@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "name": "devextreme-renovation",
+  "author": {
+    "name": "Developer Express Inc.",
+    "url": "https://www.devexpress.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DevExpress/devextreme-renovation.git"
+  },
+  "scripts": {
+  }
+}
