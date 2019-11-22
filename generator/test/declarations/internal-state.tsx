@@ -2,7 +2,11 @@
     name: 'Component'
 })
 export class Component {
-    @InternalState() hovered: Boolean = false;
+    @InternalState() _hovered: Boolean = false;
+
+    updateState() {
+        this._hovered = !this._hovered;
+    }
 
     @ViewModel()
     viewModel() {}

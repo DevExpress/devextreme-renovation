@@ -5,9 +5,13 @@ function viewModel() {}
 function view() {}
 
 export default function Component({}) {
-  const [_state, _setState] = useState(false);
+  const [_hovered, _setHovered] = useState(false);
+
+  function updateState() {
+    _setHovered(!_hovered);
+  }
 
   return view(viewModel({
-    _state
+    _hovered
   }));
 }
