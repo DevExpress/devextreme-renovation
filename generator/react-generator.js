@@ -177,6 +177,42 @@ class Method {
     }
 }
 
+class Function { 
+    constructor(decorators = [], modifiers=[], asteriskToken, name, typeParameters, parameters, type, body) { 
+        this.decorators = decorators;
+        this.modifiers = modifiers;
+        this.asteriskToken = asteriskToken;
+        this.name = name;
+        this.typeParameters = typeParameters;
+        this.parameters = parameters, 
+        this.type = type;
+        this.body = body;
+    }
+
+    declaration() { 
+        return `${this.modifiers.join(" ")} function ${this.name}(${this.parameters.map(p=>p.declaration()).join(",")})${this.body}`;
+    }
+
+    toString() { 
+
+    }
+}
+
+class ArrowFunction { 
+    constructor(modifiers = [], typeParameters = [], parameters = [], type, equalsGreaterThanToken, body) { 
+        this.modifiers = modifiers;
+        this.typeParameters = typeParameters;
+        this.parameters = parameters, 
+        this.type = type;
+        this.body = body;
+        this.equalsGreaterThanToken = equalsGreaterThanToken;
+    }
+
+    toString() { 
+        return `${this.modifiers.join(" ")} (${this.parameters.join(",")}) ${this.equalsGreaterThanToken} ${this.body}`;
+    }
+}
+
 class StringLiteral{ 
     constructor(value) { 
         this.value = value;
@@ -206,6 +242,16 @@ class Block {
         return `{
             ${this.statements.join(";\n")}
         }`
+    }
+}
+
+class Paren { 
+    constructor(expression) { 
+        this.expression = expression;
+    }
+
+    toString() { 
+        return `(${this.expression})`;
     }
 }
 
@@ -308,7 +354,14 @@ module.exports = {
         FalseKeyword: false,
         TrueKeyword: true,
         PlusToken: "+",
-        NumberKeyword: "number"
+        NumberKeyword: "number",
+        EqualsGreaterThanToken: "=>",
+        NullKeyword: null
+    },
+
+    NodeFlags: {
+        Const: "const",
+        Let: "let"
     },
 
     createIdentifier(name) { 
@@ -374,14 +427,17 @@ module.exports = {
         return value;
     },
     createTrue() {
-        return this.SyntaxKind.TrueKeyword
+        return this.SyntaxKind.TrueKeyword;
+    },
+    createNull() { 
+        return this.SyntaxKind.NullKeyword;
     },
 
     createToken(token) { 
         if (token === undefined) { 
             throw "createToken"
         }
-        return token
+        return token;
     },
 
     createBinary(left, operator, right) { 
@@ -394,5 +450,40 @@ module.exports = {
     
     createFalse() {
         return this.SyntaxKind.FalseKeyword
+    },
+
+    createFunctionDeclaration(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body) { 
+        return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body).declaration();
+    },
+
+    createVariableDeclaration(name, type, initializer="") { 
+        return `${name}=${initializer}`;
+    },
+
+    createFunctionExpression(modifiers = [], asteriskToken, name = "", typeParameters, parameters = [], type, body) {
+        return `${modifiers.join(" ")} function ${name}(${parameters.join(",")})${body}`;
+    },
+
+    createVariableDeclarationList(declarations = [], flags) { 
+        if (flags === undefined) { 
+            throw "createVariableDeclarationList";
+        }
+        return `${flags} ${declarations.join("")}`;
+    },
+
+    createArrowFunction(modifiers = [], typeParameters = [], parameters = [], type, equalsGreaterThanToken, body) {
+        return new ArrowFunction(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body);
+    },
+
+    createVariableStatement(modifiers = [], declarationList) {
+        return `${modifiers} ${declarationList}`;
+    },
+
+    createParen(expression) { 
+        return new Paren(expression);
+    },
+
+    createExportAssignment(decorators=[], modifiers=[], isExportEquals, expression) { 
+        return `export default ${expression}`;
     }
 }
