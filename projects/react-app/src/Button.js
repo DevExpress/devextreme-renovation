@@ -92,28 +92,26 @@ export default function Button({
 
   const onClickHandler = useCallback(() => onClick({ type, text }), [type, text, onClick]);
 
-  return view({ 
+  return view(viewModel({
+    // props
+    classNames,
+    height,
+    hint,
+    pressed,
+    stylingMode,
+    text,
+    type,
+    width,
+    // state
+    // internal state
+    _hovered,
+    _active,
     // listeners
     onPointerOver,
     onPointerOut,
     onPointerDown,
-    onClickHandler,
-    ...viewModel({
-      // props
-      classNames,
-      height,
-      hint,
-      pressed,
-      stylingMode,
-      text,
-      type,
-      width,
-      // state
-      // internal state
-      _hovered,
-      _active
-    })
-  });
+    onClickHandler
+  }));
 }
 
 export class ButtonComponent extends React.Component {

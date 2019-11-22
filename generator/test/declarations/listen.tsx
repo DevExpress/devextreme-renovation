@@ -3,13 +3,15 @@
 })
 export class Component {
     @Listen()
-    onClick(e) { 
-
-    }
+    onClick(e) {}
 
     @Listen()
-    onPointerMove(a = "a", b = 0, c = true) {
-        
-    }
+    onPointerMove(a = "a", b = 0, c = true) {}
+
+    @ViewModel()
+    viewModel() {}
+
+    @View()
+    view() {}
 }
   

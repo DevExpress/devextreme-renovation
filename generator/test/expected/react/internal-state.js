@@ -1,11 +1,13 @@
-export class Component {
-    constructor(props) { 
-        super(props);
-        this.state = {
-            hovered: false
-        }
-    }
-    get hovered() { return this.state.hovered; }
-    set hovered(hovered) { this.state({ hovered }); }
-}
+import { useState } from 'react';
 
+function viewModel() {}
+
+function view() {}
+
+export default function Component({}) {
+  const [_state, _setState] = useState(false);
+
+  return view(viewModel({
+    _state
+  }));
+}

@@ -1,16 +1,18 @@
+import { useState } from 'react';
 
-export class Component {
-    get pressed() {
-        return "pressed" in this.props ? this.props.pressed : this.state.pressed;
-    }
-    
-    set pressed(pressed) {
-        this.setState({ pressed });
-        this.pressedChange(pressed);
-    }
-    
-    get pressedChange() {
-        return this.props.pressedChange || (() => { });
-    }
+export default function Component({
+  pressed,
+  pressedChange = () => {}
+}) {
+  const [_pressed, _setPressed] = useState(() => pressed);
+  
+  function updateState() {
+    let curPressed = !(pressed !== undefined ? pressed : _pressed);
+    _setPressed(curPressed);
+    pressedChange(curPressed);
+  }
+  
+  return view(viewModel({
+    pressed: pressed !== undefined ? pressed : _pressed
+  }));
 }
-

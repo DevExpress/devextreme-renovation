@@ -67,23 +67,21 @@ export default function ButtonGroup({
     selectedItemsChange(curSelectedItems);
   }, [_selectedItems, selectedItems, items, keyExpr, selectionMode, selectedItemsChange]);
 
-  return view({ 
+  return view(viewModel({
+    // props
+    height,
+    hint,
+    items,
+    keyExpr,
+    selectionMode,
+    stylingMode,
+    width,
+    // state
+    selectedItems: selectedItems !== undefined ? selectedItems : _selectedItems,
+    // internal state
     // listeners
-    onClickHandler,
-    ...viewModel({
-      // props
-      height,
-      hint,
-      items,
-      keyExpr,
-      selectionMode,
-      stylingMode,
-      width,
-      // state
-      selectedItems: selectedItems !== undefined ? selectedItems : _selectedItems
-      // internal state
-    })
-  });
+    onClickHandler
+  }));
 }
 
 export class ButtonGroupComponent extends React.Component {

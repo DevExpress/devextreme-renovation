@@ -1,15 +1,19 @@
-export class Component {
-    constructor(props) { 
-        super(props);
-        this.onPointerUp = this.onPointerUp.bind(this);
-    }
+import { useCallback } from 'react';
 
-    onPointerUp() {
-      
-    }
+function viewModel() {}
 
-    componentDidMount() {
-        document.addEventListener("pointerup", this.onPointerUp);
-    }
+function view() {}
+
+export default function Component({}) {
+  const onPointerUp = useCallback(() => {}, []);
+  useEffect(() => {
+    document.addEventListener("pointerup", onPointerUp);
+    return function cleanup() {
+      document.removeEventListener("pointerup", onPointerUp);
+    };
+  });
+
+  return view(viewModel({
+    onPointerUp
+  }));
 }
-  

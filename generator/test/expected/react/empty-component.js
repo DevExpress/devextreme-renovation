@@ -1,6 +1,11 @@
-export class Component {
-    get height() { 
-        return this.prop.height;
-    }
+function viewModel() {}
+
+function view() {}
+
+export default function Component({
+  height
+}) {
+  return view(viewModel({
+    height
+  }));
 }
-  

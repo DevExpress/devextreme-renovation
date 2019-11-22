@@ -37,22 +37,20 @@ export default function ToggleButton({
     pressedChange(newPressed);
   }, [_pressed, pressed, pressedChange]);
 
-  return view({ 
+  return view(viewModel({
+    // props
+    height,
+    hint,
+    stylingMode,
+    text,
+    type,
+    width,
+    // state
+    pressed: pressed !== undefined ? pressed : _pressed,
+    // internal state
     // listeners
-    onClickHandler,
-    ...viewModel({
-      // props
-      height,
-      hint,
-      stylingMode,
-      text,
-      type,
-      width,
-      // state
-      pressed: pressed !== undefined ? pressed : _pressed
-      // internal state
-    })
-  });
+    onClickHandler
+  }));
 }
 
 export class ToggleButtonComponent extends React.Component {

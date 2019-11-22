@@ -3,8 +3,12 @@
 })
 export class Component {
     @Listen('pointerup', { target: document })
-    onPointerUp() {
-        
-    }
+    onPointerUp() {}
+
+    @ViewModel()
+    viewModel() {}
+
+    @View()
+    view() {}
 }
   

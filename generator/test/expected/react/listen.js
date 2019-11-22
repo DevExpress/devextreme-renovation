@@ -1,14 +1,15 @@
-export class Component {
-    constructor(props) { 
-        super(props);
-        this.onClick = this.onClick.bind(this);
-        this.onPointerMove = this.onPointerMove.bind(this);
-    }
+import { useCallback } from 'react';
 
-    onClick(e) { 
+function viewModel() {}
 
-    }
+function view() {}
 
-    onPointerMove(a="a", b=0, c = true) { }
+export default function Component({}) {
+  const onClick = useCallback((e) => {}, []);
+  const onPointerMove = useCallback((a = "a", b = 0, c = true) => {}, []);
+
+  return view(viewModel({
+    onClick,
+    onPointerMove
+  }));
 }
-  

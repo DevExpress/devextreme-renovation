@@ -57,7 +57,7 @@ export class ButtonGroup {
         text={item.text}
         type={item.type}
         hint={item.hint || viewModel.hint}
-        onClick={this.onClickHandler.bind(this, index)}>
+        onClick={viewModel.onClickHandler.bind(this, index)}>
           <Button.Icon></Button.Icon>
           <Icon></Icon>
         </Button>
