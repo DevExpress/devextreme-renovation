@@ -1,0 +1,236 @@
+<div>
+  <div class="buttons">
+    <div>
+      <div class="buttons-column">
+        <div class="column-header">
+          Normal
+        </div>
+        <div>
+          <dx-button
+            width="120px"
+            text="Contained"
+            hint="Contained"
+            type="normal"
+            stylingMode="contained"
+            (onClick)="onClick($event)"
+          ></dx-button>
+        </div>
+        <div>
+          <dx-button
+            width="120px"
+            text="Outlined"
+            hint="Outlined"
+            type="normal"
+            stylingMode="outlined"
+            (onClick)="onClick($event)"
+            ></dx-button>
+        </div>
+        <div>
+          <dx-button
+            width="120px"
+            text="Text"
+            hint="Text"
+            type="normal"
+            stylingMode="text"
+            (onClick)="onClick($event)"
+            ></dx-button>
+        </div>
+      </div>
+      <div class="buttons-column">
+        <div class="column-header">
+          Success
+        </div>
+        <div>
+          <dx-button
+            width="120px"
+            text="Contained"
+            hint="Contained"
+            type="success"
+            stylingMode="contained"
+            (onClick)="onClick($event)"
+            ></dx-button>
+        </div>
+        <div>
+          <dx-button
+            width="120px"
+            text="Outlined"
+            hint="Outlined"
+            type="success"
+            stylingMode="outlined"
+            (onClick)="onClick($event)"
+            ></dx-button>
+        </div>
+        <div>
+          <dx-button
+            width="120px"
+            text="Text"
+            hint="Text"
+            type="success"
+            stylingMode="text"
+            (onClick)="onClick($event)"
+            ></dx-button>
+        </div>
+      </div>
+      <div class="buttons-column">
+        <div class="column-header">
+          Default
+        </div>
+        <div>
+          <dx-button
+            width="120px"
+            text="Contained"
+            hint="Contained"
+            type="default"
+            stylingMode="contained"
+            (onClick)="onClick($event)"
+            ></dx-button>
+        </div>
+        <div>
+          <dx-button
+            width="120px"
+            text="Outlined"
+            hint="Outlined"
+            type="default"
+            stylingMode="outlined"
+            (onClick)="onClick($event)"
+            ></dx-button>
+        </div>
+        <div>
+          <dx-button
+            width="120px"
+            text="Text"
+            hint="Text"
+            type="default"
+            stylingMode="text"
+            (onClick)="onClick($event)"
+            ></dx-button>
+        </div>
+      </div>
+      <div class="buttons-column">
+        <div class="column-header">
+          Danger
+        </div>
+        <div>
+          <dx-button
+            width="120px"
+            text="Contained"
+            hint="Contained"
+            type="danger"
+            stylingMode="contained"
+            (onClick)="onClick($event)"
+            ></dx-button>
+        </div>
+        <div>
+          <dx-button
+            width="120px"
+            text="Outlined"
+            hint="Outlined"
+            type="danger"
+            stylingMode="outlined"
+            (onClick)="onClick($event)"
+            ></dx-button>
+        </div>
+        <div>
+          <dx-button
+            width="120px"
+            text="Text"
+            hint="Text"
+            type="danger"
+            stylingMode="text"
+            (onClick)="onClick($event)"
+            ></dx-button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    Last clicked button - {{lastClickedButton}}
+  </div>
+  <div class="buttons">
+    <div>
+      <div class="buttons-column">
+        <div class="column-header">
+          Normal {{ toggle ? 'ON' : 'OFF' }}
+        </div>
+        <div>
+          <dx-toggle-button
+            width="120px"
+            text="Outlined"
+            hint="Outlined"
+            type="normal"
+            stylingMode="outlined"
+            [(pressed)]="toggle"
+          ></dx-toggle-button>
+        </div>
+      </div>
+      <div class="buttons-column">
+        <div class="column-header">
+          Success {{toggle ? 'ON' : 'OFF'}}
+        </div>
+        <div>
+          <dx-toggle-button
+            width="120px"
+            text="Outlined"
+            hint="Outlined"
+            type="success"
+            stylingMode="outlined"
+            [(pressed)]="toggle"
+            ></dx-toggle-button>
+        </div>
+      </div>
+      <div class="buttons-column">
+        <div class="column-header">
+          Default {{toggle ? 'ON' : 'OFF'}}
+        </div>
+        <div>
+          <dx-toggle-button
+            width="120px"
+            text="Outlined"
+            hint="Outlined"
+            type="default"
+            stylingMode="outlined"
+            [(pressed)]="toggle"
+            ></dx-toggle-button>
+        </div>
+      </div>
+      <div class="buttons-column">
+        <div class="column-header">
+          Danger {{ toggle ? 'ON' : 'OFF'}}
+        </div>
+        <div>
+          <dx-toggle-button
+            width="120px"
+            text="Outlined"
+            hint="Outlined"
+            type="danger"
+            stylingMode="outlined"
+            [(pressed)]="toggle"
+            ></dx-toggle-button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="buttonGroups">
+    <dx-button-group
+      [items]="fontStyles"
+      [(selectedItems)]="selectedItems"
+      selectionMode="multiple"
+      stylingMode="outlined"
+      keyExpr="style"
+    ></dx-button-group>
+    <dx-button-group
+      [items]="fontStyles"
+      selectionMode="multiple"
+      stylingMode="contained"
+      [(selectedItems)]="selectedItems"
+      keyExpr="style"
+      ></dx-button-group>
+    <dx-button-group
+      [items]="fontStyles"
+      selectionMode="single"
+      stylingMode="text"
+      [selectedItems]="['bold', 'strike']"
+      keyExpr="style"
+      ></dx-button-group>
+  </div>
+</div>
