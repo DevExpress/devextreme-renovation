@@ -23,7 +23,7 @@ function getResult(source) {
 
 function testGenerator(componentName, generator) {
     const factory = require(`./componentFactory/${componentName}`);
-    const code = this.code = factory(generator).toString();
+    const code = this.code = factory(generator).join("\n");
     this.expectedCode =  fs.readFileSync(`${__dirname}/expected/react/${componentName}.js`).toString();
     assert.equal(getResult(code), getResult(this.expectedCode));
 }
@@ -39,6 +39,8 @@ describe("react-generator", function() {
         if (this.currentTest.state !== "passed") { 
             console.log(this.code); // TODO: diff with expected
         }
+        this.code = null;
+        this.expectedCode = null;
     });
 
     it("empty-component", async function() {
@@ -61,7 +63,11 @@ describe("react-generator", function() {
         this.testGenerator("simple-block");
     });
 
-    it("listen-with-target", function() { 
+    it("listen-with-target", function() {
         this.testGenerator("listen-with-target");
-    })
+    });
+
+    it("functions", function() {
+        this.testGenerator("functions");
+    });
 });
