@@ -1,4 +1,6 @@
-import { Component, Input, Output, EventEmitter, ContentChild, ElementRef } from '@angular/core';
+import { Component, EventEmitter, Input, NgModule, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DxButtonModule } from './DxButton';
 
 @Component({
   selector: 'dx-toggle-button',
@@ -58,3 +60,13 @@ export class DxToggleButtonComponent {
     this._viewModel = this.viewModel(this.getModel());
   }
 }
+
+@NgModule({
+  declarations: [DxToggleButtonComponent],
+  imports: [
+    CommonModule,
+    DxButtonModule
+  ],
+  exports: [DxToggleButtonComponent]
+})
+export class DxToggleButtonModule { }

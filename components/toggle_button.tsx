@@ -2,7 +2,7 @@ import Button from './button';
 
 @Component({
   name: 'ToggleButton',
-  components: ['Button']
+  components: [Button]
 })
 
 export default class ToggleButton {

@@ -3,7 +3,7 @@ import './button_group.css'
 
 @Component({
   name: 'ButtonGroup',
-  components: ['Button']
+  components: [Button]
 })
 
 export class ButtonGroup {

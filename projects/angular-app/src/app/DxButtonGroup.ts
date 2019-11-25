@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter, ContentChild, ElementRef } from '@angular/core';
-import { DxButtonComponent } from "./DxButton";
+import { Component, EventEmitter, Input, NgModule, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DxButtonModule } from "./DxButton";
 
 @Component({
   selector: 'dx-button-group',
@@ -19,7 +20,6 @@ import { DxButtonComponent } from "./DxButton";
             </dx-button>
         </div>
     `,
-  entryComponents: [DxButtonComponent],
   styleUrls: ["./dx-group-button.css"]
 })
 export class DxButtonGroupComponent {
@@ -92,3 +92,13 @@ export class DxButtonGroupComponent {
     this._viewModel = this.viewModel(this.getModel());
   }
 }
+
+@NgModule({
+  declarations: [DxButtonGroupComponent],
+  imports: [
+    CommonModule,
+    DxButtonModule
+  ],
+  exports: [DxButtonGroupComponent]
+})
+export class DxButtonGroupModule { }

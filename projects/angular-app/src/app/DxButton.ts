@@ -1,4 +1,5 @@
-import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, NgModule, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 function getCssClasses(model) {
   const classNames = ['dx-button'];
@@ -116,3 +117,12 @@ export class DxButtonComponent {
     this._viewModel = this.viewModel(this.getModel());
   }
 }
+
+@NgModule({
+  declarations: [DxButtonComponent],
+  imports: [
+    CommonModule
+  ],
+  exports: [DxButtonComponent]
+})
+export class DxButtonModule { }
