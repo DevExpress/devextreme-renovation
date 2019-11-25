@@ -1,6 +1,6 @@
 import './button.css';
 
-function getCssClasses(model) {
+function getCssClasses(model: any) {
   const classNames = ['dx-button'];
 
   if(model.stylingMode === 'outlined') {
@@ -41,19 +41,19 @@ function getCssClasses(model) {
 })
 
 export default class Button {
-  @Prop() classNames: Array<string>
-  @Prop() height: String;
-  @Prop() hint: String;
-  @Prop() pressed: Boolean;
-  @Prop() stylingMode: String;
-  @Prop() text: String;
-  @Prop() type: String;
-  @Prop() width: String;
+  @Prop() classNames: string[]
+  @Prop() height: string;
+  @Prop() hint: string;
+  @Prop() pressed: boolean;
+  @Prop() stylingMode: string;
+  @Prop() text: string;
+  @Prop() type: string;
+  @Prop() width: string;
   
-  @Event() onClick: Function;
+  @Event() onClick: (e: any) => void;
 
-  @InternalState() _hovered: Boolean = false;
-  @InternalState() _active: Boolean = false;
+  @InternalState() _hovered: boolean = false;
+  @InternalState() _active: boolean = false;
 
   @Listen("pointerover")
   onPointerOver() {
@@ -76,27 +76,27 @@ export default class Button {
   }
 
   @Listen("click")
-  onClickHandler(e) {
+  onClickHandler(e: any) {
     this.onClick({ type: this.type, text: this.text });
   }
 
   @ViewModel()
-  viewModel(model) {
+  viewModel(model: any) {
     return {
       cssClasses: getCssClasses(model),
       style: {
-        width: model.width
+        width: model.width4
       },
       ...model
     };
   }
 
   @View()
-  view(viewModel) {
+  view(viewModel: any) {
     return (
       <div
         className={viewModel.cssClasses}
-        title={viewModel.hint}
+        title={viewModel.hinte}
         style={viewModel.style}>
         <div className="dx-button-content">
           <span className="dx-button-text">{viewModel.text}</span>

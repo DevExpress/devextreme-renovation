@@ -7,18 +7,18 @@ import './button_group.css'
 })
 
 export class ButtonGroup {
-  @Prop() height: String;
-  @Prop() hint: String;
-  @Prop() items: Array<any>;
-  @Prop() keyExpr: String;
-  @Prop() selectionMode: String;
-  @Prop() stylingMode: String;
-  @Prop() width: String;
+  @Prop() height: string;
+  @Prop() hint: string;
+  @Prop() items: any[];
+  @Prop() keyExpr: string;
+  @Prop() selectionMode: string;
+  @Prop() stylingMode: string;
+  @Prop() width: string;
 
-  @State() selectedItems: Array<String>;
+  @State() selectedItems: string[];
 
   @Listen()
-  onClickHandler(index) {
+  onClickHandler(index: number) {
     const currentButton = this.items[index][this.keyExpr]; 
     if(this.selectionMode === "single") {
       if(this.selectedItems[0] === currentButton) {
@@ -36,9 +36,9 @@ export class ButtonGroup {
   }
 
   @ViewModel()
-  viewModel(model) {
+  viewModel(model: any) {
     const viewModel = { ...model };
-    viewModel.items = viewModel.items.map((item, i, array) => ({
+    viewModel.items = viewModel.items.map((item: any, i: number, array: any[]) => ({
       ...item,
       pressed: (model.selectedItems || []).indexOf(item[model.keyExpr]) !== -1,
       classNames: [i === 0 && "first" || (i === array.length - 1) && "last" || ""]
@@ -48,8 +48,8 @@ export class ButtonGroup {
   }
 
   @View()
-  view(viewModel) {
-    const buttons = viewModel.items.map((item, index) => (
+  view(viewModel: any) {
+    const buttons = viewModel.items.map((item: any, index: number) => (
       <Button
         stylingMode={viewModel.stylingMode}
         key={item.key}
@@ -58,10 +58,7 @@ export class ButtonGroup {
         type={item.type}
         hint={item.hint || viewModel.hint}
         onClick={viewModel.onClickHandler.bind(this, index)}>
-          <Button.Icon></Button.Icon>
-          <Icon></Icon>
         </Button>
-        
     ));
 
     return (

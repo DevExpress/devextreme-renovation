@@ -6,27 +6,28 @@ import Button from './button';
 })
 
 export default class ToggleButton {
-  @Prop() height: String;
-  @Prop() hint: String;
-  @Prop() stylingMode: String;
-  @Prop() text: String;
-  @Prop() type: String;
-  @Prop() width: String;
+  @Prop() height: string;
+  @Prop() hint: string;
+  @Prop() stylingMode: string;
+  @Prop() text: string;
+  @Prop() type: string;
+  @Prop() width: string;
 
-  @State() pressed: Boolean;
+  @State()
+  pressed: boolean;
 
   @Listen("click")
-  onClickHandler(e) {
+  onClickHandler(e: any) {
     this.pressed = !this.pressed;
   }
 
   @ViewModel()
-  viewModel(model) {
+  viewModel(model: any) {
     return { ...model };
   }
 
   @View()
-  view(viewModel) {
+  view(viewModel: any) {
     return (
       <Button
         height={viewModel.height}
