@@ -276,7 +276,72 @@ class Obj {
     }
     
     toString() { 
-        return `{${Object.keys(this.value).map(k => `${k}: ${this.value[k]}`)}}`;
+        return `{${Object.keys(this.value).map(k => `${k}:${this.value[k]}`)}}`;
+    }
+}
+
+class ShorthandPropertyAssignment { 
+    constructor(name, expression) { 
+        this.name = name;
+        this.expression = expression;
+    }
+
+    toString() { 
+        return `${this.name}${this.expression ? `:${this.expression}` : ""}`;
+    }
+
+}
+
+class PropertyAssignment { 
+    constructor(key, value) { 
+        this.key = key;
+        this.value = value;
+    }
+    toString() { 
+        return `${this.key}:${this.value}`
+    }
+}
+
+class ObjectLiteral{
+    /**
+     * 
+     * @param {Array<PropertyAssignment|ShorthandPropertyAssignment} properties 
+     * @param {boolean} multiLine 
+     */
+    constructor(properties, multiLine) { 
+        this.properties = properties;
+        this.multiLine = multiLine;
+    }
+
+    toString() { 
+        return `{${this.properties.join(`,\n`)}}`;
+    }
+}
+
+class BindingElement { 
+    constructor(dotDotDotToken, propertyName, name, initializer) { 
+        this.dotDotDotToken = dotDotDotToken;
+        this.propertyName = propertyName;
+        this.name = name;
+        this.initializer = initializer;
+    }
+
+    toString() { 
+        return `${this.propertyName}:${this.name}`;
+    }
+}
+
+class BindingPattern { 
+    /**
+     * 
+     * @param {Array<BindingElement>} elements 
+     */
+    constructor(elements) { 
+        this.elements = elements;
+    }
+
+    toString() { 
+        return `{${this.elements.join(",")}}`;
     }
 }
 
@@ -573,21 +638,18 @@ module.exports = {
         return new StringLiteral(value);
     },
     createPropertyAssignment(key, value) { 
-        return { key, value };
+        return new PropertyAssignment(key, value)
     },
     createArrayLiteral(elements, multiLine) { 
         return new ArrayLiteral(elements, multiLine);
     },
     /**
      * 
-     * @param {Array} properties 
-     * @param {bolean} multiLine 
+     * @param {Array<PropertyAssignment|ShorthandPropertyAssignment>} properties 
+     * @param {boolean} multiLine 
      */
     createObjectLiteral(properties, multiLine) { 
-        return new Obj(properties.reduce((obj, { key, value }) => {
-            obj[key] = value;
-            return obj;
-         }, {}));
+        return new ObjectLiteral(properties, multiLine);
     },
     createCall(expression, typeArguments, argumentsArray) { 
         return new Call(expression, typeArguments, argumentsArray);
@@ -708,5 +770,17 @@ module.exports = {
 
     createExpressionStatement(expression) { 
         return expression
+    },
+
+    createShorthandPropertyAssignment(name, expression) { 
+        return new ShorthandPropertyAssignment(name, expression)
+    },
+    
+    createBindingElement(dotDotDotToken, propertyName, name, initializer) {
+        return new BindingElement(dotDotDotToken, propertyName, name, initializer);
+    },
+
+    createObjectBindingPattern(elements) { 
+        return new BindingPattern(elements);
     }
 }

@@ -70,4 +70,9 @@ describe("react-generator", function() {
     it("functions", function() {
         this.testGenerator("functions");
     });
+
+    it("objects", function() {
+        this.testGenerator("objects");
+    });
+
 });
