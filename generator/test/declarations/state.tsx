@@ -1,7 +1,7 @@
 @Component({
     name: 'Component'
 })
-export class Component {
+export default class Component {
     @State() pressed: Boolean
     
     updateState() {

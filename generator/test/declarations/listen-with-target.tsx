@@ -3,7 +3,10 @@
 })
 export class Component {
     @Listen('pointerup', { target: document })
-    onPointerUp() {}
+    onPointerUp() { }
+    
+    @Listen('scroll', { target: window })
+    scrollHandler() {}
 
     @ViewModel()
     viewModel() {}

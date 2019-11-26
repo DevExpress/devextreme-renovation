@@ -1,7 +1,7 @@
 @Component({
     name: 'ComponentName'
 })
-export class Component {
+export default class Component {
     @Prop() height: Number;
 
     @ViewModel()

@@ -43,23 +43,23 @@ describe("react-generator", function() {
         this.expectedCode = null;
     });
 
-    it("empty-component", async function() {
+    it("empty-component", function() {
         this.testGenerator("empty-component");  
     });
 
-    it("internal-state", async function() {
+    it("internal-state", function() {
         this.testGenerator("internal-state");  
     });
 
-    it("state", async function() { 
+    it("state", function() { 
         this.testGenerator("state");
     });
 
-    it("listen", async function() { 
+    it("listen", function() { 
         this.testGenerator("listen");
     });
 
-    it("simple block", async function() {
+    it("simple block", function() {
         this.testGenerator("simple-block");
     });
 
