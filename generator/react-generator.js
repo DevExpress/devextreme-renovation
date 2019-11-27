@@ -286,6 +286,14 @@ class ShorthandPropertyAssignment {
         this.expression = expression;
     }
 
+    get key() { 
+        return this.name;
+    }
+
+    get value() { 
+        return this.expression ? this.expression : this.name;
+    }
+
     toString() { 
         return `${this.name}${this.expression ? `:${this.expression}` : ""}`;
     }
@@ -493,7 +501,7 @@ class Class {
         return "";
     }
 
-    functionalComponentString() { 
+    functionalComponentString() {
         
         const props = this.members.filter(m => m.isProp);
         const internalState = this.members.filter(m => m.isInternalState);
@@ -518,29 +526,23 @@ class Class {
             return `const ${m.name} = useCallback(${m.arrowDeclaration(internalState, state)}, []);`;
         });
 
+        const parameters = this.isComponent.expression.arguments[0].properties
+            .reduce((parameters, property) => {
+                parameters[property.key] = property.value;
+                return parameters;
+            }, {});
+
         return `
             ${this.getImports()}
-
-            function viewModel(){
-
-            }
-
-            function view(){
-                
-            }
 
             ${this.modifiers.join(" ")} function ${this.name}({
                 ${propsDeclaration.concat(stateDeclaration).join("\n")}
             }){
                 ${useStateDeclaration}
-
                 ${methods.map(m => m.declaration("function", internalState, state)).join("\n")}
-
                 ${eventsDeclaration.join("\n")}
-
                 ${this.compileUseEffect()}
-                
-                return view(viewModel({
+                return ${parameters.view}(${parameters.viewModel}({
                     ${propsDeclaration
                         .concat(internalState.map(m => m.name))
                         .concat(state.map(s => `${s.name}:${stateGetter(s.name, false)}`))
@@ -782,5 +784,29 @@ module.exports = {
 
     createObjectBindingPattern(elements) { 
         return new BindingPattern(elements);
+    },
+
+    createJsxExpression(dotDotDotToken, expression) { 
+        return `{${expression}}`;
+    },
+
+    createJsxAttribute(name, initializer) { 
+        return `${name}=${initializer}`;
+    },
+
+    createJsxAttributes(properties) { 
+        return properties.join("\n");
+    },
+
+    createJsxOpeningElement(tagName, typeArguments, attributes) { 
+        return `<${tagName} ${attributes}>`
+    },
+
+    createJsxClosingElement(tagName) { 
+        return `</${tagName}>`;
+    },
+
+    createJsxElement(openingElement, children="", closingElement) { 
+        return `${openingElement}${children}${closingElement}`
     }
 }

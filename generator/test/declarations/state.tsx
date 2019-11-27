@@ -1,5 +1,11 @@
+function viewModel() {}
+
+function view() {}
+
 @Component({
-    name: 'Component'
+    name: 'Component',
+    view,
+    viewModel,
 })
 export default class Component {
     @State() pressed: Boolean
@@ -8,10 +14,5 @@ export default class Component {
         this.pressed = !this.pressed;
     }
 
-    @ViewModel()
-    viewModel() {}
-
-    @View()
-    view() {}
 }
   

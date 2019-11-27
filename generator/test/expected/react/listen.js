@@ -1,8 +1,8 @@
-import { useCallback } from 'react';
-
 function viewModel() {}
 
 function view() {}
+
+import { useCallback } from 'react';
 
 export function Component({}) {
   const onClick = useCallback((e) => {}, []);

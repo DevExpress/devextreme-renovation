@@ -1,13 +1,20 @@
+
+
 @Component({
-    name: 'ComponentName'
+    name: 'ComponentName',
+    viewModel: viewModel1,
+    view: view1
 })
 export default class Component {
-    @Prop() height: Number;
-
-    @ViewModel()
-    viewModel() {}
-
-    @View()
-    view() {}
+    @Prop() height: number;
 }
-  
+
+function viewModel1(model: Component) { 
+    return {
+        height: model.height
+    }
+}
+
+function view1(viewModel) { 
+    return <div style={{height: viewModel.height}}></div>
+}

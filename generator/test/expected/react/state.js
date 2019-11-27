@@ -1,8 +1,8 @@
-import { useState } from 'react';
-
 function viewModel() {}
 
 function view() {}
+
+import { useState } from 'react';
 
 export default function Component({
   pressed,

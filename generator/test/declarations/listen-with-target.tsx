@@ -1,5 +1,11 @@
+function viewModel() {}
+
+function view() {}
+
 @Component({
-    name: 'Component'
+    name: 'Component',
+    view,
+    viewModel,
 })
 export class Component {
     @Listen('pointerup', { target: document })
@@ -7,11 +13,5 @@ export class Component {
     
     @Listen('scroll', { target: window })
     scrollHandler() {}
-
-    @ViewModel()
-    viewModel() {}
-
-    @View()
-    view() {}
 }
   

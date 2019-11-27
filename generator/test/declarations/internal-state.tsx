@@ -1,5 +1,11 @@
+function viewModel() {}
+
+function view() {}
+
 @Component({
-    name: 'Component'
+    name: 'Component',
+    view,
+    viewModel,
 })
 export default class Component {
     @InternalState() _hovered: Boolean = false;
@@ -7,11 +13,5 @@ export default class Component {
     updateState() {
         this._hovered = !this._hovered;
     }
-
-    @ViewModel()
-    viewModel() {}
-
-    @View()
-    view() {}
 }
   
