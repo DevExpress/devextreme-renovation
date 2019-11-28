@@ -1,18 +1,23 @@
 export default function Component({
-  height
+  height,
+  width
 }) {
   return view1(viewModel1({
-    height
+    height,
+    width
   }));
 }
 
 
-function viewModel1(model) { 
+function viewModel1(model) {
   return {
-      height: model.height
+    height: model.height
   }
 }
 
-function view1(viewModel) { 
-  return <div style={{height: viewModel.height}}></div>
+function view1(viewModel) {
+  return <div style={{ height: viewModel.height }}>
+    <span></span>
+    <span></span>
+  </div>
 }

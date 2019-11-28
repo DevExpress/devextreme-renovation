@@ -126,7 +126,7 @@ class PropertyAccess {
      * @param {Array<Property>} internalState 
      * @param {Array<Property>} state
      */
-    toString(internalState, state) {
+    toString(internalState=[], state=[]) {
         if (this.expression === SyntaxKind.ThisKeyword &&
             internalState.findIndex(p => p.name === this.name) >= 0) {
             return `${this.name}`;
@@ -213,7 +213,7 @@ class Method {
 
     get isSubscription() { 
         const eventDecorator = this.isEvent;
-        if (!eventDecorator || eventDecorator.expression.argumentsArray.length === 0) {
+        if (!eventDecorator || eventDecorator.expression.argumentsArray.length < 2) {
             return;
         }
         return eventDecorator;
@@ -317,15 +317,22 @@ class PropertyAssignment {
     }
 }
 
-class ObjectLiteral{
+class ObjectLiteral {
     /**
      * 
      * @param {Array<PropertyAssignment|ShorthandPropertyAssignment} properties 
      * @param {boolean} multiLine 
      */
-    constructor(properties, multiLine) { 
+    constructor(properties, multiLine) {
         this.properties = properties;
         this.multiLine = multiLine;
+    }
+
+    getProperty(propertyName) { 
+        const property = this.properties.find(p => p.key === propertyName);
+        if (property) { 
+            return property.value;
+        }
     }
 
     toString() { 
@@ -507,17 +514,25 @@ class Class {
         if (subscriptions.length) {
             const { add, cleanup } = subscriptions.reduce(({ add, cleanup }, s) => {
                 const subscriptionDecorator = s.isSubscription;
-                const [event, { target }] = subscriptionDecorator.expression.arguments;
-                add.push(`${target}.addEventListener(${event}, ${s.name});`);
-                cleanup.push(`${target}.removeEventListener(${event}, ${s.name});`);
+                const [event, parameters] = subscriptionDecorator.expression.arguments;
+                let target;
+                if (parameters) { 
+                    target = parameters.getProperty("target");
+                }
+                if (target) { 
+                    add.push(`${target}.addEventListener(${event}, ${s.name});`);
+                    cleanup.push(`${target}.removeEventListener(${event}, ${s.name});`);
+                }
                 return { add, cleanup }
             }, { add: [], cleanup: [] });
-            return `useEffect(()=>{
-                ${add.join("\n")}
-                return function cleanup(){
-                    ${cleanup.join("\n")}
-                }
-            });`
+            if (add.length) { 
+                return `useEffect(()=>{
+                    ${add.join("\n")}
+                    return function cleanup(){
+                        ${cleanup.join("\n")}
+                    }
+                });`;
+            }
         }
         return "";
     }
@@ -557,7 +572,7 @@ class Class {
             ${this.getImports()}
 
             ${this.modifiers.join(" ")} function ${this.name}({
-                ${propsDeclaration.concat(stateDeclaration).join("\n")}
+                ${propsDeclaration.concat(stateDeclaration).join(",\n")}
             }){
                 ${useStateDeclaration}
                 ${methods.map(m => m.declaration("function", internalState, state)).join("\n")}
@@ -567,7 +582,8 @@ class Class {
                     ${propsDeclaration
                         .concat(internalState.map(m => m.name))
                         .concat(state.map(s => `${s.name}:${stateGetter(s.name, false)}`))
-                        .concat(events.map(e => e.name))
+                    .concat(events.map(e => e.name))
+            
                     }
                 }));
             }
@@ -854,8 +870,12 @@ module.exports = {
         return `</${tagName}>`;
     },
 
-    createJsxElement(openingElement, children="", closingElement) { 
-        return `${openingElement}${children}${closingElement}`
+    createJsxElement(openingElement, children=[], closingElement) { 
+        return `${openingElement}${children.join("\n")}${closingElement}`;
+    },
+
+    createJsxText(text, containsOnlyTriviaWhiteSpaces) { 
+        return text;
     },
 
     createImportSpecifier(propertyName, name) { 

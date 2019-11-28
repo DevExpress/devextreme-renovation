@@ -7,6 +7,7 @@
 })
 export default class Component {
     @Prop() height: number;
+    @Prop() width: number;
 }
 
 function viewModel1(model: Component) { 
@@ -16,5 +17,8 @@ function viewModel1(model: Component) {
 }
 
 function view1(viewModel) { 
-    return <div style={{height: viewModel.height}}></div>
+    return <div style={{ height: viewModel.height }}>
+        <span></span>
+        <span></span>
+    </div>
 }

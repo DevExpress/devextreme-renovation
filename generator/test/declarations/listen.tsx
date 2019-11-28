@@ -11,7 +11,7 @@ export class Component {
     @Listen()
     onClick(e) {}
 
-    @Listen()
+    @Listen("pointermove")
     onPointerMove(a = "a", b = 0, c = true) {}
 }
   
