@@ -41,8 +41,8 @@ class Call {
         })
     }
 
-    toString() {
-        return `${this.expression}(${this.argumentsArray.join(",")})`;
+    toString(internalState, state, props) {
+        return `${this.expression.toString(internalState, state, props)}(${this.argumentsArray.join(",")})`;
     }
 }
 
@@ -95,13 +95,18 @@ class Property {
         return this.decorators.find(d => d.name === "Prop");
     }
 
+    get isAction() { 
+        return this.decorators.find(d => d.name === "Event");
+    }
+
     get isState() {
         return this.decorators.find(d => d.name === "State");
     }
 
     declaration() {
-        if (this.isProp) {
-            return this.name;
+        if (this.isProp || this.isAction) {
+            const initializer = this.initializer === undefined ? "" : `=${this.initializer}`;
+            return `${this.name}${initializer}`;
         }
         if (this.isState) {
             return `${this.name},
@@ -126,9 +131,13 @@ class PropertyAccess {
      * @param {Array<Property>} internalState 
      * @param {Array<Property>} state
      */
-    toString(internalState = [], state = []) {
+    toString(internalState = [], state = [], props = []) {
         if (this.expression === SyntaxKind.ThisKeyword &&
-            internalState.findIndex(p => p.name === this.name) >= 0) {
+            (internalState.findIndex(p => p.name === this.name) >= 0||
+            props.findIndex(p => p.name === this.name) >= 0
+        )
+        
+        ) {
             return `${this.name}`;
         }
 
@@ -219,12 +228,12 @@ class Method {
         return eventDecorator;
     }
 
-    declaration(prefix = "", internalState, state) {
-        return `${prefix} ${this.name}(${this.parameters.map(p => p.declaration()).join(",")})${this.body.toString(internalState, state)}`;
+    declaration(prefix = "", internalState, state, props) {
+        return `${prefix} ${this.name}(${this.parameters.map(p => p.declaration()).join(",")})${this.body.toString(internalState, state, props)}`;
     }
 
-    arrowDeclaration(internalState, state) {
-        return `(${this.parameters.map(p => p.declaration()).join(",")})=>${this.body.toString(internalState, state)}`
+    arrowDeclaration(internalState, state, props) {
+        return `(${this.parameters.map(p => p.declaration()).join(",")})=>${this.body.toString(internalState, state, props)}`
     }
 
     toString() {
@@ -377,9 +386,9 @@ class Block {
         this.multiLine = multiLine;
     }
 
-    toString(internalState, state) {
+    toString(internalState, state, props) {
         return `{
-            ${this.statements.map(s => s.toString(internalState, state)).join(";\n")}
+            ${this.statements.map(s => s.toString(internalState, state, props)).join(";\n")}
         }`
     }
 }
@@ -542,6 +551,7 @@ class Class {
         const props = this.members.filter(m => m.isProp);
         const internalState = this.members.filter(m => m.isInternalState);
         const state = this.members.filter(m => m.isState);
+        const actions = this.members.filter(m => m.isAction);
 
         const methods = this.members.filter(m => m instanceof Method && m.decorators.length === 0);
 
@@ -556,6 +566,8 @@ class Class {
 
         const propsDeclaration = props.map(p => p.declaration());
         const stateDeclaration = state.map(s => s.declaration());
+        const actionDeclaration = actions.map(a => a.declaration());
+        
 
         const events = this.members.filter(m => m.isEvent);
         const eventsDeclaration = events.map(m => {
@@ -572,17 +584,21 @@ class Class {
             ${this.getImports()}
 
             ${this.modifiers.join(" ")} function ${this.name}({
-                ${propsDeclaration.concat(stateDeclaration).join(",\n")}
+                ${propsDeclaration
+                    .concat(actionDeclaration)
+                    .concat(stateDeclaration)
+                    .join(",\n")}
             }){
                 ${useStateDeclaration}
-                ${methods.map(m => m.declaration("function", internalState, state)).join("\n")}
+                ${methods.map(m => m.declaration("function", internalState, state, props.concat(actions))).join("\n")}
                 ${eventsDeclaration.join("\n")}
                 ${this.compileUseEffect()}
                 return ${parameters.view}(${parameters.viewModel}({
-                    ${propsDeclaration
-                .concat(internalState.map(m => m.name))
-                .concat(state.map(s => `${s.name}:${stateGetter(s.name, false)}`))
-                .concat(events.map(e => e.name))
+                    ${props.map(p=>p.name)
+                    .concat(internalState.map(m => m.name))
+                    .concat(state.map(s => `${s.name}:${stateGetter(s.name, false)}`))
+                    .concat(events.map(e => e.name))
+                    .join(",\n")
 
             }
                 }));
@@ -615,8 +631,8 @@ class ReturnStatement {
         this.expression = expression;
     }
 
-    toString(internalState, state) {
-        return `return ${this.expression.toString(internalState, state)};`;
+    toString(internalState, state, props) {
+        return `return ${this.expression.toString(internalState, state, props)};`;
     }
 }
 
@@ -651,8 +667,8 @@ class Prefix {
         this.operand = operand;
     }
 
-    toString(internalState, state) {
-        return `${this.operator}${this.operand.toString(internalState, state)}`
+    toString(internalState, state, props) {
+        return `${this.operator}${this.operand.toString(internalState, state, props)}`
     }
 }
 
@@ -663,11 +679,11 @@ class Binary {
         this.right = right;
     }
 
-    toString(internalState, state) {
+    toString(internalState, state, props) {
         if (this.operator === SyntaxKind.EqualsToken &&
             this.left instanceof PropertyAccess &&
             this.left.expression === SyntaxKind.ThisKeyword) {
-            const rightExpression = this.right.toString(internalState, state);
+            const rightExpression = this.right.toString(internalState, state, props);
 
             return `${this.left.compileStateSetting()}(${rightExpression});
             ${this.left.compileStateChangeRising(state, rightExpression)}`;
