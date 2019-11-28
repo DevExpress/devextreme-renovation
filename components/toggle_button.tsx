@@ -2,41 +2,42 @@ import Button from './button';
 
 @Component({
   name: 'ToggleButton',
-  components: [Button]
+  components: [Button],
+  viewModel: viewModelFunction,
+  view: viewFunction
 })
 
 export default class ToggleButton {
-  @Prop() height: string;
-  @Prop() hint: string;
-  @Prop() stylingMode: string;
-  @Prop() text: string;
-  @Prop() type: string;
-  @Prop() width: string;
+  @Prop() height?: string;
+  @Prop() hint?: string;
+  @Prop() stylingMode?: string;
+  @Prop() text?: string;
+  @Prop() type?: string;
+  @Prop() width?: string;
 
   @State()
-  pressed: boolean;
+  pressed?: boolean;
 
   @Listen("click")
   onClickHandler(e: any) {
     this.pressed = !this.pressed;
   }
+}
 
-  @ViewModel()
-  viewModel(model: any) {
-    return { ...model };
-  }
+function viewModelFunction(model: ToggleButton) {
+  return { ...model };
+}
 
-  @View()
-  view(viewModel: any) {
-    return (
-      <Button
-        height={viewModel.height}
-        hint={viewModel.hint}
-        stylingMode={viewModel.stylingMode}
-        text={viewModel.text}
-        type={viewModel.type}
-        width={viewModel.width}
-        pressed={viewModel.pressed}/>
-    );
-  }
+function viewFunction(viewModel: any) {
+  return (
+    <Button
+      height={viewModel.height}
+      hint={viewModel.hint}
+      stylingMode={viewModel.stylingMode}
+      text={viewModel.text}
+      type={viewModel.type}
+      width={viewModel.width}
+      pressed={viewModel.pressed}
+      click={viewModel.onClickHandler} />
+  );
 }

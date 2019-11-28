@@ -23,15 +23,15 @@ import { DxButtonModule } from "./DxButton";
   styleUrls: ["./dx-group-button.css"]
 })
 export class DxButtonGroupComponent {
-  @Input() height: String;
-  @Input() hint: String;
-  @Input() items: Array<any> = [];
-  @Input() keyExpr: string;
-  @Input() selectionMode: String;
-  @Input() stylingMode: String;
-  @Input() width: String;
+  @Input() height?: string;
+  @Input() hint?: string;
+  @Input() items?: Array<any> = [];
+  @Input() keyExpr?: string = "";
+  @Input() selectionMode?: string;
+  @Input() stylingMode?: string;
+  @Input() width?: string;
 
-  _selectedItems: Array<String> = [];
+  _selectedItems: Array<string> = [];
   @Output() selectedItemsChange = new EventEmitter();
   @Input() get selectedItems() {
     return this._selectedItems;
@@ -42,20 +42,21 @@ export class DxButtonGroupComponent {
   }
 
   onClickHandler(index: number) {
-    const currentButton = this.items[index][this.keyExpr];
+    const currentButton = this.items[index][this.keyExpr]
+    let newValue: string[] = [];
+
     if (this.selectionMode === "single") {
-      if (this.selectedItems[0] === currentButton) {
-        this.selectedItems = [];
-      } else {
-        this.selectedItems = [currentButton];
+      if (this.selectedItems![0] !== currentButton) {
+        newValue = [currentButton];
       }
     } else {
-      if (this.selectedItems.indexOf(currentButton) !== -1) {
-        this.selectedItems = this.selectedItems.filter(item => item !== currentButton);
+      if (this.selectedItems!.indexOf(currentButton) !== -1) {
+        newValue = this.selectedItems!.filter(item => item !== currentButton);
       } else {
-        this.selectedItems = this.selectedItems.concat(currentButton);
+        newValue = this.selectedItems!.concat(currentButton);
       }
     }
+    this.selectedItems = newValue;
   }
 
   trackBy(item) {
@@ -74,8 +75,9 @@ export class DxButtonGroupComponent {
     return viewModel;
   }
 
-  getModel() {
-    return {
+  _viewModel: any;
+  ngDoCheck() {
+    this._viewModel = this.viewModel({
       height: this.height,
       hint: this.hint,
       width: this.width,
@@ -84,12 +86,7 @@ export class DxButtonGroupComponent {
       selectedItems: this.selectedItems,
       selectionMode: this.selectionMode,
       stylingMode: this.stylingMode
-    };
-  }
-
-  _viewModel: any;
-  ngDoCheck() {
-    this._viewModel = this.viewModel(this.getModel());
+    });
   }
 }
 

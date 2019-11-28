@@ -17,14 +17,14 @@ import { DxButtonModule } from './DxButton';
 })
 
 export class DxToggleButtonComponent {
-  @Input() height: String;
-  @Input() hint: String;
-  @Input() stylingMode: String;
-  @Input() text: String;
-  @Input() type: String;
-  @Input() width: String;
+  @Input() height?: string;
+  @Input() hint?: string;
+  @Input() stylingMode?: string;
+  @Input() text?: string;
+  @Input() type?: string;
+  @Input() width?: string;
 
-  _pressed: Boolean;
+  _pressed: boolean;
   @Output() pressedChange = new EventEmitter();
   @Input() get pressed() {
     return this._pressed;
@@ -43,8 +43,9 @@ export class DxToggleButtonComponent {
     return Object.assign({}, model);
   }
 
-  getModel() {
-    return {
+  _viewModel: any;
+  ngDoCheck() {
+    this._viewModel = this.viewModel({
       height: this.height,
       hint: this.hint,
       pressed: this.pressed,
@@ -52,12 +53,7 @@ export class DxToggleButtonComponent {
       text: this.text,
       type: this.type,
       width: this.width
-    };
-  }
-
-  _viewModel: any;
-  ngDoCheck() {
-    this._viewModel = this.viewModel(this.getModel());
+    });
   }
 }
 

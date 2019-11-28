@@ -80,10 +80,11 @@ export default {
       ));
 
       return <div class="dx-button-group">{buttons}</div>;
-    },
-
-    getModel() {
-      return {
+    }
+  },
+  render() {
+    return this.view(
+      this.viewModel({
         height: this.height,
         hint: this.hint,
         stylingMode: this.stylingMode,
@@ -92,11 +93,8 @@ export default {
         keyExpr: this.keyExpr,
         selectionMode: this.selectionMode,
         selectedItems: this.selectedItems
-      };
-    }
-  },
-  render() {
-    return this.view(this.viewModel(this.getModel()));
+      })
+    );
   }
 };
 </script>

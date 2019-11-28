@@ -1,39 +1,4 @@
 <script>
-function getCssClasses(model) {
-  const classNames = ["dx-button"];
-
-  if (model.stylingMode === "outlined") {
-    classNames.push("dx-button-mode-outlined");
-  } else if (model.stylingMode === "text") {
-    classNames.push("dx-button-mode-text");
-  } else {
-    classNames.push("dx-button-mode-contained");
-  }
-
-  if (model.type === "danger") {
-    classNames.push("dx-button-danger");
-  } else if (model.type === "default") {
-    classNames.push("dx-button-default");
-  } else if (model.type === "success") {
-    classNames.push("dx-button-success");
-  } else {
-    classNames.push("dx-button-normal");
-  }
-
-  if (model.text) {
-    classNames.push("dx-button-has-text");
-  }
-
-  if (model.internal_state_hovered) {
-    classNames.push("dx-state-hover");
-  }
-
-  if (model.pressed || model.internal_state_active) {
-    classNames.push("dx-state-active");
-  }
-  return classNames.concat(model.classNames).join(" ");
-}
-
 export default {
   components: {},
   props: {
@@ -53,10 +18,10 @@ export default {
     };
   },
   mounted() {
-      document.addEventListener("pointerup", this.onPointerUp);
+    document.addEventListener("pointerup", this.onPointerUp);
   },
   beforeDestroy() {
-      document.removeEventListener("pointerup", this.onPointerUp);
+    document.removeEventListener("pointerup", this.onPointerUp);
   },
   methods: {
     onPointerOver() {
@@ -105,10 +70,11 @@ export default {
           </div>
         </div>
       );
-    },
-
-    getModel() {
-      return {
+    }
+  },
+  render() {
+    return this.view(
+      this.viewModel({
         classNames: this.classNames,
         height: this.height,
         hint: this.hint,
@@ -119,13 +85,45 @@ export default {
         width: this.width,
         internal_state_hovered: this.internal_state_hovered,
         internal_state_active: this.internal_state_active
-      };
-    }
-  },
-  render() {
-    return this.view(this.viewModel(this.getModel()));
+      })
+    );
   }
 };
+
+function getCssClasses(model) {
+  const classNames = ["dx-button"];
+
+  if (model.stylingMode === "outlined") {
+    classNames.push("dx-button-mode-outlined");
+  } else if (model.stylingMode === "text") {
+    classNames.push("dx-button-mode-text");
+  } else {
+    classNames.push("dx-button-mode-contained");
+  }
+
+  if (model.type === "danger") {
+    classNames.push("dx-button-danger");
+  } else if (model.type === "default") {
+    classNames.push("dx-button-default");
+  } else if (model.type === "success") {
+    classNames.push("dx-button-success");
+  } else {
+    classNames.push("dx-button-normal");
+  }
+
+  if (model.text) {
+    classNames.push("dx-button-has-text");
+  }
+
+  if (model.internal_state_hovered) {
+    classNames.push("dx-state-hover");
+  }
+
+  if (model.pressed || model.internal_state_active) {
+    classNames.push("dx-state-active");
+  }
+  return classNames.concat(model.classNames).join(" ");
+}
 </script>
 <style>
 .dx-button {

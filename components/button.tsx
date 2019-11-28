@@ -1,4 +1,51 @@
 import './button.css';
+@Component({
+  name: 'Button',
+  components: [],
+  viewModel: viewModelFunction,
+  view: viewFunction
+})
+
+export default class Button {
+  @Prop() classNames?: string[]
+  @Prop() height?: string;
+  @Prop() hint?: string;
+  @Prop() pressed?: boolean;
+  @Prop() stylingMode?: string;
+  @Prop() text?: string;
+  @Prop() type?: string;
+  @Prop() width?: string;
+
+  @Event() onClick?: (e: any) => void = () => {};
+
+  @InternalState() _hovered: boolean = false;
+  @InternalState() _active: boolean = false;
+
+  @Listen("pointerover")
+  onPointerOver() {
+    this._hovered = true;
+  }
+
+  @Listen("pointerout")
+  onPointerOut() {
+    this._hovered = false;
+  }
+
+  @Listen("pointerdown")
+  onPointerDown() {
+    this._active = true;
+  }
+
+  @Listen('pointerup', { target: 'document' })
+  onPointerUp() {
+    this._active = false;
+  }
+
+  @Listen("click")
+  onClickHandler(e: any) {
+    this.onClick!({ type: this.type, text: this.text });
+  }
+}
 
 function getCssClasses(model: any) {
   const classNames = ['dx-button'];
@@ -35,73 +82,30 @@ function getCssClasses(model: any) {
   return classNames.concat(model.classNames).join(" ");
 }
 
-@Component({
-  name: 'Button',
-  components: []
-})
-
-export default class Button {
-  @Prop() classNames: string[]
-  @Prop() height: string;
-  @Prop() hint: string;
-  @Prop() pressed: boolean;
-  @Prop() stylingMode: string;
-  @Prop() text: string;
-  @Prop() type: string;
-  @Prop() width: string;
-  
-  @Event() onClick: (e: any) => void;
-
-  @InternalState() _hovered: boolean = false;
-  @InternalState() _active: boolean = false;
-
-  @Listen("pointerover")
-  onPointerOver() {
-    this._hovered = true;
-  }
-
-  @Listen("pointerout")
-  onPointerOut() {
-    this._hovered = false;
-  }
-
-  @Listen("pointerdown")
-  onPointerDown() {
-    this._active = true;
-  }
-
-  @Listen('pointerup', { target: 'document' })
-  onPointerUp() {
-    this._active = false;
-  }
-
-  @Listen("click")
-  onClickHandler(e: any) {
-    this.onClick({ type: this.type, text: this.text });
-  }
-
-  @ViewModel()
-  viewModel(model: any) {
-    return {
-      cssClasses: getCssClasses(model),
-      style: {
-        width: model.width4
-      },
-      ...model
-    };
-  }
-
-  @View()
-  view(viewModel: any) {
-    return (
-      <div
-        className={viewModel.cssClasses}
-        title={viewModel.hinte}
-        style={viewModel.style}>
-        <div className="dx-button-content">
-          <span className="dx-button-text">{viewModel.text}</span>
-        </div>
-      </div>
-    );
-  }
+function viewModelFunction(model: Button) {
+  return {
+    cssClasses: getCssClasses(model),
+    style: {
+      width: model.width
+    },
+    ...model
+  };
 }
+
+function viewFunction(viewModel: any) {
+  return (
+    <div
+      className={viewModel.cssClasses}
+      title={viewModel.hint}
+      style={viewModel.style}
+      pointerover={viewModel.onPointerOver}
+      pointerout={viewModel.onPointerOut}
+      pointerdown={viewModel.onPointerDown}
+      click={viewModel.onClickHandler}>
+      <div className="dx-button-content">
+        <span className="dx-button-text">{viewModel.text}</span>
+      </div>
+    </div>
+  );
+}
+

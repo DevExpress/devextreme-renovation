@@ -40,9 +40,11 @@ export default {
           vOn:on-click={this.onClickHandler}
         />
       );
-    },
-    getModel() {
-      return {
+    }
+  },
+  render() {
+    return this.view(
+      this.viewModel({
         height: this.height,
         hint: this.hint,
         pressed: this.pressed,
@@ -50,11 +52,8 @@ export default {
         text: this.text,
         type: this.type,
         width: this.width
-      };
-    }
-  },
-  render() {
-    return this.view(this.viewModel(this.getModel()));
+      })
+    );
   }
 };
 </script>
