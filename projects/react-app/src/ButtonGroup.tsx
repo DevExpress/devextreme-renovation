@@ -32,22 +32,21 @@ const ButtonGroup = ({
     let curSelectedItems = (selectedItems !== undefined ? selectedItems : _selectedItems) || [];
 
     const currentButton = items[index][keyExpr]; 
+    let newValue: string[] = [];
+
     if(selectionMode === "single") {
-      if(curSelectedItems[0] === currentButton) {
-        curSelectedItems = [];
-      } else {
-        curSelectedItems = [currentButton];
+      if(curSelectedItems[0] !== currentButton) {
+        newValue = [currentButton];
       }
     } else {
       if(curSelectedItems.indexOf(currentButton) !== -1) {
-        curSelectedItems = curSelectedItems.filter(item => item !== currentButton);
+        newValue = curSelectedItems.filter(item => item !== currentButton);
       } else {
-        curSelectedItems = curSelectedItems.concat(currentButton);
+        newValue = curSelectedItems.concat(currentButton);
       }
     }
-
-    _setSelectedItems(curSelectedItems);
-    selectedItemsChange(curSelectedItems);
+    _setSelectedItems(newValue);
+    selectedItemsChange(newValue);
   }, [_selectedItems, selectedItems, items, keyExpr, selectionMode, selectedItemsChange]);
 
   return view(viewModel({
