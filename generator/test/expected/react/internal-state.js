@@ -1,14 +1,14 @@
-import { useState } from 'react';
-
 function viewModel() {}
 
 function view() {}
 
+import { useState } from 'react';
+
 export default function Component({}) {
-  const [_hovered, _setHovered] = useState(false);
+  const [_hovered, _set_hovered] = useState(false);
 
   function updateState() {
-    _setHovered(!_hovered);
+    _set_hovered(!_hovered);
   }
 
   return view(viewModel({

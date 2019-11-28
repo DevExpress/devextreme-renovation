@@ -1,4 +1,17 @@
 
+const SyntaxKind = {
+    ExportKeyword: "export",
+    FalseKeyword: false,
+    TrueKeyword: true,
+    PlusToken: "+",
+    EqualsToken: "=",
+    NumberKeyword: "number",
+    EqualsGreaterThanToken: "=>",
+    NullKeyword: null,
+    DefaultKeyword: "default",
+    ThisKeyword: "this",
+    ExclamationToken: "!"
+};
 class Call { 
     /**
      * 
@@ -44,6 +57,10 @@ class Decorator{
     }
 }
 
+function capitalizeFirstLetter(string) { 
+    return string.charAt(0).toUpperCase() + string.slice(1)
+}
+
 class Property { 
     /**
      * 
@@ -77,24 +94,51 @@ class Property {
 
     declaration() { 
         if (this.isProp) { 
-            return `get ${this.name}(){return this.prop.${this.name};}`
+            return this.name;
         }
-        if (this.isInternalState) { 
-            return `get ${this.name}(){return this.state.${this.name}}
-                set ${this.name}(${this.name}) { this.state({${this.name}}); }`;
-        }
-        if (this.isState) { 
-            return `get ${this.name}(){ return "${this.name}" in this.props ? this.props.${this.name} : this.state.${this.name}; }
-                set ${this.name}(${this.name}) {
-                     this.state({${this.name}});
-                     this.${this.name}Change(${this.name});
-                }
-                get ${this.name}Change() { return this.props.${this.name}Change || (()=>{}); }`;
+        if (this.isState) {
+            return `${this.name},
+                    default${capitalizeFirstLetter(this.name)},
+                    ${this.name}Change=()=>{}`
         }
     }
 
     toString() { 
         return this.name;
+    }
+}
+
+class PropertyAccess {
+    constructor(expression, name) {
+        this.expression = expression;
+        this.name = name;
+    }
+
+    /**
+     * 
+     * @param {Array<Property>} internalState 
+     * @param {Array<Property>} state
+     */
+    toString(internalState, state) {
+        if (this.expression === SyntaxKind.ThisKeyword &&
+            internalState.findIndex(p => p.name === this.name) >= 0) {
+            return `${this.name}`;
+        }
+
+        if (this.expression === SyntaxKind.ThisKeyword &&
+            state.findIndex(p => p.name === this.name) >= 0) {
+            return `${stateGetter(this.name, true)}`;
+        }
+        
+        return `${this.expression}.${this.name}`;
+    }
+
+    compileStateSetting() {
+        return stateSetter(this.name);
+    }
+
+    compileStateChangeRising(state, rightExpressionString) { 
+        return state.find(s => s.name === this.name) ? `${this.name}Change(${rightExpressionString})` : "";
     }
 }
 
@@ -168,8 +212,12 @@ class Method {
         return eventDecorator;
     }
 
-    declaration() { 
-        return `${this.name}(${this.parameters.map(p=>p.declaration()).join(",")})${this.body}`;
+    declaration(prefix = "", internalState, state) { 
+        return `${prefix} ${this.name}(${this.parameters.map(p=>p.declaration()).join(",")})${this.body.toString(internalState, state)}`;
+    }
+
+    arrowDeclaration(internalState, state) { 
+        return `(${this.parameters.map(p=>p.declaration()).join(",")})=>${this.body.toString(internalState, state)}`
     }
 
     toString() { 
@@ -228,7 +276,80 @@ class Obj {
     }
     
     toString() { 
-        return `{${Object.keys(this.value).map(k => `${k}: ${this.value[k]}`)}}`;
+        return `{${Object.keys(this.value).map(k => `${k}:${this.value[k]}`)}}`;
+    }
+}
+
+class ShorthandPropertyAssignment { 
+    constructor(name, expression) { 
+        this.name = name;
+        this.expression = expression;
+    }
+
+    get key() { 
+        return this.name;
+    }
+
+    get value() { 
+        return this.expression ? this.expression : this.name;
+    }
+
+    toString() { 
+        return `${this.name}${this.expression ? `:${this.expression}` : ""}`;
+    }
+
+}
+
+class PropertyAssignment { 
+    constructor(key, value) { 
+        this.key = key;
+        this.value = value;
+    }
+    toString() { 
+        return `${this.key}:${this.value}`
+    }
+}
+
+class ObjectLiteral{
+    /**
+     * 
+     * @param {Array<PropertyAssignment|ShorthandPropertyAssignment} properties 
+     * @param {boolean} multiLine 
+     */
+    constructor(properties, multiLine) { 
+        this.properties = properties;
+        this.multiLine = multiLine;
+    }
+
+    toString() { 
+        return `{${this.properties.join(`,\n`)}}`;
+    }
+}
+
+class BindingElement { 
+    constructor(dotDotDotToken, propertyName, name, initializer) { 
+        this.dotDotDotToken = dotDotDotToken;
+        this.propertyName = propertyName;
+        this.name = name;
+        this.initializer = initializer;
+    }
+
+    toString() { 
+        return `${this.propertyName}:${this.name}`;
+    }
+}
+
+class BindingPattern { 
+    /**
+     * 
+     * @param {Array<BindingElement>} elements 
+     */
+    constructor(elements) { 
+        this.elements = elements;
+    }
+
+    toString() { 
+        return `{${this.elements.join(",")}}`;
     }
 }
 
@@ -238,9 +359,9 @@ class Block {
         this.multiLine = multiLine;
     }
 
-    toString() { 
+    toString(internalState, state) { 
         return `{
-            ${this.statements.join(";\n")}
+            ${this.statements.map(s=>s.toString(internalState, state)).join(";\n")}
         }`
     }
 }
@@ -253,6 +374,15 @@ class Paren {
     toString() { 
         return `(${this.expression})`;
     }
+}
+
+function stateSetter(stateName) { 
+    return `_set${capitalizeFirstLetter(stateName)}`
+}
+
+function stateGetter(stateName, addParen = true) { 
+    const expr = `${stateName}!==undefined?${stateName}:_${stateName}`;
+    return addParen ? `(${expr})` : expr;
 }
 
 class Class { 
@@ -324,8 +454,110 @@ class Class {
         return result;
     }
 
+    get isComponent() { 
+        return this.decorators.find(d => d.name === "Component");
+    }
+
+    getImports() {
+        const imports = [];
+        const react = [];
+
+        if(this.members.filter(m => m.isState || m.isInternalState).length){ 
+            react.push("useState");
+        }
+
+        if (this.members.filter(m => m.isEvent).length) { 
+            react.push("useCallback");
+        }
+
+        if (this.members.filter(m => m.isSubscription).length) { 
+            react.push("useEffect");
+        }
+
+        if (react.length) { 
+            imports.push(`import {${react.join(",")}} from 'react';`);
+        }
+
+        return imports.join("\n");
+    }
+
+    compileUseEffect() {
+        const subscriptions = this.members.filter(m => m.isSubscription);
+        if (subscriptions.length) {
+            const { add, cleanup } = subscriptions.reduce(({ add, cleanup }, s) => {
+                const subscriptionDecorator = s.isSubscription;
+                const [event, { target }] = subscriptionDecorator.expression.arguments;
+                add.push(`${target}.addEventListener(${event}, ${s.name});`);
+                cleanup.push(`${target}.removeEventListener(${event}, ${s.name});`);
+                return { add, cleanup }
+            }, { add: [], cleanup: [] });
+            return `useEffect(()=>{
+                ${add.join("\n")}
+                return function cleanup(){
+                    ${cleanup.join("\n")}
+                }
+            });`
+        }
+        return "";
+    }
+
+    functionalComponentString() {
+        
+        const props = this.members.filter(m => m.isProp);
+        const internalState = this.members.filter(m => m.isInternalState);
+        const state = this.members.filter(m => m.isState);
+
+        const methods = this.members.filter(m => m instanceof Method && m.decorators.length === 0);
+
+        const useStateDeclaration = internalState
+            .map(m => {
+                return `const [${m.name}, ${stateSetter(m.name)}] = useState(${m.initializer});`;
+            }).concat(state.map(s => {
+                const internalName = `_${s.name}`;
+                return `const [${internalName}, ${stateSetter(s.name)}] = useState(()=>(${s.name} !== undefined) ? ${s.name} : default${capitalizeFirstLetter(s.name)});`;
+            })).join("\n");
+
+        
+        const propsDeclaration = props.map(p => p.declaration());
+        const stateDeclaration = state.map(s => s.declaration());
+
+        const events = this.members.filter(m => m.isEvent);
+        const eventsDeclaration = events.map(m => {
+            return `const ${m.name} = useCallback(${m.arrowDeclaration(internalState, state)}, []);`;
+        });
+
+        const parameters = this.isComponent.expression.arguments[0].properties
+            .reduce((parameters, property) => {
+                parameters[property.key] = property.value;
+                return parameters;
+            }, {});
+
+        return `
+            ${this.getImports()}
+
+            ${this.modifiers.join(" ")} function ${this.name}({
+                ${propsDeclaration.concat(stateDeclaration).join("\n")}
+            }){
+                ${useStateDeclaration}
+                ${methods.map(m => m.declaration("function", internalState, state)).join("\n")}
+                ${eventsDeclaration.join("\n")}
+                ${this.compileUseEffect()}
+                return ${parameters.view}(${parameters.viewModel}({
+                    ${propsDeclaration
+                        .concat(internalState.map(m => m.name))
+                        .concat(state.map(s => `${s.name}:${stateGetter(s.name, false)}`))
+                        .concat(events.map(e => e.name))
+                    }
+                }));
+            }
+        `
+    }
+
     toString() {
-        //${ this.decorators.map(d => d.toString()).join() }
+        if (this.isComponent) { 
+            return this.functionalComponentString();
+        }
+
         const properties = this.members.map(m => m.declaration()).join("\n");
         
         return `
@@ -334,6 +566,20 @@ class Class {
             ${properties}
             ${this.compileDidMount()}
         }`;
+    }
+}
+
+class ReturnStatement { 
+    /**
+     * 
+     * @param {Statement} expression 
+     */
+    constructor(expression) { 
+        this.expression = expression;
+    }
+
+    toString(internalState, state) { 
+        return `return ${this.expression.toString(internalState, state)};`;
     }
 }
 
@@ -348,16 +594,39 @@ class ArrayLiteral {
     }
 }
 
+class Prefix { 
+    constructor(operator, operand) { 
+        this.operator = operator;
+        this.operand = operand;
+    }
+
+    toString(internalState, state) { 
+        return `${this.operator}${this.operand.toString(internalState, state)}`
+    }
+}
+
+class Binary{ 
+    constructor(left, operator, right){ 
+        this.left = left;
+        this.operator = operator;
+        this.right = right;
+    }
+
+    toString(internalState, state) {
+        if (this.operator === SyntaxKind.EqualsToken &&
+            this.left instanceof PropertyAccess &&
+            this.left.expression === SyntaxKind.ThisKeyword) { 
+            const rightExpression = this.right.toString(internalState, state);
+            
+            return `${this.left.compileStateSetting()}(${rightExpression});
+            ${this.left.compileStateChangeRising(state, rightExpression)}`;
+        }
+        return `${this.left}${this.operator}${this.right}`;
+    }
+}
+
 module.exports = {
-    SyntaxKind: {
-        ExportKeyword: "export",
-        FalseKeyword: false,
-        TrueKeyword: true,
-        PlusToken: "+",
-        NumberKeyword: "number",
-        EqualsGreaterThanToken: "=>",
-        NullKeyword: null
-    },
+    SyntaxKind,
 
     NodeFlags: {
         Const: "const",
@@ -371,21 +640,18 @@ module.exports = {
         return new StringLiteral(value);
     },
     createPropertyAssignment(key, value) { 
-        return { key, value };
+        return new PropertyAssignment(key, value)
     },
     createArrayLiteral(elements, multiLine) { 
         return new ArrayLiteral(elements, multiLine);
     },
     /**
      * 
-     * @param {Array} properties 
-     * @param {bolean} multiLine 
+     * @param {Array<PropertyAssignment|ShorthandPropertyAssignment>} properties 
+     * @param {boolean} multiLine 
      */
     createObjectLiteral(properties, multiLine) { 
-        return new Obj(properties.reduce((obj, { key, value }) => {
-            obj[key] = value;
-            return obj;
-         }, {}));
+        return new ObjectLiteral(properties, multiLine);
     },
     createCall(expression, typeArguments, argumentsArray) { 
         return new Call(expression, typeArguments, argumentsArray);
@@ -394,6 +660,9 @@ module.exports = {
         return new Decorator(expression);
     },
     createModifier(modifier) { 
+        if (modifier === undefined) { 
+            throw "createModifier";
+        }
         return modifier
     },
     createProperty(decorators, modifiers, name, questionOrExclamationToken, type, initializer) { 
@@ -432,6 +701,9 @@ module.exports = {
     createNull() { 
         return this.SyntaxKind.NullKeyword;
     },
+    createThis() { 
+        return this.SyntaxKind.ThisKeyword;
+    },
 
     createToken(token) { 
         if (token === undefined) { 
@@ -441,11 +713,11 @@ module.exports = {
     },
 
     createBinary(left, operator, right) { 
-        return `${left}${operator}${right}`;
+        return new Binary(left, operator, right);
     },
 
     createReturn(expression){ 
-        return `return ${expression}`;
+        return new ReturnStatement(expression);
     },
     
     createFalse() {
@@ -485,5 +757,56 @@ module.exports = {
 
     createExportAssignment(decorators=[], modifiers=[], isExportEquals, expression) { 
         return `export default ${expression}`;
+    },
+
+    createPropertyAccess(expression, name) { 
+        return new PropertyAccess(expression, name);
+    },
+
+    createPrefix(operator, operand) { 
+        if (operator === undefined) { 
+            throw "createPrefix";
+        }
+        return new Prefix(operator, operand);
+    },
+
+    createExpressionStatement(expression) { 
+        return expression
+    },
+
+    createShorthandPropertyAssignment(name, expression) { 
+        return new ShorthandPropertyAssignment(name, expression)
+    },
+    
+    createBindingElement(dotDotDotToken, propertyName, name, initializer) {
+        return new BindingElement(dotDotDotToken, propertyName, name, initializer);
+    },
+
+    createObjectBindingPattern(elements) { 
+        return new BindingPattern(elements);
+    },
+
+    createJsxExpression(dotDotDotToken, expression) { 
+        return `{${expression}}`;
+    },
+
+    createJsxAttribute(name, initializer) { 
+        return `${name}=${initializer}`;
+    },
+
+    createJsxAttributes(properties) { 
+        return properties.join("\n");
+    },
+
+    createJsxOpeningElement(tagName, typeArguments, attributes) { 
+        return `<${tagName} ${attributes}>`
+    },
+
+    createJsxClosingElement(tagName) { 
+        return `</${tagName}>`;
+    },
+
+    createJsxElement(openingElement, children="", closingElement) { 
+        return `${openingElement}${children}${closingElement}`
     }
 }

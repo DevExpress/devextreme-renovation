@@ -1,14 +1,17 @@
+function viewModel() {}
+
+function view() {}
+
 @Component({
-    name: 'Component'
+    name: 'Component',
+    view,
+    viewModel,
 })
 export class Component {
     @Listen('pointerup', { target: document })
-    onPointerUp() {}
-
-    @ViewModel()
-    viewModel() {}
-
-    @View()
-    view() {}
+    onPointerUp() { }
+    
+    @Listen('scroll', { target: window })
+    scrollHandler() {}
 }
   

@@ -1,19 +1,23 @@
+function viewModel() {}
+
+function view() {}
+
 import { useState } from 'react';
 
 export default function Component({
   pressed,
   defaultPressed,
-  pressedChange = () => {}
+  pressedChange = () => { }
 }) {
   const [_pressed, _setPressed] = useState(() => (pressed !== undefined) ? pressed : defaultPressed);
-  
+
   function updateState() {
-    let curPressed = !(pressed !== undefined ? pressed : _pressed);
-    _setPressed(curPressed);
-    pressedChange(curPressed);
+    _setPressed(!(pressed !== undefined ? pressed : _pressed));
+    pressedChange(!(pressed !== undefined ? pressed : _pressed));
   }
-  
+
   return view(viewModel({
     pressed: pressed !== undefined ? pressed : _pressed
   }));
 }
+

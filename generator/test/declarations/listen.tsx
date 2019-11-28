@@ -1,5 +1,11 @@
+function viewModel() {}
+
+function view() {}
+
 @Component({
-    name: 'Component'
+    name: 'Component',
+    view,
+    viewModel,
 })
 export class Component {
     @Listen()
@@ -7,11 +13,5 @@ export class Component {
 
     @Listen()
     onPointerMove(a = "a", b = 0, c = true) {}
-
-    @ViewModel()
-    viewModel() {}
-
-    @View()
-    view() {}
 }
   

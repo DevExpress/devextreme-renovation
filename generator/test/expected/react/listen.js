@@ -1,10 +1,10 @@
-import { useCallback } from 'react';
-
 function viewModel() {}
 
 function view() {}
 
-export default function Component({}) {
+import { useCallback } from 'react';
+
+export function Component({}) {
   const onClick = useCallback((e) => {}, []);
   const onPointerMove = useCallback((a = "a", b = 0, c = true) => {}, []);
 
