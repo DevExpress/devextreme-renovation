@@ -11,9 +11,13 @@ const SyntaxKind = {
     NullKeyword: "null",
     DefaultKeyword: "default",
     ThisKeyword: "this",
+    VoidKeyword: "void",
+    StringKeyword: "string",
+    BooleanKeyword: "boolean",
     ExclamationToken: "!",
     EqualsEqualsEqualsToken: "===",
-    EqualsEqualsToken: "=="
+    EqualsEqualsToken: "==",
+    BarBarToken: "||"
 };
 class Call { 
     /**
@@ -383,6 +387,16 @@ class Paren {
     }
 }
 
+class SpreadAssignment { 
+    constructor(expression) { 
+        this.expression = expression;
+    }
+
+    toString() { 
+        return `...${this.expression}`;
+    }
+}
+
 function stateSetter(stateName) { 
     return `_set${capitalizeFirstLetter(stateName)}`
 }
@@ -713,6 +727,11 @@ module.exports = {
         if (kind === undefined) { 
             throw "createKeyword"
         }
+        return kind;
+    },
+    createArrayTypeNode(elementType) { 
+        // `${elementType}[]`;
+        return "";
     },
     createNumericLiteral(value, numericLiteralFlags) { 
         return value;
@@ -750,6 +769,9 @@ module.exports = {
         return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body).declaration();
     },
 
+    createFunctionTypeNode(typeParameters, parameters, type) { 
+        return ""
+    },
     createVariableDeclaration(name, type, initializer="") { 
         return `${name}=${initializer}`;
     },
@@ -858,5 +880,9 @@ module.exports = {
 
     createEmptyStatement() { 
         return "";
+    },
+
+    createSpreadAssignment(expression) {
+        return new SpreadAssignment(expression);
     }
 }
