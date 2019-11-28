@@ -19,56 +19,56 @@ const SyntaxKind = {
     EqualsEqualsToken: "==",
     BarBarToken: "||"
 };
-class Call { 
+class Call {
     /**
      * 
      * @param {string} expression 
      * @param {*} typeArguments 
      * @param {Array<any>} argumentsArray 
      */
-    constructor(expression, typeArguments, argumentsArray = []) { 
+    constructor(expression, typeArguments, argumentsArray = []) {
         this.expression = expression;
         this.typeArguments = typeArguments;
         this.argumentsArray = argumentsArray;
     }
 
-    get arguments() { 
-        return this.argumentsArray.map(a => { 
-            if (a instanceof Obj) { 
+    get arguments() {
+        return this.argumentsArray.map(a => {
+            if (a instanceof Obj) {
                 return a.value;
             }
             return a;
         })
     }
 
-    toString() { 
+    toString() {
         return `${this.expression}(${this.argumentsArray.join(",")})`;
     }
 }
 
-class Decorator{ 
+class Decorator {
     /**
      * 
      * @param {Call} expression 
      */
-    constructor(expression){ 
+    constructor(expression) {
         this.expression = expression;
     }
 
-    get name() { 
+    get name() {
         return this.expression.expression;
     }
 
-    toString(){ 
+    toString() {
         // return `@${this.expression.toString()}`;
     }
 }
 
-function capitalizeFirstLetter(string) { 
+function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
-class Property { 
+class Property {
     /**
      * 
      * @param {Array<Decorator>} decorators 
@@ -78,7 +78,7 @@ class Property {
      * @param {*} type 
      * @param {*} initializer 
      */
-    constructor(decorators, modifiers, name, questionOrExclamationToken, type, initializer) { 
+    constructor(decorators, modifiers, name, questionOrExclamationToken, type, initializer) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.name = name;
@@ -87,20 +87,20 @@ class Property {
         this.initializer = initializer;
     }
 
-    get isInternalState() { 
+    get isInternalState() {
         return this.decorators.find(d => d.name === "InternalState");
     }
 
-    get isProp() { 
+    get isProp() {
         return this.decorators.find(d => d.name === "Prop");
     }
 
-    get isState() { 
+    get isState() {
         return this.decorators.find(d => d.name === "State");
     }
 
-    declaration() { 
-        if (this.isProp) { 
+    declaration() {
+        if (this.isProp) {
             return this.name;
         }
         if (this.isState) {
@@ -110,7 +110,7 @@ class Property {
         }
     }
 
-    toString() { 
+    toString() {
         return this.name;
     }
 }
@@ -126,7 +126,7 @@ class PropertyAccess {
      * @param {Array<Property>} internalState 
      * @param {Array<Property>} state
      */
-    toString(internalState=[], state=[]) {
+    toString(internalState = [], state = []) {
         if (this.expression === SyntaxKind.ThisKeyword &&
             internalState.findIndex(p => p.name === this.name) >= 0) {
             return `${this.name}`;
@@ -136,7 +136,7 @@ class PropertyAccess {
             state.findIndex(p => p.name === this.name) >= 0) {
             return `${stateGetter(this.name, true)}`;
         }
-        
+
         return `${this.expression}.${this.name}`;
     }
 
@@ -144,12 +144,12 @@ class PropertyAccess {
         return stateSetter(this.name);
     }
 
-    compileStateChangeRising(state, rightExpressionString) { 
+    compileStateChangeRising(state, rightExpressionString) {
         return state.find(s => s.name === this.name) ? `${this.name}Change(${rightExpressionString})` : "";
     }
 }
 
-class Parameter { 
+class Parameter {
     /**
      * 
      * @param {Array<Decorator>} decorators 
@@ -160,7 +160,7 @@ class Parameter {
      * @param {*} type 
      * @param {*} initializer 
      */
-    constructor(decorators, modifiers, dotDotDotToken, name, questionToken, type, initializer) { 
+    constructor(decorators, modifiers, dotDotDotToken, name, questionToken, type, initializer) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.dotDotDotToken = dotDotDotToken;
@@ -170,19 +170,19 @@ class Parameter {
         this.initializer = initializer;
     }
 
-    declaration() { 
-        if (this.initializer) { 
-            return `${this.name}=${this.initializer}`; 
+    declaration() {
+        if (this.initializer) {
+            return `${this.name}=${this.initializer}`;
         }
         return this.name;
     }
 
-    toString() { 
+    toString() {
         return this.name;
     }
 }
 
-class Method { 
+class Method {
     /**
      * 
      * @param {Array<Decorator>} decorators 
@@ -195,23 +195,23 @@ class Method {
      * @param {*} type 
      * @param {*} body 
      */
-    constructor(decorators = [], modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body) { 
+    constructor(decorators = [], modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.asteriskToken = asteriskToken;
         this.name = name;
         this.questionToken = questionToken;
         this.typeParameters = typeParameters;
-        this.parameters = parameters, 
-        this.type = type;
+        this.parameters = parameters,
+            this.type = type;
         this.body = body;
     }
 
-    get isEvent() { 
+    get isEvent() {
         return this.decorators.find(d => d.name === "Listen");
     }
 
-    get isSubscription() { 
+    get isSubscription() {
         const eventDecorator = this.isEvent;
         if (!eventDecorator || eventDecorator.expression.argumentsArray.length < 2) {
             return;
@@ -219,100 +219,100 @@ class Method {
         return eventDecorator;
     }
 
-    declaration(prefix = "", internalState, state) { 
-        return `${prefix} ${this.name}(${this.parameters.map(p=>p.declaration()).join(",")})${this.body.toString(internalState, state)}`;
+    declaration(prefix = "", internalState, state) {
+        return `${prefix} ${this.name}(${this.parameters.map(p => p.declaration()).join(",")})${this.body.toString(internalState, state)}`;
     }
 
-    arrowDeclaration(internalState, state) { 
-        return `(${this.parameters.map(p=>p.declaration()).join(",")})=>${this.body.toString(internalState, state)}`
+    arrowDeclaration(internalState, state) {
+        return `(${this.parameters.map(p => p.declaration()).join(",")})=>${this.body.toString(internalState, state)}`
     }
 
-    toString() { 
+    toString() {
         return this.name;
     }
 }
 
-class Function { 
-    constructor(decorators = [], modifiers=[], asteriskToken, name, typeParameters, parameters, type, body) { 
+class Function {
+    constructor(decorators = [], modifiers = [], asteriskToken, name, typeParameters, parameters, type, body) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.asteriskToken = asteriskToken;
         this.name = name;
         this.typeParameters = typeParameters;
-        this.parameters = parameters, 
-        this.type = type;
+        this.parameters = parameters,
+            this.type = type;
         this.body = body;
     }
 
-    declaration() { 
-        return `${this.modifiers.join(" ")} function ${this.name}(${this.parameters.map(p=>p.declaration()).join(",")})${this.body}`;
+    declaration() {
+        return `${this.modifiers.join(" ")} function ${this.name}(${this.parameters.map(p => p.declaration()).join(",")})${this.body}`;
     }
 
-    toString() { 
+    toString() {
 
     }
 }
 
-class ArrowFunction { 
-    constructor(modifiers = [], typeParameters = [], parameters = [], type, equalsGreaterThanToken, body) { 
+class ArrowFunction {
+    constructor(modifiers = [], typeParameters = [], parameters = [], type, equalsGreaterThanToken, body) {
         this.modifiers = modifiers;
         this.typeParameters = typeParameters;
-        this.parameters = parameters, 
-        this.type = type;
+        this.parameters = parameters,
+            this.type = type;
         this.body = body;
         this.equalsGreaterThanToken = equalsGreaterThanToken;
     }
 
-    toString() { 
+    toString() {
         return `${this.modifiers.join(" ")} (${this.parameters.join(",")}) ${this.equalsGreaterThanToken} ${this.body}`;
     }
 }
 
-class StringLiteral{ 
-    constructor(value) { 
+class StringLiteral {
+    constructor(value) {
         this.value = value;
     }
-    toString() { 
+    toString() {
         return `"${this.value}"`;
     }
 }
 
-class Obj { 
+class Obj {
     constructor(value) {
         this.value = value;
     }
-    
-    toString() { 
+
+    toString() {
         return `{${Object.keys(this.value).map(k => `${k}:${this.value[k]}`)}}`;
     }
 }
 
-class ShorthandPropertyAssignment { 
-    constructor(name, expression) { 
+class ShorthandPropertyAssignment {
+    constructor(name, expression) {
         this.name = name;
         this.expression = expression;
     }
 
-    get key() { 
+    get key() {
         return this.name;
     }
 
-    get value() { 
+    get value() {
         return this.expression ? this.expression : this.name;
     }
 
-    toString() { 
+    toString() {
         return `${this.name}${this.expression ? `:${this.expression}` : ""}`;
     }
 
 }
 
-class PropertyAssignment { 
-    constructor(key, value) { 
+class PropertyAssignment {
+    constructor(key, value) {
         this.key = key;
         this.value = value;
     }
-    toString() { 
+    toString() {
         return `${this.key}:${this.value}`
     }
 }
@@ -328,92 +328,92 @@ class ObjectLiteral {
         this.multiLine = multiLine;
     }
 
-    getProperty(propertyName) { 
+    getProperty(propertyName) {
         const property = this.properties.find(p => p.key === propertyName);
-        if (property) { 
+        if (property) {
             return property.value;
         }
     }
 
-    toString() { 
+    toString() {
         return `{${this.properties.join(`,\n`)}}`;
     }
 }
 
-class BindingElement { 
-    constructor(dotDotDotToken, propertyName, name, initializer) { 
+class BindingElement {
+    constructor(dotDotDotToken, propertyName, name, initializer) {
         this.dotDotDotToken = dotDotDotToken;
         this.propertyName = propertyName;
         this.name = name;
         this.initializer = initializer;
     }
 
-    toString() { 
+    toString() {
         const key = this.propertyName ? `${this.propertyName}:` : "";
         return `${key}${this.name}`;
     }
 }
 
-class BindingPattern { 
+class BindingPattern {
     /**
      * 
      * @param {Array<BindingElement>} elements 
      * @param {'object'|'array'} type
      */
-    constructor(elements, type) { 
+    constructor(elements, type) {
         this.elements = elements;
         this.type = type;
     }
 
-    toString() { 
+    toString() {
         const elements = this.elements.join(",");
         return this.type === "array" ? `[${elements}]` : `{${elements}}`;
     }
 }
 
-class Block { 
-    constructor(statements=[], multiLine) { 
+class Block {
+    constructor(statements = [], multiLine) {
         this.statements = statements;
         this.multiLine = multiLine;
     }
 
-    toString(internalState, state) { 
+    toString(internalState, state) {
         return `{
-            ${this.statements.map(s=>s.toString(internalState, state)).join(";\n")}
+            ${this.statements.map(s => s.toString(internalState, state)).join(";\n")}
         }`
     }
 }
 
-class Paren { 
-    constructor(expression) { 
+class Paren {
+    constructor(expression) {
         this.expression = expression;
     }
 
-    toString() { 
+    toString() {
         return `(${this.expression})`;
     }
 }
 
-class SpreadAssignment { 
-    constructor(expression) { 
+class SpreadAssignment {
+    constructor(expression) {
         this.expression = expression;
     }
 
-    toString() { 
+    toString() {
         return `...${this.expression}`;
     }
 }
 
-function stateSetter(stateName) { 
+function stateSetter(stateName) {
     return `_set${capitalizeFirstLetter(stateName)}`
 }
 
-function stateGetter(stateName, addParen = true) { 
+function stateGetter(stateName, addParen = true) {
     const expr = `${stateName}!==undefined?${stateName}:_${stateName}`;
     return addParen ? `(${expr})` : expr;
 }
 
-class Class { 
+class Class {
     /**
      * 
      * @param {Array<Decorator>} decorators 
@@ -430,27 +430,27 @@ class Class {
         this.modifiers = modifiers;
     }
 
-    compileConstructor() { 
+    compileConstructor() {
         let result = "";
-        const initState = this.members.filter(m => m.isInternalState).reduce((state, m) => { 
+        const initState = this.members.filter(m => m.isInternalState).reduce((state, m) => {
             state[m.name] = m.initializer
             return state;
         }, {});
 
         let state = "";
 
-        if (Object.keys(initState).length) { 
+        if (Object.keys(initState).length) {
             state = `this.state=${new Obj(initState)};`
         }
 
         const listeners = this.members.filter(m => m.isEvent);
 
         let initializers = ""
-        if (listeners.length) { 
+        if (listeners.length) {
             initializers = listeners.map(l => `this.${l}=this.${l}.bind(this);`).join("\n");
         }
 
-        if (state||initializers) { 
+        if (state || initializers) {
             result = `constructor(props){
                 super(props);
                 ${state}
@@ -461,7 +461,7 @@ class Class {
         return result;
     }
 
-    compileDidMount() { 
+    compileDidMount() {
         /**
          * @type {Method[]}
          */
@@ -473,7 +473,7 @@ class Class {
 
         let result = "";
 
-        if (subscription.length) { 
+        if (subscription.length) {
             result = `componentDidMount(){
                 ${subscription.join("\n")}
             }`
@@ -482,7 +482,7 @@ class Class {
         return result;
     }
 
-    get isComponent() { 
+    get isComponent() {
         return this.decorators.find(d => d.name === "Component");
     }
 
@@ -490,19 +490,19 @@ class Class {
         const imports = [];
         const react = [];
 
-        if(this.members.filter(m => m.isState || m.isInternalState).length){ 
+        if (this.members.filter(m => m.isState || m.isInternalState).length) {
             react.push("useState");
         }
 
-        if (this.members.filter(m => m.isEvent).length) { 
+        if (this.members.filter(m => m.isEvent).length) {
             react.push("useCallback");
         }
 
-        if (this.members.filter(m => m.isSubscription).length) { 
+        if (this.members.filter(m => m.isSubscription).length) {
             react.push("useEffect");
         }
 
-        if (react.length) { 
+        if (react.length) {
             imports.push(`import {${react.join(",")}} from 'react';`);
         }
 
@@ -516,16 +516,16 @@ class Class {
                 const subscriptionDecorator = s.isSubscription;
                 const [event, parameters] = subscriptionDecorator.expression.arguments;
                 let target;
-                if (parameters) { 
+                if (parameters) {
                     target = parameters.getProperty("target");
                 }
-                if (target) { 
+                if (target) {
                     add.push(`${target}.addEventListener(${event}, ${s.name});`);
                     cleanup.push(`${target}.removeEventListener(${event}, ${s.name});`);
                 }
                 return { add, cleanup }
             }, { add: [], cleanup: [] });
-            if (add.length) { 
+            if (add.length) {
                 return `useEffect(()=>{
                     ${add.join("\n")}
                     return function cleanup(){
@@ -538,7 +538,7 @@ class Class {
     }
 
     functionalComponentString() {
-        
+
         const props = this.members.filter(m => m.isProp);
         const internalState = this.members.filter(m => m.isInternalState);
         const state = this.members.filter(m => m.isState);
@@ -553,7 +553,7 @@ class Class {
                 return `const [${internalName}, ${stateSetter(s.name)}] = useState(()=>(${s.name} !== undefined) ? ${s.name} : default${capitalizeFirstLetter(s.name)});`;
             })).join("\n");
 
-        
+
         const propsDeclaration = props.map(p => p.declaration());
         const stateDeclaration = state.map(s => s.declaration());
 
@@ -580,23 +580,23 @@ class Class {
                 ${this.compileUseEffect()}
                 return ${parameters.view}(${parameters.viewModel}({
                     ${propsDeclaration
-                        .concat(internalState.map(m => m.name))
-                        .concat(state.map(s => `${s.name}:${stateGetter(s.name, false)}`))
-                    .concat(events.map(e => e.name))
-            
-                    }
+                .concat(internalState.map(m => m.name))
+                .concat(state.map(s => `${s.name}:${stateGetter(s.name, false)}`))
+                .concat(events.map(e => e.name))
+
+            }
                 }));
             }
         `
     }
 
     toString() {
-        if (this.isComponent) { 
+        if (this.isComponent) {
             return this.functionalComponentString();
         }
 
         const properties = this.members.map(m => m.declaration()).join("\n");
-        
+
         return `
         ${this.modifiers} class ${this.name} {
             ${this.compileConstructor()}
@@ -606,58 +606,58 @@ class Class {
     }
 }
 
-class ReturnStatement { 
+class ReturnStatement {
     /**
      * 
      * @param {Statement} expression 
      */
-    constructor(expression) { 
+    constructor(expression) {
         this.expression = expression;
     }
 
-    toString(internalState, state) { 
+    toString(internalState, state) {
         return `return ${this.expression.toString(internalState, state)};`;
     }
 }
 
-class If { 
-    constructor(expression, thenStatement, elseStatement="") { 
+class If {
+    constructor(expression, thenStatement, elseStatement = "") {
         this.expression = expression;
         this.thenStatement = thenStatement;
         this.elseStatement = elseStatement;
     }
 
-    toString() { 
-        const elseStatement = this.elseStatement ? `else ${this.elseStatement}`: "";
+    toString() {
+        const elseStatement = this.elseStatement ? `else ${this.elseStatement}` : "";
         return `if(${this.expression})${this.thenStatement}
         ${elseStatement}`;
     }
 }
 
-class ArrayLiteral { 
-    constructor(elements, multiLine) { 
+class ArrayLiteral {
+    constructor(elements, multiLine) {
         this.elements = elements;
         this.multiLine = multiLine;
     }
 
-    toString() { 
+    toString() {
         return `[${this.elements.join(",")}]`;
     }
 }
 
-class Prefix { 
-    constructor(operator, operand) { 
+class Prefix {
+    constructor(operator, operand) {
         this.operator = operator;
         this.operand = operand;
     }
 
-    toString(internalState, state) { 
+    toString(internalState, state) {
         return `${this.operator}${this.operand.toString(internalState, state)}`
     }
 }
 
-class Binary{ 
-    constructor(left, operator, right){ 
+class Binary {
+    constructor(left, operator, right) {
         this.left = left;
         this.operator = operator;
         this.right = right;
@@ -666,9 +666,9 @@ class Binary{
     toString(internalState, state) {
         if (this.operator === SyntaxKind.EqualsToken &&
             this.left instanceof PropertyAccess &&
-            this.left.expression === SyntaxKind.ThisKeyword) { 
+            this.left.expression === SyntaxKind.ThisKeyword) {
             const rightExpression = this.right.toString(internalState, state);
-            
+
             return `${this.left.compileStateSetting()}(${rightExpression});
             ${this.left.compileStateChangeRising(state, rightExpression)}`;
         }
@@ -685,16 +685,16 @@ module.exports = {
         None: "var"
     },
 
-    createIdentifier(name) { 
+    createIdentifier(name) {
         return name;
     },
-    createStringLiteral(value) { 
+    createStringLiteral(value) {
         return new StringLiteral(value);
     },
-    createPropertyAssignment(key, value) { 
+    createPropertyAssignment(key, value) {
         return new PropertyAssignment(key, value)
     },
-    createArrayLiteral(elements, multiLine) { 
+    createArrayLiteral(elements, multiLine) {
         return new ArrayLiteral(elements, multiLine);
     },
     /**
@@ -702,93 +702,93 @@ module.exports = {
      * @param {Array<PropertyAssignment|ShorthandPropertyAssignment>} properties 
      * @param {boolean} multiLine 
      */
-    createObjectLiteral(properties, multiLine) { 
+    createObjectLiteral(properties, multiLine) {
         return new ObjectLiteral(properties, multiLine);
     },
-    createCall(expression, typeArguments, argumentsArray) { 
+    createCall(expression, typeArguments, argumentsArray) {
         return new Call(expression, typeArguments, argumentsArray);
     },
     createDecorator(expression) {
         return new Decorator(expression);
     },
-    createModifier(modifier) { 
-        if (modifier === undefined) { 
+    createModifier(modifier) {
+        if (modifier === undefined) {
             throw "createModifier";
         }
         return modifier
     },
-    createProperty(decorators, modifiers, name, questionOrExclamationToken, type, initializer) { 
+    createProperty(decorators, modifiers, name, questionOrExclamationToken, type, initializer) {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     },
 
-    createClassDeclaration(decorators, modifiers, name, typeParameters, heritageClauses, members) { 
+    createClassDeclaration(decorators, modifiers, name, typeParameters, heritageClauses, members) {
         return new Class(decorators, modifiers, name, typeParameters, heritageClauses, members)
     },
-    createTypeReferenceNode() { 
+    createTypeReferenceNode() {
 
     },
 
-    createParameter(decorators, modifiers, dotDotDotToken, name, questionToken, type, initializer) { 
+    createParameter(decorators, modifiers, dotDotDotToken, name, questionToken, type, initializer) {
         return new Parameter(decorators, modifiers, dotDotDotToken, name, questionToken, type, initializer);
     },
 
-    createBlock(statements, multiLine) { 
+    createBlock(statements, multiLine) {
         return new Block(statements, multiLine);
     },
 
-    createMethod(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body) { 
+    createMethod(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body) {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     },
-    createKeywordTypeNode(kind) { 
-        if (kind === undefined) { 
+    createKeywordTypeNode(kind) {
+        if (kind === undefined) {
             throw "createKeyword"
         }
         return kind;
     },
-    createArrayTypeNode(elementType) { 
+    createArrayTypeNode(elementType) {
         // `${elementType}[]`;
         return "";
     },
-    createNumericLiteral(value, numericLiteralFlags) { 
+    createNumericLiteral(value, numericLiteralFlags) {
         return value;
     },
     createTrue() {
         return this.SyntaxKind.TrueKeyword;
     },
-    createNull() { 
+    createNull() {
         return this.SyntaxKind.NullKeyword;
     },
-    createThis() { 
+    createThis() {
         return this.SyntaxKind.ThisKeyword;
     },
 
-    createToken(token) { 
-        if (token === undefined) { 
+    createToken(token) {
+        if (token === undefined) {
             throw "createToken"
         }
         return token;
     },
 
-    createBinary(left, operator, right) { 
+    createBinary(left, operator, right) {
         return new Binary(left, operator, right);
     },
 
-    createReturn(expression){ 
+    createReturn(expression) {
         return new ReturnStatement(expression);
     },
-    
+
     createFalse() {
         return this.SyntaxKind.FalseKeyword
     },
 
-    createFunctionDeclaration(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body) { 
+    createFunctionDeclaration(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body) {
         return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body).declaration();
     },
 
-    createFunctionTypeNode(typeParameters, parameters, type) { 
+    createFunctionTypeNode(typeParameters, parameters, type) {
         return ""
     },
-    createVariableDeclaration(name, type, initializer="") { 
+    createVariableDeclaration(name, type, initializer = "") {
         return `${name}=${initializer}`;
     },
 
@@ -796,8 +796,8 @@ module.exports = {
         return `${modifiers.join(" ")} function ${name}(${parameters.join(",")})${body}`;
     },
 
-    createVariableDeclarationList(declarations = [], flags) { 
-        if (flags === undefined) { 
+    createVariableDeclarationList(declarations = [], flags) {
+        if (flags === undefined) {
             throw "createVariableDeclarationList";
         }
         return `${flags} ${declarations.join("")}`;
@@ -811,94 +811,94 @@ module.exports = {
         return `${modifiers} ${declarationList}`;
     },
 
-    createParen(expression) { 
+    createParen(expression) {
         return new Paren(expression);
     },
 
-    createExportAssignment(decorators=[], modifiers=[], isExportEquals, expression) { 
+    createExportAssignment(decorators = [], modifiers = [], isExportEquals, expression) {
         return `export default ${expression}`;
     },
 
-    createPropertyAccess(expression, name) { 
+    createPropertyAccess(expression, name) {
         return new PropertyAccess(expression, name);
     },
 
-    createPrefix(operator, operand) { 
-        if (operator === undefined) { 
+    createPrefix(operator, operand) {
+        if (operator === undefined) {
             throw "createPrefix";
         }
         return new Prefix(operator, operand);
     },
 
-    createExpressionStatement(expression) { 
+    createExpressionStatement(expression) {
         return expression
     },
 
-    createShorthandPropertyAssignment(name, expression) { 
+    createShorthandPropertyAssignment(name, expression) {
         return new ShorthandPropertyAssignment(name, expression)
     },
-    
+
     createBindingElement(dotDotDotToken, propertyName, name, initializer) {
         return new BindingElement(dotDotDotToken, propertyName, name, initializer);
     },
 
-    createObjectBindingPattern(elements) { 
+    createObjectBindingPattern(elements) {
         return new BindingPattern(elements, "object");
     },
 
-    createArrayBindingPattern(elements) { 
+    createArrayBindingPattern(elements) {
         return new BindingPattern(elements, "array");
     },
 
-    createJsxExpression(dotDotDotToken, expression) { 
+    createJsxExpression(dotDotDotToken, expression) {
         return `{${expression}}`;
     },
 
-    createJsxAttribute(name, initializer) { 
+    createJsxAttribute(name, initializer) {
         return `${name}=${initializer}`;
     },
 
-    createJsxAttributes(properties) { 
+    createJsxAttributes(properties) {
         return properties.join("\n");
     },
 
-    createJsxOpeningElement(tagName, typeArguments, attributes) { 
+    createJsxOpeningElement(tagName, typeArguments, attributes) {
         return `<${tagName} ${attributes}>`
     },
 
-    createJsxClosingElement(tagName) { 
+    createJsxClosingElement(tagName) {
         return `</${tagName}>`;
     },
 
-    createJsxElement(openingElement, children=[], closingElement) { 
+    createJsxElement(openingElement, children = [], closingElement) {
         return `${openingElement}${children.join("\n")}${closingElement}`;
     },
 
-    createJsxText(text, containsOnlyTriviaWhiteSpaces) { 
+    createJsxText(text, containsOnlyTriviaWhiteSpaces) {
         return text;
     },
 
-    createImportSpecifier(propertyName, name) { 
+    createImportSpecifier(propertyName, name) {
         return name;
     },
 
-    createNamedImports(node, elements) { 
+    createNamedImports(node, elements) {
         return node.join(",");
     },
 
-    createImportClause(name, namedBindings) { 
+    createImportClause(name, namedBindings) {
         return `{${namedBindings}}`;
     },
 
-    createImportDeclaration(decorators, modifiers, importClause="", moduleSpecifier) { 
+    createImportDeclaration(decorators, modifiers, importClause = "", moduleSpecifier) {
         return `import ${importClause} ${moduleSpecifier}`;
     },
 
-    createIf(expression, thenStatement, elseStatement) { 
+    createIf(expression, thenStatement, elseStatement) {
         return new If(expression, thenStatement, elseStatement);
     },
 
-    createEmptyStatement() { 
+    createEmptyStatement() {
         return "";
     },
 
