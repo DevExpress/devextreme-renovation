@@ -44,35 +44,47 @@ describe("react-generator", function() {
     });
 
     it("empty-component", function() {
-        this.testGenerator("empty-component");  
+        this.testGenerator(this.test.title);  
     });
 
     it("internal-state", function() {
-        this.testGenerator("internal-state");  
+        this.testGenerator(this.test.title);   
     });
 
     it("state", function() { 
-        this.testGenerator("state");
+        this.testGenerator(this.test.title); 
     });
 
     it("listen", function() { 
-        this.testGenerator("listen");
+        this.testGenerator(this.test.title); 
     });
 
-    it("simple block", function() {
-        this.testGenerator("simple-block");
+    it("simple-block", function() {
+        this.testGenerator(this.test.title); 
     });
 
     it("listen-with-target", function() {
-        this.testGenerator("listen-with-target");
+        this.testGenerator(this.test.title); 
+    });
+
+    it("variable-declaration", function() { 
+        this.testGenerator(this.test.title); 
     });
 
     it("functions", function() {
-        this.testGenerator("functions");
+        this.testGenerator(this.test.title); 
     });
 
     it("objects", function() {
-        this.testGenerator("objects");
+        this.testGenerator(this.test.title); 
+    });
+
+    it("conditions", function() { 
+        this.testGenerator(this.test.title); 
+    });
+
+    it("imports", function() { 
+        this.testGenerator(this.test.title); 
     });
 
 });

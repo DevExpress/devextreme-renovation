@@ -1,16 +1,19 @@
 
 const SyntaxKind = {
     ExportKeyword: "export",
-    FalseKeyword: false,
-    TrueKeyword: true,
+    FalseKeyword: "false",
+    TrueKeyword: "true",
+    AnyKeyword: "any",
     PlusToken: "+",
     EqualsToken: "=",
     NumberKeyword: "number",
     EqualsGreaterThanToken: "=>",
-    NullKeyword: null,
+    NullKeyword: "null",
     DefaultKeyword: "default",
     ThisKeyword: "this",
-    ExclamationToken: "!"
+    ExclamationToken: "!",
+    EqualsEqualsEqualsToken: "===",
+    EqualsEqualsToken: "=="
 };
 class Call { 
     /**
@@ -335,7 +338,8 @@ class BindingElement {
     }
 
     toString() { 
-        return `${this.propertyName}:${this.name}`;
+        const key = this.propertyName ? `${this.propertyName}:` : "";
+        return `${key}${this.name}`;
     }
 }
 
@@ -343,13 +347,16 @@ class BindingPattern {
     /**
      * 
      * @param {Array<BindingElement>} elements 
+     * @param {'object'|'array'} type
      */
-    constructor(elements) { 
+    constructor(elements, type) { 
         this.elements = elements;
+        this.type = type;
     }
 
     toString() { 
-        return `{${this.elements.join(",")}}`;
+        const elements = this.elements.join(",");
+        return this.type === "array" ? `[${elements}]` : `{${elements}}`;
     }
 }
 
@@ -583,6 +590,20 @@ class ReturnStatement {
     }
 }
 
+class If { 
+    constructor(expression, thenStatement, elseStatement="") { 
+        this.expression = expression;
+        this.thenStatement = thenStatement;
+        this.elseStatement = elseStatement;
+    }
+
+    toString() { 
+        const elseStatement = this.elseStatement ? `else ${this.elseStatement}`: "";
+        return `if(${this.expression})${this.thenStatement}
+        ${elseStatement}`;
+    }
+}
+
 class ArrayLiteral { 
     constructor(elements, multiLine) { 
         this.elements = elements;
@@ -630,7 +651,8 @@ module.exports = {
 
     NodeFlags: {
         Const: "const",
-        Let: "let"
+        Let: "let",
+        None: "var"
     },
 
     createIdentifier(name) { 
@@ -783,7 +805,11 @@ module.exports = {
     },
 
     createObjectBindingPattern(elements) { 
-        return new BindingPattern(elements);
+        return new BindingPattern(elements, "object");
+    },
+
+    createArrayBindingPattern(elements) { 
+        return new BindingPattern(elements, "array");
     },
 
     createJsxExpression(dotDotDotToken, expression) { 
@@ -808,5 +834,29 @@ module.exports = {
 
     createJsxElement(openingElement, children="", closingElement) { 
         return `${openingElement}${children}${closingElement}`
+    },
+
+    createImportSpecifier(propertyName, name) { 
+        return name;
+    },
+
+    createNamedImports(node, elements) { 
+        return node.join(",");
+    },
+
+    createImportClause(name, namedBindings) { 
+        return `{${namedBindings}}`;
+    },
+
+    createImportDeclaration(decorators, modifiers, importClause="", moduleSpecifier) { 
+        return `import ${importClause} ${moduleSpecifier}`;
+    },
+
+    createIf(expression, thenStatement, elseStatement) { 
+        return new If(expression, thenStatement, elseStatement);
+    },
+
+    createEmptyStatement() { 
+        return "";
     }
 }
