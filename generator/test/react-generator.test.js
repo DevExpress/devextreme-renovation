@@ -91,4 +91,7 @@ describe("react-generator", function() {
         this.testGenerator(this.test.title); 
     });
 
+    it("props-in-listener", function() { 
+        this.testGenerator(this.test.title); 
+    });
 });

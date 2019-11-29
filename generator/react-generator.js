@@ -17,7 +17,8 @@ const SyntaxKind = {
     ExclamationToken: "!",
     EqualsEqualsEqualsToken: "===",
     EqualsEqualsToken: "==",
-    BarBarToken: "||"
+    BarBarToken: "||",
+    QuestionToken: "?"
 };
 class Call {
     /**
@@ -42,7 +43,7 @@ class Call {
     }
 
     toString(internalState, state, props) {
-        return `${this.expression.toString(internalState, state, props)}(${this.argumentsArray.join(",")})`;
+        return `${this.expression.toString(internalState, state, props)}(${this.argumentsArray.map(a => a.toString(internalState, state, props)).join(",")})`;
     }
 }
 
@@ -321,8 +322,8 @@ class PropertyAssignment {
         this.key = key;
         this.value = value;
     }
-    toString() {
-        return `${this.key}:${this.value}`
+    toString(internalState, state, props) {
+        return `${this.key}:${this.value.toString(internalState, state, props)}`;
     }
 }
 
@@ -344,8 +345,8 @@ class ObjectLiteral {
         }
     }
 
-    toString() {
-        return `{${this.properties.join(`,\n`)}}`;
+    toString(internalState, state, props) {
+        return `{${this.properties.map(p=>p.toString(internalState, state, props)).join(`,\n`)}}`;
     }
 }
 
@@ -571,7 +572,7 @@ class Class {
 
         const events = this.members.filter(m => m.isEvent);
         const eventsDeclaration = events.map(m => {
-            return `const ${m.name} = useCallback(${m.arrowDeclaration(internalState, state)}, []);`;
+            return `const ${m.name} = useCallback(${m.arrowDeclaration(internalState, state, props.concat(actions))}, []);`;
         });
 
         const parameters = this.isComponent.expression.arguments[0].properties
@@ -920,5 +921,9 @@ module.exports = {
 
     createSpreadAssignment(expression) {
         return new SpreadAssignment(expression);
+    },
+
+    createNonNullExpression(expression) {
+        return expression
     }
 }
