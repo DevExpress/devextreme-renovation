@@ -3,18 +3,7 @@ import Button from "./Button";
 
 import './ButtonGroup.css'
 
-const ButtonGroup = ({
-  height,
-  hint,
-  items = [],
-  keyExpr = "",
-  selectionMode,
-  stylingMode,
-  width,
-  selectedItems,
-  defaultSelectedItems,
-  selectedItemsChange = () => {}
-}: {
+const ButtonGroup = (props: {
   height?: string,
   hint?: string,
   items?: any[],
@@ -26,15 +15,15 @@ const ButtonGroup = ({
   defaultSelectedItems?: string[],
   selectedItemsChange?: (e: string[]) => void
 }) => {
-  const [_selectedItems, _setSelectedItems] = useState(() => (selectedItems !== undefined) ? selectedItems : defaultSelectedItems);
+  const [selectedItems, setSelectedItems] = useState(() => ((props.selectedItems !== undefined) ? props.selectedItems : props.defaultSelectedItems) || []);
 
   const onClickHandler = useCallback((index) => {
-    let curSelectedItems = (selectedItems !== undefined ? selectedItems : _selectedItems) || [];
+    let curSelectedItems = (props.selectedItems !== undefined ? props.selectedItems : selectedItems);
 
-    const currentButton = items[index][keyExpr]; 
+    const currentButton = props.items![index][props.keyExpr!]; 
     let newValue: string[] = [];
 
-    if(selectionMode === "single") {
+    if(props.selectionMode === "single") {
       if(curSelectedItems[0] !== currentButton) {
         newValue = [currentButton];
       }
@@ -45,26 +34,26 @@ const ButtonGroup = ({
         newValue = curSelectedItems.concat(currentButton);
       }
     }
-    _setSelectedItems(newValue);
-    selectedItemsChange(newValue);
-  }, [_selectedItems, selectedItems, items, keyExpr, selectionMode, selectedItemsChange]);
+    setSelectedItems(newValue);
+    props.selectedItemsChange!(newValue);
+  }, [selectedItems, props.selectedItems, props.items, props.keyExpr, props.selectionMode, props.selectedItemsChange]);
 
   return view(viewModel({
     // props
-    height,
-    hint,
-    items,
-    keyExpr,
-    selectionMode,
-    stylingMode,
-    width,
+    ...props,
     // state
-    selectedItems: selectedItems !== undefined ? selectedItems : _selectedItems,
+    selectedItems: props.selectedItems !== undefined ? props.selectedItems : selectedItems,
     // internal state
     // listeners
     onClickHandler
   }));
 }
+
+ButtonGroup.defaultProps = {
+  keyExpr: "",
+  items: [],
+  selectedItemsChange: () => {}
+};
 
 function viewModel(model: any) {
   const viewModel = { ...model };

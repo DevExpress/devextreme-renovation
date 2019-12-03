@@ -15,8 +15,7 @@ export default class ToggleButton {
   @Prop() type?: string;
   @Prop() width?: string;
 
-  @State()
-  pressed?: boolean;
+  @State() pressed?: boolean = false;
 
   @Listen("click")
   onClickHandler(e: any) {
