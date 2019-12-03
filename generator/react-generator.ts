@@ -1,6 +1,4 @@
-import { NodeFlags, SyntaxKind, isConstructorDeclaration } from "typescript";
-
-const SyntaxKind1 = {
+const SyntaxKind = {
     ExportKeyword: "export",
     FalseKeyword: "false",
     TrueKeyword: "true",
@@ -167,14 +165,14 @@ class Block {
 }
 
 class Parameter {
-    decorators: any[]
+    decorators: Decorator[]
     modifiers:string[];
     dotDotDotToken: any;
     name: string;
     questionToken: string;
     type: string;
     initializer: any;
-    constructor(decorators: any[], modifiers: string[], dotDotDotToken: any, name: string, questionToken: string="", type: string, initializer: any) {
+    constructor(decorators: Decorator[], modifiers: string[], dotDotDotToken: any, name: string, questionToken: string="", type: string, initializer: any) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.dotDotDotToken = dotDotDotToken;
@@ -229,7 +227,7 @@ class Call {
 }
 
 class Function {
-    decorators: any[];
+    decorators: Decorator[];
     modifiers: any[];
     asteriskToken:any;
     name: string;
@@ -237,7 +235,7 @@ class Function {
     parameters: Parameter[];
     type: string;
     body: Block;
-    constructor(decorators:any[] = [], modifiers:any = [], asteriskToken:any, name:string, typeParameters:string[] = [], parameters:Parameter[], type:string, body:Block) {
+    constructor(decorators:Decorator[] = [], modifiers:any = [], asteriskToken:any, name:string, typeParameters:string[] = [], parameters:Parameter[], type:string, body:Block) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.asteriskToken = asteriskToken;
@@ -302,9 +300,9 @@ class Binary {
     }
 
     toString(internalState: InternalState[], state: State[], props: Prop[]) {
-        if (this.operator === SyntaxKind1.EqualsToken &&
+        if (this.operator === SyntaxKind.EqualsToken &&
             this.left instanceof PropertyAccess &&
-            this.left.expression === SyntaxKind1.ThisKeyword) {
+            this.left.expression === SyntaxKind.ThisKeyword) {
             const rightExpression = this.right.toString(internalState, state, props);
 
             return `${this.left.compileStateSetting()}(${rightExpression});
@@ -395,17 +393,17 @@ class PropertyAccess {
     }
 
     toString(internalState:InternalState[] = [], state:State[] = [], props:Prop[] = []) {
-        if (this.expression === SyntaxKind1.ThisKeyword &&
+        if (this.expression === SyntaxKind.ThisKeyword &&
             props.findIndex(p => p.name === this.name) >= 0) {
             return `props.${this.name}`;
         }
 
-        if (this.expression === SyntaxKind1.ThisKeyword &&
+        if (this.expression === SyntaxKind.ThisKeyword &&
             (internalState.findIndex(p => p.name === this.name) >= 0)) {
             return `__state.${this.name}`;
         }
 
-        if (this.expression === SyntaxKind1.ThisKeyword) { 
+        if (this.expression === SyntaxKind.ThisKeyword) { 
             const stateProp = state.find(s => s.name === this.name);
             if (stateProp) { 
                 return `(${stateProp.getter()})`;
@@ -625,7 +623,9 @@ class ReactComponent {
         }
 
         if (react.length) {
-            imports.push(`import {${react.join(",")}} from 'react';`);
+            imports.push(`import React, {${react.join(",")}} from 'react';`);
+        } else { 
+            imports.push("import React from 'react'");
         }
 
         return imports.join("\n");
@@ -733,6 +733,16 @@ class Prefix {
     }
 }
 
+class NonNullExpression { 
+    expression: any;
+    constructor(expression: any) { 
+        this.expression = expression;
+    }
+    toString(internalState: InternalState[], state: State[], props: Prop[]) { 
+        return `${this.expression.toString(internalState, state, props)}!`;
+    }
+}
+
 export default {
     NodeFlags: {
         Const: "const",
@@ -740,7 +750,7 @@ export default {
         None: "var"
     },
 
-    SyntaxKind: SyntaxKind1,
+    SyntaxKind: SyntaxKind,
 
     createIdentifier(name: string) {
         return name;
@@ -754,7 +764,7 @@ export default {
         return variableDeclaration(name, type, initializer);
     },
 
-    createVariableDeclarationList(declarations = [], flags: NodeFlags) {
+    createVariableDeclarationList(declarations = [], flags: string) {
         if (flags === undefined) {
             throw "createVariableDeclarationList";
         }
@@ -793,14 +803,14 @@ export default {
         return new PropertyAssignment(key, value)
     },
 
-    createKeywordTypeNode(kind:SyntaxKind) {
+    createKeywordTypeNode(kind:string) {
         if (kind === undefined) {
             throw "createKeyword"
         }
         return kind;
     },
 
-    createArrayTypeNode(elementType:SyntaxKind) {
+    createArrayTypeNode(elementType:string) {
         if (elementType === undefined) {
             throw "createArrayTypeNode"
         }
@@ -831,7 +841,7 @@ export default {
         return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body).declaration();
     },
 
-    createParameter(decorators: any[], modifiers: string[], dotDotDotToken: any, name: string, questionToken: any, type: string, initializer: any) {
+    createParameter(decorators: Decorator[], modifiers: string[], dotDotDotToken: any, name: string, questionToken: any, type: string, initializer: any) {
         return new Parameter(decorators, modifiers, dotDotDotToken, name, questionToken, type, initializer);
     },
 
@@ -843,7 +853,7 @@ export default {
         return new Function([], modifiers, asteriskToken, name, typeParameters, parameters, type, body).declaration();
     },
 
-    createToken(token:SyntaxKind) {
+    createToken(token:string) {
         if (token === undefined) {
             throw "createToken"
         }
@@ -854,7 +864,7 @@ export default {
         return new ArrowFunction(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body);
     },
 
-    createModifier(modifier: SyntaxKind) {
+    createModifier(modifier: string) {
         if (modifier === undefined) {
             throw "createModifier";
         }
@@ -976,4 +986,8 @@ export default {
         }
         return new Prefix(operator, operand);
     },
+
+    createNonNullExpression(expression:any) { 
+        return new NonNullExpression(expression);
+    }
 }

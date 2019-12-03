@@ -2,14 +2,14 @@ function viewModel() { }
 
 function view() { }
 
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 
 export function Component(props: {
   type?: string,
   onClick?: () => void
 }) {
   const clickHandler = useCallback(() => {
-    props.onClick({
+    props.onClick!({
       type: props.type
     })
   }, null);

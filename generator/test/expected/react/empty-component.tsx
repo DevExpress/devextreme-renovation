@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function Component(props: {
   height: number,
   width: number

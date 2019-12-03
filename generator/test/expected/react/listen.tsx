@@ -2,7 +2,7 @@ function viewModel() { }
 
 function view() { }
 
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 
 export function Component(props: { }) {
   const onClick = useCallback((e) => { }, null);

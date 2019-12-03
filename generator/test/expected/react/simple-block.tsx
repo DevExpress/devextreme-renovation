@@ -1,6 +1,8 @@
 function viewModel() {}
 
-function view() {}
+function view() { }
+
+import React from "react";
 
 export function Component(props: {}) {
   function method(a:number) { 

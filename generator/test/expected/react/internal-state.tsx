@@ -2,7 +2,7 @@ function viewModel() {}
 
 function view() {}
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 export default function Component(props: {}) {
   const __state:any = {};

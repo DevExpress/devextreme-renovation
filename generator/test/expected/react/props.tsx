@@ -1,6 +1,8 @@
 function view() { }
 function viewModel() { }
 
+import React from "react";
+
 export default function Component(props: { 
     height: number,
     onClick: (a:number)=>null

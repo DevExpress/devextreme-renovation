@@ -2,7 +2,7 @@ function viewModel() { }
 
 function view() { }
 
-import { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 export function Component(props: { }) {
   const onPointerUp = useCallback(() => { }, null);

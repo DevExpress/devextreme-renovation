@@ -13,7 +13,7 @@ export class Component {
 
     @Listen("click")
     clickHandler() {
-        this.onClick({ type: this.type });
+        this.onClick!({ type: this.type });
     }
 }
   
