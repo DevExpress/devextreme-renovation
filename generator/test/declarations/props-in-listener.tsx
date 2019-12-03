@@ -8,10 +8,12 @@ function view() {}
     viewModel,
 })
 export class Component {
-    @Listen()
-    onClick(e) {}
+    @Prop() type?: string;
+    @Event() onClick
 
-    @Listen("pointermove")
-    onPointerMove(a = "a", b = 0, c = true) {}
+    @Listen("click")
+    clickHandler() {
+        this.onClick({ type: this.type });
+    }
 }
   

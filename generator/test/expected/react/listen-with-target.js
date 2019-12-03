@@ -1,6 +1,6 @@
-function viewModel() {}
+function viewModel() { }
 
-function view() {}
+function view() { }
 
 import { useCallback, useEffect } from 'react';
 
@@ -21,5 +21,3 @@ export function Component({ }) {
     scrollHandler
   }));
 }
-
-

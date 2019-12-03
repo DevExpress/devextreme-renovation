@@ -8,3 +8,7 @@ let o1 = { a, b };
 const { a: v } = o1;
 
 const o3 = { a: 10 + 2, v };
+
+const o4 = { ...o3, b: "" };
+
+const o5 = {};
