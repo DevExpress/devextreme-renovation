@@ -9,7 +9,7 @@ function view() {}
 })
 export class Component {
     @Prop() type?: string;
-    @Event() onClick
+    @Event() onClick?: ()=>void
 
     @Listen("click")
     clickHandler() {

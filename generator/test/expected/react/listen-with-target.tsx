@@ -4,9 +4,9 @@ function view() { }
 
 import { useCallback, useEffect } from 'react';
 
-export function Component({ }) {
-  const onPointerUp = useCallback(() => { }, []);
-  const scrollHandler = useCallback(() => { }, []);
+export function Component(props: { }) {
+  const onPointerUp = useCallback(() => { }, null);
+  const scrollHandler = useCallback(() => { }, null);
   useEffect(() => {
     document.addEventListener("pointerup", onPointerUp);
     window.addEventListener("scroll", scrollHandler);
@@ -17,6 +17,7 @@ export function Component({ }) {
   });
 
   return view(viewModel({
+    ...props,
     onPointerUp,
     scrollHandler
   }));

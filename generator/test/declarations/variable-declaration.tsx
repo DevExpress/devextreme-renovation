@@ -8,4 +8,6 @@ const [e, f] = [10, NaN];
 const { g: h } = { g: Infinity };
 
 const i: string = "string";
-const j: boolean[] = false;
+const j: boolean[] = [true, false];
+
+let k;

@@ -1,20 +1,19 @@
 {
-  "name": "generator",
+  "name": "generator-ts",
   "version": "1.0.0",
-  "description": "creates widgets from declaration",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./test --timeout 30000",
-    "compile-ts": "tsc factoryCodeGenerator.ts"
+    "test": "npm run tsc && mocha ./test --timeout 30000",
+    "tsc": "tsc"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ts-factory-code-generator-generator": "^0.5.2",
+    "mocha": "^6.2.2",
     "typescript": "^3.7.2",
-    "typescript-parser": "^2.6.1"
-  },
-  "devDependencies": {
-    "mocha": "^4.0.1"
+    "@types/node": "^12.12.14",
+    "@types/mocha": "5.2.7",
+    "ts-factory-code-generator-generator": "^0.5.2"
   }
 }

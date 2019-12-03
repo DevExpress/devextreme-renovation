@@ -1,15 +1,13 @@
-export default function Component({
-  height,
-  width
+export default function Component(props: {
+  height: number,
+  width: number
 }) {
   return view1(viewModel1({
-    height,
-    width
+    ...props
   }));
 }
 
-
-function viewModel1(model) {
+function viewModel1(model: any) {
   return {
     height: model.height
   }

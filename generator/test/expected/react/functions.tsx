@@ -1,4 +1,4 @@
-function namedFunction() {
+function namedFunction() { 
 
 }
 const b = function (a) { return a };
@@ -8,4 +8,4 @@ export function plus(a:number=45, b?:number):number {
     return a + b;
 }
 
-export default (function ():void { })();
+export default (function():void { })();
