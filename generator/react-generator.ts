@@ -548,7 +548,7 @@ class Listener  {
     }
 
     defaultDeclaration(internalState: InternalState[], state: State[], props:Prop[]) { 
-        return `const ${this.name}=useCallback(${this.method.arrowDeclaration(internalState, state, props)}, null)`;
+        return `const ${this.name}=useCallback(${this.method.arrowDeclaration(internalState, state, props)}, [])`;
     }
 }
 

@@ -12,7 +12,7 @@ export function Component(props: {
     props.onClick!({
       type: props.type
     })
-  }, null);
+  }, []);
 
   return view(viewModel({
     ...props,

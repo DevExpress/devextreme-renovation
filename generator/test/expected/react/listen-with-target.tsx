@@ -5,8 +5,8 @@ function view() { }
 import React, { useCallback, useEffect } from 'react';
 
 export function Component(props: { }) {
-  const onPointerUp = useCallback(() => { }, null);
-  const scrollHandler = useCallback(() => { }, null);
+  const onPointerUp = useCallback(() => { }, []);
+  const scrollHandler = useCallback(() => { }, []);
   useEffect(() => {
     document.addEventListener("pointerup", onPointerUp);
     window.addEventListener("scroll", scrollHandler);
