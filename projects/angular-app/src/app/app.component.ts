@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  encapsulation: ViewEncapsulation.ShadowDom
 })
 export class AppComponent {
   fontStyles = [{
@@ -30,8 +31,14 @@ export class AppComponent {
   ];
   lastClickedButton: string;
   toggle = true;
+  drawerOpened = false;
   selectedItems = ['bold', 'strike'];
+
   onClick(e) {
       this.lastClickedButton = `${e.type} - ${e.text}`
+  }
+
+  toggleDrawer() {
+    this.drawerOpened = !this.drawerOpened;
   }
 }

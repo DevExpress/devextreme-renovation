@@ -1,17 +1,7 @@
 import React, { useCallback, useState } from "react";
 import Button from "./Button";
 
-const ToggleButton = ({
-  height,
-  hint,
-  pressed,
-  defaultPressed,
-  pressedChange = () => {},
-  stylingMode,
-  text,
-  type,
-  width
-}: {
+const ToggleButton = (props: {
   height?: string,
   hint?: string,
   pressed?: boolean,
@@ -22,29 +12,28 @@ const ToggleButton = ({
   type?: string,
   width?: string
 }) => {
-  const [_pressed, _setPressed] = useState(() => (pressed !== undefined) ? pressed : defaultPressed);
+  const [pressed, setPressed] = useState(() => ((props.pressed !== undefined) ? props.pressed : props.defaultPressed) || false);
 
-  const onClickHandler = useCallback(() => {
-    const newPressed = !(pressed !== undefined ? pressed : _pressed);
-    _setPressed(newPressed);
-    pressedChange(newPressed);
-  }, [_pressed, pressed, pressedChange]);
+  const onClickHandler = useCallback(function(e: any) {
+    const newPressed = !(props.pressed !== undefined ? props.pressed : pressed);
+    setPressed(newPressed);
+    props.pressedChange!(newPressed);
+  }, [pressed, props.pressed, props.pressedChange]);
 
   return view(viewModel({
     // props
-    height,
-    hint,
-    stylingMode,
-    text,
-    type,
-    width,
+    ...props,
     // state
-    pressed: pressed !== undefined ? pressed : _pressed,
+    pressed: props.pressed !== undefined ? props.pressed : pressed,
     // internal state
     // listeners
     onClickHandler
   }));
 }
+
+ToggleButton.defaultProps = {
+  pressedChange: () => {}
+};
 
 function viewModel(model: any) {
   return { ...model };

@@ -47,3 +47,13 @@
 .buttonGroups > div {
   padding: 0 12px;
 }
+
+.drawer {
+  padding: 15px;
+  width: 800px;
+}
+
+.drawer .drawer-toolbar {
+  background-color: rgba(191, 191, 191, .15);
+  padding: 5px 10px;
+}

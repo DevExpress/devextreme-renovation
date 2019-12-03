@@ -6,7 +6,6 @@
           <div class="column-header">Normal</div>
           <div>
             <dx-button
-              @on-click="onClick"
               width="120px"
               text="Contained"
               hint="Contained"
@@ -150,7 +149,6 @@
               hint="Outlined"
               type="normal"
               styling-mode="outlined"
-              
             />
           </div>
         </div>
@@ -196,7 +194,7 @@
             />
           </div>
         </div>
-      </div> 
+      </div>
     </div>
     <div class="buttonGroups">
       <dx-button-group
@@ -223,6 +221,39 @@
         key-expr="style"
       />
     </div>
+
+    <div class="drawer">
+      <div class="drawer-toolbar">
+        <dx-button
+          @on-click="drawerHandleClick"
+          :text="drawerOpened ? 'Close the drawer!' : 'Open the drawer!'"
+          hint="Contained"
+          type="normal"
+          styling-mode="contained"
+        />
+      </div>
+      <dx-drawer
+        :opened="drawerOpened"
+        @opened-change="toggleDrawer"
+        hint="my drawer"
+        width="800px">
+        <template v-slot:drawer>
+          <div>
+            <dx-button width="100%" text="Push me!" styling-mode="text" @on-click="toggleDrawer(false)"/>
+            <dx-button width="100%" text="Push me!" styling-mode="text" @on-click="toggleDrawer(false)"/>
+            <dx-button width="100%" text="Push me!" styling-mode="text" @on-click="toggleDrawer(false)"/>
+            <dx-button width="100%" text="Push me!" styling-mode="text" @on-click="toggleDrawer(false)"/>
+            <dx-button width="100%" text="Push me!" styling-mode="text" @on-click="toggleDrawer(false)"/>
+            <dx-button width="100%" text="Push me!" styling-mode="text" @on-click="toggleDrawer(false)"/>
+          </div>
+        </template>
+
+        <!-- <template v-slot:default> -->
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Penatibus et magnis dis parturient. Eget dolor morbi non arcu risus. Tristique magna sit amet purus gravida quis blandit. Auctor urna nunc id cursus metus aliquam eleifend mi in. Tellus orci ac auctor augue mauris augue neque gravida. Nullam vehicula ipsum a arcu. Nullam ac tortor vitae purus faucibus ornare suspendisse sed nisi. Cursus in hac habitasse platea dictumst. Egestas dui id ornare arcu. Dictumst vestibulum rhoncus est pellentesque elit ullamcorper dignissim.</p>
+          <p>Mauris rhoncus aenean vel elit scelerisque mauris pellentesque pulvinar. Neque volutpat ac tincidunt vitae semper quis lectus. Sed sed risus pretium quam vulputate dignissim suspendisse in. Urna nec tincidunt praesent semper feugiat nibh sed pulvinar. Ultricies lacus sed turpis tincidunt id aliquet risus feugiat. Amet cursus sit amet dictum sit amet justo donec enim. Vestibulum rhoncus est pellentesque elit ullamcorper. Id aliquet risus feugiat in ante metus dictum at.</p>
+        <!-- </template> -->
+      </dx-drawer>
+    </div>
   </div>
 </template>
 
@@ -230,19 +261,22 @@
 import DxButton from "./components/DxButton.vue";
 import DxToggleButton from "./components/DxToggleButton.vue";
 import DxButtonGroup from "./components/DxButtonGroup.vue";
+import DxDrawer from "./components/DxDrawer.vue";
 
 export default {
   name: "app",
   components: {
     DxButton,
     DxToggleButton,
-    DxButtonGroup
+    DxButtonGroup,
+    DxDrawer
   },
   data() {
     return {
       lastClickedButton: "",
       toggle: true,
-      selectedButtons: ['bold', 'strike'],
+      drawerOpened: false,
+      selectedButtons: ["bold", "strike"],
       fontStyles: [
         {
           text: "B",
@@ -275,6 +309,12 @@ export default {
     onClick(e) {
       this.lastClickedButton = `${e.type} - ${e.text}`;
     },
+    drawerHandleClick() {
+      this.drawerOpened = !this.drawerOpened;
+    },
+    toggleDrawer(opened) {
+      this.drawerOpened = opened;
+    },
     toggleChanged(toggle) {
       this.toggle = toggle;
     },
@@ -299,7 +339,6 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
-
 
 .row:after {
   visibility: hidden;
@@ -349,5 +388,15 @@ code {
 
 .buttonGroups > div {
   padding: 0 12px;
+}
+
+.drawer {
+  padding: 15px;
+  width: 800px;
+}
+
+.drawer .drawer-toolbar {
+  background-color: rgba(191, 191, 191, .15);
+  padding: 5px 10px;
 }
 </style>

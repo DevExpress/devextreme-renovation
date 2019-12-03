@@ -16,7 +16,7 @@ export default class Button {
   @Prop() type?: string;
   @Prop() width?: string;
 
-  @Event() onClick?: (e: any) => void = () => {};
+  @Event() onClick?: (e: any) => void = (() => {});
 
   @InternalState() _hovered: boolean = false;
   @InternalState() _active: boolean = false;

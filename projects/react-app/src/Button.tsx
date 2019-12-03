@@ -1,17 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import './Button.css';
 
-const Button = ({
-  classNames,
-  height,
-  hint,
-  onClick = () => {},
-  pressed,
-  stylingMode,
-  text,
-  type,
-  width
-}: {
+const Button = (props: {
   classNames?: Array<string>,
   height?: string,
   hint?: string,
@@ -37,18 +27,13 @@ const Button = ({
     };
   });
 
-  const onClickHandler = useCallback(() => onClick({ type: type, text: text }), [type, text, onClick]);
+  const onClickHandler = useCallback(function(e: any) {
+    props.onClick!({ type: props.type, text: props.text });
+  }, [props.type, props.text, props.onClick]);
 
   return view(viewModel({
     // props
-    classNames,
-    height,
-    hint,
-    pressed,
-    stylingMode,
-    text,
-    type,
-    width,
+    ...props,
     // state
     // internal state
     _hovered,
@@ -59,6 +44,10 @@ const Button = ({
     onPointerDown,
     onClickHandler
   }));
+};
+
+Button.defaultProps = {
+  onClick: () => {}
 };
 
 function getCssClasses(model: any) {
