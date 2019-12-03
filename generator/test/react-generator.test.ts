@@ -10,7 +10,9 @@ function print(node: ts.Node, out?: string[], indent = 0): string[] {
     if (!out) {
         return print(node, []);
     }
-    out.push(new Array(indent + 1).join(' ') + ts.SyntaxKind[node.kind]);
+    out.push(new Array(indent + 1).join(' ')
+        + ts.SyntaxKind[node.kind] + "---"
+        + ((node as ts.Identifier).escapedText ? (node as ts.Identifier).escapedText : ""));
     indent++;
     ts.forEachChild(node, (node) => {
         print(node, out, indent);
@@ -95,6 +97,10 @@ mocha.describe("react-generator", function () {
     });
 
     mocha.it("props-in-listener", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("jsx-events", function () {
         this.testGenerator(this.test!.title);
     });
     

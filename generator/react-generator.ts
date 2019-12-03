@@ -20,6 +20,13 @@ const SyntaxKind = {
     QuestionToken: "?"
 };
 
+const eventsDictionary = {
+    pointerover: "onPointerOver",
+    pointerout: "onPointerOut",
+    pointerdown:"onPointerDown",
+    click: "onClick"
+}
+
 function compileType(type: string = "", questionToken:string="") { 
     return type ? `${questionToken}:${type}` : "";
 }
@@ -944,8 +951,8 @@ export default {
         return `{${expression}}`;
     },
 
-    createJsxAttribute(name:string, initializer:any) {
-        return `${name}=${initializer}`;
+    createJsxAttribute(name: string, initializer: any) {
+        return `${(eventsDictionary as any)[name] || name}=${initializer}`;
     },
 
     createJsxAttributes(properties:any[]) {
