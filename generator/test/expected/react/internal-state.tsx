@@ -9,7 +9,7 @@ export default function Component(props: {}) {
   [__state._hovered, __state.set_hovered] = useState(false);
   
   function updateState() {
-    state.__set_hovered(!__state._hovered);
+    __state.set_hovered(!__state._hovered);
   }
 
   return view(viewModel({
