@@ -12,7 +12,7 @@ export function Component(props: {
     props.onClick!({
       type: props.type
     })
-  }, []);
+  }, [props.onClick, props.type]);
 
   return view(viewModel({
     ...props,
