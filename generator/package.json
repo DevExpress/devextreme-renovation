@@ -4,16 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npm run tsc && mocha ./test --timeout 30000",
-    "tsc": "tsc"
+    "test": "mocha ./test --timeout 30000",
+    "tsc": "tsc",
+    "build": "npm run ts",
+    "dev": "gulp watch"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "mocha": "^6.2.2",
-    "typescript": "^3.7.2",
-    "@types/node": "^12.12.14",
     "@types/mocha": "5.2.7",
-    "ts-factory-code-generator-generator": "^0.5.2"
+    "@types/node": "^12.12.14",
+    "gulp": "^4.0.2",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "mocha": "^6.2.2",
+    "ts-factory-code-generator-generator": "^0.5.2",
+    "typescript": "^3.7.2"
   }
 }

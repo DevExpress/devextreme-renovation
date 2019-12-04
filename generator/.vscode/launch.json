@@ -17,8 +17,8 @@
                 "--colors",
                 "${workspaceFolder}/test"
             ],
-            "preLaunchTask": "tsc: build - tsconfig.json",
-            "outFiles": ["${workspaceFolder}/out/**/*.js"],
+            // "preLaunchTask": "tsc: build - tsconfig.json",
+            // "outFiles": ["${workspaceFolder}/out/**/*.js"],
             "internalConsoleOptions": "openOnSessionStart",
             "skipFiles": [
                 "<node_internals>/**"
