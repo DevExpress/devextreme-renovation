@@ -18,6 +18,10 @@ const SyntaxKind = {
     EqualsEqualsToken: "==",
     BarBarToken: "||",
     QuestionToken: "?"
+    // ,
+    // ExclamationEqualsEqualsToken: "!==",
+    // MinusToken: "-",
+    // AmpersandAmpersandToken: "&&"
 };
 
 const eventsDictionary = {
@@ -286,7 +290,7 @@ class Call extends ExpressionWithExpression {
         })
     }
 
-    toString(internalState:any[], state:any[], props:any[]) {
+    toString(internalState: InternalState[], state: State[], props: Prop[]) {
         return `${this.expression.toString(internalState, state, props)}(${this.argumentsArray.map(a => a.toString(internalState, state, props)).join(",")})`;
     }
 
@@ -844,6 +848,22 @@ class ReactComponent {
     }
 }
 
+class ElementAccess extends ExpressionWithExpression{ 
+    index: Expression;
+    constructor(expression: Expression, index: Expression) { 
+        super(expression);
+        this.index = index;
+    }
+
+    toString(internalState: InternalState[], state: State[], props: Prop[]) {
+        return `${super.toString(internalState, state, props)}[${this.index.toString(internalState, state, props)}]`;
+    }
+
+    getDependency() { 
+        return super.getDependency().concat(this.index.getDependency());
+    }
+}
+
 class Prefix extends Expression {
     operator: string;
     operand: Expression;
@@ -868,6 +888,59 @@ class NonNullExpression extends ExpressionWithExpression {
     }
 }
 
+class VariableDeclaration extends ExpressionWithExpression { 
+    name: string;
+    type: string;
+    constructor(name: string, type: string = "", initializer: Expression) { 
+        super(initializer);
+        this.name = name;
+        this.type = type;
+    }
+
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) { 
+        const initilizerDeclaration = this.expression ? `=${this.expression.toString(internalState, state, props)}` : "";
+        return `${this.name}${compileType(this.type)}${initilizerDeclaration}`;
+    }
+}
+
+class VariableDeclarationList extends Expression { 
+    declarations: VariableDeclaration[];
+    flags: string;
+
+    constructor(declarations: VariableDeclaration[]=[], flags: string) { 
+        super();
+        this.declarations = declarations;
+        this.flags = flags;
+    }
+
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) { 
+       return `${this.flags} ${this.declarations.map(d=>d.toString(internalState, state, props)).join(",\n")};`;
+    }
+
+    getDependency() { 
+        return this.declarations.reduce((d: string[], p) => d.concat(p.getDependency()), []);
+    }
+}
+
+class VariableStatement extends Expression{
+    declarationList: VariableDeclarationList;
+    modifiers: string[];
+    constructor(modifiers:string[] = [], declarationList: VariableDeclarationList) { 
+        super();
+        this.modifiers = modifiers;
+        this.declarationList = declarationList;
+    }   
+
+
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) { 
+        return `${this.modifiers.join(" ")} ${this.declarationList.toString(internalState, state, props)}`;
+    }
+
+    getDependency() { 
+        return this.declarationList.getDependency();
+    }
+}
+
 export default {
     NodeFlags: {
         Const: "const",
@@ -877,7 +950,7 @@ export default {
 
     SyntaxKind: SyntaxKind,
 
-    createIdentifier(name: string):string {
+    createIdentifier(name: string) {
         return name;
     },
 
@@ -885,19 +958,19 @@ export default {
         return new SimpleExpression(value);
     },
 
-    createVariableDeclaration(name: string, type: string="", initializer:Expression) {
-        return variableDeclaration(name, type, initializer);
+    createVariableDeclaration(name: string, type: string="", initializer:Expression):Expression {
+        return new VariableDeclaration(name, type, initializer);
     },
 
-    createVariableDeclarationList(declarations = [], flags: string) {
+    createVariableDeclarationList(declarations = [], flags: string): Expression {
         if (flags === undefined) {
             throw "createVariableDeclarationList";
         }
-        return `${flags} ${declarations.join(",\n")};`;
+        return new VariableDeclarationList(declarations, flags);
     },
 
-    createVariableStatement(modifiers = [], declarationList: string) {
-        return `${modifiers} ${declarationList}`;
+    createVariableStatement(modifiers:string[] = [], declarationList: VariableDeclarationList):Expression {
+        return new VariableStatement(modifiers, declarationList);
     },
 
     createStringLiteral(value: string) {
@@ -1128,5 +1201,9 @@ export default {
 
     createNonNullExpression(expression:Expression):Expression { 
         return new NonNullExpression(expression);
+    },
+
+    createElementAccess(expression: Expression, index: Expression): Expression { 
+        return new ElementAccess(expression, index);
     }
 }
