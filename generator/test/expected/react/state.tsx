@@ -4,6 +4,12 @@ function view() { }
 
 import React, { useState } from 'react';
 
+interface Component {
+  pressed?: boolean,
+  defaultPressed?: boolean,
+  pressedChange?: (pressed: boolean) => void
+}
+
 export default function Component(props: {
   pressed?: boolean,
   defaultPressed?: boolean,
@@ -13,7 +19,7 @@ export default function Component(props: {
 
   function updateState() {
     __state_setPressed(!(props.pressed !== undefined ? props.pressed : __state_pressed));
-    props.pressedChange(!(props.pressed !== undefined ? props.pressed : __state_pressed));
+    props.pressedChange!(!(props.pressed !== undefined ? props.pressed : __state_pressed));
   }
 
   return view(viewModel({

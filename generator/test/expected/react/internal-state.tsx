@@ -4,6 +4,10 @@ function view() { }
 
 import React, { useState } from 'react';
 
+interface Component{
+  _hovered:Boolean
+}
+
 export default function Component(props: {}) {
 
   const [__state__hovered, __state_set_hovered] = useState(false);

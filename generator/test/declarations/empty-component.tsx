@@ -10,7 +10,7 @@ export default class Component {
     @Prop() width: number;
 }
 
-function viewModel1(model: any) { 
+function viewModel1(model: Component) { 
     return {
         height: model.height
     }

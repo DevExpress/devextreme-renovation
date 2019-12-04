@@ -3,6 +3,11 @@ function viewModel() { }
 
 import React from "react";
 
+interface Component {
+    height: number,
+    onClick: (a: number) => null
+}
+
 export default function Component(props: { 
     height: number,
     onClick: (a:number)=>null

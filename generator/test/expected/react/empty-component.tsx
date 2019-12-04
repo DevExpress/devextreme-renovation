@@ -1,5 +1,10 @@
 import React from "react";
 
+interface Component {
+  height: number,
+  width: number
+}
+
 export default function Component(props: {
   height: number,
   width: number
@@ -9,7 +14,7 @@ export default function Component(props: {
   }));
 }
 
-function viewModel1(model: any) {
+function viewModel1(model: Component) {
   return {
     height: model.height
   }

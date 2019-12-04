@@ -4,6 +4,12 @@ function view() { }
 
 import React, { useCallback } from 'react';
 
+interface Component {
+  type?: string,
+  onClick?: () => void,
+  clickHandler: () => void
+}
+
 export function Component(props: {
   type?: string,
   onClick?: () => void

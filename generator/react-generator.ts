@@ -31,7 +31,7 @@ function compileType(type: string = "", questionToken:string="") {
     return type ? `${questionToken}:${type}` : "";
 }
 
-function variableDeclaration(name: string, type: string = "", initializer: Expression, questionToken:string="") {
+function variableDeclaration(name: string, type: string = "", initializer?: Expression, questionToken:string="") {
     const initilizerDeclaration = initializer ? `=${initializer}` : "";
     return `${name}${compileType(type, questionToken)}${initilizerDeclaration}`;
 }
@@ -247,6 +247,10 @@ class Parameter {
         this.questionToken = questionToken;
         this.type = type;
         this.initializer = initializer;
+    }
+
+    typeDeclaration() { 
+        return variableDeclaration(this.name, this.type, undefined, this.questionToken);
     }
 
     declaration() {
@@ -495,7 +499,7 @@ class PropertyAccess extends ExpressionWithExpression {
     }
 
     compileStateChangeRising(state:State[], rightExpressionString:string) {
-        return state.find(s => s.name === this.name) ? `props.${this.name}Change(${rightExpressionString})` : "";
+        return state.find(s => s.name === this.name) ? `props.${this.name}Change!(${rightExpressionString})` : "";
     }
 
     getDependency() { 
@@ -516,7 +520,7 @@ class Method {
     parameters: Parameter[];
     type: string;
     body: Block;
-    constructor(decorators:Decorator[] = [], modifiers:string[], asteriskToken:string, name:string, questionToken:string, typeParameters:any[], parameters:Parameter[], type:string, body:Block) {
+    constructor(decorators:Decorator[] = [], modifiers:string[], asteriskToken:string, name:string, questionToken:string="", typeParameters:any[], parameters:Parameter[], type:string="void", body:Block) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.asteriskToken = asteriskToken;
@@ -528,12 +532,20 @@ class Method {
         this.body = body;
     }
 
+    parametersTypeDeclaration() { 
+        return this.parameters.map(p => p.declaration()).join(",");
+    }
+
+    typeDeclaration() { 
+        return `${this.name}${this.questionToken}:(${this.parameters.map(p => p.typeDeclaration()).join(",")})=>${this.type}`
+    }
+
     declaration(prefix = "", internalState:InternalState[], state:State[], props:Prop[]) {
-        return `${prefix} ${this.name}(${this.parameters.map(p => p.declaration()).join(",")})${this.body.toString(internalState, state, props)}`;
+        return `${prefix} ${this.name}(${this.parametersTypeDeclaration()})${this.body.toString(internalState, state, props)}`;
     }
 
     arrowDeclaration(internalState:InternalState[], state:State[], props:Prop[]) {
-        return `(${this.parameters.map(p => p.declaration()).join(",")})=>${this.body.toString(internalState, state, props)}`
+        return `(${this.parametersTypeDeclaration()})=>${this.body.toString(internalState, state, props)}`
     }
 
     getDependency() { 
@@ -569,6 +581,10 @@ class Prop{
 
     getter() { 
         return getPropName(this.name);
+    }
+
+    getDependecy() { 
+        return [this.getter()];
     }
 
     setter(value:any) { 
@@ -608,6 +624,10 @@ class State extends InternalState{
         const expression = `${propName}!==undefined?${propName}:${getLocalStateName(this.name)}`;
         return expression;
     }
+
+    getDependecy() { 
+        return [getPropName(this.name), getLocalStateName(this.name), getPropName(`${this.name}Change`)]
+    }
     
     setter(value:any) { 
         return super.setter(value);
@@ -634,6 +654,10 @@ class Listener  {
         return this.method.name;
     }
 
+    typeDeclaration() { 
+        return this.method.typeDeclaration();
+    }
+
     defaultDeclaration(internalState: InternalState[], state: State[], props: Prop[]) { 
         const s = state.concat(props).concat(internalState);
         const dependency = Object.keys(this.method.getDependency().reduce((k: any, d) => {
@@ -641,7 +665,7 @@ class Listener  {
                 k[d] = d;
             }
             return k;
-        }, {})).map(d => s.find(s => s.name === d)).filter(d => d).map(p => p!.getter());
+        }, {})).map(d => s.find(s => s.name === d)).filter(d => d).reduce((d:string[], p) => d.concat(p!.getDependecy()), []);
         return `const ${this.name}=useCallback(${this.method.arrowDeclaration(internalState, state, props)}, [${dependency.join(",")}])`;
     }
 }
@@ -773,10 +797,21 @@ class ReactComponent {
         return "";
     }
 
+    compileComponentInterface() { 
+        return `interface ${this.name}{
+            ${this.props.concat(this.internalState).concat(this.state)
+            .map(p => p.typeDeclaration())
+            .concat(this.listeners.map(l => l.typeDeclaration()))
+            .join(",\n")
+        }
+        }`;
+    }
+
     toString() { 
         
         return `
             ${this.getImports()}
+            ${this.compileComponentInterface()}
 
             ${this.modifiers.join(" ")} function ${this.name}(props: {
                     ${this.props
@@ -994,6 +1029,7 @@ export default {
     },
 
     createImportDeclaration(decorators: Decorator[], modifiers:string[]=[], importClause = "", moduleSpecifier="") {
+        importClause = importClause ? `${importClause} from` : "";
         return `import ${importClause} ${moduleSpecifier}`;
     },
 
@@ -1006,7 +1042,16 @@ export default {
     },
 
     createImportClause(name:string, namedBindings:string="") {
-        return `${name?`${name},`:""}{${namedBindings}}`;
+        const result: string[] = [];
+        if (name) { 
+            result.push(name);
+        }
+        if (namedBindings) { 
+            result.push(`{${namedBindings}}`);
+        }
+   
+        return result.join(",");
+        // return `${name?`${name},`:""}{${namedBindings}}`;
     },
 
     createDecorator(expression:Call) {
