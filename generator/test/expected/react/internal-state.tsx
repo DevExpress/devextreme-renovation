@@ -1,19 +1,19 @@
-function viewModel() {}
+function viewModel() { }
 
-function view() {}
+function view() { }
 
 import React, { useState } from 'react';
 
 export default function Component(props: {}) {
-  const __state:any = {};
-  [__state._hovered, __state.set_hovered] = useState(false);
-  
+
+  const [__state__hovered, __state_set_hovered] = useState(false);
+
   function updateState() {
-    __state.set_hovered(!__state._hovered);
+    __state_set_hovered(!__state__hovered);
   }
 
   return view(viewModel({
     ...props,
-    _hovered: __state._hovered;
+    _hovered: __state__hovered;
   }));
 }

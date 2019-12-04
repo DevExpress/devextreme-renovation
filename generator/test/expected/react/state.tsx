@@ -9,17 +9,16 @@ export default function Component(props: {
   defaultPressed?: boolean,
   pressedChange?: (pressed: boolean) => void
 }) {
-  const __state: any = {};
-  [__state.pressed, __state.setPressed] = useState(() => (props.pressed !== undefined ? props.pressed : props.defaultPressed) || undefined);
+  const [__state_pressed, __state_setPressed] = useState(() => (props.pressed !== undefined ? props.pressed : props.defaultPressed) || undefined);
 
   function updateState() {
-    __state.setPressed(!(props.pressed !== undefined ? props.pressed : __state.pressed));
-    props.pressedChange(!(props.pressed !== undefined ? props.pressed : __state.pressed));
+    __state_setPressed(!(props.pressed !== undefined ? props.pressed : __state_pressed));
+    props.pressedChange(!(props.pressed !== undefined ? props.pressed : __state_pressed));
   }
 
   return view(viewModel({
     ...props,
-    pressed: props.pressed !== undefined ? props.pressed : __state.pressed
+    pressed: props.pressed !== undefined ? props.pressed : __state_pressed
   }));
 }
 

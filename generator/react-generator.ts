@@ -41,6 +41,14 @@ function stateGetter(stateName:string, addParen = true) {
     return addParen ? `(${expr})` : expr;
 }
 
+function getLocalStateName(name: string) { 
+    return `__state_${name}`;
+}
+
+function getPropName(name: string) { 
+    return `props.${name}`;
+}
+
 class Expression { 
     getDependency():string[] { 
         return [];
@@ -459,12 +467,12 @@ class PropertyAccess extends ExpressionWithExpression {
         const expressionString = this.expression.toString();
         if (expressionString === SyntaxKind.ThisKeyword &&
             props.findIndex(p => p.name === this.name) >= 0) {
-            return `props.${this.name}`;
+            return getPropName(this.name);
         }
 
         if (expressionString === SyntaxKind.ThisKeyword &&
             (internalState.findIndex(p => p.name === this.name) >= 0)) {
-            return `__state.${this.name}`;
+            return getLocalStateName(this.name);
         }
 
         if (expressionString === SyntaxKind.ThisKeyword) { 
@@ -560,7 +568,7 @@ class Prop{
     }
 
     getter() { 
-        return `props.${this.name}`;
+        return getPropName(this.name);
     }
 
     setter(value:any) { 
@@ -570,11 +578,11 @@ class Prop{
 
 class InternalState extends Prop { 
     defaultDeclaration() { 
-        return `[__state.${this.name}, ${stateSetter(this.name)}] = useState(${this.property.initializer});`;
+        return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(${this.property.initializer});`;
     }
 
     getter() { 
-        return `__state.${this.name}`;
+        return getLocalStateName(this.name);
     }
 
     setter(value:any){ 
@@ -591,11 +599,13 @@ class State extends InternalState{
     }
 
     defaultDeclaration() { 
-        return `[__state.${this.name}, ${stateSetter(this.name)}] = useState(()=>(props.${this.name}!==undefined?props.${this.name}:props.default${capitalizeFirstLetter(this.name)})||${this.property.initializer});`;
+        const propName = getPropName(this.name);
+        return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(()=>(${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(this.name)})||${this.property.initializer});`;
     }
 
     getter() { 
-        const expression = `props.${this.name}!==undefined?props.${this.name}:__state.${this.name}`;
+        const propName = getPropName(this.name);
+        const expression = `${propName}!==undefined?${propName}:${getLocalStateName(this.name)}`;
         return expression;
     }
     
@@ -641,7 +651,7 @@ function capitalizeFirstLetter(string:string) {
 }
 
 function stateSetter(stateName:string) {
-    return `__state.set${capitalizeFirstLetter(stateName)}`
+    return `__state_set${capitalizeFirstLetter(stateName)}`
 }
 
 class ReactComponent { 
@@ -726,7 +736,6 @@ class ReactComponent {
     stateDeclaration() { 
         if (this.state.length || this.internalState.length) { 
             return `
-            const __state:any = {};
             ${this.state.
                     concat(this.internalState)
                     .map(s => s.defaultDeclaration())
