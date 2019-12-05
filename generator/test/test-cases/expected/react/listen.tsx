@@ -5,8 +5,8 @@ function view() { }
 import React, { useCallback } from 'react';
 
 interface Component {
-  onClick: (e) => void,
-  onPointerMove: (a, b, c) => void
+  onClick: (e:any) => void,
+  onPointerMove: (a:any, b:any, c:any) => void
 }
 
 export function Component(props: {}) {

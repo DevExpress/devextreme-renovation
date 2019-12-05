@@ -279,9 +279,9 @@ class Parameter {
     dotDotDotToken: any;
     name: Identifier;
     questionToken: string;
-    type: string;
+    type?: string;
     initializer: any;
-    constructor(decorators: Decorator[], modifiers: string[], dotDotDotToken: any, name: Identifier, questionToken: string = "", type: string, initializer: any) {
+    constructor(decorators: Decorator[], modifiers: string[], dotDotDotToken: any, name: Identifier, questionToken: string = "", type?: string, initializer?: Expression) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.dotDotDotToken = dotDotDotToken;
@@ -292,18 +292,15 @@ class Parameter {
     }
 
     typeDeclaration() {
-        return variableDeclaration(this.name, this.type, undefined, this.questionToken);
+        return variableDeclaration(this.name, this.type || "any", undefined, this.questionToken);
     }
 
     declaration() {
-        const type = this.type ? `${this.questionToken}:${this.type}` : "";
-        const init = this.initializer ? `${this.initializer}` : "";
-
         return variableDeclaration(this.name, this.type, this.initializer, this.questionToken);
     }
 
     toString() {
-        return this.name;
+        return this.name.toString();
     }
 }
 
@@ -1099,7 +1096,7 @@ export default {
         return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body).declaration();
     },
 
-    createParameter(decorators: Decorator[], modifiers: string[], dotDotDotToken: any, name: Identifier, questionToken: any, type: string, initializer: Expression) {
+    createParameter(decorators: Decorator[], modifiers: string[], dotDotDotToken: any, name: Identifier, questionToken?: string, type?: string, initializer?: Expression) {
         return new Parameter(decorators, modifiers, dotDotDotToken, name, questionToken, type, initializer);
     },
 

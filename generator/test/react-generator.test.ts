@@ -21,28 +21,28 @@ function print(node: ts.Node, out?: string[], indent = 0): string[] {
     return out;
 }
 
-function getResult(source:string) { 
+function getResult(source: string) {
     return print(ts.createSourceFile("result", source, ts.ScriptTarget.ES2015, true)).join("\n");
 }
 
-function testGenerator(this: any, componentName:string, generator:any) {
+function testGenerator(this: any, componentName: string, generator: any) {
     const factory = require(`${__dirname}/test-cases/componentFactory/${componentName}`);
     const code = this.code = factory(generator).join("\n");
-    this.expectedCode =  fs.readFileSync(`${__dirname}/test-cases/expected/react/${componentName}.tsx`).toString();
+    this.expectedCode = fs.readFileSync(`${__dirname}/test-cases/expected/react/${componentName}.tsx`).toString();
     assert.equal(getResult(code), getResult(this.expectedCode));
 }
 
 
-mocha.describe("react-generator", function () { 
+mocha.describe("react-generator", function () {
     this.beforeAll(function () {
         compile(`${__dirname}/test-cases/declarations`, `${__dirname}/test-cases/componentFactory`);
-        this.testGenerator = function(componentName:string) { 
+        this.testGenerator = function (componentName: string) {
             testGenerator.call(this, componentName, generator);
         };
     });
 
-    this.afterEach(function() { 
-        if (this.currentTest!.state !== "passed") { 
+    this.afterEach(function () {
+        if (this.currentTest!.state !== "passed") {
             console.log(this.code); // TODO: diff with expected
         }
         this.code = null;
@@ -73,18 +73,18 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it("simple-block", function() {
-        this.testGenerator(this.test!.title);  
+    mocha.it("simple-block", function () {
+        this.testGenerator(this.test!.title);
     });
 
-    mocha.it("props", function() {
-        this.testGenerator(this.test!.title);  
+    mocha.it("props", function () {
+        this.testGenerator(this.test!.title);
     });
 
     mocha.it("internal-state", function () {
         this.testGenerator(this.test!.title);
     });
-   
+
     mocha.it("state", function () {
         this.testGenerator(this.test!.title);
     });
@@ -103,22 +103,22 @@ mocha.describe("react-generator", function () {
 
     mocha.it("jsx-events", function () {
         this.testGenerator(this.test!.title);
-    }); 
+    });
 });
 
 mocha.describe("react-generator: expressions", function () {
-    mocha.it("Indentifier", function () { 
+    mocha.it("Indentifier", function () {
         const identifier = generator.createIdentifier("a");
         assert.equal(identifier, 'a');
         assert.deepEqual(identifier.getDependency(), []);
     });
-    mocha.it("StringLiteral", function () { 
+    mocha.it("StringLiteral", function () {
         assert.equal(generator.createStringLiteral("a"), '"a"');
     });
-    mocha.it("NumericLiteral", function () { 
+    mocha.it("NumericLiteral", function () {
         assert.equal(generator.createNumericLiteral("10"), 10);
     });
-    mocha.it("ArrayTypeNode", function () { 
+    mocha.it("ArrayTypeNode", function () {
         assert.equal(generator.createArrayTypeNode(generator.SyntaxKind.NumberKeyword), "number[]");
     });
     mocha.it("VaraibleDeclaration", function () {
@@ -185,11 +185,11 @@ mocha.describe("react-generator: expressions", function () {
         assert.equal(objectLiteral.toString(), '{a,\nk:a,\n...obj}');
     });
 
-    mocha.it("Paren", function () { 
+    mocha.it("Paren", function () {
         assert.equal(generator.createParen(generator.createIdentifier("a")).toString(), "(a)");
     });
 
-    mocha.it("Block", function () { 
+    mocha.it("Block", function () {
         assert.equal(generator.createBlock([], true).toString().replace(/\s+/g, ""), "{}");
         assert.equal(generator.createBlock([
             generator.createVariableDeclarationList(
@@ -202,7 +202,7 @@ mocha.describe("react-generator: expressions", function () {
         ], true).toString().replace(/\s+/g, ""), '{consta="str",b=10;}');
     });
 
-    mocha.it("Call", function () { 
+    mocha.it("Call", function () {
         assert.equal(generator.createCall(
             generator.createIdentifier("a"),
             undefined,
@@ -210,18 +210,18 @@ mocha.describe("react-generator: expressions", function () {
         ).toString(), 'a("a",10)');
     });
 
-    mocha.it("PropertyAccess", function () { 
+    mocha.it("PropertyAccess", function () {
         assert.equal(generator.createPropertyAccess(
             generator.createThis(),
             generator.createIdentifier("field")
         ).toString(), "this.field");
     });
 
-    mocha.it("Binary", function () { 
+    mocha.it("Binary", function () {
         const expression = generator.createPropertyAccess(
             generator.createThis(),
             generator.createIdentifier("field"));
-        
+
         assert.equal(generator.createBinary(
             expression,
             generator.SyntaxKind.EqualsToken,
@@ -229,11 +229,11 @@ mocha.describe("react-generator: expressions", function () {
         ).toString(), "this.field=this.field");
     });
 
-    mocha.it("ReturnStatement", function () { 
+    mocha.it("ReturnStatement", function () {
         assert.equal(generator.createReturn(generator.createNumericLiteral("10")).toString(), "return 10;")
     });
 
-    mocha.it("ElementAccess", function () { 
+    mocha.it("ElementAccess", function () {
         assert.equal(generator.createElementAccess(
             generator.createPropertyAccess(
                 generator.createThis(),
@@ -242,54 +242,117 @@ mocha.describe("react-generator: expressions", function () {
         ).toString(), "this.field[10]")
     });
 
-    mocha.it("NonNullExpression", function () { 
+    mocha.it("NonNullExpression", function () {
         const expression = generator.createPropertyAccess(
             generator.createThis(),
             generator.createIdentifier("field"));
         assert.equal(generator.createNonNullExpression(expression).toString(), "this.field!")
     });
 
-    mocha.it("Prefix", function () { 
+    mocha.it("Prefix", function () {
         const expression = generator.createPropertyAccess(
             generator.createThis(),
             generator.createIdentifier("field"));
         assert.equal(generator.createPrefix(generator.SyntaxKind.ExclamationToken, expression).toString(), "!this.field")
     });
 
-    mocha.it("If w/o else statement", function () { 
+    mocha.it("If w/o else statement", function () {
         const expression = generator.createPropertyAccess(
             generator.createThis(),
             generator.createIdentifier("field"));
         const condition = generator.createTrue();
-        
+
         assert.equal(getResult(generator.createIf(condition, expression).toString()), getResult("if(true)this.field"));
     });
 
-    mocha.it("If w else statement", function () { 
+    mocha.it("If w else statement", function () {
         const expression = generator.createPropertyAccess(
             generator.createThis(),
             generator.createIdentifier("field"));
         const condition = generator.createTrue();
-        
+
         assert.equal(getResult(generator.createIf(condition, expression, expression).toString()), getResult("if(true) this.field else this.field"));
     });
 
+    mocha.it("Parameter w type and initializer", function () {
+        const parameter = generator.createParameter(
+            [],
+            [generator.SyntaxKind.ExportKeyword],
+            undefined,
+            generator.createIdentifier("a"),
+            generator.SyntaxKind.QuestionToken,
+            "string",
+            undefined
+        );
+
+        assert.equal(parameter.toString(), "a");
+        assert.equal(parameter.declaration(), "a?:string");
+        assert.equal(parameter.typeDeclaration(), "a?:string");
+    });
+
+    mocha.it("Simple Parameter", function () {
+        const parameter = generator.createParameter(
+            [],
+            [],
+            undefined,
+            generator.createIdentifier("a"),
+            undefined,
+            undefined,
+            undefined
+        );
+
+        assert.equal(parameter.toString(), "a");
+        assert.equal(parameter.declaration(), "a", "declaration");
+        assert.equal(parameter.typeDeclaration(), "a:any", "typeDeclaration");
+    });
+
+    mocha.it("Parameter w type", function () {
+        const parameter = generator.createParameter(
+            [],
+            [generator.SyntaxKind.ExportKeyword],
+            undefined,
+            generator.createIdentifier("a"),
+            generator.SyntaxKind.QuestionToken,
+            "string",
+            undefined
+        );
+
+        assert.equal(parameter.toString(), "a");
+        assert.equal(parameter.declaration(), "a?:string");
+        assert.equal(parameter.typeDeclaration(), "a?:string");
+    });
+
+    mocha.it("Parameter w initializer", function () {
+        const parameter = generator.createParameter(
+            [],
+            [generator.SyntaxKind.ExportKeyword],
+            undefined,
+            generator.createIdentifier("a"),
+            generator.SyntaxKind.QuestionToken,
+            "string",
+            generator.createStringLiteral("str")
+        );
+
+        assert.equal(parameter.toString(), "a");
+        assert.equal(parameter.declaration(), 'a?:string="str"');
+        assert.equal(parameter.typeDeclaration(), "a?:string");
+    });
 });
- 
-mocha.describe("common", function () { 
-    mocha.it.skip("SyntaxKind", function () { 
+
+mocha.describe("common", function () {
+    mocha.it.skip("SyntaxKind", function () {
         const expected = Object.keys(ts.SyntaxKind)
             .map((key) => ts.SyntaxKind[Number(key)])
             .filter(value => typeof value === 'string') as string[]
-        
+
         assert.deepEqual(Object.keys(generator.SyntaxKind), expected);
     });
 
-    mocha.it.skip("NodeFlags", function () { 
+    mocha.it.skip("NodeFlags", function () {
         const expected = Object.keys(ts.NodeFlags)
             .map((key) => ts.SyntaxKind[Number(key)])
             .filter(value => typeof value === 'string') as string[]
-        
+
         assert.deepEqual(Object.keys(generator.NodeFlags), expected);
     });
 });
