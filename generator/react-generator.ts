@@ -1157,7 +1157,7 @@ export default {
         return typeName;
     },
 
-    createIf(expression: Expression, thenStatement: Expression, elseStatement: Expression) {
+    createIf(expression: Expression, thenStatement: Expression, elseStatement?: Expression) {
         return new If(expression, thenStatement, elseStatement);
     },
 

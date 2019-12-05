@@ -256,4 +256,40 @@ mocha.describe("react-generator: expressions", function () {
         assert.equal(generator.createPrefix(generator.SyntaxKind.ExclamationToken, expression).toString(), "!this.field")
     });
 
- });
+    mocha.it("If w/o else statement", function () { 
+        const expression = generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("field"));
+        const condition = generator.createTrue();
+        
+        assert.equal(getResult(generator.createIf(condition, expression).toString()), getResult("if(true)this.field"));
+    });
+
+    mocha.it("If w else statement", function () { 
+        const expression = generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("field"));
+        const condition = generator.createTrue();
+        
+        assert.equal(getResult(generator.createIf(condition, expression, expression).toString()), getResult("if(true) this.field else this.field"));
+    });
+
+});
+ 
+mocha.describe("common", function () { 
+    mocha.it.skip("SyntaxKind", function () { 
+        const expected = Object.keys(ts.SyntaxKind)
+            .map((key) => ts.SyntaxKind[Number(key)])
+            .filter(value => typeof value === 'string') as string[]
+        
+        assert.deepEqual(Object.keys(generator.SyntaxKind), expected);
+    });
+
+    mocha.it.skip("NodeFlags", function () { 
+        const expected = Object.keys(ts.NodeFlags)
+            .map((key) => ts.SyntaxKind[Number(key)])
+            .filter(value => typeof value === 'string') as string[]
+        
+        assert.deepEqual(Object.keys(generator.NodeFlags), expected);
+    });
+});
