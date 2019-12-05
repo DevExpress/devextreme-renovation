@@ -5,13 +5,17 @@ const { spawn } = require('child_process');
 
 var tsProject = ts.createProject('tsconfig.json');
 
+gulp.task("copy-test-cases", function copyTestCases() { 
+    return gulp.src(['test/test-cases/**/*']).pipe(gulp.dest('build/test/test-cases'));
+});
+
 gulp.task('compile', function compile() {
     return tsProject.src()
         .pipe(sourcemaps.init())
         .pipe(tsProject())
         
         .pipe(sourcemaps.write('.', { includeContent: false, sourceRoot: './' } ))
-        .pipe(gulp.dest("./"));
+        .pipe(gulp.dest(tsProject.options.outDir));
 });
 
 gulp.task("tests", function(done) {
@@ -31,6 +35,8 @@ gulp.task("tests", function(done) {
         done();
     });
 });
+
+gulp.task("build", gulp.parallel(["copy-test-cases", "compile"]));
 
 gulp.task('watch', function watch() {
     return gulp.watch(["./**/*.ts", "!./node_modules"], gulp.series("compile", "tests"));

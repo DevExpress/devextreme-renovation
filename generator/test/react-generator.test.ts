@@ -26,15 +26,16 @@ function getResult(source:string) {
 }
 
 function testGenerator(this: any, componentName:string, generator:any) {
-    const factory = require(`./componentFactory/${componentName}`);
+    const factory = require(`${__dirname}/test-cases/componentFactory/${componentName}`);
     const code = this.code = factory(generator).join("\n");
-    this.expectedCode =  fs.readFileSync(`${__dirname}/expected/react/${componentName}.tsx`).toString();
+    this.expectedCode =  fs.readFileSync(`${__dirname}/test-cases/expected/react/${componentName}.tsx`).toString();
     assert.equal(getResult(code), getResult(this.expectedCode));
 }
 
+
 mocha.describe("react-generator", function () { 
     this.beforeAll(function () {
-        compile(`${__dirname}/declarations`, `${__dirname}/componentFactory`);
+        compile(`${__dirname}/test-cases/declarations`, `${__dirname}/test-cases/componentFactory`);
         this.testGenerator = function(componentName:string) { 
             testGenerator.call(this, componentName, generator);
         };

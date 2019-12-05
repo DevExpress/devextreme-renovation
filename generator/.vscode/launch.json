@@ -15,7 +15,7 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceFolder}/test"
+                "${workspaceFolder}/build/test"
             ],
             // "preLaunchTask": "tsc: build - tsconfig.json",
             // "outFiles": ["${workspaceFolder}/out/**/*.js"],

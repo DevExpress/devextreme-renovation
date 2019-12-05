@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./test --timeout 30000",
+    "test": "mocha ./build/test --timeout 30000",
     "tsc": "tsc",
-    "build": "npm run ts",
-    "dev": "gulp watch"
+    "build": "gulp build",
+    "dev": "gulp watch",
+    "gulp": "gulp"
   },
   "author": "",
   "license": "ISC",
