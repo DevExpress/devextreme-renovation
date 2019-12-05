@@ -103,6 +103,57 @@ mocha.describe("react-generator", function () {
 
     mocha.it("jsx-events", function () {
         this.testGenerator(this.test!.title);
-    });
-    
+    }); 
 });
+
+mocha.describe("react-generator: expressions", function () {
+    mocha.it("Indentifier", function () { 
+        const identifier = generator.createIdentifier("a");
+        assert.equal(identifier, 'a');
+        assert.deepEqual(identifier.getDependency(), []);
+    });
+    mocha.it("StringLiteral", function () { 
+        assert.equal(generator.createStringLiteral("a"), '"a"');
+    });
+    mocha.it("NumericLiteral", function () { 
+        assert.equal(generator.createNumericLiteral("10"), 10);
+    });
+    mocha.it("VaraibleDeclaration", function () {
+        const identifier = generator.createIdentifier("a");
+        assert.equal(generator.createVariableDeclaration(identifier, undefined, undefined).toString(), 'a', "w/o initializer");
+        assert.equal(generator.createVariableDeclaration(identifier, undefined, generator.createStringLiteral("str")).toString(), 'a="str"', "w initializer");
+        assert.equal(generator.createVariableDeclaration(identifier, "string", undefined).toString(), 'a:string', "w type");
+        assert.equal(generator.createVariableDeclaration(identifier, "string", generator.createStringLiteral("str")).toString(), 'a:string="str"', "w type and initializer");
+    });
+
+    mocha.it("VaraibleDeclarationList", function () {
+        assert.equal(generator.createVariableDeclarationList(
+            [
+                generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str")),
+                generator.createVariableDeclaration(generator.createIdentifier("b"), undefined, generator.createNumericLiteral("10"))
+            ],
+            generator.NodeFlags.Const
+        ).toString(), 'const a="str",\nb=10;');
+    });
+
+    mocha.it("VaraibleDeclarationList", function () {
+        const identifier = generator.createIdentifier("a");
+        const declarationList = generator.createVariableDeclarationList(
+            [generator.createVariableDeclaration(identifier, undefined, generator.createStringLiteral("str"))],
+            generator.NodeFlags.Const
+        );
+        assert.equal(
+            generator.createVariableStatement([
+                generator.SyntaxKind.DefaultKeyword,
+                generator.SyntaxKind.ExportKeyword
+            ], declarationList).toString(), 'default export const a="str";');
+    });
+
+    mocha.it("ArrayLiteral", function () {
+        assert.equal(
+            generator.createArrayLiteral([
+                generator.createNumericLiteral("1"),
+                generator.createIdentifier("a")
+            ], true).toString(), '[1,a]');
+    });
+ });

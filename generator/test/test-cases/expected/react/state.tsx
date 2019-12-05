@@ -28,4 +28,6 @@ export default function Component(props: {
   }));
 }
 
-
+Component.defaultProps = {
+  pressedChange: () => { }
+}
