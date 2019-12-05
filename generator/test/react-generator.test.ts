@@ -118,6 +118,9 @@ mocha.describe("react-generator: expressions", function () {
     mocha.it("NumericLiteral", function () { 
         assert.equal(generator.createNumericLiteral("10"), 10);
     });
+    mocha.it("ArrayTypeNode", function () { 
+        assert.equal(generator.createArrayTypeNode(generator.SyntaxKind.NumberKeyword), "number[]");
+    });
     mocha.it("VaraibleDeclaration", function () {
         const identifier = generator.createIdentifier("a");
         assert.equal(generator.createVariableDeclaration(identifier, undefined, undefined).toString(), 'a', "w/o initializer");
@@ -156,4 +159,101 @@ mocha.describe("react-generator: expressions", function () {
                 generator.createIdentifier("a")
             ], true).toString(), '[1,a]');
     });
+
+    mocha.it("PropertyAssignment", function () {
+        assert.equal(generator.createPropertyAssignment("k", generator.createIdentifier("a")).toString(), 'k:a');
+    });
+
+    mocha.it("ShorthandPropertyAssignment", function () {
+        const propertyAssignment = generator.createShorthandPropertyAssignment(generator.createIdentifier("k"), undefined);
+        assert.equal(propertyAssignment.toString(), 'k');
+        assert.equal(propertyAssignment.key, "k");
+        assert.equal(propertyAssignment.value, "k");
+    });
+
+    mocha.it("SpreadAssignement", function () {
+        const propertyAssignment = generator.createSpreadAssignment(generator.createIdentifier("obj"));
+        assert.equal(propertyAssignment.toString(), '...obj');
+    });
+
+    mocha.it("ObjectLiteral", function () {
+        const objectLiteral = generator.createObjectLiteral([
+            generator.createShorthandPropertyAssignment(generator.createIdentifier("a"), undefined),
+            generator.createPropertyAssignment("k", generator.createIdentifier("a")),
+            generator.createSpreadAssignment(generator.createIdentifier("obj"))
+        ], true);
+        assert.equal(objectLiteral.toString(), '{a,\nk:a,\n...obj}');
+    });
+
+    mocha.it("Paren", function () { 
+        assert.equal(generator.createParen(generator.createIdentifier("a")).toString(), "(a)");
+    });
+
+    mocha.it("Block", function () { 
+        assert.equal(generator.createBlock([], true).toString().replace(/\s+/g, ""), "{}");
+        assert.equal(generator.createBlock([
+            generator.createVariableDeclarationList(
+                [
+                    generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str")),
+                    generator.createVariableDeclaration(generator.createIdentifier("b"), undefined, generator.createNumericLiteral("10"))
+                ],
+                generator.NodeFlags.Const
+            )
+        ], true).toString().replace(/\s+/g, ""), '{consta="str",b=10;}');
+    });
+
+    mocha.it("Call", function () { 
+        assert.equal(generator.createCall(
+            generator.createIdentifier("a"),
+            undefined,
+            [generator.createStringLiteral("a"), generator.createNumericLiteral("10")]
+        ).toString(), 'a("a",10)');
+    });
+
+    mocha.it("PropertyAccess", function () { 
+        assert.equal(generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("field")
+        ).toString(), "this.field");
+    });
+
+    mocha.it("Binary", function () { 
+        const expression = generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("field"));
+        
+        assert.equal(generator.createBinary(
+            expression,
+            generator.SyntaxKind.EqualsToken,
+            expression
+        ).toString(), "this.field=this.field");
+    });
+
+    mocha.it("ReturnStatement", function () { 
+        assert.equal(generator.createReturn(generator.createNumericLiteral("10")).toString(), "return 10;")
+    });
+
+    mocha.it("ElementAccess", function () { 
+        assert.equal(generator.createElementAccess(
+            generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("field")),
+            generator.createNumericLiteral("10")
+        ).toString(), "this.field[10]")
+    });
+
+    mocha.it("NonNullExpression", function () { 
+        const expression = generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("field"));
+        assert.equal(generator.createNonNullExpression(expression).toString(), "this.field!")
+    });
+
+    mocha.it("Prefix", function () { 
+        const expression = generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("field"));
+        assert.equal(generator.createPrefix(generator.SyntaxKind.ExclamationToken, expression).toString(), "!this.field")
+    });
+
  });
