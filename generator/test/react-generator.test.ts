@@ -139,7 +139,7 @@ mocha.describe("react-generator: expressions", function () {
         ).toString(), 'const a="str",\nb=10;');
     });
 
-    mocha.it("VaraibleDeclarationList", function () {
+    mocha.it("VariableStatement", function () {
         const identifier = generator.createIdentifier("a");
         const declarationList = generator.createVariableDeclarationList(
             [generator.createVariableDeclaration(identifier, undefined, generator.createStringLiteral("str"))],
