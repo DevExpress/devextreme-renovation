@@ -29,7 +29,7 @@ const ButtonGroup = (props: {
       }
     } else {
       if(curSelectedItems.indexOf(currentButton) !== -1) {
-        newValue = curSelectedItems.filter(item => item !== currentButton);
+        newValue = curSelectedItems.filter((item: string) => item !== currentButton);
       } else {
         newValue = curSelectedItems.concat(currentButton);
       }

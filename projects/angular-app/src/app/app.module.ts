@@ -4,6 +4,7 @@ import { DxButtonModule } from "./DxButton";
 import { DxToggleButtonModule } from "./DxToggleButton";
 import { DxButtonGroupModule } from "./DxButtonGroup"
 import { DxDrawerModule } from "./DxDrawer"
+import { DxListModule } from "./DxList"
 
 import { AppComponent } from './app.component';
 
@@ -16,7 +17,8 @@ import { AppComponent } from './app.component';
     DxButtonModule,
     DxToggleButtonModule,
     DxButtonGroupModule,
-    DxDrawerModule
+    DxDrawerModule,
+    DxListModule
   ],
   providers: [],
   bootstrap: [AppComponent]

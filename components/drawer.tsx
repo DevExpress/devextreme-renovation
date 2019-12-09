@@ -19,11 +19,6 @@ export default class Drawer {
   @Listen()
   onClickHandler(e: any) {
     this.opened = false;
-
-    const opened = this.opened;
-    
-
-    this.opened = opened;
   }
 }
 

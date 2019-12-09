@@ -14,9 +14,8 @@ const Drawer = (props: { 
   const [opened, setOpened] = useState(() => (props.opened !== undefined) ? props.opened : props.defaultOpened);
 
   const onClickHandler = useCallback(() => {
-    const newOpened = !(props.opened !== undefined ? props.opened : opened);
-    setOpened(newOpened);
-    props.openedChange!(newOpened);
+    setOpened(false);
+    props.openedChange!(false);
   }, [opened, props.opened, props.openedChange]);
 
   return view(viewModel({

@@ -36,7 +36,7 @@ export default class Button {
     this._active = true;
   }
 
-  @Listen('pointerup', { target: 'document' })
+  @Listen('pointerup', { target: document })
   onPointerUp() {
     this._active = false;
   }

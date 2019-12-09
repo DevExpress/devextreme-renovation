@@ -1,5 +1,5 @@
 <div>
-  <div class="buttons">
+  <div class="demo-case buttons">
     <div>
       <div class="buttons-column">
         <div class="column-header">
@@ -70,10 +70,10 @@
       </div>
     </div>
   </div>
-  <div>
+  <div class="demo-case">
     Last clicked button - {{lastClickedButton}}
   </div>
-  <div class="buttons">
+  <div class="demo-case buttons">
     <div>
       <div class="buttons-column">
         <div class="column-header">
@@ -113,7 +113,7 @@
       </div>
     </div>
   </div>
-  <div class="buttonGroups">
+  <div class="demo-case buttonGroups">
     <dx-button-group [items]="fontStyles" [(selectedItems)]="selectedItems" selectionMode="multiple"
       stylingMode="outlined" keyExpr="style"></dx-button-group>
     <dx-button-group [items]="fontStyles" selectionMode="multiple" stylingMode="contained"
@@ -121,7 +121,7 @@
     <dx-button-group [items]="fontStyles" selectionMode="single" stylingMode="text" [selectedItems]="['bold', 'strike']"
       keyExpr="style"></dx-button-group>
   </div>
-  <div class="drawer">
+  <div class="demo-case drawer">
     <div class="drawer-toolbar">
       <dx-button [text]="drawerOpened ? 'Close the drawer!' : 'Open the drawer!'" type="normal" stylingMode="contained"
         (onClick)="toggleDrawer($event)"></dx-button>
@@ -136,7 +136,6 @@
         <dx-button width="100%" text="Push me!" stylingMode="text" (onClick)="toggleDrawer(false)"></dx-button>
       </div>
 
-
       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
         magna aliqua. Penatibus et magnis dis parturient. Eget dolor morbi non arcu risus. Tristique magna sit amet
         purus gravida quis blandit. Auctor urna nunc id cursus metus aliquam eleifend mi in. Tellus orci ac auctor augue
@@ -149,5 +148,49 @@
         amet dictum sit amet justo donec enim. Vestibulum rhoncus est pellentesque elit ullamcorper. Id aliquet risus
         feugiat in ante metus dictum at.</p>
     </dx-drawer>
+  </div>
+  <div class="demo-case lists">
+    <div>
+      <div class="lists-column">
+        <dx-list
+          [items]="taskList"
+          [(selectedItems)]="selectedListItems"
+          width="400px"
+          height="300px"
+        ></dx-list>
+      </div>
+      <div class="lists-column">
+        <dx-list
+          [items]="taskList"
+          [(selectedItems)]="selectedListItems"
+          width="400px"
+          height="300px"
+        ></dx-list>
+      </div>
+      <div class="lists-column">
+        <!-- itemRender={productRender} -->
+        <dx-list
+          [items]="products"
+          [(selectedItems)]="selectedListItems"
+          [itemRender]="productRenderTemplate"
+          keyExpr="ID"
+          displayExpr="Name"
+          width="400px"
+          height="300px"
+        >
+          <ng-template #productRenderTemplate let-item="item">
+            <div>
+              <div class="product">
+                <img [src]="'https://js.devexpress.com/Demos/WidgetsGallery/JSDemos/'+item.ImageSrc"/>
+                <!-- <img [src]="item.ImageSrc"/> -->
+                <div>{{ item.Name }}</div>
+                <div class="price">${{ item.Price }}</div>
+              </div>
+            </div>
+          </ng-template>
+        </dx-list>
+
+      </div>
+    </div>
   </div>
 </div>

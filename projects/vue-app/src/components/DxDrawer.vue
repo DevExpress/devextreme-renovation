@@ -38,14 +38,14 @@ export default {
           style={viewModel.style}>
           <div class={viewModel.drawerCSS}>
             {
-              this.$slots.drawer
+              this.$scopedSlots.drawer()
             }
           </div>
           <div
             class="dx-drawer-content"
             on-click={this.onClickHandler}>
             {
-              this.$slots.default
+              this.$scopedSlots.default()
             }
           </div>
         </div>
