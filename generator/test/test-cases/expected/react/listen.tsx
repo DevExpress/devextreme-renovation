@@ -2,13 +2,19 @@ function viewModel() { }
 
 function view() { }
 
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 
-export function Component({ }) {
+interface Component {
+  onClick: (e:any) => void,
+  onPointerMove: (a:any, b:any, c:any) => void
+}
+
+export function Component(props: {}) {
   const onClick = useCallback((e) => { }, []);
   const onPointerMove = useCallback((a = "a", b = 0, c = true) => { }, []);
 
   return view(viewModel({
+    ...props,
     onClick,
     onPointerMove
   }));

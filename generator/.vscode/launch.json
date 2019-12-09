@@ -4,7 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        { 
+        {
             "type": "node",
             "request": "launch",
             "name": "Mocha Tests",
@@ -15,9 +15,14 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceFolder}/test"
+                "${workspaceFolder}/build/test"
             ],
-            "internalConsoleOptions": "openOnSessionStart"
+            // "preLaunchTask": "tsc: build - tsconfig.json",
+            // "outFiles": ["${workspaceFolder}/out/**/*.js"],
+            "internalConsoleOptions": "openOnSessionStart",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
         }
     ]
 }

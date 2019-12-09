@@ -8,7 +8,7 @@ import './button_group.css'
   view: viewFunction
 })
 
-export class ButtonGroup {
+export default class ButtonGroup {
   @Prop() height?: string;
   @Prop() hint?: string;
   @Prop() items?: any[] = [];

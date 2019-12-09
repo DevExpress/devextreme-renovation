@@ -8,7 +8,7 @@ function viewModel() { }
 })
 export default class Component {
     @Prop() height: number = 10;
-    @Event() onClick: () => null = () => null;
+    @Event() onClick: (a:number) => null = () => null;
 
     getHeight() { 
         this.onClick();

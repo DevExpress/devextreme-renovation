@@ -2,9 +2,13 @@ function viewModel() { }
 
 function view() { }
 
-import { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
-export function Component({ }) {
+interface Component {
+  onPointerUp: () => void,
+  scrollHandler: () => void
+}
+export function Component(props: {}) {
   const onPointerUp = useCallback(() => { }, []);
   const scrollHandler = useCallback(() => { }, []);
   useEffect(() => {
@@ -17,6 +21,7 @@ export function Component({ }) {
   });
 
   return view(viewModel({
+    ...props,
     onPointerUp,
     scrollHandler
   }));

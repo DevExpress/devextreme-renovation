@@ -8,7 +8,7 @@ function view() {}
     viewModel,
 })
 export default class Component {
-    @State() pressed: Boolean
+    @State() pressed?: boolean
     
     updateState() {
         this.pressed = !this.pressed;
