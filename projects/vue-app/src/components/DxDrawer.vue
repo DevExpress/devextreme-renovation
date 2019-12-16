@@ -5,16 +5,21 @@ export default {
   props: {
     height: String,
     hint: String,
-    opened: Boolean,
+    opened: {
+      type: Boolean,
+      default: undefined
+    },
     width: String
   },
   data() {
-    return {};
+    return {
+      opened_state: this.opened
+    };
   },
   methods: {
     onClickHandler() {
-      this.opened = false;
-      this.$emit("opened-change", this.opened);
+      this.opened_state = false;
+      this.$emit("opened-change", this.opened_state);
     },
 
     viewModel(model) {
@@ -57,7 +62,7 @@ export default {
       this.viewModel({
         height: this.height,
         hint: this.hint,
-        opened: this.opened,
+        opened: this.opened !== undefined ? this.opened : this.opened_state,
         width: this.width
       })
     );

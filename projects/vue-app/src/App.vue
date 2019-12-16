@@ -142,8 +142,7 @@
           <div class="column-header">Normal {{toggle ? 'ON' : 'OFF'}}</div>
           <div>
             <dx-toggle-button
-              :pressed="toggle"
-              @pressed-change="toggleChanged"
+              
               width="120px"
               text="Outlined"
               hint="Outlined"
@@ -216,6 +215,12 @@
       <dx-button-group
         :items="fontStyles"
         :selected-items="['bold', 'strike']"
+        selection-mode="single"
+        styling-mode="text"
+        key-expr="style"
+      />
+      <dx-button-group
+        :items="fontStyles"
         selection-mode="single"
         styling-mode="text"
         key-expr="style"

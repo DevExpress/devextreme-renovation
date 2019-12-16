@@ -13,47 +13,36 @@ export default {
     selectionMode: String,
     stylingMode: String,
     width: String,
-    selectedItems: Array
+    selectedItems: {
+      type: Array,
+      default: undefined
+    }
   },
   data() {
     return {
-      // state: {
-      //   selectedItems: this.$options.propsData.selectedItems
-      // }
+      selectedItems_state: this.selectedItems || []
     };
   },
-  // created() {
-  //   Object.defineProperty(this, "s_selectedItems", {
-  //     get: function() {
-  //       return (this.$options.propsData.selectedItems !== undefined
-  //         ? this.$options.propsData.selectedItems
-  //         : this.state.selectedItems) || [];
-  //     },
-  //     set: function(selectedItems) {
-  //       this.state.selectedItems = selectedItems;
-  //       this.$emit("selected-items-change", selectedItems);
-  //     }
-  //   });
-  // },
   methods: {
     onClickHandler(index) {
-      const currentButton = this.items[index][this.keyExpr];
-      if (this.selectionMode === "single") {
-        if (this.selectedItems[0] === currentButton) {
-          this.selectedItems = [];
-        } else {
-          this.selectedItems = [currentButton];
+      let curSelectedItems = (this.selectedItems !== undefined ? this.selectedItems : this.selectedItems_state);
+
+      const currentButton = this.items[index][this.keyExpr]; 
+      let newValue = [];
+
+      if(this.selectionMode === "single") {
+        if(curSelectedItems[0] !== currentButton) {
+          newValue = [currentButton];
         }
       } else {
-        if (this.selectedItems.indexOf(currentButton) !== -1) {
-          this.selectedItems = this.selectedItems.filter(
-            item => item !== currentButton
-          );
+        if(curSelectedItems.indexOf(currentButton) !== -1) {
+          newValue = curSelectedItems.filter(item => item !== currentButton);
         } else {
-          this.selectedItems = this.selectedItems.concat(currentButton);
+          newValue = curSelectedItems.concat(currentButton);
         }
       }
-      this.$emit("selected-items-change", this.selectedItems);
+      this.selectedItems_state = newValue;
+      this.$emit("selected-items-change", this.selectedItems_state);
     },
 
     viewModel(model) {
@@ -92,7 +81,7 @@ export default {
         items: this.items,
         keyExpr: this.keyExpr,
         selectionMode: this.selectionMode,
-        selectedItems: this.selectedItems
+        selectedItems: this.selectedItems !== undefined ? this.selectedItems : this.selectedItems_state
       })
     );
   }

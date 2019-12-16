@@ -12,15 +12,21 @@ export default {
     text: String,
     type: String,
     width: String,
-    pressed: Boolean
+    pressed: {
+      type: Boolean,
+      default: undefined
+    }
   },
   data() {
-    return {};
+    return {
+      pressed_state: this.pressed || false
+    };
   },
   methods: {
     onClickHandler() {
-      this.pressed = !this.pressed;
-      this.$emit("pressed-change", this.pressed);
+      const newPressed = !(this.pressed !== undefined ? this.pressed : this.pressed_state);
+      this.pressed_state = newPressed;
+      this.$emit("pressed-change", this.pressed_state);
     },
 
     viewModel(model) {
@@ -47,7 +53,7 @@ export default {
       this.viewModel({
         height: this.height,
         hint: this.hint,
-        pressed: this.pressed,
+        pressed: this.pressed !== undefined ? this.pressed : this.pressed_state,
         stylingMode: this.stylingMode,
         text: this.text,
         type: this.type,

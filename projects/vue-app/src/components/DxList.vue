@@ -18,11 +18,15 @@ export default {
       type: String,
       default: () => "value"
     },
-    selectedItems: Array,
+    selectedItems: {
+      type: Array,
+      default: undefined
+    },
     width: String
   },
   data() {
     return {
+      selectedItems_state: this.selectedItems || [],
       hoveredItemKey: ""
     };
   },
@@ -32,16 +36,18 @@ export default {
     },
 
     selectHandler(key) {
-      const index = this.selectedItems.findIndex(item => item[this.keyExpr] === key);
+      const curSelectedItems = (this.selectedItems !== undefined ? this.selectedItems : this.selectedItems_state);
+    
+      const index = curSelectedItems.findIndex(item => item[this.keyExpr] === key);
       let newValue = [];
       if(index >= 0) {
-        newValue = this.selectedItems.filter(item => item[this.keyExpr] !== key);
+        newValue = curSelectedItems.filter(item => item[this.keyExpr] !== key);
       } else {
-        newValue = this.selectedItems.concat(this.items.find(item => item[this.keyExpr] === key));
+        newValue = curSelectedItems.concat(this.items.find(item => item[this.keyExpr] === key));
       }
       
-      this.selectedItems = newValue;
-      this.$emit("selected-items-change", this.selectedItems);
+      this.selectedItems_state = newValue;
+      this.$emit("selected-items-change", this.selectedItems_state);
     },
 
     viewModel(model) {
@@ -116,7 +122,7 @@ export default {
         items: this.items,
         keyExpr: this.keyExpr,
         displayExpr: this.displayExpr,
-        selectedItems: this.selectedItems,
+        selectedItems: this.selectedItems !== undefined ? this.selectedItems : this.selectedItems_state,
         hoveredItemKey: this.hoveredItemKey
       })
     );
