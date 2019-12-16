@@ -289,10 +289,17 @@
     <div class="demo-case lists">
       <div>
         <div class="lists-column">
+          <dx-button
+            text="Export"
+            type="normal"
+            styling-mode="contained"
+            @on-click="$refs.list_ref.export()"
+          />
           <dx-list
             :items="taskList"
             :selected-items="selectedListItems"
             @selected-items-change="setSelectedListItems"
+            ref="list_ref"
             width="400px"
             height="300px"
           ></dx-list>

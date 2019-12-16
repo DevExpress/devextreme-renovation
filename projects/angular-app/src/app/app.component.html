@@ -152,7 +152,14 @@
   <div class="demo-case lists">
     <div>
       <div class="lists-column">
+        <dx-button
+          text="Export"
+          type="normal"
+          stylingMode="contained"
+          (onClick)="listRef.export()"
+        ></dx-button>
         <dx-list
+          #listRef
           [items]="taskList"
           [(selectedItems)]="selectedListItems"
           width="400px"

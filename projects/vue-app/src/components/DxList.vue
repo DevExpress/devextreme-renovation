@@ -86,6 +86,7 @@ export default {
 
       return (
         <div
+          ref="host"
           class="dx-list"
           style={viewModel.style}
           title={viewModel.hint}>
@@ -94,6 +95,16 @@ export default {
           </div>
         </div>
       );
+    },
+
+    export() {
+      const htmlContent = this.$refs.host.outerHTML;
+      const bl = new Blob([htmlContent], {type: "text/html"});
+      const a = document.createElement("a");
+      a.download = "list.html";
+      a.href = URL.createObjectURL(bl);
+      a.target = "_blank";
+      a.click();
     }
   },
   render() {

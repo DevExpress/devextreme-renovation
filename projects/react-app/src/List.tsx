@@ -1,8 +1,12 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, forwardRef, useRef, useImperativeHandle } from "react";
 
 import './List.css'
 
-const List = (props: {
+export type ListRef = {
+  export: () => void
+}
+
+type ListProps = {
   height?: string,
   hint?: string,
   itemRender?: (e: any) => React.ReactNode,
@@ -13,7 +17,9 @@ const List = (props: {
   selectedItems?: any[],
   defaultSelectedItems?: any[],
   selectedItemsChange?: (e: any[]) => void
-}) => {
+}
+
+const List = forwardRef<ListRef, ListProps>((props: ListProps, ref) => {
   const [hoveredItemKey, setHoveredItemKey] = useState("");
   const onItemMove = useCallback((key: string, e: any) => setHoveredItemKey(key), []);
 
@@ -34,6 +40,21 @@ const List = (props: {
     props.selectedItemsChange!(newValue);
   }, [selectedItems, props.selectedItems, props.items, props.keyExpr, props.selectedItemsChange]);
 
+
+  const host = useRef<HTMLDivElement>();
+
+  useImperativeHandle(ref, () => ({
+    export: () => {
+      const htmlContent = host.current!.outerHTML;
+      const bl = new Blob([htmlContent], {type: "text/html"});
+      const a = document.createElement("a");
+      a.download = "list.html";
+      a.href = URL.createObjectURL(bl);
+      a.target = "_blank";
+      a.click();
+    }
+  }));
+
   return view(viewModel({
     // props
     ...props,
@@ -43,9 +64,11 @@ const List = (props: {
     hoveredItemKey,
     // listeners
     onItemMove,
-    selectHandler
+    selectHandler,
+    //refs
+    host
   }));
-}
+});
 
 List.defaultProps = {
   height: "400px",
@@ -97,6 +120,7 @@ function view(viewModel: any) {
 
   return (
     <div
+      ref={viewModel.host}
       className="dx-list"
       style={viewModel.style}
       title={viewModel.hint}>

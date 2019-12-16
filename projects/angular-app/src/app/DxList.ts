@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, NgModule, Output, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, Input, NgModule, Output, TemplateRef,ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'dx-list',
   template: `
     <div
+      #host
       class="dx-list"
       [ngStyle]="_viewModel.style"
       [title]="_viewModel.hint">
@@ -25,6 +26,8 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./dx-list.css']
 })
 export class DxListComponent {
+  @ViewChild("host", { static: false }) host: ElementRef<HTMLDivElement>;
+
   @Input() height?: string;
   @Input() hint?: string;
   @Input() items?: Array<any> = [];
@@ -60,6 +63,16 @@ export class DxListComponent {
     }
 
     this.selectedItems = newValue;
+  }
+
+  export() {
+    const htmlContent = this.host.nativeElement.outerHTML;
+    const bl = new Blob([htmlContent], {type: "text/html"});
+    const a = document.createElement("a");
+    a.download = "list.html";
+    a.href = URL.createObjectURL(bl);
+    a.target = "_blank";
+    a.click();
   }
 
   trackBy(item) {

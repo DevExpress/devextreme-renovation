@@ -6,6 +6,8 @@
 })
 
 export default class List {
+  @Ref() host!: HTMLDivElement;
+
   @Prop() height?: string = "400px";
   @Prop() hint?: string;
   @Prop() items?: any[] = [];
@@ -36,6 +38,18 @@ export default class List {
     
     this.selectedItems = newValue;
   }
+
+  @Method() 
+  export() {
+    const htmlContent = this.host.outerHTML;
+    const bl = new Blob([htmlContent], {type: "text/html"});
+    const a = document.createElement("a");
+    a.download = "list.html";
+    a.href = URL.createObjectURL(bl);
+    a.target = "_blank";
+    a.click();
+  }
+
 }
 
 function viewModel(model: List) {
@@ -81,6 +95,7 @@ function view(viewModel: any) {
 
   return (
     <div
+      ref={viewModel.host}
       className="dx-list"
       style={viewModel.style}
       title={viewModel.hint}>

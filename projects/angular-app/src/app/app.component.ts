@@ -1,4 +1,5 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, ViewChild } from '@angular/core';
+import { DxListComponent } from './DxList';
 
 @Component({
   selector: 'app-root',
@@ -7,6 +8,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
   encapsulation: ViewEncapsulation.ShadowDom
 })
 export class AppComponent {
+  @ViewChild("listRef", { static: false }) listRef: DxListComponent;
   fontStyles = [{
     text: 'B',
     style: 'bold',

@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import Button from "./Button";
 import ToggleButton from "./ToggleButton";
 import ButtonGroup from "./ButtonGroup";
 import Drawer from "./Drawer";
-import List from "./List";
+import List, { ListRef } from "./List";
 import './App.css';
 
 const fontStyles = [{
@@ -229,6 +229,8 @@ const App: React.FC = () => {
 
   const drawerHandleClick = useCallback(() => setDrawerOpened((value) => !value), []);
   const toggleDrawer = useCallback((value: boolean) => setDrawerOpened(value), []);
+
+  const list_ref = useRef<ListRef>(null);
 
   return (
     <div>
@@ -504,7 +506,17 @@ const App: React.FC = () => {
       <div className="demo-case lists">
         <div>
           <div className="lists-column">
+            <Button
+              onClick={() => {
+                list_ref.current!.export()
+              }}
+              text="Export"
+              hint="Contained"
+              type="normal"
+              stylingMode="contained"
+            />
             <List
+              ref={list_ref}
               width="400px"
               height="300px"
               items={taskList}
