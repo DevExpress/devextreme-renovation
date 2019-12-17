@@ -10,5 +10,7 @@
     "url": "git+https://github.com/DevExpress/devextreme-renovation.git"
   },
   "scripts": {
+    "install": "cd generator && npm install",
+    "postinstall": "cd generator && npm run build"
   }
 }
