@@ -3,13 +3,25 @@ import assert from "assert";
 import fs from "fs";
 import path from "path";
 
+function printNodeValue(node: ts.Node):string { 
+    if ((node as ts.Identifier).escapedText){ 
+        return (node as ts.Identifier).escapedText.toString();
+    }
+
+    if (ts.isStringLiteral(node)) { 
+        return node.text;
+    }
+
+    return "";
+}
+
 function print(node: ts.Node, out?: string[], indent = 0): string[] {
     if (!out) {
         return print(node, []);
     }
     out.push(new Array(indent + 1).join(' ')
         + ts.SyntaxKind[node.kind] + "---"
-        + ((node as ts.Identifier).escapedText ? (node as ts.Identifier).escapedText : ""));
+        + printNodeValue(node));
     indent++;
     ts.forEachChild(node, (node) => {
         print(node, out, indent);

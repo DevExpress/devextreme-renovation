@@ -4,7 +4,7 @@ class PreactComponent extends ReactComponent {
     compileImportStatements(hooks: string[]) {
         const imports = ["import * as Preact from 'preact'"]; 
         if (hooks.length) { 
-            imports.push(`import {${hooks.join(",")}} from 'preact'`);
+            imports.push(`import {${hooks.join(",")}} from 'preact/hooks'`);
         }
         return imports;
     }
