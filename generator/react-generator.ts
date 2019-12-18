@@ -998,6 +998,26 @@ class VariableStatement extends Expression {
     }
 }
 
+class PropertySignature extends ExpressionWithOptionalExpression { 
+    modifiers: string[];
+    name: Identifier;
+    questionToken: string;
+    type: string;
+
+    constructor(modifiers: string[] = [], name: Identifier, questionToken: string="", type: string, initializer?: Expression) { 
+        super(initializer);
+        this.modifiers = modifiers;
+        this.name = name;
+        this.questionToken = questionToken;
+        this.type = type;
+    }
+
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) { 
+        return `${this.name}${this.questionToken}:${this.type}`; 
+    }
+
+}
+
 export default {
     NodeFlags: {
         Const: "const",
@@ -1262,5 +1282,17 @@ export default {
 
     createElementAccess(expression: Expression, index: Expression): Expression {
         return new ElementAccess(expression, index);
+    },
+
+    createPropertySignature(modifiers: string[] = [], name: Identifier, questionToken: string | undefined, type: string, initializer?: Expression) {
+        return new PropertySignature(modifiers, name, questionToken, type, initializer);
+    },
+
+    createTypeLiteralNode(members: PropertySignature[]) { 
+        return `{${members.join(",")}}`;
+    },
+
+    createIntersectionTypeNode(types: any[]) { 
+        return types.join("&");
     }
 }

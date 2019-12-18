@@ -324,6 +324,55 @@ mocha.describe("react-generator: expressions", function () {
         assert.equal(parameter.declaration(), 'a?:string="str"');
         assert.equal(parameter.typeDeclaration(), "a?:string");
     });
+
+    mocha.it("createPropertySignature", function () {
+        const propertySignatureWithQuestionToken = generator.createPropertySignature(
+            [],
+            generator.createIdentifier("a"),
+            generator.SyntaxKind.QuestionToken,
+            "string"
+        );
+
+        const propertySignatureWithoutQuestionToken = generator.createPropertySignature(
+            [],
+            generator.createIdentifier("a"),
+            undefined,
+            "string"
+        );
+
+        assert.equal(propertySignatureWithQuestionToken.toString(), "a?:string");
+        assert.equal(propertySignatureWithoutQuestionToken.toString(), "a:string");
+    });
+
+    mocha.it("createTypeLiteralNode", function () {
+        const propertySignatureWithQuestionToken = generator.createPropertySignature(
+            [],
+            generator.createIdentifier("a"),
+            generator.SyntaxKind.QuestionToken,
+            "string"
+        );
+
+        const propertySignatureWithoutQuestionToken = generator.createPropertySignature(
+            [],
+            generator.createIdentifier("b"),
+            undefined,
+            "string"
+        );
+
+        assert.equal(generator.createTypeLiteralNode(
+            [propertySignatureWithQuestionToken,
+            propertySignatureWithoutQuestionToken
+            ]
+        ), "{a?:string,b:string}");
+    });
+
+    
+    mocha.it("createIntersectionTypeNode", function () {
+        assert.equal(generator.createIntersectionTypeNode(
+            ["string", "number"]
+        ), "string&number");
+    });
+
 });
 
 mocha.describe("common", function () {
