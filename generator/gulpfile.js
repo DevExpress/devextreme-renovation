@@ -39,5 +39,5 @@ gulp.task("tests", function(done) {
 gulp.task("build", gulp.parallel(["copy-test-cases", "compile"]));
 
 gulp.task('watch', function watch() {
-    return gulp.watch(["./**/*.ts", "!./node_modules"], gulp.series("compile", "tests"));
+    return gulp.watch(["./**/*.ts", "!./node_modules"], gulp.series("compile"));
 });

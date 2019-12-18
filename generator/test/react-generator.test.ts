@@ -6,23 +6,11 @@ import generator from "../react-generator";
 
 import compile from "../component-compiler";
 
-function print(node: ts.Node, out?: string[], indent = 0): string[] {
-    if (!out) {
-        return print(node, []);
-    }
-    out.push(new Array(indent + 1).join(' ')
-        + ts.SyntaxKind[node.kind] + "---"
-        + ((node as ts.Identifier).escapedText ? (node as ts.Identifier).escapedText : ""));
-    indent++;
-    ts.forEachChild(node, (node) => {
-        print(node, out, indent);
-    });
-    indent--;
-    return out;
-}
+import { printSourceCodeAst as getResult } from "./helpers/common";
 
-function getResult(source: string) {
-    return print(ts.createSourceFile("result", source, ts.ScriptTarget.ES2015, true)).join("\n");
+if (!mocha.describe) { 
+    mocha.describe = describe;
+    mocha.it = it;
 }
 
 function testGenerator(this: any, componentName: string, generator: any) {
@@ -31,7 +19,6 @@ function testGenerator(this: any, componentName: string, generator: any) {
     this.expectedCode = fs.readFileSync(`${__dirname}/test-cases/expected/react/${componentName}.tsx`).toString();
     assert.equal(getResult(code), getResult(this.expectedCode));
 }
-
 
 mocha.describe("react-generator", function () {
     this.beforeAll(function () {

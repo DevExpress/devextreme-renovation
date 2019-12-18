@@ -16,6 +16,28 @@ function deleteFolderRecursive(path: string) {
     }
 }
 
+import Stream from "stream";
+import File from "vinyl";
+
+export function generateComponents(generator:any) { 
+    const stream = new Stream.Transform({ objectMode: true });
+
+    stream._transform = function (originalFile: File, _, callback) {
+        const factoryCodeFile = originalFile.clone();
+        if (originalFile.contents instanceof Buffer){ 
+            const code = originalFile.contents.toString();
+            const source = ts.createSourceFile(originalFile.path, code, ts.ScriptTarget.ES2016, true);
+            const codeFactory = generateFactoryCode(ts, source);
+            const componentCode = eval(codeFactory)(generator).join("\n");
+
+            factoryCodeFile.contents = Buffer.from(componentCode);
+            callback(null, factoryCodeFile);
+        }
+    };
+
+    return stream;
+}
+
 export default function compile(dir: string, outDir: string) {
     if (fs.existsSync(outDir)) {
         deleteFolderRecursive(outDir);
