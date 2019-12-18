@@ -6,22 +6,17 @@ import generator from "../react-generator";
 
 import compile from "../component-compiler";
 
-import { printSourceCodeAst as getResult } from "./helpers/common";
+import { printSourceCodeAst as getResult, createTestGenerator } from "./helpers/common";
 
 if (!mocha.describe) { 
     mocha.describe = describe;
     mocha.it = it;
 }
 
-function testGenerator(this: any, componentName: string, generator: any) {
-    const factory = require(`${__dirname}/test-cases/componentFactory/${componentName}`);
-    const code = this.code = factory(generator).join("\n");
-    this.expectedCode = fs.readFileSync(`${__dirname}/test-cases/expected/react/${componentName}.tsx`).toString();
-    assert.equal(getResult(code), getResult(this.expectedCode));
-}
 
 mocha.describe("react-generator", function () {
     this.beforeAll(function () {
+        const testGenerator = createTestGenerator("react");
         compile(`${__dirname}/test-cases/declarations`, `${__dirname}/test-cases/componentFactory`);
         this.testGenerator = function (componentName: string) {
             testGenerator.call(this, componentName, generator);

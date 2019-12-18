@@ -84,7 +84,7 @@ class StringLiteral extends SimpleExpression {
     }
 }
 
-class Identifier extends SimpleExpression {
+export class Identifier extends SimpleExpression {
     constructor(name: string) {
         super(name);
     }
@@ -448,7 +448,7 @@ class If extends ExpressionWithExpression {
     }
 }
 
-class Decorator {
+export class Decorator {
     expression: Call;
     constructor(expression: Call) {
         this.expression = expression;
@@ -464,7 +464,7 @@ class Decorator {
     }
 }
 
-class Property {
+export class Property {
     decorators: Decorator[]
     modifiers: string[];
     name: Identifier;
@@ -553,7 +553,7 @@ class PropertyAccess extends ExpressionWithExpression {
     }
 }
 
-class Method {
+export class Method {
     decorators: Decorator[];
     modifiers: string[];
     asteriskToken: string;
@@ -734,7 +734,7 @@ function stateSetter(stateName: Identifier) {
     return `__state_set${capitalizeFirstLetter(stateName)}`
 }
 
-class ReactComponent {
+export class ReactComponent {
     props: Prop[] = [];
     state: State[] = [];
     internalState: InternalState[];
@@ -776,29 +776,30 @@ class ReactComponent {
         this.viewModel = parameters.getProperty("viewModel");
     }
 
+    compileImportStatements(hooks:string[]) { 
+        if (hooks.length) {
+           return [`import React, {${hooks.join(",")}} from 'react';`];
+        } 
+        return ["import React from 'react'"];
+    }
+
     getImports() {
         const imports: string[] = [];
-        const react = [];
+        const hooks:string[] = [];
 
         if (this.internalState.length || this.state.length) {
-            react.push("useState");
+            hooks.push("useState");
         }
 
         if (this.listeners.length) {
-            react.push("useCallback");
+            hooks.push("useCallback");
         }
 
         if (this.listeners.filter(l => l.target).length) {
-            react.push("useEffect");
+            hooks.push("useEffect");
         }
 
-        if (react.length) {
-            imports.push(`import React, {${react.join(",")}} from 'react';`);
-        } else {
-            imports.push("import React from 'react'");
-        }
-
-        return imports.join("\n");
+        return imports.concat(this.compileImportStatements(hooks)).join(";\n");
     }
 
     compileDefaultProps() {
