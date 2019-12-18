@@ -52,10 +52,6 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it("imports", function () {
-        this.testGenerator(this.test!.title);
-    });
-
     mocha.it("empty-component", function () {
         this.testGenerator(this.test!.title);
     });
@@ -124,6 +120,69 @@ mocha.describe("react-generator: expressions", function () {
             ],
             generator.NodeFlags.Const
         ).toString(), 'const a="str",\nb=10;');
+    });
+
+    mocha.it("createImportDeclaration", function () { 
+        assert.equal(generator.createImportDeclaration(
+            undefined,
+            undefined,
+            undefined,
+            generator.createStringLiteral("typescript")
+        ), 'import "typescript"');
+
+        assert.equal(generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                undefined,
+                generator.createNamedImports([
+                    generator.createImportSpecifier(
+                        undefined,
+                        generator.createIdentifier("SyntaxKind")
+                    ),
+                    generator.createImportSpecifier(
+                        undefined,
+                        generator.createIdentifier("AffectedFileResult")
+                    )
+                ])
+            ),
+            generator.createStringLiteral("typescript")
+        ), 'import {SyntaxKind,AffectedFileResult} from "typescript"');
+
+        assert.equal(generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                generator.createIdentifier("ts"),
+                generator.createNamedImports([generator.createImportSpecifier(
+                    undefined,
+                    generator.createIdentifier("Node")
+                )])
+            ),
+            generator.createStringLiteral("typescript")
+        ), 'import ts,{Node} from "typescript"');
+
+        assert.equal(generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                generator.createIdentifier("Button"),
+              undefined
+            ),
+            generator.createStringLiteral("./button")
+          ), 'import Button from "./button"')
+    });
+
+    mocha.it("createImportDeclaration exclude imports from component_declaration/common", function () { 
+        assert.equal(generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                generator.createIdentifier("Button"),
+              undefined
+            ),
+            generator.createStringLiteral("../../component_declaration/common")
+          ), '')
     });
 
     mocha.it("VariableStatement", function () {

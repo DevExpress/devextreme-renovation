@@ -1050,7 +1050,7 @@ export default {
         return new VariableStatement(modifiers, declarationList);
     },
 
-    createStringLiteral(value: string): Expression {
+    createStringLiteral(value: string) {
         return new StringLiteral(value);
     },
 
@@ -1178,30 +1178,32 @@ export default {
         return new If(expression, thenStatement, elseStatement);
     },
 
-    createImportDeclaration(decorators: Decorator[], modifiers: string[] = [], importClause = "", moduleSpecifier = "") {
-        importClause = importClause ? `${importClause} from` : "";
-        return `import ${importClause} ${moduleSpecifier}`;
+    createImportDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], importClause: string = "", moduleSpecifier: string| StringLiteral) {
+        if (moduleSpecifier.toString().indexOf("component_declaration/common") >= 0) {
+            return "";
+        }
+        importClause = importClause ? `${importClause} from ` : "";
+        return `import ${importClause}${moduleSpecifier}`;
     },
 
-    createImportSpecifier(propertyName: string, name: Identifier) {
+    createImportSpecifier(propertyName: string | undefined, name: Identifier) {
         return name;
     },
 
-    createNamedImports(node: any = [], elements: any) {
+    createNamedImports(node: any[] = [], elements?: any[]) {
         return node.join(",");
     },
 
-    createImportClause(name: string, namedBindings: string = "") {
+    createImportClause(name?: Identifier, namedBindings: string = "") {
         const result: string[] = [];
         if (name) {
-            result.push(name);
+            result.push(name.toString());
         }
         if (namedBindings) {
             result.push(`{${namedBindings}}`);
         }
 
         return result.join(",");
-        // return `${name?`${name},`:""}{${namedBindings}}`;
     },
 
     createDecorator(expression: Call) {
