@@ -1,6 +1,6 @@
 import assert from "assert";
 import mocha from "mocha";
-import generator from "../react-generator";
+import generator from "../preact-generator";
 import gulp from "gulp";
 import fs from "fs";
 import path from "path";
@@ -14,24 +14,27 @@ if (!mocha.describe) {
     mocha.it = it;
 }
 
-async function readData(stream:NodeJS.ReadableStream):Promise<string> {
+async function readData(stream:NodeJS.ReadableStream):Promise<File[]> {
     return new Promise((resolve, _error) => {
-        const bodyChunks:string[] = [];
+        const bodyChunks:File[] = [];
         stream.on('data', function (chunk: File) {
             if (chunk.contents) { 
-                bodyChunks.push(chunk.contents.toString());
+                bodyChunks.push(chunk);
             }
         }).on('end', function () {
-            resolve(bodyChunks.join());
+            resolve(bodyChunks);
         });
     });
 }
 
-mocha.describe("gulp generator", function() { 
+mocha.describe("code-compiler: gulp integration", function() { 
     mocha.it("createCodeGenerator stream", async function () { 
-        const result = await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/empty-component.tsx`))
-            .pipe(generateComponents(generator)));
+        const result = await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/props-in-listener.tsx`))
+            .pipe(generateComponents(generator))
+            .pipe(gulp.dest("."))
+        );
         
-        assert.strictEqual(printSourceCodeAst(result), printSourceCodeAst(fs.readFileSync(`${__dirname}/test-cases/expected/react/empty-component.tsx`).toString()));
+        assert.strictEqual(printSourceCodeAst(result[0].contents!.toString()), printSourceCodeAst(fs.readFileSync(`${__dirname}/test-cases/expected/preact/props-in-listener.tsx`).toString()));
+        assert.ok(result[0].path.endsWith("props-in-listener.p.tsx"));
     });
 });

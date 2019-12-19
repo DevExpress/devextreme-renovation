@@ -1026,6 +1026,10 @@ export default {
         None: "var"
     },
 
+    processSourceFileName(name: string) { 
+        return name;
+    },
+
     SyntaxKind: SyntaxKind,
 
     createIdentifier(name: string): Identifier {
