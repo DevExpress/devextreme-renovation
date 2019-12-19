@@ -31,7 +31,6 @@ mocha.describe("code-compiler: gulp integration", function() {
     mocha.it("createCodeGenerator stream", async function () { 
         const result = await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/props-in-listener.tsx`))
             .pipe(generateComponents(generator))
-            .pipe(gulp.dest("."))
         );
         
         assert.strictEqual(printSourceCodeAst(result[0].contents!.toString()), printSourceCodeAst(fs.readFileSync(`${__dirname}/test-cases/expected/preact/props-in-listener.tsx`).toString()));

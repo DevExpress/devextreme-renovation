@@ -448,6 +448,17 @@ class If extends ExpressionWithExpression {
     }
 }
 
+
+class Conditional extends If { 
+    constructor(condition: Expression, whenTrue: Expression, whenFalse: Expression) {
+        super(condition, whenTrue, whenFalse);
+    }
+
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+        return `${this.expression.toString(internalState, state, props)}?${this.thenStatement.toString(internalState, state, props)}:${this.elseStatement!.toString(internalState, state, props)}`;
+    }
+}
+
 export class Decorator {
     expression: Call;
     constructor(expression: Call) {
@@ -1019,6 +1030,38 @@ class PropertySignature extends ExpressionWithOptionalExpression {
 
 }
 
+class TemplateSpan extends ExpressionWithExpression { 
+    literal: string;
+    constructor(expression: Expression, literal: string) { 
+        super(expression);
+        this.literal = literal;
+    }
+
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) { 
+        return `\${${super.toString(internalState, state, props)}}${this.literal}`;
+    }
+}
+
+class TemplateExpression extends Expression {
+    head: string;
+    templateSpans: TemplateSpan[];
+    
+    constructor(head: string, templateSpans: TemplateSpan[]) {
+        super();
+        this.head = head;
+        this.templateSpans = templateSpans;
+    }
+
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+        return `\`${this.head}${this.templateSpans.map(s => s.toString(internalState, state, props)).join("")}\``;
+    }
+
+    getDependency() { 
+        return this.templateSpans.reduce((d:string[], t) => d.concat(t.getDependency()), []);
+    }
+
+}
+
 export default {
     NodeFlags: {
         Const: "const",
@@ -1301,5 +1344,27 @@ export default {
 
     createIntersectionTypeNode(types: any[]) { 
         return types.join("&");
+    },
+
+    createConditional(condition: Expression, whenTrue: Expression, whenFalse: Expression) { 
+        return new Conditional(condition, whenTrue, whenFalse);
+    },
+
+    createTemplateHead(text: string, rawText?: string) { 
+        return text;
+    },
+    createTemplateMiddle(text: string, rawText?: string) {
+        return text;
+     },
+    createTemplateTail(text: string, rawText?: string) { 
+        return text;
+    },
+
+    createTemplateSpan(expression: Expression, literal:string) { 
+        return new TemplateSpan(expression, literal);
+    },
+
+    createTemplateExpression(head:string, templateSpans:TemplateSpan[]) { 
+        return new TemplateExpression(head, templateSpans);
     }
 }

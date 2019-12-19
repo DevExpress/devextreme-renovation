@@ -427,6 +427,42 @@ mocha.describe("react-generator: expressions", function () {
         ), "string&number");
     });
 
+    mocha.it("createConditional", function () { 
+        const expression = generator.createConditional(
+            generator.createIdentifier("a"),
+            generator.createFalse(),
+            generator.createTrue());
+        
+        assert.equal(expression.toString(), "a?false:true");
+    });
+
+    mocha.it("createTemplateExpression", function () {
+        const expression = generator.createTemplateExpression(
+            generator.createTemplateHead(
+                "a",
+                "a"
+            ),
+            [
+                generator.createTemplateSpan(
+                    generator.createNumericLiteral("1"),
+                    generator.createTemplateMiddle(
+                        "b",
+                        "b"
+                    )
+                ),
+                generator.createTemplateSpan(
+                    generator.createNumericLiteral("2"),
+                    generator.createTemplateTail(
+                        "c",
+                        "c"
+                    )
+                )
+            ]
+        );
+
+        assert.equal(expression.toString(), "`a${1}b${2}c`");
+     });
+
 });
 
 mocha.describe("common", function () {
@@ -445,4 +481,11 @@ mocha.describe("common", function () {
 
         assert.deepEqual(Object.keys(generator.NodeFlags), expected);
     });
+
+    // mocha.it("create functions", function () { 
+    //     const getMethods = (g:any) => Object.keys(ts)
+    //         .filter((key) => key.startsWith("create"));
+
+    //     assert.equal(getMethods(ts), getMethods(generator));
+    // });
 });
