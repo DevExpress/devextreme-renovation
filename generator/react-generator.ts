@@ -465,7 +465,6 @@ class If extends ExpressionWithExpression {
     }
 }
 
-
 class Conditional extends If { 
     constructor(condition: Expression, whenTrue: Expression, whenFalse: Expression) {
         super(condition, whenTrue, whenFalse);
@@ -473,6 +472,44 @@ class Conditional extends If {
 
     toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return `${this.expression.toString(internalState, state, props)}?${this.thenStatement.toString(internalState, state, props)}:${this.elseStatement!.toString(internalState, state, props)}`;
+    }
+}
+
+class While extends If { 
+    constructor(expression: Expression, statement: Expression) { 
+        super(expression, statement);
+    }
+
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+        return `while(${this.expression.toString(internalState, state, props)})${this.thenStatement.toString(internalState, state, props)}`;
+    }
+}
+
+class For extends ExpressionWithExpression { 
+    initializer?: Expression;
+    condition?: Expression;
+    incrementor?: Expression;
+
+    constructor(initializer: Expression | undefined, condition: Expression | undefined, incrementor: Expression | undefined, statement: Expression) { 
+        super(statement);
+        this.initializer = initializer;
+        this.condition = condition;
+        this.incrementor = incrementor;
+    }
+
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+        const initializer = this.initializer ? this.initializer.toString(internalState, state, props) : "";
+        const condition = this.condition ? this.condition.toString(internalState, state, props) : "";
+        const incrementor = this.incrementor ? this.incrementor.toString(internalState, state, props) : "";
+
+        return `for(${initializer};${condition};${incrementor})${this.expression.toString(internalState, state, props)}`;
+    }
+
+    getDependency() { 
+        return super.getDependency()
+            .concat(this.initializer && this.initializer.getDependency() || [])
+            .concat(this.condition && this.condition.getDependency() || [])
+            .concat(this.incrementor && this.incrementor.getDependency() || []);
     }
 }
 
@@ -964,6 +1001,12 @@ class Prefix extends Expression {
     }
 }
 
+class Postfix extends Prefix {
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+        return `${this.operand.toString(internalState, state, props)}${this.operator}`;
+    }
+}
+
 class NonNullExpression extends ExpressionWithExpression {
     toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return `${super.toString(internalState, state, props)}!`;
@@ -1243,6 +1286,10 @@ export default {
         return new If(expression, thenStatement, elseStatement);
     },
 
+    createWhile(expression: Expression, statement: Expression) {
+        return new While(expression, statement);
+    },
+
     createImportDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], importClause: string = "", moduleSpecifier: string| StringLiteral) {
         if (moduleSpecifier.toString().indexOf("component_declaration/common") >= 0) {
             return "";
@@ -1343,11 +1390,11 @@ export default {
         return new Prefix(operator, operand);
     },
 
-    createPostfix(operator: string, operand: Expression) {
+    createPostfix(operand: Expression, operator: string) {
         if (operator === undefined) {
             throw "createPrefix";
         }
-        return new Prefix(operator, operand); // ?
+        return new Postfix(operator, operand);
     },
 
     createNonNullExpression(expression: Expression) {
@@ -1390,5 +1437,9 @@ export default {
 
     createTemplateExpression(head:string, templateSpans:TemplateSpan[]) { 
         return new TemplateExpression(head, templateSpans);
+    },
+
+    createFor(initializer: Expression | undefined, condition: Expression | undefined, incrementor: Expression | undefined, statement: Expression) { 
+        return new For(initializer, condition, incrementor, statement);
     }
 }

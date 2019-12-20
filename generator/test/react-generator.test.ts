@@ -305,7 +305,7 @@ mocha.describe("react-generator: expressions", function () {
         const expression = generator.createPropertyAccess(
             generator.createThis(),
             generator.createIdentifier("field"));
-        assert.equal(generator.createPostfix(generator.SyntaxKind.PlusPlusToken, expression).toString(), "this.field++");
+        assert.equal(generator.createPostfix(expression, generator.SyntaxKind.PlusPlusToken).toString(), "this.field++");
     });
 
     mocha.it("If w/o else statement", function () {
@@ -472,7 +472,33 @@ mocha.describe("react-generator: expressions", function () {
         );
 
         assert.equal(expression.toString(), "`a${1}b${2}c`");
-     });
+    });
+    
+    mocha.it("While", function () {
+        const expression = generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("field"));
+        const condition = generator.createTrue();
+
+        assert.equal(getResult(generator.createWhile(condition, expression).toString()), getResult("while(true)this.field"));
+    });
+
+    mocha.it("For", function () {
+        const expression = generator.createFor(
+            generator.createIdentifier("i"),
+            generator.createTrue(),
+            generator.createPostfix(
+                generator.createIdentifier("i"),
+                generator.SyntaxKind.PlusPlusToken
+            ),
+            generator.createBlock(
+                [],
+                true
+            )
+        );
+
+        assert.equal(getResult(expression.toString()), getResult("for(i;true;i++){}"));
+    });
 
 });
 
@@ -492,11 +518,4 @@ mocha.describe("common", function () {
 
         assert.deepEqual(Object.keys(generator.NodeFlags), expected);
     });
-
-    // mocha.it("create functions", function () { 
-    //     const getMethods = (g:any) => Object.keys(ts)
-    //         .filter((key) => key.startsWith("create"));
-
-    //     assert.equal(getMethods(ts), getMethods(generator));
-    // });
 });
