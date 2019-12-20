@@ -47,6 +47,10 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("expressions", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("empty-component", function () {
         this.testGenerator(this.test!.title);
     });
@@ -295,6 +299,13 @@ mocha.describe("react-generator: expressions", function () {
             generator.createThis(),
             generator.createIdentifier("field"));
         assert.equal(generator.createPrefix(generator.SyntaxKind.ExclamationToken, expression).toString(), "!this.field")
+    });
+
+    mocha.it.skip("Postfix", function () {
+        const expression = generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("field"));
+        assert.equal(generator.createPostfix(generator.SyntaxKind.PlusPlusToken, expression).toString(), "this.field++");
     });
 
     mocha.it("If w/o else statement", function () {

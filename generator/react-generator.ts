@@ -4,9 +4,20 @@ const SyntaxKind = {
     TrueKeyword: "true",
     AnyKeyword: "any",
     PlusToken: "+",
+    MinusToken: "-",
+    AsteriskToken: "*",
+    SlashToken: "/",
     EqualsToken: "=",
+    PlusEqualsToken: "+=",
+    MinusEqualsToken: "-=",
+    PlusPlusToken: "++",
+    MinusMinusToken: "--",
     NumberKeyword: "number",
     EqualsGreaterThanToken: "=>",
+    GreaterThanToken: ">",
+    GreaterThanEqualsToken: ">=",
+    LessThanToken: "<",
+    LessThanEqualsToken: "<=",
     NullKeyword: "null",
     DefaultKeyword: "default",
     ThisKeyword: "this",
@@ -17,11 +28,17 @@ const SyntaxKind = {
     EqualsEqualsEqualsToken: "===",
     EqualsEqualsToken: "==",
     BarBarToken: "||",
-    QuestionToken: "?"
-    ,
+    BarToken: "|",
+    BarEqualsToken: "|=",
+    QuestionToken: "?",
+    TildeToken: "~",
     ExclamationEqualsEqualsToken: "!==",
-    MinusToken: "-",
-    AmpersandAmpersandToken: "&&"
+   
+    AmpersandAmpersandToken: "&&",
+    AmpersandToken: "&",
+    AmpersandEqualsToken: "&=",
+    PercentToken: "%",
+    CaretToken: "^"
 };
 
 const eventsDictionary = {
@@ -938,8 +955,8 @@ class Prefix extends Expression {
         this.operand = operand;
     }
 
-    toString(internalState: InternalState[], state: State[], props: Prop[]) {
-        return `${this.operator}${this.operand.toString(internalState, state, props)}`
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+        return `${this.operator}${this.operand.toString(internalState, state, props)}`;
     }
 
     getDependency() {
@@ -1319,11 +1336,18 @@ export default {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     },
 
-    createPrefix(operator: string, operand: Expression): Expression {
+    createPrefix(operator: string, operand: Expression) {
         if (operator === undefined) {
             throw "createPrefix";
         }
         return new Prefix(operator, operand);
+    },
+
+    createPostfix(operator: string, operand: Expression) {
+        if (operator === undefined) {
+            throw "createPrefix";
+        }
+        return new Prefix(operator, operand); // ?
     },
 
     createNonNullExpression(expression: Expression) {
