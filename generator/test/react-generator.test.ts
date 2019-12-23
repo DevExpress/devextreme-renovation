@@ -509,6 +509,13 @@ mocha.describe("react-generator: expressions", function () {
         assert.equal(getResult(expression.toString()), getResult("for(i;true;i++){}"));
     });
 
+    mocha.it("createJsxSpreadAttribute", function () { 
+        const expression = generator.createJsxSpreadAttribute(
+            generator.createIdentifier("field"));
+        
+        assert.equal(expression.toString(), "{...field}");
+    });
+
 });
 
 mocha.describe("common", function () {

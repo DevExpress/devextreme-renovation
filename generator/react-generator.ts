@@ -23,6 +23,7 @@ const SyntaxKind = {
     ThisKeyword: "this",
     VoidKeyword: "void",
     StringKeyword: "string",
+    ObjectKeyword: "object",
     BooleanKeyword: "boolean",
     ExclamationToken: "!",
     EqualsEqualsEqualsToken: "===",
@@ -1349,6 +1350,10 @@ export default {
 
     createJsxAttribute(name: string, initializer: any) {
         return `${(eventsDictionary as any)[name] || name}=${initializer}`;
+    },
+
+    createJsxSpreadAttribute(expression: Expression) { 
+        return `{...${expression.toString()}}`;
     },
 
     createJsxAttributes(properties: string[]) {
