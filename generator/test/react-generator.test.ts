@@ -1,7 +1,6 @@
 import assert from "assert";
 import mocha from "mocha";
 import ts from "typescript";
-import fs from "fs";
 import generator from "../react-generator";
 
 import compile from "../component-compiler";
@@ -305,7 +304,7 @@ mocha.describe("react-generator: expressions", function () {
         assert.equal(generator.createPrefix(generator.SyntaxKind.ExclamationToken, expression).toString(), "!this.field")
     });
 
-    mocha.it.skip("Postfix", function () {
+    mocha.it("Postfix", function () {
         const expression = generator.createPropertyAccess(
             generator.createThis(),
             generator.createIdentifier("field"));
