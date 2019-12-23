@@ -527,6 +527,16 @@ mocha.describe("common", function () {
         assert.deepEqual(Object.keys(generator.SyntaxKind), expected);
     });
 
+    mocha.it("Keywords", function () {
+        const expected = Object.keys(ts.SyntaxKind)
+            .map((key) => ts.SyntaxKind[Number(key)])
+            .filter(value => typeof value === 'string' && value.endsWith("Keyword")) as string[]
+
+        expected.forEach(k => { 
+            assert.equal((generator.SyntaxKind as any)[k], k.replace(/Keyword$/, "").toLowerCase(), `${k} is missed`);
+        });
+    });
+
     mocha.it.skip("NodeFlags", function () {
         const expected = Object.keys(ts.NodeFlags)
             .map((key) => ts.SyntaxKind[Number(key)])

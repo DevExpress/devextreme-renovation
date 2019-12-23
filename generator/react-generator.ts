@@ -1,46 +1,4 @@
-const SyntaxKind = {
-    ExportKeyword: "export",
-    FalseKeyword: "false",
-    TrueKeyword: "true",
-    AnyKeyword: "any",
-    PlusToken: "+",
-    MinusToken: "-",
-    AsteriskToken: "*",
-    SlashToken: "/",
-    EqualsToken: "=",
-    PlusEqualsToken: "+=",
-    MinusEqualsToken: "-=",
-    PlusPlusToken: "++",
-    MinusMinusToken: "--",
-    NumberKeyword: "number",
-    EqualsGreaterThanToken: "=>",
-    GreaterThanToken: ">",
-    GreaterThanEqualsToken: ">=",
-    LessThanToken: "<",
-    LessThanEqualsToken: "<=",
-    NullKeyword: "null",
-    DefaultKeyword: "default",
-    ThisKeyword: "this",
-    VoidKeyword: "void",
-    StringKeyword: "string",
-    ObjectKeyword: "object",
-    BooleanKeyword: "boolean",
-    ExclamationToken: "!",
-    EqualsEqualsEqualsToken: "===",
-    EqualsEqualsToken: "==",
-    BarBarToken: "||",
-    BarToken: "|",
-    BarEqualsToken: "|=",
-    QuestionToken: "?",
-    TildeToken: "~",
-    ExclamationEqualsEqualsToken: "!==",
-   
-    AmpersandAmpersandToken: "&&",
-    AmpersandToken: "&",
-    AmpersandEqualsToken: "&=",
-    PercentToken: "%",
-    CaretToken: "^"
-};
+import SyntaxKind from "./syntaxKind";
 
 const eventsDictionary = {
     pointerover: "onPointerOver",
@@ -466,7 +424,7 @@ export class If extends ExpressionWithExpression {
     }
 }
 
-export class Conditional extends If { 
+export class Conditional extends If {
     constructor(condition: Expression, whenTrue: Expression, whenFalse: Expression) {
         super(condition, whenTrue, whenFalse);
     }
@@ -476,8 +434,8 @@ export class Conditional extends If {
     }
 }
 
-export class While extends If { 
-    constructor(expression: Expression, statement: Expression) { 
+export class While extends If {
+    constructor(expression: Expression, statement: Expression) {
         super(expression, statement);
     }
 
@@ -486,12 +444,12 @@ export class While extends If {
     }
 }
 
-export class For extends ExpressionWithExpression { 
+export class For extends ExpressionWithExpression {
     initializer?: Expression;
     condition?: Expression;
     incrementor?: Expression;
 
-    constructor(initializer: Expression | undefined, condition: Expression | undefined, incrementor: Expression | undefined, statement: Expression) { 
+    constructor(initializer: Expression | undefined, condition: Expression | undefined, incrementor: Expression | undefined, statement: Expression) {
         super(statement);
         this.initializer = initializer;
         this.condition = condition;
@@ -506,7 +464,7 @@ export class For extends ExpressionWithExpression {
         return `for(${initializer};${condition};${incrementor})${this.expression.toString(internalState, state, props)}`;
     }
 
-    getDependency() { 
+    getDependency() {
         return super.getDependency()
             .concat(this.initializer && this.initializer.getDependency() || [])
             .concat(this.condition && this.condition.getDependency() || [])
@@ -669,7 +627,7 @@ export class Method {
 export class Prop {
     property: Property;
     constructor(property: Property) {
-        if (property.decorators.find(d => d.name === "Template")) { 
+        if (property.decorators.find(d => d.name === "Template")) {
             property.name = new Identifier(property.name.toString().replace("template", "render"));
             property.name = new Identifier(property.name.toString().replace("Template", "Render"));
         }
@@ -846,16 +804,16 @@ export class ReactComponent {
         this.viewModel = parameters.getProperty("viewModel");
     }
 
-    compileImportStatements(hooks:string[]) { 
+    compileImportStatements(hooks: string[]) {
         if (hooks.length) {
-           return [`import React, {${hooks.join(",")}} from 'react';`];
-        } 
+            return [`import React, {${hooks.join(",")}} from 'react';`];
+        }
         return ["import React from 'react'"];
     }
 
     getImports() {
         const imports: string[] = [];
-        const hooks:string[] = [];
+        const hooks: string[] = [];
 
         if (this.internalState.length || this.state.length) {
             hooks.push("useState");
@@ -1075,13 +1033,13 @@ export class VariableStatement extends Expression {
     }
 }
 
-export class PropertySignature extends ExpressionWithOptionalExpression { 
+export class PropertySignature extends ExpressionWithOptionalExpression {
     modifiers: string[];
     name: Identifier;
     questionToken: string;
     type: string;
 
-    constructor(modifiers: string[] = [], name: Identifier, questionToken: string="", type: string, initializer?: Expression) { 
+    constructor(modifiers: string[] = [], name: Identifier, questionToken: string = "", type: string, initializer?: Expression) {
         super(initializer);
         this.modifiers = modifiers;
         this.name = name;
@@ -1089,20 +1047,20 @@ export class PropertySignature extends ExpressionWithOptionalExpression {
         this.type = type;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) { 
-        return `${this.name}${this.questionToken}:${this.type}`; 
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+        return `${this.name}${this.questionToken}:${this.type}`;
     }
 
 }
 
-export class TemplateSpan extends ExpressionWithExpression { 
+export class TemplateSpan extends ExpressionWithExpression {
     literal: string;
-    constructor(expression: Expression, literal: string) { 
+    constructor(expression: Expression, literal: string) {
         super(expression);
         this.literal = literal;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) { 
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return `\${${super.toString(internalState, state, props)}}${this.literal}`;
     }
 }
@@ -1110,7 +1068,7 @@ export class TemplateSpan extends ExpressionWithExpression {
 export class TemplateExpression extends Expression {
     head: string;
     templateSpans: TemplateSpan[];
-    
+
     constructor(head: string, templateSpans: TemplateSpan[]) {
         super();
         this.head = head;
@@ -1121,8 +1079,8 @@ export class TemplateExpression extends Expression {
         return `\`${this.head}${this.templateSpans.map(s => s.toString(internalState, state, props)).join("")}\``;
     }
 
-    getDependency() { 
-        return this.templateSpans.reduce((d:string[], t) => d.concat(t.getDependency()), []);
+    getDependency() {
+        return this.templateSpans.reduce((d: string[], t) => d.concat(t.getDependency()), []);
     }
 
 }
@@ -1134,7 +1092,7 @@ export default {
         None: "var"
     },
 
-    processSourceFileName(name: string) { 
+    processSourceFileName(name: string) {
         return name;
     },
 
@@ -1295,7 +1253,7 @@ export default {
         return new While(expression, statement);
     },
 
-    createImportDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], importClause: string = "", moduleSpecifier: string| StringLiteral) {
+    createImportDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], importClause: string = "", moduleSpecifier: string | StringLiteral) {
         if (moduleSpecifier.toString().indexOf("component_declaration/common") >= 0) {
             return "";
         }
@@ -1352,7 +1310,7 @@ export default {
         return `${(eventsDictionary as any)[name] || name}=${initializer}`;
     },
 
-    createJsxSpreadAttribute(expression: Expression) { 
+    createJsxSpreadAttribute(expression: Expression) {
         return `{...${expression.toString()}}`;
     },
 
@@ -1418,41 +1376,41 @@ export default {
         return new PropertySignature(modifiers, name, questionToken, type, initializer);
     },
 
-    createTypeLiteralNode(members: PropertySignature[]) { 
+    createTypeLiteralNode(members: PropertySignature[]) {
         return `{${members.join(",")}}`;
     },
 
-    createIntersectionTypeNode(types: string[]) { 
+    createIntersectionTypeNode(types: string[]) {
         return types.join("&");
     },
 
-    createUnionTypeNode(types: string[]) { 
+    createUnionTypeNode(types: string[]) {
         return types.join("|");
     },
 
-    createConditional(condition: Expression, whenTrue: Expression, whenFalse: Expression) { 
+    createConditional(condition: Expression, whenTrue: Expression, whenFalse: Expression) {
         return new Conditional(condition, whenTrue, whenFalse);
     },
 
-    createTemplateHead(text: string, rawText?: string) { 
+    createTemplateHead(text: string, rawText?: string) {
         return text;
     },
     createTemplateMiddle(text: string, rawText?: string) {
         return text;
-     },
-    createTemplateTail(text: string, rawText?: string) { 
+    },
+    createTemplateTail(text: string, rawText?: string) {
         return text;
     },
 
-    createTemplateSpan(expression: Expression, literal:string) { 
+    createTemplateSpan(expression: Expression, literal: string) {
         return new TemplateSpan(expression, literal);
     },
 
-    createTemplateExpression(head:string, templateSpans:TemplateSpan[]) { 
+    createTemplateExpression(head: string, templateSpans: TemplateSpan[]) {
         return new TemplateExpression(head, templateSpans);
     },
 
-    createFor(initializer: Expression | undefined, condition: Expression | undefined, incrementor: Expression | undefined, statement: Expression) { 
+    createFor(initializer: Expression | undefined, condition: Expression | undefined, incrementor: Expression | undefined, statement: Expression) {
         return new For(initializer, condition, incrementor, statement);
     }
 }
