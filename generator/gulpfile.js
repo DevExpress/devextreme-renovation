@@ -8,7 +8,7 @@ gulp.task("copy-test-cases", function copyTestCases() {
 });
 
 gulp.task("copy-package", function copyTestCases() { 
-    return gulp.src(['package.json', "LICENSE", "README.md"]).pipe(gulp.dest('build'));
+    return gulp.src(['package.json', "LICENSE", "README.md", ".npmignore"]).pipe(gulp.dest('build'));
 });
 
 gulp.task('compile', function compile() {
