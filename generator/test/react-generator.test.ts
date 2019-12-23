@@ -524,24 +524,40 @@ mocha.describe("common", function () {
             .map((key) => ts.SyntaxKind[Number(key)])
             .filter(value => typeof value === 'string') as string[]
 
-        assert.deepEqual(Object.keys(generator.SyntaxKind), expected);
+        const actual = Object.keys(generator.SyntaxKind);
+        
+        assert.equal(actual.length, expected.length);
+        assert.deepEqual(actual, expected);
     });
 
-    mocha.it("Keywords", function () {
+    mocha.it("SyntaxKind Keywords", function () {
         const expected = Object.keys(ts.SyntaxKind)
             .map((key) => ts.SyntaxKind[Number(key)])
-            .filter(value => typeof value === 'string' && value.endsWith("Keyword")) as string[]
+            .filter(value => typeof value === 'string' && value.endsWith("Keyword")) as string[];
 
         expected.forEach(k => { 
             assert.equal((generator.SyntaxKind as any)[k], k.replace(/Keyword$/, "").toLowerCase(), `${k} is missed`);
         });
     });
 
+    mocha.it("SyntaxKind Tokens", function () {
+        const expected = Object.keys(ts.SyntaxKind)
+            .map((key) => ts.SyntaxKind[Number(key)])
+            .filter(value => typeof value === 'string' && value.endsWith("Token")) as string[];
+
+        expected.forEach(k => { 
+            const token = (generator.SyntaxKind as any)[k];
+            assert.ok(token!==undefined, `${k} is missed`);
+        });
+    });
+
     mocha.it.skip("NodeFlags", function () {
         const expected = Object.keys(ts.NodeFlags)
             .map((key) => ts.SyntaxKind[Number(key)])
-            .filter(value => typeof value === 'string') as string[]
-
+            .filter(value => typeof value === 'string') as string[];
+        
+        const actual = Object.keys(generator.NodeFlags);
+        assert.equal(actual.length, expected.length);
         assert.deepEqual(Object.keys(generator.NodeFlags), expected);
     });
 });

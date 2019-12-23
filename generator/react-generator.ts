@@ -1089,7 +1089,19 @@ export default {
     NodeFlags: {
         Const: "const",
         Let: "let",
-        None: "var"
+        None: "var",
+        LessThanEqualsToken: "<=",
+        MinusEqualsToken: "-=",
+        ConstructorKeyword: "constructor",
+
+        // FirstToken: 0,
+        // EndOfFileToken: 1,
+        // FirstTriviaToken: 2,
+        // MultiLineCommentTrivia: 3,
+        // NewLineTrivia: 4,
+        // FirstLiteralToken: 5,
+        // TemplateMiddle: 6,
+        // NamedImports: 10
     },
 
     processSourceFileName(name: string) {
@@ -1201,7 +1213,11 @@ export default {
 
     createToken(token: string) {
         if (token === undefined) {
-            throw "createToken"
+            throw "unknown token";
+        }
+        if (typeof token === "number") {
+            const tokenName = Object.keys(SyntaxKind).find(k => (SyntaxKind as any)[k] === token);
+            throw `${tokenName} is missed`;
         }
         return token;
     },
@@ -1213,6 +1229,10 @@ export default {
     createModifier(modifier: string) {
         if (modifier === undefined) {
             throw "createModifier";
+        }
+        if (typeof modifier === "number") {
+            const modifierName = Object.keys(SyntaxKind).find(k => (SyntaxKind as any)[k] === modifier);
+            throw `${modifierName} is missed`;
         }
         return modifier
     },

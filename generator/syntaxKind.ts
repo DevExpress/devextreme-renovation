@@ -1,4 +1,4 @@
-export default  {
+export default {
     ExportKeyword: "export",
     FalseKeyword: "false",
     TrueKeyword: "true",
@@ -101,5 +101,43 @@ export default  {
     FromKeyword: "from",
     GlobalKeyword: "global",
     BigIntKeyword: "bigint",
-    LastContextualKeyword: "lastcontextual"
+    LastContextualKeyword: "lastcontextual",
+
+    FirstToken: 0,
+    EndOfFileToken: 1,
+    FirstTriviaToken: 2,
+    LastTriviaToken: 3,
+    FirstLiteralToken: 4,
+    FirstTemplateToken: 5,
+    LastTemplateToken: 6,
+    CloseBraceToken: 7,
+    OpenParenToken: "(",
+    CloseParenToken: ")",
+    OpenBracketToken: "{",
+    CloseBracketToken: "}",
+    DotToken: ".",
+    DotDotDotToken: "...",
+    SemicolonToken: ";",
+    CommaToken: ",",
+    QuestionDotToken: "?.",
+    LessThanSlashToken: "</",
+   
+    ExclamationEqualsToken: "!=",
+    AsteriskAsteriskToken: "**",
+  
+    LessThanLessThanToken: "<<",
+    GreaterThanGreaterThanToken: ">>",
+    GreaterThanGreaterThanGreaterThanToken: ">>>",
+   
+    ColonToken: ":",
+    AtToken: 46,
+    QuestionQuestionToken: "??",
+    BacktickToken: '"',
+    AsteriskEqualsToken: "*=",
+    AsteriskAsteriskEqualsToken: "**=",
+    SlashEqualsToken: "/=",
+    PercentEqualsToken: "%=",
+    LessThanLessThanEqualsToken: "<<=",
+    GreaterThanGreaterThanEqualsToken: ">>=",
+    GreaterThanGreaterThanGreaterThanEqualsToken: ">>>=",
 };
