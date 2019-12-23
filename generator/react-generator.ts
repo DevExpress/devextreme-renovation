@@ -668,6 +668,10 @@ export class Method {
 class Prop {
     property: Property;
     constructor(property: Property) {
+        if (property.decorators.find(d => d.name === "Template")) { 
+            property.name = new Identifier(property.name.toString().replace("template", "render"));
+            property.name = new Identifier(property.name.toString().replace("Template", "Render"));
+        }
         this.property = property;
     }
 
@@ -819,7 +823,7 @@ export class ReactComponent {
         this.name = name;
 
         this.props = members
-            .filter(m => m.decorators.find(d => d.name === "Prop" || d.name === "Event"))
+            .filter(m => m.decorators.find(d => d.name === "Prop" || d.name === "Event" || d.name === "Template"))
             .map(p => new Prop(p as Property));
 
         this.internalState = members
