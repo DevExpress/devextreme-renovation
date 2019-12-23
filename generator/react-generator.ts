@@ -1417,8 +1417,12 @@ export default {
         return `{${members.join(",")}}`;
     },
 
-    createIntersectionTypeNode(types: any[]) { 
+    createIntersectionTypeNode(types: string[]) { 
         return types.join("&");
+    },
+
+    createUnionTypeNode(types: string[]) { 
+        return types.join("|");
     },
 
     createConditional(condition: Expression, whenTrue: Expression, whenFalse: Expression) { 

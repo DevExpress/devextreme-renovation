@@ -441,6 +441,12 @@ mocha.describe("react-generator: expressions", function () {
         ), "string&number");
     });
 
+    mocha.it("createUnionTypeNode", function () {
+        assert.equal(generator.createUnionTypeNode(
+            ["string", "number"]
+        ), "string|number");
+    });
+
     mocha.it("createConditional", function () { 
         const expression = generator.createConditional(
             generator.createIdentifier("a"),
