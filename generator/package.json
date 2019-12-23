@@ -1,8 +1,7 @@
 {
-  "name": "generator-ts",
+  "name": "devextreme-generator",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Component generator",
   "scripts": {
     "test": "mocha ./build/test --timeout 30000",
     "tsc": "tsc",
@@ -10,17 +9,19 @@
     "dev": "gulp watch",
     "gulp": "gulp"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Developer Express Inc.",
+  "license": "MIT",
   "dependencies": {
-    "@types/mocha": "5.2.7",
-    "@types/node": "^12.12.14",
-    "@types/gulp": "^4.0.6",
     "gulp": "^4.0.2",
+    "typescript": "^3.7.2"
+  },
+  "devDependencies": {
+    "ts-factory-code-generator-generator": "^0.5.2",
+    "mocha": "^6.2.2",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-typescript": "^6.0.0-alpha.1",
-    "mocha": "^6.2.2",
-    "ts-factory-code-generator-generator": "^0.5.2",
-    "typescript": "^3.7.2"
+    "@types/mocha": "5.2.7",
+    "@types/node": "^12.12.14",
+    "@types/gulp": "^4.0.6"
   }
 }
