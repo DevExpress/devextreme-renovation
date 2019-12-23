@@ -1,15 +1,18 @@
 const ts = require("gulp-typescript");
 const gulp = require("gulp");
-var sourcemaps = require('gulp-sourcemaps');
+const sourcemaps = require('gulp-sourcemaps');
 const { spawn } = require('child_process');
-
-var tsProject = ts.createProject('tsconfig.json');
 
 gulp.task("copy-test-cases", function copyTestCases() { 
     return gulp.src(['test/test-cases/**/*']).pipe(gulp.dest('build/test/test-cases'));
 });
 
+gulp.task("copy-package", function copyTestCases() { 
+    return gulp.src(['package.json', "LICENSE", "README.md"]).pipe(gulp.dest('build'));
+});
+
 gulp.task('compile', function compile() {
+    const tsProject = ts.createProject('tsconfig.json');
     return tsProject.src()
         .pipe(sourcemaps.init())
         .pipe(tsProject())
@@ -37,6 +40,14 @@ gulp.task("tests", function(done) {
 });
 
 gulp.task("build", gulp.parallel(["copy-test-cases", "compile"]));
+
+gulp.task("build-dist", gulp.series("copy-package", "copy-test-cases", function() { 
+    const tsProject = ts.createProject('tsconfig.dist.json');
+    
+    return tsProject.src()
+    .pipe(tsProject())
+    .pipe(gulp.dest(tsProject.options.outDir));
+}));
 
 gulp.task('watch', function watch() {
     return gulp.watch(["./**/*.ts", "!./node_modules", "!./**/*.d.ts"], gulp.series("compile"));

@@ -6,6 +6,7 @@
     "test": "mocha ./build/test --timeout 30000",
     "tsc": "tsc",
     "build": "gulp build",
+    "build-dist": "gulp build-dist",
     "dev": "gulp watch",
     "gulp": "gulp"
   },

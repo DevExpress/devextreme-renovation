@@ -70,7 +70,7 @@ function getPropName(name: Identifier | string) {
     return `props.${name}`;
 }
 
-class Expression {
+export class Expression {
     getDependency(): string[] {
         return [];
     }
@@ -80,7 +80,7 @@ class Expression {
     }
 }
 
-class SimpleExpression extends Expression {
+export class SimpleExpression extends Expression {
     expression: string;
     constructor(expression: string) {
         super();
@@ -92,7 +92,7 @@ class SimpleExpression extends Expression {
     }
 }
 
-class StringLiteral extends SimpleExpression {
+export class StringLiteral extends SimpleExpression {
     constructor(value: string) {
         super(value);
     }
@@ -112,7 +112,7 @@ export class Identifier extends SimpleExpression {
 }
 
 
-class ExpressionWithExpression extends Expression {
+export class ExpressionWithExpression extends Expression {
     expression: Expression;
 
     constructor(expression: Expression) {
@@ -129,7 +129,7 @@ class ExpressionWithExpression extends Expression {
     }
 }
 
-class ExpressionWithOptionalExpression extends Expression {
+export class ExpressionWithOptionalExpression extends Expression {
     expression?: Expression;
 
     constructor(expression?: Expression) {
@@ -146,7 +146,7 @@ class ExpressionWithOptionalExpression extends Expression {
     }
 }
 
-class BindingElement {
+export class BindingElement {
     dotDotDotToken?: any;
     propertyName?: string;
     name?: string;
@@ -164,7 +164,7 @@ class BindingElement {
     }
 }
 
-class BindingPattern {
+export class BindingPattern {
 
     elements: Array<BindingElement>
     type: 'array' | 'object'
@@ -180,7 +180,7 @@ class BindingPattern {
     }
 }
 
-class ArrayLiteral extends Expression {
+export class ArrayLiteral extends Expression {
     elements: Expression[];
     multiLine: boolean;
     constructor(elements: Expression[], multiLine: boolean) {
@@ -194,7 +194,7 @@ class ArrayLiteral extends Expression {
     }
 }
 
-class PropertyAssignment extends Expression {
+export class PropertyAssignment extends Expression {
     key: string;
     value: Expression;
     constructor(key: string, value: Expression) {
@@ -212,7 +212,7 @@ class PropertyAssignment extends Expression {
 
 }
 
-class ShorthandPropertyAssignment extends ExpressionWithOptionalExpression {
+export class ShorthandPropertyAssignment extends ExpressionWithOptionalExpression {
     name: Identifier;
 
     constructor(name: Identifier, expression?: Expression) {
@@ -234,7 +234,7 @@ class ShorthandPropertyAssignment extends ExpressionWithOptionalExpression {
 
 }
 
-class SpreadAssignment extends ExpressionWithExpression {
+export class SpreadAssignment extends ExpressionWithExpression {
     key: null = null;
     value: null = null;
 
@@ -243,7 +243,7 @@ class SpreadAssignment extends ExpressionWithExpression {
     }
 }
 
-class ObjectLiteral extends Expression {
+export class ObjectLiteral extends Expression {
     properties: Array<PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment>;
     multiLine: boolean;
     constructor(properties: Array<PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment>, multiLine: boolean) {
@@ -268,7 +268,7 @@ class ObjectLiteral extends Expression {
     }
 }
 
-class Block extends Expression {
+export class Block extends Expression {
     statements: Expression[];
     multiLine: boolean;
     constructor(statements: Expression[], multiLine: boolean) {
@@ -290,7 +290,7 @@ class Block extends Expression {
     }
 }
 
-class Parameter {
+export class Parameter {
     decorators: Decorator[]
     modifiers: string[];
     dotDotDotToken: any;
@@ -321,13 +321,13 @@ class Parameter {
     }
 }
 
-class Paren extends ExpressionWithExpression {
+export class Paren extends ExpressionWithExpression {
     toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return `(${super.toString(internalState, state, props)})`;
     }
 }
 
-class Call extends ExpressionWithExpression {
+export class Call extends ExpressionWithExpression {
     typeArguments: any[];
     argumentsArray: Expression[];
     constructor(expression: Expression, typeArguments: string[], argumentsArray: Expression[] = []) {
@@ -352,7 +352,7 @@ class Call extends ExpressionWithExpression {
     }
 }
 
-class Function {
+export class Function {
     decorators: Decorator[];
     modifiers: string[];
     asteriskToken: string;
@@ -383,7 +383,7 @@ class Function {
     }
 }
 
-class ArrowFunction extends Expression {
+export class ArrowFunction extends Expression {
     modifiers: any[];
     typeParameters: string[];
     parameters: Parameter[];
@@ -409,13 +409,13 @@ class ArrowFunction extends Expression {
     }
 }
 
-class ReturnStatement extends ExpressionWithExpression {
+export class ReturnStatement extends ExpressionWithExpression {
     toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return `return ${super.toString(internalState, state, props)};`;
     }
 }
 
-class Binary {
+export class Binary {
     left: Expression;
     operator: string;
     right: Expression;
@@ -443,7 +443,7 @@ class Binary {
     }
 }
 
-class If extends ExpressionWithExpression {
+export class If extends ExpressionWithExpression {
     thenStatement: Expression;
     elseStatement?: Expression;
     constructor(expression: Expression, thenStatement: Expression, elseStatement?: Expression) {
@@ -465,7 +465,7 @@ class If extends ExpressionWithExpression {
     }
 }
 
-class Conditional extends If { 
+export class Conditional extends If { 
     constructor(condition: Expression, whenTrue: Expression, whenFalse: Expression) {
         super(condition, whenTrue, whenFalse);
     }
@@ -475,7 +475,7 @@ class Conditional extends If {
     }
 }
 
-class While extends If { 
+export class While extends If { 
     constructor(expression: Expression, statement: Expression) { 
         super(expression, statement);
     }
@@ -485,7 +485,7 @@ class While extends If {
     }
 }
 
-class For extends ExpressionWithExpression { 
+export class For extends ExpressionWithExpression { 
     initializer?: Expression;
     condition?: Expression;
     incrementor?: Expression;
@@ -551,7 +551,7 @@ export class Property {
     }
 }
 
-class Class {
+export class Class {
     decorators: Decorator[];
     name: Identifier;
     members: Array<Property | Method>;
@@ -568,7 +568,7 @@ class Class {
     }
 }
 
-class PropertyAccess extends ExpressionWithExpression {
+export class PropertyAccess extends ExpressionWithExpression {
     name: Identifier
     constructor(expression: Expression, name: Identifier) {
         super(expression);
@@ -665,7 +665,7 @@ export class Method {
     }
 }
 
-class Prop {
+export class Prop {
     property: Property;
     constructor(property: Property) {
         if (property.decorators.find(d => d.name === "Template")) { 
@@ -708,7 +708,7 @@ class Prop {
     }
 }
 
-class InternalState extends Prop {
+export class InternalState extends Prop {
     defaultDeclaration() {
         return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(${this.property.initializer});`;
     }
@@ -726,7 +726,7 @@ class InternalState extends Prop {
     }
 }
 
-class State extends InternalState {
+export class State extends InternalState {
     typeDeclaration() {
         return [super.typeDeclaration(),
         `default${capitalizeFirstLetter(this.name)}?:${this.type}`,
@@ -758,7 +758,7 @@ class State extends InternalState {
     }
 }
 
-class Listener {
+export class Listener {
     method: Method;
     target?: string;
     eventName?: string;
@@ -971,7 +971,7 @@ export class ReactComponent {
     }
 }
 
-class ElementAccess extends ExpressionWithExpression {
+export class ElementAccess extends ExpressionWithExpression {
     index: Expression;
     constructor(expression: Expression, index: Expression) {
         super(expression);
@@ -987,7 +987,7 @@ class ElementAccess extends ExpressionWithExpression {
     }
 }
 
-class Prefix extends Expression {
+export class Prefix extends Expression {
     operator: string;
     operand: Expression;
     constructor(operator: string, operand: Expression) {
@@ -1005,19 +1005,19 @@ class Prefix extends Expression {
     }
 }
 
-class Postfix extends Prefix {
+export class Postfix extends Prefix {
     toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return `${this.operand.toString(internalState, state, props)}${this.operator}`;
     }
 }
 
-class NonNullExpression extends ExpressionWithExpression {
+export class NonNullExpression extends ExpressionWithExpression {
     toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return `${super.toString(internalState, state, props)}!`;
     }
 }
 
-class VariableDeclaration extends Expression {
+export class VariableDeclaration extends Expression {
     name: Identifier;
     type: string;
     initializer?: Expression | string;
@@ -1035,7 +1035,7 @@ class VariableDeclaration extends Expression {
     }
 }
 
-class VariableDeclarationList extends Expression {
+export class VariableDeclarationList extends Expression {
     declarations: VariableDeclaration[];
     flags: string;
 
@@ -1054,7 +1054,7 @@ class VariableDeclarationList extends Expression {
     }
 }
 
-class VariableStatement extends Expression {
+export class VariableStatement extends Expression {
     declarationList: VariableDeclarationList;
     modifiers: string[];
     constructor(modifiers: string[] = [], declarationList: VariableDeclarationList) {
@@ -1074,7 +1074,7 @@ class VariableStatement extends Expression {
     }
 }
 
-class PropertySignature extends ExpressionWithOptionalExpression { 
+export class PropertySignature extends ExpressionWithOptionalExpression { 
     modifiers: string[];
     name: Identifier;
     questionToken: string;
@@ -1094,7 +1094,7 @@ class PropertySignature extends ExpressionWithOptionalExpression {
 
 }
 
-class TemplateSpan extends ExpressionWithExpression { 
+export class TemplateSpan extends ExpressionWithExpression { 
     literal: string;
     constructor(expression: Expression, literal: string) { 
         super(expression);
@@ -1106,7 +1106,7 @@ class TemplateSpan extends ExpressionWithExpression {
     }
 }
 
-class TemplateExpression extends Expression {
+export class TemplateExpression extends Expression {
     head: string;
     templateSpans: TemplateSpan[];
     
