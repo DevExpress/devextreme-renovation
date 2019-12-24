@@ -8,6 +8,10 @@ class PreactComponent extends ReactComponent {
         }
         return imports;
     }
+
+    defaultPropsDest() { 
+        return `(${super.defaultPropsDest()} as any)`;
+    }
 }
 
 export default {

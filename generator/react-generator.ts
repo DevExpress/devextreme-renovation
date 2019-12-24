@@ -830,11 +830,15 @@ export class ReactComponent {
         return imports.concat(this.compileImportStatements(hooks)).join(";\n");
     }
 
+    defaultPropsDest() {
+        return this.name.toString();
+    }
+
     compileDefaultProps() {
         const defaultProps = this.props.filter(p => p.property.initializer).concat(this.state);
 
         if (defaultProps.length) {
-            return `${this.name}.defaultProps = {
+            return `${this.defaultPropsDest()}.defaultProps = {
                 ${defaultProps.map(p => p.defaultProps())
                     .join(",\n")}
             }`;

@@ -29,4 +29,8 @@ mocha.describe("preact-generator", function () {
     mocha.it("props-in-listener", function () {
         this.testGenerator(this.test!.title);
     });
+
+    mocha.it("props", function () {
+        this.testGenerator(this.test!.title);
+    });
 });
