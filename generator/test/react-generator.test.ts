@@ -535,6 +535,28 @@ mocha.describe("react-generator: expressions", function () {
         assert.equal(getResult(expression.toString()), getResult("for(i;true;i++){continue}"));
     });
 
+    mocha.it("ForIn", function () { 
+        const expression = generator.createForIn(
+            generator.createVariableDeclarationList(
+                [generator.createVariableDeclaration(
+                    generator.createIdentifier("i"),
+                    undefined,
+                    undefined
+                )],
+                generator.NodeFlags.Let
+            ),
+            generator.createIdentifier("obj"),
+            generator.createBlock(
+                [],
+                true
+            )
+        );
+
+        const actualString = expression.toString();
+
+        assert.equal(getResult(actualString), getResult("for(let i in obj){}"));
+    });
+
     mocha.it("createJsxSpreadAttribute", function () { 
         const expression = generator.createJsxSpreadAttribute(
             generator.createIdentifier("field"));

@@ -464,6 +464,30 @@ export class For extends ExpressionWithExpression {
     }
 }
 
+export class ForIn extends ExpressionWithExpression { 
+    initializer: Expression;
+    statement: Expression;
+    constructor(initializer: Expression, expression: Expression, statement: Expression) { 
+        super(expression);
+        this.initializer = initializer;
+        this.statement = statement;
+    }
+
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+        const initializer = this.initializer.toString(internalState, state, props);
+        const statement = this.statement.toString(internalState, state, props);
+        const expression = super.toString(internalState, state, props);
+
+        return `for(${initializer} in ${expression})${statement}`;
+    }
+
+    getDependency() {
+        return super.getDependency()
+            .concat(this.initializer.getDependency())
+            .concat(this.statement.getDependency());
+    }
+}
+
 export class Decorator {
     expression: Call;
     constructor(expression: Call) {
@@ -1502,6 +1526,10 @@ export default {
 
     createFor(initializer: Expression | undefined, condition: Expression | undefined, incrementor: Expression | undefined, statement: Expression) {
         return new For(initializer, condition, incrementor, statement);
+    },
+
+    createForIn(initializer: Expression, expression: Expression, statement: Expression) { 
+        return new ForIn(initializer, expression, statement);
     },
 
     createCaseClause(expression: Expression, statements: Expression[]) { 
