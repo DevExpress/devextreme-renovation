@@ -1049,6 +1049,24 @@ export class PropertySignature extends ExpressionWithOptionalExpression {
 
 }
 
+export class IndexSignature extends Expression { 
+    decorators?: Decorator[];
+    modifiers: string[];
+    parameters: Parameter[];
+    type: string;
+    constructor(decorators: Decorator[]=[], modifiers: string[] = [], parameters: Parameter[], type: string) { 
+        super();
+        this.decorators = decorators;
+        this.modifiers = modifiers;
+        this.parameters = parameters;
+        this.type = type;
+    }
+
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) { 
+        return `${this.parameters.map(p => `[${p.typeDeclaration()}]`)}:${this.type}`;
+    }
+}
+
 export class TemplateSpan extends ExpressionWithExpression {
     literal: string;
     constructor(expression: Expression, literal: string) {
@@ -1247,7 +1265,7 @@ export default {
         return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body).declaration();
     },
 
-    createParameter(decorators: Decorator[], modifiers: string[], dotDotDotToken: any, name: Identifier, questionToken?: string, type?: string, initializer?: Expression) {
+    createParameter(decorators: Decorator[] = [], modifiers: string[] = [], dotDotDotToken: any, name: Identifier, questionToken?: string, type?: string, initializer?: Expression) {
         return new Parameter(decorators, modifiers, dotDotDotToken, name, questionToken, type, initializer);
     },
 
@@ -1442,6 +1460,10 @@ export default {
 
     createPropertySignature(modifiers: string[] = [], name: Identifier, questionToken: string | undefined, type: string, initializer?: Expression) {
         return new PropertySignature(modifiers, name, questionToken, type, initializer);
+    },
+
+    createIndexSignature(decorators: Decorator[] | undefined, modifiers: string[] = [], parameters: Parameter[], type: string) { 
+        return new IndexSignature(decorators, modifiers, parameters, type);
     },
 
     createTypeLiteralNode(members: PropertySignature[]) {

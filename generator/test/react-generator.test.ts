@@ -124,6 +124,25 @@ mocha.describe("react-generator: expressions", function () {
         ).toString(), 'const a="str",\nb=10');
     });
 
+    mocha.it("createIndexSignature", function () { 
+        const expression = generator.createIndexSignature(
+            undefined,
+            undefined,
+            [generator.createParameter(
+                undefined,
+                undefined,
+                undefined,
+                generator.createIdentifier("name"),
+                undefined,
+                generator.createKeywordTypeNode(generator.SyntaxKind.StringKeyword),
+                undefined
+            )],
+            generator.createKeywordTypeNode(generator.SyntaxKind.NumberKeyword)
+        );
+
+        assert.equal(expression.toString(), "[name:string]:number");
+    });
+
     mocha.it("createImportDeclaration", function () { 
         assert.equal(generator.createImportDeclaration(
             undefined,
