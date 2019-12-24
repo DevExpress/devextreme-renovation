@@ -121,7 +121,7 @@ mocha.describe("react-generator: expressions", function () {
                 generator.createVariableDeclaration(generator.createIdentifier("b"), undefined, generator.createNumericLiteral("10"))
             ],
             generator.NodeFlags.Const
-        ).toString(), 'const a="str",\nb=10;');
+        ).toString(), 'const a="str",\nb=10');
     });
 
     mocha.it("createImportDeclaration", function () { 
@@ -197,7 +197,7 @@ mocha.describe("react-generator: expressions", function () {
             generator.createVariableStatement([
                 generator.SyntaxKind.DefaultKeyword,
                 generator.SyntaxKind.ExportKeyword
-            ], declarationList).toString(), 'default export const a="str";');
+            ], declarationList).toString(), 'default export const a="str"');
     });
 
     mocha.it("ArrayLiteral", function () {
@@ -239,7 +239,7 @@ mocha.describe("react-generator: expressions", function () {
 
     mocha.it("Block", function () {
         assert.equal(generator.createBlock([], true).toString().replace(/\s+/g, ""), "{}");
-        assert.equal(generator.createBlock([
+        const expression = generator.createBlock([
             generator.createVariableDeclarationList(
                 [
                     generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str")),
@@ -247,7 +247,10 @@ mocha.describe("react-generator: expressions", function () {
                 ],
                 generator.NodeFlags.Const
             )
-        ], true).toString().replace(/\s+/g, ""), '{consta="str",b=10;}');
+        ], true);
+
+        const actualString = expression.toString();
+        assert.equal(getResult(actualString), getResult('{const a="str", b=10}'));
     });
 
     mocha.it("Call", function () {
@@ -505,12 +508,12 @@ mocha.describe("react-generator: expressions", function () {
                 generator.SyntaxKind.PlusPlusToken
             ),
             generator.createBlock(
-                [],
+                [generator.createContinue()],
                 true
             )
         );
 
-        assert.equal(getResult(expression.toString()), getResult("for(i;true;i++){}"));
+        assert.equal(getResult(expression.toString()), getResult("for(i;true;i++){continue}"));
     });
 
     mocha.it("createJsxSpreadAttribute", function () { 
@@ -520,41 +523,8 @@ mocha.describe("react-generator: expressions", function () {
         assert.equal(expression.toString(), "{...field}");
     });
 
-
-    mocha.it("CaseClause", function () {
-        const expression = generator.createCaseClause(generator.createNumericLiteral("1"), [
-            generator.createVariableDeclarationList(
-                [
-                    generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str"))
-                ],
-                generator.NodeFlags.Const
-            ),
-            generator.createBreak()
-        ]);
-        assert.equal(getResult(expression.toString()), getResult(`case 1:
-        const a = "str";
-        break;
-        `));
-    });
-
-    mocha.it.skip("createDefaultClause", function () {
-        const expression = generator.createDefaultClause([
-            generator.createVariableDeclarationList(
-                [
-                    generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str"))
-                ],
-                generator.NodeFlags.Const
-            ),
-            generator.createBreak()
-        ]);
-        assert.equal(getResult(expression.toString()), getResult(`default:
-        const a = "str";
-        break;
-        `));
-    });
-
-    mocha.it.skip("createDefaultClause", function () {
-        const clause1 = generator.createDefaultClause([
+    mocha.it("createSwitch", function () {
+        const clause1 = generator.createCaseClause(generator.createNumericLiteral("1"), [
             generator.createVariableDeclarationList(
                 [
                     generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str"))
@@ -573,13 +543,16 @@ mocha.describe("react-generator: expressions", function () {
             generator.createBreak()
         ]);
 
-        const expression = generator.createCaseBlock([clause1, clause2]);
-        assert.equal(getResult(expression.toString()), getResult(`
-        {
+        const block = generator.createCaseBlock([clause1, clause2]);
+
+        const expression = generator.createSwitch(generator.createIdentifier("expr"), block);
+        const actualString = expression.toString();
+        assert.equal(getResult(actualString), getResult(`
+        switch(expr){
             case 1:
                 const a = "str";
                 break;
-            defult:
+            default:
                 const a = "str";
                 break;
         }

@@ -425,20 +425,12 @@ export class If extends ExpressionWithExpression {
 }
 
 export class Conditional extends If {
-    constructor(condition: Expression, whenTrue: Expression, whenFalse: Expression) {
-        super(condition, whenTrue, whenFalse);
-    }
-
     toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return `${this.expression.toString(internalState, state, props)}?${this.thenStatement.toString(internalState, state, props)}:${this.elseStatement!.toString(internalState, state, props)}`;
     }
 }
 
 export class While extends If {
-    constructor(expression: Expression, statement: Expression) {
-        super(expression, statement);
-    }
-
     toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return `while(${this.expression.toString(internalState, state, props)})${this.thenStatement.toString(internalState, state, props)}`;
     }
@@ -1009,7 +1001,7 @@ export class VariableDeclarationList extends Expression {
     }
 
     toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `${this.flags} ${this.declarations.map(d => d.toString(internalState, state, props)).join(",\n")};`;
+        return `${this.flags} ${this.declarations.map(d => d.toString(internalState, state, props)).join(",\n")}`;
     }
 
     getDependency() {
@@ -1122,8 +1114,14 @@ export class DefaultClause extends CaseClause {
 }
 
 export class CaseBlock extends Block { 
-    constructor(clauses: Expression[]) { 
+    constructor(clauses: Array<DefaultClause|CaseClause>) { 
         super(clauses, true);
+    }
+}
+
+export class Switch extends If {
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+        return `switch(${this.expression.toString(internalState, state, props)})${this.thenStatement.toString(internalState, state, props)}`;
     }
 }
 
@@ -1235,6 +1233,10 @@ export default {
 
     createBreak(label?: string | Identifier) { 
         return new SimpleExpression("break");
+    },
+
+    createContinue(label?: string | Identifier) { 
+        return new SimpleExpression("continue");
     },
 
     createBlock(statements: Expression[], multiLine: boolean) {
@@ -1488,11 +1490,11 @@ export default {
         return new DefaultClause(statements);
     },
 
-    createCaseBlock(clauses: Expression[]) {
+    createCaseBlock(clauses: Array<DefaultClause|CaseClause>) {
         return new CaseBlock(clauses);
     },
     
-    createSwitch(expression: Expression, caseBlock: Expression) { 
-        return 
+    createSwitch(expression: Expression, caseBlock: CaseBlock) { 
+        return new Switch(expression, caseBlock);
     }
 }
