@@ -1085,6 +1085,44 @@ export class TemplateExpression extends Expression {
 
 }
 
+export class CaseClause extends ExpressionWithOptionalExpression { 
+    statements: Expression[];
+    constructor(expression: Expression|undefined, statements: Expression[]) { 
+        super(expression);
+        this.statements = statements;
+    }
+
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+        return `case ${super.toString(internalState, state, props)}:
+            ${this.statements.map(s=>s.toString(internalState, state, props)).join("\n")}
+        `;
+    }
+
+    getDependency() {
+        return this.statements.reduce((d: string[], s) => {
+            return d.concat(s.getDependency());
+        }, []).concat(super.getDependency());
+    }
+}
+
+export class DefaultClause extends CaseClause { 
+    constructor(statements: Expression[]) { 
+        super(undefined, statements);
+    }
+
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+        return `default:
+            ${this.statements.map(s=>s.toString(internalState, state, props)).join("\n")}
+        `;
+    }
+}
+
+export class CaseBlock extends Block { 
+    constructor(clauses: Expression[]) { 
+        super(clauses, true);
+    }
+}
+
 export default {
     NodeFlags: {
         Const: "const",
@@ -1189,6 +1227,10 @@ export default {
 
     createThis() {
         return new SimpleExpression(this.SyntaxKind.ThisKeyword);
+    },
+
+    createBreak(label?: string | Identifier) { 
+        return new SimpleExpression("break");
     },
 
     createBlock(statements: Expression[], multiLine: boolean) {
@@ -1432,5 +1474,21 @@ export default {
 
     createFor(initializer: Expression | undefined, condition: Expression | undefined, incrementor: Expression | undefined, statement: Expression) {
         return new For(initializer, condition, incrementor, statement);
+    },
+
+    createCaseClause(expression: Expression, statements: Expression[]) { 
+        return new CaseClause(expression, statements);
+    },
+
+    createDefaultClause(statements: Expression[]) { 
+        return new DefaultClause(statements);
+    },
+
+    createCaseBlock(clauses: Expression[]) {
+        return new CaseBlock(clauses);
+    },
+    
+    createSwitch(expression: Expression, caseBlock: Expression) { 
+        return 
     }
 }

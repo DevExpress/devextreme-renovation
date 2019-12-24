@@ -447,6 +447,10 @@ mocha.describe("react-generator: expressions", function () {
         ), "string|number");
     });
 
+    mocha.it("CreateBreak", function () { 
+        assert.equal(generator.createBreak().toString(), "break");
+    });
+
     mocha.it("createConditional", function () { 
         const expression = generator.createConditional(
             generator.createIdentifier("a"),
@@ -514,6 +518,72 @@ mocha.describe("react-generator: expressions", function () {
             generator.createIdentifier("field"));
         
         assert.equal(expression.toString(), "{...field}");
+    });
+
+
+    mocha.it("CaseClause", function () {
+        const expression = generator.createCaseClause(generator.createNumericLiteral("1"), [
+            generator.createVariableDeclarationList(
+                [
+                    generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str"))
+                ],
+                generator.NodeFlags.Const
+            ),
+            generator.createBreak()
+        ]);
+        assert.equal(getResult(expression.toString()), getResult(`case 1:
+        const a = "str";
+        break;
+        `));
+    });
+
+    mocha.it.skip("createDefaultClause", function () {
+        const expression = generator.createDefaultClause([
+            generator.createVariableDeclarationList(
+                [
+                    generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str"))
+                ],
+                generator.NodeFlags.Const
+            ),
+            generator.createBreak()
+        ]);
+        assert.equal(getResult(expression.toString()), getResult(`default:
+        const a = "str";
+        break;
+        `));
+    });
+
+    mocha.it.skip("createDefaultClause", function () {
+        const clause1 = generator.createDefaultClause([
+            generator.createVariableDeclarationList(
+                [
+                    generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str"))
+                ],
+                generator.NodeFlags.Const
+            ),
+            generator.createBreak()
+        ]);
+        const clause2 = generator.createDefaultClause([
+            generator.createVariableDeclarationList(
+                [
+                    generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str"))
+                ],
+                generator.NodeFlags.Const
+            ),
+            generator.createBreak()
+        ]);
+
+        const expression = generator.createCaseBlock([clause1, clause2]);
+        assert.equal(getResult(expression.toString()), getResult(`
+        {
+            case 1:
+                const a = "str";
+                break;
+            defult:
+                const a = "str";
+                break;
+        }
+        `));
     });
 
 });
