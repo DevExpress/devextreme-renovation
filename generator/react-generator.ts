@@ -436,6 +436,16 @@ export class While extends If {
     }
 }
 
+export class Do extends While {
+    constructor(statement: Expression, expression: Expression) { 
+        super(expression, statement);
+    }
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+        return `do ${this.thenStatement.toString(internalState, state, props)} 
+            while(${this.expression.toString(internalState, state, props)})`;
+    }
+}
+
 export class For extends ExpressionWithExpression {
     initializer?: Expression;
     condition?: Expression;
@@ -1167,6 +1177,12 @@ export class Switch extends If {
     }
 }
 
+export class ComputedPropertyName extends ExpressionWithExpression { 
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) { 
+        return `[${super.toString(internalState, state, props)}]`;
+    }
+}
+
 export default {
     NodeFlags: {
         Const: "const",
@@ -1279,6 +1295,10 @@ export default {
 
     createContinue(label?: string | Identifier) { 
         return new SimpleExpression("continue");
+    },
+
+    createDebuggerStatement() { 
+        return new SimpleExpression("debugger");
     },
 
     createBlock(statements: Expression[], multiLine: boolean) {
@@ -1546,5 +1566,13 @@ export default {
     
     createSwitch(expression: Expression, caseBlock: CaseBlock) { 
         return new Switch(expression, caseBlock);
+    },
+
+    createComputedPropertyName(expression:Expression) { 
+        return new ComputedPropertyName(expression);
+    },
+
+    createDo(statement: Expression, expression: Expression) { 
+        return new Do(statement, expression);
     }
 }

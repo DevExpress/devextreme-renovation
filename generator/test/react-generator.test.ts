@@ -518,6 +518,15 @@ mocha.describe("react-generator: expressions", function () {
         assert.equal(getResult(generator.createWhile(condition, expression).toString()), getResult("while(true)this.field"));
     });
 
+    mocha.it("DoWhile", function () {
+        const expression = generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("field"));
+        const condition = generator.createTrue();
+
+        assert.equal(getResult(generator.createDo(expression, condition).toString()), getResult("do this.field while(true)"));
+    });
+
     mocha.it("For", function () {
         const expression = generator.createFor(
             generator.createIdentifier("i"),
@@ -600,6 +609,15 @@ mocha.describe("react-generator: expressions", function () {
         `));
     });
 
+    mocha.it("createDebuggerStatement", function () { 
+        assert.equal(generator.createDebuggerStatement().toString(), "debugger");
+    });
+
+    mocha.it("createComputedPropertyName", function () { 
+        assert.equal(generator.createComputedPropertyName(
+            generator.createIdentifier("name")
+        ).toString(), "[name]");
+    });
 });
 
 mocha.describe("common", function () {
