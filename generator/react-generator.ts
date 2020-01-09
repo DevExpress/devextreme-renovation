@@ -299,7 +299,7 @@ export class Call extends ExpressionWithExpression {
         return this.argumentsArray.map(a => a);
     }
 
-    toString(internalState: InternalState[], state: State[], props: Prop[]) {
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return `${this.expression.toString(internalState, state, props)}(${this.argumentsArray.map(a => a.toString(internalState, state, props)).join(",")})`;
     }
 
@@ -308,6 +308,12 @@ export class Call extends ExpressionWithExpression {
             return d.concat(a.getDependency());
         }, []);
         return super.getDependency().concat(argumentsDependency);
+    }
+}
+
+export class New extends Call {
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+        return `${SyntaxKind.NewKeyword} ${super.toString(internalState, state, props)}`;
     }
 }
 
@@ -1263,6 +1269,10 @@ export default {
 
     createTrue(): Expression {
         return new SimpleExpression(this.SyntaxKind.TrueKeyword);
+    },
+
+    createNew(expression: Expression, typeArguments: string[]=[], argumentsArray: Expression[]) { 
+        return new New(expression, typeArguments, argumentsArray);
     },
 
     createNull() {

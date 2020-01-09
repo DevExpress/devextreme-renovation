@@ -8,4 +8,4 @@ export function plus(a:number=45, b?:number):number {
     return a + b;
 }
 
-export default (function ():void { })();
+export default (function (): void { })();
