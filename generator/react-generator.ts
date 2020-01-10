@@ -841,6 +841,8 @@ export class ReactComponent {
     listeners: Listener[];
     methods: Method[];
 
+    effects: Method[];
+
     view: any;
     viewModel: any;
 
@@ -867,7 +869,8 @@ export class ReactComponent {
 
         this.listeners = members.filter(m => m.decorators.find(d => d.name === "Listen"))
             .map(m => new Listener(m as Method));
-
+        
+        this.effects = members.filter(m => m.decorators.find(d => d.name === "Effect")) as Method[];
 
         const parameters = (decorator.expression.arguments[0] as ObjectLiteral);
 
@@ -894,7 +897,7 @@ export class ReactComponent {
             hooks.push("useCallback");
         }
 
-        if (this.listeners.filter(l => l.target).length) {
+        if (this.listeners.filter(l => l.target).length || this.effects.length) {
             hooks.push("useEffect");
         }
 
@@ -944,6 +947,12 @@ export class ReactComponent {
 
     compileUseEffect() {
         const subscriptions = this.listeners.filter(m => m.target);
+
+        const effects = this.effects;
+
+        const effectsString = effects.map(e => `useEffect(${e.arrowDeclaration(this.internalState, this.state, this.props.concat(this.refs))})`).join(";\n");
+
+        let subscriptionsString = "";
         if (subscriptions.length) {
             const { add, cleanup } = subscriptions.reduce(({ add, cleanup }, s) => {
                 (add as string[]).push(`${s.target}.addEventListener(${s.eventName}, ${s.name});`);
@@ -951,7 +960,7 @@ export class ReactComponent {
                 return { add, cleanup }
             }, { add: [], cleanup: [] });
             if (add.length) {
-                return `useEffect(()=>{
+                subscriptionsString = `useEffect(()=>{
                     ${add.join("\n")}
                     return function cleanup(){
                         ${cleanup.join("\n")}
@@ -959,7 +968,7 @@ export class ReactComponent {
                 });`;
             }
         }
-        return "";
+        return subscriptionsString + effectsString;
     }
 
     compileUseRef() { 

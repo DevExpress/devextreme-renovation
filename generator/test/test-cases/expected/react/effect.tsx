@@ -17,9 +17,7 @@ interface Component {
 export default function Component(props: {}) {
     useEffect(() => {
         const id = subscribe();
-        return function() {
-            unsubscribe(id);
-        };
+        return () => unsubscribe(id);
     });
 
     return view(viewModel({

@@ -92,6 +92,10 @@ mocha.describe("react-generator", function () {
     mocha.it("refs", function () {
         this.testGenerator(this.test!.title);
     });
+
+    mocha.it("effect", function () {
+        this.testGenerator(this.test!.title);
+    });
 });
 
 mocha.describe("react-generator: expressions", function () {
