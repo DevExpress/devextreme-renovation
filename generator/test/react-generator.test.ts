@@ -12,7 +12,6 @@ if (!mocha.describe) {
     mocha.it = it;
 }
 
-
 mocha.describe("react-generator", function () {
     this.beforeAll(function () {
         const testGenerator = createTestGenerator("react");
@@ -278,6 +277,14 @@ mocha.describe("react-generator: expressions", function () {
             undefined,
             [generator.createStringLiteral("a"), generator.createNumericLiteral("10")]
         ).toString(), 'a("a",10)');
+    });
+
+    mocha.it("createNew", function () {
+        assert.equal(generator.createNew(
+            generator.createIdentifier("a"),
+            undefined,
+            [generator.createStringLiteral("a"), generator.createNumericLiteral("10")]
+        ).toString(), 'new a("a",10)');
     });
 
     mocha.it("PropertyAccess", function () {
