@@ -1481,7 +1481,9 @@ export default {
     },
 
     createJsxElement(openingElement: string, children: string[], closingElement: string) {
-        return `${openingElement}${children.join("\n")}${closingElement}`;
+        return `${openingElement}${children.join("\n")}${closingElement}`
+            .replace(/template/g, "render")
+            .replace(/(.+)(Template)/g, "$1Render");
     },
 
     createJsxText(text: string, containsOnlyTriviaWhiteSpaces: string) {

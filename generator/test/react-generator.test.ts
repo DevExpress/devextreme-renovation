@@ -627,9 +627,10 @@ mocha.describe("react-generator: expressions", function () {
     });
 
     mocha.it("createDelete", function () { 
-        assert.equal(generator.createPropertyAccess(
-            generator.createThis(),
-            generator.createIdentifier("field")).toString(), "delete this.field");
+        assert.equal(generator.createDelete(
+                generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("field"))).toString(), "delete this.field");
     });
 });
 
