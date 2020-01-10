@@ -88,6 +88,10 @@ mocha.describe("react-generator", function () {
     mocha.it("template", function () {
         this.testGenerator(this.test!.title);
     });
+
+    mocha.it("refs", function () {
+        this.testGenerator(this.test!.title);
+    });
 });
 
 mocha.describe("react-generator: expressions", function () {

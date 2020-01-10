@@ -574,9 +574,11 @@ export class PropertyAccess extends ExpressionWithExpression {
 
     toString(internalState: InternalState[] = [], state: State[] = [], props: Prop[] = []) {
         const expressionString = this.expression.toString();
-        if (expressionString === SyntaxKind.ThisKeyword &&
-            props.findIndex(p => p.name.valueOf() === this.name.valueOf()) >= 0) {
-            return getPropName(this.name);
+        if (expressionString === SyntaxKind.ThisKeyword) {
+            const p = props.find(p => p.name.valueOf() === this.name.valueOf());
+            if (p) { 
+                return p.getter();
+            }
         }
 
         if (expressionString === SyntaxKind.ThisKeyword &&
@@ -611,7 +613,7 @@ export class PropertyAccess extends ExpressionWithExpression {
         if (this.expression.toString() === SyntaxKind.ThisKeyword) {
             return [this.name.toString()];
         }
-        return [];
+        return this.expression.getDependency();
     }
 }
 
@@ -702,6 +704,32 @@ export class Prop {
 
     setter(value: any) {
         return `prop.${this.name}`;
+    }
+}
+
+export class Ref extends Prop {
+    defaultProps() {
+        return "";
+    }
+
+    typeDeclaration() {
+        return `${this.name}:any`;
+    }
+
+    defaultDeclaration() {
+        return "";
+    }
+
+    getter() {
+        return `${this.name}.current!`;
+    }
+
+    getDependecy() {
+        return [this.name.toString()];
+    }
+
+    setter(value: any) {
+        return "";
     }
 }
 
@@ -804,6 +832,7 @@ export class ReactComponent {
     props: Prop[] = [];
     state: State[] = [];
     internalState: InternalState[];
+    refs: Ref[];
     events: Property[] = [];
 
     modifiers: string[];
@@ -822,6 +851,10 @@ export class ReactComponent {
         this.props = members
             .filter(m => m.decorators.find(d => d.name === "Prop" || d.name === "Event" || d.name === "Template"))
             .map(p => new Prop(p as Property));
+        
+        
+        this.refs = members.filter(m => m.decorators.find(d => d.name === "Ref"))
+            .map(p => new Ref(p as Property));
 
         this.internalState = members
             .filter(m => m.decorators.find(d => d.name === "InternalState"))
@@ -865,6 +898,10 @@ export class ReactComponent {
             hooks.push("useEffect");
         }
 
+        if (this.refs.length) { 
+            hooks.push("useRef");
+        }
+
         return imports.concat(this.compileImportStatements(hooks)).join(";\n");
     }
 
@@ -900,7 +937,7 @@ export class ReactComponent {
 
     listenersDeclaration() {
         if (this.listeners.length) {
-            return this.listeners.map(l => l.defaultDeclaration(this.internalState, this.state, this.props)).join(";\n");
+            return this.listeners.map(l => l.defaultDeclaration(this.internalState, this.state, this.props.concat(this.refs))).join(";\n");
         }
         return "";
     }
@@ -925,12 +962,18 @@ export class ReactComponent {
         return "";
     }
 
+    compileUseRef() { 
+        return this.refs.map(r => { 
+            return `const ${r.name}=useRef<${r.type}>()`;
+        }).join(";\n");
+    }
+
     compileComponentInterface() {
         return `interface ${this.name}{
-            ${this.props.concat(this.internalState).concat(this.state)
+            ${this.props.concat(this.internalState).concat(this.state).concat(this.refs)
                 .map(p => p.typeDeclaration())
                 .concat(this.listeners.map(l => l.typeDeclaration()))
-                .join(",\n")
+                .join(";\n")
             }
         }`;
     }
@@ -947,11 +990,12 @@ export class ReactComponent {
                 .map(p => p.typeDeclaration()).join(",\n")}
                 }
             ){
+                ${this.compileUseRef()}
                 ${this.stateDeclaration()}
                 ${this.listenersDeclaration()}
                 ${this.compileUseEffect()}
 
-                ${this.methods.map(m => m.declaration("function", this.internalState, this.state, this.props)).join("\n")}
+                ${this.methods.map(m => m.declaration("function", this.internalState, this.state, this.props.concat(this.refs))).join("\n")}
                 
                 return ${this.view}(${this.viewModel}({
                     ${
@@ -961,7 +1005,8 @@ export class ReactComponent {
                         .concat(this.state)
                         .map(s => `${s.name}:${s.getter()}`)
                 )
-                .concat(this.listeners.map(l => l.name.toString()))
+            .concat(this.listeners.map(l => l.name.toString()))
+            .concat(this.refs.map(r=>r.name.toString()))
                 .join(",\n")
             }
                 }));
@@ -1033,6 +1078,13 @@ export class VariableDeclaration extends Expression {
     toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         const initilizerDeclaration = this.initializer ? `=${this.initializer.toString(internalState, state, props)}` : "";
         return `${this.name}${compileType(this.type)}${initilizerDeclaration}`;
+    }
+
+    getDependency() { 
+        if (this.initializer && this.initializer instanceof Expression) { 
+            return this.initializer.getDependency();
+        }
+        return [];
     }
 }
 

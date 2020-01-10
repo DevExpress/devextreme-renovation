@@ -9,6 +9,11 @@ function viewModel() { }
 export default class Component {
     @Ref() divRef!: HTMLDivElement;
 
+    @Listen("click")
+    clickHandler() {
+        const html = this.divRef.outerHTML;
+    }
+
     getHeight() { 
         return this.divRef.outerHTML;
     }

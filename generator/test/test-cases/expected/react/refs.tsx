@@ -1,15 +1,21 @@
-function view(viewModel) { 
+function view(viewModel) {
     return <div ref={viewModel.divRef}></div>
 }
 function viewModel() { }
 
-import React, { useRef } from "react";
+import React, { useCallback, useRef } from "react";
 
 interface Component {
+    divRef: any;
+    clickHandler: () => void;
 }
 
-export default function Component(props: { }) {
+export default function Component(props: {}) {
     const divRef = useRef<HTMLDivElement>();
+
+    const clickHandler = useCallback(() => {
+        const html = divRef.current!.outerHTML;
+    }, [divRef])
 
     function getHeight() {
         return divRef.current!.outerHTML;
@@ -17,6 +23,7 @@ export default function Component(props: { }) {
 
     return view(viewModel({
         ...props,
+        clickHandler,
         divRef
     }));
 }
