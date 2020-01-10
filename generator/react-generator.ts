@@ -123,6 +123,12 @@ export class BindingElement {
     }
 }
 
+export class Delete extends ExpressionWithExpression {
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+        return `${SyntaxKind.DeleteKeyword} ${super.toString()}`;
+    }
+}
+
 export class BindingPattern {
 
     elements: Array<BindingElement>
@@ -1289,6 +1295,10 @@ export default {
 
     createNew(expression: Expression, typeArguments: string[]=[], argumentsArray: Expression[]) { 
         return new New(expression, typeArguments, argumentsArray);
+    },
+
+    createDelete(expression: Expression) { 
+        return new Delete(expression);
     },
 
     createNull() {
