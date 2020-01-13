@@ -371,8 +371,8 @@ export class ArrowFunction extends Expression {
         this.equalsGreaterThanToken = equalsGreaterThanToken;
     }
 
-    toString() {
-        return `${this.modifiers.join(" ")} (${this.parameters.map(p => p.declaration()).join(",")})${compileType(this.type)} ${this.equalsGreaterThanToken} ${this.body}`;
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+        return `${this.modifiers.join(" ")} (${this.parameters.map(p => p.declaration()).join(",")})${compileType(this.type)} ${this.equalsGreaterThanToken} ${this.body.toString(internalState, state, props)}`;
     }
 
     getDependency() {
