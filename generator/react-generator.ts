@@ -733,6 +733,25 @@ export class Ref extends Prop {
     }
 }
 
+export class Slot extends Prop {
+    constructor(property: Property) {
+        super(property);
+        property.name = new Identifier(property.name.toString().replace("default", "children"));
+    }
+
+    typeDeclaration() {
+        return `${this.name}${this.property.questionOrExclamationToken}:React.ReactNode`;
+    }
+
+    defaultDeclaration() {
+        return "";
+    }
+
+    setter(value: any) {
+        return "";
+    }
+}
+
 export class InternalState extends Prop {
     defaultDeclaration() {
         return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(${this.property.initializer});`;
@@ -840,8 +859,8 @@ export class ReactComponent {
 
     listeners: Listener[];
     methods: Method[];
-
     effects: Method[];
+    slots: Slot[];
 
     view: any;
     viewModel: any;
@@ -871,6 +890,8 @@ export class ReactComponent {
             .map(m => new Listener(m as Method));
         
         this.effects = members.filter(m => m.decorators.find(d => d.name === "Effect")) as Method[];
+
+        this.slots = members.filter(m => m.decorators.find(d => d.name === "Slot")).map(m => new Slot(m as Property));
 
         const parameters = (decorator.expression.arguments[0] as ObjectLiteral);
 
@@ -979,7 +1000,11 @@ export class ReactComponent {
 
     compileComponentInterface() {
         return `interface ${this.name}{
-            ${this.props.concat(this.internalState).concat(this.state).concat(this.refs)
+            ${this.props
+                .concat(this.internalState)
+                .concat(this.state)
+                .concat(this.refs)
+                .concat(this.slots)
                 .map(p => p.typeDeclaration())
                 .concat(this.listeners.map(l => l.typeDeclaration()))
                 .join(";\n")
@@ -995,7 +1020,8 @@ export class ReactComponent {
 
             ${this.modifiers.join(" ")} function ${this.name}(props: {
                     ${this.props
-                .concat(this.state)
+                    .concat(this.state)
+                    .concat(this.slots)
                 .map(p => p.typeDeclaration()).join(",\n")}
                 }
             ){
@@ -1543,6 +1569,7 @@ export default {
 
     createJsxElement(openingElement: string, children: string[], closingElement: string) {
         return `${openingElement}${children.join("\n")}${closingElement}`
+            .replace(/(\.default)(\W+)/g, ".children$2")
             .replace(/template/g, "render")
             .replace(/(.+)(Template)/g, "$1Render");
     },

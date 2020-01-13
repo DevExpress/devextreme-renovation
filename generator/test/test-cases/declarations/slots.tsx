@@ -2,7 +2,7 @@ function view(viewModel) {
     return (
         <div>
             <div>
-                {viewModel.drawer}
+                {viewModel.namedSlot}
             </div>
             <div>
                 {viewModel.default}
@@ -16,6 +16,6 @@ function viewModel() { }
     view: view
 })
 export default class Component {
-    @Slot() namedSlot: any;
-    @Slot() default: any;
+    @Slot() namedSlot?: any;
+    @Slot() default?: any;
 }

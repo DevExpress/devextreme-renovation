@@ -15,6 +15,8 @@ function viewModel() { }
 import React from "react";
 
 interface Component {
+    namedSlot?: React.ReactNode,
+    children?: React.ReactNode
 }
 
 export default function Component(props: {
