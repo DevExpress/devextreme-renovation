@@ -33,4 +33,8 @@ mocha.describe("preact-generator", function () {
     mocha.it("props", function () {
         this.testGenerator(this.test!.title);
     });
+
+    mocha.it("slots", function () {
+        this.testGenerator(this.test!.title);
+    });
 });

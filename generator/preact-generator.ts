@@ -1,6 +1,19 @@
-import reactGenerator, { ReactComponent, Decorator, Identifier, Property, Method } from "./react-generator";
+import reactGenerator, { ReactComponent, Decorator, Identifier, Property, Method, Slot } from "./react-generator";
 
+class PreactSlot extends Slot { 
+    constructor(slot: Slot) { 
+        super(slot.property);
+    }
+
+    typeDeclaration() {
+        return `${this.name}${this.property.questionOrExclamationToken}:any`;
+    }
+}
 class PreactComponent extends ReactComponent {
+    constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: any, members: Array<Property | Method>) {
+        super(decorator, modifiers, name, typeParameters, heritageClauses, members);
+        this.slots = this.slots.map(s => new PreactSlot(s));
+    }
     compileImportStatements(hooks: string[]) {
         const imports = ["import * as Preact from 'preact'"]; 
         if (hooks.length) { 
