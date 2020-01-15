@@ -1,4 +1,6 @@
-import reactGenerator, { ReactComponent, Decorator, Identifier, Property, Method, Slot } from "./react-generator";
+import reactGenerator, { ReactComponent, Decorator, Identifier, Property, Method, Slot, StringLiteral } from "./react-generator";
+import fs from "fs";
+import path from "path";
 
 class PreactSlot extends Slot { 
     constructor(slot: Slot) { 
@@ -29,6 +31,18 @@ class PreactComponent extends ReactComponent {
 
 export default {
     ...reactGenerator,
+
+    createImportDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], importClause: string = "", moduleSpecifier: StringLiteral) {
+        const module = moduleSpecifier.expression.toString();
+        if (this.context.path) { 
+            const modulePath = path.join(this.context.path, `${module}.tsx`);
+            if (fs.existsSync(modulePath)) { 
+                moduleSpecifier = new StringLiteral(`${module}.p`);
+            }
+            
+        }
+        return reactGenerator.createImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
+    },
 
     processSourceFileName(name: string) {
         return name.replace(/\.tsx$/, ".p.tsx");

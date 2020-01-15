@@ -1282,6 +1282,10 @@ export class ComputedPropertyName extends ExpressionWithExpression {
     }
 }
 
+interface GeneratorContex { 
+    path?: string;
+}
+
 export default {
     NodeFlags: {
         Const: "const",
@@ -1490,7 +1494,7 @@ export default {
         return new While(expression, statement);
     },
 
-    createImportDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], importClause: string = "", moduleSpecifier: string | StringLiteral) {
+    createImportDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], importClause: string = "", moduleSpecifier: StringLiteral) {
         if (moduleSpecifier.toString().indexOf("component_declaration/common") >= 0) {
             return "";
         }
@@ -1684,5 +1688,15 @@ export default {
 
     createDo(statement: Expression, expression: Expression) { 
         return new Do(statement, expression);
+    },
+
+    context: {} as GeneratorContex,
+    
+    setContext(context: GeneratorContex) { 
+        if (!context) {
+            this.context = {};
+        } else { 
+            this.context = { ...this.context, ...context };
+        }
     }
 }

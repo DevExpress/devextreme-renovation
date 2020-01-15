@@ -5,6 +5,7 @@ import gulp from "gulp";
 import fs from "fs";
 import path from "path";
 import { printSourceCodeAst } from "./helpers/common";
+import sinon from "sinon";
 
 import { generateComponents } from "../component-compiler";
 import File from "vinyl";
@@ -29,11 +30,15 @@ async function readData(stream:NodeJS.ReadableStream):Promise<File[]> {
 
 mocha.describe("code-compiler: gulp integration", function() { 
     mocha.it("createCodeGenerator stream", async function () { 
+        const setContextSpy = sinon.spy(generator, "setContext");
         const result = await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/props-in-listener.tsx`))
             .pipe(generateComponents(generator))
         );
         
         assert.strictEqual(printSourceCodeAst(result[0].contents!.toString()), printSourceCodeAst(fs.readFileSync(`${__dirname}/test-cases/expected/preact/props-in-listener.tsx`).toString()));
         assert.ok(result[0].path.endsWith("props-in-listener.p.tsx"));
+        assert.ok(setContextSpy.firstCall.args[0].path!.endsWith("declarations"));
+        assert.deepEqual(generator.context, {});
+        setContextSpy.restore();
     });
 });

@@ -27,9 +27,10 @@ export function generateComponents(generator:any) {
             if (originalFile.contents instanceof Buffer) {
                 const code = originalFile.contents.toString();
                 const source = ts.createSourceFile(originalFile.path, code, ts.ScriptTarget.ES2016, true);
+                generator.setContext({ path: originalFile.dirname });
                 const codeFactory = generateFactoryCode(ts, source);
                 const componentCode = eval(codeFactory)(generator).join("\n");
-    
+                generator.setContext(null);
                 factoryCodeFile.contents = Buffer.from(componentCode);
                 factoryCodeFile.path = generator.processSourceFileName(factoryCodeFile.path)
                 callback(null, factoryCodeFile);

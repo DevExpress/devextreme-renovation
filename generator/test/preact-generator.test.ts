@@ -1,6 +1,8 @@
 import mocha from "mocha";
 import generator from "../preact-generator";
 import compile from "../component-compiler";
+import path from "path";
+import assert from "assert";
 
 import { createTestGenerator } from "./helpers/common";
 
@@ -37,4 +39,29 @@ mocha.describe("preact-generator", function () {
     mocha.it("slots", function () {
         this.testGenerator(this.test!.title);
     });
+
+    mocha.describe("react-generator: expressions", function () {
+        mocha.it("Rename import if it is component declaration", function () {
+            generator.setContext({ path: path.resolve(__dirname) });
+            
+            assert.equal(generator.createImportDeclaration(
+                undefined,
+                undefined,
+                undefined,
+                generator.createStringLiteral("./test-cases/declarations/empty-component")
+            ), 'import "./test-cases/declarations/empty-component.p"');
+        });
+
+        mocha.it("Do not rename module without declaration", function () {
+            generator.setContext({ path: path.resolve(__dirname) });
+            
+            assert.equal(generator.createImportDeclaration(
+                undefined,
+                undefined,
+                undefined,
+                generator.createStringLiteral("typescript")
+            ), 'import "typescript"');
+        });
+    });
+    
 });

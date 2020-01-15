@@ -1,6 +1,6 @@
 {
   "name": "devextreme-generator",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Component generator",
   "scripts": {
     "test": "mocha ./build/test --timeout 30000",
@@ -18,12 +18,14 @@
     "code-block-writer": "^10.1.0"
   },
   "devDependencies": {
-    "mocha": "^6.2.2",
-    "gulp-sourcemaps": "^2.6.5",
-    "gulp-typescript": "^6.0.0-alpha.1",
+    "@types/gulp": "^4.0.6",
     "@types/mocha": "5.2.7",
     "@types/node": "^12.12.14",
-    "@types/gulp": "^4.0.6",
-    "@types/typescript": "^2.0.0"
+    "@types/sinon": "^7.5.1",
+    "@types/typescript": "^2.0.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "mocha": "^6.2.2",
+    "sinon": "^8.0.4"
   }
 }
