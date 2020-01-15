@@ -1282,7 +1282,7 @@ export class ComputedPropertyName extends ExpressionWithExpression {
     }
 }
 
-interface GeneratorContex { 
+export interface GeneratorContex { 
     path?: string;
 }
 
