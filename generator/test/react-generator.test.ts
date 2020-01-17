@@ -100,6 +100,10 @@ mocha.describe("react-generator", function () {
     mocha.it("slots", function () {
         this.testGenerator(this.test!.title);
     });
+
+    mocha.it.skip("extend-props", function () {
+        this.testGenerator(this.test!.title);
+    });
 });
 
 mocha.describe("react-generator: expressions", function () {
@@ -643,6 +647,16 @@ mocha.describe("react-generator: expressions", function () {
                 generator.createPropertyAccess(
                     generator.createThis(),
                     generator.createIdentifier("field"))).toString(), "delete this.field");
+    });
+
+    mocha.it("createHeritageClause", function () {
+        assert.equal(generator.createHeritageClause(
+            generator.SyntaxKind.ExtendsKeyword,
+            [generator.createExpressionWithTypeArguments(
+                undefined,
+                generator.createIdentifier("Base")
+            )]
+        ).toString(), "extends Base");
     });
 });
 

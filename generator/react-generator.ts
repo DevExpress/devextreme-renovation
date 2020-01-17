@@ -865,7 +865,7 @@ export class ReactComponent {
     view: any;
     viewModel: any;
 
-    constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: any, members: Array<Property | Method>) {
+    constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause, members: Array<Property | Method>) {
         this.modifiers = modifiers;
         this.name = name;
 
@@ -1230,6 +1230,19 @@ export class TemplateExpression extends Expression {
         return this.templateSpans.reduce((d: string[], t) => d.concat(t.getDependency()), []);
     }
 
+}
+
+export class HeritageClause { 
+    token: string;
+    types: Expression[];
+    constructor(token: string, types: Expression[]) { 
+        this.token = token;
+        this.types = types;
+    }
+
+    toString() { 
+        return `${this.token} ${this.types.map(t => t.toString())}`;
+    }
 }
 
 export class CaseClause extends ExpressionWithOptionalExpression { 
@@ -1688,6 +1701,14 @@ export default {
 
     createDo(statement: Expression, expression: Expression) { 
         return new Do(statement, expression);
+    },
+
+    createExpressionWithTypeArguments(typeArguments: string[]=[], expression: Expression) { 
+        return expression;
+    },
+
+    createHeritageClause(token: string, types: Expression[]) { 
+        return new HeritageClause(token, types);
     },
 
     context: {} as GeneratorContex,
