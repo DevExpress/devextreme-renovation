@@ -20,7 +20,12 @@ mocha.describe("preact-generator", function () {
         };
     });
 
+    this.beforeEach(function () {
+        generator.setContext({ path: path.resolve(__dirname, "./test-cases/declarations") });
+    });
+
     this.afterEach(function () {
+        generator.setContext(null);
         if (this.currentTest!.state !== "passed") {
             console.log(this.code); // TODO: diff with expected
         }
@@ -37,6 +42,10 @@ mocha.describe("preact-generator", function () {
     });
 
     mocha.it("slots", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("extend-props", function () {
         this.testGenerator(this.test!.title);
     });
 

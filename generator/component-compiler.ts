@@ -19,6 +19,18 @@ function deleteFolderRecursive(path: string) {
 import Stream from "stream";
 import File from "vinyl";
 
+export function compileCode(generator: any, code: string, file: { dirname: string, path: string }): string {
+    const source = ts.createSourceFile(file.path, code, ts.ScriptTarget.ES2016, true);
+    generator.setContext({ path: file.dirname });
+    const codeFactory = generateFactoryCode(ts, source);
+    const codeFactoryResult = eval(codeFactory)(generator);
+    
+    generator.cache[file.path] = codeFactoryResult;
+    generator.setContext(null);
+
+    return codeFactoryResult.join("\n");
+}
+
 export function generateComponents(generator:any) { 
     const stream = new Stream.Transform({
         objectMode: true,
@@ -26,11 +38,7 @@ export function generateComponents(generator:any) {
             const factoryCodeFile = originalFile.clone();
             if (originalFile.contents instanceof Buffer) {
                 const code = originalFile.contents.toString();
-                const source = ts.createSourceFile(originalFile.path, code, ts.ScriptTarget.ES2016, true);
-                generator.setContext({ path: originalFile.dirname });
-                const codeFactory = generateFactoryCode(ts, source);
-                const componentCode = eval(codeFactory)(generator).join("\n");
-                generator.setContext(null);
+                const componentCode = compileCode(generator, code, originalFile);
                 factoryCodeFile.contents = Buffer.from(componentCode);
                 factoryCodeFile.path = generator.processSourceFileName(factoryCodeFile.path)
                 callback(null, factoryCodeFile);

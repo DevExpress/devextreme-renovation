@@ -1,6 +1,6 @@
-import Base from "./empty-component"
+import Base from "./empty-component.p"
 
-import React from "react";
+import * as Preact from "preact";
 
 interface Component {
     size: number,

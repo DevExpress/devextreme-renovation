@@ -14,7 +14,7 @@ function viewModel1(model: Component) {
     }
 }
 
-function view1(viewModel) { 
+function view1(viewModel: Component) { 
     return <div style={{ height: viewModel.height }}>
         <span></span>
         <span></span>

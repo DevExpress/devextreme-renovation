@@ -1,4 +1,7 @@
 import SyntaxKind from "./syntaxKind";
+import fs from "fs";
+import path from "path";
+import { compileCode } from "./component-compiler";
 
 const eventsDictionary = {
     pointerover: "onPointerOver",
@@ -544,7 +547,7 @@ export class Property {
     }
 
     toString() {
-        return this.name;
+        return this.name.toString();
     }
 }
 
@@ -865,13 +868,15 @@ export class ReactComponent {
     view: any;
     viewModel: any;
 
-    constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause, members: Array<Property | Method>) {
+    constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>) {
         this.modifiers = modifiers;
         this.name = name;
 
+        members = heritageClauses.reduce((m, clause) => m.concat(clause.members), members);
+
         this.props = members
             .filter(m => m.decorators.find(d => d.name === "Prop" || d.name === "Event" || d.name === "Template"))
-            .map(p => new Prop(p as Property));
+            .map(p => new Prop(p as Property))
         
         
         this.refs = members.filter(m => m.decorators.find(d => d.name === "Ref"))
@@ -897,6 +902,11 @@ export class ReactComponent {
 
         this.view = parameters.getProperty("view");
         this.viewModel = parameters.getProperty("viewModel");
+    }
+
+    get heritageProperies() { 
+        return this.props.map(p => p.property)
+            .concat(this.state.map(s => s.property));
     }
 
     compileImportStatements(hooks: string[]) {
@@ -1235,9 +1245,17 @@ export class TemplateExpression extends Expression {
 export class HeritageClause { 
     token: string;
     types: Expression[];
-    constructor(token: string, types: Expression[]) { 
+    members: Property[];
+    constructor(token: string, types: Expression[], context: GeneratorContex) { 
         this.token = token;
         this.types = types;
+
+        this.members = types.reduce((properties:Property[], type:Expression) => { 
+            if (context.components && context.components[type.toString()]) { 
+                properties = properties.concat(context.components[type.toString()].heritageProperies)
+            }
+            return properties;
+        }, []);
     }
 
     toString() { 
@@ -1297,10 +1315,11 @@ export class ComputedPropertyName extends ExpressionWithExpression {
 
 export interface GeneratorContex { 
     path?: string;
+    components?: { [name: string]: ReactComponent };
 }
 
-export default {
-    NodeFlags: {
+export class Generator { 
+    NodeFlags = {
         Const: "const",
         Let: "let",
         None: "var",
@@ -1316,134 +1335,134 @@ export default {
         // FirstLiteralToken: 5,
         // TemplateMiddle: 6,
         // NamedImports: 10
-    },
+    };
+
+    SyntaxKind = SyntaxKind;
 
     processSourceFileName(name: string) {
         return name;
-    },
-
-    SyntaxKind: SyntaxKind,
+    }
 
     createIdentifier(name: string): Identifier {
         return new Identifier(name);
-    },
+    }
 
     createNumericLiteral(value: string, numericLiteralFlags = ""): Expression {
         return new SimpleExpression(value);
-    },
+    }
 
     createVariableDeclaration(name: Identifier, type: string = "", initializer?: Expression | string): VariableDeclaration {
         return new VariableDeclaration(name, type, initializer);
-    },
+    }
 
     createVariableDeclarationList(declarations: VariableDeclaration[] = [], flags: string) {
         if (flags === undefined) {
             throw "createVariableDeclarationList";
         }
         return new VariableDeclarationList(declarations, flags);
-    },
+    }
 
     createVariableStatement(modifiers: string[] = [], declarationList: VariableDeclarationList): Expression {
         return new VariableStatement(modifiers, declarationList);
-    },
+    }
 
     createStringLiteral(value: string) {
         return new StringLiteral(value);
-    },
+    }
 
     createBindingElement(dotDotDotToken?: any, propertyName?: string, name?: string, initializer?: Expression) {
         return new BindingElement(dotDotDotToken, propertyName, name, initializer);
-    },
+    }
 
     createArrayBindingPattern(elements: Array<BindingElement>) {
         return new BindingPattern(elements, "array");
-    },
+    }
 
     createArrayLiteral(elements: Expression[], multiLine: boolean): Expression {
         return new ArrayLiteral(elements, multiLine);
-    },
+    }
 
     createObjectLiteral(properties: Array<PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment>, multiLine: boolean): Expression {
         return new ObjectLiteral(properties, multiLine);
-    },
+    }
 
     createObjectBindingPattern(elements: BindingElement[]) {
         return new BindingPattern(elements, "object");
-    },
+    }
 
     createPropertyAssignment(key: string, value: Expression) {
         return new PropertyAssignment(key, value)
-    },
+    }
 
     createKeywordTypeNode(kind: string) {
         if (kind === undefined) {
             throw "createKeyword"
         }
         return kind;
-    },
+    }
 
     createArrayTypeNode(elementType: string) {
         if (elementType === undefined) {
             throw "createArrayTypeNode"
         }
         return `${elementType}[]`;
-    },
+    }
 
     createFalse() {
         return new SimpleExpression(this.SyntaxKind.FalseKeyword);
-    },
+    }
 
     createTrue(): Expression {
         return new SimpleExpression(this.SyntaxKind.TrueKeyword);
-    },
+    }
 
     createNew(expression: Expression, typeArguments: string[]=[], argumentsArray: Expression[]) { 
         return new New(expression, typeArguments, argumentsArray);
-    },
+    }
 
     createDelete(expression: Expression) { 
         return new Delete(expression);
-    },
+    }
 
     createNull() {
         return new SimpleExpression(this.SyntaxKind.NullKeyword);
-    },
+    }
 
     createThis() {
         return new SimpleExpression(this.SyntaxKind.ThisKeyword);
-    },
+    }
 
     createBreak(label?: string | Identifier) { 
         return new SimpleExpression("break");
-    },
+    }
 
     createContinue(label?: string | Identifier) { 
         return new SimpleExpression("continue");
-    },
+    }
 
     createDebuggerStatement() { 
         return new SimpleExpression("debugger");
-    },
+    }
 
     createBlock(statements: Expression[], multiLine: boolean) {
         return new Block(statements, multiLine);
-    },
+    }
 
     createFunctionDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, typeParameters: string[], parameters: Parameter[], type: string, body: Block) {
         return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body).declaration();
-    },
+    }
 
     createParameter(decorators: Decorator[] = [], modifiers: string[] = [], dotDotDotToken: any, name: Identifier, questionToken?: string, type?: string, initializer?: Expression) {
         return new Parameter(decorators, modifiers, dotDotDotToken, name, questionToken, type, initializer);
-    },
+    }
 
     createReturn(expression: Expression) {
         return new ReturnStatement(expression);
-    },
+    }
 
     createFunctionExpression(modifiers: string[] = [], asteriskToken: string, name: Identifier | undefined, typeParameters: string[], parameters: Parameter[], type: string, body: Block) {
         return new Function([], modifiers, asteriskToken, name, typeParameters, parameters, type, body).declaration();
-    },
+    }
 
     createToken(token: string) {
         if (token === undefined) {
@@ -1454,11 +1473,11 @@ export default {
             throw `${tokenName} is missed`;
         }
         return token;
-    },
+    }
 
     createArrowFunction(modifiers: string[] = [], typeParameters: string[], parameters: Parameter[], type: string, equalsGreaterThanToken: string, body: Block) {
         return new ArrowFunction(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body);
-    },
+    }
 
     createModifier(modifier: string) {
         if (modifier === undefined) {
@@ -1469,59 +1488,73 @@ export default {
             throw `${modifierName} is missed`;
         }
         return modifier
-    },
+    }
 
     createBinary(left: Expression, operator: string, right: Expression) {
         return new Binary(left, operator, right);
-    },
+    }
 
     createParen(expression: Expression) {
         return new Paren(expression);
-    },
+    }
 
     createCall(expression: Expression, typeArguments: string[] = [], argumentsArray: Expression[] = []): Expression {
         return new Call(expression, typeArguments, argumentsArray);
-    },
+    }
 
     createExportAssignment(decorators: Decorator[] = [], modifiers: string[] = [], isExportEquals: any, expression: Expression) {
         return `export default ${expression}`;
-    },
+    }
 
     createShorthandPropertyAssignment(name: Identifier, expression?: Expression) {
         return new ShorthandPropertyAssignment(name, expression)
-    },
+    }
 
     createSpreadAssignment(expression: Expression) {
         return new SpreadAssignment(expression);
-    },
+    }
 
     createTypeReferenceNode(typeName: string, typeArguments: string[] = []) {
         return typeName;
-    },
+    }
 
     createIf(expression: Expression, thenStatement: Expression, elseStatement?: Expression) {
         return new If(expression, thenStatement, elseStatement);
-    },
+    }
 
     createWhile(expression: Expression, statement: Expression) {
         return new While(expression, statement);
-    },
+    }
 
     createImportDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], importClause: string = "", moduleSpecifier: StringLiteral) {
         if (moduleSpecifier.toString().indexOf("component_declaration/common") >= 0) {
             return "";
         }
+
+        const module = moduleSpecifier.expression.toString();
+        const context = this.getContext();
+        if (context.path) { 
+            const modulePath = path.join(context.path, `${module}.tsx`);
+            if (fs.existsSync(modulePath)) { 
+                compileCode(this, fs.readFileSync(modulePath).toString(), { dirname: context.path, path: modulePath });
+                
+                if (importClause) { 
+                    this.addComponent(importClause, this.cache[modulePath].find((e: any) => e instanceof ReactComponent));
+                }
+            }
+        }
+
         importClause = importClause ? `${importClause} from ` : "";
         return `import ${importClause}${moduleSpecifier}`;
-    },
+    }
 
     createImportSpecifier(propertyName: string | undefined, name: Identifier) {
         return name;
-    },
+    }
 
     createNamedImports(node: any[] = [], elements?: any[]) {
         return node.join(",");
-    },
+    }
 
     createImportClause(name?: Identifier, namedBindings: string = "") {
         const result: string[] = [];
@@ -1533,15 +1566,15 @@ export default {
         }
 
         return result.join(",");
-    },
+    }
 
     createDecorator(expression: Call) {
         return new Decorator(expression);
-    },
+    }
 
     createProperty(decorators: Decorator[], modifiers: string[], name: Identifier, questionOrExclamationToken: string = "", type: string, initializer: any) {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
-    },
+    }
 
     createClassDeclaration(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: any, members: Array<Property | Method>) {
         const componentDecorator = decorators.find(d => d.name === "Component");
@@ -1550,174 +1583,188 @@ export default {
         }
 
         return new Class(decorators, modifiers, name, typeParameters, heritageClauses, members)
-    },
+    }
 
     createPropertyAccess(expression: Expression, name: Identifier): Expression {
         return new PropertyAccess(expression, name);
-    },
+    }
 
     createJsxExpression(dotDotDotToken: string, expression: string) {
         return `{${expression}}`;
-    },
+    }
 
     createJsxAttribute(name: string, initializer: any) {
         return `${(eventsDictionary as any)[name] || name}=${initializer}`;
-    },
+    }
 
     createJsxSpreadAttribute(expression: Expression) {
         return `{...${expression.toString()}}`;
-    },
+    }
 
     createJsxAttributes(properties: string[]) {
         return properties.join("\n");
-    },
+    }
 
     createJsxOpeningElement(tagName: string, typeArguments: any[], attributes: string) {
         return `<${tagName} ${attributes}>`
-    },
+    }
 
     createJsxSelfClosingElement(tagName: string, typeArguments: any[], attributes: string) {
         return `<${tagName} ${attributes}/>`
-    },
+    }
 
     createJsxClosingElement(tagName: string) {
         return `</${tagName}>`;
-    },
+    }
 
     createJsxElement(openingElement: string, children: string[], closingElement: string) {
         return `${openingElement}${children.join("\n")}${closingElement}`
             .replace(/(\.default)(\W+)/g, ".children$2")
             .replace(/template/g, "render")
             .replace(/(.+)(Template)/g, "$1Render");
-    },
+    }
 
     createJsxText(text: string, containsOnlyTriviaWhiteSpaces: string) {
         return containsOnlyTriviaWhiteSpaces ? "" : text;
-    },
+    }
 
     createFunctionTypeNode(typeParameters: any, parameters: Parameter[], type: string) {
         return `(${parameters.map(p => p.declaration())})=>${type}`;
-    },
+    }
 
     createExpressionStatement(expression: Expression) {
         return expression;
-    },
+    }
 
     createMethod(decorators: Decorator[], modifiers: string[], asteriskToken: string, name: Identifier, questionToken: string, typeParameters: any, parameters: Parameter[], type: string, body: Block) {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
-    },
+    }
 
     createPrefix(operator: string, operand: Expression) {
         if (operator === undefined) {
             throw "createPrefix";
         }
         return new Prefix(operator, operand);
-    },
+    }
 
     createPostfix(operand: Expression, operator: string) {
         if (operator === undefined) {
             throw "createPrefix";
         }
         return new Postfix(operator, operand);
-    },
+    }
 
     createNonNullExpression(expression: Expression) {
         return new NonNullExpression(expression);
-    },
+    }
 
     createElementAccess(expression: Expression, index: Expression): Expression {
         return new ElementAccess(expression, index);
-    },
+    }
 
     createPropertySignature(modifiers: string[] = [], name: Identifier, questionToken: string | undefined, type: string, initializer?: Expression) {
         return new PropertySignature(modifiers, name, questionToken, type, initializer);
-    },
+    }
 
     createIndexSignature(decorators: Decorator[] | undefined, modifiers: string[] = [], parameters: Parameter[], type: string) { 
         return new IndexSignature(decorators, modifiers, parameters, type);
-    },
+    }
 
     createTypeLiteralNode(members: PropertySignature[]) {
         return `{${members.join(",")}}`;
-    },
+    }
 
     createIntersectionTypeNode(types: string[]) {
         return types.join("&");
-    },
+    }
 
     createUnionTypeNode(types: string[]) {
         return types.join("|");
-    },
+    }
 
     createConditional(condition: Expression, whenTrue: Expression, whenFalse: Expression) {
         return new Conditional(condition, whenTrue, whenFalse);
-    },
+    }
 
     createTemplateHead(text: string, rawText?: string) {
         return text;
-    },
+    }
     createTemplateMiddle(text: string, rawText?: string) {
         return text;
-    },
+    }
     createTemplateTail(text: string, rawText?: string) {
         return text;
-    },
+    }
 
     createTemplateSpan(expression: Expression, literal: string) {
         return new TemplateSpan(expression, literal);
-    },
+    }
 
     createTemplateExpression(head: string, templateSpans: TemplateSpan[]) {
         return new TemplateExpression(head, templateSpans);
-    },
+    }
 
     createFor(initializer: Expression | undefined, condition: Expression | undefined, incrementor: Expression | undefined, statement: Expression) {
         return new For(initializer, condition, incrementor, statement);
-    },
+    }
 
     createForIn(initializer: Expression, expression: Expression, statement: Expression) { 
         return new ForIn(initializer, expression, statement);
-    },
+    }
 
     createCaseClause(expression: Expression, statements: Expression[]) { 
         return new CaseClause(expression, statements);
-    },
+    }
 
     createDefaultClause(statements: Expression[]) { 
         return new DefaultClause(statements);
-    },
+    }
 
     createCaseBlock(clauses: Array<DefaultClause|CaseClause>) {
         return new CaseBlock(clauses);
-    },
+    }
     
     createSwitch(expression: Expression, caseBlock: CaseBlock) { 
         return new Switch(expression, caseBlock);
-    },
+    }
 
     createComputedPropertyName(expression:Expression) { 
         return new ComputedPropertyName(expression);
-    },
+    }
 
     createDo(statement: Expression, expression: Expression) { 
         return new Do(statement, expression);
-    },
+    }
 
     createExpressionWithTypeArguments(typeArguments: string[]=[], expression: Expression) { 
         return expression;
-    },
+    }
 
     createHeritageClause(token: string, types: Expression[]) { 
-        return new HeritageClause(token, types);
-    },
+        return new HeritageClause(token, types, this.getContext());
+    }
 
-    context: {} as GeneratorContex,
+    context: GeneratorContex[] = [];
+
+    addComponent(name: string, component: ReactComponent) { 
+        const context = this.getContext();
+        context.components = context.components || {};
+        context.components[name] = component; 
+    }
+
+    getContext() { 
+        return this.context[this.context.length - 1] || { components: {} };
+    }
     
-    setContext(context: GeneratorContex) { 
+    setContext(context: GeneratorContex | null ) { 
         if (!context) {
-            this.context = {};
+            this.context.pop();
         } else { 
-            this.context = { ...this.context, ...context };
+            this.context.push(context);
         }
     }
+
+    cache: { [name: string]: any } = {};
 }
+
+export default new Generator();

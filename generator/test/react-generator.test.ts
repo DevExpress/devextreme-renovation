@@ -1,9 +1,10 @@
 import assert from "assert";
 import mocha from "mocha";
 import ts from "typescript";
-import generator from "../react-generator";
+import generator, { ReactComponent } from "../react-generator";
 
 import compile from "../component-compiler";
+import path from "path";
 
 import { printSourceCodeAst as getResult, createTestGenerator } from "./helpers/common";
 
@@ -21,10 +22,15 @@ mocha.describe("react-generator", function () {
         };
     });
 
+    this.beforeEach(function () {
+        generator.setContext({ path: path.resolve(__dirname, "./test-cases/declarations") });
+    });
+
     this.afterEach(function () {
         if (this.currentTest!.state !== "passed") {
             console.log(this.code); // TODO: diff with expected
         }
+        generator.setContext(null);
         this.code = null;
         this.expectedCode = null;
     });
@@ -101,7 +107,7 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it.skip("extend-props", function () {
+    mocha.it("extend-props", function () {
         this.testGenerator(this.test!.title);
     });
 });
@@ -701,5 +707,65 @@ mocha.describe("common", function () {
         const actual = Object.keys(generator.NodeFlags);
         assert.equal(actual.length, expected.length);
         assert.deepEqual(Object.keys(generator.NodeFlags), expected);
+    });
+});
+
+mocha.describe("import Components", function () { 
+    this.beforeEach(function () { 
+        generator.setContext({ path: path.resolve(__dirname) });
+    });
+
+    this.afterEach(function () {
+        generator.setContext(null);
+    });
+    
+    mocha.it("Parse imported component", function () {
+        const identifier = generator.createIdentifier("Base"); 
+        generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                identifier,
+                undefined
+            ),
+            generator.createStringLiteral("./test-cases/declarations/empty-component")
+        );   
+        
+        const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/empty-component.tsx`);
+        assert.ok(generator.cache[baseModulePath]);
+        assert.deepEqual(generator.getContext().components!["Base"].heritageProperies.map(p => p.name.toString()), ["height", "width"]);
+    });
+
+    mocha.it("Get properties from heritageClause", function () {
+        generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                generator.createIdentifier("Base"),
+                undefined
+            ),
+            generator.createStringLiteral("./test-cases/declarations/empty-component")
+        ); 
+        
+        const heritageClause = generator.createHeritageClause(
+            generator.SyntaxKind.ExtendsKeyword,
+            [generator.createExpressionWithTypeArguments(
+                undefined,
+                generator.createIdentifier("Base")
+            )]);
+        
+        assert.deepEqual(heritageClause.members.map(m => m.toString()), ["height", "width"]);
+    });
+
+    
+    mocha.it("Get properties from heritageClause without import", function () {
+        const heritageClause = generator.createHeritageClause(
+            generator.SyntaxKind.ExtendsKeyword,
+            [generator.createExpressionWithTypeArguments(
+                undefined,
+                generator.createIdentifier("Base")
+            )]);
+        
+        assert.deepEqual(heritageClause.members.map(m => m.toString()), []);
     });
 });

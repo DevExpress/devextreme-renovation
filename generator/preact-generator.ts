@@ -1,4 +1,4 @@
-import reactGenerator, { ReactComponent, Decorator, Identifier, Property, Method, Slot, StringLiteral } from "./react-generator";
+import { Generator, ReactComponent, Decorator, Identifier, Property, Method, Slot, StringLiteral } from "./react-generator";
 import fs from "fs";
 import path from "path";
 
@@ -29,24 +29,25 @@ class PreactComponent extends ReactComponent {
     }
 }
 
-export default {
-    ...reactGenerator,
-
+export class PreactGenerator extends Generator { 
     createImportDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], importClause: string = "", moduleSpecifier: StringLiteral) {
+        let importStatement = super.createImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
+
         const module = moduleSpecifier.expression.toString();
-        if (this.context.path) { 
-            const modulePath = path.join(this.context.path, `${module}.tsx`);
-            if (fs.existsSync(modulePath)) { 
-                moduleSpecifier = new StringLiteral(`${module}.p`);
+        const modulePath = `${module}.tsx`;
+        const context = this.getContext();
+        if (context.path) {
+            const fullPath = path.resolve(context.path, modulePath);
+            if (this.cache[fullPath]) { 
+                importStatement = importStatement.replace(module, `${module}.p`);
             }
-            
         }
-        return reactGenerator.createImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
-    },
+        return importStatement;
+    }
 
     processSourceFileName(name: string) {
         return name.replace(/\.tsx$/, ".p.tsx");
-    },
+    }
 
     createClassDeclaration(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: any, members: Array<Property | Method>) {
         const componentDecorator = decorators.find(d => d.name === "Component");
@@ -54,6 +55,8 @@ export default {
             return new PreactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
         }
 
-        return reactGenerator.createClassDeclaration(decorators, modifiers, name, typeParameters, heritageClauses, members);
+        return super.createClassDeclaration(decorators, modifiers, name, typeParameters, heritageClauses, members);
     }
-};
+}
+
+export default new PreactGenerator();
