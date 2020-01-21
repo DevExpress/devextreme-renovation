@@ -658,8 +658,15 @@ export class Method {
         return `(${this.parametersTypeDeclaration()})=>${this.body.toString(internalState, state, props)}`
     }
 
-    getDependency() {
-        return this.body.getDependency();
+    getDependency(properties: Array<State|Prop|InternalState> = []) {
+        const dependency = this.body.getDependency();
+        
+        return Object.keys(dependency.reduce((k: any, d) => {
+            if (!k[d]) {
+                k[d] = d;
+            }
+            return k;
+        }, {})).map(d => properties.find(p => p.name.toString() === d)).filter(d => d).reduce((d: string[], p) => d.concat(p!.getDependecy()), [])
     }
 
     toString() {
@@ -830,13 +837,7 @@ export class Listener {
     }
 
     defaultDeclaration(internalState: InternalState[], state: State[], props: Prop[]) {
-        const s = state.concat(props).concat(internalState);
-        const dependency = Object.keys(this.method.getDependency().reduce((k: any, d) => {
-            if (!k[d]) {
-                k[d] = d;
-            }
-            return k;
-        }, {})).map(d => s.find(s => s.name.toString() === d)).filter(d => d).reduce((d: string[], p) => d.concat(p!.getDependecy()), []);
+        const dependency = this.method.getDependency(state.concat(props).concat(internalState));
         return `const ${this.name}=useCallback(${this.method.arrowDeclaration(internalState, state, props)}, [${dependency.join(",")}])`;
     }
 }
@@ -981,7 +982,8 @@ export class ReactComponent {
 
         const effects = this.effects;
 
-        const effectsString = effects.map(e => `useEffect(${e.arrowDeclaration(this.internalState, this.state, this.props.concat(this.refs))})`).join(";\n");
+        const effectsString = effects.map(e => `useEffect(${e.arrowDeclaration(this.internalState, this.state, this.props.concat(this.refs))}, 
+        [${e.getDependency(this.props.concat(this.state).concat(this.internalState))}])`).join(";\n");
 
         let subscriptionsString = "";
         if (subscriptions.length) {
