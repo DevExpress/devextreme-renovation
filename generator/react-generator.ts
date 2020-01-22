@@ -536,6 +536,7 @@ export class Property {
     questionOrExclamationToken: string;
     type: string;
     initializer: Expression;
+    inherited: boolean = false;
 
     constructor(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string, initializer: Expression) {
         this.decorators = decorators;
@@ -868,10 +869,12 @@ export class ReactComponent {
 
     view: any;
     viewModel: any;
+    heritageClauses: HeritageClause[];
 
     constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>) {
         this.modifiers = modifiers;
         this.name = name;
+        this.heritageClauses = heritageClauses;
 
         members = heritageClauses.reduce((m, clause) => m.concat(clause.members), members);
 
@@ -945,13 +948,17 @@ export class ReactComponent {
     }
 
     compileDefaultProps() {
-        const defaultProps = this.props.filter(p => p.property.initializer).concat(this.state);
+        const defaultProps = this.props.filter(p => !p.property.inherited && p.property.initializer).concat(this.state);
+        const heritageDefaultProps = this.heritageClauses.filter(h => h.defaultProps.length).map(h => `...${h.defaultProps}`);
 
         if (defaultProps.length) {
             return `${this.defaultPropsDest()}.defaultProps = {
+                ${heritageDefaultProps.join(",")},
                 ${defaultProps.map(p => p.defaultProps())
                     .join(",\n")}
             }`;
+        } else if (heritageDefaultProps.length) { 
+            return `${this.defaultPropsDest()}.defaultProps = {${heritageDefaultProps.join(",")}}`;
         }
 
         return "";
@@ -1248,16 +1255,30 @@ export class HeritageClause {
     token: string;
     types: Expression[];
     members: Property[];
+    defaultProps: string[];
     constructor(token: string, types: Expression[], context: GeneratorContex) { 
         this.token = token;
         this.types = types;
 
         this.members = types.reduce((properties:Property[], type:Expression) => { 
             if (context.components && context.components[type.toString()]) { 
-                properties = properties.concat(context.components[type.toString()].heritageProperies)
+                properties = properties.concat(context.components[type.toString()].heritageProperies.map(p => { 
+                    const property = new Property(p.decorators, p.modifiers, p.name, p.questionOrExclamationToken, p.type, p.initializer);
+                    property.inherited = true;
+                    return property;
+                }))
             }
             return properties;
         }, []);
+
+        this.defaultProps = types.reduce((defaultProps: string[], type: Expression) => {
+            const importName = type.toString();
+            const component = context.components && context.components[importName]
+            if (component && component.compileDefaultProps()!=="") { 
+                defaultProps.push(`${component.defaultPropsDest().replace(component.name.toString(), importName)}.defaultProps`);
+            }
+            return defaultProps;
+         }, []);
     }
 
     toString() { 
@@ -1500,7 +1521,7 @@ export class Generator {
         return new Paren(expression);
     }
 
-    createCall(expression: Expression, typeArguments: string[] = [], argumentsArray: Expression[] = []): Expression {
+    createCall(expression: Expression, typeArguments: string[] = [], argumentsArray: Expression[] = []) {
         return new Call(expression, typeArguments, argumentsArray);
     }
 
@@ -1574,11 +1595,11 @@ export class Generator {
         return new Decorator(expression);
     }
 
-    createProperty(decorators: Decorator[], modifiers: string[], name: Identifier, questionOrExclamationToken: string = "", type: string, initializer: any) {
+    createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string, initializer: any) {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
-    createClassDeclaration(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: any, members: Array<Property | Method>) {
+    createClassDeclaration(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) {
         const componentDecorator = decorators.find(d => d.name === "Component");
         if (componentDecorator) {
             return new ReactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);

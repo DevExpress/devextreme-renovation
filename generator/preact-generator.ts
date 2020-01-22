@@ -11,7 +11,7 @@ class PreactSlot extends Slot {
         return `${this.name}${this.property.questionOrExclamationToken}:any`;
     }
 }
-class PreactComponent extends ReactComponent {
+export class PreactComponent extends ReactComponent {
     constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: any, members: Array<Property | Method>) {
         super(decorator, modifiers, name, typeParameters, heritageClauses, members);
         this.slots = this.slots.map(s => new PreactSlot(s));

@@ -1,10 +1,10 @@
 import mocha from "mocha";
-import generator from "../preact-generator";
+import generator, { PreactComponent } from "../preact-generator";
 import compile from "../component-compiler";
 import path from "path";
 import assert from "assert";
 
-import { createTestGenerator } from "./helpers/common";
+import { printSourceCodeAst as getResult, createTestGenerator } from "./helpers/common";
 
 if (!mocha.describe) { 
     mocha.describe = describe;
@@ -72,5 +72,51 @@ mocha.describe("preact-generator", function () {
             ), 'import "typescript"');
         });
     });
-    
+});
+
+mocha.describe("import Components", function () { 
+    this.beforeEach(function () { 
+        generator.setContext({ path: path.resolve(__dirname) });
+    });
+
+    this.afterEach(function () {
+        generator.setContext(null);
+    });
+
+    mocha.it("Heritage defaultProps. Base component and child component have defaultProps", function () {
+        generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                generator.createIdentifier("Base"),
+                undefined
+            ),
+            generator.createStringLiteral("./test-cases/declarations/props")
+        );
+        
+        const heritageClause = generator.createHeritageClause(
+            generator.SyntaxKind.ExtendsKeyword,
+            [generator.createExpressionWithTypeArguments(
+                undefined,
+                generator.createIdentifier("Base")
+            )]);
+        
+        const decorator = generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)]));
+        const childProperty = generator.createProperty(
+            [generator.createDecorator(generator.createCall(
+                generator.createIdentifier("Prop"),
+                undefined,
+                []
+            ))],
+            undefined,
+            generator.createIdentifier("childProp"),
+            undefined,
+            generator.createKeywordTypeNode(generator.SyntaxKind.NumberKeyword),
+            generator.createNumericLiteral("10")
+        );
+        
+        const component = new PreactComponent(decorator, [], generator.createIdentifier("Component"), [], [heritageClause], [childProperty]);
+
+        assert.equal(getResult(component.compileDefaultProps()), getResult("(Component as any).defaultProps = {...(Base as any).defaultProps, childProp:10}"));
+    });
 });

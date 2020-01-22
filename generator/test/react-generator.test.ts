@@ -755,9 +755,9 @@ mocha.describe("import Components", function () {
             )]);
         
         assert.deepEqual(heritageClause.members.map(m => m.toString()), ["height", "width"]);
+        assert.deepEqual(heritageClause.defaultProps, [], "defualtProps");
     });
 
-    
     mocha.it("Get properties from heritageClause without import", function () {
         const heritageClause = generator.createHeritageClause(
             generator.SyntaxKind.ExtendsKeyword,
@@ -767,5 +767,113 @@ mocha.describe("import Components", function () {
             )]);
         
         assert.deepEqual(heritageClause.members.map(m => m.toString()), []);
+    });
+
+    mocha.it("Get properties from heritageClause", function () {
+        generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                generator.createIdentifier("Base"),
+                undefined
+            ),
+            generator.createStringLiteral("./test-cases/declarations/props")
+        ); 
+        
+        const heritageClause = generator.createHeritageClause(
+            generator.SyntaxKind.ExtendsKeyword,
+            [generator.createExpressionWithTypeArguments(
+                undefined,
+                generator.createIdentifier("Base")
+            )]);
+        
+        assert.deepEqual(heritageClause.defaultProps, ["Base.defaultProps"], "defualtProps");
+    });
+
+    mocha.it("Heritage defaultProps. Base component has defaultProps, component has not", function () {
+        generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                generator.createIdentifier("Base"),
+                undefined
+            ),
+            generator.createStringLiteral("./test-cases/declarations/props")
+        );
+        
+        const heritageClause = generator.createHeritageClause(
+            generator.SyntaxKind.ExtendsKeyword,
+            [generator.createExpressionWithTypeArguments(
+                undefined,
+                generator.createIdentifier("Base")
+            )]);
+        
+        const decorator = generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)]));
+        
+        const component = new ReactComponent(decorator, [], generator.createIdentifier("Component"), [], [heritageClause], []);
+
+        assert.equal(component.compileDefaultProps(), "Component.defaultProps = {...Base.defaultProps}");
+    });
+
+    mocha.it("Heritage defaultProps. Base component has not defaultProps, component has not", function () {
+        generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                generator.createIdentifier("Base"),
+                undefined
+            ),
+            generator.createStringLiteral("./test-cases/declarations/empty-component")
+        );
+        
+        const heritageClause = generator.createHeritageClause(
+            generator.SyntaxKind.ExtendsKeyword,
+            [generator.createExpressionWithTypeArguments(
+                undefined,
+                generator.createIdentifier("Base")
+            )]);
+        
+        const decorator = generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)]));
+        
+        const component = new ReactComponent(decorator, [], generator.createIdentifier("Component"), [], [heritageClause], []);
+
+        assert.equal(component.compileDefaultProps(), "");
+    });
+
+    mocha.it("Heritage defaultProps. Base component and child component have defaultProps", function () {
+        generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                generator.createIdentifier("Base"),
+                undefined
+            ),
+            generator.createStringLiteral("./test-cases/declarations/props")
+        );
+        
+        const heritageClause = generator.createHeritageClause(
+            generator.SyntaxKind.ExtendsKeyword,
+            [generator.createExpressionWithTypeArguments(
+                undefined,
+                generator.createIdentifier("Base")
+            )]);
+        
+        const decorator = generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)]));
+        const childProperty = generator.createProperty(
+            [generator.createDecorator(generator.createCall(
+                generator.createIdentifier("Prop"),
+                undefined,
+                []
+            ))],
+            undefined,
+            generator.createIdentifier("childProp"),
+            undefined,
+            generator.createKeywordTypeNode(generator.SyntaxKind.NumberKeyword),
+            generator.createNumericLiteral("10")
+        );
+        
+        const component = new ReactComponent(decorator, [], generator.createIdentifier("Component"), [], [heritageClause], [childProperty]);
+
+        assert.equal(getResult(component.compileDefaultProps()), getResult("Component.defaultProps = {...Base.defaultProps, childProp:10}"));
     });
 });
