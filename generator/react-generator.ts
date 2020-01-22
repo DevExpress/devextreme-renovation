@@ -1553,6 +1553,10 @@ export class Generator {
         if (moduleSpecifier.toString().indexOf("component_declaration/common") >= 0) {
             return "";
         }
+        if (moduleSpecifier.toString().indexOf("component_declaration/jsx") >= 0) { 
+            const importString = moduleSpecifier.expression.toString().replace("component_declaration/jsx", "component_declaration/jsx-g")
+            moduleSpecifier = new StringLiteral(importString);
+        }
 
         const module = moduleSpecifier.expression.toString();
         const context = this.getContext();

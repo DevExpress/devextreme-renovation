@@ -215,7 +215,19 @@ mocha.describe("react-generator: expressions", function () {
           ), 'import Button from "./button"')
     });
 
-    mocha.it("createImportDeclaration exclude imports from component_declaration/common", function () { 
+    mocha.it("createImportDeclaration exclude imports from component_declaration/jsx to component_declaration/jsx-g", function () { 
+        assert.equal(generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                generator.createIdentifier("JSXConstructor"),
+              undefined
+            ),
+            generator.createStringLiteral("../../component_declaration/jsx")
+          ), 'import JSXConstructor from "../../component_declaration/jsx-g"')
+    });
+
+    mocha.it("createImportDeclaration change import ", function () { 
         assert.equal(generator.createImportDeclaration(
             undefined,
             undefined,
