@@ -1,6 +1,7 @@
 import ts from "typescript";
 import fs from "fs";
 import { generateFactoryCode } from "./factoryCodeGenerator";
+import { Generator } from "./react-generator";
 
 function deleteFolderRecursive(path: string) {
     if (fs.existsSync(path)) {
@@ -19,7 +20,7 @@ function deleteFolderRecursive(path: string) {
 import Stream from "stream";
 import File from "vinyl";
 
-export function compileCode(generator: any, code: string, file: { dirname: string, path: string }): string {
+export function compileCode(generator: Generator, code: string, file: { dirname: string, path: string }): string {
     const source = ts.createSourceFile(file.path, code, ts.ScriptTarget.ES2016, true);
     generator.setContext({ path: file.dirname });
     const codeFactory = generateFactoryCode(ts, source);
@@ -31,7 +32,7 @@ export function compileCode(generator: any, code: string, file: { dirname: strin
     return codeFactoryResult.join("\n");
 }
 
-export function generateComponents(generator:any) { 
+export function generateComponents(generator:Generator) { 
     const stream = new Stream.Transform({
         objectMode: true,
         transform(originalFile: File, _, callback) {
