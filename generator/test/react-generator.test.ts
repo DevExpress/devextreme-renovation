@@ -1,7 +1,7 @@
 import assert from "assert";
 import mocha from "mocha";
 import ts from "typescript";
-import generator, { ReactComponent, State, InternalState } from "../react-generator";
+import generator, { ReactComponent, State, InternalState, Prop } from "../react-generator";
 
 import compile from "../component-compiler";
 import path from "path";
@@ -946,6 +946,14 @@ mocha.describe("Expressions with props/state/internal state", function () {
             "string",
             undefined);
         
+        this.internalState = generator.createProperty(
+            [generator.createDecorator(generator.createCall(generator.createIdentifier("State"), [], []))],
+            [],
+            generator.createIdentifier("i1"),
+            generator.SyntaxKind.QuestionToken,
+            "string",
+            undefined);
+        
         this.propAccess = generator.createPropertyAccess(
             generator.createThis(),
             generator.createIdentifier("p1")
@@ -955,8 +963,65 @@ mocha.describe("Expressions with props/state/internal state", function () {
             generator.createThis(),
             generator.createIdentifier("s1")
         );
+
+        this.internalStateAccess = generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("i1")
+        );
     });
 
+    mocha.it("PropertyAccess. Prop", function () {
+        assert.equal(this.propAccess.toString([], [], [new Prop(this.prop)]), "props.p1");
+        assert.deepEqual(this.propAccess.getDependency(), ["p1"]);
+    });
+
+    
+    mocha.it("PropertyAccess. State", function () {
+        assert.equal(this.stateAccess.toString([], [new State(this.state)], []), "(props.s1!==undefined?props.s1:__state_s1)");
+        assert.deepEqual(this.stateAccess.getDependency(), ["s1"]);
+    });
+
+    mocha.it("PropertyAccess. Internal State", function () {
+        assert.equal(this.internalStateAccess.toString([new InternalState(this.internalState)], [new State(this.state)]), [], "__state_i1");
+        assert.deepEqual(this.internalStateAccess.getDependency(), ["i1"]);
+    });
+
+    mocha.it("= operator for state", function () { 
+        const expression = generator.createBinary(
+            this.stateAccess,
+            generator.SyntaxKind.EqualsToken,
+            generator.createIdentifier("a")
+        );
+
+        assert.equal(getResult(expression.toString([], [new State(this.state)], [])), getResult("__state_setS1(a); props.s1Change!(a);"));
+    });
+
+    mocha.it("= operator for internal state", function () { 
+        const expression = generator.createBinary(
+            this.internalStateAccess,
+            generator.SyntaxKind.EqualsToken,
+            generator.createIdentifier("a")
+        );
+
+        assert.equal(getResult(expression.toString([new InternalState(this.internalState)], [new State(this.state)], [])), getResult("__state_setI1(a);"));
+    });
+
+    mocha.it("= operator for prop", function () { 
+        const expression = generator.createBinary(
+            this.propAccess,
+            generator.SyntaxKind.EqualsToken,
+            generator.createIdentifier("a")
+        );
+
+        let error = null;
+        try {
+            expression.toString([new InternalState(this.internalState)], [new State(this.state)], [new Prop(this.prop)]);
+        } catch (e) {
+            error = e;
+        }
+
+        assert.strictEqual(error, "Error: Can't assign Prop() - this.p1=a");
+    });
 
     mocha.it("Arrow Function. Change Expression body with Block if state has been set in that expression", function () {
         const arrowFunction = generator.createArrowFunction(

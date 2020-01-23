@@ -357,6 +357,15 @@ export class Function {
     }
 }
 
+function checkDependency(expression: Expression, properties: Array<InternalState | State | Prop> = []) { 
+    const dependency = expression.getDependency().reduce((r: { [name: string]: boolean }, d) => {
+        r[d] = true;
+        return r;
+    }, {});
+
+    return properties.some(s => dependency[s.name.toString()]);
+}
+
 export class ArrowFunction extends Expression {
     modifiers: any[];
     typeParameters: string[];
@@ -376,14 +385,8 @@ export class ArrowFunction extends Expression {
 
     toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         let bodyString = "";
-        if (!(this.body instanceof Block)) {
-            const dependency = this.body.getDependency().reduce((r: { [name: string]: boolean }, d) => {
-                r[d] = true;
-                return r;
-            }, {});
-            if ((state || []).some(s => dependency[s.name.toString()])) { 
-                bodyString = `{${this.body.toString(internalState, state, props)}}`;
-            }
+        if (!(this.body instanceof Block) && checkDependency(this.body, state)) {
+            bodyString = `{${this.body.toString(internalState, state, props)}}`;
         }
         if (!bodyString) { 
             bodyString = this.body.toString(internalState, state, props);
@@ -418,6 +421,10 @@ export class Binary {
             this.left.toString() !== this.left.toString(internalState, state, props) &&
             this.left.expression.toString() === SyntaxKind.ThisKeyword) {
             const rightExpression = this.right.toString(internalState, state, props);
+
+            if (checkDependency(this.left, props)) {
+                throw `Error: Can't assign Prop() - ${this.toString()}`;
+            }
 
             return `${this.left.compileStateSetting()}(${rightExpression});
             ${this.left.compileStateChangeRising(state, rightExpression)}`;
