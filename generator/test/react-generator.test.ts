@@ -982,7 +982,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
     });
 
     mocha.it("PropertyAccess. Internal State", function () {
-        assert.equal(this.internalStateAccess.toString([new InternalState(this.internalState)], [new State(this.state)]), [], "__state_i1");
+        assert.equal(this.internalStateAccess.toString([new InternalState(this.internalState)], [new State(this.state)]), ["__state_i1"]);
         assert.deepEqual(this.internalStateAccess.getDependency(), ["i1"]);
     });
 
