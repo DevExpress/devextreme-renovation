@@ -1658,10 +1658,10 @@ export class Generator {
     }
 
     createJsxElement(openingElement: string, children: string[], closingElement: string) {
-        return `${openingElement}${children.join("\n")}${closingElement}`
+        return new SimpleExpression(`${openingElement}${children.join("\n")}${closingElement}`
             .replace(/(\.default)(\W+)/g, ".children$2")
             .replace(/template/g, "render")
-            .replace(/(.+)(Template)/g, "$1Render");
+            .replace(/(.+)(Template)/g, "$1Render"));
     }
 
     createJsxText(text: string, containsOnlyTriviaWhiteSpaces: string) {
