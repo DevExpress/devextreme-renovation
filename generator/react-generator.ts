@@ -362,9 +362,9 @@ export class ArrowFunction extends Expression {
     typeParameters: string[];
     parameters: Parameter[];
     type: string;
-    body: Block;
+    body: Block | Expression;
     equalsGreaterThanToken: string;
-    constructor(modifiers: string[] = [], typeParameters: string[], parameters: Parameter[], type: string, equalsGreaterThanToken: string, body: Block) {
+    constructor(modifiers: string[] = [], typeParameters: string[], parameters: Parameter[], type: string, equalsGreaterThanToken: string, body: Block | Expression) {
         super();
         this.modifiers = modifiers;
         this.typeParameters = typeParameters;
@@ -375,7 +375,20 @@ export class ArrowFunction extends Expression {
     }
 
     toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `${this.modifiers.join(" ")} (${this.parameters.map(p => p.declaration()).join(",")})${compileType(this.type)} ${this.equalsGreaterThanToken} ${this.body.toString(internalState, state, props)}`;
+        let bodyString = "";
+        if (!(this.body instanceof Block)) {
+            const dependency = this.body.getDependency().reduce((r: { [name: string]: boolean }, d) => {
+                r[d] = true;
+                return r;
+            }, {});
+            if ((state || []).some(s => dependency[s.name.toString()])) { 
+                bodyString = `{${this.body.toString(internalState, state, props)}}`;
+            }
+        }
+        if (!bodyString) { 
+            bodyString = this.body.toString(internalState, state, props);
+        }
+        return `${this.modifiers.join(" ")} (${this.parameters.map(p => p.declaration()).join(",")})${compileType(this.type)} ${this.equalsGreaterThanToken} ${bodyString}`;
     }
 
     getDependency() {
@@ -1498,7 +1511,7 @@ export class Generator {
         return token;
     }
 
-    createArrowFunction(modifiers: string[] = [], typeParameters: string[], parameters: Parameter[], type: string, equalsGreaterThanToken: string, body: Block) {
+    createArrowFunction(modifiers: string[] = [], typeParameters: string[] = [], parameters: Parameter[], type: string="", equalsGreaterThanToken: string, body: Block | Expression) {
         return new ArrowFunction(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body);
     }
 

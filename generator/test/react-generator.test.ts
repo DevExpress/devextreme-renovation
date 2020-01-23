@@ -1,7 +1,7 @@
 import assert from "assert";
 import mocha from "mocha";
 import ts from "typescript";
-import generator, { ReactComponent } from "../react-generator";
+import generator, { ReactComponent, State, InternalState } from "../react-generator";
 
 import compile from "../component-compiler";
 import path from "path";
@@ -887,5 +887,55 @@ mocha.describe("import Components", function () {
         const component = new ReactComponent(decorator, [], generator.createIdentifier("Component"), [], [heritageClause], [childProperty]);
 
         assert.equal(getResult(component.compileDefaultProps()), getResult("Component.defaultProps = {...Base.defaultProps, childProp:10}"));
+    });
+});
+
+mocha.describe("Expressions with props/state/internal state", function () { 
+    this.beforeEach(function () {
+        this.prop = generator.createProperty(
+            [generator.createDecorator(generator.createCall(generator.createIdentifier("Prop"), [], []))],
+            [],
+            generator.createIdentifier("p1"),
+            generator.SyntaxKind.QuestionToken,
+            "string",
+            undefined);
+        
+        this.state = generator.createProperty(
+            [generator.createDecorator(generator.createCall(generator.createIdentifier("State"), [], []))],
+            [],
+            generator.createIdentifier("s1"),
+            generator.SyntaxKind.QuestionToken,
+            "string",
+            undefined);
+        
+        this.propAccess = generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("p1")
+        );
+
+        this.stateAccess = generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("s1")
+        );
+    });
+
+
+    mocha.it("Arrow Function. Change Expression body with Block if state has been set in that expression", function () {
+        const arrowFunction = generator.createArrowFunction(
+            undefined,
+            undefined,
+            [],
+            undefined,
+            generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+            generator.createBinary(
+                this.stateAccess,
+                generator.createToken(generator.SyntaxKind.EqualsToken),
+                generator.createNumericLiteral("10")
+            )
+        );
+        
+        assert.deepEqual(arrowFunction.getDependency(), ["s1"]);
+        assert.equal(getResult(arrowFunction.toString([], [new State(this.state)], [])), getResult("()=>{__state_setS1(10); props.s1Change!(10)}"));
+        assert.equal(getResult(arrowFunction.toString([new InternalState(this.state)], [], [])), getResult("()=>__state_setS1(10)"), "do not change for internal state");
     });
 });
