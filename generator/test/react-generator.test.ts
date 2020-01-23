@@ -888,6 +888,44 @@ mocha.describe("import Components", function () {
 
         assert.equal(getResult(component.compileDefaultProps()), getResult("Component.defaultProps = {...Base.defaultProps, childProp:10}"));
     });
+
+    mocha.it("Heritage defaultProps. Base component has not default props, child component has defaultProps", function () {
+        generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                generator.createIdentifier("Base"),
+                undefined
+            ),
+            generator.createStringLiteral("./test-cases/declarations/empty-component")
+        );
+        
+        const heritageClause = generator.createHeritageClause(
+            generator.SyntaxKind.ExtendsKeyword,
+            [generator.createExpressionWithTypeArguments(
+                undefined,
+                generator.createIdentifier("Base")
+            )]);
+        
+        const decorator = generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)]));
+        const childProperty = generator.createProperty(
+            [generator.createDecorator(generator.createCall(
+                generator.createIdentifier("Prop"),
+                undefined,
+                []
+            ))],
+            undefined,
+            generator.createIdentifier("childProp"),
+            undefined,
+            generator.createKeywordTypeNode(generator.SyntaxKind.NumberKeyword),
+            generator.createNumericLiteral("10")
+        );
+        
+        const component = new ReactComponent(decorator, [], generator.createIdentifier("Component"), [], [heritageClause], [childProperty]);
+
+        assert.equal(getResult(component.compileDefaultProps()), getResult("Component.defaultProps = {childProp:10}"));
+        assert.equal(component.compileDefaultProps().indexOf(","), -1);
+    });
 });
 
 mocha.describe("Expressions with props/state/internal state", function () { 

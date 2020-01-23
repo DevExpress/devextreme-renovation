@@ -966,7 +966,7 @@ export class ReactComponent {
 
         if (defaultProps.length) {
             return `${this.defaultPropsDest()}.defaultProps = {
-                ${heritageDefaultProps.join(",")},
+                ${heritageDefaultProps.join(",") + (heritageDefaultProps.length ? "," : "")}
                 ${defaultProps.map(p => p.defaultProps())
                     .join(",\n")}
             }`;
