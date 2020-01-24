@@ -1,5 +1,4 @@
 import { Generator, ReactComponent, Decorator, Identifier, Property, Method, Slot, StringLiteral } from "./react-generator";
-import fs from "fs";
 import path from "path";
 
 class PreactSlot extends Slot { 
