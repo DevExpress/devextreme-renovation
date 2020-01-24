@@ -1,6 +1,6 @@
 import assert from "assert";
 import mocha from "mocha";
-import ts from "typescript";
+import ts, { createIdentifier } from "typescript";
 import generator, { ReactComponent, State, InternalState, Prop } from "../react-generator";
 
 import compile from "../component-compiler";
@@ -676,6 +676,16 @@ mocha.describe("react-generator: expressions", function () {
             )]
         ).toString(), "extends Base");
     });
+
+    mocha.it("createPropertyAccessChain", function () { 
+        const expression = generator.createPropertyAccessChain(
+            generator.createIdentifier("a"),
+            generator.createToken(generator.SyntaxKind.QuestionDotToken),
+            generator.createIdentifier("b")
+        );
+
+        assert.equal(expression.toString(), "a?.b");
+    });
 });
 
 mocha.describe("common", function () {
@@ -1040,5 +1050,20 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.deepEqual(arrowFunction.getDependency(), ["s1"]);
         assert.equal(getResult(arrowFunction.toString([], [new State(this.state)], [])), getResult("()=>{__state_setS1(10); props.s1Change!(10)}"));
         assert.equal(getResult(arrowFunction.toString([new InternalState(this.state)], [], [])), getResult("()=>__state_setS1(10)"), "do not change for internal state");
+    });
+
+    mocha.it("createPropertyAccessChain", function () { 
+        const expression = generator.createPropertyAccessChain(
+            this.propAccess,
+            generator.createToken(generator.SyntaxKind.QuestionDotToken),
+            generator.createCall(
+                generator.createIdentifier("call"),
+                [],
+                [this.stateAccess]
+            )
+        );
+
+        assert.equal(expression.toString([new InternalState(this.internalState)], [new State(this.state)], [new Prop(this.prop)]), "props.p1?.call((props.s1!==undefined?props.s1:__state_s1))");
+        assert.deepEqual(expression.getDependency(), ["p1", "s1"]);
     });
 });

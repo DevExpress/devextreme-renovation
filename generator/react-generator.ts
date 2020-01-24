@@ -258,6 +258,24 @@ export class Block extends Expression {
     }
 }
 
+export class PropertyAccessChain extends ExpressionWithExpression {
+    questionDotToken: string;
+    name: Expression;
+    constructor(expression: Expression, questionDotToken: string, name: Expression) {
+        super(expression);
+        this.questionDotToken = questionDotToken;
+        this.name = name;
+    }
+
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+        return `${this.expression.toString(internalState, state, props)}${this.questionDotToken}${this.name.toString(internalState, state, props)}`;
+    }
+
+    getDependency() { 
+        return super.getDependency().concat(this.name.getDependency());
+    }
+}
+
 export class Parameter {
     decorators: Decorator[]
     modifiers: string[];
@@ -1789,6 +1807,10 @@ export class Generator {
 
     createHeritageClause(token: string, types: Expression[]) { 
         return new HeritageClause(token, types, this.getContext());
+    }
+
+    createPropertyAccessChain(expression: Expression, questionDotToken: string, name: Expression) { 
+        return new PropertyAccessChain(expression, questionDotToken, name);
     }
 
     context: GeneratorContex[] = [];
