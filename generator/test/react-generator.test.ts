@@ -1004,6 +1004,8 @@ mocha.describe("Expressions with props/state/internal state", function () {
         );
 
         assert.equal(getResult(expression.toString([], [new State(this.state)], [])), getResult("__state_setS1(a); props.s1Change!(a);"));
+        assert.deepEqual(expression.getDependency(), []);
+        assert.deepEqual(expression.getAllDependency(), ["s1"]);
     });
 
     mocha.it("= operator for internal state", function () { 
@@ -1033,6 +1035,18 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.strictEqual(error, "Error: Can't assign Prop() - this.p1=a");
     });
 
+    mocha.it("Binary operator returns dependency for both side", function () { 
+        const expression = generator.createBinary(
+            this.stateAccess,
+            generator.SyntaxKind.EqualsEqualsEqualsToken,
+            this.propAccess
+        );
+
+        assert.equal((expression.toString([], [new State(this.state)], [new Prop(this.prop)])), ("(props.s1!==undefined?props.s1:__state_s1)===props.p1"));
+        assert.deepEqual(expression.getDependency(), ["s1", "p1"]);
+        assert.deepEqual(expression.getAllDependency(), ["s1", "p1"]);
+    });
+
     mocha.it("Arrow Function. Change Expression body with Block if state has been set in that expression", function () {
         const arrowFunction = generator.createArrowFunction(
             undefined,
@@ -1047,9 +1061,28 @@ mocha.describe("Expressions with props/state/internal state", function () {
             )
         );
         
-        assert.deepEqual(arrowFunction.getDependency(), ["s1"]);
+        assert.deepEqual(arrowFunction.getDependency(), []);
         assert.equal(getResult(arrowFunction.toString([], [new State(this.state)], [])), getResult("()=>{__state_setS1(10); props.s1Change!(10)}"));
         assert.equal(getResult(arrowFunction.toString([new InternalState(this.state)], [], [])), getResult("()=>__state_setS1(10)"), "do not change for internal state");
+    });
+
+    mocha.it("Arrow Function. Change Expression body with Block if state has been set in that expression. Set prop in state", function () {
+        const arrowFunction = generator.createArrowFunction(
+            undefined,
+            undefined,
+            [],
+            undefined,
+            generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+            generator.createBinary(
+                this.stateAccess,
+                generator.createToken(generator.SyntaxKind.EqualsToken),
+                this.propAccess
+            )
+        );
+        
+        assert.deepEqual(arrowFunction.getDependency(), ["p1"]);
+        assert.equal(getResult(arrowFunction.toString([], [new State(this.state)], [new Prop(this.prop)])), getResult("()=>{__state_setS1(props.p1); props.s1Change!(props.p1)}"));
+        assert.equal(getResult(arrowFunction.toString([new InternalState(this.state)], [], [new Prop(this.prop)])), getResult("()=>__state_setS1(props.p1)"), "do not change for internal state");
     });
 
     mocha.it("createPropertyAccessChain", function () { 

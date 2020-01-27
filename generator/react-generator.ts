@@ -40,6 +40,10 @@ export class Expression {
     toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return "";
     }
+
+    getAllDependency() { 
+        return this.getDependency();
+    }
 }
 
 export class SimpleExpression extends Expression {
@@ -376,7 +380,7 @@ export class Function {
 }
 
 function checkDependency(expression: Expression, properties: Array<InternalState | State | Prop> = []) { 
-    const dependency = expression.getDependency().reduce((r: { [name: string]: boolean }, d) => {
+    const dependency = expression.getAllDependency().reduce((r: { [name: string]: boolean }, d) => {
         r[d] = true;
         return r;
     }, {});
@@ -423,7 +427,7 @@ export class ReturnStatement extends ExpressionWithExpression {
     }
 }
 
-export class Binary {
+export class Binary implements Expression {
     left: Expression;
     operator: string;
     right: Expression;
@@ -451,6 +455,13 @@ export class Binary {
     }
 
     getDependency() {
+        if (this.operator === SyntaxKind.EqualsToken) { 
+            return this.right.getDependency();
+        }
+        return this.getAllDependency();
+    }
+
+    getAllDependency() { 
         return this.left.getDependency().concat(this.right.getDependency());
     }
 }
