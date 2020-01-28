@@ -360,6 +360,18 @@ export class New extends Call {
     }
 }
 
+export class CallChain extends Call { 
+    questionDotToken: string;
+    constructor(expression: Expression, questionDotToken: string = "", typeArguments: string[] = [], argumentsArray: Expression[] = []) { 
+        super(expression, typeArguments, argumentsArray);
+        this.questionDotToken = questionDotToken;
+    }
+    
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+        return `${this.expression.toString(internalState, state, props)}${this.questionDotToken}(${this.argumentsArray.map(a => a.toString(internalState, state, props)).join(",")})`;
+    }
+}
+
 export class Function {
     decorators: Decorator[];
     modifiers: string[];
@@ -1842,6 +1854,10 @@ export class Generator {
 
     createPropertyAccessChain(expression: Expression, questionDotToken: string, name: Expression) { 
         return new PropertyAccessChain(expression, questionDotToken, name);
+    }
+
+    createCallChain(expression: Expression, questionDotToken: string = "", typeArguments: string[]=[], argumentsArray: Expression[]=[]) { 
+        return new CallChain(expression, questionDotToken, typeArguments, argumentsArray);
     }
 
     context: GeneratorContex[] = [];
