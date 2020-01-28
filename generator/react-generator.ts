@@ -101,6 +101,12 @@ export class TypeOf extends ExpressionWithExpression {
     }
 }
 
+export class Void extends ExpressionWithExpression { 
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) { 
+        return `void ${this.expression.toString(internalState, state, props)}`;
+    }
+}
+
 export class ExpressionWithOptionalExpression extends Expression {
     expression?: Expression;
 
@@ -1824,6 +1830,10 @@ export class Generator {
 
     createTypeOf(expression: Expression) { 
         return new TypeOf(expression);
+    }
+
+    createVoid(expression: Expression) { 
+        return new Void(expression);
     }
 
     createHeritageClause(token: string, types: Expression[]) { 

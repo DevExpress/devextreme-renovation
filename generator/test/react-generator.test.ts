@@ -692,6 +692,12 @@ mocha.describe("react-generator: expressions", function () {
 
         assert.strictEqual(expression.toString(), "typeof b");
     });
+
+    mocha.it("createVoid", function () { 
+        const expression = generator.createVoid(generator.createNumericLiteral("0"));
+
+        assert.strictEqual(expression.toString(), "void 0");
+    });
 });
 
 mocha.describe("common", function () {
