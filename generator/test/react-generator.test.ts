@@ -686,6 +686,12 @@ mocha.describe("react-generator: expressions", function () {
 
         assert.equal(expression.toString(), "a?.b");
     });
+
+    mocha.it("createTypeOf", function () { 
+        const expression = generator.createTypeOf(generator.createIdentifier("b"));
+
+        assert.strictEqual(expression.toString(), "typeof b");
+    });
 });
 
 mocha.describe("common", function () {
