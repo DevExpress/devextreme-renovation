@@ -1,6 +1,6 @@
 import assert from "assert";
 import mocha from "mocha";
-import ts, { createIdentifier } from "typescript";
+import ts from "typescript";
 import generator, { ReactComponent, State, InternalState, Prop } from "../react-generator";
 
 import compile from "../component-compiler";
@@ -1111,4 +1111,59 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.equal(expression.toString([new InternalState(this.internalState)], [new State(this.state)], [new Prop(this.prop)]), "props.p1?.call((props.s1!==undefined?props.s1:__state_s1))");
         assert.deepEqual(expression.getDependency(), ["p1", "s1"]);
     });
+});
+
+
+mocha.describe("ComponentInput", function () {
+    this.beforeEach(function () { 
+        generator.setContext({});
+        this.decorators = [generator.createDecorator(generator.createCall(
+            generator.createIdentifier("ComponentInput"),
+            [],
+            []
+        ))];
+    });
+
+    this.afterEach(function () { 
+        generator.setContext(null);
+    })
+
+    mocha.it("Create Component Input", function () { 
+        const expression = generator.createClassDeclaration(
+            this.decorators,
+            ["export"],
+            generator.createIdentifier("BaseModel"),
+            [],
+            [],
+            []
+        );
+
+        assert.strictEqual(expression.toString(), "");
+
+        const cachedComponent = generator.getContext().components!["BaseModel"];
+        assert.equal(cachedComponent, expression);
+        assert.deepEqual(cachedComponent.heritageProperies.map(p => p.toString), []);
+    });
+
+    mocha.it("Component input has heritage properties", function () { 
+        generator.createClassDeclaration(
+            this.decorators,
+            ["export"],
+            generator.createIdentifier("BaseModel"),
+            [],
+            [],
+            [generator.createProperty(
+                [generator.createDecorator(generator.createCall(generator.createIdentifier("Prop"), [], []))],
+                [],
+                generator.createIdentifier("p"),
+                undefined,
+                undefined,
+                undefined
+            )]
+        );
+
+        const cachedComponent = generator.getContext().components!["BaseModel"];
+        assert.deepEqual(cachedComponent.heritageProperies.map(p => p.toString()), ["p"]);
+    });
+
 });

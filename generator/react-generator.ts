@@ -596,10 +596,10 @@ export class Property {
     name: Identifier;
     questionOrExclamationToken: string;
     type: string;
-    initializer: Expression;
+    initializer?: Expression;
     inherited: boolean = false;
 
-    constructor(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string, initializer: Expression) {
+    constructor(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string="", initializer?: Expression) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.name = name;
@@ -618,6 +618,7 @@ export class Class {
     name: Identifier;
     members: Array<Property | Method>;
     modifiers: string[];
+
     constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, typeParameters: any[], heritageClauses: any, members: Array<Property | Method>) {
         this.decorators = decorators;
         this.name = name;
@@ -626,6 +627,27 @@ export class Class {
     }
 
     toString() {
+        return "";
+    }
+}
+
+interface Heritable { 
+    name: StringLiteral;
+    heritageProperies: Property[];
+    compileDefaultProps(): string;
+    defaultPropsDest(): string;
+}
+
+export class ComponentInput extends Class implements Heritable{
+    get heritageProperies() {
+        return this.members.filter(m => m instanceof Property) as Property[];
+    }
+
+    compileDefaultProps() {
+        return "";
+    }
+
+    defaultPropsDest() { 
         return "";
     }
 }
@@ -971,7 +993,12 @@ export class ReactComponent {
 
     get heritageProperies() { 
         return this.props.map(p => p.property)
-            .concat(this.state.map(s => s.property));
+            .concat(this.state.map(s => s.property))
+            .map(p => { 
+                const property = new Property(p.decorators, p.modifiers, p.name, p.questionOrExclamationToken, p.type, p.initializer);
+                property.inherited = true;
+                return property;
+            });
     }
 
     compileImportStatements(hooks: string[]) {
@@ -1316,18 +1343,14 @@ export class HeritageClause {
     token: string;
     types: Expression[];
     members: Property[];
-    defaultProps: string[];
+    defaultProps: string[] = [];
     constructor(token: string, types: Expression[], context: GeneratorContex) { 
         this.token = token;
         this.types = types;
 
-        this.members = types.reduce((properties:Property[], type:Expression) => { 
-            if (context.components && context.components[type.toString()]) { 
-                properties = properties.concat(context.components[type.toString()].heritageProperies.map(p => { 
-                    const property = new Property(p.decorators, p.modifiers, p.name, p.questionOrExclamationToken, p.type, p.initializer);
-                    property.inherited = true;
-                    return property;
-                }))
+        this.members = types.reduce((properties: Property[], type: Expression) => { 
+            if (context.components && context.components[type.toString()] && context.components[type.toString()] instanceof ReactComponent) { 
+                properties = properties.concat(context.components[type.toString()].heritageProperies)
             }
             return properties;
         }, []);
@@ -1399,7 +1422,7 @@ export class ComputedPropertyName extends ExpressionWithExpression {
 
 export interface GeneratorContex { 
     path?: string;
-    components?: { [name: string]: ReactComponent };
+    components?: { [name: string]: Heritable };
 }
 
 export class Generator { 
@@ -1660,17 +1683,24 @@ export class Generator {
         return new Decorator(expression);
     }
 
-    createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string, initializer: any) {
+    createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string="", initializer?: Expression) {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
     createClassDeclaration(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) {
         const componentDecorator = decorators.find(d => d.name === "Component");
+        let result: Class | ReactComponent | ComponentInput;
         if (componentDecorator) {
-            return new ReactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
+            result = new ReactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
+        } else if (decorators.find(d => d.name === "ComponentInput")) {
+            const componentInput = new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members);
+            this.addComponent(name.toString(), componentInput);
+            result = componentInput;
+        } else { 
+            result = new Class(decorators, modifiers, name, typeParameters, heritageClauses, members); 
         }
 
-        return new Class(decorators, modifiers, name, typeParameters, heritageClauses, members)
+        return result;
     }
 
     createPropertyAccess(expression: Expression, name: Identifier): Expression {
@@ -1846,7 +1876,7 @@ export class Generator {
 
     context: GeneratorContex[] = [];
 
-    addComponent(name: string, component: ReactComponent) { 
+    addComponent(name: string, component: Heritable) { 
         const context = this.getContext();
         context.components = context.components || {};
         context.components[name] = component; 
