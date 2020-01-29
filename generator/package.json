@@ -13,9 +13,11 @@
   "author": "Developer Express Inc.",
   "license": "MIT",
   "dependencies": {
+    "@types/react": "^16.9.19",
+    "code-block-writer": "^10.1.0",
     "gulp": "^4.0.2",
-    "typescript": "^3.7.2",
-    "code-block-writer": "^10.1.0"
+    "react": "^16.12.0",
+    "typescript": "^3.7.2"
   },
   "devDependencies": {
     "@types/gulp": "^4.0.6",

@@ -664,6 +664,40 @@ export class ComponentInput extends Class implements Heritable{
     }
 }
 
+export class TypeNode extends Expression {
+    typeName: Identifier;
+    typeArguments: string[];
+    constructor(typeName: Identifier, typeArguments: string[] = []) { 
+        super();
+        this.typeName = typeName;
+        this.typeArguments = typeArguments;
+    }
+    toString() { 
+        return this.typeName.toString();
+    }
+}
+ 
+export class ExpressionWithTypeArguments extends ExpressionWithExpression { 
+    typeArguments: TypeNode[] = [];
+    constructor(typeArguments: TypeNode[] = [], expression: Expression) { 
+        super(expression);
+        this.typeArguments = typeArguments;
+    }
+
+    toString() { 
+        const typeArgumentString = this.typeArguments.length ? `<${this.typeArguments.join(",")}>`: "";
+        return `${this.expression}${typeArgumentString}`;
+    }
+
+    get type() { 
+        const typeNode = this.expression.toString();
+        if (this.typeArguments.length) { 
+            return this.typeArguments[0].toString();
+        }
+        return typeNode;
+    }
+}
+
 export class PropertyAccess extends ExpressionWithExpression {
     name: Identifier
     constructor(expression: Expression, name: Identifier) {
@@ -673,7 +707,7 @@ export class PropertyAccess extends ExpressionWithExpression {
 
     toString(internalState: InternalState[] = [], state: State[] = [], props: Prop[] = []) {
         const expressionString = this.expression.toString();
-        if (expressionString === SyntaxKind.ThisKeyword) {
+        if (expressionString === SyntaxKind.ThisKeyword || expressionString === `${SyntaxKind.ThisKeyword}.props`) {
             const p = props.find(p => p.name.valueOf() === this.name.valueOf());
             if (p) { 
                 return p.getter();
@@ -709,7 +743,8 @@ export class PropertyAccess extends ExpressionWithExpression {
     }
 
     getDependency() {
-        if (this.expression.toString() === SyntaxKind.ThisKeyword) {
+        const expressionString = this.expression.toString();
+        if (expressionString === SyntaxKind.ThisKeyword || expressionString===`${SyntaxKind.ThisKeyword}.props`) {
             return [this.name.toString()];
         }
         return this.expression.getDependency();
@@ -1356,19 +1391,19 @@ export class HeritageClause {
     types: Expression[];
     members: Property[];
     defaultProps: string[] = [];
-    constructor(token: string, types: Expression[], context: GeneratorContex) { 
+    constructor(token: string, types: ExpressionWithTypeArguments[], context: GeneratorContex) { 
         this.token = token;
         this.types = types;
 
-        this.members = types.reduce((properties: Property[], type: Expression) => { 
-            if (context.components && context.components[type.toString()] && context.components[type.toString()] instanceof ReactComponent) { 
-                properties = properties.concat(context.components[type.toString()].heritageProperies)
+        this.members = types.reduce((properties: Property[], { type }) => { 
+            if (context.components && context.components[type] && context.components[type]) { 
+                properties = properties.concat(context.components[type].heritageProperies)
             }
             return properties;
         }, []);
 
-        this.defaultProps = types.reduce((defaultProps: string[], type: Expression) => {
-            const importName = type.toString();
+        this.defaultProps = types.reduce((defaultProps: string[], { type }) => {
+            const importName = type;
             const component = context.components && context.components[importName]
             if (component && component.compileDefaultProps()!=="") { 
                 defaultProps.push(`${component.defaultPropsDest().replace(component.name.toString(), importName)}.defaultProps`);
@@ -1633,8 +1668,8 @@ export class Generator {
         return new SpreadAssignment(expression);
     }
 
-    createTypeReferenceNode(typeName: string, typeArguments: string[] = []) {
-        return typeName;
+    createTypeReferenceNode(typeName: Identifier, typeArguments: string[] = []) {
+        return new TypeNode(typeName, typeArguments);
     }
 
     createIf(expression: Expression, thenStatement: Expression, elseStatement?: Expression) {
@@ -1715,7 +1750,7 @@ export class Generator {
         return result;
     }
 
-    createPropertyAccess(expression: Expression, name: Identifier): Expression {
+    createPropertyAccess(expression: Expression, name: Identifier) {
         return new PropertyAccess(expression, name);
     }
 
@@ -1866,8 +1901,8 @@ export class Generator {
         return new Do(statement, expression);
     }
 
-    createExpressionWithTypeArguments(typeArguments: string[]=[], expression: Expression) { 
-        return expression;
+    createExpressionWithTypeArguments(typeArguments: TypeNode[] = [], expression: Expression) { 
+        return new ExpressionWithTypeArguments(typeArguments, expression);
     }
 
     createTypeOf(expression: Expression) { 
@@ -1878,7 +1913,7 @@ export class Generator {
         return new Void(expression);
     }
 
-    createHeritageClause(token: string, types: Expression[]) { 
+    createHeritageClause(token: string, types: ExpressionWithTypeArguments[]) { 
         return new HeritageClause(token, types, this.getContext());
     }
 
