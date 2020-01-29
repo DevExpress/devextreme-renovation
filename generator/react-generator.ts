@@ -451,11 +451,12 @@ export class ReturnStatement extends ExpressionWithExpression {
     }
 }
 
-export class Binary implements Expression {
+export class Binary extends Expression {
     left: Expression;
     operator: string;
     right: Expression;
     constructor(left: Expression, operator: string, right: Expression) {
+        super();
         this.left = left;
         this.operator = operator;
         this.right = right;
@@ -1208,7 +1209,7 @@ export class VariableDeclaration extends Expression {
     }
 
     getDependency() { 
-        if (this.initializer && this.initializer instanceof Expression) { 
+        if (this.initializer && typeof this.initializer !== "string") { 
             return this.initializer.getDependency();
         }
         return [];

@@ -1075,6 +1075,42 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.deepEqual(expression.getAllDependency(), ["s1", "p1"]);
     });
 
+    mocha.it("VariableDeclarationList return dependecy for initializer", function () {
+        const expresion = generator.createVariableStatement(
+            undefined,
+            generator.createVariableDeclarationList(
+                [generator.createVariableDeclaration(
+                    generator.createIdentifier("v"),
+                    undefined,
+                    generator.createBinary(
+                        this.propAccess,
+                        generator.createToken(generator.SyntaxKind.AmpersandAmpersandToken),
+                        this.stateAccess
+                    )
+                )],
+                generator.NodeFlags.Const
+            )
+        );
+
+        assert.deepEqual(expresion.getDependency(), ["p1", "s1"]);
+    });
+
+    mocha.it("VariableDeclarationList return empty dependecy for string initializer", function () {
+        const expresion = generator.createVariableStatement(
+            undefined,
+            generator.createVariableDeclarationList(
+                [generator.createVariableDeclaration(
+                    generator.createIdentifier("v"),
+                    undefined,
+                    "stringInitializer"
+                )],
+                generator.NodeFlags.Const
+            )
+        );
+
+        assert.deepEqual(expresion.getDependency(), []);
+    });
+
     mocha.it("Arrow Function. Change Expression body with Block if state has been set in that expression", function () {
         const arrowFunction = generator.createArrowFunction(
             undefined,
