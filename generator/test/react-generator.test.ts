@@ -687,6 +687,22 @@ mocha.describe("react-generator: expressions", function () {
         assert.equal(expression.toString(), "a?.b");
     });
 
+    mocha.it("createCallChain", function () { 
+        const expression = generator.createCallChain(
+            generator.createPropertyAccessChain(
+                generator.createIdentifier("model"),
+                generator.createToken(generator.SyntaxKind.QuestionDotToken),
+                generator.createIdentifier("onClick")
+            ),
+            undefined,
+            undefined,
+            [generator.createIdentifier("e")]
+          )
+
+        assert.deepEqual(expression.toString(), "model?.onClick(e)");
+        assert.deepEqual(expression.getDependency(), []);
+    });
+
     mocha.it("createTypeOf", function () { 
         const expression = generator.createTypeOf(generator.createIdentifier("b"));
 
@@ -1110,6 +1126,38 @@ mocha.describe("Expressions with props/state/internal state", function () {
 
         assert.equal(expression.toString([new InternalState(this.internalState)], [new State(this.state)], [new Prop(this.prop)]), "props.p1?.call((props.s1!==undefined?props.s1:__state_s1))");
         assert.deepEqual(expression.getDependency(), ["p1", "s1"]);
+    });
+
+    mocha.it("createCallChain with props, state internal state in args", function () { 
+        const expression = generator.createCallChain(
+            generator.createPropertyAccessChain(
+                generator.createIdentifier("model"),
+                generator.createToken(generator.SyntaxKind.QuestionDotToken),
+                generator.createIdentifier("onClick")
+            ),
+            undefined,
+            undefined,
+            [this.propAccess, this.stateAccess, this.internalStateAccess]
+          )
+
+        assert.deepEqual(expression.toString([new InternalState(this.internalState)], [new State(this.state)], [new Prop(this.prop)]), "model?.onClick(props.p1,(props.s1!==undefined?props.s1:__state_s1),__state_i1)");
+        assert.deepEqual(expression.getDependency(), ["p1", "s1", "i1"]);
+    });
+
+    mocha.it("createCallChain with props, in expression", function () { 
+        const expression = generator.createCallChain(
+            generator.createPropertyAccessChain(
+                this.propAccess,
+                generator.createToken(generator.SyntaxKind.QuestionDotToken),
+                generator.createIdentifier("onClick")
+            ),
+            undefined,
+            undefined,
+            []
+          )
+
+        assert.deepEqual(expression.toString([new InternalState(this.internalState)], [new State(this.state)], [new Prop(this.prop)]), "props.p1?.onClick()");
+        assert.deepEqual(expression.getDependency(), ["p1"]);
     });
 });
 
