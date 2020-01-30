@@ -1,7 +1,7 @@
 import assert from "assert";
 import mocha from "mocha";
 import ts from "typescript";
-import generator, { ReactComponent, State, InternalState, Prop, Decorator } from "../react-generator";
+import generator, { ReactComponent, State, InternalState, Prop, Decorator, ComponentInput } from "../react-generator";
 
 import compile from "../component-compiler";
 import path from "path";
@@ -999,6 +999,27 @@ mocha.describe("import Components", function () {
 
         assert.equal(getResult(component.compileDefaultProps()), getResult("Component.defaultProps = {childProp:10}"));
         assert.equal(component.compileDefaultProps().indexOf(","), -1);
+    });
+
+    mocha.it("Parse imported component input", function () {
+        const expresstion = generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                generator.createIdentifier("Widget"),
+                generator.createNamedImports([generator.createImportSpecifier(
+                    undefined,
+                    generator.createIdentifier("WidgetProps")
+                )])
+            ),
+            generator.createStringLiteral("./test-cases/declarations/component-input")
+        );
+        
+        const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/component-input.tsx`);
+        assert.strictEqual(expresstion.toString(), `import Widget from "./test-cases/declarations/component-input"`);
+        assert.ok(generator.cache[baseModulePath]);
+        assert.ok(generator.getContext().components!["Widget"] instanceof ReactComponent);
+        assert.ok(generator.getContext().components!["WidgetProps"] instanceof ComponentInput);
     });
 });
 

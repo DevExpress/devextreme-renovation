@@ -13,10 +13,10 @@ import React, { useState, useEffect } from "react";
 
 interface Component {
     p: string;
+    s: number;
+    defaultS?: number;
+    sChange?: (s: number) => void;
     i: number;
-    s: number,
-    defaultS?: number,
-    sChange?: (s: number) => void
 }
 
 export default function Component(props: {

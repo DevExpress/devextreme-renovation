@@ -1487,6 +1487,60 @@ export class ComputedPropertyName extends ExpressionWithExpression {
     }
 }
 
+export class NamedImports {
+    node: Identifier[];
+    elements?: any[];
+    constructor(node: Identifier[] = [], elements?: any[]) {
+        this.node = node;
+        this.elements = elements;
+    }
+
+    
+    remove(name: string) { 
+        this.node = this.node.filter(n => n.toString() !== name);
+    }
+
+    toString() {
+        return this.node.length ? `{${this.node.join(",")}}` : "";
+    }
+}
+
+export class ImportClause { 
+    name?: Identifier;
+    namedBindings?: NamedImports;
+    constructor(name?: Identifier, namedBindings?: NamedImports) { 
+        this.name = name;
+        this.namedBindings = namedBindings;
+    }
+
+    get default() { 
+        return this.name?.toString() || "";
+    }
+
+    get imports() { 
+        return this.namedBindings?.node.map(m => m.toString()) || [];
+    }
+
+    remove(name:string) { 
+        if (this.namedBindings) { 
+            this.namedBindings.remove(name);
+        }
+    }
+
+    toString() { 
+        const result: string[] = [];
+        if (this.name) {
+            result.push(this.name.toString());
+        }
+        if (this.namedBindings) {
+            const namedBindings = this.namedBindings.toString();
+            namedBindings && result.push(namedBindings);
+        }
+
+        return result.length ? `${result.join(",")} from ` : "";
+    }
+}
+
 export interface GeneratorContex {
     path?: string;
     components?: { [name: string]: Heritable };
@@ -1700,7 +1754,7 @@ export class Generator {
         return new While(expression, statement);
     }
 
-    createImportDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], importClause: string = "", moduleSpecifier: StringLiteral) {
+    createImportDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], importClause: ImportClause=new ImportClause(), moduleSpecifier: StringLiteral) {
         if (moduleSpecifier.toString().indexOf("component_declaration/common") >= 0) {
             return "";
         }
@@ -1717,12 +1771,19 @@ export class Generator {
                 compileCode(this, fs.readFileSync(modulePath).toString(), { dirname: context.path, path: modulePath });
 
                 if (importClause) {
-                    this.addComponent(importClause, this.cache[modulePath].find((e: any) => e instanceof ReactComponent));
+                    this.addComponent(importClause.default, this.cache[modulePath].find((e: any) => e instanceof ReactComponent));
+                    const componentInputs:ComponentInput[] = this.cache[modulePath].filter((e: any) => e instanceof ComponentInput);
+                    componentInputs.length && importClause.imports.forEach(i => {
+                        const componentInput = componentInputs.find(c => c.name.toString() === i && c.modifiers.indexOf("export") >= 0);
+                        if (componentInput) { 
+                            this.addComponent(i, componentInput);
+                            importClause.remove(i);
+                        }
+                    });
                 }
             }
         }
 
-        importClause = importClause ? `${importClause} from ` : "";
         return `import ${importClause}${moduleSpecifier}`;
     }
 
@@ -1730,20 +1791,12 @@ export class Generator {
         return name;
     }
 
-    createNamedImports(node: any[] = [], elements?: any[]) {
-        return node.join(",");
+    createNamedImports(node: Identifier[] = [], elements?: any[]) {
+        return new NamedImports(node, elements);
     }
 
-    createImportClause(name?: Identifier, namedBindings: string = "") {
-        const result: string[] = [];
-        if (name) {
-            result.push(name.toString());
-        }
-        if (namedBindings) {
-            result.push(`{${namedBindings}}`);
-        }
-
-        return result.join(",");
+    createImportClause(name?: Identifier, namedBindings?: NamedImports) {
+        return new ImportClause(name, namedBindings);
     }
 
     createDecorator(expression: Call) {

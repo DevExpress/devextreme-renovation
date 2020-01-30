@@ -1,4 +1,4 @@
-import { Generator, ReactComponent, Decorator, Identifier, Property, Method, Slot, StringLiteral } from "./react-generator";
+import { Generator, ReactComponent, Decorator, Identifier, Property, Method, Slot, StringLiteral, ImportClause } from "./react-generator";
 import path from "path";
 
 class PreactSlot extends Slot { 
@@ -29,7 +29,7 @@ export class PreactComponent extends ReactComponent {
 }
 
 export class PreactGenerator extends Generator { 
-    createImportDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], importClause: string = "", moduleSpecifier: StringLiteral) {
+    createImportDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], importClause: ImportClause = new ImportClause(), moduleSpecifier: StringLiteral) {
         let importStatement = super.createImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
 
         const module = moduleSpecifier.expression.toString();
