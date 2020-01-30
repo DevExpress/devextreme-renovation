@@ -48,7 +48,7 @@ export class PreactGenerator extends Generator {
         return name.replace(/\.tsx$/, ".p.tsx");
     }
 
-    createClassDeclaration(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: any, members: Array<Property | Method>) {
+    createClassDeclaration(decorators: Decorator[] = [], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: any, members: Array<Property | Method>) {
         const componentDecorator = decorators.find(d => d.name === "Component");
         if (componentDecorator) {
             return new PreactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);

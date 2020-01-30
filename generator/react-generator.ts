@@ -41,7 +41,7 @@ export class Expression {
         return "";
     }
 
-    getAllDependency() { 
+    getAllDependency() {
         return this.getDependency();
     }
 }
@@ -95,14 +95,14 @@ export class ExpressionWithExpression extends Expression {
     }
 }
 
-export class TypeOf extends ExpressionWithExpression { 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) { 
+export class TypeOf extends ExpressionWithExpression {
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return `typeof ${this.expression.toString(internalState, state, props)}`;
     }
 }
 
-export class Void extends ExpressionWithExpression { 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) { 
+export class Void extends ExpressionWithExpression {
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return `void ${this.expression.toString(internalState, state, props)}`;
     }
 }
@@ -287,7 +287,7 @@ export class PropertyAccessChain extends ExpressionWithExpression {
         return `${this.expression.toString(internalState, state, props)}${this.questionDotToken}${this.name.toString(internalState, state, props)}`;
     }
 
-    getDependency() { 
+    getDependency() {
         return super.getDependency().concat(this.name.getDependency());
     }
 }
@@ -360,13 +360,13 @@ export class New extends Call {
     }
 }
 
-export class CallChain extends Call { 
+export class CallChain extends Call {
     questionDotToken: string;
-    constructor(expression: Expression, questionDotToken: string = "", typeArguments: string[] = [], argumentsArray: Expression[] = []) { 
+    constructor(expression: Expression, questionDotToken: string = "", typeArguments: string[] = [], argumentsArray: Expression[] = []) {
         super(expression, typeArguments, argumentsArray);
         this.questionDotToken = questionDotToken;
     }
-    
+
     toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return `${this.expression.toString(internalState, state, props)}${this.questionDotToken}(${this.argumentsArray.map(a => a.toString(internalState, state, props)).join(",")})`;
     }
@@ -403,7 +403,7 @@ export class Function {
     }
 }
 
-function checkDependency(expression: Expression, properties: Array<InternalState | State | Prop> = []) { 
+function checkDependency(expression: Expression, properties: Array<InternalState | State | Prop> = []) {
     const dependency = expression.getAllDependency().reduce((r: { [name: string]: boolean }, d) => {
         r[d] = true;
         return r;
@@ -434,7 +434,7 @@ export class ArrowFunction extends Expression {
         if (!(this.body instanceof Block) && checkDependency(this.body, state)) {
             bodyString = `{${this.body.toString(internalState, state, props)}}`;
         }
-        if (!bodyString) { 
+        if (!bodyString) {
             bodyString = this.body.toString(internalState, state, props);
         }
         return `${this.modifiers.join(" ")} (${this.parameters.map(p => p.declaration()).join(",")})${compileType(this.type)} ${this.equalsGreaterThanToken} ${bodyString}`;
@@ -480,13 +480,13 @@ export class Binary extends Expression {
     }
 
     getDependency() {
-        if (this.operator === SyntaxKind.EqualsToken) { 
+        if (this.operator === SyntaxKind.EqualsToken) {
             return this.right.getDependency();
         }
         return this.getAllDependency();
     }
 
-    getAllDependency() { 
+    getAllDependency() {
         return this.left.getDependency().concat(this.right.getDependency());
     }
 }
@@ -526,7 +526,7 @@ export class While extends If {
 }
 
 export class Do extends While {
-    constructor(statement: Expression, expression: Expression) { 
+    constructor(statement: Expression, expression: Expression) {
         super(expression, statement);
     }
     toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
@@ -563,10 +563,10 @@ export class For extends ExpressionWithExpression {
     }
 }
 
-export class ForIn extends ExpressionWithExpression { 
+export class ForIn extends ExpressionWithExpression {
     initializer: Expression;
     statement: Expression;
-    constructor(initializer: Expression, expression: Expression, statement: Expression) { 
+    constructor(initializer: Expression, expression: Expression, statement: Expression) {
         super(expression);
         this.initializer = initializer;
         this.statement = statement;
@@ -612,7 +612,7 @@ export class Property {
     initializer?: Expression;
     inherited: boolean = false;
 
-    constructor(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string="", initializer?: Expression) {
+    constructor(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.name = name;
@@ -644,14 +644,14 @@ export class Class {
     }
 }
 
-interface Heritable { 
+interface Heritable {
     name: StringLiteral;
     heritageProperies: Property[];
     compileDefaultProps(): string;
     defaultPropsDest(): string;
 }
 
-export class ComponentInput extends Class implements Heritable{
+export class ComponentInput extends Class implements Heritable {
     get heritageProperies() {
         return this.members.filter(m => m instanceof Property) as Property[];
     }
@@ -660,7 +660,7 @@ export class ComponentInput extends Class implements Heritable{
         return "";
     }
 
-    defaultPropsDest() { 
+    defaultPropsDest() {
         return "";
     }
 }
@@ -668,34 +668,34 @@ export class ComponentInput extends Class implements Heritable{
 export class TypeNode extends Expression {
     typeName: Identifier;
     typeArguments: string[];
-    constructor(typeName: Identifier, typeArguments: string[] = []) { 
+    constructor(typeName: Identifier, typeArguments: string[] = []) {
         super();
         this.typeName = typeName;
         this.typeArguments = typeArguments;
     }
-    toString() { 
+    toString() {
         return this.typeName.toString();
     }
 }
- 
-export class ExpressionWithTypeArguments extends ExpressionWithExpression { 
+
+export class ExpressionWithTypeArguments extends ExpressionWithExpression {
     typeArguments: TypeNode[] = [];
-    constructor(typeArguments: TypeNode[] = [], expression: Expression) { 
+    constructor(typeArguments: TypeNode[] = [], expression: Expression) {
         super(expression);
         this.typeArguments = typeArguments;
     }
 
-    toString() { 
-        const typeArgumentString = this.typeArguments.length ? `<${this.typeArguments.join(",")}>`: "";
+    toString() {
+        const typeArgumentString = this.typeArguments.length ? `<${this.typeArguments.join(",")}>` : "";
         return `${this.expression}${typeArgumentString}`;
     }
 
-    get typeNode() { 
+    get typeNode() {
         return this.expression.toString();
     }
 
-    get type() { 
-        if (this.typeArguments.length) { 
+    get type() {
+        if (this.typeArguments.length) {
             return this.typeArguments[0].toString();
         }
         return this.typeNode;
@@ -713,7 +713,7 @@ export class PropertyAccess extends ExpressionWithExpression {
         const expressionString = this.expression.toString();
         if (expressionString === SyntaxKind.ThisKeyword || expressionString === `${SyntaxKind.ThisKeyword}.props`) {
             const p = props.find(p => p.name.valueOf() === this.name.valueOf());
-            if (p) { 
+            if (p) {
                 return p.getter();
             }
         }
@@ -748,7 +748,7 @@ export class PropertyAccess extends ExpressionWithExpression {
 
     getDependency() {
         const expressionString = this.expression.toString();
-        if (expressionString === SyntaxKind.ThisKeyword || expressionString===`${SyntaxKind.ThisKeyword}.props`) {
+        if (expressionString === SyntaxKind.ThisKeyword || expressionString === `${SyntaxKind.ThisKeyword}.props`) {
             return [this.name.toString()];
         }
         return this.expression.getDependency();
@@ -793,9 +793,9 @@ export class Method {
         return `(${this.parametersTypeDeclaration()})=>${this.body.toString(internalState, state, props)}`
     }
 
-    getDependency(properties: Array<State|Prop|InternalState> = []) {
+    getDependency(properties: Array<State | Prop | InternalState> = []) {
         const dependency = this.body.getDependency();
-        
+
         return Object.keys(dependency.reduce((k: any, d) => {
             if (!k[d]) {
                 k[d] = d;
@@ -1015,8 +1015,8 @@ export class ReactComponent {
         this.props = members
             .filter(m => m.decorators.find(d => d.name === "Prop" || d.name === "Event" || d.name === "Template"))
             .map(p => new Prop(p as Property))
-        
-        
+
+
         this.refs = members.filter(m => m.decorators.find(d => d.name === "Ref"))
             .map(p => new Ref(p as Property));
 
@@ -1031,7 +1031,7 @@ export class ReactComponent {
 
         this.listeners = members.filter(m => m.decorators.find(d => d.name === "Listen"))
             .map(m => new Listener(m as Method));
-        
+
         this.effects = members.filter(m => m.decorators.find(d => d.name === "Effect")) as Method[];
 
         this.slots = members.filter(m => m.decorators.find(d => d.name === "Slot")).map(m => new Slot(m as Property));
@@ -1042,10 +1042,10 @@ export class ReactComponent {
         this.viewModel = parameters.getProperty("viewModel");
     }
 
-    get heritageProperies() { 
+    get heritageProperies() {
         return this.props.map(p => p.property)
             .concat(this.state.map(s => s.property))
-            .map(p => { 
+            .map(p => {
                 const property = new Property(p.decorators, p.modifiers, p.name, p.questionOrExclamationToken, p.type, p.initializer);
                 property.inherited = true;
                 return property;
@@ -1075,7 +1075,7 @@ export class ReactComponent {
             hooks.push("useEffect");
         }
 
-        if (this.refs.length) { 
+        if (this.refs.length) {
             hooks.push("useRef");
         }
 
@@ -1096,7 +1096,7 @@ export class ReactComponent {
                 ${defaultProps.map(p => p.defaultProps())
                     .join(",\n")}
             }`;
-        } else if (heritageDefaultProps.length) { 
+        } else if (heritageDefaultProps.length) {
             return `${this.defaultPropsDest()}.defaultProps = {${heritageDefaultProps.join(",")}}`;
         }
 
@@ -1150,41 +1150,47 @@ export class ReactComponent {
         return subscriptionsString + effectsString;
     }
 
-    compileUseRef() { 
-        return this.refs.map(r => { 
+    compileUseRef() {
+        return this.refs.map(r => {
             return `const ${r.name}=useRef<${r.type}>()`;
         }).join(";\n");
     }
 
     compileComponentInterface() {
-        return `interface ${this.name}{
+
+        const props = this.isJSXComponent ? [`props: {
             ${this.props
-                .concat(this.internalState)
+            
+            .concat(this.state)
+                .map(p => p.typeDeclaration()).join(";\n")}
+            }`] : this.props
                 .concat(this.state)
-                .concat(this.refs)
-                .concat(this.slots)
-                .map(p => p.typeDeclaration())
+                .map(p => p.typeDeclaration());
+
+        return `interface ${this.name}{
+            ${  props
+                .concat(this.internalState.concat(this.refs).concat(this.slots).map(p => p.typeDeclaration()))
                 .concat(this.listeners.map(l => l.typeDeclaration()))
                 .join(";\n")
             }
         }`;
     }
 
-    get isJSXComponent() { 
+    get isJSXComponent() {
         return this.heritageClauses
             .reduce((typeNodes: string[], h) => typeNodes.concat(h.typeNodes), [])
             .filter(t => t === "JSXComponent").length;
     }
 
-    compileViewModelArguments(): string[] { 
+    compileViewModelArguments(): string[] {
         const state = this.internalState
             .concat(this.state)
             .map(s => `${s.name}:${s.getter()}`);
-        
+
         const props = this.isJSXComponent ?
             [`props:{${["...props"].concat(state).join(",\n")}}`] :
             ["...props"].concat(state);
-        
+
         return props
             .concat(this.listeners.map(l => l.name.toString()))
             .concat(this.refs.map(r => r.name.toString()));
@@ -1197,8 +1203,8 @@ export class ReactComponent {
 
             ${this.modifiers.join(" ")} function ${this.name}(props: {
                     ${this.props
-                    .concat(this.state)
-                    .concat(this.slots)
+                .concat(this.state)
+                .concat(this.slots)
                 .map(p => p.typeDeclaration()).join(",\n")}
                 }
             ){
@@ -1280,8 +1286,8 @@ export class VariableDeclaration extends Expression {
         return `${this.name}${compileType(this.type)}${initilizerDeclaration}`;
     }
 
-    getDependency() { 
-        if (this.initializer && typeof this.initializer !== "string") { 
+    getDependency() {
+        if (this.initializer && typeof this.initializer !== "string") {
             return this.initializer.getDependency();
         }
         return [];
@@ -1347,12 +1353,12 @@ export class PropertySignature extends ExpressionWithOptionalExpression {
 
 }
 
-export class IndexSignature extends Expression { 
+export class IndexSignature extends Expression {
     decorators?: Decorator[];
     modifiers: string[];
     parameters: Parameter[];
     type: string;
-    constructor(decorators: Decorator[]=[], modifiers: string[] = [], parameters: Parameter[], type: string) { 
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], parameters: Parameter[], type: string) {
         super();
         this.decorators = decorators;
         this.modifiers = modifiers;
@@ -1360,7 +1366,7 @@ export class IndexSignature extends Expression {
         this.type = type;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) { 
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return `${this.parameters.map(p => `[${p.typeDeclaration()}]`)}:${this.type}`;
     }
 }
@@ -1397,20 +1403,20 @@ export class TemplateExpression extends Expression {
 
 }
 
-export class HeritageClause { 
+export class HeritageClause {
     token: string;
     types: ExpressionWithTypeArguments[];
     members: Property[];
     defaultProps: string[] = [];
-    get typeNodes() { 
+    get typeNodes() {
         return this.types.map(t => t.typeNode);
     }
-    constructor(token: string, types: ExpressionWithTypeArguments[], context: GeneratorContex) { 
+    constructor(token: string, types: ExpressionWithTypeArguments[], context: GeneratorContex) {
         this.token = token;
         this.types = types;
 
-        this.members = types.reduce((properties: Property[], { type }) => { 
-            if (context.components && context.components[type] && context.components[type]) { 
+        this.members = types.reduce((properties: Property[], { type }) => {
+            if (context.components && context.components[type] && context.components[type]) {
                 properties = properties.concat(context.components[type].heritageProperies)
             }
             return properties;
@@ -1419,28 +1425,28 @@ export class HeritageClause {
         this.defaultProps = types.reduce((defaultProps: string[], { type }) => {
             const importName = type;
             const component = context.components && context.components[importName]
-            if (component && component.compileDefaultProps()!=="") { 
+            if (component && component.compileDefaultProps() !== "") {
                 defaultProps.push(`${component.defaultPropsDest().replace(component.name.toString(), importName)}.defaultProps`);
             }
             return defaultProps;
-         }, []);
+        }, []);
     }
 
-    toString() { 
+    toString() {
         return `${this.token} ${this.types.map(t => t.toString())}`;
     }
 }
 
-export class CaseClause extends ExpressionWithOptionalExpression { 
+export class CaseClause extends ExpressionWithOptionalExpression {
     statements: Expression[];
-    constructor(expression: Expression|undefined, statements: Expression[]) { 
+    constructor(expression: Expression | undefined, statements: Expression[]) {
         super(expression);
         this.statements = statements;
     }
 
     toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return `case ${super.toString(internalState, state, props)}:
-            ${this.statements.map(s=>s.toString(internalState, state, props)).join("\n")}
+            ${this.statements.map(s => s.toString(internalState, state, props)).join("\n")}
         `;
     }
 
@@ -1451,20 +1457,20 @@ export class CaseClause extends ExpressionWithOptionalExpression {
     }
 }
 
-export class DefaultClause extends CaseClause { 
-    constructor(statements: Expression[]) { 
+export class DefaultClause extends CaseClause {
+    constructor(statements: Expression[]) {
         super(undefined, statements);
     }
 
     toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return `default:
-            ${this.statements.map(s=>s.toString(internalState, state, props)).join("\n")}
+            ${this.statements.map(s => s.toString(internalState, state, props)).join("\n")}
         `;
     }
 }
 
-export class CaseBlock extends Block { 
-    constructor(clauses: Array<DefaultClause|CaseClause>) { 
+export class CaseBlock extends Block {
+    constructor(clauses: Array<DefaultClause | CaseClause>) {
         super(clauses, true);
     }
 }
@@ -1475,18 +1481,18 @@ export class Switch extends If {
     }
 }
 
-export class ComputedPropertyName extends ExpressionWithExpression { 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) { 
+export class ComputedPropertyName extends ExpressionWithExpression {
+    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return `[${super.toString(internalState, state, props)}]`;
     }
 }
 
-export interface GeneratorContex { 
+export interface GeneratorContex {
     path?: string;
     components?: { [name: string]: Heritable };
 }
 
-export class Generator { 
+export class Generator {
     NodeFlags = {
         Const: "const",
         Let: "let",
@@ -1584,11 +1590,11 @@ export class Generator {
         return new SimpleExpression(this.SyntaxKind.TrueKeyword);
     }
 
-    createNew(expression: Expression, typeArguments: string[]=[], argumentsArray: Expression[]) { 
+    createNew(expression: Expression, typeArguments: string[] = [], argumentsArray: Expression[]) {
         return new New(expression, typeArguments, argumentsArray);
     }
 
-    createDelete(expression: Expression) { 
+    createDelete(expression: Expression) {
         return new Delete(expression);
     }
 
@@ -1600,15 +1606,15 @@ export class Generator {
         return new SimpleExpression(this.SyntaxKind.ThisKeyword);
     }
 
-    createBreak(label?: string | Identifier) { 
+    createBreak(label?: string | Identifier) {
         return new SimpleExpression("break");
     }
 
-    createContinue(label?: string | Identifier) { 
+    createContinue(label?: string | Identifier) {
         return new SimpleExpression("continue");
     }
 
-    createDebuggerStatement() { 
+    createDebuggerStatement() {
         return new SimpleExpression("debugger");
     }
 
@@ -1643,7 +1649,7 @@ export class Generator {
         return token;
     }
 
-    createArrowFunction(modifiers: string[] = [], typeParameters: string[] = [], parameters: Parameter[], type: string="", equalsGreaterThanToken: string, body: Block | Expression) {
+    createArrowFunction(modifiers: string[] = [], typeParameters: string[] = [], parameters: Parameter[], type: string = "", equalsGreaterThanToken: string, body: Block | Expression) {
         return new ArrowFunction(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body);
     }
 
@@ -1698,19 +1704,19 @@ export class Generator {
         if (moduleSpecifier.toString().indexOf("component_declaration/common") >= 0) {
             return "";
         }
-        if (moduleSpecifier.toString().indexOf("component_declaration/jsx") >= 0) { 
+        if (moduleSpecifier.toString().indexOf("component_declaration/jsx") >= 0) {
             const importString = moduleSpecifier.expression.toString().replace("component_declaration/jsx", "component_declaration/jsx-g")
             moduleSpecifier = new StringLiteral(importString);
         }
 
         const module = moduleSpecifier.expression.toString();
         const context = this.getContext();
-        if (context.path) { 
+        if (context.path) {
             const modulePath = path.join(context.path, `${module}.tsx`);
-            if (fs.existsSync(modulePath)) { 
+            if (fs.existsSync(modulePath)) {
                 compileCode(this, fs.readFileSync(modulePath).toString(), { dirname: context.path, path: modulePath });
-                
-                if (importClause) { 
+
+                if (importClause) {
                     this.addComponent(importClause, this.cache[modulePath].find((e: any) => e instanceof ReactComponent));
                 }
             }
@@ -1744,7 +1750,7 @@ export class Generator {
         return new Decorator(expression);
     }
 
-    createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string="", initializer?: Expression) {
+    createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression) {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
@@ -1757,8 +1763,8 @@ export class Generator {
             const componentInput = new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members);
             this.addComponent(name.toString(), componentInput);
             result = componentInput;
-        } else { 
-            result = new Class(decorators, modifiers, name, typeParameters, heritageClauses, members); 
+        } else {
+            result = new Class(decorators, modifiers, name, typeParameters, heritageClauses, members);
         }
 
         return result;
@@ -1845,7 +1851,7 @@ export class Generator {
         return new PropertySignature(modifiers, name, questionToken, type, initializer);
     }
 
-    createIndexSignature(decorators: Decorator[] | undefined, modifiers: string[] = [], parameters: Parameter[], type: string) { 
+    createIndexSignature(decorators: Decorator[] | undefined, modifiers: string[] = [], parameters: Parameter[], type: string) {
         return new IndexSignature(decorators, modifiers, parameters, type);
     }
 
@@ -1887,74 +1893,74 @@ export class Generator {
         return new For(initializer, condition, incrementor, statement);
     }
 
-    createForIn(initializer: Expression, expression: Expression, statement: Expression) { 
+    createForIn(initializer: Expression, expression: Expression, statement: Expression) {
         return new ForIn(initializer, expression, statement);
     }
 
-    createCaseClause(expression: Expression, statements: Expression[]) { 
+    createCaseClause(expression: Expression, statements: Expression[]) {
         return new CaseClause(expression, statements);
     }
 
-    createDefaultClause(statements: Expression[]) { 
+    createDefaultClause(statements: Expression[]) {
         return new DefaultClause(statements);
     }
 
-    createCaseBlock(clauses: Array<DefaultClause|CaseClause>) {
+    createCaseBlock(clauses: Array<DefaultClause | CaseClause>) {
         return new CaseBlock(clauses);
     }
-    
-    createSwitch(expression: Expression, caseBlock: CaseBlock) { 
+
+    createSwitch(expression: Expression, caseBlock: CaseBlock) {
         return new Switch(expression, caseBlock);
     }
 
-    createComputedPropertyName(expression:Expression) { 
+    createComputedPropertyName(expression: Expression) {
         return new ComputedPropertyName(expression);
     }
 
-    createDo(statement: Expression, expression: Expression) { 
+    createDo(statement: Expression, expression: Expression) {
         return new Do(statement, expression);
     }
 
-    createExpressionWithTypeArguments(typeArguments: TypeNode[] = [], expression: Expression) { 
+    createExpressionWithTypeArguments(typeArguments: TypeNode[] = [], expression: Expression) {
         return new ExpressionWithTypeArguments(typeArguments, expression);
     }
 
-    createTypeOf(expression: Expression) { 
+    createTypeOf(expression: Expression) {
         return new TypeOf(expression);
     }
 
-    createVoid(expression: Expression) { 
+    createVoid(expression: Expression) {
         return new Void(expression);
     }
 
-    createHeritageClause(token: string, types: ExpressionWithTypeArguments[]) { 
+    createHeritageClause(token: string, types: ExpressionWithTypeArguments[]) {
         return new HeritageClause(token, types, this.getContext());
     }
 
-    createPropertyAccessChain(expression: Expression, questionDotToken: string, name: Expression) { 
+    createPropertyAccessChain(expression: Expression, questionDotToken: string, name: Expression) {
         return new PropertyAccessChain(expression, questionDotToken, name);
     }
 
-    createCallChain(expression: Expression, questionDotToken: string = "", typeArguments: string[]=[], argumentsArray: Expression[]=[]) { 
+    createCallChain(expression: Expression, questionDotToken: string = "", typeArguments: string[] = [], argumentsArray: Expression[] = []) {
         return new CallChain(expression, questionDotToken, typeArguments, argumentsArray);
     }
 
     context: GeneratorContex[] = [];
 
-    addComponent(name: string, component: Heritable) { 
+    addComponent(name: string, component: Heritable) {
         const context = this.getContext();
         context.components = context.components || {};
-        context.components[name] = component; 
+        context.components[name] = component;
     }
 
-    getContext() { 
+    getContext() {
         return this.context[this.context.length - 1] || { components: {} };
     }
-    
-    setContext(context: GeneratorContex | null ) { 
+
+    setContext(context: GeneratorContex | null) {
         if (!context) {
             this.context.pop();
-        } else { 
+        } else {
             this.context.push(context);
         }
     }

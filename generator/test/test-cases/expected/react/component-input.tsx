@@ -4,7 +4,9 @@ function viewModel() { }
 import React, { useCallback } from "react";
 
 interface Widget {
-    height?: number;
+    props: {
+        height?: number;
+    },
     onClick:()=>void
 }
 
