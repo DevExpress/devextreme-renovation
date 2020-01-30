@@ -690,12 +690,15 @@ export class ExpressionWithTypeArguments extends ExpressionWithExpression {
         return `${this.expression}${typeArgumentString}`;
     }
 
+    get typeNode() { 
+        return this.expression.toString();
+    }
+
     get type() { 
-        const typeNode = this.expression.toString();
         if (this.typeArguments.length) { 
             return this.typeArguments[0].toString();
         }
-        return typeNode;
+        return this.typeNode;
     }
 }
 
@@ -1167,8 +1170,27 @@ export class ReactComponent {
         }`;
     }
 
-    toString() {
+    get isJSXComponent() { 
+        return this.heritageClauses
+            .reduce((typeNodes: string[], h) => typeNodes.concat(h.typeNodes), [])
+            .filter(t => t === "JSXComponent").length;
+    }
 
+    compileViewModelArguments(): string[] { 
+        const state = this.internalState
+            .concat(this.state)
+            .map(s => `${s.name}:${s.getter()}`);
+        
+        const props = this.isJSXComponent ?
+            [`props:{${["...props"].concat(state).join(",\n")}}`] :
+            ["...props"].concat(state);
+        
+        return props
+            .concat(this.listeners.map(l => l.name.toString()))
+            .concat(this.refs.map(r => r.name.toString()));
+    }
+
+    toString() {
         return `
             ${this.getImports()}
             ${this.compileComponentInterface()}
@@ -1184,26 +1206,14 @@ export class ReactComponent {
                 ${this.stateDeclaration()}
                 ${this.listenersDeclaration()}
                 ${this.compileUseEffect()}
-
                 ${this.methods.map(m => m.declaration("function", this.internalState, this.state, this.props.concat(this.refs))).join("\n")}
-                
                 return ${this.view}(${this.viewModel}({
-                    ${
-            ["...props"]
-                .concat(
-                    this.internalState
-                        .concat(this.state)
-                        .map(s => `${s.name}:${s.getter()}`)
-                )
-            .concat(this.listeners.map(l => l.name.toString()))
-            .concat(this.refs.map(r=>r.name.toString()))
-                .join(",\n")
-            }
-                }));
+                        ${ this.compileViewModelArguments().join(",\n")}
+                    })
+                );
             }
 
-            ${this.compileDefaultProps()}
-        `;
+            ${this.compileDefaultProps()}`;
     }
 }
 
@@ -1389,9 +1399,12 @@ export class TemplateExpression extends Expression {
 
 export class HeritageClause { 
     token: string;
-    types: Expression[];
+    types: ExpressionWithTypeArguments[];
     members: Property[];
     defaultProps: string[] = [];
+    get typeNodes() { 
+        return this.types.map(t => t.typeNode);
+    }
     constructor(token: string, types: ExpressionWithTypeArguments[], context: GeneratorContex) { 
         this.token = token;
         this.types = types;

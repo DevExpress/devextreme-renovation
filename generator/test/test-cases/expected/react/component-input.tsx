@@ -16,7 +16,7 @@ export default function Widget(props: {
     }, [props.height]);
 
     return view(viewModel({
-        ...props,
+        props: { ...props },
         onClick
     }));
 }

@@ -1,7 +1,7 @@
 import assert from "assert";
 import mocha from "mocha";
 import ts from "typescript";
-import generator, { ReactComponent, State, InternalState, Prop } from "../react-generator";
+import generator, { ReactComponent, State, InternalState, Prop, Decorator } from "../react-generator";
 
 import compile from "../component-compiler";
 import path from "path";
