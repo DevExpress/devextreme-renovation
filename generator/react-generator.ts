@@ -626,13 +626,21 @@ export class Property {
     }
 }
 
+function inheritMembers(heritageClauses: HeritageClause[], members: Array<Property | Method>) {
+    return heritageClauses.reduce((m, { members }) => {
+        members = members.filter(inheritMember => m.every(m => m.name.toString() !== inheritMember.name.toString()));
+        return m.concat(members);
+    }, members);
+}
+
 export class Class {
     decorators: Decorator[];
     name: Identifier;
     members: Array<Property | Method>;
     modifiers: string[];
 
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, typeParameters: any[], heritageClauses: any, members: Array<Property | Method>) {
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, typeParameters: any[], heritageClauses: HeritageClause[]=[], members: Array<Property | Method>) {
+        members = inheritMembers(heritageClauses, members);
         this.decorators = decorators;
         this.name = name;
         this.members = members;
@@ -1010,7 +1018,7 @@ export class ReactComponent {
         this.name = name;
         this.heritageClauses = heritageClauses;
 
-        members = heritageClauses.reduce((m, clause) => m.concat(clause.members), members);
+        members = inheritMembers(heritageClauses, members);
 
         this.props = members
             .filter(m => m.decorators.find(d => d.name === "Prop" || d.name === "Event" || d.name === "Template"))

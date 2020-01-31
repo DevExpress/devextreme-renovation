@@ -1,7 +1,7 @@
 import assert from "assert";
 import mocha from "mocha";
 import ts from "typescript";
-import generator, { ReactComponent, State, InternalState, Prop, Decorator, ComponentInput } from "../react-generator";
+import generator, { ReactComponent, State, InternalState, Prop, Decorator, ComponentInput, Property } from "../react-generator";
 
 import compile from "../component-compiler";
 import path from "path";
@@ -1021,6 +1021,82 @@ mocha.describe("import Components", function () {
         assert.ok(generator.getContext().components!["Widget"] instanceof ReactComponent);
         assert.ok(generator.getContext().components!["WidgetProps"] instanceof ComponentInput);
     });
+
+    mocha.it("ComponentInput gets all members from herutage clause", function () { 
+        const expresstion = generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                generator.createIdentifier("Widget"),
+                generator.createNamedImports([generator.createImportSpecifier(
+                    undefined,
+                    generator.createIdentifier("WidgetProps")
+                )])
+            ),
+            generator.createStringLiteral("./test-cases/declarations/component-input")
+        );
+
+        const heritageClause = generator.createHeritageClause(
+            generator.SyntaxKind.ExtendsKeyword,
+            [generator.createExpressionWithTypeArguments(
+                undefined,
+                generator.createIdentifier("WidgetProps")
+            )]);
+        
+        const model = new ComponentInput(
+            [],
+            [],
+            generator.createIdentifier("Model"),
+            [],
+            [heritageClause],
+            []
+        );
+
+        assert.deepEqual(model.members.map(m => m.name.toString()), ["height"]);
+    });
+
+    mocha.it("ComponentInput inherit members - can redefine member", function () { 
+        const expresstion = generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                generator.createIdentifier("Widget"),
+                generator.createNamedImports([generator.createImportSpecifier(
+                    undefined,
+                    generator.createIdentifier("WidgetProps")
+                )])
+            ),
+            generator.createStringLiteral("./test-cases/declarations/component-input")
+        );
+
+        const heritageClause = generator.createHeritageClause(
+            generator.SyntaxKind.ExtendsKeyword,
+            [generator.createExpressionWithTypeArguments(
+                undefined,
+                generator.createIdentifier("WidgetProps")
+            )]);
+        
+        const model = new ComponentInput(
+            [],
+            [],
+            generator.createIdentifier("Model"),
+            [],
+            [heritageClause],
+            [generator.createProperty(
+                [],
+                [],
+                generator.createIdentifier("height"),
+                generator.SyntaxKind.ExclamationToken,
+                "string",
+                generator.createStringLiteral("10px")
+            )]
+        );
+
+        assert.deepEqual(model.members.map(m => {
+            const prop = new Prop(m as Property);
+            return prop.typeDeclaration();
+        }), ["height!:string"]);
+    });
 });
 
 mocha.describe("Expressions with props/state/internal state", function () { 
@@ -1316,5 +1392,4 @@ mocha.describe("ComponentInput", function () {
         const cachedComponent = generator.getContext().components!["BaseModel"];
         assert.deepEqual(cachedComponent.heritageProperies.map(p => p.toString()), ["p"]);
     });
-
 });
