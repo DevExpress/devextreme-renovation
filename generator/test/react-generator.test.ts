@@ -1,7 +1,7 @@
 import assert from "assert";
 import mocha from "mocha";
 import ts from "typescript";
-import generator, { ReactComponent, State, InternalState, Prop, Decorator, ComponentInput, Property } from "../react-generator";
+import generator, { ReactComponent, State, InternalState, Prop, Decorator, ComponentInput, Property, Expression } from "../react-generator";
 
 import compile from "../component-compiler";
 import path from "path";
@@ -499,6 +499,25 @@ mocha.describe("react-generator: expressions", function () {
             propertySignatureWithoutQuestionToken
             ]
         ), "{a?:string,b:string}");
+    });
+
+    mocha.it("createTypeAliasDeclaration", function () { 
+        const literalNode = generator.createTypeLiteralNode(
+            [generator.createPropertySignature(
+                [],
+                generator.createIdentifier("b"),
+                undefined,
+                "string"
+            )]
+        );
+        const expression = generator.createTypeAliasDeclaration(
+            undefined,
+            ["export", "declare"],
+            generator.createIdentifier("Name"),
+            [],
+            literalNode);
+
+        assert.strictEqual(expression.toString(), "export declare type Name = {b:string}");
     });
 
     

@@ -1934,6 +1934,10 @@ export class Generator {
         return `{${members.join(",")}}`;
     }
 
+    createTypeAliasDeclaration(decorators: Decorator[]=[], modifiers: string[]=[], name: Identifier, typeParameters: any[]=[], type: string) { 
+        return `${modifiers.join(" ")} type ${name} = ${type}`;
+    }
+
     createIntersectionTypeNode(types: string[]) {
         return types.join("&");
     }
