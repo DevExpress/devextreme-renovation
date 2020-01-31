@@ -674,7 +674,7 @@ export class ComponentInput extends Class implements Heritable {
 
     toString() { 
         return `${this.modifiers.join(" ")} const ${this.name}={
-            ${this.heritageProperies.map(p=>new Prop(p).defaultDeclaration()).join(";\n")}
+            ${this.heritageProperies.map(p=>new Prop(p).defaultDeclaration()).join(",\n")}
         };`;
     }
 
