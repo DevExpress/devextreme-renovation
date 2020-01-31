@@ -1,6 +1,10 @@
 function view() { }
 function viewModel() { }
 
+export const WidgetProps={
+    height: 10
+};
+
 import React, { useCallback } from "react";
 
 interface Widget {
@@ -24,5 +28,5 @@ export default function Widget(props: {
 }
 
 Widget.defaultProps = {
-    height: 10
+    ...WidgetProps
 };

@@ -24,7 +24,7 @@ export class PreactComponent extends ReactComponent {
     }
 
     defaultPropsDest() { 
-        return `(${super.defaultPropsDest()} as any)`;
+        return `(${this.name} as any).defaultProps`;
     }
 }
 

@@ -661,15 +661,25 @@ interface Heritable {
 
 export class ComponentInput extends Class implements Heritable {
     get heritageProperies() {
-        return this.members.filter(m => m instanceof Property) as Property[];
+        return (this.members.filter(m => m instanceof Property) as Property[]).map(p => { 
+            const property = new Property(p.decorators, p.modifiers, p.name, p.questionOrExclamationToken, p.type, p.initializer);
+            property.inherited = true;
+            return property
+        });
     }
 
     compileDefaultProps() {
-        return "";
+        return this.name.toString();
+    }
+
+    toString() { 
+        return `${this.modifiers.join(" ")} const ${this.name}={
+            ${this.heritageProperies.map(p=>new Prop(p).defaultDeclaration()).join(";\n")}
+        };`;
     }
 
     defaultPropsDest() {
-        return "";
+        return this.name.toString();
     }
 }
 
@@ -1091,7 +1101,7 @@ export class ReactComponent {
     }
 
     defaultPropsDest() {
-        return this.name.toString();
+        return `${this.name.toString()}.defaultProps`;
     }
 
     compileDefaultProps() {
@@ -1099,13 +1109,13 @@ export class ReactComponent {
         const heritageDefaultProps = this.heritageClauses.filter(h => h.defaultProps.length).map(h => `...${h.defaultProps}`);
 
         if (defaultProps.length) {
-            return `${this.defaultPropsDest()}.defaultProps = {
+            return `${this.defaultPropsDest()} = {
                 ${heritageDefaultProps.join(",") + (heritageDefaultProps.length ? "," : "")}
                 ${defaultProps.map(p => p.defaultProps())
                     .join(",\n")}
             }`;
         } else if (heritageDefaultProps.length) {
-            return `${this.defaultPropsDest()}.defaultProps = {${heritageDefaultProps.join(",")}}`;
+            return `${this.defaultPropsDest()} = {${heritageDefaultProps.join(",")}}`;
         }
 
         return "";
@@ -1434,7 +1444,7 @@ export class HeritageClause {
             const importName = type;
             const component = context.components && context.components[importName]
             if (component && component.compileDefaultProps() !== "") {
-                defaultProps.push(`${component.defaultPropsDest().replace(component.name.toString(), importName)}.defaultProps`);
+                defaultProps.push(`${component.defaultPropsDest().replace(component.name.toString(), importName)}`);
             }
             return defaultProps;
         }, []);
@@ -1785,7 +1795,6 @@ export class Generator {
                         const componentInput = componentInputs.find(c => c.name.toString() === i && c.modifiers.indexOf("export") >= 0);
                         if (componentInput) { 
                             this.addComponent(i, componentInput);
-                            importClause.remove(i);
                         }
                     });
                 }

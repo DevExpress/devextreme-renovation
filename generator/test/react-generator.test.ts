@@ -1016,7 +1016,7 @@ mocha.describe("import Components", function () {
         );
         
         const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/component-input.tsx`);
-        assert.strictEqual(expresstion.toString(), `import Widget from "./test-cases/declarations/component-input"`);
+        assert.strictEqual(expresstion.toString(), `import Widget,{WidgetProps} from "./test-cases/declarations/component-input"`);
         assert.ok(generator.cache[baseModulePath]);
         assert.ok(generator.getContext().components!["Widget"] instanceof ReactComponent);
         assert.ok(generator.getContext().components!["WidgetProps"] instanceof ComponentInput);
@@ -1096,6 +1096,8 @@ mocha.describe("import Components", function () {
             const prop = new Prop(m as Property);
             return prop.typeDeclaration();
         }), ["height!:string"]);
+
+        assert.strictEqual(model.defaultPropsDest(), "Model");
     });
 });
 
@@ -1365,7 +1367,7 @@ mocha.describe("ComponentInput", function () {
             []
         );
 
-        assert.strictEqual(expression.toString(), "");
+        assert.strictEqual(getResult(expression.toString()), getResult("export const BaseModel={};"));
 
         const cachedComponent = generator.getContext().components!["BaseModel"];
         assert.equal(cachedComponent, expression);
@@ -1373,23 +1375,20 @@ mocha.describe("ComponentInput", function () {
     });
 
     mocha.it("Component input has heritage properties", function () { 
-        generator.createClassDeclaration(
+        const expression = generator.createClassDeclaration(
             this.decorators,
             ["export"],
             generator.createIdentifier("BaseModel"),
             [],
             [],
-            [generator.createProperty(
-                [generator.createDecorator(generator.createCall(generator.createIdentifier("Prop"), [], []))],
-                [],
-                generator.createIdentifier("p"),
-                undefined,
-                undefined,
-                undefined
-            )]
+            [
+                new Property([], [], generator.createIdentifier("p"), undefined, "number", generator.createNumericLiteral("10")),
+                new Property([], [], generator.createIdentifier("p1"), undefined, "number", generator.createNumericLiteral("15"))
+            ]
         );
 
+        assert.strictEqual(getResult(expression.toString()), getResult("export const BaseModel={p:10, p1: 15};"));
         const cachedComponent = generator.getContext().components!["BaseModel"];
-        assert.deepEqual(cachedComponent.heritageProperies.map(p => p.toString()), ["p"]);
+        assert.deepEqual(cachedComponent.heritageProperies.map(p => p.toString()), ["p", "p1"]);
     });
 });
