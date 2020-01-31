@@ -1,7 +1,11 @@
 function view() { }
 function viewModel() { }
 
-export const WidgetProps={
+declare type WidgetProps={
+    height?: number;
+}
+
+export const WidgetProps: WidgetProps = {
     height: 10
 };
 

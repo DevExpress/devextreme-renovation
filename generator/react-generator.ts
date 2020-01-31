@@ -678,7 +678,12 @@ export class ComponentInput extends Class implements Heritable {
         const inherited = this.heritageClauses.reduce((t: string[], h) => t.concat(h.typeNodes.map(t => `...${t}`)), []);
         const members = this.members.filter(m => !(m as Property).inherited).map(p => new Prop(p as Property).defaultDeclaration());
 
-        return `${this.modifiers.join(" ")} const ${this.name}={
+        const typeDeclaration = `declare type ${this.name}={
+            ${this.members.filter(m => !(m as Property).inherited).map(p => new Prop(p as Property).typeDeclaration()).join(";\n")}
+        }`;
+
+        return `${typeDeclaration}
+        ${this.modifiers.join(" ")} const ${this.name}:${this.name}={
            ${inherited.concat(members).join(",\n")}
         };`;
     }

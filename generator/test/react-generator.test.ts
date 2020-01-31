@@ -1058,7 +1058,7 @@ mocha.describe("import Components", function () {
         assert.ok(generator.getContext().components!["WidgetProps"] instanceof ComponentInput);
     });
 
-    mocha.it("ComponentInput gets all members from herutage clause", function () { 
+    mocha.it("ComponentInput gets all members from heritage clause", function () { 
         const expresstion = generator.createImportDeclaration(
             undefined,
             undefined,
@@ -1089,7 +1089,7 @@ mocha.describe("import Components", function () {
         );
 
         assert.deepEqual(model.members.map(m => m.name.toString()), ["height"]);
-        assert.strictEqual(getResult(model.toString()), getResult("const Model={...WidgetProps}"));
+        assert.strictEqual(getResult(model.toString()), getResult("declare type Model={} const Model:Model={...WidgetProps}"));
     });
 
     mocha.it("ComponentInput inherit members - can redefine member", function () { 
@@ -1135,7 +1135,7 @@ mocha.describe("import Components", function () {
         }), ["height!:string"]);
 
         assert.strictEqual(model.defaultPropsDest(), "Model");
-        assert.strictEqual(getResult(model.toString()), getResult("const Model={...WidgetProps, height: '10px'}"));
+        assert.strictEqual(getResult(model.toString()), getResult("declare type Model={height!:string} const Model:Model={...WidgetProps, height: '10px'}"));
     });
 });
 
@@ -1405,7 +1405,7 @@ mocha.describe("ComponentInput", function () {
             []
         );
 
-        assert.strictEqual(getResult(expression.toString()), getResult("export const BaseModel={};"));
+        assert.strictEqual(getResult(expression.toString()), getResult("declare type BaseModel={}; export const BaseModel:BaseModel={};"));
 
         const cachedComponent = generator.getContext().components!["BaseModel"];
         assert.equal(cachedComponent, expression);
@@ -1425,7 +1425,7 @@ mocha.describe("ComponentInput", function () {
             ]
         );
 
-        assert.strictEqual(getResult(expression.toString()), getResult("export const BaseModel={p:10, p1: 15};"));
+        assert.strictEqual(getResult(expression.toString()), getResult("declare type BaseModel={p:number; p1:number}; export const BaseModel:BaseModel={p:10, p1: 15};"));
         const cachedComponent = generator.getContext().components!["BaseModel"];
         assert.deepEqual(cachedComponent.heritageProperies.map(p => p.toString()), ["p", "p1"]);
     });
