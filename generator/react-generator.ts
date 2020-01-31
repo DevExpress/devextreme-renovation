@@ -638,6 +638,7 @@ export class Class {
     name: Identifier;
     members: Array<Property | Method>;
     modifiers: string[];
+    heritageClauses: HeritageClause[];
 
     constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, typeParameters: any[], heritageClauses: HeritageClause[]=[], members: Array<Property | Method>) {
         members = inheritMembers(heritageClauses, members);
@@ -645,6 +646,7 @@ export class Class {
         this.name = name;
         this.members = members;
         this.modifiers = modifiers;
+        this.heritageClauses = heritageClauses;
     }
 
     toString() {
@@ -673,8 +675,11 @@ export class ComponentInput extends Class implements Heritable {
     }
 
     toString() { 
+        const inherited = this.heritageClauses.reduce((t: string[], h) => t.concat(h.typeNodes.map(t => `...${t}`)), []);
+        const members = this.members.filter(m => !(m as Property).inherited).map(p => new Prop(p as Property).defaultDeclaration());
+
         return `${this.modifiers.join(" ")} const ${this.name}={
-            ${this.heritageProperies.map(p=>new Prop(p).defaultDeclaration()).join(",\n")}
+           ${inherited.concat(members).join(",\n")}
         };`;
     }
 

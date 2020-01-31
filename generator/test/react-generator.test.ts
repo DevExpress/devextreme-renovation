@@ -1053,6 +1053,7 @@ mocha.describe("import Components", function () {
         );
 
         assert.deepEqual(model.members.map(m => m.name.toString()), ["height"]);
+        assert.strictEqual(getResult(model.toString()), getResult("const Model={...WidgetProps}"));
     });
 
     mocha.it("ComponentInput inherit members - can redefine member", function () { 
@@ -1098,6 +1099,7 @@ mocha.describe("import Components", function () {
         }), ["height!:string"]);
 
         assert.strictEqual(model.defaultPropsDest(), "Model");
+        assert.strictEqual(getResult(model.toString()), getResult("const Model={...WidgetProps, height: '10px'}"));
     });
 });
 
