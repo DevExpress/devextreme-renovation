@@ -697,7 +697,8 @@ export class TypeNode extends Expression {
         this.typeArguments = typeArguments;
     }
     toString() {
-        return this.typeName.toString();
+        const typeArguments = this.typeArguments.length ? `<${this.typeArguments.join(",")}>` : "";
+        return `${this.typeName}${typeArguments}`;
     }
 }
 
@@ -1940,6 +1941,10 @@ export class Generator {
 
     createIntersectionTypeNode(types: string[]) {
         return types.join("&");
+    }
+
+    createTypeQueryNode(exprName: Expression) { 
+        return `typeof ${exprName}`;
     }
 
     createUnionTypeNode(types: string[]) {

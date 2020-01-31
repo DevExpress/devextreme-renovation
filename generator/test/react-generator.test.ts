@@ -520,6 +520,11 @@ mocha.describe("react-generator: expressions", function () {
         assert.strictEqual(expression.toString(), "export declare type Name = {b:string}");
     });
 
+    mocha.it("TypeQueryNode", function () { 
+        const expression = generator.createTypeQueryNode(generator.createIdentifier("Component"));
+
+        assert.strictEqual(expression.toString(), "typeof Component");
+    });
     
     mocha.it("createIntersectionTypeNode", function () {
         assert.equal(generator.createIntersectionTypeNode(
@@ -745,6 +750,18 @@ mocha.describe("react-generator: expressions", function () {
         );
 
         assert.equal(expression.toString(), "Node");
+    });
+
+    mocha.it("TypeReferenceNode with typeArguments", function () { 
+        const expression = generator.createTypeReferenceNode(
+            generator.createIdentifier("Node"),
+            [
+                generator.createArrayTypeNode("string"),
+                generator.createArrayTypeNode("number")
+            ]
+        );
+
+        assert.equal(expression.toString(), "Node<string[],number[]>");
     });
 
     mocha.it("ExpressionWithTypeArguments", function () {
