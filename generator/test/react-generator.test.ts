@@ -1089,7 +1089,7 @@ mocha.describe("import Components", function () {
         );
 
         assert.deepEqual(model.members.map(m => m.name.toString()), ["height"]);
-        assert.strictEqual(getResult(model.toString()), getResult("declare type Model=WidgetProps & {} const Model:Model={...WidgetProps}"));
+        assert.strictEqual(getResult(model.toString()), getResult("declare type Model= typeof WidgetProps & {} const Model:Model={...WidgetProps}"));
     });
 
     mocha.it("ComponentInput inherit members - can redefine member", function () { 
@@ -1135,7 +1135,7 @@ mocha.describe("import Components", function () {
         }), ["height!:string"]);
 
         assert.strictEqual(model.defaultPropsDest(), "Model");
-        assert.strictEqual(getResult(model.toString()), getResult("declare type Model=WidgetProps&{height!:string} const Model:Model={...WidgetProps, height: '10px'}"));
+        assert.strictEqual(getResult(model.toString()), getResult("declare type Model=typeof WidgetProps&{height!:string} const Model:Model={...WidgetProps, height: '10px'}"));
     });
 
     mocha.it("ComponentInput - doesn't have properties without initializer", function () { 
