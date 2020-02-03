@@ -28,6 +28,7 @@ export const Slot = () => propertyDecorator;
 export const Method = () => propertyDecorator;
 export const Event = () => propertyDecorator;
 export const State = () => propertyDecorator;
+export const InternalState = () => propertyDecorator;
 export const Listen = (eventName?: string, parameters?: { target?: Document | Window | string }) => propertyDecorator;
 export const Ref = () => propertyDecorator;
 export const Effect = () => propertyDecorator;
