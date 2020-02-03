@@ -1,7 +1,7 @@
 import assert from "assert";
 import mocha from "mocha";
 import ts from "typescript";
-import generator, { ReactComponent, State, InternalState, Prop, Decorator, ComponentInput, Property, Expression } from "../react-generator";
+import generator, { ReactComponent, State, InternalState, Prop, Decorator, ComponentInput, Property, Method, Expression } from "../react-generator";
 
 import compile from "../component-compiler";
 import path from "path";
@@ -1059,7 +1059,7 @@ mocha.describe("import Components", function () {
     });
 
     mocha.it("ComponentInput gets all members from heritage clause", function () { 
-        const expresstion = generator.createImportDeclaration(
+        generator.createImportDeclaration(
             undefined,
             undefined,
             generator.createImportClause(
@@ -1089,11 +1089,11 @@ mocha.describe("import Components", function () {
         );
 
         assert.deepEqual(model.members.map(m => m.name.toString()), ["height"]);
-        assert.strictEqual(getResult(model.toString()), getResult("declare type Model={} const Model:Model={...WidgetProps}"));
+        assert.strictEqual(getResult(model.toString()), getResult("declare type Model=WidgetProps & {} const Model:Model={...WidgetProps}"));
     });
 
     mocha.it("ComponentInput inherit members - can redefine member", function () { 
-        const expresstion = generator.createImportDeclaration(
+        generator.createImportDeclaration(
             undefined,
             undefined,
             generator.createImportClause(
@@ -1135,7 +1135,27 @@ mocha.describe("import Components", function () {
         }), ["height!:string"]);
 
         assert.strictEqual(model.defaultPropsDest(), "Model");
-        assert.strictEqual(getResult(model.toString()), getResult("declare type Model={height!:string} const Model:Model={...WidgetProps, height: '10px'}"));
+        assert.strictEqual(getResult(model.toString()), getResult("declare type Model=WidgetProps&{height!:string} const Model:Model={...WidgetProps, height: '10px'}"));
+    });
+
+    mocha.it("ComponentInput - doesn't have properties without initializer", function () { 
+        
+        const model = new ComponentInput(
+            [],
+            [],
+            generator.createIdentifier("Model"),
+            [],
+            [],
+            [generator.createProperty(
+                [],
+                [],
+                generator.createIdentifier("height"),
+                generator.SyntaxKind.ExclamationToken,
+                "string",
+                undefined
+            )]
+        );
+        assert.strictEqual(getResult(model.toString()), getResult("declare type Model={height!:string} const Model:Model={}"));
     });
 });
 
@@ -1428,5 +1448,117 @@ mocha.describe("ComponentInput", function () {
         assert.strictEqual(getResult(expression.toString()), getResult("declare type BaseModel={p:number; p1:number}; export const BaseModel:BaseModel={p:10, p1: 15};"));
         const cachedComponent = generator.getContext().components!["BaseModel"];
         assert.deepEqual(cachedComponent.heritageProperies.map(p => p.toString()), ["p", "p1"]);
+    });
+
+    mocha.describe("CompileViewModelArguments", function () {
+        this.beforeEach(function () { 
+            
+        });
+
+        function createComponent(inputMembers: Array<Property|Method>, componentMembers: Array<Property|Method>=[]):ReactComponent { 
+            generator.createClassDeclaration(
+                [generator.createDecorator(
+                    generator.createCall(generator.createIdentifier("ComponentInput"), [], [])
+                )],
+                [],
+                generator.createIdentifier("Input"),
+                [],
+                [],
+                inputMembers
+            );
+
+            const heritageClause = generator.createHeritageClause(
+                generator.SyntaxKind.ExtendsKeyword,
+                [generator.createExpressionWithTypeArguments(
+                    [generator.createTypeReferenceNode(
+                        generator.createIdentifier("Input"),
+                        undefined
+                    )],
+                    generator.createIdentifier("JSXComponent")
+                )]
+            );
+
+            const component = generator.createClassDeclaration(
+                [generator.createDecorator(
+                    generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)])
+                )],
+                [],
+                generator.createIdentifier("Widget"),
+                [],
+                [heritageClause],
+                componentMembers
+            );
+
+            return component as ReactComponent;
+            
+        }
+
+        mocha.it("Empty input with empty component", function () {
+            const component = createComponent([]);
+            assert.deepEqual(component.compileViewModelArguments(), ["props:{...props}"]);
+        });
+        
+        mocha.it("Prop in input with empty component", function () {
+            const component = createComponent([
+                generator.createProperty(
+                    [generator.createDecorator(generator.createCall(
+                        generator.createIdentifier("Prop"), [], []
+                    ))],
+                    [],
+                    generator.createIdentifier("p"),
+                    "",
+                    generator.SyntaxKind.BooleanKeyword,
+                    undefined
+                )
+            ]);
+            assert.deepEqual(component.compileViewModelArguments(), ["props:{...props}"]);
+        });
+
+        mocha.it("State in input - extended props with state getter in viewModes args", function () {
+            const component = createComponent([
+                generator.createProperty(
+                    [generator.createDecorator(generator.createCall(
+                        generator.createIdentifier("State"), [], []
+                    ))],
+                    [],
+                    generator.createIdentifier("p"),
+                    "",
+                    generator.SyntaxKind.BooleanKeyword,
+                    undefined
+                )
+            ]);
+            assert.deepEqual(getResult(
+                `{${component.compileViewModelArguments().join(",")}}`
+            ), getResult("{props:{...props, p:props.p!==undefined?props.p:__state_p}}"));
+        });
+
+        mocha.it("component with internal state - add internal state to viewModel args", function () {
+            const component = createComponent([
+                generator.createProperty(
+                    [generator.createDecorator(generator.createCall(
+                        generator.createIdentifier("Prop"), [], []
+                    ))],
+                    [],
+                    generator.createIdentifier("p"),
+                    "",
+                    generator.SyntaxKind.BooleanKeyword,
+                    undefined
+                )
+            ], [
+                generator.createProperty(
+                    [generator.createDecorator(generator.createCall(
+                        generator.createIdentifier("InternalState"), [], []
+                    ))],
+                    [],
+                    generator.createIdentifier("s"),
+                    "",
+                    generator.SyntaxKind.BooleanKeyword,
+                    undefined
+                )
+            ]);
+            assert.deepEqual(getResult(
+                `{${component.compileViewModelArguments().join(",")}}`
+            ), getResult("{props:{...props},s:__state_s}"));
+        });
     });
 });

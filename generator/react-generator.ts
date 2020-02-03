@@ -621,6 +621,14 @@ export class Property {
         this.initializer = initializer;
     }
 
+    typeDeclaration() {
+        return `${this.name}${this.questionOrExclamationToken}:${this.type}`;
+    }
+
+    defaultDeclaration() {
+        return `${this.name}:${this.initializer}`;
+    }
+
     toString() {
         return this.name.toString();
     }
@@ -676,15 +684,20 @@ export class ComponentInput extends Class implements Heritable {
 
     toString() { 
         const inherited = this.heritageClauses.reduce((t: string[], h) => t.concat(h.typeNodes.map(t => `...${t}`)), []);
-        const members = this.members.filter(m => !(m as Property).inherited).map(p => new Prop(p as Property).defaultDeclaration());
+       
+        const types = this.heritageClauses.reduce((t: string[], h) => t.concat(h.typeNodes.map(t => `${t}`)), []);
 
-        const typeDeclaration = `declare type ${this.name}={
-            ${this.members.filter(m => !(m as Property).inherited).map(p => new Prop(p as Property).typeDeclaration()).join(";\n")}
-        }`;
+        const typeDeclaration = `declare type ${this.name}=${types.concat([`{
+            ${this.members.filter(m => !(m as Property).inherited).map(p => p.typeDeclaration()).join(";\n")}
+        }`]).join("&")}`;
 
         return `${typeDeclaration}
         ${this.modifiers.join(" ")} const ${this.name}:${this.name}={
-           ${inherited.concat(members).join(",\n")}
+           ${inherited.concat(
+               this.members
+                   .filter(m => !(m as Property).inherited && (m as Property).initializer)
+                   .map(p => p.defaultDeclaration())
+           ).join(",\n")}
         };`;
     }
 
@@ -814,7 +827,11 @@ export class Method {
         return `${this.name}${this.questionToken}:(${this.parameters.map(p => p.typeDeclaration()).join(",")})=>${this.type}`
     }
 
-    declaration(prefix = "", internalState: InternalState[], state: State[], props: Prop[]) {
+    defaultDeclaration() { 
+        return this.declaration();
+    }
+
+    declaration(prefix = "", internalState?: InternalState[], state?: State[], props?: Prop[]) {
         return `${prefix} ${this.name}(${this.parametersTypeDeclaration()})${this.body.toString(internalState, state, props)}`;
     }
 
@@ -861,11 +878,11 @@ export class Prop {
     }
 
     typeDeclaration() {
-        return `${this.name}${this.property.questionOrExclamationToken}:${this.type}`;
+        return this.property.typeDeclaration();
     }
 
     defaultDeclaration() {
-        return `${this.name}:${this.property.initializer}`;
+        return this.property.defaultDeclaration();
     }
 
     getter() {
@@ -1212,13 +1229,13 @@ export class ReactComponent {
     }
 
     compileViewModelArguments(): string[] {
-        const state = this.internalState
-            .concat(this.state)
-            .map(s => `${s.name}:${s.getter()}`);
+        const compileState = (state: Array<State | InternalState>) => state.map(s => `${s.name}:${s.getter()}`);
+        const state = compileState(this.state);
+        const internalState = compileState(this.internalState);
 
         const props = this.isJSXComponent ?
-            [`props:{${["...props"].concat(state).join(",\n")}}`] :
-            ["...props"].concat(state);
+            [`props:{${["...props"].concat(state).join(",\n")}}`].concat(internalState) :
+            ["...props"].concat(internalState).concat(state);
 
         return props
             .concat(this.listeners.map(l => l.name.toString()))
