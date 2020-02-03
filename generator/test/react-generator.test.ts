@@ -122,14 +122,17 @@ mocha.describe("react-generator: expressions", function () {
         assert.equal(identifier, 'a');
         assert.deepEqual(identifier.getDependency(), []);
     });
-    mocha.it("StringLiteral", function () {
-        assert.equal(generator.createStringLiteral("a"), '"a"');
+    mocha.it("createStringLiteral", function () {
+        assert.strictEqual(generator.createStringLiteral("a").toString(), '"a"');
     });
-    mocha.it("NumericLiteral", function () {
-        assert.equal(generator.createNumericLiteral("10"), 10);
+    mocha.it("createNumericLiteral", function () {
+        assert.strictEqual(generator.createNumericLiteral("10").toString(), "10");
     });
-    mocha.it("ArrayTypeNode", function () {
-        assert.equal(generator.createArrayTypeNode(generator.SyntaxKind.NumberKeyword), "number[]");
+    mocha.it("createArrayTypeNode", function () {
+        assert.strictEqual(generator.createArrayTypeNode(generator.SyntaxKind.NumberKeyword), "number[]");
+    });
+    mocha.it("createLiteralTypeNode", function () { 
+        assert.strictEqual(generator.createLiteralTypeNode(generator.createStringLiteral("2")).toString(), '"2"'); ;
     });
     mocha.it("VaraibleDeclaration", function () {
         const identifier = generator.createIdentifier("a");

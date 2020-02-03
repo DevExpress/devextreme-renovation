@@ -1957,6 +1957,10 @@ export class Generator {
         return `{${members.join(",")}}`;
     }
 
+    createLiteralTypeNode(literal: any) { 
+        return literal;
+    }
+
     createTypeAliasDeclaration(decorators: Decorator[]=[], modifiers: string[]=[], name: Identifier, typeParameters: any[]=[], type: string) { 
         return `${modifiers.join(" ")} type ${name} = ${type}`;
     }
