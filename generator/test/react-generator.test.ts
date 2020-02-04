@@ -1240,10 +1240,10 @@ mocha.describe("Expressions with props/state/internal state", function () {
             generator.createPropertyAccess(
                 generator.createThis(),
                 generator.createIdentifier("props")
-            ), generator.createIdentifier("p1"));
+            ), generator.createIdentifier("s1"));
         
-        assert.equal(this.stateAccess.toString([], [new State(this.state)], []), "(props.s1!==undefined?props.s1:__state_s1)");
-        assert.deepEqual(this.stateAccess.getDependency(), ["s1"]);
+        assert.equal(expression.toString([], [new State(this.state)], []), "(props.s1!==undefined?props.s1:__state_s1)");
+        assert.deepEqual(expression.getDependency(), ["s1"]);
     });
 
     mocha.it("PropertyAccess. Internal State", function () {
