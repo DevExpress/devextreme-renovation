@@ -2,7 +2,7 @@ function viewModel() { }
 
 function view() { }
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
 interface Component{
   _hovered:Boolean
@@ -12,9 +12,9 @@ export default function Component(props: {}) {
 
   const [__state__hovered, __state_set_hovered] = useState(false);
 
-  function updateState() {
+  const updateState = useCallback(function updateState() {
     __state_set_hovered(!__state__hovered);
-  }
+  }, [__state__hovered]);
 
   return view(viewModel({
     ...props,

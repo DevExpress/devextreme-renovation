@@ -17,9 +17,9 @@ export default function Component(props: {}) {
         const html = divRef.current!.outerHTML;
     }, [divRef])
 
-    function getHeight() {
+    const getHeight = useCallback(function getHeight() {
         return divRef.current!.outerHTML;
-    }
+    }, []);
 
     return view(viewModel({
         ...props,

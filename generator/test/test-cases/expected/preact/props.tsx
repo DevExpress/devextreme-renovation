@@ -2,6 +2,7 @@ function view() { }
 function viewModel() { }
 
 import * as Preact from "preact";
+import { useCallback } from "preact/hooks";
 
 interface Component {
     height: number,
@@ -12,10 +13,10 @@ export default function Component(props: {
     height: number,
     onClick: (a:number)=>null
 }) {
-    function getHeight() {
+    const getHeight = useCallback(function getHeight() {
         props.onClick();
         return props.height;
-    }
+    }, [props.onClick, props.height]);
 
     return view(viewModel({
         ...props

@@ -767,6 +767,10 @@ export class PropertyAccess extends ExpressionWithExpression {
             }
         }
 
+        if (expressionString === SyntaxKind.ThisKeyword && (internalState.length + state.length + props.length) > 0) { 
+            return this.name.toString();
+        }
+
         return `${this.expression.toString(internalState, state, props)}.${this.name}`;
     }
 
@@ -1103,7 +1107,7 @@ export class ReactComponent {
             hooks.push("useState");
         }
 
-        if (this.listeners.length) {
+        if (this.listeners.length || this.methods.length) {
             hooks.push("useCallback");
         }
 
@@ -1248,7 +1252,11 @@ export class ReactComponent {
                 ${this.stateDeclaration()}
                 ${this.listenersDeclaration()}
                 ${this.compileUseEffect()}
-                ${this.methods.map(m => m.declaration("function", this.internalState, this.state, this.props.concat(this.refs))).join("\n")}
+                ${this.methods.map(m => {
+                    return `const ${m.name}=useCallback(${m.declaration("function", this.internalState, this.state, this.props.concat(this.refs))}, [${
+                        m.getDependency(this.internalState.concat(this.state).concat(this.props))
+                    }]);`;
+                }).join("\n")}
                 return ${this.view}(${this.viewModel}({
                         ${ this.compileViewModelArguments().join(",\n")}
                     })

@@ -59,10 +59,6 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it("simple-block", function () {
-        this.testGenerator(this.test!.title);
-    });
-
     mocha.it("props", function () {
         this.testGenerator(this.test!.title);
     });
@@ -1374,6 +1370,18 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.deepEqual(arrowFunction.getDependency(), ["p1"]);
         assert.equal(getResult(arrowFunction.toString([], [new State(this.state)], [new Prop(this.prop)])), getResult("()=>(__state_setS1(props.p1), props.s1Change!(props.p1))"));
         assert.equal(getResult(arrowFunction.toString([new InternalState(this.state)], [], [new Prop(this.prop)])), getResult("()=>__state_setS1(props.p1)"), "do not change for internal state");
+    });
+
+    mocha.it("PropertyAccess should remove this if there is props, state or internal state", function () {
+        const expression = generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("name")
+        );
+        
+        assert.equal(expression.toString([], [], [new Prop(this.prop)]), "name");
+        assert.equal(expression.toString([], [new State(this.state)], []), "name");
+        assert.equal(expression.toString([new InternalState(this.internalState)], [new State(this.state)], []), "name");
+        assert.equal(expression.toString(), "this.name");
     });
 
     mocha.it("createPropertyAccessChain", function () { 

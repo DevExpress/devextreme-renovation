@@ -2,7 +2,7 @@ function viewModel() { }
 
 function view() { }
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
 interface Component {
   pressed?: boolean,
@@ -17,9 +17,9 @@ export default function Component(props: {
 }) {
   const [__state_pressed, __state_setPressed] = useState(() => (props.pressed !== undefined ? props.pressed : props.defaultPressed) || undefined);
 
-  function updateState() {
-    (__state_setPressed(!(props.pressed!==undefined?props.pressed:__state_pressed)),props.pressedChange!(!(props.pressed!==undefined?props.pressed:__state_pressed)))
-  }
+  const updateState = useCallback(function updateState() {
+    (__state_setPressed(!(props.pressed !== undefined ? props.pressed : __state_pressed)), props.pressedChange!(!(props.pressed !== undefined ? props.pressed : __state_pressed)))
+  }, [props.pressed, __state_pressed, props.pressedChange]);
 
   return view(viewModel({
     ...props,
