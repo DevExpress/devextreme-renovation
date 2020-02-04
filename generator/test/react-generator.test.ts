@@ -718,6 +718,16 @@ mocha.describe("react-generator: expressions", function () {
         assert.equal(expression.toString(), "a?.b");
     });
 
+    mocha.it("createPropertyAccessChain without QuestionDotToken should use DotToken", function () { 
+        const expression = generator.createPropertyAccessChain(
+            generator.createThis(),
+            undefined,
+            generator.createIdentifier("click")
+        );
+
+        assert.strictEqual(expression.toString(), "this.click");
+    });
+
     mocha.it("createCallChain", function () { 
         const expression = generator.createCallChain(
             generator.createPropertyAccessChain(
@@ -1221,6 +1231,17 @@ mocha.describe("Expressions with props/state/internal state", function () {
     });
 
     mocha.it("PropertyAccess. State", function () {
+        assert.equal(this.stateAccess.toString([], [new State(this.state)], []), "(props.s1!==undefined?props.s1:__state_s1)");
+        assert.deepEqual(this.stateAccess.getDependency(), ["s1"]);
+    });
+
+    mocha.it("PropertyAccess. State in props", function () {
+        const expression = generator.createPropertyAccess(
+            generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("props")
+            ), generator.createIdentifier("p1"));
+        
         assert.equal(this.stateAccess.toString([], [new State(this.state)], []), "(props.s1!==undefined?props.s1:__state_s1)");
         assert.deepEqual(this.stateAccess.getDependency(), ["s1"]);
     });

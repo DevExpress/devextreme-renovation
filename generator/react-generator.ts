@@ -277,7 +277,7 @@ export class Block extends Expression {
 export class PropertyAccessChain extends ExpressionWithExpression {
     questionDotToken: string;
     name: Expression;
-    constructor(expression: Expression, questionDotToken: string, name: Expression) {
+    constructor(expression: Expression, questionDotToken: string = SyntaxKind.DotToken, name: Expression) {
         super(expression);
         this.questionDotToken = questionDotToken;
         this.name = name;
@@ -748,28 +748,23 @@ export class PropertyAccess extends ExpressionWithExpression {
 
     toString(internalState: InternalState[] = [], state: State[] = [], props: Prop[] = []) {
         const expressionString = this.expression.toString();
+        const findProperty = (p: InternalState | State | Prop) => p.name.valueOf() === this.name.valueOf();
         if (expressionString === SyntaxKind.ThisKeyword || expressionString === `${SyntaxKind.ThisKeyword}.props`) {
-            const p = props.find(p => p.name.valueOf() === this.name.valueOf());
+            const p = props.find(findProperty);
             if (p) {
                 return p.getter();
             }
-        }
 
-        if (expressionString === SyntaxKind.ThisKeyword &&
-            (internalState.findIndex(p => p.name.valueOf() === this.name.valueOf()) >= 0)) {
-            return getLocalStateName(this.name);
-        }
-
-        if (expressionString === SyntaxKind.ThisKeyword) {
-            const stateProp = state.find(s => s.name.valueOf() === this.name.valueOf());
+            const stateProp = state.find(findProperty);
             if (stateProp) {
                 return `(${stateProp.getter()})`;
             }
         }
 
-        if (expressionString === SyntaxKind.ThisKeyword &&
-            state.findIndex(p => p.name.valueOf() === this.name.valueOf()) >= 0) {
-            return `${stateGetter(this.name, true)}`;
+        if (expressionString === SyntaxKind.ThisKeyword) {
+            if (internalState.findIndex(findProperty) >= 0) {
+                return getLocalStateName(this.name);
+            }
         }
 
         return `${this.expression.toString(internalState, state, props)}.${this.name}`;
@@ -2042,7 +2037,7 @@ export class Generator {
         return new HeritageClause(token, types, this.getContext());
     }
 
-    createPropertyAccessChain(expression: Expression, questionDotToken: string, name: Expression) {
+    createPropertyAccessChain(expression: Expression, questionDotToken: string|undefined, name: Expression) {
         return new PropertyAccessChain(expression, questionDotToken, name);
     }
 
