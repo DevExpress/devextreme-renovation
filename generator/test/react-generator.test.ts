@@ -1230,19 +1230,19 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.deepEqual(this.internalStateAccess.getDependency(), ["i1"]);
     });
 
-    mocha.it("= operator for state", function () { 
+    mocha.it("= operator for state - set state and rise change state", function () { 
         const expression = generator.createBinary(
             this.stateAccess,
             generator.SyntaxKind.EqualsToken,
             generator.createIdentifier("a")
         );
 
-        assert.equal(getResult(expression.toString([], [new State(this.state)], [])), getResult("__state_setS1(a); props.s1Change!(a);"));
+        assert.equal(getResult(expression.toString([], [new State(this.state)], [])), getResult("(__state_setS1(a), props.s1Change!(a))"));
         assert.deepEqual(expression.getDependency(), []);
         assert.deepEqual(expression.getAllDependency(), ["s1"]);
     });
 
-    mocha.it("= operator for internal state", function () { 
+    mocha.it("= operator for internal state - call __state_set...", function () { 
         const expression = generator.createBinary(
             this.internalStateAccess,
             generator.SyntaxKind.EqualsToken,
@@ -1252,7 +1252,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.equal(getResult(expression.toString([new InternalState(this.internalState)], [new State(this.state)], [])), getResult("__state_setI1(a);"));
     });
 
-    mocha.it("= operator for prop", function () { 
+    mocha.it("= operator for prop - throw error", function () { 
         const expression = generator.createBinary(
             this.propAccess,
             generator.SyntaxKind.EqualsToken,
@@ -1317,7 +1317,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.deepEqual(expresion.getDependency(), []);
     });
 
-    mocha.it("Arrow Function. Change Expression body with Block if state has been set in that expression", function () {
+    mocha.it("Arrow Function. Can set state", function () {
         const arrowFunction = generator.createArrowFunction(
             undefined,
             undefined,
@@ -1332,11 +1332,11 @@ mocha.describe("Expressions with props/state/internal state", function () {
         );
         
         assert.deepEqual(arrowFunction.getDependency(), []);
-        assert.equal(getResult(arrowFunction.toString([], [new State(this.state)], [])), getResult("()=>{__state_setS1(10); props.s1Change!(10)}"));
-        assert.equal(getResult(arrowFunction.toString([new InternalState(this.state)], [], [])), getResult("()=>__state_setS1(10)"), "do not change for internal state");
+        assert.equal(getResult(arrowFunction.toString([], [new State(this.state)], [])), getResult("()=>(__state_setS1(10), props.s1Change!(10))"));
+        assert.equal(getResult(arrowFunction.toString([new InternalState(this.state)], [], [])), getResult("()=>__state_setS1(10)"));
     });
 
-    mocha.it("Arrow Function. Change Expression body with Block if state has been set in that expression. Set prop in state", function () {
+    mocha.it("Arrow Function. Can set prop in state", function () {
         const arrowFunction = generator.createArrowFunction(
             undefined,
             undefined,
@@ -1351,7 +1351,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
         );
         
         assert.deepEqual(arrowFunction.getDependency(), ["p1"]);
-        assert.equal(getResult(arrowFunction.toString([], [new State(this.state)], [new Prop(this.prop)])), getResult("()=>{__state_setS1(props.p1); props.s1Change!(props.p1)}"));
+        assert.equal(getResult(arrowFunction.toString([], [new State(this.state)], [new Prop(this.prop)])), getResult("()=>(__state_setS1(props.p1), props.s1Change!(props.p1))"));
         assert.equal(getResult(arrowFunction.toString([new InternalState(this.state)], [], [new Prop(this.prop)])), getResult("()=>__state_setS1(props.p1)"), "do not change for internal state");
     });
 

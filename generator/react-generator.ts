@@ -430,13 +430,7 @@ export class ArrowFunction extends Expression {
     }
 
     toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        let bodyString = "";
-        if (!(this.body instanceof Block) && checkDependency(this.body, state)) {
-            bodyString = `{${this.body.toString(internalState, state, props)}}`;
-        }
-        if (!bodyString) {
-            bodyString = this.body.toString(internalState, state, props);
-        }
+        const bodyString = this.body.toString(internalState, state, props);
         return `${this.modifiers.join(" ")} (${this.parameters.map(p => p.declaration()).join(",")})${compileType(this.type)} ${this.equalsGreaterThanToken} ${bodyString}`;
     }
 
@@ -473,8 +467,9 @@ export class Binary extends Expression {
                 throw `Error: Can't assign Prop() - ${this.toString()}`;
             }
 
-            return `${this.left.compileStateSetting()}(${rightExpression});
-            ${this.left.compileStateChangeRising(state, rightExpression)}`;
+            const stateSetting = `${this.left.compileStateSetting()}(${rightExpression})`
+            const changeRising = this.left.compileStateChangeRising(state, rightExpression);
+            return changeRising ? `(${stateSetting},${changeRising})` : stateSetting;
         }
         return `${this.left.toString(internalState, state, props)}${this.operator}${this.right.toString(internalState, state, props)}`;
     }
