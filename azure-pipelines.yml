@@ -18,7 +18,7 @@ steps:
 - script: |
     cd ./generator
     npm install
-    npm run build
+    npm run build-dist
     npm run test
   displayName: 'npm install and build'
 
