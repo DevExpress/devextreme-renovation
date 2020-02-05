@@ -29,7 +29,7 @@ function getLocalStateName(name: Identifier | string) {
 }
 
 function getPropName(name: Identifier | string) {
-    return `${name}`;
+    return `props.${name}`;
 }
 
 export class Expression {
