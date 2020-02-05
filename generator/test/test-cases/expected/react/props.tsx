@@ -3,26 +3,28 @@ function viewModel() { }
 
 import React, { useCallback } from "react";
 
-interface Component {
+interface Widget {
     height: number,
-    onClick: (a: number) => null
+    onClick: (a: number) => null;
+    getHeight:()=>number;
 }
 
-export default function Component(props: { 
+export default function Widget(props: { 
     height: number,
-    onClick: (a:number)=>null
+    onClick: (a: number) => null
 }) {
     const getHeight = useCallback(function getHeight() {
-        props.onClick();
+        props.onClick(10);
         return props.height;
     }, [props.onClick, props.height]);
 
     return view(viewModel({
-        ...props
+        ...props,
+        getHeight
     }));
 }
 
-Component.defaultProps = {
+Widget.defaultProps = {
     height: 10,
     onClick: () => null
 };

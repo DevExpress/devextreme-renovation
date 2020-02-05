@@ -1,3 +1,5 @@
+import { Prop, State, Component, InternalState, Effect } from "../../../component_declaration/common";
+
 function view() { }
 function viewModel() { }
 
@@ -13,7 +15,7 @@ function unsubscribe(id: number) {
     viewModel: viewModel,
     view: view
 })
-export default class Component {
+export default class Widget {
     @Prop() p: string = "10";
     @State() s: number
     @InternalState() i: number;

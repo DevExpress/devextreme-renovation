@@ -11,7 +11,7 @@ function unsubscribe(id: number) {
 
 import React, { useState, useEffect } from "react";
 
-interface Component {
+interface Widget {
     p: string;
     s: number;
     defaultS?: number;
@@ -19,7 +19,7 @@ interface Component {
     i: number;
 }
 
-export default function Component(props: {
+export default function Widget(props: {
     p: string,
     s: number,
     defaultS?: number,
@@ -42,7 +42,7 @@ export default function Component(props: {
     }));
 }
 
-Component.defaultProps = {
+Widget.defaultProps = {
     p: "10",
     sChange: () => { }
 }

@@ -4,11 +4,12 @@ function view() { }
 
 import React, { useState, useCallback } from 'react';
 
-interface Component{
-  _hovered:Boolean
+interface Widget{
+  _hovered: Boolean;
+  updateState: () => void;
 }
 
-export default function Component(props: {}) {
+export default function Widget(props: {}) {
 
   const [__state__hovered, __state_set_hovered] = useState(false);
 
@@ -18,6 +19,7 @@ export default function Component(props: {}) {
 
   return view(viewModel({
     ...props,
-    _hovered: __state__hovered;
+    _hovered: __state__hovered,
+    updateState
   }));
 }

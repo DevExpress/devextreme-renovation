@@ -4,13 +4,14 @@ function view() { }
 
 import React, { useState, useCallback } from 'react';
 
-interface Component {
-  pressed?: boolean,
-  defaultPressed?: boolean,
-  pressedChange?: (pressed: boolean) => void
+interface Widget {
+  pressed?: boolean;
+  defaultPressed?: boolean;
+  pressedChange?: (pressed: boolean) => void;
+  updateState: () => void;
 }
 
-export default function Component(props: {
+export default function Widget(props: {
   pressed?: boolean,
   defaultPressed?: boolean,
   pressedChange?: (pressed: boolean) => void
@@ -23,10 +24,11 @@ export default function Component(props: {
 
   return view(viewModel({
     ...props,
-    pressed: props.pressed !== undefined ? props.pressed : __state_pressed
+    pressed: props.pressed !== undefined ? props.pressed : __state_pressed,
+    updateState
   }));
 }
 
-Component.defaultProps = {
+Widget.defaultProps = {
   pressedChange: () => { }
 }

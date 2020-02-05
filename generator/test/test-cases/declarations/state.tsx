@@ -1,4 +1,6 @@
-function viewModel() {}
+import { Component, State } from "../../../component_declaration/common";
+
+function viewModel() { }
 
 function view() {}
 
@@ -7,7 +9,7 @@ function view() {}
     view,
     viewModel,
 })
-export default class Component {
+export default class Widget {
     @State() pressed?: boolean
     
     updateState() {

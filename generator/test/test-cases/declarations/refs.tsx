@@ -1,3 +1,5 @@
+import { Component, Ref, Listen } from "../../../component_declaration/common";
+
 function view(viewModel) { 
     return <div ref={viewModel.divRef}></div>
 }
@@ -6,7 +8,7 @@ function viewModel() { }
     viewModel: viewModel,
     view: view
 })
-export default class Component {
+export default class Widget {
     @Ref() divRef!: HTMLDivElement;
 
     @Listen("click")

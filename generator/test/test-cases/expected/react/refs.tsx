@@ -5,12 +5,13 @@ function viewModel() { }
 
 import React, { useCallback, useRef } from "react";
 
-interface Component {
+interface Widget {
     divRef: any;
     clickHandler: () => void;
+    getHeight: () => void;
 }
 
-export default function Component(props: {}) {
+export default function Widget(props: {}) {
     const divRef = useRef<HTMLDivElement>();
 
     const clickHandler = useCallback(() => {
@@ -24,6 +25,7 @@ export default function Component(props: {}) {
     return view(viewModel({
         ...props,
         clickHandler,
-        divRef
+        divRef, 
+        getHeight
     }));
 }

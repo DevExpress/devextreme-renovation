@@ -1211,6 +1211,8 @@ export class ReactComponent {
             ${  props
                 .concat(this.internalState.concat(this.refs).concat(this.slots).map(p => p.typeDeclaration()))
                 .concat(this.listeners.map(l => l.typeDeclaration()))
+                .concat(this.methods.map(m => m.typeDeclaration()))
+                .concat([""])
                 .join(";\n")
             }
         }`;
@@ -1233,7 +1235,8 @@ export class ReactComponent {
 
         return props
             .concat(this.listeners.map(l => l.name.toString()))
-            .concat(this.refs.map(r => r.name.toString()));
+            .concat(this.refs.map(r => r.name.toString()))
+            .concat(this.methods.map(m => m.name.toString()));
     }
 
     toString() {
