@@ -8,8 +8,8 @@ export const React = react;
  * Declare class that contains all internal logic and public methods.
  * Class should extend JSXComponent<ComponentInput>.
  * Class can contains properties with the following decorators: Ref, InternalState(optional).
- * Class can contains method with the following decorators: Effect, Method, Listen
- * Class can contains methods without any decorator
+ * Class can contains method with the following decorators: Effect, Method, Listen.
+ * Class can contains methods without any decorator.
  */
 export function Component(args: {
     name?: string;
@@ -34,7 +34,7 @@ export function Component(args: {
  * Class Decorator.
  * Use for definition of Component interface.
  * Declare class that contains is everything that user of component can pass to it.
- * Class can contains only properties with decorators OneWay, TwoWay, Slot, Template
+ * Class can contains only properties with decorators OneWay, TwoWay, Slot, Template.
  */
 export function ComponentInput() { 
     return function ComponentInput(constructor: Function) { }
