@@ -54,7 +54,6 @@ export const OneWay = () => propertyDecorator;
 */
 export const TwoWay = () => propertyDecorator;
 
-export const Prop = () => propertyDecorator;
 /**
  * Property Decorator. 
  * Declares an input property that the user can set for custom rendering.
@@ -76,7 +75,6 @@ export const Method = () => propertyDecorator;
  * Delcares input property that is component event handler
  */
 export const Event = () => propertyDecorator;
-export const State = () => propertyDecorator;
 /**
  * Property Decorator
  * Declares a widget propety. Any change of it causes component rerender

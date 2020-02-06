@@ -1,4 +1,4 @@
-import { Component, Prop, Event } from "../../../component_declaration/common";
+import { Component, OneWay, Event } from "../../../component_declaration/common";
 
 function view() { }
 function viewModel() { }
