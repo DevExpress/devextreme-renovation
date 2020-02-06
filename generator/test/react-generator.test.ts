@@ -992,7 +992,7 @@ mocha.describe("import Components", function () {
         const decorator = generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)]));
         const childProperty = generator.createProperty(
             [generator.createDecorator(generator.createCall(
-                generator.createIdentifier("Prop"),
+                generator.createIdentifier("OneWay"),
                 undefined,
                 []
             ))],
@@ -1029,7 +1029,7 @@ mocha.describe("import Components", function () {
         const decorator = generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)]));
         const childProperty = generator.createProperty(
             [generator.createDecorator(generator.createCall(
-                generator.createIdentifier("Prop"),
+                generator.createIdentifier("OneWay"),
                 undefined,
                 []
             ))],
@@ -1171,7 +1171,7 @@ mocha.describe("import Components", function () {
 mocha.describe("Expressions with props/state/internal state", function () { 
     this.beforeEach(function () {
         this.prop = generator.createProperty(
-            [generator.createDecorator(generator.createCall(generator.createIdentifier("Prop"), [], []))],
+            [generator.createDecorator(generator.createCall(generator.createIdentifier("OneWay"), [], []))],
             [],
             generator.createIdentifier("p1"),
             generator.SyntaxKind.QuestionToken,
@@ -1179,7 +1179,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
             undefined);
         
         this.state = generator.createProperty(
-            [generator.createDecorator(generator.createCall(generator.createIdentifier("State"), [], []))],
+            [generator.createDecorator(generator.createCall(generator.createIdentifier("TwoWay"), [], []))],
             [],
             generator.createIdentifier("s1"),
             generator.SyntaxKind.QuestionToken,
@@ -1187,7 +1187,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
             undefined);
         
         this.internalState = generator.createProperty(
-            [generator.createDecorator(generator.createCall(generator.createIdentifier("State"), [], []))],
+            [generator.createDecorator(generator.createCall(generator.createIdentifier("TwoWay"), [], []))],
             [],
             generator.createIdentifier("i1"),
             generator.SyntaxKind.QuestionToken,
@@ -1283,7 +1283,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
             error = e;
         }
 
-        assert.strictEqual(error, "Error: Can't assign Prop() - this.p1=a");
+        assert.strictEqual(error, "Error: Can't assign OneWay() property use TwoWay() - this.p1=a");
     });
 
     mocha.it("Binary operator returns dependency for both side", function () { 
@@ -1534,7 +1534,7 @@ mocha.describe("ComponentInput", function () {
             const component = createComponent([
                 generator.createProperty(
                     [generator.createDecorator(generator.createCall(
-                        generator.createIdentifier("Prop"), [], []
+                        generator.createIdentifier("OneWay"), [], []
                     ))],
                     [],
                     generator.createIdentifier("p"),
@@ -1550,7 +1550,7 @@ mocha.describe("ComponentInput", function () {
             const component = createComponent([
                 generator.createProperty(
                     [generator.createDecorator(generator.createCall(
-                        generator.createIdentifier("State"), [], []
+                        generator.createIdentifier("TwoWay"), [], []
                     ))],
                     [],
                     generator.createIdentifier("p"),
@@ -1568,7 +1568,7 @@ mocha.describe("ComponentInput", function () {
             const component = createComponent([
                 generator.createProperty(
                     [generator.createDecorator(generator.createCall(
-                        generator.createIdentifier("Prop"), [], []
+                        generator.createIdentifier("OneWay"), [], []
                     ))],
                     [],
                     generator.createIdentifier("p"),

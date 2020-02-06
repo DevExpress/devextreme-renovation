@@ -2,13 +2,13 @@ import Base from "./empty-component"
 
 import React from "react";
 
-interface Component {
+interface Widget {
     size: number,
     height: number,
     width: number
 }
 
-export default function Component(props: {
+export default function Widget(props: {
     size: number,
     height: number,
     width: number
@@ -18,13 +18,13 @@ export default function Component(props: {
     }));
 }
 
-function viewModel1(model: Component) {
+function viewModel1(model: Widget) {
     return {
         height: model.height
     }
 }
 
-function view1(viewModel: Component) {
+function view1(viewModel: Widget) {
     return <div style={{ height: viewModel.height }}>
         <span></span>
         <span></span>

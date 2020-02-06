@@ -1,4 +1,4 @@
-import { Component, State } from "../../../component_declaration/common";
+import { Component, TwoWay } from "../../../component_declaration/common";
 
 function viewModel() { }
 
@@ -10,7 +10,7 @@ function view() {}
     viewModel,
 })
 export default class Widget {
-    @State() pressed?: boolean
+    @TwoWay() pressed?: boolean
     
     updateState() {
         this.pressed = !this.pressed;
