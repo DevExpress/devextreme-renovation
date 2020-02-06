@@ -1,13 +1,12 @@
 
-
 @Component({
     name: 'ComponentName',
     viewModel: viewModel1,
     view: view1
 })
 export default class Component {
-    @Prop() height: number;
-    @Prop() width: number;
+    @OneWay() height: number;
+    @OneWay() width: number;
 }
 
 function viewModel1(model: Component) { 

@@ -8,14 +8,14 @@ import Button from './button';
 })
 
 export default class ToggleButton {
-  @Prop() height?: string;
-  @Prop() hint?: string;
-  @Prop() stylingMode?: string;
-  @Prop() text?: string;
-  @Prop() type?: string;
-  @Prop() width?: string;
+  @OneWay() height?: string;
+  @OneWay() hint?: string;
+  @OneWay() stylingMode?: string;
+  @OneWay() text?: string;
+  @OneWay() type?: string;
+  @OneWay() width?: string;
 
-  @State() pressed?: boolean = false;
+  @TwoWay() pressed?: boolean = false;
 
   @Listen("click")
   onClickHandler(e: any) {

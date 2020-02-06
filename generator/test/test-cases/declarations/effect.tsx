@@ -1,4 +1,4 @@
-import { Prop, State, Component, InternalState, Effect } from "../../../component_declaration/common";
+import { OneWay, TwoWay, Component, InternalState, Effect } from "../../../component_declaration/common";
 
 function view() { }
 function viewModel() { }
@@ -16,8 +16,8 @@ function unsubscribe(id: number) {
     view: view
 })
 export default class Widget {
-    @Prop() p: string = "10";
-    @State() s: number
+    @OneWay() p: string = "10";
+    @TwoWay() s: number;
     @InternalState() i: number;
     @Effect()
     setupData() {

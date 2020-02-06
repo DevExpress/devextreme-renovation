@@ -464,7 +464,7 @@ export class Binary extends Expression {
             const rightExpression = this.right.toString(internalState, state, props);
 
             if (checkDependency(this.left, props)) {
-                throw `Error: Can't assign Prop() - ${this.toString()}`;
+                throw `Error: Can't assign OneWay() property use TwoWay() - ${this.toString()}`;
             }
 
             const stateSetting = `${this.left.compileStateSetting()}(${rightExpression})`
@@ -1053,7 +1053,7 @@ export class ReactComponent {
         members = inheritMembers(heritageClauses, members);
 
         this.props = members
-            .filter(m => m.decorators.find(d => d.name === "Prop" || d.name === "Event" || d.name === "Template"))
+            .filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template"))
             .map(p => new Prop(p as Property))
 
 
@@ -1061,10 +1061,10 @@ export class ReactComponent {
             .map(p => new Ref(p as Property));
 
         this.internalState = members
-            .filter(m => m.decorators.find(d => d.name === "InternalState"))
+            .filter(m => m instanceof Property && (m.decorators.length === 0 || m.decorators.find(d => d.name === "InternalState")))
             .map(p => new InternalState(p as Property));
 
-        this.state = members.filter(m => m.decorators.find(d => d.name === "State"))
+        this.state = members.filter(m => m.decorators.find(d => d.name === "TwoWay"))
             .map(s => new State(s as Property));
 
         this.methods = members.filter(m => m instanceof Method && m.decorators.length === 0) as Method[];
@@ -1858,7 +1858,7 @@ export class Generator {
         let result: Class | ReactComponent | ComponentInput;
         if (componentDecorator) {
             result = new ReactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
-        } else if (decorators.find(d => d.name === "ComponentInput")) {
+        } else if (decorators.find(d => d.name === "ComponentBindings")) {
             const componentInput = new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members);
             this.addComponent(name.toString(), componentInput);
             result = componentInput;

@@ -1,4 +1,4 @@
-import { Component, Prop, Event } from "../../../component_declaration/common";
+import { Component, OneWay, Event } from "../../../component_declaration/common";
 
 function view() { }
 function viewModel() { }
@@ -8,7 +8,7 @@ function viewModel() { }
     view: view
 })
 export default class Widget {
-    @Prop() height: number = 10;
+    @OneWay() height: number = 10;
     @Event() onClick: (a:number) => null = () => null;
 
     getHeight():number { 

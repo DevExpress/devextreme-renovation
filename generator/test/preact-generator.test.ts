@@ -104,7 +104,7 @@ mocha.describe("import Components", function () {
         const decorator = generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)]));
         const childProperty = generator.createProperty(
             [generator.createDecorator(generator.createCall(
-                generator.createIdentifier("Prop"),
+                generator.createIdentifier("OneWay"),
                 undefined,
                 []
             ))],

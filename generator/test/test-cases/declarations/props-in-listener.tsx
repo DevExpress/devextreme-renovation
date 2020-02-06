@@ -8,7 +8,7 @@ function view() {}
     viewModel,
 })
 export class Component {
-    @Prop() type?: string;
+    @OneWay() type?: string;
     @Event() onClick?: ()=>void
 
     @Listen("click")
