@@ -1437,7 +1437,7 @@ mocha.describe("ComponentInput", function () {
     this.beforeEach(function () { 
         generator.setContext({});
         this.decorators = [generator.createDecorator(generator.createCall(
-            generator.createIdentifier("ComponentInput"),
+            generator.createIdentifier("ComponentBindings"),
             [],
             []
         ))];
@@ -1490,7 +1490,7 @@ mocha.describe("ComponentInput", function () {
         function createComponent(inputMembers: Array<Property|Method>, componentMembers: Array<Property|Method>=[]):ReactComponent { 
             generator.createClassDeclaration(
                 [generator.createDecorator(
-                    generator.createCall(generator.createIdentifier("ComponentInput"), [], [])
+                    generator.createCall(generator.createIdentifier("ComponentBindings"), [], [])
                 )],
                 [],
                 generator.createIdentifier("Input"),

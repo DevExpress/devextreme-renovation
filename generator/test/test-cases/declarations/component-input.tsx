@@ -1,9 +1,9 @@
-import { OneWay, Listen, JSXComponent, Component, ComponentInput } from "../../../component_declaration/common";
+import { OneWay, Listen, JSXComponent, Component, ComponentBindings } from "../../../component_declaration/common";
 
 function view() { }
 function viewModel() { }
 
-@ComponentInput()
+@ComponentBindings()
 export class WidgetProps { 
     @OneWay() height?: number = 10;
 }

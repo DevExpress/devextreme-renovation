@@ -6,7 +6,7 @@ export const React = react;
 /**
  * Class Decorator.
  * Declare class that contains all internal logic and public methods.
- * Class should extend JSXComponent<ComponentInput>.
+ * Class should extend JSXComponent<ComponentBindings>.
  * Class can contains properties with the following decorators: Ref, InternalState(optional).
  * Class can contains method with the following decorators: Effect, Method, Listen.
  * Class can contains methods without any decorator.
@@ -36,8 +36,8 @@ export function Component(args: {
  * Declare class that contains is everything that user of component can pass to it.
  * Class can contains only properties with decorators OneWay, TwoWay, Slot, Template.
  */
-export function ComponentInput() { 
-    return function ComponentInput(constructor: Function) { }
+export function ComponentBindings() { 
+    return function ComponentBindings(constructor: Function) { }
 }
 
 const propertyDecorator = function(target: any, propertyKey: string) { };
@@ -96,7 +96,7 @@ export const Effect = () => propertyDecorator;
 
 /**
  * Base Class for any Component. 
- * Pass ComponentInput as type argument 
+ * Pass ComponentBindings as type argument 
  */
 export class JSXComponent<T> extends React.Component<T> {
     props!: T;

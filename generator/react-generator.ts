@@ -1858,7 +1858,7 @@ export class Generator {
         let result: Class | ReactComponent | ComponentInput;
         if (componentDecorator) {
             result = new ReactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
-        } else if (decorators.find(d => d.name === "ComponentInput")) {
+        } else if (decorators.find(d => d.name === "ComponentBindings")) {
             const componentInput = new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members);
             this.addComponent(name.toString(), componentInput);
             result = componentInput;
