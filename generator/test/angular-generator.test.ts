@@ -254,6 +254,18 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), "<span >{{viewModel.text}}</span>");
         });
 
+        mocha.it("ref", function () { 
+            const expression = generator.createJsxAttribute(
+                generator.createIdentifier("ref"),
+                generator.createPropertyAccess(
+                    generator.createIdentifier("viewModel"),
+                    generator.createIdentifier("refName")
+                )
+            );
+
+            assert.strictEqual(expression.toString(), "#viewModel.refName");
+        });
+
         mocha.describe("View Function", function () { 
             this.beforeEach(function () {
                 this.block = generator.createBlock([

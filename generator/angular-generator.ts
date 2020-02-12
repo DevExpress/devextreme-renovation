@@ -25,6 +25,9 @@ export class JsxSelfClosingElement extends ReactJsxSelfClosingElement{
 
 export class JsxAttribute extends ReactJsxAttribute { 
     toString() { 
+        if (this.name.toString() === "ref") { 
+            return `#${this.initializer.toString()}`;
+        }
         if (this.initializer instanceof StringLiteral) { 
             return `${this.name}=${this.initializer}`;
         }
