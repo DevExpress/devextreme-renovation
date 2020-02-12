@@ -297,6 +297,57 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(expression.getTemplate(), "<div />");
             });
 
+            mocha.it("Rename viewModel identifier", function () {
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [generator.createParameter(
+                        [],
+                        [],
+                        undefined,
+                        generator.createIdentifier("passedViewModel"),
+                        undefined,
+                        undefined,
+                        undefined
+                    )],
+                    "",
+                    generator.createBlock([
+                        generator.createReturn(
+                            generator.createJsxElement(
+                                generator.createJsxOpeningElement(
+                                    generator.createIdentifier("span"),
+                                    undefined,
+                                    generator.createJsxAttributes(
+                                        [
+                                            generator.createJsxAttribute(
+                                                generator.createIdentifier("attr"),
+                                                generator.createPropertyAccess(
+                                                    generator.createIdentifier("passedViewModel"),
+                                                    generator.createIdentifier("value")
+                                                )
+                                            )
+                                        ]
+                                    )
+                                ),
+                                [generator.createJsxExpression(
+                                    undefined,
+                                    generator.createPropertyAccess(
+                                        generator.createIdentifier("passedViewModel"),
+                                        generator.createIdentifier("text")
+                                    )
+                                )],
+                                generator.createJsxClosingElement(generator.createIdentifier("span"))
+                            )
+                        )
+                    ], false)
+                );
+
+                assert.strictEqual(expression.getTemplate(), `<span [attr]="_viewModel.value">{{_viewModel.text}}</span>`);
+            });
+
             mocha.it("Function without JSX is generated", function () {
                 const expression = generator.createFunctionDeclaration(
                     [],

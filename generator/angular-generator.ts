@@ -103,7 +103,12 @@ export class AngularFunction extends Function {
         const returnStatement = this.body.statements.find(s => s instanceof ReturnStatement);
 
         if (returnStatement) { 
-            return (returnStatement as ReturnStatement).expression.toString();
+            this.parameters[0];
+            const result = (returnStatement as ReturnStatement).expression.toString();
+            if (this.parameters[0]) { 
+                return result.replace(new RegExp(this.parameters[0].name.toString(), "g"), "_viewModel");
+            }
+            return result;
         }
     }
 }
