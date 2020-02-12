@@ -264,7 +264,10 @@ mocha.describe("react-generator: expressions", function () {
     });
 
     mocha.it("PropertyAssignment", function () {
-        assert.equal(generator.createPropertyAssignment("k", generator.createIdentifier("a")).toString(), 'k:a');
+        assert.equal(generator.createPropertyAssignment(
+            generator.createIdentifier("k"),
+            generator.createIdentifier("a")
+        ).toString(), 'k:a');
     });
 
     mocha.it("ShorthandPropertyAssignment", function () {
@@ -282,7 +285,7 @@ mocha.describe("react-generator: expressions", function () {
     mocha.it("ObjectLiteral", function () {
         const objectLiteral = generator.createObjectLiteral([
             generator.createShorthandPropertyAssignment(generator.createIdentifier("a"), undefined),
-            generator.createPropertyAssignment("k", generator.createIdentifier("a")),
+            generator.createPropertyAssignment(generator.createIdentifier("k"), generator.createIdentifier("a")),
             generator.createSpreadAssignment(generator.createIdentifier("obj"))
         ], true);
         assert.equal(objectLiteral.toString(), '{a,\nk:a,\n...obj}');
@@ -1211,7 +1214,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
     });
 
     mocha.it("PropertyAccess. Prop", function () {
-        assert.equal(this.propAccess.toString([], [], [new Prop(this.prop)]), "props.p1");
+        assert.equal(this.propAccess.toString({ internalState: [], state: [], props: [new Prop(this.prop)] }), "props.p1");
         assert.deepEqual(this.propAccess.getDependency(), ["p1"]);
     });
 
@@ -1222,12 +1225,12 @@ mocha.describe("Expressions with props/state/internal state", function () {
                 generator.createIdentifier("props")
             ), generator.createIdentifier("p1"));
        
-        assert.equal(expression.toString([], [], [new Prop(this.prop)]), "props.p1");
+        assert.equal(expression.toString({ internalState: [], state: [], props: [new Prop(this.prop)]}), "props.p1");
         assert.deepEqual(expression.getDependency(), ["p1"]);
     });
 
     mocha.it("PropertyAccess. State", function () {
-        assert.equal(this.stateAccess.toString([], [new State(this.state)], []), "(props.s1!==undefined?props.s1:__state_s1)");
+        assert.equal(this.stateAccess.toString({ internalState: [], state: [new State(this.state)], props: [] }), "(props.s1!==undefined?props.s1:__state_s1)");
         assert.deepEqual(this.stateAccess.getDependency(), ["s1"]);
     });
 
@@ -1238,12 +1241,12 @@ mocha.describe("Expressions with props/state/internal state", function () {
                 generator.createIdentifier("props")
             ), generator.createIdentifier("s1"));
         
-        assert.equal(expression.toString([], [new State(this.state)], []), "(props.s1!==undefined?props.s1:__state_s1)");
+        assert.equal(expression.toString({ internalState: [], state: [new State(this.state)], props: [] }), "(props.s1!==undefined?props.s1:__state_s1)");
         assert.deepEqual(expression.getDependency(), ["s1"]);
     });
 
     mocha.it("PropertyAccess. Internal State", function () {
-        assert.equal(this.internalStateAccess.toString([new InternalState(this.internalState)], [new State(this.state)]), ["__state_i1"]);
+        assert.equal(this.internalStateAccess.toString({ internalState: [new InternalState(this.internalState)], state: [new State(this.state)] }), ["__state_i1"]);
         assert.deepEqual(this.internalStateAccess.getDependency(), ["i1"]);
     });
 
@@ -1254,7 +1257,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
             generator.createIdentifier("a")
         );
 
-        assert.equal(getResult(expression.toString([], [new State(this.state)], [])), getResult("(__state_setS1(a), props.s1Change!(a))"));
+        assert.equal(getResult(expression.toString({ internalState: [], state: [new State(this.state)], props: [] })), getResult("(__state_setS1(a), props.s1Change!(a))"));
         assert.deepEqual(expression.getDependency(), []);
         assert.deepEqual(expression.getAllDependency(), ["s1"]);
     });
@@ -1266,7 +1269,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
             generator.createIdentifier("a")
         );
 
-        assert.equal(getResult(expression.toString([new InternalState(this.internalState)], [new State(this.state)], [])), getResult("__state_setI1(a);"));
+        assert.equal(getResult(expression.toString({ internalState: [new InternalState(this.internalState)], state: [new State(this.state)], props: [] })), getResult("__state_setI1(a);"));
     });
 
     mocha.it("= operator for prop - throw error", function () { 
@@ -1278,7 +1281,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
 
         let error = null;
         try {
-            expression.toString([new InternalState(this.internalState)], [new State(this.state)], [new Prop(this.prop)]);
+            expression.toString({ internalState: [new InternalState(this.internalState)], state: [new State(this.state)], props: [new Prop(this.prop)] });
         } catch (e) {
             error = e;
         }
@@ -1293,7 +1296,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
             this.propAccess
         );
 
-        assert.equal((expression.toString([], [new State(this.state)], [new Prop(this.prop)])), ("(props.s1!==undefined?props.s1:__state_s1)===props.p1"));
+        assert.equal((expression.toString({ internalState: [], state: [new State(this.state)], props: [new Prop(this.prop)] })), ("(props.s1!==undefined?props.s1:__state_s1)===props.p1"));
         assert.deepEqual(expression.getDependency(), ["s1", "p1"]);
         assert.deepEqual(expression.getAllDependency(), ["s1", "p1"]);
     });
@@ -1349,8 +1352,8 @@ mocha.describe("Expressions with props/state/internal state", function () {
         );
         
         assert.deepEqual(arrowFunction.getDependency(), []);
-        assert.equal(getResult(arrowFunction.toString([], [new State(this.state)], [])), getResult("()=>(__state_setS1(10), props.s1Change!(10))"));
-        assert.equal(getResult(arrowFunction.toString([new InternalState(this.state)], [], [])), getResult("()=>__state_setS1(10)"));
+        assert.equal(getResult(arrowFunction.toString({ internalState: [], state: [new State(this.state)], props: [] })), getResult("()=>(__state_setS1(10), props.s1Change!(10))"));
+        assert.equal(getResult(arrowFunction.toString({ internalState: [new InternalState(this.state)], state: [], props: [] })), getResult("()=>__state_setS1(10)"));
     });
 
     mocha.it("Arrow Function. Can set prop in state", function () {
@@ -1368,8 +1371,8 @@ mocha.describe("Expressions with props/state/internal state", function () {
         );
         
         assert.deepEqual(arrowFunction.getDependency(), ["p1"]);
-        assert.equal(getResult(arrowFunction.toString([], [new State(this.state)], [new Prop(this.prop)])), getResult("()=>(__state_setS1(props.p1), props.s1Change!(props.p1))"));
-        assert.equal(getResult(arrowFunction.toString([new InternalState(this.state)], [], [new Prop(this.prop)])), getResult("()=>__state_setS1(props.p1)"), "do not change for internal state");
+        assert.equal(getResult(arrowFunction.toString({ internalState: [], state: [new State(this.state)], props: [new Prop(this.prop)] })), getResult("()=>(__state_setS1(props.p1), props.s1Change!(props.p1))"));
+        assert.equal(getResult(arrowFunction.toString({ internalState: [new InternalState(this.state)], state: [], props: [new Prop(this.prop)] })), getResult("()=>__state_setS1(props.p1)"), "do not change for internal state");
     });
 
     mocha.it("PropertyAccess should remove this if there is props, state or internal state", function () {
@@ -1378,9 +1381,9 @@ mocha.describe("Expressions with props/state/internal state", function () {
             generator.createIdentifier("name")
         );
         
-        assert.equal(expression.toString([], [], [new Prop(this.prop)]), "name");
-        assert.equal(expression.toString([], [new State(this.state)], []), "name");
-        assert.equal(expression.toString([new InternalState(this.internalState)], [new State(this.state)], []), "name");
+        assert.equal(expression.toString({ internalState: [], state: [], props: [new Prop(this.prop)] }), "name");
+        assert.equal(expression.toString({ internalState: [], state: [new State(this.state)], props: [] }), "name");
+        assert.equal(expression.toString({ internalState: [new InternalState(this.internalState)], state: [new State(this.state)], props: [] }), "name");
         assert.equal(expression.toString(), "this.name");
     });
 
@@ -1395,7 +1398,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
             )
         );
 
-        assert.equal(expression.toString([new InternalState(this.internalState)], [new State(this.state)], [new Prop(this.prop)]), "props.p1?.call((props.s1!==undefined?props.s1:__state_s1))");
+        assert.equal(expression.toString({ internalState: [new InternalState(this.internalState)], state: [new State(this.state)], props: [new Prop(this.prop)] }), "props.p1?.call((props.s1!==undefined?props.s1:__state_s1))");
         assert.deepEqual(expression.getDependency(), ["p1", "s1"]);
     });
 
@@ -1411,7 +1414,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
             [this.propAccess, this.stateAccess, this.internalStateAccess]
           )
 
-        assert.deepEqual(expression.toString([new InternalState(this.internalState)], [new State(this.state)], [new Prop(this.prop)]), "model?.onClick(props.p1,(props.s1!==undefined?props.s1:__state_s1),__state_i1)");
+        assert.deepEqual(expression.toString({ internalState: [new InternalState(this.internalState)], state: [new State(this.state)], props: [new Prop(this.prop)] }), "model?.onClick(props.p1,(props.s1!==undefined?props.s1:__state_s1),__state_i1)");
         assert.deepEqual(expression.getDependency(), ["p1", "s1", "i1"]);
     });
 
@@ -1427,11 +1430,10 @@ mocha.describe("Expressions with props/state/internal state", function () {
             []
           )
 
-        assert.deepEqual(expression.toString([new InternalState(this.internalState)], [new State(this.state)], [new Prop(this.prop)]), "props.p1?.onClick()");
+        assert.deepEqual(expression.toString({ internalState: [new InternalState(this.internalState)], state: [new State(this.state)], props: [new Prop(this.prop)] }), "props.p1?.onClick()");
         assert.deepEqual(expression.getDependency(), ["p1"]);
     });
 });
-
 
 mocha.describe("ComponentInput", function () {
     this.beforeEach(function () { 
