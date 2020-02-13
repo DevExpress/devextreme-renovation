@@ -17,7 +17,9 @@ import {
     ComponentInput as BaseComponentInput,
     HeritageClause,
     Property as BaseProperty,
-    Method
+    Method,
+    GeneratorContex,
+    ObjectLiteral
 } from "./react-generator";
 
 export class JsxOpeningElement extends ReactJsxOpeningElement { 
@@ -94,8 +96,11 @@ export class JsxElement extends Expression {
 }
 
 export class AngularFunction extends Function { 
+    isJsx() { 
+        return this.body.isJsx();
+    }
     toString() { 
-        if (this.body.isJsx()) { 
+        if (this.isJsx()) { 
             return "";
         }
         return super.toString();
@@ -119,6 +124,11 @@ export class AngularFunction extends Function {
 }
 
 class Decorator extends BaseDecorator { 
+    viewFunctions: { [name: string]: AngularFunction };
+    constructor(expression: Call, viewFunctions: { [name: string]: AngularFunction }) { 
+        super(expression);
+        this.viewFunctions = viewFunctions;
+    }
     toString() { 
         if (this.name === "OneWay" || this.name === "Event") {
             return "@Input()";
@@ -126,6 +136,23 @@ class Decorator extends BaseDecorator {
             return "@Output()";
         } else if (this.name === "Effect" || this.name === "Ref") {
             return "";
+        } else if (this.name === "Component") { 
+            const parameters = (this.expression.arguments[0] as ObjectLiteral);
+            const viewFunctionValue = parameters.getProperty("view");
+            let viewFunction: AngularFunction | null = null;
+            if (viewFunctionValue instanceof Identifier) { 
+                viewFunction = this.viewFunctions[viewFunctionValue.toString()];
+            }
+
+            if (viewFunction) { 
+                const template = viewFunction.getTemplate();
+                if (template) { 
+                    parameters.setProperty("template", new StringLiteral(template));
+                }
+            }
+
+            parameters.removeProperty("view");
+            parameters.removeProperty("viewModel");
         }
         return super.toString();
     }
@@ -147,6 +174,10 @@ class Property extends BaseProperty {
         }
         return `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.typeDeclaration()} ${this.initializer ? `= ${this.initializer.toString()}` : ""}`;
     }
+}
+
+type AngularGeneratorContext = GeneratorContex & {
+    viewFunctions?: { [name: string]: AngularFunction };
 }
 
 export class AngularGenerator extends Generator { 
@@ -198,11 +229,15 @@ export class AngularGenerator extends Generator {
     }
 
     createFunctionDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, typeParameters: string[], parameters: Parameter[], type: string, body: Block) {
-        return new AngularFunction(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body);
+        const functionDeclaration = new AngularFunction(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body);
+        if (functionDeclaration.isJsx() && functionDeclaration.name) { 
+            this.addViewFunction(functionDeclaration.name.toString(), functionDeclaration);
+        }
+        return functionDeclaration;
     }
 
     createDecorator(expression: Call) {
-        return new Decorator(expression);
+        return new Decorator(expression, this.getContext().viewFunctions || {});
     }
 
     createComponentBindings(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
@@ -211,6 +246,18 @@ export class AngularGenerator extends Generator {
 
     createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression) {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
+    }
+
+    context: AngularGeneratorContext[] = [];
+
+    getContext() { 
+        return super.getContext() as AngularGeneratorContext;
+    }
+
+    addViewFunction(name: string, f: AngularFunction) {
+        const context = this.getContext();
+        context.viewFunctions = context.viewFunctions || {};
+        context.viewFunctions[name] = f;
     }
 }
 

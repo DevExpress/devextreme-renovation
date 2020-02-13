@@ -405,6 +405,62 @@ mocha.describe("Angular generator", function () {
 
             assert.strictEqual(decorator.toString(), "");
         });
+
+        mocha.describe("Component", function () {
+            this.beforeEach(function () { 
+                generator.setContext({});
+            });
+            mocha.it("Replace viewFunction with template", function () {
+                generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("viewFunction"),
+                    [],
+                    [],
+                    "",
+                    generator.createBlock([
+                        generator.createReturn(
+                            generator.createJsxElement(
+                                generator.createJsxSelfClosingElement(
+                                    generator.createIdentifier("div")
+                                ),
+                                [],
+                                ""
+                            )
+                        )
+                    ], false)
+                );
+
+                const decorator = generator.createDecorator(
+                    generator.createCall(
+                        generator.createIdentifier("Component"), [],
+                        [generator.createObjectLiteral([
+                            generator.createPropertyAssignment(
+                                generator.createIdentifier("view"),
+                                generator.createIdentifier("viewFunction")
+                            )
+                        ], false)])
+                );
+
+                assert.strictEqual(decorator.toString(), `@Component({template:"<div />"})`);
+            });
+
+            mocha.it("Remove viewModel", function () {
+                const decorator = generator.createDecorator(
+                    generator.createCall(
+                        generator.createIdentifier("Component"), [],
+                        [generator.createObjectLiteral([
+                            generator.createPropertyAssignment(
+                                generator.createIdentifier("viewModel"),
+                                generator.createIdentifier("viewModel")
+                            )
+                        ], false)])
+                );
+
+                assert.strictEqual(decorator.toString(), `@Component({})`);
+            });
+        });
     });
 
     mocha.describe("ComponentBindings", function () {

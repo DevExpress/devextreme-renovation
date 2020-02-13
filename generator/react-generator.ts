@@ -250,8 +250,21 @@ export class ObjectLiteral extends Expression {
     getProperty(propertyName: string) {
         const property = this.properties.find(p => p.key && p.key.toString() === propertyName);
         if (property) {
-            return property.value!.toString();
+            return property.value;
         }
+    }
+
+    setProperty(propertyName: string, value: Expression) { 
+        this.properties.push(
+            new PropertyAssignment(
+                new Identifier(propertyName),
+                value
+            )
+        )
+    }
+
+    removeProperty(propertyName: string) { 
+        this.properties = this.properties.filter(p => p.key?.toString() !== propertyName);
     }
 
     toString(options?:any) {
@@ -1015,7 +1028,7 @@ export class Listener {
         this.method = method;
         const [event, parameters] = method.decorators.find(d => d.name === "Listen")!.expression.arguments;
         if (parameters) {
-            this.target = (parameters as ObjectLiteral).getProperty("target") as string;
+            this.target = (parameters as ObjectLiteral).getProperty("target")?.toString();
         }
         if (event) {
             this.eventName = event.toString();
