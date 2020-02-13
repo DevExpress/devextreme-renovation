@@ -372,136 +372,135 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(expression.getTemplate(), "");
             });
         });
+    });
 
-        mocha.describe("Decorators", function () {
-            mocha.it("OneWay -> Input", function () {
-                const decorator = createDecorator("OneWay");
+    mocha.describe("Decorators", function () {
+        mocha.it("OneWay -> Input", function () {
+            const decorator = createDecorator("OneWay");
 
-                assert.strictEqual(decorator.name, "OneWay");
-                assert.strictEqual(decorator.toString(), "@Input()");
-            });
-
-            mocha.it("TwoWay -> Output", function () {
-                const decorator = createDecorator("TwoWay");
-
-                assert.strictEqual(decorator.toString(), "@Output()");
-            });
-
-            mocha.it("Event -> Input", function () {
-                const decorator = createDecorator("Event");
-
-                assert.strictEqual(decorator.toString(), "@Input()");
-            });
-
-            mocha.it("Effect -> ''", function () {
-                const decorator = createDecorator("Effect");
-
-                assert.strictEqual(decorator.toString(), "");
-            });
-
-            mocha.it("Ref -> ''", function () {
-                const decorator = createDecorator("Ref");
-
-                assert.strictEqual(decorator.toString(), "");
-            });
+            assert.strictEqual(decorator.name, "OneWay");
+            assert.strictEqual(decorator.toString(), "@Input()");
         });
 
-        mocha.describe("ComponentBindings", function () {
-            mocha.it("Generate componentBindings as a class", function () {
-                const bindings = generator.createClassDeclaration(
-                    [createDecorator("ComponentBindings")],
-                    ["export", "default"],
-                    generator.createIdentifier("ComponentInput"),
-                    [],
-                    [],
-                    [
-                        generator.createProperty(
-                            [createDecorator("OneWay")],
-                            [],
-                            generator.createIdentifier("p1"),
-                            generator.SyntaxKind.QuestionToken,
-                            "number",
-                            generator.createNumericLiteral("10")
-                        ),
-                        generator.createProperty(
-                            [createDecorator("OneWay")],
-                            [],
-                            generator.createIdentifier("p2"),
-                            generator.SyntaxKind.QuestionToken,
-                            "number",
-                            generator.createNumericLiteral("11")
-                        )
-                    ]
-                );
-    
-                assert.strictEqual(getResult(bindings.toString()), getResult(`
-                    export default class ComponentInput {
-                        @Input() p1?:number = 10;
-                        @Input() p2?:number = 11;
-                    }`)
-                );
-            });
+        mocha.it("TwoWay -> Output", function () {
+            const decorator = createDecorator("TwoWay");
 
-            mocha.it("Generate componentBindings with heritageClause", function () {
-                const bindings = generator.createClassDeclaration(
-                    [createDecorator("ComponentBindings")],
-                    ["export", "default"],
-                    generator.createIdentifier("ComponentInput"),
-                    [],
-                    [
-                        generator.createHeritageClause(
-                            generator.SyntaxKind.ExtendsKeyword,
-                            [generator.createExpressionWithTypeArguments(
-                                undefined,
-                                generator.createIdentifier("Base")
-                            )]
-                        )
-                    ],
-                    []
-                );
-    
-                assert.strictEqual(getResult(bindings.toString()),
-                    getResult(`export default class ComponentInput extends Base {  }`));
-            });
+            assert.strictEqual(decorator.toString(), "@Output()");
+        });
 
-            mocha.it("Event Prop generates Event EventEmitter", function () {
-                const property = generator.createProperty(
-                    [createDecorator("Event")],
-                    [],
-                    generator.createIdentifier("onClick"),
-                    generator.SyntaxKind.QuestionToken,
-                    undefined,
-                    generator.createArrowFunction([], [], [], "", generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
-                );
+        mocha.it("Event -> Input", function () {
+            const decorator = createDecorator("Event");
 
-                assert.strictEqual(property.toString(), "@Input() onClick:EventEmitter<any> = new EventEmitter()");
-            });
+            assert.strictEqual(decorator.toString(), "@Input()");
+        });
 
-            mocha.it.skip("Event Prop with type", function () {
-                const property = generator.createProperty(
-                    [createDecorator("Event")],
-                    [],
-                    generator.createIdentifier("onClick"),
-                    generator.SyntaxKind.QuestionToken,
-                    generator.createFunctionTypeNode(
-                        undefined,
-                        [generator.createParameter(
-                            [],
-                            [],
-                            "",
-                            generator.createIdentifier("a"),
-                            "",
-                            "number",
-                            generator.createNumericLiteral("1")
-                        )],
-                        "void"
+        mocha.it("Effect -> ''", function () {
+            const decorator = createDecorator("Effect");
+
+            assert.strictEqual(decorator.toString(), "");
+        });
+
+        mocha.it("Ref -> ''", function () {
+            const decorator = createDecorator("Ref");
+
+            assert.strictEqual(decorator.toString(), "");
+        });
+    });
+
+    mocha.describe("ComponentBindings", function () {
+        mocha.it("Generate componentBindings as a class", function () {
+            const bindings = generator.createClassDeclaration(
+                [createDecorator("ComponentBindings")],
+                ["export", "default"],
+                generator.createIdentifier("ComponentInput"),
+                [],
+                [],
+                [
+                    generator.createProperty(
+                        [createDecorator("OneWay")],
+                        [],
+                        generator.createIdentifier("p1"),
+                        generator.SyntaxKind.QuestionToken,
+                        "number",
+                        generator.createNumericLiteral("10")
                     ),
-                    generator.createArrowFunction([], [], [], "", generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
-                );
+                    generator.createProperty(
+                        [createDecorator("OneWay")],
+                        [],
+                        generator.createIdentifier("p2"),
+                        generator.SyntaxKind.QuestionToken,
+                        "number",
+                        generator.createNumericLiteral("11")
+                    )
+                ]
+            );
 
-                assert.strictEqual(property.toString(), "@Input() onClick:EventEmitter<number> = new EventEmitter()");
-            });    
+            assert.strictEqual(getResult(bindings.toString()), getResult(`
+                export default class ComponentInput {
+                    @Input() p1?:number = 10;
+                    @Input() p2?:number = 11;
+                }`)
+            );
         });
 
+        mocha.it("Generate componentBindings with heritageClause", function () {
+            const bindings = generator.createClassDeclaration(
+                [createDecorator("ComponentBindings")],
+                ["export", "default"],
+                generator.createIdentifier("ComponentInput"),
+                [],
+                [
+                    generator.createHeritageClause(
+                        generator.SyntaxKind.ExtendsKeyword,
+                        [generator.createExpressionWithTypeArguments(
+                            undefined,
+                            generator.createIdentifier("Base")
+                        )]
+                    )
+                ],
+                []
+            );
+
+            assert.strictEqual(getResult(bindings.toString()),
+                getResult(`export default class ComponentInput extends Base {  }`));
+        });
+
+        mocha.it("Event Prop generates Event EventEmitter", function () {
+            const property = generator.createProperty(
+                [createDecorator("Event")],
+                [],
+                generator.createIdentifier("onClick"),
+                generator.SyntaxKind.QuestionToken,
+                undefined,
+                generator.createArrowFunction([], [], [], "", generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
+            );
+
+            assert.strictEqual(property.toString(), "@Input() onClick:EventEmitter<any> = new EventEmitter()");
+        });
+
+        mocha.it.skip("Event Prop with type", function () {
+            const property = generator.createProperty(
+                [createDecorator("Event")],
+                [],
+                generator.createIdentifier("onClick"),
+                generator.SyntaxKind.QuestionToken,
+                generator.createFunctionTypeNode(
+                    undefined,
+                    [generator.createParameter(
+                        [],
+                        [],
+                        "",
+                        generator.createIdentifier("a"),
+                        "",
+                        "number",
+                        generator.createNumericLiteral("1")
+                    )],
+                    "void"
+                ),
+                generator.createArrowFunction([], [], [], "", generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
+            );
+
+            assert.strictEqual(property.toString(), "@Input() onClick:EventEmitter<number> = new EventEmitter()");
+        });    
     });
 });
