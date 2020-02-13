@@ -3,6 +3,7 @@ import generator from "../angular-generator";
 import assert from "assert";
 
 import { printSourceCodeAst as getResult } from "./helpers/common";
+import { Property } from "../react-generator";
 
 if (!mocha.describe) { 
     mocha.describe = describe;
@@ -523,6 +524,19 @@ mocha.describe("Angular generator", function () {
 
         mocha.it("Event Prop generates Event EventEmitter", function () {
             const property = generator.createProperty(
+                [createDecorator("Ref")],
+                [],
+                generator.createIdentifier("host"),
+                generator.SyntaxKind.QuestionToken,
+                "HTMLDivElement",
+                generator.createArrowFunction([], [], [], "", generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
+            );
+
+            assert.strictEqual(property.toString(), `@ViewChild("_widgetModel.host", {static: false}) host:ElementRef<HTMLDivElement>`);
+        });
+
+        mocha.it("Ref Prop generates ViewChild", function () {
+            const property = generator.createProperty(
                 [createDecorator("Event")],
                 [],
                 generator.createIdentifier("onClick"),
@@ -559,4 +573,110 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(property.toString(), "@Input() onClick:EventEmitter<number> = new EventEmitter()");
         });    
     });
+
+    mocha.describe("Angular Component", function () { 
+        function createComponentDecorator(paramenters: {[name:string]: any}) { 
+            return generator.createDecorator(
+                generator.createCall(
+                    generator.createIdentifier("Component"),
+                    [],
+                    [generator.createObjectLiteral(
+                        Object.keys(paramenters).map(k => 
+                            generator.createPropertyAssignment(
+                                generator.createIdentifier(k),
+                                paramenters[k]
+                            )
+                        ),
+                        false
+                    )]
+                )
+            )
+        }
+        
+        mocha.it("Calculate Selector", function () {
+            const decorator = createComponentDecorator({})
+            const component = generator.createComponent(
+                decorator,
+                [],
+                generator.createIdentifier("BaseWidget"),
+                [],
+                [],
+                []
+            );
+
+            assert.strictEqual(component.selector, "dx-base-widget");
+            assert.strictEqual(decorator.toString(), `@Component({selector:"dx-base-widget"})`);
+        });
+
+        mocha.describe("Imports", function () {
+            function createComponent(properties: Property[]=[]) {
+                return generator.createComponent(
+                    createComponentDecorator({}),
+                    [],
+                    generator.createIdentifier("BaseWidget"),
+                    [],
+                    [],
+                    properties
+                );
+            }
+
+            mocha.it("Empty component", function () { 
+                const component = createComponent();
+                assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule } from "@angular/core"; import {CommonModule} from "@angular/common"`));
+            });
+
+            mocha.it("Has OneWay property - Input", function () {
+                const component = createComponent(
+                    [
+                        generator.createProperty(
+                            [createDecorator("OneWay")],
+                            [],
+                            generator.createIdentifier("p")
+                        )
+                    ]
+                );
+                assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Input } from "@angular/core"; import {CommonModule} from "@angular/common"`));
+            });
+
+            mocha.it("Has TwoWay property - Output", function () {
+                const component = createComponent(
+                    [
+                        generator.createProperty(
+                            [createDecorator("TwoWay")],
+                            [],
+                            generator.createIdentifier("p")
+                        )
+                    ]
+                );
+                assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Output } from "@angular/core"; import {CommonModule} from "@angular/common"`));
+            });
+
+            mocha.it("Has Event property - EventEmitter", function () {
+                const component = createComponent(
+                    [
+                        generator.createProperty(
+                            [createDecorator("Event")],
+                            [],
+                            generator.createIdentifier("p")
+                        )
+                    ]
+                );
+                assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, EventEmitter } from "@angular/core"; import {CommonModule} from "@angular/common"`));
+            });
+
+            mocha.it("Has Ref property - ViewChild, ElementRef", function () {
+                const component = createComponent(
+                    [
+                        generator.createProperty(
+                            [createDecorator("Ref")],
+                            [],
+                            generator.createIdentifier("p")
+                        )
+                    ]
+                );
+                assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, ViewChild, ElementRef } from "@angular/core"; import {CommonModule} from "@angular/common"`));
+            });
+        });
+    });
+
 });

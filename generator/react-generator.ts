@@ -1131,7 +1131,7 @@ export class ReactComponent {
         return ["import React from 'react'"];
     }
 
-    getImports() {
+    compileImports() {
         const imports: string[] = [];
         const hooks: string[] = [];
 
@@ -1279,7 +1279,7 @@ export class ReactComponent {
 
     toString() {
         return `
-            ${this.getImports()}
+            ${this.compileImports()}
             ${this.compileComponentInterface()}
 
             ${this.modifiers.join(" ")} function ${this.name}(props: {
@@ -1958,8 +1958,8 @@ export class Generator {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
-    createComponent() { 
-
+    createComponent(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
+        return new ReactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
     }
 
     createComponentBindings(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
@@ -1970,7 +1970,7 @@ export class Generator {
         const componentDecorator = decorators.find(d => d.name === "Component");
         let result: Class | ReactComponent | ComponentInput;
         if (componentDecorator) {
-            result = new ReactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
+            result = this.createComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
         } else if (decorators.find(d => d.name === "ComponentBindings")) {
             const componentInput = this.createComponentBindings(decorators, modifiers, name, typeParameters, heritageClauses, members);
             this.addComponent(name.toString(), componentInput);

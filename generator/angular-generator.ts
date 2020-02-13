@@ -19,7 +19,8 @@ import {
     Property as BaseProperty,
     Method,
     GeneratorContex,
-    ObjectLiteral
+    ObjectLiteral,
+    ReactComponent
 } from "./react-generator";
 
 export class JsxOpeningElement extends ReactJsxOpeningElement { 
@@ -129,6 +130,15 @@ class Decorator extends BaseDecorator {
         super(expression);
         this.viewFunctions = viewFunctions;
     }
+
+    addParameter(name: string, value: Expression) {
+        if (this.name !== "Component") { 
+            return;
+        }
+        const parameters = (this.expression.arguments[0] as ObjectLiteral);
+        parameters.setProperty(name, value);
+    }
+
     toString() { 
         if (this.name === "OneWay" || this.name === "Event") {
             return "@Input()";
@@ -168,11 +178,51 @@ class ComponentInput extends BaseComponentInput {
 
 class Property extends BaseProperty { 
     toString() { 
-        const eventDecorator = this.decorators.find(d => d.name === "Event")
+        const eventDecorator = this.decorators.find(d => d.name === "Event");
         if (eventDecorator) { 
             return `${eventDecorator} ${this.name}:EventEmitter<any> = new EventEmitter()`
         }
+        if (this.decorators.find(d => d.name === "Ref")) {
+            return `@ViewChild("_widgetModel.${this.name}", {static: false}) ${this.name}:ElementRef<${this.type}>`;
+        }
         return `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.typeDeclaration()} ${this.initializer ? `= ${this.initializer.toString()}` : ""}`;
+    }
+}
+
+class AngularComponent extends ReactComponent {
+    constructor(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
+        super(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
+        componentDecorator.addParameter("selector", new StringLiteral(this.selector));
+    }
+
+    get selector() {
+        const words = this.name.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
+        return ["dx"].concat(words).join("-");
+    }
+
+    compileImports() { 
+        const core = ["Component", "NgModule"];
+        if (this.props.filter(p => p.property.decorators.find(d => d.name === "OneWay")).length) {
+            core.push("Input");
+        }
+        if (this.state.length) { 
+            core.push("Output");
+        }
+        if (this.props.filter(p => p.property.decorators.find(d => d.name === "Event")).length) { 
+            core.push("EventEmitter");
+        }
+        if (this.refs.length) { 
+            core.push("ViewChild, ElementRef");
+        }
+
+        return [
+            `import {${core.join(",")}} from "@angular/core"`,
+            'import {CommonModule} from "@angular/common"'
+        ].join(";\n");
+    }
+
+    toString() { 
+        return "";
     }
 }
 
@@ -246,6 +296,10 @@ export class AngularGenerator extends Generator {
 
     createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression) {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
+    }
+
+    createComponent(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
+        return new AngularComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
     }
 
     context: AngularGeneratorContext[] = [];
