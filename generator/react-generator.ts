@@ -609,8 +609,7 @@ export class Decorator {
     }
 
     toString() {
-        return "";
-        // return `@${this.expression.toString()}`;
+        return `@${this.expression.toString()}`;
     }
 }
 
@@ -1946,13 +1945,21 @@ export class Generator {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
+    createComponent() { 
+
+    }
+
+    createComponentBindings(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
+        return new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members)
+    }
+
     createClassDeclaration(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) {
         const componentDecorator = decorators.find(d => d.name === "Component");
         let result: Class | ReactComponent | ComponentInput;
         if (componentDecorator) {
             result = new ReactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
         } else if (decorators.find(d => d.name === "ComponentBindings")) {
-            const componentInput = new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members);
+            const componentInput = this.createComponentBindings(decorators, modifiers, name, typeParameters, heritageClauses, members);
             this.addComponent(name.toString(), componentInput);
             result = componentInput;
         } else {

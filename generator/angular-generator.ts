@@ -6,13 +6,18 @@ import {
     JsxSelfClosingElement as ReactJsxSelfClosingElement,
     JsxAttribute as ReactJsxAttribute,
     JsxExpression as ReactJsxExpression,
-    Decorator,
+    Decorator as BaseDecorator,
     Function,
     Parameter,
     Block,
     ReturnStatement,
     Binary,
-    StringLiteral
+    StringLiteral,
+    Call,
+    ComponentInput as BaseComponentInput,
+    HeritageClause,
+    Property as BaseProperty,
+    Method
 } from "./react-generator";
 
 export class JsxOpeningElement extends ReactJsxOpeningElement { 
@@ -113,6 +118,37 @@ export class AngularFunction extends Function {
     }
 }
 
+class Decorator extends BaseDecorator { 
+    toString() { 
+        if (this.name === "OneWay" || this.name === "Event") {
+            return "@Input()";
+        } else if (this.name === "TwoWay") {
+            return "@Output()";
+        } else if (this.name === "Effect" || this.name === "Ref") {
+            return "";
+        }
+        return super.toString();
+    }
+}
+
+class ComponentInput extends BaseComponentInput { 
+    toString() {
+        return `${this.modifiers.join(" ")} class ${this.name} ${this.heritageClauses.map(h => h.toString())} {
+            ${this.members.map(m => m.toString()).concat("").join(";\n")}
+        }`;
+    }
+}
+
+class Property extends BaseProperty { 
+    toString() { 
+        const eventDecorator = this.decorators.find(d => d.name === "Event")
+        if (eventDecorator) { 
+            return `${eventDecorator} ${this.name}:EventEmitter<any> = new EventEmitter()`
+        }
+        return `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.typeDeclaration()} ${this.initializer ? `= ${this.initializer.toString()}` : ""}`;
+    }
+}
+
 export class AngularGenerator extends Generator { 
     createJsxExpression(dotDotDotToken: string = "", expression: Expression) {
         if (expression instanceof Binary &&
@@ -163,6 +199,18 @@ export class AngularGenerator extends Generator {
 
     createFunctionDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, typeParameters: string[], parameters: Parameter[], type: string, body: Block) {
         return new AngularFunction(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body);
+    }
+
+    createDecorator(expression: Call) {
+        return new Decorator(expression);
+    }
+
+    createComponentBindings(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
+        return new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members);
+    }
+
+    createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression) {
+        return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 }
 
