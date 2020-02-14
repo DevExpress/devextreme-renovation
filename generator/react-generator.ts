@@ -1393,7 +1393,11 @@ export class VariableDeclarationList extends Expression {
     }
 
     toString(options?: any) {
-        return `${this.flags} ${this.declarations.map(d => d.toString(options)).join(",\n")}`;
+        const declarations = this.declarations.map(d => d.toString(options)).filter(d => d);
+        if (declarations.length === 0) { 
+            return "";
+        }
+        return `${this.flags} ${declarations}`;
     }
 
     getDependency() {

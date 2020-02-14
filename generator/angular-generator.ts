@@ -23,7 +23,7 @@ import {
     ReactComponent,
     ArrowFunction,
     ExpressionWithExpression,
-    VariableDeclaration
+    VariableDeclaration as BaseVariableDeclaration
 } from "./react-generator";
 
 export class JsxOpeningElement extends ReactJsxOpeningElement { 
@@ -252,6 +252,18 @@ class AngularComponent extends ReactComponent {
 
     toString() { 
         return "";
+    }
+}
+
+export class VariableDeclaration extends BaseVariableDeclaration { 
+    isJsx() { 
+        return this.initializer instanceof Expression && this.initializer.isJsx()
+    }
+    toString() { 
+        if (this.isJsx()) { 
+            return "";
+        }
+        return super.toString();
     }
 }
 

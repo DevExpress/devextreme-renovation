@@ -424,13 +424,44 @@ mocha.describe("Angular generator", function () {
                     this.block
                 );
 
-                generator.createVariableDeclaration(
-                    generator.createIdentifier("viewFunction"),
-                    undefined,
-                    functionDeclaration
+                const expression = generator.createVariableDeclarationList(
+                    [generator.createVariableDeclaration(
+                        generator.createIdentifier("viewFunction"),
+                        undefined,
+                        functionDeclaration
+                    )],
+                    generator.SyntaxKind.ConstKeyword
                 );
 
                 assert.strictEqual(generator.getContext().viewFunctions!["viewFunction"], functionDeclaration);
+                assert.strictEqual(expression.toString(), "");
+            });
+
+            mocha.it("Declaration list with jsx and noJsx - skip only jsx variables", function () {
+                const functionDeclaration = generator.createArrowFunction(
+                    [],
+                    [],
+                    [],
+                    undefined,
+                    generator.SyntaxKind.EqualsGreaterThanToken,
+                    this.block
+                );
+
+                const expression = generator.createVariableDeclarationList(
+                    [generator.createVariableDeclaration(
+                        generator.createIdentifier("viewFunction"),
+                        undefined,
+                        functionDeclaration
+                    ),
+                    generator.createVariableDeclaration(
+                        generator.createIdentifier("a"),
+                        undefined,
+                        generator.createNumericLiteral("10")
+                    )],
+                    generator.SyntaxKind.ConstKeyword
+                );
+
+                assert.strictEqual(expression.toString(), "const a=10");
             });
         });
     });
