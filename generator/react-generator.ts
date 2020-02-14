@@ -400,7 +400,7 @@ export class CallChain extends Call {
     }
 }
 
-export class Function {
+export class Function extends Expression {
     decorators: Decorator[];
     modifiers: string[];
     asteriskToken: string;
@@ -410,6 +410,7 @@ export class Function {
     type: string;
     body: Block;
     constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier | undefined, typeParameters: string[] = [], parameters: Parameter[], type: string, body: Block) {
+        super();
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.asteriskToken = asteriskToken;

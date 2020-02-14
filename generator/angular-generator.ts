@@ -20,7 +20,10 @@ import {
     Method,
     GeneratorContex,
     ObjectLiteral,
-    ReactComponent
+    ReactComponent,
+    ArrowFunction,
+    ExpressionWithExpression,
+    VariableDeclaration
 } from "./react-generator";
 
 export class JsxOpeningElement extends ReactJsxOpeningElement { 
@@ -96,6 +99,28 @@ export class JsxElement extends Expression {
     }
 }
 
+function getAngularTemplate(functionWithTemplate: AngularFunction | ArrowFunctionWithTemplate) {
+    if (!functionWithTemplate.isJsx()) {
+        return "";
+    }
+
+    const returnStatement = functionWithTemplate.body instanceof Block ?
+        functionWithTemplate.body.statements.find(s => s instanceof ReturnStatement) :
+        functionWithTemplate.body;
+
+    if (returnStatement) { 
+        functionWithTemplate.parameters[0];
+
+        const result = (returnStatement instanceof ExpressionWithExpression) ?
+            returnStatement.expression.toString() :
+            returnStatement.toString();
+        
+        if (functionWithTemplate.parameters[0]) { 
+            return result.replace(new RegExp(functionWithTemplate.parameters[0].name.toString(), "g"), "_viewModel");
+        }
+        return result;
+    }
+}
 export class AngularFunction extends Function { 
     isJsx() { 
         return this.body.isJsx();
@@ -108,25 +133,29 @@ export class AngularFunction extends Function {
     }
 
     getTemplate() {
-        if (!this.body.isJsx()) {
+        return getAngularTemplate(this);
+    }
+}
+
+export class ArrowFunctionWithTemplate extends ArrowFunction { 
+    isJsx() { 
+        return this.body.isJsx();
+    }
+    toString() { 
+        if (this.isJsx()) { 
             return "";
         }
-        const returnStatement = this.body.statements.find(s => s instanceof ReturnStatement);
-
-        if (returnStatement) { 
-            this.parameters[0];
-            const result = (returnStatement as ReturnStatement).expression.toString();
-            if (this.parameters[0]) { 
-                return result.replace(new RegExp(this.parameters[0].name.toString(), "g"), "_viewModel");
-            }
-            return result;
-        }
+        return super.toString();
+    }
+    
+    getTemplate() {
+        return getAngularTemplate(this);
     }
 }
 
 class Decorator extends BaseDecorator { 
-    viewFunctions: { [name: string]: AngularFunction };
-    constructor(expression: Call, viewFunctions: { [name: string]: AngularFunction }) { 
+    viewFunctions: { [name: string]: AngularFunction | ArrowFunctionWithTemplate };
+    constructor(expression: Call, viewFunctions: { [name: string]: AngularFunction | ArrowFunctionWithTemplate }) { 
         super(expression);
         this.viewFunctions = viewFunctions;
     }
@@ -149,7 +178,7 @@ class Decorator extends BaseDecorator {
         } else if (this.name === "Component") { 
             const parameters = (this.expression.arguments[0] as ObjectLiteral);
             const viewFunctionValue = parameters.getProperty("view");
-            let viewFunction: AngularFunction | null = null;
+            let viewFunction: ArrowFunctionWithTemplate | AngularFunction | null = null;
             if (viewFunctionValue instanceof Identifier) { 
                 viewFunction = this.viewFunctions[viewFunctionValue.toString()];
             }
@@ -227,7 +256,7 @@ class AngularComponent extends ReactComponent {
 }
 
 type AngularGeneratorContext = GeneratorContex & {
-    viewFunctions?: { [name: string]: AngularFunction };
+    viewFunctions?: { [name: string]: AngularFunction | ArrowFunctionWithTemplate };
 }
 
 export class AngularGenerator extends Generator { 
@@ -280,10 +309,21 @@ export class AngularGenerator extends Generator {
 
     createFunctionDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, typeParameters: string[], parameters: Parameter[], type: string, body: Block) {
         const functionDeclaration = new AngularFunction(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body);
-        if (functionDeclaration.isJsx() && functionDeclaration.name) { 
+        if (functionDeclaration.name) { 
             this.addViewFunction(functionDeclaration.name.toString(), functionDeclaration);
         }
         return functionDeclaration;
+    }
+
+    createArrowFunction(modifiers: string[] = [], typeParameters: string[] = [], parameters: Parameter[], type: string = "", equalsGreaterThanToken: string, body: Block | Expression) { 
+        return new ArrowFunctionWithTemplate(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body);
+    }
+
+    createVariableDeclaration(name: Identifier, type: string = "", initializer?: Expression | string) {
+        if (initializer) { 
+            this.addViewFunction(name.toString(), initializer);
+        }
+        return new VariableDeclaration(name, type, initializer);
     }
 
     createDecorator(expression: Call) {
@@ -308,10 +348,12 @@ export class AngularGenerator extends Generator {
         return super.getContext() as AngularGeneratorContext;
     }
 
-    addViewFunction(name: string, f: AngularFunction) {
-        const context = this.getContext();
-        context.viewFunctions = context.viewFunctions || {};
-        context.viewFunctions[name] = f;
+    addViewFunction(name: string, f: any) {
+        if ((f instanceof AngularFunction || f instanceof ArrowFunctionWithTemplate) && f.isJsx()) {
+            const context = this.getContext();
+            context.viewFunctions = context.viewFunctions || {};
+            context.viewFunctions[name] = f;
+        }
     }
 }
 

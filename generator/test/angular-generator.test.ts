@@ -277,6 +277,8 @@ mocha.describe("Angular generator", function () {
 
         mocha.describe("View Function", function () { 
             this.beforeEach(function () {
+                generator.setContext({});
+
                 this.block = generator.createBlock([
                     generator.createReturn(
                         generator.createJsxElement(
@@ -288,6 +290,9 @@ mocha.describe("Angular generator", function () {
                         )
                     )
                 ], false);
+            });
+            this.afterEach(function () { 
+                generator.setContext(null);
             });
 
             mocha.it("Function that returns JSX can be converted to template", function () {
@@ -372,6 +377,61 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(getResult(expression.toString()), getResult("function View(){}"));
                 assert.strictEqual(expression.getTemplate(), "");
             });
+
+            mocha.it("Arrow function JSX can be converted to template", function () {
+                const expression = generator.createArrowFunction(
+                    [],
+                    [],
+                    [],
+                    undefined,
+                    generator.SyntaxKind.GreaterThanToken,
+                    generator.createJsxElement(
+                        generator.createJsxSelfClosingElement(
+                            generator.createIdentifier("div")
+                        ),
+                        [],
+                        ""
+                    )
+                );
+
+                assert.strictEqual(expression.isJsx(), true);
+                assert.strictEqual(expression.getTemplate(), "<div />");
+                assert.strictEqual(expression.toString(), "");
+            });
+
+            mocha.it("Arrow function without JSX behaves as usual function", function () {
+                const expression = generator.createArrowFunction(
+                    [],
+                    [],
+                    [],
+                    undefined,
+                    generator.SyntaxKind.EqualsGreaterThanToken,
+                    generator.createTrue()
+                );
+
+                assert.strictEqual(expression.isJsx(), false);
+                assert.strictEqual(expression.getTemplate(), "");
+                assert.strictEqual(getResult(expression.toString()), getResult("()=>true"));
+            });
+
+            mocha.it("Add arrow function in context", function () {
+                const functionDeclaration = generator.createArrowFunction(
+                    [],
+                    [],
+                    [],
+                    undefined,
+                    generator.SyntaxKind.EqualsGreaterThanToken,
+                    this.block
+                );
+
+                generator.createVariableDeclaration(
+                    generator.createIdentifier("viewFunction"),
+                    undefined,
+                    functionDeclaration
+                );
+
+                assert.strictEqual(generator.getContext().viewFunctions!["viewFunction"], functionDeclaration);
+            });
         });
     });
 
@@ -410,6 +470,9 @@ mocha.describe("Angular generator", function () {
         mocha.describe("Component", function () {
             this.beforeEach(function () { 
                 generator.setContext({});
+            });
+            this.afterEach(function () { 
+                generator.setContext(null);
             });
             mocha.it("Replace viewFunction with template", function () {
                 generator.createFunctionDeclaration(
