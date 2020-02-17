@@ -424,13 +424,15 @@ mocha.describe("Angular generator", function () {
                     this.block
                 );
 
-                const expression = generator.createVariableDeclarationList(
-                    [generator.createVariableDeclaration(
-                        generator.createIdentifier("viewFunction"),
-                        undefined,
-                        functionDeclaration
-                    )],
-                    generator.SyntaxKind.ConstKeyword
+                const expression = generator.createVariableStatement([generator.SyntaxKind.ExportKeyword],
+                    generator.createVariableDeclarationList(
+                        [generator.createVariableDeclaration(
+                            generator.createIdentifier("viewFunction"),
+                            undefined,
+                            functionDeclaration
+                        )],
+                        generator.SyntaxKind.ConstKeyword
+                    )
                 );
 
                 assert.strictEqual(generator.getContext().viewFunctions!["viewFunction"], functionDeclaration);
