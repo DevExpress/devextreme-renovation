@@ -23,7 +23,8 @@ import {
     ReactComponent,
     ArrowFunction,
     ExpressionWithExpression,
-    VariableDeclaration as BaseVariableDeclaration
+    VariableDeclaration as BaseVariableDeclaration,
+    TemplateExpression
 } from "./react-generator";
 
 export class JsxOpeningElement extends ReactJsxOpeningElement { 
@@ -186,7 +187,7 @@ class Decorator extends BaseDecorator {
             if (viewFunction) { 
                 const template = viewFunction.getTemplate();
                 if (template) { 
-                    parameters.setProperty("template", new StringLiteral(template, "'"));
+                    parameters.setProperty("template", new TemplateExpression(template, []));
                 }
             }
 

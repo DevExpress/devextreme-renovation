@@ -540,7 +540,7 @@ mocha.describe("Angular generator", function () {
                         ], false)])
                 );
 
-                assert.strictEqual(decorator.toString(), `@Component({template:'<div />'})`);
+                assert.strictEqual(decorator.toString(), `@Component({template:\`<div />\`})`);
             });
 
             mocha.it("Remove viewModel", function () {
