@@ -145,7 +145,7 @@ mocha.describe("react-generator: expressions", function () {
                 generator.createVariableDeclaration(generator.createIdentifier("b"), undefined, generator.createNumericLiteral("10"))
             ],
             generator.NodeFlags.Const
-        ).toString(), 'const a="str",\nb=10');
+        ).toString(), 'const a="str",b=10');
     });
 
     mocha.it("createIndexSignature", function () { 
