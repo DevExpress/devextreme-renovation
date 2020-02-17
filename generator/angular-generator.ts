@@ -186,7 +186,7 @@ class Decorator extends BaseDecorator {
             if (viewFunction) { 
                 const template = viewFunction.getTemplate();
                 if (template) { 
-                    parameters.setProperty("template", new StringLiteral(template));
+                    parameters.setProperty("template", new StringLiteral(template, "'"));
                 }
             }
 
@@ -219,13 +219,19 @@ class Property extends BaseProperty {
 }
 
 class AngularComponent extends ReactComponent {
+    decorator: Decorator;
     constructor(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
         super(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
         componentDecorator.addParameter("selector", new StringLiteral(this.selector));
+        this.decorator = componentDecorator;
+    }
+
+    get name() { 
+        return `Dx${this._name}Component`;
     }
 
     get selector() {
-        const words = this.name.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
+        const words = this._name.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
         return ["dx"].concat(words).join("-");
     }
 
@@ -251,7 +257,22 @@ class AngularComponent extends ReactComponent {
     }
 
     toString() { 
-        return "";
+
+        return `
+        ${this.compileImports()}
+        ${this.decorator}
+        ${this.modifiers.join(" ")} class ${this.name} {
+            
+        }
+        @NgModule({
+            declarations: [${this.name}],
+            imports: [
+                CommonModule
+            ],
+            exports: [${this.name}]
+        })
+        export class ${this.name.replace(/(.+)(Component)/, "$1Module")} {}
+        `;
     }
 }
 

@@ -540,7 +540,7 @@ mocha.describe("Angular generator", function () {
                         ], false)])
                 );
 
-                assert.strictEqual(decorator.toString(), `@Component({template:"<div />"})`);
+                assert.strictEqual(decorator.toString(), `@Component({template:'<div />'})`);
             });
 
             mocha.it("Remove viewModel", function () {
@@ -711,7 +711,6 @@ mocha.describe("Angular generator", function () {
                 )
             )
         }
-        
         mocha.it("Calculate Selector", function () {
             const decorator = createComponentDecorator({})
             const component = generator.createComponent(
@@ -795,6 +794,34 @@ mocha.describe("Angular generator", function () {
                 );
                 assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, ViewChild, ElementRef } from "@angular/core"; import {CommonModule} from "@angular/common"`));
             });
+        });
+
+        mocha.it("generate component skeleton", function () { 
+            const component = generator.createComponent(
+                createComponentDecorator({}),
+                [generator.SyntaxKind.ExportKeyword, generator.SyntaxKind.DefaultKeyword],
+                generator.createIdentifier("BaseWidget"),
+                [],
+                [],
+                []
+            );
+
+            assert.strictEqual(getResult(component.toString()), getResult(`
+                ${component.compileImports()}
+                ${component.decorator}
+                export default class DxBaseWidgetComponent {
+
+                }
+
+                @NgModule({
+                    declarations: [DxBaseWidgetComponent],
+                    imports: [
+                        CommonModule
+                    ],
+                    exports: [DxBaseWidgetComponent]
+                })
+                export class DxBaseWidgetModule {}
+            `));
         });
     });
 

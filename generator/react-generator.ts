@@ -66,11 +66,13 @@ export class SimpleExpression extends Expression {
 }
 
 export class StringLiteral extends SimpleExpression {
-    constructor(value: string) {
+    quoteSymbol: string;
+    constructor(value: string, quoteSymbol = '"') {
         super(value);
+        this.quoteSymbol = quoteSymbol;
     }
     toString() {
-        return `"${this.expression}"`;
+        return `${this.quoteSymbol}${this.expression}${this.quoteSymbol}`;
     }
 }
 
@@ -667,15 +669,19 @@ function inheritMembers(heritageClauses: HeritageClause[], members: Array<Proper
 
 export class Class {
     decorators: Decorator[];
-    name: Identifier;
+    _name: Identifier;
     members: Array<Property | Method>;
     modifiers: string[];
     heritageClauses: HeritageClause[];
 
+    get name() { 
+        return this._name.toString();
+    }
+
     constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, typeParameters: any[], heritageClauses: HeritageClause[]=[], members: Array<Property | Method>) {
         members = inheritMembers(heritageClauses, members);
         this.decorators = decorators;
-        this.name = name;
+        this._name = name;
         this.members = members;
         this.modifiers = modifiers;
         this.heritageClauses = heritageClauses;
@@ -687,7 +693,7 @@ export class Class {
 }
 
 interface Heritable {
-    name: StringLiteral;
+    name: string;
     heritageProperies: Property[];
     compileDefaultProps(): string;
     defaultPropsDest(): string;
@@ -1067,7 +1073,7 @@ export class ReactComponent {
     events: Property[] = [];
 
     modifiers: string[];
-    name: Identifier;
+    _name: Identifier;
 
     listeners: Listener[];
     methods: Method[];
@@ -1078,9 +1084,13 @@ export class ReactComponent {
     viewModel: any;
     heritageClauses: HeritageClause[];
 
+    get name() { 
+        return this._name.toString();
+    }
+
     constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>) {
         this.modifiers = modifiers;
-        this.name = name;
+        this._name = name;
         this.heritageClauses = heritageClauses;
 
         members = inheritMembers(heritageClauses, members);
