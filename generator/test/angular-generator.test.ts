@@ -559,6 +559,12 @@ mocha.describe("Angular generator", function () {
     });
 
     mocha.describe("ComponentBindings", function () {
+        this.beforeEach(function () { 
+            generator.setContext({});
+        })
+        this.afterEach(function () { 
+            generator.setContext(null);
+        });
         mocha.it("Generate componentBindings as a class", function () {
             const bindings = generator.createClassDeclaration(
                 [createDecorator("ComponentBindings")],
@@ -594,26 +600,43 @@ mocha.describe("Angular generator", function () {
             );
         });
 
-        mocha.it("Generate componentBindings with heritageClause", function () {
-            const bindings = generator.createClassDeclaration(
+        mocha.it("Do not include inherited props", function () {
+            generator.createClassDeclaration(
                 [createDecorator("ComponentBindings")],
                 ["export", "default"],
-                generator.createIdentifier("ComponentInput"),
+                generator.createIdentifier("Base"),
+                [],
                 [],
                 [
-                    generator.createHeritageClause(
-                        generator.SyntaxKind.ExtendsKeyword,
-                        [generator.createExpressionWithTypeArguments(
-                            undefined,
-                            generator.createIdentifier("Base")
-                        )]
+                    generator.createProperty(
+                        [createDecorator("OneWay")],
+                        [],
+                        generator.createIdentifier("p1"),
+                        generator.SyntaxKind.QuestionToken,
+                        "number",
+                        generator.createNumericLiteral("10")
                     )
-                ],
+                ]
+            );
+
+            const heritageClause = generator.createHeritageClause(
+                generator.SyntaxKind.ExtendsKeyword,
+                [generator.createExpressionWithTypeArguments(
+                    undefined,
+                    generator.createIdentifier("Base")
+                )]
+            );
+
+            const child = generator.createClassDeclaration(
+                [createDecorator("ComponentBindings")],
+                ["export", "default"],
+                generator.createIdentifier("Child"),
+                [],
+                [heritageClause],
                 []
             );
 
-            assert.strictEqual(getResult(bindings.toString()),
-                getResult(`export default class ComponentInput extends Base {  }`));
+            assert.strictEqual(getResult(child.toString()), getResult("export default class Child extends Base {}"));
         });
 
         mocha.it("Event Prop generates Event EventEmitter", function () {

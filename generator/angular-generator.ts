@@ -200,7 +200,7 @@ class Decorator extends BaseDecorator {
 class ComponentInput extends BaseComponentInput { 
     toString() {
         return `${this.modifiers.join(" ")} class ${this.name} ${this.heritageClauses.map(h => h.toString())} {
-            ${this.members.map(m => m.toString()).concat("").join(";\n")}
+            ${this.members.filter(p => p instanceof Property && !p.inherited).map(m => m.toString()).concat("").join(";\n")}
         }`;
     }
 }
