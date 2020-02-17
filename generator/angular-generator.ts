@@ -257,11 +257,11 @@ class AngularComponent extends ReactComponent {
     }
 
     toString() { 
-
+        const extendTypes = this.heritageClauses.reduce((t: string[], h) => t.concat(h.types.map(t => t.type)), []);
         return `
         ${this.compileImports()}
         ${this.decorator}
-        ${this.modifiers.join(" ")} class ${this.name} {
+        ${this.modifiers.join(" ")} class ${this.name} ${extendTypes.length? `extends ${extendTypes.join(" ")}`:""} {
             
         }
         @NgModule({

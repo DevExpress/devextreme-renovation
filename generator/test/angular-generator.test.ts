@@ -823,6 +823,65 @@ mocha.describe("Angular generator", function () {
                 export class DxBaseWidgetModule {}
             `));
         });
+
+        mocha.it("generate component skeleton with extends of Component Bindings", function () { 
+            generator.createClassDeclaration(
+                [generator.createDecorator(
+                    generator.createCall(generator.createIdentifier("ComponentBindings"), [], [])
+                )],
+                [],
+                generator.createIdentifier("Input"),
+                [],
+                [],
+                [
+                    generator.createProperty(
+                        [],
+                        [],
+                        generator.createIdentifier("p"),
+                        "",
+                        "",
+                        generator.createNumericLiteral("10")
+                    )
+                ]
+            );
+
+            const heritageClause = generator.createHeritageClause(
+                generator.SyntaxKind.ExtendsKeyword,
+                [generator.createExpressionWithTypeArguments(
+                    [generator.createTypeReferenceNode(
+                        generator.createIdentifier("Input"),
+                        undefined
+                    )],
+                    generator.createIdentifier("JSXComponent")
+                )]
+            );
+
+            const component = generator.createComponent(
+                createComponentDecorator({}),
+                [generator.SyntaxKind.ExportKeyword, generator.SyntaxKind.DefaultKeyword],
+                generator.createIdentifier("BaseWidget"),
+                [],
+                [heritageClause],
+                []
+            );
+
+            assert.strictEqual(getResult(component.toString()), getResult(`
+                ${component.compileImports()}
+                ${component.decorator}
+                export default class DxBaseWidgetComponent extends Input {
+
+                }
+
+                @NgModule({
+                    declarations: [DxBaseWidgetComponent],
+                    imports: [
+                        CommonModule
+                    ],
+                    exports: [DxBaseWidgetComponent]
+                })
+                export class DxBaseWidgetModule {}
+            `));
+        });
     });
 
 });
