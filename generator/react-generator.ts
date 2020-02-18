@@ -629,7 +629,7 @@ export class Decorator {
     }
 }
 
-export class Property {
+export class Property extends Expression {
     decorators: Decorator[]
     modifiers: string[];
     name: Identifier;
@@ -639,6 +639,7 @@ export class Property {
     inherited: boolean = false;
 
     constructor(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression) {
+        super();
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.name = name;
@@ -655,7 +656,11 @@ export class Property {
         return `${this.name}:${this.initializer}`;
     }
 
-    toString() {
+    toString(options?: any) {
+        return this.name.toString();
+    }
+
+    getter() { 
         return this.name.toString();
     }
 }
@@ -781,7 +786,8 @@ export class PropertyAccess extends ExpressionWithExpression {
         this.name = name;
     }
 
-    toString(options?: toStringOptions) {
+    toString(options?: any) {
+
         const expressionString = this.expression.toString();
         const internalState = options && options.internalState || [];
         const state = options && options.state || [];
@@ -840,7 +846,7 @@ export class Method {
     parameters: Parameter[];
     type: string;
     body: Block;
-    constructor(decorators: Decorator[] = [], modifiers: string[], asteriskToken: string, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: string = "void", body: Block) {
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: string = "void", body: Block) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.asteriskToken = asteriskToken;
@@ -883,8 +889,12 @@ export class Method {
         }, {})).map(d => properties.find(p => p.name.toString() === d)).filter(d => d).reduce((d: string[], p) => d.concat(p!.getDependecy()), [])
     }
 
-    toString() {
-        return this.name;
+    toString(options?: any) {
+        return this.name.toString();
+    }
+
+    getter() { 
+        return this.toString();
     }
 }
 
@@ -1084,6 +1094,8 @@ export class ReactComponent {
     viewModel: any;
     heritageClauses: HeritageClause[];
 
+    members: Array<Property | Method>;
+
     get name() { 
         return this._name.toString();
     }
@@ -1093,7 +1105,7 @@ export class ReactComponent {
         this._name = name;
         this.heritageClauses = heritageClauses;
 
-        members = inheritMembers(heritageClauses, members);
+        this.members = members = inheritMembers(heritageClauses, members);
 
         this.props = members
             .filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template"))

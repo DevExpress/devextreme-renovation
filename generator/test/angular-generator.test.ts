@@ -1,9 +1,8 @@
 import mocha from "mocha";
-import generator from "../angular-generator";
+import generator, { Property } from "../angular-generator";
 import assert from "assert";
 
 import { printSourceCodeAst as getResult } from "./helpers/common";
-import { Property } from "../react-generator";
 
 if (!mocha.describe) { 
     mocha.describe = describe;
@@ -881,6 +880,75 @@ mocha.describe("Angular generator", function () {
                 })
                 export class DxBaseWidgetModule {}
             `));
+        });
+
+        mocha.describe("Members generation", function () { 
+            mocha.it("Access props - this.prop", function () { 
+                const property = new Property(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("width"),
+                    undefined,
+                    undefined,
+                    undefined
+                );
+
+                const expression = generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("width")
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [property]
+                }), "this.width");
+            });
+
+            mocha.it("Access props - this.props.prop", function () { 
+                const property = new Property(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("width"),
+                    undefined,
+                    undefined,
+                    undefined
+                );
+
+                const expression = generator.createPropertyAccess(
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("props")
+                    ),
+                    generator.createIdentifier("width")
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [property]
+                }), "this.width");
+            });
+
+            mocha.it("Call Event", function () { 
+                const property = new Property(
+                    [createDecorator("Event")],
+                    [],
+                    generator.createIdentifier("onClick"),
+                    undefined,
+                    undefined,
+                    undefined
+                );
+
+                const expression = generator.createCall(
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("onClick")
+                    ),
+                    [],
+                    [generator.createNumericLiteral("10")]
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [property]
+                }), "this.onClick.emit(10)");
+            });
         });
     });
 

@@ -17,15 +17,22 @@ import {
     ComponentInput as BaseComponentInput,
     HeritageClause,
     Property as BaseProperty,
-    Method,
+    Method as BaseMethod,
     GeneratorContex,
     ObjectLiteral,
     ReactComponent,
     ArrowFunction,
     ExpressionWithExpression,
     VariableDeclaration as BaseVariableDeclaration,
-    TemplateExpression
+    TemplateExpression,
+    PropertyAccess as BasePropertyAccess
 } from "./react-generator";
+
+import SyntaxKind from "./syntaxKind";
+
+type toStringOptions = {
+    members: Array<Property | Method>
+}
 
 export class JsxOpeningElement extends ReactJsxOpeningElement { 
 
@@ -206,7 +213,7 @@ class ComponentInput extends BaseComponentInput {
     }
 }
 
-class Property extends BaseProperty { 
+export class Property extends BaseProperty { 
     toString() { 
         const eventDecorator = this.decorators.find(d => d.name === "Event");
         if (eventDecorator) { 
@@ -216,6 +223,25 @@ class Property extends BaseProperty {
             return `@ViewChild("_widgetModel.${this.name}", {static: false}) ${this.name}:ElementRef<${this.type}>`;
         }
         return `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.typeDeclaration()} ${this.initializer ? `= ${this.initializer.toString()}` : ""}`;
+    }
+
+    getter() { 
+        if (this.decorators.find(d => d.name === "Event")) { 
+            return `${this.name}.emit`;
+        }
+        return this.name.toString();
+    }
+}
+
+class Method extends BaseMethod { 
+    toString(options: toStringOptions) { 
+        return `${this.modifiers.join(" ")} ${this.name}(${
+            this.parameters.map(p => p.declaration()).join(",")
+            })${this.type ? `:${this.type}` : ""}${this.body.toString(options)}`;
+    }
+
+    getter() { 
+        return this.name.toString();
     }
 }
 
@@ -263,7 +289,9 @@ class AngularComponent extends ReactComponent {
         ${this.compileImports()}
         ${this.decorator}
         ${this.modifiers.join(" ")} class ${this.name} ${extendTypes.length? `extends ${extendTypes.join(" ")}`:""} {
-            
+            ${this.members.map(m => m.toString({
+                members: this.members
+            })).join(";\n")}
         }
         @NgModule({
             declarations: [${this.name}],
@@ -274,6 +302,22 @@ class AngularComponent extends ReactComponent {
         })
         export class ${this.name.replace(/(.+)(Component)/, "$1Module")} {}
         `;
+    }
+}
+
+export class PropertyAccess extends BasePropertyAccess {
+    toString(options?: toStringOptions) {
+        let expressionString = this.expression.toString();
+        
+        if (expressionString === SyntaxKind.ThisKeyword || expressionString === `${SyntaxKind.ThisKeyword}.props`) {
+            expressionString = SyntaxKind.ThisKeyword;
+            const member = options?.members.find(m => m.name.toString() === this.name.toString())
+            if (member) { 
+                return `${expressionString}.${member.getter()}`;
+            }
+        }
+
+        return `${this.expression.toString(options)}.${this.name}`;
     }
 }
 
@@ -372,8 +416,16 @@ export class AngularGenerator extends Generator {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
+    createMethod(decorators: Decorator[], modifiers: string[], asteriskToken: string, name: Identifier, questionToken: string, typeParameters: any, parameters: Parameter[], type: string, body: Block) {
+        return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
+    }
+
     createComponent(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
         return new AngularComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
+    }
+
+    createPropertyAccess(expression: Expression, name: Identifier) {
+        return new PropertyAccess(expression, name);
     }
 
     context: AngularGeneratorContext[] = [];
