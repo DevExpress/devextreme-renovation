@@ -283,6 +283,36 @@ class AngularComponent extends ReactComponent {
         ].join(";\n");
     }
 
+    compileViewModelArguments() { 
+        const args = [
+            `props: {${
+            this.members
+                .filter(m => m.decorators.find(d => d.name.toString() === "OneWay"||d.name.toString() === "Event"))
+                .map(m => `${m.name}: this.${m.name}`)
+                .join(",\n")
+            }}`,
+            this.members
+                .filter(m => m.decorators.length === 0)
+                .map(m => `${m.name}: this.${m.name}`)
+                .join(",\n")
+        ]
+        return args;
+    }
+
+    compileViewModel() { 
+        if (!this.viewModel) { 
+            return "";
+        }
+
+        return `
+        _viewModel: any;
+
+        ngDoCheck(){
+            this._viewModel = view(viewModel({${this.compileViewModelArguments().join(",\n")}}));
+        }
+        `;
+    }
+
     toString() { 
         const extendTypes = this.heritageClauses.reduce((t: string[], h) => t.concat(h.types.map(t => t.type)), []);
         return `
@@ -292,6 +322,7 @@ class AngularComponent extends ReactComponent {
             ${this.members.map(m => m.toString({
                 members: this.members
             })).join(";\n")}
+            ${this.compileViewModel()}
         }
         @NgModule({
             declarations: [${this.name}],
