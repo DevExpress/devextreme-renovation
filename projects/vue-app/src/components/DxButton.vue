@@ -1,15 +1,55 @@
 <script>
+// import convertRulesToOptions from 'core/options/utils';
+const convertRulesToOptions = (rules) => {
+  return rules.reduce((options, rule) => {
+    return {
+      ...options,
+      ...(rule.device() ? rule.options : {})
+    };
+  }, {});
+};
+
+export const defaultOptionsRules = [{
+  device: function() {
+    return true;
+  },
+  options: {
+    text: "Push me!"
+  }
+}];
+
 export default {
   components: {},
   props: {
     classNames: Array,
-    height: String,
-    hint: String,
+    height: {
+      type: String,
+      default() { return this._defaultOptions.height || "" }
+    },
+    hint: {
+      type: String,
+      default() { return this._defaultOptions.hint || "" }
+    },
     pressed: Boolean,
-    stylingMode: String,
-    text: String,
-    type: String,
-    width: String
+    stylingMode: {
+      type: String,
+      default() { return this._defaultOptions.stylingMode || "" }
+    },
+    text: {
+      type: String,
+      default() { return this._defaultOptions.text || "" }
+    },
+    type: {
+      type: String,
+      default() { return this._defaultOptions.type || "" }
+    },
+    width: {
+      type: String,
+      default() { return this._defaultOptions.width || "" }
+    }
+  },
+  beforeCreate() {
+    this._defaultOptions = convertRulesToOptions(defaultOptionsRules);
   },
   data() {
     return {
@@ -44,26 +84,57 @@ export default {
       this.$emit("on-click", { type: this.type, text: this.text });
     },
 
-    viewModel(model) {
+    style() {
       return {
-        cssClasses: getCssClasses(model),
-        style: {
-          width: model.width
-        },
-        ...model
+        width: this.width
       };
+    },
+
+    cssClasses() {
+      const classNames = ['dx-button'];
+
+      if(this.stylingMode === 'outlined') {
+        classNames.push('dx-button-mode-outlined');
+      } else if(this.stylingMode === 'text') {
+        classNames.push('dx-button-mode-text');
+      } else {
+        classNames.push('dx-button-mode-contained');
+      }
+
+      if(this.type === 'danger') {
+        classNames.push('dx-button-danger');
+      } else if(this.type === 'default') {
+        classNames.push('dx-button-default');
+      } else if(this.type === 'success') {
+        classNames.push('dx-button-success');
+      } else {
+        classNames.push('dx-button-normal');
+      }
+
+      if(this.text) {
+        classNames.push('dx-button-has-text');
+      }
+
+      if(this.internal_state_hovered) {
+        classNames.push("dx-state-hover");
+      }
+
+      if(this.pressed || this.internal_state_active) {
+        classNames.push("dx-state-active");
+      }
+      return classNames.concat(this.classNames || []).join(" ");
     },
 
     view(viewModel) {
       return (
         <div
-          class={viewModel.cssClasses}
+          class={viewModel.cssClasses()}
           title={viewModel.hint}
-          style={viewModel.style}
-          on-pointerover={this.onPointerOver}
-          on-pointerout={this.onPointerOut}
-          on-pointerdown={this.onPointerDown}
-          on-click={this.onClickHandler}
+          style={viewModel.style()}
+          on-pointerover={viewModel.onPointerOver}
+          on-pointerout={viewModel.onPointerOut}
+          on-pointerdown={viewModel.onPointerDown}
+          on-click={viewModel.onClickHandler}
         >
           <div class="dx-button-content">
             <span class="dx-button-text">{viewModel.text}</span>
@@ -73,57 +144,9 @@ export default {
     }
   },
   render() {
-    return this.view(
-      this.viewModel({
-        classNames: this.classNames,
-        height: this.height,
-        hint: this.hint,
-        pressed: this.pressed,
-        stylingMode: this.stylingMode,
-        text: this.text,
-        type: this.type,
-        width: this.width,
-        internal_state_hovered: this.internal_state_hovered,
-        internal_state_active: this.internal_state_active
-      })
-    );
+    return this.view(this);
   }
 };
-
-function getCssClasses(model) {
-  const classNames = ["dx-button"];
-
-  if (model.stylingMode === "outlined") {
-    classNames.push("dx-button-mode-outlined");
-  } else if (model.stylingMode === "text") {
-    classNames.push("dx-button-mode-text");
-  } else {
-    classNames.push("dx-button-mode-contained");
-  }
-
-  if (model.type === "danger") {
-    classNames.push("dx-button-danger");
-  } else if (model.type === "default") {
-    classNames.push("dx-button-default");
-  } else if (model.type === "success") {
-    classNames.push("dx-button-success");
-  } else {
-    classNames.push("dx-button-normal");
-  }
-
-  if (model.text) {
-    classNames.push("dx-button-has-text");
-  }
-
-  if (model.internal_state_hovered) {
-    classNames.push("dx-state-hover");
-  }
-
-  if (model.pressed || model.internal_state_active) {
-    classNames.push("dx-state-active");
-  }
-  return classNames.concat(model.classNames).join(" ");
-}
 </script>
 <style>
 .dx-button {

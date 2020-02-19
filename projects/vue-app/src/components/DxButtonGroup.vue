@@ -1,9 +1,11 @@
 <script>
 import DxButton from "./DxButton";
+import DxToggleButton from "./DxToggleButton";
 
 export default {
   components: {
-    DxButton
+    DxButton,
+    DxToggleButton
   },
   props: {
     height: String,
@@ -24,47 +26,44 @@ export default {
     };
   },
   methods: {
-    onClickHandler(index) {
+    pressedChange(index, pressed) {
       let curSelectedItems = (this.selectedItems !== undefined ? this.selectedItems : this.selectedItems_state);
 
       const currentButton = this.items[index][this.keyExpr]; 
       let newValue = [];
 
       if(this.selectionMode === "single") {
-        if(curSelectedItems[0] !== currentButton) {
-          newValue = [currentButton];
-        }
+        newValue = pressed ? [currentButton] : [];
       } else {
-        if(curSelectedItems.indexOf(currentButton) !== -1) {
-          newValue = curSelectedItems.filter(item => item !== currentButton);
+        if(pressed) {
+          if(curSelectedItems.indexOf(currentButton) === -1) {
+            newValue = curSelectedItems.concat(currentButton);
+          }
         } else {
-          newValue = curSelectedItems.concat(currentButton);
+          newValue = curSelectedItems.filter((item) => item !== currentButton);
         }
       }
       this.selectedItems_state = newValue;
       this.$emit("selected-items-change", this.selectedItems_state);
     },
 
-    viewModel(model) {
-      const viewModel = { ...model };
-      viewModel.items = viewModel.items.map(item => ({
+    itemsVM() {
+      return this.items.map((item) => ({
         ...item,
-        pressed: (model.selectedItems || []).indexOf(item[model.keyExpr]) !== -1
+        pressed: ((this.selectedItems !== undefined ? this.selectedItems : this.selectedItems_state) || []).indexOf(item[this.keyExpr]) !== -1
       }));
-
-      return viewModel;
     },
 
     view(viewModel) {
-      const buttons = viewModel.items.map((item, index) => (
-        <DxButton
+      const buttons = viewModel.itemsVM().map((item, index) => (
+        <DxToggleButton
           key={item.key}
           pressed={item.pressed}
+          vOn:pressed-change={viewModel.pressedChange.bind(null, index)}
           stylingMode={viewModel.stylingMode}
           text={item.text}
           type={item.type}
           hint={item.hint || viewModel.hint}
-          vOn:on-click={this.onClickHandler.bind(this, index)}
         />
       ));
 
@@ -72,18 +71,7 @@ export default {
     }
   },
   render() {
-    return this.view(
-      this.viewModel({
-        height: this.height,
-        hint: this.hint,
-        stylingMode: this.stylingMode,
-        width: this.width,
-        items: this.items,
-        keyExpr: this.keyExpr,
-        selectionMode: this.selectionMode,
-        selectedItems: this.selectedItems !== undefined ? this.selectedItems : this.selectedItems_state
-      })
-    );
+    return this.view(this);
   }
 };
 </script>

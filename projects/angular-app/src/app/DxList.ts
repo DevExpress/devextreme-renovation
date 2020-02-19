@@ -7,11 +7,11 @@ import { CommonModule } from '@angular/common';
     <div
       #host
       class="dx-list"
-      [ngStyle]="_viewModel.style"
-      [title]="_viewModel.hint">
+      [ngStyle]="style"
+      [title]="hint">
       <div class="dx-list-content">
         <div
-          *ngFor="let item of _viewModel.items; let i = index; trackBy: trackBy"
+          *ngFor="let item of itemsVM; let i = index; trackBy: trackBy"
           [class]="['dx-list-item'].concat(item.selected ? 'dx-state-selected' : '', item.hovered ? 'dx-state-hover' : '').join(' ')"
           (click)="selectHandler(item.key)"
           (pointermove)="onItemMove(item.key)"
@@ -79,39 +79,23 @@ export class DxListComponent {
     return item.key;
   }
 
-  viewModel(model) {
-    const viewModel = Object.assign({
-      style: {
-        width: model.width,
-        height: model.height
-      }
-    },
-    model);
-
-    viewModel.items = viewModel.items!.map((item: any) => {
-      const selected = (model.selectedItems || []).findIndex((selectedItem: any) => selectedItem[model.keyExpr!] === item[model.keyExpr!]) !== -1;
-      return Object.assign({
-        text: item[model.displayExpr!],
-        key: item[model.keyExpr!],
-        selected,
-        hovered: !selected && viewModel.hoveredItemKey === item[model.keyExpr!]
-      }, item);
-    });
-
-    return viewModel;
+  get style() {
+    return {
+      width: this.width,
+      height: this.height
+    };
   }
 
-  _viewModel: any;
-  ngDoCheck() {
-    this._viewModel = this.viewModel({
-      height: this.height,
-      hint: this.hint,
-      width: this.width,
-      items: this.items,
-      keyExpr: this.keyExpr,
-      displayExpr: this.displayExpr,
-      selectedItems: this.selectedItems,
-      hoveredItemKey: this.hoveredItemKey
+  get itemsVM() {
+    return this.items!.map((item: any) => {
+      const selected = (this.selectedItems || []).findIndex((selectedItem: any) => selectedItem[this.keyExpr!] === item[this.keyExpr!]) !== -1;
+      return {
+        ...item,
+        text: item[this.displayExpr!],
+        key: item[this.keyExpr!],
+        selected,
+        hovered: !selected && this.hoveredItemKey === item[this.keyExpr!]
+      };
     });
   }
 }

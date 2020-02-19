@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import './Drawer.css';
 
 const Drawer = (props: { 
@@ -18,47 +18,50 @@ const Drawer = (props: { 
     props.openedChange!(false);
   }, [opened, props.opened, props.openedChange]);
 
-  return view(viewModel({
+  const drawerCSS = useMemo(function() {
+    return ["dx-drawer-panel"].concat((props.opened !== undefined ? props.opened : opened) ? "dx-state-visible" : "dx-state-hidden").join(" ");
+  }, [opened, props.opened]);
+  
+  const style = useMemo(function() {
+    return {
+      width: props.width,
+      height: props.height
+    };
+  }, [props.width, props.height]);
+
+  return view({
     // state
-    ...props,
-    // state
-    opened: props.opened !== undefined ? props.opened : opened,
+    props: {
+      ...props,
+      // state
+      opened: props.opened !== undefined ? props.opened : opened
+    },
     // internal state
     // listeners
-    onClickHandler
-  }));
+    onClickHandler,
+    // viewModel
+    drawerCSS,
+    style
+  });
 }
 
 Drawer.defaultProps = {
   openedChange: () => {}
 };
 
-function viewModel(model: any) {
-  return {
-    drawerCSS: ["dx-drawer-panel"]
-      .concat(model.opened ? "dx-state-visible" : "dx-state-hidden")
-      .join(" "),
-    style: {
-      width: model.width,
-      height: model.height
-    },
-    ...model
-  };
-}
-
 function view(viewModel: any) {
   return (
     <div
       className="dx-drawer"
-      title={viewModel.hint}
+      title={viewModel.props.hint}
       style={viewModel.style}>
       <div className={viewModel.drawerCSS}>
-        { viewModel.drawer }
+        { viewModel.props.drawer }
       </div>
       <div
         className="dx-drawer-content"
         onClick={viewModel.onClickHandler}>
-        { viewModel.children }
+        { viewModel.props.children }
       </div>
     </div>
   );

@@ -68,6 +68,14 @@
           </dx-button>
         </div>
       </div>
+      <div class="buttons-column">
+        <div class="column-header">
+          Default options
+        </div>
+        <div>
+          <dx-button width="120px" (onClick)="onClick($event)"></dx-button>
+        </div>
+      </div>
     </div>
   </div>
   <div class="demo-case">
@@ -81,7 +89,7 @@
         </div>
         <div>
           <dx-toggle-button width="120px" text="Outlined" hint="Outlined" type="normal" stylingMode="outlined"
-            [(pressed)]="toggle"></dx-toggle-button>
+            [pressed]="toggle" (pressedChange)="togglePressed($event)"></dx-toggle-button>
         </div>
       </div>
       <div class="buttons-column">
@@ -90,7 +98,7 @@
         </div>
         <div>
           <dx-toggle-button width="120px" text="Outlined" hint="Outlined" type="success" stylingMode="outlined"
-            [(pressed)]="toggle"></dx-toggle-button>
+            [pressed]="toggle" (pressedChange)="toggle = $event"></dx-toggle-button>
         </div>
       </div>
       <div class="buttons-column">
@@ -99,7 +107,7 @@
         </div>
         <div>
           <dx-toggle-button width="120px" text="Outlined" hint="Outlined" type="default" stylingMode="outlined"
-            [(pressed)]="toggle"></dx-toggle-button>
+            [pressed]="toggle" (pressedChange)="toggle = $event"></dx-toggle-button>
         </div>
       </div>
       <div class="buttons-column">
@@ -108,7 +116,15 @@
         </div>
         <div>
           <dx-toggle-button width="120px" text="Outlined" hint="Outlined" type="danger" stylingMode="outlined"
-            [(pressed)]="toggle"></dx-toggle-button>
+            [pressed]="toggle" (pressedChange)="toggle = $event"></dx-toggle-button>
+        </div>
+      </div>
+      <div class="buttons-column">
+        <div class="column-header">
+          Default options
+        </div>
+        <div>
+          <dx-toggle-button width="120px"></dx-toggle-button>
         </div>
       </div>
     </div>

@@ -50,39 +50,37 @@ export default {
       this.$emit("selected-items-change", this.selectedItems_state);
     },
 
-    viewModel(model) {
-      const viewModel = { 
-        ...model,
-        style: {
-          width: model.width,
-          height: model.height
-        }
+    style() {
+      return {
+        width: this.width,
+        height: this.height
       };
-      viewModel.items = viewModel.items.map(item => {
-        const selected = (model.selectedItems || []).findIndex(selectedItem => selectedItem[model.keyExpr] === item[model.keyExpr]) !== -1;
+    },
+
+    itemsVM() {
+      return this.items.map(item => {
+        const selected = ((this.selectedItems !== undefined ? this.selectedItems : this.selectedItems_state) || []).findIndex(selectedItem => selectedItem[this.keyExpr] === item[this.keyExpr]) !== -1;
         return {
           ...item,
-          text: item[model.displayExpr],
-          key: item[model.keyExpr],
+          text: item[this.displayExpr],
+          key: item[this.keyExpr],
           selected,
-          hovered: !selected && viewModel.hoveredItemKey === item[model.keyExpr]
+          hovered: !selected && this.hoveredItemKey === item[this.keyExpr]
         };
       });
-
-      return viewModel;
     },
 
     view(viewModel) {
-      const items = viewModel.items.map((item) => {
+      const items = viewModel.itemsVM().map((item) => {
         return (
           <div
             key={item.key}
             class={["dx-list-item"].concat(item.selected ? "dx-state-selected" : "", item.hovered ? "dx-state-hover" : "").join(" ")}
-            on-click={this.selectHandler.bind(this, item.key)}
-            on-pointermove={this.onItemMove.bind(this, item.key)}
+            on-click={viewModel.selectHandler.bind(null, item.key)}
+            on-pointermove={viewModel.onItemMove.bind(null, item.key)}
             >
-              {this.$scopedSlots["item-render"] ? (
-                this.$scopedSlots["item-render"](item)
+              {viewModel.$scopedSlots["item-render"] ? (
+                viewModel.$scopedSlots["item-render"](item)
               ) : (
                 item.text
               )}
@@ -94,7 +92,7 @@ export default {
         <div
           ref="host"
           class="dx-list"
-          style={viewModel.style}
+          style={viewModel.style()}
           title={viewModel.hint}>
           <div class="dx-list-content">
             { items }
@@ -114,18 +112,7 @@ export default {
     }
   },
   render() {
-    return this.view(
-      this.viewModel({
-        height: this.height,
-        hint: this.hint,
-        width: this.width,
-        items: this.items,
-        keyExpr: this.keyExpr,
-        displayExpr: this.displayExpr,
-        selectedItems: this.selectedItems !== undefined ? this.selectedItems : this.selectedItems_state,
-        hoveredItemKey: this.hoveredItemKey
-      })
-    );
+    return this.view(this);
   }
 };
 </script>

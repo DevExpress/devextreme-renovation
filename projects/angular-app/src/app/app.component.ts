@@ -371,4 +371,8 @@ export class AppComponent {
   toggleDrawer() {
     this.drawerOpened = !this.drawerOpened;
   }
+
+  togglePressed(pressed) {
+    this.toggle = pressed;
+  }
 }

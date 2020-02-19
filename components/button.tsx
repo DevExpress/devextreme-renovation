@@ -1,23 +1,40 @@
+import { Component, ComponentBindings, Event, InternalState, Listen, JSXComponent, OneWay, React } from '../generator/component_declaration/common';
 import './button.css';
+
+export const defaultOptionsRules: { device: () => boolean, options: any }[] = [{
+  device: function() {
+    return true;
+  },
+  options: {
+    text: "Push me!",
+    sdfsdf: ""
+  }
+}];
+
+@ComponentBindings()
+export class ButtonInput {
+  @OneWay() classNames?: string[]
+  @OneWay() height?: string;
+  @OneWay() hint?: string;
+  @OneWay() pressed?: boolean;
+  @OneWay() stylingMode?: string;
+  @OneWay() text?: string;
+  @OneWay() type?: string;
+  @OneWay() width?: string;
+  @Event() onClick?: (e: any) => void = (() => {});
+}
+
 @Component({
   name: 'Button',
   components: [],
-  viewModel: viewModelFunction,
-  view: viewFunction
+  viewModel() {},
+  view: viewFunction,
+  defaultOptionsRules() {
+    return defaultOptionsRules;
+  }
 })
 
-export default class Button {
-  @Prop() classNames?: string[]
-  @Prop() height?: string;
-  @Prop() hint?: string;
-  @Prop() pressed?: boolean;
-  @Prop() stylingMode?: string;
-  @Prop() text?: string;
-  @Prop() type?: string;
-  @Prop() width?: string;
-
-  @Event() onClick?: (e: any) => void = (() => {});
-
+export default class Button extends JSXComponent<ButtonInput> {
   @InternalState() _hovered: boolean = false;
   @InternalState() _active: boolean = false;
 
@@ -43,67 +60,63 @@ export default class Button {
 
   @Listen("click")
   onClickHandler(e: any) {
-    this.onClick!({ type: this.type, text: this.text });
+    this.props.onClick!({ type: this.props.type, text: this.props.text });
+  }
+
+  get style() {
+    return {
+      width: this.props.width
+    };
+  }
+
+  get cssClasses() {
+    const classNames = ['dx-button'];
+
+    if(this.props.stylingMode === 'outlined') {
+      classNames.push('dx-button-mode-outlined');
+    } else if(this.props.stylingMode === 'text') {
+      classNames.push('dx-button-mode-text');
+    } else {
+      classNames.push('dx-button-mode-contained');
+    }
+
+    if(this.props.type === 'danger') {
+      classNames.push('dx-button-danger');
+    } else if(this.props.type === 'default') {
+      classNames.push('dx-button-default');
+    } else if(this.props.type === 'success') {
+      classNames.push('dx-button-success');
+    } else {
+      classNames.push('dx-button-normal');
+    }
+
+    if(this.props.text) {
+      classNames.push('dx-button-has-text');
+    }
+
+    if(this._hovered) {
+      classNames.push("dx-state-hover");
+    }
+
+    if(this.props.pressed || this._active) {
+      classNames.push("dx-state-active");
+    }
+    return classNames.concat(this.props.classNames || []).join(" ");
   }
 }
 
-function getCssClasses(model: any) {
-  const classNames = ['dx-button'];
-
-  if(model.stylingMode === 'outlined') {
-    classNames.push('dx-button-mode-outlined');
-  } else if(model.stylingMode === 'text') {
-    classNames.push('dx-button-mode-text');
-  } else {
-    classNames.push('dx-button-mode-contained');
-  }
-
-  if(model.type === 'danger') {
-    classNames.push('dx-button-danger');
-  } else if(model.type === 'default') {
-    classNames.push('dx-button-default');
-  } else if(model.type === 'success') {
-    classNames.push('dx-button-success');
-  } else {
-    classNames.push('dx-button-normal');
-  }
-
-  if(model.text) {
-    classNames.push('dx-button-has-text');
-  }
-
-  if(model._hovered) {
-    classNames.push("dx-state-hover");
-  }
-
-  if(model.pressed || model._active) {
-    classNames.push("dx-state-active");
-  }
-  return classNames.concat(model.classNames).join(" ");
-}
-
-function viewModelFunction(model: Button) {
-  return {
-    cssClasses: getCssClasses(model),
-    style: {
-      width: model.width
-    },
-    ...model
-  };
-}
-
-function viewFunction(viewModel: any) {
+function viewFunction(viewModel: Button) {
   return (
     <div
       className={viewModel.cssClasses}
-      title={viewModel.hint}
+      title={viewModel.props.hint}
       style={viewModel.style}
-      pointerover={viewModel.onPointerOver}
-      pointerout={viewModel.onPointerOut}
-      pointerdown={viewModel.onPointerDown}
-      click={viewModel.onClickHandler}>
+      onPointerOver={viewModel.onPointerOver}
+      onPointerOut={viewModel.onPointerOut}
+      onPointerDown={viewModel.onPointerDown}
+      onClick={viewModel.onClickHandler}>
       <div className="dx-button-content">
-        <span className="dx-button-text">{viewModel.text}</span>
+        <span className="dx-button-text">{viewModel.props.text}</span>
       </div>
     </div>
   );

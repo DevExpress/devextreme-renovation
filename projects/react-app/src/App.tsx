@@ -376,6 +376,17 @@ const App: React.FC = () => {
               />
             </div>
           </div>
+          <div className="buttons-column">
+            <div className="column-header">
+              Default options
+              </div>
+            <div>
+              <Button
+                width="120px"
+                onClick={onClick}
+              />
+            </div>
+          </div>
         </div>
       </div>
       <div className="demo-case">
@@ -444,6 +455,16 @@ const App: React.FC = () => {
                 stylingMode="outlined"
                 pressed={toggle}
                 pressedChange={toggleChange}
+              />
+            </div>
+          </div>
+          <div className="buttons-column">
+            <div className="column-header">
+              Default options
+            </div>
+            <div>
+              <ToggleButton
+                width="120px"
               />
             </div>
           </div>
