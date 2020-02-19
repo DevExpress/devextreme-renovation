@@ -1,5 +1,24 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import './Button.css';
+
+// import convertRulesToOptions from 'core/options/utils';
+const convertRulesToOptions = (rules: { device: () => boolean, options: any }[]) => {
+  return rules.reduce((options, rule) => {
+    return {
+      ...options,
+      ...(rule.device() ? rule.options : {})
+    };
+  }, {});
+};
+
+export const defaultOptionsRules: { device: () => boolean, options: any }[] = [{
+  device: function() {
+    return true;
+  },
+  options: {
+    text: "Push me!"
+  }
+}];
 
 const Button = (props: {
   classNames?: Array<string>,
@@ -31,9 +50,50 @@ const Button = (props: {
     props.onClick!({ type: props.type, text: props.text });
   }, [props.type, props.text, props.onClick]);
 
-  return view(viewModel({
+  const style = useMemo(function() {
+    return {
+      width: props.width
+    };
+  }, [props.width]);
+
+  const cssClasses = useMemo(function() {
+    const classNames = ['dx-button'];
+
+    if(props.stylingMode === 'outlined') {
+      classNames.push('dx-button-mode-outlined');
+    } else if(props.stylingMode === 'text') {
+      classNames.push('dx-button-mode-text');
+    } else {
+      classNames.push('dx-button-mode-contained');
+    }
+
+    if(props.type === 'danger') {
+      classNames.push('dx-button-danger');
+    } else if(props.type === 'default') {
+      classNames.push('dx-button-default');
+    } else if(props.type === 'success') {
+      classNames.push('dx-button-success');
+    } else {
+      classNames.push('dx-button-normal');
+    }
+
+    if(props.text) {
+      classNames.push('dx-button-has-text');
+    }
+
+    if(_hovered) {
+      classNames.push("dx-state-hover");
+    }
+
+    if(props.pressed || _active) {
+      classNames.push("dx-state-active");
+    }
+    return classNames.concat(props.classNames || []).join(" ");
+  }, [props.classNames, props.pressed, props.text, props.type, props.stylingMode, _hovered, _active]);
+
+  return view({
     // props
-    ...props,
+    props,
     // state
     // internal state
     _hovered,
@@ -42,71 +102,30 @@ const Button = (props: {
     onPointerOver,
     onPointerOut,
     onPointerDown,
-    onClickHandler
-  }));
+    onClickHandler,
+    // viewModel
+    style,
+    cssClasses
+  });
 };
 
 Button.defaultProps = {
-  onClick: () => {}
+  onClick: () => {},
+  ...convertRulesToOptions(defaultOptionsRules)
 };
-
-function getCssClasses(model: any) {
-  const classNames = ['dx-button'];
-
-  if (model.stylingMode === 'outlined') {
-    classNames.push('dx-button-mode-outlined');
-  } else if (model.stylingMode === 'text') {
-    classNames.push('dx-button-mode-text');
-  } else {
-    classNames.push('dx-button-mode-contained');
-  }
-
-  if (model.type === 'danger') {
-    classNames.push('dx-button-danger');
-  } else if (model.type === 'default') {
-    classNames.push('dx-button-default');
-  } else if (model.type === 'success') {
-    classNames.push('dx-button-success');
-  } else {
-    classNames.push('dx-button-normal');
-  }
-
-  if (model.text) {
-    classNames.push('dx-button-has-text');
-  }
-
-  if (model._hovered) {
-    classNames.push("dx-state-hover");
-  }
-
-  if (model.pressed || model._active) {
-    classNames.push("dx-state-active");
-  }
-  return classNames.concat(model.classNames).join(' ');
-}
-
-function viewModel(model: any) {
-  return {
-    cssClasses: getCssClasses(model),
-    style: {
-      width: model.width
-    },
-    ...model
-  };
-}
 
 function view(viewModel: any) {
   return (
     <div
       className={viewModel.cssClasses}
-      title={viewModel.hint}
+      title={viewModel.props.hint}
       style={viewModel.style}
       onPointerOver={viewModel.onPointerOver}
       onPointerOut={viewModel.onPointerOut}
       onPointerDown={viewModel.onPointerDown}
       onClick={viewModel.onClickHandler}>
       <div className="dx-button-content">
-        <span className="dx-button-text">{viewModel.text}</span>
+        <span className="dx-button-text">{viewModel.props.text}</span>
       </div>
     </div>
   );

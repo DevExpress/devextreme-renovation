@@ -5,9 +5,9 @@ import { CommonModule } from '@angular/common';
   selector: 'dx-drawer',
   template: `<div
     class="dx-drawer"
-    [title]="_viewModel.hint"
-    [ngStyle]="_viewModel.style">
-    <div [class]="_viewModel.drawerCSS">
+    [title]="hint"
+    [ngStyle]="style">
+    <div [class]="drawerCSS">
       <ng-content select="[drawer]"></ng-content>
     </div>
     <div
@@ -21,47 +21,27 @@ import { CommonModule } from '@angular/common';
 })
 
 export class DxDrawerComponent {
-  // drawer?: React.ReactNode,
-  // children?: React.ReactNode
-
-
   @Input() height?: string;
   @Input() hint?: string;
   @Input() width?: string;
 
-  _opened: boolean;
+  @Input() opened: boolean;
   @Output() openedChange = new EventEmitter();
-  @Input() get opened() {
-    return this._opened;
-  }
-
-  set opened(value) {
-    this._opened = value;
-    this.openedChange.emit(value);
-  }
 
   onClickHandler(e) {
     this.opened = false;
+    this.openedChange.emit(this.opened);
   }
 
-  viewModel(model) {
-    return Object.assign({
-      drawerCSS: ["dx-drawer-panel"] .concat(model.opened ? "dx-state-visible" : "dx-state-hidden") .join(" "),
-      style: {
-        width: model.width,
-        height: model.height
-      }
-    }, model);
+  get drawerCSS() {
+    return ["dx-drawer-panel"].concat(this.opened ? "dx-state-visible" : "dx-state-hidden").join(" ");
   }
 
-  _viewModel: any;
-  ngDoCheck() {
-    this._viewModel = this.viewModel({
-      height: this.height,
-      hint: this.hint,
-      opened: this.opened,
-      width: this.width
-    });
+  get style() {
+    return {
+      width: this.width,
+      height: this.height
+    };
   }
 }
 

@@ -1,53 +1,56 @@
+import { Component, ComponentBindings, JSXComponent, Slot, OneWay, React, TwoWay, Listen } from '../generator/component_declaration/common';
+
 import './drawer.css';
-@Component({
-  name: 'Drawer',
-  components: [],
-  viewModel,
-  view
-})
 
-export default class Drawer {
-  @Prop() height?: string;
-  @Prop() hint?: string;
-  @Prop() width?: string;
+@ComponentBindings()
+export class DrawerInput {
+  @OneWay() height?: string;
+  @OneWay() hint?: string;
+  @OneWay() width?: string;
 
-  @State() opened?: boolean;
+  @TwoWay() opened?: boolean;
 
   @Slot() drawer: any;
   @Slot() default: any;
+}
 
+@Component({
+  name: 'Drawer',
+  components: [],
+  viewModel() {},
+  view
+})
+export default class Drawer extends JSXComponent<DrawerInput> {
   @Listen()
   onClickHandler(e: any) {
-    this.opened = false;
+    this.props.opened = false;
+  }
+
+  get drawerCSS() {
+    return ["dx-drawer-panel"].concat(this.props.opened ? "dx-state-visible" : "dx-state-hidden").join(" ");
+  }
+  
+  get style() {
+    return {
+      width: this.props.width,
+      height: this.props.height
+    };
   }
 }
 
-function viewModel(model: Drawer) {
-  return {
-    drawerCSS: ["dx-drawer-panel"]
-      .concat(model.opened ? "dx-state-visible" : "dx-state-hidden")
-      .join(" "),
-    style: {
-      width: model.width,
-      height: model.height
-    },
-    ...model
-  };
-}
-
-function view(viewModel: any) {
+function view(viewModel: Drawer) {
   return (
     <div
-      class="dx-drawer"
-      title={viewModel.hint}
+      className="dx-drawer"
+      title={viewModel.props.hint}
       style={viewModel.style}>
-      <div class={viewModel.drawerCSS}>
-        { viewModel.drawer }
+      <div className={viewModel.drawerCSS}>
+        { viewModel.props.drawer }
       </div>
       <div
-        class="dx-drawer-content"
-        click={viewModel.onClickHandler}>
-        { viewModel.default }
+        className="dx-drawer-content"
+        onClick={viewModel.onClickHandler}>
+        { viewModel.props.default }
       </div>
     </div>
   );

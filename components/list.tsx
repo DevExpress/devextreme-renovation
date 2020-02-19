@@ -1,25 +1,29 @@
-@Component({
-  name: 'List',
-  components: [],
-  viewModel,
-  view
-})
+import { Component, ComponentBindings, JSXComponent, Template, OneWay, React, TwoWay, Method, Listen, Ref } from '../generator/component_declaration/common';
 
-export default class List {
-  @Ref() host!: HTMLDivElement;
-
-  @Prop() height?: string = "400px";
-  @Prop() hint?: string;
-  @Prop() items?: any[] = [];
-  @Prop() keyExpr?: string = 'value';
-  @Prop() displayExpr?: string = 'value';
-  @Prop() width?: string;
-
-  @InternalState() hoveredItemKey: string = "";
+@ComponentBindings()
+export class ListInput {
+  @OneWay() height?: string = "400px";
+  @OneWay() hint?: string;
+  @OneWay() items?: any[] = [];
+  @OneWay() keyExpr?: string = 'value';
+  @OneWay() displayExpr?: string = 'value';
+  @OneWay() width?: string;
 
   @Template() itemRender?: any;
 
-  @State() selectedItems?: any[] = [];
+  @TwoWay() selectedItems?: any[] = [];
+}
+
+@Component({
+  name: 'List',
+  components: [],
+  viewModel() {},
+  view
+})
+export default class List extends JSXComponent<ListInput> {
+  @Ref() host!: HTMLDivElement;
+
+  hoveredItemKey: string = "";
 
   @Listen()
   onItemMove(key: string) {
@@ -28,15 +32,15 @@ export default class List {
 
   @Listen()
   selectHandler(key: any) {
-    const index = this.selectedItems!.findIndex(item => item[this.keyExpr!] === key);
+    const index = this.props.selectedItems!.findIndex(item => item[this.props.keyExpr!] === key);
     let newValue: any[] = [];
     if(index >= 0) {
-      newValue = this.selectedItems!.filter(item => item[this.keyExpr!] !== key);
+      newValue = this.props.selectedItems!.filter(item => item[this.props.keyExpr!] !== key);
     } else {
-      newValue = this.selectedItems!.concat(this.items!.find(item => item[this.keyExpr!] === key));
+      newValue = this.props.selectedItems!.concat(this.items!.find(item => item[this.props.keyExpr!] === key));
     }
     
-    this.selectedItems = newValue;
+    this.props.selectedItems = newValue;
   }
 
   @Method() 
@@ -50,32 +54,28 @@ export default class List {
     a.click();
   }
 
-}
-
-function viewModel(model: List) {
-  const viewModel = { 
-    ...model,
-    style: {
-      width: model.width,
-      height: model.height
-    }
-  };
-
-  viewModel.items = viewModel.items!.map((item: any) => {
-    const selected = (model.selectedItems || []).findIndex((selectedItem: any) => selectedItem[model.keyExpr!] === item[model.keyExpr!]) !== -1;
+  get style() {
     return {
-      ...item,
-      text: item[model.displayExpr!],
-      key: item[model.keyExpr!],
-      selected,
-      hovered: !selected && viewModel.hoveredItemKey === item[model.keyExpr!]
+      width: this.props.width,
+      height: this.props.height
     };
-  });
+  }
 
-  return viewModel;
+  get items() {
+    return this.props.items!.map((item: any) => {
+      const selected = (this.props.selectedItems || []).findIndex((selectedItem: any) => selectedItem[this.props.keyExpr!] === item[this.props.keyExpr!]) !== -1;
+      return {
+        ...item,
+        text: item[this.props.displayExpr!],
+        key: item[this.props.keyExpr!],
+        selected,
+        hovered: !selected && this.hoveredItemKey === item[this.props.keyExpr!]
+      };
+    });
+  }
 }
 
-function view(viewModel: any) {
+function view(viewModel: List) {
   const items = viewModel.items.map((item: any) => {
     return (
       <div
@@ -84,8 +84,8 @@ function view(viewModel: any) {
         onClick={viewModel.selectHandler.bind(null, item.key)}
         onPointerMove={viewModel.onItemMove.bind(null, item.key)}
         >
-          {viewModel.itemRender ? (
-            <viewModel.itemRender {...item} />
+          {viewModel.props.itemRender ? (
+            <viewModel.props.itemRender {...item} />
           ) : (
             item.text
           )}
@@ -98,7 +98,7 @@ function view(viewModel: any) {
       ref={viewModel.host}
       className="dx-list"
       style={viewModel.style}
-      title={viewModel.hint}>
+      title={viewModel.props.hint}>
       <div className="dx-list-content">
         { items }
       </div>

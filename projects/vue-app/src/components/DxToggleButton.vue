@@ -1,21 +1,61 @@
 <script>
-import DxButton from "./DxButton";
+import DxButton, { defaultOptionsRules as buttonRules } from "./DxButton";
+
+// import convertRulesToOptions from 'core/options/utils';
+const convertRulesToOptions = (rules) => {
+  return rules.reduce((options, rule) => {
+    return {
+      ...options,
+      ...(rule.device() ? rule.options : {})
+    };
+  }, {});
+};
+
+export const defaultOptionsRules = buttonRules.concat([{
+  device: function() {
+    return true;
+  },
+  options: {
+    hint: "Toggle button"
+  }
+}]);
 
 export default {
   components: {
     DxButton
   },
   props: {
-    height: String,
-    hint: String,
-    stylingMode: String,
-    text: String,
-    type: String,
-    width: String,
+    height: {
+      type: String,
+      default() { return this._defaultOptions.height || "" }
+    },
+    hint: {
+      type: String,
+      default() { return this._defaultOptions.hint || "" }
+    },
+    stylingMode: {
+      type: String,
+      default() { return this._defaultOptions.stylingMode || "" }
+    },
+    text: {
+      type: String,
+      default() { return this._defaultOptions.text || "" }
+    },
+    type: {
+      type: String,
+      default() { return this._defaultOptions.type || "" }
+    },
+    width: {
+      type: String,
+      default() { return this._defaultOptions.width || "" }
+    },
     pressed: {
       type: Boolean,
       default: undefined
     }
+  },
+  beforeCreate() {
+    this._defaultOptions = convertRulesToOptions(defaultOptionsRules);
   },
   data() {
     return {
@@ -29,10 +69,6 @@ export default {
       this.$emit("pressed-change", this.pressed_state);
     },
 
-    viewModel(model) {
-      return { ...model };
-    },
-
     view(viewModel) {
       return (
         <DxButton
@@ -42,24 +78,14 @@ export default {
           text={viewModel.text}
           type={viewModel.type}
           width={viewModel.width}
-          pressed={viewModel.pressed}
+          pressed={viewModel.pressed !== undefined ? viewModel.pressed : viewModel.pressed_state}
           vOn:on-click={this.onClickHandler}
         />
       );
     }
   },
   render() {
-    return this.view(
-      this.viewModel({
-        height: this.height,
-        hint: this.hint,
-        pressed: this.pressed !== undefined ? this.pressed : this.pressed_state,
-        stylingMode: this.stylingMode,
-        text: this.text,
-        type: this.type,
-        width: this.width
-      })
-    );
+    return this.view(this);
   }
 };
 </script>

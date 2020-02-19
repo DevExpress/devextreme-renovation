@@ -1,5 +1,24 @@
 import React, { useCallback, useState } from "react";
-import Button from "./Button";
+import Button, { defaultOptionsRules as buttonRules } from "./Button";
+
+// import convertRulesToOptions from 'core/options/utils';
+const convertRulesToOptions = (rules: { device: () => boolean, options: any }[]) => {
+  return rules.reduce((options, rule) => {
+    return {
+      ...options,
+      ...(rule.device() ? rule.options : {})
+    };
+  }, {});
+};
+
+export const defaultOptionsRules = buttonRules.concat([{
+  device: function() {
+    return true;
+  },
+  options: {
+    hint: "Toggle button"
+  }
+}]);
 
 const ToggleButton = (props: {
   height?: string,
@@ -20,36 +39,35 @@ const ToggleButton = (props: {
     props.pressedChange!(newPressed);
   }, [pressed, props.pressed, props.pressedChange]);
 
-  return view(viewModel({
+  return view({
     // props
-    ...props,
-    // state
-    pressed: props.pressed !== undefined ? props.pressed : pressed,
+    props: {
+      ...props,
+      // state
+      pressed: props.pressed !== undefined ? props.pressed : pressed
+    },
     // internal state
     // listeners
     onClickHandler
-  }));
+  });
 }
 
 ToggleButton.defaultProps = {
-  pressedChange: () => {}
+  pressedChange: () => {},
+  ...convertRulesToOptions(defaultOptionsRules)
 };
-
-function viewModel(model: any) {
-  return { ...model };
-}
 
 function view(viewModel: any) {
   return (
     <Button
-      height={viewModel.height}
-      hint={viewModel.hint}
-      stylingMode={viewModel.stylingMode}
-      text={viewModel.text}
-      type={viewModel.type}
-      width={viewModel.width}
-      pressed={viewModel.pressed}
-      onClick={viewModel.onClickHandler}/>
+      height={viewModel.props.height}
+      hint={viewModel.props.hint}
+      stylingMode={viewModel.props.stylingMode}
+      text={viewModel.props.text}
+      type={viewModel.props.type}
+      width={viewModel.props.width}
+      pressed={viewModel.props.pressed}
+      onClick={viewModel.onClickHandler} />
   );
 }
 

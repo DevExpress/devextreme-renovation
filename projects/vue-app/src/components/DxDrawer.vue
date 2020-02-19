@@ -22,16 +22,16 @@ export default {
       this.$emit("opened-change", this.opened_state);
     },
 
-    viewModel(model) {
+    drawerCSS() {
+      return ["dx-drawer-panel"]
+        .concat((this.opened !== undefined ? this.opened : this.opened_state) ? "dx-state-visible" : "dx-state-hidden")
+        .join(" ");
+    },
+
+    style() {
       return {
-        drawerCSS: ["dx-drawer-panel"]
-          .concat(model.opened ? "dx-state-visible" : "dx-state-hidden")
-          .join(" "),
-        style: {
-          width: model.width,
-          height: model.height
-        },
-        ...model
+        width: this.width,
+        height: this.height
       };
     },
 
@@ -40,17 +40,17 @@ export default {
         <div
           class="dx-drawer"
           title={viewModel.hint}
-          style={viewModel.style}>
-          <div class={viewModel.drawerCSS}>
+          style={viewModel.style()}>
+          <div class={viewModel.drawerCSS()}>
             {
-              this.$scopedSlots.drawer()
+              viewModel.$scopedSlots.drawer()
             }
           </div>
           <div
             class="dx-drawer-content"
-            on-click={this.onClickHandler}>
+            on-click={viewModel.onClickHandler}>
             {
-              this.$scopedSlots.default()
+              viewModel.$scopedSlots.default()
             }
           </div>
         </div>
@@ -58,14 +58,7 @@ export default {
     }
   },
   render() {
-    return this.view(
-      this.viewModel({
-        height: this.height,
-        hint: this.hint,
-        opened: this.opened !== undefined ? this.opened : this.opened_state,
-        width: this.width
-      })
-    );
+    return this.view(this);
   }
 };
 </script>

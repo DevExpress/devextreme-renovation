@@ -1,42 +1,56 @@
-import Button from './button';
+
+import { Component, ComponentBindings, Listen, JSXComponent, OneWay, React, TwoWay } from '../generator/component_declaration/common';
+import Button, { defaultOptionsRules as buttonRules } from './button';
+
+export const defaultOptionsRules: { device: () => boolean, options: any }[] = buttonRules.concat([{
+  device: function() {
+    return true;
+  },
+  options: {
+    hint: "Toggle button"
+  }
+}]);
+
+@ComponentBindings()
+export class ToggleButtonInput {
+  @OneWay() height?: string;
+  @OneWay() hint?: string;
+  @OneWay() stylingMode?: string;
+  @OneWay() text?: string;
+  @OneWay() type?: string;
+  @OneWay() width?: string;
+
+  @TwoWay() pressed?: boolean = false;
+  @Change() pressedChange?: (pressed: boolean) => void = (() => {});
+}
 
 @Component({
   name: 'ToggleButton',
   components: [Button],
-  viewModel: viewModelFunction,
-  view: viewFunction
+  viewModel() {},
+  view: viewFunction,
+  defaultOptionsRules() {
+    return defaultOptionsRules;
+  }
 })
 
-export default class ToggleButton {
-  @Prop() height?: string;
-  @Prop() hint?: string;
-  @Prop() stylingMode?: string;
-  @Prop() text?: string;
-  @Prop() type?: string;
-  @Prop() width?: string;
-
-  @State() pressed?: boolean = false;
-
+export default class ToggleButton extends JSXComponent<ToggleButtonInput> {
   @Listen("click")
   onClickHandler(e: any) {
-    this.pressed = !this.pressed;
+    this.props.pressed = !this.props.pressed;
   }
 }
 
-function viewModelFunction(model: ToggleButton) {
-  return { ...model };
-}
-
-function viewFunction(viewModel: any) {
+function viewFunction(viewModel: ToggleButton) {
   return (
     <Button
-      height={viewModel.height}
-      hint={viewModel.hint}
-      stylingMode={viewModel.stylingMode}
-      text={viewModel.text}
-      type={viewModel.type}
-      width={viewModel.width}
-      pressed={viewModel.pressed}
-      click={viewModel.onClickHandler} />
+      height={viewModel.props.height}
+      hint={viewModel.props.hint}
+      stylingMode={viewModel.props.stylingMode}
+      text={viewModel.props.text}
+      type={viewModel.props.type}
+      width={viewModel.props.width}
+      pressed={viewModel.props.pressed}
+      onClick={viewModel.onClickHandler} />
   );
 }

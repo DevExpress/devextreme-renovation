@@ -133,6 +133,15 @@
             />
           </div>
         </div>
+        <div class="buttons-column">
+          <div class="column-header">Default options</div>
+          <div>
+            <dx-button
+              @on-click="onClick"
+              width="120px"
+            />
+          </div>
+        </div>
       </div>
     </div>
     <div class="demo-case">Last clicked button - {{lastClickedButton}}</div>
@@ -142,7 +151,6 @@
           <div class="column-header">Normal {{toggle ? 'ON' : 'OFF'}}</div>
           <div>
             <dx-toggle-button
-              
               width="120px"
               text="Outlined"
               hint="Outlined"
@@ -190,6 +198,14 @@
               hint="Outlined"
               type="danger"
               styling-mode="outlined"
+            />
+          </div>
+        </div>
+        <div class="buttons-column">
+          <div class="column-header">Default options</div>
+          <div>
+            <dx-toggle-button
+              width="120px"
             />
           </div>
         </div>

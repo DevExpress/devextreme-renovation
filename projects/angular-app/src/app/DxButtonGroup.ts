@@ -1,27 +1,28 @@
 import { Component, EventEmitter, Input, NgModule, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DxButtonModule } from "./DxButton";
+import { DxToggleButtonModule } from "./DxToggleButton";
 
 @Component({
   selector: 'dx-button-group',
   template: `
         <div class="dx-button-group">
-            <dx-button
+            <dx-toggle-button
                 class="item"
-                *ngFor="let item of _viewModel.items; let i = index; trackBy: trackBy"
-                (click)="onClickHandler(i)"
-                [stylingMode]="_viewModel.stylingMode"
+                *ngFor="let item of itemsVM; let i = index; trackBy: trackBy"
+                [stylingMode]="stylingMode"
                 [pressed]="item.pressed"
+                (pressedChange)="pressedChange(i, $event)"
                 [text]="item.text"
-                [classNames]="item.classNames"
                 [type]="item.type"
-                [hint]="item.hint || _viewModel.hint"
+                [hint]="item.hint || hint"
                 >
-            </dx-button>
+            </dx-toggle-button>
         </div>
     `,
   styleUrls: ["./dx-group-button.css"]
 })
+
 export class DxButtonGroupComponent {
   @Input() height?: string;
   @Input() hint?: string;
@@ -31,62 +32,38 @@ export class DxButtonGroupComponent {
   @Input() stylingMode?: string;
   @Input() width?: string;
 
-  _selectedItems: Array<string> = [];
+  @Input() selectedItems: Array<string> = [];
   @Output() selectedItemsChange = new EventEmitter();
-  @Input() get selectedItems() {
-    return this._selectedItems;
-  }
-  set selectedItems(value) {
-    this._selectedItems = value;
-    this.selectedItemsChange.emit(value);
-  }
 
-  onClickHandler(index: number) {
-    const currentButton = this.items[index][this.keyExpr]
+  pressedChange(index: number, pressed: boolean) {
+    const currentButton = this.items[index][this.keyExpr];
     let newValue: string[] = [];
 
-    if (this.selectionMode === "single") {
-      if (this.selectedItems![0] !== currentButton) {
-        newValue = [currentButton];
-      }
+    if(this.selectionMode === "single") {
+      newValue = pressed ? [currentButton] : [];
     } else {
-      if (this.selectedItems!.indexOf(currentButton) !== -1) {
-        newValue = this.selectedItems!.filter(item => item !== currentButton);
+      if(pressed) {
+        if(this.selectedItems!.indexOf(currentButton) === -1) {
+          newValue = this.selectedItems!.concat(currentButton);
+        }
       } else {
-        newValue = this.selectedItems!.concat(currentButton);
+        newValue = this.selectedItems!.filter((item: string) => item !== currentButton);
       }
     }
     this.selectedItems = newValue;
+    this.selectedItemsChange.emit(this.selectedItems);
   }
 
   trackBy(item) {
     return item[this.keyExpr];
   }
 
-  viewModel(model) {
-    const viewModel = Object.assign({}, model);
-    viewModel.items = viewModel.items.map((item, i, array) => (Object.assign({}, item,
-      {
-        pressed: (model.selectedItems || []).indexOf(item[model.keyExpr]) !== -1,
-        classNames: [i === 0 && "first" || (i === array.length - 1) && "last" || ""]
-      }
-    )));
-
-    return viewModel;
-  }
-
-  _viewModel: any;
-  ngDoCheck() {
-    this._viewModel = this.viewModel({
-      height: this.height,
-      hint: this.hint,
-      width: this.width,
-      items: this.items,
-      keyExpr: this.keyExpr,
-      selectedItems: this.selectedItems,
-      selectionMode: this.selectionMode,
-      stylingMode: this.stylingMode
-    });
+  get itemsVM() {
+    return this.items!.map((item: any, i: number, array: any[]) => ({
+      ...item,
+      pressed: (this.selectedItems || []).indexOf(item[this.keyExpr!]) !== -1,
+      classNames: [i === 0 && "first" || (i === array.length - 1) && "last" || ""]
+    }));
   }
 }
 
@@ -94,7 +71,8 @@ export class DxButtonGroupComponent {
   declarations: [DxButtonGroupComponent],
   imports: [
     CommonModule,
-    DxButtonModule
+    DxButtonModule,
+    DxToggleButtonModule
   ],
   exports: [DxButtonGroupComponent]
 })
