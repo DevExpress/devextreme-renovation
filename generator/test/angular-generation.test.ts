@@ -35,4 +35,8 @@ mocha.describe("angular-generation", function () {
     mocha.it("props", function () {
         this.testGenerator(this.test!.title);
     });
+
+    mocha.it("state", function () {
+        this.testGenerator(this.test!.title);
+    });
 });

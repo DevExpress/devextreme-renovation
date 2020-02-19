@@ -25,12 +25,13 @@ import {
     ExpressionWithExpression,
     VariableDeclaration as BaseVariableDeclaration,
     TemplateExpression,
-    PropertyAccess as BasePropertyAccess
+    PropertyAccess as BasePropertyAccess,
+    toStringOptions as ReactToStringOptions
 } from "./react-generator";
 
 import SyntaxKind from "./syntaxKind";
 
-type toStringOptions = {
+interface toStringOptions extends  ReactToStringOptions {
     members: Array<Property | Method>
 }
 
@@ -180,7 +181,7 @@ class Decorator extends BaseDecorator {
         if (this.name === "OneWay" || this.name === "Event") {
             return "@Input()";
         } else if (this.name === "TwoWay") {
-            return "@Output()";
+            return "@Input()";
         } else if (this.name === "Effect" || this.name === "Ref") {
             return "";
         } else if (this.name === "Component") { 
@@ -216,13 +217,18 @@ class ComponentInput extends BaseComponentInput {
 export class Property extends BaseProperty { 
     toString() { 
         const eventDecorator = this.decorators.find(d => d.name === "Event");
+        const defaultValue = `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.typeDeclaration()} ${this.initializer ? `= ${this.initializer.toString()}` : ""}`;
         if (eventDecorator) { 
             return `${eventDecorator} ${this.name}:EventEmitter<any> = new EventEmitter()`
         }
         if (this.decorators.find(d => d.name === "Ref")) {
             return `@ViewChild("_widgetModel.${this.name}", {static: false}) ${this.name}:ElementRef<${this.type}>`;
         }
-        return `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.typeDeclaration()} ${this.initializer ? `= ${this.initializer.toString()}` : ""}`;
+        if (this.decorators.find(d => d.name.toString() === "TwoWay")) { 
+            return `${defaultValue};
+            @Output() ${this.name}Change: EventEmitter<${this.type||"any"}> = new EventEmitter()`
+        }
+        return defaultValue;
     }
 
     getter() { 
@@ -268,12 +274,12 @@ class AngularComponent extends ReactComponent {
             core.push("Input");
         }
         if (this.state.length) { 
-            core.push("Output");
+            core.push("Input", "Output", "EventEmitter");
         }
         if (this.props.filter(p => p.property.decorators.find(d => d.name === "Event")).length) { 
             core.push("EventEmitter");
         }
-        if (this.refs.length) { 
+        if (this.refs.length) {
             core.push("ViewChild, ElementRef");
         }
 
@@ -287,8 +293,9 @@ class AngularComponent extends ReactComponent {
         const args = [
             `props: {${
             this.members
-                .filter(m => m.decorators.find(d => d.name.toString() === "OneWay"||d.name.toString() === "Event"))
+                .filter(m => m.decorators.find(d => d.name === "OneWay"||d.name === "Event"))
                 .map(m => `${m.name}: this.${m.name}`)
+                .concat(this.members.filter(m=>m.decorators.find(d=>d.name==="TwoWay")).map(m=>`${m.name}:this.${m.name},\n${m.name}Change:this.${m.name}Change`))
                 .join(",\n")
             }}`,
             this.members
@@ -320,6 +327,9 @@ class AngularComponent extends ReactComponent {
         ${this.decorator}
         ${this.modifiers.join(" ")} class ${this.name} ${extendTypes.length? `extends ${extendTypes.join(" ")}`:""} {
             ${this.members.map(m => m.toString({
+                internalState: [],
+                state: [],
+                props: [],
                 members: this.members
             })).join(";\n")}
             ${this.compileViewModel()}
@@ -349,6 +359,14 @@ export class PropertyAccess extends BasePropertyAccess {
         }
 
         return `${this.expression.toString(options)}.${this.name}`;
+    }
+
+    compileStateSetting(value: string) {
+        return `this.${this.name}Change.emit(${this.toString()}=${value})`;
+    }
+
+    compileStateChangeRising() {
+        return "";
     }
 }
 

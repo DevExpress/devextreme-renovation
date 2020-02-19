@@ -29,7 +29,8 @@ function getPropName(name: Identifier | string) {
     return `props.${name}`;
 }
 
-interface toStringOptions { 
+export interface toStringOptions {
+    members: Array<Property | Method>;
     internalState: InternalState[];
     state: State[];
     props: Prop[];
@@ -40,7 +41,7 @@ export class Expression {
         return [];
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return "";
     }
 
@@ -95,7 +96,7 @@ export class ExpressionWithExpression extends Expression {
         this.expression = expression;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return this.expression.toString(options);
     }
 
@@ -109,13 +110,13 @@ export class ExpressionWithExpression extends Expression {
 }
 
 export class TypeOf extends ExpressionWithExpression {
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `typeof ${this.expression.toString(options)}`;
     }
 }
 
 export class Void extends ExpressionWithExpression {
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `void ${this.expression.toString(options)}`;
     }
 }
@@ -128,7 +129,7 @@ export class ExpressionWithOptionalExpression extends Expression {
         this.expression = expression;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return this.expression ? this.expression.toString(options) : "";
     }
 
@@ -156,7 +157,7 @@ export class BindingElement {
 }
 
 export class Delete extends ExpressionWithExpression {
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `${SyntaxKind.DeleteKeyword} ${super.toString()}`;
     }
 }
@@ -199,7 +200,7 @@ export class PropertyAssignment extends Expression {
         this.key = key;
         this.value = value;
     }
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `${this.key}:${this.value.toString(options)}`;
     }
 
@@ -235,7 +236,7 @@ export class SpreadAssignment extends ExpressionWithExpression {
     key: null = null;
     value: null = null;
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `...${this.expression.toString(options)}`;
     }
 }
@@ -287,7 +288,7 @@ export class Block extends Expression {
         this.multiLine = multiLine;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `{
             ${this.statements.map(s => s.toString(options)).join("\n")}
         }`
@@ -313,7 +314,7 @@ export class PropertyAccessChain extends ExpressionWithExpression {
         this.name = name;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `${this.expression.toString(options)}${this.questionDotToken}${this.name.toString(options)}`;
     }
 
@@ -354,7 +355,7 @@ export class Parameter {
 }
 
 export class Paren extends ExpressionWithExpression {
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `(${super.toString(options)})`;
     }
 }
@@ -372,7 +373,7 @@ export class Call extends ExpressionWithExpression {
         return this.argumentsArray.map(a => a);
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `${this.expression.toString(options)}(${this.argumentsArray.map(a => a.toString(options)).join(",")})`;
     }
 
@@ -385,7 +386,7 @@ export class Call extends ExpressionWithExpression {
 }
 
 export class New extends Call {
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `${SyntaxKind.NewKeyword} ${super.toString(options)}`;
     }
 }
@@ -397,7 +398,7 @@ export class CallChain extends Call {
         this.questionDotToken = questionDotToken;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `${this.expression.toString(options)}${this.questionDotToken}(${this.argumentsArray.map(a => a.toString(options)).join(",")})`;
     }
 }
@@ -434,7 +435,7 @@ export class Function extends Expression {
     }
 }
 
-function checkDependency(expression: Expression, properties: Array<InternalState | State | Prop> = []) {
+function checkDependency(expression: Expression, properties: Array<InternalState | State | Prop | Property | Method> = []) {
     const dependency = expression.getAllDependency().reduce((r: { [name: string]: boolean }, d) => {
         r[d] = true;
         return r;
@@ -460,7 +461,7 @@ export class ArrowFunction extends Expression {
         this.equalsGreaterThanToken = equalsGreaterThanToken;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         const bodyString = this.body.toString(options);
         return `${this.modifiers.join(" ")} (${this.parameters.map(p => p.declaration()).join(",")})${compileType(this.type)} ${this.equalsGreaterThanToken} ${bodyString}`;
     }
@@ -471,7 +472,7 @@ export class ArrowFunction extends Expression {
 }
 
 export class ReturnStatement extends ExpressionWithExpression {
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `return ${super.toString(options)};`;
     }
 }
@@ -491,15 +492,15 @@ export class Binary extends Expression {
         if (options &&
             this.operator === SyntaxKind.EqualsToken &&
             this.left instanceof PropertyAccess &&
-            this.left.toString() !== this.left.toString(options) &&
+            checkDependency(this.left, options.members) &&
             this.left.expression.toString() === SyntaxKind.ThisKeyword) {
             const rightExpression = this.right.toString(options);
 
-            if (checkDependency(this.left, options.props)) {
-                throw `Error: Can't assign OneWay() property use TwoWay() - ${this.toString()}`;
+            if (checkDependency(this.left, options.members.filter(m=>m.isReadOnly()))) {
+                throw `Error: Can't assign property use TwoWay() or Internal State - ${this.toString()}`;
             }
 
-            const stateSetting = `${this.left.compileStateSetting()}(${rightExpression})`
+            const stateSetting = `${this.left.compileStateSetting(rightExpression)}`
             const changeRising = this.left.compileStateChangeRising(options.state, rightExpression);
             return changeRising ? `(${stateSetting},${changeRising})` : stateSetting;
         }
@@ -527,7 +528,7 @@ export class If extends ExpressionWithExpression {
         this.elseStatement = elseStatement;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         const elseStatement = this.elseStatement ? `else ${this.elseStatement.toString(options)}` : "";
         return `if(${this.expression.toString(options)})${this.thenStatement.toString(options)}
         ${elseStatement}`;
@@ -541,13 +542,13 @@ export class If extends ExpressionWithExpression {
 }
 
 export class Conditional extends If {
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `${this.expression.toString(options)}?${this.thenStatement.toString(options)}:${this.elseStatement!.toString(options)}`;
     }
 }
 
 export class While extends If {
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `while(${this.expression.toString(options)})${this.thenStatement.toString(options)}`;
     }
 }
@@ -556,7 +557,7 @@ export class Do extends While {
     constructor(statement: Expression, expression: Expression) {
         super(expression, statement);
     }
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `do ${this.thenStatement.toString(options)} 
             while(${this.expression.toString(options)})`;
     }
@@ -574,7 +575,7 @@ export class For extends ExpressionWithExpression {
         this.incrementor = incrementor;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         const initializer = this.initializer ? this.initializer.toString(options) : "";
         const condition = this.condition ? this.condition.toString(options) : "";
         const incrementor = this.incrementor ? this.incrementor.toString(options) : "";
@@ -599,7 +600,7 @@ export class ForIn extends ExpressionWithExpression {
         this.statement = statement;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         const initializer = this.initializer.toString(options);
         const statement = this.statement.toString(options);
         const expression = super.toString(options);
@@ -656,12 +657,16 @@ export class Property extends Expression {
         return `${this.name}:${this.initializer}`;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return this.name.toString();
     }
 
     getter() { 
         return this.name.toString();
+    }
+
+    isReadOnly() { 
+        return !!this.decorators.find(d => d.name === "OneWay" || d.name === "Event");
     }
 }
 
@@ -786,7 +791,7 @@ export class PropertyAccess extends ExpressionWithExpression {
         this.name = name;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
 
         const expressionString = this.expression.toString();
         const internalState = options && options.internalState || [];
@@ -819,8 +824,8 @@ export class PropertyAccess extends ExpressionWithExpression {
         return `${this.expression.toString(options)}.${this.name}`;
     }
 
-    compileStateSetting() {
-        return stateSetter(this.name);
+    compileStateSetting(state: string) {
+        return `${stateSetter(this.name)}(${state})`;
     }
 
     compileStateChangeRising(state: State[] = [], rightExpressionString: string) {
@@ -870,7 +875,7 @@ export class Method {
         return this.declaration();
     }
 
-    declaration(prefix = "", options?: any) {
+    declaration(prefix = "", options?: toStringOptions) {
         return `${prefix} ${this.name}(${this.parametersTypeDeclaration()})${this.body.toString(options)}`;
     }
 
@@ -889,12 +894,16 @@ export class Method {
         }, {})).map(d => properties.find(p => p.name.toString() === d)).filter(d => d).reduce((d: string[], p) => d.concat(p!.getDependecy()), [])
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return this.name.toString();
     }
 
     getter() { 
         return this.toString();
+    }
+
+    isReadOnly() { 
+        return true;
     }
 }
 
@@ -1214,6 +1223,7 @@ export class ReactComponent {
     listenersDeclaration() {
         if (this.listeners.length) {
             return this.listeners.map(l => l.defaultDeclaration({
+                members: this.members,
                 internalState: this.internalState,
                 state: this.state,
                 props: this.props.concat(this.refs)
@@ -1318,6 +1328,7 @@ export class ReactComponent {
                 ${this.compileUseEffect()}
                 ${this.methods.map(m => {
                     return `const ${m.name}=useCallback(${m.declaration("function", {
+                        members: this.members,
                         internalState: this.internalState, state: this.state, props:this.props.concat(this.refs)
                     })}, [${
                         m.getDependency(this.internalState.concat(this.state).concat(this.props))
@@ -1340,7 +1351,7 @@ export class ElementAccess extends ExpressionWithExpression {
         this.index = index;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `${super.toString(options)}[${this.index.toString(options)}]`;
     }
 
@@ -1358,7 +1369,7 @@ export class Prefix extends Expression {
         this.operand = operand;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `${this.operator}${this.operand.toString(options)}`;
     }
 
@@ -1368,13 +1379,13 @@ export class Prefix extends Expression {
 }
 
 export class Postfix extends Prefix {
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `${this.operand.toString(options)}${this.operator}`;
     }
 }
 
 export class NonNullExpression extends ExpressionWithExpression {
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `${super.toString(options)}!`;
     }
 }
@@ -1391,7 +1402,7 @@ export class VariableDeclaration extends Expression {
         this.initializer = initializer;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         const initilizerDeclaration = this.initializer ? `=${this.initializer.toString(options)}` : "";
         return `${this.name}${compileType(this.type)}${initilizerDeclaration}`;
     }
@@ -1414,7 +1425,7 @@ export class VariableDeclarationList extends Expression {
         this.flags = flags;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         const declarations = this.declarations.map(d => d.toString(options)).filter(d => d);
         if (declarations.length === 0) { 
             return "";
@@ -1437,7 +1448,7 @@ export class VariableStatement extends Expression {
     }
 
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         const declarationList = this.declarationList.toString(options);
         return declarationList ? `${this.modifiers.join(" ")} ${declarationList}` : "";
     }
@@ -1461,7 +1472,7 @@ export class PropertySignature extends ExpressionWithOptionalExpression {
         this.type = type;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `${this.name}${this.questionToken}:${this.type}`;
     }
 
@@ -1480,7 +1491,7 @@ export class IndexSignature extends Expression {
         this.type = type;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `${this.parameters.map(p => `[${p.typeDeclaration()}]`)}:${this.type}`;
     }
 }
@@ -1492,7 +1503,7 @@ export class TemplateSpan extends ExpressionWithExpression {
         this.literal = literal;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `\${${super.toString(options)}}${this.literal}`;
     }
 }
@@ -1507,7 +1518,7 @@ export class TemplateExpression extends Expression {
         this.templateSpans = templateSpans;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `\`${this.head}${this.templateSpans.map(s => s.toString(options)).join("")}\``;
     }
 
@@ -1558,7 +1569,7 @@ export class CaseClause extends ExpressionWithOptionalExpression {
         this.statements = statements;
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `case ${super.toString(options)}:
             ${this.statements.map(s => s.toString(options)).join("\n")}
         `;
@@ -1576,7 +1587,7 @@ export class DefaultClause extends CaseClause {
         super(undefined, statements);
     }
 
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `default:
             ${this.statements.map(s => s.toString(options)).join("\n")}
         `;
@@ -1590,13 +1601,13 @@ export class CaseBlock extends Block {
 }
 
 export class Switch extends If {
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `switch(${this.expression.toString(options)})${this.thenStatement.toString(options)}`;
     }
 }
 
 export class ComputedPropertyName extends ExpressionWithExpression {
-    toString(options?: any) {
+    toString(options?: toStringOptions) {
         return `[${super.toString(options)}]`;
     }
 }

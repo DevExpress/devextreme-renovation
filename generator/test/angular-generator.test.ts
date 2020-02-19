@@ -478,7 +478,7 @@ mocha.describe("Angular generator", function () {
         mocha.it("TwoWay -> Output", function () {
             const decorator = createDecorator("TwoWay");
 
-            assert.strictEqual(decorator.toString(), "@Output()");
+            assert.strictEqual(decorator.toString(), "@Input()");
         });
 
         mocha.it("Event -> Input", function () {
@@ -689,7 +689,39 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(property.toString(), "@Input() onClick:EventEmitter<number> = new EventEmitter()");
-        });    
+        });  
+        
+        mocha.it("Generate change for TwoWay prop", function () { 
+            const property = generator.createProperty(
+                [createDecorator("TwoWay")],
+                [],
+                generator.createIdentifier("pressed"),
+                generator.SyntaxKind.QuestionToken,
+                "boolean",
+                generator.createFalse()
+            );
+
+            assert.strictEqual(getResult(property.toString()),
+                getResult(`@Input() pressed?:boolean = false
+                 @Output() pressedChange: EventEmitter<boolean> = new EventEmitter()`)
+            );
+        });
+
+        mocha.it("Generate change for TwoWay prop", function () { 
+            const property = generator.createProperty(
+                [createDecorator("TwoWay")],
+                [],
+                generator.createIdentifier("pressed"),
+                generator.SyntaxKind.QuestionToken,
+                undefined,
+                generator.createFalse()
+            );
+
+            assert.strictEqual(getResult(property.toString()),
+                getResult(`@Input() pressed?: = false
+                 @Output() pressedChange: EventEmitter<any> = new EventEmitter()`)
+            );
+        });
     });
 
     mocha.describe("Angular Component", function () { 
@@ -755,7 +787,7 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Input } from "@angular/core"; import {CommonModule} from "@angular/common"`));
             });
 
-            mocha.it("Has TwoWay property - Output", function () {
+            mocha.it("Has TwoWay property - Input, Output, EventEmitter", function () {
                 const component = createComponent(
                     [
                         generator.createProperty(
@@ -765,7 +797,7 @@ mocha.describe("Angular generator", function () {
                         )
                     ]
                 );
-                assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Output } from "@angular/core"; import {CommonModule} from "@angular/common"`));
+                assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Input, Output, EventEmitter } from "@angular/core"; import {CommonModule} from "@angular/common"`));
             });
 
             mocha.it("Has Event property - EventEmitter", function () {
@@ -899,7 +931,33 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.toString({
-                    members: [property]
+                    members: [property],
+                    internalState: [],
+                    state: [],
+                    props: []
+                }), "this.width");
+            });
+
+            mocha.it("Access TwoWay prop - this.prop", function () { 
+                const property = new Property(
+                    [createDecorator("TwoWay")],
+                    [],
+                    generator.createIdentifier("width"),
+                    undefined,
+                    undefined,
+                    undefined
+                );
+
+                const expression = generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("width")
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [property],
+                    internalState: [],
+                    state: [],
+                    props: []
                 }), "this.width");
             });
 
@@ -922,7 +980,36 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.toString({
-                    members: [property]
+                    members: [property],
+                    internalState: [],
+                    state: [],
+                    props: []
+                }), "this.width");
+            });
+
+            mocha.it("Access TwoWay props - this.props.prop", function () { 
+                const property = new Property(
+                    [createDecorator("TwoWay")],
+                    [],
+                    generator.createIdentifier("width"),
+                    undefined,
+                    undefined,
+                    undefined
+                );
+
+                const expression = generator.createPropertyAccess(
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("props")
+                    ),
+                    generator.createIdentifier("width")
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [property],
+                    internalState: [],
+                    state: [],
+                    props: []
                 }), "this.width");
             });
 
@@ -946,8 +1033,70 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.toString({
-                    members: [property]
+                    members: [property],
+                    internalState: [],
+                    state: [],
+                    props: []
                 }), "this.onClick.emit(10)");
+            });
+
+            mocha.it("Set TwoWay Prop", function () { 
+                const property = new Property(
+                    [createDecorator("TwoWay")],
+                    [],
+                    generator.createIdentifier("width"),
+                    undefined,
+                    undefined,
+                    undefined
+                );
+
+                const expression = generator.createBinary(
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("width")
+                    ),
+                    generator.SyntaxKind.EqualsToken,
+                    generator.createNumericLiteral("10")
+                );
+
+                assert.strictEqual(getResult(expression.toString({
+                    members: [property],
+                    internalState: [],
+                    state: [],
+                    props: []
+                })), getResult("this.widthChange.emit(this.width=10)"));
+            });
+
+            mocha.it("Can't set OneWay Prop", function () { 
+                const property = new Property(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("width"),
+                    undefined,
+                    undefined,
+                    undefined
+                );
+
+                const expression = generator.createBinary(
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("width")
+                    ),
+                    generator.SyntaxKind.EqualsToken,
+                    generator.createNumericLiteral("10")
+                );
+                let error = null;
+                try {
+                    expression.toString({
+                        members: [property],
+                        internalState: [],
+                        state: [],
+                        props: []
+                    });
+                } catch (e) { 
+                    error = e;
+                }
+                assert.strictEqual(error, "Error: Can't assign property use TwoWay() or Internal State - this.width=10");
             });
         });
     });
