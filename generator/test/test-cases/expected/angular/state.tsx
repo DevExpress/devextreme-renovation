@@ -17,13 +17,13 @@ export default class DxWidgetComponent {
 
     _viewModel: any;
     ngDoCheck() { 
-        this._viewModel = view(viewModel({
+        this._viewModel = viewModel({
             props: {
                 pressed: this.pressed,
                 pressedChange: this.pressedChange
             },
             updateState: this.updateState
-        }));
+        });
     }
 }
 

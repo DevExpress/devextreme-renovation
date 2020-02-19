@@ -1,11 +1,11 @@
 import React from "react";
 
-interface Component {
+interface Widget {
   height: number,
   width: number
 }
 
-export default function Component(props: {
+export default function Widget(props: {
   height: number,
   width: number
 }) {
@@ -14,7 +14,7 @@ export default function Component(props: {
   }));
 }
 
-function viewModel1(model: Component) {
+function viewModel1(model: Widget) {
   return {
     height: model.height
   }

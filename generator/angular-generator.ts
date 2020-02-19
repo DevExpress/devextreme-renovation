@@ -163,10 +163,10 @@ export class ArrowFunctionWithTemplate extends ArrowFunction {
 }
 
 class Decorator extends BaseDecorator { 
-    viewFunctions: { [name: string]: AngularFunction | ArrowFunctionWithTemplate };
-    constructor(expression: Call, viewFunctions: { [name: string]: AngularFunction | ArrowFunctionWithTemplate }) { 
+    context: AngularGeneratorContext;
+    constructor(expression: Call, context: AngularGeneratorContext) { 
         super(expression);
-        this.viewFunctions = viewFunctions;
+        this.context = context;
     }
 
     addParameter(name: string, value: Expression) {
@@ -189,7 +189,7 @@ class Decorator extends BaseDecorator {
             const viewFunctionValue = parameters.getProperty("view");
             let viewFunction: ArrowFunctionWithTemplate | AngularFunction | null = null;
             if (viewFunctionValue instanceof Identifier) { 
-                viewFunction = this.viewFunctions[viewFunctionValue.toString()];
+                viewFunction = this.context.viewFunctions ? this.context.viewFunctions[viewFunctionValue.toString()] : null;
             }
 
             if (viewFunction) { 
@@ -315,7 +315,7 @@ class AngularComponent extends ReactComponent {
         _viewModel: any;
 
         ngDoCheck(){
-            this._viewModel = view(viewModel({${this.compileViewModelArguments().join(",\n")}}));
+            this._viewModel = ${this.viewModel}({${this.compileViewModelArguments().join(",\n")}});
         }
         `;
     }
@@ -454,7 +454,7 @@ export class AngularGenerator extends Generator {
     }
 
     createDecorator(expression: Call) {
-        return new Decorator(expression, this.getContext().viewFunctions || {});
+        return new Decorator(expression, this.getContext());
     }
 
     createComponentBindings(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 

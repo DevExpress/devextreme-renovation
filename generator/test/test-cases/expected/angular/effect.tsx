@@ -26,13 +26,13 @@ export default class DxWidgetComponent {
 
     _viewModel: any;
     ngDoCheck() { 
-        this._viewModel = view(viewModel({
+        this._viewModel = viewModel({
             props: {
                 p: this.p,
                 s: this.s
             },
             i: this.i
-        }));
+        });
     }
 }
 

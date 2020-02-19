@@ -22,13 +22,13 @@ export default class DxWidgetComponent {
 
     _viewModel: any;
     ngDoCheck() { 
-        this._viewModel = view(viewModel({
+        this._viewModel = viewModel({
             props: {
                 height: this.height,
                 onClick: this.onClick
             },
             getHeight: this.getHeight
-        }));
+        });
     }
 }
 
