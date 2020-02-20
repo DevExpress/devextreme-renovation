@@ -385,6 +385,12 @@ export class PropertyAccess extends BasePropertyAccess {
             }
         }
 
+        const result = `${this.expression.toString(options)}.${this.name}`;
+
+        if (options && result === "this.props") { 
+            return "this";
+        }
+
         return `${this.expression.toString(options)}.${this.name}`;
     }
 

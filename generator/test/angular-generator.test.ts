@@ -1092,6 +1092,20 @@ mocha.describe("Angular generator", function () {
                 }), "this.width");
             });
 
+            mocha.it("Access props - this.props", function () { 
+                const expression = generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("props")
+                    )
+
+                assert.strictEqual(expression.toString({
+                    members: [],
+                    internalState: [],
+                    state: [],
+                    props: []
+                }), "this");
+            });
+
             mocha.it("Access TwoWay props - this.props.prop", function () { 
                 const property = new Property(
                     [createDecorator("TwoWay")],
