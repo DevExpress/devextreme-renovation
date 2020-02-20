@@ -798,6 +798,15 @@ mocha.describe("react-generator: expressions", function () {
         assert.strictEqual(expresion.toString(), "Component");
         assert.strictEqual(expresion.type, "Component");
     });
+
+    mocha.it("createAsExpression", function () { 
+        const expression = generator.createAsExpression(
+            generator.createThis(),
+            generator.createKeywordTypeNode(generator.SyntaxKind.AnyKeyword)
+        );
+
+        assert.strictEqual(expression.toString(), "this as any");
+    })
 });
 
 mocha.describe("common", function () {

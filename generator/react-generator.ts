@@ -1731,6 +1731,18 @@ export class JsxExpression extends ExpressionWithExpression {
     }
 }
 
+export class AsExpression extends ExpressionWithExpression { 
+    type: TypeNode | string;
+    constructor(expression: Expression, type: TypeNode | string) {
+        super(expression);
+        this.type = type;
+    }
+
+    toString(options?: toStringOptions) { 
+        return `${super.toString(options)} as ${this.type}`;
+    }
+}
+
 export interface GeneratorContex {
     path?: string;
     components?: { [name: string]: Heritable };
@@ -2205,6 +2217,10 @@ export class Generator {
 
     createCallChain(expression: Expression, questionDotToken: string = "", typeArguments: string[] = [], argumentsArray: Expression[] = []) {
         return new CallChain(expression, questionDotToken, typeArguments, argumentsArray);
+    }
+
+    createAsExpression(expression: Expression, type: TypeNode | string) { 
+        return new AsExpression(expression, type);
     }
 
     context: GeneratorContex[] = [];
