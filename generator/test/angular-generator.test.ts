@@ -274,6 +274,76 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), "#viewModel.refName");
         });
 
+        mocha.describe("slots", function () {
+            mocha.it("named slot", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("span"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("name")
+                        )
+                      )],
+                    generator.createJsxClosingElement(generator.createIdentifier("span"))
+                );
+
+                const slotProperty = generator.createProperty(
+                    [createDecorator("Slot")],
+                    [],
+                    generator.createIdentifier("name"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    generator.createFalse()
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [slotProperty],
+                    internalState: [],
+                    state: [],
+                    props: []
+                }), `<span ><ng-content select="[name]"></ng-content></span>`);
+            });
+
+            mocha.it("default slot", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("span"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("default")
+                        )
+                      )],
+                    generator.createJsxClosingElement(generator.createIdentifier("span"))
+                );
+
+                const slotProperty = generator.createProperty(
+                    [createDecorator("Slot")],
+                    [],
+                    generator.createIdentifier("default"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    generator.createFalse()
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [slotProperty],
+                    internalState: [],
+                    state: [],
+                    props: []
+                }), `<span ><ng-content></ng-content></span>`);
+            });
+        });
+
         mocha.describe("View Function", function () { 
             this.beforeEach(function () {
                 generator.setContext({});
@@ -391,6 +461,28 @@ mocha.describe("Angular generator", function () {
                         [],
                         ""
                     )
+                );
+
+                assert.strictEqual(expression.isJsx(), true);
+                assert.strictEqual(expression.getTemplate(), "<div />");
+                assert.strictEqual(expression.toString(), "");
+            });
+
+            mocha.it("template generation if jsx is wrapped into paren", function () {
+                const expression = generator.createArrowFunction(
+                    [],
+                    [],
+                    [],
+                    undefined,
+                    generator.SyntaxKind.GreaterThanToken,
+                    generator.createParen(
+                    generator.createJsxElement(
+                        generator.createJsxSelfClosingElement(
+                            generator.createIdentifier("div")
+                        ),
+                        [],
+                        ""
+                    ))
                 );
 
                 assert.strictEqual(expression.isJsx(), true);
@@ -721,6 +813,19 @@ mocha.describe("Angular generator", function () {
                 getResult(`@Input() pressed?: = false
                  @Output() pressedChange: EventEmitter<any> = new EventEmitter()`)
             );
+        });
+
+        mocha.it("@Slot prop should be a member of component", function () {
+            const property = generator.createProperty(
+                [createDecorator("Slot")],
+                [],
+                generator.createIdentifier("name"),
+                generator.SyntaxKind.QuestionToken,
+                undefined,
+                generator.createFalse()
+            );
+
+            assert.strictEqual(property.toString(), "");
         });
     });
 

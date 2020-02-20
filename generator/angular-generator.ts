@@ -62,7 +62,7 @@ export class AngularDirective extends JsxAttribute {
 }
 
 export class JsxExpression extends ReactJsxExpression {
-    toString() {
+    toString(options?: toStringOptions) {
         return this.expression.toString();
     }
 }
@@ -72,7 +72,7 @@ export class JsxChildExpression extends JsxExpression {
         super(expression.dotDotDotToken, expression.expression);
     }
 
-    toString() {
+    toString(options?: toStringOptions) {
         const stringValue = super.toString();
         if (this.expression.isJsx()) { 
             return stringValue;
@@ -80,6 +80,17 @@ export class JsxChildExpression extends JsxExpression {
         if (this.expression instanceof StringLiteral) { 
             return this.expression.expression;
         }
+        const slot = options?.members
+            .filter(m => m.decorators.find(d => d.name === "Slot"))
+            .find(s => stringValue.endsWith(`.${s.name.toString()}`)
+                || s.name.toString() === "children" && (stringValue.endsWith(".default") || stringValue.endsWith(".children")));
+        if (slot) { 
+            if (slot.name.toString() === "default" || slot.name.toString() === "children") { 
+                return `<ng-content></ng-content>`;
+            }
+            return `<ng-content select="[${slot.name}]"></ng-content>`;
+        }
+        
         return `{{${stringValue}}}`;
     }
 }
@@ -95,8 +106,9 @@ export class JsxElement extends Expression {
         this.closingElement = closingElement;
     }
 
-    toString() { 
-        return `${this.openingElement}${this.children.join("\n")}${this.closingElement}`;
+    toString(options?: toStringOptions) { 
+        const children: string = this.children.map(c => c.toString(options)).join("\n");
+        return `${this.openingElement}${children}${this.closingElement}`;
     }
 
     addAttribute(attribute: JsxAttribute) { 
@@ -108,7 +120,16 @@ export class JsxElement extends Expression {
     }
 }
 
-function getAngularTemplate(functionWithTemplate: AngularFunction | ArrowFunctionWithTemplate) {
+function getJsxExpression(e: ExpressionWithExpression | Expression): JsxExpression | undefined {
+    if (e instanceof JsxExpression || e instanceof JsxElement) {
+        return e as JsxExpression;
+    }
+    else if (e instanceof ExpressionWithExpression) { 
+        return getJsxExpression(e.expression);
+    }
+}
+
+function getAngularTemplate(functionWithTemplate: AngularFunction | ArrowFunctionWithTemplate, options?: toStringOptions) {
     if (!functionWithTemplate.isJsx()) {
         return "";
     }
@@ -120,14 +141,12 @@ function getAngularTemplate(functionWithTemplate: AngularFunction | ArrowFunctio
     if (returnStatement) { 
         functionWithTemplate.parameters[0];
 
-        const result = (returnStatement instanceof ExpressionWithExpression) ?
-            returnStatement.expression.toString() :
-            returnStatement.toString();
+        const expression = getJsxExpression(returnStatement)?.toString(options);
         
-        if (functionWithTemplate.parameters[0]) { 
-            return result.replace(new RegExp(functionWithTemplate.parameters[0].name.toString(), "g"), "_viewModel");
+        if (expression && functionWithTemplate.parameters[0]) { 
+            return expression.replace(new RegExp(functionWithTemplate.parameters[0].name.toString(), "g"), "_viewModel");
         }
-        return result;
+        return expression;
     }
 }
 export class AngularFunction extends Function { 
@@ -141,8 +160,8 @@ export class AngularFunction extends Function {
         return super.toString();
     }
 
-    getTemplate() {
-        return getAngularTemplate(this);
+    getTemplate(options?: toStringOptions) {
+        return getAngularTemplate(this, options);
     }
 }
 
@@ -157,8 +176,8 @@ export class ArrowFunctionWithTemplate extends ArrowFunction {
         return super.toString();
     }
     
-    getTemplate() {
-        return getAngularTemplate(this);
+    getTemplate(options?: toStringOptions) {
+        return getAngularTemplate(this, options);
     }
 }
 
@@ -177,7 +196,7 @@ class Decorator extends BaseDecorator {
         parameters.setProperty(name, value);
     }
 
-    toString() { 
+    toString(options?: toStringOptions) { 
         if (this.name === "OneWay" || this.name === "Event") {
             return "@Input()";
         } else if (this.name === "TwoWay") {
@@ -193,7 +212,7 @@ class Decorator extends BaseDecorator {
             }
 
             if (viewFunction) { 
-                const template = viewFunction.getTemplate();
+                const template = viewFunction.getTemplate(options);
                 if (template) { 
                     parameters.setProperty("template", new TemplateExpression(template, []));
                 }
@@ -227,6 +246,9 @@ export class Property extends BaseProperty {
         if (this.decorators.find(d => d.name.toString() === "TwoWay")) { 
             return `${defaultValue};
             @Output() ${this.name}Change: EventEmitter<${this.type||"any"}> = new EventEmitter()`
+        }
+        if (this.decorators.find(d => d.name === "Slot")) { 
+            return "";
         }
         return defaultValue;
     }
@@ -324,14 +346,19 @@ class AngularComponent extends ReactComponent {
         const extendTypes = this.heritageClauses.reduce((t: string[], h) => t.concat(h.types.map(t => t.type)), []);
         return `
         ${this.compileImports()}
-        ${this.decorator}
+        ${this.decorator.toString({
+            members: this.members,
+            state: [],
+            internalState: [],
+            props: []
+        })}
         ${this.modifiers.join(" ")} class ${this.name} ${extendTypes.length? `extends ${extendTypes.join(" ")}`:""} {
             ${this.members.map(m => m.toString({
                 internalState: [],
                 state: [],
                 props: [],
                 members: this.members
-            })).join(";\n")}
+            })).filter(m=>m).join(";\n")}
             ${this.compileViewModel()}
         }
         @NgModule({

@@ -9,6 +9,10 @@ function printNodeValue(node: ts.Node):string {
         return (node as ts.Identifier).escapedText.toString();
     }
 
+    if (ts.isTemplateLiteral(node)) { 
+        return (node as any).rawText.replace(/(\s|\s)/gi, "");
+    }
+
     if (ts.isStringLiteral(node)) { 
         return node.text;
     }
