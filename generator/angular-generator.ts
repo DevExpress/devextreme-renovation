@@ -257,6 +257,9 @@ export class Property extends BaseProperty {
         if (this.decorators.find(d => d.name === "Event")) { 
             return `${this.name}.emit`;
         }
+        if (this.decorators.find(d => d.name === "Ref")) { 
+            return `${this.name}.nativeElement`
+        }
         return this.name.toString();
     }
 }

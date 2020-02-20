@@ -1217,6 +1217,29 @@ mocha.describe("Angular generator", function () {
                 }
                 assert.strictEqual(error, "Error: Can't assign property use TwoWay() or Internal State - this.width=10");
             });
+
+            mocha.it("Access elementRef", function () { 
+                const property = new Property(
+                    [createDecorator("Ref")],
+                    [],
+                    generator.createIdentifier("div"),
+                    undefined,
+                    undefined,
+                    undefined
+                );
+
+                const expression = generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("div")
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [property],
+                    internalState: [],
+                    state: [],
+                    props: []
+                }), "this.div.nativeElement");
+            });
         });
     });
 
