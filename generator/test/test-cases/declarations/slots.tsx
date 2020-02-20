@@ -1,3 +1,5 @@
+import { Component, Slot } from "../../../component_declaration/common";
+
 function view(viewModel) {
     return (
         <div>
@@ -15,7 +17,7 @@ function viewModel() { }
     viewModel: viewModel,
     view: view
 })
-export default class Component {
+export default class Widget {
     @Slot() namedSlot?: any;
     @Slot() default?: any;
 }

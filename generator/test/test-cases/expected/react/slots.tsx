@@ -14,12 +14,12 @@ function viewModel() { }
 
 import React from "react";
 
-interface Component {
+interface Widget {
     namedSlot?: React.ReactNode,
     children?: React.ReactNode
 }
 
-export default function Component(props: {
+export default function Widget(props: {
     namedSlot?: React.ReactNode,
     children?: React.ReactNode
 }) {

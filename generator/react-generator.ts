@@ -2,6 +2,7 @@ import SyntaxKind from "./syntaxKind";
 import fs from "fs";
 import path from "path";
 import { compileCode } from "./component-compiler";
+import { JsxElement } from "./angular-generator";
 
 const eventsDictionary = {
     pointerover: "onPointerOver",
@@ -19,10 +20,6 @@ function variableDeclaration(name: Identifier, type: string = "", initializer?: 
     return `${name}${compileType(type, questionToken)}${initilizerDeclaration}`;
 }
 
-function stateGetter(stateName: Identifier | string, addParen = true) {
-    const expr = `${stateName}!==undefined?${stateName}:_${stateName}`;
-    return addParen ? `(${expr})` : expr;
-}
 
 function getLocalStateName(name: Identifier | string) {
     return `__state_${name}`;
@@ -32,17 +29,28 @@ function getPropName(name: Identifier | string) {
     return `props.${name}`;
 }
 
+export interface toStringOptions {
+    members: Array<Property | Method>;
+    internalState: InternalState[];
+    state: State[];
+    props: Prop[];
+}
+
 export class Expression {
     getDependency(): string[] {
         return [];
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+    toString(options?: toStringOptions) {
         return "";
     }
 
     getAllDependency() {
         return this.getDependency();
+    }
+
+    isJsx() { 
+        return false;
     }
 }
 
@@ -59,11 +67,13 @@ export class SimpleExpression extends Expression {
 }
 
 export class StringLiteral extends SimpleExpression {
-    constructor(value: string) {
+    quoteSymbol: string;
+    constructor(value: string, quoteSymbol = '"') {
         super(value);
+        this.quoteSymbol = quoteSymbol;
     }
     toString() {
-        return `"${this.expression}"`;
+        return `${this.quoteSymbol}${this.expression}${this.quoteSymbol}`;
     }
 }
 
@@ -86,24 +96,28 @@ export class ExpressionWithExpression extends Expression {
         this.expression = expression;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return this.expression.toString(internalState, state, props);
+    toString(options?: toStringOptions) {
+        return this.expression.toString(options);
     }
 
     getDependency() {
         return this.expression.getDependency();
     }
+
+    isJsx() { 
+        return this.expression.isJsx();
+    }
 }
 
 export class TypeOf extends ExpressionWithExpression {
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `typeof ${this.expression.toString(internalState, state, props)}`;
+    toString(options?: toStringOptions) {
+        return `typeof ${this.expression.toString(options)}`;
     }
 }
 
 export class Void extends ExpressionWithExpression {
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `void ${this.expression.toString(internalState, state, props)}`;
+    toString(options?: toStringOptions) {
+        return `void ${this.expression.toString(options)}`;
     }
 }
 
@@ -115,8 +129,8 @@ export class ExpressionWithOptionalExpression extends Expression {
         this.expression = expression;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return this.expression ? this.expression.toString(internalState, state, props) : "";
+    toString(options?: toStringOptions) {
+        return this.expression ? this.expression.toString(options) : "";
     }
 
     getDependency() {
@@ -143,7 +157,7 @@ export class BindingElement {
 }
 
 export class Delete extends ExpressionWithExpression {
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+    toString(options?: toStringOptions) {
         return `${SyntaxKind.DeleteKeyword} ${super.toString()}`;
     }
 }
@@ -179,15 +193,15 @@ export class ArrayLiteral extends Expression {
 }
 
 export class PropertyAssignment extends Expression {
-    key: string;
+    key: Identifier;
     value: Expression;
-    constructor(key: string, value: Expression) {
+    constructor(key: Identifier, value: Expression) {
         super();
         this.key = key;
         this.value = value;
     }
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `${this.key}:${this.value.toString(internalState, state, props)}`;
+    toString(options?: toStringOptions) {
+        return `${this.key}:${this.value.toString(options)}`;
     }
 
     getDependency() {
@@ -222,8 +236,8 @@ export class SpreadAssignment extends ExpressionWithExpression {
     key: null = null;
     value: null = null;
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `...${this.expression.toString(internalState, state, props)}`;
+    toString(options?: toStringOptions) {
+        return `...${this.expression.toString(options)}`;
     }
 }
 
@@ -239,12 +253,25 @@ export class ObjectLiteral extends Expression {
     getProperty(propertyName: string) {
         const property = this.properties.find(p => p.key && p.key.toString() === propertyName);
         if (property) {
-            return property.value!.toString();
+            return property.value;
         }
     }
 
-    toString(internalState: InternalState[], state: State[], props: Prop[]) {
-        return `{${this.properties.map(p => p.toString(internalState, state, props)).join(`,\n`)}}`;
+    setProperty(propertyName: string, value: Expression) { 
+        this.properties.push(
+            new PropertyAssignment(
+                new Identifier(propertyName),
+                value
+            )
+        )
+    }
+
+    removeProperty(propertyName: string) { 
+        this.properties = this.properties.filter(p => p.key?.toString() !== propertyName);
+    }
+
+    toString(options?:any) {
+        return `{${this.properties.map(p => p.toString(options)).join(`,\n`)}}`;
     }
 
     getDependency() {
@@ -261,9 +288,9 @@ export class Block extends Expression {
         this.multiLine = multiLine;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+    toString(options?: toStringOptions) {
         return `{
-            ${this.statements.map(s => s.toString(internalState, state, props)).join("\n")}
+            ${this.statements.map(s => s.toString(options)).join("\n")}
         }`
     }
 
@@ -271,6 +298,10 @@ export class Block extends Expression {
         return this.statements.reduce((d: string[], s) => {
             return d.concat(s.getDependency());
         }, []);
+    }
+
+    isJsx() { 
+        return this.statements.some(s => s.isJsx());
     }
 }
 
@@ -283,8 +314,8 @@ export class PropertyAccessChain extends ExpressionWithExpression {
         this.name = name;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `${this.expression.toString(internalState, state, props)}${this.questionDotToken}${this.name.toString(internalState, state, props)}`;
+    toString(options?: toStringOptions) {
+        return `${this.expression.toString(options)}${this.questionDotToken}${this.name.toString(options)}`;
     }
 
     getDependency() {
@@ -324,8 +355,8 @@ export class Parameter {
 }
 
 export class Paren extends ExpressionWithExpression {
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `(${super.toString(internalState, state, props)})`;
+    toString(options?: toStringOptions) {
+        return `(${super.toString(options)})`;
     }
 }
 
@@ -342,8 +373,8 @@ export class Call extends ExpressionWithExpression {
         return this.argumentsArray.map(a => a);
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `${this.expression.toString(internalState, state, props)}(${this.argumentsArray.map(a => a.toString(internalState, state, props)).join(",")})`;
+    toString(options?: toStringOptions) {
+        return `${this.expression.toString(options)}(${this.argumentsArray.map(a => a.toString(options)).join(",")})`;
     }
 
     getDependency() {
@@ -355,8 +386,8 @@ export class Call extends ExpressionWithExpression {
 }
 
 export class New extends Call {
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `${SyntaxKind.NewKeyword} ${super.toString(internalState, state, props)}`;
+    toString(options?: toStringOptions) {
+        return `${SyntaxKind.NewKeyword} ${super.toString(options)}`;
     }
 }
 
@@ -367,12 +398,12 @@ export class CallChain extends Call {
         this.questionDotToken = questionDotToken;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `${this.expression.toString(internalState, state, props)}${this.questionDotToken}(${this.argumentsArray.map(a => a.toString(internalState, state, props)).join(",")})`;
+    toString(options?: toStringOptions) {
+        return `${this.expression.toString(options)}${this.questionDotToken}(${this.argumentsArray.map(a => a.toString(options)).join(",")})`;
     }
 }
 
-export class Function {
+export class Function extends Expression {
     decorators: Decorator[];
     modifiers: string[];
     asteriskToken: string;
@@ -382,13 +413,14 @@ export class Function {
     type: string;
     body: Block;
     constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier | undefined, typeParameters: string[] = [], parameters: Parameter[], type: string, body: Block) {
+        super();
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.asteriskToken = asteriskToken;
         this.name = name;
         this.typeParameters = typeParameters;
-        this.parameters = parameters,
-            this.type = type;
+        this.parameters = parameters;
+        this.type = type;
         this.body = body;
     }
 
@@ -399,11 +431,11 @@ export class Function {
     }
 
     toString() {
-
+        return this.declaration();
     }
 }
 
-function checkDependency(expression: Expression, properties: Array<InternalState | State | Prop> = []) {
+function checkDependency(expression: Expression, properties: Array<InternalState | State | Prop | Property | Method> = []) {
     const dependency = expression.getAllDependency().reduce((r: { [name: string]: boolean }, d) => {
         r[d] = true;
         return r;
@@ -429,8 +461,8 @@ export class ArrowFunction extends Expression {
         this.equalsGreaterThanToken = equalsGreaterThanToken;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        const bodyString = this.body.toString(internalState, state, props);
+    toString(options?: toStringOptions) {
+        const bodyString = this.body.toString(options);
         return `${this.modifiers.join(" ")} (${this.parameters.map(p => p.declaration()).join(",")})${compileType(this.type)} ${this.equalsGreaterThanToken} ${bodyString}`;
     }
 
@@ -440,8 +472,8 @@ export class ArrowFunction extends Expression {
 }
 
 export class ReturnStatement extends ExpressionWithExpression {
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `return ${super.toString(internalState, state, props)};`;
+    toString(options?: toStringOptions) {
+        return `return ${super.toString(options)};`;
     }
 }
 
@@ -456,22 +488,23 @@ export class Binary extends Expression {
         this.right = right;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        if (this.operator === SyntaxKind.EqualsToken &&
+    toString(options?: toStringOptions) {
+        if (options &&
+            this.operator === SyntaxKind.EqualsToken &&
             this.left instanceof PropertyAccess &&
-            this.left.toString() !== this.left.toString(internalState, state, props) &&
+            checkDependency(this.left, options.members) &&
             this.left.expression.toString() === SyntaxKind.ThisKeyword) {
-            const rightExpression = this.right.toString(internalState, state, props);
+            const rightExpression = this.right.toString(options);
 
-            if (checkDependency(this.left, props)) {
-                throw `Error: Can't assign OneWay() property use TwoWay() - ${this.toString()}`;
+            if (checkDependency(this.left, options.members.filter(m=>m.isReadOnly()))) {
+                throw `Error: Can't assign property use TwoWay() or Internal State - ${this.toString()}`;
             }
 
-            const stateSetting = `${this.left.compileStateSetting()}(${rightExpression})`
-            const changeRising = this.left.compileStateChangeRising(state, rightExpression);
+            const stateSetting = `${this.left.compileStateSetting(rightExpression)}`
+            const changeRising = this.left.compileStateChangeRising(options.state, rightExpression);
             return changeRising ? `(${stateSetting},${changeRising})` : stateSetting;
         }
-        return `${this.left.toString(internalState, state, props)}${this.operator}${this.right.toString(internalState, state, props)}`;
+        return `${this.left.toString(options)}${this.operator}${this.right.toString(options)}`;
     }
 
     getDependency() {
@@ -495,9 +528,9 @@ export class If extends ExpressionWithExpression {
         this.elseStatement = elseStatement;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        const elseStatement = this.elseStatement ? `else ${this.elseStatement.toString(internalState, state, props)}` : "";
-        return `if(${this.expression.toString(internalState, state, props)})${this.thenStatement.toString(internalState, state, props)}
+    toString(options?: toStringOptions) {
+        const elseStatement = this.elseStatement ? `else ${this.elseStatement.toString(options)}` : "";
+        return `if(${this.expression.toString(options)})${this.thenStatement.toString(options)}
         ${elseStatement}`;
     }
 
@@ -509,14 +542,14 @@ export class If extends ExpressionWithExpression {
 }
 
 export class Conditional extends If {
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `${this.expression.toString(internalState, state, props)}?${this.thenStatement.toString(internalState, state, props)}:${this.elseStatement!.toString(internalState, state, props)}`;
+    toString(options?: toStringOptions) {
+        return `${this.expression.toString(options)}?${this.thenStatement.toString(options)}:${this.elseStatement!.toString(options)}`;
     }
 }
 
 export class While extends If {
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `while(${this.expression.toString(internalState, state, props)})${this.thenStatement.toString(internalState, state, props)}`;
+    toString(options?: toStringOptions) {
+        return `while(${this.expression.toString(options)})${this.thenStatement.toString(options)}`;
     }
 }
 
@@ -524,9 +557,9 @@ export class Do extends While {
     constructor(statement: Expression, expression: Expression) {
         super(expression, statement);
     }
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `do ${this.thenStatement.toString(internalState, state, props)} 
-            while(${this.expression.toString(internalState, state, props)})`;
+    toString(options?: toStringOptions) {
+        return `do ${this.thenStatement.toString(options)} 
+            while(${this.expression.toString(options)})`;
     }
 }
 
@@ -542,12 +575,12 @@ export class For extends ExpressionWithExpression {
         this.incrementor = incrementor;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        const initializer = this.initializer ? this.initializer.toString(internalState, state, props) : "";
-        const condition = this.condition ? this.condition.toString(internalState, state, props) : "";
-        const incrementor = this.incrementor ? this.incrementor.toString(internalState, state, props) : "";
+    toString(options?: toStringOptions) {
+        const initializer = this.initializer ? this.initializer.toString(options) : "";
+        const condition = this.condition ? this.condition.toString(options) : "";
+        const incrementor = this.incrementor ? this.incrementor.toString(options) : "";
 
-        return `for(${initializer};${condition};${incrementor})${this.expression.toString(internalState, state, props)}`;
+        return `for(${initializer};${condition};${incrementor})${this.expression.toString(options)}`;
     }
 
     getDependency() {
@@ -567,10 +600,10 @@ export class ForIn extends ExpressionWithExpression {
         this.statement = statement;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        const initializer = this.initializer.toString(internalState, state, props);
-        const statement = this.statement.toString(internalState, state, props);
-        const expression = super.toString(internalState, state, props);
+    toString(options?: toStringOptions) {
+        const initializer = this.initializer.toString(options);
+        const statement = this.statement.toString(options);
+        const expression = super.toString(options);
 
         return `for(${initializer} in ${expression})${statement}`;
     }
@@ -593,12 +626,11 @@ export class Decorator {
     }
 
     toString() {
-        return "";
-        // return `@${this.expression.toString()}`;
+        return `@${this.expression.toString()}`;
     }
 }
 
-export class Property {
+export class Property extends Expression {
     decorators: Decorator[]
     modifiers: string[];
     name: Identifier;
@@ -608,6 +640,7 @@ export class Property {
     inherited: boolean = false;
 
     constructor(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression) {
+        super();
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.name = name;
@@ -624,8 +657,16 @@ export class Property {
         return `${this.name}:${this.initializer}`;
     }
 
-    toString() {
+    toString(options?: toStringOptions) {
         return this.name.toString();
+    }
+
+    getter() { 
+        return this.name.toString();
+    }
+
+    isReadOnly() { 
+        return !!this.decorators.find(d => d.name === "OneWay" || d.name === "Event");
     }
 }
 
@@ -638,15 +679,19 @@ function inheritMembers(heritageClauses: HeritageClause[], members: Array<Proper
 
 export class Class {
     decorators: Decorator[];
-    name: Identifier;
+    _name: Identifier;
     members: Array<Property | Method>;
     modifiers: string[];
     heritageClauses: HeritageClause[];
 
+    get name() { 
+        return this._name.toString();
+    }
+
     constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, typeParameters: any[], heritageClauses: HeritageClause[]=[], members: Array<Property | Method>) {
         members = inheritMembers(heritageClauses, members);
         this.decorators = decorators;
-        this.name = name;
+        this._name = name;
         this.members = members;
         this.modifiers = modifiers;
         this.heritageClauses = heritageClauses;
@@ -658,7 +703,7 @@ export class Class {
 }
 
 interface Heritable {
-    name: StringLiteral;
+    name: string;
     heritageProperies: Property[];
     compileDefaultProps(): string;
     defaultPropsDest(): string;
@@ -746,8 +791,13 @@ export class PropertyAccess extends ExpressionWithExpression {
         this.name = name;
     }
 
-    toString(internalState: InternalState[] = [], state: State[] = [], props: Prop[] = []) {
+    toString(options?: toStringOptions) {
+
         const expressionString = this.expression.toString();
+        const internalState = options && options.internalState || [];
+        const state = options && options.state || [];
+        const props = options && options.props || [];
+
         const findProperty = (p: InternalState | State | Prop) => p.name.valueOf() === this.name.valueOf();
         if (expressionString === SyntaxKind.ThisKeyword || expressionString === `${SyntaxKind.ThisKeyword}.props`) {
             const p = props.find(findProperty);
@@ -771,11 +821,11 @@ export class PropertyAccess extends ExpressionWithExpression {
             return this.name.toString();
         }
 
-        return `${this.expression.toString(internalState, state, props)}.${this.name}`;
+        return `${this.expression.toString(options)}.${this.name}`;
     }
 
-    compileStateSetting() {
-        return stateSetter(this.name);
+    compileStateSetting(state: string) {
+        return `${stateSetter(this.name)}(${state})`;
     }
 
     compileStateChangeRising(state: State[] = [], rightExpressionString: string) {
@@ -801,7 +851,7 @@ export class Method {
     parameters: Parameter[];
     type: string;
     body: Block;
-    constructor(decorators: Decorator[] = [], modifiers: string[], asteriskToken: string, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: string = "void", body: Block) {
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: string = "void", body: Block) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.asteriskToken = asteriskToken;
@@ -825,12 +875,12 @@ export class Method {
         return this.declaration();
     }
 
-    declaration(prefix = "", internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `${prefix} ${this.name}(${this.parametersTypeDeclaration()})${this.body.toString(internalState, state, props)}`;
+    declaration(prefix = "", options?: toStringOptions) {
+        return `${prefix} ${this.name}(${this.parametersTypeDeclaration()})${this.body.toString(options)}`;
     }
 
-    arrowDeclaration(internalState: InternalState[], state: State[], props: Prop[]) {
-        return `(${this.parametersTypeDeclaration()})=>${this.body.toString(internalState, state, props)}`
+    arrowDeclaration(options?:any) {
+        return `(${this.parametersTypeDeclaration()})=>${this.body.toString(options)}`
     }
 
     getDependency(properties: Array<State | Prop | InternalState> = []) {
@@ -844,8 +894,16 @@ export class Method {
         }, {})).map(d => properties.find(p => p.name.toString() === d)).filter(d => d).reduce((d: string[], p) => d.concat(p!.getDependecy()), [])
     }
 
-    toString() {
-        return this.name;
+    toString(options?: toStringOptions) {
+        return this.name.toString();
+    }
+
+    getter() { 
+        return this.toString();
+    }
+
+    isReadOnly() { 
+        return true;
     }
 }
 
@@ -996,7 +1054,7 @@ export class Listener {
         this.method = method;
         const [event, parameters] = method.decorators.find(d => d.name === "Listen")!.expression.arguments;
         if (parameters) {
-            this.target = (parameters as ObjectLiteral).getProperty("target") as string;
+            this.target = (parameters as ObjectLiteral).getProperty("target")?.toString();
         }
         if (event) {
             this.eventName = event.toString();
@@ -1011,9 +1069,9 @@ export class Listener {
         return this.method.typeDeclaration();
     }
 
-    defaultDeclaration(internalState: InternalState[], state: State[], props: Prop[]) {
-        const dependency = this.method.getDependency(state.concat(props).concat(internalState));
-        return `const ${this.name}=useCallback(${this.method.arrowDeclaration(internalState, state, props)}, [${dependency.join(",")}])`;
+    defaultDeclaration(options: toStringOptions) {
+        const dependency = this.method.getDependency(options.state.concat(options.props).concat(options.internalState));
+        return `const ${this.name}=useCallback(${this.method.arrowDeclaration(options)}, [${dependency.join(",")}])`;
     }
 }
 
@@ -1034,7 +1092,7 @@ export class ReactComponent {
     events: Property[] = [];
 
     modifiers: string[];
-    name: Identifier;
+    _name: Identifier;
 
     listeners: Listener[];
     methods: Method[];
@@ -1045,12 +1103,18 @@ export class ReactComponent {
     viewModel: any;
     heritageClauses: HeritageClause[];
 
+    members: Array<Property | Method>;
+
+    get name() { 
+        return this._name.toString();
+    }
+
     constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>) {
         this.modifiers = modifiers;
-        this.name = name;
+        this._name = name;
         this.heritageClauses = heritageClauses;
 
-        members = inheritMembers(heritageClauses, members);
+        this.members = members = inheritMembers(heritageClauses, members);
 
         this.props = members
             .filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template"))
@@ -1099,7 +1163,7 @@ export class ReactComponent {
         return ["import React from 'react'"];
     }
 
-    getImports() {
+    compileImports() {
         const imports: string[] = [];
         const hooks: string[] = [];
 
@@ -1158,7 +1222,12 @@ export class ReactComponent {
 
     listenersDeclaration() {
         if (this.listeners.length) {
-            return this.listeners.map(l => l.defaultDeclaration(this.internalState, this.state, this.props.concat(this.refs))).join(";\n");
+            return this.listeners.map(l => l.defaultDeclaration({
+                members: this.members,
+                internalState: this.internalState,
+                state: this.state,
+                props: this.props.concat(this.refs)
+            })).join(";\n");
         }
         return "";
     }
@@ -1168,7 +1237,9 @@ export class ReactComponent {
 
         const effects = this.effects;
 
-        const effectsString = effects.map(e => `useEffect(${e.arrowDeclaration(this.internalState, this.state, this.props.concat(this.refs))}, 
+        const effectsString = effects.map(e => `useEffect(${e.arrowDeclaration({
+            internalState: this.internalState, state: this.state, props: this.props.concat(this.refs)
+        })}, 
         [${e.getDependency(this.props.concat(this.state).concat(this.internalState))}])`).join(";\n");
 
         let subscriptionsString = "";
@@ -1241,7 +1312,7 @@ export class ReactComponent {
 
     toString() {
         return `
-            ${this.getImports()}
+            ${this.compileImports()}
             ${this.compileComponentInterface()}
 
             ${this.modifiers.join(" ")} function ${this.name}(props: {
@@ -1256,7 +1327,10 @@ export class ReactComponent {
                 ${this.listenersDeclaration()}
                 ${this.compileUseEffect()}
                 ${this.methods.map(m => {
-                    return `const ${m.name}=useCallback(${m.declaration("function", this.internalState, this.state, this.props.concat(this.refs))}, [${
+                    return `const ${m.name}=useCallback(${m.declaration("function", {
+                        members: this.members,
+                        internalState: this.internalState, state: this.state, props:this.props.concat(this.refs)
+                    })}, [${
                         m.getDependency(this.internalState.concat(this.state).concat(this.props))
                     }]);`;
                 }).join("\n")}
@@ -1277,8 +1351,8 @@ export class ElementAccess extends ExpressionWithExpression {
         this.index = index;
     }
 
-    toString(internalState: InternalState[], state: State[], props: Prop[]) {
-        return `${super.toString(internalState, state, props)}[${this.index.toString(internalState, state, props)}]`;
+    toString(options?: toStringOptions) {
+        return `${super.toString(options)}[${this.index.toString(options)}]`;
     }
 
     getDependency() {
@@ -1295,8 +1369,8 @@ export class Prefix extends Expression {
         this.operand = operand;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `${this.operator}${this.operand.toString(internalState, state, props)}`;
+    toString(options?: toStringOptions) {
+        return `${this.operator}${this.operand.toString(options)}`;
     }
 
     getDependency() {
@@ -1305,14 +1379,14 @@ export class Prefix extends Expression {
 }
 
 export class Postfix extends Prefix {
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `${this.operand.toString(internalState, state, props)}${this.operator}`;
+    toString(options?: toStringOptions) {
+        return `${this.operand.toString(options)}${this.operator}`;
     }
 }
 
 export class NonNullExpression extends ExpressionWithExpression {
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `${super.toString(internalState, state, props)}!`;
+    toString(options?: toStringOptions) {
+        return `${super.toString(options)}!`;
     }
 }
 
@@ -1328,8 +1402,8 @@ export class VariableDeclaration extends Expression {
         this.initializer = initializer;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        const initilizerDeclaration = this.initializer ? `=${this.initializer.toString(internalState, state, props)}` : "";
+    toString(options?: toStringOptions) {
+        const initilizerDeclaration = this.initializer ? `=${this.initializer.toString(options)}` : "";
         return `${this.name}${compileType(this.type)}${initilizerDeclaration}`;
     }
 
@@ -1351,8 +1425,12 @@ export class VariableDeclarationList extends Expression {
         this.flags = flags;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `${this.flags} ${this.declarations.map(d => d.toString(internalState, state, props)).join(",\n")}`;
+    toString(options?: toStringOptions) {
+        const declarations = this.declarations.map(d => d.toString(options)).filter(d => d);
+        if (declarations.length === 0) { 
+            return "";
+        }
+        return `${this.flags} ${declarations}`;
     }
 
     getDependency() {
@@ -1370,9 +1448,9 @@ export class VariableStatement extends Expression {
     }
 
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `${this.
-            modifiers.join(" ")} ${this.declarationList.toString(internalState, state, props)}`;
+    toString(options?: toStringOptions) {
+        const declarationList = this.declarationList.toString(options);
+        return declarationList ? `${this.modifiers.join(" ")} ${declarationList}` : "";
     }
 
     getDependency() {
@@ -1394,7 +1472,7 @@ export class PropertySignature extends ExpressionWithOptionalExpression {
         this.type = type;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+    toString(options?: toStringOptions) {
         return `${this.name}${this.questionToken}:${this.type}`;
     }
 
@@ -1413,7 +1491,7 @@ export class IndexSignature extends Expression {
         this.type = type;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+    toString(options?: toStringOptions) {
         return `${this.parameters.map(p => `[${p.typeDeclaration()}]`)}:${this.type}`;
     }
 }
@@ -1425,8 +1503,8 @@ export class TemplateSpan extends ExpressionWithExpression {
         this.literal = literal;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `\${${super.toString(internalState, state, props)}}${this.literal}`;
+    toString(options?: toStringOptions) {
+        return `\${${super.toString(options)}}${this.literal}`;
     }
 }
 
@@ -1440,8 +1518,8 @@ export class TemplateExpression extends Expression {
         this.templateSpans = templateSpans;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `\`${this.head}${this.templateSpans.map(s => s.toString(internalState, state, props)).join("")}\``;
+    toString(options?: toStringOptions) {
+        return `\`${this.head}${this.templateSpans.map(s => s.toString(options)).join("")}\``;
     }
 
     getDependency() {
@@ -1491,9 +1569,9 @@ export class CaseClause extends ExpressionWithOptionalExpression {
         this.statements = statements;
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `case ${super.toString(internalState, state, props)}:
-            ${this.statements.map(s => s.toString(internalState, state, props)).join("\n")}
+    toString(options?: toStringOptions) {
+        return `case ${super.toString(options)}:
+            ${this.statements.map(s => s.toString(options)).join("\n")}
         `;
     }
 
@@ -1509,9 +1587,9 @@ export class DefaultClause extends CaseClause {
         super(undefined, statements);
     }
 
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
+    toString(options?: toStringOptions) {
         return `default:
-            ${this.statements.map(s => s.toString(internalState, state, props)).join("\n")}
+            ${this.statements.map(s => s.toString(options)).join("\n")}
         `;
     }
 }
@@ -1523,14 +1601,14 @@ export class CaseBlock extends Block {
 }
 
 export class Switch extends If {
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `switch(${this.expression.toString(internalState, state, props)})${this.thenStatement.toString(internalState, state, props)}`;
+    toString(options?: toStringOptions) {
+        return `switch(${this.expression.toString(options)})${this.thenStatement.toString(options)}`;
     }
 }
 
 export class ComputedPropertyName extends ExpressionWithExpression {
-    toString(internalState?: InternalState[], state?: State[], props?: Prop[]) {
-        return `[${super.toString(internalState, state, props)}]`;
+    toString(options?: toStringOptions) {
+        return `[${super.toString(options)}]`;
     }
 }
 
@@ -1585,6 +1663,83 @@ export class ImportClause {
         }
 
         return result.length ? `${result.join(",")} from ` : "";
+    }
+}
+
+export class JsxAttribute { 
+    name: Identifier;
+    initializer: Expression;
+    constructor(name: Identifier, initializer: Expression) { 
+        this.name = name;
+        this.initializer = initializer;
+    }
+
+    toString() { 
+        const name = this.name.toString();
+        return `${(eventsDictionary as any)[name] || this.name.toString()}=${this.initializer}`;
+    }
+}
+
+export class JsxOpeningElement extends Expression { 
+    tagName: Identifier;
+    typeArguments: any[];
+    attributes: JsxAttribute[];
+
+    constructor(tagName: Identifier, typeArguments: any[] = [], attributes: JsxAttribute[]) { 
+        super();
+        this.tagName = tagName;
+        this.typeArguments = typeArguments;
+        this.attributes = attributes;
+    }
+
+    attributesString() { 
+        return this.attributes.map(a => a.toString()).join("\n");
+    }
+
+    toString() { 
+        return `<${this.tagName} ${this.attributesString()}>`;
+    }
+
+    addAttribute(attribute: JsxAttribute) { 
+        this.attributes.push(attribute);
+    }
+
+    isJsx() { 
+        return true
+    }
+}
+
+export class JsxSelfClosingElement extends JsxOpeningElement{
+    toString() { 
+        return `<${this.tagName} ${this.attributesString()}/>`;
+    }
+ }
+
+export class JsxExpression extends ExpressionWithExpression { 
+    dotDotDotToken: string;
+    constructor(dotDotDotToken: string="", expression: Expression) {
+        super(expression);
+        this.dotDotDotToken = dotDotDotToken;
+    }
+
+    toString() { 
+        return `{${this.dotDotDotToken}${this.expression}}`;
+    }
+
+    isJsx() { 
+        return true;
+    }
+}
+
+export class AsExpression extends ExpressionWithExpression { 
+    type: TypeNode | string;
+    constructor(expression: Expression, type: TypeNode | string) {
+        super(expression);
+        this.type = type;
+    }
+
+    toString(options?: toStringOptions) { 
+        return `${super.toString(options)} as ${this.type}`;
     }
 }
 
@@ -1665,7 +1820,7 @@ export class Generator {
         return new BindingPattern(elements, "object");
     }
 
-    createPropertyAssignment(key: string, value: Expression) {
+    createPropertyAssignment(key: Identifier, value: Expression) {
         return new PropertyAssignment(key, value)
     }
 
@@ -1724,7 +1879,7 @@ export class Generator {
     }
 
     createFunctionDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, typeParameters: string[], parameters: Parameter[], type: string, body: Block) {
-        return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body).declaration();
+        return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body);
     }
 
     createParameter(decorators: Decorator[] = [], modifiers: string[] = [], dotDotDotToken: any, name: Identifier, questionToken?: string, type?: string, initializer?: Expression) {
@@ -1736,7 +1891,7 @@ export class Generator {
     }
 
     createFunctionExpression(modifiers: string[] = [], asteriskToken: string, name: Identifier | undefined, typeParameters: string[], parameters: Parameter[], type: string, body: Block) {
-        return new Function([], modifiers, asteriskToken, name, typeParameters, parameters, type, body).declaration();
+        return new Function([], modifiers, asteriskToken, name, typeParameters, parameters, type, body);
     }
 
     createToken(token: string) {
@@ -1853,13 +2008,21 @@ export class Generator {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
+    createComponent(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
+        return new ReactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
+    }
+
+    createComponentBindings(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
+        return new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members)
+    }
+
     createClassDeclaration(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) {
         const componentDecorator = decorators.find(d => d.name === "Component");
         let result: Class | ReactComponent | ComponentInput;
         if (componentDecorator) {
-            result = new ReactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
+            result = this.createComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
         } else if (decorators.find(d => d.name === "ComponentBindings")) {
-            const componentInput = new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members);
+            const componentInput = this.createComponentBindings(decorators, modifiers, name, typeParameters, heritageClauses, members);
             this.addComponent(name.toString(), componentInput);
             result = componentInput;
         } else {
@@ -1873,35 +2036,35 @@ export class Generator {
         return new PropertyAccess(expression, name);
     }
 
-    createJsxExpression(dotDotDotToken: string, expression: string) {
-        return `{${expression}}`;
+    createJsxExpression(dotDotDotToken: string, expression: Expression) {
+        return new JsxExpression(dotDotDotToken, expression);
     }
 
-    createJsxAttribute(name: string, initializer: any) {
-        return `${(eventsDictionary as any)[name] || name}=${initializer}`;
+    createJsxAttribute(name: Identifier, initializer: Expression) {
+        return new JsxAttribute(name, initializer);
     }
 
     createJsxSpreadAttribute(expression: Expression) {
-        return `{...${expression.toString()}}`;
+        return new JsxExpression(this.SyntaxKind.DotDotDotToken, expression);
     }
 
-    createJsxAttributes(properties: string[]) {
-        return properties.join("\n");
+    createJsxAttributes(properties: JsxAttribute[]) {
+        return properties;
     }
 
-    createJsxOpeningElement(tagName: string, typeArguments: any[], attributes: string) {
-        return `<${tagName} ${attributes}>`
+    createJsxOpeningElement(tagName: Identifier, typeArguments: any[], attributes: JsxAttribute[]=[]) {
+        return new JsxOpeningElement(tagName, typeArguments, attributes);
     }
 
-    createJsxSelfClosingElement(tagName: string, typeArguments: any[], attributes: string) {
-        return `<${tagName} ${attributes}/>`
+    createJsxSelfClosingElement(tagName: Identifier, typeArguments: any[], attributes: JsxAttribute[]=[]) {
+        return new JsxSelfClosingElement(tagName, typeArguments, attributes);
     }
 
-    createJsxClosingElement(tagName: string) {
+    createJsxClosingElement(tagName: Identifier) {
         return `</${tagName}>`;
     }
 
-    createJsxElement(openingElement: string, children: string[], closingElement: string) {
+    createJsxElement(openingElement: JsxOpeningElement, children: JsxElement[], closingElement: string): Expression {
         return new SimpleExpression(`${openingElement}${children.join("\n")}${closingElement}`
             .replace(/(\.default)(\W+)/g, ".children$2")
             .replace(/template/g, "render")
@@ -2054,6 +2217,10 @@ export class Generator {
 
     createCallChain(expression: Expression, questionDotToken: string = "", typeArguments: string[] = [], argumentsArray: Expression[] = []) {
         return new CallChain(expression, questionDotToken, typeArguments, argumentsArray);
+    }
+
+    createAsExpression(expression: Expression, type: TypeNode | string) { 
+        return new AsExpression(expression, type);
     }
 
     context: GeneratorContex[] = [];

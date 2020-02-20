@@ -5,9 +5,8 @@ function viewModel() { }
 function view() {}
 
 @Component({
-    name: 'Component',
     view,
-    viewModel,
+    viewModel
 })
 export default class Widget {
     @TwoWay() pressed?: boolean
@@ -15,6 +14,5 @@ export default class Widget {
     updateState() {
         this.pressed = !this.pressed;
     }
-
 }
   

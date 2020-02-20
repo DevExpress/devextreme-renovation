@@ -14,12 +14,12 @@ function viewModel() { }
 
 import * as Preact from "preact";
 
-interface Component {
+interface Widget {
     namedSlot?: any,
     children?: any
 }
 
-export default function Component(props: {
+export default function Widget(props: {
     namedSlot?: any,
     children?: any
 }) {

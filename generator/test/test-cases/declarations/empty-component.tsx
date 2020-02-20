@@ -1,15 +1,14 @@
-
+import { Component, OneWay } from "../../../component_declaration/common";
 @Component({
-    name: 'ComponentName',
     viewModel: viewModel1,
     view: view1
 })
-export default class Component {
+export default class Widget {
     @OneWay() height: number;
     @OneWay() width: number;
 }
 
-function viewModel1(model: Component) { 
+function viewModel1(model: Widget) { 
     return {
         height: model.height
     }
