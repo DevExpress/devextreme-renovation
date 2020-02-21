@@ -138,12 +138,13 @@ export class ExpressionWithOptionalExpression extends Expression {
     }
 }
 
-export class BindingElement {
+export class BindingElement extends Expression {
     dotDotDotToken?: any;
     propertyName?: string;
-    name?: string;
+    name?: string | Identifier;
     initializer?: Expression;
-    constructor(dotDotDotToken: any, propertyName?: string, name?: string, initializer?: Expression) {
+    constructor(dotDotDotToken: any, propertyName?: string, name?: string | Identifier, initializer?: Expression) {
+        super();
         this.dotDotDotToken = dotDotDotToken;
         this.propertyName = propertyName;
         this.name = name;
@@ -154,6 +155,10 @@ export class BindingElement {
         const key = this.propertyName ? `${this.propertyName}:` : "";
         return `${key}${this.name}`;
     }
+
+    getDependency() { 
+        return this.name && this.name instanceof Identifier ? [this.toString()] : [];
+    }
 }
 
 export class Delete extends ExpressionWithExpression {
@@ -162,12 +167,13 @@ export class Delete extends ExpressionWithExpression {
     }
 }
 
-export class BindingPattern {
+export class BindingPattern extends Expression {
 
     elements: Array<BindingElement>
     type: 'array' | 'object'
 
     constructor(elements: Array<BindingElement>, type: 'object' | 'array') {
+        super();
         this.elements = elements;
         this.type = type;
     }
@@ -175,6 +181,10 @@ export class BindingPattern {
     toString() {
         const elements = this.elements.join(",");
         return this.type === "array" ? `[${elements}]` : `{${elements}}`;
+    }
+
+    getDependency() { 
+        return this.elements.reduce((d: string[], e) => d.concat(e.getDependency()), []);
     }
 }
 
@@ -834,7 +844,7 @@ export class PropertyAccess extends ExpressionWithExpression {
 
     getDependency() {
         const expressionString = this.expression.toString();
-        if (expressionString === SyntaxKind.ThisKeyword || expressionString === `${SyntaxKind.ThisKeyword}.props`) {
+        if ((expressionString === SyntaxKind.ThisKeyword && this.name.toString() !== "props") || expressionString === `${SyntaxKind.ThisKeyword}.props`) {
             return [this.name.toString()];
         }
         return this.expression.getDependency();
@@ -1391,11 +1401,11 @@ export class NonNullExpression extends ExpressionWithExpression {
 }
 
 export class VariableDeclaration extends Expression {
-    name: Identifier;
+    name: Identifier | BindingPattern;
     type: string;
     initializer?: Expression | string;
 
-    constructor(name: Identifier, type: string = "", initializer?: Expression | string) {
+    constructor(name: Identifier | BindingPattern, type: string = "", initializer?: Expression | string) {
         super();
         this.name = name;
         this.type = type;
@@ -1409,7 +1419,8 @@ export class VariableDeclaration extends Expression {
 
     getDependency() {
         if (this.initializer && typeof this.initializer !== "string") {
-            return this.initializer.getDependency();
+            const dependency = this.name instanceof BindingPattern && this.initializer.toString().startsWith("this") ? this.name.getDependency() : [];
+            return this.initializer.getDependency().concat(dependency);
         }
         return [];
     }
@@ -1781,7 +1792,7 @@ export class Generator {
         return new SimpleExpression(value);
     }
 
-    createVariableDeclaration(name: Identifier, type: string = "", initializer?: Expression | string): VariableDeclaration {
+    createVariableDeclaration(name: Identifier | BindingPattern, type: string = "", initializer?: Expression | string): VariableDeclaration {
         return new VariableDeclaration(name, type, initializer);
     }
 
@@ -1800,7 +1811,7 @@ export class Generator {
         return new StringLiteral(value);
     }
 
-    createBindingElement(dotDotDotToken?: any, propertyName?: string, name?: string, initializer?: Expression) {
+    createBindingElement(dotDotDotToken?: any, propertyName?: string, name?: string | Identifier, initializer?: Expression) {
         return new BindingElement(dotDotDotToken, propertyName, name, initializer);
     }
 
