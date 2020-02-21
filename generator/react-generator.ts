@@ -1248,6 +1248,7 @@ export class ReactComponent {
         const effects = this.effects;
 
         const effectsString = effects.map(e => `useEffect(${e.arrowDeclaration({
+            members: this.members,
             internalState: this.internalState, state: this.state, props: this.props.concat(this.refs)
         })}, 
         [${e.getDependency(this.props.concat(this.state).concat(this.internalState))}])`).join(";\n");

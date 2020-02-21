@@ -2,6 +2,7 @@
 import react from "react";
 
 export const React = react;
+export const Fragment = react.Fragment;
 
 /**
  * Class Decorator.

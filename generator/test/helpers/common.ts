@@ -10,7 +10,7 @@ function printNodeValue(node: ts.Node):string {
     }
 
     if (ts.isTemplateLiteral(node)) { 
-        return (node as any).rawText.replace(/(\s|\s)/gi, "");
+        return ((node as any).rawText || "").replace(/(\s|\s)/gi, "");
     }
 
     if (ts.isStringLiteral(node)) { 

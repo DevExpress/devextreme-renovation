@@ -71,6 +71,18 @@ mocha.describe("preact-generator", function () {
                 generator.createStringLiteral("typescript")
             ), 'import "typescript"');
         });
+
+        mocha.describe("Fragment", function () { 
+            mocha.it("React.Fragment -> Preact.Fragment", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(generator.createIdentifier("Fragment"), [], []),
+                    [],
+                    generator.createJsxClosingElement(generator.createIdentifier("Fragment"))
+                );
+
+                assert.strictEqual(expression.toString(), "<Preact.Fragment ></Preact.Fragment>");
+            });
+        });
     });
 });
 
