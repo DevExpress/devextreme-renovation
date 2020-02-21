@@ -31,6 +31,7 @@ export default function Widget(props: {
 
     useEffect(() => {
         const id = subscribe(props.p, (props.s !== undefined ? props.s : __state_s), __state_i)
+        __state_setI(15);
         return () => unsubscribe(id);
     },
         [props.p, props.s, __state_s, props.sChange, __state_i])

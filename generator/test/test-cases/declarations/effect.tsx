@@ -22,6 +22,7 @@ export default class Widget {
     @Effect()
     setupData() {
         const id = subscribe(this.p, this.s, this.i);
+        this.i = 15;
         return () => unsubscribe(id);
     }
 }
