@@ -1,5 +1,6 @@
 
 import react from "react";
+import { Rule } from "./default_options";
 
 export const React = react;
 
@@ -22,6 +23,8 @@ export function Component(args: {
      * Function that recieves a component viewModel and returns a view
      */
     view: Function;
+
+    defaultOptionsRules?: Rule<any>[];
 }) {
     return function ComponentDecorator(constructor: Function) {
         constructor.prototype.render = function() {
