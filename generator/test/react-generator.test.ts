@@ -1346,6 +1346,24 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.deepEqual(expresion.getDependency(), []);
     });
 
+    mocha.it("VariableDeclaration returns dependency for Binding Pattern", function () {
+        const expresion = generator.createVariableDeclaration(
+            generator.createObjectBindingPattern([generator.createBindingElement(
+                undefined,
+                undefined,
+                generator.createIdentifier("height"),
+                undefined
+            )]),
+            undefined,
+            generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("props")
+            )
+        );
+
+        assert.deepEqual(expresion.getDependency(), ["height"]);
+    });
+
     mocha.it("Arrow Function. Can set state", function () {
         const arrowFunction = generator.createArrowFunction(
             undefined,

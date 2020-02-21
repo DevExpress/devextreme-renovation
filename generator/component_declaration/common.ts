@@ -3,6 +3,7 @@ import react from "react";
 import { Rule } from "./default_options";
 
 export const React = react;
+export const Fragment = react.Fragment;
 
 /**
  * Class Decorator.

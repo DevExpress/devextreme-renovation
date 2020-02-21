@@ -1,4 +1,16 @@
-import { Generator, ReactComponent, Decorator, Identifier, Property, Method, Slot, StringLiteral, ImportClause } from "./react-generator";
+import {
+    Generator,
+    ReactComponent,
+    Decorator,
+    Identifier,
+    Property,
+    Method,
+    Slot,
+    StringLiteral,
+    ImportClause,
+    JsxAttribute,
+    JsxOpeningElement as ReactJsxOpeningElement
+} from "./react-generator";
 import path from "path";
 
 class PreactSlot extends Slot { 
@@ -25,6 +37,15 @@ export class PreactComponent extends ReactComponent {
 
     defaultPropsDest() { 
         return `(${this.name} as any).defaultProps`;
+    }
+}
+
+class JsxOpeningElement extends ReactJsxOpeningElement { 
+    constructor(tagName: Identifier, typeArguments: any[], attributes: JsxAttribute[] = []) { 
+        if (tagName.toString() === "Fragment") { 
+            tagName = new Identifier("Preact.Fragment");
+        }
+        super(tagName, typeArguments, attributes);
     }
 }
 
@@ -55,6 +76,14 @@ export class PreactGenerator extends Generator {
         }
 
         return super.createClassDeclaration(decorators, modifiers, name, typeParameters, heritageClauses, members);
+    }
+
+    createJsxOpeningElement(tagName: Identifier, typeArguments: any[], attributes: JsxAttribute[]=[]) {
+        return new JsxOpeningElement(tagName, typeArguments, attributes);
+    }
+
+    createJsxClosingElement(tagName: Identifier) {
+        return `</${tagName.toString() === "Fragment" ? "Preact.Fragment" : tagName}>`;
     }
 }
 
