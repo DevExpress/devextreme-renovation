@@ -7,7 +7,7 @@ import path from "path";
 import { printSourceCodeAst } from "./helpers/common";
 import sinon from "sinon";
 
-import { generateComponents } from "../component-compiler";
+import { generateComponents, deleteFolderRecursive } from "../component-compiler";
 import File from "vinyl";
 
 if (!mocha.describe) { 
@@ -41,4 +41,24 @@ mocha.describe("code-compiler: gulp integration", function() {
         assert.deepEqual(generator.getContext(), { components: {} });
         setContextSpy.restore();
     });
+
+    mocha.describe("Default options", function () { 
+        const TEST_FOLDER = path.resolve(`${__dirname}/test-cases/dist`);
+        this.beforeEach(function () {
+            generator.destination = TEST_FOLDER;
+            fs.mkdirSync(TEST_FOLDER)
+        });
+        this.afterEach(function () { 
+            generator.destination = "";
+            deleteFolderRecursive(TEST_FOLDER);
+        });
+        mocha.it("copy default_options", async function () { 
+            await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/props-in-listener.tsx`))
+                .pipe(generateComponents(generator))
+            );
+
+            assert.ok(fs.readdirSync(TEST_FOLDER).map(f => f).filter(f => f.startsWith("default_options")).length > 0);
+        });
+    });
+
 });

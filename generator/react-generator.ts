@@ -2256,6 +2256,8 @@ export class Generator {
     }
 
     cache: { [name: string]: any } = {};
+
+    destination: string = "";
 }
 
 export default new Generator();

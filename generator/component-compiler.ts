@@ -2,8 +2,9 @@ import ts from "typescript";
 import fs from "fs";
 import { generateFactoryCode } from "./factoryCodeGenerator";
 import { Generator } from "./react-generator";
+import path from "path";
 
-function deleteFolderRecursive(path: string) {
+export function deleteFolderRecursive(path: string) {
     if (fs.existsSync(path)) {
         fs.readdirSync(path).forEach(fileName => {
             const filePath = `${path}/${fileName}`;
@@ -32,7 +33,12 @@ export function compileCode(generator: Generator, code: string, file: { dirname:
     return codeFactoryResult.join("\n");
 }
 
-export function generateComponents(generator:Generator) { 
+export function generateComponents(generator: Generator) {
+    if (generator.destination) { 
+        fs.readdirSync(path.resolve(`${__dirname}/component_declaration/`)).filter(f => f.startsWith("default_options")).forEach(f => { 
+            fs.writeFileSync(path.join(generator.destination, f), fs.readFileSync(path.join(`${__dirname}/component_declaration/`, f)));
+        });
+    }
     const stream = new Stream.Transform({
         objectMode: true,
         transform(originalFile: File, _, callback) {
