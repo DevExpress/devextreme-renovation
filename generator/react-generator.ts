@@ -1117,6 +1117,8 @@ export class ReactComponent {
 
     context: GeneratorContex;
 
+    defaultOptionsRules?: Expression | null;
+
     get name() { 
         return this._name.toString();
     }
@@ -1156,6 +1158,7 @@ export class ReactComponent {
 
         this.view = parameters.getProperty("view");
         this.viewModel = parameters.getProperty("viewModel");
+        this.defaultOptionsRules = parameters.getProperty("defaultOptionsRules");
 
         this.context = context;
 
@@ -1214,17 +1217,22 @@ export class ReactComponent {
     }
 
     compileDefaultProps() {
-        const defaultProps = this.props.filter(p => !p.property.inherited && p.property.initializer).concat(this.state);
-        const heritageDefaultProps = this.heritageClauses.filter(h => h.defaultProps.length).map(h => `...${h.defaultProps}`);
+        const defaultProps = this.heritageClauses
+            .filter(h => h.defaultProps.length).map(h => `...${h.defaultProps}`)
+            .concat(
+                this.props.filter(p => !p.property.inherited && p.property.initializer)
+                    .concat(this.state)
+                    .map(p => p.defaultProps())
+        );
 
-        if (defaultProps.length) {
+        if (this.defaultOptionsRules) { 
+            defaultProps.push(`...convertRulesToOption(${this.defaultOptionsRules})`);
+        }
+        
+        if (defaultProps.length) { 
             return `${this.defaultPropsDest()} = {
-                ${heritageDefaultProps.join(",") + (heritageDefaultProps.length ? "," : "")}
-                ${defaultProps.map(p => p.defaultProps())
-                    .join(",\n")}
+                ${defaultProps.join(",\n")}
             }`;
-        } else if (heritageDefaultProps.length) {
-            return `${this.defaultPropsDest()} = {${heritageDefaultProps.join(",")}}`;
         }
 
         return "";

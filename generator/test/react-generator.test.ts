@@ -972,7 +972,7 @@ mocha.describe("import Components", function () {
         
         const component = new ReactComponent(decorator, [], generator.createIdentifier("Component"), [], [heritageClause], [], {});
 
-        assert.equal(component.compileDefaultProps(), "Component.defaultProps = {...Base.defaultProps}");
+        assert.equal(getResult(component.compileDefaultProps()), getResult("Component.defaultProps = {...Base.defaultProps}"));
     });
 
     mocha.it("Heritage defaultProps. Base component has not defaultProps, component has not", function () {
@@ -1730,6 +1730,37 @@ mocha.describe("Default_options", function () {
             generator.getContext());
         
         assert.strictEqual(getResult(component.compileImports()), getResult(`import {convertRulesToOption, Rule} from "../default_options"; import React from "react";`));
+    });
+
+    mocha.it("Add defaultOptionRules to defaultProps", function () {
+        const component = new ReactComponent(
+            generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([
+                generator.createPropertyAssignment(
+                    generator.createIdentifier("defaultOptionsRules"),
+                    generator.createArrayLiteral([], false)
+                )
+            ], false)])),
+            [],
+            generator.createIdentifier("Component"),
+            [],
+            [],
+            [generator.createProperty(
+                [generator.createDecorator(
+                    generator.createCall(
+                        generator.createIdentifier("OneWay"))
+                )],
+                [],
+                generator.createIdentifier("p"),
+                "",
+                undefined,
+                generator.createNumericLiteral("10")
+            )],
+            generator.getContext());
+        
+        assert.strictEqual(getResult(component.compileDefaultProps()), getResult(`Component.defaultProps = {
+            p: 10,
+            ...convertRulesToOption([])
+        }`));
     });
 
 });
