@@ -29,11 +29,13 @@ mocha.describe("react-generator", function () {
 
     this.afterEach(function () {
         if (this.currentTest!.state !== "passed") {
-            console.log(this.code); // TODO: diff with expected
+            console.log(this.currentTest?.ctx?.code); // TODO: diff with expected
         }
         generator.setContext(null);
-        this.code = null;
-        this.expectedCode = null;
+        if (this.currentTest?.ctx) { 
+            this.currentTest.ctx.code = null;
+            this.currentTest.ctx.expectedCode = null;
+        }
     });
 
     mocha.it("variable-declaration", function () {
@@ -116,6 +118,9 @@ mocha.describe("react-generator", function () {
         const TEST_FOLDER = path.resolve(__dirname, "./test-cases/dist");
         this.beforeEach(function () {
             generator.destination = TEST_FOLDER;
+            generator.setContext({
+                destination: TEST_FOLDER
+            });
             fs.mkdirSync(TEST_FOLDER);
         });
 

@@ -1342,6 +1342,22 @@ export class ReactComponent {
             .concat(this.methods.map(m => m.name.toString()));
     }
 
+    compileDefaultOptionsMethod() { 
+        if (this.context.destination) { 
+            const defaultOptionsTypeName = `${this.name}OptionRule`;
+            const defaultOptionsTypeArgument = this.isJSXComponent ? this.heritageClauses[0].defaultProps : this.name;
+            return `type ${defaultOptionsTypeName} = Rule<${defaultOptionsTypeArgument}>;
+
+            export function defaultOptions(rule: ${defaultOptionsTypeName}) { 
+                Widget.defaultProps = {
+                    ...${this.defaultPropsDest()},
+                    ...convertRulesToOption([rule])
+                }
+            }`;
+        }
+        return "";
+    }
+
     toString() {
         return `
             ${this.compileImports()}
@@ -1372,7 +1388,8 @@ export class ReactComponent {
                 );
             }
 
-            ${this.compileDefaultProps()}`;
+            ${this.compileDefaultProps()}
+            ${this.compileDefaultOptionsMethod()}`;
     }
 }
 
