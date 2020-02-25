@@ -53,11 +53,15 @@ mocha.describe("code-compiler: gulp integration", function() {
             deleteFolderRecursive(TEST_FOLDER);
         });
         mocha.it("copy default_options", async function () { 
+            const setContextSpy = sinon.spy(generator, "setContext");
             await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/props-in-listener.tsx`))
                 .pipe(generateComponents(generator))
             );
 
             assert.ok(fs.readdirSync(TEST_FOLDER).map(f => f).filter(f => f.startsWith("default_options")).length > 0);
+            assert.strictEqual(setContextSpy.firstCall.args[0]!.destination, generator.destination);
+
+            setContextSpy.restore();
         });
     });
 

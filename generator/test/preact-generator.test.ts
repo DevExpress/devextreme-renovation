@@ -127,7 +127,7 @@ mocha.describe("import Components", function () {
             generator.createNumericLiteral("10")
         );
         
-        const component = new PreactComponent(decorator, [], generator.createIdentifier("Component"), [], [heritageClause], [childProperty]);
+        const component = new PreactComponent(decorator, [], generator.createIdentifier("Component"), [], [heritageClause], [childProperty], {});
 
         assert.equal(getResult(component.compileDefaultProps()), getResult("(Component as any).defaultProps = {...(Base as any).defaultProps, childProp:10}"));
     });

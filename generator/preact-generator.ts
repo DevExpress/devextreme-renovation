@@ -9,7 +9,10 @@ import {
     StringLiteral,
     ImportClause,
     JsxAttribute,
-    JsxOpeningElement as ReactJsxOpeningElement
+    JsxOpeningElement as ReactJsxOpeningElement,
+    ImportDeclaration,
+    GeneratorContex,
+    HeritageClause
 } from "./react-generator";
 import path from "path";
 
@@ -23,8 +26,8 @@ class PreactSlot extends Slot {
     }
 }
 export class PreactComponent extends ReactComponent {
-    constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: any, members: Array<Property | Method>) {
-        super(decorator, modifiers, name, typeParameters, heritageClauses, members);
+    constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: any, members: Array<Property | Method>, context: GeneratorContex) {
+        super(decorator, modifiers, name, typeParameters, heritageClauses, members, context);
         this.slots = this.slots.map(s => new PreactSlot(s));
     }
     compileImportStatements(hooks: string[]) {
@@ -51,7 +54,7 @@ class JsxOpeningElement extends ReactJsxOpeningElement {
 
 export class PreactGenerator extends Generator { 
     createImportDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], importClause: ImportClause = new ImportClause(), moduleSpecifier: StringLiteral) {
-        let importStatement = super.createImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
+        const importStatement = super.createImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
 
         const module = moduleSpecifier.expression.toString();
         const modulePath = `${module}.tsx`;
@@ -59,7 +62,7 @@ export class PreactGenerator extends Generator {
         if (context.path) {
             const fullPath = path.resolve(context.path, modulePath);
             if (this.cache[fullPath]) { 
-                importStatement = importStatement.replace(module, `${module}.p`);
+                (importStatement as ImportDeclaration).replaceSpecifier(module, `${module}.p`);
             }
         }
         return importStatement;
@@ -69,13 +72,8 @@ export class PreactGenerator extends Generator {
         return name.replace(/\.tsx$/, ".p.tsx");
     }
 
-    createClassDeclaration(decorators: Decorator[] = [], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: any, members: Array<Property | Method>) {
-        const componentDecorator = decorators.find(d => d.name === "Component");
-        if (componentDecorator) {
-            return new PreactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
-        }
-
-        return super.createClassDeclaration(decorators, modifiers, name, typeParameters, heritageClauses, members);
+    createComponent(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
+        return new PreactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members, this.getContext());
     }
 
     createJsxOpeningElement(tagName: Identifier, typeArguments: any[], attributes: JsxAttribute[]=[]) {

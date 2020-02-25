@@ -1115,11 +1115,13 @@ export class ReactComponent {
 
     members: Array<Property | Method>;
 
+    context: GeneratorContex;
+
     get name() { 
         return this._name.toString();
     }
 
-    constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>) {
+    constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>, context: GeneratorContex) {
         this.modifiers = modifiers;
         this._name = name;
         this.heritageClauses = heritageClauses;
@@ -1154,6 +1156,13 @@ export class ReactComponent {
 
         this.view = parameters.getProperty("view");
         this.viewModel = parameters.getProperty("viewModel");
+
+        this.context = context;
+
+        if (context.defaultOptionsImport) { 
+            context.defaultOptionsImport.add("convertRulesToOption");
+            context.defaultOptionsImport.add("Rule");
+        }
     }
 
     get heritageProperies() {
@@ -1191,6 +1200,10 @@ export class ReactComponent {
 
         if (this.refs.length) {
             hooks.push("useRef");
+        }
+
+        if (!this.context.defaultOptionsImport && this.context.destination) { 
+            imports.push(`import {convertRulesToOption, Rule} from "../default_options"`);
         }
 
         return imports.concat(this.compileImportStatements(hooks)).join(";\n");
@@ -1632,6 +1645,10 @@ export class NamedImports {
         this.elements = elements;
     }
 
+    add(name: string) { 
+        this.remove(name);
+        this.node.push(new Identifier(name));
+    }
     
     remove(name: string) { 
         this.node = this.node.filter(n => n.toString() !== name);
@@ -1664,6 +1681,14 @@ export class ImportClause {
         }
     }
 
+    add(name: string) { 
+        if (this.namedBindings) {
+            this.namedBindings.add(name);
+        } else { 
+            this.namedBindings = new NamedImports([new Identifier(name)]);
+        }
+    }
+
     toString() { 
         const result: string[] = [];
         if (this.name) {
@@ -1675,6 +1700,32 @@ export class ImportClause {
         }
 
         return result.length ? `${result.join(",")} from ` : "";
+    }
+}
+
+export class ImportDeclaration { 
+    decorators: Decorator[];
+    modifiers: string[];
+    importClause: ImportClause;
+    moduleSpecifier: StringLiteral;
+
+    replaceSpecifier(search: string | RegExp, replaceValue: string) { 
+        this.moduleSpecifier.expression = this.moduleSpecifier.expression.replace(search, replaceValue);
+    }
+    
+    add(name: string) { 
+        this.importClause.add(name);
+    }
+
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], importClause: ImportClause, moduleSpecifier: StringLiteral) { 
+        this.decorators = decorators;
+        this.modifiers = modifiers;
+        this.importClause = importClause;
+        this.moduleSpecifier = moduleSpecifier;
+    }
+
+    toString() { 
+        return `import ${this.importClause}${this.moduleSpecifier}`;
     }
 }
 
@@ -1758,6 +1809,8 @@ export class AsExpression extends ExpressionWithExpression {
 export interface GeneratorContex {
     path?: string;
     components?: { [name: string]: Heritable };
+    defaultOptionsImport?: ImportDeclaration;
+    destination?: string
 }
 
 export class Generator {
@@ -1972,6 +2025,15 @@ export class Generator {
         if (moduleSpecifier.toString().indexOf("component_declaration/common") >= 0) {
             return "";
         }
+        if (moduleSpecifier.toString().indexOf("component_declaration/default_options") >= 0) {
+            const context = this.getContext();
+            if (context.path && this.destination) { 
+                const importString = `${path.relative(context.path!, this.destination)}/default_options`;
+                moduleSpecifier = new StringLiteral(importString);
+                context.defaultOptionsImport = new ImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
+                return context.defaultOptionsImport;
+            }
+        }
         if (moduleSpecifier.toString().indexOf("component_declaration/jsx") >= 0) {
             const importString = moduleSpecifier.expression.toString().replace("component_declaration/jsx", "component_declaration/jsx-g")
             moduleSpecifier = new StringLiteral(importString);
@@ -1997,7 +2059,7 @@ export class Generator {
             }
         }
 
-        return `import ${importClause}${moduleSpecifier}`;
+        return new ImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
     }
 
     createImportSpecifier(propertyName: string | undefined, name: Identifier) {
@@ -2021,7 +2083,7 @@ export class Generator {
     }
 
     createComponent(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
-        return new ReactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
+        return new ReactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members, this.getContext());
     }
 
     createComponentBindings(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
