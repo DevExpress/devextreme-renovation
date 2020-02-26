@@ -2235,6 +2235,10 @@ export class Generator {
         return new AsExpression(expression, type);
     }
 
+    createRegularExpressionLiteral(text: string) { 
+        return new SimpleExpression(text);
+    }
+
     context: GeneratorContex[] = [];
 
     addComponent(name: string, component: Heritable) {
