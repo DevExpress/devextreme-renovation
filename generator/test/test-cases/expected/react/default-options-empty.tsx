@@ -5,7 +5,7 @@ declare type WidgetProps = {}
 
 export const WidgetProps: WidgetProps = {};
 
-import {convertRulesToOption, Rule} from "../default_options";
+import {convertRulesToOptions, Rule} from "../../../../../../component_declaration/default_options";
 import React from "react";
 
 interface Widget { props: {} }
@@ -27,7 +27,7 @@ type WidgetOptionRule = Rule<WidgetProps>;
 
 export function defaultOptions(rule: WidgetOptionRule) { 
     Widget.defaultProps = {
-        ...Widget.defaultProps,
-        ...convertRulesToOption([rule])
+        ...(Widget.defaultProps || {}),
+        ...convertRulesToOptions([rule])
     }
 }

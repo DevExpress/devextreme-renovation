@@ -1,5 +1,5 @@
 export type Rule<T> = {
-    device: () => boolean;
+    device: any;
     options: T
 }
 

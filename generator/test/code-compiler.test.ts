@@ -42,15 +42,13 @@ mocha.describe("code-compiler: gulp integration", function() {
         setContextSpy.restore();
     });
 
-    mocha.describe("Default options", function () { 
-        const TEST_FOLDER = path.resolve(`${__dirname}/test-cases/dist`);
+    mocha.describe("Default options", function () {
+        const defaultOptionsModule = "../component_declaration/default_options";
         this.beforeEach(function () {
-            generator.destination = TEST_FOLDER;
-            fs.mkdirSync(TEST_FOLDER)
+            generator.defaultOptionsModule = defaultOptionsModule
         });
         this.afterEach(function () { 
-            generator.destination = "";
-            deleteFolderRecursive(TEST_FOLDER);
+            generator.defaultOptionsModule = undefined;
         });
         mocha.it("copy default_options", async function () { 
             const setContextSpy = sinon.spy(generator, "setContext");
@@ -58,8 +56,7 @@ mocha.describe("code-compiler: gulp integration", function() {
                 .pipe(generateComponents(generator))
             );
 
-            assert.ok(fs.readdirSync(TEST_FOLDER).map(f => f).filter(f => f.startsWith("default_options")).length > 0);
-            assert.strictEqual(setContextSpy.firstCall.args[0]!.destination, generator.destination);
+            assert.strictEqual(setContextSpy.firstCall.args[0]!.defaultOptionsModule, path.resolve(defaultOptionsModule));
 
             setContextSpy.restore();
         });

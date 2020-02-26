@@ -23,7 +23,7 @@ import File from "vinyl";
 
 export function compileCode(generator: Generator, code: string, file: { dirname: string, path: string }): string {
     const source = ts.createSourceFile(file.path, code, ts.ScriptTarget.ES2016, true);
-    generator.setContext({ path: file.dirname, destination: generator.destination });
+    generator.setContext({ path: file.dirname, defaultOptionsModule: generator.defaultOptionsModule && path.resolve(generator.defaultOptionsModule) });
     const codeFactory = generateFactoryCode(ts, source);
     const codeFactoryResult = eval(codeFactory)(generator);
     
@@ -34,11 +34,6 @@ export function compileCode(generator: Generator, code: string, file: { dirname:
 }
 
 export function generateComponents(generator: Generator) {
-    if (generator.destination) { 
-        fs.readdirSync(path.resolve(`${__dirname}/component_declaration/`)).filter(f => f.startsWith("default_options")).forEach(f => { 
-            fs.writeFileSync(path.join(generator.destination, f), fs.readFileSync(path.join(`${__dirname}/component_declaration/`, f)));
-        });
-    }
     const stream = new Stream.Transform({
         objectMode: true,
         transform(originalFile: File, _, callback) {

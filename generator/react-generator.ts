@@ -1,5 +1,5 @@
 import SyntaxKind from "./syntaxKind";
-import fs from "fs";
+import fs, { PathLike } from "fs";
 import path from "path";
 import { compileCode } from "./component-compiler";
 import { JsxElement } from "./angular-generator";
@@ -20,6 +20,25 @@ function variableDeclaration(name: Identifier, type: string = "", initializer?: 
     return `${name}${compileType(type, questionToken)}${initilizerDeclaration}`;
 }
 
+function getRelativePath(src:string, dst:string, moduleName: string="") { 
+    const relativePath = `${path.relative(src, dst)}${moduleName ? `/${moduleName}` : ""}`.replace(/\\/gi, "/");
+    if (relativePath.startsWith("/")) { 
+        return `.${relativePath}`;
+    }
+    if (!relativePath.startsWith(".")) { 
+        return `./${relativePath}`;
+    }
+    return relativePath;
+}
+
+function getModuleRelativePath(src: string, moduleSpecifier: string) { 
+    const normalizedPath = path.normalize(moduleSpecifier);
+    const moduleParts = normalizedPath.split(/(\/|\\)/);
+
+    const folderPath = path.resolve(moduleParts.slice(0, moduleParts.length - 2).join("/"));
+
+    return getRelativePath(src, folderPath, moduleParts[moduleParts.length - 1]);
+}
 
 function getLocalStateName(name: Identifier | string) {
     return `__state_${name}`;
@@ -74,6 +93,9 @@ export class StringLiteral extends SimpleExpression {
     }
     toString() {
         return `${this.quoteSymbol}${this.expression}${this.quoteSymbol}`;
+    }
+    valueOf() { 
+        return this.expression;
     }
 }
 
@@ -1163,7 +1185,7 @@ export class ReactComponent {
         this.context = context;
 
         if (context.defaultOptionsImport) { 
-            context.defaultOptionsImport.add("convertRulesToOption");
+            context.defaultOptionsImport.add("convertRulesToOptions");
             context.defaultOptionsImport.add("Rule");
         }
     }
@@ -1205,8 +1227,9 @@ export class ReactComponent {
             hooks.push("useRef");
         }
 
-        if (!this.context.defaultOptionsImport && this.context.destination) { 
-            imports.push(`import {convertRulesToOption, Rule} from "../default_options"`);
+        if (!this.context.defaultOptionsImport && this.context.defaultOptionsModule && this.context.path) {
+            const relativePath = getModuleRelativePath(this.context.path, this.context.defaultOptionsModule);
+            imports.push(`import {convertRulesToOptions, Rule} from "${relativePath}"`);
         }
 
         return imports.concat(this.compileImportStatements(hooks)).join(";\n");
@@ -1226,7 +1249,7 @@ export class ReactComponent {
         );
 
         if (this.defaultOptionsRules) { 
-            defaultProps.push(`...convertRulesToOption(${this.defaultOptionsRules})`);
+            defaultProps.push(`...convertRulesToOptions(${this.defaultOptionsRules})`);
         }
         
         if (defaultProps.length) { 
@@ -1343,15 +1366,15 @@ export class ReactComponent {
     }
 
     compileDefaultOptionsMethod() { 
-        if (this.context.destination) { 
+        if (this.context.defaultOptionsModule) { 
             const defaultOptionsTypeName = `${this.name}OptionRule`;
             const defaultOptionsTypeArgument = this.isJSXComponent ? this.heritageClauses[0].defaultProps : this.name;
             return `type ${defaultOptionsTypeName} = Rule<${defaultOptionsTypeArgument}>;
 
             export function defaultOptions(rule: ${defaultOptionsTypeName}) { 
-                Widget.defaultProps = {
-                    ...${this.defaultPropsDest()},
-                    ...convertRulesToOption([rule])
+                ${this.defaultPropsDest()} = {
+                    ...(${this.defaultPropsDest()} || {}),
+                    ...convertRulesToOptions([rule])
                 }
             }`;
         }
@@ -1835,7 +1858,7 @@ export interface GeneratorContex {
     path?: string;
     components?: { [name: string]: Heritable };
     defaultOptionsImport?: ImportDeclaration;
-    destination?: string
+    defaultOptionsModule?: string
 }
 
 export class Generator {
@@ -2050,11 +2073,10 @@ export class Generator {
         if (moduleSpecifier.toString().indexOf("component_declaration/common") >= 0) {
             return "";
         }
-        if (moduleSpecifier.toString().indexOf("component_declaration/default_options") >= 0) {
-            const context = this.getContext();
-            if (context.path && this.destination) { 
-                const importString = `${path.relative(context.path!, this.destination)}/default_options`;
-                moduleSpecifier = new StringLiteral(importString);
+        const context = this.getContext();
+        if (context.defaultOptionsModule && context.path) {
+            const relativePath = getModuleRelativePath(context.path, context.defaultOptionsModule);
+            if (relativePath.toString()===moduleSpecifier.valueOf()) {
                 context.defaultOptionsImport = new ImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
                 return context.defaultOptionsImport;
             }
@@ -2065,7 +2087,6 @@ export class Generator {
         }
 
         const module = moduleSpecifier.expression.toString();
-        const context = this.getContext();
         if (context.path) {
             const modulePath = path.join(context.path, `${module}.tsx`);
             if (fs.existsSync(modulePath)) {
@@ -2345,6 +2366,8 @@ export class Generator {
     cache: { [name: string]: any } = {};
 
     destination: string = "";
+
+    defaultOptionsModule?: string;
 }
 
 export default new Generator();
