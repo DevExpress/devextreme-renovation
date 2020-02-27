@@ -542,7 +542,7 @@ export function generateFactoryCode(ts: typeof import("typescript"), initialNode
 
     function createRegularExpressionLiteral(node: import("typescript").RegularExpressionLiteral) {
         writer.write("ts.createRegularExpressionLiteral(");
-        writer.quote(node.text.toString())
+        writer.write(`String.raw\`${node.text.toString()}\``)
         writer.write(")");
     }
 
