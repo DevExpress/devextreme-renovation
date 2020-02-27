@@ -1239,6 +1239,24 @@ export class ReactComponent {
         return `${this.name.toString()}.defaultProps`;
     }
 
+    compileDefaultOptionsMethod() { 
+        if (this.context.defaultOptionsModule) { 
+            const defaultOptionsTypeName = `${this.name}OptionRule`;
+            const defaultOptionsTypeArgument = this.isJSXComponent ? this.heritageClauses[0].defaultProps : this.name;
+            return `type ${defaultOptionsTypeName} = Rule<${defaultOptionsTypeArgument}>;
+
+            const __defaultOptionsRules:${defaultOptionsTypeName}[] = [];
+            export function defaultOptions(rule: ${defaultOptionsTypeName}) { 
+                __defaultOptionsRules.push(rule);
+                ${this.defaultPropsDest()} = {
+                    ...__createDefaultProps(),
+                    ...convertRulesToOptions(__defaultOptionsRules)
+                };
+            }`;
+        }
+        return "";
+    }
+
     compileDefaultProps() {
         const defaultProps = this.heritageClauses
             .filter(h => h.defaultProps.length).map(h => `...${h.defaultProps}`)
@@ -1251,8 +1269,18 @@ export class ReactComponent {
         if (this.defaultOptionsRules) { 
             defaultProps.push(`...convertRulesToOptions(${this.defaultOptionsRules})`);
         }
-        
-        if (defaultProps.length) { 
+
+        if (this.context.defaultOptionsModule) { 
+            return `
+                function __createDefaultProps(){
+                    return {
+                        ${defaultProps.join(",\n")}
+                    }
+                }
+                ${this.defaultPropsDest()}= __createDefaultProps();
+            `;
+        }
+        if (defaultProps.length) {
             return `${this.defaultPropsDest()} = {
                 ${defaultProps.join(",\n")}
             }`;
@@ -1363,22 +1391,6 @@ export class ReactComponent {
             .concat(this.listeners.map(l => l.name.toString()))
             .concat(this.refs.map(r => r.name.toString()))
             .concat(this.methods.map(m => m.name.toString()));
-    }
-
-    compileDefaultOptionsMethod() { 
-        if (this.context.defaultOptionsModule) { 
-            const defaultOptionsTypeName = `${this.name}OptionRule`;
-            const defaultOptionsTypeArgument = this.isJSXComponent ? this.heritageClauses[0].defaultProps : this.name;
-            return `type ${defaultOptionsTypeName} = Rule<${defaultOptionsTypeArgument}>;
-
-            export function defaultOptions(rule: ${defaultOptionsTypeName}) { 
-                ${this.defaultPropsDest()} = {
-                    ...(${this.defaultPropsDest()} || {}),
-                    ...convertRulesToOptions([rule])
-                }
-            }`;
-        }
-        return "";
     }
 
     toString() {

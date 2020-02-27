@@ -7,7 +7,7 @@ import path from "path";
 import { printSourceCodeAst } from "./helpers/common";
 import sinon from "sinon";
 
-import { generateComponents, deleteFolderRecursive } from "../component-compiler";
+import { generateComponents } from "../component-compiler";
 import File from "vinyl";
 
 if (!mocha.describe) { 

@@ -124,6 +124,8 @@ mocha.describe("react-generator", function () {
         });
 
         this.afterEach(function () { 
+            generator.setContext(null);
+            generator.defaultOptionsModule = "";
         });
 
         mocha.it("default-options-empty", function () { 
@@ -1656,7 +1658,7 @@ mocha.describe("Default_options", function () {
     });
 
     this.afterEach(function () {
-        generator.destination = "";
+        generator.defaultOptionsModule = "";
         generator.setContext(null);
     });
 
@@ -1789,36 +1791,4 @@ mocha.describe("Default_options", function () {
         
         assert.strictEqual(getResult(component.compileImports()), getResult(`import {convertRulesToOptions, Rule} from "../default_options"; import React from "react";`));
     });
-
-    mocha.it("Add defaultOptionRules to defaultProps", function () {
-        const component = new ReactComponent(
-            generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([
-                generator.createPropertyAssignment(
-                    generator.createIdentifier("defaultOptionsRules"),
-                    generator.createArrayLiteral([], false)
-                )
-            ], false)])),
-            [],
-            generator.createIdentifier("Component"),
-            [],
-            [],
-            [generator.createProperty(
-                [generator.createDecorator(
-                    generator.createCall(
-                        generator.createIdentifier("OneWay"))
-                )],
-                [],
-                generator.createIdentifier("p"),
-                "",
-                undefined,
-                generator.createNumericLiteral("10")
-            )],
-            generator.getContext());
-        
-        assert.strictEqual(getResult(component.compileDefaultProps()), getResult(`Component.defaultProps = {
-            p: 10,
-            ...convertRulesToOptions([])
-        }`));
-    });
-
 });
