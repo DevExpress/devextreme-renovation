@@ -13,6 +13,12 @@ if (!mocha.describe) {
     mocha.it = it;
 }
 
+function createDecorator(name: string) { 
+    return generator.createDecorator(
+        generator.createCall(generator.createIdentifier(name), [], [])
+    );
+}
+
 mocha.describe("react-generator", function () {
     this.beforeAll(function () {
         const testGenerator = createTestGenerator("react");
@@ -1516,6 +1522,29 @@ mocha.describe("ComponentInput", function () {
         assert.deepEqual(cachedComponent.heritageProperies.map(p => p.toString()), ["p", "p1"]);
     });
 
+    mocha.it("Rename Template property: template->render", function () { 
+        const expression = generator.createClassDeclaration(
+            this.decorators,
+            ["export"],
+            generator.createIdentifier("BaseModel"),
+            [],
+            [],
+            [
+                generator.createProperty([
+                    createDecorator("Template")
+                ],
+                    [],
+                    generator.createIdentifier("template"),
+                    undefined,
+                    "any",
+                    undefined
+                ),
+            ]
+        );
+
+        assert.strictEqual(getResult(expression.toString()), getResult(`declare type BaseModel={render: any}; export const BaseModel:BaseModel={};`));
+    });
+
     mocha.describe("CompileViewModelArguments", function () {
         this.beforeEach(function () { 
             
@@ -1626,5 +1655,6 @@ mocha.describe("ComponentInput", function () {
                 `{${component.compileViewModelArguments().join(",")}}`
             ), getResult("{props:{...props},s:__state_s}"));
         });
+
     });
 });

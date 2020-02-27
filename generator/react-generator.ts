@@ -643,17 +643,28 @@ export class Decorator {
 export class Property extends Expression {
     decorators: Decorator[]
     modifiers: string[];
-    name: Identifier;
+    _name: Identifier;
     questionOrExclamationToken: string;
     type: string;
     initializer?: Expression;
     inherited: boolean = false;
 
+    get name(): string { 
+        if (this.decorators.find(d => d.name === "Template")) { 
+            return this._name.toString().replace(/template/g, "render")
+                .replace(/(.+)(Template)/g, "$1Render");
+        }
+        if (this.decorators.find(d => d.name === "Slot") && this._name.toString() === "default") {
+            return "children";
+        }
+        return this._name.toString();
+    }
+
     constructor(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression) {
         super();
         this.decorators = decorators;
         this.modifiers = modifiers;
-        this.name = name;
+        this._name = name;
         this.questionOrExclamationToken = questionOrExclamationToken;
         this.type = type;
         this.initializer = initializer;
@@ -722,7 +733,7 @@ interface Heritable {
 export class ComponentInput extends Class implements Heritable {
     get heritageProperies() {
         return (this.members.filter(m => m instanceof Property) as Property[]).map(p => { 
-            const property = new Property(p.decorators, p.modifiers, p.name, p.questionOrExclamationToken, p.type, p.initializer);
+            const property = new Property(p.decorators, p.modifiers, p._name, p.questionOrExclamationToken, p.type, p.initializer);
             property.inherited = true;
             return property
         });
@@ -920,10 +931,6 @@ export class Method {
 export class Prop {
     property: Property;
     constructor(property: Property) {
-        if (property.decorators.find(d => d.name === "Template")) {
-            property.name = new Identifier(property.name.toString().replace("template", "render"));
-            property.name = new Identifier(property.name.toString().replace("Template", "Render"));
-        }
         this.property = property;
     }
 
@@ -987,11 +994,6 @@ export class Ref extends Prop {
 }
 
 export class Slot extends Prop {
-    constructor(property: Property) {
-        super(property);
-        property.name = new Identifier(property.name.toString().replace("default", "children"));
-    }
-
     typeDeclaration() {
         return `${this.name}${this.property.questionOrExclamationToken}:React.ReactNode`;
     }
@@ -1090,7 +1092,7 @@ function capitalizeFirstLetter(string: string | Identifier) {
     return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
-function stateSetter(stateName: Identifier) {
+function stateSetter(stateName: Identifier|string) {
     return `__state_set${capitalizeFirstLetter(stateName)}`
 }
 
@@ -1160,7 +1162,7 @@ export class ReactComponent {
         return this.props.map(p => p.property)
             .concat(this.state.map(s => s.property))
             .map(p => {
-                const property = new Property(p.decorators, p.modifiers, p.name, p.questionOrExclamationToken, p.type, p.initializer);
+                const property = new Property(p.decorators, p.modifiers, p._name, p.questionOrExclamationToken, p.type, p.initializer);
                 property.inherited = true;
                 return property;
             });
