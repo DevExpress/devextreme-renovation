@@ -41,4 +41,25 @@ mocha.describe("code-compiler: gulp integration", function() {
         assert.deepEqual(generator.getContext(), { components: {} });
         setContextSpy.restore();
     });
+
+    mocha.describe("Default options", function () {
+        const defaultOptionsModule = "../component_declaration/default_options";
+        this.beforeEach(function () {
+            generator.defaultOptionsModule = defaultOptionsModule
+        });
+        this.afterEach(function () { 
+            generator.defaultOptionsModule = undefined;
+        });
+        mocha.it("copy default_options", async function () { 
+            const setContextSpy = sinon.spy(generator, "setContext");
+            await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/props-in-listener.tsx`))
+                .pipe(generateComponents(generator))
+            );
+
+            assert.strictEqual(setContextSpy.firstCall.args[0]!.defaultOptionsModule, path.resolve(defaultOptionsModule));
+
+            setContextSpy.restore();
+        });
+    });
+
 });
