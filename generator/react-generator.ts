@@ -2,7 +2,6 @@ import SyntaxKind from "./syntaxKind";
 import fs from "fs";
 import path from "path";
 import { compileCode } from "./component-compiler";
-import { JsxElement } from "./angular-generator";
 
 const eventsDictionary = {
     pointerover: "onPointerOver",
@@ -1723,6 +1722,34 @@ export class JsxOpeningElement extends Expression {
     }
 }
 
+export class JsxElement extends Expression { 
+    openingElement: JsxOpeningElement;
+    children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>;
+    closingElement: string;
+    constructor(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: string) { 
+        super();
+        this.openingElement = openingElement;
+        this.children = children;
+        this.closingElement = closingElement;
+    }
+
+    toString(options?: toStringOptions) {
+        const children: string = this.children.map(c => c.toString(options)).join("\n");
+        return `${this.openingElement}${children}${this.closingElement}`
+            .replace(/(\.default)(\W+)/g, ".children$2")
+            .replace(/template/g, "render")
+            .replace(/(.+)(Template)/g, "$1Render");
+    }
+
+    addAttribute(attribute: JsxAttribute) { 
+        this.openingElement.addAttribute(attribute);
+    }
+
+    isJsx() { 
+        return true;
+    }
+}
+
 export class JsxSelfClosingElement extends JsxOpeningElement{
     toString() { 
         return `<${this.tagName} ${this.attributesString()}/>`;
@@ -2078,11 +2105,8 @@ export class Generator {
         return `</${tagName}>`;
     }
 
-    createJsxElement(openingElement: JsxOpeningElement, children: JsxElement[], closingElement: string): Expression {
-        return new SimpleExpression(`${openingElement}${children.join("\n")}${closingElement}`
-            .replace(/(\.default)(\W+)/g, ".children$2")
-            .replace(/template/g, "render")
-            .replace(/(.+)(Template)/g, "$1Render"));
+    createJsxElement(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: string) {
+        return new JsxElement(openingElement, children, closingElement);
     }
 
     createJsxText(text: string, containsOnlyTriviaWhiteSpaces: string) {

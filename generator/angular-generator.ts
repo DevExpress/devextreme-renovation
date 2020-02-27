@@ -26,7 +26,8 @@ import {
     VariableDeclaration as BaseVariableDeclaration,
     TemplateExpression,
     PropertyAccess as BasePropertyAccess,
-    toStringOptions as ReactToStringOptions
+    toStringOptions as ReactToStringOptions,
+    JsxElement as ReactJsxElement
 } from "./react-generator";
 
 import SyntaxKind from "./syntaxKind";
@@ -95,12 +96,10 @@ export class JsxChildExpression extends JsxExpression {
     }
 }
 
-export class JsxElement extends Expression { 
-    openingElement: JsxOpeningElement;
-    children: Array<JsxElement | string | JsxChildExpression|JsxSelfClosingElement>;
-    closingElement: string;
+export class JsxElement extends ReactJsxElement { 
+    children: Array<JsxElement | string | JsxChildExpression | JsxSelfClosingElement>;
     constructor(openingElement: JsxOpeningElement, children: Array<JsxElement|string|JsxExpression|JsxSelfClosingElement>, closingElement: string) { 
-        super();
+        super(openingElement, children, closingElement);
         this.openingElement = openingElement;
         this.children = children.map(c => c instanceof JsxExpression ? new JsxChildExpression(c) : c);
         this.closingElement = closingElement;
@@ -109,14 +108,6 @@ export class JsxElement extends Expression {
     toString(options?: toStringOptions) { 
         const children: string = this.children.map(c => c.toString(options)).join("\n");
         return `${this.openingElement}${children}${this.closingElement}`;
-    }
-
-    addAttribute(attribute: JsxAttribute) { 
-        this.openingElement.addAttribute(attribute);
-    }
-
-    isJsx() { 
-        return true;
     }
 }
 
