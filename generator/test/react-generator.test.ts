@@ -1545,6 +1545,52 @@ mocha.describe("ComponentInput", function () {
         assert.strictEqual(getResult(expression.toString()), getResult(`declare type BaseModel={render: any}; export const BaseModel:BaseModel={};`));
     });
 
+    mocha.it("Rename Template property: template->render", function () { 
+        const expression = generator.createClassDeclaration(
+            this.decorators,
+            ["export"],
+            generator.createIdentifier("BaseModel"),
+            [],
+            [],
+            [
+                generator.createProperty([
+                    createDecorator("Template")
+                ],
+                    [],
+                    generator.createIdentifier("template"),
+                    undefined,
+                    "any",
+                    undefined
+                ),
+            ]
+        );
+
+        assert.strictEqual(getResult(expression.toString()), getResult(`declare type BaseModel={render: any}; export const BaseModel:BaseModel={};`));
+    });
+
+    mocha.it("Rename Template property: contentTemplate->contentRender", function () { 
+        const expression = generator.createClassDeclaration(
+            this.decorators,
+            ["export"],
+            generator.createIdentifier("BaseModel"),
+            [],
+            [],
+            [
+                generator.createProperty([
+                    createDecorator("Template")
+                ],
+                    [],
+                    generator.createIdentifier("contentTemplate"),
+                    undefined,
+                    "any",
+                    undefined
+                ),
+            ]
+        );
+
+        assert.strictEqual(getResult(expression.toString()), getResult(`declare type BaseModel={contentRender: any}; export const BaseModel:BaseModel={};`));
+    });
+
     mocha.describe("CompileViewModelArguments", function () {
         this.beforeEach(function () { 
             
