@@ -1,9 +1,10 @@
 import assert from "assert";
 import mocha from "mocha";
 import ts from "typescript";
-import generator, { ReactComponent, State, InternalState, Prop, Decorator, ComponentInput, Property, Method, Expression } from "../react-generator";
+import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex } from "../react-generator";
+import fs from "fs";
 
-import compile from "../component-compiler";
+import compile, { deleteFolderRecursive } from "../component-compiler";
 import path from "path";
 
 import { printSourceCodeAst as getResult, createTestGenerator } from "./helpers/common";
@@ -34,11 +35,13 @@ mocha.describe("react-generator", function () {
 
     this.afterEach(function () {
         if (this.currentTest!.state !== "passed") {
-            console.log(this.code); // TODO: diff with expected
+            console.log(this.currentTest?.ctx?.code); // TODO: diff with expected
         }
         generator.setContext(null);
-        this.code = null;
-        this.expectedCode = null;
+        if (this.currentTest?.ctx) { 
+            this.currentTest.ctx.code = null;
+            this.currentTest.ctx.expectedCode = null;
+        }
     });
 
     mocha.it("variable-declaration", function () {
@@ -115,6 +118,25 @@ mocha.describe("react-generator", function () {
 
     mocha.it("component-input", function () {
         this.testGenerator(this.test!.title);
+    });
+
+    mocha.describe("Default option rules", function () {
+        this.beforeEach(function () {
+            generator.defaultOptionsModule = "../component_declaration/default_options";
+            generator.setContext({
+                path: path.resolve(__dirname, "./test-cases/expected/react"),
+                defaultOptionsModule: path.resolve(generator.defaultOptionsModule)
+            });
+        });
+
+        this.afterEach(function () { 
+            generator.setContext(null);
+            generator.defaultOptionsModule = "";
+        });
+
+        mocha.it("default-options-empty", function () { 
+            this.testGenerator(this.test!.title);
+        })
     });
 });
 
@@ -965,9 +987,9 @@ mocha.describe("import Components", function () {
         
         const decorator = generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)]));
         
-        const component = new ReactComponent(decorator, [], generator.createIdentifier("Component"), [], [heritageClause], []);
+        const component = new ReactComponent(decorator, [], generator.createIdentifier("Component"), [], [heritageClause], [], {});
 
-        assert.equal(component.compileDefaultProps(), "Component.defaultProps = {...Base.defaultProps}");
+        assert.equal(getResult(component.compileDefaultProps()), getResult("Component.defaultProps = {...Base.defaultProps}"));
     });
 
     mocha.it("Heritage defaultProps. Base component has not defaultProps, component has not", function () {
@@ -990,7 +1012,7 @@ mocha.describe("import Components", function () {
         
         const decorator = generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)]));
         
-        const component = new ReactComponent(decorator, [], generator.createIdentifier("Component"), [], [heritageClause], []);
+        const component = new ReactComponent(decorator, [], generator.createIdentifier("Component"), [], [heritageClause], [], {});
 
         assert.equal(component.compileDefaultProps(), "");
     });
@@ -1027,7 +1049,7 @@ mocha.describe("import Components", function () {
             generator.createNumericLiteral("10")
         );
         
-        const component = new ReactComponent(decorator, [], generator.createIdentifier("Component"), [], [heritageClause], [childProperty]);
+        const component = new ReactComponent(decorator, [], generator.createIdentifier("Component"), [], [heritageClause], [childProperty], {});
 
         assert.equal(getResult(component.compileDefaultProps()), getResult("Component.defaultProps = {...Base.defaultProps, childProp:10}"));
     });
@@ -1064,7 +1086,7 @@ mocha.describe("import Components", function () {
             generator.createNumericLiteral("10")
         );
         
-        const component = new ReactComponent(decorator, [], generator.createIdentifier("Component"), [], [heritageClause], [childProperty]);
+        const component = new ReactComponent(decorator, [], generator.createIdentifier("Component"), [], [heritageClause], [childProperty], {});
 
         assert.equal(getResult(component.compileDefaultProps()), getResult("Component.defaultProps = {childProp:10}"));
         assert.equal(component.compileDefaultProps().indexOf(","), -1);
@@ -1702,5 +1724,152 @@ mocha.describe("ComponentInput", function () {
             ), getResult("{props:{...props},s:__state_s}"));
         });
 
+    });
+});
+
+mocha.describe("Default_options", function () {
+    function setupGenerator(context: GeneratorContex) { 
+        generator.setContext(context);
+    }
+    this.beforeEach(function () {
+        setupGenerator({
+            path: path.join(__dirname, "test-cases"),
+            defaultOptionsModule: `${__dirname}/default_options`
+        });
+    });
+
+    this.afterEach(function () {
+        generator.defaultOptionsModule = "";
+        generator.setContext(null);
+    });
+
+    mocha.describe("Store default_options import statement in context", function () {
+        mocha.it("default_options in parent folder", function () {
+            const expected = 'import defaultOptions from "../default_options"';
+            assert.strictEqual(generator.createImportDeclaration(
+                undefined,
+                undefined,
+                generator.createImportClause(
+                    generator.createIdentifier("defaultOptions"),
+                    undefined
+                ),
+                generator.createStringLiteral("../default_options")
+            ).toString(), expected);
+    
+            assert.strictEqual(generator.getContext().defaultOptionsImport!.toString(), expected);
+        });
+
+        mocha.it("default_options in same folder", function () {
+            setupGenerator({
+                path: __dirname,
+                defaultOptionsModule: `${__dirname}/default_options`
+            });
+    
+            generator.createImportDeclaration(
+                undefined,
+                undefined,
+                generator.createImportClause(
+                    generator.createIdentifier("defaultOptions"),
+                    undefined
+                ),
+                generator.createStringLiteral("./default_options")
+            );
+
+            assert.strictEqual(generator.getContext().defaultOptionsImport!.toString(), 'import defaultOptions from "./default_options"');
+        });
+
+        mocha.it("default_options in child folder", function () {
+            setupGenerator({
+                path: __dirname,
+                defaultOptionsModule: `${__dirname}/child/default_options`
+            })
+    
+            generator.createImportDeclaration(
+                undefined,
+                undefined,
+                generator.createImportClause(
+                    generator.createIdentifier("defaultOptions"),
+                    undefined
+                ),
+                generator.createStringLiteral("./child/default_options")
+            );
+
+            assert.strictEqual(generator.getContext().defaultOptionsImport!.toString(), 'import defaultOptions from "./child/default_options"');
+        });
+    });
+
+    mocha.it("Add import convertRulesToOptions, Rule", function () {
+        const importClause = generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                generator.createIdentifier("defaultOptions"),
+                undefined
+            ),
+            generator.createStringLiteral("../default_options")
+        )
+        
+        const component = new ReactComponent(
+            generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)])),
+            [],
+            generator.createIdentifier("Component"),
+            [],
+            [],
+            [],
+            generator.getContext());
+
+        assert.strictEqual(getResult(importClause.toString()), getResult(`import defaultOptions, {convertRulesToOptions, Rule} from "../default_options"`));
+        assert.strictEqual(getResult(component.compileImports()), getResult(`import React from "react";`));
+    });
+
+    mocha.it("Adding imports should not leads to duplicates", function () {
+        const importClause = generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                generator.createIdentifier("defaultOptions"),
+                generator.createNamedImports(
+                    [generator.createIdentifier("Rule")]
+                )
+            ),
+            generator.createStringLiteral("../default_options")
+        )
+        
+        new ReactComponent(
+            generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)])),
+            [],
+            generator.createIdentifier("Component"),
+            [],
+            [],
+            [],
+            generator.getContext());
+
+        assert.strictEqual(getResult(importClause.toString()), getResult(`import defaultOptions, {convertRulesToOptions, Rule} from "../default_options"`));
+    });
+
+    mocha.it("Import default_options if module doesn't import default_options", function () {
+        const component = new ReactComponent(
+            generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)])),
+            [],
+            generator.createIdentifier("Component"),
+            [],
+            [],
+            [],
+            generator.getContext());
+        
+        assert.strictEqual(getResult(component.compileImports()), getResult(`import {convertRulesToOptions, Rule} from "../default_options"; import React from "react";`));
+    });
+
+    mocha.it("Import default_options if module doesn't import default_options", function () {
+        const component = new ReactComponent(
+            generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)])),
+            [],
+            generator.createIdentifier("Component"),
+            [],
+            [],
+            [],
+            generator.getContext());
+        
+        assert.strictEqual(getResult(component.compileImports()), getResult(`import {convertRulesToOptions, Rule} from "../default_options"; import React from "react";`));
     });
 });

@@ -1,5 +1,5 @@
 import SyntaxKind from "./syntaxKind";
-import fs from "fs";
+import fs, { PathLike } from "fs";
 import path from "path";
 import { compileCode } from "./component-compiler";
 
@@ -19,6 +19,25 @@ function variableDeclaration(name: Identifier, type: string = "", initializer?: 
     return `${name}${compileType(type, questionToken)}${initilizerDeclaration}`;
 }
 
+function getRelativePath(src:string, dst:string, moduleName: string="") { 
+    const relativePath = `${path.relative(src, dst)}${moduleName ? `/${moduleName}` : ""}`.replace(/\\/gi, "/");
+    if (relativePath.startsWith("/")) { 
+        return `.${relativePath}`;
+    }
+    if (!relativePath.startsWith(".")) { 
+        return `./${relativePath}`;
+    }
+    return relativePath;
+}
+
+function getModuleRelativePath(src: string, moduleSpecifier: string) { 
+    const normalizedPath = path.normalize(moduleSpecifier);
+    const moduleParts = normalizedPath.split(/(\/|\\)/);
+
+    const folderPath = path.resolve(moduleParts.slice(0, moduleParts.length - 2).join("/"));
+
+    return getRelativePath(src, folderPath, moduleParts[moduleParts.length - 1]);
+}
 
 function getLocalStateName(name: Identifier | string) {
     return `__state_${name}`;
@@ -73,6 +92,9 @@ export class StringLiteral extends SimpleExpression {
     }
     toString() {
         return `${this.quoteSymbol}${this.expression}${this.quoteSymbol}`;
+    }
+    valueOf() { 
+        return this.expression;
     }
 }
 
@@ -1116,11 +1138,15 @@ export class ReactComponent {
 
     members: Array<Property | Method>;
 
+    context: GeneratorContex;
+
+    defaultOptionsRules?: Expression | null;
+
     get name() { 
         return this._name.toString();
     }
 
-    constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>) {
+    constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>, context: GeneratorContex) {
         this.modifiers = modifiers;
         this._name = name;
         this.heritageClauses = heritageClauses;
@@ -1155,6 +1181,14 @@ export class ReactComponent {
 
         this.view = parameters.getProperty("view");
         this.viewModel = parameters.getProperty("viewModel");
+        this.defaultOptionsRules = parameters.getProperty("defaultOptionsRules");
+
+        this.context = context;
+
+        if (context.defaultOptionsImport) { 
+            context.defaultOptionsImport.add("convertRulesToOptions");
+            context.defaultOptionsImport.add("Rule");
+        }
     }
 
     get heritageProperies() {
@@ -1194,6 +1228,11 @@ export class ReactComponent {
             hooks.push("useRef");
         }
 
+        if (!this.context.defaultOptionsImport && this.context.defaultOptionsModule && this.context.path) {
+            const relativePath = getModuleRelativePath(this.context.path, this.context.defaultOptionsModule);
+            imports.push(`import {convertRulesToOptions, Rule} from "${relativePath}"`);
+        }
+
         return imports.concat(this.compileImportStatements(hooks)).join(";\n");
     }
 
@@ -1201,18 +1240,51 @@ export class ReactComponent {
         return `${this.name.toString()}.defaultProps`;
     }
 
-    compileDefaultProps() {
-        const defaultProps = this.props.filter(p => !p.property.inherited && p.property.initializer).concat(this.state);
-        const heritageDefaultProps = this.heritageClauses.filter(h => h.defaultProps.length).map(h => `...${h.defaultProps}`);
+    compileDefaultOptionsMethod() { 
+        if (this.context.defaultOptionsModule) { 
+            const defaultOptionsTypeName = `${this.name}OptionRule`;
+            const defaultOptionsTypeArgument = this.isJSXComponent ? this.heritageClauses[0].defaultProps : this.name;
+            return `type ${defaultOptionsTypeName} = Rule<${defaultOptionsTypeArgument}>;
 
+            const __defaultOptionsRules:${defaultOptionsTypeName}[] = [];
+            export function defaultOptions(rule: ${defaultOptionsTypeName}) { 
+                __defaultOptionsRules.push(rule);
+                ${this.defaultPropsDest()} = {
+                    ...__createDefaultProps(),
+                    ...convertRulesToOptions(__defaultOptionsRules)
+                };
+            }`;
+        }
+        return "";
+    }
+
+    compileDefaultProps() {
+        const defaultProps = this.heritageClauses
+            .filter(h => h.defaultProps.length).map(h => `...${h.defaultProps}`)
+            .concat(
+                this.props.filter(p => !p.property.inherited && p.property.initializer)
+                    .concat(this.state)
+                    .map(p => p.defaultProps())
+        );
+
+        if (this.defaultOptionsRules) { 
+            defaultProps.push(`...convertRulesToOptions(${this.defaultOptionsRules})`);
+        }
+
+        if (this.context.defaultOptionsModule) { 
+            return `
+                function __createDefaultProps(){
+                    return {
+                        ${defaultProps.join(",\n")}
+                    }
+                }
+                ${this.defaultPropsDest()}= __createDefaultProps();
+            `;
+        }
         if (defaultProps.length) {
             return `${this.defaultPropsDest()} = {
-                ${heritageDefaultProps.join(",") + (heritageDefaultProps.length ? "," : "")}
-                ${defaultProps.map(p => p.defaultProps())
-                    .join(",\n")}
+                ${defaultProps.join(",\n")}
             }`;
-        } else if (heritageDefaultProps.length) {
-            return `${this.defaultPropsDest()} = {${heritageDefaultProps.join(",")}}`;
         }
 
         return "";
@@ -1352,7 +1424,8 @@ export class ReactComponent {
                 );
             }
 
-            ${this.compileDefaultProps()}`;
+            ${this.compileDefaultProps()}
+            ${this.compileDefaultOptionsMethod()}`;
     }
 }
 
@@ -1633,6 +1706,10 @@ export class NamedImports {
         this.elements = elements;
     }
 
+    add(name: string) { 
+        this.remove(name);
+        this.node.push(new Identifier(name));
+    }
     
     remove(name: string) { 
         this.node = this.node.filter(n => n.toString() !== name);
@@ -1665,6 +1742,14 @@ export class ImportClause {
         }
     }
 
+    add(name: string) { 
+        if (this.namedBindings) {
+            this.namedBindings.add(name);
+        } else { 
+            this.namedBindings = new NamedImports([new Identifier(name)]);
+        }
+    }
+
     toString() { 
         const result: string[] = [];
         if (this.name) {
@@ -1676,6 +1761,32 @@ export class ImportClause {
         }
 
         return result.length ? `${result.join(",")} from ` : "";
+    }
+}
+
+export class ImportDeclaration { 
+    decorators: Decorator[];
+    modifiers: string[];
+    importClause: ImportClause;
+    moduleSpecifier: StringLiteral;
+
+    replaceSpecifier(search: string | RegExp, replaceValue: string) { 
+        this.moduleSpecifier.expression = this.moduleSpecifier.expression.replace(search, replaceValue);
+    }
+    
+    add(name: string) { 
+        this.importClause.add(name);
+    }
+
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], importClause: ImportClause, moduleSpecifier: StringLiteral) { 
+        this.decorators = decorators;
+        this.modifiers = modifiers;
+        this.importClause = importClause;
+        this.moduleSpecifier = moduleSpecifier;
+    }
+
+    toString() { 
+        return `import ${this.importClause}${this.moduleSpecifier}`;
     }
 }
 
@@ -1787,6 +1898,8 @@ export class AsExpression extends ExpressionWithExpression {
 export interface GeneratorContex {
     path?: string;
     components?: { [name: string]: Heritable };
+    defaultOptionsImport?: ImportDeclaration;
+    defaultOptionsModule?: string
 }
 
 export class Generator {
@@ -2001,13 +2114,20 @@ export class Generator {
         if (moduleSpecifier.toString().indexOf("component_declaration/common") >= 0) {
             return "";
         }
+        const context = this.getContext();
+        if (context.defaultOptionsModule && context.path) {
+            const relativePath = getModuleRelativePath(context.path, context.defaultOptionsModule);
+            if (relativePath.toString()===moduleSpecifier.valueOf()) {
+                context.defaultOptionsImport = new ImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
+                return context.defaultOptionsImport;
+            }
+        }
         if (moduleSpecifier.toString().indexOf("component_declaration/jsx") >= 0) {
             const importString = moduleSpecifier.expression.toString().replace("component_declaration/jsx", "component_declaration/jsx-g")
             moduleSpecifier = new StringLiteral(importString);
         }
 
         const module = moduleSpecifier.expression.toString();
-        const context = this.getContext();
         if (context.path) {
             const modulePath = path.join(context.path, `${module}.tsx`);
             if (fs.existsSync(modulePath)) {
@@ -2026,7 +2146,7 @@ export class Generator {
             }
         }
 
-        return `import ${importClause}${moduleSpecifier}`;
+        return new ImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
     }
 
     createImportSpecifier(propertyName: string | undefined, name: Identifier) {
@@ -2050,7 +2170,7 @@ export class Generator {
     }
 
     createComponent(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
-        return new ReactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
+        return new ReactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members, this.getContext());
     }
 
     createComponentBindings(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
@@ -2286,6 +2406,10 @@ export class Generator {
     }
 
     cache: { [name: string]: any } = {};
+
+    destination: string = "";
+
+    defaultOptionsModule?: string;
 }
 
 export default new Generator();

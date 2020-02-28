@@ -269,8 +269,8 @@ class Method extends BaseMethod {
 
 class AngularComponent extends ReactComponent {
     decorator: Decorator;
-    constructor(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
-        super(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
+    constructor(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>, context: GeneratorContex) { 
+        super(componentDecorator, modifiers, name, typeParameters, heritageClauses, members, context);
         componentDecorator.addParameter("selector", new StringLiteral(this.selector));
         this.decorator = componentDecorator;
     }
@@ -497,7 +497,7 @@ export class AngularGenerator extends Generator {
     }
 
     createComponent(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
-        return new AngularComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
+        return new AngularComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members, this.getContext());
     }
 
     createPropertyAccess(expression: Expression, name: Identifier) {

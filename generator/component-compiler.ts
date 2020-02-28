@@ -2,15 +2,16 @@ import ts from "typescript";
 import fs from "fs";
 import { generateFactoryCode } from "./factoryCodeGenerator";
 import { Generator } from "./react-generator";
+import path from "path";
 
-function deleteFolderRecursive(path: string) {
+export function deleteFolderRecursive(path: string) {
     if (fs.existsSync(path)) {
-        fs.readdirSync(path).forEach(function (file) {
-            var curPath = path + "/" + file;
-            if (fs.lstatSync(curPath).isDirectory()) {
-                deleteFolderRecursive(curPath);
+        fs.readdirSync(path).forEach(fileName => {
+            const filePath = `${path}/${fileName}`;
+            if (fs.lstatSync(filePath).isDirectory()) {
+                deleteFolderRecursive(filePath);
             } else {
-                fs.unlinkSync(curPath);
+                fs.unlinkSync(filePath);
             }
         });
         fs.rmdirSync(path);
@@ -22,7 +23,7 @@ import File from "vinyl";
 
 export function compileCode(generator: Generator, code: string, file: { dirname: string, path: string }): string {
     const source = ts.createSourceFile(file.path, code, ts.ScriptTarget.ES2016, true);
-    generator.setContext({ path: file.dirname });
+    generator.setContext({ path: file.dirname, defaultOptionsModule: generator.defaultOptionsModule && path.resolve(generator.defaultOptionsModule) });
     const codeFactory = generateFactoryCode(ts, source);
     const codeFactoryResult = eval(codeFactory)(generator);
     
@@ -32,7 +33,7 @@ export function compileCode(generator: Generator, code: string, file: { dirname:
     return codeFactoryResult.join("\n");
 }
 
-export function generateComponents(generator:Generator) { 
+export function generateComponents(generator: Generator) {
     const stream = new Stream.Transform({
         objectMode: true,
         transform(originalFile: File, _, callback) {
