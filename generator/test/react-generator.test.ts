@@ -841,6 +841,35 @@ mocha.describe("react-generator: expressions", function () {
 
         assert.strictEqual(expression.toString(), '/d+/');
     });
+
+    mocha.describe("Methods", function () {
+        mocha.describe("GetAccessor", function () {
+            mocha.it("type declaration with defined type", function () {
+                const expression = generator.createGetAccessor([], [], generator.createIdentifier("name"), [], "string", undefined);
+        
+                assert.strictEqual(expression.typeDeclaration(), "name:string");
+            });
+    
+            mocha.it("type declaration with undefined type", function () {
+                const expression = generator.createGetAccessor(
+                    [],
+                    [],
+                    generator.createIdentifier("name"),
+                    [],
+                    undefined,
+                    undefined
+                );
+        
+                assert.strictEqual(expression.typeDeclaration(), "name:any");
+            });
+
+            mocha.it("getter is call", function () {
+                const expression = generator.createGetAccessor([], [], generator.createIdentifier("name"), [], "string", undefined);
+        
+                assert.strictEqual(expression.getter(), "name()");
+            });
+        });
+    });   
 });
 
 mocha.describe("common", function () {

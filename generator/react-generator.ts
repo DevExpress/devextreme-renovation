@@ -950,8 +950,16 @@ export class Method {
 }
 
 export class GetAccessor extends Method { 
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type: string, body?: Block) { 
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type?: string, body?: Block) { 
         super(decorators, modifiers, "", name, "", [], parameters, type, body || new Block([], false));
+    }
+
+    typeDeclaration() { 
+        return `${this.name}:${this.type}`;
+    }
+
+    getter() { 
+        return `${super.getter()}()`;
     }
 }
 
@@ -2247,11 +2255,11 @@ export class Generator {
         return expression;
     }
 
-    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string, typeParameters: any, parameters: Parameter[], type: string, body: Block) {
+    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string, typeParameters: any, parameters: Parameter[], type: string | undefined, body: Block) {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 
-    createGetAccessor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type: string, body?: Block) {
+    createGetAccessor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type?: string, body?: Block) {
         return new GetAccessor(decorators, modifiers, name, parameters, type, body);
     }
 
