@@ -681,7 +681,7 @@ export class Property extends Expression {
         return this._name.toString();
     }
 
-    constructor(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression) {
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression) {
         super();
         this.decorators = decorators;
         this.modifiers = modifiers;
@@ -949,6 +949,12 @@ export class Method {
     }
 }
 
+export class GetAccessor extends Method { 
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type: string, body?: Block) { 
+        super(decorators, modifiers, "", name, "", [], parameters, type, body || new Block([], false));
+    }
+}
+
 export class Prop {
     property: Property;
     constructor(property: Property) {
@@ -1180,7 +1186,7 @@ export class ReactComponent {
         const parameters = (decorator.expression.arguments[0] as ObjectLiteral);
 
         this.view = parameters.getProperty("view");
-        this.viewModel = parameters.getProperty("viewModel");
+        this.viewModel = parameters.getProperty("viewModel") || "";
         this.defaultOptionsRules = parameters.getProperty("defaultOptionsRules");
 
         this.context = context;
@@ -1391,7 +1397,7 @@ export class ReactComponent {
         return props
             .concat(this.listeners.map(l => l.name.toString()))
             .concat(this.refs.map(r => r.name.toString()))
-            .concat(this.methods.map(m => m.name.toString()));
+            .concat(this.methods.map(m => m instanceof GetAccessor ? `${m.name}:${m.name}()` : m.name.toString()));
     }
 
     toString() {
@@ -2241,8 +2247,12 @@ export class Generator {
         return expression;
     }
 
-    createMethod(decorators: Decorator[], modifiers: string[], asteriskToken: string, name: Identifier, questionToken: string, typeParameters: any, parameters: Parameter[], type: string, body: Block) {
+    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string, typeParameters: any, parameters: Parameter[], type: string, body: Block) {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
+    }
+
+    createGetAccessor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type: string, body?: Block) {
+        return new GetAccessor(decorators, modifiers, name, parameters, type, body);
     }
 
     createPrefix(operator: string, operand: Expression) {

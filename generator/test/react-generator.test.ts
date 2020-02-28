@@ -1613,48 +1613,63 @@ mocha.describe("ComponentInput", function () {
         assert.strictEqual(getResult(expression.toString()), getResult(`declare type BaseModel={contentRender: any}; export const BaseModel:BaseModel={};`));
     });
 
+    function createComponentDecorator(paramenters: {[name:string]: any}) { 
+        return generator.createDecorator(
+            generator.createCall(
+                generator.createIdentifier("Component"),
+                [],
+                [generator.createObjectLiteral(
+                    Object.keys(paramenters).map(k => 
+                        generator.createPropertyAssignment(
+                            generator.createIdentifier(k),
+                            paramenters[k]
+                        )
+                    ),
+                    false
+                )]
+            )
+        )
+    }
+
+    function createComponent(inputMembers: Array<Property | Method>, componentMembers: Array<Property | Method> = [], paramenters: { [name: string]: any } = {}):ReactComponent { 
+        generator.createClassDeclaration(
+            [generator.createDecorator(
+                generator.createCall(generator.createIdentifier("ComponentBindings"), [], [])
+            )],
+            [],
+            generator.createIdentifier("Input"),
+            [],
+            [],
+            inputMembers
+        );
+
+        const heritageClause = generator.createHeritageClause(
+            generator.SyntaxKind.ExtendsKeyword,
+            [generator.createExpressionWithTypeArguments(
+                [generator.createTypeReferenceNode(
+                    generator.createIdentifier("Input"),
+                    undefined
+                )],
+                generator.createIdentifier("JSXComponent")
+            )]
+        );
+
+        const component = generator.createClassDeclaration(
+            [createComponentDecorator(paramenters)],
+            [],
+            generator.createIdentifier("Widget"),
+            [],
+            [heritageClause],
+            componentMembers
+        );
+
+        return component as ReactComponent;
+    }
+
     mocha.describe("CompileViewModelArguments", function () {
         this.beforeEach(function () { 
             
         });
-
-        function createComponent(inputMembers: Array<Property|Method>, componentMembers: Array<Property|Method>=[]):ReactComponent { 
-            generator.createClassDeclaration(
-                [generator.createDecorator(
-                    generator.createCall(generator.createIdentifier("ComponentBindings"), [], [])
-                )],
-                [],
-                generator.createIdentifier("Input"),
-                [],
-                [],
-                inputMembers
-            );
-
-            const heritageClause = generator.createHeritageClause(
-                generator.SyntaxKind.ExtendsKeyword,
-                [generator.createExpressionWithTypeArguments(
-                    [generator.createTypeReferenceNode(
-                        generator.createIdentifier("Input"),
-                        undefined
-                    )],
-                    generator.createIdentifier("JSXComponent")
-                )]
-            );
-
-            const component = generator.createClassDeclaration(
-                [generator.createDecorator(
-                    generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)])
-                )],
-                [],
-                generator.createIdentifier("Widget"),
-                [],
-                [heritageClause],
-                componentMembers
-            );
-
-            return component as ReactComponent;
-            
-        }
 
         mocha.it("Empty input with empty component", function () {
             const component = createComponent([]);
@@ -1722,6 +1737,22 @@ mocha.describe("ComponentInput", function () {
             assert.deepEqual(getResult(
                 `{${component.compileViewModelArguments().join(",")}}`
             ), getResult("{props:{...props},s:__state_s}"));
+        });
+
+        mocha.it("Pass getter result in viewModel arguments", function () {
+            const component = createComponent([], [
+                generator.createGetAccessor(
+                    [],
+                    [],
+                    generator.createIdentifier("property"),
+                    [],
+                    "",
+                    undefined
+                )
+            ]);
+
+            assert.strictEqual(getResult(`{${component.compileViewModelArguments().join(",")}}`
+            ), getResult("{props:{...props}, property: property()}"));
         });
 
     });
