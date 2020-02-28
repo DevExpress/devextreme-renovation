@@ -893,15 +893,15 @@ export class Method {
     parameters: Parameter[];
     type: string;
     body: Block;
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: string = "void", body: Block) {
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: string = "any", body: Block) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.asteriskToken = asteriskToken;
         this.name = name;
         this.questionToken = questionToken;
         this.typeParameters = typeParameters;
-        this.parameters = parameters,
-            this.type = type;
+        this.parameters = parameters;
+        this.type = type;
         this.body = body;
     }
 

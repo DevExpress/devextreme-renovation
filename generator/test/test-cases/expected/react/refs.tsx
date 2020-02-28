@@ -7,8 +7,8 @@ import React, { useCallback, useRef } from "react";
 
 interface Widget {
     divRef: any;
-    clickHandler: () => void;
-    getHeight: () => void;
+    clickHandler: () => any;
+    getHeight: () => any;
 }
 
 export default function Widget(props: {}) {

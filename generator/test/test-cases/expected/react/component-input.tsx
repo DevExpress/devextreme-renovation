@@ -15,7 +15,7 @@ interface Widget {
     props: {
         height?: number;
     },
-    onClick:()=>void
+    onClick:()=>any
 }
 
 export default function Widget(props: { 
