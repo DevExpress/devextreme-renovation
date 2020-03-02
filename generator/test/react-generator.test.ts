@@ -601,6 +601,39 @@ mocha.describe("react-generator: expressions", function () {
 
         assert.equal(expression.toString(), "`a${1}b${2}c`");
     });
+
+    mocha.it("createTemplateExpression - convert to string concatination", function () {
+        const expression = generator.createTemplateExpression(
+            generator.createTemplateHead(
+                "a",
+                "a"
+            ),
+            [
+                generator.createTemplateSpan(
+                    generator.createNumericLiteral("1"),
+                    generator.createTemplateMiddle(
+                        "b",
+                        "b"
+                    )
+                ),
+                generator.createTemplateSpan(
+                    generator.createNumericLiteral("2"),
+                    generator.createTemplateTail(
+                        "c",
+                        "c"
+                    )
+                )
+            ]
+        );
+
+        assert.equal(expression.toString({
+            disableTemplates: true,
+            members: [],
+            props: [],
+            internalState: [],
+            state: []
+        }), `"a"+1+"b"+2+"c"`);
+    });
     
     mocha.it("While", function () {
         const expression = generator.createPropertyAccess(
