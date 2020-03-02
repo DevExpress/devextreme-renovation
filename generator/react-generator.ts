@@ -692,6 +692,9 @@ export class Property extends Expression {
     }
 
     typeDeclaration() {
+        if (this.decorators.find(d => d.name === "Slot")) { 
+            return `${this.name}${this.questionOrExclamationToken}:React.ReactNode`;
+        }
         return `${this.name}${this.questionOrExclamationToken}:${this.type}`;
     }
 
@@ -1029,10 +1032,6 @@ export class Ref extends Prop {
 }
 
 export class Slot extends Prop {
-    typeDeclaration() {
-        return `${this.name}${this.property.questionOrExclamationToken}:React.ReactNode`;
-    }
-
     defaultDeclaration() {
         return "";
     }
@@ -1368,9 +1367,7 @@ export class ReactComponent {
     compileComponentInterface() {
 
         const props = this.isJSXComponent ? [`props: {
-            ${this.props
-            
-            .concat(this.state)
+            ${this.members.filter(m=>m instanceof Property && m.inherited)
                 .map(p => p.typeDeclaration()).join(";\n")}
             }`] : this.props
                 .concat(this.state)
@@ -1378,7 +1375,7 @@ export class ReactComponent {
 
         return `interface ${this.name}{
             ${  props
-                .concat(this.internalState.concat(this.refs).concat(this.slots).map(p => p.typeDeclaration()))
+                .concat(this.internalState.concat(this.refs).concat(this.slots.filter(s=>!s.property.inherited)).map(p => p.typeDeclaration()))
                 .concat(this.listeners.map(l => l.typeDeclaration()))
                 .concat(this.methods.map(m => m.typeDeclaration()))
                 .concat([""])

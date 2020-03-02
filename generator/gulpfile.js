@@ -3,8 +3,10 @@ const gulp = require("gulp");
 const sourcemaps = require('gulp-sourcemaps');
 const { spawn } = require('child_process');
 
+const TEST_CASES_SRC = 'test/test-cases/**/*';
+
 gulp.task("copy-test-cases", function copyTestCases() { 
-    return gulp.src(['test/test-cases/**/*']).pipe(gulp.dest('build/test/test-cases'));
+    return gulp.src(TEST_CASES_SRC).pipe(gulp.dest('build/test/test-cases'));
 });
 
 gulp.task("copy-package", function copyTestCases() { 
@@ -49,6 +51,7 @@ gulp.task("build-dist", gulp.series("copy-package", "copy-test-cases", function(
     .pipe(gulp.dest(tsProject.options.outDir));
 }));
 
-gulp.task('watch', function watch() {
+gulp.task('watch', gulp.parallel("build", "copy-test-cases", function watch() {
+    gulp.watch(TEST_CASES_SRC, gulp.series("copy-test-cases"));
     return gulp.watch(["./**/*.ts", "!./node_modules", "!./**/*.d.ts"], gulp.series("compile"));
-});
+}));

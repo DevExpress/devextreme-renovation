@@ -1172,7 +1172,7 @@ mocha.describe("import Components", function () {
             []
         );
 
-        assert.deepEqual(model.members.map(m => m.name.toString()), ["height"]);
+        assert.deepEqual(model.members.map(m => m.name.toString()), ["height", "children"]);
         assert.strictEqual(getResult(model.toString()), getResult("declare type Model= typeof WidgetProps & {} const Model:Model={...WidgetProps}"));
     });
 
@@ -1216,10 +1216,10 @@ mocha.describe("import Components", function () {
         assert.deepEqual(model.members.map(m => {
             const prop = new Prop(m as Property);
             return prop.typeDeclaration();
-        }), ["height!:string"]);
+        }), ["height!:string", "children?:React.ReactNode"]);
 
         assert.strictEqual(model.defaultPropsDest(), "Model");
-        assert.strictEqual(getResult(model.toString()), getResult("declare type Model=typeof WidgetProps&{height!:string} const Model:Model={...WidgetProps, height: '10px'}"));
+        assert.strictEqual(getResult(model.toString()), getResult("declare type Model=typeof WidgetProps&{height!:string;} const Model:Model={...WidgetProps, height: '10px'}"));
     });
 
     mocha.it("ComponentInput - doesn't have properties without initializer", function () { 
