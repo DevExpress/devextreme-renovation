@@ -1036,6 +1036,139 @@ mocha.describe("React Component", function () {
                 viewModel.props.render
             }`));
         });
+
+        mocha.it("Do not modify state", function () {
+            const component = createComponent(
+                [
+                    generator.createProperty(
+                        [createDecorator("TwoWay")],
+                        [],
+                        generator.createIdentifier("p")
+                    )
+                ]
+            );
+
+            const view = generator.createFunctionDeclaration(
+                [],
+                [],
+                "",
+                generator.createIdentifier("view"),
+                [],
+                [
+                    generator.createParameter(
+                        [],
+                        [],
+                        undefined,
+                        generator.createIdentifier("viewModel"),
+                        undefined,
+                        component.name,
+                        undefined
+                    )
+                ],
+                "",
+                generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("props")
+                        ),
+                        generator.createIdentifier("p")
+                    )
+                ], false)
+            );
+
+            assert.strictEqual(getResult(view.toString()), getResult(`function view(viewModel:Widget){
+                viewModel.props.p
+            }`));
+        });
+
+        mocha.it("Do not modify internal state", function () {
+            const component = createComponent(
+                [],
+                [
+                    generator.createProperty(
+                        [createDecorator("InternalState")],
+                        [],
+                        generator.createIdentifier("p")
+                    )
+                ]
+            );
+
+            const view = generator.createFunctionDeclaration(
+                [],
+                [],
+                "",
+                generator.createIdentifier("view"),
+                [],
+                [
+                    generator.createParameter(
+                        [],
+                        [],
+                        undefined,
+                        generator.createIdentifier("viewModel"),
+                        undefined,
+                        component.name,
+                        undefined
+                    )
+                ],
+                "",
+                generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("p")
+                    )
+                ], false)
+            );
+
+            assert.strictEqual(getResult(view.toString()), getResult(`function view(viewModel:Widget){
+                viewModel.p
+            }`));
+        });
+
+        mocha.it("Rename default slot", function () {
+            const component = createComponent(
+                [
+                    generator.createProperty(
+                        [createDecorator("Slot")],
+                        [],
+                        generator.createIdentifier("default")
+                    )
+                ]
+            );
+
+            const view = generator.createFunctionDeclaration(
+                [],
+                [],
+                "",
+                generator.createIdentifier("view"),
+                [],
+                [
+                    generator.createParameter(
+                        [],
+                        [],
+                        undefined,
+                        generator.createIdentifier("viewModel"),
+                        undefined,
+                        component.name,
+                        undefined
+                    )
+                ],
+                "",
+                generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("props")
+                        ),
+                        generator.createIdentifier("default")
+                    )
+                ], false)
+            );
+
+            assert.strictEqual(getResult(view.toString()), getResult(`function view(viewModel:Widget){
+                viewModel.props.children
+            }`));
+        });
     });
 });
 

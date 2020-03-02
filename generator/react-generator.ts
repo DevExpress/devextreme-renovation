@@ -468,13 +468,13 @@ export class Function extends Expression {
         const widget = this.parameters[0] && this.context.components?.[this.parameters[0].type || ""];
         if (widget && widget instanceof ReactComponent) { 
             options = {
-                members: widget.members,
+                members: widget.members.filter(m => m.decorators.find(d => d.name === "Template" || d.name === "Slot")),
                 internalState: [],
                 state: [],
                 props: [],
                 componentContext: this.parameters[0].name.toString(),
                 newComponentContext: this.parameters[0].name.toString()
-            }
+            };
         }
         return `${this.modifiers.join(" ")} function ${this.name || ""}(${
             this.parameters.map(p => p.declaration()).join(",")
@@ -726,7 +726,7 @@ export class Property extends Expression {
         if (this.decorators.find(d => d.name === "InternalState")) {
             return getLocalStateName(this.name);   
         }
-        if (this.decorators.find(d => d.name === "Template")) { 
+        if (this.decorators.find(d => d.name === "Template" || d.name === "Slot")) { 
             return `props.${this.name}`;
         }
         return this.name;
