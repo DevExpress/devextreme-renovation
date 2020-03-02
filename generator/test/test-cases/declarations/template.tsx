@@ -1,20 +1,21 @@
-@Component({
-    viewModel: viewModel,
-    view: view
-})
-export default class Component {
-    @Template() template: ()=>HTMLDivElement;
-    @Template() contentTemplate: (a: string) => HTMLDivElement = (a: string) => (<div>{a}</div>);
+import { Component, Template, ComponentBindings, JSXComponent } from "../../../component_declaration/common";
+
+@ComponentBindings()
+export class WidgetInput { 
+    @Template() template?: ()=>HTMLDivElement;
+    @Template() contentTemplate: (a: string) => any = (a: string) => (<div>{a}</div>);
 }
 
-function viewModel(model: Component) {
-    return model;
- }
+@Component({
+    view: view
+})
+export default class Widget extends JSXComponent<WidgetInput> {
+    
+}
 
-
-function view(viewModel: Component) { 
+function view(viewModel: Widget) { 
     return (<div>
-        {viewModel.contentTemplate("1")}
-        {viewModel.template()}
+        {viewModel.props.contentTemplate("1")}
+        {viewModel.props.template?.()}
     </div>)
 }

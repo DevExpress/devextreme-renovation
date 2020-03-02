@@ -1835,30 +1835,30 @@ export class JsxAttribute {
         this.initializer = initializer;
     }
 
-    toString() { 
+    toString(options?:toStringOptions) { 
         const name = this.name.toString();
-        return `${(eventsDictionary as any)[name] || this.name.toString()}=${this.initializer}`;
+        return `${(eventsDictionary as any)[name] || this.name.toString()}=${this.initializer.toString(options)}`;
     }
 }
 
 export class JsxOpeningElement extends Expression { 
-    tagName: Identifier;
+    tagName: Expression;
     typeArguments: any[];
     attributes: JsxAttribute[];
 
-    constructor(tagName: Identifier, typeArguments: any[] = [], attributes: JsxAttribute[]) { 
+    constructor(tagName: Expression, typeArguments: any[] = [], attributes: JsxAttribute[]) { 
         super();
         this.tagName = tagName;
         this.typeArguments = typeArguments;
         this.attributes = attributes;
     }
 
-    attributesString() { 
-        return this.attributes.map(a => a.toString()).join("\n");
+    attributesString(options?:toStringOptions) { 
+        return this.attributes.map(a => a.toString(options)).join("\n");
     }
 
-    toString() { 
-        return `<${this.tagName} ${this.attributesString()}>`;
+    toString(options?:toStringOptions) { 
+        return `<${this.tagName.toString(options)} ${this.attributesString(options)}>`;
     }
 
     addAttribute(attribute: JsxAttribute) { 
@@ -1883,10 +1883,8 @@ export class JsxElement extends Expression {
 
     toString(options?: toStringOptions) {
         const children: string = this.children.map(c => c.toString(options)).join("\n");
-        return `${this.openingElement}${children}${this.closingElement}`
-            .replace(/(\.default)(\W+)/g, ".children$2")
-            .replace(/template/g, "render")
-            .replace(/(.+)(Template)/g, "$1Render");
+        return `${this.openingElement.toString(options)}${children}${this.closingElement}`
+            .replace(/(\.default)(\W+)/g, ".children$2");
     }
 
     addAttribute(attribute: JsxAttribute) { 
@@ -1911,8 +1909,8 @@ export class JsxExpression extends ExpressionWithExpression {
         this.dotDotDotToken = dotDotDotToken;
     }
 
-    toString() { 
-        return `{${this.dotDotDotToken}${this.expression}}`;
+    toString(options?:toStringOptions) { 
+        return `{${this.dotDotDotToken}${this.expression.toString(options)}}`;
     }
 
     isJsx() { 
