@@ -1,5 +1,5 @@
 import SyntaxKind from "./syntaxKind";
-import fs, { PathLike } from "fs";
+import fs from "fs";
 import path from "path";
 import { compileCode } from "./component-compiler";
 
