@@ -462,7 +462,7 @@ export class AngularGenerator extends Generator {
     }
 
     createFunctionDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, typeParameters: string[], parameters: Parameter[], type: string, body: Block) {
-        const functionDeclaration = new AngularFunction(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body);
+        const functionDeclaration = new AngularFunction(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
         if (functionDeclaration.name) { 
             this.addViewFunction(functionDeclaration.name.toString(), functionDeclaration);
         }

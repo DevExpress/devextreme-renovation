@@ -52,6 +52,8 @@ export interface toStringOptions {
     internalState: InternalState[];
     state: State[];
     props: Prop[];
+    componentContext?: string;
+    newComponentContext?: string;
 }
 
 export class Expression {
@@ -361,7 +363,7 @@ export class Parameter {
     name: Identifier;
     questionToken: string;
     type?: string;
-    initializer: any;
+    initializer?: Expression;
     constructor(decorators: Decorator[], modifiers: string[], dotDotDotToken: any, name: Identifier, questionToken: string = "", type?: string, initializer?: Expression) {
         this.decorators = decorators;
         this.modifiers = modifiers;
@@ -443,7 +445,8 @@ export class Function extends Expression {
     parameters: Parameter[];
     type: string;
     body: Block;
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier | undefined, typeParameters: string[] = [], parameters: Parameter[], type: string, body: Block) {
+    context: GeneratorContex;
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier | undefined, typeParameters: string[] = [], parameters: Parameter[], type: string, body: Block, context: GeneratorContex) {
         super();
         this.decorators = decorators;
         this.modifiers = modifiers;
@@ -453,16 +456,29 @@ export class Function extends Expression {
         this.parameters = parameters;
         this.type = type;
         this.body = body;
+        this.context = context;
     }
 
     declaration() {
-        return `${this.modifiers.join(" ")} function ${this.name || ""}(${
-            this.parameters.map(p => p.declaration()).join(",")
-            })${compileType(this.type)}${this.body}`;
+        this.toString();
     }
 
     toString() {
-        return this.declaration();
+        let options: toStringOptions | undefined = undefined;
+        const widget = this.parameters[0] && this.context.components?.[this.parameters[0].type || ""];
+        if (widget && widget instanceof ReactComponent) { 
+            options = {
+                members: widget.members,
+                internalState: [],
+                state: [],
+                props: [],
+                componentContext: this.parameters[0].name.toString(),
+                newComponentContext: this.parameters[0].name.toString()
+            }
+        }
+        return `${this.modifiers.join(" ")} function ${this.name || ""}(${
+            this.parameters.map(p => p.declaration()).join(",")
+            })${compileType(this.type)}${this.body.toString(options)}`;
     }
 }
 
@@ -707,7 +723,13 @@ export class Property extends Expression {
     }
 
     getter() { 
-        return this.name.toString();
+        if (this.decorators.find(d => d.name === "InternalState")) {
+            return getLocalStateName(this.name);   
+        }
+        if (this.decorators.find(d => d.name === "Template")) { 
+            return `props.${this.name}`;
+        }
+        return this.name;
     }
 
     isReadOnly() { 
@@ -842,9 +864,11 @@ export class PropertyAccess extends ExpressionWithExpression {
         const internalState = options && options.internalState || [];
         const state = options && options.state || [];
         const props = options && options.props || [];
+        const componentContext = options?.componentContext || SyntaxKind.ThisKeyword;
+        const newComponentContext = options?.newComponentContext || "";
 
         const findProperty = (p: InternalState | State | Prop) => p.name.valueOf() === this.name.valueOf();
-        if (expressionString === SyntaxKind.ThisKeyword || expressionString === `${SyntaxKind.ThisKeyword}.props`) {
+        if (expressionString === componentContext || expressionString === `${componentContext}.props`) {
             const p = props.find(findProperty);
             if (p) {
                 return p.getter();
@@ -854,15 +878,14 @@ export class PropertyAccess extends ExpressionWithExpression {
             if (stateProp) {
                 return `(${stateProp.getter()})`;
             }
-        }
 
-        if (expressionString === SyntaxKind.ThisKeyword) {
-            if (internalState.findIndex(findProperty) >= 0) {
-                return getLocalStateName(this.name);
+            const member = options?.members.find(m => m._name.toString() === this.name.toString());
+            if (member) { 
+                return `${options?.newComponentContext ? `${options.newComponentContext}.` : ""}${member.getter()}`;
             }
         }
 
-        if (expressionString === SyntaxKind.ThisKeyword && (internalState.length + state.length + props.length) > 0) { 
+        if (expressionString === SyntaxKind.ThisKeyword && (internalState.length + state.length + props.length) > 0) {
             return this.name.toString();
         }
 
@@ -890,17 +913,20 @@ export class Method {
     decorators: Decorator[];
     modifiers: string[];
     asteriskToken: string;
-    name: Identifier;
+    _name: Identifier;
     questionToken: string;
     typeParameters: any;
     parameters: Parameter[];
     type: string;
     body: Block;
+    get name(): string { 
+        return this._name.toString();
+    }
     constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: string = "any", body: Block) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.asteriskToken = asteriskToken;
-        this.name = name;
+        this._name = name;
         this.questionToken = questionToken;
         this.typeParameters = typeParameters;
         this.parameters = parameters;
@@ -2044,7 +2070,7 @@ export class Generator {
     }
 
     createFunctionDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, typeParameters: string[], parameters: Parameter[], type: string, body: Block) {
-        return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body);
+        return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
     }
 
     createParameter(decorators: Decorator[] = [], modifiers: string[] = [], dotDotDotToken: any, name: Identifier, questionToken?: string, type?: string, initializer?: Expression) {
@@ -2056,7 +2082,7 @@ export class Generator {
     }
 
     createFunctionExpression(modifiers: string[] = [], asteriskToken: string, name: Identifier | undefined, typeParameters: string[], parameters: Parameter[], type: string, body: Block) {
-        return new Function([], modifiers, asteriskToken, name, typeParameters, parameters, type, body);
+        return new Function([], modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
     }
 
     createToken(token: string) {
@@ -2193,6 +2219,7 @@ export class Generator {
         let result: Class | ReactComponent | ComponentInput;
         if (componentDecorator) {
             result = this.createComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
+            this.addComponent(name.toString(), result);
         } else if (decorators.find(d => d.name === "ComponentBindings")) {
             const componentInput = this.createComponentBindings(decorators, modifiers, name, typeParameters, heritageClauses, members);
             this.addComponent(name.toString(), componentInput);
