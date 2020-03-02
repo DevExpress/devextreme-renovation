@@ -9,16 +9,10 @@ export const WidgetInput: WidgetInput = {
 
 import React from "react";
 interface Widget {
-    props: {
-        render?: () => HTMLDivElement;
-        contentRender: (a: string) => any;
-    };
+    props: WidgetInput;
 }
 
-export default function Widget(props: {
-    render?: () => HTMLDivElement,
-    contentRender: (a: string) => any
-}) {
+export default function Widget(props: WidgetInput) {
 
     return view(({
         props: { ...props }

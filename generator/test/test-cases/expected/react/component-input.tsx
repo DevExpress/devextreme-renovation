@@ -13,17 +13,11 @@ export const WidgetProps: WidgetProps = {
 import React, { useCallback } from "react";
 
 interface Widget {
-    props: {
-        height?: number;
-        children?: React.ReactNode;
-    },
+    props: WidgetProps,
     onClick:()=>any
 }
 
-export default function Widget(props: { 
-    height?: number;
-    children?: React.ReactNode;
-}) {
+export default function Widget(props: WidgetProps) {
     const onClick = useCallback(() => {
         const v = props.height
     }, [props.height]);

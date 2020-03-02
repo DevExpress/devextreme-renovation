@@ -684,10 +684,10 @@ export class Property extends Expression {
     questionOrExclamationToken: string;
     type: string;
     initializer?: Expression;
-    inherited: boolean = false;
+    inherited: boolean;
 
-    get name(): string { 
-        if (this.decorators.find(d => d.name === "Template")) { 
+    get name(): string {
+        if (this.decorators.find(d => d.name === "Template")) {
             return this._name.toString().replace(/template/g, "render")
                 .replace(/(.+)(Template)/g, "$1Render");
         }
@@ -697,7 +697,7 @@ export class Property extends Expression {
         return this._name.toString();
     }
 
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression) {
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression, inherited: boolean = false) {
         super();
         this.decorators = decorators;
         this.modifiers = modifiers;
@@ -705,10 +705,11 @@ export class Property extends Expression {
         this.questionOrExclamationToken = questionOrExclamationToken;
         this.type = type;
         this.initializer = initializer;
+        this.inherited = inherited;
     }
 
     typeDeclaration() {
-        if (this.decorators.find(d => d.name === "Slot")) { 
+        if (this.decorators.find(d => d.name === "Slot")) {
             return `${this.name}${this.questionOrExclamationToken}:React.ReactNode`;
         }
         return `${this.name}${this.questionOrExclamationToken}:${this.type}`;
@@ -722,18 +723,22 @@ export class Property extends Expression {
         return this.name.toString();
     }
 
-    getter() { 
+    getter() {
         if (this.decorators.find(d => d.name === "InternalState")) {
-            return getLocalStateName(this.name);   
+            return getLocalStateName(this.name);
         }
-        if (this.decorators.find(d => d.name === "Template" || d.name === "Slot")) { 
+        if (this.decorators.find(d => d.name === "Template" || d.name === "Slot")) {
             return `props.${this.name}`;
         }
         return this.name;
     }
 
-    isReadOnly() { 
+    isReadOnly() {
         return !!this.decorators.find(d => d.name === "OneWay" || d.name === "Event");
+    }
+
+    inherit() { 
+        return new Property(this.decorators, this.modifiers, this._name, this.questionOrExclamationToken, this.type, this.initializer, true);
     }
 }
 
@@ -778,11 +783,7 @@ interface Heritable {
 
 export class ComponentInput extends Class implements Heritable {
     get heritageProperies() {
-        return (this.members.filter(m => m instanceof Property) as Property[]).map(p => { 
-            const property = new Property(p.decorators, p.modifiers, p._name, p.questionOrExclamationToken, p.type, p.initializer);
-            property.inherited = true;
-            return property
-        });
+        return (this.members.filter(m => m instanceof Property) as Property[]).map(p => p.inherit());
     }
 
     compileDefaultProps() {
@@ -1392,10 +1393,7 @@ export class ReactComponent {
 
     compileComponentInterface() {
 
-        const props = this.isJSXComponent ? [`props: {
-            ${this.members.filter(m=>m instanceof Property && m.inherited)
-                .map(p => p.typeDeclaration()).join(";\n")}
-            }`] : this.props
+        const props = this.isJSXComponent ? [`props: ${this.compilePropsType()}`] : this.props
                 .concat(this.state)
                 .map(p => p.typeDeclaration());
 
@@ -1431,18 +1429,24 @@ export class ReactComponent {
             .concat(this.methods.map(m => m instanceof GetAccessor ? `${m.name}:${m.name}()` : m.name.toString()));
     }
 
+    compilePropsType() {
+        if (this.isJSXComponent) { 
+            return this.heritageClauses[0].defaultProps[0];
+        }
+        return `{
+            ${this.props
+                .concat(this.state)
+                .concat(this.slots)
+                .map(p => p.typeDeclaration()).join(",\n")}
+        }`;
+    }
+
     toString() {
         return `
             ${this.compileImports()}
             ${this.compileComponentInterface()}
 
-            ${this.modifiers.join(" ")} function ${this.name}(props: {
-                    ${this.props
-                .concat(this.state)
-                .concat(this.slots)
-                .map(p => p.typeDeclaration()).join(",\n")}
-                }
-            ){
+            ${this.modifiers.join(" ")} function ${this.name}(props: ${this.compilePropsType()}){
                 ${this.compileUseRef()}
                 ${this.stateDeclaration()}
                 ${this.listenersDeclaration()}

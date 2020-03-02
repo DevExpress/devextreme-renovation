@@ -1,4 +1,6 @@
-function viewModel() { }
+class WidgetInput  {
+            
+}
 
 import { Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -14,11 +16,8 @@ import { CommonModule } from "@angular/common";
         </div>
     </div>`
 })
-export default class DxWidgetComponent {
-    _viewModel: any;
-    ngDoCheck() { 
-        this._viewModel = viewModel({ props: {} });
-    }
+export default class DxWidgetComponent extends WidgetInput {
+    
 }
 
 @NgModule({

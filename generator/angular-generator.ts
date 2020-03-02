@@ -219,7 +219,7 @@ class Decorator extends BaseDecorator {
 class ComponentInput extends BaseComponentInput { 
     toString() {
         return `${this.modifiers.join(" ")} class ${this.name} ${this.heritageClauses.map(h => h.toString())} {
-            ${this.members.filter(p => p instanceof Property && !p.inherited).map(m => m.toString()).concat("").join(";\n")}
+            ${this.members.filter(p => p instanceof Property && !p.inherited).map(m => m.toString()).filter(m => m).concat("").join(";\n")}
         }`;
     }
 }
@@ -252,6 +252,10 @@ export class Property extends BaseProperty {
             return `${this.name}.nativeElement`
         }
         return this.name.toString();
+    }
+
+    inherit() { 
+        return new Property(this.decorators, this.modifiers, this._name, this.questionOrExclamationToken, this.type, this.initializer, true);
     }
 }
 

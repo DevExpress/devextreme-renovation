@@ -1,29 +1,36 @@
-function view(viewModel) {
+function view(viewModel: Widget) {
     return (
         <div>
             <div>
-                {viewModel.namedSlot}
+                {viewModel.props.namedSlot}
             </div>
             <div>
-                {viewModel.children}
+                {viewModel.props.children}
             </div>
         </div>
     );
 }
-function viewModel() { }
+
+declare type WidgetInput = {
+    namedSlot?: React.ReactNode;
+    children?: React.ReactNode;
+}
+const WidgetInput: WidgetInput = {
+   
+};
 
 import React from "react";
 
 interface Widget {
-    namedSlot?: React.ReactNode,
-    children?: React.ReactNode
+    props: WidgetInput;
 }
 
-export default function Widget(props: {
-    namedSlot?: React.ReactNode,
-    children?: React.ReactNode
-}) {
-    return view(viewModel({
-        ...props
+export default function Widget(props: WidgetInput) {
+    return view(({
+        props: { ...props }
     }));
+}
+
+Widget.defaultProps = {
+    ...WidgetInput
 }

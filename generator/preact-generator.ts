@@ -3,33 +3,20 @@ import {
     ReactComponent,
     Decorator,
     Identifier,
-    Property,
+    Property as BaseProperty,
     Method,
-    Slot,
     StringLiteral,
     ImportClause,
     JsxAttribute,
     JsxOpeningElement as ReactJsxOpeningElement,
     ImportDeclaration,
-    GeneratorContex,
-    HeritageClause
+    HeritageClause,
+    Expression,
 } from "./react-generator";
 import path from "path";
 
-class PreactSlot extends Slot { 
-    constructor(slot: Slot) { 
-        super(slot.property);
-    }
 
-    typeDeclaration() {
-        return `${this.name}${this.property.questionOrExclamationToken}:any`;
-    }
-}
 export class PreactComponent extends ReactComponent {
-    constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: any, members: Array<Property | Method>, context: GeneratorContex) {
-        super(decorator, modifiers, name, typeParameters, heritageClauses, members, context);
-        this.slots = this.slots.map(s => new PreactSlot(s));
-    }
     compileImportStatements(hooks: string[]) {
         const imports = ["import * as Preact from 'preact'"]; 
         if (hooks.length) { 
@@ -40,6 +27,15 @@ export class PreactComponent extends ReactComponent {
 
     defaultPropsDest() { 
         return `(${this.name} as any).defaultProps`;
+    }
+}
+
+export class Property extends BaseProperty { 
+    typeDeclaration() {
+        if (this.decorators.find(d => d.name === "Slot")) { 
+            return `${this.name}${this.questionOrExclamationToken}:any`;
+        }
+        return super.typeDeclaration();
     }
 }
 
@@ -82,6 +78,10 @@ export class PreactGenerator extends Generator {
 
     createJsxClosingElement(tagName: Identifier) {
         return `</${tagName.toString() === "Fragment" ? "Preact.Fragment" : tagName}>`;
+    }
+
+    createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression) {
+        return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 }
 
