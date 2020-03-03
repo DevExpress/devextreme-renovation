@@ -2166,10 +2166,12 @@ mocha.describe("ComponentInput", function () {
                     [],
                     generator.createIdentifier("property"),
                     [],
-                    "",
+                    undefined,
                     undefined
                 )
             ]);
+
+            assert.strictEqual(getResult(component.compileComponentInterface()), getResult("interface Widget{props: Input; property:any}"));
 
             assert.strictEqual(getResult(`{${component.compileViewModelArguments().join(",")}}`
             ), getResult("{props:{...props}, property: __property()}"));

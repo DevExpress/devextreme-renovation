@@ -785,7 +785,7 @@ export class GetAccessor extends Method {
     }
 
     typeDeclaration() { 
-        return `${this.name}:${this.type}`;
+        return `${this._name}:${this.type}`;
     }
 
     getter() { 
