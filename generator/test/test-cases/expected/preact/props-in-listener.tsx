@@ -8,7 +8,7 @@ import { useCallback } from "preact/hooks";
 interface Component {
   type?: string,
   onClick?: () => void,
-  clickHandler: () => void
+  clickHandler: () => any
 }
 
 export function Component(props: {

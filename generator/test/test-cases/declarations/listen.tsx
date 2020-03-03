@@ -1,11 +1,8 @@
-function viewModel() {}
-
-function view() {}
+function view() { }
 
 @Component({
     name: 'Component',
     view,
-    viewModel,
 })
 export class Component {
     @Listen()

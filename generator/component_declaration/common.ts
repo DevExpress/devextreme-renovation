@@ -19,7 +19,7 @@ export function Component(args: {
     /**
      * Function that recieves a component model and returns a viewModel
      */
-    viewModel: Function;
+    viewModel?: Function;
      /**
      * Function that recieves a component viewModel and returns a view
      */
@@ -29,7 +29,7 @@ export function Component(args: {
 }) {
     return function ComponentDecorator(constructor: Function) {
         constructor.prototype.render = function() {
-            return args.view(args.viewModel(this));
+            return args.view(args.viewModel?.(this) || this);
         };
     }
 }

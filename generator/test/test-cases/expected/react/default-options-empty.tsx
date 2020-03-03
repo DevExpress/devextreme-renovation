@@ -8,11 +8,9 @@ export const WidgetProps: WidgetProps = {};
 import { convertRulesToOptions, Rule } from "../../../../../../component_declaration/default_options";
 import React from "react";
 
-interface Widget { props: {} }
+interface Widget { props: WidgetProps }
 
-export default function Widget(props: {
-
-}) {
+export default function Widget(props: WidgetProps) {
     return view(viewModel({
         props: { ...props },
     }));

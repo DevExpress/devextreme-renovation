@@ -1,23 +1,24 @@
-import { Component, Slot } from "../../../component_declaration/common";
+import { Component, ComponentBindings, Slot, JSXComponent } from "../../../component_declaration/common";
 
-function view(viewModel) {
+function view(viewModel: Widget) {
     return (
         <div>
             <div>
-                {viewModel.namedSlot}
+                {viewModel.props.namedSlot}
             </div>
             <div>
-                {viewModel.default}
+                {viewModel.props.default}
             </div>
         </div>
     );
 }
-function viewModel() { }
-@Component({
-    viewModel: viewModel,
-    view: view
-})
-export default class Widget {
+
+@ComponentBindings()
+class WidgetInput { 
     @Slot() namedSlot?: any;
     @Slot() default?: any;
 }
+@Component({
+    view: view
+})
+export default class Widget extends JSXComponent<WidgetInput> {}

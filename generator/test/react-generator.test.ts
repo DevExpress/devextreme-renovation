@@ -2,16 +2,39 @@ import assert from "assert";
 import mocha from "mocha";
 import ts from "typescript";
 import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex } from "../react-generator";
-import fs from "fs";
 
-import compile, { deleteFolderRecursive } from "../component-compiler";
+import compile from "../component-compiler";
 import path from "path";
+
+function createComponentDecorator(paramenters: {[name:string]: any}) { 
+    return generator.createDecorator(
+        generator.createCall(
+            generator.createIdentifier("Component"),
+            [],
+            [generator.createObjectLiteral(
+                Object.keys(paramenters).map(k => 
+                    generator.createPropertyAssignment(
+                        generator.createIdentifier(k),
+                        paramenters[k]
+                    )
+                ),
+                false
+            )]
+        )
+    )
+}
 
 import { printSourceCodeAst as getResult, createTestGenerator } from "./helpers/common";
 
 if (!mocha.describe) { 
     mocha.describe = describe;
     mocha.it = it;
+}
+
+function createDecorator(name: string) { 
+    return generator.createDecorator(
+        generator.createCall(generator.createIdentifier(name), [], [])
+    );
 }
 
 mocha.describe("react-generator", function () {
@@ -976,6 +999,35 @@ mocha.describe("react-generator: expressions", function () {
 
         assert.strictEqual(expression.toString(), '/d+/');
     });
+
+    mocha.describe("Methods", function () {
+        mocha.describe("GetAccessor", function () {
+            mocha.it("type declaration with defined type", function () {
+                const expression = generator.createGetAccessor([], [], generator.createIdentifier("name"), [], "string", undefined);
+        
+                assert.strictEqual(expression.typeDeclaration(), "name:string");
+            });
+    
+            mocha.it("type declaration with undefined type", function () {
+                const expression = generator.createGetAccessor(
+                    [],
+                    [],
+                    generator.createIdentifier("name"),
+                    [],
+                    undefined,
+                    undefined
+                );
+        
+                assert.strictEqual(expression.typeDeclaration(), "name:any");
+            });
+
+            mocha.it("getter is call", function () {
+                const expression = generator.createGetAccessor([], [], generator.createIdentifier("name"), [], "string", undefined);
+        
+                assert.strictEqual(expression.getter(), "name()");
+            });
+        });
+    });   
 });
 
 mocha.describe("common", function () {
@@ -1019,6 +1071,292 @@ mocha.describe("common", function () {
         const actual = Object.keys(generator.NodeFlags);
         assert.equal(actual.length, expected.length);
         assert.deepEqual(Object.keys(generator.NodeFlags), expected);
+    });
+});
+
+function createComponent(inputMembers: Array<Property | Method>, componentMembers: Array<Property | Method> = [], paramenters: { [name: string]: any } = {}):ReactComponent { 
+    generator.createClassDeclaration(
+        [generator.createDecorator(
+            generator.createCall(generator.createIdentifier("ComponentBindings"), [], [])
+        )],
+        [],
+        generator.createIdentifier("Input"),
+        [],
+        [],
+        inputMembers
+    );
+
+    const heritageClause = generator.createHeritageClause(
+        generator.SyntaxKind.ExtendsKeyword,
+        [generator.createExpressionWithTypeArguments(
+            [generator.createTypeReferenceNode(
+                generator.createIdentifier("Input"),
+                undefined
+            )],
+            generator.createIdentifier("JSXComponent")
+        )]
+    );
+
+    const component = generator.createClassDeclaration(
+        [createComponentDecorator(paramenters)],
+        [],
+        generator.createIdentifier("Widget"),
+        [],
+        [heritageClause],
+        componentMembers
+    );
+
+    return component as ReactComponent;
+}
+
+mocha.describe("React Component", function () {
+    this.beforeEach(() => {
+        generator.setContext({});
+    });
+    this.afterEach(() => {
+        generator.setContext(null);
+    });
+
+    mocha.it("class with Component decorator is ReactComponent", function () {
+        const expression = generator.createClassDeclaration(
+            [createComponentDecorator({})],
+            [],
+            generator.createIdentifier("Widget"),
+            [],
+            [],
+            []
+        );
+
+        assert.ok(expression instanceof ReactComponent);
+        const componentFromContext = generator.getContext().components?.["Widget"];
+        assert.strictEqual(componentFromContext, expression);
+    });
+
+    mocha.describe("View", function () {
+        mocha.it("Rename template to render in view function", function () {
+            const component = createComponent(
+                [
+                    generator.createProperty(
+                        [createDecorator("Template")],
+                        [],
+                        generator.createIdentifier("template")
+                    )
+                ]
+            );
+
+            const view = generator.createFunctionDeclaration(
+                [],
+                [],
+                "",
+                generator.createIdentifier("view"),
+                [],
+                [
+                    generator.createParameter(
+                        [],
+                        [],
+                        undefined,
+                        generator.createIdentifier("viewModel"),
+                        undefined,
+                        component.name,
+                        undefined
+                    )
+                ],
+                "",
+                generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("props")
+                        ),
+                        generator.createIdentifier("template")
+                    )
+                ], false)
+            );
+
+            assert.strictEqual(getResult(view.toString()), getResult(`function view(viewModel:Widget){
+                viewModel.props.render
+            }`));
+        });
+
+        mocha.it("Do not modify state", function () {
+            const component = createComponent(
+                [
+                    generator.createProperty(
+                        [createDecorator("TwoWay")],
+                        [],
+                        generator.createIdentifier("p")
+                    )
+                ]
+            );
+
+            const view = generator.createFunctionDeclaration(
+                [],
+                [],
+                "",
+                generator.createIdentifier("view"),
+                [],
+                [
+                    generator.createParameter(
+                        [],
+                        [],
+                        undefined,
+                        generator.createIdentifier("viewModel"),
+                        undefined,
+                        component.name,
+                        undefined
+                    )
+                ],
+                "",
+                generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("props")
+                        ),
+                        generator.createIdentifier("p")
+                    )
+                ], false)
+            );
+
+            assert.strictEqual(getResult(view.toString()), getResult(`function view(viewModel:Widget){
+                viewModel.props.p
+            }`));
+        });
+
+        mocha.it("Do not modify internal state", function () {
+            const component = createComponent(
+                [],
+                [
+                    generator.createProperty(
+                        [createDecorator("InternalState")],
+                        [],
+                        generator.createIdentifier("p")
+                    )
+                ]
+            );
+
+            const view = generator.createFunctionDeclaration(
+                [],
+                [],
+                "",
+                generator.createIdentifier("view"),
+                [],
+                [
+                    generator.createParameter(
+                        [],
+                        [],
+                        undefined,
+                        generator.createIdentifier("viewModel"),
+                        undefined,
+                        component.name,
+                        undefined
+                    )
+                ],
+                "",
+                generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("p")
+                    )
+                ], false)
+            );
+
+            assert.strictEqual(getResult(view.toString()), getResult(`function view(viewModel:Widget){
+                viewModel.p
+            }`));
+        });
+
+        mocha.it("Rename default slot", function () {
+            const component = createComponent(
+                [
+                    generator.createProperty(
+                        [createDecorator("Slot")],
+                        [],
+                        generator.createIdentifier("default")
+                    )
+                ]
+            );
+
+            const view = generator.createFunctionDeclaration(
+                [],
+                [],
+                "",
+                generator.createIdentifier("view"),
+                [],
+                [
+                    generator.createParameter(
+                        [],
+                        [],
+                        undefined,
+                        generator.createIdentifier("viewModel"),
+                        undefined,
+                        component.name,
+                        undefined
+                    )
+                ],
+                "",
+                generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("props")
+                        ),
+                        generator.createIdentifier("default")
+                    )
+                ], false)
+            );
+
+            assert.strictEqual(getResult(view.toString()), getResult(`function view(viewModel:Widget){
+                viewModel.props.children
+            }`));
+        });
+
+        mocha.it("Access to GetAccessor as usual property", function () {
+            const component = createComponent(
+                [],
+                [
+                    generator.createGetAccessor(
+                        [],
+                        [],
+                        generator.createIdentifier("p"),
+                        [],
+                        undefined,
+                        undefined
+                    )
+                ]
+            );
+
+            const view = generator.createFunctionDeclaration(
+                [],
+                [],
+                "",
+                generator.createIdentifier("view"),
+                [],
+                [
+                    generator.createParameter(
+                        [],
+                        [],
+                        undefined,
+                        generator.createIdentifier("viewModel"),
+                        undefined,
+                        component.name,
+                        undefined
+                    )
+                ],
+                "",
+                generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("p")
+                    )
+                ], false)
+            );
+
+            assert.strictEqual(getResult(view.toString()), getResult(`function view(viewModel:Widget){
+                viewModel.p
+            }`));
+
+        });
     });
 });
 
@@ -1278,7 +1616,7 @@ mocha.describe("import Components", function () {
             []
         );
 
-        assert.deepEqual(model.members.map(m => m.name.toString()), ["height"]);
+        assert.deepEqual(model.members.map(m => m.name.toString()), ["height", "children"]);
         assert.strictEqual(getResult(model.toString()), getResult("declare type Model= typeof WidgetProps & {} const Model:Model={...WidgetProps}"));
     });
 
@@ -1322,10 +1660,10 @@ mocha.describe("import Components", function () {
         assert.deepEqual(model.members.map(m => {
             const prop = new Prop(m as Property);
             return prop.typeDeclaration();
-        }), ["height!:string"]);
+        }), ["height!:string", "children?:React.ReactNode"]);
 
         assert.strictEqual(model.defaultPropsDest(), "Model");
-        assert.strictEqual(getResult(model.toString()), getResult("declare type Model=typeof WidgetProps&{height!:string} const Model:Model={...WidgetProps, height: '10px'}"));
+        assert.strictEqual(getResult(model.toString()), getResult("declare type Model=typeof WidgetProps&{height!:string;} const Model:Model={...WidgetProps, height: '10px'}"));
     });
 
     mocha.it("ComponentInput - doesn't have properties without initializer", function () { 
@@ -1351,7 +1689,7 @@ mocha.describe("import Components", function () {
 mocha.describe("Expressions with props/state/internal state", function () { 
     this.beforeEach(function () {
         this.prop = generator.createProperty(
-            [generator.createDecorator(generator.createCall(generator.createIdentifier("OneWay"), [], []))],
+            [createDecorator("OneWay")],
             [],
             generator.createIdentifier("p1"),
             generator.SyntaxKind.QuestionToken,
@@ -1359,7 +1697,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
             undefined);
         
         this.state = generator.createProperty(
-            [generator.createDecorator(generator.createCall(generator.createIdentifier("TwoWay"), [], []))],
+            [createDecorator("TwoWay")],
             [],
             generator.createIdentifier("s1"),
             generator.SyntaxKind.QuestionToken,
@@ -1367,7 +1705,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
             undefined);
         
         this.internalState = generator.createProperty(
-            [generator.createDecorator(generator.createCall(generator.createIdentifier("TwoWay"), [], []))],
+            [createDecorator("InternalState")],
             [],
             generator.createIdentifier("i1"),
             generator.SyntaxKind.QuestionToken,
@@ -1679,48 +2017,79 @@ mocha.describe("ComponentInput", function () {
         assert.deepEqual(cachedComponent.heritageProperies.map(p => p.toString()), ["p", "p1"]);
     });
 
+    mocha.it("Rename Template property: template->render", function () { 
+        const expression = generator.createClassDeclaration(
+            this.decorators,
+            ["export"],
+            generator.createIdentifier("BaseModel"),
+            [],
+            [],
+            [
+                generator.createProperty([
+                    createDecorator("Template")
+                ],
+                    [],
+                    generator.createIdentifier("template"),
+                    undefined,
+                    "any",
+                    undefined
+                ),
+            ]
+        );
+
+        assert.strictEqual(getResult(expression.toString()), getResult(`declare type BaseModel={render: any}; export const BaseModel:BaseModel={};`));
+    });
+
+    mocha.it("Rename Template property: template->render", function () { 
+        const expression = generator.createClassDeclaration(
+            this.decorators,
+            ["export"],
+            generator.createIdentifier("BaseModel"),
+            [],
+            [],
+            [
+                generator.createProperty([
+                    createDecorator("Template")
+                ],
+                    [],
+                    generator.createIdentifier("template"),
+                    undefined,
+                    "any",
+                    undefined
+                ),
+            ]
+        );
+
+        assert.strictEqual(getResult(expression.toString()), getResult(`declare type BaseModel={render: any}; export const BaseModel:BaseModel={};`));
+    });
+
+    mocha.it("Rename Template property: contentTemplate->contentRender", function () { 
+        const expression = generator.createClassDeclaration(
+            this.decorators,
+            ["export"],
+            generator.createIdentifier("BaseModel"),
+            [],
+            [],
+            [
+                generator.createProperty([
+                    createDecorator("Template")
+                ],
+                    [],
+                    generator.createIdentifier("contentTemplate"),
+                    undefined,
+                    "any",
+                    undefined
+                ),
+            ]
+        );
+
+        assert.strictEqual(getResult(expression.toString()), getResult(`declare type BaseModel={contentRender: any}; export const BaseModel:BaseModel={};`));
+    });
+
     mocha.describe("CompileViewModelArguments", function () {
         this.beforeEach(function () { 
             
         });
-
-        function createComponent(inputMembers: Array<Property|Method>, componentMembers: Array<Property|Method>=[]):ReactComponent { 
-            generator.createClassDeclaration(
-                [generator.createDecorator(
-                    generator.createCall(generator.createIdentifier("ComponentBindings"), [], [])
-                )],
-                [],
-                generator.createIdentifier("Input"),
-                [],
-                [],
-                inputMembers
-            );
-
-            const heritageClause = generator.createHeritageClause(
-                generator.SyntaxKind.ExtendsKeyword,
-                [generator.createExpressionWithTypeArguments(
-                    [generator.createTypeReferenceNode(
-                        generator.createIdentifier("Input"),
-                        undefined
-                    )],
-                    generator.createIdentifier("JSXComponent")
-                )]
-            );
-
-            const component = generator.createClassDeclaration(
-                [generator.createDecorator(
-                    generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)])
-                )],
-                [],
-                generator.createIdentifier("Widget"),
-                [],
-                [heritageClause],
-                componentMembers
-            );
-
-            return component as ReactComponent;
-            
-        }
 
         mocha.it("Empty input with empty component", function () {
             const component = createComponent([]);
@@ -1789,6 +2158,25 @@ mocha.describe("ComponentInput", function () {
                 `{${component.compileViewModelArguments().join(",")}}`
             ), getResult("{props:{...props},s:__state_s}"));
         });
+
+        mocha.it("Pass getter result in viewModel arguments", function () {
+            const component = createComponent([], [
+                generator.createGetAccessor(
+                    [],
+                    [],
+                    generator.createIdentifier("property"),
+                    [],
+                    undefined,
+                    undefined
+                )
+            ]);
+
+            assert.strictEqual(getResult(component.compileComponentInterface()), getResult("interface Widget{props: Input; property:any}"));
+
+            assert.strictEqual(getResult(`{${component.compileViewModelArguments().join(",")}}`
+            ), getResult("{props:{...props}, property: __property()}"));
+        });
+
     });
 });
 

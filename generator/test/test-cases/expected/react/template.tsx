@@ -1,32 +1,32 @@
-import React from "react";
-
-interface Component {
-    render: () => HTMLDivElement,
-    contentRender: (a: string) => HTMLDivElement
+declare type WidgetInput = {
+    render?: () => HTMLDivElement;
+    contentRender: (a: string) => any
 }
 
-export default function Component(props: {
-    render: () => HTMLDivElement,
-    contentRender: (a: string) => HTMLDivElement
-}) {
+export const WidgetInput: WidgetInput = {
+    contentRender: (a: string) => (<div >{a}</div>)
+};
 
-    return view(viewModel({
-        ...props
+import React from "react";
+interface Widget {
+    props: WidgetInput;
+}
+
+export default function Widget(props: WidgetInput) {
+
+    return view(({
+        props: { ...props }
     }));
 }
 
-Component.defaultProps = {
-    contentRender: (a: string) => (<div>{a}</div>)
-}
-
-function viewModel(model: Component) {
-    return model;
+Widget.defaultProps = {
+    ...WidgetInput
 }
 
 
-function view(viewModel: Component) {
+function view(viewModel: Widget) {
     return (<div>
-        {viewModel.contentRender("1")}
-        {viewModel.render()}
+        {viewModel.props.contentRender("1")}
+        {viewModel.props.render?.()}
     </div>)
 }

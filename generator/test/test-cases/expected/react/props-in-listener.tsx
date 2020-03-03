@@ -7,7 +7,7 @@ import React, { useCallback } from 'react';
 interface Component {
   type?: string,
   onClick?: () => void,
-  clickHandler: () => void
+  clickHandler: () => any
 }
 
 export function Component(props: {

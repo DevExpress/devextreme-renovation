@@ -6,7 +6,7 @@ import React, { useState, useCallback } from 'react';
 
 interface Widget{
   _hovered: Boolean;
-  updateState: () => void;
+  updateState: () => any;
 }
 
 export default function Widget(props: {}) {

@@ -27,6 +27,7 @@ import {
     TemplateExpression,
     PropertyAccess as BasePropertyAccess,
     toStringOptions as ReactToStringOptions,
+    JsxElement as ReactJsxElement,
     VariableDeclarationList,
     VariableExpression
 } from "./react-generator";
@@ -104,12 +105,10 @@ export class JsxChildExpression extends JsxExpression {
     }
 }
 
-export class JsxElement extends Expression { 
-    openingElement: JsxOpeningElement;
-    children: Array<JsxElement | string | JsxChildExpression|JsxSelfClosingElement>;
-    closingElement: string;
+export class JsxElement extends ReactJsxElement { 
+    children: Array<JsxElement | string | JsxChildExpression | JsxSelfClosingElement>;
     constructor(openingElement: JsxOpeningElement, children: Array<JsxElement|string|JsxExpression|JsxSelfClosingElement>, closingElement: string) { 
-        super();
+        super(openingElement, children, closingElement);
         this.openingElement = openingElement;
         this.children = children.map(c => c instanceof JsxExpression ? new JsxChildExpression(c) : c);
         this.closingElement = closingElement;
@@ -117,7 +116,7 @@ export class JsxElement extends Expression {
 
     toString(options?: toStringOptions) { 
         const children: string = this.children.map(c => c.toString(options)).join("\n");
-        return `${this.openingElement.toString(options)}${children}${this.closingElement}`;
+        return `${this.openingElement.toString(options)}${children}${this.closingElement.toString(options)}`;
     }
 
     addAttribute(attribute: JsxAttribute) { 
@@ -253,7 +252,7 @@ class Decorator extends BaseDecorator {
 class ComponentInput extends BaseComponentInput { 
     toString() {
         return `${this.modifiers.join(" ")} class ${this.name} ${this.heritageClauses.map(h => h.toString())} {
-            ${this.members.filter(p => p instanceof Property && !p.inherited).map(m => m.toString()).concat("").join(";\n")}
+            ${this.members.filter(p => p instanceof Property && !p.inherited).map(m => m.toString()).filter(m => m).concat("").join(";\n")}
         }`;
     }
 }
@@ -286,6 +285,10 @@ export class Property extends BaseProperty {
             return `${this.name}.nativeElement`
         }
         return this.name.toString();
+    }
+
+    inherit() { 
+        return new Property(this.decorators, this.modifiers, this._name, this.questionOrExclamationToken, this.type, this.initializer, true);
     }
 }
 
@@ -496,7 +499,7 @@ export class AngularGenerator extends Generator {
     }
 
     createFunctionDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, typeParameters: string[], parameters: Parameter[], type: string, body: Block) {
-        const functionDeclaration = new AngularFunction(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body);
+        const functionDeclaration = new AngularFunction(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
         if (functionDeclaration.name) { 
             this.addViewFunction(functionDeclaration.name.toString(), functionDeclaration);
         }

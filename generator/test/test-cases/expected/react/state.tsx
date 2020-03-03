@@ -8,7 +8,7 @@ interface Widget {
   pressed?: boolean;
   defaultPressed?: boolean;
   pressedChange?: (pressed: boolean) => void;
-  updateState: () => void;
+  updateState: () => any;
 }
 
 export default function Widget(props: {

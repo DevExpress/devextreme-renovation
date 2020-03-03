@@ -5,8 +5,8 @@ function view() { }
 import React, { useCallback, useEffect } from 'react';
 
 interface Component {
-  onPointerUp: () => void,
-  scrollHandler: () => void
+  onPointerUp: () => any,
+  scrollHandler: () => any
 }
 export function Component(props: {}) {
   const onPointerUp = useCallback(() => { }, []);

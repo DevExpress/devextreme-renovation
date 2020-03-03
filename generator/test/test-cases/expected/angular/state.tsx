@@ -11,7 +11,7 @@ export default class DxWidgetComponent {
     @Input() pressed?: boolean;
     @Output() pressedChange: EventEmitter<boolean> = new EventEmitter();
 
-    updateState():void {
+    updateState():any {
         this.pressedChange.emit(this.pressed = !this.pressed);
     }
 

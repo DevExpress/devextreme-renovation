@@ -1,29 +1,36 @@
-function view(viewModel) {
+function view(viewModel: Widget) {
     return (
         <div>
             <div>
-                {viewModel.namedSlot}
+                {viewModel.props.namedSlot}
             </div>
             <div>
-                {viewModel.children}
+                {viewModel.props.children}
             </div>
         </div>
     );
 }
-function viewModel() { }
 
+declare type WidgetInput = {
+    namedSlot?: any;
+    children?: any
+}
+const WidgetInput: WidgetInput = {
+   
+};
 import * as Preact from "preact";
 
 interface Widget {
-    namedSlot?: any,
-    children?: any
+    props: WidgetInput;
 }
 
-export default function Widget(props: {
-    namedSlot?: any,
-    children?: any
-}) {
-    return view(viewModel({
-        ...props
-    }));
+export default function Widget(props: WidgetInput) {
+    return view(({
+        props: { ...props }
+    })
+    );
+}
+
+(Widget as any).defaultProps = {
+    ...WidgetInput
 }
