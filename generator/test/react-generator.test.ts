@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert, { deepEqual } from "assert";
 import mocha from "mocha";
 import ts from "typescript";
 import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex } from "../react-generator";
@@ -1744,6 +1744,16 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.deepEqual(expression.getDependency(), ["p1"]);
     });
 
+    mocha.it("Property accees. this.props", function () {
+        const expression = generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("props")
+        );
+       
+        assert.equal(expression.toString({ members: [this.state, this.prop, this.internalState], internalState: [], state: [], props: [new Prop(this.prop)]}), "props");
+        assert.deepEqual(expression.getDependency(), ["props"]);
+    });
+
     mocha.it("PropertyAccess. State", function () {
         assert.equal(this.stateAccess.toString({members: [this.state, this.prop, this.internalState], internalState: [], state: [new State(this.state)], props: [] }), "(props.s1!==undefined?props.s1:__state_s1)");
         assert.deepEqual(this.stateAccess.getDependency(), ["s1"]);
@@ -1965,6 +1975,74 @@ mocha.describe("Expressions with props/state/internal state", function () {
 
         assert.deepEqual(expression.toString({members: [this.state, this.prop, this.internalState], internalState: [new InternalState(this.internalState)], state: [new State(this.state)], props: [new Prop(this.prop)] }), "props.p1?.onClick()");
         assert.deepEqual(expression.getDependency(), ["p1"]);
+    });
+
+    mocha.it("Method should return dependency for all properties", function () {
+        const method = generator.createMethod(
+            [],
+            [],
+            "",
+            generator.createIdentifier("p"),
+            "",
+            undefined,
+            [],
+            undefined,
+            generator.createBlock([
+                this.propAccess,
+                this.internalStateAccess,
+                this.stateAccess
+            ], false)
+        );
+
+        deepEqual(method.getDependency(
+            [new InternalState(this.internalState), new State(this.state), new Prop(this.prop)]
+        ), ["props.p1", "__state_i1", "props.s1", "__state_s1", "props.s1Change"]);
+    });
+
+    mocha.it("Method should not return dependency for unknown property", function () {
+        const method = generator.createMethod(
+            [],
+            [],
+            "",
+            generator.createIdentifier("p"),
+            "",
+            undefined,
+            [],
+            undefined,
+            generator.createBlock([
+                this.propAccess,
+                this.internalStateAccess
+            ], false)
+        );
+
+        deepEqual(method.getDependency(
+            [new State(this.state), new Prop(this.prop)]
+        ), ["props.p1"]);
+    });
+
+    mocha.it("Method should not include single props if there is props in dependency", function () {
+        const method = generator.createMethod(
+            [],
+            [],
+            "",
+            generator.createIdentifier("p"),
+            "",
+            undefined,
+            [],
+            undefined,
+            generator.createBlock([
+                this.propAccess,
+                this.stateAccess,
+                generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("props")
+                )
+            ], false)
+        );
+
+        deepEqual(method.getDependency(
+            [new InternalState(this.internalState), new State(this.state), new Prop(this.prop)]
+        ), ["__state_s1", "props"]);
     });
 });
 

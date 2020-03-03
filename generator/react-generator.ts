@@ -769,13 +769,28 @@ export class Method extends BaseClassMember {
 
     getDependency(properties: Array<State | Prop | InternalState> = []) {
         const dependency = this.body.getDependency();
+        const additionalDependency = [];
 
-        return Object.keys(dependency.reduce((k: any, d) => {
+        if (dependency.find(d => d === "props")) { 
+            additionalDependency.push("props");
+        }
+
+        const result = Object.keys(dependency.reduce((k: any, d) => {
             if (!k[d]) {
                 k[d] = d;
             }
             return k;
-        }, {})).map(d => properties.find(p => p.name.toString() === d)).filter(d => d).reduce((d: string[], p) => d.concat(p!.getDependecy()), [])
+        }, {}))
+            .map(d => properties.find(p => p.name.toString() === d))
+            .filter(d => d)
+            .reduce((d: string[], p) => d.concat(p!.getDependecy()), [])
+            .concat(additionalDependency);
+        
+        if (additionalDependency.indexOf("props") > -1) { 
+            return result.filter(d => !d.startsWith("props."));
+        }
+        
+        return result;
     }
 }
 
@@ -1008,7 +1023,11 @@ export class PropertyAccess extends ExpressionWithExpression {
         if ((expressionString === SyntaxKind.ThisKeyword && this.name.toString() !== "props") || expressionString === `${SyntaxKind.ThisKeyword}.props`) {
             return [this.name.toString()];
         }
-        return this.expression.getDependency();
+        const dependecy = this.expression.getDependency();
+        if (this.toString() === `${SyntaxKind.ThisKeyword}.props` && dependecy.length === 0) {
+            return ["props"];
+        }
+        return dependecy;
     }
 }
 
@@ -1558,8 +1577,10 @@ export class VariableDeclaration extends Expression {
 
     getDependency() {
         if (this.initializer && typeof this.initializer !== "string") {
-            const dependency = this.name instanceof BindingPattern && this.initializer.toString().startsWith("this") ? this.name.getDependency() : [];
-            return this.initializer.getDependency().concat(dependency);
+            if (this.name instanceof BindingPattern && this.initializer.toString().startsWith("this")) {
+                return this.name.getDependency()
+            }
+            return this.initializer.getDependency();
         }
         return [];
     }
