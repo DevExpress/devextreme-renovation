@@ -55,6 +55,41 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), `[attr]="value"`);
         });
 
+        mocha.it(`JsxAttribute with template expression - [attr]="string concatination"`, function () {
+            const templateExpression = generator.createTemplateExpression(
+                generator.createTemplateHead(
+                    "a",
+                    "a"
+                ),
+                [
+                    generator.createTemplateSpan(
+                        generator.createNumericLiteral("1"),
+                        generator.createTemplateMiddle(
+                            "b",
+                            "b"
+                        )
+                    ),
+                    generator.createTemplateSpan(
+                        generator.createNumericLiteral("2"),
+                        generator.createTemplateTail(
+                            "c",
+                            "c"
+                        )
+                    )
+                ]
+            );
+
+            const expression = generator.createJsxAttribute(
+                generator.createIdentifier("attr"),
+                generator.createJsxExpression(
+                    undefined,
+                    templateExpression
+                )
+            );
+
+            assert.strictEqual(expression.toString(), String.raw`[attr]="\"a\"+1+\"b\"+2+\"c\""`);
+        });
+
         mocha.it(`JsxAttribute with string literal expression - attr="value"`, function () {
             const expression = generator.createJsxAttribute(
                 generator.createIdentifier("attr"),
