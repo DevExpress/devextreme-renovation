@@ -1,4 +1,4 @@
-import assert, { deepEqual } from "assert";
+import assert from "assert";
 import mocha from "mocha";
 import ts from "typescript";
 import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex } from "../react-generator";
@@ -1994,7 +1994,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
             ], false)
         );
 
-        deepEqual(method.getDependency(
+        assert.deepEqual(method.getDependency(
             [new InternalState(this.internalState), new State(this.state), new Prop(this.prop)]
         ), ["props.p1", "__state_i1", "props.s1", "__state_s1", "props.s1Change"]);
     });
@@ -2015,7 +2015,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
             ], false)
         );
 
-        deepEqual(method.getDependency(
+        assert.deepEqual(method.getDependency(
             [new State(this.state), new Prop(this.prop)]
         ), ["props.p1"]);
     });
@@ -2040,7 +2040,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
             ], false)
         );
 
-        deepEqual(method.getDependency(
+        assert.deepEqual(method.getDependency(
             [new InternalState(this.internalState), new State(this.state), new Prop(this.prop)]
         ), ["__state_s1", "props"]);
     });
