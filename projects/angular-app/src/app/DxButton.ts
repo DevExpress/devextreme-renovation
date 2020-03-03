@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, NgModule, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, NgModule, Output, Renderer2, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // import convertRulesToOptions from 'core/options/utils';
@@ -37,14 +37,21 @@ export const defaultOptionsRules: { device: () => boolean, options: any }[] = [{
   styleUrls: ['./dx-button.css']
 })
 export class DxButtonComponent {
-  constructor() {
+  constructor(private renderer: Renderer2, private elRef: ElementRef) {
     const defaultOptions = convertRulesToOptions(defaultOptionsRules);
     for(let option in defaultOptions) {
       this[option] = defaultOptions[option];
     }
   }
 
+  ngOnChanges() {
+    for(let key in this.elementAttr || {}) {
+      this.renderer.setAttribute(this.elRef.nativeElement, key, this.elementAttr[key]);
+    }
+  }
+
   @Input() classNames?: Array<string>
+  @Input() elementAttr?: { [name: string]: any };
   @Input() height?: string;
   @Input() hint?: string;
   @Input() pressed?: boolean;

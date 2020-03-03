@@ -220,10 +220,18 @@ const App: React.FC = () => {
   const [toggle, setToggle] = useState(true);
   const [selectedItems, setSelectedItems] = useState(() => ['bold', 'strike']);
   const [drawerOpened, setDrawerOpened] = useState(false);
-
   const [selectedListItems, setSelectedListItems] = useState(() => [] as any[]);
+  const [elementAttr, setElementAttr] = useState(() => ({ id: "Button_1", "data_my_data": "this is my button" } as any));
 
   const onClick = useCallback((e: any) => setLastClickedButton(`${e.type} - ${e.text}`), []);
+  const changeElementAttr = useCallback(() => {
+    if(elementAttr.data_my_other_data) {
+      setElementAttr({...elementAttr, data_my_other_data: ""});
+    } else {
+      setElementAttr({...elementAttr, data_my_other_data: "yes"});
+    }
+  }, [elementAttr]);
+
   const toggleChange = useCallback((value: boolean) => setToggle(value), []);
   const buttonsSelected = useCallback((value: string[]) => setSelectedItems(value), []);
 
@@ -247,7 +255,7 @@ const App: React.FC = () => {
                 hint="Contained"
                 type="normal"
                 stylingMode="contained"
-                
+                elementAttr={elementAttr}
               />
             </div>
             <div>
@@ -257,7 +265,7 @@ const App: React.FC = () => {
                 hint="Outlined"
                 type="normal"
                 stylingMode="outlined"
-                onClick={onClick}
+                onClick={changeElementAttr}
               />
             </div>
             <div>

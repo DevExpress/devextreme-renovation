@@ -10,19 +10,22 @@ import { CommonModule } from '@angular/common';
       [ngStyle]="style"
       [title]="hint">
       <div class="dx-list-content">
-        <div
-          *ngFor="let item of itemsVM; let i = index; trackBy: trackBy"
-          [class]="['dx-list-item'].concat(item.selected ? 'dx-state-selected' : '', item.hovered ? 'dx-state-hover' : '').join(' ')"
-          (click)="selectHandler(item.key)"
-          (pointermove)="onItemMove(item.key)"
-        >
-          <ng-container *ngTemplateOutlet="itemRender ? itemRender : defautlItemRender; context:{item:item}"></ng-container>
-        </div>
+        <ng-container *ngFor="let item of itemsVM; trackBy: trackBy">
+          <div
+            [class]="['dx-list-item'].concat(item.selected ? 'dx-state-selected' : '', item.hovered ? 'dx-state-hover' : '').join(' ')"
+            (click)="selectHandler(item.key)"
+            (pointermove)="onItemMove(item.key)"
+          >
+            <ng-container *ngIf="itemRender">
+              <ng-container *ngTemplateOutlet="itemRender; context:{item:item.item}"></ng-container>
+            </ng-container>
+            <ng-container *ngIf="!itemRender">
+              {{item.text}}
+            </ng-container>
+          </div>
+        </ng-container>
       </div>
-    </div>
-    <ng-template #defautlItemRender let-item="item">
-      {{item.text}}
-    </ng-template>`,
+    </div>`,
   styleUrls: ['./dx-list.css']
 })
 export class DxListComponent {
@@ -75,7 +78,7 @@ export class DxListComponent {
     a.click();
   }
 
-  trackBy(item) {
+  trackBy(index, item) {
     return item.key;
   }
 
@@ -90,7 +93,7 @@ export class DxListComponent {
     return this.items!.map((item: any) => {
       const selected = (this.selectedItems || []).findIndex((selectedItem: any) => selectedItem[this.keyExpr!] === item[this.keyExpr!]) !== -1;
       return {
-        ...item,
+        item,
         text: item[this.displayExpr!],
         key: item[this.keyExpr!],
         selected,

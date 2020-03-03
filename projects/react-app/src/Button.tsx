@@ -22,6 +22,7 @@ export const defaultOptionsRules: { device: () => boolean, options: any }[] = [{
 
 const Button = (props: {
   classNames?: Array<string>,
+  elementAttr?: { [name: string]: any },
   height?: string,
   hint?: string,
   onClick?: (e: any) => void,
@@ -120,6 +121,7 @@ function view(viewModel: any) {
       className={viewModel.cssClasses}
       title={viewModel.props.hint}
       style={viewModel.style}
+      {...viewModel.props.elementAttr}
       onPointerOver={viewModel.onPointerOver}
       onPointerOut={viewModel.onPointerOut}
       onPointerDown={viewModel.onPointerDown}

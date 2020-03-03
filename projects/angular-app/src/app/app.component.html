@@ -6,11 +6,11 @@
           Normal
         </div>
         <div>
-          <dx-button width="120px" text="Contained" hint="Contained" type="normal" stylingMode="contained"></dx-button>
+          <dx-button width="120px" text="Contained" hint="Contained" type="normal" stylingMode="contained" [elementAttr]="elementAttr"></dx-button>
         </div>
         <div>
           <dx-button width="120px" text="Outlined" hint="Outlined" type="normal" stylingMode="outlined"
-            (onClick)="onClick($event)"></dx-button>
+            (onClick)="changeElementAttr($event)"></dx-button>
         </div>
         <div>
           <dx-button width="120px" text="Text" hint="Text" type="normal" stylingMode="text" (onClick)="onClick($event)">

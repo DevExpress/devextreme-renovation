@@ -6,6 +6,7 @@
           <div class="column-header">Normal</div>
           <div>
             <dx-button
+              :element-attr="elementAttr"
               width="120px"
               text="Contained"
               hint="Contained"
@@ -15,7 +16,7 @@
           </div>
           <div>
             <dx-button
-              @on-click="onClick"
+              @on-click="changeElementAttr"
               width="120px"
               text="Outlined"
               hint="Outlined"
@@ -377,6 +378,7 @@ export default {
   data() {
     return {
       lastClickedButton: "",
+      elementAttr: { id: 'Button_1', 'data_my_data': 'this is my button' },
       toggle: true,
       drawerOpened: false,
       selectedButtons: ["bold", "strike"],
@@ -739,6 +741,13 @@ export default {
   methods: {
     onClick(e) {
       this.lastClickedButton = `${e.type} - ${e.text}`;
+    },
+    changeElementAttr() {
+      if(this.elementAttr.data_my_other_data) {
+        this.elementAttr = { ...this.elementAttr, data_my_other_data: ""};
+      } else {
+        this.elementAttr = { ...this.elementAttr, data_my_other_data: "yes"};
+      }
     },
     drawerHandleClick() {
       this.drawerOpened = !this.drawerOpened;

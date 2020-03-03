@@ -363,9 +363,18 @@ export class AppComponent {
   drawerOpened = false;
   selectedItems = ['bold', 'strike'];
   selectedListItems = [];
+  elementAttr={ id: 'Button_1', 'data_my_data': 'this is my button' } as any;
 
   onClick(e) {
       this.lastClickedButton = `${e.type} - ${e.text}`
+  }
+
+  changeElementAttr(e) {
+    if(this.elementAttr.data_my_other_data) {
+      this.elementAttr = { ...this.elementAttr, data_my_other_data: ""};
+    } else {
+      this.elementAttr = { ...this.elementAttr, data_my_other_data: "yes"};
+    }
   }
 
   toggleDrawer() {
