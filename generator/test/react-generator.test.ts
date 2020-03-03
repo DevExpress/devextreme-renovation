@@ -1310,6 +1310,53 @@ mocha.describe("React Component", function () {
                 viewModel.props.children
             }`));
         });
+
+        mocha.it("Access to GetAccessor as usual property", function () {
+            const component = createComponent(
+                [],
+                [
+                    generator.createGetAccessor(
+                        [],
+                        [],
+                        generator.createIdentifier("p"),
+                        [],
+                        undefined,
+                        undefined
+                    )
+                ]
+            );
+
+            const view = generator.createFunctionDeclaration(
+                [],
+                [],
+                "",
+                generator.createIdentifier("view"),
+                [],
+                [
+                    generator.createParameter(
+                        [],
+                        [],
+                        undefined,
+                        generator.createIdentifier("viewModel"),
+                        undefined,
+                        component.name,
+                        undefined
+                    )
+                ],
+                "",
+                generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("p")
+                    )
+                ], false)
+            );
+
+            assert.strictEqual(getResult(view.toString()), getResult(`function view(viewModel:Widget){
+                viewModel.p
+            }`));
+
+        });
     });
 });
 
@@ -2125,7 +2172,7 @@ mocha.describe("ComponentInput", function () {
             ]);
 
             assert.strictEqual(getResult(`{${component.compileViewModelArguments().join(",")}}`
-            ), getResult("{props:{...props}, property: property()}"));
+            ), getResult("{props:{...props}, property: __property()}"));
         });
 
     });

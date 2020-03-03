@@ -691,14 +691,111 @@ export class Decorator {
     }
 }
 
-export class Property extends Expression {
-    decorators: Decorator[]
+export class BaseClassMember extends Expression { 
+    decorators: Decorator[];
     modifiers: string[];
     _name: Identifier;
-    questionOrExclamationToken: string;
-    type: string;
-    initializer?: Expression;
+    type?: string;
     inherited: boolean;
+
+    prefix: string = "";
+
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, type: string = "any", inherited: boolean = false) { 
+        super();
+        this.decorators = decorators;
+        this.modifiers = modifiers;
+        this._name = name;
+        this.type = type;
+        this.inherited = inherited;
+    }
+
+    get name(): string { 
+        return `${this.prefix}${this._name}`;
+    }
+
+    typeDeclaration() {
+        return `${this.name}:${this.type}`
+    }
+
+    toString(options?: toStringOptions) {
+        return this.name.toString();
+    }
+
+    getter() { 
+        return this.toString();
+    }
+
+    isReadOnly() { 
+        return true;
+    }
+
+}
+
+export class Method extends BaseClassMember {
+    asteriskToken: string;
+    questionToken: string;
+    typeParameters: any;
+    parameters: Parameter[];
+    body: Block;
+   
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: string = "any", body: Block) {
+        super(decorators, modifiers, name, type);
+        this.asteriskToken = asteriskToken;
+        this.questionToken = questionToken;
+        this.typeParameters = typeParameters;
+        this.parameters = parameters;
+        this.body = body;
+    }
+
+    parametersTypeDeclaration() {
+        return this.parameters.map(p => p.declaration()).join(",");
+    }
+
+    typeDeclaration() {
+        return `${this.name}${this.questionToken}:(${this.parameters.map(p => p.typeDeclaration()).join(",")})=>${this.type}`
+    }
+
+    defaultDeclaration() { 
+        return this.declaration();
+    }
+
+    declaration(prefix = "", options?: toStringOptions) {
+        return `${prefix} ${this.name}(${this.parametersTypeDeclaration()})${this.body.toString(options)}`;
+    }
+
+    arrowDeclaration(options?:any) {
+        return `(${this.parametersTypeDeclaration()})=>${this.body.toString(options)}`
+    }
+
+    getDependency(properties: Array<State | Prop | InternalState> = []) {
+        const dependency = this.body.getDependency();
+
+        return Object.keys(dependency.reduce((k: any, d) => {
+            if (!k[d]) {
+                k[d] = d;
+            }
+            return k;
+        }, {})).map(d => properties.find(p => p.name.toString() === d)).filter(d => d).reduce((d: string[], p) => d.concat(p!.getDependecy()), [])
+    }
+}
+
+export class GetAccessor extends Method { 
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type?: string, body?: Block) { 
+        super(decorators, modifiers, "", name, "", [], parameters, type, body || new Block([], false));
+    }
+
+    typeDeclaration() { 
+        return `${this.name}:${this.type}`;
+    }
+
+    getter() { 
+        return `${super.getter()}()`;
+    }
+}
+
+export class Property extends BaseClassMember {
+    questionOrExclamationToken: string;
+    initializer?: Expression;
 
     get name(): string {
         if (this.decorators.find(d => d.name === "Template")) {
@@ -708,18 +805,13 @@ export class Property extends Expression {
         if (this.decorators.find(d => d.name === "Slot") && this._name.toString() === "default") {
             return "children";
         }
-        return this._name.toString();
+        return super.name;
     }
 
     constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression, inherited: boolean = false) {
-        super();
-        this.decorators = decorators;
-        this.modifiers = modifiers;
-        this._name = name;
+        super(decorators, modifiers, name, type, inherited);
         this.questionOrExclamationToken = questionOrExclamationToken;
-        this.type = type;
         this.initializer = initializer;
-        this.inherited = inherited;
     }
 
     typeDeclaration() {
@@ -731,10 +823,6 @@ export class Property extends Expression {
 
     defaultDeclaration() {
         return `${this.name}:${this.initializer}`;
-    }
-
-    toString(options?: toStringOptions) {
-        return this.name.toString();
     }
 
     getter() {
@@ -921,89 +1009,6 @@ export class PropertyAccess extends ExpressionWithExpression {
             return [this.name.toString()];
         }
         return this.expression.getDependency();
-    }
-}
-
-export class Method {
-    decorators: Decorator[];
-    modifiers: string[];
-    asteriskToken: string;
-    _name: Identifier;
-    questionToken: string;
-    typeParameters: any;
-    parameters: Parameter[];
-    type: string;
-    body: Block;
-    get name(): string { 
-        return this._name.toString();
-    }
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: string = "any", body: Block) {
-        this.decorators = decorators;
-        this.modifiers = modifiers;
-        this.asteriskToken = asteriskToken;
-        this._name = name;
-        this.questionToken = questionToken;
-        this.typeParameters = typeParameters;
-        this.parameters = parameters;
-        this.type = type;
-        this.body = body;
-    }
-
-    parametersTypeDeclaration() {
-        return this.parameters.map(p => p.declaration()).join(",");
-    }
-
-    typeDeclaration() {
-        return `${this.name}${this.questionToken}:(${this.parameters.map(p => p.typeDeclaration()).join(",")})=>${this.type}`
-    }
-
-    defaultDeclaration() { 
-        return this.declaration();
-    }
-
-    declaration(prefix = "", options?: toStringOptions) {
-        return `${prefix} ${this.name}(${this.parametersTypeDeclaration()})${this.body.toString(options)}`;
-    }
-
-    arrowDeclaration(options?:any) {
-        return `(${this.parametersTypeDeclaration()})=>${this.body.toString(options)}`
-    }
-
-    getDependency(properties: Array<State | Prop | InternalState> = []) {
-        const dependency = this.body.getDependency();
-
-        return Object.keys(dependency.reduce((k: any, d) => {
-            if (!k[d]) {
-                k[d] = d;
-            }
-            return k;
-        }, {})).map(d => properties.find(p => p.name.toString() === d)).filter(d => d).reduce((d: string[], p) => d.concat(p!.getDependecy()), [])
-    }
-
-    toString(options?: toStringOptions) {
-        return this.name.toString();
-    }
-
-    getter() { 
-        return this.toString();
-    }
-
-    isReadOnly() { 
-        return true;
-    }
-}
-
-export class GetAccessor extends Method { 
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type?: string, body?: Block) { 
-        super(decorators, modifiers, "", name, "", [], parameters, type, body || new Block([], false));
-    }
-
-    typeDeclaration() { 
-        return `${this.name}:${this.type}`;
-    }
-
-    getter() { 
-        return `${super.getter()}()`;
     }
 }
 
@@ -1204,6 +1209,10 @@ export class ReactComponent {
         this.modifiers = modifiers;
         this._name = name;
         this.heritageClauses = heritageClauses;
+
+        members.filter(m => m instanceof GetAccessor).forEach(m => {
+            m.prefix = "__";
+        });
 
         this.members = members = inheritMembers(heritageClauses, members);
 
@@ -1440,7 +1449,7 @@ export class ReactComponent {
         return props
             .concat(this.listeners.map(l => l.name.toString()))
             .concat(this.refs.map(r => r.name.toString()))
-            .concat(this.methods.map(m => m instanceof GetAccessor ? `${m.name}:${m.name}()` : m.name.toString()));
+            .concat(this.methods.map(m => m instanceof GetAccessor ? `${m._name}:${m.name}()` : m.name.toString()));
     }
 
     compilePropsType() {
