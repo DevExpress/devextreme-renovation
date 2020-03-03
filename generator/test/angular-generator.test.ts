@@ -591,6 +591,54 @@ mocha.describe("Angular generator", function () {
 
                 assert.strictEqual(expression.toString(), "const a=10");
             });
+
+            mocha.it("Can use variables in view function", function () {
+                const block = generator.createBlock([
+                    generator.createVariableDeclarationList(
+                        [generator.createVariableDeclaration(
+                            generator.createIdentifier("v"),
+                            undefined,
+                            generator.createNumericLiteral("10")
+                        )],
+                        generator.SyntaxKind.ConstKeyword
+                    ),
+                    generator.createReturn(
+                        generator.createJsxElement(
+                            generator.createJsxSelfClosingElement(
+                                generator.createIdentifier("div"),
+                                undefined,
+                                [
+                                    generator.createJsxAttribute(
+                                        generator.createIdentifier("v"),
+                                        generator.createIdentifier("v")
+                                    )
+                                ]
+                            ),
+                            [],
+                            ""
+                        )
+                    )
+                ], false);
+
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [],
+                    "",
+                    block
+                );
+
+                assert.strictEqual(expression.toString(), "");
+                assert.strictEqual(expression.getTemplate({
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    members: []
+                }), `<div [v]="10"/>`);
+            });
         });
     });
 

@@ -27,7 +27,9 @@ import {
     TemplateExpression,
     PropertyAccess as BasePropertyAccess,
     toStringOptions as ReactToStringOptions,
-    JsxElement as ReactJsxElement
+    JsxElement as ReactJsxElement,
+    VariableDeclarationList,
+    VariableExpression
 } from "./react-generator";
 
 import SyntaxKind from "./syntaxKind";
@@ -45,19 +47,20 @@ export class JsxSelfClosingElement extends ReactJsxSelfClosingElement{
 }
 
 export class JsxAttribute extends ReactJsxAttribute { 
-    toString() { 
+    toString(options?:toStringOptions) { 
         if (this.name.toString() === "ref") { 
             return `#${this.initializer.toString()}`;
         }
         if (this.initializer instanceof StringLiteral) { 
-            return `${this.name}=${this.initializer}`;
+            return `${this.name}=${this.initializer.toString()}`;
         }
         return `[${this.name}]="${this.initializer.toString({
             members: [],
             props: [],
             internalState: [],
             state: [],
-            disableTemplates: true
+            disableTemplates: true,
+            ...options
         }).replace(/"/gi, String.raw`\"`)}"`;
     }
 }
@@ -113,7 +116,7 @@ export class JsxElement extends ReactJsxElement {
 
     toString(options?: toStringOptions) { 
         const children: string = this.children.map(c => c.toString(options)).join("\n");
-        return `${this.openingElement}${children}${this.closingElement}`;
+        return `${this.openingElement.toString(options)}${children}${this.closingElement}`;
     }
 }
 
@@ -131,9 +134,25 @@ function getAngularTemplate(functionWithTemplate: AngularFunction | ArrowFunctio
         return "";
     }
 
+    const statements = functionWithTemplate.body instanceof Block ?
+        functionWithTemplate.body.statements :
+        [functionWithTemplate.body];
+    
+    if (options) { 
+        options.variables = statements.reduce((v: VariableExpression, statement) => {
+            if (statement instanceof VariableDeclarationList) { 
+                return {
+                    ...statement.getVariableExpressions(),
+                    ...v
+                }
+            }
+            return v;
+        }, {});
+    }
+    
     const returnStatement = functionWithTemplate.body instanceof Block ?
-        functionWithTemplate.body.statements.find(s => s instanceof ReturnStatement) :
-        functionWithTemplate.body;
+        statements.find(s => s instanceof ReturnStatement) :
+        statements[0];
 
     if (returnStatement) { 
         functionWithTemplate.parameters[0];

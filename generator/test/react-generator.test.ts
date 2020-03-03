@@ -183,14 +183,122 @@ mocha.describe("react-generator: expressions", function () {
         assert.equal(generator.createVariableDeclaration(identifier, "string", generator.createStringLiteral("str")).toString(), 'a:string="str"', "w type and initializer");
     });
 
-    mocha.it("VaraibleDeclarationList", function () {
-        assert.equal(generator.createVariableDeclarationList(
-            [
-                generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str")),
-                generator.createVariableDeclaration(generator.createIdentifier("b"), undefined, generator.createNumericLiteral("10"))
-            ],
-            generator.NodeFlags.Const
-        ).toString(), 'const a="str",b=10');
+    mocha.describe("VaraibleDeclarationList", function () {
+        mocha.it("toString", function () {
+            const expresion = generator.createVariableDeclarationList(
+                [
+                    generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str")),
+                    generator.createVariableDeclaration(generator.createIdentifier("b"), undefined, generator.createNumericLiteral("10"))
+                ],
+                generator.NodeFlags.Const
+            );
+    
+            assert.equal(expresion.toString(), 'const a="str",b=10');
+        });
+
+        mocha.it("createVariableDeclaration - getVariableExpression", function () { 
+            const expresion = generator.createVariableDeclaration(
+                generator.createIdentifier("a"),
+                undefined,
+                generator.createStringLiteral("str")
+            );
+
+            const list = expresion.getVariableExpressions();
+            assert.strictEqual(Object.keys(list).length, 1);
+            assert.strictEqual(list["a"].toString(), `"str"`);
+                    
+        });
+
+        mocha.it("getVariableExpression", function () {
+            const expresion = generator.createVariableDeclarationList(
+                [
+                    generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str")),
+                    generator.createVariableDeclaration(generator.createIdentifier("b"), undefined, generator.createNumericLiteral("10"))
+                ],
+                generator.NodeFlags.Const
+            );
+
+            const variableList = expresion.getVariableExpressions();
+
+            assert.strictEqual(Object.keys(variableList).length, 2);
+    
+            assert.equal(variableList["a"].toString(), '"str"');
+            assert.equal(variableList["b"].toString(), '10');
+        });
+
+        mocha.it("VariableDeclaration with object binding pattern - getVariableDeclaration", function () {
+            const expresion = generator.createVariableDeclaration(
+                generator.createObjectBindingPattern([generator.createBindingElement(
+                    undefined,
+                    undefined,
+                    generator.createIdentifier("height"),
+                    undefined
+                )]),
+                undefined,
+                generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("props")
+                )
+            );
+
+            const list = expresion.getVariableExpressions();
+            
+            assert.strictEqual(Object.keys(list).length, 1);
+            assert.strictEqual(list["height"].toString(), "this.props.height");
+        });
+
+        mocha.it("VariableDeclaration with array binding pattern - getVariableDeclaration", function () {
+            const expresion = generator.createVariableDeclaration(
+                generator.createArrayBindingPattern([generator.createBindingElement(
+                    undefined,
+                    undefined,
+                    generator.createIdentifier("height"),
+                    undefined
+                )]),
+                undefined,
+                generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("props")
+                )
+            );
+
+            const list = expresion.getVariableExpressions();
+            
+            assert.strictEqual(Object.keys(list).length, 1);
+            assert.strictEqual(list["height"].toString(), "this.props[0]");
+        });
+
+        mocha.it("can replace Identifer with expression", function () { 
+            const identifer = generator.createIdentifier("name");
+            const expression = generator.createNumericLiteral("10");
+
+            assert.strictEqual(identifer.toString({
+                props: [],
+                state: [],
+                internalState: [],
+                members: [],
+                variables: {
+                    name: expression
+                }
+            }), "10");
+        });
+
+        mocha.it("PropertyAccess", function () { 
+            const propertyAccess = generator.createPropertyAccess(
+                generator.createIdentifier("name"),
+                generator.createIdentifier("name")
+            );
+
+            assert.strictEqual(propertyAccess.toString({
+                props: [],
+                state: [],
+                internalState: [],
+                members: [],
+                variables: {
+                    name: generator.createIdentifier("v")
+                }
+            }), "v.name");
+        });
     });
 
     mocha.it("createIndexSignature", function () { 
