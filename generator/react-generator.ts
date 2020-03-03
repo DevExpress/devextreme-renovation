@@ -54,6 +54,11 @@ export interface toStringOptions {
     internalState: InternalState[];
     state: State[];
     props: Prop[];
+    variables?: VariableExpression;
+}
+
+export interface VariableExpression { 
+    [name: string]: Expression;
 }
 
 export class Expression {
@@ -107,6 +112,14 @@ export class Identifier extends SimpleExpression {
 
     valueOf() {
         return this.expression;
+    }
+
+    toString(options?: toStringOptions) { 
+        const baseValue = super.toString();
+        if (options?.variables && options.variables[baseValue]) {
+            return options.variables[baseValue].toString(options);    
+        }
+        return baseValue;
     }
 }
 
@@ -1499,6 +1512,29 @@ export class VariableDeclaration extends Expression {
         }
         return [];
     }
+
+    getVariableExpressions(): VariableExpression { 
+        if (this.name instanceof Identifier && this.initializer instanceof Expression) { 
+            return {
+                [this.name.toString()]: this.initializer
+            };
+        }
+        if (this.name instanceof BindingPattern) { 
+            return this.name.elements.reduce((v: VariableExpression, e, index) => {
+                if (e.name) { 
+                    const expressionString = (this.name as BindingPattern).type === "object" ? `${this.initializer}.${e.name.toString()}` :
+                    `${this.initializer}[${index}]`;
+                    const expression = new SimpleExpression(expressionString);
+                    return {
+                        [e.name.toString()]: expression,
+                        ...v
+                    };
+                }
+                return v;
+             }, {});
+        }
+        return {};
+    }
 }
 
 export class VariableDeclarationList extends Expression {
@@ -1521,6 +1557,15 @@ export class VariableDeclarationList extends Expression {
 
     getDependency() {
         return this.declarations.reduce((d: string[], p) => d.concat(p.getDependency()), []);
+    }
+
+    getVariableExpressions(): VariableExpression { 
+        return this.declarations.reduce((v: VariableExpression, d) => { 
+            return {
+                ...v,
+                ...d.getVariableExpressions()
+            }
+        }, {});
     }
 }
 
@@ -1806,9 +1851,9 @@ export class JsxAttribute {
         this.initializer = initializer;
     }
 
-    toString() { 
-        const name = this.name.toString();
-        return `${(eventsDictionary as any)[name] || this.name.toString()}=${this.initializer}`;
+    toString(options?:toStringOptions) { 
+        const name = this.name.toString(options);
+        return `${(eventsDictionary as any)[name] || name}=${this.initializer.toString(options)}`;
     }
 }
 
@@ -1824,12 +1869,12 @@ export class JsxOpeningElement extends Expression {
         this.attributes = attributes;
     }
 
-    attributesString() { 
-        return this.attributes.map(a => a.toString()).join("\n");
+    attributesString(options?:toStringOptions) { 
+        return this.attributes.map(a => a.toString(options)).join("\n");
     }
 
-    toString() { 
-        return `<${this.tagName} ${this.attributesString()}>`;
+    toString(options?:toStringOptions) { 
+        return `<${this.tagName} ${this.attributesString(options)}>`;
     }
 
     addAttribute(attribute: JsxAttribute) { 
@@ -1842,8 +1887,8 @@ export class JsxOpeningElement extends Expression {
 }
 
 export class JsxSelfClosingElement extends JsxOpeningElement{
-    toString() { 
-        return `<${this.tagName} ${this.attributesString()}/>`;
+    toString(options?:toStringOptions) { 
+        return `<${this.tagName} ${this.attributesString(options)}/>`;
     }
  }
 
