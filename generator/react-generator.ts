@@ -50,6 +50,7 @@ function getPropName(name: Identifier | string) {
 
 export interface toStringOptions {
     members: Array<Property | Method>;
+    disableTemplates?: boolean;
     internalState: InternalState[];
     state: State[];
     props: Prop[];
@@ -1589,7 +1590,11 @@ export class TemplateSpan extends ExpressionWithExpression {
     }
 
     toString(options?: toStringOptions) {
-        return `\${${super.toString(options)}}${this.literal}`;
+        const expressionString = super.toString(options);
+        if (options?.disableTemplates) { 
+            return `${expressionString}+"${this.literal}"`;
+        }
+        return `\${${expressionString}}${this.literal}`;
     }
 }
 
@@ -1604,7 +1609,11 @@ export class TemplateExpression extends Expression {
     }
 
     toString(options?: toStringOptions) {
-        return `\`${this.head}${this.templateSpans.map(s => s.toString(options)).join("")}\``;
+        const templateSpansStrings = this.templateSpans.map(s => s.toString(options));
+        if (options?.disableTemplates) { 
+            return `"${this.head}"+${templateSpansStrings.join("+")}`;
+        }
+        return `\`${this.head}${templateSpansStrings.join("")}\``;
     }
 
     getDependency() {

@@ -51,19 +51,25 @@ export class JsxAttribute extends ReactJsxAttribute {
         if (this.initializer instanceof StringLiteral) { 
             return `${this.name}=${this.initializer}`;
         }
-        return `[${this.name}]="${this.initializer}"`;
+        return `[${this.name}]="${this.initializer.toString({
+            members: [],
+            props: [],
+            internalState: [],
+            state: [],
+            disableTemplates: true
+        }).replace(/"/gi, String.raw`\"`)}"`;
     }
 }
 
 export class AngularDirective extends JsxAttribute { 
-    toString() { 
-        return `${this.name}="${this.initializer}"`;
+    toString(options?: toStringOptions) { 
+        return `${this.name}="${this.initializer.toString(options)}"`;
     }
 }
 
 export class JsxExpression extends ReactJsxExpression {
     toString(options?: toStringOptions) {
-        return this.expression.toString();
+        return this.expression.toString(options);
     }
 }
 
