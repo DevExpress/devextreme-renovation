@@ -1178,6 +1178,49 @@ mocha.describe("React Component", function () {
             }`));
         });
 
+        mocha.it("Rename template to render in view function when view function is arrow function", function () {
+            const component = createComponent(
+                [
+                    generator.createProperty(
+                        [createDecorator("Template")],
+                        [],
+                        generator.createIdentifier("template")
+                    )
+                ]
+            );
+
+            const view = generator.createArrowFunction(
+                [],
+                [],
+                [
+                    generator.createParameter(
+                        [],
+                        [],
+                        undefined,
+                        generator.createIdentifier("viewModel"),
+                        undefined,
+                        component.name,
+                        undefined
+                    )
+                ],
+                "",
+                generator.SyntaxKind.EqualsGreaterThanToken,
+                generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("props")
+                        ),
+                        generator.createIdentifier("template")
+                    )
+                ], false)
+            );
+
+            assert.strictEqual(getResult(view.toString()), getResult(`(viewModel:Widget)=>{
+                viewModel.props.render
+            }`));
+        });
+
         mocha.it("Do not modify state", function () {
             const component = createComponent(
                 [

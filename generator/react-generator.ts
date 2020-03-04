@@ -450,22 +450,17 @@ export class CallChain extends Call {
     }
 }
 
-export class Function extends Expression {
-    decorators: Decorator[];
+export class BaseFunction extends Expression { 
     modifiers: string[];
-    asteriskToken: string;
-    name: Identifier | undefined;
     typeParameters: string[];
     parameters: Parameter[];
     type: string;
-    body: Block;
+    body: Block | Expression;
     context: GeneratorContex;
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier | undefined, typeParameters: string[] = [], parameters: Parameter[], type: string, body: Block, context: GeneratorContex) {
+
+    constructor(modifiers: string[] = [], typeParameters: string[] = [], parameters: Parameter[], type: string, body: Block | Expression, context: GeneratorContex) { 
         super();
-        this.decorators = decorators;
         this.modifiers = modifiers;
-        this.asteriskToken = asteriskToken;
-        this.name = name;
         this.typeParameters = typeParameters;
         this.parameters = parameters;
         this.type = type;
@@ -473,12 +468,11 @@ export class Function extends Expression {
         this.context = context;
     }
 
-    declaration() {
-        this.toString();
+    getDependency() { 
+        return this.body.getDependency();
     }
 
-    toString() {
-        let options: toStringOptions | undefined = undefined;
+    getToStringOptions(options?: toStringOptions) { 
         const widget = this.parameters[0] && this.context.components?.[this.parameters[0].type || ""];
         if (widget && widget instanceof ReactComponent) { 
             options = {
@@ -490,9 +484,55 @@ export class Function extends Expression {
                 newComponentContext: this.parameters[0].name.toString()
             };
         }
+        return options;
+    }
+}
+
+export class Function extends BaseFunction {
+    decorators: Decorator[];
+    asteriskToken: string;
+    name: Identifier | undefined;
+    body: Block;
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier | undefined, typeParameters: string[] = [], parameters: Parameter[], type: string, body: Block, context: GeneratorContex) {
+        super(modifiers, typeParameters, parameters, type, body, context);
+        this.decorators = decorators;
+        this.asteriskToken = asteriskToken;
+        this.name = name;
+        this.body = body;
+    }
+
+    declaration() {
+        this.toString();
+    }
+
+    toString(options?: toStringOptions) {
+        options = this.getToStringOptions(options);
         return `${this.modifiers.join(" ")} function ${this.name || ""}(${
             this.parameters.map(p => p.declaration()).join(",")
             })${compileType(this.type)}${this.body.toString(options)}`;
+    }
+}
+
+export class ArrowFunction extends BaseFunction {
+    modifiers: any[];
+    typeParameters: string[];
+    parameters: Parameter[];
+    type: string;
+    body: Block | Expression;
+    equalsGreaterThanToken: string;
+    constructor(modifiers: string[] = [], typeParameters: string[], parameters: Parameter[], type: string, equalsGreaterThanToken: string, body: Block | Expression, context: GeneratorContex) {
+        super(modifiers, typeParameters, parameters, type, body, context);
+        this.modifiers = modifiers;
+        this.typeParameters = typeParameters;
+        this.parameters = parameters;
+        this.type = type;
+        this.body = body;
+        this.equalsGreaterThanToken = equalsGreaterThanToken;
+    }
+
+    toString(options?: toStringOptions) {
+        const bodyString = this.body.toString(this.getToStringOptions(options));
+        return `${this.modifiers.join(" ")} (${this.parameters.map(p => p.declaration()).join(",")})${compileType(this.type)} ${this.equalsGreaterThanToken} ${bodyString}`;
     }
 }
 
@@ -503,33 +543,6 @@ function checkDependency(expression: Expression, properties: Array<InternalState
     }, {});
 
     return properties.some(s => dependency[s.name.toString()]);
-}
-
-export class ArrowFunction extends Expression {
-    modifiers: any[];
-    typeParameters: string[];
-    parameters: Parameter[];
-    type: string;
-    body: Block | Expression;
-    equalsGreaterThanToken: string;
-    constructor(modifiers: string[] = [], typeParameters: string[], parameters: Parameter[], type: string, equalsGreaterThanToken: string, body: Block | Expression) {
-        super();
-        this.modifiers = modifiers;
-        this.typeParameters = typeParameters;
-        this.parameters = parameters;
-        this.type = type;
-        this.body = body;
-        this.equalsGreaterThanToken = equalsGreaterThanToken;
-    }
-
-    toString(options?: toStringOptions) {
-        const bodyString = this.body.toString(options);
-        return `${this.modifiers.join(" ")} (${this.parameters.map(p => p.declaration()).join(",")})${compileType(this.type)} ${this.equalsGreaterThanToken} ${bodyString}`;
-    }
-
-    getDependency() {
-        return this.body.getDependency();
-    }
 }
 
 export class ReturnStatement extends ExpressionWithExpression {
@@ -2183,7 +2196,7 @@ export class Generator {
     }
 
     createArrowFunction(modifiers: string[] = [], typeParameters: string[] = [], parameters: Parameter[], type: string = "", equalsGreaterThanToken: string, body: Block | Expression) {
-        return new ArrowFunction(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body);
+        return new ArrowFunction(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body, this.getContext());
     }
 
     createModifier(modifier: string) {
