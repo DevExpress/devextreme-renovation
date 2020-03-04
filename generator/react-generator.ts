@@ -216,8 +216,15 @@ export class BindingPattern extends Expression {
     }
 
     toString() {
+        if (this.elements.length === 0) { 
+            return "";
+        }
         const elements = this.elements.join(",");
         return this.type === "array" ? `[${elements}]` : `{${elements}}`;
+    }
+
+    remove(name: string) {
+        this.elements = this.elements.filter(e => e.name?.toString() !== name);
     }
 
     getDependency() { 
@@ -996,7 +1003,6 @@ export class PropertyAccess extends ExpressionWithExpression {
         const state = options && options.state || [];
         const props = options && options.props || [];
         const componentContext = options?.componentContext || SyntaxKind.ThisKeyword;
-        const newComponentContext = options?.newComponentContext || "";
 
         const findProperty = (p: InternalState | State | Prop) => p.name.valueOf() === this.name.valueOf();
         if (expressionString === componentContext || expressionString === `${componentContext}.props`) {
@@ -1031,13 +1037,14 @@ export class PropertyAccess extends ExpressionWithExpression {
         return state.find(s => s.name.valueOf() === this.name.valueOf()) ? `props.${this.name}Change!(${rightExpressionString})` : "";
     }
 
-    getDependency() {
+    getDependency(options?: toStringOptions) {
         const expressionString = this.expression.toString();
-        if ((expressionString === SyntaxKind.ThisKeyword && this.name.toString() !== "props") || expressionString === `${SyntaxKind.ThisKeyword}.props`) {
+        const componentContext = options?.componentContext || SyntaxKind.ThisKeyword;
+        if ((expressionString === componentContext && this.name.toString() !== "props") || expressionString === `${componentContext}.props`) {
             return [this.name.toString()];
         }
         const dependecy = this.expression.getDependency();
-        if (this.toString() === `${SyntaxKind.ThisKeyword}.props` && dependecy.length === 0) {
+        if (this.toString() === `${componentContext}.props` && dependecy.length === 0) {
             return ["props"];
         }
         return dependecy;
@@ -1584,8 +1591,29 @@ export class VariableDeclaration extends Expression {
     }
 
     toString(options?: toStringOptions) {
+        if (this.name instanceof BindingPattern && options?.members.length && this.initializer instanceof PropertyAccess) {
+            const dependecy = this.initializer.getDependency(options);
+            if (dependecy.indexOf("props") === 0) { 
+                const members = this.name.getDependency()
+                    .map(d => options?.members.find(m => m._name.toString() === d))
+                    .filter(m => m && m.name && m._name.toString() !== m.name) as Array<Property|Method>;
+                const variables = members.reduce((v: VariableExpression, m) => {
+                    (this.name as BindingPattern).remove(m._name.toString());
+                    return {
+                        ...v,
+                        [m._name.toString()]: new SimpleExpression(`${this.initializer?.toString()}.${m.name}`)
+                    };
+                }, options.variables || {});
+                
+                options.variables = variables;
+            }
+         }
+        
         const initilizerDeclaration = this.initializer ? `=${this.initializer.toString(options)}` : "";
-        return `${this.name}${compileType(this.type)}${initilizerDeclaration}`;
+        if (this.name.toString()) { 
+           return `${this.name}${compileType(this.type)}${initilizerDeclaration}`;
+        }
+        return "";
     }
 
     getDependency() {
