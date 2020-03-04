@@ -61,7 +61,7 @@ export default {
       return this.items.map(item => {
         const selected = ((this.selectedItems !== undefined ? this.selectedItems : this.selectedItems_state) || []).findIndex(selectedItem => selectedItem[this.keyExpr] === item[this.keyExpr]) !== -1;
         return {
-          ...item,
+          item,
           text: item[this.displayExpr],
           key: item[this.keyExpr],
           selected,
@@ -80,7 +80,7 @@ export default {
             on-pointermove={viewModel.onItemMove.bind(null, item.key)}
             >
               {viewModel.$scopedSlots["item-render"] ? (
-                viewModel.$scopedSlots["item-render"](item)
+                viewModel.$scopedSlots["item-render"](item.item)
               ) : (
                 item.text
               )}

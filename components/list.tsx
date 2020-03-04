@@ -65,7 +65,7 @@ export default class List extends JSXComponent<ListInput> {
     return this.props.items!.map((item: any) => {
       const selected = (this.props.selectedItems || []).findIndex((selectedItem: any) => selectedItem[this.props.keyExpr!] === item[this.props.keyExpr!]) !== -1;
       return {
-        ...item,
+        item,
         text: item[this.props.displayExpr!],
         key: item[this.props.keyExpr!],
         selected,
@@ -85,7 +85,7 @@ function view(viewModel: List) {
         onPointerMove={viewModel.onItemMove.bind(null, item.key)}
         >
           {viewModel.props.itemRender ? (
-            <viewModel.props.itemRender {...item} />
+            <viewModel.props.itemRender {...item.item} />
           ) : (
             item.text
           )}

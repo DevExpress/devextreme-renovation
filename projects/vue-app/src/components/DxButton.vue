@@ -22,6 +22,7 @@ export default {
   components: {},
   props: {
     classNames: Array,
+    elementAttr: Object,
     height: {
       type: String,
       default() { return this._defaultOptions.height || "" }
@@ -131,6 +132,7 @@ export default {
           class={viewModel.cssClasses()}
           title={viewModel.hint}
           style={viewModel.style()}
+          {...{attrs:viewModel.elementAttr}}
           on-pointerover={viewModel.onPointerOver}
           on-pointerout={viewModel.onPointerOut}
           on-pointerdown={viewModel.onPointerDown}

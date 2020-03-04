@@ -14,6 +14,7 @@ export const defaultOptionsRules: { device: () => boolean, options: any }[] = [{
 @ComponentBindings()
 export class ButtonInput {
   @OneWay() classNames?: string[]
+  @OneWay() elementAttr?: { [name: string]: any } = {};
   @OneWay() height?: string;
   @OneWay() hint?: string;
   @OneWay() pressed?: boolean;
@@ -111,6 +112,7 @@ function viewFunction(viewModel: Button) {
       className={viewModel.cssClasses}
       title={viewModel.props.hint}
       style={viewModel.style}
+      {...viewModel.props.elementAttr}
       onPointerOver={viewModel.onPointerOver}
       onPointerOut={viewModel.onPointerOut}
       onPointerDown={viewModel.onPointerDown}

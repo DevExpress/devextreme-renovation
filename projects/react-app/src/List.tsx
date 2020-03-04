@@ -66,7 +66,7 @@ const List = forwardRef<ListRef, ListProps>((props: ListProps, ref) => {
     return props.items!.map((item: any) => {
       const selected = ((props.selectedItems !== undefined ? props.selectedItems : selectedItems) || []).findIndex((selectedItem: any) => selectedItem[props.keyExpr!] === item[props.keyExpr!]) !== -1;
       return {
-        ...item,
+        item,
         text: item[props.displayExpr!],
         key: item[props.keyExpr!],
         selected,
@@ -114,7 +114,7 @@ function view(viewModel: any) {
         onPointerMove={viewModel.onItemMove.bind(null, item.key)}
         >
           {viewModel.props.itemRender ? (
-            <viewModel.props.itemRender {...item} />
+            <viewModel.props.itemRender {...item.item} />
           ) : (
             item.text
           )}
