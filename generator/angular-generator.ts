@@ -499,7 +499,7 @@ export class AngularGenerator extends Generator {
     }
 
     createArrowFunction(modifiers: string[] = [], typeParameters: string[] = [], parameters: Parameter[], type: string = "", equalsGreaterThanToken: string, body: Block | Expression) { 
-        return new ArrowFunctionWithTemplate(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body);
+        return new ArrowFunctionWithTemplate(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body, this.getContext());
     }
 
     createVariableDeclaration(name: Identifier, type: string = "", initializer?: Expression | string) {
