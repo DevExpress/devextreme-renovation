@@ -141,6 +141,24 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), '<div [style]="{height:viewModel.height}"></div>');
         });
 
+        mocha.it("Fragment should be ignored", function () { 
+            const expression = generator.createJsxElement(
+                generator.createJsxOpeningElement(
+                    generator.createIdentifier("Fragment"),
+                    undefined,
+                    undefined
+                ),
+                [
+                    generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                ],
+                generator.createJsxClosingElement(generator.createIdentifier("Fragment"))
+            );
+
+            assert.strictEqual(expression.toString(), '<div />');
+        });
+
         mocha.it("JSX element witn with child element", function () { 
             const expression = generator.createJsxElement(
                 generator.createJsxOpeningElement(
@@ -263,6 +281,27 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), `<input *ngIf="viewModel.input"/>`);
         });
 
+        mocha.it("ngIf derictive with string - replace quotes with backslach quotes", function () { 
+            const expression = generator.createJsxExpression(
+                undefined,
+                generator.createBinary(
+                    generator.createBinary(
+                        generator.createIdentifier("viewModel"),
+                        generator.SyntaxKind.EqualsEqualsEqualsToken,
+                        generator.createStringLiteral("input")
+                    ),
+                    generator.createToken(generator.SyntaxKind.AmpersandAmpersandToken),
+                        generator.createJsxSelfClosingElement(
+                            generator.createIdentifier("input"),
+                            undefined,
+                            generator.createJsxAttributes([])
+                        )
+                )
+            );
+
+            assert.strictEqual(expression.toString(), String.raw`<input *ngIf="viewModel===\"input\""/>`);
+        });
+
         mocha.it("<element>nonJsxExpr</element> -> <element>{{nonJsxExpr}}</element>", function () { 
             const expression = generator.createJsxElement(
                 generator.createJsxOpeningElement(
@@ -327,7 +366,44 @@ mocha.describe("Angular generator", function () {
                     members: [slotProperty],
                     internalState: [],
                     state: [],
-                    props: []
+                    props: [],
+                    componentContext: "viewModel"
+                }), `<span ><ng-content select="[name]"></ng-content></span>`);
+            });
+
+            mocha.it("named slot with empty context", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("span"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("name")
+                        )
+                      )],
+                    generator.createJsxClosingElement(generator.createIdentifier("span"))
+                );
+
+                const slotProperty = generator.createProperty(
+                    [createDecorator("Slot")],
+                    [],
+                    generator.createIdentifier("name"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    generator.createFalse()
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [slotProperty],
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
                 }), `<span ><ng-content select="[name]"></ng-content></span>`);
             });
 
@@ -446,7 +522,13 @@ mocha.describe("Angular generator", function () {
                     ], false)
                 );
 
-                assert.strictEqual(expression.getTemplate(), `<span [attr]="_viewModel.value">{{_viewModel.text}}</span>`);
+                assert.strictEqual(expression.getTemplate({
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    members: [],
+                    newComponentContext: "_viewModel"
+                }), `<span [attr]="_viewModel.value">{{_viewModel.text}}</span>`);
             });
 
             mocha.it("Function without JSX is generated", function () {
@@ -866,7 +948,7 @@ mocha.describe("Angular generator", function () {
             );
         });
 
-        mocha.it("@Slot prop should be a member of component", function () {
+        mocha.it("@Slot prop should not be a member of component", function () {
             const property = generator.createProperty(
                 [createDecorator("Slot")],
                 [],
@@ -877,6 +959,20 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(property.toString(), "");
+        });
+
+        mocha.it("GetAccessor", function () {
+            const property = generator.createGetAccessor(
+                [],
+                [],
+                generator.createIdentifier("name"),
+                [],
+                undefined,
+                generator.createBlock([], false)
+            );
+
+            assert.strictEqual(getResult(property.toString()), getResult("get name(){}"));
+            assert.strictEqual(property.getter(), "name")
         });
     });
 
@@ -1141,6 +1237,90 @@ mocha.describe("Angular generator", function () {
                     state: [],
                     props: []
                 }), "this.width");
+            });
+
+            mocha.it("Access props - viewModel.props.prop -> newViewModel.prop", function () { 
+                const property = new Property(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("width"),
+                    undefined,
+                    undefined,
+                    undefined
+                );
+
+                const expression = generator.createPropertyAccess(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("props")
+                    ),
+                    generator.createIdentifier("width")
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [property],
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    componentContext: "viewModel",
+                    newComponentContext: "newViewModel"
+                }), "newViewModel.width");
+            });
+
+            mocha.it("Access props - viewModel.props.prop", function () { 
+                const property = new Property(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("width"),
+                    undefined,
+                    undefined,
+                    undefined
+                );
+
+                const expression = generator.createPropertyAccess(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("props")
+                    ),
+                    generator.createIdentifier("width")
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [property],
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    componentContext: "viewModel",
+                    newComponentContext: "newViewModel"
+                }), "newViewModel.width");
+            });
+
+            mocha.it("Access props - viewModel.props.prop - prop", function () { 
+                const property = new Property(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("width"),
+                    undefined,
+                    undefined,
+                    undefined
+                );
+
+                const expression = generator.createPropertyAccess(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("props")
+                    ),
+                    generator.createIdentifier("width")
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [property],
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), "width");
             });
 
             mocha.it("Access props - this.props", function () { 

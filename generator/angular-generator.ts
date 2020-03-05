@@ -30,7 +30,8 @@ import {
     JsxElement as ReactJsxElement,
     VariableDeclarationList,
     VariableExpression,
-    JsxClosingElement
+    JsxClosingElement,
+    GetAccessor as BaseGetAccessor
 } from "./react-generator";
 
 import SyntaxKind from "./syntaxKind";
@@ -48,6 +49,17 @@ export class JsxSelfClosingElement extends ReactJsxSelfClosingElement{
 }
 
 export class JsxAttribute extends ReactJsxAttribute { 
+    compileInitializer(options?: toStringOptions) { 
+        return this.initializer.toString({
+            members: [],
+            props: [],
+            internalState: [],
+            state: [],
+            disableTemplates: true,
+            ...options
+        }).replace(/"/gi, String.raw`\"`);
+    }
+
     toString(options?:toStringOptions) { 
         if (this.name.toString() === "ref") { 
             return `#${this.initializer.toString()}`;
@@ -55,20 +67,13 @@ export class JsxAttribute extends ReactJsxAttribute {
         if (this.initializer instanceof StringLiteral) { 
             return `${this.name}=${this.initializer.toString()}`;
         }
-        return `[${this.name}]="${this.initializer.toString({
-            members: [],
-            props: [],
-            internalState: [],
-            state: [],
-            disableTemplates: true,
-            ...options
-        }).replace(/"/gi, String.raw`\"`)}"`;
+        return `[${this.name}]="${this.compileInitializer(options)}"`;
     }
 }
 
 export class AngularDirective extends JsxAttribute { 
     toString(options?: toStringOptions) { 
-        return `${this.name}="${this.initializer.toString(options)}"`;
+        return `${this.name}="${this.compileInitializer(options)}"`;
     }
 }
 
@@ -84,16 +89,17 @@ export class JsxChildExpression extends JsxExpression {
     }
 
     toString(options?: toStringOptions) {
-        const stringValue = super.toString();
+        const stringValue = super.toString(options);
         if (this.expression.isJsx()) { 
             return stringValue;
         }
         if (this.expression instanceof StringLiteral) { 
             return this.expression.expression;
         }
+        const contextExpr = options?.newComponentContext ? `${options.newComponentContext}.` : "";
         const slot = options?.members
             .filter(m => m.decorators.find(d => d.name === "Slot"))
-            .find(s => stringValue.endsWith(`.${s.name.toString()}`)
+            .find(s => stringValue.endsWith(`${contextExpr}${s.name.toString()}`)
                 || s.name.toString() === "children" && (stringValue.endsWith(".default") || stringValue.endsWith(".children")));
         if (slot) { 
             if (slot.name.toString() === "default" || slot.name.toString() === "children") { 
@@ -117,7 +123,10 @@ export class JsxElement extends ReactJsxElement {
 
     toString(options?: toStringOptions) { 
         const children: string = this.children.map(c => c.toString(options)).join("\n");
-        return `${this.openingElement.toString(options)}${children}${this.closingElement.toString()}`;
+        if (this.openingElement.tagName.toString() === "Fragment") {
+            return children;
+        }
+        return `${this.openingElement.toString(options)}${children}${this.closingElement.toString(options)}`;
     }
 }
 
@@ -139,29 +148,33 @@ function getAngularTemplate(functionWithTemplate: AngularFunction | ArrowFunctio
         functionWithTemplate.body.statements :
         [functionWithTemplate.body];
     
-    if (options) { 
-        options.variables = statements.reduce((v: VariableExpression, statement) => {
-            if (statement instanceof VariableDeclarationList) { 
-                return {
-                    ...statement.getVariableExpressions(),
-                    ...v
-                }
-            }
-            return v;
-        }, {});
-    }
-    
     const returnStatement = functionWithTemplate.body instanceof Block ?
         statements.find(s => s instanceof ReturnStatement) :
         statements[0];
 
     if (returnStatement) { 
-        functionWithTemplate.parameters[0];
+        const componentParamenter = functionWithTemplate.parameters[0];
+        if (options) { 
+            if (componentParamenter && componentParamenter.name instanceof Identifier) { 
+                options.componentContext = componentParamenter.toString();
+            }
 
+            options.variables = statements.reduce((v: VariableExpression, statement) => {
+                if (statement instanceof VariableDeclarationList) { 
+                    return {
+                        ...statement.getVariableExpressions(),
+                        ...v
+                    }
+                }
+                return v;
+            }, {});
+        }
+        
         const expression = getJsxExpression(returnStatement)?.toString(options);
         
-        if (expression && functionWithTemplate.parameters[0]) { 
-            return expression.replace(new RegExp(functionWithTemplate.parameters[0].name.toString(), "g"), "_viewModel");
+        if (expression && componentParamenter) { 
+            return expression
+                //.replace(new RegExp(functionWithTemplate.parameters[0].name.toString(), "g"), "_viewModel");
         }
         return expression;
     }
@@ -297,6 +310,16 @@ class Method extends BaseMethod {
     }
 }
 
+class GetAccessor extends BaseGetAccessor { 
+    toString(options?: toStringOptions) { 
+        return `get ${this.name}()${this.body.toString(options)}`;
+    }
+
+    getter() { 
+        return this.name;
+    }
+}
+
 class AngularComponent extends ReactComponent {
     decorator: Decorator;
     constructor(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>, context: GeneratorContex) { 
@@ -374,7 +397,8 @@ class AngularComponent extends ReactComponent {
             members: this.members,
             state: [],
             internalState: [],
-            props: []
+            props: [],
+            newComponentContext: this.viewModel ? "_viewModel" : ""
         })}
         ${this.modifiers.join(" ")} class ${this.name} ${extendTypes.length? `extends ${extendTypes.join(" ")}`:""} {
             ${this.members.map(m => m.toString({
@@ -399,23 +423,17 @@ class AngularComponent extends ReactComponent {
 
 export class PropertyAccess extends BasePropertyAccess {
     toString(options?: toStringOptions) {
-        let expressionString = this.expression.toString();
-        
-        if (expressionString === SyntaxKind.ThisKeyword || expressionString === `${SyntaxKind.ThisKeyword}.props`) {
-            expressionString = SyntaxKind.ThisKeyword;
-            const member = options?.members.find(m => m.name.toString() === this.name.toString())
-            if (member) { 
-                return `${expressionString}.${member.getter()}`;
-            }
+
+        if (options && !("newComponentContext" in options)) { 
+            options.newComponentContext = SyntaxKind.ThisKeyword;
         }
 
-        const result = `${this.expression.toString(options)}.${this.name}`;
-
-        if (options && result === "this.props") { 
-            return "this";
+        const result = super.toString(options);
+        if (options && result === `${options.newComponentContext}.props`) { 
+            return options.newComponentContext!;
         }
 
-        return `${this.expression.toString(options)}.${this.name}`;
+        return result;
     }
 
     compileStateSetting(value: string) {
@@ -431,11 +449,11 @@ export class VariableDeclaration extends BaseVariableDeclaration {
     isJsx() { 
         return this.initializer instanceof Expression && this.initializer.isJsx()
     }
-    toString() { 
+    toString(options?:toStringOptions) { 
         if (this.isJsx()) { 
             return "";
         }
-        return super.toString();
+        return super.toString(options);
     }
 }
 
@@ -524,6 +542,10 @@ export class AngularGenerator extends Generator {
 
     createMethod(decorators: Decorator[], modifiers: string[], asteriskToken: string, name: Identifier, questionToken: string, typeParameters: any, parameters: Parameter[], type: string, body: Block) {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
+    }
+
+    createGetAccessor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type?: string, body?: Block) {
+        return new GetAccessor(decorators, modifiers, name, parameters, type, body);
     }
 
     createComponent(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 

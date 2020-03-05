@@ -1026,7 +1026,13 @@ export class PropertyAccess extends ExpressionWithExpression {
             return this.name.toString();
         }
 
-        return `${this.expression.toString(options)}.${this.name}`;
+        const result = `${this.expression.toString(options)}.${this.name}`;
+
+        if (options?.newComponentContext && result.startsWith(componentContext)) { 
+            return result.replace(options.componentContext!, options.newComponentContext);
+        }
+
+        return result;
     }
 
     compileStateSetting(state: string) {
