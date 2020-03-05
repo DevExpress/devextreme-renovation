@@ -2002,8 +2002,8 @@ export class JsxOpeningElement extends Expression {
 export class JsxElement extends Expression { 
     openingElement: JsxOpeningElement;
     children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>;
-    closingElement: string;
-    constructor(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: string) { 
+    closingElement: JsxClosingElement;
+    constructor(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: JsxClosingElement) { 
         super();
         this.openingElement = openingElement;
         this.children = children;
@@ -2012,8 +2012,7 @@ export class JsxElement extends Expression {
 
     toString(options?: toStringOptions) {
         const children: string = this.children.map(c => c.toString(options)).join("\n");
-        return `${this.openingElement.toString(options)}${children}${this.closingElement}`
-            .replace(/(\.default)(\W+)/g, ".children$2");
+        return `${this.openingElement.toString(options)}${children}${this.closingElement.toString(options)}`;
     }
 
     addAttribute(attribute: JsxAttribute) { 
@@ -2027,9 +2026,19 @@ export class JsxElement extends Expression {
 
 export class JsxSelfClosingElement extends JsxOpeningElement{
     toString(options?:toStringOptions) { 
-        return `<${this.tagName} ${this.attributesString(options)}/>`;
+        return `<${this.tagName.toString(options)} ${this.attributesString(options)}/>`;
     }
- }
+}
+ 
+export class JsxClosingElement extends JsxOpeningElement { 
+    constructor(tagName: Identifier) { 
+        super(tagName, [], []);
+    }
+
+    toString(options?:toStringOptions) { 
+        return `</${this.tagName.toString(options)}>`;
+    }
+}
 
 export class JsxExpression extends ExpressionWithExpression { 
     dotDotDotToken: string;
@@ -2387,10 +2396,10 @@ export class Generator {
     }
 
     createJsxClosingElement(tagName: Identifier) {
-        return `</${tagName}>`;
+        return new JsxClosingElement(tagName);
     }
 
-    createJsxElement(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: string) {
+    createJsxElement(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: JsxClosingElement) {
         return new JsxElement(openingElement, children, closingElement);
     }
 

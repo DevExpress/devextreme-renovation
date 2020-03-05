@@ -29,7 +29,8 @@ import {
     toStringOptions as ReactToStringOptions,
     JsxElement as ReactJsxElement,
     VariableDeclarationList,
-    VariableExpression
+    VariableExpression,
+    JsxClosingElement
 } from "./react-generator";
 
 import SyntaxKind from "./syntaxKind";
@@ -107,7 +108,7 @@ export class JsxChildExpression extends JsxExpression {
 
 export class JsxElement extends ReactJsxElement { 
     children: Array<JsxElement | string | JsxChildExpression | JsxSelfClosingElement>;
-    constructor(openingElement: JsxOpeningElement, children: Array<JsxElement|string|JsxExpression|JsxSelfClosingElement>, closingElement: string) { 
+    constructor(openingElement: JsxOpeningElement, children: Array<JsxElement|string|JsxExpression|JsxSelfClosingElement>, closingElement: JsxClosingElement) { 
         super(openingElement, children, closingElement);
         this.openingElement = openingElement;
         this.children = children.map(c => c instanceof JsxExpression ? new JsxChildExpression(c) : c);
@@ -121,7 +122,7 @@ export class JsxElement extends ReactJsxElement {
 }
 
 function getJsxExpression(e: ExpressionWithExpression | Expression): JsxExpression | undefined {
-    if (e instanceof JsxExpression || e instanceof JsxElement) {
+    if (e instanceof JsxExpression || e instanceof JsxElement || e instanceof ReactJsxOpeningElement) {
         return e as JsxExpression;
     }
     else if (e instanceof ExpressionWithExpression) { 
@@ -479,10 +480,10 @@ export class AngularGenerator extends Generator {
     }
 
     createJsxClosingElement(tagName: Identifier) {
-        return `</${tagName}>`;
+        return new JsxClosingElement(tagName);
     }
 
-    createJsxElement(openingElement: JsxOpeningElement, children: Array<JsxElement|string|JsxExpression|JsxSelfClosingElement>, closingElement: string) {
+    createJsxElement(openingElement: JsxOpeningElement, children: Array<JsxElement|string|JsxExpression|JsxSelfClosingElement>, closingElement: JsxClosingElement) {
         return new JsxElement(openingElement, children, closingElement);
     }
 

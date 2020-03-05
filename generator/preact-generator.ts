@@ -9,6 +9,7 @@ import {
     ImportClause,
     JsxAttribute,
     JsxOpeningElement as ReactJsxOpeningElement,
+    JsxClosingElement as ReactJsxClosingElement,
     ImportDeclaration,
     HeritageClause,
     Expression,
@@ -39,12 +40,17 @@ export class Property extends BaseProperty {
     }
 }
 
+const processTagName = (tagName: Identifier) => tagName.toString() === "Fragment" ? new Identifier("Preact.Fragment") : tagName;
+
 class JsxOpeningElement extends ReactJsxOpeningElement { 
     constructor(tagName: Identifier, typeArguments: any[], attributes: JsxAttribute[] = []) { 
-        if (tagName.toString() === "Fragment") { 
-            tagName = new Identifier("Preact.Fragment");
-        }
-        super(tagName, typeArguments, attributes);
+        super(processTagName(tagName), typeArguments, attributes);
+    }
+}
+
+class JsxClosingElement extends ReactJsxClosingElement { 
+    constructor(tagName: Identifier) { 
+        super(processTagName(tagName));
     }
 }
 
@@ -77,7 +83,7 @@ export class PreactGenerator extends Generator {
     }
 
     createJsxClosingElement(tagName: Identifier) {
-        return `</${tagName.toString() === "Fragment" ? "Preact.Fragment" : tagName}>`;
+        return new JsxClosingElement(tagName);
     }
 
     createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression) {

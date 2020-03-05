@@ -1,7 +1,7 @@
 import assert from "assert";
 import mocha from "mocha";
 import ts from "typescript";
-import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex, toStringOptions } from "../react-generator";
+import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex, toStringOptions, SimpleExpression } from "../react-generator";
 
 import compile from "../component-compiler";
 import path from "path";
@@ -281,6 +281,54 @@ mocha.describe("react-generator: expressions", function () {
                     name: expression
                 }
             }), "10");
+        });
+
+        mocha.it("can replace Identifer with expression in JSX self-closing element", function () { 
+            const identifer = generator.createIdentifier("render");
+            const element = generator.createJsxSelfClosingElement(
+                identifer,
+                [],
+                []
+            );
+            
+            const expression = new SimpleExpression("viewModel.props.template");
+
+            assert.strictEqual(element.toString({
+                props: [],
+                state: [],
+                internalState: [],
+                members: [],
+                variables: {
+                    render: expression
+                }
+            }), "<viewModel.props.template />");
+        });
+
+        mocha.it("can replace Identifer with expression in JSX element", function () { 
+            const identifer = generator.createIdentifier("render");
+            const element = generator.createJsxElement(
+                generator.createJsxOpeningElement(
+                    identifer,
+                    [],
+                    []
+                ),
+                [],
+                generator.createJsxClosingElement(
+                    identifer
+                )
+            );
+            
+            const expression = new SimpleExpression("viewModel.props.template");
+
+            assert.strictEqual(element.toString({
+                props: [],
+                state: [],
+                internalState: [],
+                members: [],
+                variables: {
+                    render: expression
+                }
+            }), "<viewModel.props.template ></viewModel.props.template>");
         });
 
         mocha.it("PropertyAccess", function () { 

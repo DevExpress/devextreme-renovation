@@ -112,19 +112,6 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), `<div [a1]="10"\n[a2]="15"/>`);
         });
 
-        mocha.it("JsxElement with SelfClosing element", function () { 
-            const expression = generator.createJsxElement(
-                generator.createJsxSelfClosingElement(
-                    generator.createIdentifier("div")
-                ),
-                [],
-                ""
-            );
-
-            assert.strictEqual(expression.toString(), "<div />");
-            assert.strictEqual(expression.isJsx(), true);
-        });
-
         mocha.it("JSX element witn Opening and Close Elements", function () { 
             const expression = generator.createJsxElement(
                 generator.createJsxOpeningElement(
@@ -385,12 +372,8 @@ mocha.describe("Angular generator", function () {
 
                 this.block = generator.createBlock([
                     generator.createReturn(
-                        generator.createJsxElement(
-                            generator.createJsxSelfClosingElement(
-                                generator.createIdentifier("div")
-                            ),
-                            [],
-                            ""
+                        generator.createJsxSelfClosingElement(
+                            generator.createIdentifier("div")
                         )
                     )
                 ], false);
@@ -489,12 +472,8 @@ mocha.describe("Angular generator", function () {
                     [],
                     undefined,
                     generator.SyntaxKind.GreaterThanToken,
-                    generator.createJsxElement(
-                        generator.createJsxSelfClosingElement(
-                            generator.createIdentifier("div")
-                        ),
-                        [],
-                        ""
+                    generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("div")
                     )
                 );
 
@@ -511,13 +490,10 @@ mocha.describe("Angular generator", function () {
                     undefined,
                     generator.SyntaxKind.GreaterThanToken,
                     generator.createParen(
-                    generator.createJsxElement(
                         generator.createJsxSelfClosingElement(
                             generator.createIdentifier("div")
-                        ),
-                        [],
-                        ""
-                    ))
+                        )
+                    )
                 );
 
                 assert.strictEqual(expression.isJsx(), true);
@@ -603,7 +579,6 @@ mocha.describe("Angular generator", function () {
                         generator.SyntaxKind.ConstKeyword
                     ),
                     generator.createReturn(
-                        generator.createJsxElement(
                             generator.createJsxSelfClosingElement(
                                 generator.createIdentifier("div"),
                                 undefined,
@@ -613,10 +588,7 @@ mocha.describe("Angular generator", function () {
                                         generator.createIdentifier("v")
                                     )
                                 ]
-                            ),
-                            [],
-                            ""
-                        )
+                            )
                     )
                 ], false);
 
@@ -692,12 +664,8 @@ mocha.describe("Angular generator", function () {
                     "",
                     generator.createBlock([
                         generator.createReturn(
-                            generator.createJsxElement(
-                                generator.createJsxSelfClosingElement(
-                                    generator.createIdentifier("div")
-                                ),
-                                [],
-                                ""
+                            generator.createJsxSelfClosingElement(
+                                generator.createIdentifier("div")
                             )
                         )
                     ], false)
