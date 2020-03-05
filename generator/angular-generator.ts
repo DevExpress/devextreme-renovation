@@ -45,7 +45,23 @@ export class JsxOpeningElement extends ReactJsxOpeningElement {
 }
 
 export class JsxSelfClosingElement extends ReactJsxSelfClosingElement{ 
-
+    toString(options?: toStringOptions) {
+        const tagName = this.tagName.toString(options);
+        const contextExpr = options?.newComponentContext ? `${options.newComponentContext}.` : "";
+        const template = options?.members
+            .filter(m => m.decorators.find(d => d.name === "Template"))
+            .find(s => tagName.endsWith(`${contextExpr}${s.name.toString()}`));
+        
+        if (template) { 
+            const contextElements = this.attributes.map(a => { 
+                return `${a.name.toString(options)}: ${(a as JsxAttribute).compileInitializer(options)}`;
+            });
+            const contextString = contextElements.length?`; context={${contextElements.join(",")}}`:""
+            return `<ng-container *ngTemplateOutlet="${contextExpr}${template.name}${contextString}"></ng-container>`
+        }
+        
+        return super.toString(options);
+    }
 }
 
 export class JsxAttribute extends ReactJsxAttribute { 
@@ -107,7 +123,7 @@ export class JsxChildExpression extends JsxExpression {
             }
             return `<ng-content select="[${slot.name}]"></ng-content>`;
         }
-        
+
         return `{{${stringValue}}}`;
     }
 }
@@ -229,7 +245,7 @@ class Decorator extends BaseDecorator {
     toString(options?: toStringOptions) { 
         if (this.name === "OneWay" || this.name === "Event") {
             return "@Input()";
-        } else if (this.name === "TwoWay") {
+        } else if (this.name === "TwoWay" || this.name === "Template") {
             return "@Input()";
         } else if (this.name === "Effect" || this.name === "Ref") {
             return "";
@@ -264,9 +280,21 @@ class ComponentInput extends BaseComponentInput {
 }
 
 export class Property extends BaseProperty { 
+    get name() { 
+        if (this.decorators.find(d => d.name === "Slot")) { 
+            return super.name;
+        }
+        return this._name.toString();
+    }
+    constructor(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "any", initializer?: Expression, inherited: boolean=false) { 
+        if (decorators.find(d => d.name === "Template")) { 
+            type = `TemplateRef<any>`;
+        }
+        super(decorators, modifiers, name, questionOrExclamationToken, type, initializer, inherited);
+    }
     toString() { 
         const eventDecorator = this.decorators.find(d => d.name === "Event");
-        const defaultValue = `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.typeDeclaration()} ${this.initializer ? `= ${this.initializer.toString()}` : ""}`;
+        const defaultValue = `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.typeDeclaration()} ${this.initializer && this.initializer.toString() ? `= ${this.initializer.toString()}` : ""}`;
         if (eventDecorator) { 
             return `${eventDecorator} ${this.name}:EventEmitter<any> = new EventEmitter()`
         }
@@ -275,11 +303,12 @@ export class Property extends BaseProperty {
         }
         if (this.decorators.find(d => d.name.toString() === "TwoWay")) { 
             return `${defaultValue};
-            @Output() ${this.name}Change: EventEmitter<${this.type||"any"}> = new EventEmitter()`
+            @Output() ${this.name}Change: EventEmitter<${this.type}> = new EventEmitter()`
         }
         if (this.decorators.find(d => d.name === "Slot")) { 
             return "";
         }
+        
         return defaultValue;
     }
 
@@ -294,7 +323,7 @@ export class Property extends BaseProperty {
     }
 
     inherit() { 
-        return new Property(this.decorators, this.modifiers, this._name, this.questionOrExclamationToken, this.type, this.initializer, true);
+        return new Property(this.decorators as Decorator[], this.modifiers, this._name, this.questionOrExclamationToken, this.type, this.initializer, true);
     }
 }
 
@@ -344,6 +373,9 @@ class AngularComponent extends ReactComponent {
         }
         if (this.state.length) { 
             core.push("Input", "Output", "EventEmitter");
+        }
+        if (this.members.filter(m => m.decorators.find(d=>d.name==="Template")).length) { 
+            core.push("Input", "TemplateRef");
         }
         if (this.props.filter(p => p.property.decorators.find(d => d.name === "Event")).length) { 
             core.push("EventEmitter");
@@ -489,11 +521,11 @@ export class AngularGenerator extends Generator {
         return properties;
     }
 
-    createJsxOpeningElement(tagName: Identifier, typeArguments: any[]=[], attributes: JsxAttribute[]=[]) {
+    createJsxOpeningElement(tagName: Expression, typeArguments: any[]=[], attributes: JsxAttribute[]=[]) {
         return new JsxOpeningElement(tagName, typeArguments, attributes);
     }
 
-    createJsxSelfClosingElement(tagName: Identifier, typeArguments: any[]=[], attributes:  JsxAttribute[]=[]) {
+    createJsxSelfClosingElement(tagName: Expression, typeArguments: any[]=[], attributes:  JsxAttribute[]=[]) {
         return new JsxSelfClosingElement(tagName, typeArguments, attributes);
     }
 
@@ -536,7 +568,7 @@ export class AngularGenerator extends Generator {
         return new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members);
     }
 
-    createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression) {
+    createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "any", initializer?: Expression) {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 

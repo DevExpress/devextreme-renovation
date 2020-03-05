@@ -442,6 +442,75 @@ mocha.describe("Angular generator", function () {
             });
         });
 
+        mocha.describe("template", function () {
+            mocha.it("<template /> -> <ng-container>", function () {
+                const expression = generator.createJsxSelfClosingElement(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("template")
+                    ),
+                    [],
+                    []
+                );
+
+                const templateProperty = generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [templateProperty],
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), `<ng-container *ngTemplateOutlet="template"></ng-container>`);
+            });
+
+            mocha.it("template attributes -> template context", function () {
+                const expression = generator.createJsxSelfClosingElement(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("template")
+                    ),
+                    [],
+                    [
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("a1"),
+                            generator.createStringLiteral("str")
+                        ),
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("a2"),
+                            generator.createNumericLiteral("10")
+                        )
+                    ]
+                );
+
+                const templateProperty = generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [templateProperty],
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), String.raw`<ng-container *ngTemplateOutlet="template; context={a1: \"str\",a2: 10}"></ng-container>`);
+            });
+        });
+
         mocha.describe("View Function", function () { 
             this.beforeEach(function () {
                 generator.setContext({});
@@ -716,6 +785,12 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(decorator.toString(), "@Input()");
         });
 
+        mocha.it("Template -> Input", function () {
+            const decorator = createDecorator("Template");
+
+            assert.strictEqual(decorator.toString(), "@Input()");
+        });
+
         mocha.it("Effect -> ''", function () {
             const decorator = createDecorator("Effect");
 
@@ -916,7 +991,7 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(property.toString(), "@Input() onClick:EventEmitter<number> = new EventEmitter()");
         });  
         
-        mocha.it("Generate change for TwoWay prop", function () { 
+        mocha.it("Generate change for TwoWay prop with type", function () { 
             const property = generator.createProperty(
                 [createDecorator("TwoWay")],
                 [],
@@ -932,7 +1007,7 @@ mocha.describe("Angular generator", function () {
             );
         });
 
-        mocha.it("Generate change for TwoWay prop", function () { 
+        mocha.it("Generate change for TwoWay prop without type", function () { 
             const property = generator.createProperty(
                 [createDecorator("TwoWay")],
                 [],
@@ -943,7 +1018,7 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(getResult(property.toString()),
-                getResult(`@Input() pressed?: = false
+                getResult(`@Input() pressed?:any = false
                  @Output() pressedChange: EventEmitter<any> = new EventEmitter()`)
             );
         });
@@ -959,6 +1034,19 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(property.toString(), "");
+        });
+
+        mocha.it("@Template prop without type", function () {
+            const property = generator.createProperty(
+                [createDecorator("Template")],
+                [],
+                generator.createIdentifier("name"),
+                generator.SyntaxKind.QuestionToken,
+                undefined,
+                generator.createFalse()
+            );
+
+            assert.strictEqual(property.toString(), " @Input() name?:TemplateRef<any> = false");
         });
 
         mocha.it("GetAccessor", function () {
@@ -1037,6 +1125,19 @@ mocha.describe("Angular generator", function () {
                     ]
                 );
                 assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Input } from "@angular/core"; import {CommonModule} from "@angular/common"`));
+            });
+
+            mocha.it("Has Template property - Input, TemplateRef", function () {
+                const component = createComponent(
+                    [
+                        generator.createProperty(
+                            [createDecorator("Template")],
+                            [],
+                            generator.createIdentifier("p")
+                        )
+                    ]
+                );
+                assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Input, TemplateRef } from "@angular/core"; import {CommonModule} from "@angular/common"`));
             });
 
             mocha.it("Has TwoWay property - Input, Output, EventEmitter", function () {
