@@ -2,6 +2,7 @@ const ts = require("gulp-typescript");
 const gulp = require("gulp");
 const sourcemaps = require('gulp-sourcemaps');
 const { spawn } = require('child_process');
+const plumber = require('gulp-plumber');
 
 const TEST_CASES_SRC = 'test/test-cases/**/*';
 
@@ -16,6 +17,7 @@ gulp.task("copy-package", function copyTestCases() {
 gulp.task('compile', function compile() {
     const tsProject = ts.createProject('tsconfig.json');
     return tsProject.src()
+        .pipe(plumber(()=>null))
         .pipe(sourcemaps.init())
         .pipe(tsProject())
         
