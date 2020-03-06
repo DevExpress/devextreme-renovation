@@ -78,7 +78,14 @@ export class JsxAttribute extends ReactJsxAttribute {
 
     toString(options?:toStringOptions) { 
         if (this.name.toString() === "ref") { 
-            return `#${this.initializer.toString()}`;
+            const refString = this.initializer.toString(options);
+            const componentContext = options?.newComponentContext ? `${options.newComponentContext}.` : '';
+            const match = refString.match(new RegExp(`${componentContext}(\\w+).nativeElement`));
+            if (match && match[1]) { 
+                return `#${match[1]}`;
+            }
+
+            return `#${refString}`;
         }
         if (this.initializer instanceof StringLiteral) { 
             return `${this.name}=${this.initializer.toString()}`;

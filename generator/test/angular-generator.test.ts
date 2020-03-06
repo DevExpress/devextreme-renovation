@@ -335,6 +335,65 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), "#viewModel.refName");
         });
 
+        mocha.it("ref with component context", function () { 
+            const expression = generator.createJsxAttribute(
+                generator.createIdentifier("ref"),
+                generator.createPropertyAccess(
+                    generator.createIdentifier("viewModel"),
+                    generator.createIdentifier("refName")
+                )
+            );
+
+            assert.strictEqual(expression.toString({
+                state: [],
+                internalState: [],
+                props: [],
+                members: [
+                    generator.createProperty(
+                        [createDecorator("Ref")],
+                        [],
+                        generator.createIdentifier("refName"),
+                        undefined,
+                        undefined,
+                        undefined
+                    )
+                ],
+                componentContext: "viewModel",
+                newComponentContext: ""
+            }), "#refName");
+        });
+
+        mocha.it("ref with component context", function () { 
+            const expression = generator.createJsxAttribute(
+                generator.createIdentifier("ref"),
+                generator.createAsExpression(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("refName")
+                    ),
+                    "any"
+                )
+            );
+
+            assert.strictEqual(expression.toString({
+                state: [],
+                internalState: [],
+                props: [],
+                members: [
+                    generator.createProperty(
+                        [createDecorator("Ref")],
+                        [],
+                        generator.createIdentifier("refName"),
+                        undefined,
+                        undefined,
+                        undefined
+                    )
+                ],
+                componentContext: "viewModel",
+                newComponentContext: ""
+            }), "#refName");
+        });
+
         mocha.describe("slots", function () {
             mocha.it("named slot", function () {
                 const expression = generator.createJsxElement(
