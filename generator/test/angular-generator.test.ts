@@ -87,7 +87,7 @@ mocha.describe("Angular generator", function () {
                 )
             );
 
-            assert.strictEqual(expression.toString(), String.raw`[attr]="\"a\"+1+\"b\"+2+\"c\""`);
+            assert.strictEqual(expression.toString(), "'a'+1+'b'+2+'c'");
         });
 
         mocha.it(`JsxAttribute with string literal expression - attr="value"`, function () {
@@ -299,7 +299,7 @@ mocha.describe("Angular generator", function () {
                 )
             );
 
-            assert.strictEqual(expression.toString(), String.raw`<input *ngIf="viewModel===\"input\""/>`);
+            assert.strictEqual(expression.toString(), `<input *ngIf="viewModel==='input'"/>`);
         });
 
         mocha.it("<element>nonJsxExpr</element> -> <element>{{nonJsxExpr}}</element>", function () { 
@@ -566,7 +566,7 @@ mocha.describe("Angular generator", function () {
                     props: [],
                     componentContext: "viewModel",
                     newComponentContext: ""
-                }), String.raw`<ng-container *ngTemplateOutlet="template; context={a1: \"str\",a2: 10}"></ng-container>`);
+                }), `<ng-container *ngTemplateOutlet="template; context={a1: 'str',a2: 10}"></ng-container>`);
             });
         });
 

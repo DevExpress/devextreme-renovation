@@ -73,7 +73,7 @@ export class JsxAttribute extends ReactJsxAttribute {
             state: [],
             disableTemplates: true,
             ...options
-        }).replace(/"/gi, String.raw`\"`);
+        }).replace(/"/gi, "'");
     }
 
     toString(options?:toStringOptions) { 
