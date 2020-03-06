@@ -254,7 +254,7 @@ class Decorator extends BaseDecorator {
             return "@Input()";
         } else if (this.name === "TwoWay" || this.name === "Template") {
             return "@Input()";
-        } else if (this.name === "Effect" || this.name === "Ref") {
+        } else if (this.name === "Effect" || this.name === "Ref" || this.name==="InternalState") {
             return "";
         } else if (this.name === "Component") { 
             const parameters = (this.expression.arguments[0] as ObjectLiteral);
@@ -306,7 +306,7 @@ export class Property extends BaseProperty {
             return `${eventDecorator} ${this.name}:EventEmitter<any> = new EventEmitter()`
         }
         if (this.decorators.find(d => d.name === "Ref")) {
-            return `@ViewChild("_widgetModel.${this.name}", {static: false}) ${this.name}:ElementRef<${this.type}>`;
+            return `@ViewChild("${this.name}", {static: false}) ${this.name}:ElementRef<${this.type}>`;
         }
         if (this.decorators.find(d => d.name.toString() === "TwoWay")) { 
             return `${defaultValue};

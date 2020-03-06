@@ -862,6 +862,12 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(decorator.toString(), "");
         });
 
+        mocha.it("InternalState -> ''", function () {
+            const decorator = createDecorator("InternalState");
+
+            assert.strictEqual(decorator.toString(), "");
+        });
+
         mocha.describe("Component", function () {
             this.beforeEach(function () { 
                 generator.setContext({});
@@ -1009,7 +1015,7 @@ mocha.describe("Angular generator", function () {
                 generator.createArrowFunction([], [], [], "", generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
             );
 
-            assert.strictEqual(property.toString(), `@ViewChild("_widgetModel.host", {static: false}) host:ElementRef<HTMLDivElement>`);
+            assert.strictEqual(property.toString(), `@ViewChild("host", {static: false}) host:ElementRef<HTMLDivElement>`);
         });
 
         mocha.it("Ref Prop generates ViewChild", function () {
