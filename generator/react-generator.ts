@@ -1004,8 +1004,10 @@ export class PropertyAccess extends ExpressionWithExpression {
         const props = options && options.props || [];
         const componentContext = options?.componentContext || SyntaxKind.ThisKeyword;
 
+        const usePropsSpace = `${componentContext}.props`;
+
         const findProperty = (p: InternalState | State | Prop) => p.name.valueOf() === this.name.valueOf();
-        if (expressionString === componentContext || expressionString === `${componentContext}.props`) {
+        if (expressionString === componentContext || expressionString === usePropsSpace) {
             const p = props.find(findProperty);
             if (p) {
                 return p.getter();
@@ -1016,7 +1018,10 @@ export class PropertyAccess extends ExpressionWithExpression {
                 return `(${stateProp.getter()})`;
             }
 
-            const member = options?.members.find(m => m._name.toString() === this.name.toString());
+            const member = options?.members
+                .filter(m => expressionString === usePropsSpace ? m.inherited : true)
+                .find(m => m._name.toString() === this.name.toString());
+            
             if (member) { 
                 return `${options?.newComponentContext ? `${options.newComponentContext}.` : ""}${member.getter()}`;
             }

@@ -1108,19 +1108,44 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(property.toString(), " @Input() name?:TemplateRef<any> = false");
         });
 
-        mocha.it("GetAccessor", function () {
+        mocha.it("get prop with same name in get accessor", function () {
             const property = generator.createGetAccessor(
                 [],
                 [],
                 generator.createIdentifier("name"),
                 [],
                 undefined,
-                generator.createBlock([], false)
+                generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createPropertyAccess(
+                            generator.createThis(),
+                            generator.createIdentifier("props")
+                        ),
+                        generator.createIdentifier("name")
+                    )
+                ], false)
+            );
+            property.prefix = "_";
+
+            const prop = new Property(
+                [createDecorator("OneWay")],
+                [],
+                generator.createIdentifier("name"),
+                undefined,
+                undefined,
+                undefined,
+                true
             );
 
-            assert.strictEqual(getResult(property.toString()), getResult("get name(){}"));
-            assert.strictEqual(property.getter(), "name")
+            assert.strictEqual(getResult(property.toString({
+                internalState: [],
+                state: [],
+                props: [],
+                members: [property, prop]
+            })), getResult("get _name(){this.name}"));
         });
+
+
     });
 
     mocha.describe("Angular Component", function () { 
@@ -1462,7 +1487,8 @@ mocha.describe("Angular generator", function () {
                     generator.createIdentifier("width"),
                     undefined,
                     undefined,
-                    undefined
+                    undefined,
+                    true
                 );
 
                 const expression = generator.createPropertyAccess(
