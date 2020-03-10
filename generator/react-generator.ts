@@ -2042,7 +2042,7 @@ export class JsxSelfClosingElement extends JsxOpeningElement{
 }
  
 export class JsxClosingElement extends JsxOpeningElement { 
-    constructor(tagName: Identifier) { 
+    constructor(tagName: Expression) { 
         super(tagName, [], []);
     }
 

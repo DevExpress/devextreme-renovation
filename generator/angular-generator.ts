@@ -40,11 +40,31 @@ interface toStringOptions extends  ReactToStringOptions {
     members: Array<Property | Method>
 }
 
-export class JsxOpeningElement extends ReactJsxOpeningElement { 
+function processTagName(tagName: Expression, context: GeneratorContex) { 
+    const component = context.components?.[tagName.toString()];
+        if (component) { 
+            const selector = (component as AngularComponent).decorator.getParameter("selector") as StringLiteral;
+            if (selector) {
+                return new Identifier(selector.expression);
+            }
+    }
+    return tagName;
+}
 
+export class JsxOpeningElement extends ReactJsxOpeningElement { 
+    context: GeneratorContex;
+    constructor(tagName: Expression, typeArguments: any[] = [], attributes: JsxAttribute[] = [], context: GeneratorContex) { 
+        super(processTagName(tagName, context), typeArguments, attributes);
+        this.context = context;
+    }
 }
 
 export class JsxSelfClosingElement extends ReactJsxSelfClosingElement{ 
+    context: GeneratorContex;
+    constructor(tagName: Expression, typeArguments: any[]=[], attributes:  JsxAttribute[]=[], context: GeneratorContex) { 
+        super(processTagName(tagName, context), typeArguments, attributes);
+        this.context = context;
+    }
     toString(options?: toStringOptions) {
         const tagName = this.tagName.toString(options);
         const contextExpr = options?.newComponentContext ? `${options.newComponentContext}.` : "";
@@ -247,6 +267,11 @@ class Decorator extends BaseDecorator {
         }
         const parameters = (this.expression.arguments[0] as ObjectLiteral);
         parameters.setProperty(name, value);
+    }
+
+    getParameter(name: string) { 
+        const parameters = (this.expression.arguments[0] as ObjectLiteral);
+        return parameters.getProperty(name);
     }
 
     toString(options?: toStringOptions) { 
@@ -528,19 +553,19 @@ export class AngularGenerator extends Generator {
         return properties;
     }
 
-    createJsxOpeningElement(tagName: Expression, typeArguments: any[]=[], attributes: JsxAttribute[]=[]) {
-        return new JsxOpeningElement(tagName, typeArguments, attributes);
+    createJsxOpeningElement(tagName: Expression, typeArguments: any[] = [], attributes: JsxAttribute[] = []) {
+        return new JsxOpeningElement(tagName, typeArguments, attributes, this.getContext());
     }
 
     createJsxSelfClosingElement(tagName: Expression, typeArguments: any[]=[], attributes:  JsxAttribute[]=[]) {
-        return new JsxSelfClosingElement(tagName, typeArguments, attributes);
+        return new JsxSelfClosingElement(tagName, typeArguments, attributes, this.getContext());
     }
 
-    createJsxClosingElement(tagName: Identifier) {
-        return new JsxClosingElement(tagName);
+    createJsxClosingElement(tagName: Expression) {
+        return new JsxClosingElement( processTagName(tagName as Expression, this.getContext()));
     }
 
-    createJsxElement(openingElement: JsxOpeningElement, children: Array<JsxElement|string|JsxExpression|JsxSelfClosingElement>, closingElement: JsxClosingElement) {
+    createJsxElement(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: JsxClosingElement) {
         return new JsxElement(openingElement, children, closingElement);
     }
 

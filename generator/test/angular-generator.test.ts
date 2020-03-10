@@ -499,6 +499,48 @@ mocha.describe("Angular generator", function () {
                     props: []
                 }), `<span ><ng-content></ng-content></span>`);
             });
+
+            mocha.describe("Import widget.", function () { 
+                this.beforeEach(function () {
+                    generator.setContext({
+                        path: __dirname
+                    });
+                    generator.createImportDeclaration(
+                        [],
+                        [],
+                        generator.createImportClause(
+                            generator.createIdentifier("Widget"),
+                            undefined
+                        ),
+                        generator.createStringLiteral("./test-cases/declarations/empty-component")
+                    );
+                });
+
+                this.afterEach(function () {
+                    generator.setContext(null);
+                });
+
+                mocha.it("<Widget></Widget> -> <dx-widget></dx-widget>", function () { 
+                    const element = generator.createJsxElement(
+                        generator.createJsxOpeningElement(generator.createIdentifier("Widget")),
+                        [],
+                        generator.createJsxClosingElement(generator.createIdentifier("Widget"))
+                    );
+
+                    assert.strictEqual(element.toString(), "<dx-widget ></dx-widget>");
+                });
+
+                mocha.it("<Widget/> -> <dx-widget/>", function () { 
+                    const element = generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("Widget"),
+                        []
+                    );
+
+                    assert.strictEqual(element.toString(), "<dx-widget />");
+                });
+
+            });
+
         });
 
         mocha.describe("template", function () {
