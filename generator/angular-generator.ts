@@ -31,7 +31,8 @@ import {
     VariableDeclarationList,
     VariableExpression,
     JsxClosingElement,
-    GetAccessor as BaseGetAccessor
+    GetAccessor as BaseGetAccessor,
+    VariableStatement
 } from "./react-generator";
 
 import SyntaxKind from "./syntaxKind";
@@ -209,9 +210,9 @@ function getAngularTemplate(functionWithTemplate: AngularFunction | ArrowFunctio
             }
 
             options.variables = statements.reduce((v: VariableExpression, statement) => {
-                if (statement instanceof VariableDeclarationList) { 
+                if (statement instanceof VariableStatement) { 
                     return {
-                        ...statement.getVariableExpressions(),
+                        ...statement.declarationList.getVariableExpressions(),
                         ...v
                     }
                 }

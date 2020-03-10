@@ -863,13 +863,16 @@ mocha.describe("Angular generator", function () {
 
             mocha.it("Can use variables in view function", function () {
                 const block = generator.createBlock([
-                    generator.createVariableDeclarationList(
-                        [generator.createVariableDeclaration(
-                            generator.createIdentifier("v"),
-                            undefined,
-                            generator.createNumericLiteral("10")
-                        )],
-                        generator.SyntaxKind.ConstKeyword
+                    generator.createVariableStatement(
+                        [],
+                        generator.createVariableDeclarationList(
+                            [generator.createVariableDeclaration(
+                                generator.createIdentifier("v"),
+                                undefined,
+                                generator.createNumericLiteral("10")
+                            )],
+                            generator.SyntaxKind.ConstKeyword
+                        )
                     ),
                     generator.createReturn(
                             generator.createJsxSelfClosingElement(
