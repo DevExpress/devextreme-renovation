@@ -44,6 +44,10 @@ mocha.describe("angular-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("component-input", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("slots", function () {
         this.testGenerator(this.test!.title);
     });

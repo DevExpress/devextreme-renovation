@@ -471,12 +471,15 @@ class AngularComponent extends ReactComponent {
             newComponentContext: this.viewModel ? "_viewModel" : ""
         })}
         ${this.modifiers.join(" ")} class ${this.name} ${extendTypes.length? `extends ${extendTypes.join(" ")}`:""} {
-            ${this.members.map(m => m.toString({
-                internalState: [],
-                state: [],
-                props: [],
-                members: this.members
-            })).filter(m=>m).join(";\n")}
+            ${this.members
+                .filter(m => !m.inherited)
+                .map(m => m.toString({
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    members: this.members
+                }))
+                .filter(m => m).join(";\n")}
             ${this.compileViewModel()}
         }
         @NgModule({
