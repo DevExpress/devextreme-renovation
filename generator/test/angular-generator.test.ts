@@ -87,7 +87,7 @@ mocha.describe("Angular generator", function () {
                 )
             );
 
-            assert.strictEqual(expression.toString(), "'a'+1+'b'+2+'c'");
+            assert.strictEqual(expression.toString(), `[attr]="'a'+1+'b'+2+'c'"`);
         });
 
         mocha.it(`JsxAttribute with string literal expression - attr="value"`, function () {
