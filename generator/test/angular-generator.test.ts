@@ -1,8 +1,9 @@
 import mocha from "mocha";
-import generator, { Property } from "../angular-generator";
+import generator, { Property, AngularDirective } from "../angular-generator";
 import assert from "assert";
 
 import { printSourceCodeAst as getResult } from "./helpers/common";
+import { Identifier } from "../react-generator";
 
 if (!mocha.describe) { 
     mocha.describe = describe;
@@ -570,7 +571,7 @@ mocha.describe("Angular generator", function () {
                     props: [],
                     componentContext: "viewModel",
                     newComponentContext: ""
-                }), `<ng-container *ngTemplateOutlet="template"></ng-container>`);
+                }), `<ng-container *ngTemplateOutlet="template"  ></ng-container>`);
             });
 
             mocha.it("template attributes -> template context", function () {
@@ -608,7 +609,47 @@ mocha.describe("Angular generator", function () {
                     props: [],
                     componentContext: "viewModel",
                     newComponentContext: ""
-                }), `<ng-container *ngTemplateOutlet="template; context={a1: 'str',a2: 10}"></ng-container>`);
+                }), `<ng-container *ngTemplateOutlet="template; context={a1: \'str\',a2: 10}"  ></ng-container>`);
+            });
+
+            mocha.it("render template with condition *ngIf", function () {
+                const expression = generator.createJsxSelfClosingElement(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("template")
+                    ),
+                    [],
+                    [
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("a1"),
+                            generator.createStringLiteral("str")
+                        ),
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("a2"),
+                            generator.createNumericLiteral("10")
+                        )
+                    ]
+                );
+
+                expression.addAttribute(new AngularDirective(new Identifier("*ngIf"), generator.createIdentifier("condition")))
+
+                const templateProperty = generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [templateProperty],
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), `<ng-container *ngTemplateOutlet="template; context={a1: 'str',a2: 10}"  *ngIf="condition"></ng-container>`);
             });
         });
 

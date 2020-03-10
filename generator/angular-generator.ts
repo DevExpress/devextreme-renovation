@@ -73,11 +73,17 @@ export class JsxSelfClosingElement extends ReactJsxSelfClosingElement{
             .find(s => tagName.endsWith(`${contextExpr}${s.name.toString()}`));
         
         if (template) { 
-            const contextElements = this.attributes.map(a => { 
+            const contextElements = this.attributes.filter(
+                a=> !(a instanceof AngularDirective)
+            ).map(a => { 
                 return `${a.name.toString(options)}: ${(a as JsxAttribute).compileInitializer(options)}`;
             });
-            const contextString = contextElements.length?`; context={${contextElements.join(",")}}`:""
-            return `<ng-container *ngTemplateOutlet="${contextExpr}${template.name}${contextString}"></ng-container>`
+            const contextString = contextElements.length ? `; context={${contextElements.join(",")}}` : "";
+            const attributes = this.attributes
+                .filter(a => a instanceof AngularDirective)
+                .map(a => a.toString(options))
+                .join("\n");
+            return `<ng-container *ngTemplateOutlet="${contextExpr}${template.name}${contextString}"  ${attributes}></ng-container>`
         }
         
         return super.toString(options);
