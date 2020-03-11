@@ -581,7 +581,7 @@ export class Binary extends Expression {
                 throw `Error: Can't assign property use TwoWay() or Internal State - ${this.toString()}`;
             }
 
-            const stateSetting = `${this.left.compileStateSetting(rightExpression)}`
+            const stateSetting = `${this.left.compileStateSetting(rightExpression, checkDependency(this.left, options.members.filter(m=>m.decorators.find(d=>d.name==="TwoWay"))))}`
             const changeRising = this.left.compileStateChangeRising(options.state, rightExpression);
             return changeRising ? `(${stateSetting},${changeRising})` : stateSetting;
         }
@@ -1040,7 +1040,7 @@ export class PropertyAccess extends ExpressionWithExpression {
         return result;
     }
 
-    compileStateSetting(state: string) {
+    compileStateSetting(state: string, isState: boolean) {
         return `${stateSetter(this.name)}(${state})`;
     }
 

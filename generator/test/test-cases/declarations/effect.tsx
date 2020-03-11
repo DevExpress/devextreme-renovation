@@ -1,7 +1,6 @@
-import { OneWay, TwoWay, Component, InternalState, Effect } from "../../../component_declaration/common";
+import { OneWay, TwoWay, Component, InternalState, Effect, ComponentBindings, JSXComponent } from "../../../component_declaration/common";
 
 function view() { }
-function viewModel() { }
 
 function subscribe(p: string, s: number, i: number) {
     return 1;
@@ -11,14 +10,17 @@ function unsubscribe(id: number) {
     return undefined;
 }
 
-@Component({
-    viewModel: viewModel,
-    view: view
-})
-export default class Widget {
+@ComponentBindings()
+export class WidgetInput { 
     @OneWay() p: string = "10";
     @TwoWay() s: number;
     @InternalState() i: number;
+}
+
+@Component({
+    view: view
+})
+export default class Widget extends JSXComponent<WidgetInput> {
     @Effect()
     setupData() {
         const id = subscribe(this.p, this.s, this.i);

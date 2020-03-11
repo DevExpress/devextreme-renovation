@@ -438,6 +438,10 @@ class Method extends BaseMethod {
     }
 }
 
+function onlyUnique(value:any, index:number, self:any[]) { 
+    return self.indexOf(value) === index;
+}
+
 class GetAccessor extends BaseGetAccessor { 
     toString(options?: toStringOptions) { 
         return `get ${this.name}()${this.body.toString(options)}`;
@@ -488,9 +492,28 @@ class AngularComponent extends ReactComponent {
         }
 
         return [
-            `import {${core.join(",")}} from "@angular/core"`,
+            `import {${core.filter(onlyUnique).join(",")}} from "@angular/core"`,
             'import {CommonModule} from "@angular/common"'
         ].join(";\n");
+    }
+
+    compileEffects() { 
+        const effects = this.members.filter(m => m.decorators.find(d => d.name === "Effect"));
+        if (effects.length) { 
+            return `
+                __destroyEffects: Array<() => any> = [];
+
+                ngAfterViewInit() {
+                    this.__destroyEffects.push(${effects.map(e=>`this.${e.getter()}()`).join(",")});
+                }
+            
+                ngOnDestroy() {
+                    this.__destroyEffects.forEach(d => d && d());
+                }
+            `;
+        }
+
+        return "";
     }
 
     compileViewModelArguments() { 
@@ -553,6 +576,7 @@ class AngularComponent extends ReactComponent {
                 }))
                 .filter(m => m).join(";\n")}
             ${this.compileViewModel()}
+            ${this.compileEffects()}
         }
         @NgModule({
             declarations: [${this.name}],
@@ -581,8 +605,11 @@ export class PropertyAccess extends BasePropertyAccess {
         return result;
     }
 
-    compileStateSetting(value: string) {
-        return `this.${this.name}Change.emit(${this.toString()}=${value})`;
+    compileStateSetting(value: string, isState: boolean) {
+        if (isState) { 
+            return `this.${this.name}Change.emit(${this.toString()}=${value})`;
+        }
+        return `${this.toString()}=${value}`;
     }
 
     compileStateChangeRising() {

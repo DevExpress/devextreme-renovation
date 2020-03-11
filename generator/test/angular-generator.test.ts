@@ -1519,6 +1519,24 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Input, Output, EventEmitter } from "@angular/core"; import {CommonModule} from "@angular/common"`));
             });
 
+            mocha.it("Import should not have duplicates", function () {
+                const component = createComponent(
+                    [
+                        generator.createProperty(
+                            [createDecorator("OneWay")],
+                            [],
+                            generator.createIdentifier("p")
+                        ),
+                        generator.createProperty(
+                            [createDecorator("TwoWay")],
+                            [],
+                            generator.createIdentifier("p")
+                        )
+                    ]
+                );
+                assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Input, Output, EventEmitter } from "@angular/core"; import {CommonModule} from "@angular/common"`));
+            });
+
             mocha.it("Has Event property - EventEmitter", function () {
                 const component = createComponent(
                     [
