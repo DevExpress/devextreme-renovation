@@ -33,7 +33,7 @@ mocha.describe("Angular generator", function () {
             );
         });
 
-        mocha.it("Empty JsxSelfClosingElement", function () {
+        mocha.it("Empty JsxSelfClosingElement should have opening and closing tags", function () {
             assert.strictEqual(
                 generator.createJsxSelfClosingElement(
                     generator.createIdentifier("div"),
@@ -41,6 +41,17 @@ mocha.describe("Angular generator", function () {
                     undefined
                 ).toString(),
                 "<div ></div>"
+            );
+        });
+
+        mocha.it("Void elements should be self-closing", function () {
+            assert.strictEqual(
+                generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("img"),
+                    undefined,
+                    undefined
+                ).toString(),
+                "<img />"
             );
         });
 
@@ -279,7 +290,7 @@ mocha.describe("Angular generator", function () {
                 )
             );
 
-            assert.strictEqual(expression.toString(), `<input *ngIf="viewModel.input"></input>`);
+            assert.strictEqual(expression.toString(), `<input *ngIf="viewModel.input"/>`);
         });
 
         mocha.it("ngIf derictive with string - replace quotes with backslach quotes", function () {
@@ -300,7 +311,7 @@ mocha.describe("Angular generator", function () {
                 )
             );
 
-            assert.strictEqual(expression.toString(), `<input *ngIf="viewModel==='input'"></input>`);
+            assert.strictEqual(expression.toString(), `<input *ngIf="viewModel==='input'"/>`);
         });
 
         mocha.it("<element>nonJsxExpr</element> -> <element>{{nonJsxExpr}}</element>", function () {

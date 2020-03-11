@@ -40,6 +40,10 @@ import {
 
 import SyntaxKind from "./syntaxKind";
 
+// https://html.spec.whatwg.org/multipage/syntax.html#void-elements
+const VOID_ELEMEMTS = 
+    ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"];
+
 interface toStringOptions extends  ReactToStringOptions {
     members: Array<Property | Method>
 }
@@ -97,6 +101,11 @@ export class JsxSelfClosingElement extends ReactJsxSelfClosingElement{
                 .map(a => a.toString(options))
                 .join("\n");
             return `<ng-container *ngTemplateOutlet="${contextExpr}${template.name}${contextString}"  ${attributes}></ng-container>`
+        }
+
+        
+        if (VOID_ELEMEMTS.indexOf(this.tagName.toString(options))!==-1) { 
+            return super.toString(options);
         }
         
         return `${super.toString(options).replace("/>", ">")}</${tagName}>`;
