@@ -1,7 +1,7 @@
 import assert from "assert";
 import mocha from "mocha";
 import ts from "typescript";
-import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex, toStringOptions, SimpleExpression } from "../react-generator";
+import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex, toStringOptions, SimpleExpression, PropertyAccess, ElementAccess } from "../react-generator";
 
 import compile from "../component-compiler";
 import path from "path";
@@ -245,6 +245,7 @@ mocha.describe("react-generator: expressions", function () {
             
             assert.strictEqual(Object.keys(list).length, 1);
             assert.strictEqual(list["height"].toString(), "this.props.height");
+            assert.ok(list["height"] instanceof PropertyAccess);
         });
 
         mocha.it("VariableDeclaration with array binding pattern - getVariableDeclaration", function () {
@@ -266,6 +267,7 @@ mocha.describe("react-generator: expressions", function () {
             
             assert.strictEqual(Object.keys(list).length, 1);
             assert.strictEqual(list["height"].toString(), "this.props[0]");
+            assert.ok(list["height"] instanceof ElementAccess);
         });
 
         mocha.it("can replace Identifer with expression", function () { 

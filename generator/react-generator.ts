@@ -1645,17 +1645,17 @@ export class VariableDeclaration extends Expression {
         }
         if (this.name instanceof BindingPattern) { 
             return this.name.elements.reduce((v: VariableExpression, e, index) => {
-                if (e.name) { 
-                    const expressionString = (this.name as BindingPattern).type === "object" ? `${this.initializer}.${e.name.toString()}` :
-                    `${this.initializer}[${index}]`;
-                    const expression = new SimpleExpression(expressionString);
+                if (e.name) {
+                    const expression = (this.name as BindingPattern).type === "object" ?
+                        this.initializer instanceof Expression && e.name instanceof Identifier ? new PropertyAccess(this.initializer, e.name) : new SimpleExpression(`${this.initializer}.${e.name.toString()}`) :
+                        this.initializer instanceof Expression ? new ElementAccess(this.initializer, new SimpleExpression(index.toString())) : new SimpleExpression(`${this.initializer}[${index}]`);
                     return {
                         [e.name.toString()]: expression,
                         ...v
                     };
                 }
                 return v;
-             }, {});
+            }, {});
         }
         return {};
     }
