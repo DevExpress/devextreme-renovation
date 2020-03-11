@@ -32,7 +32,8 @@ import {
     VariableExpression,
     JsxClosingElement,
     GetAccessor as BaseGetAccessor,
-    VariableStatement
+    VariableStatement,
+    Paren
 } from "./react-generator";
 
 import SyntaxKind from "./syntaxKind";
@@ -57,6 +58,15 @@ export class JsxOpeningElement extends ReactJsxOpeningElement {
     constructor(tagName: Expression, typeArguments: any[] = [], attributes: JsxAttribute[] = [], context: GeneratorContex) { 
         super(processTagName(tagName, context), typeArguments, attributes);
         this.context = context;
+    }
+
+    clone() { 
+        return new JsxOpeningElement(
+            this.tagName,
+            this.typeArguments,
+            (this.attributes as JsxAttribute[]).slice(),
+            this.context
+        )
     }
 }
 
@@ -88,6 +98,15 @@ export class JsxSelfClosingElement extends ReactJsxSelfClosingElement{
         }
         
         return super.toString(options);
+    }
+
+    clone() { 
+        return new JsxSelfClosingElement(
+            this.tagName,
+            this.typeArguments,
+            (this.attributes as JsxAttribute[]).slice(),
+            this.context
+        )
     }
 }
 
@@ -127,8 +146,38 @@ export class AngularDirective extends JsxAttribute {
     }
 }
 
+function processBinary(expression: Binary, options?: toStringOptions, condition:Expression[] =[]):Expression|null { 
+    if (expression.operator === SyntaxKind.AmpersandAmpersandToken && !expression.left.isJsx()) { 
+        const right = options?.variables?.[expression.right.toString()] || expression.right;
+        if (right instanceof JsxElement || right instanceof JsxSelfClosingElement) {
+            const conditionExpression = condition.reduce((c: Expression, e) => { 
+                return new Binary(
+                    new Paren(c),
+                    SyntaxKind.AmpersandAmpersandToken,
+                    e
+                );
+            }, expression.left);
+            const elementExpression = right.clone();
+            elementExpression.addAttribute(new AngularDirective(new Identifier("*ngIf"), conditionExpression));
+            return elementExpression;
+        }
+
+        if (right instanceof Binary) {
+            return processBinary(right, options, condition.concat(expression.left));
+        }
+    }
+    return null;
+}
+
 export class JsxExpression extends ReactJsxExpression {
     toString(options?: toStringOptions) {
+        
+        if (this.expression instanceof Binary) { 
+            const expression = processBinary(this.expression, options);
+            if (expression) { 
+                return expression.toString(options);
+            }
+        }
         return this.expression.toString(options);
     }
 }
@@ -140,7 +189,7 @@ export class JsxChildExpression extends JsxExpression {
 
     toString(options?: toStringOptions) {
         const stringValue = super.toString(options);
-        if (this.expression.isJsx()) { 
+        if (this.expression.isJsx() || stringValue.startsWith("<")) { 
             return stringValue;
         }
         if (this.expression instanceof StringLiteral) { 
@@ -163,6 +212,7 @@ export class JsxChildExpression extends JsxExpression {
 }
 
 export class JsxElement extends ReactJsxElement { 
+    openingElement: JsxOpeningElement
     children: Array<JsxElement | string | JsxChildExpression | JsxSelfClosingElement>;
     constructor(openingElement: JsxOpeningElement, children: Array<JsxElement|string|JsxExpression|JsxSelfClosingElement>, closingElement: JsxClosingElement) { 
         super(openingElement, children, closingElement);
@@ -177,6 +227,14 @@ export class JsxElement extends ReactJsxElement {
             return children;
         }
         return `${this.openingElement.toString(options)}${children}${this.closingElement.toString(options)}`;
+    }
+
+    clone() { 
+        return new JsxElement(
+            this.openingElement.clone(),
+            this.children.slice(),
+            this.closingElement
+        );
     }
 }
 
@@ -537,14 +595,6 @@ type AngularGeneratorContext = GeneratorContex & {
 
 export class AngularGenerator extends Generator { 
     createJsxExpression(dotDotDotToken: string = "", expression: Expression) {
-        if (expression instanceof Binary &&
-            expression.operator === this.SyntaxKind.AmpersandAmpersandToken &&
-            !expression.left.isJsx() &&
-            (expression.right instanceof JsxElement || expression.right instanceof JsxSelfClosingElement)
-        ) {
-            expression.right.addAttribute(new AngularDirective(new Identifier("*ngIf"), expression.left));
-            expression = expression.right;
-        }
         return new JsxExpression(dotDotDotToken, expression);
     }
 
