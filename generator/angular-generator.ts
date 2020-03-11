@@ -45,9 +45,9 @@ interface toStringOptions extends  ReactToStringOptions {
 function processTagName(tagName: Expression, context: GeneratorContex) { 
     const component = context.components?.[tagName.toString()];
         if (component) { 
-            const selector = (component as AngularComponent).decorator.getParameter("selector") as StringLiteral;
+            const selector = (component as AngularComponent).selector;
             if (selector) {
-                return new Identifier(selector.expression);
+                return new Identifier(selector);
             }
     }
     return tagName;
@@ -97,7 +97,7 @@ export class JsxSelfClosingElement extends ReactJsxSelfClosingElement{
             return `<ng-container *ngTemplateOutlet="${contextExpr}${template.name}${contextString}"  ${attributes}></ng-container>`
         }
         
-        return super.toString(options);
+        return `${super.toString(options).replace("/>", ">")}</${tagName}>`;
     }
 
     clone() { 
@@ -617,7 +617,7 @@ export class AngularGenerator extends Generator {
         return new JsxOpeningElement(tagName, typeArguments, attributes, this.getContext());
     }
 
-    createJsxSelfClosingElement(tagName: Expression, typeArguments: any[]=[], attributes:  JsxAttribute[]=[]) {
+    createJsxSelfClosingElement(tagName: Expression, typeArguments: any[] = [], attributes: JsxAttribute[] = []) {
         return new JsxSelfClosingElement(tagName, typeArguments, attributes, this.getContext());
     }
 

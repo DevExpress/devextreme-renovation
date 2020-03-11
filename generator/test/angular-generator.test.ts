@@ -40,7 +40,7 @@ mocha.describe("Angular generator", function () {
                     undefined,
                     undefined
                 ).toString(),
-                "<div />"
+                "<div ></div>"
             );
         });
 
@@ -110,7 +110,7 @@ mocha.describe("Angular generator", function () {
                 ])
             );
 
-            assert.strictEqual(expression.toString(), `<div [a1]="10"\n[a2]="15"/>`);
+            assert.strictEqual(expression.toString(), `<div [a1]="10"\n[a2]="15"></div>`);
         });
 
         mocha.it("JSX element witn Opening and Close Elements", function () {
@@ -157,7 +157,7 @@ mocha.describe("Angular generator", function () {
                 generator.createJsxClosingElement(generator.createIdentifier("Fragment"))
             );
 
-            assert.strictEqual(expression.toString(), '<div />');
+            assert.strictEqual(expression.toString(), '<div ></div>');
         });
 
         mocha.it("JSX element witn with child element", function () {
@@ -173,7 +173,7 @@ mocha.describe("Angular generator", function () {
                 generator.createJsxClosingElement(generator.createIdentifier("parent"))
             );
 
-            assert.strictEqual(expression.toString(), '<parent ><child /></parent>');
+            assert.strictEqual(expression.toString(), '<parent ><child ></child></parent>');
         });
 
         mocha.it("JSX element witn with child element that transformed from expression - no wrap it {{}}", function () {
@@ -279,7 +279,7 @@ mocha.describe("Angular generator", function () {
                 )
             );
 
-            assert.strictEqual(expression.toString(), `<input *ngIf="viewModel.input"/>`);
+            assert.strictEqual(expression.toString(), `<input *ngIf="viewModel.input"></input>`);
         });
 
         mocha.it("ngIf derictive with string - replace quotes with backslach quotes", function () {
@@ -300,7 +300,7 @@ mocha.describe("Angular generator", function () {
                 )
             );
 
-            assert.strictEqual(expression.toString(), `<input *ngIf="viewModel==='input'"/>`);
+            assert.strictEqual(expression.toString(), `<input *ngIf="viewModel==='input'"></input>`);
         });
 
         mocha.it("<element>nonJsxExpr</element> -> <element>{{nonJsxExpr}}</element>", function () {
@@ -531,13 +531,13 @@ mocha.describe("Angular generator", function () {
                     assert.strictEqual(element.toString(), "<dx-widget ></dx-widget>");
                 });
 
-                mocha.it("<Widget/> -> <dx-widget/>", function () {
+                mocha.it("<Widget/> -> <dx-widget></dx-widget>", function () {
                     const element = generator.createJsxSelfClosingElement(
                         generator.createIdentifier("Widget"),
                         []
                     );
 
-                    assert.strictEqual(element.toString(), "<dx-widget />");
+                    assert.strictEqual(element.toString(), "<dx-widget ></dx-widget>");
                 });
 
             });
@@ -682,7 +682,7 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.toString(), "");
-                assert.strictEqual(expression.getTemplate(), "<div />");
+                assert.strictEqual(expression.getTemplate(), "<div ></div>");
             });
 
             mocha.it("Rename viewModel identifier", function () {
@@ -771,7 +771,7 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.isJsx(), true);
-                assert.strictEqual(expression.getTemplate(), "<div />");
+                assert.strictEqual(expression.getTemplate(), "<div ></div>");
                 assert.strictEqual(expression.toString(), "");
             });
 
@@ -790,7 +790,7 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.isJsx(), true);
-                assert.strictEqual(expression.getTemplate(), "<div />");
+                assert.strictEqual(expression.getTemplate(), "<div ></div>");
                 assert.strictEqual(expression.toString(), "");
             });
 
@@ -905,7 +905,7 @@ mocha.describe("Angular generator", function () {
                     state: [],
                     props: [],
                     members: []
-                }), `<div [v]="10"/>`);
+                }), `<div [v]="10"></div>`);
             });
         });
 
@@ -956,7 +956,7 @@ mocha.describe("Angular generator", function () {
                 state: [],
                 props: [],
                 members: []
-            }), `<div ><span /></div>`);
+            }), `<div ><span ></span></div>`);
         });
 
         mocha.it("Can use jsx variable twice", function () {
@@ -1019,8 +1019,8 @@ mocha.describe("Angular generator", function () {
                 props: [],
                 members: []
             }) as string).replace(/(\s|\s)/gi, ""), (`<div >
-                    <span *ngIf="c1"/>
-                    <span *ngIf="c2"/>
+                    <span *ngIf="c1"></span>
+                    <span *ngIf="c2"></span>
                 </div>`).replace(/(\s|\s)/gi, ""));
         });
 
@@ -1080,7 +1080,7 @@ mocha.describe("Angular generator", function () {
                 props: [],
                 members: []
             }) as string).replace(/(\s|\s)/gi, ""), (`<div >
-                    <span *ngIf="(c1)&&c2"/>
+                    <span *ngIf="(c1)&&c2"></span>
                 </div>`).replace(/(\s|\s)/gi, ""));
         });
     });
@@ -1166,7 +1166,7 @@ mocha.describe("Angular generator", function () {
                         ], false)])
                 );
 
-                assert.strictEqual(decorator.toString(), `@Component({template:\`<div />\`})`);
+                assert.strictEqual(decorator.toString(), `@Component({template:\`<div ></div>\`})`);
             });
 
             mocha.it("Remove viewModel", function () {
