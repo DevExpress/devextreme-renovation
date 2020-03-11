@@ -302,11 +302,11 @@ export class AngularFunction extends Function {
     isJsx() { 
         return this.body.isJsx();
     }
-    toString() { 
+    toString(options?:toStringOptions) { 
         if (this.isJsx()) { 
             return "";
         }
-        return super.toString();
+        return super.toString(options);
     }
 
     getTemplate(options?: toStringOptions) {
@@ -318,11 +318,11 @@ export class ArrowFunctionWithTemplate extends ArrowFunction {
     isJsx() { 
         return this.body.isJsx();
     }
-    toString() { 
+    toString(options?:toStringOptions) { 
         if (this.isJsx()) { 
             return "";
         }
-        return super.toString();
+        return super.toString(options);
     }
     
     getTemplate(options?: toStringOptions) {
@@ -351,29 +351,31 @@ class Decorator extends BaseDecorator {
     }
 
     toString(options?: toStringOptions) { 
-        if (this.name === "OneWay" || this.name === "Event") {
+        if (this.name === "OneWay") {
             return "@Input()";
         } else if (this.name === "TwoWay" || this.name === "Template") {
             return "@Input()";
-        } else if (this.name === "Effect" || this.name === "Ref" || this.name==="InternalState") {
+        } else if (this.name === "Effect" || this.name === "Ref" || this.name === "InternalState") {
             return "";
-        } else if (this.name === "Component") { 
+        } else if (this.name === "Component") {
             const parameters = (this.expression.arguments[0] as ObjectLiteral);
             const viewFunctionValue = parameters.getProperty("view");
             let viewFunction: ArrowFunctionWithTemplate | AngularFunction | null = null;
-            if (viewFunctionValue instanceof Identifier) { 
+            if (viewFunctionValue instanceof Identifier) {
                 viewFunction = this.context.viewFunctions ? this.context.viewFunctions[viewFunctionValue.toString()] : null;
             }
 
-            if (viewFunction) { 
+            if (viewFunction) {
                 const template = viewFunction.getTemplate(options);
-                if (template) { 
+                if (template) {
                     parameters.setProperty("template", new TemplateExpression(template, []));
                 }
             }
 
             parameters.removeProperty("view");
             parameters.removeProperty("viewModel");
+        } else if (this.name === "Event") { 
+            return "@Output()";
         }
         return super.toString();
     }
@@ -494,7 +496,7 @@ class AngularComponent extends ReactComponent {
             core.push("Input", "TemplateRef");
         }
         if (this.props.filter(p => p.property.decorators.find(d => d.name === "Event")).length) { 
-            core.push("EventEmitter");
+            core.push("Output", "EventEmitter");
         }
         if (this.refs.length) {
             core.push("ViewChild, ElementRef");

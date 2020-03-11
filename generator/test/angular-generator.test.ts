@@ -1125,10 +1125,10 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(decorator.toString(), "@Input()");
         });
 
-        mocha.it("Event -> Input", function () {
+        mocha.it("Event -> Output", function () {
             const decorator = createDecorator("Event");
 
-            assert.strictEqual(decorator.toString(), "@Input()");
+            assert.strictEqual(decorator.toString(), "@Output()");
         });
 
         mocha.it("Template -> Input", function () {
@@ -1292,7 +1292,7 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(getResult(child.toString()), getResult("export default class Child extends Base {}"));
         });
 
-        mocha.it("Event Prop generates Event EventEmitter", function () {
+        mocha.it("Ref Prop generates ViewChild", function () {
             const property = generator.createProperty(
                 [createDecorator("Ref")],
                 [],
@@ -1305,7 +1305,7 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(property.toString(), `@ViewChild("host", {static: false}) host:ElementRef<HTMLDivElement>`);
         });
 
-        mocha.it("Ref Prop generates ViewChild", function () {
+        mocha.it("Event Prop generates Event EventEmitter", function () {
             const property = generator.createProperty(
                 [createDecorator("Event")],
                 [],
@@ -1315,7 +1315,7 @@ mocha.describe("Angular generator", function () {
                 generator.createArrowFunction([], [], [], "", generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
             );
 
-            assert.strictEqual(property.toString(), "@Input() onClick:EventEmitter<any> = new EventEmitter()");
+            assert.strictEqual(property.toString(), "@Output() onClick:EventEmitter<any> = new EventEmitter()");
         });
 
         mocha.it.skip("Event Prop with type", function () {
@@ -1548,7 +1548,7 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Input, Output, EventEmitter } from "@angular/core"; import {CommonModule} from "@angular/common"`));
             });
 
-            mocha.it("Has Event property - EventEmitter", function () {
+            mocha.it("Has Event property - Output, EventEmitter", function () {
                 const component = createComponent(
                     [
                         generator.createProperty(
@@ -1558,7 +1558,7 @@ mocha.describe("Angular generator", function () {
                         )
                     ]
                 );
-                assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, EventEmitter } from "@angular/core"; import {CommonModule} from "@angular/common"`));
+                assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Output, EventEmitter } from "@angular/core"; import {CommonModule} from "@angular/common"`));
             });
 
             mocha.it("Has Ref property - ViewChild, ElementRef", function () {

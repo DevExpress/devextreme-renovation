@@ -5,7 +5,7 @@ function viewModel() {
 
 }
 
-import { Component, NgModule, Input, EventEmitter } from "@angular/core";
+import { Component, NgModule, Input, Output, EventEmitter } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 @Component({
@@ -13,7 +13,7 @@ import { CommonModule } from "@angular/common";
 })
 export default class DxWidgetComponent {
     @Input() height: number = 10;
-    @Input() onClick: EventEmitter<any> = new EventEmitter();
+    @Output() onClick: EventEmitter<any> = new EventEmitter();
 
     getHeight(): number {
         this.onClick.emit(10);
