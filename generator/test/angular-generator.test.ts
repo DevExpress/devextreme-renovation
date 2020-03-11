@@ -540,6 +540,20 @@ mocha.describe("Angular generator", function () {
                     assert.strictEqual(element.toString(), "<dx-widget ></dx-widget>");
                 });
 
+                mocha.it("import component statement should have import module", function () {
+                    const expression = generator.createImportDeclaration(
+                        [],
+                        [],
+                        generator.createImportClause(
+                            generator.createIdentifier("Component"),
+                            undefined
+                        ),
+                        generator.createStringLiteral("./test-cases/declarations/empty-component")
+                    );
+        
+                    assert.strictEqual(expression.toString(), `import Component,{DxWidgetModule} from "./test-cases/declarations/empty-component"`);
+                });
+
             });
 
         });
@@ -1084,7 +1098,7 @@ mocha.describe("Angular generator", function () {
                 </div>`).replace(/(\s|\s)/gi, ""));
         });
     });
-});
+
 
     mocha.describe("Decorators", function () {
         mocha.it("OneWay -> Input", function () {
@@ -1131,10 +1145,10 @@ mocha.describe("Angular generator", function () {
         });
 
         mocha.describe("Component", function () {
-            this.beforeEach(function () { 
+            this.beforeEach(function () {
                 generator.setContext({});
             });
-            this.afterEach(function () { 
+            this.afterEach(function () {
                 generator.setContext(null);
             });
             mocha.it("Replace viewFunction with template", function () {

@@ -33,7 +33,9 @@ import {
     JsxClosingElement,
     GetAccessor as BaseGetAccessor,
     VariableStatement,
-    Paren
+    Paren,
+    Heritable,
+    ImportClause
 } from "./react-generator";
 
 import SyntaxKind from "./syntaxKind";
@@ -448,19 +450,23 @@ class GetAccessor extends BaseGetAccessor {
 
 class AngularComponent extends ReactComponent {
     decorator: Decorator;
-    constructor(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>, context: GeneratorContex) { 
+    constructor(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>, context: GeneratorContex) {
         super(componentDecorator, modifiers, name, typeParameters, heritageClauses, members, context);
         componentDecorator.addParameter("selector", new StringLiteral(this.selector));
         this.decorator = componentDecorator;
     }
 
-    get name() { 
+    get name() {
         return `Dx${this._name}Component`;
     }
 
     get selector() {
         const words = this._name.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
         return ["dx"].concat(words).join("-");
+    }
+
+    get module() { 
+        return this.name.replace(/(.+)(Component)/, "$1Module")
     }
 
     compileImports() { 
@@ -520,6 +526,13 @@ class AngularComponent extends ReactComponent {
 
     toString() { 
         const extendTypes = this.heritageClauses.reduce((t: string[], h) => t.concat(h.types.map(t => t.type)), []);
+
+        const modules = Object.keys(this.context.components || {})
+            .map((k) => this.context.components?.[k])
+            .filter(c => c instanceof AngularComponent && c !== this)
+            .map(c => (c as AngularComponent).module)
+            .concat(["CommonModule"])
+        
         return `
         ${this.compileImports()}
         ${this.decorator.toString({
@@ -544,11 +557,11 @@ class AngularComponent extends ReactComponent {
         @NgModule({
             declarations: [${this.name}],
             imports: [
-                CommonModule
+                ${modules.join(",\n")}
             ],
             exports: [${this.name}]
         })
-        export class ${this.name.replace(/(.+)(Component)/, "$1Module")} {}
+        export class ${this.module} {}
         `;
     }
 }
@@ -692,6 +705,13 @@ export class AngularGenerator extends Generator {
             context.viewFunctions = context.viewFunctions || {};
             context.viewFunctions[name] = f;
         }
+    }
+
+    addComponent(name: string, component: Heritable, importClause?: ImportClause) { 
+        if (component instanceof AngularComponent) { 
+            importClause?.add(component.module);
+        }
+        super.addComponent(name, component, importClause);
     }
 }
 

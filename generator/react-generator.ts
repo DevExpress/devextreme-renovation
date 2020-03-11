@@ -911,7 +911,7 @@ export class Class {
     }
 }
 
-interface Heritable {
+export interface Heritable {
     name: string;
     heritageProperies: Property[];
     compileDefaultProps(): string;
@@ -2318,7 +2318,7 @@ export class Generator {
                 compileCode(this, fs.readFileSync(modulePath).toString(), { dirname: context.path, path: modulePath });
 
                 if (importClause) {
-                    this.addComponent(importClause.default, this.cache[modulePath].find((e: any) => e instanceof ReactComponent));
+                    this.addComponent(importClause.default, this.cache[modulePath].find((e: any) => e instanceof ReactComponent), importClause);
                     const componentInputs:ComponentInput[] = this.cache[modulePath].filter((e: any) => e instanceof ComponentInput);
                     componentInputs.length && importClause.imports.forEach(i => {
                         const componentInput = componentInputs.find(c => c.name.toString() === i && c.modifiers.indexOf("export") >= 0);
@@ -2576,7 +2576,7 @@ export class Generator {
 
     context: GeneratorContex[] = [];
 
-    addComponent(name: string, component: Heritable) {
+    addComponent(name: string, component: Heritable, importClause?:ImportClause) {
         const context = this.getContext();
         context.components = context.components || {};
         context.components[name] = component;
