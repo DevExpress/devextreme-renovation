@@ -636,7 +636,7 @@ mocha.describe("Angular generator", function () {
         });
 
         mocha.describe("template", function () {
-            mocha.it("<template /> -> <ng-container>", function () {
+            mocha.it("<template/> -> <ng-container>", function () {
                 const expression = generator.createJsxSelfClosingElement(
                     generator.createPropertyAccess(
                         generator.createIdentifier("viewModel"),
@@ -662,7 +662,7 @@ mocha.describe("Angular generator", function () {
                     props: [],
                     componentContext: "viewModel",
                     newComponentContext: ""
-                }), `<ng-container *ngTemplateOutlet="template"  ></ng-container>`);
+                }), `<ng-container *ngTemplateOutlet="template"></ng-container>`);
             });
 
             mocha.it("template attributes -> template context", function () {
@@ -700,7 +700,7 @@ mocha.describe("Angular generator", function () {
                     props: [],
                     componentContext: "viewModel",
                     newComponentContext: ""
-                }), `<ng-container *ngTemplateOutlet="template; context={a1: \'str\',a2: 10}"  ></ng-container>`);
+                }), `<ng-container *ngTemplateOutlet="template; context:{a1: \'str\',a2: 10}"></ng-container>`);
             });
 
             mocha.it("render template with condition *ngIf", function () {
@@ -740,7 +740,9 @@ mocha.describe("Angular generator", function () {
                     props: [],
                     componentContext: "viewModel",
                     newComponentContext: ""
-                }), `<ng-container *ngTemplateOutlet="template; context={a1: 'str',a2: 10}"  *ngIf="condition"></ng-container>`);
+                }).replace(/(\s|\s)/gi, ""), `<ng-container *ngIf="condition">
+                        <ng-container *ngTemplateOutlet="template; context:{a1: 'str',a2: 10}"></ng-container>
+                    </ng-container>`.replace(/(\s|\s)/gi, ""));
             });
         });
 

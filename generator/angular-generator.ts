@@ -99,12 +99,21 @@ export class JsxOpeningElement extends ReactJsxOpeningElement {
             ).map(a => { 
                 return `${a.name.toString(options)}: ${(a as JsxAttribute).compileInitializer(options)}`;
             });
-            const contextString = contextElements.length ? `; context={${contextElements.join(",")}}` : "";
+            const contextString = contextElements.length ? `; context:{${contextElements.join(",")}}` : "";
             const attributes = this.attributes
                 .filter(a => a instanceof AngularDirective)
                 .map(a => a.toString(options))
                 .join("\n");
-            return `<ng-container *ngTemplateOutlet="${contextExpr}${templateProperty.name}${contextString}"  ${attributes}></ng-container>`
+            
+            const elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${templateProperty.name}${contextString}"></ng-container>`;
+            
+            if (attributes.length) { 
+                return `<ng-container ${attributes}>
+                    ${elementString}
+                </ng-container>`;
+            }
+
+            return elementString
         }
 
         return super.toString(options);
