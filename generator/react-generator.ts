@@ -1640,7 +1640,7 @@ export class VariableDeclaration extends Expression {
     getVariableExpressions(): VariableExpression { 
         if (this.name instanceof Identifier && this.initializer instanceof Expression) { 
             return {
-                [this.name.toString()]: this.initializer
+                [this.name.toString()]: this.initializer instanceof SimpleExpression || this.initializer.isJsx() ? this.initializer: new Paren(this.initializer)
             };
         }
         if (this.name instanceof BindingPattern) { 

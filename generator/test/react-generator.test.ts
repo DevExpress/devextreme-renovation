@@ -205,8 +205,23 @@ mocha.describe("react-generator: expressions", function () {
 
             const list = expresion.getVariableExpressions();
             assert.strictEqual(Object.keys(list).length, 1);
-            assert.strictEqual(list["a"].toString(), `"str"`);
-                    
+            assert.strictEqual(list["a"].toString(), `"str"`);    
+        });
+
+        mocha.it("createVariableDeclaration - wrap expression in paren complex", function () { 
+            const expresion = generator.createVariableDeclaration(
+                generator.createIdentifier("a"),
+                undefined,
+                generator.createBinary(
+                    generator.createIdentifier("i"),
+                    generator.SyntaxKind.MinusToken,
+                    generator.createIdentifier("j")
+                )
+            );
+
+            const list = expresion.getVariableExpressions();
+            assert.strictEqual(Object.keys(list).length, 1);
+            assert.strictEqual(list["a"].toString(), `(i-j)`);    
         });
 
         mocha.it("getVariableExpression", function () {

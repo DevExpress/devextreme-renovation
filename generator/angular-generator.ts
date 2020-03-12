@@ -199,8 +199,12 @@ export class AngularDirective extends JsxAttribute {
 
 function processBinary(expression: Binary, options?: toStringOptions, condition:Expression[] =[]):Expression|null { 
     if (expression.operator === SyntaxKind.AmpersandAmpersandToken && !expression.left.isJsx()) { 
-        const right = options?.variables?.[expression.right.toString()] || expression.right;
-        if (right instanceof JsxElement || right instanceof JsxSelfClosingElement) {
+        let right = options?.variables?.[expression.right.toString()] || expression.right;
+        const isElement = (e: Expression) => e instanceof JsxElement || e instanceof JsxSelfClosingElement;
+        if (right instanceof Paren) { 
+            right = right.expression;
+        }
+        if (isElement(right)) {
             const conditionExpression = condition.reduce((c: Expression, e) => { 
                 return new Binary(
                     new Paren(c),
@@ -208,7 +212,7 @@ function processBinary(expression: Binary, options?: toStringOptions, condition:
                     e
                 );
             }, expression.left);
-            const elementExpression = right.clone();
+            const elementExpression = (right as JsxElement).clone();
             elementExpression.addAttribute(new AngularDirective(new Identifier("*ngIf"), conditionExpression));
             return elementExpression;
         }
@@ -241,7 +245,7 @@ export class JsxChildExpression extends JsxExpression {
 
     toString(options?: toStringOptions) {
         const stringValue = super.toString(options);
-        if (this.expression.isJsx() || stringValue.startsWith("<")) { 
+        if (this.expression.isJsx() || stringValue.startsWith("<") || stringValue.startsWith("(<")) { 
             return stringValue;
         }
         if (this.expression instanceof StringLiteral) { 
