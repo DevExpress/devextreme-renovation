@@ -175,14 +175,20 @@ export class JsxAttribute extends ReactJsxAttribute {
 
             return `#${refString}`;
         }
-        if (this.initializer instanceof StringLiteral) { 
-            return `${this.name}=${this.initializer.toString()}`;
-        }
-
+        
         if (options?.enventProperties?.find(p=>p.name===this.name.toString())) { 
             return `(${this.name})="${this.compileInitializer(options)}($event)"`;
         }
-        return `[${this.name}]="${this.compileInitializer(options)}"`;
+        let name = this.name.toString();
+        if (!(options?.enventProperties) && name === "className") { 
+            name = "class";
+        }
+
+        if (this.initializer instanceof StringLiteral) { 
+            return `${name}=${this.initializer.toString()}`;
+        }
+        
+        return `[${name}]="${this.compileInitializer(options)}"`;
     }
 }
 
@@ -224,6 +230,7 @@ export class JsxExpression extends ReactJsxExpression {
                 return expression.toString(options);
             }
         }
+
         return this.expression.toString(options);
     }
 }
@@ -685,9 +692,6 @@ export class AngularGenerator extends Generator {
     }
 
     createJsxAttribute(name: Identifier, initializer: Expression) {
-        if (name.toString() === "className") { 
-            name.expression = "class";
-        }
         return new JsxAttribute(name, initializer);
     }
 

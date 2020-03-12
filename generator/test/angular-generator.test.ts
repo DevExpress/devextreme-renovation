@@ -631,6 +631,101 @@ mocha.describe("Angular generator", function () {
                     }), `<dx-widget (event)="value($event)"></dx-widget>`);        
                 });
 
+                mocha.it("className should not be renamed to class", function () {
+                    generator.createClassDeclaration(
+                        [createComponentDecorator({})],
+                        [],
+                        generator.createIdentifier("Widget"),
+                        [],
+                        [],
+                        [
+                        generator.createProperty(
+                            [createDecorator("OneWay")],
+                            [],
+                            generator.createIdentifier("className"),
+                            undefined,
+                            undefined,
+                            undefined
+                        )]
+                    );
+
+                    const element = generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("Widget"),
+                        [],
+                        [
+                            generator.createJsxAttribute(
+                                generator.createIdentifier("className"),
+                                generator.createIdentifier("value")
+                            )
+                        ]
+                    );
+
+                    assert.strictEqual(element.toString({
+                        state: [],
+                        props: [],
+                        members: [],
+                        internalState: [],
+                    }), `<dx-widget [className]="value"></dx-widget>`);        
+                });
+
+                mocha.it("className should be renamed to class in children", function () {
+                    generator.createClassDeclaration(
+                        [createComponentDecorator({})],
+                        [],
+                        generator.createIdentifier("Widget"),
+                        [],
+                        [],
+                        [
+                        generator.createProperty(
+                            [createDecorator("OneWay")],
+                            [],
+                            generator.createIdentifier("className"),
+                            undefined,
+                            undefined,
+                            undefined
+                        )]
+                    );
+
+                    const element = generator.createJsxElement(
+                        generator.createJsxOpeningElement(
+                            generator.createIdentifier("Widget"),
+                            [],
+                            [
+                                generator.createJsxAttribute(
+                                    generator.createIdentifier("className"),
+                                    generator.createIdentifier("value")
+                                )
+                            ]
+                        ),
+                        [generator.createJsxElement(
+                            generator.createJsxOpeningElement(
+                                generator.createIdentifier("div"),
+                                [],
+                                [
+                                    generator.createJsxAttribute(
+                                        generator.createIdentifier("className"),
+                                        generator.createStringLiteral("class-name")
+                                    )
+                                ]
+                            ),
+                            [],
+                            generator.createJsxClosingElement(
+                                generator.createIdentifier("div")
+                            )
+                        )],
+                        generator.createJsxClosingElement(
+                            generator.createIdentifier("Widget")
+                        )
+                    );
+
+                    assert.strictEqual(element.toString({
+                        state: [],
+                        props: [],
+                        members: [],
+                        internalState: [],
+                    }), `<dx-widget [className]="value"><div class="class-name"></div></dx-widget>`);        
+                });
+
             });
 
         });
