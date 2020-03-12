@@ -13,7 +13,7 @@ export const Fragment = react.Fragment;
  * Class can contains method with the following decorators: Effect, Method, Listen.
  * Class can contains methods without any decorator.
  */
-export function Component(args: {
+export function Component(arg: {
     name?: string;
     components?: any[];
     /**
@@ -29,7 +29,7 @@ export function Component(args: {
 }) {
     return function ComponentDecorator(constructor: Function) {
         constructor.prototype.render = function() {
-            return args.view(args.viewModel?.(this) || this);
+            return arg.view(arg.viewModel?.(this) || this);
         };
     }
 }

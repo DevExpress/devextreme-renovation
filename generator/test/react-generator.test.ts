@@ -47,7 +47,7 @@ mocha.describe("react-generator", function () {
     });
 
     this.beforeEach(function () {
-        generator.setContext({ path: path.resolve(__dirname, "./test-cases/declarations") });
+        generator.setContext({ dirname: path.resolve(__dirname, "./test-cases/declarations") });
     });
 
     this.afterEach(function () {
@@ -133,6 +133,14 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("method", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("method-use-apiref", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("component-input", function () {
         this.testGenerator(this.test!.title);
     });
@@ -141,7 +149,7 @@ mocha.describe("react-generator", function () {
         this.beforeEach(function () {
             generator.defaultOptionsModule = "../component_declaration/default_options";
             generator.setContext({
-                path: path.resolve(__dirname, "./test-cases/expected/react"),
+                dirname: path.resolve(__dirname, "./test-cases/expected/react"),
                 defaultOptionsModule: path.resolve(generator.defaultOptionsModule)
             });
         });
@@ -1638,7 +1646,7 @@ mocha.describe("React Component", function () {
 
 mocha.describe("import Components", function () { 
     this.beforeEach(function () { 
-        generator.setContext({ path: path.resolve(__dirname) });
+        generator.setContext({ dirname: path.resolve(__dirname) });
     });
 
     this.afterEach(function () {
@@ -2540,7 +2548,7 @@ mocha.describe("Default_options", function () {
     }
     this.beforeEach(function () {
         setupGenerator({
-            path: path.join(__dirname, "test-cases"),
+            dirname: path.join(__dirname, "test-cases"),
             defaultOptionsModule: `${__dirname}/default_options`
         });
     });
@@ -2568,7 +2576,7 @@ mocha.describe("Default_options", function () {
 
         mocha.it("default_options in same folder", function () {
             setupGenerator({
-                path: __dirname,
+                dirname: __dirname,
                 defaultOptionsModule: `${__dirname}/default_options`
             });
     
@@ -2587,7 +2595,7 @@ mocha.describe("Default_options", function () {
 
         mocha.it("default_options in child folder", function () {
             setupGenerator({
-                path: __dirname,
+                dirname: __dirname,
                 defaultOptionsModule: `${__dirname}/child/default_options`
             })
     

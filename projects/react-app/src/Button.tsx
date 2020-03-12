@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useMemo } from "react";
+import React, { useCallback, useEffect, useState, useMemo, useRef, useImperativeHandle, forwardRef } from "react";
 import './Button.css';
 
 // import convertRulesToOptions from 'core/options/utils';
@@ -20,7 +20,11 @@ export const defaultOptionsRules: { device: () => boolean, options: any }[] = [{
   }
 }];
 
-const Button = (props: {
+export type ButtonRef = {
+  focus: () => void
+}
+
+type ButtonProps = {
   classNames?: Array<string>,
   elementAttr?: { [name: string]: any },
   height?: string,
@@ -31,14 +35,19 @@ const Button = (props: {
   text?: string,
   type?: string,
   width?: string
-}) => {
+}
+
+const Button = forwardRef<ButtonRef, ButtonProps>((props: ButtonProps, ref) => {
   const [_hovered, _setHovered] = useState(false);
   const [_active, _setActive] = useState(false);
+  const [_focused, _setFocused] = useState(false);
 
   const onPointerOver = useCallback(() => _setHovered(true), []);
   const onPointerOut = useCallback(() => _setHovered(false), []);
   const onPointerDown = useCallback(() => _setActive(true), []);
   const onPointerUp = useCallback(() => _setActive(false), []);
+  const onFocus = useCallback(() => _setFocused(true), []);
+  const onBlur = useCallback(() => _setFocused(false), []);
 
   useEffect(() => {
     document.addEventListener("pointerup", onPointerUp);
@@ -50,6 +59,14 @@ const Button = (props: {
   const onClickHandler = useCallback(function(e: any) {
     props.onClick!({ type: props.type, text: props.text });
   }, [props.type, props.text, props.onClick]);
+
+  const host = useRef<HTMLDivElement>();
+
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      host.current!.focus();
+    }
+  }));
 
   const style = useMemo(function() {
     return {
@@ -86,11 +103,15 @@ const Button = (props: {
       classNames.push("dx-state-hover");
     }
 
+    if(_focused) {
+      classNames.push("dx-state-focused");
+    }
+
     if(props.pressed || _active) {
       classNames.push("dx-state-active");
     }
     return classNames.concat(props.classNames || []).join(" ");
-  }, [props.classNames, props.pressed, props.text, props.type, props.stylingMode, _hovered, _active]);
+  }, [props.classNames, props.pressed, props.text, props.type, props.stylingMode, _hovered, _active, _focused]);
 
   return view({
     // props
@@ -99,16 +120,22 @@ const Button = (props: {
     // internal state
     _hovered,
     _active,
+    _focused,
     // listeners
     onPointerOver,
     onPointerOut,
     onPointerDown,
     onClickHandler,
+    onFocus,
+    onBlur,
+    //refs
+    host,
     // viewModel
     style,
     cssClasses
   });
-};
+});
+
 
 Button.defaultProps = {
   onClick: () => {},
@@ -118,6 +145,8 @@ Button.defaultProps = {
 function view(viewModel: any) {
   return (
     <div
+      tabIndex="1"
+      ref={viewModel.host}
       className={viewModel.cssClasses}
       title={viewModel.props.hint}
       style={viewModel.style}
@@ -125,7 +154,9 @@ function view(viewModel: any) {
       onPointerOver={viewModel.onPointerOver}
       onPointerOut={viewModel.onPointerOut}
       onPointerDown={viewModel.onPointerDown}
-      onClick={viewModel.onClickHandler}>
+      onClick={viewModel.onClickHandler}
+      onFocus={viewModel.onFocus}
+      onBlur={viewModel.onBlur}>
       <div className="dx-button-content">
         <span className="dx-button-text">{viewModel.props.text}</span>
       </div>
