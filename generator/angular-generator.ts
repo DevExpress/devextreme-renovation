@@ -3,7 +3,6 @@ import {
     Expression,
     Identifier,
     JsxOpeningElement as ReactJsxOpeningElement,
-    JsxSelfClosingElement as ReactJsxSelfClosingElement,
     JsxAttribute as ReactJsxAttribute,
     JsxExpression as ReactJsxExpression,
     Decorator as BaseDecorator,
@@ -168,7 +167,7 @@ export class JsxAttribute extends ReactJsxAttribute {
         if (this.name.toString() === "ref") { 
             const refString = this.initializer.toString(options);
             const componentContext = options?.newComponentContext ? `${options.newComponentContext}.` : '';
-            const match = refString.match(new RegExp(`${componentContext}(\\w+).nativeElement`));
+            const match = refString.replace("?", "").match(new RegExp(`${componentContext}(\\w+).nativeElement`));
             if (match && match[1]) { 
                 return `#${match[1]}`;
             }
@@ -261,6 +260,12 @@ export class JsxChildExpression extends JsxExpression {
         }
 
         return `{{${stringValue}}}`;
+    }
+}
+
+export class JsxSpreadAttribute extends JsxExpression{
+    toString(options?:toStringOptions) { 
+        return "";
     }
 }
 
@@ -469,7 +474,7 @@ export class Property extends BaseProperty {
             return `${this.name}.emit`;
         }
         if (this.decorators.find(d => d.name === "Ref")) { 
-            return `${this.name}.nativeElement`
+            return `${this.name}?.nativeElement`
         }
         return this.name.toString();
     }
@@ -695,9 +700,9 @@ export class AngularGenerator extends Generator {
         return new JsxAttribute(name, initializer);
     }
 
-    // createJsxSpreadAttribute(expression: Expression) {
-    //     return `{...${expression.toString()}}`;
-    // }
+    createJsxSpreadAttribute(expression: Expression) {
+        return new JsxSpreadAttribute(undefined, expression);
+    }
 
     createJsxAttributes(properties: JsxAttribute[]) {
         return properties;

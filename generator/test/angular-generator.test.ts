@@ -364,6 +364,14 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), "<span >{{viewModel.text}}</span>");
         });
 
+        mocha.it("Spread attribute", function () { 
+            const expression = generator.createJsxSpreadAttribute(
+                generator.createIdentifier("attr")
+            );
+
+            assert.strictEqual(expression.toString(), "");
+        });
+
         mocha.it("ref", function () {
             const expression = generator.createJsxAttribute(
                 generator.createIdentifier("ref"),
@@ -2103,7 +2111,7 @@ mocha.describe("Angular generator", function () {
                     internalState: [],
                     state: [],
                     props: []
-                }), "this.div.nativeElement");
+                }), "this.div?.nativeElement");
             });
         });
     });
