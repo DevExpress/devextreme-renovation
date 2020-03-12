@@ -41,11 +41,12 @@ import {
 import SyntaxKind from "./syntaxKind";
 
 // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
-const VOID_ELEMEMTS = 
+const VOID_ELEMENTS = 
     ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"];
 
 interface toStringOptions extends  ReactToStringOptions {
-    members: Array<Property | Method>
+    members: Array<Property | Method>,
+    enventProperties?: Array<Property>
 }
 
 function processTagName(tagName: Expression, context: GeneratorContex) { 
@@ -61,9 +62,52 @@ function processTagName(tagName: Expression, context: GeneratorContex) {
 
 export class JsxOpeningElement extends ReactJsxOpeningElement { 
     context: GeneratorContex;
+    component?: AngularComponent;
     constructor(tagName: Expression, typeArguments: any[] = [], attributes: JsxAttribute[] = [], context: GeneratorContex) { 
         super(processTagName(tagName, context), typeArguments, attributes);
         this.context = context;
+        const component = context.components?.[tagName.toString()];
+        if (component instanceof AngularComponent) { 
+            this.component = component;
+        }
+    }
+
+    getTemplateProperty(options?: toStringOptions) { 
+        const tagName = this.tagName.toString(options);
+        const contextExpr = options?.newComponentContext ? `${options.newComponentContext}.` : "";
+        return options?.members
+            .filter(m => m.decorators.find(d => d.name === "Template"))
+            .find(s => tagName.endsWith(`${contextExpr}${s.name.toString()}`));
+    }
+
+    attributesString(options?: toStringOptions) {
+        if (this.component && options) { 
+            options = {
+                ...options,
+                enventProperties: this.component.members.filter(m => m.decorators.find(d => d.name === "Event")) as Property[]
+            }
+        }
+        return super.attributesString(options);
+    }
+
+    toString(options?: toStringOptions) {
+        const templateProperty = this.getTemplateProperty(options)
+        if (templateProperty) { 
+            const contextExpr = options?.newComponentContext ? `${options.newComponentContext}.` : "";
+            const contextElements = this.attributes.filter(
+                a=> !(a instanceof AngularDirective)
+            ).map(a => { 
+                return `${a.name.toString(options)}: ${(a as JsxAttribute).compileInitializer(options)}`;
+            });
+            const contextString = contextElements.length ? `; context={${contextElements.join(",")}}` : "";
+            const attributes = this.attributes
+                .filter(a => a instanceof AngularDirective)
+                .map(a => a.toString(options))
+                .join("\n");
+            return `<ng-container *ngTemplateOutlet="${contextExpr}${templateProperty.name}${contextString}"  ${attributes}></ng-container>`
+        }
+
+        return super.toString(options);
     }
 
     clone() { 
@@ -76,39 +120,17 @@ export class JsxOpeningElement extends ReactJsxOpeningElement {
     }
 }
 
-export class JsxSelfClosingElement extends ReactJsxSelfClosingElement{ 
-    context: GeneratorContex;
-    constructor(tagName: Expression, typeArguments: any[]=[], attributes:  JsxAttribute[]=[], context: GeneratorContex) { 
-        super(processTagName(tagName, context), typeArguments, attributes);
-        this.context = context;
-    }
+export class JsxSelfClosingElement extends JsxOpeningElement{ 
     toString(options?: toStringOptions) {
-        const tagName = this.tagName.toString(options);
-        const contextExpr = options?.newComponentContext ? `${options.newComponentContext}.` : "";
-        const template = options?.members
-            .filter(m => m.decorators.find(d => d.name === "Template"))
-            .find(s => tagName.endsWith(`${contextExpr}${s.name.toString()}`));
-        
-        if (template) { 
-            const contextElements = this.attributes.filter(
-                a=> !(a instanceof AngularDirective)
-            ).map(a => { 
-                return `${a.name.toString(options)}: ${(a as JsxAttribute).compileInitializer(options)}`;
-            });
-            const contextString = contextElements.length ? `; context={${contextElements.join(",")}}` : "";
-            const attributes = this.attributes
-                .filter(a => a instanceof AngularDirective)
-                .map(a => a.toString(options))
-                .join("\n");
-            return `<ng-container *ngTemplateOutlet="${contextExpr}${template.name}${contextString}"  ${attributes}></ng-container>`
+        if (VOID_ELEMENTS.indexOf(this.tagName.toString(options))!==-1) { 
+            return `${super.toString(options).replace(">", "/>")}`;
         }
 
-        
-        if (VOID_ELEMEMTS.indexOf(this.tagName.toString(options))!==-1) { 
+        if (this.getTemplateProperty(options)) { 
             return super.toString(options);
         }
         
-        return `${super.toString(options).replace("/>", ">")}</${tagName}>`;
+        return `${super.toString(options)}</${this.tagName}>`
     }
 
     clone() { 
@@ -146,6 +168,10 @@ export class JsxAttribute extends ReactJsxAttribute {
         }
         if (this.initializer instanceof StringLiteral) { 
             return `${this.name}=${this.initializer.toString()}`;
+        }
+
+        if (options?.enventProperties?.find(p=>p.name===this.name.toString())) { 
+            return `(${this.name})="${this.compileInitializer(options)}($event)"`;
         }
         return `[${this.name}]="${this.compileInitializer(options)}"`;
     }
@@ -673,7 +699,7 @@ export class AngularGenerator extends Generator {
     }
 
     createJsxClosingElement(tagName: Expression) {
-        return new JsxClosingElement( processTagName(tagName as Expression, this.getContext()));
+        return new JsxClosingElement(processTagName(tagName as Expression, this.getContext()));
     }
 
     createJsxElement(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: JsxClosingElement) {

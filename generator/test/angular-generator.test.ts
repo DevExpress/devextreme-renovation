@@ -18,6 +18,35 @@ function createDecorator(name: string) {
     ));
 }
 
+function createComponentDecorator(paramenters: {[name:string]: any}) { 
+    return generator.createDecorator(
+        generator.createCall(
+            generator.createIdentifier("Component"),
+            [],
+            [generator.createObjectLiteral(
+                Object.keys(paramenters).map(k => 
+                    generator.createPropertyAssignment(
+                        generator.createIdentifier(k),
+                        paramenters[k]
+                    )
+                ),
+                false
+            )]
+        )
+    )
+}
+
+function createComponent(properties: Property[]=[]) {
+    return generator.createComponent(
+        createComponentDecorator({}),
+        [],
+        generator.createIdentifier("BaseWidget"),
+        [],
+        [],
+        properties
+    );
+}
+
 mocha.describe("Angular generator", function () {
     
     mocha.describe("JSX -> AngularTemplate", function () {
@@ -563,6 +592,43 @@ mocha.describe("Angular generator", function () {
                     );
         
                     assert.strictEqual(expression.toString(), `import Component,{DxWidgetModule} from "./test-cases/declarations/empty-component"`);
+                });
+
+                mocha.it("Event attribute should be wrapped in paren", function () {
+                    generator.createClassDeclaration(
+                        [createComponentDecorator({})],
+                        [],
+                        generator.createIdentifier("Widget"),
+                        [],
+                        [],
+                        [
+                        generator.createProperty(
+                            [createDecorator("Event")],
+                            [],
+                            generator.createIdentifier("event"),
+                            undefined,
+                            undefined,
+                            undefined
+                        )]
+                    );
+
+                    const element = generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("Widget"),
+                        [],
+                        [
+                            generator.createJsxAttribute(
+                                generator.createIdentifier("event"),
+                                generator.createIdentifier("value")
+                            )
+                        ]
+                    );
+
+                    assert.strictEqual(element.toString({
+                        state: [],
+                        props: [],
+                        members: [],
+                        internalState: [],
+                    }), `<dx-widget (event)="value($event)"></dx-widget>`);        
                 });
 
             });
@@ -1442,23 +1508,7 @@ mocha.describe("Angular generator", function () {
     });
 
     mocha.describe("Angular Component", function () { 
-        function createComponentDecorator(paramenters: {[name:string]: any}) { 
-            return generator.createDecorator(
-                generator.createCall(
-                    generator.createIdentifier("Component"),
-                    [],
-                    [generator.createObjectLiteral(
-                        Object.keys(paramenters).map(k => 
-                            generator.createPropertyAssignment(
-                                generator.createIdentifier(k),
-                                paramenters[k]
-                            )
-                        ),
-                        false
-                    )]
-                )
-            )
-        }
+        
         mocha.it("Calculate Selector", function () {
             const decorator = createComponentDecorator({})
             const component = generator.createComponent(
@@ -1475,17 +1525,7 @@ mocha.describe("Angular generator", function () {
         });
 
         mocha.describe("Imports", function () {
-            function createComponent(properties: Property[]=[]) {
-                return generator.createComponent(
-                    createComponentDecorator({}),
-                    [],
-                    generator.createIdentifier("BaseWidget"),
-                    [],
-                    [],
-                    properties
-                );
-            }
-
+            
             mocha.it("Empty component", function () { 
                 const component = createComponent();
                 assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule } from "@angular/core"; import {CommonModule} from "@angular/common"`));
