@@ -364,12 +364,94 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), "<span >{{viewModel.text}}</span>");
         });
 
-        mocha.it("Spread attribute", function () { 
-            const expression = generator.createJsxSpreadAttribute(
-                generator.createIdentifier("attr")
-            );
+        mocha.describe("Spread Attributes", function () { 
+            this.beforeEach(function () {
+                generator.setContext(null);
+                generator.setContext({
+                    path: __dirname
+                });
+            });
 
-            assert.strictEqual(expression.toString(), "");
+            this.afterEach(function () {
+                generator.setContext(null);
+            });
+            mocha.it("should not be in element", function () { 
+                const expression = generator.createJsxSpreadAttribute(
+                    generator.createIdentifier("attr")
+                );
+    
+                assert.strictEqual(expression.toString(), "");
+            });
+
+            mocha.it("element with spread attribute should not generate ref attribute if it have one", function () { 
+                const spread = generator.createJsxSpreadAttribute(
+                    generator.createIdentifier("attr")
+                );
+
+                const element = generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("input"),
+                    [],
+                    [
+                        spread,
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("ref"),
+                            generator.createIdentifier("value")
+                        )
+                    ]
+                );
+    
+                assert.strictEqual(element.toString(), "<input #value/>");
+                const spreadAttributes = element.getSpreadAttributes();
+                assert.strictEqual(spreadAttributes.length, 1);
+                assert.strictEqual(spreadAttributes[0].expression.toString(), "attr");
+                assert.strictEqual(spreadAttributes[0].refExpression.toString(), "value");
+            });
+
+            mocha.it("element with spread attribute should generate unique ref attribute if it have no one", function () { 
+                const spread = generator.createJsxSpreadAttribute(
+                    generator.createIdentifier("attr")
+                );
+
+                const element = generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("input"),
+                    [],
+                    [spread]
+                );
+    
+                assert.strictEqual(element.toString(), "<input #_auto_ref_0/>");
+                const spreadAttributes = element.getSpreadAttributes();
+                assert.strictEqual(spreadAttributes.length, 1);
+                assert.strictEqual(spreadAttributes[0].expression.toString(), "attr");
+                assert.strictEqual(spreadAttributes[0].refExpression.toString(), "_auto_ref_0");
+            });
+
+            mocha.it("getJsxAttributes should collect attributes from all tree", function () { 
+                const spread = generator.createJsxSpreadAttribute(
+                    generator.createIdentifier("attr")
+                );
+
+                const element = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        [],
+                        [spread]
+                    ),
+                    [
+                        generator.createJsxSelfClosingElement(
+                            generator.createIdentifier("input"),
+                            [],
+                            [spread]
+                        )
+                    ],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(element.toString(), "<div #_auto_ref_1><input #_auto_ref_0/></div>");
+                const spreadAttributes = element.getSpreadAttributes();
+                assert.strictEqual(spreadAttributes.length, 2);
+            });
         });
 
         mocha.it("ref", function () {

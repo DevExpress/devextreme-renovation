@@ -1984,9 +1984,9 @@ export class JsxAttribute {
 export class JsxOpeningElement extends Expression { 
     tagName: Expression;
     typeArguments: any[];
-    attributes: JsxAttribute[];
+    attributes: Array<JsxAttribute|JsxSpreadAttribute>;
 
-    constructor(tagName: Expression, typeArguments: any[] = [], attributes: JsxAttribute[]) { 
+    constructor(tagName: Expression, typeArguments: any[] = [], attributes: Array<JsxAttribute|JsxSpreadAttribute>) { 
         super();
         this.tagName = tagName;
         this.typeArguments = typeArguments;
@@ -1994,7 +1994,9 @@ export class JsxOpeningElement extends Expression {
     }
 
     attributesString(options?:toStringOptions) { 
-        return this.attributes.map(a => a.toString(options)).join("\n");
+        return this.attributes.map(a => a.toString(options))
+            .filter(s => s)
+            .join("\n");
     }
 
     toString(options?:toStringOptions) { 
@@ -2064,6 +2066,12 @@ export class JsxExpression extends ExpressionWithExpression {
 
     isJsx() { 
         return true;
+    }
+}
+
+export class JsxSpreadAttribute extends JsxExpression {
+    constructor(expression: Expression) { 
+        super(SyntaxKind.DotDotDotToken, expression)
     }
 }
 
@@ -2391,18 +2399,18 @@ export class Generator {
     }
 
     createJsxSpreadAttribute(expression: Expression) {
-        return new JsxExpression(this.SyntaxKind.DotDotDotToken, expression);
+        return new JsxSpreadAttribute(expression);
     }
 
-    createJsxAttributes(properties: JsxAttribute[]) {
+    createJsxAttributes(properties: Array<JsxAttribute|JsxSpreadAttribute>) {
         return properties;
     }
 
-    createJsxOpeningElement(tagName: Identifier, typeArguments: any[], attributes: JsxAttribute[]=[]) {
+    createJsxOpeningElement(tagName: Identifier, typeArguments: any[], attributes: Array<JsxAttribute|JsxSpreadAttribute>=[]) {
         return new JsxOpeningElement(tagName, typeArguments, attributes);
     }
 
-    createJsxSelfClosingElement(tagName: Identifier, typeArguments: any[], attributes: JsxAttribute[]=[]) {
+    createJsxSelfClosingElement(tagName: Identifier, typeArguments: any[], attributes: Array<JsxAttribute|JsxSpreadAttribute>=[]) {
         return new JsxSelfClosingElement(tagName, typeArguments, attributes);
     }
 

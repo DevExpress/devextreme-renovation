@@ -27,14 +27,14 @@ import {
     PropertyAccess as BasePropertyAccess,
     toStringOptions as ReactToStringOptions,
     JsxElement as ReactJsxElement,
-    VariableDeclarationList,
     VariableExpression,
     JsxClosingElement,
     GetAccessor as BaseGetAccessor,
     VariableStatement,
     Paren,
     Heritable,
-    ImportClause
+    ImportClause,
+    SimpleExpression
 } from "./react-generator";
 
 import SyntaxKind from "./syntaxKind";
@@ -42,6 +42,22 @@ import SyntaxKind from "./syntaxKind";
 // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
 const VOID_ELEMENTS = 
     ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"];
+
+const isElement = (e: Expression) => e instanceof JsxElement || e instanceof JsxSelfClosingElement;
+
+export const counter = (function () {
+    let i = 0;
+
+    return {
+        get() {
+            return i++;
+        },
+
+        reset() {
+            i = 0;
+        }
+    }
+})();
 
 interface toStringOptions extends  ReactToStringOptions {
     members: Array<Property | Method>,
@@ -59,10 +75,15 @@ function processTagName(tagName: Expression, context: GeneratorContex) {
     return tagName;
 }
 
+interface JsxSpreadAttributeMeta { 
+    refExpression: Expression,
+    expression: Expression
+}
+
 export class JsxOpeningElement extends ReactJsxOpeningElement { 
     context: GeneratorContex;
     component?: AngularComponent;
-    constructor(tagName: Expression, typeArguments: any[] = [], attributes: JsxAttribute[] = [], context: GeneratorContex) { 
+    constructor(tagName: Expression, typeArguments: any[] = [], attributes: Array<JsxAttribute|JsxSpreadAttribute> = [], context: GeneratorContex) { 
         super(processTagName(tagName, context), typeArguments, attributes);
         this.context = context;
         const component = context.components?.[tagName.toString()];
@@ -86,6 +107,16 @@ export class JsxOpeningElement extends ReactJsxOpeningElement {
                 enventProperties: this.component.members.filter(m => m.decorators.find(d => d.name === "Event")) as Property[]
             }
         }
+
+        const spreadAttributes = this.attributes.filter(a => a instanceof JsxSpreadAttribute) as JsxSpreadAttribute[];
+        if (spreadAttributes.length) { 
+            const ref = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === "ref");
+            if (!ref) { 
+                this.attributes.push(
+                    new JsxAttribute(new Identifier("ref"), new SimpleExpression(`_auto_ref_${counter.get()}`))
+                );
+            }
+        }
         return super.attributesString(options);
     }
 
@@ -96,7 +127,7 @@ export class JsxOpeningElement extends ReactJsxOpeningElement {
             const contextElements = this.attributes.filter(
                 a=> !(a instanceof AngularDirective)
             ).map(a => { 
-                return `${a.name.toString(options)}: ${(a as JsxAttribute).compileInitializer(options)}`;
+                return `${(a as AngularDirective).name.toString(options)}: ${(a as JsxAttribute).compileInitializer(options)}`;
             });
             const contextString = contextElements.length ? `; context:{${contextElements.join(",")}}` : "";
             const attributes = this.attributes
@@ -125,6 +156,18 @@ export class JsxOpeningElement extends ReactJsxOpeningElement {
             (this.attributes as JsxAttribute[]).slice(),
             this.context
         )
+    }
+
+    getSpreadAttributes() { 
+        const result = this.attributes.filter(a => a instanceof JsxSpreadAttribute).map(a => {
+            const ref = this.attributes.find(a => (a instanceof JsxAttribute) && a.name.toString() === "ref")! as JsxAttribute;
+            return {
+                refExpression: ref.initializer,
+                expression: (a as JsxSpreadAttribute).expression
+            } as JsxSpreadAttributeMeta;
+        });
+
+        return result;
     }
 }
 
@@ -200,7 +243,6 @@ export class AngularDirective extends JsxAttribute {
 function processBinary(expression: Binary, options?: toStringOptions, condition:Expression[] =[]):Expression|null { 
     if (expression.operator === SyntaxKind.AmpersandAmpersandToken && !expression.left.isJsx()) { 
         let right = options?.variables?.[expression.right.toString()] || expression.right;
-        const isElement = (e: Expression) => e instanceof JsxElement || e instanceof JsxSelfClosingElement;
         if (right instanceof Paren) { 
             right = right.expression;
         }
@@ -298,6 +340,17 @@ export class JsxElement extends ReactJsxElement {
             this.closingElement
         );
     }
+
+    getSpreadAttributes() { 
+        const result = this.openingElement.getSpreadAttributes();
+        const allAttributes:JsxSpreadAttributeMeta[] = this.children.reduce((result: JsxSpreadAttributeMeta[], c) => {
+            if ((c instanceof JsxElement || c instanceof JsxSelfClosingElement)) { 
+                return result.concat(c.getSpreadAttributes());
+            }
+            return result
+        }, result)
+        return allAttributes;
+    }
 }
 
 function getJsxExpression(e: ExpressionWithExpression | Expression): JsxExpression | undefined {
@@ -340,13 +393,7 @@ function getAngularTemplate(functionWithTemplate: AngularFunction | ArrowFunctio
             }, {});
         }
         
-        const expression = getJsxExpression(returnStatement)?.toString(options);
-        
-        if (expression && componentParamenter) { 
-            return expression
-                //.replace(new RegExp(functionWithTemplate.parameters[0].name.toString(), "g"), "_viewModel");
-        }
-        return expression;
+        return getJsxExpression(returnStatement);
     }
 }
 export class AngularFunction extends Function { 
@@ -361,7 +408,7 @@ export class AngularFunction extends Function {
     }
 
     getTemplate(options?: toStringOptions) {
-        return getAngularTemplate(this, options);
+        return getAngularTemplate(this, options)?.toString(options);
     }
 }
 
@@ -377,15 +424,19 @@ export class ArrowFunctionWithTemplate extends ArrowFunction {
     }
     
     getTemplate(options?: toStringOptions) {
-        return getAngularTemplate(this, options);
+        return getAngularTemplate(this, options)?.toString(options);
     }
 }
 
 class Decorator extends BaseDecorator { 
     context: AngularGeneratorContext;
+    viewParameter?: Expression | null;
     constructor(expression: Call, context: AngularGeneratorContext) { 
         super(expression);
         this.context = context;
+        if (this.name === "Component") { 
+            this.viewParameter = this.getParameter("view");
+        }
     }
 
     addParameter(name: string, value: Expression) {
@@ -401,6 +452,16 @@ class Decorator extends BaseDecorator {
         return parameters.getProperty(name);
     }
 
+    getViewFunction() {
+        const viewFunctionValue = this.viewParameter
+        let viewFunction: ArrowFunctionWithTemplate | AngularFunction | null = null;
+        if (viewFunctionValue instanceof Identifier) {
+            viewFunction = this.context.viewFunctions ? this.context.viewFunctions[viewFunctionValue.toString()] : null;
+        }
+
+        return viewFunction
+    }
+
     toString(options?: toStringOptions) { 
         if (this.name === "OneWay") {
             return "@Input()";
@@ -410,12 +471,7 @@ class Decorator extends BaseDecorator {
             return "";
         } else if (this.name === "Component") {
             const parameters = (this.expression.arguments[0] as ObjectLiteral);
-            const viewFunctionValue = parameters.getProperty("view");
-            let viewFunction: ArrowFunctionWithTemplate | AngularFunction | null = null;
-            if (viewFunctionValue instanceof Identifier) {
-                viewFunction = this.context.viewFunctions ? this.context.viewFunctions[viewFunctionValue.toString()] : null;
-            }
-
+            const viewFunction = this.getViewFunction();
             if (viewFunction) {
                 const template = viewFunction.getTemplate(options);
                 if (template) {
@@ -559,20 +615,12 @@ class AngularComponent extends ReactComponent {
         ].join(";\n");
     }
 
-    compileEffects() { 
+    compileEffects(ngAfterViewInitStatements: string[], ngOnDestroyStatements: string[]) { 
         const effects = this.members.filter(m => m.decorators.find(d => d.name === "Effect"));
         if (effects.length) { 
-            return `
-                __destroyEffects: Array<() => any> = [];
-
-                ngAfterViewInit() {
-                    this.__destroyEffects.push(${effects.map(e=>`this.${e.getter()}()`).join(",")});
-                }
-            
-                ngOnDestroy() {
-                    this.__destroyEffects.forEach(d => d && d());
-                }
-            `;
+            ngAfterViewInitStatements.push(`this.__destroyEffects.push(${effects.map(e => `this.${e.getter()}()`).join(",")});`);
+            ngOnDestroyStatements.push(`this.__destroyEffects.forEach(d => d && d());`)
+            return `__destroyEffects: Array<() => any> = [];`
         }
 
         return "";
@@ -609,14 +657,82 @@ class AngularComponent extends ReactComponent {
         `;
     }
 
+    compileSpreadAttributes(ngOnChangesStatements: string[]): string { 
+        const viewFunction = this.decorator.getViewFunction();
+        if (viewFunction) { 
+            const options = {
+                members: this.members,
+                state: [],
+                internalState: [],
+                props: [],
+                newComponentContext: this.viewModel ? "_viewModel" : ""
+            };
+            const expression = getAngularTemplate(viewFunction, options);
+            if (expression instanceof JsxElement || expression instanceof JsxSelfClosingElement) { 
+                options.newComponentContext = "this";
+                const members = [];
+                const statements = expression.getSpreadAttributes().map((o, i) => { 
+                    const expressionString = o.expression.toString(options);
+                    const refString = o.refExpression instanceof SimpleExpression ? `this.${o.refExpression.toString()}?.nativeElement` : o.refExpression.toString(options);
+                    if (o.refExpression instanceof SimpleExpression) { 
+                        members.push(`@ViewChild("${o.refExpression.toString()}", { static: false }) ${o.refExpression.toString()}: ElementRef<HTMLDivElement>`)
+                    }
+                    return `
+                    const _attr_${i} = ${expressionString} || {};
+                    const _ref_${i} = ${refString};
+                    if(_ref_${i}){
+                        for(let key in _attr_${i}) {
+                            _ref_${i}.setAttribute(key, _attr_${i}[key]);
+                        }
+                    }
+                    `;
+                });
+
+                if (statements.length) { 
+                    const methodName = "__applyAttributes__";
+                    ngOnChangesStatements.push(`this.${methodName}()`);
+                    
+                    members.push(`${methodName}(){
+                        ${statements.join("\n")}
+                    }`);
+
+                    return members.join(";\n");
+                }
+            }
+        }
+        return "";
+    }
+
+    compileLifeCycle(name: string, statements: string[]): string { 
+        if (statements.length) { 
+            return `${name}(){
+                ${statements.join("\n")}
+            }`;
+        }
+        return "";
+    }
+
+    compileNgOnChanges(statements: string[]) { 
+        if (statements.length) { 
+            return `ngOnChanges(){
+                ${statements.join("\n")}
+            }`;
+        }
+        return "";
+    }
+
     toString() { 
         const extendTypes = this.heritageClauses.reduce((t: string[], h) => t.concat(h.types.map(t => t.type)), []);
-
+        
         const modules = Object.keys(this.context.components || {})
             .map((k) => this.context.components?.[k])
             .filter(c => c instanceof AngularComponent && c !== this)
             .map(c => (c as AngularComponent).module)
-            .concat(["CommonModule"])
+            .concat(["CommonModule"]);
+        const ngOnChangesStatements: string[] = [];
+        const ngAfterViewInitStatements: string[] = [];
+        const ngOnDestroyStatements: string[] = [];
+
         
         return `
         ${this.compileImports()}
@@ -636,9 +752,14 @@ class AngularComponent extends ReactComponent {
                     props: [],
                     members: this.members
                 }))
-                .filter(m => m).join(";\n")}
+            .filter(m => m).join(";\n")}
+            ${this.compileSpreadAttributes(ngOnChangesStatements)}
             ${this.compileViewModel()}
-            ${this.compileEffects()}
+            ${this.compileEffects(ngAfterViewInitStatements, ngOnDestroyStatements)}
+            ${this.compileLifeCycle("ngAfterViewInit", ngAfterViewInitStatements)}
+            ${this.compileLifeCycle("ngOnChanges", ngOnChangesStatements)}
+            ${this.compileLifeCycle("ngOnDestroy", ngOnDestroyStatements)}
+           
         }
         @NgModule({
             declarations: [${this.name}],
@@ -712,11 +833,11 @@ export class AngularGenerator extends Generator {
         return properties;
     }
 
-    createJsxOpeningElement(tagName: Expression, typeArguments: any[] = [], attributes: JsxAttribute[] = []) {
+    createJsxOpeningElement(tagName: Expression, typeArguments: any[] = [], attributes: Array<JsxAttribute|JsxSpreadAttribute> = []) {
         return new JsxOpeningElement(tagName, typeArguments, attributes, this.getContext());
     }
 
-    createJsxSelfClosingElement(tagName: Expression, typeArguments: any[] = [], attributes: JsxAttribute[] = []) {
+    createJsxSelfClosingElement(tagName: Expression, typeArguments: any[] = [], attributes: Array<JsxAttribute|JsxSpreadAttribute> = []) {
         return new JsxSelfClosingElement(tagName, typeArguments, attributes, this.getContext());
     }
 
@@ -783,6 +904,11 @@ export class AngularGenerator extends Generator {
 
     getContext() { 
         return super.getContext() as AngularGeneratorContext;
+    }
+
+    setContext(context: GeneratorContex|null) {
+        !context && counter.reset();
+        return super.setContext(context);
     }
 
     addViewFunction(name: string, f: any) {
