@@ -1,4 +1,4 @@
-function view() {
+function view(model: Widget) {
 
 }
 function subscribe(p: string, s: number, i: number) {
@@ -9,15 +9,14 @@ function unsubscribe(id: number) {
 }
 declare type WidgetInput = {
     p: string;
-    s: number;
-    i: number
+    s: number
 }
 export const WidgetInput: WidgetInput = {
-    p: "10"
+    p: "10",
+    s: 10
 };
 
 import React, { useState, useEffect } from 'react';
-
 interface Widget {
     props: WidgetInput;
     i: number;
@@ -25,8 +24,8 @@ interface Widget {
 }
 
 export default function Widget(props: WidgetInput) {
-    const [__state_s, __state_setS] = useState(() => (props.s !== undefined ? props.s : props.defaultS) || undefined);;
-    const [__state_i, __state_setI] = useState(undefined);
+    const [__state_s, __state_setS] = useState(() => (props.s !== undefined ? props.s : props.defaultS) || 10);;
+    const [__state_i, __state_setI] = useState(10);
 
     useEffect(() => {
         const id = subscribe(props.p, (props.s !== undefined ? props.s : __state_s), __state_i)

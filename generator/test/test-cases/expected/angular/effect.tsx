@@ -1,4 +1,4 @@
-function view() {
+function view(model: Widget) {
 
 }
 function subscribe(p: string, s: number, i: number) {
@@ -9,16 +9,15 @@ function unsubscribe(id: number) {
 }
 export class WidgetInput {
     @Input() p: string = "10";
-    @Input() s: number;
+    @Input() s: number = 10;
     @Output() sChange: EventEmitter<number> = new EventEmitter();
-    i: number;
-
 }
 
 import { Component, NgModule, Input, Output, EventEmitter } from "@angular/core";
 import { CommonModule } from "@angular/common"
 @Component({ selector: "dx-widget" })
 export default class DxWidgetComponent extends WidgetInput {
+    i: number = 10;
     setupData(): any {
         const id = subscribe(this.p, this.s, this.i);
         this.i = 15;
