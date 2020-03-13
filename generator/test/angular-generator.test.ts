@@ -159,27 +159,15 @@ mocha.describe("Angular generator", function () {
                     generator.createIdentifier("div"),
                     undefined,
                     generator.createJsxAttributes([generator.createJsxAttribute(
-                        generator.createIdentifier("style"),
-                        generator.createJsxExpression(
-                            undefined,
-                            generator.createObjectLiteral(
-                                [generator.createPropertyAssignment(
-                                    generator.createIdentifier("height"),
-                                    generator.createPropertyAccess(
-                                        generator.createIdentifier("viewModel"),
-                                        generator.createIdentifier("height")
-                                    )
-                                )],
-                                false
-                            )
-                        )
+                        generator.createIdentifier("a"),
+                        generator.createIdentifier("value")
                     )])
                 ),
                 [],
                 generator.createJsxClosingElement(generator.createIdentifier("div"))
             );
 
-            assert.strictEqual(expression.toString(), '<div [style]="{height:viewModel.height}"></div>');
+            assert.strictEqual(expression.toString(), '<div [a]="value"></div>');
         });
 
         mocha.it("Fragment should be ignored", function () {
@@ -274,6 +262,18 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(expression.toString(), `[class]="value"`);
+        });
+
+        mocha.it("Rename style attribute to ngStyle", function () {
+            const expression = generator.createJsxAttribute(
+                generator.createIdentifier("style"),
+                generator.createJsxExpression(
+                    undefined,
+                    generator.createIdentifier("value")
+                )
+            );
+
+            assert.strictEqual(expression.toString(), `[ngStyle]="value"`);
         });
 
         mocha.it("notJsxExpr && <element></element> -> <element *ngIf='notJsxExpr'></element>", function () {

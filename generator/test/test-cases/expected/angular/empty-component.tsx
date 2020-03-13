@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 
 @Component({
     selector: "dx-widget",
-    template: `<div [style]="{height:_viewModel.height}">
+    template: `<div [ngStyle]="{height:_viewModel.height}">
                     <span ></span>
                     
                     <span ></span>

@@ -222,8 +222,13 @@ export class JsxAttribute extends ReactJsxAttribute {
             return `(${this.name})="${this.compileInitializer(options)}($event)"`;
         }
         let name = this.name.toString();
-        if (!(options?.enventProperties) && name === "className") { 
-            name = "class";
+        if (!(options?.enventProperties)) {
+            if (name === "className") { 
+                name = "class";
+            }
+            if (name === "style") { 
+                name = "ngStyle"
+            }
         }
 
         if (this.initializer instanceof StringLiteral) { 
