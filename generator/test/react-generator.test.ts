@@ -243,23 +243,34 @@ mocha.describe("react-generator: expressions", function () {
 
         mocha.it("VariableDeclaration with object binding pattern - getVariableDeclaration", function () {
             const expresion = generator.createVariableDeclaration(
-                generator.createObjectBindingPattern([generator.createBindingElement(
-                    undefined,
-                    undefined,
-                    generator.createIdentifier("height"),
-                    undefined
-                )]),
+                generator.createObjectBindingPattern([
+                    generator.createBindingElement(
+                        undefined,
+                        undefined,
+                        generator.createIdentifier("height"),
+                        undefined
+                    ),
+                    generator.createBindingElement(
+                        undefined,
+                        generator.createIdentifier("props"),
+                        generator.createObjectBindingPattern([generator.createBindingElement(
+                            undefined,
+                            undefined,
+                            generator.createIdentifier("source"),
+                            undefined
+                        )]),
+                        undefined
+                    )
+                ]),
                 undefined,
-                generator.createPropertyAccess(
-                    generator.createThis(),
-                    generator.createIdentifier("props")
-                )
+                generator.createIdentifier("this")
             );
 
             const list = expresion.getVariableExpressions();
             
-            assert.strictEqual(Object.keys(list).length, 1);
-            assert.strictEqual(list["height"].toString(), "this.props.height");
+            assert.strictEqual(Object.keys(list).length, 2);
+            assert.strictEqual(list["height"].toString(), "this.height");
+            assert.strictEqual(list["source"].toString(), "this.props.source");
             assert.ok(list["height"] instanceof PropertyAccess);
         });
 

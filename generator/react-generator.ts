@@ -14,7 +14,7 @@ function compileType(type: string = "", questionToken: string = "") {
     return type ? `${questionToken}:${type}` : "";
 }
 
-function variableDeclaration(name: Identifier, type: string = "", initializer?: Expression, questionToken: string = "") {
+function variableDeclaration(name: Identifier|BindingPattern, type: string = "", initializer?: Expression, questionToken: string = "") {
     const initilizerDeclaration = initializer ? `=${initializer}` : "";
     return `${name}${compileType(type, questionToken)}${initilizerDeclaration}`;
 }
@@ -177,10 +177,10 @@ export class ExpressionWithOptionalExpression extends Expression {
 
 export class BindingElement extends Expression {
     dotDotDotToken?: any;
-    propertyName?: string;
-    name?: string | Identifier;
+    propertyName?: Identifier;
+    name?: string | Identifier | BindingElement;
     initializer?: Expression;
-    constructor(dotDotDotToken: any, propertyName?: string, name?: string | Identifier, initializer?: Expression) {
+    constructor(dotDotDotToken: any, propertyName?: Identifier, name?: string | Identifier| BindingElement, initializer?: Expression) {
         super();
         this.dotDotDotToken = dotDotDotToken;
         this.propertyName = propertyName;
@@ -229,6 +229,37 @@ export class BindingPattern extends Expression {
 
     getDependency() { 
         return this.elements.reduce((d: string[], e) => d.concat(e.getDependency()), []);
+    }
+
+    getVariableExpressions(startExpression: Expression): VariableExpression { 
+        return this.elements.reduce((v: VariableExpression, e, index) => {
+            if (e.name) {
+                let expression: Expression | null = null;
+
+                if (this.type !== "object") {
+                    expression = new ElementAccess(startExpression, new SimpleExpression(index.toString()));
+                } else if (e.name instanceof Identifier) {
+                    expression = new PropertyAccess(startExpression, e.name);
+                } else if (typeof e.name === "string") {
+                    const name = e.name;
+                    expression = new PropertyAccess(startExpression, new Identifier(name));
+                } else if (e.name instanceof BindingPattern && e.propertyName) { 
+                    return {
+                        ...e.name.getVariableExpressions(
+                            new PropertyAccess(startExpression,e.propertyName)
+                        ),
+                        ...v
+                    };
+                }   
+                if (expression) {
+                    return {
+                        [e.name.toString()]: expression,
+                        ...v,
+                    };
+                }
+            }
+            return v;
+        }, {})
     }
 }
 
@@ -381,11 +412,11 @@ export class Parameter {
     decorators: Decorator[]
     modifiers: string[];
     dotDotDotToken: any;
-    name: Identifier;
+    name: Identifier | BindingPattern;
     questionToken: string;
     type?: string;
     initializer?: Expression;
-    constructor(decorators: Decorator[], modifiers: string[], dotDotDotToken: any, name: Identifier, questionToken: string = "", type?: string, initializer?: Expression) {
+    constructor(decorators: Decorator[], modifiers: string[], dotDotDotToken: any, name: Identifier|BindingPattern, questionToken: string = "", type?: string, initializer?: Expression) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.dotDotDotToken = dotDotDotToken;
@@ -1643,19 +1674,9 @@ export class VariableDeclaration extends Expression {
                 [this.name.toString()]: this.initializer instanceof SimpleExpression || this.initializer.isJsx() ? this.initializer: new Paren(this.initializer)
             };
         }
-        if (this.name instanceof BindingPattern) { 
-            return this.name.elements.reduce((v: VariableExpression, e, index) => {
-                if (e.name) {
-                    const expression = (this.name as BindingPattern).type === "object" ?
-                        this.initializer instanceof Expression && e.name instanceof Identifier ? new PropertyAccess(this.initializer, e.name) : new SimpleExpression(`${this.initializer}.${e.name.toString()}`) :
-                        this.initializer instanceof Expression ? new ElementAccess(this.initializer, new SimpleExpression(index.toString())) : new SimpleExpression(`${this.initializer}[${index}]`);
-                    return {
-                        [e.name.toString()]: expression,
-                        ...v
-                    };
-                }
-                return v;
-            }, {});
+        if (this.name instanceof BindingPattern && this.initializer) { 
+            const startExpression = this.initializer instanceof Expression ? this.initializer : new SimpleExpression(this.initializer);
+            return this.name.getVariableExpressions(startExpression);
         }
         return {};
     }
@@ -2146,7 +2167,7 @@ export class Generator {
         return new StringLiteral(value);
     }
 
-    createBindingElement(dotDotDotToken?: any, propertyName?: string, name?: string | Identifier, initializer?: Expression) {
+    createBindingElement(dotDotDotToken?: any, propertyName?: Identifier, name?: string | Identifier | BindingElement, initializer?: Expression) {
         return new BindingElement(dotDotDotToken, propertyName, name, initializer);
     }
 
@@ -2228,7 +2249,7 @@ export class Generator {
         return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
     }
 
-    createParameter(decorators: Decorator[] = [], modifiers: string[] = [], dotDotDotToken: any, name: Identifier, questionToken?: string, type?: string, initializer?: Expression) {
+    createParameter(decorators: Decorator[] = [], modifiers: string[] = [], dotDotDotToken: any, name: Identifier|BindingPattern, questionToken?: string, type?: string, initializer?: Expression) {
         return new Parameter(decorators, modifiers, dotDotDotToken, name, questionToken, type, initializer);
     }
 
