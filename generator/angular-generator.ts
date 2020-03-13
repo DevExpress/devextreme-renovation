@@ -678,7 +678,7 @@ class AngularComponent extends ReactComponent {
                         members.push(`@ViewChild("${o.refExpression.toString()}", { static: false }) ${o.refExpression.toString()}: ElementRef<HTMLDivElement>`)
                     }
                     return `
-                    const _attr_${i} = ${expressionString} || {};
+                    const _attr_${i}:{[name: string]:string } = ${expressionString} || {};
                     const _ref_${i} = ${refString};
                     if(_ref_${i}){
                         for(let key in _attr_${i}) {
