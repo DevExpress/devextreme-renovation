@@ -34,7 +34,8 @@ import {
     Paren,
     Heritable,
     ImportClause,
-    SimpleExpression
+    SimpleExpression,
+    BindingPattern
 } from "./react-generator";
 
 import SyntaxKind from "./syntaxKind";
@@ -396,6 +397,13 @@ function getAngularTemplate(functionWithTemplate: AngularFunction | ArrowFunctio
                 }
                 return v;
             }, {});
+
+            if (componentParamenter && componentParamenter.name instanceof BindingPattern) {
+                options.variables = {
+                    ...componentParamenter.name.getVariableExpressions(new SimpleExpression(SyntaxKind.ThisKeyword)),
+                    ...options.variables
+                }
+            }
         }
         
         return getJsxExpression(returnStatement);

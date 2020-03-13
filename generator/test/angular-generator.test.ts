@@ -1185,181 +1185,245 @@ mocha.describe("Angular generator", function () {
                     members: []
                 }), `<div [v]="10"></div>`);
             });
-        });
 
-        mocha.it("Can use jsx variables in view function", function () {
-            const block = generator.createBlock([
-                generator.createVariableStatement(
-                    [],
-                    generator.createVariableDeclarationList(
-                        [generator.createVariableDeclaration(
-                            generator.createIdentifier("v"),
-                            undefined,
-                            generator.createJsxSelfClosingElement(
-                                generator.createIdentifier("span")
-                            )
-                        )],
-                        generator.SyntaxKind.ConstKeyword
-                    )
-                ),
-                generator.createReturn(
-                    generator.createJsxElement(
-                        generator.createJsxOpeningElement(
+            mocha.it("Can decomposite component", function () {
+                const block = generator.createBlock([
+                    generator.createReturn(
+                        generator.createJsxSelfClosingElement(
                             generator.createIdentifier("div"),
-                            [],
-                            []),
-                        [generator.createJsxExpression(
                             undefined,
-                            generator.createIdentifier("v")
-                        )],
-                        generator.createJsxClosingElement(generator.createIdentifier("div"))
+                            [
+                                generator.createJsxAttribute(
+                                    generator.createIdentifier("v"),
+                                    generator.createIdentifier("height")
+                                )
+                            ]
+                        )
                     )
-                )
-            ], false);
+                ], false);
 
-            const expression = generator.createFunctionDeclaration(
-                [],
-                [],
-                "",
-                generator.createIdentifier("View"),
-                [],
-                [],
-                "",
-                block
-            );
-
-            assert.strictEqual(expression.toString(), "");
-            assert.strictEqual(expression.getTemplate({
-                internalState: [],
-                state: [],
-                props: [],
-                members: []
-            }), `<div ><span ></span></div>`);
-        });
-
-        mocha.it("Can use jsx variable twice", function () {
-            const block = generator.createBlock([
-                generator.createVariableStatement(
+                const expression = generator.createFunctionDeclaration(
                     [],
-                    generator.createVariableDeclarationList(
-                        [generator.createVariableDeclaration(
-                            generator.createIdentifier("v"),
-                            undefined,
-                            generator.createJsxSelfClosingElement(
-                                generator.createIdentifier("span")
-                            )
-                        )],
-                        generator.SyntaxKind.ConstKeyword
-                    )
-                ),
-                generator.createReturn(
-                    generator.createJsxElement(
-                        generator.createJsxOpeningElement(
-                            generator.createIdentifier("div"),
-                            [],
-                            []),
-                        [generator.createJsxExpression(
-                            undefined,
-                            generator.createBinary(
-                                generator.createIdentifier("c1"),
-                                generator.SyntaxKind.AmpersandAmpersandToken,
-                                generator.createIdentifier("v")
-                            ),
-                        ),
-                        generator.createJsxExpression(
-                            undefined,
-                            generator.createBinary(
-                                generator.createIdentifier("c2"),
-                                generator.SyntaxKind.AmpersandAmpersandToken,
-                                generator.createIdentifier("v")
-                            ),
-                        )],
-                        generator.createJsxClosingElement(generator.createIdentifier("div"))
-                    )
-                )
-            ], false);
-
-            const expression = generator.createFunctionDeclaration(
-                [],
-                [],
-                "",
-                generator.createIdentifier("View"),
-                [],
-                [],
-                "",
-                block
-            );
-
-            assert.strictEqual(expression.toString(), "");
-            assert.strictEqual((expression.getTemplate({
-                internalState: [],
-                state: [],
-                props: [],
-                members: []
-            }) as string).replace(/(\s|\s)/gi, ""), (`<div >
-                    <span *ngIf="c1"></span>
-                    <span *ngIf="c2"></span>
-                </div>`).replace(/(\s|\s)/gi, ""));
-        });
-
-        mocha.it("Can use jsx variable with condition", function () {
-            const block = generator.createBlock([
-                generator.createVariableStatement(
                     [],
-                    generator.createVariableDeclarationList(
-                        [generator.createVariableDeclaration(
-                            generator.createIdentifier("v"),
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [
+                        generator.createParameter(
+                            [],
+                            [],
                             undefined,
-                            generator.createBinary(
-                                generator.createIdentifier("c1"),
-                                generator.SyntaxKind.AmpersandAmpersandToken,
+                            generator.createObjectBindingPattern([
+                                generator.createBindingElement(
+                                    undefined,
+                                    undefined,
+                                    generator.createIdentifier("height"),
+                                    undefined
+                                )
+                            ]),
+                            undefined,
+                            undefined,
+                            undefined
+                       )
+                    ],
+                    "",
+                    block
+                );
+
+                const member = generator.createGetAccessor(
+                    [],
+                    [],
+                    generator.createIdentifier("height"),
+                    [],
+                    undefined,
+                    undefined
+                );
+
+                member.prefix = "__";
+
+                assert.strictEqual(expression.toString(), "");
+                assert.strictEqual(expression.getTemplate({
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    members: [member]
+                }), `<div [v]="__height"></div>`);
+            });
+
+            mocha.it("Can use jsx variables in view function", function () {
+                const block = generator.createBlock([
+                    generator.createVariableStatement(
+                        [],
+                        generator.createVariableDeclarationList(
+                            [generator.createVariableDeclaration(
+                                generator.createIdentifier("v"),
+                                undefined,
                                 generator.createJsxSelfClosingElement(
                                     generator.createIdentifier("span")
                                 )
-                            )
-                        )],
-                        generator.SyntaxKind.ConstKeyword
-                    )
-                ),
-                generator.createReturn(
-                    generator.createJsxElement(
-                        generator.createJsxOpeningElement(
-                            generator.createIdentifier("div"),
-                            [],
-                            []),
-                        [generator.createJsxExpression(
-                            undefined,
-                            generator.createBinary(
-                                generator.createIdentifier("c2"),
-                                generator.SyntaxKind.AmpersandAmpersandToken,
+                            )],
+                            generator.SyntaxKind.ConstKeyword
+                        )
+                    ),
+                    generator.createReturn(
+                        generator.createJsxElement(
+                            generator.createJsxOpeningElement(
+                                generator.createIdentifier("div"),
+                                [],
+                                []),
+                            [generator.createJsxExpression(
+                                undefined,
                                 generator.createIdentifier("v")
-                            ),
-                        )],
-                        generator.createJsxClosingElement(generator.createIdentifier("div"))
+                            )],
+                            generator.createJsxClosingElement(generator.createIdentifier("div"))
+                        )
                     )
-                )
-            ], false);
-
-            const expression = generator.createFunctionDeclaration(
-                [],
-                [],
-                "",
-                generator.createIdentifier("View"),
-                [],
-                [],
-                "",
-                block
-            );
-
-            assert.strictEqual(expression.toString(), "");
-            assert.strictEqual((expression.getTemplate({
-                internalState: [],
-                state: [],
-                props: [],
-                members: []
-            }) as string).replace(/(\s|\s)/gi, ""), (`<div >
-                    <span *ngIf="(c1)&&c2"></span>
-                </div>`).replace(/(\s|\s)/gi, ""));
+                ], false);
+    
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [],
+                    "",
+                    block
+                );
+    
+                assert.strictEqual(expression.toString(), "");
+                assert.strictEqual(expression.getTemplate({
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    members: []
+                }), `<div ><span ></span></div>`);
+            });
+    
+            mocha.it("Can use jsx variable twice", function () {
+                const block = generator.createBlock([
+                    generator.createVariableStatement(
+                        [],
+                        generator.createVariableDeclarationList(
+                            [generator.createVariableDeclaration(
+                                generator.createIdentifier("v"),
+                                undefined,
+                                generator.createJsxSelfClosingElement(
+                                    generator.createIdentifier("span")
+                                )
+                            )],
+                            generator.SyntaxKind.ConstKeyword
+                        )
+                    ),
+                    generator.createReturn(
+                        generator.createJsxElement(
+                            generator.createJsxOpeningElement(
+                                generator.createIdentifier("div"),
+                                [],
+                                []),
+                            [generator.createJsxExpression(
+                                undefined,
+                                generator.createBinary(
+                                    generator.createIdentifier("c1"),
+                                    generator.SyntaxKind.AmpersandAmpersandToken,
+                                    generator.createIdentifier("v")
+                                ),
+                            ),
+                            generator.createJsxExpression(
+                                undefined,
+                                generator.createBinary(
+                                    generator.createIdentifier("c2"),
+                                    generator.SyntaxKind.AmpersandAmpersandToken,
+                                    generator.createIdentifier("v")
+                                ),
+                            )],
+                            generator.createJsxClosingElement(generator.createIdentifier("div"))
+                        )
+                    )
+                ], false);
+    
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [],
+                    "",
+                    block
+                );
+    
+                assert.strictEqual(expression.toString(), "");
+                assert.strictEqual((expression.getTemplate({
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    members: []
+                }) as string).replace(/(\s|\s)/gi, ""), (`<div >
+                        <span *ngIf="c1"></span>
+                        <span *ngIf="c2"></span>
+                    </div>`).replace(/(\s|\s)/gi, ""));
+            });
+    
+            mocha.it("Can use jsx variable with condition", function () {
+                const block = generator.createBlock([
+                    generator.createVariableStatement(
+                        [],
+                        generator.createVariableDeclarationList(
+                            [generator.createVariableDeclaration(
+                                generator.createIdentifier("v"),
+                                undefined,
+                                generator.createBinary(
+                                    generator.createIdentifier("c1"),
+                                    generator.SyntaxKind.AmpersandAmpersandToken,
+                                    generator.createJsxSelfClosingElement(
+                                        generator.createIdentifier("span")
+                                    )
+                                )
+                            )],
+                            generator.SyntaxKind.ConstKeyword
+                        )
+                    ),
+                    generator.createReturn(
+                        generator.createJsxElement(
+                            generator.createJsxOpeningElement(
+                                generator.createIdentifier("div"),
+                                [],
+                                []),
+                            [generator.createJsxExpression(
+                                undefined,
+                                generator.createBinary(
+                                    generator.createIdentifier("c2"),
+                                    generator.SyntaxKind.AmpersandAmpersandToken,
+                                    generator.createIdentifier("v")
+                                ),
+                            )],
+                            generator.createJsxClosingElement(generator.createIdentifier("div"))
+                        )
+                    )
+                ], false);
+    
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [],
+                    "",
+                    block
+                );
+    
+                assert.strictEqual(expression.toString(), "");
+                assert.strictEqual((expression.getTemplate({
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    members: []
+                }) as string).replace(/(\s|\s)/gi, ""), (`<div >
+                        <span *ngIf="(c1)&&c2"></span>
+                    </div>`).replace(/(\s|\s)/gi, ""));
+            });
         });
     });
 
