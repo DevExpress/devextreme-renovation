@@ -1286,16 +1286,22 @@ export class ReactComponent {
         return this._name.toString();
     }
 
+    addPrefixToMembers(members: Array<Property | Method>) { 
+        if (this.isJSXComponent) { 
+            members.filter(m => !m.inherited && m instanceof GetAccessor).forEach(m => {
+                m.prefix = "__";
+            });
+        }
+        return members;
+    }
+
     constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>, context: GeneratorContex) {
         this.modifiers = modifiers;
         this._name = name;
         this.heritageClauses = heritageClauses;
 
-        members.filter(m => m instanceof GetAccessor).forEach(m => {
-            m.prefix = "__";
-        });
 
-        this.members = members = inheritMembers(heritageClauses, members);
+        this.members = members = inheritMembers(heritageClauses, this.addPrefixToMembers(members));
 
         this.props = members
             .filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template"))

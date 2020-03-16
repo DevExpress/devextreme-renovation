@@ -63,4 +63,8 @@ mocha.describe("angular-generation", function () {
     mocha.it("spread-attribute", function () {
         this.testGenerator(this.test!.title);
     });
+
+    mocha.it("icon", function () {
+        this.testGenerator(this.test!.title);
+    });
 });

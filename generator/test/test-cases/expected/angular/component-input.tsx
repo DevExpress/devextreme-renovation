@@ -10,7 +10,7 @@ import {Component,NgModule,Input} from "@angular/core";
 import {CommonModule} from "@angular/common"
 @Component({selector:"dx-widget"})
 export default class DxWidgetComponent extends WidgetProps {
-     onClick():any{
+     __onClick():any{
      const v=this.height
 }
     

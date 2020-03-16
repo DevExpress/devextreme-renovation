@@ -591,6 +591,15 @@ class AngularComponent extends ReactComponent {
         this.decorator = componentDecorator;
     }
 
+    addPrefixToMembers(members: Array<Property | Method>) { 
+        if (this.isJSXComponent) {
+            members.forEach(m => {
+                m.prefix = "__";
+            });
+        }
+        return members;
+    }
+
     get name() {
         return `Dx${this._name}Component`;
     }
