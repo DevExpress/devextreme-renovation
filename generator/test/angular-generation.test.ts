@@ -64,7 +64,7 @@ mocha.describe("angular-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it("icon", function () {
+    mocha.it("template", function () {
         this.testGenerator(this.test!.title);
     });
 });
