@@ -9,7 +9,6 @@ const eventsDictionary = {
     pointerdown: "onPointerDown",
     click: "onClick"
 }
-
 function compileType(type: string = "", questionToken: string = "") {
     return type ? `${questionToken}:${type}` : "";
 }
@@ -19,18 +18,18 @@ function variableDeclaration(name: Identifier, type: string = "", initializer?: 
     return `${name}${compileType(type, questionToken)}${initilizerDeclaration}`;
 }
 
-function getRelativePath(src:string, dst:string, moduleName: string="") { 
+function getRelativePath(src: string, dst: string, moduleName: string = "") {
     const relativePath = `${path.relative(src, dst)}${moduleName ? `/${moduleName}` : ""}`.replace(/\\/gi, "/");
-    if (relativePath.startsWith("/")) { 
+    if (relativePath.startsWith("/")) {
         return `.${relativePath}`;
     }
-    if (!relativePath.startsWith(".")) { 
+    if (!relativePath.startsWith(".")) {
         return `./${relativePath}`;
     }
     return relativePath;
 }
 
-function getModuleRelativePath(src: string, moduleSpecifier: string) { 
+function getModuleRelativePath(src: string, moduleSpecifier: string) {
     const normalizedPath = path.normalize(moduleSpecifier);
     const moduleParts = normalizedPath.split(/(\/|\\)/);
 
@@ -58,7 +57,7 @@ export interface toStringOptions {
     variables?: VariableExpression;
 }
 
-export interface VariableExpression { 
+export interface VariableExpression {
     [name: string]: Expression;
 }
 
@@ -75,7 +74,7 @@ export class Expression {
         return this.getDependency();
     }
 
-    isJsx() { 
+    isJsx() {
         return false;
     }
 }
@@ -101,7 +100,7 @@ export class StringLiteral extends SimpleExpression {
     toString() {
         return `${this.quoteSymbol}${this.expression}${this.quoteSymbol}`;
     }
-    valueOf() { 
+    valueOf() {
         return this.expression;
     }
 }
@@ -115,10 +114,10 @@ export class Identifier extends SimpleExpression {
         return this.expression;
     }
 
-    toString(options?: toStringOptions) { 
+    toString(options?: toStringOptions) {
         const baseValue = super.toString();
         if (options?.variables && options.variables[baseValue]) {
-            return options.variables[baseValue].toString(options);    
+            return options.variables[baseValue].toString(options);
         }
         return baseValue;
     }
@@ -141,7 +140,7 @@ export class ExpressionWithExpression extends Expression {
         return this.expression.getDependency();
     }
 
-    isJsx() { 
+    isJsx() {
         return this.expression.isJsx();
     }
 }
@@ -193,7 +192,7 @@ export class BindingElement extends Expression {
         return `${key}${this.name}`;
     }
 
-    getDependency() { 
+    getDependency() {
         return this.name && this.name instanceof Identifier ? [this.toString()] : [];
     }
 }
@@ -216,7 +215,7 @@ export class BindingPattern extends Expression {
     }
 
     toString() {
-        if (this.elements.length === 0) { 
+        if (this.elements.length === 0) {
             return "";
         }
         const elements = this.elements.join(",");
@@ -227,7 +226,7 @@ export class BindingPattern extends Expression {
         this.elements = this.elements.filter(e => e.name?.toString() !== name);
     }
 
-    getDependency() { 
+    getDependency() {
         return this.elements.reduce((d: string[], e) => d.concat(e.getDependency()), []);
     }
 }
@@ -311,7 +310,7 @@ export class ObjectLiteral extends Expression {
         }
     }
 
-    setProperty(propertyName: string, value: Expression) { 
+    setProperty(propertyName: string, value: Expression) {
         this.properties.push(
             new PropertyAssignment(
                 new Identifier(propertyName),
@@ -320,11 +319,11 @@ export class ObjectLiteral extends Expression {
         )
     }
 
-    removeProperty(propertyName: string) { 
+    removeProperty(propertyName: string) {
         this.properties = this.properties.filter(p => p.key?.toString() !== propertyName);
     }
 
-    toString(options?:any) {
+    toString(options?: any) {
         return `{${this.properties.map(p => p.toString(options)).join(`,\n`)}}`;
     }
 
@@ -354,7 +353,7 @@ export class Block extends Expression {
         }, []);
     }
 
-    isJsx() { 
+    isJsx() {
         return this.statements.some(s => s.isJsx());
     }
 }
@@ -457,7 +456,7 @@ export class CallChain extends Call {
     }
 }
 
-export class BaseFunction extends Expression { 
+export class BaseFunction extends Expression {
     modifiers: string[];
     typeParameters: string[];
     parameters: Parameter[];
@@ -465,7 +464,7 @@ export class BaseFunction extends Expression {
     body: Block | Expression;
     context: GeneratorContex;
 
-    constructor(modifiers: string[] = [], typeParameters: string[] = [], parameters: Parameter[], type: string, body: Block | Expression, context: GeneratorContex) { 
+    constructor(modifiers: string[] = [], typeParameters: string[] = [], parameters: Parameter[], type: string, body: Block | Expression, context: GeneratorContex) {
         super();
         this.modifiers = modifiers;
         this.typeParameters = typeParameters;
@@ -475,13 +474,13 @@ export class BaseFunction extends Expression {
         this.context = context;
     }
 
-    getDependency() { 
+    getDependency() {
         return this.body.getDependency();
     }
 
-    getToStringOptions(options?: toStringOptions) { 
+    getToStringOptions(options?: toStringOptions) {
         const widget = this.parameters[0] && this.context.components?.[this.parameters[0].type || ""];
-        if (widget && widget instanceof ReactComponent) { 
+        if (widget && widget instanceof ReactComponent) {
             options = {
                 members: widget.members.filter(m => m.decorators.find(d => d.name === "Template" || d.name === "Slot")),
                 internalState: [],
@@ -577,7 +576,7 @@ export class Binary extends Expression {
             this.left.expression.toString() === SyntaxKind.ThisKeyword) {
             const rightExpression = this.right.toString(options);
 
-            if (checkDependency(this.left, options.members.filter(m=>m.isReadOnly()))) {
+            if (checkDependency(this.left, options.members.filter(m => m.isReadOnly()))) {
                 throw `Error: Can't assign property use TwoWay() or Internal State - ${this.toString()}`;
             }
 
@@ -711,7 +710,7 @@ export class Decorator {
     }
 }
 
-export class BaseClassMember extends Expression { 
+export class BaseClassMember extends Expression {
     decorators: Decorator[];
     modifiers: string[];
     _name: Identifier;
@@ -720,7 +719,7 @@ export class BaseClassMember extends Expression {
 
     prefix: string = "";
 
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, type: string = "any", inherited: boolean = false) { 
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, type: string = "any", inherited: boolean = false) {
         super();
         this.decorators = decorators;
         this.modifiers = modifiers;
@@ -729,7 +728,7 @@ export class BaseClassMember extends Expression {
         this.inherited = inherited;
     }
 
-    get name(): string { 
+    get name(): string {
         return `${this.prefix}${this._name}`;
     }
 
@@ -741,11 +740,11 @@ export class BaseClassMember extends Expression {
         return this.name.toString();
     }
 
-    getter() { 
+    getter() {
         return this.toString();
     }
 
-    isReadOnly() { 
+    isReadOnly() {
         return true;
     }
 
@@ -757,7 +756,7 @@ export class Method extends BaseClassMember {
     typeParameters: any;
     parameters: Parameter[];
     body: Block;
-   
+
     constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: string = "any", body: Block) {
         super(decorators, modifiers, name, type);
         this.asteriskToken = asteriskToken;
@@ -775,7 +774,7 @@ export class Method extends BaseClassMember {
         return `${this.name}${this.questionToken}:(${this.parameters.map(p => p.typeDeclaration()).join(",")})=>${this.type}`
     }
 
-    defaultDeclaration() { 
+    defaultDeclaration() {
         return this.declaration();
     }
 
@@ -783,7 +782,7 @@ export class Method extends BaseClassMember {
         return `${prefix} ${this.name}(${this.parametersTypeDeclaration()})${this.body.toString(options)}`;
     }
 
-    arrowDeclaration(options?:any) {
+    arrowDeclaration(options?: any) {
         return `(${this.parametersTypeDeclaration()})=>${this.body.toString(options)}`
     }
 
@@ -791,7 +790,7 @@ export class Method extends BaseClassMember {
         const dependency = this.body.getDependency();
         const additionalDependency = [];
 
-        if (dependency.find(d => d === "props")) { 
+        if (dependency.find(d => d === "props")) {
             additionalDependency.push("props");
         }
 
@@ -805,25 +804,25 @@ export class Method extends BaseClassMember {
             .filter(d => d)
             .reduce((d: string[], p) => d.concat(p!.getDependecy()), [])
             .concat(additionalDependency);
-        
-        if (additionalDependency.indexOf("props") > -1) { 
+
+        if (additionalDependency.indexOf("props") > -1) {
             return result.filter(d => !d.startsWith("props."));
         }
-        
+
         return result;
     }
 }
 
-export class GetAccessor extends Method { 
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type?: string, body?: Block) { 
+export class GetAccessor extends Method {
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type?: string, body?: Block) {
         super(decorators, modifiers, "", name, "", [], parameters, type, body || new Block([], false));
     }
 
-    typeDeclaration() { 
+    typeDeclaration() {
         return `${this._name}:${this.type}`;
     }
 
-    getter() { 
+    getter() {
         return `${super.getter()}()`;
     }
 }
@@ -874,7 +873,7 @@ export class Property extends BaseClassMember {
         return !!this.decorators.find(d => d.name === "OneWay" || d.name === "Event");
     }
 
-    inherit() { 
+    inherit() {
         return new Property(this.decorators, this.modifiers, this._name, this.questionOrExclamationToken, this.type, this.initializer, true);
     }
 }
@@ -893,11 +892,11 @@ export class Class {
     modifiers: string[];
     heritageClauses: HeritageClause[];
 
-    get name() { 
+    get name() {
         return this._name.toString();
     }
 
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, typeParameters: any[], heritageClauses: HeritageClause[]=[], members: Array<Property | Method>) {
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, typeParameters: any[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>) {
         members = inheritMembers(heritageClauses, members);
         this.decorators = decorators;
         this._name = name;
@@ -927,9 +926,9 @@ export class ComponentInput extends Class implements Heritable {
         return this.name.toString();
     }
 
-    toString() { 
+    toString() {
         const inherited = this.heritageClauses.reduce((t: string[], h) => t.concat(h.typeNodes.map(t => `...${t}`)), []);
-       
+
         const types = this.heritageClauses.reduce((t: string[], h) => t.concat(h.typeNodes.map(t => `typeof ${t}`)), []);
 
         const typeDeclaration = `declare type ${this.name}=${types.concat([`{
@@ -939,10 +938,10 @@ export class ComponentInput extends Class implements Heritable {
         return `${typeDeclaration}
         ${this.modifiers.join(" ")} const ${this.name}:${this.name}={
            ${inherited.concat(
-               this.members
-                   .filter(m => !(m as Property).inherited && (m as Property).initializer)
-                   .map(p => p.defaultDeclaration())
-           ).join(",\n")}
+            this.members
+                .filter(m => !(m as Property).inherited && (m as Property).initializer)
+                .map(p => p.defaultDeclaration())
+        ).join(",\n")}
         };`;
     }
 
@@ -1017,7 +1016,7 @@ export class PropertyAccess extends ExpressionWithExpression {
             }
 
             const member = options?.members.find(m => m._name.toString() === this.name.toString());
-            if (member) { 
+            if (member) {
                 return `${options?.newComponentContext ? `${options.newComponentContext}.` : ""}${member.getter()}`;
             }
         }
@@ -1211,7 +1210,7 @@ function capitalizeFirstLetter(string: string | Identifier) {
     return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
-function stateSetter(stateName: Identifier|string) {
+function stateSetter(stateName: Identifier | string) {
     return `__state_set${capitalizeFirstLetter(stateName)}`
 }
 
@@ -1240,7 +1239,7 @@ export class ReactComponent {
 
     defaultOptionsRules?: Expression | null;
 
-    get name() { 
+    get name() {
         return this._name.toString();
     }
 
@@ -1287,7 +1286,7 @@ export class ReactComponent {
 
         this.context = context;
 
-        if (context.defaultOptionsImport) { 
+        if (context.defaultOptionsImport) {
             context.defaultOptionsImport.add("convertRulesToOptions");
             context.defaultOptionsImport.add("Rule");
         }
@@ -1342,8 +1341,8 @@ export class ReactComponent {
         return `${this.name.toString()}.defaultProps`;
     }
 
-    compileDefaultOptionsMethod() { 
-        if (this.context.defaultOptionsModule) { 
+    compileDefaultOptionsMethod() {
+        if (this.context.defaultOptionsModule) {
             const defaultOptionsTypeName = `${this.name}OptionRule`;
             const defaultOptionsTypeArgument = this.isJSXComponent ? this.heritageClauses[0].defaultProps : this.name;
             return `type ${defaultOptionsTypeName} = Rule<${defaultOptionsTypeArgument}>;
@@ -1367,13 +1366,13 @@ export class ReactComponent {
                 this.props.filter(p => !p.property.inherited && p.property.initializer)
                     .concat(this.state)
                     .map(p => p.defaultProps())
-        );
+            );
 
-        if (this.defaultOptionsRules) { 
+        if (this.defaultOptionsRules) {
             defaultProps.push(`...convertRulesToOptions(${this.defaultOptionsRules})`);
         }
 
-        if (this.context.defaultOptionsModule) { 
+        if (this.context.defaultOptionsModule) {
             return `
                 function __createDefaultProps(){
                     return {
@@ -1456,12 +1455,12 @@ export class ReactComponent {
     compileComponentInterface() {
 
         const props = this.isJSXComponent ? [`props: ${this.compilePropsType()}`] : this.props
-                .concat(this.state)
-                .map(p => p.typeDeclaration());
+            .concat(this.state)
+            .map(p => p.typeDeclaration());
 
         return `interface ${this.name}{
             ${  props
-                .concat(this.internalState.concat(this.refs).concat(this.slots.filter(s=>!s.property.inherited)).map(p => p.typeDeclaration()))
+                .concat(this.internalState.concat(this.refs).concat(this.slots.filter(s => !s.property.inherited)).map(p => p.typeDeclaration()))
                 .concat(this.listeners.map(l => l.typeDeclaration()))
                 .concat(this.methods.map(m => m.typeDeclaration()))
                 .concat([""])
@@ -1492,7 +1491,7 @@ export class ReactComponent {
     }
 
     compilePropsType() {
-        if (this.isJSXComponent) { 
+        if (this.isJSXComponent) {
             return this.heritageClauses[0].defaultProps[0];
         }
         return `{
@@ -1514,13 +1513,13 @@ export class ReactComponent {
                 ${this.listenersDeclaration()}
                 ${this.compileUseEffect()}
                 ${this.methods.map(m => {
-                    return `const ${m.name}=useCallback(${m.declaration("function", {
-                        members: this.members,
-                        internalState: this.internalState, state: this.state, props:this.props.concat(this.refs)
-                    })}, [${
-                        m.getDependency(this.internalState.concat(this.state).concat(this.props))
-                    }]);`;
-                }).join("\n")}
+            return `const ${m.name}=useCallback(${m.declaration("function", {
+                members: this.members,
+                internalState: this.internalState, state: this.state, props: this.props.concat(this.refs)
+            })}, [${
+                m.getDependency(this.internalState.concat(this.state).concat(this.props))
+                }]);`;
+        }).join("\n")}
                 return ${this.view}(${this.viewModel}({
                         ${ this.compileViewModelArguments().join(",\n")}
                     })
@@ -1593,10 +1592,10 @@ export class VariableDeclaration extends Expression {
     toString(options?: toStringOptions) {
         if (this.name instanceof BindingPattern && options?.members.length && this.initializer instanceof PropertyAccess) {
             const dependecy = this.initializer.getDependency(options);
-            if (dependecy.indexOf("props") === 0) { 
+            if (dependecy.indexOf("props") === 0) {
                 const members = this.name.getDependency()
                     .map(d => options?.members.find(m => m._name.toString() === d))
-                    .filter(m => m && m.name && m._name.toString() !== m.name) as Array<Property|Method>;
+                    .filter(m => m && m.name && m._name.toString() !== m.name) as Array<Property | Method>;
                 const variables = members.reduce((v: VariableExpression, m) => {
                     (this.name as BindingPattern).remove(m._name.toString());
                     return {
@@ -1604,14 +1603,14 @@ export class VariableDeclaration extends Expression {
                         [m._name.toString()]: new SimpleExpression(`${this.initializer?.toString()}.${m.name}`)
                     };
                 }, options.variables || {});
-                
+
                 options.variables = variables;
             }
-         }
-        
+        }
+
         const initilizerDeclaration = this.initializer ? `=${this.initializer.toString(options)}` : "";
-        if (this.name.toString()) { 
-           return `${this.name}${compileType(this.type)}${initilizerDeclaration}`;
+        if (this.name.toString()) {
+            return `${this.name}${compileType(this.type)}${initilizerDeclaration}`;
         }
         return "";
     }
@@ -1626,17 +1625,17 @@ export class VariableDeclaration extends Expression {
         return [];
     }
 
-    getVariableExpressions(): VariableExpression { 
-        if (this.name instanceof Identifier && this.initializer instanceof Expression) { 
+    getVariableExpressions(): VariableExpression {
+        if (this.name instanceof Identifier && this.initializer instanceof Expression) {
             return {
                 [this.name.toString()]: this.initializer
             };
         }
-        if (this.name instanceof BindingPattern) { 
+        if (this.name instanceof BindingPattern) {
             return this.name.elements.reduce((v: VariableExpression, e, index) => {
-                if (e.name) { 
+                if (e.name) {
                     const expressionString = (this.name as BindingPattern).type === "object" ? `${this.initializer}.${e.name.toString()}` :
-                    `${this.initializer}[${index}]`;
+                        `${this.initializer}[${index}]`;
                     const expression = new SimpleExpression(expressionString);
                     return {
                         [e.name.toString()]: expression,
@@ -1644,7 +1643,7 @@ export class VariableDeclaration extends Expression {
                     };
                 }
                 return v;
-             }, {});
+            }, {});
         }
         return {};
     }
@@ -1662,7 +1661,7 @@ export class VariableDeclarationList extends Expression {
 
     toString(options?: toStringOptions) {
         const declarations = this.declarations.map(d => d.toString(options)).filter(d => d);
-        if (declarations.length === 0) { 
+        if (declarations.length === 0) {
             return "";
         }
         return `${this.flags} ${declarations}`;
@@ -1672,8 +1671,8 @@ export class VariableDeclarationList extends Expression {
         return this.declarations.reduce((d: string[], p) => d.concat(p.getDependency()), []);
     }
 
-    getVariableExpressions(): VariableExpression { 
-        return this.declarations.reduce((v: VariableExpression, d) => { 
+    getVariableExpressions(): VariableExpression {
+        return this.declarations.reduce((v: VariableExpression, d) => {
             return {
                 ...v,
                 ...d.getVariableExpressions()
@@ -1749,7 +1748,7 @@ export class TemplateSpan extends ExpressionWithExpression {
 
     toString(options?: toStringOptions) {
         const expressionString = super.toString(options);
-        if (options?.disableTemplates) { 
+        if (options?.disableTemplates) {
             return `${expressionString}+"${this.literal}"`;
         }
         return `\${${expressionString}}${this.literal}`;
@@ -1768,7 +1767,7 @@ export class TemplateExpression extends Expression {
 
     toString(options?: toStringOptions) {
         const templateSpansStrings = this.templateSpans.map(s => s.toString(options));
-        if (options?.disableTemplates) { 
+        if (options?.disableTemplates) {
             return `"${this.head}"+${templateSpansStrings.join("+")}`;
         }
         return `\`${this.head}${templateSpansStrings.join("")}\``;
@@ -1872,12 +1871,12 @@ export class NamedImports {
         this.elements = elements;
     }
 
-    add(name: string) { 
+    add(name: string) {
         this.remove(name);
         this.node.push(new Identifier(name));
     }
-    
-    remove(name: string) { 
+
+    remove(name: string) {
         this.node = this.node.filter(n => n.toString() !== name);
     }
 
@@ -1886,37 +1885,37 @@ export class NamedImports {
     }
 }
 
-export class ImportClause { 
+export class ImportClause {
     name?: Identifier;
     namedBindings?: NamedImports;
-    constructor(name?: Identifier, namedBindings?: NamedImports) { 
+    constructor(name?: Identifier, namedBindings?: NamedImports) {
         this.name = name;
         this.namedBindings = namedBindings;
     }
 
-    get default() { 
+    get default() {
         return this.name?.toString() || "";
     }
 
-    get imports() { 
+    get imports() {
         return this.namedBindings?.node.map(m => m.toString()) || [];
     }
 
-    remove(name:string) { 
-        if (this.namedBindings) { 
+    remove(name: string) {
+        if (this.namedBindings) {
             this.namedBindings.remove(name);
         }
     }
 
-    add(name: string) { 
+    add(name: string) {
         if (this.namedBindings) {
             this.namedBindings.add(name);
-        } else { 
+        } else {
             this.namedBindings = new NamedImports([new Identifier(name)]);
         }
     }
 
-    toString() { 
+    toString() {
         const result: string[] = [];
         if (this.name) {
             result.push(this.name.toString());
@@ -1930,80 +1929,80 @@ export class ImportClause {
     }
 }
 
-export class ImportDeclaration { 
+export class ImportDeclaration {
     decorators: Decorator[];
     modifiers: string[];
     importClause: ImportClause;
     moduleSpecifier: StringLiteral;
 
-    replaceSpecifier(search: string | RegExp, replaceValue: string) { 
+    replaceSpecifier(search: string | RegExp, replaceValue: string) {
         this.moduleSpecifier.expression = this.moduleSpecifier.expression.replace(search, replaceValue);
     }
-    
-    add(name: string) { 
+
+    add(name: string) {
         this.importClause.add(name);
     }
 
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], importClause: ImportClause, moduleSpecifier: StringLiteral) { 
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], importClause: ImportClause, moduleSpecifier: StringLiteral) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.importClause = importClause;
         this.moduleSpecifier = moduleSpecifier;
     }
 
-    toString() { 
+    toString() {
         return `import ${this.importClause}${this.moduleSpecifier}`;
     }
 }
 
-export class JsxAttribute { 
+export class JsxAttribute {
     name: Identifier;
     initializer: Expression;
-    constructor(name: Identifier, initializer: Expression) { 
+    constructor(name: Identifier, initializer: Expression) {
         this.name = name;
         this.initializer = initializer;
     }
 
-    toString(options?:toStringOptions) { 
+    toString(options?: toStringOptions) {
         const name = this.name.toString(options);
         return `${(eventsDictionary as any)[name] || name}=${this.initializer.toString(options)}`;
     }
 }
 
-export class JsxOpeningElement extends Expression { 
+export class JsxOpeningElement extends Expression {
     tagName: Expression;
     typeArguments: any[];
     attributes: JsxAttribute[];
 
-    constructor(tagName: Expression, typeArguments: any[] = [], attributes: JsxAttribute[]) { 
+    constructor(tagName: Expression, typeArguments: any[] = [], attributes: JsxAttribute[]) {
         super();
         this.tagName = tagName;
         this.typeArguments = typeArguments;
         this.attributes = attributes;
     }
 
-    attributesString(options?:toStringOptions) { 
+    attributesString(options?: toStringOptions) {
         return this.attributes.map(a => a.toString(options)).join("\n");
     }
 
-    toString(options?:toStringOptions) { 
+    toString(options?: toStringOptions) {
         return `<${this.tagName.toString(options)} ${this.attributesString(options)}>`;
     }
 
-    addAttribute(attribute: JsxAttribute) { 
+    addAttribute(attribute: JsxAttribute) {
         this.attributes.push(attribute);
     }
 
-    isJsx() { 
+    isJsx() {
         return true
     }
 }
 
-export class JsxElement extends Expression { 
+export class JsxElement extends Expression {
     openingElement: JsxOpeningElement;
     children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>;
     closingElement: JsxClosingElement;
-    constructor(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: JsxClosingElement) { 
+    constructor(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: JsxClosingElement) {
         super();
         this.openingElement = openingElement;
         this.children = children;
@@ -2015,55 +2014,55 @@ export class JsxElement extends Expression {
         return `${this.openingElement.toString(options)}${children}${this.closingElement.toString(options)}`;
     }
 
-    addAttribute(attribute: JsxAttribute) { 
+    addAttribute(attribute: JsxAttribute) {
         this.openingElement.addAttribute(attribute);
     }
 
-    isJsx() { 
+    isJsx() {
         return true;
     }
 }
 
-export class JsxSelfClosingElement extends JsxOpeningElement{
-    toString(options?:toStringOptions) { 
+export class JsxSelfClosingElement extends JsxOpeningElement {
+    toString(options?: toStringOptions) {
         return `<${this.tagName.toString(options)} ${this.attributesString(options)}/>`;
     }
 }
- 
-export class JsxClosingElement extends JsxOpeningElement { 
-    constructor(tagName: Identifier) { 
+
+export class JsxClosingElement extends JsxOpeningElement {
+    constructor(tagName: Identifier) {
         super(tagName, [], []);
     }
 
-    toString(options?:toStringOptions) { 
+    toString(options?: toStringOptions) {
         return `</${this.tagName.toString(options)}>`;
     }
 }
 
-export class JsxExpression extends ExpressionWithExpression { 
+export class JsxExpression extends ExpressionWithExpression {
     dotDotDotToken: string;
-    constructor(dotDotDotToken: string="", expression: Expression) {
+    constructor(dotDotDotToken: string = "", expression: Expression) {
         super(expression);
         this.dotDotDotToken = dotDotDotToken;
     }
 
-    toString(options?:toStringOptions) { 
+    toString(options?: toStringOptions) {
         return `{${this.dotDotDotToken}${this.expression.toString(options)}}`;
     }
 
-    isJsx() { 
+    isJsx() {
         return true;
     }
 }
 
-export class AsExpression extends ExpressionWithExpression { 
+export class AsExpression extends ExpressionWithExpression {
     type: TypeNode | string;
     constructor(expression: Expression, type: TypeNode | string) {
         super(expression);
         this.type = type;
     }
 
-    toString(options?: toStringOptions) { 
+    toString(options?: toStringOptions) {
         return `${super.toString(options)} as ${this.type}`;
     }
 }
@@ -2283,14 +2282,14 @@ export class Generator {
         return new While(expression, statement);
     }
 
-    createImportDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], importClause: ImportClause=new ImportClause(), moduleSpecifier: StringLiteral) {
+    createImportDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], importClause: ImportClause = new ImportClause(), moduleSpecifier: StringLiteral) {
         if (moduleSpecifier.toString().indexOf("component_declaration/common") >= 0) {
             return "";
         }
         const context = this.getContext();
         if (context.defaultOptionsModule && context.path) {
             const relativePath = getModuleRelativePath(context.path, context.defaultOptionsModule);
-            if (relativePath.toString()===moduleSpecifier.valueOf()) {
+            if (relativePath.toString() === moduleSpecifier.valueOf()) {
                 context.defaultOptionsImport = new ImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
                 return context.defaultOptionsImport;
             }
@@ -2308,10 +2307,10 @@ export class Generator {
 
                 if (importClause) {
                     this.addComponent(importClause.default, this.cache[modulePath].find((e: any) => e instanceof ReactComponent));
-                    const componentInputs:ComponentInput[] = this.cache[modulePath].filter((e: any) => e instanceof ComponentInput);
+                    const componentInputs: ComponentInput[] = this.cache[modulePath].filter((e: any) => e instanceof ComponentInput);
                     componentInputs.length && importClause.imports.forEach(i => {
                         const componentInput = componentInputs.find(c => c.name.toString() === i && c.modifiers.indexOf("export") >= 0);
-                        if (componentInput) { 
+                        if (componentInput) {
                             this.addComponent(i, componentInput);
                         }
                     });
@@ -2342,11 +2341,11 @@ export class Generator {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
-    createComponent(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
+    createComponent(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) {
         return new ReactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members, this.getContext());
     }
 
-    createComponentBindings(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
+    createComponentBindings(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) {
         return new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members)
     }
 
@@ -2387,11 +2386,11 @@ export class Generator {
         return properties;
     }
 
-    createJsxOpeningElement(tagName: Identifier, typeArguments: any[], attributes: JsxAttribute[]=[]) {
+    createJsxOpeningElement(tagName: Identifier, typeArguments: any[], attributes: JsxAttribute[] = []) {
         return new JsxOpeningElement(tagName, typeArguments, attributes);
     }
 
-    createJsxSelfClosingElement(tagName: Identifier, typeArguments: any[], attributes: JsxAttribute[]=[]) {
+    createJsxSelfClosingElement(tagName: Identifier, typeArguments: any[], attributes: JsxAttribute[] = []) {
         return new JsxSelfClosingElement(tagName, typeArguments, attributes);
     }
 
@@ -2457,11 +2456,11 @@ export class Generator {
         return `{${members.join(",")}}`;
     }
 
-    createLiteralTypeNode(literal: any) { 
+    createLiteralTypeNode(literal: any) {
         return literal;
     }
 
-    createTypeAliasDeclaration(decorators: Decorator[]=[], modifiers: string[]=[], name: Identifier, typeParameters: any[]=[], type: string) { 
+    createTypeAliasDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, typeParameters: any[] = [], type: string) {
         return `${modifiers.join(" ")} type ${name} = ${type}`;
     }
 
@@ -2469,7 +2468,7 @@ export class Generator {
         return types.join("&");
     }
 
-    createTypeQueryNode(exprName: Expression) { 
+    createTypeQueryNode(exprName: Expression) {
         return `typeof ${exprName}`;
     }
 
@@ -2547,7 +2546,7 @@ export class Generator {
         return new HeritageClause(token, types, this.getContext());
     }
 
-    createPropertyAccessChain(expression: Expression, questionDotToken: string|undefined, name: Expression) {
+    createPropertyAccessChain(expression: Expression, questionDotToken: string | undefined, name: Expression) {
         return new PropertyAccessChain(expression, questionDotToken, name);
     }
 
@@ -2555,11 +2554,11 @@ export class Generator {
         return new CallChain(expression, questionDotToken, typeArguments, argumentsArray);
     }
 
-    createAsExpression(expression: Expression, type: TypeNode | string) { 
+    createAsExpression(expression: Expression, type: TypeNode | string) {
         return new AsExpression(expression, type);
     }
 
-    createRegularExpressionLiteral(text: string) { 
+    createRegularExpressionLiteral(text: string) {
         return new SimpleExpression(text);
     }
 
