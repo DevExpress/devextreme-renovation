@@ -9,6 +9,7 @@ const eventsDictionary = {
     pointerdown: "onPointerDown",
     click: "onClick"
 }
+
 function compileType(type: string = "", questionToken: string = "") {
     return type ? `${questionToken}:${type}` : "";
 }
