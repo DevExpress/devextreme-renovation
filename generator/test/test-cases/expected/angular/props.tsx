@@ -11,7 +11,7 @@ import { CommonModule } from "@angular/common";
 @Component({
     selector: "dx-widget"
 })
-export default class DxWidgetComponent {
+export default class Widget {
     @Input() height: number = 10;
     @Output() onClick: EventEmitter<any> = new EventEmitter();
 
@@ -33,10 +33,10 @@ export default class DxWidgetComponent {
 }
 
 @NgModule({
-    declarations: [DxWidgetComponent],
+    declarations: [Widget],
     imports: [
         CommonModule
     ],
-    exports: [DxWidgetComponent]
+    exports: [Widget]
 })
 export class DxWidgetModule { }

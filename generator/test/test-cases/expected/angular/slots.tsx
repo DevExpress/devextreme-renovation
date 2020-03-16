@@ -16,15 +16,15 @@ import { CommonModule } from "@angular/common";
         </div>
     </div>`
 })
-export default class DxWidgetComponent extends WidgetInput {
+export default class Widget extends WidgetInput {
     
 }
 
 @NgModule({
-    declarations: [DxWidgetComponent],
+    declarations: [Widget],
     imports: [
         CommonModule
     ],
-    exports: [DxWidgetComponent]
+    exports: [Widget]
 })
 export class DxWidgetModule { }

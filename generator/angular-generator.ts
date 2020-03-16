@@ -600,17 +600,13 @@ class AngularComponent extends ReactComponent {
         return members;
     }
 
-    get name() {
-        return `Dx${this._name}Component`;
-    }
-
     get selector() {
         const words = this._name.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
         return ["dx"].concat(words).join("-");
     }
 
     get module() { 
-        return this.name.replace(/(.+)(Component)/, "$1Module")
+        return `Dx${this._name}Module`
     }
 
     compileImports() { 
@@ -781,7 +777,6 @@ class AngularComponent extends ReactComponent {
             ${this.compileLifeCycle("ngAfterViewInit", ngAfterViewInitStatements)}
             ${this.compileLifeCycle("ngOnChanges", ngOnChangesStatements)}
             ${this.compileLifeCycle("ngOnDestroy", ngOnDestroyStatements)}
-           
         }
         @NgModule({
             declarations: [${this.name}],

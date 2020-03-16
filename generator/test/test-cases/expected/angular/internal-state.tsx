@@ -11,7 +11,7 @@ import { CommonModule } from "@angular/common"
     name: "Component",
     selector: "dx-widget"
 })
-export default class DxWidgetComponent {
+export default class Widget {
     _hovered: Boolean = false;
     updateState(): any {
         this._hovered = !this._hovered
@@ -28,10 +28,10 @@ export default class DxWidgetComponent {
 
 }
 @NgModule({
-    declarations: [DxWidgetComponent],
+    declarations: [Widget],
     imports: [
         CommonModule
     ],
-    exports: [DxWidgetComponent]
+    exports: [Widget]
 })
 export class DxWidgetModule { }

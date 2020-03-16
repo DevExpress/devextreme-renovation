@@ -16,7 +16,7 @@ export class WidgetInput {
 import { Component, NgModule, Input, Output, EventEmitter } from "@angular/core";
 import { CommonModule } from "@angular/common"
 @Component({ selector: "dx-widget" })
-export default class DxWidgetComponent extends WidgetInput {
+export default class Widget extends WidgetInput {
     i: number = 10;
     __setupData(): any {
         const id = subscribe(this.p, this.s, this.i);
@@ -36,10 +36,10 @@ export default class DxWidgetComponent extends WidgetInput {
 
 }
 @NgModule({
-    declarations: [DxWidgetComponent],
+    declarations: [Widget],
     imports: [
         CommonModule
     ],
-    exports: [DxWidgetComponent]
+    exports: [Widget]
 })
 export class DxWidgetModule { }

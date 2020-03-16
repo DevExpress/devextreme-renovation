@@ -10,7 +10,7 @@ import { CommonModule } from "@angular/common";
                 <input #_auto_ref_0/>
                 </div>`
 })
-export default class DxWidgetComponent extends WidgetInput {
+export default class Widget extends WidgetInput {
     @ViewChild("host", { static: false }) host: ElementRef<HTMLDivElement>;
 
     get __attr1() {
@@ -46,10 +46,10 @@ export default class DxWidgetComponent extends WidgetInput {
     }
 }
 @NgModule({
-    declarations: [DxWidgetComponent],
+    declarations: [Widget],
     imports: [
         CommonModule
     ],
-    exports: [DxWidgetComponent]
+    exports: [Widget]
 })
 export class DxWidgetModule { }

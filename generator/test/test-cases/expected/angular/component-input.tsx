@@ -9,17 +9,17 @@ export class WidgetProps  {
 import {Component,NgModule,Input} from "@angular/core";
 import {CommonModule} from "@angular/common"
 @Component({selector:"dx-widget"})
-export default class DxWidgetComponent extends WidgetProps {
+export default class Widget extends WidgetProps {
      __onClick():any{
      const v=this.height
 }
     
 }
 @NgModule({
-    declarations: [DxWidgetComponent],
+    declarations: [Widget],
     imports: [
         CommonModule
     ],
-    exports: [DxWidgetComponent]
+    exports: [Widget]
 })
 export class DxWidgetModule {}

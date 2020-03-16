@@ -9,7 +9,7 @@ import { CommonModule } from "@angular/common";
                     <span ></span>
               </div>`
 })
-export default class DxWidgetComponent {
+export default class Widget {
     @Input() height: number;
     @Input() width: number;
 
@@ -25,11 +25,11 @@ export default class DxWidgetComponent {
 }
 
 @NgModule({
-    declarations: [DxWidgetComponent],
+    declarations: [Widget],
     imports: [
         CommonModule
     ],
-    exports: [DxWidgetComponent]
+    exports: [Widget]
 })
 export class DxWidgetModule { }
 

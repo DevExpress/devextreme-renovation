@@ -1879,16 +1879,16 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(getResult(component.toString()), getResult(`
                 ${component.compileImports()}
                 ${component.decorator}
-                export default class DxBaseWidgetComponent {
+                export default class BaseWidget {
 
                 }
 
                 @NgModule({
-                    declarations: [DxBaseWidgetComponent],
+                    declarations: [BaseWidget],
                     imports: [
                         CommonModule
                     ],
-                    exports: [DxBaseWidgetComponent]
+                    exports: [BaseWidget]
                 })
                 export class DxBaseWidgetModule {}
             `));
@@ -1938,16 +1938,16 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(getResult(component.toString()), getResult(`
                 ${component.compileImports()}
                 ${component.decorator}
-                export default class DxBaseWidgetComponent extends Input {
+                export default class BaseWidget extends Input {
 
                 }
 
                 @NgModule({
-                    declarations: [DxBaseWidgetComponent],
+                    declarations: [BaseWidget],
                     imports: [
                         CommonModule
                     ],
-                    exports: [DxBaseWidgetComponent]
+                    exports: [BaseWidget]
                 })
                 export class DxBaseWidgetModule {}
             `));
