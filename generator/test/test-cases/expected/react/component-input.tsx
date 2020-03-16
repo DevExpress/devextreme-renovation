@@ -1,7 +1,6 @@
 function view() { }
-function viewModel() { }
 
-declare type WidgetProps={
+declare type WidgetProps = {
     height?: number;
     children?: React.ReactNode
 }
@@ -14,15 +13,15 @@ import React, { useCallback } from "react";
 
 interface Widget {
     props: WidgetProps,
-    onClick:()=>any
+    onClick: () => any
 }
 
 export default function Widget(props: WidgetProps) {
-    const onClick = useCallback(() => {
+    const onClick = useCallback(function onClick() {
         const v = props.height
     }, [props.height]);
 
-    return view(viewModel({
+    return view(({
         props: { ...props },
         onClick
     }));

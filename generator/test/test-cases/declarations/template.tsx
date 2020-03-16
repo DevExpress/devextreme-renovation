@@ -2,20 +2,18 @@ import { Component, Template, ComponentBindings, JSXComponent } from "../../../c
 
 @ComponentBindings()
 export class WidgetInput { 
-    @Template() template?: ()=>HTMLDivElement;
-    @Template() contentTemplate: (a: string) => any = (a: string) => (<div>{a}</div>);
+    @Template() template: () => any = () => <div></div>;
+    @Template() contentTemplate: (data: {p1: string }) => any = (data) => (<div>{data.p1}</div>);
 }
 
 @Component({
     view: view
 })
-export default class Widget extends JSXComponent<WidgetInput> {
-    
-}
+export default class Widget extends JSXComponent<WidgetInput> {}
 
 function view(viewModel: Widget) { 
     return (<div>
-        {viewModel.props.contentTemplate("1")}
-        {viewModel.props.template?.()}
+        <viewModel.props.contentTemplate p1={"value"}/>
+        <viewModel.props.template />
     </div>)
 }

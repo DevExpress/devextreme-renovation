@@ -40,11 +40,31 @@ mocha.describe("angular-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("internal-state", function () { 
+        this.testGenerator(this.test!.title);
+    })
+
     mocha.it("empty-component", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("component-input", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("slots", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("effect", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("spread-attribute", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("template", function () {
         this.testGenerator(this.test!.title);
     });
 });

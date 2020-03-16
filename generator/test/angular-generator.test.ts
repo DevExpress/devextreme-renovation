@@ -1,8 +1,9 @@
 import mocha from "mocha";
-import generator, { Property } from "../angular-generator";
+import generator, { Property, AngularDirective } from "../angular-generator";
 import assert from "assert";
 
 import { printSourceCodeAst as getResult } from "./helpers/common";
+import { Identifier } from "../react-generator";
 
 if (!mocha.describe) { 
     mocha.describe = describe;
@@ -17,11 +18,40 @@ function createDecorator(name: string) {
     ));
 }
 
+function createComponentDecorator(paramenters: {[name:string]: any}) { 
+    return generator.createDecorator(
+        generator.createCall(
+            generator.createIdentifier("Component"),
+            [],
+            [generator.createObjectLiteral(
+                Object.keys(paramenters).map(k => 
+                    generator.createPropertyAssignment(
+                        generator.createIdentifier(k),
+                        paramenters[k]
+                    )
+                ),
+                false
+            )]
+        )
+    )
+}
+
+function createComponent(properties: Property[]=[]) {
+    return generator.createComponent(
+        createComponentDecorator({}),
+        [],
+        generator.createIdentifier("BaseWidget"),
+        [],
+        [],
+        properties
+    );
+}
+
 mocha.describe("Angular generator", function () {
     
-    mocha.describe("JSX -> AngularTemplate", function () { 
+    mocha.describe("JSX -> AngularTemplate", function () {
         
-        mocha.it("Empty JsxOpeningElement", function () { 
+        mocha.it("Empty JsxOpeningElement", function () {
             assert.strictEqual(
                 generator.createJsxOpeningElement(
                     generator.createIdentifier("div"),
@@ -32,15 +62,26 @@ mocha.describe("Angular generator", function () {
             );
         });
 
-        mocha.it("Empty JsxSelfClosingElement", function () {
+        mocha.it("Empty JsxSelfClosingElement should have opening and closing tags", function () {
             assert.strictEqual(
                 generator.createJsxSelfClosingElement(
                     generator.createIdentifier("div"),
                     undefined,
                     undefined
                 ).toString(),
-                "<div />"
-            ); 
+                "<div ></div>"
+            );
+        });
+
+        mocha.it("Void elements should be self-closing", function () {
+            assert.strictEqual(
+                generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("img"),
+                    undefined,
+                    undefined
+                ).toString(),
+                "<img />"
+            );
         });
 
         mocha.it(`JsxAttribute with expression - [attr]="value"`, function () {
@@ -87,7 +128,7 @@ mocha.describe("Angular generator", function () {
                 )
             );
 
-            assert.strictEqual(expression.toString(), String.raw`[attr]="\"a\"+1+\"b\"+2+\"c\""`);
+            assert.strictEqual(expression.toString(), `[attr]="'a'+1+'b'+2+'c'"`);
         });
 
         mocha.it(`JsxAttribute with string literal expression - attr="value"`, function () {
@@ -109,39 +150,45 @@ mocha.describe("Angular generator", function () {
                 ])
             );
 
-            assert.strictEqual(expression.toString(), `<div [a1]="10"\n[a2]="15"/>`);
+            assert.strictEqual(expression.toString(), `<div [a1]="10"\n[a2]="15"></div>`);
         });
 
-        mocha.it("JSX element witn Opening and Close Elements", function () { 
+        mocha.it("JSX element witn Opening and Close Elements", function () {
             const expression = generator.createJsxElement(
                 generator.createJsxOpeningElement(
                     generator.createIdentifier("div"),
                     undefined,
                     generator.createJsxAttributes([generator.createJsxAttribute(
-                        generator.createIdentifier("style"),
-                        generator.createJsxExpression(
-                            undefined,
-                            generator.createObjectLiteral(
-                                [generator.createPropertyAssignment(
-                                    generator.createIdentifier("height"),
-                                    generator.createPropertyAccess(
-                                        generator.createIdentifier("viewModel"),
-                                        generator.createIdentifier("height")
-                                    )
-                                )],
-                                false
-                            )
-                        )
+                        generator.createIdentifier("a"),
+                        generator.createIdentifier("value")
                     )])
                 ),
                 [],
                 generator.createJsxClosingElement(generator.createIdentifier("div"))
             );
 
-            assert.strictEqual(expression.toString(), '<div [style]="{height:viewModel.height}"></div>');
+            assert.strictEqual(expression.toString(), '<div [a]="value"></div>');
         });
 
-        mocha.it("JSX element witn with child element", function () { 
+        mocha.it("Fragment should be ignored", function () {
+            const expression = generator.createJsxElement(
+                generator.createJsxOpeningElement(
+                    generator.createIdentifier("Fragment"),
+                    undefined,
+                    undefined
+                ),
+                [
+                    generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                ],
+                generator.createJsxClosingElement(generator.createIdentifier("Fragment"))
+            );
+
+            assert.strictEqual(expression.toString(), '<div ></div>');
+        });
+
+        mocha.it("JSX element witn with child element", function () {
             const expression = generator.createJsxElement(
                 generator.createJsxOpeningElement(
                     generator.createIdentifier("parent"),
@@ -154,7 +201,7 @@ mocha.describe("Angular generator", function () {
                 generator.createJsxClosingElement(generator.createIdentifier("parent"))
             );
 
-            assert.strictEqual(expression.toString(), '<parent ><child /></parent>');
+            assert.strictEqual(expression.toString(), '<parent ><child ></child></parent>');
         });
 
         mocha.it("JSX element witn with child element that transformed from expression - no wrap it {{}}", function () {
@@ -217,7 +264,19 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), `[class]="value"`);
         });
 
-        mocha.it("notJsxExpr && <element></element> -> <element *ngIf='notJsxExpr'></element>", function () { 
+        mocha.it("Rename style attribute to ngStyle", function () {
+            const expression = generator.createJsxAttribute(
+                generator.createIdentifier("style"),
+                generator.createJsxExpression(
+                    undefined,
+                    generator.createIdentifier("value")
+                )
+            );
+
+            assert.strictEqual(expression.toString(), `[ngStyle]="value"`);
+        });
+
+        mocha.it("notJsxExpr && <element></element> -> <element *ngIf='notJsxExpr'></element>", function () {
             const expression = generator.createJsxExpression(
                 undefined,
                 generator.createBinary(
@@ -243,7 +302,7 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), `<input *ngIf="viewModel.input"></input>`);
         });
 
-        mocha.it("notJsxExpr && <element/> -> <element *ngIf='notJsxExpr' />", function () { 
+        mocha.it("notJsxExpr && <element/> -> <element *ngIf='notJsxExpr' />", function () {
             const expression = generator.createJsxExpression(
                 undefined,
                 generator.createBinary(
@@ -252,18 +311,39 @@ mocha.describe("Angular generator", function () {
                         generator.createIdentifier("input")
                     ),
                     generator.createToken(generator.SyntaxKind.AmpersandAmpersandToken),
-                        generator.createJsxSelfClosingElement(
-                            generator.createIdentifier("input"),
-                            undefined,
-                            generator.createJsxAttributes([])
-                        )
+                    generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("input"),
+                        undefined,
+                        generator.createJsxAttributes([])
+                    )
                 )
             );
 
             assert.strictEqual(expression.toString(), `<input *ngIf="viewModel.input"/>`);
         });
 
-        mocha.it("<element>nonJsxExpr</element> -> <element>{{nonJsxExpr}}</element>", function () { 
+        mocha.it("ngIf derictive with string - replace quotes with backslach quotes", function () {
+            const expression = generator.createJsxExpression(
+                undefined,
+                generator.createBinary(
+                    generator.createBinary(
+                        generator.createIdentifier("viewModel"),
+                        generator.SyntaxKind.EqualsEqualsEqualsToken,
+                        generator.createStringLiteral("input")
+                    ),
+                    generator.createToken(generator.SyntaxKind.AmpersandAmpersandToken),
+                    generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("input"),
+                        undefined,
+                        generator.createJsxAttributes([])
+                    )
+                )
+            );
+
+            assert.strictEqual(expression.toString(), `<input *ngIf="viewModel==='input'"/>`);
+        });
+
+        mocha.it("<element>nonJsxExpr</element> -> <element>{{nonJsxExpr}}</element>", function () {
             const expression = generator.createJsxElement(
                 generator.createJsxOpeningElement(
                     generator.createIdentifier("span"),
@@ -284,7 +364,97 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), "<span >{{viewModel.text}}</span>");
         });
 
-        mocha.it("ref", function () { 
+        mocha.describe("Spread Attributes", function () { 
+            this.beforeEach(function () {
+                generator.setContext(null);
+                generator.setContext({
+                    path: __dirname
+                });
+            });
+
+            this.afterEach(function () {
+                generator.setContext(null);
+            });
+            mocha.it("should not be in element", function () { 
+                const expression = generator.createJsxSpreadAttribute(
+                    generator.createIdentifier("attr")
+                );
+    
+                assert.strictEqual(expression.toString(), "");
+            });
+
+            mocha.it("element with spread attribute should not generate ref attribute if it have one", function () { 
+                const spread = generator.createJsxSpreadAttribute(
+                    generator.createIdentifier("attr")
+                );
+
+                const element = generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("input"),
+                    [],
+                    [
+                        spread,
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("ref"),
+                            generator.createIdentifier("value")
+                        )
+                    ]
+                );
+    
+                assert.strictEqual(element.toString(), "<input #value/>");
+                const spreadAttributes = element.getSpreadAttributes();
+                assert.strictEqual(spreadAttributes.length, 1);
+                assert.strictEqual(spreadAttributes[0].expression.toString(), "attr");
+                assert.strictEqual(spreadAttributes[0].refExpression.toString(), "value");
+            });
+
+            mocha.it("element with spread attribute should generate unique ref attribute if it have no one", function () { 
+                const spread = generator.createJsxSpreadAttribute(
+                    generator.createIdentifier("attr")
+                );
+
+                const element = generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("input"),
+                    [],
+                    [spread]
+                );
+    
+                assert.strictEqual(element.toString(), "<input #_auto_ref_0/>");
+                const spreadAttributes = element.getSpreadAttributes();
+                assert.strictEqual(spreadAttributes.length, 1);
+                assert.strictEqual(spreadAttributes[0].expression.toString(), "attr");
+                assert.strictEqual(spreadAttributes[0].refExpression.toString(), "_auto_ref_0");
+            });
+
+            mocha.it("getJsxAttributes should collect attributes from all tree", function () { 
+                const spread = generator.createJsxSpreadAttribute(
+                    generator.createIdentifier("attr")
+                );
+
+                const element = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        [],
+                        [spread]
+                    ),
+                    [
+                        generator.createJsxSelfClosingElement(
+                            generator.createIdentifier("input"),
+                            [],
+                            [spread]
+                        )
+                    ],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(element.toString(), "<div #_auto_ref_1><input #_auto_ref_0/></div>");
+                const spreadAttributes = element.getSpreadAttributes();
+                assert.strictEqual(spreadAttributes.length, 2);
+            });
+        });
+
+        mocha.it("ref", function () {
             const expression = generator.createJsxAttribute(
                 generator.createIdentifier("ref"),
                 generator.createPropertyAccess(
@@ -294,6 +464,65 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(expression.toString(), "#viewModel.refName");
+        });
+
+        mocha.it("ref with component context", function () {
+            const expression = generator.createJsxAttribute(
+                generator.createIdentifier("ref"),
+                generator.createPropertyAccess(
+                    generator.createIdentifier("viewModel"),
+                    generator.createIdentifier("refName")
+                )
+            );
+
+            assert.strictEqual(expression.toString({
+                state: [],
+                internalState: [],
+                props: [],
+                members: [
+                    generator.createProperty(
+                        [createDecorator("Ref")],
+                        [],
+                        generator.createIdentifier("refName"),
+                        undefined,
+                        undefined,
+                        undefined
+                    )
+                ],
+                componentContext: "viewModel",
+                newComponentContext: ""
+            }), "#refName");
+        });
+
+        mocha.it("ref with component context", function () {
+            const expression = generator.createJsxAttribute(
+                generator.createIdentifier("ref"),
+                generator.createAsExpression(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("refName")
+                    ),
+                    "any"
+                )
+            );
+
+            assert.strictEqual(expression.toString({
+                state: [],
+                internalState: [],
+                props: [],
+                members: [
+                    generator.createProperty(
+                        [createDecorator("Ref")],
+                        [],
+                        generator.createIdentifier("refName"),
+                        undefined,
+                        undefined,
+                        undefined
+                    )
+                ],
+                componentContext: "viewModel",
+                newComponentContext: ""
+            }), "#refName");
         });
 
         mocha.describe("slots", function () {
@@ -310,7 +539,7 @@ mocha.describe("Angular generator", function () {
                             generator.createIdentifier("viewModel"),
                             generator.createIdentifier("name")
                         )
-                      )],
+                    )],
                     generator.createJsxClosingElement(generator.createIdentifier("span"))
                 );
 
@@ -327,7 +556,44 @@ mocha.describe("Angular generator", function () {
                     members: [slotProperty],
                     internalState: [],
                     state: [],
-                    props: []
+                    props: [],
+                    componentContext: "viewModel"
+                }), `<span ><ng-content select="[name]"></ng-content></span>`);
+            });
+
+            mocha.it("named slot with empty context", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("span"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("name")
+                        )
+                    )],
+                    generator.createJsxClosingElement(generator.createIdentifier("span"))
+                );
+
+                const slotProperty = generator.createProperty(
+                    [createDecorator("Slot")],
+                    [],
+                    generator.createIdentifier("name"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    generator.createFalse()
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [slotProperty],
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
                 }), `<span ><ng-content select="[name]"></ng-content></span>`);
             });
 
@@ -344,7 +610,7 @@ mocha.describe("Angular generator", function () {
                             generator.createIdentifier("viewModel"),
                             generator.createIdentifier("default")
                         )
-                      )],
+                    )],
                     generator.createJsxClosingElement(generator.createIdentifier("span"))
                 );
 
@@ -364,9 +630,308 @@ mocha.describe("Angular generator", function () {
                     props: []
                 }), `<span ><ng-content></ng-content></span>`);
             });
+
+            mocha.describe("Import widget.", function () {
+                this.beforeEach(function () {
+                    generator.setContext({
+                        path: __dirname
+                    });
+                    generator.createImportDeclaration(
+                        [],
+                        [],
+                        generator.createImportClause(
+                            generator.createIdentifier("Widget"),
+                            undefined
+                        ),
+                        generator.createStringLiteral("./test-cases/declarations/empty-component")
+                    );
+                });
+
+                this.afterEach(function () {
+                    generator.setContext(null);
+                });
+
+                mocha.it("<Widget></Widget> -> <dx-widget></dx-widget>", function () {
+                    const element = generator.createJsxElement(
+                        generator.createJsxOpeningElement(generator.createIdentifier("Widget")),
+                        [],
+                        generator.createJsxClosingElement(generator.createIdentifier("Widget"))
+                    );
+
+                    assert.strictEqual(element.toString(), "<dx-widget ></dx-widget>");
+                });
+
+                mocha.it("<Widget/> -> <dx-widget></dx-widget>", function () {
+                    const element = generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("Widget"),
+                        []
+                    );
+
+                    assert.strictEqual(element.toString(), "<dx-widget ></dx-widget>");
+                });
+
+                mocha.it("import component statement should have import module", function () {
+                    const expression = generator.createImportDeclaration(
+                        [],
+                        [],
+                        generator.createImportClause(
+                            generator.createIdentifier("Component"),
+                            undefined
+                        ),
+                        generator.createStringLiteral("./test-cases/declarations/empty-component")
+                    );
+        
+                    assert.strictEqual(expression.toString(), `import Component,{DxWidgetModule} from "./test-cases/declarations/empty-component"`);
+                });
+
+                mocha.it("Event attribute should be wrapped in paren", function () {
+                    generator.createClassDeclaration(
+                        [createComponentDecorator({})],
+                        [],
+                        generator.createIdentifier("Widget"),
+                        [],
+                        [],
+                        [
+                        generator.createProperty(
+                            [createDecorator("Event")],
+                            [],
+                            generator.createIdentifier("event"),
+                            undefined,
+                            undefined,
+                            undefined
+                        )]
+                    );
+
+                    const element = generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("Widget"),
+                        [],
+                        [
+                            generator.createJsxAttribute(
+                                generator.createIdentifier("event"),
+                                generator.createIdentifier("value")
+                            )
+                        ]
+                    );
+
+                    assert.strictEqual(element.toString({
+                        state: [],
+                        props: [],
+                        members: [],
+                        internalState: [],
+                    }), `<dx-widget (event)="value($event)"></dx-widget>`);        
+                });
+
+                mocha.it("className should not be renamed to class", function () {
+                    generator.createClassDeclaration(
+                        [createComponentDecorator({})],
+                        [],
+                        generator.createIdentifier("Widget"),
+                        [],
+                        [],
+                        [
+                        generator.createProperty(
+                            [createDecorator("OneWay")],
+                            [],
+                            generator.createIdentifier("className"),
+                            undefined,
+                            undefined,
+                            undefined
+                        )]
+                    );
+
+                    const element = generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("Widget"),
+                        [],
+                        [
+                            generator.createJsxAttribute(
+                                generator.createIdentifier("className"),
+                                generator.createIdentifier("value")
+                            )
+                        ]
+                    );
+
+                    assert.strictEqual(element.toString({
+                        state: [],
+                        props: [],
+                        members: [],
+                        internalState: [],
+                    }), `<dx-widget [className]="value"></dx-widget>`);        
+                });
+
+                mocha.it("className should be renamed to class in children", function () {
+                    generator.createClassDeclaration(
+                        [createComponentDecorator({})],
+                        [],
+                        generator.createIdentifier("Widget"),
+                        [],
+                        [],
+                        [
+                        generator.createProperty(
+                            [createDecorator("OneWay")],
+                            [],
+                            generator.createIdentifier("className"),
+                            undefined,
+                            undefined,
+                            undefined
+                        )]
+                    );
+
+                    const element = generator.createJsxElement(
+                        generator.createJsxOpeningElement(
+                            generator.createIdentifier("Widget"),
+                            [],
+                            [
+                                generator.createJsxAttribute(
+                                    generator.createIdentifier("className"),
+                                    generator.createIdentifier("value")
+                                )
+                            ]
+                        ),
+                        [generator.createJsxElement(
+                            generator.createJsxOpeningElement(
+                                generator.createIdentifier("div"),
+                                [],
+                                [
+                                    generator.createJsxAttribute(
+                                        generator.createIdentifier("className"),
+                                        generator.createStringLiteral("class-name")
+                                    )
+                                ]
+                            ),
+                            [],
+                            generator.createJsxClosingElement(
+                                generator.createIdentifier("div")
+                            )
+                        )],
+                        generator.createJsxClosingElement(
+                            generator.createIdentifier("Widget")
+                        )
+                    );
+
+                    assert.strictEqual(element.toString({
+                        state: [],
+                        props: [],
+                        members: [],
+                        internalState: [],
+                    }), `<dx-widget [className]="value"><div class="class-name"></div></dx-widget>`);        
+                });
+
+            });
+
         });
 
-        mocha.describe("View Function", function () { 
+        mocha.describe("template", function () {
+            mocha.it("<template/> -> <ng-container>", function () {
+                const expression = generator.createJsxSelfClosingElement(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("template")
+                    ),
+                    [],
+                    []
+                );
+
+                const templateProperty = generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [templateProperty],
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), `<ng-container *ngTemplateOutlet="template"></ng-container>`);
+            });
+
+            mocha.it("template attributes -> template context", function () {
+                const expression = generator.createJsxSelfClosingElement(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("template")
+                    ),
+                    [],
+                    [
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("a1"),
+                            generator.createStringLiteral("str")
+                        ),
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("a2"),
+                            generator.createNumericLiteral("10")
+                        )
+                    ]
+                );
+
+                const templateProperty = generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [templateProperty],
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), `<ng-container *ngTemplateOutlet="template; context:{a1: \'str\',a2: 10}"></ng-container>`);
+            });
+
+            mocha.it("render template with condition *ngIf", function () {
+                const expression = generator.createJsxSelfClosingElement(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("template")
+                    ),
+                    [],
+                    [
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("a1"),
+                            generator.createStringLiteral("str")
+                        ),
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("a2"),
+                            generator.createNumericLiteral("10")
+                        )
+                    ]
+                );
+
+                expression.addAttribute(new AngularDirective(new Identifier("*ngIf"), generator.createIdentifier("condition")))
+
+                const templateProperty = generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [templateProperty],
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }).replace(/(\s|\s)/gi, ""), `<ng-container *ngIf="condition">
+                        <ng-container *ngTemplateOutlet="template; context:{a1: 'str',a2: 10}"></ng-container>
+                    </ng-container>`.replace(/(\s|\s)/gi, ""));
+            });
+        });
+
+        mocha.describe("View Function", function () {
             this.beforeEach(function () {
                 generator.setContext({});
 
@@ -378,7 +943,7 @@ mocha.describe("Angular generator", function () {
                     )
                 ], false);
             });
-            this.afterEach(function () { 
+            this.afterEach(function () {
                 generator.setContext(null);
             });
 
@@ -395,7 +960,7 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.toString(), "");
-                assert.strictEqual(expression.getTemplate(), "<div />");
+                assert.strictEqual(expression.getTemplate(), "<div ></div>");
             });
 
             mocha.it("Rename viewModel identifier", function () {
@@ -446,7 +1011,13 @@ mocha.describe("Angular generator", function () {
                     ], false)
                 );
 
-                assert.strictEqual(expression.getTemplate(), `<span [attr]="_viewModel.value">{{_viewModel.text}}</span>`);
+                assert.strictEqual(expression.getTemplate({
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    members: [],
+                    newComponentContext: "_viewModel"
+                }), `<span [attr]="_viewModel.value">{{_viewModel.text}}</span>`);
             });
 
             mocha.it("Function without JSX is generated", function () {
@@ -478,7 +1049,7 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.isJsx(), true);
-                assert.strictEqual(expression.getTemplate(), "<div />");
+                assert.strictEqual(expression.getTemplate(), "<div ></div>");
                 assert.strictEqual(expression.toString(), "");
             });
 
@@ -497,7 +1068,7 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.isJsx(), true);
-                assert.strictEqual(expression.getTemplate(), "<div />");
+                assert.strictEqual(expression.getTemplate(), "<div ></div>");
                 assert.strictEqual(expression.toString(), "");
             });
 
@@ -570,25 +1141,28 @@ mocha.describe("Angular generator", function () {
 
             mocha.it("Can use variables in view function", function () {
                 const block = generator.createBlock([
-                    generator.createVariableDeclarationList(
-                        [generator.createVariableDeclaration(
-                            generator.createIdentifier("v"),
-                            undefined,
-                            generator.createNumericLiteral("10")
-                        )],
-                        generator.SyntaxKind.ConstKeyword
+                    generator.createVariableStatement(
+                        [],
+                        generator.createVariableDeclarationList(
+                            [generator.createVariableDeclaration(
+                                generator.createIdentifier("v"),
+                                undefined,
+                                generator.createNumericLiteral("10")
+                            )],
+                            generator.SyntaxKind.ConstKeyword
+                        )
                     ),
                     generator.createReturn(
-                            generator.createJsxSelfClosingElement(
-                                generator.createIdentifier("div"),
-                                undefined,
-                                [
-                                    generator.createJsxAttribute(
-                                        generator.createIdentifier("v"),
-                                        generator.createIdentifier("v")
-                                    )
-                                ]
-                            )
+                        generator.createJsxSelfClosingElement(
+                            generator.createIdentifier("div"),
+                            undefined,
+                            [
+                                generator.createJsxAttribute(
+                                    generator.createIdentifier("v"),
+                                    generator.createIdentifier("v")
+                                )
+                            ]
+                        )
                     )
                 ], false);
 
@@ -609,10 +1183,250 @@ mocha.describe("Angular generator", function () {
                     state: [],
                     props: [],
                     members: []
-                }), `<div [v]="10"/>`);
+                }), `<div [v]="10"></div>`);
+            });
+
+            mocha.it("Can decomposite component", function () {
+                const block = generator.createBlock([
+                    generator.createReturn(
+                        generator.createJsxSelfClosingElement(
+                            generator.createIdentifier("div"),
+                            undefined,
+                            [
+                                generator.createJsxAttribute(
+                                    generator.createIdentifier("v"),
+                                    generator.createIdentifier("height")
+                                )
+                            ]
+                        )
+                    )
+                ], false);
+
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [
+                        generator.createParameter(
+                            [],
+                            [],
+                            undefined,
+                            generator.createObjectBindingPattern([
+                                generator.createBindingElement(
+                                    undefined,
+                                    undefined,
+                                    generator.createIdentifier("height"),
+                                    undefined
+                                )
+                            ]),
+                            undefined,
+                            undefined,
+                            undefined
+                       )
+                    ],
+                    "",
+                    block
+                );
+
+                const member = generator.createGetAccessor(
+                    [],
+                    [],
+                    generator.createIdentifier("height"),
+                    [],
+                    undefined,
+                    undefined
+                );
+
+                member.prefix = "__";
+
+                assert.strictEqual(expression.toString(), "");
+                assert.strictEqual(expression.getTemplate({
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    members: [member]
+                }), `<div [v]="__height"></div>`);
+            });
+
+            mocha.it("Can use jsx variables in view function", function () {
+                const block = generator.createBlock([
+                    generator.createVariableStatement(
+                        [],
+                        generator.createVariableDeclarationList(
+                            [generator.createVariableDeclaration(
+                                generator.createIdentifier("v"),
+                                undefined,
+                                generator.createJsxSelfClosingElement(
+                                    generator.createIdentifier("span")
+                                )
+                            )],
+                            generator.SyntaxKind.ConstKeyword
+                        )
+                    ),
+                    generator.createReturn(
+                        generator.createJsxElement(
+                            generator.createJsxOpeningElement(
+                                generator.createIdentifier("div"),
+                                [],
+                                []),
+                            [generator.createJsxExpression(
+                                undefined,
+                                generator.createIdentifier("v")
+                            )],
+                            generator.createJsxClosingElement(generator.createIdentifier("div"))
+                        )
+                    )
+                ], false);
+    
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [],
+                    "",
+                    block
+                );
+    
+                assert.strictEqual(expression.toString(), "");
+                assert.strictEqual(expression.getTemplate({
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    members: []
+                }), `<div ><span ></span></div>`);
+            });
+    
+            mocha.it("Can use jsx variable twice", function () {
+                const block = generator.createBlock([
+                    generator.createVariableStatement(
+                        [],
+                        generator.createVariableDeclarationList(
+                            [generator.createVariableDeclaration(
+                                generator.createIdentifier("v"),
+                                undefined,
+                                generator.createJsxSelfClosingElement(
+                                    generator.createIdentifier("span")
+                                )
+                            )],
+                            generator.SyntaxKind.ConstKeyword
+                        )
+                    ),
+                    generator.createReturn(
+                        generator.createJsxElement(
+                            generator.createJsxOpeningElement(
+                                generator.createIdentifier("div"),
+                                [],
+                                []),
+                            [generator.createJsxExpression(
+                                undefined,
+                                generator.createBinary(
+                                    generator.createIdentifier("c1"),
+                                    generator.SyntaxKind.AmpersandAmpersandToken,
+                                    generator.createIdentifier("v")
+                                ),
+                            ),
+                            generator.createJsxExpression(
+                                undefined,
+                                generator.createBinary(
+                                    generator.createIdentifier("c2"),
+                                    generator.SyntaxKind.AmpersandAmpersandToken,
+                                    generator.createIdentifier("v")
+                                ),
+                            )],
+                            generator.createJsxClosingElement(generator.createIdentifier("div"))
+                        )
+                    )
+                ], false);
+    
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [],
+                    "",
+                    block
+                );
+    
+                assert.strictEqual(expression.toString(), "");
+                assert.strictEqual((expression.getTemplate({
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    members: []
+                }) as string).replace(/(\s|\s)/gi, ""), (`<div >
+                        <span *ngIf="c1"></span>
+                        <span *ngIf="c2"></span>
+                    </div>`).replace(/(\s|\s)/gi, ""));
+            });
+    
+            mocha.it("Can use jsx variable with condition", function () {
+                const block = generator.createBlock([
+                    generator.createVariableStatement(
+                        [],
+                        generator.createVariableDeclarationList(
+                            [generator.createVariableDeclaration(
+                                generator.createIdentifier("v"),
+                                undefined,
+                                generator.createBinary(
+                                    generator.createIdentifier("c1"),
+                                    generator.SyntaxKind.AmpersandAmpersandToken,
+                                    generator.createJsxSelfClosingElement(
+                                        generator.createIdentifier("span")
+                                    )
+                                )
+                            )],
+                            generator.SyntaxKind.ConstKeyword
+                        )
+                    ),
+                    generator.createReturn(
+                        generator.createJsxElement(
+                            generator.createJsxOpeningElement(
+                                generator.createIdentifier("div"),
+                                [],
+                                []),
+                            [generator.createJsxExpression(
+                                undefined,
+                                generator.createBinary(
+                                    generator.createIdentifier("c2"),
+                                    generator.SyntaxKind.AmpersandAmpersandToken,
+                                    generator.createIdentifier("v")
+                                ),
+                            )],
+                            generator.createJsxClosingElement(generator.createIdentifier("div"))
+                        )
+                    )
+                ], false);
+    
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [],
+                    "",
+                    block
+                );
+    
+                assert.strictEqual(expression.toString(), "");
+                assert.strictEqual((expression.getTemplate({
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    members: []
+                }) as string).replace(/(\s|\s)/gi, ""), (`<div >
+                        <span *ngIf="(c1)&&c2"></span>
+                    </div>`).replace(/(\s|\s)/gi, ""));
             });
         });
     });
+
 
     mocha.describe("Decorators", function () {
         mocha.it("OneWay -> Input", function () {
@@ -628,8 +1442,14 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(decorator.toString(), "@Input()");
         });
 
-        mocha.it("Event -> Input", function () {
+        mocha.it("Event -> Output", function () {
             const decorator = createDecorator("Event");
+
+            assert.strictEqual(decorator.toString(), "@Output()");
+        });
+
+        mocha.it("Template -> Input", function () {
+            const decorator = createDecorator("Template");
 
             assert.strictEqual(decorator.toString(), "@Input()");
         });
@@ -646,11 +1466,17 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(decorator.toString(), "");
         });
 
+        mocha.it("InternalState -> ''", function () {
+            const decorator = createDecorator("InternalState");
+
+            assert.strictEqual(decorator.toString(), "");
+        });
+
         mocha.describe("Component", function () {
-            this.beforeEach(function () { 
+            this.beforeEach(function () {
                 generator.setContext({});
             });
-            this.afterEach(function () { 
+            this.afterEach(function () {
                 generator.setContext(null);
             });
             mocha.it("Replace viewFunction with template", function () {
@@ -682,7 +1508,7 @@ mocha.describe("Angular generator", function () {
                         ], false)])
                 );
 
-                assert.strictEqual(decorator.toString(), `@Component({template:\`<div />\`})`);
+                assert.strictEqual(decorator.toString(), `@Component({template:\`<div ></div>\`})`);
             });
 
             mocha.it("Remove viewModel", function () {
@@ -783,7 +1609,7 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(getResult(child.toString()), getResult("export default class Child extends Base {}"));
         });
 
-        mocha.it("Event Prop generates Event EventEmitter", function () {
+        mocha.it("Ref Prop generates ViewChild", function () {
             const property = generator.createProperty(
                 [createDecorator("Ref")],
                 [],
@@ -793,10 +1619,10 @@ mocha.describe("Angular generator", function () {
                 generator.createArrowFunction([], [], [], "", generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
             );
 
-            assert.strictEqual(property.toString(), `@ViewChild("_widgetModel.host", {static: false}) host:ElementRef<HTMLDivElement>`);
+            assert.strictEqual(property.toString(), `@ViewChild("host", {static: false}) host:ElementRef<HTMLDivElement>`);
         });
 
-        mocha.it("Ref Prop generates ViewChild", function () {
+        mocha.it("Event Prop generates Event EventEmitter", function () {
             const property = generator.createProperty(
                 [createDecorator("Event")],
                 [],
@@ -806,7 +1632,7 @@ mocha.describe("Angular generator", function () {
                 generator.createArrowFunction([], [], [], "", generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
             );
 
-            assert.strictEqual(property.toString(), "@Input() onClick:EventEmitter<any> = new EventEmitter()");
+            assert.strictEqual(property.toString(), "@Output() onClick:EventEmitter<any> = new EventEmitter()");
         });
 
         mocha.it.skip("Event Prop with type", function () {
@@ -834,7 +1660,7 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(property.toString(), "@Input() onClick:EventEmitter<number> = new EventEmitter()");
         });  
         
-        mocha.it("Generate change for TwoWay prop", function () { 
+        mocha.it("Generate change for TwoWay prop with type", function () { 
             const property = generator.createProperty(
                 [createDecorator("TwoWay")],
                 [],
@@ -850,7 +1676,7 @@ mocha.describe("Angular generator", function () {
             );
         });
 
-        mocha.it("Generate change for TwoWay prop", function () { 
+        mocha.it("Generate change for TwoWay prop without type", function () { 
             const property = generator.createProperty(
                 [createDecorator("TwoWay")],
                 [],
@@ -861,12 +1687,12 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(getResult(property.toString()),
-                getResult(`@Input() pressed?: = false
+                getResult(`@Input() pressed?:any = false
                  @Output() pressedChange: EventEmitter<any> = new EventEmitter()`)
             );
         });
 
-        mocha.it("@Slot prop should be a member of component", function () {
+        mocha.it("@Slot prop should not be a member of component", function () {
             const property = generator.createProperty(
                 [createDecorator("Slot")],
                 [],
@@ -878,26 +1704,62 @@ mocha.describe("Angular generator", function () {
 
             assert.strictEqual(property.toString(), "");
         });
+
+        mocha.it("@Template prop without type", function () {
+            const property = generator.createProperty(
+                [createDecorator("Template")],
+                [],
+                generator.createIdentifier("name"),
+                generator.SyntaxKind.QuestionToken,
+                undefined,
+                generator.createFalse()
+            );
+
+            assert.strictEqual(property.toString(), " @Input() name?:TemplateRef<any> = false");
+        });
+
+        mocha.it("get prop with same name in get accessor", function () {
+            const property = generator.createGetAccessor(
+                [],
+                [],
+                generator.createIdentifier("name"),
+                [],
+                undefined,
+                generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createPropertyAccess(
+                            generator.createThis(),
+                            generator.createIdentifier("props")
+                        ),
+                        generator.createIdentifier("name")
+                    )
+                ], false)
+            );
+            property.prefix = "_";
+
+            const prop = new Property(
+                [createDecorator("OneWay")],
+                [],
+                generator.createIdentifier("name"),
+                undefined,
+                undefined,
+                undefined,
+                true
+            );
+
+            assert.strictEqual(getResult(property.toString({
+                internalState: [],
+                state: [],
+                props: [],
+                members: [property, prop]
+            })), getResult("get _name(){this.name}"));
+        });
+
+
     });
 
     mocha.describe("Angular Component", function () { 
-        function createComponentDecorator(paramenters: {[name:string]: any}) { 
-            return generator.createDecorator(
-                generator.createCall(
-                    generator.createIdentifier("Component"),
-                    [],
-                    [generator.createObjectLiteral(
-                        Object.keys(paramenters).map(k => 
-                            generator.createPropertyAssignment(
-                                generator.createIdentifier(k),
-                                paramenters[k]
-                            )
-                        ),
-                        false
-                    )]
-                )
-            )
-        }
+        
         mocha.it("Calculate Selector", function () {
             const decorator = createComponentDecorator({})
             const component = generator.createComponent(
@@ -914,17 +1776,7 @@ mocha.describe("Angular generator", function () {
         });
 
         mocha.describe("Imports", function () {
-            function createComponent(properties: Property[]=[]) {
-                return generator.createComponent(
-                    createComponentDecorator({}),
-                    [],
-                    generator.createIdentifier("BaseWidget"),
-                    [],
-                    [],
-                    properties
-                );
-            }
-
+            
             mocha.it("Empty component", function () { 
                 const component = createComponent();
                 assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule } from "@angular/core"; import {CommonModule} from "@angular/common"`));
@@ -943,6 +1795,19 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Input } from "@angular/core"; import {CommonModule} from "@angular/common"`));
             });
 
+            mocha.it("Has Template property - Input, TemplateRef", function () {
+                const component = createComponent(
+                    [
+                        generator.createProperty(
+                            [createDecorator("Template")],
+                            [],
+                            generator.createIdentifier("p")
+                        )
+                    ]
+                );
+                assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Input, TemplateRef } from "@angular/core"; import {CommonModule} from "@angular/common"`));
+            });
+
             mocha.it("Has TwoWay property - Input, Output, EventEmitter", function () {
                 const component = createComponent(
                     [
@@ -956,7 +1821,25 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Input, Output, EventEmitter } from "@angular/core"; import {CommonModule} from "@angular/common"`));
             });
 
-            mocha.it("Has Event property - EventEmitter", function () {
+            mocha.it("Import should not have duplicates", function () {
+                const component = createComponent(
+                    [
+                        generator.createProperty(
+                            [createDecorator("OneWay")],
+                            [],
+                            generator.createIdentifier("p")
+                        ),
+                        generator.createProperty(
+                            [createDecorator("TwoWay")],
+                            [],
+                            generator.createIdentifier("p")
+                        )
+                    ]
+                );
+                assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Input, Output, EventEmitter } from "@angular/core"; import {CommonModule} from "@angular/common"`));
+            });
+
+            mocha.it("Has Event property - Output, EventEmitter", function () {
                 const component = createComponent(
                     [
                         generator.createProperty(
@@ -966,7 +1849,7 @@ mocha.describe("Angular generator", function () {
                         )
                     ]
                 );
-                assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, EventEmitter } from "@angular/core"; import {CommonModule} from "@angular/common"`));
+                assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Output, EventEmitter } from "@angular/core"; import {CommonModule} from "@angular/common"`));
             });
 
             mocha.it("Has Ref property - ViewChild, ElementRef", function () {
@@ -996,16 +1879,16 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(getResult(component.toString()), getResult(`
                 ${component.compileImports()}
                 ${component.decorator}
-                export default class DxBaseWidgetComponent {
+                export default class BaseWidget {
 
                 }
 
                 @NgModule({
-                    declarations: [DxBaseWidgetComponent],
+                    declarations: [BaseWidget],
                     imports: [
                         CommonModule
                     ],
-                    exports: [DxBaseWidgetComponent]
+                    exports: [BaseWidget]
                 })
                 export class DxBaseWidgetModule {}
             `));
@@ -1055,16 +1938,16 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(getResult(component.toString()), getResult(`
                 ${component.compileImports()}
                 ${component.decorator}
-                export default class DxBaseWidgetComponent extends Input {
+                export default class BaseWidget extends Input {
 
                 }
 
                 @NgModule({
-                    declarations: [DxBaseWidgetComponent],
+                    declarations: [BaseWidget],
                     imports: [
                         CommonModule
                     ],
-                    exports: [DxBaseWidgetComponent]
+                    exports: [BaseWidget]
                 })
                 export class DxBaseWidgetModule {}
             `));
@@ -1141,6 +2024,91 @@ mocha.describe("Angular generator", function () {
                     state: [],
                     props: []
                 }), "this.width");
+            });
+
+            mocha.it("Access props - viewModel.props.prop -> newViewModel.prop", function () { 
+                const property = new Property(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("width"),
+                    undefined,
+                    undefined,
+                    undefined
+                );
+
+                const expression = generator.createPropertyAccess(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("props")
+                    ),
+                    generator.createIdentifier("width")
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [property],
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    componentContext: "viewModel",
+                    newComponentContext: "newViewModel"
+                }), "newViewModel.width");
+            });
+
+            mocha.it("Access props - viewModel.props.prop", function () { 
+                const property = new Property(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("width"),
+                    undefined,
+                    undefined,
+                    undefined
+                );
+
+                const expression = generator.createPropertyAccess(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("props")
+                    ),
+                    generator.createIdentifier("width")
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [property],
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    componentContext: "viewModel",
+                    newComponentContext: "newViewModel"
+                }), "newViewModel.width");
+            });
+
+            mocha.it("Access props - viewModel.props.prop - prop", function () { 
+                const property = new Property(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("width"),
+                    undefined,
+                    undefined,
+                    undefined,
+                    true
+                );
+
+                const expression = generator.createPropertyAccess(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("props")
+                    ),
+                    generator.createIdentifier("width")
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [property],
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), "width");
             });
 
             mocha.it("Access props - this.props", function () { 
@@ -1289,7 +2257,7 @@ mocha.describe("Angular generator", function () {
                     internalState: [],
                     state: [],
                     props: []
-                }), "this.div.nativeElement");
+                }), "this.div?.nativeElement");
             });
         });
     });

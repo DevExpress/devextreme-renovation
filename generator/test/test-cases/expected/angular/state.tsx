@@ -7,7 +7,7 @@ import { CommonModule } from "@angular/common";
 @Component({
     selector: "dx-widget"
 })
-export default class DxWidgetComponent {
+export default class Widget {
     @Input() pressed?: boolean;
     @Output() pressedChange: EventEmitter<boolean> = new EventEmitter();
 
@@ -28,10 +28,10 @@ export default class DxWidgetComponent {
 }
 
 @NgModule({
-    declarations: [DxWidgetComponent],
+    declarations: [Widget],
     imports: [
         CommonModule
     ],
-    exports: [DxWidgetComponent]
+    exports: [Widget]
 })
 export class DxWidgetModule { }

@@ -1,18 +1,19 @@
-import { Component, OneWay, Event } from "../../../component_declaration/common";
+import { Component, OneWay, Event, ComponentBindings, JSXComponent } from "../../../component_declaration/common";
 
-function view() { }
-function viewModel() { }
+function view(model: Widget) { }
 
-@Component({
-    viewModel: viewModel,
-    view: view
-})
-export default class Widget {
+@ComponentBindings()
+class WidgetInput { 
     @OneWay() height: number = 10;
     @Event() onClick: (a:number) => null = () => null;
+}
 
+@Component({
+    view: view
+})
+export default class Widget extends JSXComponent<WidgetInput> {
     getHeight():number { 
-        this.onClick(10);
-        return this.height;
+        this.props.onClick(10);
+        return this.props.height;
     }
 }

@@ -3,13 +3,13 @@ import { CommonModule } from "@angular/common";
 
 @Component({
     selector: "dx-widget",
-    template: `<div [style]="{height:_viewModel.height}">
+    template: `<div [ngStyle]="{height:_viewModel.height}">
                     <span ></span>
                     
                     <span ></span>
               </div>`
 })
-export default class DxWidgetComponent {
+export default class Widget {
     @Input() height: number;
     @Input() width: number;
 
@@ -25,11 +25,11 @@ export default class DxWidgetComponent {
 }
 
 @NgModule({
-    declarations: [DxWidgetComponent],
+    declarations: [Widget],
     imports: [
         CommonModule
     ],
-    exports: [DxWidgetComponent]
+    exports: [Widget]
 })
 export class DxWidgetModule { }
 

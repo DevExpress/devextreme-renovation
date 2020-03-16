@@ -14,7 +14,7 @@ function compileType(type: string = "", questionToken: string = "") {
     return type ? `${questionToken}:${type}` : "";
 }
 
-function variableDeclaration(name: Identifier, type: string = "", initializer?: Expression, questionToken: string = "") {
+function variableDeclaration(name: Identifier|BindingPattern, type: string = "", initializer?: Expression, questionToken: string = "") {
     const initilizerDeclaration = initializer ? `=${initializer}` : "";
     return `${name}${compileType(type, questionToken)}${initilizerDeclaration}`;
 }
@@ -177,10 +177,10 @@ export class ExpressionWithOptionalExpression extends Expression {
 
 export class BindingElement extends Expression {
     dotDotDotToken?: any;
-    propertyName?: string;
-    name?: string | Identifier;
+    propertyName?: Identifier;
+    name?: string | Identifier | BindingElement;
     initializer?: Expression;
-    constructor(dotDotDotToken: any, propertyName?: string, name?: string | Identifier, initializer?: Expression) {
+    constructor(dotDotDotToken: any, propertyName?: Identifier, name?: string | Identifier| BindingElement, initializer?: Expression) {
         super();
         this.dotDotDotToken = dotDotDotToken;
         this.propertyName = propertyName;
@@ -229,6 +229,37 @@ export class BindingPattern extends Expression {
 
     getDependency() { 
         return this.elements.reduce((d: string[], e) => d.concat(e.getDependency()), []);
+    }
+
+    getVariableExpressions(startExpression: Expression): VariableExpression { 
+        return this.elements.reduce((v: VariableExpression, e, index) => {
+            if (e.name) {
+                let expression: Expression | null = null;
+
+                if (this.type !== "object") {
+                    expression = new ElementAccess(startExpression, new SimpleExpression(index.toString()));
+                } else if (e.name instanceof Identifier) {
+                    expression = new PropertyAccess(startExpression, e.name);
+                } else if (typeof e.name === "string") {
+                    const name = e.name;
+                    expression = new PropertyAccess(startExpression, new Identifier(name));
+                } else if (e.name instanceof BindingPattern && e.propertyName) { 
+                    return {
+                        ...e.name.getVariableExpressions(
+                            new PropertyAccess(startExpression,e.propertyName)
+                        ),
+                        ...v
+                    };
+                }   
+                if (expression) {
+                    return {
+                        [e.name.toString()]: expression,
+                        ...v,
+                    };
+                }
+            }
+            return v;
+        }, {})
     }
 }
 
@@ -381,11 +412,11 @@ export class Parameter {
     decorators: Decorator[]
     modifiers: string[];
     dotDotDotToken: any;
-    name: Identifier;
+    name: Identifier | BindingPattern;
     questionToken: string;
     type?: string;
     initializer?: Expression;
-    constructor(decorators: Decorator[], modifiers: string[], dotDotDotToken: any, name: Identifier, questionToken: string = "", type?: string, initializer?: Expression) {
+    constructor(decorators: Decorator[], modifiers: string[], dotDotDotToken: any, name: Identifier|BindingPattern, questionToken: string = "", type?: string, initializer?: Expression) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.dotDotDotToken = dotDotDotToken;
@@ -581,7 +612,7 @@ export class Binary extends Expression {
                 throw `Error: Can't assign property use TwoWay() or Internal State - ${this.toString()}`;
             }
 
-            const stateSetting = `${this.left.compileStateSetting(rightExpression)}`
+            const stateSetting = `${this.left.compileStateSetting(rightExpression, checkDependency(this.left, options.members.filter(m=>m.decorators.find(d=>d.name==="TwoWay"))))}`
             const changeRising = this.left.compileStateChangeRising(options.state, rightExpression);
             return changeRising ? `(${stateSetting},${changeRising})` : stateSetting;
         }
@@ -911,7 +942,7 @@ export class Class {
     }
 }
 
-interface Heritable {
+export interface Heritable {
     name: string;
     heritageProperies: Property[];
     compileDefaultProps(): string;
@@ -1004,8 +1035,10 @@ export class PropertyAccess extends ExpressionWithExpression {
         const props = options && options.props || [];
         const componentContext = options?.componentContext || SyntaxKind.ThisKeyword;
 
+        const usePropsSpace = `${componentContext}.props`;
+
         const findProperty = (p: InternalState | State | Prop) => p.name.valueOf() === this.name.valueOf();
-        if (expressionString === componentContext || expressionString === `${componentContext}.props`) {
+        if (expressionString === componentContext || expressionString === usePropsSpace) {
             const p = props.find(findProperty);
             if (p) {
                 return p.getter();
@@ -1016,7 +1049,10 @@ export class PropertyAccess extends ExpressionWithExpression {
                 return `(${stateProp.getter()})`;
             }
 
-            const member = options?.members.find(m => m._name.toString() === this.name.toString());
+            const member = options?.members
+                .filter(m => expressionString === usePropsSpace ? m.inherited : true)
+                .find(m => m._name.toString() === this.name.toString());
+            
             if (member) { 
                 return `${options?.newComponentContext ? `${options.newComponentContext}.` : ""}${member.getter()}`;
             }
@@ -1026,10 +1062,16 @@ export class PropertyAccess extends ExpressionWithExpression {
             return this.name.toString();
         }
 
-        return `${this.expression.toString(options)}.${this.name}`;
+        const result = `${this.expression.toString(options)}.${this.name}`;
+
+        if (options?.newComponentContext && result.startsWith(componentContext)) { 
+            return result.replace(options.componentContext!, options.newComponentContext);
+        }
+
+        return result;
     }
 
-    compileStateSetting(state: string) {
+    compileStateSetting(state: string, isState: boolean) {
         return `${stateSetter(this.name)}(${state})`;
     }
 
@@ -1244,16 +1286,22 @@ export class ReactComponent {
         return this._name.toString();
     }
 
+    addPrefixToMembers(members: Array<Property | Method>) { 
+        if (this.isJSXComponent) { 
+            members.filter(m => !m.inherited && m instanceof GetAccessor).forEach(m => {
+                m.prefix = "__";
+            });
+        }
+        return members;
+    }
+
     constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>, context: GeneratorContex) {
         this.modifiers = modifiers;
         this._name = name;
         this.heritageClauses = heritageClauses;
 
-        members.filter(m => m instanceof GetAccessor).forEach(m => {
-            m.prefix = "__";
-        });
 
-        this.members = members = inheritMembers(heritageClauses, members);
+        this.members = members = inheritMembers(heritageClauses, this.addPrefixToMembers(members));
 
         this.props = members
             .filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template"))
@@ -1596,12 +1644,12 @@ export class VariableDeclaration extends Expression {
             if (dependecy.indexOf("props") === 0) { 
                 const members = this.name.getDependency()
                     .map(d => options?.members.find(m => m._name.toString() === d))
-                    .filter(m => m && m.name && m._name.toString() !== m.name) as Array<Property|Method>;
+                    .filter(m => m && m.name && m.getter().toString() !== m._name.toString()) as Array<Property|Method>;
                 const variables = members.reduce((v: VariableExpression, m) => {
                     (this.name as BindingPattern).remove(m._name.toString());
                     return {
                         ...v,
-                        [m._name.toString()]: new SimpleExpression(`${this.initializer?.toString()}.${m.name}`)
+                        [m._name.toString()]: this.initializer instanceof Expression ? new PropertyAccess(this.initializer, new Identifier(m.name)) : new SimpleExpression(m.name)
                     };
                 }, options.variables || {});
                 
@@ -1629,22 +1677,12 @@ export class VariableDeclaration extends Expression {
     getVariableExpressions(): VariableExpression { 
         if (this.name instanceof Identifier && this.initializer instanceof Expression) { 
             return {
-                [this.name.toString()]: this.initializer
+                [this.name.toString()]: this.initializer instanceof SimpleExpression || this.initializer.isJsx() ? this.initializer: new Paren(this.initializer)
             };
         }
-        if (this.name instanceof BindingPattern) { 
-            return this.name.elements.reduce((v: VariableExpression, e, index) => {
-                if (e.name) { 
-                    const expressionString = (this.name as BindingPattern).type === "object" ? `${this.initializer}.${e.name.toString()}` :
-                    `${this.initializer}[${index}]`;
-                    const expression = new SimpleExpression(expressionString);
-                    return {
-                        [e.name.toString()]: expression,
-                        ...v
-                    };
-                }
-                return v;
-             }, {});
+        if (this.name instanceof BindingPattern && this.initializer) { 
+            const startExpression = this.initializer instanceof Expression ? this.initializer : new SimpleExpression(this.initializer);
+            return this.name.getVariableExpressions(startExpression);
         }
         return {};
     }
@@ -1973,9 +2011,9 @@ export class JsxAttribute {
 export class JsxOpeningElement extends Expression { 
     tagName: Expression;
     typeArguments: any[];
-    attributes: JsxAttribute[];
+    attributes: Array<JsxAttribute|JsxSpreadAttribute>;
 
-    constructor(tagName: Expression, typeArguments: any[] = [], attributes: JsxAttribute[]) { 
+    constructor(tagName: Expression, typeArguments: any[] = [], attributes: Array<JsxAttribute|JsxSpreadAttribute>) { 
         super();
         this.tagName = tagName;
         this.typeArguments = typeArguments;
@@ -1983,7 +2021,9 @@ export class JsxOpeningElement extends Expression {
     }
 
     attributesString(options?:toStringOptions) { 
-        return this.attributes.map(a => a.toString(options)).join("\n");
+        return this.attributes.map(a => a.toString(options))
+            .filter(s => s)
+            .join("\n");
     }
 
     toString(options?:toStringOptions) { 
@@ -2031,7 +2071,7 @@ export class JsxSelfClosingElement extends JsxOpeningElement{
 }
  
 export class JsxClosingElement extends JsxOpeningElement { 
-    constructor(tagName: Identifier) { 
+    constructor(tagName: Expression) { 
         super(tagName, [], []);
     }
 
@@ -2053,6 +2093,12 @@ export class JsxExpression extends ExpressionWithExpression {
 
     isJsx() { 
         return true;
+    }
+}
+
+export class JsxSpreadAttribute extends JsxExpression {
+    constructor(expression: Expression) { 
+        super(SyntaxKind.DotDotDotToken, expression)
     }
 }
 
@@ -2127,7 +2173,7 @@ export class Generator {
         return new StringLiteral(value);
     }
 
-    createBindingElement(dotDotDotToken?: any, propertyName?: string, name?: string | Identifier, initializer?: Expression) {
+    createBindingElement(dotDotDotToken?: any, propertyName?: Identifier, name?: string | Identifier | BindingElement, initializer?: Expression) {
         return new BindingElement(dotDotDotToken, propertyName, name, initializer);
     }
 
@@ -2209,7 +2255,7 @@ export class Generator {
         return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
     }
 
-    createParameter(decorators: Decorator[] = [], modifiers: string[] = [], dotDotDotToken: any, name: Identifier, questionToken?: string, type?: string, initializer?: Expression) {
+    createParameter(decorators: Decorator[] = [], modifiers: string[] = [], dotDotDotToken: any, name: Identifier|BindingPattern, questionToken?: string, type?: string, initializer?: Expression) {
         return new Parameter(decorators, modifiers, dotDotDotToken, name, questionToken, type, initializer);
     }
 
@@ -2307,7 +2353,7 @@ export class Generator {
                 compileCode(this, fs.readFileSync(modulePath).toString(), { dirname: context.path, path: modulePath });
 
                 if (importClause) {
-                    this.addComponent(importClause.default, this.cache[modulePath].find((e: any) => e instanceof ReactComponent));
+                    this.addComponent(importClause.default, this.cache[modulePath].find((e: any) => e instanceof ReactComponent), importClause);
                     const componentInputs:ComponentInput[] = this.cache[modulePath].filter((e: any) => e instanceof ComponentInput);
                     componentInputs.length && importClause.imports.forEach(i => {
                         const componentInput = componentInputs.find(c => c.name.toString() === i && c.modifiers.indexOf("export") >= 0);
@@ -2380,18 +2426,18 @@ export class Generator {
     }
 
     createJsxSpreadAttribute(expression: Expression) {
-        return new JsxExpression(this.SyntaxKind.DotDotDotToken, expression);
+        return new JsxSpreadAttribute(expression);
     }
 
-    createJsxAttributes(properties: JsxAttribute[]) {
+    createJsxAttributes(properties: Array<JsxAttribute|JsxSpreadAttribute>) {
         return properties;
     }
 
-    createJsxOpeningElement(tagName: Identifier, typeArguments: any[], attributes: JsxAttribute[]=[]) {
+    createJsxOpeningElement(tagName: Identifier, typeArguments: any[], attributes: Array<JsxAttribute|JsxSpreadAttribute>=[]) {
         return new JsxOpeningElement(tagName, typeArguments, attributes);
     }
 
-    createJsxSelfClosingElement(tagName: Identifier, typeArguments: any[], attributes: JsxAttribute[]=[]) {
+    createJsxSelfClosingElement(tagName: Identifier, typeArguments: any[], attributes: Array<JsxAttribute|JsxSpreadAttribute>=[]) {
         return new JsxSelfClosingElement(tagName, typeArguments, attributes);
     }
 
@@ -2565,7 +2611,7 @@ export class Generator {
 
     context: GeneratorContex[] = [];
 
-    addComponent(name: string, component: Heritable) {
+    addComponent(name: string, component: Heritable, importClause?:ImportClause) {
         const context = this.getContext();
         context.components = context.components || {};
         context.components[name] = component;

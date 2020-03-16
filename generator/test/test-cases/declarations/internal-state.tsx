@@ -1,4 +1,4 @@
-import { Component, InternalState} from "../../../component_declaration/common";
+import { Component, InternalState } from "../../../component_declaration/common";
 
 function viewModel() { }
 
