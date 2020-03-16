@@ -1644,12 +1644,12 @@ export class VariableDeclaration extends Expression {
             if (dependecy.indexOf("props") === 0) { 
                 const members = this.name.getDependency()
                     .map(d => options?.members.find(m => m._name.toString() === d))
-                    .filter(m => m && m.name && m._name.toString() !== m.name) as Array<Property|Method>;
+                    .filter(m => m && m.name && m.getter().toString() !== m._name.toString()) as Array<Property|Method>;
                 const variables = members.reduce((v: VariableExpression, m) => {
                     (this.name as BindingPattern).remove(m._name.toString());
                     return {
                         ...v,
-                        [m._name.toString()]: new SimpleExpression(`${this.initializer?.toString()}.${m.name}`)
+                        [m._name.toString()]: this.initializer instanceof Expression ? new PropertyAccess(this.initializer, new Identifier(m.name)) : new SimpleExpression(m.name)
                     };
                 }, options.variables || {});
                 
