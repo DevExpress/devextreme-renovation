@@ -1,30 +1,34 @@
-function view() { }
-function viewModel() { }
+function view(model: Widget) {
 
-import React, { useCallback } from "react";
-
-interface Widget {
-    height: number,
-    onClick: (a: number) => null;
-    getHeight:()=>number;
 }
-
-export default function Widget(props: { 
-    height: number,
+declare type WidgetInput = {
+    height: number;
     onClick: (a: number) => null
-}) {
-    const getHeight = useCallback(function getHeight() {
-        props.onClick(10);
-        return props.height;
-    }, [props.onClick, props.height]);
-
-    return view(viewModel({
-        ...props,
-        getHeight
-    }));
 }
-
-Widget.defaultProps = {
+const WidgetInput: WidgetInput = {
     height: 10,
     onClick: () => null
 };
+
+import React, { useCallback } from 'react';
+interface Widget {
+    props: WidgetInput;
+    getHeight: () => number;
+
+}
+
+export default function Widget(props: WidgetInput) {
+    const getHeight = useCallback(function getHeight() {
+        props.onClick(10)
+        return props.height;
+    }, [props.onClick, props.height]);
+    return view(({
+        props: { ...props },
+        getHeight
+    })
+    );
+}
+
+Widget.defaultProps = {
+    ...WidgetInput
+}

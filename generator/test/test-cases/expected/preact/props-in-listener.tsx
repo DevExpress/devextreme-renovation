@@ -1,28 +1,31 @@
-function viewModel() { }
+function viewModel() {
 
-function view() { }
+}
+function view() {
 
-import * as Preact from "preact";
-import { useCallback } from "preact/hooks";
+}
 
+import * as Preact from 'preact';
+import { useCallback } from 'preact/hooks'
 interface Component {
-  type?: string,
-  onClick?: () => void,
-  clickHandler: () => any
+    type?: string;
+    onClick?: () => void;
+    clickHandler: () => any;
+
 }
 
 export function Component(props: {
-  type?: string,
-  onClick?: () => void
+    type?: string,
+    onClick?: () => void
 }) {
-  const clickHandler = useCallback(() => {
-    props.onClick!({
-      type: props.type
-    })
-  }, [props.onClick, props.type]);
 
-  return view(viewModel({
-    ...props,
-    clickHandler
-  }));
+    const clickHandler = useCallback(() => {
+        props.onClick!({ type: props.type })
+    }, [props.onClick, props.type])
+
+    return view(viewModel({
+        ...props,
+        clickHandler
+    })
+    );
 }
