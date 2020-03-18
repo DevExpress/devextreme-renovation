@@ -7,6 +7,5 @@ function view() {
             onPointerDown={f}
             onClick={f}
             unknown={f}
-        >
-    </div>)
+        ></div>)
 }

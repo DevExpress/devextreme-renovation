@@ -1,37 +1,36 @@
-function view(viewModel: Widget) { return null;}
+import BaseWidget from "./method";
+
+function view(viewModel: Widget) { return <BaseWidget ref={viewModel.baseRef} prop1={viewModel.props.prop1}></BaseWidget>;}
 
 declare type WidgetInput = {
-    prop1?: number;
-    prop2?: number
+    prop1?: number
 }
 const WidgetInput: WidgetInput = { };
 
+import { WidgetRef as BaseWidgetRef } from "./method";
 import React, { useRef, useImperativeHandle, forwardRef } from "react";
 
 export type WidgetRef = {
-    getHeight: () => string,
-    getSize: () => string
-}
+    getSomething: () => string
+};
+
 interface Widget {
     props: WidgetInput;
-    divRef: any;
+    baseRef: any;
 }
 
 const Widget = forwardRef<WidgetRef, WidgetInput>((props: WidgetInput, ref) => {
-    const divRef = useRef<HTMLDivElement>();
+    const baseRef = useRef<BaseWidgetRef>();
 
     useImperativeHandle(ref, () => ({
-        getHeight: () => {
-            return `${props.prop1} + ${props.prop2} + ${divRef.current!.innerHTML}`;
-        },
-        getSize: () => {
-            return `${props.prop1} + ${divRef.current!.innerHTML}`;
+        getSomething: () => { 
+            return `${props.prop1} + ${baseRef.current!.getHeight()}`;
         }
-    }), [props.prop1, props.prop2]);
+    }), [props.prop1]);
 
     return view(({
         props: { ...props },
-        divRef
+        baseRef
     }));
 });
 

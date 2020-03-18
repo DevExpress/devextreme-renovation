@@ -17,11 +17,16 @@ import {
 import path from "path";
 
 export class PreactComponent extends ReactComponent {
-    compileImportStatements(hooks: string[]) {
+    compileImportStatements(hooks: string[], compats: string[]) {
         const imports = ["import * as Preact from 'preact'"]; 
         if (hooks.length) { 
             imports.push(`import {${hooks.join(",")}} from 'preact/hooks'`);
         }
+
+        if (compats.length) { 
+            imports.push(`import {${compats.join(",")}} from "preact/compat"`);
+        }
+        
         return imports;
     }
 
@@ -60,8 +65,8 @@ export class PreactGenerator extends Generator {
         const module = moduleSpecifier.expression.toString();
         const modulePath = `${module}.tsx`;
         const context = this.getContext();
-        if (context.path) {
-            const fullPath = path.resolve(context.path, modulePath);
+        if (context.dirname) {
+            const fullPath = path.resolve(context.dirname, modulePath);
             if (this.cache[fullPath]) { 
                 (importStatement as ImportDeclaration).replaceSpecifier(module, `${module}.p`);
             }

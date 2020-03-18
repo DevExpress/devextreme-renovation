@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useRef } from 'react';
-import Button from "./Button";
-import ToggleButton from "./ToggleButton";
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import Button, { ButtonRef } from "./Button";
+import ToggleButton, { ToggleButtonRef } from "./ToggleButton";
 import ButtonGroup from "./ButtonGroup";
 import Drawer from "./Drawer";
 import List, { ListRef } from "./List";
@@ -239,6 +239,13 @@ const App: React.FC = () => {
   const toggleDrawer = useCallback((value: boolean) => setDrawerOpened(value), []);
 
   const list_ref = useRef<ListRef>(null);
+  const button_ref = useRef<ButtonRef>(null);
+  const toggle_button_ref = useRef<ToggleButtonRef>(null);
+
+  useEffect(()=>{
+    setTimeout(()=>button_ref.current!.focus(),2000)
+    setTimeout(()=>toggle_button_ref.current!.focus(),4000)
+  })
 
   return (
     <div>
@@ -250,6 +257,7 @@ const App: React.FC = () => {
               </div>
             <div>
               <Button
+                ref={button_ref}
                 width="120px"
                 text="Contained"
                 hint="Contained"
@@ -408,6 +416,7 @@ const App: React.FC = () => {
             </div>
             <div>
               <ToggleButton
+                ref={toggle_button_ref}
                 width="120px"
                 text="Outlined"
                 hint="Outlined"

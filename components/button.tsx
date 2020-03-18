@@ -1,4 +1,4 @@
-import { Component, ComponentBindings, Event, InternalState, Listen, JSXComponent, OneWay, React } from '../generator/component_declaration/common';
+import { Component, ComponentBindings, Event, InternalState, Listen, JSXComponent, OneWay, React, Method, Ref } from '../generator/component_declaration/common';
 import './button.css';
 
 export const defaultOptionsRules: { device: () => boolean, options: any }[] = [{
@@ -36,6 +36,8 @@ export class ButtonInput {
 })
 
 export default class Button extends JSXComponent<ButtonInput> {
+  @Ref() host!: HTMLDivElement;
+
   @InternalState() _hovered: boolean = false;
   @InternalState() _active: boolean = false;
 
@@ -62,6 +64,11 @@ export default class Button extends JSXComponent<ButtonInput> {
   @Listen("click")
   onClickHandler(e: any) {
     this.props.onClick!({ type: this.props.type, text: this.props.text });
+  }
+
+  @Method()
+  focus() {
+    this.host.focus();
   }
 
   get style() {
@@ -109,6 +116,7 @@ export default class Button extends JSXComponent<ButtonInput> {
 function viewFunction(viewModel: Button) {
   return (
     <div
+      ref={viewModel.host}
       className={viewModel.cssClasses}
       title={viewModel.props.hint}
       style={viewModel.style}

@@ -20,7 +20,7 @@ mocha.describe("angular-generation", function () {
     });
 
     this.beforeEach(function () {
-        generator.setContext({ path: path.resolve(__dirname, "./test-cases/declarations") });
+        generator.setContext({ dirname: path.resolve(__dirname, "./test-cases/declarations") });
     });
 
     this.afterEach(function () {

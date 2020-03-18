@@ -1262,6 +1262,7 @@ export class ReactComponent {
     state: State[] = [];
     internalState: InternalState[];
     refs: Ref[];
+    apiRefs: Ref[];
     events: Property[] = [];
 
     modifiers: string[];
@@ -1271,6 +1272,8 @@ export class ReactComponent {
     methods: Method[];
     effects: Method[];
     slots: Slot[];
+
+    api: Method[];
 
     view: any;
     viewModel: any;
@@ -1311,9 +1314,19 @@ export class ReactComponent {
             .filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template"))
             .map(p => new Prop(p as Property))
 
-
-        this.refs = members.filter(m => m.decorators.find(d => d.name === "Ref"))
-            .map(p => new Ref(p as Property));
+        const refs = members.filter(m => m.decorators.find(d => d.name === "Ref")).reduce((r: {refs: Ref[], apiRefs: Ref[]}, p) => {
+            if(context.components && context.components[p.type!] instanceof ReactComponent) {
+                p.type = `${p.type}Ref`;
+                const ref = new Ref(p as Property);
+                r.apiRefs?.push(ref);
+                r.refs.push(ref);
+            } else {
+                r.refs.push(new Ref(p as Property));
+            }
+            return r;
+        }, { refs: [], apiRefs: []});
+        this.refs = refs.refs;
+        this.apiRefs = refs.apiRefs;
 
         this.internalState = members
             .filter(m => m instanceof Property && (m.decorators.length === 0 || m.decorators.find(d => d.name === "InternalState")))
@@ -1328,6 +1341,8 @@ export class ReactComponent {
             .map(m => new Listener(m as Method));
 
         this.effects = members.filter(m => m.decorators.find(d => d.name === "Effect")) as Method[];
+
+        this.api = members.filter(m => m.decorators.find(d => d.name === "Method")) as Method[];
 
         this.slots = members.filter(m => m.decorators.find(d => d.name === "Slot")).map(m => new Slot(m as Property));
 
@@ -1356,9 +1371,9 @@ export class ReactComponent {
             });
     }
 
-    compileImportStatements(hooks: string[]) {
+    compileImportStatements(hooks: string[], compats: string[]) {
         if (hooks.length) {
-            return [`import React, {${hooks.join(",")}} from 'react';`];
+            return [`import React, {${hooks.concat(compats).join(",")}} from 'react';`];
         }
         return ["import React from 'react'"];
     }
@@ -1366,6 +1381,7 @@ export class ReactComponent {
     compileImports() {
         const imports: string[] = [];
         const hooks: string[] = [];
+        const compats: string[] = [];
 
         if (this.internalState.length || this.state.length) {
             hooks.push("useState");
@@ -1383,12 +1399,28 @@ export class ReactComponent {
             hooks.push("useRef");
         }
 
-        if (!this.context.defaultOptionsImport && this.needGenerateDefaultOptions && this.context.defaultOptionsModule && this.context.path) {
-            const relativePath = getModuleRelativePath(this.context.path, this.context.defaultOptionsModule);
+        if (this.api.length) {
+            hooks.push("useImperativeHandle");
+            compats.push("forwardRef");
+        }
+
+        if(this.apiRefs.length) {
+            imports.splice(-1, 0, ...this.apiRefs.reduce((imports: string[], ref) => {
+                const baseComponent = this.context.components![ref.type!.replace(/Ref$/, '')] as ReactComponent;
+                if(this.context.dirname) {
+                    const relativePath = getModuleRelativePath(this.context.dirname, baseComponent.context.path!);
+                    imports.push(`import {${baseComponent.name}Ref as ${ref.type}} from "${relativePath.replace(path.extname(relativePath), '')}"`);
+                }
+                return imports;
+            }, []));
+        }
+
+        if (!this.context.defaultOptionsImport && this.needGenerateDefaultOptions && this.context.defaultOptionsModule && this.context.dirname) {
+            const relativePath = getModuleRelativePath(this.context.dirname, this.context.defaultOptionsModule);
             imports.push(`import {convertRulesToOptions, Rule} from "${relativePath}"`);
         }
 
-        return imports.concat(this.compileImportStatements(hooks)).join(";\n");
+        return imports.concat(this.compileImportStatements(hooks, compats)).join(";\n");
     }
 
     defaultPropsDest() {
@@ -1500,6 +1532,32 @@ export class ReactComponent {
         return subscriptionsString + effectsString;
     }
 
+    compileComponentRef() {
+        if(this.api.length) {
+            return `export type ${this.name}Ref = {${this.api.map(a => a.typeDeclaration())}}`
+        }
+        return "";
+    }
+
+    compileUseImperativeHandle() {
+        if(this.api.length) {
+            const api = this.api.reduce((r: { methods: string[], deps: string[]}, a) => {
+                r.methods.push(`${a.name}: ${a.arrowDeclaration({
+                    members: this.members,
+                    internalState: this.internalState, state: this.state, props: this.props.concat(this.refs)
+                })}`);
+
+                r.deps = [...new Set(r.deps.concat(a.getDependency(this.props.concat(this.state).concat(this.internalState))))];
+                
+                return r;
+            }, { methods: [], deps: [] });
+
+            return `useImperativeHandle(ref, () => ({${api.methods.join(",\n")}}), [${api.deps.join(",")}])`
+        }
+
+        return "";
+    }
+
     compileUseRef() {
         return this.refs.map(r => {
             return `const ${r.name}=useRef<${r.type}>()`;
@@ -1559,13 +1617,17 @@ export class ReactComponent {
     toString() {
         return `
             ${this.compileImports()}
+            ${this.compileComponentRef()}
             ${this.compileComponentInterface()}
 
-            ${this.modifiers.join(" ")} function ${this.name}(props: ${this.compilePropsType()}){
+            ${this.api.length === 0 
+                ? `${this.modifiers.join(" ")} function ${this.name}(props: ${this.compilePropsType()}){`
+                : `const ${this.name} = forwardRef<${this.name}Ref, ${this.compilePropsType()}>((props: ${this.compilePropsType()}, ref) => {`}
                 ${this.compileUseRef()}
                 ${this.stateDeclaration()}
                 ${this.listenersDeclaration()}
                 ${this.compileUseEffect()}
+                ${this.compileUseImperativeHandle()}
                 ${this.methods.map(m => {
                     return `const ${m.name}=useCallback(${m.declaration("function", {
                         members: this.members,
@@ -1578,8 +1640,8 @@ export class ReactComponent {
                         ${ this.compileViewModelArguments().join(",\n")}
                     })
                 );
-            }
-
+            ${this.api.length === 0 ? `}` : `});\n${this.modifiers.join(" ")} ${this.name};`}
+            
             ${this.compileDefaultProps()}
             ${this.compileDefaultOptionsMethod()}`;
     }
@@ -2125,6 +2187,7 @@ export class AsExpression extends ExpressionWithExpression {
 
 export interface GeneratorContex {
     path?: string;
+    dirname?: string;
     components?: { [name: string]: Heritable };
     defaultOptionsImport?: ImportDeclaration;
     defaultOptionsModule?: string
@@ -2343,8 +2406,8 @@ export class Generator {
             return "";
         }
         const context = this.getContext();
-        if (context.defaultOptionsModule && context.path) {
-            const relativePath = getModuleRelativePath(context.path, context.defaultOptionsModule);
+        if (context.defaultOptionsModule && context.dirname) {
+            const relativePath = getModuleRelativePath(context.dirname, context.defaultOptionsModule);
             if (relativePath.toString()===moduleSpecifier.valueOf()) {
                 context.defaultOptionsImport = new ImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
                 return context.defaultOptionsImport;
@@ -2356,10 +2419,10 @@ export class Generator {
         }
 
         const module = moduleSpecifier.expression.toString();
-        if (context.path) {
-            const modulePath = path.join(context.path, `${module}.tsx`);
+        if (context.dirname) {
+            const modulePath = path.join(context.dirname, `${module}.tsx`);
             if (fs.existsSync(modulePath)) {
-                compileCode(this, fs.readFileSync(modulePath).toString(), { dirname: context.path, path: modulePath });
+                compileCode(this, fs.readFileSync(modulePath).toString(), { dirname: context.dirname, path: modulePath });
 
                 if (importClause) {
                     this.addComponent(importClause.default, this.cache[modulePath].find((e: any) => e instanceof ReactComponent), importClause);
@@ -2459,7 +2522,7 @@ export class Generator {
     }
 
     createJsxText(text: string, containsOnlyTriviaWhiteSpaces: string) {
-        return containsOnlyTriviaWhiteSpaces ? "" : text;
+        return containsOnlyTriviaWhiteSpaces === "true" ? "" : text;
     }
 
     createFunctionTypeNode(typeParameters: any, parameters: Parameter[], type: string) {
