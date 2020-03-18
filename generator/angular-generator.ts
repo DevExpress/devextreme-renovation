@@ -573,10 +573,6 @@ class Method extends BaseMethod {
     }
 }
 
-function onlyUnique(value:any, index:number, self:any[]) { 
-    return self.indexOf(value) === index;
-}
-
 class GetAccessor extends BaseGetAccessor { 
     toString(options?: toStringOptions) { 
         return `get ${this.name}()${this.body.toString(options)}`;
@@ -632,7 +628,7 @@ class AngularComponent extends ReactComponent {
         }
 
         return [
-            `import {${core.filter(onlyUnique).join(",")}} from "@angular/core"`,
+            `import {${[...new Set(core)].join(",")}} from "@angular/core"`,
             'import {CommonModule} from "@angular/common"'
         ].join(";\n");
     }

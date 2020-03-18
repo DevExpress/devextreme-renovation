@@ -191,6 +191,11 @@ mocha.describe("react-generator: expressions", function () {
         assert.equal(generator.createVariableDeclaration(identifier, "string", generator.createStringLiteral("str")).toString(), 'a:string="str"', "w type and initializer");
     });
 
+    mocha.it("createJsxText", function () {
+        assert.strictEqual(generator.createJsxText("test string", "false"), "test string");
+        assert.strictEqual(generator.createJsxText("test string", "true"), "");
+    });
+
     mocha.describe("VaraibleDeclarationList", function () {
         mocha.it("toString", function () {
             const expresion = generator.createVariableDeclarationList(
