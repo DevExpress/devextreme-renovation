@@ -84,13 +84,17 @@ interface JsxSpreadAttributeMeta {
 export class JsxOpeningElement extends ReactJsxOpeningElement { 
     context: GeneratorContex;
     component?: AngularComponent;
-    constructor(tagName: Expression, typeArguments: any[] = [], attributes: Array<JsxAttribute|JsxSpreadAttribute> = [], context: GeneratorContex) { 
+    constructor(tagName: Expression, typeArguments: any[] = [], attributes: Array<JsxAttribute | JsxSpreadAttribute> = [], context: GeneratorContex) { 
         super(processTagName(tagName, context), typeArguments, attributes);
         this.context = context;
         const component = context.components?.[tagName.toString()];
         if (component instanceof AngularComponent) { 
             this.component = component;
         }
+    }
+
+    processTagName(tagName: Expression) { 
+        return tagName;
     }
 
     getTemplateProperty(options?: toStringOptions) { 
