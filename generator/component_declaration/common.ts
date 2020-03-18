@@ -103,6 +103,6 @@ export const Effect = () => propertyDecorator;
  * Pass ComponentBindings as type argument 
  */
 export class JSXComponent<T> extends React.Component<T> {
-    props!: T;
+    props!: T & { ref?: JSXComponent<T> };
     setState() {}
 };
