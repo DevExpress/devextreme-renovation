@@ -2011,11 +2011,15 @@ export class JsxAttribute {
 export class JsxOpeningElement extends Expression { 
     tagName: Expression;
     typeArguments: any[];
-    attributes: Array<JsxAttribute|JsxSpreadAttribute>;
+    attributes: Array<JsxAttribute | JsxSpreadAttribute>;
+    
+    processTagName(tagName: Expression) { 
+        return tagName.toString() === "Fragment" ? new Identifier("React.Fragment") : tagName;
+    }
 
     constructor(tagName: Expression, typeArguments: any[] = [], attributes: Array<JsxAttribute|JsxSpreadAttribute>) { 
         super();
-        this.tagName = tagName;
+        this.tagName = this.processTagName(tagName);
         this.typeArguments = typeArguments;
         this.attributes = attributes;
     }

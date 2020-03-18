@@ -16,7 +16,6 @@ import {
 } from "./react-generator";
 import path from "path";
 
-
 export class PreactComponent extends ReactComponent {
     compileImportStatements(hooks: string[]) {
         const imports = ["import * as Preact from 'preact'"]; 
@@ -40,17 +39,17 @@ export class Property extends BaseProperty {
     }
 }
 
-const processTagName = (tagName: Identifier) => tagName.toString() === "Fragment" ? new Identifier("Preact.Fragment") : tagName;
+const processTagName = (tagName: Expression) => tagName.toString() === "Fragment" ? new Identifier("Preact.Fragment") : tagName;
 
 class JsxOpeningElement extends ReactJsxOpeningElement { 
-    constructor(tagName: Identifier, typeArguments: any[], attributes: JsxAttribute[] = []) { 
-        super(processTagName(tagName), typeArguments, attributes);
+    processTagName(tagName: Expression) { 
+        return processTagName(tagName);
     }
 }
 
 class JsxClosingElement extends ReactJsxClosingElement { 
-    constructor(tagName: Identifier) { 
-        super(processTagName(tagName));
+    processTagName(tagName: Expression) { 
+        return processTagName(tagName);
     }
 }
 

@@ -1103,7 +1103,17 @@ mocha.describe("react-generator: expressions", function () {
                 assert.strictEqual(expression.getter(), "name()");
             });
         });
-    });   
+    }); 
+    
+    mocha.it("JsxElement. Fragment -> React.Fragment", function () {
+        const expression = generator.createJsxElement(
+            generator.createJsxOpeningElement(generator.createIdentifier("Fragment"), [], []),
+            [],
+            generator.createJsxClosingElement(generator.createIdentifier("Fragment"))
+        );
+
+        assert.strictEqual(expression.toString(), "<React.Fragment ></React.Fragment>");
+    });
 });
 
 mocha.describe("common", function () {
