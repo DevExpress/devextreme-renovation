@@ -43,6 +43,9 @@
     color: rgb(51, 51, 51);
     border-color: rgb(221, 221, 221);
 }
+.dx-button-mode-contained.dx-state-focused {
+    border-color: red;
+}
 .dx-button-mode-contained.dx-button-success {
     background-color: rgb(92, 184, 92);
     color: rgb(255, 255, 255);
@@ -51,6 +54,9 @@
 .dx-button-mode-contained.dx-button-success.dx-state-hover {
     background-color: rgb(53, 121, 53);
     border-color: transparent;
+}
+.dx-button-mode-contained.dx-button-success.dx-state-focused {
+    border-color: red;
 }
 .dx-button-mode-contained.dx-button-success.dx-state-active {
     background-color: rgb(6, 15, 6);
@@ -71,6 +77,9 @@
     color: rgb(255, 255, 255);
     border-color: transparent;
 }
+.dx-button-mode-contained.dx-button-default.dx-state-focused {
+    border-color: red;
+}
 .dx-button-mode-contained.dx-button-danger {
     background-color: rgb(217, 83, 79);
     color: rgb(255, 255, 255);
@@ -84,6 +93,9 @@
     background-color: rgb(34, 8, 7);
     color: rgb(255, 255, 255);
     border-color: transparent;
+}
+.dx-button-mode-contained.dx-button-danger.dx-state-focused {
+    border-color: red;
 }
 
 
@@ -101,6 +113,9 @@
     color: rgb(51, 51, 51);
     border-color: rgb(221, 221, 221);
 }
+.dx-button-mode-outlined.dx-state-focused {
+    border-color: red;
+}
 .dx-button-mode-outlined.dx-button-success {
     background-color: transparent;
     color: rgb(76, 174, 76);
@@ -114,6 +129,9 @@
     background-color: rgba(76, 174, 76, 0.4);
     color: rgb(76, 174, 76);
     border-color: rgb(76, 174, 76);
+}
+.dx-button-mode-outlined.dx-button-success.dx-state-focused {
+    border-color: red;
 }
 .dx-button-mode-outlined.dx-button-default {
     background-color: transparent;
@@ -129,6 +147,9 @@
     color: rgb(45, 109, 163);
     border-color: rgb(45, 109, 163);
 }
+.dx-button-mode-outlined.dx-button-default.dx-state-focused {
+    border-color: red;
+}
 .dx-button-mode-outlined.dx-button-danger {
     background-color: transparent;
     color: rgb(212, 63, 58);
@@ -142,6 +163,9 @@
     background-color: rgba(212, 63, 58, 0.4);
     color: rgb(212, 63, 58);
     border-color: rgb(212, 63, 58);
+}
+.dx-button-mode-outlined.dx-button-danger.dx-state-focused {
+    border-color: red;
 }
 
 .dx-button-mode-text {
@@ -158,6 +182,9 @@
     color: rgb(51, 51, 51);
     border-color: transparent;
 }
+.dx-button-mode-text.dx-state-focused {
+    border-color: red;
+}
 .dx-button-mode-text.dx-button-success {
     background-color: transparent;
     color: rgb(76, 174, 76);
@@ -171,6 +198,9 @@
     background-color: rgba(76, 174, 76, 0.4);
     color: rgb(76, 174, 76);
     border-color: transparent;
+}
+.dx-button-mode-text.dx-button-success.dx-state-focused {
+    border-color: red;
 }
 .dx-button-mode-text.dx-button-default {
     background-color: transparent;
@@ -186,6 +216,9 @@
     color: rgb(45, 109, 163);
     border-color: transparent;
 }
+.dx-button-mode-text.dx-button-default.dx-state-focused {
+    border-color: red;
+}
 .dx-button-mode-text.dx-button-danger {
     background-color: transparent;
     color: rgb(212, 63, 58);
@@ -199,6 +232,9 @@
     background-color: rgba(212, 63, 58, 0.4);
     color: rgb(212, 63, 58);
     border-color: transparent;
+}
+.dx-button-mode-text.dx-button-danger.dx-state-focused {
+    border-color: red;
 }
 
 .dx-button-content {

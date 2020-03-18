@@ -23,7 +23,7 @@ import File from "vinyl";
 
 export function compileCode(generator: Generator, code: string, file: { dirname: string, path: string }): string {
     const source = ts.createSourceFile(file.path, code, ts.ScriptTarget.ES2016, true);
-    generator.setContext({ path: file.dirname, defaultOptionsModule: generator.defaultOptionsModule && path.resolve(generator.defaultOptionsModule) });
+    generator.setContext({ path: file.path, dirname: file.dirname, defaultOptionsModule: generator.defaultOptionsModule && path.resolve(generator.defaultOptionsModule) });
     const codeFactory = generateFactoryCode(ts, source);
     const codeFactoryResult = eval(codeFactory)(generator);
     

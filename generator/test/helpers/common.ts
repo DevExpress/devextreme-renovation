@@ -17,6 +17,10 @@ function printNodeValue(node: ts.Node):string {
         return node.text;
     }
 
+    if (ts.isJsxText(node)) { 
+        return node.text.replace(/(\s|\s)/gi, "");
+    }
+
     return "";
 }
 
@@ -36,7 +40,7 @@ function print(node: ts.Node, out?: string[], indent = 0): string[] {
 }
 
 export function printSourceCodeAst(source: string) { 
-    return print(ts.createSourceFile("result", source, ts.ScriptTarget.ES2015, true)).join("\n");
+    return print(ts.createSourceFile("result.tsx", source, ts.ScriptTarget.ES2016, true)).join("\n");
 }
 
 export function createTestGenerator(expectedFolder: string){ 

@@ -21,7 +21,7 @@ mocha.describe("preact-generator", function () {
     });
 
     this.beforeEach(function () {
-        generator.setContext({ path: path.resolve(__dirname, "./test-cases/declarations") });
+        generator.setContext({ dirname: path.resolve(__dirname, "./test-cases/declarations") });
     });
 
     this.afterEach(function () {
@@ -51,7 +51,7 @@ mocha.describe("preact-generator", function () {
 
     mocha.describe("react-generator: expressions", function () {
         mocha.it("Rename import if it is component declaration", function () {
-            generator.setContext({ path: path.resolve(__dirname) });
+            generator.setContext({ dirname: path.resolve(__dirname) });
             
             assert.equal(generator.createImportDeclaration(
                 undefined,
@@ -62,7 +62,7 @@ mocha.describe("preact-generator", function () {
         });
 
         mocha.it("Do not rename module without declaration", function () {
-            generator.setContext({ path: path.resolve(__dirname) });
+            generator.setContext({ dirname: path.resolve(__dirname) });
             
             assert.equal(generator.createImportDeclaration(
                 undefined,
@@ -88,7 +88,7 @@ mocha.describe("preact-generator", function () {
 
 mocha.describe("import Components", function () { 
     this.beforeEach(function () { 
-        generator.setContext({ path: path.resolve(__dirname) });
+        generator.setContext({ dirname: path.resolve(__dirname) });
     });
 
     this.afterEach(function () {

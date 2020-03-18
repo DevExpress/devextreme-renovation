@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from "react";
-import Button, { defaultOptionsRules as buttonRules } from "./Button";
+import React, { useCallback, useState, forwardRef, useImperativeHandle, useRef } from "react";
+import Button, { defaultOptionsRules as buttonRules, ButtonRef } from "./Button";
 
 // import convertRulesToOptions from 'core/options/utils';
 const convertRulesToOptions = (rules: { device: () => boolean, options: any }[]) => {
@@ -20,7 +20,12 @@ export const defaultOptionsRules = buttonRules.concat([{
   }
 }]);
 
-const ToggleButton = (props: {
+
+export type ToggleButtonRef = {
+  focus: () => void
+}
+
+type ToggleButtonProps = {
   height?: string,
   hint?: string,
   pressed?: boolean,
@@ -30,7 +35,9 @@ const ToggleButton = (props: {
   text?: string,
   type?: string,
   width?: string
-}) => {
+}
+
+const ToggleButton = forwardRef<ToggleButtonRef, ToggleButtonProps>((props: ToggleButtonProps, ref) => {
   const [pressed, setPressed] = useState(() => ((props.pressed !== undefined) ? props.pressed : props.defaultPressed) || false);
 
   const onClickHandler = useCallback(function(e: any) {
@@ -39,6 +46,11 @@ const ToggleButton = (props: {
     props.pressedChange!(newPressed);
   }, [pressed, props.pressed, props.pressedChange]);
 
+  const inheritRef = useRef<ButtonRef>();
+  useImperativeHandle(ref, () => ({
+    ...inheritRef.current!
+  }), [inheritRef]);
+  
   return view({
     // props
     props: {
@@ -46,11 +58,12 @@ const ToggleButton = (props: {
       // state
       pressed: props.pressed !== undefined ? props.pressed : pressed
     },
+    inheritRef,
     // internal state
     // listeners
     onClickHandler
   });
-}
+});
 
 ToggleButton.defaultProps = {
   pressedChange: () => {},
@@ -60,6 +73,7 @@ ToggleButton.defaultProps = {
 function view(viewModel: any) {
   return (
     <Button
+      ref={viewModel.inheritRef}
       height={viewModel.props.height}
       hint={viewModel.props.hint}
       stylingMode={viewModel.props.stylingMode}

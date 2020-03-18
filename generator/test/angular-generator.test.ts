@@ -368,7 +368,7 @@ mocha.describe("Angular generator", function () {
             this.beforeEach(function () {
                 generator.setContext(null);
                 generator.setContext({
-                    path: __dirname
+                    dirname: __dirname
                 });
             });
 
@@ -634,7 +634,7 @@ mocha.describe("Angular generator", function () {
             mocha.describe("Import widget.", function () {
                 this.beforeEach(function () {
                     generator.setContext({
-                        path: __dirname
+                        dirname: __dirname
                     });
                     generator.createImportDeclaration(
                         [],

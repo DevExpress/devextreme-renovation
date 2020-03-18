@@ -37,7 +37,7 @@ mocha.describe("code-compiler: gulp integration", function() {
         
         assert.strictEqual(printSourceCodeAst(result[0].contents!.toString()), printSourceCodeAst(fs.readFileSync(`${__dirname}/test-cases/expected/preact/props-in-listener.tsx`).toString()));
         assert.ok(result[0].path.endsWith("props-in-listener.p.tsx"));
-        assert.ok(setContextSpy.firstCall.args[0]!.path!.endsWith("declarations"));
+        assert.ok(setContextSpy.firstCall.args[0]!.dirname!.endsWith("declarations"));
         assert.deepEqual(generator.getContext(), { components: {} });
         setContextSpy.restore();
     });

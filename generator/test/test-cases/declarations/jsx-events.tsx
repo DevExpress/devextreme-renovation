@@ -7,6 +7,5 @@ function view() {
             pointerdown={f}
             click={f}
             unknown={f}
-        >
-    </div>)
+        ></div>)
 }
