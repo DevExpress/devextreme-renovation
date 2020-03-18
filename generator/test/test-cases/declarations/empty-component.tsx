@@ -1,7 +1,8 @@
 import { Component, OneWay } from "../../../component_declaration/common";
 @Component({
     viewModel: viewModel1,
-    view: view1
+    view: view1,
+    defaultOptionRules: null
 })
 export default class Widget {
     @OneWay() height: number;

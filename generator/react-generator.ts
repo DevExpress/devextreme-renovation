@@ -1283,7 +1283,7 @@ export class ReactComponent {
 
     context: GeneratorContex;
 
-    defaultOptionsRules?: Expression | null;
+    defaultOptionRules?: Expression | null;
 
     get name() { 
         return this._name.toString();
@@ -1296,6 +1296,10 @@ export class ReactComponent {
             });
         }
         return members;
+    }
+
+    get needGenerateDefaultOptions(): boolean { 
+        return !!this.context.defaultOptionsModule && (!this.defaultOptionRules || this.defaultOptionRules?.toString() !== "null");
     }
 
     constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>, context: GeneratorContex) {
@@ -1346,7 +1350,8 @@ export class ReactComponent {
 
         this.view = parameters.getProperty("view");
         this.viewModel = parameters.getProperty("viewModel") || "";
-        this.defaultOptionsRules = parameters.getProperty("defaultOptionsRules");
+
+        this.defaultOptionRules = parameters.getProperty("defaultOptionRules");
 
         this.context = context;
 
@@ -1410,7 +1415,7 @@ export class ReactComponent {
             }, []));
         }
 
-        if (!this.context.defaultOptionsImport && this.context.defaultOptionsModule && this.context.dirname) {
+        if (!this.context.defaultOptionsImport && this.needGenerateDefaultOptions && this.context.defaultOptionsModule && this.context.dirname) {
             const relativePath = getModuleRelativePath(this.context.dirname, this.context.defaultOptionsModule);
             imports.push(`import {convertRulesToOptions, Rule} from "${relativePath}"`);
         }
@@ -1423,17 +1428,17 @@ export class ReactComponent {
     }
 
     compileDefaultOptionsMethod() { 
-        if (this.context.defaultOptionsModule) { 
+        if (this.needGenerateDefaultOptions) { 
             const defaultOptionsTypeName = `${this.name}OptionRule`;
             const defaultOptionsTypeArgument = this.isJSXComponent ? this.heritageClauses[0].defaultProps : this.name;
             return `type ${defaultOptionsTypeName} = Rule<${defaultOptionsTypeArgument}>;
 
-            const __defaultOptionsRules:${defaultOptionsTypeName}[] = [];
+            const __defaultOptionRules:${defaultOptionsTypeName}[] = [];
             export function defaultOptions(rule: ${defaultOptionsTypeName}) { 
-                __defaultOptionsRules.push(rule);
+                __defaultOptionRules.push(rule);
                 ${this.defaultPropsDest()} = {
                     ...__createDefaultProps(),
-                    ...convertRulesToOptions(__defaultOptionsRules)
+                    ...convertRulesToOptions(__defaultOptionRules)
                 };
             }`;
         }
@@ -1449,11 +1454,11 @@ export class ReactComponent {
                     .map(p => p.defaultProps())
         );
 
-        if (this.defaultOptionsRules) { 
-            defaultProps.push(`...convertRulesToOptions(${this.defaultOptionsRules})`);
+        if (this.defaultOptionRules && this.needGenerateDefaultOptions) { 
+            defaultProps.push(`...convertRulesToOptions(${this.defaultOptionRules})`);
         }
 
-        if (this.context.defaultOptionsModule) { 
+        if (this.needGenerateDefaultOptions) { 
             return `
                 function __createDefaultProps(){
                     return {

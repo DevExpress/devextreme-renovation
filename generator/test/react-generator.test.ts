@@ -2680,6 +2680,36 @@ mocha.describe("Default_options", function () {
         assert.strictEqual(getResult(component.compileImports()), getResult(`import {convertRulesToOptions, Rule} from "../default_options"; import React from "react";`));
     });
 
+    mocha.it("Do not import default_options if defaultOptionRules is set to null", function () {
+        const component = new ReactComponent(
+            createComponentDecorator({
+                defaultOptionRules: generator.createNull()
+            }),
+            [],
+            generator.createIdentifier("Component"),
+            [],
+            [],
+            [],
+            generator.getContext());
+        
+        assert.strictEqual(getResult(component.compileImports()), getResult(`import React from "react";`));
+    });
+
+    mocha.it("Do not generate DefaultOptionsMethod if defaultOptionRules parameter is null", function () {
+        const component = new ReactComponent(
+            createComponentDecorator({
+                defaultOptionRules: generator.createNull()
+            }),
+            [],
+            generator.createIdentifier("Component"),
+            [],
+            [],
+            [],
+            generator.getContext());
+        
+        assert.strictEqual(component.compileDefaultOptionsMethod(), "");
+    });
+
     mocha.it("Import default_options if module doesn't import default_options", function () {
         const component = new ReactComponent(
             generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)])),

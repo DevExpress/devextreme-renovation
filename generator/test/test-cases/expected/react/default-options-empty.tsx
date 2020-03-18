@@ -27,11 +27,11 @@ Widget.defaultProps = __createDefaultProps();
 
 type WidgetOptionRule = Rule<WidgetProps>;
 
-const __defaultOptionsRules: WidgetOptionRule[] = [];
+const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {
-    __defaultOptionsRules.push(rule);
+    __defaultOptionRules.push(rule);
     Widget.defaultProps = {
         ...__createDefaultProps(),
-        ...convertRulesToOptions(__defaultOptionsRules)
+        ...convertRulesToOptions(__defaultOptionRules)
     }
 }
