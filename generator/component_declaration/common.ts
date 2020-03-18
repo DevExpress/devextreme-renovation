@@ -25,7 +25,7 @@ export function Component(args: {
      */
     view: Function;
 
-    defaultOptionsRules?: Rule<any>[];
+    defaultOptionRules?: Rule<any>[] | null;
 }) {
     return function ComponentDecorator(constructor: Function) {
         constructor.prototype.render = function() {
