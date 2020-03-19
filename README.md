@@ -1,5 +1,7 @@
 # devextreme-renovation
 
+[![Build Status](https://dev.azure.com/pavelgruba/devextreme-renovation/_apis/build/status/DevExpress.devextreme-renovation?branchName=master)](https://dev.azure.com/pavelgruba/devextreme-renovation/_build/latest?definitionId=1&branchName=master)
+
 ## Generator
 
 [![npm package](https://img.shields.io/npm/v/devextreme-generator?logo=npm&style=flat-square)](https://www.npmjs.org/package/devextreme-generator)
