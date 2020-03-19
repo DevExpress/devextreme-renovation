@@ -1378,6 +1378,13 @@ export class ReactComponent {
         return ["import React from 'react'"];
     }
 
+    compileDefaultOptionsImport(imports: string[]): void { 
+        if (!this.context.defaultOptionsImport && this.needGenerateDefaultOptions && this.context.defaultOptionsModule && this.context.dirname) {
+            const relativePath = getModuleRelativePath(this.context.dirname, this.context.defaultOptionsModule);
+            imports.push(`import {convertRulesToOptions, Rule} from "${relativePath}"`);
+        }
+    }
+
     compileImports() {
         const imports: string[] = [];
         const hooks: string[] = [];
@@ -1415,10 +1422,7 @@ export class ReactComponent {
             }, []));
         }
 
-        if (!this.context.defaultOptionsImport && this.needGenerateDefaultOptions && this.context.defaultOptionsModule && this.context.dirname) {
-            const relativePath = getModuleRelativePath(this.context.dirname, this.context.defaultOptionsModule);
-            imports.push(`import {convertRulesToOptions, Rule} from "${relativePath}"`);
-        }
+        this.compileDefaultOptionsImport(imports);
 
         return imports.concat(this.compileImportStatements(hooks, compats)).join(";\n");
     }
@@ -1427,19 +1431,16 @@ export class ReactComponent {
         return `${this.name.toString()}.defaultProps`;
     }
 
-    compileDefaultOptionsMethod() { 
+    compileDefaultOptionsMethod(defaultOptionRulesInitializer:string = "[]", statements: string[]=[]) { 
         if (this.needGenerateDefaultOptions) { 
             const defaultOptionsTypeName = `${this.name}OptionRule`;
             const defaultOptionsTypeArgument = this.isJSXComponent ? this.heritageClauses[0].defaultProps : this.name;
             return `type ${defaultOptionsTypeName} = Rule<${defaultOptionsTypeArgument}>;
 
-            const __defaultOptionRules:${defaultOptionsTypeName}[] = [];
+            const __defaultOptionRules:${defaultOptionsTypeName}[] = ${defaultOptionRulesInitializer};
             export function defaultOptions(rule: ${defaultOptionsTypeName}) { 
                 __defaultOptionRules.push(rule);
-                ${this.defaultPropsDest()} = {
-                    ...__createDefaultProps(),
-                    ...convertRulesToOptions(__defaultOptionRules)
-                };
+                ${statements.join("\n")}
             }`;
         }
         return "";
@@ -1643,7 +1644,12 @@ export class ReactComponent {
             ${this.api.length === 0 ? `}` : `});\n${this.modifiers.join(" ")} ${this.name};`}
             
             ${this.compileDefaultProps()}
-            ${this.compileDefaultOptionsMethod()}`;
+            ${this.compileDefaultOptionsMethod("[]", [
+                `${this.defaultPropsDest()} = {
+                    ...__createDefaultProps(),
+                    ...convertRulesToOptions(__defaultOptionRules)
+                };`
+            ])}`;
     }
 }
 

@@ -1,9 +1,10 @@
 import mocha from "mocha";
 import generator, { Property, AngularDirective } from "../angular-generator";
 import assert from "assert";
+import path from "path";
 
 import { printSourceCodeAst as getResult } from "./helpers/common";
-import { Identifier } from "../react-generator";
+import { Identifier, GeneratorContex, Expression } from "../react-generator";
 
 if (!mocha.describe) { 
     mocha.describe = describe;
@@ -36,9 +37,9 @@ function createComponentDecorator(paramenters: {[name:string]: any}) {
     )
 }
 
-function createComponent(properties: Property[]=[]) {
+function createComponent(properties: Property[] = [], paramenters: { [name: string]: Expression } = {}) {
     return generator.createComponent(
-        createComponentDecorator({}),
+        createComponentDecorator(paramenters),
         [],
         generator.createIdentifier("BaseWidget"),
         [],
@@ -1632,7 +1633,7 @@ mocha.describe("Angular generator", function () {
                 generator.createArrowFunction([], [], [], "", generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
             );
 
-            assert.strictEqual(property.toString(), "@Output() onClick:EventEmitter<any> = new EventEmitter()");
+            assert.strictEqual(property.toString(), "@Output() onClick?:EventEmitter<any> = new EventEmitter()");
         });
 
         mocha.it.skip("Event Prop with type", function () {
@@ -1672,7 +1673,7 @@ mocha.describe("Angular generator", function () {
 
             assert.strictEqual(getResult(property.toString()),
                 getResult(`@Input() pressed?:boolean = false
-                 @Output() pressedChange: EventEmitter<boolean> = new EventEmitter()`)
+                 @Output() pressedChange?: EventEmitter<boolean> = new EventEmitter()`)
             );
         });
 
@@ -1688,7 +1689,7 @@ mocha.describe("Angular generator", function () {
 
             assert.strictEqual(getResult(property.toString()),
                 getResult(`@Input() pressed?:any = false
-                 @Output() pressedChange: EventEmitter<any> = new EventEmitter()`)
+                 @Output() pressedChange?: EventEmitter<any> = new EventEmitter()`)
             );
         });
 
@@ -1953,6 +1954,42 @@ mocha.describe("Angular generator", function () {
             `));
         });
 
+        mocha.describe("Default options", function () {
+            function setupGenerator(context: GeneratorContex) { 
+                generator.setContext(context);
+            }
+            this.beforeEach(function () {
+                setupGenerator({
+                    dirname: path.join(__dirname, "test-cases"),
+                    defaultOptionsModule: `${__dirname}/default_options`
+                });
+            });
+        
+            this.afterEach(function () {
+                generator.defaultOptionsModule = "";
+                generator.setContext(null);
+            });
+
+            mocha.it("Add import convertRulesToOptions, Rule", function () {
+                const component = createComponent([]);
+                assert.ok(component.compileImports().indexOf(`import {convertRulesToOptions, Rule} from "../default_options"`) > -1);
+            });
+
+            mocha.it("Compile defaultOptions expression if defaultOptionRules expression is set", function () {
+                const component = createComponent([], {
+                    defaultOptionRules: generator.createIdentifier("rules")
+                });
+                assert.strictEqual(getResult(component.compileDefaultOptions([])), getResult(`
+                    type BaseWidgetOptionRule = Rule<BaseWidget>;
+                    const __defaultOptionRules:BaseWidgetOptionRule[] = rules;
+                    export function defaultOptions(rule: BaseWidgetOptionRule) { 
+                        __defaultOptionRules.push(rule);
+                        
+                    }`));
+            });
+
+        });
+
         mocha.describe("Members generation", function () { 
             mocha.it("Access props - this.prop", function () { 
                 const property = new Property(
@@ -2175,7 +2212,7 @@ mocha.describe("Angular generator", function () {
                     internalState: [],
                     state: [],
                     props: []
-                }), "this.onClick.emit(10)");
+                }), "this.onClick!.emit(10)");
             });
 
             mocha.it("Set TwoWay Prop", function () { 
@@ -2202,7 +2239,7 @@ mocha.describe("Angular generator", function () {
                     internalState: [],
                     state: [],
                     props: []
-                })), getResult("this.widthChange.emit(this.width=10)"));
+                })), getResult("this.widthChange!.emit(this.width=10)"));
             });
 
             mocha.it("Can't set OneWay Prop", function () { 

@@ -1,5 +1,4 @@
 function view() { }
-function viewModel() { }
 
 declare type WidgetProps = {}
 
@@ -11,7 +10,7 @@ import React from "react";
 interface Widget { props: WidgetProps }
 
 export default function Widget(props: WidgetProps) {
-    return view(viewModel({
+    return view(({
         props: { ...props },
     }));
 }

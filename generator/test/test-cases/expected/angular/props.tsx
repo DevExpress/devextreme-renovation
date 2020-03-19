@@ -12,7 +12,7 @@ import { CommonModule } from "@angular/common"
 @Component({ selector: "dx-widget" })
 export default class Widget extends WidgetInput {
     __getHeight(): number {
-        this.onClick.emit(10)
+        this.onClick!.emit(10)
         return this.height;
     }
 }
