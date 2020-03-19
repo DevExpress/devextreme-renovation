@@ -9,10 +9,10 @@ import { CommonModule } from "@angular/common";
 })
 export default class Widget {
     @Input() pressed?: boolean;
-    @Output() pressedChange: EventEmitter<boolean> = new EventEmitter();
+    @Output() pressedChange?: EventEmitter<boolean> = new EventEmitter();
 
     updateState():any {
-        this.pressedChange.emit(this.pressed = !this.pressed);
+        this.pressedChange!.emit(this.pressed = !this.pressed);
     }
 
     _viewModel: any;

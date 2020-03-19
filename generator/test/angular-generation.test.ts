@@ -24,12 +24,14 @@ mocha.describe("angular-generation", function () {
     });
 
     this.afterEach(function () {
-        generator.setContext(null);
         if (this.currentTest!.state !== "passed") {
-            console.log(this.code); // TODO: diff with expected
+            console.log(this.currentTest?.ctx?.code); // TODO: diff with expected
         }
-        this.code = null;
-        this.expectedCode = null;
+        generator.setContext(null);
+        if (this.currentTest?.ctx) { 
+            this.currentTest.ctx.code = null;
+            this.currentTest.ctx.expectedCode = null;
+        }
     });
 
     mocha.it("props", function () {
@@ -66,5 +68,24 @@ mocha.describe("angular-generation", function () {
 
     mocha.it("template", function () {
         this.testGenerator(this.test!.title);
+    });
+
+    mocha.describe("Default option rules", function () {
+        this.beforeEach(function () {
+            generator.defaultOptionsModule = "../component_declaration/default_options";
+            generator.setContext({
+                dirname: path.resolve(__dirname, "./test-cases/expected/react"),
+                defaultOptionsModule: path.resolve(generator.defaultOptionsModule)
+            });
+        });
+
+        this.afterEach(function () { 
+            generator.setContext(null);
+            generator.defaultOptionsModule = "";
+        });
+
+        mocha.it("default-options-empty", function () { 
+            this.testGenerator(this.test!.title);
+        })
     });
 });

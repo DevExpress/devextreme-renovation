@@ -531,14 +531,14 @@ export class Property extends BaseProperty {
         const eventDecorator = this.decorators.find(d => d.name === "Event");
         const defaultValue = `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.typeDeclaration()} ${this.initializer && this.initializer.toString() ? `= ${this.initializer.toString()}` : ""}`;
         if (eventDecorator) { 
-            return `${eventDecorator} ${this.name}:EventEmitter<any> = new EventEmitter()`
+            return `${eventDecorator} ${this.name}${this.questionOrExclamationToken}:EventEmitter<any> = new EventEmitter()`
         }
         if (this.decorators.find(d => d.name === "Ref")) {
             return `@ViewChild("${this.name}", {static: false}) ${this.name}:ElementRef<${this.type}>`;
         }
         if (this.decorators.find(d => d.name.toString() === "TwoWay")) { 
             return `${defaultValue};
-            @Output() ${this.name}Change: EventEmitter<${this.type}> = new EventEmitter()`
+            @Output() ${this.name}Change${this.questionOrExclamationToken}: EventEmitter<${this.type}> = new EventEmitter()`
         }
         if (this.decorators.find(d => d.name === "Slot")) { 
             return "";
@@ -549,7 +549,7 @@ export class Property extends BaseProperty {
 
     getter() { 
         if (this.decorators.find(d => d.name === "Event")) { 
-            return `${this.name}.emit`;
+            return `${this.name}!.emit`;
         }
         if (this.decorators.find(d => d.name === "Ref")) { 
             return `${this.name}?.nativeElement`
@@ -628,10 +628,14 @@ class AngularComponent extends ReactComponent {
             core.push("ViewChild, ElementRef");
         }
 
-        return [
+        const imports = [
             `import {${[...new Set(core)].join(",")}} from "@angular/core"`,
             'import {CommonModule} from "@angular/common"'
-        ].join(";\n");
+        ];
+
+        this.compileDefaultOptionsImport(imports);
+
+        return imports.join(";\n");
     }
 
     compileEffects(ngAfterViewInitStatements: string[], ngOnDestroyStatements: string[]) { 
@@ -740,6 +744,19 @@ class AngularComponent extends ReactComponent {
         return "";
     }
 
+    compileDefaultOptions(constructorStatements: string[]): string { 
+        if (this.needGenerateDefaultOptions) { 
+            constructorStatements.push(`
+            const defaultOptions = convertRulesToOptions(__defaultOptionRules);
+            for(let option in defaultOptions) {
+                this[option] = defaultOptions[option];
+            }`);
+
+            return this.compileDefaultOptionsMethod(this.defaultOptionRules ? this.defaultOptionRules.toString() : "[]", []);
+        }
+        return "";
+    }
+
     toString() { 
         const extendTypes = this.heritageClauses.reduce((t: string[], h) => t.concat(h.types.map(t => t.type)), []);
         
@@ -751,10 +768,12 @@ class AngularComponent extends ReactComponent {
         const ngOnChangesStatements: string[] = [];
         const ngAfterViewInitStatements: string[] = [];
         const ngOnDestroyStatements: string[] = [];
+        const constructorStatements: string[] = [];
 
         
         return `
         ${this.compileImports()}
+        ${this.compileDefaultOptions(constructorStatements)}
         ${this.decorator.toString({
             members: this.members,
             state: [],
@@ -778,6 +797,11 @@ class AngularComponent extends ReactComponent {
             ${this.compileLifeCycle("ngAfterViewInit", ngAfterViewInitStatements)}
             ${this.compileLifeCycle("ngOnChanges", ngOnChangesStatements)}
             ${this.compileLifeCycle("ngOnDestroy", ngOnDestroyStatements)}
+            ${this.compileLifeCycle("constructor",
+                constructorStatements.length ?
+                    ["super()"].concat(constructorStatements) :
+                    constructorStatements
+            )}
         }
         @NgModule({
             declarations: [${this.name}],
@@ -808,7 +832,7 @@ export class PropertyAccess extends BasePropertyAccess {
 
     compileStateSetting(value: string, isState: boolean) {
         if (isState) { 
-            return `this.${this.name}Change.emit(${this.toString()}=${value})`;
+            return `this.${this.name}Change!.emit(${this.toString()}=${value})`;
         }
         return `${this.toString()}=${value}`;
     }
