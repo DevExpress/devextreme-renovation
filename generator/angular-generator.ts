@@ -236,11 +236,18 @@ export class JsxAttribute extends ReactJsxAttribute {
             }
         }
 
-        if (this.initializer instanceof StringLiteral) { 
+        if (this.initializer instanceof StringLiteral ||
+            this.initializer instanceof JsxExpression && this.initializer.expression instanceof StringLiteral) { 
             return `${name}=${this.initializer.toString()}`;
         }
+
+        let initializerString = this.compileInitializer(options);
         
-        return `[${name}]="${this.compileInitializer(options)}"`;
+        if (name.toString() === "title") { 
+            initializerString = `${initializerString}!==undefined?${initializerString}:''`;
+        }
+
+        return `[${name}]="${initializerString}"`;
     }
 }
 

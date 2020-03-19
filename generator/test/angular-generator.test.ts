@@ -97,6 +97,27 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), `[attr]="value"`);
         });
 
+        mocha.it(`process title attribute - use empty string if value is undefined"`, function () {
+            const expression = generator.createJsxAttribute(
+                generator.createIdentifier("title"),
+                generator.createJsxExpression(
+                    undefined,
+                    generator.createIdentifier("value")
+                )
+            );
+
+            assert.strictEqual(expression.toString(), `[title]="value!==undefined?value:''"`);
+        });
+
+        mocha.it(`do not process title attribute if it stringLiteral value"`, function () {
+            const expression = generator.createJsxAttribute(
+                generator.createIdentifier("title"),
+                generator.createStringLiteral("value")
+            );
+
+            assert.strictEqual(expression.toString(), `title="value"`);
+        });
+
         mocha.it(`JsxAttribute with template expression - [attr]="string concatination"`, function () {
             const templateExpression = generator.createTemplateExpression(
                 generator.createTemplateHead(
@@ -136,6 +157,18 @@ mocha.describe("Angular generator", function () {
             const expression = generator.createJsxAttribute(
                 generator.createIdentifier("attr"),
                 generator.createStringLiteral("value")
+            );
+
+            assert.strictEqual(expression.toString(), `attr="value"`);
+        });
+
+        mocha.it(`JsxAttribute is JsxExpression with stringLiteral - attr="value"`, function () {
+            const expression = generator.createJsxAttribute(
+                generator.createIdentifier("attr"),
+                generator.createJsxExpression(
+                    undefined,
+                    generator.createStringLiteral("value")
+                )
             );
 
             assert.strictEqual(expression.toString(), `attr="value"`);
