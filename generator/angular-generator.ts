@@ -174,6 +174,10 @@ export class JsxOpeningElement extends ReactJsxOpeningElement {
 
         return result;
     }
+
+    hasNgStyle() { 
+        return this.attributes.some(a => a instanceof JsxAttribute && a.name.toString() === "style");
+    }
 }
 
 export class JsxSelfClosingElement extends JsxOpeningElement{ 
@@ -236,11 +240,22 @@ export class JsxAttribute extends ReactJsxAttribute {
             }
         }
 
-        if (this.initializer instanceof StringLiteral) { 
+        if (this.initializer instanceof StringLiteral ||
+            this.initializer instanceof JsxExpression && this.initializer.expression instanceof StringLiteral) { 
             return `${name}=${this.initializer.toString()}`;
         }
+
+        let initializerString = this.compileInitializer(options);
         
-        return `[${name}]="${this.compileInitializer(options)}"`;
+        if (name === "title") { 
+            initializerString = `${initializerString}!==undefined?${initializerString}:''`;
+        }
+
+        if (name === "ngStyle") { 
+            initializerString = `__processNgStyle(${initializerString})`;
+        }
+
+        return `[${name}]="${initializerString}"`;
     }
 }
 
@@ -360,6 +375,11 @@ export class JsxElement extends ReactJsxElement {
             return result
         }, result)
         return allAttributes;
+    }
+
+    hasNgStyle(): boolean { 
+        return this.openingElement.hasNgStyle()
+            || this.children.some(c => (c instanceof JsxElement || c instanceof JsxOpeningElement) && c.hasNgStyle());
     }
 }
 
@@ -726,18 +746,43 @@ class AngularComponent extends ReactComponent {
         return "";
     }
 
-    compileLifeCycle(name: string, statements: string[]): string { 
-        if (statements.length) { 
-            return `${name}(){
-                ${statements.join("\n")}
-            }`;
+    compileNgStyleProcessor(): string { 
+        const viewFunction = this.decorator.getViewFunction();
+        if (viewFunction) { 
+            const options = {
+                members: this.members,
+                state: [],
+                internalState: [],
+                props: [],
+                newComponentContext: this.viewModel ? "_viewModel" : ""
+            };
+            const expression = getAngularTemplate(viewFunction, options);
+            if (expression instanceof JsxElement || expression instanceof JsxSelfClosingElement) {
+                if (expression.hasNgStyle()) { 
+                    
+                    return `__processNgStyle(value:any){
+                        if (typeof value === "object") {
+                            return Object.keys(value).reduce((v: { [name: string]: any }, k) => {
+                                if (typeof value[k] === "number") {
+                                    v[k] = value[k] + "px";
+                                } else {
+                                    v[k] = value[k];
+                                }
+                                return v;
+                            }, {});
+                        }
+                
+                        return value;
+                    }`;
+                }
+            }
         }
         return "";
     }
 
-    compileNgOnChanges(statements: string[]) { 
+    compileLifeCycle(name: string, statements: string[]): string { 
         if (statements.length) { 
-            return `ngOnChanges(){
+            return `${name}(){
                 ${statements.join("\n")}
             }`;
         }
@@ -765,6 +810,7 @@ class AngularComponent extends ReactComponent {
             .filter(c => c instanceof AngularComponent && c !== this)
             .map(c => (c as AngularComponent).module)
             .concat(["CommonModule"]);
+
         const ngOnChangesStatements: string[] = [];
         const ngAfterViewInitStatements: string[] = [];
         const ngOnDestroyStatements: string[] = [];
@@ -802,6 +848,7 @@ class AngularComponent extends ReactComponent {
                     ["super()"].concat(constructorStatements) :
                     constructorStatements
             )}
+            ${this.compileNgStyleProcessor()}
         }
         @NgModule({
             declarations: [${this.name}],
