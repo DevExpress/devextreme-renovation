@@ -10,10 +10,10 @@ import { CommonModule } from "@angular/common";
               </div>`
 })
 export default class Widget {
-    @Input() height: number;
-    @Input() width: number;
+    @Input() height: number
+    @Input() width: number
 
-    _viewModel: any;
+    _viewModel: any
     ngDoCheck() {
         this._viewModel = viewModel1({
             props: {

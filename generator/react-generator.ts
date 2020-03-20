@@ -400,7 +400,10 @@ export class PropertyAccessChain extends ExpressionWithExpression {
     }
 
     toString(options?: toStringOptions) {
-        return `${this.expression.toString(options)}${this.questionDotToken}${this.name.toString(options)}`;
+        const replaceMark = this.questionDotToken === SyntaxKind.QuestionDotToken;
+        const firstPart = this.expression.toString(options);
+
+        return `${replaceMark ? firstPart.replace(/[\?!]$/, '') : firstPart}${this.questionDotToken}${this.name.toString(options)}`;
     }
 
     getDependency() {
@@ -1146,7 +1149,7 @@ export class Ref extends Prop {
     }
 
     getter() {
-        return `${this.name}.current!`;
+        return `${this.name}.current${this.property.questionOrExclamationToken}`;
     }
 
     getDependecy() {
@@ -1316,10 +1319,8 @@ export class ReactComponent {
 
         const refs = members.filter(m => m.decorators.find(d => d.name === "Ref")).reduce((r: {refs: Ref[], apiRefs: Ref[]}, p) => {
             if(context.components && context.components[p.type!] instanceof ReactComponent) {
-                p.type = `${p.type}Ref`;
-                const ref = new Ref(p as Property);
-                r.apiRefs?.push(ref);
-                r.refs.push(ref);
+                p.decorators.find(d => d.name === "Ref")!.expression.expression = new SimpleExpression("ApiRef");
+                r.apiRefs?.push(new Ref(p as Property));
             } else {
                 r.refs.push(new Ref(p as Property));
             }
@@ -1402,7 +1403,7 @@ export class ReactComponent {
             hooks.push("useEffect");
         }
 
-        if (this.refs.length) {
+        if (this.refs.length || this.apiRefs.length) {
             hooks.push("useRef");
         }
 
@@ -1413,10 +1414,10 @@ export class ReactComponent {
 
         if(this.apiRefs.length) {
             imports.splice(-1, 0, ...this.apiRefs.reduce((imports: string[], ref) => {
-                const baseComponent = this.context.components![ref.type!.replace(/Ref$/, '')] as ReactComponent;
+                const baseComponent = this.context.components![ref.type!] as ReactComponent;
                 if(this.context.dirname) {
                     const relativePath = getModuleRelativePath(this.context.dirname, baseComponent.context.path!);
-                    imports.push(`import {${baseComponent.name}Ref as ${ref.type}} from "${relativePath.replace(path.extname(relativePath), '')}"`);
+                    imports.push(`import {${baseComponent.name}Ref as ${ref.type}Ref} from "${relativePath.replace(path.extname(relativePath), '')}"`);
                 }
                 return imports;
             }, []));
@@ -1497,7 +1498,7 @@ export class ReactComponent {
                 members: this.members,
                 internalState: this.internalState,
                 state: this.state,
-                props: this.props.concat(this.refs)
+                props: this.props.concat(this.refs, this.apiRefs)
             })).join(";\n");
         }
         return "";
@@ -1510,7 +1511,7 @@ export class ReactComponent {
 
         const effectsString = effects.map(e => `useEffect(${e.arrowDeclaration({
             members: this.members,
-            internalState: this.internalState, state: this.state, props: this.props.concat(this.refs)
+            internalState: this.internalState, state: this.state, props: this.props.concat(this.refs, this.apiRefs)
         })}, 
         [${e.getDependency(this.props.concat(this.state).concat(this.internalState))}])`).join(";\n");
 
@@ -1545,7 +1546,7 @@ export class ReactComponent {
             const api = this.api.reduce((r: { methods: string[], deps: string[]}, a) => {
                 r.methods.push(`${a.name}: ${a.arrowDeclaration({
                     members: this.members,
-                    internalState: this.internalState, state: this.state, props: this.props.concat(this.refs)
+                    internalState: this.internalState, state: this.state, props: this.props.concat(this.refs, this.apiRefs)
                 })}`);
 
                 r.deps = [...new Set(r.deps.concat(a.getDependency(this.props.concat(this.state).concat(this.internalState))))];
@@ -1562,7 +1563,9 @@ export class ReactComponent {
     compileUseRef() {
         return this.refs.map(r => {
             return `const ${r.name}=useRef<${r.type}>()`;
-        }).join(";\n");
+        }).concat(this.apiRefs.map(r => {
+            return `const ${r.name}=useRef<${r.type}Ref>()`;
+        })).join(";\n");
     }
 
     compileComponentInterface() {
@@ -1573,7 +1576,7 @@ export class ReactComponent {
 
         return `interface ${this.name}{
             ${  props
-                .concat(this.internalState.concat(this.refs).concat(this.slots.filter(s=>!s.property.inherited)).map(p => p.typeDeclaration()))
+                .concat(this.internalState.concat(this.refs, this.apiRefs).concat(this.slots.filter(s=>!s.property.inherited)).map(p => p.typeDeclaration()))
                 .concat(this.listeners.map(l => l.typeDeclaration()))
                 .concat(this.methods.map(m => m.typeDeclaration()))
                 .concat([""])
@@ -1600,6 +1603,7 @@ export class ReactComponent {
         return props
             .concat(this.listeners.map(l => l.name.toString()))
             .concat(this.refs.map(r => r.name.toString()))
+            .concat(this.apiRefs.map(r => r.name.toString()))
             .concat(this.methods.map(m => m instanceof GetAccessor ? `${m._name}:${m.name}()` : m.name.toString()));
     }
 
@@ -1632,7 +1636,7 @@ export class ReactComponent {
                 ${this.methods.map(m => {
                     return `const ${m.name}=useCallback(${m.declaration("function", {
                         members: this.members,
-                        internalState: this.internalState, state: this.state, props:this.props.concat(this.refs)
+                        internalState: this.internalState, state: this.state, props:this.props.concat(this.refs, this.apiRefs)
                     })}, [${
                         m.getDependency(this.internalState.concat(this.state).concat(this.props))
                     }]);`;
@@ -1695,7 +1699,7 @@ export class Postfix extends Prefix {
 
 export class NonNullExpression extends ExpressionWithExpression {
     toString(options?: toStringOptions) {
-        return `${super.toString(options)}!`;
+        return `${super.toString(options).replace(/[\?!]$/, '')}!`;
     }
 }
 

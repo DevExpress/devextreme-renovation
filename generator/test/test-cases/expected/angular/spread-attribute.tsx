@@ -11,17 +11,17 @@ import { CommonModule } from "@angular/common";
                 </div>`
 })
 export default class Widget extends WidgetInput {
-    @ViewChild("host", { static: false }) host: ElementRef<HTMLDivElement>;
+    @ViewChild("host", { static: false }) host: ElementRef<HTMLDivElement>
 
     get __attr1() {
         return {};
-    };
+    }
 
     get __attr2() {
         return {};
     }
 
-    @ViewChild("_auto_ref_0", { static: false }) _auto_ref_0: ElementRef<HTMLDivElement>;
+    @ViewChild("_auto_ref_0", { static: false }) _auto_ref_0: ElementRef<HTMLDivElement>
 
     __applyAttributes__() {
         const _attr_0: { [name: string]: string } = this.__attr1 || {};

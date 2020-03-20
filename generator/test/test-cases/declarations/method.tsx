@@ -1,7 +1,6 @@
 import { Component, ComponentBindings, OneWay, Ref, Method, JSXComponent } from "../../../component_declaration/common";
 
-function view(viewModel: Widget) { return null; }
-
+function view(viewModel: Widget) { return (<div ref={viewModel.divRef as any}></div>); }
 
 @ComponentBindings()
 class WidgetInput { 

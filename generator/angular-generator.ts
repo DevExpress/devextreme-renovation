@@ -164,6 +164,9 @@ export class JsxOpeningElement extends ReactJsxOpeningElement {
     }
 
     getSpreadAttributes() { 
+        if(this.component) {
+            return [];
+        }
         const result = this.attributes.filter(a => a instanceof JsxSpreadAttribute).map(a => {
             const ref = this.attributes.find(a => (a instanceof JsxAttribute) && a.name.toString() === "ref")! as JsxAttribute;
             return {
@@ -215,7 +218,7 @@ export class JsxAttribute extends ReactJsxAttribute {
         if (this.name.toString() === "ref") { 
             const refString = this.initializer.toString(options);
             const componentContext = options?.newComponentContext ? `${options.newComponentContext}.` : '';
-            const match = refString.replace("?", "").match(new RegExp(`${componentContext}(\\w+).nativeElement`));
+            const match = refString.replace(/[\?!]/, "").match(new RegExp(`${componentContext}(\\w+).nativeElement`));
             if (match && match[1]) { 
                 return `#${match[1]}`;
             }
@@ -484,7 +487,7 @@ class Decorator extends BaseDecorator {
             return "@Input()";
         } else if (this.name === "TwoWay" || this.name === "Template") {
             return "@Input()";
-        } else if (this.name === "Effect" || this.name === "Ref" || this.name === "InternalState") {
+        } else if (this.name === "Effect" || this.name === "Ref" || this.name === "ApiRef" || this.name === "InternalState" || this.name === "Method") {
             return "";
         } else if (this.name === "Component") {
             const parameters = (this.expression.arguments[0] as ObjectLiteral);
@@ -536,6 +539,9 @@ export class Property extends BaseProperty {
         if (this.decorators.find(d => d.name === "Ref")) {
             return `@ViewChild("${this.name}", {static: false}) ${this.name}:ElementRef<${this.type}>`;
         }
+        if (this.decorators.find(d => d.name === "ApiRef")) {
+            return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:${this.type}`;
+        }
         if (this.decorators.find(d => d.name.toString() === "TwoWay")) { 
             return `${defaultValue};
             @Output() ${this.name}Change${this.questionOrExclamationToken}: EventEmitter<${this.type}> = new EventEmitter()`
@@ -552,7 +558,10 @@ export class Property extends BaseProperty {
             return `${this.name}!.emit`;
         }
         if (this.decorators.find(d => d.name === "Ref")) { 
-            return `${this.name}?.nativeElement`
+            return `${this.name}${this.questionOrExclamationToken}.nativeElement`
+        }
+        if (this.decorators.find(d => d.name === "ApiRef")) { 
+            return `${this.name}`
         }
         return this.name.toString();
     }
@@ -594,7 +603,7 @@ class AngularComponent extends ReactComponent {
 
     addPrefixToMembers(members: Array<Property | Method>) { 
         if (this.isJSXComponent) {
-            members.forEach(m => {
+            members.filter(m => !m.decorators.find(d => d.name === "Method")).forEach(m => {
                 m.prefix = "__";
             });
         }
@@ -624,8 +633,11 @@ class AngularComponent extends ReactComponent {
         if (this.props.filter(p => p.property.decorators.find(d => d.name === "Event")).length) { 
             core.push("Output", "EventEmitter");
         }
+        if (this.refs.length || this.apiRefs.length) {
+            core.push("ViewChild");
+        }
         if (this.refs.length) {
-            core.push("ViewChild, ElementRef");
+            core.push("ElementRef");
         }
 
         const imports = [
@@ -790,7 +802,7 @@ class AngularComponent extends ReactComponent {
                     props: [],
                     members: this.members
                 }))
-            .filter(m => m).join(";\n")}
+            .filter(m => m).join("\n")}
             ${this.compileSpreadAttributes(ngOnChangesStatements)}
             ${this.compileViewModel()}
             ${this.compileEffects(ngAfterViewInitStatements, ngOnDestroyStatements)}
