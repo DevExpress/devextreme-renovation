@@ -307,7 +307,7 @@ mocha.describe("Angular generator", function () {
                 )
             );
 
-            assert.strictEqual(expression.toString(), `[ngStyle]="value"`);
+            assert.strictEqual(expression.toString(), `[ngStyle]="__processNgStyle(value)"`);
         });
 
         mocha.it("notJsxExpr && <element></element> -> <element *ngIf='notJsxExpr'></element>", function () {
@@ -485,6 +485,95 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(element.toString(), "<div #_auto_ref_1><input #_auto_ref_0/></div>");
                 const spreadAttributes = element.getSpreadAttributes();
                 assert.strictEqual(spreadAttributes.length, 2);
+            });
+        });
+
+        mocha.describe("element.hasNgStyle()", function () { 
+            mocha.it("returns false if there is not any style attribute", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("span"),
+                        undefined,
+                        []
+                    ),
+                    [],
+                    generator.createJsxClosingElement(generator.createIdentifier("span"))
+                );
+                
+                assert.strictEqual(expression.hasNgStyle(), false);
+            });
+
+            mocha.it("returns true if there is a style attribute", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("span"),
+                        undefined,
+                        [
+                            generator.createJsxAttribute(
+                                generator.createIdentifier("style"),
+                                generator.createIdentifier("value")
+                            )
+                        ]
+                    ),
+                    [],
+                    generator.createJsxClosingElement(generator.createIdentifier("span"))
+                );
+                
+                assert.strictEqual(expression.hasNgStyle(), true);
+            });
+
+            mocha.it("returns true if there is a style attribute in the child element", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [
+                        generator.createJsxElement(
+                            generator.createJsxOpeningElement(
+                                generator.createIdentifier("span"),
+                                undefined,
+                                [
+                                    generator.createJsxAttribute(
+                                        generator.createIdentifier("style"),
+                                        generator.createIdentifier("value")
+                                    )
+                                ]
+                            ),
+                            [],
+                            generator.createJsxClosingElement(generator.createIdentifier("span"))
+                        )
+                    ],
+                    generator.createJsxClosingElement(generator.createIdentifier("div"))
+                );
+                
+                assert.strictEqual(expression.hasNgStyle(), true);
+            });
+
+            mocha.it("returns true if there is a style attribute in the child self-closing element", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [
+                        generator.createJsxSelfClosingElement(
+                            generator.createIdentifier("span"),
+                            undefined,
+                            [
+                                generator.createJsxAttribute(
+                                    generator.createIdentifier("style"),
+                                    generator.createIdentifier("value")
+                                )
+                            ]
+                        )
+                    ],
+                    generator.createJsxClosingElement(generator.createIdentifier("div"))
+                );
+                
+                assert.strictEqual(expression.hasNgStyle(), true);
             });
         });
 
