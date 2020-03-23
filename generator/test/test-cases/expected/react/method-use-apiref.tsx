@@ -1,30 +1,30 @@
 import BaseWidget from "./method";
 
-function view(viewModel: Widget) { return <BaseWidget ref={viewModel.baseRef} prop1={viewModel.props.prop1}></BaseWidget>;}
+function view(viewModel: WidgetWithApiRef) { return <BaseWidget ref={viewModel.baseRef} prop1={viewModel.props.prop1}></BaseWidget>;}
 
-declare type WidgetInput = {
+declare type WidgetWithApiRefInput = {
     prop1?: number
 }
-const WidgetInput: WidgetInput = { };
+const WidgetWithApiRefInput: WidgetWithApiRefInput = { };
 
 import { WidgetRef as BaseWidgetRef } from "./method";
 import React, { useRef, useImperativeHandle, forwardRef } from "react";
 
-export type WidgetRef = {
+export type WidgetWithApiRefRef = {
     getSomething: () => string
 };
 
-interface Widget {
-    props: WidgetInput;
+interface WidgetWithApiRef {
+    props: WidgetWithApiRefInput;
     baseRef: any;
 }
 
-const Widget = forwardRef<WidgetRef, WidgetInput>((props: WidgetInput, ref) => {
+const WidgetWithApiRef = forwardRef<WidgetWithApiRefRef, WidgetWithApiRefInput>((props: WidgetWithApiRefInput, ref) => {
     const baseRef = useRef<BaseWidgetRef>();
 
     useImperativeHandle(ref, () => ({
         getSomething: () => { 
-            return `${props.prop1} + ${baseRef.current!.getHeight()}`;
+            return `${props.prop1} + ${baseRef.current?.getHeight()}`;
         }
     }), [props.prop1]);
 
@@ -34,8 +34,8 @@ const Widget = forwardRef<WidgetRef, WidgetInput>((props: WidgetInput, ref) => {
     }));
 });
 
-export default Widget;
+export default WidgetWithApiRef;
 
-Widget.defaultProps = {
-    ...WidgetInput
+WidgetWithApiRef.defaultProps = {
+    ...WidgetWithApiRefInput
 }

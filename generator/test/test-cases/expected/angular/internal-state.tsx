@@ -12,12 +12,12 @@ import { CommonModule } from "@angular/common"
     selector: "dx-widget"
 })
 export default class Widget {
-    _hovered: Boolean = false;
+    _hovered: Boolean = false
     updateState(): any {
         this._hovered = !this._hovered
     }
 
-    _viewModel: any;
+    _viewModel: any
 
     ngDoCheck() {
         this._viewModel = viewModel({

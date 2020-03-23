@@ -17,14 +17,14 @@ import { Component, NgModule, Input, Output, EventEmitter } from "@angular/core"
 import { CommonModule } from "@angular/common"
 @Component({ selector: "dx-widget" })
 export default class Widget extends WidgetInput {
-    i: number = 10;
+    i: number = 10
     __setupData(): any {
         const id = subscribe(this.p, this.s, this.i);
         this.i = 15;
         return () => unsubscribe(id);
     }
 
-    __destroyEffects: Array<() => any> = [];
+    __destroyEffects: Array<() => any> = []
 
     ngAfterViewInit() {
         this.__destroyEffects.push(this.__setupData());

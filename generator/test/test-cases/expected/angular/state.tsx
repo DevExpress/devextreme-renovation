@@ -8,14 +8,14 @@ import { CommonModule } from "@angular/common";
     selector: "dx-widget"
 })
 export default class Widget {
-    @Input() pressed?: boolean;
-    @Output() pressedChange?: EventEmitter<boolean> = new EventEmitter();
+    @Input() pressed?: boolean
+    @Output() pressedChange?: EventEmitter<boolean> = new EventEmitter()
 
     updateState():any {
         this.pressedChange!.emit(this.pressed = !this.pressed);
     }
 
-    _viewModel: any;
+    _viewModel: any
     ngDoCheck() { 
         this._viewModel = viewModel({
             props: {

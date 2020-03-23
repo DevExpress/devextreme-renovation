@@ -1,4 +1,4 @@
-function view(viewModel: Widget) { return null;}
+function view(viewModel: Widget) { return (<div ref={viewModel.divRef as any}></div>);}
 
 declare type WidgetInput = {
     prop1?: number;

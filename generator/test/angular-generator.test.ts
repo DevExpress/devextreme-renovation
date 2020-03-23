@@ -2406,6 +2406,24 @@ mocha.describe("Angular generator", function () {
                     undefined
                 );
 
+                const propertyWithExclamation = new Property(
+                    [createDecorator("Ref")],
+                    [],
+                    generator.createIdentifier("div"),
+                    "!",
+                    undefined,
+                    undefined
+                );
+
+                const propertyWithQuestion = new Property(
+                    [createDecorator("Ref")],
+                    [],
+                    generator.createIdentifier("div"),
+                    "?",
+                    undefined,
+                    undefined
+                );
+
                 const expression = generator.createPropertyAccess(
                     generator.createThis(),
                     generator.createIdentifier("div")
@@ -2413,6 +2431,20 @@ mocha.describe("Angular generator", function () {
 
                 assert.strictEqual(expression.toString({
                     members: [property],
+                    internalState: [],
+                    state: [],
+                    props: []
+                }), "this.div.nativeElement");
+
+                assert.strictEqual(expression.toString({
+                    members: [propertyWithExclamation],
+                    internalState: [],
+                    state: [],
+                    props: []
+                }), "this.div!.nativeElement");
+
+                assert.strictEqual(expression.toString({
+                    members: [propertyWithQuestion],
                     internalState: [],
                     state: [],
                     props: []
