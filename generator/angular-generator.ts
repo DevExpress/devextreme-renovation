@@ -243,6 +243,10 @@ export class JsxAttribute extends ReactJsxAttribute {
             }
         }
 
+        if(name==="key") { 
+            return "";
+        }
+
         if (this.initializer instanceof StringLiteral ||
             this.initializer instanceof JsxExpression && this.initializer.expression instanceof StringLiteral) { 
             return `${name}=${this.initializer.toString()}`;
@@ -265,6 +269,28 @@ export class JsxAttribute extends ReactJsxAttribute {
 export class AngularDirective extends JsxAttribute { 
     toString(options?: toStringOptions) { 
         return `${this.name}="${this.compileInitializer(options)}"`;
+    }
+}
+
+export class TrackByAttribute extends JsxAttribute {
+    indexName: string;
+    itemName: string;
+    trackByExpressionString: string;
+    constructor(name: Identifier, trackByExpressionString: string, indexName: string, itemName: string) { 
+        super(name, new SimpleExpression(SyntaxKind.NullKeyword));
+        this.indexName = indexName;
+        this.itemName = itemName;
+        this.trackByExpressionString = trackByExpressionString;
+    }
+
+    toString(options?: toStringOptions) { 
+        return "";
+    }
+
+    declaration(): string {
+        return `${this.name}(index: number; item: any){
+            return ${this.trackByExpressionString}
+        }`;
     }
 }
 
@@ -296,15 +322,60 @@ function processBinary(expression: Binary, options?: toStringOptions, condition:
 
 export class JsxExpression extends ReactJsxExpression {
     toString(options?: toStringOptions) {
-        
-        if (this.expression instanceof Binary) { 
-            const expression = processBinary(this.expression, options);
-            if (expression) { 
-                return expression.toString(options);
+        let expression = this.expression;
+
+        if (expression instanceof Identifier && options?.variables?.[expression.toString()]) { 
+            expression = options.variables[expression.toString()];
+        }
+
+        if (expression instanceof Binary) { 
+            const parsedBinary = processBinary(expression, options);
+            if (parsedBinary) { 
+                return parsedBinary.toString(options);
             }
         }
 
-        return this.expression.toString(options);
+        if (expression instanceof Call &&
+            expression.expression instanceof PropertyAccess &&
+            expression.expression.name.toString() === "map") {
+            const iterator = expression.arguments[0];
+            if (iterator instanceof ArrowFunctionWithTemplate || iterator instanceof AngularFunction) {
+                const templateOptions = options ? { ...options } : options;
+                const templateExpression = getAngularTemplate(iterator, templateOptions, true); 
+                const template: string = templateExpression ? templateExpression.toString(templateOptions) : "";
+                const itemsExpression = expression.expression.expression;
+                const itemName = iterator.parameters[0].toString()
+                const item = `let ${itemName} of ${itemsExpression.toString(options)}`;
+                const ngForValue = [item];
+                if (iterator.parameters[1]) { 
+                    ngForValue.push(`index as ${iterator.parameters[1]}`);
+                }
+
+                if (templateExpression instanceof JsxElement || templateExpression instanceof JsxOpeningElement) { 
+                    const keyAttribute = templateExpression.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === "key") as JsxAttribute;
+                    if (keyAttribute) { 
+                        const trackByName = new Identifier(`trackBy${counter.get()}`);
+                        ngForValue.push(`trackBy: ${trackByName}`);
+                        templateExpression.addAttribute(
+                            new TrackByAttribute(
+                                trackByName,
+                                keyAttribute.initializer.toString(templateOptions),
+                                iterator.parameters[1]?.name.toString() || "",
+                                itemName
+                            )
+                        );
+                    }
+                }
+
+                
+                return `<ng-container *ngFor="${ngForValue.join(";")}">${
+                    template
+                }</ng-container>`;
+            }
+            return "";
+        }
+
+        return expression.toString(options);
     }
 }
 
@@ -395,9 +466,13 @@ function getJsxExpression(e: ExpressionWithExpression | Expression): JsxExpressi
     }
 }
 
-function getAngularTemplate(functionWithTemplate: AngularFunction | ArrowFunctionWithTemplate, options?: toStringOptions) {
+function getAngularTemplate(
+    functionWithTemplate: AngularFunction | ArrowFunctionWithTemplate,
+    options?: toStringOptions,
+    doNotChangeContext = false
+) {
     if (!functionWithTemplate.isJsx()) {
-        return "";
+        return;
     }
 
     const statements = functionWithTemplate.body instanceof Block ?
@@ -411,7 +486,7 @@ function getAngularTemplate(functionWithTemplate: AngularFunction | ArrowFunctio
     if (returnStatement) { 
         const componentParamenter = functionWithTemplate.parameters[0];
         if (options) { 
-            if (componentParamenter && componentParamenter.name instanceof Identifier) { 
+            if (!doNotChangeContext && componentParamenter && componentParamenter.name instanceof Identifier) { 
                 options.componentContext = componentParamenter.toString();
             }
 
@@ -447,8 +522,8 @@ export class AngularFunction extends Function {
         return super.toString(options);
     }
 
-    getTemplate(options?: toStringOptions) {
-        return getAngularTemplate(this, options)?.toString(options);
+    getTemplate(options?: toStringOptions, doNotChangeContext = false): string {
+        return getAngularTemplate(this, options, doNotChangeContext)?.toString(options) || "";
     }
 }
 
@@ -463,8 +538,8 @@ export class ArrowFunctionWithTemplate extends ArrowFunction {
         return super.toString(options);
     }
     
-    getTemplate(options?: toStringOptions) {
-        return getAngularTemplate(this, options)?.toString(options);
+    getTemplate(options?: toStringOptions, doNotChangeContext = false): string {
+        return getAngularTemplate(this, options, doNotChangeContext)?.toString(options) || "";
     }
 }
 
@@ -544,7 +619,7 @@ export class Property extends BaseProperty {
         }
         return this._name.toString();
     }
-    constructor(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "any", initializer?: Expression, inherited: boolean=false) { 
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "any", initializer?: Expression, inherited: boolean=false) { 
         if (decorators.find(d => d.name === "Template")) { 
             type = `TemplateRef<any>`;
         }

@@ -1054,6 +1054,111 @@ mocha.describe("Angular generator", function () {
             });
         });
 
+        mocha.it(".map((item)=><div>) -> *ngFor", function () { 
+            const expression = generator.createJsxExpression(
+                undefined,
+                generator.createCall(
+                    generator.createPropertyAccess(
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("items")
+                        ),
+                        generator.createIdentifier("map")
+                    ),
+                    undefined,
+                    [generator.createArrowFunction(
+                        undefined,
+                        undefined,
+                        [generator.createParameter(
+                            undefined,
+                            undefined,
+                            undefined,
+                            generator.createIdentifier("items"),
+                            undefined,
+                            undefined,
+                            undefined
+                        )],
+                        undefined,
+                        generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                        generator.createJsxElement(
+                            generator.createJsxOpeningElement(
+                                generator.createIdentifier("div"),
+                                undefined,
+                                generator.createJsxAttributes([])
+                            ),
+                            [],
+                            generator.createJsxClosingElement(generator.createIdentifier("div"))
+                        )
+                    )]
+                )
+            );
+
+            assert.strictEqual(expression.toString(), `<ng-container *ngFor="let items of viewModel.items"><div ></div></ng-container>`);
+        });
+        
+        mocha.it(".map((item, index)=><div>) -> *ngFor", function () { 
+            const expression = generator.createJsxExpression(
+                undefined,
+                generator.createCall(
+                    generator.createPropertyAccess(
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("items")
+                        ),
+                        generator.createIdentifier("map")
+                    ),
+                    undefined,
+                    [generator.createArrowFunction(
+                        undefined,
+                        undefined,
+                        [generator.createParameter(
+                            undefined,
+                            undefined,
+                            undefined,
+                            generator.createIdentifier("items"),
+                            undefined,
+                            undefined,
+                            undefined
+                        ),
+                        generator.createParameter(
+                            undefined,
+                            undefined,
+                            undefined,
+                            generator.createIdentifier("i"),
+                            undefined,
+                            undefined,
+                            undefined
+                        )],
+                        undefined,
+                        generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                        generator.createJsxElement(
+                            generator.createJsxOpeningElement(
+                                generator.createIdentifier("div"),
+                                undefined,
+                                generator.createJsxAttributes([])
+                            ),
+                            [],
+                            generator.createJsxClosingElement(generator.createIdentifier("div"))
+                        )
+                    )]
+                )
+            );
+
+            assert.strictEqual(expression.toString(), `<ng-container *ngFor="let items of viewModel.items;index as i"><div ></div></ng-container>`);
+        });
+
+        mocha.it("key attribute should be ignored", function () { 
+            const expression = generator.createJsxAttribute(
+                generator.createIdentifier("key"),
+                generator.createPropertyAccess(
+                    generator.createIdentifier("item"),
+                    generator.createIdentifier("id")
+                )
+            );
+
+            assert.strictEqual(expression.toString(), "");
+        });
+
         mocha.describe("View Function", function () {
             this.beforeEach(function () {
                 generator.setContext({});
@@ -1545,6 +1650,92 @@ mocha.describe("Angular generator", function () {
                     members: []
                 }) as string).replace(/(\s|\s)/gi, ""), (`<div >
                         <span *ngIf="(c1)&&c2"></span>
+                    </div>`).replace(/(\s|\s)/gi, ""));
+            });
+
+            mocha.it("Can store map in variable", function () {
+                const block = generator.createBlock([
+                    generator.createVariableStatement(
+                        [],
+                        generator.createVariableDeclarationList(
+                            [generator.createVariableDeclaration(
+                                generator.createIdentifier("v"),
+                                undefined,
+                                generator.createCall(
+                                    generator.createPropertyAccess(
+                                        generator.createPropertyAccess(
+                                            generator.createIdentifier("viewModel"),
+                                            generator.createIdentifier("items")
+                                        ),
+                                        generator.createIdentifier("map")
+                                    ),
+                                    undefined,
+                                    [generator.createArrowFunction(
+                                        undefined,
+                                        undefined,
+                                        [generator.createParameter(
+                                            undefined,
+                                            undefined,
+                                            undefined,
+                                            generator.createIdentifier("items"),
+                                            undefined,
+                                            undefined,
+                                            undefined
+                                        )],
+                                        undefined,
+                                        generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                                        generator.createJsxElement(
+                                            generator.createJsxOpeningElement(
+                                                generator.createIdentifier("div"),
+                                                undefined,
+                                                generator.createJsxAttributes([])
+                                            ),
+                                            [],
+                                            generator.createJsxClosingElement(generator.createIdentifier("div"))
+                                        )
+                                    )]
+                                )
+                            )],
+                            generator.SyntaxKind.ConstKeyword
+                        )
+                    ),
+                    generator.createReturn(
+                        generator.createJsxElement(
+                            generator.createJsxOpeningElement(
+                                generator.createIdentifier("div"),
+                                [],
+                                []),
+                            [generator.createJsxExpression(
+                                undefined,
+                                generator.createIdentifier("v"),
+                            )],
+                            generator.createJsxClosingElement(generator.createIdentifier("div"))
+                        )
+                    )
+                ], false);
+    
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [],
+                    "",
+                    block
+                );
+    
+                assert.strictEqual(expression.toString(), "");
+                assert.strictEqual((expression.getTemplate({
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    members: []
+                }) as string)
+                    .replace(/(\s|\s)/gi, ""), (`<div>
+                        <ng-container *ngFor="let items of viewModel.items">
+                            <div ></div>
+                        </ng-container>
                     </div>`).replace(/(\s|\s)/gi, ""));
             });
         });
