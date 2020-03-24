@@ -432,6 +432,31 @@ mocha.describe("Angular generator", function () {
             })), removeSpaces(`<div [a]="_value" *ngIf="condition"></div>\n<input [a]="_value" *ngIf="!(condition)"/>`));
         });
 
+        mocha.it("conditional expression with paren", function () {
+            const expression = generator.createJsxExpression(
+                undefined,
+                generator.createConditional(
+                    generator.createIdentifier("condition"),
+                    generator.createParen(
+                    generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("div"),
+                        [],
+                        []
+                    )),
+                    generator.createParen(
+                    generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("input"),
+                        [],
+                        []
+                        )
+                    )
+                )
+            );
+
+            assert.strictEqual(removeSpaces(expression.toString()),
+                removeSpaces(`<div *ngIf="condition"></div>\n<input *ngIf="!(condition)"/>`));
+        });
+
         mocha.it("<element>nonJsxExpr</element> -> <element>{{nonJsxExpr}}</element>", function () {
             const expression = generator.createJsxElement(
                 generator.createJsxOpeningElement(

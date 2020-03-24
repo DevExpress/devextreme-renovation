@@ -396,27 +396,27 @@ export class JsxExpression extends ReactJsxExpression {
         }
 
         if (expression instanceof Conditional) { 
-            let result:string[] = [];
-            if (isElement(expression.thenStatement)) { 
-                const element = expression.thenStatement;
-                element.addAttribute(
+            let result: string[] = [];
+            const thenStatement = getJsxExpression(expression.thenStatement);
+            if (isElement(thenStatement)) { 
+                thenStatement.addAttribute(
                     new AngularDirective(
                         new Identifier("*ngIf"),
                         expression.expression
                     )
                 );
-                result.push(element.toString(options));
+                result.push(thenStatement.toString(options));
             }
 
-            if (isElement(expression.elseStatement)) { 
-                const element = expression.elseStatement;
-                element.addAttribute(
+            const elseStatement = getJsxExpression(expression.elseStatement);
+            if (isElement(elseStatement)) { 
+                elseStatement.addAttribute(
                     new AngularDirective(
                         new Identifier("*ngIf"),
                         new Prefix(SyntaxKind.ExclamationToken, new Paren(expression.expression))
                     )
                 );
-                result.push(element.toString(options));
+                result.push(elseStatement.toString(options));
             }
 
             return result.join("\n");
@@ -528,7 +528,7 @@ export class JsxElement extends ReactJsxElement {
     }
 }
 
-function getJsxExpression(e: ExpressionWithExpression | Expression): JsxExpression | undefined {
+function getJsxExpression(e: ExpressionWithExpression | Expression | undefined): JsxExpression | undefined {
     if (e instanceof JsxExpression || e instanceof JsxElement || e instanceof ReactJsxOpeningElement) {
         return e as JsxExpression;
     }
