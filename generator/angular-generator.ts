@@ -47,7 +47,7 @@ import SyntaxKind from "./syntaxKind";
 const VOID_ELEMENTS = 
     ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"];
 
-const isElement = (e: Expression) => e instanceof JsxElement || e instanceof JsxSelfClosingElement;
+const isElement = (e: any): e is JsxElement | JsxSelfClosingElement => e instanceof JsxElement || e instanceof JsxSelfClosingElement;
 
 export const counter = (function () {
     let i = 0;
@@ -315,7 +315,7 @@ function processBinary(expression: Binary, options?: toStringOptions, condition:
                     e
                 );
             }, expression.left);
-            const elementExpression = (right as JsxElement).clone();
+            const elementExpression = right.clone();
             elementExpression.addAttribute(new AngularDirective(new Identifier("*ngIf"), conditionExpression));
             return elementExpression;
         }
@@ -374,7 +374,7 @@ export class JsxExpression extends ReactJsxExpression {
                 ngForValue.push(`index as ${iterator.parameters[1]}`);
             }
 
-            if (templateExpression instanceof JsxElement || templateExpression instanceof JsxOpeningElement) {
+            if (isElement(templateExpression)) {
                 const keyAttribute = templateExpression.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === "key") as JsxAttribute;
                 if (keyAttribute) {
                     const trackByName = new Identifier(`_trackBy_${itemsExpressionString.replace(".", "_")}_${counter.get()}`);
@@ -397,7 +397,7 @@ export class JsxExpression extends ReactJsxExpression {
 
         if (expression instanceof Conditional) { 
             let result:string[] = [];
-            if (expression.thenStatement instanceof JsxElement || expression.thenStatement instanceof JsxSelfClosingElement) { 
+            if (isElement(expression.thenStatement)) { 
                 const element = expression.thenStatement;
                 element.addAttribute(
                     new AngularDirective(
@@ -408,7 +408,7 @@ export class JsxExpression extends ReactJsxExpression {
                 result.push(element.toString(options));
             }
 
-            if (expression.elseStatement instanceof JsxElement || expression.elseStatement instanceof JsxSelfClosingElement) { 
+            if (isElement(expression.elseStatement)) { 
                 const element = expression.elseStatement;
                 element.addAttribute(
                     new AngularDirective(
@@ -431,7 +431,7 @@ export class JsxExpression extends ReactJsxExpression {
         if (iterator) {
             const templateOptions = options ? { ...options } : options;
             const templateExpression = getAngularTemplate(iterator, templateOptions, true);
-            if (templateExpression instanceof JsxElement || templateExpression instanceof JsxExpression) {
+            if (isElement(templateExpression)) {
                 return templateExpression.trackBy(options);
             }       
         }
@@ -504,7 +504,7 @@ export class JsxElement extends ReactJsxElement {
     getSpreadAttributes() { 
         const result = this.openingElement.getSpreadAttributes();
         const allAttributes:JsxSpreadAttributeMeta[] = this.children.reduce((result: JsxSpreadAttributeMeta[], c) => {
-            if ((c instanceof JsxElement || c instanceof JsxSelfClosingElement)) { 
+            if (isElement(c)) { 
                 return result.concat(c.getSpreadAttributes());
             }
             return result
@@ -514,7 +514,7 @@ export class JsxElement extends ReactJsxElement {
 
     hasNgStyle(): boolean { 
         return this.openingElement.hasNgStyle()
-            || this.children.some(c => (c instanceof JsxElement || c instanceof JsxOpeningElement) && c.hasNgStyle());
+            || this.children.some(c => (isElement(c)) && c.hasNgStyle());
     }
 
     trackBy(options?: toStringOptions): Array<TrackByAttribute> { 
@@ -869,7 +869,7 @@ class AngularComponent extends ReactComponent {
                 newComponentContext: this.viewModel ? "_viewModel" : ""
             };
             const expression = getAngularTemplate(viewFunction, options);
-            if (expression instanceof JsxElement || expression instanceof JsxSelfClosingElement) {
+            if (isElement(expression)) {
                 return expression.trackBy(options).map(a => a.getTrackBydeclaration()).join("\n");
             }
         }
@@ -888,7 +888,7 @@ class AngularComponent extends ReactComponent {
                 newComponentContext: this.viewModel ? "_viewModel" : ""
             };
             const expression = getAngularTemplate(viewFunction, options);
-            if (expression instanceof JsxElement || expression instanceof JsxSelfClosingElement) { 
+            if (isElement(expression)) { 
                 options.newComponentContext = "this";
                 const members = [];
                 const statements = expression.getSpreadAttributes().map((o, i) => { 
@@ -934,7 +934,7 @@ class AngularComponent extends ReactComponent {
                 newComponentContext: this.viewModel ? "_viewModel" : ""
             };
             const expression = getAngularTemplate(viewFunction, options);
-            if (expression instanceof JsxElement || expression instanceof JsxSelfClosingElement) {
+            if (isElement(expression)) {
                 if (expression.hasNgStyle()) { 
                     
                     return `__processNgStyle(value:any){
