@@ -4,13 +4,17 @@ import fs from "fs";
 import path from "path";
 import { Generator } from "../../react-generator";
 
+export function removeSpaces(value: string) { 
+    return value.replace(/(\s|\s)/gi, "");
+}
+
 function printNodeValue(node: ts.Node):string { 
     if ((node as ts.Identifier).escapedText){ 
         return (node as ts.Identifier).escapedText.toString();
     }
 
     if (ts.isTemplateLiteral(node)) { 
-        return ((node as any).rawText || "").replace(/(\s|\s)/gi, "");
+        return removeSpaces((node as any).rawText || "");
     }
 
     if (ts.isStringLiteral(node)) { 
@@ -18,7 +22,7 @@ function printNodeValue(node: ts.Node):string {
     }
 
     if (ts.isJsxText(node)) { 
-        return node.text.replace(/(\s|\s)/gi, "");
+        return removeSpaces(node.text);
     }
 
     return "";

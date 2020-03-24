@@ -1753,8 +1753,16 @@ export class VariableDeclaration extends Expression {
 
     getVariableExpressions(): VariableExpression { 
         if (this.name instanceof Identifier && this.initializer instanceof Expression) { 
+            const expression =
+                this.initializer instanceof SimpleExpression ||
+                    this.initializer.isJsx() ||
+                    this.initializer instanceof Call ?
+                
+                    this.initializer :
+                    new Paren(this.initializer);
+            
             return {
-                [this.name.toString()]: this.initializer instanceof SimpleExpression || this.initializer.isJsx() ? this.initializer: new Paren(this.initializer)
+                [this.name.toString()]: expression
             };
         }
         if (this.name instanceof BindingPattern && this.initializer) { 
@@ -2129,6 +2137,10 @@ export class JsxElement extends Expression {
         this.openingElement = openingElement;
         this.children = children;
         this.closingElement = closingElement;
+    }
+
+    get attributes() { 
+        return this.openingElement.attributes;
     }
 
     toString(options?: toStringOptions) {
