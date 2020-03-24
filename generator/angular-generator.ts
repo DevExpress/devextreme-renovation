@@ -38,7 +38,8 @@ import {
     BindingPattern,
     PropertyAccessChain,
     Conditional,
-    Prefix
+    Prefix,
+    PropertyAssignment
 } from "./react-generator";
 
 import SyntaxKind from "./syntaxKind";
@@ -87,6 +88,7 @@ interface JsxSpreadAttributeMeta {
 export class JsxOpeningElement extends ReactJsxOpeningElement { 
     context: GeneratorContex;
     component?: AngularComponent;
+    attributes: Array<JsxAttribute | JsxSpreadAttribute>;
     constructor(tagName: Expression, typeArguments: any[] = [], attributes: Array<JsxAttribute | JsxSpreadAttribute> = [], context: GeneratorContex) { 
         super(processTagName(tagName, context), typeArguments, attributes);
         this.context = context;
@@ -94,6 +96,7 @@ export class JsxOpeningElement extends ReactJsxOpeningElement {
         if (component instanceof AngularComponent) { 
             this.component = component;
         }
+        this.attributes = attributes;
     }
 
     processTagName(tagName: Expression) { 
@@ -132,12 +135,8 @@ export class JsxOpeningElement extends ReactJsxOpeningElement {
         const templateProperty = this.getTemplateProperty(options)
         if (templateProperty) { 
             const contextExpr = options?.newComponentContext ? `${options.newComponentContext}.` : "";
-            const contextElements = this.attributes.filter(
-                a=> !(a instanceof AngularDirective)
-            ).map(a => { 
-                return `${(a as AngularDirective).name.toString(options)}: ${(a as JsxAttribute).compileInitializer(options)}`;
-            });
-            const contextString = contextElements.length ? `; context:{${contextElements.join(",")}}` : "";
+            const contextElements = this.attributes.map(a => a.getTemplateContext()).filter(p => p) as PropertyAssignment[];
+            const contextString = contextElements.length ? `; context:${(new ObjectLiteral(contextElements, false)).toString(options).replace(/"/gi, "'")}` : "";
             const attributes = this.attributes
                 .filter(a => a instanceof AngularDirective)
                 .map(a => a.toString(options))
@@ -225,6 +224,10 @@ export class JsxAttribute extends ReactJsxAttribute {
         }).replace(/"/gi, "'");
     }
 
+    getTemplateContext(): PropertyAssignment | null { 
+        return new PropertyAssignment(this.name, this.initializer);
+    }
+
     toString(options?:toStringOptions) { 
         if (this.name.toString() === "ref") { 
             const refString = this.initializer.toString(options);
@@ -274,6 +277,9 @@ export class JsxAttribute extends ReactJsxAttribute {
 }
 
 export class AngularDirective extends JsxAttribute { 
+    getTemplateContext() { 
+        return null;
+    }
     toString(options?: toStringOptions) { 
         return `${this.name}="${this.compileInitializer(options)}"`;
     }
@@ -470,6 +476,12 @@ export class JsxChildExpression extends JsxExpression {
 }
 
 export class JsxSpreadAttribute extends JsxExpression{
+    getTemplateContext() { 
+        // TODO: Support spread attributes in template contex
+        console.warn("Angular generator doesn't support spread attributes in template");
+        return null;
+    }
+
     toString(options?:toStringOptions) { 
         return "";
     }
