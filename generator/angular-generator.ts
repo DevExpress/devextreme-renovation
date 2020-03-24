@@ -36,7 +36,9 @@ import {
     ImportClause,
     SimpleExpression,
     BindingPattern,
-    PropertyAccessChain
+    PropertyAccessChain,
+    Conditional,
+    Prefix
 } from "./react-generator";
 
 import SyntaxKind from "./syntaxKind";
@@ -390,7 +392,34 @@ export class JsxExpression extends ReactJsxExpression {
                 
             return `<ng-container *ngFor="${ngForValue.join(";")}">${
                 template
-            }</ng-container>`;
+                }</ng-container>`;
+        }
+
+        if (expression instanceof Conditional) { 
+            let result:string[] = [];
+            if (expression.thenStatement instanceof JsxElement || expression.thenStatement instanceof JsxSelfClosingElement) { 
+                const element = expression.thenStatement;
+                element.addAttribute(
+                    new AngularDirective(
+                        new Identifier("*ngIf"),
+                        expression.expression
+                    )
+                );
+                result.push(element.toString(options));
+            }
+
+            if (expression.elseStatement instanceof JsxElement || expression.elseStatement instanceof JsxSelfClosingElement) { 
+                const element = expression.elseStatement;
+                element.addAttribute(
+                    new AngularDirective(
+                        new Identifier("*ngIf"),
+                        new Prefix(SyntaxKind.ExclamationToken, new Paren(expression.expression))
+                    )
+                );
+                result.push(element.toString(options));
+            }
+
+            return result.join("\n");
         }
 
         return expression.toString(options);

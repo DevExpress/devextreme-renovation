@@ -3,7 +3,7 @@ import generator, { Property, AngularDirective } from "../angular-generator";
 import assert from "assert";
 import path from "path";
 
-import { printSourceCodeAst as getResult } from "./helpers/common";
+import { printSourceCodeAst as getResult, removeSpaces } from "./helpers/common";
 import { Identifier, GeneratorContex, Expression } from "../react-generator";
 
 if (!mocha.describe) { 
@@ -384,6 +384,52 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(expression.toString(), `<input *ngIf="viewModel==='input'"/>`);
+        });
+
+        mocha.it("condition?then:else - <div ngIf='condition'> <div ngIf='!(condition)'", function () {
+            const attribute = generator.createJsxAttribute(
+                generator.createIdentifier("a"),
+                generator.createPropertyAccess(
+                    generator.createIdentifier("viewModel"),
+                    generator.createIdentifier("value")
+                )
+            );
+
+            const property = generator.createGetAccessor(
+                [],
+                [],
+                generator.createIdentifier("value"),
+                [],
+                undefined,
+                undefined
+            );
+            property.prefix = "_";
+
+            const expression = generator.createJsxExpression(
+                undefined,
+                generator.createConditional(
+                    generator.createIdentifier("condition"),
+                    generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("div"),
+                        [],
+                        [attribute]
+                    ),
+                    generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("input"),
+                        [],
+                        [attribute]
+                    )
+                )
+            );
+
+            assert.strictEqual(removeSpaces(expression.toString({
+                state: [],
+                props: [],
+                internalState: [],
+                componentContext: "viewModel",
+                newComponentContext: "",
+                members: [property]
+            })), removeSpaces(`<div [a]="_value" *ngIf="condition"></div>\n<input [a]="_value" *ngIf="!(condition)"/>`));
         });
 
         mocha.it("<element>nonJsxExpr</element> -> <element>{{nonJsxExpr}}</element>", function () {
@@ -1050,16 +1096,16 @@ mocha.describe("Angular generator", function () {
                     undefined
                 );
 
-                assert.strictEqual(expression.toString({
+                assert.strictEqual(removeSpaces(expression.toString({
                     members: [templateProperty],
                     internalState: [],
                     state: [],
                     props: [],
                     componentContext: "viewModel",
                     newComponentContext: ""
-                }).replace(/(\s|\s)/gi, ""), `<ng-container *ngIf="condition">
+                })), removeSpaces(`<ng-container *ngIf="condition">
                         <ng-container *ngTemplateOutlet="template; context:{a1: 'str',a2: 10}"></ng-container>
-                    </ng-container>`.replace(/(\s|\s)/gi, ""));
+                    </ng-container>`));
             });
         });
 
@@ -1756,15 +1802,15 @@ mocha.describe("Angular generator", function () {
                 );
     
                 assert.strictEqual(expression.toString(), "");
-                assert.strictEqual((expression.getTemplate({
+                assert.strictEqual(removeSpaces((expression.getTemplate({
                     internalState: [],
                     state: [],
                     props: [],
                     members: []
-                }) as string).replace(/(\s|\s)/gi, ""), (`<div >
+                }) as string)), removeSpaces(`<div >
                         <span *ngIf="c1"></span>
                         <span *ngIf="c2"></span>
-                    </div>`).replace(/(\s|\s)/gi, ""));
+                    </div>`));
             });
     
             mocha.it("Can use jsx variable with condition", function () {
@@ -1817,14 +1863,14 @@ mocha.describe("Angular generator", function () {
                 );
     
                 assert.strictEqual(expression.toString(), "");
-                assert.strictEqual((expression.getTemplate({
+                assert.strictEqual(removeSpaces(expression.getTemplate({
                     internalState: [],
                     state: [],
                     props: [],
                     members: []
-                }) as string).replace(/(\s|\s)/gi, ""), (`<div >
+                }) as string), removeSpaces(`<div >
                         <span *ngIf="(c1)&&c2"></span>
-                    </div>`).replace(/(\s|\s)/gi, ""));
+                    </div>`));
             });
 
             mocha.it("Can store map in variable", function () {
@@ -1900,17 +1946,16 @@ mocha.describe("Angular generator", function () {
                 );
     
                 assert.strictEqual(expression.toString(), "");
-                assert.strictEqual((expression.getTemplate({
+                assert.strictEqual(removeSpaces(expression.getTemplate({
                     internalState: [],
                     state: [],
                     props: [],
                     members: []
-                }) as string)
-                    .replace(/(\s|\s)/gi, ""), (`<div>
+                }) as string), removeSpaces(`<div>
                         <ng-container *ngFor="let items of viewModel.items">
                             <div ></div>
                         </ng-container>
-                    </div>`).replace(/(\s|\s)/gi, ""));
+                    </div>`));
             });
 
         });
