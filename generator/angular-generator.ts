@@ -181,6 +181,10 @@ export class JsxOpeningElement extends ReactJsxOpeningElement {
     hasNgStyle() { 
         return this.attributes.some(a => a instanceof JsxAttribute && a.name.toString() === "style");
     }
+
+    trackBy() { 
+        return this.attributes.filter(a => a instanceof TrackByAttribute) as TrackByAttribute[];
+    }
 }
 
 export class JsxSelfClosingElement extends JsxOpeningElement{ 
@@ -287,8 +291,8 @@ export class TrackByAttribute extends JsxAttribute {
         return "";
     }
 
-    declaration(): string {
-        return `${this.name}(index: number; item: any){
+    getTrackBydeclaration(): string {
+        return `${this.name}(${this.indexName||"_index"}: number, ${this.itemName}: any){
             return ${this.trackByExpressionString}
         }`;
     }
@@ -377,6 +381,31 @@ export class JsxExpression extends ReactJsxExpression {
 
         return expression.toString(options);
     }
+
+    trackBy(options?:toStringOptions): TrackByAttribute[] { 
+        let expression = this.expression;
+
+        if (expression instanceof Identifier && options?.variables?.[expression.toString()]) { 
+            expression = options.variables[expression.toString()];
+        }
+
+        if (expression instanceof Call &&
+            expression.expression instanceof PropertyAccess &&
+            expression.expression.name.toString() === "map") {
+            const iterator = expression.arguments[0];
+            if (iterator instanceof ArrowFunctionWithTemplate || iterator instanceof AngularFunction) {
+                const templateOptions = options ? { ...options } : options;
+                const templateExpression = getAngularTemplate(iterator, templateOptions, true);
+                if (templateExpression instanceof JsxElement || templateExpression instanceof JsxExpression) {
+                    return templateExpression.trackBy(options);
+                }
+
+                
+            }
+        }
+
+        return [];
+    }
 }
 
 export class JsxChildExpression extends JsxExpression { 
@@ -454,6 +483,16 @@ export class JsxElement extends ReactJsxElement {
     hasNgStyle(): boolean { 
         return this.openingElement.hasNgStyle()
             || this.children.some(c => (c instanceof JsxElement || c instanceof JsxOpeningElement) && c.hasNgStyle());
+    }
+
+    trackBy(options?: toStringOptions): Array<TrackByAttribute> { 
+        return this.openingElement.trackBy().concat(this.children.reduce((trackBy: Array<TrackByAttribute>, c) => {
+            if (c instanceof JsxExpression || c instanceof JsxElement) {
+                return trackBy.concat(c.trackBy(options));
+            }
+
+            return trackBy;
+         }, []));
     }
 }
 
