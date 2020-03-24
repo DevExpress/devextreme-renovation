@@ -325,12 +325,28 @@ function processBinary(expression: Binary, options?: toStringOptions, condition:
 }
 
 export class JsxExpression extends ReactJsxExpression {
-    toString(options?: toStringOptions) {
-        let expression = this.expression;
-
-        if (expression instanceof Identifier && options?.variables?.[expression.toString()]) { 
-            expression = options.variables[expression.toString()];
+    getExpression(options?: toStringOptions): Expression { 
+        if (this.expression instanceof Identifier && options?.variables?.[this.expression.toString()]) { 
+            return options.variables[this.expression.toString()];
         }
+
+        return this.expression;
+    }
+
+    getIterator(expression: Expression): ArrowFunctionWithTemplate | AngularFunction | undefined {
+        if (expression instanceof Call &&
+            expression.expression instanceof PropertyAccess &&
+            expression.expression.name.toString() === "map") {
+            const iterator = expression.arguments[0];
+            if (iterator instanceof ArrowFunctionWithTemplate || iterator instanceof AngularFunction) {
+                return iterator;
+            }
+        }
+        return;
+    }
+
+    toString(options?: toStringOptions) {
+        const expression = this.getExpression(options);
 
         if (expression instanceof Binary) { 
             const parsedBinary = processBinary(expression, options);
@@ -339,69 +355,53 @@ export class JsxExpression extends ReactJsxExpression {
             }
         }
 
-        if (expression instanceof Call &&
-            expression.expression instanceof PropertyAccess &&
-            expression.expression.name.toString() === "map") {
-            const iterator = expression.arguments[0];
-            if (iterator instanceof ArrowFunctionWithTemplate || iterator instanceof AngularFunction) {
-                const templateOptions = options ? { ...options } : options;
-                const templateExpression = getAngularTemplate(iterator, templateOptions, true); 
-                const template: string = templateExpression ? templateExpression.toString(templateOptions) : "";
-                const itemsExpression = expression.expression.expression;
-                const itemName = iterator.parameters[0].toString()
-                const item = `let ${itemName} of ${itemsExpression.toString(options)}`;
-                const ngForValue = [item];
-                if (iterator.parameters[1]) { 
-                    ngForValue.push(`index as ${iterator.parameters[1]}`);
-                }
-
-                if (templateExpression instanceof JsxElement || templateExpression instanceof JsxOpeningElement) { 
-                    const keyAttribute = templateExpression.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === "key") as JsxAttribute;
-                    if (keyAttribute) { 
-                        const trackByName = new Identifier(`trackBy${counter.get()}`);
-                        ngForValue.push(`trackBy: ${trackByName}`);
-                        templateExpression.addAttribute(
-                            new TrackByAttribute(
-                                trackByName,
-                                keyAttribute.initializer.toString(templateOptions),
-                                iterator.parameters[1]?.name.toString() || "",
-                                itemName
-                            )
-                        );
-                    }
-                }
-
-                
-                return `<ng-container *ngFor="${ngForValue.join(";")}">${
-                    template
-                }</ng-container>`;
+        const iterator = this.getIterator(expression);
+       
+        if (iterator) {
+            const templateOptions = options ? { ...options } : options;
+            const templateExpression = getAngularTemplate(iterator, templateOptions, true);
+            const template: string = templateExpression ? templateExpression.toString(templateOptions) : "";
+            const itemsExpression = ((expression as Call).expression as PropertyAccess).expression;
+            const itemName = iterator.parameters[0].toString()
+            const item = `let ${itemName} of ${itemsExpression.toString(options)}`;
+            const ngForValue = [item];
+            if (iterator.parameters[1]) {
+                ngForValue.push(`index as ${iterator.parameters[1]}`);
             }
-            return "";
+
+            if (templateExpression instanceof JsxElement || templateExpression instanceof JsxOpeningElement) {
+                const keyAttribute = templateExpression.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === "key") as JsxAttribute;
+                if (keyAttribute) {
+                    const trackByName = new Identifier(`trackBy${counter.get()}`);
+                    ngForValue.push(`trackBy: ${trackByName}`);
+                    templateExpression.addAttribute(
+                        new TrackByAttribute(
+                            trackByName,
+                            keyAttribute.initializer.toString(templateOptions),
+                            iterator.parameters[1]?.name.toString() || "",
+                            itemName
+                        )
+                    );
+                }
+            }
+                
+            return `<ng-container *ngFor="${ngForValue.join(";")}">${
+                template
+            }</ng-container>`;
         }
 
         return expression.toString(options);
     }
 
     trackBy(options?:toStringOptions): TrackByAttribute[] { 
-        let expression = this.expression;
+        const iterator = this.getIterator(this.getExpression(options));
 
-        if (expression instanceof Identifier && options?.variables?.[expression.toString()]) { 
-            expression = options.variables[expression.toString()];
-        }
-
-        if (expression instanceof Call &&
-            expression.expression instanceof PropertyAccess &&
-            expression.expression.name.toString() === "map") {
-            const iterator = expression.arguments[0];
-            if (iterator instanceof ArrowFunctionWithTemplate || iterator instanceof AngularFunction) {
-                const templateOptions = options ? { ...options } : options;
-                const templateExpression = getAngularTemplate(iterator, templateOptions, true);
-                if (templateExpression instanceof JsxElement || templateExpression instanceof JsxExpression) {
-                    return templateExpression.trackBy(options);
-                }
-
-                
-            }
+        if (iterator) {
+            const templateOptions = options ? { ...options } : options;
+            const templateExpression = getAngularTemplate(iterator, templateOptions, true);
+            if (templateExpression instanceof JsxElement || templateExpression instanceof JsxExpression) {
+                return templateExpression.trackBy(options);
+            }       
         }
 
         return [];
