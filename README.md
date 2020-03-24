@@ -19,4 +19,4 @@
     
 ### Publishing
 
-Increment version in [package.json](https://github.com/DevExpress/devextreme-renovation/blob/master/package.json) and commit it in the master. The package will be published automatically once tests passed.
+Increment version in [package.json](https://github.com/DevExpress/devextreme-renovation/blob/master/generator/package.json#L3) and commit it in the master. The package will be published automatically once tests passed.
