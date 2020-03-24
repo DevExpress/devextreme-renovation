@@ -1214,11 +1214,11 @@ mocha.describe("Angular generator", function () {
                 )
             );
 
-            assert.strictEqual(expression.toString(), `<ng-container *ngFor="let item of viewModel.items;trackBy: trackBy0"><div ></div></ng-container>`);
+            assert.strictEqual(expression.toString(), `<ng-container *ngFor="let item of viewModel.items;trackBy: _trackBy_viewModel_items_0"><div ></div></ng-container>`);
             const trackByAttrs = expression.trackBy();
             assert.strictEqual(trackByAttrs.length, 1);
-            assert.strictEqual(getResult(trackByAttrs[0].getTrackBydeclaration()), getResult(`trackBy0(_index: number, item: any){
-                return item.id
+            assert.strictEqual(getResult(trackByAttrs[0].getTrackBydeclaration()), getResult(`_trackBy_viewModel_items_0(_index: number, item: any){
+                return item.id;
             }`));
         });
 
@@ -1319,14 +1319,14 @@ mocha.describe("Angular generator", function () {
                 )
             );
 
-            assert.strictEqual(expression.toString(), `<ng-container *ngFor="let item of viewModel.items;trackBy: trackBy1"><div ><ng-container *ngFor="let _ of item;index as i;trackBy: trackBy0"><div ></div></ng-container></div></ng-container>`);
+            assert.strictEqual(expression.toString(), `<ng-container *ngFor="let item of viewModel.items;trackBy: _trackBy_viewModel_items_1"><div ><ng-container *ngFor="let _ of item;index as i;trackBy: _trackBy_item_0"><div ></div></ng-container></div></ng-container>`);
             const trackByAttrs = expression.trackBy();
             assert.strictEqual(trackByAttrs.length, 2);
-            assert.strictEqual(getResult(trackByAttrs[0].getTrackBydeclaration()), getResult(`trackBy1(_index: number, item: any){
+            assert.strictEqual(getResult(trackByAttrs[0].getTrackBydeclaration()), getResult(`_trackBy_viewModel_items_1(_index: number, item: any){
                 return item.id;
             }`), "external map trackBy function");
 
-            assert.strictEqual(getResult(trackByAttrs[1].getTrackBydeclaration()), getResult(`trackBy0(i: number, _: any){
+            assert.strictEqual(getResult(trackByAttrs[1].getTrackBydeclaration()), getResult(`_trackBy_item_0(i: number, _: any){
                 return i;
             }`), "internal map trackBy function");
         });

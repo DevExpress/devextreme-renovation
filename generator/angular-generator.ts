@@ -362,7 +362,8 @@ export class JsxExpression extends ReactJsxExpression {
             const templateExpression = getAngularTemplate(iterator, templateOptions, true);
             const template: string = templateExpression ? templateExpression.toString(templateOptions) : "";
             const itemsExpression = ((expression as Call).expression as PropertyAccess).expression;
-            const itemName = iterator.parameters[0].toString()
+            const itemName = iterator.parameters[0].toString();
+            const itemsExpressionString = itemsExpression.toString(options)
             const item = `let ${itemName} of ${itemsExpression.toString(options)}`;
             const ngForValue = [item];
             if (iterator.parameters[1]) {
@@ -372,7 +373,7 @@ export class JsxExpression extends ReactJsxExpression {
             if (templateExpression instanceof JsxElement || templateExpression instanceof JsxOpeningElement) {
                 const keyAttribute = templateExpression.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === "key") as JsxAttribute;
                 if (keyAttribute) {
-                    const trackByName = new Identifier(`trackBy${counter.get()}`);
+                    const trackByName = new Identifier(`_trackBy_${itemsExpressionString.replace(".", "_")}_${counter.get()}`);
                     ngForValue.push(`trackBy: ${trackByName}`);
                     templateExpression.addAttribute(
                         new TrackByAttribute(
@@ -826,6 +827,25 @@ class AngularComponent extends ReactComponent {
         `;
     }
 
+    compileTrackBy():string {
+        const viewFunction = this.decorator.getViewFunction();
+        if (viewFunction) {
+            const options = {
+                members: this.members,
+                state: [],
+                internalState: [],
+                props: [],
+                newComponentContext: this.viewModel ? "_viewModel" : ""
+            };
+            const expression = getAngularTemplate(viewFunction, options);
+            if (expression instanceof JsxElement || expression instanceof JsxSelfClosingElement) {
+                return expression.trackBy(options).map(a => a.getTrackBydeclaration()).join("\n");
+            }
+        }
+
+        return "";
+    }
+
     compileSpreadAttributes(ngOnChangesStatements: string[]): string { 
         const viewFunction = this.decorator.getViewFunction();
         if (viewFunction) { 
@@ -964,6 +984,7 @@ class AngularComponent extends ReactComponent {
                 }))
             .filter(m => m).join("\n")}
             ${this.compileSpreadAttributes(ngOnChangesStatements)}
+            ${this.compileTrackBy()}
             ${this.compileViewModel()}
             ${this.compileEffects(ngAfterViewInitStatements, ngOnDestroyStatements)}
             ${this.compileLifeCycle("ngAfterViewInit", ngAfterViewInitStatements)}
