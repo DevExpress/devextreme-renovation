@@ -35,7 +35,8 @@ import {
     Heritable,
     ImportClause,
     SimpleExpression,
-    BindingPattern
+    BindingPattern,
+    PropertyAccessChain
 } from "./react-generator";
 
 import SyntaxKind from "./syntaxKind";
@@ -293,7 +294,7 @@ export class TrackByAttribute extends JsxAttribute {
 
     getTrackBydeclaration(): string {
         return `${this.name}(${this.indexName||"_index"}: number, ${this.itemName}: any){
-            return ${this.trackByExpressionString}
+            return ${this.trackByExpressionString};
         }`;
     }
 }
@@ -335,7 +336,8 @@ export class JsxExpression extends ReactJsxExpression {
 
     getIterator(expression: Expression): ArrowFunctionWithTemplate | AngularFunction | undefined {
         if (expression instanceof Call &&
-            expression.expression instanceof PropertyAccess &&
+            (expression.expression instanceof PropertyAccess ||
+                expression.expression instanceof PropertyAccessChain) &&
             expression.expression.name.toString() === "map") {
             const iterator = expression.arguments[0];
             if (iterator instanceof ArrowFunctionWithTemplate || iterator instanceof AngularFunction) {
