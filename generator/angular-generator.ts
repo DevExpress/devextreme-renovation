@@ -355,6 +355,32 @@ export class JsxExpression extends ReactJsxExpression {
         return;
     }
 
+    compileStatement(statement: Expression | undefined, condition: Expression, options?: toStringOptions): string { 
+        const conditionAttribute = new AngularDirective(
+            new Identifier("*ngIf"),
+            condition
+        );
+
+        const expression = getJsxExpression(statement);
+        if (isElement(expression)) {
+            expression.addAttribute(conditionAttribute);
+            return expression.toString(options);
+        } else if (statement) {
+            const containerIdentifer = new Identifier("ng-container")
+            return new JsxElement(
+                new JsxOpeningElement(
+                    containerIdentifer,
+                    undefined,
+                    [conditionAttribute],
+                    {}
+                ),
+                [new JsxExpression(undefined, statement)],
+                new JsxClosingElement(containerIdentifer)
+            ).toString(options);
+        }
+        return "";
+    }
+
     toString(options?: toStringOptions) {
         const expression = this.getExpression(options);
 
@@ -402,28 +428,15 @@ export class JsxExpression extends ReactJsxExpression {
         }
 
         if (expression instanceof Conditional) { 
-            let result: string[] = [];
-            const thenStatement = getJsxExpression(expression.thenStatement);
-            if (isElement(thenStatement)) { 
-                thenStatement.addAttribute(
-                    new AngularDirective(
-                        new Identifier("*ngIf"),
-                        expression.expression
-                    )
-                );
-                result.push(thenStatement.toString(options));
-            }
-
-            const elseStatement = getJsxExpression(expression.elseStatement);
-            if (isElement(elseStatement)) { 
-                elseStatement.addAttribute(
-                    new AngularDirective(
-                        new Identifier("*ngIf"),
-                        new Prefix(SyntaxKind.ExclamationToken, new Paren(expression.expression))
-                    )
-                );
-                result.push(elseStatement.toString(options));
-            }
+            const result: string[] = [];
+            result.push(this.compileStatement(expression.thenStatement, expression.expression, options));
+            result.push(this.compileStatement(
+                expression.elseStatement,
+                new Prefix(SyntaxKind.ExclamationToken,
+                    new Paren(expression.expression)
+                ),
+                options)
+            );
 
             return result.join("\n");
         }
