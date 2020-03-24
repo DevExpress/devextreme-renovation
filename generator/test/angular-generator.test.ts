@@ -1063,57 +1063,170 @@ mocha.describe("Angular generator", function () {
             });
         });
 
-        mocha.it(".map((item)=><div>) -> *ngFor", function () { 
-            const expression = generator.createJsxExpression(
-                undefined,
-                generator.createCall(
-                    generator.createPropertyAccess(
-                        generator.createPropertyAccess(
-                            generator.createIdentifier("viewModel"),
-                            generator.createIdentifier("items")
-                        ),
-                        generator.createIdentifier("map")
-                    ),
+        mocha.describe("Parse Map function", function () {
+            mocha.it(".map((item)=><div>) -> *ngFor", function () { 
+                const expression = generator.createJsxExpression(
                     undefined,
-                    [generator.createArrowFunction(
-                        undefined,
-                        undefined,
-                        [generator.createParameter(
-                            undefined,
-                            undefined,
-                            undefined,
-                            generator.createIdentifier("items"),
-                            undefined,
-                            undefined,
-                            undefined
-                        )],
-                        undefined,
-                        generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
-                        generator.createJsxElement(
-                            generator.createJsxOpeningElement(
-                                generator.createIdentifier("div"),
-                                undefined,
-                                generator.createJsxAttributes([])
+                    generator.createCall(
+                        generator.createPropertyAccess(
+                            generator.createPropertyAccess(
+                                generator.createIdentifier("viewModel"),
+                                generator.createIdentifier("items")
                             ),
-                            [],
-                            generator.createJsxClosingElement(generator.createIdentifier("div"))
-                        )
-                    )]
-                )
-            );
-
-            assert.strictEqual(expression.toString(), `<ng-container *ngFor="let items of viewModel.items"><div ></div></ng-container>`);
-        });
-        
-        mocha.it(".map((item, index)=><div>) -> *ngFor", function () { 
-            const expression = generator.createJsxExpression(
-                undefined,
-                generator.createCall(
-                    generator.createPropertyAccess(
-                        generator.createPropertyAccess(
-                            generator.createIdentifier("viewModel"),
-                            generator.createIdentifier("items")
+                            generator.createIdentifier("map")
                         ),
+                        undefined,
+                        [generator.createArrowFunction(
+                            undefined,
+                            undefined,
+                            [generator.createParameter(
+                                undefined,
+                                undefined,
+                                undefined,
+                                generator.createIdentifier("items"),
+                                undefined,
+                                undefined,
+                                undefined
+                            )],
+                            undefined,
+                            generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                            generator.createJsxElement(
+                                generator.createJsxOpeningElement(
+                                    generator.createIdentifier("div"),
+                                    undefined,
+                                    generator.createJsxAttributes([])
+                                ),
+                                [],
+                                generator.createJsxClosingElement(generator.createIdentifier("div"))
+                            )
+                        )]
+                    )
+                );
+    
+                assert.strictEqual(expression.toString(), `<ng-container *ngFor="let items of viewModel.items"><div ></div></ng-container>`);
+            });
+            
+            mocha.it(".map((item, index)=><div>) -> *ngFor", function () { 
+                const expression = generator.createJsxExpression(
+                    undefined,
+                    generator.createCall(
+                        generator.createPropertyAccess(
+                            generator.createPropertyAccess(
+                                generator.createIdentifier("viewModel"),
+                                generator.createIdentifier("items")
+                            ),
+                            generator.createIdentifier("map")
+                        ),
+                        undefined,
+                        [generator.createArrowFunction(
+                            undefined,
+                            undefined,
+                            [generator.createParameter(
+                                undefined,
+                                undefined,
+                                undefined,
+                                generator.createIdentifier("items"),
+                                undefined,
+                                undefined,
+                                undefined
+                            ),
+                            generator.createParameter(
+                                undefined,
+                                undefined,
+                                undefined,
+                                generator.createIdentifier("i"),
+                                undefined,
+                                undefined,
+                                undefined
+                            )],
+                            undefined,
+                            generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                            generator.createJsxElement(
+                                generator.createJsxOpeningElement(
+                                    generator.createIdentifier("div"),
+                                    undefined,
+                                    generator.createJsxAttributes([])
+                                ),
+                                [],
+                                generator.createJsxClosingElement(generator.createIdentifier("div"))
+                            )
+                        )]
+                    )
+                );
+    
+                assert.strictEqual(expression.toString(), `<ng-container *ngFor="let items of viewModel.items;index as i"><div ></div></ng-container>`);
+            });
+    
+            mocha.it("key attribute should be ignored", function () { 
+                const expression = generator.createJsxAttribute(
+                    generator.createIdentifier("key"),
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("item"),
+                        generator.createIdentifier("id")
+                    )
+                );
+    
+                assert.strictEqual(expression.toString(), "");
+            });
+    
+            mocha.it("map with key attribute should generate trackBy function", function () { 
+                const expression = generator.createJsxExpression(
+                    undefined,
+                    generator.createCall(
+                        generator.createPropertyAccess(
+                            generator.createPropertyAccess(
+                                generator.createIdentifier("viewModel"),
+                                generator.createIdentifier("items")
+                            ),
+                            generator.createIdentifier("map")
+                        ),
+                        undefined,
+                        [generator.createArrowFunction(
+                            undefined,
+                            undefined,
+                            [generator.createParameter(
+                                undefined,
+                                undefined,
+                                undefined,
+                                generator.createIdentifier("item"),
+                                undefined,
+                                undefined,
+                                undefined
+                            )],
+                            undefined,
+                            generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                            generator.createJsxElement(
+                                generator.createJsxOpeningElement(
+                                    generator.createIdentifier("div"),
+                                    undefined,
+                                    generator.createJsxAttributes([
+                                        generator.createJsxAttribute(
+                                            generator.createIdentifier("key"),
+                                            generator.createPropertyAccess(
+                                                generator.createIdentifier("item"),
+                                                generator.createIdentifier("id")
+                                            ))
+                                    ])
+                                ),
+                                [],
+                                generator.createJsxClosingElement(generator.createIdentifier("div"))
+                            )
+                        )]
+                    )
+                );
+    
+                assert.strictEqual(expression.toString(), `<ng-container *ngFor="let item of viewModel.items;trackBy: _trackBy_viewModel_items_0"><div ></div></ng-container>`);
+                const trackByAttrs = expression.trackBy();
+                assert.strictEqual(trackByAttrs.length, 1);
+                assert.strictEqual(getResult(trackByAttrs[0].getTrackBydeclaration()), getResult(`_trackBy_viewModel_items_0(_index: number, item: any){
+                    return item.id;
+                }`));
+            });
+    
+            mocha.it("map inside an other map", function () { 
+                const insideExpression = generator.createCall(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("item"),
                         generator.createIdentifier("map")
                     ),
                     undefined,
@@ -1124,7 +1237,7 @@ mocha.describe("Angular generator", function () {
                             undefined,
                             undefined,
                             undefined,
-                            generator.createIdentifier("items"),
+                            generator.createIdentifier("_"),
                             undefined,
                             undefined,
                             undefined
@@ -1144,191 +1257,80 @@ mocha.describe("Angular generator", function () {
                             generator.createJsxOpeningElement(
                                 generator.createIdentifier("div"),
                                 undefined,
-                                generator.createJsxAttributes([])
-                            ),
-                            [],
-                            generator.createJsxClosingElement(generator.createIdentifier("div"))
-                        )
-                    )]
-                )
-            );
-
-            assert.strictEqual(expression.toString(), `<ng-container *ngFor="let items of viewModel.items;index as i"><div ></div></ng-container>`);
-        });
-
-        mocha.it("key attribute should be ignored", function () { 
-            const expression = generator.createJsxAttribute(
-                generator.createIdentifier("key"),
-                generator.createPropertyAccess(
-                    generator.createIdentifier("item"),
-                    generator.createIdentifier("id")
-                )
-            );
-
-            assert.strictEqual(expression.toString(), "");
-        });
-
-        mocha.it("map with key attribute should generate trackBy function", function () { 
-            const expression = generator.createJsxExpression(
-                undefined,
-                generator.createCall(
-                    generator.createPropertyAccess(
-                        generator.createPropertyAccess(
-                            generator.createIdentifier("viewModel"),
-                            generator.createIdentifier("items")
-                        ),
-                        generator.createIdentifier("map")
-                    ),
-                    undefined,
-                    [generator.createArrowFunction(
-                        undefined,
-                        undefined,
-                        [generator.createParameter(
-                            undefined,
-                            undefined,
-                            undefined,
-                            generator.createIdentifier("item"),
-                            undefined,
-                            undefined,
-                            undefined
-                        )],
-                        undefined,
-                        generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
-                        generator.createJsxElement(
-                            generator.createJsxOpeningElement(
-                                generator.createIdentifier("div"),
-                                undefined,
                                 generator.createJsxAttributes([
                                     generator.createJsxAttribute(
                                         generator.createIdentifier("key"),
-                                        generator.createPropertyAccess(
-                                            generator.createIdentifier("item"),
-                                            generator.createIdentifier("id")
-                                        ))
+                                        generator.createIdentifier("i")
+                                    )
                                 ])
                             ),
                             [],
                             generator.createJsxClosingElement(generator.createIdentifier("div"))
                         )
                     )]
-                )
-            );
-
-            assert.strictEqual(expression.toString(), `<ng-container *ngFor="let item of viewModel.items;trackBy: _trackBy_viewModel_items_0"><div ></div></ng-container>`);
-            const trackByAttrs = expression.trackBy();
-            assert.strictEqual(trackByAttrs.length, 1);
-            assert.strictEqual(getResult(trackByAttrs[0].getTrackBydeclaration()), getResult(`_trackBy_viewModel_items_0(_index: number, item: any){
-                return item.id;
-            }`));
-        });
-
-        mocha.it("map inside an other map", function () { 
-            const insideExpression = generator.createCall(
-                generator.createPropertyAccess(
-                    generator.createIdentifier("item"),
-                    generator.createIdentifier("map")
-                ),
-                undefined,
-                [generator.createArrowFunction(
+                );
+    
+                const expression = generator.createJsxExpression(
                     undefined,
-                    undefined,
-                    [generator.createParameter(
-                        undefined,
-                        undefined,
-                        undefined,
-                        generator.createIdentifier("_"),
-                        undefined,
-                        undefined,
-                        undefined
-                    ),
-                    generator.createParameter(
-                        undefined,
-                        undefined,
-                        undefined,
-                        generator.createIdentifier("i"),
-                        undefined,
-                        undefined,
-                        undefined
-                    )],
-                    undefined,
-                    generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
-                    generator.createJsxElement(
-                        generator.createJsxOpeningElement(
-                            generator.createIdentifier("div"),
-                            undefined,
-                            generator.createJsxAttributes([
-                                generator.createJsxAttribute(
-                                    generator.createIdentifier("key"),
-                                    generator.createIdentifier("i")
-                                )
-                            ])
-                        ),
-                        [],
-                        generator.createJsxClosingElement(generator.createIdentifier("div"))
-                    )
-                )]
-            );
-
-            const expression = generator.createJsxExpression(
-                undefined,
-                generator.createCall(
-                    generator.createPropertyAccess(
+                    generator.createCall(
                         generator.createPropertyAccess(
-                            generator.createIdentifier("viewModel"),
-                            generator.createIdentifier("items")
-                        ),
-                        generator.createIdentifier("map")
-                    ),
-                    undefined,
-                    [generator.createArrowFunction(
-                        undefined,
-                        undefined,
-                        [generator.createParameter(
-                            undefined,
-                            undefined,
-                            undefined,
-                            generator.createIdentifier("item"),
-                            undefined,
-                            undefined,
-                            undefined
-                        )],
-                        undefined,
-                        generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
-                        generator.createJsxElement(
-                            generator.createJsxOpeningElement(
-                                generator.createIdentifier("div"),
-                                undefined,
-                                generator.createJsxAttributes([
-                                    generator.createJsxAttribute(
-                                        generator.createIdentifier("key"),
-                                        generator.createPropertyAccess(
-                                            generator.createIdentifier("item"),
-                                            generator.createIdentifier("id")
-                                        ))
-                                ])
+                            generator.createPropertyAccess(
+                                generator.createIdentifier("viewModel"),
+                                generator.createIdentifier("items")
                             ),
-                            [
-                                generator.createJsxExpression(
+                            generator.createIdentifier("map")
+                        ),
+                        undefined,
+                        [generator.createArrowFunction(
+                            undefined,
+                            undefined,
+                            [generator.createParameter(
+                                undefined,
+                                undefined,
+                                undefined,
+                                generator.createIdentifier("item"),
+                                undefined,
+                                undefined,
+                                undefined
+                            )],
+                            undefined,
+                            generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                            generator.createJsxElement(
+                                generator.createJsxOpeningElement(
+                                    generator.createIdentifier("div"),
                                     undefined,
-                                    insideExpression
-                                )
-                            ],
-                            generator.createJsxClosingElement(generator.createIdentifier("div"))
-                        )
-                    )]
-                )
-            );
-
-            assert.strictEqual(expression.toString(), `<ng-container *ngFor="let item of viewModel.items;trackBy: _trackBy_viewModel_items_1"><div ><ng-container *ngFor="let _ of item;index as i;trackBy: _trackBy_item_0"><div ></div></ng-container></div></ng-container>`);
-            const trackByAttrs = expression.trackBy();
-            assert.strictEqual(trackByAttrs.length, 2);
-            assert.strictEqual(getResult(trackByAttrs[0].getTrackBydeclaration()), getResult(`_trackBy_viewModel_items_1(_index: number, item: any){
-                return item.id;
-            }`), "external map trackBy function");
-
-            assert.strictEqual(getResult(trackByAttrs[1].getTrackBydeclaration()), getResult(`_trackBy_item_0(i: number, _: any){
-                return i;
-            }`), "internal map trackBy function");
+                                    generator.createJsxAttributes([
+                                        generator.createJsxAttribute(
+                                            generator.createIdentifier("key"),
+                                            generator.createPropertyAccess(
+                                                generator.createIdentifier("item"),
+                                                generator.createIdentifier("id")
+                                            ))
+                                    ])
+                                ),
+                                [
+                                    generator.createJsxExpression(
+                                        undefined,
+                                        insideExpression
+                                    )
+                                ],
+                                generator.createJsxClosingElement(generator.createIdentifier("div"))
+                            )
+                        )]
+                    )
+                );
+    
+                assert.strictEqual(expression.toString(), `<ng-container *ngFor="let item of viewModel.items;trackBy: _trackBy_viewModel_items_1"><div ><ng-container *ngFor="let _ of item;index as i;trackBy: _trackBy_item_0"><div ></div></ng-container></div></ng-container>`);
+                const trackByAttrs = expression.trackBy();
+                assert.strictEqual(trackByAttrs.length, 2);
+                assert.strictEqual(getResult(trackByAttrs[0].getTrackBydeclaration()), getResult(`_trackBy_viewModel_items_1(_index: number, item: any){
+                    return item.id;
+                }`), "external map trackBy function");
+    
+                assert.strictEqual(getResult(trackByAttrs[1].getTrackBydeclaration()), getResult(`_trackBy_item_0(i: number, _: any){
+                    return i;
+                }`), "internal map trackBy function");
+            });
         });
     
         mocha.describe("View Function", function () {
