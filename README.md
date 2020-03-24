@@ -16,3 +16,7 @@
     `npm run build` or `npm run build-dist` or `npm run dev`
   - test
     `npm test`
+    
+### Publishing
+
+Increment version in [package.json](https://github.com/DevExpress/devextreme-renovation/blob/master/package.json) and commit it in the master. The package will be published automatically once tests passed.
