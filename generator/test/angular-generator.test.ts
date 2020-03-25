@@ -432,6 +432,49 @@ mocha.describe("Angular generator", function () {
             })), removeSpaces(`<div [a]="_value" *ngIf="condition"></div>\n<input [a]="_value" *ngIf="!(condition)"/>`));
         });
 
+        mocha.it("non jsx conditional - condition?then:else - {{then}} {{else}}'", function () {
+            const thenStatement = generator.createPropertyAccess(
+                generator.createIdentifier("viewModel"),
+                generator.createIdentifier("value")
+            );
+
+            const elseStatement = generator.createPrefix(
+                generator.SyntaxKind.ExclamationToken,
+                generator.createPropertyAccess(
+                    generator.createIdentifier("viewModel"),
+                    generator.createIdentifier("value")
+                )
+            );
+
+            const property = generator.createGetAccessor(
+                [],
+                [],
+                generator.createIdentifier("value"),
+                [],
+                undefined,
+                undefined
+            );
+            property.prefix = "_";
+
+            const expression = generator.createJsxExpression(
+                undefined,
+                generator.createConditional(
+                    generator.createIdentifier("condition"),
+                    thenStatement,
+                    elseStatement
+                )
+            );
+
+            assert.strictEqual(removeSpaces(expression.toString({
+                state: [],
+                props: [],
+                internalState: [],
+                componentContext: "viewModel",
+                newComponentContext: "",
+                members: [property]
+            })), removeSpaces(`<ng-container*ngIf="condition">{{_value}}</ng-container><ng-container*ngIf="!(condition)">{{!_value}}</ng-container>`));
+        });
+
         mocha.it("conditional expression with paren", function () {
             const expression = generator.createJsxExpression(
                 undefined,
@@ -1081,14 +1124,51 @@ mocha.describe("Angular generator", function () {
                     undefined
                 );
 
-                assert.strictEqual(expression.toString({
+                assert.strictEqual(removeSpaces(expression.toString({
                     members: [templateProperty],
                     internalState: [],
                     state: [],
                     props: [],
                     componentContext: "viewModel",
                     newComponentContext: ""
-                }), `<ng-container *ngTemplateOutlet="template; context:{a1: \'str\',a2: 10}"></ng-container>`);
+                })), removeSpaces(`<ng-container *ngTemplateOutlet="template; context:{a1: \'str\',a2: 10}"></ng-container>`));
+            });
+
+            mocha.it("template jsx spread attributes -> template context", function () {
+                const expression = generator.createJsxSelfClosingElement(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("template")
+                    ),
+                    [],
+                    [
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("a1"),
+                            generator.createNumericLiteral("10")
+                        ),
+                        generator.createJsxSpreadAttribute(
+                            generator.createIdentifier("spreadContext")
+                        )
+                    ]
+                );
+
+                const templateProperty = generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+
+                assert.strictEqual(removeSpaces(expression.toString({
+                    members: [templateProperty],
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                })), removeSpaces(`<ng-container *ngTemplateOutlet="template; context:{a1: 10}"></ng-container>`));
             });
 
             mocha.it("render template with condition *ngIf", function () {
