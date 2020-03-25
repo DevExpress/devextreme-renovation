@@ -176,11 +176,11 @@ export class ExpressionWithOptionalExpression extends Expression {
 }
 
 export class BindingElement extends Expression {
-    dotDotDotToken?: any;
+    dotDotDotToken?: string;
     propertyName?: Identifier;
-    name?: string | Identifier | BindingElement;
+    name?: string | Identifier | BindingPattern;
     initializer?: Expression;
-    constructor(dotDotDotToken: any, propertyName?: Identifier, name?: string | Identifier| BindingElement, initializer?: Expression) {
+    constructor(dotDotDotToken: string = "", propertyName?: Identifier, name?: string | Identifier| BindingPattern, initializer?: Expression) {
         super();
         this.dotDotDotToken = dotDotDotToken;
         this.propertyName = propertyName;
@@ -190,11 +190,17 @@ export class BindingElement extends Expression {
 
     toString() {
         const key = this.propertyName ? `${this.propertyName}:` : "";
-        return `${key}${this.name}`;
+        return `${key}${this.dotDotDotToken}${this.name}`;
     }
 
-    getDependency() { 
-        return this.name && this.name instanceof Identifier ? [this.toString()] : [];
+    getDependency() {
+        if (!this.propertyName && this.name instanceof Identifier) { 
+            return [this.name.toString()];
+        }
+        if (this.propertyName instanceof Identifier) { 
+            return [this.propertyName.toString()];
+        }
+        return []
     }
 }
 
@@ -229,6 +235,10 @@ export class BindingPattern extends Expression {
 
     getDependency() { 
         return this.elements.reduce((d: string[], e) => d.concat(e.getDependency()), []);
+    }
+
+    hasRest() { 
+        return this.elements.find(e => e.dotDotDotToken);
     }
 
     getVariableExpressions(startExpression: Expression): VariableExpression { 
@@ -1743,10 +1753,14 @@ export class VariableDeclaration extends Expression {
 
     getDependency() {
         if (this.initializer && typeof this.initializer !== "string") {
+            const initializerDependency = this.initializer.getDependency();
             if (this.name instanceof BindingPattern && this.initializer.toString().startsWith("this")) {
-                return this.name.getDependency()
+                if (this.name.hasRest()) {
+                    return initializerDependency;
+                }
+                return this.name.getDependency();
             }
-            return this.initializer.getDependency();
+            return initializerDependency;
         }
         return [];
     }
@@ -2267,7 +2281,7 @@ export class Generator {
         return new StringLiteral(value);
     }
 
-    createBindingElement(dotDotDotToken?: any, propertyName?: Identifier, name?: string | Identifier | BindingElement, initializer?: Expression) {
+    createBindingElement(dotDotDotToken?: string, propertyName?: Identifier, name?: string | Identifier | BindingPattern, initializer?: Expression) {
         return new BindingElement(dotDotDotToken, propertyName, name, initializer);
     }
 
