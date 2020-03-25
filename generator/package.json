@@ -16,19 +16,28 @@
     "@types/react": "^16.9.19",
     "code-block-writer": "^10.1.0",
     "gulp": "^4.0.2",
-    "react": "^16.12.0",
+    "react": "^16.13.1",
     "typescript": "^3.7.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "@babel/preset-react": "^7.9.4",
     "@types/gulp": "^4.0.6",
     "@types/mocha": "5.2.7",
     "@types/node": "^12.12.14",
     "@types/sinon": "^7.5.1",
     "@types/typescript": "^2.0.0",
+    "babel-loader": "^8.1.0",
+    "babel-preset-react-app": "^9.1.2",
     "gulp-plumber": "^1.2.1",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-typescript": "^6.0.0-alpha.1",
     "mocha": "^6.2.2",
-    "sinon": "^8.0.4"
+    "react-dom": "^16.13.1",
+    "sinon": "^8.0.4",
+    "ts-loader": "^6.2.2",
+    "webpack": "^4.42.1",
+    "webpack-dev-server": "^3.10.3"
   }
 }

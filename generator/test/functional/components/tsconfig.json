@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "ES2016",
+        "module": "ESNext",
+        "strict": false,
+        "esModuleInterop": false,
+        "typeRoots": ["node_modules/@types"],
+        "forceConsistentCasingInFileNames": true,
+        "jsx": "preserve",
+        "declaration": true,
+        "experimentalDecorators": true,
+    },
+    "include": ["**/*"],
+    "exclude": [
+        "node_modules"
+    ]
+}
