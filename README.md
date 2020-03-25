@@ -20,3 +20,43 @@
 ### Publishing
 
 Increment version in [package.json](https://github.com/DevExpress/devextreme-renovation/blob/master/generator/package.json#L3) and commit it in the master. The package will be published automatically once tests passed.
+
+### Using
+
+#### Installing
+
+    `npm install --save devextreme-generator`
+    
+#### Usage
+
+##### With gulp
+
+```javascript
+// gulpfile.js
+const { generateComponents } = require('devextreme-generator/component-compiler');
+const generator = require('devextreme-generator/preact-generator').default;
+// const generator = require('devextreme-generator/react-generator').default;
+// const generator = require('devextreme-generator/angular-generator').default;
+
+// Optional set defaultOptionsModule
+generator.defaultOptionsModule = 'pathToYourModule or node_modules/devextreme-generator/component_declaration/default_options';
+
+gulp.task('generate-components', function() {
+    return gulp.src(SRC)
+        .pipe(generateComponents(generator))
+        .pipe(gulp.dest(DEST));
+});
+
+ ```
+ 
+ ##### Generate component from file
+ 
+ ```javascript
+const { compileCode } = require('devextreme-generator/component-compiler');
+const reactGenerator = require('devextreme-generator/react-generator').default;
+
+const result = compileCode(generator, source, {
+    path: path,
+    dirname: dirname
+});
+ ```
