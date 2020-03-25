@@ -23,9 +23,17 @@ steps:
 - script: |
     cd ./generator
     npm install
+  displayName: 'npm install'
+
+- script: |
+    cd ./generator
     npm run build-dist
+  displayName: 'build'
+
+- script: |
+    cd ./generator
     npm run test
-  displayName: 'npm install and build'
+  displayName: 'tests'
 
 - task: ArchiveFiles@2
   inputs:
