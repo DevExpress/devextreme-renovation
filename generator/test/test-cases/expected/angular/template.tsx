@@ -1,10 +1,11 @@
 
+import { Input, TemplateRef } from "@angular/core";
 export class WidgetInput {
     @Input() template: TemplateRef<any>;
     @Input() contentTemplate: TemplateRef<any>;
 }
 
-import { Component, NgModule, Input, TemplateRef } from "@angular/core";
+import { Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 @Component({
     selector: "dx-widget",

@@ -1,9 +1,10 @@
+import { Input } from "@angular/core";
 export class ListInput {
     @Input() items?: Array<{ key: number, text: string }>;
 }
 
-import { Component, NgModule, Input } from "@angular/core";
-import { CommonModule } from "@angular/common"
+import { Component, NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
 
 @Component({
     selector: "dx-list",

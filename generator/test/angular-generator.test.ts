@@ -2202,6 +2202,7 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(getResult(bindings.toString()), getResult(`
+                import {Input} from "@angular/core"
                 export default class ComponentInput {
                     @Input() p1?:number = 10;
                     @Input() p2?:number = 11;
@@ -2515,7 +2516,9 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(getResult(component.toString()), getResult(`
-                ${component.compileImports()}
+                import {Component,NgModule} from "@angular/core";
+                import {CommonModule} from "@angular/common";
+
                 ${component.decorator}
                 export default class BaseWidget {
 
@@ -2574,7 +2577,9 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(getResult(component.toString()), getResult(`
-                ${component.compileImports()}
+                import {Component,NgModule} from "@angular/core";
+                import {CommonModule} from "@angular/common";
+                
                 ${component.decorator}
                 export default class BaseWidget extends Input {
 

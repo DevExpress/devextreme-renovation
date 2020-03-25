@@ -7,14 +7,15 @@ function subscribe(p: string, s: number, i: number) {
 function unsubscribe(id: number) {
     return undefined;
 }
+import { Input, Output, EventEmitter } from "@angular/core";
 export class WidgetInput {
     @Input() p: string = "10";
     @Input() s: number = 10;
     @Output() sChange: EventEmitter<number> = new EventEmitter();
 }
 
-import { Component, NgModule, Input, Output, EventEmitter } from "@angular/core";
-import { CommonModule } from "@angular/common"
+import { Component, NgModule} from "@angular/core";
+import { CommonModule } from "@angular/common";
 @Component({ selector: "dx-widget" })
 export default class Widget extends WidgetInput {
     i: number = 10

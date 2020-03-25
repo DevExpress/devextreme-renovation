@@ -1,11 +1,12 @@
 
 import BaseWidget, {DxWidgetModule} from "./method";
 
+import { Input } from "@angular/core";
 class WidgetWithApiRefInput {
     @Input() prop1?: number;
 }
 
-import { Component, NgModule, Input, ViewChild } from "@angular/core";
+import { Component, NgModule, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 @Component({
     selector: "dx-widget-with-api-ref",

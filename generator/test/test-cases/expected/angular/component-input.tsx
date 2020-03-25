@@ -1,12 +1,13 @@
 function view(){
             
 }
+
+import {Input} from "@angular/core";
 export class WidgetProps  {
      @Input() height?:number = 10;
-
 }
 
-import {Component,NgModule,Input} from "@angular/core";
+import {Component,NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common"
 @Component({selector:"dx-widget"})
 export default class Widget extends WidgetProps {
