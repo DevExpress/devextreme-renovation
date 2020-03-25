@@ -1117,6 +1117,51 @@ mocha.describe("react-generator: expressions", function () {
             });
         });
     }); 
+
+    mocha.describe("BindingElement", function () {
+        mocha.it("only name is set (decomposite object)", function () {
+            const expression = generator.createBindingElement(
+                undefined,
+                undefined,
+                generator.createIdentifier("v")
+            );
+
+            assert.strictEqual(expression.toString(), "v");
+            assert.deepEqual(expression.getDependency(), ["v"]);
+        });
+
+        mocha.it("property name and name are set (decomposite object and rename)", function () {
+            const expression = generator.createBindingElement(
+                undefined,
+                generator.createIdentifier("a"),
+                generator.createIdentifier("v")
+            );
+            assert.strictEqual(expression.toString(), "a:v");
+            assert.deepEqual(expression.getDependency(), ["a"]);
+        });
+
+        mocha.it("rest properties", function () {
+            assert.strictEqual(generator.createBindingElement(
+                generator.SyntaxKind.DotDotDotToken,
+                undefined,
+                generator.createIdentifier("v")
+            ).toString(), "...v");
+        });
+
+        mocha.it("decomposite object with BindingPattern", function () {
+            assert.strictEqual(generator.createBindingElement(
+                undefined,
+                generator.createIdentifier("v"),
+                generator.createObjectBindingPattern(
+                    [generator.createBindingElement(
+                        undefined,
+                        undefined,
+                        generator.createIdentifier("a")
+                    )]
+                )
+            ).toString(), "v:{a}");
+        });
+    });
     
     mocha.it("JsxElement. Fragment -> React.Fragment", function () {
         const expression = generator.createJsxElement(
@@ -2167,6 +2212,24 @@ mocha.describe("Expressions with props/state/internal state", function () {
         );
 
         assert.deepEqual(expresion.getDependency(), ["height"]);
+    });
+
+    mocha.it("VariableDeclaration returns all props dependency if binding element have rest operator", function () {
+        const expresion = generator.createVariableDeclaration(
+            generator.createObjectBindingPattern([generator.createBindingElement(
+                generator.SyntaxKind.DotDotDotToken,
+                undefined,
+                generator.createIdentifier("rest"),
+                undefined
+            )]),
+            undefined,
+            generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("props")
+            )
+        );
+
+        assert.deepEqual(expresion.getDependency(), ["props"]);
     });
 
     mocha.it("Arrow Function. Can set state", function () {
