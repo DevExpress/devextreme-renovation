@@ -854,6 +854,12 @@ mocha.describe("react-generator: expressions", function () {
             state: []
         }), `"a"+1+"b"+2+"c"`);
     });
+
+    mocha.it("createNoSubstitutionTemplateLiteral", function () {
+        const expression = generator.createNoSubstitutionTemplateLiteral("10", "10");
+
+        assert.equal(expression.toString(), "`10`");
+    });
     
     mocha.it("While", function () {
         const expression = generator.createPropertyAccess(
