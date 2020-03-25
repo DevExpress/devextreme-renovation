@@ -2639,6 +2639,10 @@ export class Generator {
         return new TemplateExpression(head, templateSpans);
     }
 
+    createNoSubstitutionTemplateLiteral(text: string, rawText?: string) { 
+        return new TemplateExpression(text, []);
+    }
+
     createFor(initializer: Expression | undefined, condition: Expression | undefined, incrementor: Expression | undefined, statement: Expression) {
         return new For(initializer, condition, incrementor, statement);
     }
