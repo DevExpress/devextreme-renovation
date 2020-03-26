@@ -48,7 +48,7 @@ function getPropName(name: Identifier | string) {
 }
 
 function getProps(members: Array<Property | Method>): Property[] {
-    return members.filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template")) as Property[];
+    return members.filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template" || d.name === "Slot")) as Property[];
 }
 
 export interface toStringOptions {
