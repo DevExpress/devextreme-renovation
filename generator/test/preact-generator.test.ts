@@ -49,6 +49,10 @@ mocha.describe("preact-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("method-use-apiref", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.describe("react-generator: expressions", function () {
         mocha.it("Rename import if it is component declaration", function () {
             generator.setContext({ dirname: path.resolve(__dirname) });
