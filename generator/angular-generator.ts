@@ -700,9 +700,41 @@ class Decorator extends BaseDecorator {
     }
 }
 
+function compileCoreImports(members: Array<Property|Method>, context: AngularGeneratorContext, imports:string[] = []) { 
+    if (members.filter(m => m.decorators.find(d => d.name === "OneWay")).length) {
+        imports.push("Input");
+    }
+    if (members.filter(m => m.decorators.find(d => d.name === "TwoWay")).length) { 
+        imports.push("Input", "Output", "EventEmitter");
+    }
+    if (members.filter(m => m.decorators.find(d=>d.name==="Template")).length) { 
+        imports.push("Input", "TemplateRef");
+    }
+    if (members.filter(m => m.decorators.find(d => d.name === "Event")).length) { 
+        imports.push("Output", "EventEmitter");
+    }
+
+    const set = new Set(context.angularCoreImports);
+    const needImport = imports.filter(name => !set.has(name));
+    context.angularCoreImports = [...set, ...needImport];
+
+    if (needImport.length) {
+        return `import {${[...new Set(needImport)].join(",")}} from "@angular/core"`;
+    }
+
+    return "";
+}
+
 class ComponentInput extends BaseComponentInput { 
+    context: AngularGeneratorContext;
+    constructor(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>, context: AngularGeneratorContext) { 
+        super(decorators, modifiers, name, typeParameters, heritageClauses, members);
+        this.context = context;
+    }
     toString() {
-        return `${this.modifiers.join(" ")} class ${this.name} ${this.heritageClauses.map(h => h.toString())} {
+        return `
+        ${compileCoreImports(this.members.filter(m => !m.inherited), this.context)}
+        ${this.modifiers.join(" ")} class ${this.name} ${this.heritageClauses.map(h => h.toString())} {
             ${this.members.filter(p => p instanceof Property && !p.inherited).map(m => m.toString()).filter(m => m).concat("").join(";\n")}
         }`;
     }
@@ -812,18 +844,7 @@ class AngularComponent extends ReactComponent {
 
     compileImports() { 
         const core = ["Component", "NgModule"];
-        if (this.props.filter(p => p.property.decorators.find(d => d.name === "OneWay")).length) {
-            core.push("Input");
-        }
-        if (this.state.length) { 
-            core.push("Input", "Output", "EventEmitter");
-        }
-        if (this.members.filter(m => m.decorators.find(d=>d.name==="Template")).length) { 
-            core.push("Input", "TemplateRef");
-        }
-        if (this.props.filter(p => p.property.decorators.find(d => d.name === "Event")).length) { 
-            core.push("Output", "EventEmitter");
-        }
+    
         if (this.refs.length || this.apiRefs.length) {
             core.push("ViewChild");
         }
@@ -832,7 +853,7 @@ class AngularComponent extends ReactComponent {
         }
 
         const imports = [
-            `import {${[...new Set(core)].join(",")}} from "@angular/core"`,
+            `${compileCoreImports(this.members.filter(m => !m.inherited), this.context, core)}`,
             'import {CommonModule} from "@angular/common"'
         ];
 
@@ -1106,6 +1127,7 @@ export class VariableDeclaration extends BaseVariableDeclaration {
 
 type AngularGeneratorContext = GeneratorContex & {
     viewFunctions?: { [name: string]: AngularFunction | ArrowFunctionWithTemplate };
+    angularCoreImports?: string[];
 }
 
 export class AngularGenerator extends Generator { 
@@ -1165,7 +1187,7 @@ export class AngularGenerator extends Generator {
     }
 
     createComponentBindings(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
-        return new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members);
+        return new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members, this.getContext());
     }
 
     createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "any", initializer?: Expression) {

@@ -1,13 +1,14 @@
 function view(model: Widget) {
 
 }
+import { Input, Output, EventEmitter } from "@angular/core";
 class WidgetInput {
     @Input() height: number = 10;
     @Output() onClick: EventEmitter<any> = new EventEmitter();
 
 }
 
-import { Component, NgModule, Input, Output, EventEmitter } from "@angular/core";
+import { Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common"
 @Component({ selector: "dx-widget" })
 export default class Widget extends WidgetInput {
