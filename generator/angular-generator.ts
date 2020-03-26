@@ -1202,7 +1202,7 @@ export class AngularGenerator extends Generator {
         return new GetAccessor(decorators, modifiers, name, parameters, type, body);
     }
 
-    createComponent(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
+    createComponent(componentDecorator: Decorator, modifiers: string[], name: string, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
         return new AngularComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members, this.getContext());
     }
 
