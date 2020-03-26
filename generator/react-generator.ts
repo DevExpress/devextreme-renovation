@@ -47,6 +47,10 @@ function getPropName(name: Identifier | string) {
     return `props.${name}`;
 }
 
+function getProps(members: Array<Property | Method>): Property[] {
+    return members.filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template")) as Property[];
+}
+
 export interface toStringOptions {
     members: Array<Property | Method>;
     disableTemplates?: boolean;
@@ -231,6 +235,10 @@ export class BindingPattern extends Expression {
 
     remove(name: string) {
         this.elements = this.elements.filter(e => e.name?.toString() !== name);
+    }
+
+    add(element: BindingElement) { 
+        this.elements.push(element);
     }
 
     getDependency() { 
@@ -1729,11 +1737,18 @@ export class VariableDeclaration extends Expression {
         if (this.name instanceof BindingPattern && options?.members.length && this.initializer instanceof PropertyAccess) {
             const dependecy = this.initializer.getDependency(options);
             if (dependecy.indexOf("props") === 0) { 
+                const props = getProps(options.members);
                 const members = this.name.getDependency()
-                    .map(d => options?.members.find(m => m._name.toString() === d))
+                    .map(d => props.find(m => m._name.toString() === d))
                     .filter(m => m && m.name && m.getter().toString() !== m._name.toString()) as Array<Property|Method>;
                 const variables = members.reduce((v: VariableExpression, m) => {
-                    (this.name as BindingPattern).remove(m._name.toString());
+                    const bindingPattern = this.name as BindingPattern;
+                    bindingPattern.remove(m._name.toString());
+                    if (bindingPattern.hasRest()) { 
+                        bindingPattern.add(
+                            new BindingElement(undefined, undefined, new Identifier(m.name))
+                        );
+                    }
                     return {
                         ...v,
                         [m._name.toString()]: this.initializer instanceof Expression ? new PropertyAccess(this.initializer, new Identifier(m.name)) : new SimpleExpression(m.name)

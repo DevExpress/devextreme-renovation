@@ -1,6 +1,6 @@
 import assert from "assert";
 import mocha from "mocha";
-import ts from "typescript";
+import ts, { SyntaxKind } from "typescript";
 import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex, toStringOptions, SimpleExpression, PropertyAccess, ElementAccess } from "../react-generator";
 
 import compile from "../component-compiler";
@@ -1696,6 +1696,111 @@ mocha.describe("React Component", function () {
                 assert.strictEqual(toStringOptions.variables?.["template"].toString(), "viewModel.props.render");
                 assert.strictEqual(expressionString, "{p}=viewModel.props");
             });
+
+            mocha.it("template property should be removed from binding pattern if it has rest operator", function () {
+                const expression = generator.createVariableDeclaration(
+                    generator.createObjectBindingPattern([
+                        generator.createBindingElement(
+                            undefined,
+                            undefined,
+                            generator.createIdentifier("template"),
+                            undefined
+                        ),
+                        generator.createBindingElement(
+                            undefined,
+                            undefined,
+                            generator.createIdentifier("p"),
+                            undefined
+                        ),
+                        generator.createBindingElement(
+                            generator.SyntaxKind.DotDotDotToken,
+                            undefined,
+                            generator.createIdentifier("rest"),
+                            undefined
+                        )
+                    ]),
+                    undefined,
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("props")
+                    ),
+                );
+
+                const toStringOptions: toStringOptions = {
+                    componentContext: "viewModel",
+                    newComponentContext: "viewModel",
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    members: [
+                        templateProperty,
+                        generator.createProperty(
+                            [createDecorator("OneWay")],
+                            [],
+                            generator.createIdentifier("p"),
+                            undefined,
+                            "",
+                            undefined
+                        )
+                    ]
+                };
+
+                const expressionString = expression.toString(toStringOptions);
+
+                assert.strictEqual(Object.keys(toStringOptions.variables!).length, 1);
+                assert.strictEqual(toStringOptions.variables?.["template"].toString(), "viewModel.props.render");
+                assert.strictEqual(expressionString, "{p,...rest,render}=viewModel.props");
+            });
+
+            mocha.it("non-prop property should not be excluded from binding pattern", function () {
+                const property = generator.createGetAccessor(
+                    [],
+                    [],
+                    generator.createIdentifier("p"),
+                    [],
+                );
+                property.prefix = "__";
+
+                const prop = generator.createProperty(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("p")
+                )
+
+                const expression = generator.createVariableDeclaration(
+                    generator.createObjectBindingPattern([
+                        generator.createBindingElement(
+                            undefined,
+                            undefined,
+                            generator.createIdentifier("p"),
+                            undefined
+                        )
+                    ]),
+                    undefined,
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("props")
+                    ),
+                );
+
+                const toStringOptions: toStringOptions = {
+                    componentContext: "viewModel",
+                    newComponentContext: "viewModel",
+                    internalState: [],
+                    state: [],
+                    props: [],
+                    members: [
+                        property,
+                        prop
+                    ]
+                };
+
+                const expressionString = expression.toString(toStringOptions);
+
+                assert.strictEqual(Object.keys(toStringOptions.variables!).length, 0);
+                assert.strictEqual(expressionString, "{p}=viewModel.props");
+            });
+
         });
     });
 });
