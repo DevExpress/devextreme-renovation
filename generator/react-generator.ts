@@ -229,8 +229,33 @@ export class BindingPattern extends Expression {
         if (this.elements.length === 0) { 
             return "";
         }
-        const elements = this.elements.join(",");
-        return this.type === "array" ? `[${elements}]` : `{${elements}}`;
+        return this.type === "array" ? `[${this.elements}]` : `{${this.elements.sort((a, b) => {
+            if (a.dotDotDotToken) { 
+                return 1;
+            }
+            if (b.dotDotDotToken) { 
+                return -1;
+            }
+            const aValue = a.propertyName?.toString() || a.name?.toString();
+            const bValue = b.propertyName?.toString() || b.name?.toString() 
+            if (aValue && bValue) { 
+                if (aValue < bValue) { 
+                    return -1;
+                }
+                if (aValue > bValue) { 
+                    return 1;
+                }
+            } else {
+                if (aValue) {
+                    return 1;
+                }
+                if (bValue) {
+                    return -1;
+                }
+            }
+            
+            return 0;
+        })}}`;
     }
 
     remove(name: string) {

@@ -1167,6 +1167,67 @@ mocha.describe("react-generator: expressions", function () {
                 )
             ).toString(), "v:{a}");
         });
+
+        mocha.it("Object Binding pattern should sort items", function () {
+            const expression = generator.createObjectBindingPattern([
+                generator.createBindingElement(
+                    undefined,
+                    undefined,
+                    generator.createIdentifier("d"),
+                    undefined
+                ),
+                generator.createBindingElement(
+                    undefined,
+                    generator.createIdentifier("b"),
+                    generator.createObjectBindingPattern([generator.createBindingElement(
+                        undefined,
+                        undefined,
+                        generator.createIdentifier("c"),
+                        undefined
+                    )]),
+                    undefined
+                ),
+                generator.createBindingElement(
+                    undefined,
+                    undefined,
+                    generator.createIdentifier("c"),
+                    undefined
+                ),
+                generator.createBindingElement(
+                    undefined,
+                    undefined,
+                    generator.createIdentifier("z"),
+                    undefined
+                ),
+                generator.createBindingElement(
+                    generator.SyntaxKind.DotDotDotToken,
+                    undefined,
+                    generator.createIdentifier("e"),
+                    undefined
+                )
+            ]);
+
+            assert.strictEqual(expression.toString(), "{b:{c},c,d,z,...e}");
+        });
+
+        mocha.it("Do not sort array Binding Pattern", function () {
+            const expression = generator.createArrayBindingPattern([
+                generator.createBindingElement(
+                    undefined,
+                    undefined,
+                    generator.createIdentifier("d"),
+                    undefined
+                ),
+                generator.createBindingElement(
+                    undefined,
+                    undefined,
+                    generator.createIdentifier("c"),
+                    undefined
+                )
+            ]);
+
+            assert.strictEqual(expression.toString(), "[d,c]");
+        });
     });
     
     mocha.it("JsxElement. Fragment -> React.Fragment", function () {
@@ -1749,7 +1810,7 @@ mocha.describe("React Component", function () {
 
                 assert.strictEqual(Object.keys(toStringOptions.variables!).length, 1);
                 assert.strictEqual(toStringOptions.variables?.["template"].toString(), "viewModel.props.render");
-                assert.strictEqual(expressionString, "{p,...rest,render}=viewModel.props");
+                assert.strictEqual(expressionString, "{p,render,...rest}=viewModel.props");
             });
 
             mocha.it("non-prop property should not be excluded from binding pattern", function () {
