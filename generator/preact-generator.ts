@@ -16,6 +16,8 @@ import {
 } from "./react-generator";
 import path from "path";
 
+const processModuleFileName = (module: string) => `${module}.p`;
+
 export class PreactComponent extends ReactComponent {
     compileImportStatements(hooks: string[], compats: string[]) {
         const imports = ["import * as Preact from 'preact'"]; 
@@ -28,6 +30,10 @@ export class PreactComponent extends ReactComponent {
         }
         
         return imports;
+    }
+
+    processModuleFileName(module: string) {
+        return processModuleFileName(module);
     }
 
     defaultPropsDest() { 
@@ -68,7 +74,7 @@ export class PreactGenerator extends Generator {
         if (context.dirname) {
             const fullPath = path.resolve(context.dirname, modulePath);
             if (this.cache[fullPath]) { 
-                (importStatement as ImportDeclaration).replaceSpecifier(module, `${module}.p`);
+                (importStatement as ImportDeclaration).replaceSpecifier(module, processModuleFileName(module));
             }
         }
         return importStatement;

@@ -1397,6 +1397,10 @@ export class ReactComponent {
         return ["import React from 'react'"];
     }
 
+    processModuleFileName(module: string) {
+        return module;
+    }
+
     compileDefaultOptionsImport(imports: string[]): void { 
         if (!this.context.defaultOptionsImport && this.needGenerateDefaultOptions && this.context.defaultOptionsModule && this.context.dirname) {
             const relativePath = getModuleRelativePath(this.context.dirname, this.context.defaultOptionsModule);
@@ -1435,7 +1439,7 @@ export class ReactComponent {
                 const baseComponent = this.context.components![ref.type!] as ReactComponent;
                 if(this.context.dirname) {
                     const relativePath = getModuleRelativePath(this.context.dirname, baseComponent.context.path!);
-                    imports.push(`import {${baseComponent.name}Ref as ${ref.type}Ref} from "${relativePath.replace(path.extname(relativePath), '')}"`);
+                    imports.push(`import {${baseComponent.name}Ref as ${ref.type}Ref} from "${this.processModuleFileName(relativePath.replace(path.extname(relativePath), ''))}"`);
                 }
                 return imports;
             }, []));
