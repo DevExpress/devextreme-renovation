@@ -1253,7 +1253,8 @@ export class State extends InternalState {
 
     defaultDeclaration() {
         const propName = getPropName(this.name);
-        return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(()=>(${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(this.name)})||${this.property.initializer});`;
+        const initializer = this.property.initializer ? `||${this.property.initializer.toString()}` : "";
+        return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(()=>(${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(this.name)})${initializer});`;
     }
 
     getter() {

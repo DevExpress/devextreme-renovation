@@ -7,12 +7,12 @@ function view(model: Widget) {
 @ComponentBindings()
 class WidgetInput { 
     @TwoWay() pressed?: boolean = false;
+    @TwoWay() s?: boolean;
 }
 @Component({
     view
 })
 export default class Widget extends JSXComponent<WidgetInput> {
-    
     updateState() {
         this.props.pressed = !this.props.pressed;
     }
