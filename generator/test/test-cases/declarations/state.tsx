@@ -1,18 +1,20 @@
-import { Component, TwoWay } from "../../../component_declaration/common";
+import { Component, TwoWay, ComponentBindings, JSXComponent } from "../../../component_declaration/common";
 
-function viewModel() { }
+function view(model: Widget) {
+    return <div>{model.props.pressed}</div>
+}
 
-function view() {}
-
+@ComponentBindings()
+class WidgetInput { 
+    @TwoWay() pressed?: boolean = false;
+}
 @Component({
-    view,
-    viewModel
+    view
 })
-export default class Widget {
-    @TwoWay() pressed?: boolean
+export default class Widget extends JSXComponent<WidgetInput> {
     
     updateState() {
-        this.pressed = !this.pressed;
+        this.props.pressed = !this.props.pressed;
     }
 }
   

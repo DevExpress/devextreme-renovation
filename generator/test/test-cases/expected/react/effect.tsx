@@ -9,11 +9,14 @@ function unsubscribe(id: number) {
 }
 declare type WidgetInput = {
     p: string;
-    s: number
+    s: number;
+    defaultS?:number;
+    sChange?:(s:number)=>void
 }
 export const WidgetInput: WidgetInput = {
     p: "10",
-    s: 10
+    s: 10,
+    sChange:()=>{}
 };
 
 import React, { useState, useEffect } from 'react';

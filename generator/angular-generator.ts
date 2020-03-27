@@ -753,6 +753,9 @@ export class Property extends BaseProperty {
         }
         super(decorators, modifiers, name, questionOrExclamationToken, type, initializer, inherited);
     }
+    typeDeclaration() { 
+        return `${this.name}${this.questionOrExclamationToken}:${this.type}`;
+    }
     toString() { 
         const eventDecorator = this.decorators.find(d => d.name === "Event");
         const defaultValue = `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.typeDeclaration()} ${this.initializer && this.initializer.toString() ? `= ${this.initializer.toString()}` : ""}`;
@@ -1101,11 +1104,11 @@ export class PropertyAccess extends BasePropertyAccess {
         return result;
     }
 
-    compileStateSetting(value: string, isState: boolean) {
+    compileStateSetting(value: string, isState: boolean, toStringOptions?: toStringOptions) {
         if (isState) { 
-            return `this.${this.name}Change!.emit(${this.toString()}=${value})`;
+            return `this.${this.name}Change!.emit(${this.toString(toStringOptions)}=${value})`;
         }
-        return `${this.toString()}=${value}`;
+        return `${this.toString(toStringOptions)}=${value}`;
     }
 
     compileStateChangeRising() {

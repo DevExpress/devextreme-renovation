@@ -650,15 +650,16 @@ export class Binary extends Expression {
         if (options &&
             this.operator === SyntaxKind.EqualsToken &&
             this.left instanceof PropertyAccess &&
-            checkDependency(this.left, options.members) &&
-            this.left.expression.toString() === SyntaxKind.ThisKeyword) {
+            this.left.expression.toString().startsWith(SyntaxKind.ThisKeyword) &&
+            checkDependency(this.left, options.members)) {
             const rightExpression = this.right.toString(options);
 
             if (checkDependency(this.left, options.members.filter(m=>m.isReadOnly()))) {
                 throw `Error: Can't assign property use TwoWay() or Internal State - ${this.toString()}`;
             }
 
-            const stateSetting = `${this.left.compileStateSetting(rightExpression, checkDependency(this.left, options.members.filter(m=>m.decorators.find(d=>d.name==="TwoWay"))))}`
+            const isState = checkDependency(this.left, options.members.filter(m => m.decorators.find(d => d.name === "TwoWay")));
+            const stateSetting = `${this.left.compileStateSetting(rightExpression, isState, options)}`;
             const changeRising = this.left.compileStateChangeRising(options.state, rightExpression);
             return changeRising ? `(${stateSetting},${changeRising})` : stateSetting;
         }
@@ -930,11 +931,23 @@ export class Property extends BaseClassMember {
         if (this.decorators.find(d => d.name === "Slot")) {
             return `${this.name}${this.questionOrExclamationToken}:React.ReactNode`;
         }
-        return `${this.name}${this.questionOrExclamationToken}:${this.type}`;
+        const baseValue = `${this.name}${this.questionOrExclamationToken}:${this.type}`;
+        if (this.decorators.find(d => d.name === "TwoWay")) {
+            return `
+            ${baseValue};
+            default${capitalizeFirstLetter(this.name)}?:${this.type};
+            ${this.name}Change?:(${this.name}:${this.type})=>void`;
+        }
+        return baseValue;
     }
 
     defaultDeclaration() {
-        return `${this.name}:${this.initializer}`;
+        const baseValue = `${this.name}:${this.initializer}`;
+        if (this.decorators.find(d => d.name === "TwoWay")) {
+            return `${baseValue},
+            ${this.name}Change:()=>{}`;
+        }
+        return baseValue;
     }
 
     getter() {
@@ -974,7 +987,7 @@ export class Class {
         return this._name.toString();
     }
 
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, typeParameters: any[], heritageClauses: HeritageClause[]=[], members: Array<Property | Method>) {
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, typeParameters: any[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>) {
         members = inheritMembers(heritageClauses, members);
         this.decorators = decorators;
         this._name = name;
@@ -1117,7 +1130,7 @@ export class PropertyAccess extends ExpressionWithExpression {
         return result;
     }
 
-    compileStateSetting(state: string, isState: boolean) {
+    compileStateSetting(state: string, isState: boolean, options?: toStringOptions) {
         return `${stateSetter(this.name)}(${state})`;
     }
 
@@ -1233,12 +1246,6 @@ export class InternalState extends Prop {
 }
 
 export class State extends InternalState {
-    typeDeclaration() {
-        return [super.typeDeclaration(),
-        `default${capitalizeFirstLetter(this.name)}?:${this.type}`,
-        `${this.name}Change?:(${this.name}:${this.type})=>void`
-        ].join(",\n");
-    }
 
     defaultProps() {
         return `${this.name}Change:()=>{}`
