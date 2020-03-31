@@ -942,7 +942,7 @@ class AngularComponent extends ReactComponent {
                 const members = [];
                 const statements = expression.getSpreadAttributes().map((o, i) => { 
                     const expressionString = o.expression.toString(options);
-                    const refString = o.refExpression instanceof SimpleExpression ? `this.${o.refExpression.toString()}?.nativeElement` : o.refExpression.toString(options);
+                    const refString = o.refExpression instanceof SimpleExpression ? `this.${o.refExpression.toString()}?.nativeElement` : o.refExpression.toString(options).replace(/(\w)!?\.nativeElement/, "($1)?.nativeElement");
                     if (o.refExpression instanceof SimpleExpression) { 
                         members.push(`@ViewChild("${o.refExpression.toString()}", { static: false }) ${o.refExpression.toString()}: ElementRef<HTMLDivElement>`)
                     }

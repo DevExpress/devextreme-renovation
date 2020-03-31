@@ -2,7 +2,8 @@ import { Component, ComponentBindings, JSXComponent, Ref } from "../../../compon
 
 function view(model: Widget) { 
     return <div ref={model.host as any} {...model.attr1}>
-        <input {...model.attr2}/>
+        <input {...model.attr2} />
+        <input ref={model.i1 as any} {...model.attr2}/>
     </div>;
 }
 
@@ -14,6 +15,7 @@ export class WidgetInput {}
 })
 export default class Widget extends JSXComponent<WidgetInput> {
     @Ref() host?: HTMLDivElement;
+    @Ref() i1!: HTMLInputElement;
             
     get attr1() { 
         return {}
