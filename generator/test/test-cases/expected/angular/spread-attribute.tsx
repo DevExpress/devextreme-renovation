@@ -8,10 +8,12 @@ import { CommonModule } from "@angular/common";
     selector: "dx-widget",
     template: `<div #host>
                 <input #_auto_ref_0/>
+                <input #i1/>
                 </div>`
 })
 export default class Widget extends WidgetInput {
     @ViewChild("host", { static: false }) host: ElementRef<HTMLDivElement>
+    @ViewChild("i1", {static: false}) i1:ElementRef<HTMLInputElement>
 
     get __attr1() {
         return {};
@@ -37,6 +39,14 @@ export default class Widget extends WidgetInput {
         if (_ref_1) {
             for (let key in _attr_1) {
                 _ref_1.setAttribute(key, _attr_1[key]);
+            }
+        }
+
+        const _attr_2:{[name: string]:string } = this.__attr2 || {};
+        const _ref_2 = this.i1?.nativeElement as any;
+        if (_ref_2) {
+            for (let key in _attr_2) {
+                _ref_2.setAttribute(key, _attr_2[key]);
             }
         }
     }
