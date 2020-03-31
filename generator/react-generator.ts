@@ -354,8 +354,13 @@ export class ShorthandPropertyAssignment extends ExpressionWithOptionalExpressio
         return this.expression ? this.expression : this.name;
     }
 
-    toString() {
-        return `${this.name}${this.expression ? `:${this.expression}` : ""}`;
+    toString(options?: toStringOptions) {
+        let expression = this.expression ? `:${this.expression.toString(options)}` : "";
+        if (!expression && options?.variables?.[this.name.toString()]) { 
+            expression = `:${options.variables[this.name.toString()].toString(options)}`;
+        }
+
+        return `${this.name}${expression}`;
     }
 
 }
