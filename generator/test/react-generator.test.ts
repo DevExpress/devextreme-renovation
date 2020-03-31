@@ -388,6 +388,27 @@ mocha.describe("react-generator: expressions", function () {
                 }
             }), "v.name");
         });
+
+        mocha.it("Can replace identifer in shortland property assignment", function () { 
+            const expresstion = generator.createObjectLiteral(
+                [
+                    generator.createShorthandPropertyAssignment(
+                        generator.createIdentifier("v")
+                    )
+                ],
+                false
+            );
+
+            assert.strictEqual(expresstion.toString({
+                props: [],
+                state: [],
+                internalState: [],
+                members: [],
+                variables: {
+                    v: generator.createIdentifier("value")
+                }
+            }), "{v:value}");
+        });
     });
 
     mocha.it("createIndexSignature", function () { 
