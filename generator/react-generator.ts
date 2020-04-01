@@ -583,10 +583,6 @@ export class Function extends BaseFunction {
         this.body = body;
     }
 
-    declaration() {
-        this.toString();
-    }
-
     toString(options?: toStringOptions) {
         options = this.getToStringOptions(options);
         return `${this.modifiers.join(" ")} function ${this.name || ""}(${
@@ -814,11 +810,7 @@ export class BaseClassMember extends Expression {
         return `${this.prefix}${this._name}`;
     }
 
-    typeDeclaration() {
-        return `${this.name}:${this.type}`
-    }
-
-    toString(options?: toStringOptions) {
+    toString() {
         return this.name.toString();
     }
 
@@ -1383,8 +1375,15 @@ export class ReactComponent {
     }
 
     get heritageProperies() {
-        return this.props.map(p => p.property)
-            .concat(this.state.map(s => s.property))
+        return this.members
+            .filter(m => m instanceof Property &&
+                m.decorators.find(d =>
+                    d.name === "OneWay" ||
+                    d.name === "TwoWay" ||
+                    d.name === "Event" ||
+                    d.name === "Slot" ||
+                    d.name === "Template"))
+            .map(p=>p as Property)
             .map(p => {
                 const property = new Property(p.decorators, p.modifiers, p._name, p.questionOrExclamationToken, p.type, p.initializer);
                 property.inherited = true;

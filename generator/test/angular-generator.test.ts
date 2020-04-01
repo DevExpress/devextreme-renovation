@@ -2679,6 +2679,17 @@ mocha.describe("Angular generator", function () {
                     }`));
             });
 
+            mocha.it("Compile defaultOptions expression if defaultOptionRules expression is not set", function () {
+                const component = createComponent([], {});
+                assert.strictEqual(getResult(component.compileDefaultOptions([])), getResult(`
+                    type BaseWidgetOptionRule = Rule<BaseWidget>;
+                    const __defaultOptionRules:BaseWidgetOptionRule[] = [];
+                    export function defaultOptions(rule: BaseWidgetOptionRule) { 
+                        __defaultOptionRules.push(rule);
+                        
+                    }`));
+            });
+
         });
 
         mocha.describe("Members generation", function () { 

@@ -981,6 +981,51 @@ mocha.describe("react-generator: expressions", function () {
         );
 
         assert.equal(getResult(expression.toString()), getResult("for(i;true;i++){continue}"));
+        assert.deepEqual(expression.getDependency(), []);
+    });
+
+    mocha.it("For without initializer, condition, incrementor", function () {
+        const expression = generator.createFor(
+            undefined,
+            undefined,
+            undefined,
+            generator.createBlock(
+                [generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("name")
+                )],
+                true
+            )
+        );
+
+        assert.equal(getResult(expression.toString()), getResult("for(;;){this.name}"));
+        assert.deepEqual(expression.getDependency(), ["name"]);
+    });
+
+    mocha.it("For: get dependency from initializer, condition, incrementor", function () {
+        const expression = generator.createFor(
+            generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("i")
+            ),
+            generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("c")
+            ),
+            generator.createPostfix(
+                generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("ii")
+                ),
+                generator.SyntaxKind.PlusPlusToken
+            ),
+            generator.createBlock(
+                [generator.createContinue()],
+                true
+            )
+        );
+
+        assert.deepEqual(expression.getDependency(), ["i", "c", "ii"])
     });
 
     mocha.it("ForIn", function () { 
@@ -993,16 +1038,24 @@ mocha.describe("react-generator: expressions", function () {
                 )],
                 generator.NodeFlags.Let
             ),
-            generator.createIdentifier("obj"),
+            generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("i")
+            ),
             generator.createBlock(
-                [],
+                [generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("ii")
+                )],
                 true
             )
         );
 
         const actualString = expression.toString();
 
-        assert.equal(getResult(actualString), getResult("for(let i in obj){}"));
+        assert.equal(getResult(actualString), getResult("for(let i in this.i){this.ii}"));
+        assert.deepEqual(expression.getDependency(), ["i", "ii"]);
+        
     });
 
     mocha.it("createJsxSpreadAttribute", function () { 
@@ -1984,6 +2037,62 @@ mocha.describe("React Component", function () {
                 assert.strictEqual(expressionString, "{p}=viewModel.props");
             });
 
+        });
+
+        mocha.it("getHeritageProperties", function () {
+            const component = createComponent([], [
+                generator.createProperty(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("p1")
+                ),
+                generator.createProperty(
+                    [createDecorator("TwoWay")],
+                    [],
+                    generator.createIdentifier("p2")
+                ),
+                generator.createProperty(
+                    [createDecorator("Event")],
+                    [],
+                    generator.createIdentifier("p3")
+                ),
+                generator.createProperty(
+                    [createDecorator("Slot")],
+                    [],
+                    generator.createIdentifier("p4")
+                ),
+                generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("p5")
+                ),
+                generator.createProperty(
+                    [createDecorator("InternalState")],
+                    [],
+                    generator.createIdentifier("p6")
+                ),
+                generator.createMethod(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("p7"),
+                    "",
+                    undefined,
+                    [],
+                    undefined,
+                    generator.createBlock([], false)
+                ),
+                generator.createGetAccessor(
+                    [],
+                    [],
+                    generator.createIdentifier("p8"),
+                    []
+                )
+            ]);
+
+            assert.deepEqual(component.heritageProperies.map(p => p.name.toString()), [
+                "p1", "p2", "p3", "p4", "p5"
+            ]);
         });
     });
 });
