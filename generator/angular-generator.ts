@@ -935,7 +935,7 @@ class AngularComponent extends ReactComponent {
                 internalState: [],
                 props: [],
                 newComponentContext: this.viewModel ? "_viewModel" : ""
-            };          
+            };
             const expression = getAngularTemplate(viewFunction, options);
             if (isElement(expression)) { 
                 options.newComponentContext = "this";
