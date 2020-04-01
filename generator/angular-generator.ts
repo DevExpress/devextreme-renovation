@@ -845,8 +845,8 @@ class AngularComponent extends ReactComponent {
         return `Dx${this._name}Module`
     }
 
-    compileImports() { 
-        const core = ["Component", "NgModule"];
+    compileImports(coreImports: string[]=[]) { 
+        const core = ["Component", "NgModule"].concat(coreImports);
     
         if (this.refs.length || this.apiRefs.length) {
             core.push("ViewChild");
@@ -926,7 +926,7 @@ class AngularComponent extends ReactComponent {
         return "";
     }
 
-    compileSpreadAttributes(ngOnChangesStatements: string[]): string { 
+    compileSpreadAttributes(ngOnChangesStatements: string[], coreImports: string[]): string { 
         const viewFunction = this.decorator.getViewFunction();
         if (viewFunction) { 
             const options = {
@@ -935,7 +935,7 @@ class AngularComponent extends ReactComponent {
                 internalState: [],
                 props: [],
                 newComponentContext: this.viewModel ? "_viewModel" : ""
-            };
+            };          
             const expression = getAngularTemplate(viewFunction, options);
             if (isElement(expression)) { 
                 options.newComponentContext = "this";
@@ -944,6 +944,7 @@ class AngularComponent extends ReactComponent {
                     const expressionString = o.expression.toString(options);
                     const refString = o.refExpression instanceof SimpleExpression ? `this.${o.refExpression.toString()}?.nativeElement` : o.refExpression.toString(options).replace(/(\w|\d)!?\.nativeElement/, "$1?.nativeElement");
                     if (o.refExpression instanceof SimpleExpression) { 
+                        coreImports.push("ViewChild", "ElementRef");
                         members.push(`@ViewChild("${o.refExpression.toString()}", { static: false }) ${o.refExpression.toString()}: ElementRef<HTMLDivElement>`)
                     }
                     return `
@@ -1041,18 +1042,23 @@ class AngularComponent extends ReactComponent {
         const ngAfterViewInitStatements: string[] = [];
         const ngOnDestroyStatements: string[] = [];
         const constructorStatements: string[] = [];
+        const coreImports: string[] = [];
 
-        
-        return `
-        ${this.compileImports()}
-        ${this.compileDefaultOptions(constructorStatements)}
-        ${this.decorator.toString({
+        const componentDecorator = this.decorator.toString({
             members: this.members,
             state: [],
             internalState: [],
             props: [],
             newComponentContext: this.viewModel ? "_viewModel" : ""
-        })}
+        });
+
+        const spreadAttributes = this.compileSpreadAttributes(ngOnChangesStatements, coreImports);
+
+        
+        return `
+        ${this.compileImports(coreImports)}
+        ${this.compileDefaultOptions(constructorStatements)}
+        ${componentDecorator}
         ${this.modifiers.join(" ")} class ${this.name} ${extendTypes.length? `extends ${extendTypes.join(" ")}`:""} {
             ${this.members
                 .filter(m => !m.inherited)
@@ -1063,7 +1069,7 @@ class AngularComponent extends ReactComponent {
                     members: this.members
                 }))
             .filter(m => m).join("\n")}
-            ${this.compileSpreadAttributes(ngOnChangesStatements)}
+            ${spreadAttributes}
             ${this.compileTrackBy()}
             ${this.compileViewModel()}
             ${this.compileEffects(ngAfterViewInitStatements, ngOnDestroyStatements)}
