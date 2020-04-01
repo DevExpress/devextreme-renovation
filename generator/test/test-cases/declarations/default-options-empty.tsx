@@ -5,7 +5,11 @@ function view() { }
 @ComponentBindings()
 export class WidgetProps { }
 @Component({
-    view: view
+    view: view,
+    defaultOptionRules: [{
+        device: true,
+        options: {}
+    }]
 })
 export default class Widget extends JSXComponent<WidgetProps> {
     
