@@ -1,7 +1,7 @@
 import assert from "assert";
 import mocha from "mocha";
 import ts, { SyntaxKind } from "typescript";
-import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex, toStringOptions, SimpleExpression, PropertyAccess, ElementAccess, Class, ImportDeclaration } from "../react-generator";
+import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex, toStringOptions, SimpleExpression, PropertyAccess, ElementAccess, Class, ImportDeclaration, Expression } from "../react-generator";
 
 import compile from "../component-compiler";
 import path from "path";
@@ -166,6 +166,15 @@ mocha.describe("react-generator", function () {
 });
 
 mocha.describe("react-generator: expressions", function () {
+    mocha.describe("Base Expressions", function () { 
+        mocha.it("Expression", function () { 
+            const expression = new Expression();
+
+            assert.strictEqual(expression.toString(), "");
+            assert.deepEqual(expression.getDependency(), []);
+            assert.deepEqual(expression.getAllDependency(), []);
+        });
+    });
     mocha.it("Indentifier", function () {
         const identifier = generator.createIdentifier("a");
         assert.equal(identifier, 'a');

@@ -182,9 +182,9 @@ export class ExpressionWithOptionalExpression extends Expression {
 export class BindingElement extends Expression {
     dotDotDotToken?: string;
     propertyName?: Identifier;
-    name?: string | Identifier | BindingPattern;
+    name: string | Identifier | BindingPattern;
     initializer?: Expression;
-    constructor(dotDotDotToken: string = "", propertyName?: Identifier, name?: string | Identifier| BindingPattern, initializer?: Expression) {
+    constructor(dotDotDotToken: string = "", propertyName: Identifier | undefined, name: string | Identifier | BindingPattern, initializer?: Expression) {
         super();
         this.dotDotDotToken = dotDotDotToken;
         this.propertyName = propertyName;
@@ -198,13 +198,10 @@ export class BindingElement extends Expression {
     }
 
     getDependency() {
-        if (!this.propertyName && this.name instanceof Identifier) { 
+        if (!this.propertyName) { 
             return [this.name.toString()];
         }
-        if (this.propertyName instanceof Identifier) { 
-            return [this.propertyName.toString()];
-        }
-        return []
+        return [this.propertyName.toString()];
     }
 }
 
@@ -236,18 +233,13 @@ export class BindingPattern extends Expression {
             if (b.dotDotDotToken) { 
                 return -1;
             }
-            const aValue = a.propertyName?.toString() || a.name?.toString();
-            const bValue = b.propertyName?.toString() || b.name?.toString();
-            if (aValue && bValue) { 
-                if (aValue < bValue) { 
-                    return -1;
-                }
-                if (aValue > bValue) { 
-                    return 1;
-                }
+            const aValue = a.propertyName?.toString() || a.name.toString();
+            const bValue = b.propertyName?.toString() || b.name.toString();
+    
+            if (aValue < bValue) {
+                return -1;
             }
-            
-            return 0;
+            return 1;
         })}}`;
     }
 
@@ -282,7 +274,7 @@ export class BindingPattern extends Expression {
                 } else if (e.name instanceof BindingPattern && e.propertyName) { 
                     return {
                         ...e.name.getVariableExpressions(
-                            new PropertyAccess(startExpression,e.propertyName)
+                            new PropertyAccess(startExpression, e.propertyName)
                         ),
                         ...v
                     };
@@ -294,6 +286,7 @@ export class BindingPattern extends Expression {
                     };
                 }
             }
+            /* istanbul ignore next */
             return v;
         }, {})
     }
@@ -849,11 +842,12 @@ export class Method extends BaseClassMember {
     }
 
     defaultDeclaration() { 
+        /* istanbul ignore next */
         return this.declaration();
     }
 
-    declaration(prefix = "", options?: toStringOptions) {
-        return `${prefix} ${this.name}(${this.parametersTypeDeclaration()})${this.body.toString(options)}`;
+    declaration(options?: toStringOptions) {
+        return `function ${this.name}(${this.parametersTypeDeclaration()})${this.body.toString(options)}`;
     }
 
     arrowDeclaration(options?:any) {
@@ -1657,7 +1651,7 @@ export class ReactComponent {
                 ${this.compileUseEffect()}
                 ${this.compileUseImperativeHandle()}
                 ${this.methods.map(m => {
-                    return `const ${m.name}=useCallback(${m.declaration("function", {
+                    return `const ${m.name}=useCallback(${m.declaration({
                         members: this.members,
                         internalState: this.internalState, state: this.state, props:this.props.concat(this.refs, this.apiRefs)
                     })}, [${
@@ -2298,7 +2292,7 @@ export class Generator {
         return new StringLiteral(value);
     }
 
-    createBindingElement(dotDotDotToken?: string, propertyName?: Identifier, name?: string | Identifier | BindingPattern, initializer?: Expression) {
+    createBindingElement(dotDotDotToken: string="", propertyName: Identifier | undefined, name: string | Identifier | BindingPattern, initializer?: Expression) {
         return new BindingElement(dotDotDotToken, propertyName, name, initializer);
     }
 
