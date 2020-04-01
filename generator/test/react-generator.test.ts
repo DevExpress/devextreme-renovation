@@ -1288,6 +1288,9 @@ mocha.describe("react-generator: expressions", function () {
             assert.ok(expression instanceof Class);
             assert.ok(!(expression instanceof ComponentInput));
             assert.ok(!(expression instanceof ReactComponent));
+
+            // TODO implement class generation
+            assert.strictEqual(expression.toString(), "");
         });
     });
     

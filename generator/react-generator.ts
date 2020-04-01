@@ -237,20 +237,13 @@ export class BindingPattern extends Expression {
                 return -1;
             }
             const aValue = a.propertyName?.toString() || a.name?.toString();
-            const bValue = b.propertyName?.toString() || b.name?.toString() 
+            const bValue = b.propertyName?.toString() || b.name?.toString();
             if (aValue && bValue) { 
                 if (aValue < bValue) { 
                     return -1;
                 }
                 if (aValue > bValue) { 
                     return 1;
-                }
-            } else {
-                if (aValue) {
-                    return 1;
-                }
-                if (bValue) {
-                    return -1;
                 }
             }
             
@@ -1195,23 +1188,11 @@ export class Prop {
     getDependecy() {
         return [this.getter()];
     }
-
-    setter(value: any) {
-        return `prop.${this.name}`;
-    }
 }
 
 export class Ref extends Prop {
-    defaultProps() {
-        return "";
-    }
-
     typeDeclaration() {
         return `${this.name}:any`;
-    }
-
-    defaultDeclaration() {
-        return "";
     }
 
     getter() {
@@ -1221,20 +1202,10 @@ export class Ref extends Prop {
     getDependecy() {
         return [this.name.toString()];
     }
-
-    setter(value: any) {
-        return "";
-    }
 }
 
 export class Slot extends Prop {
-    defaultDeclaration() {
-        return "";
-    }
-
-    setter(value: any) {
-        return "";
-    }
+   
 }
 
 export class InternalState extends Prop {
@@ -1242,16 +1213,8 @@ export class InternalState extends Prop {
         return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(${this.property.initializer});`;
     }
 
-    defaultProps() {
-        return "";
-    }
-
     getter() {
         return getLocalStateName(this.name);
-    }
-
-    setter(value: any) {
-        return `${stateSetter(this.name)}(${value})`;
     }
 }
 
@@ -1275,10 +1238,6 @@ export class State extends InternalState {
 
     getDependecy() {
         return [getPropName(this.name), getLocalStateName(this.name), getPropName(`${this.name}Change`)]
-    }
-
-    setter(value: any) {
-        return super.setter(value);
     }
 }
 
