@@ -1,0 +1,15 @@
+{
+    "check-coverage": true,
+    "watermarks": {
+      "lines": [80, 95],
+      "functions": [80, 95],
+      "branches": [80, 95],
+      "statements": [80, 95]
+    },
+    "reporter": ["text"],
+    "exclude": [
+      "factoryCodeGenerator.ts",
+      "node_modules",
+      "test/"
+    ]
+}
