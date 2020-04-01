@@ -21,7 +21,7 @@ module.exports = function(source) {
     default:
       throw new Error('Invalid platform');
   }
-
+  
   return compileCode(generator, source, {
     path: this.resourcePath,
     dirname: 'dirname'
