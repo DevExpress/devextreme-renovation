@@ -810,7 +810,7 @@ export class BaseClassMember extends Expression {
         return `${this.prefix}${this._name}`;
     }
 
-    toString() {
+    toString(options?: toStringOptions) {
         return this.name.toString();
     }
 
