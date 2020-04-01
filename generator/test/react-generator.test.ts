@@ -1,7 +1,7 @@
 import assert from "assert";
 import mocha from "mocha";
 import ts, { SyntaxKind } from "typescript";
-import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex, toStringOptions, SimpleExpression, PropertyAccess, ElementAccess, Class } from "../react-generator";
+import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex, toStringOptions, SimpleExpression, PropertyAccess, ElementAccess, Class, ImportDeclaration } from "../react-generator";
 
 import compile from "../component-compiler";
 import path from "path";
@@ -504,10 +504,30 @@ mocha.describe("react-generator: expressions", function () {
             undefined,
             generator.createImportClause(
                 generator.createIdentifier("Button"),
-              undefined
+                undefined
             ),
             generator.createStringLiteral("./button")
-          ), 'import Button from "./button"')
+        ), 'import Button from "./button"');
+    });
+
+    mocha.it("ImportDeclaration: can remove named import", function () { 
+        const expression = generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                generator.createIdentifier("ts"),
+                generator.createNamedImports([generator.createImportSpecifier(
+                    undefined,
+                    generator.createIdentifier("Node")
+                )])
+            ),
+            generator.createStringLiteral("typescript")
+        ) as ImportDeclaration;
+
+        expression.importClause.remove("Node");
+
+        assert.equal(expression.toString(), 'import ts from "typescript"');
+
     });
 
     mocha.it("createImportDeclaration exclude imports from component_declaration/jsx to component_declaration/jsx-g", function () { 
@@ -990,15 +1010,23 @@ mocha.describe("react-generator: expressions", function () {
             generator.createIdentifier("field"));
         
         assert.equal(expression.toString(), "{...field}");
+        assert.strictEqual(expression.isJsx(), true);
+    });
+
+    mocha.it("createJsxExpression", function () { 
+        const expression = generator.createJsxExpression(
+            undefined,
+            generator.createIdentifier("field"));
+        
+        assert.equal(expression.toString(), "{field}");
+        assert.strictEqual(expression.isJsx(), true);
     });
 
     mocha.it("createSwitch", function () {
         const clause1 = generator.createCaseClause(generator.createNumericLiteral("1"), [
-            generator.createVariableDeclarationList(
-                [
-                    generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str"))
-                ],
-                generator.NodeFlags.Const
+            generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("name")
             ),
             generator.createBreak()
         ]);
@@ -1014,18 +1042,23 @@ mocha.describe("react-generator: expressions", function () {
 
         const block = generator.createCaseBlock([clause1, clause2]);
 
-        const expression = generator.createSwitch(generator.createIdentifier("expr"), block);
+        const expression = generator.createSwitch(generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("expr")
+        ), block);
         const actualString = expression.toString();
         assert.equal(getResult(actualString), getResult(`
-        switch(expr){
+        switch(this.expr){
             case 1:
-                const a = "str";
+                this.name;
                 break;
             default:
                 const a = "str";
                 break;
         }
         `));
+
+        assert.deepEqual(expression.getDependency(), ["expr", "name"]);
     });
 
     mocha.it("createDebuggerStatement", function () { 
