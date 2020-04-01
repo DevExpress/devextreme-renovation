@@ -9,7 +9,7 @@ const WidgetInput: WidgetInput = { };
 import React, { useRef, useImperativeHandle, forwardRef } from "react";
 
 export type WidgetRef = {
-    getHeight: () => string,
+    getHeight: (p:number,p1:any)=>string,
     getSize: () => string
 }
 interface Widget {
@@ -21,7 +21,7 @@ const Widget = forwardRef<WidgetRef, WidgetInput>((props: WidgetInput, ref) => {
     const divRef = useRef<HTMLDivElement>();
 
     useImperativeHandle(ref, () => ({
-        getHeight: () => {
+        getHeight: (p:number=10, p1: any) => {
             return `${props.prop1} + ${props.prop2} + ${divRef.current!.innerHTML}`;
         },
         getSize: () => {

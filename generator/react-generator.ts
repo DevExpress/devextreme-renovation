@@ -580,7 +580,7 @@ export class BaseFunction extends Expression {
 export class Function extends BaseFunction {
     decorators: Decorator[];
     asteriskToken: string;
-    name: Identifier | undefined;
+    name?: Identifier;
     body: Block;
     constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier | undefined, typeParameters: string[] = [], parameters: Parameter[], type: string, body: Block, context: GeneratorContex) {
         super(modifiers, typeParameters, parameters, type, body, context);
@@ -706,6 +706,11 @@ export class If extends ExpressionWithExpression {
 }
 
 export class Conditional extends If {
+    elseStatement: Expression;
+    constructor(expression: Expression, thenStatement: Expression, elseStatement: Expression) {
+        super(expression, thenStatement);
+        this.elseStatement = elseStatement;
+    }
     toString(options?: toStringOptions) {
         return `${this.expression.toString(options)}?${this.thenStatement.toString(options)}:${this.elseStatement!.toString(options)}`;
     }
@@ -2324,9 +2329,6 @@ export class Generator {
     }
 
     createVariableDeclarationList(declarations: VariableDeclaration[] = [], flags: string) {
-        if (flags === undefined) {
-            throw "createVariableDeclarationList";
-        }
         return new VariableDeclarationList(declarations, flags);
     }
 
@@ -2363,16 +2365,10 @@ export class Generator {
     }
 
     createKeywordTypeNode(kind: string) {
-        if (kind === undefined) {
-            throw "createKeyword"
-        }
         return kind;
     }
 
     createArrayTypeNode(elementType: string) {
-        if (elementType === undefined) {
-            throw "createArrayTypeNode"
-        }
         return `${elementType}[]`;
     }
 
@@ -2433,13 +2429,6 @@ export class Generator {
     }
 
     createToken(token: string) {
-        if (token === undefined) {
-            throw "unknown token";
-        }
-        if (typeof token === "number") {
-            const tokenName = Object.keys(SyntaxKind).find(k => (SyntaxKind as any)[k] === token);
-            throw `${tokenName} is missed`;
-        }
         return token;
     }
 
@@ -2448,13 +2437,6 @@ export class Generator {
     }
 
     createModifier(modifier: string) {
-        if (modifier === undefined) {
-            throw "createModifier";
-        }
-        if (typeof modifier === "number") {
-            const modifierName = Object.keys(SyntaxKind).find(k => (SyntaxKind as any)[k] === modifier);
-            throw `${modifierName} is missed`;
-        }
         return modifier
     }
 
@@ -2635,16 +2617,10 @@ export class Generator {
     }
 
     createPrefix(operator: string, operand: Expression) {
-        if (operator === undefined) {
-            throw "createPrefix";
-        }
         return new Prefix(operator, operand);
     }
 
     createPostfix(operand: Expression, operator: string) {
-        if (operator === undefined) {
-            throw "createPrefix";
-        }
         return new Postfix(operator, operand);
     }
 

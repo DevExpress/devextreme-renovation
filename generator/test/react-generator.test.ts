@@ -1,7 +1,7 @@
 import assert from "assert";
 import mocha from "mocha";
 import ts, { SyntaxKind } from "typescript";
-import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex, toStringOptions, SimpleExpression, PropertyAccess, ElementAccess } from "../react-generator";
+import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex, toStringOptions, SimpleExpression, PropertyAccess, ElementAccess, Class } from "../react-generator";
 
 import compile from "../component-compiler";
 import path from "path";
@@ -219,6 +219,14 @@ mocha.describe("react-generator: expressions", function () {
             const list = expresion.getVariableExpressions();
             assert.strictEqual(Object.keys(list).length, 1);
             assert.strictEqual(list["a"].toString(), `"str"`);    
+        });
+
+        mocha.it("createVariableDeclaration without initializer - getVariableExpression should return empty object", function () { 
+            const expresion = generator.createVariableDeclaration(
+                generator.createIdentifier("a")
+            );
+
+            assert.deepEqual(expresion.getVariableExpressions(), {});  
         });
 
         mocha.it("createVariableDeclaration - wrap expression in paren complex", function () { 
@@ -614,12 +622,29 @@ mocha.describe("react-generator: expressions", function () {
     });
 
     mocha.it("ElementAccess", function () {
-        assert.equal(generator.createElementAccess(
+        const expression = generator.createElementAccess(
             generator.createPropertyAccess(
                 generator.createThis(),
                 generator.createIdentifier("field")),
             generator.createNumericLiteral("10")
-        ).toString(), "this.field[10]")
+        );
+        assert.equal(expression.toString(), "this.field[10]");
+            
+        assert.deepEqual(expression.getDependency(), ["field"]);
+    });
+
+    mocha.it("ElementAccess: getDependency shoud take into account index expression", function () {
+        const expression = generator.createElementAccess(
+            generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("field")),
+            generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("field1"))
+        );
+        assert.equal(expression.toString(), "this.field[this.field1]");
+            
+        assert.deepEqual(expression.getDependency(), ["field", "field1"]);
     });
 
     mocha.it("NonNullExpression", function () {
@@ -1249,6 +1274,21 @@ mocha.describe("react-generator: expressions", function () {
 
             assert.strictEqual(expression.toString(), "[d,c]");
         });
+
+        mocha.it("createClassDeclaration", function () {
+            const expression = generator.createClassDeclaration(
+                [],
+                [],
+                generator.createIdentifier("name"),
+                [],
+                [],
+                []
+            );
+
+            assert.ok(expression instanceof Class);
+            assert.ok(!(expression instanceof ComponentInput));
+            assert.ok(!(expression instanceof ReactComponent));
+        });
     });
     
     mocha.it("JsxElement. Fragment -> React.Fragment", function () {
@@ -1304,6 +1344,10 @@ mocha.describe("common", function () {
         assert.equal(actual.length, expected.length);
         assert.deepEqual(Object.keys(generator.NodeFlags), expected);
     });
+
+    mocha.it("processSourceFileName", function () {
+        assert.strictEqual(generator.processSourceFileName("someName"), "someName");
+    })
 });
 
 function createComponent(inputMembers: Array<Property | Method>, componentMembers: Array<Property | Method> = [], paramenters: { [name: string]: any } = {}):ReactComponent { 

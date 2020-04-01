@@ -345,6 +345,36 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), `<input *ngIf="viewModel.input"></input>`);
         });
 
+        mocha.it("not supported binary expression in JsxExpression - throw exception", function () {
+            const expression = generator.createJsxExpression(
+                undefined,
+                generator.createBinary(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("input")
+                    ),
+                    generator.createToken(generator.SyntaxKind.PlusToken),
+                    generator.createJsxElement(
+                        generator.createJsxOpeningElement(
+                            generator.createIdentifier("input"),
+                            undefined,
+                            generator.createJsxAttributes([])
+                        ),
+                        [],
+                        generator.createJsxClosingElement(
+                            generator.createIdentifier("input")
+                        )
+                    )
+                )
+            );
+
+            try {
+                expression.toString()
+            } catch (e) { 
+                assert.strictEqual(e, "Operator + is not supoorted: viewModel.input+<input ></input>");
+            }
+        });
+
         mocha.it("notJsxExpr && <element/> -> <element *ngIf='notJsxExpr' />", function () {
             const expression = generator.createJsxExpression(
                 undefined,
@@ -1369,6 +1399,7 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(expression.toString(), `<ng-container *ngFor="let item of viewModel.items;trackBy: _trackBy_viewModel_items_0"><div ></div></ng-container>`);
                 const trackByAttrs = expression.trackBy();
                 assert.strictEqual(trackByAttrs.length, 1);
+                assert.strictEqual(trackByAttrs[0].toString(), "");
                 assert.strictEqual(getResult(trackByAttrs[0].getTrackBydeclaration()), getResult(`_trackBy_viewModel_items_0(_index: number, item: any){
                     return item.id;
                 }`));
@@ -1514,6 +1545,24 @@ mocha.describe("Angular generator", function () {
 
                 assert.strictEqual(expression.toString(), "");
                 assert.strictEqual(expression.getTemplate(), "<div ></div>");
+            });
+
+            mocha.it("Function without return statement", function () {
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [],
+                    "",
+                    generator.createBlock(
+                        [],
+                        false
+                    )
+                );
+
+                assert.strictEqual(expression.getTemplate(), "");
             });
 
             mocha.it("Rename viewModel identifier", function () {
@@ -2970,6 +3019,22 @@ mocha.describe("Angular generator", function () {
                     props: []
                 }), "this.div?.nativeElement");
             });
+        });
+    });
+
+    mocha.describe("Expressions", function () { 
+        mocha.it("Variable declaration", function () { 
+            assert.strictEqual(generator.createVariableDeclaration(
+                generator.createIdentifier("a"),
+                undefined,
+                undefined
+            ).toString(), "a");
+
+            assert.strictEqual(generator.createVariableDeclaration(
+                generator.createIdentifier("a"),
+                "any",
+                generator.createNumericLiteral("10")
+            ).toString(), "a:any=10");
         });
     });
 

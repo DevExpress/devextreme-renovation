@@ -355,7 +355,7 @@ export class JsxExpression extends ReactJsxExpression {
         return;
     }
 
-    compileStatement(statement: Expression | undefined, condition: Expression, options?: toStringOptions): string { 
+    compileStatement(statement: Expression, condition: Expression, options?: toStringOptions): string {
         const conditionAttribute = new AngularDirective(
             new Identifier("*ngIf"),
             condition
@@ -365,20 +365,18 @@ export class JsxExpression extends ReactJsxExpression {
         if (isElement(expression)) {
             expression.addAttribute(conditionAttribute);
             return expression.toString(options);
-        } else if (statement) {
-            const containerIdentifer = new Identifier("ng-container")
-            return new JsxElement(
-                new JsxOpeningElement(
-                    containerIdentifer,
-                    undefined,
-                    [conditionAttribute],
-                    {}
-                ),
-                [new JsxExpression(undefined, statement)],
-                new JsxClosingElement(containerIdentifer)
-            ).toString(options);
         }
-        return "";
+        const containerIdentifer = new Identifier("ng-container")
+        return new JsxElement(
+            new JsxOpeningElement(
+                containerIdentifer,
+                undefined,
+                [conditionAttribute],
+                {}
+            ),
+            [new JsxExpression(undefined, statement)],
+            new JsxClosingElement(containerIdentifer)
+        ).toString(options);
     }
 
     toString(options?: toStringOptions) {
@@ -386,8 +384,10 @@ export class JsxExpression extends ReactJsxExpression {
 
         if (expression instanceof Binary) { 
             const parsedBinary = processBinary(expression, options);
-            if (parsedBinary) { 
+            if (parsedBinary) {
                 return parsedBinary.toString(options);
+            } else { 
+                throw `Operator ${expression.operator} is not supoorted: ${expression.toString()}`;
             }
         }
 
@@ -651,9 +651,6 @@ class Decorator extends BaseDecorator {
     }
 
     addParameter(name: string, value: Expression) {
-        if (this.name !== "Component") { 
-            return;
-        }
         const parameters = (this.expression.arguments[0] as ObjectLiteral);
         parameters.setProperty(name, value);
     }
@@ -1168,9 +1165,7 @@ export class AngularGenerator extends Generator {
 
     createFunctionDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, typeParameters: string[], parameters: Parameter[], type: string, body: Block) {
         const functionDeclaration = new AngularFunction(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
-        if (functionDeclaration.name) { 
-            this.addViewFunction(functionDeclaration.name.toString(), functionDeclaration);
-        }
+        this.addViewFunction(functionDeclaration.name!.toString(), functionDeclaration);
         return functionDeclaration;
     }
 
