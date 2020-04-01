@@ -52,40 +52,106 @@ mocha.describe("preact-generator", function () {
     mocha.it("method-use-apiref", function () {
         this.testGenerator(this.test!.title);
     });
+});
 
-    mocha.describe("react-generator: expressions", function () {
-        mocha.it("Rename import if it is component declaration", function () {
+mocha.describe("preact-generator: expressions", function () {
+    mocha.describe("Import statement with context", function () { 
+        this.beforeEach(function () { 
             generator.setContext({ dirname: path.resolve(__dirname) });
-            
+        });
+
+        this.afterEach(function () { 
+            generator.setContext(null);
+        });
+        mocha.it("Rename import if it is component declaration", function () {
             assert.equal(generator.createImportDeclaration(
                 undefined,
                 undefined,
                 undefined,
                 generator.createStringLiteral("./test-cases/declarations/empty-component")
             ), 'import "./test-cases/declarations/empty-component.p"');
+    
+            generator.setContext(null);
         });
-
+    
         mocha.it("Do not rename module without declaration", function () {
-            generator.setContext({ dirname: path.resolve(__dirname) });
-            
             assert.equal(generator.createImportDeclaration(
                 undefined,
                 undefined,
                 undefined,
                 generator.createStringLiteral("typescript")
             ), 'import "typescript"');
+    
+            generator.setContext({ dirname: path.resolve(__dirname) });
+        });
+    });
+
+    mocha.it("import module without components, generator with empty context", function () { 
+        assert.strictEqual(generator.createImportDeclaration(
+            undefined,
+            undefined,
+            undefined,
+            generator.createStringLiteral("module")
+        ).toString(), `import "module"`);
+    });
+
+    mocha.describe("Fragment", function () { 
+        mocha.it("React.Fragment -> Preact.Fragment", function () {
+            const expression = generator.createJsxElement(
+                generator.createJsxOpeningElement(generator.createIdentifier("Fragment"), []),
+                [],
+                generator.createJsxClosingElement(generator.createIdentifier("Fragment"))
+            );
+
+            assert.strictEqual(expression.toString(), "<Preact.Fragment ></Preact.Fragment>");
+        });
+    });
+
+    mocha.describe("Property: type declaration", function () {
+        mocha.it("Slot by default - any", function () { 
+            const property = generator.createProperty(
+                [generator.createDecorator(generator.createCall(
+                    generator.createIdentifier("Slot"),
+                    undefined,
+                    []
+                ))],
+                undefined,
+                generator.createIdentifier("p")
+            );
+            
+            assert.strictEqual(property.typeDeclaration(), "p:any");
         });
 
-        mocha.describe("Fragment", function () { 
-            mocha.it("React.Fragment -> Preact.Fragment", function () {
-                const expression = generator.createJsxElement(
-                    generator.createJsxOpeningElement(generator.createIdentifier("Fragment"), [], []),
-                    [],
-                    generator.createJsxClosingElement(generator.createIdentifier("Fragment"))
-                );
+        mocha.it("Slot with type - any", function () { 
+            const property = generator.createProperty(
+                [generator.createDecorator(generator.createCall(
+                    generator.createIdentifier("Slot"),
+                    undefined,
+                    []
+                ))],
+                undefined,
+                generator.createIdentifier("p"),
+                generator.SyntaxKind.ExclamationToken,
+                "string"
+            );
+            
+            assert.strictEqual(property.typeDeclaration(), "p!:any");
+        });
 
-                assert.strictEqual(expression.toString(), "<Preact.Fragment ></Preact.Fragment>");
-            });
+        mocha.it("Not Slot Property - use base type declaration", function () { 
+            const property = generator.createProperty(
+                [generator.createDecorator(generator.createCall(
+                    generator.createIdentifier("OneWay"),
+                    undefined,
+                    []
+                ))],
+                undefined,
+                generator.createIdentifier("p"),
+                generator.SyntaxKind.ExclamationToken,
+                "string"
+            );
+            
+            assert.strictEqual(property.typeDeclaration(), "p!:string");
         });
     });
 });

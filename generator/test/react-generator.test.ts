@@ -245,7 +245,7 @@ mocha.describe("react-generator: expressions", function () {
             assert.strictEqual(list["a"].toString(), `(i-j)`);    
         });
 
-        mocha.it("getVariableExpression", function () {
+        mocha.it("getVariableExpression from VariableDeclaration", function () {
             const expresion = generator.createVariableDeclarationList(
                 [
                     generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str")),
@@ -292,6 +292,27 @@ mocha.describe("react-generator: expressions", function () {
             assert.strictEqual(Object.keys(list).length, 2);
             assert.strictEqual(list["height"].toString(), "this.height");
             assert.strictEqual(list["source"].toString(), "this.props.source");
+            assert.ok(list["height"] instanceof PropertyAccess);
+        });
+
+        mocha.it("VariableDeclaration with object binding pattern with string name - getVariableDeclaration", function () {
+            const expresion = generator.createVariableDeclaration(
+                generator.createObjectBindingPattern([
+                    generator.createBindingElement(
+                        undefined,
+                        undefined,
+                        "height",
+                        undefined
+                    )
+                ]),
+                undefined,
+                generator.createIdentifier("this")
+            );
+
+            const list = expresion.getVariableExpressions();
+            
+            assert.strictEqual(Object.keys(list).length, 1);
+            assert.strictEqual(list["height"].toString(), "this.height");
             assert.ok(list["height"] instanceof PropertyAccess);
         });
 
