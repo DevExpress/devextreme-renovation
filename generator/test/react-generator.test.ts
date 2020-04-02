@@ -198,8 +198,8 @@ mocha.describe("react-generator: expressions", function () {
         const identifier = generator.createIdentifier("a");
         assert.equal(generator.createVariableDeclaration(identifier, undefined, undefined).toString(), 'a', "w/o initializer");
         assert.equal(generator.createVariableDeclaration(identifier, undefined, generator.createStringLiteral("str")).toString(), 'a="str"', "w initializer");
-        assert.equal(generator.createVariableDeclaration(identifier, "string", undefined).toString(), 'a:string', "w type");
-        assert.equal(generator.createVariableDeclaration(identifier, "string", generator.createStringLiteral("str")).toString(), 'a:string="str"', "w type and initializer");
+        assert.equal(generator.createVariableDeclaration(identifier, generator.createKeywordTypeNode("string")).toString(), 'a:string', "w type");
+        assert.equal(generator.createVariableDeclaration(identifier, generator.createKeywordTypeNode("string"), generator.createStringLiteral("str")).toString(), 'a:string="str"', "w type and initializer");
     });
 
     mocha.it("createJsxText", function () {
@@ -612,6 +612,16 @@ mocha.describe("react-generator: expressions", function () {
         assert.equal(propertyAssignment.value, "k");
     });
 
+    mocha.it("ShorthandPropertyAssignment with expression", function () {
+        const propertyAssignment = generator.createShorthandPropertyAssignment(
+            generator.createIdentifier("k"),
+            generator.createIdentifier("v")
+        );
+        assert.equal(propertyAssignment.toString(), 'k:v');
+        assert.equal(propertyAssignment.key, "k");
+        assert.equal(propertyAssignment.value, "v");
+    });
+
     mocha.it("SpreadAssignement", function () {
         const propertyAssignment = generator.createSpreadAssignment(generator.createIdentifier("obj"));
         assert.equal(propertyAssignment.toString(), '...obj');
@@ -624,6 +634,18 @@ mocha.describe("react-generator: expressions", function () {
             generator.createSpreadAssignment(generator.createIdentifier("obj"))
         ], true);
         assert.equal(objectLiteral.toString(), '{a,\nk:a,\n...obj}');
+    });
+
+    mocha.it("ObjectLiteral: Can remove property", function () {
+        const objectLiteral = generator.createObjectLiteral([
+            generator.createShorthandPropertyAssignment(generator.createIdentifier("a"), undefined),
+            generator.createPropertyAssignment(generator.createIdentifier("k"), generator.createIdentifier("a")),
+            generator.createSpreadAssignment(generator.createIdentifier("obj"))
+        ], true);
+        
+        objectLiteral.removeProperty("k");
+            
+        assert.equal(objectLiteral.toString(), '{a,\n...obj}');
     });
 
     mocha.it("Paren", function () {
@@ -1447,11 +1469,47 @@ mocha.describe("react-generator: expressions", function () {
             // TODO implement class generation
             assert.strictEqual(expression.toString(), "");
         });
+
+        mocha.it("createClassDeclaration without decorators and modifiers", function () {
+            const expression = generator.createClassDeclaration(
+                undefined,
+                undefined,
+                generator.createIdentifier("name"),
+                [],
+                [],
+                []
+            );
+
+            assert.ok(expression instanceof Class);
+            assert.ok(!(expression instanceof ComponentInput));
+            assert.ok(!(expression instanceof ReactComponent));
+
+            // TODO implement class generation
+            assert.strictEqual(expression.toString(), "");
+        });
+    });
+
+    mocha.it("JsxElement", function () {
+        const expression = generator.createJsxElement(
+            generator.createJsxOpeningElement(generator.createIdentifier("div"), [], [
+                generator.createJsxAttribute(
+                    generator.createIdentifier("name"),
+                    generator.createJsxExpression(
+                        undefined,
+                        generator.createIdentifier("value")
+                    )
+                )
+            ]),
+            [],
+            generator.createJsxClosingElement(generator.createIdentifier("div"))
+        );
+
+        assert.strictEqual(expression.toString(), "<div name={value}></div>");
     });
     
     mocha.it("JsxElement. Fragment -> React.Fragment", function () {
         const expression = generator.createJsxElement(
-            generator.createJsxOpeningElement(generator.createIdentifier("Fragment"), [], []),
+            generator.createJsxOpeningElement(generator.createIdentifier("Fragment"), []),
             [],
             generator.createJsxClosingElement(generator.createIdentifier("Fragment"))
         );
@@ -1595,7 +1653,7 @@ mocha.describe("React Component", function () {
                         undefined
                     )
                 ],
-                "",
+                undefined,
                 generator.createBlock([
                     generator.createPropertyAccess(
                         generator.createPropertyAccess(
@@ -1637,7 +1695,7 @@ mocha.describe("React Component", function () {
                         undefined
                     )
                 ],
-                "",
+                undefined,
                 generator.SyntaxKind.EqualsGreaterThanToken,
                 generator.createBlock([
                     generator.createPropertyAccess(
@@ -1697,7 +1755,7 @@ mocha.describe("React Component", function () {
                         undefined
                     )
                 ],
-                "",
+                undefined,
                 generator.SyntaxKind.EqualsGreaterThanToken,
                 generator.createBlock([
                     bindingPattern,
@@ -1740,7 +1798,7 @@ mocha.describe("React Component", function () {
                         undefined
                     )
                 ],
-                "",
+                undefined,
                 generator.createBlock([
                     generator.createPropertyAccess(
                         generator.createPropertyAccess(
@@ -1786,7 +1844,7 @@ mocha.describe("React Component", function () {
                         undefined
                     )
                 ],
-                "",
+                undefined,
                 generator.createBlock([
                     generator.createPropertyAccess(
                         generator.createIdentifier("viewModel"),
@@ -1828,7 +1886,7 @@ mocha.describe("React Component", function () {
                         undefined
                     )
                 ],
-                "",
+                undefined,
                 generator.createBlock([
                     generator.createPropertyAccess(
                         generator.createPropertyAccess(
@@ -1877,7 +1935,7 @@ mocha.describe("React Component", function () {
                         undefined
                     )
                 ],
-                "",
+                undefined,
                 generator.createBlock([
                     generator.createPropertyAccess(
                         generator.createIdentifier("viewModel"),

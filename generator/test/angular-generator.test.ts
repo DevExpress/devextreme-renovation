@@ -1539,7 +1539,7 @@ mocha.describe("Angular generator", function () {
                     generator.createIdentifier("View"),
                     [],
                     [],
-                    "",
+                    undefined,
                     this.block
                 );
 
@@ -1555,7 +1555,7 @@ mocha.describe("Angular generator", function () {
                     generator.createIdentifier("View"),
                     [],
                     [],
-                    "",
+                    undefined,
                     generator.createBlock(
                         [],
                         false
@@ -1581,7 +1581,7 @@ mocha.describe("Angular generator", function () {
                         undefined,
                         undefined
                     )],
-                    "",
+                    undefined,
                     generator.createBlock([
                         generator.createReturn(
                             generator.createJsxElement(
@@ -1630,7 +1630,7 @@ mocha.describe("Angular generator", function () {
                     generator.createIdentifier("View"),
                     [],
                     [],
-                    "",
+                    undefined,
                     generator.createBlock([], false)
                 );
 
@@ -1775,7 +1775,7 @@ mocha.describe("Angular generator", function () {
                     generator.createIdentifier("View"),
                     [],
                     [],
-                    "",
+                    undefined,
                     block
                 );
 
@@ -1828,7 +1828,7 @@ mocha.describe("Angular generator", function () {
                             undefined
                        )
                     ],
-                    "",
+                    undefined,
                     block
                 );
 
@@ -1889,7 +1889,7 @@ mocha.describe("Angular generator", function () {
                     generator.createIdentifier("View"),
                     [],
                     [],
-                    "",
+                    undefined,
                     block
                 );
     
@@ -1951,7 +1951,7 @@ mocha.describe("Angular generator", function () {
                     generator.createIdentifier("View"),
                     [],
                     [],
-                    "",
+                    undefined,
                     block
                 );
     
@@ -2012,7 +2012,7 @@ mocha.describe("Angular generator", function () {
                     generator.createIdentifier("View"),
                     [],
                     [],
-                    "",
+                    undefined,
                     block
                 );
     
@@ -2095,7 +2095,7 @@ mocha.describe("Angular generator", function () {
                     generator.createIdentifier("View"),
                     [],
                     [],
-                    "",
+                    undefined,
                     block
                 );
     
@@ -2175,7 +2175,7 @@ mocha.describe("Angular generator", function () {
                     generator.createIdentifier("viewFunction"),
                     [],
                     [],
-                    "",
+                    undefined,
                     generator.createBlock([
                         generator.createReturn(
                             generator.createJsxSelfClosingElement(
@@ -2305,7 +2305,7 @@ mocha.describe("Angular generator", function () {
                 generator.createIdentifier("host"),
                 generator.SyntaxKind.QuestionToken,
                 generator.createKeywordTypeNode("HTMLDivElement"),
-                generator.createArrowFunction([], [], [], "", generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
+                generator.createArrowFunction([], [], [], undefined, generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
             );
 
             assert.strictEqual(property.toString(), `@ViewChild("host", {static: false}) host:ElementRef<HTMLDivElement>`);
@@ -2318,7 +2318,7 @@ mocha.describe("Angular generator", function () {
                 generator.createIdentifier("onClick"),
                 generator.SyntaxKind.QuestionToken,
                 undefined,
-                generator.createArrowFunction([], [], [], "", generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
+                generator.createArrowFunction([], [], [], undefined, generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
             );
 
             assert.strictEqual(property.toString(), "@Output() onClick?:EventEmitter<any> = new EventEmitter()");
@@ -2343,7 +2343,7 @@ mocha.describe("Angular generator", function () {
                     )],
                     generator.createKeywordTypeNode("void")
                 ),
-                generator.createArrowFunction([], [], [], "", generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
+                generator.createArrowFunction([], [], [], undefined, generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
             );
 
             assert.strictEqual(property.toString(), "@Input() onClick:EventEmitter<number> = new EventEmitter()");
@@ -3043,7 +3043,7 @@ mocha.describe("Angular generator", function () {
 
             assert.strictEqual(generator.createVariableDeclaration(
                 generator.createIdentifier("a"),
-                "any",
+                generator.createKeywordTypeNode("any"),
                 generator.createNumericLiteral("10")
             ).toString(), "a:any=10");
         });
