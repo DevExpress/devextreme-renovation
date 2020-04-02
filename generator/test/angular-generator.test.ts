@@ -1513,6 +1513,27 @@ mocha.describe("Angular generator", function () {
                     return i;
                 }`), "internal map trackBy function");
             });
+
+            mocha.it("Not function in the map", function () { 
+                const expression = generator.createJsxExpression(
+                    undefined,
+                    generator.createCall(
+                        generator.createPropertyAccess(
+                            generator.createPropertyAccess(
+                                generator.createIdentifier("viewModel"),
+                                generator.createIdentifier("items")
+                            ),
+                            generator.createIdentifier("map")
+                        ),
+                        undefined,
+                        [
+                            generator.createNull()
+                        ]
+                    )
+                );
+    
+                assert.strictEqual(expression.toString(), `viewModel.items.map(null)`);
+            });
         });
     
         mocha.describe("View Function", function () {

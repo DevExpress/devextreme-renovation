@@ -75,9 +75,7 @@ function processTagName(tagName: Expression, context: GeneratorContex) {
     const component = context.components?.[tagName.toString()];
         if (component) { 
             const selector = (component as AngularComponent).selector;
-            if (selector) {
-                return new Identifier(selector);
-            }
+            return new Identifier(selector);
     }
     return tagName;
 }
@@ -91,7 +89,7 @@ export class JsxOpeningElement extends ReactJsxOpeningElement {
     context: GeneratorContex;
     component?: AngularComponent;
     attributes: Array<JsxAttribute | JsxSpreadAttribute>;
-    constructor(tagName: Expression, typeArguments: any[] = [], attributes: Array<JsxAttribute | JsxSpreadAttribute> = [], context: GeneratorContex) { 
+    constructor(tagName: Expression, typeArguments: any, attributes: Array<JsxAttribute | JsxSpreadAttribute> = [], context: GeneratorContex) { 
         super(processTagName(tagName, context), typeArguments, attributes);
         this.context = context;
         const component = context.components?.[tagName.toString()];
@@ -800,7 +798,7 @@ class Method extends BaseMethod {
     toString(options: toStringOptions) { 
         return `${this.modifiers.join(" ")} ${this.name}(${
             this.parameters.map(p => p.declaration()).join(",")
-            })${this.type ? `:${this.type}` : ""}${this.body.toString(options)}`;
+            }):${this.type}${this.body.toString(options)}`;
     }
 
     getter() { 
@@ -1149,11 +1147,11 @@ export class AngularGenerator extends Generator {
         return properties;
     }
 
-    createJsxOpeningElement(tagName: Expression, typeArguments: any[] = [], attributes: Array<JsxAttribute|JsxSpreadAttribute> = []) {
+    createJsxOpeningElement(tagName: Expression, typeArguments?: any, attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
         return new JsxOpeningElement(tagName, typeArguments, attributes, this.getContext());
     }
 
-    createJsxSelfClosingElement(tagName: Expression, typeArguments: any[] = [], attributes: Array<JsxAttribute|JsxSpreadAttribute> = []) {
+    createJsxSelfClosingElement(tagName: Expression, typeArguments?: any, attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
         return new JsxSelfClosingElement(tagName, typeArguments, attributes, this.getContext());
     }
 
@@ -1190,7 +1188,7 @@ export class AngularGenerator extends Generator {
         return new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members, this.getContext());
     }
 
-    createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type?: TypeExpression, initializer?: Expression) {
+    createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: TypeExpression, initializer?: Expression) {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
