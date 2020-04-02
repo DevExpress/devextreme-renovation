@@ -1,4 +1,5 @@
 import { JSXComponent, Component, ComponentBindings } from "../../../component_declaration/common";
+import "typescript";
 
 function view() { }
 

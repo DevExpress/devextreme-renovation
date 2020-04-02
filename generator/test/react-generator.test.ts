@@ -874,6 +874,25 @@ mocha.describe("react-generator: expressions", function () {
         assert.strictEqual(expression.toString(), "export declare type Name = {b:string}");
     });
 
+    mocha.it("createTypeAliasDeclaration without modifiers", function () { 
+        const literalNode = generator.createTypeLiteralNode(
+            [generator.createPropertySignature(
+                [],
+                generator.createIdentifier("b"),
+                undefined,
+                "string"
+            )]
+        );
+        const expression = generator.createTypeAliasDeclaration(
+            undefined,
+            undefined,
+            generator.createIdentifier("Name"),
+            [],
+            literalNode);
+
+        assert.strictEqual(expression.toString(), " type Name = {b:string}");
+    });
+
     mocha.it("TypeQueryNode", function () { 
         const expression = generator.createTypeQueryNode(generator.createIdentifier("Component"));
 

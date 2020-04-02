@@ -1,3 +1,5 @@
+import "typescript";
+
 function view() { }
 
 declare type WidgetProps = {}

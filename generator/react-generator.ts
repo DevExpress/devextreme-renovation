@@ -485,7 +485,7 @@ export class Paren extends ExpressionWithExpression {
 export class Call extends ExpressionWithExpression {
     typeArguments: any[];
     argumentsArray: Expression[];
-    constructor(expression: Expression, typeArguments: string[], argumentsArray: Expression[] = []) {
+    constructor(expression: Expression, typeArguments: any, argumentsArray: Expression[] = []) {
         super(expression);
         this.typeArguments = typeArguments;
         this.argumentsArray = argumentsArray;
@@ -2214,7 +2214,7 @@ export class JsxOpeningElement extends Expression {
         return tagName.toString() === "Fragment" ? new Identifier("React.Fragment") : tagName;
     }
 
-    constructor(tagName: Expression, typeArguments: any[] = [], attributes: Array<JsxAttribute|JsxSpreadAttribute>) { 
+    constructor(tagName: Expression, typeArguments: any, attributes: Array<JsxAttribute|JsxSpreadAttribute>=[]) { 
         super();
         this.tagName = this.processTagName(tagName);
         this.typeArguments = typeArguments;
@@ -2484,7 +2484,7 @@ export class Generator {
         return new Paren(expression);
     }
 
-    createCall(expression: Expression, typeArguments: string[] = [], argumentsArray: Expression[] = []) {
+    createCall(expression: Expression, typeArguments: any, argumentsArray?: Expression[]) {
         return new Call(expression, typeArguments, argumentsArray);
     }
 
@@ -2535,16 +2535,14 @@ export class Generator {
             if (fs.existsSync(modulePath)) {
                 compileCode(this, fs.readFileSync(modulePath).toString(), { dirname: context.dirname, path: modulePath });
 
-                if (importClause) {
-                    this.addComponent(importClause.default, this.cache[modulePath].find((e: any) => e instanceof ReactComponent), importClause);
-                    const componentInputs:ComponentInput[] = this.cache[modulePath].filter((e: any) => e instanceof ComponentInput);
-                    componentInputs.length && importClause.imports.forEach(i => {
-                        const componentInput = componentInputs.find(c => c.name.toString() === i && c.modifiers.indexOf("export") >= 0);
-                        if (componentInput) { 
-                            this.addComponent(i, componentInput);
-                        }
-                    });
-                }
+                this.addComponent(importClause.default, this.cache[modulePath].find((e: any) => e instanceof ReactComponent), importClause);
+                const componentInputs: ComponentInput[] = this.cache[modulePath].filter((e: any) => e instanceof ComponentInput);
+                componentInputs.length && importClause.imports.forEach(i => {
+                    const componentInput = componentInputs.find(c => c.name.toString() === i && c.modifiers.indexOf("export") >= 0);
+                    if (componentInput) {
+                        this.addComponent(i, componentInput);
+                    }
+                });
             }
         }
 
@@ -2616,11 +2614,11 @@ export class Generator {
         return properties;
     }
 
-    createJsxOpeningElement(tagName: Identifier, typeArguments: any[], attributes: Array<JsxAttribute|JsxSpreadAttribute>=[]) {
+    createJsxOpeningElement(tagName: Identifier, typeArguments: any[], attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
         return new JsxOpeningElement(tagName, typeArguments, attributes);
     }
 
-    createJsxSelfClosingElement(tagName: Identifier, typeArguments: any[], attributes: Array<JsxAttribute|JsxSpreadAttribute>=[]) {
+    createJsxSelfClosingElement(tagName: Identifier, typeArguments: any[], attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
         return new JsxSelfClosingElement(tagName, typeArguments, attributes);
     }
 
@@ -2649,7 +2647,7 @@ export class Generator {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 
-    createGetAccessor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type?: TypeExpression, body?: Block) {
+    createGetAccessor(decorators: Decorator[]|undefined, modifiers: string[]|undefined, name: Identifier, parameters: Parameter[], type?: TypeExpression, body?: Block) {
         return new GetAccessor(decorators, modifiers, name, parameters, type, body);
     }
 
@@ -2685,7 +2683,7 @@ export class Generator {
         return new SimpleTypeExpression(literal.toString());
     }
 
-    createTypeAliasDeclaration(decorators: Decorator[]=[], modifiers: string[]=[], name: Identifier, typeParameters: any[]=[], type: TypeExpression) { 
+    createTypeAliasDeclaration(decorators: Decorator[]|undefined, modifiers: string[]=[], name: Identifier, typeParameters: any, type: TypeExpression) { 
         return `${modifiers.join(" ")} type ${name} = ${type}`;
     }
 
