@@ -451,9 +451,9 @@ export class Parameter {
     dotDotDotToken: any;
     name: Identifier | BindingPattern;
     questionToken: string;
-    type?: string;
+    type?: TypeExpression;
     initializer?: Expression;
-    constructor(decorators: Decorator[], modifiers: string[], dotDotDotToken: any, name: Identifier|BindingPattern, questionToken: string = "", type?: string, initializer?: Expression) {
+    constructor(decorators: Decorator[], modifiers: string[], dotDotDotToken: any, name: Identifier|BindingPattern, questionToken: string = "", type?: TypeExpression, initializer?: Expression) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.dotDotDotToken = dotDotDotToken;
@@ -464,11 +464,11 @@ export class Parameter {
     }
 
     typeDeclaration() {
-        return variableDeclaration(this.name, this.type || "any", undefined, this.questionToken);
+        return variableDeclaration(this.name, this.type?.toString() || "any", undefined, this.questionToken);
     }
 
     declaration() {
-        return variableDeclaration(this.name, this.type, this.initializer, this.questionToken);
+        return variableDeclaration(this.name, this.type?.toString(), this.initializer, this.questionToken);
     }
 
     toString() {
@@ -548,7 +548,7 @@ export class BaseFunction extends Expression {
     }
 
     getToStringOptions(options?: toStringOptions) { 
-        const widget = this.parameters[0] && this.context.components?.[this.parameters[0].type || ""];
+        const widget = this.parameters[0] && this.context.components?.[this.parameters[0].type?.toString() || ""];
         if (widget && widget instanceof ReactComponent) { 
             options = {
                 members: widget.members.filter(m => m.decorators.find(d => d.name === "Template" || d.name === "Slot")),
@@ -785,12 +785,12 @@ export class BaseClassMember extends Expression {
     decorators: Decorator[];
     modifiers: string[];
     _name: Identifier;
-    type?: string;
+    type: TypeExpression;
     inherited: boolean;
 
     prefix: string = "";
 
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, type: string = "any", inherited: boolean = false) { 
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, type: TypeExpression = new SimpleExpression(""), inherited: boolean = false) { 
         super();
         this.decorators = decorators;
         this.modifiers = modifiers;
@@ -824,7 +824,7 @@ export class Method extends BaseClassMember {
     parameters: Parameter[];
     body: Block;
    
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: string = "any", body: Block) {
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: TypeExpression = new SimpleExpression("any"), body: Block) {
         super(decorators, modifiers, name, type);
         this.asteriskToken = asteriskToken;
         this.questionToken = questionToken;
@@ -882,7 +882,7 @@ export class Method extends BaseClassMember {
 }
 
 export class GetAccessor extends Method { 
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type?: string, body?: Block) { 
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type?: TypeExpression, body?: Block) { 
         super(decorators, modifiers, "", name, "", [], parameters, type, body || new Block([], false));
     }
 
@@ -910,7 +910,7 @@ export class Property extends BaseClassMember {
         return super.name;
     }
 
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression, inherited: boolean = false) {
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: TypeExpression = new SimpleExpression("any"), initializer?: Expression, inherited: boolean = false) {
         super(decorators, modifiers, name, type, inherited);
         this.questionOrExclamationToken = questionOrExclamationToken;
         this.initializer = initializer;
@@ -1030,10 +1030,54 @@ export class ComponentInput extends Class implements Heritable {
     }
 }
 
-export class TypeNode extends Expression {
+export class TypeExpression extends Expression { }
+
+export class SimpleTypeExpression extends TypeExpression { 
+    type: string;
+
+    constructor(type: string) { 
+        super();
+        this.type = type;
+    }
+
+    toString(options?: toStringOptions) { 
+        return this.type;
+    }
+}
+
+export class ArrayTypeNode extends TypeExpression { 
+    elementType: TypeExpression;
+
+    constructor(elementType: TypeExpression) { 
+        super();
+        this.elementType = elementType;
+    }
+
+    toString(options?: toStringOptions) { 
+        return `${this.elementType}[]`;
+    }
+}
+
+export class FunctionTypeNode extends TypeExpression { 
+    typeParameters: any;
+    parameters: Parameter[];
+    type: TypeExpression;
+    constructor(typeParameters: any, parameters: Parameter[], type: TypeExpression) { 
+        super();
+        this.typeParameters = typeParameters;
+        this.parameters = parameters;
+        this.type = type;
+    }
+
+    toString(options?: toStringOptions) { 
+        return `(${this.parameters.map(p => p.declaration())})=>${this.type}`;
+    }
+}
+
+export class TypeReferenceNode extends TypeExpression {
     typeName: Identifier;
-    typeArguments: string[];
-    constructor(typeName: Identifier, typeArguments: string[] = []) {
+    typeArguments: TypeExpression[];
+    constructor(typeName: Identifier, typeArguments: TypeExpression[] = []) {
         super();
         this.typeName = typeName;
         this.typeArguments = typeArguments;
@@ -1044,9 +1088,21 @@ export class TypeNode extends Expression {
     }
 }
 
+export class TypeLiteralNode extends TypeExpression { 
+    members: PropertySignature[];
+    constructor(members: PropertySignature[]) { 
+        super();
+        this.members = members;
+    }
+
+    toString(options?:toStringOptions) { 
+        return `{${this.members.join(",")}}`;
+    }
+}
+
 export class ExpressionWithTypeArguments extends ExpressionWithExpression {
-    typeArguments: TypeNode[] = [];
-    constructor(typeArguments: TypeNode[] = [], expression: Expression) {
+    typeArguments: TypeReferenceNode[] = [];
+    constructor(typeArguments: TypeReferenceNode[] = [], expression: Expression) {
         super(expression);
         this.typeArguments = typeArguments;
     }
@@ -1324,7 +1380,7 @@ export class ReactComponent {
             .map(p => new Prop(p as Property))
 
         const refs = members.filter(m => m.decorators.find(d => d.name === "Ref")).reduce((r: {refs: Ref[], apiRefs: Ref[]}, p) => {
-            if(context.components && context.components[p.type!] instanceof ReactComponent) {
+            if(context.components && context.components[p.type!.toString()] instanceof ReactComponent) {
                 p.decorators.find(d => d.name === "Ref")!.expression.expression = new SimpleExpression("ApiRef");
                 r.apiRefs?.push(new Ref(p as Property));
             } else {
@@ -1431,7 +1487,7 @@ export class ReactComponent {
 
         if(this.apiRefs.length) {
             imports.splice(-1, 0, ...this.apiRefs.reduce((imports: string[], ref) => {
-                const baseComponent = this.context.components![ref.type!] as ReactComponent;
+                const baseComponent = this.context.components![ref.type!.toString()] as ReactComponent;
                 if(this.context.dirname) {
                     const relativePath = getModuleRelativePath(this.context.dirname, baseComponent.context.path!);
                     imports.push(`import {${baseComponent.name}Ref as ${ref.type}Ref} from "${this.processModuleFileName(relativePath.replace(path.extname(relativePath), ''))}"`);
@@ -1723,9 +1779,9 @@ export class NonNullExpression extends ExpressionWithExpression {
 export class VariableDeclaration extends Expression {
     name: Identifier | BindingPattern;
     type: string;
-    initializer?: Expression | string;
+    initializer?: Expression;
 
-    constructor(name: Identifier | BindingPattern, type: string = "", initializer?: Expression | string) {
+    constructor(name: Identifier | BindingPattern, type: string = "", initializer?: Expression) {
         super();
         this.name = name;
         this.type = type;
@@ -1750,7 +1806,7 @@ export class VariableDeclaration extends Expression {
                     }
                     return {
                         ...v,
-                        [m._name.toString()]: this.initializer instanceof Expression ? new PropertyAccess(this.initializer, new Identifier(m.name)) : new SimpleExpression(m.name)
+                        [m._name.toString()]: this.initializer ? new PropertyAccess(this.initializer, new Identifier(m.name)) : new SimpleExpression(m.name)
                     };
                 }, options.variables || {});
                 
@@ -1793,9 +1849,8 @@ export class VariableDeclaration extends Expression {
                 [this.name.toString()]: expression
             };
         }
-        if (this.name instanceof BindingPattern && this.initializer) { 
-            const startExpression = this.initializer instanceof Expression ? this.initializer : new SimpleExpression(this.initializer);
-            return this.name.getVariableExpressions(startExpression);
+        if (this.name instanceof BindingPattern && this.initializer) {
+            return this.name.getVariableExpressions(this.initializer);
         }
         return {};
     }
@@ -1803,9 +1858,9 @@ export class VariableDeclaration extends Expression {
 
 export class VariableDeclarationList extends Expression {
     declarations: VariableDeclaration[];
-    flags: string;
+    flags?: string;
 
-    constructor(declarations: VariableDeclaration[] = [], flags: string) {
+    constructor(declarations: VariableDeclaration[], flags?: string) {
         super();
         this.declarations = declarations;
         this.flags = flags;
@@ -1877,8 +1932,8 @@ export class IndexSignature extends Expression {
     decorators?: Decorator[];
     modifiers: string[];
     parameters: Parameter[];
-    type: string;
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], parameters: Parameter[], type: string) {
+    type: TypeExpression;
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], parameters: Parameter[], type: TypeExpression) {
         super();
         this.decorators = decorators;
         this.modifiers = modifiers;
@@ -2017,10 +2072,8 @@ export class ComputedPropertyName extends ExpressionWithExpression {
 
 export class NamedImports {
     node: Identifier[];
-    elements?: any[];
-    constructor(node: Identifier[] = [], elements?: any[]) {
+    constructor(node: Identifier[], elements?: any[]) {
         this.node = node;
-        this.elements = elements;
     }
 
     add(name: string) { 
@@ -2224,8 +2277,8 @@ export class JsxSpreadAttribute extends JsxExpression {
 }
 
 export class AsExpression extends ExpressionWithExpression { 
-    type: TypeNode | string;
-    constructor(expression: Expression, type: TypeNode | string) {
+    type: TypeExpression;
+    constructor(expression: Expression, type: TypeExpression) {
         super(expression);
         this.type = type;
     }
@@ -2276,11 +2329,11 @@ export class Generator {
         return new SimpleExpression(value);
     }
 
-    createVariableDeclaration(name: Identifier | BindingPattern, type: string = "", initializer?: Expression | string): VariableDeclaration {
+    createVariableDeclaration(name: Identifier | BindingPattern, type: string = "", initializer?: Expression): VariableDeclaration {
         return new VariableDeclaration(name, type, initializer);
     }
 
-    createVariableDeclarationList(declarations: VariableDeclaration[] = [], flags: string) {
+    createVariableDeclarationList(declarations: VariableDeclaration[], flags?: string) {
         return new VariableDeclarationList(declarations, flags);
     }
 
@@ -2317,11 +2370,11 @@ export class Generator {
     }
 
     createKeywordTypeNode(kind: string) {
-        return kind;
+        return new SimpleTypeExpression(kind);
     }
 
-    createArrayTypeNode(elementType: string) {
-        return `${elementType}[]`;
+    createArrayTypeNode(elementType: TypeExpression) {
+        return new ArrayTypeNode(elementType);
     }
 
     createFalse() {
@@ -2368,7 +2421,7 @@ export class Generator {
         return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
     }
 
-    createParameter(decorators: Decorator[] = [], modifiers: string[] = [], dotDotDotToken: any, name: Identifier|BindingPattern, questionToken?: string, type?: string, initializer?: Expression) {
+    createParameter(decorators: Decorator[] = [], modifiers: string[] = [], dotDotDotToken: any, name: Identifier|BindingPattern, questionToken?: string, type?: TypeExpression, initializer?: Expression) {
         return new Parameter(decorators, modifiers, dotDotDotToken, name, questionToken, type, initializer);
     }
 
@@ -2416,8 +2469,8 @@ export class Generator {
         return new SpreadAssignment(expression);
     }
 
-    createTypeReferenceNode(typeName: Identifier, typeArguments: string[] = []) {
-        return new TypeNode(typeName, typeArguments);
+    createTypeReferenceNode(typeName: Identifier, typeArguments?: TypeExpression[]) {
+        return new TypeReferenceNode(typeName, typeArguments);
     }
 
     createIf(expression: Expression, thenStatement: Expression, elseStatement?: Expression) {
@@ -2471,8 +2524,8 @@ export class Generator {
         return name;
     }
 
-    createNamedImports(node: Identifier[] = [], elements?: any[]) {
-        return new NamedImports(node, elements);
+    createNamedImports(node: Identifier[]) {
+        return new NamedImports(node);
     }
 
     createImportClause(name?: Identifier, namedBindings?: NamedImports) {
@@ -2483,7 +2536,7 @@ export class Generator {
         return new Decorator(expression);
     }
 
-    createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression) {
+    createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken?: string, type?: TypeExpression, initializer?: Expression) {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
@@ -2552,19 +2605,20 @@ export class Generator {
         return containsOnlyTriviaWhiteSpaces === "true" ? "" : text;
     }
 
-    createFunctionTypeNode(typeParameters: any, parameters: Parameter[], type: string) {
-        return `(${parameters.map(p => p.declaration())})=>${type}`;
+    createFunctionTypeNode(typeParameters: any, parameters: Parameter[], type: TypeExpression) {
+        return new FunctionTypeNode(typeParameters, parameters, type);
+        
     }
 
     createExpressionStatement(expression: Expression) {
         return expression;
     }
 
-    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string, typeParameters: any, parameters: Parameter[], type: string | undefined, body: Block) {
+    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 
-    createGetAccessor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type?: string, body?: Block) {
+    createGetAccessor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type?: TypeExpression, body?: Block) {
         return new GetAccessor(decorators, modifiers, name, parameters, type, body);
     }
 
@@ -2584,23 +2638,23 @@ export class Generator {
         return new ElementAccess(expression, index);
     }
 
-    createPropertySignature(modifiers: string[] = [], name: Identifier, questionToken: string | undefined, type: string, initializer?: Expression) {
+    createPropertySignature(modifiers: string[]| undefined, name: Identifier, questionToken: string | undefined, type: string, initializer?: Expression) {
         return new PropertySignature(modifiers, name, questionToken, type, initializer);
     }
 
-    createIndexSignature(decorators: Decorator[] | undefined, modifiers: string[] = [], parameters: Parameter[], type: string) {
+    createIndexSignature(decorators: Decorator[] | undefined, modifiers: string[]| undefined, parameters: Parameter[], type: TypeExpression) {
         return new IndexSignature(decorators, modifiers, parameters, type);
     }
 
     createTypeLiteralNode(members: PropertySignature[]) {
-        return `{${members.join(",")}}`;
+        return new TypeLiteralNode(members);
     }
 
     createLiteralTypeNode(literal: any) { 
         return literal;
     }
 
-    createTypeAliasDeclaration(decorators: Decorator[]=[], modifiers: string[]=[], name: Identifier, typeParameters: any[]=[], type: string) { 
+    createTypeAliasDeclaration(decorators: Decorator[]=[], modifiers: string[]=[], name: Identifier, typeParameters: any[]=[], type: TypeExpression) { 
         return `${modifiers.join(" ")} type ${name} = ${type}`;
     }
 
@@ -2674,7 +2728,7 @@ export class Generator {
         return new Do(statement, expression);
     }
 
-    createExpressionWithTypeArguments(typeArguments: TypeNode[] = [], expression: Expression) {
+    createExpressionWithTypeArguments(typeArguments: TypeReferenceNode[] = [], expression: Expression) {
         return new ExpressionWithTypeArguments(typeArguments, expression);
     }
 
@@ -2693,12 +2747,12 @@ export class Generator {
     createPropertyAccessChain(expression: Expression, questionDotToken: string|undefined, name: Expression) {
         return new PropertyAccessChain(expression, questionDotToken, name);
     }
-
-    createCallChain(expression: Expression, questionDotToken: string = "", typeArguments: string[] = [], argumentsArray: Expression[] = []) {
+    
+    createCallChain(expression: Expression, questionDotToken: string | undefined, typeArguments: string[]| undefined, argumentsArray: Expression[] | undefined) {
         return new CallChain(expression, questionDotToken, typeArguments, argumentsArray);
     }
 
-    createAsExpression(expression: Expression, type: TypeNode | string) { 
+    createAsExpression(expression: Expression, type: TypeExpression) { 
         return new AsExpression(expression, type);
     }
 

@@ -778,7 +778,7 @@ mocha.describe("Angular generator", function () {
                         generator.createIdentifier("viewModel"),
                         generator.createIdentifier("refName")
                     ),
-                    "any"
+                    generator.createKeywordTypeNode("any")
                 )
             );
 
@@ -2236,7 +2236,7 @@ mocha.describe("Angular generator", function () {
                         [],
                         generator.createIdentifier("p1"),
                         generator.SyntaxKind.QuestionToken,
-                        "number",
+                        generator.createKeywordTypeNode("number"),
                         generator.createNumericLiteral("10")
                     ),
                     generator.createProperty(
@@ -2244,7 +2244,7 @@ mocha.describe("Angular generator", function () {
                         [],
                         generator.createIdentifier("p2"),
                         generator.SyntaxKind.QuestionToken,
-                        "number",
+                        generator.createKeywordTypeNode("number"),
                         generator.createNumericLiteral("11")
                     )
                 ]
@@ -2272,7 +2272,7 @@ mocha.describe("Angular generator", function () {
                         [],
                         generator.createIdentifier("p1"),
                         generator.SyntaxKind.QuestionToken,
-                        "number",
+                        generator.createKeywordTypeNode("number"),
                         generator.createNumericLiteral("10")
                     )
                 ]
@@ -2304,7 +2304,7 @@ mocha.describe("Angular generator", function () {
                 [],
                 generator.createIdentifier("host"),
                 generator.SyntaxKind.QuestionToken,
-                "HTMLDivElement",
+                generator.createKeywordTypeNode("HTMLDivElement"),
                 generator.createArrowFunction([], [], [], "", generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
             );
 
@@ -2338,10 +2338,10 @@ mocha.describe("Angular generator", function () {
                         "",
                         generator.createIdentifier("a"),
                         "",
-                        "number",
+                        generator.createKeywordTypeNode("number"),
                         generator.createNumericLiteral("1")
                     )],
-                    "void"
+                    generator.createKeywordTypeNode("void")
                 ),
                 generator.createArrowFunction([], [], [], "", generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
             );
@@ -2355,7 +2355,7 @@ mocha.describe("Angular generator", function () {
                 [],
                 generator.createIdentifier("pressed"),
                 generator.SyntaxKind.QuestionToken,
-                "boolean",
+                generator.createKeywordTypeNode("boolean"),
                 generator.createFalse()
             );
 
@@ -2599,7 +2599,7 @@ mocha.describe("Angular generator", function () {
                         [],
                         generator.createIdentifier("p"),
                         "",
-                        "",
+                        undefined,
                         generator.createNumericLiteral("10")
                     )
                 ]

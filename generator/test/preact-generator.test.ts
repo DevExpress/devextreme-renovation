@@ -132,7 +132,7 @@ mocha.describe("preact-generator: expressions", function () {
                 undefined,
                 generator.createIdentifier("p"),
                 generator.SyntaxKind.ExclamationToken,
-                "string"
+                generator.createKeywordTypeNode("string")
             );
             
             assert.strictEqual(property.typeDeclaration(), "p!:any");
@@ -148,7 +148,7 @@ mocha.describe("preact-generator: expressions", function () {
                 undefined,
                 generator.createIdentifier("p"),
                 generator.SyntaxKind.ExclamationToken,
-                "string"
+                generator.createKeywordTypeNode("string")
             );
             
             assert.strictEqual(property.typeDeclaration(), "p!:string");

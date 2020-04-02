@@ -39,7 +39,9 @@ import {
     PropertyAccessChain,
     Conditional,
     Prefix,
-    PropertyAssignment
+    PropertyAssignment,
+    TypeExpression,
+    SimpleTypeExpression
 } from "./react-generator";
 
 import SyntaxKind from "./syntaxKind";
@@ -744,9 +746,9 @@ export class Property extends BaseProperty {
         }
         return this._name.toString();
     }
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "any", initializer?: Expression, inherited: boolean=false) { 
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type?: TypeExpression, initializer?: Expression, inherited: boolean=false) { 
         if (decorators.find(d => d.name === "Template")) { 
-            type = `TemplateRef<any>`;
+            type = new SimpleTypeExpression(`TemplateRef<any>`);
         }
         super(decorators, modifiers, name, questionOrExclamationToken, type, initializer, inherited);
     }
@@ -1173,7 +1175,7 @@ export class AngularGenerator extends Generator {
         return new ArrowFunctionWithTemplate(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body, this.getContext());
     }
 
-    createVariableDeclaration(name: Identifier, type: string = "", initializer?: Expression | string) {
+    createVariableDeclaration(name: Identifier, type: string = "", initializer?: Expression) {
         if (initializer) { 
             this.addViewFunction(name.toString(), initializer);
         }
@@ -1188,15 +1190,15 @@ export class AngularGenerator extends Generator {
         return new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members, this.getContext());
     }
 
-    createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "any", initializer?: Expression) {
+    createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type?: TypeExpression, initializer?: Expression) {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
-    createMethod(decorators: Decorator[], modifiers: string[], asteriskToken: string, name: Identifier, questionToken: string, typeParameters: any, parameters: Parameter[], type: string, body: Block) {
+    createMethod(decorators: Decorator[], modifiers: string[], asteriskToken: string, name: Identifier, questionToken: string, typeParameters: any, parameters: Parameter[], type: TypeExpression, body: Block) {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 
-    createGetAccessor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type?: string, body?: Block) {
+    createGetAccessor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type?: TypeExpression, body?: Block) {
         return new GetAccessor(decorators, modifiers, name, parameters, type, body);
     }
 
