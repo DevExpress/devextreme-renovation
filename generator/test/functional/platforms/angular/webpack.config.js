@@ -24,15 +24,6 @@ module.exports = {
       test: /\.tsx$/,
       loaders: [
         { 
-          loader: 'babel-loader',
-          options: {
-            presets: [ 
-              "@babel/preset-env",
-              "@babel/preset-react",
-            ]
-          }
-        }, 
-        { 
           loader: 'ts-loader',
           options: {
             configFile: path.resolve('./test/functional/components/tsconfig.json'),
