@@ -1040,7 +1040,7 @@ export class SimpleTypeExpression extends TypeExpression {
         this.type = type;
     }
 
-    toString(options?: toStringOptions) { 
+    toString() { 
         return this.type;
     }
 }
@@ -1053,7 +1053,7 @@ export class ArrayTypeNode extends TypeExpression {
         this.elementType = elementType;
     }
 
-    toString(options?: toStringOptions) { 
+    toString() { 
         return `${this.elementType}[]`;
     }
 }
@@ -1069,8 +1069,39 @@ export class FunctionTypeNode extends TypeExpression {
         this.type = type;
     }
 
-    toString(options?: toStringOptions) { 
+    toString() { 
         return `(${this.parameters.map(p => p.declaration())})=>${this.type}`;
+    }
+}
+
+export class IntersectionTypeNode extends TypeExpression { 
+    types: TypeExpression[];
+    constructor(types: TypeExpression[]) { 
+        super();
+        this.types = types;
+    }
+
+    toString() { 
+        return this.types.join("&");
+    }
+}
+
+export class UnionTypeNode extends IntersectionTypeNode{
+    toString() { 
+        return this.types.join("|");
+    }
+}
+
+export class TypeQueryNode extends TypeExpression { 
+    expression: Expression;
+
+    constructor(expression: Expression) { 
+        super();
+        this.expression = expression;
+    }
+
+    toString() { 
+        return `typeof ${this.expression}`;
     }
 }
 
@@ -2650,24 +2681,24 @@ export class Generator {
         return new TypeLiteralNode(members);
     }
 
-    createLiteralTypeNode(literal: any) { 
-        return literal;
+    createLiteralTypeNode(literal: Expression) { 
+        return new SimpleTypeExpression(literal.toString());
     }
 
     createTypeAliasDeclaration(decorators: Decorator[]=[], modifiers: string[]=[], name: Identifier, typeParameters: any[]=[], type: TypeExpression) { 
         return `${modifiers.join(" ")} type ${name} = ${type}`;
     }
 
-    createIntersectionTypeNode(types: string[]) {
-        return types.join("&");
+    createIntersectionTypeNode(types: TypeExpression[]) {
+        return new IntersectionTypeNode(types);
+    }
+
+    createUnionTypeNode(types: TypeExpression[]) {
+        return new UnionTypeNode(types);
     }
 
     createTypeQueryNode(exprName: Expression) { 
-        return `typeof ${exprName}`;
-    }
-
-    createUnionTypeNode(types: string[]) {
-        return types.join("|");
+        return new TypeQueryNode(exprName);
     }
 
     createConditional(condition: Expression, whenTrue: Expression, whenFalse: Expression) {

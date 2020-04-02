@@ -882,13 +882,19 @@ mocha.describe("react-generator: expressions", function () {
     
     mocha.it("createIntersectionTypeNode", function () {
         assert.equal(generator.createIntersectionTypeNode(
-            ["string", "number"]
+            [
+                generator.createKeywordTypeNode("string"),
+                generator.createKeywordTypeNode("number")
+            ]
         ), "string&number");
     });
 
     mocha.it("createUnionTypeNode", function () {
         assert.equal(generator.createUnionTypeNode(
-            ["string", "number"]
+            [
+                generator.createKeywordTypeNode("string"),
+                generator.createKeywordTypeNode("number")
+            ]
         ), "string|number");
     });
 
