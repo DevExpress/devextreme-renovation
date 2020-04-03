@@ -15,6 +15,8 @@
       "factoryCodeGenerator.ts",
       "node_modules",
       "test/",
-      "build/test/test-cases/componentFactory"
+      "build/test/",
+      "build/test/test-cases/componentFactory",
+      "build/factoryCodeGenerator.js"
     ]
 }
