@@ -1267,6 +1267,22 @@ mocha.describe("react-generator: expressions", function () {
         assert.deepEqual(expression.getDependency(), []);
     });
 
+    mocha.it("createCallChain without question mark and parameters", function () { 
+        const expression = generator.createCallChain(
+            generator.createPropertyAccessChain(
+                generator.createIdentifier("model"),
+                undefined,
+                generator.createIdentifier("onClick")
+            ),
+            undefined,
+            undefined,
+            undefined
+          )
+
+        assert.deepEqual(expression.toString(), "model.onClick()");
+        assert.deepEqual(expression.getDependency(), []);
+    });
+
     mocha.it("createTypeOf", function () { 
         const expression = generator.createTypeOf(generator.createIdentifier("b"));
 
@@ -1589,7 +1605,7 @@ mocha.describe("common", function () {
 function createComponent(inputMembers: Array<Property | Method>, componentMembers: Array<Property | Method> = [], paramenters: { [name: string]: any } = {}):ReactComponent { 
     generator.createClassDeclaration(
         [generator.createDecorator(
-            generator.createCall(generator.createIdentifier("ComponentBindings"), [], [])
+            generator.createCall(generator.createIdentifier("ComponentBindings"), [])
         )],
         [],
         generator.createIdentifier("Input"),
@@ -2369,8 +2385,7 @@ mocha.describe("import Components", function () {
         const childProperty = generator.createProperty(
             [generator.createDecorator(generator.createCall(
                 generator.createIdentifier("OneWay"),
-                undefined,
-                []
+                undefined
             ))],
             undefined,
             generator.createIdentifier("childProp"),

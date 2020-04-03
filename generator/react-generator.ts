@@ -604,7 +604,7 @@ export class ArrowFunction extends BaseFunction {
     }
 }
 
-function checkDependency(expression: Expression, properties: Array<InternalState | State | Prop | Property | Method> = []) {
+function checkDependency(expression: Expression, properties: Array<InternalState | State | Prop | Property | Method>) {
     const dependency = expression.getAllDependency().reduce((r: { [name: string]: boolean }, d) => {
         r[d] = true;
         return r;
@@ -2559,7 +2559,7 @@ export class Generator {
         return new Decorator(expression);
     }
 
-    createProperty(decorators: Decorator[], modifiers: string[]|undefined, name: Identifier, questionOrExclamationToken?: string, type?: TypeExpression, initializer?: Expression) {
+    createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: TypeExpression, initializer?: Expression) {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
