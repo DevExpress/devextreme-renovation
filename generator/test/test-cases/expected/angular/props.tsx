@@ -4,7 +4,7 @@ function view(model: Widget) {
 import { Input, Output, EventEmitter } from "@angular/core";
 class WidgetInput {
     @Input() height: number = 10;
-    @Output() onClick: EventEmitter<any> = new EventEmitter();
+    @Output() onClick: EventEmitter<number> = new EventEmitter();
 
 }
 

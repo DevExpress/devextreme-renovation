@@ -42,7 +42,7 @@ import {
     PropertyAssignment,
     TypeExpression,
     SimpleTypeExpression,
-    BaseClassMember
+    FunctionTypeNode
 } from "./react-generator";
 
 import SyntaxKind from "./syntaxKind";
@@ -740,7 +740,7 @@ class ComponentInput extends BaseComponentInput {
             [],
             stateName,
             undefined,
-            stateMember.type
+            this.buildChangeStateType(stateMember)
         );
     }
 
@@ -751,6 +751,19 @@ class ComponentInput extends BaseComponentInput {
             ${this.members.filter(p => p instanceof Property && !p.inherited).map(m => m.toString()).filter(m => m).concat("").join(";\n")}
         }`;
     }
+}
+
+function parseEventType(type: TypeExpression) { 
+    if(type instanceof FunctionTypeNode){
+        return type.parameters.map(p => {
+            const type = p.type?.toString() || "any";
+            if (p.questionToken === SyntaxKind.QuestionToken && type !== "any") { 
+                return `${type}|${SyntaxKind.UndefinedKeyword}`;
+            }
+            return type;
+        }).join(",");
+    }
+    return "any";
 }
 
 export class Property extends BaseProperty { 
@@ -773,7 +786,7 @@ export class Property extends BaseProperty {
         const eventDecorator = this.decorators.find(d => d.name === "Event");
         const defaultValue = `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.typeDeclaration()} ${this.initializer && this.initializer.toString() ? `= ${this.initializer.toString()}` : ""}`;
         if (eventDecorator) { 
-            return `${eventDecorator} ${this.name}${this.questionOrExclamationToken}:EventEmitter<any> = new EventEmitter()`
+            return `${eventDecorator} ${this.name}${this.questionOrExclamationToken}:EventEmitter<${parseEventType(this.type)}> = new EventEmitter()`
         }
         if (this.decorators.find(d => d.name === "Ref")) {
             return `@ViewChild("${this.name}", {static: false}) ${this.name}:ElementRef<${this.type}>`;

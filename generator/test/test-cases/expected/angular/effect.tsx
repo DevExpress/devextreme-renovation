@@ -11,7 +11,7 @@ import { Input, Output, EventEmitter } from "@angular/core";
 export class WidgetInput {
     @Input() p: string = "10";
     @Input() s: number = 10;
-    @Output() sChange: EventEmitter<any> = new EventEmitter();
+    @Output() sChange: EventEmitter<number> = new EventEmitter();
 }
 
 import { Component, NgModule} from "@angular/core";

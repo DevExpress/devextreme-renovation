@@ -2345,7 +2345,7 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(property.toString(), "@Output() onClick?:EventEmitter<any> = new EventEmitter()");
         });
 
-        mocha.it.skip("Event Prop with type", function () {
+        mocha.it("Event Prop with type FunctionNodeType", function () {
             const property = generator.createProperty(
                 [createDecorator("Event")],
                 [],
@@ -2353,21 +2353,32 @@ mocha.describe("Angular generator", function () {
                 generator.SyntaxKind.QuestionToken,
                 generator.createFunctionTypeNode(
                     undefined,
-                    [generator.createParameter(
-                        [],
-                        [],
-                        "",
-                        generator.createIdentifier("a"),
-                        "",
-                        generator.createKeywordTypeNode("number"),
-                        generator.createNumericLiteral("1")
-                    )],
-                    generator.createKeywordTypeNode("void")
+                    [
+                        generator.createParameter(
+                            [],
+                            [],
+                            undefined,
+                            generator.createIdentifier("a"),
+                            generator.SyntaxKind.QuestionToken,
+                            generator.createKeywordTypeNode("string"),
+                            undefined
+                        ),
+                        generator.createParameter(
+                            [],
+                            [],
+                            undefined,
+                            generator.createIdentifier("b"),
+                            undefined,
+                            generator.createKeywordTypeNode("number"),
+                            undefined
+                        )
+                    ],
+                    generator.createKeywordTypeNode("any")
                 ),
                 generator.createArrowFunction([], [], [], undefined, generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
             );
 
-            assert.strictEqual(property.toString(), "@Input() onClick:EventEmitter<number> = new EventEmitter()");
+            assert.strictEqual(property.toString(), "@Output() onClick?:EventEmitter<string|undefined,number> = new EventEmitter()");
         });  
         
         mocha.it("Generate change for TwoWay prop with type", function () { 
@@ -2391,7 +2402,7 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(bindings.members.length, 2);
-            assert.strictEqual(bindings.members[1].toString(), "@Output() p1Change:EventEmitter<any> = new EventEmitter()");
+            assert.strictEqual(bindings.members[1].toString(), "@Output() p1Change:EventEmitter<number> = new EventEmitter()");
         });
 
         mocha.it("TwoWay without type", function () { 

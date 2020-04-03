@@ -988,13 +988,30 @@ export interface Heritable {
 
 export class ComponentInput extends Class implements Heritable {
 
+    buildChangeStateType(stateMember: Property) {
+        return new FunctionTypeNode(
+            undefined,
+            [
+                new Parameter(
+                    [],
+                    [],
+                    undefined,
+                    stateMember._name,
+                    undefined,
+                    stateMember.type
+                )
+            ],
+            new SimpleTypeExpression("void")
+        );
+    }
+
     buildChangeState(stateMember: Property, stateName: Identifier) { 
         return new Property(
             [new Decorator(new Call(new Identifier("Event"), undefined, []))],
             [],
             stateName,
             SyntaxKind.QuestionToken,
-            new SimpleTypeExpression(`(${stateMember._name}:${stateMember.type})=>void`),
+            this.buildChangeStateType(stateMember),
             new SimpleExpression("()=>{}")
         );
     }
