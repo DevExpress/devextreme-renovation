@@ -13,6 +13,7 @@ import {
     ImportDeclaration,
     HeritageClause,
     Expression,
+    TypeExpression,
 } from "./react-generator";
 import path from "path";
 
@@ -96,7 +97,7 @@ export class PreactGenerator extends Generator {
         return new JsxClosingElement(tagName);
     }
 
-    createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "", initializer?: Expression) {
+    createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type?: TypeExpression, initializer?: Expression) {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 }

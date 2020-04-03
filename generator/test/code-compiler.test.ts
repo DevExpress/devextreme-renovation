@@ -7,7 +7,7 @@ import path from "path";
 import { printSourceCodeAst } from "./helpers/common";
 import sinon from "sinon";
 
-import { generateComponents } from "../component-compiler";
+import { generateComponents, deleteFolderRecursive } from "../component-compiler";
 import File from "vinyl";
 
 if (!mocha.describe) { 
@@ -61,5 +61,23 @@ mocha.describe("code-compiler: gulp integration", function() {
             setContextSpy.restore();
         });
     });
+});
 
+mocha.describe("utils", function () { 
+    const BASE_PATH = "test-utils-tmp";
+    this.beforeEach(function () { 
+        deleteFolderRecursive(BASE_PATH);
+    });
+    
+    mocha.it("delete folders", function () {
+        const INTERNAL_PATH = path.join(BASE_PATH, "internal");
+        fs.mkdirSync(BASE_PATH);
+        fs.mkdirSync(INTERNAL_PATH);
+        fs.writeFileSync(path.join(BASE_PATH, "f1.txt"), "test");
+        fs.writeFileSync(path.join(INTERNAL_PATH, "f1.txt"), "test");
+
+        deleteFolderRecursive(BASE_PATH);
+
+        assert.ok(!fs.existsSync(BASE_PATH))
+    });
 });

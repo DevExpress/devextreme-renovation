@@ -3,16 +3,18 @@ function view(model: Widget) {
 }
 declare type WidgetInput = {
   pressed?: boolean;
+  s?: boolean;
+
   defaultPressed?: boolean;
   pressedChange?: (pressed: boolean) => void;
 
-  s?: boolean;
   defaultS?: boolean;
   sChange?: (s: boolean) => void
 }
 const WidgetInput: WidgetInput = {
   pressed: false,
-  pressedChange: () => { }
+  pressedChange: () => { },
+  sChange: () => { }
 };
 
 import React, { useState, useCallback } from 'react';
@@ -41,7 +43,5 @@ export default function Widget(props: WidgetInput) {
 }
 
 Widget.defaultProps = {
-  ...WidgetInput,
-  pressedChange: () => { },
-  sChange: () => { }
+  ...WidgetInput
 }

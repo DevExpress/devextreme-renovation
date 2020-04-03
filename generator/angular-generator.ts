@@ -39,7 +39,10 @@ import {
     PropertyAccessChain,
     Conditional,
     Prefix,
-    PropertyAssignment
+    PropertyAssignment,
+    TypeExpression,
+    SimpleTypeExpression,
+    FunctionTypeNode
 } from "./react-generator";
 
 import SyntaxKind from "./syntaxKind";
@@ -73,9 +76,7 @@ function processTagName(tagName: Expression, context: GeneratorContex) {
     const component = context.components?.[tagName.toString()];
         if (component) { 
             const selector = (component as AngularComponent).selector;
-            if (selector) {
-                return new Identifier(selector);
-            }
+            return new Identifier(selector);
     }
     return tagName;
 }
@@ -89,7 +90,7 @@ export class JsxOpeningElement extends ReactJsxOpeningElement {
     context: GeneratorContex;
     component?: AngularComponent;
     attributes: Array<JsxAttribute | JsxSpreadAttribute>;
-    constructor(tagName: Expression, typeArguments: any[] = [], attributes: Array<JsxAttribute | JsxSpreadAttribute> = [], context: GeneratorContex) { 
+    constructor(tagName: Expression, typeArguments: any, attributes: Array<JsxAttribute | JsxSpreadAttribute> = [], context: GeneratorContex) { 
         super(processTagName(tagName, context), typeArguments, attributes);
         this.context = context;
         const component = context.components?.[tagName.toString()];
@@ -355,7 +356,7 @@ export class JsxExpression extends ReactJsxExpression {
         return;
     }
 
-    compileStatement(statement: Expression | undefined, condition: Expression, options?: toStringOptions): string { 
+    compileStatement(statement: Expression, condition: Expression, options?: toStringOptions): string {
         const conditionAttribute = new AngularDirective(
             new Identifier("*ngIf"),
             condition
@@ -365,20 +366,18 @@ export class JsxExpression extends ReactJsxExpression {
         if (isElement(expression)) {
             expression.addAttribute(conditionAttribute);
             return expression.toString(options);
-        } else if (statement) {
-            const containerIdentifer = new Identifier("ng-container")
-            return new JsxElement(
-                new JsxOpeningElement(
-                    containerIdentifer,
-                    undefined,
-                    [conditionAttribute],
-                    {}
-                ),
-                [new JsxExpression(undefined, statement)],
-                new JsxClosingElement(containerIdentifer)
-            ).toString(options);
         }
-        return "";
+        const containerIdentifer = new Identifier("ng-container")
+        return new JsxElement(
+            new JsxOpeningElement(
+                containerIdentifer,
+                undefined,
+                [conditionAttribute],
+                {}
+            ),
+            [new JsxExpression(undefined, statement)],
+            new JsxClosingElement(containerIdentifer)
+        ).toString(options);
     }
 
     toString(options?: toStringOptions) {
@@ -386,8 +385,10 @@ export class JsxExpression extends ReactJsxExpression {
 
         if (expression instanceof Binary) { 
             const parsedBinary = processBinary(expression, options);
-            if (parsedBinary) { 
+            if (parsedBinary) {
                 return parsedBinary.toString(options);
+            } else { 
+                throw `Operator ${expression.operator} is not supoorted: ${expression.toString()}`;
             }
         }
 
@@ -651,9 +652,6 @@ class Decorator extends BaseDecorator {
     }
 
     addParameter(name: string, value: Expression) {
-        if (this.name !== "Component") { 
-            return;
-        }
         const parameters = (this.expression.arguments[0] as ObjectLiteral);
         parameters.setProperty(name, value);
     }
@@ -727,10 +725,25 @@ function compileCoreImports(members: Array<Property|Method>, context: AngularGen
 
 class ComponentInput extends BaseComponentInput { 
     context: AngularGeneratorContext;
-    constructor(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>, context: AngularGeneratorContext) { 
+    constructor(decorators: Decorator[], modifiers: string[]=[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>, context: AngularGeneratorContext) { 
         super(decorators, modifiers, name, typeParameters, heritageClauses, members);
         this.context = context;
     }
+
+    buildDefaultStateProperty() { 
+        return null;
+    }
+    
+    buildChangeState(stateMember: Property, stateName: Identifier) { 
+        return  new Property(
+            [new Decorator(new Call(new Identifier("Event"), undefined, []), {})],
+            [],
+            stateName,
+            undefined,
+            this.buildChangeStateType(stateMember)
+        );
+    }
+
     toString() {
         return `
         ${compileCoreImports(this.members.filter(m => !m.inherited), this.context)}
@@ -740,6 +753,19 @@ class ComponentInput extends BaseComponentInput {
     }
 }
 
+function parseEventType(type: TypeExpression) { 
+    if(type instanceof FunctionTypeNode){
+        return type.parameters.map(p => {
+            const type = p.type?.toString() || "any";
+            if (p.questionToken === SyntaxKind.QuestionToken && type !== "any") { 
+                return `${type}|${SyntaxKind.UndefinedKeyword}`;
+            }
+            return type;
+        }).join(",");
+    }
+    return "any";
+}
+
 export class Property extends BaseProperty { 
     get name() { 
         if (this.decorators.find(d => d.name === "Slot")) { 
@@ -747,9 +773,9 @@ export class Property extends BaseProperty {
         }
         return this._name.toString();
     }
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "any", initializer?: Expression, inherited: boolean=false) { 
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type?: TypeExpression, initializer?: Expression, inherited: boolean=false) { 
         if (decorators.find(d => d.name === "Template")) { 
-            type = `TemplateRef<any>`;
+            type = new SimpleTypeExpression(`TemplateRef<any>`);
         }
         super(decorators, modifiers, name, questionOrExclamationToken, type, initializer, inherited);
     }
@@ -760,17 +786,13 @@ export class Property extends BaseProperty {
         const eventDecorator = this.decorators.find(d => d.name === "Event");
         const defaultValue = `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.typeDeclaration()} ${this.initializer && this.initializer.toString() ? `= ${this.initializer.toString()}` : ""}`;
         if (eventDecorator) { 
-            return `${eventDecorator} ${this.name}${this.questionOrExclamationToken}:EventEmitter<any> = new EventEmitter()`
+            return `${eventDecorator} ${this.name}${this.questionOrExclamationToken}:EventEmitter<${parseEventType(this.type)}> = new EventEmitter()`
         }
         if (this.decorators.find(d => d.name === "Ref")) {
             return `@ViewChild("${this.name}", {static: false}) ${this.name}:ElementRef<${this.type}>`;
         }
         if (this.decorators.find(d => d.name === "ApiRef")) {
             return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:${this.type}`;
-        }
-        if (this.decorators.find(d => d.name.toString() === "TwoWay")) { 
-            return `${defaultValue};
-            @Output() ${this.name}Change${this.questionOrExclamationToken}: EventEmitter<${this.type}> = new EventEmitter()`
         }
         if (this.decorators.find(d => d.name === "Slot")) { 
             return "";
@@ -801,7 +823,7 @@ class Method extends BaseMethod {
     toString(options: toStringOptions) { 
         return `${this.modifiers.join(" ")} ${this.name}(${
             this.parameters.map(p => p.declaration()).join(",")
-            })${this.type ? `:${this.type}` : ""}${this.body.toString(options)}`;
+            }):${this.type}${this.body.toString(options)}`;
     }
 
     getter() { 
@@ -1156,11 +1178,11 @@ export class AngularGenerator extends Generator {
         return properties;
     }
 
-    createJsxOpeningElement(tagName: Expression, typeArguments: any[] = [], attributes: Array<JsxAttribute|JsxSpreadAttribute> = []) {
+    createJsxOpeningElement(tagName: Expression, typeArguments?: any, attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
         return new JsxOpeningElement(tagName, typeArguments, attributes, this.getContext());
     }
 
-    createJsxSelfClosingElement(tagName: Expression, typeArguments: any[] = [], attributes: Array<JsxAttribute|JsxSpreadAttribute> = []) {
+    createJsxSelfClosingElement(tagName: Expression, typeArguments?: any, attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
         return new JsxSelfClosingElement(tagName, typeArguments, attributes, this.getContext());
     }
 
@@ -1172,19 +1194,17 @@ export class AngularGenerator extends Generator {
         return new JsxElement(openingElement, children, closingElement);
     }
 
-    createFunctionDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, typeParameters: string[], parameters: Parameter[], type: string, body: Block) {
+    createFunctionDeclaration(decorators: Decorator[]| undefined, modifiers: string[]|undefined, asteriskToken: string, name: Identifier, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, body: Block) {
         const functionDeclaration = new AngularFunction(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
-        if (functionDeclaration.name) { 
-            this.addViewFunction(functionDeclaration.name.toString(), functionDeclaration);
-        }
+        this.addViewFunction(functionDeclaration.name!.toString(), functionDeclaration);
         return functionDeclaration;
     }
 
-    createArrowFunction(modifiers: string[] = [], typeParameters: string[] = [], parameters: Parameter[], type: string = "", equalsGreaterThanToken: string, body: Block | Expression) { 
+    createArrowFunction(modifiers: string[]|undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, equalsGreaterThanToken: string, body: Block | Expression) { 
         return new ArrowFunctionWithTemplate(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body, this.getContext());
     }
 
-    createVariableDeclaration(name: Identifier, type: string = "", initializer?: Expression | string) {
+    createVariableDeclaration(name: Identifier, type?: TypeExpression, initializer?: Expression) {
         if (initializer) { 
             this.addViewFunction(name.toString(), initializer);
         }
@@ -1195,23 +1215,23 @@ export class AngularGenerator extends Generator {
         return new Decorator(expression, this.getContext());
     }
 
-    createComponentBindings(decorators: Decorator[], modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
+    createComponentBindings(decorators: Decorator[], modifiers: string[]|undefined, name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
         return new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members, this.getContext());
     }
 
-    createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: string = "any", initializer?: Expression) {
+    createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: TypeExpression, initializer?: Expression) {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
-    createMethod(decorators: Decorator[], modifiers: string[], asteriskToken: string, name: Identifier, questionToken: string, typeParameters: any, parameters: Parameter[], type: string, body: Block) {
+    createMethod(decorators: Decorator[], modifiers: string[], asteriskToken: string, name: Identifier, questionToken: string, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, body: Block) {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 
-    createGetAccessor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, parameters: Parameter[], type?: string, body?: Block) {
+    createGetAccessor(decorators: Decorator[]|undefined, modifiers: string[]|undefined, name: Identifier, parameters: Parameter[], type?: TypeExpression, body?: Block) {
         return new GetAccessor(decorators, modifiers, name, parameters, type, body);
     }
 
-    createComponent(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
+    createComponent(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: any, heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
         return new AngularComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members, this.getContext());
     }
 

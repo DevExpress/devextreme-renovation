@@ -1,3 +1,5 @@
+import "typescript";
+
 function view() { }
 export class WidgetProps {}
 
@@ -6,7 +8,7 @@ import { CommonModule } from "@angular/common";
 import { convertRulesToOptions, Rule } from "../../../../../../component_declaration/default_options"
 type WidgetOptionRule = Rule<WidgetProps>;
 
-const __defaultOptionRules: WidgetOptionRule[] = [];
+const __defaultOptionRules: WidgetOptionRule[] = [{ device: true, options: {} }];
 export function defaultOptions(rule: WidgetOptionRule) {
     __defaultOptionRules.push(rule);
 

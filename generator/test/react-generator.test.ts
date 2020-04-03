@@ -1,7 +1,7 @@
 import assert from "assert";
 import mocha from "mocha";
-import ts, { SyntaxKind } from "typescript";
-import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex, toStringOptions, SimpleExpression, PropertyAccess, ElementAccess } from "../react-generator";
+import ts from "typescript";
+import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex, toStringOptions, SimpleExpression, PropertyAccess, ElementAccess, Class, ImportDeclaration, Expression } from "../react-generator";
 
 import compile from "../component-compiler";
 import path from "path";
@@ -166,6 +166,15 @@ mocha.describe("react-generator", function () {
 });
 
 mocha.describe("react-generator: expressions", function () {
+    mocha.describe("Base Expressions", function () { 
+        mocha.it("Expression", function () { 
+            const expression = new Expression();
+
+            assert.strictEqual(expression.toString(), "");
+            assert.deepEqual(expression.getDependency(), []);
+            assert.deepEqual(expression.getAllDependency(), []);
+        });
+    });
     mocha.it("Indentifier", function () {
         const identifier = generator.createIdentifier("a");
         assert.equal(identifier, 'a');
@@ -178,7 +187,9 @@ mocha.describe("react-generator: expressions", function () {
         assert.strictEqual(generator.createNumericLiteral("10").toString(), "10");
     });
     mocha.it("createArrayTypeNode", function () {
-        assert.strictEqual(generator.createArrayTypeNode(generator.SyntaxKind.NumberKeyword), "number[]");
+        assert.strictEqual(generator.createArrayTypeNode(
+            generator.createKeywordTypeNode(generator.SyntaxKind.NumberKeyword)
+        ).toString(), "number[]");
     });
     mocha.it("createLiteralTypeNode", function () { 
         assert.strictEqual(generator.createLiteralTypeNode(generator.createStringLiteral("2")).toString(), '"2"'); ;
@@ -187,8 +198,8 @@ mocha.describe("react-generator: expressions", function () {
         const identifier = generator.createIdentifier("a");
         assert.equal(generator.createVariableDeclaration(identifier, undefined, undefined).toString(), 'a', "w/o initializer");
         assert.equal(generator.createVariableDeclaration(identifier, undefined, generator.createStringLiteral("str")).toString(), 'a="str"', "w initializer");
-        assert.equal(generator.createVariableDeclaration(identifier, "string", undefined).toString(), 'a:string', "w type");
-        assert.equal(generator.createVariableDeclaration(identifier, "string", generator.createStringLiteral("str")).toString(), 'a:string="str"', "w type and initializer");
+        assert.equal(generator.createVariableDeclaration(identifier, generator.createKeywordTypeNode("string")).toString(), 'a:string', "w type");
+        assert.equal(generator.createVariableDeclaration(identifier, generator.createKeywordTypeNode("string"), generator.createStringLiteral("str")).toString(), 'a:string="str"', "w type and initializer");
     });
 
     mocha.it("createJsxText", function () {
@@ -221,6 +232,14 @@ mocha.describe("react-generator: expressions", function () {
             assert.strictEqual(list["a"].toString(), `"str"`);    
         });
 
+        mocha.it("createVariableDeclaration without initializer - getVariableExpression should return empty object", function () { 
+            const expresion = generator.createVariableDeclaration(
+                generator.createIdentifier("a")
+            );
+
+            assert.deepEqual(expresion.getVariableExpressions(), {});  
+        });
+
         mocha.it("createVariableDeclaration - wrap expression in paren complex", function () { 
             const expresion = generator.createVariableDeclaration(
                 generator.createIdentifier("a"),
@@ -237,7 +256,7 @@ mocha.describe("react-generator: expressions", function () {
             assert.strictEqual(list["a"].toString(), `(i-j)`);    
         });
 
-        mocha.it("getVariableExpression", function () {
+        mocha.it("getVariableExpression from VariableDeclaration", function () {
             const expresion = generator.createVariableDeclarationList(
                 [
                     generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str")),
@@ -284,6 +303,27 @@ mocha.describe("react-generator: expressions", function () {
             assert.strictEqual(Object.keys(list).length, 2);
             assert.strictEqual(list["height"].toString(), "this.height");
             assert.strictEqual(list["source"].toString(), "this.props.source");
+            assert.ok(list["height"] instanceof PropertyAccess);
+        });
+
+        mocha.it("VariableDeclaration with object binding pattern with string name - getVariableDeclaration", function () {
+            const expresion = generator.createVariableDeclaration(
+                generator.createObjectBindingPattern([
+                    generator.createBindingElement(
+                        undefined,
+                        undefined,
+                        "height",
+                        undefined
+                    )
+                ]),
+                undefined,
+                generator.createIdentifier("this")
+            );
+
+            const list = expresion.getVariableExpressions();
+            
+            assert.strictEqual(Object.keys(list).length, 1);
+            assert.strictEqual(list["height"].toString(), "this.height");
             assert.ok(list["height"] instanceof PropertyAccess);
         });
 
@@ -475,10 +515,42 @@ mocha.describe("react-generator: expressions", function () {
             undefined,
             generator.createImportClause(
                 generator.createIdentifier("Button"),
-              undefined
+                undefined
             ),
             generator.createStringLiteral("./button")
-          ), 'import Button from "./button"')
+        ), 'import Button from "./button"');
+    });
+
+    mocha.it("ImportDeclaration: can remove named import", function () { 
+        const expression = generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                generator.createIdentifier("ts"),
+                generator.createNamedImports([generator.createImportSpecifier(
+                    undefined,
+                    generator.createIdentifier("Node")
+                )])
+            ),
+            generator.createStringLiteral("typescript")
+        ) as ImportDeclaration;
+
+        expression.importClause.remove("Node");
+
+        assert.equal(expression.toString(), 'import ts from "typescript"');
+    });
+
+    mocha.it("ImportDeclaration: remove named import if no named bindings", function () { 
+        const expression = generator.createImportDeclaration(
+            undefined,
+            undefined,
+            undefined,
+            generator.createStringLiteral("typescript")
+        ) as ImportDeclaration;
+
+        expression.importClause.remove("Node");
+
+        assert.equal(expression.toString(), 'import "typescript"');
     });
 
     mocha.it("createImportDeclaration exclude imports from component_declaration/jsx to component_declaration/jsx-g", function () { 
@@ -540,6 +612,16 @@ mocha.describe("react-generator: expressions", function () {
         assert.equal(propertyAssignment.value, "k");
     });
 
+    mocha.it("ShorthandPropertyAssignment with expression", function () {
+        const propertyAssignment = generator.createShorthandPropertyAssignment(
+            generator.createIdentifier("k"),
+            generator.createIdentifier("v")
+        );
+        assert.equal(propertyAssignment.toString(), 'k:v');
+        assert.equal(propertyAssignment.key, "k");
+        assert.equal(propertyAssignment.value, "v");
+    });
+
     mocha.it("SpreadAssignement", function () {
         const propertyAssignment = generator.createSpreadAssignment(generator.createIdentifier("obj"));
         assert.equal(propertyAssignment.toString(), '...obj');
@@ -552,6 +634,18 @@ mocha.describe("react-generator: expressions", function () {
             generator.createSpreadAssignment(generator.createIdentifier("obj"))
         ], true);
         assert.equal(objectLiteral.toString(), '{a,\nk:a,\n...obj}');
+    });
+
+    mocha.it("ObjectLiteral: Can remove property", function () {
+        const objectLiteral = generator.createObjectLiteral([
+            generator.createShorthandPropertyAssignment(generator.createIdentifier("a"), undefined),
+            generator.createPropertyAssignment(generator.createIdentifier("k"), generator.createIdentifier("a")),
+            generator.createSpreadAssignment(generator.createIdentifier("obj"))
+        ], true);
+        
+        objectLiteral.removeProperty("k");
+            
+        assert.equal(objectLiteral.toString(), '{a,\n...obj}');
     });
 
     mocha.it("Paren", function () {
@@ -614,12 +708,29 @@ mocha.describe("react-generator: expressions", function () {
     });
 
     mocha.it("ElementAccess", function () {
-        assert.equal(generator.createElementAccess(
+        const expression = generator.createElementAccess(
             generator.createPropertyAccess(
                 generator.createThis(),
                 generator.createIdentifier("field")),
             generator.createNumericLiteral("10")
-        ).toString(), "this.field[10]")
+        );
+        assert.equal(expression.toString(), "this.field[10]");
+            
+        assert.deepEqual(expression.getDependency(), ["field"]);
+    });
+
+    mocha.it("ElementAccess: getDependency shoud take into account index expression", function () {
+        const expression = generator.createElementAccess(
+            generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("field")),
+            generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("field1"))
+        );
+        assert.equal(expression.toString(), "this.field[this.field1]");
+            
+        assert.deepEqual(expression.getDependency(), ["field", "field1"]);
     });
 
     mocha.it("NonNullExpression", function () {
@@ -668,7 +779,7 @@ mocha.describe("react-generator: expressions", function () {
             undefined,
             generator.createIdentifier("a"),
             generator.SyntaxKind.QuestionToken,
-            "string",
+            generator.createKeywordTypeNode("string"),
             undefined
         );
 
@@ -700,7 +811,7 @@ mocha.describe("react-generator: expressions", function () {
             undefined,
             generator.createIdentifier("a"),
             generator.SyntaxKind.QuestionToken,
-            "string",
+            generator.createKeywordTypeNode("string"),
             undefined
         );
 
@@ -716,7 +827,7 @@ mocha.describe("react-generator: expressions", function () {
             undefined,
             generator.createIdentifier("a"),
             generator.SyntaxKind.QuestionToken,
-            "string",
+            generator.createKeywordTypeNode("string"),
             generator.createStringLiteral("str")
         );
 
@@ -725,23 +836,43 @@ mocha.describe("react-generator: expressions", function () {
         assert.equal(parameter.typeDeclaration(), "a?:string");
     });
 
-    mocha.it("createPropertySignature", function () {
-        const propertySignatureWithQuestionToken = generator.createPropertySignature(
-            [],
-            generator.createIdentifier("a"),
-            generator.SyntaxKind.QuestionToken,
-            "string"
-        );
+    mocha.describe("createPropertySignature", function () { 
 
-        const propertySignatureWithoutQuestionToken = generator.createPropertySignature(
-            [],
-            generator.createIdentifier("a"),
-            undefined,
-            "string"
-        );
+        mocha.it("Only name is defined", function () {
+            assert.strictEqual(generator.createPropertySignature(
+                undefined,
+                generator.createIdentifier("a"),
+                undefined
+            ).toString(), "a");
+        });
 
-        assert.equal(propertySignatureWithQuestionToken.toString(), "a?:string");
-        assert.equal(propertySignatureWithoutQuestionToken.toString(), "a:string");
+        mocha.it("with type", function () {
+            assert.strictEqual(generator.createPropertySignature(
+                undefined,
+                generator.createIdentifier("a"),
+                undefined,
+                generator.createKeywordTypeNode("string")
+            ).toString(), "a:string");
+        });
+
+        mocha.it("with question token token", function () {
+            assert.strictEqual(generator.createPropertySignature(
+                undefined,
+                generator.createIdentifier("a"),
+                generator.SyntaxKind.QuestionToken,
+                generator.createKeywordTypeNode("string")
+            ).toString(), "a?:string");
+        });
+
+        mocha.it("with initializer", function () {
+            assert.strictEqual(generator.createPropertySignature(
+                undefined,
+                generator.createIdentifier("a"),
+                generator.SyntaxKind.QuestionToken,
+                generator.createKeywordTypeNode("number"),
+                generator.createNumericLiteral("10")
+            ).toString(), "a?:number=10");
+        });
     });
 
     mocha.it("createTypeLiteralNode", function () {
@@ -749,14 +880,14 @@ mocha.describe("react-generator: expressions", function () {
             [],
             generator.createIdentifier("a"),
             generator.SyntaxKind.QuestionToken,
-            "string"
+            generator.createKeywordTypeNode("string")
         );
 
         const propertySignatureWithoutQuestionToken = generator.createPropertySignature(
             [],
             generator.createIdentifier("b"),
             undefined,
-            "string"
+            generator.createKeywordTypeNode("string")
         );
 
         assert.equal(generator.createTypeLiteralNode(
@@ -772,7 +903,7 @@ mocha.describe("react-generator: expressions", function () {
                 [],
                 generator.createIdentifier("b"),
                 undefined,
-                "string"
+                generator.createKeywordTypeNode("string")
             )]
         );
         const expression = generator.createTypeAliasDeclaration(
@@ -785,6 +916,25 @@ mocha.describe("react-generator: expressions", function () {
         assert.strictEqual(expression.toString(), "export declare type Name = {b:string}");
     });
 
+    mocha.it("createTypeAliasDeclaration without modifiers", function () { 
+        const literalNode = generator.createTypeLiteralNode(
+            [generator.createPropertySignature(
+                [],
+                generator.createIdentifier("b"),
+                undefined,
+                generator.createKeywordTypeNode("string")
+            )]
+        );
+        const expression = generator.createTypeAliasDeclaration(
+            undefined,
+            undefined,
+            generator.createIdentifier("Name"),
+            [],
+            literalNode);
+
+        assert.strictEqual(expression.toString(), " type Name = {b:string}");
+    });
+
     mocha.it("TypeQueryNode", function () { 
         const expression = generator.createTypeQueryNode(generator.createIdentifier("Component"));
 
@@ -793,13 +943,19 @@ mocha.describe("react-generator: expressions", function () {
     
     mocha.it("createIntersectionTypeNode", function () {
         assert.equal(generator.createIntersectionTypeNode(
-            ["string", "number"]
+            [
+                generator.createKeywordTypeNode("string"),
+                generator.createKeywordTypeNode("number")
+            ]
         ), "string&number");
     });
 
     mocha.it("createUnionTypeNode", function () {
         assert.equal(generator.createUnionTypeNode(
-            ["string", "number"]
+            [
+                generator.createKeywordTypeNode("string"),
+                generator.createKeywordTypeNode("number")
+            ]
         ), "string|number");
     });
 
@@ -915,6 +1071,51 @@ mocha.describe("react-generator: expressions", function () {
         );
 
         assert.equal(getResult(expression.toString()), getResult("for(i;true;i++){continue}"));
+        assert.deepEqual(expression.getDependency(), []);
+    });
+
+    mocha.it("For without initializer, condition, incrementor", function () {
+        const expression = generator.createFor(
+            undefined,
+            undefined,
+            undefined,
+            generator.createBlock(
+                [generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("name")
+                )],
+                true
+            )
+        );
+
+        assert.equal(getResult(expression.toString()), getResult("for(;;){this.name}"));
+        assert.deepEqual(expression.getDependency(), ["name"]);
+    });
+
+    mocha.it("For: get dependency from initializer, condition, incrementor", function () {
+        const expression = generator.createFor(
+            generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("i")
+            ),
+            generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("c")
+            ),
+            generator.createPostfix(
+                generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("ii")
+                ),
+                generator.SyntaxKind.PlusPlusToken
+            ),
+            generator.createBlock(
+                [generator.createContinue()],
+                true
+            )
+        );
+
+        assert.deepEqual(expression.getDependency(), ["i", "c", "ii"])
     });
 
     mocha.it("ForIn", function () { 
@@ -927,16 +1128,24 @@ mocha.describe("react-generator: expressions", function () {
                 )],
                 generator.NodeFlags.Let
             ),
-            generator.createIdentifier("obj"),
+            generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("i")
+            ),
             generator.createBlock(
-                [],
+                [generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("ii")
+                )],
                 true
             )
         );
 
         const actualString = expression.toString();
 
-        assert.equal(getResult(actualString), getResult("for(let i in obj){}"));
+        assert.equal(getResult(actualString), getResult("for(let i in this.i){this.ii}"));
+        assert.deepEqual(expression.getDependency(), ["i", "ii"]);
+        
     });
 
     mocha.it("createJsxSpreadAttribute", function () { 
@@ -944,15 +1153,23 @@ mocha.describe("react-generator: expressions", function () {
             generator.createIdentifier("field"));
         
         assert.equal(expression.toString(), "{...field}");
+        assert.strictEqual(expression.isJsx(), true);
+    });
+
+    mocha.it("createJsxExpression", function () { 
+        const expression = generator.createJsxExpression(
+            undefined,
+            generator.createIdentifier("field"));
+        
+        assert.equal(expression.toString(), "{field}");
+        assert.strictEqual(expression.isJsx(), true);
     });
 
     mocha.it("createSwitch", function () {
         const clause1 = generator.createCaseClause(generator.createNumericLiteral("1"), [
-            generator.createVariableDeclarationList(
-                [
-                    generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str"))
-                ],
-                generator.NodeFlags.Const
+            generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("name")
             ),
             generator.createBreak()
         ]);
@@ -968,18 +1185,23 @@ mocha.describe("react-generator: expressions", function () {
 
         const block = generator.createCaseBlock([clause1, clause2]);
 
-        const expression = generator.createSwitch(generator.createIdentifier("expr"), block);
+        const expression = generator.createSwitch(generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("expr")
+        ), block);
         const actualString = expression.toString();
         assert.equal(getResult(actualString), getResult(`
-        switch(expr){
+        switch(this.expr){
             case 1:
-                const a = "str";
+                this.name;
                 break;
             default:
                 const a = "str";
                 break;
         }
         `));
+
+        assert.deepEqual(expression.getDependency(), ["expr", "name"]);
     });
 
     mocha.it("createDebuggerStatement", function () { 
@@ -1045,6 +1267,22 @@ mocha.describe("react-generator: expressions", function () {
         assert.deepEqual(expression.getDependency(), []);
     });
 
+    mocha.it("createCallChain without question mark and parameters", function () { 
+        const expression = generator.createCallChain(
+            generator.createPropertyAccessChain(
+                generator.createIdentifier("model"),
+                undefined,
+                generator.createIdentifier("onClick")
+            ),
+            undefined,
+            undefined,
+            undefined
+          )
+
+        assert.deepEqual(expression.toString(), "model.onClick()");
+        assert.deepEqual(expression.getDependency(), []);
+    });
+
     mocha.it("createTypeOf", function () { 
         const expression = generator.createTypeOf(generator.createIdentifier("b"));
 
@@ -1070,8 +1308,8 @@ mocha.describe("react-generator: expressions", function () {
         const expression = generator.createTypeReferenceNode(
             generator.createIdentifier("Node"),
             [
-                generator.createArrayTypeNode("string"),
-                generator.createArrayTypeNode("number")
+                generator.createArrayTypeNode(generator.createKeywordTypeNode("string")),
+                generator.createArrayTypeNode(generator.createKeywordTypeNode("number"))
             ]
         );
 
@@ -1119,7 +1357,7 @@ mocha.describe("react-generator: expressions", function () {
     mocha.describe("Methods", function () {
         mocha.describe("GetAccessor", function () {
             mocha.it("type declaration with defined type", function () {
-                const expression = generator.createGetAccessor([], [], generator.createIdentifier("name"), [], "string", undefined);
+                const expression = generator.createGetAccessor([], [], generator.createIdentifier("name"), [], generator.createKeywordTypeNode("string"), undefined);
         
                 assert.strictEqual(expression.typeDeclaration(), "name:string");
             });
@@ -1138,7 +1376,7 @@ mocha.describe("react-generator: expressions", function () {
             });
 
             mocha.it("getter is call", function () {
-                const expression = generator.createGetAccessor([], [], generator.createIdentifier("name"), [], "string", undefined);
+                const expression = generator.createGetAccessor([], [], generator.createIdentifier("name"), [], generator.createKeywordTypeNode("string"), undefined);
         
                 assert.strictEqual(expression.getter(), "name()");
             });
@@ -1249,11 +1487,65 @@ mocha.describe("react-generator: expressions", function () {
 
             assert.strictEqual(expression.toString(), "[d,c]");
         });
+
+        mocha.it("createClassDeclaration", function () {
+            const expression = generator.createClassDeclaration(
+                [],
+                [],
+                generator.createIdentifier("name"),
+                [],
+                [],
+                []
+            );
+
+            assert.ok(expression instanceof Class);
+            assert.ok(!(expression instanceof ComponentInput));
+            assert.ok(!(expression instanceof ReactComponent));
+
+            // TODO implement class generation
+            assert.strictEqual(expression.toString(), "");
+        });
+
+        mocha.it("createClassDeclaration without decorators and modifiers", function () {
+            const expression = generator.createClassDeclaration(
+                undefined,
+                undefined,
+                generator.createIdentifier("name"),
+                [],
+                [],
+                []
+            );
+
+            assert.ok(expression instanceof Class);
+            assert.ok(!(expression instanceof ComponentInput));
+            assert.ok(!(expression instanceof ReactComponent));
+
+            // TODO implement class generation
+            assert.strictEqual(expression.toString(), "");
+        });
+    });
+
+    mocha.it("JsxElement", function () {
+        const expression = generator.createJsxElement(
+            generator.createJsxOpeningElement(generator.createIdentifier("div"), [], [
+                generator.createJsxAttribute(
+                    generator.createIdentifier("name"),
+                    generator.createJsxExpression(
+                        undefined,
+                        generator.createIdentifier("value")
+                    )
+                )
+            ]),
+            [],
+            generator.createJsxClosingElement(generator.createIdentifier("div"))
+        );
+
+        assert.strictEqual(expression.toString(), "<div name={value}></div>");
     });
     
     mocha.it("JsxElement. Fragment -> React.Fragment", function () {
         const expression = generator.createJsxElement(
-            generator.createJsxOpeningElement(generator.createIdentifier("Fragment"), [], []),
+            generator.createJsxOpeningElement(generator.createIdentifier("Fragment"), []),
             [],
             generator.createJsxClosingElement(generator.createIdentifier("Fragment"))
         );
@@ -1304,12 +1596,16 @@ mocha.describe("common", function () {
         assert.equal(actual.length, expected.length);
         assert.deepEqual(Object.keys(generator.NodeFlags), expected);
     });
+
+    mocha.it("processSourceFileName", function () {
+        assert.strictEqual(generator.processSourceFileName("someName"), "someName");
+    })
 });
 
 function createComponent(inputMembers: Array<Property | Method>, componentMembers: Array<Property | Method> = [], paramenters: { [name: string]: any } = {}):ReactComponent { 
     generator.createClassDeclaration(
         [generator.createDecorator(
-            generator.createCall(generator.createIdentifier("ComponentBindings"), [], [])
+            generator.createCall(generator.createIdentifier("ComponentBindings"), [])
         )],
         [],
         generator.createIdentifier("Input"),
@@ -1389,11 +1685,11 @@ mocha.describe("React Component", function () {
                         undefined,
                         generator.createIdentifier("viewModel"),
                         undefined,
-                        component.name,
+                        generator.createKeywordTypeNode(component.name),
                         undefined
                     )
                 ],
-                "",
+                undefined,
                 generator.createBlock([
                     generator.createPropertyAccess(
                         generator.createPropertyAccess(
@@ -1431,11 +1727,11 @@ mocha.describe("React Component", function () {
                         undefined,
                         generator.createIdentifier("viewModel"),
                         undefined,
-                        component.name,
+                        generator.createKeywordTypeNode(component.name),
                         undefined
                     )
                 ],
-                "",
+                undefined,
                 generator.SyntaxKind.EqualsGreaterThanToken,
                 generator.createBlock([
                     generator.createPropertyAccess(
@@ -1491,11 +1787,11 @@ mocha.describe("React Component", function () {
                         undefined,
                         generator.createIdentifier("viewModel"),
                         undefined,
-                        component.name,
+                        generator.createKeywordTypeNode(component.name),
                         undefined
                     )
                 ],
-                "",
+                undefined,
                 generator.SyntaxKind.EqualsGreaterThanToken,
                 generator.createBlock([
                     bindingPattern,
@@ -1534,11 +1830,11 @@ mocha.describe("React Component", function () {
                         undefined,
                         generator.createIdentifier("viewModel"),
                         undefined,
-                        component.name,
+                        generator.createKeywordTypeNode(component.name),
                         undefined
                     )
                 ],
-                "",
+                undefined,
                 generator.createBlock([
                     generator.createPropertyAccess(
                         generator.createPropertyAccess(
@@ -1580,11 +1876,11 @@ mocha.describe("React Component", function () {
                         undefined,
                         generator.createIdentifier("viewModel"),
                         undefined,
-                        component.name,
+                        generator.createKeywordTypeNode(component.name),
                         undefined
                     )
                 ],
-                "",
+                undefined,
                 generator.createBlock([
                     generator.createPropertyAccess(
                         generator.createIdentifier("viewModel"),
@@ -1622,11 +1918,11 @@ mocha.describe("React Component", function () {
                         undefined,
                         generator.createIdentifier("viewModel"),
                         undefined,
-                        component.name,
+                        generator.createKeywordTypeNode(component.name),
                         undefined
                     )
                 ],
-                "",
+                undefined,
                 generator.createBlock([
                     generator.createPropertyAccess(
                         generator.createPropertyAccess(
@@ -1671,11 +1967,11 @@ mocha.describe("React Component", function () {
                         undefined,
                         generator.createIdentifier("viewModel"),
                         undefined,
-                        component.name,
+                        generator.createKeywordTypeNode(component.name),
                         undefined
                     )
                 ],
-                "",
+                undefined,
                 generator.createBlock([
                     generator.createPropertyAccess(
                         generator.createIdentifier("viewModel"),
@@ -1764,10 +2060,7 @@ mocha.describe("React Component", function () {
                         generator.createProperty(
                             [createDecorator("OneWay")],
                             [],
-                            generator.createIdentifier("p"),
-                            undefined,
-                            "",
-                            undefined
+                            generator.createIdentifier("p")
                         )
                     ]
                 };
@@ -1819,10 +2112,7 @@ mocha.describe("React Component", function () {
                         generator.createProperty(
                             [createDecorator("OneWay")],
                             [],
-                            generator.createIdentifier("p"),
-                            undefined,
-                            "",
-                            undefined
+                            generator.createIdentifier("p")
                         )
                     ]
                 };
@@ -1883,6 +2173,62 @@ mocha.describe("React Component", function () {
                 assert.strictEqual(expressionString, "{p}=viewModel.props");
             });
 
+        });
+
+        mocha.it("getHeritageProperties", function () {
+            const component = createComponent([], [
+                generator.createProperty(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("p1")
+                ),
+                generator.createProperty(
+                    [createDecorator("TwoWay")],
+                    [],
+                    generator.createIdentifier("p2")
+                ),
+                generator.createProperty(
+                    [createDecorator("Event")],
+                    [],
+                    generator.createIdentifier("p3")
+                ),
+                generator.createProperty(
+                    [createDecorator("Slot")],
+                    [],
+                    generator.createIdentifier("p4")
+                ),
+                generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("p5")
+                ),
+                generator.createProperty(
+                    [createDecorator("InternalState")],
+                    [],
+                    generator.createIdentifier("p6")
+                ),
+                generator.createMethod(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("p7"),
+                    "",
+                    undefined,
+                    [],
+                    undefined,
+                    generator.createBlock([], false)
+                ),
+                generator.createGetAccessor(
+                    [],
+                    [],
+                    generator.createIdentifier("p8"),
+                    []
+                )
+            ]);
+
+            assert.deepEqual(component.heritageProperies.map(p => p.name.toString()), [
+                "p1", "p2", "p3", "p4", "p5"
+            ]);
         });
     });
 });
@@ -2039,8 +2385,7 @@ mocha.describe("import Components", function () {
         const childProperty = generator.createProperty(
             [generator.createDecorator(generator.createCall(
                 generator.createIdentifier("OneWay"),
-                undefined,
-                []
+                undefined
             ))],
             undefined,
             generator.createIdentifier("childProp"),
@@ -2179,7 +2524,7 @@ mocha.describe("import Components", function () {
                 [],
                 generator.createIdentifier("height"),
                 generator.SyntaxKind.ExclamationToken,
-                "string",
+                generator.createKeywordTypeNode("string"),
                 generator.createStringLiteral("10px")
             )]
         );
@@ -2205,11 +2550,69 @@ mocha.describe("import Components", function () {
                 [],
                 generator.createIdentifier("height"),
                 generator.SyntaxKind.ExclamationToken,
-                "string",
+                generator.createKeywordTypeNode("string"),
                 undefined
             )]
         );
         assert.strictEqual(getResult(model.toString()), getResult("declare type Model={height!:string} const Model:Model={}"));
+    });
+
+    mocha.it("ComponentInput should generate default and change for state property", function () { 
+        const model = new ComponentInput(
+            [],
+            [],
+            generator.createIdentifier("Model"),
+            [],
+            [],
+            [generator.createProperty(
+                [createDecorator("TwoWay")],
+                [],
+                generator.createIdentifier("p"),
+                generator.SyntaxKind.ExclamationToken,
+                generator.createKeywordTypeNode("string"),
+                undefined
+            )]
+        );
+
+        assert.strictEqual(model.members.length, 3);
+        assert.strictEqual(model.members[1].defaultDeclaration(), "defaultP:undefined");
+        assert.strictEqual(model.members[1].typeDeclaration(), "defaultP?:string");
+
+        assert.strictEqual(model.members[2].defaultDeclaration(), "pChange:()=>{}");
+        assert.strictEqual(model.members[2].typeDeclaration(), "pChange?:(p:string)=>void");
+    });
+
+    mocha.it("ComponentInput should not generate change for state property if it has one", function () { 
+        const model = new ComponentInput(
+            [],
+            [],
+            generator.createIdentifier("Model"),
+            [],
+            [],
+            [generator.createProperty(
+                [createDecorator("TwoWay")],
+                [],
+                generator.createIdentifier("p"),
+                generator.SyntaxKind.ExclamationToken,
+                generator.createKeywordTypeNode("string"),
+                undefined
+            ),
+            generator.createProperty(
+                [createDecorator("Event")],
+                [],
+                generator.createIdentifier("pChange"),
+                generator.SyntaxKind.ExclamationToken,
+                generator.createKeywordTypeNode("any"),
+                undefined
+            )]
+        );
+
+        assert.strictEqual(model.members.length, 3);
+        assert.strictEqual(model.members[1].defaultDeclaration(), "pChange:undefined");
+        assert.strictEqual(model.members[1].typeDeclaration(), "pChange!:any");
+
+        assert.strictEqual(model.members[2].defaultDeclaration(), "defaultP:undefined");
+        assert.strictEqual(model.members[2].typeDeclaration(), "defaultP?:string");
     });
 });
 
@@ -2220,24 +2623,23 @@ mocha.describe("Expressions with props/state/internal state", function () {
             [],
             generator.createIdentifier("p1"),
             generator.SyntaxKind.QuestionToken,
-            "string",
-            undefined);
+            generator.createKeywordTypeNode("string"));
         
         this.state = generator.createProperty(
             [createDecorator("TwoWay")],
             [],
             generator.createIdentifier("s1"),
             generator.SyntaxKind.QuestionToken,
-            "string",
-            undefined);
+            generator.createKeywordTypeNode("string")
+        );
         
         this.internalState = generator.createProperty(
             [createDecorator("InternalState")],
             [],
             generator.createIdentifier("i1"),
             generator.SyntaxKind.QuestionToken,
-            "string",
-            undefined);
+            generator.createKeywordTypeNode("string")
+        );
         
         this.propAccess = generator.createPropertyAccess(
             generator.createThis(),
@@ -2371,22 +2773,6 @@ mocha.describe("Expressions with props/state/internal state", function () {
         );
 
         assert.deepEqual(expresion.getDependency(), ["p1", "s1"]);
-    });
-
-    mocha.it("VariableDeclarationList return empty dependecy for string initializer", function () {
-        const expresion = generator.createVariableStatement(
-            undefined,
-            generator.createVariableDeclarationList(
-                [generator.createVariableDeclaration(
-                    generator.createIdentifier("v"),
-                    undefined,
-                    "stringInitializer"
-                )],
-                generator.NodeFlags.Const
-            )
-        );
-
-        assert.deepEqual(expresion.getDependency(), []);
     });
 
     mocha.it("VariableDeclaration returns dependency for Binding Pattern", function () {
@@ -2630,8 +3016,8 @@ mocha.describe("ComponentInput", function () {
             [],
             [],
             [
-                new Property([], [], generator.createIdentifier("p"), undefined, "number", generator.createNumericLiteral("10")),
-                new Property([], [], generator.createIdentifier("p1"), undefined, "number", generator.createNumericLiteral("15"))
+                new Property([], [], generator.createIdentifier("p"), undefined, generator.createKeywordTypeNode("number"), generator.createNumericLiteral("10")),
+                new Property([], [], generator.createIdentifier("p1"), undefined, generator.createKeywordTypeNode("number"), generator.createNumericLiteral("15"))
             ]
         );
 
@@ -2654,7 +3040,7 @@ mocha.describe("ComponentInput", function () {
                     [],
                     generator.createIdentifier("template"),
                     undefined,
-                    "any",
+                    generator.createKeywordTypeNode("any"),
                     undefined
                 ),
             ]
@@ -2677,8 +3063,7 @@ mocha.describe("ComponentInput", function () {
                     [],
                     generator.createIdentifier("template"),
                     undefined,
-                    "any",
-                    undefined
+                    generator.createKeywordTypeNode("any")
                 ),
             ]
         );
@@ -2700,8 +3085,7 @@ mocha.describe("ComponentInput", function () {
                     [],
                     generator.createIdentifier("contentTemplate"),
                     undefined,
-                    "any",
-                    undefined
+                    generator.createKeywordTypeNode("any")
                 ),
             ]
         );
@@ -2728,8 +3112,7 @@ mocha.describe("ComponentInput", function () {
                     [],
                     generator.createIdentifier("p"),
                     "",
-                    generator.SyntaxKind.BooleanKeyword,
-                    undefined
+                    generator.createKeywordTypeNode(generator.SyntaxKind.BooleanKeyword)
                 )
             ]);
             assert.deepEqual(component.compileViewModelArguments(), ["props:{...props}"]);
@@ -2744,7 +3127,7 @@ mocha.describe("ComponentInput", function () {
                     [],
                     generator.createIdentifier("p"),
                     "",
-                    generator.SyntaxKind.BooleanKeyword,
+                    generator.createKeywordTypeNode(generator.SyntaxKind.BooleanKeyword),
                     undefined
                 )
             ]);
@@ -2762,7 +3145,7 @@ mocha.describe("ComponentInput", function () {
                     [],
                     generator.createIdentifier("p"),
                     "",
-                    generator.SyntaxKind.BooleanKeyword,
+                    generator.createKeywordTypeNode(generator.SyntaxKind.BooleanKeyword),
                     undefined
                 )
             ], [
@@ -2773,8 +3156,7 @@ mocha.describe("ComponentInput", function () {
                     [],
                     generator.createIdentifier("s"),
                     "",
-                    generator.SyntaxKind.BooleanKeyword,
-                    undefined
+                    generator.createKeywordTypeNode(generator.SyntaxKind.BooleanKeyword)
                 )
             ]);
             assert.deepEqual(getResult(
@@ -2979,3 +3361,5 @@ mocha.describe("Default_options", function () {
         assert.strictEqual(getResult(component.compileImports()), getResult(`import {convertRulesToOptions, Rule} from "../default_options"; import React from "react";`));
     });
 });
+
+
