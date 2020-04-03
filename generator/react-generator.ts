@@ -1393,6 +1393,7 @@ export class ReactComponent {
             .map(s => new State(s as Property));
 
         this.methods = members.filter(m => m instanceof Method && m.decorators.length === 0) as Method[];
+        this.methods.push(this.getCustomAttributesExpression());
 
         this.listeners = members.filter(m => m.decorators.find(d => d.name === "Listen"))
             .map(m => new Listener(m as Method));
@@ -1426,6 +1427,22 @@ export class ReactComponent {
                 property.inherited = true;
                 return property;
             });
+    }
+
+    getCustomAttributesExpression() {
+        debugger
+        const propsList = this.heritageProperies;
+        const statements = [new SimpleExpression('const {')];
+
+        propsList.forEach((prop) => {
+            statements.push(new SimpleExpression(`${prop.name},`));
+        });
+        statements.push(new SimpleExpression('...restProps'));
+        statements.push(new SimpleExpression('} = props;'));
+        statements.push(new SimpleExpression('return restProps;'));
+
+        const body = new Block(statements, true);
+        return new Method(undefined, undefined, '', new Identifier('customAttributes'), undefined, [], [], undefined, body);
     }
 
     compileImportStatements(hooks: string[], compats: string[]) {

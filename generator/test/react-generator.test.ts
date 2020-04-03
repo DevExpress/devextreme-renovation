@@ -144,6 +144,10 @@ mocha.describe("react-generator", function () {
     mocha.it("component-input", function () {
         this.testGenerator(this.test!.title);
     });
+    
+    mocha.it("custom-attributes", function () {
+        this.testGenerator(this.test!.title);
+    });
 
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {
@@ -2638,29 +2642,6 @@ mocha.describe("ComponentInput", function () {
         assert.strictEqual(getResult(expression.toString()), getResult("declare type BaseModel={p:number; p1:number}; export const BaseModel:BaseModel={p:10, p1: 15};"));
         const cachedComponent = generator.getContext().components!["BaseModel"];
         assert.deepEqual(cachedComponent.heritageProperies.map(p => p.toString()), ["p", "p1"]);
-    });
-
-    mocha.it("Rename Template property: template->render", function () { 
-        const expression = generator.createClassDeclaration(
-            this.decorators,
-            ["export"],
-            generator.createIdentifier("BaseModel"),
-            [],
-            [],
-            [
-                generator.createProperty([
-                    createDecorator("Template")
-                ],
-                    [],
-                    generator.createIdentifier("template"),
-                    undefined,
-                    "any",
-                    undefined
-                ),
-            ]
-        );
-
-        assert.strictEqual(getResult(expression.toString()), getResult(`declare type BaseModel={render: any}; export const BaseModel:BaseModel={};`));
     });
 
     mocha.it("Rename Template property: template->render", function () { 
