@@ -9,7 +9,7 @@ function view(model: Simple) {
 }
 
 @ComponentBindings()
-class Input { 
+class WidgetInput { 
     @OneWay() height: number = 10;
     @OneWay() width: number = 10;
 }
@@ -18,4 +18,4 @@ class Input {
     view
 })
 
-export default class Simple extends JSXComponent<Input> {}
+export default class Simple extends JSXComponent<WidgetInput> {}
