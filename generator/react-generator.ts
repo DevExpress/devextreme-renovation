@@ -48,7 +48,7 @@ function getPropName(name: Identifier | string) {
 }
 
 function getProps(members: Array<Property | Method>): Property[] {
-    return members.filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template" || d.name === "Slot")) as Property[];
+    return members.filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "TwoWay" || d.name === "Event" || d.name === "Template" || d.name === "Slot")) as Property[];
 }
 
 export interface toStringOptions {
@@ -342,7 +342,7 @@ export class ShorthandPropertyAssignment extends ExpressionWithOptionalExpressio
     }
 
     toString(options?: toStringOptions) {
-        let expression = this.expression ? `:${this.expression.toString(options)}` : "";
+        let expression = this.expression ? `:${super.toString(options)}` : "";
         if (!expression && options?.variables?.[this.name.toString()]) { 
             expression = `:${options.variables[this.name.toString()].toString(options)}`;
         }
@@ -1390,7 +1390,7 @@ export class ReactComponent {
     }
 
     get needGenerateDefaultOptions(): boolean { 
-        return !!this.context.defaultOptionsModule && (!this.defaultOptionRules || this.defaultOptionRules?.toString() !== "null");
+        return !!this.context.defaultOptionsModule && (!this.defaultOptionRules || this.defaultOptionRules.toString() !== "null");
     }
 
     constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>, context: GeneratorContex) {
@@ -1408,7 +1408,7 @@ export class ReactComponent {
         const refs = members.filter(m => m.decorators.find(d => d.name === "Ref")).reduce((r: {refs: Ref[], apiRefs: Ref[]}, p) => {
             if(context.components && context.components[p.type!.toString()] instanceof ReactComponent) {
                 p.decorators.find(d => d.name === "Ref")!.expression.expression = new SimpleExpression("ApiRef");
-                r.apiRefs?.push(new Ref(p as Property));
+                r.apiRefs.push(new Ref(p as Property));
             } else {
                 r.refs.push(new Ref(p as Property));
             }
@@ -1936,9 +1936,9 @@ export class PropertySignature extends ExpressionWithOptionalExpression {
     modifiers: string[];
     name: Identifier;
     questionToken: string;
-    type: string;
+    type?: TypeExpression;
 
-    constructor(modifiers: string[] = [], name: Identifier, questionToken: string = "", type: string, initializer?: Expression) {
+    constructor(modifiers: string[] = [], name: Identifier, questionToken: string = "", type?: TypeExpression, initializer?: Expression) {
         super(initializer);
         this.modifiers = modifiers;
         this.name = name;
@@ -1947,7 +1947,8 @@ export class PropertySignature extends ExpressionWithOptionalExpression {
     }
 
     toString(options?: toStringOptions) {
-        return `${this.name}${this.questionToken}:${this.type}`;
+        const initializer = this.expression?`=${this.expression.toString(options)}`:""
+        return `${this.name}${this.questionToken}${compileType(this.type?.toString())}${initializer}`;
     }
 
 }
@@ -2660,7 +2661,7 @@ export class Generator {
         return new ElementAccess(expression, index);
     }
 
-    createPropertySignature(modifiers: string[]| undefined, name: Identifier, questionToken: string | undefined, type: string, initializer?: Expression) {
+    createPropertySignature(modifiers: string[] | undefined, name: Identifier, questionToken: string | undefined, type?: TypeExpression, initializer?: Expression) {
         return new PropertySignature(modifiers, name, questionToken, type, initializer);
     }
 

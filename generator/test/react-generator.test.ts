@@ -1,6 +1,6 @@
 import assert from "assert";
 import mocha from "mocha";
-import ts, { SyntaxKind } from "typescript";
+import ts from "typescript";
 import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex, toStringOptions, SimpleExpression, PropertyAccess, ElementAccess, Class, ImportDeclaration, Expression } from "../react-generator";
 
 import compile from "../component-compiler";
@@ -836,23 +836,43 @@ mocha.describe("react-generator: expressions", function () {
         assert.equal(parameter.typeDeclaration(), "a?:string");
     });
 
-    mocha.it("createPropertySignature", function () {
-        const propertySignatureWithQuestionToken = generator.createPropertySignature(
-            [],
-            generator.createIdentifier("a"),
-            generator.SyntaxKind.QuestionToken,
-            "string"
-        );
+    mocha.describe("createPropertySignature", function () { 
 
-        const propertySignatureWithoutQuestionToken = generator.createPropertySignature(
-            [],
-            generator.createIdentifier("a"),
-            undefined,
-            "string"
-        );
+        mocha.it("Only name is defined", function () {
+            assert.strictEqual(generator.createPropertySignature(
+                undefined,
+                generator.createIdentifier("a"),
+                undefined
+            ).toString(), "a");
+        });
 
-        assert.equal(propertySignatureWithQuestionToken.toString(), "a?:string");
-        assert.equal(propertySignatureWithoutQuestionToken.toString(), "a:string");
+        mocha.it("with type", function () {
+            assert.strictEqual(generator.createPropertySignature(
+                undefined,
+                generator.createIdentifier("a"),
+                undefined,
+                generator.createKeywordTypeNode("string")
+            ).toString(), "a:string");
+        });
+
+        mocha.it("with question token token", function () {
+            assert.strictEqual(generator.createPropertySignature(
+                undefined,
+                generator.createIdentifier("a"),
+                generator.SyntaxKind.QuestionToken,
+                generator.createKeywordTypeNode("string")
+            ).toString(), "a?:string");
+        });
+
+        mocha.it("with initializer", function () {
+            assert.strictEqual(generator.createPropertySignature(
+                undefined,
+                generator.createIdentifier("a"),
+                generator.SyntaxKind.QuestionToken,
+                generator.createKeywordTypeNode("number"),
+                generator.createNumericLiteral("10")
+            ).toString(), "a?:number=10");
+        });
     });
 
     mocha.it("createTypeLiteralNode", function () {
@@ -860,14 +880,14 @@ mocha.describe("react-generator: expressions", function () {
             [],
             generator.createIdentifier("a"),
             generator.SyntaxKind.QuestionToken,
-            "string"
+            generator.createKeywordTypeNode("string")
         );
 
         const propertySignatureWithoutQuestionToken = generator.createPropertySignature(
             [],
             generator.createIdentifier("b"),
             undefined,
-            "string"
+            generator.createKeywordTypeNode("string")
         );
 
         assert.equal(generator.createTypeLiteralNode(
@@ -883,7 +903,7 @@ mocha.describe("react-generator: expressions", function () {
                 [],
                 generator.createIdentifier("b"),
                 undefined,
-                "string"
+                generator.createKeywordTypeNode("string")
             )]
         );
         const expression = generator.createTypeAliasDeclaration(
@@ -902,7 +922,7 @@ mocha.describe("react-generator: expressions", function () {
                 [],
                 generator.createIdentifier("b"),
                 undefined,
-                "string"
+                generator.createKeywordTypeNode("string")
             )]
         );
         const expression = generator.createTypeAliasDeclaration(
@@ -3268,3 +3288,5 @@ mocha.describe("Default_options", function () {
         assert.strictEqual(getResult(component.compileImports()), getResult(`import {convertRulesToOptions, Rule} from "../default_options"; import React from "react";`));
     });
 });
+
+
