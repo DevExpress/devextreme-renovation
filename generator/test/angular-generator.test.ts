@@ -2371,22 +2371,30 @@ mocha.describe("Angular generator", function () {
         });  
         
         mocha.it("Generate change for TwoWay prop with type", function () { 
-            const property = generator.createProperty(
-                [createDecorator("TwoWay")],
+           
+            const bindings = generator.createClassDeclaration(
+                [createDecorator("ComponentBindings")],
+                ["export", "default"],
+                generator.createIdentifier("ComponentInput"),
                 [],
-                generator.createIdentifier("pressed"),
-                generator.SyntaxKind.QuestionToken,
-                generator.createKeywordTypeNode("boolean"),
-                generator.createFalse()
+                [],
+                [
+                    generator.createProperty(
+                        [createDecorator("TwoWay")],
+                        [],
+                        generator.createIdentifier("p1"),
+                        generator.SyntaxKind.QuestionToken,
+                        generator.createKeywordTypeNode("number"),
+                        generator.createNumericLiteral("10")
+                    )
+                ]
             );
 
-            assert.strictEqual(getResult(property.toString()),
-                getResult(`@Input() pressed?:boolean = false
-                 @Output() pressedChange?: EventEmitter<boolean> = new EventEmitter()`)
-            );
+            assert.strictEqual(bindings.members.length, 2);
+            assert.strictEqual(bindings.members[1].toString(), "@Output() p1Change:EventEmitter<any> = new EventEmitter()");
         });
 
-        mocha.it("Generate change for TwoWay prop without type", function () { 
+        mocha.it("TwoWay without type", function () { 
             const property = generator.createProperty(
                 [createDecorator("TwoWay")],
                 [],
@@ -2397,8 +2405,7 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(getResult(property.toString()),
-                getResult(`@Input() pressed?:any = false
-                 @Output() pressedChange?: EventEmitter<any> = new EventEmitter()`)
+                getResult(`@Input() pressed?:any = false`)
             );
         });
 

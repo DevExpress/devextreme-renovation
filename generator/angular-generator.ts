@@ -41,7 +41,8 @@ import {
     Prefix,
     PropertyAssignment,
     TypeExpression,
-    SimpleTypeExpression
+    SimpleTypeExpression,
+    BaseClassMember
 } from "./react-generator";
 
 import SyntaxKind from "./syntaxKind";
@@ -728,6 +729,19 @@ class ComponentInput extends BaseComponentInput {
         super(decorators, modifiers, name, typeParameters, heritageClauses, members);
         this.context = context;
     }
+    
+    buildStateProperies(stateMember: Property, members: BaseClassMember[]) { 
+        return [
+            new Property(
+                [new Decorator(new Call(new Identifier("Event"), undefined, []), {})],
+                [],
+                new Identifier(`${stateMember._name}Change`),
+                undefined,
+                stateMember.type
+            )
+        ];
+    }
+
     toString() {
         return `
         ${compileCoreImports(this.members.filter(m => !m.inherited), this.context)}
@@ -764,10 +778,6 @@ export class Property extends BaseProperty {
         }
         if (this.decorators.find(d => d.name === "ApiRef")) {
             return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:${this.type}`;
-        }
-        if (this.decorators.find(d => d.name.toString() === "TwoWay")) { 
-            return `${defaultValue};
-            @Output() ${this.name}Change${this.questionOrExclamationToken}: EventEmitter<${this.type}> = new EventEmitter()`
         }
         if (this.decorators.find(d => d.name === "Slot")) { 
             return "";

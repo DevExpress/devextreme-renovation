@@ -916,21 +916,11 @@ export class Property extends BaseClassMember {
             return `${this.name}${this.questionOrExclamationToken}:React.ReactNode`;
         }
         const baseValue = `${this.name}${this.questionOrExclamationToken}:${this.type}`;
-        if (this.decorators.find(d => d.name === "TwoWay")) {
-            return `
-            ${baseValue};
-            default${capitalizeFirstLetter(this.name)}?:${this.type};
-            ${this.name}Change?:(${this.name}:${this.type})=>void`;
-        }
         return baseValue;
     }
 
     defaultDeclaration() {
         const baseValue = `${this.name}:${this.initializer}`;
-        if (this.decorators.find(d => d.name === "TwoWay")) {
-            return `${baseValue},
-            ${this.name}Change:()=>{}`;
-        }
         return baseValue;
     }
 
@@ -971,8 +961,12 @@ export class Class {
         return this._name.toString();
     }
 
+    processMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) { 
+        return inheritMembers(heritageClauses, members);
+    }
+
     constructor(decorators: Decorator[], modifiers: string[] = [], name: Identifier, typeParameters: any[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>) {
-        members = inheritMembers(heritageClauses, members);
+        members = this.processMembers(members, heritageClauses);
         this.decorators = decorators;
         this._name = name;
         this.members = members;
@@ -993,6 +987,35 @@ export interface Heritable {
 }
 
 export class ComponentInput extends Class implements Heritable {
+
+    buildStateProperies(stateMember: Property, members: BaseClassMember[]) { 
+        return [
+            new Property(
+                [new Decorator(new Call(new Identifier("OneWay"), undefined, []))],
+                [],
+                new Identifier(`default${capitalizeFirstLetter(stateMember._name)}`),
+                SyntaxKind.QuestionToken,
+                stateMember.type
+            ),
+            new Property(
+                [new Decorator(new Call(new Identifier("Event"), undefined, []))],
+                [],
+                new Identifier(`${stateMember._name}Change`),
+                SyntaxKind.QuestionToken,
+                new SimpleTypeExpression(`(${stateMember._name}:${stateMember.type})=>void`),
+                new SimpleExpression("()=>{}")
+            )
+        ];
+    }
+
+    processMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) { 
+        return super.processMembers(members.concat(
+            members.filter(m => m.decorators.find(d => d.name === "TwoWay")).reduce((properies: Property[], p) => { 
+                return properies.concat(this.buildStateProperies(p as Property, members))
+            }, [])
+        ), heritageClauses);
+    }
+
     get heritageProperies() {
         return (this.members.filter(m => m instanceof Property) as Property[]).map(p => p.inherit());
     }
@@ -1288,10 +1311,6 @@ export class InternalState extends Prop {
 
 export class State extends InternalState {
 
-    defaultProps() {
-        return `${this.name}Change:()=>{}`
-    }
-
     defaultDeclaration() {
         const propName = getPropName(this.name);
         const initializer = this.property.initializer ? `||${this.property.initializer.toString()}` : "";
@@ -1551,9 +1570,8 @@ export class ReactComponent {
             .filter(h => h.defaultProps.length).map(h => `...${h.defaultProps}`)
             .concat(
                 this.props.filter(p => !p.property.inherited && p.property.initializer)
-                    .concat(this.state)
                     .map(p => p.defaultProps())
-        );
+            );
 
         if (this.defaultOptionRules && this.needGenerateDefaultOptions) { 
             defaultProps.push(`...convertRulesToOptions(${this.defaultOptionRules})`);

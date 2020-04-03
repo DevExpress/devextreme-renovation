@@ -1,10 +1,9 @@
 import { Input, Output, EventEmitter } from "@angular/core"
 class WidgetInput {
     @Input() pressed?: boolean = false;
-    @Output() pressedChange?: EventEmitter<boolean> = new EventEmitter();
-
-    @Input() s?:boolean ;
-    @Output() sChange?: EventEmitter<boolean> = new EventEmitter();
+    @Input() s?: boolean;
+    @Output() pressedChange: EventEmitter<any> = new EventEmitter();
+    @Output() sChange: EventEmitter<any> = new EventEmitter();
 }
 
 import { Component, NgModule } from "@angular/core";
