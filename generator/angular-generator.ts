@@ -729,17 +729,19 @@ class ComponentInput extends BaseComponentInput {
         super(decorators, modifiers, name, typeParameters, heritageClauses, members);
         this.context = context;
     }
+
+    buildDefaultStateProperty() { 
+        return null;
+    }
     
-    buildStateProperies(stateMember: Property, members: BaseClassMember[]) { 
-        return [
-            new Property(
-                [new Decorator(new Call(new Identifier("Event"), undefined, []), {})],
-                [],
-                new Identifier(`${stateMember._name}Change`),
-                undefined,
-                stateMember.type
-            )
-        ];
+    buildChangeState(stateMember: Property, stateName: Identifier) { 
+        return  new Property(
+            [new Decorator(new Call(new Identifier("Event"), undefined, []), {})],
+            [],
+            stateName,
+            undefined,
+            stateMember.type
+        );
     }
 
     toString() {

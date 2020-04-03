@@ -2556,6 +2556,64 @@ mocha.describe("import Components", function () {
         );
         assert.strictEqual(getResult(model.toString()), getResult("declare type Model={height!:string} const Model:Model={}"));
     });
+
+    mocha.it("ComponentInput should generate default and change for state property", function () { 
+        const model = new ComponentInput(
+            [],
+            [],
+            generator.createIdentifier("Model"),
+            [],
+            [],
+            [generator.createProperty(
+                [createDecorator("TwoWay")],
+                [],
+                generator.createIdentifier("p"),
+                generator.SyntaxKind.ExclamationToken,
+                generator.createKeywordTypeNode("string"),
+                undefined
+            )]
+        );
+
+        assert.strictEqual(model.members.length, 3);
+        assert.strictEqual(model.members[1].defaultDeclaration(), "defaultP:undefined");
+        assert.strictEqual(model.members[1].typeDeclaration(), "defaultP?:string");
+
+        assert.strictEqual(model.members[2].defaultDeclaration(), "pChange:()=>{}");
+        assert.strictEqual(model.members[2].typeDeclaration(), "pChange?:(p:string)=>void");
+    });
+
+    mocha.it("ComponentInput should not generate change for state property if it has one", function () { 
+        const model = new ComponentInput(
+            [],
+            [],
+            generator.createIdentifier("Model"),
+            [],
+            [],
+            [generator.createProperty(
+                [createDecorator("TwoWay")],
+                [],
+                generator.createIdentifier("p"),
+                generator.SyntaxKind.ExclamationToken,
+                generator.createKeywordTypeNode("string"),
+                undefined
+            ),
+            generator.createProperty(
+                [createDecorator("Event")],
+                [],
+                generator.createIdentifier("pChange"),
+                generator.SyntaxKind.ExclamationToken,
+                generator.createKeywordTypeNode("any"),
+                undefined
+            )]
+        );
+
+        assert.strictEqual(model.members.length, 3);
+        assert.strictEqual(model.members[1].defaultDeclaration(), "pChange:undefined");
+        assert.strictEqual(model.members[1].typeDeclaration(), "pChange!:any");
+
+        assert.strictEqual(model.members[2].defaultDeclaration(), "defaultP:undefined");
+        assert.strictEqual(model.members[2].typeDeclaration(), "defaultP?:string");
+    });
 });
 
 mocha.describe("Expressions with props/state/internal state", function () { 

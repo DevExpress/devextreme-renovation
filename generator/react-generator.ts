@@ -988,24 +988,42 @@ export interface Heritable {
 
 export class ComponentInput extends Class implements Heritable {
 
+    buildChangeState(stateMember: Property, stateName: Identifier) { 
+        return new Property(
+            [new Decorator(new Call(new Identifier("Event"), undefined, []))],
+            [],
+            stateName,
+            SyntaxKind.QuestionToken,
+            new SimpleTypeExpression(`(${stateMember._name}:${stateMember.type})=>void`),
+            new SimpleExpression("()=>{}")
+        );
+    }
+
+    buildDefaultStateProperty(stateMember: Property): Property|null { 
+        return new Property(
+            [new Decorator(new Call(new Identifier("OneWay"), undefined, []))],
+            [],
+            new Identifier(`default${capitalizeFirstLetter(stateMember._name)}`),
+            SyntaxKind.QuestionToken,
+            stateMember.type
+        )
+    }
+
     buildStateProperies(stateMember: Property, members: BaseClassMember[]) { 
-        return [
-            new Property(
-                [new Decorator(new Call(new Identifier("OneWay"), undefined, []))],
-                [],
-                new Identifier(`default${capitalizeFirstLetter(stateMember._name)}`),
-                SyntaxKind.QuestionToken,
-                stateMember.type
-            ),
-            new Property(
-                [new Decorator(new Call(new Identifier("Event"), undefined, []))],
-                [],
-                new Identifier(`${stateMember._name}Change`),
-                SyntaxKind.QuestionToken,
-                new SimpleTypeExpression(`(${stateMember._name}:${stateMember.type})=>void`),
-                new SimpleExpression("()=>{}")
-            )
-        ];
+        const props:Property[] = []
+        const defaultStateProperty = this.buildDefaultStateProperty(stateMember);
+        
+        if(defaultStateProperty){
+            props.push(defaultStateProperty);
+        }
+
+        const stateName = `${stateMember._name}Change`;
+
+        if (!members.find(m=>m._name.toString()===stateName)) { 
+            props.push(this.buildChangeState(stateMember, new Identifier(stateName)));
+        }
+
+        return props;
     }
 
     processMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) { 
