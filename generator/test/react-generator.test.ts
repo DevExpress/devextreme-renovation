@@ -2679,7 +2679,14 @@ mocha.describe("Expressions with props/state/internal state", function () {
             generator.createIdentifier("props")
         );
        
-        assert.equal(expression.toString({ members: [this.state, this.prop, this.internalState], internalState: [], state: [], props: [new Prop(this.prop)]}), "props");
+        assert.equal(expression.toString({
+            members: [this.state, this.prop, this.internalState],
+            internalState: [],
+            state: [],
+            props: [new Prop(this.prop)],
+            componentContext: "this",
+            newComponentContext: ""
+        }), "props");
         assert.deepEqual(expression.getDependency(), ["props"]);
     });
 
@@ -2849,15 +2856,20 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.equal(getResult(arrowFunction.toString({ members: [this.state, this.prop, this.internalState], internalState: [new InternalState(this.state)], state: [], props: [new Prop(this.prop)] })), getResult("()=>__state_setS1(props.p1)"), "do not change for internal state");
     });
 
-    mocha.it("PropertyAccess should remove this if there is props, state or internal state", function () {
+    mocha.it("PropertyAccess should replace componentContext on newComponentContex", function () {
         const expression = generator.createPropertyAccess(
             generator.createThis(),
             generator.createIdentifier("name")
         );
         
-        assert.equal(expression.toString({members: [this.state, this.prop, this.internalState], internalState: [], state: [], props: [new Prop(this.prop)] }), "name");
-        assert.equal(expression.toString({members: [this.state, this.prop, this.internalState], internalState: [], state: [new State(this.state)], props: [] }), "name");
-        assert.equal(expression.toString({members: [this.state, this.prop, this.internalState], internalState: [new InternalState(this.internalState)], state: [new State(this.state)], props: [] }), "name");
+        assert.equal(expression.toString({
+            members: [this.state, this.prop, this.internalState],
+            internalState: [],
+            state: [],
+            props: [],
+            componentContext: "this",
+            newComponentContext: ""
+        }), "name");
         assert.equal(expression.toString(), "this.name");
     });
 

@@ -1216,9 +1216,7 @@ export class PropertyAccess extends ExpressionWithExpression {
     }
 
     toString(options?: toStringOptions) {
-
         const expressionString = this.expression.toString();
-        const internalState = options && options.internalState || [];
         const state = options && options.state || [];
         const props = options && options.props || [];
         const componentContext = options?.componentContext || SyntaxKind.ThisKeyword;
@@ -1246,13 +1244,12 @@ export class PropertyAccess extends ExpressionWithExpression {
             }
         }
 
-        if (expressionString === SyntaxKind.ThisKeyword && (internalState.length + state.length + props.length) > 0) {
-            return this.name.toString();
-        }
-
         const result = `${this.expression.toString(options)}.${this.name}`;
 
-        if (options?.newComponentContext && result.startsWith(componentContext)) { 
+        if (options?.newComponentContext !== undefined && result.startsWith(componentContext)) {
+            if (options.newComponentContext === "") { 
+                return this.name.toString();
+            }
             return result.replace(options.componentContext!, options.newComponentContext);
         }
 
@@ -1646,12 +1643,7 @@ export class ReactComponent {
 
     listenersDeclaration() {
         if (this.listeners.length) {
-            return this.listeners.map(l => l.defaultDeclaration({
-                members: this.members,
-                internalState: this.internalState,
-                state: this.state,
-                props: this.props.concat(this.refs, this.apiRefs)
-            })).join(";\n");
+            return this.listeners.map(l => l.defaultDeclaration(this.getToStringOptions())).join(";\n");
         }
         return "";
     }
@@ -1661,10 +1653,7 @@ export class ReactComponent {
 
         const effects = this.effects;
 
-        const effectsString = effects.map(e => `useEffect(${e.arrowDeclaration({
-            members: this.members,
-            internalState: this.internalState, state: this.state, props: this.props.concat(this.refs, this.apiRefs)
-        })}, 
+        const effectsString = effects.map(e => `useEffect(${e.arrowDeclaration(this.getToStringOptions())}, 
         [${e.getDependency(this.props.concat(this.state).concat(this.internalState))}])`).join(";\n");
 
         let subscriptionsString = "";
@@ -1695,10 +1684,7 @@ export class ReactComponent {
     compileUseImperativeHandle() {
         if(this.api.length) {
             const api = this.api.reduce((r: { methods: string[], deps: string[]}, a) => {
-                r.methods.push(`${a.name}: ${a.arrowDeclaration({
-                    members: this.members,
-                    internalState: this.internalState, state: this.state, props: this.props.concat(this.refs, this.apiRefs)
-                })}`);
+                r.methods.push(`${a.name}: ${a.arrowDeclaration(this.getToStringOptions())}`);
 
                 r.deps = [...new Set(r.deps.concat(a.getDependency(this.props.concat(this.state).concat(this.internalState))))];
                 
@@ -1770,6 +1756,15 @@ export class ReactComponent {
         }`;
     }
 
+    getToStringOptions() { 
+        return {
+            members: this.members,
+            internalState: this.internalState, state: this.state, props: this.props.concat(this.refs, this.apiRefs),
+            componentContext: "this",
+            newComponentContext: ""
+        };
+    }
+
     toString() {
         return `
             ${this.compileImports()}
@@ -1785,10 +1780,7 @@ export class ReactComponent {
                 ${this.compileUseEffect()}
                 ${this.compileUseImperativeHandle()}
                 ${this.methods.map(m => {
-                    return `const ${m.name}=useCallback(${m.declaration({
-                        members: this.members,
-                        internalState: this.internalState, state: this.state, props:this.props.concat(this.refs, this.apiRefs)
-                    })}, [${
+                    return `const ${m.name}=useCallback(${m.declaration(this.getToStringOptions())}, [${
                         m.getDependency(this.internalState.concat(this.state).concat(this.props))
                     }]);`;
                 }).join("\n")}
