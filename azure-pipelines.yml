@@ -37,7 +37,7 @@ steps:
 
 - script: |
     cd ./generator
-    npm run test:testcafe
+    npm run test:testcafe-headless
   displayName: 'functional-test'
 
 - task: ArchiveFiles@2
