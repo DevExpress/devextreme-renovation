@@ -3082,7 +3082,7 @@ mocha.describe("ComponentInput", function () {
 
         mocha.it("Empty input with empty component", function () {
             const component = createComponent([]);
-            assert.deepEqual(component.compileViewModelArguments(), ["props:{...props}"]);
+            assert.deepEqual(component.compileViewModelArguments(), ["props:{...props}", "customAttributes"]);
         });
         
         mocha.it("Prop in input with empty component", function () {
@@ -3097,7 +3097,7 @@ mocha.describe("ComponentInput", function () {
                     generator.createKeywordTypeNode(generator.SyntaxKind.BooleanKeyword)
                 )
             ]);
-            assert.deepEqual(component.compileViewModelArguments(), ["props:{...props}"]);
+            assert.deepEqual(component.compileViewModelArguments(), ["props:{...props}", "customAttributes"]);
         });
 
         mocha.it("State in input - extended props with state getter in viewModes args", function () {
@@ -3115,7 +3115,7 @@ mocha.describe("ComponentInput", function () {
             ]);
             assert.deepEqual(getResult(
                 `{${component.compileViewModelArguments().join(",")}}`
-            ), getResult("{props:{...props, p:props.p!==undefined?props.p:__state_p}}"));
+            ), getResult("{props:{...props, p:props.p!==undefined?props.p:__state_p}, customAttributes}"));
         });
 
         mocha.it("component with internal state - add internal state to viewModel args", function () {
@@ -3143,7 +3143,7 @@ mocha.describe("ComponentInput", function () {
             ]);
             assert.deepEqual(getResult(
                 `{${component.compileViewModelArguments().join(",")}}`
-            ), getResult("{props:{...props},s:__state_s}"));
+            ), getResult("{props:{...props},s:__state_s,customAttributes}"));
         });
 
         mocha.it("Pass getter result in viewModel arguments", function () {
@@ -3158,10 +3158,10 @@ mocha.describe("ComponentInput", function () {
                 )
             ]);
 
-            assert.strictEqual(getResult(component.compileComponentInterface()), getResult("interface Widget{props: Input; property:any}"));
+            assert.strictEqual(getResult(component.compileComponentInterface()), getResult("interface Widget{props: Input; property:any; customAttributes:()=>any;}"));
 
             assert.strictEqual(getResult(`{${component.compileViewModelArguments().join(",")}}`
-            ), getResult("{props:{...props}, property: __property()}"));
+            ), getResult("{props:{...props}, property: __property(), customAttributes }"));
         });
 
     });
@@ -3259,7 +3259,7 @@ mocha.describe("Default_options", function () {
             generator.getContext());
 
         assert.strictEqual(getResult(importClause.toString()), getResult(`import defaultOptions, {convertRulesToOptions, Rule} from "../default_options"`));
-        assert.strictEqual(getResult(component.compileImports()), getResult(`import React from "react";`));
+        assert.strictEqual(getResult(component.compileImports()), getResult(`import React, { useCallback } from "react";`));
     });
 
     mocha.it("Adding imports should not leads to duplicates", function () {
@@ -3297,7 +3297,7 @@ mocha.describe("Default_options", function () {
             [],
             generator.getContext());
         
-        assert.strictEqual(getResult(component.compileImports()), getResult(`import {convertRulesToOptions, Rule} from "../default_options"; import React from "react";`));
+        assert.strictEqual(getResult(component.compileImports()), getResult(`import {convertRulesToOptions, Rule} from "../default_options"; import React, { useCallback } from "react";`));
     });
 
     mocha.it("Do not import default_options if defaultOptionRules is set to null", function () {
@@ -3312,7 +3312,7 @@ mocha.describe("Default_options", function () {
             [],
             generator.getContext());
         
-        assert.strictEqual(getResult(component.compileImports()), getResult(`import React from "react";`));
+        assert.strictEqual(getResult(component.compileImports()), getResult(`import React, { useCallback } from "react";`));
     });
 
     mocha.it("Do not generate DefaultOptionsMethod if defaultOptionRules parameter is null", function () {
@@ -3328,19 +3328,6 @@ mocha.describe("Default_options", function () {
             generator.getContext());
         
         assert.strictEqual(component.compileDefaultOptionsMethod(), "");
-    });
-
-    mocha.it("Import default_options if module doesn't import default_options", function () {
-        const component = new ReactComponent(
-            generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)])),
-            [],
-            generator.createIdentifier("Component"),
-            [],
-            [],
-            [],
-            generator.getContext());
-        
-        assert.strictEqual(getResult(component.compileImports()), getResult(`import {convertRulesToOptions, Rule} from "../default_options"; import React from "react";`));
     });
 });
 
