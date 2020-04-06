@@ -1,28 +1,18 @@
 import { Selector } from 'testcafe';
 import cloneTest from './utils/check-all-platforms';
-import looksSame from 'looks-same';
-import path from 'path';
+import screenshotTest from "./utils/screenshot-test";
 
-fixture `Simple component`;
+fixture`Simple component`;
 
 cloneTest('Check default render', async t => {
-    await t.takeElementScreenshot('body', 'simple.png');
-
-    const { equal, error } = await new Promise(resolve => {
-        looksSame(
-            path.resolve(__dirname, './etalon/simple.png'),
-            path.resolve(__dirname, './temp/simple.png'), 
-            (error, { equal }) => resolve({ equal, error })
-        );
-    });
-
-    await t.expect(equal).ok(String(error));
+    await t.expect(await screenshotTest(t, "body", "simple.png")).eql(true);
 });
 
-cloneTest('Check element size', async t => {
+cloneTest('Check element style', async t => {
     const el = Selector('#simple');
 
     await t
         .expect(el.clientWidth).eql(100)
-        .expect(el.clientHeight).eql(100);
+        .expect(el.clientHeight).eql(100)
+        .expect((await el.style)["background-color"]).eql('rgb(255, 0, 0)');
 });

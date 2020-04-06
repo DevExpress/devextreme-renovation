@@ -1,14 +1,16 @@
 {
-    "browsers": ["chrome:headless --disable-features=VizDisplayCompositor"],
-    "src": "./test/functional/tests/**/*.test.js",
-    "reporter": [
-      "spec",
-      {
-        "name": "xunit",
-        "output": "/tmp/testcafe-test-results/res.xml"
-      }
-    ],
-    "screenshots": {
-        "path": "./test/functional/tests/temp/"
+  "browsers": [
+    "chrome --disable-features=VizDisplayCompositor"
+  ],
+  "src": "./test/functional/tests/**/*.test.js",
+  "reporter": [
+    "spec",
+    {
+      "name": "xunit",
+      "output": "/tmp/testcafe-test-results/res.xml"
     }
+  ],
+  "screenshots": {
+    "path": "./test/functional/tests/temp/"
   }
+}
