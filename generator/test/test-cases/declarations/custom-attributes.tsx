@@ -6,7 +6,8 @@ function view(model: Widget) {
 
 @ComponentBindings()
 export class WidgetInput {
-    @OneWay() prop1: any;
+    @OneWay() prop1?: any;
+    @TwoWay() stateProp?: any;
 }
 
 @Component({

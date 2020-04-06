@@ -1523,16 +1523,35 @@ export class ReactComponent {
     }
 
     getCustomAttributesExpression() {
-        debugger
-        const propsList = this.heritageProperies;
-        const statements = [new SimpleExpression('const {')];
+        const props = this.heritageProperies;
+        const bindingElements = props.map(p => new BindingElement(
+                undefined,
+                undefined,
+                p._name,
+            )).concat([
+                new BindingElement(
+                    SyntaxKind.DotDotDotToken,
+                    undefined,
+                    new Identifier("restProps"))
+            ]);
 
-        propsList.forEach((prop) => {
-            statements.push(new SimpleExpression(`${prop.name},`));
-        });
-        statements.push(new SimpleExpression('...restProps'));
-        statements.push(new SimpleExpression('} = props;'));
-        statements.push(new SimpleExpression('return restProps;'));
+        const statements = [new VariableStatement(
+            undefined,
+            new VariableDeclarationList(
+                [new VariableDeclaration(
+                    new BindingPattern(
+                        bindingElements,
+                        "object"
+                    ),
+                    undefined,
+                    new PropertyAccess(
+                        new SimpleExpression("this"),
+                        new Identifier("props")
+                    )
+                )],
+                SyntaxKind.ConstKeyword
+            )
+        ), new ReturnStatement(new SimpleExpression("restProps"))];
 
         const body = new Block(statements, true);
         return new Method(undefined, undefined, '', new Identifier('customAttributes'), undefined, [], [], undefined, body);
