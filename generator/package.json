@@ -3,7 +3,7 @@
   "version": "1.0.44",
   "description": "Component generator",
   "scripts": {
-    "test": "mocha ./build/test --timeout 30000",
+    "test": "nyc mocha ./build/test --timeout 30000",
     "tsc": "tsc",
     "build": "gulp build",
     "build-dist": "gulp build-dist",
@@ -44,6 +44,7 @@
     "html-loader": "^1.0.0",
     "html-webpack-plugin": "^4.0.3",
     "mocha": "^6.2.2",
+    "nyc": "^15.0.0",
     "raw-loader": "1.0.0",
     "react-dom": "^16.13.1",
     "rxjs": "^6.5.4",

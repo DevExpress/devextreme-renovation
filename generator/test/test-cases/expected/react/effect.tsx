@@ -48,6 +48,5 @@ export default function Widget(props: WidgetInput) {
 }
 
 Widget.defaultProps = {
-    ...WidgetInput,
-    sChange: () => { }
+    ...WidgetInput
 }

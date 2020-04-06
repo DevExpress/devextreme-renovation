@@ -1,3 +1,5 @@
+import "typescript";
+
 function view() { }
 
 declare type WidgetProps = {}
@@ -17,7 +19,8 @@ export default function Widget(props: WidgetProps) {
 
 function __createDefaultProps() {
     return {
-        ...WidgetProps
+        ...WidgetProps,
+        ...convertRulesToOptions([{ device: true, options: {} }])
     };
 }
 
