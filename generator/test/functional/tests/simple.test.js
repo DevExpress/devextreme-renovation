@@ -1,3 +1,4 @@
+import { Selector } from 'testcafe';
 import cloneTest from './utils/check-all-platforms';
 import looksSame from 'looks-same';
 import path from 'path';
@@ -16,4 +17,12 @@ cloneTest('Check default render', async t => {
     });
 
     await t.expect(equal).ok(String(error));
+});
+
+cloneTest('Check element size', async t => {
+    const el = Selector('#simple');
+
+    await t
+        .expect(el.clientWidth).eql(100)
+        .expect(el.clientHeight).eql(100);
 });

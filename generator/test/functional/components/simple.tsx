@@ -1,7 +1,7 @@
 import { Component, OneWay, ComponentBindings, JSXComponent } from "../../../component_declaration/common";
 
 function view(model: Simple) { 
-    return <div style={{ 
+    return <div id="simple" style={{ 
         backgroundColor: 'red',
         width: model.props.width,
         height: model.props.height,

@@ -10,6 +10,5 @@
     ],
     "screenshots": {
         "path": "./test/functional/tests/temp/"
-    },
-    "skipJsErrors" : true
+    }
   }
