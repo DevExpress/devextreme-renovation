@@ -8,13 +8,12 @@ import path from 'path';
  * @param {string} ethalonName 
  */
 const screenshotTest = async (t, selector, ethalonName) => { 
-    await t.takeElementScreenshot(selector, ethalonName);
-
-
     if (t.browser.headless) { 
         console.warn("Screenshot test skipped in headless mode");
         return Promise.resolve(true);
     }
+
+    await t.takeElementScreenshot(selector, ethalonName);
 
     return new Promise((resolve, fail) => {
         looksSame(
