@@ -13,6 +13,9 @@ export default class Widget extends WidgetInput {
     get __attr1() {
         return {};
     }
+    get getRestProps(){
+        return {}
+    }
 
     @ViewChild("_auto_ref_0", { static: false }) _auto_ref_0: ElementRef<HTMLDivElement>
 

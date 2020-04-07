@@ -25,6 +25,10 @@ export default class Widget extends WidgetInput {
         return () => unsubscribe(id);
     }
 
+    get getRestProps(){
+        return {}
+    }
+
     __destroyEffects: Array<() => any> = []
 
     ngAfterViewInit() {
@@ -34,7 +38,6 @@ export default class Widget extends WidgetInput {
     ngOnDestroy() {
         this.__destroyEffects.forEach(d => d && d());
     }
-
 }
 @NgModule({
     declarations: [Widget],

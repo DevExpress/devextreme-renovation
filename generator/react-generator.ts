@@ -1451,6 +1451,7 @@ export class ReactComponent {
 
 
         this.members = members = inheritMembers(heritageClauses, this.addPrefixToMembers(members));
+        this.members.push(this.createRestPropsMethod());
 
         this.props = members
             .filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template"))
@@ -1476,7 +1477,7 @@ export class ReactComponent {
             .map(s => new State(s as Property));
 
         this.methods = members.filter(m => m instanceof Method && m.decorators.length === 0) as Method[];
-        this.methods.push(this.createRestPropsMethod());
+        // this.methods.push(this.createRestPropsMethod());
 
         this.listeners = members.filter(m => m.decorators.find(d => d.name === "Listen"))
             .map(m => new Listener(m as Method));

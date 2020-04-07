@@ -12,6 +12,10 @@ export default class Widget {
     @Input() height: number
     @Input() width: number
 
+    get getRestProps(){
+        return {}
+    }
+
     _viewModel: any
     ngDoCheck() {
         this._viewModel = viewModel1({
@@ -19,6 +23,7 @@ export default class Widget {
                 height: this.height,
                 width: this.width
             },
+            getRestProps: this.getRestProps
         });
     }
     __processNgStyle(value: any) {

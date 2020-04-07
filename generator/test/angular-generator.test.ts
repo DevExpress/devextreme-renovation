@@ -2609,7 +2609,9 @@ mocha.describe("Angular generator", function () {
 
                 ${component.decorator}
                 export default class BaseWidget {
-
+                    get getRestProps(){
+                        return {}
+                    }
                 }
 
                 @NgModule({
@@ -2670,7 +2672,9 @@ mocha.describe("Angular generator", function () {
                 
                 ${component.decorator}
                 export default class BaseWidget extends Input {
-
+                    get getRestProps(){
+                        return {}
+                    }
                 }
 
                 @NgModule({
