@@ -2,7 +2,7 @@ import { Component, OneWay, ComponentBindings, JSXComponent } from "../../../com
 
 function view(model: Simple) { 
     return <div id="simple" style={{ 
-        backgroundColor: 'red',
+        backgroundColor: model.props.color,
         width: model.props.width,
         height: model.props.height,
     }}></div>;
@@ -12,6 +12,7 @@ function view(model: Simple) {
 class WidgetInput { 
     @OneWay() height: number = 10;
     @OneWay() width: number = 10;
+    @OneWay() color?: string = "red"
 }
 
 @Component({

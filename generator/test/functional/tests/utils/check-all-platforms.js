@@ -3,7 +3,14 @@ const sites = [
     { port: 3001, platform: 'Angular' }
 ];
 
-export default (testName, testBody, page = '') =>
+/**
+ * 
+ * @param {string} testName 
+ * @param {(t:TestController)=>Promise<any>} testBody 
+ * @param {string} page 
+ */
+const cloneTest = (testName, testBody, page = '') =>
     sites.forEach(({ port, platform }) =>
-        test.page `http://localhost:${port}/${page}`(`${platform}: ${testName}`, testBody)
+        test.page`http://localhost:${port}/${page}`(`${platform}: ${testName}`, testBody)
     );
+export default cloneTest;

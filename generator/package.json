@@ -9,6 +9,7 @@
     "build-dist": "gulp build-dist",
     "dev": "gulp watch",
     "test:testcafe": "start-server-and-test testcafe:start-test-servers \"3000|3001\" testcafe",
+    "test:testcafe-headless": "start-server-and-test testcafe:start-test-servers \"3000|3001\" 'testcafe chrome:headless'",
     "testcafe:start-test-servers": "NODE_ENV=development node ./test/functional/start-servers.js",
     "gulp": "gulp"
   },

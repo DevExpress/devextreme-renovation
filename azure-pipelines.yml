@@ -35,6 +35,11 @@ steps:
     npm run test
   displayName: 'tests'
 
+- script: |
+    cd ./generator
+    npm run test:testcafe-headless
+  displayName: 'functional-test'
+
 - task: ArchiveFiles@2
   inputs:
     rootFolderOrFile: './generator/build'
