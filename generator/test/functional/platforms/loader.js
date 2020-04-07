@@ -3,6 +3,7 @@ const { compileCode } = require('../../../build/component-compiler');
 const reactGenerator = require('../../../build/react-generator').default;
 const agularGenerator = require('../../../build/angular-generator').default;
 //const vueGenerator = require('../../../build/vue-generator').default;
+const path = require("path");
 
 module.exports = function(source) {
   const { platform } = getOptions(this);
@@ -21,9 +22,14 @@ module.exports = function(source) {
     default:
       throw new Error('Invalid platform');
   }
+
+  const normalizedPath = path.normalize(this.resourcePath);
+  const moduleParts = normalizedPath.split(/(\/|\\)/);
+
+  const folderPath = path.resolve(moduleParts.slice(0, moduleParts.length - 2).join("/"));
   
   return compileCode(generator, source, {
     path: this.resourcePath,
-    dirname: 'dirname'
+    dirname: folderPath
   });
 }

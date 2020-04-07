@@ -26,7 +26,7 @@ module.exports = {
         { 
           loader: 'ts-loader',
           options: {
-            configFile: path.resolve('./test/functional/components/tsconfig.json'),
+            configFile: path.resolve('./test/functional/platforms/angular/tsconfig.json'),
           },
         }, 
         {
