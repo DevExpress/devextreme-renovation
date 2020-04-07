@@ -1,11 +1,13 @@
 import Base from "./empty-component.p"
 
 import * as Preact from "preact";
+import { useCallback } from "preact/hooks";
 
 interface Widget {
-    size: number,
-    height: number,
-    width: number
+    size: number;
+    height: number;
+    width: number;
+    customAttributes: () => any;
 }
 
 export default function Widget(props: {
@@ -13,8 +15,13 @@ export default function Widget(props: {
     height: number,
     width: number
 }) {
+    const customAttributes=useCallback(function customAttributes(){
+        const { height, size, width, ...restProps } = props;
+        return restProps;
+    }, [props]);
     return view1(viewModel1({
-        ...props
+        ...props,
+        customAttributes
     }));
 }
 

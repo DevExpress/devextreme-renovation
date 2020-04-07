@@ -19,15 +19,21 @@ const WidgetInput: WidgetInput = {
    
 };
 
-import React from "react";
+import React, {useCallback} from "react";
 
 interface Widget {
     props: WidgetInput;
+    customAttributes:()=>any;
 }
 
 export default function Widget(props: WidgetInput) {
+    const customAttributes=useCallback(function customAttributes(){
+        const { children, namedSlot, ...restProps } = props;
+        return restProps;
+    }, [props]);
     return view(({
-        props: { ...props }
+        props: { ...props },
+        customAttributes
     }));
 }
 

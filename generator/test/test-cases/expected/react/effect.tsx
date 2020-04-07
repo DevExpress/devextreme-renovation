@@ -19,11 +19,11 @@ export const WidgetInput: WidgetInput = {
     sChange:()=>{}
 };
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 interface Widget {
     props: WidgetInput;
     i: number;
-
+    customAttributes:()=>any;
 }
 
 export default function Widget(props: WidgetInput) {
@@ -36,13 +36,18 @@ export default function Widget(props: WidgetInput) {
         return () => unsubscribe(id);
     },
         [props.p, props.s, __state_s, props.sChange, __state_i])
+    const customAttributes=useCallback(function customAttributes(){
+        const { defaultS, p, s, sChange, ...restProps } = props;
+        return restProps;
+    }, [props]);
 
     return view(({
         props: {
             ...props,
             s: props.s !== undefined ? props.s : __state_s
         },
-        i: __state_i
+        i: __state_i,
+        customAttributes
     })
     );
 }

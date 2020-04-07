@@ -13,20 +13,27 @@ function view(viewModel: Widget) {
 
 declare type WidgetInput = {
     namedSlot?: any;
-    children?: any
+    children?: any;
 }
 const WidgetInput: WidgetInput = {
    
 };
 import * as Preact from "preact";
+import { useCallback } from "preact/hooks";
 
 interface Widget {
     props: WidgetInput;
+    customAttributes: () => any;
 }
 
 export default function Widget(props: WidgetInput) {
+    const customAttributes=useCallback(function customAttributes(){
+        const { children, namedSlot, ...restProps } = props;
+        return restProps;
+    }, [props]);
     return view(({
-        props: { ...props }
+        props: { ...props },
+        customAttributes
     })
     );
 }

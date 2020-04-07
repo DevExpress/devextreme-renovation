@@ -9,7 +9,7 @@ const WidgetWithApiRefInput: WidgetWithApiRefInput = { };
 
 import { WidgetRef as BaseWidgetRef } from "./method.p";
 import * as Preact from "preact";
-import { useRef, useImperativeHandle } from 'preact/hooks'
+import { useCallback, useRef, useImperativeHandle } from 'preact/hooks'
 import { forwardRef } from 'preact/compat'
 
 export type WidgetWithApiRefRef = {
@@ -19,6 +19,7 @@ export type WidgetWithApiRefRef = {
 interface WidgetWithApiRef {
     props: WidgetWithApiRefInput;
     baseRef: any;
+    customAttributes: () => any;
 }
 
 const WidgetWithApiRef = forwardRef<WidgetWithApiRefRef, WidgetWithApiRefInput>((props: WidgetWithApiRefInput, ref) => {
@@ -30,9 +31,15 @@ const WidgetWithApiRef = forwardRef<WidgetWithApiRefRef, WidgetWithApiRefInput>(
         }
     }), [props.prop1]);
 
+    const customAttributes=useCallback(function customAttributes(){
+        const { prop1, ...restProps } = props;
+        return restProps;
+    }, [props]);
+
     return view(({
         props: { ...props },
-        baseRef
+        baseRef,
+        customAttributes
     }));
 });
 
