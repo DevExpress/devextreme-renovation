@@ -2259,6 +2259,23 @@ mocha.describe("import Components", function () {
         assert.deepEqual(generator.getContext().components!["Base"].heritageProperies.map(p => p.name.toString()), ["height", "width"]);
     });
 
+    mocha.it("Parse imported component. module specifier has extension", function () {
+        const identifier = generator.createIdentifier("Base"); 
+        generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                identifier,
+                undefined
+            ),
+            generator.createStringLiteral("./test-cases/declarations/empty-component.tsx")
+        );   
+        
+        const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/empty-component.tsx`);
+        assert.ok(generator.cache[baseModulePath]);
+        assert.deepEqual(generator.getContext().components!["Base"].heritageProperies.map(p => p.name.toString()), ["height", "width"]);
+    });
+
     mocha.it("Get properties from heritageClause", function () {
         generator.createImportDeclaration(
             undefined,

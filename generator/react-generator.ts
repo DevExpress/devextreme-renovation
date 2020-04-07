@@ -2570,7 +2570,7 @@ export class Generator {
 
         const module = moduleSpecifier.expression.toString();
         if (context.dirname) {
-            const modulePath = path.join(context.dirname, `${module}.tsx`);
+            const modulePath = path.join(context.dirname, module.endsWith(".tsx") ? module : `${module}.tsx`);
             if (fs.existsSync(modulePath)) {
                 compileCode(this, fs.readFileSync(modulePath).toString(), { dirname: context.dirname, path: modulePath });
 
