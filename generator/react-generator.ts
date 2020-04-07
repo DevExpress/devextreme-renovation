@@ -1555,10 +1555,7 @@ export class ReactComponent {
     }
 
     compileImportStatements(hooks: string[], compats: string[]) {
-        if (hooks.length) {
-            return [`import React, {${hooks.concat(compats).join(",")}} from 'react';`];
-        }
-        return ["import React from 'react'"];
+        return [`import React, {${hooks.concat(compats).join(",")}} from 'react';`];
     }
 
     processModuleFileName(module: string) {
