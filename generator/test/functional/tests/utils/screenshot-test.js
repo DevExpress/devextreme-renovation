@@ -1,5 +1,6 @@
 import looksSame from 'looks-same';
 import path from 'path';
+import fs from 'fs';
 
 /**
  * 
@@ -8,11 +9,15 @@ import path from 'path';
  * @param {string} ethalonName 
  */
 const screenshotTest = async (t, selector, ethalonName) => { 
+    const screenshotPath = path.resolve(__dirname, `../temp/${ethalonName}`);
+    if (fs.existsSync(screenshotPath)) { 
+        fs.unlinkSync(screenshotPath);
+    }
     await t.takeElementScreenshot(selector, ethalonName);
     return new Promise((resolve, fail) => {
         looksSame(
-            path.resolve(__dirname, '../etalon/simple.png'),
-            path.resolve(__dirname, '../temp/simple.png'), 
+            path.resolve(__dirname, `../etalon/${ethalonName}`),
+            screenshotPath, 
             (error, { equal }) => {
                 if (error) { 
                     fail(error);
