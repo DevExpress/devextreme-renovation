@@ -14,7 +14,7 @@ import React, { useCallback } from 'react';
 interface Widget {
     props: WidgetInput;
     getHeight: () => number;
-    customAttributes: () => any;
+    getRestProps: () => any;
 }
 
 export default function Widget(props: WidgetInput) {
@@ -23,7 +23,7 @@ export default function Widget(props: WidgetInput) {
         return props.height;
     }, [props.onClick, props.height]);
 
-    const customAttributes=useCallback(function customAttributes(){
+    const getRestProps=useCallback(function getRestProps(){
         const { height, onClick, ...restProps } = props;
         return restProps;
     }, [props]);
@@ -31,7 +31,7 @@ export default function Widget(props: WidgetInput) {
     return view(({
         props: { ...props },
         getHeight,
-        customAttributes
+        getRestProps
     })
     );
 }

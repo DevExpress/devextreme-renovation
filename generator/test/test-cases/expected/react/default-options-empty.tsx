@@ -9,16 +9,16 @@ export const WidgetProps: WidgetProps = {};
 import { convertRulesToOptions, Rule } from "../../../../../../component_declaration/default_options";
 import React, {useCallback} from "react";
 
-interface Widget { props: WidgetProps, customAttributes:()=>any; }
+interface Widget { props: WidgetProps, getRestProps:()=>any; }
 
 export default function Widget(props: WidgetProps) {
-    const customAttributes=useCallback(function customAttributes(){
+    const getRestProps=useCallback(function getRestProps(){
         const { ...restProps } = props;
         return restProps;
     }, [props]);
     return view(({
         props: { ...props },
-        customAttributes,
+        getRestProps,
     }));
 }
 

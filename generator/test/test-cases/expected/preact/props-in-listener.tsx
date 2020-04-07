@@ -11,7 +11,7 @@ interface Component {
     type?: string;
     onClick?: () => void;
     clickHandler: () => any;
-    customAttributes: () => any;
+    getRestProps: () => any;
 }
 
 export function Component(props: {
@@ -23,7 +23,7 @@ export function Component(props: {
         props.onClick!({ type: props.type })
     }, [props.onClick, props.type])
 
-    const customAttributes=useCallback(function customAttributes(){
+    const getRestProps=useCallback(function getRestProps(){
         const { onClick, type, ...restProps } = props;
         return restProps;
     }, [props]);
@@ -31,7 +31,7 @@ export function Component(props: {
     return view(viewModel({
         ...props,
         clickHandler,
-        customAttributes
+        getRestProps
     })
     );
 }

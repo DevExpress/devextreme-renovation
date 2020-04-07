@@ -1476,7 +1476,7 @@ export class ReactComponent {
             .map(s => new State(s as Property));
 
         this.methods = members.filter(m => m instanceof Method && m.decorators.length === 0) as Method[];
-        this.methods.push(this.getCustomAttributesExpression());
+        this.methods.push(this.createRestPropsMethod());
 
         this.listeners = members.filter(m => m.decorators.find(d => d.name === "Listen"))
             .map(m => new Listener(m as Method));
@@ -1519,7 +1519,7 @@ export class ReactComponent {
             });
     }
 
-    getCustomAttributesExpression() {
+    createRestPropsMethod() {
         const props = this.heritageProperies;
         const bindingElements = props.map(p => new BindingElement(
                 undefined,
@@ -1551,7 +1551,7 @@ export class ReactComponent {
         ), new ReturnStatement(new SimpleExpression("restProps"))];
 
         const body = new Block(statements, true);
-        return new Method(undefined, undefined, '', new Identifier('customAttributes'), undefined, [], [], undefined, body);
+        return new Method(undefined, undefined, '', new Identifier('getRestProps'), undefined, [], [], undefined, body);
     }
 
     compileImportStatements(hooks: string[], compats: string[]) {

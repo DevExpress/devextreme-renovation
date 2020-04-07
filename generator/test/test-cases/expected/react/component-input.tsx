@@ -14,14 +14,14 @@ import React, { useCallback } from "react";
 interface Widget {
     props: WidgetProps,
     onClick: () => any,
-    customAttributes:()=>any;
+    getRestProps:()=>any;
 }
 
 export default function Widget(props: WidgetProps) {
     const onClick = useCallback(function onClick() {
         const v = props.height
     }, [props.height]);
-    const customAttributes=useCallback(function customAttributes(){
+    const getRestProps=useCallback(function getRestProps(){
         const { children, height, ...restProps } = props;
         return restProps;
     }, [props]);
@@ -29,7 +29,7 @@ export default function Widget(props: WidgetProps) {
     return view(({
         props: { ...props },
         onClick,
-        customAttributes
+        getRestProps
     }));
 }
 

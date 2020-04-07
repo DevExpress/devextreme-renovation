@@ -22,7 +22,7 @@ import React, { useState, useCallback } from 'react';
 interface Widget {
   props: WidgetInput;
   updateState: () => any;
-  customAttributes: () => any;
+  getRestProps: () => any;
 }
 
 export default function Widget(props: WidgetInput) {
@@ -33,7 +33,7 @@ export default function Widget(props: WidgetInput) {
     (__state_setPressed(!(props.pressed !== undefined ? props.pressed : __state_pressed)), props.pressedChange!(!(props.pressed !== undefined ? props.pressed : __state_pressed)))
   }, [props.pressed, __state_pressed, props.pressedChange]);
 
-  const customAttributes=useCallback(function customAttributes(){
+  const getRestProps=useCallback(function getRestProps(){
     const { defaultPressed, defaultS, pressed, pressedChange, s, sChange, ...restProps } = props;
     return restProps;
   }, [props]);
@@ -45,7 +45,7 @@ export default function Widget(props: WidgetInput) {
       s: props.s !== undefined ? props.s : __state_s
     },
     updateState,
-    customAttributes
+    getRestProps
   })
   );
 }
