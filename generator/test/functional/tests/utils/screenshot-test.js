@@ -13,6 +13,7 @@ const screenshotTest = async (t, selector, ethalonName) => {
     if (fs.existsSync(screenshotPath)) { 
         fs.unlinkSync(screenshotPath);
     }
+    await t.resizeWindow(600, 600);
     await t.takeElementScreenshot(selector, ethalonName);
     return new Promise((resolve, fail) => {
         looksSame(
