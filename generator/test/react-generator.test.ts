@@ -3210,7 +3210,34 @@ mocha.describe("ComponentInput", function () {
             assert.strictEqual(getResult(`{${component.compileViewModelArguments().join(",")}}`
             ), getResult("{props:{...props}, property: __property()}"));
         });
+    });
 
+    mocha.describe("Property. getters", function () { 
+        mocha.it("Property without decorators should be an internal state", function () {
+            const property = generator.createProperty(
+                [],
+                undefined,
+                generator.createIdentifier("p"),
+                generator.SyntaxKind.QuestionToken
+            );
+
+            assert.strictEqual(property.getter(), "__state_p");
+        });
+
+        mocha.it("Property with unknown decorator should throw error", function () {
+            const property = generator.createProperty(
+                [createDecorator("any")],
+                undefined,
+                generator.createIdentifier("p"),
+                generator.SyntaxKind.QuestionToken
+            );
+
+            try {
+                property.getter();
+            } catch (e) { 
+                assert.strictEqual(e, "Can't parse property: p");
+            }
+        });
     });
 });
 

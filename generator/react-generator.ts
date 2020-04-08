@@ -925,13 +925,18 @@ export class Property extends BaseClassMember {
     }
 
     getter() {
-        if (this.decorators.find(d => d.name === "InternalState")) {
+        if (this.decorators.find(d => d.name === "InternalState") || this.decorators.length===0) {
             return getLocalStateName(this.name);
+        } else if (this.decorators.find(d => d.name === "OneWay" ||  d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
+            return getPropName(this.name);
+        } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
+            return `${this.name}.current${this.questionOrExclamationToken}`
+        } else if (this.decorators.find(d => d.name === "TwoWay")) { 
+            const propName = getPropName(this.name);
+            const expression = `${propName}!==undefined?${propName}:${getLocalStateName(this.name)}`;
+            return expression;
         }
-        if (this.decorators.find(d => d.name === "Template" || d.name === "Slot")) {
-            return `props.${this.name}`;
-        }
-        return this.name;
+        throw `Can't parse property: ${this._name}`;
     }
 
     isReadOnly() {
@@ -1305,7 +1310,7 @@ export class Prop {
     }
 
     getter() {
-        return getPropName(this.name);
+        return this.property.getter();
     }
 
     getDependecy() {
@@ -1317,11 +1322,6 @@ export class Ref extends Prop {
     typeDeclaration() {
         return `${this.name}:any`;
     }
-
-    getter() {
-        return `${this.name}.current${this.property.questionOrExclamationToken}`;
-    }
-
     getDependecy() {
         return [this.name.toString()];
     }
@@ -1335,10 +1335,6 @@ export class InternalState extends Prop {
     defaultDeclaration() {
         return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(${this.property.initializer});`;
     }
-
-    getter() {
-        return getLocalStateName(this.name);
-    }
 }
 
 export class State extends InternalState {
@@ -1347,12 +1343,6 @@ export class State extends InternalState {
         const propName = getPropName(this.name);
         const initializer = this.property.initializer ? `||${this.property.initializer.toString()}` : "";
         return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(()=>(${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(this.name)})${initializer});`;
-    }
-
-    getter() {
-        const propName = getPropName(this.name);
-        const expression = `${propName}!==undefined?${propName}:${getLocalStateName(this.name)}`;
-        return expression;
     }
 
     getDependecy() {
@@ -1863,7 +1853,7 @@ export class VariableDeclaration extends Expression {
             const props = getProps(options.members);
             const members = this.name.getDependency()
                 .map(d => props.find(m => m._name.toString() === d))
-                .filter(m => m && m.name && m.getter().toString() !== m._name.toString()) as Array<Property | Method>;
+                .filter(m => m && m.name && m.name.toString() !== m._name.toString()) as Array<Property | Method>;
             const variables = members.reduce((v: VariableExpression, m) => {
                 const bindingPattern = this.name as BindingPattern;
                 bindingPattern.remove(m._name.toString());
