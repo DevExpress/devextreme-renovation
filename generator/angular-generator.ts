@@ -829,6 +829,10 @@ class Method extends BaseMethod {
     getter() { 
         return this.name.toString();
     }
+
+    getAllDependency() {
+        return this.body.getDependency();
+    }
 }
 
 class GetAccessor extends BaseGetAccessor { 
@@ -840,6 +844,8 @@ class GetAccessor extends BaseGetAccessor {
         return this.name;
     }
 }
+
+const ngOnChangesParameters = ["changes"];
 
 class AngularComponent extends ReactComponent {
     decorator: Decorator;
@@ -887,12 +893,36 @@ class AngularComponent extends ReactComponent {
         return imports.join(";\n");
     }
 
-    compileEffects(ngAfterViewInitStatements: string[], ngOnDestroyStatements: string[]) { 
-        const effects = this.members.filter(m => m.decorators.find(d => d.name === "Effect"));
+    compileEffects(ngAfterViewInitStatements: string[], ngOnDestroyStatements: string[], ngOnChanges:string[]=[], ngAfterViewCheckedStatements: string[]=[]) { 
+        const effects = this.members.filter(m => m.decorators.find(d => d.name === "Effect")) as BaseMethod[];
         if (effects.length) { 
+            const subscribe = (e: Method) => `this.${e.getter()}()`;
+            effects.map((e,i) => { 
+                const d = e.getAllDependency();
+                const inputProps = this.members.filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "TwoWay"));
+                const propsDependency = d.filter(d => inputProps.some(p => p.name.toString() === d));
+                if (propsDependency.length) {
+                    ngOnChanges.push(`
+                        if (this.__destroyEffects.length && [${propsDependency.map(d=>`"${d}"`).join(",")}].some(d=>${ngOnChangesParameters[0]}[d]!==null)) {
+                            this.__destroyEffects[${i}]?.();
+                            this.__viewCheckedSubscribeEvent[${i}] = ()=>{
+                                this.__destroyEffects[${i}] = ${subscribe(e)}
+                            }
+                        }`);
+                }
+                
+            });
+            if (ngOnChanges.length) { 
+                ngAfterViewCheckedStatements.push(`
+                this.__viewCheckedSubscribeEvent.forEach(s=>s?.());
+                this.__viewCheckedSubscribeEvent = [];
+                `);
+            }
             ngAfterViewInitStatements.push(`this.__destroyEffects.push(${effects.map(e => `this.${e.getter()}()`).join(",")});`);
             ngOnDestroyStatements.push(`this.__destroyEffects.forEach(d => d && d());`)
-            return `__destroyEffects: Array<() => any> = [];`
+            return `__destroyEffects: Array<() => any> = [];
+            __viewCheckedSubscribeEvent: Array<()=>void> = [];
+            `
         }
 
         return "";
@@ -1029,9 +1059,9 @@ class AngularComponent extends ReactComponent {
         return "";
     }
 
-    compileLifeCycle(name: string, statements: string[]): string { 
+    compileLifeCycle(name: string, statements: string[], parameters:string[] = []): string { 
         if (statements.length) { 
-            return `${name}(){
+            return `${name}(${parameters.join(",")}){
                 ${statements.join("\n")}
             }`;
         }
@@ -1063,6 +1093,7 @@ class AngularComponent extends ReactComponent {
         const ngOnChangesStatements: string[] = [];
         const ngAfterViewInitStatements: string[] = [];
         const ngOnDestroyStatements: string[] = [];
+        const ngAfterViewCheckedStatements: string[] = [];
         const constructorStatements: string[] = [];
         const coreImports: string[] = [];
 
@@ -1094,10 +1125,11 @@ class AngularComponent extends ReactComponent {
             ${spreadAttributes}
             ${this.compileTrackBy()}
             ${this.compileViewModel()}
-            ${this.compileEffects(ngAfterViewInitStatements, ngOnDestroyStatements)}
+            ${this.compileEffects(ngAfterViewInitStatements, ngOnDestroyStatements, ngOnChangesStatements, ngAfterViewCheckedStatements)}
             ${this.compileLifeCycle("ngAfterViewInit", ngAfterViewInitStatements)}
-            ${this.compileLifeCycle("ngOnChanges", ngOnChangesStatements)}
+            ${this.compileLifeCycle("ngOnChanges", ngOnChangesStatements, [`${ngOnChangesParameters[0]}: {[name:string]: any}`])}
             ${this.compileLifeCycle("ngOnDestroy", ngOnDestroyStatements)}
+            ${this.compileLifeCycle("ngAfterViewChecked", ngAfterViewCheckedStatements)}
             ${this.compileLifeCycle("constructor",
                 constructorStatements.length ?
                     ["super()"].concat(constructorStatements) :

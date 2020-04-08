@@ -25,14 +25,29 @@ export default class Widget extends WidgetInput {
         return () => unsubscribe(id);
     }
 
-    __destroyEffects: Array<() => any> = []
+    __destroyEffects: Array<() => any> = [];
+    __viewCheckedSubscribeEvent: Array<()=>void> = [];
 
     ngAfterViewInit() {
         this.__destroyEffects.push(this.__setupData());
     }
 
+    ngOnChanges(changes: {[name:string]: any}) {
+        if (this.__destroyEffects.length && ["p", "s"].some(d => changes[d] !== null)) {
+            this.__destroyEffects[0]?.();
+            this.__viewCheckedSubscribeEvent[0] = () => {
+                this.__destroyEffects[0] = this.__setupData()
+            }
+        }
+    }
+
     ngOnDestroy() {
         this.__destroyEffects.forEach(d => d && d());
+    }
+
+    ngAfterViewChecked(){   
+        this.__viewCheckedSubscribeEvent.forEach(s=>s?.());
+        this.__viewCheckedSubscribeEvent = [];
     }
 
 }
