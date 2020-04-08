@@ -14,18 +14,18 @@ import React, {useState,useCallback} from 'react';
 
 interface Widget {
     props: WidgetInput;
-    getRestProps:()=>any;
+    restAttributes: any;
 }
 
 export default function Widget(props: WidgetInput){
     const [__state_stateProp, __state_setStateProp] = useState(()=>(props.stateProp!==undefined?props.stateProp:props.defaultStateProp));
-    const getRestProps=useCallback(function getRestProps(){
+    const restAttributes=useCallback(function restAttributes(){
         const { defaultStateProp, prop1, stateProp, statePropChange, ...restProps } = props;
         return restProps;
     }, [props]);
     return view(({
             props:{...props, stateProp:props.stateProp!==undefined?props.stateProp:__state_stateProp},
-            getRestProps
+            restAttributes: restAttributes()
         })
     );
 }

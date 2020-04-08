@@ -20,7 +20,7 @@ export default class Widget extends WidgetInput {
     getSize(): string { 
         return `${this.prop1} + ${this.divRef!.nativeElement.innerHTML}`;
     }
-    get getRestProps(){
+    get restAttributes(){
         return {}
     }
 }

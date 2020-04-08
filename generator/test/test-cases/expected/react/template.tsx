@@ -10,17 +10,17 @@ export const WidgetInput: WidgetInput = {
 import React, {useCallback} from 'react'
 interface Widget {
     props: WidgetInput;
-    getRestProps: () => any;
+    restAttributes: any;
 }
 
 export default function Widget(props: WidgetInput) {
-    const getRestProps=useCallback(function getRestProps(){
+    const restAttributes=useCallback(function restAttributes(){
         const { contentRender, render, ...restProps } = props;
         return restProps;
     }, [props]);
     return view(({
         props: { ...props },
-        getRestProps
+        restAttributes: restAttributes()
     })
     );
 }

@@ -6,7 +6,7 @@ interface Widget {
     size: number,
     height: number,
     width: number,
-    getRestProps:()=>any,
+    restAttributes: any,
 }
 
 export default function Widget(props: {
@@ -14,13 +14,13 @@ export default function Widget(props: {
     height: number,
     width: number
 }) {
-    const getRestProps=useCallback(function getRestProps(){
+    const restAttributes=useCallback(function restAttributes(){
         const { height, size, width, ...restProps } = props;
         return restProps;
     }, [props]);
     return view1(viewModel1({
         ...props,
-        getRestProps
+        restAttributes: restAttributes()
     }));
 }
 

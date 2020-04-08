@@ -7,7 +7,7 @@ import React, { useCallback, useEffect } from 'react';
 interface Component {
   onPointerUp: () => any;
   scrollHandler: () => any;
-  getRestProps: () => any;
+  restAttributes: any;
 }
 export function Component(props: {}) {
   const onPointerUp = useCallback(() => { }, []);
@@ -20,7 +20,7 @@ export function Component(props: {}) {
       window.removeEventListener("scroll", scrollHandler);
     };
   });
-  const getRestProps=useCallback(function getRestProps(){
+  const restAttributes=useCallback(function restAttributes(){
     const { ...restProps } = props;
     return restProps;
   }, [props]);
@@ -29,6 +29,6 @@ export function Component(props: {}) {
     ...props,
     onPointerUp,
     scrollHandler,
-    getRestProps
+    restAttributes: restAttributes()
   }));
 }

@@ -23,17 +23,17 @@ import { useCallback } from "preact/hooks";
 
 interface Widget {
     props: WidgetInput;
-    getRestProps: () => any;
+    restAttributes: any;
 }
 
 export default function Widget(props: WidgetInput) {
-    const getRestProps=useCallback(function getRestProps(){
+    const restAttributes=useCallback(function restAttributes(){
         const { children, namedSlot, ...restProps } = props;
         return restProps;
     }, [props]);
     return view(({
         props: { ...props },
-        getRestProps
+        restAttributes: restAttributes()
     })
     );
 }

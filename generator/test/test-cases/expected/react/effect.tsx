@@ -23,7 +23,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 interface Widget {
     props: WidgetInput;
     i: number;
-    getRestProps:()=>any;
+    restAttributes: any;
 }
 
 export default function Widget(props: WidgetInput) {
@@ -36,7 +36,7 @@ export default function Widget(props: WidgetInput) {
         return () => unsubscribe(id);
     },
         [props.p, props.s, __state_s, props.sChange, __state_i])
-    const getRestProps=useCallback(function getRestProps(){
+    const restAttributes=useCallback(function restAttributes(){
         const { defaultS, p, s, sChange, ...restProps } = props;
         return restProps;
     }, [props]);
@@ -47,7 +47,7 @@ export default function Widget(props: WidgetInput) {
             s: props.s !== undefined ? props.s : __state_s
         },
         i: __state_i,
-        getRestProps
+        restAttributes: restAttributes()
     })
     );
 }

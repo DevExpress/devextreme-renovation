@@ -17,7 +17,7 @@ export default class Widget extends WidgetInput {
     __updateState(): any {
         this.pressedChange!.emit(this.pressed = !this.pressed)
     }
-    get getRestProps(){
+    get restAttributes(){
         return {}
     }
 }

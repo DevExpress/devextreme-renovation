@@ -851,7 +851,7 @@ class AngularComponent extends ReactComponent {
 
     createRestPropsMethod() {
         const body = new Block([new SimpleExpression("return {}")], true);
-        return new GetAccessor(undefined, undefined, new Identifier('getRestProps'), [], undefined, body);
+        return new GetAccessor(undefined, undefined, new Identifier('restAttributes'), [], undefined, body);
     }
 
     addPrefixToMembers(members: Array<Property | Method>) { 

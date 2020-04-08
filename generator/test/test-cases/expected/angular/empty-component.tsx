@@ -12,7 +12,7 @@ export default class Widget {
     @Input() height: number
     @Input() width: number
 
-    get getRestProps(){
+    get restAttributes(){
         return {}
     }
 
@@ -23,7 +23,7 @@ export default class Widget {
                 height: this.height,
                 width: this.width
             },
-            getRestProps: this.getRestProps
+            restAttributes: this.restAttributes
         });
     }
     __processNgStyle(value: any) {

@@ -15,7 +15,7 @@ export type WidgetRef = {
 interface Widget {
     props: WidgetInput;
     divRef: any;
-    getRestProps:()=>any;
+    restAttributes: any;
 }
 
 const Widget = forwardRef<WidgetRef, WidgetInput>((props: WidgetInput, ref) => {
@@ -29,7 +29,7 @@ const Widget = forwardRef<WidgetRef, WidgetInput>((props: WidgetInput, ref) => {
             return `${props.prop1} + ${divRef.current!.innerHTML}`;
         }
     }), [props.prop1, props.prop2]);
-    const getRestProps=useCallback(function getRestProps(){
+    const restAttributes=useCallback(function restAttributes(){
         const { prop1, prop2, ...restProps } = props;
         return restProps;
     }, [props]);
@@ -37,7 +37,7 @@ const Widget = forwardRef<WidgetRef, WidgetInput>((props: WidgetInput, ref) => {
     return view(({
         props: { ...props },
         divRef,
-        getRestProps
+        restAttributes: restAttributes()
     }));
 });
 

@@ -23,7 +23,7 @@ export default class Widget extends WidgetInput {
         return {};
     }
 
-    get getRestProps(){
+    get restAttributes(){
         return {}
     }
 

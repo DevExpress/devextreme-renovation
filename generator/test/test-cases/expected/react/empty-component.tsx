@@ -3,20 +3,20 @@ import React, {useCallback} from "react";
 interface Widget {
   height: number;
   width: number;
-  getRestProps: () => any;
+  restAttributes: any;
 }
 
 export default function Widget(props: {
   height: number,
   width: number
 }) {
-  const getRestProps=useCallback(function getRestProps(){
+  const restAttributes=useCallback(function restAttributes(){
     const { height, width, ...restProps } = props;
     return restProps;
 }, [props]);
   return view1(viewModel1({
     ...props,
-    getRestProps
+    restAttributes: restAttributes()
   }));
 }
 

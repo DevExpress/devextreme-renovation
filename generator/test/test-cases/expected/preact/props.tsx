@@ -15,7 +15,7 @@ import { useCallback } from 'preact/hooks';
 interface Widget {
     props: WidgetInput;
     getHeight: () => number;
-    getRestProps: () => any;
+    restAttributes: any;
 }
 
 export default function Widget(props: WidgetInput) {
@@ -23,14 +23,14 @@ export default function Widget(props: WidgetInput) {
         props.onClick(10)
         return props.height;
     }, [props.onClick, props.height]);
-    const getRestProps=useCallback(function getRestProps(){
+    const restAttributes=useCallback(function restAttributes(){
         const {  height, onClick, ...restProps } = props;
         return restProps;
     }, [props]);
     return view(({
         props: { ...props },
         getHeight,
-        getRestProps
+        restAttributes: restAttributes()
     })
     );
 }
