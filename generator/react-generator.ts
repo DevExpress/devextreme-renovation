@@ -1451,7 +1451,7 @@ export class ReactComponent {
 
 
         this.members = members = inheritMembers(heritageClauses, this.addPrefixToMembers(members));
-        this.members.push(this.createRestPropsMethod());
+        this.members.push(this.createRestPropsGetter());
 
         this.props = members
             .filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template"))
@@ -1519,7 +1519,7 @@ export class ReactComponent {
             });
     }
 
-    createRestPropsMethod() {
+    createRestPropsGetter() {
         const props = this.heritageProperies;
         const bindingElements = props.map(p => new BindingElement(
                 undefined,
@@ -1550,10 +1550,7 @@ export class ReactComponent {
             )
         ), new ReturnStatement(new SimpleExpression("restProps"))];
 
-        const body = new Block(statements, true);
-        const a = new GetAccessor(undefined, undefined, new Identifier('restAttributes'), [], undefined, body);
-        // return new Method(undefined, undefined, '', new Identifier('restAttributes'), undefined, [], [], undefined, body);
-        return a;
+        return  new GetAccessor(undefined, undefined, new Identifier('restAttributes'), [], undefined, new Block(statements, true));
     }
 
     compileImportStatements(hooks: string[], compats: string[]) {

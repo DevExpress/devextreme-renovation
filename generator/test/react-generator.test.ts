@@ -144,10 +144,6 @@ mocha.describe("react-generator", function () {
     mocha.it("component-input", function () {
         this.testGenerator(this.test!.title);
     });
-    
-    mocha.it("custom-attributes", function () {
-        this.testGenerator(this.test!.title);
-    });
 
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {

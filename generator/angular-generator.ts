@@ -849,9 +849,8 @@ class AngularComponent extends ReactComponent {
         this.decorator = componentDecorator;
     }
 
-    createRestPropsMethod() {
-        const body = new Block([new SimpleExpression("return {}")], true);
-        return new GetAccessor(undefined, undefined, new Identifier('restAttributes'), [], undefined, body);
+    createRestPropsGetter() {
+        return new GetAccessor(undefined, undefined, new Identifier('restAttributes'), [], undefined, new Block([new SimpleExpression("return {}")], true));
     }
 
     addPrefixToMembers(members: Array<Property | Method>) { 
@@ -1081,7 +1080,7 @@ class AngularComponent extends ReactComponent {
 
         const spreadAttributes = this.compileSpreadAttributes(ngOnChangesStatements, coreImports);
 
-        debugger
+
         return `
         ${this.compileImports(coreImports)}
         ${this.compileDefaultOptions(constructorStatements)}
