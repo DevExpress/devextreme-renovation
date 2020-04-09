@@ -2955,7 +2955,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
         );
 
         assert.deepEqual(method.getDependency(
-            [new InternalState(this.internalState), new State(this.state), new Prop(this.prop)]
+            [this.internalState, this.state, this.prop]
         ), ["props.p1", "__state_i1", "props.s1", "__state_s1", "props.s1Change"]);
     });
 
@@ -2976,7 +2976,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
         );
 
         assert.deepEqual(method.getDependency(
-            [new State(this.state), new Prop(this.prop)]
+            [this.state, this.prop]
         ), ["props.p1"]);
     });
 
@@ -3001,7 +3001,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
         );
 
         assert.deepEqual(method.getDependency(
-            [new InternalState(this.internalState), new State(this.state), new Prop(this.prop)]
+            [this.internalState, this.state, this.prop]
         ), ["__state_s1", "props"]);
     });
 });
@@ -3212,7 +3212,7 @@ mocha.describe("ComponentInput", function () {
         });
     });
 
-    mocha.describe("Property. getters", function () { 
+    mocha.describe("Property. getters, getDependency", function () { 
         mocha.it("Property without decorators should be an internal state", function () {
             const property = generator.createProperty(
                 [],
@@ -3222,6 +3222,7 @@ mocha.describe("ComponentInput", function () {
             );
 
             assert.strictEqual(property.getter(), "__state_p");
+            assert.deepEqual(property.getDependency(), ["__state_p"]);
         });
 
         mocha.it("Property with unknown decorator should throw error", function () {
@@ -3234,6 +3235,21 @@ mocha.describe("ComponentInput", function () {
 
             try {
                 property.getter();
+            } catch (e) { 
+                assert.strictEqual(e, "Can't parse property: p");
+            }
+        });
+
+        mocha.it("Property with unknown decorator should throw error", function () {
+            const property = generator.createProperty(
+                [createDecorator("any")],
+                undefined,
+                generator.createIdentifier("p"),
+                generator.SyntaxKind.QuestionToken
+            );
+
+            try {
+                property.getDependency();
             } catch (e) { 
                 assert.strictEqual(e, "Can't parse property: p");
             }

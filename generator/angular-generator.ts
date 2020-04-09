@@ -814,6 +814,10 @@ export class Property extends BaseProperty {
         return this.name.toString();
     }
 
+    getDependency() { 
+        return [this.name];
+    }
+
     inherit() { 
         return new Property(this.decorators as Decorator[], this.modifiers, this._name, this.questionOrExclamationToken, this.type, this.initializer, true);
     }
@@ -828,10 +832,6 @@ class Method extends BaseMethod {
 
     getter() { 
         return this.name.toString();
-    }
-
-    getAllDependency() {
-        return this.body.getDependency();
     }
 }
 
@@ -897,10 +897,10 @@ class AngularComponent extends ReactComponent {
         const effects = this.members.filter(m => m.decorators.find(d => d.name === "Effect")) as BaseMethod[];
         if (effects.length) { 
             const subscribe = (e: Method) => `this.${e.getter()}()`;
-            effects.map((e,i) => { 
-                const d = e.getAllDependency();
-                const inputProps = this.members.filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "TwoWay"));
-                const propsDependency = d.filter(d => inputProps.some(p => p.name.toString() === d));
+            effects.map((e, i) => { 
+                const propsDependency = e.getDependency(
+                    this.members.filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "TwoWay")) as Property[]
+                );
                 if (propsDependency.length) {
                     ngOnChanges.push(`
                         if (this.__destroyEffects.length && [${propsDependency.map(d=>`"${d}"`).join(",")}].some(d=>${ngOnChangesParameters[0]}[d]!==null)) {

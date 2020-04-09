@@ -851,7 +851,7 @@ export class Method extends BaseClassMember {
         return `(${this.parametersTypeDeclaration()})=>${this.body.toString(options)}`
     }
 
-    getDependency(properties: Array<State | Prop | InternalState> = []) {
+    getDependency(properties: Property[] = []) {
         const dependency = this.body.getDependency();
         const additionalDependency = [];
 
@@ -859,13 +859,10 @@ export class Method extends BaseClassMember {
             additionalDependency.push("props");
         }
 
-        const result = Object.keys(dependency.reduce((k: any, d) => {
-            k[d] = d;
-            return k;
-        }, {}))
+        const result = [...new Set(dependency)]
             .map(d => properties.find(p => p.name.toString() === d))
             .filter(d => d)
-            .reduce((d: string[], p) => d.concat(p!.getDependecy()), [])
+            .reduce((d: string[], p) => d.concat(p!.getDependency()), [])
             .concat(additionalDependency);
         
         if (additionalDependency.indexOf("props") > -1) { 
@@ -935,6 +932,19 @@ export class Property extends BaseClassMember {
             const propName = getPropName(this.name);
             const expression = `${propName}!==undefined?${propName}:${getLocalStateName(this.name)}`;
             return expression;
+        }
+        throw `Can't parse property: ${this._name}`;
+    }
+
+    getDependency() { 
+        if (this.decorators.find(d => d.name === "InternalState") || this.decorators.length === 0) {
+            return [getLocalStateName(this.name)];
+        } else if (this.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
+            return [getPropName(this.name)];
+        } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
+            return [this.name.toString()]
+        } else if (this.decorators.find(d => d.name === "TwoWay")) {
+            return [getPropName(this.name), getLocalStateName(this.name), getPropName(`${this.name}Change`)];
         }
         throw `Can't parse property: ${this._name}`;
     }
@@ -1312,18 +1322,11 @@ export class Prop {
     getter() {
         return this.property.getter();
     }
-
-    getDependecy() {
-        return [this.getter()];
-    }
 }
 
 export class Ref extends Prop {
     typeDeclaration() {
         return `${this.name}:any`;
-    }
-    getDependecy() {
-        return [this.name.toString()];
     }
 }
 
@@ -1338,15 +1341,10 @@ export class InternalState extends Prop {
 }
 
 export class State extends InternalState {
-
     defaultDeclaration() {
         const propName = getPropName(this.name);
         const initializer = this.property.initializer ? `||${this.property.initializer.toString()}` : "";
         return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(()=>(${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(this.name)})${initializer});`;
-    }
-
-    getDependecy() {
-        return [getPropName(this.name), getLocalStateName(this.name), getPropName(`${this.name}Change`)]
     }
 }
 
@@ -1375,7 +1373,7 @@ export class Listener {
     }
 
     defaultDeclaration(options: toStringOptions) {
-        const dependency = this.method.getDependency(options.state.concat(options.props).concat(options.internalState));
+        const dependency = this.method.getDependency(options.state.concat(options.props).concat(options.internalState).map(p=>p.property));
         return `const ${this.name}=useCallback(${this.method.arrowDeclaration(options)}, [${dependency.join(",")}])`;
     }
 }
@@ -1644,7 +1642,7 @@ export class ReactComponent {
         const effects = this.effects;
 
         const effectsString = effects.map(e => `useEffect(${e.arrowDeclaration(this.getToStringOptions())}, 
-        [${e.getDependency(this.props.concat(this.state).concat(this.internalState))}])`).join(";\n");
+        [${e.getDependency(this.props.concat(this.state).concat(this.internalState).map(p=>p.property))}])`).join(";\n");
 
         let subscriptionsString = "";
         if (subscriptions.length) {
@@ -1676,7 +1674,10 @@ export class ReactComponent {
             const api = this.api.reduce((r: { methods: string[], deps: string[]}, a) => {
                 r.methods.push(`${a.name}: ${a.arrowDeclaration(this.getToStringOptions())}`);
 
-                r.deps = [...new Set(r.deps.concat(a.getDependency(this.props.concat(this.state).concat(this.internalState))))];
+                r.deps = [...new Set(r.deps
+                    .concat(a.getDependency(
+                        this.props.concat(this.state).concat(this.internalState).map(p=>p.property)
+                    )))];
                 
                 return r;
             }, { methods: [], deps: [] });
@@ -1771,7 +1772,7 @@ export class ReactComponent {
                 ${this.compileUseImperativeHandle()}
                 ${this.methods.map(m => {
                     return `const ${m.name}=useCallback(${m.declaration(this.getToStringOptions())}, [${
-                        m.getDependency(this.internalState.concat(this.state).concat(this.props))
+                        m.getDependency(this.internalState.concat(this.state).concat(this.props).map(p => p.property))
                     }]);`;
                 }).join("\n")}
                 return ${this.view}(${this.viewModel}({
