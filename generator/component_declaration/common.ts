@@ -104,5 +104,6 @@ export const Effect = () => propertyDecorator;
  */
 export class JSXComponent<T> extends React.Component<T> {
     props!: T & { ref?: JSXComponent<T> };
-    setState() {}
+    setState() {};
+    restAttributes: any;
 };
