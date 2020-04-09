@@ -458,6 +458,17 @@ export class JsxExpression extends ReactJsxExpression {
 
         return [];
     }
+
+    hasNgStyle() { 
+        const expression = this.getExpression();
+        if (expression instanceof Binary) { 
+            const parsedBinary = processBinary(expression);
+            if (isElement(parsedBinary)) {
+                return parsedBinary.hasNgStyle();
+            } 
+        }
+        return false;
+    }
 }
 
 export class JsxChildExpression extends JsxExpression { 
@@ -501,17 +512,17 @@ export class JsxSpreadAttribute extends JsxExpression{
     }
 }
 
-export class JsxElement extends ReactJsxElement { 
+export class JsxElement extends ReactJsxElement {
     openingElement: JsxOpeningElement
     children: Array<JsxElement | string | JsxChildExpression | JsxSelfClosingElement>;
-    constructor(openingElement: JsxOpeningElement, children: Array<JsxElement|string|JsxExpression|JsxSelfClosingElement>, closingElement: JsxClosingElement) { 
+    constructor(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: JsxClosingElement) {
         super(openingElement, children, closingElement);
         this.openingElement = openingElement;
         this.children = children.map(c => c instanceof JsxExpression ? new JsxChildExpression(c) : c);
         this.closingElement = closingElement;
     }
 
-    toString(options?: toStringOptions) { 
+    toString(options?: toStringOptions) {
         const children: string = this.children.map(c => c.toString(options)).join("\n");
         if (this.openingElement.tagName.toString() === "Fragment") {
             return children;
@@ -519,7 +530,7 @@ export class JsxElement extends ReactJsxElement {
         return `${this.openingElement.toString(options)}${children}${this.closingElement.toString(options)}`;
     }
 
-    clone() { 
+    clone() {
         return new JsxElement(
             this.openingElement.clone(),
             this.children.slice(),
@@ -527,10 +538,10 @@ export class JsxElement extends ReactJsxElement {
         );
     }
 
-    getSpreadAttributes() { 
+    getSpreadAttributes() {
         const result = this.openingElement.getSpreadAttributes();
-        const allAttributes:JsxSpreadAttributeMeta[] = this.children.reduce((result: JsxSpreadAttributeMeta[], c) => {
-            if (isElement(c)) { 
+        const allAttributes: JsxSpreadAttributeMeta[] = this.children.reduce((result: JsxSpreadAttributeMeta[], c) => {
+            if (isElement(c)) {
                 return result.concat(c.getSpreadAttributes());
             }
             return result
@@ -538,9 +549,9 @@ export class JsxElement extends ReactJsxElement {
         return allAttributes;
     }
 
-    hasNgStyle(): boolean { 
+    hasNgStyle(): boolean {
         return this.openingElement.hasNgStyle()
-            || this.children.some(c => (isElement(c)) && c.hasNgStyle());
+            || this.children.some(c => (isElement(c) || c instanceof JsxExpression) && c.hasNgStyle());
     }
 
     trackBy(options?: toStringOptions): Array<TrackByAttribute> { 
