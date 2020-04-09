@@ -16,6 +16,9 @@ export default class Widget {
     updateState(): any {
         this._hovered = !this._hovered
     }
+    get restAttributes(){
+        return {}
+    }
 
     _viewModel: any
 
@@ -23,9 +26,9 @@ export default class Widget {
         this._viewModel = viewModel({
             props: {},
             updateState: this.updateState
+            restAttributes: this.restAttributes,
         });
     }
-
 }
 @NgModule({
     declarations: [Widget],

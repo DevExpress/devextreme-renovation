@@ -17,6 +17,9 @@ export default class Widget extends WidgetInput {
     __updateState(): any {
         this.pressedChange!.emit(this.pressed = !this.pressed)
     }
+    get restAttributes(){
+        return {}
+    }
 }
 @NgModule({
     declarations: [Widget],

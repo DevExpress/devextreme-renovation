@@ -849,6 +849,10 @@ class AngularComponent extends ReactComponent {
         this.decorator = componentDecorator;
     }
 
+    createRestPropsGetter() {
+        return new GetAccessor(undefined, undefined, new Identifier('restAttributes'), [], undefined, new Block([new SimpleExpression("return {}")], true));
+    }
+
     addPrefixToMembers(members: Array<Property | Method>) { 
         if (this.isJSXComponent) {
             members.filter(m => !m.decorators.find(d => d.name === "Method")).forEach(m => {
@@ -1076,7 +1080,7 @@ class AngularComponent extends ReactComponent {
 
         const spreadAttributes = this.compileSpreadAttributes(ngOnChangesStatements, coreImports);
 
-        
+
         return `
         ${this.compileImports(coreImports)}
         ${this.compileDefaultOptions(constructorStatements)}

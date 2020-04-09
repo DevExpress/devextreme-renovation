@@ -14,7 +14,9 @@ export default class Widget extends WidgetProps {
      __onClick():any{
      const v=this.height
 }
-    
+get restAttributes(){
+    return {}
+}
 }
 @NgModule({
     declarations: [Widget],

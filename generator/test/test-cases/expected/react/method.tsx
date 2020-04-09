@@ -6,7 +6,7 @@ declare type WidgetInput = {
 }
 const WidgetInput: WidgetInput = { };
 
-import React, { useRef, useImperativeHandle, forwardRef } from "react";
+import React, { useCallback, useRef, useImperativeHandle, forwardRef } from "react";
 
 export type WidgetRef = {
     getHeight: (p:number,p1:any)=>string,
@@ -15,6 +15,7 @@ export type WidgetRef = {
 interface Widget {
     props: WidgetInput;
     divRef: any;
+    restAttributes: any;
 }
 
 const Widget = forwardRef<WidgetRef, WidgetInput>((props: WidgetInput, ref) => {
@@ -28,10 +29,15 @@ const Widget = forwardRef<WidgetRef, WidgetInput>((props: WidgetInput, ref) => {
             return `${props.prop1} + ${divRef.current!.innerHTML}`;
         }
     }), [props.prop1, props.prop2]);
+    const restAttributes=useCallback(function restAttributes(){
+        const { prop1, prop2, ...restProps } = props;
+        return restProps;
+    }, [props]);
 
     return view(({
         props: { ...props },
-        divRef
+        divRef,
+        restAttributes: restAttributes()
     }));
 });
 

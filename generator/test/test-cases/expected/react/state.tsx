@@ -22,6 +22,7 @@ import React, { useState, useCallback } from 'react';
 interface Widget {
   props: WidgetInput;
   updateState: () => any;
+  restAttributes: any;
 }
 
 export default function Widget(props: WidgetInput) {
@@ -31,13 +32,20 @@ export default function Widget(props: WidgetInput) {
   const updateState = useCallback(function updateState() {
     (__state_setPressed(!(props.pressed !== undefined ? props.pressed : __state_pressed)), props.pressedChange!(!(props.pressed !== undefined ? props.pressed : __state_pressed)))
   }, [props.pressed, __state_pressed, props.pressedChange]);
+
+  const restAttributes=useCallback(function restAttributes(){
+    const { defaultPressed, defaultS, pressed, pressedChange, s, sChange, ...restProps } = props;
+    return restProps;
+  }, [props]);
+
   return view(({
     props: {
       ...props,
       pressed: props.pressed !== undefined ? props.pressed : __state_pressed,
       s: props.s !== undefined ? props.s : __state_s
     },
-    updateState
+    updateState,
+    restAttributes: restAttributes()
   })
   );
 }
