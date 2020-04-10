@@ -39,8 +39,6 @@ export default class Widget extends WidgetInput {
         }
     }
 
-    __destroyEffects: Array<() => any> = []
-
     ngAfterViewInit() {
         this.__destroyEffects.push(this.__setupData());
     }
