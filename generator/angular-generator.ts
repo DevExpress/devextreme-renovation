@@ -459,13 +459,19 @@ export class JsxExpression extends ReactJsxExpression {
         return [];
     }
 
-    hasNgStyle() { 
+    hasNgStyle():boolean { 
         const expression = this.getExpression();
         if (expression instanceof Binary) { 
             const parsedBinary = processBinary(expression);
             if (isElement(parsedBinary)) {
                 return parsedBinary.hasNgStyle();
             } 
+        }
+
+        if (expression instanceof Conditional) { 
+            const thenStatement = getJsxExpression(expression.thenStatement);
+            const elseStatement = getJsxExpression(expression.elseStatement);
+            return isElement(thenStatement) && thenStatement.hasNgStyle() || isElement(elseStatement) && elseStatement.hasNgStyle();
         }
         return false;
     }
@@ -544,7 +550,7 @@ export class JsxElement extends ReactJsxElement {
             if (isElement(c)) {
                 return result.concat(c.getSpreadAttributes());
             }
-            return result
+            return result;
         }, result)
         return allAttributes;
     }

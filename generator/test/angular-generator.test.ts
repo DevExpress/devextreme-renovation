@@ -729,78 +729,144 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(expression.hasNgStyle(), true);
             });
 
-            mocha.it("Jsx expression: binary with element returns true if element has style attribute", function () {
-                const expression = generator.createJsxExpression(
-                    undefined,
-                    generator.createBinary(
-                        generator.createTrue(),
-                        generator.createToken(generator.SyntaxKind.AmpersandAmpersandToken),
-                        generator.createJsxElement(
-                            generator.createJsxOpeningElement(
-                                generator.createIdentifier("child"),
+            mocha.describe("Binary JSX expression", function () { 
+                mocha.it("returns true if element has style attribute", function () {
+                    const expression = generator.createJsxExpression(
+                        undefined,
+                        generator.createBinary(
+                            generator.createTrue(),
+                            generator.createToken(generator.SyntaxKind.AmpersandAmpersandToken),
+                            generator.createJsxElement(
+                                generator.createJsxOpeningElement(
+                                    generator.createIdentifier("child"),
+                                    undefined,
+                                    [generator.createJsxAttribute(
+                                        generator.createIdentifier("style"),
+                                        generator.createIdentifier("value")
+                                    )
+                                    ]
+                                ),
+                                [],
+                                generator.createJsxClosingElement(generator.createIdentifier("child"))
+                            )
+                        )
+                    )
+                    
+                    assert.strictEqual(expression.hasNgStyle(), true);
+                });
+    
+                mocha.it("returns false if has no element with style", function () {
+                    const expression = generator.createJsxExpression(
+                        undefined,
+                        generator.createBinary(
+                            generator.createTrue(),
+                            generator.createToken(generator.SyntaxKind.AmpersandAmpersandToken),
+                            generator.createTrue()
+                        )
+                    );
+                    
+                    assert.strictEqual(expression.hasNgStyle(), false);
+                });
+    
+                mocha.it("returns true if element has JsxEpression that contains element with style", function () {
+                    const expression = generator.createJsxElement(
+                        generator.createJsxOpeningElement(
+                            generator.createIdentifier("parent"),
+                            undefined,
+                            []
+                        ),
+                        [
+                            generator.createJsxExpression(
                                 undefined,
+                                generator.createBinary(
+                                    generator.createTrue(),
+                                    generator.createToken(generator.SyntaxKind.AmpersandAmpersandToken),
+                                    generator.createJsxElement(
+                                        generator.createJsxOpeningElement(
+                                            generator.createIdentifier("child"),
+                                            undefined,
+                                            [generator.createJsxAttribute(
+                                                generator.createIdentifier("style"),
+                                                generator.createIdentifier("value")
+                                            )
+                                            ]
+                                        ),
+                                        [],
+                                        generator.createJsxClosingElement(generator.createIdentifier("child"))
+                                    )
+                                )
+                            )
+                        ],
+                        generator.createJsxClosingElement(generator.createIdentifier("parent"))
+                    );
+                    
+                    assert.strictEqual(expression.hasNgStyle(), true);
+                });
+            });
+
+            mocha.describe("Conditional expression", function () { 
+                mocha.it("returns true if style in the then statement", function () { 
+                    const expression = generator.createJsxExpression(
+                        undefined,
+                        generator.createConditional(
+                            generator.createIdentifier("condition"),
+                            generator.createJsxSelfClosingElement(
+                                generator.createIdentifier("div"),
+                                [],
                                 [generator.createJsxAttribute(
                                     generator.createIdentifier("style"),
                                     generator.createIdentifier("value")
-                                )
-                                ]
+                                )]
                             ),
-                            [],
-                            generator.createJsxClosingElement(generator.createIdentifier("child"))
-                        )
-                    )
-                )
-                
-                assert.strictEqual(expression.hasNgStyle(), true);
-            });
-
-            mocha.it("Jsx expression: binary with element returns false if no element in expression", function () {
-                const expression = generator.createJsxExpression(
-                    undefined,
-                    generator.createBinary(
-                        generator.createTrue(),
-                        generator.createToken(generator.SyntaxKind.AmpersandAmpersandToken),
-                        generator.createTrue()
-                    )
-                );
-                
-                assert.strictEqual(expression.hasNgStyle(), false);
-            });
-
-            mocha.it("returns true if element has JsxEpression that contains element with style", function () {
-                const expression = generator.createJsxElement(
-                    generator.createJsxOpeningElement(
-                        generator.createIdentifier("parent"),
-                        undefined,
-                        []
-                    ),
-                    [
-                        generator.createJsxExpression(
-                            undefined,
-                            generator.createBinary(
-                                generator.createTrue(),
-                                generator.createToken(generator.SyntaxKind.AmpersandAmpersandToken),
-                                generator.createJsxElement(
-                                    generator.createJsxOpeningElement(
-                                        generator.createIdentifier("child"),
-                                        undefined,
-                                        [generator.createJsxAttribute(
-                                            generator.createIdentifier("style"),
-                                            generator.createIdentifier("value")
-                                        )
-                                        ]
-                                    ),
-                                    [],
-                                    generator.createJsxClosingElement(generator.createIdentifier("child"))
-                                )
+                            generator.createJsxSelfClosingElement(
+                                generator.createIdentifier("input"),
+                                [],
+                                []
                             )
                         )
-                    ],
-                    generator.createJsxClosingElement(generator.createIdentifier("parent"))
-                );
-                
-                assert.strictEqual(expression.hasNgStyle(), true);
+                    );
+    
+                    assert.strictEqual(expression.hasNgStyle(), true);
+                });
+    
+                mocha.it("returns true if style in the else statement", function () { 
+                    const expression = generator.createJsxExpression(
+                        undefined,
+                        generator.createConditional(
+                            generator.createIdentifier("condition"),
+                            generator.createJsxSelfClosingElement(
+                                generator.createIdentifier("div"),
+                                [],
+                                []
+                            ),
+                            generator.createJsxSelfClosingElement(
+                                generator.createIdentifier("input"),
+                                [],
+                                [generator.createJsxAttribute(
+                                    generator.createIdentifier("style"),
+                                    generator.createIdentifier("value")
+                                )]
+                            )
+                        )
+                    );
+    
+                    assert.strictEqual(expression.hasNgStyle(), true);
+                });
+
+                mocha.it("returns false if non-Jsx", function () { 
+                    const expression = generator.createJsxExpression(
+                        undefined,
+                        generator.createConditional(
+                            generator.createIdentifier("condition"),
+                            generator.createNull(),
+                            generator.createNull()
+                        )
+                    );
+    
+                    assert.strictEqual(expression.hasNgStyle(), false);
+                });
             });
+
         });
 
         mocha.it("ref", function () {
