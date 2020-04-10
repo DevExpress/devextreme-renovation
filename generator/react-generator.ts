@@ -10,9 +10,8 @@ const eventsDictionary = {
     click: "onClick"
 }
 
-function compileType(type: string = "", questionToken: string = "") {
-    return type ? `${questionToken}:${type}` : "";
-}
+export const compileType = (type: string = "", questionToken: string = "") =>
+    type ? `${questionToken}:${type}` : "";
 
 function variableDeclaration(name: Identifier|BindingPattern, type: string = "", initializer?: Expression, questionToken: string = "") {
     const initilizerDeclaration = initializer ? `=${initializer}` : "";
@@ -604,13 +603,13 @@ export class ArrowFunction extends BaseFunction {
     }
 }
 
-function checkDependency(expression: Expression, properties: Array<InternalState | State | Prop | Property | Method>) {
+function checkDependency(expression: Expression, properties: Array<Property | Method>=[]) {
     const dependency = expression.getAllDependency().reduce((r: { [name: string]: boolean }, d) => {
         r[d] = true;
         return r;
     }, {});
 
-    return properties.some(s => dependency[s.name.toString()]);
+    return properties.find(s => dependency[s.name.toString()]);
 }
 
 export class ReturnStatement extends ExpressionWithExpression {
@@ -631,19 +630,19 @@ export class Binary extends Expression {
     }
 
     toString(options?: toStringOptions) {
+        const dependecyMember = checkDependency(this.left, options?.members);
         if (options &&
             this.operator === SyntaxKind.EqualsToken &&
             this.left instanceof PropertyAccess &&
             this.left.expression.toString().startsWith(SyntaxKind.ThisKeyword) &&
-            checkDependency(this.left, options.members)) {
-            const rightExpression = this.right.toString(options);
+            dependecyMember) {
 
-            if (checkDependency(this.left, options.members.filter(m=>m.isReadOnly()))) {
+            if (dependecyMember.isReadOnly()) {
                 throw `Error: Can't assign property use TwoWay() or Internal State - ${this.toString()}`;
             }
+            const rightExpression = this.right.toString(options);
 
-            const isState = checkDependency(this.left, options.members.filter(m => m.decorators.find(d => d.name === "TwoWay")));
-            const stateSetting = `${this.left.compileStateSetting(rightExpression, isState, options)}`;
+            const stateSetting = `${this.left.compileStateSetting(rightExpression, dependecyMember as Property, options)}`;
             const changeRising = this.left.compileStateChangeRising(options.state, rightExpression);
             return changeRising ? `(${stateSetting},${changeRising})` : stateSetting;
         }
@@ -815,13 +814,13 @@ export class BaseClassMember extends Expression {
 }
 
 export class Method extends BaseClassMember {
-    asteriskToken: string;
+    asteriskToken?: string;
     questionToken: string;
     typeParameters: any;
     parameters: Parameter[];
     body: Block;
    
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: TypeExpression = new SimpleExpression("any"), body: Block) {
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string | undefined, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: TypeExpression = new SimpleExpression("any"), body: Block) {
         super(decorators, modifiers, name, type);
         this.asteriskToken = asteriskToken;
         this.questionToken = questionToken;
@@ -851,7 +850,7 @@ export class Method extends BaseClassMember {
         return `(${this.parametersTypeDeclaration()})=>${this.body.toString(options)}`
     }
 
-    getDependency(properties: Array<State | Prop | InternalState> = []) {
+    getDependency(properties: Property[] = []) {
         const dependency = this.body.getDependency();
         const additionalDependency = [];
 
@@ -859,13 +858,10 @@ export class Method extends BaseClassMember {
             additionalDependency.push("props");
         }
 
-        const result = Object.keys(dependency.reduce((k: any, d) => {
-            k[d] = d;
-            return k;
-        }, {}))
+        const result = [...new Set(dependency)]
             .map(d => properties.find(p => p.name.toString() === d))
             .filter(d => d)
-            .reduce((d: string[], p) => d.concat(p!.getDependecy()), [])
+            .reduce((d: string[], p) => d.concat(p!.getDependency()), [])
             .concat(additionalDependency);
         
         if (additionalDependency.indexOf("props") > -1) { 
@@ -925,13 +921,31 @@ export class Property extends BaseClassMember {
     }
 
     getter() {
-        if (this.decorators.find(d => d.name === "InternalState")) {
+        if (this.decorators.find(d => d.name === "InternalState") || this.decorators.length===0) {
             return getLocalStateName(this.name);
+        } else if (this.decorators.find(d => d.name === "OneWay" ||  d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
+            return getPropName(this.name);
+        } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
+            return `${this.name}.current${this.questionOrExclamationToken}`
+        } else if (this.decorators.find(d => d.name === "TwoWay")) { 
+            const propName = getPropName(this.name);
+            const expression = `${propName}!==undefined?${propName}:${getLocalStateName(this.name)}`;
+            return expression;
         }
-        if (this.decorators.find(d => d.name === "Template" || d.name === "Slot")) {
-            return `props.${this.name}`;
+        throw `Can't parse property: ${this._name}`;
+    }
+
+    getDependency() { 
+        if (this.decorators.find(d => d.name === "InternalState") || this.decorators.length === 0) {
+            return [getLocalStateName(this.name)];
+        } else if (this.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
+            return [getPropName(this.name)];
+        } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
+            return [this.name.toString()]
+        } else if (this.decorators.find(d => d.name === "TwoWay")) {
+            return [getPropName(this.name), getLocalStateName(this.name), getPropName(`${this.name}Change`)];
         }
-        return this.name;
+        throw `Can't parse property: ${this._name}`;
     }
 
     isReadOnly() {
@@ -1256,7 +1270,7 @@ export class PropertyAccess extends ExpressionWithExpression {
         return result;
     }
 
-    compileStateSetting(state: string, isState: boolean, options?: toStringOptions) {
+    compileStateSetting(state: string, property: Property, options?: toStringOptions) {
         return `${stateSetter(this.name)}(${state})`;
     }
 
@@ -1305,25 +1319,13 @@ export class Prop {
     }
 
     getter() {
-        return getPropName(this.name);
-    }
-
-    getDependecy() {
-        return [this.getter()];
+        return this.property.getter();
     }
 }
 
 export class Ref extends Prop {
     typeDeclaration() {
         return `${this.name}:any`;
-    }
-
-    getter() {
-        return `${this.name}.current${this.property.questionOrExclamationToken}`;
-    }
-
-    getDependecy() {
-        return [this.name.toString()];
     }
 }
 
@@ -1335,28 +1337,13 @@ export class InternalState extends Prop {
     defaultDeclaration() {
         return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(${this.property.initializer});`;
     }
-
-    getter() {
-        return getLocalStateName(this.name);
-    }
 }
 
 export class State extends InternalState {
-
     defaultDeclaration() {
         const propName = getPropName(this.name);
         const initializer = this.property.initializer ? `||${this.property.initializer.toString()}` : "";
         return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(()=>(${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(this.name)})${initializer});`;
-    }
-
-    getter() {
-        const propName = getPropName(this.name);
-        const expression = `${propName}!==undefined?${propName}:${getLocalStateName(this.name)}`;
-        return expression;
-    }
-
-    getDependecy() {
-        return [getPropName(this.name), getLocalStateName(this.name), getPropName(`${this.name}Change`)]
     }
 }
 
@@ -1385,7 +1372,7 @@ export class Listener {
     }
 
     defaultDeclaration(options: toStringOptions) {
-        const dependency = this.method.getDependency(options.state.concat(options.props).concat(options.internalState));
+        const dependency = this.method.getDependency(options.state.concat(options.props).concat(options.internalState).map(p=>p.property));
         return `const ${this.name}=useCallback(${this.method.arrowDeclaration(options)}, [${dependency.join(",")}])`;
     }
 }
@@ -1686,7 +1673,7 @@ export class ReactComponent {
         const effects = this.effects;
 
         const effectsString = effects.map(e => `useEffect(${e.arrowDeclaration(this.getToStringOptions())}, 
-        [${e.getDependency(this.props.concat(this.state).concat(this.internalState))}])`).join(";\n");
+        [${e.getDependency(this.props.concat(this.state).concat(this.internalState).map(p=>p.property))}])`).join(";\n");
 
         let subscriptionsString = "";
         if (subscriptions.length) {
@@ -1718,7 +1705,10 @@ export class ReactComponent {
             const api = this.api.reduce((r: { methods: string[], deps: string[]}, a) => {
                 r.methods.push(`${a.name}: ${a.arrowDeclaration(this.getToStringOptions())}`);
 
-                r.deps = [...new Set(r.deps.concat(a.getDependency(this.props.concat(this.state).concat(this.internalState))))];
+                r.deps = [...new Set(r.deps
+                    .concat(a.getDependency(
+                        this.props.concat(this.state).concat(this.internalState).map(p=>p.property)
+                    )))];
                 
                 return r;
             }, { methods: [], deps: [] });
@@ -1813,7 +1803,7 @@ export class ReactComponent {
                 ${this.compileUseImperativeHandle()}
                 ${this.methods.map(m => {
                     return `const ${m.name}=useCallback(${m.declaration(this.getToStringOptions())}, [${
-                        m.getDependency(this.internalState.concat(this.state).concat(this.props))
+                        m.getDependency(this.internalState.concat(this.state).concat(this.props).map(p => p.property))
                     }]);`;
                 }).join("\n")}
                 return ${this.view}(${this.viewModel}({
@@ -1895,7 +1885,7 @@ export class VariableDeclaration extends Expression {
             const props = getProps(options.members);
             const members = this.name.getDependency()
                 .map(d => props.find(m => m._name.toString() === d))
-                .filter(m => m && m.name && m.getter().toString() !== m._name.toString()) as Array<Property | Method>;
+                .filter(m => m && m.name && m.name.toString() !== m._name.toString()) as Array<Property | Method>;
             const variables = members.reduce((v: VariableExpression, m) => {
                 const bindingPattern = this.name as BindingPattern;
                 bindingPattern.remove(m._name.toString());
@@ -2602,7 +2592,7 @@ export class Generator {
 
         const module = moduleSpecifier.expression.toString();
         if (context.dirname) {
-            const modulePath = path.join(context.dirname, `${module}.tsx`);
+            const modulePath = path.join(context.dirname, module.endsWith(".tsx") ? module : `${module}.tsx`);
             if (fs.existsSync(modulePath)) {
                 compileCode(this, fs.readFileSync(modulePath).toString(), { dirname: context.dirname, path: modulePath });
 
@@ -2714,7 +2704,7 @@ export class Generator {
         return expression;
     }
 
-    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
+    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string|undefined, name: Identifier, questionToken: string | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 

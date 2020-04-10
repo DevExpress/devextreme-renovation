@@ -42,7 +42,8 @@ import {
     PropertyAssignment,
     TypeExpression,
     SimpleTypeExpression,
-    FunctionTypeNode
+    FunctionTypeNode,
+    compileType
 } from "./react-generator";
 
 import SyntaxKind from "./syntaxKind";
@@ -458,6 +459,23 @@ export class JsxExpression extends ReactJsxExpression {
 
         return [];
     }
+
+    hasNgStyle():boolean { 
+        const expression = this.getExpression();
+        if (expression instanceof Binary) { 
+            const parsedBinary = processBinary(expression);
+            if (isElement(parsedBinary)) {
+                return parsedBinary.hasNgStyle();
+            } 
+        }
+
+        if (expression instanceof Conditional) { 
+            const thenStatement = getJsxExpression(expression.thenStatement);
+            const elseStatement = getJsxExpression(expression.elseStatement);
+            return isElement(thenStatement) && thenStatement.hasNgStyle() || isElement(elseStatement) && elseStatement.hasNgStyle();
+        }
+        return false;
+    }
 }
 
 export class JsxChildExpression extends JsxExpression { 
@@ -501,17 +519,17 @@ export class JsxSpreadAttribute extends JsxExpression{
     }
 }
 
-export class JsxElement extends ReactJsxElement { 
+export class JsxElement extends ReactJsxElement {
     openingElement: JsxOpeningElement
     children: Array<JsxElement | string | JsxChildExpression | JsxSelfClosingElement>;
-    constructor(openingElement: JsxOpeningElement, children: Array<JsxElement|string|JsxExpression|JsxSelfClosingElement>, closingElement: JsxClosingElement) { 
+    constructor(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: JsxClosingElement) {
         super(openingElement, children, closingElement);
         this.openingElement = openingElement;
         this.children = children.map(c => c instanceof JsxExpression ? new JsxChildExpression(c) : c);
         this.closingElement = closingElement;
     }
 
-    toString(options?: toStringOptions) { 
+    toString(options?: toStringOptions) {
         const children: string = this.children.map(c => c.toString(options)).join("\n");
         if (this.openingElement.tagName.toString() === "Fragment") {
             return children;
@@ -519,7 +537,7 @@ export class JsxElement extends ReactJsxElement {
         return `${this.openingElement.toString(options)}${children}${this.closingElement.toString(options)}`;
     }
 
-    clone() { 
+    clone() {
         return new JsxElement(
             this.openingElement.clone(),
             this.children.slice(),
@@ -527,20 +545,20 @@ export class JsxElement extends ReactJsxElement {
         );
     }
 
-    getSpreadAttributes() { 
+    getSpreadAttributes() {
         const result = this.openingElement.getSpreadAttributes();
-        const allAttributes:JsxSpreadAttributeMeta[] = this.children.reduce((result: JsxSpreadAttributeMeta[], c) => {
-            if (isElement(c)) { 
+        const allAttributes: JsxSpreadAttributeMeta[] = this.children.reduce((result: JsxSpreadAttributeMeta[], c) => {
+            if (isElement(c)) {
                 return result.concat(c.getSpreadAttributes());
             }
-            return result
+            return result;
         }, result)
         return allAttributes;
     }
 
-    hasNgStyle(): boolean { 
+    hasNgStyle(): boolean {
         return this.openingElement.hasNgStyle()
-            || this.children.some(c => (isElement(c)) && c.hasNgStyle());
+            || this.children.some(c => (isElement(c) || c instanceof JsxExpression) && c.hasNgStyle());
     }
 
     trackBy(options?: toStringOptions): Array<TrackByAttribute> { 
@@ -814,16 +832,20 @@ export class Property extends BaseProperty {
         return this.name.toString();
     }
 
+    getDependency() { 
+        return [this.name];
+    }
+
     inherit() { 
         return new Property(this.decorators as Decorator[], this.modifiers, this._name, this.questionOrExclamationToken, this.type, this.initializer, true);
     }
 }
 
-class Method extends BaseMethod { 
-    toString(options: toStringOptions) { 
+export class Method extends BaseMethod { 
+    toString(options?: toStringOptions) { 
         return `${this.modifiers.join(" ")} ${this.name}(${
             this.parameters.map(p => p.declaration()).join(",")
-            }):${this.type}${this.body.toString(options)}`;
+            })${compileType(this.type.toString())}${this.body.toString(options)}`;
     }
 
     getter() { 
@@ -840,6 +862,17 @@ class GetAccessor extends BaseGetAccessor {
         return this.name;
     }
 }
+
+class SetAccessor extends Method { 
+    constructor(decorators: Decorator[] | undefined, modifiers: string[] | undefined, name: Identifier, parameters: Parameter[], body: Block) {
+        super(decorators, modifiers, "", name, "", [], parameters, new SimpleTypeExpression(""), body);
+    }
+    toString(options?: toStringOptions) { 
+        return `set ${super.toString(options)}`;
+    }
+}
+
+const ngOnChangesParameters = ["changes"];
 
 class AngularComponent extends ReactComponent {
     decorator: Decorator;
@@ -859,6 +892,31 @@ class AngularComponent extends ReactComponent {
                 m.prefix = "__";
             });
         }
+        members = members.reduce((members, member) => {
+            if (member.decorators.find(d => d.name === "InternalState") || (member instanceof Property && member.decorators.length===0)) { 
+                members.push(
+                    new SetAccessor(
+                        undefined,
+                        undefined,
+                        new Identifier(`_${member.name}`),
+                        [new Parameter(
+                            [],
+                            [],
+                            undefined,
+                            member._name,
+                            (member as Property).questionOrExclamationToken,
+                            member.type,
+                            undefined
+                        )],
+                        new Block(
+                            [new SimpleExpression(`this.${member.name}=${member._name}`)],
+                            false
+                        )
+                    )
+                );
+            }
+            return members;
+         }, members);
         return members;
     }
 
@@ -891,12 +949,62 @@ class AngularComponent extends ReactComponent {
         return imports.join(";\n");
     }
 
-    compileEffects(ngAfterViewInitStatements: string[], ngOnDestroyStatements: string[]) { 
-        const effects = this.members.filter(m => m.decorators.find(d => d.name === "Effect"));
+    compileEffects(ngAfterViewInitStatements: string[], ngOnDestroyStatements: string[], ngOnChanges:string[], ngAfterViewCheckedStatements: string[]) { 
+        const effects = this.members.filter(m => m.decorators.find(d => d.name === "Effect")) as BaseMethod[];
+        let hasInternalStateDependecy = false;
+        
         if (effects.length) { 
-            ngAfterViewInitStatements.push(`this.__destroyEffects.push(${effects.map(e => `this.${e.getter()}()`).join(",")});`);
+            const statements = [
+                "__destroyEffects: Array<() => any> = [];",
+                "__viewCheckedSubscribeEvent: Array<()=>void> = [];"
+            ];
+
+            const subscribe = (e: Method) => `this.${e.getter()}()`;
+            effects.map((e, i) => { 
+                const propsDependency = e.getDependency(
+                    this.members.filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "TwoWay")) as Property[]
+                );
+                const internalStateDependency = e.getDependency(
+                    this.members.filter(m => m.decorators.length === 0 || m.decorators.find(d => d.name === "InternalState")) as Property[]
+                );
+                const updateEffectMethod = `__schedule_${e._name}`
+                if (propsDependency.length || internalStateDependency.length) { 
+                    statements.push(`${updateEffectMethod}(){
+                        this.__destroyEffects[${i}]?.();
+                        this.__viewCheckedSubscribeEvent[${i}] = ()=>{
+                            this.__destroyEffects[${i}] = ${subscribe(e)}
+                        }
+                    }`);
+                }
+                if (propsDependency.length) {
+                    ngOnChanges.push(`
+                        if (this.__destroyEffects.length && [${propsDependency.map(d=>`"${d}"`).join(",")}].some(d=>${ngOnChangesParameters[0]}[d]!==null)) {
+                            this.${updateEffectMethod}();
+                        }`);
+                }
+
+                internalStateDependency.forEach(name => { 
+                    const setter = this.members.find(p => p.name === `_${name}`) as SetAccessor;
+                    setter.body.statements.push(
+                        new SimpleExpression(`
+                        if (this.__destroyEffects.length) {
+                            this.${updateEffectMethod}();
+                        }
+                        `)
+                    );
+                    hasInternalStateDependecy = true;
+                });
+                
+            });
+            if (ngOnChanges.length || hasInternalStateDependecy) { 
+                ngAfterViewCheckedStatements.push(`
+                this.__viewCheckedSubscribeEvent.forEach(s=>s?.());
+                this.__viewCheckedSubscribeEvent = [];
+                `);
+            }
+            ngAfterViewInitStatements.push(`this.__destroyEffects.push(${effects.map(e => subscribe(e)).join(",")});`);
             ngOnDestroyStatements.push(`this.__destroyEffects.forEach(d => d && d());`)
-            return `__destroyEffects: Array<() => any> = [];`
+            return statements.join("\n");
         }
 
         return "";
@@ -912,7 +1020,7 @@ class AngularComponent extends ReactComponent {
                 .join(",\n")
             }}`,
             this.members
-                .filter(m => m.decorators.length === 0)
+                .filter(m => m.decorators.length === 0 && !(m instanceof SetAccessor))
                 .map(m => `${m.name}: this.${m.name}`)
                 .join(",\n")
         ]
@@ -1033,9 +1141,9 @@ class AngularComponent extends ReactComponent {
         return "";
     }
 
-    compileLifeCycle(name: string, statements: string[]): string { 
+    compileLifeCycle(name: string, statements: string[], parameters:string[] = []): string { 
         if (statements.length) { 
-            return `${name}(){
+            return `${name}(${parameters.join(",")}){
                 ${statements.join("\n")}
             }`;
         }
@@ -1067,6 +1175,7 @@ class AngularComponent extends ReactComponent {
         const ngOnChangesStatements: string[] = [];
         const ngAfterViewInitStatements: string[] = [];
         const ngOnDestroyStatements: string[] = [];
+        const ngAfterViewCheckedStatements: string[] = [];
         const constructorStatements: string[] = [];
         const coreImports: string[] = [];
 
@@ -1087,7 +1196,7 @@ class AngularComponent extends ReactComponent {
         ${componentDecorator}
         ${this.modifiers.join(" ")} class ${this.name} ${extendTypes.length? `extends ${extendTypes.join(" ")}`:""} {
             ${this.members
-                .filter(m => !m.inherited)
+                .filter(m => !m.inherited && !(m instanceof SetAccessor))
                 .map(m => m.toString({
                     internalState: [],
                     state: [],
@@ -1098,15 +1207,17 @@ class AngularComponent extends ReactComponent {
             ${spreadAttributes}
             ${this.compileTrackBy()}
             ${this.compileViewModel()}
-            ${this.compileEffects(ngAfterViewInitStatements, ngOnDestroyStatements)}
+            ${this.compileEffects(ngAfterViewInitStatements, ngOnDestroyStatements, ngOnChangesStatements, ngAfterViewCheckedStatements)}
             ${this.compileLifeCycle("ngAfterViewInit", ngAfterViewInitStatements)}
-            ${this.compileLifeCycle("ngOnChanges", ngOnChangesStatements)}
+            ${this.compileLifeCycle("ngOnChanges", ngOnChangesStatements, [`${ngOnChangesParameters[0]}: {[name:string]: any}`])}
             ${this.compileLifeCycle("ngOnDestroy", ngOnDestroyStatements)}
+            ${this.compileLifeCycle("ngAfterViewChecked", ngAfterViewCheckedStatements)}
             ${this.compileLifeCycle("constructor",
                 constructorStatements.length ?
                     ["super()"].concat(constructorStatements) :
                     constructorStatements
-            )}
+        )}
+            ${this.members.filter(m=>m instanceof SetAccessor)}
             ${this.compileNgStyleProcessor()}
         }
         @NgModule({
@@ -1136,11 +1247,11 @@ export class PropertyAccess extends BasePropertyAccess {
         return result;
     }
 
-    compileStateSetting(value: string, isState: boolean, toStringOptions?: toStringOptions) {
-        if (isState) { 
+    compileStateSetting(value: string, property: Property, toStringOptions?: toStringOptions) {
+        if (property.decorators.find(d => d.name === "TwoWay")) {
             return `this.${this.name}Change!.emit(${this.toString(toStringOptions)}=${value})`;
         }
-        return `${this.toString(toStringOptions)}=${value}`;
+        return `this._${property.name}=${value}`;
     }
 
     compileStateChangeRising() {
@@ -1227,11 +1338,11 @@ export class AngularGenerator extends Generator {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
-    createMethod(decorators: Decorator[], modifiers: string[], asteriskToken: string, name: Identifier, questionToken: string, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, body: Block) {
+    createMethod(decorators: Decorator[], modifiers: string[] | undefined, asteriskToken: string | undefined, name: Identifier, questionToken: string | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 
-    createGetAccessor(decorators: Decorator[]|undefined, modifiers: string[]|undefined, name: Identifier, parameters: Parameter[], type?: TypeExpression, body?: Block) {
+    createGetAccessor(decorators: Decorator[] | undefined, modifiers: string[]|undefined, name: Identifier, parameters: Parameter[], type?: TypeExpression, body?: Block) {
         return new GetAccessor(decorators, modifiers, name, parameters, type, body);
     }
 

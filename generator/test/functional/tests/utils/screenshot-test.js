@@ -1,5 +1,6 @@
 import looksSame from 'looks-same';
 import path from 'path';
+import fs from 'fs';
 
 /**
  * 
@@ -9,16 +10,18 @@ import path from 'path';
  */
 const screenshotTest = async (t, selector, ethalonName) => { 
     if (t.browser.headless) { 
-        console.warn("Screenshot test skipped in headless mode");
         return Promise.resolve(true);
     }
-
+    const screenshotPath = path.resolve(__dirname, `../temp/${ethalonName}`);
+    if (fs.existsSync(screenshotPath)) { 
+        fs.unlinkSync(screenshotPath);
+    }
+    await t.resizeWindow(600, 600);
     await t.takeElementScreenshot(selector, ethalonName);
-
     return new Promise((resolve, fail) => {
         looksSame(
-            path.resolve(__dirname, '../etalon/simple.png'),
-            path.resolve(__dirname, '../temp/simple.png'), 
+            path.resolve(__dirname, `../etalon/${ethalonName}`),
+            screenshotPath, 
             (error, { equal }) => {
                 if (error) { 
                     fail(error);

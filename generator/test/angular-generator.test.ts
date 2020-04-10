@@ -1,5 +1,5 @@
 import mocha from "mocha";
-import generator, { Property, AngularDirective } from "../angular-generator";
+import generator, { Property, AngularDirective, Method } from "../angular-generator";
 import assert from "assert";
 import path from "path";
 
@@ -37,7 +37,7 @@ function createComponentDecorator(paramenters: {[name:string]: any}) {
     )
 }
 
-function createComponent(properties: Property[] = [], paramenters: { [name: string]: Expression } = {}) {
+function createComponent(properties: Array<Property|Method> = [], paramenters: { [name: string]: Expression } = {}) {
     return generator.createComponent(
         createComponentDecorator(paramenters),
         [],
@@ -728,6 +728,145 @@ mocha.describe("Angular generator", function () {
                 
                 assert.strictEqual(expression.hasNgStyle(), true);
             });
+
+            mocha.describe("Binary JSX expression", function () { 
+                mocha.it("returns true if element has style attribute", function () {
+                    const expression = generator.createJsxExpression(
+                        undefined,
+                        generator.createBinary(
+                            generator.createTrue(),
+                            generator.createToken(generator.SyntaxKind.AmpersandAmpersandToken),
+                            generator.createJsxElement(
+                                generator.createJsxOpeningElement(
+                                    generator.createIdentifier("child"),
+                                    undefined,
+                                    [generator.createJsxAttribute(
+                                        generator.createIdentifier("style"),
+                                        generator.createIdentifier("value")
+                                    )
+                                    ]
+                                ),
+                                [],
+                                generator.createJsxClosingElement(generator.createIdentifier("child"))
+                            )
+                        )
+                    )
+                    
+                    assert.strictEqual(expression.hasNgStyle(), true);
+                });
+    
+                mocha.it("returns false if has no element with style", function () {
+                    const expression = generator.createJsxExpression(
+                        undefined,
+                        generator.createBinary(
+                            generator.createTrue(),
+                            generator.createToken(generator.SyntaxKind.AmpersandAmpersandToken),
+                            generator.createTrue()
+                        )
+                    );
+                    
+                    assert.strictEqual(expression.hasNgStyle(), false);
+                });
+    
+                mocha.it("returns true if element has JsxEpression that contains element with style", function () {
+                    const expression = generator.createJsxElement(
+                        generator.createJsxOpeningElement(
+                            generator.createIdentifier("parent"),
+                            undefined,
+                            []
+                        ),
+                        [
+                            generator.createJsxExpression(
+                                undefined,
+                                generator.createBinary(
+                                    generator.createTrue(),
+                                    generator.createToken(generator.SyntaxKind.AmpersandAmpersandToken),
+                                    generator.createJsxElement(
+                                        generator.createJsxOpeningElement(
+                                            generator.createIdentifier("child"),
+                                            undefined,
+                                            [generator.createJsxAttribute(
+                                                generator.createIdentifier("style"),
+                                                generator.createIdentifier("value")
+                                            )
+                                            ]
+                                        ),
+                                        [],
+                                        generator.createJsxClosingElement(generator.createIdentifier("child"))
+                                    )
+                                )
+                            )
+                        ],
+                        generator.createJsxClosingElement(generator.createIdentifier("parent"))
+                    );
+                    
+                    assert.strictEqual(expression.hasNgStyle(), true);
+                });
+            });
+
+            mocha.describe("Conditional expression", function () { 
+                mocha.it("returns true if style in the then statement", function () { 
+                    const expression = generator.createJsxExpression(
+                        undefined,
+                        generator.createConditional(
+                            generator.createIdentifier("condition"),
+                            generator.createJsxSelfClosingElement(
+                                generator.createIdentifier("div"),
+                                [],
+                                [generator.createJsxAttribute(
+                                    generator.createIdentifier("style"),
+                                    generator.createIdentifier("value")
+                                )]
+                            ),
+                            generator.createJsxSelfClosingElement(
+                                generator.createIdentifier("input"),
+                                [],
+                                []
+                            )
+                        )
+                    );
+    
+                    assert.strictEqual(expression.hasNgStyle(), true);
+                });
+    
+                mocha.it("returns true if style in the else statement", function () { 
+                    const expression = generator.createJsxExpression(
+                        undefined,
+                        generator.createConditional(
+                            generator.createIdentifier("condition"),
+                            generator.createJsxSelfClosingElement(
+                                generator.createIdentifier("div"),
+                                [],
+                                []
+                            ),
+                            generator.createJsxSelfClosingElement(
+                                generator.createIdentifier("input"),
+                                [],
+                                [generator.createJsxAttribute(
+                                    generator.createIdentifier("style"),
+                                    generator.createIdentifier("value")
+                                )]
+                            )
+                        )
+                    );
+    
+                    assert.strictEqual(expression.hasNgStyle(), true);
+                });
+
+                mocha.it("returns false if non-Jsx", function () { 
+                    const expression = generator.createJsxExpression(
+                        undefined,
+                        generator.createConditional(
+                            generator.createIdentifier("condition"),
+                            generator.createNull(),
+                            generator.createNull()
+                        )
+                    );
+    
+                    assert.strictEqual(expression.hasNgStyle(), false);
+                });
+            });
+
         });
 
         mocha.it("ref", function () {
@@ -3072,6 +3211,146 @@ mocha.describe("Angular generator", function () {
                     state: [],
                     props: []
                 }), "this.div?.nativeElement");
+            });
+        });
+
+        mocha.describe("Compile useEffect", function () {
+            this.beforeEach(function () { 
+                this.effect = generator.createMethod(
+                    [createDecorator("Effect")],
+                    [],
+                    undefined,
+                    generator.createIdentifier("e"),
+                    undefined,
+                    undefined,
+                    [],
+                    undefined,
+                    generator.createBlock([], true)
+                );
+            });
+
+            mocha.it("should generate schedule effect method and fill ngOnChanges if there is prop in dependency", function () { 
+                this.effect.body = generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("p")
+                    ),
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("p2")
+                    )
+                ], false);
+
+                const component = createComponent(
+                    ["p", "p1", "p2"].map(name => generator.createProperty(
+                        [createDecorator("OneWay")],
+                        undefined,
+                        generator.createIdentifier(name),
+                        undefined,
+                        undefined,
+                        undefined
+                    )).concat(this.effect)
+                );
+
+                const ngOnChanges: string[] = [];
+                assert.strictEqual(getResult(component.compileEffects([], [], ngOnChanges, [])), getResult(`
+                        __destroyEffects: Array<() => any> = [];
+                        __viewCheckedSubscribeEvent: Array<()=>void> = [];
+                        __schedule_e(){
+                            this.__destroyEffects[0]?.();
+                            this.__viewCheckedSubscribeEvent[0] = ()=>{
+                                this.__destroyEffects[0] = this.e()
+                            }
+                        }
+                `));
+
+                assert.strictEqual(getResult(ngOnChanges.join("\n")), getResult(`
+                        if (this.__destroyEffects.length && ["p", "p2"].some(d=>changes[d]!==null)) {
+                            this.__schedule_e();
+                        }
+                `));
+            });
+
+            mocha.it("should generate schedule effect method if there is internal state in dependency", function () { 
+                this.effect.body = generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("p")
+                    ),
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("p2")
+                    )
+                ], false);
+
+                const component = createComponent(
+                    ["p", "p1"].map(name => generator.createProperty(
+                        [createDecorator("InternalState")],
+                        undefined,
+                        generator.createIdentifier(name),
+                        undefined,
+                        undefined,
+                        undefined
+                    )).concat([
+                        generator.createProperty(
+                            [],
+                            undefined,
+                            generator.createIdentifier("p2"),
+                            undefined,
+                            undefined,
+                            undefined
+                        )
+                    ])
+                        .concat(this.effect)
+                );
+
+                const ngOnChanges: string[] = [];
+                assert.strictEqual(getResult(component.compileEffects([], [], ngOnChanges, [])), getResult(`
+                        __destroyEffects: Array<() => any> = [];
+                        __viewCheckedSubscribeEvent: Array<()=>void> = [];
+                        __schedule_e(){
+                            this.__destroyEffects[0]?.();
+                            this.__viewCheckedSubscribeEvent[0] = ()=>{
+                                this.__destroyEffects[0] = this.e()
+                            }
+                        }
+                `));
+
+                assert.deepEqual(ngOnChanges, []);
+
+                const p1Setter = component.members.find(p => p.name === "_p1");
+                assert.strictEqual(getResult(p1Setter?.toString() || ""), getResult(`set  _p1(p1:any){this.p1=p1}`));
+
+                const p2Setter = component.members.find(p => p.name === "_p2");
+                assert.strictEqual(getResult(p2Setter?.toString() || ""), getResult(`
+                    set _p2(p2:any){
+                        this.p2=p2
+                        if (this.__destroyEffects.length) {
+                            this.__schedule_e();
+                        }
+                    }
+                `));
+            });
+
+            mocha.it("should not generate schedule effect method if there is not props in dependency", function () { 
+                const component = createComponent(
+                    ["p", "p1"].map(name => generator.createProperty(
+                        [createDecorator("OneWay")],
+                        undefined,
+                        generator.createIdentifier(name),
+                        undefined,
+                        undefined,
+                        undefined
+                    )).concat(this.effect)
+                );
+
+                const ngOnChanges: string[] = [];
+                assert.strictEqual(getResult(component.compileEffects([], [], ngOnChanges, [])), getResult(`
+                        __destroyEffects: Array<() => any> = [];
+                        __viewCheckedSubscribeEvent: Array<()=>void> = [];
+                `));
+
+                assert.deepEqual(ngOnChanges, []);
             });
         });
     });

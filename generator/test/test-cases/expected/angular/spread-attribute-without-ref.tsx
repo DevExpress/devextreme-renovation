@@ -29,7 +29,7 @@ export default class Widget extends WidgetInput {
         }
     }
 
-    ngOnChanges() {
+    ngOnChanges(changes: {[name:string]: any}) {
         this.__applyAttributes__()
     }
 }

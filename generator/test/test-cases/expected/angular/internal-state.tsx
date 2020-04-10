@@ -14,7 +14,7 @@ import { CommonModule } from "@angular/common"
 export default class Widget {
     _hovered: Boolean = false
     updateState(): any {
-        this._hovered = !this._hovered
+        this.__hovered = !this._hovered
     }
     get restAttributes(){
         return {}
@@ -28,6 +28,10 @@ export default class Widget {
             updateState: this.updateState
             restAttributes: this.restAttributes,
         });
+    }
+
+    set  __hovered(_hovered:Boolean){
+        this._hovered=_hovered
     }
 }
 @NgModule({

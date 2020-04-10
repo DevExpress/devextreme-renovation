@@ -1,7 +1,24 @@
 import assert from "assert";
 import mocha from "mocha";
 import ts from "typescript";
-import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex, toStringOptions, SimpleExpression, PropertyAccess, ElementAccess, Class, ImportDeclaration, Expression } from "../react-generator";
+import generator, {
+    ReactComponent,
+    State,
+    InternalState,
+    Prop,
+    ComponentInput,
+    Property,
+    Method,
+    GeneratorContex,
+    toStringOptions,
+    SimpleExpression,
+    PropertyAccess,
+    ElementAccess,
+    Class,
+    ImportDeclaration,
+    Expression,
+    Block
+} from "../react-generator";
 
 import compile from "../component-compiler";
 import path from "path";
@@ -1380,6 +1397,22 @@ mocha.describe("react-generator: expressions", function () {
         
                 assert.strictEqual(expression.getter(), "name()");
             });
+
+            mocha.it("Method", function () { 
+                const expression = generator.createMethod(
+                    undefined,
+                    undefined,
+                    "",
+                    generator.createIdentifier("name"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    [],
+                    undefined,
+                    new Block([], false)
+                );
+
+                assert.strictEqual(expression.isReadOnly(), true);
+            });
         });
     }); 
 
@@ -2259,6 +2292,23 @@ mocha.describe("import Components", function () {
         assert.deepEqual(generator.getContext().components!["Base"].heritageProperies.map(p => p.name.toString()), ["height", "width"]);
     });
 
+    mocha.it("Parse imported component. module specifier has extension", function () {
+        const identifier = generator.createIdentifier("Base"); 
+        generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+                identifier,
+                undefined
+            ),
+            generator.createStringLiteral("./test-cases/declarations/empty-component.tsx")
+        );   
+        
+        const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/empty-component.tsx`);
+        assert.ok(generator.cache[baseModulePath]);
+        assert.deepEqual(generator.getContext().components!["Base"].heritageProperies.map(p => p.name.toString()), ["height", "width"]);
+    });
+
     mocha.it("Get properties from heritageClause", function () {
         generator.createImportDeclaration(
             undefined,
@@ -2938,7 +2988,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
         );
 
         assert.deepEqual(method.getDependency(
-            [new InternalState(this.internalState), new State(this.state), new Prop(this.prop)]
+            [this.internalState, this.state, this.prop]
         ), ["props.p1", "__state_i1", "props.s1", "__state_s1", "props.s1Change"]);
     });
 
@@ -2959,7 +3009,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
         );
 
         assert.deepEqual(method.getDependency(
-            [new State(this.state), new Prop(this.prop)]
+            [this.state, this.prop]
         ), ["props.p1"]);
     });
 
@@ -2984,7 +3034,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
         );
 
         assert.deepEqual(method.getDependency(
-            [new InternalState(this.internalState), new State(this.state), new Prop(this.prop)]
+            [this.internalState, this.state, this.prop]
         ), ["__state_s1", "props"]);
     });
 });
@@ -3171,7 +3221,50 @@ mocha.describe("ComponentInput", function () {
             assert.strictEqual(getResult(`{${component.compileViewModelArguments().join(",")}}`
             ), getResult("{props:{...props}, property: __property(), restAttributes: restAttributes() }"));
         });
+    });
 
+    mocha.describe("Property. getters, getDependency", function () { 
+        mocha.it("Property without decorators should be an internal state", function () {
+            const property = generator.createProperty(
+                [],
+                undefined,
+                generator.createIdentifier("p"),
+                generator.SyntaxKind.QuestionToken
+            );
+
+            assert.strictEqual(property.getter(), "__state_p");
+            assert.deepEqual(property.getDependency(), ["__state_p"]);
+        });
+
+        mocha.it("Property with unknown decorator should throw error", function () {
+            const property = generator.createProperty(
+                [createDecorator("any")],
+                undefined,
+                generator.createIdentifier("p"),
+                generator.SyntaxKind.QuestionToken
+            );
+
+            try {
+                property.getter();
+            } catch (e) { 
+                assert.strictEqual(e, "Can't parse property: p");
+            }
+        });
+
+        mocha.it("Property with unknown decorator should throw error", function () {
+            const property = generator.createProperty(
+                [createDecorator("any")],
+                undefined,
+                generator.createIdentifier("p"),
+                generator.SyntaxKind.QuestionToken
+            );
+
+            try {
+                property.getDependency();
+            } catch (e) { 
+                assert.strictEqual(e, "Can't parse property: p");
+            }
+        });
     });
 });
 

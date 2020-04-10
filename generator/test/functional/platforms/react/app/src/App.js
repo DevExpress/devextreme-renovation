@@ -1,4 +1,4 @@
 import React from 'react';
-import Simple from '../../../../components/simple.tsx';
+import App from '../../../../components/app.tsx';
 
-export default () => <Simple width={100} height={100}></Simple>;
+export default () => <App></App>;

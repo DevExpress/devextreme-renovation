@@ -1,7 +1,4 @@
-const sites = [
-    { port: 3000, platform: 'React' }, 
-    { port: 3001, platform: 'Angular' }
-];
+const sites = require("../../server-config");
 
 /**
  * 
