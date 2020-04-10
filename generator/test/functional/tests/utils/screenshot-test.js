@@ -9,6 +9,9 @@ import fs from 'fs';
  * @param {string} ethalonName 
  */
 const screenshotTest = async (t, selector, ethalonName) => { 
+    if (t.browser.headless) { 
+        return new Promise.resolve(true);
+    }
     const screenshotPath = path.resolve(__dirname, `../temp/${ethalonName}`);
     if (fs.existsSync(screenshotPath)) { 
         fs.unlinkSync(screenshotPath);
