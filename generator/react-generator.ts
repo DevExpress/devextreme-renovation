@@ -10,9 +10,8 @@ const eventsDictionary = {
     click: "onClick"
 }
 
-function compileType(type: string = "", questionToken: string = "") {
-    return type ? `${questionToken}:${type}` : "";
-}
+export const compileType = (type: string = "", questionToken: string = "") =>
+    type ? `${questionToken}:${type}` : "";
 
 function variableDeclaration(name: Identifier|BindingPattern, type: string = "", initializer?: Expression, questionToken: string = "") {
     const initilizerDeclaration = initializer ? `=${initializer}` : "";
@@ -604,13 +603,13 @@ export class ArrowFunction extends BaseFunction {
     }
 }
 
-function checkDependency(expression: Expression, properties: Array<InternalState | State | Prop | Property | Method>) {
+function checkDependency(expression: Expression, properties: Array<Property | Method>=[]) {
     const dependency = expression.getAllDependency().reduce((r: { [name: string]: boolean }, d) => {
         r[d] = true;
         return r;
     }, {});
 
-    return properties.some(s => dependency[s.name.toString()]);
+    return properties.find(s => dependency[s.name.toString()]);
 }
 
 export class ReturnStatement extends ExpressionWithExpression {
@@ -631,19 +630,19 @@ export class Binary extends Expression {
     }
 
     toString(options?: toStringOptions) {
+        const dependecyMember = checkDependency(this.left, options?.members);
         if (options &&
             this.operator === SyntaxKind.EqualsToken &&
             this.left instanceof PropertyAccess &&
             this.left.expression.toString().startsWith(SyntaxKind.ThisKeyword) &&
-            checkDependency(this.left, options.members)) {
-            const rightExpression = this.right.toString(options);
+            dependecyMember) {
 
-            if (checkDependency(this.left, options.members.filter(m=>m.isReadOnly()))) {
+            if (dependecyMember.isReadOnly()) {
                 throw `Error: Can't assign property use TwoWay() or Internal State - ${this.toString()}`;
             }
+            const rightExpression = this.right.toString(options);
 
-            const isState = checkDependency(this.left, options.members.filter(m => m.decorators.find(d => d.name === "TwoWay")));
-            const stateSetting = `${this.left.compileStateSetting(rightExpression, isState, options)}`;
+            const stateSetting = `${this.left.compileStateSetting(rightExpression, dependecyMember as Property, options)}`;
             const changeRising = this.left.compileStateChangeRising(options.state, rightExpression);
             return changeRising ? `(${stateSetting},${changeRising})` : stateSetting;
         }
@@ -815,13 +814,13 @@ export class BaseClassMember extends Expression {
 }
 
 export class Method extends BaseClassMember {
-    asteriskToken: string;
+    asteriskToken?: string;
     questionToken: string;
     typeParameters: any;
     parameters: Parameter[];
     body: Block;
    
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: TypeExpression = new SimpleExpression("any"), body: Block) {
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string | undefined, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: TypeExpression = new SimpleExpression("any"), body: Block) {
         super(decorators, modifiers, name, type);
         this.asteriskToken = asteriskToken;
         this.questionToken = questionToken;
@@ -1271,7 +1270,7 @@ export class PropertyAccess extends ExpressionWithExpression {
         return result;
     }
 
-    compileStateSetting(state: string, isState: boolean, options?: toStringOptions) {
+    compileStateSetting(state: string, property: Property, options?: toStringOptions) {
         return `${stateSetter(this.name)}(${state})`;
     }
 
@@ -2673,7 +2672,7 @@ export class Generator {
         return expression;
     }
 
-    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string, name: Identifier, questionToken: string, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
+    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string|undefined, name: Identifier, questionToken: string | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 

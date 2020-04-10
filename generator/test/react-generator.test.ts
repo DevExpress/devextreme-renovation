@@ -1,7 +1,24 @@
 import assert from "assert";
 import mocha from "mocha";
 import ts from "typescript";
-import generator, { ReactComponent, State, InternalState, Prop, ComponentInput, Property, Method, GeneratorContex, toStringOptions, SimpleExpression, PropertyAccess, ElementAccess, Class, ImportDeclaration, Expression } from "../react-generator";
+import generator, {
+    ReactComponent,
+    State,
+    InternalState,
+    Prop,
+    ComponentInput,
+    Property,
+    Method,
+    GeneratorContex,
+    toStringOptions,
+    SimpleExpression,
+    PropertyAccess,
+    ElementAccess,
+    Class,
+    ImportDeclaration,
+    Expression,
+    Block
+} from "../react-generator";
 
 import compile from "../component-compiler";
 import path from "path";
@@ -1379,6 +1396,22 @@ mocha.describe("react-generator: expressions", function () {
                 const expression = generator.createGetAccessor([], [], generator.createIdentifier("name"), [], generator.createKeywordTypeNode("string"), undefined);
         
                 assert.strictEqual(expression.getter(), "name()");
+            });
+
+            mocha.it("Method", function () { 
+                const expression = generator.createMethod(
+                    undefined,
+                    undefined,
+                    "",
+                    generator.createIdentifier("name"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    [],
+                    undefined,
+                    new Block([], false)
+                );
+
+                assert.strictEqual(expression.isReadOnly(), true);
             });
         });
     }); 

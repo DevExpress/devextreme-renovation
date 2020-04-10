@@ -53,3 +53,25 @@ cloneTest('SpreadAttributes', async t => {
         .expect(await el.getAttribute("id")).eql("component-with-spread")
         .expect(await el.getAttribute("aria")).eql("changed");
 });
+
+cloneTest('ChangeVisibility: Effect depends on InternalState', async t => {
+    await t.click(Selector('#change-visibility-open-element'));
+
+    const el = Selector("#change-visibility-hide-element");
+    await t
+        .expect((await el.style)["background-color"]).eql('rgb(0, 128, 0)');
+    
+    await t.click(el);
+
+    await t
+        .expect(Selector("#change-visibility-hide-element").exists).notOk()
+});
+
+cloneTest('ChangeVisibilityProp: Effect depends on Prop', async t => {
+    await t.click(Selector('#button-4'));
+    const el = Selector("#change-visibility-prop-element");
+    await t.click(el);
+
+    await t
+        .expect(Selector("#change-visibility-prop-element").textContent).eql("1");
+});

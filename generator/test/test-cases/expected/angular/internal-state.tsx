@@ -14,7 +14,7 @@ import { CommonModule } from "@angular/common"
 export default class Widget {
     _hovered: Boolean = false
     updateState(): any {
-        this._hovered = !this._hovered
+        this.__hovered = !this._hovered
     }
 
     _viewModel: any
@@ -26,6 +26,9 @@ export default class Widget {
         });
     }
 
+    set  __hovered(_hovered:Boolean){
+        this._hovered=_hovered
+    }
 }
 @NgModule({
     declarations: [Widget],

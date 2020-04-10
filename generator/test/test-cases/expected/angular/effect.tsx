@@ -21,12 +21,19 @@ export default class Widget extends WidgetInput {
     i: number = 10
     __setupData(): any {
         const id = subscribe(this.p, this.s, this.i);
-        this.i = 15;
+        this._i = 15;
         return () => unsubscribe(id);
     }
 
     __destroyEffects: Array<() => any> = [];
-    __viewCheckedSubscribeEvent: Array<()=>void> = [];
+    __viewCheckedSubscribeEvent: Array<() => void> = [];
+    
+    __schedule_setupData(){
+        this.__destroyEffects[0]?.();
+        this.__viewCheckedSubscribeEvent[0] = ()=>{
+            this.__destroyEffects[0] = this.__setupData()
+        }
+    }
 
     ngAfterViewInit() {
         this.__destroyEffects.push(this.__setupData());
@@ -34,10 +41,7 @@ export default class Widget extends WidgetInput {
 
     ngOnChanges(changes: {[name:string]: any}) {
         if (this.__destroyEffects.length && ["p", "s"].some(d => changes[d] !== null)) {
-            this.__destroyEffects[0]?.();
-            this.__viewCheckedSubscribeEvent[0] = () => {
-                this.__destroyEffects[0] = this.__setupData()
-            }
+            this.__schedule_setupData();
         }
     }
 
@@ -50,6 +54,12 @@ export default class Widget extends WidgetInput {
         this.__viewCheckedSubscribeEvent = [];
     }
 
+    set  _i(i:number){
+        this.i = i;
+        if (this.__destroyEffects.length) {
+            this.__schedule_setupData();
+        }
+    }
 }
 @NgModule({
     declarations: [Widget],

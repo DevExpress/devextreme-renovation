@@ -4,11 +4,13 @@ import SimpleComponent from "./simple.tsx";
 import ButtonComponent from "./button.tsx";
 import ButtonWithState from "./state.tsx";
 import ComponentWithSpread from "./spread-attributes.tsx";
+import VisibilityChange from "./change-visibility.tsx";
+import VisibilityChangeProp from "./change-visibility-prop.tsx";
 
 function view(model: App) { 
     return <div>
         <SimpleComponent width={100} height={100}></SimpleComponent>
-        
+
         <ButtonComponent
             id="button-1"
             onClick={model.onButtonClick}
@@ -22,6 +24,11 @@ function view(model: App) {
 
         <ComponentWithSpread containerId="component-with-spread" aria={model.spreadAttributesComponentAria}></ComponentWithSpread>
         <ButtonComponent id="button-3" onClick={model.onChangeAriaButtonClick}>{"Change Aria"}</ButtonComponent>
+    
+        <VisibilityChange></VisibilityChange>
+
+        <ButtonComponent id="button-4" onClick={model.onVisibilityChangePropClick}>{"Open"}</ButtonComponent>
+        <VisibilityChangeProp visible={model.visibilityChangePropValue}></VisibilityChangeProp>
     </div>;
 }
 
@@ -51,4 +58,10 @@ export default class App extends JSXComponent<AppInput> {
     onChangeAriaButtonClick() { 
         this.spreadAttributesComponentAria = "changed"
     }
+
+    @InternalState() visibilityChangePropValue: boolean = false;
+
+    onVisibilityChangePropClick() {
+        this.visibilityChangePropValue = true;
+     }
 }
