@@ -18,6 +18,9 @@ export default class WidgetWithApiRef extends WidgetWithApiRefInput {
     getSomething(): string { 
         return `${this.prop1} + ${this.baseRef?.getHeight()}`;
     }
+    get restAttributes(){
+        return {}
+    }
 }
 @NgModule({
     declarations: [WidgetWithApiRef],

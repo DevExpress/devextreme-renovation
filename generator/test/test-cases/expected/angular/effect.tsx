@@ -25,6 +25,10 @@ export default class Widget extends WidgetInput {
         return () => unsubscribe(id);
     }
 
+    get restAttributes(){
+        return {}
+    }
+
     __destroyEffects: Array<() => any> = [];
     __viewCheckedSubscribeEvent: Array<() => void> = [];
     
@@ -34,6 +38,8 @@ export default class Widget extends WidgetInput {
             this.__destroyEffects[0] = this.__setupData()
         }
     }
+
+    __destroyEffects: Array<() => any> = []
 
     ngAfterViewInit() {
         this.__destroyEffects.push(this.__setupData());
@@ -60,6 +66,7 @@ export default class Widget extends WidgetInput {
             this.__schedule_setupData();
         }
     }
+
 }
 @NgModule({
     declarations: [Widget],

@@ -16,6 +16,9 @@ export default class Widget {
     getHeight() { 
         return this.divRef.nativeElement.outerHTML + this.nullableRef?.nativeElement.outerHTML;
     }
+    get restAttributes(){
+        return {}
+    }
 }
 @NgModule({
     declarations: [Widget],

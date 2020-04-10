@@ -11,7 +11,7 @@ interface Component {
     type?: string;
     onClick?: () => void;
     clickHandler: () => any;
-
+    restAttributes: any;
 }
 
 export function Component(props: {
@@ -23,9 +23,15 @@ export function Component(props: {
         props.onClick!({ type: props.type })
     }, [props.onClick, props.type])
 
+    const restAttributes=useCallback(function restAttributes(){
+        const { onClick, type, ...restProps } = props;
+        return restProps;
+    }, [props]);
+
     return view(viewModel({
         ...props,
-        clickHandler
+        clickHandler,
+        restAttributes: restAttributes()
     })
     );
 }

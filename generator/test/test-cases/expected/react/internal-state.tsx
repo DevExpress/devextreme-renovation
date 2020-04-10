@@ -7,6 +7,7 @@ import React, { useState, useCallback } from 'react';
 interface Widget{
   _hovered: Boolean;
   updateState: () => any;
+  restAttributes: any;
 }
 
 export default function Widget(props: {}) {
@@ -17,9 +18,15 @@ export default function Widget(props: {}) {
     __state_set_hovered(!__state__hovered);
   }, [__state__hovered]);
 
+  const restAttributes=useCallback(function restAttributes(){
+    const { ...restProps } = props;
+    return restProps;
+  }, [props]);
+
   return view(viewModel({
     ...props,
     _hovered: __state__hovered,
-    updateState
+    updateState,
+    restAttributes: restAttributes()
   }));
 }

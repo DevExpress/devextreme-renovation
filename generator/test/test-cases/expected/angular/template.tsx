@@ -15,7 +15,9 @@ import { CommonModule } from "@angular/common";
     </div>`
 })
 export default class Widget extends WidgetInput {
-
+    get restAttributes(){
+        return {}
+    }
 }
 @NgModule({
     declarations: [Widget],

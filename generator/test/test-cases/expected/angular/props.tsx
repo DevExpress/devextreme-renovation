@@ -16,6 +16,9 @@ export default class Widget extends WidgetInput {
         this.onClick!.emit(10)
         return this.height;
     }
+    get restAttributes(){
+        return {}
+    }
 }
 @NgModule({
     declarations: [Widget],

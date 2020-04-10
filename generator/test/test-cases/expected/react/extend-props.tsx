@@ -1,11 +1,12 @@
 import Base from "./empty-component"
 
-import React from "react";
+import React, {useCallback} from "react";
 
 interface Widget {
     size: number,
     height: number,
-    width: number
+    width: number,
+    restAttributes: any,
 }
 
 export default function Widget(props: {
@@ -13,8 +14,13 @@ export default function Widget(props: {
     height: number,
     width: number
 }) {
+    const restAttributes=useCallback(function restAttributes(){
+        const { height, size, width, ...restProps } = props;
+        return restProps;
+    }, [props]);
     return view1(viewModel1({
-        ...props
+        ...props,
+        restAttributes: restAttributes()
     }));
 }
 

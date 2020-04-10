@@ -1438,6 +1438,7 @@ export class ReactComponent {
 
 
         this.members = members = inheritMembers(heritageClauses, this.addPrefixToMembers(members));
+        this.members.push(this.createRestPropsGetter());
 
         this.props = members
             .filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template"))
@@ -1505,11 +1506,42 @@ export class ReactComponent {
             });
     }
 
+    createRestPropsGetter() {
+        const props = this.heritageProperies;
+        const bindingElements = props.map(p => new BindingElement(
+                undefined,
+                undefined,
+                p._name,
+            )).concat([
+                new BindingElement(
+                    SyntaxKind.DotDotDotToken,
+                    undefined,
+                    new Identifier("restProps"))
+            ]);
+
+        const statements = [new VariableStatement(
+            undefined,
+            new VariableDeclarationList(
+                [new VariableDeclaration(
+                    new BindingPattern(
+                        bindingElements,
+                        "object"
+                    ),
+                    undefined,
+                    new PropertyAccess(
+                        new SimpleExpression("this"),
+                        new Identifier("props")
+                    )
+                )],
+                SyntaxKind.ConstKeyword
+            )
+        ), new ReturnStatement(new SimpleExpression("restProps"))];
+
+        return  new GetAccessor(undefined, undefined, new Identifier('restAttributes'), [], undefined, new Block(statements, true));
+    }
+
     compileImportStatements(hooks: string[], compats: string[]) {
-        if (hooks.length) {
-            return [`import React, {${hooks.concat(compats).join(",")}} from 'react';`];
-        }
-        return ["import React from 'react'"];
+        return [`import React, {${hooks.concat(compats).join(",")}} from 'react';`];
     }
 
     processModuleFileName(module: string) {

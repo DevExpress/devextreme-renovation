@@ -11,6 +11,7 @@ interface Widget {
     explicitRef: any;
     clickHandler: () => any;
     getHeight: () => any;
+    restAttributes: any;
 }
 
 export default function Widget(props: {}) {
@@ -26,12 +27,18 @@ export default function Widget(props: {}) {
         return divRef.current!.outerHTML + nullableRef.current?.outerHTML;
     }, []);
 
+    const restAttributes=useCallback(function restAttributes(){
+        const { ...restProps } = props;
+        return restProps;
+    }, [props]);
+
     return view(viewModel({
         ...props,
         clickHandler,
         divRef,
         nullableRef,
         explicitRef,
-        getHeight
+        getHeight,
+        restAttributes: restAttributes()
     }));
 }

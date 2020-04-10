@@ -7,13 +7,18 @@ declare type WidgetProps = {}
 export const WidgetProps: WidgetProps = {};
 
 import { convertRulesToOptions, Rule } from "../../../../../../component_declaration/default_options";
-import React from "react";
+import React, {useCallback} from "react";
 
-interface Widget { props: WidgetProps }
+interface Widget { props: WidgetProps, restAttributes: any; }
 
 export default function Widget(props: WidgetProps) {
+    const restAttributes=useCallback(function restAttributes(){
+        const { ...restProps } = props;
+        return restProps;
+    }, [props]);
     return view(({
         props: { ...props },
+        restAttributes: restAttributes()
     }));
 }
 

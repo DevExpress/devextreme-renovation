@@ -20,6 +20,9 @@ export default class Widget extends WidgetInput {
     getSize(): string { 
         return `${this.prop1} + ${this.divRef!.nativeElement.innerHTML}`;
     }
+    get restAttributes(){
+        return {}
+    }
 }
 @NgModule({
     declarations: [Widget],
