@@ -1,5 +1,5 @@
 import assert from "assert";
-import mocha from "mocha";
+import mocha from "./helpers/mocha";
 import generator from "../preact-generator";
 import gulp from "gulp";
 import fs from "fs";
@@ -9,11 +9,6 @@ import sinon from "sinon";
 
 import { generateComponents, deleteFolderRecursive } from "../component-compiler";
 import File from "vinyl";
-
-if (!mocha.describe) { 
-    mocha.describe = describe;
-    mocha.it = it;
-}
 
 async function readData(stream:NodeJS.ReadableStream):Promise<File[]> {
     return new Promise((resolve, _error) => {

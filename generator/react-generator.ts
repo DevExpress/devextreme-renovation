@@ -2014,7 +2014,7 @@ export class PropertySignature extends ExpressionWithOptionalExpression {
     }
 
     toString(options?: toStringOptions) {
-        const initializer = this.expression?`=${this.expression.toString(options)}`:""
+        const initializer = this.expression ? `=${this.expression.toString(options)}` : "";
         return `${this.name}${this.questionToken}${compileType(this.type?.toString())}${initializer}`;
     }
 

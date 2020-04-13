@@ -1,5 +1,5 @@
 import assert from "assert";
-import mocha from "mocha";
+import mocha from "./helpers/mocha";
 import ts from "typescript";
 import generator, {
     ReactComponent,
@@ -42,11 +42,6 @@ function createComponentDecorator(paramenters: {[name:string]: any}) {
 }
 
 import { printSourceCodeAst as getResult, createTestGenerator } from "./helpers/common";
-
-if (!mocha.describe) { 
-    mocha.describe = describe;
-    mocha.it = it;
-}
 
 function createDecorator(name: string) { 
     return generator.createDecorator(

@@ -1,15 +1,10 @@
-import mocha from "mocha";
+import mocha from "./helpers/mocha";
 import generator, { Property, AngularDirective, Method } from "../angular-generator";
 import assert from "assert";
 import path from "path";
 
 import { printSourceCodeAst as getResult, removeSpaces } from "./helpers/common";
 import { Identifier, GeneratorContex, Expression } from "../react-generator";
-
-if (!mocha.describe) { 
-    mocha.describe = describe;
-    mocha.it = it;
-}
 
 function createDecorator(name: string) {
     return generator.createDecorator(generator.createCall(

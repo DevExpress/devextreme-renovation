@@ -1,14 +1,9 @@
-import mocha from "mocha";
+import mocha from "./helpers/mocha";
 import generator from "../angular-generator";
 import compile from "../component-compiler";
 import path from "path";
 
 import { printSourceCodeAst as getResult, createTestGenerator } from "./helpers/common";
-
-if (!mocha.describe) { 
-    mocha.describe = describe;
-    mocha.it = it;
-}
 
 mocha.describe("angular-generation", function () {
     const testGenerator = createTestGenerator("angular");
