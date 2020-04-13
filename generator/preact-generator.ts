@@ -1,8 +1,11 @@
 import {
     Generator,
+    GeneratorContex as BaseGeneratorContext,
+    getModuleRelativePath,
     ReactComponent,
     Decorator,
     Identifier,
+    ObjectLiteral,
     Property as BaseProperty,
     Method,
     StringLiteral,
@@ -20,14 +23,29 @@ import path from "path";
 const processModuleFileName = (module: string) => `${module}.p`;
 
 export class PreactComponent extends ReactComponent {
+    context!: GeneratorContext;
+    needRegisterJQueryWidget: boolean = false;
+
+    constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>, context: GeneratorContext) {
+        super(decorator, modifiers, name, typeParameters, heritageClauses, members, context);
+
+        this.needRegisterJQueryWidget = (decorator.expression.arguments[0] as ObjectLiteral).getProperty("registerJQuery")?.toString() === "true"
+            && !!this.context.jqueryComponentRegistratorModule && !!this.context.jqueryBaseComponentModule;
+    }
+
     compileImportStatements(hooks: string[], compats: string[]) {
-        const imports = ["import * as Preact from 'preact'"]; 
+        const imports = [`import * as Preact from "preact"`]; 
         if (hooks.length) { 
-            imports.push(`import {${hooks.join(",")}} from 'preact/hooks'`);
+            imports.push(`import {${hooks.join(",")}} from "preact/hooks"`);
         }
 
         if (compats.length) { 
             imports.push(`import {${compats.join(",")}} from "preact/compat"`);
+        }
+
+        if(this.needRegisterJQueryWidget) {
+            imports.push(`import registerComponent from "${getModuleRelativePath(this.context.dirname!, this.context.jqueryComponentRegistratorModule!)}"`);
+            imports.push(`import Component from "${getModuleRelativePath(this.context.dirname!, this.context.jqueryBaseComponentModule!)}"`);
         }
         
         return imports;
@@ -39,6 +57,82 @@ export class PreactComponent extends ReactComponent {
 
     defaultPropsDest() { 
         return `(${this.name} as any).defaultProps`;
+    }
+
+    compileJQGetProps() {
+        const statements: string[] = [];
+        const templates = this.props.filter(p => p.property.decorators.find(d => d.name === "Template"))
+
+        statements.splice(-1, 0, ...templates.map(t => {
+            return `
+            if(props.${t.property._name}) {
+                props.${t.name} = this._createTemplateComponent(props, "${t.property._name}");
+            }
+            `;
+        }));
+
+        if(!statements.length) {
+            return "";
+        }
+
+        return `
+        getProps(props:any) {
+            ${statements.join("\n")}
+
+            return props;
+        }
+        `;
+    }
+
+    compileJQAPI() {
+        if(!this.api.length) return "";
+
+        const api = this.api.map(a => `${a.name}(${a.parametersTypeDeclaration()}) {
+            this.viewRef.current.${a.name}(${a.parameters.map(p => p.name).join(",")});
+        }`);
+
+        return `${api.join("\n")}`;
+    }
+
+    compileJQInit() {
+        const statements: string[] = [];
+        if(this.api.length) {
+            statements.push("this._createViewRef();");
+        }
+
+        if(!statements.length) {
+            return "";
+        }
+
+        return `
+        _initWidget() {
+            ${statements.join(";\n")}
+        }
+        `;
+    }
+
+    toString() {
+        const statements: string[] = [super.toString()];
+
+        if(this.needRegisterJQueryWidget) {
+            statements.push(`
+            export class Dx${this.name} extends Component {
+                ${this.compileJQGetProps()}
+    
+                ${this.compileJQAPI()}
+    
+                get _viewComponent() {
+                    return ${this.name};
+                }
+    
+                ${this.compileJQInit()}
+            }
+    
+            registerComponent("${this.name}", Dx${this.name});
+            `)
+        }
+
+        return `${statements.join("\n")}`;
     }
 }
 
@@ -65,7 +159,21 @@ class JsxClosingElement extends ReactJsxClosingElement {
     }
 }
 
+export type GeneratorContext = BaseGeneratorContext & {
+    jqueryComponentRegistratorModule?: string
+    jqueryBaseComponentModule?: string
+}
+
 export class PreactGenerator extends Generator { 
+    jqueryComponentRegistratorModule?: string
+    jqueryBaseComponentModule?: string
+
+    context: GeneratorContext[] = [];
+
+    setContext(context: GeneratorContext | null) {
+        super.setContext(context);
+    }
+
     createImportDeclaration(decorators: Decorator[] = [], modifiers: string[] = [], importClause: ImportClause = new ImportClause(), moduleSpecifier: StringLiteral) {
         const importStatement = super.createImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
 
