@@ -29,7 +29,7 @@ function getRelativePath(src:string, dst:string, moduleName: string="") {
     return relativePath;
 }
 
-function getModuleRelativePath(src: string, moduleSpecifier: string) { 
+export function getModuleRelativePath(src: string, moduleSpecifier: string) { 
     const normalizedPath = path.normalize(moduleSpecifier);
     const moduleParts = normalizedPath.split(/(\/|\\)/);
 

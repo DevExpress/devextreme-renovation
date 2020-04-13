@@ -1,6 +1,7 @@
 import assert from "assert";
 import mocha from "mocha";
 import generator from "../preact-generator";
+import jqueryGenerator from "../jquery-generator";
 import gulp from "gulp";
 import fs from "fs";
 import path from "path";
@@ -42,6 +43,14 @@ mocha.describe("code-compiler: gulp integration", function() {
         setContextSpy.restore();
     });
 
+    mocha.it("createCodeGenerator stream with no result", async function () {
+        const result = await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/props-in-listener.tsx`))
+            .pipe(generateComponents(jqueryGenerator))
+        );
+
+        assert.deepEqual(result, []);
+    });
+
     mocha.describe("Default options", function () {
         const defaultOptionsModule = "../component_declaration/default_options";
         this.beforeEach(function () {
@@ -59,6 +68,39 @@ mocha.describe("code-compiler: gulp integration", function() {
             assert.strictEqual(setContextSpy.firstCall.args[0]!.defaultOptionsModule, path.resolve(defaultOptionsModule));
 
             setContextSpy.restore();
+        });
+    });
+
+    mocha.describe("jQuery", function () {
+        const jqueryComponentRegistratorModule = "../component_declaration/jquery_component_registrator";
+        const jqueryBaseComponentModule = "../component_declaration/jquery_base_component";
+    
+        this.beforeEach(function () {
+            jqueryGenerator.jqueryComponentRegistratorModule = jqueryComponentRegistratorModule
+            jqueryGenerator.jqueryBaseComponentModule = jqueryBaseComponentModule
+        });
+        this.afterEach(function () { 
+            jqueryGenerator.jqueryComponentRegistratorModule = undefined
+            jqueryGenerator.jqueryBaseComponentModule = undefined
+        });
+        mocha.it("copy utils modules", async function () { 
+            const setContextSpy = sinon.spy(jqueryGenerator, "setContext");
+            await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/props-in-listener.tsx`))
+                .pipe(generateComponents(jqueryGenerator))
+            );
+
+            assert.strictEqual(setContextSpy.firstCall.args[0]!.jqueryComponentRegistratorModule, path.resolve(jqueryComponentRegistratorModule));
+            assert.strictEqual(setContextSpy.firstCall.args[0]!.jqueryBaseComponentModule, path.resolve(jqueryBaseComponentModule));
+
+            setContextSpy.restore();
+        });
+
+        mocha.it("createCodeGenerator returns correct filename", async function () {
+            const result = await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/empty-component.tsx`))
+                .pipe(generateComponents(jqueryGenerator))
+            );
+    
+            assert.ok(result[0].path.endsWith("empty-component.j.tsx"));
         });
     });
 });

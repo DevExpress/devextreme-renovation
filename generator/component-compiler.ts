@@ -1,7 +1,8 @@
 import ts from "typescript";
 import fs from "fs";
 import { generateFactoryCode } from "./factoryCodeGenerator";
-import { Generator } from "./react-generator";
+import { Generator, GeneratorContex } from "./react-generator";
+import { JQueryGenerator, JQueryGeneratorContext } from "./jquery-generator";
 import path from "path";
 
 export function deleteFolderRecursive(path: string) {
@@ -21,9 +22,15 @@ export function deleteFolderRecursive(path: string) {
 import Stream from "stream";
 import File from "vinyl";
 
-export function compileCode(generator: Generator, code: string, file: { dirname: string, path: string }): string {
+export function compileCode(generator: Generator | JQueryGenerator, code: string, file: { dirname: string, path: string }): string {
     const source = ts.createSourceFile(file.path, code, ts.ScriptTarget.ES2016, true);
-    generator.setContext({ path: file.path, dirname: file.dirname, defaultOptionsModule: generator.defaultOptionsModule && path.resolve(generator.defaultOptionsModule) });
+    generator.setContext({ 
+        path: file.path, 
+        dirname: file.dirname, 
+        defaultOptionsModule: generator.defaultOptionsModule && path.resolve(generator.defaultOptionsModule),
+        jqueryComponentRegistratorModule: (generator as JQueryGenerator).jqueryComponentRegistratorModule && path.resolve((generator as JQueryGenerator).jqueryComponentRegistratorModule!),
+        jqueryBaseComponentModule: (generator as JQueryGenerator).jqueryBaseComponentModule && path.resolve((generator as JQueryGenerator).jqueryBaseComponentModule!)
+    });
     const codeFactory = generateFactoryCode(ts, source);
     const codeFactoryResult = eval(codeFactory)(generator);
     
@@ -41,9 +48,13 @@ export function generateComponents(generator: Generator) {
             if (originalFile.contents instanceof Buffer) {
                 const code = originalFile.contents.toString();
                 const componentCode = compileCode(generator, code, originalFile);
-                factoryCodeFile.contents = Buffer.from(componentCode);
-                factoryCodeFile.path = generator.processSourceFileName(factoryCodeFile.path)
-                callback(null, factoryCodeFile);
+                if(componentCode.trim().length !== 0) {
+                    factoryCodeFile.contents = Buffer.from(componentCode);
+                    factoryCodeFile.path = generator.processSourceFileName(factoryCodeFile.path)
+                    callback(null, factoryCodeFile);
+                } else {
+                    callback();
+                }
             }
         }
     });

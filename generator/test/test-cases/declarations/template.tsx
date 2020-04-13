@@ -7,7 +7,8 @@ export class WidgetInput {
 }
 
 @Component({
-    view: view
+    view: view,
+    registerJQuery: true
 })
 export default class Widget extends JSXComponent<WidgetInput> {}
 

@@ -23,7 +23,7 @@ const Widget = forwardRef<WidgetRef, WidgetInput>((props: WidgetInput, ref) => {
 
     useImperativeHandle(ref, () => ({
         getHeight: (p:number=10, p1: any) => {
-            return `${props.prop1} + ${props.prop2} + ${divRef.current!.innerHTML}`;
+            return `${props.prop1} + ${props.prop2} + ${divRef.current!.innerHTML} + ${p}`;
         },
         getSize: () => {
             return `${props.prop1} + ${divRef.current!.innerHTML}`;
