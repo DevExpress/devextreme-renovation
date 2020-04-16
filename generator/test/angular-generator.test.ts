@@ -4,7 +4,7 @@ import assert from "assert";
 import path from "path";
 
 import { printSourceCodeAst as getResult, removeSpaces } from "./helpers/common";
-import { GeneratorContex } from "../base-generator/types";
+import { GeneratorContext } from "../base-generator/types";
 import { Expression } from "../base-generator/expressions/base";
 import { Identifier } from "../base-generator/expressions/common";
 import { Method } from "../base-generator/expressions/class-members";
@@ -2760,7 +2760,7 @@ mocha.describe("Angular generator", function () {
         });
 
         mocha.describe("Default options", function () {
-            function setupGenerator(context: GeneratorContex) { 
+            function setupGenerator(context: GeneratorContext) { 
                 generator.setContext(context);
             }
             this.beforeEach(function () {

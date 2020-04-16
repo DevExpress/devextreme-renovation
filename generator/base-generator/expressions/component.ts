@@ -3,7 +3,7 @@ import { GetAccessor, Property, Method, BaseClassMember } from "./class-members"
 import { SimpleExpression, Expression } from "./base";
 import { ObjectLiteral } from "./literal";
 import { HeritageClause, inheritMembers, Class, Heritable } from "./class";
-import { GeneratorContex } from "../types";
+import { GeneratorContext } from "../types";
 import { Block } from "./statements";
 import { getModuleRelativePath } from "../utils/path-utils";
 
@@ -43,7 +43,7 @@ export class Component extends Class implements Heritable {
     view: any;
     viewModel: any;
 
-    context: GeneratorContex;
+    context: GeneratorContext;
 
     defaultOptionRules?: Expression | null;
 
@@ -74,7 +74,7 @@ export class Component extends Class implements Heritable {
         return members;
     }
 
-    constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>, context: GeneratorContex) {
+    constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>, context: GeneratorContext) {
         super([decorator], modifiers, name, typeParameters, heritageClauses, members);
         members = this.members;
         this.props = members

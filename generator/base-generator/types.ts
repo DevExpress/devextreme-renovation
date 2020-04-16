@@ -21,7 +21,7 @@ export type VariableExpression = {
     [name: string]: IExpression;
 }
 
-export type GeneratorContex = {
+export type GeneratorContext = {
     path?: string;
     dirname?: string;
     components?: { [name: string]: Heritable };

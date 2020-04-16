@@ -48,9 +48,9 @@ export function printSourceCodeAst(source: string) {
 }
 
 export function createTestGenerator(expectedFolder: string){ 
-    return function testGenerator(this: any, componentName: string, generator: Generator) {
+    return function testGenerator(this: any, componentName: string, generator: Generator, componentIndex: number = 0) {
         const factory = require(path.resolve(`${__dirname}/../test-cases/componentFactory/${componentName}`));
-        const code = this.code = factory(generator).join("\n");
+        const code = this.code = generator.generate(factory)[componentIndex].code;
         this.expectedCode = fs.readFileSync(path.resolve(`${__dirname}/../test-cases/expected/${expectedFolder}/${componentName}.tsx`)).toString();
         assert.equal(printSourceCodeAst(code), printSourceCodeAst(this.expectedCode));
     }
