@@ -6,7 +6,11 @@ declare type WidgetInput = {
 }
 const WidgetInput: WidgetInput = { };
 
-import React, { useCallback, useRef, useImperativeHandle, forwardRef } from "react";
+import * as Preact from "preact";
+import { useCallback, useRef, useImperativeHandle } from "preact/hooks";
+import { forwardRef } from "preact/compat";
+import registerComponent from "../../../../../component_declaration/jquery_component_registrator";
+import Component from "../../../../../component_declaration/jquery_base_component"
 
 export type WidgetRef = {
     getHeight: (p:number,p1:any)=>string,
@@ -43,6 +47,26 @@ const Widget = forwardRef<WidgetRef, WidgetInput>((props: WidgetInput, ref) => {
 
 export default Widget;
 
-Widget.defaultProps = {
+(Widget as any).defaultProps = {
     ...WidgetInput
 }
+
+export class DxWidget extends Component {
+    getHeight(p:number=10, p1: any) {
+        this.viewRef.current.getHeight(p, p1);
+    }
+
+    getSize() {
+        this.viewRef.current.getSize();
+    }
+
+    get _viewComponent() {
+        return Widget;
+    }
+
+    _initWidget() {
+        this._createViewRef();
+    }
+}
+
+registerComponent('Widget', DxWidget);

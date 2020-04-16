@@ -16,11 +16,19 @@ mocha.describe("preact-generator", function () {
     });
 
     this.beforeEach(function () {
-        generator.setContext({ dirname: path.resolve(__dirname, "./test-cases/declarations") });
+        generator.jqueryComponentRegistratorModule = "../component_declaration/jquery_component_registrator";
+        generator.jqueryBaseComponentModule = "../component_declaration/jquery_base_component";
+        generator.setContext({ 
+            dirname: path.resolve(__dirname, "./test-cases/declarations"),
+            jqueryComponentRegistratorModule: path.resolve(generator.jqueryComponentRegistratorModule),
+            jqueryBaseComponentModule: path.resolve(generator.jqueryBaseComponentModule)
+        });
     });
 
     this.afterEach(function () {
         generator.setContext(null);
+        generator.jqueryComponentRegistratorModule = "";
+        generator.jqueryBaseComponentModule = "";
         if (this.currentTest!.state !== "passed") {
             console.log(this.code); // TODO: diff with expected
         }
@@ -45,6 +53,30 @@ mocha.describe("preact-generator", function () {
     });
 
     mocha.it("method-use-apiref", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("jquery-empty", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("jquery-without-modules", function () {
+        generator.jqueryComponentRegistratorModule = undefined;
+        generator.jqueryBaseComponentModule = undefined;
+        generator.setContext({ 
+            dirname: path.resolve(__dirname, "./test-cases/declarations"),
+            jqueryComponentRegistratorModule: generator.jqueryComponentRegistratorModule,
+            jqueryBaseComponentModule: generator.jqueryBaseComponentModule
+        });
+
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("jquery-api", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("jquery-template", function () {
         this.testGenerator(this.test!.title);
     });
 });

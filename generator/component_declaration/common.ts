@@ -26,6 +26,11 @@ export function Component(arg: {
     view: Function;
 
     defaultOptionRules?: Rule<any>[] | null;
+
+    /**
+     * If jQuery widget should be registered
+     */
+    registerJQuery?: boolean;
 }) {
     return function ComponentDecorator(constructor: Function) {
         constructor.prototype.render = function() {

@@ -2,6 +2,7 @@ import ts from "typescript";
 import fs from "fs";
 import { generateFactoryCode } from "./factoryCodeGenerator";
 import Generator  from "./base-generator";
+import { PreactGenerator } from "./preact-generator";
 import path from "path";
 
 export function deleteFolderRecursive(path: string) {
@@ -21,9 +22,15 @@ export function deleteFolderRecursive(path: string) {
 import Stream from "stream";
 import File from "vinyl";
 
-export function compileCode(generator: Generator, code: string, file: { dirname: string, path: string }): string {
+export function compileCode(generator: Generator | PreactGenerator, code: string, file: { dirname: string, path: string }): string {
     const source = ts.createSourceFile(file.path, code, ts.ScriptTarget.ES2016, true);
-    generator.setContext({ path: file.path, dirname: file.dirname, defaultOptionsModule: generator.defaultOptionsModule && path.resolve(generator.defaultOptionsModule) });
+    generator.setContext({ 
+        path: file.path, 
+        dirname: file.dirname, 
+        defaultOptionsModule: generator.defaultOptionsModule && path.resolve(generator.defaultOptionsModule),
+        jqueryComponentRegistratorModule: (generator as PreactGenerator).jqueryComponentRegistratorModule && path.resolve((generator as PreactGenerator).jqueryComponentRegistratorModule!),
+        jqueryBaseComponentModule: (generator as PreactGenerator).jqueryBaseComponentModule && path.resolve((generator as PreactGenerator).jqueryBaseComponentModule!)
+    });
     const codeFactory = generateFactoryCode(ts, source);
     const codeFactoryResult = eval(codeFactory)(generator);
     

@@ -14,7 +14,7 @@ export default class Widget extends WidgetInput {
     @ViewChild("divRef", { static: false }) divRef: ElementRef<HTMLDivElement>;
 
     getHeight(p:number=10, p1:any): string { 
-        return `${this.prop1} + ${this.prop2} + ${this.divRef!.nativeElement.innerHTML}`;
+        return `${this.prop1} + ${this.prop2} + ${this.divRef!.nativeElement.innerHTML} + ${p}`;
     }
 
     getSize(): string { 

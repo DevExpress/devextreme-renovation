@@ -694,6 +694,7 @@ class Decorator extends BaseDecorator {
             parameters.removeProperty("view");
             parameters.removeProperty("viewModel");
             parameters.removeProperty("defaultOptionRules");
+            parameters.removeProperty("registerJQuery");
         } else if (this.name === "Event") { 
             return "@Output()";
         }
