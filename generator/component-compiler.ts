@@ -20,7 +20,7 @@ export function deleteFolderRecursive(path: string) {
 import Stream from "stream";
 import File from "vinyl";
 
-export function compileCode(generator: Generator, code: string, file: { dirname: string, path: string }): {path?: string, code: string }[] {
+export function compileCode(generator: Generator, code: string, file: { dirname: string, path: string }, includeExtraComponents: boolean = false): {path?: string, code: string }[] | string {
     const source = ts.createSourceFile(file.path, code, ts.ScriptTarget.ES2016, true);
     generator.setContext({ 
         path: file.path, 
@@ -32,7 +32,10 @@ export function compileCode(generator: Generator, code: string, file: { dirname:
     const codeFactoryResult = generator.generate(eval(codeFactory));
     generator.setContext(null);
 
-    return codeFactoryResult;
+    if(includeExtraComponents) {
+        return codeFactoryResult;
+    }
+    return codeFactoryResult[0].code;
 }
 
 export function generateComponents(generator: Generator) {
@@ -41,9 +44,9 @@ export function generateComponents(generator: Generator) {
         transform(originalFile: File, _, callback) {
             if (originalFile.contents instanceof Buffer) {
                 const code = originalFile.contents.toString();
-                const components = compileCode(generator, code, originalFile);
+                const components: {} = compileCode(generator, code, originalFile, true);
 
-                components.filter(c => c.path && c.code).forEach(c => {
+                (components as { path?: string, code: string }[]).filter(c => c.path && c.code).forEach(c => {
                     const generatedFile = originalFile.clone();
                     generatedFile.contents = Buffer.from(c.code);
                     generatedFile.path = c.path!;
