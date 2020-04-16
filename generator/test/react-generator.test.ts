@@ -30,7 +30,7 @@ function createComponentDecorator(paramenters: {[name:string]: any}) {
 }
 
 import { printSourceCodeAst as getResult, createTestGenerator } from "./helpers/common";
-import { GeneratorContex } from "../base-generator/types";
+import { GeneratorContext } from "../base-generator/types";
 
 function createDecorator(name: string) { 
     return generator.createDecorator(
@@ -1428,7 +1428,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
         })), getResult("()=>(__state_setS1(props.p1), props.s1Change!(props.p1))"));
     });
 
-    mocha.it("PropertyAccess should replace componentContext on newComponentContex", function () {
+    mocha.it("PropertyAccess should replace componentContext on newComponentContext", function () {
         const expression = generator.createPropertyAccess(
             generator.createThis(),
             generator.createIdentifier("name")
@@ -1800,7 +1800,7 @@ mocha.describe("ComponentInput", function () {
 });
 
 mocha.describe("Default_options", function () {
-    function setupGenerator(context: GeneratorContex) { 
+    function setupGenerator(context: GeneratorContext) { 
         generator.setContext(context);
     }
     this.beforeEach(function () {

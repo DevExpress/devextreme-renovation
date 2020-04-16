@@ -3,7 +3,9 @@ import { Component, Template, ComponentBindings, JSXComponent } from "../../../c
 @ComponentBindings()
 export class WidgetInput { 
     @Template() template: () => any = () => <div></div>;
-    @Template() contentTemplate: (data: {p1: string }) => any = (data) => (<div>{data.p1}</div>);
+    @Template({}) anotherTemplate: () => any = () => <div></div>;
+    @Template({ canBeAnonymous: false }) containerTemplate: () => any = () => <div></div>;
+    @Template({ canBeAnonymous: true }) contentTemplate: () => any = () => <div></div>;
 }
 
 @Component({
@@ -14,7 +16,9 @@ export default class Widget extends JSXComponent<WidgetInput> {}
 
 function view(viewModel: Widget) { 
     return (<div>
-        <viewModel.props.contentTemplate p1={"value"}/>
         <viewModel.props.template />
+        <viewModel.props.anotherTemplate />
+        <viewModel.props.containerTemplate />
+        <viewModel.props.contentTemplate />
     </div>)
 }

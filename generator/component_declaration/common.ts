@@ -68,7 +68,12 @@ export const TwoWay = () => propertyDecorator;
  * Declares an input property that the user can set for custom rendering.
  * Property type should be a function that receives model and returns markup.
  */
-export const Template = () => propertyDecorator;
+export const Template = (args?: { 
+    /**
+     * Better use @Slot 
+     */
+    canBeAnonymous?: boolean;
+}) => propertyDecorator;
 /**
  * Property Decorator.
  * Declares an input property that the user can set custom rendering part of widget.

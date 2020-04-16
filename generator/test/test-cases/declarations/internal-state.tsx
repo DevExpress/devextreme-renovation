@@ -16,4 +16,3 @@ export default class Widget {
         this._hovered = !this._hovered;
     }
 }
-  

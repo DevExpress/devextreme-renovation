@@ -2,8 +2,6 @@ import ts from "typescript";
 import fs from "fs";
 import { generateFactoryCode } from "./factoryCodeGenerator";
 import Generator  from "./base-generator";
-import { PreactGenerator } from "./preact-generator";
-import path from "path";
 
 export function deleteFolderRecursive(path: string) {
     if (fs.existsSync(path)) {
@@ -22,35 +20,40 @@ export function deleteFolderRecursive(path: string) {
 import Stream from "stream";
 import File from "vinyl";
 
-export function compileCode(generator: Generator | PreactGenerator, code: string, file: { dirname: string, path: string }): string {
+export function compileCode(generator: Generator, code: string, file: { dirname: string, path: string }, includeExtraComponents: boolean = false): {path?: string, code: string }[] | string {
     const source = ts.createSourceFile(file.path, code, ts.ScriptTarget.ES2016, true);
     generator.setContext({ 
         path: file.path, 
         dirname: file.dirname, 
-        defaultOptionsModule: generator.defaultOptionsModule && path.resolve(generator.defaultOptionsModule),
-        jqueryComponentRegistratorModule: (generator as PreactGenerator).jqueryComponentRegistratorModule && path.resolve((generator as PreactGenerator).jqueryComponentRegistratorModule!),
-        jqueryBaseComponentModule: (generator as PreactGenerator).jqueryBaseComponentModule && path.resolve((generator as PreactGenerator).jqueryBaseComponentModule!)
+        ...generator.getInitialContext()
     });
     const codeFactory = generateFactoryCode(ts, source);
-    const codeFactoryResult = eval(codeFactory)(generator);
-    
-    generator.cache[file.path] = codeFactoryResult;
+
+    const codeFactoryResult = generator.generate(eval(codeFactory));
     generator.setContext(null);
 
-    return codeFactoryResult.join("\n");
+    if(includeExtraComponents) {
+        return codeFactoryResult;
+    }
+    return codeFactoryResult[0].code;
 }
 
 export function generateComponents(generator: Generator) {
     const stream = new Stream.Transform({
         objectMode: true,
         transform(originalFile: File, _, callback) {
-            const factoryCodeFile = originalFile.clone();
             if (originalFile.contents instanceof Buffer) {
                 const code = originalFile.contents.toString();
-                const componentCode = compileCode(generator, code, originalFile);
-                factoryCodeFile.contents = Buffer.from(componentCode);
-                factoryCodeFile.path = generator.processSourceFileName(factoryCodeFile.path)
-                callback(null, factoryCodeFile);
+                const components: {} = compileCode(generator, code, originalFile, true);
+
+                (components as { path?: string, code: string }[]).filter(c => c.path && c.code).forEach(c => {
+                    const generatedFile = originalFile.clone();
+                    generatedFile.contents = Buffer.from(c.code);
+                    generatedFile.path = c.path!;
+                    this.push(generatedFile)
+                });
+                
+                callback()
             }
         }
     });

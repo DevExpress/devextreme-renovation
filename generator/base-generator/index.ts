@@ -35,7 +35,7 @@ import { CaseClause, DefaultClause, CaseBlock, Switch, If, Conditional } from ".
 import { ShorthandPropertyAssignment, SpreadAssignment, PropertyAssignment } from "./expressions/property-assignment";
 import { Binary, Prefix, Postfix } from "./expressions/operators";
 import { ReturnStatement, Block } from "./expressions/statements";
-import { GeneratorContex } from "./types";
+import { GeneratorContext } from "./types";
 import { VariableDeclaration, VariableDeclarationList, VariableStatement } from "./expressions/variables";
 import { StringLiteral, ArrayLiteral, ObjectLiteral } from "./expressions/literal";
 import { Class, HeritageClause, Heritable } from "./expressions/class";
@@ -521,7 +521,7 @@ export default class Generator {
         return new SimpleExpression(text);
     }
 
-    context: GeneratorContex[] = [];
+    context: GeneratorContext[] = [];
 
     addComponent(name: string, component: Component| ComponentInput, importClause?:ImportClause) {
         const context = this.getContext();
@@ -529,11 +529,17 @@ export default class Generator {
         context.components[name] = component;
     }
 
+    getInitialContext(): GeneratorContext {
+        return {
+            defaultOptionsModule: this.defaultOptionsModule && path.resolve(this.defaultOptionsModule)
+        };
+    }
+
     getContext() {
         return this.context[this.context.length - 1] || { components: {} };
     }
 
-    setContext(context: GeneratorContex | null) {
+    setContext(context: GeneratorContext | null) {
         if (!context) {
             this.context.pop();
         } else {
@@ -546,4 +552,16 @@ export default class Generator {
     destination: string = "";
 
     defaultOptionsModule?: string;
+
+    generate(factory: any): { path?: string, code: string }[] {
+        const result: { path?: string, code: string }[] = []
+        const codeFactoryResult = factory(this);
+        const { path } = this.getContext()
+        if(path) {
+            this.cache[path] = codeFactoryResult;
+        }
+        result.push({ path: path && this.processSourceFileName(path), code: codeFactoryResult.join("\n") })
+
+        return result;
+    }
 }
