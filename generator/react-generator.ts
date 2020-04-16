@@ -15,7 +15,7 @@ import {
     JsxOpeningElement as BaseJsxOpeningElement,
     JsxSpreadAttribute
 } from "./base-generator/expressions/jsx";
-import { toStringOptions, GeneratorContex } from "./base-generator/types";
+import { toStringOptions, GeneratorContext } from "./base-generator/types";
 import { Component, getProps } from "./base-generator/expressions/component";
 import { HeritageClause as BaseHeritageClause } from "./base-generator/expressions/class";
 import { BindingElement, BindingPattern } from "./base-generator/expressions/binding-pattern";
@@ -69,7 +69,7 @@ export class ComponentInput extends BaseComponentInput {
 }
 
 export class HeritageClause extends BaseHeritageClause { 
-    constructor(token: string, types: ExpressionWithTypeArguments[], context: GeneratorContex) {
+    constructor(token: string, types: ExpressionWithTypeArguments[], context: GeneratorContext) {
         super(token, types, context);
         this.defaultProps = types.reduce((defaultProps: string[], { type }) => {
             const importName = type;

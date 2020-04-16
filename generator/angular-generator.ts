@@ -14,7 +14,7 @@ import {
 import { Function, Parameter } from "./base-generator/expressions/functions";
 import {
     toStringOptions as BaseToStringOptions,
-    GeneratorContex,
+    GeneratorContext,
     VariableExpression
 } from "./base-generator/types";
 import SyntaxKind from "./base-generator/syntaxKind";
@@ -61,7 +61,7 @@ interface toStringOptions extends  BaseToStringOptions {
     enventProperties?: Array<Property>
 }
 
-function processTagName(tagName: Expression, context: GeneratorContex) { 
+function processTagName(tagName: Expression, context: GeneratorContext) { 
     const component = context.components?.[tagName.toString()];
         if (component) { 
             const selector = (component as AngularComponent).selector;
@@ -76,10 +76,10 @@ interface JsxSpreadAttributeMeta {
 }
 
 export class JsxOpeningElement extends BaseJsxOpeningElement { 
-    context: GeneratorContex;
+    context: GeneratorContext;
     component?: AngularComponent;
     attributes: Array<JsxAttribute | JsxSpreadAttribute>;
-    constructor(tagName: Expression, typeArguments: any, attributes: Array<JsxAttribute | JsxSpreadAttribute> = [], context: GeneratorContex) { 
+    constructor(tagName: Expression, typeArguments: any, attributes: Array<JsxAttribute | JsxSpreadAttribute> = [], context: GeneratorContext) { 
         super(processTagName(tagName, context), typeArguments, attributes);
         this.context = context;
         const component = context.components?.[tagName.toString()];
@@ -494,7 +494,7 @@ export class JsxChildExpression extends JsxExpression {
 
 export class JsxSpreadAttribute extends JsxExpression{
     getTemplateContext() { 
-        // TODO: Support spread attributes in template contex
+        // TODO: Support spread attributes in template context
         console.warn("Angular generator doesn't support spread attributes in template");
         return null;
     }
@@ -840,7 +840,7 @@ const ngOnChangesParameters = ["changes"];
 
 class AngularComponent extends Component {
     decorator: Decorator;
-    constructor(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>, context: GeneratorContex) {
+    constructor(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>, context: GeneratorContext) {
         super(componentDecorator, modifiers, name, typeParameters, heritageClauses, members, context);
         componentDecorator.addParameter("selector", new StringLiteral(this.selector));
         this.decorator = componentDecorator;
@@ -1221,7 +1221,7 @@ export class VariableDeclaration extends BaseVariableDeclaration {
     }
 }
 
-type AngularGeneratorContext = GeneratorContex & {
+type AngularGeneratorContext = GeneratorContext & {
     viewFunctions?: { [name: string]: AngularFunction | ArrowFunctionWithTemplate };
     angularCoreImports?: string[];
 }
@@ -1306,7 +1306,7 @@ export class AngularGenerator extends Generator {
         return super.getContext() as AngularGeneratorContext;
     }
 
-    setContext(context: GeneratorContex | null) {
+    setContext(context: GeneratorContext | null) {
         !context && counter.reset();
         return super.setContext(context);
     }

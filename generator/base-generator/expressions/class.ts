@@ -1,7 +1,7 @@
 import { Identifier, Decorator } from "./common";
 import { Property, Method } from "./class-members";
 import { ExpressionWithTypeArguments } from "./type";
-import { GeneratorContex } from "../types";
+import { GeneratorContext } from "../types";
 
 export function inheritMembers(heritageClauses: HeritageClause[], members: Array<Property | Method>) {
     return heritageClauses.reduce((m, { members }) => {
@@ -18,7 +18,7 @@ export class HeritageClause {
     get typeNodes() {
         return this.types.map(t => t.typeNode);
     }
-    constructor(token: string, types: ExpressionWithTypeArguments[], context: GeneratorContex) {
+    constructor(token: string, types: ExpressionWithTypeArguments[], context: GeneratorContext) {
         this.token = token;
         this.types = types;
 

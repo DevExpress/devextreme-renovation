@@ -1,7 +1,7 @@
 import { Expression } from "./base";
 import { Decorator, Identifier } from "./common";
 import { TypeExpression } from "./type";
-import { toStringOptions, GeneratorContex } from "../types";
+import { toStringOptions, GeneratorContext } from "../types";
 import { Block } from "./statements";
 import { BindingPattern } from "./binding-pattern";
 import { variableDeclaration, compileType } from "../utils/string";
@@ -44,9 +44,9 @@ export class BaseFunction extends Expression {
     parameters: Parameter[];
     type?: TypeExpression;
     body: Block | Expression;
-    context: GeneratorContex;
+    context: GeneratorContext;
 
-    constructor(modifiers: string[] = [], typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, body: Block | Expression, context: GeneratorContex) { 
+    constructor(modifiers: string[] = [], typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, body: Block | Expression, context: GeneratorContext) { 
         super();
         this.modifiers = modifiers;
         this.typeParameters = typeParameters;
@@ -78,7 +78,7 @@ export class Function extends BaseFunction {
     asteriskToken: string;
     name?: Identifier;
     body: Block;
-    constructor(decorators: Decorator[] = [], modifiers: string[]|undefined, asteriskToken: string, name: Identifier | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, body: Block, context: GeneratorContex) {
+    constructor(decorators: Decorator[] = [], modifiers: string[]|undefined, asteriskToken: string, name: Identifier | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, body: Block, context: GeneratorContext) {
         super(modifiers, typeParameters, parameters, type, body, context);
         this.decorators = decorators;
         this.asteriskToken = asteriskToken;
@@ -99,7 +99,7 @@ export class ArrowFunction extends BaseFunction {
     parameters: Parameter[];
     body: Block | Expression;
     equalsGreaterThanToken: string;
-    constructor(modifiers: string[]|undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, equalsGreaterThanToken: string, body: Block | Expression, context: GeneratorContex) {
+    constructor(modifiers: string[]|undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, equalsGreaterThanToken: string, body: Block | Expression, context: GeneratorContext) {
         super(modifiers, typeParameters, parameters, type, body, context);
         this.typeParameters = typeParameters;
         this.parameters = parameters;
