@@ -403,6 +403,10 @@ mocha.describe("base-generator: expressions", function () {
             assert.equal(generator.createReturn(generator.createNumericLiteral("10")).toString(), "return 10;")
         });
 
+        mocha.it("createEmptyStatement", function () { 
+            assert.equal(generator.createEmptyStatement().toString(), "");
+        });
+
         mocha.it("createDebuggerStatement", function () { 
             assert.equal(generator.createDebuggerStatement().toString(), "debugger");
         });    

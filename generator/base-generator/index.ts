@@ -159,6 +159,10 @@ export default class Generator {
         return new SimpleExpression("continue");
     }
 
+    createEmptyStatement() { 
+        return new SimpleExpression("");
+    }
+
     createDebuggerStatement() {
         return new SimpleExpression(SyntaxKind.DebuggerKeyword);
     }
