@@ -316,6 +316,12 @@ mocha.describe("base-generator: expressions", function () {
             ), "string|number");
         });
 
+        mocha.it("createParenthesizedType", function () {
+            assert.equal(generator.createParenthesizedType(
+                generator.createKeywordTypeNode("string")
+            ), "(string)");
+        });
+
         mocha.describe("createPropertySignature", function () { 
 
             mocha.it("Only name is defined", function () {

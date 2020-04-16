@@ -26,7 +26,8 @@ import {
     TypeLiteralNode,
     IntersectionTypeNode,
     UnionTypeNode,
-    TypeQueryNode
+    TypeQueryNode,
+    ParenthesizedType
 } from "./expressions/type";
 import { Method, GetAccessor, Property } from "./expressions/class-members";
 import { For, ForIn, Do, While } from "./expressions/cycle";
@@ -486,6 +487,10 @@ export default class Generator {
 
     createTypeOf(expression: Expression) {
         return new TypeOf(expression);
+    }
+
+    createParenthesizedType(expression: TypeExpression) { 
+        return new ParenthesizedType(expression);
     }
 
     createVoid(expression: Expression) {

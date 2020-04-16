@@ -167,3 +167,15 @@ export class ExpressionWithTypeArguments extends ExpressionWithExpression {
         return this.typeNode;
     }
 }
+
+export class ParenthesizedType extends TypeExpression { 
+    expression: TypeExpression;
+    constructor(expression: TypeExpression) { 
+        super();
+        this.expression = expression;
+    }
+
+    toString() { 
+        return `(${this.expression})`;
+    }
+}
