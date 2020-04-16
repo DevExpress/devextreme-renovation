@@ -576,6 +576,13 @@ mocha.describe("base-generator: expressions", function () {
             assert.deepEqual(expression.getDependency(), ["field"]);
         });
 
+        mocha.it("createSpread", function () {
+            const expression = generator.createSpread(
+                generator.createIdentifier("v")
+            );
+            assert.equal(expression.toString(), "...v");
+        });
+
         mocha.it("createPropertyAccessChain", function () { 
             const expression = generator.createPropertyAccessChain(
                 generator.createIdentifier("a"),
