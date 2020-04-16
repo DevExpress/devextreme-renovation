@@ -1,52 +1,40 @@
+import Generator from "./base-generator";
 import {
-    Generator,
-    Expression,
-    Identifier,
-    JsxOpeningElement as ReactJsxOpeningElement,
-    JsxAttribute as ReactJsxAttribute,
-    JsxExpression as ReactJsxExpression,
-    Decorator as BaseDecorator,
-    Function,
-    Parameter,
-    Block,
-    ReturnStatement,
-    Binary,
-    StringLiteral,
-    Call,
-    ComponentInput as BaseComponentInput,
-    HeritageClause,
-    Property as BaseProperty,
-    Method as BaseMethod,
+    JsxExpression as BaseJsxExpression,
+    JsxOpeningElement as BaseJsxOpeningElement,
+    JsxAttribute as BaseJsxAttribute,
+    JsxElement as BaseJsxElement,
+    JsxClosingElement
+} from "./base-generator/expressions/jsx";
+import { Decorator as BaseDecorator, Call } from "./base-generator/expressions/common";
+import { VariableDeclaration as BaseVariableDeclaration, VariableStatement } from "./base-generator/expressions/variables";
+import {
+    Property as BaseProperty, Method
+} from "./base-generator/expressions/class-members"
+import { Function, Parameter } from "./base-generator/expressions/functions";
+import {
+    toStringOptions as BaseToStringOptions,
     GeneratorContex,
-    ObjectLiteral,
-    ReactComponent,
-    ArrowFunction,
-    ExpressionWithExpression,
-    VariableDeclaration as BaseVariableDeclaration,
-    TemplateExpression,
-    PropertyAccess as BasePropertyAccess,
-    toStringOptions as ReactToStringOptions,
-    JsxElement as ReactJsxElement,
-    VariableExpression,
-    JsxClosingElement,
-    GetAccessor as BaseGetAccessor,
-    VariableStatement,
-    Paren,
-    Heritable,
-    ImportClause,
-    SimpleExpression,
-    BindingPattern,
-    PropertyAccessChain,
-    Conditional,
-    Prefix,
-    PropertyAssignment,
-    TypeExpression,
-    SimpleTypeExpression,
-    FunctionTypeNode,
-    compileType
-} from "./react-generator";
-
-import SyntaxKind from "./syntaxKind";
+    VariableExpression
+} from "./base-generator/types";
+import SyntaxKind from "./base-generator/syntaxKind";
+import { Expression, SimpleExpression, ExpressionWithExpression } from "./base-generator/expressions/base";
+import { Identifier, Paren } from "./base-generator/expressions/common";
+import { StringLiteral, ObjectLiteral } from "./base-generator/expressions/literal";
+import { PropertyAssignment } from "./base-generator/expressions/property-assignment";
+import { Binary, Prefix } from "./base-generator/expressions/operators";
+import { PropertyAccessChain } from "./base-generator/expressions/property-access";
+import { Conditional } from "./base-generator/expressions/conditions";
+import { Block, ReturnStatement } from "./base-generator/expressions/statements";
+import { ArrowFunction } from "./base-generator/expressions/functions";
+import { TemplateExpression } from "./base-generator/expressions/template";
+import { SimpleTypeExpression, TypeExpression, FunctionTypeNode } from "./base-generator/expressions/type";
+import { HeritageClause } from "./base-generator/expressions/class";
+import { ImportClause } from "./base-generator/expressions/import";
+import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input"
+import { Component, isJSXComponent } from "./base-generator/expressions/component";
+import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access";
+import { BindingPattern } from "./base-generator/expressions/binding-pattern";
 
 // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
 const VOID_ELEMENTS = 
@@ -68,7 +56,7 @@ export const counter = (function () {
     }
 })();
 
-interface toStringOptions extends  ReactToStringOptions {
+interface toStringOptions extends  BaseToStringOptions {
     members: Array<Property | Method>,
     enventProperties?: Array<Property>
 }
@@ -87,7 +75,7 @@ interface JsxSpreadAttributeMeta {
     expression: Expression
 }
 
-export class JsxOpeningElement extends ReactJsxOpeningElement { 
+export class JsxOpeningElement extends BaseJsxOpeningElement { 
     context: GeneratorContex;
     component?: AngularComponent;
     attributes: Array<JsxAttribute | JsxSpreadAttribute>;
@@ -214,13 +202,10 @@ export class JsxSelfClosingElement extends JsxOpeningElement{
     }
 }
 
-export class JsxAttribute extends ReactJsxAttribute { 
+export class JsxAttribute extends BaseJsxAttribute { 
     compileInitializer(options?: toStringOptions) { 
         return this.initializer.toString({
             members: [],
-            props: [],
-            internalState: [],
-            state: [],
             disableTemplates: true,
             ...options
         }).replace(/"/gi, "'");
@@ -335,7 +320,7 @@ function processBinary(expression: Binary, options?: toStringOptions, condition:
     return null;
 }
 
-export class JsxExpression extends ReactJsxExpression {
+export class JsxExpression extends BaseJsxExpression {
     getExpression(options?: toStringOptions): Expression { 
         if (this.expression instanceof Identifier && options?.variables?.[this.expression.toString()]) { 
             return options.variables[this.expression.toString()];
@@ -519,7 +504,7 @@ export class JsxSpreadAttribute extends JsxExpression{
     }
 }
 
-export class JsxElement extends ReactJsxElement {
+export class JsxElement extends BaseJsxElement {
     openingElement: JsxOpeningElement
     children: Array<JsxElement | string | JsxChildExpression | JsxSelfClosingElement>;
     constructor(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: JsxClosingElement) {
@@ -573,7 +558,7 @@ export class JsxElement extends ReactJsxElement {
 }
 
 function getJsxExpression(e: ExpressionWithExpression | Expression | undefined): JsxExpression | undefined {
-    if (e instanceof JsxExpression || e instanceof JsxElement || e instanceof ReactJsxOpeningElement) {
+    if (e instanceof JsxExpression || e instanceof JsxElement || e instanceof BaseJsxOpeningElement) {
         return e as JsxExpression;
     }
     else if (e instanceof ExpressionWithExpression) { 
@@ -803,7 +788,7 @@ export class Property extends BaseProperty {
     }
     toString() { 
         const eventDecorator = this.decorators.find(d => d.name === "Event");
-        const defaultValue = `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.typeDeclaration()} ${this.initializer && this.initializer.toString() ? `= ${this.initializer.toString()}` : ""}`;
+        const defaultValue = super.toString();
         if (eventDecorator) { 
             return `${eventDecorator} ${this.name}${this.questionOrExclamationToken}:EventEmitter<${parseEventType(this.type)}> = new EventEmitter()`
         }
@@ -842,28 +827,6 @@ export class Property extends BaseProperty {
     }
 }
 
-export class Method extends BaseMethod { 
-    toString(options?: toStringOptions) { 
-        return `${this.modifiers.join(" ")} ${this.name}(${
-            this.parameters.map(p => p.declaration()).join(",")
-            })${compileType(this.type.toString())}${this.body.toString(options)}`;
-    }
-
-    getter() { 
-        return this.name.toString();
-    }
-}
-
-class GetAccessor extends BaseGetAccessor { 
-    toString(options?: toStringOptions) { 
-        return `get ${this.name}()${this.body.toString(options)}`;
-    }
-
-    getter() { 
-        return this.name;
-    }
-}
-
 class SetAccessor extends Method { 
     constructor(decorators: Decorator[] | undefined, modifiers: string[] | undefined, name: Identifier, parameters: Parameter[], body: Block) {
         super(decorators, modifiers, "", name, "", [], parameters, new SimpleTypeExpression(""), body);
@@ -875,7 +838,7 @@ class SetAccessor extends Method {
 
 const ngOnChangesParameters = ["changes"];
 
-class AngularComponent extends ReactComponent {
+class AngularComponent extends Component {
     decorator: Decorator;
     constructor(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>, context: GeneratorContex) {
         super(componentDecorator, modifiers, name, typeParameters, heritageClauses, members, context);
@@ -883,12 +846,8 @@ class AngularComponent extends ReactComponent {
         this.decorator = componentDecorator;
     }
 
-    createRestPropsGetter() {
-        return new GetAccessor(undefined, undefined, new Identifier('restAttributes'), [], undefined, new Block([new SimpleExpression("return {}")], true));
-    }
-
-    addPrefixToMembers(members: Array<Property | Method>) { 
-        if (this.isJSXComponent) {
+    addPrefixToMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) { 
+        if (isJSXComponent(heritageClauses)) {
             members.filter(m => !m.decorators.find(d => d.name === "Method")).forEach(m => {
                 m.prefix = "__";
             });
@@ -951,7 +910,7 @@ class AngularComponent extends ReactComponent {
     }
 
     compileEffects(ngAfterViewInitStatements: string[], ngOnDestroyStatements: string[], ngOnChanges:string[], ngAfterViewCheckedStatements: string[]) { 
-        const effects = this.members.filter(m => m.decorators.find(d => d.name === "Effect")) as BaseMethod[];
+        const effects = this.members.filter(m => m.decorators.find(d => d.name === "Effect")) as Method[];
         let hasInternalStateDependecy = false;
         
         if (effects.length) { 
@@ -1182,9 +1141,6 @@ class AngularComponent extends ReactComponent {
 
         const componentDecorator = this.decorator.toString({
             members: this.members,
-            state: [],
-            internalState: [],
-            props: [],
             newComponentContext: this.viewModel ? "_viewModel" : ""
         });
 
@@ -1199,9 +1155,6 @@ class AngularComponent extends ReactComponent {
             ${this.members
                 .filter(m => !m.inherited && !(m instanceof SetAccessor))
                 .map(m => m.toString({
-                    internalState: [],
-                    state: [],
-                    props: [],
                     members: this.members
                 }))
             .filter(m => m).join("\n")}
@@ -1254,10 +1207,6 @@ export class PropertyAccess extends BasePropertyAccess {
         }
         return `this._${property.name}=${value}`;
     }
-
-    compileStateChangeRising() {
-        return "";
-    }
 }
 
 export class VariableDeclaration extends BaseVariableDeclaration { 
@@ -1277,7 +1226,7 @@ type AngularGeneratorContext = GeneratorContex & {
     angularCoreImports?: string[];
 }
 
-export class AngularGenerator extends Generator { 
+export class AngularGenerator extends Generator {
     createJsxExpression(dotDotDotToken: string = "", expression: Expression) {
         return new JsxExpression(dotDotDotToken, expression);
     }
@@ -1294,11 +1243,11 @@ export class AngularGenerator extends Generator {
         return properties;
     }
 
-    createJsxOpeningElement(tagName: Expression, typeArguments?: any, attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
+    createJsxOpeningElement(tagName: Expression, typeArguments?: any, attributes?: Array<JsxAttribute | JsxSpreadAttribute>) {
         return new JsxOpeningElement(tagName, typeArguments, attributes, this.getContext());
     }
 
-    createJsxSelfClosingElement(tagName: Expression, typeArguments?: any, attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
+    createJsxSelfClosingElement(tagName: Expression, typeArguments?: any, attributes?: Array<JsxAttribute | JsxSpreadAttribute>) {
         return new JsxSelfClosingElement(tagName, typeArguments, attributes, this.getContext());
     }
 
@@ -1310,18 +1259,18 @@ export class AngularGenerator extends Generator {
         return new JsxElement(openingElement, children, closingElement);
     }
 
-    createFunctionDeclaration(decorators: Decorator[]| undefined, modifiers: string[]|undefined, asteriskToken: string, name: Identifier, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, body: Block) {
+    createFunctionDeclaration(decorators: Decorator[] | undefined, modifiers: string[] | undefined, asteriskToken: string, name: Identifier, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
         const functionDeclaration = new AngularFunction(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
         this.addViewFunction(functionDeclaration.name!.toString(), functionDeclaration);
         return functionDeclaration;
     }
 
-    createArrowFunction(modifiers: string[]|undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, equalsGreaterThanToken: string, body: Block | Expression) { 
+    createArrowFunction(modifiers: string[] | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, equalsGreaterThanToken: string, body: Block | Expression) {
         return new ArrowFunctionWithTemplate(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body, this.getContext());
     }
 
     createVariableDeclaration(name: Identifier, type?: TypeExpression, initializer?: Expression) {
-        if (initializer) { 
+        if (initializer) {
             this.addViewFunction(name.toString(), initializer);
         }
         return new VariableDeclaration(name, type, initializer);
@@ -1331,7 +1280,7 @@ export class AngularGenerator extends Generator {
         return new Decorator(expression, this.getContext());
     }
 
-    createComponentBindings(decorators: Decorator[], modifiers: string[]|undefined, name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
+    createComponentBindings(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) {
         return new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members, this.getContext());
     }
 
@@ -1343,11 +1292,7 @@ export class AngularGenerator extends Generator {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 
-    createGetAccessor(decorators: Decorator[] | undefined, modifiers: string[]|undefined, name: Identifier, parameters: Parameter[], type?: TypeExpression, body?: Block) {
-        return new GetAccessor(decorators, modifiers, name, parameters, type, body);
-    }
-
-    createComponent(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: any, heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
+    createComponent(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: any, heritageClauses: HeritageClause[], members: Array<Property | Method>) {
         return new AngularComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members, this.getContext());
     }
 
@@ -1357,11 +1302,11 @@ export class AngularGenerator extends Generator {
 
     context: AngularGeneratorContext[] = [];
 
-    getContext() { 
+    getContext() {
         return super.getContext() as AngularGeneratorContext;
     }
 
-    setContext(context: GeneratorContex|null) {
+    setContext(context: GeneratorContex | null) {
         !context && counter.reset();
         return super.setContext(context);
     }
@@ -1374,7 +1319,7 @@ export class AngularGenerator extends Generator {
         }
     }
 
-    addComponent(name: string, component: Heritable, importClause?: ImportClause) { 
+    addComponent(name: string, component: BaseComponentInput| BaseComponentInput, importClause?: ImportClause) { 
         if (component instanceof AngularComponent) { 
             importClause?.add(component.module);
         }

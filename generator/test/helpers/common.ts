@@ -2,7 +2,7 @@ import ts from "typescript";
 import assert from "assert";
 import fs from "fs";
 import path from "path";
-import { Generator } from "../../react-generator";
+import Generator from "../../base-generator";
 
 export function removeSpaces(value: string) { 
     return value.replace(/(\s|\s)/gi, "");

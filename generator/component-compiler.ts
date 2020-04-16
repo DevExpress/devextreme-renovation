@@ -1,7 +1,7 @@
 import ts from "typescript";
 import fs from "fs";
 import { generateFactoryCode } from "./factoryCodeGenerator";
-import { Generator } from "./react-generator";
+import Generator  from "./base-generator";
 import { PreactGenerator } from "./preact-generator";
 import path from "path";
 

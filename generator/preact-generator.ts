@@ -1,24 +1,21 @@
 import {
     Generator,
-    GeneratorContex as BaseGeneratorContext,
-    getModuleRelativePath,
     ReactComponent,
-    Decorator,
-    Identifier,
-    ObjectLiteral,
     Property as BaseProperty,
     Method,
-    StringLiteral,
-    ImportClause,
     JsxAttribute,
     JsxOpeningElement as ReactJsxOpeningElement,
     JsxClosingElement as ReactJsxClosingElement,
-    ImportDeclaration,
     HeritageClause,
-    Expression,
-    TypeExpression,
 } from "./react-generator";
 import path from "path";
+import { Expression } from "./base-generator/expressions/base";
+import { Identifier, Decorator } from "./base-generator/expressions/common";
+import { ImportClause, ImportDeclaration } from "./base-generator/expressions/import";
+import { StringLiteral, ObjectLiteral } from "./base-generator/expressions/literal";
+import { TypeExpression } from "./base-generator/expressions/type";
+import { getModuleRelativePath } from "./base-generator/utils/path-utils";
+import { GeneratorContex as BaseGeneratorContext } from "./base-generator/types";
 
 const processModuleFileName = (module: string) => `${module}.p`;
 
@@ -61,12 +58,12 @@ export class PreactComponent extends ReactComponent {
 
     compileJQGetProps() {
         const statements: string[] = [];
-        const templates = this.props.filter(p => p.property.decorators.find(d => d.name === "Template"))
+        const templates = this.props.filter(p => p.decorators.find(d => d.name === "Template"))
 
         statements.splice(-1, 0, ...templates.map(t => {
             return `
-            if(props.${t.property._name}) {
-                props.${t.name} = this._createTemplateComponent(props, "${t.property._name}");
+            if(props.${t._name}) {
+                props.${t.name} = this._createTemplateComponent(props, "${t._name}");
             }
             `;
         }));

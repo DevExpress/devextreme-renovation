@@ -15,7 +15,7 @@ export function Component(props: {
   type?: string,
   onClick?: () => void
 }) {
-  const clickHandler = useCallback(() => {
+  const clickHandler = useCallback(function clickHandler() {
     props.onClick!({
       type: props.type
     })

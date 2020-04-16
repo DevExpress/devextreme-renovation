@@ -9,8 +9,8 @@ interface Component {
 }
 
 export function Component(props: {}) {
-  const onClick = useCallback((e) => { }, []);
-  const onPointerMove = useCallback((a = "a", b = 0, c = true) => { }, []);
+  const onClick = useCallback(function onClick(e){ }, []);
+  const onPointerMove = useCallback(function onPointerMove(a = "a", b = 0, c = true) { }, []);
   
   const restAttributes=useCallback(function restAttributes(){
     const { ...restProps } = props;

@@ -1,15 +1,10 @@
-import mocha from "mocha";
+import mocha from "./helpers/mocha";
 import generator, { PreactComponent } from "../preact-generator";
 import compile from "../component-compiler";
 import path from "path";
 import assert from "assert";
 
 import { printSourceCodeAst as getResult, createTestGenerator } from "./helpers/common";
-
-if (!mocha.describe) { 
-    mocha.describe = describe;
-    mocha.it = it;
-}
 
 mocha.describe("preact-generator", function () {
     const testGenerator = createTestGenerator("preact");
