@@ -41,8 +41,8 @@ export default function Widget(props: WidgetInput) {
   return view(({
     props: {
       ...props,
-      pressed: props.pressed !== undefined ? props.pressed : __state_pressed,
-      s: props.s !== undefined ? props.s : __state_s
+      pressed: (props.pressed !== undefined ? props.pressed : __state_pressed),
+      s: (props.s !== undefined ? props.s : __state_s)
     },
     updateState,
     restAttributes: restAttributes()

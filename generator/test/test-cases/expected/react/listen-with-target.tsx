@@ -10,8 +10,14 @@ interface Component {
   restAttributes: any;
 }
 export function Component(props: {}) {
-  const onPointerUp = useCallback(() => { }, []);
-  const scrollHandler = useCallback(() => { }, []);
+  const onPointerUp = useCallback(function onPointerUp(){ }, []);
+  const scrollHandler = useCallback(function scrollHandler() { }, []);
+  
+  const restAttributes=useCallback(function restAttributes(){
+    const { ...restProps } = props;
+    return restProps;
+  }, [props]);
+
   useEffect(() => {
     document.addEventListener("pointerup", onPointerUp);
     window.addEventListener("scroll", scrollHandler);
@@ -20,11 +26,7 @@ export function Component(props: {}) {
       window.removeEventListener("scroll", scrollHandler);
     };
   });
-  const restAttributes=useCallback(function restAttributes(){
-    const { ...restProps } = props;
-    return restProps;
-  }, [props]);
-
+  
   return view(viewModel({
     ...props,
     onPointerUp,

@@ -1,24 +1,12 @@
 import assert from "assert";
 import mocha from "./helpers/mocha";
-import ts from "typescript";
 import generator, {
     ReactComponent,
-    State,
-    InternalState,
-    Prop,
-    ComponentInput,
     Property,
     Method,
-    GeneratorContex,
-    toStringOptions,
-    SimpleExpression,
-    PropertyAccess,
-    ElementAccess,
-    Class,
-    ImportDeclaration,
-    Expression,
-    Block
+    ComponentInput
 } from "../react-generator";
+import { toStringOptions } from "../base-generator/types"
 
 import compile from "../component-compiler";
 import path from "path";
@@ -42,6 +30,7 @@ function createComponentDecorator(paramenters: {[name:string]: any}) {
 }
 
 import { printSourceCodeAst as getResult, createTestGenerator } from "./helpers/common";
+import { GeneratorContex } from "../base-generator/types";
 
 function createDecorator(name: string) { 
     return generator.createDecorator(
@@ -178,1194 +167,6 @@ mocha.describe("react-generator", function () {
 });
 
 mocha.describe("react-generator: expressions", function () {
-    mocha.describe("Base Expressions", function () { 
-        mocha.it("Expression", function () { 
-            const expression = new Expression();
-
-            assert.strictEqual(expression.toString(), "");
-            assert.deepEqual(expression.getDependency(), []);
-            assert.deepEqual(expression.getAllDependency(), []);
-        });
-    });
-    mocha.it("Indentifier", function () {
-        const identifier = generator.createIdentifier("a");
-        assert.equal(identifier, 'a');
-        assert.deepEqual(identifier.getDependency(), []);
-    });
-    mocha.it("createStringLiteral", function () {
-        assert.strictEqual(generator.createStringLiteral("a").toString(), '"a"');
-    });
-    mocha.it("createNumericLiteral", function () {
-        assert.strictEqual(generator.createNumericLiteral("10").toString(), "10");
-    });
-    mocha.it("createArrayTypeNode", function () {
-        assert.strictEqual(generator.createArrayTypeNode(
-            generator.createKeywordTypeNode(generator.SyntaxKind.NumberKeyword)
-        ).toString(), "number[]");
-    });
-    mocha.it("createLiteralTypeNode", function () { 
-        assert.strictEqual(generator.createLiteralTypeNode(generator.createStringLiteral("2")).toString(), '"2"'); ;
-    });
-    mocha.it("VaraibleDeclaration", function () {
-        const identifier = generator.createIdentifier("a");
-        assert.equal(generator.createVariableDeclaration(identifier, undefined, undefined).toString(), 'a', "w/o initializer");
-        assert.equal(generator.createVariableDeclaration(identifier, undefined, generator.createStringLiteral("str")).toString(), 'a="str"', "w initializer");
-        assert.equal(generator.createVariableDeclaration(identifier, generator.createKeywordTypeNode("string")).toString(), 'a:string', "w type");
-        assert.equal(generator.createVariableDeclaration(identifier, generator.createKeywordTypeNode("string"), generator.createStringLiteral("str")).toString(), 'a:string="str"', "w type and initializer");
-    });
-
-    mocha.it("createJsxText", function () {
-        assert.strictEqual(generator.createJsxText("test string", "false"), "test string");
-        assert.strictEqual(generator.createJsxText("test string", "true"), "");
-    });
-
-    mocha.describe("VaraibleDeclarationList", function () {
-        mocha.it("toString", function () {
-            const expresion = generator.createVariableDeclarationList(
-                [
-                    generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str")),
-                    generator.createVariableDeclaration(generator.createIdentifier("b"), undefined, generator.createNumericLiteral("10"))
-                ],
-                generator.NodeFlags.Const
-            );
-    
-            assert.equal(expresion.toString(), 'const a="str",b=10');
-        });
-
-        mocha.it("createVariableDeclaration - getVariableExpression", function () { 
-            const expresion = generator.createVariableDeclaration(
-                generator.createIdentifier("a"),
-                undefined,
-                generator.createStringLiteral("str")
-            );
-
-            const list = expresion.getVariableExpressions();
-            assert.strictEqual(Object.keys(list).length, 1);
-            assert.strictEqual(list["a"].toString(), `"str"`);    
-        });
-
-        mocha.it("createVariableDeclaration without initializer - getVariableExpression should return empty object", function () { 
-            const expresion = generator.createVariableDeclaration(
-                generator.createIdentifier("a")
-            );
-
-            assert.deepEqual(expresion.getVariableExpressions(), {});  
-        });
-
-        mocha.it("createVariableDeclaration - wrap expression in paren complex", function () { 
-            const expresion = generator.createVariableDeclaration(
-                generator.createIdentifier("a"),
-                undefined,
-                generator.createBinary(
-                    generator.createIdentifier("i"),
-                    generator.SyntaxKind.MinusToken,
-                    generator.createIdentifier("j")
-                )
-            );
-
-            const list = expresion.getVariableExpressions();
-            assert.strictEqual(Object.keys(list).length, 1);
-            assert.strictEqual(list["a"].toString(), `(i-j)`);    
-        });
-
-        mocha.it("getVariableExpression from VariableDeclaration", function () {
-            const expresion = generator.createVariableDeclarationList(
-                [
-                    generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str")),
-                    generator.createVariableDeclaration(generator.createIdentifier("b"), undefined, generator.createNumericLiteral("10"))
-                ],
-                generator.NodeFlags.Const
-            );
-
-            const variableList = expresion.getVariableExpressions();
-
-            assert.strictEqual(Object.keys(variableList).length, 2);
-    
-            assert.equal(variableList["a"].toString(), '"str"');
-            assert.equal(variableList["b"].toString(), '10');
-        });
-
-        mocha.it("VariableDeclaration with object binding pattern - getVariableDeclaration", function () {
-            const expresion = generator.createVariableDeclaration(
-                generator.createObjectBindingPattern([
-                    generator.createBindingElement(
-                        undefined,
-                        undefined,
-                        generator.createIdentifier("height"),
-                        undefined
-                    ),
-                    generator.createBindingElement(
-                        undefined,
-                        generator.createIdentifier("props"),
-                        generator.createObjectBindingPattern([generator.createBindingElement(
-                            undefined,
-                            undefined,
-                            generator.createIdentifier("source"),
-                            undefined
-                        )]),
-                        undefined
-                    )
-                ]),
-                undefined,
-                generator.createIdentifier("this")
-            );
-
-            const list = expresion.getVariableExpressions();
-            
-            assert.strictEqual(Object.keys(list).length, 2);
-            assert.strictEqual(list["height"].toString(), "this.height");
-            assert.strictEqual(list["source"].toString(), "this.props.source");
-            assert.ok(list["height"] instanceof PropertyAccess);
-        });
-
-        mocha.it("VariableDeclaration with object binding pattern with string name - getVariableDeclaration", function () {
-            const expresion = generator.createVariableDeclaration(
-                generator.createObjectBindingPattern([
-                    generator.createBindingElement(
-                        undefined,
-                        undefined,
-                        "height",
-                        undefined
-                    )
-                ]),
-                undefined,
-                generator.createIdentifier("this")
-            );
-
-            const list = expresion.getVariableExpressions();
-            
-            assert.strictEqual(Object.keys(list).length, 1);
-            assert.strictEqual(list["height"].toString(), "this.height");
-            assert.ok(list["height"] instanceof PropertyAccess);
-        });
-
-        mocha.it("VariableDeclaration with array binding pattern - getVariableDeclaration", function () {
-            const expresion = generator.createVariableDeclaration(
-                generator.createArrayBindingPattern([generator.createBindingElement(
-                    undefined,
-                    undefined,
-                    generator.createIdentifier("height"),
-                    undefined
-                )]),
-                undefined,
-                generator.createPropertyAccess(
-                    generator.createThis(),
-                    generator.createIdentifier("props")
-                )
-            );
-
-            const list = expresion.getVariableExpressions();
-            
-            assert.strictEqual(Object.keys(list).length, 1);
-            assert.strictEqual(list["height"].toString(), "this.props[0]");
-            assert.ok(list["height"] instanceof ElementAccess);
-        });
-
-        mocha.it("can replace Identifer with expression", function () { 
-            const identifer = generator.createIdentifier("name");
-            const expression = generator.createNumericLiteral("10");
-
-            assert.strictEqual(identifer.toString({
-                props: [],
-                state: [],
-                internalState: [],
-                members: [],
-                variables: {
-                    name: expression
-                }
-            }), "10");
-        });
-
-        mocha.it("can replace Identifer with expression in JSX self-closing element", function () { 
-            const identifer = generator.createIdentifier("render");
-            const element = generator.createJsxSelfClosingElement(
-                identifer,
-                [],
-                []
-            );
-            
-            const expression = new SimpleExpression("viewModel.props.template");
-
-            assert.strictEqual(element.toString({
-                props: [],
-                state: [],
-                internalState: [],
-                members: [],
-                variables: {
-                    render: expression
-                }
-            }), "<viewModel.props.template />");
-        });
-
-        mocha.it("can replace Identifer with expression in JSX element", function () { 
-            const identifer = generator.createIdentifier("render");
-            const element = generator.createJsxElement(
-                generator.createJsxOpeningElement(
-                    identifer,
-                    [],
-                    []
-                ),
-                [],
-                generator.createJsxClosingElement(
-                    identifer
-                )
-            );
-            
-            const expression = new SimpleExpression("viewModel.props.template");
-
-            assert.strictEqual(element.toString({
-                props: [],
-                state: [],
-                internalState: [],
-                members: [],
-                variables: {
-                    render: expression
-                }
-            }), "<viewModel.props.template ></viewModel.props.template>");
-        });
-
-        mocha.it("PropertyAccess", function () { 
-            const propertyAccess = generator.createPropertyAccess(
-                generator.createIdentifier("name"),
-                generator.createIdentifier("name")
-            );
-
-            assert.strictEqual(propertyAccess.toString({
-                props: [],
-                state: [],
-                internalState: [],
-                members: [],
-                variables: {
-                    name: generator.createIdentifier("v")
-                }
-            }), "v.name");
-        });
-
-        mocha.it("Can replace identifer in shortland property assignment", function () { 
-            const expresstion = generator.createObjectLiteral(
-                [
-                    generator.createShorthandPropertyAssignment(
-                        generator.createIdentifier("v")
-                    )
-                ],
-                false
-            );
-
-            assert.strictEqual(expresstion.toString({
-                props: [],
-                state: [],
-                internalState: [],
-                members: [],
-                variables: {
-                    v: generator.createIdentifier("value")
-                }
-            }), "{v:value}");
-        });
-    });
-
-    mocha.it("createIndexSignature", function () { 
-        const expression = generator.createIndexSignature(
-            undefined,
-            undefined,
-            [generator.createParameter(
-                undefined,
-                undefined,
-                undefined,
-                generator.createIdentifier("name"),
-                undefined,
-                generator.createKeywordTypeNode(generator.SyntaxKind.StringKeyword),
-                undefined
-            )],
-            generator.createKeywordTypeNode(generator.SyntaxKind.NumberKeyword)
-        );
-
-        assert.equal(expression.toString(), "[name:string]:number");
-    });
-
-    mocha.it("createImportDeclaration", function () { 
-        assert.equal(generator.createImportDeclaration(
-            undefined,
-            undefined,
-            undefined,
-            generator.createStringLiteral("typescript")
-        ), 'import "typescript"');
-
-        assert.equal(generator.createImportDeclaration(
-            undefined,
-            undefined,
-            generator.createImportClause(
-                undefined,
-                generator.createNamedImports([
-                    generator.createImportSpecifier(
-                        undefined,
-                        generator.createIdentifier("SyntaxKind")
-                    ),
-                    generator.createImportSpecifier(
-                        undefined,
-                        generator.createIdentifier("AffectedFileResult")
-                    )
-                ])
-            ),
-            generator.createStringLiteral("typescript")
-        ), 'import {SyntaxKind,AffectedFileResult} from "typescript"');
-
-        assert.equal(generator.createImportDeclaration(
-            undefined,
-            undefined,
-            generator.createImportClause(
-                generator.createIdentifier("ts"),
-                generator.createNamedImports([generator.createImportSpecifier(
-                    undefined,
-                    generator.createIdentifier("Node")
-                )])
-            ),
-            generator.createStringLiteral("typescript")
-        ), 'import ts,{Node} from "typescript"');
-
-        assert.equal(generator.createImportDeclaration(
-            undefined,
-            undefined,
-            generator.createImportClause(
-                generator.createIdentifier("Button"),
-                undefined
-            ),
-            generator.createStringLiteral("./button")
-        ), 'import Button from "./button"');
-    });
-
-    mocha.it("ImportDeclaration: can remove named import", function () { 
-        const expression = generator.createImportDeclaration(
-            undefined,
-            undefined,
-            generator.createImportClause(
-                generator.createIdentifier("ts"),
-                generator.createNamedImports([generator.createImportSpecifier(
-                    undefined,
-                    generator.createIdentifier("Node")
-                )])
-            ),
-            generator.createStringLiteral("typescript")
-        ) as ImportDeclaration;
-
-        expression.importClause.remove("Node");
-
-        assert.equal(expression.toString(), 'import ts from "typescript"');
-    });
-
-    mocha.it("ImportDeclaration: remove named import if no named bindings", function () { 
-        const expression = generator.createImportDeclaration(
-            undefined,
-            undefined,
-            undefined,
-            generator.createStringLiteral("typescript")
-        ) as ImportDeclaration;
-
-        expression.importClause.remove("Node");
-
-        assert.equal(expression.toString(), 'import "typescript"');
-    });
-
-    mocha.it("createImportDeclaration exclude imports from component_declaration/jsx to component_declaration/jsx-g", function () { 
-        assert.equal(generator.createImportDeclaration(
-            undefined,
-            undefined,
-            generator.createImportClause(
-                generator.createIdentifier("JSXConstructor"),
-              undefined
-            ),
-            generator.createStringLiteral("../../component_declaration/jsx")
-          ), 'import JSXConstructor from "../../component_declaration/jsx-g"')
-    });
-
-    mocha.it("createImportDeclaration change import ", function () { 
-        assert.equal(generator.createImportDeclaration(
-            undefined,
-            undefined,
-            generator.createImportClause(
-                generator.createIdentifier("Button"),
-              undefined
-            ),
-            generator.createStringLiteral("../../component_declaration/common")
-          ), '')
-    });
-
-    mocha.it("VariableStatement", function () {
-        const identifier = generator.createIdentifier("a");
-        const declarationList = generator.createVariableDeclarationList(
-            [generator.createVariableDeclaration(identifier, undefined, generator.createStringLiteral("str"))],
-            generator.NodeFlags.Const
-        );
-        assert.equal(
-            generator.createVariableStatement([
-                generator.SyntaxKind.DefaultKeyword,
-                generator.SyntaxKind.ExportKeyword
-            ], declarationList).toString(), 'default export const a="str"');
-    });
-
-    mocha.it("ArrayLiteral", function () {
-        assert.equal(
-            generator.createArrayLiteral([
-                generator.createNumericLiteral("1"),
-                generator.createIdentifier("a")
-            ], true).toString(), '[1,a]');
-    });
-
-    mocha.it("PropertyAssignment", function () {
-        assert.equal(generator.createPropertyAssignment(
-            generator.createIdentifier("k"),
-            generator.createIdentifier("a")
-        ).toString(), 'k:a');
-    });
-
-    mocha.it("ShorthandPropertyAssignment", function () {
-        const propertyAssignment = generator.createShorthandPropertyAssignment(generator.createIdentifier("k"), undefined);
-        assert.equal(propertyAssignment.toString(), 'k');
-        assert.equal(propertyAssignment.key, "k");
-        assert.equal(propertyAssignment.value, "k");
-    });
-
-    mocha.it("ShorthandPropertyAssignment with expression", function () {
-        const propertyAssignment = generator.createShorthandPropertyAssignment(
-            generator.createIdentifier("k"),
-            generator.createIdentifier("v")
-        );
-        assert.equal(propertyAssignment.toString(), 'k:v');
-        assert.equal(propertyAssignment.key, "k");
-        assert.equal(propertyAssignment.value, "v");
-    });
-
-    mocha.it("SpreadAssignement", function () {
-        const propertyAssignment = generator.createSpreadAssignment(generator.createIdentifier("obj"));
-        assert.equal(propertyAssignment.toString(), '...obj');
-    });
-
-    mocha.it("ObjectLiteral", function () {
-        const objectLiteral = generator.createObjectLiteral([
-            generator.createShorthandPropertyAssignment(generator.createIdentifier("a"), undefined),
-            generator.createPropertyAssignment(generator.createIdentifier("k"), generator.createIdentifier("a")),
-            generator.createSpreadAssignment(generator.createIdentifier("obj"))
-        ], true);
-        assert.equal(objectLiteral.toString(), '{a,\nk:a,\n...obj}');
-    });
-
-    mocha.it("ObjectLiteral: Can remove property", function () {
-        const objectLiteral = generator.createObjectLiteral([
-            generator.createShorthandPropertyAssignment(generator.createIdentifier("a"), undefined),
-            generator.createPropertyAssignment(generator.createIdentifier("k"), generator.createIdentifier("a")),
-            generator.createSpreadAssignment(generator.createIdentifier("obj"))
-        ], true);
-        
-        objectLiteral.removeProperty("k");
-            
-        assert.equal(objectLiteral.toString(), '{a,\n...obj}');
-    });
-
-    mocha.it("Paren", function () {
-        assert.equal(generator.createParen(generator.createIdentifier("a")).toString(), "(a)");
-    });
-
-    mocha.it("Block", function () {
-        assert.equal(generator.createBlock([], true).toString().replace(/\s+/g, ""), "{}");
-        const expression = generator.createBlock([
-            generator.createVariableDeclarationList(
-                [
-                    generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str")),
-                    generator.createVariableDeclaration(generator.createIdentifier("b"), undefined, generator.createNumericLiteral("10"))
-                ],
-                generator.NodeFlags.Const
-            )
-        ], true);
-
-        const actualString = expression.toString();
-        assert.equal(getResult(actualString), getResult('{const a="str", b=10}'));
-    });
-
-    mocha.it("Call", function () {
-        assert.equal(generator.createCall(
-            generator.createIdentifier("a"),
-            undefined,
-            [generator.createStringLiteral("a"), generator.createNumericLiteral("10")]
-        ).toString(), 'a("a",10)');
-    });
-
-    mocha.it("createNew", function () {
-        assert.equal(generator.createNew(
-            generator.createIdentifier("a"),
-            undefined,
-            [generator.createStringLiteral("a"), generator.createNumericLiteral("10")]
-        ).toString(), 'new a("a",10)');
-    });
-
-    mocha.it("PropertyAccess", function () {
-        assert.equal(generator.createPropertyAccess(
-            generator.createThis(),
-            generator.createIdentifier("field")
-        ).toString(), "this.field");
-    });
-
-    mocha.it("Binary", function () {
-        const expression = generator.createPropertyAccess(
-            generator.createThis(),
-            generator.createIdentifier("field"));
-
-        assert.equal(generator.createBinary(
-            expression,
-            generator.SyntaxKind.EqualsToken,
-            expression
-        ).toString(), "this.field=this.field");
-    });
-
-    mocha.it("ReturnStatement", function () {
-        assert.equal(generator.createReturn(generator.createNumericLiteral("10")).toString(), "return 10;")
-    });
-
-    mocha.it("ElementAccess", function () {
-        const expression = generator.createElementAccess(
-            generator.createPropertyAccess(
-                generator.createThis(),
-                generator.createIdentifier("field")),
-            generator.createNumericLiteral("10")
-        );
-        assert.equal(expression.toString(), "this.field[10]");
-            
-        assert.deepEqual(expression.getDependency(), ["field"]);
-    });
-
-    mocha.it("ElementAccess: getDependency shoud take into account index expression", function () {
-        const expression = generator.createElementAccess(
-            generator.createPropertyAccess(
-                generator.createThis(),
-                generator.createIdentifier("field")),
-            generator.createPropertyAccess(
-                generator.createThis(),
-                generator.createIdentifier("field1"))
-        );
-        assert.equal(expression.toString(), "this.field[this.field1]");
-            
-        assert.deepEqual(expression.getDependency(), ["field", "field1"]);
-    });
-
-    mocha.it("NonNullExpression", function () {
-        const expression = generator.createPropertyAccess(
-            generator.createThis(),
-            generator.createIdentifier("field"));
-        assert.equal(generator.createNonNullExpression(expression).toString(), "this.field!")
-    });
-
-    mocha.it("Prefix", function () {
-        const expression = generator.createPropertyAccess(
-            generator.createThis(),
-            generator.createIdentifier("field"));
-        assert.equal(generator.createPrefix(generator.SyntaxKind.ExclamationToken, expression).toString(), "!this.field")
-    });
-
-    mocha.it("Postfix", function () {
-        const expression = generator.createPropertyAccess(
-            generator.createThis(),
-            generator.createIdentifier("field"));
-        assert.equal(generator.createPostfix(expression, generator.SyntaxKind.PlusPlusToken).toString(), "this.field++");
-    });
-
-    mocha.it("If w/o else statement", function () {
-        const expression = generator.createPropertyAccess(
-            generator.createThis(),
-            generator.createIdentifier("field"));
-        const condition = generator.createTrue();
-
-        assert.equal(getResult(generator.createIf(condition, expression).toString()), getResult("if(true)this.field"));
-    });
-
-    mocha.it("If w else statement", function () {
-        const expression = generator.createPropertyAccess(
-            generator.createThis(),
-            generator.createIdentifier("field"));
-        const condition = generator.createTrue();
-
-        assert.equal(getResult(generator.createIf(condition, expression, expression).toString()), getResult("if(true) this.field else this.field"));
-    });
-
-    mocha.it("Parameter w type and initializer", function () {
-        const parameter = generator.createParameter(
-            [],
-            [generator.SyntaxKind.ExportKeyword],
-            undefined,
-            generator.createIdentifier("a"),
-            generator.SyntaxKind.QuestionToken,
-            generator.createKeywordTypeNode("string"),
-            undefined
-        );
-
-        assert.equal(parameter.toString(), "a");
-        assert.equal(parameter.declaration(), "a?:string");
-        assert.equal(parameter.typeDeclaration(), "a?:string");
-    });
-
-    mocha.it("Simple Parameter", function () {
-        const parameter = generator.createParameter(
-            [],
-            [],
-            undefined,
-            generator.createIdentifier("a"),
-            undefined,
-            undefined,
-            undefined
-        );
-
-        assert.equal(parameter.toString(), "a");
-        assert.equal(parameter.declaration(), "a", "declaration");
-        assert.equal(parameter.typeDeclaration(), "a:any", "typeDeclaration");
-    });
-
-    mocha.it("Parameter w type", function () {
-        const parameter = generator.createParameter(
-            [],
-            [generator.SyntaxKind.ExportKeyword],
-            undefined,
-            generator.createIdentifier("a"),
-            generator.SyntaxKind.QuestionToken,
-            generator.createKeywordTypeNode("string"),
-            undefined
-        );
-
-        assert.equal(parameter.toString(), "a");
-        assert.equal(parameter.declaration(), "a?:string");
-        assert.equal(parameter.typeDeclaration(), "a?:string");
-    });
-
-    mocha.it("Parameter w initializer", function () {
-        const parameter = generator.createParameter(
-            [],
-            [generator.SyntaxKind.ExportKeyword],
-            undefined,
-            generator.createIdentifier("a"),
-            generator.SyntaxKind.QuestionToken,
-            generator.createKeywordTypeNode("string"),
-            generator.createStringLiteral("str")
-        );
-
-        assert.equal(parameter.toString(), "a");
-        assert.equal(parameter.declaration(), 'a?:string="str"');
-        assert.equal(parameter.typeDeclaration(), "a?:string");
-    });
-
-    mocha.describe("createPropertySignature", function () { 
-
-        mocha.it("Only name is defined", function () {
-            assert.strictEqual(generator.createPropertySignature(
-                undefined,
-                generator.createIdentifier("a"),
-                undefined
-            ).toString(), "a");
-        });
-
-        mocha.it("with type", function () {
-            assert.strictEqual(generator.createPropertySignature(
-                undefined,
-                generator.createIdentifier("a"),
-                undefined,
-                generator.createKeywordTypeNode("string")
-            ).toString(), "a:string");
-        });
-
-        mocha.it("with question token token", function () {
-            assert.strictEqual(generator.createPropertySignature(
-                undefined,
-                generator.createIdentifier("a"),
-                generator.SyntaxKind.QuestionToken,
-                generator.createKeywordTypeNode("string")
-            ).toString(), "a?:string");
-        });
-
-        mocha.it("with initializer", function () {
-            assert.strictEqual(generator.createPropertySignature(
-                undefined,
-                generator.createIdentifier("a"),
-                generator.SyntaxKind.QuestionToken,
-                generator.createKeywordTypeNode("number"),
-                generator.createNumericLiteral("10")
-            ).toString(), "a?:number=10");
-        });
-    });
-
-    mocha.it("createTypeLiteralNode", function () {
-        const propertySignatureWithQuestionToken = generator.createPropertySignature(
-            [],
-            generator.createIdentifier("a"),
-            generator.SyntaxKind.QuestionToken,
-            generator.createKeywordTypeNode("string")
-        );
-
-        const propertySignatureWithoutQuestionToken = generator.createPropertySignature(
-            [],
-            generator.createIdentifier("b"),
-            undefined,
-            generator.createKeywordTypeNode("string")
-        );
-
-        assert.equal(generator.createTypeLiteralNode(
-            [propertySignatureWithQuestionToken,
-            propertySignatureWithoutQuestionToken
-            ]
-        ), "{a?:string,b:string}");
-    });
-
-    mocha.it("createTypeAliasDeclaration", function () { 
-        const literalNode = generator.createTypeLiteralNode(
-            [generator.createPropertySignature(
-                [],
-                generator.createIdentifier("b"),
-                undefined,
-                generator.createKeywordTypeNode("string")
-            )]
-        );
-        const expression = generator.createTypeAliasDeclaration(
-            undefined,
-            ["export", "declare"],
-            generator.createIdentifier("Name"),
-            [],
-            literalNode);
-
-        assert.strictEqual(expression.toString(), "export declare type Name = {b:string}");
-    });
-
-    mocha.it("createTypeAliasDeclaration without modifiers", function () { 
-        const literalNode = generator.createTypeLiteralNode(
-            [generator.createPropertySignature(
-                [],
-                generator.createIdentifier("b"),
-                undefined,
-                generator.createKeywordTypeNode("string")
-            )]
-        );
-        const expression = generator.createTypeAliasDeclaration(
-            undefined,
-            undefined,
-            generator.createIdentifier("Name"),
-            [],
-            literalNode);
-
-        assert.strictEqual(expression.toString(), " type Name = {b:string}");
-    });
-
-    mocha.it("TypeQueryNode", function () { 
-        const expression = generator.createTypeQueryNode(generator.createIdentifier("Component"));
-
-        assert.strictEqual(expression.toString(), "typeof Component");
-    });
-    
-    mocha.it("createIntersectionTypeNode", function () {
-        assert.equal(generator.createIntersectionTypeNode(
-            [
-                generator.createKeywordTypeNode("string"),
-                generator.createKeywordTypeNode("number")
-            ]
-        ), "string&number");
-    });
-
-    mocha.it("createUnionTypeNode", function () {
-        assert.equal(generator.createUnionTypeNode(
-            [
-                generator.createKeywordTypeNode("string"),
-                generator.createKeywordTypeNode("number")
-            ]
-        ), "string|number");
-    });
-
-    mocha.it("CreateBreak", function () { 
-        assert.equal(generator.createBreak().toString(), "break");
-    });
-
-    mocha.it("createConditional", function () { 
-        const expression = generator.createConditional(
-            generator.createIdentifier("a"),
-            generator.createFalse(),
-            generator.createTrue());
-        
-        assert.equal(expression.toString(), "a?false:true");
-    });
-
-    mocha.it("createTemplateExpression", function () {
-        const expression = generator.createTemplateExpression(
-            generator.createTemplateHead(
-                "a",
-                "a"
-            ),
-            [
-                generator.createTemplateSpan(
-                    generator.createNumericLiteral("1"),
-                    generator.createTemplateMiddle(
-                        "b",
-                        "b"
-                    )
-                ),
-                generator.createTemplateSpan(
-                    generator.createNumericLiteral("2"),
-                    generator.createTemplateTail(
-                        "c",
-                        "c"
-                    )
-                )
-            ]
-        );
-
-        assert.equal(expression.toString(), "`a${1}b${2}c`");
-    });
-
-    mocha.it("createTemplateExpression - convert to string concatination", function () {
-        const expression = generator.createTemplateExpression(
-            generator.createTemplateHead(
-                "a",
-                "a"
-            ),
-            [
-                generator.createTemplateSpan(
-                    generator.createNumericLiteral("1"),
-                    generator.createTemplateMiddle(
-                        "b",
-                        "b"
-                    )
-                ),
-                generator.createTemplateSpan(
-                    generator.createNumericLiteral("2"),
-                    generator.createTemplateTail(
-                        "c",
-                        "c"
-                    )
-                )
-            ]
-        );
-
-        assert.equal(expression.toString({
-            disableTemplates: true,
-            members: [],
-            props: [],
-            internalState: [],
-            state: []
-        }), `"a"+1+"b"+2+"c"`);
-    });
-
-    mocha.it("createNoSubstitutionTemplateLiteral", function () {
-        const expression = generator.createNoSubstitutionTemplateLiteral("10", "10");
-
-        assert.equal(expression.toString(), "`10`");
-    });
-    
-    mocha.it("While", function () {
-        const expression = generator.createPropertyAccess(
-            generator.createThis(),
-            generator.createIdentifier("field"));
-        const condition = generator.createTrue();
-
-        assert.equal(getResult(generator.createWhile(condition, expression).toString()), getResult("while(true)this.field"));
-    });
-
-    mocha.it("DoWhile", function () {
-        const expression = generator.createPropertyAccess(
-            generator.createThis(),
-            generator.createIdentifier("field"));
-        const condition = generator.createTrue();
-
-        assert.equal(getResult(generator.createDo(expression, condition).toString()), getResult("do this.field while(true)"));
-    });
-
-    mocha.it("For", function () {
-        const expression = generator.createFor(
-            generator.createIdentifier("i"),
-            generator.createTrue(),
-            generator.createPostfix(
-                generator.createIdentifier("i"),
-                generator.SyntaxKind.PlusPlusToken
-            ),
-            generator.createBlock(
-                [generator.createContinue()],
-                true
-            )
-        );
-
-        assert.equal(getResult(expression.toString()), getResult("for(i;true;i++){continue}"));
-        assert.deepEqual(expression.getDependency(), []);
-    });
-
-    mocha.it("For without initializer, condition, incrementor", function () {
-        const expression = generator.createFor(
-            undefined,
-            undefined,
-            undefined,
-            generator.createBlock(
-                [generator.createPropertyAccess(
-                    generator.createThis(),
-                    generator.createIdentifier("name")
-                )],
-                true
-            )
-        );
-
-        assert.equal(getResult(expression.toString()), getResult("for(;;){this.name}"));
-        assert.deepEqual(expression.getDependency(), ["name"]);
-    });
-
-    mocha.it("For: get dependency from initializer, condition, incrementor", function () {
-        const expression = generator.createFor(
-            generator.createPropertyAccess(
-                generator.createThis(),
-                generator.createIdentifier("i")
-            ),
-            generator.createPropertyAccess(
-                generator.createThis(),
-                generator.createIdentifier("c")
-            ),
-            generator.createPostfix(
-                generator.createPropertyAccess(
-                    generator.createThis(),
-                    generator.createIdentifier("ii")
-                ),
-                generator.SyntaxKind.PlusPlusToken
-            ),
-            generator.createBlock(
-                [generator.createContinue()],
-                true
-            )
-        );
-
-        assert.deepEqual(expression.getDependency(), ["i", "c", "ii"])
-    });
-
-    mocha.it("ForIn", function () { 
-        const expression = generator.createForIn(
-            generator.createVariableDeclarationList(
-                [generator.createVariableDeclaration(
-                    generator.createIdentifier("i"),
-                    undefined,
-                    undefined
-                )],
-                generator.NodeFlags.Let
-            ),
-            generator.createPropertyAccess(
-                generator.createThis(),
-                generator.createIdentifier("i")
-            ),
-            generator.createBlock(
-                [generator.createPropertyAccess(
-                    generator.createThis(),
-                    generator.createIdentifier("ii")
-                )],
-                true
-            )
-        );
-
-        const actualString = expression.toString();
-
-        assert.equal(getResult(actualString), getResult("for(let i in this.i){this.ii}"));
-        assert.deepEqual(expression.getDependency(), ["i", "ii"]);
-        
-    });
-
-    mocha.it("createJsxSpreadAttribute", function () { 
-        const expression = generator.createJsxSpreadAttribute(
-            generator.createIdentifier("field"));
-        
-        assert.equal(expression.toString(), "{...field}");
-        assert.strictEqual(expression.isJsx(), true);
-    });
-
-    mocha.it("createJsxExpression", function () { 
-        const expression = generator.createJsxExpression(
-            undefined,
-            generator.createIdentifier("field"));
-        
-        assert.equal(expression.toString(), "{field}");
-        assert.strictEqual(expression.isJsx(), true);
-    });
-
-    mocha.it("createSwitch", function () {
-        const clause1 = generator.createCaseClause(generator.createNumericLiteral("1"), [
-            generator.createPropertyAccess(
-                generator.createThis(),
-                generator.createIdentifier("name")
-            ),
-            generator.createBreak()
-        ]);
-        const clause2 = generator.createDefaultClause([
-            generator.createVariableDeclarationList(
-                [
-                    generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str"))
-                ],
-                generator.NodeFlags.Const
-            ),
-            generator.createBreak()
-        ]);
-
-        const block = generator.createCaseBlock([clause1, clause2]);
-
-        const expression = generator.createSwitch(generator.createPropertyAccess(
-            generator.createThis(),
-            generator.createIdentifier("expr")
-        ), block);
-        const actualString = expression.toString();
-        assert.equal(getResult(actualString), getResult(`
-        switch(this.expr){
-            case 1:
-                this.name;
-                break;
-            default:
-                const a = "str";
-                break;
-        }
-        `));
-
-        assert.deepEqual(expression.getDependency(), ["expr", "name"]);
-    });
-
-    mocha.it("createDebuggerStatement", function () { 
-        assert.equal(generator.createDebuggerStatement().toString(), "debugger");
-    });
-
-    mocha.it("createComputedPropertyName", function () { 
-        assert.equal(generator.createComputedPropertyName(
-            generator.createIdentifier("name")
-        ).toString(), "[name]");
-    });
-
-    mocha.it("createDelete", function () { 
-        assert.equal(generator.createDelete(
-                generator.createPropertyAccess(
-                    generator.createThis(),
-                    generator.createIdentifier("field"))).toString(), "delete this.field");
-    });
-
-    mocha.it("createHeritageClause", function () {
-        assert.equal(generator.createHeritageClause(
-            generator.SyntaxKind.ExtendsKeyword,
-            [generator.createExpressionWithTypeArguments(
-                undefined,
-                generator.createIdentifier("Base")
-            )]
-        ).toString(), "extends Base");
-    });
-
-    mocha.it("createPropertyAccessChain", function () { 
-        const expression = generator.createPropertyAccessChain(
-            generator.createIdentifier("a"),
-            generator.createToken(generator.SyntaxKind.QuestionDotToken),
-            generator.createIdentifier("b")
-        );
-
-        assert.equal(expression.toString(), "a?.b");
-    });
-
-    mocha.it("createPropertyAccessChain without QuestionDotToken should use DotToken", function () { 
-        const expression = generator.createPropertyAccessChain(
-            generator.createThis(),
-            undefined,
-            generator.createIdentifier("click")
-        );
-
-        assert.strictEqual(expression.toString(), "this.click");
-    });
-
-    mocha.it("createCallChain", function () { 
-        const expression = generator.createCallChain(
-            generator.createPropertyAccessChain(
-                generator.createIdentifier("model"),
-                generator.createToken(generator.SyntaxKind.QuestionDotToken),
-                generator.createIdentifier("onClick")
-            ),
-            undefined,
-            undefined,
-            [generator.createIdentifier("e")]
-          )
-
-        assert.deepEqual(expression.toString(), "model?.onClick(e)");
-        assert.deepEqual(expression.getDependency(), []);
-    });
-
-    mocha.it("createCallChain without question mark and parameters", function () { 
-        const expression = generator.createCallChain(
-            generator.createPropertyAccessChain(
-                generator.createIdentifier("model"),
-                undefined,
-                generator.createIdentifier("onClick")
-            ),
-            undefined,
-            undefined,
-            undefined
-          )
-
-        assert.deepEqual(expression.toString(), "model.onClick()");
-        assert.deepEqual(expression.getDependency(), []);
-    });
-
-    mocha.it("createTypeOf", function () { 
-        const expression = generator.createTypeOf(generator.createIdentifier("b"));
-
-        assert.strictEqual(expression.toString(), "typeof b");
-    });
-
-    mocha.it("createVoid", function () { 
-        const expression = generator.createVoid(generator.createNumericLiteral("0"));
-
-        assert.strictEqual(expression.toString(), "void 0");
-    });
-
-    mocha.it("TypeReferenceNode", function () { 
-        const expression = generator.createTypeReferenceNode(
-            generator.createIdentifier("Node"),
-            []
-        );
-
-        assert.equal(expression.toString(), "Node");
-    });
-
-    mocha.it("TypeReferenceNode with typeArguments", function () { 
-        const expression = generator.createTypeReferenceNode(
-            generator.createIdentifier("Node"),
-            [
-                generator.createArrayTypeNode(generator.createKeywordTypeNode("string")),
-                generator.createArrayTypeNode(generator.createKeywordTypeNode("number"))
-            ]
-        );
-
-        assert.equal(expression.toString(), "Node<string[],number[]>");
-    });
-
-    mocha.it("ExpressionWithTypeArguments", function () {
-        const expresion = generator.createExpressionWithTypeArguments(
-            [generator.createTypeReferenceNode(
-                generator.createIdentifier("WidgetProps"),
-                undefined
-            )],
-            generator.createIdentifier("JSXComponent")
-        );
-
-        assert.strictEqual(expresion.toString(), "JSXComponent<WidgetProps>");
-        assert.strictEqual(expresion.type, "WidgetProps");
-    });
-
-    mocha.it("ExpressionWithTypeArguments", function () {
-        const expresion = generator.createExpressionWithTypeArguments(
-            [],
-            generator.createIdentifier("Component")
-        );
-
-        assert.strictEqual(expresion.toString(), "Component");
-        assert.strictEqual(expresion.type, "Component");
-    });
-
-    mocha.it("createAsExpression", function () {
-        const expression = generator.createAsExpression(
-            generator.createThis(),
-            generator.createKeywordTypeNode(generator.SyntaxKind.AnyKeyword)
-        );
-
-        assert.strictEqual(expression.toString(), "this as any");
-    });
-
-    mocha.it("createRegularExpressionLiteral", function () {
-        const expression = generator.createRegularExpressionLiteral('/d+/');
-
-        assert.strictEqual(expression.toString(), '/d+/');
-    });
-
     mocha.describe("Methods", function () {
         mocha.describe("GetAccessor", function () {
             mocha.it("type declaration with defined type", function () {
@@ -1392,184 +193,8 @@ mocha.describe("react-generator: expressions", function () {
         
                 assert.strictEqual(expression.getter(), "name()");
             });
-
-            mocha.it("Method", function () { 
-                const expression = generator.createMethod(
-                    undefined,
-                    undefined,
-                    "",
-                    generator.createIdentifier("name"),
-                    generator.SyntaxKind.QuestionToken,
-                    undefined,
-                    [],
-                    undefined,
-                    new Block([], false)
-                );
-
-                assert.strictEqual(expression.isReadOnly(), true);
-            });
         });
     }); 
-
-    mocha.describe("BindingElement", function () {
-        mocha.it("only name is set (decomposite object)", function () {
-            const expression = generator.createBindingElement(
-                undefined,
-                undefined,
-                generator.createIdentifier("v")
-            );
-
-            assert.strictEqual(expression.toString(), "v");
-            assert.deepEqual(expression.getDependency(), ["v"]);
-        });
-
-        mocha.it("property name and name are set (decomposite object and rename)", function () {
-            const expression = generator.createBindingElement(
-                undefined,
-                generator.createIdentifier("a"),
-                generator.createIdentifier("v")
-            );
-            assert.strictEqual(expression.toString(), "a:v");
-            assert.deepEqual(expression.getDependency(), ["a"]);
-        });
-
-        mocha.it("rest properties", function () {
-            assert.strictEqual(generator.createBindingElement(
-                generator.SyntaxKind.DotDotDotToken,
-                undefined,
-                generator.createIdentifier("v")
-            ).toString(), "...v");
-        });
-
-        mocha.it("decomposite object with BindingPattern", function () {
-            assert.strictEqual(generator.createBindingElement(
-                undefined,
-                generator.createIdentifier("v"),
-                generator.createObjectBindingPattern(
-                    [generator.createBindingElement(
-                        undefined,
-                        undefined,
-                        generator.createIdentifier("a")
-                    )]
-                )
-            ).toString(), "v:{a}");
-        });
-
-        mocha.it("Object Binding pattern should sort items", function () {
-            const expression = generator.createObjectBindingPattern([
-                generator.createBindingElement(
-                    undefined,
-                    undefined,
-                    generator.createIdentifier("d"),
-                    undefined
-                ),
-                generator.createBindingElement(
-                    undefined,
-                    generator.createIdentifier("b"),
-                    generator.createObjectBindingPattern([generator.createBindingElement(
-                        undefined,
-                        undefined,
-                        generator.createIdentifier("c"),
-                        undefined
-                    )]),
-                    undefined
-                ),
-                generator.createBindingElement(
-                    undefined,
-                    undefined,
-                    generator.createIdentifier("c"),
-                    undefined
-                ),
-                generator.createBindingElement(
-                    undefined,
-                    undefined,
-                    generator.createIdentifier("z"),
-                    undefined
-                ),
-                generator.createBindingElement(
-                    generator.SyntaxKind.DotDotDotToken,
-                    undefined,
-                    generator.createIdentifier("e"),
-                    undefined
-                )
-            ]);
-
-            assert.strictEqual(expression.toString(), "{b:{c},c,d,z,...e}");
-        });
-
-        mocha.it("Do not sort array Binding Pattern", function () {
-            const expression = generator.createArrayBindingPattern([
-                generator.createBindingElement(
-                    undefined,
-                    undefined,
-                    generator.createIdentifier("d"),
-                    undefined
-                ),
-                generator.createBindingElement(
-                    undefined,
-                    undefined,
-                    generator.createIdentifier("c"),
-                    undefined
-                )
-            ]);
-
-            assert.strictEqual(expression.toString(), "[d,c]");
-        });
-
-        mocha.it("createClassDeclaration", function () {
-            const expression = generator.createClassDeclaration(
-                [],
-                [],
-                generator.createIdentifier("name"),
-                [],
-                [],
-                []
-            );
-
-            assert.ok(expression instanceof Class);
-            assert.ok(!(expression instanceof ComponentInput));
-            assert.ok(!(expression instanceof ReactComponent));
-
-            // TODO implement class generation
-            assert.strictEqual(expression.toString(), "");
-        });
-
-        mocha.it("createClassDeclaration without decorators and modifiers", function () {
-            const expression = generator.createClassDeclaration(
-                undefined,
-                undefined,
-                generator.createIdentifier("name"),
-                [],
-                [],
-                []
-            );
-
-            assert.ok(expression instanceof Class);
-            assert.ok(!(expression instanceof ComponentInput));
-            assert.ok(!(expression instanceof ReactComponent));
-
-            // TODO implement class generation
-            assert.strictEqual(expression.toString(), "");
-        });
-    });
-
-    mocha.it("JsxElement", function () {
-        const expression = generator.createJsxElement(
-            generator.createJsxOpeningElement(generator.createIdentifier("div"), [], [
-                generator.createJsxAttribute(
-                    generator.createIdentifier("name"),
-                    generator.createJsxExpression(
-                        undefined,
-                        generator.createIdentifier("value")
-                    )
-                )
-            ]),
-            [],
-            generator.createJsxClosingElement(generator.createIdentifier("div"))
-        );
-
-        assert.strictEqual(expression.toString(), "<div name={value}></div>");
-    });
     
     mocha.it("JsxElement. Fragment -> React.Fragment", function () {
         const expression = generator.createJsxElement(
@@ -1582,53 +207,6 @@ mocha.describe("react-generator: expressions", function () {
     });
 });
 
-mocha.describe("common", function () {
-    mocha.it.skip("SyntaxKind", function () {
-        const expected = Object.keys(ts.SyntaxKind)
-            .map((key) => ts.SyntaxKind[Number(key)])
-            .filter(value => typeof value === 'string') as string[]
-
-        const actual = Object.keys(generator.SyntaxKind);
-        
-        assert.equal(actual.length, expected.length);
-        assert.deepEqual(actual, expected);
-    });
-
-    mocha.it("SyntaxKind Keywords", function () {
-        const expected = Object.keys(ts.SyntaxKind)
-            .map((key) => ts.SyntaxKind[Number(key)])
-            .filter(value => typeof value === 'string' && value.endsWith("Keyword")) as string[];
-
-        expected.forEach(k => { 
-            assert.equal((generator.SyntaxKind as any)[k], k.replace(/Keyword$/, "").toLowerCase(), `${k} is missed`);
-        });
-    });
-
-    mocha.it("SyntaxKind Tokens", function () {
-        const expected = Object.keys(ts.SyntaxKind)
-            .map((key) => ts.SyntaxKind[Number(key)])
-            .filter(value => typeof value === 'string' && value.endsWith("Token")) as string[];
-
-        expected.forEach(k => { 
-            const token = (generator.SyntaxKind as any)[k];
-            assert.ok(token!==undefined, `${k} is missed`);
-        });
-    });
-
-    mocha.it.skip("NodeFlags", function () {
-        const expected = Object.keys(ts.NodeFlags)
-            .map((key) => ts.SyntaxKind[Number(key)])
-            .filter(value => typeof value === 'string') as string[];
-        
-        const actual = Object.keys(generator.NodeFlags);
-        assert.equal(actual.length, expected.length);
-        assert.deepEqual(Object.keys(generator.NodeFlags), expected);
-    });
-
-    mocha.it("processSourceFileName", function () {
-        assert.strictEqual(generator.processSourceFileName("someName"), "someName");
-    })
-});
 
 function createComponent(inputMembers: Array<Property | Method>, componentMembers: Array<Property | Method> = [], paramenters: { [name: string]: any } = {}):ReactComponent { 
     generator.createClassDeclaration(
@@ -1671,21 +249,6 @@ mocha.describe("React Component", function () {
     });
     this.afterEach(() => {
         generator.setContext(null);
-    });
-
-    mocha.it("class with Component decorator is ReactComponent", function () {
-        const expression = generator.createClassDeclaration(
-            [createComponentDecorator({})],
-            [],
-            generator.createIdentifier("Widget"),
-            [],
-            [],
-            []
-        );
-
-        assert.ok(expression instanceof ReactComponent);
-        const componentFromContext = generator.getContext().components?.["Widget"];
-        assert.strictEqual(componentFromContext, expression);
     });
 
     mocha.describe("View", function () {
@@ -2039,9 +602,6 @@ mocha.describe("React Component", function () {
                 const toStringOptions: toStringOptions = {
                     componentContext: "viewModel",
                     newComponentContext: "viewModel",
-                    internalState: [],
-                    state: [],
-                    props: [],
                     members: [
                         templateProperty
                     ]
@@ -2080,9 +640,6 @@ mocha.describe("React Component", function () {
                 const toStringOptions: toStringOptions = {
                     componentContext: "viewModel",
                     newComponentContext: "viewModel",
-                    internalState: [],
-                    state: [],
-                    props: [],
                     members: [
                         templateProperty,
                         generator.createProperty(
@@ -2132,9 +689,6 @@ mocha.describe("React Component", function () {
                 const toStringOptions: toStringOptions = {
                     componentContext: "viewModel",
                     newComponentContext: "viewModel",
-                    internalState: [],
-                    state: [],
-                    props: [],
                     members: [
                         templateProperty,
                         generator.createProperty(
@@ -2186,9 +740,6 @@ mocha.describe("React Component", function () {
                 const toStringOptions: toStringOptions = {
                     componentContext: "viewModel",
                     newComponentContext: "viewModel",
-                    internalState: [],
-                    state: [],
-                    props: [],
                     members: [
                         property,
                         prop
@@ -2270,39 +821,6 @@ mocha.describe("import Components", function () {
         generator.setContext(null);
     });
     
-    mocha.it("Parse imported component", function () {
-        const identifier = generator.createIdentifier("Base"); 
-        generator.createImportDeclaration(
-            undefined,
-            undefined,
-            generator.createImportClause(
-                identifier,
-                undefined
-            ),
-            generator.createStringLiteral("./test-cases/declarations/empty-component")
-        );   
-        
-        const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/empty-component.tsx`);
-        assert.ok(generator.cache[baseModulePath]);
-        assert.deepEqual(generator.getContext().components!["Base"].heritageProperies.map(p => p.name.toString()), ["height", "width"]);
-    });
-
-    mocha.it("Parse imported component. module specifier has extension", function () {
-        const identifier = generator.createIdentifier("Base"); 
-        generator.createImportDeclaration(
-            undefined,
-            undefined,
-            generator.createImportClause(
-                identifier,
-                undefined
-            ),
-            generator.createStringLiteral("./test-cases/declarations/empty-component.tsx")
-        );   
-        
-        const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/empty-component.tsx`);
-        assert.ok(generator.cache[baseModulePath]);
-        assert.deepEqual(generator.getContext().components!["Base"].heritageProperies.map(p => p.name.toString()), ["height", "width"]);
-    });
 
     mocha.it("Get properties from heritageClause", function () {
         generator.createImportDeclaration(
@@ -2322,19 +840,7 @@ mocha.describe("import Components", function () {
                 generator.createIdentifier("Base")
             )]);
         
-        assert.deepEqual(heritageClause.members.map(m => m.toString()), ["height", "width"]);
         assert.deepEqual(heritageClause.defaultProps, [], "defualtProps");
-    });
-
-    mocha.it("Get properties from heritageClause without import", function () {
-        const heritageClause = generator.createHeritageClause(
-            generator.SyntaxKind.ExtendsKeyword,
-            [generator.createExpressionWithTypeArguments(
-                undefined,
-                generator.createIdentifier("Base")
-            )]);
-        
-        assert.deepEqual(heritageClause.members.map(m => m.toString()), []);
     });
 
     mocha.it("Get properties from heritageClause", function () {
@@ -2482,27 +988,7 @@ mocha.describe("import Components", function () {
         assert.equal(component.compileDefaultProps().indexOf(","), -1);
     });
 
-    mocha.it("Parse imported component input", function () {
-        const expresstion = generator.createImportDeclaration(
-            undefined,
-            undefined,
-            generator.createImportClause(
-                generator.createIdentifier("Widget"),
-                generator.createNamedImports([generator.createImportSpecifier(
-                    undefined,
-                    generator.createIdentifier("WidgetProps")
-                )])
-            ),
-            generator.createStringLiteral("./test-cases/declarations/component-input")
-        );
-        
-        const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/component-input.tsx`);
-        assert.strictEqual(expresstion.toString(), `import Widget,{WidgetProps} from "./test-cases/declarations/component-input"`);
-        assert.ok(generator.cache[baseModulePath]);
-        assert.ok(generator.getContext().components!["Widget"] instanceof ReactComponent);
-        assert.ok(generator.getContext().components!["WidgetProps"] instanceof ComponentInput);
-    });
-
+    
     mocha.it("ComponentInput gets all members from heritage clause", function () { 
         generator.createImportDeclaration(
             undefined,
@@ -2533,7 +1019,6 @@ mocha.describe("import Components", function () {
             []
         );
 
-        assert.deepEqual(model.members.map(m => m.name.toString()), ["height", "children"]);
         assert.strictEqual(getResult(model.toString()), getResult("declare type Model= typeof WidgetProps & {} const Model:Model={...WidgetProps}"));
     });
 
@@ -2575,8 +1060,7 @@ mocha.describe("import Components", function () {
         );
 
         assert.deepEqual(model.members.map(m => {
-            const prop = new Prop(m as Property);
-            return prop.typeDeclaration();
+            return m.typeDeclaration();
         }), ["height!:string", "children?:React.ReactNode"]);
 
         assert.strictEqual(model.defaultPropsDest(), "Model");
@@ -2619,12 +1103,14 @@ mocha.describe("import Components", function () {
             )]
         );
 
-        assert.strictEqual(model.members.length, 3);
-        assert.strictEqual(model.members[1].defaultDeclaration(), "defaultP:undefined");
-        assert.strictEqual(model.members[1].typeDeclaration(), "defaultP?:string");
+        const members = model.members as Property[];
 
-        assert.strictEqual(model.members[2].defaultDeclaration(), "pChange:()=>{}");
-        assert.strictEqual(model.members[2].typeDeclaration(), "pChange?:(p:string)=>void");
+        assert.strictEqual(members.length, 3);
+        assert.strictEqual(members[1].defaultDeclaration(), "defaultP:undefined");
+        assert.strictEqual(members[1].typeDeclaration(), "defaultP?:string");
+
+        assert.strictEqual(members[2].defaultDeclaration(), "pChange:()=>{}");
+        assert.strictEqual(members[2].typeDeclaration(), "pChange?:(p:string)=>void");
     });
 
     mocha.it("ComponentInput should not generate change for state property if it has one", function () { 
@@ -2652,12 +1138,14 @@ mocha.describe("import Components", function () {
             )]
         );
 
-        assert.strictEqual(model.members.length, 3);
-        assert.strictEqual(model.members[1].defaultDeclaration(), "pChange:undefined");
-        assert.strictEqual(model.members[1].typeDeclaration(), "pChange!:any");
+        const members = model.members as Property[];
 
-        assert.strictEqual(model.members[2].defaultDeclaration(), "defaultP:undefined");
-        assert.strictEqual(model.members[2].typeDeclaration(), "defaultP?:string");
+        assert.strictEqual(members.length, 3);
+        assert.strictEqual(members[1].defaultDeclaration(), "pChange:undefined");
+        assert.strictEqual(members[1].typeDeclaration(), "pChange!:any");
+
+        assert.strictEqual(members[2].defaultDeclaration(), "defaultP:undefined");
+        assert.strictEqual(members[2].typeDeclaration(), "defaultP?:string");
     });
 });
 
@@ -2703,7 +1191,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
     });
 
     mocha.it("PropertyAccess. Prop", function () {
-        assert.equal(this.propAccess.toString({ internalState: [this.state, this.prop, this.internalState], state: [], props: [new Prop(this.prop)] }), "props.p1");
+        assert.equal(this.propAccess.toString({ members: [this.state, this.prop, this.internalState] }), "props.p1");
         assert.deepEqual(this.propAccess.getDependency(), ["p1"]);
     });
 
@@ -2714,7 +1202,11 @@ mocha.describe("Expressions with props/state/internal state", function () {
                 generator.createIdentifier("props")
             ), generator.createIdentifier("p1"));
        
-        assert.equal(expression.toString({ members: [this.state, this.prop, this.internalState], internalState: [], state: [], props: [new Prop(this.prop)]}), "props.p1");
+        assert.equal(expression.toString({
+            members: [this.state, this.prop, this.internalState],
+            componentContext: "this",
+            newComponentContext: ""
+        }), "props.p1");
         assert.deepEqual(expression.getDependency(), ["p1"]);
     });
 
@@ -2726,9 +1218,6 @@ mocha.describe("Expressions with props/state/internal state", function () {
        
         assert.equal(expression.toString({
             members: [this.state, this.prop, this.internalState],
-            internalState: [],
-            state: [],
-            props: [new Prop(this.prop)],
             componentContext: "this",
             newComponentContext: ""
         }), "props");
@@ -2736,7 +1225,9 @@ mocha.describe("Expressions with props/state/internal state", function () {
     });
 
     mocha.it("PropertyAccess. State", function () {
-        assert.equal(this.stateAccess.toString({members: [this.state, this.prop, this.internalState], internalState: [], state: [new State(this.state)], props: [] }), "(props.s1!==undefined?props.s1:__state_s1)");
+        assert.equal(this.stateAccess.toString({
+            members: [this.state, this.prop, this.internalState]
+        }), "(props.s1!==undefined?props.s1:__state_s1)");
         assert.deepEqual(this.stateAccess.getDependency(), ["s1"]);
     });
 
@@ -2747,12 +1238,18 @@ mocha.describe("Expressions with props/state/internal state", function () {
                 generator.createIdentifier("props")
             ), generator.createIdentifier("s1"));
         
-        assert.equal(expression.toString({members: [], internalState: [this.state, this.prop, this.internalState], state: [new State(this.state)], props: [] }), "(props.s1!==undefined?props.s1:__state_s1)");
+        this.state.inherited = true;
+        
+        assert.equal(expression.toString({
+            members: [this.state, this.prop, this.internalState]
+        }), "(props.s1!==undefined?props.s1:__state_s1)");
         assert.deepEqual(expression.getDependency(), ["s1"]);
     });
 
     mocha.it("PropertyAccess. Internal State", function () {
-        assert.equal(this.internalStateAccess.toString({ members: [this.state, this.prop, this.internalState],internalState: [new InternalState(this.internalState)], state: [new State(this.state)] }), ["__state_i1"]);
+        assert.equal(this.internalStateAccess.toString({
+            members: [this.state, this.prop, this.internalState]
+        }), ["__state_i1"]);
         assert.deepEqual(this.internalStateAccess.getDependency(), ["i1"]);
     });
 
@@ -2763,7 +1260,9 @@ mocha.describe("Expressions with props/state/internal state", function () {
             generator.createIdentifier("a")
         );
 
-        assert.equal(getResult(expression.toString({members: [this.state, this.prop, this.internalState], internalState: [], state: [new State(this.state)], props: [] })), getResult("(__state_setS1(a), props.s1Change!(a))"));
+        assert.equal((expression.toString({
+            members: [this.state, this.prop, this.internalState]
+        })), ("(__state_setS1(a), props.s1Change!(a))"));
         assert.deepEqual(expression.getDependency(), []);
         assert.deepEqual(expression.getAllDependency(), ["s1"]);
     });
@@ -2775,7 +1274,9 @@ mocha.describe("Expressions with props/state/internal state", function () {
             generator.createIdentifier("a")
         );
 
-        assert.equal(getResult(expression.toString({members: [this.state, this.prop, this.internalState], internalState: [new InternalState(this.internalState)], state: [new State(this.state)], props: [] })), getResult("__state_setI1(a);"));
+        assert.equal(getResult(expression.toString({
+            members: [this.state, this.prop, this.internalState]
+        })), getResult("__state_setI1(a);"));
     });
 
     mocha.it("= operator for prop - throw error", function () { 
@@ -2787,7 +1288,9 @@ mocha.describe("Expressions with props/state/internal state", function () {
 
         let error = null;
         try {
-            expression.toString({members: [this.state, this.prop, this.internalState], internalState: [new InternalState(this.internalState)], state: [new State(this.state)], props: [new Prop(this.prop)] });
+            expression.toString({
+                members: [this.state, this.prop, this.internalState]
+            });
         } catch (e) {
             error = e;
         }
@@ -2802,7 +1305,9 @@ mocha.describe("Expressions with props/state/internal state", function () {
             this.propAccess
         );
 
-        assert.equal((expression.toString({ members: [],internalState: [], state: [new State(this.state)], props: [new Prop(this.prop)] })), ("(props.s1!==undefined?props.s1:__state_s1)===props.p1"));
+        assert.equal((expression.toString({
+            members: [this.state, this.prop, this.internalState]
+        })), ("(props.s1!==undefined?props.s1:__state_s1)===props.p1"));
         assert.deepEqual(expression.getDependency(), ["s1", "p1"]);
         assert.deepEqual(expression.getAllDependency(), ["s1", "p1"]);
     });
@@ -2878,8 +1383,29 @@ mocha.describe("Expressions with props/state/internal state", function () {
         );
         
         assert.deepEqual(arrowFunction.getDependency(), []);
-        assert.equal(getResult(arrowFunction.toString({ members: [this.state, this.prop, this.internalState],internalState: [], state: [new State(this.state)], props: [] })), getResult("()=>(__state_setS1(10), props.s1Change!(10))"));
-        assert.equal(getResult(arrowFunction.toString({ members: [this.state, this.prop, this.internalState],internalState: [new InternalState(this.state)], state: [], props: [] })), getResult("()=>__state_setS1(10)"));
+        assert.equal(getResult(arrowFunction.toString({
+            members: [this.state, this.prop, this.internalState]
+        })), getResult("()=>(__state_setS1(10), props.s1Change!(10))"));
+    });
+
+    mocha.it("Arrow Function. Can set internal state", function () {
+        const arrowFunction = generator.createArrowFunction(
+            undefined,
+            undefined,
+            [],
+            undefined,
+            generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+            generator.createBinary(
+                this.internalStateAccess,
+                generator.createToken(generator.SyntaxKind.EqualsToken),
+                generator.createNumericLiteral("10")
+            )
+        );
+        
+        assert.deepEqual(arrowFunction.getDependency(), []);
+        assert.equal(getResult(arrowFunction.toString({
+            members: [this.state, this.prop, this.internalState]
+        })), getResult("()=>__state_setI1(10)"));
     });
 
     mocha.it("Arrow Function. Can set prop in state", function () {
@@ -2897,8 +1423,9 @@ mocha.describe("Expressions with props/state/internal state", function () {
         );
         
         assert.deepEqual(arrowFunction.getDependency(), ["p1"]);
-        assert.equal(getResult(arrowFunction.toString({members: [this.state, this.prop, this.internalState], internalState: [], state: [new State(this.state)], props: [new Prop(this.prop)] })), getResult("()=>(__state_setS1(props.p1), props.s1Change!(props.p1))"));
-        assert.equal(getResult(arrowFunction.toString({ members: [this.state, this.prop, this.internalState], internalState: [new InternalState(this.state)], state: [], props: [new Prop(this.prop)] })), getResult("()=>__state_setS1(props.p1)"), "do not change for internal state");
+        assert.equal(getResult(arrowFunction.toString({
+            members: [this.state, this.prop, this.internalState]
+        })), getResult("()=>(__state_setS1(props.p1), props.s1Change!(props.p1))"));
     });
 
     mocha.it("PropertyAccess should replace componentContext on newComponentContex", function () {
@@ -2909,9 +1436,6 @@ mocha.describe("Expressions with props/state/internal state", function () {
         
         assert.equal(expression.toString({
             members: [this.state, this.prop, this.internalState],
-            internalState: [],
-            state: [],
-            props: [],
             componentContext: "this",
             newComponentContext: ""
         }), "name");
@@ -2929,7 +1453,9 @@ mocha.describe("Expressions with props/state/internal state", function () {
             )
         );
 
-        assert.equal(expression.toString({members: [this.state, this.prop, this.internalState], internalState: [new InternalState(this.internalState)], state: [new State(this.state)], props: [new Prop(this.prop)] }), "props.p1?.call((props.s1!==undefined?props.s1:__state_s1))");
+        assert.equal(expression.toString({
+            members: [this.state, this.prop, this.internalState]
+        }), "props.p1?.call((props.s1!==undefined?props.s1:__state_s1))");
         assert.deepEqual(expression.getDependency(), ["p1", "s1"]);
     });
 
@@ -2945,7 +1471,9 @@ mocha.describe("Expressions with props/state/internal state", function () {
             [this.propAccess, this.stateAccess, this.internalStateAccess]
           )
 
-        assert.deepEqual(expression.toString({members: [this.state, this.prop, this.internalState], internalState: [new InternalState(this.internalState)], state: [new State(this.state)], props: [new Prop(this.prop)] }), "model?.onClick(props.p1,(props.s1!==undefined?props.s1:__state_s1),__state_i1)");
+        assert.deepEqual(expression.toString({
+            members: [this.state, this.prop, this.internalState]
+        }), "model?.onClick(props.p1,(props.s1!==undefined?props.s1:__state_s1),__state_i1)");
         assert.deepEqual(expression.getDependency(), ["p1", "s1", "i1"]);
     });
 
@@ -2961,7 +1489,9 @@ mocha.describe("Expressions with props/state/internal state", function () {
             []
           )
 
-        assert.deepEqual(expression.toString({members: [this.state, this.prop, this.internalState], internalState: [new InternalState(this.internalState)], state: [new State(this.state)], props: [new Prop(this.prop)] }), "props.p1?.onClick()");
+        assert.deepEqual(expression.toString({
+            members: [this.state, this.prop, this.internalState]
+        }), "props.p1?.onClick()");
         assert.deepEqual(expression.getDependency(), ["p1"]);
     });
 
@@ -3080,7 +1610,7 @@ mocha.describe("ComponentInput", function () {
 
         assert.strictEqual(getResult(expression.toString()), getResult("declare type BaseModel={p:number; p1:number}; export const BaseModel:BaseModel={p:10, p1: 15};"));
         const cachedComponent = generator.getContext().components!["BaseModel"];
-        assert.deepEqual(cachedComponent.heritageProperies.map(p => p.toString()), ["p", "p1"]);
+        assert.deepEqual(cachedComponent.heritageProperies.map(p => p.name), ["p", "p1"]);
     });
 
     mocha.it("Rename Template property: template->render", function () { 
@@ -3168,7 +1698,13 @@ mocha.describe("ComponentInput", function () {
             ]);
             assert.deepEqual(getResult(
                 `{${component.compileViewModelArguments().join(",")}}`
-            ), getResult("{props:{...props, p:props.p!==undefined?props.p:__state_p}, restAttributes: restAttributes()}"));
+            ), getResult(`{
+                props:{
+                    ...props,
+                    p:(props.p!==undefined?props.p:__state_p)
+                },
+                restAttributes: restAttributes()
+            }`));
         });
 
         mocha.it("component with internal state - add internal state to viewModel args", function () {

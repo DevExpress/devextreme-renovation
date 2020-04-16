@@ -19,13 +19,13 @@ export default function Widget(props: {}) {
     const nullableRef = useRef<HTMLDivElement>();
     const explicitRef = useRef<HTMLDivElement>();
 
-    const clickHandler = useCallback(() => {
+    const clickHandler = useCallback(function clickHandler() {
         const html = divRef.current!.outerHTML + explicitRef.current!.outerHTML;
     }, [divRef, explicitRef])
 
     const getHeight = useCallback(function getHeight() {
         return divRef.current!.outerHTML + nullableRef.current?.outerHTML;
-    }, []);
+    }, [divRef, nullableRef]);
 
     const restAttributes=useCallback(function restAttributes(){
         const { ...restProps } = props;

@@ -1,21 +1,19 @@
 import {
     Generator,
     ReactComponent,
-    Decorator,
-    Identifier,
     Property as BaseProperty,
     Method,
-    StringLiteral,
-    ImportClause,
     JsxAttribute,
     JsxOpeningElement as ReactJsxOpeningElement,
     JsxClosingElement as ReactJsxClosingElement,
-    ImportDeclaration,
     HeritageClause,
-    Expression,
-    TypeExpression,
 } from "./react-generator";
 import path from "path";
+import { Expression } from "./base-generator/expressions/base";
+import { Identifier, Decorator } from "./base-generator/expressions/common";
+import { ImportClause, ImportDeclaration } from "./base-generator/expressions/import";
+import { StringLiteral } from "./base-generator/expressions/literal";
+import { TypeExpression } from "./base-generator/expressions/type";
 
 const processModuleFileName = (module: string) => `${module}.p`;
 

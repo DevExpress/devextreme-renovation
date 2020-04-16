@@ -1,10 +1,13 @@
 import mocha from "./helpers/mocha";
-import generator, { Property, AngularDirective, Method } from "../angular-generator";
+import generator, { Property, AngularDirective } from "../angular-generator";
 import assert from "assert";
 import path from "path";
 
 import { printSourceCodeAst as getResult, removeSpaces } from "./helpers/common";
-import { Identifier, GeneratorContex, Expression } from "../react-generator";
+import { GeneratorContex } from "../base-generator/types";
+import { Expression } from "../base-generator/expressions/base";
+import { Identifier } from "../base-generator/expressions/common";
+import { Method } from "../base-generator/expressions/class-members";
 
 function createDecorator(name: string) {
     return generator.createDecorator(generator.createCall(
@@ -32,7 +35,7 @@ function createComponentDecorator(paramenters: {[name:string]: any}) {
     )
 }
 
-function createComponent(properties: Array<Property|Method> = [], paramenters: { [name: string]: Expression } = {}) {
+function createComponent(properties: Array<Property | Method> = [], paramenters: { [name: string]: Expression } = {}) {
     return generator.createComponent(
         createComponentDecorator(paramenters),
         [],
@@ -448,9 +451,6 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(removeSpaces(expression.toString({
-                state: [],
-                props: [],
-                internalState: [],
                 componentContext: "viewModel",
                 newComponentContext: "",
                 members: [property]
@@ -491,9 +491,6 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(removeSpaces(expression.toString({
-                state: [],
-                props: [],
-                internalState: [],
                 componentContext: "viewModel",
                 newComponentContext: "",
                 members: [property]
@@ -886,9 +883,6 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(expression.toString({
-                state: [],
-                internalState: [],
-                props: [],
                 members: [
                     generator.createProperty(
                         [createDecorator("Ref")],
@@ -917,9 +911,6 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(expression.toString({
-                state: [],
-                internalState: [],
-                props: [],
                 members: [
                     generator.createProperty(
                         [createDecorator("Ref")],
@@ -964,9 +955,6 @@ mocha.describe("Angular generator", function () {
 
                 assert.strictEqual(expression.toString({
                     members: [slotProperty],
-                    internalState: [],
-                    state: [],
-                    props: [],
                     componentContext: "viewModel"
                 }), `<span ><ng-content select="[name]"></ng-content></span>`);
             });
@@ -999,9 +987,6 @@ mocha.describe("Angular generator", function () {
 
                 assert.strictEqual(expression.toString({
                     members: [slotProperty],
-                    internalState: [],
-                    state: [],
-                    props: [],
                     componentContext: "viewModel",
                     newComponentContext: ""
                 }), `<span ><ng-content select="[name]"></ng-content></span>`);
@@ -1034,10 +1019,7 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.toString({
-                    members: [slotProperty],
-                    internalState: [],
-                    state: [],
-                    props: []
+                    members: [slotProperty]
                 }), `<span ><ng-content></ng-content></span>`);
             });
 
@@ -1124,10 +1106,7 @@ mocha.describe("Angular generator", function () {
                     );
 
                     assert.strictEqual(element.toString({
-                        state: [],
-                        props: [],
-                        members: [],
-                        internalState: [],
+                        members: []
                     }), `<dx-widget (event)="value($event)"></dx-widget>`);        
                 });
 
@@ -1161,10 +1140,7 @@ mocha.describe("Angular generator", function () {
                     );
 
                     assert.strictEqual(element.toString({
-                        state: [],
-                        props: [],
                         members: [],
-                        internalState: [],
                     }), `<dx-widget [className]="value"></dx-widget>`);        
                 });
 
@@ -1219,10 +1195,7 @@ mocha.describe("Angular generator", function () {
                     );
 
                     assert.strictEqual(element.toString({
-                        state: [],
-                        props: [],
-                        members: [],
-                        internalState: [],
+                        members: []
                     }), `<dx-widget [className]="value"><div class="class-name"></div></dx-widget>`);        
                 });
 
@@ -1252,9 +1225,6 @@ mocha.describe("Angular generator", function () {
 
                 assert.strictEqual(expression.toString({
                     members: [templateProperty],
-                    internalState: [],
-                    state: [],
-                    props: [],
                     componentContext: "viewModel",
                     newComponentContext: ""
                 }), `<ng-container *ngTemplateOutlet="template"></ng-container>`);
@@ -1290,9 +1260,6 @@ mocha.describe("Angular generator", function () {
 
                 assert.strictEqual(removeSpaces(expression.toString({
                     members: [templateProperty],
-                    internalState: [],
-                    state: [],
-                    props: [],
                     componentContext: "viewModel",
                     newComponentContext: ""
                 })), removeSpaces(`<ng-container *ngTemplateOutlet="template; context:{a1: \'str\',a2: 10}"></ng-container>`));
@@ -1327,9 +1294,6 @@ mocha.describe("Angular generator", function () {
 
                 assert.strictEqual(removeSpaces(expression.toString({
                     members: [templateProperty],
-                    internalState: [],
-                    state: [],
-                    props: [],
                     componentContext: "viewModel",
                     newComponentContext: ""
                 })), removeSpaces(`<ng-container *ngTemplateOutlet="template; context:{a1: 10}"></ng-container>`));
@@ -1367,9 +1331,6 @@ mocha.describe("Angular generator", function () {
 
                 assert.strictEqual(removeSpaces(expression.toString({
                     members: [templateProperty],
-                    internalState: [],
-                    state: [],
-                    props: [],
                     componentContext: "viewModel",
                     newComponentContext: ""
                 })), removeSpaces(`<ng-container *ngIf="condition">
@@ -1769,9 +1730,6 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.getTemplate({
-                    internalState: [],
-                    state: [],
-                    props: [],
                     members: [],
                     newComponentContext: "_viewModel"
                 }), `<span [attr]="_viewModel.value">{{_viewModel.text}}</span>`);
@@ -1936,9 +1894,6 @@ mocha.describe("Angular generator", function () {
 
                 assert.strictEqual(expression.toString(), "");
                 assert.strictEqual(expression.getTemplate({
-                    internalState: [],
-                    state: [],
-                    props: [],
                     members: []
                 }), `<div [v]="10"></div>`);
             });
@@ -2000,9 +1955,6 @@ mocha.describe("Angular generator", function () {
 
                 assert.strictEqual(expression.toString(), "");
                 assert.strictEqual(expression.getTemplate({
-                    internalState: [],
-                    state: [],
-                    props: [],
                     members: [member]
                 }), `<div [v]="__height"></div>`);
             });
@@ -2050,9 +2002,6 @@ mocha.describe("Angular generator", function () {
     
                 assert.strictEqual(expression.toString(), "");
                 assert.strictEqual(expression.getTemplate({
-                    internalState: [],
-                    state: [],
-                    props: [],
                     members: []
                 }), `<div ><span ></span></div>`);
             });
@@ -2112,9 +2061,6 @@ mocha.describe("Angular generator", function () {
     
                 assert.strictEqual(expression.toString(), "");
                 assert.strictEqual(removeSpaces((expression.getTemplate({
-                    internalState: [],
-                    state: [],
-                    props: [],
                     members: []
                 }) as string)), removeSpaces(`<div >
                         <span *ngIf="c1"></span>
@@ -2173,9 +2119,6 @@ mocha.describe("Angular generator", function () {
     
                 assert.strictEqual(expression.toString(), "");
                 assert.strictEqual(removeSpaces(expression.getTemplate({
-                    internalState: [],
-                    state: [],
-                    props: [],
                     members: []
                 }) as string), removeSpaces(`<div >
                         <span *ngIf="(c1)&&c2"></span>
@@ -2256,9 +2199,6 @@ mocha.describe("Angular generator", function () {
     
                 assert.strictEqual(expression.toString(), "");
                 assert.strictEqual(removeSpaces(expression.getTemplate({
-                    internalState: [],
-                    state: [],
-                    props: [],
                     members: []
                 }) as string), removeSpaces(`<div>
                         <ng-container *ngFor="let items of viewModel.items">
@@ -2610,9 +2550,6 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(getResult(property.toString({
-                internalState: [],
-                state: [],
-                props: [],
                 members: [property, prop]
             })), getResult("get _name(){this.name}"));
         });
@@ -2886,10 +2823,7 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.toString({
-                    members: [property],
-                    internalState: [],
-                    state: [],
-                    props: []
+                    members: [property]
                 }), "this.width");
             });
 
@@ -2909,10 +2843,7 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.toString({
-                    members: [property],
-                    internalState: [],
-                    state: [],
-                    props: []
+                    members: [property]
                 }), "this.width");
             });
 
@@ -2935,10 +2866,7 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.toString({
-                    members: [property],
-                    internalState: [],
-                    state: [],
-                    props: []
+                    members: [property]
                 }), "this.width");
             });
 
@@ -2962,9 +2890,6 @@ mocha.describe("Angular generator", function () {
 
                 assert.strictEqual(expression.toString({
                     members: [property],
-                    internalState: [],
-                    state: [],
-                    props: [],
                     componentContext: "viewModel",
                     newComponentContext: "newViewModel"
                 }), "newViewModel.width");
@@ -2990,9 +2915,6 @@ mocha.describe("Angular generator", function () {
 
                 assert.strictEqual(expression.toString({
                     members: [property],
-                    internalState: [],
-                    state: [],
-                    props: [],
                     componentContext: "viewModel",
                     newComponentContext: "newViewModel"
                 }), "newViewModel.width");
@@ -3019,9 +2941,6 @@ mocha.describe("Angular generator", function () {
 
                 assert.strictEqual(expression.toString({
                     members: [property],
-                    internalState: [],
-                    state: [],
-                    props: [],
                     componentContext: "viewModel",
                     newComponentContext: ""
                 }), "width");
@@ -3034,10 +2953,7 @@ mocha.describe("Angular generator", function () {
                     )
 
                 assert.strictEqual(expression.toString({
-                    members: [],
-                    internalState: [],
-                    state: [],
-                    props: []
+                    members: []
                 }), "this");
             });
 
@@ -3060,10 +2976,7 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.toString({
-                    members: [property],
-                    internalState: [],
-                    state: [],
-                    props: []
+                    members: [property]
                 }), "this.width");
             });
 
@@ -3087,10 +3000,7 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.toString({
-                    members: [property],
-                    internalState: [],
-                    state: [],
-                    props: []
+                    members: [property]
                 }), "this.onClick!.emit(10)");
             });
 
@@ -3114,10 +3024,7 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(getResult(expression.toString({
-                    members: [property],
-                    internalState: [],
-                    state: [],
-                    props: []
+                    members: [property]
                 })), getResult("this.widthChange!.emit(this.width=10)"));
             });
 
@@ -3142,10 +3049,7 @@ mocha.describe("Angular generator", function () {
                 let error = null;
                 try {
                     expression.toString({
-                        members: [property],
-                        internalState: [],
-                        state: [],
-                        props: []
+                        members: [property]
                     });
                 } catch (e) { 
                     error = e;
@@ -3187,24 +3091,15 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.toString({
-                    members: [property],
-                    internalState: [],
-                    state: [],
-                    props: []
+                    members: [property]
                 }), "this.div.nativeElement");
 
                 assert.strictEqual(expression.toString({
-                    members: [propertyWithExclamation],
-                    internalState: [],
-                    state: [],
-                    props: []
+                    members: [propertyWithExclamation]
                 }), "this.div!.nativeElement");
 
                 assert.strictEqual(expression.toString({
-                    members: [propertyWithQuestion],
-                    internalState: [],
-                    state: [],
-                    props: []
+                    members: [propertyWithQuestion]
                 }), "this.div?.nativeElement");
             });
         });
