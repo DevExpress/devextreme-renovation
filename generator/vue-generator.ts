@@ -32,19 +32,25 @@ import { checkDependency } from "./base-generator/utils/dependency";
 function calculatePropertyType(type: TypeExpression): string { 
     if (type instanceof SimpleTypeExpression) {
         return capitalizeFirstLetter(type.toString());
-    } else if (type instanceof ArrayTypeNode) {
+    }
+    if (type instanceof ArrayTypeNode) {
         return "Array";
-    } else if (type instanceof UnionTypeNode) {
+    }
+    if (type instanceof UnionTypeNode) {
         return `[${[([] as string[]).concat(type.types.map(t => calculatePropertyType(t))).join(",")]}]`;
-    } else if (type instanceof FunctionTypeNode) {
-        return "Function"
-    } else if (type instanceof LiteralTypeNode) { 
+    }
+    if (type instanceof FunctionTypeNode) {
+        return "Function";
+    }
+    if (type instanceof LiteralTypeNode) { 
         if (type.expression instanceof ObjectLiteral) { 
-            return "Object"
-        } else if (type.expression instanceof StringLiteral) { 
-            return "String"
-        } else if (type.expression instanceof NumericLiteral) { 
-            return "Number"
+            return "Object";
+        }
+        if (type.expression instanceof StringLiteral) { 
+            return "String";
+        }
+        if (type.expression instanceof NumericLiteral) { 
+            return "Number";
         }
     }
     return "";
@@ -161,8 +167,8 @@ export class Call extends BaseCall {
     }
     toString(options?: toStringOptions) { 
         let expression: Expression = this.expression;
-        if (this.expression instanceof Identifier && options?.variables && options.variables[expression.toString()]) { 
-            expression = options?.variables && options.variables[expression.toString()];
+        if (this.expression instanceof Identifier && options?.variables?.[expression.toString()]) { 
+            expression = options.variables[expression.toString()];
         }
         const eventMember = checkDependency(expression, options?.members.filter(m => m.isEvent));
         if (eventMember) { 
