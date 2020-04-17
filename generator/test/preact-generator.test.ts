@@ -236,6 +236,10 @@ mocha.describe("preact-generator: jQuery generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("jquery-events", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("jquery-without-modules", function () {
         generator.jqueryComponentRegistratorModule = undefined;
         generator.jqueryBaseComponentModule = undefined;
