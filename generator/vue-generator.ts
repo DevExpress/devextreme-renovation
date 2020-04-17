@@ -4,7 +4,8 @@ import { Decorator, Identifier } from "./base-generator/expressions/common";
 import { HeritageClause } from "./base-generator/expressions/class";
 import {
     Property as BaseProperty,
-    Method as BaseMethod
+    Method as BaseMethod,
+    GetAccessor as BaseGetAccessor
 } from "./base-generator/expressions/class-members";
 import { toStringOptions } from "./base-generator/types";
 import {
@@ -15,10 +16,11 @@ import {
     FunctionTypeNode,
     LiteralTypeNode
 } from "./base-generator/expressions/type";
-import { capitalizeFirstLetter } from "./base-generator/utils/string";
+import { capitalizeFirstLetter, compileType } from "./base-generator/utils/string";
 import SyntaxKind from "./base-generator/syntaxKind";
 import { Expression } from "./base-generator/expressions/base";
 import { ObjectLiteral, StringLiteral, NumericLiteral } from "./base-generator/expressions/literal";
+import { Parameter } from "./base-generator/expressions/functions";
 
 function calculatePropertyType(type: TypeExpression): string { 
     if (type instanceof SimpleTypeExpression) {
@@ -81,8 +83,30 @@ export class Property extends BaseProperty {
     }
 }
 
-export class Method extends BaseMethod { 
+function compileMethod(expression: Method | GetAccessor, options?: toStringOptions): string { 
+    return `${expression.name}(${expression.parameters.map(p => p.declaration()).join(",")})${compileType(expression.type.toString())}${expression.body.toString(options)}`
+}
 
+export class Method extends BaseMethod { 
+    toString(options?: toStringOptions) { 
+        if (!options) { 
+            return super.toString();
+        }
+        return compileMethod(this, options)
+    }
+}
+
+export class GetAccessor extends BaseGetAccessor { 
+    toString(options?: toStringOptions): string { 
+        if (!options) { 
+            return super.toString();
+        }
+        return compileMethod(this, options)
+    }
+
+    getter() { 
+        return `${super.getter()}()`;
+    }
 }
 
 export class VueComponent extends Component { 
@@ -99,7 +123,13 @@ class VueGenerator extends BaseGenerator {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
+    createGetAccessor(decorators: Decorator[]|undefined, modifiers: string[]|undefined, name: Identifier, parameters: Parameter[], type?: TypeExpression, body?: Block) {
+        return new GetAccessor(decorators, modifiers, name, parameters, type, body);
+    }
 
+    createMethod(decorators: Decorator[]| undefined, modifiers: string[]|undefined, asteriskToken: string|undefined, name: Identifier, questionToken: string | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
+        return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
+    }
 }
 
 

@@ -225,5 +225,70 @@ mocha.describe("Vue-generator", function () {
             });
         });
     });
+
+    mocha.describe("Methods", function () { 
+        mocha.it("Method with options", function () { 
+            const expression = generator.createMethod(
+                [createDecorator("SomeDecorator")],
+                ["public"],
+                undefined,
+                generator.createIdentifier("m"),
+                undefined,
+                undefined,
+                [],
+                undefined,
+                generator.createBlock([], false)
+            );
+
+            assert.strictEqual(getAst(expression.toString({
+                members: []
+            })), getAst("m():any{}"));
+        });
+
+        mocha.it("Method without options should return method string", function () { 
+            const expression = generator.createMethod(
+                [createDecorator("SomeDecorator")],
+                ["public"],
+                undefined,
+                generator.createIdentifier("m"),
+                undefined,
+                undefined,
+                [],
+                undefined,
+                generator.createBlock([], false)
+            );
+
+            assert.strictEqual(getAst(expression.toString()), getAst(`@SomeDecorator() public m():any{}`));
+        });
+
+        mocha.it("GetAccessor", function () { 
+            const expression = generator.createGetAccessor(
+                [createDecorator("SomeDecorator")],
+                ["public"],
+                generator.createIdentifier("m"),
+                [],
+                undefined,
+                generator.createBlock([], false)
+            );
+            
+            assert.strictEqual(getAst(expression.toString({
+                members:[]
+            })), getAst("m():any{}"));
+            assert.strictEqual(expression.getter(), "m()");
+        });
+
+        mocha.it("GetAccessor without options should return GetAccessor string", function () { 
+            const expression = generator.createGetAccessor(
+                [createDecorator("SomeDecorator")],
+                ["public"],
+                generator.createIdentifier("m"),
+                [],
+                undefined,
+                generator.createBlock([], false)
+            );
+            
+            assert.strictEqual(getAst(expression.toString()), getAst("get m(){}"));
+        });
+    });
     
 });
