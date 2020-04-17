@@ -300,7 +300,7 @@ export default class Generator {
     }
 
     createDecorator(expression: Call) {
-        return new Decorator(expression);
+        return new Decorator(expression, this.getContext());
     }
 
     createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: TypeExpression, initializer?: Expression) {

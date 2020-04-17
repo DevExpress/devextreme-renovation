@@ -579,36 +579,6 @@ export class ArrowFunction extends BaseArrowFunction {
 }
 
 class Decorator extends BaseDecorator { 
-    context: AngularGeneratorContext;
-    viewParameter?: Expression | null;
-    constructor(expression: Call, context: AngularGeneratorContext) { 
-        super(expression);
-        this.context = context;
-        if (this.name === "Component") { 
-            this.viewParameter = this.getParameter("view");
-        }
-    }
-
-    addParameter(name: string, value: Expression) {
-        const parameters = (this.expression.arguments[0] as ObjectLiteral);
-        parameters.setProperty(name, value);
-    }
-
-    getParameter(name: string) { 
-        const parameters = (this.expression.arguments[0] as ObjectLiteral);
-        return parameters.getProperty(name);
-    }
-
-    getViewFunction() {
-        const viewFunctionValue = this.viewParameter
-        let viewFunction: ArrowFunction | Function | null = null;
-        if (viewFunctionValue instanceof Identifier) {
-            viewFunction = this.context.viewFunctions ? this.context.viewFunctions[viewFunctionValue.toString()] : null;
-        }
-
-        return viewFunction
-    }
-
     toString(options?: toStringOptions) { 
         if (this.name === "OneWay") {
             return "@Input()";

@@ -1,7 +1,9 @@
-import { toStringOptions } from "../types";
+import { toStringOptions, GeneratorContext } from "../types";
 import SyntaxKind from "../syntaxKind";
 import { ExpressionWithExpression, Expression, SimpleExpression } from "./base";
 import { TypeExpression } from "./type";
+import { ArrowFunction, Function } from "./functions";
+import { ObjectLiteral } from "./literal";
 
 export class Identifier extends SimpleExpression {
     constructor(name: string) {
@@ -91,8 +93,35 @@ export class CallChain extends Call {
 
 export class Decorator {
     expression: Call;
-    constructor(expression: Call) {
+    context: GeneratorContext;
+    viewParameter?: Expression | null;
+
+    constructor(expression: Call, context: GeneratorContext) {
         this.expression = expression;
+        this.context = context;
+        if (this.name === "Component") { 
+            this.viewParameter = this.getParameter("view");
+        }
+    }
+
+    addParameter(name: string, value: Expression) {
+        const parameters = (this.expression.arguments[0] as ObjectLiteral);
+        parameters.setProperty(name, value);
+    }
+
+    getParameter(name: string) { 
+        const parameters = (this.expression.arguments[0] as ObjectLiteral);
+        return parameters.getProperty(name);
+    }
+
+    getViewFunction() {
+        const viewFunctionValue = this.viewParameter
+        let viewFunction: ArrowFunction | Function | null = null;
+        if (viewFunctionValue instanceof Identifier) {
+            viewFunction = this.context.viewFunctions ? this.context.viewFunctions[viewFunctionValue.toString()] : null;
+        }
+
+        return viewFunction
     }
 
     get name() {
