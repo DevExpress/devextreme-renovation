@@ -40,7 +40,7 @@ import { VariableDeclaration, VariableDeclarationList, VariableStatement } from 
 import { StringLiteral, ArrayLiteral, ObjectLiteral } from "./expressions/literal";
 import { Class, HeritageClause, Heritable } from "./expressions/class";
 import { TemplateSpan, TemplateExpression } from "./expressions/template";
-import { ComputedPropertyName, PropertyAccess, ElementAccess, PropertyAccessChain } from "./expressions/property-access";
+import { ComputedPropertyName, PropertyAccess, ElementAccess, PropertyAccessChain, Spread } from "./expressions/property-access";
 import { BindingPattern, BindingElement } from "./expressions/binding-pattern";
 import { ComponentInput } from "./expressions/component-input";
 import { Component } from "./expressions/component";
@@ -389,6 +389,10 @@ export default class Generator {
 
     createElementAccess(expression: Expression, index: Expression): Expression {
         return new ElementAccess(expression, index);
+    }
+
+    createSpread(expression: Expression) { 
+        return new Spread(expression);
     }
 
     createPropertySignature(modifiers: string[] | undefined, name: Identifier, questionToken: string | undefined, type?: TypeExpression, initializer?: Expression) {

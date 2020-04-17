@@ -96,3 +96,9 @@ export class PropertyAccessChain extends ExpressionWithExpression {
         return super.getDependency().concat(this.name.getDependency());
     }
 }
+
+export class Spread extends ExpressionWithExpression { 
+    toString(options?: toStringOptions) { 
+        return `${SyntaxKind.DotDotDotToken}${super.toString(options)}`;
+    }
+}
