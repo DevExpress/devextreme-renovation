@@ -86,9 +86,6 @@ export class Property extends BaseProperty {
         if (this.isInternalState) {
             return `internal_state_${baseValue}`;
         }
-        if (this.isEvent) { 
-            return `this.$emit`;
-        }
         return baseValue
     }
 }
