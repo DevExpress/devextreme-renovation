@@ -10,12 +10,13 @@ import {
 } from "./react-generator";
 import path from "path";
 import { Expression } from "./base-generator/expressions/base";
-import { Identifier, Decorator } from "./base-generator/expressions/common";
+import { Identifier } from "./base-generator/expressions/common";
 import { ImportClause, ImportDeclaration } from "./base-generator/expressions/import";
 import { StringLiteral, ObjectLiteral } from "./base-generator/expressions/literal";
 import { TypeExpression } from "./base-generator/expressions/type";
 import { getModuleRelativePath } from "./base-generator/utils/path-utils";
 import { GeneratorContext as BaseGeneratorContext } from "./base-generator/types";
+import { Decorator } from "./base-generator/expressions/decorator";
 
 const processModuleFileName = (module: string) => `${module}.p`;
 

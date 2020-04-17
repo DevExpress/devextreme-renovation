@@ -8,7 +8,7 @@ import {
     Method as BaseMethod,
     BaseClassMember
 } from "./base-generator/expressions/class-members";
-import { Identifier, Decorator } from "./base-generator/expressions/common";
+import { Identifier } from "./base-generator/expressions/common";
 import { Expression, SimpleExpression } from "./base-generator/expressions/base";
 import {
     JsxAttribute as BaseJsxAttribute,
@@ -27,6 +27,7 @@ import { ExpressionWithTypeArguments, TypeExpression } from "./base-generator/ex
 import { Parameter } from "./base-generator/expressions/functions";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input";
 import { ObjectLiteral } from "./base-generator/expressions/literal";
+import { Decorator } from "./base-generator/expressions/decorator";
 
 const eventsDictionary = {
     pointerover: "onPointerOver",

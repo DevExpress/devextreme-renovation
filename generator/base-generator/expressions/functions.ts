@@ -1,5 +1,5 @@
 import { Expression, SimpleExpression } from "./base";
-import { Decorator, Identifier } from "./common";
+import { Identifier } from "./common";
 import { TypeExpression } from "./type";
 import { toStringOptions, GeneratorContext, VariableExpression } from "../types";
 import { Block, ReturnStatement } from "./statements";
@@ -9,6 +9,7 @@ import { Component } from "./component";
 import { VariableStatement } from "./variables";
 import SyntaxKind from "../syntaxKind";
 import { getJsxExpression } from "./jsx";
+import { Decorator } from "./decorator";
 
 export class Parameter {
     decorators: Decorator[]

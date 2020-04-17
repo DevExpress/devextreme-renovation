@@ -2,10 +2,11 @@ import { Class, Heritable, HeritageClause, inheritMembers } from "./class";
 import { Parameter } from "./functions";
 import { SimpleTypeExpression, FunctionTypeNode } from "./type";
 import { Property, Method, BaseClassMember } from "./class-members";
-import { Decorator, Identifier, Call } from "./common";
+import { Identifier, Call } from "./common";
 import SyntaxKind from "../syntaxKind";
 import { SimpleExpression } from "./base";
 import { capitalizeFirstLetter } from "../utils/string";
+import { Decorator } from "./decorator";
 
 export class ComponentInput extends Class implements Heritable {
     buildChangeStateType(stateMember: Property) {
@@ -27,7 +28,7 @@ export class ComponentInput extends Class implements Heritable {
 
     buildChangeState(stateMember: Property, stateName: Identifier) { 
         return new Property(
-            [new Decorator(new Call(new Identifier("Event"), undefined, []))],
+            [new Decorator(new Call(new Identifier("Event"), undefined, []), {})],
             [],
             stateName,
             SyntaxKind.QuestionToken,
@@ -38,7 +39,7 @@ export class ComponentInput extends Class implements Heritable {
 
     buildDefaultStateProperty(stateMember: Property): Property|null { 
         return new Property(
-            [new Decorator(new Call(new Identifier("OneWay"), undefined, []))],
+            [new Decorator(new Call(new Identifier("OneWay"), undefined, []), {})],
             [],
             new Identifier(`default${capitalizeFirstLetter(stateMember._name)}`),
             SyntaxKind.QuestionToken,

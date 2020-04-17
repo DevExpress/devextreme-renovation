@@ -1,10 +1,11 @@
-import { Decorator, Identifier } from "./common";
+import { Identifier } from "./common";
 import { TypeExpression } from "./type";
 import { Expression, SimpleExpression } from "./base";
 import { toStringOptions } from "../types";
 import { Parameter } from "./functions";
 import { Block } from "./statements";
 import { compileType } from "../utils/string";
+import { Decorator } from "./decorator";
 
 export class BaseClassMember extends Expression { 
     decorators: Decorator[];

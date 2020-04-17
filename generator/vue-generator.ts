@@ -1,6 +1,6 @@
 import BaseGenerator from "./base-generator";
 import { Component } from "./base-generator/expressions/component";
-import { Decorator, Identifier } from "./base-generator/expressions/common";
+import { Identifier } from "./base-generator/expressions/common";
 import { HeritageClause } from "./base-generator/expressions/class";
 import {
     Property as BaseProperty,
@@ -23,6 +23,8 @@ import { ObjectLiteral, StringLiteral, NumericLiteral } from "./base-generator/e
 import { Parameter } from "./base-generator/expressions/functions";
 import { Block } from "./base-generator/expressions/statements";
 import { Function, ArrowFunction, VariableDeclaration } from "./angular-generator";
+import { Decorator } from "./base-generator/expressions/decorator";
+import { BindingPattern } from "./base-generator/expressions/binding-pattern";
 
 function calculatePropertyType(type: TypeExpression): string { 
     if (type instanceof SimpleTypeExpression) {
@@ -141,7 +143,7 @@ class VueGenerator extends BaseGenerator {
         return new ArrowFunction(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body, this.getContext());
     }
 
-    createVariableDeclarationCore(name: Identifier, type?: TypeExpression, initializer?: Expression) {
+    createVariableDeclarationCore(name: Identifier | BindingPattern, type?: TypeExpression, initializer?: Expression) {
         return new VariableDeclaration(name, type, initializer);
     }
 }

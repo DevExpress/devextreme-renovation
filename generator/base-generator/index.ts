@@ -4,7 +4,7 @@ import path from "path";
 import { compileCode } from "../component-compiler";
 import { ImportDeclaration, ImportClause, NamedImports } from "./expressions/import";
 import { SimpleExpression, Expression } from "./expressions/base";
-import { Identifier, Decorator, New, Delete, Paren, Call, NonNullExpression, TypeOf, Void, CallChain, AsExpression } from "./expressions/common";
+import { Identifier, New, Delete, Paren, Call, NonNullExpression, TypeOf, Void, CallChain, AsExpression } from "./expressions/common";
 import {
     JsxExpression,
     JsxAttribute,
@@ -47,6 +47,7 @@ import { ComponentInput } from "./expressions/component-input";
 import { Component } from "./expressions/component";
 import { ExpressionWithTypeArguments } from "./expressions/type";
 import { getModuleRelativePath } from "./utils/path-utils";
+import { Decorator } from "./expressions/decorator";
 
 export default class Generator {
     NodeFlags = {
@@ -81,7 +82,7 @@ export default class Generator {
         return new NumericLiteral(value);
     }
 
-    createVariableDeclaration(name: Identifier, type?: TypeExpression, initializer?: Expression) {
+    createVariableDeclaration(name: Identifier| BindingPattern, type?: TypeExpression, initializer?: Expression) {
         if (initializer) {
             this.addViewFunction(name.toString(), initializer);
         }

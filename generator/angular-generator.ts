@@ -7,7 +7,8 @@ import {
     JsxClosingElement,
     getJsxExpression
 } from "./base-generator/expressions/jsx";
-import { Decorator as BaseDecorator, Call } from "./base-generator/expressions/common";
+import {  Call } from "./base-generator/expressions/common";
+import { Decorator as BaseDecorator } from "./base-generator/expressions/decorator";
 import { VariableDeclaration as BaseVariableDeclaration } from "./base-generator/expressions/variables";
 import {
     Property as BaseProperty, Method
@@ -38,6 +39,7 @@ import { ImportClause } from "./base-generator/expressions/import";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input"
 import { Component, isJSXComponent } from "./base-generator/expressions/component";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access";
+import { BindingPattern } from "./base-generator/expressions/binding-pattern";
 
 // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
 const VOID_ELEMENTS = 
@@ -1168,7 +1170,7 @@ export class AngularGenerator extends Generator {
         return new ArrowFunction(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body, this.getContext());
     }
 
-    createVariableDeclarationCore(name: Identifier, type?: TypeExpression, initializer?: Expression) {
+    createVariableDeclarationCore(name: Identifier | BindingPattern, type?: TypeExpression, initializer?: Expression) {
         return new VariableDeclaration(name, type, initializer);
     }
 

@@ -1,8 +1,9 @@
 import { Expression, ExpressionWithOptionalExpression, ExpressionWithExpression } from "./base";
-import { Decorator, Identifier } from "./common";
+import { Identifier } from "./common";
 import { Parameter } from "./functions";
 import { toStringOptions } from "../types";
 import { compileType } from "../utils/string";
+import { Decorator } from "./decorator";
 
 export class TypeExpression extends Expression { }
 
