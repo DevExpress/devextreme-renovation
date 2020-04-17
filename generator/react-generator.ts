@@ -61,7 +61,8 @@ export class ComponentInput extends BaseComponentInput {
         ${this.modifiers.join(" ")} const ${this.name}:${this.name}={
            ${inherited.concat(
                this.members
-                   .filter(m => !(m as Property).inherited && (m as Property).initializer)
+                   .filter(m => !(m as Property).inherited && (m as Property).initializer && 
+                   (m.decorators.find(d => d.name !== "TwoWay") || (m as Property).questionOrExclamationToken !== "?"))
                    .map(p => (p as Property).defaultDeclaration())
            ).join(",\n")}
         };`;
@@ -142,9 +143,9 @@ export class Property extends BaseProperty {
         if (this.decorators.find(d => d.name === "TwoWay")) {
             const propName = getPropName(this.name);
             const initializer = this.initializer ? `||${this.initializer.toString()}` : "";
-            return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(()=>(${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(this.name)})${initializer});`;
+            return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(()=>(${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(this.name)})${initializer})`;
         }
-        return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(${this.initializer});`;
+        return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(${this.initializer})`;
     }
 }
 
