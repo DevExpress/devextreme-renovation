@@ -1,11 +1,14 @@
-import { Expression } from "./base";
+import { Expression, SimpleExpression } from "./base";
 import { Decorator, Identifier } from "./common";
 import { TypeExpression } from "./type";
-import { toStringOptions, GeneratorContext } from "../types";
-import { Block } from "./statements";
+import { toStringOptions, GeneratorContext, VariableExpression } from "../types";
+import { Block, ReturnStatement } from "./statements";
 import { BindingPattern } from "./binding-pattern";
 import { variableDeclaration, compileType } from "../utils/string";
 import { Component } from "./component";
+import { VariableStatement } from "./variables";
+import SyntaxKind from "../syntaxKind";
+import { getJsxExpression } from "./jsx";
 
 export class Parameter {
     decorators: Decorator[]
@@ -35,6 +38,52 @@ export class Parameter {
 
     toString() {
         return this.name.toString();
+    }
+}
+
+export function getTemplate(
+    functionWithTemplate: BaseFunction,
+    options?: toStringOptions,
+    doNotChangeContext = false
+) {
+    if (!functionWithTemplate.isJsx()) {
+        return;
+    }
+
+    const statements = functionWithTemplate.body instanceof Block ?
+        functionWithTemplate.body.statements :
+        [functionWithTemplate.body];
+    
+    const returnStatement = functionWithTemplate.body instanceof Block ?
+        statements.find(s => s instanceof ReturnStatement) :
+        statements[0];
+
+    if (returnStatement) { 
+        const componentParamenter = functionWithTemplate.parameters[0];
+        if (options) { 
+            if (!doNotChangeContext && componentParamenter && componentParamenter.name instanceof Identifier) { 
+                options.componentContext = componentParamenter.toString();
+            }
+
+            options.variables = statements.reduce((v: VariableExpression, statement) => {
+                if (statement instanceof VariableStatement) { 
+                    return {
+                        ...statement.declarationList.getVariableExpressions(),
+                        ...v
+                    }
+                }
+                return v;
+            }, {});
+
+            if (componentParamenter && componentParamenter.name instanceof BindingPattern) {
+                options.variables = {
+                    ...componentParamenter.name.getVariableExpressions(new SimpleExpression(SyntaxKind.ThisKeyword)),
+                    ...options.variables
+                }
+            }
+        }
+        
+        return getJsxExpression(returnStatement);
     }
 }
 
@@ -70,6 +119,14 @@ export class BaseFunction extends Expression {
             };
         }
         return options;
+    }
+
+    isJsx() { 
+        return this.body.isJsx();
+    }
+
+    getTemplate(options?: toStringOptions, doNotChangeContext = false): string {
+        return getTemplate(this, options, doNotChangeContext)?.toString(options) || "";
     }
 }
 

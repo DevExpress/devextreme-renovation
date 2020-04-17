@@ -21,6 +21,8 @@ import SyntaxKind from "./base-generator/syntaxKind";
 import { Expression } from "./base-generator/expressions/base";
 import { ObjectLiteral, StringLiteral, NumericLiteral } from "./base-generator/expressions/literal";
 import { Parameter } from "./base-generator/expressions/functions";
+import { Block } from "./base-generator/expressions/statements";
+import { Function, ArrowFunction, VariableDeclaration } from "./angular-generator";
 
 function calculatePropertyType(type: TypeExpression): string { 
     if (type instanceof SimpleTypeExpression) {
@@ -129,6 +131,18 @@ class VueGenerator extends BaseGenerator {
 
     createMethod(decorators: Decorator[]| undefined, modifiers: string[]|undefined, asteriskToken: string|undefined, name: Identifier, questionToken: string | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
+    }
+
+    createFunctionDeclarationCore(decorators: Decorator[] | undefined, modifiers: string[] | undefined, asteriskToken: string, name: Identifier, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
+        return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
+    }
+
+    createArrowFunction(modifiers: string[] | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, equalsGreaterThanToken: string, body: Block | Expression) {
+        return new ArrowFunction(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body, this.getContext());
+    }
+
+    createVariableDeclarationCore(name: Identifier, type?: TypeExpression, initializer?: Expression) {
+        return new VariableDeclaration(name, type, initializer);
     }
 }
 

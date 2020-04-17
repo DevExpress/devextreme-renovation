@@ -85,6 +85,10 @@ export class VariableDeclaration extends Expression {
         }
         return {};
     }
+
+    isJsx() { 
+        return this.initializer instanceof Expression && this.initializer.isJsx()
+    }
 }
 
 export class VariableDeclarationList extends Expression {

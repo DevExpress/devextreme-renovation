@@ -290,5 +290,73 @@ mocha.describe("Vue-generator", function () {
             assert.strictEqual(getAst(expression.toString()), getAst("get m(){}"));
         });
     });
+
+    mocha.describe("Template", function () { 
+
+        mocha.describe("View Function", function () { 
+            const viewFunctionBlock = generator.createBlock([
+                generator.createReturn(
+                    generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("div"),
+                        [],
+                        []
+                    )
+                )
+            ], false);
+
+            mocha.it("Function that returns jsx converts to empty string", function () { 
+                const expression = generator.createFunctionDeclaration(
+                    undefined,
+                    undefined,
+                    "",
+                    generator.createIdentifier("view"),
+                    undefined,
+                    [],
+                    undefined,
+                    viewFunctionBlock
+                )
+
+                assert.strictEqual(expression.toString(), "")
+            });
+
+            mocha.it("ArrowFunction that returns jsx converts to empty string", function () { 
+                const expression = generator.createArrowFunction(
+                    undefined,
+                    undefined,
+                    [],
+                    undefined,
+                    generator.SyntaxKind.EqualsGreaterThanToken,
+                    viewFunctionBlock
+                )
+
+                assert.strictEqual(expression.toString(), "")
+            });
+
+            mocha.it("skip jsx function from variable declaration", function () {
+                const functionDeclaration = generator.createFunctionExpression(
+                    [],
+                    "",
+                    undefined,
+                    [],
+                    [],
+                    undefined,
+                    viewFunctionBlock
+                );
+
+                const expression = generator.createVariableStatement([generator.SyntaxKind.ExportKeyword],
+                    generator.createVariableDeclarationList(
+                        [generator.createVariableDeclaration(
+                            generator.createIdentifier("viewFunction"),
+                            undefined,
+                            functionDeclaration
+                        )],
+                        generator.SyntaxKind.ConstKeyword
+                    )
+                );
+
+                assert.strictEqual(expression.toString(), "");
+            });
+        });
+    });
     
 });

@@ -39,7 +39,7 @@ import { ReturnStatement, Block } from "./expressions/statements";
 import { GeneratorContext } from "./types";
 import { VariableDeclaration, VariableDeclarationList, VariableStatement } from "./expressions/variables";
 import { StringLiteral, ArrayLiteral, ObjectLiteral, NumericLiteral } from "./expressions/literal";
-import { Class, HeritageClause, Heritable } from "./expressions/class";
+import { Class, HeritageClause } from "./expressions/class";
 import { TemplateSpan, TemplateExpression } from "./expressions/template";
 import { ComputedPropertyName, PropertyAccess, ElementAccess, PropertyAccessChain, Spread } from "./expressions/property-access";
 import { BindingPattern, BindingElement } from "./expressions/binding-pattern";
@@ -81,7 +81,14 @@ export default class Generator {
         return new NumericLiteral(value);
     }
 
-    createVariableDeclaration(name: Identifier | BindingPattern, type?: TypeExpression, initializer?: Expression) {
+    createVariableDeclaration(name: Identifier, type?: TypeExpression, initializer?: Expression) {
+        if (initializer) {
+            this.addViewFunction(name.toString(), initializer);
+        }
+        return this.createVariableDeclarationCore(name, type, initializer);
+    }
+
+    createVariableDeclarationCore(name: Identifier | BindingPattern, type?: TypeExpression, initializer?: Expression) {
         return new VariableDeclaration(name, type, initializer);
     }
 
@@ -173,7 +180,13 @@ export default class Generator {
         return new Block(statements, multiLine);
     }
 
-    createFunctionDeclaration(decorators: Decorator[]|undefined, modifiers: string[]|undefined, asteriskToken: string, name: Identifier, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, body: Block) {
+    createFunctionDeclaration(decorators: Decorator[] | undefined, modifiers: string[] | undefined, asteriskToken: string, name: Identifier, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
+        const functionDeclaration = this.createFunctionDeclarationCore(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body);
+        this.addViewFunction(functionDeclaration.name!.toString(), functionDeclaration);
+        return functionDeclaration;
+    }
+
+    createFunctionDeclarationCore(decorators: Decorator[]|undefined, modifiers: string[]|undefined, asteriskToken: string, name: Identifier|undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, body: Block) {
         return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
     }
 
@@ -186,7 +199,7 @@ export default class Generator {
     }
 
     createFunctionExpression(modifiers: string[] = [], asteriskToken: string, name: Identifier | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, body: Block) {
-        return new Function([], modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
+        return this.createFunctionDeclarationCore([], modifiers, asteriskToken, name, typeParameters, parameters, type, body);
     }
 
     createToken(token: string) {
@@ -545,6 +558,14 @@ export default class Generator {
             this.context.pop();
         } else {
             this.context.push(context);
+        }
+    }
+
+    addViewFunction(name: string, f: any) {
+        if ((f instanceof Function || f instanceof ArrowFunction) && f.isJsx()) {
+            const context = this.getContext();
+            context.viewFunctions = context.viewFunctions || {};
+            context.viewFunctions[name] = f;
         }
     }
 

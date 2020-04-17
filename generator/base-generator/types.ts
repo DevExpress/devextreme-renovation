@@ -1,6 +1,7 @@
 import { Property, Method } from "./expressions/class-members"
 import { Heritable } from "./expressions/class"
 import { ImportDeclaration } from "./expressions/import"
+import { ArrowFunction, Function } from "./expressions/functions"
 
 export interface IExpression { 
     getDependency(): string[];
@@ -26,5 +27,6 @@ export type GeneratorContext = {
     dirname?: string;
     components?: { [name: string]: Heritable };
     defaultOptionsImport?: ImportDeclaration;
-    defaultOptionsModule?: string
+    defaultOptionsModule?: string;
+    viewFunctions?: { [name: string]: Function | ArrowFunction };
 }
