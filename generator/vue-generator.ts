@@ -1,11 +1,12 @@
 import BaseGenerator from "./base-generator";
 import { Component } from "./base-generator/expressions/component";
-import { Identifier } from "./base-generator/expressions/common";
+import { Identifier, Call as BaseCall } from "./base-generator/expressions/common";
 import { HeritageClause } from "./base-generator/expressions/class";
 import {
     Property as BaseProperty,
     Method as BaseMethod,
-    GetAccessor as BaseGetAccessor
+    GetAccessor as BaseGetAccessor,
+    BaseClassMember
 } from "./base-generator/expressions/class-members";
 import { toStringOptions } from "./base-generator/types";
 import {
@@ -18,7 +19,7 @@ import {
 } from "./base-generator/expressions/type";
 import { capitalizeFirstLetter, compileType } from "./base-generator/utils/string";
 import SyntaxKind from "./base-generator/syntaxKind";
-import { Expression } from "./base-generator/expressions/base";
+import { Expression, SimpleExpression } from "./base-generator/expressions/base";
 import { ObjectLiteral, StringLiteral, NumericLiteral } from "./base-generator/expressions/literal";
 import { Parameter } from "./base-generator/expressions/functions";
 import { Block } from "./base-generator/expressions/statements";
@@ -26,6 +27,7 @@ import { Function, ArrowFunction, VariableDeclaration } from "./angular-generato
 import { Decorator } from "./base-generator/expressions/decorator";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
 import { ComponentInput } from "./base-generator/expressions/component-input";
+import { checkDependency } from "./base-generator/utils/dependency";
 
 function calculatePropertyType(type: TypeExpression): string { 
     if (type instanceof SimpleTypeExpression) {
@@ -84,6 +86,9 @@ export class Property extends BaseProperty {
         if (this.isInternalState) {
             return `internal_state_${baseValue}`;
         }
+        if (this.isEvent) { 
+            return `this.$emit`;
+        }
         return baseValue
     }
 }
@@ -118,7 +123,8 @@ export class VueComponentInput extends ComponentInput {
     
     toString() { 
         const members = this.baseTypes.map(t => `...${t}`)
-            .concat(this.members.map(m => m.toString()));
+            .concat(this.members.map(m => m.toString()))
+            .filter(m => m);
         return `${this.modifiers.join(" ")} const ${this.name} = {
             ${members.join(",")}
         }`;
@@ -126,7 +132,47 @@ export class VueComponentInput extends ComponentInput {
 }
 
 export class VueComponent extends Component { 
+    createRestPropsGetter(members: BaseClassMember[]) {
+        return new GetAccessor(
+            undefined,
+            undefined,
+            new Identifier('restAttributes'),
+            [], undefined,
+            new Block([
+                new SimpleExpression("return {}")
+            ], true));
+    }
+    
+    toString() { 
+        return `${this.modifiers.join(" ")} {
+            props: ${this.heritageClauses[0].defaultProps[0]},
+            methods: {
+                ${this.methods.map(m => m.toString({
+                    members: this.members,
+                    componentContext: "this",
+                    newComponentContext: "this"
+                }))}
+            }
+        }`;
+    }
+}
 
+export class Call extends BaseCall { 
+    getEventName(name: Identifier) { 
+        const words = name.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
+        return words.join("-");
+    }
+    toString(options?: toStringOptions) { 
+        let expression: Expression = this.expression;
+        if (this.expression instanceof Identifier && options?.variables && options.variables[expression.toString()]) { 
+            expression = options?.variables && options.variables[expression.toString()];
+        }
+        const eventMember = checkDependency(expression, options?.members.filter(m => m.isEvent));
+        if (eventMember) { 
+            return `this.$emit("${this.getEventName(eventMember._name)}", ${this.argumentsArray.map(a => a.toString(options)).join(",")})`;
+        }
+        return super.toString(options);
+    }
 }
 
 
@@ -162,6 +208,10 @@ class VueGenerator extends BaseGenerator {
 
     createVariableDeclarationCore(name: Identifier | BindingPattern, type?: TypeExpression, initializer?: Expression) {
         return new VariableDeclaration(name, type, initializer);
+    }
+
+    createCall(expression: Expression, typeArguments: any, argumentsArray?: Expression[]) {
+        return new Call(expression, typeArguments, argumentsArray);
     }
 }
 

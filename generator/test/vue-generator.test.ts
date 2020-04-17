@@ -4,7 +4,7 @@ import generator from "../vue-generator";
 import compile from "../component-compiler";
 import path from "path";
 
-import { printSourceCodeAst as getAst, createTestGenerator } from "./helpers/common";
+import { printSourceCodeAst as getAst } from "./helpers/common";
 import componentCreator from "./helpers/create-component";
 const { createDecorator } = componentCreator(generator);
 
@@ -177,6 +177,7 @@ mocha.describe("Vue-generator", function () {
                 }}`));
             });
         });
+
         mocha.describe("Internal state", function () {
             const decorators = [createDecorator("InternalState")];
 
@@ -223,6 +224,57 @@ mocha.describe("Vue-generator", function () {
         
                 assert.strictEqual(expression.toString(), "");
             });
+        });
+    });
+
+    mocha.describe("Call", function () { 
+        mocha.it("Call expression generates usual call if not event", function () { 
+            assert.equal(generator.createCall(
+                generator.createIdentifier("a"),
+                undefined,
+                [generator.createNumericLiteral("10")]
+            ).toString(), 'a(10)');
+        });
+
+        mocha.it("Call expression generates emit if call Event", function () { 
+            const member = generator.createProperty(
+                [createDecorator("Event")],
+                undefined,
+                generator.createIdentifier("onClick")
+            )
+            assert.equal(generator.createCall(
+                generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("onClick")
+                ),
+                undefined,
+                [generator.createNumericLiteral("10")]
+            ).toString({members: [member]}), 'this.$emit("on-click", 10)');
+        });
+
+        mocha.it("Call expression generates emit if call Event using variable", function () { 
+            const member = generator.createProperty(
+                [createDecorator("Event")],
+                undefined,
+                generator.createIdentifier("onClick")
+            );
+            const expression = generator.createCall(
+                generator.createIdentifier("click"),
+                undefined,
+                [generator.createNumericLiteral("10")]
+            );
+
+            const propertyAccess = generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("onClick")
+            );
+
+            assert.equal(expression.toString({
+                members: [member],
+                variables: {
+                    click: propertyAccess
+                }
+            }), 'this.$emit("on-click", 10)');
         });
     });
 
