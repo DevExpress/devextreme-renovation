@@ -27,7 +27,8 @@ import {
     IntersectionTypeNode,
     UnionTypeNode,
     TypeQueryNode,
-    ParenthesizedType
+    ParenthesizedType,
+    LiteralTypeNode
 } from "./expressions/type";
 import { Method, GetAccessor, Property } from "./expressions/class-members";
 import { For, ForIn, Do, While } from "./expressions/cycle";
@@ -37,7 +38,7 @@ import { Binary, Prefix, Postfix } from "./expressions/operators";
 import { ReturnStatement, Block } from "./expressions/statements";
 import { GeneratorContext } from "./types";
 import { VariableDeclaration, VariableDeclarationList, VariableStatement } from "./expressions/variables";
-import { StringLiteral, ArrayLiteral, ObjectLiteral } from "./expressions/literal";
+import { StringLiteral, ArrayLiteral, ObjectLiteral, NumericLiteral } from "./expressions/literal";
 import { Class, HeritageClause, Heritable } from "./expressions/class";
 import { TemplateSpan, TemplateExpression } from "./expressions/template";
 import { ComputedPropertyName, PropertyAccess, ElementAccess, PropertyAccessChain, Spread } from "./expressions/property-access";
@@ -77,7 +78,7 @@ export default class Generator {
     }
 
     createNumericLiteral(value: string, numericLiteralFlags = ""): Expression {
-        return new SimpleExpression(value);
+        return new NumericLiteral(value);
     }
 
     createVariableDeclaration(name: Identifier | BindingPattern, type?: TypeExpression, initializer?: Expression) {
@@ -408,7 +409,7 @@ export default class Generator {
     }
 
     createLiteralTypeNode(literal: Expression) { 
-        return new SimpleTypeExpression(literal.toString());
+        return new LiteralTypeNode(literal);
     }
 
     createTypeAliasDeclaration(decorators: Decorator[]|undefined, modifiers: string[]=[], name: Identifier, typeParameters: any, type: TypeExpression) { 

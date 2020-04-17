@@ -16,6 +16,9 @@ export class StringLiteral extends SimpleExpression {
     }
 }
 
+export class NumericLiteral extends SimpleExpression {
+}
+
 export class ArrayLiteral extends Expression {
     elements: Expression[];
     multiLine: boolean;

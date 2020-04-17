@@ -160,4 +160,12 @@ export class Property extends BaseClassMember {
     toString() { 
         return `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.typeDeclaration()} ${this.initializer && this.initializer.toString() ? `= ${this.initializer.toString()}` : ""}`;
     }
+
+    get isInternalState() { 
+        return this.decorators.some(d => d.name === "InternalState") || this.decorators.length === 0;
+    }
+
+    get isEvent() { 
+        return this.decorators.some(d => d.name === "Event");
+    }
 }

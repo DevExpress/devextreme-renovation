@@ -179,3 +179,16 @@ export class ParenthesizedType extends TypeExpression {
         return `(${this.expression})`;
     }
 }
+
+export class LiteralTypeNode extends TypeExpression { 
+    expression: Expression;
+
+    constructor(expression: Expression) { 
+        super();
+        this.expression = expression;
+    }
+
+    toString() { 
+        return this.expression.toString();
+    }
+}
