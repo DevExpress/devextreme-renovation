@@ -9,6 +9,11 @@ import { capitalizeFirstLetter } from "../utils/string";
 import { Decorator } from "./decorator";
 
 export class ComponentInput extends Class implements Heritable {
+
+    get baseTypes() { 
+        return this.heritageClauses.reduce((t: string[], h) => t.concat(h.typeNodes.map(t => t.toString())), []);
+    }
+
     buildChangeStateType(stateMember: Property) {
         return new FunctionTypeNode(
             undefined,

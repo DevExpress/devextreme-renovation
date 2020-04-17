@@ -50,7 +50,7 @@ function stateSetter(stateName: Identifier | string) {
 
 export class ComponentInput extends BaseComponentInput { 
     toString() { 
-        const inherited = this.heritageClauses.reduce((t: string[], h) => t.concat(h.typeNodes.map(t => `...${t}`)), []);
+        const inherited = this.baseTypes.map(t => `...${t}`);
        
         const types = this.heritageClauses.reduce((t: string[], h) => t.concat(h.typeNodes.map(t => `typeof ${t}`)), []);
 

@@ -25,6 +25,7 @@ import { Block } from "./base-generator/expressions/statements";
 import { Function, ArrowFunction, VariableDeclaration } from "./angular-generator";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
+import { ComponentInput } from "./base-generator/expressions/component-input";
 
 function calculatePropertyType(type: TypeExpression): string { 
     if (type instanceof SimpleTypeExpression) {
@@ -113,12 +114,28 @@ export class GetAccessor extends BaseGetAccessor {
     }
 }
 
+export class VueComponentInput extends ComponentInput { 
+    
+    toString() { 
+        const members = this.baseTypes.map(t => `...${t}`)
+            .concat(this.members.map(m => m.toString()));
+        return `${this.modifiers.join(" ")} const ${this.name} = {
+            ${members.join(",")}
+        }`;
+    }
+}
+
 export class VueComponent extends Component { 
 
 }
 
 
 class VueGenerator extends BaseGenerator { 
+    
+    createComponentBindings(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) {
+        return new VueComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members)
+    }
+
     createComponent(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: any, heritageClauses: HeritageClause[], members: Array<Property | Method>) {
         return new VueComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members, this.getContext());
     }

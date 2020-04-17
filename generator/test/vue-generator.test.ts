@@ -358,5 +358,72 @@ mocha.describe("Vue-generator", function () {
             });
         });
     });
+
+    mocha.describe("Component Input", function () { 
+        mocha.it("Component Binding should be an object", function () { 
+            const expression = generator.createClassDeclaration(
+                [createDecorator("ComponentBindings")],
+                ["export", "default"],
+                generator.createIdentifier("Props"),
+                [],
+                [],
+                [
+                    generator.createProperty(
+                        [createDecorator("OneWay")],
+                        [],
+                        generator.createIdentifier("p"),
+                        undefined,
+                        generator.createKeywordTypeNode("string"),
+                        undefined
+                    ),
+                    generator.createProperty(
+                        [createDecorator("OneWay")],
+                        [],
+                        generator.createIdentifier("p1"),
+                        undefined,
+                        generator.createKeywordTypeNode("number"),
+                        undefined
+                    )
+                ]
+            );
+
+            assert.strictEqual(getAst(expression.toString()), getAst(`export default const Props = {
+                p: {type: String},
+                p1: {type: Number}
+            }`));
+        });
+
+        mocha.it("Component with heritage clauses", function () { 
+            const expression = generator.createClassDeclaration(
+                [createDecorator("ComponentBindings")],
+                ["export", "default"],
+                generator.createIdentifier("Props"),
+                [],
+                [
+                    generator.createHeritageClause(
+                        generator.SyntaxKind.ExtendsKeyword,
+                        [generator.createExpressionWithTypeArguments(
+                            undefined,
+                            generator.createIdentifier("Base")
+                        )])
+                ],
+                [
+                    generator.createProperty(
+                        [createDecorator("OneWay")],
+                        [],
+                        generator.createIdentifier("p"),
+                        undefined,
+                        generator.createKeywordTypeNode("string"),
+                        undefined
+                    )
+                ]
+            );
+
+            assert.strictEqual(getAst(expression.toString()), getAst(`export default const Props = {
+                ...Base,
+                p: {type: String}
+            }`));
+        });
+    });
     
 });
