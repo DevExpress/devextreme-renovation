@@ -79,7 +79,7 @@ export class Property extends BaseProperty {
             parts.push("required: true")
         }
 
-        if (this.initializer) { 
+        if (this.initializer && !this.isState) { 
             parts.push(`default(){
                 return ${this.initializer}
             }`)
@@ -92,9 +92,6 @@ export class Property extends BaseProperty {
 
     getter() { 
         const baseValue = super.getter();
-        if (this.isInternalState) {
-            return `internal_state_${baseValue}`;
-        }
         return baseValue
     }
 }
@@ -126,6 +123,19 @@ export class GetAccessor extends BaseGetAccessor {
 }
 
 export class VueComponentInput extends ComponentInput { 
+    buildDefaultStateProperty() { 
+        return null;
+    }
+    
+    buildChangeState(stateMember: Property, stateName: Identifier) { 
+        return  new Property(
+            [new Decorator(new Call(new Identifier("Event"), undefined, []), {})],
+            [],
+            stateName,
+            undefined,
+            this.buildChangeStateType(stateMember)
+        );
+    }
     
     toString() { 
         const members = this.baseTypes.map(t => `...${t}`)
@@ -147,6 +157,32 @@ export class VueComponent extends Component {
             new Block([
                 new SimpleExpression("return {}")
             ], true));
+    }
+
+    processMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) { 
+        members = super.processMembers(members, heritageClauses);
+        members = members.reduce((members, m) => { 
+            if (m.isState) { 
+                const base = (m as Property);
+                members.push(
+                    new Property(
+                        [new Decorator(
+                            new Call(new Identifier("InternalState"), undefined, []),
+                            {}
+                        )],
+                        [],
+                        new Identifier(`${m._name}_state`),
+                        "",
+                        m.type,
+                        base.initializer && new SimpleExpression(
+                            `this.${base.getter()}!==undefined?this.${base.getter()}:${base.initializer}`
+                        )
+                    )
+                )
+            }
+            return members;
+        }, members);
+        return members;
     }
 
     generateProps() {

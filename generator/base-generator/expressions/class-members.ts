@@ -46,6 +46,10 @@ export class BaseClassMember extends Expression {
         return this.decorators.some(d => d.name === "Event");
     }
 
+    get isState() { 
+        return this.decorators.some(d => d.name === "TwoWay");
+    }
+
 }
 
 export class Method extends BaseClassMember {

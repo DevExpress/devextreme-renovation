@@ -228,6 +228,21 @@ mocha.describe("Vue-generator", function () {
                     return 10;
                 }}`));
             });
+
+            mocha.describe("TwoWay", function () { 
+                mocha.it("shouldn't have initializer", function () {
+                    const expression = generator.createProperty(
+                        [createDecorator("TwoWay")],
+                        undefined,
+                        name,
+                        generator.SyntaxKind.QuestionToken,
+                        generator.createKeywordTypeNode("boolean"),
+                        generator.createTrue()
+                    );
+            
+                    assert.strictEqual(getAst(expression.toString()), getAst("p: {type: Boolean}"));
+                });
+            });
         });
 
         mocha.describe("Internal state", function () {
@@ -244,8 +259,8 @@ mocha.describe("Vue-generator", function () {
                     undefined
                 );
         
-                assert.strictEqual(getAst(expression.toString()), getAst("internal_state_p: undefined"));
-                assert.strictEqual(expression.getter(), "internal_state_p");
+                assert.strictEqual(getAst(expression.toString()), getAst("p: undefined"));
+                assert.strictEqual(expression.getter(), "p");
             });
 
             mocha.it("with initializer", function () {
@@ -259,7 +274,7 @@ mocha.describe("Vue-generator", function () {
                     generator.createNumericLiteral("10")
                 );
         
-                assert.strictEqual(getAst(expression.toString()), getAst("internal_state_p: 10"));
+                assert.strictEqual(getAst(expression.toString()), getAst("p: 10"));
             });
         });
 
