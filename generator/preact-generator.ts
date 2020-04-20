@@ -71,6 +71,10 @@ class JQueryComponent {
         if(this.source.props.find(p => p.name === "onKeyDown" && p.decorators.find(d => d.name === "Event"))) {
             statements.push("props.onKeyDown = this._wrapKeyDownHandler(props.onKeyDown);");
         }
+
+        statements.splice(-1, 0, ...this.source.state.map(s => {
+            return `props.${s.name}Change = this._stateChange('${s.name}')`
+        }));
     
         if(!statements.length) {
             return "";

@@ -253,4 +253,8 @@ mocha.describe("preact-generator: jQuery generation", function () {
     mocha.it("jquery-template", function () {
         this.testGenerator(this.test!.title);
     });
+
+    mocha.it("jquery-state", function () {
+        this.testGenerator(this.test!.title);
+    });
 });
