@@ -157,6 +157,8 @@ export class VueComponentInput extends ComponentInput {
 }
 
 export class VueComponent extends Component { 
+    template?: string;
+
     createRestPropsGetter(members: BaseClassMember[]) {
         return new GetAccessor(
             undefined,
@@ -192,6 +194,16 @@ export class VueComponent extends Component {
             return members;
         }, members);
         return members;
+    }
+
+    compileTemplate() {
+        const viewFunction = this.decorators[0].getViewFunction();
+        if (viewFunction) {
+            this.template = viewFunction.getTemplate({
+                members: this.members,
+                newComponentContext: ""
+            });
+        }
     }
 
     generateProps() {
@@ -232,6 +244,8 @@ export class VueComponent extends Component {
     }
     
     toString() { 
+        this.compileTemplate();
+
         const statements = [
             this.generateProps(),
             this.generateData(),
@@ -311,9 +325,16 @@ class VueGenerator extends BaseGenerator {
     }
 
     processCodeFactoryResult(codeFactoryResult: Array<any>) { 
+        const code = codeFactoryResult.join("\n");
+        const template = codeFactoryResult.find(r => r instanceof VueComponent)?.template;
         return `
+            ${template ? `
+            <template>
+            ${template}
+            </template>`
+            : ""}
             ${"<script>"}
-            ${codeFactoryResult.join("\n")}
+            ${code}
             ${"</script>"}
         `;
     }

@@ -1,3 +1,6 @@
+<template>
+    <div>{(pressed !== undefined ? pressed : pressed_state)}</div>
+</template> 
  <script>
 const WidgetInput = {
   pressed: {

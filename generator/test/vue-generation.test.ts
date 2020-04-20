@@ -5,19 +5,33 @@ import path from "path";
 
 import { createTestGenerator, assertCode } from "./helpers/common";
 
-function getCodeFromSourceFile(code: string) { 
-    const scriptTag = "<script>";
-    const startPosition = code.indexOf(scriptTag) + scriptTag.length;
-    const endPosition = code.indexOf("</script>");
+function getPartFromSourceFile(code: string, tagName: string){ 
+    const tag = `<${tagName}>`;
+    const startPosition = code.indexOf(tag) + tag.length;
+    const endPosition = code.indexOf(`</${tagName}>`);
+    if (startPosition === -1 || endPosition === -1) { 
+        return "";
+    }
 
     return code.slice(startPosition, endPosition);
+}
+
+function getCodeFromSourceFile(code: string) { 
+    return getPartFromSourceFile(code, "script");
+}
+
+function getTemplateFromSourceFile(code: string) { 
+    const template = getPartFromSourceFile(code, "template");
+    return String.raw`\`${template}\``;
 }
 
 mocha.describe("vue-generation", function () {
     const testGenerator = createTestGenerator(
         "vue",
-        (code, expreactedCode) => 
-            assertCode(getCodeFromSourceFile(code), getCodeFromSourceFile(expreactedCode)),
+        (code, expreactedCode) => {
+            assertCode(getCodeFromSourceFile(code), getCodeFromSourceFile(expreactedCode));
+            assertCode(getTemplateFromSourceFile(code), getTemplateFromSourceFile(expreactedCode));
+        },
         (componentName) => `${componentName}.vue`
     );
     this.beforeAll(function () {
