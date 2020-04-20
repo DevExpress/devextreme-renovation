@@ -712,17 +712,18 @@ export class Property extends BaseProperty {
         return defaultValue;
     }
 
-    getter() { 
+    getter(componentContext?: string) { 
+        componentContext = this.processComponentContext(componentContext);
         if (this.decorators.find(d => d.name === "Event")) { 
-            return `${this.name}!.emit`;
+            return `${componentContext}${this.name}!.emit`;
         }
         if (this.decorators.find(d => d.name === "Ref")) { 
-            return `${this.name}${this.questionOrExclamationToken}.nativeElement`
+            return `${componentContext}${this.name}${this.questionOrExclamationToken}.nativeElement`
         }
         if (this.decorators.find(d => d.name === "ApiRef")) { 
-            return `${this.name}`
+            return `${componentContext}${this.name}`
         }
-        return this.name.toString();
+        return `${componentContext}${this.name}`;
     }
 
     getDependency() { 

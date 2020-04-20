@@ -28,6 +28,7 @@ import { Decorator } from "./base-generator/expressions/decorator";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
 import { ComponentInput } from "./base-generator/expressions/component-input";
 import { checkDependency } from "./base-generator/utils/dependency";
+import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access"
 
 function calculatePropertyType(type: TypeExpression): string { 
     if (type instanceof SimpleTypeExpression) {
@@ -62,7 +63,7 @@ function calculatePropertyType(type: TypeExpression): string {
 export class Property extends BaseProperty { 
     toString(options?: toStringOptions) {
         if (this.isInternalState) { 
-            return `${this.getter()}: ${this.initializer}`;
+            return `${this.name}: ${this.initializer}`;
         } 
 
         if (this.isEvent) { 
@@ -90,9 +91,17 @@ export class Property extends BaseProperty {
         }`;
     }
 
-    getter() { 
-        const baseValue = super.getter();
+    getter(componentContext?: string) { 
+        const baseValue = super.getter(componentContext);
+        componentContext = this.processComponentContext(componentContext);
+        if (this.isState) { 
+            return `(${componentContext}${this.name} !== undefined ? ${componentContext}${this.name} : ${componentContext}${this.name}_state)`;
+        }
         return baseValue
+    }
+
+    inherit() { 
+        return new Property(this.decorators, this.modifiers, this._name, this.questionOrExclamationToken, this.type, this.initializer, true);
     }
 }
 
@@ -117,8 +126,8 @@ export class GetAccessor extends BaseGetAccessor {
         return compileMethod(this, options)
     }
 
-    getter() { 
-        return `${super.getter()}()`;
+    getter(componentContext?: string) { 
+        return `${this.processComponentContext(componentContext)}${super.getter()}()`;
     }
 }
 
@@ -175,7 +184,7 @@ export class VueComponent extends Component {
                         "",
                         m.type,
                         base.initializer && new SimpleExpression(
-                            `this.${base.getter()}!==undefined?this.${base.getter()}:${base.initializer}`
+                            `this.${base.name}!==undefined?this.${base.name}:${base.initializer}`
                         )
                     )
                 )
@@ -252,6 +261,12 @@ export class Call extends BaseCall {
     }
 }
 
+export class PropertyAccess extends BasePropertyAccess { 
+    compileStateSetting(state: string, property: Property, options?: toStringOptions) {
+        const propertyName = property.isState ? `${property.name}_state` : property.name;
+        return `this.${propertyName}=${state}`;
+    }
+}
 
 class VueGenerator extends BaseGenerator { 
     
@@ -301,6 +316,10 @@ class VueGenerator extends BaseGenerator {
             ${codeFactoryResult.join("\n")}
             ${"</script>"}
         `;
+    }
+
+    createPropertyAccess(expression: Expression, name: Identifier) {
+        return new PropertyAccess(expression, name);
     }
 }
 

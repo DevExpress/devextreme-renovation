@@ -36,12 +36,12 @@ const eventsDictionary = {
     click: "onClick"
 }
 
-function getLocalStateName(name: Identifier | string) {
-    return `__state_${name}`;
+function getLocalStateName(name: Identifier | string, componentContext: string="") {
+    return `${componentContext}__state_${name}`;
 }
 
-function getPropName(name: Identifier | string) {
-    return `props.${name}`;
+function getPropName(name: Identifier | string, componentContext:string="") {
+    return `${componentContext}props.${name}`;
 }
 
 function stateSetter(stateName: Identifier | string) {
@@ -108,16 +108,17 @@ export class Property extends BaseProperty {
         return super.typeDeclaration();
     }
 
-    getter() { 
+    getter(componentContext?: string) { 
+        componentContext = this.processComponentContext(componentContext);
         if (this.decorators.find(d => d.name === "InternalState") || this.decorators.length===0) {
-            return getLocalStateName(this.name);
+            return getLocalStateName(this.name, componentContext);
         } else if (this.decorators.find(d => d.name === "OneWay" ||  d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
-            return getPropName(this.name);
+            return getPropName(this.name, componentContext);
         } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
             return `${this.name}.current${this.questionOrExclamationToken}`
         } else if (this.decorators.find(d => d.name === "TwoWay")) { 
-            const propName = getPropName(this.name);
-            return `(${propName}!==undefined?${propName}:${getLocalStateName(this.name)})`;
+            const propName = getPropName(this.name, componentContext);
+            return `(${propName}!==undefined?${propName}:${getLocalStateName(this.name, componentContext)})`;
         }
         throw `Can't parse property: ${this._name}`;
     }

@@ -42,7 +42,7 @@ export class PropertyAccess extends ExpressionWithExpression {
                 .filter(m => expressionString === usePropsSpace ? m.inherited : true)
                 .find(m => m._name.toString() === this.name.toString());
             if (member) { 
-                return `${options?.newComponentContext ? `${options.newComponentContext}.` : ""}${member.getter()}`;
+                return `${member.getter(options?.newComponentContext)}`;
             }
         }
 
@@ -59,7 +59,7 @@ export class PropertyAccess extends ExpressionWithExpression {
     }
 
     compileStateSetting(state: string, property: Property, options?: toStringOptions) {
-        return `this.${property.getter()}=${state}`;
+        return `this.${property.name}=${state}`;
     }
 
     getDependency(options?: toStringOptions) {

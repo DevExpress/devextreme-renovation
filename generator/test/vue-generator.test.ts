@@ -29,6 +29,7 @@ mocha.describe("Vue-generator", function () {
         
                     assert.strictEqual(getAst(expression.toString()), getAst("p: {type: String}"));
                     assert.strictEqual(expression.getter(), "p");
+                    assert.strictEqual(expression.getter("this"), "this.p");
                 });
         
                 mocha.it("Property with ArrayTypeNode", function () { 
@@ -414,6 +415,7 @@ mocha.describe("Vue-generator", function () {
                 members:[]
             })), getAst("m(){}"));
             assert.strictEqual(expression.getter(), "m()");
+            assert.strictEqual(expression.getter("this"), "this.m()");
         });
 
     });

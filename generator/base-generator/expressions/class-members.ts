@@ -29,8 +29,12 @@ export class BaseClassMember extends Expression {
         return `${this.prefix}${this._name}`;
     }
 
-    getter() { 
-        return this.name;
+    processComponentContext(componentContext: string = "") { 
+        return componentContext.length ? `${componentContext}.` : "";
+    }
+
+    getter(componentContext?: string) { 
+        return `${this.processComponentContext(componentContext)}${this.name}`;
     }
 
     isReadOnly() { 
@@ -115,8 +119,8 @@ export class GetAccessor extends Method {
         return `${this._name}:${this.type}`;
     }
 
-    getter() { 
-        return `${this.name}`;
+    getter(componentContext?: string) { 
+        return `${this.processComponentContext(componentContext)}${this.name}`;
     }
 
     toString(options?: toStringOptions) { 
@@ -153,8 +157,8 @@ export class Property extends BaseClassMember {
         return `${this.name}:${this.initializer}`;;
     }
 
-    getter() {
-        return this._name.toString();
+    getter(componentContext?: string) {
+        return `${this.processComponentContext(componentContext)}${this._name.toString()}`;
     }
 
     isReadOnly() {

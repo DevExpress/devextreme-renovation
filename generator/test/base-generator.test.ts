@@ -551,17 +551,20 @@ mocha.describe("base-generator: expressions", function () {
         });
 
         mocha.it("PropertyAccess compileStateSetting", function () {
-            assert.equal(generator.createPropertyAccess(
+            const expression = generator.createPropertyAccess(
                 generator.createThis(),
                 generator.createIdentifier("field")
-            ).compileStateSetting("value", generator.createProperty(
+            );
+            const property = generator.createProperty(
                 [],
                 undefined,
                 generator.createIdentifier("field"),
                 undefined,
                 undefined,
                 undefined
-            )), "this.field=value");
+            );
+
+            assert.equal(expression.compileStateSetting("value", property), "this.field=value");
         });
     
         mocha.it("ElementAccess", function () {

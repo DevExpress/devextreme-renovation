@@ -1,4 +1,4 @@
-<script>
+ <script>
 const WidgetInput = {
   pressed: {
     type: Boolean
@@ -17,7 +17,9 @@ export default {
   },
   methods: {
     updateState() {
-      this.pressed = !this.pressed;
+      this.pressed_state = !(this.pressed !== undefined
+        ? this.pressed
+        : this.pressed_state);
     },
     restAttributes() {
       return {};
