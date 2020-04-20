@@ -111,18 +111,12 @@ export class Parameter extends BaseParameter {
 
 export class Method extends BaseMethod { 
     toString(options?: toStringOptions) { 
-        if (!options) { 
-            return super.toString();
-        }
         return compileMethod(this, options)
     }
 }
 
 export class GetAccessor extends BaseGetAccessor { 
     toString(options?: toStringOptions): string { 
-        if (!options) { 
-            return super.toString();
-        }
         return compileMethod(this, options)
     }
 
