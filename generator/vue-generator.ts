@@ -148,17 +148,52 @@ export class VueComponent extends Component {
                 new SimpleExpression("return {}")
             ], true));
     }
+
+    generateProps() {
+        if (this.isJSXComponent) { 
+            return `props: ${this.heritageClauses[0].defaultProps[0]}`;
+        }
+        return "";
+    }
+
+    generateData() { 
+        const statements: string[] = [];
+        if (this.internalState.length) { 
+            statements.push.apply(statements, this.internalState.map(i=>i.toString()))
+        }
+
+        if (statements.length) { 
+            return `data() {
+                return {
+                    ${statements.join(",\n")}
+                };
+            }`;
+        }
+        return "";
+    }
+
+    generateMethods() { 
+        const statements: string[] = [];
+
+        statements.push.apply(statements, this.methods.map(m => m.toString({
+            members: this.members,
+            componentContext: "this",
+            newComponentContext: "this"
+        })));
+
+        return `methods: {
+                ${statements.join(",\n")}
+         }`;
+    }
     
     toString() { 
+        const statements = [
+            this.generateProps(),
+            this.generateData(),
+            this.generateMethods()
+        ].filter(s => s);
         return `${this.modifiers.join(" ")} {
-            props: ${this.heritageClauses[0].defaultProps[0]},
-            methods: {
-                ${this.methods.map(m => m.toString({
-                    members: this.members,
-                    componentContext: "this",
-                    newComponentContext: "this"
-                }))}
-            }
+            ${statements.join(",\n")}
         }`;
     }
 }

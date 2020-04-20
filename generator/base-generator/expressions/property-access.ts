@@ -59,7 +59,7 @@ export class PropertyAccess extends ExpressionWithExpression {
     }
 
     compileStateSetting(state: string, property: Property, options?: toStringOptions) {
-        return `this.${this.name}=${state}`;
+        return `this.${property.getter()}=${state}`;
     }
 
     getDependency(options?: toStringOptions) {
