@@ -889,7 +889,7 @@ mocha.describe("base-generator: expressions", function () {
                 generator.createVariableStatement([
                     generator.SyntaxKind.DefaultKeyword,
                     generator.SyntaxKind.ExportKeyword
-                ], declarationList).toString(), 'default export const a="str";');
+                ], declarationList).toString(), 'default export const a="str"');
         });
 
         mocha.describe("VaraibleDeclarationList", function () {

@@ -1,5 +1,7 @@
 import { Expression, ExpressionWithExpression } from "./base";
 import { toStringOptions } from "../types";
+import { Paren } from "./common";
+import { VariableStatement } from "./variables";
 
 export class Block extends Expression {
     statements: Expression[];
@@ -12,7 +14,12 @@ export class Block extends Expression {
 
     toString(options?: toStringOptions) {
         return `{
-            ${this.statements.map(s => s.toString(options)).join("\n")}
+            ${this.statements.map(s => {
+                const main = s.toString(options);
+                const tail = ((s instanceof Paren) 
+                || (s instanceof VariableStatement)) ? ";" : ""
+                return `${main}${tail}`
+            }).join("\n")}
         }`
     }
 

@@ -131,7 +131,7 @@ export class VariableStatement extends Expression {
 
     toString(options?: toStringOptions) {
         const declarationList = this.declarationList.toString(options);
-        return declarationList ? `${this.modifiers.join(" ")} ${declarationList};` : "";
+        return declarationList ? `${this.modifiers.join(" ")} ${declarationList}` : "";
     }
 
     getDependency() {
