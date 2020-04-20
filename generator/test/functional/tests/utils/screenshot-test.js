@@ -33,7 +33,9 @@ const screenshotTest = async (t, selector, etalonName) => {
                 }
             );
         } else {
-            fs.mkdirSync(etalonDir);
+            if (!fs.existsSync(etalonDir)) {
+                fs.mkdirSync(etalonDir);
+            }
             fs.copyFileSync(screenshotPath, etalonPath);
             resolve(true);
         }
