@@ -17,5 +17,10 @@ export default class Widget extends JSXComponent<WidgetInput> {
     updateState() {
         this.props.state1 = !this.props.state1;
     }
+
+    updateState2() {
+        const cur = this.props.state2;
+        this.props.state2 = cur !== false ? false : true;
+    }
 }
   

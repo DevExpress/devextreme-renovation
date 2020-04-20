@@ -19,6 +19,12 @@ export default class Widget extends WidgetInput {
     __updateState(): any {
         this.state1Change!.emit(this.state1 = !this.state1)
     }
+
+    __updateState2(): any {
+        const cur = this.state2;
+        this.state2Change!.emit(this.state2 = cur !== false ? false : true)
+    }
+
     get restAttributes(){
         return {}
     }
