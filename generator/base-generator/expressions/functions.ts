@@ -33,12 +33,8 @@ export class Parameter {
         return variableDeclaration(this.name, this.type?.toString() || "any", undefined, this.questionToken);
     }
 
-    declaration() {
-        return variableDeclaration(this.name, this.type?.toString(), this.initializer, this.questionToken);
-    }
-
     toString() {
-        return this.name.toString();
+        return variableDeclaration(this.name, this.type?.toString(), this.initializer, this.questionToken);
     }
 }
 
@@ -63,7 +59,7 @@ export function getTemplate(
         const componentParamenter = functionWithTemplate.parameters[0];
         if (options) { 
             if (!doNotChangeContext && componentParamenter && componentParamenter.name instanceof Identifier) { 
-                options.componentContext = componentParamenter.toString();
+                options.componentContext = componentParamenter.name.toString();
             }
 
             options.variables = statements.reduce((v: VariableExpression, statement) => {
@@ -147,7 +143,7 @@ export class Function extends BaseFunction {
     toString(options?: toStringOptions) {
         options = this.getToStringOptions(options);
         return `${this.modifiers.join(" ")} function ${this.name || ""}(${
-            this.parameters.map(p => p.declaration()).join(",")
+            this.parameters
             })${compileType(this.type?.toString())}${this.body.toString(options)}`;
     }
 }
@@ -167,6 +163,6 @@ export class ArrowFunction extends BaseFunction {
 
     toString(options?: toStringOptions) {
         const bodyString = this.body.toString(this.getToStringOptions(options));
-        return `${this.modifiers.join(" ")} (${this.parameters.map(p => p.declaration()).join(",")})${compileType(this.type?.toString())} ${this.equalsGreaterThanToken} ${bodyString}`;
+        return `${this.modifiers.join(" ")} (${this.parameters})${compileType(this.type?.toString())} ${this.equalsGreaterThanToken} ${bodyString}`;
     }
 }

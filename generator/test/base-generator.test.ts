@@ -638,8 +638,7 @@ mocha.describe("base-generator: expressions", function () {
                     undefined
                 );
         
-                assert.equal(parameter.toString(), "a");
-                assert.equal(parameter.declaration(), "a?:string");
+                assert.equal(parameter.toString(), "a?:string");
                 assert.equal(parameter.typeDeclaration(), "a?:string");
             });
         
@@ -654,8 +653,7 @@ mocha.describe("base-generator: expressions", function () {
                     undefined
                 );
         
-                assert.equal(parameter.toString(), "a");
-                assert.equal(parameter.declaration(), "a", "declaration");
+                assert.equal(parameter.toString(), "a", "declaration");
                 assert.equal(parameter.typeDeclaration(), "a:any", "typeDeclaration");
             });
         
@@ -669,9 +667,8 @@ mocha.describe("base-generator: expressions", function () {
                     generator.createKeywordTypeNode("string"),
                     undefined
                 );
-        
-                assert.equal(parameter.toString(), "a");
-                assert.equal(parameter.declaration(), "a?:string");
+
+                assert.equal(parameter.toString(), "a?:string");
                 assert.equal(parameter.typeDeclaration(), "a?:string");
             });
         
@@ -686,8 +683,7 @@ mocha.describe("base-generator: expressions", function () {
                     generator.createStringLiteral("str")
                 );
         
-                assert.equal(parameter.toString(), "a");
-                assert.equal(parameter.declaration(), 'a?:string="str"');
+                assert.equal(parameter.toString(), 'a?:string="str"');
                 assert.equal(parameter.typeDeclaration(), "a?:string");
             });
         });
@@ -1305,6 +1301,7 @@ mocha.describe("base-generator: expressions", function () {
 
             assert.strictEqual(expression.isReadOnly(), true);
             assert.strictEqual(getAst(expression.toString()), getAst("name():any{}"));
+            assert.strictEqual(expression.isInternalState, false);
         });
 
         mocha.it("Method with decorators, modifiers, type", function () { 

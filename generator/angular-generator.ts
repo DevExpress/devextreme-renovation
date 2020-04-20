@@ -390,9 +390,9 @@ export class JsxExpression extends BaseJsxExpression {
             const templateExpression = getTemplate(iterator, templateOptions, true);
             const template: string = templateExpression ? templateExpression.toString(templateOptions) : "";
             const itemsExpression = ((expression as Call).expression as PropertyAccess).expression;
-            const itemName = iterator.parameters[0].toString();
+            const itemName = iterator.parameters[0].name.toString();
             const itemsExpressionString = itemsExpression.toString(options)
-            const item = `let ${itemName} of ${itemsExpression.toString(options)}`;
+            const item = `let ${itemName} of ${itemsExpressionString}`;
             const ngForValue = [item];
             if (iterator.parameters[1]) {
                 ngForValue.push(`index as ${iterator.parameters[1]}`);

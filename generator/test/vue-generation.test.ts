@@ -3,10 +3,23 @@ import generator from "../vue-generator";
 import compile from "../component-compiler";
 import path from "path";
 
-import { createTestGenerator } from "./helpers/common";
+import { createTestGenerator, assertCode } from "./helpers/common";
+
+function getCodeFromSourceFile(code: string) { 
+    const scriptTag = "<script>";
+    const startPosition = code.indexOf(scriptTag) + scriptTag.length;
+    const endPosition = code.indexOf("</script>");
+
+    return code.slice(startPosition, endPosition);
+}
 
 mocha.describe("vue-generation", function () {
-    const testGenerator = createTestGenerator("vue");
+    const testGenerator = createTestGenerator(
+        "vue",
+        (code, expreactedCode) => 
+            assertCode(getCodeFromSourceFile(code), getCodeFromSourceFile(expreactedCode)),
+        (componentName) => `${componentName}.vue`
+    );
     this.beforeAll(function () {
         compile(`${__dirname}/test-cases/declarations`, `${__dirname}/test-cases/componentFactory`);
         this.testGenerator = function (componentName: string) {

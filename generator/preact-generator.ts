@@ -85,7 +85,7 @@ class JQueryComponent {
     compileAPI() {
         if(!this.source.api.length) return "";
     
-        const api = this.source.api.map(a => `${a.name}(${a.parametersTypeDeclaration()}) {
+        const api = this.source.api.map(a => `${a.name}(${a.parameters}) {
             this.viewRef.current.${a.name}(${a.parameters.map(p => p.name).join(",")});
         }`);
     

@@ -45,24 +45,6 @@ mocha.describe("Vue-generator", function () {
         
                     assert.strictEqual(getAst(expression.toString()), getAst("p: {type: Array}"));
                 });
-        
-                mocha.it("Property with Union type", function () { 
-                    const expression = generator.createProperty(
-                        decorators,
-                        undefined,
-                        name,
-                        undefined,
-                        generator.createUnionTypeNode(
-                            [
-                                generator.createKeywordTypeNode("string"),
-                                generator.createKeywordTypeNode("number")
-                            ],
-                        ),
-                        undefined
-                    );
-        
-                    assert.strictEqual(getAst(expression.toString()), getAst("p: {type: [String,Number]}"));
-                });
     
                 mocha.it("Property with Function type", function () { 
                     const expression = generator.createProperty(
@@ -128,6 +110,76 @@ mocha.describe("Vue-generator", function () {
                         );
             
                         assert.strictEqual(getAst(expression.toString()), getAst("p: {type: Number}"));
+                    });
+                });
+
+                mocha.describe("Union", function () { 
+                    mocha.it("Property with Union type", function () { 
+                        const expression = generator.createProperty(
+                            decorators,
+                            undefined,
+                            name,
+                            undefined,
+                            generator.createUnionTypeNode(
+                                [
+                                    generator.createKeywordTypeNode("string"),
+                                    generator.createKeywordTypeNode("number")
+                                ],
+                            ),
+                            undefined
+                        );
+            
+                        assert.strictEqual(getAst(expression.toString()), getAst("p: {type: [String,Number]}"));
+                    });
+    
+                    mocha.it("type should not have duplicates", function () { 
+                        const expression = generator.createProperty(
+                            decorators,
+                            undefined,
+                            name,
+                            undefined,
+                            generator.createUnionTypeNode(
+                                [
+                                    generator.createLiteralTypeNode(
+                                        generator.createStringLiteral("10")
+                                    ),
+                                    generator.createLiteralTypeNode(
+                                        generator.createStringLiteral("11")
+                                    ),
+                                    generator.createLiteralTypeNode(
+                                        generator.createNumericLiteral("12")
+                                    )
+                                ]
+                            ),
+                            undefined
+                        );
+            
+                        assert.strictEqual(getAst(expression.toString()), getAst("p: {type: [String, Number]}"));
+                    });
+
+                    mocha.it("type should be an array if only one type in the union", function () { 
+                        const expression = generator.createProperty(
+                            decorators,
+                            undefined,
+                            name,
+                            undefined,
+                            generator.createUnionTypeNode(
+                                [
+                                    generator.createLiteralTypeNode(
+                                        generator.createStringLiteral("10")
+                                    ),
+                                    generator.createLiteralTypeNode(
+                                        generator.createStringLiteral("11")
+                                    ),
+                                    generator.createLiteralTypeNode(
+                                        generator.createStringLiteral("12")
+                                    )
+                                ]
+                            ),
+                            undefined
+                        );
+            
+                        assert.strictEqual(getAst(expression.toString()), getAst("p: {type: String}"));
                     });
                 });
     
@@ -294,23 +346,43 @@ mocha.describe("Vue-generator", function () {
 
             assert.strictEqual(getAst(expression.toString({
                 members: []
-            })), getAst("m():any{}"));
+            })), getAst("m(){}"));
         });
 
-        mocha.it("Method without options should return method string", function () { 
+        mocha.it("Method with parameters", function () {
             const expression = generator.createMethod(
-                [createDecorator("SomeDecorator")],
-                ["public"],
+                [],
+                [],
                 undefined,
                 generator.createIdentifier("m"),
                 undefined,
                 undefined,
-                [],
+                [
+                    generator.createParameter(
+                        [],
+                        [],
+                        undefined,
+                        generator.createIdentifier("p1"),
+                        generator.SyntaxKind.QuestionToken,
+                        generator.createKeywordTypeNode("number"),
+                        generator.createNumericLiteral("10")
+                    ),
+                    generator.createParameter(
+                        [],
+                        [],
+                        undefined,
+                        generator.createIdentifier("p2"),
+                        generator.SyntaxKind.QuestionToken,
+                        generator.createKeywordTypeNode("number")
+                    )
+                ],
                 undefined,
                 generator.createBlock([], false)
             );
 
-            assert.strictEqual(getAst(expression.toString()), getAst(`@SomeDecorator() public m():any{}`));
+            assert.strictEqual(getAst(expression.toString({
+                members: []
+            })), getAst(`m(p1=10, p2){}`));
         });
 
         mocha.it("GetAccessor", function () { 
@@ -325,22 +397,10 @@ mocha.describe("Vue-generator", function () {
             
             assert.strictEqual(getAst(expression.toString({
                 members:[]
-            })), getAst("m():any{}"));
+            })), getAst("m(){}"));
             assert.strictEqual(expression.getter(), "m()");
         });
 
-        mocha.it("GetAccessor without options should return GetAccessor string", function () { 
-            const expression = generator.createGetAccessor(
-                [createDecorator("SomeDecorator")],
-                ["public"],
-                generator.createIdentifier("m"),
-                [],
-                undefined,
-                generator.createBlock([], false)
-            );
-            
-            assert.strictEqual(getAst(expression.toString()), getAst("get m(){}"));
-        });
     });
 
     mocha.describe("Template", function () { 

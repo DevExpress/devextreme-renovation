@@ -576,6 +576,10 @@ export default class Generator {
 
     defaultOptionsModule?: string;
 
+    processCodeFactoryResult(codeFactoryResult: Array<any>) { 
+        return codeFactoryResult.join("\n");
+    }
+
     generate(factory: any): { path?: string, code: string }[] {
         const result: { path?: string, code: string }[] = []
         const codeFactoryResult = factory(this);
@@ -583,7 +587,7 @@ export default class Generator {
         if(path) {
             this.cache[path] = codeFactoryResult;
         }
-        result.push({ path: path && this.processSourceFileName(path), code: codeFactoryResult.join("\n") })
+        result.push({ path: path && this.processSourceFileName(path), code: this.processCodeFactoryResult(codeFactoryResult) })
 
         return result;
     }

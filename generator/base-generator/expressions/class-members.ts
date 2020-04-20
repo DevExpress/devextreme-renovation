@@ -39,7 +39,7 @@ export class BaseClassMember extends Expression {
 
 
     get isInternalState() { 
-        return this.decorators.some(d => d.name === "InternalState") || this.decorators.length === 0;
+        return false;
     }
 
     get isEvent() { 
@@ -64,20 +64,16 @@ export class Method extends BaseClassMember {
         this.body = body;
     }
 
-    parametersTypeDeclaration() {
-        return this.parameters.map(p => p.declaration()).join(",");
-    }
-
     typeDeclaration() {
         return `${this.name}${this.questionToken}:(${this.parameters.map(p => p.typeDeclaration()).join(",")})=>${this.type}`
     }
 
     declaration(options?: toStringOptions) {
-        return `function ${this.name}(${this.parametersTypeDeclaration()})${this.body.toString(options)}`;
+        return `function ${this.name}(${this.parameters})${this.body.toString(options)}`;
     }
 
     arrowDeclaration(options?:any) {
-        return `(${this.parametersTypeDeclaration()})=>${this.body.toString(options)}`
+        return `(${this.parameters})=>${this.body.toString(options)}`
     }
 
     getDependency(properties: Property[] = []) {
@@ -102,9 +98,7 @@ export class Method extends BaseClassMember {
     }
 
     toString(options?: toStringOptions) { 
-        return `${this.decorators.join(" ")} ${this.modifiers.join(" ")} ${this.name}(${
-            this.parameters.map(p => p.declaration()).join(",")
-            })${compileType(this.type.toString())}${this.body.toString(options)}`;
+        return `${this.decorators.join(" ")} ${this.modifiers.join(" ")} ${this.name}(${this.parameters})${compileType(this.type.toString())}${this.body.toString(options)}`;
     }
 }
 
@@ -169,5 +163,9 @@ export class Property extends BaseClassMember {
 
     toString() { 
         return `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.typeDeclaration()} ${this.initializer && this.initializer.toString() ? `= ${this.initializer.toString()}` : ""}`;
+    }
+
+    get isInternalState() { 
+        return this.decorators.some(d => d.name === "InternalState") || this.decorators.length === 0;
     }
 }

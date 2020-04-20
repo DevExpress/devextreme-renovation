@@ -17,11 +17,11 @@ import {
     FunctionTypeNode,
     LiteralTypeNode
 } from "./base-generator/expressions/type";
-import { capitalizeFirstLetter, compileType } from "./base-generator/utils/string";
+import { capitalizeFirstLetter, variableDeclaration } from "./base-generator/utils/string";
 import SyntaxKind from "./base-generator/syntaxKind";
 import { Expression, SimpleExpression } from "./base-generator/expressions/base";
 import { ObjectLiteral, StringLiteral, NumericLiteral } from "./base-generator/expressions/literal";
-import { Parameter } from "./base-generator/expressions/functions";
+import { Parameter as BaseParameter } from "./base-generator/expressions/functions";
 import { Block } from "./base-generator/expressions/statements";
 import { Function, ArrowFunction, VariableDeclaration } from "./angular-generator";
 import { Decorator } from "./base-generator/expressions/decorator";
@@ -37,7 +37,10 @@ function calculatePropertyType(type: TypeExpression): string {
         return "Array";
     }
     if (type instanceof UnionTypeNode) {
-        return `[${[([] as string[]).concat(type.types.map(t => calculatePropertyType(t))).join(",")]}]`;
+        const types = ([] as string[])
+            .concat(type.types.map(t => calculatePropertyType(t)));
+        const typesWithoutDuplcates = [...new Set(types)];
+        return typesWithoutDuplcates.length === 1 ? typesWithoutDuplcates[0] : `[${typesWithoutDuplcates.join(",")}]`;
     }
     if (type instanceof FunctionTypeNode) {
         return "Function";
@@ -97,7 +100,13 @@ export class Property extends BaseProperty {
 }
 
 function compileMethod(expression: Method | GetAccessor, options?: toStringOptions): string { 
-    return `${expression.name}(${expression.parameters.map(p => p.declaration()).join(",")})${compileType(expression.type.toString())}${expression.body.toString(options)}`
+    return `${expression.name}(${expression.parameters})${expression.body.toString(options)}`
+}
+
+export class Parameter extends BaseParameter {
+    toString() {
+        return variableDeclaration(this.name, undefined, this.initializer, undefined);
+    }
 }
 
 export class Method extends BaseMethod { 
@@ -215,6 +224,18 @@ class VueGenerator extends BaseGenerator {
 
     createCall(expression: Expression, typeArguments: any, argumentsArray?: Expression[]) {
         return new Call(expression, typeArguments, argumentsArray);
+    }
+
+    createParameter(decorators: Decorator[] = [], modifiers: string[] = [], dotDotDotToken: any, name: Identifier|BindingPattern, questionToken?: string, type?: TypeExpression, initializer?: Expression) {
+        return new Parameter(decorators, modifiers, dotDotDotToken, name, questionToken, type, initializer);
+    }
+
+    processCodeFactoryResult(codeFactoryResult: Array<any>) { 
+        return `
+            ${"<script>"}
+            ${codeFactoryResult.join("\n")}
+            ${"</script>"}
+        `;
     }
 }
 

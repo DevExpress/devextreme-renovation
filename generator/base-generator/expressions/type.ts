@@ -45,7 +45,7 @@ export class FunctionTypeNode extends TypeExpression {
     }
 
     toString() { 
-        return `(${this.parameters.map(p => p.declaration())})=>${this.type}`;
+        return `(${this.parameters})=>${this.type}`;
     }
 }
 

@@ -150,10 +150,6 @@ export class Property extends BaseProperty {
 }
 
 export class Method extends BaseMethod {
-    parametersTypeDeclaration() {
-        return this.parameters.map(p => p.declaration()).join(",");
-    }
-
     getDependency(properties: Property[] = []) {
         const dependency = this.body.getDependency();
         const additionalDependency = [];
