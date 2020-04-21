@@ -469,8 +469,15 @@ export class JsxExpression extends BaseJsxExpression {
 }
 
 export class JsxChildExpression extends JsxExpression { 
-    constructor(expression: JsxExpression) { 
+    constructor(expression: BaseJsxExpression) { 
         super(expression.dotDotDotToken, expression.expression);
+    }
+
+    compileSlot(slot: Property) { 
+        if (slot.name.toString() === "default" || slot.name.toString() === "children") { 
+            return `<ng-content></ng-content>`;
+        }
+        return `<ng-content select="[${slot.name}]"></ng-content>`;
     }
 
     toString(options?: toStringOptions) {
@@ -487,10 +494,7 @@ export class JsxChildExpression extends JsxExpression {
             .find(s => stringValue.endsWith(`${contextExpr}${s.name.toString()}`)
                 || s.name.toString() === "children" && (stringValue.endsWith(".default") || stringValue.endsWith(".children")));
         if (slot) { 
-            if (slot.name.toString() === "default" || slot.name.toString() === "children") { 
-                return `<ng-content></ng-content>`;
-            }
-            return `<ng-content select="[${slot.name}]"></ng-content>`;
+            return this.compileSlot(slot as Property);
         }
 
         return `{{${stringValue}}}`;
@@ -510,12 +514,20 @@ export class JsxSpreadAttribute extends JsxExpression{
 }
 
 export class JsxElement extends BaseJsxElement {
+
+    createChildJsxExpression(expression: BaseJsxExpression) { 
+        return new JsxChildExpression(expression);
+    }
+
     openingElement: JsxOpeningElement
     children: Array<JsxElement | string | JsxChildExpression | JsxSelfClosingElement>;
     constructor(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: JsxClosingElement) {
         super(openingElement, children, closingElement);
         this.openingElement = openingElement;
-        this.children = children.map(c => c instanceof JsxExpression ? new JsxChildExpression(c) : c);
+        this.children = children.map(c => c instanceof JsxExpression
+                ? this.createChildJsxExpression(c)
+                : c
+        );
         this.closingElement = closingElement;
     }
 

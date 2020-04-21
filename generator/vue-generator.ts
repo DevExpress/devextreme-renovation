@@ -1,6 +1,10 @@
 import BaseGenerator from "./base-generator";
 import { Component } from "./base-generator/expressions/component";
-import { Identifier, Call as BaseCall } from "./base-generator/expressions/common";
+import {
+    Identifier,
+    Call as BaseCall,
+    AsExpression as BaseAsExpression
+} from "./base-generator/expressions/common";
 import { HeritageClause } from "./base-generator/expressions/class";
 import {
     Property as BaseProperty,
@@ -27,13 +31,18 @@ import {
     Function,
     ArrowFunction,
     VariableDeclaration,
-    JsxExpression as BaseJsxExpression
+    JsxExpression as BaseJsxExpression,
+    JsxElement as BaseJsxElement,
+    JsxOpeningElement,
+    JsxSelfClosingElement,
+    JsxChildExpression as BaseJsxChildExpression
 } from "./angular-generator";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
 import { ComponentInput } from "./base-generator/expressions/component-input";
 import { checkDependency } from "./base-generator/utils/dependency";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access"
+import { JsxClosingElement } from "./base-generator/expressions/jsx";
 
 function calculatePropertyType(type: TypeExpression): string { 
     if (type instanceof SimpleTypeExpression) {
@@ -74,6 +83,10 @@ export class Property extends BaseProperty {
         if (this.isEvent) { 
             return "";
         }
+
+        if (this.isRef) { 
+            return "";
+        }
     
         const type = calculatePropertyType(this.type);
         const parts = [];
@@ -101,6 +114,9 @@ export class Property extends BaseProperty {
         componentContext = this.processComponentContext(componentContext);
         if (this.isState) { 
             return `(${componentContext}${this.name} !== undefined ? ${componentContext}${this.name} : ${componentContext}${this.name}_state)`;
+        }
+        if (this.isRef && componentContext.length) { 
+            return `${componentContext}$refs.${this.name}`;
         }
         return baseValue
     }
@@ -296,11 +312,26 @@ export class PropertyAccess extends BasePropertyAccess {
     }
 }
 
+export class AsExpression extends BaseAsExpression { 
+    toString(options?: toStringOptions) { 
+        return `${this.expression.toString(options)}`;
+    }
+}
+
+export class JsxElement extends BaseJsxElement { 
+    createChildJsxExpression(expression: BaseJsxExpression) { 
+        return new JsxChildExpression(expression);
+    }
+
+}
 export class JsxExpression extends BaseJsxExpression {
     toString(options?: toStringOptions) {
-        const expression = this.getExpression(options);
-        return `{{${expression.toString(options)}}}`;
+        return `"${this.expression.toString(options)}"`;
     }
+}
+
+export class JsxChildExpression extends BaseJsxChildExpression { 
+   
 }
 
 class VueGenerator extends BaseGenerator { 
@@ -366,6 +397,14 @@ class VueGenerator extends BaseGenerator {
 
     createJsxExpression(dotDotDotToken: string = "", expression: Expression) {
         return new JsxExpression(dotDotDotToken, expression);
+    }
+
+    createJsxElement(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: JsxClosingElement) {
+        return new JsxElement(openingElement, children, closingElement);
+    }
+
+    createAsExpression(expression: Expression, type: TypeExpression) { 
+        return new AsExpression(expression, type);
     }
 }
 
