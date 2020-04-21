@@ -23,7 +23,12 @@ import { Expression, SimpleExpression } from "./base-generator/expressions/base"
 import { ObjectLiteral, StringLiteral, NumericLiteral } from "./base-generator/expressions/literal";
 import { Parameter as BaseParameter } from "./base-generator/expressions/functions";
 import { Block } from "./base-generator/expressions/statements";
-import { Function, ArrowFunction, VariableDeclaration } from "./angular-generator";
+import {
+    Function,
+    ArrowFunction,
+    VariableDeclaration,
+    JsxExpression as BaseJsxExpression
+} from "./angular-generator";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
 import { ComponentInput } from "./base-generator/expressions/component-input";
@@ -291,6 +296,13 @@ export class PropertyAccess extends BasePropertyAccess {
     }
 }
 
+export class JsxExpression extends BaseJsxExpression {
+    toString(options?: toStringOptions) {
+        const expression = this.getExpression(options);
+        return `{{${expression.toString(options)}}}`;
+    }
+}
+
 class VueGenerator extends BaseGenerator { 
     
     createComponentBindings(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) {
@@ -350,6 +362,10 @@ class VueGenerator extends BaseGenerator {
 
     createPropertyAccess(expression: Expression, name: Identifier) {
         return new PropertyAccess(expression, name);
+    }
+
+    createJsxExpression(dotDotDotToken: string = "", expression: Expression) {
+        return new JsxExpression(dotDotDotToken, expression);
     }
 }
 
