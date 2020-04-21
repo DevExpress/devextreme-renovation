@@ -3256,6 +3256,44 @@ mocha.describe("Angular generator", function () {
                 `));
             });
 
+            mocha.it("should generate schedule effect method and fill ngOnChanges all props in dependency", function () { 
+                this.effect.body = generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("props")
+                    )
+                ], false);
+
+                const component = createComponent(
+                    ["p", "p1", "p2"].map(name => generator.createProperty(
+                        [createDecorator("OneWay")],
+                        undefined,
+                        generator.createIdentifier(name),
+                        undefined,
+                        undefined,
+                        undefined
+                    )).concat(this.effect)
+                );
+
+                const ngOnChanges: string[] = [];
+                assert.strictEqual(getResult(component.compileEffects([], [], ngOnChanges, [])), getResult(`
+                        __destroyEffects: Array<() => any> = [];
+                        __viewCheckedSubscribeEvent: Array<()=>void> = [];
+                        __schedule_e(){
+                            this.__destroyEffects[0]?.();
+                            this.__viewCheckedSubscribeEvent[0] = ()=>{
+                                this.__destroyEffects[0] = this.e()
+                            }
+                        }
+                `));
+
+                assert.strictEqual(getResult(ngOnChanges.join("\n")), getResult(`
+                        if (this.__destroyEffects.length) {
+                            this.__schedule_e();
+                        }
+                `));
+            });
+
             mocha.it("should generate schedule effect method if there is internal state in dependency", function () { 
                 this.effect.body = generator.createBlock([
                     generator.createPropertyAccess(

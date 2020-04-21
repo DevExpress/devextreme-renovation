@@ -845,22 +845,28 @@ class AngularComponent extends Component {
                     }`);
                 }
                 if (propsDependency.length) {
+                    const conditionArray = ["this.__destroyEffects.length"];
+                    if (propsDependency.indexOf("props") === -1) {
+                        conditionArray.push(`[${propsDependency.map(d => `"${d}"`).join(",")}].some(d=>${ngOnChangesParameters[0]}[d]!==null`)
+                    }
+                   
                     ngOnChanges.push(`
-                        if (this.__destroyEffects.length && [${propsDependency.map(d=>`"${d}"`).join(",")}].some(d=>${ngOnChangesParameters[0]}[d]!==null)) {
+                        if (${conditionArray.join("&&")}) {
                             this.${updateEffectMethod}();
                         }`);
                 }
 
                 internalStateDependency.forEach(name => { 
                     const setter = this.members.find(p => p.name === `_${name}`) as SetAccessor;
-                    setter.body.statements.push(
-                        new SimpleExpression(`
-                        if (this.__destroyEffects.length) {
-                            this.${updateEffectMethod}();
-                        }
-                        `)
-                    );
-                    hasInternalStateDependecy = true;
+                    if (setter) { 
+                        setter.body.statements.push(
+                            new SimpleExpression(`
+                            if (this.__destroyEffects.length) {
+                                this.${updateEffectMethod}();
+                            }`)
+                        );
+                        hasInternalStateDependecy = true;
+                    }
                 });
                 
             });
