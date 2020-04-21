@@ -1,7 +1,10 @@
-function view(viewModel) {
-    return <div ref={viewModel.divRef}><div ref={viewModel.explicitRef}><div ref={viewModel.nullableRef}></div></div></div>
+function view(viewModel: Widget) {
+    return <div ref={viewModel.divRef as any}>
+        <div ref={viewModel.explicitRef as any}>
+            <div ref={viewModel.nullableRef as any}></div>
+        </div>
+    </div>
 }
-function viewModel() { }
 
 import React, { useCallback, useRef } from "react";
 
@@ -32,7 +35,7 @@ export default function Widget(props: {}) {
         return restProps;
     }, [props]);
 
-    return view(viewModel({
+    return view(({
         ...props,
         clickHandler,
         divRef,
