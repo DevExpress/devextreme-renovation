@@ -1,7 +1,7 @@
-<template>
+ <template>
   <div>{(state1 !== undefined ? state1 : state1_state)}</div>
 </template>
-            <script>
+<script>
 const WidgetInput = {
   state1: {
     type: Boolean
@@ -24,13 +24,15 @@ export default {
   },
   methods: {
     updateState() {
-      this.state1_state = !(this.state1 !== undefined
+        this.state1_state = !(this.state1 !== undefined
         ? this.state1
-        : this.state1_state);
+        : this.state1_state),
+        this.emit("state1-change", this.state1_state);
     },
     updateState2() {
-      const cur = (this.state2 !== undefined ? this.state2 : this.state2_state);
-      this.state2_state = cur !== false ? false : true;
+      const cur = (this.state2 !== undefined ? this.state2 : this.state2_state)
+      this.state2_state = cur !== false ? false : true,
+      this.emit("state2-change", this.state2_state);
     },
     restAttributes() {
       return {};

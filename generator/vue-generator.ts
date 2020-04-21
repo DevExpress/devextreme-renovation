@@ -257,11 +257,15 @@ export class VueComponent extends Component {
     }
 }
 
-export class Call extends BaseCall { 
-    getEventName(name: Identifier) { 
-        const words = name.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
-        return words.join("-");
+function getEventName(name: Identifier, suffix="") { 
+    const words = name.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
+    if (suffix) { 
+        words.push(suffix);
     }
+    return `"${words.join("-")}"`;
+}
+
+export class Call extends BaseCall { 
     toString(options?: toStringOptions) { 
         let expression: Expression = this.expression;
         if (this.expression instanceof Identifier && options?.variables?.[expression.toString()]) { 
@@ -269,7 +273,7 @@ export class Call extends BaseCall {
         }
         const eventMember = checkDependency(expression, options?.members.filter(m => m.isEvent));
         if (eventMember) { 
-            return `this.$emit("${this.getEventName(eventMember._name)}", ${this.argumentsArray.map(a => a.toString(options)).join(",")})`;
+            return `this.$emit(${getEventName(eventMember._name)}, ${this.argumentsArray.map(a => a.toString(options)).join(",")})`;
         }
         return super.toString(options);
     }
@@ -277,8 +281,13 @@ export class Call extends BaseCall {
 
 export class PropertyAccess extends BasePropertyAccess { 
     compileStateSetting(state: string, property: Property, options?: toStringOptions) {
-        const propertyName = property.isState ? `${property.name}_state` : property.name;
-        return `this.${propertyName}=${state}`;
+        const isState = property.isState;
+        const propertyName = isState ? `${property.name}_state` : property.name;
+        const stateSetting = `this.${propertyName}=${state}`;
+        if (isState) { 
+            return `${stateSetting},\nthis.emit(${getEventName(property._name, "change")}, this.${propertyName})`;
+        }
+        return stateSetting;
     }
 }
 
