@@ -1,12 +1,15 @@
 <template>
-    <div>{(pressed !== undefined ? pressed : pressed_state)}</div>
-</template> 
- <script>
+  <div>{(state1 !== undefined ? state1 : state1_state)}</div>
+</template>
+            <script>
 const WidgetInput = {
-  pressed: {
+  state1: {
     type: Boolean
   },
-  s: {
+  state2: {
+    type: Boolean
+  },
+  state3: {
     type: Boolean
   }
 };
@@ -14,15 +17,20 @@ export default {
   props: WidgetInput,
   data() {
     return {
-      pressed_state: this.pressed !== undefined ? this.pressed : false,
-      s_state: undefined
+      state1_state: this.state1 !== undefined ? this.state1 : false,
+      state2_state: this.state2 !== undefined ? this.state2 : false,
+      state3_state: undefined
     };
   },
   methods: {
     updateState() {
-      this.pressed_state = !(this.pressed !== undefined
-        ? this.pressed
-        : this.pressed_state);
+      this.state1_state = !(this.state1 !== undefined
+        ? this.state1
+        : this.state1_state);
+    },
+    updateState2() {
+      const cur = (this.state2 !== undefined ? this.state2 : this.state2_state);
+      this.state2_state = cur !== false ? false : true;
     },
     restAttributes() {
       return {};
