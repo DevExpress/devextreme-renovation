@@ -30,7 +30,6 @@ export class Component extends Class implements Heritable {
     internalState: Property[];
     refs: Property[];
     apiRefs: Property[];
-    events: Property[] = [];
 
 
     listeners: Method[];

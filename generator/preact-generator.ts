@@ -56,8 +56,8 @@ class JQueryComponent {
 
     compileGetProps() {
         const statements: string[] = [];
+
         const templates = this.source.props.filter(p => p.decorators.find(d => d.name === "Template"))
-    
         statements.splice(-1, 0, ...templates.map(t => {
             const params = ["props", `props.${t._name}`];
             const decoratorArgs = t.decorators.find(d => d.name === "Template")!.expression.arguments[0];
@@ -66,6 +66,14 @@ class JQueryComponent {
             }
     
             return `props.${t.name} = this._createTemplateComponent(${params.join(",")});`;
+        }));
+
+        if(this.source.props.find(p => p.name === "onKeyDown" && p.decorators.find(d => d.name === "Event"))) {
+            statements.push("props.onKeyDown = this._wrapKeyDownHandler(props.onKeyDown);");
+        }
+
+        statements.splice(-1, 0, ...this.source.state.map(s => {
+            return `props.${s.name}Change = this._stateChange('${s.name}')`
         }));
     
         if(!statements.length) {
@@ -148,7 +156,7 @@ class JQueryComponent {
 
 export class Property extends BaseProperty { 
     typeDeclaration() {
-        if (this.decorators.find(d => d.name === "Slot")) { 
+        if (this.decorators.find(d => d.name === "Slot")) {
             return `${this.name}${this.questionOrExclamationToken}:any`;
         }
         return super.typeDeclaration();
