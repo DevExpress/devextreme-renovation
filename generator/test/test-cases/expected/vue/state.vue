@@ -1,5 +1,5 @@
  <template>
-  <div>{(state1 !== undefined ? state1 : state1_state)}</div>
+  <div>{{(state1 !== undefined ? state1 : state1_state)}}</div>
 </template>
 <script>
 const WidgetInput = {

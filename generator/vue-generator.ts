@@ -1,6 +1,10 @@
 import BaseGenerator from "./base-generator";
 import { Component } from "./base-generator/expressions/component";
-import { Identifier, Call as BaseCall } from "./base-generator/expressions/common";
+import {
+    Identifier,
+    Call as BaseCall,
+    AsExpression as BaseAsExpression
+} from "./base-generator/expressions/common";
 import { HeritageClause } from "./base-generator/expressions/class";
 import {
     Property as BaseProperty,
@@ -23,12 +27,22 @@ import { Expression, SimpleExpression } from "./base-generator/expressions/base"
 import { ObjectLiteral, StringLiteral, NumericLiteral } from "./base-generator/expressions/literal";
 import { Parameter as BaseParameter } from "./base-generator/expressions/functions";
 import { Block } from "./base-generator/expressions/statements";
-import { Function, ArrowFunction, VariableDeclaration } from "./angular-generator";
+import {
+    Function,
+    ArrowFunction,
+    VariableDeclaration,
+    JsxExpression as BaseJsxExpression,
+    JsxElement as BaseJsxElement,
+    JsxOpeningElement,
+    JsxSelfClosingElement,
+    JsxChildExpression as BaseJsxChildExpression
+} from "./angular-generator";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
 import { ComponentInput } from "./base-generator/expressions/component-input";
 import { checkDependency } from "./base-generator/utils/dependency";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access"
+import { JsxClosingElement } from "./base-generator/expressions/jsx";
 
 function calculatePropertyType(type: TypeExpression): string { 
     if (type instanceof SimpleTypeExpression) {
@@ -69,6 +83,10 @@ export class Property extends BaseProperty {
         if (this.isEvent) { 
             return "";
         }
+
+        if (this.isRef) { 
+            return "";
+        }
     
         const type = calculatePropertyType(this.type);
         const parts = [];
@@ -96,6 +114,9 @@ export class Property extends BaseProperty {
         componentContext = this.processComponentContext(componentContext);
         if (this.isState) { 
             return `(${componentContext}${this.name} !== undefined ? ${componentContext}${this.name} : ${componentContext}${this.name}_state)`;
+        }
+        if (this.isRef && componentContext.length) { 
+            return `${componentContext}$refs.${this.name}`;
         }
         return baseValue
     }
@@ -291,6 +312,28 @@ export class PropertyAccess extends BasePropertyAccess {
     }
 }
 
+export class AsExpression extends BaseAsExpression { 
+    toString(options?: toStringOptions) { 
+        return `${this.expression.toString(options)}`;
+    }
+}
+
+export class JsxElement extends BaseJsxElement { 
+    createChildJsxExpression(expression: BaseJsxExpression) { 
+        return new JsxChildExpression(expression);
+    }
+
+}
+export class JsxExpression extends BaseJsxExpression {
+    toString(options?: toStringOptions) {
+        return `"${this.expression.toString(options)}"`;
+    }
+}
+
+export class JsxChildExpression extends BaseJsxChildExpression { 
+   
+}
+
 class VueGenerator extends BaseGenerator { 
     
     createComponentBindings(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) {
@@ -350,6 +393,18 @@ class VueGenerator extends BaseGenerator {
 
     createPropertyAccess(expression: Expression, name: Identifier) {
         return new PropertyAccess(expression, name);
+    }
+
+    createJsxExpression(dotDotDotToken: string = "", expression: Expression) {
+        return new JsxExpression(dotDotDotToken, expression);
+    }
+
+    createJsxElement(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: JsxClosingElement) {
+        return new JsxElement(openingElement, children, closingElement);
+    }
+
+    createAsExpression(expression: Expression, type: TypeExpression) { 
+        return new AsExpression(expression, type);
     }
 }
 

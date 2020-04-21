@@ -280,7 +280,7 @@ mocha.describe("Vue-generator", function () {
         });
 
         mocha.describe("Event", function () { 
-            mocha.it("toString should return expty string", function () {
+            mocha.it("toString should return empty string", function () {
                 const expression = generator.createProperty(
                     [createDecorator("Event")],
                     undefined,
@@ -291,6 +291,35 @@ mocha.describe("Vue-generator", function () {
                 );
         
                 assert.strictEqual(expression.toString(), "");
+            });
+        });
+
+        mocha.describe("Refs", function () { 
+            mocha.it("toString should return empty string", function () {
+                const expression = generator.createProperty(
+                    [createDecorator("Ref")],
+                    undefined,
+                    name,
+                    generator.SyntaxKind.QuestionToken,
+                    generator.createKeywordTypeNode("HtmlDivElement"),
+                    undefined
+                );
+        
+                assert.strictEqual(expression.toString(), "");
+            });
+
+            mocha.it("getter", function () {
+                const expression = generator.createProperty(
+                    [createDecorator("Ref")],
+                    undefined,
+                    name,
+                    generator.SyntaxKind.QuestionToken,
+                    generator.createKeywordTypeNode("HtmlDivElement"),
+                    undefined
+                );
+        
+                assert.strictEqual(expression.getter("this"), "this.$refs.p");
+                assert.strictEqual(expression.getter(""), "p");
             });
         });
     });

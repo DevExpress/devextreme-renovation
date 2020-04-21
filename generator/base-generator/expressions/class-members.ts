@@ -54,6 +54,9 @@ export class BaseClassMember extends Expression {
         return this.decorators.some(d => d.name === "TwoWay");
     }
 
+    get isRef() { 
+        return this.decorators.some(d => d.name === "Ref");
+    }
 }
 
 export class Method extends BaseClassMember {
