@@ -14,7 +14,7 @@ export class Block extends Expression {
         return `{
             ${this.statements.map((s, i, arr) => {
                 const main = s.toString(options);
-                const tail = (arr[i + 1] && main.endsWith(")") && arr[i + 1].toString(options).startsWith("(")) ? ";" : "";
+                const tail = (arr[i + 1] && !main.trim().endsWith("}") && arr[i + 1].toString(options).trim().startsWith("(")) ? ";" : "";
                 return `${main}${tail}`
             }).join("\n")}
         }`
