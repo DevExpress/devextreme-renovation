@@ -299,12 +299,26 @@ export class TrackByAttribute extends JsxAttribute {
     }
 }
 
-function processBinary(expression: Binary, options?: toStringOptions, condition:Expression[] =[]):Expression|null { 
-    if (expression.operator === SyntaxKind.AmpersandAmpersandToken && !expression.left.isJsx()) { 
-        let right = options?.variables?.[expression.right.toString()] || expression.right;
-        if (right instanceof Paren) { 
-            right = right.expression;
-        }
+function getExpression(expression: Expression, options?: toStringOptions): Expression {
+    if (expression instanceof Identifier && options?.variables?.[expression.toString()]) { 
+        expression = options.variables[expression.toString()];
+    }
+
+    if (expression instanceof Paren) { 
+        return expression.expression;
+    }
+
+    return expression;
+ }
+
+function processBinary(expression: Binary, options?: toStringOptions, condition: Expression[] = []): Expression | null { 
+    const left = getExpression(expression.left, options);
+    const right = getExpression(expression.right, options);
+    
+    if ((isElement(left) || isElement(right)) && expression.operator !== SyntaxKind.AmpersandAmpersandToken) { 
+        throw `Operator ${expression.operator} is not supoorted: ${expression.toString()}`;
+    }
+    if (expression.operator === SyntaxKind.AmpersandAmpersandToken && !left.isJsx()) { 
         if (isElement(right)) {
             const conditionExpression = condition.reduce((c: Expression, e) => { 
                 return new Binary(
@@ -404,8 +418,6 @@ export class JsxChildExpression extends JsxExpression {
             const parsedBinary = processBinary(expression, options);
             if (parsedBinary) {
                 return parsedBinary.toString(options);
-            } else { 
-                throw `Operator ${expression.operator} is not supoorted: ${expression.toString()}`;
             }
         }
 

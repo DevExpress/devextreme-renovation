@@ -429,6 +429,29 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(error, "Operator + is not supoorted: viewModel.input+<input ></input>");
         });
 
+        mocha.it("non jsx binary in element", function () {
+            const expression = generator.createJsxElement(
+                generator.createJsxOpeningElement(
+                    generator.createIdentifier("div"),
+                    undefined,
+                    []
+                ),
+                [generator.createJsxExpression(
+                        undefined,
+                        generator.createBinary(
+                            generator.createIdentifier("s1"),
+                            generator.SyntaxKind.PlusToken,
+                            generator.createIdentifier("s2")
+                        )
+                )],
+                generator.createJsxClosingElement(
+                    generator.createIdentifier("div")
+                )
+            );
+            
+            assert.strictEqual(expression.toString(), "<div >{{s1+s2}}</div>");
+        });
+
         mocha.it("notJsxExpr && <element/> -> <element *ngIf='notJsxExpr' />", function () {
             const expression = generator.createJsxElement(
                 generator.createJsxOpeningElement(
