@@ -6,6 +6,7 @@ import ButtonWithState from "./state.tsx";
 import ComponentWithSpread from "./spread-attributes.tsx";
 import VisibilityChange from "./change-visibility.tsx";
 import VisibilityChangeProp from "./change-visibility-prop.tsx";
+import ComponentWithRest from "./rest-attributes.tsx";
 
 function view(model: App) { 
     return <div>
@@ -29,6 +30,8 @@ function view(model: App) {
 
         <ButtonComponent id="button-4" onClick={model.onVisibilityChangePropClick}>{"Open"}</ButtonComponent>
         <VisibilityChangeProp visible={model.visibilityChangePropValue}></VisibilityChangeProp>
+
+        <ComponentWithRest id="component-with-rest-attributes"></ComponentWithRest>
     </div>;
 }
 

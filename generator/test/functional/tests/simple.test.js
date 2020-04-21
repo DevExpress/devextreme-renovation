@@ -75,3 +75,10 @@ cloneTest('ChangeVisibilityProp: Effect depends on Prop', async t => {
     await t
         .expect(Selector("#change-visibility-prop-element").textContent).eql("1");
 });
+
+cloneTest('Check rest attributes', async t => {
+    const el = Selector("#component-with-rest-attributes");
+
+    await t
+        .expect(await el.getAttribute("id")).eql("component-with-rest-attributes");
+});
