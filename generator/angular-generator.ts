@@ -373,7 +373,33 @@ export class JsxExpression extends BaseJsxExpression {
 
     toString(options?: toStringOptions) {
         const expression = this.getExpression(options);
+        return expression.toString(options);
+    }
 
+    trackBy(options?:toStringOptions): TrackByAttribute[] { 
+        return [];
+    }
+
+    hasNgStyle() { 
+        return false;
+    }
+}
+
+export class JsxChildExpression extends JsxExpression { 
+    constructor(expression: JsxExpression) { 
+        super(expression.dotDotDotToken, expression.expression);
+    }
+
+    compileSlot(slot: Property) { 
+        if (slot.name.toString() === "default" || slot.name.toString() === "children") { 
+            return `<ng-content></ng-content>`;
+        }
+        return `<ng-content select="[${slot.name}]"></ng-content>`;
+    }
+
+    toString(options?: toStringOptions) {
+        const expression = this.getExpression(options);
+        
         if (expression instanceof Binary) { 
             const parsedBinary = processBinary(expression, options);
             if (parsedBinary) {
@@ -433,21 +459,25 @@ export class JsxExpression extends BaseJsxExpression {
             return result.join("\n");
         }
 
-        return expression.toString(options);
-    }
+        if (this.expression instanceof StringLiteral) { 
+            return this.expression.expression;
+        }
+        const stringValue = super.toString(options);
 
-    trackBy(options?:toStringOptions): TrackByAttribute[] { 
-        const iterator = this.getIterator(this.getExpression(options));
-
-        if (iterator) {
-            const templateOptions = options ? { ...options } : options;
-            const templateExpression = getTemplate(iterator, templateOptions, true);
-            if (isElement(templateExpression)) {
-                return templateExpression.trackBy(options);
-            }       
+        if (this.expression.isJsx() || stringValue.startsWith("<") || stringValue.startsWith("(<")) { 
+            return stringValue;
         }
 
-        return [];
+        const contextExpr = options?.newComponentContext ? `${options.newComponentContext}.` : "";
+        const slot = options?.members
+            .filter(m => m.decorators.find(d => d.name === "Slot"))
+            .find(s => stringValue.endsWith(`${contextExpr}${s.name.toString()}`)
+                || s.name.toString() === "children" && (stringValue.endsWith(".default") || stringValue.endsWith(".children")));
+        if (slot) { 
+            return this.compileSlot(slot as Property);
+        }
+
+        return `{{${stringValue}}}`;
     }
 
     hasNgStyle():boolean { 
@@ -466,38 +496,19 @@ export class JsxExpression extends BaseJsxExpression {
         }
         return false;
     }
-}
 
-export class JsxChildExpression extends JsxExpression { 
-    constructor(expression: BaseJsxExpression) { 
-        super(expression.dotDotDotToken, expression.expression);
-    }
+    trackBy(options?:toStringOptions): TrackByAttribute[] { 
+        const iterator = this.getIterator(this.getExpression(options));
 
-    compileSlot(slot: Property) { 
-        if (slot.name.toString() === "default" || slot.name.toString() === "children") { 
-            return `<ng-content></ng-content>`;
-        }
-        return `<ng-content select="[${slot.name}]"></ng-content>`;
-    }
-
-    toString(options?: toStringOptions) {
-        const stringValue = super.toString(options);
-        if (this.expression.isJsx() || stringValue.startsWith("<") || stringValue.startsWith("(<")) { 
-            return stringValue;
-        }
-        if (this.expression instanceof StringLiteral) { 
-            return this.expression.expression;
-        }
-        const contextExpr = options?.newComponentContext ? `${options.newComponentContext}.` : "";
-        const slot = options?.members
-            .filter(m => m.decorators.find(d => d.name === "Slot"))
-            .find(s => stringValue.endsWith(`${contextExpr}${s.name.toString()}`)
-                || s.name.toString() === "children" && (stringValue.endsWith(".default") || stringValue.endsWith(".children")));
-        if (slot) { 
-            return this.compileSlot(slot as Property);
+        if (iterator) {
+            const templateOptions = options ? { ...options } : options;
+            const templateExpression = getTemplate(iterator, templateOptions, true);
+            if (isElement(templateExpression)) {
+                return templateExpression.trackBy(options);
+            }       
         }
 
-        return `{{${stringValue}}}`;
+        return [];
     }
 }
 
@@ -515,7 +526,7 @@ export class JsxSpreadAttribute extends JsxExpression{
 
 export class JsxElement extends BaseJsxElement {
 
-    createChildJsxExpression(expression: BaseJsxExpression) { 
+    createChildJsxExpression(expression: JsxExpression) { 
         return new JsxChildExpression(expression);
     }
 
