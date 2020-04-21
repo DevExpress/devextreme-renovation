@@ -1,4 +1,4 @@
-import { Identifier, Decorator } from "./common";
+import { Identifier } from "./common";
 import { GetAccessor, Property, Method, BaseClassMember } from "./class-members";
 import { SimpleExpression, Expression } from "./base";
 import { ObjectLiteral } from "./literal";
@@ -6,6 +6,7 @@ import { HeritageClause, inheritMembers, Class, Heritable } from "./class";
 import { GeneratorContext } from "../types";
 import { Block } from "./statements";
 import { getModuleRelativePath } from "../utils/path-utils";
+import { Decorator } from "./decorator";
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
     return heritageClauses

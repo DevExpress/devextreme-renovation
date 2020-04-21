@@ -1,0 +1,23 @@
+<script>
+function view(model) {}
+const WidgetInput = {
+  height: {
+    type: Number,
+    default() {
+      return 10;
+    }
+  }
+};
+export default {
+  props: WidgetInput,
+  methods: {
+    getHeight() {
+      this.$emit("on-click", 10);
+      return this.height;
+    },
+    restAttributes() {
+      return {};
+    }
+  }
+};
+</script>

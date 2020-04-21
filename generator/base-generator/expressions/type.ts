@@ -1,8 +1,9 @@
 import { Expression, ExpressionWithOptionalExpression, ExpressionWithExpression } from "./base";
-import { Decorator, Identifier } from "./common";
+import { Identifier } from "./common";
 import { Parameter } from "./functions";
 import { toStringOptions } from "../types";
 import { compileType } from "../utils/string";
+import { Decorator } from "./decorator";
 
 export class TypeExpression extends Expression { }
 
@@ -44,7 +45,7 @@ export class FunctionTypeNode extends TypeExpression {
     }
 
     toString() { 
-        return `(${this.parameters.map(p => p.declaration())})=>${this.type}`;
+        return `(${this.parameters})=>${this.type}`;
     }
 }
 
@@ -177,5 +178,18 @@ export class ParenthesizedType extends TypeExpression {
 
     toString() { 
         return `(${this.expression})`;
+    }
+}
+
+export class LiteralTypeNode extends TypeExpression { 
+    expression: Expression;
+
+    constructor(expression: Expression) { 
+        super();
+        this.expression = expression;
+    }
+
+    toString() { 
+        return this.expression.toString();
     }
 }

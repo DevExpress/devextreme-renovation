@@ -1,9 +1,6 @@
 import { Expression, ExpressionWithOptionalExpression, ExpressionWithExpression } from "./base";
 import { toStringOptions } from "../types";
-import { TypeExpression } from "./type";
-import { Identifier, Decorator } from "./common";
-import { compileType } from "../utils/string";
-import { Parameter } from "./functions";
+import { Identifier } from "./common";
 
 export class PropertyAssignment extends Expression {
     key: Identifier;

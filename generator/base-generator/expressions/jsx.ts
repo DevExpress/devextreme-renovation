@@ -3,6 +3,15 @@ import { Expression, ExpressionWithExpression } from "./base";
 import { toStringOptions } from "../types";
 import SyntaxKind from "../syntaxKind";
 
+export function getJsxExpression(e: ExpressionWithExpression | Expression | undefined): JsxExpression | undefined {
+    if (e instanceof JsxExpression || e instanceof JsxElement || e instanceof JsxOpeningElement) {
+        return e as JsxExpression;
+    }
+    else if (e instanceof ExpressionWithExpression) { 
+        return getJsxExpression(e.expression);
+    }
+}
+
 export class JsxAttribute { 
     name: Identifier;
     initializer: Expression;

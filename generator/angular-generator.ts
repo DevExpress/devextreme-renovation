@@ -4,18 +4,18 @@ import {
     JsxOpeningElement as BaseJsxOpeningElement,
     JsxAttribute as BaseJsxAttribute,
     JsxElement as BaseJsxElement,
-    JsxClosingElement
+    JsxClosingElement,
+    getJsxExpression
 } from "./base-generator/expressions/jsx";
-import { Decorator as BaseDecorator, Call } from "./base-generator/expressions/common";
-import { VariableDeclaration as BaseVariableDeclaration, VariableStatement } from "./base-generator/expressions/variables";
+import {  Call } from "./base-generator/expressions/common";
+import { Decorator as BaseDecorator } from "./base-generator/expressions/decorator";
+import { VariableDeclaration as BaseVariableDeclaration } from "./base-generator/expressions/variables";
 import {
     Property as BaseProperty, Method
 } from "./base-generator/expressions/class-members"
-import { Function, Parameter } from "./base-generator/expressions/functions";
 import {
     toStringOptions as BaseToStringOptions,
-    GeneratorContext,
-    VariableExpression
+    GeneratorContext
 } from "./base-generator/types";
 import SyntaxKind from "./base-generator/syntaxKind";
 import { Expression, SimpleExpression, ExpressionWithExpression } from "./base-generator/expressions/base";
@@ -25,8 +25,13 @@ import { PropertyAssignment } from "./base-generator/expressions/property-assign
 import { Binary, Prefix } from "./base-generator/expressions/operators";
 import { PropertyAccessChain } from "./base-generator/expressions/property-access";
 import { Conditional } from "./base-generator/expressions/conditions";
-import { Block, ReturnStatement } from "./base-generator/expressions/statements";
-import { ArrowFunction } from "./base-generator/expressions/functions";
+import { Block } from "./base-generator/expressions/statements";
+import {
+    ArrowFunction as BaseArrowFunction,
+    Function as BaseFunction,
+    Parameter,
+    getTemplate 
+} from "./base-generator/expressions/functions";
 import { TemplateExpression } from "./base-generator/expressions/template";
 import { SimpleTypeExpression, TypeExpression, FunctionTypeNode } from "./base-generator/expressions/type";
 import { HeritageClause } from "./base-generator/expressions/class";
@@ -329,13 +334,13 @@ export class JsxExpression extends BaseJsxExpression {
         return this.expression;
     }
 
-    getIterator(expression: Expression): ArrowFunctionWithTemplate | AngularFunction | undefined {
+    getIterator(expression: Expression): ArrowFunction | Function | undefined {
         if (expression instanceof Call &&
             (expression.expression instanceof PropertyAccess ||
                 expression.expression instanceof PropertyAccessChain) &&
             expression.expression.name.toString() === "map") {
             const iterator = expression.arguments[0];
-            if (iterator instanceof ArrowFunctionWithTemplate || iterator instanceof AngularFunction) {
+            if (iterator instanceof ArrowFunction || iterator instanceof Function) {
                 return iterator;
             }
         }
@@ -382,12 +387,12 @@ export class JsxExpression extends BaseJsxExpression {
        
         if (iterator) {
             const templateOptions = options ? { ...options } : options;
-            const templateExpression = getAngularTemplate(iterator, templateOptions, true);
+            const templateExpression = getTemplate(iterator, templateOptions, true);
             const template: string = templateExpression ? templateExpression.toString(templateOptions) : "";
             const itemsExpression = ((expression as Call).expression as PropertyAccess).expression;
-            const itemName = iterator.parameters[0].toString();
+            const itemName = iterator.parameters[0].name.toString();
             const itemsExpressionString = itemsExpression.toString(options)
-            const item = `let ${itemName} of ${itemsExpression.toString(options)}`;
+            const item = `let ${itemName} of ${itemsExpressionString}`;
             const ngForValue = [item];
             if (iterator.parameters[1]) {
                 ngForValue.push(`index as ${iterator.parameters[1]}`);
@@ -436,7 +441,7 @@ export class JsxExpression extends BaseJsxExpression {
 
         if (iterator) {
             const templateOptions = options ? { ...options } : options;
-            const templateExpression = getAngularTemplate(iterator, templateOptions, true);
+            const templateExpression = getTemplate(iterator, templateOptions, true);
             if (isElement(templateExpression)) {
                 return templateExpression.trackBy(options);
             }       
@@ -557,123 +562,25 @@ export class JsxElement extends BaseJsxElement {
     }
 }
 
-function getJsxExpression(e: ExpressionWithExpression | Expression | undefined): JsxExpression | undefined {
-    if (e instanceof JsxExpression || e instanceof JsxElement || e instanceof BaseJsxOpeningElement) {
-        return e as JsxExpression;
-    }
-    else if (e instanceof ExpressionWithExpression) { 
-        return getJsxExpression(e.expression);
-    }
-}
-
-function getAngularTemplate(
-    functionWithTemplate: AngularFunction | ArrowFunctionWithTemplate,
-    options?: toStringOptions,
-    doNotChangeContext = false
-) {
-    if (!functionWithTemplate.isJsx()) {
-        return;
-    }
-
-    const statements = functionWithTemplate.body instanceof Block ?
-        functionWithTemplate.body.statements :
-        [functionWithTemplate.body];
-    
-    const returnStatement = functionWithTemplate.body instanceof Block ?
-        statements.find(s => s instanceof ReturnStatement) :
-        statements[0];
-
-    if (returnStatement) { 
-        const componentParamenter = functionWithTemplate.parameters[0];
-        if (options) { 
-            if (!doNotChangeContext && componentParamenter && componentParamenter.name instanceof Identifier) { 
-                options.componentContext = componentParamenter.toString();
-            }
-
-            options.variables = statements.reduce((v: VariableExpression, statement) => {
-                if (statement instanceof VariableStatement) { 
-                    return {
-                        ...statement.declarationList.getVariableExpressions(),
-                        ...v
-                    }
-                }
-                return v;
-            }, {});
-
-            if (componentParamenter && componentParamenter.name instanceof BindingPattern) {
-                options.variables = {
-                    ...componentParamenter.name.getVariableExpressions(new SimpleExpression(SyntaxKind.ThisKeyword)),
-                    ...options.variables
-                }
-            }
-        }
-        
-        return getJsxExpression(returnStatement);
-    }
-}
-export class AngularFunction extends Function { 
-    isJsx() { 
-        return this.body.isJsx();
-    }
+export class Function extends BaseFunction { 
     toString(options?:toStringOptions) { 
         if (this.isJsx()) { 
             return "";
         }
         return super.toString(options);
     }
-
-    getTemplate(options?: toStringOptions, doNotChangeContext = false): string {
-        return getAngularTemplate(this, options, doNotChangeContext)?.toString(options) || "";
-    }
 }
 
-export class ArrowFunctionWithTemplate extends ArrowFunction { 
-    isJsx() { 
-        return this.body.isJsx();
-    }
+export class ArrowFunction extends BaseArrowFunction { 
     toString(options?:toStringOptions) { 
         if (this.isJsx()) { 
             return "";
         }
         return super.toString(options);
-    }
-    
-    getTemplate(options?: toStringOptions, doNotChangeContext = false): string {
-        return getAngularTemplate(this, options, doNotChangeContext)?.toString(options) || "";
     }
 }
 
 class Decorator extends BaseDecorator { 
-    context: AngularGeneratorContext;
-    viewParameter?: Expression | null;
-    constructor(expression: Call, context: AngularGeneratorContext) { 
-        super(expression);
-        this.context = context;
-        if (this.name === "Component") { 
-            this.viewParameter = this.getParameter("view");
-        }
-    }
-
-    addParameter(name: string, value: Expression) {
-        const parameters = (this.expression.arguments[0] as ObjectLiteral);
-        parameters.setProperty(name, value);
-    }
-
-    getParameter(name: string) { 
-        const parameters = (this.expression.arguments[0] as ObjectLiteral);
-        return parameters.getProperty(name);
-    }
-
-    getViewFunction() {
-        const viewFunctionValue = this.viewParameter
-        let viewFunction: ArrowFunctionWithTemplate | AngularFunction | null = null;
-        if (viewFunctionValue instanceof Identifier) {
-            viewFunction = this.context.viewFunctions ? this.context.viewFunctions[viewFunctionValue.toString()] : null;
-        }
-
-        return viewFunction
-    }
-
     toString(options?: toStringOptions) { 
         if (this.name === "OneWay") {
             return "@Input()";
@@ -805,17 +712,18 @@ export class Property extends BaseProperty {
         return defaultValue;
     }
 
-    getter() { 
+    getter(componentContext?: string) { 
+        componentContext = this.processComponentContext(componentContext);
         if (this.decorators.find(d => d.name === "Event")) { 
-            return `${this.name}!.emit`;
+            return `${componentContext}${this.name}!.emit`;
         }
         if (this.decorators.find(d => d.name === "Ref")) { 
-            return `${this.name}${this.questionOrExclamationToken}.nativeElement`
+            return `${componentContext}${this.name}${this.questionOrExclamationToken}.nativeElement`
         }
         if (this.decorators.find(d => d.name === "ApiRef")) { 
-            return `${this.name}`
+            return `${componentContext}${this.name}`
         }
-        return this.name.toString();
+        return `${componentContext}${this.name}`;
     }
 
     getDependency() { 
@@ -1011,7 +919,7 @@ class AngularComponent extends Component {
                 props: [],
                 newComponentContext: this.viewModel ? "_viewModel" : ""
             };
-            const expression = getAngularTemplate(viewFunction, options);
+            const expression = getTemplate(viewFunction, options);
             if (isElement(expression)) {
                 return expression.trackBy(options).map(a => a.getTrackBydeclaration()).join("\n");
             }
@@ -1030,7 +938,7 @@ class AngularComponent extends Component {
                 props: [],
                 newComponentContext: this.viewModel ? "_viewModel" : ""
             };
-            const expression = getAngularTemplate(viewFunction, options);
+            const expression = getTemplate(viewFunction, options);
             if (isElement(expression)) { 
                 options.newComponentContext = "this";
                 const members = [];
@@ -1077,7 +985,7 @@ class AngularComponent extends Component {
                 props: [],
                 newComponentContext: this.viewModel ? "_viewModel" : ""
             };
-            const expression = getAngularTemplate(viewFunction, options);
+            const expression = getTemplate(viewFunction, options);
             if (isElement(expression)) {
                 if (expression.hasNgStyle()) { 
                     
@@ -1210,9 +1118,6 @@ export class PropertyAccess extends BasePropertyAccess {
 }
 
 export class VariableDeclaration extends BaseVariableDeclaration { 
-    isJsx() { 
-        return this.initializer instanceof Expression && this.initializer.isJsx()
-    }
     toString(options?:toStringOptions) { 
         if (this.isJsx()) { 
             return "";
@@ -1222,7 +1127,6 @@ export class VariableDeclaration extends BaseVariableDeclaration {
 }
 
 type AngularGeneratorContext = GeneratorContext & {
-    viewFunctions?: { [name: string]: AngularFunction | ArrowFunctionWithTemplate };
     angularCoreImports?: string[];
 }
 
@@ -1259,20 +1163,15 @@ export class AngularGenerator extends Generator {
         return new JsxElement(openingElement, children, closingElement);
     }
 
-    createFunctionDeclaration(decorators: Decorator[] | undefined, modifiers: string[] | undefined, asteriskToken: string, name: Identifier, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
-        const functionDeclaration = new AngularFunction(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
-        this.addViewFunction(functionDeclaration.name!.toString(), functionDeclaration);
-        return functionDeclaration;
+    createFunctionDeclarationCore(decorators: Decorator[] | undefined, modifiers: string[] | undefined, asteriskToken: string, name: Identifier, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
+        return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
     }
 
     createArrowFunction(modifiers: string[] | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, equalsGreaterThanToken: string, body: Block | Expression) {
-        return new ArrowFunctionWithTemplate(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body, this.getContext());
+        return new ArrowFunction(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body, this.getContext());
     }
 
-    createVariableDeclaration(name: Identifier, type?: TypeExpression, initializer?: Expression) {
-        if (initializer) {
-            this.addViewFunction(name.toString(), initializer);
-        }
+    createVariableDeclarationCore(name: Identifier | BindingPattern, type?: TypeExpression, initializer?: Expression) {
         return new VariableDeclaration(name, type, initializer);
     }
 
@@ -1309,14 +1208,6 @@ export class AngularGenerator extends Generator {
     setContext(context: GeneratorContext | null) {
         !context && counter.reset();
         return super.setContext(context);
-    }
-
-    addViewFunction(name: string, f: any) {
-        if ((f instanceof AngularFunction || f instanceof ArrowFunctionWithTemplate) && f.isJsx()) {
-            const context = this.getContext();
-            context.viewFunctions = context.viewFunctions || {};
-            context.viewFunctions[name] = f;
-        }
     }
 
     addComponent(name: string, component: BaseComponentInput| BaseComponentInput, importClause?: ImportClause) { 

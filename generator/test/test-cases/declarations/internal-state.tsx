@@ -1,13 +1,9 @@
 import { Component, InternalState } from "../../../component_declaration/common";
 
-function viewModel() { }
-
 function view() {}
 
 @Component({
-    name: 'Component',
-    view,
-    viewModel,
+    view
 })
 export default class Widget {
     @InternalState() _hovered: Boolean = false;

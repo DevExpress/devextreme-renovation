@@ -1,5 +1,6 @@
 import { StringLiteral } from "./literal";
-import { Identifier, Decorator } from "./common";
+import { Identifier } from "./common";
+import { Decorator } from "./decorator";
 
 export class NamedImports {
     node: Identifier[];

@@ -43,15 +43,24 @@ function print(node: ts.Node, out?: string[], indent = 0): string[] {
     return out;
 }
 
+export const assertCode = (code: string, expectedCode: string) => { 
+    assert.equal(printSourceCodeAst(code), printSourceCodeAst(expectedCode));
+}
+
 export function printSourceCodeAst(source: string) { 
     return print(ts.createSourceFile("result.tsx", source, ts.ScriptTarget.ES2016, true)).join("\n");
 }
 
-export function createTestGenerator(expectedFolder: string){ 
+export function createTestGenerator(
+    expectedFolder: string,
+    checkCode = assertCode,
+    expectedCodePath = (componentName: string) => `${componentName}.tsx`
+    ) { 
     return function testGenerator(this: any, componentName: string, generator: Generator, componentIndex: number = 0) {
         const factory = require(path.resolve(`${__dirname}/../test-cases/componentFactory/${componentName}`));
         const code = this.code = generator.generate(factory)[componentIndex].code;
-        this.expectedCode = fs.readFileSync(path.resolve(`${__dirname}/../test-cases/expected/${expectedFolder}/${componentName}.tsx`)).toString();
-        assert.equal(printSourceCodeAst(code), printSourceCodeAst(this.expectedCode));
+        const expectedPath = path.resolve(`${__dirname}/../test-cases/expected/${expectedFolder}/${expectedCodePath(componentName)}`);
+        this.expectedCode = fs.readFileSync(expectedPath).toString();
+        checkCode(code, this.expectedCode);
     }
 }

@@ -8,7 +8,7 @@ import {
     Method as BaseMethod,
     BaseClassMember
 } from "./base-generator/expressions/class-members";
-import { Identifier, Decorator } from "./base-generator/expressions/common";
+import { Identifier } from "./base-generator/expressions/common";
 import { Expression, SimpleExpression } from "./base-generator/expressions/base";
 import {
     JsxAttribute as BaseJsxAttribute,
@@ -27,6 +27,7 @@ import { ExpressionWithTypeArguments, TypeExpression } from "./base-generator/ex
 import { Parameter } from "./base-generator/expressions/functions";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input";
 import { ObjectLiteral } from "./base-generator/expressions/literal";
+import { Decorator } from "./base-generator/expressions/decorator";
 
 const eventsDictionary = {
     pointerover: "onPointerOver",
@@ -35,12 +36,12 @@ const eventsDictionary = {
     click: "onClick"
 }
 
-function getLocalStateName(name: Identifier | string) {
-    return `__state_${name}`;
+function getLocalStateName(name: Identifier | string, componentContext: string="") {
+    return `${componentContext}__state_${name}`;
 }
 
-function getPropName(name: Identifier | string) {
-    return `props.${name}`;
+function getPropName(name: Identifier | string, componentContext:string="") {
+    return `${componentContext}props.${name}`;
 }
 
 function stateSetter(stateName: Identifier | string) {
@@ -49,7 +50,7 @@ function stateSetter(stateName: Identifier | string) {
 
 export class ComponentInput extends BaseComponentInput { 
     toString() { 
-        const inherited = this.heritageClauses.reduce((t: string[], h) => t.concat(h.typeNodes.map(t => `...${t}`)), []);
+        const inherited = this.baseTypes.map(t => `...${t}`);
        
         const types = this.heritageClauses.reduce((t: string[], h) => t.concat(h.typeNodes.map(t => `typeof ${t}`)), []);
 
@@ -108,16 +109,17 @@ export class Property extends BaseProperty {
         return super.typeDeclaration();
     }
 
-    getter() { 
+    getter(componentContext?: string) { 
+        componentContext = this.processComponentContext(componentContext);
         if (this.decorators.find(d => d.name === "InternalState") || this.decorators.length===0) {
-            return getLocalStateName(this.name);
+            return getLocalStateName(this.name, componentContext);
         } else if (this.decorators.find(d => d.name === "OneWay" ||  d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
-            return getPropName(this.name);
+            return getPropName(this.name, componentContext);
         } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
             return `${this.name}.current${this.questionOrExclamationToken}`
         } else if (this.decorators.find(d => d.name === "TwoWay")) { 
-            const propName = getPropName(this.name);
-            return `(${propName}!==undefined?${propName}:${getLocalStateName(this.name)})`;
+            const propName = getPropName(this.name, componentContext);
+            return `(${propName}!==undefined?${propName}:${getLocalStateName(this.name, componentContext)})`;
         }
         throw `Can't parse property: ${this._name}`;
     }
@@ -150,10 +152,6 @@ export class Property extends BaseProperty {
 }
 
 export class Method extends BaseMethod {
-    parametersTypeDeclaration() {
-        return this.parameters.map(p => p.declaration()).join(",");
-    }
-
     getDependency(properties: Property[] = []) {
         const dependency = this.body.getDependency();
         const additionalDependency = [];
