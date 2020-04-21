@@ -2550,7 +2550,9 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(getResult(property.toString({
-                members: [property, prop]
+                members: [property, prop],
+                componentContext: generator.SyntaxKind.ThisKeyword,
+                newComponentContext: generator.SyntaxKind.ThisKeyword
             })), getResult("get _name(){this.name}"));
         });
 
@@ -2823,7 +2825,9 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.toString({
-                    members: [property]
+                    members: [property],
+                    componentContext: generator.SyntaxKind.ThisKeyword,
+                    newComponentContext: generator.SyntaxKind.ThisKeyword
                 }), "this.width");
             });
 
@@ -2843,7 +2847,9 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.toString({
-                    members: [property]
+                    members: [property],
+                    componentContext: generator.SyntaxKind.ThisKeyword,
+                    newComponentContext: generator.SyntaxKind.ThisKeyword
                 }), "this.width");
             });
 
@@ -2866,7 +2872,9 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.toString({
-                    members: [property]
+                    members: [property],
+                    componentContext: generator.SyntaxKind.ThisKeyword,
+                    newComponentContext: generator.SyntaxKind.ThisKeyword
                 }), "this.width");
             });
 
@@ -2946,15 +2954,90 @@ mocha.describe("Angular generator", function () {
                 }), "width");
             });
 
-            mocha.it("Access props - this.props", function () { 
+            mocha.it("Access props - this.props without members", function () { 
                 const expression = generator.createPropertyAccess(
-                        generator.createThis(),
-                        generator.createIdentifier("props")
-                    )
+                    generator.createThis(),
+                    generator.createIdentifier("props")
+                );
 
-                assert.strictEqual(expression.toString({
-                    members: []
-                }), "this");
+                const stringValue = expression.toString({
+                    members: [],
+                    componentContext: generator.SyntaxKind.ThisKeyword,
+                    newComponentContext: generator.SyntaxKind.ThisKeyword
+                });
+
+                assert.strictEqual(stringValue, "{}");
+            });
+
+            mocha.it("Access props - this.props with members", function () { 
+                const expression = generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("props")
+                );
+
+                const members = [
+                    generator.createProperty(
+                        [createDecorator("OneWay")],
+                        [],
+                        generator.createIdentifier("p1")
+                    ),
+                    generator.createProperty(
+                        [createDecorator("TwoWay")],
+                        [],
+                        generator.createIdentifier("p2")
+                    ),
+                    generator.createProperty(
+                        [createDecorator("Event")],
+                        [],
+                        generator.createIdentifier("p3")
+                    ),
+                    generator.createProperty(
+                        [createDecorator("Slot")],
+                        [],
+                        generator.createIdentifier("p4")
+                    ),
+                    generator.createProperty(
+                        [createDecorator("Template")],
+                        [],
+                        generator.createIdentifier("p5")
+                    ),
+                    generator.createProperty(
+                        [createDecorator("InternalState")],
+                        [],
+                        generator.createIdentifier("p6")
+                    ),
+                    generator.createMethod(
+                        [],
+                        [],
+                        "",
+                        generator.createIdentifier("p7"),
+                        "",
+                        undefined,
+                        [],
+                        undefined,
+                        generator.createBlock([], false)
+                    ),
+                    generator.createGetAccessor(
+                        [],
+                        [],
+                        generator.createIdentifier("p8"),
+                        []
+                    )
+                ];
+
+                const stringValue = expression.toString({
+                    members,
+                    componentContext: generator.SyntaxKind.ThisKeyword,
+                    newComponentContext: generator.SyntaxKind.ThisKeyword
+                });
+
+                assert.strictEqual(getResult(stringValue), getResult(`{
+                    p1:this.p1,
+                    p2:this.p2,
+                    p3:this.p3!.emit,
+                    p4:this.p4,
+                    p5:this.p5
+                }`));
             });
 
             mocha.it("Access TwoWay props - this.props.prop", function () { 
@@ -2976,7 +3059,9 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.toString({
-                    members: [property]
+                    members: [property],
+                    componentContext: generator.SyntaxKind.ThisKeyword,
+                    newComponentContext: generator.SyntaxKind.ThisKeyword
                 }), "this.width");
             });
 
@@ -3000,7 +3085,9 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.toString({
-                    members: [property]
+                    members: [property],
+                    componentContext: generator.SyntaxKind.ThisKeyword,
+                    newComponentContext: generator.SyntaxKind.ThisKeyword
                 }), "this.onClick!.emit(10)");
             });
 
@@ -3024,7 +3111,9 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(getResult(expression.toString({
-                    members: [property]
+                    members: [property],
+                    componentContext: generator.SyntaxKind.ThisKeyword,
+                    newComponentContext: generator.SyntaxKind.ThisKeyword
                 })), getResult("this.widthChange!.emit(this.width=10)"));
             });
 
@@ -3091,15 +3180,21 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.toString({
-                    members: [property]
+                    members: [property],
+                    componentContext: generator.SyntaxKind.ThisKeyword,
+                    newComponentContext: generator.SyntaxKind.ThisKeyword
                 }), "this.div.nativeElement");
 
                 assert.strictEqual(expression.toString({
-                    members: [propertyWithExclamation]
+                    members: [propertyWithExclamation],
+                    componentContext: generator.SyntaxKind.ThisKeyword,
+                    newComponentContext: generator.SyntaxKind.ThisKeyword
                 }), "this.div!.nativeElement");
 
                 assert.strictEqual(expression.toString({
-                    members: [propertyWithQuestion]
+                    members: [propertyWithQuestion],
+                    componentContext: generator.SyntaxKind.ThisKeyword,
+                    newComponentContext: generator.SyntaxKind.ThisKeyword
                 }), "this.div?.nativeElement");
             });
         });
