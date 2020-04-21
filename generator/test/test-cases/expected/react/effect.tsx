@@ -27,8 +27,8 @@ interface Widget {
 }
 
 export default function Widget(props: WidgetInput) {
-    const [__state_s, __state_setS] = useState(() => (props.s !== undefined ? props.s : props.defaultS) || 10);;
-    const [__state_i, __state_setI] = useState(10);
+    const [__state_s, __state_setS] = useState(() => (props.s !== undefined ? props.s : props.defaultS) || 10);
+    const [__state_i, __state_setI] = useState(10)
 
     const restAttributes=useCallback(function restAttributes(){
         const { defaultS, p, s, sChange, ...restProps } = props;

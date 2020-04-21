@@ -12,7 +12,11 @@ export class Block extends Expression {
 
     toString(options?: toStringOptions) {
         return `{
-            ${this.statements.map(s => s.toString(options)).join("\n")}
+            ${this.statements.map((s, i, arr) => {
+                const main = s.toString(options);
+                const tail = (arr[i + 1] && main.endsWith(")") && arr[i + 1].toString(options).startsWith("(")) ? ";" : "";
+                return `${main}${tail}`
+            }).join("\n")}
         }`
     }
 
