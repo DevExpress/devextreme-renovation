@@ -37,7 +37,7 @@ import { SimpleTypeExpression, TypeExpression, FunctionTypeNode } from "./base-g
 import { HeritageClause } from "./base-generator/expressions/class";
 import { ImportClause } from "./base-generator/expressions/import";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input"
-import { Component, isJSXComponent } from "./base-generator/expressions/component";
+import { Component, isJSXComponent, getProps } from "./base-generator/expressions/component";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
 
@@ -857,22 +857,28 @@ class AngularComponent extends Component {
                     }`);
                 }
                 if (propsDependency.length) {
+                    const conditionArray = ["this.__destroyEffects.length"];
+                    if (propsDependency.indexOf("props") === -1) {
+                        conditionArray.push(`[${propsDependency.map(d => `"${d}"`).join(",")}].some(d=>${ngOnChangesParameters[0]}[d]!==null`)
+                    }
+                   
                     ngOnChanges.push(`
-                        if (this.__destroyEffects.length && [${propsDependency.map(d=>`"${d}"`).join(",")}].some(d=>${ngOnChangesParameters[0]}[d]!==null)) {
+                        if (${conditionArray.join("&&")}) {
                             this.${updateEffectMethod}();
                         }`);
                 }
 
                 internalStateDependency.forEach(name => { 
                     const setter = this.members.find(p => p.name === `_${name}`) as SetAccessor;
-                    setter.body.statements.push(
-                        new SimpleExpression(`
-                        if (this.__destroyEffects.length) {
-                            this.${updateEffectMethod}();
-                        }
-                        `)
-                    );
-                    hasInternalStateDependecy = true;
+                    if (setter) { 
+                        setter.body.statements.push(
+                            new SimpleExpression(`
+                            if (this.__destroyEffects.length) {
+                                this.${updateEffectMethod}();
+                            }`)
+                        );
+                        hasInternalStateDependecy = true;
+                    }
                 });
                 
             });
@@ -1075,7 +1081,9 @@ class AngularComponent extends Component {
             ${this.members
                 .filter(m => !m.inherited && !(m instanceof SetAccessor))
                 .map(m => m.toString({
-                    members: this.members
+                    members: this.members,
+                    componentContext: SyntaxKind.ThisKeyword,
+                    newComponentContext: SyntaxKind.ThisKeyword
                 }))
             .filter(m => m).join("\n")}
             ${spreadAttributes}
@@ -1107,18 +1115,22 @@ class AngularComponent extends Component {
 }
 
 export class PropertyAccess extends BasePropertyAccess {
-    toString(options?: toStringOptions) {
-
-        if (options && !("newComponentContext" in options)) { 
-            options.newComponentContext = SyntaxKind.ThisKeyword;
-        }
-
-        const result = super.toString(options);
-        if (options && result === `${options.newComponentContext}.props`) { 
-            return options.newComponentContext!;
-        }
-
-        return result;
+    processProps(result: string, options: toStringOptions) {
+        const props = getProps(options.members);
+        const expression = new ObjectLiteral(
+            props.map(p => new PropertyAssignment(
+                p._name,
+                new PropertyAccess(
+                    new PropertyAccess(
+                        new Identifier(SyntaxKind.ThisKeyword),
+                        new Identifier("props")
+                    ),
+                    p._name
+                )
+            )),
+            true
+        );
+        return expression.toString(options);
     }
 
     compileStateSetting(value: string, property: Property, toStringOptions?: toStringOptions) {

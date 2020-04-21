@@ -3,6 +3,7 @@ import { toStringOptions } from "../types";
 import { Identifier } from "./common";
 import SyntaxKind from "../syntaxKind";
 import { Property } from "./class-members";
+import { getProps } from "./component";
 
 export class ElementAccess extends ExpressionWithExpression {
     index: Expression;
@@ -33,13 +34,22 @@ export class PropertyAccess extends ExpressionWithExpression {
         this.name = name;
     }
 
+    processProps(result: string, options: toStringOptions) { 
+        return result;
+    }
+
     toString(options?: toStringOptions) {
         const expressionString = this.expression.toString();
         const componentContext = options?.componentContext || SyntaxKind.ThisKeyword;
         const usePropsSpace = `${componentContext}.props`;
         if (expressionString === componentContext || expressionString === usePropsSpace) {
+            const props = getProps(options?.members || []);
             const member = options?.members
-                .filter(m => expressionString === usePropsSpace ? m.inherited : true)
+                .filter(m =>
+                    expressionString === usePropsSpace
+                        ? m instanceof Property && props.indexOf(m) > -1 :
+                        m instanceof Property && props.indexOf(m) || true
+                )
                 .find(m => m._name.toString() === this.name.toString());
             if (member) { 
                 return `${member.getter(options?.newComponentContext)}`;
@@ -52,7 +62,11 @@ export class PropertyAccess extends ExpressionWithExpression {
             if (options.newComponentContext === "") { 
                 return this.name.toString();
             }
-            return result.replace(options.componentContext!, options.newComponentContext);
+            const value = result.replace(options.componentContext!, options.newComponentContext);
+            if (value === `${options?.componentContext?`${options?.componentContext}.`:""}props`) { 
+                return this.processProps(value, options);
+            }
+            return value;
         }
 
         return result;
