@@ -399,17 +399,30 @@ export class JsxExpression extends BaseJsxExpression {
     }
 }
 
-export class JsxChildExpression extends JsxExpression { 
-    constructor(expression: JsxExpression) { 
+export class JsxChildExpression extends JsxExpression {
+    constructor(expression: JsxExpression) {
         super(expression.dotDotDotToken, expression.expression);
     }
 
-    compileSlot(slot: Property) { 
-        if (slot.name.toString() === "default" || slot.name.toString() === "children") { 
+    compileSlot(slot: Property) {
+        if (slot.name.toString() === "default" || slot.name.toString() === "children") {
             return `<ng-content></ng-content>`;
         }
         return `<ng-content select="[${slot.name}]"></ng-content>`;
     }
+
+    getIeratorItemName(parameter: Identifier | BindingPattern, options: toStringOptions) {
+        if (parameter instanceof BindingPattern) { 
+            const identifier = new Identifier(`item_${counter.get()}`);
+            
+            options.variables = {
+                ...options.variables,
+                ...parameter.getVariableExpressions(identifier)
+            }
+            return identifier;
+        }
+        return parameter;
+     }
 
     toString(options?: toStringOptions) {
         const expression = this.getExpression(options);
@@ -424,12 +437,12 @@ export class JsxChildExpression extends JsxExpression {
         const iterator = this.getIterator(expression);
        
         if (iterator) {
-            const templateOptions = options ? { ...options } : options;
+            const templateOptions = options ? { ...options } : { members: [] };
             const templateExpression = getTemplate(iterator, templateOptions, true);
-            const template: string = templateExpression ? templateExpression.toString(templateOptions) : "";
             const itemsExpression = ((expression as Call).expression as PropertyAccess).expression;
-            const itemName = iterator.parameters[0].name.toString();
-            const itemsExpressionString = itemsExpression.toString(options)
+            const itemName = this.getIeratorItemName(iterator.parameters[0].name, templateOptions).toString();
+            const itemsExpressionString = itemsExpression.toString(options);
+            const template: string = templateExpression ? templateExpression.toString(templateOptions) : "";
             const item = `let ${itemName} of ${itemsExpressionString}`;
             const ngForValue = [item];
             if (iterator.parameters[1]) {
@@ -437,7 +450,8 @@ export class JsxChildExpression extends JsxExpression {
             }
 
             if (isElement(templateExpression)) {
-                const keyAttribute = templateExpression.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === "key") as JsxAttribute;
+                const keyAttribute = templateExpression.attributes
+                    .find(a => a instanceof JsxAttribute && a.name.toString() === "key") as JsxAttribute;
                 if (keyAttribute) {
                     const trackByName = new Identifier(`_trackBy_${itemsExpressionString.replace(".", "_")}_${counter.get()}`);
                     ngForValue.push(`trackBy: ${trackByName}`);
