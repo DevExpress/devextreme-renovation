@@ -1,5 +1,7 @@
 import { OneWay, JSXComponent, Component, ComponentBindings, Slot } from "../../../component_declaration/common";
 
+export const COMPONENT_INPUT_CLASS = "c3";
+
 function view() { }
 
 @ComponentBindings()

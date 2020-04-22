@@ -41,7 +41,8 @@ export class Parameter {
 export function getTemplate(
     functionWithTemplate: BaseFunction,
     options?: toStringOptions,
-    doNotChangeContext = false
+    doNotChangeContext = false,
+    globals?: VariableExpression
 ) {
     if (!functionWithTemplate.isJsx()) {
         return;
@@ -70,7 +71,9 @@ export function getTemplate(
                     }
                 }
                 return v;
-            }, {});
+            }, {
+                ...globals
+            });
 
             if (componentParamenter && componentParamenter.name instanceof BindingPattern) {
                 options.variables = {
@@ -123,7 +126,7 @@ export class BaseFunction extends Expression {
     }
 
     getTemplate(options?: toStringOptions, doNotChangeContext = false): string {
-        return getTemplate(this, options, doNotChangeContext)?.toString(options) || "";
+        return getTemplate(this, options, doNotChangeContext, this.context.globals)?.toString(options) || "";
     }
 }
 
