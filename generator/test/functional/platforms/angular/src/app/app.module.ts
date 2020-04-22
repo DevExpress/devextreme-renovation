@@ -8,6 +8,7 @@ import DxButtonWithState from '../../../../components/state';
 import DxComponentWithSpread from '../../../../components/spread-attributes';
 import DxVisibilityChange from '../../../../components/change-visibility';
 import DxVisibilityChangeProp from '../../../../components/change-visibility-prop';
+import ComponentWithRest from '../../../../components/rest-attributes';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import DxVisibilityChangeProp from '../../../../components/change-visibility-pro
     DxButtonWithState,
     DxComponentWithSpread,
     DxVisibilityChange,
-    DxVisibilityChangeProp
+    DxVisibilityChangeProp,
+    ComponentWithRest,
   ],
   imports: [
     BrowserModule

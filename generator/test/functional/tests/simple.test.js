@@ -75,3 +75,18 @@ cloneTest('ChangeVisibilityProp: Effect depends on Prop', async t => {
     await t
         .expect(Selector("#change-visibility-prop-element").textContent).eql("1");
 });
+
+cloneTest('Check rest attributes', async t => {
+    const el = Selector("#component-with-rest-attributes");
+
+    await t
+        .expect(await el.getAttribute("id")).eql("component-with-rest-attributes")
+        .expect(await el.getAttribute("label")).eql("rest-attributes");
+});
+
+cloneTest('Check fragment children', async t => {
+    const el = Selector("#component-with-fragment");
+
+    await t
+        .expect(await el.childElementCount).eql(2);
+});
