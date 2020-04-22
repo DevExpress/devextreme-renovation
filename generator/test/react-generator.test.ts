@@ -805,7 +805,7 @@ mocha.describe("React Component", function () {
                 )
             ]);
 
-            assert.deepEqual(component.heritageProperies.map(p => p.name.toString()), [
+            assert.deepEqual(component.heritageProperties.map(p => p.name.toString()), [
                 "p1", "p2", "p3", "p4", "p5"
             ]);
         });
@@ -1592,7 +1592,7 @@ mocha.describe("ComponentInput", function () {
 
         const cachedComponent = generator.getContext().components!["BaseModel"];
         assert.equal(cachedComponent, expression);
-        assert.deepEqual(cachedComponent.heritageProperies.map(p => p.toString), []);
+        assert.deepEqual(cachedComponent.heritageProperties.map(p => p.toString), []);
     });
 
     mocha.it("Component input has heritage properties", function () { 
@@ -1610,7 +1610,7 @@ mocha.describe("ComponentInput", function () {
 
         assert.strictEqual(getResult(expression.toString()), getResult("declare type BaseModel={p:number; p1:number}; export const BaseModel:BaseModel={p:10, p1: 15};"));
         const cachedComponent = generator.getContext().components!["BaseModel"];
-        assert.deepEqual(cachedComponent.heritageProperies.map(p => p.name), ["p", "p1"]);
+        assert.deepEqual(cachedComponent.heritageProperties.map(p => p.name), ["p", "p1"]);
     });
 
     mocha.it("Rename Template property: template->render", function () { 

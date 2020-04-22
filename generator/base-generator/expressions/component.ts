@@ -129,7 +129,7 @@ export class Component extends Class implements Heritable {
         return "";
     }
 
-    get heritageProperies() {
+    get heritageProperties() {
         return this.members
             .filter(m => m instanceof Property &&
                 m.decorators.find(d =>

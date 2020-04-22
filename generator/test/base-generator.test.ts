@@ -1669,7 +1669,7 @@ mocha.describe("ComponentInput", function () {
 
         const cachedComponent = generator.getContext().components!["BaseModel"];
         assert.equal(cachedComponent, expression);
-        assert.deepEqual(cachedComponent.heritageProperies.map(p => p.toString), []);
+        assert.deepEqual(cachedComponent.heritageProperties.map(p => p.toString), []);
     });
 
     mocha.it("Component input has heritage properties", function () { 
@@ -1686,7 +1686,7 @@ mocha.describe("ComponentInput", function () {
         );
 
         const cachedComponent = generator.getContext().components!["BaseModel"];
-        assert.deepEqual(cachedComponent.heritageProperies.map(p => p.name.toString()), ["p", "p1"]);
+        assert.deepEqual(cachedComponent.heritageProperties.map(p => p.name.toString()), ["p", "p1"]);
     });
 });
 
@@ -1714,7 +1714,7 @@ mocha.describe("import Components", function () {
         
         const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/empty-component.tsx`);
         assert.ok(generator.cache[baseModulePath]);
-        assert.deepEqual(generator.getContext().components!["Base"].heritageProperies.map(p => p.name.toString()), ["height", "width"]);
+        assert.deepEqual(generator.getContext().components!["Base"].heritageProperties.map(p => p.name.toString()), ["height", "width"]);
     });
 
     mocha.it("Parse imported component. module specifier has extension", function () {
@@ -1731,7 +1731,7 @@ mocha.describe("import Components", function () {
         
         const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/empty-component.tsx`);
         assert.ok(generator.cache[baseModulePath]);
-        assert.deepEqual(generator.getContext().components!["Base"].heritageProperies.map(p => p.name.toString()), ["height", "width"]);
+        assert.deepEqual(generator.getContext().components!["Base"].heritageProperties.map(p => p.name.toString()), ["height", "width"]);
     });
 
     mocha.it("Get properties from heritageClause", function () {

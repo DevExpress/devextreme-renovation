@@ -25,7 +25,7 @@ export class HeritageClause {
 
         this.members = types.reduce((properties: Property[], { type }) => {
             if (context.components && context.components[type] && context.components[type]) {
-                properties = properties.concat(context.components[type].heritageProperies)
+                properties = properties.concat(context.components[type].heritageProperties)
             }
             return properties;
         }, []);
@@ -80,7 +80,7 @@ export class Class {
 
 export interface Heritable {
     name: string;
-    heritageProperies: Property[];
+    heritageProperties: Property[];
     compileDefaultProps(): string;
     defaultPropsDest(): string;
 }
