@@ -2,7 +2,7 @@ import SyntaxKind from "./syntaxKind";
 import fs from "fs";
 import path from "path";
 import { compileCode } from "../component-compiler";
-import { ImportDeclaration, ImportClause, NamedImports } from "./expressions/import";
+import { ImportDeclaration, ImportClause, NamedImports, NamespaceImport } from "./expressions/import";
 import { SimpleExpression, Expression } from "./expressions/base";
 import { Identifier, New, Delete, Paren, Call, NonNullExpression, TypeOf, Void, CallChain, AsExpression } from "./expressions/common";
 import {
@@ -28,7 +28,8 @@ import {
     UnionTypeNode,
     TypeQueryNode,
     ParenthesizedType,
-    LiteralTypeNode
+    LiteralTypeNode,
+    IndexedAccessTypeNode
 } from "./expressions/type";
 import { Method, GetAccessor, Property } from "./expressions/class-members";
 import { For, ForIn, Do, While } from "./expressions/cycle";
@@ -251,6 +252,10 @@ export default class Generator {
         return new While(expression, statement);
     }
 
+    createNamespaceImport(name: Identifier) { 
+        return new NamespaceImport(name);
+    }
+
     createImportDeclaration(decorators: Decorator[]|undefined, modifiers: string[]|undefined, importClause: ImportClause=new ImportClause(), moduleSpecifier: StringLiteral) {
         if (moduleSpecifier.toString().indexOf("component_declaration/common") >= 0) {
             return "";
@@ -424,6 +429,10 @@ export default class Generator {
 
     createLiteralTypeNode(literal: Expression) { 
         return new LiteralTypeNode(literal);
+    }
+
+    createIndexedAccessTypeNode(objectType: TypeExpression, indexType: TypeExpression) { 
+        return new IndexedAccessTypeNode(objectType, indexType);
     }
 
     createTypeAliasDeclaration(decorators: Decorator[]|undefined, modifiers: string[]=[], name: Identifier, typeParameters: any, type: TypeExpression) { 

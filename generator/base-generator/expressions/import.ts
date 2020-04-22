@@ -91,3 +91,15 @@ export class ImportDeclaration {
         return `import ${this.importClause}${this.moduleSpecifier}`;
     }
 }
+
+export class NamespaceImport { 
+    name: Identifier;
+
+    constructor(name: Identifier) { 
+        this.name = name;
+    }
+
+    toString() { 
+        return `* as ${this.name}`;
+    }
+}

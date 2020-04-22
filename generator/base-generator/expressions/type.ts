@@ -193,3 +193,17 @@ export class LiteralTypeNode extends TypeExpression {
         return this.expression.toString();
     }
 }
+
+export class IndexedAccessTypeNode extends TypeExpression { 
+    objectType: TypeExpression;
+    indexType: TypeExpression;
+    constructor(objectType: TypeExpression, indexType: TypeExpression) {
+        super();
+        this.objectType = objectType;
+        this.indexType = indexType;
+    }
+
+    toString() { 
+        return `${this.objectType}[${this.indexType}]`;
+    }
+}

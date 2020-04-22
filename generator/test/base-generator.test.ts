@@ -296,7 +296,18 @@ mocha.describe("base-generator: expressions", function () {
     
             assert.strictEqual(expression.toString(), " type Name = {b:string}");
         });
-    
+
+        mocha.it("createIndexedAccessTypeNode", function () { 
+            const expression = generator.createIndexedAccessTypeNode(
+                generator.createTypeReferenceNode(
+                    generator.createIdentifier("PageIndex"),
+                    undefined
+                ),
+                generator.createLiteralTypeNode(generator.createStringLiteral("1"))
+            );
+
+            assert.strictEqual(expression.toString(), `PageIndex["1"]`);
+        });
         
         mocha.it("createIntersectionTypeNode", function () {
             assert.equal(generator.createIntersectionTypeNode(
@@ -1545,6 +1556,14 @@ mocha.describe("base-generator: expressions", function () {
                 ),
                 generator.createStringLiteral("../../component_declaration/common")
               ), '')
+        });
+
+        mocha.it("createNamespaceImport", function () { 
+            const expression = generator.createNamespaceImport(
+                generator.createIdentifier("module")
+            );
+    
+            assert.equal(expression.toString(), '* as module');
         });
     });
 
