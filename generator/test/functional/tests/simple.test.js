@@ -85,7 +85,6 @@ cloneTest('Check rest attributes', async t => {
 });
 
 cloneTest('Check fragment children', async t => {
-    await t.debug();
     const el = Selector("#component-with-fragment");
 
     await t
