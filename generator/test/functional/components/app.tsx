@@ -31,7 +31,7 @@ function view(model: App) {
         <ButtonComponent id="button-4" onClick={model.onVisibilityChangePropClick}>{"Open"}</ButtonComponent>
         <VisibilityChangeProp visible={model.visibilityChangePropValue}></VisibilityChangeProp>
 
-        <ComponentWithRest id="component-with-rest-attributes"></ComponentWithRest>
+        <ComponentWithRest id="component-with-rest-attributes" label="rest-attributes"></ComponentWithRest>
     </div>;
 }
 

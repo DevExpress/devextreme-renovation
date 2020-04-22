@@ -80,5 +80,6 @@ cloneTest('Check rest attributes', async t => {
     const el = Selector("#component-with-rest-attributes");
 
     await t
-        .expect(await el.getAttribute("id")).eql("component-with-rest-attributes");
+        .expect(await el.getAttribute("id")).eql("component-with-rest-attributes")
+        .expect(await el.getAttribute("label")).eql("rest-attributes");
 });
