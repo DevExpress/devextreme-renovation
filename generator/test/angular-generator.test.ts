@@ -3188,6 +3188,39 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(stringValue, "{}");
             });
 
+            mocha.it("Access props - this.props in bindingPattern statement", function () { 
+                const variableDeclaration = generator.createVariableDeclaration(
+                    generator.createObjectBindingPattern(
+                        [
+                            generator.createBindingElement(
+                                undefined,
+                                undefined,
+                                generator.createIdentifier("p")
+                            )
+                        ]
+                    ),
+                    undefined,
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("props")
+                    )
+                )
+
+                const stringValue = variableDeclaration.toString({
+                    members: [
+                        generator.createProperty(
+                            [createDecorator("OneWay")],
+                            [],
+                            generator.createIdentifier("p1")
+                        )
+                    ],
+                    componentContext: generator.SyntaxKind.ThisKeyword,
+                    newComponentContext: generator.SyntaxKind.ThisKeyword
+                });
+
+                assert.strictEqual(stringValue, "{p}=this");
+            });
+            
             mocha.it("Access props - this.props with members", function () { 
                 const expression = generator.createPropertyAccess(
                     generator.createThis(),

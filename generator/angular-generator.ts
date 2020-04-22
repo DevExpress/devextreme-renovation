@@ -1165,6 +1165,10 @@ export class PropertyAccess extends BasePropertyAccess {
 }
 
 export class VariableDeclaration extends BaseVariableDeclaration { 
+    processProps(result: string, options:toStringOptions) { 
+        return options.newComponentContext!
+    }
+
     toString(options?:toStringOptions) { 
         if (this.isJsx()) { 
             return "";
