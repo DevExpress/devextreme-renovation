@@ -287,6 +287,15 @@ export default class Generator {
                         this.addComponent(i, componentInput);
                     }
                 });
+
+                this.cache.__globals__ && importClause.imports.forEach(i => {
+                    if (this.cache.__globals__[i]) { 
+                        context.globals = {
+                            ...context.globals,
+                            [i]: this.cache.__globals__[i]
+                        }
+                    }
+                });
             }
         }
 
@@ -586,13 +595,24 @@ export default class Generator {
     defaultOptionsModule?: string;
 
     processCodeFactoryResult(codeFactoryResult: Array<any>) { 
+        const context = this.getContext();
+        codeFactoryResult.forEach(e => { 
+            if (e instanceof VariableStatement) { 
+                context.globals = {
+                    ...context.globals,
+                    ...e.getVariableExpressions()
+                }
+            }
+        });
+        this.cache.__globals__ = context.globals;
         return codeFactoryResult.join("\n");
     }
 
     generate(factory: any): { path?: string, code: string }[] {
-        const result: { path?: string, code: string }[] = []
+        const result: { path?: string, code: string }[] = [];
         const codeFactoryResult = factory(this);
-        const { path } = this.getContext()
+        const { path } = this.getContext();
+
         if(path) {
             this.cache[path] = codeFactoryResult;
         }

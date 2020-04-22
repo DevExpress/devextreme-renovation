@@ -150,4 +150,8 @@ export class VariableStatement extends Expression {
     getDependency() {
         return this.declarationList.getDependency();
     }
+
+    getVariableExpressions() { 
+        return this.declarationList.getVariableExpressions();
+    }
 }
