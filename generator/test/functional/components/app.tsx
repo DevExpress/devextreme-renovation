@@ -1,4 +1,4 @@
-import { Component, ComponentBindings, JSXComponent, InternalState } from "../../../component_declaration/common";
+import { Component, ComponentBindings, JSXComponent, InternalState, Fragment } from "../../../component_declaration/common";
 
 import SimpleComponent from "./simple.tsx";
 import ButtonComponent from "./button.tsx";
@@ -32,6 +32,8 @@ function view(model: App) {
         <VisibilityChangeProp visible={model.visibilityChangePropValue}></VisibilityChangeProp>
 
         <ComponentWithRest id="component-with-rest-attributes" label="rest-attributes"></ComponentWithRest>
+
+        <div id="component-with-fragment"><Fragment><div></div><div></div></Fragment></div>
     </div>;
 }
 
