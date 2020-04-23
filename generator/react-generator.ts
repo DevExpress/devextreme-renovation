@@ -23,7 +23,11 @@ import { VariableStatement, VariableDeclarationList, VariableDeclaration } from 
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access";
 import { ReturnStatement, Block } from "./base-generator/expressions/statements";
 import { getModuleRelativePath } from "./base-generator/utils/path-utils";
-import { ExpressionWithTypeArguments, TypeExpression } from "./base-generator/expressions/type";
+import {
+    ExpressionWithTypeArguments,
+    TypeExpression,
+    TypeReferenceNode as BaseTypeReferenceNode
+} from "./base-generator/expressions/type";
 import { Parameter } from "./base-generator/expressions/functions";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input";
 import { ObjectLiteral } from "./base-generator/expressions/literal";
@@ -53,13 +57,14 @@ export class ComponentInput extends BaseComponentInput {
         const inherited = this.baseTypes.map(t => `...${t}`);
        
         const types = this.heritageClauses.reduce((t: string[], h) => t.concat(h.typeNodes.map(t => `typeof ${t}`)), []);
+        const typeName = `${this.name}Type`;
 
-        const typeDeclaration = `declare type ${this.name}=${types.concat([`{
+        const typeDeclaration = `export declare type ${typeName} ${types.concat([`{
             ${this.members.filter(m => !(m as Property).inherited).map(p => p.typeDeclaration()).join(";\n")}
         }`]).join("&")}`;
 
         return `${typeDeclaration}
-        ${this.modifiers.join(" ")} const ${this.name}:${this.name}={
+        ${this.modifiers.join(" ")} const ${this.name}:${typeName}={
            ${inherited.concat(
                this.members
                    .filter(m => !(m as Property).inherited && (m as Property).initializer && 
@@ -73,8 +78,9 @@ export class ComponentInput extends BaseComponentInput {
 export class HeritageClause extends BaseHeritageClause { 
     constructor(token: string, types: ExpressionWithTypeArguments[], context: GeneratorContext) {
         super(token, types, context);
-        this.defaultProps = types.reduce((defaultProps: string[], { type }) => {
-            const importName = type;
+        this.defaultProps = 
+        types.reduce((defaultProps: string[], { type }) => {
+            const importName = type.replace("typeof ", "");
             const component = context.components && context.components[importName]
             if (component && component.compileDefaultProps() !== "") {
                 defaultProps.push(`${component.defaultPropsDest().replace(component.name.toString(), importName)}`);
@@ -415,7 +421,7 @@ export class ReactComponent extends Component {
 
     compilePropsType() {
         if (this.isJSXComponent) { 
-            return this.heritageClauses[0].defaultProps[0];
+            return `${this.heritageClauses[0].defaultProps[0]}Type`;
         }
         return `{
             ${this.props
@@ -486,6 +492,20 @@ export class JsxSelfClosingElement extends JsxOpeningElement{
         return `<${this.tagName.toString(options)} ${this.attributesString(options)}/>`;
     }
 }
+
+export class TypeReferenceNode extends BaseTypeReferenceNode { 
+    context: GeneratorContext;
+    constructor(typeName: Identifier, typeArguments: TypeExpression[] | undefined, context: GeneratorContext) {
+        super(typeName, typeArguments);
+        this.context = context;
+    }
+    toString() { 
+        if (this.context.components?.[this.typeName.toString()] instanceof ComponentInput) {
+            return `typeof ${super.toString()}`;
+        }
+        return super.toString();
+    }
+}
  
 export class JsxClosingElement extends JsxOpeningElement { 
     constructor(tagName: Expression) { 
@@ -540,6 +560,10 @@ export class Generator extends BaseGenerator {
 
     createPropertyAccess(expression: Expression, name: Identifier) {
         return new PropertyAccess(expression, name);
+    }
+
+    createTypeReferenceNode(typeName: Identifier, typeArguments?: TypeExpression[]) {
+        return new TypeReferenceNode(typeName, typeArguments, this.getContext());
     }
 }
 

@@ -34,7 +34,11 @@ export class HeritageClause {
             const importName = type;
             const component = context.components && context.components[importName]
             if (component && component.compileDefaultProps() !== "") {
-                defaultProps.push(`${component.defaultPropsDest().replace(component.name.toString(), importName)}`);
+                defaultProps.push(
+                    `${component.defaultPropsDest().replace(component.name.toString(), importName)}${
+                        type.indexOf("typeof ") === 0 ? "Type": ""
+                    }`
+                );
             }
             return defaultProps;
         }, []);

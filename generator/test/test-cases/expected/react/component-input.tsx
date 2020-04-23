@@ -2,24 +2,24 @@ export const COMPONENT_INPUT_CLASS = "c3";
 
 function view() { }
 
-declare type WidgetProps = {
+export declare type WidgetPropsType = {
     height?: number;
     children?: React.ReactNode
 }
 
-export const WidgetProps: WidgetProps = {
+export const WidgetProps: WidgetPropsType = {
     height: 10
 };
 
 import React, { useCallback } from "react";
 
 interface Widget {
-    props: WidgetProps,
+    props: WidgetPropsType,
     onClick: () => any,
     restAttributes:any;
 }
 
-export default function Widget(props: WidgetProps) {
+export default function Widget(props: WidgetPropsType) {
     const onClick = useCallback(function onClick() {
         const v = props.height
     }, [props.height]);

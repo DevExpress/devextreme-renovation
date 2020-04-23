@@ -2,16 +2,16 @@ import "typescript";
 
 function view() { }
 
-declare type WidgetProps = {}
+export declare type WidgetPropsType = {}
 
-export const WidgetProps: WidgetProps = {};
+export const WidgetProps: WidgetPropsType = {};
 
 import { convertRulesToOptions, Rule } from "../../../../../../component_declaration/default_options";
 import React, {useCallback} from "react";
 
-interface Widget { props: WidgetProps, restAttributes: any; }
+interface Widget { props: WidgetPropsType, restAttributes: any; }
 
-export default function Widget(props: WidgetProps) {
+export default function Widget(props: WidgetPropsType) {
     const restAttributes=useCallback(function restAttributes(){
         const { ...restProps } = props;
         return restProps;
@@ -32,7 +32,7 @@ function __createDefaultProps() {
 Widget.defaultProps = __createDefaultProps();
 
 
-type WidgetOptionRule = Rule<WidgetProps>;
+type WidgetOptionRule = Rule<WidgetPropsType>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {

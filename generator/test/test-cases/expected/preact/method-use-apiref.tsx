@@ -2,10 +2,10 @@ import BaseWidget from "./method.p";
 
 function view(viewModel: WidgetWithApiRef) { return <BaseWidget ref={viewModel.baseRef} prop1={viewModel.props.prop1}></BaseWidget>;}
 
-declare type WidgetWithApiRefInput = {
+export declare type WidgetWithApiRefInputType = {
     prop1?: number
 }
-const WidgetWithApiRefInput: WidgetWithApiRefInput = { };
+const WidgetWithApiRefInput: WidgetWithApiRefInputType = { };
 
 import { WidgetRef as BaseWidgetRef } from "./method.p";
 import * as Preact from "preact";
@@ -17,12 +17,12 @@ export type WidgetWithApiRefRef = {
 };
 
 interface WidgetWithApiRef {
-    props: WidgetWithApiRefInput;
+    props: WidgetWithApiRefInputType;
     baseRef: any;
     restAttributes: any;
 }
 
-const WidgetWithApiRef = forwardRef<WidgetWithApiRefRef, WidgetWithApiRefInput>((props: WidgetWithApiRefInput, ref) => {
+const WidgetWithApiRef = forwardRef<WidgetWithApiRefRef, WidgetWithApiRefInputType>((props: WidgetWithApiRefInputType, ref) => {
     const baseRef = useRef<BaseWidgetRef>();
 
     useImperativeHandle(ref, () => ({

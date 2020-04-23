@@ -7,13 +7,13 @@ function subscribe(p: string, s: number, i: number) {
 function unsubscribe(id: number) {
     return undefined;
 }
-declare type WidgetInput = {
+export declare type WidgetInputType = {
     p: string;
     s: number;
     defaultS?:number;
     sChange?:(s:number)=>void
 }
-export const WidgetInput: WidgetInput = {
+export const WidgetInput: WidgetInputType = {
     p: "10",
     s: 10,
     sChange:()=>{}
@@ -21,12 +21,12 @@ export const WidgetInput: WidgetInput = {
 
 import React, { useState, useCallback, useEffect } from 'react';
 interface Widget {
-    props: WidgetInput;
+    props: WidgetInputType;
     i: number;
     restAttributes: any;
 }
 
-export default function Widget(props: WidgetInput) {
+export default function Widget(props: WidgetInputType) {
     const [__state_s, __state_setS] = useState(() => (props.s !== undefined ? props.s : props.defaultS) || 10);
     const [__state_i, __state_setI] = useState(10)
 
