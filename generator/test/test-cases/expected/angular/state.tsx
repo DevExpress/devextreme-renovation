@@ -25,6 +25,11 @@ export default class Widget extends WidgetInput {
         this.state2Change!.emit(this.state2 = cur !== false ? false : true)
     }
 
+    __destruct(): any {
+        const { state1 } = this;
+        const s = state1;
+    }
+
     get __restAttributes(){
         return {}
     }

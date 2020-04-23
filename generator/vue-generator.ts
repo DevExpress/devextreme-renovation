@@ -124,6 +124,13 @@ export class Property extends BaseProperty {
     inherit() { 
         return new Property(this.decorators, this.modifiers, this._name, this.questionOrExclamationToken, this.type, this.initializer, true);
     }
+
+    get canBeDestructured() { 
+        if (this.isEvent || this.isState) {
+            return false;
+        }
+        return super.canBeDestructured;
+    }
 }
 
 function compileMethod(expression: Method | GetAccessor, options?: toStringOptions): string { 

@@ -25,11 +25,18 @@ export class VariableDeclaration extends Expression {
     }
 
     toString(options?: toStringOptions) {
-        if (this.name instanceof BindingPattern && options?.members.length && this.initializer instanceof PropertyAccess) {
-            const props = getProps(options.members);
-            const members = this.name.getDependency()
-                .map(d => props.find(m => m._name.toString() === d))
-                .filter(m => m && m.name && m.name.toString() !== m._name.toString()) as Array<Property | Method>;
+        if (this.name instanceof BindingPattern &&
+            options?.members.length &&
+            this.initializer instanceof PropertyAccess &&
+            this.initializer.toString({
+                members: [],
+                variables: { ...options.variables }
+            }).endsWith("props")
+        ) {
+            const dependency = this.name.getDependency();
+            const members = getProps(options.members)
+                .filter(m => !m.canBeDestructured && dependency.indexOf(m._name.toString()) >= 0);
+                
             const variables = members.reduce((v: VariableExpression, m) => {
                 const bindingPattern = this.name as BindingPattern;
                 bindingPattern.remove(m._name.toString());

@@ -57,6 +57,10 @@ export class BaseClassMember extends Expression {
     get isRef() { 
         return this.decorators.some(d => d.name === "Ref");
     }
+
+    get canBeDestructured() { 
+        return this.name === this._name.toString();
+    } 
 }
 
 export class Method extends BaseClassMember {

@@ -155,6 +155,13 @@ export class Property extends BaseProperty {
         }
         return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(${this.initializer})`;
     }
+
+    get canBeDestructured() { 
+        if (this.isState) { 
+            return false;
+        }
+        return super.canBeDestructured;
+    }
 }
 
 export class Method extends BaseMethod {

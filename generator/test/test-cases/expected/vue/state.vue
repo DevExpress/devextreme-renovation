@@ -34,6 +34,9 @@ export default {
       this.state2_state = cur !== false ? false : true,
       this.emit("state2-change", this.state2_state);
     },
+    destruct(){
+      const s = (this.state1 !== undefined ? this.state1 : this.state1_state);
+    },
     __restAttributes() {
       return {};
     }

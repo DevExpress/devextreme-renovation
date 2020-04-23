@@ -19,7 +19,9 @@ interface Widget {
 
 export default function Widget(props: WidgetInputType) {
     const getHeight = useCallback(function getHeight() {
-        props.onClick(10)
+        props.onClick(10);
+        const { onClick } = props;
+        onClick(11);
         return props.height;
     }, [props.onClick, props.height]);
 
