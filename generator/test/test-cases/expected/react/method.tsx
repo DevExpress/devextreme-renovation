@@ -29,7 +29,7 @@ const Widget = forwardRef<WidgetRef, WidgetInput>((props: WidgetInput, ref) => {
             return `${props.prop1} + ${divRef.current!.innerHTML}`;
         }
     }), [props.prop1, props.prop2]);
-    const restAttributes=useCallback(function restAttributes(){
+    const __restAttributes=useCallback(function __restAttributes(){
         const { prop1, prop2, ...restProps } = props;
         return restProps;
     }, [props]);
@@ -37,7 +37,7 @@ const Widget = forwardRef<WidgetRef, WidgetInput>((props: WidgetInput, ref) => {
     return view(({
         props: { ...props },
         divRef,
-        restAttributes: restAttributes()
+        restAttributes: __restAttributes()
     }));
 });
 

@@ -9,10 +9,10 @@ import { CommonModule } from "@angular/common"
 })
 export default class Widget {
     _hovered: Boolean = false
-    updateState(): any {
+    __updateState(): any {
         this.__hovered = !this._hovered
     }
-    get restAttributes(){
+    get __restAttributes(){
         return {}
     }
     

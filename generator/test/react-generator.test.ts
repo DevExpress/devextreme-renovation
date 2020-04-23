@@ -805,7 +805,7 @@ mocha.describe("React Component", function () {
                 )
             ]);
 
-            assert.deepEqual(component.heritageProperies.map(p => p.name.toString()), [
+            assert.deepEqual(component.heritageProperties.map(p => p.name.toString()), [
                 "p1", "p2", "p3", "p4", "p5"
             ]);
         });
@@ -1592,7 +1592,7 @@ mocha.describe("ComponentInput", function () {
 
         const cachedComponent = generator.getContext().components!["BaseModel"];
         assert.equal(cachedComponent, expression);
-        assert.deepEqual(cachedComponent.heritageProperies.map(p => p.toString), []);
+        assert.deepEqual(cachedComponent.heritageProperties.map(p => p.toString), []);
     });
 
     mocha.it("Component input has heritage properties", function () { 
@@ -1610,7 +1610,7 @@ mocha.describe("ComponentInput", function () {
 
         assert.strictEqual(getResult(expression.toString()), getResult("declare type BaseModel={p:number; p1:number}; export const BaseModel:BaseModel={p:10, p1: 15};"));
         const cachedComponent = generator.getContext().components!["BaseModel"];
-        assert.deepEqual(cachedComponent.heritageProperies.map(p => p.name), ["p", "p1"]);
+        assert.deepEqual(cachedComponent.heritageProperties.map(p => p.name), ["p", "p1"]);
     });
 
     mocha.it("Rename Template property: template->render", function () { 
@@ -1665,7 +1665,7 @@ mocha.describe("ComponentInput", function () {
 
         mocha.it("Empty input with empty component", function () {
             const component = createComponent([]);
-            assert.deepEqual(component.compileViewModelArguments(), ["props:{...props}", "restAttributes:restAttributes()"]);
+            assert.deepEqual(component.compileViewModelArguments(), ["props:{...props}", "restAttributes:__restAttributes()"]);
         });
         
         mocha.it("Prop in input with empty component", function () {
@@ -1680,7 +1680,7 @@ mocha.describe("ComponentInput", function () {
                     generator.createKeywordTypeNode(generator.SyntaxKind.BooleanKeyword)
                 )
             ]);
-            assert.deepEqual(component.compileViewModelArguments(), ["props:{...props}", "restAttributes:restAttributes()"]);
+            assert.deepEqual(component.compileViewModelArguments(), ["props:{...props}", "restAttributes:__restAttributes()"]);
         });
 
         mocha.it("State in input - extended props with state getter in viewModes args", function () {
@@ -1703,7 +1703,7 @@ mocha.describe("ComponentInput", function () {
                     ...props,
                     p:(props.p!==undefined?props.p:__state_p)
                 },
-                restAttributes: restAttributes()
+                restAttributes: __restAttributes()
             }`));
         });
 
@@ -1732,7 +1732,7 @@ mocha.describe("ComponentInput", function () {
             ]);
             assert.deepEqual(getResult(
                 `{${component.compileViewModelArguments().join(",")}}`
-            ), getResult("{props:{...props},s:__state_s,restAttributes: restAttributes()}"));
+            ), getResult("{props:{...props},s:__state_s,restAttributes: __restAttributes()}"));
         });
 
         mocha.it("Pass getter result in viewModel arguments", function () {
@@ -1750,7 +1750,7 @@ mocha.describe("ComponentInput", function () {
             assert.strictEqual(getResult(component.compileComponentInterface()), getResult("interface Widget{props: Input; property:any; restAttributes:any;}"));
 
             assert.strictEqual(getResult(`{${component.compileViewModelArguments().join(",")}}`
-            ), getResult("{props:{...props}, property: __property(), restAttributes: restAttributes() }"));
+            ), getResult("{props:{...props}, property: __property(), restAttributes: __restAttributes() }"));
         });
     });
 

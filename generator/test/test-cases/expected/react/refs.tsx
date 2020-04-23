@@ -30,7 +30,7 @@ export default function Widget(props: {}) {
         return divRef.current!.outerHTML + nullableRef.current?.outerHTML;
     }, [divRef, nullableRef]);
 
-    const restAttributes=useCallback(function restAttributes(){
+    const __restAttributes=useCallback(function __restAttributes(){
         const { ...restProps } = props;
         return restProps;
     }, [props]);
@@ -42,6 +42,6 @@ export default function Widget(props: {}) {
         nullableRef,
         explicitRef,
         getHeight,
-        restAttributes: restAttributes()
+        restAttributes: __restAttributes()
     }));
 }

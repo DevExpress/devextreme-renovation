@@ -2980,7 +2980,7 @@ mocha.describe("Angular generator", function () {
 
                 ${component.decorator}
                 export default class BaseWidget {
-                    get restAttributes(){
+                    get __restAttributes(){
                         return {}
                     }
                 }
@@ -3043,7 +3043,7 @@ mocha.describe("Angular generator", function () {
                 
                 ${component.decorator}
                 export default class BaseWidget extends Input {
-                    get restAttributes(){
+                    get __restAttributes(){
                         return {}
                     }
                 }
@@ -3575,7 +3575,7 @@ mocha.describe("Angular generator", function () {
                         __schedule_e(){
                             this.__destroyEffects[0]?.();
                             this.__viewCheckedSubscribeEvent[0] = ()=>{
-                                this.__destroyEffects[0] = this.e()
+                                this.__destroyEffects[0] = this.__e()
                             }
                         }
                 `));
@@ -3613,7 +3613,7 @@ mocha.describe("Angular generator", function () {
                         __schedule_e(){
                             this.__destroyEffects[0]?.();
                             this.__viewCheckedSubscribeEvent[0] = ()=>{
-                                this.__destroyEffects[0] = this.e()
+                                this.__destroyEffects[0] = this.__e()
                             }
                         }
                 `));
@@ -3665,7 +3665,7 @@ mocha.describe("Angular generator", function () {
                         __schedule_e(){
                             this.__destroyEffects[0]?.();
                             this.__viewCheckedSubscribeEvent[0] = ()=>{
-                                this.__destroyEffects[0] = this.e()
+                                this.__destroyEffects[0] = this.__e()
                             }
                         }
                 `));

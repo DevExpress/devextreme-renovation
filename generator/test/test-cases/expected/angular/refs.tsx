@@ -16,7 +16,7 @@ export default class Widget {
     getHeight() { 
         return this.divRef.nativeElement.outerHTML + this.nullableRef?.nativeElement.outerHTML;
     }
-    get restAttributes(){
+    get __restAttributes(){
         return {}
     }
 }

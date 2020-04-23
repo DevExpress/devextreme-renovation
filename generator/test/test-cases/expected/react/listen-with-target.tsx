@@ -13,7 +13,7 @@ export function Component(props: {}) {
   const onPointerUp = useCallback(function onPointerUp(){ }, []);
   const scrollHandler = useCallback(function scrollHandler() { }, []);
   
-  const restAttributes=useCallback(function restAttributes(){
+  const __restAttributes=useCallback(function __restAttributes(){
     const { ...restProps } = props;
     return restProps;
   }, [props]);
@@ -31,6 +31,6 @@ export function Component(props: {}) {
     ...props,
     onPointerUp,
     scrollHandler,
-    restAttributes: restAttributes()
+    restAttributes: __restAttributes()
   }));
 }
