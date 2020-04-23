@@ -1,7 +1,7 @@
 function view(model: Widget) {
   return <div >{model.props.state1}</div>;
 }
-declare type WidgetInput = {
+export declare type WidgetInputType = {
   state1?: boolean;
   state2: boolean;
   state3?: boolean;
@@ -15,7 +15,7 @@ declare type WidgetInput = {
   defaultState3?: boolean;
   state3Change?: (state3: boolean) => void;
 }
-const WidgetInput: WidgetInput = {
+const WidgetInput: WidgetInputType = {
   state2: false,
   state1Change: () => { },
   state2Change: () => { },
@@ -25,13 +25,13 @@ const WidgetInput: WidgetInput = {
 import React, { useState, useCallback } from 'react';
 
 interface Widget {
-  props: WidgetInput;
+  props: WidgetInputType;
   updateState: () => any;
   updateState2: () => any;
   restAttributes: any;
 }
 
-export default function Widget(props: WidgetInput) {
+export default function Widget(props: WidgetInputType) {
   const [__state_state1, __state_setState1] = useState(() => (props.state1 !== undefined ? props.state1 : props.defaultState1) || false);
   const [__state_state2, __state_setState2] = useState(() => (props.state2 !== undefined ? props.state2 : props.defaultState2) || false);
   const [__state_state3, __state_setState3] = useState(() => (props.state3 !== undefined ? props.state3 : props.defaultState3))

@@ -11,22 +11,22 @@ function view(viewModel: Widget) {
     );
 }
 
-declare type WidgetInput = {
+export declare type WidgetInputType = {
     namedSlot?: any;
     children?: any;
 }
-const WidgetInput: WidgetInput = {
+const WidgetInput: WidgetInputType = {
    
 };
 import * as Preact from "preact";
 import { useCallback } from "preact/hooks";
 
 interface Widget {
-    props: WidgetInput;
+    props: WidgetInputType;
     restAttributes: any;
 }
 
-export default function Widget(props: WidgetInput) {
+export default function Widget(props: WidgetInputType) {
     const __restAttributes=useCallback(function __restAttributes(){
         const { children, namedSlot, ...restProps } = props;
         return restProps;
