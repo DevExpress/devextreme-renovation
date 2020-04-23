@@ -1,7 +1,7 @@
 import { Component, OneWay, Event, ComponentBindings, JSXComponent } from "../../../component_declaration/common";
 import Base, { WidgetProps } from "./component-input";
 
-function view(model: Widget) { 
+function view(model: Child) { 
     <Base height={model.getProps().height}/>
 }
 
@@ -12,7 +12,7 @@ class ChildInput extends WidgetProps {
 }
 
 @Component({ view })
-export default class Widget extends JSXComponent<ChildInput> {
+export default class Child extends JSXComponent<ChildInput> {
     getProps(): WidgetProps { 
         return this.props;
     }

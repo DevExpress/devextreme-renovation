@@ -1,5 +1,5 @@
 import Base, { WidgetProps } from "./component-input"
-function view(model: Widget) {
+function view(model: Child) {
     <Base height={model.getProps().height} />
 }
 export declare type ChildInputType = typeof WidgetProps & {
@@ -14,14 +14,14 @@ const ChildInput: ChildInputType = {
 
 import React, { useCallback } from 'react';
 
-interface Widget {
+interface Child {
     props: ChildInputType;
     getProps: () => typeof WidgetProps;
     restAttributes: any;
 
 }
 
-export default function Widget(props: ChildInputType) {
+export default function Child(props: ChildInputType) {
     const getProps = useCallback(function getProps() {
         return props;
     }, [props]);
@@ -38,6 +38,6 @@ export default function Widget(props: ChildInputType) {
     }));
 }
 
-Widget.defaultProps = {
+Child.defaultProps = {
     ...ChildInput
 }
