@@ -28,6 +28,7 @@ interface Widget {
   props: WidgetInputType;
   updateState: () => any;
   updateState2: () => any;
+  destruct: () => any;
   restAttributes: any;
 }
 
@@ -45,6 +46,10 @@ export default function Widget(props: WidgetInputType) {
     (__state_setState2(cur !== false ? false : true), props.state2Change!(cur !== false ? false : true));
   }, [props.state2, __state_state2, props.state2Change]);
 
+  const destruct = useCallback(function destruct() {
+    const s = (props.state1 !== undefined ? props.state1 : __state_state1)
+  }, [props.state1, __state_state1, props.state1Change]);
+
   const __restAttributes=useCallback(function __restAttributes(){
     const { defaultState1, defaultState2, defaultState3, state1, state1Change, state2, state2Change, state3, state3Change, ...restProps } = props;
     return restProps;
@@ -59,6 +64,7 @@ export default function Widget(props: WidgetInputType) {
     },
     updateState,
     updateState2,
+    destruct,
     restAttributes: __restAttributes()
   })
   );

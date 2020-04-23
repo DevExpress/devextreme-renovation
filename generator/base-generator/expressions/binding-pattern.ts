@@ -32,6 +32,8 @@ export class BindingElement extends Expression {
 export class BindingPattern extends Expression {
 
     elements: Array<BindingElement>
+    removedElements: Array<BindingElement> = [];
+
     type: 'array' | 'object'
 
     constructor(elements: Array<BindingElement>, type: 'object' | 'array') {
@@ -62,7 +64,11 @@ export class BindingPattern extends Expression {
     }
 
     remove(name: string) {
-        this.elements = this.elements.filter(e => e.name?.toString() !== name);
+        const element = this.elements.find(e => e.name?.toString() === name);
+        if (element) { 
+            this.removedElements.push(element);
+            this.elements = this.elements.filter(e => e !== element);
+        }
     }
 
     add(element: BindingElement) { 
@@ -70,7 +76,9 @@ export class BindingPattern extends Expression {
     }
 
     getDependency() { 
-        return this.elements.reduce((d: string[], e) => d.concat(e.getDependency()), []);
+        return this.elements
+            .concat(this.removedElements)
+            .reduce((d: string[], e) => d.concat(e.getDependency()), []);
     }
 
     hasRest() { 
