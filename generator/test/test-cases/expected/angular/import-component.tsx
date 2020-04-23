@@ -20,7 +20,7 @@ export default class Child extends ChildInput {
             height: this.height
         };
     }
-    get restAttributes() {
+    get __restAttributes() {
         return {}
     }
 }

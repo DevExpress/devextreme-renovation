@@ -25,7 +25,7 @@ export default function Child(props: ChildInputType) {
         return { height: props.height };
     }, [props.height]);
 
-    const restAttributes = useCallback(function restAttributes() {
+    const __restAttributes = useCallback(function __restAttributes() {
         const { children, height, onClick, ...restProps } = props
         return restProps;
     }, [props]);
@@ -33,7 +33,7 @@ export default function Child(props: ChildInputType) {
     return view(({
         props: { ...props },
         getProps,
-        restAttributes: restAttributes()
+        restAttributes: __restAttributes()
     }));
 }
 
