@@ -14,13 +14,13 @@ interface Widget {
 }
 
 export default function Widget(props: WidgetInputType) {
-    const restAttributes=useCallback(function restAttributes(){
+    const __restAttributes=useCallback(function __restAttributes(){
         const { contentRender, render, ...restProps } = props;
         return restProps;
     }, [props]);
     return view(({
         props: { ...props },
-        restAttributes: restAttributes()
+        restAttributes: __restAttributes()
     })
     );
 }

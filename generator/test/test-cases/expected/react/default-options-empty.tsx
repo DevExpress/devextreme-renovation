@@ -12,13 +12,13 @@ import React, {useCallback} from "react";
 interface Widget { props: WidgetPropsType, restAttributes: any; }
 
 export default function Widget(props: WidgetPropsType) {
-    const restAttributes=useCallback(function restAttributes(){
+    const __restAttributes=useCallback(function __restAttributes(){
         const { ...restProps } = props;
         return restProps;
     }, [props]);
     return view(({
         props: { ...props },
-        restAttributes: restAttributes()
+        restAttributes: __restAttributes()
     }));
 }
 

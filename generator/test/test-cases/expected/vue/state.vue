@@ -34,7 +34,7 @@ export default {
       this.state2_state = cur !== false ? false : true,
       this.emit("state2-change", this.state2_state);
     },
-    restAttributes() {
+    __restAttributes() {
       return {};
     }
   }

@@ -12,7 +12,7 @@ export function Component(props: {}) {
   const onClick = useCallback(function onClick(e){ }, []);
   const onPointerMove = useCallback(function onPointerMove(a = "a", b = 0, c = true) { }, []);
   
-  const restAttributes=useCallback(function restAttributes(){
+  const __restAttributes=useCallback(function __restAttributes(){
     const { ...restProps } = props;
     return restProps;
   }, [props]);
@@ -21,6 +21,6 @@ export function Component(props: {}) {
     ...props,
     onClick,
     onPointerMove,
-    restAttributes: restAttributes()
+    restAttributes: __restAttributes()
   }));
 }

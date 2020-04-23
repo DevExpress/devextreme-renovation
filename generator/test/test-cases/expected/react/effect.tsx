@@ -30,7 +30,7 @@ export default function Widget(props: WidgetInputType) {
     const [__state_s, __state_setS] = useState(() => (props.s !== undefined ? props.s : props.defaultS) || 10);
     const [__state_i, __state_setI] = useState(10)
 
-    const restAttributes=useCallback(function restAttributes(){
+    const __restAttributes=useCallback(function __restAttributes(){
         const { defaultS, p, s, sChange, ...restProps } = props;
         return restProps;
     }, [props]);
@@ -47,7 +47,7 @@ export default function Widget(props: WidgetInputType) {
             s: (props.s !== undefined ? props.s : __state_s)
         },
         i: __state_i,
-        restAttributes: restAttributes()
+        restAttributes: __restAttributes()
     })
     );
 }

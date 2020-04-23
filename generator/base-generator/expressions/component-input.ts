@@ -77,7 +77,7 @@ export class ComponentInput extends Class implements Heritable {
         ), heritageClauses));
     }
 
-    get heritageProperies() {
+    get heritageProperties() {
         return (this.members.filter(m => m instanceof Property) as Property[]).map(p => p.inherit());
     }
 

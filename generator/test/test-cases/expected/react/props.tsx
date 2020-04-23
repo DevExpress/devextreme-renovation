@@ -23,7 +23,7 @@ export default function Widget(props: WidgetInputType) {
         return props.height;
     }, [props.onClick, props.height]);
 
-    const restAttributes=useCallback(function restAttributes(){
+    const __restAttributes=useCallback(function __restAttributes(){
         const { height, onClick, ...restProps } = props;
         return restProps;
     }, [props]);
@@ -31,7 +31,7 @@ export default function Widget(props: WidgetInputType) {
     return view(({
         props: { ...props },
         getHeight,
-        restAttributes: restAttributes()
+        restAttributes: __restAttributes()
     })
     );
 }

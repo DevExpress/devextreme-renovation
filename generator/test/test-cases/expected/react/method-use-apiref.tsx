@@ -28,7 +28,7 @@ const WidgetWithApiRef = forwardRef<WidgetWithApiRefRef, WidgetWithApiRefInputTy
             return `${props.prop1} + ${baseRef.current?.getHeight()}`;
         }
     }), [props.prop1]);
-    const restAttributes=useCallback(function restAttributes(){
+    const __restAttributes=useCallback(function __restAttributes(){
         const { prop1, ...restProps } = props;
         return restProps;
     }, [props]);
@@ -36,7 +36,7 @@ const WidgetWithApiRef = forwardRef<WidgetWithApiRefRef, WidgetWithApiRefInputTy
     return view(({
         props: { ...props },
         baseRef,
-        restAttributes: restAttributes()
+        restAttributes: __restAttributes()
     }));
 });
 

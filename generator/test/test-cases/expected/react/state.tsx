@@ -45,7 +45,7 @@ export default function Widget(props: WidgetInputType) {
     (__state_setState2(cur !== false ? false : true), props.state2Change!(cur !== false ? false : true));
   }, [props.state2, __state_state2, props.state2Change]);
 
-  const restAttributes=useCallback(function restAttributes(){
+  const __restAttributes=useCallback(function __restAttributes(){
     const { defaultState1, defaultState2, defaultState3, state1, state1Change, state2, state2Change, state3, state3Change, ...restProps } = props;
     return restProps;
   }, [props]);
@@ -59,7 +59,7 @@ export default function Widget(props: WidgetInputType) {
     },
     updateState,
     updateState2,
-    restAttributes: restAttributes()
+    restAttributes: __restAttributes()
   })
   );
 }

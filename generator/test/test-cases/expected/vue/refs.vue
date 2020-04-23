@@ -11,7 +11,7 @@ export default {
     getHeight() {
       return this.$refs.divRef.outerHTML+this.$refs.nullableRef?.outerHTML;
     },
-    restAttributes() {
+    __restAttributes() {
       return {};
     }
   }
