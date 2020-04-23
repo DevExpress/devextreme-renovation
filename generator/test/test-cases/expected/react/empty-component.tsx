@@ -10,13 +10,13 @@ export default function Widget(props: {
   height: number,
   width: number
 }) {
-  const restAttributes=useCallback(function restAttributes(){
+  const __restAttributes=useCallback(function __restAttributes(){
     const { height, width, ...restProps } = props;
     return restProps;
 }, [props]);
   return view1(viewModel1({
     ...props,
-    restAttributes: restAttributes()
+    restAttributes: __restAttributes()
   }));
 }
 

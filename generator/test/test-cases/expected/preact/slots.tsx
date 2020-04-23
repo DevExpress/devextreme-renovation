@@ -27,13 +27,13 @@ interface Widget {
 }
 
 export default function Widget(props: WidgetInput) {
-    const restAttributes=useCallback(function restAttributes(){
+    const __restAttributes=useCallback(function __restAttributes(){
         const { children, namedSlot, ...restProps } = props;
         return restProps;
     }, [props]);
     return view(({
         props: { ...props },
-        restAttributes: restAttributes()
+        restAttributes: __restAttributes()
     })
     );
 }

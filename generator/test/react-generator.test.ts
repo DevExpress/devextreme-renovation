@@ -1665,7 +1665,7 @@ mocha.describe("ComponentInput", function () {
 
         mocha.it("Empty input with empty component", function () {
             const component = createComponent([]);
-            assert.deepEqual(component.compileViewModelArguments(), ["props:{...props}", "restAttributes:restAttributes()"]);
+            assert.deepEqual(component.compileViewModelArguments(), ["props:{...props}", "restAttributes:__restAttributes()"]);
         });
         
         mocha.it("Prop in input with empty component", function () {
@@ -1680,7 +1680,7 @@ mocha.describe("ComponentInput", function () {
                     generator.createKeywordTypeNode(generator.SyntaxKind.BooleanKeyword)
                 )
             ]);
-            assert.deepEqual(component.compileViewModelArguments(), ["props:{...props}", "restAttributes:restAttributes()"]);
+            assert.deepEqual(component.compileViewModelArguments(), ["props:{...props}", "restAttributes:__restAttributes()"]);
         });
 
         mocha.it("State in input - extended props with state getter in viewModes args", function () {
@@ -1703,7 +1703,7 @@ mocha.describe("ComponentInput", function () {
                     ...props,
                     p:(props.p!==undefined?props.p:__state_p)
                 },
-                restAttributes: restAttributes()
+                restAttributes: __restAttributes()
             }`));
         });
 
@@ -1732,7 +1732,7 @@ mocha.describe("ComponentInput", function () {
             ]);
             assert.deepEqual(getResult(
                 `{${component.compileViewModelArguments().join(",")}}`
-            ), getResult("{props:{...props},s:__state_s,restAttributes: restAttributes()}"));
+            ), getResult("{props:{...props},s:__state_s,restAttributes: __restAttributes()}"));
         });
 
         mocha.it("Pass getter result in viewModel arguments", function () {
@@ -1750,7 +1750,7 @@ mocha.describe("ComponentInput", function () {
             assert.strictEqual(getResult(component.compileComponentInterface()), getResult("interface Widget{props: Input; property:any; restAttributes:any;}"));
 
             assert.strictEqual(getResult(`{${component.compileViewModelArguments().join(",")}}`
-            ), getResult("{props:{...props}, property: __property(), restAttributes: restAttributes() }"));
+            ), getResult("{props:{...props}, property: __property(), restAttributes: __restAttributes() }"));
         });
     });
 

@@ -51,12 +51,10 @@ export class Component extends Class implements Heritable {
         return this._name.toString();
     }
 
-    addPrefixToMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) { 
-        if (isJSXComponent(heritageClauses)) { 
-            members.filter(m => !m.inherited && m instanceof GetAccessor).forEach(m => {
-                m.prefix = "__";
-            });
-        }
+    addPrefixToMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) {
+        members.filter(m => !m.inherited && m instanceof GetAccessor).forEach(m => {
+            m.prefix = "__";
+        });
         return members;
     }
 
@@ -69,8 +67,10 @@ export class Component extends Class implements Heritable {
             inheritMembers(heritageClauses,
                 this.addPrefixToMembers(members, heritageClauses)),
             heritageClauses);
-        
-        members.push(this.createRestPropsGetter(members));
+
+        const restPropsGetter = this.createRestPropsGetter(members);
+        restPropsGetter.prefix = "__";
+        members.push(restPropsGetter);
         return members;
     }
 

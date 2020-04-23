@@ -15,7 +15,7 @@ export default {
       this.$emit("on-click", 10);
       return this.height;
     },
-    restAttributes() {
+    __restAttributes() {
       return {};
     }
   }

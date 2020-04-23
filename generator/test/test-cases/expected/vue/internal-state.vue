@@ -11,7 +11,7 @@ export default {
     updateState(){
         this._hovered=!this._hovered;
     },
-    restAttributes() {
+    __restAttributes() {
       return {};
     }
   }

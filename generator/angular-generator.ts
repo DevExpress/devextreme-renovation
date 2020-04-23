@@ -790,11 +790,9 @@ class AngularComponent extends Component {
     }
 
     addPrefixToMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) { 
-        if (isJSXComponent(heritageClauses)) {
-            members.filter(m => !m.decorators.find(d => d.name === "Method")).forEach(m => {
-                m.prefix = "__";
-            });
-        }
+        members.filter(m => !m.decorators.find(d => d.name === "Method")).forEach(m => {
+            m.prefix = "__";
+        });
         members = members.reduce((members, member) => {
             if (member.decorators.find(d => d.name === "InternalState") || (member instanceof Property && member.decorators.length===0)) { 
                 members.push(
@@ -930,7 +928,7 @@ class AngularComponent extends Component {
             }}`,
             this.members
                 .filter(m => m.decorators.length === 0 && !(m instanceof SetAccessor))
-                .map(m => `${m.name}: this.${m.name}`)
+                .map(m => `${m._name}: this.${m.name}`)
                 .join(",\n")
         ]
         return args;

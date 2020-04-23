@@ -23,7 +23,7 @@ export function Component(props: {
         props.onClick!({ type: props.type })
     }, [props.onClick, props.type])
 
-    const restAttributes=useCallback(function restAttributes(){
+    const __restAttributes=useCallback(function __restAttributes(){
         const { onClick, type, ...restProps } = props;
         return restProps;
     }, [props]);
@@ -31,7 +31,7 @@ export function Component(props: {
     return view(viewModel({
         ...props,
         clickHandler,
-        restAttributes: restAttributes()
+        restAttributes: __restAttributes()
     })
     );
 }
