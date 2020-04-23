@@ -1848,6 +1848,85 @@ mocha.describe("Angular generator", function () {
     
                 assert.strictEqual(expression.toString(), `viewModel.items.map(null)`);
             });
+
+            mocha.it("Parse map with desructurization", function () { 
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createCall(
+                            generator.createPropertyAccess(
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier("viewModel"),
+                                    generator.createIdentifier("items")
+                                ),
+                                generator.createIdentifier("map")
+                            ),
+                            undefined,
+                            [generator.createArrowFunction(
+                                undefined,
+                                undefined,
+                                [generator.createParameter(
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    generator.createObjectBindingPattern(
+                                        [
+                                            generator.createBindingElement(
+                                                undefined,
+                                                undefined,
+                                                generator.createIdentifier("p1")
+                                            ),
+                                            generator.createBindingElement(
+                                                undefined,
+                                                undefined,
+                                                generator.createIdentifier("p2")
+                                            )
+                                        ]
+                                    ),
+                                    undefined,
+                                    undefined,
+                                    undefined
+                                )],
+                                undefined,
+                                generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                                generator.createJsxElement(
+                                    generator.createJsxOpeningElement(
+                                        generator.createIdentifier("div"),
+                                        undefined,
+                                        generator.createJsxAttributes([])
+                                    ),
+                                    [
+                                        generator.createJsxExpression(
+                                            undefined,
+                                            generator.createIdentifier("p1")
+                                        ),
+                                        generator.createJsxExpression(
+                                            undefined,
+                                            generator.createIdentifier("p2")
+                                        )
+                                    ],
+                                    generator.createJsxClosingElement(generator.createIdentifier("div"))
+                                )
+                            )]
+                        )
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(removeSpaces(expression.children[0].toString()), removeSpaces(`<ng-container *ngFor="let item_0 of viewModel.items">
+                    <div>
+                    {{item_0.p1}}
+                    {{item_0.p2}}
+                    </div>
+                </ng-container>`));
+            });
         });
     
         mocha.describe("View Function", function () {
@@ -3188,6 +3267,39 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(stringValue, "{}");
             });
 
+            mocha.it("Access props - this.props in bindingPattern statement", function () { 
+                const variableDeclaration = generator.createVariableDeclaration(
+                    generator.createObjectBindingPattern(
+                        [
+                            generator.createBindingElement(
+                                undefined,
+                                undefined,
+                                generator.createIdentifier("p")
+                            )
+                        ]
+                    ),
+                    undefined,
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("props")
+                    )
+                )
+
+                const stringValue = variableDeclaration.toString({
+                    members: [
+                        generator.createProperty(
+                            [createDecorator("OneWay")],
+                            [],
+                            generator.createIdentifier("p1")
+                        )
+                    ],
+                    componentContext: generator.SyntaxKind.ThisKeyword,
+                    newComponentContext: generator.SyntaxKind.ThisKeyword
+                });
+
+                assert.strictEqual(stringValue, "{p}=this");
+            });
+            
             mocha.it("Access props - this.props with members", function () { 
                 const expression = generator.createPropertyAccess(
                     generator.createThis(),

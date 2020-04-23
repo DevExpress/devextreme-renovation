@@ -20,6 +20,10 @@ export class VariableDeclaration extends Expression {
         this.initializer = initializer;
     }
 
+    processProps(result: string, options:toStringOptions) { 
+        return result;
+    }
+
     toString(options?: toStringOptions) {
         if (this.name instanceof BindingPattern && options?.members.length && this.initializer instanceof PropertyAccess) {
             const props = getProps(options.members);
@@ -45,9 +49,14 @@ export class VariableDeclaration extends Expression {
             options.variables = variables;
         }
         
-        const initilizerDeclaration = this.initializer ? `=${this.initializer.toString(options)}` : "";
+        let initilizer: string | undefined = this.initializer?.toString(options);
+
+        if (this.initializer instanceof PropertyAccess && this.initializer.checkPropsAccess(this.initializer.toString(), options) && options) { 
+            initilizer = this.processProps(initilizer!, options)
+        }
+
         if (this.name.toString()) { 
-           return `${this.name}${compileType(this.type?.toString())}${initilizerDeclaration}`;
+            return `${this.name}${compileType(this.type?.toString())}${initilizer ? `=${initilizer}`:""}`;
         }
         return "";
     }
@@ -140,5 +149,9 @@ export class VariableStatement extends Expression {
 
     getDependency() {
         return this.declarationList.getDependency();
+    }
+
+    getVariableExpressions() { 
+        return this.declarationList.getVariableExpressions();
     }
 }

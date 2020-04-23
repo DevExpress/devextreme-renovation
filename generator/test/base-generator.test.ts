@@ -1451,6 +1451,17 @@ mocha.describe("base-generator: expressions", function () {
     });
 
     mocha.describe("import", function () { 
+        this.beforeEach(function () { 
+            generator.setContext({
+                path: __filename,
+                dirname: __dirname
+            });
+        });
+
+        this.afterEach(function () { 
+            generator.setContext(null);
+        });
+
         mocha.it("createImportDeclaration", function () { 
             assert.equal(generator.createImportDeclaration(
                 undefined,
@@ -1564,6 +1575,25 @@ mocha.describe("base-generator: expressions", function () {
             );
     
             assert.equal(expression.toString(), '* as module');
+        });
+
+        mocha.it("import global variable should fill context global", function () { 
+            const expression = generator.createImportDeclaration(
+                undefined,
+                undefined,
+                generator.createImportClause(
+                    undefined,
+                    generator.createNamedImports(
+                        [
+                            generator.createIdentifier("PREFIX")
+                        ]
+                    )
+                ),
+                generator.createStringLiteral("./test-cases/declarations/globals-in-template")
+            );
+
+            assert.strictEqual(generator.getContext().globals?.["PREFIX"].toString(), '"dx"');
+            assert.strictEqual(generator.getContext().globals?.["CLASS_NAME"], undefined);
         });
     });
 

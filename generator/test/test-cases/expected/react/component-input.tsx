@@ -1,3 +1,5 @@
+export const COMPONENT_INPUT_CLASS = "c3";
+
 function view() { }
 
 declare type WidgetProps = {

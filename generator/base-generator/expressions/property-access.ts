@@ -4,6 +4,7 @@ import { Identifier } from "./common";
 import SyntaxKind from "../syntaxKind";
 import { Property } from "./class-members";
 import { getProps } from "./component";
+import { processComponentContext } from "../utils/string";
 
 export class ElementAccess extends ExpressionWithExpression {
     index: Expression;
@@ -38,6 +39,10 @@ export class PropertyAccess extends ExpressionWithExpression {
         return result;
     }
 
+    checkPropsAccess(result: string, options?: toStringOptions) { 
+        return result === `${processComponentContext(options?.newComponentContext)}props`;
+    }
+
     toString(options?: toStringOptions) {
         const expressionString = this.expression.toString();
         const componentContext = options?.componentContext || SyntaxKind.ThisKeyword;
@@ -63,7 +68,7 @@ export class PropertyAccess extends ExpressionWithExpression {
                 return this.name.toString();
             }
             const value = result.replace(options.componentContext!, options.newComponentContext);
-            if (value === `${options?.componentContext?`${options?.componentContext}.`:""}props`) { 
+            if (this.checkPropsAccess(value, options)) { 
                 return this.processProps(value, options);
             }
             return value;
