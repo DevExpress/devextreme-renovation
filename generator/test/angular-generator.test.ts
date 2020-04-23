@@ -2253,8 +2253,68 @@ mocha.describe("Angular generator", function () {
 
                 assert.strictEqual(expression.toString(), "");
                 assert.strictEqual(expression.getTemplate({
-                    members: [member]
+                    members: [member],
+                    newComponentContext: "",
                 }), `<div [v]="__height"></div>`);
+            });
+
+            mocha.it("Can decomposite component - props", function () {
+                const block = generator.createBlock([
+                    generator.createReturn(
+                        generator.createJsxSelfClosingElement(
+                            generator.createIdentifier("div"),
+                            undefined,
+                            [
+                                generator.createJsxAttribute(
+                                    generator.createIdentifier("v"),
+                                    generator.createPropertyAccess(
+                                        generator.createIdentifier("props"),
+                                        generator.createIdentifier("height")
+                                    )
+                                )
+                            ]
+                        )
+                    )
+                ], false);
+
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [
+                        generator.createParameter(
+                            [],
+                            [],
+                            undefined,
+                            generator.createObjectBindingPattern([
+                                generator.createBindingElement(
+                                    undefined,
+                                    undefined,
+                                    generator.createIdentifier("props"),
+                                    undefined
+                                )
+                            ]),
+                            undefined,
+                            undefined,
+                            undefined
+                       )
+                    ],
+                    undefined,
+                    block
+                );
+
+                const member = generator.createProperty(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("height")
+                );
+
+                assert.strictEqual(expression.toString(), "");
+                assert.strictEqual(expression.getTemplate({
+                    members: [member]
+                }), `<div [v]="height"></div>`);
             });
 
             mocha.it("Can use jsx variables in view function", function () {

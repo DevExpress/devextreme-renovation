@@ -44,9 +44,14 @@ export class PropertyAccess extends ExpressionWithExpression {
     }
 
     toString(options?: toStringOptions) {
-        const expressionString = this.expression.toString();
-        const componentContext = options?.componentContext || SyntaxKind.ThisKeyword;
-        const usePropsSpace = `${componentContext}.props`;
+        const expressionString = this.expression.toString({
+            members: [],
+            variables: {
+                ...options?.variables
+            }
+        });
+        const componentContext = options?.componentContext !== undefined ? options?.componentContext : SyntaxKind.ThisKeyword;
+        const usePropsSpace = `${processComponentContext(componentContext)}props`;
         if (expressionString === componentContext || expressionString === usePropsSpace) {
             const props = getProps(options?.members || []);
             const member = options?.members

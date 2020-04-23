@@ -76,8 +76,9 @@ export function getTemplate(
             });
 
             if (componentParamenter && componentParamenter.name instanceof BindingPattern) {
+                options.componentContext = SyntaxKind.ThisKeyword;
                 options.variables = {
-                    ...componentParamenter.name.getVariableExpressions(new SimpleExpression(SyntaxKind.ThisKeyword)),
+                    ...componentParamenter.name.getVariableExpressions(new SimpleExpression(options.componentContext)),
                     ...options.variables
                 }
             }
