@@ -611,7 +611,16 @@ export class JsxElement extends BaseJsxElement {
     }
 }
 
-export class Function extends BaseFunction { 
+export class AngularBaseFunction extends BaseFunction { 
+    processTemplateExpression(expression?: JsxExpression) { 
+        if (expression && !isElement(expression)) { 
+            return new JsxChildExpression(expression);
+        }
+        return super.processTemplateExpression(expression);
+    }
+}
+
+export class Function extends AngularBaseFunction { 
     toString(options?:toStringOptions) { 
         if (this.isJsx()) { 
             return "";

@@ -2565,6 +2565,40 @@ mocha.describe("Angular generator", function () {
                     </div>`));
             });
 
+            mocha.it("Convert to template function with ternary operaot", function () {
+
+                this.block.statements = [
+                    generator.createReturn(
+                        generator.createConditional(
+                            generator.createTrue(),
+                            generator.createJsxSelfClosingElement(
+                                generator.createIdentifier("div")
+                            ),
+                            generator.createJsxSelfClosingElement(
+                                generator.createIdentifier("span")
+                            )
+                        )
+                    )
+                ]
+
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [],
+                    undefined,
+                    this.block
+                );
+
+                assert.strictEqual(expression.toString(), "");
+                assert.strictEqual(removeSpaces(expression.getTemplate()), removeSpaces(`
+                    <div *ngIf="true"></div>
+                    <span *ngIf="!(true)"></span>
+                `));
+            });
+
         });
     });
 

@@ -8,7 +8,7 @@ import { variableDeclaration, compileType } from "../utils/string";
 import { Component } from "./component";
 import { VariableStatement } from "./variables";
 import SyntaxKind from "../syntaxKind";
-import { getJsxExpression } from "./jsx";
+import { getJsxExpression, JsxExpression } from "./jsx";
 import { Decorator } from "./decorator";
 
 export class Parameter {
@@ -126,8 +126,14 @@ export class BaseFunction extends Expression {
         return this.body.isJsx();
     }
 
+    processTemplateExpression(expression?: JsxExpression) {
+        return expression;
+    }
+
     getTemplate(options?: toStringOptions, doNotChangeContext = false): string {
-        return getTemplate(this, options, doNotChangeContext, this.context.globals)?.toString(options) || "";
+        return this.processTemplateExpression(
+            getTemplate(this, options, doNotChangeContext, this.context.globals)
+        )?.toString(options) || "";
     }
 }
 

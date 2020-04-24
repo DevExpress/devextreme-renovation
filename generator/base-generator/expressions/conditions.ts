@@ -22,6 +22,10 @@ export class If extends ExpressionWithExpression {
             .concat(this.thenStatement.getDependency())
             .concat(this.elseStatement ? this.elseStatement.getDependency() : []);
     }
+
+    isJsx() { 
+        return this.elseStatement?.isJsx() || this.thenStatement.isJsx();
+    }
 }
 
 export class Conditional extends If {
