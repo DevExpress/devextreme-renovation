@@ -295,7 +295,6 @@ export default class Generator {
                         this.addComponent(i, componentInput);
                     }
                 });
-                
                 this.cache.__globals__ && importClause.imports.forEach(i => {
                     if (this.cache.__globals__[i]) { 
                         context.globals = {
