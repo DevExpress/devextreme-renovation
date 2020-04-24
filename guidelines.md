@@ -358,7 +358,7 @@ onWidgetKeyDown(event: Event, options) {
 
 ## Разработка
 
-Пока что разработка новых компонентов ведется в ветке [preact-button](https://github.com/DevExpress/DevExtreme/tree/preact-button). Все комопненты пока рзмещаются в папке [js/renovation](https://github.com/DevExpress/DevExtreme/tree/preact-button/js/renovation).
+Пока что разработка новых компонентов ведется в ветке [preact-button](https://github.com/DevExpress/DevExtreme/tree/preact-button). Все комопненты пока размещаются в папке [js/renovation](https://github.com/DevExpress/DevExtreme/tree/preact-button/js/renovation).
 
 ### Исходный код
 
@@ -404,7 +404,7 @@ export default class Component extends JSXComponent<ComponentProps> {
 
 ### Playground
 
-В папке playground есть приложения на ангуляре и реакте, показывающие новую нопку
+В папке playground есть приложения на ангуляре и реакте, показывающие новую кнопку
 
 Для того, чтобы можно было посмотреть вживую на работу компонента в плейграунде его нужно скомпилировать под нужный фреймворк. Воспользуйтесь билдежными тасками
 
@@ -413,4 +413,3 @@ React - `build:react` либо `build:react:watch`
 Angular - `build:angular` либо `build:angular:watch`
 
 jQuery - если в декораторе Вашего компонента указано `registerJQuery: true`, то при запуске тасок `build`, `dev`, `test-env` в дополнение к Preact-компоненту сгенерируется и jQuery враппер над ним. Имя для jQuery-виджета совпадает с именем компонента (без приставки `dx`).
-
