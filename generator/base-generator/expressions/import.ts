@@ -31,7 +31,7 @@ export class ImportClause {
     }
 
     get default() { 
-        return this.name?.toString() || "";
+        return this.name;
     }
 
     get imports() { 

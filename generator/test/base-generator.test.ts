@@ -1576,7 +1576,7 @@ mocha.describe("base-generator: expressions", function () {
         });
 
         mocha.it("import global variable should fill context global", function () { 
-            const expression = generator.createImportDeclaration(
+            generator.createImportDeclaration(
                 undefined,
                 undefined,
                 generator.createImportClause(
@@ -1592,6 +1592,42 @@ mocha.describe("base-generator: expressions", function () {
 
             assert.strictEqual(generator.getContext().globals?.["PREFIX"].toString(), '"dx"');
             assert.strictEqual(generator.getContext().globals?.["CLASS_NAME"], undefined);
+        });
+
+        mocha.it("import module declaration with component shouldn't fill component if it is not imported", function () { 
+            generator.createImportDeclaration(
+                undefined,
+                undefined,
+                generator.createImportClause(
+                    undefined,
+                    generator.createNamedImports(
+                        [
+                            generator.createIdentifier("PREFIX")
+                        ]
+                    )
+                ),
+                generator.createStringLiteral("./test-cases/declarations/globals-in-template")
+            );
+            
+            assert.strictEqual(generator.getContext().components, undefined);
+        });
+
+        mocha.it("import module declaration with component should fill component if it is imported", function () { 
+            generator.createImportDeclaration(
+                undefined,
+                undefined,
+                generator.createImportClause(
+                    generator.createIdentifier("Base"),
+                    generator.createNamedImports(
+                        [
+                            generator.createIdentifier("PREFIX")
+                        ]
+                    )
+                ),
+                generator.createStringLiteral("./test-cases/declarations/globals-in-template")
+            );
+            
+            assert.strictEqual(generator.getContext().components?.["Base"].name, "WidgetWithGlobals");
         });
     });
 

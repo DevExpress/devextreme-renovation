@@ -1,4 +1,4 @@
-import { COMPONENT_INPUT_CLASS, DxWidgetModule } from "./component-input"
+import { COMPONENT_INPUT_CLASS } from "./component-input"
 
 export const PREFIX = "dx";
 export const CLASS_NAME = PREFIX + "c1" + "c2" + COMPONENT_INPUT_CLASS;
@@ -23,7 +23,6 @@ export default class WidgetWithGlobals extends WidgetProps {
 @NgModule({
     declarations: [WidgetWithGlobals],
     imports: [
-        DxWidgetModule,
         CommonModule
     ],
     exports: [WidgetWithGlobals]
