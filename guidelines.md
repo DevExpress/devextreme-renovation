@@ -23,7 +23,7 @@
 - - [Подписка на ивенты](#Подписка-на-ивенты)
 - - [Темплейты](#Темплейты)
 - - [registerKeyHandler](#registerKeyHandler)
-
+- [Разработка](#разработка)
 ## Цели
 
 Обеспечение высокого уровня качества. Код должен быть простым, стабильным, быстрым, отвечать современным стандартам разработки и сопровождения.
@@ -355,3 +355,62 @@ onWidgetKeyDown(event: Event, options) {
   } 
 } 
 ```
+
+## Разработка
+
+Пока что разработка новых компонентов ведется в ветке [preact-button](https://github.com/DevExpress/DevExtreme/tree/preact-button). Все комопненты пока рзмещаются в папке [js/renovation](https://github.com/DevExpress/DevExtreme/tree/preact-button/js/renovation).
+
+### Исходный код
+
+Все декораторы, а так же базовый `JSXComponent` необходимо импортировать из `devextreme-generator/component_declaration/common`.
+
+Стартовый шаблон кода компонента:
+```tsx
+import {
+  Component,
+  ComponentBindings,
+  JSXComponent,
+  OneWay,
+} from 'devextreme-generator/component_declaration/common';
+
+export const viewFunction = (viewModel: Component) => {
+  return (<div></div>);
+};
+
+@ComponentBindings()
+export class ComponentProps {
+  // Your props go here
+}
+
+@Component({
+  view: viewFunction,
+})
+export default class Component extends JSXComponent<ComponentProps> {
+  // ViewModel getters, Effects, Refs, go here  
+}
+```
+
+Так же смотрите пример выше в этом гайде, а так же уже реализованные компоненты в `js/renovation`.
+
+### Тестирование компонентов
+
+Тесты на декларации написаны с использование jest. Примеры тестов на существующие компоненты см в [testing/jest](https://github.com/DevExpress/DevExtreme/tree/preact-button/testing/jest).
+
+Для подготовки (компиляции) компонентов к тестированию, необходимо воспользоваться тасками `test-env`, `dev`, либо gulp таской `generate-components`. Рядом с вашим декларативных компонентом появится файл с расширением .p.js. (Это Preact компонент, скомпилированный из декларативного. Пока что он используется для тестирования)
+
+Так же ознакомьтесь с информацией в [Тестирование](#тестирование)
+
+!! Раздел дополняется
+
+### Playground
+
+В папке playground есть приложения на ангуляре и реакте, показывающие новую нопку
+
+Для того, чтобы можно было посмотреть вживую на работу компонента в плейграунде его нужно скомпилировать под нужный фреймворк. Воспользуйтесь билдежными тасками
+
+React - `build:react` либо `build:react:watch`
+
+Angular - `build:angular` либо `build:angular:watch`
+
+jQuery - если в декораторе Вашего компонента указано `registerJQuery: true`, то при запуске тасок `build`, `dev`, `test-env` в дополнение к Preact-компоненту сгенерируется и jQuery враппер над ним. Имя для jQuery-виджета совпадает с именем компонента (без приставки `dx`).
+
