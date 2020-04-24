@@ -782,6 +782,13 @@ export class Property extends BaseProperty {
     inherit() { 
         return new Property(this.decorators as Decorator[], this.modifiers, this._name, this.questionOrExclamationToken, this.type, this.initializer, true);
     }
+
+    get canBeDestructured() { 
+        if (this.isEvent) { 
+            return false;
+        }
+        return super.canBeDestructured;
+    }
 }
 
 class SetAccessor extends Method { 

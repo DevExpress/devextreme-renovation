@@ -13,6 +13,7 @@ export default {
   methods: {
     getHeight() {
       this.$emit("on-click", 10);
+      this.$emit("on-click", 11);
       return this.height;
     },
     __restAttributes() {

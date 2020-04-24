@@ -15,6 +15,7 @@ import path from "path";
 const generator = new Generator();
 
 import componentCreator from "./helpers/create-component";
+import { toStringOptions } from "../base-generator/types";
 
 const { createComponentDecorator, createDecorator} = componentCreator(generator);
 
@@ -1123,9 +1124,6 @@ mocha.describe("base-generator: expressions", function () {
                 );
     
                 assert.strictEqual(expresstion.toString({
-                    props: [],
-                    state: [],
-                    internalState: [],
                     members: [],
                     variables: {
                         v: generator.createIdentifier("value")
@@ -1848,5 +1846,54 @@ mocha.describe("import Components", function () {
         );
 
         assert.deepEqual(model.members.map(m => m.name.toString()), ["height", "children"]);
+    });
+});
+
+mocha.describe("Expressions with toStringOptions should pass it in internal expressions", function () { 
+    const property = generator.createProperty(
+        [createDecorator("OneWay")],
+        undefined,
+        generator.createIdentifier("p")
+    );
+
+    const propertyAccess = generator.createPropertyAccess(
+        generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("props")
+        ),
+        generator.createIdentifier("p")
+    );
+
+    const getToStringOptions = (): toStringOptions => ({
+        members: [property],
+        componentContext: "this",
+        newComponentContext: ""
+    });
+
+    mocha.it("Array literal", function () {
+        const expresion = generator.createArrayLiteral([
+            propertyAccess
+        ], true);
+        
+        assert.strictEqual(expresion.toString(getToStringOptions()), "[p]");
+    });
+
+    mocha.it("Object literal", function () {
+        const expresion = generator.createObjectLiteral([
+            generator.createPropertyAssignment(
+                generator.createIdentifier("p"),
+                propertyAccess
+            )
+        ], true);
+        
+        assert.strictEqual(expresion.toString(getToStringOptions()), "{p:p}");
+    });
+
+    mocha.it("Spread Assignment", function () {
+        const expresion = generator.createSpreadAssignment(
+            propertyAccess
+        );
+        
+        assert.strictEqual(expresion.toString(getToStringOptions()), "...p");
     });
 });

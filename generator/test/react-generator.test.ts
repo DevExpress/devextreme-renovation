@@ -146,6 +146,10 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("import-component", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {
             generator.defaultOptionsModule = "../component_declaration/default_options";
@@ -1019,7 +1023,10 @@ mocha.describe("import Components", function () {
             []
         );
 
-        assert.strictEqual(getResult(model.toString()), getResult("declare type Model= typeof WidgetProps & {} const Model:Model={...WidgetProps}"));
+        assert.strictEqual(getResult(model.toString()), getResult(`
+            export declare type ModelType = typeof WidgetProps & {};
+            const Model:ModelType = {...WidgetProps}
+        `));
     });
 
     mocha.it("ComponentInput inherit members - can redefine member", function () { 
@@ -1064,7 +1071,10 @@ mocha.describe("import Components", function () {
         }), ["height!:string", "children?:React.ReactNode"]);
 
         assert.strictEqual(model.defaultPropsDest(), "Model");
-        assert.strictEqual(getResult(model.toString()), getResult("declare type Model=typeof WidgetProps&{height!:string;} const Model:Model={...WidgetProps, height: '10px'}"));
+        assert.strictEqual(getResult(model.toString()), getResult(`
+            export declare type ModelType = typeof WidgetProps & {height!:string;}
+            const Model:ModelType = {...WidgetProps, height: '10px'}
+        `));
     });
 
     mocha.it("ComponentInput - doesn't have properties without initializer", function () { 
@@ -1083,7 +1093,10 @@ mocha.describe("import Components", function () {
                 undefined
             )]
         );
-        assert.strictEqual(getResult(model.toString()), getResult("declare type Model={height!:string} const Model:Model={}"));
+        assert.strictEqual(getResult(model.toString()), getResult(`
+            export declare type ModelType = {height!:string}
+            const Model:ModelType={}
+        `));
     });
 
     mocha.it("ComponentInput should generate default and change for state property", function () { 
@@ -1588,7 +1601,10 @@ mocha.describe("ComponentInput", function () {
             []
         );
 
-        assert.strictEqual(getResult(expression.toString()), getResult("declare type BaseModel={}; export const BaseModel:BaseModel={};"));
+        assert.strictEqual(getResult(expression.toString()), getResult(`
+            export declare type BaseModelType = {};
+            export const BaseModel:BaseModelType = {};
+        `));
 
         const cachedComponent = generator.getContext().components!["BaseModel"];
         assert.equal(cachedComponent, expression);
@@ -1608,7 +1624,10 @@ mocha.describe("ComponentInput", function () {
             ]
         );
 
-        assert.strictEqual(getResult(expression.toString()), getResult("declare type BaseModel={p:number; p1:number}; export const BaseModel:BaseModel={p:10, p1: 15};"));
+        assert.strictEqual(getResult(expression.toString()), getResult(`
+            export declare type BaseModelType = {p:number; p1:number};
+            export const BaseModel:BaseModelType={p:10, p1: 15};
+        `));
         const cachedComponent = generator.getContext().components!["BaseModel"];
         assert.deepEqual(cachedComponent.heritageProperties.map(p => p.name), ["p", "p1"]);
     });
@@ -1633,7 +1652,10 @@ mocha.describe("ComponentInput", function () {
             ]
         );
 
-        assert.strictEqual(getResult(expression.toString()), getResult(`declare type BaseModel={render: any}; export const BaseModel:BaseModel={};`));
+        assert.strictEqual(getResult(expression.toString()), getResult(`
+            export declare type BaseModelType={render: any};
+            export const BaseModel:BaseModelType={};
+        `));
     });
 
     mocha.it("Rename Template property: contentTemplate->contentRender", function () { 
@@ -1655,7 +1677,10 @@ mocha.describe("ComponentInput", function () {
             ]
         );
 
-        assert.strictEqual(getResult(expression.toString()), getResult(`declare type BaseModel={contentRender: any}; export const BaseModel:BaseModel={};`));
+        assert.strictEqual(getResult(expression.toString()), getResult(`
+            export declare type BaseModelType = {contentRender: any};
+            export const BaseModel:BaseModelType={};
+        `));
     });
 
     mocha.describe("CompileViewModelArguments", function () {
@@ -1747,7 +1772,7 @@ mocha.describe("ComponentInput", function () {
                 )
             ]);
 
-            assert.strictEqual(getResult(component.compileComponentInterface()), getResult("interface Widget{props: Input; property:any; restAttributes:any;}"));
+            assert.strictEqual(getResult(component.compileComponentInterface()), getResult("interface Widget{props: InputType; property:any; restAttributes:any;}"));
 
             assert.strictEqual(getResult(`{${component.compileViewModelArguments().join(",")}}`
             ), getResult("{props:{...props}, property: __property(), restAttributes: __restAttributes() }"));

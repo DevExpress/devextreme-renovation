@@ -22,5 +22,10 @@ export default class Widget extends JSXComponent<WidgetInput> {
         const cur = this.props.state2;
         this.props.state2 = cur !== false ? false : true;
     }
+
+    destruct() { 
+        const { state1 } = this.props;
+        const s = state1;
+    }
 }
   

@@ -163,7 +163,7 @@ export class ExpressionWithTypeArguments extends ExpressionWithExpression {
 
     get type() {
         if (this.typeArguments.length) {
-            return this.typeArguments[0].toString();
+            return this.typeArguments[0].toString().replace("typeof ", "");
         }
         return this.typeNode;
     }
