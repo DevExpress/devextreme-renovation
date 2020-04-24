@@ -279,15 +279,23 @@ export default class Generator {
             if (fs.existsSync(modulePath)) {
                 compileCode(this, fs.readFileSync(modulePath).toString(), { dirname: context.dirname, path: modulePath });
 
-                this.addComponent(importClause.default, this.cache[modulePath].find((e: any) => e instanceof Component), importClause);
-                const componentInputs: ComponentInput[] = this.cache[modulePath].filter((e: any) => e instanceof ComponentInput);
-                componentInputs.length && importClause.imports.forEach(i => {
-                    const componentInput = componentInputs.find(c => c.name.toString() === i && c.modifiers.indexOf("export") >= 0);
+                if (importClause.default) {
+                    this.addComponent(importClause.default.toString(), this.cache[modulePath]
+                        .find((e: any) => e instanceof Component), importClause);
+                }
+
+                const componentInputs: ComponentInput[] = this.cache[modulePath]
+                    .filter((e: any) => e instanceof ComponentInput);
+        
+                importClause.imports.forEach(i => {
+                    const componentInput = componentInputs
+                        .find(c => c.name.toString() === i && c.modifiers.indexOf("export") >= 0);
+                    
                     if (componentInput) {
                         this.addComponent(i, componentInput);
                     }
                 });
-
+                
                 this.cache.__globals__ && importClause.imports.forEach(i => {
                     if (this.cache.__globals__[i]) { 
                         context.globals = {
