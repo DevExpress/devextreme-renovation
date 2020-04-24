@@ -624,13 +624,148 @@ function viewFunction(viewModel) {
 }
 ```
 
+#### @Ref()
+
+Рефы предоставляют ссылку на эелемент или другой компонент для доступа к DOM или АПИ другого компонента.
+
+Для корректной инициализации рефов их надо объявить и передать как спец-проп `ref` в нужный элемент (компонент)
+
+```tsx
+@ComponentBindings() 
+class MyComponentProps {}
+
+@Component({ view: viewFunction })
+class MyComponent extends JSXComponent<MyComponentProps> {
+  @Ref() rootRef!: HTMLDivElement;
+}
+
+function viewFunction(viewModel: MyComponent) {
+  return (
+    <div ref={viewModel.rootRef}></div>
+  );
+}
+```
+Примеры использования рефов смотри ниже.
+
+#### @Method()
+
+Этим декоратором помечаются методы компонента, которые должны представлять внешнее API. 
+
+Особое внимание стоит уделить тому, что АПИ должно содержать только минимум необходимых методов - все, что может быть сделано через пропы, должно быть сделано через них.
+
+Классическим примером такого АПИ является focus и export/print. 
+
+Переключить видимость, открыть/закрыть дровер и прочие НЕ являются примером АПИ - эти примеры могут и должны быть решены через пропы.
+
+Итак, в теле методов, помеченных как `Method` есть доступ к DOM. Однако как указывалось ранее, лучше код работы с DOM и тп выделить в отдельную утилиту, протестировать отдельно, а в компоненте уже решать вопросы на более высоком уровне.
+
+**Важно!** Также не допускается вызывать `Method` методы на стадии рендера (из view функции, геттеров вьюмодели и тп), их может вызвать только другой компонент, либо код, тригерящийся от действий конечного пользователя (на обработчиках событий, например) - в общем когда компонент уже отрендерен.
+
+```tsx
+@ComponentBindings() 
+class MyComponentProps {
+  @OneWay() type?: 'bad' | 'good' = 'good';
+}
+
+@Component({ view: viewFunction })
+class MyComponent extends JSXComponent<MyComponentProps> {
+  @Ref() rootRef!: HTMLDivElement;
+
+  @Method()
+  export(format: string) {
+    if(false) {
+      // Реф используется как элемент, на который он указывает
+      return this.rootRef.innerHTML;
+    } 
+    // Но лучше как-то так
+    return exportUtils.exportElement(this.rootRef, format);
+  }
+}
+
+function viewFunction(viewModel: MyComponent) {
+  return (
+    <div ref={viewModel.rootRef}>
+      <span>I'm a {viewModel.props.type} guy</span>
+    </div>
+  );
+}
+```
+
+Доступ к API одного декларативного компонента внутри другого осуществляется через реф.
+
+```tsx
+import MyEditorComponent from './my_funny_editor';
+
+@ComponentBindings() 
+class MyComponentProps {
+  @OneWay() type?: 'bad' | 'good' = 'good';
+}
+
+@Component({ view: viewFunction })
+class MyComponent extends JSXComponent<MyComponentProps> {
+  @Ref() editorRef?: MyEditorComponent;
+
+  @Method()
+  focus() {
+    // У компонента MyEditorComponent есть API метод, помеченный декоратором @Method()
+    return editorRef?.focus();
+  }
+}
+
+function viewFunction(viewModel: MyComponent) {
+  return (
+    <div>
+      <MyEditorComponent ref={viewModel.editorRef} editorProp={viewModel.props.type} />
+    </div>
+  );
+}
+```
+
 #### @Template()
+
+В этом пропе в компонент придет нечто, что можно можно отрисовать, передав ему какие-то параметры-пропы. Можно представить, что это другой компонент или render-функция.
+
+Все, что нам нужно, это корректно этот проп указать во view функции. Ну собственно так, будто мы просто рендерим другой компонент. 
+
+Ну и наши декларативные компоненты конечно могут выступать в роли темплейтов в других компонентах.
+
+Так же с целью обеспечения [обратной совместимости](#Темплейты) для jQuery виджетов в темплейт необходимо передавать реф на родительский контейнер. При этом парент для темплейта и дефолтного контента (если надо) должен быть одним и тем же.
+
+```tsx
+@ComponentBindings() 
+class MyComponentProps {
+  @OneWay() item?: Item;
+  @Template() itemTemplate?: any;
+}
+
+@Component({ view: viewFunction })
+class MyComponent extends JSXComponent<MyComponentProps> {
+  @Ref() templateParentRef!: HTMLDivElement; 
+}
+
+function viewFunction(viewModel) {
+  const useTemplate = !!viewModel.props.itemTemplate;
+  return (
+    <div ref={viewModel.templateParentRef}>
+      { 
+        useTemplate && 
+        <viewModel.props.itemTemplate 
+          item={viewModel.props.item}
+          parentRef={viewModel.templateParentRef} /> 
+      }
+
+      { 
+        !useTemplate && 
+        <span>{viewModel.props.item.text}</span>
+      }
+    </div>
+  );
+}
+```
 
 #### @Slot()
 
-#### @Ref()
-
 #### @Effect()
 
-#### @Method()
+
 
