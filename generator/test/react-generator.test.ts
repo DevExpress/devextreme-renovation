@@ -3,7 +3,6 @@ import mocha from "./helpers/mocha";
 import generator, {
     ReactComponent,
     Property,
-    Method,
     ComponentInput
 } from "../react-generator";
 import { toStringOptions } from "../base-generator/types"
@@ -31,6 +30,7 @@ function createComponentDecorator(paramenters: {[name:string]: any}) {
 
 import { printSourceCodeAst as getResult, createTestGenerator } from "./helpers/common";
 import { GeneratorContext } from "../base-generator/types";
+import { Method } from "../base-generator/expressions/class-members";
 
 function createDecorator(name: string) { 
     return generator.createDecorator(
@@ -86,7 +86,7 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it("props", function () {
+    mocha.it.only("props", function () {
         this.testGenerator(this.test!.title);
     });
 
