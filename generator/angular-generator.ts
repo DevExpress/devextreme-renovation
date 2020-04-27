@@ -910,7 +910,7 @@ class AngularComponent extends Component {
                 if (propsDependency.length) {
                     const conditionArray = ["this.__destroyEffects.length"];
                     if (propsDependency.indexOf("props") === -1) {
-                        conditionArray.push(`[${propsDependency.map(d => `"${d}"`).join(",")}].some(d=>${ngOnChangesParameters[0]}[d]!==null`)
+                        conditionArray.push(`[${propsDependency.map(d => `"${d}"`).join(",")}].some(d=>${ngOnChangesParameters[0]}[d]`)
                     }
                    
                     ngOnChanges.push(`

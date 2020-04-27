@@ -3675,7 +3675,7 @@ mocha.describe("Angular generator", function () {
                 `));
 
                 assert.strictEqual(getResult(ngOnChanges.join("\n")), getResult(`
-                        if (this.__destroyEffects.length && ["p", "p2"].some(d=>changes[d]!==null)) {
+                        if (this.__destroyEffects.length && ["p", "p2"].some(d=>changes[d])) {
                             this.__schedule_e();
                         }
                 `));
