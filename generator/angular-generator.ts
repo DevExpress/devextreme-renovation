@@ -116,7 +116,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
             const attrValue = attr?.initializer.toString();
             const value = attrValue
                 ? `${spreadValue}!==undefined?${spreadValue}:${attrValue}`
-                : spreadValue ;
+                : spreadValue;
 
             acc.push(new JsxAttribute(propName, new SimpleExpression(value)));
             return acc;
@@ -569,7 +569,7 @@ export class JsxChildExpression extends JsxExpression {
 }
 
 export class JsxSpreadAttribute extends JsxExpression{
-    getTemplateContext() {
+    getTemplateContext() { 
         // TODO: Support spread attributes in template context
         console.warn("Angular generator doesn't support spread attributes in template");
         return null;
