@@ -59,7 +59,7 @@ export class ComponentInput extends BaseComponentInput {
         const types = this.heritageClauses.reduce((t: string[], h) => t.concat(h.typeNodes.map(t => `typeof ${t}`)), []);
         const typeName = `${this.name}Type`;
 
-        const typeDeclaration = `export declare type ${typeName} ${types.concat([`{
+        const typeDeclaration = `export declare type ${typeName} = ${types.concat([`{
             ${this.members.filter(m => !(m as Property).inherited).map(p => p.typeDeclaration()).join(";\n")}
         }`]).join("&")}`;
 
