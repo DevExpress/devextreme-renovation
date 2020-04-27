@@ -14,3 +14,7 @@ export function variableDeclaration(name: Identifier | BindingPattern, type: str
     const initilizerDeclaration = initializer ? `=${initializer}` : "";
     return `${name}${compileType(type, questionToken)}${initilizerDeclaration}`;
 }
+
+export function processComponentContext(componentContext: string = "") { 
+    return componentContext.length ? `${componentContext}.` : "";
+}

@@ -1,5 +1,3 @@
-function viewModel() { }
-
 function view() { }
 
 import React, { useState, useCallback } from 'react';
@@ -18,15 +16,15 @@ export default function Widget(props: {}) {
     __state_set_hovered(!__state__hovered);
   }, [__state__hovered]);
 
-  const restAttributes=useCallback(function restAttributes(){
+  const __restAttributes=useCallback(function __restAttributes(){
     const { ...restProps } = props;
     return restProps;
   }, [props]);
 
-  return view(viewModel({
+  return view(({
     ...props,
     _hovered: __state__hovered,
     updateState,
-    restAttributes: restAttributes()
+    restAttributes: __restAttributes()
   }));
 }

@@ -1,11 +1,15 @@
-import { Expression } from "./base";
-import { Decorator, Identifier } from "./common";
+import { Expression, SimpleExpression } from "./base";
+import { Identifier } from "./common";
 import { TypeExpression } from "./type";
-import { toStringOptions, GeneratorContext } from "../types";
-import { Block } from "./statements";
+import { toStringOptions, GeneratorContext, VariableExpression } from "../types";
+import { Block, ReturnStatement } from "./statements";
 import { BindingPattern } from "./binding-pattern";
 import { variableDeclaration, compileType } from "../utils/string";
 import { Component } from "./component";
+import { VariableStatement } from "./variables";
+import SyntaxKind from "../syntaxKind";
+import { getJsxExpression, JsxExpression } from "./jsx";
+import { Decorator } from "./decorator";
 
 export class Parameter {
     decorators: Decorator[]
@@ -29,12 +33,58 @@ export class Parameter {
         return variableDeclaration(this.name, this.type?.toString() || "any", undefined, this.questionToken);
     }
 
-    declaration() {
+    toString() {
         return variableDeclaration(this.name, this.type?.toString(), this.initializer, this.questionToken);
     }
+}
 
-    toString() {
-        return this.name.toString();
+export function getTemplate(
+    functionWithTemplate: BaseFunction,
+    options?: toStringOptions,
+    doNotChangeContext = false,
+    globals?: VariableExpression
+) {
+    if (!functionWithTemplate.isJsx()) {
+        return;
+    }
+
+    const statements = functionWithTemplate.body instanceof Block ?
+        functionWithTemplate.body.statements :
+        [functionWithTemplate.body];
+    
+    const returnStatement = functionWithTemplate.body instanceof Block ?
+        statements.find(s => s instanceof ReturnStatement) :
+        statements[0];
+
+    if (returnStatement) { 
+        const componentParamenter = functionWithTemplate.parameters[0];
+        if (options) { 
+            if (!doNotChangeContext && componentParamenter && componentParamenter.name instanceof Identifier) { 
+                options.componentContext = componentParamenter.name.toString();
+            }
+
+            options.variables = statements.reduce((v: VariableExpression, statement) => {
+                if (statement instanceof VariableStatement) { 
+                    return {
+                        ...statement.declarationList.getVariableExpressions(),
+                        ...v
+                    }
+                }
+                return v;
+            }, {
+                ...globals
+            });
+
+            if (componentParamenter && componentParamenter.name instanceof BindingPattern) {
+                options.componentContext = SyntaxKind.ThisKeyword;
+                options.variables = {
+                    ...componentParamenter.name.getVariableExpressions(new SimpleExpression(options.componentContext)),
+                    ...options.variables
+                }
+            }
+        }
+        
+        return getJsxExpression(returnStatement);
     }
 }
 
@@ -71,6 +121,20 @@ export class BaseFunction extends Expression {
         }
         return options;
     }
+
+    isJsx() { 
+        return this.body.isJsx();
+    }
+
+    processTemplateExpression(expression?: JsxExpression) {
+        return expression;
+    }
+
+    getTemplate(options?: toStringOptions, doNotChangeContext = false): string {
+        return this.processTemplateExpression(
+            getTemplate(this, options, doNotChangeContext, this.context.globals)
+        )?.toString(options) || "";
+    }
 }
 
 export class Function extends BaseFunction {
@@ -89,7 +153,7 @@ export class Function extends BaseFunction {
     toString(options?: toStringOptions) {
         options = this.getToStringOptions(options);
         return `${this.modifiers.join(" ")} function ${this.name || ""}(${
-            this.parameters.map(p => p.declaration()).join(",")
+            this.parameters
             })${compileType(this.type?.toString())}${this.body.toString(options)}`;
     }
 }
@@ -109,6 +173,6 @@ export class ArrowFunction extends BaseFunction {
 
     toString(options?: toStringOptions) {
         const bodyString = this.body.toString(this.getToStringOptions(options));
-        return `${this.modifiers.join(" ")} (${this.parameters.map(p => p.declaration()).join(",")})${compileType(this.type?.toString())} ${this.equalsGreaterThanToken} ${bodyString}`;
+        return `${this.modifiers.join(" ")} (${this.parameters})${compileType(this.type?.toString())} ${this.equalsGreaterThanToken} ${bodyString}`;
     }
 }

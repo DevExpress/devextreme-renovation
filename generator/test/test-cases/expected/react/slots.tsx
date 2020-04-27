@@ -11,29 +11,29 @@ function view(viewModel: Widget) {
     );
 }
 
-declare type WidgetInput = {
+export declare type WidgetInputType = {
     namedSlot?: React.ReactNode;
     children?: React.ReactNode;
 }
-const WidgetInput: WidgetInput = {
+const WidgetInput: WidgetInputType = {
    
 };
 
 import React, {useCallback} from "react";
 
 interface Widget {
-    props: WidgetInput;
+    props: WidgetInputType;
     restAttributes: any;
 }
 
-export default function Widget(props: WidgetInput) {
-    const restAttributes=useCallback(function restAttributes(){
+export default function Widget(props: WidgetInputType) {
+    const __restAttributes=useCallback(function __restAttributes(){
         const { children, namedSlot, ...restProps } = props;
         return restProps;
     }, [props]);
     return view(({
         props: { ...props },
-        restAttributes: restAttributes()
+        restAttributes: __restAttributes()
     }));
 }
 

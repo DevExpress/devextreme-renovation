@@ -1,4 +1,4 @@
-import { Identifier, Decorator } from "./common";
+import { Identifier } from "./common";
 import { GetAccessor, Property, Method, BaseClassMember } from "./class-members";
 import { SimpleExpression, Expression } from "./base";
 import { ObjectLiteral } from "./literal";
@@ -6,6 +6,7 @@ import { HeritageClause, inheritMembers, Class, Heritable } from "./class";
 import { GeneratorContext } from "../types";
 import { Block } from "./statements";
 import { getModuleRelativePath } from "../utils/path-utils";
+import { Decorator } from "./decorator";
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
     return heritageClauses
@@ -30,7 +31,6 @@ export class Component extends Class implements Heritable {
     internalState: Property[];
     refs: Property[];
     apiRefs: Property[];
-    events: Property[] = [];
 
 
     listeners: Method[];
@@ -51,12 +51,10 @@ export class Component extends Class implements Heritable {
         return this._name.toString();
     }
 
-    addPrefixToMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) { 
-        if (isJSXComponent(heritageClauses)) { 
-            members.filter(m => !m.inherited && m instanceof GetAccessor).forEach(m => {
-                m.prefix = "__";
-            });
-        }
+    addPrefixToMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) {
+        members.filter(m => !m.inherited && m instanceof GetAccessor).forEach(m => {
+            m.prefix = "__";
+        });
         return members;
     }
 
@@ -69,8 +67,10 @@ export class Component extends Class implements Heritable {
             inheritMembers(heritageClauses,
                 this.addPrefixToMembers(members, heritageClauses)),
             heritageClauses);
-        
-        members.push(this.createRestPropsGetter(members));
+
+        const restPropsGetter = this.createRestPropsGetter(members);
+        restPropsGetter.prefix = "__";
+        members.push(restPropsGetter);
         return members;
     }
 
@@ -129,7 +129,7 @@ export class Component extends Class implements Heritable {
         return "";
     }
 
-    get heritageProperies() {
+    get heritageProperties() {
         return this.members
             .filter(m => m instanceof Property &&
                 m.decorators.find(d =>
@@ -168,10 +168,14 @@ export class Component extends Class implements Heritable {
         }
     }
 
+    compilePropsType() {
+        return this.isJSXComponent ? this.heritageClauses[0].defaultProps : this.name;
+    }
+
     compileDefaultOptionsMethod(defaultOptionRulesInitializer:string = "[]", statements: string[]=[]) { 
         if (this.needGenerateDefaultOptions) { 
             const defaultOptionsTypeName = `${this.name}OptionRule`;
-            const defaultOptionsTypeArgument = this.isJSXComponent ? this.heritageClauses[0].defaultProps : this.name;
+            const defaultOptionsTypeArgument = this.compilePropsType();
             return `type ${defaultOptionsTypeName} = Rule<${defaultOptionsTypeArgument}>;
 
             const __defaultOptionRules:${defaultOptionsTypeName}[] = ${defaultOptionRulesInitializer};

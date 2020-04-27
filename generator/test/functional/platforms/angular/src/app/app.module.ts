@@ -8,6 +8,8 @@ import DxButtonWithState from '../../../../components/state';
 import DxComponentWithSpread from '../../../../components/spread-attributes';
 import DxVisibilityChange from '../../../../components/change-visibility';
 import DxVisibilityChangeProp from '../../../../components/change-visibility-prop';
+import ComponentWithRest from '../../../../components/rest-attributes';
+import CallMethodInGetter from '../../../../components/call-method-in-getter';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import DxVisibilityChangeProp from '../../../../components/change-visibility-pro
     DxButtonWithState,
     DxComponentWithSpread,
     DxVisibilityChange,
-    DxVisibilityChangeProp
+    DxVisibilityChangeProp,
+    ComponentWithRest,
+    CallMethodInGetter
   ],
   imports: [
     BrowserModule

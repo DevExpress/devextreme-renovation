@@ -1,6 +1,7 @@
 import { SimpleExpression, Expression } from "./base";
 import { PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment } from "./property-assignment";
 import { Identifier } from "./common";
+import { toStringOptions } from "../types";
 
 export class StringLiteral extends SimpleExpression {
     quoteSymbol: string;
@@ -16,6 +17,9 @@ export class StringLiteral extends SimpleExpression {
     }
 }
 
+export class NumericLiteral extends SimpleExpression {
+}
+
 export class ArrayLiteral extends Expression {
     elements: Expression[];
     multiLine: boolean;
@@ -25,8 +29,8 @@ export class ArrayLiteral extends Expression {
         this.multiLine = multiLine;
     }
 
-    toString() {
-        return `[${this.elements.join(",")}]`;
+    toString(options?: toStringOptions) {
+        return `[${this.elements.map(e=>e.toString(options))}]`;
     }
 }
 
@@ -59,7 +63,7 @@ export class ObjectLiteral extends Expression {
         this.properties = this.properties.filter(p => p.key?.toString() !== propertyName);
     }
 
-    toString(options?:any) {
+    toString(options?:toStringOptions) {
         return `{${this.properties.map(p => p.toString(options)).join(`,\n`)}}`;
     }
 

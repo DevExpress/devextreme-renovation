@@ -3,7 +3,7 @@ import generator from "../angular-generator";
 import compile from "../component-compiler";
 import path from "path";
 
-import { printSourceCodeAst as getResult, createTestGenerator } from "./helpers/common";
+import { createTestGenerator } from "./helpers/common";
 
 mocha.describe("angular-generation", function () {
     const testGenerator = createTestGenerator("angular");
@@ -82,6 +82,14 @@ mocha.describe("angular-generation", function () {
     });
 
     mocha.it("list", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("globals-in-template", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("import-component", function () {
         this.testGenerator(this.test!.title);
     });
 

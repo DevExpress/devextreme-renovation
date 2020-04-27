@@ -1,7 +1,8 @@
-import { Identifier, Decorator } from "./common";
+import { Identifier } from "./common";
 import { Property, Method } from "./class-members";
 import { ExpressionWithTypeArguments } from "./type";
 import { GeneratorContext } from "../types";
+import { Decorator } from "./decorator";
 
 export function inheritMembers(heritageClauses: HeritageClause[], members: Array<Property | Method>) {
     return heritageClauses.reduce((m, { members }) => {
@@ -24,7 +25,7 @@ export class HeritageClause {
 
         this.members = types.reduce((properties: Property[], { type }) => {
             if (context.components && context.components[type] && context.components[type]) {
-                properties = properties.concat(context.components[type].heritageProperies)
+                properties = properties.concat(context.components[type].heritageProperties)
             }
             return properties;
         }, []);
@@ -33,7 +34,11 @@ export class HeritageClause {
             const importName = type;
             const component = context.components && context.components[importName]
             if (component && component.compileDefaultProps() !== "") {
-                defaultProps.push(`${component.defaultPropsDest().replace(component.name.toString(), importName)}`);
+                defaultProps.push(
+                    `${component.defaultPropsDest().replace(component.name.toString(), importName)}${
+                        type.indexOf("typeof ") === 0 ? "Type": ""
+                    }`
+                );
             }
             return defaultProps;
         }, []);
@@ -79,7 +84,7 @@ export class Class {
 
 export interface Heritable {
     name: string;
-    heritageProperies: Property[];
+    heritageProperties: Property[];
     compileDefaultProps(): string;
     defaultPropsDest(): string;
 }

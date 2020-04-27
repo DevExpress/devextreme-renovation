@@ -7,13 +7,13 @@ function subscribe(p: string, s: number, i: number) {
 function unsubscribe(id: number) {
     return undefined;
 }
-declare type WidgetInput = {
+export declare type WidgetInputType = {
     p: string;
     s: number;
     defaultS?:number;
     sChange?:(s:number)=>void
 }
-export const WidgetInput: WidgetInput = {
+export const WidgetInput: WidgetInputType = {
     p: "10",
     s: 10,
     sChange:()=>{}
@@ -21,16 +21,16 @@ export const WidgetInput: WidgetInput = {
 
 import React, { useState, useCallback, useEffect } from 'react';
 interface Widget {
-    props: WidgetInput;
+    props: WidgetInputType;
     i: number;
     restAttributes: any;
 }
 
-export default function Widget(props: WidgetInput) {
-    const [__state_s, __state_setS] = useState(() => (props.s !== undefined ? props.s : props.defaultS) || 10);;
-    const [__state_i, __state_setI] = useState(10);
+export default function Widget(props: WidgetInputType) {
+    const [__state_s, __state_setS] = useState(() => (props.s !== undefined ? props.s : props.defaultS) || 10);
+    const [__state_i, __state_setI] = useState(10)
 
-    const restAttributes=useCallback(function restAttributes(){
+    const __restAttributes=useCallback(function __restAttributes(){
         const { defaultS, p, s, sChange, ...restProps } = props;
         return restProps;
     }, [props]);
@@ -47,7 +47,7 @@ export default function Widget(props: WidgetInput) {
             s: (props.s !== undefined ? props.s : __state_s)
         },
         i: __state_i,
-        restAttributes: restAttributes()
+        restAttributes: __restAttributes()
     })
     );
 }

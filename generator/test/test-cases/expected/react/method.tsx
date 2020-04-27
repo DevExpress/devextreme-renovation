@@ -1,10 +1,10 @@
 function view(viewModel: Widget) { return (<div ref={viewModel.divRef as any}></div>);}
 
-declare type WidgetInput = {
+export declare type WidgetInputType = {
     prop1?: number;
     prop2?: number
 }
-const WidgetInput: WidgetInput = { };
+const WidgetInput: WidgetInputType = { };
 
 import React, { useCallback, useRef, useImperativeHandle, forwardRef } from "react";
 
@@ -13,12 +13,12 @@ export type WidgetRef = {
     getSize: () => string
 }
 interface Widget {
-    props: WidgetInput;
+    props: WidgetInputType;
     divRef: any;
     restAttributes: any;
 }
 
-const Widget = forwardRef<WidgetRef, WidgetInput>((props: WidgetInput, ref) => {
+const Widget = forwardRef<WidgetRef, WidgetInputType>((props: WidgetInputType, ref) => {
     const divRef = useRef<HTMLDivElement>();
 
     useImperativeHandle(ref, () => ({
@@ -29,7 +29,7 @@ const Widget = forwardRef<WidgetRef, WidgetInput>((props: WidgetInput, ref) => {
             return `${props.prop1} + ${divRef.current!.innerHTML}`;
         }
     }), [props.prop1, props.prop2]);
-    const restAttributes=useCallback(function restAttributes(){
+    const __restAttributes=useCallback(function __restAttributes(){
         const { prop1, prop2, ...restProps } = props;
         return restProps;
     }, [props]);
@@ -37,7 +37,7 @@ const Widget = forwardRef<WidgetRef, WidgetInput>((props: WidgetInput, ref) => {
     return view(({
         props: { ...props },
         divRef,
-        restAttributes: restAttributes()
+        restAttributes: __restAttributes()
     }));
 });
 

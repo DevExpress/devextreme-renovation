@@ -2,9 +2,9 @@ import SyntaxKind from "./syntaxKind";
 import fs from "fs";
 import path from "path";
 import { compileCode } from "../component-compiler";
-import { ImportDeclaration, ImportClause, NamedImports } from "./expressions/import";
+import { ImportDeclaration, ImportClause, NamedImports, NamespaceImport } from "./expressions/import";
 import { SimpleExpression, Expression } from "./expressions/base";
-import { Identifier, Decorator, New, Delete, Paren, Call, NonNullExpression, TypeOf, Void, CallChain, AsExpression } from "./expressions/common";
+import { Identifier, New, Delete, Paren, Call, NonNullExpression, TypeOf, Void, CallChain, AsExpression } from "./expressions/common";
 import {
     JsxExpression,
     JsxAttribute,
@@ -27,7 +27,9 @@ import {
     IntersectionTypeNode,
     UnionTypeNode,
     TypeQueryNode,
-    ParenthesizedType
+    ParenthesizedType,
+    LiteralTypeNode,
+    IndexedAccessTypeNode
 } from "./expressions/type";
 import { Method, GetAccessor, Property } from "./expressions/class-members";
 import { For, ForIn, Do, While } from "./expressions/cycle";
@@ -37,8 +39,8 @@ import { Binary, Prefix, Postfix } from "./expressions/operators";
 import { ReturnStatement, Block } from "./expressions/statements";
 import { GeneratorContext } from "./types";
 import { VariableDeclaration, VariableDeclarationList, VariableStatement } from "./expressions/variables";
-import { StringLiteral, ArrayLiteral, ObjectLiteral } from "./expressions/literal";
-import { Class, HeritageClause, Heritable } from "./expressions/class";
+import { StringLiteral, ArrayLiteral, ObjectLiteral, NumericLiteral } from "./expressions/literal";
+import { Class, HeritageClause } from "./expressions/class";
 import { TemplateSpan, TemplateExpression } from "./expressions/template";
 import { ComputedPropertyName, PropertyAccess, ElementAccess, PropertyAccessChain, Spread } from "./expressions/property-access";
 import { BindingPattern, BindingElement } from "./expressions/binding-pattern";
@@ -46,6 +48,7 @@ import { ComponentInput } from "./expressions/component-input";
 import { Component } from "./expressions/component";
 import { ExpressionWithTypeArguments } from "./expressions/type";
 import { getModuleRelativePath } from "./utils/path-utils";
+import { Decorator } from "./expressions/decorator";
 
 export default class Generator {
     NodeFlags = {
@@ -77,10 +80,17 @@ export default class Generator {
     }
 
     createNumericLiteral(value: string, numericLiteralFlags = ""): Expression {
-        return new SimpleExpression(value);
+        return new NumericLiteral(value);
     }
 
-    createVariableDeclaration(name: Identifier | BindingPattern, type?: TypeExpression, initializer?: Expression) {
+    createVariableDeclaration(name: Identifier| BindingPattern, type?: TypeExpression, initializer?: Expression) {
+        if (initializer) {
+            this.addViewFunction(name.toString(), initializer);
+        }
+        return this.createVariableDeclarationCore(name, type, initializer);
+    }
+
+    createVariableDeclarationCore(name: Identifier | BindingPattern, type?: TypeExpression, initializer?: Expression) {
         return new VariableDeclaration(name, type, initializer);
     }
 
@@ -172,7 +182,13 @@ export default class Generator {
         return new Block(statements, multiLine);
     }
 
-    createFunctionDeclaration(decorators: Decorator[]|undefined, modifiers: string[]|undefined, asteriskToken: string, name: Identifier, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, body: Block) {
+    createFunctionDeclaration(decorators: Decorator[] | undefined, modifiers: string[] | undefined, asteriskToken: string, name: Identifier, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
+        const functionDeclaration = this.createFunctionDeclarationCore(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body);
+        this.addViewFunction(functionDeclaration.name!.toString(), functionDeclaration);
+        return functionDeclaration;
+    }
+
+    createFunctionDeclarationCore(decorators: Decorator[]|undefined, modifiers: string[]|undefined, asteriskToken: string, name: Identifier|undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, body: Block) {
         return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
     }
 
@@ -185,7 +201,7 @@ export default class Generator {
     }
 
     createFunctionExpression(modifiers: string[] = [], asteriskToken: string, name: Identifier | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, body: Block) {
-        return new Function([], modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
+        return this.createFunctionDeclarationCore([], modifiers, asteriskToken, name, typeParameters, parameters, type, body);
     }
 
     createToken(token: string) {
@@ -236,6 +252,10 @@ export default class Generator {
         return new While(expression, statement);
     }
 
+    createNamespaceImport(name: Identifier) { 
+        return new NamespaceImport(name);
+    }
+
     createImportDeclaration(decorators: Decorator[]|undefined, modifiers: string[]|undefined, importClause: ImportClause=new ImportClause(), moduleSpecifier: StringLiteral) {
         if (moduleSpecifier.toString().indexOf("component_declaration/common") >= 0) {
             return "";
@@ -259,12 +279,28 @@ export default class Generator {
             if (fs.existsSync(modulePath)) {
                 compileCode(this, fs.readFileSync(modulePath).toString(), { dirname: context.dirname, path: modulePath });
 
-                this.addComponent(importClause.default, this.cache[modulePath].find((e: any) => e instanceof Component), importClause);
-                const componentInputs: ComponentInput[] = this.cache[modulePath].filter((e: any) => e instanceof ComponentInput);
-                componentInputs.length && importClause.imports.forEach(i => {
-                    const componentInput = componentInputs.find(c => c.name.toString() === i && c.modifiers.indexOf("export") >= 0);
+                if (importClause.default) {
+                    this.addComponent(importClause.default.toString(), this.cache[modulePath]
+                        .find((e: any) => e instanceof Component), importClause);
+                }
+
+                const componentInputs: ComponentInput[] = this.cache[modulePath]
+                    .filter((e: any) => e instanceof ComponentInput);
+        
+                importClause.imports.forEach(i => {
+                    const componentInput = componentInputs
+                        .find(c => c.name.toString() === i && c.modifiers.indexOf("export") >= 0);
+                    
                     if (componentInput) {
                         this.addComponent(i, componentInput);
+                    }
+                });
+                this.cache.__globals__ && importClause.imports.forEach(i => {
+                    if (this.cache.__globals__[i]) { 
+                        context.globals = {
+                            ...context.globals,
+                            [i]: this.cache.__globals__[i]
+                        }
                     }
                 });
             }
@@ -286,7 +322,7 @@ export default class Generator {
     }
 
     createDecorator(expression: Call) {
-        return new Decorator(expression);
+        return new Decorator(expression, this.getContext());
     }
 
     createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: TypeExpression, initializer?: Expression) {
@@ -408,7 +444,11 @@ export default class Generator {
     }
 
     createLiteralTypeNode(literal: Expression) { 
-        return new SimpleTypeExpression(literal.toString());
+        return new LiteralTypeNode(literal);
+    }
+
+    createIndexedAccessTypeNode(objectType: TypeExpression, indexType: TypeExpression) { 
+        return new IndexedAccessTypeNode(objectType, indexType);
     }
 
     createTypeAliasDeclaration(decorators: Decorator[]|undefined, modifiers: string[]=[], name: Identifier, typeParameters: any, type: TypeExpression) { 
@@ -547,20 +587,43 @@ export default class Generator {
         }
     }
 
+    addViewFunction(name: string, f: any) {
+        if ((f instanceof Function || f instanceof ArrowFunction) && f.isJsx()) {
+            const context = this.getContext();
+            context.viewFunctions = context.viewFunctions || {};
+            context.viewFunctions[name] = f;
+        }
+    }
+
     cache: { [name: string]: any } = {};
 
     destination: string = "";
 
     defaultOptionsModule?: string;
 
+    processCodeFactoryResult(codeFactoryResult: Array<any>) { 
+        const context = this.getContext();
+        codeFactoryResult.forEach(e => { 
+            if (e instanceof VariableStatement) { 
+                context.globals = {
+                    ...context.globals,
+                    ...e.getVariableExpressions()
+                }
+            }
+        });
+        this.cache.__globals__ = context.globals;
+        return codeFactoryResult.join("\n");
+    }
+
     generate(factory: any): { path?: string, code: string }[] {
-        const result: { path?: string, code: string }[] = []
+        const result: { path?: string, code: string }[] = [];
         const codeFactoryResult = factory(this);
-        const { path } = this.getContext()
+        const { path } = this.getContext();
+
         if(path) {
             this.cache[path] = codeFactoryResult;
         }
-        result.push({ path: path && this.processSourceFileName(path), code: codeFactoryResult.join("\n") })
+        result.push({ path: path && this.processSourceFileName(path), code: this.processCodeFactoryResult(codeFactoryResult) })
 
         return result;
     }

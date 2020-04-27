@@ -89,22 +89,6 @@ export class CallChain extends Call {
     }
 }
 
-export class Decorator {
-    expression: Call;
-    constructor(expression: Call) {
-        this.expression = expression;
-    }
-
-    get name() {
-        return this.expression.expression.toString();
-    }
-
-    toString() {
-        return `@${this.expression.toString()}`;
-    }
-}
-
-
 export class NonNullExpression extends ExpressionWithExpression {
     toString(options?: toStringOptions) {
         return `${super.toString(options).replace(/[\?!]$/, '')}!`;

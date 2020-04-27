@@ -15,6 +15,8 @@ import path from "path";
 const generator = new Generator();
 
 import componentCreator from "./helpers/create-component";
+import { toStringOptions } from "../base-generator/types";
+import { Property, Method } from "../base-generator/expressions/class-members";
 
 const { createComponentDecorator, createDecorator} = componentCreator(generator);
 
@@ -296,7 +298,18 @@ mocha.describe("base-generator: expressions", function () {
     
             assert.strictEqual(expression.toString(), " type Name = {b:string}");
         });
-    
+
+        mocha.it("createIndexedAccessTypeNode", function () { 
+            const expression = generator.createIndexedAccessTypeNode(
+                generator.createTypeReferenceNode(
+                    generator.createIdentifier("PageIndex"),
+                    undefined
+                ),
+                generator.createLiteralTypeNode(generator.createStringLiteral("1"))
+            );
+
+            assert.strictEqual(expression.toString(), `PageIndex["1"]`);
+        });
         
         mocha.it("createIntersectionTypeNode", function () {
             assert.equal(generator.createIntersectionTypeNode(
@@ -551,17 +564,20 @@ mocha.describe("base-generator: expressions", function () {
         });
 
         mocha.it("PropertyAccess compileStateSetting", function () {
-            assert.equal(generator.createPropertyAccess(
+            const expression = generator.createPropertyAccess(
                 generator.createThis(),
                 generator.createIdentifier("field")
-            ).compileStateSetting("value", generator.createProperty(
+            );
+            const property = generator.createProperty(
                 [],
                 undefined,
                 generator.createIdentifier("field"),
                 undefined,
                 undefined,
                 undefined
-            )), "this.field=value");
+            );
+
+            assert.equal(expression.compileStateSetting("value", property), "this.field=value");
         });
     
         mocha.it("ElementAccess", function () {
@@ -638,8 +654,7 @@ mocha.describe("base-generator: expressions", function () {
                     undefined
                 );
         
-                assert.equal(parameter.toString(), "a");
-                assert.equal(parameter.declaration(), "a?:string");
+                assert.equal(parameter.toString(), "a?:string");
                 assert.equal(parameter.typeDeclaration(), "a?:string");
             });
         
@@ -654,8 +669,7 @@ mocha.describe("base-generator: expressions", function () {
                     undefined
                 );
         
-                assert.equal(parameter.toString(), "a");
-                assert.equal(parameter.declaration(), "a", "declaration");
+                assert.equal(parameter.toString(), "a", "declaration");
                 assert.equal(parameter.typeDeclaration(), "a:any", "typeDeclaration");
             });
         
@@ -669,9 +683,8 @@ mocha.describe("base-generator: expressions", function () {
                     generator.createKeywordTypeNode("string"),
                     undefined
                 );
-        
-                assert.equal(parameter.toString(), "a");
-                assert.equal(parameter.declaration(), "a?:string");
+
+                assert.equal(parameter.toString(), "a?:string");
                 assert.equal(parameter.typeDeclaration(), "a?:string");
             });
         
@@ -686,8 +699,7 @@ mocha.describe("base-generator: expressions", function () {
                     generator.createStringLiteral("str")
                 );
         
-                assert.equal(parameter.toString(), "a");
-                assert.equal(parameter.declaration(), 'a?:string="str"');
+                assert.equal(parameter.toString(), 'a?:string="str"');
                 assert.equal(parameter.typeDeclaration(), "a?:string");
             });
         });
@@ -1113,9 +1125,6 @@ mocha.describe("base-generator: expressions", function () {
                 );
     
                 assert.strictEqual(expresstion.toString({
-                    props: [],
-                    state: [],
-                    internalState: [],
                     members: [],
                     variables: {
                         v: generator.createIdentifier("value")
@@ -1305,6 +1314,7 @@ mocha.describe("base-generator: expressions", function () {
 
             assert.strictEqual(expression.isReadOnly(), true);
             assert.strictEqual(getAst(expression.toString()), getAst("name():any{}"));
+            assert.strictEqual(expression.isInternalState, false);
         });
 
         mocha.it("Method with decorators, modifiers, type", function () { 
@@ -1325,6 +1335,102 @@ mocha.describe("base-generator: expressions", function () {
 
             assert.strictEqual(expression.isReadOnly(), true);
             assert.strictEqual(getAst(expression.toString()), getAst("@d1() @d2() public name():string{}"));
+        });
+
+        mocha.describe("Method.getDependency()", function () { 
+            mocha.it("should return dependency from other method if it used", function () { 
+
+                const p1 = generator.createProperty(
+                    [createDecorator("OneWay")],
+                    undefined,
+                    generator.createIdentifier("p1")
+                );
+                const p2 = generator.createProperty(
+                    [createDecorator("OneWay")],
+                    undefined,
+                    generator.createIdentifier("p1")
+                );
+
+                const method1 = generator.createMethod(
+                    undefined,
+                    undefined,
+                    "",
+                    generator.createIdentifier("m1"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    [],
+                    undefined,
+                    generator.createBlock([
+                        generator.createPropertyAccess(
+                            generator.createThis(),
+                            generator.createIdentifier("m2")
+                        )
+                    ], false)
+                );
+
+                const method2 = generator.createMethod(
+                    undefined,
+                    undefined,
+                    "",
+                    generator.createIdentifier("m2"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    [],
+                    undefined,
+                    generator.createBlock([
+                        generator.createReturn(
+                            generator.createPropertyAccess(
+                                generator.createPropertyAccess(
+                                    generator.createThis(),
+                                    generator.createIdentifier("props")
+                                ),
+                                generator.createIdentifier("p1")
+                            )
+                        )
+                    ], false)
+                );
+
+                const members = [p1, p2, method1, method2];
+    
+                assert.deepEqual(method1.getDependency(members), ["p1"]);
+            });
+
+            mocha.it("should correctly resolve recursive dependency", function () { 
+                const p1 = generator.createProperty(
+                    [createDecorator("OneWay")],
+                    undefined,
+                    generator.createIdentifier("p1")
+                );
+            
+                const method = generator.createMethod(
+                    undefined,
+                    undefined,
+                    "",
+                    generator.createIdentifier("m"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    [],
+                    undefined,
+                    generator.createBlock([
+                        generator.createPropertyAccess(
+                            generator.createThis(),
+                            generator.createIdentifier("m")
+                        ),
+                        generator.createPropertyAccess(
+                            generator.createPropertyAccess(
+                                generator.createThis(),
+                                generator.createIdentifier("props")
+                            ),
+                            generator.createIdentifier("p1")
+                        )
+                    ], false)
+                );
+
+
+                const members = [p1, method];
+    
+                assert.deepEqual(method.getDependency(members), ["p1"]);
+            });
         });
     });
 
@@ -1440,6 +1546,17 @@ mocha.describe("base-generator: expressions", function () {
     });
 
     mocha.describe("import", function () { 
+        this.beforeEach(function () { 
+            generator.setContext({
+                path: __filename,
+                dirname: __dirname
+            });
+        });
+
+        this.afterEach(function () { 
+            generator.setContext(null);
+        });
+
         mocha.it("createImportDeclaration", function () { 
             assert.equal(generator.createImportDeclaration(
                 undefined,
@@ -1546,6 +1663,69 @@ mocha.describe("base-generator: expressions", function () {
                 generator.createStringLiteral("../../component_declaration/common")
               ), '')
         });
+
+        mocha.it("createNamespaceImport", function () { 
+            const expression = generator.createNamespaceImport(
+                generator.createIdentifier("module")
+            );
+    
+            assert.equal(expression.toString(), '* as module');
+        });
+
+        mocha.it("import global variable should fill context global", function () { 
+            generator.createImportDeclaration(
+                undefined,
+                undefined,
+                generator.createImportClause(
+                    undefined,
+                    generator.createNamedImports(
+                        [
+                            generator.createIdentifier("PREFIX")
+                        ]
+                    )
+                ),
+                generator.createStringLiteral("./test-cases/declarations/globals-in-template")
+            );
+
+            assert.strictEqual(generator.getContext().globals?.["PREFIX"].toString(), '"dx"');
+            assert.strictEqual(generator.getContext().globals?.["CLASS_NAME"], undefined);
+        });
+
+        mocha.it("import module declaration with component shouldn't fill component if it is not imported", function () { 
+            generator.createImportDeclaration(
+                undefined,
+                undefined,
+                generator.createImportClause(
+                    undefined,
+                    generator.createNamedImports(
+                        [
+                            generator.createIdentifier("PREFIX")
+                        ]
+                    )
+                ),
+                generator.createStringLiteral("./test-cases/declarations/globals-in-template")
+            );
+            
+            assert.strictEqual(generator.getContext().components, undefined);
+        });
+
+        mocha.it("import module declaration with component should fill component if it is imported", function () { 
+            generator.createImportDeclaration(
+                undefined,
+                undefined,
+                generator.createImportClause(
+                    generator.createIdentifier("Base"),
+                    generator.createNamedImports(
+                        [
+                            generator.createIdentifier("PREFIX")
+                        ]
+                    )
+                ),
+                generator.createStringLiteral("./test-cases/declarations/globals-in-template")
+            );
+            
+            assert.strictEqual(generator.getContext().components?.["Base"].name, "WidgetWithGlobals");
+        });
     });
 
 });
@@ -1650,7 +1830,7 @@ mocha.describe("ComponentInput", function () {
 
         const cachedComponent = generator.getContext().components!["BaseModel"];
         assert.equal(cachedComponent, expression);
-        assert.deepEqual(cachedComponent.heritageProperies.map(p => p.toString), []);
+        assert.deepEqual(cachedComponent.heritageProperties.map(p => p.toString), []);
     });
 
     mocha.it("Component input has heritage properties", function () { 
@@ -1667,7 +1847,7 @@ mocha.describe("ComponentInput", function () {
         );
 
         const cachedComponent = generator.getContext().components!["BaseModel"];
-        assert.deepEqual(cachedComponent.heritageProperies.map(p => p.name.toString()), ["p", "p1"]);
+        assert.deepEqual(cachedComponent.heritageProperties.map(p => p.name.toString()), ["p", "p1"]);
     });
 });
 
@@ -1695,7 +1875,7 @@ mocha.describe("import Components", function () {
         
         const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/empty-component.tsx`);
         assert.ok(generator.cache[baseModulePath]);
-        assert.deepEqual(generator.getContext().components!["Base"].heritageProperies.map(p => p.name.toString()), ["height", "width"]);
+        assert.deepEqual(generator.getContext().components!["Base"].heritageProperties.map(p => p.name.toString()), ["height", "width"]);
     });
 
     mocha.it("Parse imported component. module specifier has extension", function () {
@@ -1712,7 +1892,7 @@ mocha.describe("import Components", function () {
         
         const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/empty-component.tsx`);
         assert.ok(generator.cache[baseModulePath]);
-        assert.deepEqual(generator.getContext().components!["Base"].heritageProperies.map(p => p.name.toString()), ["height", "width"]);
+        assert.deepEqual(generator.getContext().components!["Base"].heritageProperties.map(p => p.name.toString()), ["height", "width"]);
     });
 
     mocha.it("Get properties from heritageClause", function () {
@@ -1799,5 +1979,54 @@ mocha.describe("import Components", function () {
         );
 
         assert.deepEqual(model.members.map(m => m.name.toString()), ["height", "children"]);
+    });
+});
+
+mocha.describe("Expressions with toStringOptions should pass it in internal expressions", function () { 
+    const property = generator.createProperty(
+        [createDecorator("OneWay")],
+        undefined,
+        generator.createIdentifier("p")
+    );
+
+    const propertyAccess = generator.createPropertyAccess(
+        generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("props")
+        ),
+        generator.createIdentifier("p")
+    );
+
+    const getToStringOptions = (): toStringOptions => ({
+        members: [property],
+        componentContext: "this",
+        newComponentContext: ""
+    });
+
+    mocha.it("Array literal", function () {
+        const expresion = generator.createArrayLiteral([
+            propertyAccess
+        ], true);
+        
+        assert.strictEqual(expresion.toString(getToStringOptions()), "[p]");
+    });
+
+    mocha.it("Object literal", function () {
+        const expresion = generator.createObjectLiteral([
+            generator.createPropertyAssignment(
+                generator.createIdentifier("p"),
+                propertyAccess
+            )
+        ], true);
+        
+        assert.strictEqual(expresion.toString(getToStringOptions()), "{p:p}");
+    });
+
+    mocha.it("Spread Assignment", function () {
+        const expresion = generator.createSpreadAssignment(
+            propertyAccess
+        );
+        
+        assert.strictEqual(expresion.toString(getToStringOptions()), "...p");
     });
 });

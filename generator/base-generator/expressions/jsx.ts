@@ -2,6 +2,18 @@ import { Identifier } from "./common";
 import { Expression, ExpressionWithExpression } from "./base";
 import { toStringOptions } from "../types";
 import SyntaxKind from "../syntaxKind";
+import { Conditional } from "./conditions";
+
+export function getJsxExpression(e: ExpressionWithExpression | Expression | undefined): JsxExpression | undefined {
+    if (e instanceof Conditional && e.isJsx()) { 
+        return new JsxExpression(undefined, e);
+    } else if (e instanceof JsxExpression || e instanceof JsxElement || e instanceof JsxOpeningElement) {
+        return e as JsxExpression;
+    }
+    else if (e instanceof ExpressionWithExpression) {
+        return getJsxExpression(e.expression);
+    }
+}
 
 export class JsxAttribute { 
     name: Identifier;

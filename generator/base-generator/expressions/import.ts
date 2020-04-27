@@ -1,5 +1,6 @@
 import { StringLiteral } from "./literal";
-import { Identifier, Decorator } from "./common";
+import { Identifier } from "./common";
+import { Decorator } from "./decorator";
 
 export class NamedImports {
     node: Identifier[];
@@ -30,7 +31,7 @@ export class ImportClause {
     }
 
     get default() { 
-        return this.name?.toString() || "";
+        return this.name;
     }
 
     get imports() { 
@@ -88,5 +89,17 @@ export class ImportDeclaration {
 
     toString() { 
         return `import ${this.importClause}${this.moduleSpecifier}`;
+    }
+}
+
+export class NamespaceImport { 
+    name: Identifier;
+
+    constructor(name: Identifier) { 
+        this.name = name;
+    }
+
+    toString() { 
+        return `* as ${this.name}`;
     }
 }

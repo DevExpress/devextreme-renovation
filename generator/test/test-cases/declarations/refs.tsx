@@ -1,11 +1,14 @@
 import { Component, Ref, Listen } from "../../../component_declaration/common";
 
-function view(viewModel) { 
-    return <div ref={viewModel.divRef}><div ref={viewModel.explicitRef}><div ref={viewModel.nullableRef}></div></div></div>
+function view(viewModel: Widget) { 
+    return <div ref={viewModel.divRef as any}>
+        <div ref={viewModel.explicitRef as any}>
+            <div ref={viewModel.nullableRef as any}></div>
+        </div>
+    </div>
 }
-function viewModel() { }
+
 @Component({
-    viewModel: viewModel,
     view: view
 })
 export default class Widget {

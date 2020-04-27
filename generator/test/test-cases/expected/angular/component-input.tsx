@@ -1,4 +1,6 @@
-function view(){
+export const COMPONENT_INPUT_CLASS = "c3";
+
+function view() {
             
 }
 
@@ -14,7 +16,7 @@ export default class Widget extends WidgetProps {
      __onClick():any{
      const v=this.height
 }
-get restAttributes(){
+get __restAttributes(){
     return {}
 }
 }

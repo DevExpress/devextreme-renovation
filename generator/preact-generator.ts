@@ -2,7 +2,6 @@ import {
     Generator,
     ReactComponent,
     Property as BaseProperty,
-    Method,
     JsxAttribute,
     JsxOpeningElement as ReactJsxOpeningElement,
     JsxClosingElement as ReactJsxClosingElement,
@@ -10,12 +9,14 @@ import {
 } from "./react-generator";
 import path from "path";
 import { Expression } from "./base-generator/expressions/base";
-import { Identifier, Decorator } from "./base-generator/expressions/common";
+import { Identifier } from "./base-generator/expressions/common";
 import { ImportClause, ImportDeclaration } from "./base-generator/expressions/import";
 import { StringLiteral, ObjectLiteral } from "./base-generator/expressions/literal";
 import { TypeExpression } from "./base-generator/expressions/type";
 import { getModuleRelativePath } from "./base-generator/utils/path-utils";
 import { GeneratorContext as BaseGeneratorContext } from "./base-generator/types";
+import { Decorator } from "./base-generator/expressions/decorator";
+import { Method } from "./base-generator/expressions/class-members";
 
 const processModuleFileName = (module: string) => `${module}.p`;
 
@@ -56,8 +57,8 @@ class JQueryComponent {
 
     compileGetProps() {
         const statements: string[] = [];
+
         const templates = this.source.props.filter(p => p.decorators.find(d => d.name === "Template"))
-    
         statements.splice(-1, 0, ...templates.map(t => {
             const params = ["props", `props.${t._name}`];
             const decoratorArgs = t.decorators.find(d => d.name === "Template")!.expression.arguments[0];
@@ -66,6 +67,14 @@ class JQueryComponent {
             }
     
             return `props.${t.name} = this._createTemplateComponent(${params.join(",")});`;
+        }));
+
+        if(this.source.props.find(p => p.name === "onKeyDown" && p.decorators.find(d => d.name === "Event"))) {
+            statements.push("props.onKeyDown = this._wrapKeyDownHandler(props.onKeyDown);");
+        }
+
+        statements.splice(-1, 0, ...this.source.state.map(s => {
+            return `props.${s.name}Change = this._stateChange('${s.name}')`
         }));
     
         if(!statements.length) {
@@ -84,7 +93,7 @@ class JQueryComponent {
     compileAPI() {
         if(!this.source.api.length) return "";
     
-        const api = this.source.api.map(a => `${a.name}(${a.parametersTypeDeclaration()}) {
+        const api = this.source.api.map(a => `${a.name}(${a.parameters}) {
             this.viewRef.current.${a.name}(${a.parameters.map(p => p.name).join(",")});
         }`);
     
@@ -148,7 +157,7 @@ class JQueryComponent {
 
 export class Property extends BaseProperty { 
     typeDeclaration() {
-        if (this.decorators.find(d => d.name === "Slot")) { 
+        if (this.decorators.find(d => d.name === "Slot")) {
             return `${this.name}${this.questionOrExclamationToken}:any`;
         }
         return super.typeDeclaration();

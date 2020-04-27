@@ -1,6 +1,3 @@
-function viewModel() {
-
-}
 function view() {
 
 }
@@ -8,28 +5,17 @@ function view() {
 import { Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common"
 @Component({
-    name: "Component",
     selector: "dx-widget"
 })
 export default class Widget {
     _hovered: Boolean = false
-    updateState(): any {
+    __updateState(): any {
         this.__hovered = !this._hovered
     }
-    get restAttributes(){
+    get __restAttributes(){
         return {}
     }
-
-    _viewModel: any
-
-    ngDoCheck() {
-        this._viewModel = viewModel({
-            props: {},
-            updateState: this.updateState
-            restAttributes: this.restAttributes,
-        });
-    }
-
+    
     set  __hovered(_hovered:Boolean){
         this._hovered=_hovered
     }
