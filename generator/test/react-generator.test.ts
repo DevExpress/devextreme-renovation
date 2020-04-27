@@ -28,7 +28,7 @@ function createComponentDecorator(paramenters: {[name:string]: any}) {
     )
 }
 
-import { printSourceCodeAst as getResult, createTestGenerator } from "./helpers/common";
+import { printSourceCodeAst as getResult, createTestGenerator, removeSpaces } from "./helpers/common";
 import { GeneratorContext } from "../base-generator/types";
 import { Method } from "../base-generator/expressions/class-members";
 
@@ -1071,9 +1071,9 @@ mocha.describe("import Components", function () {
         }), ["height!:string", "children?:React.ReactNode"]);
 
         assert.strictEqual(model.defaultPropsDest(), "Model");
-        assert.strictEqual(getResult(model.toString()), getResult(`
-            export declare type ModelType = typeof WidgetProps & {height!:string;}
-            const Model:ModelType = {...WidgetProps, height: '10px'}
+        assert.strictEqual(removeSpaces(model.toString()), removeSpaces(`
+            export declare type ModelType = typeof WidgetProps & {height!:string} 
+            constModel:ModelType={...WidgetProps, height:"10px"};
         `));
     });
 
