@@ -9,6 +9,7 @@ import DxComponentWithSpread from '../../../../components/spread-attributes';
 import DxVisibilityChange from '../../../../components/change-visibility';
 import DxVisibilityChangeProp from '../../../../components/change-visibility-prop';
 import ComponentWithRest from '../../../../components/rest-attributes';
+import CallMethodInGetter from '../../../../components/call-method-in-getter';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import ComponentWithRest from '../../../../components/rest-attributes';
     DxVisibilityChange,
     DxVisibilityChangeProp,
     ComponentWithRest,
+    CallMethodInGetter
   ],
   imports: [
     BrowserModule

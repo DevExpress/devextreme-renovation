@@ -7,6 +7,7 @@ import ComponentWithSpread from "./spread-attributes.tsx";
 import VisibilityChange from "./change-visibility.tsx";
 import VisibilityChangeProp from "./change-visibility-prop.tsx";
 import ComponentWithRest from "./rest-attributes.tsx";
+import CallMethodInGetterWidget from "./call-method-in-getter.tsx";
 
 function view(model: App) { 
     return <div>
@@ -34,6 +35,9 @@ function view(model: App) {
         <ComponentWithRest id="component-with-rest-attributes" label="rest-attributes"></ComponentWithRest>
 
         <div id="component-with-fragment"><Fragment><div></div><div></div></Fragment></div>
+
+        <CallMethodInGetterWidget id={"call-method-in-getter-widget"} prop={model.callMethodInGetterWidgetProp}></CallMethodInGetterWidget>
+        <ButtonComponent id="button-5" onClick={model.changeCallMethodInGetterWidgetProp}>{"Open"}</ButtonComponent>
     </div>;
 }
 
@@ -52,6 +56,8 @@ export default class App extends JSXComponent<AppInput> {
 
     @InternalState() spreadAttributesComponentAria = "init";
 
+    @InternalState() callMethodInGetterWidgetProp = 1;
+
     onButtonClick() { 
         this.clickCount = this.clickCount + 1;
     }
@@ -62,6 +68,10 @@ export default class App extends JSXComponent<AppInput> {
 
     onChangeAriaButtonClick() { 
         this.spreadAttributesComponentAria = "changed"
+    }
+
+    changeCallMethodInGetterWidgetProp() { 
+        this.callMethodInGetterWidgetProp = 10;
     }
 
     @InternalState() visibilityChangePropValue: boolean = false;
