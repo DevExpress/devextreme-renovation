@@ -136,7 +136,7 @@ export class Property extends BaseProperty {
         } else if (this.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
             return [getPropName(this.name)];
         } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
-            return [this.name.toString()]
+            return this.questionOrExclamationToken === "?" ? [`${this.name.toString()}.current`] : [];
         } else if (this.decorators.find(d => d.name === "TwoWay")) {
             return [getPropName(this.name), getLocalStateName(this.name), getPropName(`${this.name}Change`)];
         }

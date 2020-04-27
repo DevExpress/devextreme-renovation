@@ -1337,7 +1337,7 @@ mocha.describe("base-generator: expressions", function () {
             assert.strictEqual(getAst(expression.toString()), getAst("@d1() @d2() public name():string{}"));
         });
 
-        mocha.describe.only("Method.getDependency()", function () { 
+        mocha.describe("Method.getDependency()", function () { 
             mocha.it("should return dependency from other method if it used", function () { 
 
                 const p1 = generator.createProperty(

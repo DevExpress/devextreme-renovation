@@ -86,7 +86,7 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it.only("props", function () {
+    mocha.it("props", function () {
         this.testGenerator(this.test!.title);
     });
 

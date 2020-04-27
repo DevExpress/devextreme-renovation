@@ -24,11 +24,11 @@ export default function Widget(props: {}) {
 
     const clickHandler = useCallback(function clickHandler() {
         const html = divRef.current!.outerHTML + explicitRef.current!.outerHTML;
-    }, [divRef, explicitRef])
+    }, [])
 
     const getHeight = useCallback(function getHeight() {
         return divRef.current!.outerHTML + nullableRef.current?.outerHTML;
-    }, [divRef, nullableRef]);
+    }, [nullableRef.current]);
 
     const __restAttributes=useCallback(function __restAttributes(){
         const { ...restProps } = props;
