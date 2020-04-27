@@ -44,7 +44,7 @@ export default class Widget extends WidgetInput {
     }
 
     ngOnChanges(changes: {[name:string]: any}) {
-        if (this.__destroyEffects.length && ["p", "s"].some(d => changes[d] !== null)) {
+        if (this.__destroyEffects.length && ["p", "s"].some(d => changes[d])) {
             this.__schedule_setupData();
         }
     }
