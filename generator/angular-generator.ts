@@ -137,12 +137,12 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
                 const attributes = this.spreadToArray(spreadAttr);
                 attributes.forEach(attr => {
                     const oldAttrIndex = this.attributes.findIndex(
-											  (a) => a instanceof JsxAttribute && a.name.toString() === attr.name.toString()
-										);
-										if (oldAttrIndex > -1) {
-											this.attributes.splice(oldAttrIndex, 1);
-										}
-                    this.attributes.push(attr)
+                        (a) => a instanceof JsxAttribute && a.name.toString() === attr.name.toString()
+                    );
+                    if (oldAttrIndex > -1) {
+                        this.attributes.splice(oldAttrIndex, 1);
+                     }
+                    this.attributes.push(attr);
                 });
             });
 

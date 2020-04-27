@@ -16,7 +16,7 @@ export default class Widget extends WidgetInput {
 	get __attr1() {
 		return { value: 100, selected: true };
 	}
-	get restAttributes() {
+	get __restAttributes() {
 		return {};
 	}
 }
