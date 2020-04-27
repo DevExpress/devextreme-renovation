@@ -32,7 +32,7 @@ import { SimpleTypeExpression, TypeExpression, FunctionTypeNode } from "./base-g
 import { HeritageClause } from "./base-generator/expressions/class";
 import { ImportClause } from "./base-generator/expressions/import";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input"
-import { Component, isJSXComponent } from "./base-generator/expressions/component";
+import { Component, isJSXComponent, getProps } from "./base-generator/expressions/component";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
 
@@ -101,6 +101,23 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
             .find(s => tagName.endsWith(`${contextExpr}${s.name.toString()}`));
     }
 
+    spreadToArray(spreadAttributes: JsxSpreadAttribute) {
+        const component = this.component;
+        const properties = component && getProps(component.members) || [];
+        return properties.reduce((acc, prop: Method | BaseProperty) => {
+            const propName = prop._name;
+            const spreadValue = `${spreadAttributes.expression.toString()}.${propName.toString()}`;
+            const attr = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === propName.toString()) as JsxAttribute;
+            const attrValue = attr?.initializer.toString();
+            const value = attrValue
+                ? `${spreadValue}!==undefined?${spreadValue}:${attrValue}`
+                : spreadValue ;
+
+            acc.push(new JsxAttribute(propName, new SimpleExpression(value)));
+            return acc;
+        }, [] as JsxAttribute[])
+    }
+
     attributesString(options?: toStringOptions) {
         if (this.component && options) { 
             options = {
@@ -111,8 +128,21 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
         const spreadAttributes = this.attributes.filter(a => a instanceof JsxSpreadAttribute) as JsxSpreadAttribute[];
         if (spreadAttributes.length) { 
+            spreadAttributes.forEach(spreadAttr => {
+                const attributes = this.spreadToArray(spreadAttr);
+                attributes.forEach(attr => {
+                    const oldAttrIndex = this.attributes.findIndex(
+											  (a) => a instanceof JsxAttribute && a.name.toString() === attr.name.toString()
+										);
+										if (oldAttrIndex > -1) {
+											this.attributes.splice(oldAttrIndex, 1);
+										}
+                    this.attributes.push(attr)
+                });
+            });
+
             const ref = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === "ref");
-            if (!ref) { 
+            if (!ref && !this.component) { 
                 this.attributes.push(
                     new JsxAttribute(new Identifier("ref"), new SimpleExpression(`_auto_ref_${counter.get()}`))
                 );
@@ -493,7 +523,7 @@ export class JsxChildExpression extends JsxExpression {
 }
 
 export class JsxSpreadAttribute extends JsxExpression{
-    getTemplateContext() { 
+    getTemplateContext() {
         // TODO: Support spread attributes in template context
         console.warn("Angular generator doesn't support spread attributes in template");
         return null;
