@@ -5,7 +5,7 @@ import BaseGenerator from "./base-generator";
 import {
     Property as BaseProperty,
     GetAccessor as BaseGetAccessor,
-    Method as BaseMethod,
+    Method,
     BaseClassMember
 } from "./base-generator/expressions/class-members";
 import { Identifier } from "./base-generator/expressions/common";
@@ -136,7 +136,7 @@ export class Property extends BaseProperty {
         } else if (this.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
             return [getPropName(this.name)];
         } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
-            return [this.name.toString()]
+            return this.questionOrExclamationToken === "?" ? [`${this.name.toString()}.current`] : [];
         } else if (this.decorators.find(d => d.name === "TwoWay")) {
             return [getPropName(this.name), getLocalStateName(this.name), getPropName(`${this.name}Change`)];
         }
@@ -164,36 +164,13 @@ export class Property extends BaseProperty {
     }
 }
 
-export class Method extends BaseMethod {
-    getDependency(properties: Property[] = []) {
-        const dependency = this.body.getDependency();
-        const additionalDependency = [];
-
-        if (dependency.find(d => d === "props")) { 
-            additionalDependency.push("props");
-        }
-
-        const result = [...new Set(dependency)]
-            .map(d => properties.find(p => p.name.toString() === d))
-            .filter(d => d)
-            .reduce((d: string[], p) => d.concat(p!.getDependency()), [])
-            .concat(additionalDependency);
-        
-        if (additionalDependency.indexOf("props") > -1) { 
-            return result.filter(d => !d.startsWith("props."));
-        }
-        
-        return result;
-    }
-}
-
 export class GetAccessor extends BaseGetAccessor { 
     getter() { 
         return `${super.getter()}()`;
     }
 }
 
-function getSubscriptions(methods: BaseMethod[]) {
+function getSubscriptions(methods: Method[]) {
     return methods.map(m => {
         const [event, parameters] = m.decorators.find(d => d.name === "Listen")!.expression.arguments;
         
@@ -337,7 +314,7 @@ export class ReactComponent extends Component {
         const effects = this.effects;
 
         const effectsString = effects.map(e => `useEffect(${e.arrowDeclaration(this.getToStringOptions())}, 
-        [${e.getDependency(this.props.concat(this.state).concat(this.internalState))}])`).join(";\n");
+        [${e.getDependency(this.members)}])`).join(";\n");
 
         let subscriptionsString = "";
         if (subscriptions.length) {
@@ -371,7 +348,7 @@ export class ReactComponent extends Component {
 
                 r.deps = [...new Set(r.deps
                     .concat(a.getDependency(
-                        this.props.concat(this.state).concat(this.internalState)
+                        this.members
                     )))];
                 
                 return r;
@@ -461,7 +438,7 @@ export class ReactComponent extends Component {
                 ${this.listeners.concat(this.methods)
                     .map(m => {
                         return `const ${m.name}=useCallback(${m.declaration(this.getToStringOptions())}, [${
-                            m.getDependency(this.internalState.concat(this.state).concat(this.props).concat(this.refs))
+                            m.getDependency(this.members)
                         }]);`;
                     }).join("\n")}
                 ${this.compileUseEffect()}
@@ -551,10 +528,6 @@ export class Generator extends BaseGenerator {
 
     createJsxClosingElement(tagName: Identifier) {
         return new JsxClosingElement(tagName);
-    }
-
-    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string|undefined, name: Identifier, questionToken: string | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
-        return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 
     createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: TypeExpression, initializer?: Expression) {

@@ -2,7 +2,6 @@ import {
     Generator,
     ReactComponent,
     Property as BaseProperty,
-    Method,
     JsxAttribute,
     JsxOpeningElement as ReactJsxOpeningElement,
     JsxClosingElement as ReactJsxClosingElement,
@@ -17,6 +16,7 @@ import { TypeExpression } from "./base-generator/expressions/type";
 import { getModuleRelativePath } from "./base-generator/utils/path-utils";
 import { GeneratorContext as BaseGeneratorContext } from "./base-generator/types";
 import { Decorator } from "./base-generator/expressions/decorator";
+import { Method } from "./base-generator/expressions/class-members";
 
 const processModuleFileName = (module: string) => `${module}.p`;
 

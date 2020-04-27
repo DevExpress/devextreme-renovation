@@ -61,6 +61,10 @@ export class BaseClassMember extends Expression {
     get canBeDestructured() { 
         return this.name === this._name.toString();
     } 
+
+    getDependency() { 
+        return [this.name];
+    }
 }
 
 export class Method extends BaseClassMember {
@@ -91,25 +95,25 @@ export class Method extends BaseClassMember {
         return `(${this.parameters})=>${this.body.toString(options)}`
     }
 
-    getDependency(properties: Property[] = []) {
+    getDependency(members: Array<Property | Method> = []) {
         const dependency = this.body.getDependency();
         const additionalDependency = [];
 
-        if (dependency.find(d => d === "props")) { 
+        if (dependency.find(d => d === "props")) {
             additionalDependency.push("props");
         }
 
-        const result = [...new Set(dependency)]
-            .map(d => properties.find(p => p.name.toString() === d))
+        const result: string[] = [...new Set(dependency)]
+            .map(d => members.find(p => p.name.toString() === d))
             .filter(d => d)
-            .reduce((d: string[], p) => d.concat(p!.getDependency()), [])
+            .reduce((d: string[], p) => d.concat(p!.getDependency(members.filter(p => p !== this))), [])
             .concat(additionalDependency);
         
         if (additionalDependency.indexOf("props") > -1) { 
             return result.filter(d => !d.startsWith("props."));
         }
         
-        return result;
+        return [...new Set(result)];
     }
 
     toString(options?: toStringOptions) { 

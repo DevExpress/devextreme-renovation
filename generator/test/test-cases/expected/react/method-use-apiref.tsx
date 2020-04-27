@@ -27,7 +27,7 @@ const WidgetWithApiRef = forwardRef<WidgetWithApiRefRef, WidgetWithApiRefInputTy
         getSomething: () => { 
             return `${props.prop1} + ${baseRef.current?.getHeight()}`;
         }
-    }), [props.prop1]);
+    }), [props.prop1, baseRef.current]);
     const __restAttributes=useCallback(function __restAttributes(){
         const { prop1, ...restProps } = props;
         return restProps;

@@ -16,6 +16,7 @@ const generator = new Generator();
 
 import componentCreator from "./helpers/create-component";
 import { toStringOptions } from "../base-generator/types";
+import { Property, Method } from "../base-generator/expressions/class-members";
 
 const { createComponentDecorator, createDecorator} = componentCreator(generator);
 
@@ -1334,6 +1335,102 @@ mocha.describe("base-generator: expressions", function () {
 
             assert.strictEqual(expression.isReadOnly(), true);
             assert.strictEqual(getAst(expression.toString()), getAst("@d1() @d2() public name():string{}"));
+        });
+
+        mocha.describe("Method.getDependency()", function () { 
+            mocha.it("should return dependency from other method if it used", function () { 
+
+                const p1 = generator.createProperty(
+                    [createDecorator("OneWay")],
+                    undefined,
+                    generator.createIdentifier("p1")
+                );
+                const p2 = generator.createProperty(
+                    [createDecorator("OneWay")],
+                    undefined,
+                    generator.createIdentifier("p1")
+                );
+
+                const method1 = generator.createMethod(
+                    undefined,
+                    undefined,
+                    "",
+                    generator.createIdentifier("m1"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    [],
+                    undefined,
+                    generator.createBlock([
+                        generator.createPropertyAccess(
+                            generator.createThis(),
+                            generator.createIdentifier("m2")
+                        )
+                    ], false)
+                );
+
+                const method2 = generator.createMethod(
+                    undefined,
+                    undefined,
+                    "",
+                    generator.createIdentifier("m2"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    [],
+                    undefined,
+                    generator.createBlock([
+                        generator.createReturn(
+                            generator.createPropertyAccess(
+                                generator.createPropertyAccess(
+                                    generator.createThis(),
+                                    generator.createIdentifier("props")
+                                ),
+                                generator.createIdentifier("p1")
+                            )
+                        )
+                    ], false)
+                );
+
+                const members = [p1, p2, method1, method2];
+    
+                assert.deepEqual(method1.getDependency(members), ["p1"]);
+            });
+
+            mocha.it("should correctly resolve recursive dependency", function () { 
+                const p1 = generator.createProperty(
+                    [createDecorator("OneWay")],
+                    undefined,
+                    generator.createIdentifier("p1")
+                );
+            
+                const method = generator.createMethod(
+                    undefined,
+                    undefined,
+                    "",
+                    generator.createIdentifier("m"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    [],
+                    undefined,
+                    generator.createBlock([
+                        generator.createPropertyAccess(
+                            generator.createThis(),
+                            generator.createIdentifier("m")
+                        ),
+                        generator.createPropertyAccess(
+                            generator.createPropertyAccess(
+                                generator.createThis(),
+                                generator.createIdentifier("props")
+                            ),
+                            generator.createIdentifier("p1")
+                        )
+                    ], false)
+                );
+
+
+                const members = [p1, method];
+    
+                assert.deepEqual(method.getDependency(members), ["p1"]);
+            });
         });
     });
 

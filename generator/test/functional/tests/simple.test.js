@@ -90,3 +90,15 @@ cloneTest('Check fragment children', async t => {
     await t
         .expect(await el.childElementCount).eql(2);
 });
+
+cloneTest('Can call method inside a getter', async t => {
+    const el = Selector("#call-method-in-getter-widget");
+
+    await t
+        .expect(await el.textContent).eql("2");
+    
+    await t.click(Selector('#button-5'));
+
+    await t
+        .expect(await el.textContent).eql("20");
+});
