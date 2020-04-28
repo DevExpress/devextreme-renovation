@@ -70,7 +70,7 @@ export class Component extends Class implements Heritable {
                     ? m.initializer.body
                     : new Block([new ReturnStatement(m.initializer.body as Expression)], true);
                   
-                return new Method([], m.modifiers, undefined, m._name, undefined, [], m.initializer.parameters, m.type,  body);
+                return new Method([], m.modifiers, undefined, m._name, undefined, [], m.initializer.parameters, m.initializer.type, body);
             }
             return m;
         });
