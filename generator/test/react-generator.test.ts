@@ -142,6 +142,10 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("method-without-decorator", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("component-input", function () {
         this.testGenerator(this.test!.title);
     });

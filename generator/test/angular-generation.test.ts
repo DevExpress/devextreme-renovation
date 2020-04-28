@@ -81,6 +81,10 @@ mocha.describe("angular-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("method-without-decorator", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("list", function () {
         this.testGenerator(this.test!.title);
     });
