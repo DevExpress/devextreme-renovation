@@ -9,11 +9,11 @@ export const WidgetInput: WidgetInputType = {
 
 import React, {useCallback} from 'react'
 interface Widget {
-    props: WidgetInputType;
+    props: typeof WidgetInput;
     restAttributes: any;
 }
 
-export default function Widget(props: WidgetInputType) {
+export default function Widget(props: typeof WidgetInput) {
     const __restAttributes=useCallback(function __restAttributes(){
         const { contentRender, render, ...restProps } = props;
         return restProps;

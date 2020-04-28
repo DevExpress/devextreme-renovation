@@ -15,12 +15,12 @@ export type WidgetWithApiRefRef = {
 };
 
 interface WidgetWithApiRef {
-    props: WidgetWithApiRefInputType;
+    props: typeof WidgetWithApiRefInput;
     baseRef: any;
     restAttributes: any;
 }
 
-const WidgetWithApiRef = forwardRef<WidgetWithApiRefRef, WidgetWithApiRefInputType>((props: WidgetWithApiRefInputType, ref) => {
+const WidgetWithApiRef = forwardRef<WidgetWithApiRefRef, typeof WidgetWithApiRefInput>((props: typeof WidgetWithApiRefInput, ref) => {
     const baseRef = useRef<BaseWidgetRef>();
 
     useImperativeHandle(ref, () => ({

@@ -12,12 +12,12 @@ const WidgetInput: WidgetInputType = {
 
 import React, { useCallback } from 'react';
 interface Widget {
-    props: WidgetInputType;
+    props: typeof WidgetInput;
     getHeight: () => number;
     restAttributes: any;
 }
 
-export default function Widget(props: WidgetInputType) {
+export default function Widget(props: typeof WidgetInput) {
     const getHeight = useCallback(function getHeight() {
         props.onClick(10);
         const { onClick } = props;

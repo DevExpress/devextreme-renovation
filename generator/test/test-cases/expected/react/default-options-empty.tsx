@@ -9,9 +9,9 @@ export const WidgetProps: WidgetPropsType = {};
 import { convertRulesToOptions, Rule } from "../../../../../../component_declaration/default_options";
 import React, {useCallback} from "react";
 
-interface Widget { props: WidgetPropsType, restAttributes: any; }
+interface Widget { props: typeof WidgetProps, restAttributes: any; }
 
-export default function Widget(props: WidgetPropsType) {
+export default function Widget(props: typeof WidgetProps) {
     const __restAttributes=useCallback(function __restAttributes(){
         const { ...restProps } = props;
         return restProps;
@@ -32,7 +32,7 @@ function __createDefaultProps() {
 Widget.defaultProps = __createDefaultProps();
 
 
-type WidgetOptionRule = Rule<WidgetPropsType>;
+type WidgetOptionRule = Rule<typeof WidgetProps>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {

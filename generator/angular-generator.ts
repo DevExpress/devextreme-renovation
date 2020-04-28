@@ -1101,7 +1101,7 @@ class AngularComponent extends Component {
     }
 
     toString() { 
-        const extendTypes = this.heritageClauses.reduce((t: string[], h) => t.concat(h.types.map(t => t.type)), []);
+        const extendTypes = this.heritageClauses.reduce((t: string[], h) => t.concat(h.types.map(t => t.type.toString())), []);
         
         const modules = Object.keys(this.context.components || {})
             .map((k) => this.context.components?.[k])

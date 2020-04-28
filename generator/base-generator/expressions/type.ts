@@ -92,6 +92,16 @@ export class TypeReferenceNode extends TypeExpression {
         const typeArguments = this.typeArguments.length ? `<${this.typeArguments.join(",")}>` : "";
         return `${this.typeName}${typeArguments}`;
     }
+
+    get type(): Expression {
+        if (this.typeArguments.length) {
+            const typeArgument = this.typeArguments[0];
+            if (typeArgument instanceof TypeReferenceNode) { 
+                return typeArgument.type
+            }
+        }
+        return this.typeName
+    }
 }
 
 export class TypeLiteralNode extends TypeExpression { 
@@ -157,13 +167,18 @@ export class ExpressionWithTypeArguments extends ExpressionWithExpression {
         return `${this.expression}${typeArgumentString}`;
     }
 
-    get typeNode() {
-        return this.expression.toString();
+    get isJsxComponent() { 
+        return this.expression.toString() === "JSXComponent";
     }
 
-    get type() {
+    get typeNode() {
+        return this.expression;
+    }
+
+    get type(): Expression {
         if (this.typeArguments.length) {
-            return this.typeArguments[0].toString().replace("typeof ", "");
+            const typeArgument = this.typeArguments[0];
+            return typeArgument.type
         }
         return this.typeNode;
     }

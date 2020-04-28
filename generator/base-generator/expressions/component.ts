@@ -9,9 +9,7 @@ import { getModuleRelativePath } from "../utils/path-utils";
 import { Decorator } from "./decorator";
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
-    return heritageClauses
-        .reduce((typeNodes: string[], h) => typeNodes.concat(h.typeNodes), [])
-        .filter(t => t === "JSXComponent").length;
+    return heritageClauses.some(h => h.isJsxComponent);
 }
 
 export function getProps(members: BaseClassMember[]): Property[] {
@@ -169,7 +167,7 @@ export class Component extends Class implements Heritable {
     }
 
     compilePropsType() {
-        return this.isJSXComponent ? this.heritageClauses[0].defaultProps : this.name;
+        return this.isJSXComponent ? this.heritageClauses[0].propsType : this.name;
     }
 
     compileDefaultOptionsMethod(defaultOptionRulesInitializer:string = "[]", statements: string[]=[]) { 

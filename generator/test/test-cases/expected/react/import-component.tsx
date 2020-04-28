@@ -15,12 +15,12 @@ const ChildInput: ChildInputType = {
 import React, { useCallback } from 'react';
 
 interface Child {
-    props: ChildInputType;
+    props: typeof ChildInput;
     getProps: () => typeof WidgetProps;
     restAttributes: any;
 }
 
-export default function Child(props: ChildInputType) {
+export default function Child(props: typeof ChildInput) {
     const getProps = useCallback(function getProps() {
         return { height: props.height };
     }, [props.height]);

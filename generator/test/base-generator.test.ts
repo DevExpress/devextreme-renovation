@@ -383,7 +383,7 @@ mocha.describe("base-generator: expressions", function () {
                 );
         
                 assert.strictEqual(expresion.toString(), "JSXComponent<WidgetProps>");
-                assert.strictEqual(expresion.type, "WidgetProps");
+                assert.strictEqual(expresion.type.toString(), "WidgetProps");
             });
         
             mocha.it("ExpressionWithTypeArguments without type arguments", function () {
@@ -393,7 +393,7 @@ mocha.describe("base-generator: expressions", function () {
                 );
         
                 assert.strictEqual(expresion.toString(), "Component");
-                assert.strictEqual(expresion.type, "Component");
+                assert.strictEqual(expresion.type.toString(), "Component");
             });
         });
 
