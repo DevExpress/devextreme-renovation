@@ -12,7 +12,7 @@ export default class Widget {
     __updateState(): any {
         this.__hovered = !this._hovered
     }
-    get __restAttributes(){
+    get __restAttributes():any{
         return {}
     }
     

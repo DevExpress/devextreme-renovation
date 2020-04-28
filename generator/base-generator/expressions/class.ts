@@ -3,10 +3,12 @@ import { Property, Method } from "./class-members";
 import { ExpressionWithTypeArguments } from "./type";
 import { GeneratorContext } from "../types";
 import { Decorator } from "./decorator";
+import syntaxKind from "../syntaxKind";
 
 export function inheritMembers(heritageClauses: HeritageClause[], members: Array<Property | Method>) {
     return heritageClauses.reduce((m, { members }) => {
         members = members.filter(inheritMember => m.every(m => m.name.toString() !== inheritMember.name.toString()));
+        //members.forEach(m=>m.questionOrExclamationToken=syntaxKind.ExclamationToken)
         return m.concat(members);
     }, members);
 }
@@ -30,6 +32,10 @@ export class HeritageClause {
 
     get isJsxComponent() { 
         return this.types.some(t => t.isJsxComponent);
+    }
+
+    get isRequired() { 
+        return this.types[0].typeArguments[0] && this.types[0].typeArguments[0].toString().startsWith("Required");
     }
 
     constructor(token: string, types: ExpressionWithTypeArguments[], context: GeneratorContext) {

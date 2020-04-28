@@ -15,7 +15,7 @@ import { CommonModule } from "@angular/common"
     template: `<div [class]="('dx'+'c1'+'c2'+'c3')"></div>`
 })
 export default class WidgetWithGlobals extends WidgetProps {
-    get __restAttributes() {
+    get __restAttributes():any {
         return {}
     }
 

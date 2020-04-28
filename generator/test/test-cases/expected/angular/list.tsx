@@ -15,7 +15,7 @@ import { CommonModule } from "@angular/common";
             </div>`
 })
 export default class List extends ListInput {
-    get __restAttributes(){
+    get __restAttributes():any{
         return {}
     }
     _trackBy_items_0(_index: number, item: any) {

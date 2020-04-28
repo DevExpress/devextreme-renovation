@@ -15,15 +15,15 @@ export default class Widget extends WidgetInput {
     @ViewChild("host", { static: false }) host: ElementRef<HTMLDivElement>
     @ViewChild("i1", {static: false}) i1:ElementRef<HTMLInputElement>
 
-    get __attr1() {
+    get __attr1():any {
         return {};
     }
 
-    get __attr2() {
+    get __attr2():any {
         return {};
     }
 
-    get __restAttributes(){
+    get __restAttributes():any{
         return {}
     }
 

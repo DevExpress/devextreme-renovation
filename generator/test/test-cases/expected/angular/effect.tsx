@@ -25,7 +25,7 @@ export default class Widget extends WidgetInput {
         return () => unsubscribe(id);
     }
 
-    get __restAttributes(){
+    get __restAttributes(): any{
         return {}
     }
 

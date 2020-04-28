@@ -2945,7 +2945,7 @@ mocha.describe("Angular generator", function () {
                 members: [property, prop],
                 componentContext: generator.SyntaxKind.ThisKeyword,
                 newComponentContext: generator.SyntaxKind.ThisKeyword
-            })), getResult("get _name(){this.name}"));
+            })), getResult("get _name(): any{this.name}"));
         });
 
     });
@@ -3074,7 +3074,7 @@ mocha.describe("Angular generator", function () {
 
                 ${component.decorator}
                 export default class BaseWidget {
-                    get __restAttributes(){
+                    get __restAttributes(): any{
                         return {}
                     }
                 }
@@ -3137,7 +3137,7 @@ mocha.describe("Angular generator", function () {
                 
                 ${component.decorator}
                 export default class BaseWidget extends Input {
-                    get __restAttributes(){
+                    get __restAttributes(): any{
                         return {}
                     }
                 }
