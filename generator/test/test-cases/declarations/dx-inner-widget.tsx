@@ -1,4 +1,4 @@
-import { Component, ComponentBindings, JSXComponent, OneWay } from "../../../component_declaration/common";
+import { Component, ComponentBindings, JSXComponent, OneWay, Event, TwoWay } from "../../../component_declaration/common";
 
 function view(model: InnerWidget) {
     return <div></div>
@@ -6,8 +6,9 @@ function view(model: InnerWidget) {
 
 @ComponentBindings()
 export class InnerWidgetProps {
-    @OneWay() value?: number;
     @OneWay() selected?: boolean;
+    @TwoWay() value?: number;
+    @Event() onSelect?: (e: any) => any;
 }
 
 @Component({

@@ -115,7 +115,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
             const attr = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === propName.toString()) as JsxAttribute;
             const attrValue = attr?.initializer.toString();
             const value = attrValue
-                ? `${spreadValue}!==undefined?${spreadValue}:${attrValue}`
+                ? `(${spreadValue}!==undefined?${spreadValue}:${attrValue})`
                 : spreadValue;
 
             acc.push(new JsxAttribute(propName, new SimpleExpression(value)));
