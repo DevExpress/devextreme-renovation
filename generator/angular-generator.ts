@@ -106,6 +106,23 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
             .find(s => tagName.endsWith(`${contextExpr}${s.name.toString()}`));
     }
 
+    spreadToArray(spreadAttributes: JsxSpreadAttribute, options?: toStringOptions) {
+        const component = this.component;
+        const properties = component && getProps(component.members) || [];
+        return properties.reduce((acc, prop: Method | BaseProperty) => {
+            const propName = prop._name;
+            const spreadValue = `${spreadAttributes.expression.toString(options)}.${propName.toString()}`;
+            const attr = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === propName.toString()) as JsxAttribute;
+            const attrValue = attr?.initializer.toString();
+            const value = attrValue
+                ? `(${spreadValue}!==undefined?${spreadValue}:${attrValue})`
+                : spreadValue;
+
+            acc.push(new JsxAttribute(propName, new SimpleExpression(value)));
+            return acc;
+        }, [] as JsxAttribute[])
+    }
+
     attributesString(options?: toStringOptions) {
         if (this.component && options) { 
             options = {
@@ -116,8 +133,21 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
         const spreadAttributes = this.attributes.filter(a => a instanceof JsxSpreadAttribute) as JsxSpreadAttribute[];
         if (spreadAttributes.length) { 
+            spreadAttributes.forEach(spreadAttr => {
+                const attributes = this.spreadToArray(spreadAttr, options);
+                attributes.forEach(attr => {
+                    const oldAttrIndex = this.attributes.findIndex(
+                        (a) => a instanceof JsxAttribute && a.name.toString() === attr.name.toString()
+                    );
+                    if (oldAttrIndex > -1) {
+                        this.attributes.splice(oldAttrIndex, 1);
+                     }
+                    this.attributes.push(attr);
+                });
+            });
+
             const ref = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === "ref");
-            if (!ref) { 
+            if (!ref && !this.component) { 
                 this.attributes.push(
                     new JsxAttribute(new Identifier("ref"), new SimpleExpression(`_auto_ref_${counter.get()}`))
                 );
