@@ -426,7 +426,7 @@ jQuery - если в декораторе Вашего компонента ук
 
 ### Оформление багов
 
-В ходе разработки могут быть выявлены ошибки генератора. Для оформления бага следует завести соответствующее issue следуя темплейту в репозитории [devextreme-renovation](https://github.com/DevExpress/devextreme-renovation).
+В ходе разработки могут быть выявлены ошибки генератора. Для оформления бага следует завести соответствующее issue, следуя темплейту в репозитории [devextreme-renovation](https://github.com/DevExpress/devextreme-renovation).
 
 ### Use Cases
 
