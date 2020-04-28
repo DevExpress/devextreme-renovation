@@ -4,9 +4,10 @@ import { SimpleExpression, Expression } from "./base";
 import { ObjectLiteral } from "./literal";
 import { HeritageClause, inheritMembers, Class, Heritable } from "./class";
 import { GeneratorContext } from "../types";
-import { Block } from "./statements";
+import { Block, ReturnStatement } from "./statements";
 import { getModuleRelativePath } from "../utils/path-utils";
 import { Decorator } from "./decorator";
+import { BaseFunction } from './functions';
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
     return heritageClauses
@@ -63,10 +64,21 @@ export class Component extends Class implements Heritable {
     }
 
     processMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) { 
+        members = members.map(m => {
+            if (m instanceof Property && m.decorators.length === 0 && m.initializer instanceof BaseFunction) {
+                const body = m.initializer.body instanceof Block
+                    ? m.initializer.body
+                    : new Block([new ReturnStatement(m.initializer.body as Expression)], true);
+                  
+                return new Method([], m.modifiers, undefined, m._name, undefined, [], m.initializer.parameters, m.initializer.type, body);
+            }
+            return m;
+        });
+        
         members = super.processMembers(
-            inheritMembers(heritageClauses,
-                this.addPrefixToMembers(members, heritageClauses)),
-            heritageClauses);
+          inheritMembers(heritageClauses,
+              this.addPrefixToMembers(members, heritageClauses)),
+          heritageClauses);
 
         const restPropsGetter = this.createRestPropsGetter(members);
         restPropsGetter.prefix = "__";
