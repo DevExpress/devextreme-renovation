@@ -65,6 +65,10 @@ mocha.describe("angular-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("spread-attribute-with-custom-component", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("template", function () {
         this.testGenerator(this.test!.title);
     });
