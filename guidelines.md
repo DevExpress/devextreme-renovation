@@ -27,6 +27,7 @@
 - - [Исходный код](#Исходный-код)
 - - [Тестирование компонентов](#Тестирование-компонентов)
 - - [Playground](#Playground)
+  - [Оформление багов](#Оформление-багов)
 - - [Use Cases](#use-cases)
 ## Цели
 
@@ -367,6 +368,8 @@ onWidgetKeyDown(event: Event, options) {
 
 Пока что разработка новых компонентов ведется в ветке [preact-button](https://github.com/DevExpress/DevExtreme/tree/preact-button). Все комопненты пока размещаются в папке [js/renovation](https://github.com/DevExpress/DevExtreme/tree/preact-button/js/renovation).
 
+Переписывание старых сложных компонентов следует производить поэтапно, обновляя сначала маленькие составные части и внедряя их в старые виджеты.
+
 ### Исходный код
 
 Все декораторы, а так же базовый `JSXComponent` необходимо импортировать из `devextreme-generator/component_declaration/common`.
@@ -420,6 +423,10 @@ React - `build:react` либо `build:react:watch`
 Angular - `build:angular` либо `build:angular:watch`
 
 jQuery - если в декораторе Вашего компонента указано `registerJQuery: true`, то при запуске тасок `build`, `dev`, `test-env` в дополнение к Preact-компоненту сгенерируется и jQuery враппер над ним. Имя для jQuery-виджета совпадает с именем компонента (без приставки `dx`).
+
+### Оформление багов
+
+В ходе разработки могут быть выявлены ошибки генератора. Для оформления бага следует завести соответствующее issue следуя темплейту в репозитории [devextreme-renovation](https://github.com/DevExpress/devextreme-renovation).
 
 ### Use Cases
 
