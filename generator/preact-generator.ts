@@ -69,7 +69,7 @@ class JQueryComponent {
             return `props.${t.name} = this._createTemplateComponent(${params.join(",")});`;
         }));
 
-        if(this.source.props.find(p => p.name === "onKeyDown" && p.decorators.find(d => d.name === "Event"))) {
+        if(this.source.props.find(p => p.name === "onKeyDown" && p.isEvent)) {
             statements.push("props.onKeyDown = this._wrapKeyDownHandler(props.onKeyDown);");
         }
 
@@ -128,6 +128,30 @@ class JQueryComponent {
 
         return imports.join(";\n");
     }
+
+    compileEventMap() {
+        const statements = this.source.props.reduce((r: string[], p) => {
+            const decoratorArgs = p.isEvent && p.decorators.find(d => d.name === "Event")!.expression.arguments[0];
+            const actionConfig = decoratorArgs && (decoratorArgs as ObjectLiteral).getProperty("actionConfig");
+            if(actionConfig) {
+                r.push(`${p.name}: ${(actionConfig as ObjectLiteral)}`)
+            }
+
+            return r;
+        }, []);
+
+        if(!statements.length) {
+            return "";
+        }
+
+        return `
+        _getActionsMap() {
+            return {
+                ${statements.join(",\n")}
+            };
+        }
+        `;
+    }
     
     toString() {
         if(!((this.source.decorator.expression.arguments[0] as ObjectLiteral).getProperty("registerJQuery")?.toString() === "true"
@@ -143,6 +167,8 @@ class JQueryComponent {
             
             ${this.compileAPI()}
     
+            ${this.compileEventMap()}
+
             get _viewComponent() {
                 return ${this.source.name}Component;
             }
