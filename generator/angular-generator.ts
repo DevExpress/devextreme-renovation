@@ -111,9 +111,9 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         const properties = component && getProps(component.members) || [];
         return properties.reduce((acc, prop: Method | BaseProperty) => {
             const propName = prop._name;
-            const spreadValue = `${spreadAttributes.expression.toString(options)}.${propName.toString(options)}`;
-            const attr = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString(options) === propName.toString(options)) as JsxAttribute;
-            const attrValue = attr?.initializer.toString(options);
+            const spreadValue = `${spreadAttributes.expression.toString(options)}.${propName.toString()}`;
+            const attr = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === propName.toString()) as JsxAttribute;
+            const attrValue = attr?.initializer.toString();
             const value = attrValue
                 ? `${spreadValue}!==undefined?${spreadValue}:${attrValue}`
                 : spreadValue;
