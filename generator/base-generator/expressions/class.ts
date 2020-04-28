@@ -8,7 +8,6 @@ import syntaxKind from "../syntaxKind";
 export function inheritMembers(heritageClauses: HeritageClause[], members: Array<Property | Method>) {
     return heritageClauses.reduce((m, { members }) => {
         members = members.filter(inheritMember => m.every(m => m.name.toString() !== inheritMember.name.toString()));
-        //members.forEach(m=>m.questionOrExclamationToken=syntaxKind.ExclamationToken)
         return m.concat(members);
     }, members);
 }
