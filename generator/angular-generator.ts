@@ -106,14 +106,14 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
             .find(s => tagName.endsWith(`${contextExpr}${s.name.toString()}`));
     }
 
-    spreadToArray(spreadAttributes: JsxSpreadAttribute) {
+    spreadToArray(spreadAttributes: JsxSpreadAttribute, options?: toStringOptions) {
         const component = this.component;
         const properties = component && getProps(component.members) || [];
         return properties.reduce((acc, prop: Method | BaseProperty) => {
             const propName = prop._name;
-            const spreadValue = `${spreadAttributes.expression.toString()}.${propName.toString()}`;
-            const attr = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === propName.toString()) as JsxAttribute;
-            const attrValue = attr?.initializer.toString();
+            const spreadValue = `${spreadAttributes.expression.toString(options)}.${propName.toString(options)}`;
+            const attr = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString(options) === propName.toString(options)) as JsxAttribute;
+            const attrValue = attr?.initializer.toString(options);
             const value = attrValue
                 ? `${spreadValue}!==undefined?${spreadValue}:${attrValue}`
                 : spreadValue;
@@ -134,7 +134,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         const spreadAttributes = this.attributes.filter(a => a instanceof JsxSpreadAttribute) as JsxSpreadAttribute[];
         if (spreadAttributes.length) { 
             spreadAttributes.forEach(spreadAttr => {
-                const attributes = this.spreadToArray(spreadAttr);
+                const attributes = this.spreadToArray(spreadAttr, options);
                 attributes.forEach(attr => {
                     const oldAttrIndex = this.attributes.findIndex(
                         (a) => a instanceof JsxAttribute && a.name.toString() === attr.name.toString()

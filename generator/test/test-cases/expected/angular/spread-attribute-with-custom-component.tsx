@@ -8,17 +8,17 @@ import { CommonModule } from '@angular/common';
 @Component({
     selector: 'dx-widget',
     template: `<dx-inner-widget
-                [value]="model.attr1.value"
-                [selected]="model.attr1.selected !== undefined ? model.attr1.selected : false"
+                [value]="__attr1.value"
+                [selected]="__attr1.selected !== undefined ? __attr1.selected : false"
               ></dx-inner-widget>`,
 })
 export default class Widget extends WidgetInput {
-	get __attr1() {
-		return { value: 100, selected: true };
-	}
-	get __restAttributes() {
-		return {};
-	}
+    get __attr1() {
+        return { value: 100, selected: true };
+    }
+    get __restAttributes() {
+        return {};
+    }
 }
 @NgModule({
     declarations: [Widget],
