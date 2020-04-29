@@ -638,7 +638,20 @@ mocha.describe("base-generator: expressions", function () {
                 
             assert.deepEqual(expression.getDependency(), ["field", "field1"]);
         });
-    
+
+        mocha.it('Rename property in binding element', function () {
+					const expression = generator.createObjectBindingPattern([
+						generator.createBindingElement(
+							undefined,
+							generator.createIdentifier('props'),
+							generator.createIdentifier('myProps'),
+							undefined
+						),
+					]);
+
+					const variables = expression.getVariableExpressions(new SimpleExpression('this'));
+					assert.strictEqual(variables['myProps'].toString(), 'this.props');
+				});
     });
 
     mocha.describe("Function", function () {
