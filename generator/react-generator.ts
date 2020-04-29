@@ -423,6 +423,10 @@ export class ReactComponent extends Component {
         }`;
     }
 
+    compileDefaultOptionsPropsType() { 
+        return this.isJSXComponent ? `${this.heritageClauses[0].propsType.type}Type` : this.compilePropsType();
+    }
+
     getToStringOptions() { 
         return {
             members: this.members,

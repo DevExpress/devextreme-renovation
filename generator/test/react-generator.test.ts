@@ -150,10 +150,6 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it("required-props", function () {
-        this.testGenerator(this.test!.title);
-    });
-
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {
             generator.defaultOptionsModule = "../component_declaration/default_options";
@@ -168,9 +164,14 @@ mocha.describe("react-generator", function () {
             generator.defaultOptionsModule = "";
         });
 
-        mocha.it("default-options-empty", function () { 
+        mocha.it("default-options-empty", function () {
             this.testGenerator(this.test!.title);
-        })
+        });
+
+        mocha.it("required-props", function () {
+            this.testGenerator(this.test!.title);
+        });
+    
     });
 });
 

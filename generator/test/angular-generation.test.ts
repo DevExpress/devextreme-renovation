@@ -89,10 +89,6 @@ mocha.describe("angular-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it("required-props", function () {
-        this.testGenerator(this.test!.title);
-    });
-
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {
             generator.defaultOptionsModule = "../component_declaration/default_options";
@@ -108,6 +104,10 @@ mocha.describe("angular-generation", function () {
         });
 
         mocha.it("default-options-empty", function () { 
+            this.testGenerator(this.test!.title);
+        });
+
+        mocha.it("required-props", function () {
             this.testGenerator(this.test!.title);
         });
     });

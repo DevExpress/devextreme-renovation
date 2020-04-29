@@ -32,7 +32,7 @@ function __createDefaultProps() {
 Widget.defaultProps = __createDefaultProps();
 
 
-type WidgetOptionRule = Rule<typeof WidgetProps>;
+type WidgetOptionRule = Rule<WidgetPropsType>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {

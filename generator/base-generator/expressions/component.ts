@@ -167,13 +167,17 @@ export class Component extends Class implements Heritable {
     }
 
     compilePropsType() {
-        return this.isJSXComponent ? this.heritageClauses[0].propsType : this.name;
+        return (this.isJSXComponent ? this.heritageClauses[0].types[0].type : this.name).toString();
+    }
+
+    compileDefaultOptionsPropsType() { 
+        return this.compilePropsType();
     }
 
     compileDefaultOptionsMethod(defaultOptionRulesInitializer:string = "[]", statements: string[]=[]) { 
         if (this.needGenerateDefaultOptions) { 
             const defaultOptionsTypeName = `${this.name}OptionRule`;
-            const defaultOptionsTypeArgument = this.compilePropsType();
+            const defaultOptionsTypeArgument = this.compileDefaultOptionsPropsType();
             return `type ${defaultOptionsTypeName} = Rule<${defaultOptionsTypeArgument}>;
 
             const __defaultOptionRules:${defaultOptionsTypeName}[] = ${defaultOptionRulesInitializer};

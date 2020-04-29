@@ -13,6 +13,7 @@ const WidgetInput: WidgetInputType = {
     type: "type"
 };
 
+import { convertRulesToOptions, Rule } from "../../../../../../component_declaration/default_options";
 import React, { useCallback } from 'react';
 
 interface Widget {
@@ -44,6 +45,20 @@ export default function Widget(props: Required<typeof WidgetInput>) {
     );
 }
 
-Widget.defaultProps = {
-    ...WidgetInput
+function __createDefaultProps() {
+    return {
+        ...WidgetInput
+    }
+}
+Widget.defaultProps = __createDefaultProps();
+
+type WidgetOptionRule = Rule<WidgetInputType>;
+
+const __defaultOptionRules: WidgetOptionRule[] = [];
+export function defaultOptions(rule: WidgetOptionRule) {
+    __defaultOptionRules.push(rule);
+    Widget.defaultProps = {
+        ...__createDefaultProps(),
+        ...convertRulesToOptions(__defaultOptionRules)
+    };
 }
