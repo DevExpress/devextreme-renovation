@@ -1437,13 +1437,15 @@ mocha.describe("base-generator: expressions", function () {
     mocha.describe("class expressions", function () { 
 
         mocha.it("createHeritageClause", function () {
-            assert.equal(generator.createHeritageClause(
+            const expression = generator.createHeritageClause(
                 generator.SyntaxKind.ExtendsKeyword,
                 [generator.createExpressionWithTypeArguments(
                     undefined,
                     generator.createIdentifier("Base")
                 )]
-            ).toString(), "extends Base");
+            );
+            assert.strictEqual(expression.toString(), "extends Base");
+            assert.strictEqual(expression.propsType.toString(), "Base");
         });
 
         mocha.it("createClassDeclaration without decorators and modifiers", function () {
@@ -1725,6 +1727,7 @@ mocha.describe("base-generator: expressions", function () {
             );
             
             assert.strictEqual(generator.getContext().components?.["Base"].name, "WidgetWithGlobals");
+            assert.strictEqual(generator.getContext().components?.["Base"].compileDefaultProps(), "");
         });
     });
 
