@@ -93,7 +93,7 @@ export class BindingPattern extends Expression {
                 if (this.type !== "object") {
                     expression = new ElementAccess(startExpression, new SimpleExpression(index.toString()));
                 } else if (e.name instanceof Identifier) {
-                    expression = new PropertyAccess(startExpression, e.name);
+                    expression = new PropertyAccess(startExpression, e.propertyName || e.name);
                 } else if (typeof e.name === "string") {
                     const name = e.name;
                     expression = new PropertyAccess(startExpression, new Identifier(name));
