@@ -15,10 +15,10 @@ import { CommonModule } from '@angular/common';
             ></dx-inner-widget>`,
 })
 export default class Widget extends WidgetInput {
-	get __attr1() {
+	get __attr1(): any {
 		return { value: 100, selected: true };
 	}
-	get __restAttributes() {
+	get __restAttributes(): any {
 		return {};
 	}
 }

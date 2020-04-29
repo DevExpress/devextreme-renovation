@@ -18,7 +18,7 @@ import { CommonModule } from '@angular/common';
             ></dx-inner-widget>`,
 })
 export default class Widget extends WidgetInput {
-	get __restAttributes() {
+	get __restAttributes():any {
 		return {};
 	}
 }
