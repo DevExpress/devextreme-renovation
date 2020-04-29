@@ -3,6 +3,7 @@ import { Property, Method } from "./class-members";
 import { ExpressionWithTypeArguments } from "./type";
 import { GeneratorContext } from "../types";
 import { Decorator } from "./decorator";
+import syntaxKind from "../syntaxKind";
 
 export function inheritMembers(heritageClauses: HeritageClause[], members: Array<Property | Method>) {
     return heritageClauses.reduce((m, { members }) => {
@@ -16,31 +17,36 @@ export class HeritageClause {
     types: ExpressionWithTypeArguments[];
     members: Property[];
     defaultProps: string[] = [];
+
+    get propsType() { 
+        if (this.isJsxComponent) { 
+            return this.types[0].typeArguments[0];
+        }
+        return this.types[0]
+    }
+
     get typeNodes() {
         return this.types.map(t => t.typeNode);
     }
+
+    get isJsxComponent() { 
+        return this.types.some(t => t.isJsxComponent);
+    }
+
+    get isRequired() { 
+        return this.types[0].typeArguments[0] && this.types[0].typeArguments[0].toString().startsWith("Required");
+    }
+
     constructor(token: string, types: ExpressionWithTypeArguments[], context: GeneratorContext) {
         this.token = token;
         this.types = types;
 
-        this.members = types.reduce((properties: Property[], { type }) => {
-            if (context.components && context.components[type] && context.components[type]) {
-                properties = properties.concat(context.components[type].heritageProperties)
+        this.members = types.reduce((properties: Property[], typeExpression) => {
+            const typeString = typeExpression.type.toString().replace("typeof ", "");
+            if (context.components && context.components[typeString] && context.components[typeString]) {
+                properties = properties.concat(context.components[typeString].heritageProperties)
             }
             return properties;
-        }, []);
-
-        this.defaultProps = types.reduce((defaultProps: string[], { type }) => {
-            const importName = type;
-            const component = context.components && context.components[importName]
-            if (component && component.compileDefaultProps() !== "") {
-                defaultProps.push(
-                    `${component.defaultPropsDest().replace(component.name.toString(), importName)}${
-                        type.indexOf("typeof ") === 0 ? "Type": ""
-                    }`
-                );
-            }
-            return defaultProps;
         }, []);
     }
 

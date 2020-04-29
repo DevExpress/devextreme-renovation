@@ -14,12 +14,12 @@ export const WidgetProps: WidgetPropsType = {
 import React, { useCallback } from "react";
 
 interface Widget {
-    props: WidgetPropsType,
+    props: typeof WidgetProps,
     onClick: () => any,
     restAttributes:any;
 }
 
-export default function Widget(props: WidgetPropsType) {
+export default function Widget(props: typeof WidgetProps) {
     const onClick = useCallback(function onClick() {
         const v = props.height
     }, [props.height]);

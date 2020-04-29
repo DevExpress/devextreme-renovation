@@ -12,7 +12,7 @@ export default class Widget {
     @Input() height: number
     @Input() width: number
 
-    get __restAttributes(){
+    get __restAttributes(): any {
         return {}
     }
 

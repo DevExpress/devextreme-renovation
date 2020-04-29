@@ -30,7 +30,7 @@ export default class Widget extends WidgetInput {
         const s = state1;
     }
 
-    get __restAttributes(){
+    get __restAttributes(): any{
         return {}
     }
 }

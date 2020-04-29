@@ -782,7 +782,7 @@ export class Property extends BaseProperty {
             return super.name;
         }
         return this._name.toString();
-    }
+    } 
     constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type?: TypeExpression, initializer?: Expression, inherited: boolean=false) { 
         if (decorators.find(d => d.name === "Template")) { 
             type = new SimpleTypeExpression(`TemplateRef<any>`);
@@ -812,6 +812,7 @@ export class Property extends BaseProperty {
     }
 
     getter(componentContext?: string) { 
+        const suffix = this.required ? "!" : "";
         componentContext = this.processComponentContext(componentContext);
         if (this.decorators.find(d => d.name === "Event")) { 
             return `${componentContext}${this.name}!.emit`;
@@ -820,9 +821,9 @@ export class Property extends BaseProperty {
             return `${componentContext}${this.name}${this.questionOrExclamationToken}.nativeElement`
         }
         if (this.decorators.find(d => d.name === "ApiRef")) { 
-            return `${componentContext}${this.name}`
+            return `${componentContext}${this.name}${suffix}`
         }
-        return `${componentContext}${this.name}`;
+        return `${componentContext}${this.name}${suffix}`;
     }
 
     getDependency() { 
@@ -858,6 +859,17 @@ class AngularComponent extends Component {
         super(componentDecorator, modifiers, name, typeParameters, heritageClauses, members, context);
         componentDecorator.addParameter("selector", new StringLiteral(this.selector));
         this.decorator = componentDecorator;
+    }
+
+    processMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) { 
+        heritageClauses.forEach(h => { 
+            if (h.isRequired) { 
+                h.members.forEach(m => { 
+                    (m as Property).required = true;
+                })
+            }
+        });
+        return super.processMembers(members, heritageClauses);
     }
 
     addPrefixToMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) { 
@@ -1142,7 +1154,7 @@ class AngularComponent extends Component {
     }
 
     toString() { 
-        const extendTypes = this.heritageClauses.reduce((t: string[], h) => t.concat(h.types.map(t => t.type)), []);
+        const extendTypes = this.heritageClauses.reduce((t: string[], h) => t.concat(h.types.map(t => t.type.toString())), []);
         
         const modules = Object.keys(this.context.components || {})
             .map((k) => this.context.components?.[k])

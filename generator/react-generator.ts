@@ -78,12 +78,20 @@ export class ComponentInput extends BaseComponentInput {
 export class HeritageClause extends BaseHeritageClause { 
     constructor(token: string, types: ExpressionWithTypeArguments[], context: GeneratorContext) {
         super(token, types, context);
-        this.defaultProps = 
-        types.reduce((defaultProps: string[], { type }) => {
-            const importName = type.replace("typeof ", "");
-            const component = context.components && context.components[importName]
-            if (component && component.compileDefaultProps() !== "") {
-                defaultProps.push(`${component.defaultPropsDest().replace(component.name.toString(), importName)}`);
+        this.defaultProps = types.reduce((defaultProps: string[], { type, isJsxComponent }) => {
+            
+            if (isJsxComponent) { 
+                defaultProps.push(type.toString());
+            } else {
+                const importName = type.toString().replace("typeof ", "");
+                const component = context.components && context.components[importName];
+                if (component && component.compileDefaultProps() !== "") {
+                    defaultProps.push(
+                        `${component.defaultPropsDest().replace(component.name.toString(), importName)}${
+                            type.toString().indexOf("typeof ") === 0 ? "Type": ""
+                        }`
+                    );
+                }
             }
             return defaultProps;
         }, []);
@@ -405,7 +413,7 @@ export class ReactComponent extends Component {
 
     compilePropsType() {
         if (this.isJSXComponent) { 
-            return `${this.heritageClauses[0].defaultProps[0]}Type`;
+            return `${this.heritageClauses[0].propsType}`;
         }
         return `{
             ${this.props
@@ -413,6 +421,10 @@ export class ReactComponent extends Component {
                 .concat(this.slots)
                 .map(p => p.typeDeclaration()).join(",\n")}
         }`;
+    }
+
+    compileDefaultOptionsPropsType() { 
+        return this.isJSXComponent ? `${this.heritageClauses[0].propsType.type}Type` : this.compilePropsType();
     }
 
     getToStringOptions() { 

@@ -13,12 +13,12 @@ export type WidgetRef = {
     getSize: () => string
 }
 interface Widget {
-    props: WidgetInputType;
+    props: typeof WidgetInput;
     divRef: any;
     restAttributes: any;
 }
 
-const Widget = forwardRef<WidgetRef, WidgetInputType>((props: WidgetInputType, ref) => {
+const Widget = forwardRef<WidgetRef, typeof WidgetInput>((props: typeof WidgetInput, ref) => {
     const divRef = useRef<HTMLDivElement>();
 
     useImperativeHandle(ref, () => ({

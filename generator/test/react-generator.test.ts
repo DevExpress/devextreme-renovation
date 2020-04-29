@@ -168,9 +168,14 @@ mocha.describe("react-generator", function () {
             generator.defaultOptionsModule = "";
         });
 
-        mocha.it("default-options-empty", function () { 
+        mocha.it("default-options-empty", function () {
             this.testGenerator(this.test!.title);
-        })
+        });
+
+        mocha.it("required-props", function () {
+            this.testGenerator(this.test!.title);
+        });
+    
     });
 });
 
@@ -1776,7 +1781,7 @@ mocha.describe("ComponentInput", function () {
                 )
             ]);
 
-            assert.strictEqual(getResult(component.compileComponentInterface()), getResult("interface Widget{props: InputType; property:any; restAttributes:any;}"));
+            assert.strictEqual(getResult(component.compileComponentInterface()), getResult("interface Widget{props: typeof Input; property:any; restAttributes:any;}"));
 
             assert.strictEqual(getResult(`{${component.compileViewModelArguments().join(",")}}`
             ), getResult("{props:{...props}, property: __property(), restAttributes: __restAttributes() }"));

@@ -14,6 +14,8 @@ export class BaseClassMember extends Expression {
     type: TypeExpression;
     inherited: boolean;
 
+    required: boolean = false;
+
     prefix: string = "";
 
     constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, type: TypeExpression = new SimpleExpression(""), inherited: boolean = false) { 
@@ -59,6 +61,9 @@ export class BaseClassMember extends Expression {
     }
 
     get canBeDestructured() { 
+        if (this.required) { 
+            return false;
+        }
         return this.name === this._name.toString();
     } 
 
@@ -135,7 +140,7 @@ export class GetAccessor extends Method {
     }
 
     toString(options?: toStringOptions) { 
-        return `get ${this.name}()${this.body.toString(options)}`;
+        return `get ${this.name}()${compileType(this.type.toString())}${this.body.toString(options)}`;
     }
 }
 

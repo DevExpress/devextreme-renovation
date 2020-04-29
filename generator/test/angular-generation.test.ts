@@ -118,5 +118,9 @@ mocha.describe("angular-generation", function () {
         mocha.it("default-options-empty", function () { 
             this.testGenerator(this.test!.title);
         });
+
+        mocha.it("required-props", function () {
+            this.testGenerator(this.test!.title);
+        });
     });
 });

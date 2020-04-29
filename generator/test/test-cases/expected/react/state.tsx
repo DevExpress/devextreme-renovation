@@ -25,14 +25,14 @@ const WidgetInput: WidgetInputType = {
 import React, { useState, useCallback } from 'react';
 
 interface Widget {
-  props: WidgetInputType;
+  props: typeof WidgetInput;
   updateState: () => any;
   updateState2: () => any;
   destruct: () => any;
   restAttributes: any;
 }
 
-export default function Widget(props: WidgetInputType) {
+export default function Widget(props: typeof WidgetInput) {
   const [__state_state1, __state_setState1] = useState(() => (props.state1 !== undefined ? props.state1 : props.defaultState1) || false);
   const [__state_state2, __state_setState2] = useState(() => (props.state2 !== undefined ? props.state2 : props.defaultState2) || false);
   const [__state_state3, __state_setState3] = useState(() => (props.state3 !== undefined ? props.state3 : props.defaultState3))

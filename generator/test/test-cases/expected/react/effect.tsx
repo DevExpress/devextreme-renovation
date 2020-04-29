@@ -21,12 +21,12 @@ export const WidgetInput: WidgetInputType = {
 
 import React, { useState, useCallback, useEffect } from 'react';
 interface Widget {
-    props: WidgetInputType;
+    props: typeof WidgetInput;
     i: number;
     restAttributes: any;
 }
 
-export default function Widget(props: WidgetInputType) {
+export default function Widget(props: typeof WidgetInput) {
     const [__state_s, __state_setS] = useState(() => (props.s !== undefined ? props.s : props.defaultS) || 10);
     const [__state_i, __state_setI] = useState(10)
 

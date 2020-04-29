@@ -12,7 +12,7 @@ export default class Widget extends WidgetInput {
     __method2(): null {
         return null;
     }
-    get __restAttributes() {
+    get __restAttributes():any {
         return {};
     }
 }

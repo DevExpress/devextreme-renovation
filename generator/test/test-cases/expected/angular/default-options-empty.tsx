@@ -15,7 +15,7 @@ export function defaultOptions(rule: WidgetOptionRule) {
 }
 @Component({ selector: "dx-widget" })
 export default class Widget extends WidgetProps {
-    get __restAttributes(){
+    get __restAttributes(): any{
         return {}
     }
     constructor() {

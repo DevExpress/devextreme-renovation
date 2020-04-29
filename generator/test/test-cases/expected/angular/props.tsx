@@ -17,7 +17,7 @@ export default class Widget extends WidgetInput {
         this.onClick!.emit(11);
         return this.height;
     }
-    get __restAttributes(){
+    get __restAttributes(): any{
         return {}
     }
 }

@@ -10,9 +10,7 @@ import { Decorator } from "./decorator";
 import { BaseFunction } from './functions';
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
-    return heritageClauses
-        .reduce((typeNodes: string[], h) => typeNodes.concat(h.typeNodes), [])
-        .filter(t => t === "JSXComponent").length;
+    return heritageClauses.some(h => h.isJsxComponent);
 }
 
 export function getProps(members: BaseClassMember[]): Property[] {
@@ -181,13 +179,17 @@ export class Component extends Class implements Heritable {
     }
 
     compilePropsType() {
-        return this.isJSXComponent ? this.heritageClauses[0].defaultProps : this.name;
+        return (this.isJSXComponent ? this.heritageClauses[0].types[0].type : this.name).toString();
+    }
+
+    compileDefaultOptionsPropsType() { 
+        return this.compilePropsType();
     }
 
     compileDefaultOptionsMethod(defaultOptionRulesInitializer:string = "[]", statements: string[]=[]) { 
         if (this.needGenerateDefaultOptions) { 
             const defaultOptionsTypeName = `${this.name}OptionRule`;
-            const defaultOptionsTypeArgument = this.compilePropsType();
+            const defaultOptionsTypeArgument = this.compileDefaultOptionsPropsType();
             return `type ${defaultOptionsTypeName} = Rule<${defaultOptionsTypeArgument}>;
 
             const __defaultOptionRules:${defaultOptionsTypeName}[] = ${defaultOptionRulesInitializer};

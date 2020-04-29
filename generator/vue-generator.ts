@@ -236,7 +236,7 @@ export class VueComponent extends Component {
 
     generateProps() {
         if (this.isJSXComponent) { 
-            return `props: ${this.heritageClauses[0].defaultProps[0]}`;
+            return `props: ${this.heritageClauses[0].propsType.type}`;
         }
         return "";
     }

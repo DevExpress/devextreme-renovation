@@ -72,4 +72,8 @@ mocha.describe("vue-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("required-props", function () {
+        this.testGenerator(this.test!.title);
+    });
+
 });
