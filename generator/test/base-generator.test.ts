@@ -640,17 +640,17 @@ mocha.describe("base-generator: expressions", function () {
         });
 
         mocha.it('Rename property in binding element', function () {
-					const expression = generator.createObjectBindingPattern([
-						generator.createBindingElement(
-							undefined,
-							generator.createIdentifier('props'),
-							generator.createIdentifier('myProps'),
-							undefined
-						),
-					]);
+            const expression = generator.createObjectBindingPattern([
+                generator.createBindingElement(
+                    undefined,
+                    generator.createIdentifier('props'),
+                    generator.createIdentifier('myProps'),
+                    undefined
+                ),
+            ]);
 
-					const variables = expression.getVariableExpressions(new SimpleExpression('this'));
-					assert.strictEqual(variables['myProps'].toString(), 'this.props');
+            const variables = expression.getVariableExpressions(new SimpleExpression('this'));
+            assert.strictEqual(variables['myProps'].toString(), 'this.props');
 				});
     });
 
