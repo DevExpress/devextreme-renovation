@@ -107,11 +107,15 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     }
 
     spreadToArray(spreadAttributes: JsxSpreadAttribute, options?: toStringOptions) {
+        const isPropsAttribute = spreadAttributes.expression.toString(options) === 'props';
         const component = this.component;
         const properties = component && getProps(component.members) || [];
         return properties.reduce((acc, prop: Method | BaseProperty) => {
             const propName = prop._name;
-            const spreadValue = `${spreadAttributes.expression.toString(options)}.${propName.toString()}`;
+            const prefix = !isPropsAttribute
+                ? `${spreadAttributes.expression.toString(options)}.`
+                : '';
+            const spreadValue = `${prefix}${propName.toString()}`;
             const attr = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === propName.toString()) as JsxAttribute;
             const attrValue = attr?.initializer.toString();
             const value = attrValue
