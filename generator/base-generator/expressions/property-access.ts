@@ -103,11 +103,16 @@ export class PropertyAccess extends ExpressionWithExpression {
         if ((expressionString === componentContext && this.name.toString() !== "props") || expressionString === `${componentContext}.props`) {
             return [this.name.toString()];
         }
-        const dependecy = this.expression.getDependency();
-        if (this.toString() === `${componentContext}.props` && dependecy.length === 0) {
+        const dependency = this.expression.getDependency();
+        if (this.toString() === `${componentContext}.props` && dependency.length === 0) {
             return ["props"];
         }
-        return dependecy;
+        return dependency;
+    }
+
+    isPropsScope(options?: toStringOptions) {
+        const result = `${this.expression.toString(options)}`;
+        return this.checkPropsAccess(result, options)
     }
 }
 

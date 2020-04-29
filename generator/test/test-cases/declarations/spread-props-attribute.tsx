@@ -8,6 +8,7 @@ function view({ props }: Widget) {
 @ComponentBindings()
 export class WidgetInput {
     @OneWay() visible?: boolean;
+    @TwoWay() value?: boolean;
 }
 
 @Component({

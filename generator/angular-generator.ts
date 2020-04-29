@@ -63,7 +63,7 @@ export const counter = (function () {
 
 interface toStringOptions extends  BaseToStringOptions {
     members: Array<Property | Method>,
-    enventProperties?: Array<Property>
+    eventProperties?: Array<Property>
 }
 
 function processTagName(tagName: Expression, context: GeneratorContext) { 
@@ -107,15 +107,22 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     }
 
     spreadToArray(spreadAttributes: JsxSpreadAttribute, options?: toStringOptions) {
-        const isPropsAttribute = spreadAttributes.expression.toString(options) === 'props';
         const component = this.component;
         const properties = component && getProps(component.members) || [];
         return properties.reduce((acc, prop: Method | BaseProperty) => {
             const propName = prop._name;
-            const prefix = !isPropsAttribute
-                ? `${spreadAttributes.expression.toString(options)}.`
-                : '';
-            const spreadValue = `${prefix}${propName.toString()}`;
+            const spreadValueExpression = new PropertyAccess(
+                spreadAttributes.expression,
+                propName
+            );
+
+            const isPropsScope = spreadValueExpression.isPropsScope(options);
+            const members = spreadValueExpression.getMembers(options);
+            const hasMember = members?.some(m => m._name.toString() === propName.toString())
+            if(isPropsScope && !hasMember)
+                return acc;
+            
+            const spreadValue = spreadValueExpression.toString(options);
             const attr = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === propName.toString()) as JsxAttribute;
             const attrValue = attr?.initializer.toString();
             const value = attrValue
@@ -131,7 +138,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         if (this.component && options) { 
             options = {
                 ...options,
-                enventProperties: this.component.members.filter(m => m.decorators.find(d => d.name === "Event")) as Property[]
+                eventProperties: this.component.members.filter(m => m.decorators.find(d => d.name === "Event")) as Property[]
             }
         }
 
@@ -266,11 +273,11 @@ export class JsxAttribute extends BaseJsxAttribute {
             return `#${refString}`;
         }
         
-        if (options?.enventProperties?.find(p=>p.name===this.name.toString())) { 
+        if (options?.eventProperties?.find(p=>p.name===this.name.toString())) { 
             return `(${this.name})="${this.compileInitializer(options)}($event)"`;
         }
         let name = this.name.toString();
-        if (!(options?.enventProperties)) {
+        if (!(options?.eventProperties)) {
             if (name === "className") { 
                 name = "class";
             }
