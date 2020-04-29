@@ -65,6 +65,14 @@ mocha.describe("angular-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("spread-attribute-with-custom-component", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("spread-props-attribute", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("template", function () {
         this.testGenerator(this.test!.title);
     });
@@ -74,6 +82,10 @@ mocha.describe("angular-generation", function () {
     });
 
     mocha.it("method-use-apiref", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("method-without-decorator", function () {
         this.testGenerator(this.test!.title);
     });
 

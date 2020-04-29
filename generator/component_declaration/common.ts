@@ -88,7 +88,9 @@ export const Method = () => propertyDecorator;
  * Property Decorator. 
  * Delcares input property that is component event handler
  */
-export const Event = () => propertyDecorator;
+export const Event = (args? : {
+    actionConfig?: any
+}) => propertyDecorator;
 /**
  * Property Decorator
  * Declares a widget propety. Any change of it causes component rerender

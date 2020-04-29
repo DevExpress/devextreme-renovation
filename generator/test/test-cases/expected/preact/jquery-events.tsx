@@ -10,6 +10,13 @@ export default class Widget extends Component {
     return props;
   }
 
+  _getActionsMap() {
+    return {
+      onEventWithConfig: { someAction: "config" },
+      onEventWithEmptyConfig: {}
+    };
+  }
+
   get _viewComponent() {
       return WidgetComponent;
   }

@@ -4,6 +4,9 @@ import { Component, Event, ComponentBindings, JSXComponent } from "../../../comp
 @ComponentBindings()
 class WidgetProps { 
     @Event() onKeyDown?: (e: any) => any;
+    @Event({ }) onEventWithoutConfig?: (e: any) => any;
+    @Event({ actionConfig: { someAction: "config" } }) onEventWithConfig?: (e: any) => any;
+    @Event({ actionConfig: {} }) onEventWithEmptyConfig?: (e: any) => any;
 }
 
 @Component({ 
