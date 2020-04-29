@@ -651,7 +651,7 @@ mocha.describe("base-generator: expressions", function () {
 
             const variables = expression.getVariableExpressions(new SimpleExpression('this'));
             assert.strictEqual(variables['myProps'].toString(), 'this.props');
-				});
+        });
     });
 
     mocha.describe("Function", function () {
