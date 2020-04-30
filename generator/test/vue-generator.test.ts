@@ -681,6 +681,43 @@ mocha.describe("Vue-generator", function () {
                 assert.strictEqual(removeSpaces(expression.toString()), removeSpaces(`<div :a="10" b="word"></div>`));
             });
 
+            mocha.describe("Attributes", function () { 
+                mocha.it("title attribute", function () { 
+                    const expression = generator.createJsxAttribute(
+                        generator.createIdentifier("title"),
+                        generator.createNumericLiteral("10")
+                    );
+
+                    assert.strictEqual(expression.toString(), `:title="10"`);
+                });
+
+                mocha.it("style -> v-bind:style", function () {
+                    const expression = generator.createJsxAttribute(
+                        generator.createIdentifier("style"),
+                        generator.createJsxExpression(
+                            undefined,
+                            generator.createIdentifier("value")
+                        )
+                    );
+        
+                    assert.strictEqual(expression.toString(), `v-bind:style="__processStyle(value)"`);
+                });
+
+                mocha.it("class -> v-bind:class", function () {
+                    const expression = generator.createJsxAttribute(
+                        generator.createIdentifier("class"),
+                        generator.createJsxExpression(
+                            undefined,
+                            generator.createIdentifier("value")
+                        )
+                    );
+        
+                    assert.strictEqual(expression.toString(), `v-bind:class="value"`);
+                });
+            });
+        });
+
+        mocha.describe("Conditional Rendering", function () { 
             mocha.it("notJsxExpr && <element></element> -> <element v-if='notJsxExpr'></element>", function () {
                 const expression = generator.createJsxElement(
                     generator.createJsxOpeningElement(

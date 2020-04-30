@@ -12,7 +12,7 @@ import {
     GetAccessor as BaseGetAccessor,
     BaseClassMember
 } from "./base-generator/expressions/class-members";
-import { toStringOptions, GeneratorContext } from "./base-generator/types";
+import { GeneratorContext } from "./base-generator/types";
 import {
     TypeExpression,
     SimpleTypeExpression,
@@ -41,6 +41,7 @@ import {
     JsxSpreadAttribute as BaseJsxSpeadAttribute,
     AngularDirective,
     createProcessBinary,
+    toStringOptions
     
 } from "./angular-generator";
 import { Decorator } from "./base-generator/expressions/decorator";
@@ -344,12 +345,35 @@ export class JsxAttribute extends BaseJsxAttribute {
         return `:v-bind:${this.name}="${this.compileInitializer(options)}"`;
     }
 
+    compileName(options?: toStringOptions) { 
+        const name = this.name.toString();
+        if (!(options?.eventProperties)) {
+            if (name === "class") { 
+                return "v-bind:class";
+            }
+            if (name === "style") { 
+                return "v-bind:style";
+            }
+        }
+
+        return name;
+    }
+
     compileRef(options?: toStringOptions) { 
         return `ref="${this.compileInitializer(options)}"`;
     }
 
+    compileValue(name: string, value: string) {
+        if (name === "v-bind:style") {
+            return `__processStyle(${value})`;
+        }
+
+        return value;
+    }
+
     compileBase(name: string, value: string) { 
-        return `:${name}="${value}"`;
+        const prefix = name.startsWith("v-bind") ? "" : ":";
+        return `${prefix}${name}="${value}"`;
     }
 }
 

@@ -63,7 +63,7 @@ export const counter = (function () {
     }
 })();
 
-interface toStringOptions extends  BaseToStringOptions {
+export interface toStringOptions extends  BaseToStringOptions {
     members: Array<Property | Method>,
     eventProperties?: Array<Property>
 }
@@ -300,18 +300,17 @@ export class JsxAttribute extends BaseJsxAttribute {
         return "";
     }
 
-    compileValue(name: string, options?: toStringOptions) {
-        const initializerString = this.compileInitializer(options);
+    compileValue(name: string, value: string) {
         
         if (name === "title") {
-            return `${initializerString}!==undefined?${initializerString}:''`;
+            return `${value}!==undefined?${value}:''`;
         }
 
         if (name === "ngStyle") {
-            return `__processNgStyle(${initializerString})`;
+            return `__processNgStyle(${value})`;
         }
 
-        return initializerString;
+        return value;
     }
 
     compileBase(name: string, value: string) { 
@@ -338,7 +337,7 @@ export class JsxAttribute extends BaseJsxAttribute {
             return `${name}=${this.initializer.toString()}`;
         }
 
-        return this.compileBase(name, this.compileValue(name, options));
+        return this.compileBase(name, this.compileValue(name, this.compileInitializer(options)));
     }
 }
 
