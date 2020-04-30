@@ -246,6 +246,10 @@ mocha.describe("preact-generator: jQuery generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("jquery-register-false", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("jquery-api", function () {
         this.testGenerator(this.test!.title);
     });
@@ -255,6 +259,14 @@ mocha.describe("preact-generator: jQuery generation", function () {
     });
 
     mocha.it("jquery-state", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("jquery-custom-base", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("jquery-custom-named-base", function () {
         this.testGenerator(this.test!.title);
     });
 });

@@ -30,7 +30,10 @@ export function Component(arg: {
     /**
      * If jQuery widget should be registered
      */
-    registerJQuery?: boolean;
+    jQuery?: {
+        register?: boolean;
+        component?: any;
+    }
 }) {
     return function ComponentDecorator(constructor: Function) {
         constructor.prototype.render = function() {
