@@ -1409,6 +1409,41 @@ mocha.describe("Angular generator", function () {
                 }), `<ng-container *ngTemplateOutlet="template"></ng-container>`);
             });
 
+            mocha.it("<template><template -> <ng-container></ng-container>", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("template")
+                        ),
+                        [],
+                        []
+                    ),
+                    [],
+                    generator.createJsxClosingElement(
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("template")
+                        )
+                    )
+                );
+
+                const templateProperty = generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [templateProperty],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), `<ng-container *ngTemplateOutlet="template"></ng-container>`);
+            });
+
             mocha.it("template attributes -> template context", function () {
                 const expression = generator.createJsxSelfClosingElement(
                     generator.createPropertyAccess(

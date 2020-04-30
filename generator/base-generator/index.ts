@@ -374,15 +374,15 @@ export default class Generator {
         return properties;
     }
 
-    createJsxOpeningElement(tagName: Identifier, typeArguments: any[], attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
+    createJsxOpeningElement(tagName: Expression, typeArguments: any[], attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
         return new JsxOpeningElement(tagName, typeArguments, attributes);
     }
 
-    createJsxSelfClosingElement(tagName: Identifier, typeArguments: any[], attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
+    createJsxSelfClosingElement(tagName: Expression, typeArguments: any[], attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
         return new JsxSelfClosingElement(tagName, typeArguments, attributes);
     }
 
-    createJsxClosingElement(tagName: Identifier) {
+    createJsxClosingElement(tagName: Expression) {
         return new JsxClosingElement(tagName);
     }
 

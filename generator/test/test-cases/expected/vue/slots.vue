@@ -1,0 +1,22 @@
+ <template>
+  <div>
+    <div>
+      <slot name="namedSlot"></slot>
+    </div>
+
+    <div>
+      <slot></slot>
+    </div>
+  </div>
+</template>
+<script>
+const WidgetInput = { };
+export default {
+  props: WidgetInput,
+  methods: {
+    __restAttributes() {
+      return {};
+    }
+  }
+};
+</script>

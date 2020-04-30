@@ -244,6 +244,36 @@ mocha.describe("Vue-generator", function () {
                     assert.strictEqual(getAst(expression.toString()), getAst("p: {type: Boolean}"));
                 });
             });
+
+            mocha.describe("Slots", function () { 
+                mocha.it("default slot", function () {
+                    const expression = generator.createProperty(
+                        [createDecorator("Slot")],
+                        undefined,
+                        name,
+                        generator.SyntaxKind.QuestionToken,
+                        generator.createKeywordTypeNode("boolean"),
+                        generator.createTrue()
+                    );
+            
+                    assert.strictEqual(expression.toString(), "");
+                });
+            });
+
+            mocha.describe("Template", function () { 
+                mocha.it("Template props toString should return empty string", function () {
+                    const expression = generator.createProperty(
+                        [createDecorator("Template")],
+                        undefined,
+                        name,
+                        generator.SyntaxKind.QuestionToken,
+                        generator.createKeywordTypeNode("boolean"),
+                        generator.createTrue()
+                    );
+            
+                    assert.strictEqual(expression.toString(), "");
+                });
+            });
         });
 
         mocha.describe("Internal state", function () {
@@ -582,6 +612,137 @@ mocha.describe("Vue-generator", function () {
                 p: {type: String}
             }`));
         });
+    });
+
+    mocha.describe("Template Generation", function () {
+        mocha.describe("Template", function () { 
+            mocha.it("<template/> -> <slot></slot>", function () {
+                const expression = generator.createJsxSelfClosingElement(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("template")
+                    ),
+                    [],
+                    []
+                );
+    
+                const templateProperty = generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+    
+                assert.strictEqual(expression.toString({
+                    members: [templateProperty],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), `<slot name="template" ></slot>`);
+            });
+
+            mocha.it("Template with parameters", function () {
+                const expression = generator.createJsxSelfClosingElement(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("template")
+                    ),
+                    [],
+                    [
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("p1"),
+                            generator.createNumericLiteral("10")
+                        ),
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("p2"),
+                            generator.createStringLiteral("11")
+                        )
+                    ]
+                );
+    
+                const templateProperty = generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+    
+                assert.strictEqual(expression.toString({
+                    members: [templateProperty],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), `<slot name="template" :v-bind:p1="10" :v-bind:p2="'11'"></slot>`);
+            });
+
+            mocha.it("<template></template> -> <slot></slot>", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("template")
+                        ),
+                        undefined,
+                        []
+                    ),
+                    [],
+                    generator.createJsxClosingElement(
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("template")
+                        )
+                    )
+                );
+    
+                const templateProperty = generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+    
+                assert.strictEqual(expression.toString({
+                    members: [templateProperty],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), `<slot name="template" ></slot>`);
+            });
+
+            mocha.it("Template with spread attribute", function () {
+                const expression = generator.createJsxSelfClosingElement(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("template")
+                    ),
+                    [],
+                    [
+                        generator.createJsxSpreadAttribute(
+                           generator.createIdentifier("item")
+                       )
+                    ]
+                );
+    
+                const templateProperty = generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+    
+                assert.strictEqual(expression.toString({
+                    members: [templateProperty],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), `<slot name="template" :v-bind="item"></slot>`);
+            });
+        });
+      
     });
     
 });

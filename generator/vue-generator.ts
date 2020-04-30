@@ -12,7 +12,7 @@ import {
     GetAccessor as BaseGetAccessor,
     BaseClassMember
 } from "./base-generator/expressions/class-members";
-import { toStringOptions } from "./base-generator/types";
+import { toStringOptions, GeneratorContext } from "./base-generator/types";
 import {
     TypeExpression,
     SimpleTypeExpression,
@@ -33,9 +33,12 @@ import {
     VariableDeclaration,
     JsxExpression as BaseJsxExpression,
     JsxElement as BaseJsxElement,
-    JsxOpeningElement,
-    JsxSelfClosingElement,
-    JsxChildExpression as BaseJsxChildExpression
+    JsxOpeningElement as BaseJsxOpeningElement,
+    JsxSelfClosingElement as BaseJsxSelfClosingElement,
+    JsxChildExpression as BaseJsxChildExpression,
+    JsxAttribute as BaseJsxAttribute,
+    JsxSpreadAttribute as BaseJsxSpeadAttribute,
+    
 } from "./angular-generator";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
@@ -75,16 +78,19 @@ function calculatePropertyType(type: TypeExpression): string {
 }
 
 export class Property extends BaseProperty { 
+    get name() { 
+        if (this.isTemplate) { 
+            return this._name.toString();
+        }
+        return this._name.toString();
+    } 
+
     toString(options?: toStringOptions) {
         if (this.isInternalState) { 
             return `${this.name}: ${this.initializer}`;
         } 
 
-        if (this.isEvent) { 
-            return "";
-        }
-
-        if (this.isRef) { 
+        if (this.isEvent || this.isRef || this.isSlot || this.isTemplate) { 
             return "";
         }
     
@@ -325,6 +331,45 @@ export class AsExpression extends BaseAsExpression {
     }
 }
 
+export class JsxAttribute extends BaseJsxAttribute { 
+    getTemplateProp(options?: toStringOptions) {
+        return `:v-bind:${this.name}="${this.compileInitializer(options)}"`;
+    }
+
+    compileRef(options?: toStringOptions) { 
+        return `ref="${this.compileInitializer(options)}"`;
+    }
+}
+
+export class JsxSpreadAttribute extends BaseJsxSpeadAttribute { 
+    getTemplateProp(options?: toStringOptions) { 
+        return `:v-bind="${this.expression.toString(options)}"`;
+    }
+}
+
+export class JsxOpeningElement extends BaseJsxOpeningElement { 
+    attributes: Array<JsxAttribute | JsxSpreadAttribute>;
+    constructor(tagName: Expression, typeArguments: any, attributes: Array<JsxAttribute | JsxSpreadAttribute> = [], context: GeneratorContext) { 
+        super(tagName, typeArguments, attributes, context);
+        this.attributes = attributes;
+    }
+
+    compileTemplate(templateProperty: Property, options?: toStringOptions) {
+        const attributes = this.attributes.map(a => a.getTemplateProp(options));
+        return `<slot name="${templateProperty.name}" ${attributes.join(" ")}></slot>`;
+    }
+}
+
+export class JsxSelfClosingElement extends JsxOpeningElement { 
+    toString(options?: toStringOptions) {
+        if (this.getTemplateProperty(options)) { 
+            return super.toString(options);
+        }
+        
+        return `${super.toString(options)}</${this.tagName}>`
+    }
+}
+
 export class JsxElement extends BaseJsxElement { 
     createChildJsxExpression(expression: BaseJsxExpression) { 
         return new JsxChildExpression(expression);
@@ -332,13 +377,16 @@ export class JsxElement extends BaseJsxElement {
 
 }
 export class JsxExpression extends BaseJsxExpression {
-    toString(options?: toStringOptions) {
-        return `"${this.expression.toString(options)}"`;
-    }
+   
 }
 
 export class JsxChildExpression extends BaseJsxChildExpression { 
-   
+    compileSlot(slot: Property) {
+        if (slot.name.toString() === "default" || slot.name.toString() === "children") {
+            return `<slot></slot>`;
+        }
+        return `<slot name="${slot.name}"></slot>`;
+    }
 }
 
 class VueGenerator extends BaseGenerator { 
@@ -406,12 +454,28 @@ class VueGenerator extends BaseGenerator {
         return new JsxExpression(dotDotDotToken, expression);
     }
 
+    createJsxOpeningElement(tagName: Expression, typeArguments?: any, attributes?: Array<JsxAttribute | JsxSpreadAttribute>) {
+        return new JsxOpeningElement(tagName, typeArguments, attributes, this.getContext());
+    }
+
+    createJsxSelfClosingElement(tagName: Expression, typeArguments?: any, attributes?: Array<JsxAttribute | JsxSpreadAttribute>) {
+        return new JsxSelfClosingElement(tagName, typeArguments, attributes, this.getContext());
+    }
+
     createJsxElement(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: JsxClosingElement) {
         return new JsxElement(openingElement, children, closingElement);
     }
 
+    createJsxAttribute(name: Identifier, initializer: Expression) {
+        return new JsxAttribute(name, initializer);
+    }
+
     createAsExpression(expression: Expression, type: TypeExpression) { 
         return new AsExpression(expression, type);
+    }
+
+    createJsxSpreadAttribute(expression: Expression) {
+        return new JsxSpreadAttribute(undefined, expression);
     }
 }
 

@@ -18,7 +18,7 @@ import {
     GeneratorContext
 } from "./base-generator/types";
 import SyntaxKind from "./base-generator/syntaxKind";
-import { Expression, SimpleExpression, ExpressionWithExpression } from "./base-generator/expressions/base";
+import { Expression, SimpleExpression } from "./base-generator/expressions/base";
 import { Identifier, Paren } from "./base-generator/expressions/common";
 import { StringLiteral, ObjectLiteral } from "./base-generator/expressions/literal";
 import { PropertyAssignment } from "./base-generator/expressions/property-assignment";
@@ -37,9 +37,10 @@ import { SimpleTypeExpression, TypeExpression, FunctionTypeNode } from "./base-g
 import { HeritageClause } from "./base-generator/expressions/class";
 import { ImportClause } from "./base-generator/expressions/import";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input"
-import { Component, isJSXComponent, getProps } from "./base-generator/expressions/component";
+import { Component, getProps } from "./base-generator/expressions/component";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
+import { processComponentContext } from "./base-generator/utils/string";
 
 // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
 const VOID_ELEMENTS = 
@@ -100,7 +101,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
     getTemplateProperty(options?: toStringOptions) { 
         const tagName = this.tagName.toString(options);
-        const contextExpr = options?.newComponentContext ? `${options.newComponentContext}.` : "";
+        const contextExpr = processComponentContext(options?.newComponentContext);
         return options?.members
             .filter(m => m.decorators.find(d => d.name === "Template"))
             .find(s => tagName.endsWith(`${contextExpr}${s.name.toString()}`));
@@ -167,26 +168,30 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         return super.attributesString(options);
     }
 
-    toString(options?: toStringOptions) {
-        const templateProperty = this.getTemplateProperty(options)
-        if (templateProperty) { 
-            const contextExpr = options?.newComponentContext ? `${options.newComponentContext}.` : "";
-            const contextElements = this.attributes.map(a => a.getTemplateContext()).filter(p => p) as PropertyAssignment[];
-            const contextString = contextElements.length ? `; context:${(new ObjectLiteral(contextElements, false)).toString(options).replace(/"/gi, "'")}` : "";
-            const attributes = this.attributes
-                .filter(a => a instanceof AngularDirective)
-                .map(a => a.toString(options))
-                .join("\n");
+    compileTemplate(templateProperty: Property, options?: toStringOptions) {
+        const contextExpr = processComponentContext(options?.newComponentContext);
+        const contextElements = this.attributes.map(a => a.getTemplateContext()).filter(p => p) as PropertyAssignment[];
+        const contextString = contextElements.length ? `; context:${(new ObjectLiteral(contextElements, false)).toString(options).replace(/"/gi, "'")}` : "";
+        const attributes = this.attributes
+            .filter(a => a instanceof AngularDirective)
+            .map(a => a.toString(options))
+            .join("\n");
             
-            const elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${templateProperty.name}${contextString}"></ng-container>`;
+        const elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${templateProperty.name}${contextString}"></ng-container>`;
             
-            if (attributes.length) { 
-                return `<ng-container ${attributes}>
+        if (attributes.length) {
+            return `<ng-container ${attributes}>
                     ${elementString}
                 </ng-container>`;
-            }
+        }
 
-            return elementString
+        return elementString
+    }
+
+    toString(options?: toStringOptions) {
+        const templateProperty = this.getTemplateProperty(options) as Property;
+        if (templateProperty) { 
+            return this.compileTemplate(templateProperty, options);
         }
 
         return super.toString(options);
@@ -261,33 +266,70 @@ export class JsxAttribute extends BaseJsxAttribute {
         return new PropertyAssignment(this.name, this.initializer);
     }
 
+    compileRef(options?: toStringOptions) { 
+        const refString = this.initializer.toString(options);
+        const componentContext = options?.newComponentContext ? `${options.newComponentContext}.` : '';
+        const match = refString.replace(/[\?!]/, "").match(new RegExp(`${componentContext}(\\w+).nativeElement`));
+        if (match && match[1]) { 
+            return `#${match[1]}`;
+        }
+
+        return `#${refString}`;
+    }
+
+    compileEvent(options?: toStringOptions) { 
+        return `(${this.name})="${this.compileInitializer(options)}($event)"`;
+    }
+
+    compileName(options?: toStringOptions) { 
+        const name = this.name.toString();
+        if (!(options?.eventProperties)) {
+            if (name === "className") { 
+                return "class";
+            }
+            if (name === "style") { 
+                return "ngStyle";
+            }
+        }
+
+        return name;
+    }
+
+    compileKey() { 
+        return "";
+    }
+
+    compileValue(name: string, options?: toStringOptions) {
+        const initializerString = this.compileInitializer(options);
+        
+        if (name === "title") {
+            return `${initializerString}!==undefined?${initializerString}:''`;
+        }
+
+        if (name === "ngStyle") {
+            return `__processNgStyle(${initializerString})`;
+        }
+
+        return initializerString;
+    }
+
+    compileBase(name: string, value: string) { 
+        return `[${name}]="${value}"`;
+    }
+
     toString(options?:toStringOptions) { 
         if (this.name.toString() === "ref") { 
-            const refString = this.initializer.toString(options);
-            const componentContext = options?.newComponentContext ? `${options.newComponentContext}.` : '';
-            const match = refString.replace(/[\?!]/, "").match(new RegExp(`${componentContext}(\\w+).nativeElement`));
-            if (match && match[1]) { 
-                return `#${match[1]}`;
-            }
-
-            return `#${refString}`;
+            return this.compileRef(options);
         }
         
         if (options?.eventProperties?.find(p=>p.name===this.name.toString())) { 
-            return `(${this.name})="${this.compileInitializer(options)}($event)"`;
-        }
-        let name = this.name.toString();
-        if (!(options?.eventProperties)) {
-            if (name === "className") { 
-                name = "class";
-            }
-            if (name === "style") { 
-                name = "ngStyle"
-            }
+            return this.compileEvent(options);
         }
 
+        const name = this.compileName(options);
+
         if(name==="key") { 
-            return "";
+            return this.compileKey();
         }
 
         if (this.initializer instanceof StringLiteral ||
@@ -295,17 +337,7 @@ export class JsxAttribute extends BaseJsxAttribute {
             return `${name}=${this.initializer.toString()}`;
         }
 
-        let initializerString = this.compileInitializer(options);
-        
-        if (name === "title") { 
-            initializerString = `${initializerString}!==undefined?${initializerString}:''`;
-        }
-
-        if (name === "ngStyle") { 
-            initializerString = `__processNgStyle(${initializerString})`;
-        }
-
-        return `[${name}]="${initializerString}"`;
+        return this.compileBase(name, this.compileValue(name, options));
     }
 }
 
@@ -539,7 +571,7 @@ export class JsxChildExpression extends JsxExpression {
         const slot = options?.members
             .filter(m => m.decorators.find(d => d.name === "Slot"))
             .find(s => stringValue.endsWith(`${contextExpr}${s.name.toString()}`)
-                || s.name.toString() === "children" && (stringValue.endsWith(".default") || stringValue.endsWith(".children")));
+                || s.name.toString() === "children" && (stringValue.endsWith("default") || stringValue.endsWith("children")));
         if (slot) { 
             return this.compileSlot(slot as Property);
         }
@@ -614,7 +646,8 @@ export class JsxElement extends BaseJsxElement {
         if (this.openingElement.tagName.toString() === "Fragment") {
             return children;
         }
-        return `${this.openingElement.toString(options)}${children}${this.closingElement.toString(options)}`;
+        const closingElementString = !this.openingElement.getTemplateProperty(options) ? this.closingElement.toString(options) : "";
+        return `${this.openingElement.toString(options)}${children}${closingElementString}`;
     }
 
     clone() {
