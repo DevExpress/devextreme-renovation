@@ -339,6 +339,10 @@ export class JsxAttribute extends BaseJsxAttribute {
     compileRef(options?: toStringOptions) { 
         return `ref="${this.compileInitializer(options)}"`;
     }
+
+    compileBase(name: string, value: string) { 
+        return `:${name}="${value}"`;
+    }
 }
 
 export class JsxSpreadAttribute extends BaseJsxSpeadAttribute { 
