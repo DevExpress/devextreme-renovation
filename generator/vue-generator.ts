@@ -19,7 +19,8 @@ import {
     ArrayTypeNode,
     UnionTypeNode,
     FunctionTypeNode,
-    LiteralTypeNode
+    LiteralTypeNode,
+    TypeReferenceNode
 } from "./base-generator/expressions/type";
 import { capitalizeFirstLetter, variableDeclaration } from "./base-generator/utils/string";
 import SyntaxKind from "./base-generator/syntaxKind";
@@ -73,6 +74,10 @@ function calculatePropertyType(type: TypeExpression): string {
         if (type.expression instanceof NumericLiteral) { 
             return "Number";
         }
+    }
+
+    if (type instanceof TypeReferenceNode) { 
+        return type.typeName.toString();
     }
     return "";
 }

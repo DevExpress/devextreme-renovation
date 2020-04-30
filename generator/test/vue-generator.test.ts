@@ -61,6 +61,24 @@ mocha.describe("Vue-generator", function () {
         
                     assert.strictEqual(getAst(expression.toString()), getAst("p: {type: Function"));
                 });
+
+                mocha.it("Property with TypeReferenceNode", function () {
+                    const expression = generator.createProperty(
+                        decorators,
+                        undefined,
+                        name,
+                        undefined,
+                        generator.createTypeReferenceNode(
+                            generator.createIdentifier("Array"),
+                            [
+                                generator.createKeywordTypeNode("Number")
+                            ]
+                        ),
+                        undefined
+                    );
+            
+                    assert.strictEqual(getAst(expression.toString()), getAst("p: {type: Array"));
+                });
     
                 mocha.describe("Property with LiteralTypeNode", function () { 
                     mocha.it("Object", function () { 
