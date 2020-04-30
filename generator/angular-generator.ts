@@ -18,7 +18,7 @@ import {
     GeneratorContext
 } from "./base-generator/types";
 import SyntaxKind from "./base-generator/syntaxKind";
-import { Expression, SimpleExpression, ExpressionWithExpression } from "./base-generator/expressions/base";
+import { Expression, SimpleExpression } from "./base-generator/expressions/base";
 import { Identifier, Paren } from "./base-generator/expressions/common";
 import { StringLiteral, ObjectLiteral } from "./base-generator/expressions/literal";
 import { PropertyAssignment } from "./base-generator/expressions/property-assignment";
@@ -37,15 +37,17 @@ import { SimpleTypeExpression, TypeExpression, FunctionTypeNode } from "./base-g
 import { HeritageClause } from "./base-generator/expressions/class";
 import { ImportClause } from "./base-generator/expressions/import";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input"
-import { Component, isJSXComponent, getProps } from "./base-generator/expressions/component";
+import { Component, getProps } from "./base-generator/expressions/component";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
+import { processComponentContext } from "./base-generator/utils/string";
 
 // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
 const VOID_ELEMENTS = 
     ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"];
 
-const isElement = (e: any): e is JsxElement | JsxSelfClosingElement => e instanceof JsxElement || e instanceof JsxSelfClosingElement;
+const isElement = (e: any): e is JsxElement | JsxSelfClosingElement =>
+    e instanceof JsxElement || e instanceof JsxSelfClosingElement || e instanceof BaseJsxOpeningElement;
 
 export const counter = (function () {
     let i = 0;
@@ -61,9 +63,10 @@ export const counter = (function () {
     }
 })();
 
-interface toStringOptions extends  BaseToStringOptions {
-    members: Array<Property | Method>,
-    eventProperties?: Array<Property>
+export interface toStringOptions extends  BaseToStringOptions {
+    members: Array<Property | Method>;
+    eventProperties?: Array<Property>;
+    hasStyle?: boolean
 }
 
 function processTagName(tagName: Expression, context: GeneratorContext) { 
@@ -100,7 +103,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
     getTemplateProperty(options?: toStringOptions) { 
         const tagName = this.tagName.toString(options);
-        const contextExpr = options?.newComponentContext ? `${options.newComponentContext}.` : "";
+        const contextExpr = processComponentContext(options?.newComponentContext);
         return options?.members
             .filter(m => m.decorators.find(d => d.name === "Template"))
             .find(s => tagName.endsWith(`${contextExpr}${s.name.toString()}`));
@@ -167,26 +170,30 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         return super.attributesString(options);
     }
 
-    toString(options?: toStringOptions) {
-        const templateProperty = this.getTemplateProperty(options)
-        if (templateProperty) { 
-            const contextExpr = options?.newComponentContext ? `${options.newComponentContext}.` : "";
-            const contextElements = this.attributes.map(a => a.getTemplateContext()).filter(p => p) as PropertyAssignment[];
-            const contextString = contextElements.length ? `; context:${(new ObjectLiteral(contextElements, false)).toString(options).replace(/"/gi, "'")}` : "";
-            const attributes = this.attributes
-                .filter(a => a instanceof AngularDirective)
-                .map(a => a.toString(options))
-                .join("\n");
+    compileTemplate(templateProperty: Property, options?: toStringOptions) {
+        const contextExpr = processComponentContext(options?.newComponentContext);
+        const contextElements = this.attributes.map(a => a.getTemplateContext()).filter(p => p) as PropertyAssignment[];
+        const contextString = contextElements.length ? `; context:${(new ObjectLiteral(contextElements, false)).toString(options).replace(/"/gi, "'")}` : "";
+        const attributes = this.attributes
+            .filter(a => a instanceof AngularDirective)
+            .map(a => a.toString(options))
+            .join("\n");
             
-            const elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${templateProperty.name}${contextString}"></ng-container>`;
+        const elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${templateProperty.name}${contextString}"></ng-container>`;
             
-            if (attributes.length) { 
-                return `<ng-container ${attributes}>
+        if (attributes.length) {
+            return `<ng-container ${attributes}>
                     ${elementString}
                 </ng-container>`;
-            }
+        }
 
-            return elementString
+        return elementString
+    }
+
+    toString(options?: toStringOptions) {
+        const templateProperty = this.getTemplateProperty(options) as Property;
+        if (templateProperty) { 
+            return this.compileTemplate(templateProperty, options);
         }
 
         return super.toString(options);
@@ -261,33 +268,69 @@ export class JsxAttribute extends BaseJsxAttribute {
         return new PropertyAssignment(this.name, this.initializer);
     }
 
+    compileRef(options?: toStringOptions) { 
+        const refString = this.initializer.toString(options);
+        const componentContext = options?.newComponentContext ? `${options.newComponentContext}.` : '';
+        const match = refString.replace(/[\?!]/, "").match(new RegExp(`${componentContext}(\\w+).nativeElement`));
+        if (match && match[1]) { 
+            return `#${match[1]}`;
+        }
+
+        return `#${refString}`;
+    }
+
+    compileEvent(options?: toStringOptions) { 
+        return `(${this.name})="${this.compileInitializer(options)}($event)"`;
+    }
+
+    compileName(options?: toStringOptions) { 
+        const name = this.name.toString();
+        if (!(options?.eventProperties)) {
+            if (name === "className") { 
+                return "class";
+            }
+            if (name === "style") { 
+                return "ngStyle";
+            }
+        }
+
+        return name;
+    }
+
+    compileKey() { 
+        return "";
+    }
+
+    compileValue(name: string, value: string) {
+        
+        if (name === "title") {
+            return `${value}!==undefined?${value}:''`;
+        }
+
+        if (name === "ngStyle") {
+            return `__processNgStyle(${value})`;
+        }
+
+        return value;
+    }
+
+    compileBase(name: string, value: string) { 
+        return `[${name}]="${value}"`;
+    }
+
     toString(options?:toStringOptions) { 
         if (this.name.toString() === "ref") { 
-            const refString = this.initializer.toString(options);
-            const componentContext = options?.newComponentContext ? `${options.newComponentContext}.` : '';
-            const match = refString.replace(/[\?!]/, "").match(new RegExp(`${componentContext}(\\w+).nativeElement`));
-            if (match && match[1]) { 
-                return `#${match[1]}`;
-            }
-
-            return `#${refString}`;
+            return this.compileRef(options);
         }
         
         if (options?.eventProperties?.find(p=>p.name===this.name.toString())) { 
-            return `(${this.name})="${this.compileInitializer(options)}($event)"`;
-        }
-        let name = this.name.toString();
-        if (!(options?.eventProperties)) {
-            if (name === "className") { 
-                name = "class";
-            }
-            if (name === "style") { 
-                name = "ngStyle"
-            }
+            return this.compileEvent(options);
         }
 
+        const name = this.compileName(options);
+
         if(name==="key") { 
-            return "";
+            return this.compileKey();
         }
 
         if (this.initializer instanceof StringLiteral ||
@@ -295,17 +338,7 @@ export class JsxAttribute extends BaseJsxAttribute {
             return `${name}=${this.initializer.toString()}`;
         }
 
-        let initializerString = this.compileInitializer(options);
-        
-        if (name === "title") { 
-            initializerString = `${initializerString}!==undefined?${initializerString}:''`;
-        }
-
-        if (name === "ngStyle") { 
-            initializerString = `__processNgStyle(${initializerString})`;
-        }
-
-        return `[${name}]="${initializerString}"`;
+        return this.compileBase(name, this.compileValue(name, this.compileInitializer(options)));
     }
 }
 
@@ -314,7 +347,9 @@ export class AngularDirective extends JsxAttribute {
         return null;
     }
     toString(options?: toStringOptions) { 
-        return `${this.name}="${this.compileInitializer(options)}"`;
+        const initializer = this.compileInitializer(options);
+        const value = initializer ? `="${initializer}"` : "";
+        return `${this.name}${value}`;
     }
 }
 
@@ -352,33 +387,39 @@ function getExpression(expression: Expression, options?: toStringOptions): Expre
     return expression;
  }
 
-function processBinary(expression: Binary, options?: toStringOptions, condition: Expression[] = []): Expression | null { 
-    const left = getExpression(expression.left, options);
-    const right = getExpression(expression.right, options);
+export function createProcessBinary(createIfAttribute = (conditionExpression: Expression): JsxAttribute => { 
+    return new AngularDirective(new Identifier("*ngIf"), conditionExpression);
+}) { 
+    return function processBinary(expression: Binary, options?: toStringOptions, condition: Expression[] = []): Expression | null { 
+        const left = getExpression(expression.left, options);
+        const right = getExpression(expression.right, options);
+        
+        if ((isElement(left) || isElement(right)) && expression.operator !== SyntaxKind.AmpersandAmpersandToken) { 
+            throw `Operator ${expression.operator} is not supoorted: ${expression.toString()}`;
+        }
+        if (expression.operator === SyntaxKind.AmpersandAmpersandToken && !left.isJsx()) { 
+            if (isElement(right)) {
+                const conditionExpression = condition.reduce((c: Expression, e) => { 
+                    return new Binary(
+                        new Paren(c),
+                        SyntaxKind.AmpersandAmpersandToken,
+                        e
+                    );
+                }, expression.left);
+                const elementExpression = right.clone();
+                elementExpression.addAttribute(createIfAttribute(conditionExpression));
+                return elementExpression;
+            }
     
-    if ((isElement(left) || isElement(right)) && expression.operator !== SyntaxKind.AmpersandAmpersandToken) { 
-        throw `Operator ${expression.operator} is not supoorted: ${expression.toString()}`;
-    }
-    if (expression.operator === SyntaxKind.AmpersandAmpersandToken && !left.isJsx()) { 
-        if (isElement(right)) {
-            const conditionExpression = condition.reduce((c: Expression, e) => { 
-                return new Binary(
-                    new Paren(c),
-                    SyntaxKind.AmpersandAmpersandToken,
-                    e
-                );
-            }, expression.left);
-            const elementExpression = right.clone();
-            elementExpression.addAttribute(new AngularDirective(new Identifier("*ngIf"), conditionExpression));
-            return elementExpression;
+            if (right instanceof Binary) {
+                return processBinary(right, options, condition.concat(expression.left));
+            }
         }
-
-        if (right instanceof Binary) {
-            return processBinary(right, options, condition.concat(expression.left));
-        }
+        return null;
     }
-    return null;
 }
+
+const processBinary = createProcessBinary();
 
 export class JsxExpression extends BaseJsxExpression {
     getExpression(options?: toStringOptions): Expression { 
@@ -402,30 +443,6 @@ export class JsxExpression extends BaseJsxExpression {
         return;
     }
 
-    compileStatement(statement: Expression, condition: Expression, options?: toStringOptions): string {
-        const conditionAttribute = new AngularDirective(
-            new Identifier("*ngIf"),
-            condition
-        );
-
-        const expression = getJsxExpression(statement);
-        if (isElement(expression)) {
-            expression.addAttribute(conditionAttribute);
-            return expression.toString(options);
-        }
-        const containerIdentifer = new Identifier("ng-container")
-        return new JsxElement(
-            new JsxOpeningElement(
-                containerIdentifer,
-                undefined,
-                [conditionAttribute],
-                {}
-            ),
-            [new JsxExpression(undefined, statement)],
-            new JsxClosingElement(containerIdentifer)
-        ).toString(options);
-    }
-
     toString(options?: toStringOptions) {
         const expression = this.getExpression(options);
         return expression.toString(options);
@@ -445,11 +462,68 @@ export class JsxChildExpression extends JsxExpression {
         super(expression.dotDotDotToken, expression.expression);
     }
 
+    processBinary(expression: Binary, options?: toStringOptions, condition?: Expression[]) { 
+        return processBinary(expression, options, condition)
+    }
+
     compileSlot(slot: Property) {
         if (slot.name.toString() === "default" || slot.name.toString() === "children") {
             return `<ng-content></ng-content>`;
         }
         return `<ng-content select="[${slot.name}]"></ng-content>`;
+    }
+
+    createIfAttribute(condition: Expression) { 
+        return new AngularDirective(
+            new Identifier("*ngIf"),
+            condition
+        );
+    }
+
+    createJsxExpression(statement: Expression) { 
+        return new JsxExpression(undefined, statement);
+    }
+
+    createContainer(atributes: JsxAttribute[], children: Array<JsxExpression | JsxElement | JsxSelfClosingElement>) { 
+        const containerIdentifer = new Identifier("ng-container")
+        return new JsxElement(
+            new JsxOpeningElement(
+                containerIdentifer,
+                undefined,
+                atributes,
+                {}
+            ),
+            children,
+            new JsxClosingElement(containerIdentifer)
+        );
+    }
+
+    compileStatement(statement: Expression, condition?: Expression, options?: toStringOptions): string {
+        const conditionAttribute = this.createIfAttribute(condition!);
+
+        const expression = getJsxExpression(statement);
+        if (isElement(expression)) {
+            expression.addAttribute(conditionAttribute);
+            return expression.toString(options);
+        }
+        return this.createContainer(
+            [conditionAttribute],
+            [this.createJsxExpression(statement)]
+        ).toString(options);
+    }
+
+    compileConditionStatement(condition: Expression, thenStatement: Expression, elseStatement: Expression, options?: toStringOptions) { 
+        const result: string[] = [];
+        result.push(this.compileStatement(thenStatement, condition, options));
+        result.push(this.compileStatement(
+            elseStatement,
+            new Prefix(SyntaxKind.ExclamationToken,
+                new Paren(condition)
+            ),
+            options)
+        );
+
+        return result.join("\n");
     }
 
     getIeratorItemName(parameter: Identifier | BindingPattern, options: toStringOptions) {
@@ -469,7 +543,7 @@ export class JsxChildExpression extends JsxExpression {
         const expression = this.getExpression(options);
         
         if (expression instanceof Binary) { 
-            const parsedBinary = processBinary(expression, options);
+            const parsedBinary = this.processBinary(expression, options);
             if (parsedBinary) {
                 return parsedBinary.toString(options);
             }
@@ -512,18 +586,12 @@ export class JsxChildExpression extends JsxExpression {
                 }</ng-container>`;
         }
 
-        if (expression instanceof Conditional) { 
-            const result: string[] = [];
-            result.push(this.compileStatement(expression.thenStatement, expression.expression, options));
-            result.push(this.compileStatement(
+        if (expression instanceof Conditional) {
+            return this.compileConditionStatement(
+                expression.expression,
+                expression.thenStatement,
                 expression.elseStatement,
-                new Prefix(SyntaxKind.ExclamationToken,
-                    new Paren(expression.expression)
-                ),
-                options)
-            );
-
-            return result.join("\n");
+                options);
         }
 
         if (this.expression instanceof StringLiteral) { 
@@ -539,7 +607,7 @@ export class JsxChildExpression extends JsxExpression {
         const slot = options?.members
             .filter(m => m.decorators.find(d => d.name === "Slot"))
             .find(s => stringValue.endsWith(`${contextExpr}${s.name.toString()}`)
-                || s.name.toString() === "children" && (stringValue.endsWith(".default") || stringValue.endsWith(".children")));
+                || s.name.toString() === "children" && (stringValue.endsWith("default") || stringValue.endsWith("children")));
         if (slot) { 
             return this.compileSlot(slot as Property);
         }
@@ -614,7 +682,8 @@ export class JsxElement extends BaseJsxElement {
         if (this.openingElement.tagName.toString() === "Fragment") {
             return children;
         }
-        return `${this.openingElement.toString(options)}${children}${this.closingElement.toString(options)}`;
+        const closingElementString = !this.openingElement.getTemplateProperty(options) ? this.closingElement.toString(options) : "";
+        return `${this.openingElement.toString(options)}${children}${closingElementString}`;
     }
 
     clone() {

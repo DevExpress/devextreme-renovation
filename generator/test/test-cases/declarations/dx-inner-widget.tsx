@@ -1,7 +1,7 @@
 import { Component, ComponentBindings, JSXComponent, OneWay, Event, TwoWay } from "../../../component_declaration/common";
 
 function view(model: InnerWidget) {
-    return <div></div>
+    return <div style={{ width: 100, height: 100}}></div>
 }
 
 @ComponentBindings()

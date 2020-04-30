@@ -60,6 +60,14 @@ export class BaseClassMember extends Expression {
         return this.decorators.some(d => d.name === "Ref");
     }
 
+    get isSlot() { 
+        return this.decorators.some(d => d.name === "Slot");
+    }
+
+    get isTemplate() { 
+        return this.decorators.some(d => d.name === "Template");
+    }
+
     get canBeDestructured() { 
         if (this.required) { 
             return false;

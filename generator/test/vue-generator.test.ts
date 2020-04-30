@@ -1,11 +1,10 @@
 import mocha from "./helpers/mocha";
 import assert from "assert";
 import generator from "../vue-generator";
-import compile from "../component-compiler";
-import path from "path";
 
-import { printSourceCodeAst as getAst } from "./helpers/common";
+import { printSourceCodeAst as getAst, removeSpaces } from "./helpers/common";
 import componentCreator from "./helpers/create-component";
+import { toStringOptions } from "../angular-generator";
 const { createDecorator } = componentCreator(generator);
 
 
@@ -62,6 +61,24 @@ mocha.describe("Vue-generator", function () {
                     );
         
                     assert.strictEqual(getAst(expression.toString()), getAst("p: {type: Function"));
+                });
+
+                mocha.it("Property with TypeReferenceNode", function () {
+                    const expression = generator.createProperty(
+                        decorators,
+                        undefined,
+                        name,
+                        undefined,
+                        generator.createTypeReferenceNode(
+                            generator.createIdentifier("Array"),
+                            [
+                                generator.createKeywordTypeNode("Number")
+                            ]
+                        ),
+                        undefined
+                    );
+            
+                    assert.strictEqual(getAst(expression.toString()), getAst("p: {type: Array"));
                 });
     
                 mocha.describe("Property with LiteralTypeNode", function () { 
@@ -242,6 +259,36 @@ mocha.describe("Vue-generator", function () {
                     );
             
                     assert.strictEqual(getAst(expression.toString()), getAst("p: {type: Boolean}"));
+                });
+            });
+
+            mocha.describe("Slots", function () { 
+                mocha.it("default slot", function () {
+                    const expression = generator.createProperty(
+                        [createDecorator("Slot")],
+                        undefined,
+                        name,
+                        generator.SyntaxKind.QuestionToken,
+                        generator.createKeywordTypeNode("boolean"),
+                        generator.createTrue()
+                    );
+            
+                    assert.strictEqual(expression.toString(), "");
+                });
+            });
+
+            mocha.describe("Template", function () { 
+                mocha.it("Template props toString should return empty string", function () {
+                    const expression = generator.createProperty(
+                        [createDecorator("Template")],
+                        undefined,
+                        name,
+                        generator.SyntaxKind.QuestionToken,
+                        generator.createKeywordTypeNode("boolean"),
+                        generator.createTrue()
+                    );
+            
+                    assert.strictEqual(expression.toString(), "");
                 });
             });
         });
@@ -582,6 +629,495 @@ mocha.describe("Vue-generator", function () {
                 p: {type: String}
             }`));
         });
+    });
+
+    mocha.describe("Template Generation", function () {
+
+        mocha.describe("Elements", function () { 
+            mocha.it("Self-closing element", function () { 
+                const expression = generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("span")
+                );
+
+                assert.strictEqual(expression.toString(), "<span />");
+            });
+
+            mocha.it("element", function () { 
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div")
+                    ),
+                    [],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+
+                assert.strictEqual(expression.toString(), "<div ></div>");
+            });
+
+            mocha.it("element with attributes", function () { 
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        [],
+                        [
+                            generator.createJsxAttribute(
+                                generator.createIdentifier("a"),
+                                generator.createNumericLiteral("10")
+                            ),
+
+                            generator.createJsxAttribute(
+                                generator.createIdentifier("b"),
+                                generator.createStringLiteral("word")
+                            )
+                        ]
+                    ),
+                    [],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+
+                assert.strictEqual(removeSpaces(expression.toString()), removeSpaces(`<div :a="10" b="word"></div>`));
+            });
+
+            mocha.describe("Attributes", function () { 
+                mocha.it("title attribute", function () { 
+                    const expression = generator.createJsxAttribute(
+                        generator.createIdentifier("title"),
+                        generator.createNumericLiteral("10")
+                    );
+
+                    assert.strictEqual(expression.toString(), `:title="10"`);
+                });
+
+                mocha.it("style -> v-bind:style", function () {
+                    const expression = generator.createJsxAttribute(
+                        generator.createIdentifier("style"),
+                        generator.createJsxExpression(
+                            undefined,
+                            generator.createIdentifier("value")
+                        )
+                    );
+        
+                    assert.strictEqual(expression.toString(), `v-bind:style="__processStyle(value)"`);
+                });
+
+                mocha.it("class -> v-bind:class", function () {
+                    const expression = generator.createJsxAttribute(
+                        generator.createIdentifier("class"),
+                        generator.createJsxExpression(
+                            undefined,
+                            generator.createIdentifier("value")
+                        )
+                    );
+        
+                    assert.strictEqual(expression.toString(), `v-bind:class="value"`);
+                });
+
+                mocha.it("Parse style with options should fill hasClass", function () {
+                    const expression = generator.createJsxAttribute(
+                        generator.createIdentifier("style"),
+                        generator.createJsxExpression(
+                            undefined,
+                            generator.createIdentifier("value")
+                        )
+                    );
+    
+                    const options: toStringOptions = {
+                        members: []
+                    };
+
+                    assert.strictEqual(expression.toString(options), `v-bind:style="__processStyle(value)"`);
+                    assert.strictEqual(options.hasStyle, true);
+                });
+            });
+        });
+
+        mocha.describe("Conditional Rendering", function () { 
+            mocha.it("notJsxExpr && <element></element> -> <element v-if='notJsxExpr'></element>", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createBinary(
+                            generator.createPropertyAccess(
+                                generator.createIdentifier("viewModel"),
+                                generator.createIdentifier("input")
+                            ),
+                            generator.createToken(generator.SyntaxKind.AmpersandAmpersandToken),
+                            generator.createJsxElement(
+                                generator.createJsxOpeningElement(
+                                    generator.createIdentifier("input"),
+                                    undefined,
+                                    []
+                                ),
+                                [],
+                                generator.createJsxClosingElement(
+                                    generator.createIdentifier("input")
+                                )
+                            )
+                        )
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(expression.children[0].toString(), `<input v-if="viewModel.input"></input>`);
+            });
+
+            mocha.it("condition?then:else - <div v-if='condition'> <div v-else>", function () {
+                const attribute = generator.createJsxAttribute(
+                    generator.createIdentifier("a"),
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("value")
+                    )
+                );
+    
+                const property = generator.createGetAccessor(
+                    [],
+                    [],
+                    generator.createIdentifier("value"),
+                    [],
+                    undefined,
+                    undefined
+                );
+                property.prefix = "_";
+    
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createConditional(
+                            generator.createIdentifier("condition"),
+                            generator.createJsxSelfClosingElement(
+                                generator.createIdentifier("input"),
+                                [],
+                                [attribute]
+                            ),
+                            generator.createJsxSelfClosingElement(
+                                generator.createIdentifier("input"),
+                                [],
+                                [attribute]
+                            )
+                        )
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(removeSpaces(expression.children[0].toString({
+                    componentContext: "viewModel",
+                    newComponentContext: "",
+                    members: [property]
+                })), removeSpaces(`<input :a="_value()" v-if="condition"/>\n<input :a="_value()" v-else/>`));
+            });
+
+            mocha.it("non jsx conditional - condition?then:else - {{then}} {{else}}'", function () {
+                const thenStatement = generator.createPropertyAccess(
+                    generator.createIdentifier("viewModel"),
+                    generator.createIdentifier("value")
+                );
+    
+                const elseStatement = generator.createPrefix(
+                    generator.SyntaxKind.ExclamationToken,
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("value")
+                    )
+                );
+    
+                const property = generator.createGetAccessor(
+                    [],
+                    [],
+                    generator.createIdentifier("value"),
+                    [],
+                    undefined,
+                    undefined
+                );
+                property.prefix = "_";
+    
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createConditional(
+                            generator.createIdentifier("condition"),
+                            thenStatement,
+                            elseStatement
+                        )
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(removeSpaces(expression.children[0].toString({
+                    componentContext: "viewModel",
+                    newComponentContext: "",
+                    members: [property]
+                })), removeSpaces(`<template v-if="condition">{{_value()}}</template><template v-else>{{!_value()}}</template>`));
+            });
+        });
+
+        mocha.describe("Template", function () { 
+            mocha.it("<template/> -> <slot></slot>", function () {
+                const expression = generator.createJsxSelfClosingElement(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("template")
+                    ),
+                    [],
+                    []
+                );
+    
+                const templateProperty = generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+    
+                assert.strictEqual(expression.toString({
+                    members: [templateProperty],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), `<slot name="template" ></slot>`);
+            });
+
+            mocha.it("Template with parameters", function () {
+                const expression = generator.createJsxSelfClosingElement(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("template")
+                    ),
+                    [],
+                    [
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("p1"),
+                            generator.createNumericLiteral("10")
+                        ),
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("p2"),
+                            generator.createStringLiteral("11")
+                        )
+                    ]
+                );
+    
+                const templateProperty = generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+    
+                assert.strictEqual(expression.toString({
+                    members: [templateProperty],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), `<slot name="template" :v-bind:p1="10" :v-bind:p2="'11'"></slot>`);
+            });
+
+            mocha.it("<template></template> -> <slot></slot>", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("template")
+                        ),
+                        undefined,
+                        []
+                    ),
+                    [],
+                    generator.createJsxClosingElement(
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("template")
+                        )
+                    )
+                );
+    
+                const templateProperty = generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+    
+                assert.strictEqual(expression.toString({
+                    members: [templateProperty],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), `<slot name="template" ></slot>`);
+            });
+
+            mocha.it("Template with spread attribute", function () {
+                const expression = generator.createJsxSelfClosingElement(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("template")
+                    ),
+                    [],
+                    [
+                        generator.createJsxSpreadAttribute(
+                           generator.createIdentifier("item")
+                       )
+                    ]
+                );
+    
+                const templateProperty = generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+    
+                assert.strictEqual(expression.toString({
+                    members: [templateProperty],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), `<slot name="template" :v-bind="item"></slot>`);
+            });
+        });
+
+        mocha.describe("Slot", function () {
+            mocha.it("defaultSlot", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        [],
+                        []
+                    ),
+                    [
+                        generator.createJsxExpression(
+                            undefined,
+                            generator.createPropertyAccess(
+                                generator.createIdentifier("viewModel"),
+                                generator.createIdentifier("default")
+                            )
+                        )
+                    ],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                )
+    
+                const slotProperty = generator.createProperty(
+                    [createDecorator("Slot")],
+                    [],
+                    generator.createIdentifier("default"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+    
+                assert.strictEqual(expression.toString({
+                    members: [slotProperty],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), `<div ><slot></slot></div>`);
+            });
+
+            mocha.it("children slot is default", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        [],
+                        []
+                    ),
+                    [
+                        generator.createJsxExpression(
+                            undefined,
+                            generator.createPropertyAccess(
+                                generator.createIdentifier("viewModel"),
+                                generator.createIdentifier("children")
+                            )
+                        )
+                    ],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                )
+    
+                const slotProperty = generator.createProperty(
+                    [createDecorator("Slot")],
+                    [],
+                    generator.createIdentifier("children"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+    
+                assert.strictEqual(expression.toString({
+                    members: [slotProperty],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), `<div ><slot></slot></div>`);
+            });
+
+            mocha.it("named slot", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        [],
+                        []
+                    ),
+                    [
+                        generator.createJsxExpression(
+                            undefined,
+                            generator.createPropertyAccess(
+                                generator.createIdentifier("viewModel"),
+                                generator.createIdentifier("slotName")
+                            )
+                        )
+                    ],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                )
+    
+                const slotProperty = generator.createProperty(
+                    [createDecorator("Slot")],
+                    [],
+                    generator.createIdentifier("slotName"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+    
+                assert.strictEqual(expression.toString({
+                    members: [slotProperty],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), `<div ><slot name="slotName"></slot></div>`);
+            });
+        });
+
+      
     });
     
 });

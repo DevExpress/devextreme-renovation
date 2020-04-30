@@ -12,14 +12,15 @@ import {
     GetAccessor as BaseGetAccessor,
     BaseClassMember
 } from "./base-generator/expressions/class-members";
-import { toStringOptions } from "./base-generator/types";
+import { GeneratorContext } from "./base-generator/types";
 import {
     TypeExpression,
     SimpleTypeExpression,
     ArrayTypeNode,
     UnionTypeNode,
     FunctionTypeNode,
-    LiteralTypeNode
+    LiteralTypeNode,
+    TypeReferenceNode
 } from "./base-generator/expressions/type";
 import { capitalizeFirstLetter, variableDeclaration } from "./base-generator/utils/string";
 import SyntaxKind from "./base-generator/syntaxKind";
@@ -33,9 +34,15 @@ import {
     VariableDeclaration,
     JsxExpression as BaseJsxExpression,
     JsxElement as BaseJsxElement,
-    JsxOpeningElement,
-    JsxSelfClosingElement,
-    JsxChildExpression as BaseJsxChildExpression
+    JsxOpeningElement as BaseJsxOpeningElement,
+    JsxSelfClosingElement as BaseJsxSelfClosingElement,
+    JsxChildExpression as BaseJsxChildExpression,
+    JsxAttribute as BaseJsxAttribute,
+    JsxSpreadAttribute as BaseJsxSpeadAttribute,
+    AngularDirective,
+    createProcessBinary,
+    toStringOptions
+    
 } from "./angular-generator";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
@@ -43,6 +50,7 @@ import { ComponentInput } from "./base-generator/expressions/component-input";
 import { checkDependency } from "./base-generator/utils/dependency";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access"
 import { JsxClosingElement } from "./base-generator/expressions/jsx";
+import { Binary } from "./base-generator/expressions/operators";
 
 function calculatePropertyType(type: TypeExpression): string { 
     if (type instanceof SimpleTypeExpression) {
@@ -71,20 +79,27 @@ function calculatePropertyType(type: TypeExpression): string {
             return "Number";
         }
     }
+
+    if (type instanceof TypeReferenceNode) { 
+        return type.typeName.toString();
+    }
     return "";
 }
 
 export class Property extends BaseProperty { 
+    get name() { 
+        if (this.isTemplate) { 
+            return this._name.toString();
+        }
+        return this._name.toString();
+    } 
+
     toString(options?: toStringOptions) {
         if (this.isInternalState) { 
             return `${this.name}: ${this.initializer}`;
         } 
 
-        if (this.isEvent) { 
-            return "";
-        }
-
-        if (this.isRef) { 
+        if (this.isEvent || this.isRef || this.isSlot || this.isTemplate) { 
             return "";
         }
     
@@ -227,10 +242,49 @@ export class VueComponent extends Component {
     compileTemplate() {
         const viewFunction = this.decorators[0].getViewFunction();
         if (viewFunction) {
-            this.template = viewFunction.getTemplate({
+            const options: toStringOptions = {
                 members: this.members,
                 newComponentContext: ""
-            });
+            };
+            this.template = viewFunction.getTemplate(options);
+
+            if (options.hasStyle) { 
+                this.methods.push(new Method(
+                    [],
+                    [],
+                    undefined,
+                    new Identifier("__processStyle"),
+                    undefined,
+                    [],
+                    [
+                        new Parameter(
+                            [],
+                            [],
+                            undefined,
+                            new Identifier("value"),
+                            undefined,
+                            undefined,
+                            undefined
+                        )
+                    ],
+                    undefined,
+                    new Block([
+                        new SimpleExpression(`
+                            if (typeof value === "object") {
+                                return Object.keys(value).reduce((v, k) => {
+                                    if (typeof value[k] === "number") {
+                                        v[k] = value[k] + "px";
+                                    } else {
+                                        v[k] = value[k];
+                                    }
+                                    return v;
+                                }, {});
+                            }
+                            return value;`
+                        )
+                    ], true)
+                ));
+            }
         }
     }
 
@@ -325,6 +379,75 @@ export class AsExpression extends BaseAsExpression {
     }
 }
 
+export class JsxAttribute extends BaseJsxAttribute { 
+    getTemplateProp(options?: toStringOptions) {
+        return `:v-bind:${this.name}="${this.compileInitializer(options)}"`;
+    }
+
+    compileName(options?: toStringOptions) { 
+        const name = this.name.toString();
+        if (!(options?.eventProperties)) {
+            if (name === "class") { 
+                return "v-bind:class";
+            }
+            if (name === "style") { 
+                if (options) { 
+                    options.hasStyle = true;
+                }
+                return "v-bind:style";
+            }
+        }
+
+        return name;
+    }
+
+    compileRef(options?: toStringOptions) { 
+        return `ref="${this.compileInitializer(options)}"`;
+    }
+
+    compileValue(name: string, value: string) {
+        if (name === "v-bind:style") {
+            return `__processStyle(${value})`;
+        }
+
+        return value;
+    }
+
+    compileBase(name: string, value: string) { 
+        const prefix = name.startsWith("v-bind") ? "" : ":";
+        return `${prefix}${name}="${value}"`;
+    }
+}
+
+export class JsxSpreadAttribute extends BaseJsxSpeadAttribute { 
+    getTemplateProp(options?: toStringOptions) { 
+        return `:v-bind="${this.expression.toString(options)}"`;
+    }
+}
+
+export class JsxOpeningElement extends BaseJsxOpeningElement { 
+    attributes: Array<JsxAttribute | JsxSpreadAttribute>;
+    constructor(tagName: Expression, typeArguments: any, attributes: Array<JsxAttribute | JsxSpreadAttribute> = [], context: GeneratorContext) { 
+        super(tagName, typeArguments, attributes, context);
+        this.attributes = attributes;
+    }
+
+    compileTemplate(templateProperty: Property, options?: toStringOptions) {
+        const attributes = this.attributes.map(a => a.getTemplateProp(options));
+        return `<slot name="${templateProperty.name}" ${attributes.join(" ")}></slot>`;
+    }
+}
+
+export class JsxSelfClosingElement extends JsxOpeningElement { 
+    toString(options?: toStringOptions) {
+        if (this.getTemplateProperty(options)) { 
+            return super.toString(options);
+        }
+        
+        return super.toString(options).replace(/>$/, "/>");
+    }
+}
+
 export class JsxElement extends BaseJsxElement { 
     createChildJsxExpression(expression: BaseJsxExpression) { 
         return new JsxChildExpression(expression);
@@ -332,13 +455,64 @@ export class JsxElement extends BaseJsxElement {
 
 }
 export class JsxExpression extends BaseJsxExpression {
-    toString(options?: toStringOptions) {
-        return `"${this.expression.toString(options)}"`;
-    }
+   
 }
 
+export class VueDirective extends AngularDirective { }
+
+const processBinary = createProcessBinary((conditionExpression: Expression) => { 
+    return new VueDirective(new Identifier("v-if"), conditionExpression);
+})
+
 export class JsxChildExpression extends BaseJsxChildExpression { 
-   
+
+    createJsxExpression(statement: Expression) { 
+        return new JsxExpression(undefined, statement);
+    }
+
+    createContainer(atributes: JsxAttribute[], children: Array<JsxExpression | JsxElement | JsxSelfClosingElement>) { 
+        const containerIdentifer = new Identifier("template")
+        return new JsxElement(
+            new JsxOpeningElement(
+                containerIdentifer,
+                undefined,
+                atributes,
+                {}
+            ),
+            children,
+            new JsxClosingElement(containerIdentifer)
+        );
+    }
+
+    createIfAttribute(condition?: Expression) {
+        return new VueDirective(
+            new Identifier(condition ? "v-if" : "v-else"),
+            condition || new SimpleExpression("")
+        );
+    }
+    
+    compileConditionStatement(condition: Expression, thenStatement: Expression, elseStatement: Expression, options?: toStringOptions) { 
+        const result: string[] = [];
+        result.push(this.compileStatement(thenStatement, condition, options));
+        result.push(this.compileStatement(
+            elseStatement,
+            undefined,
+            options)
+        );
+
+        return result.join("\n");
+    }
+
+    compileSlot(slot: Property) {
+        if (slot.name.toString() === "default" || slot.name.toString() === "children") {
+            return `<slot></slot>`;
+        }
+        return `<slot name="${slot.name}"></slot>`;
+    }
+
+    processBinary(expression: Binary, options?: toStringOptions, condition?: Expression[]) { 
+        return processBinary(expression, options, condition)
+    }
 }
 
 class VueGenerator extends BaseGenerator { 
@@ -406,12 +580,28 @@ class VueGenerator extends BaseGenerator {
         return new JsxExpression(dotDotDotToken, expression);
     }
 
+    createJsxOpeningElement(tagName: Expression, typeArguments?: any, attributes?: Array<JsxAttribute | JsxSpreadAttribute>) {
+        return new JsxOpeningElement(tagName, typeArguments, attributes, this.getContext());
+    }
+
+    createJsxSelfClosingElement(tagName: Expression, typeArguments?: any, attributes?: Array<JsxAttribute | JsxSpreadAttribute>) {
+        return new JsxSelfClosingElement(tagName, typeArguments, attributes, this.getContext());
+    }
+
     createJsxElement(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: JsxClosingElement) {
         return new JsxElement(openingElement, children, closingElement);
     }
 
+    createJsxAttribute(name: Identifier, initializer: Expression) {
+        return new JsxAttribute(name, initializer);
+    }
+
     createAsExpression(expression: Expression, type: TypeExpression) { 
         return new AsExpression(expression, type);
+    }
+
+    createJsxSpreadAttribute(expression: Expression) {
+        return new JsxSpreadAttribute(undefined, expression);
     }
 }
 
