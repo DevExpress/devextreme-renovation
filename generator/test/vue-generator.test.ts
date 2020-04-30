@@ -638,7 +638,7 @@ mocha.describe("Vue-generator", function () {
                     generator.createIdentifier("span")
                 );
 
-                assert.strictEqual(expression.toString(), "<span ></span>");
+                assert.strictEqual(expression.toString(), "<span />");
             });
 
             mocha.it("element", function () { 
@@ -679,6 +679,145 @@ mocha.describe("Vue-generator", function () {
                 );
 
                 assert.strictEqual(removeSpaces(expression.toString()), removeSpaces(`<div :a="10" b="word"></div>`));
+            });
+
+            mocha.it("notJsxExpr && <element></element> -> <element v-if='notJsxExpr'></element>", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createBinary(
+                            generator.createPropertyAccess(
+                                generator.createIdentifier("viewModel"),
+                                generator.createIdentifier("input")
+                            ),
+                            generator.createToken(generator.SyntaxKind.AmpersandAmpersandToken),
+                            generator.createJsxElement(
+                                generator.createJsxOpeningElement(
+                                    generator.createIdentifier("input"),
+                                    undefined,
+                                    []
+                                ),
+                                [],
+                                generator.createJsxClosingElement(
+                                    generator.createIdentifier("input")
+                                )
+                            )
+                        )
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(expression.children[0].toString(), `<input v-if="viewModel.input"></input>`);
+            });
+
+            mocha.it("condition?then:else - <div v-if='condition'> <div v-else>", function () {
+                const attribute = generator.createJsxAttribute(
+                    generator.createIdentifier("a"),
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("value")
+                    )
+                );
+    
+                const property = generator.createGetAccessor(
+                    [],
+                    [],
+                    generator.createIdentifier("value"),
+                    [],
+                    undefined,
+                    undefined
+                );
+                property.prefix = "_";
+    
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createConditional(
+                            generator.createIdentifier("condition"),
+                            generator.createJsxSelfClosingElement(
+                                generator.createIdentifier("input"),
+                                [],
+                                [attribute]
+                            ),
+                            generator.createJsxSelfClosingElement(
+                                generator.createIdentifier("input"),
+                                [],
+                                [attribute]
+                            )
+                        )
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(removeSpaces(expression.children[0].toString({
+                    componentContext: "viewModel",
+                    newComponentContext: "",
+                    members: [property]
+                })), removeSpaces(`<input :a="_value()" v-if="condition"/>\n<input :a="_value()" v-else/>`));
+            });
+
+            mocha.it("non jsx conditional - condition?then:else - {{then}} {{else}}'", function () {
+                const thenStatement = generator.createPropertyAccess(
+                    generator.createIdentifier("viewModel"),
+                    generator.createIdentifier("value")
+                );
+    
+                const elseStatement = generator.createPrefix(
+                    generator.SyntaxKind.ExclamationToken,
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("value")
+                    )
+                );
+    
+                const property = generator.createGetAccessor(
+                    [],
+                    [],
+                    generator.createIdentifier("value"),
+                    [],
+                    undefined,
+                    undefined
+                );
+                property.prefix = "_";
+    
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createConditional(
+                            generator.createIdentifier("condition"),
+                            thenStatement,
+                            elseStatement
+                        )
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(removeSpaces(expression.children[0].toString({
+                    componentContext: "viewModel",
+                    newComponentContext: "",
+                    members: [property]
+                })), removeSpaces(`<template v-if="condition">{{_value()}}</template><template v-else>{{!_value()}}</template>`));
             });
         });
 

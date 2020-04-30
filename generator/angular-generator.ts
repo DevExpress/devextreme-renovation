@@ -46,7 +46,8 @@ import { processComponentContext } from "./base-generator/utils/string";
 const VOID_ELEMENTS = 
     ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"];
 
-const isElement = (e: any): e is JsxElement | JsxSelfClosingElement => e instanceof JsxElement || e instanceof JsxSelfClosingElement;
+const isElement = (e: any): e is JsxElement | JsxSelfClosingElement =>
+    e instanceof JsxElement || e instanceof JsxSelfClosingElement || e instanceof BaseJsxOpeningElement;
 
 export const counter = (function () {
     let i = 0;
@@ -346,7 +347,9 @@ export class AngularDirective extends JsxAttribute {
         return null;
     }
     toString(options?: toStringOptions) { 
-        return `${this.name}="${this.compileInitializer(options)}"`;
+        const initializer = this.compileInitializer(options);
+        const value = initializer ? `="${initializer}"` : "";
+        return `${this.name}${value}`;
     }
 }
 
@@ -384,33 +387,39 @@ function getExpression(expression: Expression, options?: toStringOptions): Expre
     return expression;
  }
 
-function processBinary(expression: Binary, options?: toStringOptions, condition: Expression[] = []): Expression | null { 
-    const left = getExpression(expression.left, options);
-    const right = getExpression(expression.right, options);
+export function createProcessBinary(createIfAttribute = (conditionExpression: Expression): JsxAttribute => { 
+    return new AngularDirective(new Identifier("*ngIf"), conditionExpression);
+}) { 
+    return function processBinary(expression: Binary, options?: toStringOptions, condition: Expression[] = []): Expression | null { 
+        const left = getExpression(expression.left, options);
+        const right = getExpression(expression.right, options);
+        
+        if ((isElement(left) || isElement(right)) && expression.operator !== SyntaxKind.AmpersandAmpersandToken) { 
+            throw `Operator ${expression.operator} is not supoorted: ${expression.toString()}`;
+        }
+        if (expression.operator === SyntaxKind.AmpersandAmpersandToken && !left.isJsx()) { 
+            if (isElement(right)) {
+                const conditionExpression = condition.reduce((c: Expression, e) => { 
+                    return new Binary(
+                        new Paren(c),
+                        SyntaxKind.AmpersandAmpersandToken,
+                        e
+                    );
+                }, expression.left);
+                const elementExpression = right.clone();
+                elementExpression.addAttribute(createIfAttribute(conditionExpression));
+                return elementExpression;
+            }
     
-    if ((isElement(left) || isElement(right)) && expression.operator !== SyntaxKind.AmpersandAmpersandToken) { 
-        throw `Operator ${expression.operator} is not supoorted: ${expression.toString()}`;
-    }
-    if (expression.operator === SyntaxKind.AmpersandAmpersandToken && !left.isJsx()) { 
-        if (isElement(right)) {
-            const conditionExpression = condition.reduce((c: Expression, e) => { 
-                return new Binary(
-                    new Paren(c),
-                    SyntaxKind.AmpersandAmpersandToken,
-                    e
-                );
-            }, expression.left);
-            const elementExpression = right.clone();
-            elementExpression.addAttribute(new AngularDirective(new Identifier("*ngIf"), conditionExpression));
-            return elementExpression;
+            if (right instanceof Binary) {
+                return processBinary(right, options, condition.concat(expression.left));
+            }
         }
-
-        if (right instanceof Binary) {
-            return processBinary(right, options, condition.concat(expression.left));
-        }
+        return null;
     }
-    return null;
 }
+
+const processBinary = createProcessBinary();
 
 export class JsxExpression extends BaseJsxExpression {
     getExpression(options?: toStringOptions): Expression { 
@@ -434,30 +443,6 @@ export class JsxExpression extends BaseJsxExpression {
         return;
     }
 
-    compileStatement(statement: Expression, condition: Expression, options?: toStringOptions): string {
-        const conditionAttribute = new AngularDirective(
-            new Identifier("*ngIf"),
-            condition
-        );
-
-        const expression = getJsxExpression(statement);
-        if (isElement(expression)) {
-            expression.addAttribute(conditionAttribute);
-            return expression.toString(options);
-        }
-        const containerIdentifer = new Identifier("ng-container")
-        return new JsxElement(
-            new JsxOpeningElement(
-                containerIdentifer,
-                undefined,
-                [conditionAttribute],
-                {}
-            ),
-            [new JsxExpression(undefined, statement)],
-            new JsxClosingElement(containerIdentifer)
-        ).toString(options);
-    }
-
     toString(options?: toStringOptions) {
         const expression = this.getExpression(options);
         return expression.toString(options);
@@ -477,11 +462,68 @@ export class JsxChildExpression extends JsxExpression {
         super(expression.dotDotDotToken, expression.expression);
     }
 
+    processBinary(expression: Binary, options?: toStringOptions, condition?: Expression[]) { 
+        return processBinary(expression, options, condition)
+    }
+
     compileSlot(slot: Property) {
         if (slot.name.toString() === "default" || slot.name.toString() === "children") {
             return `<ng-content></ng-content>`;
         }
         return `<ng-content select="[${slot.name}]"></ng-content>`;
+    }
+
+    createIfAttribute(condition: Expression) { 
+        return new AngularDirective(
+            new Identifier("*ngIf"),
+            condition
+        );
+    }
+
+    createJsxExpression(statement: Expression) { 
+        return new JsxExpression(undefined, statement);
+    }
+
+    createContainer(atributes: JsxAttribute[], children: Array<JsxExpression | JsxElement | JsxSelfClosingElement>) { 
+        const containerIdentifer = new Identifier("ng-container")
+        return new JsxElement(
+            new JsxOpeningElement(
+                containerIdentifer,
+                undefined,
+                atributes,
+                {}
+            ),
+            children,
+            new JsxClosingElement(containerIdentifer)
+        );
+    }
+
+    compileStatement(statement: Expression, condition?: Expression, options?: toStringOptions): string {
+        const conditionAttribute = this.createIfAttribute(condition!);
+
+        const expression = getJsxExpression(statement);
+        if (isElement(expression)) {
+            expression.addAttribute(conditionAttribute);
+            return expression.toString(options);
+        }
+        return this.createContainer(
+            [conditionAttribute],
+            [this.createJsxExpression(statement)]
+        ).toString(options);
+    }
+
+    compileConditionStatement(condition: Expression, thenStatement: Expression, elseStatement: Expression, options?: toStringOptions) { 
+        const result: string[] = [];
+        result.push(this.compileStatement(thenStatement, condition, options));
+        result.push(this.compileStatement(
+            elseStatement,
+            new Prefix(SyntaxKind.ExclamationToken,
+                new Paren(condition)
+            ),
+            options)
+        );
+
+        return result.join("\n");
     }
 
     getIeratorItemName(parameter: Identifier | BindingPattern, options: toStringOptions) {
@@ -501,7 +543,7 @@ export class JsxChildExpression extends JsxExpression {
         const expression = this.getExpression(options);
         
         if (expression instanceof Binary) { 
-            const parsedBinary = processBinary(expression, options);
+            const parsedBinary = this.processBinary(expression, options);
             if (parsedBinary) {
                 return parsedBinary.toString(options);
             }
@@ -544,18 +586,12 @@ export class JsxChildExpression extends JsxExpression {
                 }</ng-container>`;
         }
 
-        if (expression instanceof Conditional) { 
-            const result: string[] = [];
-            result.push(this.compileStatement(expression.thenStatement, expression.expression, options));
-            result.push(this.compileStatement(
+        if (expression instanceof Conditional) {
+            return this.compileConditionStatement(
+                expression.expression,
+                expression.thenStatement,
                 expression.elseStatement,
-                new Prefix(SyntaxKind.ExclamationToken,
-                    new Paren(expression.expression)
-                ),
-                options)
-            );
-
-            return result.join("\n");
+                options);
         }
 
         if (this.expression instanceof StringLiteral) { 

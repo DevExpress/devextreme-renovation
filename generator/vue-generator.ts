@@ -39,6 +39,8 @@ import {
     JsxChildExpression as BaseJsxChildExpression,
     JsxAttribute as BaseJsxAttribute,
     JsxSpreadAttribute as BaseJsxSpeadAttribute,
+    AngularDirective,
+    createProcessBinary,
     
 } from "./angular-generator";
 import { Decorator } from "./base-generator/expressions/decorator";
@@ -47,6 +49,7 @@ import { ComponentInput } from "./base-generator/expressions/component-input";
 import { checkDependency } from "./base-generator/utils/dependency";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access"
 import { JsxClosingElement } from "./base-generator/expressions/jsx";
+import { Binary } from "./base-generator/expressions/operators";
 
 function calculatePropertyType(type: TypeExpression): string { 
     if (type instanceof SimpleTypeExpression) {
@@ -375,7 +378,7 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
             return super.toString(options);
         }
         
-        return `${super.toString(options)}</${this.tagName}>`
+        return super.toString(options).replace(/>$/, "/>");
     }
 }
 
@@ -389,12 +392,60 @@ export class JsxExpression extends BaseJsxExpression {
    
 }
 
+export class VueDirective extends AngularDirective { }
+
+const processBinary = createProcessBinary((conditionExpression: Expression) => { 
+    return new VueDirective(new Identifier("v-if"), conditionExpression);
+})
+
 export class JsxChildExpression extends BaseJsxChildExpression { 
+
+    createJsxExpression(statement: Expression) { 
+        return new JsxExpression(undefined, statement);
+    }
+
+    createContainer(atributes: JsxAttribute[], children: Array<JsxExpression | JsxElement | JsxSelfClosingElement>) { 
+        const containerIdentifer = new Identifier("template")
+        return new JsxElement(
+            new JsxOpeningElement(
+                containerIdentifer,
+                undefined,
+                atributes,
+                {}
+            ),
+            children,
+            new JsxClosingElement(containerIdentifer)
+        );
+    }
+
+    createIfAttribute(condition?: Expression) {
+        return new VueDirective(
+            new Identifier(condition ? "v-if" : "v-else"),
+            condition || new SimpleExpression("")
+        );
+    }
+    
+    compileConditionStatement(condition: Expression, thenStatement: Expression, elseStatement: Expression, options?: toStringOptions) { 
+        const result: string[] = [];
+        result.push(this.compileStatement(thenStatement, condition, options));
+        result.push(this.compileStatement(
+            elseStatement,
+            undefined,
+            options)
+        );
+
+        return result.join("\n");
+    }
+
     compileSlot(slot: Property) {
         if (slot.name.toString() === "default" || slot.name.toString() === "children") {
             return `<slot></slot>`;
         }
         return `<slot name="${slot.name}"></slot>`;
+    }
+
+    processBinary(expression: Binary, options?: toStringOptions, condition?: Expression[]) { 
+        return processBinary(expression, options, condition)
     }
 }
 
