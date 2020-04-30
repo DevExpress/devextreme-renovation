@@ -242,10 +242,49 @@ export class VueComponent extends Component {
     compileTemplate() {
         const viewFunction = this.decorators[0].getViewFunction();
         if (viewFunction) {
-            this.template = viewFunction.getTemplate({
+            const options: toStringOptions = {
                 members: this.members,
                 newComponentContext: ""
-            });
+            };
+            this.template = viewFunction.getTemplate(options);
+
+            if (options.hasStyle) { 
+                this.methods.push(new Method(
+                    [],
+                    [],
+                    undefined,
+                    new Identifier("__processStyle"),
+                    undefined,
+                    [],
+                    [
+                        new Parameter(
+                            [],
+                            [],
+                            undefined,
+                            new Identifier("value"),
+                            undefined,
+                            undefined,
+                            undefined
+                        )
+                    ],
+                    undefined,
+                    new Block([
+                        new SimpleExpression(`
+                            if (typeof value === "object") {
+                                return Object.keys(value).reduce((v, k) => {
+                                    if (typeof value[k] === "number") {
+                                        v[k] = value[k] + "px";
+                                    } else {
+                                        v[k] = value[k];
+                                    }
+                                    return v;
+                                }, {});
+                            }
+                            return value;`
+                        )
+                    ], true)
+                ));
+            }
         }
     }
 

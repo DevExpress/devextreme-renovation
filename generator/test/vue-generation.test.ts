@@ -80,6 +80,10 @@ mocha.describe("vue-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("Add processStyle method", function () {
+        this.testGenerator("dx-inner-widget");
+    });
+
     mocha.it("required-props", function () {
         this.testGenerator(this.test!.title);
     });
