@@ -3,7 +3,7 @@ import { Component, OneWay } from "../../../component_declaration/common";
     viewModel: viewModel1,
     view: view1,
     defaultOptionRules: null,
-    jQuery: { register: true }
+    jQuery: { register: false }
 })
 export default class Widget {
     @OneWay() height: number;

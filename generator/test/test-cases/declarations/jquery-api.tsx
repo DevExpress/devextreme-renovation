@@ -10,7 +10,7 @@ class WidgetInput {
 
 @Component({
     view: view,
-    registerJQuery: true
+    jQuery: { register: true }
 })
 export default class Widget extends JSXComponent<WidgetInput> {
     @Ref() divRef!: HTMLDivElement;

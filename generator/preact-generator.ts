@@ -117,13 +117,25 @@ class JQueryComponent {
         `;
     }
 
-    compileImports() {
+    compileImports(component: Identifier) {
+        const context = this.source.context;
+
         const imports: string[] = [`import * as Preact from "preact"`];
         
-        imports.push(`import registerComponent from "${getModuleRelativePath(this.source.context.dirname!, this.source.context.jqueryComponentRegistratorModule!)}"`);
-        imports.push(`import Component from "${getModuleRelativePath(this.source.context.dirname!, this.source.context.jqueryBaseComponentModule!)}"`);
+        imports.push(`import registerComponent from "${getModuleRelativePath(context.dirname!, context.jqueryComponentRegistratorModule!)}"`);
 
-        const relativePath = getModuleRelativePath(this.source.context.dirname!, this.source.context.path!);
+        if(!component) {
+            imports.push(`import BaseComponent from "${getModuleRelativePath(context.dirname!, context.jqueryBaseComponentModule!)}"`);
+        } else {
+            const importClause = context.noncomponentImports!.find(i => 
+                i.importClause.name?.toString() === component.toString() || 
+                i.importClause.namedBindings?.node.some(n => n.toString() === component.toString()));
+            if(importClause) {
+                imports.push(importClause.toString());
+            }
+        }
+
+        const relativePath = getModuleRelativePath(context.dirname!, context.path!);
         imports.push(`import ${this.source.name}Component from '${processModuleFileName(relativePath.replace(path.extname(relativePath), ''))}'`);
 
         return imports.join(";\n");
@@ -145,7 +157,7 @@ class JQueryComponent {
         }
 
         return `
-        _getActionsMap() {
+        _getActionConfigs() {
             return {
                 ${statements.join(",\n")}
             };
@@ -154,15 +166,19 @@ class JQueryComponent {
     }
     
     toString() {
-        if(!((this.source.decorator.expression.arguments[0] as ObjectLiteral).getProperty("registerJQuery")?.toString() === "true"
-            && !!this.source.context.jqueryComponentRegistratorModule && !!this.source.context.jqueryBaseComponentModule)) {
+        const jQueryProp = (this.source.decorator.expression.arguments[0] as ObjectLiteral).getProperty("jQuery");
+        const registerJQuery = jQueryProp && (jQueryProp as ObjectLiteral).getProperty("register")?.toString() === "true"
+        const baseComponent = jQueryProp && (jQueryProp as ObjectLiteral).getProperty("component");
+
+        if(!(registerJQuery
+            && !!this.source.context.jqueryComponentRegistratorModule && (!!baseComponent || !!this.source.context.jqueryBaseComponentModule))) {
             return "";
         }
         
         return `
-        ${this.compileImports()}
+        ${this.compileImports(baseComponent as Identifier)}
 
-        export default class ${this.source.name} extends Component {
+        export default class ${this.source.name} extends ${baseComponent ? baseComponent.toString() : "BaseComponent"} {
             ${this.compileGetProps()}
             
             ${this.compileAPI()}
@@ -207,6 +223,7 @@ class JsxClosingElement extends ReactJsxClosingElement {
 export type GeneratorContext = BaseGeneratorContext & {
     jqueryComponentRegistratorModule?: string
     jqueryBaseComponentModule?: string
+    noncomponentImports?: ImportDeclaration[];
 }
 
 export class PreactGenerator extends Generator { 
@@ -216,6 +233,7 @@ export class PreactGenerator extends Generator {
     context: GeneratorContext[] = [];
 
     setContext(context: GeneratorContext | null) {
+        context && !context.noncomponentImports && (context.noncomponentImports = []);
         super.setContext(context);
     }
 
@@ -244,11 +262,13 @@ export class PreactGenerator extends Generator {
 
         const module = moduleSpecifier.expression.toString();
         const modulePath = `${module}.tsx`;
-        const context = this.getContext();
+        const context = this.getContext() as GeneratorContext;
         if (context.dirname) {
             const fullPath = path.resolve(context.dirname, modulePath);
             if (this.cache[fullPath]) { 
                 (importStatement as ImportDeclaration).replaceSpecifier(module, processModuleFileName(module));
+            } else {
+                importStatement && context.noncomponentImports!.push(importStatement as ImportDeclaration);
             }
         }
         return importStatement;
