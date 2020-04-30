@@ -4,6 +4,7 @@ import generator from "../vue-generator";
 
 import { printSourceCodeAst as getAst, removeSpaces } from "./helpers/common";
 import componentCreator from "./helpers/create-component";
+import { toStringOptions } from "../angular-generator";
 const { createDecorator } = componentCreator(generator);
 
 
@@ -713,6 +714,23 @@ mocha.describe("Vue-generator", function () {
                     );
         
                     assert.strictEqual(expression.toString(), `v-bind:class="value"`);
+                });
+
+                mocha.it("Parse style with options should fill hasClass", function () {
+                    const expression = generator.createJsxAttribute(
+                        generator.createIdentifier("style"),
+                        generator.createJsxExpression(
+                            undefined,
+                            generator.createIdentifier("value")
+                        )
+                    );
+    
+                    const options: toStringOptions = {
+                        members: []
+                    };
+
+                    assert.strictEqual(expression.toString(options), `v-bind:style="__processStyle(value)"`);
+                    assert.strictEqual(options.hasStyle, true);
                 });
             });
         });

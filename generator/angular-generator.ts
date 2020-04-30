@@ -64,8 +64,9 @@ export const counter = (function () {
 })();
 
 export interface toStringOptions extends  BaseToStringOptions {
-    members: Array<Property | Method>,
-    eventProperties?: Array<Property>
+    members: Array<Property | Method>;
+    eventProperties?: Array<Property>;
+    hasStyle?: boolean
 }
 
 function processTagName(tagName: Expression, context: GeneratorContext) { 

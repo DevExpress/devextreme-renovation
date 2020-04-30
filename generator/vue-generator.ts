@@ -352,6 +352,9 @@ export class JsxAttribute extends BaseJsxAttribute {
                 return "v-bind:class";
             }
             if (name === "style") { 
+                if (options) { 
+                    options.hasStyle = true;
+                }
                 return "v-bind:style";
             }
         }
