@@ -4,6 +4,7 @@
   "description": "Component generator",
   "scripts": {
     "test": "nyc mocha ./build/test --timeout 30000",
+    "test:with-reporters": "nyc --reporter clover mocha ./build/test --timeout 30000 --reporter mocha-junit-reporter --reporter-options mochaFile=./build/test/report/test-result.xml",
     "tsc": "tsc",
     "build": "gulp build",
     "build-dist": "gulp build-dist",
@@ -17,8 +18,10 @@
   "license": "MIT",
   "dependencies": {
     "@types/react": "^16.9.19",
+    "clover": "0.0.1",
     "code-block-writer": "^10.1.0",
     "gulp": "^4.0.2",
+    "mocha-junit-reporter": "^1.23.3",
     "react": "^16.13.1",
     "typescript": "^3.7.2"
   },
