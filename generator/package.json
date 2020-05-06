@@ -59,6 +59,9 @@
     "start-server-and-test": "^1.10.11",
     "testcafe": "^1.8.3",
     "ts-loader": "^6.2.2",
+    "vue": "^2.6.11",
+    "vue-loader": "^15.9.1",
+    "vue-template-compiler": "^2.6.11",
     "webpack": "^4.42.1",
     "webpack-dev-server": "^3.10.3",
     "zone.js": "^0.10.3"
