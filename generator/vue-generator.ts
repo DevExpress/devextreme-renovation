@@ -3,7 +3,8 @@ import { Component } from "./base-generator/expressions/component";
 import {
     Identifier,
     Call as BaseCall,
-    AsExpression as BaseAsExpression
+    AsExpression as BaseAsExpression,
+    CallChain as BaseCallChain
 } from "./base-generator/expressions/common";
 import { HeritageClause } from "./base-generator/expressions/class";
 import {
@@ -111,11 +112,15 @@ export class Property extends BaseProperty {
         if (this.questionOrExclamationToken === SyntaxKind.ExclamationToken) { 
             parts.push("required: true")
         }
-
-        if (this.initializer && !this.isState) { 
+        const isState = this.isState;
+        if (this.initializer && !isState) { 
             parts.push(`default(){
                 return ${this.initializer}
             }`)
+        }
+
+        if (this.isState) { 
+            parts.push("default: undefined");
         }
 
         return `${this.name}: {
@@ -126,7 +131,7 @@ export class Property extends BaseProperty {
     getter(componentContext?: string) { 
         const baseValue = super.getter(componentContext);
         componentContext = this.processComponentContext(componentContext);
-        if (this.isState) { 
+        if (this.isState) {
             return `(${componentContext}${this.name} !== undefined ? ${componentContext}${this.name} : ${componentContext}${this.name}_state)`;
         }
         if (this.isRef && componentContext.length) { 
@@ -315,7 +320,9 @@ export class VueComponent extends Component {
     generateMethods() { 
         const statements: string[] = [];
 
-        statements.push.apply(statements, this.methods.map(m => m.toString({
+        statements.push.apply(statements, this.methods
+            .concat(this.effects)
+            .map(m => m.toString({
             members: this.members,
             componentContext: "this",
             newComponentContext: "this"
@@ -324,6 +331,10 @@ export class VueComponent extends Component {
         return `methods: {
                 ${statements.join(",\n")}
          }`;
+    }
+
+    generateEffects() { 
+        
     }
 
     generateComponents() { 
@@ -341,6 +352,36 @@ export class VueComponent extends Component {
 
         return "";
     }
+
+    generateMounted() { 
+        const statements: string[] = this.effects.map((e, i) => { 
+            return `this.__destroyEffects[${i}]=this.${e.name}()`;
+        });
+
+        if (statements.length) { 
+            return `mounted(){
+                ${statements.join(";\n")}
+            }`;
+        }
+
+        return "";
+    }
+
+    generateCreated() { 
+        const statements: string[] = [];
+
+        if (this.effects.length) { 
+            statements.push("this.__destroyEffects=[]");
+        }
+
+        if (statements.length) { 
+            return `created(){
+                ${statements.join(";\n")}
+            }`;
+        }
+
+        return "";
+    }
     
     toString() { 
         this.compileTemplate();
@@ -349,7 +390,9 @@ export class VueComponent extends Component {
             this.generateComponents(),
             this.generateProps(),
             this.generateData(),
-            this.generateMethods()
+            this.generateMethods(),
+            this.generateCreated(),
+            this.generateMounted(),
         ].filter(s => s);
         return `${this.modifiers.join(" ")} {
             ${statements.join(",\n")}
@@ -362,20 +405,30 @@ function getEventName(name: Identifier, suffix="") {
     if (suffix) { 
         words.push(suffix);
     }
-    return `"${words.join("-")}"`;
+    return `${words.join("-")}`;
+}
+
+function generateCallEvent(call: Call | CallChain, options?: toStringOptions): string {
+    let expression: Expression = call.expression;
+    if (call.expression instanceof Identifier && options?.variables?.[expression.toString()]) { 
+        expression = options.variables[expression.toString()];
+    }
+    const eventMember = checkDependency(expression, options?.members.filter(m => m.isEvent));
+    if (eventMember) { 
+        return `this.$emit("${getEventName(eventMember._name)}", ${call.argumentsArray.map(a => a.toString(options)).join(",")})`;
+    }
+    return "";
 }
 
 export class Call extends BaseCall { 
     toString(options?: toStringOptions) { 
-        let expression: Expression = this.expression;
-        if (this.expression instanceof Identifier && options?.variables?.[expression.toString()]) { 
-            expression = options.variables[expression.toString()];
-        }
-        const eventMember = checkDependency(expression, options?.members.filter(m => m.isEvent));
-        if (eventMember) { 
-            return `this.$emit(${getEventName(eventMember._name)}, ${this.argumentsArray.map(a => a.toString(options)).join(",")})`;
-        }
-        return super.toString(options);
+        return generateCallEvent(this, options) || super.toString(options);
+    }
+}
+
+export class CallChain extends BaseCallChain { 
+    toString(options?: toStringOptions): string { 
+        return generateCallEvent(this, options) || super.toString(options);
     }
 }
 
@@ -385,7 +438,7 @@ export class PropertyAccess extends BasePropertyAccess {
         const propertyName = isState ? `${property.name}_state` : property.name;
         const stateSetting = `this.${propertyName}=${state}`;
         if (isState) { 
-            return `${stateSetting},\nthis.emit(${getEventName(property._name, "change")}, this.${propertyName})`;
+            return `${stateSetting},\nthis.$emit("${getEventName(property._name, "change")}", this.${propertyName})`;
         }
         return stateSetting;
     }
@@ -432,7 +485,7 @@ export class JsxAttribute extends BaseJsxAttribute {
     }
 
     compileEvent(options?: toStringOptions) { 
-        return `@${this.name}="${this.compileInitializer(options)}"`;
+        return `@${getEventName(this.name)}="${this.compileInitializer(options)}"`;
     }
 
     compileBase(name: string, value: string) { 
@@ -597,6 +650,10 @@ class VueGenerator extends BaseGenerator {
 
     createCall(expression: Expression, typeArguments: any, argumentsArray?: Expression[]) {
         return new Call(expression, typeArguments, argumentsArray);
+    }
+
+    createCallChain(expression: Expression, questionDotToken: string | undefined, typeArguments: any, argumentsArray: Expression[] | undefined) {
+        return new CallChain(expression, questionDotToken, typeArguments, argumentsArray);
     }
 
     createParameter(decorators: Decorator[] = [], modifiers: string[] = [], dotDotDotToken: any, name: Identifier|BindingPattern, questionToken?: string, type?: TypeExpression, initializer?: Expression) {

@@ -104,4 +104,8 @@ mocha.describe("vue-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("effect", function () {
+        this.testGenerator(this.test!.title);
+    });
+
 });

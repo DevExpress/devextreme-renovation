@@ -248,7 +248,7 @@ mocha.describe("Vue-generator", function () {
             });
 
             mocha.describe("TwoWay", function () { 
-                mocha.it("shouldn't have initializer", function () {
+                mocha.it("should always have undefined initializer", function () {
                     const expression = generator.createProperty(
                         [createDecorator("TwoWay")],
                         undefined,
@@ -258,7 +258,7 @@ mocha.describe("Vue-generator", function () {
                         generator.createTrue()
                     );
             
-                    assert.strictEqual(getAst(expression.toString()), getAst("p: {type: Boolean}"));
+                    assert.strictEqual(getAst(expression.toString()), getAst("p: {type: Boolean, default: undefined}"));
                 });
             });
 
@@ -419,6 +419,32 @@ mocha.describe("Vue-generator", function () {
                     click: propertyAccess
                 }
             }), 'this.$emit("on-click", 10)');
+        });
+
+        mocha.it("CallChain expression generates emit if call Event", function () { 
+            const member = generator.createProperty(
+                [createDecorator("Event")],
+                undefined,
+                generator.createIdentifier("onClick")
+            )
+            assert.equal(generator.createCallChain(
+                generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("onClick")
+                ),
+                generator.SyntaxKind.QuestionDotToken,
+                undefined,
+                [generator.createNumericLiteral("10")]
+            ).toString({members: [member]}), 'this.$emit("on-click", 10)');
+        });
+
+        mocha.it("CallChain expression generates usual call if not event", function () { 
+            assert.equal(generator.createCallChain(
+                generator.createIdentifier("a"),
+                generator.SyntaxKind.QuestionDotToken,
+                undefined,
+                [generator.createNumericLiteral("10")]
+            ).toString(), 'a?.(10)');
         });
     });
 
