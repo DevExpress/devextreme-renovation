@@ -193,9 +193,11 @@ export class VueComponentInput extends ComponentInput {
         const members = this.baseTypes.map(t => `...${t}`)
             .concat(this.members.map(m => m.toString()))
             .filter(m => m);
-        return `${this.modifiers.join(" ")} const ${this.name} = {
+        const modifiers = this.modifiers.indexOf(SyntaxKind.DefaultKeyword) === -1 ? this.modifiers : [];
+        return `${modifiers.join(" ")} const ${this.name} = {
             ${members.join(",")}
-        }`;
+        };
+        ${modifiers !== this.modifiers ? `${this.modifiers.join(" ")} ${this.name}`: ""}`;
     }
 }
 
