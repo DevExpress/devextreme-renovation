@@ -42,6 +42,7 @@ steps:
     testResultsFiles: './generator/build/test/report/test-result.xml'
 
 - task: PublishCodeCoverageResults@1
+  condition: succeededOrFailed()
   inputs: 
     codeCoverageTool: Cobertura
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
