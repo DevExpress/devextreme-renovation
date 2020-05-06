@@ -32,8 +32,21 @@ steps:
 
 - script: |
     cd ./generator
-    npm run test
+    npm run test:with-reporters
   displayName: 'tests'
+
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
+  inputs:
+    testRunner: JUnit
+    testResultsFiles: './generator/build/test/report/test-result.xml'
+
+- task: PublishCodeCoverageResults@1
+  condition: succeededOrFailed()
+  inputs: 
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
 
 - script: |
     cd ./generator
