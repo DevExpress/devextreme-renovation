@@ -49,7 +49,6 @@ import { BindingPattern } from "./base-generator/expressions/binding-pattern";
 import { ComponentInput } from "./base-generator/expressions/component-input";
 import { checkDependency } from "./base-generator/utils/dependency";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access"
-import { JsxClosingElement } from "./base-generator/expressions/jsx";
 import { Binary } from "./base-generator/expressions/operators";
 
 function calculatePropertyType(type: TypeExpression): string { 
@@ -326,11 +325,28 @@ export class VueComponent extends Component {
                 ${statements.join(",\n")}
          }`;
     }
+
+    generateComponents() { 
+        const components = Object.keys(this.context.components || {})
+            .filter((k) => {
+                const component = this.context.components?.[k];
+                return component instanceof VueComponent && component !== this
+            });
+        
+        if (components.length) { 
+            return `components: {
+                ${components.join(",\n")}
+            }`;
+        }
+
+        return "";
+    }
     
     toString() { 
         this.compileTemplate();
 
         const statements = [
+            this.generateComponents(),
             this.generateProps(),
             this.generateData(),
             this.generateMethods()
@@ -415,6 +431,10 @@ export class JsxAttribute extends BaseJsxAttribute {
         return value;
     }
 
+    compileEvent(options?: toStringOptions) { 
+        return `@${this.name}="${this.compileInitializer(options)}"`;
+    }
+
     compileBase(name: string, value: string) { 
         const prefix = name.startsWith("v-bind") ? "" : ":";
         return `${prefix}${name}="${value}"`;
@@ -432,12 +452,28 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     constructor(tagName: Expression, typeArguments: any, attributes: Array<JsxAttribute | JsxSpreadAttribute> = [], context: GeneratorContext) { 
         super(tagName, typeArguments, attributes, context);
         this.attributes = attributes;
+        if (this.component) { 
+            const components = this.context.components!;
+            const name = (Object.keys(components).find(k => components[k] === this.component) || "");
+    
+            this.tagName = new SimpleExpression(name);
+        }
     }
 
     compileTemplate(templateProperty: Property, options?: toStringOptions) {
         const attributes = this.attributes.map(a => a.getTemplateProp(options));
         return `<slot name="${templateProperty.name}" ${attributes.join(" ")}></slot>`;
     }
+}
+
+export class JsxClosingElement extends JsxOpeningElement { 
+    constructor(tagName: Expression, context: GeneratorContext) { 
+        super(tagName, [], [], context);
+    }
+
+    toString(options: toStringOptions) {
+        return `</${this.tagName.toString(options)}>`;
+     }
 }
 
 export class JsxSelfClosingElement extends JsxOpeningElement { 
@@ -482,7 +518,7 @@ export class JsxChildExpression extends BaseJsxChildExpression {
                 {}
             ),
             children,
-            new JsxClosingElement(containerIdentifer)
+            new JsxClosingElement(containerIdentifer, {})
         );
     }
 
@@ -588,6 +624,10 @@ class VueGenerator extends BaseGenerator {
 
     createJsxSelfClosingElement(tagName: Expression, typeArguments?: any, attributes?: Array<JsxAttribute | JsxSpreadAttribute>) {
         return new JsxSelfClosingElement(tagName, typeArguments, attributes, this.getContext());
+    }
+
+    createJsxClosingElement(tagName: Expression) {
+        return new JsxClosingElement(tagName, this.getContext());
     }
 
     createJsxElement(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: JsxClosingElement) {

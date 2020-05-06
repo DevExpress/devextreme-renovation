@@ -91,8 +91,8 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         super(processTagName(tagName, context), typeArguments, attributes);
         this.context = context;
         const component = context.components?.[tagName.toString()];
-        if (component instanceof AngularComponent) { 
-            this.component = component;
+        if (component instanceof Component) { 
+            this.component = component as AngularComponent;
         }
         this.attributes = attributes;
     }
