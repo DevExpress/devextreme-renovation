@@ -150,6 +150,10 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("component-bindings-only", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("import-component", function () {
         this.testGenerator(this.test!.title);
     });
@@ -158,7 +162,7 @@ mocha.describe("react-generator", function () {
         this.beforeEach(function () {
             generator.defaultOptionsModule = "../component_declaration/default_options";
             generator.setContext({
-                dirname: path.resolve(__dirname, "./test-cases/expected/react"),
+                dirname: path.resolve(__dirname, "./test-cases/declarations"),
                 defaultOptionsModule: path.resolve(generator.defaultOptionsModule)
             });
         });
@@ -173,6 +177,10 @@ mocha.describe("react-generator", function () {
         });
 
         mocha.it("required-props", function () {
+            this.testGenerator(this.test!.title);
+        });
+
+        mocha.it("use-external-component-bindings", function () {
             this.testGenerator(this.test!.title);
         });
     

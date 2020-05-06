@@ -281,7 +281,11 @@ export default class Generator {
 
                 if (importClause.default) {
                     this.addComponent(importClause.default.toString(), this.cache[modulePath]
-                        .find((e: any) => e instanceof Component), importClause);
+                        .find((e: any) =>
+                            (e instanceof Component ||
+                            e instanceof ComponentInput) &&
+                            e.modifiers.find(m => m === SyntaxKind.DefaultKeyword)
+                        ), importClause);
                 }
 
                 const componentInputs: ComponentInput[] = this.cache[modulePath]

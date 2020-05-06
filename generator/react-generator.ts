@@ -63,15 +63,18 @@ export class ComponentInput extends BaseComponentInput {
             ${this.members.filter(m => !(m as Property).inherited).map(p => p.typeDeclaration()).join(";\n")}
         }`]).join("&")}`;
 
+        const declarationModifiers = this.modifiers.indexOf("default") !== -1 ? [] : this.modifiers;
+
         return `${typeDeclaration}
-        ${this.modifiers.join(" ")} const ${this.name}:${typeName}={
+        ${declarationModifiers.join(" ")} const ${this.name}:${typeName}={
            ${inherited.concat(
-               this.members
-                   .filter(m => !(m as Property).inherited && (m as Property).initializer && 
-                   (m.decorators.find(d => d.name !== "TwoWay") || (m as Property).questionOrExclamationToken !== "?"))
-                   .map(p => (p as Property).defaultDeclaration())
-           ).join(",\n")}
-        };`;
+            this.members
+                .filter(m => !(m as Property).inherited && (m as Property).initializer &&
+                    (m.decorators.find(d => d.name !== "TwoWay") || (m as Property).questionOrExclamationToken !== "?"))
+                .map(p => (p as Property).defaultDeclaration())
+        ).join(",\n")}
+        };
+        ${declarationModifiers !== this.modifiers ? `${this.modifiers.join(" ")} ${this.name}` : ""}`;
     }
 }
 
@@ -424,7 +427,10 @@ export class ReactComponent extends Component {
     }
 
     compileDefaultOptionsPropsType() { 
-        return this.isJSXComponent ? `${this.heritageClauses[0].propsType.type}Type` : this.compilePropsType();
+        if (this.isJSXComponent && this.heritageClauses[0].propsType.typeArguments.length) { 
+            return this.heritageClauses[0].propsType.typeArguments[0].toString();
+        }
+        return super.compileDefaultOptionsPropsType();
     }
 
     getToStringOptions() { 
