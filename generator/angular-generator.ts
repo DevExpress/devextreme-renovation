@@ -137,14 +137,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         }, [] as JsxAttribute[])
     }
 
-    attributesString(options?: toStringOptions) {
-        if (this.component && options) { 
-            options = {
-                ...options,
-                eventProperties: this.component.members.filter(m => m.decorators.find(d => d.name === "Event")) as Property[]
-            }
-        }
-
+    processSpreadAttributes(options?: toStringOptions) { 
         const spreadAttributes = this.attributes.filter(a => a instanceof JsxSpreadAttribute) as JsxSpreadAttribute[];
         if (spreadAttributes.length) { 
             spreadAttributes.forEach(spreadAttr => {
@@ -167,6 +160,18 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
                 );
             }
         }
+    }
+
+    attributesString(options?: toStringOptions) {
+        if (this.component && options) { 
+            options = {
+                ...options,
+                eventProperties: this.component.members.filter(m => m.decorators.find(d => d.name === "Event")) as Property[]
+            }
+        }
+
+        this.processSpreadAttributes(options);
+        
         return super.attributesString(options);
     }
 

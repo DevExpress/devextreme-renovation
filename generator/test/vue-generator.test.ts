@@ -935,7 +935,7 @@ mocha.describe("Vue-generator", function () {
                     members: [templateProperty],
                     componentContext: "viewModel",
                     newComponentContext: ""
-                }), `<slot name="template" :v-bind:p1="10" :v-bind:p2="'11'"></slot>`);
+                }), `<slot name="template" v-bind:p1="10" v-bind:p2="'11'"></slot>`);
             });
 
             mocha.it("<template></template> -> <slot></slot>", function () {
@@ -1000,7 +1000,7 @@ mocha.describe("Vue-generator", function () {
                     members: [templateProperty],
                     componentContext: "viewModel",
                     newComponentContext: ""
-                }), `<slot name="template" :v-bind="item"></slot>`);
+                }), `<slot name="template" v-bind="item"></slot>`);
             });
         });
 
