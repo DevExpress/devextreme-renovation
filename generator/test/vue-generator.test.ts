@@ -568,7 +568,7 @@ mocha.describe("Vue-generator", function () {
         mocha.it("Component Binding should be an object", function () { 
             const expression = generator.createClassDeclaration(
                 [createDecorator("ComponentBindings")],
-                ["export", "default"],
+                ["export"],
                 generator.createIdentifier("Props"),
                 [],
                 [],
@@ -592,7 +592,7 @@ mocha.describe("Vue-generator", function () {
                 ]
             );
 
-            assert.strictEqual(getAst(expression.toString()), getAst(`export default const Props = {
+            assert.strictEqual(getAst(expression.toString()), getAst(`export const Props = {
                 p: {type: String},
                 p1: {type: Number}
             }`));
@@ -601,7 +601,7 @@ mocha.describe("Vue-generator", function () {
         mocha.it("Component with heritage clauses", function () { 
             const expression = generator.createClassDeclaration(
                 [createDecorator("ComponentBindings")],
-                ["export", "default"],
+                ["export"],
                 generator.createIdentifier("Props"),
                 [],
                 [
@@ -624,7 +624,7 @@ mocha.describe("Vue-generator", function () {
                 ]
             );
 
-            assert.strictEqual(getAst(expression.toString()), getAst(`export default const Props = {
+            assert.strictEqual(getAst(expression.toString()), getAst(`export const Props = {
                 ...Base,
                 p: {type: String}
             }`));
