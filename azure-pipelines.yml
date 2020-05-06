@@ -44,8 +44,8 @@ steps:
 - task: PublishCodeCoverageResults@1
   inputs: 
     codeCoverageTool: Cobertura
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
-    reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
+    summaryFileLocation: './generator/coverage/clover.xml'
+    reportDirectory: './generator/coverage/'
 
 - script: |
     cd ./generator
