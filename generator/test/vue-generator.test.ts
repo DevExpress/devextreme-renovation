@@ -5,7 +5,7 @@ import generator from "../vue-generator";
 import { printSourceCodeAst as getAst, removeSpaces } from "./helpers/common";
 import componentCreator from "./helpers/create-component";
 import { toStringOptions } from "../angular-generator";
-const { createDecorator } = componentCreator(generator);
+const { createDecorator, createComponentDecorator } = componentCreator(generator);
 
 
 mocha.describe("Vue-generator", function () { 
@@ -1117,7 +1117,81 @@ mocha.describe("Vue-generator", function () {
             });
         });
 
-      
+        mocha.describe("Import widget.", function () {
+            this.beforeEach(function () {
+                generator.setContext({
+                    dirname: __dirname
+                });
+                generator.createImportDeclaration(
+                    [],
+                    [],
+                    generator.createImportClause(
+                        generator.createIdentifier("DxWidget"),
+                        undefined
+                    ),
+                    generator.createStringLiteral("./test-cases/declarations/component-input")
+                );
+            });
+
+            this.afterEach(function () {
+                generator.setContext(null);
+            });
+
+            mocha.it("<DxWidget></DxWidget> -> <dx-widget></dx-widget>", function () {
+                const element = generator.createJsxElement(
+                    generator.createJsxOpeningElement(generator.createIdentifier("DxWidget")),
+                    [],
+                    generator.createJsxClosingElement(generator.createIdentifier("DxWidget"))
+                );
+
+                assert.strictEqual(element.toString(), "<DxWidget ></DxWidget>");
+            });
+
+            mocha.it("<DxWidget/> -> <dx-widget/>", function () {
+                const element = generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("DxWidget"),
+                    []
+                );
+
+                assert.strictEqual(element.toString(), "<DxWidget />");
+            });
+
+            mocha.it("Process event - @event", function () {
+                generator.createClassDeclaration(
+                    [createComponentDecorator({})],
+                    [],
+                    generator.createIdentifier("Widget"),
+                    [],
+                    [],
+                    [
+                    generator.createProperty(
+                        [createDecorator("Event")],
+                        [],
+                        generator.createIdentifier("event"),
+                        undefined,
+                        undefined,
+                        undefined
+                    )]
+                );
+
+                const element = generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("Widget"),
+                    [],
+                    [
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("event"),
+                            generator.createIdentifier("value")
+                        )
+                    ]
+                );
+
+                assert.strictEqual(element.toString({
+                    members: []
+                }), `<Widget @event="value"/>`);        
+            });
+
+        });
+
     });
     
 });
