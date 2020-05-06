@@ -1,16 +1,12 @@
 <template>
  <div>
-    <dx-app
-      :width="100"
-      :height="100"
-    >
-      <div>Click!!</div>
+    <dx-app>
     </dx-app>
  </div>
 </template>
 <script>
 
-import DxApp from "../../../../components/button.tsx";
+import DxApp from "../../../../components/app.tsx";
 
 export default {
   components: {
@@ -18,7 +14,7 @@ export default {
   },
 
   data() {
-   
+   return {};
   },
   methods: {
    

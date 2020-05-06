@@ -1,6 +1,6 @@
 <template>
   <div>
-      <slot name="contentTemplate" :v-bind:p1="'value'"></slot>
+      <slot name="contentTemplate" v-bind:p1="'value'"></slot>
         <slot name="template"></slot>
       </div>
 </template>

@@ -399,7 +399,7 @@ export class AsExpression extends BaseAsExpression {
 
 export class JsxAttribute extends BaseJsxAttribute { 
     getTemplateProp(options?: toStringOptions) {
-        return `:v-bind:${this.name}="${this.compileInitializer(options)}"`;
+        return `v-bind:${this.name}="${this.compileInitializer(options)}"`;
     }
 
     compileName(options?: toStringOptions) { 
@@ -443,7 +443,11 @@ export class JsxAttribute extends BaseJsxAttribute {
 
 export class JsxSpreadAttribute extends BaseJsxSpeadAttribute { 
     getTemplateProp(options?: toStringOptions) { 
-        return `:v-bind="${this.expression.toString(options)}"`;
+        return this.toString(options)
+    }
+
+    toString(options?: toStringOptions) { 
+        return `v-bind="${this.expression.toString(options)}"`;
     }
 }
 
@@ -463,6 +467,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     compileTemplate(templateProperty: Property, options?: toStringOptions) {
         const attributes = this.attributes.map(a => a.getTemplateProp(options));
         return `<slot name="${templateProperty.name}" ${attributes.join(" ")}></slot>`;
+    }
+
+    processSpreadAttributes() { 
+
     }
 }
 
