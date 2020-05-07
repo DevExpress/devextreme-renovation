@@ -2,7 +2,7 @@ import { Component, ComponentBindings, JSXComponent } from "../../../component_d
 import InnerWidget from './dx-inner-widget';
 
 function view(model: Widget) { 
-    return <InnerWidget selected={false} {...model.attr1} />;
+    return <InnerWidget selected={false} {...model.attr1} {...model.restAttributes} />;
 }
 
 @ComponentBindings()

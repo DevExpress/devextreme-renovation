@@ -11,7 +11,7 @@ import {  Call } from "./base-generator/expressions/common";
 import { Decorator as BaseDecorator } from "./base-generator/expressions/decorator";
 import { VariableDeclaration as BaseVariableDeclaration } from "./base-generator/expressions/variables";
 import {
-    Property as BaseProperty, Method
+    Property as BaseProperty, Method, GetAccessor
 } from "./base-generator/expressions/class-members"
 import {
     toStringOptions as BaseToStringOptions,
@@ -112,6 +112,14 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     spreadToArray(spreadAttributes: JsxSpreadAttribute, options?: toStringOptions) {
         const component = this.component;
         const properties = component && getProps(component.members) || [];
+
+        if (spreadAttributes.expression instanceof PropertyAccess) { 
+            const member = spreadAttributes.expression.getMember(options);
+            if (member && member instanceof GetAccessor && member._name.toString() === "restAttributes") { 
+                return [];
+            }
+        }
+        
         return properties.reduce((acc, prop: Method | BaseProperty) => {
             const propName = prop._name;
             const spreadValueExpression = new PropertyAccess(
@@ -122,8 +130,9 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
             const isPropsScope = spreadValueExpression.isPropsScope(options);
             const members = spreadValueExpression.getMembers(options);
             const hasMember = members?.some(m => m._name.toString() === propName.toString())
-            if(isPropsScope && !hasMember)
+            if (isPropsScope && !hasMember) {
                 return acc;
+            }
             
             const spreadValue = spreadValueExpression.toString(options);
             const attr = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === propName.toString()) as JsxAttribute;
