@@ -113,9 +113,13 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         const component = this.component;
         const properties = component && getProps(component.members) || [];
 
-        if (spreadAttributes.expression instanceof PropertyAccess) { 
-            const member = spreadAttributes.expression.getMember(options);
-            if (member && member instanceof GetAccessor && member._name.toString() === "restAttributes") { 
+        const spreadAttributesExpression = spreadAttributes.expression instanceof Identifier &&
+            options?.variables?.[spreadAttributes.expression.toString()] ||
+            spreadAttributes.expression;
+
+        if (spreadAttributesExpression instanceof BasePropertyAccess) { 
+            const member = spreadAttributesExpression.getMember(options);
+            if (member instanceof GetAccessor && member._name.toString() === "restAttributes") { 
                 return [];
             }
         }
@@ -123,7 +127,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         return properties.reduce((acc, prop: Method | BaseProperty) => {
             const propName = prop._name;
             const spreadValueExpression = new PropertyAccess(
-                spreadAttributes.expression,
+                spreadAttributesExpression,
                 propName
             );
 
