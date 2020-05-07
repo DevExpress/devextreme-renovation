@@ -10,7 +10,7 @@ const { createDecorator, createComponentDecorator, createComponent } = component
 
 mocha.describe("Vue-generator", function () { 
     mocha.describe("Expressions", function () { 
-        mocha.describe.only("common", function () { 
+        mocha.describe("common", function () { 
             mocha.it("NonNullExpression", function () {
                 const expression = generator.createPropertyAccess(
                     generator.createThis(),
@@ -473,7 +473,7 @@ mocha.describe("Vue-generator", function () {
             ).toString({members: [member]}), 'this.$emit("on-click", 10)');
         });
 
-        mocha.it.only("Call expression generates emit if call NonNulable expression with event", function () { 
+        mocha.it("Call expression generates emit if call NonNulable expression with event", function () { 
             const member = generator.createProperty(
                 [createDecorator("Event")],
                 undefined,
