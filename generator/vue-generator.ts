@@ -1,5 +1,5 @@
 import BaseGenerator from "./base-generator";
-import { Component } from "./base-generator/expressions/component";
+import { Component, getProps } from "./base-generator/expressions/component";
 import {
     Identifier,
     Call as BaseCall,
@@ -317,7 +317,7 @@ export class VueComponent extends Component {
         return "";
     }
 
-    generateMethods() { 
+    generateMethods(externalStatements: string[]) { 
         const statements: string[] = [];
 
         statements.push.apply(statements, this.methods
@@ -328,13 +328,57 @@ export class VueComponent extends Component {
             newComponentContext: "this"
         })));
 
+
         return `methods: {
-                ${statements.join(",\n")}
+            ${statements.concat(externalStatements).join(",\n")}
          }`;
     }
 
-    generateEffects() { 
-        
+    generateWatch(methods: string[]) { 
+        const watches: { [name: string]: string[] } = {};
+
+        this.effects.forEach((effect, index) => { 
+            const props: Array<BaseProperty | BaseMethod> = getProps(this.members);
+            const dependency = effect.getDependency(
+                props.concat((this.members.filter(m=>m.isInternalState)))
+            );
+
+            const scheduleEffectName = `__schedule_${effect.name}`;
+
+            if (dependency.length) { 
+                methods.push(`
+                    ${scheduleEffectName}() {
+                        this.__scheduleEffects[${index}]=()=>{
+                            this.__destroyEffects[${index}]&&this.__destroyEffects[${index}]();
+                            this.__destroyEffects[${index}]=this.${effect.name}();
+                        }
+                    }
+                `);
+            }
+
+            dependency.forEach(d => { 
+                watches[d] = watches[d] || [];
+                watches[d].push(`
+                    "${scheduleEffectName}"
+                `);
+            });
+        });
+
+        const watchStatements = Object.keys(watches).map(k => { 
+            return `${k}: [
+                ${watches[k].join(",\n")}
+            ]`
+        });
+
+        if (watchStatements.length) { 
+            return `
+                watch: {
+                    ${watchStatements.join(",\n")}
+                }
+            `;
+        }
+
+        return "";
     }
 
     generateComponents() { 
@@ -372,6 +416,7 @@ export class VueComponent extends Component {
 
         if (this.effects.length) { 
             statements.push("this.__destroyEffects=[]");
+            statements.push("this.__scheduleEffects=[]");
         }
 
         if (statements.length) { 
@@ -382,18 +427,65 @@ export class VueComponent extends Component {
 
         return "";
     }
+
+    generateUpdated() { 
+        const statements: string[] = [];
+
+        if (this.effects.length) { 
+            statements.push(`
+                this.__scheduleEffects.forEach((_,i)=>{
+                    this.__scheduleEffects[i]&&this.__scheduleEffects[i]()
+                });
+            `);
+        }
+
+        if (statements.length) { 
+            return `updated(){
+                ${statements.join(";\n")}
+            }`;
+        }
+
+        return "";
+    }
+
+    generateBeforeDestroyed() { 
+        const statements: string[] = [];
+
+        if (this.effects.length) { 
+            statements.push(`
+                this.__destroyEffects.forEach((_,i)=>{
+                    this.__destroyEffects[i]&&this.__destroyEffects[i]()
+                });
+                this.__destroyEffects = null;
+            `);
+        }
+
+        if (statements.length) { 
+            return `beforeDestoyed(){
+                ${statements.join("\n")}
+            }`;
+        }
+
+        return "";
+    }
     
     toString() { 
         this.compileTemplate();
+
+        const methods: string[] = [];
 
         const statements = [
             this.generateComponents(),
             this.generateProps(),
             this.generateData(),
-            this.generateMethods(),
+            this.generateWatch(methods),
+            this.generateMethods(methods),
             this.generateCreated(),
             this.generateMounted(),
+            this.generateUpdated(),
+            this.generateBeforeDestroyed()
         ].filter(s => s);
+
         return `${this.modifiers.join(" ")} {
             ${statements.join(",\n")}
         }`;

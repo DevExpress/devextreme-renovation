@@ -1,4 +1,3 @@
-     
 <script>
 function view(model) {}
 function subscribe(p, s, i) {
@@ -28,6 +27,12 @@ export default {
       s_state: this.s !== undefined ? this.s : 10
     };
   },
+
+  watch: {
+    p: ["__schedule_setupData"],
+    s: ["__schedule_setupData"],
+    i: ["__schedule_setupData"]
+  },
   methods: {
     __restAttributes() {
       return {};
@@ -40,13 +45,32 @@ export default {
       );
       this.i = 15;
       return () => unsubscribe(id);
+    },
+
+    __schedule_setupData() {
+      this.__scheduleEffects[0] = () => {
+        this.__destroyEffects[0] && this.__destroyEffects[0]();
+        this.__destroyEffects[0] = this.setupData();
+      };
     }
   },
   created() {
     this.__destroyEffects = [];
+    this.__scheduleEffects = [];
   },
   mounted() {
     this.__destroyEffects[0] = this.setupData();
+  },
+  updated() {
+    this.__scheduleEffects.forEach((_, i) => {
+      this.__scheduleEffects[i] && this.__scheduleEffects[i]();
+    });
+  },
+  beforeDestoyed() {
+    this.__destroyEffects.forEach((_, i) => {
+      this.__destroyEffects[i] && this.__destroyEffects[i]();
+    });
+    this.__destroyEffects = null;
   }
 };
 </script>
