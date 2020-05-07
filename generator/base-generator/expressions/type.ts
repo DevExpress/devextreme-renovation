@@ -222,3 +222,38 @@ export class IndexedAccessTypeNode extends TypeExpression {
         return `${this.objectType}[${this.indexType}]`;
     }
 }
+
+export class QualifiedName extends TypeExpression { 
+    left: Expression;
+    right: Identifier;
+
+    constructor(left: Expression, right: Identifier) { 
+        super();
+        this.left = left;
+        this.right = right
+    }
+
+    toString() { 
+        return `${this.left}.${this.right}`;
+    }
+}
+
+export class MethodSignature extends TypeExpression { 
+    typeParameters: any;
+    parameters: Parameter[];
+    type: TypeExpression;
+    name: Identifier;
+    questionToken?:string
+    constructor(typeParameters: any, parameters: Parameter[]=[], type: TypeExpression=new SimpleTypeExpression("any"), name: Identifier, questionToken?: string) { 
+        super();
+        this.typeParameters = typeParameters;
+        this.parameters = parameters;
+        this.type = type;
+        this.name = name;
+        this.questionToken = questionToken;
+    }
+
+    toString() { 
+        return `${this.name}(${this.parameters})${compileType(this.type.toString(), this.questionToken)}`;
+    }
+}

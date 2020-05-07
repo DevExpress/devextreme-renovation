@@ -16,7 +16,6 @@ const generator = new Generator();
 
 import componentCreator from "./helpers/create-component";
 import { toStringOptions } from "../base-generator/types";
-import { Property, Method } from "../base-generator/expressions/class-members";
 
 const { createComponentDecorator, createDecorator} = componentCreator(generator);
 
@@ -414,6 +413,58 @@ mocha.describe("base-generator: expressions", function () {
             );
     
             assert.equal(expression.toString(), "[name:string]:number");
+        });
+
+        mocha.it("createQualifiedName", function () { 
+            const expression = generator.createQualifiedName(
+                generator.createIdentifier("left"),
+                generator.createIdentifier("right")
+            );
+
+            assert.strictEqual(expression.toString(), "left.right");
+        });
+
+        mocha.it("createMethodSignature", function () { 
+            assert.strictEqual(generator.createMethodSignature(
+                undefined,
+                [],
+                undefined,
+                generator.createIdentifier("name"),
+                undefined
+            ).toString(), "name():any");
+
+            assert.strictEqual(generator.createMethodSignature(
+                undefined,
+                [],
+                generator.createKeywordTypeNode("string"),
+                generator.createIdentifier("name"),
+                generator.SyntaxKind.QuestionToken
+            ).toString(), "name()?:string");
+
+            assert.strictEqual(generator.createMethodSignature(
+                undefined,
+                [
+                    generator.createParameter(
+                        undefined,
+                        undefined,
+                        undefined,
+                        generator.createIdentifier("a"),
+                        undefined,
+                        generator.createKeywordTypeNode("string")
+                    ), 
+                    generator.createParameter(
+                        undefined,
+                        undefined,
+                        undefined,
+                        generator.createIdentifier("b"),
+                        undefined,
+                        generator.createKeywordTypeNode("string")
+                    )
+                ],
+                undefined,
+                generator.createIdentifier("name"),
+                undefined
+            ).toString(), "name(a:string,b:string):any");
         });
     });
 
