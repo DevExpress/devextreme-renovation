@@ -150,6 +150,13 @@ export class Property extends BaseProperty {
         }
         return super.canBeDestructured;
     }
+
+    getDependency() {
+        if (this.isState) { 
+            return super.getDependency().concat([`${this.name}_state`]);
+        }
+        return super.getDependency();
+    }
 }
 
 function compileMethod(expression: Method | GetAccessor, options?: toStringOptions): string { 
@@ -356,12 +363,20 @@ export class VueComponent extends Component {
                 `);
             }
 
-            dependency.forEach(d => { 
-                watches[d] = watches[d] || [];
-                watches[d].push(`
-                    "${scheduleEffectName}"
-                `);
-            });
+            const watchDependency = (dependency: string[]) => { 
+                dependency.forEach(d => { 
+                    watches[d] = watches[d] || [];
+                    watches[d].push(`
+                        "${scheduleEffectName}"
+                    `);
+                });
+            }
+
+            if (dependency.indexOf("props") !== -1) { 
+                watchDependency(props.map(p => p.name));
+            }
+
+            watchDependency(dependency.filter(d => d !== "props"));
         });
 
         const watchStatements = Object.keys(watches).map(k => { 

@@ -31,6 +31,7 @@ export default {
   watch: {
     p: ["__schedule_setupData"],
     s: ["__schedule_setupData"],
+    s_state: ["__schedule_setupData"],
     i: ["__schedule_setupData"]
   },
   methods: {

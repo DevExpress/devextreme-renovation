@@ -1,11 +1,11 @@
 import mocha from "./helpers/mocha";
 import assert from "assert";
-import generator from "../vue-generator";
+import generator, { VueComponent } from "../vue-generator";
 
 import { printSourceCodeAst as getAst, removeSpaces } from "./helpers/common";
 import componentCreator from "./helpers/create-component";
 import { toStringOptions } from "../angular-generator";
-const { createDecorator, createComponentDecorator } = componentCreator(generator);
+const { createDecorator, createComponentDecorator, createComponent } = componentCreator(generator);
 
 
 mocha.describe("Vue-generator", function () { 
@@ -654,6 +654,168 @@ mocha.describe("Vue-generator", function () {
                 ...Base,
                 p: {type: String}
             }`));
+        });
+    });
+
+    mocha.describe("Component", function () { 
+        mocha.describe("Compile Effects", function () {
+            this.beforeEach(function () {
+                this.effect = generator.createMethod(
+                    [createDecorator("Effect")],
+                    [],
+                    undefined,
+                    generator.createIdentifier("e"),
+                    undefined,
+                    undefined,
+                    [],
+                    undefined,
+                    generator.createBlock([], true)
+                );
+            });
+
+            mocha.it("should add watch for properties in dependency", function () {
+                this.effect.body = generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("p")
+                    ),
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("p2")
+                    )
+                ], false);
+
+                const component = createComponent(
+                    ["p", "p1", "p2"].map(name => generator.createProperty(
+                        [createDecorator("OneWay")],
+                        undefined,
+                        generator.createIdentifier(name),
+                        undefined,
+                        undefined,
+                        undefined
+                    )).concat(this.effect)
+                ) as VueComponent;
+
+                const watch = component.generateWatch([]);
+
+                assert.strictEqual(getAst(watch), getAst(`watch: {
+                    p: ["__schedule_e"],
+                    p2: ["__schedule_e"]
+                }`));
+            });
+
+            mocha.it("should watch all props if props in dependency", function () {
+                this.effect.body = generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("props")
+                    )
+                ], false);
+
+                const component = createComponent(
+                    ["p", "p1", "p2"].map(name => generator.createProperty(
+                        [createDecorator("OneWay")],
+                        undefined,
+                        generator.createIdentifier(name),
+                        undefined,
+                        undefined,
+                        undefined
+                    )).concat(this.effect)
+                ) as VueComponent;
+
+                const watch = component.generateWatch([]);
+
+                assert.strictEqual(getAst(watch), getAst(`watch: {
+                    p: ["__schedule_e"],
+                    p1: ["__schedule_e"],
+                    p2: ["__schedule_e"]
+                }`));
+            });
+
+            mocha.it("should not generate watch if there is not any dependency", function () {
+                const component = createComponent(
+                    ["p", "p1"].map(name => generator.createProperty(
+                        [createDecorator("OneWay")],
+                        undefined,
+                        generator.createIdentifier(name),
+                        undefined,
+                        undefined,
+                        undefined
+                    )).concat(this.effect)
+                ) as VueComponent;
+
+                const methods: string[] = [];
+                const watch = component.generateWatch(methods);
+
+                assert.strictEqual(watch, "");
+                assert.deepEqual(methods, []);
+            });
+
+            mocha.it("two effect have same dependecy", function () {
+                const effect = generator.createMethod(
+                    [createDecorator("Effect")],
+                    [],
+                    undefined,
+                    generator.createIdentifier("e1"),
+                    undefined,
+                    undefined,
+                    [],
+                    undefined,
+                    generator.createBlock([
+                        generator.createPropertyAccess(
+                            generator.createThis(),
+                            generator.createIdentifier("p")
+                        )
+                    ], true)
+                );
+
+                this.effect.body = generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("p")
+                    ),
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("p2")
+                    )
+                ], false);
+
+                const component = createComponent(
+                    ["p", "p1", "p2"].map(name => generator.createProperty(
+                        [createDecorator("OneWay")],
+                        undefined,
+                        generator.createIdentifier(name),
+                        undefined,
+                        undefined,
+                        undefined
+                    )).concat([this.effect, effect])
+                ) as VueComponent;
+
+                const methods: string[] = [];
+                const watch = component.generateWatch(methods);
+
+                assert.strictEqual(getAst(watch), getAst(`watch: {
+                    p: ["__schedule_e", "__schedule_e1"],
+                    p2: ["__schedule_e"]
+                }`));
+
+                assert.strictEqual(getAst(`{
+                    ${methods.join(",\n")}
+                }`), getAst(`{
+                __schedule_e() {
+                       this.__scheduleEffects[0]=()=>{
+                           this.__destroyEffects[0]&&this.__destroyEffects[0]();
+                           this.__destroyEffects[0]=this.e();
+                       }
+                   },
+                   __schedule_e1() {
+                       this.__scheduleEffects[1]=()=>{
+                           this.__destroyEffects[1]&&this.__destroyEffects[1]();
+                           this.__destroyEffects[1]=this.e1();
+                       }
+                   }
+               }`));
+            });
         });
     });
 
