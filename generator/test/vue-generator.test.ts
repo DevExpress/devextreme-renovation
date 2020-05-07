@@ -67,10 +67,6 @@ mocha.describe("Vue-generator", function () {
                 ), "");
             });
 
-            mocha.it("createTypeOf", function () { 
-                assert.strictEqual(generator.createTypeOf(generator.createIdentifier("b")).toString(), "");
-            });
-
             mocha.it("FunctionTypeNode", function () { 
                 assert.strictEqual(generator.createFunctionTypeNode(
                     undefined,

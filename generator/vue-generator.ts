@@ -852,10 +852,6 @@ class VueGenerator extends BaseGenerator {
         return addEmptyToString<UnionTypeNode>(super.createUnionTypeNode(types));
     }
 
-    createTypeOf(expression: Expression) {
-        return addEmptyToString<TypeOf>(super.createTypeOf(expression));
-    }
-
     createParenthesizedType(expression: TypeExpression) { 
         return addEmptyToString<ParenthesizedType>(super.createParenthesizedType(expression));
     }
