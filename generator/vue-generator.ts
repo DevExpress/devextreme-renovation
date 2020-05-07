@@ -623,7 +623,14 @@ export class JsxSpreadAttribute extends BaseJsxSpeadAttribute {
     }
 
     toString(options?: toStringOptions) { 
-        return `v-bind="${this.expression.toString(options)}"`;
+        const expression = this.getExpression(options);
+        if (expression instanceof BasePropertyAccess) { 
+            const member = expression.getMember(options);
+            if (member instanceof GetAccessor && member._name.toString() === "restAttributes") { 
+                return "";
+            }
+        }
+        return `v-bind="${expression.toString(options)}"`;
     }
 }
 
