@@ -4,13 +4,16 @@
 <script>
 const WidgetInput = {
   state1: {
-    type: Boolean
+    type: Boolean,
+    default: undefined
   },
   state2: {
-    type: Boolean
+    type: Boolean,
+    default: undefined
   },
   state3: {
-    type: Boolean
+    type: Boolean,
+    default: undefined
   }
 };
 export default {
@@ -27,12 +30,12 @@ export default {
         this.state1_state = !(this.state1 !== undefined
         ? this.state1
         : this.state1_state),
-        this.emit("state1-change", this.state1_state);
+        this.$emit("state1-change", this.state1_state);
     },
     updateState2() {
       const cur = (this.state2 !== undefined ? this.state2 : this.state2_state)
       this.state2_state = cur !== false ? false : true,
-      this.emit("state2-change", this.state2_state);
+      this.$emit("state2-change", this.state2_state);
     },
     destruct(){
       const s = (this.state1 !== undefined ? this.state1 : this.state1_state);

@@ -1,4 +1,6 @@
 import Generator from "../../base-generator";
+import { Property, Method } from "../../base-generator/expressions/class-members";
+import { Expression } from "../../base-generator/expressions/base";
 
 export default function (generator: Generator) {
 
@@ -26,8 +28,20 @@ export default function (generator: Generator) {
         );
     }
 
+    function createComponent(properties: Array<Property | Method> = [], paramenters: { [name: string]: Expression } = {}) {
+        return generator.createComponent(
+            createComponentDecorator(paramenters),
+            [],
+            generator.createIdentifier("BaseWidget"),
+            [],
+            [],
+            properties
+        );
+    }
+
     return {
         createComponentDecorator,
-        createDecorator
+        createDecorator,
+        createComponent
     };
 }

@@ -10,7 +10,8 @@ export const InnerWidgetProps = {
     type: Boolean
   },
   value: {
-    type: Number
+    type: Number,
+    default: undefined
   }
 };
 export default {
