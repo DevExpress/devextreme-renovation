@@ -4,7 +4,8 @@ import {
     Identifier,
     Call as BaseCall,
     AsExpression as BaseAsExpression,
-    CallChain as BaseCallChain
+    CallChain as BaseCallChain,
+    TypeOf
 } from "./base-generator/expressions/common";
 import { HeritageClause } from "./base-generator/expressions/class";
 import {
@@ -21,7 +22,10 @@ import {
     UnionTypeNode,
     FunctionTypeNode,
     LiteralTypeNode,
-    TypeReferenceNode
+    TypeReferenceNode,
+    IndexedAccessTypeNode,
+    IntersectionTypeNode,
+    ParenthesizedType
 } from "./base-generator/expressions/type";
 import { capitalizeFirstLetter, variableDeclaration } from "./base-generator/utils/string";
 import SyntaxKind from "./base-generator/syntaxKind";
@@ -54,7 +58,7 @@ import { Binary } from "./base-generator/expressions/operators";
 
 function calculatePropertyType(type: TypeExpression): string { 
     if (type instanceof SimpleTypeExpression) {
-        return capitalizeFirstLetter(type.toString());
+        return capitalizeFirstLetter(type.type.toString());
     }
     if (type instanceof ArrayTypeNode) {
         return "Array";
@@ -721,6 +725,12 @@ export class JsxChildExpression extends BaseJsxChildExpression {
     }
 }
 
+const emptyToString = () => "";
+
+const addEmptyToString  = <T>(e: T): T => { 
+    (e as any).toString = emptyToString;
+    return e as typeof e;
+};
 class VueGenerator extends BaseGenerator { 
     
     createComponentBindings(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) {
@@ -817,6 +827,43 @@ class VueGenerator extends BaseGenerator {
     createJsxSpreadAttribute(expression: Expression) {
         return new JsxSpreadAttribute(undefined, expression);
     }
+
+    createKeywordTypeNode(kind: string) {
+        return addEmptyToString<SimpleTypeExpression>(super.createKeywordTypeNode(kind));
+    }
+
+    createArrayTypeNode(elementType: TypeExpression) {
+        return addEmptyToString<ArrayTypeNode>(super.createArrayTypeNode(elementType));
+    }
+
+    createLiteralTypeNode(literal: Expression) { 
+        return addEmptyToString<LiteralTypeNode>(super.createLiteralTypeNode(literal));
+    }
+
+    createIndexedAccessTypeNode(objectType: TypeExpression, indexType: TypeExpression) { 
+        return  addEmptyToString<IndexedAccessTypeNode>(super.createIndexedAccessTypeNode(objectType, indexType));
+    }
+
+    createIntersectionTypeNode(types: TypeExpression[]) {
+        return addEmptyToString<IntersectionTypeNode>(super.createIntersectionTypeNode(types));
+    }
+
+    createUnionTypeNode(types: TypeExpression[]) {
+        return addEmptyToString<UnionTypeNode>(super.createUnionTypeNode(types));
+    }
+
+    createTypeOf(expression: Expression) {
+        return addEmptyToString<TypeOf>(super.createTypeOf(expression));
+    }
+
+    createParenthesizedType(expression: TypeExpression) { 
+        return addEmptyToString<ParenthesizedType>(super.createParenthesizedType(expression));
+    }
+
+    createFunctionTypeNode(typeParameters: any, parameters: Parameter[], type: TypeExpression) {
+        return addEmptyToString<FunctionTypeNode>(super.createFunctionTypeNode(typeParameters, parameters, type)); 
+    }
+
 }
 
 

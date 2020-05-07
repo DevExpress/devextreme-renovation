@@ -399,8 +399,7 @@ export default class Generator {
     }
 
     createFunctionTypeNode(typeParameters: any, parameters: Parameter[], type: TypeExpression) {
-        return new FunctionTypeNode(typeParameters, parameters, type);
-        
+        return new FunctionTypeNode(typeParameters, parameters, type); 
     }
 
     createExpressionStatement(expression: Expression) {

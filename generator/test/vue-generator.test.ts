@@ -9,6 +9,79 @@ const { createDecorator, createComponentDecorator, createComponent } = component
 
 
 mocha.describe("Vue-generator", function () { 
+    mocha.describe("Expressions", function () { 
+        mocha.describe("Type expressions should generate empty string", function () { 
+            mocha.it("KeywordTypeNode", function () { 
+                assert.strictEqual(generator.createKeywordTypeNode("number").toString(), "");
+            });
+
+            mocha.it("ArrayTypeNode", function () { 
+                assert.strictEqual(generator.createArrayTypeNode(
+                    generator.createKeywordTypeNode("number")
+                ).toString(), "");
+            });
+
+            mocha.it("ArrayTypeNode", function () { 
+                assert.strictEqual(generator.createArrayTypeNode(
+                    generator.createKeywordTypeNode("number")
+                ).toString(), "");
+            });
+
+            mocha.it("createLiteralTypeNode", function () { 
+                assert.strictEqual(generator.createLiteralTypeNode(generator.createStringLiteral("2")).toString(), ""); ;
+            });
+
+            mocha.it("createIndexedAccessTypeNode", function () { 
+                const expression = generator.createIndexedAccessTypeNode(
+                    generator.createTypeReferenceNode(
+                        generator.createIdentifier("PageIndex"),
+                        undefined
+                    ),
+                    generator.createLiteralTypeNode(generator.createStringLiteral("1"))
+                );
+    
+                assert.strictEqual(expression.toString(), "");
+            });
+            
+            mocha.it("createIntersectionTypeNode", function () {
+                assert.equal(generator.createIntersectionTypeNode(
+                    [
+                        generator.createKeywordTypeNode("string"),
+                        generator.createKeywordTypeNode("number")
+                    ]
+                ), "");
+            });
+        
+            mocha.it("createUnionTypeNode", function () {
+                assert.equal(generator.createUnionTypeNode(
+                    [
+                        generator.createKeywordTypeNode("string"),
+                        generator.createKeywordTypeNode("number")
+                    ]
+                ), "");
+            });
+    
+            mocha.it("createParenthesizedType", function () {
+                assert.equal(generator.createParenthesizedType(
+                    generator.createKeywordTypeNode("string")
+                ), "");
+            });
+
+            mocha.it("createTypeOf", function () { 
+                assert.strictEqual(generator.createTypeOf(generator.createIdentifier("b")).toString(), "");
+            });
+
+            mocha.it("FunctionTypeNode", function () { 
+                assert.strictEqual(generator.createFunctionTypeNode(
+                    undefined,
+                    [],
+                    generator.createKeywordTypeNode("string")
+                ).toString(), "");
+            });
+        });
+        
+    });
+
     mocha.describe("Property", function () { 
         const name = generator.createIdentifier("p");
 
