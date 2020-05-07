@@ -141,6 +141,9 @@ export class Property extends BaseProperty {
         if (this.isRef && componentContext.length) { 
             return `${componentContext}$refs.${this.name}`;
         }
+        if (this.isTemplate) { 
+            return `${componentContext}$slots.${this.name}`;
+        }
         return baseValue
     }
 
@@ -645,6 +648,15 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     processSpreadAttributes() { 
 
     }
+
+    clone() { 
+        return new JsxOpeningElement(
+            this.tagName,
+            this.typeArguments,
+            this.attributes,
+            this.context
+        );
+    }
 }
 
 export class JsxClosingElement extends JsxOpeningElement { 
@@ -681,12 +693,23 @@ export class JsxElement extends BaseJsxElement {
         return new JsxChildExpression(expression);
     }
 
+    clone() {
+        return new JsxElement(
+            this.openingElement.clone(),
+            this.children.slice(),
+            this.closingElement
+        );
+    }
 }
 export class JsxExpression extends BaseJsxExpression {
    
 }
 
-export class VueDirective extends AngularDirective { }
+export class VueDirective extends AngularDirective {
+    getTemplateProp(options?: toStringOptions) { 
+        return this.toString(options)
+    }
+ }
 
 const processBinary = createProcessBinary((conditionExpression: Expression) => { 
     return new VueDirective(new Identifier("v-if"), conditionExpression);

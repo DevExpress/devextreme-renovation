@@ -1320,6 +1320,56 @@ mocha.describe("Vue-generator", function () {
                     newComponentContext: ""
                 }), `<slot name="template" v-bind="item"></slot>`);
             });
+
+            mocha.it("Template with condition", function () {
+                const expression = generator.createJsxSelfClosingElement(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("template")
+                    ),
+                    [],
+                    []
+                );
+
+                const element = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [
+                        generator.createJsxExpression(
+                            undefined,
+                            generator.createBinary(
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier("viewModel"),
+                                    generator.createIdentifier("template")
+                                ),
+                                generator.SyntaxKind.AmpersandAmpersandToken,
+                                expression
+                            )
+                        )
+                    ],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                )
+    
+                const templateProperty = generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+    
+                assert.strictEqual(element.children[0].toString({
+                    members: [templateProperty],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), `<slot name="template" v-if="$slots.template"></slot>`);
+            });
         });
 
         mocha.describe("Slot", function () {
