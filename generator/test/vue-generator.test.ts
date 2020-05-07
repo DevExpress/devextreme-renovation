@@ -10,6 +10,15 @@ const { createDecorator, createComponentDecorator, createComponent } = component
 
 mocha.describe("Vue-generator", function () { 
     mocha.describe("Expressions", function () { 
+        mocha.describe.only("common", function () { 
+            mocha.it("NonNullExpression", function () {
+                const expression = generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("field"));
+                assert.equal(generator.createNonNullExpression(expression).toString(), "this.field")
+            });
+        })
+
         mocha.describe("Type expressions should generate empty string", function () { 
             mocha.it("KeywordTypeNode", function () { 
                 assert.strictEqual(generator.createKeywordTypeNode("number").toString(), "");
@@ -75,7 +84,6 @@ mocha.describe("Vue-generator", function () {
                 ).toString(), "");
             });
         });
-        
     });
 
     mocha.describe("Property", function () { 
@@ -455,7 +463,7 @@ mocha.describe("Vue-generator", function () {
                 undefined,
                 generator.createIdentifier("onClick")
             )
-            assert.equal(generator.createCall(
+            assert.strictEqual(generator.createCall(
                 generator.createPropertyAccess(
                     generator.createThis(),
                     generator.createIdentifier("onClick")
@@ -463,6 +471,29 @@ mocha.describe("Vue-generator", function () {
                 undefined,
                 [generator.createNumericLiteral("10")]
             ).toString({members: [member]}), 'this.$emit("on-click", 10)');
+        });
+
+        mocha.it.only("Call expression generates emit if call NonNulable expression with event", function () { 
+            const member = generator.createProperty(
+                [createDecorator("Event")],
+                undefined,
+                generator.createIdentifier("onClick")
+            )
+            assert.strictEqual(generator.createCall(
+                generator.createNonNullExpression(
+                    generator.createIdentifier("event")
+                ),
+                undefined,
+                [generator.createNumericLiteral("10")]
+            ).toString({
+                members: [member],
+                variables: {
+                    "event": generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("onClick")
+                    )
+                }
+            }), 'this.$emit("on-click", 10)');
         });
 
         mocha.it("Call expression generates emit if call Event using variable", function () { 
@@ -482,7 +513,7 @@ mocha.describe("Vue-generator", function () {
                 generator.createIdentifier("onClick")
             );
 
-            assert.equal(expression.toString({
+            assert.strictEqual(expression.toString({
                 members: [member],
                 variables: {
                     click: propertyAccess
@@ -496,7 +527,7 @@ mocha.describe("Vue-generator", function () {
                 undefined,
                 generator.createIdentifier("onClick")
             )
-            assert.equal(generator.createCallChain(
+            assert.strictEqual(generator.createCallChain(
                 generator.createPropertyAccess(
                     generator.createThis(),
                     generator.createIdentifier("onClick")
@@ -508,7 +539,7 @@ mocha.describe("Vue-generator", function () {
         });
 
         mocha.it("CallChain expression generates usual call if not event", function () { 
-            assert.equal(generator.createCallChain(
+            assert.strictEqual(generator.createCallChain(
                 generator.createIdentifier("a"),
                 generator.SyntaxKind.QuestionDotToken,
                 undefined,

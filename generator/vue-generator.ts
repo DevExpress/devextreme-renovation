@@ -5,7 +5,7 @@ import {
     Call as BaseCall,
     AsExpression as BaseAsExpression,
     CallChain as BaseCallChain,
-    TypeOf
+    NonNullExpression as BaseNonNullExpression
 } from "./base-generator/expressions/common";
 import { HeritageClause } from "./base-generator/expressions/class";
 import {
@@ -521,7 +521,10 @@ function getEventName(name: Identifier, suffix="") {
 
 function generateCallEvent(call: Call | CallChain, options?: toStringOptions): string {
     let expression: Expression = call.expression;
-    if (call.expression instanceof Identifier && options?.variables?.[expression.toString()]) { 
+    if (call.expression instanceof NonNullExpression) { 
+        expression = call.expression.expression;
+    }
+    if (expression instanceof Identifier && options?.variables?.[expression.toString()]) { 
         expression = options.variables[expression.toString()];
     }
     const eventMember = checkDependency(expression, options?.members.filter(m => m.isEvent));
@@ -540,6 +543,12 @@ export class Call extends BaseCall {
 export class CallChain extends BaseCallChain { 
     toString(options?: toStringOptions): string { 
         return generateCallEvent(this, options) || super.toString(options);
+    }
+}
+
+export class NonNullExpression extends BaseNonNullExpression { 
+    toString(options?: toStringOptions) { 
+        return this.expression.toString(options);
     }
 }
 
@@ -826,6 +835,10 @@ class VueGenerator extends BaseGenerator {
 
     createJsxSpreadAttribute(expression: Expression) {
         return new JsxSpreadAttribute(undefined, expression);
+    }
+
+    createNonNullExpression(expression: Expression) {
+        return new NonNullExpression(expression);
     }
 
     createKeywordTypeNode(kind: string) {
