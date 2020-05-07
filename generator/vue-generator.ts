@@ -665,6 +665,15 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
         
         return super.toString(options).replace(/>$/, "/>");
     }
+
+    clone() { 
+        return new JsxSelfClosingElement(
+            this.tagName,
+            this.typeArguments,
+            this.attributes,
+            this.context
+        );
+    }
 }
 
 export class JsxElement extends BaseJsxElement { 

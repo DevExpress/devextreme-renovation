@@ -1060,6 +1060,36 @@ mocha.describe("Vue-generator", function () {
                 assert.strictEqual(expression.children[0].toString(), `<input v-if="viewModel.input"></input>`);
             });
 
+            mocha.it("notJsxExpr && <element/> -> <element v-if='notJsxExpr'>", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createBinary(
+                            generator.createPropertyAccess(
+                                generator.createIdentifier("viewModel"),
+                                generator.createIdentifier("input")
+                            ),
+                            generator.createToken(generator.SyntaxKind.AmpersandAmpersandToken),
+                            generator.createJsxSelfClosingElement(
+                                generator.createIdentifier("input"),
+                                undefined,
+                                []
+                            )
+                        )
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(expression.children[0].toString(), `<input v-if="viewModel.input"/>`);
+            });
+
             mocha.it("condition?then:else - <div v-if='condition'> <div v-else>", function () {
                 const attribute = generator.createJsxAttribute(
                     generator.createIdentifier("a"),
