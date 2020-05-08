@@ -37,6 +37,12 @@ export default {
         }, {});
       }
       return value;
+    },
+    onSelect(...args){
+      this.$emit("on-select", ...args);
+    },
+    valueChange(...args){
+      this.$emit("value-change", ...args);
     }
   }
 };

@@ -2,9 +2,10 @@ import BaseGenerator from "./base-generator";
 import { Component, getProps } from "./base-generator/expressions/component";
 import {
     Identifier,
-    Call as BaseCall,
+    Call,
     AsExpression as BaseAsExpression,
-    CallChain as BaseCallChain
+    CallChain as BaseCallChain,
+    NonNullExpression as BaseNonNullExpression
 } from "./base-generator/expressions/common";
 import { HeritageClause } from "./base-generator/expressions/class";
 import {
@@ -21,7 +22,10 @@ import {
     UnionTypeNode,
     FunctionTypeNode,
     LiteralTypeNode,
-    TypeReferenceNode
+    TypeReferenceNode,
+    IndexedAccessTypeNode,
+    IntersectionTypeNode,
+    ParenthesizedType
 } from "./base-generator/expressions/type";
 import { capitalizeFirstLetter, variableDeclaration } from "./base-generator/utils/string";
 import SyntaxKind from "./base-generator/syntaxKind";
@@ -51,10 +55,14 @@ import { ComponentInput } from "./base-generator/expressions/component-input";
 import { checkDependency } from "./base-generator/utils/dependency";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access"
 import { Binary } from "./base-generator/expressions/operators";
+import { PropertyAssignment } from "./base-generator/expressions/property-assignment";
 
 function calculatePropertyType(type: TypeExpression): string { 
     if (type instanceof SimpleTypeExpression) {
-        return capitalizeFirstLetter(type.toString());
+        const typeString = type.type.toString();
+        if (typeString !== SyntaxKind.AnyKeyword && typeString !== SyntaxKind.UndefinedKeyword) { 
+            return capitalizeFirstLetter(typeString);
+        }
     }
     if (type instanceof ArrayTypeNode) {
         return "Array";
@@ -136,6 +144,9 @@ export class Property extends BaseProperty {
         }
         if (this.isRef && componentContext.length) { 
             return `${componentContext}$refs.${this.name}`;
+        }
+        if (this.isTemplate) { 
+            return `${componentContext}$slots.${this.name}`;
         }
         return baseValue
     }
@@ -330,11 +341,16 @@ export class VueComponent extends Component {
         statements.push.apply(statements, this.methods
             .concat(this.effects)
             .map(m => m.toString({
-            members: this.members,
-            componentContext: "this",
-            newComponentContext: "this"
-        })));
-
+                members: this.members,
+                componentContext: "this",
+                newComponentContext: "this"
+            })));
+        
+        this.members.filter(m => m.isEvent).forEach(m => { 
+            statements.push(`${m._name}(...args){
+                this.$emit("${getEventName(m._name)}", ...args);
+            }`);
+        });
 
         return `methods: {
             ${statements.concat(externalStatements).join(",\n")}
@@ -507,45 +523,58 @@ export class VueComponent extends Component {
     }
 }
 
-function getEventName(name: Identifier, suffix="") { 
+function getEventName(name: Identifier) { 
     const words = name.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
-    if (suffix) { 
-        words.push(suffix);
-    }
     return `${words.join("-")}`;
-}
-
-function generateCallEvent(call: Call | CallChain, options?: toStringOptions): string {
-    let expression: Expression = call.expression;
-    if (call.expression instanceof Identifier && options?.variables?.[expression.toString()]) { 
-        expression = options.variables[expression.toString()];
-    }
-    const eventMember = checkDependency(expression, options?.members.filter(m => m.isEvent));
-    if (eventMember) { 
-        return `this.$emit("${getEventName(eventMember._name)}", ${call.argumentsArray.map(a => a.toString(options)).join(",")})`;
-    }
-    return "";
-}
-
-export class Call extends BaseCall { 
-    toString(options?: toStringOptions) { 
-        return generateCallEvent(this, options) || super.toString(options);
-    }
 }
 
 export class CallChain extends BaseCallChain { 
     toString(options?: toStringOptions): string { 
-        return generateCallEvent(this, options) || super.toString(options);
+        let expression: Expression = this.expression;
+       
+        if (expression instanceof Identifier && options?.variables?.[expression.toString()]) { 
+            expression = options.variables[expression.toString()];
+        }
+        const eventMember = checkDependency(expression, options?.members.filter(m => m.isEvent));
+        if (eventMember) { 
+            return `${expression.toString(options)}(${this.argumentsArray.map(a => a.toString(options)).join(",")})`;
+        }
+        return super.toString(options);
+    }
+}
+
+export class NonNullExpression extends BaseNonNullExpression { 
+    toString(options?: toStringOptions) { 
+        return this.expression.toString(options);
     }
 }
 
 export class PropertyAccess extends BasePropertyAccess { 
+
+    processProps(result: string, options: toStringOptions) {
+        const props = getProps(options.members);
+        const expression = new ObjectLiteral(
+            props.map(p => new PropertyAssignment(
+                p._name,
+                new PropertyAccess(
+                    new PropertyAccess(
+                        new Identifier(SyntaxKind.ThisKeyword),
+                        new Identifier("props")
+                    ),
+                    p._name
+                )
+            )),
+            true
+        );
+        return expression.toString(options);
+    }
+
     compileStateSetting(state: string, property: Property, options?: toStringOptions) {
         const isState = property.isState;
         const propertyName = isState ? `${property.name}_state` : property.name;
         const stateSetting = `this.${propertyName}=${state}`;
         if (isState) { 
-            return `${stateSetting},\nthis.$emit("${getEventName(property._name, "change")}", this.${propertyName})`;
+            return `${stateSetting},\nthis.${property._name}Change(this.${propertyName})`;
         }
         return stateSetting;
     }
@@ -607,7 +636,14 @@ export class JsxSpreadAttribute extends BaseJsxSpeadAttribute {
     }
 
     toString(options?: toStringOptions) { 
-        return `v-bind="${this.expression.toString(options)}"`;
+        const expression = this.getExpression(options);
+        if (expression instanceof BasePropertyAccess) { 
+            const member = expression.getMember(options);
+            if (member instanceof GetAccessor && member._name.toString() === "restAttributes") { 
+                return "";
+            }
+        }
+        return `v-bind="${expression.toString(options).replace(/"/gi, "'")}"`;
     }
 }
 
@@ -632,6 +668,15 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     processSpreadAttributes() { 
 
     }
+
+    clone() { 
+        return new JsxOpeningElement(
+            this.tagName,
+            this.typeArguments,
+            this.attributes,
+            this.context
+        );
+    }
 }
 
 export class JsxClosingElement extends JsxOpeningElement { 
@@ -652,6 +697,15 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
         
         return super.toString(options).replace(/>$/, "/>");
     }
+
+    clone() { 
+        return new JsxSelfClosingElement(
+            this.tagName,
+            this.typeArguments,
+            this.attributes,
+            this.context
+        );
+    }
 }
 
 export class JsxElement extends BaseJsxElement { 
@@ -659,12 +713,23 @@ export class JsxElement extends BaseJsxElement {
         return new JsxChildExpression(expression);
     }
 
+    clone() {
+        return new JsxElement(
+            this.openingElement.clone(),
+            this.children.slice(),
+            this.closingElement
+        );
+    }
 }
 export class JsxExpression extends BaseJsxExpression {
    
 }
 
-export class VueDirective extends AngularDirective { }
+export class VueDirective extends AngularDirective {
+    getTemplateProp(options?: toStringOptions) { 
+        return this.toString(options)
+    }
+ }
 
 const processBinary = createProcessBinary((conditionExpression: Expression) => { 
     return new VueDirective(new Identifier("v-if"), conditionExpression);
@@ -721,6 +786,12 @@ export class JsxChildExpression extends BaseJsxChildExpression {
     }
 }
 
+const emptyToString = () => "";
+
+const addEmptyToString  = <T>(e: T): T => { 
+    (e as any).toString = emptyToString;
+    return e as typeof e;
+};
 class VueGenerator extends BaseGenerator { 
     
     createComponentBindings(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) {
@@ -755,16 +826,16 @@ class VueGenerator extends BaseGenerator {
         return new VariableDeclaration(name, type, initializer);
     }
 
-    createCall(expression: Expression, typeArguments: any, argumentsArray?: Expression[]) {
-        return new Call(expression, typeArguments, argumentsArray);
-    }
-
     createCallChain(expression: Expression, questionDotToken: string | undefined, typeArguments: any, argumentsArray: Expression[] | undefined) {
         return new CallChain(expression, questionDotToken, typeArguments, argumentsArray);
     }
 
     createParameter(decorators: Decorator[] = [], modifiers: string[] = [], dotDotDotToken: any, name: Identifier|BindingPattern, questionToken?: string, type?: TypeExpression, initializer?: Expression) {
         return new Parameter(decorators, modifiers, dotDotDotToken, name, questionToken, type, initializer);
+    }
+
+    processSourceFileName(name: string) {
+        return name.replace(/\.tsx$/, ".vue");
     }
 
     processCodeFactoryResult(codeFactoryResult: Array<any>) { 
@@ -817,6 +888,43 @@ class VueGenerator extends BaseGenerator {
     createJsxSpreadAttribute(expression: Expression) {
         return new JsxSpreadAttribute(undefined, expression);
     }
+
+    createNonNullExpression(expression: Expression) {
+        return new NonNullExpression(expression);
+    }
+
+    createKeywordTypeNode(kind: string) {
+        return addEmptyToString<SimpleTypeExpression>(super.createKeywordTypeNode(kind));
+    }
+
+    createArrayTypeNode(elementType: TypeExpression) {
+        return addEmptyToString<ArrayTypeNode>(super.createArrayTypeNode(elementType));
+    }
+
+    createLiteralTypeNode(literal: Expression) { 
+        return addEmptyToString<LiteralTypeNode>(super.createLiteralTypeNode(literal));
+    }
+
+    createIndexedAccessTypeNode(objectType: TypeExpression, indexType: TypeExpression) { 
+        return  addEmptyToString<IndexedAccessTypeNode>(super.createIndexedAccessTypeNode(objectType, indexType));
+    }
+
+    createIntersectionTypeNode(types: TypeExpression[]) {
+        return addEmptyToString<IntersectionTypeNode>(super.createIntersectionTypeNode(types));
+    }
+
+    createUnionTypeNode(types: TypeExpression[]) {
+        return addEmptyToString<UnionTypeNode>(super.createUnionTypeNode(types));
+    }
+
+    createParenthesizedType(expression: TypeExpression) { 
+        return addEmptyToString<ParenthesizedType>(super.createParenthesizedType(expression));
+    }
+
+    createFunctionTypeNode(typeParameters: any, parameters: Parameter[], type: TypeExpression) {
+        return addEmptyToString<FunctionTypeNode>(super.createFunctionTypeNode(typeParameters, parameters, type)); 
+    }
+
 }
 
 
