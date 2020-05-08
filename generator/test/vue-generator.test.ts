@@ -1073,6 +1073,22 @@ mocha.describe("Vue-generator", function () {
                 assert.strictEqual(removeSpaces(expression.toString()), removeSpaces(`<div :a="10" b="word"></div>`));
             });
 
+            mocha.it(`JsxSpreadAttribute replace " -> '`, function () {
+                const expression = generator.createJsxSpreadAttribute(
+                    generator.createObjectLiteral(
+                        [
+                            generator.createPropertyAssignment(
+                                generator.createIdentifier("a"),
+                                generator.createStringLiteral("str")
+                            )
+                        ],
+                        false
+                    )
+                );
+
+                assert.strictEqual(expression.toString(), `v-bind="{a:'str'}"`);
+             })
+
             mocha.describe("Attributes", function () { 
                 mocha.it("title attribute", function () { 
                     const expression = generator.createJsxAttribute(

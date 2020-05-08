@@ -643,7 +643,7 @@ export class JsxSpreadAttribute extends BaseJsxSpeadAttribute {
                 return "";
             }
         }
-        return `v-bind="${expression.toString(options)}"`;
+        return `v-bind="${expression.toString(options).replace(/"/gi, "'")}"`;
     }
 }
 
