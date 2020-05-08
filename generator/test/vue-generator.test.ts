@@ -107,6 +107,34 @@ mocha.describe("Vue-generator", function () {
                     assert.strictEqual(expression.getter(), "p");
                     assert.strictEqual(expression.getter("this"), "this.p");
                 });
+
+                mocha.it("Property with KeywordTypeNode - any", function () { 
+                    const expression = generator.createProperty(
+                        decorators,
+                        undefined,
+                        name,
+                        generator.SyntaxKind.QuestionToken,
+                        generator.createKeywordTypeNode("any"),
+                        undefined
+                    );
+        
+                    assert.strictEqual(getAst(expression.toString()), getAst("p: {}"));
+                });
+
+                mocha.it("Property with KeywordTypeNode - undefined", function () { 
+                    const expression = generator.createProperty(
+                        decorators,
+                        undefined,
+                        name,
+                        generator.SyntaxKind.QuestionToken,
+                        generator.createKeywordTypeNode("undefined"),
+                        undefined
+                    );
+        
+                    assert.strictEqual(getAst(expression.toString()), getAst("p: {}"));
+                    assert.strictEqual(expression.getter(), "p");
+                    assert.strictEqual(expression.getter("this"), "this.p");
+                });
         
                 mocha.it("Property with ArrayTypeNode", function () { 
                     const expression = generator.createProperty(
@@ -225,6 +253,24 @@ mocha.describe("Vue-generator", function () {
                         );
             
                         assert.strictEqual(getAst(expression.toString()), getAst("p: {type: [String,Number]}"));
+                    });
+
+                    mocha.it("Property with Union type with undefined", function () { 
+                        const expression = generator.createProperty(
+                            decorators,
+                            undefined,
+                            name,
+                            undefined,
+                            generator.createUnionTypeNode(
+                                [
+                                    generator.createKeywordTypeNode("string"),
+                                    generator.createKeywordTypeNode("undefined")
+                                ],
+                            ),
+                            undefined
+                        );
+            
+                        assert.strictEqual(getAst(expression.toString()), getAst("p: {type: [String]}"));
                     });
     
                     mocha.it("type should not have duplicates", function () { 

@@ -59,7 +59,10 @@ import { PropertyAssignment } from "./base-generator/expressions/property-assign
 
 function calculatePropertyType(type: TypeExpression): string { 
     if (type instanceof SimpleTypeExpression) {
-        return capitalizeFirstLetter(type.type.toString());
+        const typeString = type.type.toString();
+        if (typeString !== SyntaxKind.AnyKeyword && typeString !== SyntaxKind.UndefinedKeyword) { 
+            return capitalizeFirstLetter(typeString);
+        }
     }
     if (type instanceof ArrayTypeNode) {
         return "Array";
@@ -832,6 +835,10 @@ class VueGenerator extends BaseGenerator {
 
     createParameter(decorators: Decorator[] = [], modifiers: string[] = [], dotDotDotToken: any, name: Identifier|BindingPattern, questionToken?: string, type?: TypeExpression, initializer?: Expression) {
         return new Parameter(decorators, modifiers, dotDotDotToken, name, questionToken, type, initializer);
+    }
+
+    processSourceFileName(name: string) {
+        return name.replace(/\.tsx$/, ".vue");
     }
 
     processCodeFactoryResult(codeFactoryResult: Array<any>) { 
