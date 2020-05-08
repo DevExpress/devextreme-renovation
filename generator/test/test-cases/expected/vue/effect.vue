@@ -48,6 +48,10 @@ export default {
       return () => unsubscribe(id);
     },
 
+    sChange(...args){
+      this.$emit("s-change", ...args);
+    },
+
     __schedule_setupData() {
       this.__scheduleEffects[0] = () => {
         this.__destroyEffects[0] && this.__destroyEffects[0]();

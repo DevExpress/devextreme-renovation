@@ -2,7 +2,7 @@ import BaseGenerator from "./base-generator";
 import { Component, getProps } from "./base-generator/expressions/component";
 import {
     Identifier,
-    Call as BaseCall,
+    Call,
     AsExpression as BaseAsExpression,
     CallChain as BaseCallChain,
     NonNullExpression as BaseNonNullExpression
@@ -55,6 +55,7 @@ import { ComponentInput } from "./base-generator/expressions/component-input";
 import { checkDependency } from "./base-generator/utils/dependency";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access"
 import { Binary } from "./base-generator/expressions/operators";
+import { PropertyAssignment } from "./base-generator/expressions/property-assignment";
 
 function calculatePropertyType(type: TypeExpression): string { 
     if (type instanceof SimpleTypeExpression) {
@@ -337,11 +338,16 @@ export class VueComponent extends Component {
         statements.push.apply(statements, this.methods
             .concat(this.effects)
             .map(m => m.toString({
-            members: this.members,
-            componentContext: "this",
-            newComponentContext: "this"
-        })));
-
+                members: this.members,
+                componentContext: "this",
+                newComponentContext: "this"
+            })));
+        
+        this.members.filter(m => m.isEvent).forEach(m => { 
+            statements.push(`${m._name}(...args){
+                this.$emit("${getEventName(m._name)}", ...args);
+            }`);
+        });
 
         return `methods: {
             ${statements.concat(externalStatements).join(",\n")}
@@ -522,30 +528,18 @@ function getEventName(name: Identifier, suffix="") {
     return `${words.join("-")}`;
 }
 
-function generateCallEvent(call: Call | CallChain, options?: toStringOptions): string {
-    let expression: Expression = call.expression;
-    if (call.expression instanceof NonNullExpression) { 
-        expression = call.expression.expression;
-    }
-    if (expression instanceof Identifier && options?.variables?.[expression.toString()]) { 
-        expression = options.variables[expression.toString()];
-    }
-    const eventMember = checkDependency(expression, options?.members.filter(m => m.isEvent));
-    if (eventMember) { 
-        return `this.$emit("${getEventName(eventMember._name)}", ${call.argumentsArray.map(a => a.toString(options)).join(",")})`;
-    }
-    return "";
-}
-
-export class Call extends BaseCall { 
-    toString(options?: toStringOptions) { 
-        return generateCallEvent(this, options) || super.toString(options);
-    }
-}
-
 export class CallChain extends BaseCallChain { 
     toString(options?: toStringOptions): string { 
-        return generateCallEvent(this, options) || super.toString(options);
+        let expression: Expression = this.expression;
+       
+        if (expression instanceof Identifier && options?.variables?.[expression.toString()]) { 
+            expression = options.variables[expression.toString()];
+        }
+        const eventMember = checkDependency(expression, options?.members.filter(m => m.isEvent));
+        if (eventMember) { 
+            return `${expression.toString(options)}(${this.argumentsArray.map(a => a.toString(options)).join(",")})`;
+        }
+        return super.toString(options);
     }
 }
 
@@ -556,12 +550,31 @@ export class NonNullExpression extends BaseNonNullExpression {
 }
 
 export class PropertyAccess extends BasePropertyAccess { 
+
+    processProps(result: string, options: toStringOptions) {
+        const props = getProps(options.members);
+        const expression = new ObjectLiteral(
+            props.map(p => new PropertyAssignment(
+                p._name,
+                new PropertyAccess(
+                    new PropertyAccess(
+                        new Identifier(SyntaxKind.ThisKeyword),
+                        new Identifier("props")
+                    ),
+                    p._name
+                )
+            )),
+            true
+        );
+        return expression.toString(options);
+    }
+
     compileStateSetting(state: string, property: Property, options?: toStringOptions) {
         const isState = property.isState;
         const propertyName = isState ? `${property.name}_state` : property.name;
         const stateSetting = `this.${propertyName}=${state}`;
         if (isState) { 
-            return `${stateSetting},\nthis.$emit("${getEventName(property._name, "change")}", this.${propertyName})`;
+            return `${stateSetting},\nthis.${property._name}Change(this.${propertyName})`;
         }
         return stateSetting;
     }
@@ -811,10 +824,6 @@ class VueGenerator extends BaseGenerator {
 
     createVariableDeclarationCore(name: Identifier | BindingPattern, type?: TypeExpression, initializer?: Expression) {
         return new VariableDeclaration(name, type, initializer);
-    }
-
-    createCall(expression: Expression, typeArguments: any, argumentsArray?: Expression[]) {
-        return new Call(expression, typeArguments, argumentsArray);
     }
 
     createCallChain(expression: Expression, questionDotToken: string | undefined, typeArguments: any, argumentsArray: Expression[] | undefined) {

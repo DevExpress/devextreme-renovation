@@ -470,55 +470,11 @@ mocha.describe("Vue-generator", function () {
                 ),
                 undefined,
                 [generator.createNumericLiteral("10")]
-            ).toString({members: [member]}), 'this.$emit("on-click", 10)');
-        });
-
-        mocha.it("Call expression generates emit if call NonNulable expression with event", function () { 
-            const member = generator.createProperty(
-                [createDecorator("Event")],
-                undefined,
-                generator.createIdentifier("onClick")
-            )
-            assert.strictEqual(generator.createCall(
-                generator.createNonNullExpression(
-                    generator.createIdentifier("event")
-                ),
-                undefined,
-                [generator.createNumericLiteral("10")]
             ).toString({
                 members: [member],
-                variables: {
-                    "event": generator.createPropertyAccess(
-                        generator.createThis(),
-                        generator.createIdentifier("onClick")
-                    )
-                }
-            }), 'this.$emit("on-click", 10)');
-        });
-
-        mocha.it("Call expression generates emit if call Event using variable", function () { 
-            const member = generator.createProperty(
-                [createDecorator("Event")],
-                undefined,
-                generator.createIdentifier("onClick")
-            );
-            const expression = generator.createCall(
-                generator.createIdentifier("click"),
-                undefined,
-                [generator.createNumericLiteral("10")]
-            );
-
-            const propertyAccess = generator.createPropertyAccess(
-                generator.createThis(),
-                generator.createIdentifier("onClick")
-            );
-
-            assert.strictEqual(expression.toString({
-                members: [member],
-                variables: {
-                    click: propertyAccess
-                }
-            }), 'this.$emit("on-click", 10)');
+                componentContext: "this",
+                newComponentContext: "this"
+            }), 'this.onClick(10)');
         });
 
         mocha.it("CallChain expression generates emit if call Event", function () { 
@@ -535,7 +491,11 @@ mocha.describe("Vue-generator", function () {
                 generator.SyntaxKind.QuestionDotToken,
                 undefined,
                 [generator.createNumericLiteral("10")]
-            ).toString({members: [member]}), 'this.$emit("on-click", 10)');
+            ).toString({
+                members: [member],
+                componentContext: "this",
+                newComponentContext: "this"
+            }), 'this.onClick(10)');
         });
 
         mocha.it("CallChain expression generates usual call if not event", function () { 
@@ -918,6 +878,79 @@ mocha.describe("Vue-generator", function () {
             });
         });
     });
+
+    mocha.describe("PropertyAccess", function () { 
+        mocha.it("Access props - this.props with members", function () { 
+            const expression = generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("props")
+            );
+
+            const members = [
+                generator.createProperty(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("p1")
+                ),
+                generator.createProperty(
+                    [createDecorator("TwoWay")],
+                    [],
+                    generator.createIdentifier("p2")
+                ),
+                generator.createProperty(
+                    [createDecorator("Event")],
+                    [],
+                    generator.createIdentifier("p3")
+                ),
+                generator.createProperty(
+                    [createDecorator("Slot")],
+                    [],
+                    generator.createIdentifier("p4")
+                ),
+                generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("p5")
+                ),
+                generator.createProperty(
+                    [createDecorator("InternalState")],
+                    [],
+                    generator.createIdentifier("p6")
+                ),
+                generator.createMethod(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("p7"),
+                    "",
+                    undefined,
+                    [],
+                    undefined,
+                    generator.createBlock([], false)
+                ),
+                generator.createGetAccessor(
+                    [],
+                    [],
+                    generator.createIdentifier("p8"),
+                    []
+                )
+            ];
+
+            const stringValue = expression.toString({
+                members,
+                componentContext: generator.SyntaxKind.ThisKeyword,
+                newComponentContext: generator.SyntaxKind.ThisKeyword
+            });
+
+            assert.strictEqual(getAst(stringValue), getAst(`{
+                p1:this.p1,
+                p2:(this.p2 !== undefined ? this.p2 : this.p2_state),
+                p3:this.p3,
+                p4:this.p4,
+                p5:this.$slots.p5
+            }`));
+        });
+    })
 
     mocha.describe("Template Generation", function () {
 

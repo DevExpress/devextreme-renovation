@@ -27,6 +27,9 @@ export default {
   methods: {
     __restAttributes() {
       return {};
+    },
+    valueChange(...args){
+      this.$emit("value-change", ...args);
     }
   }
 };

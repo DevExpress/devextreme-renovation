@@ -24,6 +24,9 @@ export default {
     },
     __restAttributes() {
       return {};
+    },
+    onClick(...args){
+      this.$emit("on-click", ...args);
     }
   }
 };

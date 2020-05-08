@@ -1,4 +1,4 @@
-<script>
+ <script>
 function view(model) {}
 const WidgetInput = {
   height: {
@@ -8,16 +8,22 @@ const WidgetInput = {
     }
   }
 };
+
 export default {
   props: WidgetInput,
   methods: {
     getHeight() {
-      this.$emit("on-click", 10);
-      this.$emit("on-click", 11);
+      this.onClick(10);
+
+      this.onClick(11);
       return this.height;
     },
     __restAttributes() {
       return {};
+    },
+
+    onClick(...args) {
+      this.$emit("on-click", ...args);
     }
   }
 };
