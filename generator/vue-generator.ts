@@ -523,11 +523,8 @@ export class VueComponent extends Component {
     }
 }
 
-function getEventName(name: Identifier, suffix="") { 
+function getEventName(name: Identifier) { 
     const words = name.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
-    if (suffix) { 
-        words.push(suffix);
-    }
     return `${words.join("-")}`;
 }
 

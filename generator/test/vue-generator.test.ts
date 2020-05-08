@@ -544,6 +544,30 @@ mocha.describe("Vue-generator", function () {
             }), 'this.onClick(10)');
         });
 
+        mocha.it("CallChain Identifer that is call event", function () { 
+            const member = generator.createProperty(
+                [createDecorator("Event")],
+                undefined,
+                generator.createIdentifier("onClick")
+            )
+            assert.strictEqual(generator.createCallChain(
+                generator.createIdentifier("click"),
+                generator.SyntaxKind.QuestionDotToken,
+                undefined,
+                [generator.createNumericLiteral("10")]
+            ).toString({
+                members: [member],
+                componentContext: "this",
+                newComponentContext: "this",
+                variables: {
+                    "click": generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("onClick")
+                    )
+                }
+            }), 'this.onClick(10)');
+        });
+
         mocha.it("CallChain expression generates usual call if not event", function () { 
             assert.strictEqual(generator.createCallChain(
                 generator.createIdentifier("a"),
