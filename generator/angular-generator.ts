@@ -336,6 +336,11 @@ export class JsxAttribute extends BaseJsxAttribute {
         return `[${name}]="${value}"`;
     }
 
+    isStringLiteralValue() { 
+        return this.initializer instanceof StringLiteral ||
+            this.initializer instanceof JsxExpression && this.initializer.expression instanceof StringLiteral;
+    }
+
     toString(options?:toStringOptions) { 
         if (this.name.toString() === "ref") { 
             return this.compileRef(options);
@@ -351,8 +356,7 @@ export class JsxAttribute extends BaseJsxAttribute {
             return this.compileKey();
         }
 
-        if (this.initializer instanceof StringLiteral ||
-            this.initializer instanceof JsxExpression && this.initializer.expression instanceof StringLiteral) { 
+        if (this.isStringLiteralValue()) { 
             return `${name}=${this.initializer.toString()}`;
         }
 

@@ -1111,9 +1111,9 @@ mocha.describe("Vue-generator", function () {
                     assert.strictEqual(expression.toString(), `v-bind:style="__processStyle(value)"`);
                 });
 
-                mocha.it("class -> v-bind:class", function () {
+                mocha.it("className -> v-bind:class", function () {
                     const expression = generator.createJsxAttribute(
-                        generator.createIdentifier("class"),
+                        generator.createIdentifier("className"),
                         generator.createJsxExpression(
                             undefined,
                             generator.createIdentifier("value")
@@ -1121,6 +1121,18 @@ mocha.describe("Vue-generator", function () {
                     );
         
                     assert.strictEqual(expression.toString(), `v-bind:class="value"`);
+                });
+
+                mocha.it("className -> class", function () {
+                    const expression = generator.createJsxAttribute(
+                        generator.createIdentifier("className"),
+                        generator.createJsxExpression(
+                            undefined,
+                            generator.createStringLiteral("value")
+                        )
+                    );
+        
+                    assert.strictEqual(expression.toString(), `class="value"`);
                 });
 
                 mocha.it("Parse style with options should fill hasClass", function () {

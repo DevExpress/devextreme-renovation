@@ -600,8 +600,8 @@ export class JsxAttribute extends BaseJsxAttribute {
     compileName(options?: toStringOptions) { 
         const name = this.name.toString();
         if (!(options?.eventProperties)) {
-            if (name === "class") { 
-                return "v-bind:class";
+            if (name === "className") { 
+                return this.isStringLiteralValue() ? "class" : "v-bind:class";
             }
             if (name === "style") { 
                 if (options) { 
