@@ -229,6 +229,14 @@ export class VueComponentInput extends ComponentInput {
     }
 }
 
+function getComponentListFromContext(context: GeneratorContext) { 
+    return Object.keys(context.components || {})
+        .filter((k) => {
+            const component = context.components?.[k];
+            return component instanceof VueComponent;
+        }).map(k => context.components![k]) as VueComponent[];
+}
+
 export class VueComponent extends Component { 
     template?: string;
 
@@ -375,22 +383,18 @@ export class VueComponent extends Component {
             const scheduleEffectName = `__schedule_${effect.name}`;
 
             if (dependency.length) { 
-                methods.push(`
-                    ${scheduleEffectName}() {
+                methods.push(` ${scheduleEffectName}() {
                         this.__scheduleEffects[${index}]=()=>{
                             this.__destroyEffects[${index}]&&this.__destroyEffects[${index}]();
                             this.__destroyEffects[${index}]=this.${effect.name}();
                         }
-                    }
-                `);
+                    }`);
             }
 
             const watchDependency = (dependency: string[]) => { 
                 dependency.forEach(d => { 
                     watches[d] = watches[d] || [];
-                    watches[d].push(`
-                        "${scheduleEffectName}"
-                    `);
+                    watches[d].push(`"${scheduleEffectName}"`);
                 });
             }
 
@@ -420,10 +424,10 @@ export class VueComponent extends Component {
 
     generateComponents() { 
         const components = Object.keys(this.context.components || {})
-            .filter((k) => {
-                const component = this.context.components?.[k];
-                return component instanceof VueComponent && component !== this
-            });
+        .filter((k) => {
+            const component = this.context.components?.[k];
+            return component instanceof VueComponent && component !== this
+        });
         
         if (components.length) { 
             return `components: {
@@ -841,11 +845,15 @@ class VueGenerator extends BaseGenerator {
     }
 
     processSourceFileName(name: string) {
-        return name.replace(/\.tsx$/, ".vue");
+        const ext = getComponentListFromContext(this.getContext()).length ? ".vue" : ".js";
+        return name.replace(/\.tsx$/, ext);
     }
 
     processCodeFactoryResult(codeFactoryResult: Array<any>) { 
         const code = codeFactoryResult.join("\n");
+        if (getComponentListFromContext(this.getContext()).length === 0) {
+            return code;
+        }
         const template = codeFactoryResult.find(r => r instanceof VueComponent)?.template;
         return `
             ${template ? `
