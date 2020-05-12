@@ -7,13 +7,18 @@ import { createTestGenerator, assertCode } from "./helpers/common";
 
 function getPartFromSourceFile(code: string, tagName: string){ 
     const tag = `<${tagName}>`;
-    const startPosition = code.indexOf(tag) + tag.length;
+    const startPosition = code.indexOf(tag);
     const endPosition = code.indexOf(`</${tagName}>`);
+
+    if (startPosition === -1 && endPosition === -1 && tagName==="script") { 
+        return code;
+    }
+
     if (startPosition === -1 || endPosition === -1) { 
         return "";
     }
 
-    return code.slice(startPosition, endPosition);
+    return code.slice(startPosition + tag.length, endPosition);
 }
 
 function getCodeFromSourceFile(code: string) { 

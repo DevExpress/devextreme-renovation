@@ -1085,7 +1085,7 @@ mocha.describe("import Components", function () {
 
         assert.deepEqual(model.members.map(m => {
             return m.typeDeclaration();
-        }), ["height!:string", "children?:React.ReactNode"]);
+        }), ["height!:string", "width?:number", "children?:React.ReactNode"]);
 
         assert.strictEqual(model.defaultPropsDest(), "Model");
         assert.strictEqual(removeSpaces(model.toString()), removeSpaces(`

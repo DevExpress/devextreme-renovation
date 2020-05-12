@@ -7,6 +7,7 @@ function view() {
 import { Input } from "@angular/core";
 export class WidgetProps {
     @Input() height?: number = 10;
+    @Input() width?: number = 10;
 }
 
 import { Component, NgModule } from "@angular/core";
