@@ -4,11 +4,13 @@ function view() { }
 
 export declare type WidgetPropsType = {
     height?: number;
+    width?: number;
     children?: React.ReactNode
 }
 
 export const WidgetProps: WidgetPropsType = {
-    height: 10
+    height: 10,
+    width: 10
 };
 
 import React, { useCallback } from "react";
@@ -24,7 +26,7 @@ export default function Widget(props: typeof WidgetProps) {
         const v = props.height
     }, [props.height]);
     const __restAttributes=useCallback(function __restAttributes(){
-        const { children, height, ...restProps } = props;
+        const { children, height, width, ...restProps } = props;
         return restProps;
     }, [props]);
 

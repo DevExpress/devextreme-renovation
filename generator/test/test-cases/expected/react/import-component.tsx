@@ -24,9 +24,9 @@ export default function Child(props: typeof ChildInput) {
     const getProps = useCallback(function getProps() {
         return { height: props.height };
     }, [props.height]);
-
+    
     const __restAttributes = useCallback(function __restAttributes() {
-        const { children, height, onClick, ...restProps } = props
+        const { children, height, onClick, width, ...restProps } = props
         return restProps;
     }, [props]);
 

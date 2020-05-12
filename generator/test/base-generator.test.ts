@@ -2045,7 +2045,7 @@ mocha.describe("import Components", function () {
             []
         );
 
-        assert.deepEqual(model.members.map(m => m.name.toString()), ["height", "children"]);
+        assert.deepEqual(model.members.map(m => m.name.toString()), ["height", "width", "children"]);
     });
 });
 
