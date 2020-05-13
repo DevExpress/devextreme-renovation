@@ -1153,7 +1153,7 @@ mocha.describe("Vue-generator", function () {
                 p2:(this.p2 !== undefined ? this.p2 : this.p2_state),
                 p3:this.p3,
                 p4:this.p4,
-                p5:this.$slots.p5
+                p5:this.$scopedSlots.p5
             }`));
         });
     })
@@ -1495,6 +1495,89 @@ mocha.describe("Vue-generator", function () {
                     members: [property]
                 })), removeSpaces(`<template v-if="condition">{{_value()}}</template><template v-else>{{!_value()}}</template>`));
             });
+
+            mocha.it("condition?<element>:expr - <element><template>{expr}</template>'", function () {
+                const thenStatement = generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("input"),
+                    [],
+                    []
+                );
+    
+                const elseStatement = generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("value")
+                    )
+    
+                const property = generator.createGetAccessor(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    [],
+                    undefined,
+                    undefined
+                );
+
+                generator.createJsxExpression(
+                    undefined,
+                    generator.createConditional(
+                        generator.createIdentifier("condition"),
+                        thenStatement,
+                        elseStatement
+                    )
+                )
+    
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [
+                        generator.createJsxExpression(
+                            undefined,
+                            generator.createConditional(
+                                generator.createIdentifier("condition"),
+                                generator.createJsxSelfClosingElement(
+                                    generator.createPropertyAccess(
+                                        generator.createPropertyAccess(
+                                            generator.createIdentifier("model"),
+                                            generator.createIdentifier("props")
+                                        ),
+                                        generator.createIdentifier("template")
+                                    ),
+                                    undefined,
+                                    [generator.createJsxAttribute(
+                                        generator.createIdentifier("text"),
+                                        generator.createJsxExpression(
+                                            undefined,
+                                            generator.createPropertyAccess(
+                                                generator.createPropertyAccess(
+                                                    generator.createIdentifier("model"),
+                                                    generator.createIdentifier("props")
+                                                ),
+                                                generator.createIdentifier("text")
+                                            )
+                                        )
+                                    )]
+                                ),
+                                generator.createIdentifier("text")
+                            )
+                        )
+                    ],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(removeSpaces(expression.children[0].toString({
+                    componentContext: "model",
+                    newComponentContext: "",
+                    members: [property]
+                })), removeSpaces(`
+                    <slot name="template" v-bind:text="props.text" v-if="condition"></slot>
+                    <templatev-else>{{text}}</template>
+                `));
+            });
         });
 
         mocha.describe("Template", function () { 
@@ -1671,7 +1754,7 @@ mocha.describe("Vue-generator", function () {
                     members: [templateProperty],
                     componentContext: "viewModel",
                     newComponentContext: ""
-                }), `<slot name="template" v-if="$slots.template"></slot>`);
+                }), `<slot name="template" v-if="$scopedSlots.template"></slot>`);
             });
         });
 

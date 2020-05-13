@@ -146,7 +146,7 @@ export class Property extends BaseProperty {
             return `${componentContext}$refs.${this.name}`;
         }
         if (this.isTemplate) { 
-            return `${componentContext}$slots.${this.name}`;
+            return `${componentContext}$scopedSlots.${this.name}`;
         }
         return baseValue
     }
@@ -757,9 +757,37 @@ export class VueDirective extends AngularDirective {
     }
  }
 
-const processBinary = createProcessBinary((conditionExpression: Expression) => { 
+const processBinary = createProcessBinary((conditionExpression: Expression) => {
     return new VueDirective(new Identifier("v-if"), conditionExpression);
-})
+});
+
+export class TemplateWrapperElement extends JsxOpeningElement { 
+    getTemplateProperty(options?: toStringOptions) { 
+        return undefined;
+    }
+
+    constructor(attributes: Array<JsxAttribute | JsxSpreadAttribute> = []) { 
+        super(
+            new Identifier("template"),
+            undefined,
+            attributes,
+            {}
+        );
+    }
+}
+
+export class ClosingTemplateWrapperElement extends JsxClosingElement { 
+    getTemplateProperty(options?: toStringOptions) { 
+        return undefined;
+    }
+
+    constructor(attributes: Array<JsxAttribute | JsxSpreadAttribute> = []) { 
+        super(
+            new Identifier("template"),
+            {}
+        );
+    }
+}
 
 export class JsxChildExpression extends BaseJsxChildExpression { 
 
@@ -770,14 +798,9 @@ export class JsxChildExpression extends BaseJsxChildExpression {
     createContainer(atributes: JsxAttribute[], children: Array<JsxExpression | JsxElement | JsxSelfClosingElement>) { 
         const containerIdentifer = new Identifier("template")
         return new JsxElement(
-            new JsxOpeningElement(
-                containerIdentifer,
-                undefined,
-                atributes,
-                {}
-            ),
+            new TemplateWrapperElement(atributes),
             children,
-            new JsxClosingElement(containerIdentifer, {})
+            new ClosingTemplateWrapperElement()
         );
     }
 
