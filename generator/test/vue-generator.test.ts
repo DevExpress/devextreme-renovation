@@ -717,7 +717,143 @@ mocha.describe("Vue-generator", function () {
 
                 assert.strictEqual(expression.toString(), "");
             });
+
+            mocha.it("Can use jsx variable twice. Self-closing element should be cloned correctly", function () {
+                const block = generator.createBlock([
+                    generator.createVariableStatement(
+                        [],
+                        generator.createVariableDeclarationList(
+                            [generator.createVariableDeclaration(
+                                generator.createIdentifier("v"),
+                                undefined,
+                                generator.createJsxSelfClosingElement(
+                                    generator.createIdentifier("span")
+                                )
+                            )],
+                            generator.SyntaxKind.ConstKeyword
+                        )
+                    ),
+                    generator.createReturn(
+                        generator.createJsxElement(
+                            generator.createJsxOpeningElement(
+                                generator.createIdentifier("div"),
+                                [],
+                                []),
+                            [generator.createJsxExpression(
+                                undefined,
+                                generator.createBinary(
+                                    generator.createIdentifier("c1"),
+                                    generator.SyntaxKind.AmpersandAmpersandToken,
+                                    generator.createIdentifier("v")
+                                ),
+                            ),
+                            generator.createJsxExpression(
+                                undefined,
+                                generator.createBinary(
+                                    generator.createIdentifier("c2"),
+                                    generator.SyntaxKind.AmpersandAmpersandToken,
+                                    generator.createIdentifier("v")
+                                ),
+                            )],
+                            generator.createJsxClosingElement(generator.createIdentifier("div"))
+                        )
+                    )
+                ], false);
+    
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [],
+                    undefined,
+                    block
+                );
+    
+                assert.strictEqual(expression.toString(), "");
+                assert.strictEqual(removeSpaces((expression.getTemplate({
+                    members: []
+                }) as string)), removeSpaces(`<div >
+                        <span v-if="c1"/>
+                        <span v-if="c2"/>
+                    </div>`));
+            });
+
+            mocha.it("Can use jsx variable twice. jsx element should be cloned correctly", function () {
+                const block = generator.createBlock([
+                    generator.createVariableStatement(
+                        [],
+                        generator.createVariableDeclarationList(
+                            [generator.createVariableDeclaration(
+                                generator.createIdentifier("v"),
+                                undefined,
+                                generator.createJsxElement(
+                                    generator.createJsxOpeningElement(
+                                        generator.createIdentifier("span"),
+                                        undefined,
+                                        [],
+                                        
+                                    ),
+                                    [],
+                                    generator.createJsxClosingElement(
+                                        generator.createIdentifier("span")
+                                    )
+                                )
+                            )],
+                            generator.SyntaxKind.ConstKeyword
+                        )
+                    ),
+                    generator.createReturn(
+                        generator.createJsxElement(
+                            generator.createJsxOpeningElement(
+                                generator.createIdentifier("div"),
+                                [],
+                                []),
+                            [generator.createJsxExpression(
+                                undefined,
+                                generator.createBinary(
+                                    generator.createIdentifier("c1"),
+                                    generator.SyntaxKind.AmpersandAmpersandToken,
+                                    generator.createIdentifier("v")
+                                ),
+                            ),
+                            generator.createJsxExpression(
+                                undefined,
+                                generator.createBinary(
+                                    generator.createIdentifier("c2"),
+                                    generator.SyntaxKind.AmpersandAmpersandToken,
+                                    generator.createIdentifier("v")
+                                ),
+                            )],
+                            generator.createJsxClosingElement(generator.createIdentifier("div"))
+                        )
+                    )
+                ], false);
+    
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [],
+                    undefined,
+                    block
+                );
+    
+                assert.strictEqual(expression.toString(), "");
+                assert.strictEqual(removeSpaces((expression.getTemplate({
+                    members: []
+                }) as string)), removeSpaces(`<div >
+                        <span v-if="c1"></span>
+                        <span v-if="c2"></span>
+                    </div>`));
+            });
+
         });
+
+        
     });
 
     mocha.describe("Component Input", function () { 
@@ -1047,6 +1183,24 @@ mocha.describe("Vue-generator", function () {
                 assert.strictEqual(expression.toString(), "<div ></div>");
             });
 
+            mocha.it("Element with two children: should not be any whitespace symbols between elements", function () { 
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div")
+                    ),
+                    [generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("span")
+                    ),generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("span")
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+
+                assert.strictEqual(expression.toString(), "<div ><span /><span /></div>");
+            });
+
             mocha.it("element with attributes", function () { 
                 const expression = generator.createJsxElement(
                     generator.createJsxOpeningElement(
@@ -1150,6 +1304,24 @@ mocha.describe("Vue-generator", function () {
 
                     assert.strictEqual(expression.toString(options), `v-bind:style="__processStyle(value)"`);
                     assert.strictEqual(options.hasStyle, true);
+                });
+            });
+
+            mocha.describe("Fragment", function () { 
+                mocha.it("Fragment -> div", function () { 
+                    const element = generator.createJsxElement(
+                        generator.createJsxOpeningElement(
+                            generator.createIdentifier("Fragment"),
+                            undefined,
+                            []
+                        ),
+                        [],
+                        generator.createJsxClosingElement(
+                            generator.createIdentifier("Fragment")
+                        )
+                    );
+
+                    assert.strictEqual(element.toString(), `<div style="display: contents" ></div>`);
                 });
             });
         });
