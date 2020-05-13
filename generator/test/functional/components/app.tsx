@@ -8,6 +8,7 @@ import VisibilityChange from "./change-visibility.tsx";
 import VisibilityChangeProp from "./change-visibility-prop.tsx";
 import ComponentWithRest from "./rest-attributes.tsx";
 import CallMethodInGetterWidget from "./call-method-in-getter.tsx";
+import ComponentWithFragment from "./component-with-fragment.tsx";
 
 function view(model: App) { 
     return <div>
@@ -34,10 +35,11 @@ function view(model: App) {
 
         <ComponentWithRest id="component-with-rest-attributes" label="rest-attributes"></ComponentWithRest>
 
-        <div id="component-with-fragment"><Fragment><div></div><div></div></Fragment></div>
-
         <CallMethodInGetterWidget id={"call-method-in-getter-widget"} prop={model.callMethodInGetterWidgetProp}></CallMethodInGetterWidget>
-        <ButtonComponent id="button-5" onClick={model.changeCallMethodInGetterWidgetProp}>{"Open"}</ButtonComponent>
+        <ButtonComponent id="button-5" onClick={model.changeCallMethodInGetterWidgetProp}>{"UpdateValue"}</ButtonComponent>
+        <div>
+            <ComponentWithFragment/>
+        </div>
     </div>;
 }
 

@@ -10,6 +10,7 @@ import DxVisibilityChange from '../../../../components/change-visibility';
 import DxVisibilityChangeProp from '../../../../components/change-visibility-prop';
 import ComponentWithRest from '../../../../components/rest-attributes';
 import CallMethodInGetter from '../../../../components/call-method-in-getter';
+import ComponentWithFragment from '../../../../components/component-with-fragment';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import CallMethodInGetter from '../../../../components/call-method-in-getter';
     DxVisibilityChange,
     DxVisibilityChangeProp,
     ComponentWithRest,
-    CallMethodInGetter
+    CallMethodInGetter,
+    ComponentWithFragment
   ],
   imports: [
     BrowserModule

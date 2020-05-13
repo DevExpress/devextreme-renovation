@@ -670,6 +670,14 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         }
     }
 
+    processTagName(tagName: Expression) { 
+        if (tagName.toString() === "Fragment") { 
+            return new SimpleExpression('div style="display: contents"');
+        }
+
+        return tagName;
+    }
+
     compileTemplate(templateProperty: Property, options?: toStringOptions) {
         const attributes = this.attributes.map(a => a.getTemplateProp(options));
         return `<slot name="${templateProperty.name}" ${attributes.join(" ")}></slot>`;
@@ -683,7 +691,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         return new JsxOpeningElement(
             this.tagName,
             this.typeArguments,
-            this.attributes,
+            this.attributes.slice(),
             this.context
         );
     }
@@ -692,6 +700,14 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 export class JsxClosingElement extends JsxOpeningElement { 
     constructor(tagName: Expression, context: GeneratorContext) { 
         super(tagName, [], [], context);
+    }
+
+    processTagName(tagName: Expression) { 
+        if (tagName.toString() === "Fragment") { 
+            return new SimpleExpression('div');
+        }
+
+        return tagName;
     }
 
     toString(options: toStringOptions) {
@@ -712,7 +728,7 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
         return new JsxSelfClosingElement(
             this.tagName,
             this.typeArguments,
-            this.attributes,
+            this.attributes.slice(),
             this.context
         );
     }

@@ -700,7 +700,7 @@ export class JsxElement extends BaseJsxElement {
     }
 
     toString(options?: toStringOptions) {
-        const children: string = this.children.map(c => c.toString(options)).join("\n");
+        const children: string = this.children.map(c => c.toString(options)).join("");
         if (this.openingElement.tagName.toString() === "Fragment") {
             return children;
         }
