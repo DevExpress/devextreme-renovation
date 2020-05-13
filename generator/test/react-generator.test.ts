@@ -1700,6 +1700,65 @@ mocha.describe("ComponentInput", function () {
         `));
     });
 
+    mocha.describe("Required prop", function () { 
+        mocha.it("Type declaration should have excalmation token", function () {
+            const expression = generator.createClassDeclaration(
+                this.decorators,
+                ["export"],
+                generator.createIdentifier("BaseModel"),
+                [],
+                [],
+                [
+                    generator.createProperty(
+                        [createDecorator("OneWay")],
+                        undefined,
+                        generator.createIdentifier("prop"),
+                        generator.SyntaxKind.ExclamationToken,
+                        generator.createKeywordTypeNode("number"),
+                        generator.createNumericLiteral("1")
+                    )
+                ]
+            );
+        
+            assert.strictEqual(getResult(expression.toString()), getResult(`
+                export declare type BaseModelType = {
+                    prop: number
+                };
+                export const BaseModel:BaseModelType = {
+                    prop: 1
+                };
+            `));
+        });
+
+        mocha.it("Default props should be casted to props type it has at least one required prop w/o initializer", function () {
+            const expression = generator.createClassDeclaration(
+                this.decorators,
+                ["export"],
+                generator.createIdentifier("BaseModel"),
+                [],
+                [],
+                [
+                    generator.createProperty(
+                        [createDecorator("OneWay")],
+                        undefined,
+                        generator.createIdentifier("prop"),
+                        generator.SyntaxKind.ExclamationToken,
+                        generator.createKeywordTypeNode("number")
+                    )
+                ]
+            );
+        
+            assert.strictEqual(getResult(expression.toString()), getResult(`
+                export declare type BaseModelType = {
+                    prop: number
+                };
+                export const BaseModel:BaseModelType = {
+                    
+                } as BaseModelType;
+            `));
+        });
+    });
+
     mocha.describe("CompileViewModelArguments", function () {
         this.beforeEach(function () { 
             

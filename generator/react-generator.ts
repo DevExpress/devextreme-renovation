@@ -53,27 +53,38 @@ function stateSetter(stateName: Identifier | string) {
 }
 
 export class ComponentInput extends BaseComponentInput { 
-    toString() { 
+    toString() {
         const inherited = this.baseTypes.map(t => `...${t}`);
        
         const types = this.heritageClauses.reduce((t: string[], h) => t.concat(h.typeNodes.map(t => `typeof ${t}`)), []);
         const typeName = `${this.name}Type`;
 
+        const properties = this.members.
+            filter(m => !(m as Property).inherited) as Property[];
+        
         const typeDeclaration = `export declare type ${typeName} = ${types.concat([`{
-            ${this.members.filter(m => !(m as Property).inherited).map(p => p.typeDeclaration()).join(";\n")}
+            ${properties.map(p => p.typeDeclaration()).join(";\n")}
         }`]).join("&")}`;
+
+        const typeCasting = properties.some(p =>
+            p.questionOrExclamationToken === SyntaxKind.ExclamationToken && !p.initializer
+        )
+            ? ` as ${typeName}`
+            : "";
 
         const declarationModifiers = this.modifiers.indexOf("default") !== -1 ? [] : this.modifiers;
 
+        const propertiesWithInitializer = this.members
+            .filter(m =>
+                !(m as Property).inherited && (m as Property).initializer &&
+                (m.decorators.find(d => d.name !== "TwoWay") || (m as Property).questionOrExclamationToken !== "?")) as Property[];
+
         return `${typeDeclaration}
         ${declarationModifiers.join(" ")} const ${this.name}:${typeName}={
-           ${inherited.concat(
-            this.members
-                .filter(m => !(m as Property).inherited && (m as Property).initializer &&
-                    (m.decorators.find(d => d.name !== "TwoWay") || (m as Property).questionOrExclamationToken !== "?"))
-                .map(p => (p as Property).defaultDeclaration())
-        ).join(",\n")}
-        };
+           ${inherited
+                .concat(propertiesWithInitializer.map(p => p.defaultDeclaration()))
+                .join(",\n")}
+        }${typeCasting};
         ${declarationModifiers !== this.modifiers ? `${this.modifiers.join(" ")} ${this.name}` : ""}`;
     }
 }
@@ -122,6 +133,9 @@ export class Property extends BaseProperty {
         }
         if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")){ 
             return `${this.name}:any`;
+        }
+        if (this.questionOrExclamationToken === SyntaxKind.ExclamationToken) {
+            return `${this.name}:${this.type}`;
         }
         return super.typeDeclaration();
     }
