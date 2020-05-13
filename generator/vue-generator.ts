@@ -777,11 +777,7 @@ export class TemplateWrapperElement extends JsxOpeningElement {
 }
 
 export class ClosingTemplateWrapperElement extends JsxClosingElement { 
-    getTemplateProperty(options?: toStringOptions) { 
-        return undefined;
-    }
-
-    constructor(attributes: Array<JsxAttribute | JsxSpreadAttribute> = []) { 
+    constructor() { 
         super(
             new Identifier("template"),
             {}
