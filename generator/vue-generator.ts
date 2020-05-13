@@ -640,7 +640,9 @@ export class JsxAttribute extends BaseJsxAttribute {
     }
 
     compileEvent(options?: toStringOptions) { 
-        return `@${getEventName(this.name)}="${this.compileInitializer(options)}"`;
+        const state = options?.members?.find(s => s.isState && `${s.name}Change` === this.name.toString());
+        const eventName = state ? `update:${state.name}` : this.name;
+        return `@${getEventName(eventName)}="${this.compileInitializer(options)}"`;
     }
 
     compileBase(name: string, value: string) { 

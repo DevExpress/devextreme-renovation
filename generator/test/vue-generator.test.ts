@@ -1828,21 +1828,36 @@ mocha.describe("Vue-generator", function () {
             });
 
             mocha.it("Process event - @event", function () {
+                const members = [
+                    generator.createProperty(
+                        [createDecorator("Event")],
+                        [],
+                        generator.createIdentifier("eventChange"),
+                        undefined,
+                        undefined,
+                        undefined
+                    ),
+                    generator.createProperty(
+                        [createDecorator("Event")],
+                        [],
+                        generator.createIdentifier("statePropChange"),
+                        undefined,
+                        undefined,
+                        undefined
+                    ),
+                    generator.createProperty(
+                        [createDecorator("TwoWay")],
+                        [],
+                        generator.createIdentifier("stateProp")
+                    )
+                ];
                 generator.createClassDeclaration(
                     [createComponentDecorator({})],
                     [],
                     generator.createIdentifier("Widget"),
                     [],
                     [],
-                    [
-                    generator.createProperty(
-                        [createDecorator("Event")],
-                        [],
-                        generator.createIdentifier("event"),
-                        undefined,
-                        undefined,
-                        undefined
-                    )]
+                    members
                 );
 
                 const element = generator.createJsxSelfClosingElement(
@@ -1850,15 +1865,19 @@ mocha.describe("Vue-generator", function () {
                     [],
                     [
                         generator.createJsxAttribute(
-                            generator.createIdentifier("event"),
+                            generator.createIdentifier("eventChange"),
+                            generator.createIdentifier("value")
+                        ),
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("statePropChange"),
                             generator.createIdentifier("value")
                         )
                     ]
                 );
 
                 assert.strictEqual(element.toString({
-                    members: []
-                }), `<Widget @event="value"/>`);        
+                    members: members
+                }), `<Widget @event-change="value"\n@update:state-prop="value"/>`);
             });
 
         });

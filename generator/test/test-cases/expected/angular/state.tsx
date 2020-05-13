@@ -1,3 +1,5 @@
+import BaseState, {DxStateBaseWidgetModule} from "./state-base";
+
 import { Input, Output, EventEmitter } from "@angular/core"
 class WidgetInput {
     @Input() state1?: boolean = false;
@@ -13,7 +15,7 @@ import { CommonModule } from "@angular/common"
 
 @Component({
     selector: "dx-widget",
-    template: `<div>{{state1}}</div>`
+    template: `<div>{{state1}}<dx-state-base-widget (statePropChange)="__stateChange($event)"></dx-state-base-widget></div>`
 })
 export default class Widget extends WidgetInput {
     __updateState(): any {
@@ -30,6 +32,10 @@ export default class Widget extends WidgetInput {
         const s = state1;
     }
 
+    __stateChange(stateProp: boolean): any {
+        this.statePropChange!.emit(this.stateProp = stateProp);
+    }
+
     get __restAttributes(): any{
         return {}
     }
@@ -37,6 +43,7 @@ export default class Widget extends WidgetInput {
 @NgModule({
     declarations: [Widget],
     imports: [
+        DxStateBaseWidgetModule,
         CommonModule
     ],
     exports: [Widget]

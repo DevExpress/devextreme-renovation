@@ -1,5 +1,10 @@
+import BaseState from "./state-base";
+
 function view(model: Widget) {
-  return <div >{model.props.state1}</div>;
+  return (<div>
+    {model.props.state1}
+    <BaseState statePropChange={model.stateChange}></BaseState>
+  </div>);
 }
 export declare type WidgetInputType = {
   state1?: boolean;
@@ -31,6 +36,7 @@ interface Widget {
   updateState: () => any;
   updateState2: () => any;
   destruct: () => any;
+  stateChange: (stateProp:boolean) => any;
   restAttributes: any;
 }
 
@@ -52,6 +58,10 @@ export default function Widget(props: typeof WidgetInput) {
     const s = (props.state1 !== undefined ? props.state1 : __state_state1)
   }, [props.state1, __state_state1, props.state1Change]);
 
+  const stateChange = useCallback(function stateChange(stateProp: boolean) {
+    (__state_setStateProp(stateProp), props.statePropChange!(stateProp))
+  }, []);
+
   const __restAttributes=useCallback(function __restAttributes(){
     const { defaultState1, defaultState2, defaultStateProp, state1, state1Change, state2, state2Change, stateProp, statePropChange, ...restProps } = props;
     return restProps;
@@ -67,6 +77,7 @@ export default function Widget(props: typeof WidgetInput) {
     updateState,
     updateState2,
     destruct,
+    stateChange,
     restAttributes: __restAttributes()
   })
   );

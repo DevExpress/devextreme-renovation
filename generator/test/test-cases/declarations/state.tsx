@@ -1,7 +1,11 @@
 import { Component, TwoWay, ComponentBindings, JSXComponent } from "../../../component_declaration/common";
+import BaseState from "./state-base";
 
 function view(model: Widget) {
-    return <div>{model.props.state1}</div>
+    return (<div>
+        {model.props.state1}
+        <BaseState statePropChange={model.stateChange}></BaseState>
+    </div>);
 }
 
 @ComponentBindings()
@@ -26,6 +30,10 @@ export default class Widget extends JSXComponent<WidgetInput> {
     destruct() { 
         const { state1 } = this.props;
         const s = state1;
+    }
+
+    stateChange(stateProp: boolean) {
+        this.props.stateProp = stateProp;
     }
 }
   

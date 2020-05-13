@@ -1,7 +1,8 @@
  <template>
-  <div>{{(state1 !== undefined ? state1 : state1_state)}}</div>
+  <div>{{(state1 !== undefined ? state1 : state1_state)}}<BaseState @update:state-prop="stateChange"></BaseState></div>
 </template>
 <script>
+import BaseState from "./state-base";
 const WidgetInput = {
   state1: {
     type: Boolean,
@@ -32,6 +33,9 @@ const WidgetInput = {
   }
 };
 export default {
+  components: {
+    BaseState
+  },
   props: WidgetInput,
   data() {
     return {
@@ -54,6 +58,10 @@ export default {
     },
     destruct(){
       const s = (this.state1 !== undefined ? this.state1 : this.state1_state);
+    },
+    stateChange(stateProp) {
+      this.stateProp_state = stateProp,
+      this.statePropChange(this.stateProp_state);
     },
     __restAttributes() {
       return {};
