@@ -148,7 +148,7 @@ mocha.describe("preact-generator: expressions", function () {
                 generator.createKeywordTypeNode("string")
             );
             
-            assert.strictEqual(property.typeDeclaration(), "p!:string");
+            assert.strictEqual(property.typeDeclaration(), "p:string");
         });
     });
 });

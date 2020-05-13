@@ -1085,11 +1085,11 @@ mocha.describe("import Components", function () {
 
         assert.deepEqual(model.members.map(m => {
             return m.typeDeclaration();
-        }), ["height!:string", "width?:number", "children?:React.ReactNode"]);
+        }), ["height:string", "width?:number", "children?:React.ReactNode"]);
 
         assert.strictEqual(model.defaultPropsDest(), "Model");
         assert.strictEqual(removeSpaces(model.toString()), removeSpaces(`
-            export declare type ModelType = typeof WidgetProps & {height!:string} 
+            export declare type ModelType = typeof WidgetProps & {height:string} 
             constModel:ModelType={...WidgetProps, height:"10px"};
         `));
     });
@@ -1111,8 +1111,8 @@ mocha.describe("import Components", function () {
             )]
         );
         assert.strictEqual(getResult(model.toString()), getResult(`
-            export declare type ModelType = {height!:string}
-            const Model:ModelType={}
+            export declare type ModelType = {height:string}
+            const Model:ModelType={} as ModelType
         `));
     });
 
@@ -1172,7 +1172,7 @@ mocha.describe("import Components", function () {
 
         assert.strictEqual(members.length, 3);
         assert.strictEqual(members[1].defaultDeclaration(), "pChange:undefined");
-        assert.strictEqual(members[1].typeDeclaration(), "pChange!:any");
+        assert.strictEqual(members[1].typeDeclaration(), "pChange:any");
 
         assert.strictEqual(members[2].defaultDeclaration(), "defaultP:undefined");
         assert.strictEqual(members[2].typeDeclaration(), "defaultP?:string");
@@ -1727,34 +1727,6 @@ mocha.describe("ComponentInput", function () {
                 export const BaseModel:BaseModelType = {
                     prop: 1
                 };
-            `));
-        });
-
-        mocha.it("Default props should be casted to props type it has at least one required prop w/o initializer", function () {
-            const expression = generator.createClassDeclaration(
-                this.decorators,
-                ["export"],
-                generator.createIdentifier("BaseModel"),
-                [],
-                [],
-                [
-                    generator.createProperty(
-                        [createDecorator("OneWay")],
-                        undefined,
-                        generator.createIdentifier("prop"),
-                        generator.SyntaxKind.ExclamationToken,
-                        generator.createKeywordTypeNode("number")
-                    )
-                ]
-            );
-        
-            assert.strictEqual(getResult(expression.toString()), getResult(`
-                export declare type BaseModelType = {
-                    prop: number
-                };
-                export const BaseModel:BaseModelType = {
-                    
-                } as BaseModelType;
             `));
         });
     });
