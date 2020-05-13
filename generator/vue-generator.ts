@@ -197,8 +197,15 @@ export class GetAccessor extends BaseGetAccessor {
 }
 
 export class VueComponentInput extends ComponentInput { 
-    buildDefaultStateProperty() { 
-        return null;
+    buildDefaultStateProperty(stateMember: Property): Property|null { 
+        return new Property(
+            [new Decorator(new Call(new Identifier("OneWay"), undefined, []), {})],
+            [],
+            new Identifier(`default${capitalizeFirstLetter(stateMember._name)}`),
+            undefined,
+            stateMember.type,
+            stateMember.initializer
+        )
     }
     
     buildChangeState(stateMember: Property, stateName: Identifier) { 
@@ -266,8 +273,8 @@ export class VueComponent extends Component {
                         new Identifier(`${m._name}_state`),
                         "",
                         m.type,
-                        base.initializer && new SimpleExpression(
-                            `this.${base.name}!==undefined?this.${base.name}:${base.initializer}`
+                        new SimpleExpression(
+                            `this.default${capitalizeFirstLetter(base.name)}`
                         )
                     )
                 )
@@ -359,10 +366,12 @@ export class VueComponent extends Component {
                 componentContext: "this",
                 newComponentContext: "this"
             })));
-        
+
         this.members.filter(m => m.isEvent).forEach(m => { 
+            const state = this.members.find(s => s.isState && `${s._name}Change` === m._name.toString());
+            const event = state ? `update:${state._name}` : m._name;
             statements.push(`${m._name}(...args){
-                this.$emit("${getEventName(m._name)}", ...args);
+                this.$emit("${getEventName(event)}", ...args);
             }`);
         });
 
@@ -533,7 +542,7 @@ export class VueComponent extends Component {
     }
 }
 
-function getEventName(name: Identifier) { 
+function getEventName(name: Identifier | string) { 
     const words = name.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
     return `${words.join("-")}`;
 }

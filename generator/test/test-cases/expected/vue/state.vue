@@ -11,18 +11,33 @@ const WidgetInput = {
     type: Boolean,
     default: undefined
   },
-  state3: {
+  stateProp: {
     type: Boolean,
     default: undefined
+  },
+  defaultState1: {
+    type: Boolean,
+    default() {
+      return false;
+    }
+  },
+  defaultState2: {
+    type: Boolean,
+    default() {
+      return false;
+    }
+  },
+  defaultStateProp: {
+    type: Boolean
   }
 };
 export default {
   props: WidgetInput,
   data() {
     return {
-      state1_state: this.state1 !== undefined ? this.state1 : false,
-      state2_state: this.state2 !== undefined ? this.state2 : false,
-      state3_state: undefined
+      state1_state: this.defaultState1,
+      state2_state: this.defaultState2,
+      stateProp_state: this.defaultStateProp
     };
   },
   methods: {
@@ -44,13 +59,13 @@ export default {
       return {};
     },
     state1Change(...args){
-      this.$emit("state1-change", ...args);
+      this.$emit("update:state1", ...args);
     },
     state2Change(...args){
-      this.$emit("state2-change", ...args);
+      this.$emit("update:state2", ...args);
     },
-    state3Change(...args){
-      this.$emit("state3-change", ...args);
+    statePropChange(...args){
+      this.$emit("update:state-prop", ...args);
     }
   }
 };

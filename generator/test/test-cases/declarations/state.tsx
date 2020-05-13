@@ -8,7 +8,7 @@ function view(model: Widget) {
 class WidgetInput { 
     @TwoWay() state1?: boolean = false;
     @TwoWay() state2: boolean = false;
-    @TwoWay() state3?: boolean;
+    @TwoWay() stateProp?: boolean;
 }
 @Component({
     view

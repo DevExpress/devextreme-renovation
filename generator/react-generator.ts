@@ -175,8 +175,7 @@ export class Property extends BaseProperty {
     toString() { 
         if (this.decorators.find(d => d.name === "TwoWay")) {
             const propName = getPropName(this.name);
-            const initializer = this.initializer ? `||${this.initializer.toString()}` : "";
-            return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(()=>(${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(this.name)})${initializer})`;
+            return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(()=>${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(this.name)})`;
         }
         return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(${this.initializer})`;
     }
