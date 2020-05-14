@@ -1575,7 +1575,7 @@ mocha.describe("Vue-generator", function () {
                     members: [property]
                 })), removeSpaces(`
                     <slot name="template" v-bind:text="props.text" v-if="condition"></slot>
-                    <templatev-else>{{text}}</template>
+                    <template v-else>{{text}}</template>
                 `));
             });
         });
