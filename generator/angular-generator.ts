@@ -180,8 +180,8 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         if (this.component && options) { 
             options = {
                 ...options,
-                eventProperties: this.component.members.filter(m => m.decorators.find(d => d.name === "Event")) as Property[],
-                stateProperties: this.component.members.filter(m => m.decorators.find(d => d.name === "TwoWay")) as Property[]
+                eventProperties: this.component.members.filter(m => m.isEvent) as Property[],
+                stateProperties: this.component.members.filter(m => m.isState) as Property[]
             }
         }
 
