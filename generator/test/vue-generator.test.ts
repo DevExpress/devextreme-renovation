@@ -1827,7 +1827,7 @@ mocha.describe("Vue-generator", function () {
                 assert.strictEqual(element.toString(), "<DxWidget />");
             });
 
-            mocha.it("Process event - @event", function () {
+            mocha.it("Process eventChange - @event-change", function () {
                 generator.createClassDeclaration(
                     [createComponentDecorator({})],
                     [],
@@ -1842,7 +1842,34 @@ mocha.describe("Vue-generator", function () {
                             undefined,
                             undefined,
                             undefined
-                        ),
+                        )
+                    ]
+                );
+
+                const element = generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("Widget"),
+                    [],
+                    [
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("eventChange"),
+                            generator.createIdentifier("value")
+                        )
+                    ]
+                );
+
+                assert.strictEqual(element.toString({
+                    members: []
+                }), `<Widget @event-change="value"/>`);
+            });
+
+            mocha.it("Process statePropChange - @update:state-prop if stateProp is TwoWay prop", function () {
+                generator.createClassDeclaration(
+                    [createComponentDecorator({})],
+                    [],
+                    generator.createIdentifier("Widget"),
+                    [],
+                    [],
+                    [
                         generator.createProperty(
                             [createDecorator("Event")],
                             [],
@@ -1864,10 +1891,6 @@ mocha.describe("Vue-generator", function () {
                     [],
                     [
                         generator.createJsxAttribute(
-                            generator.createIdentifier("eventChange"),
-                            generator.createIdentifier("value")
-                        ),
-                        generator.createJsxAttribute(
                             generator.createIdentifier("statePropChange"),
                             generator.createIdentifier("value")
                         )
@@ -1876,9 +1899,8 @@ mocha.describe("Vue-generator", function () {
 
                 assert.strictEqual(element.toString({
                     members: []
-                }), `<Widget @event-change="value"\n@update:state-prop="value"/>`);
+                }), `<Widget @update:state-prop="value"/>`);
             });
-
         });
 
     });
