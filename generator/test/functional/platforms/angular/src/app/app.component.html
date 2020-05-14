@@ -1,1 +1,16 @@
 <dx-app></dx-app>
+
+<dx-button-with-template
+    text="With Template"
+    [template]="template1"
+>
+<ng-template #template1 let-text="text">
+    <div style="border: 1px solid blue;">
+      {{text+"!"}}
+    </div>
+  </ng-template>
+</dx-button-with-template>
+
+<dx-button-with-template
+    text="Without Template"
+></dx-button-with-template>
