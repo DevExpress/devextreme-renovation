@@ -367,11 +367,9 @@ export class VueComponent extends Component {
                 newComponentContext: "this"
             })));
 
-        this.members.filter(m => m.isEvent).forEach(m => { 
-            const state = this.members.find(s => s.isState && `${s._name}Change` === m._name.toString());
-            const event = state ? `update:${state._name}` : m._name;
+        this.members.filter(m => m.isEvent).forEach(m => {
             statements.push(`${m._name}(...args){
-                this.$emit("${getEventName(event)}", ...args);
+                this.$emit("${getEventName(m._name, this.members.filter(m => m.isState))}", ...args);
             }`);
         });
 
@@ -542,8 +540,10 @@ export class VueComponent extends Component {
     }
 }
 
-function getEventName(name: Identifier | string) { 
-    const words = name.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
+function getEventName(defaultName: Identifier, stateMembers?: Array<Property | Method>) {
+    const state = stateMembers?.find(s => `${s._name}Change` === defaultName.toString());
+    const eventName = state ? `update:${state._name}` : defaultName;
+    const words = eventName.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
     return `${words.join("-")}`;
 }
 
@@ -639,10 +639,8 @@ export class JsxAttribute extends BaseJsxAttribute {
         return value;
     }
 
-    compileEvent(options?: toStringOptions) { 
-        const state = options?.members?.find(s => s.isState && `${s.name}Change` === this.name.toString());
-        const eventName = state ? `update:${state.name}` : this.name;
-        return `@${getEventName(eventName)}="${this.compileInitializer(options)}"`;
+    compileEvent(options?: toStringOptions) {
+        return `@${getEventName(this.name, options?.stateProperties)}="${this.compileInitializer(options)}"`;
     }
 
     compileBase(name: string, value: string) { 

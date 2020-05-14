@@ -1,5 +1,5 @@
  <template>
-  <div>{{(state1 !== undefined ? state1 : state1_state)}}<BaseState @update:state-prop="stateChange"></BaseState></div>
+  <div>{{(state1 !== undefined ? state1 : state1_state)}}<BaseState @update:base-state-prop="stateChange"></BaseState></div>
 </template>
 <script>
 import BaseState from "./state-base";

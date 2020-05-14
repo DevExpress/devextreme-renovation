@@ -15,7 +15,7 @@ import { CommonModule } from "@angular/common"
 
 @Component({
     selector: "dx-widget",
-    template: `<div>{{state1}}<dx-state-base-widget (statePropChange)="__stateChange($event)"></dx-state-base-widget></div>`
+    template: `<div>{{state1}}<dx-state-base-widget (baseStatePropChange)="__stateChange($event)"></dx-state-base-widget></div>`
 })
 export default class Widget extends WidgetInput {
     __updateState(): any {

@@ -1828,36 +1828,35 @@ mocha.describe("Vue-generator", function () {
             });
 
             mocha.it("Process event - @event", function () {
-                const members = [
-                    generator.createProperty(
-                        [createDecorator("Event")],
-                        [],
-                        generator.createIdentifier("eventChange"),
-                        undefined,
-                        undefined,
-                        undefined
-                    ),
-                    generator.createProperty(
-                        [createDecorator("Event")],
-                        [],
-                        generator.createIdentifier("statePropChange"),
-                        undefined,
-                        undefined,
-                        undefined
-                    ),
-                    generator.createProperty(
-                        [createDecorator("TwoWay")],
-                        [],
-                        generator.createIdentifier("stateProp")
-                    )
-                ];
                 generator.createClassDeclaration(
                     [createComponentDecorator({})],
                     [],
                     generator.createIdentifier("Widget"),
                     [],
                     [],
-                    members
+                    [
+                        generator.createProperty(
+                            [createDecorator("Event")],
+                            [],
+                            generator.createIdentifier("eventChange"),
+                            undefined,
+                            undefined,
+                            undefined
+                        ),
+                        generator.createProperty(
+                            [createDecorator("Event")],
+                            [],
+                            generator.createIdentifier("statePropChange"),
+                            undefined,
+                            undefined,
+                            undefined
+                        ),
+                        generator.createProperty(
+                            [createDecorator("TwoWay")],
+                            [],
+                            generator.createIdentifier("stateProp")
+                        )
+                    ]
                 );
 
                 const element = generator.createJsxSelfClosingElement(
@@ -1876,7 +1875,7 @@ mocha.describe("Vue-generator", function () {
                 );
 
                 assert.strictEqual(element.toString({
-                    members: members
+                    members: []
                 }), `<Widget @event-change="value"\n@update:state-prop="value"/>`);
             });
 

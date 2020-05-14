@@ -3,7 +3,7 @@ import BaseState from "./state-base";
 function view(model: Widget) {
   return (<div>
     {model.props.state1}
-    <BaseState statePropChange={model.stateChange}></BaseState>
+    <BaseState baseStatePropChange={model.stateChange}></BaseState>
   </div>);
 }
 export declare type WidgetInputType = {
