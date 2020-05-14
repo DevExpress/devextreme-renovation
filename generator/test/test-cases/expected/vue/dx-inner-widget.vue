@@ -12,13 +12,16 @@ export const InnerWidgetProps = {
   value: {
     type: Number,
     default: undefined
+  },
+  defaultValue: {
+    type: Number
   }
 };
 export default {
   props: InnerWidgetProps,
   data() {
     return {
-      value_state: undefined
+      value_state: this.defaultValue
     };
   },
   methods: {
@@ -42,7 +45,7 @@ export default {
       this.$emit("on-select", ...args);
     },
     valueChange(...args){
-      this.$emit("value-change", ...args);
+      this.$emit("update:value", ...args);
     }
   }
 };

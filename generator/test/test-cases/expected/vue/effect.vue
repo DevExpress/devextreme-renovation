@@ -16,6 +16,12 @@ export const WidgetInput = {
   s: {
     type: Number,
     default: undefined
+  },
+  defaultS: {
+    type: Number,
+    default() {
+      return 10;
+    }
   }
 };
 
@@ -24,7 +30,7 @@ export default {
   data() {
     return {
       i: 10,
-      s_state: this.s !== undefined ? this.s : 10
+      s_state: this.defaultS
     };
   },
 
@@ -49,7 +55,7 @@ export default {
     },
 
     sChange(...args){
-      this.$emit("s-change", ...args);
+      this.$emit("update:s", ...args);
     },
 
     __schedule_setupData() {

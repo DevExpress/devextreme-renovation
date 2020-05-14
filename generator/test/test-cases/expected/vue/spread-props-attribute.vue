@@ -11,6 +11,9 @@ export const WidgetInput = {
   value: {
     type: Boolean,
     default: undefined
+  },
+  defaultValue: {
+    type: Boolean
   }
 };
 
@@ -21,7 +24,7 @@ export default {
   props: WidgetInput,
   data() {
     return {
-      value_state: undefined
+      value_state: this.defaultValue
     };
   },
   methods: {
@@ -29,7 +32,7 @@ export default {
       return {};
     },
     valueChange(...args){
-      this.$emit("value-change", ...args);
+      this.$emit("update:value", ...args);
     }
   }
 };

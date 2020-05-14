@@ -66,6 +66,7 @@ export const counter = (function () {
 export interface toStringOptions extends  BaseToStringOptions {
     members: Array<Property | Method>;
     eventProperties?: Array<Property>;
+    stateProperties?: Array<Property>;
     hasStyle?: boolean
 }
 
@@ -179,7 +180,8 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         if (this.component && options) { 
             options = {
                 ...options,
-                eventProperties: this.component.members.filter(m => m.decorators.find(d => d.name === "Event")) as Property[]
+                eventProperties: this.component.members.filter(m => m.isEvent) as Property[],
+                stateProperties: this.component.members.filter(m => m.isState) as Property[]
             }
         }
 

@@ -197,8 +197,15 @@ export class GetAccessor extends BaseGetAccessor {
 }
 
 export class VueComponentInput extends ComponentInput { 
-    buildDefaultStateProperty() { 
-        return null;
+    buildDefaultStateProperty(stateMember: Property): Property|null { 
+        return new Property(
+            [new Decorator(new Call(new Identifier("OneWay"), undefined, []), {})],
+            [],
+            new Identifier(`default${capitalizeFirstLetter(stateMember._name)}`),
+            undefined,
+            stateMember.type,
+            stateMember.initializer
+        )
     }
     
     buildChangeState(stateMember: Property, stateName: Identifier) { 
@@ -266,8 +273,8 @@ export class VueComponent extends Component {
                         new Identifier(`${m._name}_state`),
                         "",
                         m.type,
-                        base.initializer && new SimpleExpression(
-                            `this.${base.name}!==undefined?this.${base.name}:${base.initializer}`
+                        new SimpleExpression(
+                            `this.default${capitalizeFirstLetter(base.name)}`
                         )
                     )
                 )
@@ -359,10 +366,10 @@ export class VueComponent extends Component {
                 componentContext: "this",
                 newComponentContext: "this"
             })));
-        
-        this.members.filter(m => m.isEvent).forEach(m => { 
+
+        this.members.filter(m => m.isEvent).forEach(m => {
             statements.push(`${m._name}(...args){
-                this.$emit("${getEventName(m._name)}", ...args);
+                this.$emit("${getEventName(m._name, this.members.filter(m => m.isState))}", ...args);
             }`);
         });
 
@@ -533,8 +540,10 @@ export class VueComponent extends Component {
     }
 }
 
-function getEventName(name: Identifier) { 
-    const words = name.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
+function getEventName(defaultName: Identifier, stateMembers?: Array<Property | Method>) {
+    const state = stateMembers?.find(s => `${s._name}Change` === defaultName.toString());
+    const eventName = state ? `update:${state._name}` : defaultName;
+    const words = eventName.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
     return `${words.join("-")}`;
 }
 
@@ -630,8 +639,8 @@ export class JsxAttribute extends BaseJsxAttribute {
         return value;
     }
 
-    compileEvent(options?: toStringOptions) { 
-        return `@${getEventName(this.name)}="${this.compileInitializer(options)}"`;
+    compileEvent(options?: toStringOptions) {
+        return `@${getEventName(this.name, options?.stateProperties)}="${this.compileInitializer(options)}"`;
     }
 
     compileBase(name: string, value: string) { 
