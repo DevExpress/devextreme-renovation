@@ -397,6 +397,35 @@ mocha.describe("Vue-generator", function () {
                     );
             
                     assert.strictEqual(expression.toString(), "");
+                    assert.strictEqual(expression.getter("this"), "this.$slots.p");
+                });
+
+                mocha.it("default slot", function () {
+                    const expression = generator.createProperty(
+                        [createDecorator("Slot")],
+                        undefined,
+                        generator.createIdentifier("default"),
+                        generator.SyntaxKind.QuestionToken,
+                        generator.createKeywordTypeNode("boolean"),
+                        generator.createTrue()
+                    );
+            
+                    assert.strictEqual(expression.toString(), "");
+                    assert.strictEqual(expression.getter("this"), "this.$slots.default");
+                });
+
+                mocha.it("children slot", function () {
+                    const expression = generator.createProperty(
+                        [createDecorator("Slot")],
+                        undefined,
+                        generator.createIdentifier("children"),
+                        generator.SyntaxKind.QuestionToken,
+                        generator.createKeywordTypeNode("boolean"),
+                        generator.createTrue()
+                    );
+            
+                    assert.strictEqual(expression.toString(), "");
+                    assert.strictEqual(expression.getter("this"), "this.$slots.default");
                 });
             });
 
@@ -1152,7 +1181,7 @@ mocha.describe("Vue-generator", function () {
                 p1:this.p1,
                 p2:(this.p2 !== undefined ? this.p2 : this.p2_state),
                 p3:this.p3,
-                p4:this.p4,
+                p4:this.$slots.p4,
                 p5:this.$scopedSlots.p5
             }`));
         });

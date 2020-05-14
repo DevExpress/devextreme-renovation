@@ -148,6 +148,10 @@ export class Property extends BaseProperty {
         if (this.isTemplate) { 
             return `${componentContext}$scopedSlots.${this.name}`;
         }
+        if (this.isSlot) { 
+            const name = this.name === "children" ? "default" : this.name;
+            return `${componentContext}$slots.${name}`;
+        }
         return baseValue
     }
 
@@ -800,8 +804,7 @@ export class JsxChildExpression extends BaseJsxChildExpression {
         return new JsxExpression(undefined, statement);
     }
 
-    createContainer(atributes: JsxAttribute[], children: Array<JsxExpression | JsxElement | JsxSelfClosingElement>) { 
-        const containerIdentifer = new Identifier("template")
+    createContainer(atributes: JsxAttribute[], children: Array<JsxExpression | JsxElement | JsxSelfClosingElement>) {
         return new JsxElement(
             new TemplateWrapperElement(atributes),
             children,
