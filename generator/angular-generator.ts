@@ -569,7 +569,7 @@ export class JsxChildExpression extends JsxExpression {
      }
      
     addCallParameters(parameters: Parameter[], args: Expression[], options?: toStringOptions) {
-        const templateOptions = options ? { ...options } : { members: [] };
+        const templateOptions = options ? { disableTemplates: true, ...options } : { members: [] };
 
         return parameters.reduce((acc: toStringOptions, param: Parameter, index) => {
             const initializer = args[index];

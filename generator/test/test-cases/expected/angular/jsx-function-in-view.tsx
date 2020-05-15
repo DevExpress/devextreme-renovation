@@ -15,14 +15,17 @@ import { CommonModule } from '@angular/common';
                 <div>{{ __loadingProps.text }}</div>
             </ng-container>
             <ng-container *ngIf="!(loading)">
-                <span>{{ greetings }}</span>
+                <span>{{"" + greetings + " " + __name + "" }}</span>
             </ng-container>
         </div>
-	  `,
+    `,
 })
 export default class Widget extends WidgetInput {
     get __loadingProps(): any {
         return { text: 'Loading...' };
+    }
+    get __name(): any {
+        return 'User';
     }
     get __restAttributes(): any {
         return {};

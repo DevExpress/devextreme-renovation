@@ -1,7 +1,11 @@
 <template>
     <div >
-        <template v-if="loading">{{loadingJSX(__loadingProps())}}</template>
-        <template v-else>{{infoJSX(greetings)}}</template>
+        <template v-if="loading">
+            <div >{{ __loadingProps().text }}</div>
+        </template>
+        <template v-else>
+            <span >{{ ""+greetings+" "+__name()+"" }}</span>
+        </template>
     </div>
 </template>
 
@@ -26,6 +30,9 @@
         methods: {
             __loadingProps(){
                 return {text:"Loading..."};
+            },
+            __name(){
+                return "User";
             },
             __restAttributes(){
                 return {}
