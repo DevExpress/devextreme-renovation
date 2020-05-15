@@ -40,7 +40,7 @@ import { ComponentInput as BaseComponentInput } from "./base-generator/expressio
 import { Component, getProps } from "./base-generator/expressions/component";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
-import { processComponentContext } from "./base-generator/utils/string";
+import { processComponentContext, capitalizeFirstLetter } from "./base-generator/utils/string";
 
 // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
 const VOID_ELEMENTS = 
@@ -491,13 +491,14 @@ export class JsxChildExpression extends JsxExpression {
     }
 
     compileSlot(slot: Property) {
-        if (slot.name.toString() === "default" || slot.name.toString() === "children") {
-            return `<ng-content></ng-content>`;
-        }
-        return `<ng-content select="[${slot.name}]"></ng-content>`;
+        const slotValue = slot.name.toString() === "default" || slot.name.toString() === "children"
+            ? "<ng-content></ng-content>"
+            : `<ng-content select="[${slot.name}]"></ng-content>`;
+        
+        return `<div #slot${capitalizeFirstLetter(slot.name)} style="display: contents">${slotValue}</div>`;
     }
 
-    createIfAttribute(condition: Expression) { 
+    createIfAttribute(condition: Expression, statement: Expression, options?: toStringOptions) { 
         return new AngularDirective(
             new Identifier("*ngIf"),
             condition
@@ -522,8 +523,20 @@ export class JsxChildExpression extends JsxExpression {
         );
     }
 
+    processSlotInConditional(statement: Expression, options?: toStringOptions) { 
+        const slot = this.getSlot(statement.toString(options), options);
+        if (slot && slot.getter(options?.newComponentContext)===statement.toString(options)) { 
+            return new JsxChildExpression(this.createJsxExpression(statement)).toString(options);
+        }
+    }
+
     compileStatement(statement: Expression, condition?: Expression, options?: toStringOptions): string {
-        const conditionAttribute = this.createIfAttribute(condition!);
+        const slot = this.processSlotInConditional(statement, options);
+        if (slot) { 
+            return slot;
+        }
+       
+        const conditionAttribute = this.createIfAttribute(condition!, statement, options);
 
         const expression = getJsxExpression(statement);
         if (isElement(expression)) {
@@ -561,7 +574,13 @@ export class JsxChildExpression extends JsxExpression {
             return identifier;
         }
         return parameter;
-     }
+    }
+    
+    getSlot(stringValue: string, options?: toStringOptions) { 
+        return options?.members
+            .filter(m => m.decorators.find(d => d.name === "Slot"))
+            .find(s => stringValue.indexOf(s.getter(options.newComponentContext)) !== -1) as Property | undefined;
+    }
 
     toString(options?: toStringOptions) {
         const expression = this.getExpression(options);
@@ -627,11 +646,7 @@ export class JsxChildExpression extends JsxExpression {
             return stringValue;
         }
 
-        const contextExpr = options?.newComponentContext ? `${options.newComponentContext}.` : "";
-        const slot = options?.members
-            .filter(m => m.decorators.find(d => d.name === "Slot"))
-            .find(s => stringValue.endsWith(`${contextExpr}${s.name.toString()}`)
-                || s.name.toString() === "children" && (stringValue.endsWith("default") || stringValue.endsWith("children")));
+        const slot = this.getSlot(stringValue, options);
         if (slot) { 
             return this.compileSlot(slot as Property);
         }
@@ -808,11 +823,15 @@ function compileCoreImports(members: Array<Property|Method>, context: AngularGen
     if (members.filter(m => m.decorators.find(d => d.name === "TwoWay")).length) { 
         imports.push("Input", "Output", "EventEmitter");
     }
-    if (members.filter(m => m.decorators.find(d=>d.name==="Template")).length) { 
+    if (members.filter(m => m.isTemplate).length) { 
         imports.push("Input", "TemplateRef");
     }
-    if (members.filter(m => m.decorators.find(d => d.name === "Event")).length) { 
+    if (members.filter(m => m.isEvent).length) { 
         imports.push("Output", "EventEmitter");
+    }
+
+    if (members.filter(m => m.isSlot).length) {
+        imports.push("ViewChild", "ElementRef");
     }
 
     const set = new Set(context.angularCoreImports);
@@ -871,9 +890,6 @@ function parseEventType(type: TypeExpression) {
 
 export class Property extends BaseProperty { 
     get name() { 
-        if (this.decorators.find(d => d.name === "Slot")) { 
-            return super.name;
-        }
         return this._name.toString();
     } 
     constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type?: TypeExpression, initializer?: Expression, inherited: boolean=false) { 
@@ -898,8 +914,13 @@ export class Property extends BaseProperty {
             return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:${this.type}`;
         }
         if (this.decorators.find(d => d.name === "Slot")) { 
-            return "";
-        }
+            const selector = `slot${capitalizeFirstLetter(this.name)}`
+            return `@ViewChild("${selector}") ${selector}?: ElementRef<HTMLDivElement>;
+
+            get ${this.name}(){
+                return this.${selector}?.nativeElement?.innerHTML.trim();
+            }`;
+    }
         
         return defaultValue;
     }

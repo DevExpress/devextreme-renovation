@@ -818,6 +818,10 @@ export class JsxChildExpression extends BaseJsxChildExpression {
             condition || new SimpleExpression("")
         );
     }
+
+    processSlotInConditional(statement: Expression, options?: toStringOptions) { 
+        return undefined;
+    }
     
     compileConditionStatement(condition: Expression, thenStatement: Expression, elseStatement: Expression, options?: toStringOptions) { 
         const result: string[] = [];

@@ -1,6 +1,6 @@
 import mocha from "./helpers/mocha";
 import assert from "assert";
-import generator, { VueComponent } from "../vue-generator";
+import generator, { VueComponent, JsxExpression } from "../vue-generator";
 
 import { printSourceCodeAst as getAst, removeSpaces } from "./helpers/common";
 import componentCreator from "./helpers/create-component";
@@ -1606,6 +1606,62 @@ mocha.describe("Vue-generator", function () {
                     <slot name="template" v-bind:text="props.text" v-if="condition"></slot>
                     <template v-else>{{text}}</template>
                 `));
+            });
+
+            mocha.describe.only("Slots with conditional rendering", function () {
+                this.beforeEach(function () { 
+                    this.slotProperty = generator.createProperty(
+                        [createDecorator("Slot")],
+                        [],
+                        generator.createIdentifier("default"),
+                        generator.SyntaxKind.QuestionToken,
+                        undefined,
+                        undefined
+                    );
+    
+                    this.slotExpression = generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("default")
+                    );
+    
+    
+                    this.toStringOptions = {
+                        members: [this.slotProperty],
+                        componentContext: "viewModel",
+                        newComponentContext: ""
+                    } as toStringOptions;
+                });
+    
+                function createElement(children: JsxExpression[]) { 
+                    return generator.createJsxElement(
+                        generator.createJsxOpeningElement(
+                            generator.createIdentifier("div"),
+                            undefined,
+                            []
+                        ),
+                        children,
+                        generator.createJsxClosingElement(
+                            generator.createIdentifier("div")
+                        )
+                    );
+                }
+    
+                mocha.it("slot? slot: alternative content", function() {
+                    const element = createElement([generator.createJsxExpression(
+                        undefined,
+                        generator.createConditional(
+                            this.slotExpression,
+                            this.slotExpression,
+                            generator.createIdentifier("alternative")
+                        )
+                    )]);
+    
+                    assert.strictEqual(removeSpaces(element.children[0].toString(this.toStringOptions)), removeSpaces(`
+                     <template v-if="$slots.default"><slot></slot></template>
+                     <templatev-else>{{alternative}}</template>
+                  `));
+                    
+                });
             });
         });
 

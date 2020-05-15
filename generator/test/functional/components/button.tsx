@@ -7,7 +7,9 @@ function view(model: Button) {
         border: "1px solid black",
         padding: 10,
         display: "inline-block"
-    }}>{model.props.children}</div>;
+        }}>{
+            model.props.children ? model.props.children : "Default Text"
+        }</div>;
 }
 
 @ComponentBindings()

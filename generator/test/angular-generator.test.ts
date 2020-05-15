@@ -1,5 +1,5 @@
 import mocha from "./helpers/mocha";
-import generator, { Property, AngularDirective } from "../angular-generator";
+import generator, { Property, AngularDirective, toStringOptions } from "../angular-generator";
 import assert from "assert";
 import path from "path";
 
@@ -672,6 +672,62 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), "<span >{{viewModel.text}}</span>");
         });
 
+        mocha.describe.only("Slots with conditional rendering", function () {
+            this.beforeEach(function () { 
+                this.slotProperty = generator.createProperty(
+                    [createDecorator("Slot")],
+                    [],
+                    generator.createIdentifier("default"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+
+                this.slotExpression = generator.createPropertyAccess(
+                    generator.createIdentifier("viewModel"),
+                    generator.createIdentifier("default")
+                );
+
+
+                this.toStringOptions = {
+                    members: [this.slotProperty],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                } as toStringOptions;
+            });
+
+            function createElement(children: JsxExpression[]) { 
+                return generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    children,
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+            }
+
+            mocha.it("slot? slot: alternative content", function() {
+                const element = createElement([generator.createJsxExpression(
+                    undefined,
+                    generator.createConditional(
+                        this.slotExpression,
+                        this.slotExpression,
+                        generator.createIdentifier("alternative")
+                    )
+                )]);
+
+                assert.strictEqual(removeSpaces(element.children[0].toString(this.toStringOptions)), removeSpaces(`
+                    <div #slotDefault style="display: contents"><ng-content></ng-content></div>
+                    <ng-container *ngIf="!(default)">{{alternative}}</ng-container>
+              `));
+                
+            });
+        });
+
         mocha.describe("Spread Attributes", function () { 
             this.beforeEach(function () {
                 generator.setContext(null);
@@ -1135,7 +1191,7 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(expression.toString({
                     members: [slotProperty],
                     componentContext: "viewModel"
-                }), `<span ><ng-content select="[name]"></ng-content></span>`);
+                }), `<span ><div #slotName style="display: contents"><ng-content select="[name]"></ng-content></div></span>`);
             });
 
             mocha.it("named slot with empty context", function () {
@@ -1168,7 +1224,7 @@ mocha.describe("Angular generator", function () {
                     members: [slotProperty],
                     componentContext: "viewModel",
                     newComponentContext: ""
-                }), `<span ><ng-content select="[name]"></ng-content></span>`);
+                }), `<span ><div #slotName style="display: contents"><ng-content select="[name]"></ng-content></div></span>`);
             });
 
             mocha.it("default slot", function () {
@@ -1199,7 +1255,38 @@ mocha.describe("Angular generator", function () {
 
                 assert.strictEqual(expression.toString({
                     members: [slotProperty]
-                }), `<span ><ng-content></ng-content></span>`);
+                }), `<span ><div #slotDefault style="display: contents"><ng-content></ng-content></div></span>`);
+            });
+
+            mocha.it("children slot", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("span"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createPropertyAccess(
+                            generator.createIdentifier("viewModel"),
+                            generator.createIdentifier("children")
+                        )
+                    )],
+                    generator.createJsxClosingElement(generator.createIdentifier("span"))
+                );
+
+                const slotProperty = generator.createProperty(
+                    [createDecorator("Slot")],
+                    [],
+                    generator.createIdentifier("children"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    generator.createFalse()
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [slotProperty]
+                }), `<span ><div #slotChildren style="display: contents"><ng-content></ng-content></div></span>`);
             });
 
             mocha.describe("Import widget.", function () {
@@ -2600,7 +2687,7 @@ mocha.describe("Angular generator", function () {
                     </div>`));
             });
 
-            mocha.it("Convert to template function with ternary operaot", function () {
+            mocha.it("Convert to template function with ternary operator", function () {
 
                 this.block.statements = [
                     generator.createReturn(
@@ -2921,7 +3008,7 @@ mocha.describe("Angular generator", function () {
             );
         });
 
-        mocha.it("@Slot prop should not be a member of component", function () {
+        mocha.it("@Slot prop should generate viewChild and getter", function () {
             const property = generator.createProperty(
                 [createDecorator("Slot")],
                 [],
@@ -2931,7 +3018,13 @@ mocha.describe("Angular generator", function () {
                 generator.createFalse()
             );
 
-            assert.strictEqual(property.toString(), "");
+            assert.strictEqual(getResult(property.toString()), getResult(`
+                @ViewChild("slotName") slotName?: ElementRef<HTMLDivElement>;
+
+                get name(){
+                    return this.slotName?.nativeElement?.innerHTML.trim();
+                }
+            `));
         });
 
         mocha.it("@Template prop without type", function () {
