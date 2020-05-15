@@ -28,10 +28,16 @@ export function Component(arg: {
     defaultOptionRules?: Rule<any>[] | null;
 
     /**
-     * If jQuery widget should be registered
+     * jQuery wrapper specific settings
      */
     jQuery?: {
+        /**
+         * If jQuery widget should be registered
+         */
         register?: boolean;
+        /**
+         * Custom base widget for wrapper
+         */
         component?: any;
     }
 }) {
@@ -64,7 +70,12 @@ export const OneWay = () => propertyDecorator;
 * Define a property that user can pass to component. Componet can write to it.
 * Any change of this property causes component re-render, also user gets notified about that change (in a different way, depending on target platform)
 */
-export const TwoWay = () => propertyDecorator;
+export const TwoWay = (args?: { 
+    /**
+     * Specify whether to use this prop as model binding
+     */
+    isModel?: boolean;
+}) => propertyDecorator;
 
 /**
  * Property Decorator. 

@@ -1,5 +1,5 @@
 import { Component, TwoWay, ComponentBindings, JSXComponent } from "../../../component_declaration/common";
-import BaseState from "./state-base";
+import BaseState from "./model-binding";
 
 function view(model: Widget) {
     return (<div>

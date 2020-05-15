@@ -340,6 +340,25 @@ export class VueComponent extends Component {
         return "";
     }
 
+    generateModel() {
+        let stateProps = this.members.filter(m => m.isState);
+
+        if(stateProps.length > 1) {
+            stateProps = stateProps.filter(m => m.decorators.find(d => (d.expression.arguments[0] as ObjectLiteral)?.getProperty("isModel")?.toString() === "true"));
+        }
+
+        if(stateProps.length !== 1) {
+            return "";
+        }
+
+        const state = stateProps[0];
+
+        return `model: {
+            prop: "${state._name}",
+            event: "${getEventName(`${state._name}Change`, [state])}"
+        }`;
+    }
+
     generateData() { 
         const statements: string[] = [];
         if (this.internalState.length) { 
@@ -525,6 +544,7 @@ export class VueComponent extends Component {
         const statements = [
             this.generateComponents(),
             this.generateProps(),
+            this.generateModel(),
             this.generateData(),
             this.generateWatch(methods),
             this.generateMethods(methods),
@@ -540,11 +560,10 @@ export class VueComponent extends Component {
     }
 }
 
-function getEventName(defaultName: Identifier, stateMembers?: Array<Property | Method>) {
+function getEventName(defaultName: Identifier | string, stateMembers?: Array<Property | Method>) {
     const state = stateMembers?.find(s => `${s._name}Change` === defaultName.toString());
-    const eventName = state ? `update:${state._name}` : defaultName;
-    const words = eventName.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
-    return `${words.join("-")}`;
+    const eventName = state ? `update:${state._name}` : defaultName
+    return eventName.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase()).join("-");
 }
 
 export class CallChain extends BaseCallChain { 
