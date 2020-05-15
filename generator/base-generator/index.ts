@@ -620,6 +620,7 @@ export default class Generator {
             if (e instanceof VariableStatement) { 
                 context.globals = {
                     ...context.globals,
+                    ...context.viewFunctions,
                     ...e.getVariableExpressions()
                 }
             }

@@ -104,6 +104,10 @@ mocha.describe("angular-generation", function () {
     mocha.it("component-bindings-only", function () {
         this.testGenerator(this.test!.title);
     });
+    
+    mocha.it("jsx-function-in-view", function () {
+        this.testGenerator(this.test!.title);
+    });
 
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {
