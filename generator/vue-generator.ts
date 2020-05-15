@@ -341,21 +341,12 @@ export class VueComponent extends Component {
     }
 
     generateModel() {
-        let stateProps = this.members.filter(m => m.isState);
-
-        if(stateProps.length > 1) {
-            stateProps = stateProps.filter(m => m.decorators.find(d => (d.expression.arguments[0] as ObjectLiteral)?.getProperty("isModel")?.toString() === "true"));
-        }
-
-        if(stateProps.length !== 1) {
+        if(!this.modelProp) {
             return "";
         }
-
-        const state = stateProps[0];
-
         return `model: {
-            prop: "${state._name}",
-            event: "${getEventName(`${state._name}Change`, [state])}"
+            prop: "${this.modelProp._name}",
+            event: "${getEventName(`${this.modelProp._name}Change`, [this.modelProp])}"
         }`;
     }
 

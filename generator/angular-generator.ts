@@ -419,7 +419,7 @@ export function createProcessBinary(createIfAttribute = (conditionExpression: Ex
         const right = getExpression(expression.right, options);
         
         if ((isElement(left) || isElement(right)) && expression.operator !== SyntaxKind.AmpersandAmpersandToken) { 
-            throw `Operator ${expression.operator} is not supoorted: ${expression.toString()}`;
+            throw `Operator ${expression.operator} is not supported: ${expression.toString()}`;
         }
         if (expression.operator === SyntaxKind.AmpersandAmpersandToken && !left.isJsx()) { 
             if (isElement(right)) {

@@ -1869,6 +1869,49 @@ mocha.describe("Component", function () {
         const componentFromContext = generator.getContext().components?.["Widget"];
         assert.strictEqual(componentFromContext, expression);
     });
+
+    mocha.it("should throw an error if more than one prop marked as isModel", function () {
+        let error;
+        try {
+            generator.createClassDeclaration(
+                [createComponentDecorator({})],
+                [],
+                generator.createIdentifier("Widget"),
+                [],
+                [],
+                [
+                    generator.createProperty(
+                        [createDecorator("TwoWay", { isModel: true })],
+                        [],
+                        generator.createIdentifier("stateProp1"),
+                        undefined,
+                        undefined,
+                        undefined
+                    ),
+                    generator.createProperty(
+                        [createDecorator("TwoWay", { isModel: true })],
+                        [],
+                        generator.createIdentifier("stateProp2"),
+                        undefined,
+                        undefined,
+                        undefined
+                    ),
+                    generator.createProperty(
+                        [createDecorator("TwoWay")],
+                        [],
+                        generator.createIdentifier("stateProp3"),
+                        undefined,
+                        undefined,
+                        undefined
+                    )
+                ]
+            );
+        } catch (e) {
+            error = e;
+        }
+
+        assert.strictEqual(error, "There should be only one model prop. Props marked as isModel: stateProp1, stateProp2");
+    });
 });
 
 mocha.describe("ComponentInput", function () {
