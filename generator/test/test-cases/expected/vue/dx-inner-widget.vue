@@ -19,6 +19,10 @@ export const InnerWidgetProps = {
 };
 export default {
   props: InnerWidgetProps,
+  model: {
+    prop: "value",
+    event: "update:value"
+  },
   data() {
     return {
       value_state: this.defaultValue

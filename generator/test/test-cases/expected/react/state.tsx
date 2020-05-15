@@ -1,4 +1,4 @@
-import BaseState from "./state-base";
+import BaseState from "./model-binding";
 
 function view(model: Widget) {
   return (<div>

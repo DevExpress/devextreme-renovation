@@ -4,16 +4,16 @@ import { Expression } from "../../base-generator/expressions/base";
 
 export default function (generator: Generator) {
 
-    function createComponentDecorator(paramenters: { [name: string]: any }) {
+    function createComponentDecorator(parameters: { [name: string]: any }) {
         return generator.createDecorator(
             generator.createCall(
                 generator.createIdentifier("Component"),
                 [],
                 [generator.createObjectLiteral(
-                    Object.keys(paramenters).map(k =>
+                    Object.keys(parameters).map(k =>
                         generator.createPropertyAssignment(
                             generator.createIdentifier(k),
-                            paramenters[k]
+                            parameters[k]
                         )
                     ),
                     false
@@ -22,9 +22,22 @@ export default function (generator: Generator) {
         )
     }
 
-    function createDecorator(name: string) { 
+    function createDecorator(name: string, parameters?: { [name: string]: any }) { 
+        const params = !parameters ? [] : [generator.createObjectLiteral(
+            Object.keys(parameters).map(k =>
+                generator.createPropertyAssignment(
+                    generator.createIdentifier(k),
+                    parameters[k]
+                )
+            ),
+            false
+        )];
         return generator.createDecorator(
-            generator.createCall(generator.createIdentifier(name), [], [])
+            generator.createCall(
+                generator.createIdentifier(name),
+                [],
+                params
+            )
         );
     }
 

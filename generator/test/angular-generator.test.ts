@@ -426,7 +426,7 @@ mocha.describe("Angular generator", function () {
                 error = e;
             }
 
-            assert.strictEqual(error, "Operator + is not supoorted: viewModel.input+<input ></input>");
+            assert.strictEqual(error, "Operator + is not supported: viewModel.input+<input ></input>");
         });
 
         mocha.it("non jsx binary in element", function () {

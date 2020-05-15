@@ -27,6 +27,10 @@ export const WidgetInput = {
 
 export default {
   props: WidgetInput,
+  model: {
+    prop: "s",
+    event: "update:s"
+  },
   data() {
     return {
       i: 10,

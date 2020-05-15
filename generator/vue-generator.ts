@@ -340,6 +340,16 @@ export class VueComponent extends Component {
         return "";
     }
 
+    generateModel() {
+        if(!this.modelProp) {
+            return "";
+        }
+        return `model: {
+            prop: "${this.modelProp._name}",
+            event: "${getEventName(`${this.modelProp._name}Change`, [this.modelProp])}"
+        }`;
+    }
+
     generateData() { 
         const statements: string[] = [];
         if (this.internalState.length) { 
@@ -525,6 +535,7 @@ export class VueComponent extends Component {
         const statements = [
             this.generateComponents(),
             this.generateProps(),
+            this.generateModel(),
             this.generateData(),
             this.generateWatch(methods),
             this.generateMethods(methods),
@@ -540,11 +551,10 @@ export class VueComponent extends Component {
     }
 }
 
-function getEventName(defaultName: Identifier, stateMembers?: Array<Property | Method>) {
+function getEventName(defaultName: Identifier | string, stateMembers?: Array<Property | Method>) {
     const state = stateMembers?.find(s => `${s._name}Change` === defaultName.toString());
-    const eventName = state ? `update:${state._name}` : defaultName;
-    const words = eventName.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
-    return `${words.join("-")}`;
+    const eventName = state ? `update:${state._name}` : defaultName
+    return eventName.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase()).join("-");
 }
 
 export class CallChain extends BaseCallChain { 

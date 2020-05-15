@@ -125,4 +125,7 @@ mocha.describe("vue-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("model-binding", function () {
+        this.testGenerator(this.test!.title);
+    });
 });

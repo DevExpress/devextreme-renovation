@@ -26,6 +26,7 @@ export function getProps(members: BaseClassMember[]): Property[] {
 
 export class Component extends Class implements Heritable {
     props: Property[] = [];
+    modelProp?: Property;
     state: Property[] = [];
     internalState: Property[];
     refs: Property[];
@@ -109,6 +110,19 @@ export class Component extends Class implements Heritable {
             ) as Property[];
 
         this.state = members.filter(m => m.decorators.find(d => d.name === "TwoWay")) as Property[];
+
+        let modelProps = this.state;
+        if(modelProps.length > 1) {
+            modelProps = this.state.filter(m => m.decorators.find(d => (d.expression.arguments[0] as ObjectLiteral)?.getProperty("isModel")?.toString() === "true"));
+        }
+
+        if(modelProps.length > 1) {
+            throw `There should be only one model prop. Props marked as isModel: ${modelProps.map(s => s._name).join(", ")}`; 
+        }
+
+        if(modelProps.length === 1) {
+            this.modelProp = modelProps[0];
+        }
 
         this.methods = members.filter(m => m instanceof Method && m.decorators.length === 0 || m instanceof GetAccessor) as Method[];
 
