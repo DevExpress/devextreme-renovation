@@ -1,24 +1,34 @@
 <template>
  <div>
-    <dx-app
-      :width="100"
-      :height="100"
+    <dx-app/>
+   
+   <button-with-template
+      text="With Template"
     >
-      <div>Click!!</div>
-    </dx-app>
+    <template #template="data">
+        <div v-bind:style="{border: '1px solid blue'}">
+          {{data.text+"!"}}
+        </div>
+    </template>
+
+   </button-with-template><button-with-template
+      text="Without Template"
+    />
  </div>
 </template>
 <script>
 
-import DxApp from "../../../../components/button.tsx";
+import DxApp from "../../../../components/app.tsx";
+import ButtonWithTemplate from "../../../../components/button-with-template.tsx"
 
 export default {
   components: {
-    DxApp
+    DxApp,
+    ButtonWithTemplate
   },
 
   data() {
-   
+   return {};
   },
   methods: {
    

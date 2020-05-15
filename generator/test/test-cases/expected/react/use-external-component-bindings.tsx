@@ -1,38 +1,38 @@
-import "typescript";
-
-function view() { }
-
-export declare type WidgetPropsType = {}
-
-export const WidgetProps: WidgetPropsType = {};
+import Props from "./component-bindings-only"
+function view(model: Widget) {
+    return <div >{model.props.height}</div>;
+}
 
 import { convertRulesToOptions, Rule } from "../../../../../component_declaration/default_options";
-import React, {useCallback} from "react";
+import React, { useCallback } from 'react';
 
-interface Widget { props: typeof WidgetProps, restAttributes: any; }
+interface Widget {
+    props: typeof Props;
+    restAttributes: any;
 
-export default function Widget(props: typeof WidgetProps) {
-    const __restAttributes=useCallback(function __restAttributes(){
-        const { ...restProps } = props;
+}
+
+export default function Widget(props: typeof Props) {
+    const __restAttributes = useCallback(function __restAttributes() {
+        const { height, ...restProps } = props
         return restProps;
     }, [props]);
+
     return view(({
         props: { ...props },
         restAttributes: __restAttributes()
-    }));
+    })
+    );
 }
 
 function __createDefaultProps() {
     return {
-        ...WidgetProps,
-        ...convertRulesToOptions([{ device: true, options: {} }])
-    };
+        ...Props
+    }
 }
-
 Widget.defaultProps = __createDefaultProps();
 
-
-type WidgetOptionRule = Rule<typeof WidgetProps>;
+type WidgetOptionRule = Rule<typeof Props>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {
@@ -40,5 +40,5 @@ export function defaultOptions(rule: WidgetOptionRule) {
     Widget.defaultProps = {
         ...__createDefaultProps(),
         ...convertRulesToOptions(__defaultOptionRules)
-    }
+    };
 }

@@ -84,13 +84,6 @@ cloneTest('Check rest attributes', async t => {
         .expect(await el.getAttribute("label")).eql("rest-attributes");
 });
 
-cloneTest('Check fragment children', async t => {
-    const el = Selector("#component-with-fragment");
-
-    await t
-        .expect(await el.childElementCount).eql(2);
-});
-
 cloneTest('Can call method inside a getter', async t => {
     const el = Selector("#call-method-in-getter-widget");
 

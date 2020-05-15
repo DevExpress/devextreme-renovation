@@ -1,25 +1,47 @@
  <template>
-  <div>{{(state1 !== undefined ? state1 : state1_state)}}</div>
+  <div>{{(state1 !== undefined ? state1 : state1_state)}}<BaseState @update:base-state-prop="stateChange"></BaseState></div>
 </template>
 <script>
+import BaseState from "./state-base";
 const WidgetInput = {
   state1: {
-    type: Boolean
+    type: Boolean,
+    default: undefined
   },
   state2: {
-    type: Boolean
+    type: Boolean,
+    default: undefined
   },
-  state3: {
+  stateProp: {
+    type: Boolean,
+    default: undefined
+  },
+  defaultState1: {
+    type: Boolean,
+    default() {
+      return false;
+    }
+  },
+  defaultState2: {
+    type: Boolean,
+    default() {
+      return false;
+    }
+  },
+  defaultStateProp: {
     type: Boolean
   }
 };
 export default {
+  components: {
+    BaseState
+  },
   props: WidgetInput,
   data() {
     return {
-      state1_state: this.state1 !== undefined ? this.state1 : false,
-      state2_state: this.state2 !== undefined ? this.state2 : false,
-      state3_state: undefined
+      state1_state: this.defaultState1,
+      state2_state: this.defaultState2,
+      stateProp_state: this.defaultStateProp
     };
   },
   methods: {
@@ -27,18 +49,31 @@ export default {
         this.state1_state = !(this.state1 !== undefined
         ? this.state1
         : this.state1_state),
-        this.emit("state1-change", this.state1_state);
+        this.state1Change(this.state1_state);
     },
     updateState2() {
       const cur = (this.state2 !== undefined ? this.state2 : this.state2_state)
       this.state2_state = cur !== false ? false : true,
-      this.emit("state2-change", this.state2_state);
+      this.state2Change(this.state2_state);
     },
     destruct(){
       const s = (this.state1 !== undefined ? this.state1 : this.state1_state);
     },
+    stateChange(stateProp) {
+      this.stateProp_state = stateProp,
+      this.statePropChange(this.stateProp_state);
+    },
     __restAttributes() {
       return {};
+    },
+    state1Change(...args){
+      this.$emit("update:state1", ...args);
+    },
+    state2Change(...args){
+      this.$emit("update:state2", ...args);
+    },
+    statePropChange(...args){
+      this.$emit("update:state-prop", ...args);
     }
   }
 };

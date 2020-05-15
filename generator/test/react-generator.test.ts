@@ -150,6 +150,10 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("component-bindings-only", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("import-component", function () {
         this.testGenerator(this.test!.title);
     });
@@ -158,7 +162,7 @@ mocha.describe("react-generator", function () {
         this.beforeEach(function () {
             generator.defaultOptionsModule = "../component_declaration/default_options";
             generator.setContext({
-                dirname: path.resolve(__dirname, "./test-cases/expected/react"),
+                dirname: path.resolve(__dirname, "./test-cases/declarations"),
                 defaultOptionsModule: path.resolve(generator.defaultOptionsModule)
             });
         });
@@ -173,6 +177,10 @@ mocha.describe("react-generator", function () {
         });
 
         mocha.it("required-props", function () {
+            this.testGenerator(this.test!.title);
+        });
+
+        mocha.it("use-external-component-bindings", function () {
             this.testGenerator(this.test!.title);
         });
     
@@ -1077,11 +1085,11 @@ mocha.describe("import Components", function () {
 
         assert.deepEqual(model.members.map(m => {
             return m.typeDeclaration();
-        }), ["height!:string", "children?:React.ReactNode"]);
+        }), ["height:string", "width?:number", "children?:React.ReactNode"]);
 
         assert.strictEqual(model.defaultPropsDest(), "Model");
         assert.strictEqual(removeSpaces(model.toString()), removeSpaces(`
-            export declare type ModelType = typeof WidgetProps & {height!:string} 
+            export declare type ModelType = typeof WidgetProps & {height:string} 
             constModel:ModelType={...WidgetProps, height:"10px"};
         `));
     });
@@ -1103,8 +1111,8 @@ mocha.describe("import Components", function () {
             )]
         );
         assert.strictEqual(getResult(model.toString()), getResult(`
-            export declare type ModelType = {height!:string}
-            const Model:ModelType={}
+            export declare type ModelType = {height:string}
+            const Model:ModelType={} as ModelType
         `));
     });
 
@@ -1164,7 +1172,7 @@ mocha.describe("import Components", function () {
 
         assert.strictEqual(members.length, 3);
         assert.strictEqual(members[1].defaultDeclaration(), "pChange:undefined");
-        assert.strictEqual(members[1].typeDeclaration(), "pChange!:any");
+        assert.strictEqual(members[1].typeDeclaration(), "pChange:any");
 
         assert.strictEqual(members[2].defaultDeclaration(), "defaultP:undefined");
         assert.strictEqual(members[2].typeDeclaration(), "defaultP?:string");
@@ -1690,6 +1698,37 @@ mocha.describe("ComponentInput", function () {
             export declare type BaseModelType = {contentRender: any};
             export const BaseModel:BaseModelType={};
         `));
+    });
+
+    mocha.describe("Required prop", function () { 
+        mocha.it("Type declaration should have excalmation token", function () {
+            const expression = generator.createClassDeclaration(
+                this.decorators,
+                ["export"],
+                generator.createIdentifier("BaseModel"),
+                [],
+                [],
+                [
+                    generator.createProperty(
+                        [createDecorator("OneWay")],
+                        undefined,
+                        generator.createIdentifier("prop"),
+                        generator.SyntaxKind.ExclamationToken,
+                        generator.createKeywordTypeNode("number"),
+                        generator.createNumericLiteral("1")
+                    )
+                ]
+            );
+        
+            assert.strictEqual(getResult(expression.toString()), getResult(`
+                export declare type BaseModelType = {
+                    prop: number
+                };
+                export const BaseModel:BaseModelType = {
+                    prop: 1
+                };
+            `));
+        });
     });
 
     mocha.describe("CompileViewModelArguments", function () {

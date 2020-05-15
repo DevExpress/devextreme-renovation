@@ -101,6 +101,10 @@ mocha.describe("angular-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("component-bindings-only", function () {
+        this.testGenerator(this.test!.title);
+    });
+    
     mocha.it("jsx-function-in-view", function () {
         this.testGenerator(this.test!.title);
     });
@@ -109,7 +113,7 @@ mocha.describe("angular-generation", function () {
         this.beforeEach(function () {
             generator.defaultOptionsModule = "../component_declaration/default_options";
             generator.setContext({
-                dirname: path.resolve(__dirname, "./test-cases/expected/react"),
+                dirname: path.resolve(__dirname, "./test-cases/declarations"),
                 defaultOptionsModule: path.resolve(generator.defaultOptionsModule)
             });
         });
@@ -124,6 +128,10 @@ mocha.describe("angular-generation", function () {
         });
 
         mocha.it("required-props", function () {
+            this.testGenerator(this.test!.title);
+        });
+
+        mocha.it("use-external-component-bindings", function () {
             this.testGenerator(this.test!.title);
         });
     });

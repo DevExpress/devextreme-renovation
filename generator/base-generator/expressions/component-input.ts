@@ -48,7 +48,8 @@ export class ComponentInput extends Class implements Heritable {
             [],
             new Identifier(`default${capitalizeFirstLetter(stateMember._name)}`),
             SyntaxKind.QuestionToken,
-            stateMember.type
+            stateMember.type,
+            stateMember.initializer
         )
     }
 

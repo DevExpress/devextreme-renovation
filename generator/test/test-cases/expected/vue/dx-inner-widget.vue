@@ -10,6 +10,10 @@ export const InnerWidgetProps = {
     type: Boolean
   },
   value: {
+    type: Number,
+    default: undefined
+  },
+  defaultValue: {
     type: Number
   }
 };
@@ -17,7 +21,7 @@ export default {
   props: InnerWidgetProps,
   data() {
     return {
-      value_state: undefined
+      value_state: this.defaultValue
     };
   },
   methods: {
@@ -36,6 +40,12 @@ export default {
         }, {});
       }
       return value;
+    },
+    onSelect(...args){
+      this.$emit("on-select", ...args);
+    },
+    valueChange(...args){
+      this.$emit("update:value", ...args);
     }
   }
 };

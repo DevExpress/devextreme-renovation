@@ -16,6 +16,7 @@ export declare type WidgetInputType = {
 export const WidgetInput: WidgetInputType = {
     p: "10",
     s: 10,
+    defaultS: 10,
     sChange:()=>{}
 };
 
@@ -27,7 +28,7 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput) {
-    const [__state_s, __state_setS] = useState(() => (props.s !== undefined ? props.s : props.defaultS) || 10);
+    const [__state_s, __state_setS] = useState(() => props.s !== undefined ? props.s : props.defaultS);
     const [__state_i, __state_setI] = useState(10)
 
     const __restAttributes=useCallback(function __restAttributes(){

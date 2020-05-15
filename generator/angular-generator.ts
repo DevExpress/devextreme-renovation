@@ -11,7 +11,7 @@ import {  Call } from "./base-generator/expressions/common";
 import { Decorator as BaseDecorator } from "./base-generator/expressions/decorator";
 import { VariableDeclaration as BaseVariableDeclaration } from "./base-generator/expressions/variables";
 import {
-    Property as BaseProperty, Method
+    Property as BaseProperty, Method, GetAccessor
 } from "./base-generator/expressions/class-members"
 import {
     toStringOptions as BaseToStringOptions,
@@ -66,6 +66,7 @@ export const counter = (function () {
 export interface toStringOptions extends  BaseToStringOptions {
     members: Array<Property | Method>;
     eventProperties?: Array<Property>;
+    stateProperties?: Array<Property>;
     hasStyle?: boolean
 }
 
@@ -91,8 +92,8 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         super(processTagName(tagName, context), typeArguments, attributes);
         this.context = context;
         const component = context.components?.[tagName.toString()];
-        if (component instanceof AngularComponent) { 
-            this.component = component;
+        if (component instanceof Component) { 
+            this.component = component as AngularComponent;
         }
         this.attributes = attributes;
     }
@@ -112,18 +113,31 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     spreadToArray(spreadAttributes: JsxSpreadAttribute, options?: toStringOptions) {
         const component = this.component;
         const properties = component && getProps(component.members) || [];
+
+        const spreadAttributesExpression = spreadAttributes.expression instanceof Identifier &&
+            options?.variables?.[spreadAttributes.expression.toString()] ||
+            spreadAttributes.expression;
+
+        if (spreadAttributesExpression instanceof BasePropertyAccess) { 
+            const member = spreadAttributesExpression.getMember(options);
+            if (member instanceof GetAccessor && member._name.toString() === "restAttributes") { 
+                return [];
+            }
+        }
+        
         return properties.reduce((acc, prop: Method | BaseProperty) => {
             const propName = prop._name;
             const spreadValueExpression = new PropertyAccess(
-                spreadAttributes.expression,
+                spreadAttributesExpression,
                 propName
             );
 
             const isPropsScope = spreadValueExpression.isPropsScope(options);
             const members = spreadValueExpression.getMembers(options);
             const hasMember = members?.some(m => m._name.toString() === propName.toString())
-            if(isPropsScope && !hasMember)
+            if (isPropsScope && !hasMember) {
                 return acc;
+            }
             
             const spreadValue = spreadValueExpression.toString(options);
             const attr = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === propName.toString()) as JsxAttribute;
@@ -137,14 +151,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         }, [] as JsxAttribute[])
     }
 
-    attributesString(options?: toStringOptions) {
-        if (this.component && options) { 
-            options = {
-                ...options,
-                eventProperties: this.component.members.filter(m => m.decorators.find(d => d.name === "Event")) as Property[]
-            }
-        }
-
+    processSpreadAttributes(options?: toStringOptions) { 
         const spreadAttributes = this.attributes.filter(a => a instanceof JsxSpreadAttribute) as JsxSpreadAttribute[];
         if (spreadAttributes.length) { 
             spreadAttributes.forEach(spreadAttr => {
@@ -167,6 +174,19 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
                 );
             }
         }
+    }
+
+    attributesString(options?: toStringOptions) {
+        if (this.component && options) { 
+            options = {
+                ...options,
+                eventProperties: this.component.members.filter(m => m.isEvent) as Property[],
+                stateProperties: this.component.members.filter(m => m.isState) as Property[]
+            }
+        }
+
+        this.processSpreadAttributes(options);
+        
         return super.attributesString(options);
     }
 
@@ -318,6 +338,11 @@ export class JsxAttribute extends BaseJsxAttribute {
         return `[${name}]="${value}"`;
     }
 
+    isStringLiteralValue() { 
+        return this.initializer instanceof StringLiteral ||
+            this.initializer instanceof JsxExpression && this.initializer.expression instanceof StringLiteral;
+    }
+
     toString(options?:toStringOptions) { 
         if (this.name.toString() === "ref") { 
             return this.compileRef(options);
@@ -333,8 +358,7 @@ export class JsxAttribute extends BaseJsxAttribute {
             return this.compileKey();
         }
 
-        if (this.initializer instanceof StringLiteral ||
-            this.initializer instanceof JsxExpression && this.initializer.expression instanceof StringLiteral) { 
+        if (this.isStringLiteralValue()) { 
             return `${name}=${this.initializer.toString()}`;
         }
 
@@ -719,7 +743,7 @@ export class JsxElement extends BaseJsxElement {
     }
 
     toString(options?: toStringOptions) {
-        const children: string = this.children.map(c => c.toString(options)).join("\n");
+        const children: string = this.children.map(c => c.toString(options)).join("");
         if (this.openingElement.tagName.toString() === "Fragment") {
             return children;
         }

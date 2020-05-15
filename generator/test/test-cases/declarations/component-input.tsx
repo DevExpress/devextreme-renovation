@@ -7,6 +7,7 @@ function view() { }
 @ComponentBindings()
 export class WidgetProps { 
     @OneWay() height?: number = 10;
+    @OneWay() width?: number = 10;
     @Slot() children?: any;
 }
 

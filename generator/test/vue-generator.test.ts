@@ -1,14 +1,91 @@
 import mocha from "./helpers/mocha";
 import assert from "assert";
-import generator from "../vue-generator";
+import generator, { VueComponent } from "../vue-generator";
 
 import { printSourceCodeAst as getAst, removeSpaces } from "./helpers/common";
 import componentCreator from "./helpers/create-component";
 import { toStringOptions } from "../angular-generator";
-const { createDecorator } = componentCreator(generator);
+const { createDecorator, createComponentDecorator, createComponent } = componentCreator(generator);
 
 
 mocha.describe("Vue-generator", function () { 
+    mocha.describe("Expressions", function () { 
+        mocha.describe("common", function () { 
+            mocha.it("NonNullExpression", function () {
+                const expression = generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("field"));
+                assert.equal(generator.createNonNullExpression(expression).toString(), "this.field")
+            });
+        })
+
+        mocha.describe("Type expressions should generate empty string", function () { 
+            mocha.it("KeywordTypeNode", function () { 
+                assert.strictEqual(generator.createKeywordTypeNode("number").toString(), "");
+            });
+
+            mocha.it("ArrayTypeNode", function () { 
+                assert.strictEqual(generator.createArrayTypeNode(
+                    generator.createKeywordTypeNode("number")
+                ).toString(), "");
+            });
+
+            mocha.it("ArrayTypeNode", function () { 
+                assert.strictEqual(generator.createArrayTypeNode(
+                    generator.createKeywordTypeNode("number")
+                ).toString(), "");
+            });
+
+            mocha.it("createLiteralTypeNode", function () { 
+                assert.strictEqual(generator.createLiteralTypeNode(generator.createStringLiteral("2")).toString(), ""); ;
+            });
+
+            mocha.it("createIndexedAccessTypeNode", function () { 
+                const expression = generator.createIndexedAccessTypeNode(
+                    generator.createTypeReferenceNode(
+                        generator.createIdentifier("PageIndex"),
+                        undefined
+                    ),
+                    generator.createLiteralTypeNode(generator.createStringLiteral("1"))
+                );
+    
+                assert.strictEqual(expression.toString(), "");
+            });
+            
+            mocha.it("createIntersectionTypeNode", function () {
+                assert.equal(generator.createIntersectionTypeNode(
+                    [
+                        generator.createKeywordTypeNode("string"),
+                        generator.createKeywordTypeNode("number")
+                    ]
+                ), "");
+            });
+        
+            mocha.it("createUnionTypeNode", function () {
+                assert.equal(generator.createUnionTypeNode(
+                    [
+                        generator.createKeywordTypeNode("string"),
+                        generator.createKeywordTypeNode("number")
+                    ]
+                ), "");
+            });
+    
+            mocha.it("createParenthesizedType", function () {
+                assert.equal(generator.createParenthesizedType(
+                    generator.createKeywordTypeNode("string")
+                ), "");
+            });
+
+            mocha.it("FunctionTypeNode", function () { 
+                assert.strictEqual(generator.createFunctionTypeNode(
+                    undefined,
+                    [],
+                    generator.createKeywordTypeNode("string")
+                ).toString(), "");
+            });
+        });
+    });
+
     mocha.describe("Property", function () { 
         const name = generator.createIdentifier("p");
 
@@ -27,6 +104,34 @@ mocha.describe("Vue-generator", function () {
                     );
         
                     assert.strictEqual(getAst(expression.toString()), getAst("p: {type: String}"));
+                    assert.strictEqual(expression.getter(), "p");
+                    assert.strictEqual(expression.getter("this"), "this.p");
+                });
+
+                mocha.it("Property with KeywordTypeNode - any", function () { 
+                    const expression = generator.createProperty(
+                        decorators,
+                        undefined,
+                        name,
+                        generator.SyntaxKind.QuestionToken,
+                        generator.createKeywordTypeNode("any"),
+                        undefined
+                    );
+        
+                    assert.strictEqual(getAst(expression.toString()), getAst("p: {}"));
+                });
+
+                mocha.it("Property with KeywordTypeNode - undefined", function () { 
+                    const expression = generator.createProperty(
+                        decorators,
+                        undefined,
+                        name,
+                        generator.SyntaxKind.QuestionToken,
+                        generator.createKeywordTypeNode("undefined"),
+                        undefined
+                    );
+        
+                    assert.strictEqual(getAst(expression.toString()), getAst("p: {}"));
                     assert.strictEqual(expression.getter(), "p");
                     assert.strictEqual(expression.getter("this"), "this.p");
                 });
@@ -149,6 +254,24 @@ mocha.describe("Vue-generator", function () {
             
                         assert.strictEqual(getAst(expression.toString()), getAst("p: {type: [String,Number]}"));
                     });
+
+                    mocha.it("Property with Union type with undefined", function () { 
+                        const expression = generator.createProperty(
+                            decorators,
+                            undefined,
+                            name,
+                            undefined,
+                            generator.createUnionTypeNode(
+                                [
+                                    generator.createKeywordTypeNode("string"),
+                                    generator.createKeywordTypeNode("undefined")
+                                ],
+                            ),
+                            undefined
+                        );
+            
+                        assert.strictEqual(getAst(expression.toString()), getAst("p: {type: [String]}"));
+                    });
     
                     mocha.it("type should not have duplicates", function () { 
                         const expression = generator.createProperty(
@@ -248,7 +371,7 @@ mocha.describe("Vue-generator", function () {
             });
 
             mocha.describe("TwoWay", function () { 
-                mocha.it("shouldn't have initializer", function () {
+                mocha.it("should always have undefined initializer", function () {
                     const expression = generator.createProperty(
                         [createDecorator("TwoWay")],
                         undefined,
@@ -258,7 +381,7 @@ mocha.describe("Vue-generator", function () {
                         generator.createTrue()
                     );
             
-                    assert.strictEqual(getAst(expression.toString()), getAst("p: {type: Boolean}"));
+                    assert.strictEqual(getAst(expression.toString()), getAst("p: {type: Boolean, default: undefined}"));
                 });
             });
 
@@ -386,39 +509,72 @@ mocha.describe("Vue-generator", function () {
                 undefined,
                 generator.createIdentifier("onClick")
             )
-            assert.equal(generator.createCall(
+            assert.strictEqual(generator.createCall(
                 generator.createPropertyAccess(
                     generator.createThis(),
                     generator.createIdentifier("onClick")
                 ),
                 undefined,
                 [generator.createNumericLiteral("10")]
-            ).toString({members: [member]}), 'this.$emit("on-click", 10)');
+            ).toString({
+                members: [member],
+                componentContext: "this",
+                newComponentContext: "this"
+            }), 'this.onClick(10)');
         });
 
-        mocha.it("Call expression generates emit if call Event using variable", function () { 
+        mocha.it("CallChain expression generates emit if call Event", function () { 
             const member = generator.createProperty(
                 [createDecorator("Event")],
                 undefined,
                 generator.createIdentifier("onClick")
-            );
-            const expression = generator.createCall(
-                generator.createIdentifier("click"),
+            )
+            assert.strictEqual(generator.createCallChain(
+                generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("onClick")
+                ),
+                generator.SyntaxKind.QuestionDotToken,
                 undefined,
                 [generator.createNumericLiteral("10")]
-            );
-
-            const propertyAccess = generator.createPropertyAccess(
-                generator.createThis(),
-                generator.createIdentifier("onClick")
-            );
-
-            assert.equal(expression.toString({
+            ).toString({
                 members: [member],
+                componentContext: "this",
+                newComponentContext: "this"
+            }), 'this.onClick(10)');
+        });
+
+        mocha.it("CallChain Identifer that is call event", function () { 
+            const member = generator.createProperty(
+                [createDecorator("Event")],
+                undefined,
+                generator.createIdentifier("onClick")
+            )
+            assert.strictEqual(generator.createCallChain(
+                generator.createIdentifier("click"),
+                generator.SyntaxKind.QuestionDotToken,
+                undefined,
+                [generator.createNumericLiteral("10")]
+            ).toString({
+                members: [member],
+                componentContext: "this",
+                newComponentContext: "this",
                 variables: {
-                    click: propertyAccess
+                    "click": generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("onClick")
+                    )
                 }
-            }), 'this.$emit("on-click", 10)');
+            }), 'this.onClick(10)');
+        });
+
+        mocha.it("CallChain expression generates usual call if not event", function () { 
+            assert.strictEqual(generator.createCallChain(
+                generator.createIdentifier("a"),
+                generator.SyntaxKind.QuestionDotToken,
+                undefined,
+                [generator.createNumericLiteral("10")]
+            ).toString(), 'a?.(10)');
         });
     });
 
@@ -561,14 +717,150 @@ mocha.describe("Vue-generator", function () {
 
                 assert.strictEqual(expression.toString(), "");
             });
+
+            mocha.it("Can use jsx variable twice. Self-closing element should be cloned correctly", function () {
+                const block = generator.createBlock([
+                    generator.createVariableStatement(
+                        [],
+                        generator.createVariableDeclarationList(
+                            [generator.createVariableDeclaration(
+                                generator.createIdentifier("v"),
+                                undefined,
+                                generator.createJsxSelfClosingElement(
+                                    generator.createIdentifier("span")
+                                )
+                            )],
+                            generator.SyntaxKind.ConstKeyword
+                        )
+                    ),
+                    generator.createReturn(
+                        generator.createJsxElement(
+                            generator.createJsxOpeningElement(
+                                generator.createIdentifier("div"),
+                                [],
+                                []),
+                            [generator.createJsxExpression(
+                                undefined,
+                                generator.createBinary(
+                                    generator.createIdentifier("c1"),
+                                    generator.SyntaxKind.AmpersandAmpersandToken,
+                                    generator.createIdentifier("v")
+                                ),
+                            ),
+                            generator.createJsxExpression(
+                                undefined,
+                                generator.createBinary(
+                                    generator.createIdentifier("c2"),
+                                    generator.SyntaxKind.AmpersandAmpersandToken,
+                                    generator.createIdentifier("v")
+                                ),
+                            )],
+                            generator.createJsxClosingElement(generator.createIdentifier("div"))
+                        )
+                    )
+                ], false);
+    
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [],
+                    undefined,
+                    block
+                );
+    
+                assert.strictEqual(expression.toString(), "");
+                assert.strictEqual(removeSpaces((expression.getTemplate({
+                    members: []
+                }) as string)), removeSpaces(`<div >
+                        <span v-if="c1"/>
+                        <span v-if="c2"/>
+                    </div>`));
+            });
+
+            mocha.it("Can use jsx variable twice. jsx element should be cloned correctly", function () {
+                const block = generator.createBlock([
+                    generator.createVariableStatement(
+                        [],
+                        generator.createVariableDeclarationList(
+                            [generator.createVariableDeclaration(
+                                generator.createIdentifier("v"),
+                                undefined,
+                                generator.createJsxElement(
+                                    generator.createJsxOpeningElement(
+                                        generator.createIdentifier("span"),
+                                        undefined,
+                                        [],
+                                        
+                                    ),
+                                    [],
+                                    generator.createJsxClosingElement(
+                                        generator.createIdentifier("span")
+                                    )
+                                )
+                            )],
+                            generator.SyntaxKind.ConstKeyword
+                        )
+                    ),
+                    generator.createReturn(
+                        generator.createJsxElement(
+                            generator.createJsxOpeningElement(
+                                generator.createIdentifier("div"),
+                                [],
+                                []),
+                            [generator.createJsxExpression(
+                                undefined,
+                                generator.createBinary(
+                                    generator.createIdentifier("c1"),
+                                    generator.SyntaxKind.AmpersandAmpersandToken,
+                                    generator.createIdentifier("v")
+                                ),
+                            ),
+                            generator.createJsxExpression(
+                                undefined,
+                                generator.createBinary(
+                                    generator.createIdentifier("c2"),
+                                    generator.SyntaxKind.AmpersandAmpersandToken,
+                                    generator.createIdentifier("v")
+                                ),
+                            )],
+                            generator.createJsxClosingElement(generator.createIdentifier("div"))
+                        )
+                    )
+                ], false);
+    
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [],
+                    undefined,
+                    block
+                );
+    
+                assert.strictEqual(expression.toString(), "");
+                assert.strictEqual(removeSpaces((expression.getTemplate({
+                    members: []
+                }) as string)), removeSpaces(`<div >
+                        <span v-if="c1"></span>
+                        <span v-if="c2"></span>
+                    </div>`));
+            });
+
         });
+
+        
     });
 
     mocha.describe("Component Input", function () { 
         mocha.it("Component Binding should be an object", function () { 
             const expression = generator.createClassDeclaration(
                 [createDecorator("ComponentBindings")],
-                ["export", "default"],
+                ["export"],
                 generator.createIdentifier("Props"),
                 [],
                 [],
@@ -592,7 +884,7 @@ mocha.describe("Vue-generator", function () {
                 ]
             );
 
-            assert.strictEqual(getAst(expression.toString()), getAst(`export default const Props = {
+            assert.strictEqual(getAst(expression.toString()), getAst(`export const Props = {
                 p: {type: String},
                 p1: {type: Number}
             }`));
@@ -601,7 +893,7 @@ mocha.describe("Vue-generator", function () {
         mocha.it("Component with heritage clauses", function () { 
             const expression = generator.createClassDeclaration(
                 [createDecorator("ComponentBindings")],
-                ["export", "default"],
+                ["export"],
                 generator.createIdentifier("Props"),
                 [],
                 [
@@ -624,12 +916,247 @@ mocha.describe("Vue-generator", function () {
                 ]
             );
 
-            assert.strictEqual(getAst(expression.toString()), getAst(`export default const Props = {
+            assert.strictEqual(getAst(expression.toString()), getAst(`export const Props = {
                 ...Base,
                 p: {type: String}
             }`));
         });
     });
+
+    mocha.describe("Component", function () { 
+        mocha.describe("Compile Effects", function () {
+            this.beforeEach(function () {
+                this.effect = generator.createMethod(
+                    [createDecorator("Effect")],
+                    [],
+                    undefined,
+                    generator.createIdentifier("e"),
+                    undefined,
+                    undefined,
+                    [],
+                    undefined,
+                    generator.createBlock([], true)
+                );
+            });
+
+            mocha.it("should add watch for properties in dependency", function () {
+                this.effect.body = generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("p")
+                    ),
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("p2")
+                    )
+                ], false);
+
+                const component = createComponent(
+                    ["p", "p1", "p2"].map(name => generator.createProperty(
+                        [createDecorator("OneWay")],
+                        undefined,
+                        generator.createIdentifier(name),
+                        undefined,
+                        undefined,
+                        undefined
+                    )).concat(this.effect)
+                ) as VueComponent;
+
+                const watch = component.generateWatch([]);
+
+                assert.strictEqual(getAst(watch), getAst(`watch: {
+                    p: ["__schedule_e"],
+                    p2: ["__schedule_e"]
+                }`));
+            });
+
+            mocha.it("should watch all props if props in dependency", function () {
+                this.effect.body = generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("props")
+                    )
+                ], false);
+
+                const component = createComponent(
+                    ["p", "p1", "p2"].map(name => generator.createProperty(
+                        [createDecorator("OneWay")],
+                        undefined,
+                        generator.createIdentifier(name),
+                        undefined,
+                        undefined,
+                        undefined
+                    )).concat(this.effect)
+                ) as VueComponent;
+
+                const watch = component.generateWatch([]);
+
+                assert.strictEqual(getAst(watch), getAst(`watch: {
+                    p: ["__schedule_e"],
+                    p1: ["__schedule_e"],
+                    p2: ["__schedule_e"]
+                }`));
+            });
+
+            mocha.it("should not generate watch if there is not any dependency", function () {
+                const component = createComponent(
+                    ["p", "p1"].map(name => generator.createProperty(
+                        [createDecorator("OneWay")],
+                        undefined,
+                        generator.createIdentifier(name),
+                        undefined,
+                        undefined,
+                        undefined
+                    )).concat(this.effect)
+                ) as VueComponent;
+
+                const methods: string[] = [];
+                const watch = component.generateWatch(methods);
+
+                assert.strictEqual(watch, "");
+                assert.deepEqual(methods, []);
+            });
+
+            mocha.it("two effect have same dependecy", function () {
+                const effect = generator.createMethod(
+                    [createDecorator("Effect")],
+                    [],
+                    undefined,
+                    generator.createIdentifier("e1"),
+                    undefined,
+                    undefined,
+                    [],
+                    undefined,
+                    generator.createBlock([
+                        generator.createPropertyAccess(
+                            generator.createThis(),
+                            generator.createIdentifier("p")
+                        )
+                    ], true)
+                );
+
+                this.effect.body = generator.createBlock([
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("p")
+                    ),
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("p2")
+                    )
+                ], false);
+
+                const component = createComponent(
+                    ["p", "p1", "p2"].map(name => generator.createProperty(
+                        [createDecorator("OneWay")],
+                        undefined,
+                        generator.createIdentifier(name),
+                        undefined,
+                        undefined,
+                        undefined
+                    )).concat([this.effect, effect])
+                ) as VueComponent;
+
+                const methods: string[] = [];
+                const watch = component.generateWatch(methods);
+
+                assert.strictEqual(getAst(watch), getAst(`watch: {
+                    p: ["__schedule_e", "__schedule_e1"],
+                    p2: ["__schedule_e"]
+                }`));
+
+                assert.strictEqual(getAst(`{
+                    ${methods.join(",\n")}
+                }`), getAst(`{
+                __schedule_e() {
+                       this.__scheduleEffects[0]=()=>{
+                           this.__destroyEffects[0]&&this.__destroyEffects[0]();
+                           this.__destroyEffects[0]=this.e();
+                       }
+                   },
+                   __schedule_e1() {
+                       this.__scheduleEffects[1]=()=>{
+                           this.__destroyEffects[1]&&this.__destroyEffects[1]();
+                           this.__destroyEffects[1]=this.e1();
+                       }
+                   }
+               }`));
+            });
+        });
+    });
+
+    mocha.describe("PropertyAccess", function () { 
+        mocha.it("Access props - this.props with members", function () { 
+            const expression = generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("props")
+            );
+
+            const members = [
+                generator.createProperty(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("p1")
+                ),
+                generator.createProperty(
+                    [createDecorator("TwoWay")],
+                    [],
+                    generator.createIdentifier("p2")
+                ),
+                generator.createProperty(
+                    [createDecorator("Event")],
+                    [],
+                    generator.createIdentifier("p3")
+                ),
+                generator.createProperty(
+                    [createDecorator("Slot")],
+                    [],
+                    generator.createIdentifier("p4")
+                ),
+                generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("p5")
+                ),
+                generator.createProperty(
+                    [createDecorator("InternalState")],
+                    [],
+                    generator.createIdentifier("p6")
+                ),
+                generator.createMethod(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("p7"),
+                    "",
+                    undefined,
+                    [],
+                    undefined,
+                    generator.createBlock([], false)
+                ),
+                generator.createGetAccessor(
+                    [],
+                    [],
+                    generator.createIdentifier("p8"),
+                    []
+                )
+            ];
+
+            const stringValue = expression.toString({
+                members,
+                componentContext: generator.SyntaxKind.ThisKeyword,
+                newComponentContext: generator.SyntaxKind.ThisKeyword
+            });
+
+            assert.strictEqual(getAst(stringValue), getAst(`{
+                p1:this.p1,
+                p2:(this.p2 !== undefined ? this.p2 : this.p2_state),
+                p3:this.p3,
+                p4:this.p4,
+                p5:this.$scopedSlots.p5
+            }`));
+        });
+    })
 
     mocha.describe("Template Generation", function () {
 
@@ -654,6 +1181,24 @@ mocha.describe("Vue-generator", function () {
                 );
 
                 assert.strictEqual(expression.toString(), "<div ></div>");
+            });
+
+            mocha.it("Element with two children: should not be any whitespace symbols between elements", function () { 
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div")
+                    ),
+                    [generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("span")
+                    ),generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("span")
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+
+                assert.strictEqual(expression.toString(), "<div ><span /><span /></div>");
             });
 
             mocha.it("element with attributes", function () { 
@@ -682,6 +1227,22 @@ mocha.describe("Vue-generator", function () {
                 assert.strictEqual(removeSpaces(expression.toString()), removeSpaces(`<div :a="10" b="word"></div>`));
             });
 
+            mocha.it(`JsxSpreadAttribute replace " -> '`, function () {
+                const expression = generator.createJsxSpreadAttribute(
+                    generator.createObjectLiteral(
+                        [
+                            generator.createPropertyAssignment(
+                                generator.createIdentifier("a"),
+                                generator.createStringLiteral("str")
+                            )
+                        ],
+                        false
+                    )
+                );
+
+                assert.strictEqual(expression.toString(), `v-bind="{a:'str'}"`);
+             })
+
             mocha.describe("Attributes", function () { 
                 mocha.it("title attribute", function () { 
                     const expression = generator.createJsxAttribute(
@@ -704,9 +1265,9 @@ mocha.describe("Vue-generator", function () {
                     assert.strictEqual(expression.toString(), `v-bind:style="__processStyle(value)"`);
                 });
 
-                mocha.it("class -> v-bind:class", function () {
+                mocha.it("className -> v-bind:class", function () {
                     const expression = generator.createJsxAttribute(
-                        generator.createIdentifier("class"),
+                        generator.createIdentifier("className"),
                         generator.createJsxExpression(
                             undefined,
                             generator.createIdentifier("value")
@@ -714,6 +1275,18 @@ mocha.describe("Vue-generator", function () {
                     );
         
                     assert.strictEqual(expression.toString(), `v-bind:class="value"`);
+                });
+
+                mocha.it("className -> class", function () {
+                    const expression = generator.createJsxAttribute(
+                        generator.createIdentifier("className"),
+                        generator.createJsxExpression(
+                            undefined,
+                            generator.createStringLiteral("value")
+                        )
+                    );
+        
+                    assert.strictEqual(expression.toString(), `class="value"`);
                 });
 
                 mocha.it("Parse style with options should fill hasClass", function () {
@@ -731,6 +1304,24 @@ mocha.describe("Vue-generator", function () {
 
                     assert.strictEqual(expression.toString(options), `v-bind:style="__processStyle(value)"`);
                     assert.strictEqual(options.hasStyle, true);
+                });
+            });
+
+            mocha.describe("Fragment", function () { 
+                mocha.it("Fragment -> div", function () { 
+                    const element = generator.createJsxElement(
+                        generator.createJsxOpeningElement(
+                            generator.createIdentifier("Fragment"),
+                            undefined,
+                            []
+                        ),
+                        [],
+                        generator.createJsxClosingElement(
+                            generator.createIdentifier("Fragment")
+                        )
+                    );
+
+                    assert.strictEqual(element.toString(), `<div style="display: contents" ></div>`);
                 });
             });
         });
@@ -770,6 +1361,36 @@ mocha.describe("Vue-generator", function () {
                 );
     
                 assert.strictEqual(expression.children[0].toString(), `<input v-if="viewModel.input"></input>`);
+            });
+
+            mocha.it("notJsxExpr && <element/> -> <element v-if='notJsxExpr'>", function () {
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createBinary(
+                            generator.createPropertyAccess(
+                                generator.createIdentifier("viewModel"),
+                                generator.createIdentifier("input")
+                            ),
+                            generator.createToken(generator.SyntaxKind.AmpersandAmpersandToken),
+                            generator.createJsxSelfClosingElement(
+                                generator.createIdentifier("input"),
+                                undefined,
+                                []
+                            )
+                        )
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(expression.children[0].toString(), `<input v-if="viewModel.input"/>`);
             });
 
             mocha.it("condition?then:else - <div v-if='condition'> <div v-else>", function () {
@@ -874,6 +1495,89 @@ mocha.describe("Vue-generator", function () {
                     members: [property]
                 })), removeSpaces(`<template v-if="condition">{{_value()}}</template><template v-else>{{!_value()}}</template>`));
             });
+
+            mocha.it("condition?<element>:expr - <element><template>{expr}</template>'", function () {
+                const thenStatement = generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("input"),
+                    [],
+                    []
+                );
+    
+                const elseStatement = generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("value")
+                    )
+    
+                const property = generator.createGetAccessor(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    [],
+                    undefined,
+                    undefined
+                );
+
+                generator.createJsxExpression(
+                    undefined,
+                    generator.createConditional(
+                        generator.createIdentifier("condition"),
+                        thenStatement,
+                        elseStatement
+                    )
+                )
+    
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [
+                        generator.createJsxExpression(
+                            undefined,
+                            generator.createConditional(
+                                generator.createIdentifier("condition"),
+                                generator.createJsxSelfClosingElement(
+                                    generator.createPropertyAccess(
+                                        generator.createPropertyAccess(
+                                            generator.createIdentifier("model"),
+                                            generator.createIdentifier("props")
+                                        ),
+                                        generator.createIdentifier("template")
+                                    ),
+                                    undefined,
+                                    [generator.createJsxAttribute(
+                                        generator.createIdentifier("text"),
+                                        generator.createJsxExpression(
+                                            undefined,
+                                            generator.createPropertyAccess(
+                                                generator.createPropertyAccess(
+                                                    generator.createIdentifier("model"),
+                                                    generator.createIdentifier("props")
+                                                ),
+                                                generator.createIdentifier("text")
+                                            )
+                                        )
+                                    )]
+                                ),
+                                generator.createIdentifier("text")
+                            )
+                        )
+                    ],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(removeSpaces(expression.children[0].toString({
+                    componentContext: "model",
+                    newComponentContext: "",
+                    members: [property]
+                })), removeSpaces(`
+                    <slot name="template" v-bind:text="props.text" v-if="condition"></slot>
+                    <template v-else>{{text}}</template>
+                `));
+            });
         });
 
         mocha.describe("Template", function () { 
@@ -935,7 +1639,7 @@ mocha.describe("Vue-generator", function () {
                     members: [templateProperty],
                     componentContext: "viewModel",
                     newComponentContext: ""
-                }), `<slot name="template" :v-bind:p1="10" :v-bind:p2="'11'"></slot>`);
+                }), `<slot name="template" v-bind:p1="10" v-bind:p2="'11'"></slot>`);
             });
 
             mocha.it("<template></template> -> <slot></slot>", function () {
@@ -1000,7 +1704,57 @@ mocha.describe("Vue-generator", function () {
                     members: [templateProperty],
                     componentContext: "viewModel",
                     newComponentContext: ""
-                }), `<slot name="template" :v-bind="item"></slot>`);
+                }), `<slot name="template" v-bind="item"></slot>`);
+            });
+
+            mocha.it("Template with condition", function () {
+                const expression = generator.createJsxSelfClosingElement(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("template")
+                    ),
+                    [],
+                    []
+                );
+
+                const element = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [
+                        generator.createJsxExpression(
+                            undefined,
+                            generator.createBinary(
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier("viewModel"),
+                                    generator.createIdentifier("template")
+                                ),
+                                generator.SyntaxKind.AmpersandAmpersandToken,
+                                expression
+                            )
+                        )
+                    ],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                )
+    
+                const templateProperty = generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("template"),
+                    generator.SyntaxKind.QuestionToken,
+                    undefined,
+                    undefined
+                );
+    
+                assert.strictEqual(element.children[0].toString({
+                    members: [templateProperty],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                }), `<slot name="template" v-if="$scopedSlots.template"></slot>`);
             });
         });
 
@@ -1117,7 +1871,121 @@ mocha.describe("Vue-generator", function () {
             });
         });
 
-      
+        mocha.describe("Import widget.", function () {
+            this.beforeEach(function () {
+                generator.setContext({
+                    dirname: __dirname
+                });
+                generator.createImportDeclaration(
+                    [],
+                    [],
+                    generator.createImportClause(
+                        generator.createIdentifier("DxWidget"),
+                        undefined
+                    ),
+                    generator.createStringLiteral("./test-cases/declarations/component-input")
+                );
+            });
+
+            this.afterEach(function () {
+                generator.setContext(null);
+            });
+
+            mocha.it("<DxWidget></DxWidget> -> <dx-widget></dx-widget>", function () {
+                const element = generator.createJsxElement(
+                    generator.createJsxOpeningElement(generator.createIdentifier("DxWidget")),
+                    [],
+                    generator.createJsxClosingElement(generator.createIdentifier("DxWidget"))
+                );
+
+                assert.strictEqual(element.toString(), "<DxWidget ></DxWidget>");
+            });
+
+            mocha.it("<DxWidget/> -> <dx-widget/>", function () {
+                const element = generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("DxWidget"),
+                    []
+                );
+
+                assert.strictEqual(element.toString(), "<DxWidget />");
+            });
+
+            mocha.it("Process eventChange - @event-change", function () {
+                generator.createClassDeclaration(
+                    [createComponentDecorator({})],
+                    [],
+                    generator.createIdentifier("Widget"),
+                    [],
+                    [],
+                    [
+                        generator.createProperty(
+                            [createDecorator("Event")],
+                            [],
+                            generator.createIdentifier("eventChange"),
+                            undefined,
+                            undefined,
+                            undefined
+                        )
+                    ]
+                );
+
+                const element = generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("Widget"),
+                    [],
+                    [
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("eventChange"),
+                            generator.createIdentifier("value")
+                        )
+                    ]
+                );
+
+                assert.strictEqual(element.toString({
+                    members: []
+                }), `<Widget @event-change="value"/>`);
+            });
+
+            mocha.it("Process statePropChange - @update:state-prop if stateProp is TwoWay prop", function () {
+                generator.createClassDeclaration(
+                    [createComponentDecorator({})],
+                    [],
+                    generator.createIdentifier("Widget"),
+                    [],
+                    [],
+                    [
+                        generator.createProperty(
+                            [createDecorator("Event")],
+                            [],
+                            generator.createIdentifier("statePropChange"),
+                            undefined,
+                            undefined,
+                            undefined
+                        ),
+                        generator.createProperty(
+                            [createDecorator("TwoWay")],
+                            [],
+                            generator.createIdentifier("stateProp")
+                        )
+                    ]
+                );
+
+                const element = generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("Widget"),
+                    [],
+                    [
+                        generator.createJsxAttribute(
+                            generator.createIdentifier("statePropChange"),
+                            generator.createIdentifier("value")
+                        )
+                    ]
+                );
+
+                assert.strictEqual(element.toString({
+                    members: []
+                }), `<Widget @update:state-prop="value"/>`);
+            });
+        });
+
     });
     
 });

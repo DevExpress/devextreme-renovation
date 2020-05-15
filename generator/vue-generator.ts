@@ -1,9 +1,11 @@
 import BaseGenerator from "./base-generator";
-import { Component } from "./base-generator/expressions/component";
+import { Component, getProps } from "./base-generator/expressions/component";
 import {
     Identifier,
-    Call as BaseCall,
-    AsExpression as BaseAsExpression
+    Call,
+    AsExpression as BaseAsExpression,
+    CallChain as BaseCallChain,
+    NonNullExpression as BaseNonNullExpression
 } from "./base-generator/expressions/common";
 import { HeritageClause } from "./base-generator/expressions/class";
 import {
@@ -20,7 +22,10 @@ import {
     UnionTypeNode,
     FunctionTypeNode,
     LiteralTypeNode,
-    TypeReferenceNode
+    TypeReferenceNode,
+    IndexedAccessTypeNode,
+    IntersectionTypeNode,
+    ParenthesizedType
 } from "./base-generator/expressions/type";
 import { capitalizeFirstLetter, variableDeclaration } from "./base-generator/utils/string";
 import SyntaxKind from "./base-generator/syntaxKind";
@@ -49,12 +54,15 @@ import { BindingPattern } from "./base-generator/expressions/binding-pattern";
 import { ComponentInput } from "./base-generator/expressions/component-input";
 import { checkDependency } from "./base-generator/utils/dependency";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access"
-import { JsxClosingElement } from "./base-generator/expressions/jsx";
 import { Binary } from "./base-generator/expressions/operators";
+import { PropertyAssignment } from "./base-generator/expressions/property-assignment";
 
 function calculatePropertyType(type: TypeExpression): string { 
     if (type instanceof SimpleTypeExpression) {
-        return capitalizeFirstLetter(type.toString());
+        const typeString = type.type.toString();
+        if (typeString !== SyntaxKind.AnyKeyword && typeString !== SyntaxKind.UndefinedKeyword) { 
+            return capitalizeFirstLetter(typeString);
+        }
     }
     if (type instanceof ArrayTypeNode) {
         return "Array";
@@ -112,11 +120,15 @@ export class Property extends BaseProperty {
         if (this.questionOrExclamationToken === SyntaxKind.ExclamationToken) { 
             parts.push("required: true")
         }
-
-        if (this.initializer && !this.isState) { 
+        const isState = this.isState;
+        if (this.initializer && !isState) { 
             parts.push(`default(){
                 return ${this.initializer}
             }`)
+        }
+
+        if (this.isState) { 
+            parts.push("default: undefined");
         }
 
         return `${this.name}: {
@@ -127,11 +139,14 @@ export class Property extends BaseProperty {
     getter(componentContext?: string) { 
         const baseValue = super.getter(componentContext);
         componentContext = this.processComponentContext(componentContext);
-        if (this.isState) { 
+        if (this.isState) {
             return `(${componentContext}${this.name} !== undefined ? ${componentContext}${this.name} : ${componentContext}${this.name}_state)`;
         }
         if (this.isRef && componentContext.length) { 
             return `${componentContext}$refs.${this.name}`;
+        }
+        if (this.isTemplate) { 
+            return `${componentContext}$scopedSlots.${this.name}`;
         }
         return baseValue
     }
@@ -145,6 +160,13 @@ export class Property extends BaseProperty {
             return false;
         }
         return super.canBeDestructured;
+    }
+
+    getDependency() {
+        if (this.isState) { 
+            return super.getDependency().concat([`${this.name}_state`]);
+        }
+        return super.getDependency();
     }
 }
 
@@ -175,8 +197,15 @@ export class GetAccessor extends BaseGetAccessor {
 }
 
 export class VueComponentInput extends ComponentInput { 
-    buildDefaultStateProperty() { 
-        return null;
+    buildDefaultStateProperty(stateMember: Property): Property|null { 
+        return new Property(
+            [new Decorator(new Call(new Identifier("OneWay"), undefined, []), {})],
+            [],
+            new Identifier(`default${capitalizeFirstLetter(stateMember._name)}`),
+            undefined,
+            stateMember.type,
+            stateMember.initializer
+        )
     }
     
     buildChangeState(stateMember: Property, stateName: Identifier) { 
@@ -191,12 +220,28 @@ export class VueComponentInput extends ComponentInput {
     
     toString() { 
         const members = this.baseTypes.map(t => `...${t}`)
-            .concat(this.members.map(m => m.toString()))
+            .concat(
+                this.members
+                    .filter(m => !m.inherited)
+                    .map(m => m.toString())
+            )
             .filter(m => m);
-        return `${this.modifiers.join(" ")} const ${this.name} = {
+        const modifiers = this.modifiers.indexOf(SyntaxKind.DefaultKeyword) === -1 ?
+            this.modifiers :
+            [];
+        return `${modifiers.join(" ")} const ${this.name} = {
             ${members.join(",")}
-        }`;
+        };
+        ${modifiers !== this.modifiers ? `${this.modifiers.join(" ")} ${this.name}`: ""}`;
     }
+}
+
+function getComponentListFromContext(context: GeneratorContext) { 
+    return Object.keys(context.components || {})
+        .filter((k) => {
+            const component = context.components?.[k];
+            return component instanceof VueComponent;
+        }).map(k => context.components![k]) as VueComponent[];
 }
 
 export class VueComponent extends Component { 
@@ -228,8 +273,8 @@ export class VueComponent extends Component {
                         new Identifier(`${m._name}_state`),
                         "",
                         m.type,
-                        base.initializer && new SimpleExpression(
-                            `this.${base.name}!==undefined?this.${base.name}:${base.initializer}`
+                        new SimpleExpression(
+                            `this.default${capitalizeFirstLetter(base.name)}`
                         )
                     )
                 )
@@ -311,63 +356,244 @@ export class VueComponent extends Component {
         return "";
     }
 
-    generateMethods() { 
+    generateMethods(externalStatements: string[]) { 
         const statements: string[] = [];
 
-        statements.push.apply(statements, this.methods.map(m => m.toString({
-            members: this.members,
-            componentContext: "this",
-            newComponentContext: "this"
-        })));
+        statements.push.apply(statements, this.methods
+            .concat(this.effects)
+            .map(m => m.toString({
+                members: this.members,
+                componentContext: "this",
+                newComponentContext: "this"
+            })));
+
+        this.members.filter(m => m.isEvent).forEach(m => {
+            statements.push(`${m._name}(...args){
+                this.$emit("${getEventName(m._name, this.members.filter(m => m.isState))}", ...args);
+            }`);
+        });
 
         return `methods: {
-                ${statements.join(",\n")}
+            ${statements.concat(externalStatements).join(",\n")}
          }`;
+    }
+
+    generateWatch(methods: string[]) { 
+        const watches: { [name: string]: string[] } = {};
+
+        this.effects.forEach((effect, index) => { 
+            const props: Array<BaseProperty | BaseMethod> = getProps(this.members);
+            const dependency = effect.getDependency(
+                props.concat((this.members.filter(m=>m.isInternalState)))
+            );
+
+            const scheduleEffectName = `__schedule_${effect.name}`;
+
+            if (dependency.length) { 
+                methods.push(` ${scheduleEffectName}() {
+                        this.__scheduleEffects[${index}]=()=>{
+                            this.__destroyEffects[${index}]&&this.__destroyEffects[${index}]();
+                            this.__destroyEffects[${index}]=this.${effect.name}();
+                        }
+                    }`);
+            }
+
+            const watchDependency = (dependency: string[]) => { 
+                dependency.forEach(d => { 
+                    watches[d] = watches[d] || [];
+                    watches[d].push(`"${scheduleEffectName}"`);
+                });
+            }
+
+            if (dependency.indexOf("props") !== -1) { 
+                watchDependency(props.map(p => p.name));
+            }
+
+            watchDependency(dependency.filter(d => d !== "props"));
+        });
+
+        const watchStatements = Object.keys(watches).map(k => { 
+            return `${k}: [
+                ${watches[k].join(",\n")}
+            ]`
+        });
+
+        if (watchStatements.length) { 
+            return `
+                watch: {
+                    ${watchStatements.join(",\n")}
+                }
+            `;
+        }
+
+        return "";
+    }
+
+    generateComponents() { 
+        const components = Object.keys(this.context.components || {})
+        .filter((k) => {
+            const component = this.context.components?.[k];
+            return component instanceof VueComponent && component !== this
+        });
+        
+        if (components.length) { 
+            return `components: {
+                ${components.join(",\n")}
+            }`;
+        }
+
+        return "";
+    }
+
+    generateMounted() { 
+        const statements: string[] = this.effects.map((e, i) => { 
+            return `this.__destroyEffects[${i}]=this.${e.name}()`;
+        });
+
+        if (statements.length) { 
+            return `mounted(){
+                ${statements.join(";\n")}
+            }`;
+        }
+
+        return "";
+    }
+
+    generateCreated() { 
+        const statements: string[] = [];
+
+        if (this.effects.length) { 
+            statements.push("this.__destroyEffects=[]");
+            statements.push("this.__scheduleEffects=[]");
+        }
+
+        if (statements.length) { 
+            return `created(){
+                ${statements.join(";\n")}
+            }`;
+        }
+
+        return "";
+    }
+
+    generateUpdated() { 
+        const statements: string[] = [];
+
+        if (this.effects.length) { 
+            statements.push(`
+                this.__scheduleEffects.forEach((_,i)=>{
+                    this.__scheduleEffects[i]&&this.__scheduleEffects[i]()
+                });
+            `);
+        }
+
+        if (statements.length) { 
+            return `updated(){
+                ${statements.join(";\n")}
+            }`;
+        }
+
+        return "";
+    }
+
+    generateBeforeDestroyed() { 
+        const statements: string[] = [];
+
+        if (this.effects.length) { 
+            statements.push(`
+                this.__destroyEffects.forEach((_,i)=>{
+                    this.__destroyEffects[i]&&this.__destroyEffects[i]()
+                });
+                this.__destroyEffects = null;
+            `);
+        }
+
+        if (statements.length) { 
+            return `beforeDestoyed(){
+                ${statements.join("\n")}
+            }`;
+        }
+
+        return "";
     }
     
     toString() { 
         this.compileTemplate();
 
+        const methods: string[] = [];
+
         const statements = [
+            this.generateComponents(),
             this.generateProps(),
             this.generateData(),
-            this.generateMethods()
+            this.generateWatch(methods),
+            this.generateMethods(methods),
+            this.generateCreated(),
+            this.generateMounted(),
+            this.generateUpdated(),
+            this.generateBeforeDestroyed()
         ].filter(s => s);
+
         return `${this.modifiers.join(" ")} {
             ${statements.join(",\n")}
         }`;
     }
 }
 
-function getEventName(name: Identifier, suffix="") { 
-    const words = name.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
-    if (suffix) { 
-        words.push(suffix);
-    }
-    return `"${words.join("-")}"`;
+function getEventName(defaultName: Identifier, stateMembers?: Array<Property | Method>) {
+    const state = stateMembers?.find(s => `${s._name}Change` === defaultName.toString());
+    const eventName = state ? `update:${state._name}` : defaultName;
+    const words = eventName.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
+    return `${words.join("-")}`;
 }
 
-export class Call extends BaseCall { 
-    toString(options?: toStringOptions) { 
+export class CallChain extends BaseCallChain { 
+    toString(options?: toStringOptions): string { 
         let expression: Expression = this.expression;
-        if (this.expression instanceof Identifier && options?.variables?.[expression.toString()]) { 
+       
+        if (expression instanceof Identifier && options?.variables?.[expression.toString()]) { 
             expression = options.variables[expression.toString()];
         }
         const eventMember = checkDependency(expression, options?.members.filter(m => m.isEvent));
         if (eventMember) { 
-            return `this.$emit(${getEventName(eventMember._name)}, ${this.argumentsArray.map(a => a.toString(options)).join(",")})`;
+            return `${expression.toString(options)}(${this.argumentsArray.map(a => a.toString(options)).join(",")})`;
         }
         return super.toString(options);
     }
 }
 
+export class NonNullExpression extends BaseNonNullExpression { 
+    toString(options?: toStringOptions) { 
+        return this.expression.toString(options);
+    }
+}
+
 export class PropertyAccess extends BasePropertyAccess { 
+
+    processProps(result: string, options: toStringOptions) {
+        const props = getProps(options.members);
+        const expression = new ObjectLiteral(
+            props.map(p => new PropertyAssignment(
+                p._name,
+                new PropertyAccess(
+                    new PropertyAccess(
+                        new Identifier(SyntaxKind.ThisKeyword),
+                        new Identifier("props")
+                    ),
+                    p._name
+                )
+            )),
+            true
+        );
+        return expression.toString(options);
+    }
+
     compileStateSetting(state: string, property: Property, options?: toStringOptions) {
         const isState = property.isState;
         const propertyName = isState ? `${property.name}_state` : property.name;
         const stateSetting = `this.${propertyName}=${state}`;
         if (isState) { 
-            return `${stateSetting},\nthis.emit(${getEventName(property._name, "change")}, this.${propertyName})`;
+            return `${stateSetting},\nthis.${property._name}Change(this.${propertyName})`;
         }
         return stateSetting;
     }
@@ -381,14 +607,14 @@ export class AsExpression extends BaseAsExpression {
 
 export class JsxAttribute extends BaseJsxAttribute { 
     getTemplateProp(options?: toStringOptions) {
-        return `:v-bind:${this.name}="${this.compileInitializer(options)}"`;
+        return `v-bind:${this.name}="${this.compileInitializer(options)}"`;
     }
 
     compileName(options?: toStringOptions) { 
         const name = this.name.toString();
         if (!(options?.eventProperties)) {
-            if (name === "class") { 
-                return "v-bind:class";
+            if (name === "className") { 
+                return this.isStringLiteralValue() ? "class" : "v-bind:class";
             }
             if (name === "style") { 
                 if (options) { 
@@ -413,6 +639,10 @@ export class JsxAttribute extends BaseJsxAttribute {
         return value;
     }
 
+    compileEvent(options?: toStringOptions) {
+        return `@${getEventName(this.name, options?.stateProperties)}="${this.compileInitializer(options)}"`;
+    }
+
     compileBase(name: string, value: string) { 
         const prefix = name.startsWith("v-bind") ? "" : ":";
         return `${prefix}${name}="${value}"`;
@@ -421,7 +651,18 @@ export class JsxAttribute extends BaseJsxAttribute {
 
 export class JsxSpreadAttribute extends BaseJsxSpeadAttribute { 
     getTemplateProp(options?: toStringOptions) { 
-        return `:v-bind="${this.expression.toString(options)}"`;
+        return this.toString(options)
+    }
+
+    toString(options?: toStringOptions) { 
+        const expression = this.getExpression(options);
+        if (expression instanceof BasePropertyAccess) { 
+            const member = expression.getMember(options);
+            if (member instanceof GetAccessor && member._name.toString() === "restAttributes") { 
+                return "";
+            }
+        }
+        return `v-bind="${expression.toString(options).replace(/"/gi, "'")}"`;
     }
 }
 
@@ -430,12 +671,57 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     constructor(tagName: Expression, typeArguments: any, attributes: Array<JsxAttribute | JsxSpreadAttribute> = [], context: GeneratorContext) { 
         super(tagName, typeArguments, attributes, context);
         this.attributes = attributes;
+        if (this.component) { 
+            const components = this.context.components!;
+            const name = (Object.keys(components).find(k => components[k] === this.component) || "");
+    
+            this.tagName = new SimpleExpression(name);
+        }
+    }
+
+    processTagName(tagName: Expression) { 
+        if (tagName.toString() === "Fragment") { 
+            return new SimpleExpression('div style="display: contents"');
+        }
+
+        return tagName;
     }
 
     compileTemplate(templateProperty: Property, options?: toStringOptions) {
         const attributes = this.attributes.map(a => a.getTemplateProp(options));
         return `<slot name="${templateProperty.name}" ${attributes.join(" ")}></slot>`;
     }
+
+    processSpreadAttributes() { 
+
+    }
+
+    clone() { 
+        return new JsxOpeningElement(
+            this.tagName,
+            this.typeArguments,
+            this.attributes.slice(),
+            this.context
+        );
+    }
+}
+
+export class JsxClosingElement extends JsxOpeningElement { 
+    constructor(tagName: Expression, context: GeneratorContext) { 
+        super(tagName, [], [], context);
+    }
+
+    processTagName(tagName: Expression) { 
+        if (tagName.toString() === "Fragment") { 
+            return new SimpleExpression('div');
+        }
+
+        return tagName;
+    }
+
+    toString(options: toStringOptions) {
+        return `</${this.tagName.toString(options)}>`;
+     }
 }
 
 export class JsxSelfClosingElement extends JsxOpeningElement { 
@@ -446,6 +732,15 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
         
         return super.toString(options).replace(/>$/, "/>");
     }
+
+    clone() { 
+        return new JsxSelfClosingElement(
+            this.tagName,
+            this.typeArguments,
+            this.attributes.slice(),
+            this.context
+        );
+    }
 }
 
 export class JsxElement extends BaseJsxElement { 
@@ -453,16 +748,51 @@ export class JsxElement extends BaseJsxElement {
         return new JsxChildExpression(expression);
     }
 
+    clone() {
+        return new JsxElement(
+            this.openingElement.clone(),
+            this.children.slice(),
+            this.closingElement
+        );
+    }
 }
 export class JsxExpression extends BaseJsxExpression {
    
 }
 
-export class VueDirective extends AngularDirective { }
+export class VueDirective extends AngularDirective {
+    getTemplateProp(options?: toStringOptions) { 
+        return this.toString(options)
+    }
+ }
 
-const processBinary = createProcessBinary((conditionExpression: Expression) => { 
+const processBinary = createProcessBinary((conditionExpression: Expression) => {
     return new VueDirective(new Identifier("v-if"), conditionExpression);
-})
+});
+
+export class TemplateWrapperElement extends JsxOpeningElement { 
+    getTemplateProperty(options?: toStringOptions) { 
+        return undefined;
+    }
+
+    constructor(attributes: Array<JsxAttribute | JsxSpreadAttribute> = []) { 
+        super(
+            new Identifier("template"),
+            undefined,
+            attributes,
+            {}
+        );
+    }
+}
+
+export class ClosingTemplateWrapperElement extends JsxClosingElement { 
+    constructor() { 
+        super(
+            new Identifier("template"),
+            {}
+        );
+    }
+}
 
 export class JsxChildExpression extends BaseJsxChildExpression { 
 
@@ -473,14 +803,9 @@ export class JsxChildExpression extends BaseJsxChildExpression {
     createContainer(atributes: JsxAttribute[], children: Array<JsxExpression | JsxElement | JsxSelfClosingElement>) { 
         const containerIdentifer = new Identifier("template")
         return new JsxElement(
-            new JsxOpeningElement(
-                containerIdentifer,
-                undefined,
-                atributes,
-                {}
-            ),
+            new TemplateWrapperElement(atributes),
             children,
-            new JsxClosingElement(containerIdentifer)
+            new ClosingTemplateWrapperElement()
         );
     }
 
@@ -515,6 +840,12 @@ export class JsxChildExpression extends BaseJsxChildExpression {
     }
 }
 
+const emptyToString = () => "";
+
+const addEmptyToString  = <T>(e: T): T => { 
+    (e as any).toString = emptyToString;
+    return e as typeof e;
+};
 class VueGenerator extends BaseGenerator { 
     
     createComponentBindings(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) {
@@ -549,16 +880,24 @@ class VueGenerator extends BaseGenerator {
         return new VariableDeclaration(name, type, initializer);
     }
 
-    createCall(expression: Expression, typeArguments: any, argumentsArray?: Expression[]) {
-        return new Call(expression, typeArguments, argumentsArray);
+    createCallChain(expression: Expression, questionDotToken: string | undefined, typeArguments: any, argumentsArray: Expression[] | undefined) {
+        return new CallChain(expression, questionDotToken, typeArguments, argumentsArray);
     }
 
     createParameter(decorators: Decorator[] = [], modifiers: string[] = [], dotDotDotToken: any, name: Identifier|BindingPattern, questionToken?: string, type?: TypeExpression, initializer?: Expression) {
         return new Parameter(decorators, modifiers, dotDotDotToken, name, questionToken, type, initializer);
     }
 
+    processSourceFileName(name: string) {
+        const ext = getComponentListFromContext(this.getContext()).length ? ".vue" : ".js";
+        return name.replace(/\.tsx$/, ext);
+    }
+
     processCodeFactoryResult(codeFactoryResult: Array<any>) { 
         const code = codeFactoryResult.join("\n");
+        if (getComponentListFromContext(this.getContext()).length === 0) {
+            return code;
+        }
         const template = codeFactoryResult.find(r => r instanceof VueComponent)?.template;
         return `
             ${template ? `
@@ -588,6 +927,10 @@ class VueGenerator extends BaseGenerator {
         return new JsxSelfClosingElement(tagName, typeArguments, attributes, this.getContext());
     }
 
+    createJsxClosingElement(tagName: Expression) {
+        return new JsxClosingElement(tagName, this.getContext());
+    }
+
     createJsxElement(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: JsxClosingElement) {
         return new JsxElement(openingElement, children, closingElement);
     }
@@ -603,6 +946,43 @@ class VueGenerator extends BaseGenerator {
     createJsxSpreadAttribute(expression: Expression) {
         return new JsxSpreadAttribute(undefined, expression);
     }
+
+    createNonNullExpression(expression: Expression) {
+        return new NonNullExpression(expression);
+    }
+
+    createKeywordTypeNode(kind: string) {
+        return addEmptyToString<SimpleTypeExpression>(super.createKeywordTypeNode(kind));
+    }
+
+    createArrayTypeNode(elementType: TypeExpression) {
+        return addEmptyToString<ArrayTypeNode>(super.createArrayTypeNode(elementType));
+    }
+
+    createLiteralTypeNode(literal: Expression) { 
+        return addEmptyToString<LiteralTypeNode>(super.createLiteralTypeNode(literal));
+    }
+
+    createIndexedAccessTypeNode(objectType: TypeExpression, indexType: TypeExpression) { 
+        return  addEmptyToString<IndexedAccessTypeNode>(super.createIndexedAccessTypeNode(objectType, indexType));
+    }
+
+    createIntersectionTypeNode(types: TypeExpression[]) {
+        return addEmptyToString<IntersectionTypeNode>(super.createIntersectionTypeNode(types));
+    }
+
+    createUnionTypeNode(types: TypeExpression[]) {
+        return addEmptyToString<UnionTypeNode>(super.createUnionTypeNode(types));
+    }
+
+    createParenthesizedType(expression: TypeExpression) { 
+        return addEmptyToString<ParenthesizedType>(super.createParenthesizedType(expression));
+    }
+
+    createFunctionTypeNode(typeParameters: any, parameters: Parameter[], type: TypeExpression) {
+        return addEmptyToString<FunctionTypeNode>(super.createFunctionTypeNode(typeParameters, parameters, type)); 
+    }
+
 }
 
 

@@ -29,7 +29,9 @@ import {
     TypeQueryNode,
     ParenthesizedType,
     LiteralTypeNode,
-    IndexedAccessTypeNode
+    IndexedAccessTypeNode,
+    QualifiedName,
+    MethodSignature
 } from "./expressions/type";
 import { Method, GetAccessor, Property } from "./expressions/class-members";
 import { For, ForIn, Do, While } from "./expressions/cycle";
@@ -281,7 +283,11 @@ export default class Generator {
 
                 if (importClause.default) {
                     this.addComponent(importClause.default.toString(), this.cache[modulePath]
-                        .find((e: any) => e instanceof Component), importClause);
+                        .find((e: any) =>
+                            (e instanceof Component ||
+                            e instanceof ComponentInput) &&
+                            e.modifiers.find(m => m === SyntaxKind.DefaultKeyword)
+                        ), importClause);
                 }
 
                 const componentInputs: ComponentInput[] = this.cache[modulePath]
@@ -395,8 +401,7 @@ export default class Generator {
     }
 
     createFunctionTypeNode(typeParameters: any, parameters: Parameter[], type: TypeExpression) {
-        return new FunctionTypeNode(typeParameters, parameters, type);
-        
+        return new FunctionTypeNode(typeParameters, parameters, type); 
     }
 
     createExpressionStatement(expression: Expression) {
@@ -557,6 +562,14 @@ export default class Generator {
         return new AsExpression(expression, type);
     }
 
+    createQualifiedName(left: Expression, right: Identifier) { 
+        return new QualifiedName(left, right);
+    }
+
+    createMethodSignature(typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, name: Identifier, questionToken?: string) {
+        return new MethodSignature(typeParameters, parameters, type, name, questionToken);
+    }
+    
     createRegularExpressionLiteral(text: string) { 
         return new SimpleExpression(text);
     }
