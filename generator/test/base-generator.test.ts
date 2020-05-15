@@ -1239,6 +1239,18 @@ mocha.describe("base-generator: expressions", function () {
     
             assert.strictEqual(expression.toString(), "<div name={value}></div>");
         });
+        
+        mocha.it("booleanAttribute", function () {
+            const expression = generator.createJsxElement(
+                generator.createJsxOpeningElement(generator.createIdentifier("div"), [], [
+                    generator.createJsxAttribute(generator.createIdentifier("selected"))
+                ]),
+                [],
+                generator.createJsxClosingElement(generator.createIdentifier("div"))
+            );
+    
+            assert.strictEqual(expression.toString(), "<div selected={true}></div>");
+      });
     });
 
     mocha.describe("BindingElement", function () {
