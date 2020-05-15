@@ -422,12 +422,17 @@ export function createProcessBinary(createIfAttribute = (conditionExpression: Ex
 const processBinary = createProcessBinary();
 
 export class JsxExpression extends BaseJsxExpression {
-    getExpression(options?: toStringOptions): Expression { 
+    getExpression(options?: toStringOptions): Expression {
+        let variableExpression;
         if (this.expression instanceof Identifier && options?.variables?.[this.expression.toString()]) { 
-            return options.variables[this.expression.toString()];
+            variableExpression = options.variables[this.expression.toString()];
         }
 
-        return this.expression;
+        if (variableExpression instanceof Paren) {
+            return variableExpression.expression;
+        }
+
+        return variableExpression || this.expression;
     }
 
     getIterator(expression: Expression): ArrowFunction | Function | undefined {
@@ -538,6 +543,31 @@ export class JsxChildExpression extends JsxExpression {
         }
         return parameter;
      }
+     
+    addCallParameters(parameters: Parameter[], args: Expression[], options?: toStringOptions) {
+        const templateOptions = options ? { ...options } : { members: [] };
+
+        return parameters.reduce((acc: toStringOptions, param: Parameter, index) => {
+            const initializer = args[index];
+            const name = param.name;
+
+            if (name instanceof BindingPattern) { 
+                const identifier = new Identifier(initializer.toString(options));
+                
+                acc.variables = {
+                    ...acc.variables,
+                    ...name.getVariableExpressions(identifier)
+                }
+            } else {
+              acc.variables = {
+                    ...acc.variables,
+                    ...{[name.toString()]: initializer}
+                }
+            }
+            
+            return acc;
+        }, templateOptions)
+    }
 
     toString(options?: toStringOptions) {
         const expression = this.getExpression(options);
@@ -584,6 +614,17 @@ export class JsxChildExpression extends JsxExpression {
             return `<ng-container *ngFor="${ngForValue.join(";")}">${
                 template
                 }</ng-container>`;
+        }
+
+        if (expression instanceof Call) {
+            const funcName = expression.expression.toString();
+            const template = options?.variables?.[funcName];
+            if (template instanceof BaseArrowFunction || template instanceof BaseFunction) {
+                const templateOptions = this.addCallParameters(template.parameters, expression.arguments, options);
+                const templateExpression = template.getTemplate(templateOptions, true);
+
+                return templateExpression;
+            }
         }
 
         if (expression instanceof Conditional) {
