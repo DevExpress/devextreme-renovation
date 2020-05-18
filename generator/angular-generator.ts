@@ -391,7 +391,7 @@ export class TrackByAttribute extends JsxAttribute {
         return "";
     }
 
-    getTrackBydeclaration(): string {
+    getTrackByDeclaration(): string {
         return `${this.name}(${this.indexName||"_index"}: number, ${this.itemName}: any){
             return ${this.trackByExpressionString};
         }`;
@@ -984,7 +984,7 @@ class SetAccessor extends Method {
 
 const ngOnChangesParameters = ["changes"];
 
-class AngularComponent extends Component {
+export class AngularComponent extends Component {
     decorator: Decorator;
     constructor(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>, context: GeneratorContext) {
         super(componentDecorator, modifiers, name, typeParameters, heritageClauses, members, context);
@@ -1066,7 +1066,7 @@ class AngularComponent extends Component {
 
     compileEffects(ngAfterViewInitStatements: string[], ngOnDestroyStatements: string[], ngOnChanges:string[], ngAfterViewCheckedStatements: string[]) { 
         const effects = this.members.filter(m => m.decorators.find(d => d.name === "Effect")) as Method[];
-        let hasInternalStateDependecy = false;
+        let hasInternalStateDependency = false;
         
         if (effects.length) { 
             const statements = [
@@ -1112,12 +1112,12 @@ class AngularComponent extends Component {
                                 this.${updateEffectMethod}();
                             }`)
                         );
-                        hasInternalStateDependecy = true;
+                        hasInternalStateDependency = true;
                     }
                 });
                 
             });
-            if (ngOnChanges.length || hasInternalStateDependecy) { 
+            if (ngOnChanges.length || hasInternalStateDependency) { 
                 ngAfterViewCheckedStatements.push(`
                 this.__viewCheckedSubscribeEvent.forEach(s=>s?.());
                 this.__viewCheckedSubscribeEvent = [];
@@ -1174,7 +1174,7 @@ class AngularComponent extends Component {
             };
             const expression = getTemplate(viewFunction, options);
             if (isElement(expression)) {
-                return expression.trackBy(options).map(a => a.getTrackBydeclaration()).join("\n");
+                return expression.trackBy(options).map(a => a.getTrackByDeclaration()).join("\n");
             }
         }
 

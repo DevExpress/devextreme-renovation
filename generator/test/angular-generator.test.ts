@@ -1,5 +1,5 @@
 import mocha from "./helpers/mocha";
-import generator, { Property, AngularDirective, toStringOptions } from "../angular-generator";
+import generator, { Property, AngularDirective, toStringOptions, AngularComponent } from "../angular-generator";
 import assert from "assert";
 import path from "path";
 
@@ -10,42 +10,13 @@ import { Identifier } from "../base-generator/expressions/common";
 import { Method } from "../base-generator/expressions/class-members";
 import { JsxExpression } from "../angular-generator";
 
-function createDecorator(name: string) {
-    return generator.createDecorator(generator.createCall(
-        generator.createIdentifier(name),
-        [],
-        []
-    ));
-}
+import factory from "./helpers/create-component";
 
-function createComponentDecorator(paramenters: {[name:string]: any}) { 
-    return generator.createDecorator(
-        generator.createCall(
-            generator.createIdentifier("Component"),
-            [],
-            [generator.createObjectLiteral(
-                Object.keys(paramenters).map(k => 
-                    generator.createPropertyAssignment(
-                        generator.createIdentifier(k),
-                        paramenters[k]
-                    )
-                ),
-                false
-            )]
-        )
-    )
-}
-
-function createComponent(properties: Array<Property | Method> = [], paramenters: { [name: string]: Expression } = {}) {
-    return generator.createComponent(
-        createComponentDecorator(paramenters),
-        [],
-        generator.createIdentifier("BaseWidget"),
-        [],
-        [],
-        properties
-    );
-}
+const {
+    createComponent,
+    createComponentDecorator,
+    createDecorator
+} = factory(generator)
 
 mocha.describe("Angular generator", function () {
 
@@ -1650,7 +1621,7 @@ mocha.describe("Angular generator", function () {
                 const trackByAttrs = (expression.children[0] as JsxExpression).trackBy();
                 assert.strictEqual(trackByAttrs.length, 1);
                 assert.strictEqual(trackByAttrs[0].toString(), "");
-                assert.strictEqual(getResult(trackByAttrs[0].getTrackBydeclaration()), getResult(`_trackBy_viewModel_items_0(_index: number, item: any){
+                assert.strictEqual(getResult(trackByAttrs[0].getTrackByDeclaration()), getResult(`_trackBy_viewModel_items_0(_index: number, item: any){
                     return item.id;
                 }`));
             });
@@ -1765,11 +1736,11 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(expression.toString(), `<ng-container *ngFor="let item of viewModel.items;trackBy: _trackBy_viewModel_items_1"><div ><ng-container *ngFor="let _ of item;index as i;trackBy: _trackBy_item_0"><div ></div></ng-container></div></ng-container>`);
                 const trackByAttrs = expression.trackBy();
                 assert.strictEqual(trackByAttrs.length, 2);
-                assert.strictEqual(getResult(trackByAttrs[0].getTrackBydeclaration()), getResult(`_trackBy_viewModel_items_1(_index: number, item: any){
+                assert.strictEqual(getResult(trackByAttrs[0].getTrackByDeclaration()), getResult(`_trackBy_viewModel_items_1(_index: number, item: any){
                     return item.id;
                 }`), "external map trackBy function");
     
-                assert.strictEqual(getResult(trackByAttrs[1].getTrackBydeclaration()), getResult(`_trackBy_item_0(i: number, _: any){
+                assert.strictEqual(getResult(trackByAttrs[1].getTrackByDeclaration()), getResult(`_trackBy_item_0(i: number, _: any){
                     return i;
                 }`), "internal map trackBy function");
             });
@@ -1795,7 +1766,7 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(expression.toString(), `viewModel.items.map(null)`);
             });
 
-            mocha.it("Parse map with desructurization", function () { 
+            mocha.it("Parse map with destructuration", function () { 
                 const expression = generator.createJsxElement(
                     generator.createJsxOpeningElement(
                         generator.createIdentifier("div"),
@@ -2922,7 +2893,7 @@ mocha.describe("Angular generator", function () {
         mocha.describe("Imports", function () {
             
             mocha.it("Empty component", function () { 
-                const component = createComponent();
+                const component = createComponent() as AngularComponent;
                 assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule } from "@angular/core"; import {CommonModule} from "@angular/common"`));
             });
 
@@ -2935,7 +2906,7 @@ mocha.describe("Angular generator", function () {
                             generator.createIdentifier("p")
                         )
                     ]
-                );
+                ) as AngularComponent;
                 assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Input } from "@angular/core"; import {CommonModule} from "@angular/common"`));
             });
 
@@ -2948,7 +2919,7 @@ mocha.describe("Angular generator", function () {
                             generator.createIdentifier("p")
                         )
                     ]
-                );
+                ) as AngularComponent;
                 assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Input, TemplateRef } from "@angular/core"; import {CommonModule} from "@angular/common"`));
             });
 
@@ -2961,7 +2932,7 @@ mocha.describe("Angular generator", function () {
                             generator.createIdentifier("p")
                         )
                     ]
-                );
+                ) as AngularComponent;
                 assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Input, Output, EventEmitter } from "@angular/core"; import {CommonModule} from "@angular/common"`));
             });
 
@@ -2979,7 +2950,7 @@ mocha.describe("Angular generator", function () {
                             generator.createIdentifier("p")
                         )
                     ]
-                );
+                ) as AngularComponent;
                 assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Input, Output, EventEmitter } from "@angular/core"; import {CommonModule} from "@angular/common"`));
             });
 
@@ -2992,7 +2963,7 @@ mocha.describe("Angular generator", function () {
                             generator.createIdentifier("p")
                         )
                     ]
-                );
+                ) as AngularComponent;
                 assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, Output, EventEmitter } from "@angular/core"; import {CommonModule} from "@angular/common"`));
             });
 
@@ -3005,7 +2976,7 @@ mocha.describe("Angular generator", function () {
                             generator.createIdentifier("p")
                         )
                     ]
-                );
+                ) as AngularComponent;
                 assert.strictEqual(getResult(component.compileImports()), getResult(`import { Component, NgModule, ViewChild, ElementRef } from "@angular/core"; import {CommonModule} from "@angular/common"`));
             });
         });
@@ -3122,14 +3093,14 @@ mocha.describe("Angular generator", function () {
             });
 
             mocha.it("Add import convertRulesToOptions, Rule", function () {
-                const component = createComponent([]);
+                const component = createComponent([]) as AngularComponent;
                 assert.ok(component.compileImports().indexOf(`import {convertRulesToOptions, Rule} from "../default_options"`) > -1);
             });
 
             mocha.it("Compile defaultOptions expression if defaultOptionRules expression is set", function () {
                 const component = createComponent([], {
                     defaultOptionRules: generator.createIdentifier("rules")
-                });
+                }) as AngularComponent;
                 assert.strictEqual(getResult(component.compileDefaultOptions([])), getResult(`
                     type BaseWidgetOptionRule = Rule<BaseWidget>;
                     const __defaultOptionRules:BaseWidgetOptionRule[] = rules;
@@ -3140,7 +3111,7 @@ mocha.describe("Angular generator", function () {
             });
 
             mocha.it("Compile defaultOptions expression if defaultOptionRules expression is not set", function () {
-                const component = createComponent([], {});
+                const component = createComponent([], {}) as AngularComponent;
                 assert.strictEqual(getResult(component.compileDefaultOptions([])), getResult(`
                     type BaseWidgetOptionRule = Rule<BaseWidget>;
                     const __defaultOptionRules:BaseWidgetOptionRule[] = [];
@@ -3612,7 +3583,7 @@ mocha.describe("Angular generator", function () {
                         undefined,
                         undefined
                     )).concat(this.effect)
-                );
+                ) as AngularComponent;
 
                 const ngOnChanges: string[] = [];
                 assert.strictEqual(getResult(component.compileEffects([], [], ngOnChanges, [])), getResult(`
@@ -3650,7 +3621,7 @@ mocha.describe("Angular generator", function () {
                         undefined,
                         undefined
                     )).concat(this.effect)
-                );
+                ) as AngularComponent;
 
                 const ngOnChanges: string[] = [];
                 assert.strictEqual(getResult(component.compileEffects([], [], ngOnChanges, [])), getResult(`
@@ -3702,7 +3673,7 @@ mocha.describe("Angular generator", function () {
                         )
                     ])
                         .concat(this.effect)
-                );
+                ) as AngularComponent;
 
                 const ngOnChanges: string[] = [];
                 assert.strictEqual(getResult(component.compileEffects([], [], ngOnChanges, [])), getResult(`
@@ -3742,7 +3713,7 @@ mocha.describe("Angular generator", function () {
                         undefined,
                         undefined
                     )).concat(this.effect)
-                );
+                ) as AngularComponent;
 
                 const ngOnChanges: string[] = [];
                 assert.strictEqual(getResult(component.compileEffects([], [], ngOnChanges, [])), getResult(`
