@@ -33,9 +33,9 @@ function getTemplateFromSourceFile(code: string) {
 mocha.describe("vue-generation", function () {
     const testGenerator = createTestGenerator(
         "vue",
-        (code, expreactedCode) => {
-            assertCode(getCodeFromSourceFile(code), getCodeFromSourceFile(expreactedCode));
-            assertCode(getTemplateFromSourceFile(code), getTemplateFromSourceFile(expreactedCode));
+        (code, expectedCode) => {
+            assertCode(getCodeFromSourceFile(code), getCodeFromSourceFile(expectedCode));
+            assertCode(getTemplateFromSourceFile(code), getTemplateFromSourceFile(expectedCode));
         },
         (componentName) => `${componentName}.vue`
     );

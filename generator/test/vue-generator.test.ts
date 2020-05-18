@@ -1046,7 +1046,7 @@ mocha.describe("Vue-generator", function () {
                 assert.deepEqual(methods, []);
             });
 
-            mocha.it("two effect have same dependecy", function () {
+            mocha.it("two effect have same dependency", function () {
                 const effect = generator.createMethod(
                     [createDecorator("Effect")],
                     [],
@@ -1608,7 +1608,7 @@ mocha.describe("Vue-generator", function () {
                 `));
             });
 
-            mocha.describe.only("Slots with conditional rendering", function () {
+            mocha.describe("Slots with conditional rendering", function () {
                 this.beforeEach(function () { 
                     this.slotProperty = generator.createProperty(
                         [createDecorator("Slot")],
@@ -1658,7 +1658,7 @@ mocha.describe("Vue-generator", function () {
     
                     assert.strictEqual(removeSpaces(element.children[0].toString(this.toStringOptions)), removeSpaces(`
                      <template v-if="$slots.default"><slot></slot></template>
-                     <templatev-else>{{alternative}}</template>
+                     <template v-else>{{alternative}}</template>
                   `));
                     
                 });

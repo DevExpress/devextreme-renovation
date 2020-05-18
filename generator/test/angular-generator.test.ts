@@ -126,7 +126,7 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), `title="value"`);
         });
 
-        mocha.it(`JsxAttribute with template expression - [attr]="string concatination"`, function () {
+        mocha.it(`JsxAttribute with template expression - [attr]="string concatenation"`, function () {
             const templateExpression = generator.createTemplateExpression(
                 generator.createTemplateHead(
                     "a",
@@ -205,7 +205,7 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), `<div [a1]="10"\n[a2]="15"></div>`);
         });
 
-        mocha.it("JSX element witn Opening and Close Elements", function () {
+        mocha.it("JSX element with Opening and Close Elements", function () {
             const expression = generator.createJsxElement(
                 generator.createJsxOpeningElement(
                     generator.createIdentifier("div"),
@@ -240,7 +240,7 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), '<div ></div>');
         });
 
-        mocha.it("JSX element witn with child element", function () {
+        mocha.it("JSX element with with child element", function () {
             const expression = generator.createJsxElement(
                 generator.createJsxOpeningElement(
                     generator.createIdentifier("parent"),
@@ -256,7 +256,7 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), '<parent ><child ></child></parent>');
         });
 
-        mocha.it("JSX element witn with child element that transformed from expression - no wrap it {{}}", function () {
+        mocha.it("JSX element with with child element that transformed from expression - no wrap it {{}}", function () {
             const expression = generator.createJsxElement(
                 generator.createJsxOpeningElement(
                     generator.createIdentifier("parent"),
@@ -482,7 +482,7 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.children[0].toString(), `<input *ngIf="viewModel.input"/>`);
         });
 
-        mocha.it("ngIf derictive with string - replace quotes with backslach quotes", function () {
+        mocha.it("ngIf directive with string - replace quotes with backslash quotes", function () {
             const expression = generator.createJsxElement(
                 generator.createJsxOpeningElement(
                     generator.createIdentifier("div"),
@@ -672,7 +672,7 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), "<span >{{viewModel.text}}</span>");
         });
 
-        mocha.describe.only("Slots with conditional rendering", function () {
+        mocha.describe("Slots with conditional rendering", function () {
             this.beforeEach(function () { 
                 this.slotProperty = generator.createProperty(
                     [createDecorator("Slot")],
@@ -965,7 +965,7 @@ mocha.describe("Angular generator", function () {
                     assert.strictEqual(expression.hasNgStyle(), false);
                 });
     
-                mocha.it("returns true if element has JsxEpression that contains element with style", function () {
+                mocha.it("returns true if element has JsxExpression that contains element with style", function () {
                     const expression = generator.createJsxElement(
                         generator.createJsxOpeningElement(
                             generator.createIdentifier("parent"),
