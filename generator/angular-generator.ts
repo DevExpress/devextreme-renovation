@@ -243,10 +243,6 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         return result;
     }
 
-    hasNgStyle() { 
-        return this.attributes.some(a => a instanceof JsxAttribute && a.name.toString() === "style");
-    }
-
     trackBy() { 
         return this.attributes.filter(a => a instanceof TrackByAttribute) as TrackByAttribute[];
     }
@@ -310,6 +306,9 @@ export class JsxAttribute extends BaseJsxAttribute {
                 return "class";
             }
             if (name === "style") { 
+                if (options) { 
+                    options.hasStyle = true;
+                }
                 return "ngStyle";
             }
         }
@@ -434,7 +433,7 @@ export function createProcessBinary(createIfAttribute = (conditionExpression: Ex
                 elementExpression.addAttribute(createIfAttribute(conditionExpression));
                 return elementExpression;
             }
-    
+            
             if (right instanceof Binary) {
                 return processBinary(right, options, condition.concat(expression.left));
             }
@@ -475,10 +474,6 @@ export class JsxExpression extends BaseJsxExpression {
     trackBy(options?:toStringOptions): TrackByAttribute[] { 
         return [];
     }
-
-    hasNgStyle() { 
-        return false;
-    }
 }
 
 export class JsxChildExpression extends JsxExpression {
@@ -509,13 +504,13 @@ export class JsxChildExpression extends JsxExpression {
         return new JsxExpression(undefined, statement);
     }
 
-    createContainer(atributes: JsxAttribute[], children: Array<JsxExpression | JsxElement | JsxSelfClosingElement>) { 
+    createContainer(attributes: JsxAttribute[], children: Array<JsxExpression | JsxElement | JsxSelfClosingElement>) { 
         const containerIdentifer = new Identifier("ng-container")
         return new JsxElement(
             new JsxOpeningElement(
                 containerIdentifer,
                 undefined,
-                atributes,
+                attributes,
                 {}
             ),
             children,
@@ -563,7 +558,7 @@ export class JsxChildExpression extends JsxExpression {
         return result.join("\n");
     }
 
-    getIeratorItemName(parameter: Identifier | BindingPattern, options: toStringOptions) {
+    getIteratorItemName(parameter: Identifier | BindingPattern, options: toStringOptions) {
         if (parameter instanceof BindingPattern) { 
             const identifier = new Identifier(`item_${counter.get()}`);
             
@@ -598,7 +593,7 @@ export class JsxChildExpression extends JsxExpression {
             const templateOptions = options ? { ...options } : { members: [] };
             const templateExpression = getTemplate(iterator, templateOptions, true);
             const itemsExpression = ((expression as Call).expression as PropertyAccess).expression;
-            const itemName = this.getIeratorItemName(iterator.parameters[0].name, templateOptions).toString();
+            const itemName = this.getIteratorItemName(iterator.parameters[0].name, templateOptions).toString();
             const itemsExpressionString = itemsExpression.toString(options);
             const template: string = templateExpression ? templateExpression.toString(templateOptions) : "";
             const item = `let ${itemName} of ${itemsExpressionString}`;
@@ -621,6 +616,9 @@ export class JsxChildExpression extends JsxExpression {
                             itemName
                         )
                     );
+                }
+                if (options) { 
+                    options.hasStyle = options.hasStyle || templateOptions.hasStyle;
                 }
             }
                 
@@ -652,23 +650,6 @@ export class JsxChildExpression extends JsxExpression {
         }
 
         return `{{${stringValue}}}`;
-    }
-
-    hasNgStyle():boolean { 
-        const expression = this.getExpression();
-        if (expression instanceof Binary) { 
-            const parsedBinary = processBinary(expression);
-            if (isElement(parsedBinary)) {
-                return parsedBinary.hasNgStyle();
-            } 
-        }
-
-        if (expression instanceof Conditional) { 
-            const thenStatement = getJsxExpression(expression.thenStatement);
-            const elseStatement = getJsxExpression(expression.elseStatement);
-            return isElement(thenStatement) && thenStatement.hasNgStyle() || isElement(elseStatement) && elseStatement.hasNgStyle();
-        }
-        return false;
     }
 
     trackBy(options?:toStringOptions): TrackByAttribute[] { 
@@ -742,11 +723,6 @@ export class JsxElement extends BaseJsxElement {
             return result;
         }, result)
         return allAttributes;
-    }
-
-    hasNgStyle(): boolean {
-        return this.openingElement.hasNgStyle()
-            || this.children.some(c => (isElement(c) || c instanceof JsxExpression) && c.hasNgStyle());
     }
 
     trackBy(options?: toStringOptions): Array<TrackByAttribute> { 
@@ -1211,36 +1187,22 @@ class AngularComponent extends Component {
         return "";
     }
 
-    compileNgStyleProcessor(): string { 
-        const viewFunction = this.decorator.getViewFunction();
-        if (viewFunction) { 
-            const options = {
-                members: this.members,
-                state: [],
-                internalState: [],
-                props: [],
-                newComponentContext: this.viewModel ? "_viewModel" : ""
-            };
-            const expression = getTemplate(viewFunction, options);
-            if (isElement(expression)) {
-                if (expression.hasNgStyle()) { 
-                    
-                    return `__processNgStyle(value:any){
-                        if (typeof value === "object") {
-                            return Object.keys(value).reduce((v: { [name: string]: any }, k) => {
-                                if (typeof value[k] === "number") {
-                                    v[k] = value[k] + "px";
-                                } else {
-                                    v[k] = value[k];
-                                }
-                                return v;
-                            }, {});
-                        }
-                
-                        return value;
-                    }`;
-                }
-            }
+    compileNgStyleProcessor(options?: toStringOptions): string { 
+        if (options?.hasStyle) {
+            return `__processNgStyle(value:any){
+                    if (typeof value === "object") {
+                        return Object.keys(value).reduce((v: { [name: string]: any }, k) => {
+                            if (typeof value[k] === "number") {
+                                v[k] = value[k] + "px";
+                            } else {
+                                v[k] = value[k];
+                            }
+                            return v;
+                        }, {});
+                    }
+            
+                    return value;
+                }`;
         }
         return "";
     }
@@ -1283,10 +1245,12 @@ class AngularComponent extends Component {
         const constructorStatements: string[] = [];
         const coreImports: string[] = [];
 
-        const componentDecorator = this.decorator.toString({
+        const decoratorToStringOptions: toStringOptions = {
             members: this.members,
             newComponentContext: this.viewModel ? "_viewModel" : ""
-        });
+        };
+
+        const componentDecorator = this.decorator.toString(decoratorToStringOptions);
 
         const spreadAttributes = this.compileSpreadAttributes(ngOnChangesStatements, coreImports);
 
@@ -1318,7 +1282,7 @@ class AngularComponent extends Component {
                     constructorStatements
         )}
             ${this.members.filter(m=>m instanceof SetAccessor)}
-            ${this.compileNgStyleProcessor()}
+            ${this.compileNgStyleProcessor(decoratorToStringOptions)}
         }
         @NgModule({
             declarations: [${this.name}],
