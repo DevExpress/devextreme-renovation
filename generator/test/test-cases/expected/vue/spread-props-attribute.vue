@@ -22,6 +22,10 @@ export default {
     InnerWidget
   },
   props: WidgetInput,
+  model: {
+    prop: "value",
+    event: "update:value"
+  },
   data() {
     return {
       value_state: this.defaultValue

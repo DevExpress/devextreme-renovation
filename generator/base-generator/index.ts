@@ -368,7 +368,7 @@ export default class Generator {
         return new JsxExpression(dotDotDotToken, expression);
     }
 
-    createJsxAttribute(name: Identifier, initializer: Expression) {
+    createJsxAttribute(name: Identifier, initializer?: Expression) {
         return new JsxAttribute(name, initializer);
     }
 
@@ -620,6 +620,7 @@ export default class Generator {
             if (e instanceof VariableStatement) { 
                 context.globals = {
                     ...context.globals,
+                    ...context.viewFunctions,
                     ...e.getVariableExpressions()
                 }
             }

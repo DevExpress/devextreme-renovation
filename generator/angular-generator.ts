@@ -418,7 +418,7 @@ export function createProcessBinary(createIfAttribute = (conditionExpression: Ex
         const right = getExpression(expression.right, options);
         
         if ((isElement(left) || isElement(right)) && expression.operator !== SyntaxKind.AmpersandAmpersandToken) { 
-            throw `Operator ${expression.operator} is not supoorted: ${expression.toString()}`;
+            throw `Operator ${expression.operator} is not supported: ${expression.toString()}`;
         }
         if (expression.operator === SyntaxKind.AmpersandAmpersandToken && !left.isJsx()) { 
             if (isElement(right)) {
@@ -445,12 +445,17 @@ export function createProcessBinary(createIfAttribute = (conditionExpression: Ex
 const processBinary = createProcessBinary();
 
 export class JsxExpression extends BaseJsxExpression {
-    getExpression(options?: toStringOptions): Expression { 
+    getExpression(options?: toStringOptions): Expression {
+        let variableExpression;
         if (this.expression instanceof Identifier && options?.variables?.[this.expression.toString()]) { 
-            return options.variables[this.expression.toString()];
+            variableExpression = options.variables[this.expression.toString()];
         }
 
-        return this.expression;
+        if (variableExpression instanceof Paren) {
+            return variableExpression.expression;
+        }
+
+        return variableExpression || this.expression;
     }
 
     getIterator(expression: Expression): ArrowFunction | Function | undefined {
@@ -575,6 +580,31 @@ export class JsxChildExpression extends JsxExpression {
         return options?.members
             .filter(m => m.decorators.find(d => d.name === "Slot"))
             .find(s => stringValue.indexOf(s.getter(options.newComponentContext)) !== -1) as Property | undefined;
+     }
+     
+    addCallParameters(parameters: Parameter[], args: Expression[], options?: toStringOptions) {
+        const templateOptions = options ? { disableTemplates: true, ...options } : { members: [] };
+
+        return parameters.reduce((acc: toStringOptions, param: Parameter, index) => {
+            const initializer = args[index];
+            const name = param.name;
+
+            if (name instanceof BindingPattern) { 
+                const identifier = new Identifier(initializer.toString(options));
+                
+                acc.variables = {
+                    ...acc.variables,
+                    ...name.getVariableExpressions(identifier)
+                }
+            } else {
+              acc.variables = {
+                    ...acc.variables,
+                    ...{[name.toString()]: initializer}
+                }
+            }
+            
+            return acc;
+        }, templateOptions)
     }
 
     toString(options?: toStringOptions) {
@@ -625,6 +655,17 @@ export class JsxChildExpression extends JsxExpression {
             return `<ng-container *ngFor="${ngForValue.join(";")}">${
                 template
                 }</ng-container>`;
+        }
+
+        if (expression instanceof Call) {
+            const funcName = expression.expression.toString();
+            const template = options?.variables?.[funcName];
+            if (template instanceof BaseArrowFunction || template instanceof BaseFunction) {
+                const templateOptions = this.addCallParameters(template.parameters, expression.arguments, options);
+                const templateExpression = template.getTemplate(templateOptions, true);
+
+                return templateExpression;
+            }
         }
 
         if (expression instanceof Conditional) {

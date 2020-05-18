@@ -1239,6 +1239,18 @@ mocha.describe("base-generator: expressions", function () {
     
             assert.strictEqual(expression.toString(), "<div name={value}></div>");
         });
+        
+        mocha.it("booleanAttribute", function () {
+            const expression = generator.createJsxElement(
+                generator.createJsxOpeningElement(generator.createIdentifier("div"), [], [
+                    generator.createJsxAttribute(generator.createIdentifier("selected"))
+                ]),
+                [],
+                generator.createJsxClosingElement(generator.createIdentifier("div"))
+            );
+    
+            assert.strictEqual(expression.toString(), "<div selected={true}></div>");
+      });
     });
 
     mocha.describe("BindingElement", function () {
@@ -1868,6 +1880,49 @@ mocha.describe("Component", function () {
         assert.strictEqual((expression as Component).defaultPropsDest(), "");
         const componentFromContext = generator.getContext().components?.["Widget"];
         assert.strictEqual(componentFromContext, expression);
+    });
+
+    mocha.it("should throw an error if more than one prop marked as isModel", function () {
+        let error;
+        try {
+            generator.createClassDeclaration(
+                [createComponentDecorator({})],
+                [],
+                generator.createIdentifier("Widget"),
+                [],
+                [],
+                [
+                    generator.createProperty(
+                        [createDecorator("TwoWay", { isModel: true })],
+                        [],
+                        generator.createIdentifier("stateProp1"),
+                        undefined,
+                        undefined,
+                        undefined
+                    ),
+                    generator.createProperty(
+                        [createDecorator("TwoWay", { isModel: true })],
+                        [],
+                        generator.createIdentifier("stateProp2"),
+                        undefined,
+                        undefined,
+                        undefined
+                    ),
+                    generator.createProperty(
+                        [createDecorator("TwoWay")],
+                        [],
+                        generator.createIdentifier("stateProp3"),
+                        undefined,
+                        undefined,
+                        undefined
+                    )
+                ]
+            );
+        } catch (e) {
+            error = e;
+        }
+
+        assert.strictEqual(error, "There should be only one model prop. Props marked as isModel: stateProp1, stateProp2");
     });
 });
 

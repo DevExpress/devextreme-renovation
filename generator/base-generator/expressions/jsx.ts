@@ -1,5 +1,5 @@
 import { Identifier } from "./common";
-import { Expression, ExpressionWithExpression } from "./base";
+import { Expression, ExpressionWithExpression, SimpleExpression } from "./base";
 import { toStringOptions } from "../types";
 import SyntaxKind from "../syntaxKind";
 import { Conditional } from "./conditions";
@@ -18,9 +18,9 @@ export function getJsxExpression(e: ExpressionWithExpression | Expression | unde
 export class JsxAttribute { 
     name: Identifier;
     initializer: Expression;
-    constructor(name: Identifier, initializer: Expression) { 
+    constructor(name: Identifier, initializer?: Expression) { 
         this.name = name;
-        this.initializer = initializer;
+        this.initializer = initializer || new JsxExpression(undefined, new SimpleExpression("true"));
     }
 
     toString(options?:toStringOptions) { 
@@ -46,6 +46,7 @@ export class JsxOpeningElement extends Expression {
     }
 
     attributesString(options?:toStringOptions) { 
+
         return this.attributes.map(a => a.toString(options))
             .filter(s => s)
             .join("\n");

@@ -1,4 +1,4 @@
-import BaseState, {DxStateBaseWidgetModule} from "./state-base";
+import BaseState, {DxModelBindingWidgetModule} from "./model-binding";
 
 import { Input, Output, EventEmitter } from "@angular/core"
 class WidgetInput {
@@ -15,7 +15,7 @@ import { CommonModule } from "@angular/common"
 
 @Component({
     selector: "dx-widget",
-    template: `<div>{{state1}}<dx-state-base-widget (baseStatePropChange)="__stateChange($event)"></dx-state-base-widget></div>`
+    template: `<div>{{state1}}<dx-model-binding-widget (baseStatePropChange)="__stateChange($event)"></dx-model-binding-widget></div>`
 })
 export default class Widget extends WidgetInput {
     __updateState(): any {
@@ -43,7 +43,7 @@ export default class Widget extends WidgetInput {
 @NgModule({
     declarations: [Widget],
     imports: [
-        DxStateBaseWidgetModule,
+        DxModelBindingWidgetModule,
         CommonModule
     ],
     exports: [Widget]

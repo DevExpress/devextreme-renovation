@@ -72,6 +72,7 @@ export function getTemplate(
                 }
                 return v;
             }, {
+                ...options.variables,
                 ...globals
             });
 
