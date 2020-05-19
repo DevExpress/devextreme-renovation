@@ -31,7 +31,7 @@ mocha.describe("base-generator: expressions", function () {
     });
     
     mocha.describe("common expressions", function () { 
-        mocha.it("Indentifier", function () {
+        mocha.it("Identifier", function () {
             const identifier = generator.createIdentifier("a");
             assert.equal(identifier, 'a');
             assert.deepEqual(identifier.getDependency(), []);
@@ -328,6 +328,12 @@ mocha.describe("base-generator: expressions", function () {
             ), "string|number");
         });
 
+        mocha.it("createTypeOperatorNode", function () {
+            assert.equal(generator.createTypeOperatorNode(
+                generator.createKeywordTypeNode("number")
+            ), "keyof number");
+        });
+
         mocha.it("createParenthesizedType", function () {
             assert.equal(generator.createParenthesizedType(
                 generator.createKeywordTypeNode("string")
@@ -373,7 +379,7 @@ mocha.describe("base-generator: expressions", function () {
             });
 
             mocha.it("ExpressionWithTypeArguments with type arguments", function () {
-                const expresion = generator.createExpressionWithTypeArguments(
+                const expression = generator.createExpressionWithTypeArguments(
                     [generator.createTypeReferenceNode(
                         generator.createIdentifier("WidgetProps"),
                         undefined
@@ -381,18 +387,18 @@ mocha.describe("base-generator: expressions", function () {
                     generator.createIdentifier("JSXComponent")
                 );
         
-                assert.strictEqual(expresion.toString(), "JSXComponent<WidgetProps>");
-                assert.strictEqual(expresion.type.toString(), "WidgetProps");
+                assert.strictEqual(expression.toString(), "JSXComponent<WidgetProps>");
+                assert.strictEqual(expression.type.toString(), "WidgetProps");
             });
         
             mocha.it("ExpressionWithTypeArguments without type arguments", function () {
-                const expresion = generator.createExpressionWithTypeArguments(
+                const expression = generator.createExpressionWithTypeArguments(
                     [],
                     generator.createIdentifier("Component")
                 );
         
-                assert.strictEqual(expresion.toString(), "Component");
-                assert.strictEqual(expresion.type.toString(), "Component");
+                assert.strictEqual(expression.toString(), "Component");
+                assert.strictEqual(expression.type.toString(), "Component");
             });
         });
 
@@ -600,7 +606,7 @@ mocha.describe("base-generator: expressions", function () {
             assert.equal(propertyAssignment.value, "v");
         });
     
-        mocha.it("SpreadAssignement", function () {
+        mocha.it("SpreadAssignment", function () {
             const propertyAssignment = generator.createSpreadAssignment(generator.createIdentifier("obj"));
             assert.equal(propertyAssignment.toString(), '...obj');
         });    
@@ -676,7 +682,7 @@ mocha.describe("base-generator: expressions", function () {
             ).toString(), "[name]");
         });
 
-        mocha.it("ElementAccess: getDependency shoud take into account index expression", function () {
+        mocha.it("ElementAccess: getDependency should take into account index expression", function () {
             const expression = generator.createElementAccess(
                 generator.createPropertyAccess(
                     generator.createThis(),
@@ -797,7 +803,7 @@ mocha.describe("base-generator: expressions", function () {
             assert.equal(expression.toString(), "`a${1}b${2}c`");
         });
     
-        mocha.it("createTemplateExpression - convert to string concatination", function () {
+        mocha.it("createTemplateExpression - convert to string concatenation", function () {
             const expression = generator.createTemplateExpression(
                 generator.createTemplateHead(
                     "a",
@@ -947,7 +953,7 @@ mocha.describe("base-generator: expressions", function () {
     });
 
     mocha.describe("Variables", function () { 
-        mocha.it("VaraibleDeclaration", function () {
+        mocha.it("VariableDeclaration", function () {
             const identifier = generator.createIdentifier("a");
             assert.equal(generator.createVariableDeclaration(identifier, undefined, undefined).toString(), 'a', "w/o initializer");
             assert.equal(generator.createVariableDeclaration(identifier, undefined, generator.createStringLiteral("str")).toString(), 'a="str"', "w initializer");
@@ -968,9 +974,9 @@ mocha.describe("base-generator: expressions", function () {
                 ], declarationList).toString(), 'default export const a="str"');
         });
 
-        mocha.describe("VaraibleDeclarationList", function () {
+        mocha.describe("VariableDeclarationList", function () {
             mocha.it("toString", function () {
-                const expresion = generator.createVariableDeclarationList(
+                const expression = generator.createVariableDeclarationList(
                     [
                         generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str")),
                         generator.createVariableDeclaration(generator.createIdentifier("b"), undefined, generator.createNumericLiteral("10"))
@@ -978,31 +984,31 @@ mocha.describe("base-generator: expressions", function () {
                     generator.NodeFlags.Const
                 );
         
-                assert.equal(expresion.toString(), 'const a="str",b=10');
+                assert.equal(expression.toString(), 'const a="str",b=10');
             });
     
             mocha.it("createVariableDeclaration - getVariableExpression", function () { 
-                const expresion = generator.createVariableDeclaration(
+                const expression = generator.createVariableDeclaration(
                     generator.createIdentifier("a"),
                     undefined,
                     generator.createStringLiteral("str")
                 );
     
-                const list = expresion.getVariableExpressions();
+                const list = expression.getVariableExpressions();
                 assert.strictEqual(Object.keys(list).length, 1);
                 assert.strictEqual(list["a"].toString(), `"str"`);    
             });
     
             mocha.it("createVariableDeclaration without initializer - getVariableExpression should return empty object", function () { 
-                const expresion = generator.createVariableDeclaration(
+                const expression = generator.createVariableDeclaration(
                     generator.createIdentifier("a")
                 );
     
-                assert.deepEqual(expresion.getVariableExpressions(), {});  
+                assert.deepEqual(expression.getVariableExpressions(), {});  
             });
     
             mocha.it("createVariableDeclaration - wrap expression in paren complex", function () { 
-                const expresion = generator.createVariableDeclaration(
+                const expression = generator.createVariableDeclaration(
                     generator.createIdentifier("a"),
                     undefined,
                     generator.createBinary(
@@ -1012,13 +1018,13 @@ mocha.describe("base-generator: expressions", function () {
                     )
                 );
     
-                const list = expresion.getVariableExpressions();
+                const list = expression.getVariableExpressions();
                 assert.strictEqual(Object.keys(list).length, 1);
                 assert.strictEqual(list["a"].toString(), `(i-j)`);    
             });
     
             mocha.it("getVariableExpression from VariableDeclaration", function () {
-                const expresion = generator.createVariableDeclarationList(
+                const expression = generator.createVariableDeclarationList(
                     [
                         generator.createVariableDeclaration(generator.createIdentifier("a"), undefined, generator.createStringLiteral("str")),
                         generator.createVariableDeclaration(generator.createIdentifier("b"), undefined, generator.createNumericLiteral("10"))
@@ -1026,7 +1032,7 @@ mocha.describe("base-generator: expressions", function () {
                     generator.NodeFlags.Const
                 );
     
-                const variableList = expresion.getVariableExpressions();
+                const variableList = expression.getVariableExpressions();
     
                 assert.strictEqual(Object.keys(variableList).length, 2);
         
@@ -1035,7 +1041,7 @@ mocha.describe("base-generator: expressions", function () {
             });
     
             mocha.it("VariableDeclaration with object binding pattern - getVariableDeclaration", function () {
-                const expresion = generator.createVariableDeclaration(
+                const expression = generator.createVariableDeclaration(
                     generator.createObjectBindingPattern([
                         generator.createBindingElement(
                             undefined,
@@ -1059,7 +1065,7 @@ mocha.describe("base-generator: expressions", function () {
                     generator.createIdentifier("this")
                 );
     
-                const list = expresion.getVariableExpressions();
+                const list = expression.getVariableExpressions();
                 
                 assert.strictEqual(Object.keys(list).length, 2);
                 assert.strictEqual(list["height"].toString(), "this.height");
@@ -1068,7 +1074,7 @@ mocha.describe("base-generator: expressions", function () {
             });
     
             mocha.it("VariableDeclaration with object binding pattern with string name - getVariableDeclaration", function () {
-                const expresion = generator.createVariableDeclaration(
+                const expression = generator.createVariableDeclaration(
                     generator.createObjectBindingPattern([
                         generator.createBindingElement(
                             undefined,
@@ -1081,7 +1087,7 @@ mocha.describe("base-generator: expressions", function () {
                     generator.createIdentifier("this")
                 );
     
-                const list = expresion.getVariableExpressions();
+                const list = expression.getVariableExpressions();
                 
                 assert.strictEqual(Object.keys(list).length, 1);
                 assert.strictEqual(list["height"].toString(), "this.height");
@@ -1089,7 +1095,7 @@ mocha.describe("base-generator: expressions", function () {
             });
     
             mocha.it("VariableDeclaration with array binding pattern - getVariableDeclaration", function () {
-                const expresion = generator.createVariableDeclaration(
+                const expression = generator.createVariableDeclaration(
                     generator.createArrayBindingPattern([generator.createBindingElement(
                         undefined,
                         undefined,
@@ -1103,7 +1109,7 @@ mocha.describe("base-generator: expressions", function () {
                     )
                 );
     
-                const list = expresion.getVariableExpressions();
+                const list = expression.getVariableExpressions();
                 
                 assert.strictEqual(Object.keys(list).length, 1);
                 assert.strictEqual(list["height"].toString(), "this.props[0]");
@@ -1178,8 +1184,8 @@ mocha.describe("base-generator: expressions", function () {
                 }), "v.name");
             });
     
-            mocha.it("Can replace identifer in shortland property assignment", function () { 
-                const expresstion = generator.createObjectLiteral(
+            mocha.it("Can replace identifer in shorthand property assignment", function () { 
+                const expression = generator.createObjectLiteral(
                     [
                         generator.createShorthandPropertyAssignment(
                             generator.createIdentifier("v")
@@ -1188,7 +1194,7 @@ mocha.describe("base-generator: expressions", function () {
                     false
                 );
     
-                assert.strictEqual(expresstion.toString({
+                assert.strictEqual(expression.toString({
                     members: [],
                     variables: {
                         v: generator.createIdentifier("value")
@@ -1866,7 +1872,7 @@ mocha.describe("Component", function () {
         generator.setContext(null);
     });
 
-    mocha.it("class with Component decorator is Component istance", function () {
+    mocha.it("class with Component decorator is Component instance", function () {
         const expression = generator.createClassDeclaration(
             [createComponentDecorator({})],
             [],
@@ -1940,7 +1946,7 @@ mocha.describe("ComponentInput", function () {
         generator.setContext(null);
     })
 
-    mocha.it("Add Component input to cahce", function () { 
+    mocha.it("Add Component input to cache", function () { 
         const expression = generator.createClassDeclaration(
             this.decorators,
             ["export"],
@@ -2050,7 +2056,7 @@ mocha.describe("import Components", function () {
     });
 
     mocha.it("Parse imported component input", function () {
-        const expresstion = generator.createImportDeclaration(
+        const expression = generator.createImportDeclaration(
             undefined,
             undefined,
             generator.createImportClause(
@@ -2064,7 +2070,7 @@ mocha.describe("import Components", function () {
         );
         
         const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/component-input.tsx`);
-        assert.strictEqual(expresstion.toString(), `import Widget,{WidgetProps} from "./test-cases/declarations/component-input"`);
+        assert.strictEqual(expression.toString(), `import Widget,{WidgetProps} from "./test-cases/declarations/component-input"`);
         assert.ok(generator.cache[baseModulePath]);
         assert.ok(generator.getContext().components!["Widget"] instanceof Component);
         assert.ok(generator.getContext().components!["WidgetProps"] instanceof ComponentInput);
@@ -2126,29 +2132,29 @@ mocha.describe("Expressions with toStringOptions should pass it in internal expr
     });
 
     mocha.it("Array literal", function () {
-        const expresion = generator.createArrayLiteral([
+        const expression = generator.createArrayLiteral([
             propertyAccess
         ], true);
         
-        assert.strictEqual(expresion.toString(getToStringOptions()), "[p]");
+        assert.strictEqual(expression.toString(getToStringOptions()), "[p]");
     });
 
     mocha.it("Object literal", function () {
-        const expresion = generator.createObjectLiteral([
+        const expression = generator.createObjectLiteral([
             generator.createPropertyAssignment(
                 generator.createIdentifier("p"),
                 propertyAccess
             )
         ], true);
         
-        assert.strictEqual(expresion.toString(getToStringOptions()), "{p:p}");
+        assert.strictEqual(expression.toString(getToStringOptions()), "{p:p}");
     });
 
     mocha.it("Spread Assignment", function () {
-        const expresion = generator.createSpreadAssignment(
+        const expression = generator.createSpreadAssignment(
             propertyAccess
         );
         
-        assert.strictEqual(expresion.toString(getToStringOptions()), "...p");
+        assert.strictEqual(expression.toString(getToStringOptions()), "...p");
     });
 });

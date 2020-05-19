@@ -31,7 +31,9 @@ import {
     LiteralTypeNode,
     IndexedAccessTypeNode,
     QualifiedName,
-    MethodSignature
+    MethodSignature,
+    TypeOperatorNode,
+    TypeAliasDeclaration
 } from "./expressions/type";
 import { Method, GetAccessor, Property } from "./expressions/class-members";
 import { For, ForIn, Do, While } from "./expressions/cycle";
@@ -456,8 +458,8 @@ export default class Generator {
         return new IndexedAccessTypeNode(objectType, indexType);
     }
 
-    createTypeAliasDeclaration(decorators: Decorator[]|undefined, modifiers: string[]=[], name: Identifier, typeParameters: any, type: TypeExpression) { 
-        return `${modifiers.join(" ")} type ${name} = ${type}`;
+    createTypeAliasDeclaration(decorators: Decorator[] | undefined, modifiers: string[] | undefined, name: Identifier, typeParameters: any, type: TypeExpression) {
+        return new TypeAliasDeclaration(decorators, modifiers, name, typeParameters, type);
     }
 
     createIntersectionTypeNode(types: TypeExpression[]) {
@@ -536,6 +538,10 @@ export default class Generator {
 
     createTypeOf(expression: Expression) {
         return new TypeOf(expression);
+    }
+
+    createTypeOperatorNode(type: TypeExpression) { 
+        return new TypeOperatorNode(type);
     }
 
     createParenthesizedType(expression: TypeExpression) { 
