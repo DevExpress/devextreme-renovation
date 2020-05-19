@@ -452,7 +452,7 @@ export class JsxChildExpression extends JsxExpression {
         super(expression.dotDotDotToken, expression.expression);
     }
 
-    processBinary(expression: Binary, options?: toStringOptions, condition: Expression[]=[]): Expression | null { 
+    processBinary(expression: Binary, options?: toStringOptions, condition: Expression[]=[]): string | null { 
         const left = getExpression(expression.left, options);
         const right = getExpression(expression.right, options);
         
@@ -460,22 +460,20 @@ export class JsxChildExpression extends JsxExpression {
             throw `Operator ${expression.operator} is not supported: ${expression.toString()}`;
         }
         if (expression.operator === SyntaxKind.AmpersandAmpersandToken && !left.isJsx()) { 
-            if (isElement(right)) {
-                const conditionExpression = condition.reduce((c: Expression, e) => { 
-                    return new Binary(
-                        new Paren(c),
-                        SyntaxKind.AmpersandAmpersandToken,
-                        e
-                    );
-                }, expression.left);
-                const elementExpression = right.clone();
-                elementExpression.addAttribute(this.createIfAttribute(conditionExpression));
-                return elementExpression;
-            }
-            
             if (right instanceof Binary) {
                 return this.processBinary(right, options, condition.concat(expression.left));
             }
+            
+            const conditionExpression = condition.reduce((c: Expression, e) => {
+                return new Binary(
+                    new Paren(c),
+                    SyntaxKind.AmpersandAmpersandToken,
+                    e
+                );
+            }, expression.left);
+                
+            return this.compileStatement(right, conditionExpression, options);
+            
         }
         return null;
     }
@@ -530,8 +528,9 @@ export class JsxChildExpression extends JsxExpression {
 
         const expression = getJsxExpression(statement);
         if (isElement(expression)) {
-            expression.addAttribute(conditionAttribute);
-            return expression.toString(options);
+            const element = expression.clone();
+            element.addAttribute(conditionAttribute);
+            return element.toString(options);
         }
         return this.createContainer(
             [conditionAttribute],
@@ -603,7 +602,7 @@ export class JsxChildExpression extends JsxExpression {
         if (expression instanceof Binary) { 
             const parsedBinary = this.processBinary(expression, options);
             if (parsedBinary) {
-                return parsedBinary.toString(options);
+                return parsedBinary;
             }
         }
 
