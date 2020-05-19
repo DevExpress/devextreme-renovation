@@ -44,7 +44,6 @@ import {
     JsxAttribute as BaseJsxAttribute,
     JsxSpreadAttribute as BaseJsxSpreadAttribute,
     AngularDirective,
-    createProcessBinary,
     toStringOptions
     
 } from "./angular-generator";
@@ -779,10 +778,6 @@ export class VueDirective extends AngularDirective {
     }
  }
 
-const processBinary = createProcessBinary((conditionExpression: Expression) => {
-    return new VueDirective(new Identifier("v-if"), conditionExpression);
-});
-
 export class TemplateWrapperElement extends JsxOpeningElement { 
     getTemplateProperty(options?: toStringOptions) { 
         return undefined;
@@ -849,10 +844,6 @@ export class JsxChildExpression extends BaseJsxChildExpression {
             return `<slot></slot>`;
         }
         return `<slot name="${slot.name}"></slot>`;
-    }
-
-    processBinary(expression: Binary, options?: toStringOptions, condition?: Expression[]) { 
-        return processBinary(expression, options, condition)
     }
 }
 

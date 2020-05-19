@@ -410,40 +410,6 @@ function getExpression(expression: Expression, options?: toStringOptions): Expre
     return expression;
  }
 
-export function createProcessBinary(createIfAttribute = (conditionExpression: Expression): JsxAttribute => { 
-    return new AngularDirective(new Identifier("*ngIf"), conditionExpression);
-}) { 
-    return function processBinary(expression: Binary, options?: toStringOptions, condition: Expression[] = []): Expression | null { 
-        const left = getExpression(expression.left, options);
-        const right = getExpression(expression.right, options);
-        
-        if ((isElement(left) || isElement(right)) && expression.operator !== SyntaxKind.AmpersandAmpersandToken) { 
-            throw `Operator ${expression.operator} is not supported: ${expression.toString()}`;
-        }
-        if (expression.operator === SyntaxKind.AmpersandAmpersandToken && !left.isJsx()) { 
-            if (isElement(right)) {
-                const conditionExpression = condition.reduce((c: Expression, e) => { 
-                    return new Binary(
-                        new Paren(c),
-                        SyntaxKind.AmpersandAmpersandToken,
-                        e
-                    );
-                }, expression.left);
-                const elementExpression = right.clone();
-                elementExpression.addAttribute(createIfAttribute(conditionExpression));
-                return elementExpression;
-            }
-            
-            if (right instanceof Binary) {
-                return processBinary(right, options, condition.concat(expression.left));
-            }
-        }
-        return null;
-    }
-}
-
-const processBinary = createProcessBinary();
-
 export class JsxExpression extends BaseJsxExpression {
     getExpression(options?: toStringOptions): Expression {
         let variableExpression;
@@ -486,8 +452,32 @@ export class JsxChildExpression extends JsxExpression {
         super(expression.dotDotDotToken, expression.expression);
     }
 
-    processBinary(expression: Binary, options?: toStringOptions, condition?: Expression[]) { 
-        return processBinary(expression, options, condition)
+    processBinary(expression: Binary, options?: toStringOptions, condition: Expression[]=[]): Expression | null { 
+        const left = getExpression(expression.left, options);
+        const right = getExpression(expression.right, options);
+        
+        if ((isElement(left) || isElement(right)) && expression.operator !== SyntaxKind.AmpersandAmpersandToken) { 
+            throw `Operator ${expression.operator} is not supported: ${expression.toString()}`;
+        }
+        if (expression.operator === SyntaxKind.AmpersandAmpersandToken && !left.isJsx()) { 
+            if (isElement(right)) {
+                const conditionExpression = condition.reduce((c: Expression, e) => { 
+                    return new Binary(
+                        new Paren(c),
+                        SyntaxKind.AmpersandAmpersandToken,
+                        e
+                    );
+                }, expression.left);
+                const elementExpression = right.clone();
+                elementExpression.addAttribute(this.createIfAttribute(conditionExpression));
+                return elementExpression;
+            }
+            
+            if (right instanceof Binary) {
+                return this.processBinary(right, options, condition.concat(expression.left));
+            }
+        }
+        return null;
     }
 
     compileSlot(slot: Property) {
@@ -498,7 +488,7 @@ export class JsxChildExpression extends JsxExpression {
         return `<div #slot${capitalizeFirstLetter(slot.name)} style="display: contents">${slotValue}</div>`;
     }
 
-    createIfAttribute(condition: Expression, statement: Expression, options?: toStringOptions) { 
+    createIfAttribute(condition: Expression) { 
         return new AngularDirective(
             new Identifier("*ngIf"),
             condition
@@ -536,7 +526,7 @@ export class JsxChildExpression extends JsxExpression {
             return slot;
         }
        
-        const conditionAttribute = this.createIfAttribute(condition!, statement, options);
+        const conditionAttribute = this.createIfAttribute(condition!);
 
         const expression = getJsxExpression(statement);
         if (isElement(expression)) {
