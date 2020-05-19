@@ -83,6 +83,31 @@ mocha.describe("Vue-generator", function () {
                     generator.createKeywordTypeNode("string")
                 ).toString(), "");
             });
+
+            mocha.it("createTypeAliasDeclaration", function () { 
+                const literalNode = generator.createTypeLiteralNode(
+                    [generator.createPropertySignature(
+                        [],
+                        generator.createIdentifier("b"),
+                        undefined,
+                        generator.createKeywordTypeNode("string")
+                    )]
+                );
+                const expression = generator.createTypeAliasDeclaration(
+                    undefined,
+                    ["export", "declare"],
+                    generator.createIdentifier("Name"),
+                    [],
+                    literalNode);
+        
+                assert.strictEqual(expression.toString(), "");
+            });
+
+            mocha.it("createTypeOperatorNode", function () {
+                assert.equal(generator.createTypeOperatorNode(
+                    generator.createKeywordTypeNode("number")
+                ), "");
+            });
         });
     });
 

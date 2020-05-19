@@ -257,3 +257,35 @@ export class MethodSignature extends TypeExpression {
         return `${this.name}(${this.parameters})${compileType(this.type.toString(), this.questionToken)}`;
     }
 }
+
+export class TypeOperatorNode extends TypeExpression {
+    type: TypeExpression;
+    constructor(type: TypeExpression) {
+        super();
+        this.type = type;
+    }
+
+    toString() { 
+        return `keyof ${this.type}`;
+    }
+}
+
+export class TypeAliasDeclaration extends TypeExpression { 
+    decorators: Decorator[];
+    modifiers: string[];
+    name: Identifier;
+    typeParameters: any;
+    type: TypeExpression;
+    constructor(decorators: Decorator[]=[], modifiers: string[]=[], name: Identifier, typeParameters: any, type: TypeExpression) { 
+        super();
+        this.decorators = decorators;
+        this.modifiers = modifiers;
+        this.name = name;
+        this.typeParameters = typeParameters;
+        this.type = type;
+    }
+
+    toString() { 
+        return `${this.modifiers.join(" ")} type ${this.name} = ${this.type}`;
+    }
+}

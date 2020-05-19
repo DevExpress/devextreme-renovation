@@ -25,7 +25,9 @@ import {
     TypeReferenceNode,
     IndexedAccessTypeNode,
     IntersectionTypeNode,
-    ParenthesizedType
+    ParenthesizedType,
+    TypeAliasDeclaration,
+    TypeOperatorNode
 } from "./base-generator/expressions/type";
 import { capitalizeFirstLetter, variableDeclaration } from "./base-generator/utils/string";
 import SyntaxKind from "./base-generator/syntaxKind";
@@ -45,14 +47,12 @@ import {
     JsxSpreadAttribute as BaseJsxSpreadAttribute,
     AngularDirective,
     toStringOptions
-    
 } from "./angular-generator";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
 import { ComponentInput } from "./base-generator/expressions/component-input";
 import { checkDependency } from "./base-generator/utils/dependency";
-import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access"
-import { Binary } from "./base-generator/expressions/operators";
+import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access";
 import { PropertyAssignment } from "./base-generator/expressions/property-assignment";
 
 function calculatePropertyType(type: TypeExpression): string { 
@@ -988,6 +988,14 @@ class VueGenerator extends BaseGenerator {
 
     createFunctionTypeNode(typeParameters: any, parameters: Parameter[], type: TypeExpression) {
         return addEmptyToString<FunctionTypeNode>(super.createFunctionTypeNode(typeParameters, parameters, type)); 
+    }
+
+    createTypeAliasDeclaration(decorators: Decorator[]|undefined, modifiers: string[]|undefined, name: Identifier, typeParameters: any, type: TypeExpression) { 
+        return addEmptyToString<TypeAliasDeclaration>(super.createTypeAliasDeclaration(decorators, modifiers, name, typeParameters, type)); 
+    }
+
+    createTypeOperatorNode(type: TypeExpression) { 
+        return addEmptyToString<TypeOperatorNode>(super.createTypeOperatorNode(type)); 
     }
 
 }
