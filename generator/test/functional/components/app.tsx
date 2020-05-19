@@ -20,6 +20,10 @@ function view(model: App) {
         >{"DefaultSlot"}</ButtonComponent>
         <div id="button-1-click-counter">{model.clickCount}</div>
 
+        <div>
+            <ButtonComponent/>
+        </div>
+
         <ButtonWithState
             id="button-2"
             pressedChange={model.onButtonWithStatePressedChange}></ButtonWithState>

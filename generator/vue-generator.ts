@@ -40,12 +40,10 @@ import {
     JsxExpression as BaseJsxExpression,
     JsxElement as BaseJsxElement,
     JsxOpeningElement as BaseJsxOpeningElement,
-    JsxSelfClosingElement as BaseJsxSelfClosingElement,
     JsxChildExpression as BaseJsxChildExpression,
     JsxAttribute as BaseJsxAttribute,
-    JsxSpreadAttribute as BaseJsxSpeadAttribute,
+    JsxSpreadAttribute as BaseJsxSpreadAttribute,
     AngularDirective,
-    createProcessBinary,
     toStringOptions
     
 } from "./angular-generator";
@@ -70,8 +68,8 @@ function calculatePropertyType(type: TypeExpression): string {
     if (type instanceof UnionTypeNode) {
         const types = ([] as string[])
             .concat(type.types.map(t => calculatePropertyType(t)));
-        const typesWithoutDuplcates = [...new Set(types)];
-        return typesWithoutDuplcates.length === 1 ? typesWithoutDuplcates[0] : `[${typesWithoutDuplcates.join(",")}]`;
+        const typesWithoutDuplicates = [...new Set(types)];
+        return typesWithoutDuplicates.length === 1 ? typesWithoutDuplicates[0] : `[${typesWithoutDuplicates.join(",")}]`;
     }
     if (type instanceof FunctionTypeNode) {
         return "Function";
@@ -147,6 +145,10 @@ export class Property extends BaseProperty {
         }
         if (this.isTemplate) { 
             return `${componentContext}$scopedSlots.${this.name}`;
+        }
+        if (this.isSlot) { 
+            const name = this.name === "children" ? "default" : this.name;
+            return `${componentContext}$slots.${name}`;
         }
         return baseValue
     }
@@ -506,7 +508,7 @@ export class VueComponent extends Component {
         return "";
     }
 
-    generateBeforeDestroyed() { 
+    generateDestroyed() { 
         const statements: string[] = [];
 
         if (this.effects.length) { 
@@ -519,7 +521,7 @@ export class VueComponent extends Component {
         }
 
         if (statements.length) { 
-            return `beforeDestoyed(){
+            return `destroyed(){
                 ${statements.join("\n")}
             }`;
         }
@@ -542,7 +544,7 @@ export class VueComponent extends Component {
             this.generateCreated(),
             this.generateMounted(),
             this.generateUpdated(),
-            this.generateBeforeDestroyed()
+            this.generateDestroyed()
         ].filter(s => s);
 
         return `${this.modifiers.join(" ")} {
@@ -659,7 +661,7 @@ export class JsxAttribute extends BaseJsxAttribute {
     }
 }
 
-export class JsxSpreadAttribute extends BaseJsxSpeadAttribute { 
+export class JsxSpreadAttribute extends BaseJsxSpreadAttribute { 
     getTemplateProp(options?: toStringOptions) { 
         return this.toString(options)
     }
@@ -776,10 +778,6 @@ export class VueDirective extends AngularDirective {
     }
  }
 
-const processBinary = createProcessBinary((conditionExpression: Expression) => {
-    return new VueDirective(new Identifier("v-if"), conditionExpression);
-});
-
 export class TemplateWrapperElement extends JsxOpeningElement { 
     getTemplateProperty(options?: toStringOptions) { 
         return undefined;
@@ -810,10 +808,9 @@ export class JsxChildExpression extends BaseJsxChildExpression {
         return new JsxExpression(undefined, statement);
     }
 
-    createContainer(atributes: JsxAttribute[], children: Array<JsxExpression | JsxElement | JsxSelfClosingElement>) { 
-        const containerIdentifer = new Identifier("template")
+    createContainer(attributes: JsxAttribute[], children: Array<JsxExpression | JsxElement | JsxSelfClosingElement>) {
         return new JsxElement(
-            new TemplateWrapperElement(atributes),
+            new TemplateWrapperElement(attributes),
             children,
             new ClosingTemplateWrapperElement()
         );
@@ -824,6 +821,10 @@ export class JsxChildExpression extends BaseJsxChildExpression {
             new Identifier(condition ? "v-if" : "v-else"),
             condition || new SimpleExpression("")
         );
+    }
+
+    processSlotInConditional(statement: Expression, options?: toStringOptions) { 
+        return undefined;
     }
     
     compileConditionStatement(condition: Expression, thenStatement: Expression, elseStatement: Expression, options?: toStringOptions) { 
@@ -843,10 +844,6 @@ export class JsxChildExpression extends BaseJsxChildExpression {
             return `<slot></slot>`;
         }
         return `<slot name="${slot.name}"></slot>`;
-    }
-
-    processBinary(expression: Binary, options?: toStringOptions, condition?: Expression[]) { 
-        return processBinary(expression, options, condition)
     }
 }
 

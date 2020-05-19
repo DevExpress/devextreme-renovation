@@ -40,7 +40,7 @@ import { ComponentInput as BaseComponentInput } from "./base-generator/expressio
 import { Component, getProps } from "./base-generator/expressions/component";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
-import { processComponentContext } from "./base-generator/utils/string";
+import { processComponentContext, capitalizeFirstLetter } from "./base-generator/utils/string";
 
 // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
 const VOID_ELEMENTS = 
@@ -243,10 +243,6 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         return result;
     }
 
-    hasNgStyle() { 
-        return this.attributes.some(a => a instanceof JsxAttribute && a.name.toString() === "style");
-    }
-
     trackBy() { 
         return this.attributes.filter(a => a instanceof TrackByAttribute) as TrackByAttribute[];
     }
@@ -310,6 +306,9 @@ export class JsxAttribute extends BaseJsxAttribute {
                 return "class";
             }
             if (name === "style") { 
+                if (options) { 
+                    options.hasStyle = true;
+                }
                 return "ngStyle";
             }
         }
@@ -392,7 +391,7 @@ export class TrackByAttribute extends JsxAttribute {
         return "";
     }
 
-    getTrackBydeclaration(): string {
+    getTrackByDeclaration(): string {
         return `${this.name}(${this.indexName||"_index"}: number, ${this.itemName}: any){
             return ${this.trackByExpressionString};
         }`;
@@ -410,40 +409,6 @@ function getExpression(expression: Expression, options?: toStringOptions): Expre
 
     return expression;
  }
-
-export function createProcessBinary(createIfAttribute = (conditionExpression: Expression): JsxAttribute => { 
-    return new AngularDirective(new Identifier("*ngIf"), conditionExpression);
-}) { 
-    return function processBinary(expression: Binary, options?: toStringOptions, condition: Expression[] = []): Expression | null { 
-        const left = getExpression(expression.left, options);
-        const right = getExpression(expression.right, options);
-        
-        if ((isElement(left) || isElement(right)) && expression.operator !== SyntaxKind.AmpersandAmpersandToken) { 
-            throw `Operator ${expression.operator} is not supported: ${expression.toString()}`;
-        }
-        if (expression.operator === SyntaxKind.AmpersandAmpersandToken && !left.isJsx()) { 
-            if (isElement(right)) {
-                const conditionExpression = condition.reduce((c: Expression, e) => { 
-                    return new Binary(
-                        new Paren(c),
-                        SyntaxKind.AmpersandAmpersandToken,
-                        e
-                    );
-                }, expression.left);
-                const elementExpression = right.clone();
-                elementExpression.addAttribute(createIfAttribute(conditionExpression));
-                return elementExpression;
-            }
-    
-            if (right instanceof Binary) {
-                return processBinary(right, options, condition.concat(expression.left));
-            }
-        }
-        return null;
-    }
-}
-
-const processBinary = createProcessBinary();
 
 export class JsxExpression extends BaseJsxExpression {
     getExpression(options?: toStringOptions): Expression {
@@ -480,10 +445,6 @@ export class JsxExpression extends BaseJsxExpression {
     trackBy(options?:toStringOptions): TrackByAttribute[] { 
         return [];
     }
-
-    hasNgStyle() { 
-        return false;
-    }
 }
 
 export class JsxChildExpression extends JsxExpression {
@@ -491,15 +452,38 @@ export class JsxChildExpression extends JsxExpression {
         super(expression.dotDotDotToken, expression.expression);
     }
 
-    processBinary(expression: Binary, options?: toStringOptions, condition?: Expression[]) { 
-        return processBinary(expression, options, condition)
+    processBinary(expression: Binary, options?: toStringOptions, condition: Expression[]=[]): string | null { 
+        const left = getExpression(expression.left, options);
+        const right = getExpression(expression.right, options);
+        
+        if ((isElement(left) || isElement(right)) && expression.operator !== SyntaxKind.AmpersandAmpersandToken) { 
+            throw `Operator ${expression.operator} is not supported: ${expression.toString()}`;
+        }
+        if (expression.operator === SyntaxKind.AmpersandAmpersandToken && !left.isJsx()) { 
+            if (right instanceof Binary) {
+                return this.processBinary(right, options, condition.concat(expression.left));
+            }
+            
+            const conditionExpression = condition.reduce((c: Expression, e) => {
+                return new Binary(
+                    new Paren(c),
+                    SyntaxKind.AmpersandAmpersandToken,
+                    e
+                );
+            }, expression.left);
+                
+            return this.compileStatement(right, conditionExpression, options);
+            
+        }
+        return null;
     }
 
     compileSlot(slot: Property) {
-        if (slot.name.toString() === "default" || slot.name.toString() === "children") {
-            return `<ng-content></ng-content>`;
-        }
-        return `<ng-content select="[${slot.name}]"></ng-content>`;
+        const slotValue = slot.name.toString() === "default" || slot.name.toString() === "children"
+            ? "<ng-content></ng-content>"
+            : `<ng-content select="[${slot.name}]"></ng-content>`;
+        
+        return `<div #slot${capitalizeFirstLetter(slot.name)} style="display: contents">${slotValue}</div>`;
     }
 
     createIfAttribute(condition: Expression) { 
@@ -513,13 +497,13 @@ export class JsxChildExpression extends JsxExpression {
         return new JsxExpression(undefined, statement);
     }
 
-    createContainer(atributes: JsxAttribute[], children: Array<JsxExpression | JsxElement | JsxSelfClosingElement>) { 
+    createContainer(attributes: JsxAttribute[], children: Array<JsxExpression | JsxElement | JsxSelfClosingElement>) { 
         const containerIdentifer = new Identifier("ng-container")
         return new JsxElement(
             new JsxOpeningElement(
                 containerIdentifer,
                 undefined,
-                atributes,
+                attributes,
                 {}
             ),
             children,
@@ -527,13 +511,26 @@ export class JsxChildExpression extends JsxExpression {
         );
     }
 
+    processSlotInConditional(statement: Expression, options?: toStringOptions) { 
+        const slot = this.getSlot(statement.toString(options), options);
+        if (slot && slot.getter(options?.newComponentContext)===statement.toString(options)) { 
+            return new JsxChildExpression(this.createJsxExpression(statement)).toString(options);
+        }
+    }
+
     compileStatement(statement: Expression, condition?: Expression, options?: toStringOptions): string {
+        const slot = this.processSlotInConditional(statement, options);
+        if (slot) { 
+            return slot;
+        }
+       
         const conditionAttribute = this.createIfAttribute(condition!);
 
         const expression = getJsxExpression(statement);
         if (isElement(expression)) {
-            expression.addAttribute(conditionAttribute);
-            return expression.toString(options);
+            const element = expression.clone();
+            element.addAttribute(conditionAttribute);
+            return element.toString(options);
         }
         return this.createContainer(
             [conditionAttribute],
@@ -555,7 +552,7 @@ export class JsxChildExpression extends JsxExpression {
         return result.join("\n");
     }
 
-    getIeratorItemName(parameter: Identifier | BindingPattern, options: toStringOptions) {
+    getIteratorItemName(parameter: Identifier | BindingPattern, options: toStringOptions) {
         if (parameter instanceof BindingPattern) { 
             const identifier = new Identifier(`item_${counter.get()}`);
             
@@ -566,6 +563,12 @@ export class JsxChildExpression extends JsxExpression {
             return identifier;
         }
         return parameter;
+    }
+    
+    getSlot(stringValue: string, options?: toStringOptions) { 
+        return options?.members
+            .filter(m => m.decorators.find(d => d.name === "Slot"))
+            .find(s => stringValue.indexOf(s.getter(options.newComponentContext)) !== -1) as Property | undefined;
      }
      
     addCallParameters(parameters: Parameter[], args: Expression[], options?: toStringOptions) {
@@ -599,7 +602,7 @@ export class JsxChildExpression extends JsxExpression {
         if (expression instanceof Binary) { 
             const parsedBinary = this.processBinary(expression, options);
             if (parsedBinary) {
-                return parsedBinary.toString(options);
+                return parsedBinary;
             }
         }
 
@@ -609,7 +612,7 @@ export class JsxChildExpression extends JsxExpression {
             const templateOptions = options ? { ...options } : { members: [] };
             const templateExpression = getTemplate(iterator, templateOptions, true);
             const itemsExpression = ((expression as Call).expression as PropertyAccess).expression;
-            const itemName = this.getIeratorItemName(iterator.parameters[0].name, templateOptions).toString();
+            const itemName = this.getIteratorItemName(iterator.parameters[0].name, templateOptions).toString();
             const itemsExpressionString = itemsExpression.toString(options);
             const template: string = templateExpression ? templateExpression.toString(templateOptions) : "";
             const item = `let ${itemName} of ${itemsExpressionString}`;
@@ -632,6 +635,9 @@ export class JsxChildExpression extends JsxExpression {
                             itemName
                         )
                     );
+                }
+                if (options) { 
+                    options.hasStyle = options.hasStyle || templateOptions.hasStyle;
                 }
             }
                 
@@ -668,33 +674,12 @@ export class JsxChildExpression extends JsxExpression {
             return stringValue;
         }
 
-        const contextExpr = options?.newComponentContext ? `${options.newComponentContext}.` : "";
-        const slot = options?.members
-            .filter(m => m.decorators.find(d => d.name === "Slot"))
-            .find(s => stringValue.endsWith(`${contextExpr}${s.name.toString()}`)
-                || s.name.toString() === "children" && (stringValue.endsWith("default") || stringValue.endsWith("children")));
+        const slot = this.getSlot(stringValue, options);
         if (slot) { 
             return this.compileSlot(slot as Property);
         }
 
         return `{{${stringValue}}}`;
-    }
-
-    hasNgStyle():boolean { 
-        const expression = this.getExpression();
-        if (expression instanceof Binary) { 
-            const parsedBinary = processBinary(expression);
-            if (isElement(parsedBinary)) {
-                return parsedBinary.hasNgStyle();
-            } 
-        }
-
-        if (expression instanceof Conditional) { 
-            const thenStatement = getJsxExpression(expression.thenStatement);
-            const elseStatement = getJsxExpression(expression.elseStatement);
-            return isElement(thenStatement) && thenStatement.hasNgStyle() || isElement(elseStatement) && elseStatement.hasNgStyle();
-        }
-        return false;
     }
 
     trackBy(options?:toStringOptions): TrackByAttribute[] { 
@@ -768,11 +753,6 @@ export class JsxElement extends BaseJsxElement {
             return result;
         }, result)
         return allAttributes;
-    }
-
-    hasNgStyle(): boolean {
-        return this.openingElement.hasNgStyle()
-            || this.children.some(c => (isElement(c) || c instanceof JsxExpression) && c.hasNgStyle());
     }
 
     trackBy(options?: toStringOptions): Array<TrackByAttribute> { 
@@ -849,11 +829,15 @@ function compileCoreImports(members: Array<Property|Method>, context: AngularGen
     if (members.filter(m => m.decorators.find(d => d.name === "TwoWay")).length) { 
         imports.push("Input", "Output", "EventEmitter");
     }
-    if (members.filter(m => m.decorators.find(d=>d.name==="Template")).length) { 
+    if (members.filter(m => m.isTemplate).length) { 
         imports.push("Input", "TemplateRef");
     }
-    if (members.filter(m => m.decorators.find(d => d.name === "Event")).length) { 
+    if (members.filter(m => m.isEvent).length) { 
         imports.push("Output", "EventEmitter");
+    }
+
+    if (members.filter(m => m.isSlot).length) {
+        imports.push("ViewChild", "ElementRef");
     }
 
     const set = new Set(context.angularCoreImports);
@@ -912,9 +896,6 @@ function parseEventType(type: TypeExpression) {
 
 export class Property extends BaseProperty { 
     get name() { 
-        if (this.decorators.find(d => d.name === "Slot")) { 
-            return super.name;
-        }
         return this._name.toString();
     } 
     constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type?: TypeExpression, initializer?: Expression, inherited: boolean=false) { 
@@ -939,8 +920,13 @@ export class Property extends BaseProperty {
             return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:${this.type}`;
         }
         if (this.decorators.find(d => d.name === "Slot")) { 
-            return "";
-        }
+            const selector = `slot${capitalizeFirstLetter(this.name)}`
+            return `@ViewChild("${selector}") ${selector}?: ElementRef<HTMLDivElement>;
+
+            get ${this.name}(){
+                return this.${selector}?.nativeElement?.innerHTML.trim();
+            }`;
+    }
         
         return defaultValue;
     }
@@ -987,7 +973,7 @@ class SetAccessor extends Method {
 
 const ngOnChangesParameters = ["changes"];
 
-class AngularComponent extends Component {
+export class AngularComponent extends Component {
     decorator: Decorator;
     constructor(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>, context: GeneratorContext) {
         super(componentDecorator, modifiers, name, typeParameters, heritageClauses, members, context);
@@ -1069,7 +1055,7 @@ class AngularComponent extends Component {
 
     compileEffects(ngAfterViewInitStatements: string[], ngOnDestroyStatements: string[], ngOnChanges:string[], ngAfterViewCheckedStatements: string[]) { 
         const effects = this.members.filter(m => m.decorators.find(d => d.name === "Effect")) as Method[];
-        let hasInternalStateDependecy = false;
+        let hasInternalStateDependency = false;
         
         if (effects.length) { 
             const statements = [
@@ -1115,12 +1101,12 @@ class AngularComponent extends Component {
                                 this.${updateEffectMethod}();
                             }`)
                         );
-                        hasInternalStateDependecy = true;
+                        hasInternalStateDependency = true;
                     }
                 });
                 
             });
-            if (ngOnChanges.length || hasInternalStateDependecy) { 
+            if (ngOnChanges.length || hasInternalStateDependency) { 
                 ngAfterViewCheckedStatements.push(`
                 this.__viewCheckedSubscribeEvent.forEach(s=>s?.());
                 this.__viewCheckedSubscribeEvent = [];
@@ -1177,7 +1163,7 @@ class AngularComponent extends Component {
             };
             const expression = getTemplate(viewFunction, options);
             if (isElement(expression)) {
-                return expression.trackBy(options).map(a => a.getTrackBydeclaration()).join("\n");
+                return expression.trackBy(options).map(a => a.getTrackByDeclaration()).join("\n");
             }
         }
 
@@ -1231,36 +1217,22 @@ class AngularComponent extends Component {
         return "";
     }
 
-    compileNgStyleProcessor(): string { 
-        const viewFunction = this.decorator.getViewFunction();
-        if (viewFunction) { 
-            const options = {
-                members: this.members,
-                state: [],
-                internalState: [],
-                props: [],
-                newComponentContext: this.viewModel ? "_viewModel" : ""
-            };
-            const expression = getTemplate(viewFunction, options);
-            if (isElement(expression)) {
-                if (expression.hasNgStyle()) { 
-                    
-                    return `__processNgStyle(value:any){
-                        if (typeof value === "object") {
-                            return Object.keys(value).reduce((v: { [name: string]: any }, k) => {
-                                if (typeof value[k] === "number") {
-                                    v[k] = value[k] + "px";
-                                } else {
-                                    v[k] = value[k];
-                                }
-                                return v;
-                            }, {});
-                        }
-                
-                        return value;
-                    }`;
-                }
-            }
+    compileNgStyleProcessor(options?: toStringOptions): string { 
+        if (options?.hasStyle) {
+            return `__processNgStyle(value:any){
+                    if (typeof value === "object") {
+                        return Object.keys(value).reduce((v: { [name: string]: any }, k) => {
+                            if (typeof value[k] === "number") {
+                                v[k] = value[k] + "px";
+                            } else {
+                                v[k] = value[k];
+                            }
+                            return v;
+                        }, {});
+                    }
+            
+                    return value;
+                }`;
         }
         return "";
     }
@@ -1303,10 +1275,12 @@ class AngularComponent extends Component {
         const constructorStatements: string[] = [];
         const coreImports: string[] = [];
 
-        const componentDecorator = this.decorator.toString({
+        const decoratorToStringOptions: toStringOptions = {
             members: this.members,
             newComponentContext: this.viewModel ? "_viewModel" : ""
-        });
+        };
+
+        const componentDecorator = this.decorator.toString(decoratorToStringOptions);
 
         const spreadAttributes = this.compileSpreadAttributes(ngOnChangesStatements, coreImports);
 
@@ -1338,7 +1312,7 @@ class AngularComponent extends Component {
                     constructorStatements
         )}
             ${this.members.filter(m=>m instanceof SetAccessor)}
-            ${this.compileNgStyleProcessor()}
+            ${this.compileNgStyleProcessor(decoratorToStringOptions)}
         }
         @NgModule({
             declarations: [${this.name}],

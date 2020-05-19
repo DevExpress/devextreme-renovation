@@ -41,9 +41,9 @@ export default function (generator: Generator) {
         );
     }
 
-    function createComponent(properties: Array<Property | Method> = [], paramenters: { [name: string]: Expression } = {}) {
+    function createComponent(properties: Array<Property | Method> = [], parameters: { [name: string]: Expression } = {}) {
         return generator.createComponent(
-            createComponentDecorator(paramenters),
+            createComponentDecorator(parameters),
             [],
             generator.createIdentifier("BaseWidget"),
             [],

@@ -81,7 +81,7 @@ export default {
       this.__scheduleEffects[i] && this.__scheduleEffects[i]();
     });
   },
-  beforeDestoyed() {
+  destroyed() {
     this.__destroyEffects.forEach((_, i) => {
       this.__destroyEffects[i] && this.__destroyEffects[i]();
     });
