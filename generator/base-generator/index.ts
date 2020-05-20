@@ -2,7 +2,7 @@ import SyntaxKind from "./syntaxKind";
 import fs from "fs";
 import path from "path";
 import { compileCode } from "../component-compiler";
-import { ImportDeclaration, ImportClause, NamedImports, NamespaceImport } from "./expressions/import";
+import { ImportDeclaration, ImportClause, NamedImports, NamespaceImport, ImportSpecifier } from "./expressions/import";
 import { SimpleExpression, Expression } from "./expressions/base";
 import { Identifier, New, Delete, Paren, Call, NonNullExpression, TypeOf, Void, CallChain, AsExpression } from "./expressions/common";
 import {
@@ -317,11 +317,11 @@ export default class Generator {
         return new ImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
     }
 
-    createImportSpecifier(propertyName: string | undefined, name: Identifier) {
-        return name;
+    createImportSpecifier(propertyName: Identifier | undefined, name: Identifier) {
+        return new ImportSpecifier(propertyName, name);
     }
 
-    createNamedImports(node: Identifier[]) {
+    createNamedImports(node: ImportSpecifier[]) {
         return new NamedImports(node);
     }
 
