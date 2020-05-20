@@ -97,15 +97,7 @@ mocha.describe("vue-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it("required-props", function () {
-        this.testGenerator(this.test!.title);
-    });
-
     mocha.it("jsx-function-in-view", function () {
-        this.testGenerator(this.test!.title);
-    });
-
-    mocha.it("use-external-component-bindings", function () {
         this.testGenerator(this.test!.title);
     });
 
@@ -144,6 +136,14 @@ mocha.describe("vue-generation", function () {
         });
 
         mocha.it("default-options-empty", function () { 
+            this.testGenerator(this.test!.title);
+        });
+
+        mocha.it("required-props", function () {
+            this.testGenerator(this.test!.title);
+        });
+
+        mocha.it("use-external-component-bindings", function () {
             this.testGenerator(this.test!.title);
         });
 
