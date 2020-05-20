@@ -95,3 +95,12 @@ cloneTest('Can call method inside a getter', async t => {
     await t
         .expect(await el.textContent).eql("20");
 });
+
+cloneTest('Click on component with default options', async t => {
+    const el = Selector("#component-with-default-options");
+    
+    await t.click(await el.child(0));
+
+    await t
+        .expect(await el.textContent).eql("ab164");
+});

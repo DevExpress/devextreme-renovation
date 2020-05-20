@@ -8,6 +8,7 @@ import { Block, ReturnStatement } from "./statements";
 import { getModuleRelativePath } from "../utils/path-utils";
 import { Decorator } from "./decorator";
 import { BaseFunction } from './functions';
+import { compileType } from "../utils/string";
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
     return heritageClauses.some(h => h.isJsxComponent);
@@ -200,14 +201,23 @@ export class Component extends Class implements Heritable {
         return this.compilePropsType();
     }
 
+    compileDefaultOptionsRuleTypeName() { 
+        const defaultOptionsTypeName = `${this.name}OptionRule`;
+        return defaultOptionsTypeName;
+    }
+
+    compileDefaultOptionRulesType() { 
+        const defaultOptionsTypeArgument = this.compileDefaultOptionsPropsType();
+        return `type ${this.compileDefaultOptionsRuleTypeName()} = Rule<${defaultOptionsTypeArgument}>;`;
+    }
+
     compileDefaultOptionsMethod(defaultOptionRulesInitializer:string = "[]", statements: string[]=[]) { 
         if (this.needGenerateDefaultOptions) { 
-            const defaultOptionsTypeName = `${this.name}OptionRule`;
-            const defaultOptionsTypeArgument = this.compileDefaultOptionsPropsType();
-            return `type ${defaultOptionsTypeName} = Rule<${defaultOptionsTypeArgument}>;
+            const defaultOptionsTypeName = this.compileDefaultOptionsRuleTypeName();
+            return `${this.compileDefaultOptionRulesType()}
 
-            const __defaultOptionRules:${defaultOptionsTypeName}[] = ${defaultOptionRulesInitializer};
-            export function defaultOptions(rule: ${defaultOptionsTypeName}) { 
+            const __defaultOptionRules${compileType(defaultOptionsTypeName ? `${defaultOptionsTypeName}[]` : "")} = ${defaultOptionRulesInitializer};
+            export function defaultOptions(rule${compileType(defaultOptionsTypeName)}) { 
                 __defaultOptionRules.push(rule);
                 ${statements.join("\n")}
             }`;

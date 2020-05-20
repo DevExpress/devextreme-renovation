@@ -9,6 +9,7 @@ import VisibilityChangeProp from "./change-visibility-prop.tsx";
 import ComponentWithRest from "./rest-attributes.tsx";
 import CallMethodInGetterWidget from "./call-method-in-getter.tsx";
 import ComponentWithFragment from "./component-with-fragment.tsx";
+import ComponentWithDefaultOptionRules, { defaultOptions as setDefaultOptions } from "./default-option-rules.tsx";
 
 function view(model: App) { 
     return <div>
@@ -44,8 +45,20 @@ function view(model: App) {
         <div>
             <ComponentWithFragment/>
         </div>
+
+        <ComponentWithDefaultOptionRules id="component-with-default-options"/>
     </div>;
 }
+
+setDefaultOptions({
+    device: () => true,
+    options: {
+        oneWayProp: "a",
+        oneWayPropWithDefault: "b",
+        twoWayProp: 15,
+        twoWayPropWithDefault: 3
+    }
+})
 
 @ComponentBindings()
 class AppInput { 

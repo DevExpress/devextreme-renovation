@@ -5,9 +5,7 @@ import path from "path";
 
 import { printSourceCodeAst as getResult, removeSpaces } from "./helpers/common";
 import { GeneratorContext } from "../base-generator/types";
-import { Expression } from "../base-generator/expressions/base";
 import { Identifier } from "../base-generator/expressions/common";
-import { Method } from "../base-generator/expressions/class-members";
 import { JsxExpression } from "../angular-generator";
 
 import factory from "./helpers/create-component";
@@ -190,6 +188,20 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(expression.toString(), '<div [a]="value"></div>');
+        });
+
+        mocha.it("JsxElement: trim spaces in string children", function () {
+            const expression = generator.createJsxElement(
+                generator.createJsxOpeningElement(
+                    generator.createIdentifier("div"),
+                    undefined,
+                    []
+                ),
+                ["     a      "],
+                generator.createJsxClosingElement(generator.createIdentifier("div"))
+            );
+
+            assert.strictEqual(expression.toString(), '<div >a</div>');
         });
 
         mocha.it("Fragment should be ignored", function () {

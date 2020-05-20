@@ -1,12 +1,12 @@
 const { getOptions } = require('loader-utils');
 const { compileCode } = require('../../../build/component-compiler');
 const reactGenerator = require('../../../build/react-generator').default;
-const agularGenerator = require('../../../build/angular-generator').default;
+const angularGenerator = require('../../../build/angular-generator').default;
 const vueGenerator = require('../../../build/vue-generator').default;
 const path = require("path");
 
 module.exports = function(source) {
-  const { platform } = getOptions(this);
+  const { platform, defaultOptionsModule } = getOptions(this);
   let generator = null;
 
   switch(platform) {
@@ -14,7 +14,7 @@ module.exports = function(source) {
       generator = reactGenerator;
       break;
     case 'angular':
-      generator = agularGenerator;
+      generator = angularGenerator;
       break;
     case 'vue':
       generator = vueGenerator;
@@ -22,6 +22,8 @@ module.exports = function(source) {
     default:
       throw new Error('Invalid platform');
   }
+
+  generator.defaultOptionsModule = defaultOptionsModule;
 
   const normalizedPath = path.normalize(this.resourcePath);
   const moduleParts = normalizedPath.split(/(\/|\\)/);

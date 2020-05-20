@@ -1,8 +1,27 @@
- <template>
-  <div>{{height}}</div>
-</template>
  <script>
-import Props from "./component-bindings-only";
+function view() {}
+export const WidgetProps = {
+  p1: {
+    type: String,
+    default: undefined
+  },
+  p2: {
+    type: String,
+    default: undefined
+  },
+  defaultP1: {
+    type: String,
+    default() {
+      return "";
+    }
+  },
+  defaultP2: {
+    type: String,
+    default() {
+      return "";
+    }
+  }
+};
 
 import { convertRulesToOptions } from "../../../../../component_declaration/default_options";
 
@@ -13,9 +32,9 @@ export function defaultOptions(rule) {
 
 export default {
   props: (() => {
-    const twoWayProps = [];
-    return Object.keys(Props).reduce((props, propName) => {
-      const prop = { ...Props[propName] };
+    const twoWayProps = ["p1", "p2"];
+    return Object.keys(WidgetProps).reduce((props, propName) => {
+      const prop = { ...WidgetProps[propName] };
 
       const twoWayPropName =
         propName.indexOf("default") === 0 &&
@@ -44,9 +63,21 @@ export default {
       return props;
     }, {});
   })(),
+  data() {
+    return {
+      p1_state: this.defaultP1,
+      p2_state: this.defaultP2
+    };
+  },
   methods: {
     __restAttributes() {
       return {};
+    },
+    p1Change(...args) {
+      this.$emit("update:p1", ...args);
+    },
+    p2Change(...args) {
+      this.$emit("update:p2", ...args);
     }
   },
   beforeCreate() {

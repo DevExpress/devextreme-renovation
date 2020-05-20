@@ -1764,7 +1764,10 @@ mocha.describe("base-generator: expressions", function () {
                     undefined,
                     generator.createNamedImports(
                         [
-                            generator.createIdentifier("PREFIX")
+                            generator.createImportSpecifier(
+                                undefined,
+                                generator.createIdentifier("PREFIX")
+                            )
                         ]
                     )
                 ),
@@ -1782,9 +1785,10 @@ mocha.describe("base-generator: expressions", function () {
                 generator.createImportClause(
                     undefined,
                     generator.createNamedImports(
-                        [
+                        [generator.createImportSpecifier(
+                            undefined,
                             generator.createIdentifier("PREFIX")
-                        ]
+                        )]
                     )
                 ),
                 generator.createStringLiteral("./test-cases/declarations/globals-in-template")
@@ -1801,7 +1805,10 @@ mocha.describe("base-generator: expressions", function () {
                     generator.createIdentifier("Base"),
                     generator.createNamedImports(
                         [
-                            generator.createIdentifier("PREFIX")
+                            generator.createImportSpecifier(
+                                undefined,
+                                generator.createIdentifier("PREFIX")
+                            )
                         ]
                     )
                 ),

@@ -54,6 +54,7 @@ import { ComponentInput } from "./base-generator/expressions/component-input";
 import { checkDependency } from "./base-generator/utils/dependency";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access";
 import { PropertyAssignment } from "./base-generator/expressions/property-assignment";
+import { getModuleRelativePath } from "./base-generator/utils/path-utils";
 
 function calculatePropertyType(type: TypeExpression): string { 
     if (type instanceof SimpleTypeExpression) {
@@ -286,6 +287,13 @@ export class VueComponent extends Component {
         return members;
     }
 
+    compileDefaultOptionsImport(imports: string[]): void { 
+        if (!this.context.defaultOptionsImport && this.needGenerateDefaultOptions && this.context.defaultOptionsModule && this.context.dirname) {
+            const relativePath = getModuleRelativePath(this.context.dirname, this.context.defaultOptionsModule);
+            imports.push(`import {convertRulesToOptions} from "${relativePath}"`);
+        }
+    }
+
     compileTemplate() {
         const viewFunction = this.decorators[0].getViewFunction();
         if (viewFunction) {
@@ -337,7 +345,39 @@ export class VueComponent extends Component {
 
     generateProps() {
         if (this.isJSXComponent) { 
-            return `props: ${this.heritageClauses[0].propsType.type}`;
+            let props = this.heritageClauses[0].propsType.type.toString();
+            if (this.needGenerateDefaultOptions) { 
+                props = `(()=>{
+                    const twoWayProps = [${this.state.map(s=>`"${s.name}"`)}];
+                    return Object.keys(${props}).reduce((props, propName)=>{
+                        const prop = {...${props}[propName]};
+                        
+                        const twoWayPropName = propName.indexOf("default") === 0 &&
+                                twoWayProps.find(p=>"default"+p.charAt(0).toUpperCase() + p.slice(1)===propName);
+                        const defaultPropName = twoWayPropName? twoWayPropName: propName;
+
+                        if(typeof prop.default === "function"){
+                            const defaultValue = prop.default;
+                            prop.default = function() {
+                                return this._defaultOptions[defaultPropName] !== undefined
+                                    ? this._defaultOptions[defaultPropName] 
+                                    : defaultValue();
+                            }
+                        } else if(!twoWayProps.some(p=>p===propName)){
+                            const defaultValue = prop.default;
+                            prop.default = function() {
+                                return this._defaultOptions[defaultPropName] !== undefined
+                                    ? this._defaultOptions[defaultPropName] 
+                                    : defaultValue;
+                            }
+                        }
+
+                        props[propName] = prop;
+                        return props;
+                    }, {});
+                })()`;
+            }
+            return `props: ${props}`;
         }
         return "";
     }
@@ -488,6 +528,22 @@ export class VueComponent extends Component {
         return "";
     }
 
+    generateBeforeCreate() { 
+        const statements: string[] = [];
+
+        if (this.needGenerateDefaultOptions) { 
+            statements.push("this._defaultOptions = convertRulesToOptions(__defaultOptionRules);");
+        }
+
+        if (statements.length) { 
+            return `beforeCreate(){
+                ${statements.join(";\n")}
+            }`;
+        }
+
+        return "";
+    }
+
     generateUpdated() { 
         const statements: string[] = [];
 
@@ -528,6 +584,21 @@ export class VueComponent extends Component {
 
         return "";
     }
+
+    compileDefaultOptionsRuleTypeName() { 
+        return "";
+    }
+
+    compileDefaultOptionRulesType() { 
+        return "";
+    }
+
+    compileImports() { 
+        const imports: string[] = [];
+        this.compileDefaultOptionsImport(imports);
+
+        return imports.join(";\n");
+    }
     
     toString() { 
         this.compileTemplate();
@@ -541,13 +612,18 @@ export class VueComponent extends Component {
             this.generateData(),
             this.generateWatch(methods),
             this.generateMethods(methods),
+            this.generateBeforeCreate(),
             this.generateCreated(),
             this.generateMounted(),
             this.generateUpdated(),
             this.generateDestroyed()
         ].filter(s => s);
 
-        return `${this.modifiers.join(" ")} {
+        return `
+        ${this.compileImports()}
+        ${this.compileDefaultOptionsMethod(this.defaultOptionRules ? this.defaultOptionRules.toString() : "[]", [])}
+        ${this.compileDefaultProps()}
+        ${this.modifiers.join(" ")} {
             ${statements.join(",\n")}
         }`;
     }

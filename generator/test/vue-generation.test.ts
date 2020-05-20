@@ -97,15 +97,7 @@ mocha.describe("vue-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it("required-props", function () {
-        this.testGenerator(this.test!.title);
-    });
-
     mocha.it("jsx-function-in-view", function () {
-        this.testGenerator(this.test!.title);
-    });
-
-    mocha.it("use-external-component-bindings", function () {
         this.testGenerator(this.test!.title);
     });
 
@@ -127,5 +119,37 @@ mocha.describe("vue-generation", function () {
 
     mocha.it("model-binding", function () {
         this.testGenerator(this.test!.title);
+    });
+
+    mocha.describe("Default option rules", function () {
+        this.beforeEach(function () {
+            generator.defaultOptionsModule = "../component_declaration/default_options";
+            generator.setContext({
+                dirname: path.resolve(__dirname, "./test-cases/declarations"),
+                defaultOptionsModule: path.resolve(generator.defaultOptionsModule)
+            });
+        });
+
+        this.afterEach(function () { 
+            generator.setContext(null);
+            generator.defaultOptionsModule = "";
+        });
+
+        mocha.it("default-options-empty", function () { 
+            this.testGenerator(this.test!.title);
+        });
+
+        mocha.it("required-props", function () {
+            this.testGenerator(this.test!.title);
+        });
+
+        mocha.it("use-external-component-bindings", function () {
+            this.testGenerator(this.test!.title);
+        });
+
+        mocha.it("default-options-with-state", function () {
+            this.testGenerator(this.test!.title);
+        });
+
     });
 });

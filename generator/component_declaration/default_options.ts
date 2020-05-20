@@ -3,7 +3,7 @@ export type Rule<T> = {
     options: T
 }
 
-export function convertRulesToOption<T>(rules: Rule<T>[]): T {
+export function convertRulesToOptions<T>(rules: Rule<T>[]): T {
     return rules.reduce((options: T, rule) => {
         return {
             ...options,

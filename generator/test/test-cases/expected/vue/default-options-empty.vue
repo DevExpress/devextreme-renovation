@@ -1,12 +1,11 @@
- <template>
-  <div>{{height}}</div>
-</template>
  <script>
-import Props from "./component-bindings-only";
+import "typescript";
+function view() {}
+export const WidgetProps = {};
 
 import { convertRulesToOptions } from "../../../../../component_declaration/default_options";
 
-const __defaultOptionRules = [];
+const __defaultOptionRules = [{ device: true, options: {} }];
 export function defaultOptions(rule) {
   __defaultOptionRules.push(rule);
 }
@@ -14,8 +13,8 @@ export function defaultOptions(rule) {
 export default {
   props: (() => {
     const twoWayProps = [];
-    return Object.keys(Props).reduce((props, propName) => {
-      const prop = { ...Props[propName] };
+    return Object.keys(WidgetProps).reduce((props, propName) => {
+      const prop = { ...WidgetProps[propName] };
 
       const twoWayPropName =
         propName.indexOf("default") === 0 &&

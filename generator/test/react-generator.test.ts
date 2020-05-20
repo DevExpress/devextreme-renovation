@@ -10,16 +10,16 @@ import { toStringOptions } from "../base-generator/types"
 import compile from "../component-compiler";
 import path from "path";
 
-function createComponentDecorator(paramenters: {[name:string]: any}) { 
+function createComponentDecorator(parameters: {[name:string]: any}) { 
     return generator.createDecorator(
         generator.createCall(
             generator.createIdentifier("Component"),
             [],
             [generator.createObjectLiteral(
-                Object.keys(paramenters).map(k => 
+                Object.keys(parameters).map(k => 
                     generator.createPropertyAssignment(
                         generator.createIdentifier(k),
-                        paramenters[k]
+                        parameters[k]
                     )
                 ),
                 false
@@ -183,7 +183,10 @@ mocha.describe("react-generator", function () {
         mocha.it("use-external-component-bindings", function () {
             this.testGenerator(this.test!.title);
         });
-    
+
+        mocha.it("default-options-with-state", function () {
+            this.testGenerator(this.test!.title);
+        });
     });
 });
 
@@ -229,7 +232,7 @@ mocha.describe("react-generator: expressions", function () {
 });
 
 
-function createComponent(inputMembers: Array<Property | Method>, componentMembers: Array<Property | Method> = [], paramenters: { [name: string]: any } = {}):ReactComponent { 
+function createComponent(inputMembers: Array<Property | Method>, componentMembers: Array<Property | Method> = [], parameters: { [name: string]: any } = {}):ReactComponent { 
     generator.createClassDeclaration(
         [generator.createDecorator(
             generator.createCall(generator.createIdentifier("ComponentBindings"), [])
@@ -253,7 +256,7 @@ function createComponent(inputMembers: Array<Property | Method>, componentMember
     );
 
     const component = generator.createClassDeclaration(
-        [createComponentDecorator(paramenters)],
+        [createComponentDecorator(parameters)],
         [],
         generator.createIdentifier("Widget"),
         [],
@@ -861,7 +864,7 @@ mocha.describe("import Components", function () {
                 generator.createIdentifier("Base")
             )]);
         
-        assert.deepEqual(heritageClause.defaultProps, [], "defualtProps");
+        assert.deepEqual(heritageClause.defaultProps, [], "defaultProps");
     });
 
     mocha.it("Get properties from heritageClause", function () {
@@ -882,7 +885,7 @@ mocha.describe("import Components", function () {
                 generator.createIdentifier("Base")
             )]);
         
-        assert.deepEqual(heritageClause.defaultProps, ["Base.defaultProps"], "defualtProps");
+        assert.deepEqual(heritageClause.defaultProps, ["Base.defaultProps"], "defaultProps");
     });
 
     mocha.it("Heritage defaultProps. Base component has defaultProps, component has not", function () {
@@ -1225,7 +1228,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.deepEqual(this.propAccess.getDependency(), ["p1"]);
     });
 
-    mocha.it("Property accees. this.props.p1", function () {
+    mocha.it("Property access. this.props.p1", function () {
         const expression = generator.createPropertyAccess(
             generator.createPropertyAccess(
                 generator.createThis(),
@@ -1240,7 +1243,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.deepEqual(expression.getDependency(), ["p1"]);
     });
 
-    mocha.it("Property accees. this.props", function () {
+    mocha.it("Property access. this.props", function () {
         const expression = generator.createPropertyAccess(
             generator.createThis(),
             generator.createIdentifier("props")
@@ -1342,8 +1345,8 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.deepEqual(expression.getAllDependency(), ["s1", "p1"]);
     });
 
-    mocha.it("VariableDeclarationList return dependecy for initializer", function () {
-        const expresion = generator.createVariableStatement(
+    mocha.it("VariableDeclarationList return dependency for initializer", function () {
+        const expression = generator.createVariableStatement(
             undefined,
             generator.createVariableDeclarationList(
                 [generator.createVariableDeclaration(
@@ -1359,11 +1362,11 @@ mocha.describe("Expressions with props/state/internal state", function () {
             )
         );
 
-        assert.deepEqual(expresion.getDependency(), ["p1", "s1"]);
+        assert.deepEqual(expression.getDependency(), ["p1", "s1"]);
     });
 
     mocha.it("VariableDeclaration returns dependency for Binding Pattern", function () {
-        const expresion = generator.createVariableDeclaration(
+        const expression = generator.createVariableDeclaration(
             generator.createObjectBindingPattern([generator.createBindingElement(
                 undefined,
                 undefined,
@@ -1377,11 +1380,11 @@ mocha.describe("Expressions with props/state/internal state", function () {
             )
         );
 
-        assert.deepEqual(expresion.getDependency(), ["height"]);
+        assert.deepEqual(expression.getDependency(), ["height"]);
     });
 
     mocha.it("VariableDeclaration returns all props dependency if binding element have rest operator", function () {
-        const expresion = generator.createVariableDeclaration(
+        const expression = generator.createVariableDeclaration(
             generator.createObjectBindingPattern([generator.createBindingElement(
                 generator.SyntaxKind.DotDotDotToken,
                 undefined,
@@ -1395,7 +1398,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
             )
         );
 
-        assert.deepEqual(expresion.getDependency(), ["props"]);
+        assert.deepEqual(expression.getDependency(), ["props"]);
     });
 
     mocha.it("Arrow Function. Can set state", function () {
@@ -1701,7 +1704,7 @@ mocha.describe("ComponentInput", function () {
     });
 
     mocha.describe("Required prop", function () { 
-        mocha.it("Type declaration should have excalmation token", function () {
+        mocha.it("Type declaration should have exclamation token", function () {
             const expression = generator.createClassDeclaration(
                 this.decorators,
                 ["export"],
@@ -1974,7 +1977,12 @@ mocha.describe("Default_options", function () {
             generator.createImportClause(
                 generator.createIdentifier("defaultOptions"),
                 generator.createNamedImports(
-                    [generator.createIdentifier("Rule")]
+                    [
+                        generator.createImportSpecifier(
+                            undefined,
+                            generator.createIdentifier("Rule")
+                        )
+                    ]
                 )
             ),
             generator.createStringLiteral("../default_options")
