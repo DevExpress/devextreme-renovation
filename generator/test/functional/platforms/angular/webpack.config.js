@@ -32,7 +32,8 @@ module.exports = {
         {
           loader: path.resolve('./test/functional/platforms/loader.js'),
           options: {
-            platform: 'angular'
+            platform: 'angular',
+            defaultOptionsModule: "./component_declaration/default_options"
           }
         },
       ],

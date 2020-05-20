@@ -22,7 +22,8 @@ module.exports = {
         }, {
           loader: path.resolve('./test/functional/platforms/loader.js'),
           options: {
-            platform: 'react'
+            platform: 'react',
+            defaultOptionsModule: "./build/component_declaration/default_options"
           }
         },
       ],

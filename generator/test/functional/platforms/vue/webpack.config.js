@@ -16,7 +16,8 @@ module.exports = {
                     {
                         loader: path.resolve('./test/functional/platforms/loader.js'),
                         options: {
-                            platform: 'vue'
+                            platform: 'vue',
+                            defaultOptionsModule: "./build/component_declaration/default_options"
                         }
                     }
                 ],
