@@ -15,19 +15,27 @@ export default {
     const twoWayProps = [];
     return Object.keys(WidgetProps).reduce((props, propName) => {
       const prop = { ...WidgetProps[propName] };
+
+      const twoWayPropName =
+        propName.indexOf("default") === 0 &&
+        twoWayProps.find(
+          p => "default" + p.charAt(0).toUpperCase() + p.slice(1) === propName
+        );
+      const defaultPropName = twoWayPropName ? twoWayPropName : propName;
+
       if (typeof prop.default === "function") {
         const defaultValue = prop.default;
-        const twoWayPropName =
-          propName.indexOf("default") === 0 &&
-          twoWayProps.find(
-            p => "default" + p.charAt(0).toUpperCase() + p.slice(1) === propName
-          );
-        const defaultPropName = twoWayPropName ? twoWayProp : propName;
-
         prop.default = function() {
-          return this._defaultOptions[propName] !== undefined
+          return this._defaultOptions[defaultPropName] !== undefined
             ? this._defaultOptions[defaultPropName]
             : defaultValue();
+        };
+      } else if (!twoWayProps.some(p => p === propName)) {
+        const defaultValue = prop.default;
+        prop.default = function() {
+          return this._defaultOptions[defaultPropName] !== undefined
+            ? this._defaultOptions[defaultPropName]
+            : defaultValue;
         };
       }
 
@@ -45,4 +53,3 @@ export default {
   }
 };
 </script>
-        
