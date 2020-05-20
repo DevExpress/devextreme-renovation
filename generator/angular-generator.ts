@@ -722,7 +722,7 @@ export class JsxElement extends BaseJsxElement {
         this.openingElement = openingElement;
         this.children = children.map(c => c instanceof JsxExpression
                 ? this.createChildJsxExpression(c)
-                : c
+                : typeof c === "string" ? c.trim() : c
         );
         this.closingElement = closingElement;
     }
