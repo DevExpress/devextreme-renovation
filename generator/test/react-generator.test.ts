@@ -183,7 +183,10 @@ mocha.describe("react-generator", function () {
         mocha.it("use-external-component-bindings", function () {
             this.testGenerator(this.test!.title);
         });
-    
+
+        mocha.it("default-options-with-state", function () {
+            this.testGenerator(this.test!.title);
+        });
     });
 });
 

@@ -296,6 +296,11 @@ export class ReactComponent extends Component {
         return `${this.name.toString()}.defaultProps`;
     }
 
+    compileConvertRulesToOptions(rules: string|Expression) { 
+        return this.state.length
+            ? `__processTwoWayProps(convertRulesToOptions(${rules}))`
+            : `convertRulesToOptions(${rules})`;
+    }
 
     compileDefaultProps() {
         const defaultProps = this.heritageClauses
@@ -303,14 +308,27 @@ export class ReactComponent extends Component {
             .concat(
                 this.props.filter(p => !p.inherited && p.initializer)
                     .map(p => (p as Property).defaultProps())
-            );
+        );
 
         if (this.defaultOptionRules && this.needGenerateDefaultOptions) { 
-            defaultProps.push(`...convertRulesToOptions(${this.defaultOptionRules})`);
+            defaultProps.push(`...${this.compileConvertRulesToOptions(this.defaultOptionRules)}`);
         }
 
         if (this.needGenerateDefaultOptions) { 
             return `
+                ${ this.state.length
+                    ? `function __processTwoWayProps(defaultProps: ${this.compilePropsType()}){
+                        const twoWayProps:string[] = [${this.state.map(s => `"${s.name}"`)}];
+                        
+                        return Object.keys(defaultProps).reduce((props, propName)=>{
+                            const propValue = (defaultProps as any)[propName];
+                            const defaultPropName = twoWayProps.some(p=>p===propName) ? "default"+propName.charAt(0).toUpperCase() + propName.slice(1): propName;
+                            (props as any)[defaultPropName] = propValue;
+                            return props;
+                        }, {});
+                    }`
+                    : ""}
+                
                 function __createDefaultProps(){
                     return {
                         ${defaultProps.join(",\n")}
@@ -483,7 +501,7 @@ export class ReactComponent extends Component {
             ${this.compileDefaultOptionsMethod("[]", [
                 `${this.defaultPropsDest()} = {
                     ...__createDefaultProps(),
-                    ...convertRulesToOptions(__defaultOptionRules)
+                    ...${this.compileConvertRulesToOptions("__defaultOptionRules")}
                 };`
             ])}`;
     }
