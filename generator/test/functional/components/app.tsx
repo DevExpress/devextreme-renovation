@@ -10,6 +10,7 @@ import ComponentWithRest from "./rest-attributes.tsx";
 import CallMethodInGetterWidget from "./call-method-in-getter.tsx";
 import ComponentWithFragment from "./component-with-fragment.tsx";
 import ComponentWithDefaultOptionRules, { defaultOptions as setDefaultOptions } from "./default-option-rules.tsx";
+import List from "./list.tsx";
 
 function view(model: App) { 
     return <div>
@@ -46,7 +47,9 @@ function view(model: App) {
             <ComponentWithFragment/>
         </div>
 
-        <ComponentWithDefaultOptionRules id="component-with-default-options"/>
+        <ComponentWithDefaultOptionRules id="component-with-default-options" />
+        
+        <List items={model.listItems}/>
     </div>;
 }
 
@@ -76,6 +79,8 @@ export default class App extends JSXComponent<AppInput> {
     @InternalState() spreadAttributesComponentAria = "init";
 
     @InternalState() callMethodInGetterWidgetProp = 1;
+
+    @InternalState() listItems = [{ key: 0, text: "a" }, { key: 1, text: "b" }];
 
     onButtonClick() { 
         this.clickCount = this.clickCount + 1;
