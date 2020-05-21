@@ -5,13 +5,16 @@ import SyntaxKind from "../syntaxKind";
 import { Conditional } from "./conditions";
 
 export function getJsxExpression(e: ExpressionWithExpression | Expression | undefined): JsxExpression | undefined {
-    if (e instanceof Conditional && e.isJsx()) { 
+    if (e instanceof Conditional && e.isJsx()) {
         return new JsxExpression(undefined, e);
     } else if (e instanceof JsxExpression || e instanceof JsxElement || e instanceof JsxOpeningElement) {
         return e as JsxExpression;
     }
     else if (e instanceof ExpressionWithExpression) {
         return getJsxExpression(e.expression);
+    }
+    else if (e instanceof Expression) { 
+        return new JsxExpression(undefined, e);
     }
 }
 

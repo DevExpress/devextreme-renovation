@@ -1690,6 +1690,486 @@ mocha.describe("Vue-generator", function () {
             });
         });
 
+        mocha.describe("Parse Map function", function () {
+            mocha.it(".map((item)=><div>) -> v-for", function () { 
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createCall(
+                            generator.createPropertyAccess(
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier("viewModel"),
+                                    generator.createIdentifier("items")
+                                ),
+                                generator.createIdentifier("map")
+                            ),
+                            undefined,
+                            [generator.createArrowFunction(
+                                undefined,
+                                undefined,
+                                [generator.createParameter(
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    generator.createIdentifier("items"),
+                                    undefined,
+                                    undefined,
+                                    undefined
+                                )],
+                                undefined,
+                                generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                                generator.createJsxElement(
+                                    generator.createJsxOpeningElement(
+                                        generator.createIdentifier("div"),
+                                        undefined,
+                                        generator.createJsxAttributes([])
+                                    ),
+                                    [],
+                                    generator.createJsxClosingElement(generator.createIdentifier("div"))
+                                )
+                            )]
+                        )
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(
+                    expression.children[0].toString(),
+                    `<div v-for="items of viewModel.items"></div>`
+                );
+            });
+
+            mocha.it(".map((item)=>item) -> *ngFor", function () { 
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createCall(
+                            generator.createPropertyAccess(
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier("viewModel"),
+                                    generator.createIdentifier("items")
+                                ),
+                                generator.createIdentifier("map")
+                            ),
+                            undefined,
+                            [generator.createArrowFunction(
+                                undefined,
+                                undefined,
+                                [generator.createParameter(
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    generator.createIdentifier("items"),
+                                    undefined,
+                                    undefined,
+                                    undefined
+                                )],
+                                undefined,
+                                generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                                generator.createIdentifier("items")
+                            )]
+                        )
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(
+                    expression.children[0].toString(),
+                    `<template v-for="items of viewModel.items">{{items}}</template>`
+                );
+            });
+
+            mocha.it(".map((item)=>{}) -> empty string", function () { 
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createCall(
+                            generator.createPropertyAccess(
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier("viewModel"),
+                                    generator.createIdentifier("items")
+                                ),
+                                generator.createIdentifier("map")
+                            ),
+                            undefined,
+                            [generator.createArrowFunction(
+                                undefined,
+                                undefined,
+                                [generator.createParameter(
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    generator.createIdentifier("items"),
+                                    undefined,
+                                    undefined,
+                                    undefined
+                                )],
+                                undefined,
+                                generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                                generator.createBlock([], false)
+                            )]
+                        )
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(
+                    expression.children[0].toString(),
+                    ""
+                );
+            });
+            
+            mocha.it(".map((item, index)=><div>) -> v-for='(item, index) of items'", function () { 
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createCall(
+                            generator.createPropertyAccess(
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier("viewModel"),
+                                    generator.createIdentifier("items")
+                                ),
+                                generator.createIdentifier("map")
+                            ),
+                            undefined,
+                            [generator.createArrowFunction(
+                                undefined,
+                                undefined,
+                                [generator.createParameter(
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    generator.createIdentifier("items"),
+                                    undefined,
+                                    undefined,
+                                    undefined
+                                ),
+                                generator.createParameter(
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    generator.createIdentifier("i"),
+                                    undefined,
+                                    undefined,
+                                    undefined
+                                )],
+                                undefined,
+                                generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                                generator.createJsxElement(
+                                    generator.createJsxOpeningElement(
+                                        generator.createIdentifier("div"),
+                                        undefined,
+                                        generator.createJsxAttributes([])
+                                    ),
+                                    [],
+                                    generator.createJsxClosingElement(generator.createIdentifier("div"))
+                                )
+                            )]
+                        )
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(
+                    expression.children[0].toString(),
+                    `<div v-for="(items,i) of viewModel.items"></div>`
+                );
+            });
+    
+            mocha.it("map with key attribute", function () { 
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createCall(
+                            generator.createPropertyAccess(
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier("viewModel"),
+                                    generator.createIdentifier("items")
+                                ),
+                                generator.createIdentifier("map")
+                            ),
+                            undefined,
+                            [generator.createArrowFunction(
+                                undefined,
+                                undefined,
+                                [generator.createParameter(
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    generator.createIdentifier("item"),
+                                    undefined,
+                                    undefined,
+                                    undefined
+                                )],
+                                undefined,
+                                generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                                generator.createJsxElement(
+                                    generator.createJsxOpeningElement(
+                                        generator.createIdentifier("div"),
+                                        undefined,
+                                        generator.createJsxAttributes([
+                                            generator.createJsxAttribute(
+                                                generator.createIdentifier("key"),
+                                                generator.createPropertyAccess(
+                                                    generator.createIdentifier("item"),
+                                                    generator.createIdentifier("id")
+                                                ))
+                                        ])
+                                    ),
+                                    [],
+                                    generator.createJsxClosingElement(generator.createIdentifier("div"))
+                                )
+                            )]
+                        )
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(
+                    removeSpaces(expression.children[0].toString()),
+                    removeSpaces(`<div :key="item.id" v-for="item of viewModel.items"></div>`)
+                );
+            });
+    
+            mocha.it("map inside an other map", function () { 
+                const insideExpression = generator.createCall(
+                    generator.createPropertyAccess(
+                        generator.createIdentifier("item"),
+                        generator.createIdentifier("map")
+                    ),
+                    undefined,
+                    [generator.createArrowFunction(
+                        undefined,
+                        undefined,
+                        [generator.createParameter(
+                            undefined,
+                            undefined,
+                            undefined,
+                            generator.createIdentifier("_"),
+                            undefined,
+                            undefined,
+                            undefined
+                        ),
+                        generator.createParameter(
+                            undefined,
+                            undefined,
+                            undefined,
+                            generator.createIdentifier("i"),
+                            undefined,
+                            undefined,
+                            undefined
+                        )],
+                        undefined,
+                        generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                        generator.createJsxElement(
+                            generator.createJsxOpeningElement(
+                                generator.createIdentifier("div"),
+                                undefined,
+                                generator.createJsxAttributes([
+                                    generator.createJsxAttribute(
+                                        generator.createIdentifier("key"),
+                                        generator.createIdentifier("i")
+                                    )
+                                ])
+                            ),
+                            [],
+                            generator.createJsxClosingElement(generator.createIdentifier("div"))
+                        )
+                    )]
+                );
+
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createCall(
+                            generator.createPropertyAccess(
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier("viewModel"),
+                                    generator.createIdentifier("items")
+                                ),
+                                generator.createIdentifier("map")
+                            ),
+                            undefined,
+                            [generator.createArrowFunction(
+                                undefined,
+                                undefined,
+                                [generator.createParameter(
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    generator.createIdentifier("item"),
+                                    undefined,
+                                    undefined,
+                                    undefined
+                                )],
+                                undefined,
+                                generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                                generator.createJsxElement(
+                                    generator.createJsxOpeningElement(
+                                        generator.createIdentifier("div"),
+                                        undefined,
+                                        generator.createJsxAttributes([
+                                            generator.createJsxAttribute(
+                                                generator.createIdentifier("key"),
+                                                generator.createPropertyAccess(
+                                                    generator.createIdentifier("item"),
+                                                    generator.createIdentifier("id")
+                                                ))
+                                        ])
+                                    ),
+                                    [
+                                        generator.createJsxExpression(
+                                            undefined,
+                                            insideExpression
+                                        )
+                                    ],
+                                    generator.createJsxClosingElement(generator.createIdentifier("div"))
+                                )
+                            )]
+                        )
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                ).children[0] as JsxExpression;
+    
+                assert.strictEqual(
+                    removeSpaces(expression.toString()),
+                    removeSpaces(
+                        `<div :key="item.id" v-for="item of viewModel.items">
+                            <div :key="i" v-for="(_,i) of item"></div>
+                        </div>`
+                    )
+                );
+            });
+
+            mocha.it("Parse map with destructuration", function () { 
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createCall(
+                            generator.createPropertyAccess(
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier("viewModel"),
+                                    generator.createIdentifier("items")
+                                ),
+                                generator.createIdentifier("map")
+                            ),
+                            undefined,
+                            [generator.createArrowFunction(
+                                undefined,
+                                undefined,
+                                [generator.createParameter(
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    generator.createObjectBindingPattern(
+                                        [
+                                            generator.createBindingElement(
+                                                undefined,
+                                                undefined,
+                                                generator.createIdentifier("p1")
+                                            ),
+                                            generator.createBindingElement(
+                                                undefined,
+                                                undefined,
+                                                generator.createIdentifier("p2")
+                                            )
+                                        ]
+                                    ),
+                                    undefined,
+                                    undefined,
+                                    undefined
+                                )],
+                                undefined,
+                                generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                                generator.createJsxElement(
+                                    generator.createJsxOpeningElement(
+                                        generator.createIdentifier("div"),
+                                        undefined,
+                                        generator.createJsxAttributes([])
+                                    ),
+                                    [
+                                        generator.createJsxExpression(
+                                            undefined,
+                                            generator.createIdentifier("p1")
+                                        ),
+                                        generator.createJsxExpression(
+                                            undefined,
+                                            generator.createIdentifier("p2")
+                                        )
+                                    ],
+                                    generator.createJsxClosingElement(generator.createIdentifier("div"))
+                                )
+                            )]
+                        )
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+
+                const property = generator.createProperty(
+                    [createDecorator("OneWay")],
+                    undefined,
+                    generator.createIdentifier("p1")
+                );
+    
+                assert.strictEqual(
+                    (expression.children[0].toString({
+                        members: [property],
+                        componentContext: "model",
+                        newComponentContext: ""
+                    })),
+                    (`<div v-for="{p1,p2} of viewModel.items">{{p1}}{{p2}}</div>`));
+            });
+        });
+
         mocha.describe("Template", function () { 
             mocha.it("<template/> -> <slot></slot>", function () {
                 const expression = generator.createJsxSelfClosingElement(

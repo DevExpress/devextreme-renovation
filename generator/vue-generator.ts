@@ -33,7 +33,7 @@ import { capitalizeFirstLetter, variableDeclaration } from "./base-generator/uti
 import SyntaxKind from "./base-generator/syntaxKind";
 import { Expression, SimpleExpression } from "./base-generator/expressions/base";
 import { ObjectLiteral, StringLiteral, NumericLiteral } from "./base-generator/expressions/literal";
-import { Parameter as BaseParameter } from "./base-generator/expressions/functions";
+import { Parameter as BaseParameter, getTemplate } from "./base-generator/expressions/functions";
 import { Block } from "./base-generator/expressions/statements";
 import {
     Function,
@@ -46,7 +46,8 @@ import {
     JsxAttribute as BaseJsxAttribute,
     JsxSpreadAttribute as BaseJsxSpreadAttribute,
     AngularDirective,
-    toStringOptions
+    toStringOptions,
+    isElement
 } from "./angular-generator";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
@@ -715,6 +716,10 @@ export class JsxAttribute extends BaseJsxAttribute {
         return name;
     }
 
+    compileKey() { 
+        return null;
+    }
+
     compileRef(options?: toStringOptions) { 
         return `ref="${this.compileInitializer(options)}"`;
     }
@@ -921,6 +926,48 @@ export class JsxChildExpression extends BaseJsxChildExpression {
         }
         return `<slot name="${slot.name}"></slot>`;
     }
+
+    compileIterator(iterator: ArrowFunction | Function, expression: Call, options?: toStringOptions): string {
+        const templateOptions = options ? { ...options } : { members: [] };
+        const templateExpression = getTemplate(iterator, templateOptions, true);
+        const itemsExpression = (expression.expression as PropertyAccess).expression;
+        const vForValue = [iterator.parameters[0].name.toString()];
+
+        if (iterator.parameters[1]) {
+            vForValue.push(iterator.parameters[1].toString());
+        }
+
+        const vForAttribute = new VueDirective(
+            new Identifier("v-for"),
+            new SimpleExpression(`${
+                vForValue.length > 1
+                    ? `(${vForValue})` :
+                    vForValue[0].toString()
+                } of ${itemsExpression.toString(options)}`)
+        );
+
+        if (isElement(templateExpression)) {
+            const element = templateExpression.clone();
+            element.addAttribute(vForAttribute);
+
+            const elementString = element.toString(templateOptions);
+            if (options) {
+                options.hasStyle = options.hasStyle || templateOptions.hasStyle;
+            }
+            return elementString;
+        }
+
+        if (templateExpression) {
+            const expression:JsxChildExpression = new JsxChildExpression(templateExpression as JsxExpression);
+            return this.createContainer(
+                [vForAttribute as JsxAttribute],
+                [expression]
+            )
+                .toString(templateOptions);
+        }
+
+        return "";
+    }
 }
 
 const emptyToString = () => "";
@@ -1008,6 +1055,10 @@ class VueGenerator extends BaseGenerator {
 
     createJsxSelfClosingElement(tagName: Expression, typeArguments?: any, attributes?: Array<JsxAttribute | JsxSpreadAttribute>) {
         return new JsxSelfClosingElement(tagName, typeArguments, attributes, this.getContext());
+    }
+
+    createJsxAttributes(properties: Array<JsxAttribute|JsxSpreadAttribute>) {
+        return properties;
     }
 
     createJsxClosingElement(tagName: Expression) {
