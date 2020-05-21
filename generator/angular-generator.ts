@@ -29,6 +29,7 @@ import { Block } from "./base-generator/expressions/statements";
 import {
     ArrowFunction as BaseArrowFunction,
     Function as BaseFunction,
+    BaseFunction as BaseBaseFunction,
     Parameter,
     getTemplate 
 } from "./base-generator/expressions/functions";
@@ -46,7 +47,7 @@ import { processComponentContext, capitalizeFirstLetter } from "./base-generator
 const VOID_ELEMENTS = 
     ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"];
 
-const isElement = (e: any): e is JsxElement | JsxSelfClosingElement =>
+export const isElement = (e: any): e is JsxElement | JsxSelfClosingElement =>
     e instanceof JsxElement || e instanceof JsxSelfClosingElement || e instanceof BaseJsxOpeningElement;
 
 export const counter = (function () {
@@ -316,7 +317,7 @@ export class JsxAttribute extends BaseJsxAttribute {
         return name;
     }
 
-    compileKey() { 
+    compileKey(): string|null { 
         return "";
     }
 
@@ -353,8 +354,8 @@ export class JsxAttribute extends BaseJsxAttribute {
 
         const name = this.compileName(options);
 
-        if(name==="key") { 
-            return this.compileKey();
+        if (name === "key" && this.compileKey() !== null) {
+            return this.compileKey() as string;
         }
 
         if (this.isStringLiteralValue()) { 
@@ -424,13 +425,13 @@ export class JsxExpression extends BaseJsxExpression {
         return variableExpression || this.expression;
     }
 
-    getIterator(expression: Expression): ArrowFunction | Function | undefined {
+    getIterator(expression: Expression): BaseBaseFunction| undefined {
         if (expression instanceof Call &&
-            (expression.expression instanceof PropertyAccess ||
+            (expression.expression instanceof BasePropertyAccess ||
                 expression.expression instanceof PropertyAccessChain) &&
             expression.expression.name.toString() === "map") {
             const iterator = expression.arguments[0];
-            if (iterator instanceof ArrowFunction || iterator instanceof Function) {
+            if (iterator instanceof BaseBaseFunction) {
                 return iterator;
             }
         }
@@ -486,7 +487,7 @@ export class JsxChildExpression extends JsxExpression {
         return `<div #slot${capitalizeFirstLetter(slot.name)} style="display: contents">${slotValue}</div>`;
     }
 
-    createIfAttribute(condition: Expression) { 
+    createIfAttribute(condition: Expression): JsxAttribute { 
         return new AngularDirective(
             new Identifier("*ngIf"),
             condition
@@ -596,6 +597,49 @@ export class JsxChildExpression extends JsxExpression {
         }, templateOptions)
     }
 
+    compileIterator(iterator: BaseBaseFunction, expression: Call, options?: toStringOptions): string {
+        const templateOptions = options ? { ...options } : { members: [] };
+        const templateExpression = getTemplate(iterator, templateOptions, true);
+        const itemsExpression = (expression.expression as PropertyAccess).expression;
+        const itemName = this.getIteratorItemName(iterator.parameters[0].name, templateOptions).toString();
+        const itemsExpressionString = itemsExpression.toString(options);
+        let template: string = templateExpression ? templateExpression.toString(templateOptions) : "";
+        const item = `let ${itemName} of ${itemsExpressionString}`;
+        const ngForValue = [item];
+        if (iterator.parameters[1]) {
+            ngForValue.push(`index as ${iterator.parameters[1]}`);
+        }
+
+        if (isElement(templateExpression)) {
+            const keyAttribute = templateExpression.attributes
+                .find(a => a instanceof JsxAttribute && a.name.toString() === "key") as JsxAttribute;
+            if (keyAttribute) {
+                const trackByName = new Identifier(`_trackBy_${itemsExpressionString.replace(".", "_")}_${counter.get()}`);
+                ngForValue.push(`trackBy: ${trackByName}`);
+                templateExpression.addAttribute(
+                    new TrackByAttribute(
+                        trackByName,
+                        keyAttribute.initializer.toString(templateOptions),
+                        iterator.parameters[1]?.name.toString() || "",
+                        itemName
+                    )
+                );
+            }
+            if (options) {
+                options.hasStyle = options.hasStyle || templateOptions.hasStyle;
+            }
+        }
+
+        if (templateExpression instanceof BaseJsxExpression) { 
+            const expression = new JsxChildExpression(templateExpression as JsxExpression);
+            template = expression.toString(templateOptions);
+        }
+                
+        return `<ng-container *ngFor="${ngForValue.join(";")}">${
+            template
+        }</ng-container>`;
+    }
+
     toString(options?: toStringOptions) {
         const expression = this.getExpression(options);
         
@@ -609,41 +653,7 @@ export class JsxChildExpression extends JsxExpression {
         const iterator = this.getIterator(expression);
        
         if (iterator) {
-            const templateOptions = options ? { ...options } : { members: [] };
-            const templateExpression = getTemplate(iterator, templateOptions, true);
-            const itemsExpression = ((expression as Call).expression as PropertyAccess).expression;
-            const itemName = this.getIteratorItemName(iterator.parameters[0].name, templateOptions).toString();
-            const itemsExpressionString = itemsExpression.toString(options);
-            const template: string = templateExpression ? templateExpression.toString(templateOptions) : "";
-            const item = `let ${itemName} of ${itemsExpressionString}`;
-            const ngForValue = [item];
-            if (iterator.parameters[1]) {
-                ngForValue.push(`index as ${iterator.parameters[1]}`);
-            }
-
-            if (isElement(templateExpression)) {
-                const keyAttribute = templateExpression.attributes
-                    .find(a => a instanceof JsxAttribute && a.name.toString() === "key") as JsxAttribute;
-                if (keyAttribute) {
-                    const trackByName = new Identifier(`_trackBy_${itemsExpressionString.replace(".", "_")}_${counter.get()}`);
-                    ngForValue.push(`trackBy: ${trackByName}`);
-                    templateExpression.addAttribute(
-                        new TrackByAttribute(
-                            trackByName,
-                            keyAttribute.initializer.toString(templateOptions),
-                            iterator.parameters[1]?.name.toString() || "",
-                            itemName
-                        )
-                    );
-                }
-                if (options) { 
-                    options.hasStyle = options.hasStyle || templateOptions.hasStyle;
-                }
-            }
-                
-            return `<ng-container *ngFor="${ngForValue.join(";")}">${
-                template
-                }</ng-container>`;
+            return this.compileIterator(iterator, expression as Call, options);
         }
 
         if (expression instanceof Call) {
@@ -785,6 +795,12 @@ export class Function extends AngularBaseFunction {
 }
 
 export class ArrowFunction extends BaseArrowFunction { 
+    processTemplateExpression(expression?: JsxExpression) { 
+        if (expression && !isElement(expression)) { 
+            return new JsxChildExpression(expression);
+        }
+        return super.processTemplateExpression(expression);
+    }
     toString(options?:toStringOptions) { 
         if (this.isJsx()) { 
             return "";
@@ -1277,7 +1293,8 @@ export class AngularComponent extends Component {
 
         const decoratorToStringOptions: toStringOptions = {
             members: this.members,
-            newComponentContext: this.viewModel ? "_viewModel" : ""
+            newComponentContext: this.viewModel ? "_viewModel" : "",
+            disableTemplates: true
         };
 
         const componentDecorator = this.decorator.toString(decoratorToStringOptions);

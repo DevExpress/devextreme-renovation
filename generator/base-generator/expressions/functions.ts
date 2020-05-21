@@ -44,9 +44,6 @@ export function getTemplate(
     doNotChangeContext = false,
     globals?: VariableExpression
 ) {
-    if (!functionWithTemplate.isJsx()) {
-        return;
-    }
 
     const statements = functionWithTemplate.body instanceof Block ?
         functionWithTemplate.body.statements :
@@ -57,10 +54,10 @@ export function getTemplate(
         statements[0];
 
     if (returnStatement) { 
-        const componentParamenter = functionWithTemplate.parameters[0];
+        const componentParameter = functionWithTemplate.parameters[0];
         if (options) { 
-            if (!doNotChangeContext && componentParamenter && componentParamenter.name instanceof Identifier) { 
-                options.componentContext = componentParamenter.name.toString();
+            if (!doNotChangeContext && componentParameter && componentParameter.name instanceof Identifier) { 
+                options.componentContext = componentParameter.name.toString();
             }
 
             options.variables = statements.reduce((v: VariableExpression, statement) => {
@@ -76,10 +73,12 @@ export function getTemplate(
                 ...globals
             });
 
-            if (componentParamenter && componentParamenter.name instanceof BindingPattern) {
-                options.componentContext = SyntaxKind.ThisKeyword;
+            if (componentParameter && componentParameter.name instanceof BindingPattern) {
+                if (!doNotChangeContext || !options.componentContext) { 
+                    options.componentContext = SyntaxKind.ThisKeyword;
+                }
                 options.variables = {
-                    ...componentParamenter.name.getVariableExpressions(new SimpleExpression(options.componentContext)),
+                    ...componentParameter.name.getVariableExpressions(new SimpleExpression(options.componentContext)),
                     ...options.variables
                 }
             }

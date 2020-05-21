@@ -1499,6 +1499,53 @@ mocha.describe("Angular generator", function () {
     
                 assert.strictEqual(expression.children[0].toString(), `<ng-container *ngFor="let items of viewModel.items"><div ></div></ng-container>`);
             });
+
+            mocha.it(".map((item)=>item) -> *ngFor", function () { 
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createCall(
+                            generator.createPropertyAccess(
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier("viewModel"),
+                                    generator.createIdentifier("items")
+                                ),
+                                generator.createIdentifier("map")
+                            ),
+                            undefined,
+                            [generator.createArrowFunction(
+                                undefined,
+                                undefined,
+                                [generator.createParameter(
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    generator.createIdentifier("items"),
+                                    undefined,
+                                    undefined,
+                                    undefined
+                                )],
+                                undefined,
+                                generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                                generator.createIdentifier("items")
+                            )]
+                        )
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                assert.strictEqual(
+                    expression.children[0].toString(),
+                    `<ng-container *ngFor="let items of viewModel.items">{{items}}</ng-container>`
+                );
+            });
             
             mocha.it(".map((item, index)=><div>) -> *ngFor", function () { 
                 const expression = generator.createJsxElement(
@@ -2025,7 +2072,7 @@ mocha.describe("Angular generator", function () {
                 );
 
                 assert.strictEqual(expression.isJsx(), false);
-                assert.strictEqual(expression.getTemplate(), "");
+                assert.strictEqual(expression.getTemplate(), "{{true}}");
                 assert.strictEqual(getResult(expression.toString()), getResult("()=>true"));
             });
 
