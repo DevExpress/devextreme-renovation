@@ -1,5 +1,7 @@
+ <template>
+   <div ></div>
+</template>
 <script>
-function view(model) {}
 function subscribe(p, s, i) {
   return 1;
 }

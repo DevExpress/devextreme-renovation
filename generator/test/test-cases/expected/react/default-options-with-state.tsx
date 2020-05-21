@@ -38,15 +38,7 @@ export default function Widget(props: typeof WidgetProps) {
         return restProps;
     }, [props]);
 
-    return view(({
-        props: {
-            ...props,
-            p1: (props.p1 !== undefined ? props.p1 : __state_p1),
-            p2: (props.p2 !== undefined ? props.p2 : __state_p2)
-        },
-        restAttributes: __restAttributes()
-    })
-    );
+    return view();
 }
 
 

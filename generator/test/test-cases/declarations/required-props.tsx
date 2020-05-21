@@ -1,6 +1,6 @@
-import { Component, OneWay, Event, ComponentBindings, JSXComponent } from "../../../component_declaration/common";
+import { Component, OneWay, ComponentBindings, JSXComponent } from "../../../component_declaration/common";
 
-function view(model: Widget) { }
+function view() { }
 
 @ComponentBindings()
 class WidgetInput {

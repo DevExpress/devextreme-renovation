@@ -1,6 +1,8 @@
 import { OneWay, TwoWay, Component, InternalState, Effect, ComponentBindings, JSXComponent } from "../../../component_declaration/common";
 
-function view(model: Widget) { }
+function view(model: Widget) { 
+    return <div></div>
+}
 
 function subscribe(p: string, s: number, i: number) {
     return 1;

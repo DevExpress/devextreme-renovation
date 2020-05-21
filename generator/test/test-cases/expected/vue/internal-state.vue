@@ -1,5 +1,7 @@
+<template>
+  <span ></span>
+</template>
 <script>
-function view() {}
 
 export default {
   data(){

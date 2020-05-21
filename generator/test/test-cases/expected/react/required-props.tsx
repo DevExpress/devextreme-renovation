@@ -1,4 +1,4 @@
-function view(model: Widget) {
+function view() {
 
 }
 export declare type WidgetInputType = {
@@ -36,13 +36,7 @@ export default function Widget(props: Required<typeof WidgetInput>) {
         return restProps;
     }, [props]);
 
-    return view(({
-        props: { ...props },
-        getHeight: __getHeight(),
-        type: __type(),
-        restAttributes: __restAttributes()
-    })
-    );
+    return view();
 }
 
 function __createDefaultProps() {

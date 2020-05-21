@@ -1,6 +1,3 @@
-function view(model: Widget) {
-
-}
 import { Input, Output, EventEmitter } from "@angular/core";
 class WidgetInput {
     @Input() height: number = 10;
@@ -10,7 +7,10 @@ class WidgetInput {
 
 import { Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common"
-@Component({ selector: "dx-widget" })
+@Component({
+    selector: "dx-widget",
+    template: `<span></span>`
+})
 export default class Widget extends WidgetInput {
     __getHeight(): number {
         this.onClick!.emit(10);

@@ -1,6 +1,8 @@
 import { Component, OneWay, Event, ComponentBindings, JSXComponent } from "../../../component_declaration/common";
 
-function view(model: Widget) { }
+function view(model: Widget) {
+    return <span></span>;
+ }
 
 @ComponentBindings()
 class WidgetInput { 

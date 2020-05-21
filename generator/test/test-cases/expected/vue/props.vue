@@ -1,5 +1,7 @@
- <script>
-function view(model) {}
+<template>
+  <span ></span>
+</template>
+<script>
 const WidgetInput = {
   height: {
     type: Number,

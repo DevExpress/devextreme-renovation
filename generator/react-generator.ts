@@ -473,6 +473,8 @@ export class ReactComponent extends Component {
     }
 
     toString() {
+        const viewFunction = this.context.viewFunctions?.[this.view];
+
         return `
             ${this.compileImports()}
             ${this.compileComponentRef()}
@@ -491,9 +493,12 @@ export class ReactComponent extends Component {
                         }]);`;
                     }).join("\n")}
                 ${this.compileUseEffect()}
-                return ${this.view}(${this.viewModel}({
-                        ${ this.compileViewModelArguments().join(",\n")}
-                    })
+                return ${this.view}(
+                    ${viewFunction?.parameters.length
+                        ? `${this.viewModel}({
+                            ${this.compileViewModelArguments().join(",\n")}
+                        })`
+                        : ""}
                 );
             ${this.api.length === 0 ? `}` : `});\n${this.modifiers.join(" ")} ${this.name};`}
             

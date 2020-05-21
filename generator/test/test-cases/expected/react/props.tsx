@@ -1,5 +1,5 @@
 function view(model: Widget) {
-
+    return <span></span>
 }
 export declare type WidgetInputType = {
     height: number;

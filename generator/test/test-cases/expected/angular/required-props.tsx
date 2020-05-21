@@ -1,4 +1,4 @@
-function view(model: Widget) {
+function view() {
 
 }
 
