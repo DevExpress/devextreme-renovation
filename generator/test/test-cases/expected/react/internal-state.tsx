@@ -1,4 +1,6 @@
-function view() { }
+function view(model:Widget) {
+  return <span></span>;
+}
 
 import React, { useState, useCallback } from 'react';
 

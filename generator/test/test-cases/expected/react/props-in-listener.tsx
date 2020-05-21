@@ -25,9 +25,5 @@ export function Component(props: {
     return restProps;
   }, [props]);
 
-  return view(viewModel({
-    ...props,
-    clickHandler,
-    restAttributes: __restAttributes()
-  }));
+  return view();
 }

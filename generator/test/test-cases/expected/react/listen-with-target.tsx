@@ -27,10 +27,5 @@ export function Component(props: {}) {
     };
   });
   
-  return view(viewModel({
-    ...props,
-    onPointerUp,
-    scrollHandler,
-    restAttributes: __restAttributes()
-  }));
+  return view();
 }

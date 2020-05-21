@@ -1,6 +1,3 @@
-function view(model: Widget) {
-
-}
 function subscribe(p: string, s: number, i: number) {
     return 1;
 }
@@ -16,7 +13,10 @@ export class WidgetInput {
 
 import { Component, NgModule} from "@angular/core";
 import { CommonModule } from "@angular/common";
-@Component({ selector: "dx-widget" })
+@Component({
+    selector: "dx-widget",
+    template: `<div ></div>`
+})
 export default class Widget extends WidgetInput {
     i: number = 10
     __setupData(): any {

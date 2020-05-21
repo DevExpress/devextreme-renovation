@@ -1,11 +1,8 @@
-function view() {
-
-}
-
 import { Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common"
 @Component({
-    selector: "dx-widget"
+    selector: "dx-widget",
+    template:`<span ></span>`
 })
 export default class Widget {
     _hovered: Boolean = false

@@ -1,9 +1,5 @@
 export const COMPONENT_INPUT_CLASS = "c3";
 
-function view() {
-
-}
-
 import { Input, ViewChild,ElementRef } from "@angular/core";
 export class WidgetProps {
     @Input() height?: number = 10;
@@ -19,7 +15,10 @@ export class WidgetProps {
 
 import {Component,NgModule} from "@angular/core";
 import { CommonModule } from "@angular/common"
-@Component({ selector: "dx-widget" })
+@Component({
+    selector: "dx-widget",
+    template: `<div ></div>`
+})
 export default class Widget extends WidgetProps {
     __onClick(): any {
         const v = this.height

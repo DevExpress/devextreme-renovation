@@ -1,5 +1,5 @@
 function view(model: Widget) {
-
+    return <div></div>
 }
 function subscribe(p: string, s: number, i: number) {
     return 1;

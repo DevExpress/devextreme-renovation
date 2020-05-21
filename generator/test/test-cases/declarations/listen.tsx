@@ -1,10 +1,14 @@
-function view() { }
+import { Component, Listen } from "../../../component_declaration/common";
+
+function view(model: Widget) {
+    return <div></div>
+ }
 
 @Component({
     name: 'Component',
     view,
 })
-export class Component {
+export class Widget {
     @Listen()
     onClick(e) {}
 

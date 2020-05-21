@@ -1,6 +1,8 @@
 import { Component, InternalState } from "../../../component_declaration/common";
 
-function view() {}
+function view(model: Widget) {
+    return <span></span>;
+}
 
 @Component({
     view

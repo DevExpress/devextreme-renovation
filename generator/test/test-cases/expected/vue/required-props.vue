@@ -1,5 +1,5 @@
 <script>
-function view(model) {}
+function view() {}
 const WidgetInput = {
   size: {
     default() {

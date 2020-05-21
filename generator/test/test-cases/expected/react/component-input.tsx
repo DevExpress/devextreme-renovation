@@ -1,6 +1,8 @@
 export const COMPONENT_INPUT_CLASS = "c3";
 
-function view() { }
+function view(model: Widget) {
+    return <div></div>
+ }
 
 export declare type WidgetPropsType = {
     height?: number;

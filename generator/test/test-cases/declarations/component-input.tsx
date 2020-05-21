@@ -2,7 +2,9 @@ import { OneWay, JSXComponent, Component, ComponentBindings, Slot } from "../../
 
 export const COMPONENT_INPUT_CLASS = "c3";
 
-function view() { }
+function view(model: Widget) {
+    return <div></div>
+ }
 
 @ComponentBindings()
 export class WidgetProps { 

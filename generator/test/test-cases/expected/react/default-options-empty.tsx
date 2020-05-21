@@ -16,10 +16,7 @@ export default function Widget(props: typeof WidgetProps) {
         const { ...restProps } = props;
         return restProps;
     }, [props]);
-    return view(({
-        props: { ...props },
-        restAttributes: __restAttributes()
-    }));
+    return view();
 }
 
 function __createDefaultProps() {
