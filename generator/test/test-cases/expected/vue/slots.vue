@@ -16,6 +16,12 @@ export default {
   methods: {
     __restAttributes() {
       return {};
+    },
+    props(){
+      return {
+        namedSlot:this.$slots.namedSlot,
+        default:this.$slots.default
+      };
     }
   }
 };

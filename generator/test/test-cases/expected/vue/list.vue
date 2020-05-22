@@ -15,6 +15,9 @@ export default {
   methods: {
     __restAttributes() {
       return {};
+    },
+    props(){
+      return {items:this.items};
     }
   }
 };

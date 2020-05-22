@@ -23,7 +23,12 @@ export default {
     __restAttributes() {
       return {};
     },
-
+    props(){
+      return {
+        height:this.height,
+        onClick:this.onClick
+      };
+    },
     onClick(...args) {
       this.$emit("on-click", ...args);
     }

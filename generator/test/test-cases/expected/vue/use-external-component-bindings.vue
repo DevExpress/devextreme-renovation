@@ -47,6 +47,11 @@ export default {
   methods: {
     __restAttributes() {
       return {};
+    },
+    props(){
+      return {
+        height:this.height
+      };
     }
   },
   beforeCreate() {
