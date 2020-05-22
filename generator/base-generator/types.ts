@@ -2,6 +2,7 @@ import { Property, Method } from "./expressions/class-members"
 import { Heritable } from "./expressions/class"
 import { ImportDeclaration } from "./expressions/import"
 import { ArrowFunction, Function } from "./expressions/functions"
+import { Component } from "./expressions/component"
 
 export interface IExpression { 
     getDependency(): string[];
@@ -16,6 +17,7 @@ export type toStringOptions = {
     componentContext?: string;
     newComponentContext?: string;
     variables?: VariableExpression;
+    jsxComponent?: Component;
 }
 
 export type VariableExpression = { 

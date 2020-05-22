@@ -714,7 +714,7 @@ export class JsxAttribute extends BaseJsxAttribute {
 
     compileName(options?: toStringOptions) { 
         const name = this.name.toString();
-        if (!(options?.eventProperties)) {
+        if (!(options?.jsxComponent)) {
             if (name === "className") { 
                 return this.isStringLiteralValue() ? "class" : "v-bind:class";
             }
@@ -746,7 +746,7 @@ export class JsxAttribute extends BaseJsxAttribute {
     }
 
     compileEvent(options?: toStringOptions) {
-        return `@${getEventName(this.name, options?.stateProperties)}="${this.compileInitializer(options)}"`;
+        return `@${getEventName(this.name, options?.jsxComponent?.state)}="${this.compileInitializer(options)}"`;
     }
 
     compileBase(name: string, value: string) { 

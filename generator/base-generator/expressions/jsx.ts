@@ -56,7 +56,14 @@ export class JsxOpeningElement extends Expression {
         }
     }
 
-    attributesString(options?:toStringOptions) { 
+    attributesString(options?: toStringOptions) { 
+        if (this.component && options) { 
+            options = {
+                ...options,
+                jsxComponent: this.component
+            }
+        }
+
         return this.attributes.map(a => a.toString(options))
             .filter(s => s)
             .join("\n");

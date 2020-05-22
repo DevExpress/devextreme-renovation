@@ -66,8 +66,6 @@ export const counter = (function () {
 
 export interface toStringOptions extends  BaseToStringOptions {
     members: Array<Property | Method>;
-    eventProperties?: Array<Property>;
-    stateProperties?: Array<Property>;
     hasStyle?: boolean
 }
 
@@ -175,16 +173,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     }
 
     attributesString(options?: toStringOptions) {
-        if (this.component && options) { 
-            options = {
-                ...options,
-                eventProperties: this.component.members.filter(m => m.isEvent) as Property[],
-                stateProperties: this.component.members.filter(m => m.isState) as Property[]
-            }
-        }
-
         this.processSpreadAttributes(options);
-        
         return super.attributesString(options);
     }
 
@@ -299,7 +288,7 @@ export class JsxAttribute extends BaseJsxAttribute {
 
     compileName(options?: toStringOptions) { 
         const name = this.name.toString();
-        if (!(options?.eventProperties)) {
+        if (!(options?.jsxComponent)) {
             if (name === "className") { 
                 return "class";
             }
@@ -345,7 +334,11 @@ export class JsxAttribute extends BaseJsxAttribute {
             return this.compileRef(options);
         }
         
-        if (options?.eventProperties?.find(p=>p.name===this.name.toString())) { 
+        if (
+            options?.jsxComponent?.members
+                .filter(m => m.isEvent)
+                .find(p => p.name === this.name.toString())
+        ) {
             return this.compileEvent(options);
         }
 
