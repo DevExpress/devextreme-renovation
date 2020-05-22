@@ -64,6 +64,12 @@ export default {
     },
     __restAttributes() {
       return {};
+    },
+    props(){
+      return {
+        size: this.size,
+        type: this.type
+      };
     }
   },
   beforeCreate() {

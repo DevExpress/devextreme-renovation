@@ -42,6 +42,14 @@ export default {
     __restAttributes() {
       return {};
     },
+    props(){
+      return {
+        baseStateProp:(this.baseStateProp !== undefined ? this.baseStateProp : this.baseStateProp_state),
+        baseStatePropChange:this.baseStatePropChange,
+        modelStateProp:(this.modelStateProp !== undefined ? this.modelStateProp : this.modelStateProp_state),
+        modelStatePropChange:this.modelStatePropChange
+      };
+    },
     baseStatePropChange(...args){
       this.$emit("update:base-state-prop", ...args);
     },

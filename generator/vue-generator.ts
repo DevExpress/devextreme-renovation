@@ -34,7 +34,7 @@ import SyntaxKind from "./base-generator/syntaxKind";
 import { Expression, SimpleExpression } from "./base-generator/expressions/base";
 import { ObjectLiteral, StringLiteral, NumericLiteral } from "./base-generator/expressions/literal";
 import { Parameter as BaseParameter, getTemplate } from "./base-generator/expressions/functions";
-import { Block } from "./base-generator/expressions/statements";
+import { Block, ReturnStatement } from "./base-generator/expressions/statements";
 import {
     Function,
     ArrowFunction,
@@ -262,6 +262,35 @@ export class VueComponent extends Component {
             ], true));
     }
 
+    createPropsGetter(members: Array<Property | Method>) { 
+        const defaultStatePropsName = members.filter(p => p.isState).map(m => `default${capitalizeFirstLetter(m.name)}`);
+        const props = getProps(members).filter(m => !defaultStatePropsName.some(s => s === m.name));
+        const expression = new ObjectLiteral(
+            props.map(p => new PropertyAssignment(
+                p._name,
+                new PropertyAccess(
+                    new PropertyAccess(
+                        new Identifier(SyntaxKind.ThisKeyword),
+                        new Identifier("props")
+                    ),
+                    p._name
+                )
+            )),
+            true
+        );
+
+        return new GetAccessor(
+            [],
+            [],
+            new Identifier("props"),
+            [],
+            undefined,
+            new Block([
+                new ReturnStatement(expression)
+            ], true)
+        );
+    }
+
     processMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) { 
         members = super.processMembers(members, heritageClauses);
         members = members.reduce((members, m) => { 
@@ -285,6 +314,9 @@ export class VueComponent extends Component {
             }
             return members;
         }, members);
+
+        members.push(this.createPropsGetter(members));
+
         return members;
     }
 
@@ -658,25 +690,6 @@ export class NonNullExpression extends BaseNonNullExpression {
 }
 
 export class PropertyAccess extends BasePropertyAccess { 
-
-    processProps(result: string, options: toStringOptions) {
-        const props = getProps(options.members);
-        const expression = new ObjectLiteral(
-            props.map(p => new PropertyAssignment(
-                p._name,
-                new PropertyAccess(
-                    new PropertyAccess(
-                        new Identifier(SyntaxKind.ThisKeyword),
-                        new Identifier("props")
-                    ),
-                    p._name
-                )
-            )),
-            true
-        );
-        return expression.toString(options);
-    }
-
     compileStateSetting(state: string, property: Property, options?: toStringOptions) {
         const isState = property.isState;
         const propertyName = isState ? `${property.name}_state` : property.name;

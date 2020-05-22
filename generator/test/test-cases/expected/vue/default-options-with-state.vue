@@ -73,6 +73,14 @@ export default {
     __restAttributes() {
       return {};
     },
+    props(){
+      return {
+        p1:(this.p1 !== undefined ? this.p1 : this.p1_state),
+        p2:(this.p2 !== undefined ? this.p2 : this.p2_state),
+        p1Change:this.p1Change,
+        p2Change:this.p2Change
+      };
+    },
     p1Change(...args) {
       this.$emit("update:p1", ...args);
     },

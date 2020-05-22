@@ -46,6 +46,9 @@ export default {
   methods: {
     __restAttributes() {
       return {};
+    },
+    props(){
+      return {};
     }
   },
   beforeCreate() {

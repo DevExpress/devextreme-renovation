@@ -20,6 +20,9 @@ export default {
     },
     __restAttributes() {
       return {};
+    },
+    props(){
+      return {};
     }
   }
 };

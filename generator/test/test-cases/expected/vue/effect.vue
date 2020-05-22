@@ -46,6 +46,13 @@ export default {
     __restAttributes() {
       return {};
     },
+    props(){
+      return {
+        p:this.p,
+        s:(this.s !== undefined ? this.s : this.s_state),
+        sChange:this.sChange
+      };
+    },
     setupData() {
       const id = subscribe(
         this.p,
