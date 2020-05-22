@@ -74,7 +74,7 @@ export class PropertyAccess extends ExpressionWithExpression {
     toString(options?: toStringOptions) {
         const member = this.getMember(options);
         if (member) {
-            return `${member.getter(options?.newComponentContext)}`;
+            return `${member.getter(options!.newComponentContext)}`;
         }
 
         const result = `${this.expression.toString(options)}.${this.name}`;
