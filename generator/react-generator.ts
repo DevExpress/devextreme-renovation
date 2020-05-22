@@ -525,7 +525,13 @@ export class ReactComponent extends Component {
 
 export class JsxAttribute extends BaseJsxAttribute { 
     toString(options?:toStringOptions) { 
-        const name = this.name.toString(options);
+        let name = this.name.toString(options);
+        if (options?.jsxComponent) { 
+            const member = options.jsxComponent.members.find(m => m._name.toString() === this.name.toString());
+            if (member) { 
+                name = member.name;
+            }
+        }
         return `${(eventsDictionary as any)[name] || name}=${this.initializer.toString(options)}`;
     }
 }

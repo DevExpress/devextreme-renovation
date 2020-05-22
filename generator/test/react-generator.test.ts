@@ -231,7 +231,6 @@ mocha.describe("react-generator: expressions", function () {
     });
 });
 
-
 function createComponent(inputMembers: Array<Property | Method>, componentMembers: Array<Property | Method> = [], parameters: { [name: string]: any } = {}):ReactComponent { 
     generator.createClassDeclaration(
         [generator.createDecorator(
@@ -1254,6 +1253,94 @@ mocha.describe("import Components", function () {
 
         assert.strictEqual(members[2].defaultDeclaration(), "defaultP:undefined");
         assert.strictEqual(members[2].typeDeclaration(), "defaultP?:string");
+    });
+});
+
+mocha.describe("Widget in jsx element", function () {
+    this.beforeEach(function () {
+        generator.setContext({
+            dirname: __dirname
+        });
+    });
+
+    this.afterEach(function () {
+        generator.setContext(null);
+    });
+
+    mocha.it("template->render, default->children", function () {
+        generator.createClassDeclaration(
+            [createComponentDecorator({})],
+            [],
+            generator.createIdentifier("Widget"),
+            [],
+            [],
+            [
+                generator.createProperty(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("p"),
+                    undefined,
+                    undefined,
+                    undefined
+                ),
+                generator.createProperty(
+                    [createDecorator("Template")],
+                    [],
+                    generator.createIdentifier("contentTemplate"),
+                    undefined,
+                    undefined,
+                    undefined
+                ),
+                generator.createProperty(
+                    [createDecorator("Slot")],
+                    [],
+                    generator.createIdentifier("default"),
+                    undefined,
+                    undefined,
+                    undefined
+                )
+            ]
+        );
+
+        const element = generator.createJsxSelfClosingElement(
+            generator.createIdentifier("Widget"),
+            [],
+            [
+                generator.createJsxAttribute(
+                    generator.createIdentifier("contentTemplate"),
+                    generator.createJsxExpression(
+                        undefined,
+                        generator.createIdentifier("value")
+                    )
+                ),
+                generator.createJsxAttribute(
+                    generator.createIdentifier("p"),
+                    generator.createJsxExpression(
+                        undefined,
+                        generator.createIdentifier("value1")
+                    )
+                ),
+                generator.createJsxAttribute(
+                    generator.createIdentifier("default"),
+                    generator.createJsxExpression(
+                        undefined,
+                        generator.createIdentifier("value2")
+                    )
+                )
+            ]
+        );
+
+        assert.strictEqual(
+            getResult(element.toString({
+                members: [],
+            })),
+            getResult(`
+            <Widget 
+                contentRender={value}
+                p={value1}
+                children={value2}
+            />`)
+        );
     });
 });
 
