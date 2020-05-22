@@ -117,7 +117,11 @@ mocha.describe("vue-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it("model-binding", function () {
+    mocha.it("model-value-disabled", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("model", function () {
         this.testGenerator(this.test!.title);
     });
 

@@ -2,7 +2,7 @@
   <div>{{(state1 !== undefined ? state1 : state1_state)}}<BaseState @update:base-state-prop="stateChange"></BaseState></div>
 </template>
 <script>
-import BaseState from "./model-binding";
+import BaseState from "./model";
 const WidgetInput = {
   state1: {
     type: Boolean,
