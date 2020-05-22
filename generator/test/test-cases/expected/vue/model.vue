@@ -47,7 +47,9 @@ export default {
         baseStateProp:(this.baseStateProp !== undefined ? this.baseStateProp : this.baseStateProp_state),
         baseStatePropChange:this.baseStatePropChange,
         modelStateProp:(this.modelStateProp !== undefined ? this.modelStateProp : this.modelStateProp_state),
-        modelStatePropChange:this.modelStatePropChange
+        value:(this.value !== undefined ? this.value : this.value_state),
+        modelStatePropChange:this.modelStatePropChange,
+        valueChange:this.valueChange
       };
     },
     baseStatePropChange(...args){

@@ -37,6 +37,15 @@ export default {
     __restAttributes() {
       return {};
     },
+    props(){
+      return {
+        disabled:this.disabled,
+        value:(this.value !== undefined ? this.value : this.value_state),
+        notValue:(this.notValue !== undefined ? this.notValue : this.notValue_state),
+        valueChange:this.valueChange,
+        notValueChange:this.notValueChange
+      };
+    },
     valueChange(...args){
       this.$emit("update:value", ...args);
     },
