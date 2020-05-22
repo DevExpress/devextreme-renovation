@@ -13,6 +13,12 @@ export default {
   methods: {
     __restAttributes() {
       return {};
+    },
+    props(){
+      return {
+        template: this.$scopedSlots.template,
+        contentTemplate: this.$scopedSlots.contentTemplate
+      };
     }
   }
 };

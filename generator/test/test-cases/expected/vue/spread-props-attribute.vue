@@ -1,5 +1,5 @@
  <template>
-  <InnerWidget v-bind="props" />
+  <InnerWidget v-bind="props()" />
 </template>
 <script>
 import InnerWidget from "./dx-inner-widget";
@@ -34,6 +34,12 @@ export default {
   methods: {
     __restAttributes() {
       return {};
+    },
+    props(){
+      return {visible:this.visible,
+        value:(this.value !== undefined ? this.value : this.value_state),
+        valueChange:this.valueChange
+      };
     },
     valueChange(...args){
       this.$emit("update:value", ...args);

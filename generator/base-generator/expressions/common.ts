@@ -15,6 +15,9 @@ export class Identifier extends SimpleExpression {
     toString(options?: toStringOptions) { 
         const baseValue = super.toString();
         if (options?.variables && options.variables[baseValue]) {
+            if (options.variables[baseValue].toString() === baseValue) { 
+                return baseValue;
+            }
             return options.variables[baseValue].toString(options);    
         }
         return baseValue;

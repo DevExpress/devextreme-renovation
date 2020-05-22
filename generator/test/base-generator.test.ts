@@ -1127,6 +1127,18 @@ mocha.describe("base-generator: expressions", function () {
                     }
                 }), "10");
             });
+
+            mocha.it("variable has value the same as name", function () { 
+                const identifer = generator.createIdentifier("name");
+                const expression = generator.createIdentifier("name");
+    
+                assert.strictEqual(identifer.toString({
+                    members: [],
+                    variables: {
+                        name: expression
+                    }
+                }), "name");
+            });
     
             mocha.it("can replace Identifer with expression in JSX self-closing element", function () { 
                 const identifer = generator.createIdentifier("render");

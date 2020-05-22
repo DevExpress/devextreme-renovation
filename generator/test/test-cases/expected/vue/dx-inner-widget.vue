@@ -32,6 +32,14 @@ export default {
     __restAttributes() {
       return {};
     },
+    props(){
+      return {
+        selected:this.selected,
+        value:(this.value !== undefined ? this.value : this.value_state),
+        onSelect:this.onSelect,
+        valueChange:this.valueChange
+      };
+    },
     __processStyle(value) {
       if (typeof value === "object") {
         return Object.keys(value).reduce((v, k) => {

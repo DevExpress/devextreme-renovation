@@ -25,6 +25,14 @@ export default {
     __restAttributes() {
       return {};
     },
+    props(){
+      return {
+        height:this.height,
+        onClick:this.onClick,
+        width:this.width,
+        children: this.$slots.default
+      };
+    },
     onClick(...args){
       this.$emit("on-click", ...args);
     }
