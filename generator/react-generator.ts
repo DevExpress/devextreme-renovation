@@ -538,7 +538,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
 export class JsxSelfClosingElement extends JsxOpeningElement{
     toString(options?:toStringOptions) { 
-        return `<${this.tagName.toString(options)} ${this.attributesString(options)}/>`;
+        return `<${this.processTagName(this.tagName).toString(options)} ${this.attributesString(options)}/>`;
     }
 }
 
@@ -558,11 +558,11 @@ export class TypeReferenceNode extends BaseTypeReferenceNode {
  
 export class JsxClosingElement extends JsxOpeningElement { 
     constructor(tagName: Expression) { 
-        super(tagName, [], []);
+        super(tagName, [], [], {});
     }
 
     toString(options?:toStringOptions) { 
-        return `</${this.tagName.toString(options)}>`;
+        return `</${this.processTagName(this.tagName).toString(options)}>`;
     }
 }
 
@@ -584,11 +584,11 @@ export class Generator extends BaseGenerator {
     }
 
     createJsxOpeningElement(tagName: Identifier, typeArguments: any[], attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
-        return new JsxOpeningElement(tagName, typeArguments, attributes);
+        return new JsxOpeningElement(tagName, typeArguments, attributes, this.getContext());
     }
 
     createJsxSelfClosingElement(tagName: Identifier, typeArguments: any[], attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
-        return new JsxSelfClosingElement(tagName, typeArguments, attributes);
+        return new JsxSelfClosingElement(tagName, typeArguments, attributes, this.getContext());
     }
 
     createJsxClosingElement(tagName: Identifier) {

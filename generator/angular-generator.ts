@@ -86,21 +86,18 @@ interface JsxSpreadAttributeMeta {
 }
 
 export class JsxOpeningElement extends BaseJsxOpeningElement { 
-    context: GeneratorContext;
-    component?: AngularComponent;
     attributes: Array<JsxAttribute | JsxSpreadAttribute>;
     constructor(tagName: Expression, typeArguments: any, attributes: Array<JsxAttribute | JsxSpreadAttribute> = [], context: GeneratorContext) { 
-        super(processTagName(tagName, context), typeArguments, attributes);
-        this.context = context;
-        const component = context.components?.[tagName.toString()];
-        if (component instanceof Component) { 
-            this.component = component as AngularComponent;
-        }
+        super(tagName, typeArguments, attributes, context);
         this.attributes = attributes;
     }
 
     processTagName(tagName: Expression) { 
-        return tagName;
+        if (this.component instanceof AngularComponent) {
+            const selector = this.component.selector;
+            return new Identifier(selector);
+        }
+        return super.processTagName(tagName);
     }
 
     getTemplateProperty(options?: toStringOptions) { 
@@ -259,7 +256,7 @@ export class JsxSelfClosingElement extends JsxOpeningElement{
             return super.toString(options);
         }
         
-        return `${super.toString(options)}</${this.tagName}>`
+        return `${super.toString(options)}</${this.processTagName(this.tagName)}>`
     }
 
     clone() { 
@@ -737,9 +734,13 @@ export class JsxElement extends BaseJsxElement {
         this.closingElement = closingElement;
     }
 
+    compileOnlyChildren() { 
+        return this.openingElement.tagName.toString() === "Fragment";
+    }
+
     toString(options?: toStringOptions) {
         const children: string = this.children.map(c => c.toString(options)).join("");
-        if (this.openingElement.tagName.toString() === "Fragment") {
+        if (this.compileOnlyChildren()) {
             return children;
         }
         const closingElementString = !this.openingElement.getTemplateProperty(options) ? this.closingElement.toString(options) : "";

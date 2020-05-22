@@ -826,7 +826,7 @@ export class JsxClosingElement extends JsxOpeningElement {
     }
 
     toString(options: toStringOptions) {
-        return `</${this.tagName.toString(options)}>`;
+        return `</${this.processTagName(this.tagName).toString(options)}>`;
      }
 }
 
@@ -852,6 +852,10 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
 export class JsxElement extends BaseJsxElement { 
     createChildJsxExpression(expression: BaseJsxExpression) { 
         return new JsxChildExpression(expression);
+    }
+
+    compileOnlyChildren() { 
+        return false;
     }
 
     clone() {
