@@ -364,6 +364,81 @@ mocha.describe("React Component", function () {
             }`));
         });
 
+        mocha.it("Remove template and slot from binding pattern", function () {
+            const component = createComponent(
+                [
+                    generator.createProperty(
+                        [createDecorator("Template")],
+                        [],
+                        generator.createIdentifier("template")
+                    ),
+                    generator.createProperty(
+                        [createDecorator("Slot")],
+                        [],
+                        generator.createIdentifier("default")
+                    ),
+                    generator.createProperty(
+                        [createDecorator("OneWay")],
+                        [],
+                        generator.createIdentifier("p")
+                    )
+                ]
+            );
+
+            const view = generator.createArrowFunction(
+                [],
+                [],
+                [
+                    generator.createParameter(
+                        [],
+                        [],
+                        undefined,
+                        generator.createObjectBindingPattern([generator.createBindingElement(
+                            undefined,
+                            generator.createIdentifier("props"),
+                            generator.createObjectBindingPattern([
+                                generator.createBindingElement(
+                                    undefined,
+                                    undefined,
+                                    generator.createIdentifier("template"),
+                                    undefined
+                                ),
+                                generator.createBindingElement(
+                                    undefined,
+                                    undefined,
+                                    generator.createIdentifier("default"),
+                                    undefined
+                                ),
+                                generator.createBindingElement(
+                                    undefined,
+                                    undefined,
+                                    generator.createIdentifier("p"),
+                                    undefined
+                                )
+                            ]),
+                            undefined
+                        )]),
+                        undefined,
+                        generator.createKeywordTypeNode(component.name),
+                        undefined
+                    )
+                ],
+                undefined,
+                generator.SyntaxKind.EqualsGreaterThanToken,
+                generator.createBlock([
+                    generator.createIdentifier("template"),
+                    generator.createIdentifier("default"),
+                    generator.createIdentifier("p")
+                ], false)
+            );
+
+            assert.strictEqual(getResult(view.toString()), getResult(`({props: {p}}:Widget)=>{
+                props.render;
+                props.children;
+                p
+            }`));
+        });
+
         mocha.it("Rename template to render in binding pattern", function () {
             const component = createComponent(
                 [

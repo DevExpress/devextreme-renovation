@@ -17,8 +17,9 @@ export class BindingElement extends Expression {
     }
 
     toString() {
-        const key = this.propertyName ? `${this.propertyName}:` : "";
-        return `${key}${this.dotDotDotToken}${this.name}`;
+        const nameString = this.name.toString()
+        const key = this.propertyName ? `${this.propertyName}${nameString ? ":" : ""}` : "";
+        return `${key}${this.dotDotDotToken}${nameString}`;
     }
 
     getDependency() {

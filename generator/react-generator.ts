@@ -127,8 +127,19 @@ export class Property extends BaseProperty {
         return this.defaultDeclaration();
     }
 
+    get name(): string {
+        if (this.isTemplate) {
+            return this._name.toString().replace(/template/g, "render")
+                .replace(/(.+)(Template)/g, "$1Render");
+        }
+        if (this.isSlot && this._name.toString() === "default") {
+            return "children";
+        }
+        return super.name;
+    }
+
     typeDeclaration() {
-        if (this.decorators.find(d => d.name === "Slot")) {
+        if (this.isSlot) {
             return `${this.name}${this.questionOrExclamationToken}:React.ReactNode`;
         }
         if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")){ 
@@ -142,13 +153,13 @@ export class Property extends BaseProperty {
 
     getter(componentContext?: string) { 
         componentContext = this.processComponentContext(componentContext);
-        if (this.decorators.find(d => d.name === "InternalState") || this.decorators.length===0) {
+        if (this.isInternalState) {
             return getLocalStateName(this.name, componentContext);
         } else if (this.decorators.find(d => d.name === "OneWay" ||  d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
             return getPropName(this.name, componentContext);
         } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
             return `${this.name}.current${this.questionOrExclamationToken}`
-        } else if (this.decorators.find(d => d.name === "TwoWay")) { 
+        } else if (this.isState) { 
             const propName = getPropName(this.name, componentContext);
             return `(${propName}!==undefined?${propName}:${getLocalStateName(this.name, componentContext)})`;
         }
@@ -156,13 +167,13 @@ export class Property extends BaseProperty {
     }
 
     getDependency() { 
-        if (this.decorators.find(d => d.name === "InternalState") || this.decorators.length === 0) {
+        if (this.isInternalState) {
             return [getLocalStateName(this.name)];
         } else if (this.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
             return [getPropName(this.name)];
         } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
             return this.questionOrExclamationToken === "?" ? [`${this.name.toString()}.current`] : [];
-        } else if (this.decorators.find(d => d.name === "TwoWay")) {
+        } else if (this.isState) {
             return [getPropName(this.name), getLocalStateName(this.name), getPropName(`${this.name}Change`)];
         }
         throw `Can't parse property: ${this._name}`;
