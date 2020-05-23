@@ -1,6 +1,6 @@
 {
   "name": "devextreme-generator",
-  "version": "1.0.63",
+  "version": "1.0.64",
   "description": "Component generator",
   "scripts": {
     "test": "nyc mocha ./build/test --timeout 30000",
@@ -28,6 +28,7 @@
     "@angular/common": "^9.1.0",
     "@angular/compiler": "^9.1.0",
     "@angular/core": "^9.1.0",
+    "@angular/forms": "^9.1.9",
     "@angular/platform-browser": "^9.1.0",
     "@angular/platform-browser-dynamic": "^9.1.0",
     "@babel/core": "^7.9.0",

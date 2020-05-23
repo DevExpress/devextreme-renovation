@@ -89,6 +89,14 @@ mocha.describe("angular-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("model-value-disabled", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("model", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("list", function () {
         this.testGenerator(this.test!.title);
     });

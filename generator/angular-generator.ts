@@ -20,7 +20,7 @@ import {
 import SyntaxKind from "./base-generator/syntaxKind";
 import { Expression, SimpleExpression } from "./base-generator/expressions/base";
 import { Identifier, Paren } from "./base-generator/expressions/common";
-import { StringLiteral, ObjectLiteral } from "./base-generator/expressions/literal";
+import { StringLiteral, ObjectLiteral, ArrayLiteral } from "./base-generator/expressions/literal";
 import { PropertyAssignment } from "./base-generator/expressions/property-assignment";
 import { Binary, Prefix } from "./base-generator/expressions/operators";
 import { PropertyAccessChain } from "./base-generator/expressions/property-access";
@@ -1059,9 +1059,14 @@ export class AngularComponent extends Component {
             core.push("ElementRef");
         }
 
+        if(this.modelProp) {
+            core.push("forwardRef", "HostListener");
+        }
+
         const imports = [
             `${compileCoreImports(this.members.filter(m => !m.inherited), this.context, core)}`,
-            'import {CommonModule} from "@angular/common"'
+            'import {CommonModule} from "@angular/common"',
+            ...(this.modelProp ? ["import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms'"] : [])
         ];
 
         this.compileDefaultOptionsImport(imports);
@@ -1275,9 +1280,33 @@ export class AngularComponent extends Component {
         return "";
     }
 
+    compileNgModel() {
+        if(!this.modelProp) {
+            return "";
+        }
+
+        const disabledProp = getProps(this.members).find(m => m._name.toString() === "disabled");
+        
+        return `
+        @HostListener('${this.modelProp.name}Change', ['$event']) change(_) { }
+        @HostListener('onBlur', ['$event']) touched = (_) => {};
+        
+        writeValue(value: any): void {
+            this.${this.modelProp.name} = value;
+        }
+    
+        ${disabledProp ? `setDisabledState(isDisabled: boolean): void {
+            this.disabled = isDisabled;
+        }` : ""}
+    
+        registerOnChange(fn: (_: any) => void): void { this.change = fn; }
+        registerOnTouched(fn: () => void): void { this.touched = fn; }
+        `;
+    }
+
     toString() { 
         const extendTypes = this.heritageClauses.reduce((t: string[], h) => t.concat(h.types.map(t => t.type.toString())), []);
-        
+
         const modules = Object.keys(this.context.components || {})
             .map((k) => this.context.components?.[k])
             .filter(c => c instanceof AngularComponent && c !== this)
@@ -1297,16 +1326,29 @@ export class AngularComponent extends Component {
             disableTemplates: true
         };
 
+        const implementedInterfaces: string[] = [];
+        let valueAccessor = "";
+        if(this.modelProp) {
+            implementedInterfaces.push("ControlValueAccessor");
+
+            valueAccessor = `const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
+                provide: NG_VALUE_ACCESSOR,
+                useExisting: forwardRef(() => ${this.name}),
+                multi: true
+            }`
+
+            this.decorator.addParameter("providers", new ArrayLiteral([new SimpleExpression("CUSTOM_VALUE_ACCESSOR_PROVIDER")], true));
+        }
+
         const componentDecorator = this.decorator.toString(decoratorToStringOptions);
-
         const spreadAttributes = this.compileSpreadAttributes(ngOnChangesStatements, coreImports);
-
 
         return `
         ${this.compileImports(coreImports)}
         ${this.compileDefaultOptions(constructorStatements)}
+        ${valueAccessor}
         ${componentDecorator}
-        ${this.modifiers.join(" ")} class ${this.name} ${extendTypes.length? `extends ${extendTypes.join(" ")}`:""} {
+        ${this.modifiers.join(" ")} class ${this.name} ${extendTypes.length? `extends ${extendTypes.join(" ")}`:""} ${implementedInterfaces.length ? `implements ${implementedInterfaces.join(",")}`:""} {
             ${this.members
                 .filter(m => !m.inherited && !(m instanceof SetAccessor))
                 .map(m => m.toString({
@@ -1319,6 +1361,7 @@ export class AngularComponent extends Component {
             ${this.compileTrackBy()}
             ${this.compileViewModel()}
             ${this.compileEffects(ngAfterViewInitStatements, ngOnDestroyStatements, ngOnChangesStatements, ngAfterViewCheckedStatements)}
+            ${this.compileNgModel()}
             ${this.compileLifeCycle("ngAfterViewInit", ngAfterViewInitStatements)}
             ${this.compileLifeCycle("ngOnChanges", ngOnChangesStatements, [`${ngOnChangesParameters[0]}: {[name:string]: any}`])}
             ${this.compileLifeCycle("ngOnDestroy", ngOnDestroyStatements)}
@@ -1327,7 +1370,7 @@ export class AngularComponent extends Component {
                 constructorStatements.length ?
                     ["super()"].concat(constructorStatements) :
                     constructorStatements
-        )}
+            )}
             ${this.members.filter(m=>m instanceof SetAccessor)}
             ${this.compileNgStyleProcessor(decoratorToStringOptions)}
         }

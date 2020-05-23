@@ -104,3 +104,15 @@ cloneTest('Click on component with default options', async t => {
     await t
         .expect(await el.textContent).eql("ab164");
 });
+
+cloneTest('Check form values binding', async t => {
+    const el = Selector("#counter-form-value");
+
+    await t
+        .expect(await el.textContent).eql("15");
+    
+    await t.click(Selector('#counter-control'));
+
+    await t
+        .expect(await el.textContent).eql("16");
+});
