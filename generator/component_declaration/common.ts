@@ -17,11 +17,11 @@ export function Component(arg: {
     name?: string;
     components?: any[];
     /**
-     * Function that recieves a component model and returns a viewModel
+     * Function that receives a component model and returns a viewModel
      */
     viewModel?: Function;
      /**
-     * Function that recieves a component viewModel and returns a view
+     * Function that receives a component viewModel and returns a view
      */
     view: Function;
 
@@ -67,7 +67,7 @@ const propertyDecorator = function(target: any, propertyKey: string) { };
 export const OneWay = () => propertyDecorator;
 /**
 * Property Decorator.
-* Define a property that user can pass to component. Componet can write to it.
+* Define a property that user can pass to component. Component can write to it.
 * Any change of this property causes component re-render, also user gets notified about that change (in a different way, depending on target platform)
 */
 export const TwoWay = (args?: { 
@@ -95,19 +95,19 @@ export const Template = (args?: {
 export const Slot = () => propertyDecorator;
 /**
  * Method Decorator. 
- * Declare A method that be available for extenal using
+ * Declare A method that be available for external using
  */
 export const Method = () => propertyDecorator;
 /**
  * Property Decorator. 
- * Delcares input property that is component event handler
+ * Declares input property that is component event handler
  */
 export const Event = (args? : {
     actionConfig?: any
 }) => propertyDecorator;
 /**
  * Property Decorator
- * Declares a widget propety. Any change of it causes component rerender
+ * Declares a widget property. Any change of it causes component re-render
  */
 export const InternalState = () => propertyDecorator;
 
