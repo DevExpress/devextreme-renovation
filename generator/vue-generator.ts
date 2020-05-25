@@ -1157,9 +1157,6 @@ class VueGenerator extends BaseGenerator {
     createTypeReferenceNode(typeName: Identifier, typeArguments?: TypeExpression[]) {
         return addEmptyToString<TypeReferenceNode>(super.createTypeReferenceNode(typeName, typeArguments)); 
     }
-
-    
-
 }
 
 
