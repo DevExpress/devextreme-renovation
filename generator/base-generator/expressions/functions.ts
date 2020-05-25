@@ -17,9 +17,9 @@ export class Parameter {
     dotDotDotToken: any;
     name: Identifier | BindingPattern;
     questionToken: string;
-    type?: TypeExpression;
+    type?: TypeExpression|string;
     initializer?: Expression;
-    constructor(decorators: Decorator[], modifiers: string[], dotDotDotToken: any, name: Identifier | BindingPattern, questionToken: string = "", type?: TypeExpression, initializer?: Expression) {
+    constructor(decorators: Decorator[], modifiers: string[], dotDotDotToken: any, name: Identifier | BindingPattern, questionToken: string = "", type?: TypeExpression | string, initializer?: Expression) {
         this.decorators = decorators;
         this.modifiers = modifiers;
         this.dotDotDotToken = dotDotDotToken;
@@ -92,11 +92,11 @@ export class BaseFunction extends Expression {
     modifiers: string[];
     typeParameters: string[];
     parameters: Parameter[];
-    type?: TypeExpression;
+    type?: TypeExpression | string;
     body: Block | Expression;
     context: GeneratorContext;
 
-    constructor(modifiers: string[] = [], typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, body: Block | Expression, context: GeneratorContext) { 
+    constructor(modifiers: string[] = [], typeParameters: any, parameters: Parameter[], type: TypeExpression|string|undefined, body: Block | Expression, context: GeneratorContext) { 
         super();
         this.modifiers = modifiers;
         this.typeParameters = typeParameters;
@@ -161,7 +161,7 @@ export class Function extends BaseFunction {
     asteriskToken: string;
     name?: Identifier;
     body: Block;
-    constructor(decorators: Decorator[] = [], modifiers: string[]|undefined, asteriskToken: string, name: Identifier | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, body: Block, context: GeneratorContext) {
+    constructor(decorators: Decorator[] = [], modifiers: string[]|undefined, asteriskToken: string, name: Identifier | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|string|undefined, body: Block, context: GeneratorContext) {
         super(modifiers, typeParameters, parameters, type, body, context);
         this.decorators = decorators;
         this.asteriskToken = asteriskToken;
@@ -182,7 +182,7 @@ export class ArrowFunction extends BaseFunction {
     parameters: Parameter[];
     body: Block | Expression;
     equalsGreaterThanToken: string;
-    constructor(modifiers: string[]|undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, equalsGreaterThanToken: string, body: Block | Expression, context: GeneratorContext) {
+    constructor(modifiers: string[]|undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|string|undefined, equalsGreaterThanToken: string, body: Block | Expression, context: GeneratorContext) {
         super(modifiers, typeParameters, parameters, type, body, context);
         this.typeParameters = typeParameters;
         this.parameters = parameters;

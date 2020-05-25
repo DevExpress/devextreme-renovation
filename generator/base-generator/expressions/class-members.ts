@@ -11,14 +11,14 @@ export class BaseClassMember extends Expression {
     decorators: Decorator[];
     modifiers: string[];
     _name: Identifier;
-    type: TypeExpression;
+    type: TypeExpression|string;
     inherited: boolean;
 
     required: boolean = false;
 
     prefix: string = "";
 
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, type: TypeExpression = new SimpleExpression(""), inherited: boolean = false) { 
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, type: TypeExpression|string = new SimpleExpression(""), inherited: boolean = false) { 
         super();
         this.decorators = decorators;
         this.modifiers = modifiers;
@@ -87,7 +87,7 @@ export class Method extends BaseClassMember {
     parameters: Parameter[];
     body: Block;
    
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string | undefined, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: TypeExpression = new SimpleExpression("any"), body: Block) {
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string | undefined, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: TypeExpression|string = new SimpleExpression("any"), body: Block) {
         super(decorators, modifiers, name, type);
         this.asteriskToken = asteriskToken;
         this.questionToken = questionToken;
@@ -156,7 +156,7 @@ export class Property extends BaseClassMember {
     questionOrExclamationToken: string;
     initializer?: Expression;
 
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: TypeExpression = new SimpleExpression("any"), initializer?: Expression, inherited: boolean = false) {
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: TypeExpression|string = new SimpleExpression("any"), initializer?: Expression, inherited: boolean = false) {
         super(decorators, modifiers, name, type, inherited);
         this.questionOrExclamationToken = questionOrExclamationToken;
         this.initializer = initializer;

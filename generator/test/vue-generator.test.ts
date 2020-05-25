@@ -108,6 +108,46 @@ mocha.describe("Vue-generator", function () {
                     generator.createKeywordTypeNode("number")
                 ), "");
             });
+
+            mocha.it("TypeReferenceNode", function () { 
+                const expression = generator.createTypeReferenceNode(
+                    generator.createIdentifier("NodeType"),
+                    undefined
+                );
+                assert.strictEqual(expression.toString(), "");
+            });
+
+            mocha.it("ArrowFunction with Token type should ignore it", function () { 
+                const expression = generator.createArrowFunction(
+                    undefined,
+                    undefined,
+                    [],
+                    generator.createToken(generator.SyntaxKind.VoidKeyword),
+                    generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                    generator.createBlock([],
+                        true
+                    )
+                );
+
+                assert.strictEqual(getAst(expression.toString()), getAst("()=>{}"));
+            });
+
+            mocha.it("Function with Token type should ignore it", function () { 
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    undefined,
+                    "",
+                    generator.createIdentifier("f"),
+                    undefined,
+                    [],
+                    generator.createToken(generator.SyntaxKind.VoidKeyword),
+                    generator.createBlock([],
+                        true
+                    )
+                );
+
+                assert.strictEqual(getAst(expression.toString()), getAst("function f(){}"));
+            });
         });
     });
 
