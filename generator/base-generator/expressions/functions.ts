@@ -111,13 +111,32 @@ export class BaseFunction extends Expression {
     }
 
     getToStringOptions(options?: toStringOptions) { 
-        const widget = this.parameters[0] && this.context.components?.[this.parameters[0].type?.toString() || ""];
-        if (widget && widget instanceof Component) { 
+        const componentParameter = this.parameters[0];
+        const widget = componentParameter && this.context.components?.[this.parameters[0].type?.toString() || ""];
+       
+        if (widget instanceof Component) { 
+            const members = widget.members.filter(m => m.decorators.find(d => d.name === "Template" || d.name === "Slot"));
             options = {
-                members: widget.members.filter(m => m.decorators.find(d => d.name === "Template" || d.name === "Slot")),
-                componentContext: this.parameters[0].name.toString(),
-                newComponentContext: this.parameters[0].name.toString()
+                members,
+                componentContext: componentParameter.name.toString(),
+                newComponentContext: componentParameter.name.toString(),
+                variables: {}
             };
+            if (componentParameter && componentParameter.name instanceof BindingPattern) {
+                const props = componentParameter.name.elements.find(e => e.propertyName?.toString() === "props");
+                if (props?.name instanceof BindingPattern) { 
+                    const variables = props.name.getVariableExpressions(new Identifier("props"));
+                    props.name.elements.filter(e => members.some(m => m._name.toString() === e.name.toString()))
+                        .forEach(e => {
+                            (props.name as BindingPattern).remove(e.name.toString());
+                            options!.variables = {
+                                ...options!.variables,
+                                [e.name.toString()]: variables[e.name.toString()]
+                            };
+                        });
+                }
+                options.componentContext = options.newComponentContext = "";
+            }
         }
         return options;
     }

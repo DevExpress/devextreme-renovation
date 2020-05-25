@@ -66,8 +66,6 @@ export const counter = (function () {
 
 export interface toStringOptions extends  BaseToStringOptions {
     members: Array<Property | Method>;
-    eventProperties?: Array<Property>;
-    stateProperties?: Array<Property>;
     hasStyle?: boolean
 }
 
@@ -86,21 +84,18 @@ interface JsxSpreadAttributeMeta {
 }
 
 export class JsxOpeningElement extends BaseJsxOpeningElement { 
-    context: GeneratorContext;
-    component?: AngularComponent;
     attributes: Array<JsxAttribute | JsxSpreadAttribute>;
     constructor(tagName: Expression, typeArguments: any, attributes: Array<JsxAttribute | JsxSpreadAttribute> = [], context: GeneratorContext) { 
-        super(processTagName(tagName, context), typeArguments, attributes);
-        this.context = context;
-        const component = context.components?.[tagName.toString()];
-        if (component instanceof Component) { 
-            this.component = component as AngularComponent;
-        }
+        super(tagName, typeArguments, attributes, context);
         this.attributes = attributes;
     }
 
     processTagName(tagName: Expression) { 
-        return tagName;
+        if (this.component instanceof AngularComponent) {
+            const selector = this.component.selector;
+            return new Identifier(selector);
+        }
+        return super.processTagName(tagName);
     }
 
     getTemplateProperty(options?: toStringOptions) { 
@@ -178,16 +173,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     }
 
     attributesString(options?: toStringOptions) {
-        if (this.component && options) { 
-            options = {
-                ...options,
-                eventProperties: this.component.members.filter(m => m.isEvent) as Property[],
-                stateProperties: this.component.members.filter(m => m.isState) as Property[]
-            }
-        }
-
         this.processSpreadAttributes(options);
-        
         return super.attributesString(options);
     }
 
@@ -259,7 +245,7 @@ export class JsxSelfClosingElement extends JsxOpeningElement{
             return super.toString(options);
         }
         
-        return `${super.toString(options)}</${this.tagName}>`
+        return `${super.toString(options)}</${this.processTagName(this.tagName)}>`
     }
 
     clone() { 
@@ -302,7 +288,7 @@ export class JsxAttribute extends BaseJsxAttribute {
 
     compileName(options?: toStringOptions) { 
         const name = this.name.toString();
-        if (!(options?.eventProperties)) {
+        if (!(options?.jsxComponent)) {
             if (name === "className") { 
                 return "class";
             }
@@ -348,7 +334,11 @@ export class JsxAttribute extends BaseJsxAttribute {
             return this.compileRef(options);
         }
         
-        if (options?.eventProperties?.find(p=>p.name===this.name.toString())) { 
+        if (
+            options?.jsxComponent?.members
+                .filter(m => m.isEvent)
+                .find(p => p.name === this.name.toString())
+        ) {
             return this.compileEvent(options);
         }
 
@@ -737,9 +727,13 @@ export class JsxElement extends BaseJsxElement {
         this.closingElement = closingElement;
     }
 
+    compileOnlyChildren() { 
+        return this.openingElement.tagName.toString() === "Fragment";
+    }
+
     toString(options?: toStringOptions) {
         const children: string = this.children.map(c => c.toString(options)).join("");
-        if (this.openingElement.tagName.toString() === "Fragment") {
+        if (this.compileOnlyChildren()) {
             return children;
         }
         const closingElementString = !this.openingElement.getTemplateProperty(options) ? this.closingElement.toString(options) : "";

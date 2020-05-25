@@ -2009,7 +2009,7 @@ mocha.describe("Vue-generator", function () {
                 );
             });
 
-            mocha.it("Parse map with destructuration", function () { 
+            mocha.it("Parse map with destruction", function () { 
                 const expression = generator.createJsxElement(
                     generator.createJsxOpeningElement(
                         generator.createIdentifier("div"),

@@ -16,6 +16,7 @@ const generator = new Generator();
 
 import componentCreator from "./helpers/create-component";
 import { toStringOptions } from "../base-generator/types";
+import { BindingPattern } from "../base-generator/expressions/binding-pattern";
 
 const { createComponentDecorator, createDecorator} = componentCreator(generator);
 
@@ -1313,6 +1314,22 @@ mocha.describe("base-generator: expressions", function () {
                     )]
                 )
             ).toString(), "v:{a}");
+        });
+
+        mocha.it("can remove all elements in binding pattern", function () {
+            const expression = generator.createBindingElement(
+                undefined,
+                generator.createIdentifier("v"),
+                generator.createObjectBindingPattern(
+                    [generator.createBindingElement(
+                        undefined,
+                        undefined,
+                        generator.createIdentifier("a")
+                    )]
+                )
+            );
+            (expression.name as BindingPattern).remove("a");
+            assert.strictEqual(expression.toString(), "v");
         });
 
         mocha.it("Object Binding pattern should sort items", function () {

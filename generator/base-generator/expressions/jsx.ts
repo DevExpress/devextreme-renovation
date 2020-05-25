@@ -1,8 +1,9 @@
 import { Identifier } from "./common";
 import { Expression, ExpressionWithExpression, SimpleExpression } from "./base";
-import { toStringOptions } from "../types";
+import { toStringOptions, GeneratorContext } from "../types";
 import SyntaxKind from "../syntaxKind";
 import { Conditional } from "./conditions";
+import { Component } from "./component";
 
 export function getJsxExpression(e: ExpressionWithExpression | Expression | undefined): JsxExpression | undefined {
     if (e instanceof Conditional && e.isJsx()) {
@@ -36,19 +37,32 @@ export class JsxOpeningElement extends Expression {
     tagName: Expression;
     typeArguments: any[];
     attributes: Array<JsxAttribute | JsxSpreadAttribute>;
+    context: GeneratorContext;
+    component?: Component;
     
     processTagName(tagName: Expression) { 
         return tagName;
     }
 
-    constructor(tagName: Expression, typeArguments: any, attributes: Array<JsxAttribute|JsxSpreadAttribute>=[]) { 
+    constructor(tagName: Expression, typeArguments: any, attributes: Array<JsxAttribute|JsxSpreadAttribute>=[], context: GeneratorContext) { 
         super();
-        this.tagName = this.processTagName(tagName);
+        this.tagName = tagName;
         this.typeArguments = typeArguments;
         this.attributes = attributes;
+        this.context = context;
+        const component = context.components?.[tagName.toString()];
+        if (component instanceof Component) { 
+            this.component = component;
+        }
     }
 
-    attributesString(options?:toStringOptions) { 
+    attributesString(options?: toStringOptions) { 
+        if (this.component && options) { 
+            options = {
+                ...options,
+                jsxComponent: this.component
+            }
+        }
 
         return this.attributes.map(a => a.toString(options))
             .filter(s => s)
@@ -56,7 +70,7 @@ export class JsxOpeningElement extends Expression {
     }
 
     toString(options?:toStringOptions) { 
-        return `<${this.tagName.toString(options)} ${this.attributesString(options)}>`;
+        return `<${this.processTagName(this.tagName).toString(options)} ${this.attributesString(options)}>`;
     }
 
     addAttribute(attribute: JsxAttribute) { 
@@ -99,17 +113,17 @@ export class JsxElement extends Expression {
 
 export class JsxSelfClosingElement extends JsxOpeningElement{
     toString(options?:toStringOptions) { 
-        return `<${this.tagName.toString(options)} ${this.attributesString(options)}/>`;
+        return `<${this.processTagName(this.tagName).toString(options)} ${this.attributesString(options)}/>`;
     }
 }
  
 export class JsxClosingElement extends JsxOpeningElement { 
     constructor(tagName: Expression) { 
-        super(tagName, [], []);
+        super(tagName, [], [], {});
     }
 
     toString(options?:toStringOptions) { 
-        return `</${this.tagName.toString(options)}>`;
+        return `</${this.processTagName(this.tagName).toString(options)}>`;
     }
 }
 

@@ -283,7 +283,7 @@ export class PreactGenerator extends Generator {
     }
 
     createJsxOpeningElement(tagName: Identifier, typeArguments: any[], attributes: JsxAttribute[]=[]) {
-        return new JsxOpeningElement(tagName, typeArguments, attributes);
+        return new JsxOpeningElement(tagName, typeArguments, attributes, this.getContext());
     }
 
     createJsxClosingElement(tagName: Identifier) {

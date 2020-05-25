@@ -127,8 +127,19 @@ export class Property extends BaseProperty {
         return this.defaultDeclaration();
     }
 
+    get name(): string {
+        if (this.isTemplate) {
+            return this._name.toString().replace(/template/g, "render")
+                .replace(/(.+)(Template)/g, "$1Render");
+        }
+        if (this.isSlot && this._name.toString() === "default") {
+            return "children";
+        }
+        return super.name;
+    }
+
     typeDeclaration() {
-        if (this.decorators.find(d => d.name === "Slot")) {
+        if (this.isSlot) {
             return `${this.name}${this.questionOrExclamationToken}:React.ReactNode`;
         }
         if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")){ 
@@ -142,13 +153,13 @@ export class Property extends BaseProperty {
 
     getter(componentContext?: string) { 
         componentContext = this.processComponentContext(componentContext);
-        if (this.decorators.find(d => d.name === "InternalState") || this.decorators.length===0) {
+        if (this.isInternalState) {
             return getLocalStateName(this.name, componentContext);
         } else if (this.decorators.find(d => d.name === "OneWay" ||  d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
             return getPropName(this.name, componentContext);
         } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
             return `${this.name}.current${this.questionOrExclamationToken}`
-        } else if (this.decorators.find(d => d.name === "TwoWay")) { 
+        } else if (this.isState) { 
             const propName = getPropName(this.name, componentContext);
             return `(${propName}!==undefined?${propName}:${getLocalStateName(this.name, componentContext)})`;
         }
@@ -156,13 +167,13 @@ export class Property extends BaseProperty {
     }
 
     getDependency() { 
-        if (this.decorators.find(d => d.name === "InternalState") || this.decorators.length === 0) {
+        if (this.isInternalState) {
             return [getLocalStateName(this.name)];
         } else if (this.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
             return [getPropName(this.name)];
         } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
             return this.questionOrExclamationToken === "?" ? [`${this.name.toString()}.current`] : [];
-        } else if (this.decorators.find(d => d.name === "TwoWay")) {
+        } else if (this.isState) {
             return [getPropName(this.name), getLocalStateName(this.name), getPropName(`${this.name}Change`)];
         }
         throw `Can't parse property: ${this._name}`;
@@ -514,7 +525,13 @@ export class ReactComponent extends Component {
 
 export class JsxAttribute extends BaseJsxAttribute { 
     toString(options?:toStringOptions) { 
-        const name = this.name.toString(options);
+        let name = this.name.toString(options);
+        if (options?.jsxComponent) { 
+            const member = options.jsxComponent.members.find(m => m._name.toString() === this.name.toString());
+            if (member) { 
+                name = member.name;
+            }
+        }
         return `${(eventsDictionary as any)[name] || name}=${this.initializer.toString(options)}`;
     }
 }
@@ -527,7 +544,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
 export class JsxSelfClosingElement extends JsxOpeningElement{
     toString(options?:toStringOptions) { 
-        return `<${this.tagName.toString(options)} ${this.attributesString(options)}/>`;
+        return `<${this.processTagName(this.tagName).toString(options)} ${this.attributesString(options)}/>`;
     }
 }
 
@@ -547,11 +564,11 @@ export class TypeReferenceNode extends BaseTypeReferenceNode {
  
 export class JsxClosingElement extends JsxOpeningElement { 
     constructor(tagName: Expression) { 
-        super(tagName, [], []);
+        super(tagName, [], [], {});
     }
 
     toString(options?:toStringOptions) { 
-        return `</${this.tagName.toString(options)}>`;
+        return `</${this.processTagName(this.tagName).toString(options)}>`;
     }
 }
 
@@ -573,11 +590,11 @@ export class Generator extends BaseGenerator {
     }
 
     createJsxOpeningElement(tagName: Identifier, typeArguments: any[], attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
-        return new JsxOpeningElement(tagName, typeArguments, attributes);
+        return new JsxOpeningElement(tagName, typeArguments, attributes, this.getContext());
     }
 
     createJsxSelfClosingElement(tagName: Identifier, typeArguments: any[], attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
-        return new JsxSelfClosingElement(tagName, typeArguments, attributes);
+        return new JsxSelfClosingElement(tagName, typeArguments, attributes, this.getContext());
     }
 
     createJsxClosingElement(tagName: Identifier) {

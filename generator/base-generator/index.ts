@@ -383,11 +383,11 @@ export default class Generator {
     }
 
     createJsxOpeningElement(tagName: Expression, typeArguments: any[], attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
-        return new JsxOpeningElement(tagName, typeArguments, attributes);
+        return new JsxOpeningElement(tagName, typeArguments, attributes, this.getContext());
     }
 
     createJsxSelfClosingElement(tagName: Expression, typeArguments: any[], attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
-        return new JsxSelfClosingElement(tagName, typeArguments, attributes);
+        return new JsxSelfClosingElement(tagName, typeArguments, attributes, this.getContext());
     }
 
     createJsxClosingElement(tagName: Expression) {

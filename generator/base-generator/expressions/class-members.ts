@@ -156,17 +156,6 @@ export class Property extends BaseClassMember {
     questionOrExclamationToken: string;
     initializer?: Expression;
 
-    get name(): string {
-        if (this.decorators.find(d => d.name === "Template")) {
-            return this._name.toString().replace(/template/g, "render")
-                .replace(/(.+)(Template)/g, "$1Render");
-        }
-        if (this.decorators.find(d => d.name === "Slot") && this._name.toString() === "default") {
-            return "children";
-        }
-        return super.name;
-    }
-
     constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type: TypeExpression = new SimpleExpression("any"), initializer?: Expression, inherited: boolean = false) {
         super(decorators, modifiers, name, type, inherited);
         this.questionOrExclamationToken = questionOrExclamationToken;
