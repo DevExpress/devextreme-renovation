@@ -14,3 +14,8 @@
 <dx-button-with-template
     text="Without Template"
 ></dx-button-with-template>
+
+<form #form="ngForm" class="my-form">
+  <dx-counter id="counter-control" [(ngModel)]="counterValue" name="counter"></dx-counter>
+</form>
+<div id="counter-form-value">{{ form.value.counter }}</div>

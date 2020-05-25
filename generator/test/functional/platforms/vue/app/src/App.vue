@@ -11,24 +11,32 @@
         </div>
     </template>
 
-   </button-with-template><button-with-template
+    </button-with-template><button-with-template
       text="Without Template"
     />
+    <form>
+        <Counter id="counter-control" v-model="counterValue"></Counter>
+    </form>
+    <div id="counter-form-value">{{counterValue}}</div>
  </div>
 </template>
 <script>
 
 import DxApp from "../../../../components/app.tsx";
 import ButtonWithTemplate from "../../../../components/button-with-template.tsx"
+import Counter from "../../../../components/counter.tsx"
 
 export default {
   components: {
     DxApp,
-    ButtonWithTemplate
+    ButtonWithTemplate,
+    Counter
   },
 
   data() {
-   return {};
+   return {
+     counterValue: 15
+   };
   },
   methods: {
    

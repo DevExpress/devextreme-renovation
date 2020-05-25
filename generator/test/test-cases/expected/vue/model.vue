@@ -2,7 +2,7 @@
   <div>{{(baseStateProp !== undefined ? baseStateProp : baseStateProp_state)}}</div>
 </template>
 <script>
-const ModelBindingWidgetInput = {
+const ModelWidgetInput = {
   baseStateProp: {
     type: Boolean,
     default: undefined
@@ -11,15 +11,22 @@ const ModelBindingWidgetInput = {
     type: Boolean,
     default: undefined
   },
+  value: {
+    type: Boolean,
+    default: undefined
+  },
   defaultBaseStateProp: {
     type: Boolean
   },
   defaultModelStateProp: {
     type: Boolean
+  },
+  defaultValue: {
+    type: Boolean
   }
 };
 export default {
-  props: ModelBindingWidgetInput,
+  props: ModelWidgetInput,
   model: {
     prop: "modelStateProp",
     event: "update:model-state-prop"
@@ -27,7 +34,8 @@ export default {
   data() {
     return {
       baseStateProp_state: this.defaultBaseStateProp,
-      modelStateProp_state: this.defaultModelStateProp
+      modelStateProp_state: this.defaultModelStateProp,
+      value_state: this.defaultValue
     };
   },
   methods: {
@@ -39,14 +47,19 @@ export default {
         baseStateProp:(this.baseStateProp !== undefined ? this.baseStateProp : this.baseStateProp_state),
         baseStatePropChange:this.baseStatePropChange,
         modelStateProp:(this.modelStateProp !== undefined ? this.modelStateProp : this.modelStateProp_state),
-        modelStatePropChange:this.modelStatePropChange
+        value:(this.value !== undefined ? this.value : this.value_state),
+        modelStatePropChange:this.modelStatePropChange,
+        valueChange:this.valueChange
       };
     },
     baseStatePropChange(...args){
       this.$emit("update:base-state-prop", ...args);
     },
-     modelStatePropChange(...args){
+    modelStatePropChange(...args){
       this.$emit("update:model-state-prop", ...args);
+    },
+    valueChange(...args){
+      this.$emit("update:value", ...args);
     }
   }
 };
