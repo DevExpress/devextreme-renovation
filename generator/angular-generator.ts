@@ -891,7 +891,7 @@ class ComponentInput extends BaseComponentInput {
     }
 }
 
-function parseEventType(type: TypeExpression) { 
+function parseEventType(type: TypeExpression|string) { 
     if(type instanceof FunctionTypeNode){
         return type.parameters.map(p => {
             const type = p.type?.toString() || "any";
@@ -908,8 +908,8 @@ export class Property extends BaseProperty {
     get name() { 
         return this._name.toString();
     } 
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type?: TypeExpression, initializer?: Expression, inherited: boolean=false) { 
-        if (decorators.find(d => d.name === "Template")) { 
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type?: TypeExpression | string, initializer?: Expression, inherited: boolean = false) {
+        if (decorators.find(d => d.name === "Template")) {
             type = new SimpleTypeExpression(`TemplateRef<any>`);
         }
         super(decorators, modifiers, name, questionOrExclamationToken, type, initializer, inherited);

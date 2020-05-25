@@ -36,8 +36,8 @@ import { ObjectLiteral, StringLiteral, NumericLiteral } from "./base-generator/e
 import { Parameter as BaseParameter, getTemplate } from "./base-generator/expressions/functions";
 import { Block, ReturnStatement } from "./base-generator/expressions/statements";
 import {
-    Function,
-    ArrowFunction,
+    Function as AngularFunction,
+    ArrowFunction as AngularArrowFunction,
     VariableDeclaration,
     JsxExpression as BaseJsxExpression,
     JsxElement as BaseJsxElement,
@@ -57,10 +57,10 @@ import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressio
 import { PropertyAssignment } from "./base-generator/expressions/property-assignment";
 import { getModuleRelativePath } from "./base-generator/utils/path-utils";
 
-function calculatePropertyType(type: TypeExpression): string { 
+function calculatePropertyType(type: TypeExpression | string): string {
     if (type instanceof SimpleTypeExpression) {
         const typeString = type.type.toString();
-        if (typeString !== SyntaxKind.AnyKeyword && typeString !== SyntaxKind.UndefinedKeyword) { 
+        if (typeString !== SyntaxKind.AnyKeyword && typeString !== SyntaxKind.UndefinedKeyword) {
             return capitalizeFirstLetter(typeString);
         }
     }
@@ -76,19 +76,19 @@ function calculatePropertyType(type: TypeExpression): string {
     if (type instanceof FunctionTypeNode) {
         return "Function";
     }
-    if (type instanceof LiteralTypeNode) { 
-        if (type.expression instanceof ObjectLiteral) { 
+    if (type instanceof LiteralTypeNode) {
+        if (type.expression instanceof ObjectLiteral) {
             return "Object";
         }
-        if (type.expression instanceof StringLiteral) { 
+        if (type.expression instanceof StringLiteral) {
             return "String";
         }
-        if (type.expression instanceof NumericLiteral) { 
+        if (type.expression instanceof NumericLiteral) {
             return "Number";
         }
     }
 
-    if (type instanceof TypeReferenceNode) { 
+    if (type instanceof TypeReferenceNode) {
         return type.typeName.toString();
     }
     return "";
@@ -197,6 +197,18 @@ export class GetAccessor extends BaseGetAccessor {
 
     getter(componentContext?: string) { 
         return `${this.processComponentContext(componentContext)}${super.getter()}()`;
+    }
+}
+
+export class Function extends AngularFunction { 
+    constructor(decorators: Decorator[] | undefined, modifiers: string[] | undefined, asteriskToken: string, name: Identifier, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block, context: GeneratorContext) { 
+        super(decorators, modifiers, asteriskToken, name, typeParameters, parameters, new SimpleTypeExpression(""), body, context)
+    }
+}
+
+export class ArrowFunction extends AngularArrowFunction { 
+    constructor(modifiers: string[]|undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | string |undefined, equalsGreaterThanToken: string, body: Block | Expression, context: GeneratorContext) {
+        super(modifiers, typeParameters, parameters, new SimpleTypeExpression(""), equalsGreaterThanToken, body, context);
     }
 }
 
@@ -1019,7 +1031,7 @@ class VueGenerator extends BaseGenerator {
         return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
     }
 
-    createArrowFunction(modifiers: string[] | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, equalsGreaterThanToken: string, body: Block | Expression) {
+    createArrowFunction(modifiers: string[] | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | string | undefined, equalsGreaterThanToken: string, body: Block | Expression) {
         return new ArrowFunction(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body, this.getContext());
     }
 
@@ -1142,6 +1154,9 @@ class VueGenerator extends BaseGenerator {
         return addEmptyToString<TypeOperatorNode>(super.createTypeOperatorNode(type)); 
     }
 
+    createTypeReferenceNode(typeName: Identifier, typeArguments?: TypeExpression[]) {
+        return addEmptyToString<TypeReferenceNode>(super.createTypeReferenceNode(typeName, typeArguments)); 
+    }
 }
 
 

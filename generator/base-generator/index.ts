@@ -186,13 +186,13 @@ export default class Generator {
         return new Block(statements, multiLine);
     }
 
-    createFunctionDeclaration(decorators: Decorator[] | undefined, modifiers: string[] | undefined, asteriskToken: string, name: Identifier, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
+    createFunctionDeclaration(decorators: Decorator[] | undefined, modifiers: string[] | undefined, asteriskToken: string, name: Identifier, typeParameters: any, parameters: Parameter[], type: TypeExpression | string | undefined, body: Block) {
         const functionDeclaration = this.createFunctionDeclarationCore(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body);
         this.addViewFunction(functionDeclaration.name!.toString(), functionDeclaration);
         return functionDeclaration;
     }
 
-    createFunctionDeclarationCore(decorators: Decorator[]|undefined, modifiers: string[]|undefined, asteriskToken: string, name: Identifier|undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, body: Block) {
+    createFunctionDeclarationCore(decorators: Decorator[]|undefined, modifiers: string[]|undefined, asteriskToken: string, name: Identifier|undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|string|undefined, body: Block) {
         return new Function(decorators, modifiers, asteriskToken, name, typeParameters, parameters, type, body, this.getContext());
     }
 
@@ -204,7 +204,7 @@ export default class Generator {
         return new ReturnStatement(expression);
     }
 
-    createFunctionExpression(modifiers: string[] = [], asteriskToken: string, name: Identifier | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, body: Block) {
+    createFunctionExpression(modifiers: string[] = [], asteriskToken: string, name: Identifier | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|string|undefined, body: Block) {
         return this.createFunctionDeclarationCore([], modifiers, asteriskToken, name, typeParameters, parameters, type, body);
     }
 
@@ -212,7 +212,7 @@ export default class Generator {
         return token;
     }
 
-    createArrowFunction(modifiers: string[]|undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|undefined, equalsGreaterThanToken: string, body: Block | Expression) {
+    createArrowFunction(modifiers: string[]|undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression|string|undefined, equalsGreaterThanToken: string, body: Block | Expression) {
         return new ArrowFunction(modifiers, typeParameters, parameters, type, equalsGreaterThanToken, body, this.getContext());
     }
 
