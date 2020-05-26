@@ -111,8 +111,13 @@ export class PropertyAccess extends ExpressionWithExpression {
     }
 
     isPropsScope(options?: toStringOptions) {
-        const result = `${this.expression.toString(options)}`;
-        return this.checkPropsAccess(result, options)
+        if (this.expression instanceof PropertyAccess &&
+            this.expression.expression.toString(options) === options?.componentContext &&
+            this.expression.name.toString() === "props"
+        ) { 
+            return true;
+        }
+        return false;
     }
 }
 

@@ -106,9 +106,13 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
             .find(s => tagName.endsWith(`${contextExpr}${s.name.toString()}`));
     }
 
+    getPropertyFromSpread(property: BaseProperty) { 
+        return true;
+    }
+
     spreadToArray(spreadAttributes: JsxSpreadAttribute, options?: toStringOptions) {
         const component = this.component;
-        const properties = component && getProps(component.members) || []
+        const properties = component && getProps(component.members).filter(this.getPropertyFromSpread) || []
 
         const spreadAttributesExpression = spreadAttributes.expression instanceof Identifier &&
             options?.variables?.[spreadAttributes.expression.toString()] ||
@@ -142,9 +146,22 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
                 ? `(${spreadValue}!==undefined?${spreadValue}:${attrValue})`
                 : spreadValue;
 
-            acc.push(new JsxAttribute(propName, new SimpleExpression(value)));
+            acc.push(this.createJsxAttribute(propName, new SimpleExpression(value)));
             return acc;
         }, [] as JsxAttribute[])
+    }
+
+    createJsxAttribute(name: Identifier, value: Expression) { 
+        return new JsxAttribute(name, value)
+    }
+
+    processSpreadAttributesOnNativeElement() {
+        const ref = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === "ref");
+        if (!ref && !this.component) {
+            this.attributes.push(
+                new JsxAttribute(new Identifier("ref"), new SimpleExpression(`_auto_ref_${counter.get()}`))
+            );
+        }
     }
 
     processSpreadAttributes(options?: toStringOptions) { 
@@ -163,12 +180,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
                 });
             });
 
-            const ref = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === "ref");
-            if (!ref && !this.component) { 
-                this.attributes.push(
-                    new JsxAttribute(new Identifier("ref"), new SimpleExpression(`_auto_ref_${counter.get()}`))
-                );
-            }
+            this.processSpreadAttributesOnNativeElement();
         }
     }
 

@@ -2,6 +2,8 @@
   <InnerWidget 
     :selected="false" 
     v-bind="__attr1()"
+    @on-select="__attr1().onSelect"
+    @update:value="__attr1().valueChange"
    />
 </template>
 <script>

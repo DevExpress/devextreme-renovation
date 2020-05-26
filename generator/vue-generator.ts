@@ -798,7 +798,15 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         return `<slot name="${templateProperty.name}" ${attributes.join(" ")}></slot>`;
     }
 
-    processSpreadAttributes() { 
+    createJsxAttribute(name: Identifier, value: Expression) { 
+        return new JsxAttribute(name, value)
+    }
+
+    getPropertyFromSpread(property: BaseProperty) { 
+        return property.isEvent;
+    }
+
+    processSpreadAttributesOnNativeElement() { 
 
     }
 
