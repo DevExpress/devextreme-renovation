@@ -12,8 +12,8 @@ cloneTest('Check element style', async t => {
     const el = Selector('#simple');
 
     await t
-        .expect(el.clientWidth).eql(100)
-        .expect(el.clientHeight).eql(100)
+        .expect(el.clientWidth).eql(25)
+        .expect(el.clientHeight).eql(25)
         .expect((await el.style)["background-color"]).eql('rgb(255, 0, 0)');
 });
 
@@ -103,6 +103,18 @@ cloneTest('Click on component with default options', async t => {
 
     await t
         .expect(await el.textContent).eql("ab164");
+});
+
+cloneTest('Can spread props', async t => {
+    const el = Selector('#spread-props');
+
+    await t.click(el);
+    await t.click(el);
+
+    const counter = Selector("#button-1-click-counter");
+
+    await t
+        .expect(counter.textContent).eql("2");
 });
 
 cloneTest('Check form values binding', async t => {

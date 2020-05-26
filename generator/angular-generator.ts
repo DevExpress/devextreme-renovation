@@ -106,13 +106,17 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
             .find(s => tagName.endsWith(`${contextExpr}${s.name.toString()}`));
     }
 
-    spreadToArray(spreadAttributes: JsxSpreadAttribute, options?: toStringOptions) {
-        const component = this.component;
-        const properties = component && getProps(component.members) || [];
+    getPropertyFromSpread(property: BaseProperty) { 
+        return true;
+    }
 
-        const spreadAttributesExpression = spreadAttributes.expression instanceof Identifier &&
-            options?.variables?.[spreadAttributes.expression.toString()] ||
-            spreadAttributes.expression;
+    spreadToArray(spreadAttribute: JsxSpreadAttribute, options?: toStringOptions) {
+        const component = this.component;
+        const properties = component && getProps(component.members).filter(this.getPropertyFromSpread) || [];
+
+        const spreadAttributesExpression = spreadAttribute.expression instanceof Identifier &&
+            options?.variables?.[spreadAttribute.expression.toString()] ||
+            spreadAttribute.expression;
 
         if (spreadAttributesExpression instanceof BasePropertyAccess) { 
             const member = spreadAttributesExpression.getMember(options);
@@ -142,9 +146,26 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
                 ? `(${spreadValue}!==undefined?${spreadValue}:${attrValue})`
                 : spreadValue;
 
-            acc.push(new JsxAttribute(propName, new SimpleExpression(value)));
+            acc.push(this.createJsxAttribute(propName, new SimpleExpression(value)));
             return acc;
         }, [] as JsxAttribute[])
+    }
+
+    createJsxAttribute(name: Identifier, value: Expression) { 
+        return new JsxAttribute(name, value)
+    }
+
+    processSpreadAttributesOnNativeElement() {
+        const ref = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === "ref");
+        if (!ref && !this.component) {
+            this.attributes.push(
+                new JsxAttribute(new Identifier("ref"), new SimpleExpression(`_auto_ref_${counter.get()}`))
+            );
+        }
+    }
+
+    updateSpreadAttribute(spreadAttribute: JsxSpreadAttribute, attributes: JsxAttribute[]) { 
+        return spreadAttribute;
     }
 
     processSpreadAttributes(options?: toStringOptions) { 
@@ -152,6 +173,17 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         if (spreadAttributes.length) { 
             spreadAttributes.forEach(spreadAttr => {
                 const attributes = this.spreadToArray(spreadAttr, options);
+
+                const updatedSpreadAttribute = this.updateSpreadAttribute(spreadAttr, attributes);
+
+                if (updatedSpreadAttribute !== spreadAttr) { 
+                    const oldAttrIndex = this.attributes.findIndex(a => a === spreadAttr);
+                    if (oldAttrIndex > -1) {
+                        this.attributes.splice(oldAttrIndex, 1);
+                     }
+                    this.attributes.push(updatedSpreadAttribute);
+                }
+
                 attributes.forEach(attr => {
                     const oldAttrIndex = this.attributes.findIndex(
                         (a) => a instanceof JsxAttribute && a.name.toString() === attr.name.toString()
@@ -163,12 +195,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
                 });
             });
 
-            const ref = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === "ref");
-            if (!ref && !this.component) { 
-                this.attributes.push(
-                    new JsxAttribute(new Identifier("ref"), new SimpleExpression(`_auto_ref_${counter.get()}`))
-                );
-            }
+            this.processSpreadAttributesOnNativeElement();
         }
     }
 
@@ -215,6 +242,29 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         )
     }
 
+    createJsxExpression(statement: Expression) { 
+        return new JsxExpression(undefined, statement);
+    }
+
+    createJsxChildExpression(statement: JsxExpression) { 
+        return new JsxChildExpression(statement);
+    }
+
+    getSlotsFromAttributes(options?: toStringOptions) { 
+        if (this.component){
+            const slots = this.attributes.filter(a => a instanceof JsxAttribute && a.isSlotAttribute({
+                members: [],
+                ...options,
+                jsxComponent: this.component
+            })) as JsxAttribute[];
+
+            return slots.map(s => this.createJsxChildExpression(
+                this.createJsxExpression(s.initializer)
+            ));
+        }
+        return [];
+    }
+
     getSpreadAttributes() { 
         if(this.component) {
             return [];
@@ -244,8 +294,13 @@ export class JsxSelfClosingElement extends JsxOpeningElement{
         if (this.getTemplateProperty(options)) { 
             return super.toString(options);
         }
+
+        const openingElement = super.toString(options);
+        const children: Expression[] = this.getSlotsFromAttributes(options);
         
-        return `${super.toString(options)}</${this.processTagName(this.tagName)}>`
+        return `${openingElement}${
+            children.map(c => c.toString(options)).join("")
+        }</${this.processTagName(this.tagName)}>`
     }
 
     clone() { 
@@ -329,6 +384,11 @@ export class JsxAttribute extends BaseJsxAttribute {
             this.initializer instanceof JsxExpression && this.initializer.expression instanceof StringLiteral;
     }
 
+    isSlotAttribute(options?: toStringOptions) { 
+        const slotProps = options?.jsxComponent?.members.filter(p => p.isSlot);
+        return slotProps?.some(p => p.name === this.name.toString())
+    }
+
     toString(options?:toStringOptions) { 
         if (this.name.toString() === "ref") { 
             return this.compileRef(options);
@@ -340,6 +400,10 @@ export class JsxAttribute extends BaseJsxAttribute {
                 .find(p => p.name === this.name.toString())
         ) {
             return this.compileEvent(options);
+        }
+
+        if (this.isSlotAttribute(options)) { 
+            return "";
         }
 
         const name = this.compileName(options);
@@ -732,12 +796,19 @@ export class JsxElement extends BaseJsxElement {
     }
 
     toString(options?: toStringOptions) {
-        const children: string = this.children.map(c => c.toString(options)).join("");
+        const openingElementString = this.openingElement.toString(options);
+        const children = this.children.concat(this.openingElement.getSlotsFromAttributes(options));
+        
+        const childrenString: string = children.map(c => c.toString(options)).join("");
+
         if (this.compileOnlyChildren()) {
-            return children;
+            return childrenString;
         }
-        const closingElementString = !this.openingElement.getTemplateProperty(options) ? this.closingElement.toString(options) : "";
-        return `${this.openingElement.toString(options)}${children}${closingElementString}`;
+        const closingElementString = !this.openingElement.getTemplateProperty(options)
+            ? this.closingElement.toString(options)
+            : "";
+        
+        return `${openingElementString}${childrenString}${closingElementString}`;
     }
 
     clone() {

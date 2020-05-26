@@ -1,5 +1,8 @@
  <template>
-  <InnerWidget v-bind="props()" />
+  <InnerWidget 
+    v-bind="{...props(),...{valueChange:undefined}}"
+    @update:value="valueChange"
+  />
 </template>
 <script>
 import InnerWidget from "./dx-inner-widget";

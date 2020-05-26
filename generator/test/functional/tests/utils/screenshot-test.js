@@ -16,8 +16,7 @@ const screenshotTest = async (t, selector, etalonName) => {
     if (fs.existsSync(screenshotPath)) { 
         fs.unlinkSync(screenshotPath);
     }
-
-    await t.resizeWindow(600, 600);
+    
     await t.takeElementScreenshot(selector, etalonName);
     return new Promise((resolve, fail) => {
         if (fs.existsSync(etalonPath)) {

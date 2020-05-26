@@ -64,7 +64,11 @@ export class ObjectLiteral extends Expression {
     }
 
     toString(options?:toStringOptions) {
-        return `{${this.properties.map(p => p.toString(options)).join(`,\n`)}}`;
+        return `{${
+            this.properties
+                .map(p => p.toString(options))
+                .join(`,${this.multiLine ? "\n" : ""}`)
+            }}`;
     }
 
     getDependency() {
