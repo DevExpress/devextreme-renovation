@@ -15,7 +15,7 @@ import SpreadProps from "./spread-props.tsx";
 
 function view(model: App) { 
     return <div>
-        <SimpleComponent width={100} height={100}></SimpleComponent>
+        <SimpleComponent width={25} height={25}></SimpleComponent>
 
         <ButtonComponent
             id="button-1"

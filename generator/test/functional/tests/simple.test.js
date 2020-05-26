@@ -12,8 +12,8 @@ cloneTest('Check element style', async t => {
     const el = Selector('#simple');
 
     await t
-        .expect(el.clientWidth).eql(100)
-        .expect(el.clientHeight).eql(100)
+        .expect(el.clientWidth).eql(25)
+        .expect(el.clientHeight).eql(25)
         .expect((await el.style)["background-color"]).eql('rgb(255, 0, 0)');
 });
 
