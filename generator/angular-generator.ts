@@ -227,6 +227,14 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         )
     }
 
+    createJsxExpression(statement: Expression) { 
+        return new JsxExpression(undefined, statement);
+    }
+
+    createJsxChildExpression(statement: JsxExpression) { 
+        return new JsxChildExpression(statement);
+    }
+
     getSlotsFromAttributes(options?: toStringOptions) { 
         if (this.component){
             const slots = this.attributes.filter(a => a instanceof JsxAttribute && a.isSlotAttribute({
@@ -235,8 +243,8 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
                 jsxComponent: this.component
             })) as JsxAttribute[];
 
-            return slots.map(s => new JsxChildExpression(
-                new JsxExpression(undefined, s.initializer)
+            return slots.map(s => this.createJsxChildExpression(
+                this.createJsxExpression(s.initializer)
             ));
         }
         return [];

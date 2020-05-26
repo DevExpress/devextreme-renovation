@@ -2500,6 +2500,186 @@ mocha.describe("Vue-generator", function () {
                     members: []
                 }), `<Widget @update:state-prop="value"/>`);
             });
+
+            mocha.describe("Pass slots via attribute", function () { 
+                this.beforeEach(function () {
+                    generator.setContext({
+                        dirname: __dirname
+                    });
+
+                    const defaultSlot = generator.createProperty(
+                        [createDecorator("Slot")],
+                        [],
+                        generator.createIdentifier("children")
+                    );
+
+                    const namedSlot = generator.createProperty(
+                        [createDecorator("Slot")],
+                        [],
+                        generator.createIdentifier("namedSlot")
+                    );
+
+                    generator.createClassDeclaration(
+                        [createComponentDecorator({})],
+                        [],
+                        generator.createIdentifier("Widget"),
+                        [],
+                        [],
+                        [
+                            defaultSlot,
+                            namedSlot
+                        ]
+                    );
+                });
+
+                this.afterEach(function () {
+                    generator.setContext(null);
+                });
+
+                mocha.it("Self-closing element", function () {
+                    const slotProperty = generator.createProperty(
+                        [createDecorator("Slot")],
+                        [],
+                        generator.createIdentifier("default")
+                    );
+                    const element = generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("Widget"),
+                        [],
+                        [
+                            generator.createJsxAttribute(
+                                generator.createIdentifier("children"),
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier("props"),
+                                    generator.createIdentifier("default")
+                                )
+                            )
+                        ]
+                    );
+
+                    assert.strictEqual(
+                        element.toString({
+                            componentContext: "",
+                            newComponentContext: "",
+                            members: [slotProperty]
+                        }),
+                        `<Widget ><slot></slot></Widget>`
+                    );
+                });
+
+                mocha.it("Self-closing element with two slots", function () {
+                    const slotProperty = generator.createProperty(
+                        [createDecorator("Slot")],
+                        [],
+                        generator.createIdentifier("default")
+                    );
+
+                    const namedSlot = generator.createProperty(
+                        [createDecorator("Slot")],
+                        [],
+                        generator.createIdentifier("namedSlot")
+                    );
+
+                    const element = generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("Widget"),
+                        [],
+                        [
+                            generator.createJsxAttribute(
+                                generator.createIdentifier("children"),
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier("props"),
+                                    generator.createIdentifier("default")
+                                )
+                            ),
+                            generator.createJsxAttribute(
+                                generator.createIdentifier("namedSlot"),
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier("props"),
+                                    generator.createIdentifier("namedSlot")
+                                )
+                            )
+                        ]
+                    );
+
+                    assert.strictEqual(
+                        element.toString({
+                            componentContext: "",
+                            newComponentContext: "",
+                            members: [slotProperty, namedSlot]
+                        }),
+                        `<Widget ><slot></slot><slot name="namedSlot"></slot></Widget>`
+                    );
+                });
+
+                mocha.it("spread props with slot", function () {
+                    const slotProperty = generator.createProperty(
+                        [createDecorator("Slot")],
+                        [],
+                        generator.createIdentifier("children")
+                    );
+                    const element = generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("Widget"),
+                        [],
+                        [
+                            generator.createJsxSpreadAttribute(
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier(generator.SyntaxKind.ThisKeyword),
+                                    generator.createIdentifier("props"),
+                                )
+                            )
+                        ]
+                    );
+
+                    assert.strictEqual(
+                        element.toString({
+                            componentContext: "this",
+                            newComponentContext: "",
+                            members: [slotProperty]
+                        }),
+                        `<Widget v-bind="props"><slot></slot></Widget>`
+                    );
+                });
+
+                mocha.it("element with closing tag", function () {
+                    const slotProperty = generator.createProperty(
+                        [createDecorator("Slot")],
+                        [],
+                        generator.createIdentifier("default")
+                    );
+
+                    const element = generator.createJsxElement(
+                        generator.createJsxOpeningElement(
+                            generator.createIdentifier("Widget"),
+                            [],
+                            [
+                                generator.createJsxAttribute(
+                                    generator.createIdentifier("children"),
+                                    generator.createPropertyAccess(
+                                        generator.createIdentifier("props"),
+                                        generator.createIdentifier("default")
+                                    )
+                                )
+                            ]
+                        ),
+                        [generator.createJsxSelfClosingElement(
+                            generator.createIdentifier("span")
+                        )],
+                        generator.createJsxClosingElement(
+                            generator.createIdentifier("Widget")
+                        )
+                    );
+
+                    assert.strictEqual(
+                        element.toString({
+                            componentContext: "",
+                            newComponentContext: "",
+                            members: [slotProperty]
+                        }),
+                        `<Widget ><span /><slot></slot></Widget>`
+                    );
+                });
+
+            });
+
         });
 
     });

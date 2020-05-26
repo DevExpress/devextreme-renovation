@@ -785,6 +785,14 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         }
     }
 
+    createJsxExpression(statement: Expression) { 
+        return new JsxExpression(undefined, statement);
+    }
+
+    createJsxChildExpression(statement: JsxExpression) { 
+        return new JsxChildExpression(statement);
+    }
+
     processTagName(tagName: Expression) { 
         if (tagName.toString() === "Fragment") { 
             return new SimpleExpression('div style="display: contents"');
@@ -803,7 +811,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     }
 
     getPropertyFromSpread(property: BaseProperty) { 
-        return property.isEvent;
+        return property.isEvent || property.isSlot;
     }
 
     processSpreadAttributesOnNativeElement() { 
@@ -843,8 +851,18 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
         if (this.getTemplateProperty(options)) { 
             return super.toString(options);
         }
+
+        const baseValue = super.toString(options);
+
+        const children = this.getSlotsFromAttributes(options);
+
+        if (children.length) { 
+            return `${baseValue}${
+                children.map(c => c.toString(options)).join("")
+            }</${this.processTagName(this.tagName)}>`
+        }
         
-        return super.toString(options).replace(/>$/, "/>");
+        return baseValue.replace(/>$/, "/>");
     }
 
     clone() { 
