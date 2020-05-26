@@ -794,7 +794,7 @@ mocha.describe("Angular generator", function () {
                     )
                 );
     
-                assert.strictEqual(element.toString(), "<div #_auto_ref_1><input #_auto_ref_0/></div>");
+                assert.strictEqual(element.toString(), "<div #_auto_ref_0><input #_auto_ref_1/></div>");
                 const spreadAttributes = element.getSpreadAttributes();
                 assert.strictEqual(spreadAttributes.length, 2);
             });
@@ -1270,6 +1270,191 @@ mocha.describe("Angular generator", function () {
                     assert.strictEqual(element.toString({
                         members: []
                     }), `<dx-widget [className]="value"><div class="class-name"></div></dx-widget>`);        
+                });
+
+                mocha.describe("Pass slots via attribute", function () { 
+                    this.beforeEach(function () {
+                        generator.setContext({
+                            dirname: __dirname
+                        });
+
+                        const defaultSlot = generator.createProperty(
+                            [createDecorator("Slot")],
+                            [],
+                            generator.createIdentifier("children")
+                        );
+
+                        const namedSlot = generator.createProperty(
+                            [createDecorator("Slot")],
+                            [],
+                            generator.createIdentifier("namedSlot")
+                        );
+
+                        generator.createClassDeclaration(
+                            [createComponentDecorator({})],
+                            [],
+                            generator.createIdentifier("Widget"),
+                            [],
+                            [],
+                            [
+                                defaultSlot,
+                                namedSlot
+                            ]
+                        );
+                    });
+    
+                    this.afterEach(function () {
+                        generator.setContext(null);
+                    });
+
+                    mocha.it("Self-closing element", function () {
+                        const slotProperty = generator.createProperty(
+                            [createDecorator("Slot")],
+                            [],
+                            generator.createIdentifier("default")
+                        );
+                        const element = generator.createJsxSelfClosingElement(
+                            generator.createIdentifier("Widget"),
+                            [],
+                            [
+                                generator.createJsxAttribute(
+                                    generator.createIdentifier("children"),
+                                    generator.createPropertyAccess(
+                                        generator.createIdentifier("props"),
+                                        generator.createIdentifier("default")
+                                    )
+                                )
+                            ]
+                        );
+    
+                        assert.strictEqual(
+                            element.toString({
+                                componentContext: "",
+                                newComponentContext: "",
+                                members: [slotProperty]
+                            }),
+                            `<dx-widget ><div #slotDefault style="display: contents"><ng-content></ng-content></div></dx-widget>`
+                        );
+                    });
+
+                    mocha.it("Self-closing element with two slots", function () {
+                        const slotProperty = generator.createProperty(
+                            [createDecorator("Slot")],
+                            [],
+                            generator.createIdentifier("default")
+                        );
+    
+                        const namedSlot = generator.createProperty(
+                            [createDecorator("Slot")],
+                            [],
+                            generator.createIdentifier("namedSlot")
+                        );
+    
+                        const element = generator.createJsxSelfClosingElement(
+                            generator.createIdentifier("Widget"),
+                            [],
+                            [
+                                generator.createJsxAttribute(
+                                    generator.createIdentifier("children"),
+                                    generator.createPropertyAccess(
+                                        generator.createIdentifier("props"),
+                                        generator.createIdentifier("default")
+                                    )
+                                ),
+                                generator.createJsxAttribute(
+                                    generator.createIdentifier("namedSlot"),
+                                    generator.createPropertyAccess(
+                                        generator.createIdentifier("props"),
+                                        generator.createIdentifier("namedSlot")
+                                    )
+                                )
+                            ]
+                        );
+    
+                        assert.strictEqual(
+                            removeSpaces(element.toString({
+                                componentContext: "",
+                                newComponentContext: "",
+                                members: [slotProperty, namedSlot]
+                            })),
+                            removeSpaces(`
+                            <dx-widget >
+                                <div #slotDefault style="display: contents">
+                                    <ng-content></ng-content>
+                                </div>
+                                <div #slotNamedSlot style="display: contents">
+                                    <ng-content select="[namedSlot]"></ng-content>
+                                </div>
+                            </dx-widget>`)
+                        );
+                    });
+
+                    mocha.it("spread props with slot", function () {
+                        const slotProperty = generator.createProperty(
+                            [createDecorator("Slot")],
+                            [],
+                            generator.createIdentifier("children")
+                        );
+                        const element = generator.createJsxSelfClosingElement(
+                            generator.createIdentifier("Widget"),
+                            [],
+                            [
+                                generator.createJsxSpreadAttribute(
+                                    generator.createPropertyAccess(
+                                        generator.createIdentifier(generator.SyntaxKind.ThisKeyword),
+                                        generator.createIdentifier("props"),
+                                    )
+                                )
+                            ]
+                        );
+    
+                        assert.strictEqual(
+                            element.toString({
+                                componentContext: "this",
+                                newComponentContext: "",
+                                members: [slotProperty]
+                            }),
+                            `<dx-widget ><div #slotChildren style="display: contents"><ng-content></ng-content></div></dx-widget>`
+                        );
+                    });
+
+                    mocha.it("element with closing tag", function () {
+                        const slotProperty = generator.createProperty(
+                            [createDecorator("Slot")],
+                            [],
+                            generator.createIdentifier("default")
+                        );
+
+                        const element = generator.createJsxElement(
+                            generator.createJsxOpeningElement(
+                                generator.createIdentifier("Widget"),
+                                [],
+                                [
+                                    generator.createJsxAttribute(
+                                        generator.createIdentifier("children"),
+                                        generator.createPropertyAccess(
+                                            generator.createIdentifier("props"),
+                                            generator.createIdentifier("default")
+                                        )
+                                    )
+                                ]
+                            ),
+                            [],
+                            generator.createJsxClosingElement(
+                                generator.createIdentifier("Widget")
+                            )
+                        );
+    
+                        assert.strictEqual(
+                            element.toString({
+                                componentContext: "",
+                                newComponentContext: "",
+                                members: [slotProperty]
+                            }),
+                            `<dx-widget ><div #slotDefault style="display: contents"><ng-content></ng-content></div></dx-widget>`
+                        );
+                    });
+    
                 });
 
             });
@@ -1825,7 +2010,7 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(expression.toString(), `viewModel.items.map(null)`);
             });
 
-            mocha.it("Parse map with destructuration", function () { 
+            mocha.it("Parse map with destruction", function () { 
                 const expression = generator.createJsxElement(
                     generator.createJsxOpeningElement(
                         generator.createIdentifier("div"),

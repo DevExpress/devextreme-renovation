@@ -108,7 +108,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
     spreadToArray(spreadAttributes: JsxSpreadAttribute, options?: toStringOptions) {
         const component = this.component;
-        const properties = component && getProps(component.members) || [];
+        const properties = component && getProps(component.members) || []
 
         const spreadAttributesExpression = spreadAttributes.expression instanceof Identifier &&
             options?.variables?.[spreadAttributes.expression.toString()] ||
@@ -215,6 +215,21 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         )
     }
 
+    getSlotsFromAttributes(options?: toStringOptions) { 
+        if (this.component){
+            const slots = this.attributes.filter(a => a instanceof JsxAttribute && a.isSlotAttribute({
+                members: [],
+                ...options,
+                jsxComponent: this.component
+            })) as JsxAttribute[];
+
+            return slots.map(s => new JsxChildExpression(
+                new JsxExpression(undefined, s.initializer)
+            ));
+        }
+        return [];
+    }
+
     getSpreadAttributes() { 
         if(this.component) {
             return [];
@@ -244,8 +259,13 @@ export class JsxSelfClosingElement extends JsxOpeningElement{
         if (this.getTemplateProperty(options)) { 
             return super.toString(options);
         }
+
+        const openingElement = super.toString(options);
+        const children: Expression[] = this.getSlotsFromAttributes(options);
         
-        return `${super.toString(options)}</${this.processTagName(this.tagName)}>`
+        return `${openingElement}${
+            children.map(c => c.toString(options)).join("")
+        }</${this.processTagName(this.tagName)}>`
     }
 
     clone() { 
@@ -329,6 +349,11 @@ export class JsxAttribute extends BaseJsxAttribute {
             this.initializer instanceof JsxExpression && this.initializer.expression instanceof StringLiteral;
     }
 
+    isSlotAttribute(options?: toStringOptions) { 
+        const slotProps = options?.jsxComponent?.members.filter(p => p.isSlot);
+        return slotProps?.some(p => p.name === this.name.toString())
+    }
+
     toString(options?:toStringOptions) { 
         if (this.name.toString() === "ref") { 
             return this.compileRef(options);
@@ -340,6 +365,10 @@ export class JsxAttribute extends BaseJsxAttribute {
                 .find(p => p.name === this.name.toString())
         ) {
             return this.compileEvent(options);
+        }
+
+        if (this.isSlotAttribute(options)) { 
+            return "";
         }
 
         const name = this.compileName(options);
@@ -732,12 +761,19 @@ export class JsxElement extends BaseJsxElement {
     }
 
     toString(options?: toStringOptions) {
-        const children: string = this.children.map(c => c.toString(options)).join("");
+        const openingElementString = this.openingElement.toString(options);
+        const children = this.children.concat(this.openingElement.getSlotsFromAttributes(options));
+        
+        const childrenString: string = children.map(c => c.toString(options)).join("");
+
         if (this.compileOnlyChildren()) {
-            return children;
+            return childrenString;
         }
-        const closingElementString = !this.openingElement.getTemplateProperty(options) ? this.closingElement.toString(options) : "";
-        return `${this.openingElement.toString(options)}${children}${closingElementString}`;
+        const closingElementString = !this.openingElement.getTemplateProperty(options)
+            ? this.closingElement.toString(options)
+            : "";
+        
+        return `${openingElementString}${childrenString}${closingElementString}`;
     }
 
     clone() {
