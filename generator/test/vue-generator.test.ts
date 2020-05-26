@@ -2635,7 +2635,7 @@ mocha.describe("Vue-generator", function () {
                             newComponentContext: "",
                             members: [slotProperty]
                         }),
-                        `<Widget v-bind="props"><slot></slot></Widget>`
+                        `<Widget v-bind="{...props,...{children:undefined}}"><slot></slot></Widget>`
                     );
                 });
 

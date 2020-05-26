@@ -1,7 +1,7 @@
 <template>
   <InnerWidget 
     :selected="false" 
-    v-bind="__attr1()"
+    v-bind="{...__attr1(),...{onSelect:undefined,valueChange:undefined}}"
     @on-select="__attr1().onSelect"
     @update:value="__attr1().valueChange"
    />

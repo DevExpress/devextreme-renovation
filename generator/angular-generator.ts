@@ -110,13 +110,13 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         return true;
     }
 
-    spreadToArray(spreadAttributes: JsxSpreadAttribute, options?: toStringOptions) {
+    spreadToArray(spreadAttribute: JsxSpreadAttribute, options?: toStringOptions) {
         const component = this.component;
-        const properties = component && getProps(component.members).filter(this.getPropertyFromSpread) || []
+        const properties = component && getProps(component.members).filter(this.getPropertyFromSpread) || [];
 
-        const spreadAttributesExpression = spreadAttributes.expression instanceof Identifier &&
-            options?.variables?.[spreadAttributes.expression.toString()] ||
-            spreadAttributes.expression;
+        const spreadAttributesExpression = spreadAttribute.expression instanceof Identifier &&
+            options?.variables?.[spreadAttribute.expression.toString()] ||
+            spreadAttribute.expression;
 
         if (spreadAttributesExpression instanceof BasePropertyAccess) { 
             const member = spreadAttributesExpression.getMember(options);
@@ -164,11 +164,26 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         }
     }
 
+    updateSpreadAttribute(spreadAttribute: JsxSpreadAttribute, attributes: JsxAttribute[]) { 
+        return spreadAttribute;
+    }
+
     processSpreadAttributes(options?: toStringOptions) { 
         const spreadAttributes = this.attributes.filter(a => a instanceof JsxSpreadAttribute) as JsxSpreadAttribute[];
         if (spreadAttributes.length) { 
             spreadAttributes.forEach(spreadAttr => {
                 const attributes = this.spreadToArray(spreadAttr, options);
+
+                const updatedSpreadAttribute = this.updateSpreadAttribute(spreadAttr, attributes);
+
+                if (updatedSpreadAttribute !== spreadAttr) { 
+                    const oldAttrIndex = this.attributes.findIndex(a => a === spreadAttr);
+                    if (oldAttrIndex > -1) {
+                        this.attributes.splice(oldAttrIndex, 1);
+                     }
+                    this.attributes.push(updatedSpreadAttribute);
+                }
+
                 attributes.forEach(attr => {
                     const oldAttrIndex = this.attributes.findIndex(
                         (a) => a instanceof JsxAttribute && a.name.toString() === attr.name.toString()

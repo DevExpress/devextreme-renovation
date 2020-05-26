@@ -1,6 +1,6 @@
  <template>
   <InnerWidget 
-    v-bind="props()"
+    v-bind="{...props(),...{valueChange:undefined}}"
     @update:value="valueChange"
   />
 </template>

@@ -54,7 +54,7 @@ import { BindingPattern } from "./base-generator/expressions/binding-pattern";
 import { ComponentInput } from "./base-generator/expressions/component-input";
 import { checkDependency } from "./base-generator/utils/dependency";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access";
-import { PropertyAssignment } from "./base-generator/expressions/property-assignment";
+import { PropertyAssignment, SpreadAssignment } from "./base-generator/expressions/property-assignment";
 import { getModuleRelativePath } from "./base-generator/utils/path-utils";
 
 function calculatePropertyType(type: TypeExpression): string { 
@@ -812,6 +812,32 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
     getPropertyFromSpread(property: BaseProperty) { 
         return property.isEvent || property.isSlot;
+    }
+
+    updateSpreadAttribute(spreadAttribute: JsxSpreadAttribute, attributes: JsxAttribute[]) { 
+        if (attributes.length) { 
+            const propertyAssignments = attributes.map(p => { 
+                return new PropertyAssignment(
+                    p.name,
+                    new SimpleExpression(SyntaxKind.UndefinedKeyword)
+                )
+            });
+
+            return new JsxSpreadAttribute(
+                undefined,
+                new ObjectLiteral(
+                    [
+                        new SpreadAssignment(spreadAttribute.expression),
+                        new SpreadAssignment(
+                            new ObjectLiteral(propertyAssignments, false)
+                        )
+                    ],
+                    false
+                )
+            );
+        }
+
+        return spreadAttribute;
     }
 
     processSpreadAttributesOnNativeElement() { 
