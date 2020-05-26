@@ -105,6 +105,18 @@ cloneTest('Click on component with default options', async t => {
         .expect(await el.textContent).eql("ab164");
 });
 
+cloneTest('Can spread props', async t => {
+    const el = Selector('#spread-props');
+
+    await t.click(el);
+    await t.click(el);
+
+    const counter = Selector("#button-1-click-counter");
+
+    await t
+        .expect(counter.textContent).eql("2");
+});
+
 cloneTest('Check form values binding', async t => {
     const el = Selector("#counter-form-value");
 

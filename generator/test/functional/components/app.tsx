@@ -11,6 +11,7 @@ import CallMethodInGetterWidget from "./call-method-in-getter.tsx";
 import ComponentWithFragment from "./component-with-fragment.tsx";
 import ComponentWithDefaultOptionRules, { defaultOptions as setDefaultOptions } from "./default-option-rules.tsx";
 import List from "./list.tsx";
+import SpreadProps from "./spread-props.tsx";
 
 function view(model: App) { 
     return <div>
@@ -49,7 +50,13 @@ function view(model: App) {
 
         <ComponentWithDefaultOptionRules id="component-with-default-options" />
         
-        <List items={model.listItems}/>
+        <List items={model.listItems} />
+        
+        <SpreadProps
+            onClick={model.onButtonClick}
+            id="spread-props">
+            Can Spread Props
+        </SpreadProps>
     </div>;
 }
 
