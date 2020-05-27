@@ -9,6 +9,7 @@ import { Class } from "../base-generator/expressions/class";
 import { ComponentInput } from "../base-generator/expressions/component-input";
 import { Component } from "../base-generator/expressions/component";
 import { ImportDeclaration } from "../base-generator/expressions/import";
+import sinon from "sinon";
 
 import path from "path";
 
@@ -17,6 +18,7 @@ const generator = new Generator();
 import componentCreator from "./helpers/create-component";
 import { toStringOptions } from "../base-generator/types";
 import { BindingPattern } from "../base-generator/expressions/binding-pattern";
+import { Property, Method } from "../base-generator/expressions/class-members";
 
 const { createComponentDecorator, createDecorator} = componentCreator(generator);
 
@@ -1998,20 +2000,155 @@ mocha.describe("ComponentInput", function () {
     });
 
     mocha.it("Component input has heritage properties", function () { 
-        const expression = generator.createClassDeclaration(
+        generator.createClassDeclaration(
             this.decorators,
             ["export"],
             generator.createIdentifier("BaseModel"),
             [],
             [],
             [
-                generator.createProperty([], [], generator.createIdentifier("p"), undefined, generator.createKeywordTypeNode("number"), generator.createNumericLiteral("10")),
-                generator.createProperty([], [], generator.createIdentifier("p1"), undefined, generator.createKeywordTypeNode("number"), generator.createNumericLiteral("15"))
+                generator.createProperty(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("p"),
+                    undefined,
+                    generator.createKeywordTypeNode("number"),
+                    generator.createNumericLiteral("10")
+                ),
+                generator.createProperty(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("p1"),
+                    undefined,
+                    generator.createKeywordTypeNode("number"),
+                    generator.createNumericLiteral("15")
+                )
             ]
         );
 
         const cachedComponent = generator.getContext().components!["BaseModel"];
         assert.deepEqual(cachedComponent.heritageProperties.map(p => p.name.toString()), ["p", "p1"]);
+    });
+
+
+    mocha.describe("Warnings", function () { 
+        this.beforeEach(function () { 
+            const warn = sinon.stub(console, "warn");
+            this.warn = warn;
+            this.getWarnings = () => warn.getCalls().map(c => c.args[2]);
+        });
+
+        this.afterEach(function () { 
+            this.warn.restore();
+        });
+
+        function createComponentInput(properties: Array<Property | Method>) { 
+            generator.createClassDeclaration(
+                [generator.createDecorator(generator.createCall(
+                    generator.createIdentifier("ComponentBindings"),
+                    [],
+                    []
+                ))],
+                ["export"],
+                generator.createIdentifier("BaseModel"),
+                [],
+                [],
+                properties
+            );
+        }
+
+        mocha.it("method", function () { 
+            createComponentInput([
+                generator.createMethod(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("methodName"),
+                    undefined,
+                    undefined,
+                    [],
+                    undefined,
+                    generator.createBlock([], false)
+                )
+            ]);
+
+            assert.deepEqual(this.getWarnings(), ["BaseModel ComponentBindings has non-property member: methodName"]);
+        });
+
+        mocha.it("property without decorator", function () { 
+            createComponentInput([
+                generator.createProperty(
+                    [],
+                    [],
+                    generator.createIdentifier("prop")
+                )
+            ]);
+
+            assert.deepEqual(this.getWarnings(), ["BaseModel ComponentBindings has property without decorator: prop"]);
+        });
+
+        mocha.it("property with two decorators", function () { 
+            createComponentInput([
+                generator.createProperty(
+                    [
+                        createDecorator("OneWay"),
+                        createDecorator("TwoWay")
+                    ],
+                    [],
+                    generator.createIdentifier("prop")
+                )
+            ]);
+
+            assert.deepEqual(this.getWarnings(), ["BaseModel ComponentBindings has property with multiple decorators: prop"]);
+        });
+
+        mocha.it("internal state", function () { 
+            createComponentInput([
+                generator.createProperty(
+                    [
+                        createDecorator("InternalState")
+                    ],
+                    [],
+                    generator.createIdentifier("prop")
+                )
+            ]);
+
+            assert.deepEqual(this.getWarnings(), [
+                "BaseModel ComponentBindings has property \"prop\" with incorrect decorator: InternalState"
+            ]);
+        });
+
+        mocha.it("reserved names", function () { 
+            createComponentInput([
+                generator.createProperty(
+                    [
+                        createDecorator("OneWay")
+                    ],
+                    [],
+                    generator.createIdentifier("key")
+                ),
+                generator.createProperty(
+                    [
+                        createDecorator("OneWay")
+                    ],
+                    [],
+                    generator.createIdentifier("ref")
+                ),
+                generator.createProperty(
+                    [
+                        createDecorator("OneWay")
+                    ],
+                    [],
+                    generator.createIdentifier("style")
+                )
+            ]);
+
+            assert.deepEqual(this.getWarnings(), [
+                "BaseModel ComponentBindings has property with reserved name: key",
+                "BaseModel ComponentBindings has property with reserved name: ref",
+                "BaseModel ComponentBindings has property with reserved name: style"
+            ]);
+        });
     });
 });
 
