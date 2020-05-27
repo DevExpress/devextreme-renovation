@@ -52,7 +52,7 @@ export class Component extends Class implements Heritable {
         return this._name.toString();
     }
 
-    addPrefixToMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) {
+    addPrefixToMembers(members: Array<Property | Method>) {
         members.filter(m => !m.inherited && m instanceof GetAccessor).forEach(m => {
             m.prefix = "__";
         });
@@ -63,7 +63,7 @@ export class Component extends Class implements Heritable {
         return !!this.context.defaultOptionsModule && (!this.defaultOptionRules || this.defaultOptionRules.toString() !== "null");
     }
 
-    processMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) { 
+    processMembers(members: Array<Property | Method>) { 
         members = members.map(m => {
             if (m instanceof Property && m.decorators.length === 0 && m.initializer instanceof BaseFunction) {
                 const body = m.initializer.body instanceof Block
@@ -76,9 +76,11 @@ export class Component extends Class implements Heritable {
         });
         
         members = super.processMembers(
-          inheritMembers(heritageClauses,
-              this.addPrefixToMembers(members, heritageClauses)),
-          heritageClauses);
+            inheritMembers(
+                this.heritageClauses,
+                this.addPrefixToMembers(members)
+            )
+        );
 
         const restPropsGetter = this.createRestPropsGetter(members);
         restPropsGetter.prefix = "__";

@@ -3268,7 +3268,7 @@ mocha.describe("Angular generator", function () {
                 [],
                 [
                     generator.createProperty(
-                        [],
+                        [createDecorator("OneWay")],
                         [],
                         generator.createIdentifier("p"),
                         "",

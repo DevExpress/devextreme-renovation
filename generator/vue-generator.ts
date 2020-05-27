@@ -303,8 +303,8 @@ export class VueComponent extends Component {
         );
     }
 
-    processMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) { 
-        members = super.processMembers(members, heritageClauses);
+    processMembers(members: Array<Property | Method>) { 
+        members = super.processMembers(members);
         members = members.reduce((members, m) => { 
             if (m.isState) { 
                 const base = (m as Property);

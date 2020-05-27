@@ -1151,7 +1151,7 @@ mocha.describe("import Components", function () {
             [],
             [heritageClause],
             [generator.createProperty(
-                [],
+                [createDecorator("OneWay")],
                 [],
                 generator.createIdentifier("height"),
                 generator.SyntaxKind.ExclamationToken,
@@ -1179,7 +1179,7 @@ mocha.describe("import Components", function () {
             [],
             [],
             [generator.createProperty(
-                [],
+                [createDecorator("OneWay")],
                 [],
                 generator.createIdentifier("height"),
                 generator.SyntaxKind.ExclamationToken,
@@ -1801,8 +1801,22 @@ mocha.describe("ComponentInput", function () {
             [],
             [],
             [
-                new Property([], [], generator.createIdentifier("p"), undefined, generator.createKeywordTypeNode("number"), generator.createNumericLiteral("10")),
-                new Property([], [], generator.createIdentifier("p1"), undefined, generator.createKeywordTypeNode("number"), generator.createNumericLiteral("15"))
+                new Property(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("p"),
+                    undefined,
+                    generator.createKeywordTypeNode("number"),
+                    generator.createNumericLiteral("10")
+                ),
+                new Property(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("p1"),
+                    undefined,
+                    generator.createKeywordTypeNode("number"),
+                    generator.createNumericLiteral("15")
+                )
             ]
         );
 

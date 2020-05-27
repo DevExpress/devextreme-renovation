@@ -66,17 +66,16 @@ export class Class {
         return this._name.toString();
     }
 
-    processMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) { 
+    processMembers(members: Array<Property | Method>) { 
         return members;
     }
 
     constructor(decorators: Decorator[], modifiers: string[] = [], name: Identifier, typeParameters: any[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>) {
-        members = this.processMembers(members, heritageClauses);
-        this.decorators = decorators;
         this._name = name;
-        this.members = members;
+        this.decorators = decorators;
         this.modifiers = modifiers;
         this.heritageClauses = heritageClauses;
+        this.members = this.processMembers(members);
     }
 
     toString() {

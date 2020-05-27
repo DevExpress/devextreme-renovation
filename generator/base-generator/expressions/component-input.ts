@@ -7,6 +7,14 @@ import SyntaxKind from "../syntaxKind";
 import { SimpleExpression } from "./base";
 import { capitalizeFirstLetter } from "../utils/string";
 import { Decorator } from "./decorator";
+import { warn } from "../../utils/messages";
+import { getProps } from "./component";
+
+const RESERVED_NAMES = [
+    "key",
+    "ref",
+    "style"
+];
 
 export class ComponentInput extends Class implements Heritable {
 
@@ -53,7 +61,7 @@ export class ComponentInput extends Class implements Heritable {
         )
     }
 
-    buildStateProperies(stateMember: Property, members: BaseClassMember[]) { 
+    buildStateProperties(stateMember: Property, members: BaseClassMember[]) { 
         const props:Property[] = []
         const defaultStateProperty = this.buildDefaultStateProperty(stateMember);
         
@@ -70,12 +78,32 @@ export class ComponentInput extends Class implements Heritable {
         return props;
     }
 
-    processMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) { 
-        return inheritMembers(heritageClauses, super.processMembers(members.concat(
-            members.filter(m => m.decorators.find(d => d.name === "TwoWay")).reduce((properies: Property[], p) => {
-                return properies.concat(this.buildStateProperies(p as Property, members))
+    processMembers(members: Array<Property | Method>) { 
+        members.forEach(m => { 
+            if (!(m instanceof Property)) {
+                warn(`${this.name} ComponentBindings has non-property member: ${m._name}`);
+                return;
+            }
+            if (m.decorators.length !== 1) { 
+                if (m.decorators.length === 0) {
+                    warn(`${this.name} ComponentBindings has property without decorator: ${m._name}`);
+                } else { 
+                    warn(`${this.name} ComponentBindings has property with multiple decorators: ${m._name}`);
+                }
+            } else if (getProps([m]).length === 0) {
+                warn(`${this.name} ComponentBindings has property "${m._name}" with incorrect decorator: ${m.decorators[0].name}`);
+            }
+
+            if (RESERVED_NAMES.some(n => n === m._name.toString())) { 
+                warn(`${this.name} ComponentBindings has property with reserved name: ${m._name}`);
+            }
+            
+        });
+        return inheritMembers(this.heritageClauses, super.processMembers(members.concat(
+            members.filter(m => m.decorators.find(d => d.name === "TwoWay")).reduce((properties: Property[], p) => {
+                return properties.concat(this.buildStateProperties(p as Property, members))
             }, [])
-        ), heritageClauses));
+        )));
     }
 
     get heritageProperties() {

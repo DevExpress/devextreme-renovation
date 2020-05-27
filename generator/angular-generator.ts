@@ -1062,23 +1062,23 @@ export class AngularComponent extends Component {
         this.decorator = componentDecorator;
     }
 
-    processMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) { 
-        heritageClauses.forEach(h => { 
+    processMembers(members: Array<Property | Method>) { 
+        this.heritageClauses.forEach(h => { 
             if (h.isRequired) { 
                 h.members.forEach(m => { 
                     (m as Property).required = true;
                 })
             }
         });
-        return super.processMembers(members, heritageClauses);
+        return super.processMembers(members);
     }
 
-    addPrefixToMembers(members: Array<Property | Method>, heritageClauses: HeritageClause[]) { 
+    addPrefixToMembers(members: Array<Property | Method>) { 
         members.filter(m => !m.decorators.find(d => d.name === "Method")).forEach(m => {
             m.prefix = "__";
         });
         members = members.reduce((members, member) => {
-            if (member.decorators.find(d => d.name === "InternalState") || (member instanceof Property && member.decorators.length===0)) { 
+            if (member.isInternalState) { 
                 members.push(
                     new SetAccessor(
                         undefined,
@@ -1371,9 +1371,10 @@ export class AngularComponent extends Component {
 
     toString() { 
         const extendTypes = this.heritageClauses.reduce((t: string[], h) => t.concat(h.types.map(t => t.type.toString())), []);
+        const components = this.context.components || {};
 
-        const modules = Object.keys(this.context.components || {})
-            .map((k) => this.context.components?.[k])
+        const modules = Object.keys(components)
+            .map((k) => components[k])
             .filter(c => c instanceof AngularComponent && c !== this)
             .map(c => (c as AngularComponent).module)
             .concat(["CommonModule"]);
