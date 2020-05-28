@@ -8,7 +8,7 @@ import { createTestGenerator, assertCode } from "./helpers/common";
 function getPartFromSourceFile(code: string, tagName: string){ 
     const tag = `<${tagName}>`;
     const startPosition = code.indexOf(tag);
-    const endPosition = code.indexOf(`</${tagName}>`);
+    const endPosition = code.lastIndexOf(`</${tagName}>`);
 
     if (startPosition === -1 && endPosition === -1 && tagName==="script") { 
         return code;
@@ -158,6 +158,9 @@ mocha.describe("vue-generation", function () {
         mocha.it("default-options-with-state", function () {
             this.testGenerator(this.test!.title);
         });
+    });
 
+    mocha.it("template-pass", function () {
+        this.testGenerator(this.test!.title);
     });
 });

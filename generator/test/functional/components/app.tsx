@@ -12,6 +12,7 @@ import ComponentWithFragment from "./component-with-fragment.tsx";
 import ComponentWithDefaultOptionRules, { defaultOptions as setDefaultOptions } from "./default-option-rules.tsx";
 import List from "./list.tsx";
 import SpreadProps from "./spread-props.tsx";
+import TemplatePass from "./template-pass.tsx";
 
 function view(model: App) { 
     return <div>
@@ -57,6 +58,8 @@ function view(model: App) {
             id="spread-props">
             Can Spread Props
         </SpreadProps>
+
+        <TemplatePass />
     </div>;
 }
 
