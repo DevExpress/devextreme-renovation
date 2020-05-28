@@ -27,13 +27,13 @@ import {
     IntersectionTypeNode,
     ParenthesizedType,
     TypeAliasDeclaration,
-    TypeOperatorNode
+    TypeOperatorNode,
 } from "./base-generator/expressions/type";
 import { capitalizeFirstLetter, variableDeclaration } from "./base-generator/utils/string";
 import SyntaxKind from "./base-generator/syntaxKind";
 import { Expression, SimpleExpression } from "./base-generator/expressions/base";
 import { ObjectLiteral, StringLiteral, NumericLiteral } from "./base-generator/expressions/literal";
-import { Parameter as BaseParameter, getTemplate } from "./base-generator/expressions/functions";
+import { Parameter as BaseParameter, getTemplate, BaseFunction } from "./base-generator/expressions/functions";
 import { Block, ReturnStatement } from "./base-generator/expressions/statements";
 import {
     Function as AngularFunction,
@@ -47,7 +47,7 @@ import {
     JsxSpreadAttribute as BaseJsxSpreadAttribute,
     AngularDirective,
     toStringOptions,
-    isElement
+    isElement,
 } from "./angular-generator";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
@@ -892,7 +892,10 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
 
         const baseValue = super.toString(options);
 
-        const children = this.getSlotsFromAttributes(options);
+        const children = [
+            ...this.getSlotsFromAttributes(options),
+            ...this.getTemplatesFromAttributes(options),
+        ];
 
         if (children.length) { 
             return `${baseValue}${
@@ -909,6 +912,34 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
             this.typeArguments,
             this.attributes.slice(),
             this.context
+        );
+    }
+
+    getTemplateName(attribute: JsxAttribute) {
+        return attribute.name.toString();
+    }
+
+    functionToJsxElement(name: string, func: BaseFunction, options?: toStringOptions) {      
+        const element = func.getTemplate(options, true);
+        const paramName = func.parameters[0].name.toString(options);
+
+        return new JsxElement(
+            new JsxOpeningElement(new Identifier(`template v-slot:${name}="${paramName}"`), undefined, [], this.context),
+            [element],
+            new JsxClosingElement(new Identifier('template'), this.context),
+        );
+    }
+
+    componentToJsxElement(name: string, component: Component) {
+        const paramName = 'slotProps';
+        const attributes = getProps(component.members)
+            .map(prop => new JsxAttribute(prop._name, new PropertyAccess(new Identifier(paramName), prop._name)));
+        const element = new JsxSelfClosingElement(component._name, undefined, attributes, component.context);
+
+        return new JsxElement(
+            new JsxOpeningElement(new Identifier(`template v-slot:${name}="${paramName}"`), undefined, [], this.context),
+            [element],
+            new JsxClosingElement(new Identifier('template'), this.context),
         );
     }
 }

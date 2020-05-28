@@ -195,3 +195,5 @@ export class ArrowFunction extends BaseFunction {
         return `${this.modifiers.join(" ")} (${this.parameters})${compileType(this.type?.toString())} ${this.equalsGreaterThanToken} ${bodyString}`;
     }
 }
+
+export const isFunction = (expression: Expression): expression is BaseFunction => expression instanceof BaseFunction;

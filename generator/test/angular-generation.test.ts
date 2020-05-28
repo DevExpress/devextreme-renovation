@@ -77,6 +77,10 @@ mocha.describe("angular-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("template-pass", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("method", function () {
         this.testGenerator(this.test!.title);
     });

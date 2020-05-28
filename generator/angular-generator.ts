@@ -31,10 +31,11 @@ import {
     Function as BaseFunction,
     BaseFunction as BaseBaseFunction,
     Parameter,
-    getTemplate 
+    getTemplate,
+    isFunction,
 } from "./base-generator/expressions/functions";
 import { TemplateExpression } from "./base-generator/expressions/template";
-import { SimpleTypeExpression, TypeExpression, FunctionTypeNode } from "./base-generator/expressions/type";
+import { SimpleTypeExpression, TypeExpression, FunctionTypeNode, TypeLiteralNode, PropertySignature } from "./base-generator/expressions/type";
 import { HeritageClause } from "./base-generator/expressions/class";
 import { ImportClause } from "./base-generator/expressions/import";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input"
@@ -66,7 +67,7 @@ export const counter = (function () {
 
 export interface toStringOptions extends  BaseToStringOptions {
     members: Array<Property | Method>;
-    hasStyle?: boolean
+    hasStyle?: boolean;
 }
 
 function processTagName(tagName: Expression, context: GeneratorContext) { 
@@ -265,6 +266,81 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         return [];
     }
 
+    getTemplateName(attribute: JsxAttribute) {
+        return attribute.initializer.toString();
+    }
+
+    componentToJsxElement(name: string, component: Component) {
+        const attributes = getProps(component.members).map(prop => new JsxAttribute(prop._name, prop._name));
+        const element = new JsxSelfClosingElement(component._name, undefined, attributes, component.context);
+        const templateAttr = getProps(component.members).map(prop => `let-${prop._name}="${prop._name}"`).join(" ");
+
+        return new JsxElement(
+            new JsxOpeningElement(new Identifier(`ng-template #${name.toString()} ${templateAttr}`), undefined, [], this.context),
+            [element],
+            new JsxClosingElement(new Identifier('ng-template')),
+        );
+    }
+
+    functionToJsxElement(name: string, func: BaseFunction | BaseArrowFunction, options?: toStringOptions) {      
+        const element = func.getTemplate(options);
+        const paramType = func.parameters[0].type;
+        const templateAttr = paramType instanceof TypeLiteralNode
+            ? paramType.members.map((param: BaseProperty | PropertySignature) => {
+                    const name = param.name.toString(options);
+                    return `let-${name}="${name}"`
+                }).join(' ')
+            : '';
+
+        return new JsxElement(
+          new JsxOpeningElement(new Identifier(`ng-template #${name} ${templateAttr}`), undefined, [], this.context),
+          [element],
+          new JsxClosingElement(new Identifier('ng-template'))
+        );
+    }
+
+    getTemplatesFromAttributes(options?: toStringOptions) {
+        if (this.component){
+            const templates = this.attributes.filter(a => a instanceof JsxAttribute && a.isTemplateAttribute({
+                members: [],
+                ...options,
+                jsxComponent: this.component,
+            })) as JsxAttribute[];
+
+            const components = templates.reduce((acc, template) => {
+                const name = template.initializer.toString();
+                const result = this.context.components?.[name]
+                if (result) {
+                acc.push({
+                    name: this.getTemplateName(template),
+                    component: result as Component,
+                });
+                }
+                return acc
+            }, [] as ({name: string, component: Component})[]);
+
+            const functions = templates.reduce((acc, template) => {
+                const result = this.context.viewFunctions?.[template.initializer.toString()]
+                if (result && isFunction(result)) {
+                acc.push({
+                    name: this.getTemplateName(template),
+                    func: result,
+                });
+                }
+                return acc
+            }, [] as ({name: string,  func: BaseFunction | BaseArrowFunction})[]);
+
+            const result = [
+                ...components.map(({ name, component }) =>  this.componentToJsxElement(name, component)),
+                ...functions.map(({name, func}) => this.functionToJsxElement(name, func, options)),
+            ];
+
+            return result;
+        }
+
+        return [];
+    }
+
     getSpreadAttributes() { 
         if(this.component) {
             return [];
@@ -296,7 +372,10 @@ export class JsxSelfClosingElement extends JsxOpeningElement{
         }
 
         const openingElement = super.toString(options);
-        const children: Expression[] = this.getSlotsFromAttributes(options);
+        const children: Expression[] = [
+            ...this.getSlotsFromAttributes(options),
+            ...this.getTemplatesFromAttributes(options),
+        ];
         
         return `${openingElement}${
             children.map(c => c.toString(options)).join("")
@@ -389,6 +468,11 @@ export class JsxAttribute extends BaseJsxAttribute {
         return slotProps?.some(p => p.name === this.name.toString())
     }
 
+    isTemplateAttribute(options?: toStringOptions) {
+        const templateProps = options?.jsxComponent?.members.filter(p => p.isTemplate);
+        return templateProps?.some(p => p.name === this.name.toString())
+    }
+
     toString(options?:toStringOptions) { 
         if (this.name.toString() === "ref") { 
             return this.compileRef(options);
@@ -414,6 +498,14 @@ export class JsxAttribute extends BaseJsxAttribute {
 
         if (this.isStringLiteralValue()) { 
             return `${name}=${this.initializer.toString()}`;
+        }
+
+        if (this.initializer instanceof JsxExpression) {
+            const funcName = this.initializer.toString();
+            const template = this.initializer.getExpression(options);
+            if(isFunction(template)) {
+                return this.compileBase(name, funcName);
+            }
         }
 
         return this.compileBase(name, this.compileValue(name, this.compileInitializer(options)));
@@ -641,7 +733,7 @@ export class JsxChildExpression extends JsxExpression {
                     ...name.getVariableExpressions(identifier)
                 }
             } else {
-              acc.variables = {
+                acc.variables = {
                     ...acc.variables,
                     ...{[name.toString()]: initializer}
                 }
@@ -797,7 +889,10 @@ export class JsxElement extends BaseJsxElement {
 
     toString(options?: toStringOptions) {
         const openingElementString = this.openingElement.toString(options);
-        const children = this.children.concat(this.openingElement.getSlotsFromAttributes(options));
+        const children = this.children.concat([
+            ...this.openingElement.getSlotsFromAttributes(options),
+            ...this.openingElement.getTemplatesFromAttributes(options),
+        ]);
         
         const childrenString: string = children.map(c => c.toString(options)).join("");
 
