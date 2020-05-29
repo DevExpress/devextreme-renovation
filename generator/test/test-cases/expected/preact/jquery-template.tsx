@@ -5,13 +5,13 @@ import WidgetComponent from "../../../../jquery-template.p"
 
 export default class Widget extends BaseComponent {
     getProps(props:any) {
-        props.render = this._createTemplateComponent(props, props.template);
+        props.template = this._createTemplateComponent(props, props.template);
 
-        props.anotherRender = this._createTemplateComponent(props, props.anotherTemplate);
+        props.anotherTemplate = this._createTemplateComponent(props, props.anotherTemplate);
 
-        props.containerRender = this._createTemplateComponent(props, props.containerTemplate);
+        props.containerTemplate = this._createTemplateComponent(props, props.containerTemplate);
 
-        props.contentRender = this._createTemplateComponent(props, props.contentTemplate, true);
+        props.contentTemplate = this._createTemplateComponent(props, props.contentTemplate, true);
 
         return props;
     }

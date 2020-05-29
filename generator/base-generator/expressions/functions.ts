@@ -126,7 +126,7 @@ export class BaseFunction extends Expression {
                 const props = componentParameter.name.elements.find(e => e.propertyName?.toString() === "props");
                 if (props?.name instanceof BindingPattern) { 
                     const variables = props.name.getVariableExpressions(new Identifier("props"));
-                    props.name.elements.filter(e => members.some(m => m._name.toString() === e.name.toString()))
+                    props.name.elements.filter(e => members.some(m => m._name.toString() === (e.propertyName || e.name).toString()))
                         .forEach(e => {
                             (props.name as BindingPattern).remove(e.name.toString());
                             options!.variables = {

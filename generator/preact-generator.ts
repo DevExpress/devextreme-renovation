@@ -60,7 +60,7 @@ class JQueryComponent {
 
         const templates = this.source.props.filter(p => p.decorators.find(d => d.name === "Template"))
         statements.splice(-1, 0, ...templates.map(t => {
-            const params = ["props", `props.${t._name}`];
+            const params = ["props", `props.${t.name}`];
             const decoratorArgs = t.decorators.find(d => d.name === "Template")!.expression.arguments[0];
             if(decoratorArgs && (decoratorArgs as ObjectLiteral).getProperty("canBeAnonymous")?.toString() === "true") {
                 params.push("true");

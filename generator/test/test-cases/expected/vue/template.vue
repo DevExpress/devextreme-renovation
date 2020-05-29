@@ -1,8 +1,10 @@
 <template>
   <div>
-      <slot name="contentTemplate" v-bind:p1="'value'"></slot>
-        <slot name="template"></slot>
-      </div>
+    <slot name="headerTemplate"></slot>
+    <slot name="contentTemplate" v-bind:data="{p1: 'value'}" v-bind:index="10" v-if="$scopedSlots.contentTemplate"></slot>
+    <slot name="template" v-if="!$scopedSlots.contentTemplate"></slot>
+    <slot name="footerTemplate" v-bind:someProp="true"></slot>
+  </div>
 </template>
 
 <script>
@@ -16,8 +18,10 @@ export default {
     },
     props(){
       return {
+        headerTemplate: this.$scopedSlots.headerTemplate,
         template: this.$scopedSlots.template,
-        contentTemplate: this.$scopedSlots.contentTemplate
+        contentTemplate: this.$scopedSlots.contentTemplate,
+        footerTemplate: this.$scopedSlots.footerTemplate
       };
     }
   }

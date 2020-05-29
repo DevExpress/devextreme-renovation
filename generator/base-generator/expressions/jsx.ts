@@ -1,9 +1,10 @@
-import { Identifier } from "./common";
+import { Identifier, Paren } from "./common";
 import { Expression, ExpressionWithExpression, SimpleExpression } from "./base";
 import { toStringOptions, GeneratorContext } from "../types";
 import SyntaxKind from "../syntaxKind";
 import { Conditional } from "./conditions";
 import { Component } from "./component";
+import { PropertyAssignment, SpreadAssignment } from "./property-assignment";
 
 export function getJsxExpression(e: ExpressionWithExpression | Expression | undefined): JsxExpression | undefined {
     if (e instanceof Conditional && e.isJsx()) {
@@ -27,6 +28,10 @@ export class JsxAttribute {
         this.initializer = initializer || new JsxExpression(undefined, new SimpleExpression("true"));
     }
 
+    getTemplateContext(): PropertyAssignment | null { 
+        return new PropertyAssignment(this.name, this.initializer);
+    }
+    
     toString(options?:toStringOptions) { 
         const name = this.name.toString(options);
         return `${name}=${this.initializer.toString(options)}`;
@@ -79,6 +84,11 @@ export class JsxOpeningElement extends Expression {
 
     isJsx() { 
         return true
+    }
+
+    getTemplateProperty(options?: toStringOptions) { 
+        const tagName = this.tagName.toString(options);
+        return options?.members.find(s => s.isTemplate && (tagName === `${s.getter(options?.newComponentContext)}`));
     }
 }
 
@@ -141,10 +151,27 @@ export class JsxExpression extends ExpressionWithExpression {
     isJsx() { 
         return true;
     }
+
+    getExpression(options?: toStringOptions): Expression {
+        let variableExpression;
+        if (this.expression instanceof Identifier && options?.variables?.[this.expression.toString()]) { 
+            variableExpression = options.variables[this.expression.toString()];
+        }
+
+        if (variableExpression instanceof Paren) {
+            return variableExpression.expression;
+        }
+
+        return variableExpression || this.expression;
+    }
 }
 
 export class JsxSpreadAttribute extends JsxExpression {
     constructor(expression: Expression) { 
         super(SyntaxKind.DotDotDotToken, expression)
+    }
+
+    getTemplateContext(): SpreadAssignment | null { 
+        return new SpreadAssignment(this.expression);
     }
 }

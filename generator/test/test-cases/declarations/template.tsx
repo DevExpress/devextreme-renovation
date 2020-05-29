@@ -1,9 +1,12 @@
 import { Component, Template, ComponentBindings, JSXComponent } from "../../../component_declaration/common";
 
+
 @ComponentBindings()
 export class WidgetInput { 
-    @Template() template: () => any = () => <div></div>;
-    @Template() contentTemplate: (data: {p1: string }) => any = (data) => (<div>{data.p1}</div>);
+    @Template() headerTemplate?: any;
+    @Template() template: (props: any) => any = () => <div></div>;
+    @Template() contentTemplate: (props: { data: { p1: string }, index: number }) => any = (props) => (<div>{props.data.p1}</div>);
+    @Template() footerTemplate: (props: { someProp: boolean }) => any = () => <div></div>;
 }
 
 @Component({
@@ -11,9 +14,11 @@ export class WidgetInput {
 })
 export default class Widget extends JSXComponent<WidgetInput> {}
 
-function view(viewModel: Widget) { 
+function view(viewModel: Widget) {
     return (<div>
-        <viewModel.props.contentTemplate p1={"value"}/>
-        <viewModel.props.template />
+        <viewModel.props.headerTemplate />
+        {viewModel.props.contentTemplate && <viewModel.props.contentTemplate data={{p1: "value"}} index={10} />}
+        {!viewModel.props.contentTemplate && <viewModel.props.template />}
+        <viewModel.props.footerTemplate someProp={true} ></viewModel.props.footerTemplate>
     </div>)
 }
