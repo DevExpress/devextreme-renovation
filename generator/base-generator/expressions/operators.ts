@@ -35,10 +35,6 @@ export class Binary extends Expression {
             this.left.expression.toString().startsWith(SyntaxKind.ThisKeyword) &&
             dependencyMember) {
 
-            if (dependencyMember.isReadOnly()) {
-                throw `Error: Can't assign property use TwoWay() or Internal State - ${this.toString()}`;
-            }
-
             let rightExpression;
 
             if (this.operator === SyntaxKind.EqualsToken) {
@@ -51,6 +47,10 @@ export class Binary extends Expression {
             }
 
             if (rightExpression) {
+                if (dependencyMember.isReadOnly()) {
+                    throw `Error: Can't assign property use TwoWay() or Internal State - ${this.toString()}`;
+                }
+
                 return `${this.left.compileStateSetting(rightExpression, dependencyMember as Property, options)}`;
             }
         }
@@ -85,6 +85,9 @@ export class Prefix extends Expression {
             this.operand.expression.toString().startsWith(SyntaxKind.ThisKeyword) &&
             dependencyMember
         ) {
+            if (dependencyMember.isReadOnly()) {
+                throw `Error: Can't assign property use TwoWay() or Internal State - ${this.toString()}`;
+            }
             const operator = this.operator[0] ;
             const rightExpression = `${this.operand.toString(options)}${operator}${1}`;
             return `${this.operand.compileStateSetting(rightExpression, dependencyMember as Property, options)}`;
