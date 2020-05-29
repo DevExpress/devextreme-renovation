@@ -37,6 +37,10 @@ mocha.describe("angular-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("state-short-operator", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("internal-state", function () { 
         this.testGenerator(this.test!.title);
     })
