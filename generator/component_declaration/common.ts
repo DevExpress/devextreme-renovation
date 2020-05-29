@@ -121,7 +121,7 @@ export const Ref = () => propertyDecorator;
 export const Effect = () => propertyDecorator;
 
 /**
- * The functions that returns base class for any Component.
+ * A function that returns base class for any Component.
  * Pass ComponentBindings as an argument
  */
 export function JSXComponent<T>(C: {new(): T }) {
