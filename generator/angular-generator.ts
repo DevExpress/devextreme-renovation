@@ -401,10 +401,6 @@ export class JsxAttribute extends BaseJsxAttribute {
         }).replace(/"/gi, "'");
     }
 
-    getTemplateContext(): PropertyAssignment | null { 
-        return new PropertyAssignment(this.name, this.initializer);
-    }
-
     compileRef(options?: toStringOptions) { 
         const refString = this.initializer.toString(options);
         const componentContext = options?.newComponentContext ? `${options.newComponentContext}.` : '';
@@ -558,19 +554,6 @@ function getExpression(expression: Expression, options?: toStringOptions): Expre
  }
 
 export class JsxExpression extends BaseJsxExpression {
-    getExpression(options?: toStringOptions): Expression {
-        let variableExpression;
-        if (this.expression instanceof Identifier && options?.variables?.[this.expression.toString()]) { 
-            variableExpression = options.variables[this.expression.toString()];
-        }
-
-        if (variableExpression instanceof Paren) {
-            return variableExpression.expression;
-        }
-
-        return variableExpression || this.expression;
-    }
-
     getIterator(expression: Expression): BaseBaseFunction| undefined {
         if (expression instanceof Call &&
             (expression.expression instanceof BasePropertyAccess ||

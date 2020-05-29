@@ -1,4 +1,4 @@
-import { Class, Heritable, HeritageClause, inheritMembers } from "./class";
+import { Class, Heritable, inheritMembers } from "./class";
 import { Parameter } from "./functions";
 import { SimpleTypeExpression, FunctionTypeNode } from "./type";
 import { Property, Method, BaseClassMember } from "./class-members";
@@ -78,6 +78,10 @@ export class ComponentInput extends Class implements Heritable {
         return props;
     }
 
+    buildTemplateProperies(templateMember: Property, members: BaseClassMember[]): Property[] { 
+        return [];
+    }
+
     processMembers(members: Array<Property | Method>) { 
         members.forEach(m => { 
             if (!(m instanceof Property)) {
@@ -100,8 +104,12 @@ export class ComponentInput extends Class implements Heritable {
             
         });
         return inheritMembers(this.heritageClauses, super.processMembers(members.concat(
-            members.filter(m => m.decorators.find(d => d.name === "TwoWay")).reduce((properties: Property[], p) => {
+            members.filter(m => m.isState).reduce((properties: Property[], p) => {
                 return properties.concat(this.buildStateProperties(p as Property, members))
+
+            }, []),
+            members.filter(m => m.isTemplate).reduce((properies: Property[], p) => {
+                return properies.concat(this.buildTemplateProperies(p as Property, members))
             }, [])
         )));
     }

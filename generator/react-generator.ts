@@ -8,10 +8,12 @@ import {
     Method,
     BaseClassMember
 } from "./base-generator/expressions/class-members";
-import { Identifier } from "./base-generator/expressions/common";
+import { Identifier, Call } from "./base-generator/expressions/common";
 import { Expression, SimpleExpression } from "./base-generator/expressions/base";
 import {
     JsxAttribute as BaseJsxAttribute,
+    JsxExpression,
+    JsxElement as BaseJsxElement,
     JsxOpeningElement as BaseJsxOpeningElement,
     JsxSpreadAttribute
 } from "./base-generator/expressions/jsx";
@@ -26,12 +28,14 @@ import { getModuleRelativePath } from "./base-generator/utils/path-utils";
 import {
     ExpressionWithTypeArguments,
     TypeExpression,
-    TypeReferenceNode as BaseTypeReferenceNode
+    TypeReferenceNode as BaseTypeReferenceNode,
+    FunctionTypeNode
 } from "./base-generator/expressions/type";
 import { Parameter } from "./base-generator/expressions/functions";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input";
 import { ObjectLiteral } from "./base-generator/expressions/literal";
 import { Decorator } from "./base-generator/expressions/decorator";
+import { PropertyAssignment, SpreadAssignment } from "./base-generator/expressions/property-assignment";
 
 const eventsDictionary = {
     pointerover: "onPointerOver",
@@ -40,11 +44,11 @@ const eventsDictionary = {
     click: "onClick"
 }
 
-function getLocalStateName(name: Identifier | string, componentContext: string="") {
+function getLocalStateName(name: Identifier | string, componentContext: string = "") {
     return `${componentContext}__state_${name}`;
 }
 
-function getPropName(name: Identifier | string, componentContext:string="") {
+function getPropName(name: Identifier | string, componentContext: string = "") {
     return `${componentContext}props.${name}`;
 }
 
@@ -52,16 +56,44 @@ function stateSetter(stateName: Identifier | string) {
     return `__state_set${capitalizeFirstLetter(stateName)}`
 }
 
-export class ComponentInput extends BaseComponentInput { 
+function getTemplatePropName(name: Identifier | string, propName: string) {
+    return name.toString().replace(/template/g, propName)
+        .replace(/(.+)(Template)/g, `$1${capitalizeFirstLetter(propName)}`);
+}
+
+function buildTemplatePropery(templateMember: Property, members: BaseClassMember[], propName: string, keepType = false) {
+    const templatePropName = getTemplatePropName(templateMember._name, propName);
+    if (!members.find(m => m._name.toString() === templatePropName)) {
+        return new Property(
+            [new Decorator(new Call(new Identifier("OneWay"), undefined, []), {})],
+            [],
+            new Identifier(templatePropName),
+            SyntaxKind.QuestionToken,
+            keepType ? templateMember.type : undefined,
+            undefined
+        );
+    } else {
+        throw `You can't use '${templatePropName}' property. It'll be generated for '${templateMember._name}' template property.`
+    }
+}
+
+export class ComponentInput extends BaseComponentInput {
+    buildTemplateProperies(templateMember: Property, members: BaseClassMember[]) {
+        return [
+            buildTemplatePropery(templateMember, members, "render"),
+            buildTemplatePropery(templateMember, members, "component")
+        ];
+    }
+
     toString() {
         const inherited = this.baseTypes.map(t => `...${t}`);
-       
+
         const types = this.heritageClauses.reduce((t: string[], h) => t.concat(h.typeNodes.map(t => `typeof ${t}`)), []);
         const typeName = `${this.name}Type`;
 
         const properties = this.members.
             filter(m => !(m as Property).inherited) as Property[];
-        
+
         const typeDeclaration = `export declare type ${typeName} = ${types.concat([`{
             ${properties.map(p => p.typeDeclaration()).join(";\n")}
         }`]).join("&")}`;
@@ -89,12 +121,12 @@ export class ComponentInput extends BaseComponentInput {
     }
 }
 
-export class HeritageClause extends BaseHeritageClause { 
+export class HeritageClause extends BaseHeritageClause {
     constructor(token: string, types: ExpressionWithTypeArguments[], context: GeneratorContext) {
         super(token, types, context);
         this.defaultProps = types.reduce((defaultProps: string[], { type, isJsxComponent }) => {
-            
-            if (isJsxComponent) { 
+
+            if (isJsxComponent) {
                 defaultProps.push(type.toString());
             } else {
                 const importName = type.toString().replace("typeof ", "");
@@ -102,7 +134,7 @@ export class HeritageClause extends BaseHeritageClause {
                 if (component && component.compileDefaultProps() !== "") {
                     defaultProps.push(
                         `${component.defaultPropsDest().replace(component.name.toString(), importName)}${
-                            type.toString().indexOf("typeof ") === 0 ? "Type": ""
+                        type.toString().indexOf("typeof ") === 0 ? "Type" : ""
                         }`
                     );
                 }
@@ -115,23 +147,19 @@ export class HeritageClause extends BaseHeritageClause {
 export class PropertyAccess extends BasePropertyAccess {
     compileStateSetting(state: string, property: Property, options?: toStringOptions) {
         const setState = `${stateSetter(this.name)}(${state})`;
-        if (property.decorators.find(d => d.name === "TwoWay")) { 
+        if (property.decorators.find(d => d.name === "TwoWay")) {
             return `(${setState}, props.${this.name}Change!(${state}))`;
         }
         return setState;
     }
 }
 
-export class Property extends BaseProperty { 
-    defaultProps(){ 
+export class Property extends BaseProperty {
+    defaultProps() {
         return this.defaultDeclaration();
     }
 
     get name(): string {
-        if (this.isTemplate) {
-            return this._name.toString().replace(/template/g, "render")
-                .replace(/(.+)(Template)/g, "$1Render");
-        }
         if (this.isSlot && this._name.toString() === "default") {
             return "children";
         }
@@ -142,7 +170,7 @@ export class Property extends BaseProperty {
         if (this.isSlot) {
             return `${this.name}${this.questionOrExclamationToken}:React.ReactNode`;
         }
-        if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")){ 
+        if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
             return `${this.name}:any`;
         }
         if (this.questionOrExclamationToken === SyntaxKind.ExclamationToken) {
@@ -151,22 +179,22 @@ export class Property extends BaseProperty {
         return super.typeDeclaration();
     }
 
-    getter(componentContext?: string) { 
+    getter(componentContext?: string) {
         componentContext = this.processComponentContext(componentContext);
         if (this.isInternalState) {
             return getLocalStateName(this.name, componentContext);
-        } else if (this.decorators.find(d => d.name === "OneWay" ||  d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
+        } else if (this.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
             return getPropName(this.name, componentContext);
         } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
             return `${this.name}.current${this.questionOrExclamationToken}`
-        } else if (this.isState) { 
+        } else if (this.isState) {
             const propName = getPropName(this.name, componentContext);
             return `(${propName}!==undefined?${propName}:${getLocalStateName(this.name, componentContext)})`;
         }
         throw `Can't parse property: ${this._name}`;
     }
 
-    getDependency() { 
+    getDependency() {
         if (this.isInternalState) {
             return [getLocalStateName(this.name)];
         } else if (this.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
@@ -179,11 +207,11 @@ export class Property extends BaseProperty {
         throw `Can't parse property: ${this._name}`;
     }
 
-    inherit() { 
+    inherit() {
         return new Property(this.decorators, this.modifiers, this._name, this.questionOrExclamationToken, this.type, this.initializer, true);
     }
 
-    toString() { 
+    toString() {
         if (this.decorators.find(d => d.name === "TwoWay")) {
             const propName = getPropName(this.name);
             return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(()=>${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(this.name)})`;
@@ -191,16 +219,16 @@ export class Property extends BaseProperty {
         return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(${this.initializer})`;
     }
 
-    get canBeDestructured() { 
-        if (this.isState) { 
+    get canBeDestructured() {
+        if (this.isState) {
             return false;
         }
         return super.canBeDestructured;
     }
 }
 
-export class GetAccessor extends BaseGetAccessor { 
-    getter() { 
+export class GetAccessor extends BaseGetAccessor {
+    getter() {
         return `${super.getter()}()`;
     }
 }
@@ -208,12 +236,12 @@ export class GetAccessor extends BaseGetAccessor {
 function getSubscriptions(methods: Method[]) {
     return methods.map(m => {
         const [event, parameters] = m.decorators.find(d => d.name === "Listen")!.expression.arguments;
-        
+
         let target: string | undefined;
         if (parameters instanceof ObjectLiteral) {
             target = parameters.getProperty("target")?.toString();
         }
-        
+
         return {
             name: m.name,
             target,
@@ -226,15 +254,15 @@ export class ReactComponent extends Component {
     createRestPropsGetter(members: BaseClassMember[]) {
         const props = getProps(members);
         const bindingElements = props.map(p => new BindingElement(
+            undefined,
+            undefined,
+            p._name,
+        )).concat([
+            new BindingElement(
+                SyntaxKind.DotDotDotToken,
                 undefined,
-                undefined,
-                p._name,
-            )).concat([
-                new BindingElement(
-                    SyntaxKind.DotDotDotToken,
-                    undefined,
-                    new Identifier("restProps"))
-            ]);
+                new Identifier("restProps"))
+        ]);
 
         const statements = [new VariableStatement(
             undefined,
@@ -254,7 +282,7 @@ export class ReactComponent extends Component {
             )
         ), new ReturnStatement(new SimpleExpression("restProps"))];
 
-        return  new GetAccessor(undefined, undefined, new Identifier('restAttributes'), [], undefined, new Block(statements, true));
+        return new GetAccessor(undefined, undefined, new Identifier('restAttributes'), [], undefined, new Block(statements, true));
     }
 
     compileImportStatements(hooks: string[], compats: string[]) {
@@ -287,10 +315,10 @@ export class ReactComponent extends Component {
             compats.push("forwardRef");
         }
 
-        if(this.apiRefs.length) {
+        if (this.apiRefs.length) {
             imports.splice(-1, 0, ...this.apiRefs.reduce((imports: string[], ref) => {
                 const baseComponent = this.context.components![ref.type!.toString()] as ReactComponent;
-                if(this.context.dirname) {
+                if (this.context.dirname) {
                     const relativePath = getModuleRelativePath(this.context.dirname, baseComponent.context.path!);
                     imports.push(`import {${baseComponent.name}Ref as ${ref.type}Ref} from "${this.processModuleFileName(relativePath.replace(path.extname(relativePath), ''))}"`);
                 }
@@ -307,7 +335,7 @@ export class ReactComponent extends Component {
         return `${this.name.toString()}.defaultProps`;
     }
 
-    compileConvertRulesToOptions(rules: string|Expression) { 
+    compileConvertRulesToOptions(rules: string | Expression) {
         return this.state.length
             ? `__processTwoWayProps(convertRulesToOptions(${rules}))`
             : `convertRulesToOptions(${rules})`;
@@ -319,13 +347,13 @@ export class ReactComponent extends Component {
             .concat(
                 this.props.filter(p => !p.inherited && p.initializer)
                     .map(p => (p as Property).defaultProps())
-        );
+            );
 
-        if (this.defaultOptionRules && this.needGenerateDefaultOptions) { 
+        if (this.defaultOptionRules && this.needGenerateDefaultOptions) {
             defaultProps.push(`...${this.compileConvertRulesToOptions(this.defaultOptionRules)}`);
         }
 
-        if (this.needGenerateDefaultOptions) { 
+        if (this.needGenerateDefaultOptions) {
             return `
                 ${ this.state.length
                     ? `function __processTwoWayProps(defaultProps: ${this.compilePropsType()}){
@@ -388,22 +416,22 @@ export class ReactComponent extends Component {
     }
 
     compileComponentRef() {
-        if(this.api.length) {
+        if (this.api.length) {
             return `export type ${this.name}Ref = {${this.api.map(a => a.typeDeclaration())}}`
         }
         return "";
     }
 
     compileUseImperativeHandle() {
-        if(this.api.length) {
-            const api = this.api.reduce((r: { methods: string[], deps: string[]}, a) => {
+        if (this.api.length) {
+            const api = this.api.reduce((r: { methods: string[], deps: string[] }, a) => {
                 r.methods.push(`${a.name}: ${a.arrowDeclaration(this.getToStringOptions())}`);
 
                 r.deps = [...new Set(r.deps
                     .concat(a.getDependency(
                         this.members
                     )))];
-                
+
                 return r;
             }, { methods: [], deps: [] });
 
@@ -424,12 +452,12 @@ export class ReactComponent extends Component {
     compileComponentInterface() {
 
         const props = this.isJSXComponent ? [`props: ${this.compilePropsType()}`] : this.props
-                .concat(this.state)
-                .map(p => p.typeDeclaration());
+            .concat(this.state)
+            .map(p => p.typeDeclaration());
 
         return `interface ${this.name}{
             ${  props
-                .concat(this.internalState.concat(this.refs, this.apiRefs).concat(this.slots.filter(s=>!s.inherited)).map(p => p.typeDeclaration()))
+                .concat(this.internalState.concat(this.refs, this.apiRefs).concat(this.slots.filter(s => !s.inherited)).map(p => p.typeDeclaration()))
                 .concat(this.listeners.map(l => l.typeDeclaration()))
                 .concat(this.methods.map(m => m.typeDeclaration()))
                 .concat([""])
@@ -443,8 +471,12 @@ export class ReactComponent extends Component {
         const state = compileState(this.state);
         const internalState = compileState(this.internalState);
 
+        const template = this.props
+            .filter(p => p.isTemplate)
+            .map(t => `${t.name}: getTemplate(props, "${t.name}", "${getTemplatePropName(t.name, "render")}", "${getTemplatePropName(t.name, "component")}")`);
+
         const props = this.isJSXComponent ?
-            [`props:{${["...props"].concat(state).join(",\n")}}`].concat(internalState) :
+            [`props:{${["...props"].concat(state).concat(template).join(",\n")}}`].concat(internalState) :
             ["...props"].concat(internalState).concat(state);
 
         return props
@@ -457,7 +489,7 @@ export class ReactComponent extends Component {
     }
 
     compilePropsType() {
-        if (this.isJSXComponent) { 
+        if (this.isJSXComponent) {
             return `${this.heritageClauses[0].propsType}`;
         }
         return `{
@@ -468,14 +500,14 @@ export class ReactComponent extends Component {
         }`;
     }
 
-    compileDefaultOptionsPropsType() { 
-        if (this.isJSXComponent && this.heritageClauses[0].propsType.typeArguments.length) { 
+    compileDefaultOptionsPropsType() {
+        if (this.isJSXComponent && this.heritageClauses[0].propsType.typeArguments.length) {
             return this.heritageClauses[0].propsType.typeArguments[0].toString();
         }
         return super.compileDefaultOptionsPropsType();
     }
 
-    getToStringOptions() { 
+    getToStringOptions() {
         return {
             members: this.members,
             componentContext: "this",
@@ -485,50 +517,64 @@ export class ReactComponent extends Component {
 
     toString() {
         const viewFunction = this.context.viewFunctions?.[this.view];
+        const getTemplateFunc = this.props.some(p => p.isTemplate) ? `
+        function getTemplate(props: any, template: string, render: string, component: string) {
+            const getRender = (render: any) => (props: any) => (("data" in props) ? render(props.data, props.index) : render(props));
+            const Component = props[component];
+            
+            return props[template] ||
+                        (props[render] && getRender(props[render])) ||
+                        (Component && ((props: any) => <Component {...props} />));
+        }
+        ` : "";
 
         return `
             ${this.compileImports()}
             ${this.compileComponentRef()}
             ${this.compileComponentInterface()}
-
-            ${this.api.length === 0 
+            ${getTemplateFunc}
+            ${this.api.length === 0
                 ? `${this.modifiers.join(" ")} function ${this.name}(props: ${this.compilePropsType()}){`
                 : `const ${this.name} = forwardRef<${this.name}Ref, ${this.compilePropsType()}>((props: ${this.compilePropsType()}, ref) => {`}
                 ${this.compileUseRef()}
                 ${this.stateDeclaration()}
                 ${this.compileUseImperativeHandle()}
                 ${this.listeners.concat(this.methods)
-                    .map(m => {
-                        return `const ${m.name}=useCallback(${m.declaration(this.getToStringOptions())}, [${
-                            m.getDependency(this.members)
+                .map(m => {
+                    return `const ${m.name}=useCallback(${m.declaration(this.getToStringOptions())}, [${
+                        m.getDependency(this.members)
                         }]);`;
-                    }).join("\n")}
+                }).join("\n")}
                 ${this.compileUseEffect()}
                 return ${this.view}(
                     ${viewFunction?.parameters.length
-                        ? `${this.viewModel}({
+                ? `${this.viewModel}({
                             ${this.compileViewModelArguments().join(",\n")}
                         })`
-                        : ""}
+                : ""}
                 );
             ${this.api.length === 0 ? `}` : `});\n${this.modifiers.join(" ")} ${this.name};`}
             
             ${this.compileDefaultProps()}
             ${this.compileDefaultOptionsMethod("[]", [
-                `${this.defaultPropsDest()} = {
+                    `${this.defaultPropsDest()} = {
                     ...__createDefaultProps(),
                     ...${this.compileConvertRulesToOptions("__defaultOptionRules")}
                 };`
-            ])}`;
+                ])}`;
     }
 }
 
-export class JsxAttribute extends BaseJsxAttribute { 
-    toString(options?:toStringOptions) { 
+export class JsxAttribute extends BaseJsxAttribute {
+    getTemplateContext(): PropertyAssignment | null { 
+        return new PropertyAssignment(this.name, (this.initializer as JsxExpression).getExpression());
+    }
+
+    toString(options?: toStringOptions) {
         let name = this.name.toString(options);
-        if (options?.jsxComponent) { 
+        if (options?.jsxComponent) {
             const member = options.jsxComponent.members.find(m => m._name.toString() === this.name.toString());
-            if (member) { 
+            if (member) {
                 name = member.name;
             }
         }
@@ -536,14 +582,48 @@ export class JsxAttribute extends BaseJsxAttribute {
     }
 }
 
+export class JsxElement extends BaseJsxElement {
+    toString(options?: toStringOptions) {
+        const children: string = this.children.map(c => {
+            let str = ""
+            if(c instanceof JsxElement && c.openingElement.getTemplateProperty(options)) {
+                str = `{${c.openingElement.toString(options)}}`;
+            } else if (c instanceof JsxOpeningElement && c.getTemplateProperty(options)) {
+                str = `{${c.toString(options)}}`;
+            } else {
+                str = c.toString(options);
+            }
+            return str;
+        }).join("\n");
+
+        return `${this.openingElement.toString(options)}${children}${this.closingElement.toString(options)}`;
+    }
+}
+
 export class JsxOpeningElement extends BaseJsxOpeningElement { 
     processTagName(tagName: Expression) { 
         return tagName.toString() === "Fragment" ? new Identifier("React.Fragment") : tagName;
     }
+
+    toString(options?: toStringOptions) {
+        const templateProperty = this.getTemplateProperty(options) as Property;
+        if (!templateProperty) { 
+            return super.toString(options);
+        }
+
+        const contextElements = this.attributes.map(a => a.getTemplateContext()).filter(p => p) as (PropertyAssignment | SpreadAssignment)[];
+        const templateParams = contextElements.length ? (new ObjectLiteral(contextElements, false)).toString(options).replace(/"/gi, "'") : 
+            ((templateProperty.type instanceof FunctionTypeNode && templateProperty.type.parameters.length) ? "{}" : "");
+
+        return `${this.tagName.toString(options)}(${templateParams})`
+    }
 }
 
 export class JsxSelfClosingElement extends JsxOpeningElement{
-    toString(options?:toStringOptions) { 
+    toString(options?:toStringOptions) {
+        if (this.getTemplateProperty(options)) { 
+            return super.toString(options);
+        }
         return `<${this.processTagName(this.tagName).toString(options)} ${this.attributesString(options)}/>`;
     }
 }
@@ -573,15 +653,15 @@ export class JsxClosingElement extends JsxOpeningElement {
 }
 
 export class Generator extends BaseGenerator {
-    createHeritageClause(token: string, types: ExpressionWithTypeArguments[]) { 
+    createHeritageClause(token: string, types: ExpressionWithTypeArguments[]) {
         return new HeritageClause(token, types, this.getContext());
     }
 
-    createComponent(componentDecorator: Decorator, modifiers: string[]|undefined, name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
+    createComponent(componentDecorator: Decorator, modifiers: string[] | undefined, name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) {
         return new ReactComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members, this.getContext());
     }
 
-    createComponentBindings(decorators: Decorator[], modifiers: string[]|undefined, name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 
+    createComponentBindings(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) {
         return new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members)
     }
 
@@ -589,11 +669,11 @@ export class Generator extends BaseGenerator {
         return new JsxAttribute(name, initializer);
     }
 
-    createJsxOpeningElement(tagName: Identifier, typeArguments: any[], attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
+    createJsxOpeningElement(tagName: Identifier, typeArguments: any[], attributes?: Array<JsxAttribute | JsxSpreadAttribute>) {
         return new JsxOpeningElement(tagName, typeArguments, attributes, this.getContext());
     }
 
-    createJsxSelfClosingElement(tagName: Identifier, typeArguments: any[], attributes?: Array<JsxAttribute|JsxSpreadAttribute>) {
+    createJsxSelfClosingElement(tagName: Identifier, typeArguments: any[], attributes?: Array<JsxAttribute | JsxSpreadAttribute>) {
         return new JsxSelfClosingElement(tagName, typeArguments, attributes, this.getContext());
     }
 
@@ -601,11 +681,15 @@ export class Generator extends BaseGenerator {
         return new JsxClosingElement(tagName);
     }
 
+    createJsxElement(openingElement: JsxOpeningElement, children: Array<JsxElement | string | JsxExpression | JsxSelfClosingElement>, closingElement: JsxClosingElement) {
+        return new JsxElement(openingElement, children, closingElement);
+    }
+
     createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: TypeExpression, initializer?: Expression) {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
-    createGetAccessor(decorators: Decorator[]|undefined, modifiers: string[]|undefined, name: Identifier, parameters: Parameter[], type?: TypeExpression, body?: Block) {
+    createGetAccessor(decorators: Decorator[] | undefined, modifiers: string[] | undefined, name: Identifier, parameters: Parameter[], type?: TypeExpression, body?: Block) {
         return new GetAccessor(decorators, modifiers, name, parameters, type, body);
     }
 
