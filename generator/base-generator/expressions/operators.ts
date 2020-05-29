@@ -31,7 +31,6 @@ export class Binary extends Expression {
     toString(options?: toStringOptions) {
         const dependencyMember = checkDependency(this.left, options?.members);
         if (options &&
-            this.operator === SyntaxKind.EqualsToken &&
             this.left instanceof PropertyAccess &&
             this.left.expression.toString().startsWith(SyntaxKind.ThisKeyword) &&
             dependencyMember) {
@@ -39,19 +38,22 @@ export class Binary extends Expression {
             if (dependencyMember.isReadOnly()) {
                 throw `Error: Can't assign property use TwoWay() or Internal State - ${this.toString()}`;
             }
-            const rightExpression = this.right.toString(options);
 
-            return `${this.left.compileStateSetting(rightExpression, dependencyMember as Property, options)}`;
-        }
-        if (options &&
-            isShortOperator(this.operator) &&
-            this.left instanceof PropertyAccess &&
-            this.left.expression.toString().startsWith(SyntaxKind.ThisKeyword) &&
-            dependencyMember) {
+            let rightExpression;
+
+            if (this.operator === SyntaxKind.EqualsToken) {
+                rightExpression = this.right.toString(options);
+            }
+
+            if (isShortOperator(this.operator)) {
                 const operator = this.operator[0] ;
-                const rightExpression = `${this.left.toString(options)}${operator}${this.right.toString(options)}`;
+                rightExpression = `${this.left.toString(options)}${operator}${this.right.toString(options)}`;
+            }
+
+            if (rightExpression) {
                 return `${this.left.compileStateSetting(rightExpression, dependencyMember as Property, options)}`;
             }
+        }
         return `${this.left.toString(options)}${this.operator}${this.right.toString(options)}`;
     }
 
@@ -76,7 +78,7 @@ export class Prefix extends Expression {
         this.operand = operand;
     }
 
-    toString(options?: toStringOptions) {
+    compileUnaryMath(options?: toStringOptions) {
         const dependencyMember = checkDependency(this.operand, options?.members);
         if (unaryPlusOrMinus(this.operator) && 
             this.operand instanceof PropertyAccess &&
@@ -87,6 +89,13 @@ export class Prefix extends Expression {
             const rightExpression = `${this.operand.toString(options)}${operator}${1}`;
             return `${this.operand.compileStateSetting(rightExpression, dependencyMember as Property, options)}`;
         }
+        return '';
+    }
+
+    toString(options?: toStringOptions) {
+        const unaryMath = this.compileUnaryMath(options);
+        if (unaryMath) return unaryMath;
+
         return `${this.operator}${this.operand.toString(options)}`;
     }
 
@@ -97,16 +106,9 @@ export class Prefix extends Expression {
 
 export class Postfix extends Prefix {
     toString(options?: toStringOptions) {
-        const dependencyMember = checkDependency(this.operand, options?.members);
-        if (unaryPlusOrMinus(this.operator) && 
-            this.operand instanceof PropertyAccess &&
-            this.operand.expression.toString().startsWith(SyntaxKind.ThisKeyword) &&
-            dependencyMember
-        ) {
-            const operator = this.operator[0] ;
-            const rightExpression = `${this.operand.toString(options)}${operator}${1}`;
-            return `${this.operand.compileStateSetting(rightExpression, dependencyMember as Property, options)}`;
-        }
+        const unaryMath = this.compileUnaryMath(options);
+        if (unaryMath) return unaryMath;
+
         return `${this.operand.toString(options)}${this.operator}`;
     }
 }
