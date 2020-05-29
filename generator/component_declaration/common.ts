@@ -16,10 +16,6 @@ export const Fragment = react.Fragment;
 export function Component(arg: {
     name?: string;
     components?: any[];
-    /**
-     * Function that receives a component model and returns a viewModel
-     */
-    viewModel?: Function;
      /**
      * Function that receives a component viewModel and returns a view
      */
@@ -43,7 +39,7 @@ export function Component(arg: {
 }) {
     return function ComponentDecorator(constructor: Function) {
         constructor.prototype.render = function() {
-            return arg.view(arg.viewModel?.(this) || this);
+            return arg.view(this);
         };
     }
 }
@@ -125,11 +121,14 @@ export const Ref = () => propertyDecorator;
 export const Effect = () => propertyDecorator;
 
 /**
- * Base Class for any Component. 
- * Pass ComponentBindings as type argument 
+ * A function that returns base class for any Component.
+ * Pass ComponentBindings as an argument
  */
-export class JSXComponent<T> extends React.Component<T> {
-    props!: T & { ref?: JSXComponent<T> };
-    setState() {};
-    restAttributes!: { [name: string]: any };
-};
+export function JSXComponent<T>(C: {new(): T }) {
+  return class extends React.Component<T> {
+    static defaultProps = new C(); // for testing purpose
+    props!: T & { ref?: React.Component<T> };
+    restAttributes: { [name: string]: any } = { restAttributes: 'restAttributes' }; // for testing purpose
+    setState() {}
+  };
+}
