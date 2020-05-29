@@ -3738,6 +3738,34 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(error, "Error: Can't assign property use TwoWay() or Internal State - this.width=10");
             });
 
+            mocha.it("Can't set OneWay Prop (using unary)", function () { 
+                const property = new Property(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("width"),
+                    undefined,
+                    undefined,
+                    undefined
+                );
+
+                const expression = generator.createPostfix(
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("width")
+                    ),
+                    generator.SyntaxKind.PlusPlusToken,
+                );
+                let error = null;
+                try {
+                    expression.toString({
+                        members: [property]
+                    });
+                } catch (e) { 
+                    error = e;
+                }
+                assert.strictEqual(error, "Error: Can't assign property use TwoWay() or Internal State - this.width++");
+            });
+
             mocha.it("Access elementRef", function () { 
                 const property = new Property(
                     [createDecorator("Ref")],
