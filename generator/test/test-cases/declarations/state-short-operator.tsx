@@ -11,7 +11,7 @@ class WidgetInput {
 @Component({
     view
 })
-export default class Widget extends JSXComponent<WidgetInput> {
+export default class Widget extends JSXComponent(WidgetInput) {
     innerState = 0;
     
     updateState() {

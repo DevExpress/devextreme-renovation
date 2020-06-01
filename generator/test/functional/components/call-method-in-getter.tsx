@@ -13,7 +13,7 @@ class WidgetProps {
 @Component({
     view
 })
-export default class CallMethodInGetterWidget extends JSXComponent<WidgetProps> {
+export default class CallMethodInGetterWidget extends JSXComponent(WidgetProps) {
     get text() { 
         return this.getText();
     }

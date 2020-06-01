@@ -8,6 +8,6 @@ function view(model: Widget) {
 @Component({
     view: view
 })
-export default class Widget extends JSXComponent<Props> {
+export default class Widget extends JSXComponent(Props) {
    
 }

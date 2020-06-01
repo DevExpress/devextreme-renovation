@@ -8,7 +8,7 @@ export class ListInput {
 @Component({
   view
 })
-export default class List extends JSXComponent<ListInput> {
+export default class List extends JSXComponent(ListInput) {
 }
 
 function view(viewModel: List) {

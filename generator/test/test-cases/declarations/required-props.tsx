@@ -15,7 +15,7 @@ class WidgetInput {
 @Component({
     view: view
 })
-export default class Widget extends JSXComponent<Required<WidgetInput>> {
+export default class Widget extends JSXComponent<Required<WidgetInput>, WidgetInput>(WidgetInput) {
     get getHeight(): number { 
         return this.props.size.height;
     }

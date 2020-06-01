@@ -23,7 +23,7 @@ class WidgetInput {
     view
 })
 
-export default class VisibilityChangeProp extends JSXComponent<WidgetInput> {
+export default class VisibilityChangeProp extends JSXComponent(WidgetInput) {
     @InternalState() counter: number = 0;
     @Ref() element?: HTMLDivElement;
 

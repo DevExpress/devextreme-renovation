@@ -124,11 +124,11 @@ export const Effect = () => propertyDecorator;
  * A function that returns base class for any Component.
  * Pass ComponentBindings as an argument
  */
-export function JSXComponent<T>(C: {new(): T }) {
-  return class extends React.Component<T> {
-    static defaultProps = new C(); // for testing purpose
-    props!: T & { ref?: React.Component<T> };
-    restAttributes: { [name: string]: any } = { restAttributes: 'restAttributes' }; // for testing purpose
-    setState() {}
-  };
+export function JSXComponent<PropsType, PropsConstructor = PropsType>(Props: { new(): PropsType | PropsConstructor }) {
+    return class extends React.Component<PropsType> {
+        static defaultProps = new Props(); // for testing purpose
+        props!: PropsType & { ref?: React.Component<PropsType> };
+        restAttributes: { [name: string]: any } = { restAttributes: 'restAttributes' }; // for testing purpose
+        setState() { }
+    };
 }

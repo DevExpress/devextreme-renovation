@@ -29,7 +29,7 @@ class WidgetInput {
     view
 })
 
-export default class VisibilityChange extends JSXComponent<WidgetInput> {
+export default class VisibilityChange extends JSXComponent(WidgetInput) {
     @InternalState() visible: boolean = false;
     @Ref() element?: HTMLDivElement;
 

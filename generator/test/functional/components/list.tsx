@@ -31,7 +31,7 @@ export class ListProps {
 @Component({
     view
 })
-export default class List extends JSXComponent<ListProps> {
+export default class List extends JSXComponent(ListProps) {
     style(color: string) { 
         return {
             backgroundColor: color,

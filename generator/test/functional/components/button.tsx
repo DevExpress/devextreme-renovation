@@ -23,7 +23,7 @@ export class ButtonInput {
     view
 })
 
-export default class Button extends JSXComponent<ButtonInput> {
+export default class Button extends JSXComponent(ButtonInput) {
     @Ref() host: HTMLDivElement;
 
     @Effect() clickEffect() { 

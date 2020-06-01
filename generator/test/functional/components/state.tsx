@@ -17,7 +17,7 @@ class ButtonWithStateInput extends ButtonInput {
 @Component({
     view
 })
-export default class ButtonWithState extends JSXComponent<ButtonWithStateInput> {
+export default class ButtonWithState extends JSXComponent(ButtonWithStateInput) {
     onButtonClick() { 
         this.props.pressed = !this.props.pressed;
         return null;

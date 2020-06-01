@@ -11,8 +11,8 @@ export const compileType = (type: string = "", questionToken: string = "") =>
     type ? `${questionToken}:${type}` : "";
 
 export function variableDeclaration(name: Identifier | BindingPattern, type: string = "", initializer?: Expression, questionToken: string = ""): string {
-    const initilizerDeclaration = initializer ? `=${initializer}` : "";
-    return `${name}${compileType(type, questionToken)}${initilizerDeclaration}`;
+    const initializerDeclaration = initializer ? `=${initializer}` : "";
+    return `${name}${compileType(type, questionToken)}${initializerDeclaration}`;
 }
 
 export function processComponentContext(componentContext: string = "") { 

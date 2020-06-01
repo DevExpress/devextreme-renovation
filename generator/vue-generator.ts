@@ -390,7 +390,7 @@ export class VueComponent extends Component {
 
     generateProps() {
         if (this.isJSXComponent) { 
-            let props = this.heritageClauses[0].propsType.type.toString();
+            let props = this.heritageClauses[0].propsType.toString();
             if (this.needGenerateDefaultOptions) { 
                 props = `(()=>{
                     const twoWayProps = [${this.state.map(s=>`"${s.name}"`)}];

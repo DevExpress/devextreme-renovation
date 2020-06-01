@@ -15,7 +15,7 @@ class ModelWidgetInput {
 @Component({
     view
 })
-export default class ModelWidget extends JSXComponent<ModelWidgetInput> {
+export default class ModelWidget extends JSXComponent(ModelWidgetInput) {
     
 }
   

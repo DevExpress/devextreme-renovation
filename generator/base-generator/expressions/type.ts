@@ -1,5 +1,5 @@
 import { Expression, ExpressionWithOptionalExpression, ExpressionWithExpression } from "./base";
-import { Identifier } from "./common";
+import { Identifier, Call } from "./common";
 import { Parameter } from "./functions";
 import { toStringOptions } from "../types";
 import { compileType } from "../utils/string";
@@ -94,12 +94,6 @@ export class TypeReferenceNode extends TypeExpression {
     }
 
     get type(): Expression {
-        if (this.typeArguments.length) {
-            const typeArgument = this.typeArguments[0];
-            if (typeArgument instanceof TypeReferenceNode) { 
-                return typeArgument.type
-            }
-        }
         return this.typeName
     }
 }
@@ -168,7 +162,7 @@ export class ExpressionWithTypeArguments extends ExpressionWithExpression {
     }
 
     get isJsxComponent() { 
-        return this.expression.toString() === "JSXComponent";
+        return this.expression.toString().startsWith("JSXComponent");
     }
 
     get typeNode() {
@@ -179,6 +173,9 @@ export class ExpressionWithTypeArguments extends ExpressionWithExpression {
         if (this.typeArguments.length) {
             const typeArgument = this.typeArguments[0];
             return typeArgument.type
+        }
+        if (this.expression instanceof Call) { 
+            return this.expression.arguments[0];
         }
         return this.typeNode;
     }

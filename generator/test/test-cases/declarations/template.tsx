@@ -12,7 +12,7 @@ export class WidgetInput {
 @Component({
     view: view
 })
-export default class Widget extends JSXComponent<WidgetInput> {}
+export default class Widget extends JSXComponent(WidgetInput) {}
 
 function view(viewModel: Widget) {
     return (<div>

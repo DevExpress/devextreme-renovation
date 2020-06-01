@@ -15,5 +15,5 @@ class WidgetInput {
         component: JQueryCustomBaseComponent
     }
 })
-export default class Widget extends JSXComponent<WidgetInput> {}
+export default class Widget extends JSXComponent(WidgetInput) {}
   

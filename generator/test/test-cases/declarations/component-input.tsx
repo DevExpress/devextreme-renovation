@@ -16,7 +16,7 @@ export class WidgetProps {
 @Component({
     view: view
 })
-export default class Widget extends JSXComponent<WidgetProps> {
+export default class Widget extends JSXComponent(WidgetProps) {
     onClick() { 
         const v = this.props.height;
     }

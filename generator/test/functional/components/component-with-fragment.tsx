@@ -14,7 +14,7 @@ class Props { }
 const baseStyle = { width: 10, height: 10,  display: "inline-block" }
 
 @Component({ view })
-export default class ComponentWithFragment extends JSXComponent<Props> {
+export default class ComponentWithFragment extends JSXComponent(Props) {
     get r() { 
         return {
             ...baseStyle,

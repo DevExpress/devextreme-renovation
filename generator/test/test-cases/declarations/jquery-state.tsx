@@ -13,5 +13,5 @@ class WidgetInput {
     view,
     jQuery: { register: true }
 })
-export default class Widget extends JSXComponent<WidgetInput> {}
+export default class Widget extends JSXComponent(WidgetInput) {}
   

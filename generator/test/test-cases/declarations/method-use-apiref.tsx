@@ -16,7 +16,7 @@ class WidgetWithApiRefInput {
 @Component({
     view: view
 })
-export default class WidgetWithApiRef extends JSXComponent<WidgetWithApiRefInput> {
+export default class WidgetWithApiRef extends JSXComponent(WidgetWithApiRefInput) {
     @Ref()
     baseRef?: BaseWidget;
 

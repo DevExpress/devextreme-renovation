@@ -25,4 +25,4 @@ class Props { }
 @Component({
     view
 })
-export default class TemplatePass extends JSXComponent<Props> {}
+export default class TemplatePass extends JSXComponent(Props) {}
