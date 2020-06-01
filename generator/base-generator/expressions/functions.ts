@@ -10,6 +10,7 @@ import { VariableStatement } from "./variables";
 import SyntaxKind from "../syntaxKind";
 import { getJsxExpression, JsxExpression } from "./jsx";
 import { Decorator } from "./decorator";
+import { Property } from "./class-members";
 
 export class Parameter {
     decorators: Decorator[]
@@ -115,7 +116,10 @@ export class BaseFunction extends Expression {
         const widget = componentParameter && this.context.components?.[this.parameters[0].type?.toString() || ""];
        
         if (widget instanceof Component) { 
-            const members = widget.members.filter(m => m.decorators.find(d => d.name === "Template" || d.name === "Slot"));
+            const members = (widget.members
+                .filter(m => m.isTemplate || m.isSlot && m._name.toString() !== m.name) as Property[])
+                .map(p => Object.create(p));
+                
             options = {
                 members,
                 componentContext: componentParameter.name.toString(),
@@ -125,14 +129,17 @@ export class BaseFunction extends Expression {
             if (componentParameter && componentParameter.name instanceof BindingPattern) {
                 const props = componentParameter.name.elements.find(e => e.propertyName?.toString() === "props");
                 if (props?.name instanceof BindingPattern) { 
-                    const variables = props.name.getVariableExpressions(new Identifier("props"));
-                    props.name.elements.filter(e => members.some(m => m._name.toString() === (e.propertyName || e.name).toString()))
+                    props.name.elements
                         .forEach(e => {
-                            (props.name as BindingPattern).remove(e.name.toString());
-                            options!.variables = {
-                                ...options!.variables,
-                                [e.name.toString()]: variables[e.name.toString()]
-                            };
+                            const member = members.find(m => m._name.toString() === (e.propertyName || e.name).toString());
+                            if (member) {
+                                member.scope = "";
+                                if (member.isSlot) {
+                                    e.propertyName = new Identifier(member.name);
+                                } else if (e.propertyName) {
+                                    member._name = e.name as Identifier;
+                                }
+                            }
                         });
                 }
                 options.componentContext = options.newComponentContext = "";
