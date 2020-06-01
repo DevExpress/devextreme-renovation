@@ -11,7 +11,7 @@ export class WidgetInput {}
 @Component({
     view: view
 })
-export default class Widget extends JSXComponent<WidgetInput> {    
+export default class Widget extends JSXComponent(WidgetInput) {    
     get attr1() { 
         return {
             value: 100,

@@ -12,7 +12,7 @@ class ChildInput extends WidgetProps {
 }
 
 @Component({ view })
-export default class Child extends JSXComponent<ChildInput> {
+export default class Child extends JSXComponent(ChildInput) {
     getProps(): WidgetProps { 
         return { height: this.props.height };
     }

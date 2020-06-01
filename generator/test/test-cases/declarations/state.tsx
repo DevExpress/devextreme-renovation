@@ -17,7 +17,7 @@ class WidgetInput {
 @Component({
     view
 })
-export default class Widget extends JSXComponent<WidgetInput> {
+export default class Widget extends JSXComponent(WidgetInput) {
     updateState() {
         this.props.state1 = !this.props.state1;
     }

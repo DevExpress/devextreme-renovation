@@ -13,8 +13,8 @@ class WidgetInput {
 @Component({
     view: view
 })
-export default class Widget extends JSXComponent<WidgetInput> {
-    getHeight():number { 
+export default class Widget extends JSXComponent(WidgetInput) {
+    getHeight(): number {
         this.props.onClick(10);
         const { onClick } = this.props;
         onClick(11);

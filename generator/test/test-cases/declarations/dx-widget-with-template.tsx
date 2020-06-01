@@ -9,7 +9,7 @@ export class WidgetWithTemplateInput {
 @Component({
     view: view
 })
-export default class WidgetWithTemplate extends JSXComponent<WidgetWithTemplateInput> {}
+export default class WidgetWithTemplate extends JSXComponent(WidgetWithTemplateInput) {}
 
 function view(viewModel: WidgetWithTemplate) { 
     return (<div>

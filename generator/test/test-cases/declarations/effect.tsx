@@ -21,7 +21,7 @@ export class WidgetInput {
 @Component({
     view: view
 })
-export default class Widget extends JSXComponent<WidgetInput> {
+export default class Widget extends JSXComponent(WidgetInput) {
     @InternalState() i: number = 10;
     @Effect()
     setupData() {

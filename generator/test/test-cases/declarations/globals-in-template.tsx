@@ -12,6 +12,6 @@ function view() {
 export class WidgetProps { }
 
 @Component({view})
-export default class WidgetWithGlobals extends JSXComponent<WidgetProps> {
+export default class WidgetWithGlobals extends JSXComponent(WidgetProps) {
    
 }

@@ -489,8 +489,16 @@ export class ReactComponent extends Component {
     }
 
     compilePropsType() {
+        const heritageClause = this.heritageClauses[0];
         if (this.isJSXComponent) {
-            return `${this.heritageClauses[0].propsType}`;
+            const type = heritageClause.propsType;
+            if (heritageClause.types[0].expression instanceof Call && heritageClause.types[0].expression.typeArguments?.length) { 
+                return heritageClause.types[0].expression.typeArguments?.[0].toString();
+            }
+            if (type instanceof Identifier &&
+                this.context.components![heritageClause.propsType.toString()] instanceof ComponentInput) { 
+                return `typeof ${type}`;
+            }
         }
         return `{
             ${this.props
@@ -501,8 +509,13 @@ export class ReactComponent extends Component {
     }
 
     compileDefaultOptionsPropsType() {
-        if (this.isJSXComponent && this.heritageClauses[0].propsType.typeArguments.length) {
-            return this.heritageClauses[0].propsType.typeArguments[0].toString();
+        const heritageClause = this.heritageClauses[0];
+        if (this.isJSXComponent && heritageClause.propsType) {
+            const type = heritageClause.propsType;
+            if (type instanceof Identifier &&
+                this.context.components![heritageClause.propsType.toString()] instanceof ComponentInput) { 
+                return `typeof ${type}`;
+            }
         }
         return super.compileDefaultOptionsPropsType();
     }

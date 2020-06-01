@@ -1,4 +1,4 @@
-import { Identifier } from "./common";
+import { Identifier, Call } from "./common";
 import { Property, Method } from "./class-members";
 import { ExpressionWithTypeArguments } from "./type";
 import { GeneratorContext } from "../types";
@@ -20,7 +20,7 @@ export class HeritageClause {
 
     get propsType() { 
         if (this.isJsxComponent) { 
-            return this.types[0].typeArguments[0];
+            return this.types[0].type;
         }
         return this.types[0]
     }
@@ -34,7 +34,11 @@ export class HeritageClause {
     }
 
     get isRequired() { 
-        return this.types[0].typeArguments[0] && this.types[0].typeArguments[0].toString().startsWith("Required");
+        if (this.types[0].expression instanceof Call) { 
+            return this.types[0].expression.typeArguments?.[0].toString().startsWith("Required");
+        }
+        return false;
+        
     }
 
     constructor(token: string, types: ExpressionWithTypeArguments[], context: GeneratorContext) {
