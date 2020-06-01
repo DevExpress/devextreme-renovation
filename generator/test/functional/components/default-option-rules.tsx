@@ -24,7 +24,7 @@ export class Props {
     view
 })
 
-export default class DefaultOptionRulesComponent extends JSXComponent<Props> {
+export default class DefaultOptionRulesComponent extends JSXComponent(Props) {
     @Ref() host: HTMLDivElement;
     @Effect()
     onClick() { 

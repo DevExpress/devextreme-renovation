@@ -19,4 +19,4 @@ class WidgetInput {
     view
 })
 
-export default class Simple extends JSXComponent<WidgetInput> {}
+export default class Simple extends JSXComponent(WidgetInput) {}

@@ -19,6 +19,6 @@ class Props extends ButtonInput {
 @Component({
     view
 })
-export default class ButtonWithTemplate extends JSXComponent<Props> {
+export default class ButtonWithTemplate extends JSXComponent(Props) {
     
 }

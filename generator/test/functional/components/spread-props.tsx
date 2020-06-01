@@ -6,6 +6,6 @@ function view(model: Widget) {
 }
 
 @Component({ view })
-export default class Widget extends JSXComponent<ButtonInput> {
+export default class Widget extends JSXComponent(ButtonInput) {
     
 }

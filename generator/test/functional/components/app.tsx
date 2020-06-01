@@ -82,7 +82,7 @@ class AppInput {
     view
 })
 
-export default class App extends JSXComponent<AppInput> {
+export default class App extends JSXComponent(AppInput) {
     @InternalState() clickCount: number = 0;
     @InternalState() buttonWithStateIsPressed = false;
 

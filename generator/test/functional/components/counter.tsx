@@ -14,7 +14,7 @@ export class CounterInput {
 @Component({
     view
 })
-export default class Counter extends JSXComponent<CounterInput> {
+export default class Counter extends JSXComponent(CounterInput) {
     onClick() {
         this.props.value = this.props.value + 1;
     }
