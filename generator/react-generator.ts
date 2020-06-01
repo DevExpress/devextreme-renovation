@@ -48,8 +48,8 @@ function getLocalStateName(name: Identifier | string, componentContext: string =
     return `${componentContext}__state_${name}`;
 }
 
-function getPropName(name: Identifier | string, componentContext: string = "") {
-    return `${componentContext}props.${name}`;
+function getPropName(name: Identifier | string, componentContext: string = "", scope = "props.") {
+    return `${componentContext}${scope}${name}`;
 }
 
 function stateSetter(stateName: Identifier | string) {
@@ -181,14 +181,15 @@ export class Property extends BaseProperty {
 
     getter(componentContext?: string) {
         componentContext = this.processComponentContext(componentContext);
+        const scope = this.processComponentContext(this.scope);
         if (this.isInternalState) {
             return getLocalStateName(this.name, componentContext);
         } else if (this.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
-            return getPropName(this.name, componentContext);
+            return getPropName(this.name, componentContext, scope);
         } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
-            return `${this.name}.current${this.questionOrExclamationToken}`
+            return `${this.name}.current${this.questionOrExclamationToken}`;
         } else if (this.isState) {
-            const propName = getPropName(this.name, componentContext);
+            const propName = getPropName(this.name, componentContext, scope);
             return `(${propName}!==undefined?${propName}:${getLocalStateName(this.name, componentContext)})`;
         }
         throw `Can't parse property: ${this._name}`;
@@ -251,6 +252,15 @@ function getSubscriptions(methods: Method[]) {
 }
 
 export class ReactComponent extends Component {
+    processMembers(members: Array<BaseProperty | Method>) {
+        return super.processMembers(members).map(p => {
+            if (p.inherited) {
+                p.scope = "props"
+            }
+            return p;
+        });
+    }
+
     createRestPropsGetter(members: BaseClassMember[]) {
         const props = getProps(members);
         const bindingElements = props.map(p => new BindingElement(
@@ -493,12 +503,10 @@ export class ReactComponent extends Component {
         if (this.isJSXComponent) {
             const type = heritageClause.propsType;
             if (heritageClause.types[0].expression instanceof Call && heritageClause.types[0].expression.typeArguments?.length) { 
-                return heritageClause.types[0].expression.typeArguments?.[0].toString();
+                return heritageClause.types[0].expression.typeArguments[0].toString();
             }
-            if (type instanceof Identifier &&
-                this.context.components![heritageClause.propsType.toString()] instanceof ComponentInput) { 
-                return `typeof ${type}`;
-            }
+           
+            return `typeof ${type}`;
         }
         return `{
             ${this.props
@@ -510,14 +518,7 @@ export class ReactComponent extends Component {
 
     compileDefaultOptionsPropsType() {
         const heritageClause = this.heritageClauses[0];
-        if (this.isJSXComponent && heritageClause.propsType) {
-            const type = heritageClause.propsType;
-            if (type instanceof Identifier &&
-                this.context.components![heritageClause.propsType.toString()] instanceof ComponentInput) { 
-                return `typeof ${type}`;
-            }
-        }
-        return super.compileDefaultOptionsPropsType();
+        return `typeof ${heritageClause.propsType}`;
     }
 
     getToStringOptions() {

@@ -14,6 +14,8 @@ export class BaseClassMember extends Expression {
     type: TypeExpression|string;
     inherited: boolean;
 
+    scope: string = "";
+
     required: boolean = false;
 
     prefix: string = "";
@@ -42,7 +44,6 @@ export class BaseClassMember extends Expression {
     isReadOnly() { 
         return true;
     }
-
 
     get isInternalState() { 
         return false;

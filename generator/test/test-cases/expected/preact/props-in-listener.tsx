@@ -1,32 +1,42 @@
-function viewModel() {
-
+function view(model: Widget) {
+    return <div ></div>;
 }
-function view() {
-
-}
-
-import * as Preact from 'preact';
-import { useCallback } from 'preact/hooks'
-interface Component {
+export declare type PropsType = {
     type?: string;
-    onClick?: () => void;
+    onClick?: (e: any) => void;
+}
+export const Props: PropsType = {
+
+};
+
+import * as Preact from "preact";
+import { useCallback } from "preact/hooks"
+
+interface Widget {
+    props: typeof Props;
     clickHandler: () => any;
     restAttributes: any;
 }
 
-export function Component(props: {
-    type?: string,
-    onClick?: () => void
-}) {
-
+export function Widget(props: typeof Props) {
     const clickHandler = useCallback(function clickHandler() {
         props.onClick!({ type: props.type })
-    }, [props.onClick, props.type])
+    }, [props.onClick, props.type]);
 
-    const __restAttributes=useCallback(function __restAttributes(){
-        const { onClick, type, ...restProps } = props;
+    const __restAttributes = useCallback(function __restAttributes() {
+        const { onClick, type, ...restProps } = props
         return restProps;
     }, [props]);
 
-    return view();
+    return view(
+        ({
+            props: { ...props },
+            clickHandler,
+            restAttributes: __restAttributes()
+        })
+    );
+}
+
+(Widget as any).defaultProps = {
+    ...Props
 }

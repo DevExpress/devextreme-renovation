@@ -791,7 +791,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         this.attributes = attributes;
         if (this.component) { 
             const components = this.context.components!;
-            const name = (Object.keys(components).find(k => components[k] === this.component) || "");
+            const name = Object.keys(components).find(k => components[k] === this.component)!;
     
             this.tagName = new SimpleExpression(name);
         }
@@ -976,7 +976,7 @@ export class TemplateWrapperElement extends JsxOpeningElement {
         return undefined;
     }
 
-    constructor(attributes: Array<JsxAttribute | JsxSpreadAttribute> = []) { 
+    constructor(attributes: Array<JsxAttribute | JsxSpreadAttribute>) { 
         super(
             new Identifier("template"),
             undefined,
