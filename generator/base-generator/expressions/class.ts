@@ -1,4 +1,4 @@
-import { Identifier } from "./common";
+import { Identifier, Call } from "./common";
 import { Property, Method } from "./class-members";
 import { ExpressionWithTypeArguments } from "./type";
 import { GeneratorContext } from "../types";
@@ -8,6 +8,12 @@ import syntaxKind from "../syntaxKind";
 export function inheritMembers(heritageClauses: HeritageClause[], members: Array<Property | Method>) {
     return heritageClauses.reduce((m, { members }) => {
         members = members.filter(inheritMember => m.every(m => m.name.toString() !== inheritMember.name.toString()));
+        members = members.map(prop => {
+          if(prop.isRef) {
+              prop.decorators.push(new Decorator(new Call(new Identifier("OneWay"), undefined, []), {}));
+          }
+          return prop;
+        });
         return m.concat(members);
     }, members);
 }

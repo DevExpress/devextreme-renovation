@@ -982,7 +982,7 @@ class Decorator extends BaseDecorator {
 }
 
 function compileCoreImports(members: Array<Property|Method>, context: AngularGeneratorContext, imports:string[] = []) { 
-    if (members.filter(m => m.decorators.find(d => d.name === "OneWay")).length) {
+    if (members.filter(m => m.decorators.find(d => d.name === "OneWay") && !m.isRef).length) {
         imports.push("Input");
     }
     if (members.filter(m => m.decorators.find(d => d.name === "TwoWay")).length) { 

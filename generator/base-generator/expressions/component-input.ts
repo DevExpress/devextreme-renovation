@@ -94,7 +94,7 @@ export class ComponentInput extends Class implements Heritable {
                 } else { 
                     warn(`${this.name} ComponentBindings has property with multiple decorators: ${m._name}`);
                 }
-            } else if (getProps([m]).length === 0) {
+            } else if (getProps([m]).length === 0 && !m.isRef) {
                 warn(`${this.name} ComponentBindings has property "${m._name}" with incorrect decorator: ${m.decorators[0].name}`);
             }
 
