@@ -79,7 +79,7 @@ export class PropertyAccess extends ExpressionWithExpression {
 
         const result = `${this.expression.toString(options)}.${this.name}`;
 
-        if (options?.newComponentContext !== undefined && result.startsWith(this.calculateComponentContext(options))) {
+        if (options?.newComponentContext !== undefined && result.startsWith(`${this.calculateComponentContext(options)}.`)) {
             if (options.newComponentContext === "") { 
                 return this.name.toString();
             }
