@@ -587,7 +587,8 @@ export class JsxAttribute extends BaseJsxAttribute {
     toString(options?: toStringOptions) {
         let name = this.name.toString(options);
         if (options?.jsxComponent) {
-            const member = options.jsxComponent.members.find(m => m._name.toString() === this.name.toString());
+            const member = getProps(options.jsxComponent.members)
+                .find(m => m._name.toString() === this.name.toString());
             if (member) {
                 name = member.name;
             }
