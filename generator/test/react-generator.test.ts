@@ -1751,6 +1751,82 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.deepEqual(expression.getAllDependency(), ["s1", "p1"]);
     });
 
+    mocha.it("Set ref.InnerHtml", function () {
+        const prop = generator.createProperty(
+            [createDecorator("Ref")],
+            undefined,
+            generator.createIdentifier("div")
+        )
+        const expression = generator.createBinary(
+            generator.createPropertyAccess(
+                generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("div")
+                ),
+                generator.createIdentifier("InnerHtml")
+            ),
+            generator.SyntaxKind.EqualsToken,
+            generator.createIdentifier("value")
+        );
+
+        assert.equal((expression.toString({
+            members: [prop],
+            componentContext: "this",
+            newComponentContext: ""
+        })), "div.current.InnerHtml=value");
+        assert.deepEqual(expression.getDependency(), []);
+    });
+
+    mocha.it("Set ref.InnerHtml unary", function () {
+        const prop = generator.createProperty(
+            [createDecorator("Ref")],
+            undefined,
+            generator.createIdentifier("div")
+        )
+        const expression = generator.createPostfix(
+            generator.createPropertyAccess(
+                generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("div")
+                ),
+                generator.createIdentifier("InnerHtml")
+            ),
+            generator.SyntaxKind.PlusPlusToken
+        );
+
+        assert.equal(expression.toString({
+            members: [prop],
+            componentContext: "this",
+            newComponentContext: ""
+        }), "div.current.InnerHtml++");
+    });
+
+    mocha.it("Set ref.InnerHtml short operator", function () {
+        const prop = generator.createProperty(
+            [createDecorator("Ref")],
+            undefined,
+            generator.createIdentifier("div")
+        );
+
+        const expression = generator.createBinary(
+            generator.createPropertyAccess(
+                generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("div")
+                ),
+                generator.createIdentifier("InnerHtml")
+            ),
+            generator.SyntaxKind.PlusEqualsToken,
+            generator.createIdentifier("value")
+        );
+
+        assert.equal(expression.toString({
+            members: [prop],
+            componentContext: "this",
+            newComponentContext: ""
+        }), "div.current.InnerHtml+=value");
+    });
+
     mocha.it("VariableDeclarationList return dependency for initializer", function () {
         const expression = generator.createVariableStatement(
             undefined,

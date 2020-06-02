@@ -891,12 +891,9 @@ mocha.describe("base-generator: expressions", function () {
                         generator.createThis(),
                         generator.createIdentifier("c")
                     ),
-                    generator.createPostfix(
-                        generator.createPropertyAccess(
-                            generator.createThis(),
-                            generator.createIdentifier("ii")
-                        ),
-                        generator.SyntaxKind.PlusPlusToken
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("ii")
                     ),
                     generator.createBlock(
                         [generator.createContinue()],
