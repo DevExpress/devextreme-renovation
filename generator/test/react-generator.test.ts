@@ -1517,6 +1517,57 @@ mocha.describe("Widget in jsx element", function () {
             />`)
         );
     });
+
+    mocha.it("Do not rename attribute if it has same name with getter", function () {
+        generator.createClassDeclaration(
+            [createComponentDecorator({})],
+            [],
+            generator.createIdentifier("Widget"),
+            [],
+            [],
+            [
+                generator.createGetAccessor(
+                    [],
+                    [],
+                    generator.createIdentifier("p"),
+                    []
+                ),
+
+                generator.createProperty(
+                    [createDecorator("OneWay")],
+                    [],
+                    generator.createIdentifier("p"),
+                    undefined,
+                    undefined,
+                    undefined
+                )
+            ]
+        );
+
+        const element = generator.createJsxSelfClosingElement(
+            generator.createIdentifier("Widget"),
+            [],
+            [
+                generator.createJsxAttribute(
+                    generator.createIdentifier("p"),
+                    generator.createJsxExpression(
+                        undefined,
+                        generator.createIdentifier("value1")
+                    )
+                )
+            ]
+        );
+
+        assert.strictEqual(
+            getResult(element.toString({
+                members: [],
+            })),
+            getResult(`
+            <Widget
+                p={value1}
+            />`)
+        );
+    });
 });
 
 mocha.describe("Expressions with props/state/internal state", function () {
