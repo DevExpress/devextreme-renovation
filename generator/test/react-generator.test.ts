@@ -1518,7 +1518,7 @@ mocha.describe("Widget in jsx element", function () {
         );
     });
 
-    mocha.it.only("Do not rename attribute if it has same name with getter", function () {
+    mocha.it("Do not rename attribute if it has same name with getter", function () {
         generator.createClassDeclaration(
             [createComponentDecorator({})],
             [],
