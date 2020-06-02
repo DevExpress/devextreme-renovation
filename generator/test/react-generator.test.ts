@@ -1635,6 +1635,20 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.deepEqual(expression.getDependency(), ["p1"]);
     });
 
+    mocha.it("Not member Property access.", function () {
+        const expression = generator.createPropertyAccess(
+                generator.createIdentifier("items"),
+                generator.createIdentifier("item")
+            );
+
+        assert.equal(expression.toString({
+            members: [this.state, this.prop, this.internalState],
+            componentContext: "",
+            newComponentContext: ""
+        }), "items.item");
+        assert.deepEqual(expression.getDependency(), []);
+    });
+
     mocha.it("Property access. this.props", function () {
         const expression = generator.createPropertyAccess(
             generator.createThis(),
