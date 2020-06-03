@@ -1227,14 +1227,19 @@ export class AngularComponent extends Component {
                 "__viewCheckedSubscribeEvent: Array<()=>void> = [];"
             ];
 
+            const intStates = this.members.filter(m => m.isInternalState);
             const subscribe = (e: Method) => `this.${e.getter()}()`;
             effects.map((e, i) => { 
-                const propsDependency = e.getDependency(
-                    this.members.filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "TwoWay")) as Property[]
-                );
-                const internalStateDependency = e.getDependency(
-                    this.members.filter(m => m.decorators.length === 0 || m.decorators.find(d => d.name === "InternalState")) as Property[]
-                );
+                const allDeps = e.getDependency(this.members);
+                const [propsDependency, internalStateDependency] = allDeps.reduce((r: string[][], d) => {
+                    if(intStates.find(m => m.name.toString() === d)) {
+                        r[1].push(d);
+                    } else {
+                        r[0].push(d);
+                    }
+                    
+                    return r;
+                }, [[], []]);
                 const updateEffectMethod = `__schedule_${e._name}`
                 if (propsDependency.length || internalStateDependency.length) { 
                     statements.push(`${updateEffectMethod}(){
@@ -1270,7 +1275,6 @@ export class AngularComponent extends Component {
                         hasInternalStateDependency = true;
                     }
                 });
-                
             });
             if (ngOnChanges.length || hasInternalStateDependency) { 
                 ngAfterViewCheckedStatements.push(`

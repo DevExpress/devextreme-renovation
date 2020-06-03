@@ -61,8 +61,7 @@ class JQueryComponent {
         const templates = this.source.props.filter(p => p.decorators.find(d => d.name === "Template"))
         statements.splice(-1, 0, ...templates.map(t => {
             const params = ["props", `props.${t.name}`];
-            const decoratorArgs = t.decorators.find(d => d.name === "Template")!.expression.arguments[0];
-            if(decoratorArgs && (decoratorArgs as ObjectLiteral).getProperty("canBeAnonymous")?.toString() === "true") {
+            if(t.decorators.find(d => d.name === "Template")!.getParameter("canBeAnonymous")?.toString() === "true") {
                 params.push("true");
             }
     
@@ -143,8 +142,7 @@ class JQueryComponent {
 
     compileEventMap() {
         const statements = this.source.props.reduce((r: string[], p) => {
-            const decoratorArgs = p.isEvent && p.decorators.find(d => d.name === "Event")!.expression.arguments[0];
-            const actionConfig = decoratorArgs && (decoratorArgs as ObjectLiteral).getProperty("actionConfig");
+            const actionConfig = p.isEvent && p.decorators.find(d => d.name === "Event")!.getParameter("actionConfig");
             if(actionConfig) {
                 r.push(`${p.name}: ${(actionConfig as ObjectLiteral)}`)
             }
@@ -166,7 +164,7 @@ class JQueryComponent {
     }
     
     toString() {
-        const jQueryProp = (this.source.decorator.expression.arguments[0] as ObjectLiteral).getProperty("jQuery");
+        const jQueryProp = this.source.decorator.getParameter("jQuery");
         const registerJQuery = jQueryProp && (jQueryProp as ObjectLiteral).getProperty("register")?.toString() === "true"
         const baseComponent = jQueryProp && (jQueryProp as ObjectLiteral).getProperty("component");
 

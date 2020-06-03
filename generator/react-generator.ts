@@ -85,6 +85,28 @@ export class ComponentInput extends BaseComponentInput {
         ];
     }
 
+    buildChangeState(stateMember: Property, stateName: Identifier) { 
+        return new Property(
+            [new Decorator(new Call(new Identifier("Event"), undefined, []), {})],
+            [],
+            stateName,
+            SyntaxKind.QuestionToken,
+            this.buildChangeStateType(stateMember),
+            new SimpleExpression("()=>{}")
+        );
+    }
+
+    buildDefaultStateProperty(stateMember: Property): Property|null { 
+        return new Property(
+            [new Decorator(new Call(new Identifier("OneWay"), undefined, []), {})],
+            [],
+            new Identifier(`default${capitalizeFirstLetter(stateMember._name)}`),
+            SyntaxKind.QuestionToken,
+            stateMember.type,
+            stateMember.initializer
+        )
+    }
+
     toString() {
         const inherited = this.baseTypes.map(t => `...${t}`);
 
@@ -402,11 +424,6 @@ export class ReactComponent extends Component {
     compileUseEffect() {
         const subscriptions = getSubscriptions(this.listeners);
 
-        const effects = this.effects;
-
-        const effectsString = effects.map(e => `useEffect(${e.arrowDeclaration(this.getToStringOptions())}, 
-        [${e.getDependency(this.members)}])`).join(";\n");
-
         let subscriptionsString = "";
         if (subscriptions.length) {
             const { add, cleanup } = subscriptions.reduce(({ add, cleanup }, s) => {
@@ -422,7 +439,10 @@ export class ReactComponent extends Component {
                     }
                 });`;
         }
-        return subscriptionsString + effectsString;
+        return subscriptionsString + this.effects.map(e => {
+            const deps = e.getDependency(this.members);
+            return `useEffect(${e.arrowDeclaration(this.getToStringOptions())}, ${deps[0] === "" ? "undefined" : `[${deps}]`})`
+        }).join(";\n");
     }
 
     compileComponentRef() {
@@ -714,6 +734,10 @@ export class Generator extends BaseGenerator {
 
     createTypeReferenceNode(typeName: Identifier, typeArguments?: TypeExpression[]) {
         return new TypeReferenceNode(typeName, typeArguments, this.getContext());
+    }
+
+    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string|undefined, name: Identifier, questionToken: string | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
+        return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 }
 

@@ -24,7 +24,7 @@ export class Decorator {
 
     getParameter(name: string) { 
         const parameters = (this.expression.arguments[0] as ObjectLiteral);
-        return parameters.getProperty(name);
+        return parameters?.getProperty(name);
     }
 
     getViewFunction() {

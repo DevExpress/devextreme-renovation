@@ -132,12 +132,10 @@ export class Component extends Class implements Heritable {
 
         this.slots = members.filter(m => m.decorators.find(d => d.name === "Slot")) as Property[];
 
-        const parameters = (decorator.expression.arguments[0] as ObjectLiteral);
+        this.view = decorator.getParameter("view");
+        this.viewModel = decorator.getParameter("viewModel") || "";
 
-        this.view = parameters.getProperty("view");
-        this.viewModel = parameters.getProperty("viewModel") || "";
-
-        this.defaultOptionRules = parameters.getProperty("defaultOptionRules");
+        this.defaultOptionRules = decorator.getParameter("defaultOptionRules");
 
         this.context = context;
 

@@ -37,10 +37,10 @@ export default function Widget(props: {}) {
 
     return view(({
         ...props,
-        clickHandler,
         divRef,
         nullableRef,
         explicitRef,
+        clickHandler,
         getHeight,
         restAttributes: __restAttributes()
     }));

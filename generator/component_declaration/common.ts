@@ -9,9 +9,9 @@ export const Fragment = react.Fragment;
  * Class Decorator.
  * Declare class that contains all internal logic and public methods.
  * Class should extend JSXComponent<ComponentBindings>.
- * Class can contains properties with the following decorators: Ref, InternalState(optional).
- * Class can contains method with the following decorators: Effect, Method, Listen.
- * Class can contains methods without any decorator.
+ * Class can contain properties with the following decorators: Ref, InternalState(optional).
+ * Class can contain methods with the following decorators: Effect, Method, Listen.
+ * Class can contain methods without any decorator.
  */
 export function Component(arg: {
     name?: string;
@@ -118,7 +118,10 @@ export const Ref = () => propertyDecorator;
  * Declare a logic that should be executed after component is rendered. 
  * All DOM references is available here.
  */
-export const Effect = () => propertyDecorator;
+export const Effect = (args?: {
+    run?: 'once' | 'always'
+}) => propertyDecorator;
+
 
 /**
  * A function that returns base class for any Component.

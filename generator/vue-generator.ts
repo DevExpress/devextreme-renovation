@@ -479,34 +479,23 @@ export class VueComponent extends Component {
         const watches: { [name: string]: string[] } = {};
 
         this.effects.forEach((effect, index) => { 
-            const props: Array<BaseProperty | BaseMethod> = getProps(this.members);
-            const dependency = effect.getDependency(
-                props.concat((this.members.filter(m=>m.isInternalState)))
-            );
+            const dependency = effect.getDependency(this.members);
 
             const scheduleEffectName = `__schedule_${effect.name}`;
 
             if (dependency.length) { 
                 methods.push(` ${scheduleEffectName}() {
-                        this.__scheduleEffects[${index}]=()=>{
-                            this.__destroyEffects[${index}]&&this.__destroyEffects[${index}]();
-                            this.__destroyEffects[${index}]=this.${effect.name}();
-                        }
-                    }`);
+                    this.__scheduleEffects[${index}]=()=>{
+                        this.__destroyEffects[${index}]&&this.__destroyEffects[${index}]();
+                        this.__destroyEffects[${index}]=this.${effect.name}();
+                    }
+                }`);
             }
 
-            const watchDependency = (dependency: string[]) => { 
-                dependency.forEach(d => { 
-                    watches[d] = watches[d] || [];
-                    watches[d].push(`"${scheduleEffectName}"`);
-                });
-            }
-
-            if (dependency.indexOf("props") !== -1) { 
-                watchDependency(props.map(p => p.name));
-            }
-
-            watchDependency(dependency.filter(d => d !== "props"));
+            dependency.filter(d => d !== "props").forEach(d => { 
+                watches[d] = watches[d] || [];
+                watches[d].push(`"${scheduleEffectName}"`);
+            });
         });
 
         const watchStatements = Object.keys(watches).map(k => { 
