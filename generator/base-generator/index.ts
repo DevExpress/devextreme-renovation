@@ -53,6 +53,7 @@ import { Component } from "./expressions/component";
 import { ExpressionWithTypeArguments } from "./expressions/type";
 import { getModuleRelativePath } from "./utils/path-utils";
 import { Decorator } from "./expressions/decorator";
+import { Interface } from "./expressions/interface";
 
 export default class Generator {
     NodeFlags = {
@@ -360,6 +361,10 @@ export default class Generator {
         }
 
         return result;
+    }
+
+    createInterfaceDeclaration(decorators: Decorator[]|undefined, modifiers: string[] | undefined, name: Identifier, typeParameters: any[] | undefined, heritageClauses: HeritageClause[] | undefined, members: Array<PropertySignature|MethodSignature>) { 
+        return new Interface(decorators, modifiers, name, typeParameters, heritageClauses, members);
     }
 
     createPropertyAccess(expression: Expression, name: Identifier) {

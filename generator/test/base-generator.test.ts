@@ -1848,6 +1848,86 @@ mocha.describe("base-generator: expressions", function () {
         });
     });
 
+    mocha.describe("Interface", function () { 
+        mocha.it("empty interface", function () { 
+            const expression = generator.createInterfaceDeclaration(
+                undefined,
+                undefined,
+                generator.createIdentifier("name"),
+                undefined,
+                undefined,
+                []
+            );
+
+            assert.strictEqual(getAst(expression.toString()), getAst(`
+                interface name {}
+            `));
+        });
+
+        mocha.it("interface with decorators, modifiers, and heritage clauses", function () { 
+            const expression = generator.createInterfaceDeclaration(
+                [createDecorator("d1"), createDecorator("d2")],
+                ["export", "default"],
+                generator.createIdentifier("name"),
+                undefined,
+                [
+                    generator.createHeritageClause(
+                        "extends",
+                        [generator.createExpressionWithTypeArguments(
+                            undefined,
+                            generator.createIdentifier("Base1")
+                        )]
+                    ),
+                    generator.createHeritageClause(
+                        "implements",
+                        [generator.createExpressionWithTypeArguments(
+                            undefined,
+                            generator.createIdentifier("Base2")
+                        )]
+                    )
+                ],
+                []
+            );
+
+            assert.strictEqual(getAst(expression.toString()), getAst(`
+                @d1() @d2()
+                export default interface name extends Base1 implements Base2 {}
+            `));
+        });
+
+        mocha.it("with members", function () { 
+            const expression = generator.createInterfaceDeclaration(
+                undefined,
+                undefined,
+                generator.createIdentifier("name"),
+                undefined,
+                undefined,
+                [
+                    generator.createPropertySignature(
+                        [],
+                        generator.createIdentifier("p1"),
+                        undefined,
+                        generator.createKeywordTypeNode("string"),
+                        undefined
+                    ),
+                    generator.createMethodSignature(
+                        undefined,
+                        [],
+                        generator.createKeywordTypeNode("string"),
+                        generator.createIdentifier("m1")
+                    )
+                ]
+            );
+
+            assert.strictEqual(getAst(expression.toString()), getAst(`
+                interface name {
+                    p1: string;
+                    m1():string;
+                }
+            `));
+        });
+    });
+
 });
 
 mocha.describe("common", function () {
