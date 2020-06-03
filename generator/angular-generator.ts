@@ -1073,7 +1073,7 @@ export class Property extends BaseProperty {
             return `${eventDecorator} ${this.name}${this.questionOrExclamationToken}:EventEmitter<${parseEventType(this.type)}> = new EventEmitter()`
         }
         if (this.decorators.find(d => d.name === "Ref")) {
-            return `@ViewChild("${this.name}", {static: false}) ${this.name}:ElementRef<${this.type}>`;
+            return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:ElementRef<${this.type}>`;
         }
         if (this.decorators.find(d => d.name === "ApiRef")) {
             return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:${this.type}`;

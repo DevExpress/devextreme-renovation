@@ -5,9 +5,9 @@ import { CommonModule } from "@angular/common";
     template: `<div #divRef><div #explicitRef><div #nullableRef></div></div></div>`
 })
 export default class Widget {
-    @ViewChild("divRef", { static: false }) divRef: ElementRef<HTMLDivElement>;
-    @ViewChild("nullableRef", { static: false }) nullableRef: ElementRef<HTMLDivElement>;
-    @ViewChild("explicitRef", { static: false }) explicitRef: ElementRef<HTMLDivElement>;
+    @ViewChild("divRef", { static: false }) divRef!: ElementRef<HTMLDivElement>;
+    @ViewChild("nullableRef", { static: false }) nullableRef?: ElementRef<HTMLDivElement>;
+    @ViewChild("explicitRef", { static: false }) explicitRef!: ElementRef<HTMLDivElement>;
 
     __clickHandler(): any {
         const html = this.divRef!.nativeElement.outerHTML + this.explicitRef!.nativeElement!.outerHTML;

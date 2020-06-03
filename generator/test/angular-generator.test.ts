@@ -2956,7 +2956,7 @@ mocha.describe("Angular generator", function () {
                 generator.createArrowFunction([], [], [], undefined, generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
             );
 
-            assert.strictEqual(property.toString(), `@ViewChild("host", {static: false}) host:ElementRef<HTMLDivElement>`);
+            assert.strictEqual(property.toString(), `@ViewChild("host", {static: false}) host?:ElementRef<HTMLDivElement>`);
         });
 
         mocha.it("Event Prop generates Event EventEmitter", function () {
