@@ -9,7 +9,7 @@ export class WidgetInput {
     @Input() p: string = "10";
     @Input() r: string = "20";
     @Input() s: number = 10;
-    @Output() sChange: EventEmitter<number> = new EventEmitter();
+    @Output() sChange?: EventEmitter<number> = new EventEmitter();
 }
 
 import { Component, NgModule} from "@angular/core";

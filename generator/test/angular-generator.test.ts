@@ -3029,7 +3029,7 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(bindings.members.length, 2);
-            assert.strictEqual(bindings.members[1].toString(), "@Output() p1Change:EventEmitter<number> = new EventEmitter()");
+            assert.strictEqual(bindings.members[1].toString(), "@Output() p1Change?:EventEmitter<number> = new EventEmitter()");
         });
 
         mocha.it("TwoWay without type", function () { 

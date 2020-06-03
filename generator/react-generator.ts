@@ -78,33 +78,15 @@ function buildTemplatePropery(templateMember: Property, members: BaseClassMember
 }
 
 export class ComponentInput extends BaseComponentInput {
+    createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: TypeExpression, initializer?: Expression) {
+        return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
+    }
+
     buildTemplateProperies(templateMember: Property, members: BaseClassMember[]) {
         return [
             buildTemplatePropery(templateMember, members, "render"),
             buildTemplatePropery(templateMember, members, "component")
         ];
-    }
-
-    buildChangeState(stateMember: Property, stateName: Identifier) { 
-        return new Property(
-            [new Decorator(new Call(new Identifier("Event"), undefined, []), {})],
-            [],
-            stateName,
-            SyntaxKind.QuestionToken,
-            this.buildChangeStateType(stateMember),
-            new SimpleExpression("()=>{}")
-        );
-    }
-
-    buildDefaultStateProperty(stateMember: Property): Property|null { 
-        return new Property(
-            [new Decorator(new Call(new Identifier("OneWay"), undefined, []), {})],
-            [],
-            new Identifier(`default${capitalizeFirstLetter(stateMember._name)}`),
-            SyntaxKind.QuestionToken,
-            stateMember.type,
-            stateMember.initializer
-        )
     }
 
     toString() {
@@ -439,10 +421,9 @@ export class ReactComponent extends Component {
                     }
                 });`;
         }
-        return subscriptionsString + this.effects.map(e => {
-            const deps = e.getDependency(this.members);
-            return `useEffect(${e.arrowDeclaration(this.getToStringOptions())}, ${deps[0] === "" ? "undefined" : `[${deps}]`})`
-        }).join(";\n");
+        return subscriptionsString + this.effects
+            .map(e => `useEffect(${e.arrowDeclaration(this.getToStringOptions())}, [${e.getDependency(this.members)}])`)
+            .join(";\n");
     }
 
     compileComponentRef() {

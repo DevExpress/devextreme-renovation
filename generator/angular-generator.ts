@@ -1017,18 +1017,16 @@ class ComponentInput extends BaseComponentInput {
         this.context = context;
     }
 
+    createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: TypeExpression, initializer?: Expression) {
+        return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
+    }
+
+    createDecorator(expression: Call, context: AngularGeneratorContext) {
+        return new Decorator(expression, context);
+    }
+
     buildDefaultStateProperty() { 
         return null;
-    }
-    
-    buildChangeState(stateMember: Property, stateName: Identifier) { 
-        return  new Property(
-            [new Decorator(new Call(new Identifier("Event"), undefined, []), {})],
-            [],
-            stateName,
-            undefined,
-            this.buildChangeStateType(stateMember)
-        );
     }
 
     toString() {

@@ -1,14 +1,15 @@
 import { Class, Heritable, inheritMembers } from "./class";
 import { Parameter } from "./functions";
-import { SimpleTypeExpression, FunctionTypeNode } from "./type";
+import { SimpleTypeExpression, FunctionTypeNode, TypeExpression } from "./type";
 import { Property, Method, BaseClassMember } from "./class-members";
 import { Identifier, Call } from "./common";
 import SyntaxKind from "../syntaxKind";
-import { SimpleExpression } from "./base";
+import { SimpleExpression, Expression } from "./base";
 import { capitalizeFirstLetter } from "../utils/string";
 import { Decorator } from "./decorator";
 import { warn } from "../../utils/messages";
 import { getProps } from "./component";
+import { GeneratorContext } from "../types";
 
 const RESERVED_NAMES = [
     "key",
@@ -20,6 +21,14 @@ export class ComponentInput extends Class implements Heritable {
 
     get baseTypes() { 
         return this.heritageClauses.reduce((t: string[], h) => t.concat(h.typeNodes.map(t => t.toString())), []);
+    }
+
+    createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: string | TypeExpression, initializer?: Expression) {
+        return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
+    }
+
+    createDecorator(expression: Call, context: GeneratorContext) {
+        return new Decorator(expression, context);
     }
 
     buildChangeStateType(stateMember: Property) {
@@ -40,8 +49,8 @@ export class ComponentInput extends Class implements Heritable {
     }
 
     buildChangeState(stateMember: Property, stateName: Identifier) { 
-        return new Property(
-            [new Decorator(new Call(new Identifier("Event"), undefined, []), {})],
+        return this.createProperty(
+            [this.createDecorator(new Call(new Identifier("Event"), undefined, []), {})],
             [],
             stateName,
             SyntaxKind.QuestionToken,
@@ -51,8 +60,8 @@ export class ComponentInput extends Class implements Heritable {
     }
 
     buildDefaultStateProperty(stateMember: Property): Property|null { 
-        return new Property(
-            [new Decorator(new Call(new Identifier("OneWay"), undefined, []), {})],
+        return this.createProperty(
+            [this.createDecorator(new Call(new Identifier("OneWay"), undefined, []), {})],
             [],
             new Identifier(`default${capitalizeFirstLetter(stateMember._name)}`),
             SyntaxKind.QuestionToken,

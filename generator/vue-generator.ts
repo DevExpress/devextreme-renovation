@@ -213,25 +213,12 @@ export class ArrowFunction extends AngularArrowFunction {
 }
 
 export class VueComponentInput extends ComponentInput { 
-    buildDefaultStateProperty(stateMember: Property): Property|null { 
-        return new Property(
-            [new Decorator(new Call(new Identifier("OneWay"), undefined, []), {})],
-            [],
-            new Identifier(`default${capitalizeFirstLetter(stateMember._name)}`),
-            undefined,
-            stateMember.type,
-            stateMember.initializer
-        )
+    createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: string | TypeExpression, initializer?: Expression) {
+        return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
-    
-    buildChangeState(stateMember: Property, stateName: Identifier) { 
-        return  new Property(
-            [new Decorator(new Call(new Identifier("Event"), undefined, []), {})],
-            [],
-            stateName,
-            undefined,
-            this.buildChangeStateType(stateMember)
-        );
+
+    createDecorator(expression: Call, context: GeneratorContext) {
+        return new Decorator(expression, context);
     }
     
     toString() { 

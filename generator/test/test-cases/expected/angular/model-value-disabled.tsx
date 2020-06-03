@@ -3,8 +3,8 @@ class ModelWidgetInput {
     @Input() disabled?: boolean;
     @Input() value?: boolean;
     @Input() notValue?: boolean;
-    @Output() valueChange: EventEmitter<boolean> = new EventEmitter();
-    @Output() notValueChange: EventEmitter<boolean> = new EventEmitter();
+    @Output() valueChange?: EventEmitter<boolean> = new EventEmitter();
+    @Output() notValueChange?: EventEmitter<boolean> = new EventEmitter();
 }
 
 import { Component, NgModule, forwardRef, HostListener } from "@angular/core";
