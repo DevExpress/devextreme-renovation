@@ -11,7 +11,7 @@ export default {
     clickHandler(){
       const html=this.$refs.divRef.outerHTML+this.$refs.explicitRef.outerHTML;
     },
-    getHeight() {
+    __getHeight() {
       return this.$refs.divRef.outerHTML+this.$refs.nullableRef?.outerHTML;
     },
     __restAttributes() {

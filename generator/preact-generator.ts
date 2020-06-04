@@ -17,6 +17,7 @@ import { getModuleRelativePath } from "./base-generator/utils/path-utils";
 import { GeneratorContext as BaseGeneratorContext } from "./base-generator/types";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { Method } from "./base-generator/expressions/class-members";
+import { compileType } from "./base-generator/utils/string";
 
 const processModuleFileName = (module: string) => `${module}.p`;
 
@@ -90,10 +91,8 @@ class JQueryComponent {
     }
     
     compileAPI() {
-        if(!this.source.api.length) return "";
-    
-        const api = this.source.api.map(a => `${a.name}(${a.parameters}) {
-            this.viewRef.current.${a.name}(${a.parameters.map(p => p.name).join(",")});
+        const api = this.source.api.map(a => `${a.name}(${a.parameters})${compileType(a.type.toString())} {
+            return this.viewRef.current.${a.name}(${a.parameters.map(p => p.name).join(",")});
         }`);
     
         return `${api.join("\n")}`;

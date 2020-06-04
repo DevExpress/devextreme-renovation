@@ -10,6 +10,7 @@ import { Decorator } from "./decorator";
 import { BaseFunction } from './functions';
 import { compileType } from "../utils/string";
 import SyntaxKind from "../syntaxKind";
+import { warn } from "../../utils/messages";
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
     return heritageClauses.some(h => h.isJsxComponent);
@@ -75,6 +76,13 @@ export class Component extends Class implements Heritable {
             }
             return m;
         });
+
+        const api = members.filter(m => m.decorators.find(d => d.name === "Method"));
+        const props = inheritMembers(this.heritageClauses, []);
+        
+        api.filter(m => props.some(p => p._name.toString() === m._name.toString())).forEach(a => {
+            warn(`Component ${this.name} has Prop and Api method with same name: ${a._name}`);
+        });
         
         members = super.processMembers(
             inheritMembers(
@@ -82,7 +90,6 @@ export class Component extends Class implements Heritable {
                 this.addPrefixToMembers(members)
             )
         );
-
         const restPropsGetter = this.createRestPropsGetter(members);
         restPropsGetter.prefix = "__";
         members.push(restPropsGetter);

@@ -17,7 +17,7 @@ const WidgetInput = {
 export default {
   props: WidgetInput,
   methods: {
-    onClick() {},
+    __onClick() {},
     __restAttributes() {
       return {};
     },

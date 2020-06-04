@@ -1,5 +1,5 @@
  <template>
-  <div>{{(state1 !== undefined ? state1 : state1_state)}}<BaseState @update:base-state-prop="stateChange"></BaseState></div>
+  <div>{{(state1 !== undefined ? state1 : state1_state)}}<BaseState @update:base-state-prop="__stateChange"></BaseState></div>
 </template>
 <script>
 import BaseState from "./model";
@@ -45,21 +45,21 @@ export default {
     };
   },
   methods: {
-    updateState() {
+    __updateState() {
         this.state1_state = !(this.state1 !== undefined
         ? this.state1
         : this.state1_state),
         this.state1Change(this.state1_state);
     },
-    updateState2() {
+    __updateState2() {
       const cur = (this.state2 !== undefined ? this.state2 : this.state2_state)
       this.state2_state = cur !== false ? false : true,
       this.state2Change(this.state2_state);
     },
-    destruct(){
+    __destruct(){
       const s = (this.state1 !== undefined ? this.state1 : this.state1_state);
     },
-    stateChange(stateProp) {
+    __stateChange(stateProp) {
       this.stateProp_state = stateProp,
       this.statePropChange(this.stateProp_state);
     },

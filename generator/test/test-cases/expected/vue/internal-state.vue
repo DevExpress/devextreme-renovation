@@ -10,7 +10,7 @@ export default {
       };
   },
   methods: {
-    updateState(){
+    __updateState(){
         this._hovered=!this._hovered;
     },
     __restAttributes() {

@@ -293,6 +293,13 @@ export class VueComponent extends Component {
         );
     }
 
+    addPrefixToMembers(members: Array<Property | Method>) { 
+        members.filter(m => !m.decorators.find(d => d.name === "Method")).forEach(m => {
+            m.prefix = "__";
+        });
+        return members;
+    }
+
     processMembers(members: Array<Property | Method>) { 
         members = super.processMembers(members);
         members = members.reduce((members, m) => { 
@@ -448,6 +455,7 @@ export class VueComponent extends Component {
 
         statements.push.apply(statements, this.methods
             .concat(this.effects)
+            .concat(this.api)
             .map(m => m.toString({
                 members: this.members,
                 componentContext: "this",
@@ -471,7 +479,7 @@ export class VueComponent extends Component {
         this.effects.forEach((effect, index) => { 
             const dependency = effect.getDependency(this.members);
 
-            const scheduleEffectName = `__schedule_${effect.name}`;
+            const scheduleEffectName = `__schedule_${effect._name}`;
 
             if (dependency.length) { 
                 methods.push(` ${scheduleEffectName}() {

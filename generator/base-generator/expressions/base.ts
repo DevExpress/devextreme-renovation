@@ -63,6 +63,10 @@ export class ExpressionWithOptionalExpression extends Expression {
         return this.expression ? this.expression.toString(options) : "";
     }
 
+    isJsx() { 
+        return this.expression?.isJsx() || false;
+    }
+
     getDependency() {
         return this.expression && this.expression.getDependency() || [];
     }

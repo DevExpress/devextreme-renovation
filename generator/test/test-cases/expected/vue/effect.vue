@@ -68,17 +68,17 @@ export default {
         sChange:this.sChange
       };
     },
-    setupData() {
+    __setupData() {
       const id = subscribe(this.getP(), (this.s !== undefined ? this.s : this.s_state), this.i);
       this.i = 15;
       return () => unsubscribe(id);
     },
-    onceEffect() {
+    __onceEffect() {
       const id = subscribe(this.getP(), (this.s !== undefined ? this.s : this.s_state), this.i);
       this.i = 15;
       return () => unsubscribe(id);
     },
-    alwaysEffect() {
+    __alwaysEffect() {
       const id = subscribe(this.getP(), 1, 2);
       return () => unsubscribe(id);
     },
@@ -90,13 +90,13 @@ export default {
     __schedule_setupData() {
       this.__scheduleEffects[0] = () => {
         this.__destroyEffects[0] && this.__destroyEffects[0]();
-        this.__destroyEffects[0] = this.setupData();
+        this.__destroyEffects[0] = this.__setupData();
       };
     },
     __schedule_alwaysEffect(){
       this.__scheduleEffects[2] = () => {
         this.__destroyEffects[2] && this.__destroyEffects[2]();
-        this.__destroyEffects[2] = this.alwaysEffect();
+        this.__destroyEffects[2] = this.__alwaysEffect();
       };
     }
   },
@@ -105,9 +105,9 @@ export default {
     this.__scheduleEffects = [];
   },
   mounted() {
-    this.__destroyEffects[0] = this.setupData();
-    this.__destroyEffects[1] = this.onceEffect();
-    this.__destroyEffects[2] = this.alwaysEffect();
+    this.__destroyEffects[0] = this.__setupData();
+    this.__destroyEffects[1] = this.__onceEffect();
+    this.__destroyEffects[2] = this.__alwaysEffect();
   },
   updated() {
     this.__scheduleEffects.forEach((_, i) => {
