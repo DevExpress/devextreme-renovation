@@ -468,6 +468,7 @@ export class VueComponent extends Component {
 
         statements.push.apply(statements, this.methods
             .concat(this.effects)
+            .concat(this.api)
             .map(m => m.toString({
                 members: this.members,
                 componentContext: "this",
