@@ -21,4 +21,4 @@ export default class Widget extends BaseComponent {
     }
 }
 
-registerComponent('Widget', Widget);
+registerComponent('dxrWidget', Widget);
