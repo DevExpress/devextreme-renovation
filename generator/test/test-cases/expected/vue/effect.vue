@@ -53,7 +53,7 @@ export default {
         sChange:this.sChange
       };
     },
-    setupData() {
+    __setupData() {
       const id = subscribe(
         this.p,
         (this.s !== undefined ? this.s : this.s_state),
@@ -70,7 +70,7 @@ export default {
     __schedule_setupData() {
       this.__scheduleEffects[0] = () => {
         this.__destroyEffects[0] && this.__destroyEffects[0]();
-        this.__destroyEffects[0] = this.setupData();
+        this.__destroyEffects[0] = this.__setupData();
       };
     }
   },
@@ -79,7 +79,7 @@ export default {
     this.__scheduleEffects = [];
   },
   mounted() {
-    this.__destroyEffects[0] = this.setupData();
+    this.__destroyEffects[0] = this.__setupData();
   },
   updated() {
     this.__scheduleEffects.forEach((_, i) => {
