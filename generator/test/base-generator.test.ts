@@ -20,7 +20,7 @@ import { toStringOptions } from "../base-generator/types";
 import { BindingPattern } from "../base-generator/expressions/binding-pattern";
 import { Property, Method } from "../base-generator/expressions/class-members";
 
-const { createComponentDecorator, createDecorator} = componentCreator(generator);
+const { createComponentDecorator, createDecorator } = componentCreator(generator);
 
 mocha.describe("base-generator: expressions", function () { 
     mocha.describe("Base Expressions", function () { 
@@ -2225,6 +2225,59 @@ mocha.describe("ComponentInput", function () {
                 "BaseModel ComponentBindings has property with reserved name: key",
                 "BaseModel ComponentBindings has property with reserved name: ref",
                 "BaseModel ComponentBindings has property with reserved name: style"
+            ]);
+        });
+
+        mocha.it("Prop and Api Method has same names", function () { 
+            createComponentInput([
+                generator.createProperty(
+                    [
+                        createDecorator("OneWay")
+                    ],
+                    [],
+                    generator.createIdentifier("p1")
+                ),
+                generator.createProperty(
+                    [
+                        createDecorator("OneWay")
+                    ],
+                    [],
+                    generator.createIdentifier("p2")
+                )
+            ]);
+
+            generator.createClassDeclaration(
+                [createDecorator("Component", {})],
+                [],
+                generator.createIdentifier("ComponentName"),
+                [],
+                [generator.createHeritageClause(
+                    generator.SyntaxKind.ExtendsKeyword,
+                    [generator.createExpressionWithTypeArguments(
+                        undefined,
+                        generator.createCall(
+                            generator.createIdentifier("JSXComponent"),
+                            undefined,
+                            [generator.createIdentifier("BaseModel")]
+                        )
+                    )]
+                )],
+                ["p1", "p2", "p3"].map(name=>generator.createMethod(
+                    [createDecorator("Method")],
+                    [],
+                    undefined,
+                    generator.createIdentifier(name),
+                    undefined,
+                    undefined,
+                    [],
+                    undefined,
+                    generator.createBlock([], false)
+                ))
+            );
+            
+            assert.deepEqual(this.getWarnings(), [
+                'Component ComponentName has Prop and Api method with same name: p1',
+                'Component ComponentName has Prop and Api method with same name: p2'
             ]);
         });
     });

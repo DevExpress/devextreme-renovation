@@ -25,7 +25,7 @@ export default {
     };
   },
   methods: {
-    updateState(){
+    __updateState(){
       this.innerState=this.innerState+1
       this.innerState=this.innerState+1
       this.innerState=this.innerState+1

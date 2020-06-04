@@ -1,5 +1,5 @@
 <template>
-  <Base :height="getProps().height" />
+  <Base :height="__getProps().height" />
 </template>
 <script>
 import Base, { WidgetProps } from "./component-input";
@@ -19,7 +19,7 @@ export default {
   },
   props: ChildInput,
   methods: {
-    getProps() {
+    __getProps() {
       return { height: this.height };
     },
     __restAttributes() {

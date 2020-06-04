@@ -8,7 +8,7 @@
  <script>
 export default {
   methods: {
-    getHeight() {
+    __getHeight() {
       return this.$refs.divRef.outerHTML+this.$refs.nullableRef?.outerHTML;
     },
     __restAttributes() {
