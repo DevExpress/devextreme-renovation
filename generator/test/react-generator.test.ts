@@ -160,6 +160,10 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it.only("implements", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {
             generator.defaultOptionsModule = "../component_declaration/default_options";

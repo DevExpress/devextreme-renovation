@@ -1,4 +1,4 @@
-import { Class, Heritable, inheritMembers } from "./class";
+import { Class, Heritable, inheritMembers, HeritageClause } from "./class";
 import { Parameter } from "./functions";
 import { SimpleTypeExpression, FunctionTypeNode } from "./type";
 import { Property, Method, BaseClassMember } from "./class-members";
@@ -17,6 +17,16 @@ const RESERVED_NAMES = [
 ];
 
 export class ComponentInput extends Class implements Heritable {
+    constructor(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, typeParameters: any[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>) {
+        super(
+            decorators,
+            modifiers,
+            name,
+            typeParameters,
+            heritageClauses.filter(h => h.token === SyntaxKind.ExtendsKeyword),
+            members
+        );
+    }
 
     get baseTypes() { 
         return this.heritageClauses.reduce((t: string[], h) => t.concat(h.typeNodes.map(t => t.toString())), []);
