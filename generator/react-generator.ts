@@ -5,7 +5,7 @@ import BaseGenerator from "./base-generator";
 import {
     Property as BaseProperty,
     GetAccessor as BaseGetAccessor,
-    Method,
+    Method as BaseMethod,
     BaseClassMember
 } from "./base-generator/expressions/class-members";
 import { Identifier, Call } from "./base-generator/expressions/common";
@@ -235,6 +235,12 @@ export class Property extends BaseProperty {
 export class GetAccessor extends BaseGetAccessor {
     getter() {
         return `${super.getter()}()`;
+    }
+}
+
+export class Method extends BaseMethod {
+    filterDependencies(dependencies: string[]): string[] {
+        return dependencies.filter(d => d !== "props");
     }
 }
 

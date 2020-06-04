@@ -109,13 +109,17 @@ export class Method extends BaseClassMember {
         return `(${this.parameters})=>${this.body.toString(options)}`
     }
 
+    filterDependencies(dependencies: string[]): string[] {
+        return dependencies;
+    }
+
     getDependency(members: Array<Property | Method> = []) {
         const run = this.decorators.find(d => d.name === "Effect")?.getParameter("run")?.valueOf();
         const depsReducer = (d: string[], p: (Method | Property | undefined)) => d.concat(p!.getDependency(members.filter(p => p !== this)));
 
         let result: string[] = [];
         if(run === "always") {
-            result = members.filter(m=>!(m instanceof Method)).reduce(depsReducer, []);
+            result = this.filterDependencies(members.filter(m=>!(m instanceof Method)).reduce(depsReducer, ["props"]));
         } else if(run !== "once") {
             const dependency = this.body.getDependency();
             const additionalDependency = [];

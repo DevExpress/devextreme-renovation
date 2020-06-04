@@ -72,7 +72,7 @@ export default class Widget extends WidgetInput {
             this.__schedule_setupData();
         }
 
-        if (this.__destroyEffects.length && ["p", "r", "s", "sChange"].some(d => changes[d])) {
+        if (this.__destroyEffects.length) {
             this.__schedule_alwaysEffect();
         }
     }
