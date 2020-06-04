@@ -192,7 +192,7 @@ class JQueryComponent {
             ${this.compileInit()}
         }
     
-        registerComponent("${this.source.name}", ${this.source.name});
+        registerComponent("dxr${this.source.name}", ${this.source.name});
         `;
     }
 }
