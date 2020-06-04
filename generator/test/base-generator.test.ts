@@ -479,19 +479,20 @@ mocha.describe("base-generator: expressions", function () {
 
     mocha.describe("Statements", function () { 
         mocha.it("ReturnStatement", function () {
-            assert.equal(generator.createReturn(generator.createNumericLiteral("10")).toString(), "return 10;")
+            assert.strictEqual(generator.createReturn(generator.createNumericLiteral("10")).toString(), "return 10;");
+            assert.strictEqual(generator.createReturn().toString(), "return ;")
         });
 
         mocha.it("createEmptyStatement", function () { 
-            assert.equal(generator.createEmptyStatement().toString(), "");
+            assert.strictEqual(generator.createEmptyStatement().toString(), "");
         });
 
         mocha.it("createDebuggerStatement", function () { 
-            assert.equal(generator.createDebuggerStatement().toString(), "debugger");
+            assert.strictEqual(generator.createDebuggerStatement().toString(), "debugger");
         });    
 
         mocha.it("Block", function () {
-            assert.equal(generator.createBlock([], true).toString().replace(/\s+/g, ""), "{}");
+            assert.strictEqual(generator.createBlock([], true).toString().replace(/\s+/g, ""), "{}");
             const expression = generator.createBlock([
                 generator.createCall(
                     generator.createIdentifier("i"),
@@ -504,11 +505,11 @@ mocha.describe("base-generator: expressions", function () {
             ], true);
     
             const actualString = expression.toString();
-            assert.equal(getAst(actualString), getAst('{i(); return i;}'));
+            assert.strictEqual(getAst(actualString), getAst('{i(); return i;}'));
         });
 
         mocha.it("CreateBreak", function () { 
-            assert.equal(generator.createBreak().toString(), "break");
+            assert.strictEqual(generator.createBreak().toString(), "break");
         });
         
     });

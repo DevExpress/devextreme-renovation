@@ -200,7 +200,7 @@ export default class Generator {
         return new Parameter(decorators, modifiers, dotDotDotToken, name, questionToken, type, initializer);
     }
 
-    createReturn(expression: Expression) {
+    createReturn(expression?: Expression) {
         return new ReturnStatement(expression);
     }
 

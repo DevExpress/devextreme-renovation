@@ -1,5 +1,5 @@
 import { Identifier, Paren } from "./common";
-import { Expression, ExpressionWithExpression, SimpleExpression } from "./base";
+import { Expression, ExpressionWithExpression, SimpleExpression, ExpressionWithOptionalExpression } from "./base";
 import { toStringOptions, GeneratorContext } from "../types";
 import SyntaxKind from "../syntaxKind";
 import { Conditional } from "./conditions";
@@ -12,7 +12,7 @@ export function getJsxExpression(e: ExpressionWithExpression | Expression | unde
     } else if (e instanceof JsxExpression || e instanceof JsxElement || e instanceof JsxOpeningElement) {
         return e as JsxExpression;
     }
-    else if (e instanceof ExpressionWithExpression) {
+    else if (e instanceof ExpressionWithExpression || e instanceof ExpressionWithOptionalExpression) {
         return getJsxExpression(e.expression);
     }
     else if (e instanceof Expression) { 

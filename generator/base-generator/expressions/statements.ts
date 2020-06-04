@@ -1,4 +1,4 @@
-import { Expression, ExpressionWithExpression } from "./base";
+import { Expression, ExpressionWithOptionalExpression } from "./base";
 import { toStringOptions } from "../types";
 
 export class Block extends Expression {
@@ -31,7 +31,7 @@ export class Block extends Expression {
     }
 }
 
-export class ReturnStatement extends ExpressionWithExpression {
+export class ReturnStatement extends ExpressionWithOptionalExpression {
     toString(options?: toStringOptions) {
         return `return ${super.toString(options)};`;
     }
