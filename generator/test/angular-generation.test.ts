@@ -128,6 +128,10 @@ mocha.describe("angular-generation", function () {
     mocha.it("refs", function () {
         this.testGenerator(this.test!.title);
     });
+    
+    mocha.it("implements", function () {
+        this.testGenerator(this.test!.title);
+    });
 
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {

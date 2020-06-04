@@ -9,6 +9,7 @@ import { getModuleRelativePath } from "../utils/path-utils";
 import { Decorator } from "./decorator";
 import { BaseFunction } from './functions';
 import { compileType } from "../utils/string";
+import SyntaxKind from "../syntaxKind";
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
     return heritageClauses.some(h => h.isJsxComponent);
@@ -89,7 +90,14 @@ export class Component extends Class implements Heritable {
     }
 
     constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>, context: GeneratorContext) {
-        super([decorator], modifiers, name, typeParameters, heritageClauses, members);
+        super(
+            [decorator],
+            modifiers,
+            name,
+            typeParameters,
+            heritageClauses.filter(h => h.token === SyntaxKind.ExtendsKeyword),
+            members
+        );
         members = this.members;
         this.props = members
             .filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template")) as Property[];

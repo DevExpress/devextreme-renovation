@@ -1032,7 +1032,7 @@ class ComponentInput extends BaseComponentInput {
     toString() {
         return `
         ${compileCoreImports(this.members.filter(m => !m.inherited), this.context)}
-        ${this.modifiers.join(" ")} class ${this.name} ${this.heritageClauses.map(h => h.toString())} {
+        ${this.modifiers.join(" ")} class ${this.name} ${this.heritageClauses.map(h => h.toString()).join(" ")} {
             ${this.members.filter(p => p instanceof Property && !p.inherited).map(m => m.toString()).filter(m => m).concat("").join(";\n")}
         }`;
     }
@@ -1452,7 +1452,8 @@ export class AngularComponent extends Component {
     }
 
     toString() { 
-        const extendTypes = this.heritageClauses.reduce((t: string[], h) => t.concat(h.types.map(t => t.type.toString())), []);
+        const props = this.heritageClauses.filter(h => h.isJsxComponent).map(h => h.types.map(t => t.type.toString()));
+        
         const components = this.context.components || {};
 
         const modules = Object.keys(components)
@@ -1496,7 +1497,7 @@ export class AngularComponent extends Component {
         ${this.compileDefaultOptions(constructorStatements)}
         ${valueAccessor}
         ${componentDecorator}
-        ${this.modifiers.join(" ")} class ${this.name} ${extendTypes.length? `extends ${extendTypes.join(" ")}`:""} ${implementedInterfaces.length ? `implements ${implementedInterfaces.join(",")}`:""} {
+        ${this.modifiers.join(" ")} class ${this.name} ${props.length ? `extends ${props.join(" ")}`:""} ${implementedInterfaces.length ? `implements ${implementedInterfaces.join(",")}`:""} {
             ${this.members
                 .filter(m => !m.inherited && !(m instanceof SetAccessor))
                 .map(m => m.toString({

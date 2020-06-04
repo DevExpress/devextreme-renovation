@@ -28,6 +28,8 @@ import {
     ParenthesizedType,
     TypeAliasDeclaration,
     TypeOperatorNode,
+    PropertySignature,
+    MethodSignature,
 } from "./base-generator/expressions/type";
 import { capitalizeFirstLetter, variableDeclaration } from "./base-generator/utils/string";
 import SyntaxKind from "./base-generator/syntaxKind";
@@ -56,6 +58,7 @@ import { checkDependency } from "./base-generator/utils/dependency";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access";
 import { PropertyAssignment, SpreadAssignment } from "./base-generator/expressions/property-assignment";
 import { getModuleRelativePath } from "./base-generator/utils/path-utils";
+import { Interface } from "./base-generator/expressions/interface";
 
 function calculatePropertyType(type: TypeExpression | string): string {
     if (type instanceof SimpleTypeExpression) {
@@ -1215,6 +1218,10 @@ class VueGenerator extends BaseGenerator {
 
     createTypeReferenceNode(typeName: Identifier, typeArguments?: TypeExpression[]) {
         return addEmptyToString<TypeReferenceNode>(super.createTypeReferenceNode(typeName, typeArguments)); 
+    }
+
+    createInterfaceDeclaration(decorators: Decorator[]|undefined, modifiers: string[] | undefined, name: Identifier, typeParameters: any[] | undefined, heritageClauses: HeritageClause[] | undefined, members: Array<PropertySignature|MethodSignature>) { 
+        return addEmptyToString<Interface>(super.createInterfaceDeclaration(decorators, modifiers, name, typeParameters, heritageClauses, members)); 
     }
 }
 
