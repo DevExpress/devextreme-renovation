@@ -8,7 +8,7 @@
  <script>
 export default {
   methods: {
-    clickHandler(){
+    __clickHandler(){
       const html=this.$refs.divRef.outerHTML+this.$refs.explicitRef.outerHTML;
     },
     __getHeight() {

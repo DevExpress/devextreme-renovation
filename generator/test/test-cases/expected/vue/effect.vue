@@ -54,7 +54,7 @@ export default {
     sChange: ["__schedule_alwaysEffect"]
   },
   methods: {
-    getP(){
+    __getP(){
       return this.p;
     },
     __restAttributes() {
@@ -69,17 +69,17 @@ export default {
       };
     },
     __setupData() {
-      const id = subscribe(this.getP(), (this.s !== undefined ? this.s : this.s_state), this.i);
+      const id = subscribe(this.__getP(), (this.s !== undefined ? this.s : this.s_state), this.i);
       this.i = 15;
       return () => unsubscribe(id);
     },
     __onceEffect() {
-      const id = subscribe(this.getP(), (this.s !== undefined ? this.s : this.s_state), this.i);
+      const id = subscribe(this.__getP(), (this.s !== undefined ? this.s : this.s_state), this.i);
       this.i = 15;
       return () => unsubscribe(id);
     },
     __alwaysEffect() {
-      const id = subscribe(this.getP(), 1, 2);
+      const id = subscribe(this.__getP(), 1, 2);
       return () => unsubscribe(id);
     },
 
