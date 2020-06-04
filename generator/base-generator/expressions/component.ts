@@ -90,7 +90,6 @@ export class Component extends Class implements Heritable {
                 this.addPrefixToMembers(members)
             )
         );
-        
         const restPropsGetter = this.createRestPropsGetter(members);
         restPropsGetter.prefix = "__";
         members.push(restPropsGetter);
