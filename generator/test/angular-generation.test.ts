@@ -125,7 +125,7 @@ mocha.describe("angular-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it.only("implements", function () {
+    mocha.it("implements", function () {
         this.testGenerator(this.test!.title);
     });
 
