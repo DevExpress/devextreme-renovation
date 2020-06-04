@@ -4,6 +4,10 @@ import BaseComponent from "../../../../../component_declaration/jquery_base_comp
 import WidgetComponent from "../../../../jquery-empty.p"
 
 export default class Widget extends BaseComponent {
+  __getProps():any {
+    return this.viewRef?.__getProps();
+  }
+
   get _viewComponent() {
       return WidgetComponent;
   }

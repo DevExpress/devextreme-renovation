@@ -10,7 +10,12 @@ export const Props: PropsType = {
 };
 
 import * as Preact from "preact";
-import { useCallback } from "preact/hooks"
+import { useCallback, useImperativeHandle } from "preact/hooks";
+import { forwardRef } from "preact/compat";
+
+export type WidgetRef = {
+    __getProps: () => any
+};
 
 interface Widget {
     props: typeof Props;
@@ -18,7 +23,13 @@ interface Widget {
     restAttributes: any;
 }
 
-export function Widget(props: typeof Props) {
+const Widget = forwardRef<WidgetRef, typeof Props>((props: typeof Props, ref) => {
+    useImperativeHandle(ref, () => ({
+        __getProps: () => {
+            return props;
+        }
+    }), [props]);
+
     const clickHandler = useCallback(function clickHandler() {
         props.onClick!({ type: props.type })
     }, [props.onClick, props.type]);
@@ -35,7 +46,8 @@ export function Widget(props: typeof Props) {
             restAttributes: __restAttributes()
         })
     );
-}
+});
+export default Widget;
 
 (Widget as any).defaultProps = {
     ...Props

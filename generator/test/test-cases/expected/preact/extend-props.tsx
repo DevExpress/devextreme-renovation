@@ -1,7 +1,12 @@
 import Base from "./empty-component.p"
 
 import * as Preact from "preact";
-import { useCallback } from "preact/hooks";
+import { useCallback, useImperativeHandle } from "preact/hooks";
+import { forwardRef } from "preact/compat";
+
+export type WidgetRef = {
+    __getProps: () => any
+};
 
 interface Widget {
     size: number;
@@ -10,11 +15,20 @@ interface Widget {
     restAttributes: any;
 }
 
-export default function Widget(props: {
+const Widget = forwardRef<WidgetRef, { 
+    size: number, 
+    height: number, 
+    width: number }>((props: {
     size: number,
     height: number,
     width: number
-}) {
+}, ref) => {
+    useImperativeHandle(ref, () => ({
+        __getProps: () => {
+            return props;
+        }
+    }), [props]);
+
     const __restAttributes=useCallback(function __restAttributes(){
         const { height, size, width, ...restProps } = props;
         return restProps;
@@ -23,7 +37,8 @@ export default function Widget(props: {
         ...props,
         restAttributes: __restAttributes()
     }));
-}
+});
+export default Widget;
 
 function viewModel1(model: Widget) {
     return {

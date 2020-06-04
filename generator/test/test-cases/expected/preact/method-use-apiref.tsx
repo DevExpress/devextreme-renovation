@@ -13,7 +13,8 @@ import { useCallback, useRef, useImperativeHandle } from 'preact/hooks'
 import { forwardRef } from 'preact/compat'
 
 export type WidgetWithApiRefRef = {
-    getSomething: () => string
+    getSomething: () => string,
+    __getProps: () => any
 };
 
 interface WidgetWithApiRef {
@@ -28,8 +29,11 @@ const WidgetWithApiRef = forwardRef<WidgetWithApiRefRef, typeof WidgetWithApiRef
     useImperativeHandle(ref, () => ({
         getSomething: () => { 
             return `${props.prop1} + ${baseRef.current?.getHeight()}`;
+        },
+        __getProps: () => {
+            return props;
         }
-    }), [props.prop1, baseRef.current]);
+    }), [props.prop1, baseRef.current, props]);
 
     const __restAttributes=useCallback(function __restAttributes(){
         const { prop1, ...restProps } = props;

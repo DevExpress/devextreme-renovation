@@ -4,6 +4,10 @@ import { JQueryCustomBaseComponent } from "../../../component_declaration/jquery
 import WidgetComponent from "../../../../jquery-custom-named-base.p"
 
 export default class Widget extends JQueryCustomBaseComponent {
+  __getProps():any {
+    return this.viewRef?.__getProps();
+  }
+
   get _viewComponent() {
       return WidgetComponent;
   }

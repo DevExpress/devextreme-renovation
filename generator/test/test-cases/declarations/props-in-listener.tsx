@@ -15,7 +15,7 @@ export class Props {
     name: 'Component',
     view
 })
-export class Widget extends JSXComponent(Props){
+export default class Widget extends JSXComponent(Props){
    
     @Listen("click")
     clickHandler() {

@@ -6,18 +6,21 @@ import {
     JsxOpeningElement as ReactJsxOpeningElement,
     JsxClosingElement as ReactJsxClosingElement,
     HeritageClause,
+    PropertyAccess,
 } from "./react-generator";
 import path from "path";
+import SyntaxKind from "./base-generator/syntaxKind";
 import { Expression } from "./base-generator/expressions/base";
-import { Identifier } from "./base-generator/expressions/common";
+import { Identifier, Call } from "./base-generator/expressions/common";
 import { ImportClause, ImportDeclaration } from "./base-generator/expressions/import";
 import { StringLiteral, ObjectLiteral } from "./base-generator/expressions/literal";
 import { TypeExpression } from "./base-generator/expressions/type";
 import { getModuleRelativePath } from "./base-generator/utils/path-utils";
 import { GeneratorContext as BaseGeneratorContext } from "./base-generator/types";
 import { Decorator } from "./base-generator/expressions/decorator";
-import { Method } from "./base-generator/expressions/class-members";
+import { Method, Property as ClassProperty } from "./base-generator/expressions/class-members";
 import { compileType } from "./base-generator/utils/string";
+import { Block, ReturnStatement } from "./base-generator/expressions/statements";
 
 const processModuleFileName = (module: string) => `${module}.p`;
 
@@ -50,6 +53,30 @@ export class PreactComponent extends ReactComponent {
 
     defaultPropsDest() { 
         return `(${this.name} as any).defaultProps`;
+    }
+
+    processMembers(members:  Array<ClassProperty | Method>) {
+        members = super.processMembers(members);
+
+        const propsGetter = new Method(
+            [new Decorator(new Call(new Identifier("Method"), undefined, []), {})],
+            [],
+            undefined,
+            new Identifier("getProps"),
+            undefined,
+            [],
+            [],
+            undefined,
+            new Block([
+                new ReturnStatement(new PropertyAccess(
+                    new Identifier(SyntaxKind.ThisKeyword),
+                    new Identifier("props")
+                ))
+            ], true)
+        );
+        propsGetter.prefix = "__";
+        members.push(propsGetter);
+        return members;
     }
 }
 
@@ -91,28 +118,9 @@ class JQueryComponent {
     }
     
     compileAPI() {
-        const api = this.source.api.map(a => `${a.name}(${a.parameters})${compileType(a.type.toString())} {
-            return this.viewRef.current.${a.name}(${a.parameters.map(p => p.name).join(",")});
-        }`);
-    
-        return `${api.join("\n")}`;
-    }
-    
-    compileInit() {
-        const statements: string[] = [];
-        if(this.source.api.length) {
-            statements.push("this._createViewRef();");
-        }
-    
-        if(!statements.length) {
-            return "";
-        }
-    
-        return `
-        _initWidget() {
-            ${statements.join(";\n")}
-        }
-        `;
+        return this.source.api.map(a => `${a.name}(${a.parameters})${compileType(a.type.toString())} {
+            return this.viewRef?.${a.name}(${a.parameters.map(p => p.name).join(",")});
+        }`).join("\n");
     }
 
     compileImports(component: Identifier) {
@@ -185,8 +193,6 @@ class JQueryComponent {
             get _viewComponent() {
                 return ${this.source.name}Component;
             }
-    
-            ${this.compileInit()}
         }
     
         registerComponent("dxr${this.source.name}", ${this.source.name});

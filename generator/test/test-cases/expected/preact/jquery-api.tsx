@@ -5,19 +5,19 @@ import WidgetComponent from "../../../../jquery-api.p"
 
 export default class Widget extends BaseComponent {
     getHeight(p:number=10, p1: any): string {
-        return this.viewRef.current.getHeight(p, p1);
+        return this.viewRef?.getHeight(p, p1);
     }
 
     getSize():string {
-        return this.viewRef.current.getSize();
+        return this.viewRef?.getSize();
+    }
+
+    __getProps():any {
+        return this.viewRef?.__getProps();
     }
 
     get _viewComponent() {
         return WidgetComponent;
-    }
-
-    _initWidget() {
-        this._createViewRef();
     }
 }
 
