@@ -148,6 +148,19 @@ mocha.describe("Vue-generator", function () {
 
                 assert.strictEqual(getAst(expression.toString()), getAst("function f(){}"));
             });
+
+            mocha.it("InterfaceDeclaration", function () { 
+                const expression = generator.createInterfaceDeclaration(
+                    undefined,
+                    undefined,
+                    generator.createIdentifier("name"),
+                    undefined,
+                    undefined,
+                    []
+                );
+    
+                assert.strictEqual(expression.toString(), "");
+            });
         });
     });
 
