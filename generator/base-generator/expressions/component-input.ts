@@ -10,6 +10,7 @@ import { Decorator } from "./decorator";
 import { warn } from "../../utils/messages";
 import { getProps } from "./component";
 import { GeneratorContext } from "../types";
+import { Decorators } from "../../component_declaration/decorators";
 
 const RESERVED_NAMES = [
     "key",
@@ -104,9 +105,9 @@ export class ComponentInput extends Class implements Heritable {
     processMembers(members: Array<Property | Method>) { 
         members.forEach(m => { 
            
-            const refIndex = m.decorators.findIndex(d => d.name === "Ref");
+            const refIndex = m.decorators.findIndex(d => d.name === Decorators.Ref);
             if (refIndex > -1) { 
-                m.decorators[refIndex] = this.createDecorator(new Call(new Identifier("RefProp"), undefined, []), {});
+                m.decorators[refIndex] = this.createDecorator(new Call(new Identifier(Decorators.RefProp), undefined, []), {});
             }
      
             if (!(m instanceof Property)) {

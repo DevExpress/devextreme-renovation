@@ -54,6 +54,7 @@ import { ExpressionWithTypeArguments } from "./expressions/type";
 import { getModuleRelativePath } from "./utils/path-utils";
 import { Decorator } from "./expressions/decorator";
 import { Interface } from "./expressions/interface";
+import { Decorators } from "../component_declaration/decorators";
 
 export default class Generator {
     NodeFlags = {
@@ -347,12 +348,12 @@ export default class Generator {
     }
 
     createClassDeclaration(decorators: Decorator[]=[], modifiers: string[]|undefined, name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) {
-        const componentDecorator = decorators.find(d => d.name === "Component");
+        const componentDecorator = decorators.find(d => d.name === Decorators.Component);
         let result: Class | Component | ComponentInput;
         if (componentDecorator) {
             result = this.createComponent(componentDecorator, modifiers, name, typeParameters, heritageClauses, members);
             this.addComponent(name.toString(), result as Component);
-        } else if (decorators.find(d => d.name === "ComponentBindings")) {
+        } else if (decorators.find(d => d.name === Decorators.ComponentBindings)) {
             const componentInput = this.createComponentBindings(decorators, modifiers, name, typeParameters, heritageClauses, members);
             this.addComponent(name.toString(), componentInput);
             result = componentInput;

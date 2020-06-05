@@ -6,6 +6,7 @@ import { Parameter } from "./functions";
 import { Block } from "./statements";
 import { compileType, processComponentContext } from "../utils/string";
 import { Decorator } from "./decorator";
+import { Decorators } from "../../component_declaration/decorators";
 
 export class BaseClassMember extends Expression { 
     decorators: Decorator[];
@@ -49,32 +50,40 @@ export class BaseClassMember extends Expression {
         return false;
     }
 
+    _hasDecorator(name: Decorators) {
+        return this.decorators.some(d => d.name === name);
+    }
+
     get isEvent() { 
-        return this.decorators.some(d => d.name === "Event");
+        return this._hasDecorator(Decorators.Event);
     }
 
     get isState() { 
-        return this.decorators.some(d => d.name === "TwoWay");
+        return this._hasDecorator(Decorators.TwoWay);
     }
 
     get isRef() { 
-        return this.decorators.some(d => d.name === "Ref");
+        return this._hasDecorator(Decorators.Ref);
     }
 
     get isRefProp() { 
-        return this.decorators.some(d => d.name === "RefProp");
+        return this._hasDecorator(Decorators.RefProp);
     }
 
     get isSlot() { 
-        return this.decorators.some(d => d.name === "Slot");
+        return this._hasDecorator(Decorators.Slot);
     }
 
     get isTemplate() { 
-        return this.decorators.some(d => d.name === "Template");
+        return this._hasDecorator(Decorators.Template);
     }
 
     get isApiMethod() { 
-        return this.decorators.some(d => d.name === "Method");
+        return this._hasDecorator(Decorators.Method);
+    }
+
+    get isEffect() { 
+        return this._hasDecorator(Decorators.Effect);
     }
 
     get canBeDestructured() { 
@@ -122,7 +131,7 @@ export class Method extends BaseClassMember {
     }
 
     getDependency(members: Array<Property | Method> = []) {
-        const run = this.decorators.find(d => d.name === "Effect")?.getParameter("run")?.valueOf();
+        const run = this.decorators.find(d => d.name === Decorators.Effect)?.getParameter("run")?.valueOf();
         const depsReducer = (d: string[], p: (Method | Property | undefined)) => d.concat(p!.getDependency(members.filter(p => p !== this)));
 
         let result: string[] = [];
@@ -196,7 +205,7 @@ export class Property extends BaseClassMember {
     }
 
     isReadOnly() {
-        return !!this.decorators.find(d => d.name === "OneWay" || d.name === "Event");
+        return !!this.decorators.find(d => d.name === Decorators.OneWay || d.name === Decorators.Event);
     }
 
     inherit() { 
@@ -208,6 +217,6 @@ export class Property extends BaseClassMember {
     }
 
     get isInternalState() { 
-        return this.decorators.some(d => d.name === "InternalState") || this.decorators.length === 0;
+        return this.decorators.length === 0 || this._hasDecorator(Decorators.InternalState);
     }
 }

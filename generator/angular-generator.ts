@@ -43,6 +43,7 @@ import { Component, getProps } from "./base-generator/expressions/component";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
 import { processComponentContext, capitalizeFirstLetter } from "./base-generator/utils/string";
+import { Decorators } from "./component_declaration/decorators";
 
 // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
 const VOID_ELEMENTS = 
@@ -103,7 +104,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         const tagName = this.tagName.toString(options);
         const contextExpr = processComponentContext(options?.newComponentContext);
         return options?.members
-            .filter(m => m.decorators.find(d => d.name === "Template"))
+            .filter(m => m.isTemplate)
             .find(s => tagName.endsWith(`${contextExpr}${s.name.toString()}`));
     }
 
@@ -710,7 +711,7 @@ export class JsxChildExpression extends JsxExpression {
     
     getSlot(stringValue: string, options?: toStringOptions) { 
         return options?.members
-            .filter(m => m.decorators.find(d => d.name === "Slot"))
+            .filter(m => m.isSlot)
             .find(s => stringValue.indexOf(s.getter(options.newComponentContext)) !== -1) as Property | undefined;
      }
      
@@ -967,11 +968,11 @@ export class ArrowFunction extends BaseArrowFunction {
 
 class Decorator extends BaseDecorator { 
     toString(options?: toStringOptions) { 
-        if (this.name === "OneWay" || this.name === "TwoWay" || this.name === "Template" || this.name==="RefProp") {
+        if (this.name === Decorators.OneWay || this.name === Decorators.TwoWay || this.name === Decorators.Template || this.name===Decorators.RefProp) {
             return "@Input()";
-        } else if (this.name === "Effect" || this.name === "Ref" || this.name === "ApiRef" || this.name === "InternalState" || this.name === "Method") {
+        } else if (this.name === Decorators.Effect || this.name === Decorators.Ref || this.name === Decorators.ApiRef || this.name === Decorators.InternalState || this.name === Decorators.Method) {
             return "";
-        } else if (this.name === "Component") {
+        } else if (this.name === Decorators.Component) {
             const parameters = (this.expression.arguments[0] as ObjectLiteral);
             const viewFunction = this.getViewFunction();
             if (viewFunction) {
@@ -985,7 +986,7 @@ class Decorator extends BaseDecorator {
             parameters.removeProperty("viewModel");
             parameters.removeProperty("defaultOptionRules");
             parameters.removeProperty("jQuery");
-        } else if (this.name === "Event") { 
+        } else if (this.name === Decorators.Event) { 
             return "@Output()";
         }
         return super.toString();
@@ -993,20 +994,20 @@ class Decorator extends BaseDecorator {
 }
 
 function compileCoreImports(members: Array<Property|Method>, context: AngularGeneratorContext, imports:string[] = []) { 
-    if (members.filter(m => m.decorators.find(d => d.name === "OneWay" || d.name==="RefProp")).length) {
+    if (members.some(m => m.decorators.some(d => d.name === Decorators.OneWay || d.name===Decorators.RefProp))) {
         imports.push("Input");
     }
-    if (members.filter(m => m.decorators.find(d => d.name === "TwoWay")).length) { 
+    if (members.some(m => m.isState)) { 
         imports.push("Input", "Output", "EventEmitter");
     }
-    if (members.filter(m => m.isTemplate).length) { 
+    if (members.some(m => m.isTemplate)) { 
         imports.push("Input", "TemplateRef");
     }
-    if (members.filter(m => m.isEvent).length) {
+    if (members.some(m => m.isEvent)) {
         imports.push("Output", "EventEmitter");
     }
 
-    if (members.filter(m => m.isSlot).length) {
+    if (members.some(m => m.isSlot)) {
         imports.push("ViewChild", "ElementRef");
     }
 
@@ -1067,7 +1068,7 @@ export class Property extends BaseProperty {
         return this._name.toString();
     } 
     constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type?: TypeExpression | string, initializer?: Expression, inherited: boolean = false) {
-        if (decorators.find(d => d.name === "Template")) {
+        if (decorators.find(d => d.name === Decorators.Template)) {
             type = new SimpleTypeExpression(`TemplateRef<any>`);
         }
         super(decorators, modifiers, name, questionOrExclamationToken, type, initializer, inherited);
@@ -1076,18 +1077,18 @@ export class Property extends BaseProperty {
         return `${this.name}${this.questionOrExclamationToken}:${this.type}`;
     }
     toString() { 
-        const eventDecorator = this.decorators.find(d => d.name === "Event");
+        const eventDecorator = this.decorators.find(d => d.name === Decorators.Event);
         const defaultValue = super.toString();
         if (eventDecorator) { 
             return `${eventDecorator} ${this.name}${this.questionOrExclamationToken}:EventEmitter<${parseEventType(this.type)}> = new EventEmitter()`
         }
-        if (this.decorators.find(d => d.name === "Ref")) {
+        if (this.isRef) {
             return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:ElementRef<${this.type}>`;
         }
-        if (this.decorators.find(d => d.name === "ApiRef")) {
+        if (this._hasDecorator(Decorators.ApiRef)) {
             return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:${this.type}`;
         }
-        if (this.decorators.find(d => d.name === "Slot")) { 
+        if (this.isSlot) { 
             const selector = `slot${capitalizeFirstLetter(this.name)}`
             return `@ViewChild("${selector}") ${selector}?: ElementRef<HTMLDivElement>;
 
@@ -1102,16 +1103,16 @@ export class Property extends BaseProperty {
     getter(componentContext?: string) { 
         const suffix = this.required ? "!" : "";
         componentContext = this.processComponentContext(componentContext);
-        if (this.decorators.find(d => d.name === "Event")) { 
+        if (this.isEvent) { 
             return `${componentContext}${this.name}!.emit`;
         }
-        if (this.decorators.find(d => d.name === "Ref")) { 
+        if (this.isRef) { 
             return `${componentContext}${this.name}${this.questionOrExclamationToken}.nativeElement`
         }
-        if (this.decorators.find(d => d.name === "RefProp")) { 
+        if (this.isRefProp) { 
             return `${componentContext}${this.name}`;
         }
-        if (this.decorators.find(d => d.name === "ApiRef")) { 
+        if (this._hasDecorator(Decorators.ApiRef)) { 
             return `${componentContext}${this.name}${suffix}`
         }
         return `${componentContext}${this.name}${suffix}`;
@@ -1164,7 +1165,7 @@ export class AngularComponent extends Component {
     }
 
     addPrefixToMembers(members: Array<Property | Method>) { 
-        members.filter(m => !m.decorators.find(d => d.name === "Method")).forEach(m => {
+        members.filter(m => !m.isApiMethod).forEach(m => {
             m.prefix = "__";
         });
         members = members.reduce((members, member) => {
@@ -1230,7 +1231,7 @@ export class AngularComponent extends Component {
     }
 
     compileEffects(ngAfterViewInitStatements: string[], ngOnDestroyStatements: string[], ngOnChanges:string[], ngAfterViewCheckedStatements: string[]) { 
-        const effects = this.members.filter(m => m.decorators.find(d => d.name === "Effect")) as Method[];
+        const effects = this.members.filter(m => m.isEffect) as Method[];
         let hasInternalStateDependency = false;
         
         if (effects.length) { 
@@ -1302,13 +1303,13 @@ export class AngularComponent extends Component {
         return "";
     }
 
-    compileViewModelArguments() { 
+    compileViewModelArguments() {
         const args = [
             `props: {${
             this.members
-                .filter(m => m.decorators.find(d => d.name === "OneWay"||d.name === "Event"))
+                .filter(m => m.decorators.find(d => d.name === Decorators.OneWay || d.name === Decorators.Event))
                 .map(m => `${m.name}: this.${m.name}`)
-                .concat(this.members.filter(m=>m.decorators.find(d=>d.name==="TwoWay")).map(m=>`${m.name}:this.${m.name},\n${m.name}Change:this.${m.name}Change`))
+                .concat(this.members.filter(m => m.isState).map(m => `${m.name}:this.${m.name},\n${m.name}Change:this.${m.name}Change`))
                 .join(",\n")
             }}`,
             this.members
@@ -1569,7 +1570,7 @@ export class PropertyAccess extends BasePropertyAccess {
     }
 
     compileStateSetting(value: string, property: Property, toStringOptions?: toStringOptions) {
-        if (property.decorators.find(d => d.name === "TwoWay")) {
+        if (property.isState) {
             return `this.${this.name}Change!.emit(${this.toString(toStringOptions)}=${value})`;
         }
         return `this._${property.name}=${value}`;

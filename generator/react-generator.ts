@@ -36,6 +36,7 @@ import { ComponentInput as BaseComponentInput } from "./base-generator/expressio
 import { ObjectLiteral } from "./base-generator/expressions/literal";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { PropertyAssignment, SpreadAssignment } from "./base-generator/expressions/property-assignment";
+import { Decorators } from "./component_declaration/decorators";
 
 const eventsDictionary = {
     pointerover: "onPointerOver",
@@ -113,7 +114,7 @@ export class ComponentInput extends BaseComponentInput {
         const propertiesWithInitializer = this.members
             .filter(m =>
                 !(m as Property).inherited && (m as Property).initializer &&
-                (m.decorators.find(d => d.name !== "TwoWay") || (m as Property).questionOrExclamationToken !== "?")) as Property[];
+                (m.decorators.find(d => d.name !== Decorators.TwoWay) || (m as Property).questionOrExclamationToken !== "?")) as Property[];
 
         return `${typeDeclaration}
         ${declarationModifiers.join(" ")} const ${this.name}:${typeName}={
@@ -151,7 +152,7 @@ export class HeritageClause extends BaseHeritageClause {
 export class PropertyAccess extends BasePropertyAccess {
     compileStateSetting(state: string, property: Property, options?: toStringOptions) {
         const setState = `${stateSetter(this.name)}(${state})`;
-        if (property.decorators.find(d => d.name === "TwoWay")) {
+        if (property.isState) {
             return `(${setState}, props.${this.name}Change!(${state}))`;
         }
         return setState;
@@ -174,7 +175,7 @@ export class Property extends BaseProperty {
         if (this.isSlot) {
             return `${this.name}${this.questionOrExclamationToken}:React.ReactNode`;
         }
-        if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
+        if (this.decorators.find(d => d.name === Decorators.Ref || d.name === Decorators.ApiRef)) {
             return `${this.name}:any`;
         }
         if (this.isRefProp) { 
@@ -191,9 +192,9 @@ export class Property extends BaseProperty {
         const scope = this.processComponentContext(this.scope);
         if (this.isInternalState) {
             return getLocalStateName(this.name, componentContext);
-        } else if (this.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
+        } else if (this.decorators.some(d => d.name === Decorators.OneWay || d.name === Decorators.Event || d.name === Decorators.Template || d.name === Decorators.Slot)) {
             return getPropName(this.name, componentContext, scope);
-        } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef" || d.name === "RefProp")) {
+        } else if (this.decorators.some(d => d.name === Decorators.Ref || d.name === Decorators.ApiRef || d.name === Decorators.RefProp)) {
             return `${scope}${this.name}${scope ? this.questionOrExclamationToken : ""}.current${this.questionOrExclamationToken}`;
         } else if (this.isState) {
             const propName = getPropName(this.name, componentContext, scope);
@@ -205,9 +206,9 @@ export class Property extends BaseProperty {
     getDependency() {
         if (this.isInternalState) {
             return [getLocalStateName(this.name)];
-        } else if (this.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
+        } else if (this.decorators.some(d => d.name === Decorators.OneWay || d.name === Decorators.Event || d.name === Decorators.Template || d.name === Decorators.Slot)) {
             return [getPropName(this.name)];
-        } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef" || d.name === "RefProp")) {
+        } else if (this.decorators.some(d => d.name === Decorators.Ref || d.name === Decorators.ApiRef || d.name === Decorators.RefProp)) {
             const scope = this.processComponentContext(this.scope)
             return this.questionOrExclamationToken === "?" ? [`${scope}${this.name.toString()}${scope ? this.questionOrExclamationToken : ""}.current`] : [];
         } else if (this.isState) {
@@ -221,7 +222,7 @@ export class Property extends BaseProperty {
     }
 
     toString() {
-        if (this.decorators.find(d => d.name === "TwoWay")) {
+        if (this.isState) {
             const propName = getPropName(this.name);
             return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(()=>${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(this.name)})`;
         }
