@@ -124,6 +124,10 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("refs-as-props", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("effect", function () {
         this.testGenerator(this.test!.title);
     });

@@ -1,7 +1,8 @@
+import WidgetWithRefProp, { DxWidgetWithRefPropModule } from './dx-widget-with-ref-prop';
+
+import { Input } from '@angular/core';
 class WidgetInput {
-    @ViewChild('divRef', { static: false }) divRef: ElementRef<HTMLDivElement>;
-    @ViewChild('nullableRef', { static: false }) nullableRef: ElementRef<HTMLDivElement>;
-    @ViewChild('explicitRef', { static: false }) explicitRef: ElementRef<HTMLDivElement>;
+	  @Input() nullableRef?: HTMLDivElement;
 }
 
 import { Component, NgModule, ViewChild, ElementRef } from '@angular/core';
@@ -11,16 +12,17 @@ import { CommonModule } from '@angular/common';
     selector: 'dx-widget',
     template: `
         <div #divRef>
-            <div #explicitRef><div #nullableRef></div></div>
+            <dx-widget-with-ref-prop
+                [parentRef]="divRef"
+                [nullableRef]="nullableRef"
+            ></dx-widget-with-ref-prop>
         </div>
     `,
 })
 export default class Widget extends WidgetInput {
-    @Listen('click') __clickHandler(): any {
-        const html = this.divRef!.nativeElement.outerHTML + this.explicitRef!.nativeElement!.outerHTML;
-    }
-    __getHeight(): any {
-        return this.divRef!.nativeElement.outerHTML + this.nullableRef?.nativeElement?.outerHTML;
+    @ViewChild('divRef', { static: false }) divRef: ElementRef<HTMLDivElement>;
+    ____getSize(): any {
+        return this.divRef.nativeElement.outerHTML + this.nullableRef?.outerHTML;
     }
     get __restAttributes(): any {
         return {};
@@ -28,7 +30,7 @@ export default class Widget extends WidgetInput {
 }
 @NgModule({
     declarations: [Widget],
-    imports: [CommonModule],
+    imports: [DxWidgetWithRefPropModule, CommonModule],
     exports: [Widget],
 })
 export class DxWidgetModule {}

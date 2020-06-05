@@ -306,7 +306,7 @@ export class ReactComponent extends Component {
             hooks.push("useEffect");
         }
 
-        if (this.refs.length || this.apiRefs.length) {
+        if (this.refs.filter(r => !r.inherited).length || this.apiRefs.length) {
             hooks.push("useRef");
         }
 
@@ -443,6 +443,9 @@ export class ReactComponent extends Component {
 
     compileUseRef() {
         return this.refs.map(r => {
+            if(r.inherited) {
+                return `const ${r.name}=props.${r.name}`;
+            }
             return `const ${r.name}=useRef<${r.type}>()`;
         }).concat(this.apiRefs.map(r => {
             return `const ${r.name}=useRef<${r.type}Ref>()`;
@@ -457,7 +460,7 @@ export class ReactComponent extends Component {
 
         return `interface ${this.name}{
             ${  props
-                .concat(this.internalState.concat(this.refs, this.apiRefs).concat(this.slots.filter(s => !s.inherited)).map(p => p.typeDeclaration()))
+                .concat(this.internalState.concat(this.refs.filter(r => !r.inherited), this.apiRefs).concat(this.slots.filter(s => !s.inherited)).map(p => p.typeDeclaration()))
                 .concat(this.listeners.map(l => l.typeDeclaration()))
                 .concat(this.methods.map(m => m.typeDeclaration()))
                 .concat([""])
@@ -481,7 +484,7 @@ export class ReactComponent extends Component {
 
         return props
             .concat(this.listeners.map(l => l.name.toString()))
-            .concat(this.refs.map(r => r.name.toString()))
+            .concat(this.refs.filter(r => !r.inherited).map(r => r.name.toString()))
             .concat(this.apiRefs.map(r => r.name.toString()))
             .concat(
                 this.methods.map(m => m._name.toString() !== m.getter() ? `${m._name}:${m.getter()}` : m.getter())

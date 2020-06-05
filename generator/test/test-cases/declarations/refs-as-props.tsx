@@ -1,31 +1,27 @@
-import { Component, Ref, Listen, JSXComponent } from "../../../component_declaration/common";
+import { Component, Ref, Listen, JSXComponent, OneWay } from "../../../component_declaration/common";
+import WidgetWithRefProp from "./dx-widget-with-ref-prop";
 
 function view(viewModel: Widget) { 
-    return <div ref={viewModel.props.divRef as any}>
-        <div ref={viewModel.props.explicitRef as any}>
-            <div ref={viewModel.props.nullableRef as any}></div>
-        </div>
+    return <div ref={viewModel.divRef}>
+        <WidgetWithRefProp
+            parentRef={viewModel.divRef}
+            nullableRef={viewModel.props.nullableRef}
+        />
     </div>
 }
 
 @ComponentBindings()
 class WidgetInput { 
-    @Ref() divRef!: HTMLDivElement;
     @Ref() nullableRef?: HTMLDivElement;
-    @Ref() explicitRef!: HTMLDivElement;
 }
 
 @Component({
     view: view
 })
 export default class Widget extends JSXComponent<WidgetInput> {
+    @Ref() divRef: HTMLDivElement;
 
-    @Listen("click")
-    clickHandler() {
-        const html = this.props.divRef.outerHTML + this.props.explicitRef!.outerHTML;
-    }
-
-    getHeight() { 
-        return this.props.divRef.outerHTML + this.props.nullableRef?.outerHTML;
+    __getSize() {
+      return this.divRef.outerHTML + this.props.nullableRef?.outerHTML;
     }
 }

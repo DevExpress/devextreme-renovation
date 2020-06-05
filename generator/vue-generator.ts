@@ -107,7 +107,7 @@ export class Property extends BaseProperty {
             return `${this.name}: ${this.initializer}`;
         } 
 
-        if (this.isEvent || this.isRef || this.isSlot || this.isTemplate) { 
+        if (this.isEvent || this.isRef && !this.inherited || this.isSlot || this.isTemplate) { 
             return "";
         }
     
@@ -142,7 +142,10 @@ export class Property extends BaseProperty {
         if (this.isState) {
             return `(${componentContext}${this.name} !== undefined ? ${componentContext}${this.name} : ${componentContext}${this.name}_state)`;
         }
-        if (this.isRef && componentContext.length) { 
+        if (this.isRef && componentContext.length) {
+            if(this.inherited)  {
+                return `${componentContext}${this.name}()`;
+            }
             return `${componentContext}$refs.${this.name}`;
         }
         if (this.isTemplate) { 
@@ -239,6 +242,7 @@ export class VueComponentInput extends ComponentInput {
             .concat(
                 this.members
                     .filter(m => !m.inherited)
+                    .map(m => m instanceof Property ? m.inherit() : m)
                     .map(m => m.toString())
             )
             .filter(m => m);
@@ -720,6 +724,16 @@ export class AsExpression extends BaseAsExpression {
 }
 
 export class JsxAttribute extends BaseJsxAttribute { 
+    compileInitializer(options?: toStringOptions) {
+        const value = super.compileInitializer(options);
+
+        if (options?.members.some(m => m.name === value && m.isRef && !m.inherited)) {
+            return `() => this.$refs.${value}`;
+        }
+
+        return value
+    }
+
     getTemplateProp(options?: toStringOptions) {
         return `v-bind:${this.name}="${this.compileInitializer(options)}"`;
     }
@@ -746,7 +760,7 @@ export class JsxAttribute extends BaseJsxAttribute {
     }
 
     compileRef(options?: toStringOptions) { 
-        return `ref="${this.compileInitializer(options)}"`;
+        return `ref="${super.compileInitializer(options)}"`;
     }
 
     compileValue(name: string, value: string) {

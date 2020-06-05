@@ -21,7 +21,8 @@ export function getProps(members: BaseClassMember[]): Property[] {
             d.name === "TwoWay" ||
             d.name === "Event" ||
             d.name === "Template" ||
-            d.name === "Slot")
+            d.name === "Slot" ||
+            d.name === "Ref" && m.inherited)
     ) as Property[];
 }
 

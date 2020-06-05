@@ -398,7 +398,7 @@ export class JsxAttribute extends BaseJsxAttribute {
             members: [],
             disableTemplates: true,
             ...options
-        }).replace(/"/gi, "'");
+        }).replace(/"/gi, "'").replace(".nativeElement", "");
     }
 
     compileRef(options?: toStringOptions) { 
@@ -982,7 +982,7 @@ class Decorator extends BaseDecorator {
 }
 
 function compileCoreImports(members: Array<Property|Method>, context: AngularGeneratorContext, imports:string[] = []) { 
-    if (members.filter(m => m.decorators.find(d => d.name === "OneWay") && !m.isRef).length) {
+    if (members.filter(m => m.decorators.find(d => d.name === "OneWay")).length) {
         imports.push("Input");
     }
     if (members.filter(m => m.decorators.find(d => d.name === "TwoWay")).length) { 
@@ -1085,7 +1085,7 @@ export class Property extends BaseProperty {
             get ${this.name}(){
                 return this.${selector}?.nativeElement?.innerHTML.trim();
             }`;
-    }
+        }
         
         return defaultValue;
     }
@@ -1142,11 +1142,14 @@ export class AngularComponent extends Component {
 
     processMembers(members: Array<Property | Method>) { 
         this.heritageClauses.forEach(h => { 
-            if (h.isRequired) { 
-                h.members.forEach(m => { 
-                    (m as Property).required = true;
-                })
-            }
+            h.members.forEach(m => {
+                const refIndex = (m as Property).decorators.findIndex(d => d.name === "Ref");
+                if (refIndex >= 0) {
+                    m.decorators[refIndex] = new Decorator(new Call(new Identifier("OneWay"), {}, []), this.context);
+                }
+
+                (m as Property).required = h.isRequired;
+            });
         });
         return super.processMembers(members);
     }
