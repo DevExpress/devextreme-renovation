@@ -15,6 +15,7 @@ import SpreadProps from "./spread-props.tsx";
 import TemplatePass from "./template-pass.tsx";
 import RefPass from "./ref-pass.tsx";
 import EffectsDOMUpdate from "./effects-dom-update.tsx";
+import EffectsStateUpdate from "./effects-state-update.tsx";
 
 function view(model: App) { 
     return <div>
@@ -70,7 +71,8 @@ function view(model: App) {
                 id="button-effects"
                 onClick={model.onButtonEffectsClick}
             >{"Effects on DOM Update"}</ButtonComponent>
-            <EffectsDOMUpdate name="effects-dom-update" text={model.domEffectsText}/>
+            <EffectsDOMUpdate name="effects-dom-update" text={model.domEffectsText} />
+            <EffectsStateUpdate name="effects-state-update"/>
         </div>
     </div>;
 }

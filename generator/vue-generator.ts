@@ -480,17 +480,16 @@ export class VueComponent extends Component {
     generateWatch(methods: string[]) { 
         const watches: { [name: string]: string[] } = {};
 
+        const startMethodsLength = methods.length;
+
         this.effects.forEach((effect, index) => { 
             const dependency = effect.getDependency(this.members);
 
             const scheduleEffectName = `__schedule_${effect._name}`;
 
             if (dependency.length) { 
-                methods.push(` ${scheduleEffectName}() {
-                    this.__scheduleEffects[${index}]=()=>{
-                        this.__destroyEffects[${index}]&&this.__destroyEffects[${index}]();
-                        this.__destroyEffects[${index}]=this.${effect.name}();
-                    }
+                methods.push(`${scheduleEffectName}() {
+                    this.__scheduleEffect(${index}, "${effect.name}");
                 }`);
             }
 
@@ -499,6 +498,19 @@ export class VueComponent extends Component {
                 watches[d].push(`"${scheduleEffectName}"`);
             });
         });
+
+        if (methods.length !== startMethodsLength) {
+            methods.push(`__scheduleEffect(index, name) {
+                if(!this.__scheduleEffects[index]){
+                    this.__scheduleEffects[index]=()=>{
+                        this.__destroyEffects[index]&&this.__destroyEffects[index]();
+                        this.__destroyEffects[index]=this[name]();
+                        this.__scheduleEffects[index] = null;
+                    }
+                    this.$nextTick(()=>this.__scheduleEffects[index]&&this.__scheduleEffects[index]());
+                }
+            }`);
+        }
 
         const watchStatements = Object.keys(watches).map(k => { 
             return `${k}: [

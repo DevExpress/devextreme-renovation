@@ -3,14 +3,14 @@ import Button from "./button.tsx"
 
 function view(model: EffectsStateUpdate) { 
     return <div>
-        <Button onClick={model.onButtonClick}>Effects on State Update</Button>
-        <div id={model.props.id} ref={model.divRef as any} style={{ backgroundColor: "#b3b3b3" }}></div>
+        <Button id={"button-effects-state"} onClick={model.onButtonClick}>Effects on State Update</Button>
+        <div id={model.props.name} ref={model.divRef as any} style={{ backgroundColor: "#b3b3b3" }}></div>
     </div>;
 }
 
 @ComponentBindings()
 class Props { 
-    @OneWay() id?: string;
+    @OneWay() name?: string;
 }
 
 @Component({

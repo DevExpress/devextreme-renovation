@@ -82,22 +82,24 @@ export default {
       const id = subscribe(this.__getP(), 1, 2);
       return () => unsubscribe(id);
     },
-
     sChange(...args){
       this.$emit("update:s", ...args);
     },
-
     __schedule_setupData() {
-      this.__scheduleEffects[0] = () => {
-        this.__destroyEffects[0] && this.__destroyEffects[0]();
-        this.__destroyEffects[0] = this.__setupData();
-      };
+      this.__scheduleEffect(0, "__setupData");
     },
-    __schedule_alwaysEffect(){
-      this.__scheduleEffects[2] = () => {
-        this.__destroyEffects[2] && this.__destroyEffects[2]();
-        this.__destroyEffects[2] = this.__alwaysEffect();
-      };
+    __schedule_alwaysEffect() {
+        this.__scheduleEffect(2, "__alwaysEffect");
+     },
+    __scheduleEffect(index, name) {
+      if(!this.__scheduleEffects[index]){
+        this.__scheduleEffects[index]=()=>{
+          this.__destroyEffects[index]&&this.__destroyEffects[index]();
+          this.__destroyEffects[index]=this[name]();
+          this.__scheduleEffects[index] = null;
+        }
+        this.$nextTick(()=>this.__scheduleEffects[index]&&this.__scheduleEffects[index]());
+      }
     }
   },
   created() {
