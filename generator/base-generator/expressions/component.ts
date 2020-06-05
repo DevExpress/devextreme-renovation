@@ -41,8 +41,6 @@ export class Component extends Class implements Heritable {
     effects: Method[];
     slots: Property[];
 
-    api: Method[];
-
     view: any;
     viewModel: any;
 
@@ -142,8 +140,6 @@ export class Component extends Class implements Heritable {
         this.listeners = members.filter(m => m.decorators.find(d => d.name === "Listen")) as Method[];
 
         this.effects = members.filter(m => m.decorators.find(d => d.name === "Effect")) as Method[];
-
-        this.api = members.filter(m => m.decorators.find(d => d.name === "Method")) as Method[];
 
         this.slots = members.filter(m => m.decorators.find(d => d.name === "Slot")) as Property[];
 

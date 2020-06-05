@@ -69,6 +69,10 @@ export class BaseClassMember extends Expression {
         return this.decorators.some(d => d.name === "Template");
     }
 
+    get isApiMethod() { 
+        return this.decorators.some(d => d.name === "Method");
+    }
+
     get canBeDestructured() { 
         if (this.required) { 
             return false;

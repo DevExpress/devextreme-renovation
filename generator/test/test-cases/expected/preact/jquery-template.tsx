@@ -16,10 +16,6 @@ export default class Widget extends BaseComponent {
         return props;
     }
 
-    __getProps():any {
-        return this.viewRef?.__getProps();
-    }
-
     get _viewComponent() {
         return WidgetComponent;
     }

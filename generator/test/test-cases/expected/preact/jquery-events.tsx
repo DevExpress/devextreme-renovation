@@ -10,10 +10,6 @@ export default class Widget extends BaseComponent {
     return props;
   }
 
-  __getProps():any {
-    return this.viewRef?.__getProps();
-  }
-
   _getActionConfigs() {
     return {
       onEventWithConfig: { someAction: "config" },
