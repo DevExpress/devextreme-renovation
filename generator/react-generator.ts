@@ -337,8 +337,8 @@ export class ReactComponent extends Component {
         if (this.members.some(m=>m.isRefProp)) {
             hooks.push("RefObject");
         }
-
-        if (this.api.length) {
+        
+        if (this.members.filter(a => a.isApiMethod).length) {
             hooks.push("useImperativeHandle");
             compats.push("forwardRef");
         }
@@ -441,29 +441,28 @@ export class ReactComponent extends Component {
     }
 
     compileComponentRef() {
-        if (this.api.length) {
-            return `export type ${this.name}Ref = {${this.api.map(a => a.typeDeclaration())}}`
+        const api = this.members.filter(a => a.isApiMethod);
+        if (api.length) {
+            return `export type ${this.name}Ref = {${api.map(a => a.typeDeclaration())}}`
         }
         return "";
     }
 
     compileUseImperativeHandle() {
-        if (this.api.length) {
-            const api = this.api.reduce((r: { methods: string[], deps: string[] }, a) => {
-                r.methods.push(`${a.name}: ${a.arrowDeclaration(this.getToStringOptions())}`);
+        const api = this.members.reduce((r: { methods: string[], deps: string[] }, a) => {
+            if(a.isApiMethod) {
+                r.methods.push(`${a.name}: ${(a as Method).arrowDeclaration(this.getToStringOptions())}`);
 
                 r.deps = [...new Set(r.deps
                     .concat(a.getDependency(
                         this.members
                     )))];
+            }
 
-                return r;
-            }, { methods: [], deps: [] });
+            return r;
+        }, { methods: [], deps: [] });
 
-            return `useImperativeHandle(ref, () => ({${api.methods.join(",\n")}}), [${api.deps.join(",")}])`
-        }
-
-        return "";
+        return api.methods.length ? `useImperativeHandle(ref, () => ({${api.methods.join(",\n")}}), [${api.deps.join(",")}])` : "";
     }
 
     compileUseRef() {
@@ -562,7 +561,7 @@ export class ReactComponent extends Component {
             ${this.compileComponentRef()}
             ${this.compileComponentInterface()}
             ${getTemplateFunc}
-            ${this.api.length === 0
+            ${this.members.filter(m => m.isApiMethod).length === 0
                 ? `${this.modifiers.join(" ")} function ${this.name}(props: ${this.compilePropsType()}){`
                 : `const ${this.name} = forwardRef<${this.name}Ref, ${this.compilePropsType()}>((props: ${this.compilePropsType()}, ref) => {`}
                 ${this.compileUseRef()}
@@ -582,7 +581,7 @@ export class ReactComponent extends Component {
                         })`
                 : ""}
                 );
-            ${this.api.length === 0 ? `}` : `});\n${this.modifiers.join(" ")} ${this.name};`}
+            ${this.members.filter(m => m.isApiMethod).length === 0 ? `}` : `});\n${this.modifiers.join(" ")} ${this.name};`}
             
             ${this.compileDefaultProps()}
             ${this.compileDefaultOptionsMethod("[]", [
