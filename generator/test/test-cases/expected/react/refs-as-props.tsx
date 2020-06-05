@@ -14,7 +14,7 @@ import React, { useCallback, useRef } from 'react';
 interface Widget {
     props: typeof WidgetInput;
     divRef: any;
-    __getSize: () => any;
+    getSize: () => any;
     restAttributes: any;
 }
 
@@ -22,8 +22,8 @@ export default function Widget(props: typeof WidgetInput) {
     const divRef = useRef<HTMLDivElement>();
     const nullableRef = props.nullableRef;
 
-    const __getSize = useCallback(
-        function __getSize() {
+    const getSize = useCallback(
+        function getSize() {
             return divRef.current.outerHTML + nullableRef.current?.outerHTML;
         }, [nullableRef.current]);
     const __restAttributes = useCallback(
@@ -35,7 +35,7 @@ export default function Widget(props: typeof WidgetInput) {
     return view(({
         props: { ...props },
         divRef,
-        __getSize,
+        getSize,
         restAttributes: __restAttributes(),
     }));
 }

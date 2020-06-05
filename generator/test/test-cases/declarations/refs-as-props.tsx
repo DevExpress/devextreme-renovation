@@ -21,7 +21,7 @@ class WidgetInput {
 export default class Widget extends JSXComponent<WidgetInput> {
     @Ref() divRef: HTMLDivElement;
 
-    __getSize() {
+    getSize() {
       return this.divRef.outerHTML + this.props.nullableRef?.outerHTML;
     }
 }
