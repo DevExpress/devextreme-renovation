@@ -81,6 +81,10 @@ mocha.describe("vue-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("refs-as-props", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("slots", function () {
         this.testGenerator(this.test!.title);
     });

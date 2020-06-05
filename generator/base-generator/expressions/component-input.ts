@@ -97,12 +97,18 @@ export class ComponentInput extends Class implements Heritable {
         return props;
     }
 
-    buildTemplateProperies(templateMember: Property, members: BaseClassMember[]): Property[] { 
+    buildTemplateProperties(templateMember: Property, members: BaseClassMember[]): Property[] { 
         return [];
     }
 
     processMembers(members: Array<Property | Method>) { 
         members.forEach(m => { 
+           
+            const refIndex = m.decorators.findIndex(d => d.name === "Ref");
+            if (refIndex > -1) { 
+                m.decorators[refIndex] = this.createDecorator(new Call(new Identifier("RefProp"), undefined, []), {});
+            }
+     
             if (!(m instanceof Property)) {
                 warn(`${this.name} ComponentBindings has non-property member: ${m._name}`);
                 return;
@@ -120,15 +126,14 @@ export class ComponentInput extends Class implements Heritable {
             if (RESERVED_NAMES.some(n => n === m._name.toString())) { 
                 warn(`${this.name} ComponentBindings has property with reserved name: ${m._name}`);
             }
-            
         });
         return inheritMembers(this.heritageClauses, super.processMembers(members.concat(
             members.filter(m => m.isState).reduce((properties: Property[], p) => {
                 return properties.concat(this.buildStateProperties(p as Property, members))
 
             }, []),
-            members.filter(m => m.isTemplate).reduce((properies: Property[], p) => {
-                return properies.concat(this.buildTemplateProperies(p as Property, members))
+            members.filter(m => m.isTemplate).reduce((properties: Property[], p) => {
+                return properties.concat(this.buildTemplateProperties(p as Property, members))
             }, [])
         )));
     }

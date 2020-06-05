@@ -13,6 +13,7 @@ import ComponentWithDefaultOptionRules, { defaultOptions as setDefaultOptions } 
 import List from "./list.tsx";
 import SpreadProps from "./spread-props.tsx";
 import TemplatePass from "./template-pass.tsx";
+import RefPass from "./ref-pass.tsx";
 import EffectsDOMUpdate from "./effects-dom-update.tsx";
 
 function view(model: App) { 
@@ -61,6 +62,8 @@ function view(model: App) {
         </SpreadProps>
 
         <TemplatePass />
+        
+        <RefPass />
 
         <div>
             <ButtonComponent

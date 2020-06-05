@@ -110,16 +110,16 @@ export class Property extends BaseProperty {
             return `${this.name}: ${this.initializer}`;
         } 
 
-        if (this.isEvent || this.isRef || this.isSlot || this.isTemplate) { 
+        if (this.isEvent || this.isRef && !this.inherited || this.isSlot || this.isTemplate) { 
             return "";
         }
     
-        const type = calculatePropertyType(this.type);
+        const type = this.isRefProp ? "Function" : calculatePropertyType(this.type);
         const parts = [];
         if (type) { 
             parts.push(`type: ${type}`)
         }
-        
+
         if (this.questionOrExclamationToken === SyntaxKind.ExclamationToken) { 
             parts.push("required: true")
         }
@@ -145,8 +145,11 @@ export class Property extends BaseProperty {
         if (this.isState) {
             return `(${componentContext}${this.name} !== undefined ? ${componentContext}${this.name} : ${componentContext}${this.name}_state)`;
         }
-        if (this.isRef && componentContext.length) { 
+        if (this.isRef && componentContext.length) {
             return `${componentContext}$refs.${this.name}`;
+        }
+        if(this.isRefProp)  {
+            return `${componentContext}${this.name}()`;
         }
         if (this.isTemplate) { 
             return `${componentContext}$scopedSlots.${this.name}`;
@@ -163,7 +166,7 @@ export class Property extends BaseProperty {
     }
 
     get canBeDestructured() { 
-        if (this.isEvent || this.isState) {
+        if (this.isEvent || this.isState || this.isRefProp) {
             return false;
         }
         return super.canBeDestructured;
@@ -229,6 +232,7 @@ export class VueComponentInput extends ComponentInput {
             .concat(
                 this.members
                     .filter(m => !m.inherited)
+                    .map(m => m instanceof Property ? m.inherit() : m)
                     .map(m => m.toString())
             )
             .filter(m => m);
@@ -707,6 +711,8 @@ export class AsExpression extends BaseAsExpression {
 }
 
 export class JsxAttribute extends BaseJsxAttribute { 
+    
+
     getTemplateProp(options?: toStringOptions) {
         return `v-bind:${this.name}="${this.compileInitializer(options)}"`;
     }
@@ -730,6 +736,15 @@ export class JsxAttribute extends BaseJsxAttribute {
 
     compileKey() { 
         return null;
+    }
+
+    getRefValue(options?: toStringOptions) { 
+        const name = this.initializer.toString(options);
+        const refProp = options?.members.find(m => m._name.toString() === name);
+        if (refProp?.isRef) { 
+            return `()=>this.$refs.${name}`;
+        }
+        return `()=>${name}`;
     }
 
     compileRef(options?: toStringOptions) { 
