@@ -14,5 +14,5 @@ export class InnerWidgetProps {
 @Component({
     view: view
 })
-export default class InnerWidget extends JSXComponent<InnerWidgetProps> {
+export default class InnerWidget extends JSXComponent(InnerWidgetProps) {
 }

@@ -133,7 +133,15 @@ mocha.describe("vue-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("method", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("list", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("implements", function () {
         this.testGenerator(this.test!.title);
     });
 

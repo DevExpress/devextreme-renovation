@@ -17,6 +17,7 @@ import { getModuleRelativePath } from "./base-generator/utils/path-utils";
 import { GeneratorContext as BaseGeneratorContext } from "./base-generator/types";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { Method } from "./base-generator/expressions/class-members";
+import { compileType } from "./base-generator/utils/string";
 
 const processModuleFileName = (module: string) => `${module}.p`;
 
@@ -61,8 +62,7 @@ class JQueryComponent {
         const templates = this.source.props.filter(p => p.decorators.find(d => d.name === "Template"))
         statements.splice(-1, 0, ...templates.map(t => {
             const params = ["props", `props.${t.name}`];
-            const decoratorArgs = t.decorators.find(d => d.name === "Template")!.expression.arguments[0];
-            if(decoratorArgs && (decoratorArgs as ObjectLiteral).getProperty("canBeAnonymous")?.toString() === "true") {
+            if(t.decorators.find(d => d.name === "Template")!.getParameter("canBeAnonymous")?.toString() === "true") {
                 params.push("true");
             }
     
@@ -91,10 +91,8 @@ class JQueryComponent {
     }
     
     compileAPI() {
-        if(!this.source.api.length) return "";
-    
-        const api = this.source.api.map(a => `${a.name}(${a.parameters}) {
-            this.viewRef.current.${a.name}(${a.parameters.map(p => p.name).join(",")});
+        const api = this.source.api.map(a => `${a.name}(${a.parameters})${compileType(a.type.toString())} {
+            return this.viewRef.current.${a.name}(${a.parameters.map(p => p.name).join(",")});
         }`);
     
         return `${api.join("\n")}`;
@@ -143,8 +141,7 @@ class JQueryComponent {
 
     compileEventMap() {
         const statements = this.source.props.reduce((r: string[], p) => {
-            const decoratorArgs = p.isEvent && p.decorators.find(d => d.name === "Event")!.expression.arguments[0];
-            const actionConfig = decoratorArgs && (decoratorArgs as ObjectLiteral).getProperty("actionConfig");
+            const actionConfig = p.isEvent && p.decorators.find(d => d.name === "Event")!.getParameter("actionConfig");
             if(actionConfig) {
                 r.push(`${p.name}: ${(actionConfig as ObjectLiteral)}`)
             }
@@ -166,7 +163,7 @@ class JQueryComponent {
     }
     
     toString() {
-        const jQueryProp = (this.source.decorator.expression.arguments[0] as ObjectLiteral).getProperty("jQuery");
+        const jQueryProp = this.source.decorator.getParameter("jQuery");
         const registerJQuery = jQueryProp && (jQueryProp as ObjectLiteral).getProperty("register")?.toString() === "true"
         const baseComponent = jQueryProp && (jQueryProp as ObjectLiteral).getProperty("component");
 
@@ -192,7 +189,7 @@ class JQueryComponent {
             ${this.compileInit()}
         }
     
-        registerComponent("${this.source.name}", ${this.source.name});
+        registerComponent("dxr${this.source.name}", ${this.source.name});
         `;
     }
 }

@@ -4,12 +4,12 @@ import BaseComponent from "../../../../../component_declaration/jquery_base_comp
 import WidgetComponent from "../../../../jquery-api.p"
 
 export default class Widget extends BaseComponent {
-    getHeight(p:number=10, p1: any) {
-        this.viewRef.current.getHeight(p, p1);
+    getHeight(p:number=10, p1: any): string {
+        return this.viewRef.current.getHeight(p, p1);
     }
 
-    getSize() {
-        this.viewRef.current.getSize();
+    getSize():string {
+        return this.viewRef.current.getSize();
     }
 
     get _viewComponent() {
@@ -21,4 +21,4 @@ export default class Widget extends BaseComponent {
     }
 }
 
-registerComponent('Widget', Widget);
+registerComponent('dxrWidget', Widget);

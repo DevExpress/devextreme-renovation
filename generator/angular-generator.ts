@@ -1017,24 +1017,22 @@ class ComponentInput extends BaseComponentInput {
         this.context = context;
     }
 
+    createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: TypeExpression, initializer?: Expression) {
+        return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
+    }
+
+    createDecorator(expression: Call, context: AngularGeneratorContext) {
+        return new Decorator(expression, context);
+    }
+
     buildDefaultStateProperty() { 
         return null;
-    }
-    
-    buildChangeState(stateMember: Property, stateName: Identifier) { 
-        return  new Property(
-            [new Decorator(new Call(new Identifier("Event"), undefined, []), {})],
-            [],
-            stateName,
-            undefined,
-            this.buildChangeStateType(stateMember)
-        );
     }
 
     toString() {
         return `
         ${compileCoreImports(this.members.filter(m => !m.inherited), this.context)}
-        ${this.modifiers.join(" ")} class ${this.name} ${this.heritageClauses.map(h => h.toString())} {
+        ${this.modifiers.join(" ")} class ${this.name} ${this.heritageClauses.map(h => h.toString()).join(" ")} {
             ${this.members.filter(p => p instanceof Property && !p.inherited).map(m => m.toString()).filter(m => m).concat("").join(";\n")}
         }`;
     }
@@ -1073,7 +1071,7 @@ export class Property extends BaseProperty {
             return `${eventDecorator} ${this.name}${this.questionOrExclamationToken}:EventEmitter<${parseEventType(this.type)}> = new EventEmitter()`
         }
         if (this.decorators.find(d => d.name === "Ref")) {
-            return `@ViewChild("${this.name}", {static: false}) ${this.name}:ElementRef<${this.type}>`;
+            return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:ElementRef<${this.type}>`;
         }
         if (this.decorators.find(d => d.name === "ApiRef")) {
             return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:${this.type}`;
@@ -1230,14 +1228,19 @@ export class AngularComponent extends Component {
                 "__viewCheckedSubscribeEvent: Array<()=>void> = [];"
             ];
 
+            const intStates = this.members.filter(m => m.isInternalState);
             const subscribe = (e: Method) => `this.${e.getter()}()`;
             effects.map((e, i) => { 
-                const propsDependency = e.getDependency(
-                    this.members.filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "TwoWay")) as Property[]
-                );
-                const internalStateDependency = e.getDependency(
-                    this.members.filter(m => m.decorators.length === 0 || m.decorators.find(d => d.name === "InternalState")) as Property[]
-                );
+                const allDeps = e.getDependency(this.members);
+                const [propsDependency, internalStateDependency] = allDeps.reduce((r: string[][], d) => {
+                    if(intStates.find(m => m.name.toString() === d)) {
+                        r[1].push(d);
+                    } else {
+                        r[0].push(d);
+                    }
+                    
+                    return r;
+                }, [[], []]);
                 const updateEffectMethod = `__schedule_${e._name}`
                 if (propsDependency.length || internalStateDependency.length) { 
                     statements.push(`${updateEffectMethod}(){
@@ -1273,7 +1276,6 @@ export class AngularComponent extends Component {
                         hasInternalStateDependency = true;
                     }
                 });
-                
             });
             if (ngOnChanges.length || hasInternalStateDependency) { 
                 ngAfterViewCheckedStatements.push(`
@@ -1453,7 +1455,8 @@ export class AngularComponent extends Component {
     }
 
     toString() { 
-        const extendTypes = this.heritageClauses.reduce((t: string[], h) => t.concat(h.types.map(t => t.type.toString())), []);
+        const props = this.heritageClauses.filter(h => h.isJsxComponent).map(h => h.types.map(t => t.type.toString()));
+        
         const components = this.context.components || {};
 
         const modules = Object.keys(components)
@@ -1497,7 +1500,7 @@ export class AngularComponent extends Component {
         ${this.compileDefaultOptions(constructorStatements)}
         ${valueAccessor}
         ${componentDecorator}
-        ${this.modifiers.join(" ")} class ${this.name} ${extendTypes.length? `extends ${extendTypes.join(" ")}`:""} ${implementedInterfaces.length ? `implements ${implementedInterfaces.join(",")}`:""} {
+        ${this.modifiers.join(" ")} class ${this.name} ${props.length ? `extends ${props.join(" ")}`:""} ${implementedInterfaces.length ? `implements ${implementedInterfaces.join(",")}`:""} {
             ${this.members
                 .filter(m => !m.inherited && !(m instanceof SetAccessor))
                 .map(m => m.toString({

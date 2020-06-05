@@ -14,7 +14,7 @@ const WidgetInput = {
 export default {
   props: WidgetInput,
   methods: {
-    getHeight() {
+    __getHeight() {
       this.onClick(10);
 
       this.onClick(11);

@@ -13,5 +13,5 @@ class WidgetProps {
     view: () => (null),
     jQuery: { register: true }
 })
-export default class Widget extends JSXComponent<WidgetProps> {
+export default class Widget extends JSXComponent(WidgetProps) {
 }

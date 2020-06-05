@@ -117,6 +117,19 @@ cloneTest('Can spread props', async t => {
         .expect(counter.textContent).eql("2");
 });
 
+cloneTest('Check Effects on DOM update', async t => {
+    const el = Selector('#button-effects');
+    const effects = Selector("#effects-dom-update");
+
+    await t
+        .expect(effects.textContent).eql("(no deps)(A deps)(always)(once)");
+
+    await t.click(el);
+
+    await t
+        .expect(effects.textContent).eql("(no deps)(A deps)(always)(once)(B deps)(always)");
+});
+
 cloneTest('Check form values binding', async t => {
     const el = Selector("#counter-form-value");
 

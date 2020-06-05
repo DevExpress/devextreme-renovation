@@ -148,6 +148,19 @@ mocha.describe("Vue-generator", function () {
 
                 assert.strictEqual(getAst(expression.toString()), getAst("function f(){}"));
             });
+
+            mocha.it("InterfaceDeclaration", function () { 
+                const expression = generator.createInterfaceDeclaration(
+                    undefined,
+                    undefined,
+                    generator.createIdentifier("name"),
+                    undefined,
+                    undefined,
+                    []
+                );
+    
+                assert.strictEqual(expression.toString(), "");
+            });
         });
     });
 
@@ -1165,13 +1178,13 @@ mocha.describe("Vue-generator", function () {
                 __schedule_e() {
                        this.__scheduleEffects[0]=()=>{
                            this.__destroyEffects[0]&&this.__destroyEffects[0]();
-                           this.__destroyEffects[0]=this.e();
+                           this.__destroyEffects[0]=this.__e();
                        }
                    },
                    __schedule_e1() {
                        this.__scheduleEffects[1]=()=>{
                            this.__destroyEffects[1]&&this.__destroyEffects[1]();
-                           this.__destroyEffects[1]=this.e1();
+                           this.__destroyEffects[1]=this.__e1();
                        }
                    }
                }`));

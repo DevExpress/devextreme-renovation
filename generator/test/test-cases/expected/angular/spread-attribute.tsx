@@ -12,8 +12,8 @@ import { CommonModule } from "@angular/common";
                 </div>`
 })
 export default class Widget extends WidgetInput {
-    @ViewChild("host", { static: false }) host: ElementRef<HTMLDivElement>
-    @ViewChild("i1", {static: false}) i1:ElementRef<HTMLInputElement>
+    @ViewChild("host", { static: false }) host?: ElementRef<HTMLDivElement>
+    @ViewChild("i1", {static: false}) i1!:ElementRef<HTMLInputElement>
 
     get __attr1():any {
         return {};

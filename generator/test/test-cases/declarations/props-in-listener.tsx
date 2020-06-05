@@ -1,19 +1,25 @@
-function viewModel() {}
+import { Component, ComponentBindings, JSXComponent, OneWay, Event, Listen } from "../../../component_declaration/common";
 
-function view() {}
+
+function view(model: Widget) {
+    return <div></div>
+ }
+
+@ComponentBindings()
+export class Props { 
+    @OneWay() type?: string;
+    @Event() onClick?: (e: any) => void;
+}
 
 @Component({
     name: 'Component',
-    view,
-    viewModel,
+    view
 })
-export class Component {
-    @OneWay() type?: string;
-    @Event() onClick?: ()=>void
-
+export class Widget extends JSXComponent(Props){
+   
     @Listen("click")
     clickHandler() {
-        this.onClick!({ type: this.type });
+        this.props.onClick!({ type: this.props.type });
     }
 }
   

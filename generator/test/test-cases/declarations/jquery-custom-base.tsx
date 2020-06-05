@@ -15,5 +15,5 @@ class WidgetInput {
         component: MyBaseComponent
     }
 })
-export default class Widget extends JSXComponent<WidgetInput> {}
+export default class Widget extends JSXComponent(WidgetInput) {}
   

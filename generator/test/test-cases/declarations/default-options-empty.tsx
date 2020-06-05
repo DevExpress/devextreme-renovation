@@ -12,6 +12,6 @@ export class WidgetProps { }
         options: {}
     }]
 })
-export default class Widget extends JSXComponent<WidgetProps> {
+export default class Widget extends JSXComponent(WidgetProps) {
     
 }

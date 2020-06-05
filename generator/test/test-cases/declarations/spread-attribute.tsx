@@ -13,7 +13,7 @@ export class WidgetInput {}
 @Component({
     view: view
 })
-export default class Widget extends JSXComponent<WidgetInput> {
+export default class Widget extends JSXComponent(WidgetInput) {
     @Ref() host?: HTMLDivElement;
     @Ref() i1!: HTMLInputElement;
             

@@ -28,6 +28,8 @@ import {
     ParenthesizedType,
     TypeAliasDeclaration,
     TypeOperatorNode,
+    PropertySignature,
+    MethodSignature,
 } from "./base-generator/expressions/type";
 import { capitalizeFirstLetter, variableDeclaration } from "./base-generator/utils/string";
 import SyntaxKind from "./base-generator/syntaxKind";
@@ -56,6 +58,7 @@ import { checkDependency } from "./base-generator/utils/dependency";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access";
 import { PropertyAssignment, SpreadAssignment } from "./base-generator/expressions/property-assignment";
 import { getModuleRelativePath } from "./base-generator/utils/path-utils";
+import { Interface } from "./base-generator/expressions/interface";
 
 function calculatePropertyType(type: TypeExpression | string): string {
     if (type instanceof SimpleTypeExpression) {
@@ -216,25 +219,12 @@ export class ArrowFunction extends AngularArrowFunction {
 }
 
 export class VueComponentInput extends ComponentInput { 
-    buildDefaultStateProperty(stateMember: Property): Property|null { 
-        return new Property(
-            [new Decorator(new Call(new Identifier("OneWay"), undefined, []), {})],
-            [],
-            new Identifier(`default${capitalizeFirstLetter(stateMember._name)}`),
-            undefined,
-            stateMember.type,
-            stateMember.initializer
-        )
+    createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: string | TypeExpression, initializer?: Expression) {
+        return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
-    
-    buildChangeState(stateMember: Property, stateName: Identifier) { 
-        return  new Property(
-            [new Decorator(new Call(new Identifier("Event"), undefined, []), {})],
-            [],
-            stateName,
-            undefined,
-            this.buildChangeStateType(stateMember)
-        );
+
+    createDecorator(expression: Call, context: GeneratorContext) {
+        return new Decorator(expression, context);
     }
     
     toString() { 
@@ -305,6 +295,13 @@ export class VueComponent extends Component {
                 new ReturnStatement(expression)
             ], true)
         );
+    }
+
+    addPrefixToMembers(members: Array<Property | Method>) { 
+        members.filter(m => !m.decorators.find(d => d.name === "Method")).forEach(m => {
+            m.prefix = "__";
+        });
+        return members;
     }
 
     processMembers(members: Array<Property | Method>) { 
@@ -394,7 +391,7 @@ export class VueComponent extends Component {
 
     generateProps() {
         if (this.isJSXComponent) { 
-            let props = this.heritageClauses[0].propsType.type.toString();
+            let props = this.heritageClauses[0].propsType.toString();
             if (this.needGenerateDefaultOptions) { 
                 props = `(()=>{
                     const twoWayProps = [${this.state.map(s=>`"${s.name}"`)}];
@@ -462,6 +459,7 @@ export class VueComponent extends Component {
 
         statements.push.apply(statements, this.methods
             .concat(this.effects)
+            .concat(this.api)
             .map(m => m.toString({
                 members: this.members,
                 componentContext: "this",
@@ -483,34 +481,23 @@ export class VueComponent extends Component {
         const watches: { [name: string]: string[] } = {};
 
         this.effects.forEach((effect, index) => { 
-            const props: Array<BaseProperty | BaseMethod> = getProps(this.members);
-            const dependency = effect.getDependency(
-                props.concat((this.members.filter(m=>m.isInternalState)))
-            );
+            const dependency = effect.getDependency(this.members);
 
-            const scheduleEffectName = `__schedule_${effect.name}`;
+            const scheduleEffectName = `__schedule_${effect._name}`;
 
             if (dependency.length) { 
                 methods.push(` ${scheduleEffectName}() {
-                        this.__scheduleEffects[${index}]=()=>{
-                            this.__destroyEffects[${index}]&&this.__destroyEffects[${index}]();
-                            this.__destroyEffects[${index}]=this.${effect.name}();
-                        }
-                    }`);
+                    this.__scheduleEffects[${index}]=()=>{
+                        this.__destroyEffects[${index}]&&this.__destroyEffects[${index}]();
+                        this.__destroyEffects[${index}]=this.${effect.name}();
+                    }
+                }`);
             }
 
-            const watchDependency = (dependency: string[]) => { 
-                dependency.forEach(d => { 
-                    watches[d] = watches[d] || [];
-                    watches[d].push(`"${scheduleEffectName}"`);
-                });
-            }
-
-            if (dependency.indexOf("props") !== -1) { 
-                watchDependency(props.map(p => p.name));
-            }
-
-            watchDependency(dependency.filter(d => d !== "props"));
+            dependency.filter(d => d !== "props").forEach(d => { 
+                watches[d] = watches[d] || [];
+                watches[d].push(`"${scheduleEffectName}"`);
+            });
         });
 
         const watchStatements = Object.keys(watches).map(k => { 
@@ -805,7 +792,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         this.attributes = attributes;
         if (this.component) { 
             const components = this.context.components!;
-            const name = (Object.keys(components).find(k => components[k] === this.component) || "");
+            const name = Object.keys(components).find(k => components[k] === this.component)!;
     
             this.tagName = new SimpleExpression(name);
         }
@@ -990,7 +977,7 @@ export class TemplateWrapperElement extends JsxOpeningElement {
         return undefined;
     }
 
-    constructor(attributes: Array<JsxAttribute | JsxSpreadAttribute> = []) { 
+    constructor(attributes: Array<JsxAttribute | JsxSpreadAttribute>) { 
         super(
             new Identifier("template"),
             undefined,
@@ -1253,6 +1240,10 @@ class VueGenerator extends BaseGenerator {
 
     createTypeReferenceNode(typeName: Identifier, typeArguments?: TypeExpression[]) {
         return addEmptyToString<TypeReferenceNode>(super.createTypeReferenceNode(typeName, typeArguments)); 
+    }
+
+    createInterfaceDeclaration(decorators: Decorator[]|undefined, modifiers: string[] | undefined, name: Identifier, typeParameters: any[] | undefined, heritageClauses: HeritageClause[] | undefined, members: Array<PropertySignature|MethodSignature>) { 
+        return addEmptyToString<Interface>(super.createInterfaceDeclaration(decorators, modifiers, name, typeParameters, heritageClauses, members)); 
     }
 }
 

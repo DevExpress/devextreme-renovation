@@ -10,6 +10,6 @@ export class WidgetProps {
 @Component({
     view
 })
-export default class Widget extends JSXComponent<WidgetProps> {
+export default class Widget extends JSXComponent(WidgetProps) {
     
 }

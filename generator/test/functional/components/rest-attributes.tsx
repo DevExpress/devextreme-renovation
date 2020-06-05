@@ -15,4 +15,4 @@ class WidgetInput {
     view
 })
 
-export default class ComponentWithRest extends JSXComponent<WidgetInput> {}
+export default class ComponentWithRest extends JSXComponent(WidgetInput) {}

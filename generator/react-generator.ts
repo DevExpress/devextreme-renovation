@@ -5,7 +5,7 @@ import BaseGenerator from "./base-generator";
 import {
     Property as BaseProperty,
     GetAccessor as BaseGetAccessor,
-    Method,
+    Method as BaseMethod,
     BaseClassMember
 } from "./base-generator/expressions/class-members";
 import { Identifier, Call } from "./base-generator/expressions/common";
@@ -48,8 +48,8 @@ function getLocalStateName(name: Identifier | string, componentContext: string =
     return `${componentContext}__state_${name}`;
 }
 
-function getPropName(name: Identifier | string, componentContext: string = "") {
-    return `${componentContext}props.${name}`;
+function getPropName(name: Identifier | string, componentContext: string = "", scope = "props.") {
+    return `${componentContext}${scope}${name}`;
 }
 
 function stateSetter(stateName: Identifier | string) {
@@ -78,6 +78,10 @@ function buildTemplatePropery(templateMember: Property, members: BaseClassMember
 }
 
 export class ComponentInput extends BaseComponentInput {
+    createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: TypeExpression, initializer?: Expression) {
+        return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
+    }
+
     buildTemplateProperies(templateMember: Property, members: BaseClassMember[]) {
         return [
             buildTemplatePropery(templateMember, members, "render"),
@@ -181,14 +185,15 @@ export class Property extends BaseProperty {
 
     getter(componentContext?: string) {
         componentContext = this.processComponentContext(componentContext);
+        const scope = this.processComponentContext(this.scope);
         if (this.isInternalState) {
             return getLocalStateName(this.name, componentContext);
         } else if (this.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
-            return getPropName(this.name, componentContext);
+            return getPropName(this.name, componentContext, scope);
         } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
-            return `${this.name}.current${this.questionOrExclamationToken}`
+            return `${this.name}.current${this.questionOrExclamationToken}`;
         } else if (this.isState) {
-            const propName = getPropName(this.name, componentContext);
+            const propName = getPropName(this.name, componentContext, scope);
             return `(${propName}!==undefined?${propName}:${getLocalStateName(this.name, componentContext)})`;
         }
         throw `Can't parse property: ${this._name}`;
@@ -233,6 +238,12 @@ export class GetAccessor extends BaseGetAccessor {
     }
 }
 
+export class Method extends BaseMethod {
+    filterDependencies(dependencies: string[]): string[] {
+        return dependencies.filter(d => d !== "props");
+    }
+}
+
 function getSubscriptions(methods: Method[]) {
     return methods.map(m => {
         const [event, parameters] = m.decorators.find(d => d.name === "Listen")!.expression.arguments;
@@ -251,6 +262,15 @@ function getSubscriptions(methods: Method[]) {
 }
 
 export class ReactComponent extends Component {
+    processMembers(members: Array<BaseProperty | Method>) {
+        return super.processMembers(members).map(p => {
+            if (p.inherited) {
+                p.scope = "props"
+            }
+            return p;
+        });
+    }
+
     createRestPropsGetter(members: BaseClassMember[]) {
         const props = getProps(members);
         const bindingElements = props.map(p => new BindingElement(
@@ -392,11 +412,6 @@ export class ReactComponent extends Component {
     compileUseEffect() {
         const subscriptions = getSubscriptions(this.listeners);
 
-        const effects = this.effects;
-
-        const effectsString = effects.map(e => `useEffect(${e.arrowDeclaration(this.getToStringOptions())}, 
-        [${e.getDependency(this.members)}])`).join(";\n");
-
         let subscriptionsString = "";
         if (subscriptions.length) {
             const { add, cleanup } = subscriptions.reduce(({ add, cleanup }, s) => {
@@ -412,7 +427,9 @@ export class ReactComponent extends Component {
                     }
                 });`;
         }
-        return subscriptionsString + effectsString;
+        return subscriptionsString + this.effects
+            .map(e => `useEffect(${e.arrowDeclaration(this.getToStringOptions())}, [${e.getDependency(this.members)}])`)
+            .join(";\n");
     }
 
     compileComponentRef() {
@@ -492,8 +509,14 @@ export class ReactComponent extends Component {
     }
 
     compilePropsType() {
+        const heritageClause = this.heritageClauses[0];
         if (this.isJSXComponent) {
-            return `${this.heritageClauses[0].propsType}`;
+            const type = heritageClause.propsType;
+            if (heritageClause.types[0].expression instanceof Call && heritageClause.types[0].expression.typeArguments?.length) { 
+                return heritageClause.types[0].expression.typeArguments[0].toString();
+            }
+           
+            return `typeof ${type}`;
         }
         return `{
             ${this.props
@@ -504,10 +527,8 @@ export class ReactComponent extends Component {
     }
 
     compileDefaultOptionsPropsType() {
-        if (this.isJSXComponent && this.heritageClauses[0].propsType.typeArguments.length) {
-            return this.heritageClauses[0].propsType.typeArguments[0].toString();
-        }
-        return super.compileDefaultOptionsPropsType();
+        const heritageClause = this.heritageClauses[0];
+        return `typeof ${heritageClause.propsType}`;
     }
 
     getToStringOptions() {
@@ -576,7 +597,8 @@ export class JsxAttribute extends BaseJsxAttribute {
     toString(options?: toStringOptions) {
         let name = this.name.toString(options);
         if (options?.jsxComponent) {
-            const member = options.jsxComponent.members.find(m => m._name.toString() === this.name.toString());
+            const member = getProps(options.jsxComponent.members)
+                .find(m => m._name.toString() === this.name.toString());
             if (member) {
                 name = member.name;
             }
@@ -702,6 +724,10 @@ export class Generator extends BaseGenerator {
 
     createTypeReferenceNode(typeName: Identifier, typeArguments?: TypeExpression[]) {
         return new TypeReferenceNode(typeName, typeArguments, this.getContext());
+    }
+
+    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string|undefined, name: Identifier, questionToken: string | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
+        return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 }
 

@@ -14,6 +14,8 @@ export class BaseClassMember extends Expression {
     type: TypeExpression|string;
     inherited: boolean;
 
+    scope: string = "";
+
     required: boolean = false;
 
     prefix: string = "";
@@ -42,7 +44,6 @@ export class BaseClassMember extends Expression {
     isReadOnly() { 
         return true;
     }
-
 
     get isInternalState() { 
         return false;
@@ -108,22 +109,34 @@ export class Method extends BaseClassMember {
         return `(${this.parameters})=>${this.body.toString(options)}`
     }
 
+    filterDependencies(dependencies: string[]): string[] {
+        return dependencies;
+    }
+
     getDependency(members: Array<Property | Method> = []) {
-        const dependency = this.body.getDependency();
-        const additionalDependency = [];
+        const run = this.decorators.find(d => d.name === "Effect")?.getParameter("run")?.valueOf();
+        const depsReducer = (d: string[], p: (Method | Property | undefined)) => d.concat(p!.getDependency(members.filter(p => p !== this)));
 
-        if (dependency.find(d => d === "props")) {
-            additionalDependency.push("props");
-        }
+        let result: string[] = [];
+        if(run === "always") {
+            result = this.filterDependencies(members.filter(m=>!(m instanceof Method)).reduce(depsReducer, ["props"]));
+        } else if(run !== "once") {
+            const dependency = this.body.getDependency();
+            const additionalDependency = [];
 
-        const result: string[] = [...new Set(dependency)]
-            .map(d => members.find(p => p.name.toString() === d))
-            .filter(d => d)
-            .reduce((d: string[], p) => d.concat(p!.getDependency(members.filter(p => p !== this))), [])
-            .concat(additionalDependency);
-        
-        if (additionalDependency.indexOf("props") > -1) { 
-            return result.filter(d => !d.startsWith("props."));
+            if (dependency.find(d => d === "props")) {
+                additionalDependency.push("props");
+            }
+
+            result = [...new Set(dependency)]
+                .map(d => members.find(p => p._name.toString() === d))
+                .filter(d => d)
+                .reduce(depsReducer, [])
+                .concat(additionalDependency);
+            
+            if (additionalDependency.indexOf("props") > -1) { 
+                result = result.filter(d => !d.startsWith("props."));
+            }
         }
         
         return [...new Set(result)];

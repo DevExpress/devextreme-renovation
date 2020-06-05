@@ -20,7 +20,7 @@ import { toStringOptions } from "../base-generator/types";
 import { BindingPattern } from "../base-generator/expressions/binding-pattern";
 import { Property, Method } from "../base-generator/expressions/class-members";
 
-const { createComponentDecorator, createDecorator} = componentCreator(generator);
+const { createComponentDecorator, createDecorator } = componentCreator(generator);
 
 mocha.describe("base-generator: expressions", function () { 
     mocha.describe("Base Expressions", function () { 
@@ -479,19 +479,20 @@ mocha.describe("base-generator: expressions", function () {
 
     mocha.describe("Statements", function () { 
         mocha.it("ReturnStatement", function () {
-            assert.equal(generator.createReturn(generator.createNumericLiteral("10")).toString(), "return 10;")
+            assert.strictEqual(generator.createReturn(generator.createNumericLiteral("10")).toString(), "return 10;");
+            assert.strictEqual(generator.createReturn().toString(), "return ;")
         });
 
         mocha.it("createEmptyStatement", function () { 
-            assert.equal(generator.createEmptyStatement().toString(), "");
+            assert.strictEqual(generator.createEmptyStatement().toString(), "");
         });
 
         mocha.it("createDebuggerStatement", function () { 
-            assert.equal(generator.createDebuggerStatement().toString(), "debugger");
+            assert.strictEqual(generator.createDebuggerStatement().toString(), "debugger");
         });    
 
         mocha.it("Block", function () {
-            assert.equal(generator.createBlock([], true).toString().replace(/\s+/g, ""), "{}");
+            assert.strictEqual(generator.createBlock([], true).toString().replace(/\s+/g, ""), "{}");
             const expression = generator.createBlock([
                 generator.createCall(
                     generator.createIdentifier("i"),
@@ -504,11 +505,11 @@ mocha.describe("base-generator: expressions", function () {
             ], true);
     
             const actualString = expression.toString();
-            assert.equal(getAst(actualString), getAst('{i(); return i;}'));
+            assert.strictEqual(getAst(actualString), getAst('{i(); return i;}'));
         });
 
         mocha.it("CreateBreak", function () { 
-            assert.equal(generator.createBreak().toString(), "break");
+            assert.strictEqual(generator.createBreak().toString(), "break");
         });
         
     });
@@ -891,12 +892,9 @@ mocha.describe("base-generator: expressions", function () {
                         generator.createThis(),
                         generator.createIdentifier("c")
                     ),
-                    generator.createPostfix(
-                        generator.createPropertyAccess(
-                            generator.createThis(),
-                            generator.createIdentifier("ii")
-                        ),
-                        generator.SyntaxKind.PlusPlusToken
+                    generator.createPropertyAccess(
+                        generator.createThis(),
+                        generator.createIdentifier("ii")
                     ),
                     generator.createBlock(
                         [generator.createContinue()],
@@ -1851,6 +1849,86 @@ mocha.describe("base-generator: expressions", function () {
         });
     });
 
+    mocha.describe("Interface", function () { 
+        mocha.it("empty interface", function () { 
+            const expression = generator.createInterfaceDeclaration(
+                undefined,
+                undefined,
+                generator.createIdentifier("name"),
+                undefined,
+                undefined,
+                []
+            );
+
+            assert.strictEqual(getAst(expression.toString()), getAst(`
+                interface name {}
+            `));
+        });
+
+        mocha.it("interface with decorators, modifiers, and heritage clauses", function () { 
+            const expression = generator.createInterfaceDeclaration(
+                [createDecorator("d1"), createDecorator("d2")],
+                ["export", "default"],
+                generator.createIdentifier("name"),
+                undefined,
+                [
+                    generator.createHeritageClause(
+                        "extends",
+                        [generator.createExpressionWithTypeArguments(
+                            undefined,
+                            generator.createIdentifier("Base1")
+                        )]
+                    ),
+                    generator.createHeritageClause(
+                        "implements",
+                        [generator.createExpressionWithTypeArguments(
+                            undefined,
+                            generator.createIdentifier("Base2")
+                        )]
+                    )
+                ],
+                []
+            );
+
+            assert.strictEqual(getAst(expression.toString()), getAst(`
+                @d1() @d2()
+                export default interface name extends Base1 implements Base2 {}
+            `));
+        });
+
+        mocha.it("with members", function () { 
+            const expression = generator.createInterfaceDeclaration(
+                undefined,
+                undefined,
+                generator.createIdentifier("name"),
+                undefined,
+                undefined,
+                [
+                    generator.createPropertySignature(
+                        [],
+                        generator.createIdentifier("p1"),
+                        undefined,
+                        generator.createKeywordTypeNode("string"),
+                        undefined
+                    ),
+                    generator.createMethodSignature(
+                        undefined,
+                        [],
+                        generator.createKeywordTypeNode("string"),
+                        generator.createIdentifier("m1")
+                    )
+                ]
+            );
+
+            assert.strictEqual(getAst(expression.toString()), getAst(`
+                interface name {
+                    p1: string;
+                    m1():string;
+                }
+            `));
+        });
+    });
+
 });
 
 mocha.describe("common", function () {
@@ -2147,6 +2225,59 @@ mocha.describe("ComponentInput", function () {
                 "BaseModel ComponentBindings has property with reserved name: key",
                 "BaseModel ComponentBindings has property with reserved name: ref",
                 "BaseModel ComponentBindings has property with reserved name: style"
+            ]);
+        });
+
+        mocha.it("Prop and Api Method has same names", function () { 
+            createComponentInput([
+                generator.createProperty(
+                    [
+                        createDecorator("OneWay")
+                    ],
+                    [],
+                    generator.createIdentifier("p1")
+                ),
+                generator.createProperty(
+                    [
+                        createDecorator("OneWay")
+                    ],
+                    [],
+                    generator.createIdentifier("p2")
+                )
+            ]);
+
+            generator.createClassDeclaration(
+                [createDecorator("Component", {})],
+                [],
+                generator.createIdentifier("ComponentName"),
+                [],
+                [generator.createHeritageClause(
+                    generator.SyntaxKind.ExtendsKeyword,
+                    [generator.createExpressionWithTypeArguments(
+                        undefined,
+                        generator.createCall(
+                            generator.createIdentifier("JSXComponent"),
+                            undefined,
+                            [generator.createIdentifier("BaseModel")]
+                        )
+                    )]
+                )],
+                ["p1", "p2", "p3"].map(name=>generator.createMethod(
+                    [createDecorator("Method")],
+                    [],
+                    undefined,
+                    generator.createIdentifier(name),
+                    undefined,
+                    undefined,
+                    [],
+                    undefined,
+                    generator.createBlock([], false)
+                ))
+            );
+            
+            assert.deepEqual(this.getWarnings(), [
+                'Component ComponentName has Prop and Api method with same name: p1',
+                'Component ComponentName has Prop and Api method with same name: p2'
             ]);
         });
     });

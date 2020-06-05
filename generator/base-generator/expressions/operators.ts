@@ -29,12 +29,8 @@ export class Binary extends Expression {
     }
 
     toString(options?: toStringOptions) {
-        const dependencyMember = checkDependency(this.left, options?.members);
-        if (options &&
-            this.left instanceof PropertyAccess &&
-            this.left.expression.toString().startsWith(SyntaxKind.ThisKeyword) &&
-            dependencyMember) {
-
+        const dependencyMember = this.left instanceof PropertyAccess && this.left.getMember(options);
+        if (dependencyMember) {
             let rightExpression;
 
             if (this.operator === SyntaxKind.EqualsToken) {
@@ -51,7 +47,7 @@ export class Binary extends Expression {
                     throw `Error: Can't assign property use TwoWay() or Internal State - ${this.toString()}`;
                 }
 
-                return `${this.left.compileStateSetting(rightExpression, dependencyMember as Property, options)}`;
+                return `${(this.left as PropertyAccess).compileStateSetting(rightExpression, dependencyMember as Property, options)}`;
             }
         }
         return `${this.left.toString(options)}${this.operator}${this.right.toString(options)}`;
@@ -79,18 +75,14 @@ export class Prefix extends Expression {
     }
 
     compileUnaryMath(options?: toStringOptions) {
-        const dependencyMember = checkDependency(this.operand, options?.members);
-        if (unaryPlusOrMinus(this.operator) && 
-            this.operand instanceof PropertyAccess &&
-            this.operand.expression.toString().startsWith(SyntaxKind.ThisKeyword) &&
-            dependencyMember
-        ) {
+        const dependencyMember = this.operand instanceof PropertyAccess && this.operand.getMember(options);
+        if (unaryPlusOrMinus(this.operator) && dependencyMember) {
             if (dependencyMember.isReadOnly()) {
                 throw `Error: Can't assign property use TwoWay() or Internal State - ${this.toString()}`;
             }
             const operator = this.operator[0] ;
             const rightExpression = `${this.operand.toString(options)}${operator}${1}`;
-            return `${this.operand.compileStateSetting(rightExpression, dependencyMember as Property, options)}`;
+            return `${(this.operand as PropertyAccess).compileStateSetting(rightExpression, dependencyMember as Property, options)}`;
         }
         return '';
     }

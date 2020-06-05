@@ -20,7 +20,7 @@ class WidgetInput {
     view
 })
 
-export default class ComponentWithSpread extends JSXComponent<WidgetInput> {
+export default class ComponentWithSpread extends JSXComponent(WidgetInput) {
     get attributes() { 
         const { containerId: id, aria } = this.props;
         return {
