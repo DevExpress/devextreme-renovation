@@ -61,6 +61,10 @@ export class BaseClassMember extends Expression {
         return this.decorators.some(d => d.name === "Ref");
     }
 
+    get isRefProp() { 
+        return this.decorators.some(d => d.name === "RefProp");
+    }
+
     get isSlot() { 
         return this.decorators.some(d => d.name === "Slot");
     }
