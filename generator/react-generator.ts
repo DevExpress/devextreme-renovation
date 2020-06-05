@@ -61,7 +61,7 @@ function getTemplatePropName(name: Identifier | string, propName: string) {
         .replace(/(.+)(Template)/g, `$1${capitalizeFirstLetter(propName)}`);
 }
 
-function buildTemplatePropery(templateMember: Property, members: BaseClassMember[], propName: string, keepType = false) {
+function buildTemplateProperty(templateMember: Property, members: BaseClassMember[], propName: string, keepType = false) {
     const templatePropName = getTemplatePropName(templateMember._name, propName);
     if (!members.find(m => m._name.toString() === templatePropName)) {
         return new Property(
@@ -82,10 +82,10 @@ export class ComponentInput extends BaseComponentInput {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
-    buildTemplateProperies(templateMember: Property, members: BaseClassMember[]) {
+    buildTemplateProperties(templateMember: Property, members: BaseClassMember[]) {
         return [
-            buildTemplatePropery(templateMember, members, "render"),
-            buildTemplatePropery(templateMember, members, "component")
+            buildTemplateProperty(templateMember, members, "render"),
+            buildTemplateProperty(templateMember, members, "component")
         ];
     }
 
@@ -177,6 +177,9 @@ export class Property extends BaseProperty {
         if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
             return `${this.name}:any`;
         }
+        if (this.isRefProp) { 
+            return `${this.name}${this.questionOrExclamationToken}:RefObject<${this.type}>`;
+        }
         if (this.questionOrExclamationToken === SyntaxKind.ExclamationToken) {
             return `${this.name}:${this.type}`;
         }
@@ -190,8 +193,8 @@ export class Property extends BaseProperty {
             return getLocalStateName(this.name, componentContext);
         } else if (this.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
             return getPropName(this.name, componentContext, scope);
-        } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
-            return `${this.name}.current${this.questionOrExclamationToken}`;
+        } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef" || d.name === "RefProp")) {
+            return `${scope}${this.name}${scope ? this.questionOrExclamationToken : ""}.current${this.questionOrExclamationToken}`;
         } else if (this.isState) {
             const propName = getPropName(this.name, componentContext, scope);
             return `(${propName}!==undefined?${propName}:${getLocalStateName(this.name, componentContext)})`;
@@ -204,8 +207,9 @@ export class Property extends BaseProperty {
             return [getLocalStateName(this.name)];
         } else if (this.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template" || d.name === "Slot")) {
             return [getPropName(this.name)];
-        } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef")) {
-            return this.questionOrExclamationToken === "?" ? [`${this.name.toString()}.current`] : [];
+        } else if (this.decorators.find(d => d.name === "Ref" || d.name === "ApiRef" || d.name === "RefProp")) {
+            const scope = this.processComponentContext(this.scope)
+            return this.questionOrExclamationToken === "?" ? [`${scope}${this.name.toString()}${scope ? this.questionOrExclamationToken : ""}.current`] : [];
         } else if (this.isState) {
             return [getPropName(this.name), getLocalStateName(this.name), getPropName(`${this.name}Change`)];
         }
@@ -225,7 +229,7 @@ export class Property extends BaseProperty {
     }
 
     get canBeDestructured() {
-        if (this.isState) {
+        if (this.isState || this.isRefProp) {
             return false;
         }
         return super.canBeDestructured;
@@ -326,8 +330,12 @@ export class ReactComponent extends Component {
             hooks.push("useEffect");
         }
 
-        if (this.refs.filter(r => !r.inherited).length || this.apiRefs.length) {
+        if (this.refs.length || this.apiRefs.length) {
             hooks.push("useRef");
+        }
+
+        if (this.members.some(m=>m.isRefProp)) {
+            hooks.push("RefObject");
         }
 
         if (this.api.length) {
@@ -460,9 +468,6 @@ export class ReactComponent extends Component {
 
     compileUseRef() {
         return this.refs.map(r => {
-            if(r.inherited) {
-                return `const ${r.name}=props.${r.name}`;
-            }
             return `const ${r.name}=useRef<${r.type}>()`;
         }).concat(this.apiRefs.map(r => {
             return `const ${r.name}=useRef<${r.type}Ref>()`;
@@ -477,7 +482,7 @@ export class ReactComponent extends Component {
 
         return `interface ${this.name}{
             ${  props
-                .concat(this.internalState.concat(this.refs.filter(r => !r.inherited), this.apiRefs).concat(this.slots.filter(s => !s.inherited)).map(p => p.typeDeclaration()))
+                .concat(this.internalState.concat(this.refs, this.apiRefs).concat(this.slots.filter(s => !s.inherited)).map(p => p.typeDeclaration()))
                 .concat(this.listeners.map(l => l.typeDeclaration()))
                 .concat(this.methods.map(m => m.typeDeclaration()))
                 .concat([""])
@@ -501,7 +506,7 @@ export class ReactComponent extends Component {
 
         return props
             .concat(this.listeners.map(l => l.name.toString()))
-            .concat(this.refs.filter(r => !r.inherited).map(r => r.name.toString()))
+            .concat(this.refs.map(r => r.name.toString()))
             .concat(this.apiRefs.map(r => r.name.toString()))
             .concat(
                 this.methods.map(m => m._name.toString() !== m.getter() ? `${m._name}:${m.getter()}` : m.getter())

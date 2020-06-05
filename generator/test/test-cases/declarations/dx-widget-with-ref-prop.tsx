@@ -9,7 +9,7 @@ export class WidgetWithRefPropInput {
 @Component({
     view: view
 })
-export default class WidgetWithRefProp extends JSXComponent<WidgetWithRefPropInput> {}
+export default class WidgetWithRefProp extends JSXComponent(WidgetWithRefPropInput) {}
 
 function view(viewModel: WidgetWithRefProp) { 
     return (<div></div>)

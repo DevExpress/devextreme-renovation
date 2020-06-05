@@ -393,12 +393,20 @@ export class JsxSelfClosingElement extends JsxOpeningElement{
 }
 
 export class JsxAttribute extends BaseJsxAttribute { 
+    getRefValue(options?: toStringOptions) { 
+        return this.compileRef(options).replace("#", "");
+    }
+
     compileInitializer(options?: toStringOptions) { 
+        if (this.isRefAttribute(options)) { 
+            return this.getRefValue(options);
+        }
+
         return this.initializer.toString({
             members: [],
             disableTemplates: true,
             ...options
-        }).replace(/"/gi, "'").replace(".nativeElement", "");
+        }).replace(/"/gi, "'");
     }
 
     compileRef(options?: toStringOptions) { 
@@ -462,6 +470,11 @@ export class JsxAttribute extends BaseJsxAttribute {
     isSlotAttribute(options?: toStringOptions) { 
         const slotProps = options?.jsxComponent?.members.filter(p => p.isSlot);
         return slotProps?.some(p => p.name === this.name.toString())
+    }
+
+    isRefAttribute(options?: toStringOptions) { 
+        return options?.jsxComponent?.members
+            .filter(p => p.isRefProp)?.some(p => p.name === this.name.toString());
     }
 
     isTemplateAttribute(options?: toStringOptions) {
@@ -954,9 +967,7 @@ export class ArrowFunction extends BaseArrowFunction {
 
 class Decorator extends BaseDecorator { 
     toString(options?: toStringOptions) { 
-        if (this.name === "OneWay") {
-            return "@Input()";
-        } else if (this.name === "TwoWay" || this.name === "Template") {
+        if (this.name === "OneWay" || this.name === "TwoWay" || this.name === "Template" || this.name==="RefProp") {
             return "@Input()";
         } else if (this.name === "Effect" || this.name === "Ref" || this.name === "ApiRef" || this.name === "InternalState" || this.name === "Method") {
             return "";
@@ -982,7 +993,7 @@ class Decorator extends BaseDecorator {
 }
 
 function compileCoreImports(members: Array<Property|Method>, context: AngularGeneratorContext, imports:string[] = []) { 
-    if (members.filter(m => m.decorators.find(d => d.name === "OneWay")).length) {
+    if (members.filter(m => m.decorators.find(d => d.name === "OneWay" || d.name==="RefProp")).length) {
         imports.push("Input");
     }
     if (members.filter(m => m.decorators.find(d => d.name === "TwoWay")).length) { 
@@ -991,7 +1002,7 @@ function compileCoreImports(members: Array<Property|Method>, context: AngularGen
     if (members.filter(m => m.isTemplate).length) { 
         imports.push("Input", "TemplateRef");
     }
-    if (members.filter(m => m.isEvent).length) { 
+    if (members.filter(m => m.isEvent).length) {
         imports.push("Output", "EventEmitter");
     }
 
@@ -1097,6 +1108,9 @@ export class Property extends BaseProperty {
         if (this.decorators.find(d => d.name === "Ref")) { 
             return `${componentContext}${this.name}${this.questionOrExclamationToken}.nativeElement`
         }
+        if (this.decorators.find(d => d.name === "RefProp")) { 
+            return `${componentContext}${this.name}`;
+        }
         if (this.decorators.find(d => d.name === "ApiRef")) { 
             return `${componentContext}${this.name}${suffix}`
         }
@@ -1140,14 +1154,11 @@ export class AngularComponent extends Component {
 
     processMembers(members: Array<Property | Method>) { 
         this.heritageClauses.forEach(h => { 
-            h.members.forEach(m => {
-                const refIndex = (m as Property).decorators.findIndex(d => d.name === "Ref");
-                if (refIndex >= 0) {
-                    m.decorators[refIndex] = new Decorator(new Call(new Identifier("OneWay"), {}, []), this.context);
-                }
-
-                (m as Property).required = h.isRequired;
-            });
+            if (h.isRequired) { 
+                h.members.filter(m=>m instanceof Property).forEach(m => {
+                    (m as Property).required = true;
+                });
+            }
         });
         return super.processMembers(members);
     }

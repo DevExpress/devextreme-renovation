@@ -29,10 +29,6 @@ mocha.describe("angular-generation", function () {
         }
     });
 
-    mocha.it("refs-as-props", function () {
-        this.testGenerator(this.test!.title);
-    });
-
     mocha.it("props", function () {
         this.testGenerator(this.test!.title);
     });
@@ -130,6 +126,10 @@ mocha.describe("angular-generation", function () {
     });
 
     mocha.it("refs", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("refs-as-props", function () {
         this.testGenerator(this.test!.title);
     });
     

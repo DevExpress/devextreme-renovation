@@ -1,4 +1,4 @@
-import { Component, ComponentBindings, JSXComponent, Ref, OneWay } from "../../../component_declaration/common";
+import { Component, ComponentBindings, JSXComponent, Ref, Effect } from "../../../component_declaration/common";
 
 function view(model: RefProps) { 
     return <div>{"Ref Props"}</div>;
@@ -6,19 +6,17 @@ function view(model: RefProps) {
 
 @ComponentBindings()
 class Props {
-    @Ref() parentRef: HTMLDivElement = {};
+    @Ref() parentRef: HTMLDivElement;
 }
 
 @Component({
     view
 })
-export default class RefProps extends JSXComponent<Props> {
-  @Effect()
-  loadEffect() {
-      const ref = this.props.parentRef;
-
-      if(ref) {
-          ref.style.backgroundColor = "#aaaaff";
-      }
-  }
+export default class RefProps extends JSXComponent(Props) {
+    @Effect()
+    loadEffect() {
+        const { parentRef } = this.props;
+        parentRef.style.backgroundColor = "#aaaaff";
+        parentRef.innerHTML += "childText";
+    }
 }

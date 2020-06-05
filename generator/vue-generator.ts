@@ -114,12 +114,12 @@ export class Property extends BaseProperty {
             return "";
         }
     
-        const type = calculatePropertyType(this.type);
+        const type = this.isRefProp ? "Function" : calculatePropertyType(this.type);
         const parts = [];
         if (type) { 
             parts.push(`type: ${type}`)
         }
-        
+
         if (this.questionOrExclamationToken === SyntaxKind.ExclamationToken) { 
             parts.push("required: true")
         }
@@ -146,10 +146,10 @@ export class Property extends BaseProperty {
             return `(${componentContext}${this.name} !== undefined ? ${componentContext}${this.name} : ${componentContext}${this.name}_state)`;
         }
         if (this.isRef && componentContext.length) {
-            if(this.inherited)  {
-                return `${componentContext}${this.name}()`;
-            }
             return `${componentContext}$refs.${this.name}`;
+        }
+        if(this.isRefProp)  {
+            return `${componentContext}${this.name}()`;
         }
         if (this.isTemplate) { 
             return `${componentContext}$scopedSlots.${this.name}`;
@@ -166,7 +166,7 @@ export class Property extends BaseProperty {
     }
 
     get canBeDestructured() { 
-        if (this.isEvent || this.isState) {
+        if (this.isEvent || this.isState || this.isRefProp) {
             return false;
         }
         return super.canBeDestructured;
@@ -711,21 +711,7 @@ export class AsExpression extends BaseAsExpression {
 }
 
 export class JsxAttribute extends BaseJsxAttribute { 
-    compileInitializer(options?: toStringOptions) {
-        const value = super.compileInitializer(options);
-
-        if (options?.members.some(m => m.name === value && m.isRef)) {
-            if (this.initializer instanceof JsxExpression) {
-                const expression = this.initializer.getExpression(options);
-                if(expression instanceof PropertyAccess && expression.expression.toString(options) === 'props()') {
-                   return `() => ${value}`
-                }
-                return `() => this.$refs.${value}`;
-            }
-        }
-
-        return value
-    }
+    
 
     getTemplateProp(options?: toStringOptions) {
         return `v-bind:${this.name}="${this.compileInitializer(options)}"`;
@@ -752,8 +738,17 @@ export class JsxAttribute extends BaseJsxAttribute {
         return null;
     }
 
+    getRefValue(options?: toStringOptions) { 
+        const name = this.initializer.toString(options);
+        const refProp = options?.members.find(m => m._name.toString() === name);
+        if (refProp?.isRef) { 
+            return `()=>this.$refs.${name}`;
+        }
+        return `()=>${name}`;
+    }
+
     compileRef(options?: toStringOptions) { 
-        return `ref="${super.compileInitializer(options)}"`;
+        return `ref="${this.compileInitializer(options)}"`;
     }
 
     compileValue(name: string, value: string) {
