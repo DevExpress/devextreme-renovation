@@ -1175,17 +1175,21 @@ mocha.describe("Vue-generator", function () {
                 assert.strictEqual(getAst(`{
                     ${methods.join(",\n")}
                 }`), getAst(`{
-                __schedule_e() {
-                       this.__scheduleEffects[0]=()=>{
-                           this.__destroyEffects[0]&&this.__destroyEffects[0]();
-                           this.__destroyEffects[0]=this.__e();
-                       }
+                    __schedule_e() {
+                        this.__scheduleEffect(0, "__e");
                    },
                    __schedule_e1() {
-                       this.__scheduleEffects[1]=()=>{
-                           this.__destroyEffects[1]&&this.__destroyEffects[1]();
-                           this.__destroyEffects[1]=this.__e1();
-                       }
+                        this.__scheduleEffect(1, "__e1");
+                   },
+                   __scheduleEffect(index, name){
+                    if(!this.__scheduleEffects[index]){
+                            this.__scheduleEffects[index]=()=>{
+                                this.__destroyEffects[index]&&this.__destroyEffects[index]();
+                                this.__destroyEffects[index]=this[name]();
+                                this.__scheduleEffects[index] = null;
+                            }
+                            this.$nextTick(()=>this.__scheduleEffects[index]&&this.__scheduleEffects[index]());
+                        }
                    }
                }`));
             });

@@ -130,6 +130,19 @@ cloneTest('Check Effects on DOM update', async t => {
         .expect(effects.textContent).eql("(no deps)(A deps)(always)(once)(B deps)(always)");
 });
 
+cloneTest('Check Effects on State update', async t => {
+    const el = Selector('#button-effects-state');
+    const effects = Selector("#effects-state-update");
+
+    await t
+        .expect(effects.textContent).eql("(0 deps)(always)(0 once)");
+
+    await t.click(el);
+
+    await t
+        .expect(effects.textContent).eql("(0 deps)(always)(0 once)(1 deps)(always)");
+});
+
 cloneTest('Check form values binding', async t => {
     const el = Selector("#counter-form-value");
 

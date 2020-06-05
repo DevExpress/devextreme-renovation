@@ -1,4 +1,4 @@
-import { Component, ComponentBindings, JSXComponent, Effect, InternalState, Ref, OneWay } from "../../../component_declaration/common";
+import { Component, ComponentBindings, JSXComponent, Effect, Ref, OneWay } from "../../../component_declaration/common";
 
 function view(model: EffectsDOMUpdate) { 
     return <div>
