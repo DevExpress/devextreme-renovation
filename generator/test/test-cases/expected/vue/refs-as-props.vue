@@ -1,6 +1,6 @@
 <template>
   <div ref="divRef">
-    <WidgetWithRefProp :parentRef="() => this.$refs.divRef" :nullableRef="nullableRef" />
+    <WidgetWithRefProp :parentRef="() => this.$refs.divRef" :nullableRef="() => nullableRef" />
   </div>
 </template>
 <script>

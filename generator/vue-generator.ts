@@ -714,8 +714,14 @@ export class JsxAttribute extends BaseJsxAttribute {
     compileInitializer(options?: toStringOptions) {
         const value = super.compileInitializer(options);
 
-        if (options?.members.some(m => m.name === value && m.isRef && !m.inherited)) {
-            return `() => this.$refs.${value}`;
+        if (options?.members.some(m => m.name === value && m.isRef)) {
+            if (this.initializer instanceof JsxExpression) {
+                const expression = this.initializer.getExpression(options);
+                if(expression instanceof PropertyAccess && expression.expression.toString(options) === 'props()') {
+                   return `() => ${value}`
+                }
+                return `() => this.$refs.${value}`;
+            }
         }
 
         return value
