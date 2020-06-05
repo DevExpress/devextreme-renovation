@@ -7,8 +7,9 @@ function unsubscribe(id: number) {
 import { Input, Output, EventEmitter } from "@angular/core";
 export class WidgetInput {
     @Input() p: string = "10";
+    @Input() r: string = "20";
     @Input() s: number = 10;
-    @Output() sChange: EventEmitter<number> = new EventEmitter();
+    @Output() sChange?: EventEmitter<number> = new EventEmitter();
 }
 
 import { Component, NgModule} from "@angular/core";
@@ -19,10 +20,26 @@ import { CommonModule } from "@angular/common";
 })
 export default class Widget extends WidgetInput {
     i: number = 10
+    j: number = 20
     __setupData(): any {
-        const id = subscribe(this.p, this.s, this.i);
+        const id = subscribe(this.__getP(), this.s, this.i);
         this._i = 15;
         return () => unsubscribe(id);
+    }
+
+    __onceEffect(): any {
+        const id = subscribe(this.__getP(), this.s, this.i);
+        this._i = 15;
+        return () => unsubscribe(id);
+    }
+
+    __alwaysEffect(): any {
+        const id = subscribe(this.__getP(), 1, 2);
+        return () => unsubscribe(id);
+    }
+
+    __getP():any{
+        return this.p;
     }
 
     get __restAttributes(): any{
@@ -34,18 +51,29 @@ export default class Widget extends WidgetInput {
     
     __schedule_setupData(){
         this.__destroyEffects[0]?.();
-        this.__viewCheckedSubscribeEvent[0] = ()=>{
+        this.__viewCheckedSubscribeEvent[0] = () => {
             this.__destroyEffects[0] = this.__setupData()
         }
     }
 
+    __schedule_alwaysEffect(){
+        this.__destroyEffects[2]?.();
+        this.__viewCheckedSubscribeEvent[2] = () => {
+            this.__destroyEffects[2] = this.__alwaysEffect()
+        }
+    }
+
     ngAfterViewInit() {
-        this.__destroyEffects.push(this.__setupData());
+        this.__destroyEffects.push(this.__setupData(), this.__onceEffect(), this.__alwaysEffect());
     }
 
     ngOnChanges(changes: {[name:string]: any}) {
         if (this.__destroyEffects.length && ["p", "s"].some(d => changes[d])) {
             this.__schedule_setupData();
+        }
+
+        if (this.__destroyEffects.length) {
+            this.__schedule_alwaysEffect();
         }
     }
 
@@ -63,8 +91,17 @@ export default class Widget extends WidgetInput {
         if (this.__destroyEffects.length) {
             this.__schedule_setupData();
         }
+        if (this.__destroyEffects.length) {
+            this.__schedule_alwaysEffect();
+        }
     }
 
+    set  _j(j:number){
+        this.j = j;
+        if (this.__destroyEffects.length) {
+            this.__schedule_alwaysEffect();
+        }
+    }
 }
 @NgModule({
     declarations: [Widget],

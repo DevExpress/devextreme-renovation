@@ -5,7 +5,7 @@ import BaseGenerator from "./base-generator";
 import {
     Property as BaseProperty,
     GetAccessor as BaseGetAccessor,
-    Method,
+    Method as BaseMethod,
     BaseClassMember
 } from "./base-generator/expressions/class-members";
 import { Identifier, Call } from "./base-generator/expressions/common";
@@ -78,6 +78,10 @@ function buildTemplatePropery(templateMember: Property, members: BaseClassMember
 }
 
 export class ComponentInput extends BaseComponentInput {
+    createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: TypeExpression, initializer?: Expression) {
+        return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
+    }
+
     buildTemplateProperies(templateMember: Property, members: BaseClassMember[]) {
         return [
             buildTemplatePropery(templateMember, members, "render"),
@@ -231,6 +235,12 @@ export class Property extends BaseProperty {
 export class GetAccessor extends BaseGetAccessor {
     getter() {
         return `${super.getter()}()`;
+    }
+}
+
+export class Method extends BaseMethod {
+    filterDependencies(dependencies: string[]): string[] {
+        return dependencies.filter(d => d !== "props");
     }
 }
 
@@ -402,11 +412,6 @@ export class ReactComponent extends Component {
     compileUseEffect() {
         const subscriptions = getSubscriptions(this.listeners);
 
-        const effects = this.effects;
-
-        const effectsString = effects.map(e => `useEffect(${e.arrowDeclaration(this.getToStringOptions())}, 
-        [${e.getDependency(this.members)}])`).join(";\n");
-
         let subscriptionsString = "";
         if (subscriptions.length) {
             const { add, cleanup } = subscriptions.reduce(({ add, cleanup }, s) => {
@@ -422,7 +427,9 @@ export class ReactComponent extends Component {
                     }
                 });`;
         }
-        return subscriptionsString + effectsString;
+        return subscriptionsString + this.effects
+            .map(e => `useEffect(${e.arrowDeclaration(this.getToStringOptions())}, [${e.getDependency(this.members)}])`)
+            .join(";\n");
     }
 
     compileComponentRef() {
@@ -714,6 +721,10 @@ export class Generator extends BaseGenerator {
 
     createTypeReferenceNode(typeName: Identifier, typeArguments?: TypeExpression[]) {
         return new TypeReferenceNode(typeName, typeArguments, this.getContext());
+    }
+
+    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string|undefined, name: Identifier, questionToken: string | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
+        return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 }
 

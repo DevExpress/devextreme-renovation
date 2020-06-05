@@ -4,8 +4,8 @@ class ModelWidgetInput {
     @Output() baseStatePropChange?: EventEmitter<boolean> = new EventEmitter();
     @Input() modelStateProp?: boolean;
     @Input() value?: boolean;
-    @Output() modelStatePropChange: EventEmitter<boolean> = new EventEmitter();
-    @Output() valueChange: EventEmitter<boolean> = new EventEmitter();
+    @Output() modelStatePropChange?: EventEmitter<boolean> = new EventEmitter();
+    @Output() valueChange?: EventEmitter<boolean> = new EventEmitter();
 }
 
 import { Component, NgModule, forwardRef, HostListener } from "@angular/core";

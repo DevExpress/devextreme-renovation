@@ -5,9 +5,9 @@ class WidgetInput {
     @Input() state1?: boolean = false;
     @Input() state2: boolean = false;
     @Input() stateProp?: boolean;
-    @Output() state1Change: EventEmitter<boolean> = new EventEmitter();
-    @Output() state2Change: EventEmitter<boolean> = new EventEmitter();
-    @Output() statePropChange: EventEmitter<boolean> = new EventEmitter();
+    @Output() state1Change?: EventEmitter<boolean> = new EventEmitter();
+    @Output() state2Change?: EventEmitter<boolean> = new EventEmitter();
+    @Output() statePropChange?: EventEmitter<boolean> = new EventEmitter();
 }
 
 import { Component, NgModule } from "@angular/core";

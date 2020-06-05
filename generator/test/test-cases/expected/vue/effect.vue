@@ -15,6 +15,12 @@ export const WidgetInput = {
       return "10";
     }
   },
+  r: {
+    type: String,
+    default() {
+      return "20";
+    }
+  },
   s: {
     type: Number,
     default: undefined
@@ -32,34 +38,48 @@ export default {
   data() {
     return {
       i: 10,
+      j: 20,
       s_state: this.defaultS
     };
   },
 
   watch: {
-    p: ["__schedule_setupData"],
-    s: ["__schedule_setupData"],
-    s_state: ["__schedule_setupData"],
-    i: ["__schedule_setupData"]
+    p: ["__schedule_setupData", "__schedule_alwaysEffect"],
+    s: ["__schedule_setupData", "__schedule_alwaysEffect"],
+    s_state: ["__schedule_setupData", "__schedule_alwaysEffect"],
+    i: ["__schedule_setupData", "__schedule_alwaysEffect"],
+    j: ["__schedule_alwaysEffect"],
+    r: ["__schedule_alwaysEffect"],
+    defaultS: ["__schedule_alwaysEffect"],
+    sChange: ["__schedule_alwaysEffect"]
   },
   methods: {
+    __getP(){
+      return this.p;
+    },
     __restAttributes() {
       return {};
     },
     props(){
       return {
         p:this.p,
+        r:this.r,
         s:(this.s !== undefined ? this.s : this.s_state),
         sChange:this.sChange
       };
     },
     __setupData() {
-      const id = subscribe(
-        this.p,
-        (this.s !== undefined ? this.s : this.s_state),
-        this.i
-      );
+      const id = subscribe(this.__getP(), (this.s !== undefined ? this.s : this.s_state), this.i);
       this.i = 15;
+      return () => unsubscribe(id);
+    },
+    __onceEffect() {
+      const id = subscribe(this.__getP(), (this.s !== undefined ? this.s : this.s_state), this.i);
+      this.i = 15;
+      return () => unsubscribe(id);
+    },
+    __alwaysEffect() {
+      const id = subscribe(this.__getP(), 1, 2);
       return () => unsubscribe(id);
     },
 
@@ -72,6 +92,12 @@ export default {
         this.__destroyEffects[0] && this.__destroyEffects[0]();
         this.__destroyEffects[0] = this.__setupData();
       };
+    },
+    __schedule_alwaysEffect(){
+      this.__scheduleEffects[2] = () => {
+        this.__destroyEffects[2] && this.__destroyEffects[2]();
+        this.__destroyEffects[2] = this.__alwaysEffect();
+      };
     }
   },
   created() {
@@ -80,6 +106,8 @@ export default {
   },
   mounted() {
     this.__destroyEffects[0] = this.__setupData();
+    this.__destroyEffects[1] = this.__onceEffect();
+    this.__destroyEffects[2] = this.__alwaysEffect();
   },
   updated() {
     this.__scheduleEffects.forEach((_, i) => {

@@ -1,4 +1,4 @@
-import { Component, ComponentBindings, JSXComponent, InternalState, Fragment } from "../../../component_declaration/common";
+import { Component, ComponentBindings, JSXComponent, InternalState } from "../../../component_declaration/common";
 
 import SimpleComponent from "./simple.tsx";
 import ButtonComponent from "./button.tsx";
@@ -13,6 +13,7 @@ import ComponentWithDefaultOptionRules, { defaultOptions as setDefaultOptions } 
 import List from "./list.tsx";
 import SpreadProps from "./spread-props.tsx";
 import TemplatePass from "./template-pass.tsx";
+import EffectsDOMUpdate from "./effects-dom-update.tsx";
 
 function view(model: App) { 
     return <div>
@@ -60,6 +61,14 @@ function view(model: App) {
         </SpreadProps>
 
         <TemplatePass />
+
+        <div>
+            <ButtonComponent
+                id="button-effects"
+                onClick={model.onButtonEffectsClick}
+            >{"Effects on DOM Update"}</ButtonComponent>
+            <EffectsDOMUpdate name="effects-dom-update" text={model.domEffectsText}/>
+        </div>
     </div>;
 }
 
@@ -92,8 +101,14 @@ export default class App extends JSXComponent(AppInput) {
 
     @InternalState() listItems = [{ key: 0, text: "a" }, { key: 1, text: "b" }];
 
+    @InternalState() domEffectsText: string = "A";
+
     onButtonClick() { 
         this.clickCount = this.clickCount + 1;
+    }
+
+    onButtonEffectsClick() { 
+        this.domEffectsText = this.domEffectsText === "A" ? "B" : "A";
     }
 
     onButtonWithStatePressedChange(p:boolean) { 

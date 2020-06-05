@@ -216,25 +216,12 @@ export class ArrowFunction extends AngularArrowFunction {
 }
 
 export class VueComponentInput extends ComponentInput { 
-    buildDefaultStateProperty(stateMember: Property): Property|null { 
-        return new Property(
-            [new Decorator(new Call(new Identifier("OneWay"), undefined, []), {})],
-            [],
-            new Identifier(`default${capitalizeFirstLetter(stateMember._name)}`),
-            undefined,
-            stateMember.type,
-            stateMember.initializer
-        )
+    createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: string | TypeExpression, initializer?: Expression) {
+        return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
-    
-    buildChangeState(stateMember: Property, stateName: Identifier) { 
-        return  new Property(
-            [new Decorator(new Call(new Identifier("Event"), undefined, []), {})],
-            [],
-            stateName,
-            undefined,
-            this.buildChangeStateType(stateMember)
-        );
+
+    createDecorator(expression: Call, context: GeneratorContext) {
+        return new Decorator(expression, context);
     }
     
     toString() { 
@@ -490,34 +477,23 @@ export class VueComponent extends Component {
         const watches: { [name: string]: string[] } = {};
 
         this.effects.forEach((effect, index) => { 
-            const props: Array<BaseProperty | BaseMethod> = getProps(this.members);
-            const dependency = effect.getDependency(
-                props.concat((this.members.filter(m=>m.isInternalState)))
-            );
+            const dependency = effect.getDependency(this.members);
 
             const scheduleEffectName = `__schedule_${effect._name}`;
 
             if (dependency.length) { 
                 methods.push(` ${scheduleEffectName}() {
-                        this.__scheduleEffects[${index}]=()=>{
-                            this.__destroyEffects[${index}]&&this.__destroyEffects[${index}]();
-                            this.__destroyEffects[${index}]=this.${effect.name}();
-                        }
-                    }`);
+                    this.__scheduleEffects[${index}]=()=>{
+                        this.__destroyEffects[${index}]&&this.__destroyEffects[${index}]();
+                        this.__destroyEffects[${index}]=this.${effect.name}();
+                    }
+                }`);
             }
 
-            const watchDependency = (dependency: string[]) => { 
-                dependency.forEach(d => { 
-                    watches[d] = watches[d] || [];
-                    watches[d].push(`"${scheduleEffectName}"`);
-                });
-            }
-
-            if (dependency.indexOf("props") !== -1) { 
-                watchDependency(props.map(p => p.name));
-            }
-
-            watchDependency(dependency.filter(d => d !== "props"));
+            dependency.filter(d => d !== "props").forEach(d => { 
+                watches[d] = watches[d] || [];
+                watches[d].push(`"${scheduleEffectName}"`);
+            });
         });
 
         const watchStatements = Object.keys(watches).map(k => { 

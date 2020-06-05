@@ -16,7 +16,6 @@ export default class Widget {
     @Ref() nullableRef?: HTMLDivElement;
     @Ref() explicitRef!: HTMLDivElement;
 
-    @Listen("click")
     clickHandler() {
         const html = this.divRef.outerHTML + this.explicitRef!.outerHTML;
     }
