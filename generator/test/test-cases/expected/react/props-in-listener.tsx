@@ -17,7 +17,7 @@ interface Widget {
   restAttributes: any;
 }
 
-export default function Widget(props: typeof Props) {
+export function Widget(props: typeof Props) {
   const clickHandler = useCallback(function clickHandler() {
     props.onClick!({ type: props.type })
   }, [props.onClick, props.type]);

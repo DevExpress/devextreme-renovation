@@ -15,8 +15,8 @@
                 "--colors",
                 // "${workspaceFolder}/build/test/angular-generation.test",
                 //"${workspaceFolder}/build/test/angular-generator.test"
-                "${workspaceFolder}/build/test/preact-generator.test"
-                // "${workspaceFolder}/build/test/vue-generation.test",
+                // "${workspaceFolder}/build/test/react-generator.test"
+                "${workspaceFolder}/build/test/vue-generation.test",
                 //"${workspaceFolder}/build/test"
             ],
             // "preLaunchTask": "tsc: build - tsconfig.json",

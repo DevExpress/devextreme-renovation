@@ -10,10 +10,10 @@ interface Widget {
     restAttributes: any;
 }
 
-export default function Widget(props: { 
-    size: number, 
-    height: number, 
-    width: number 
+export default function Widget(props: {
+    size: number,
+    height: number,
+    width: number
 }) {
     const __restAttributes=useCallback(function __restAttributes(){
         const { height, size, width, ...restProps } = props;

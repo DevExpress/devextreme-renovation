@@ -12,7 +12,6 @@ const WidgetInput: WidgetInputType = {
 
 import * as Preact from 'preact';
 import { useCallback } from 'preact/hooks';
-
 interface Widget {
     props: typeof WidgetInput;
     getHeight: () => number;
@@ -26,7 +25,6 @@ export default function Widget(props: typeof WidgetInput) {
         onClick(11);
         return props.height;
     }, [props.onClick, props.height]);
-
     const __restAttributes=useCallback(function __restAttributes(){
         const {  height, onClick, ...restProps } = props;
         return restProps;

@@ -10,7 +10,7 @@ export const Props: PropsType = {
 };
 
 import * as Preact from "preact";
-import { useCallback } from "preact/hooks";
+import { useCallback } from "preact/hooks"
 
 interface Widget {
     props: typeof Props;
@@ -18,7 +18,7 @@ interface Widget {
     restAttributes: any;
 }
 
-export default function Widget(props: typeof Props) {
+export function Widget(props: typeof Props) {
     const clickHandler = useCallback(function clickHandler() {
         props.onClick!({ type: props.type })
     }, [props.onClick, props.type]);
