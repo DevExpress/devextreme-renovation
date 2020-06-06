@@ -7,6 +7,7 @@ import { printSourceCodeAst as getResult, removeSpaces } from "./helpers/common"
 import { GeneratorContext } from "../base-generator/types";
 import { Identifier } from "../base-generator/expressions/common";
 import { JsxExpression } from "../angular-generator";
+import { Decorators } from "../component_declaration/decorators";
 
 import factory from "./helpers/create-component";
 
@@ -927,7 +928,7 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString({
                 members: [
                     generator.createProperty(
-                        [createDecorator("Ref")],
+                        [createDecorator(Decorators.Ref)],
                         [],
                         generator.createIdentifier("refName"),
                         undefined,
@@ -955,7 +956,7 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString({
                 members: [
                     generator.createProperty(
-                        [createDecorator("Ref")],
+                        [createDecorator(Decorators.Ref)],
                         [],
                         generator.createIdentifier("refName"),
                         undefined,
@@ -1158,7 +1159,7 @@ mocha.describe("Angular generator", function () {
                         [],
                         [
                         generator.createProperty(
-                            [createDecorator("Event")],
+                            [createDecorator(Decorators.Event)],
                             [],
                             generator.createIdentifier("event"),
                             undefined,
@@ -1192,7 +1193,7 @@ mocha.describe("Angular generator", function () {
                         [],
                         [
                         generator.createProperty(
-                            [createDecorator("OneWay")],
+                            [createDecorator(Decorators.OneWay)],
                             [],
                             generator.createIdentifier("className"),
                             undefined,
@@ -1226,7 +1227,7 @@ mocha.describe("Angular generator", function () {
                         [],
                         [
                         generator.createProperty(
-                            [createDecorator("OneWay")],
+                            [createDecorator(Decorators.OneWay)],
                             [],
                             generator.createIdentifier("className"),
                             undefined,
@@ -2467,7 +2468,7 @@ mocha.describe("Angular generator", function () {
                 );
 
                 const member = generator.createProperty(
-                    [createDecorator("OneWay")],
+                    [createDecorator(Decorators.OneWay)],
                     [],
                     generator.createIdentifier("height")
                 );
@@ -2766,20 +2767,20 @@ mocha.describe("Angular generator", function () {
 
     mocha.describe("Decorators", function () {
         mocha.it("OneWay -> Input", function () {
-            const decorator = createDecorator("OneWay");
+            const decorator = createDecorator(Decorators.OneWay);
 
-            assert.strictEqual(decorator.name, "OneWay");
+            assert.strictEqual(decorator.name, Decorators.OneWay);
             assert.strictEqual(decorator.toString(), "@Input()");
         });
 
         mocha.it("TwoWay -> Output", function () {
-            const decorator = createDecorator("TwoWay");
+            const decorator = createDecorator(Decorators.TwoWay);
 
             assert.strictEqual(decorator.toString(), "@Input()");
         });
 
         mocha.it("Event -> Output", function () {
-            const decorator = createDecorator("Event");
+            const decorator = createDecorator(Decorators.Event);
 
             assert.strictEqual(decorator.toString(), "@Output()");
         });
@@ -2797,7 +2798,7 @@ mocha.describe("Angular generator", function () {
         });
 
         mocha.it("Ref -> ''", function () {
-            const decorator = createDecorator("Ref");
+            const decorator = createDecorator(Decorators.Ref);
 
             assert.strictEqual(decorator.toString(), "");
         });
@@ -2880,7 +2881,7 @@ mocha.describe("Angular generator", function () {
                 [],
                 [
                     generator.createProperty(
-                        [createDecorator("OneWay")],
+                        [createDecorator(Decorators.OneWay)],
                         [],
                         generator.createIdentifier("p1"),
                         generator.SyntaxKind.QuestionToken,
@@ -2888,7 +2889,7 @@ mocha.describe("Angular generator", function () {
                         generator.createNumericLiteral("10")
                     ),
                     generator.createProperty(
-                        [createDecorator("OneWay")],
+                        [createDecorator(Decorators.OneWay)],
                         [],
                         generator.createIdentifier("p2"),
                         generator.SyntaxKind.QuestionToken,
@@ -2916,7 +2917,7 @@ mocha.describe("Angular generator", function () {
                 [],
                 [
                     generator.createProperty(
-                        [createDecorator("OneWay")],
+                        [createDecorator(Decorators.OneWay)],
                         [],
                         generator.createIdentifier("p1"),
                         generator.SyntaxKind.QuestionToken,
@@ -2948,7 +2949,7 @@ mocha.describe("Angular generator", function () {
 
         mocha.it("Ref Prop generates ViewChild", function () {
             const property = generator.createProperty(
-                [createDecorator("Ref")],
+                [createDecorator(Decorators.Ref)],
                 [],
                 generator.createIdentifier("host"),
                 generator.SyntaxKind.QuestionToken,
@@ -2961,7 +2962,7 @@ mocha.describe("Angular generator", function () {
 
         mocha.it("Event Prop generates Event EventEmitter", function () {
             const property = generator.createProperty(
-                [createDecorator("Event")],
+                [createDecorator(Decorators.Event)],
                 [],
                 generator.createIdentifier("onClick"),
                 generator.SyntaxKind.QuestionToken,
@@ -2974,7 +2975,7 @@ mocha.describe("Angular generator", function () {
 
         mocha.it("Event Prop with type FunctionNodeType", function () {
             const property = generator.createProperty(
-                [createDecorator("Event")],
+                [createDecorator(Decorators.Event)],
                 [],
                 generator.createIdentifier("onClick"),
                 generator.SyntaxKind.QuestionToken,
@@ -3018,7 +3019,7 @@ mocha.describe("Angular generator", function () {
                 [],
                 [
                     generator.createProperty(
-                        [createDecorator("TwoWay")],
+                        [createDecorator(Decorators.TwoWay)],
                         [],
                         generator.createIdentifier("p1"),
                         generator.SyntaxKind.QuestionToken,
@@ -3034,7 +3035,7 @@ mocha.describe("Angular generator", function () {
 
         mocha.it("TwoWay without type", function () { 
             const property = generator.createProperty(
-                [createDecorator("TwoWay")],
+                [createDecorator(Decorators.TwoWay)],
                 [],
                 generator.createIdentifier("pressed"),
                 generator.SyntaxKind.QuestionToken,
@@ -3099,7 +3100,7 @@ mocha.describe("Angular generator", function () {
             property.prefix = "_";
 
             const prop = new Property(
-                [createDecorator("OneWay")],
+                [createDecorator(Decorators.OneWay)],
                 [],
                 generator.createIdentifier("name"),
                 undefined,
@@ -3145,7 +3146,7 @@ mocha.describe("Angular generator", function () {
                 const component = createComponent(
                     [
                         generator.createProperty(
-                            [createDecorator("OneWay")],
+                            [createDecorator(Decorators.OneWay)],
                             [],
                             generator.createIdentifier("p")
                         )
@@ -3171,7 +3172,7 @@ mocha.describe("Angular generator", function () {
                 const component = createComponent(
                     [
                         generator.createProperty(
-                            [createDecorator("TwoWay")],
+                            [createDecorator(Decorators.TwoWay)],
                             [],
                             generator.createIdentifier("p")
                         )
@@ -3184,12 +3185,12 @@ mocha.describe("Angular generator", function () {
                 const component = createComponent(
                     [
                         generator.createProperty(
-                            [createDecorator("OneWay")],
+                            [createDecorator(Decorators.OneWay)],
                             [],
                             generator.createIdentifier("p")
                         ),
                         generator.createProperty(
-                            [createDecorator("TwoWay")],
+                            [createDecorator(Decorators.TwoWay)],
                             [],
                             generator.createIdentifier("p")
                         )
@@ -3202,7 +3203,7 @@ mocha.describe("Angular generator", function () {
                 const component = createComponent(
                     [
                         generator.createProperty(
-                            [createDecorator("Event")],
+                            [createDecorator(Decorators.Event)],
                             [],
                             generator.createIdentifier("p")
                         )
@@ -3215,7 +3216,7 @@ mocha.describe("Angular generator", function () {
                 const component = createComponent(
                     [
                         generator.createProperty(
-                            [createDecorator("Ref")],
+                            [createDecorator(Decorators.Ref)],
                             [],
                             generator.createIdentifier("p")
                         )
@@ -3268,7 +3269,7 @@ mocha.describe("Angular generator", function () {
                 [],
                 [
                     generator.createProperty(
-                        [createDecorator("OneWay")],
+                        [createDecorator(Decorators.OneWay)],
                         [],
                         generator.createIdentifier("p"),
                         "",
@@ -3370,7 +3371,7 @@ mocha.describe("Angular generator", function () {
         mocha.describe("Members generation", function () { 
             mocha.it("Access props - this.prop", function () { 
                 const property = new Property(
-                    [createDecorator("OneWay")],
+                    [createDecorator(Decorators.OneWay)],
                     [],
                     generator.createIdentifier("width"),
                     undefined,
@@ -3392,7 +3393,7 @@ mocha.describe("Angular generator", function () {
 
             mocha.it("Access TwoWay prop - this.prop", function () { 
                 const property = new Property(
-                    [createDecorator("TwoWay")],
+                    [createDecorator(Decorators.TwoWay)],
                     [],
                     generator.createIdentifier("width"),
                     undefined,
@@ -3414,7 +3415,7 @@ mocha.describe("Angular generator", function () {
 
             mocha.it("Access props - this.props.prop", function () { 
                 const property = new Property(
-                    [createDecorator("OneWay")],
+                    [createDecorator(Decorators.OneWay)],
                     [],
                     generator.createIdentifier("width"),
                     undefined,
@@ -3439,7 +3440,7 @@ mocha.describe("Angular generator", function () {
 
             mocha.it("Access props - viewModel.props.prop -> newViewModel.prop", function () { 
                 const property = new Property(
-                    [createDecorator("OneWay")],
+                    [createDecorator(Decorators.OneWay)],
                     [],
                     generator.createIdentifier("width"),
                     undefined,
@@ -3464,7 +3465,7 @@ mocha.describe("Angular generator", function () {
 
             mocha.it("Access props - viewModel.props.prop", function () { 
                 const property = new Property(
-                    [createDecorator("OneWay")],
+                    [createDecorator(Decorators.OneWay)],
                     [],
                     generator.createIdentifier("width"),
                     undefined,
@@ -3489,7 +3490,7 @@ mocha.describe("Angular generator", function () {
 
             mocha.it("Access props - viewModel.props.prop - prop", function () { 
                 const property = new Property(
-                    [createDecorator("OneWay")],
+                    [createDecorator(Decorators.OneWay)],
                     [],
                     generator.createIdentifier("width"),
                     undefined,
@@ -3549,7 +3550,7 @@ mocha.describe("Angular generator", function () {
                 const stringValue = variableDeclaration.toString({
                     members: [
                         generator.createProperty(
-                            [createDecorator("OneWay")],
+                            [createDecorator(Decorators.OneWay)],
                             [],
                             generator.createIdentifier("p1")
                         )
@@ -3569,17 +3570,17 @@ mocha.describe("Angular generator", function () {
 
                 const members = [
                     generator.createProperty(
-                        [createDecorator("OneWay")],
+                        [createDecorator(Decorators.OneWay)],
                         [],
                         generator.createIdentifier("p1")
                     ),
                     generator.createProperty(
-                        [createDecorator("TwoWay")],
+                        [createDecorator(Decorators.TwoWay)],
                         [],
                         generator.createIdentifier("p2")
                     ),
                     generator.createProperty(
-                        [createDecorator("Event")],
+                        [createDecorator(Decorators.Event)],
                         [],
                         generator.createIdentifier("p3")
                     ),
@@ -3634,7 +3635,7 @@ mocha.describe("Angular generator", function () {
 
             mocha.it("Access TwoWay props - this.props.prop", function () { 
                 const property = new Property(
-                    [createDecorator("TwoWay")],
+                    [createDecorator(Decorators.TwoWay)],
                     [],
                     generator.createIdentifier("width"),
                     undefined,
@@ -3659,7 +3660,7 @@ mocha.describe("Angular generator", function () {
 
             mocha.it("Call Event", function () { 
                 const property = new Property(
-                    [createDecorator("Event")],
+                    [createDecorator(Decorators.Event)],
                     [],
                     generator.createIdentifier("onClick"),
                     undefined,
@@ -3685,7 +3686,7 @@ mocha.describe("Angular generator", function () {
 
             mocha.it("Set TwoWay Prop", function () { 
                 const property = new Property(
-                    [createDecorator("TwoWay")],
+                    [createDecorator(Decorators.TwoWay)],
                     [],
                     generator.createIdentifier("width"),
                     undefined,
@@ -3711,7 +3712,7 @@ mocha.describe("Angular generator", function () {
 
             mocha.it("Can't set OneWay Prop", function () { 
                 const property = new Property(
-                    [createDecorator("OneWay")],
+                    [createDecorator(Decorators.OneWay)],
                     [],
                     generator.createIdentifier("width"),
                     undefined,
@@ -3740,7 +3741,7 @@ mocha.describe("Angular generator", function () {
 
             mocha.it("Can't set OneWay Prop (using unary)", function () { 
                 const property = new Property(
-                    [createDecorator("OneWay")],
+                    [createDecorator(Decorators.OneWay)],
                     [],
                     generator.createIdentifier("width"),
                     undefined,
@@ -3768,7 +3769,7 @@ mocha.describe("Angular generator", function () {
 
             mocha.it("Access elementRef", function () { 
                 const property = new Property(
-                    [createDecorator("Ref")],
+                    [createDecorator(Decorators.Ref)],
                     [],
                     generator.createIdentifier("div"),
                     undefined,
@@ -3777,7 +3778,7 @@ mocha.describe("Angular generator", function () {
                 );
 
                 const propertyWithExclamation = new Property(
-                    [createDecorator("Ref")],
+                    [createDecorator(Decorators.Ref)],
                     [],
                     generator.createIdentifier("div"),
                     "!",
@@ -3786,7 +3787,7 @@ mocha.describe("Angular generator", function () {
                 );
 
                 const propertyWithQuestion = new Property(
-                    [createDecorator("Ref")],
+                    [createDecorator(Decorators.Ref)],
                     [],
                     generator.createIdentifier("div"),
                     "?",
@@ -3848,7 +3849,7 @@ mocha.describe("Angular generator", function () {
 
                 const component = createComponent(
                     ["p", "p1", "p2"].map(name => generator.createProperty(
-                        [createDecorator("OneWay")],
+                        [createDecorator(Decorators.OneWay)],
                         undefined,
                         generator.createIdentifier(name),
                         undefined,
@@ -3886,7 +3887,7 @@ mocha.describe("Angular generator", function () {
 
                 const component = createComponent(
                     ["p", "p1", "p2"].map(name => generator.createProperty(
-                        [createDecorator("OneWay")],
+                        [createDecorator(Decorators.OneWay)],
                         undefined,
                         generator.createIdentifier(name),
                         undefined,
@@ -3978,7 +3979,7 @@ mocha.describe("Angular generator", function () {
             mocha.it("should not generate schedule effect method if there is not props in dependency", function () { 
                 const component = createComponent(
                     ["p", "p1"].map(name => generator.createProperty(
-                        [createDecorator("OneWay")],
+                        [createDecorator(Decorators.OneWay)],
                         undefined,
                         generator.createIdentifier(name),
                         undefined,

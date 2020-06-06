@@ -5,7 +5,8 @@ import generator, {
     Property,
     ComponentInput
 } from "../react-generator";
-import { toStringOptions } from "../base-generator/types"
+import { toStringOptions } from "../base-generator/types";
+import { Decorators } from "../component_declaration/decorators";
 
 import compile from "../component-compiler";
 import path from "path";
@@ -289,17 +290,17 @@ mocha.describe("React Component", function () {
             const component = createComponent(
                 [
                     generator.createProperty(
-                        [createDecorator("Template")],
+                        [createDecorator(Decorators.Template)],
                         [],
                         generator.createIdentifier("template")
                     ),
                     generator.createProperty(
-                        [createDecorator("Slot")],
+                        [createDecorator(Decorators.Slot)],
                         [],
                         generator.createIdentifier("default")
                     ),
                     generator.createProperty(
-                        [createDecorator("OneWay")],
+                        [createDecorator(Decorators.OneWay)],
                         [],
                         generator.createIdentifier("p")
                     )
@@ -385,7 +386,7 @@ mocha.describe("React Component", function () {
             const component = createComponent(
                 [
                     generator.createProperty(
-                        [createDecorator("Template")],
+                        [createDecorator(Decorators.Template)],
                         [],
                         generator.createIdentifier("template")
                     )
@@ -448,7 +449,7 @@ mocha.describe("React Component", function () {
             const component = createComponent(
                 [
                     generator.createProperty(
-                        [createDecorator("Slot")],
+                        [createDecorator(Decorators.Slot)],
                         [],
                         generator.createIdentifier("named")
                     )
@@ -510,7 +511,7 @@ mocha.describe("React Component", function () {
             const component = createComponent(
                 [
                     generator.createProperty(
-                        [createDecorator("TwoWay")],
+                        [createDecorator(Decorators.TwoWay)],
                         [],
                         generator.createIdentifier("p")
                     )
@@ -598,7 +599,7 @@ mocha.describe("React Component", function () {
             const component = createComponent(
                 [
                     generator.createProperty(
-                        [createDecorator("Slot")],
+                        [createDecorator(Decorators.Slot)],
                         [],
                         generator.createIdentifier("default")
                     )
@@ -687,7 +688,7 @@ mocha.describe("React Component", function () {
 
         mocha.it("Template property should not be excluded from binding pattern", function () {
             const templateProperty = generator.createProperty(
-                [createDecorator("Template")],
+                [createDecorator(Decorators.Template)],
                 [],
                 generator.createIdentifier("template")
             );
@@ -725,7 +726,7 @@ mocha.describe("React Component", function () {
                 const component = createComponent(
                     [
                         generator.createProperty(
-                            [createDecorator("Template")],
+                            [createDecorator(Decorators.Template)],
                             [],
                             generator.createIdentifier("template"),
                             undefined
@@ -770,7 +771,7 @@ mocha.describe("React Component", function () {
                 const component = createComponent(
                     [
                         generator.createProperty(
-                            [createDecorator("Template")],
+                            [createDecorator(Decorators.Template)],
                             [],
                             generator.createIdentifier("template"),
                             undefined
@@ -821,7 +822,7 @@ mocha.describe("React Component", function () {
                 const component = createComponent(
                     [
                         generator.createProperty(
-                            [createDecorator("Template")],
+                            [createDecorator(Decorators.Template)],
                             [],
                             generator.createIdentifier("template"),
                             undefined
@@ -873,7 +874,7 @@ mocha.describe("React Component", function () {
                 const component = createComponent(
                     [
                         generator.createProperty(
-                            [createDecorator("Template")],
+                            [createDecorator(Decorators.Template)],
                             [],
                             generator.createIdentifier("template"),
                             undefined
@@ -930,7 +931,7 @@ mocha.describe("React Component", function () {
                 const component = createComponent(
                     [
                         generator.createProperty(
-                            [createDecorator("Template")],
+                            [createDecorator(Decorators.Template)],
                             [],
                             generator.createIdentifier("template"),
                             undefined
@@ -994,7 +995,7 @@ mocha.describe("React Component", function () {
                 const component = createComponent(
                     [
                         generator.createProperty(
-                            [createDecorator("Template")],
+                            [createDecorator(Decorators.Template)],
                             [],
                             generator.createIdentifier("template"),
                             undefined,
@@ -1054,12 +1055,12 @@ mocha.describe("React Component", function () {
         mocha.it("getHeritageProperties", function () {
             const component = createComponent([], [
                 generator.createProperty(
-                    [createDecorator("OneWay")],
+                    [createDecorator(Decorators.OneWay)],
                     [],
                     generator.createIdentifier("p1")
                 ),
                 generator.createProperty(
-                    [createDecorator("TwoWay")],
+                    [createDecorator(Decorators.TwoWay)],
                     [],
                     generator.createIdentifier("p2")
                 ),
@@ -1069,12 +1070,12 @@ mocha.describe("React Component", function () {
                     generator.createIdentifier("p3")
                 ),
                 generator.createProperty(
-                    [createDecorator("Slot")],
+                    [createDecorator(Decorators.Slot)],
                     [],
                     generator.createIdentifier("p4")
                 ),
                 generator.createProperty(
-                    [createDecorator("Template")],
+                    [createDecorator(Decorators.Template)],
                     [],
                     generator.createIdentifier("p5")
                 ),
@@ -1232,7 +1233,7 @@ mocha.describe("import Components", function () {
         const decorator = generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)]));
         const childProperty = generator.createProperty(
             [generator.createDecorator(generator.createCall(
-                generator.createIdentifier("OneWay"),
+                generator.createIdentifier(Decorators.OneWay),
                 undefined
             ))],
             undefined,
@@ -1268,7 +1269,7 @@ mocha.describe("import Components", function () {
         const decorator = generator.createDecorator(generator.createCall(generator.createIdentifier("Component"), [], [generator.createObjectLiteral([], false)]));
         const childProperty = generator.createProperty(
             [generator.createDecorator(generator.createCall(
-                generator.createIdentifier("OneWay"),
+                generator.createIdentifier(Decorators.OneWay),
                 undefined,
                 []
             ))],
@@ -1350,7 +1351,7 @@ mocha.describe("import Components", function () {
             [],
             [heritageClause],
             [generator.createProperty(
-                [createDecorator("OneWay")],
+                [createDecorator(Decorators.OneWay)],
                 [],
                 generator.createIdentifier("height"),
                 generator.SyntaxKind.ExclamationToken,
@@ -1378,7 +1379,7 @@ mocha.describe("import Components", function () {
             [],
             [],
             [generator.createProperty(
-                [createDecorator("OneWay")],
+                [createDecorator(Decorators.OneWay)],
                 [],
                 generator.createIdentifier("height"),
                 generator.SyntaxKind.ExclamationToken,
@@ -1400,7 +1401,7 @@ mocha.describe("import Components", function () {
             [],
             [],
             [generator.createProperty(
-                [createDecorator("TwoWay")],
+                [createDecorator(Decorators.TwoWay)],
                 [],
                 generator.createIdentifier("p"),
                 generator.SyntaxKind.ExclamationToken,
@@ -1427,7 +1428,7 @@ mocha.describe("import Components", function () {
             [],
             [],
             [generator.createProperty(
-                [createDecorator("TwoWay")],
+                [createDecorator(Decorators.TwoWay)],
                 [],
                 generator.createIdentifier("p"),
                 generator.SyntaxKind.ExclamationToken,
@@ -1475,7 +1476,7 @@ mocha.describe("Widget in jsx element", function () {
             [],
             [
                 generator.createProperty(
-                    [createDecorator("OneWay")],
+                    [createDecorator(Decorators.OneWay)],
                     [],
                     generator.createIdentifier("p"),
                     undefined,
@@ -1483,7 +1484,7 @@ mocha.describe("Widget in jsx element", function () {
                     undefined
                 ),
                 generator.createProperty(
-                    [createDecorator("Slot")],
+                    [createDecorator(Decorators.Slot)],
                     [],
                     generator.createIdentifier("default"),
                     undefined,
@@ -1542,7 +1543,7 @@ mocha.describe("Widget in jsx element", function () {
                 ),
 
                 generator.createProperty(
-                    [createDecorator("OneWay")],
+                    [createDecorator(Decorators.OneWay)],
                     [],
                     generator.createIdentifier("p"),
                     undefined,
@@ -1581,7 +1582,7 @@ mocha.describe("Widget in jsx element", function () {
 mocha.describe("Expressions with props/state/internal state", function () {
     this.beforeEach(function () {
         this.prop = generator.createProperty(
-            [createDecorator("OneWay")],
+            [createDecorator(Decorators.OneWay)],
             [],
             generator.createIdentifier("p1"),
             generator.SyntaxKind.QuestionToken,
@@ -1590,7 +1591,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
         this.prop.scope = "props";
 
         this.state = generator.createProperty(
-            [createDecorator("TwoWay")],
+            [createDecorator(Decorators.TwoWay)],
             [],
             generator.createIdentifier("s1"),
             generator.SyntaxKind.QuestionToken,
@@ -2130,7 +2131,7 @@ mocha.describe("ComponentInput", function () {
             [],
             [
                 new Property(
-                    [createDecorator("OneWay")],
+                    [createDecorator(Decorators.OneWay)],
                     [],
                     generator.createIdentifier("p"),
                     undefined,
@@ -2138,7 +2139,7 @@ mocha.describe("ComponentInput", function () {
                     generator.createNumericLiteral("10")
                 ),
                 new Property(
-                    [createDecorator("OneWay")],
+                    [createDecorator(Decorators.OneWay)],
                     [],
                     generator.createIdentifier("p1"),
                     undefined,
@@ -2165,7 +2166,7 @@ mocha.describe("ComponentInput", function () {
             [],
             [
                 generator.createProperty([
-                    createDecorator("Template")
+                    createDecorator(Decorators.Template)
                 ],
                     [],
                     generator.createIdentifier("template"),
@@ -2213,7 +2214,7 @@ mocha.describe("ComponentInput", function () {
             [],
             [
                 generator.createProperty([
-                    createDecorator("Template")
+                    createDecorator(Decorators.Template)
                 ],
                     [],
                     generator.createIdentifier("contentTemplate"),
@@ -2239,7 +2240,7 @@ mocha.describe("ComponentInput", function () {
                 [],
                 [
                     generator.createProperty(
-                        [createDecorator("OneWay")],
+                        [createDecorator(Decorators.OneWay)],
                         undefined,
                         generator.createIdentifier("prop"),
                         generator.SyntaxKind.ExclamationToken,
@@ -2274,7 +2275,7 @@ mocha.describe("ComponentInput", function () {
             const component = createComponent([
                 generator.createProperty(
                     [generator.createDecorator(generator.createCall(
-                        generator.createIdentifier("OneWay"), [], []
+                        generator.createIdentifier(Decorators.OneWay), [], []
                     ))],
                     [],
                     generator.createIdentifier("p"),
@@ -2289,7 +2290,7 @@ mocha.describe("ComponentInput", function () {
             const component = createComponent([
                 generator.createProperty(
                     [generator.createDecorator(generator.createCall(
-                        generator.createIdentifier("TwoWay"), [], []
+                        generator.createIdentifier(Decorators.TwoWay), [], []
                     ))],
                     [],
                     generator.createIdentifier("p"),
@@ -2313,7 +2314,7 @@ mocha.describe("ComponentInput", function () {
             const component = createComponent([
                 generator.createProperty(
                     [generator.createDecorator(generator.createCall(
-                        generator.createIdentifier("OneWay"), [], []
+                        generator.createIdentifier(Decorators.OneWay), [], []
                     ))],
                     [],
                     generator.createIdentifier("p"),
@@ -2409,7 +2410,7 @@ mocha.describe("ComponentInput", function () {
                     [],
                     [
                         generator.createProperty([
-                            createDecorator("Template")
+                            createDecorator(Decorators.Template)
                         ],
                             [],
                             generator.createIdentifier("contentTemplate"),
@@ -2417,7 +2418,7 @@ mocha.describe("ComponentInput", function () {
                             generator.createKeywordTypeNode("any")
                         ),
                         generator.createProperty([
-                            createDecorator("OneWay")
+                            createDecorator(Decorators.OneWay)
                         ],
                             [],
                             generator.createIdentifier("contentRender"),
@@ -2441,7 +2442,7 @@ mocha.describe("ComponentInput", function () {
                     [],
                     [
                         generator.createProperty([
-                            createDecorator("Template")
+                            createDecorator(Decorators.Template)
                         ],
                             [],
                             generator.createIdentifier("contentTemplate"),
@@ -2449,7 +2450,7 @@ mocha.describe("ComponentInput", function () {
                             generator.createKeywordTypeNode("any")
                         ),
                         generator.createProperty([
-                            createDecorator("Template")
+                            createDecorator(Decorators.Template)
                         ],
                             [],
                             generator.createIdentifier("contentComponent"),

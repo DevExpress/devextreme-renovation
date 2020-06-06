@@ -298,7 +298,7 @@ export class VueComponent extends Component {
     }
 
     addPrefixToMembers(members: Array<Property | Method>) { 
-        members.filter(m => !m.decorators.find(d => d.name === "Method")).forEach(m => {
+        members.filter(m => !m.isApiMethod).forEach(m => {
             m.prefix = "__";
         });
         return members;

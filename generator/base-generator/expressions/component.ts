@@ -11,6 +11,7 @@ import { BaseFunction } from './functions';
 import { compileType } from "../utils/string";
 import SyntaxKind from "../syntaxKind";
 import { warn } from "../../utils/messages";
+import { Decorators } from "../../component_declaration/decorators";
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
     return heritageClauses.some(h => h.isJsxComponent);
@@ -19,12 +20,12 @@ export function isJSXComponent(heritageClauses: HeritageClause[]) {
 export function getProps(members: BaseClassMember[]): Property[] {
     return members.filter(m => m.decorators
         .find(d =>
-            d.name === "OneWay" ||
-            d.name === "TwoWay" ||
-            d.name === "Event" ||
-            d.name === "Template" ||
-            d.name === "Slot" ||
-            d.name === "RefProp")
+            d.name === Decorators.OneWay ||
+            d.name === Decorators.TwoWay ||
+            d.name === Decorators.Event ||
+            d.name === Decorators.Template ||
+            d.name === Decorators.Slot ||
+            d.name === Decorators.RefProp)
     ) as Property[];
 }
 
@@ -121,12 +122,9 @@ export class Component extends Class implements Heritable {
         this.apiRefs = refs.apiRefs;
 
         this.internalState = members
-            .filter(m =>
-                m instanceof Property &&
-                (m.decorators.length === 0 || m.decorators.find(d => d.name === "InternalState"))
-            ) as Property[];
+            .filter(m => m.isInternalState) as Property[];
 
-        this.state = members.filter(m => m.decorators.find(d => d.name === "TwoWay")) as Property[];
+        this.state = members.filter(m => m.isState) as Property[];
 
         let modelProps = this.state.filter(m => m.decorators.find(d => (d.expression.arguments[0] as ObjectLiteral)?.getProperty("isModel")?.toString() === "true"));
 
@@ -140,9 +138,9 @@ export class Component extends Class implements Heritable {
 
         this.listeners = members.filter(m => m.decorators.find(d => d.name === "Listen")) as Method[];
 
-        this.effects = members.filter(m => m.decorators.find(d => d.name === "Effect")) as Method[];
+        this.effects = members.filter(m => m.isEffect) as Method[];
 
-        this.slots = members.filter(m => m.decorators.find(d => d.name === "Slot")) as Property[];
+        this.slots = members.filter(m => m.isSlot) as Property[];
 
         this.view = decorator.getParameter("view");
         this.viewModel = decorator.getParameter("viewModel") || "";
@@ -162,14 +160,7 @@ export class Component extends Class implements Heritable {
     }
 
     get heritageProperties() {
-        return this.members
-            .filter(m => m instanceof Property &&
-                m.decorators.find(d =>
-                    d.name === "OneWay" ||
-                    d.name === "TwoWay" ||
-                    d.name === "Event" ||
-                    d.name === "Slot" ||
-                    d.name === "Template"))
+        return getProps(this.members)
             .map(p=>p as Property)
             .map(p => {
                 const property = new Property(p.decorators, p.modifiers, p._name, p.questionOrExclamationToken, p.type, p.initializer);
