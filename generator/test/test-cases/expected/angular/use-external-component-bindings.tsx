@@ -3,7 +3,7 @@ import Props from "./component-bindings-only";
 import { Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { convertRulesToOptions, Rule } from "../../../../../component_declaration/default_options"
-type WidgetOptionRule = Rule<Props>;
+type WidgetOptionRule = Rule<Partial<Props>>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {

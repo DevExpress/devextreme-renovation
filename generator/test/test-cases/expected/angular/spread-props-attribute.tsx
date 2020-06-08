@@ -4,7 +4,7 @@ import { Input, Output, EventEmitter } from '@angular/core';
 export class WidgetInput {
 	@Input() visible?: boolean;
 	@Input() value?: boolean;
-	@Output() valueChange?: EventEmitter<boolean> = new EventEmitter();
+	@Output() valueChange: EventEmitter<boolean> = new EventEmitter();
 }
 
 import { Component, NgModule, forwardRef, HostListener } from '@angular/core';
@@ -22,7 +22,7 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
     providers: [ CUSTOM_VALUE_ACCESSOR_PROVIDER ],
 	template: `<dx-inner-widget
               [value]="value"
-              (valueChange)="valueChange!.emit($event)"
+              (valueChange)="valueChange.emit($event)"
             ></dx-inner-widget>`,
 })
 export default class Widget extends WidgetInput implements ControlValueAccessor {

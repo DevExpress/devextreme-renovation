@@ -1,7 +1,7 @@
 import { Input, Output, EventEmitter } from "@angular/core";
 class WidgetInput {
   @Input() propState: number = 1;
-  @Output() propStateChange?: EventEmitter<number> = new EventEmitter();
+  @Output() propStateChange: EventEmitter<number> = new EventEmitter();
 }
 
 import { Component, NgModule } from "@angular/core";
@@ -18,10 +18,10 @@ export default class Widget extends WidgetInput  {
         this._innerState = this.innerState + 1;
         this._innerState = this.innerState + 1;
         this._innerState = this.innerState + 1;
-        this.propStateChange!.emit(this.propState = this.propState + 1);
-        this.propStateChange!.emit(this.propState = this.propState + 1);
-        this.propStateChange!.emit(this.propState = this.propState + 1);
-        this.propStateChange!.emit(this.propState = this.propState + 1);
+        this.propStateChange.emit(this.propState = this.propState + 1);
+        this.propStateChange.emit(this.propState = this.propState + 1);
+        this.propStateChange.emit(this.propState = this.propState + 1);
+        this.propStateChange.emit(this.propState = this.propState + 1);
     }
     get __restAttributes():any{
         return {};

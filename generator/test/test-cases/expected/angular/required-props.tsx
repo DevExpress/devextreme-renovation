@@ -16,7 +16,7 @@ import { Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { convertRulesToOptions, Rule } from "../../../../../component_declaration/default_options";
 
-type WidgetOptionRule = Rule<WidgetInput>;
+type WidgetOptionRule = Rule<Partial<WidgetInput>>;
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {
     __defaultOptionRules.push(rule);
