@@ -71,6 +71,8 @@ export const counter = (function () {
 export interface toStringOptions extends  BaseToStringOptions {
     members: Array<Property | Method>;
     hasStyle?: boolean;
+    keys?: Expression[];
+    trackBy?: TrackByAttribute[];
 }
 
 function processTagName(tagName: Expression, context: GeneratorContext) { 
@@ -359,9 +361,6 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         return result;
     }
 
-    trackBy() { 
-        return this.attributes.filter(a => a instanceof TrackByAttribute) as TrackByAttribute[];
-    }
 }
 
 export class JsxSelfClosingElement extends JsxOpeningElement{ 
@@ -448,7 +447,11 @@ export class JsxAttribute extends BaseJsxAttribute {
         return name;
     }
 
-    compileKey(): string|null { 
+    compileKey(options?: toStringOptions): string | null { 
+        if (options) { 
+            options.keys = options.keys || [];
+            options.keys.push(this.initializer);
+        }
         return "";
     }
 
@@ -509,7 +512,7 @@ export class JsxAttribute extends BaseJsxAttribute {
         const name = this.compileName(options);
 
         if (name === "key" && this.compileKey() !== null) {
-            return this.compileKey() as string;
+            return this.compileKey(options) as string;
         }
 
         if (this.isStringLiteralValue()) { 
@@ -647,7 +650,7 @@ export class JsxChildExpression extends JsxExpression {
         return new JsxExpression(undefined, statement);
     }
 
-    createContainer(attributes: JsxAttribute[], children: Array<JsxExpression | JsxElement | JsxSelfClosingElement>) { 
+    createContainer(attributes: JsxAttribute[], children: Array<JsxExpression | JsxElement | JsxSelfClosingElement | string>) { 
         const containerIdentifer = new Identifier("ng-container")
         return new JsxElement(
             new JsxOpeningElement(
@@ -747,41 +750,47 @@ export class JsxChildExpression extends JsxExpression {
     }
 
     compileIterator(iterator: BaseBaseFunction, expression: Call, options?: toStringOptions): string {
-        const templateOptions = options ? { ...options } : { members: [] };
+        const templateOptions: toStringOptions = options ? { ...options, ...{ keys: [] } } : { members: [] };
         const templateExpression = getTemplate(iterator, templateOptions, true);
         const itemsExpression = (expression.expression as PropertyAccess).expression;
         const itemName = this.getIteratorItemName(iterator.parameters[0].name, templateOptions).toString();
         const itemsExpressionString = itemsExpression.toString(options);
-        let template: string = templateExpression ? templateExpression.toString(templateOptions) : "";
+        
+        let template = "";
+
+        if (isElement(templateExpression)) {
+            template = templateExpression.toString(templateOptions);
+        } else { 
+            const expression = new JsxChildExpression(templateExpression as JsxExpression);
+            template = expression.toString(templateOptions);
+        }
+
         const item = `let ${itemName} of ${itemsExpressionString}`;
         const ngForValue = [item];
         if (iterator.parameters[1]) {
             ngForValue.push(`index as ${iterator.parameters[1]}`);
         }
 
-        if (isElement(templateExpression)) {
-            const keyAttribute = templateExpression.attributes
-                .find(a => a instanceof JsxAttribute && a.name.toString() === "key") as JsxAttribute;
-            if (keyAttribute) {
-                const trackByName = new Identifier(`_trackBy_${itemsExpressionString.replace(".", "_")}_${counter.get()}`);
-                ngForValue.push(`trackBy: ${trackByName}`);
-                templateExpression.addAttribute(
+        const keyAttribute = templateOptions.keys?.[0];
+
+        if (keyAttribute) {
+            const trackByName = new Identifier(`_trackBy_${itemsExpressionString.replace(".", "_")}_${counter.get()}`);
+            ngForValue.push(`trackBy: ${trackByName}`);
+            if (options) {
+                options.trackBy = (options.trackBy || []).concat(templateOptions.trackBy || []);
+                options.trackBy.push(
                     new TrackByAttribute(
                         trackByName,
-                        keyAttribute.initializer.toString(templateOptions),
+                        keyAttribute.toString(templateOptions),
                         iterator.parameters[1]?.name.toString() || "",
                         itemName
                     )
                 );
             }
-            if (options) {
-                options.hasStyle = options.hasStyle || templateOptions.hasStyle;
-            }
         }
 
-        if (templateExpression instanceof BaseJsxExpression) { 
-            const expression = new JsxChildExpression(templateExpression as JsxExpression);
-            template = expression.toString(templateOptions);
+        if (options) {
+            options.hasStyle = options.hasStyle || templateOptions.hasStyle;
         }
                 
         return `<ng-container *ngFor="${ngForValue.join(";")}">${
@@ -839,20 +848,6 @@ export class JsxChildExpression extends JsxExpression {
         }
 
         return `{{${stringValue}}}`;
-    }
-
-    trackBy(options?:toStringOptions): TrackByAttribute[] { 
-        const iterator = this.getIterator(this.getExpression(options));
-
-        if (iterator) {
-            const templateOptions = options ? { ...options } : options;
-            const templateExpression = getTemplate(iterator, templateOptions, true);
-            if (isElement(templateExpression)) {
-                return templateExpression.trackBy(options);
-            }       
-        }
-
-        return [];
     }
 }
 
@@ -928,15 +923,6 @@ export class JsxElement extends BaseJsxElement {
         return allAttributes;
     }
 
-    trackBy(options?: toStringOptions): Array<TrackByAttribute> { 
-        return this.openingElement.trackBy().concat(this.children.reduce((trackBy: Array<TrackByAttribute>, c) => {
-            if (c instanceof JsxExpression || c instanceof JsxElement) {
-                return trackBy.concat(c.trackBy(options));
-            }
-
-            return trackBy;
-         }, []));
-    }
 }
 
 export class AngularBaseFunction extends BaseFunction { 
@@ -1341,23 +1327,8 @@ export class AngularComponent extends Component {
         `;
     }
 
-    compileTrackBy():string {
-        const viewFunction = this.decorator.getViewFunction();
-        if (viewFunction) {
-            const options = {
-                members: this.members,
-                state: [],
-                internalState: [],
-                props: [],
-                newComponentContext: this.viewModel ? "_viewModel" : ""
-            };
-            const expression = getTemplate(viewFunction, options);
-            if (isElement(expression)) {
-                return expression.trackBy(options).map(a => a.getTrackByDeclaration()).join("\n");
-            }
-        }
-
-        return "";
+    compileTrackBy(options: toStringOptions): string { 
+        return options.trackBy?.map(trackBy => trackBy.getTrackByDeclaration()).join("\n") || "";
     }
 
     compileSpreadAttributes(ngOnChangesStatements: string[], coreImports: string[]): string { 
@@ -1533,7 +1504,7 @@ export class AngularComponent extends Component {
                 }))
             .filter(m => m).join("\n")}
             ${spreadAttributes}
-            ${this.compileTrackBy()}
+            ${this.compileTrackBy(decoratorToStringOptions)}
             ${this.compileViewModel()}
             ${this.compileEffects(ngAfterViewInitStatements, ngOnDestroyStatements, ngOnChangesStatements, ngAfterViewCheckedStatements)}
             ${this.compileNgModel()}
