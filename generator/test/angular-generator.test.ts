@@ -161,6 +161,30 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), `attr="value"`);
         });
 
+        mocha.it(`aria-label attribute binding - [attr.aria-label]"`, function () {
+            const expression = generator.createJsxAttribute(
+                generator.createIdentifier("aria-label"),
+                generator.createJsxExpression(
+                    undefined,
+                    generator.createIdentifier("value")
+                )
+            );
+
+            assert.strictEqual(expression.toString(), `[attr.aria-label]="value"`);
+        });
+
+        mocha.it(`aria-label attribute - aria-label"`, function () {
+            const expression = generator.createJsxAttribute(
+                generator.createIdentifier("aria-label"),
+                generator.createJsxExpression(
+                    undefined,
+                    generator.createStringLiteral("value")
+                )
+            );
+
+            assert.strictEqual(expression.toString(), `aria-label="value"`);
+        });
+
         mocha.it("JsxSelfClosingElement with attributes", function () {
             const expression = generator.createJsxSelfClosingElement(
                 generator.createIdentifier("div"),

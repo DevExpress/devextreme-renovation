@@ -49,6 +49,8 @@ import { Decorators } from "./component_declaration/decorators";
 const VOID_ELEMENTS = 
     ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"];
 
+const ATTR_BINDING_ATTRIBUTES = ["aria-label"];
+
 export const isElement = (e: any): e is JsxElement | JsxSelfClosingElement =>
     e instanceof JsxElement || e instanceof JsxSelfClosingElement || e instanceof BaseJsxOpeningElement;
 
@@ -437,6 +439,10 @@ export class JsxAttribute extends BaseJsxAttribute {
                 }
                 return "ngStyle";
             }
+
+            if (ATTR_BINDING_ATTRIBUTES.indexOf(name)>-1) { 
+                return `attr.${name}`;
+            }
         }
 
         return name;
@@ -507,7 +513,7 @@ export class JsxAttribute extends BaseJsxAttribute {
         }
 
         if (this.isStringLiteralValue()) { 
-            return `${name}=${this.initializer.toString()}`;
+            return `${name.replace("attr.", "")}=${this.initializer.toString()}`;
         }
 
         if (this.initializer instanceof JsxExpression) {
