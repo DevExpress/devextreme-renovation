@@ -34,7 +34,7 @@ export default {
       };
     },
     onClick(...args){
-      this.$emit("on-click", ...args);
+      this.$emit("click", ...args);
     }
   }
 };

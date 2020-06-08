@@ -676,8 +676,14 @@ export class VueComponent extends Component {
 
 function getEventName(defaultName: Identifier | string, stateMembers?: Array<Property | Method>) {
     const state = stateMembers?.find(s => `${s._name}Change` === defaultName.toString());
-    const eventName = state ? `update:${state._name}` : defaultName
-    return eventName.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase()).join("-");
+    const eventName = state ? `update:${state._name}` : defaultName;
+
+    let eventParts = eventName.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
+    if (eventParts[0] === "on") {
+       eventParts = eventParts.slice(1);
+    }
+
+    return eventParts.join("-");
 }
 
 export class CallChain extends BaseCallChain { 

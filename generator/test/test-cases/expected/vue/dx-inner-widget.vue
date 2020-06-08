@@ -54,7 +54,7 @@ export default {
       return value;
     },
     onSelect(...args){
-      this.$emit("on-select", ...args);
+      this.$emit("select", ...args);
     },
     valueChange(...args){
       this.$emit("update:value", ...args);
