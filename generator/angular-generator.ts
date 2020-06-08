@@ -595,9 +595,6 @@ export class JsxExpression extends BaseJsxExpression {
         return expression.toString(options);
     }
 
-    trackBy(options?:toStringOptions): TrackByAttribute[] { 
-        return [];
-    }
 }
 
 export class JsxChildExpression extends JsxExpression {

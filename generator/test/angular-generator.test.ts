@@ -131,15 +131,6 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), `[attr]="'a'+1+'b'+2+'c'"`);
         });
 
-        mocha.it("JsxExpression: trackBy, hasNgStyle", function () { 
-            const expression = generator.createJsxExpression(
-                undefined,
-                generator.createTrue()
-            );
-
-            assert.deepEqual(expression.trackBy(), []);
-        });
-
         mocha.it(`JsxAttribute with string literal expression - attr="value"`, function () {
             const expression = generator.createJsxAttribute(
                 generator.createIdentifier("attr"),
