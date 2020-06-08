@@ -103,10 +103,6 @@ export class JsxElement extends Expression {
         this.closingElement = closingElement;
     }
 
-    get attributes() { 
-        return this.openingElement.attributes;
-    }
-
     toString(options?: toStringOptions) {
         const children: string = this.children.map(c => c.toString(options)).join("\n");
         return `${this.openingElement.toString(options)}${children}${this.closingElement.toString(options)}`;
