@@ -7,7 +7,7 @@
       <InnerWidget
         :selected="slotProps.selected"
         :value="slotProps.value"
-        @on-select="slotProps.onSelect"
+        @select="slotProps.onSelect"
         :defaultValue="slotProps.defaultValue"
         @update:value="slotProps.valueChange"
       />
