@@ -33,9 +33,9 @@ export class SimpleExpression extends Expression {
 export class ExpressionWithExpression extends Expression {
     expression: Expression;
 
-    constructor(expression: Expression) {
+    constructor(expression?: Expression) {
         super();
-        this.expression = expression;
+        this.expression = expression || new Expression();
     }
 
     toString(options?: toStringOptions) {

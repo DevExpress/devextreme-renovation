@@ -372,7 +372,7 @@ export default class Generator {
         return new PropertyAccess(expression, name);
     }
 
-    createJsxExpression(dotDotDotToken: string="", expression: Expression) {
+    createJsxExpression(dotDotDotToken: string="", expression?: Expression) {
         return new JsxExpression(dotDotDotToken, expression);
     }
 

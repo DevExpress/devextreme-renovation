@@ -139,7 +139,7 @@ export class JsxClosingElement extends JsxOpeningElement {
 
 export class JsxExpression extends ExpressionWithExpression { 
     dotDotDotToken: string;
-    constructor(dotDotDotToken: string="", expression: Expression) {
+    constructor(dotDotDotToken: string="", expression?: Expression) {
         super(expression);
         this.dotDotDotToken = dotDotDotToken;
     }

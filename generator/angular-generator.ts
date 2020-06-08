@@ -1615,7 +1615,7 @@ type AngularGeneratorContext = GeneratorContext & {
 }
 
 export class AngularGenerator extends Generator {
-    createJsxExpression(dotDotDotToken: string = "", expression: Expression) {
+    createJsxExpression(dotDotDotToken: string = "", expression?: Expression) {
         return new JsxExpression(dotDotDotToken, expression);
     }
 
