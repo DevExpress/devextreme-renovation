@@ -13,8 +13,8 @@ import { CommonModule } from "@angular/common"
 })
 export default class Widget extends WidgetInput {
     __getHeight(): number {
-        this.onClick!.emit(10);
-        this.onClick!.emit(11);
+        this.onClick.emit(10);
+        this.onClick.emit(11);
         return this.height;
     }
     get __restAttributes(): any{

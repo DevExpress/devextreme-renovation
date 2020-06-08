@@ -1052,15 +1052,16 @@ class ComponentInput extends BaseComponentInput {
 
 function parseEventType(type: TypeExpression|string) { 
     if(type instanceof FunctionTypeNode){
-        return type.parameters.map(p => {
+        const typeList = type.parameters.map(p => {
             const type = p.type?.toString() || "any";
-            if (p.questionToken === SyntaxKind.QuestionToken && type !== "any") { 
+            if (p.questionToken === SyntaxKind.QuestionToken && type !== "any") {
                 return `${type}|${SyntaxKind.UndefinedKeyword}`;
             }
             return type;
-        }).join(",");
+        });
+        return typeList.length ? `<${typeList}>` : "";
     }
-    return "any";
+    return "<any>";
 }
 
 export class Property extends BaseProperty { 
@@ -1080,7 +1081,7 @@ export class Property extends BaseProperty {
         const eventDecorator = this.decorators.find(d => d.name === Decorators.Event);
         const defaultValue = super.toString();
         if (eventDecorator) { 
-            return `${eventDecorator} ${this.name}${this.questionOrExclamationToken}:EventEmitter<${parseEventType(this.type)}> = new EventEmitter()`
+            return `${eventDecorator} ${this.name}:EventEmitter${parseEventType(this.type)} = new EventEmitter()`
         }
         if (this.isRef) {
             return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:ElementRef<${this.type}>`;
@@ -1104,7 +1105,7 @@ export class Property extends BaseProperty {
         const suffix = this.required ? "!" : "";
         componentContext = this.processComponentContext(componentContext);
         if (this.isEvent) { 
-            return `${componentContext}${this.name}!.emit`;
+            return `${componentContext}${this.name}.emit`;
         }
         if (this.isRef) { 
             return `${componentContext}${this.name}${this.questionOrExclamationToken}.nativeElement`
@@ -1236,7 +1237,7 @@ export class AngularComponent extends Component {
         
         if (effects.length) { 
             const statements = [
-                "__destroyEffects: Array<() => any> = [];",
+                "__destroyEffects: any[] = [];",
                 "__viewCheckedSubscribeEvent: Array<()=>void> = [];"
             ];
 
@@ -1429,6 +1430,10 @@ export class AngularComponent extends Component {
         return "";
     }
 
+    compileDefaultOptionsPropsType() { 
+        return `Partial<${super.compileDefaultOptionsPropsType()}>`;
+    }
+
     compileDefaultOptions(constructorStatements: string[]): string { 
         if (this.needGenerateDefaultOptions) { 
             constructorStatements.push(`
@@ -1535,7 +1540,7 @@ export class AngularComponent extends Component {
                     ["super()"].concat(constructorStatements) :
                     constructorStatements
             )}
-            ${this.members.filter(m=>m instanceof SetAccessor)}
+            ${this.members.filter(m=>m instanceof SetAccessor).join("\n")}
             ${this.compileNgStyleProcessor(decoratorToStringOptions)}
         }
         @NgModule({
@@ -1571,7 +1576,7 @@ export class PropertyAccess extends BasePropertyAccess {
 
     compileStateSetting(value: string, property: Property, toStringOptions?: toStringOptions) {
         if (property.isState) {
-            return `this.${this.name}Change!.emit(${this.toString(toStringOptions)}=${value})`;
+            return `this.${this.name}Change.emit(${this.toString(toStringOptions)}=${value})`;
         }
         return `this._${property.name}=${value}`;
     }

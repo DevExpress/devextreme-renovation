@@ -7,7 +7,7 @@ import { Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { convertRulesToOptions, Rule } from "../../../../../component_declaration/default_options";
 
-type WidgetOptionRule = Rule<WidgetProps>;
+type WidgetOptionRule = Rule<Partial<WidgetProps>>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [{ device: true, options: {} }];
 export function defaultOptions(rule: WidgetOptionRule) {

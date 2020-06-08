@@ -2970,7 +2970,7 @@ mocha.describe("Angular generator", function () {
                 generator.createArrowFunction([], [], [], undefined, generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
             );
 
-            assert.strictEqual(property.toString(), "@Output() onClick?:EventEmitter<any> = new EventEmitter()");
+            assert.strictEqual(property.toString(), "@Output() onClick:EventEmitter<any> = new EventEmitter()");
         });
 
         mocha.it("Event Prop with type FunctionNodeType", function () {
@@ -3006,7 +3006,24 @@ mocha.describe("Angular generator", function () {
                 generator.createArrowFunction([], [], [], undefined, generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
             );
 
-            assert.strictEqual(property.toString(), "@Output() onClick?:EventEmitter<string|undefined,number> = new EventEmitter()");
+            assert.strictEqual(property.toString(), "@Output() onClick:EventEmitter<string|undefined,number> = new EventEmitter()");
+        });  
+
+        mocha.it("Event Prop with type FunctionNodeType without parameters", function () {
+            const property = generator.createProperty(
+                [createDecorator(Decorators.Event)],
+                [],
+                generator.createIdentifier("onClick"),
+                generator.SyntaxKind.QuestionToken,
+                generator.createFunctionTypeNode(
+                    undefined,
+                    [],
+                    generator.createKeywordTypeNode("any")
+                ),
+                generator.createArrowFunction([], [], [], undefined, generator.SyntaxKind.EqualsGreaterThanToken, generator.createNull())
+            );
+
+            assert.strictEqual(property.toString(), "@Output() onClick:EventEmitter = new EventEmitter()");
         });  
         
         mocha.it("Generate change for TwoWay prop with type", function () { 
@@ -3030,7 +3047,7 @@ mocha.describe("Angular generator", function () {
             );
 
             assert.strictEqual(bindings.members.length, 2);
-            assert.strictEqual(bindings.members[1].toString(), "@Output() p1Change?:EventEmitter<number> = new EventEmitter()");
+            assert.strictEqual(bindings.members[1].toString(), "@Output() p1Change:EventEmitter<number> = new EventEmitter()");
         });
 
         mocha.it("TwoWay without type", function () { 
@@ -3347,7 +3364,7 @@ mocha.describe("Angular generator", function () {
                     defaultOptionRules: generator.createIdentifier("rules")
                 }) as AngularComponent;
                 assert.strictEqual(getResult(component.compileDefaultOptions([])), getResult(`
-                    type BaseWidgetOptionRule = Rule<BaseWidget>;
+                    type BaseWidgetOptionRule = Rule<Partial<BaseWidget>>;
                     const __defaultOptionRules:BaseWidgetOptionRule[] = rules;
                     export function defaultOptions(rule: BaseWidgetOptionRule) { 
                         __defaultOptionRules.push(rule);
@@ -3358,7 +3375,7 @@ mocha.describe("Angular generator", function () {
             mocha.it("Compile defaultOptions expression if defaultOptionRules expression is not set", function () {
                 const component = createComponent([], {}) as AngularComponent;
                 assert.strictEqual(getResult(component.compileDefaultOptions([])), getResult(`
-                    type BaseWidgetOptionRule = Rule<BaseWidget>;
+                    type BaseWidgetOptionRule = Rule<Partial<BaseWidget>>;
                     const __defaultOptionRules:BaseWidgetOptionRule[] = [];
                     export function defaultOptions(rule: BaseWidgetOptionRule) { 
                         __defaultOptionRules.push(rule);
@@ -3627,7 +3644,7 @@ mocha.describe("Angular generator", function () {
                 assert.strictEqual(getResult(stringValue), getResult(`{
                     p1:this.p1,
                     p2:this.p2,
-                    p3:this.p3!.emit,
+                    p3:this.p3.emit,
                     p4:this.p4,
                     p5:this.p5
                 }`));
@@ -3681,7 +3698,7 @@ mocha.describe("Angular generator", function () {
                     members: [property],
                     componentContext: generator.SyntaxKind.ThisKeyword,
                     newComponentContext: generator.SyntaxKind.ThisKeyword
-                }), "this.onClick!.emit(10)");
+                }), "this.onClick.emit(10)");
             });
 
             mocha.it("Set TwoWay Prop", function () { 
@@ -3707,7 +3724,7 @@ mocha.describe("Angular generator", function () {
                     members: [property],
                     componentContext: generator.SyntaxKind.ThisKeyword,
                     newComponentContext: generator.SyntaxKind.ThisKeyword
-                })), getResult("this.widthChange!.emit(this.width=10)"));
+                })), getResult("this.widthChange.emit(this.width=10)"));
             });
 
             mocha.it("Can't set OneWay Prop", function () { 
@@ -3860,7 +3877,7 @@ mocha.describe("Angular generator", function () {
 
                 const ngOnChanges: string[] = [];
                 assert.strictEqual(getResult(component.compileEffects([], [], ngOnChanges, [])), getResult(`
-                        __destroyEffects: Array<() => any> = [];
+                        __destroyEffects: any[] = [];
                         __viewCheckedSubscribeEvent: Array<()=>void> = [];
                         __schedule_e(){
                             this.__destroyEffects[0]?.();
@@ -3898,7 +3915,7 @@ mocha.describe("Angular generator", function () {
 
                 const ngOnChanges: string[] = [];
                 assert.strictEqual(getResult(component.compileEffects([], [], ngOnChanges, [])), getResult(`
-                        __destroyEffects: Array<() => any> = [];
+                        __destroyEffects: any[] = [];
                         __viewCheckedSubscribeEvent: Array<()=>void> = [];
                         __schedule_e(){
                             this.__destroyEffects[0]?.();
@@ -3950,7 +3967,7 @@ mocha.describe("Angular generator", function () {
 
                 const ngOnChanges: string[] = [];
                 assert.strictEqual(getResult(component.compileEffects([], [], ngOnChanges, [])), getResult(`
-                        __destroyEffects: Array<() => any> = [];
+                        __destroyEffects: any[] = [];
                         __viewCheckedSubscribeEvent: Array<()=>void> = [];
                         __schedule_e(){
                             this.__destroyEffects[0]?.();
@@ -3990,7 +4007,7 @@ mocha.describe("Angular generator", function () {
 
                 const ngOnChanges: string[] = [];
                 assert.strictEqual(getResult(component.compileEffects([], [], ngOnChanges, [])), getResult(`
-                        __destroyEffects: Array<() => any> = [];
+                        __destroyEffects: any[] = [];
                         __viewCheckedSubscribeEvent: Array<()=>void> = [];
                 `));
 
