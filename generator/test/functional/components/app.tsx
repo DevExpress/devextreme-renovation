@@ -54,7 +54,11 @@ function view(model: App) {
 
         <ComponentWithDefaultOptionRules id="component-with-default-options" />
         
-        <List items={model.listItems} />
+        <List
+            id={"list-1"}
+            items={model.listItems}
+            onClick={model.onListItemClick}
+        />
         
         <SpreadProps
             onClick={model.onButtonClick}
@@ -118,6 +122,18 @@ export default class App extends JSXComponent(AppInput) {
 
     onButtonWithStatePressedChange(p:boolean) { 
         this.buttonWithStateIsPressed = p;
+    }
+
+    onListItemClick(i: number) {
+        this.listItems = this.listItems.map(item => { 
+            if (item.key === i) { 
+                return {
+                    ...item,
+                    color: "black"
+                }
+            }
+            return item;
+        });
     }
 
     onChangeAriaButtonClick() { 
