@@ -2358,6 +2358,41 @@ mocha.describe("Angular generator", function () {
                 }), `<div [v]="10"></div>`);
             });
 
+            mocha.it("Skip type casting in view", function () {
+                const block = generator.createBlock([
+                    generator.createReturn(
+                        generator.createJsxSelfClosingElement(
+                            generator.createIdentifier("div"),
+                            undefined,
+                            [
+                                generator.createJsxAttribute(
+                                    generator.createIdentifier("v"),
+                                    generator.createAsExpression(
+                                        generator.createIdentifier("value"),
+                                        generator.createKeywordTypeNode("number")
+                                    )
+                                )
+                            ]
+                        )
+                    )
+                ], false);
+
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [],
+                    undefined,
+                    block
+                );
+
+                assert.strictEqual(expression.getTemplate({
+                    members: []
+                }), `<div [v]="value"></div>`);
+            });
+
             mocha.it("Can decomposite component", function () {
                 const block = generator.createBlock([
                     generator.createReturn(
@@ -4029,6 +4064,35 @@ mocha.describe("Angular generator", function () {
                 generator.createKeywordTypeNode("any"),
                 generator.createNumericLiteral("10")
             ).toString(), "a:any=10");
+        });
+
+        mocha.it("AsExpression", function () { 
+            const prop = generator.createProperty(
+                [createDecorator(Decorators.OneWay)],
+                [],
+                generator.createIdentifier("p")
+            )
+            const expression = generator.createAsExpression(
+                generator.createPropertyAccess(
+                    generator.createThis(),
+                    generator.createIdentifier("p")
+                ),
+                generator.createKeywordTypeNode("number")
+            )
+
+            assert.strictEqual(expression.toString(), "this.p as number");
+            assert.strictEqual(expression.toString({
+                members: [prop],
+                componentContext: "this",
+                newComponentContext: ""
+            }), "p as number");
+
+            assert.strictEqual(expression.toString({
+                members: [],
+                componentContext: "this",
+                newComponentContext: "",
+                disableTemplates: true
+            }), "p");
         });
     });
 

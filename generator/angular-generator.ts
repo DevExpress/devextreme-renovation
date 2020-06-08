@@ -7,7 +7,7 @@ import {
     JsxClosingElement,
     getJsxExpression
 } from "./base-generator/expressions/jsx";
-import {  Call } from "./base-generator/expressions/common";
+import {  Call, AsExpression as BaseAsExpression } from "./base-generator/expressions/common";
 import { Decorator as BaseDecorator } from "./base-generator/expressions/decorator";
 import { VariableDeclaration as BaseVariableDeclaration } from "./base-generator/expressions/variables";
 import {
@@ -1595,6 +1595,15 @@ export class VariableDeclaration extends BaseVariableDeclaration {
     }
 }
 
+export class AsExpression extends BaseAsExpression { 
+    toString(options?: toStringOptions) {
+        if (options?.disableTemplates) { 
+            return this.expression.toString(options);
+        }
+        return super.toString(options);
+    }
+}
+
 type AngularGeneratorContext = GeneratorContext & {
     angularCoreImports?: string[];
 }
@@ -1666,6 +1675,10 @@ export class AngularGenerator extends Generator {
 
     createPropertyAccess(expression: Expression, name: Identifier) {
         return new PropertyAccess(expression, name);
+    }
+
+    createAsExpression(expression: Expression, type: TypeExpression) { 
+        return new AsExpression(expression, type);
     }
 
     context: AngularGeneratorContext[] = [];
