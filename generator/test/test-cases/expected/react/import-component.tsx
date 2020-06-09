@@ -22,7 +22,7 @@ interface Child {
 
 export default function Child(props: typeof ChildInput) {
     const getProps = useCallback(function getProps() {
-        return { height: props.height };
+        return { height: props.height } as typeof WidgetProps;
     }, [props.height]);
     
     const __restAttributes = useCallback(function __restAttributes() {
