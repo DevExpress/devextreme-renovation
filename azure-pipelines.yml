@@ -35,11 +35,10 @@ steps:
     npm run test:with-reporters
   displayName: 'tests'
 
-- task: Bash@3
-  inputs:
-    targetType: 'inline'
-    script: 'npx run gulp compile-check'
-  displayName: 'compilation-check'
+- script: |
+    cd ./generator
+    npm run test:compile-check
+  displayName: 'compile-check'
 
 - task: PublishTestResults@2
   condition: succeededOrFailed()
