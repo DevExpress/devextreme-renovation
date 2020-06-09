@@ -50,10 +50,6 @@ mocha.describe("preact-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it("extend-props", function () {
-        this.testGenerator(this.test!.title);
-    });
-
     mocha.it("method-use-apiref", function () {
         this.testGenerator(this.test!.title);
     });

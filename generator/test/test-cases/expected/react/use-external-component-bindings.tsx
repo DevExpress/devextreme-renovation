@@ -3,7 +3,7 @@ function view(model: Widget) {
     return <div >{model.props.height}</div>;
 }
 
-import { convertRulesToOptions, Rule } from "../../../../../component_declaration/default_options";
+import { convertRulesToOptions, Rule } from "../../../../component_declaration/default_options";
 import React, { useCallback } from 'react';
 
 interface Widget {

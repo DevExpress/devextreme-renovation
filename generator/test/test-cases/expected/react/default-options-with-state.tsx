@@ -19,7 +19,7 @@ export const WidgetProps: WidgetPropsType = {
 };
 
 
-import { convertRulesToOptions, Rule } from "../../../../../component_declaration/default_options";
+import { convertRulesToOptions, Rule } from "../../../../component_declaration/default_options";
 import React, { useState, useCallback } from 'react';
 
 interface Widget {
@@ -30,8 +30,8 @@ interface Widget {
 
 export default function Widget(props: typeof WidgetProps) {
 
-    const [__state_p1, __state_setP1] = useState(() => props.p1 !== undefined ? props.p1 : props.defaultP1);
-    const [__state_p2, __state_setP2] = useState(() => props.p2 !== undefined ? props.p2 : props.defaultP2)
+    const [__state_p1, __state_setP1] = useState(() => props.p1 !== undefined ? props.p1 : props.defaultP1!);
+    const [__state_p2, __state_setP2] = useState(() => props.p2 !== undefined ? props.p2 : props.defaultP2!)
 
     const __restAttributes = useCallback(function __restAttributes() {
         const { defaultP1, defaultP2, p1, p1Change, p2, p2Change, ...restProps } = props

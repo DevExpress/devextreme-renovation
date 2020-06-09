@@ -13,7 +13,7 @@ const WidgetInput: WidgetInputType = {
     type: "type"
 };
 
-import { convertRulesToOptions, Rule } from "../../../../../component_declaration/default_options";
+import { convertRulesToOptions, Rule } from "../../../../component_declaration/default_options";
 import React, { useCallback } from 'react';
 
 interface Widget {

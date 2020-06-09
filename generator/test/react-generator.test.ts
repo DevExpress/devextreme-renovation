@@ -97,6 +97,10 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("model", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("state", function () {
         this.testGenerator(this.test!.title);
     });
@@ -113,10 +117,6 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it("jsx-events", function () {
-        this.testGenerator(this.test!.title);
-    });
-
     mocha.it("template", function () {
         this.testGenerator(this.test!.title);
     });
@@ -129,15 +129,15 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("dx-widget-with-ref-prop", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("effect", function () {
         this.testGenerator(this.test!.title);
     });
 
     mocha.it("slots", function () {
-        this.testGenerator(this.test!.title);
-    });
-
-    mocha.it("extend-props", function () {
         this.testGenerator(this.test!.title);
     });
 
@@ -171,7 +171,7 @@ mocha.describe("react-generator", function () {
 
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {
-            generator.defaultOptionsModule = "../component_declaration/default_options";
+            generator.defaultOptionsModule = "component_declaration/default_options";
             generator.setContext({
                 dirname: path.resolve(__dirname, "./test-cases/declarations"),
                 defaultOptionsModule: path.resolve(generator.defaultOptionsModule)

@@ -5,7 +5,7 @@ export class WidgetProps {}
 
 import { Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { convertRulesToOptions, Rule } from "../../../../../component_declaration/default_options";
+import { convertRulesToOptions, Rule } from "../../../../component_declaration/default_options";
 
 type WidgetOptionRule = Rule<Partial<WidgetProps>>;
 
@@ -22,9 +22,9 @@ export default class Widget extends WidgetProps {
     constructor() {
         super()
         const defaultOptions = convertRulesToOptions(__defaultOptionRules);
-        for (let option in defaultOptions) {
-            this[option] = defaultOptions[option];
-        }
+        Object.keys(defaultOptions).forEach(option => {
+            (this as any)[option] = (defaultOptions as any)[option];
+        });
     }
 }
 @NgModule({

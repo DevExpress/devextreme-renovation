@@ -1,6 +1,8 @@
 import BaseWidget from "./method";
 
-function view(viewModel: WidgetWithApiRef) { return <BaseWidget ref={viewModel.baseRef} prop1={viewModel.props.prop1}></BaseWidget>;}
+function view(viewModel: WidgetWithApiRef) {
+    return <BaseWidget ref={viewModel.baseRef as any} prop1={viewModel.props.prop1}></BaseWidget>;
+}
 
 export declare type WidgetWithApiRefInputType = {
     prop1?: number
@@ -25,7 +27,7 @@ const WidgetWithApiRef = forwardRef<WidgetWithApiRefRef, typeof WidgetWithApiRef
 
     useImperativeHandle(ref, () => ({
         getSomething: () => { 
-            return `${props.prop1} + ${baseRef.current?.getHeight()}`;
+            return `${props.prop1} + ${baseRef.current?.getHeight(1, undefined)}`;
         }
     }), [props.prop1, baseRef.current]);
     const __restAttributes=useCallback(function __restAttributes(){

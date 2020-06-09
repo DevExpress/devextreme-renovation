@@ -73,6 +73,14 @@ mocha.describe("angular-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("dx-inner-widget", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("dx-widget-with-template", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("spread-props-attribute", function () {
         this.testGenerator(this.test!.title);
     });
@@ -129,6 +137,10 @@ mocha.describe("angular-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("dx-widget-with-ref-prop", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("refs-as-props", function () {
         this.testGenerator(this.test!.title);
     });
@@ -139,7 +151,7 @@ mocha.describe("angular-generation", function () {
 
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {
-            generator.defaultOptionsModule = "../component_declaration/default_options";
+            generator.defaultOptionsModule = "component_declaration/default_options";
             generator.setContext({
                 dirname: path.resolve(__dirname, "./test-cases/declarations"),
                 defaultOptionsModule: path.resolve(generator.defaultOptionsModule)

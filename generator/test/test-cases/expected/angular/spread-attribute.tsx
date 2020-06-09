@@ -27,7 +27,7 @@ export default class Widget extends WidgetInput {
         return {}
     }
 
-    @ViewChild("_auto_ref_0", { static: false }) _auto_ref_0: ElementRef<HTMLDivElement>
+    @ViewChild("_auto_ref_0", { static: false }) _auto_ref_0?: ElementRef<HTMLDivElement>;
 
     __applyAttributes__() {
         const _attr_0: { [name: string]: string } = this.__attr1 || {};

@@ -14,7 +14,7 @@ const WidgetInput = {
   }
 };
 
-import { convertRulesToOptions } from "../../../../../component_declaration/default_options";
+import { convertRulesToOptions } from "../../../../component_declaration/default_options";
 
 const __defaultOptionRules = [];
 export function defaultOptions(rule) {

@@ -2,7 +2,7 @@ import { Component, ComponentBindings, JSXComponent, OneWay,TwoWay } from "../..
 import InnerWidget from './dx-inner-widget';
 
 function view({ props, restAttributes }: Widget) { 
-    return <InnerWidget {...props} {...restAttributes}/>;
+    return <InnerWidget {...props as any} {...restAttributes}/>;
 }
 
 @ComponentBindings()

@@ -147,7 +147,7 @@ mocha.describe("vue-generation", function () {
 
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {
-            generator.defaultOptionsModule = "../component_declaration/default_options";
+            generator.defaultOptionsModule = "component_declaration/default_options";
             generator.setContext({
                 dirname: path.resolve(__dirname, "./test-cases/declarations"),
                 defaultOptionsModule: path.resolve(generator.defaultOptionsModule)

@@ -27,8 +27,8 @@ export default class ModelWidget extends ModelWidgetInput implements ControlValu
         return {}
     }
 
-    @HostListener('valueChange', ['$event']) change(_) { }
-    @HostListener('onBlur', ['$event']) touched = (_) => {};
+    @HostListener('valueChange', ['$event']) change() { }
+    @HostListener('onBlur', ['$event']) touched = () => {};
 
     writeValue(value: any): void {
         this.value = value;
@@ -38,7 +38,7 @@ export default class ModelWidget extends ModelWidgetInput implements ControlValu
         this.disabled = isDisabled;
     }
 
-    registerOnChange(fn: (_: any) => void): void { this.change = fn; }
+    registerOnChange(fn: () => void): void { this.change = fn; }
     registerOnTouched(fn: () => void): void { this.touched = fn; }
 }
 @NgModule({

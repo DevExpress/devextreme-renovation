@@ -28,14 +28,14 @@ export default class ModelWidget extends ModelWidgetInput implements ControlValu
         return {}
     }
 
-    @HostListener('modelStatePropChange', ['$event']) change(_) { }
-    @HostListener('onBlur', ['$event']) touched = (_) => {};
+    @HostListener('modelStatePropChange', ['$event']) change() { }
+    @HostListener('onBlur', ['$event']) touched = () => {};
 
     writeValue(value: any): void {
         this.modelStateProp = value;
     }
 
-    registerOnChange(fn: (_: any) => void): void { this.change = fn; }
+    registerOnChange(fn: () => void): void { this.change = fn; }
     registerOnTouched(fn: () => void): void { this.touched = fn; }
 }
 @NgModule({

@@ -120,9 +120,8 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         const component = this.component;
         const properties = component && getProps(component.members).filter(this.getPropertyFromSpread) || [];
 
-        const spreadAttributesExpression = spreadAttribute.expression instanceof Identifier &&
-            options?.variables?.[spreadAttribute.expression.toString()] ||
-            spreadAttribute.expression;
+        const spreadAttributesExpression = getExpression(spreadAttribute.expression, options);
+            
 
         if (spreadAttributesExpression instanceof BasePropertyAccess) { 
             const member = spreadAttributesExpression.getMember(options);
@@ -569,8 +568,10 @@ function getExpression(expression: Expression, options?: toStringOptions): Expre
         expression = options.variables[expression.toString()];
     }
 
-    if (expression instanceof Paren) { 
-        return expression.expression;
+    if (expression instanceof Paren) {
+        return getExpression(expression.expression, options)
+    } else if (expression instanceof BaseAsExpression) { 
+        return getExpression(expression.expression, options);
     }
 
     return expression;
@@ -1074,6 +1075,9 @@ export class Property extends BaseProperty {
     constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type?: TypeExpression | string, initializer?: Expression, inherited: boolean = false) {
         if (decorators.find(d => d.name === Decorators.Template)) {
             type = new SimpleTypeExpression(`TemplateRef<any>`);
+            if (questionOrExclamationToken !== SyntaxKind.QuestionToken) { 
+                questionOrExclamationToken = SyntaxKind.ExclamationToken;
+            }
         }
         super(decorators, modifiers, name, questionOrExclamationToken, type, initializer, inherited);
     }
@@ -1307,37 +1311,6 @@ export class AngularComponent extends Component {
         return "";
     }
 
-    compileViewModelArguments() {
-        const args = [
-            `props: {${
-            this.members
-                .filter(m => m.decorators.find(d => d.name === Decorators.OneWay || d.name === Decorators.Event))
-                .map(m => `${m.name}: this.${m.name}`)
-                .concat(this.members.filter(m => m.isState).map(m => `${m.name}:this.${m.name},\n${m.name}Change:this.${m.name}Change`))
-                .join(",\n")
-            }}`,
-            this.members
-                .filter(m => m.decorators.length === 0 && !(m instanceof SetAccessor))
-                .map(m => `${m._name}: this.${m.name}`)
-                .join(",\n")
-        ]
-        return args;
-    }
-
-    compileViewModel() { 
-        if (!this.viewModel) { 
-            return "";
-        }
-
-        return `
-        _viewModel: any;
-
-        ngDoCheck(){
-            this._viewModel = ${this.viewModel}({${this.compileViewModelArguments().join(",\n")}});
-        }
-        `;
-    }
-
     compileTrackBy(options: toStringOptions): string { 
         return options.trackBy?.map(trackBy => trackBy.getTrackByDeclaration()).join("\n") || "";
     }
@@ -1361,7 +1334,7 @@ export class AngularComponent extends Component {
                     const refString = o.refExpression instanceof SimpleExpression ? `this.${o.refExpression.toString()}?.nativeElement` : o.refExpression.toString(options).replace(/(\w|\d)!?\.nativeElement/, "$1?.nativeElement");
                     if (o.refExpression instanceof SimpleExpression) { 
                         coreImports.push("ViewChild", "ElementRef");
-                        members.push(`@ViewChild("${o.refExpression.toString()}", { static: false }) ${o.refExpression.toString()}: ElementRef<HTMLDivElement>`)
+                        members.push(`@ViewChild("${o.refExpression.toString()}", { static: false }) ${o.refExpression.toString()}?: ElementRef<HTMLDivElement>`)
                     }
                     return `
                     const _attr_${i}:{[name: string]:string } = ${expressionString} || {};
@@ -1426,9 +1399,9 @@ export class AngularComponent extends Component {
         if (this.needGenerateDefaultOptions) { 
             constructorStatements.push(`
             const defaultOptions = convertRulesToOptions(__defaultOptionRules);
-            for(let option in defaultOptions) {
-                this[option] = defaultOptions[option];
-            }`);
+            Object.keys(defaultOptions).forEach(option=>{
+                (this as any)[option] = (defaultOptions as any)[option];
+            });`);
 
             return this.compileDefaultOptionsMethod(this.defaultOptionRules ? this.defaultOptionRules.toString() : "[]", []);
         }
@@ -1443,8 +1416,8 @@ export class AngularComponent extends Component {
         const disabledProp = getProps(this.members).find(m => m._name.toString() === "disabled");
         
         return `
-        @HostListener('${this.modelProp.name}Change', ['$event']) change(_) { }
-        @HostListener('onBlur', ['$event']) touched = (_) => {};
+        @HostListener('${this.modelProp.name}Change', ['$event']) change() { }
+        @HostListener('onBlur', ['$event']) touched = () => {};
         
         writeValue(value: any): void {
             this.${this.modelProp.name} = value;
@@ -1454,7 +1427,7 @@ export class AngularComponent extends Component {
             this.disabled = isDisabled;
         }` : ""}
     
-        registerOnChange(fn: (_: any) => void): void { this.change = fn; }
+        registerOnChange(fn: () => void): void { this.change = fn; }
         registerOnTouched(fn: () => void): void { this.touched = fn; }
         `;
     }
@@ -1516,7 +1489,6 @@ export class AngularComponent extends Component {
             .filter(m => m).join("\n")}
             ${spreadAttributes}
             ${this.compileTrackBy(decoratorToStringOptions)}
-            ${this.compileViewModel()}
             ${this.compileEffects(ngAfterViewInitStatements, ngOnDestroyStatements, ngOnChangesStatements, ngAfterViewCheckedStatements)}
             ${this.compileNgModel()}
             ${this.compileLifeCycle("ngAfterViewInit", ngAfterViewInitStatements)}

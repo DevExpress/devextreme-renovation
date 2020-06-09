@@ -35,6 +35,11 @@ steps:
     npm run test:with-reporters
   displayName: 'tests'
 
+- script: |
+    cd ./generator
+    npm run test:compile-check
+  displayName: 'compile-check'
+
 - task: PublishTestResults@2
   condition: succeededOrFailed()
   inputs:
