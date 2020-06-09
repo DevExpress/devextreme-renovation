@@ -248,7 +248,7 @@ mocha.describe("react-generator: expressions", function () {
             generator.createJsxClosingElement(generator.createIdentifier("div"))
         );
 
-        assert.strictEqual(expression.toString(), "<div >{}</div>");
+        assert.strictEqual(expression.toString(), "<div ></div>");
     });
 });
 

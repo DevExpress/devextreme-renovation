@@ -117,6 +117,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     spreadToArray(spreadAttribute: JsxSpreadAttribute, options?: toStringOptions) {
         const component = this.component;
         const properties = component && getProps(component.members).filter(this.getPropertyFromSpread) || [];
+        
+        if (!spreadAttribute.expression) {
+            return [];
+        }
 
         const spreadAttributesExpression = spreadAttribute.expression instanceof Identifier &&
             options?.variables?.[spreadAttribute.expression.toString()] ||
@@ -519,7 +523,7 @@ export class JsxAttribute extends BaseJsxAttribute {
         if (this.initializer instanceof JsxExpression) {
             const funcName = this.initializer.toString();
             const template = this.initializer.getExpression(options);
-            if(isFunction(template)) {
+            if(template && isFunction(template)) {
                 return this.compileBase(name, funcName);
             }
         }
@@ -589,7 +593,7 @@ export class JsxExpression extends BaseJsxExpression {
 
     toString(options?: toStringOptions) {
         const expression = this.getExpression(options);
-        return expression.toString(options);
+        return expression ? expression.toString(options) : "";
     }
 
     trackBy(options?:toStringOptions): TrackByAttribute[] { 
@@ -791,6 +795,10 @@ export class JsxChildExpression extends JsxExpression {
 
     toString(options?: toStringOptions) {
         const expression = this.getExpression(options);
+
+        if (!expression) {
+            return "";
+        }
         
         if (expression instanceof Binary) { 
             const parsedBinary = this.processBinary(expression, options);
@@ -824,12 +832,12 @@ export class JsxChildExpression extends JsxExpression {
                 options);
         }
 
-        if (this.expression instanceof StringLiteral) { 
-            return this.expression.expression;
+        if (expression instanceof StringLiteral) { 
+            return expression.expression;
         }
         const stringValue = super.toString(options);
 
-        if (this.expression.isJsx() || stringValue.startsWith("<") || stringValue.startsWith("(<")) { 
+        if (expression.isJsx() || stringValue.startsWith("<") || stringValue.startsWith("(<")) { 
             return stringValue;
         }
 
@@ -842,14 +850,17 @@ export class JsxChildExpression extends JsxExpression {
     }
 
     trackBy(options?:toStringOptions): TrackByAttribute[] { 
-        const iterator = this.getIterator(this.getExpression(options));
+        const expression = this.getExpression(options);
+        if (expression) {
+            const iterator = this.getIterator(expression);
 
-        if (iterator) {
-            const templateOptions = options ? { ...options } : options;
-            const templateExpression = getTemplate(iterator, templateOptions, true);
-            if (isElement(templateExpression)) {
-                return templateExpression.trackBy(options);
-            }       
+            if (iterator) {
+                const templateOptions = options ? { ...options } : options;
+                const templateExpression = getTemplate(iterator, templateOptions, true);
+                if (isElement(templateExpression)) {
+                    return templateExpression.trackBy(options);
+                }       
+            }
         }
 
         return [];

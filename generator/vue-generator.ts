@@ -788,13 +788,16 @@ export class JsxSpreadAttribute extends BaseJsxSpreadAttribute {
 
     toString(options?: toStringOptions) { 
         const expression = this.getExpression(options);
-        if (expression instanceof BasePropertyAccess) { 
-            const member = expression.getMember(options);
-            if (member instanceof GetAccessor && member._name.toString() === "restAttributes") { 
-                return "";
+        if (expression) {
+            if (expression instanceof BasePropertyAccess) { 
+                const member = expression.getMember(options);
+                if (member instanceof GetAccessor && member._name.toString() === "restAttributes") { 
+                    return "";
+                }
             }
+            return `v-bind="${expression.toString(options).replace(/"/gi, "'")}"`;
         }
-        return `v-bind="${expression.toString(options).replace(/"/gi, "'")}"`;
+        return "";
     }
 }
 
@@ -841,7 +844,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     }
 
     updateSpreadAttribute(spreadAttribute: JsxSpreadAttribute, attributes: JsxAttribute[]) { 
-        if (attributes.length) { 
+        if (spreadAttribute.expression && attributes.length) { 
             const propertyAssignments = attributes.map(p => { 
                 return new PropertyAssignment(
                     p.name,
