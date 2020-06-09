@@ -1,22 +1,45 @@
-import { Component, ComponentBindings, JSXComponent, Event, Slot, Effect, Ref, OneWay } from "../../../component_declaration/common";
+import { Component, ComponentBindings, JSXComponent, Event, Slot, Effect, Ref, OneWay, InternalState } from "../../../component_declaration/common";
+import ListItem from "./list-item.tsx";
 
-function view(model: List) { 
-    return <div>
-        {model.props.items.map(item =>
-            <div style={model.style("red")} key={item.key}>{item.text}</div>
-        )}
-        {model.props.items.map((item, index) =>
-            <div style={model.style("green")} key={index}>{item.text}</div>
+function view({ items, restAttributes, counter }: List) { 
+    const firstList = items.map(item =>
+        (item !== null ? (<ListItem
+            key={item.key}
+            color={item.color || "red"}
+            onClick={item.onClick}
+            text={item.text}
+            onReady={item.onReady}
+        />) : <div>empty</div>)
+    );
+    return <div {...restAttributes}>
+        
+        {firstList}
+
+        {items.map((item, index) =>
+            <ListItem
+                key={index}
+                color={item.color || "green"}
+                onClick={item.onClick}
+                text={item.text}
+                onReady={item.onReady}
+            />
         )}
 
-        {model.props.items.map(({text, key}) =>
-            <div style={model.style("blue")} key={key}>{text}</div>
+        {items.map(({ text, key, color, onClick, onReady }) =>
+            <ListItem
+                key={key}
+                color={color || "blue"}
+                onClick={onClick}
+                text={text}
+                onReady={onReady}
+            />
         )}
 
-        {model.props.items.map(({ text, key }) => {
+        {items.map(({ text, key }) => {
             const value = `${key}: ${text} `;
             return value;
-        } )}
+        })}
+        <span className="ready-counter">{counter}</span>
     </div>;
 }
 
@@ -24,14 +47,35 @@ function view(model: List) {
 export class ListProps { 
     @OneWay() items?: {
         text: string;
-        key: number
+        key: number;
+        color?: string;
     }[] = [];
+
+    @Event() onClick?: (index: number)=>void
 }
 
 @Component({
     view
 })
 export default class List extends JSXComponent(ListProps) {
+    @InternalState() counter = 0;
+    @InternalState() readyItems: number[] = [];
+
+    get items() { 
+        return this.props.items.map(item => {
+            return {
+                ...item,
+                onClick:() => { 
+                    this.props.onClick?.(item.key)
+                },
+                onReady: () => { 
+                    this.readyItems.push(item.key);
+                    this.counter = this.readyItems.length;
+                }
+            }
+        });
+    }
+
     style(color: string) { 
         return {
             backgroundColor: color,

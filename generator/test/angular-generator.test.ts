@@ -131,15 +131,6 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(expression.toString(), `[attr]="'a'+1+'b'+2+'c'"`);
         });
 
-        mocha.it("JsxExpression: trackBy, hasNgStyle", function () { 
-            const expression = generator.createJsxExpression(
-                undefined,
-                generator.createTrue()
-            );
-
-            assert.deepEqual(expression.trackBy(), []);
-        });
-
         mocha.it(`JsxAttribute with string literal expression - attr="value"`, function () {
             const expression = generator.createJsxAttribute(
                 generator.createIdentifier("attr"),
@@ -1886,8 +1877,12 @@ mocha.describe("Angular generator", function () {
                     )
                 );
     
-                assert.strictEqual(expression.children[0].toString(), `<ng-container *ngFor="let item of viewModel.items;trackBy: _trackBy_viewModel_items_0"><div ></div></ng-container>`);
-                const trackByAttrs = (expression.children[0] as JsxExpression).trackBy();
+                const options: toStringOptions = {
+                    members: []
+                };
+
+                assert.strictEqual(expression.children[0].toString(options), `<ng-container *ngFor="let item of viewModel.items;trackBy: _trackBy_viewModel_items_0"><div ></div></ng-container>`);
+                const trackByAttrs = options.trackBy!;
                 assert.strictEqual(trackByAttrs.length, 1);
                 assert.strictEqual(trackByAttrs[0].toString(), "");
                 assert.strictEqual(getResult(trackByAttrs[0].getTrackByDeclaration()), getResult(`_trackBy_viewModel_items_0(_index: number, item: any){
@@ -2001,17 +1996,99 @@ mocha.describe("Angular generator", function () {
                         generator.createIdentifier("div")
                     )
                 ).children[0] as JsxExpression;
+
+                const options: toStringOptions = {
+                    members: []
+                };
     
-                assert.strictEqual(expression.toString(), `<ng-container *ngFor="let item of viewModel.items;trackBy: _trackBy_viewModel_items_1"><div ><ng-container *ngFor="let _ of item;index as i;trackBy: _trackBy_item_0"><div ></div></ng-container></div></ng-container>`);
-                const trackByAttrs = expression.trackBy();
+                assert.strictEqual(expression.toString(options), `<ng-container *ngFor="let item of viewModel.items;trackBy: _trackBy_viewModel_items_1"><div ><ng-container *ngFor="let _ of item;index as i;trackBy: _trackBy_item_0"><div ></div></ng-container></div></ng-container>`);
+                const trackByAttrs = options.trackBy!;
                 assert.strictEqual(trackByAttrs.length, 2);
-                assert.strictEqual(getResult(trackByAttrs[0].getTrackByDeclaration()), getResult(`_trackBy_viewModel_items_1(_index: number, item: any){
+                assert.strictEqual(getResult(trackByAttrs[1].getTrackByDeclaration()), getResult(`_trackBy_viewModel_items_1(_index: number, item: any){
                     return item.id;
                 }`), "external map trackBy function");
     
-                assert.strictEqual(getResult(trackByAttrs[1].getTrackByDeclaration()), getResult(`_trackBy_item_0(i: number, _: any){
+                assert.strictEqual(getResult(trackByAttrs[0].getTrackByDeclaration()), getResult(`_trackBy_item_0(i: number, _: any){
                     return i;
                 }`), "internal map trackBy function");
+            });
+
+            mocha.it("map with conditional rendering", function () { 
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [generator.createJsxExpression(
+                        undefined,
+                        generator.createCall(
+                            generator.createPropertyAccess(
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier("viewModel"),
+                                    generator.createIdentifier("items")
+                                ),
+                                generator.createIdentifier("map")
+                            ),
+                            undefined,
+                            [generator.createArrowFunction(
+                                undefined,
+                                undefined,
+                                [generator.createParameter(
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    generator.createIdentifier("item"),
+                                    undefined,
+                                    undefined,
+                                    undefined
+                                )],
+                                undefined,
+                                generator.createToken(generator.SyntaxKind.EqualsGreaterThanToken),
+                                generator.createConditional(
+                                    generator.createIdentifier("condition"),
+                                    generator.createJsxElement(
+                                        generator.createJsxOpeningElement(
+                                            generator.createIdentifier("div"),
+                                            undefined,
+                                            generator.createJsxAttributes([
+                                                generator.createJsxAttribute(
+                                                    generator.createIdentifier("key"),
+                                                    generator.createPropertyAccess(
+                                                        generator.createIdentifier("item"),
+                                                        generator.createIdentifier("id")
+                                                    ))
+                                            ])
+                                        ),
+                                        [],
+                                        generator.createJsxClosingElement(generator.createIdentifier("div"))
+                                    ),
+                                    generator.createStringLiteral("else")
+                                )
+                            )]
+                        )
+                    )],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+    
+                const options: toStringOptions = {
+                    members: []
+                };
+
+                assert.strictEqual(
+                    removeSpaces(expression.children[0].toString(options)),
+                    removeSpaces(`<ng-container *ngFor="let item of viewModel.items;trackBy: _trackBy_viewModel_items_0">
+                        <div *ngIf="condition"></div>
+                        <ng-container *ngIf="!(condition)">else</ng-container>
+                    </ng-container>`));
+                const trackByAttrs = options.trackBy!;
+                assert.strictEqual(trackByAttrs.length, 1);
+                assert.strictEqual(trackByAttrs[0].toString(), "");
+                assert.strictEqual(getResult(trackByAttrs[0].getTrackByDeclaration()), getResult(`_trackBy_viewModel_items_0(_index: number, item: any){
+                    return item.id;
+                }`));
             });
 
             mocha.it("Not function in the map", function () { 
