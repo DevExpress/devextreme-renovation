@@ -22,9 +22,9 @@ export default class Widget extends WidgetProps {
     constructor() {
         super()
         const defaultOptions = convertRulesToOptions(__defaultOptionRules);
-        for (let option in defaultOptions) {
-            this[option] = defaultOptions[option];
-        }
+        Object.keys(defaultOptions).forEach(option => {
+            (this as any)[option] = (defaultOptions as any)[option];
+        });
     }
 }
 @NgModule({

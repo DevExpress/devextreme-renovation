@@ -1382,9 +1382,9 @@ export class AngularComponent extends Component {
         if (this.needGenerateDefaultOptions) { 
             constructorStatements.push(`
             const defaultOptions = convertRulesToOptions(__defaultOptionRules);
-            for(let option in defaultOptions) {
-                this[option] = defaultOptions[option];
-            }`);
+            Object.keys(defaultOptions).forEach(option=>{
+                (this as any)[option] = (defaultOptions as any)[option];
+            });`);
 
             return this.compileDefaultOptionsMethod(this.defaultOptionRules ? this.defaultOptionRules.toString() : "[]", []);
         }
