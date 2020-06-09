@@ -1061,6 +1061,9 @@ export class Property extends BaseProperty {
     constructor(decorators: Decorator[] = [], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type?: TypeExpression | string, initializer?: Expression, inherited: boolean = false) {
         if (decorators.find(d => d.name === Decorators.Template)) {
             type = new SimpleTypeExpression(`TemplateRef<any>`);
+            if (questionOrExclamationToken !== SyntaxKind.QuestionToken) { 
+                questionOrExclamationToken = SyntaxKind.ExclamationToken;
+            }
         }
         super(decorators, modifiers, name, questionOrExclamationToken, type, initializer, inherited);
     }

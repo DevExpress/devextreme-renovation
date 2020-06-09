@@ -2,9 +2,9 @@
 import { Input, TemplateRef } from "@angular/core";
 export class WidgetInput {
     @Input() headerTemplate?: TemplateRef<any>;
-    @Input() template: TemplateRef<any>;
-    @Input() contentTemplate: TemplateRef<any>;
-    @Input() footerTemplate: TemplateRef<any>;
+    @Input() template!: TemplateRef<any>;
+    @Input() contentTemplate!: TemplateRef<any>;
+    @Input() footerTemplate!: TemplateRef<any>;
 }
 
 import { Component, NgModule } from "@angular/core";
