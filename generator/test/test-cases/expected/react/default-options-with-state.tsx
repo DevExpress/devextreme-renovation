@@ -19,7 +19,7 @@ export const WidgetProps: WidgetPropsType = {
 };
 
 
-import { convertRulesToOptions, Rule } from "../../../../../component_declaration/default_options";
+import { convertRulesToOptions, Rule } from "../../../../component_declaration/default_options";
 import React, { useState, useCallback } from 'react';
 
 interface Widget {

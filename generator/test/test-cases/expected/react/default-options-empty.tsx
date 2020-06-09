@@ -6,7 +6,7 @@ export declare type WidgetPropsType = {}
 
 export const WidgetProps: WidgetPropsType = {};
 
-import { convertRulesToOptions, Rule } from "../../../../../component_declaration/default_options";
+import { convertRulesToOptions, Rule } from "../../../../component_declaration/default_options";
 import React, {useCallback} from "react";
 
 interface Widget { props: typeof WidgetProps, restAttributes: any; }
