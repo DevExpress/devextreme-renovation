@@ -32,7 +32,7 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput) {
-    const [__state_s, __state_setS] = useState(() => props.s !== undefined ? props.s : props.defaultS);
+    const [__state_s, __state_setS] = useState(() => props.s !== undefined ? props.s : props.defaultS!);
     const [__state_i, __state_setI] = useState(10)
     const [__state_j, __state_setJ] = useState(20)
 

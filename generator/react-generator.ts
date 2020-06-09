@@ -224,7 +224,12 @@ export class Property extends BaseProperty {
     toString() {
         if (this.isState) {
             const propName = getPropName(this.name);
-            return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(()=>${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(this.name)})`;
+            const defaultExclamationToken =
+                this.initializer && this.questionOrExclamationToken !== SyntaxKind.QuestionToken
+                    ? SyntaxKind.ExclamationToken
+                    : "";
+            
+            return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(()=>${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(this.name)}${defaultExclamationToken})`;
         }
         return `const [${getLocalStateName(this.name)}, ${stateSetter(this.name)}] = useState(${this.initializer})`;
     }
