@@ -5,7 +5,7 @@ export class WidgetProps {}
 
 import { Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { convertRulesToOptions, Rule } from "../../../../../component_declaration/default_options";
+import { convertRulesToOptions, Rule } from "../../../../component_declaration/default_options";
 
 type WidgetOptionRule = Rule<Partial<WidgetProps>>;
 
