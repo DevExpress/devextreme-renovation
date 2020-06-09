@@ -1,13 +1,12 @@
-function viewModel() {}
+import { Component, Listen } from "../../../component_declaration/common";
 
 function view() {}
 
 @Component({
     name: 'Component',
-    view,
-    viewModel,
+    view
 })
-export class Component {
+export class Widget {
     @Listen('pointerup', { target: document })
     onPointerUp() { }
     

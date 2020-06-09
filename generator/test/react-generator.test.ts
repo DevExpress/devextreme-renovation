@@ -113,10 +113,6 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it("jsx-events", function () {
-        this.testGenerator(this.test!.title);
-    });
-
     mocha.it("template", function () {
         this.testGenerator(this.test!.title);
     });
@@ -134,10 +130,6 @@ mocha.describe("react-generator", function () {
     });
 
     mocha.it("slots", function () {
-        this.testGenerator(this.test!.title);
-    });
-
-    mocha.it("extend-props", function () {
         this.testGenerator(this.test!.title);
     });
 

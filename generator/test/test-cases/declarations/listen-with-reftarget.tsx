@@ -1,16 +1,15 @@
-function viewModel() {}
+import { Component, Listen,  Ref } from "../../../component_declaration/common";
+
 
 function view() {}
 
 @Component({
-    name: 'Component',
-    view,
-    viewModel
+    view
 })
-export class Component {
+export class Widget {
     @Ref() divRef!: HTMLDivElement;
 
-    @Listen('pointerup', { refTarget: 'divRef' })
+    @Listen('pointerup', { target: 'divRef' })
     onPointerUp() { }
 }
   

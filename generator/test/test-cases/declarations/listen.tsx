@@ -10,7 +10,7 @@ function view(model: Widget) {
 })
 export class Widget {
     @Listen()
-    onClick(e) {}
+    onClick(e:Event) {}
 
     @Listen("pointermove")
     onPointerMove(a = "a", b = 0, c = true) {}

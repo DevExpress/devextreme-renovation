@@ -16,7 +16,7 @@ export default class WidgetWithApiRef extends WidgetWithApiRefInput {
     @ViewChild("baseRef", { static: false }) baseRef?: BaseWidget;
 
     getSomething(): string { 
-        return `${this.prop1} + ${this.baseRef?.getHeight()}`;
+        return `${this.prop1} + ${this.baseRef?.getHeight(1, undefined)}`;
     }
     get __restAttributes():any {
         return {}

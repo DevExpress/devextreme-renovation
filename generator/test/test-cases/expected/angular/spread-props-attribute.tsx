@@ -30,14 +30,14 @@ export default class Widget extends WidgetInput implements ControlValueAccessor 
 		return {};
 	}
 
-    @HostListener('valueChange', ['$event']) change(_) { }
-    @HostListener('onBlur', ['$event']) touched = (_) => {};
+    @HostListener('valueChange', ['$event']) change() { }
+    @HostListener('onBlur', ['$event']) touched = () => {};
 
     writeValue(value: any): void {
         this.value = value;
     }
 
-    registerOnChange(fn: (_: any) => void): void { this.change = fn; }
+    registerOnChange(fn: () => void): void { this.change = fn; }
     registerOnTouched(fn: () => void): void { this.touched = fn; }
 }
 @NgModule({

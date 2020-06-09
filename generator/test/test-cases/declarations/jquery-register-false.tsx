@@ -1,23 +1,21 @@
-import { Component, OneWay } from "../../../component_declaration/common";
+import { Component, OneWay, JSXComponent, ComponentBindings } from "../../../component_declaration/common";
+
+@ComponentBindings()
+class Props { 
+    @OneWay() height?: number;
+    @OneWay() width?: number;
+}
 @Component({
-    viewModel: viewModel1,
     view: view1,
     defaultOptionRules: null,
     jQuery: { register: false }
 })
-export default class Widget {
-    @OneWay() height: number;
-    @OneWay() width: number;
+export default class Widget extends JSXComponent(Props) {
+    
 }
 
-function viewModel1(model: Widget) { 
-    return {
-        height: model.height
-    }
-}
-
-function view1(viewModel) { 
-    return <div style={{ height: viewModel.height }}>
+function view1(viewModel: Widget) { 
+    return <div style={{ height: viewModel.props.height }}>
         <span></span>
         <span></span>
     </div>

@@ -3,29 +3,19 @@ import { CommonModule } from "@angular/common"
 
 @Component({
     selector: "dx-widget",
-    template: `<div [ngStyle]="__processNgStyle({height:_viewModel.height})">
-                    <span ></span>
-                    <span ></span>
+    template: `<div [ngStyle]="__processNgStyle({height:height})">
+                    <span></span>
+                    <span></span>
                 </div>`
 })
 export default class Widget {
-    @Input() height: number
-    @Input() width: number
+    @Input() height?: number;
+    @Input() width?: number;
 
     get __restAttributes(): any {
         return {}
     }
 
-    _viewModel: any
-    ngDoCheck() {
-        this._viewModel = viewModel1({
-            props: {
-                height: this.height,
-                width: this.width
-            },
-            restAttributes: this.__restAttributes
-        });
-    }
     __processNgStyle(value: any) {
         if (typeof value === "object") {
             return Object.keys(value).reduce((v: { [name: string]: any }, k) => {
@@ -49,7 +39,3 @@ export default class Widget {
     exports: [Widget]
 })
 export class DxWidgetModule { }
-
-function viewModel1(model: Widget) {
-    return { height: model.height };
-}

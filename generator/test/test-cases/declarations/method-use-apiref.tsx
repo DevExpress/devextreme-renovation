@@ -3,7 +3,7 @@ import BaseWidget from "./method";
 
 function view(viewModel: WidgetWithApiRef) { 
     return <BaseWidget 
-        ref={viewModel.baseRef} 
+        ref={viewModel.baseRef as any} 
         prop1={viewModel.props.prop1}
     ></BaseWidget>; 
 }
@@ -22,6 +22,6 @@ export default class WidgetWithApiRef extends JSXComponent(WidgetWithApiRefInput
 
     @Method()
     getSomething(): string { 
-        return `${this.props.prop1} + ${this.baseRef?.getHeight()}`;
+        return `${this.props.prop1} + ${this.baseRef?.getHeight(1, undefined)}`;
     }
 }

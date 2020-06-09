@@ -1,25 +1,24 @@
-function namedFunction() { 
+function namedFunction() {
 
 }
-const b = function (a) { return a };
-let c = (a:number, b:number):null => null;
-
-export function plus(a:number=45, c: any, b?:number):number { 
+const b = function (a: string) {
+    return a;
+}
+let c = (a: number, b: number): null => null
+export function plus(a: number = 45, c: any, b?: number): number {
     (namedFunction());
-    (c(2,3));
-
-    (namedFunction())
-    (c(2,3))
-
-    const {p} = c;
+    (c(2, 3));
+    (namedFunction());
+    (c(2, 3))
+    const { p } = c;
     (p as any).SomeMethod({})
-
-    if(p != null) {
-        a = p + 10;
+    if (p != null) {
+        a = p + 10
     }
+
     (p as any).SomeMethod({})
-
-    return a + b;
+    return a + (b ? b : 0);
 }
+export default (function (): void {
 
-export default (function():void { })();
+})();
