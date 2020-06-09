@@ -97,6 +97,10 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("model", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.it("state", function () {
         this.testGenerator(this.test!.title);
     });
@@ -122,6 +126,10 @@ mocha.describe("react-generator", function () {
     });
 
     mocha.it("refs-as-props", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("dx-widget-with-ref-prop", function () {
         this.testGenerator(this.test!.title);
     });
 
