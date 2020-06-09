@@ -57,3 +57,30 @@ gulp.task('watch', gulp.parallel("build", "copy-test-cases", function watch() {
     gulp.watch(TEST_CASES_SRC, gulp.series("copy-test-cases"));
     return gulp.watch(["./**/*.ts", "!./node_modules", "!./**/*.d.ts"], gulp.series("compile"));
 }));
+
+gulp.task('compile-declaration-check', function compile() {
+    const tsProject = ts.createProject('./test/test-cases/tsconfig.json');
+    return gulp.src("test/test-cases/declarations/**/*.tsx")
+        .pipe(plumber(() => null))
+        .pipe(tsProject());
+});
+
+gulp.task('compile-react-check', function compile() {
+    const tsProject = ts.createProject('./test/test-cases/tsconfig.json');
+    return gulp.src("test/test-cases/expected/react/**/*.tsx")
+        .pipe(plumber(() => null))
+        .pipe(tsProject());
+});
+
+gulp.task('compile-angular-check', function compile() {
+    const tsProject = ts.createProject('./test/test-cases/tsconfig.json');
+    return gulp.src("test/test-cases/expected/angular/**/*.tsx")
+        .pipe(plumber(() => null))
+        .pipe(tsProject());
+});
+
+gulp.task("compile-check", gulp.parallel(
+    "compile-declaration-check",
+    "compile-react-check",
+    "compile-angular-check"
+));
