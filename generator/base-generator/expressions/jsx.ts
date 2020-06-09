@@ -133,22 +133,22 @@ export class JsxClosingElement extends JsxOpeningElement {
     }
 }
 
-export class JsxExpression extends ExpressionWithExpression { 
+export class JsxExpression extends ExpressionWithOptionalExpression { 
     dotDotDotToken: string;
-    constructor(dotDotDotToken: string="", expression: Expression) {
+    constructor(dotDotDotToken: string="", expression?: Expression) {
         super(expression);
         this.dotDotDotToken = dotDotDotToken;
     }
 
     toString(options?:toStringOptions) { 
-        return `{${this.dotDotDotToken}${this.expression.toString(options)}}`;
+        return this.expression ? `{${this.dotDotDotToken}${this.expression.toString(options)}}` : "";
     }
 
     isJsx() { 
         return true;
     }
 
-    getExpression(options?: toStringOptions): Expression {
+    getExpression(options?: toStringOptions): Expression | undefined {
         let variableExpression;
         if (this.expression instanceof Identifier && options?.variables?.[this.expression.toString()]) { 
             variableExpression = options.variables[this.expression.toString()];
@@ -163,8 +163,10 @@ export class JsxExpression extends ExpressionWithExpression {
 }
 
 export class JsxSpreadAttribute extends JsxExpression {
+    expression: Expression;
     constructor(expression: Expression) { 
         super(SyntaxKind.DotDotDotToken, expression)
+        this.expression = expression;
     }
 
     getTemplateContext(): SpreadAssignment | null { 

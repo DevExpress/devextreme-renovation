@@ -521,7 +521,7 @@ export class JsxAttribute extends BaseJsxAttribute {
 
         if (this.initializer instanceof JsxExpression) {
             const funcName = this.initializer.toString();
-            const template = this.initializer.getExpression(options);
+            const template = this.initializer.getExpression(options)!;
             if(isFunction(template)) {
                 return this.compileBase(name, funcName);
             }
@@ -592,7 +592,7 @@ export class JsxExpression extends BaseJsxExpression {
 
     toString(options?: toStringOptions) {
         const expression = this.getExpression(options);
-        return expression.toString(options);
+        return expression ? expression.toString(options) : "";
     }
 
 }
@@ -797,6 +797,10 @@ export class JsxChildExpression extends JsxExpression {
 
     toString(options?: toStringOptions) {
         const expression = this.getExpression(options);
+
+        if (!expression) {
+           return "";
+        }
         
         if (expression instanceof Binary) { 
             const parsedBinary = this.processBinary(expression, options);
@@ -830,12 +834,12 @@ export class JsxChildExpression extends JsxExpression {
                 options);
         }
 
-        if (this.expression instanceof StringLiteral) { 
-            return this.expression.expression;
+        if (expression instanceof StringLiteral) { 
+            return expression.expression;
         }
         const stringValue = super.toString(options);
 
-        if (this.expression.isJsx() || stringValue.startsWith("<") || stringValue.startsWith("(<")) { 
+        if (expression.isJsx() || stringValue.startsWith("<") || stringValue.startsWith("(<")) { 
             return stringValue;
         }
 
@@ -849,7 +853,17 @@ export class JsxChildExpression extends JsxExpression {
 }
 
 export class JsxSpreadAttribute extends JsxExpression{
-    getTemplateContext() { 
+    expression: Expression;
+    constructor(dotDotDotToken: string="", expression: Expression) {
+        super(dotDotDotToken, expression)
+        this.expression = expression;
+    }
+
+    getExpression(options?:toStringOptions) {
+        return super.getExpression(options) || this.expression;
+    }
+
+    getTemplateContext() {
         // TODO: Support spread attributes in template context
         console.warn("Angular generator doesn't support spread attributes in template");
         return null;
@@ -1583,7 +1597,7 @@ type AngularGeneratorContext = GeneratorContext & {
 }
 
 export class AngularGenerator extends Generator {
-    createJsxExpression(dotDotDotToken: string = "", expression: Expression) {
+    createJsxExpression(dotDotDotToken: string = "", expression?: Expression) {
         return new JsxExpression(dotDotDotToken, expression);
     }
 

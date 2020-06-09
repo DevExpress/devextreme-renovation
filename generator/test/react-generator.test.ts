@@ -240,6 +240,16 @@ mocha.describe("react-generator: expressions", function () {
 
         assert.strictEqual(expression.toString(), "<React.Fragment ></React.Fragment>");
     });
+
+    mocha.it("empty expression", function () {
+        const expression = generator.createJsxElement(
+            generator.createJsxOpeningElement(generator.createIdentifier("div"), []),
+            [generator.createJsxExpression(undefined, undefined)],
+            generator.createJsxClosingElement(generator.createIdentifier("div"))
+        );
+
+        assert.strictEqual(expression.toString(), "<div ></div>");
+    });
 });
 
 function createComponent(inputMembers: Array<Property | Method>, componentMembers: Array<Property | Method> = [], parameters: { [name: string]: any } = {}):ReactComponent {
