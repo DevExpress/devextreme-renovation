@@ -119,10 +119,6 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     spreadToArray(spreadAttribute: JsxSpreadAttribute, options?: toStringOptions) {
         const component = this.component;
         const properties = component && getProps(component.members).filter(this.getPropertyFromSpread) || [];
-        
-        if (!spreadAttribute.expression) {
-            return [];
-        }
 
         const spreadAttributesExpression = spreadAttribute.expression instanceof Identifier &&
             options?.variables?.[spreadAttribute.expression.toString()] ||
@@ -525,8 +521,8 @@ export class JsxAttribute extends BaseJsxAttribute {
 
         if (this.initializer instanceof JsxExpression) {
             const funcName = this.initializer.toString();
-            const template = this.initializer.getExpression(options);
-            if(template && isFunction(template)) {
+            const template = this.initializer.getExpression(options)!;
+            if(isFunction(template)) {
                 return this.compileBase(name, funcName);
             }
         }
@@ -803,7 +799,7 @@ export class JsxChildExpression extends JsxExpression {
         const expression = this.getExpression(options);
 
         if (!expression) {
-            return "";
+           return "";
         }
         
         if (expression instanceof Binary) { 
@@ -857,7 +853,17 @@ export class JsxChildExpression extends JsxExpression {
 }
 
 export class JsxSpreadAttribute extends JsxExpression{
-    getTemplateContext() { 
+    expression: Expression;
+    constructor(dotDotDotToken: string="", expression: Expression) {
+        super(dotDotDotToken, expression)
+        this.expression = expression;
+    }
+
+    getExpression(options?:toStringOptions) {
+        return super.getExpression(options) || this.expression;
+    }
+
+    getTemplateContext() {
         // TODO: Support spread attributes in template context
         console.warn("Angular generator doesn't support spread attributes in template");
         return null;

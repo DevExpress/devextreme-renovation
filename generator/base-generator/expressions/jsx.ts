@@ -140,11 +140,8 @@ export class JsxExpression extends ExpressionWithOptionalExpression {
         this.dotDotDotToken = dotDotDotToken;
     }
 
-    toString(options?: toStringOptions) {
-        if (this.expression) {
-            return `{${this.dotDotDotToken}${this.expression.toString(options)}}`;
-        }
-        return "";
+    toString(options?:toStringOptions) { 
+        return this.expression ? `{${this.dotDotDotToken}${this.expression.toString(options)}}` : "";
     }
 
     isJsx() { 
@@ -166,14 +163,13 @@ export class JsxExpression extends ExpressionWithOptionalExpression {
 }
 
 export class JsxSpreadAttribute extends JsxExpression {
+    expression: Expression;
     constructor(expression: Expression) { 
         super(SyntaxKind.DotDotDotToken, expression)
+        this.expression = expression;
     }
 
     getTemplateContext(): SpreadAssignment | null { 
-        if (this.expression) {
-            return new SpreadAssignment(this.expression);
-        }
-        return null;
+        return new SpreadAssignment(this.expression);
     }
 }

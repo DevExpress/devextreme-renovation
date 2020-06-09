@@ -35,7 +35,7 @@ export class ExpressionWithExpression extends Expression {
 
     constructor(expression: Expression) {
         super();
-        this.expression = expression || new Expression();
+        this.expression = expression;
     }
 
     toString(options?: toStringOptions) {

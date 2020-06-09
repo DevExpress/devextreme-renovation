@@ -596,11 +596,8 @@ export class ReactComponent extends Component {
 
 export class JsxAttribute extends BaseJsxAttribute {
     getTemplateContext(): PropertyAssignment | null {
-        const expression = this.initializer && (this.initializer as JsxExpression).getExpression()
-        if (expression) {
-            return new PropertyAssignment(this.name, expression);
-        }
-        return null;
+        const expression = (this.initializer as JsxExpression).getExpression();
+        return new PropertyAssignment(this.name, expression!);
     }
 
     toString(options?: toStringOptions) {
