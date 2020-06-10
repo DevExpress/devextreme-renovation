@@ -15,7 +15,8 @@ import { Decorators } from "../../component_declaration/decorators";
 const RESERVED_NAMES = [
     "key",
     "ref",
-    "style"
+    "style",
+    "class",
 ];
 
 export class ComponentInput extends Class implements Heritable {
