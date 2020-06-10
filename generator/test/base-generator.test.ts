@@ -2218,13 +2218,21 @@ mocha.describe("ComponentInput", function () {
                     ],
                     [],
                     generator.createIdentifier("style")
+                ),
+                generator.createProperty(
+                    [
+                        createDecorator("OneWay")
+                    ],
+                    [],
+                    generator.createIdentifier("class")
                 )
             ]);
 
             assert.deepEqual(this.getWarnings(), [
                 "BaseModel ComponentBindings has property with reserved name: key",
                 "BaseModel ComponentBindings has property with reserved name: ref",
-                "BaseModel ComponentBindings has property with reserved name: style"
+                "BaseModel ComponentBindings has property with reserved name: style",
+                "BaseModel ComponentBindings has property with reserved name: class"
             ]);
         });
 
