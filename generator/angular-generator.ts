@@ -1523,7 +1523,7 @@ export class PropertyAccess extends BasePropertyAccess {
                 p._name,
                 new PropertyAccess(
                     new PropertyAccess(
-                        new Identifier(SyntaxKind.ThisKeyword),
+                        new Identifier(this.calculateComponentContext(options)),
                         new Identifier("props")
                     ),
                     p._name

@@ -42,8 +42,13 @@ export default function ModelWidget(props: typeof ModelWidgetInput) {
             value,
             valueChange,
             ...restProps
-        } = props
-        return restProps;
+        } = {
+            ...props,
+            baseStateProp:(props.baseStateProp!==undefined?props.baseStateProp:__state_baseStateProp),
+            modelStateProp:(props.modelStateProp!==undefined?props.modelStateProp:__state_modelStateProp),
+            value:(props.value!==undefined?props.value:__state_value)
+        }
+      return restProps;
     }, [props]);
 
     return view(

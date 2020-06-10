@@ -145,6 +145,10 @@ mocha.describe("vue-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("two-way-props", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {
             generator.defaultOptionsModule = "component_declaration/default_options";

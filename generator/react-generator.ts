@@ -35,7 +35,7 @@ import { Parameter } from "./base-generator/expressions/functions";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input";
 import { ObjectLiteral } from "./base-generator/expressions/literal";
 import { Decorator } from "./base-generator/expressions/decorator";
-import { PropertyAssignment, SpreadAssignment } from "./base-generator/expressions/property-assignment";
+import { PropertyAssignment, SpreadAssignment, ShorthandPropertyAssignment } from "./base-generator/expressions/property-assignment";
 import { Decorators } from "./component_declaration/decorators";
 
 const eventsDictionary = {
@@ -156,6 +156,37 @@ export class PropertyAccess extends BasePropertyAccess {
             return `(${setState}, props.${this.name}Change!(${state}))`;
         }
         return setState;
+    }
+
+    processProps(result: string, options: toStringOptions) {
+        const props = getProps(options.members);
+        const hasTwoWay = props.some(p => p.decorators.some(d => d.name === "TwoWay"));
+        const hasNotTwoWay = props.some(p => p.decorators.some(d => d.name !== "TwoWay"));
+
+        if (hasTwoWay) {
+            const initValue = hasNotTwoWay ? [new SpreadAssignment(new Identifier("props"))] : [];
+            const expression = new ObjectLiteral(
+                props.reduce((acc, p) => {
+                    if(p.decorators.some(d => d.name === "TwoWay")){
+                        acc.push(new PropertyAssignment(
+                            p._name,
+                            new PropertyAccess(
+                              new PropertyAccess(
+                                new Identifier(this.calculateComponentContext(options)),
+                                new Identifier("props")
+                              ),
+                              p._name
+                            )
+                        ))
+                    }
+                    return acc;
+                }, initValue as (PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment)[]),
+                true
+            );
+            return expression.toString(options);
+        }
+
+        return result;
     }
 }
 

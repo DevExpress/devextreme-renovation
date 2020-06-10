@@ -34,7 +34,11 @@ export default function Widget(props: typeof WidgetProps) {
     const [__state_p2, __state_setP2] = useState(() => props.p2 !== undefined ? props.p2 : props.defaultP2!)
 
     const __restAttributes = useCallback(function __restAttributes() {
-        const { defaultP1, defaultP2, p1, p1Change, p2, p2Change, ...restProps } = props
+        const { defaultP1, defaultP2, p1, p1Change, p2, p2Change, ...restProps } = {
+            ...props,
+            p1: (props.p1 !== undefined ? props.p1 : __state_p1),
+            p2: (props.p2 !== undefined ? props.p2 : __state_p2)
+        }
         return restProps;
     }, [props]);
 
