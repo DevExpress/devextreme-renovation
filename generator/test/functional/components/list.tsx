@@ -70,7 +70,7 @@ export default class List extends JSXComponent(ListProps) {
                 },
                 onReady: () => { 
                     this.readyItems.push(item.key);
-                    this.counter = this.readyItems.length;
+                    this.counter++;
                 }
             }
         });

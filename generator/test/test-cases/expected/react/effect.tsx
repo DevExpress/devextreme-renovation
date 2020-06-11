@@ -50,13 +50,13 @@ export default function Widget(props: typeof WidgetInput) {
 
     useEffect(() => {
         const id = subscribe(getP(), (props.s !== undefined ? props.s : __state_s), __state_i)
-        __state_setI(15)
+        __state_setI(__state_i => 15)
         return () => unsubscribe(id);
     }, [props.p, props.s, __state_s, props.sChange, __state_i]);
 
     useEffect(() => {
         const id = subscribe(getP(), (props.s !== undefined ? props.s : __state_s), __state_i);
-        __state_setI(15)
+        __state_setI(__state_i => 15)
         return () => unsubscribe(id);
     }, []);
 
