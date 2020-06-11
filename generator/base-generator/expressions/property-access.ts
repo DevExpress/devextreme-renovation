@@ -78,16 +78,18 @@ export class PropertyAccess extends ExpressionWithExpression {
         }
 
         const result = `${this.expression.toString(options)}.${this.name}`;
+        const context = this.calculateComponentContext(options);
 
-        if (options?.newComponentContext !== undefined && result.startsWith(`${this.calculateComponentContext(options)}.`)) {
-            if (options.newComponentContext === "") { 
-                return this.name.toString();
-            }
-            const value = result.replace(options.componentContext!, options.newComponentContext);
+        if (options?.newComponentContext !== undefined && result.startsWith(`${context}.`)) {
+            const value = options?.newComponentContext === ""
+                ? result.replace(`${context}.`, options.newComponentContext)
+                : result.replace(context, options.newComponentContext);
+
             if (this.checkPropsAccess(value, options)) { 
                 return this.processProps(value, options);
             }
-            return value;
+
+            return options?.newComponentContext === "" ? this.name.toString() : value;
         }
 
         return result;

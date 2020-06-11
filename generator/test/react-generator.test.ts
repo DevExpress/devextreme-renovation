@@ -169,6 +169,10 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("two-way-props", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {
             generator.defaultOptionsModule = "component_declaration/default_options";
@@ -1678,7 +1682,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
             members: [this.state, this.prop, this.internalState],
             componentContext: "this",
             newComponentContext: ""
-        }), "props");
+        }), "{...props,\ns1:(props.s1!==undefined?props.s1:__state_s1)}");
         assert.deepEqual(expression.getDependency(), ["props"]);
     });
 

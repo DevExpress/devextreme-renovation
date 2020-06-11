@@ -13,7 +13,6 @@ export declare type WidgetInputType = {
 
   defaultState1?: boolean;
   state1Change?: (state1: boolean) => void;
-  
   defaultState2?: boolean;
   state2Change?: (state2: boolean) => void;
 
@@ -61,9 +60,13 @@ export default function Widget(props: typeof WidgetInput) {
   const stateChange = useCallback(function stateChange(stateProp: boolean) {
     (__state_setStateProp(stateProp), props.statePropChange!(stateProp))
   }, []);
-
-  const __restAttributes=useCallback(function __restAttributes(){
-    const { defaultState1, defaultState2, defaultStateProp, state1, state1Change, state2, state2Change, stateProp, statePropChange, ...restProps } = props;
+  const __restAttributes = useCallback(function __restAttributes() {
+    const { defaultState1, defaultState2, defaultStateProp, state1, state1Change, state2, state2Change, stateProp, statePropChange, ...restProps } = {
+      ...props,
+      state1: (props.state1 !== undefined ? props.state1 : __state_state1),
+      state2: (props.state2 !== undefined ? props.state2 : __state_state2),
+      stateProp: (props.stateProp !== undefined ? props.stateProp : __state_stateProp)
+    }
     return restProps;
   }, [props]);
 
@@ -79,8 +82,7 @@ export default function Widget(props: typeof WidgetInput) {
     destruct,
     stateChange,
     restAttributes: __restAttributes()
-  })
-  );
+  }));
 }
 
 Widget.defaultProps = {

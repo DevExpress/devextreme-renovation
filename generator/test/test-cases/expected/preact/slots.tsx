@@ -28,7 +28,10 @@ interface Widget {
 
 export default function Widget(props: typeof WidgetInput) {
     const __restAttributes=useCallback(function __restAttributes(){
-        const { children, namedSlot, ...restProps } = props;
+        const { children, default: defaultSlot, namedSlot, ...restProps } = {
+            ...props,
+            default:props.children
+        };
         return restProps;
     }, [props]);
     return view(({
