@@ -15,7 +15,7 @@ export default function Widget(props: {}) {
   const [__state__hovered, __state_set_hovered] = useState(false);
 
   const updateState = useCallback(function updateState() {
-    __state_set_hovered(!__state__hovered);
+    __state_set_hovered(__state__hovered => !__state__hovered);
   }, [__state__hovered]);
 
   const __restAttributes=useCallback(function __restAttributes(){
