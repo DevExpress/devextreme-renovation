@@ -11,7 +11,7 @@
     "dev": "gulp watch",
     "test:testcafe": "start-server-and-test testcafe:start-test-servers \"3000|3001\" testcafe",
     "test:testcafe-headless": "start-server-and-test testcafe:start-test-servers \"3000|3001\" 'testcafe chrome:headless'",
-    "testcafe:start-test-servers": "NODE_ENV=development node ./test/functional/start-servers.js",
+    "testcafe:start-test-servers": "NODE_ENV=development node ./e2e/start-servers.js",
     "test:compile-check": "gulp compile-check",
     "gulp": "gulp"
   },
