@@ -1724,7 +1724,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
 
         assert.equal((expression.toString({
             members: [this.state, this.prop, this.internalState]
-        })), ("(__state_setS1(a), props.s1Change!(a))"));
+        })), ("(__state_setS1(__state_s1 => a), props.s1Change!(a))"));
         assert.deepEqual(expression.getDependency(), []);
         assert.deepEqual(expression.getAllDependency(), ["s1"]);
     });
@@ -1738,7 +1738,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
 
         assert.equal(getResult(expression.toString({
             members: [this.state, this.prop, this.internalState]
-        })), getResult("__state_setI1(a);"));
+        })), getResult("__state_setI1(__state_i1 => a);"));
     });
 
     mocha.it("= operator for prop - throw error", function () {
@@ -1923,7 +1923,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.deepEqual(arrowFunction.getDependency(), []);
         assert.equal(getResult(arrowFunction.toString({
             members: [this.state, this.prop, this.internalState]
-        })), getResult("()=>(__state_setS1(10), props.s1Change!(10))"));
+        })), getResult("()=>(__state_setS1(__state_s1 => 10), props.s1Change!(10))"));
     });
 
     mocha.it("Arrow Function. Can set internal state", function () {
@@ -1943,7 +1943,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.deepEqual(arrowFunction.getDependency(), []);
         assert.equal(getResult(arrowFunction.toString({
             members: [this.state, this.prop, this.internalState]
-        })), getResult("()=>__state_setI1(10)"));
+        })), getResult("()=>__state_setI1(__state_i1 => 10)"));
     });
 
     mocha.it("Arrow Function. Can set prop in state", function () {
@@ -1963,7 +1963,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.deepEqual(arrowFunction.getDependency(), ["p1"]);
         assert.equal(getResult(arrowFunction.toString({
             members: [this.state, this.prop, this.internalState]
-        })), getResult("()=>(__state_setS1(props.p1), props.s1Change!(props.p1))"));
+        })), getResult("()=>(__state_setS1((__state_s1) => props.p1), props.s1Change!(props.p1))"));
     });
 
     mocha.it("PropertyAccess should replace componentContext on newComponentContext", function () {

@@ -45,12 +45,12 @@ export default function Widget(props: typeof WidgetInput) {
   const [__state_stateProp, __state_setStateProp] = useState(() => props.stateProp !== undefined ? props.stateProp : props.defaultStateProp)
 
   const updateState = useCallback(function updateState() {
-    (__state_setState1(!(props.state1 !== undefined ? props.state1 : __state_state1)), props.state1Change!(!(props.state1 !== undefined ? props.state1 : __state_state1)))
+    (__state_setState1(__state_state1 => !(props.state1 !== undefined ? props.state1 : __state_state1)), props.state1Change!(!(props.state1 !== undefined ? props.state1 : __state_state1)))
   }, [props.state1, __state_state1, props.state1Change]);
 
   const updateState2 = useCallback(function updateState2() {
     const cur = (props.state2 !== undefined ? props.state2 : __state_state2);
-    (__state_setState2(cur !== false ? false : true), props.state2Change!(cur !== false ? false : true));
+    (__state_setState2(__state_state2 => cur !== false ? false : true), props.state2Change!(cur !== false ? false : true));
   }, [props.state2, __state_state2, props.state2Change]);
 
   const destruct = useCallback(function destruct() {
@@ -58,7 +58,7 @@ export default function Widget(props: typeof WidgetInput) {
   }, [props.state1, __state_state1, props.state1Change]);
 
   const stateChange = useCallback(function stateChange(stateProp: boolean) {
-    (__state_setStateProp(stateProp), props.statePropChange!(stateProp))
+    (__state_setStateProp(__state_stateProp => stateProp), props.statePropChange!(stateProp))
   }, []);
   const __restAttributes = useCallback(function __restAttributes() {
     const { defaultState1, defaultState2, defaultStateProp, state1, state1Change, state2, state2Change, stateProp, statePropChange, ...restProps } = {
