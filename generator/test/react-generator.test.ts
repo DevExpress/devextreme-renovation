@@ -29,7 +29,7 @@ function createComponentDecorator(parameters: {[name:string]: any}) {
     )
 }
 
-import { printSourceCodeAst as getResult, createTestGenerator, removeSpaces } from "./helpers/common";
+import { printSourceCodeAst as getResult, createTestGenerator, removeSpaces, getModulePath } from "./helpers/common";
 import { GeneratorContext } from "../base-generator/types";
 import { Method } from "../base-generator/expressions/class-members";
 import { SimpleExpression } from "../base-generator/expressions/base";
@@ -44,14 +44,14 @@ function createDecorator(name: string) {
 mocha.describe("react-generator", function () {
     this.beforeAll(function () {
         const testGenerator = createTestGenerator("react");
-        compile(`${__dirname}/test-cases/declarations`, `${__dirname}/test-cases/componentFactory`);
+        compile(`${__dirname}/test-cases/declarations/src`, `${__dirname}/test-cases/componentFactory`);
         this.testGenerator = function (componentName: string) {
             testGenerator.call(this, componentName, generator);
         };
     });
 
     this.beforeEach(function () {
-        generator.setContext({ dirname: path.resolve(__dirname, "./test-cases/declarations") });
+        generator.setContext({ dirname: path.resolve(__dirname, "./test-cases/declarations/src") });
     });
 
     this.afterEach(function () {
@@ -175,9 +175,9 @@ mocha.describe("react-generator", function () {
 
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {
-            generator.defaultOptionsModule = "component_declaration/default_options";
+            generator.defaultOptionsModule = getModulePath("component_declaration/default_options");
             generator.setContext({
-                dirname: path.resolve(__dirname, "./test-cases/declarations"),
+                dirname: path.resolve(__dirname, "./test-cases/declarations/src"),
                 defaultOptionsModule: path.resolve(generator.defaultOptionsModule)
             });
         });
@@ -1142,7 +1142,7 @@ mocha.describe("import Components", function () {
                 generator.createIdentifier("Base"),
                 undefined
             ),
-            generator.createStringLiteral("./test-cases/declarations/empty-component")
+            generator.createStringLiteral("./test-cases/declarations/src/empty-component")
         );
 
         const heritageClause = generator.createHeritageClause(
@@ -1163,7 +1163,7 @@ mocha.describe("import Components", function () {
                 generator.createIdentifier("Base"),
                 undefined
             ),
-            generator.createStringLiteral("./test-cases/declarations/props")
+            generator.createStringLiteral("./test-cases/declarations/src/props")
         );
 
         const heritageClause = generator.createHeritageClause(
@@ -1184,7 +1184,7 @@ mocha.describe("import Components", function () {
                 generator.createIdentifier("Base"),
                 undefined
             ),
-            generator.createStringLiteral("./test-cases/declarations/props")
+            generator.createStringLiteral("./test-cases/declarations/src/props")
         );
 
         const heritageClause = generator.createHeritageClause(
@@ -1209,7 +1209,7 @@ mocha.describe("import Components", function () {
                 generator.createIdentifier("Base"),
                 undefined
             ),
-            generator.createStringLiteral("./test-cases/declarations/empty-component")
+            generator.createStringLiteral("./test-cases/declarations/src/empty-component")
         );
 
         const heritageClause = generator.createHeritageClause(
@@ -1234,7 +1234,7 @@ mocha.describe("import Components", function () {
                 generator.createIdentifier("Base"),
                 undefined
             ),
-            generator.createStringLiteral("./test-cases/declarations/props")
+            generator.createStringLiteral("./test-cases/declarations/src/props")
         );
 
         const heritageClause = generator.createHeritageClause(
@@ -1270,7 +1270,7 @@ mocha.describe("import Components", function () {
                 generator.createIdentifier("Base"),
                 undefined
             ),
-            generator.createStringLiteral("./test-cases/declarations/empty-component")
+            generator.createStringLiteral("./test-cases/declarations/src/empty-component")
         );
 
         const heritageClause = generator.createHeritageClause(
@@ -1312,7 +1312,7 @@ mocha.describe("import Components", function () {
                     generator.createIdentifier("WidgetProps")
                 )])
             ),
-            generator.createStringLiteral("./test-cases/declarations/component-input")
+            generator.createStringLiteral("./test-cases/declarations/src/component-input")
         );
 
         const heritageClause = generator.createHeritageClause(
@@ -1348,7 +1348,7 @@ mocha.describe("import Components", function () {
                     generator.createIdentifier("WidgetProps")
                 )])
             ),
-            generator.createStringLiteral("./test-cases/declarations/component-input")
+            generator.createStringLiteral("./test-cases/declarations/src/component-input")
         );
 
         const heritageClause = generator.createHeritageClause(

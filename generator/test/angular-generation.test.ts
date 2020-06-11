@@ -3,19 +3,19 @@ import generator from "../angular-generator";
 import compile from "../component-compiler";
 import path from "path";
 
-import { createTestGenerator } from "./helpers/common";
+import { createTestGenerator, getModulePath } from "./helpers/common";
 
 mocha.describe("angular-generation", function () {
     const testGenerator = createTestGenerator("angular");
     this.beforeAll(function () {
-        compile(`${__dirname}/test-cases/declarations`, `${__dirname}/test-cases/componentFactory`);
+        compile(`${__dirname}/test-cases/declarations/src`, `${__dirname}/test-cases/componentFactory`);
         this.testGenerator = function (componentName: string) {
             testGenerator.call(this, componentName, generator);
         };
     });
 
     this.beforeEach(function () {
-        generator.setContext({ dirname: path.resolve(__dirname, "./test-cases/declarations") });
+        generator.setContext({ dirname: path.resolve(__dirname, "./test-cases/declarations/src") });
     });
 
     this.afterEach(function () {
@@ -155,9 +155,9 @@ mocha.describe("angular-generation", function () {
 
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {
-            generator.defaultOptionsModule = "component_declaration/default_options";
+            generator.defaultOptionsModule = getModulePath("component_declaration/default_options");
             generator.setContext({
-                dirname: path.resolve(__dirname, "./test-cases/declarations"),
+                dirname: path.resolve(__dirname, "./test-cases/declarations/src"),
                 defaultOptionsModule: path.resolve(generator.defaultOptionsModule)
             });
         });

@@ -2466,7 +2466,7 @@ mocha.describe("Vue-generator", function () {
                         generator.createIdentifier("DxWidget"),
                         undefined
                     ),
-                    generator.createStringLiteral("./test-cases/declarations/component-input")
+                    generator.createStringLiteral("./test-cases/declarations/src/component-input")
                 );
             });
 

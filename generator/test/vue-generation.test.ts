@@ -3,7 +3,7 @@ import generator from "../vue-generator";
 import compile from "../component-compiler";
 import path from "path";
 
-import { createTestGenerator, assertCode } from "./helpers/common";
+import { createTestGenerator, assertCode, getModulePath } from "./helpers/common";
 
 function getPartFromSourceFile(code: string, tagName: string){ 
     const tag = `<${tagName}>`;
@@ -40,14 +40,14 @@ mocha.describe("vue-generation", function () {
         (componentName) => `${componentName}.vue`
     );
     this.beforeAll(function () {
-        compile(`${__dirname}/test-cases/declarations`, `${__dirname}/test-cases/componentFactory`);
+        compile(`${__dirname}/test-cases/declarations/src`, `${__dirname}/test-cases/componentFactory`);
         this.testGenerator = function (componentName: string) {
             testGenerator.call(this, componentName, generator);
         };
     });
 
     this.beforeEach(function () {
-        generator.setContext({ dirname: path.resolve(__dirname, "./test-cases/declarations") });
+        generator.setContext({ dirname: path.resolve(__dirname, "./test-cases/declarations/src") });
     });
 
     this.afterEach(function () {
@@ -151,9 +151,9 @@ mocha.describe("vue-generation", function () {
 
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {
-            generator.defaultOptionsModule = "component_declaration/default_options";
+            generator.defaultOptionsModule = getModulePath("component_declaration/default_options");
             generator.setContext({
-                dirname: path.resolve(__dirname, "./test-cases/declarations"),
+                dirname: path.resolve(__dirname, "./test-cases/declarations/src"),
                 defaultOptionsModule: path.resolve(generator.defaultOptionsModule)
             });
         });

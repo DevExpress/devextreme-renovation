@@ -4,18 +4,18 @@ import compile from "../component-compiler";
 import path from "path";
 import assert from "assert";
 
-import { printSourceCodeAst as getResult, createTestGenerator } from "./helpers/common";
+import { printSourceCodeAst as getResult, createTestGenerator, getModulePath } from "./helpers/common";
 
 mocha.describe("preact-generator", function () {
     const testGenerator = createTestGenerator("preact");
     this.beforeAll(function () {
-        compile(`${__dirname}/test-cases/declarations`, `${__dirname}/test-cases/componentFactory`);
+        compile(`${__dirname}/test-cases/declarations/src`, `${__dirname}/test-cases/componentFactory`);
         this.testGenerator = function (componentName: string) {
             generator.setContext({ 
-                dirname: path.resolve(__dirname, "./test-cases/declarations"),
+                dirname: path.resolve(__dirname, "./test-cases/declarations/src"),
                 path: `${componentName}.tsx`,
-                jqueryComponentRegistratorModule: "../component_declaration/jquery_component_registrator",
-                jqueryBaseComponentModule: "../component_declaration/jquery_base_component"
+                jqueryComponentRegistratorModule: getModulePath("component_declaration/jquery_component_registrator"),
+                jqueryBaseComponentModule: getModulePath("component_declaration/jquery_base_component")
             
             });
             testGenerator.call(this, componentName, generator);
@@ -23,8 +23,8 @@ mocha.describe("preact-generator", function () {
     });
 
     this.beforeEach(function () {
-        generator.jqueryComponentRegistratorModule = "../component_declaration/jquery_component_registrator";
-        generator.jqueryBaseComponentModule = "../component_declaration/jquery_base_component";
+        generator.jqueryComponentRegistratorModule = getModulePath("component_declaration/jquery_component_registrator");
+        generator.jqueryBaseComponentModule = getModulePath("component_declaration/jquery_base_component");
     });
 
     this.afterEach(function () {
@@ -73,8 +73,8 @@ mocha.describe("preact-generator: expressions", function () {
                 undefined,
                 undefined,
                 undefined,
-                generator.createStringLiteral("./test-cases/declarations/empty-component")
-            ), 'import "./test-cases/declarations/empty-component.p"');
+                generator.createStringLiteral("./test-cases/declarations/src/empty-component")
+            ), 'import "./test-cases/declarations/src/empty-component.p"');
     
             generator.setContext(null);
         });
@@ -188,7 +188,7 @@ mocha.describe("import Components", function () {
                 generator.createIdentifier("Base"),
                 undefined
             ),
-            generator.createStringLiteral("./test-cases/declarations/props")
+            generator.createStringLiteral("./test-cases/declarations/src/props")
         );
         
         const heritageClause = generator.createHeritageClause(
@@ -221,12 +221,12 @@ mocha.describe("import Components", function () {
 mocha.describe("preact-generator: jQuery generation", function () {
     const testGenerator = createTestGenerator("preact");
     this.beforeAll(function () {
-        compile(`${__dirname}/test-cases/declarations`, `${__dirname}/test-cases/componentFactory`);
+        compile(`${__dirname}/test-cases/declarations/src`, `${__dirname}/test-cases/componentFactory`);
 
         this.testGenerator = function (componentName: string) {
             generator.setContext({ 
-                dirname: path.resolve(__dirname, "./test-cases/declarations"), 
-                path: `${componentName}.tsx`,
+                dirname: path.resolve(__dirname, "./test-cases/declarations/src"), 
+                path: getModulePath(`${componentName}.tsx`),
                 jqueryComponentRegistratorModule: generator.jqueryComponentRegistratorModule && path.resolve(generator.jqueryComponentRegistratorModule),
                 jqueryBaseComponentModule: generator.jqueryBaseComponentModule && path.resolve(generator.jqueryBaseComponentModule)
             });
@@ -235,8 +235,8 @@ mocha.describe("preact-generator: jQuery generation", function () {
     });
 
     this.beforeEach(function () {
-        generator.jqueryComponentRegistratorModule = "../component_declaration/jquery_component_registrator";
-        generator.jqueryBaseComponentModule = "../component_declaration/jquery_base_component";
+        generator.jqueryComponentRegistratorModule = getModulePath("component_declaration/jquery_component_registrator");
+        generator.jqueryBaseComponentModule = getModulePath("component_declaration/jquery_base_component");
     });
     
     this.afterEach(function () {

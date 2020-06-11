@@ -67,6 +67,6 @@
     "node_modules",
     "build",
     "test/test-cases",
-    "test/functional"
+    "e2e"
   ]
 }

@@ -2,7 +2,7 @@
   "browsers": [
     "chrome --disable-features=VizDisplayCompositor"
   ],
-  "src": "./test/functional/tests/**/*.test.js",
+  "src": "./e2e/tests/**/*.test.js",
   "reporter": [
     "spec",
     {
@@ -11,6 +11,6 @@
     }
   ],
   "screenshots": {
-    "path": "./test/functional/tests/temp/"
+    "path": "./e2e/tests/temp/"
   }
 }
