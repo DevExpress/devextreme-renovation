@@ -158,31 +158,35 @@ export class PropertyAccess extends BasePropertyAccess {
         return setState;
     }
 
+    needToCreateAssignment(property: BaseProperty) {
+        return !property.canBeDestructured && !property.isRefProp;
+    }
+
     processProps(result: string, options: toStringOptions) {
         const props = getProps(options.members);
-        const hasTwoWay = props.some(p => p.decorators.some(d => d.name === "TwoWay"));
-        const hasNotTwoWay = props.some(p => p.decorators.some(d => d.name !== "TwoWay"));
+        const hasComplexProps = props.some(p => this.needToCreateAssignment(p));
 
-        if (hasTwoWay) {
-            const initValue = hasNotTwoWay ? [new SpreadAssignment(new Identifier("props"))] : [];
-            const expression = new ObjectLiteral(
-                props.reduce((acc, p) => {
-                    if(p.decorators.some(d => d.name === "TwoWay")){
-                        acc.push(new PropertyAssignment(
-                            p._name,
-                            new PropertyAccess(
-                              new PropertyAccess(
-                                new Identifier(this.calculateComponentContext(options)),
-                                new Identifier("props")
-                              ),
-                              p._name
-                            )
-                        ))
-                    }
-                    return acc;
-                }, initValue as (PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment)[]),
-                true
-            );
+        if (hasComplexProps && options.componentContext === SyntaxKind.ThisKeyword) {
+            const hasSimpleProps = props.some(p => p.canBeDestructured);
+            const initValue = (hasSimpleProps ? [new SpreadAssignment(new Identifier("props"))] : []) as (PropertyAssignment | SpreadAssignment)[];
+
+            const destructedProps = props.reduce((acc, p) => {
+                if(this.needToCreateAssignment(p)){
+                    acc.push(new PropertyAssignment(
+                        p._name,
+                        new PropertyAccess(
+                          new PropertyAccess(
+                            new Identifier(this.calculateComponentContext(options)),
+                            new Identifier("props")
+                          ),
+                          p._name
+                        )
+                    ))
+                }
+                return acc;
+            }, initValue)
+
+            const expression = new ObjectLiteral(destructedProps, true);
             return expression.toString(options);
         }
 
@@ -314,11 +318,25 @@ export class ReactComponent extends Component {
 
     createRestPropsGetter(members: BaseClassMember[]) {
         const props = getProps(members);
-        const bindingElements = props.map(p => new BindingElement(
-            undefined,
-            undefined,
-            p._name,
-        )).concat([
+        const bindingElements = props.reduce((bindingElements, p) => {
+            bindingElements.push(
+                new BindingElement(
+                    undefined,
+                    undefined,
+                    p._name,
+                )
+            )
+            if (p.isSlot && !p.canBeDestructured) {
+                bindingElements.push(
+                    new BindingElement(
+                        undefined,
+                        p._name,
+                        'defaultSlot',
+                    )
+                )
+            }
+            return bindingElements;
+        }, [] as BindingElement[]).concat([
             new BindingElement(
                 SyntaxKind.DotDotDotToken,
                 undefined,
