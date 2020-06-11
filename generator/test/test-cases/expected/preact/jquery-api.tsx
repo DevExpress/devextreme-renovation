@@ -1,6 +1,6 @@
 import * as Preact from "preact";
-import registerComponent from "../../../../../component_declaration/jquery_component_registrator";
-import BaseComponent from "../../../../../component_declaration/jquery_base_component"
+import registerComponent from "../../../../component_declaration/jquery_component_registrator";
+import BaseComponent from "../../../../component_declaration/jquery_base_component"
 import WidgetComponent from "../../../../jquery-api.p"
 
 export default class Widget extends BaseComponent {

@@ -64,3 +64,10 @@ export function createTestGenerator(
         checkCode(code, this.expectedCode);
     }
 }
+
+export function getModulePath(modulePath: string): string { 
+    if (__dirname.replace(process.cwd(), "").startsWith("/build")) { 
+        return `build/${modulePath}`;
+    }
+    return modulePath;
+}

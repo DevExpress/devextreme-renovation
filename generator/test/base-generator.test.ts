@@ -1800,7 +1800,7 @@ mocha.describe("base-generator: expressions", function () {
                         ]
                     )
                 ),
-                generator.createStringLiteral("./test-cases/declarations/globals-in-template")
+                generator.createStringLiteral("./test-cases/declarations/src/globals-in-template")
             );
 
             assert.strictEqual(generator.getContext().globals?.["PREFIX"].toString(), '"dx"');
@@ -1820,7 +1820,7 @@ mocha.describe("base-generator: expressions", function () {
                         )]
                     )
                 ),
-                generator.createStringLiteral("./test-cases/declarations/globals-in-template")
+                generator.createStringLiteral("./test-cases/declarations/src/globals-in-template")
             );
             
             assert.strictEqual(generator.getContext().components, undefined);
@@ -1841,7 +1841,7 @@ mocha.describe("base-generator: expressions", function () {
                         ]
                     )
                 ),
-                generator.createStringLiteral("./test-cases/declarations/globals-in-template")
+                generator.createStringLiteral("./test-cases/declarations/src/globals-in-template")
             );
             
             assert.strictEqual(generator.getContext().components?.["Base"].name, "WidgetWithGlobals");
@@ -2310,10 +2310,10 @@ mocha.describe("import Components", function () {
                 identifier,
                 undefined
             ),
-            generator.createStringLiteral("./test-cases/declarations/empty-component")
+            generator.createStringLiteral("./test-cases/declarations/src/empty-component")
         );
         
-        const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/empty-component.tsx`);
+        const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/src/empty-component.tsx`);
         assert.ok(generator.cache[baseModulePath]);
         assert.deepEqual(generator.getContext().components!["Base"].heritageProperties.map(p => p.name.toString()), ["height", "width"]);
     });
@@ -2327,10 +2327,10 @@ mocha.describe("import Components", function () {
                 identifier,
                 undefined
             ),
-            generator.createStringLiteral("./test-cases/declarations/empty-component.tsx")
+            generator.createStringLiteral("./test-cases/declarations/src/empty-component.tsx")
         );
         
-        const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/empty-component.tsx`);
+        const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/src/empty-component.tsx`);
         assert.ok(generator.cache[baseModulePath]);
         assert.deepEqual(generator.getContext().components!["Base"].heritageProperties.map(p => p.name.toString()), ["height", "width"]);
     });
@@ -2343,7 +2343,7 @@ mocha.describe("import Components", function () {
                 generator.createIdentifier("Base"),
                 undefined
             ),
-            generator.createStringLiteral("./test-cases/declarations/empty-component")
+            generator.createStringLiteral("./test-cases/declarations/src/empty-component")
         ); 
         
         const heritageClause = generator.createHeritageClause(
@@ -2378,11 +2378,11 @@ mocha.describe("import Components", function () {
                     generator.createIdentifier("WidgetProps")
                 )])
             ),
-            generator.createStringLiteral("./test-cases/declarations/component-input")
+            generator.createStringLiteral("./test-cases/declarations/src/component-input")
         );
         
-        const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/component-input.tsx`);
-        assert.strictEqual(expression.toString(), `import Widget,{WidgetProps} from "./test-cases/declarations/component-input"`);
+        const baseModulePath = path.resolve(`${__dirname}/test-cases/declarations/src/component-input.tsx`);
+        assert.strictEqual(expression.toString(), `import Widget,{WidgetProps} from "./test-cases/declarations/src/component-input"`);
         assert.ok(generator.cache[baseModulePath]);
         assert.ok(generator.getContext().components!["Widget"] instanceof Component);
         assert.ok(generator.getContext().components!["WidgetProps"] instanceof ComponentInput);
@@ -2399,7 +2399,7 @@ mocha.describe("import Components", function () {
                     generator.createIdentifier("WidgetProps")
                 )])
             ),
-            generator.createStringLiteral("./test-cases/declarations/component-input")
+            generator.createStringLiteral("./test-cases/declarations/src/component-input")
         );
 
         const heritageClause = generator.createHeritageClause(

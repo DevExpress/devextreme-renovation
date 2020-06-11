@@ -26,13 +26,13 @@ async function readData(stream:NodeJS.ReadableStream):Promise<File[]> {
 mocha.describe("code-compiler: gulp integration", function() { 
     mocha.it("createCodeGenerator stream", async function () { 
         const setContextSpy = sinon.spy(generator, "setContext");
-        const result = await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/props-in-listener.tsx`))
+        const result = await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/src/props-in-listener.tsx`))
             .pipe(generateComponents(generator))
         );
         
         assert.strictEqual(printSourceCodeAst(result[0].contents!.toString()), printSourceCodeAst(fs.readFileSync(`${__dirname}/test-cases/expected/preact/props-in-listener.tsx`).toString()));
         assert.ok(result[0].path.endsWith("props-in-listener.p.tsx"));
-        assert.ok(setContextSpy.firstCall.args[0]!.dirname!.endsWith("declarations"));
+        assert.ok(setContextSpy.firstCall.args[0]!.dirname!.endsWith("declarations/src"));
         assert.deepEqual(generator.getContext(), { components: {} });
         setContextSpy.restore();
     });
@@ -47,7 +47,7 @@ mocha.describe("code-compiler: gulp integration", function() {
         });
         mocha.it("copy default_options", async function () { 
             const setContextSpy = sinon.spy(generator, "setContext");
-            await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/props-in-listener.tsx`))
+            await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/src/props-in-listener.tsx`))
                 .pipe(generateComponents(generator))
             );
 
@@ -72,7 +72,7 @@ mocha.describe("jQuery", function () {
     });
     mocha.it("copy utils modules", async function () { 
         const setContextSpy = sinon.spy(generator, "setContext");
-        await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/props-in-listener.tsx`))
+        await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/src/props-in-listener.tsx`))
             .pipe(generateComponents(generator))
         );
 
@@ -83,7 +83,7 @@ mocha.describe("jQuery", function () {
     });
 
      mocha.it("createCodeGenerator returns correct filename", async function () {
-        const result = await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/jquery-empty.tsx`))
+        const result = await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/src/jquery-empty.tsx`))
             .pipe(generateComponents(generator))
         );
 

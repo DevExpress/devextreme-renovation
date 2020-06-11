@@ -60,7 +60,7 @@ gulp.task('watch', gulp.parallel("build", "copy-test-cases", function watch() {
 
 gulp.task('compile-declaration-check', function compile() {
     const tsProject = ts.createProject('./test/test-cases/tsconfig.json', ts.reporter.fullReporter);
-    return gulp.src("test/test-cases/declarations/**/*.tsx")
+    return gulp.src("test/test-cases/declarations/src/**/*.tsx")
         .pipe(tsProject());
 });
 

@@ -1124,7 +1124,7 @@ mocha.describe("Angular generator", function () {
                             generator.createIdentifier("Widget"),
                             undefined
                         ),
-                        generator.createStringLiteral("./test-cases/declarations/empty-component")
+                        generator.createStringLiteral("./test-cases/declarations/src/empty-component")
                     );
                 });
 
@@ -1159,10 +1159,10 @@ mocha.describe("Angular generator", function () {
                             generator.createIdentifier("Component"),
                             undefined
                         ),
-                        generator.createStringLiteral("./test-cases/declarations/empty-component")
+                        generator.createStringLiteral("./test-cases/declarations/src/empty-component")
                     );
         
-                    assert.strictEqual(expression.toString(), `import Component,{DxWidgetModule} from "./test-cases/declarations/empty-component"`);
+                    assert.strictEqual(expression.toString(), `import Component,{DxWidgetModule} from "./test-cases/declarations/src/empty-component"`);
                 });
 
                 mocha.it("Event attribute should be wrapped in paren", function () {
