@@ -59,7 +59,6 @@ export class ListProps {
 })
 export default class List extends JSXComponent(ListProps) {
     @InternalState() counter = 0;
-    @InternalState() readyItems: number[] = [];
 
     get items() { 
         return this.props.items.map(item => {
@@ -69,7 +68,6 @@ export default class List extends JSXComponent(ListProps) {
                     this.props.onClick?.(item.key)
                 },
                 onReady: () => { 
-                    this.readyItems.push(item.key);
                     this.counter++;
                 }
             }
