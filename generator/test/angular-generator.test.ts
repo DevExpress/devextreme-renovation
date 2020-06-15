@@ -4180,7 +4180,7 @@ mocha.describe("Angular generator", function () {
                     assert.strictEqual(getResult(getter.toString()), 
                         getResult(`get name():string[]{
                             if("name" in this.__getterCache){
-                                return this.__getterCache["name"]
+                                return this.__getterCache["name"]!
                             }
                     
                             return this.__getterCache["name"]=( ():string[] => {
@@ -4235,7 +4235,7 @@ mocha.describe("Angular generator", function () {
                     assert.strictEqual(getResult(getter.toString()), 
                         getResult(`get name():'1'|{}{
                             if("name" in this.__getterCache){
-                                return this.__getterCache["name"]
+                                return this.__getterCache["name"]!
                             }
                     
                             return this.__getterCache["name"]=( ():'1'|{} => {
@@ -4259,7 +4259,7 @@ mocha.describe("Angular generator", function () {
                     assert.strictEqual(getResult(getter.toString()), 
                         getResult(`get name():{}{
                             if("name" in this.__getterCache){
-                                return this.__getterCache["name"]
+                                return this.__getterCache["name"]!
                             }
                     
                             return this.__getterCache["name"]=( ():{} => {

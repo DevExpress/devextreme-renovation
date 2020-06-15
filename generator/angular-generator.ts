@@ -1151,7 +1151,7 @@ export class GetAccessor extends BaseGetAccessor{
             body.statements = [
                 new SimpleExpression(`
                     if(${nameStringLiteral} in this.__getterCache){
-                        return this.__getterCache[${nameStringLiteral}]
+                        return this.__getterCache[${nameStringLiteral}]!
                     }
                 `),
                 new ReturnStatement(
