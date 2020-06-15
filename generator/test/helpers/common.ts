@@ -65,8 +65,9 @@ export function createTestGenerator(
     }
 }
 
-export function getModulePath(modulePath: string): string { 
-    if (__dirname.replace(process.cwd(), "").startsWith("/build")) { 
+export function getModulePath(modulePath: string): string {
+    const relativePath = path.relative(process.cwd(), __dirname);
+    if (relativePath.startsWith("build")) { 
         return `build/${modulePath}`;
     }
     return modulePath;

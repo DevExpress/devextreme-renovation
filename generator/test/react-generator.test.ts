@@ -1796,7 +1796,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
             members: [prop],
             componentContext: "this",
             newComponentContext: ""
-        })), "div.current.InnerHtml=value");
+        })), "div.current!.InnerHtml=value");
         assert.deepEqual(expression.getDependency(), []);
     });
 
@@ -1821,7 +1821,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
             members: [prop],
             componentContext: "this",
             newComponentContext: ""
-        }), "div.current.InnerHtml++");
+        }), "div.current!.InnerHtml++");
     });
 
     mocha.it("Set ref.InnerHtml short operator", function () {
@@ -1847,7 +1847,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
             members: [prop],
             componentContext: "this",
             newComponentContext: ""
-        }), "div.current.InnerHtml+=value");
+        }), "div.current!.InnerHtml+=value");
     });
 
     mocha.it("VariableDeclarationList return dependency for initializer", function () {
