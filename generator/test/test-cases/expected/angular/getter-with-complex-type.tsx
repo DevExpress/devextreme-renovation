@@ -14,8 +14,8 @@ import { CommonModule } from "@angular/common"
 export default class Widget extends Props {
     i: number = 10
     get __g1(): number[] {
-        if ("g1" in this.__getterCache) {
-            return this.__getterCache["g1"]!
+        if (this.__getterCache["g1"]!==undefined) {
+            return this.__getterCache["g1"]
         }
         return this.__getterCache["g1"] = ((): number[] => {
             return [this.p, this.i];
@@ -34,13 +34,13 @@ export default class Widget extends Props {
 
     ngOnChanges(changes: {[name:string]: any}){
         if (["p"].some(d=>changes[d])) {
-            delete this.__getterCache["g1"];
+            this.__getterCache["g1"] = undefined;
         }
     }
 
     set _i(i: number) {
         this.i = i;
-        delete this.__getterCache["g1"];
+        this.__getterCache["g1"] = undefined;
     }
 
 }

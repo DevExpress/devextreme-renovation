@@ -1147,16 +1147,16 @@ export class Property extends BaseProperty {
 export class GetAccessor extends BaseGetAccessor{
     constructor(decorators: Decorator[]|undefined, modifiers: string[]|undefined, name: Identifier, parameters: Parameter[], type?: TypeExpression, body?: Block) { 
         if (type && body && isComplexType(type) ) { 
-            const nameStringLiteral = new StringLiteral(name.toString());
+            const cacheAccess = `this.__getterCache["${name.toString()}"]`;
             body.statements = [
                 new SimpleExpression(`
-                    if(${nameStringLiteral} in this.__getterCache){
-                        return this.__getterCache[${nameStringLiteral}]!
-                    }
-                `),
+                    if(${cacheAccess}!==undefined){
+                        return ${cacheAccess};
+                    }`
+                ),
                 new ReturnStatement(
                     new Binary(
-                        new SimpleExpression(`this.__getterCache[${nameStringLiteral}]`),
+                        new SimpleExpression(cacheAccess),
                         SyntaxKind.EqualsToken,
                         new Call(
                             new Paren(
@@ -1171,7 +1171,9 @@ export class GetAccessor extends BaseGetAccessor{
                                         false
                                     ),
                                     {}
-                                )), undefined)
+                                )
+                            ), undefined
+                        )
                     )
                 )
             ]
@@ -1305,7 +1307,8 @@ export class AngularComponent extends Component {
 
             getters.map((g) => { 
                 const allDeps = g.getDependency(this.members);
-                const [propsDependency, internalStateDependency] = separateDependency(allDeps, this.internalState)
+                const [propsDependency, internalStateDependency] = separateDependency(allDeps, this.internalState);
+                const deleteCacheStatement = `this.__getterCache["${g._name.toString()}"] = undefined;`;
                 
                 if (propsDependency.length) {
                     const conditionArray = [];
@@ -1314,14 +1317,14 @@ export class AngularComponent extends Component {
                             `[${propsDependency.map(d => `"${d}"`).join(",")}].some(d=>${ngOnChangesParameters[0]}[d])`
                         );
                     }
-                   
+
                     if (conditionArray.length) {
                         ngOnChanges.push(`
                         if (${conditionArray.join("&&")}) {
-                            delete this.__getterCache["${g._name.toString()}"];
+                            ${deleteCacheStatement}
                         }`);
                     } else { 
-                        ngOnChanges.push(`delete this.__getterCache["${g._name.toString()}"];`);
+                        ngOnChanges.push(deleteCacheStatement);
                     }
                 }
 
@@ -1329,9 +1332,7 @@ export class AngularComponent extends Component {
                     const setter = this.members.find(p => p.name === `_${name}`) as SetAccessor;
                     if (setter) { 
                         setter.body.statements.push(
-                            new SimpleExpression(`
-                                delete this.__getterCache["${g._name.toString()}"];
-                            `)
+                            new SimpleExpression(deleteCacheStatement)
                         );
                     }
                 });

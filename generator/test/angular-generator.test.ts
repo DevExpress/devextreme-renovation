@@ -4179,8 +4179,8 @@ mocha.describe("Angular generator", function () {
 
                     assert.strictEqual(getResult(getter.toString()), 
                         getResult(`get name():string[]{
-                            if("name" in this.__getterCache){
-                                return this.__getterCache["name"]!
+                            if(this.__getterCache["name"]!==undefined){
+                                return this.__getterCache["name"]
                             }
                     
                             return this.__getterCache["name"]=( ():string[] => {
@@ -4234,8 +4234,8 @@ mocha.describe("Angular generator", function () {
 
                     assert.strictEqual(getResult(getter.toString()), 
                         getResult(`get name():'1'|{}{
-                            if("name" in this.__getterCache){
-                                return this.__getterCache["name"]!
+                            if(this.__getterCache["name"]!==undefined){
+                                return this.__getterCache["name"];
                             }
                     
                             return this.__getterCache["name"]=( ():'1'|{} => {
@@ -4258,8 +4258,8 @@ mocha.describe("Angular generator", function () {
                     assert.strictEqual(getter.isMemorized(), true);
                     assert.strictEqual(getResult(getter.toString()), 
                         getResult(`get name():{}{
-                            if("name" in this.__getterCache){
-                                return this.__getterCache["name"]!
+                            if(this.__getterCache["name"]!==undefined){
+                                return this.__getterCache["name"]
                             }
                     
                             return this.__getterCache["name"]=( ():{} => {
@@ -4355,7 +4355,7 @@ mocha.describe("Angular generator", function () {
                         assert.strictEqual(
                             getResult(ngOnChanges.join("\n")),
                             getResult(`if(["p"].some(d=>changes[d])){
-                                delete this.__getterCache[\"name\"];
+                                this.__getterCache[\"name\"] = undefined;
                             }`)
                         );
                     });
@@ -4407,7 +4407,7 @@ mocha.describe("Angular generator", function () {
                             getResult(`
                             set _p(p:any){
                                 this.p=p;
-                                delete this.__getterCache["name"];
+                                this.__getterCache["name"] = undefined;
                             }`)
                         );
 
@@ -4445,7 +4445,7 @@ mocha.describe("Angular generator", function () {
 
                         component.compileGetterCache(ngOnChanges);
 
-                        assert.deepEqual(ngOnChanges.join("\n"), `delete this.__getterCache["name"];`);
+                        assert.deepEqual(ngOnChanges.join("\n"), `this.__getterCache["name"] = undefined;`);
                     });
                 });
             });
