@@ -32,6 +32,10 @@ export class ArrayLiteral extends Expression {
     toString(options?: toStringOptions) {
         return `[${this.elements.map(e=>e.toString(options))}]`;
     }
+
+    getDependency() {
+        return this.elements.reduce((d: string[], p) => d.concat(p.getDependency()), []);
+    }
 }
 
 export class ObjectLiteral extends Expression {

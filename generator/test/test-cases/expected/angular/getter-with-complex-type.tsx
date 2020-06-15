@@ -30,10 +30,17 @@ export default class Widget extends Props {
 
     __getterCache: {
         g1?: number[]
-    } = {}
+    } = {};
+
+    ngOnChanges(changes: {[name:string]: any}){
+        if (["p"].some(d=>changes[d])) {
+            delete this.__getterCache["g1"];
+        }
+    }
 
     set _i(i: number) {
-        this.i = i
+        this.i = i;
+        delete this.__getterCache["g1"];
     }
 
 }
