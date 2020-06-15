@@ -19,13 +19,14 @@ const WidgetInput: WidgetInputType = {
 
 import React, { useCallback } from 'react';
 
+declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any };
 interface Widget {
-    props: typeof WidgetInput;
+    props: typeof WidgetInput & RestProps;
     onClick: () => void;
-    restAttributes: any;
+    restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput) {
+export default function Widget(props: typeof WidgetInput & RestProps) {
     const onClick = useCallback(function onClick() {
 
     }, []);

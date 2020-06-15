@@ -22,13 +22,14 @@ export const WidgetProps: WidgetPropsType = {
 import { convertRulesToOptions, Rule } from "../../../../component_declaration/default_options";
 import React, { useState, useCallback } from 'react';
 
+declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any };
 interface Widget {
-    props: typeof WidgetProps;
-    restAttributes: any;
+    props: typeof WidgetProps & RestProps;
+    restAttributes: RestProps;
 
 }
 
-export default function Widget(props: typeof WidgetProps) {
+export default function Widget(props: typeof WidgetProps & RestProps) {
 
     const [__state_p1, __state_setP1] = useState(() => props.p1 !== undefined ? props.p1 : props.defaultP1!);
     const [__state_p2, __state_setP2] = useState(() => props.p2 !== undefined ? props.p2 : props.defaultP2!)
@@ -46,7 +47,7 @@ export default function Widget(props: typeof WidgetProps) {
 }
 
 
-function __processTwoWayProps(defaultProps: typeof WidgetProps) {
+function __processTwoWayProps(defaultProps: typeof WidgetProps & RestProps) {
     const twoWayProps: string[] = ["p1", "p2"];
 
     return Object.keys(defaultProps).reduce((props, propName) => {

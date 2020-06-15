@@ -2364,7 +2364,7 @@ mocha.describe("ComponentInput", function () {
                 )
             ]);
 
-            assert.strictEqual(getResult(component.compileComponentInterface()), getResult("interface Widget{props: typeof Input; property:any; restAttributes:any;}"));
+            assert.strictEqual(getResult(component.compileComponentInterface()), getResult("interface Widget{props: typeof Input & RestProps; property:any; restAttributes:RestProps;}"));
 
             assert.strictEqual(getResult(`{${component.compileViewModelArguments().join(",")}}`
             ), getResult("{props:{...props}, property: __property(), restAttributes: __restAttributes() }"));

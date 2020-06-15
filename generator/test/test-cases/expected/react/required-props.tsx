@@ -16,14 +16,15 @@ const WidgetInput: WidgetInputType = {
 import { convertRulesToOptions, Rule } from "../../../../component_declaration/default_options";
 import React, { useCallback } from 'react';
 
+declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any };
 interface Widget {
-    props: Required<typeof WidgetInput>;
+    props: Required<typeof WidgetInput> & RestProps;
     getHeight: number;
     type: string;
-    restAttributes: any;
+    restAttributes: RestProps;
 }
 
-export default function Widget(props: Required<typeof WidgetInput>) {
+export default function Widget(props: Required<typeof WidgetInput> & RestProps) {
     const __getHeight = useCallback(function __getHeight() {
         return props.size.height;
     }, [props.size]);

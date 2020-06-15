@@ -29,7 +29,8 @@ import {
     ExpressionWithTypeArguments,
     TypeExpression,
     TypeReferenceNode as BaseTypeReferenceNode,
-    FunctionTypeNode
+    FunctionTypeNode,
+    SimpleTypeExpression
 } from "./base-generator/expressions/type";
 import { Parameter } from "./base-generator/expressions/functions";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input";
@@ -312,6 +313,9 @@ export class ReactComponent extends Component {
             if (p.inherited) {
                 p.scope = "props"
             }
+            if (p.name === '__restAttributes') {
+              p.type = new SimpleTypeExpression('RestProps')
+            }
             return p;
         });
     }
@@ -567,22 +571,32 @@ export class ReactComponent extends Component {
             );
     }
 
+    getRestPropsType(): string {
+        return this.methods.some(m => m.name === "__restAttributes") ? " & RestProps" : "";
+    }
+
+    compileRestProps(): string {
+        return this.methods.some(m => m.name === "__restAttributes")
+            ? "declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any }"
+            : "";
+    }
+
     compilePropsType() {
-        const heritageClause = this.heritageClauses[0];
+        const restPropsType = this.getRestPropsType();
         if (this.isJSXComponent) {
-            const type = heritageClause.propsType;
-            if (heritageClause.types[0].expression instanceof Call && heritageClause.types[0].expression.typeArguments?.length) { 
-                return heritageClause.types[0].expression.typeArguments[0].toString();
+            const type = this.heritageClauses[0].types[0];
+            if (type.expression instanceof Call && type.expression.typeArguments?.length) { 
+                return type.expression.typeArguments[0].toString().concat(restPropsType);
             }
            
-            return `typeof ${type}`;
+            return this.compileDefaultOptionsPropsType().concat(restPropsType);
         }
         return `{
             ${this.props
                 .concat(this.state)
                 .concat(this.slots)
                 .map(p => p.typeDeclaration()).join(",\n")}
-        }`;
+        }${restPropsType}`;
     }
 
     compileDefaultOptionsPropsType() {
@@ -614,6 +628,7 @@ export class ReactComponent extends Component {
         return `
             ${this.compileImports()}
             ${this.compileComponentRef()}
+            ${this.compileRestProps()}
             ${this.compileComponentInterface()}
             ${getTemplateFunc}
             ${this.members.filter(m => m.isApiMethod).length === 0

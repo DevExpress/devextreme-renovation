@@ -14,7 +14,7 @@ import { Expression } from "./base-generator/expressions/base";
 import { Identifier, Call } from "./base-generator/expressions/common";
 import { ImportClause, ImportDeclaration } from "./base-generator/expressions/import";
 import { StringLiteral, ObjectLiteral } from "./base-generator/expressions/literal";
-import { TypeExpression } from "./base-generator/expressions/type";
+import { TypeExpression, SimpleTypeExpression } from "./base-generator/expressions/type";
 import { getModuleRelativePath } from "./base-generator/utils/path-utils";
 import { GeneratorContext as BaseGeneratorContext } from "./base-generator/types";
 import { Decorator } from "./base-generator/expressions/decorator";
@@ -84,6 +84,23 @@ export class PreactComponent extends ReactComponent {
 
     defaultPropsDest() { 
         return `(${this.name} as any).defaultProps`;
+    }
+
+    getRestPropsType() {
+        return "";
+    }
+
+    compileRestProps() {
+        return "";
+    }
+    
+    processMembers(members: Array<BaseProperty | Method>) {
+        return super.processMembers(members).map(p => {
+            if (p.name === '__restAttributes') {
+              p.type = new SimpleTypeExpression('any')
+            }
+            return p;
+        });
     }
 }
 

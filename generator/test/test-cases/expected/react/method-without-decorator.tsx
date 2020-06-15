@@ -6,15 +6,16 @@ const WidgetInput: WidgetInputType = {};
 
 import React, { useCallback } from 'react';
 
+declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any };
 interface Widget {
-	props: typeof WidgetInput;
+	props: typeof WidgetInput & RestProps;
 	privateMethod: (a: number) => any;
 	method1: (a: number) => void;
 	method2: () => null;
-	restAttributes: any;
+	restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput) {
+export default function Widget(props: typeof WidgetInput & RestProps) {
 	const privateMethod = useCallback(function privateMethod(a: number) { }, []);
 	const method1 = useCallback(function method1(a: number) {
 		return privateMethod(a);

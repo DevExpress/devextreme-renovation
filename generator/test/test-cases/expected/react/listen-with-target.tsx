@@ -4,15 +4,16 @@ function view() {
 
 import React, { useCallback, useEffect } from 'react';
 
+declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any };
 interface Widget {
   onPointerUp: () => any;
   scrollHandler: () => any;
-  restAttributes: any;
+  restAttributes: RestProps;
 }
 
 export function Widget(props: {
 
-}) {
+} & RestProps) {
   const onPointerUp = useCallback(function onPointerUp() {
 
   }, []);
