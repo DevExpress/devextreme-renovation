@@ -230,7 +230,7 @@ export class Property extends BaseProperty {
         } else if (this.decorators.some(d => d.name === Decorators.OneWay || d.name === Decorators.Event || d.name === Decorators.Template || d.name === Decorators.Slot)) {
             return getPropName(this.name, componentContext, scope);
         } else if (this.decorators.some(d => d.name === Decorators.Ref || d.name === Decorators.ApiRef || d.name === Decorators.RefProp)) {
-            return `${scope}${this.name}${scope ? this.questionOrExclamationToken : ""}.current${this.questionOrExclamationToken}`;
+            return `${scope}${this.name}${scope ? this.questionOrExclamationToken : ""}.current!`;
         } else if (this.isState) {
             const propName = getPropName(this.name, componentContext, scope);
             return `(${propName}!==undefined?${propName}:${getLocalStateName(this.name, componentContext)})`;
