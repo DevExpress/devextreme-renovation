@@ -10,6 +10,8 @@ import { JsxExpression } from "../angular-generator";
 import { Decorators } from "../component_declaration/decorators";
 
 import factory from "./helpers/create-component";
+import { TypeExpression } from "../base-generator/expressions/type";
+import { Block } from "../base-generator/expressions/statements";
 
 const {
     createComponent,
@@ -4148,6 +4150,304 @@ mocha.describe("Angular generator", function () {
                 `));
 
                 assert.deepEqual(ngOnChanges, []);
+            });
+        });
+
+        mocha.describe("GetAccessor", function(){
+            mocha.describe("Memorize GetAccessor with complexType", function(){
+                function createGetAccessor(type?: TypeExpression, block?: Block, name?: string){
+                    return generator.createGetAccessor(
+                        [],
+                        [],
+                        generator.createIdentifier(name||"name"),
+                        [],
+                        type,
+                        block || generator.createBlock([
+                            generator.createReturn(
+                                generator.createIdentifier("result")
+                            )
+                        ], true)
+                    )
+                }
+
+                mocha.it("Memorize Array type", function(){
+                    const getter = createGetAccessor(
+                        generator.createArrayTypeNode(
+                            generator.createKeywordTypeNode("string")
+                        )
+                    );
+
+                    assert.strictEqual(getResult(getter.toString()), 
+                        getResult(`get name():string[]{
+                            if(this.__getterCache["name"]!==undefined){
+                                return this.__getterCache["name"]
+                            }
+                    
+                            return this.__getterCache["name"]=( ():string[] => {
+                                return result;
+                            })();
+                        }`)
+                    );
+
+                    assert.strictEqual(getter.isMemorized(), true);
+                });
+
+                mocha.it("Do not memorize primitive type", function(){
+                    const getter = createGetAccessor(
+                        generator.createKeywordTypeNode("string")
+                    );
+
+                    assert.strictEqual(getResult(getter.toString()), 
+                        getResult(`get name():string{
+                            return result;
+                        }`)
+                    );
+
+                    assert.strictEqual(getter.isMemorized(), false);
+                });
+
+                mocha.it("Do not memorize union with primitive type", function(){
+                    const getter = createGetAccessor(
+                        generator.createUnionTypeNode([
+                            generator.createStringLiteral("1"),
+                            generator.createStringLiteral("2")
+                        ])
+                    );
+
+                    assert.strictEqual(getResult(getter.toString()), 
+                        getResult(`get name():'1'|'2'{
+                            return result;
+                        }`)
+                    );
+                });
+
+                mocha.it("Memorize union with complex type", function(){
+                    const getter = createGetAccessor(
+                        generator.createUnionTypeNode([
+                            generator.createStringLiteral("1"),
+                            generator.createObjectLiteral(
+                                [],
+                                false
+                            )
+                        ])
+                    );
+
+                    assert.strictEqual(getResult(getter.toString()), 
+                        getResult(`get name():'1'|{}{
+                            if(this.__getterCache["name"]!==undefined){
+                                return this.__getterCache["name"];
+                            }
+                    
+                            return this.__getterCache["name"]=( ():'1'|{} => {
+                                return result;
+                            })();
+                        }`)
+                    );
+                });
+
+                mocha.it("Memorize object literal type", function(){
+                    const getter = createGetAccessor(
+                        generator.createLiteralTypeNode(
+                            generator.createObjectLiteral(
+                                [],
+                                false
+                            )
+                        )
+                    );
+
+                    assert.strictEqual(getter.isMemorized(), true);
+                    assert.strictEqual(getResult(getter.toString()), 
+                        getResult(`get name():{}{
+                            if(this.__getterCache["name"]!==undefined){
+                                return this.__getterCache["name"]
+                            }
+                    
+                            return this.__getterCache["name"]=( ():{} => {
+                                return result;
+                            })();
+                        }`)
+                    );
+                });
+
+                mocha.describe("GetAccessor cache", function(){
+                    mocha.it("Do not generate if simple type", function () { 
+                        const getter = createGetAccessor(
+                            generator.createKeywordTypeNode("string")
+                        );
+
+                        const component = createComponent(
+                            [getter]
+                        ) as AngularComponent;
+        
+                        const ngOnChanges: string[] = [];
+                        assert.strictEqual(component.compileGetterCache(ngOnChanges), "");
+                        assert.deepEqual(ngOnChanges, []);
+                    });
+
+                    mocha.it("Create cache if component has getter with complex type", function () { 
+                        const component = createComponent(
+                            [
+                                createGetAccessor(
+                                generator.createArrayTypeNode(
+                                    generator.createKeywordTypeNode("string")
+                                ),
+                                undefined,
+                                "g1"
+                            ),
+                            createGetAccessor(
+                                generator.createArrayTypeNode(
+                                    generator.createKeywordTypeNode("number")
+                                ),
+                                undefined,
+                                "g2"
+                            ),
+                            createGetAccessor(
+                                generator.createKeywordTypeNode("number"),
+                                undefined,
+                                "g3"
+                            )
+                        ]
+                        ) as AngularComponent;
+        
+                        const ngOnChanges: string[] = [];
+                        assert.strictEqual(getResult(component.compileGetterCache(ngOnChanges)), getResult(`__getterCache: {
+                            g1?:string[];
+                            g2?:number[];
+                        } = {}`));
+                        assert.deepEqual(ngOnChanges, []);
+                    });
+
+                    mocha.it("Fill ngOnChanges if getter has prop dependency", function () { 
+                        const getter = createGetAccessor(
+                            generator.createArrayTypeNode(
+                                generator.createKeywordTypeNode("string")
+                            ),
+                            generator.createBlock(
+                                [
+                                    generator.createPropertyAccess(
+                                        generator.createPropertyAccess(
+                                            generator.createThis(),
+                                            generator.createIdentifier("props")
+                                        ),
+                                        generator.createIdentifier("p")
+                                    )
+                                ], 
+                                false
+                            )
+                        );
+
+                        const component = createComponent(
+                            [
+                                getter,
+                                generator.createProperty(
+                                    [createDecorator(Decorators.OneWay)],
+                                    [],
+                                    generator.createIdentifier("p")
+                                )
+                            ]
+                        ) as AngularComponent;
+        
+                        const ngOnChanges: string[] = [];
+                        assert.strictEqual(getResult(component.compileGetterCache(ngOnChanges)), getResult(`__getterCache: {
+                            name?:string[];
+                        } = {}`));
+
+                        assert.strictEqual(
+                            getResult(ngOnChanges.join("\n")),
+                            getResult(`if(["p"].some(d=>changes[d])){
+                                this.__getterCache[\"name\"] = undefined;
+                            }`)
+                        );
+                    });
+
+                    mocha.it("Reset cache on internal state setting", function () { 
+                        const getter = createGetAccessor(
+                            generator.createArrayTypeNode(
+                                generator.createKeywordTypeNode("string")
+                            ),
+                            generator.createBlock(
+                                [
+                                    generator.createPropertyAccess(
+                                        generator.createThis(),
+                                        generator.createIdentifier("p")
+                                    )
+                                ], 
+                                false
+                            )
+                        );
+
+                        const p = generator.createProperty(
+                            [createDecorator(Decorators.InternalState)],
+                            [],
+                            generator.createIdentifier("p")
+                        );
+
+                        const p1 = generator.createProperty(
+                            [createDecorator(Decorators.InternalState)],
+                            [],
+                            generator.createIdentifier("p1")
+                        );
+
+                        const component = createComponent(
+                            [
+                                getter,
+                                p,
+                                p1
+                            ]
+                        ) as AngularComponent;
+        
+                        const ngOnChanges: string[] = [];
+                        assert.strictEqual(getResult(component.compileGetterCache(ngOnChanges)), getResult(`__getterCache: {
+                            name?:string[];
+                        } = {}`));
+                        assert.deepEqual(ngOnChanges, []);
+
+                        assert.strictEqual(
+                            getResult(component.members.find(m=>m.name==="_p")!.toString()), 
+                            getResult(`
+                            set _p(p:any){
+                                this.p=p;
+                                this.__getterCache["name"] = undefined;
+                            }`)
+                        );
+
+                        assert.strictEqual(
+                            getResult(component.members.find(m=>m.name==="_p1")!.toString()), 
+                            getResult(`
+                                set _p1(p1:any){
+                                    this.p1=p1
+                                }`
+                            )
+                        );
+                    });
+
+                    mocha.it("Reset cache on ngChange if props in dependency", function () { 
+                        const getter = createGetAccessor(
+                            generator.createArrayTypeNode(
+                                generator.createKeywordTypeNode("string")
+                            ),
+                            generator.createBlock(
+                                [
+                                    generator.createPropertyAccess(
+                                        generator.createThis(),
+                                        generator.createIdentifier("props")
+                                    )
+                                ], 
+                                false
+                            )
+                        );
+
+                        const component = createComponent(
+                            [getter]
+                        ) as AngularComponent;
+
+                        const ngOnChanges: string[] = [];
+
+                        component.compileGetterCache(ngOnChanges);
+
+                        assert.deepEqual(ngOnChanges.join("\n"), `this.__getterCache["name"] = undefined;`);
+                    });
+                });
             });
         });
     });

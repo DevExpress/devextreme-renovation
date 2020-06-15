@@ -4,7 +4,6 @@ import { TypeExpression } from "./type";
 import { PropertyAccess } from "./property-access";
 import { toStringOptions, VariableExpression } from "../types";
 import { BindingPattern, BindingElement } from "./binding-pattern";
-import { Method, Property } from "./class-members";
 import { compileType } from "../utils/string";
 import { getProps } from "./component";
 

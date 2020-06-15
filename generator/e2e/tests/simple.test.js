@@ -60,7 +60,7 @@ cloneTest('ChangeVisibility: Effect depends on InternalState', async t => {
     const el = Selector("#change-visibility-hide-element");
     await t
         .expect((await el.style)["background-color"]).eql('rgb(0, 128, 0)');
-    
+
     await t.click(el);
 
     await t
@@ -89,7 +89,7 @@ cloneTest('Can call method inside a getter', async t => {
 
     await t
         .expect(await el.textContent).eql("2");
-    
+
     await t.click(Selector('#button-5'));
 
     await t
@@ -98,7 +98,7 @@ cloneTest('Can call method inside a getter', async t => {
 
 cloneTest('Click on component with default options', async t => {
     const el = Selector("#component-with-default-options");
-    
+
     await t.click(await el.child(0));
 
     await t
@@ -114,16 +114,16 @@ cloneTest('Click on list item', async t => {
 
     const changedElements = await Selector("#list-1 .list-item");
     const changedCount = await changedElements.count;
-    
+
 
     await t
         .expect(changedCount).eql(count);
-    
+
     await t
         .expect((await el.style)["background-color"]).eql('rgb(0, 0, 0)');
     await t
         .expect((await el.nth(1).style)["background-color"]).eql('rgb(255, 0, 0)');
-    
+
     const readyCounter = await Selector("#list-1 .ready-counter");
 
     await t
@@ -168,12 +168,22 @@ cloneTest('Check Effects on State update', async t => {
         .expect(effects.textContent).eql("(0 deps)(always)(0 once)(1 deps)(always)");
 });
 
+cloneTest('Dom Events should not lead to render', async t => {
+    const el = Selector('#button-effects-state');
+
+    await t.click(el);
+
+    await t
+        .expect(Selector('#sum-array .update-count').textContent)
+        .eql("1");
+});
+
 cloneTest('Check form values binding', async t => {
     const el = Selector("#counter-form-value");
 
     await t
         .expect(await el.textContent).eql("15");
-    
+
     await t.click(Selector('#counter-control'));
 
     await t
