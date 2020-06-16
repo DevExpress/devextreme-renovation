@@ -287,8 +287,7 @@ export default class Generator {
             const hasModule = importedModules.some(m => m === modulePath);
 
              if (fs.existsSync(modulePath) && !hasModule) {
-                importedModules.push(modulePath);
-                compileCode(this, fs.readFileSync(modulePath).toString(), { dirname: context.dirname, path: modulePath, importedModules });
+                compileCode(this, fs.readFileSync(modulePath).toString(), { dirname: context.dirname, path: modulePath, importedModules: [...importedModules, modulePath] });
 
                 if (importClause.default) {
                     this.addComponent(importClause.default.toString(), this.cache[modulePath]
