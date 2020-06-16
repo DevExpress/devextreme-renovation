@@ -86,21 +86,8 @@ export class PreactComponent extends ReactComponent {
         return `(${this.name} as any).defaultProps`;
     }
 
-    getRestPropsType() {
-        return "";
-    }
-
     compileRestProps() {
-        return "";
-    }
-    
-    processMembers(members: Array<BaseProperty | Method>) {
-        return super.processMembers(members).map(p => {
-            if (p.name === '__restAttributes') {
-              p.type = new SimpleTypeExpression('any')
-            }
-            return p;
-        });
+        return "declare type RestProps = { className?: string; style?: { [name: string]: any }; [x: string]: any }";
     }
 }
 

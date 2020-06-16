@@ -21,12 +21,13 @@ const WidgetInput: WidgetInputType = {
 import * as Preact from "preact";
 import { useCallback } from "preact/hooks";
 
+declare type RestProps = { className?: string; style?: { [name: string]: any }; [x: string]: any };
 interface Widget {
-    props: typeof WidgetInput;
-    restAttributes: any;
+    props: typeof WidgetInput & RestProps;
+    restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput) {
+export default function Widget(props: typeof WidgetInput & RestProps) {
     const __restAttributes=useCallback(function __restAttributes(){
         const { children, default: defaultSlot, namedSlot, ...restProps } = {
             ...props,

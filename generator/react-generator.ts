@@ -313,9 +313,6 @@ export class ReactComponent extends Component {
             if (p.inherited) {
                 p.scope = "props"
             }
-            if (p.name === '__restAttributes') {
-              p.type = new SimpleTypeExpression('RestProps')
-            }
             return p;
         });
     }
@@ -365,7 +362,7 @@ export class ReactComponent extends Component {
             )
         ), new ReturnStatement(new SimpleExpression("restProps"))];
 
-        return new GetAccessor(undefined, undefined, new Identifier('restAttributes'), [], undefined, new Block(statements, true));
+        return new GetAccessor(undefined, undefined, new Identifier('restAttributes'), [], new SimpleTypeExpression('RestProps'), new Block(statements, true));
     }
 
     compileImportStatements(hooks: string[], compats: string[]) {
@@ -571,18 +568,13 @@ export class ReactComponent extends Component {
             );
     }
 
-    getRestPropsType(): string {
-        return this.methods.some(m => m.name === "__restAttributes") ? " & RestProps" : "";
-    }
-
     compileRestProps(): string {
-        return this.methods.some(m => m.name === "__restAttributes")
-            ? "declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any }"
-            : "";
+        return "declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any }";
     }
 
     compilePropsType() {
-        const restPropsType = this.getRestPropsType();
+        const restPropsType = " & RestProps";
+
         if (this.isJSXComponent) {
             const type = this.heritageClauses[0].types[0];
             if (type.expression instanceof Call && type.expression.typeArguments?.length) { 
