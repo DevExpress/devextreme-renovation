@@ -282,8 +282,13 @@ export default class Generator {
         const module = moduleSpecifier.expression.toString();
         if (context.dirname) {
             const modulePath = path.join(context.dirname, module.endsWith(".tsx") ? module : `${module}.tsx`);
-            if (fs.existsSync(modulePath)) {
-                compileCode(this, fs.readFileSync(modulePath).toString(), { dirname: context.dirname, path: modulePath });
+
+            const importedModules = context.importedModules || [];
+            const hasModule = importedModules.some(m => m === modulePath);
+
+             if (fs.existsSync(modulePath) && !hasModule) {
+                importedModules.push(modulePath);
+                compileCode(this, fs.readFileSync(modulePath).toString(), { dirname: context.dirname, path: modulePath, importedModules });
 
                 if (importClause.default) {
                     this.addComponent(importClause.default.toString(), this.cache[modulePath]
