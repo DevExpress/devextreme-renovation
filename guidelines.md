@@ -265,13 +265,61 @@ Q. Так что же, могу наследоваться от кнопки и 
 
 Тестировать надо не конечные нагенеренные компоненты во всех фреймворках, а декларативные компоненты, только их логику и код.
 
-Вот почему весь лишний код надо выносить из компонентов и тестировать отдельно. Этот код может потребовать наличия браузеров в тестовой системе, еще какие-то вещи.
+Вот почему весь лишний код надо выносить из компонентов и тестировать отдельно. Этот код может потребовать наличия браузеров в тестовой системе, и тому подобное.
 
 Быстрые, легкие и понятные unit-тесты - основа тестирования, гарантия стабильной работы всех компонентов.
 
-Система тестирования, облегчающая написание и построение тестов, еще находится в разработке.
+Ниже приведен пример рекомендованного подхода к тестированию. Для рендера рекомендуется использовать `shallow` вместо `mount`, как более быстрый и легковестный. Тесты разделяются на 2 большие группы `View` и `ViewModel`.
 
-Этот пункт еще будет дополняться.
+*Для работы необходимо заимпортить в файл декларации и в файл тестов к нему функцию `h` из `preact`. См. в уже написанных тестах*
+
+<details>
+  <summary>Пример компонента</summary>
+  
+  ```jsx
+  describe('component_name', () => {
+    describe('View', () => {
+      // функция помошник, от файла к файлу может немного меняться, но суть одна - убрать повторяющийся код из тестов
+      const render = (props) => {
+        return shallow(viewFunction({ props: { ...new Component(), ...props }, /* геттеры и методы */ }));
+      };
+
+      it('should render with correct props', () => {
+        const node = render();
+    
+        expect(node.prop('prop1')).toBe(100);
+        expect(node.prop('prop2')).toBe(false);
+        expect(node.prop('className')).toBe('custom-class-name');
+      });
+
+      it('should pass Ref into right HTML element', () => {
+        const ref = createRef(); // preact createRef
+
+        render({ componentRef: ref });
+        expect(ref.current).not.toBeNull();
+        expect(ref.current.className).toBe('dx-info');
+      });
+
+      it('should render children', () => {
+        const node = render({ children: <div class="custom-class" /> });
+
+        expect(node.find('.custom-class').exists()).toBe(true);
+      });
+    });
+
+    describe('ViewModel', () => {
+      it('should return right result from Getter/Method/Effect', () => {
+        const component = new Component();
+    
+        expect(component._focused).toEqual(false);
+        component.testMethod.apply(/* необходимый контекст */);
+        expect(component._focused).toEqual(true);
+      });
+    });
+  });
+  ```
+
+</details>
 
 ### Описание пропов
 
@@ -438,11 +486,9 @@ export default class Component extends JSXComponent<ComponentProps> {
 
 Тесты на декларации написаны с использование *jest*. Примеры тестов на существующие компоненты см в [testing/jest](https://github.com/DevExpress/DevExtreme/tree/preact-button/testing/jest).
 
-Для подготовки (компиляции) компонентов к тестированию, необходимо воспользоваться тасками `test-env`, `dev`, либо *gulp* таской `generate-components`. Рядом с вашим декларативным компонентом появится файл с расширением *.p.js*. (Это *Preact* компонент, сгенерированной из декларации. Пока что он используется для тестирования)
+Для запуска тестов достаточно просто выполнить команду `test-jest`.
 
-Также ознакомьтесь с информацией в [разделе тестирования](#тестирование)
-
-!! Раздел дополняется
+Также ознакомьтесь с информацией в [разделе тестирования](#тестирование).
 
 ### Playground
 
