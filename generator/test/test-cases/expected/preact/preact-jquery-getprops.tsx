@@ -18,12 +18,13 @@ export type WidgetRef = {
     __getProps: () => any
 };
 
+declare type RestProps = { className?: string; style?: { [name: string]: any }; [x: string]: any };
 interface Widget {
-    props: typeof WidgetInput;
-    restAttributes: any;
+    props: typeof WidgetInput & RestProps;
+    restAttributes: RestProps;
 }
 
-const Widget = forwardRef<WidgetRef, typeof WidgetInput>((props: typeof WidgetInput, ref) => {
+const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>((props: typeof WidgetInput & RestProps, ref) => {
     useImperativeHandle(ref, () => ({
         __getProps: () => {
             return props;

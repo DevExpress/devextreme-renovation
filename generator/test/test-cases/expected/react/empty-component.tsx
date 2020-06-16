@@ -1,15 +1,16 @@
 import React, { useCallback } from 'react';
 
+declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any };
 interface Widget {
   height?: number;
   width?: number;
-  restAttributes: any;
+  restAttributes: RestProps;
 }
 
 export default function Widget(props: {
   height?: number,
   width?: number
-}) {
+} & RestProps) {
   const __restAttributes = useCallback(function __restAttributes() {
     const { height, width, ...restProps } = props
     return restProps;

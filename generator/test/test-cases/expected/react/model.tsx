@@ -19,12 +19,13 @@ const ModelWidgetInput: ModelWidgetInputType = {
 
 import React, { useState, useCallback } from 'react';
 
+declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any };
 interface ModelWidget {
-    props: typeof ModelWidgetInput;
-    restAttributes: any;
+    props: typeof ModelWidgetInput & RestProps;
+    restAttributes: RestProps;
 }
 
-export default function ModelWidget(props: typeof ModelWidgetInput) {
+export default function ModelWidget(props: typeof ModelWidgetInput & RestProps) {
 
     const [__state_baseStateProp, __state_setBaseStateProp] = useState(() => props.baseStateProp !== undefined ? props.baseStateProp : props.defaultBaseStateProp);
     const [__state_modelStateProp, __state_setModelStateProp] = useState(() => props.modelStateProp !== undefined ? props.modelStateProp : props.defaultModelStateProp);

@@ -85,6 +85,10 @@ export class PreactComponent extends ReactComponent {
     defaultPropsDest() { 
         return `(${this.name} as any).defaultProps`;
     }
+
+    compileRestProps() {
+        return "declare type RestProps = { className?: string; style?: { [name: string]: any }; [x: string]: any }";
+    }
 }
 
 class JQueryComponent {

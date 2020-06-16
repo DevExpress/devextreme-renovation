@@ -11,13 +11,14 @@ export const Props: PropsType = {
 
 import React, { useCallback } from 'react';
 
+declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any };
 interface Widget {
-  props: typeof Props;
+  props: typeof Props & RestProps;
   clickHandler: () => any;
-  restAttributes: any;
+  restAttributes: RestProps;
 }
 
-export function Widget(props: typeof Props) {
+export function Widget(props: typeof Props & RestProps) {
   const clickHandler = useCallback(function clickHandler() {
     props.onClick!({ type: props.type })
   }, [props.onClick, props.type]);

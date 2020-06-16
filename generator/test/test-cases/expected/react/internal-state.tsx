@@ -4,13 +4,14 @@ function view(model:Widget) {
 
 import React, { useState, useCallback } from 'react';
 
+declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any };
 interface Widget{
   _hovered: Boolean;
   updateState: () => any;
-  restAttributes: any;
+  restAttributes: RestProps;
 }
 
-export default function Widget(props: {}) {
+export default function Widget(props: {} & RestProps) {
 
   const [__state__hovered, __state_set_hovered] = useState(false);
 

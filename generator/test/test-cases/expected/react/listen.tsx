@@ -4,15 +4,16 @@ function view(model: Widget) {
 
 import React, { useCallback } from 'react';
 
+declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any };
 interface Widget {
   onClick: (e: Event) => any;
   onPointerMove: (a: any, b: any, c: any) => any;
-  restAttributes: any;
+  restAttributes: RestProps;
 }
 
 export function Widget(props: {
 
-}) {
+} & RestProps) {
   const onClick = useCallback(function onClick(e: Event) {
 
   }, []);

@@ -11,15 +11,16 @@ const WidgetInput: WidgetInputType = {};
 
 import React, { useCallback, useRef, RefObject } from 'react';
 
+declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any };
 interface Widget {
-    props: typeof WidgetInput;
+    props: typeof WidgetInput & RestProps;
     divRef: any;
     getSize: () => any;
     getNullable:()=>any;
-    restAttributes: any;
+    restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput) {
+export default function Widget(props: typeof WidgetInput & RestProps) {
     const divRef = useRef<HTMLDivElement>();
 
     const getSize = useCallback(

@@ -23,9 +23,10 @@ export const WidgetInput: WidgetInputType = {
 };
 
 import React, { useCallback } from 'react'
+declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any };
 interface Widget {
-    props: typeof WidgetInput;
-    restAttributes: any;
+    props: typeof WidgetInput & RestProps;
+    restAttributes: RestProps;
 }
 
 function getTemplate(props: any, template: string, render: string, component: string) {
@@ -37,7 +38,7 @@ function getTemplate(props: any, template: string, render: string, component: st
                 (Component && ((props: any) => <Component {...props} />));
 }
 
-export default function Widget(props: typeof WidgetInput) {
+export default function Widget(props: typeof WidgetInput & RestProps) {
     const __restAttributes = useCallback(function __restAttributes() {
         const { component,contentComponent,contentRender,contentTemplate,footerComponent,footerRender,footerTemplate,headerComponent,headerRender,headerTemplate,render,template, ...restProps } = props;
         return restProps;

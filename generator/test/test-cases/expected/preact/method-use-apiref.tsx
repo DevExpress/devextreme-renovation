@@ -20,13 +20,14 @@ export type WidgetWithApiRefRef = {
     getSomething: () => string
 };
 
+declare type RestProps = { className?: string; style?: { [name: string]: any }; [x: string]: any };
 interface WidgetWithApiRef {
-    props: typeof WidgetWithApiRefInput;
+    props: typeof WidgetWithApiRefInput & RestProps;
     baseRef: any;
-    restAttributes: any;
+    restAttributes: RestProps;
 }
 
-const WidgetWithApiRef = forwardRef<WidgetWithApiRefRef, typeof WidgetWithApiRefInput>((props: typeof WidgetWithApiRefInput, ref) => {
+const WidgetWithApiRef = forwardRef<WidgetWithApiRefRef, typeof WidgetWithApiRefInput & RestProps>((props: typeof WidgetWithApiRefInput & RestProps, ref) => {
     const baseRef = useRef<BaseWidgetRef>();
 
     useImperativeHandle(ref, () => ({

@@ -11,13 +11,14 @@ const WidgetInput: WidgetInputType = {
 };
 
 import React, { useCallback } from 'react';
+declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any };
 interface Widget {
-    props: typeof WidgetInput;
+    props: typeof WidgetInput & RestProps;
     getHeight: () => number;
-    restAttributes: any;
+    restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput) {
+export default function Widget(props: typeof WidgetInput & RestProps) {
     const getHeight = useCallback(function getHeight() {
         props.onClick(10);
         const { onClick } = props;
