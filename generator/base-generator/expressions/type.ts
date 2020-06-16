@@ -4,6 +4,7 @@ import { Parameter } from "./functions";
 import { toStringOptions } from "../types";
 import { compileType } from "../utils/string";
 import { Decorator } from "./decorator";
+import { ObjectLiteral } from "./literal";
 
 export class TypeExpression extends Expression { }
 
@@ -285,4 +286,20 @@ export class TypeAliasDeclaration extends TypeExpression {
     toString() { 
         return `${this.modifiers.join(" ")} type ${this.name} = ${this.type}`;
     }
+}
+
+export function isComplexType(type: TypeExpression | string): boolean {
+    if (type instanceof UnionTypeNode) {
+        return type.types.some(t=>isComplexType(t));
+    }
+
+    if (type instanceof FunctionTypeNode || 
+        type instanceof ArrayTypeNode ||
+         type instanceof TypeReferenceNode ||
+         type instanceof ObjectLiteral ||
+         type instanceof LiteralTypeNode && type.expression instanceof ObjectLiteral
+         ) {
+        return true;
+    }
+    return false;
 }

@@ -3,7 +3,6 @@ import { Property, Method } from "./class-members";
 import { ExpressionWithTypeArguments } from "./type";
 import { GeneratorContext } from "../types";
 import { Decorator } from "./decorator";
-import syntaxKind from "../syntaxKind";
 
 export function inheritMembers(heritageClauses: HeritageClause[], members: Array<Property | Method>) {
     return heritageClauses.reduce((m, { members }) => {

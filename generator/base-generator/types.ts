@@ -32,4 +32,5 @@ export type GeneratorContext = {
     defaultOptionsModule?: string;
     viewFunctions?: { [name: string]: Function | ArrowFunction };
     globals?: VariableExpression;
+    importedModules?: string[];
 }

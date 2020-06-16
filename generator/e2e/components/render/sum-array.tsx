@@ -1,16 +1,16 @@
-import { Component, ComponentBindings, JSXComponent, OneWay, Event, Effect, Ref, InternalState } from "../../../component_declaration/common";
+import { Component, ComponentBindings, JSXComponent, OneWay, Effect, InternalState, Ref } from "../../../component_declaration/common";
 
-function view({ sum, updatesCount, restAttributes }: SumArray) { 
+function view({ sum, restAttributes, counterRef }: SumArray) {
     return <div
         {...restAttributes}
     >
         Sum: <span className={"sum"}>{sum}</span><br />
-        Updates:<span className={"update-count"}>{updatesCount}</span>
+        Updates:<span ref={counterRef as any} className={"update-count"}>0</span>
     </div>
 }
 
 @ComponentBindings()
-export class SumArrayProps { 
+export class SumArrayProps {
     @OneWay() array?: number[];
 }
 
@@ -18,17 +18,16 @@ export class SumArrayProps {
     view
 })
 export default class SumArray extends JSXComponent(SumArrayProps) {
-    @InternalState()
-    updatesCount = 0;
+    @Ref() counterRef!: HTMLDivElement;
 
     @Effect()
-    arrayUpdated() { 
-        if (this.props.array) { 
-            this.updatesCount++;
+    arrayUpdated() {
+        if (this.props.array) {
+            this.counterRef.innerText = (Number(this.counterRef.innerText) + 1).toString();
         }
     }
 
-    get sum(): string { 
+    get sum(): string {
         return (this.props.array || []).reduce((sum, i) => sum + i, 0).toString();
     }
 }

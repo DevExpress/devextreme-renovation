@@ -3,7 +3,6 @@ import { toStringOptions } from "../types";
 import SyntaxKind from "../syntaxKind";
 import { Property } from "./class-members";
 import { PropertyAccess } from "./property-access";
-import { checkDependency } from "../utils/dependency";
 
 const isShortOperator = (operator: string) => {
     return operator === SyntaxKind.PlusEqualsToken

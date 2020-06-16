@@ -36,7 +36,7 @@ import { Parameter } from "./base-generator/expressions/functions";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input";
 import { ObjectLiteral } from "./base-generator/expressions/literal";
 import { Decorator } from "./base-generator/expressions/decorator";
-import { PropertyAssignment, SpreadAssignment, ShorthandPropertyAssignment } from "./base-generator/expressions/property-assignment";
+import { PropertyAssignment, SpreadAssignment } from "./base-generator/expressions/property-assignment";
 import { Decorators } from "./component_declaration/decorators";
 
 const eventsDictionary = {

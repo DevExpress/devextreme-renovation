@@ -20,11 +20,12 @@ export function deleteFolderRecursive(path: string) {
 import Stream from "stream";
 import File from "vinyl";
 
-export function compileCode(generator: Generator, code: string, file: { dirname: string, path: string }, includeExtraComponents: boolean = false): {path?: string, code: string }[] | string {
+export function compileCode(generator: Generator, code: string, file: { dirname: string, path: string, importedModules?: string[] }, includeExtraComponents: boolean = false): {path?: string, code: string }[] | string {
     const source = ts.createSourceFile(file.path, code, ts.ScriptTarget.ES2016, true);
     generator.setContext({ 
         path: file.path, 
-        dirname: file.dirname, 
+        dirname: file.dirname,
+        importedModules: file.importedModules,
         ...generator.getInitialContext()
     });
     const codeFactory = generateFactoryCode(ts, source);

@@ -16,8 +16,9 @@ import TemplatePass from "./template-pass.tsx";
 import RefPass from "./ref-pass.tsx";
 import EffectsDOMUpdate from "./effects-dom-update.tsx";
 import EffectsStateUpdate from "./effects-state-update.tsx";
+import SumArray from "./render/sum-array.tsx";
 
-function view(model: App) { 
+function view(model: App) {
     return <div>
         <SimpleComponent width={25} height={25}></SimpleComponent>
 
@@ -28,7 +29,7 @@ function view(model: App) {
         <div id="button-1-click-counter">{model.clickCount}</div>
 
         <div>
-            <ButtonComponent/>
+            <ButtonComponent />
         </div>
 
         <ButtonWithState
@@ -38,7 +39,7 @@ function view(model: App) {
 
         <ComponentWithSpread containerId="component-with-spread" aria={model.spreadAttributesComponentAria}></ComponentWithSpread>
         <ButtonComponent id="button-3" onClick={model.onChangeAriaButtonClick}>{"Change Aria"}</ButtonComponent>
-    
+
         <VisibilityChange></VisibilityChange>
 
         <ButtonComponent id="button-4" onClick={model.onVisibilityChangePropClick}>{"Open"}</ButtonComponent>
@@ -49,17 +50,17 @@ function view(model: App) {
         <CallMethodInGetterWidget id={"call-method-in-getter-widget"} prop={model.callMethodInGetterWidgetProp}></CallMethodInGetterWidget>
         <ButtonComponent id="button-5" onClick={model.changeCallMethodInGetterWidgetProp}>{"UpdateValue"}</ButtonComponent>
         <div>
-            <ComponentWithFragment/>
+            <ComponentWithFragment />
         </div>
 
         <ComponentWithDefaultOptionRules id="component-with-default-options" />
-        
+
         <List
             id={"list-1"}
             items={model.listItems}
             onClick={model.onListItemClick}
         />
-        
+
         <SpreadProps
             onClick={model.onButtonClick}
             id="spread-props">
@@ -67,7 +68,7 @@ function view(model: App) {
         </SpreadProps>
 
         <TemplatePass />
-        
+
         <RefPass />
 
         <div>
@@ -76,8 +77,14 @@ function view(model: App) {
                 onClick={model.onButtonEffectsClick}
             >{"Effects on DOM Update"}</ButtonComponent>
             <EffectsDOMUpdate name="effects-dom-update" text={model.domEffectsText} />
-            <EffectsStateUpdate name="effects-state-update"/>
+            <EffectsStateUpdate name="effects-state-update" />
         </div>
+
+        <SumArray
+            id={"sum-array"}
+            array={model.arrayForSum}
+        />
+
     </div>;
 }
 
@@ -92,8 +99,8 @@ setDefaultOptions({
 })
 
 @ComponentBindings()
-class AppInput { 
-    
+class AppInput {
+
 }
 
 @Component({
@@ -112,21 +119,21 @@ export default class App extends JSXComponent(AppInput) {
 
     @InternalState() domEffectsText: string = "A";
 
-    onButtonClick() { 
+    onButtonClick() {
         this.clickCount = this.clickCount + 1;
     }
 
-    onButtonEffectsClick() { 
+    onButtonEffectsClick() {
         this.domEffectsText = this.domEffectsText === "A" ? "B" : "A";
     }
 
-    onButtonWithStatePressedChange(p:boolean) { 
+    onButtonWithStatePressedChange(p: boolean) {
         this.buttonWithStateIsPressed = p;
     }
 
     onListItemClick(i: number) {
-        this.listItems = this.listItems.map(item => { 
-            if (item.key === i) { 
+        this.listItems = this.listItems.map(item => {
+            if (item.key === i) {
                 return {
                     ...item,
                     color: "black"
@@ -136,11 +143,11 @@ export default class App extends JSXComponent(AppInput) {
         });
     }
 
-    onChangeAriaButtonClick() { 
+    onChangeAriaButtonClick() {
         this.spreadAttributesComponentAria = "changed"
     }
 
-    changeCallMethodInGetterWidgetProp() { 
+    changeCallMethodInGetterWidgetProp() {
         this.callMethodInGetterWidgetProp = 10;
     }
 
@@ -148,5 +155,9 @@ export default class App extends JSXComponent(AppInput) {
 
     onVisibilityChangePropClick() {
         this.visibilityChangePropValue = true;
-     }
+    }
+
+    get arrayForSum(): number[] {
+        return [1, 5, 10];
+    }
 }

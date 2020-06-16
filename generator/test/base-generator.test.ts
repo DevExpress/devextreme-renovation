@@ -1448,6 +1448,34 @@ mocha.describe("base-generator: expressions", function () {
             assert.strictEqual(getAst(expression.toString()), getAst("@d1() @d2() public name():string{}"));
         });
 
+        mocha.it("GetAccessor", function () { 
+            const expression = generator.createGetAccessor(
+                undefined,
+                undefined,
+                generator.createIdentifier("name"),
+                []
+            );
+
+            assert.strictEqual(expression.isReadOnly(), true);
+            assert.strictEqual(getAst(expression.toString()), getAst("get name():any{}"));
+            assert.strictEqual(expression.isInternalState, false);
+        });
+
+        mocha.it("GetAccessor with decorators and modifiers", function () { 
+            const expression = generator.createGetAccessor(
+                [],
+                ["public"],
+                generator.createIdentifier("name"),
+                [],
+                undefined,
+                generator.createBlock([], false)
+            );
+
+            assert.strictEqual(expression.isReadOnly(), true);
+            assert.strictEqual(getAst(expression.toString()), getAst("get name():any{}"));
+            assert.strictEqual(expression.isInternalState, false);
+        });
+
         mocha.describe("Method.getDependency()", function () { 
             mocha.it("should return dependency from other method if it used", function () { 
 
