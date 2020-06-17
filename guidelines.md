@@ -261,25 +261,31 @@ Q. Так что же, могу наследоваться от кнопки и 
 
 ### Тестирование
 
-Одно из важных условий это 100% code coverage. Вся логика компонента, *View*, должны быть протестированы.
+Одно из важных условий это 100% code coverage. Вся логика компонента, *View*, должны быть протестированы. Быстрые, легкие и понятные unit-тесты - основа тестирования, гарантия стабильной работы всех компонентов.
 
-Тестировать надо не конечные нагенеренные компоненты во всех фреймворках, а декларативные компоненты, только их логику и код.
+Тестируются не конечные нагенеренные компоненты во всех фреймворках, а декларативные компоненты (.tsx).
 
-Вот почему весь лишний код надо выносить из компонентов и тестировать отдельно. Этот код может потребовать наличия браузеров в тестовой системе, и тому подобное.
+Весь дополнительный код (хелперы, утилиты) надо выносить из компонентов и тестировать отдельно.
 
-Быстрые, легкие и понятные unit-тесты - основа тестирования, гарантия стабильной работы всех компонентов.
+Структура тестов
 
-Ниже приведен пример рекомендованного подхода к тестированию. Для рендера рекомендуется использовать `shallow` вместо `mount`, как более быстрый и легковестный. Тесты разделяются на 2 большие группы `View` и `ViewModel`.
+- Render
+- Behavior
+- - Effects
+- - Methods
+- - Events
+- Logic
+- - Getters
+- - Default Option Rules
 
-*Для работы необходимо заимпортить в файл декларации и в файл тестов к нему функцию `h` из `preact`. См. в уже написанных тестах*
+Ниже приведены примеры тестов. Для рендера рекомендуется использовать `shallow` вместо `mount`, как более быстрый. Также необходимо добавить `import { h } from 'preact';` в тесты и сам декларативный компонент.
 
 <details>
   <summary>Пример компонента</summary>
   
   ```jsx
   describe('component_name', () => {
-    describe('View', () => {
-      // функция помошник, от файла к файлу может немного меняться, но суть одна - убрать повторяющийся код из тестов
+    describe('Render', () => {
       const render = (props) => {
         return shallow(viewFunction({ props: { ...new Component(), ...props }, /* геттеры и методы */ }));
       };
@@ -310,13 +316,40 @@ Q. Так что же, могу наследоваться от кнопки и 
       });
     });
 
-    describe('ViewModel', () => {
-      it('should return right result from Getter/Method/Effect', () => {
+    describe('Bahavior', () => {
+      describe('Effects', () => {
+        // Также как и методы
+      });
+
+      describe('Methods', () => {
+        it('should return right result from Getter/Method/Effect', () => {
         const component = new Component();
     
         expect(component._focused).toEqual(false);
         component.testMethod.apply(/* необходимый контекст */);
         expect(component._focused).toEqual(true);
+      });
+      });
+
+      describe('Events', () => {
+        // Также как и методы
+      });
+    });
+
+    describe('Logic', () => {
+      describe('Getters', () => {
+        // Также как и методы
+      });
+
+      describe('Default Option Rules', () => {
+        it('should apply `useInkRipple` to true', () => {
+          // device: () => (themes as any).isMaterial(themes.current()),
+          // options: { useInkRipple: true },
+          materialThemeMock();
+
+          expect(defaultOptionRules[0].device()).toBe(true);
+          expect(defaultOptionRules[0].options).toBe({ useInkRipple: true });
+        });
       });
     });
   });
