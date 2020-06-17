@@ -290,6 +290,9 @@ Q. Так что же, могу наследоваться от кнопки и 
         expect(node.prop('prop1')).toBe(100);
         expect(node.prop('prop2')).toBe(false);
         expect(node.prop('className')).toBe('custom-class-name');
+
+        // Проверяем, что прокинули restAttributes в нужный элемент
+        expect(node.prop('restAttributes')).toBe('restAttributes');
       });
 
       it('should pass Ref into right HTML element', () => {
