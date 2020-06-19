@@ -114,7 +114,7 @@ export class Property extends BaseProperty {
             return "";
         }
     
-        const type = this.isRefProp ? "Function" : calculatePropertyType(this.type);
+        const type = this.isRefProp || this.isForwardRef ? "Function" : calculatePropertyType(this.type);
         const parts = [];
         if (type) { 
             parts.push(`type: ${type}`)
@@ -145,7 +145,7 @@ export class Property extends BaseProperty {
         if (this.isState) {
             return `(${componentContext}${this.name} !== undefined ? ${componentContext}${this.name} : ${componentContext}${this.name}_state)`;
         }
-        if (this.isRef && componentContext.length) {
+        if ((this.isForwardRef|| this.isRef) && componentContext.length) {
             return `${componentContext}$refs.${this.name}`;
         }
         if(this.isRefProp)  {
@@ -472,6 +472,14 @@ export class VueComponent extends Component {
             }`);
         });
 
+        const forwardRefs = this.members.filter(m=>m.isForwardRef);
+
+        if(forwardRefs.length){
+            statements.push(`__forwardRef(){
+                ${forwardRefs.map(m=>`this.${m._name}(this.$refs.${m._name});`)}
+            }`)
+        }
+
         return `methods: {
             ${statements.concat(externalStatements).join(",\n")}
          }`;
@@ -546,8 +554,14 @@ export class VueComponent extends Component {
     }
 
     generateMounted() { 
-        const statements: string[] = this.effects.map((e, i) => { 
-            return `this.__destroyEffects[${i}]=this.${e.name}()`;
+        const statements: string[] = [];
+
+        if(this.members.filter(m=>m.isForwardRef).length){
+            statements.push(`this.__forwardRef()`);
+        }
+
+        this.effects.forEach((e, i) => { 
+            statements.push(`this.__destroyEffects[${i}]=this.${e.name}()`);
         });
 
         if (statements.length) { 
@@ -594,6 +608,10 @@ export class VueComponent extends Component {
 
     generateUpdated() { 
         const statements: string[] = [];
+
+        if(this.members.filter(m=>m.isForwardRef).length){
+            statements.push(`this.__forwardRef()`);
+        }
 
         if (this.effects.length) { 
             statements.push(`
@@ -765,6 +783,12 @@ export class JsxAttribute extends BaseJsxAttribute {
         return `()=>${name}`;
     }
 
+    getForwardRefValue(options?: toStringOptions){
+        return `(ref=>{
+            this.$refs.${this.initializer.toString()} = ref
+        })`;
+    }
+
     compileRef(options?: toStringOptions) { 
         return `ref="${this.compileInitializer(options)}"`;
     }
@@ -775,6 +799,10 @@ export class JsxAttribute extends BaseJsxAttribute {
         }
 
         return value;
+    }
+
+    skipValue() { 
+        return false;
     }
 
     compileEvent(options?: toStringOptions) {
@@ -815,6 +843,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     
             this.tagName = new SimpleExpression(name);
         }
+    }
+
+    processForwardRef() { 
+        
     }
 
     createJsxExpression(statement: Expression) { 

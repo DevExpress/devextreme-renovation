@@ -157,6 +157,14 @@ mocha.describe("angular-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("ref-on-children", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("child", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {
             generator.defaultOptionsModule = getModulePath("component_declaration/default_options");

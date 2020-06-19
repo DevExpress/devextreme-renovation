@@ -25,6 +25,7 @@ export function getProps(members: BaseClassMember[]): Property[] {
             d.name === Decorators.Event ||
             d.name === Decorators.Template ||
             d.name === Decorators.Slot ||
+            d.name === Decorators.ForwardRef ||
             d.name === Decorators.RefProp)
     ) as Property[];
 }

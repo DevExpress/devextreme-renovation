@@ -17,6 +17,7 @@ import RefPass from "./ref-pass.tsx";
 import EffectsDOMUpdate from "./effects-dom-update.tsx";
 import EffectsStateUpdate from "./effects-state-update.tsx";
 import SumArray from "./render/sum-array.tsx";
+import PassRefFromChild from "./ref-on-children/ref-on-children-parent.tsx";
 
 function view(model: App) {
     return <div>
@@ -84,6 +85,8 @@ function view(model: App) {
             id={"sum-array"}
             array={model.arrayForSum}
         />
+
+        <PassRefFromChild></PassRefFromChild>
 
     </div>;
 }
