@@ -13,6 +13,7 @@ import { GeneratorContext } from "../types";
 import { Decorators } from "../../component_declaration/decorators";
 
 const RESERVED_NAMES = [
+    "class",
     "key",
     "ref",
     "style",

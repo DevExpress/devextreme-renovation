@@ -1747,6 +1747,16 @@ mocha.describe("base-generator: expressions", function () {
                 ),
                 generator.createStringLiteral("./button")
             ), 'import Button from "./button"');
+
+            assert.equal(generator.createImportDeclaration(
+                undefined,
+                undefined,
+                generator.createImportClause(
+                    undefined,
+                    generator.createNamespaceImport(generator.createIdentifier("utilsModule"))
+                ),
+                generator.createStringLiteral("./utils-module")
+            ), 'import * as utilsModule from "./utils-module"');
         });
     
         mocha.it("ImportDeclaration: can remove named import", function () { 
