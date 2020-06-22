@@ -59,7 +59,7 @@ export default {
       return this.size.height;
     },
     __type() {
-      const { type } = this;
+      const { type } = this.props();
       return type;
     },
     __restAttributes() {

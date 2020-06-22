@@ -3707,7 +3707,7 @@ mocha.describe("Angular generator", function () {
                         generator.createProperty(
                             [createDecorator(Decorators.OneWay)],
                             [],
-                            generator.createIdentifier("p1")
+                            generator.createIdentifier("p")
                         )
                     ],
                     componentContext: generator.SyntaxKind.ThisKeyword,

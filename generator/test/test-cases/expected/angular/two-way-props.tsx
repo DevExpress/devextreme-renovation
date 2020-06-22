@@ -15,6 +15,11 @@ import { CommonModule } from "@angular/common"
   template: `<span ></span>`
 })
 export default class Widget extends WidgetInput {
+  __getHeight(): number {
+    const { height } = this;
+    const { height: _height } = this;
+    return height + _height;
+  }
   __getProps(): any {
     return {
       height: this.height,

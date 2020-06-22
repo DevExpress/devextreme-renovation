@@ -19,10 +19,6 @@ export class VariableDeclaration extends Expression {
         this.initializer = initializer;
     }
 
-    processProps(result: string, options:toStringOptions) { 
-        return result;
-    }
-
     toString(options?: toStringOptions) {
         if (this.name instanceof BindingPattern &&
             options?.members.length &&
@@ -55,14 +51,18 @@ export class VariableDeclaration extends Expression {
             options.variables = variables;
         }
         
-        let initilizer: string | undefined = this.initializer?.toString(options);
+        let initializer: string | undefined = this.initializer?.toString(options);
 
         if (this.initializer instanceof PropertyAccess && this.initializer.checkPropsAccess(this.initializer.toString(), options) && options) { 
-            initilizer = this.processProps(initilizer!, options)
+            let elements: BindingElement[] = [];
+            if (this.name instanceof BindingPattern && !this.name.hasRest()) { 
+                elements = this.name.elements
+            }
+            initializer = this.initializer.toString(options, elements);
         }
 
         if (this.name.toString()) { 
-            return `${this.name}${compileType(this.type?.toString())}${initilizer ? `=${initilizer}`:""}`;
+            return `${this.name}${compileType(this.type?.toString())}${initializer ? `=${initializer}`:""}`;
         }
         return "";
     }

@@ -261,17 +261,101 @@ Q. Так что же, могу наследоваться от кнопки и 
 
 ### Тестирование
 
-Одно из важных условий это 100% code coverage. Вся логика компонента, *View*, должны быть протестированы.
+Одно из важных условий это 100% code coverage. Вся логика компонента, *View*, должны быть протестированы. Быстрые, легкие и понятные unit-тесты - основа тестирования, гарантия стабильной работы всех компонентов.
 
-Тестировать надо не конечные нагенеренные компоненты во всех фреймворках, а декларативные компоненты, только их логику и код.
+Тестируются не конечные нагенеренные компоненты во всех фреймворках, а декларативные компоненты (.tsx).
 
-Вот почему весь лишний код надо выносить из компонентов и тестировать отдельно. Этот код может потребовать наличия браузеров в тестовой системе, еще какие-то вещи.
+Весь дополнительный код (хелперы, утилиты) надо выносить из компонентов и тестировать отдельно.
 
-Быстрые, легкие и понятные unit-тесты - основа тестирования, гарантия стабильной работы всех компонентов.
+Структура тестов
 
-Система тестирования, облегчающая написание и построение тестов, еще находится в разработке.
+- Render
+- Behavior
+- - Effects
+- - Methods
+- - Events
+- Logic
+- - Getters
+- - Default Option Rules
 
-Этот пункт еще будет дополняться.
+Ниже приведены примеры тестов. Для рендера рекомендуется использовать `shallow` вместо `mount`, как более быстрый. Также необходимо добавить `import { h } from 'preact';` в тесты и сам декларативный компонент.
+
+<details>
+  <summary>Пример компонента</summary>
+  
+  ```jsx
+  describe('component_name', () => {
+    describe('Render', () => {
+      const render = (props) => {
+        return shallow(viewFunction({ props: { ...new Component(), ...props }, /* геттеры и методы */ }));
+      };
+
+      it('should render with correct props', () => {
+        const node = render();
+    
+        expect(node.prop('prop1')).toBe(100);
+        expect(node.prop('prop2')).toBe(false);
+        expect(node.prop('className')).toBe('custom-class-name');
+
+        // Проверяем, что прокинули restAttributes в нужный элемент
+        expect(node.prop('restAttributes')).toBe('restAttributes');
+      });
+
+      it('should pass Ref into right HTML element', () => {
+        const ref = createRef(); // preact createRef
+
+        render({ componentRef: ref });
+        expect(ref.current).not.toBeNull();
+        expect(ref.current.className).toBe('dx-info');
+      });
+
+      it('should render children', () => {
+        const node = render({ children: <div class="custom-class" /> });
+
+        expect(node.find('.custom-class').exists()).toBe(true);
+      });
+    });
+
+    describe('Bahavior', () => {
+      describe('Effects', () => {
+        // Также как и методы
+      });
+
+      describe('Methods', () => {
+        it('should return right result from Getter/Method/Effect', () => {
+        const component = new Component();
+    
+        expect(component._focused).toEqual(false);
+        component.testMethod.apply(/* необходимый контекст */);
+        expect(component._focused).toEqual(true);
+      });
+      });
+
+      describe('Events', () => {
+        // Также как и методы
+      });
+    });
+
+    describe('Logic', () => {
+      describe('Getters', () => {
+        // Также как и методы
+      });
+
+      describe('Default Option Rules', () => {
+        it('should apply `useInkRipple` to true', () => {
+          // device: () => (themes as any).isMaterial(themes.current()),
+          // options: { useInkRipple: true },
+          materialThemeMock();
+
+          expect(defaultOptionRules[0].device()).toBe(true);
+          expect(defaultOptionRules[0].options).toBe({ useInkRipple: true });
+        });
+      });
+    });
+  });
+  ```
+
+</details>
 
 ### Описание пропов
 
@@ -438,11 +522,9 @@ export default class Component extends JSXComponent<ComponentProps> {
 
 Тесты на декларации написаны с использование *jest*. Примеры тестов на существующие компоненты см в [testing/jest](https://github.com/DevExpress/DevExtreme/tree/preact-button/testing/jest).
 
-Для подготовки (компиляции) компонентов к тестированию, необходимо воспользоваться тасками `test-env`, `dev`, либо *gulp* таской `generate-components`. Рядом с вашим декларативным компонентом появится файл с расширением *.p.js*. (Это *Preact* компонент, сгенерированной из декларации. Пока что он используется для тестирования)
+Для запуска тестов достаточно просто выполнить команду `test-jest`.
 
-Также ознакомьтесь с информацией в [разделе тестирования](#тестирование)
-
-!! Раздел дополняется
+Также ознакомьтесь с информацией в [разделе тестирования](#тестирование).
 
 ### Playground
 
