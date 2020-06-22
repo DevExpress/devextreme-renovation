@@ -5,6 +5,7 @@ import SyntaxKind from "../syntaxKind";
 import { Property } from "./class-members";
 import { getProps } from "./component";
 import { processComponentContext } from "../utils/string";
+import { BindingElement } from "./binding-pattern";
 
 export class ElementAccess extends ExpressionWithExpression {
     index: Expression;
@@ -35,12 +36,12 @@ export class PropertyAccess extends ExpressionWithExpression {
         this.name = name;
     }
 
-    processProps(result: string, options: toStringOptions) { 
+    processProps(result: string, options: toStringOptions, elements: BindingElement[] = []) {
         return result;
     }
 
     checkPropsAccess(result: string, options?: toStringOptions) { 
-        return result === `${processComponentContext(options?.newComponentContext)}props`;
+        return result === `${processComponentContext(options?.componentContext)}props`;
     }
 
     calculateComponentContext(options?: toStringOptions) {
@@ -71,7 +72,7 @@ export class PropertyAccess extends ExpressionWithExpression {
         return this.getMembers(options)?.find(m => m._name.toString() === this.name.toString());
     }
 
-    toString(options?: toStringOptions) {
+    toString(options?: toStringOptions, elements: BindingElement[] = []) {
         const member = this.getMember(options);
         if (member) {
             return `${member.getter(options!.newComponentContext)}`;
@@ -85,8 +86,8 @@ export class PropertyAccess extends ExpressionWithExpression {
                 ? result.replace(`${context}.`, options.newComponentContext)
                 : result.replace(context, options.newComponentContext);
 
-            if (this.checkPropsAccess(value, options)) { 
-                return this.processProps(value, options);
+            if (this.checkPropsAccess(result, options)) { 
+                return this.processProps(value, options, elements);
             }
 
             return options?.newComponentContext === "" ? this.name.toString() : value;

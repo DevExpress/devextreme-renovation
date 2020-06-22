@@ -14,6 +14,11 @@ class WidgetInput {
     view: view
 })
 export default class Widget extends JSXComponent(WidgetInput) {
+    getHeight(): number { 
+        const { height } = this.props;
+        const { height: _height } = this.props;
+        return height + _height;
+    }
     getProps(): any {
         return this.props;
     }
