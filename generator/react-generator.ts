@@ -159,20 +159,22 @@ export class PropertyAccess extends BasePropertyAccess {
         return setState;
     }
 
-    needToCreateAssignment(property: BaseProperty) {
-        return !property.canBeDestructured && !property.isRefProp;
+    needToCreateAssignment(property: BaseProperty, elements: BindingElement[]) {
+        return !property.canBeDestructured &&
+            !property.isRefProp &&
+            (elements.length === 0 || elements.some(e => (e.propertyName || e.name).toString() === property._name.toString()));
     }
 
-    processProps(result: string, options: toStringOptions) {
+    processProps(result: string, options: toStringOptions, elements: BindingElement[]=[]) {
         const props = getProps(options.members);
-        const hasComplexProps = props.some(p => this.needToCreateAssignment(p));
+        const hasComplexProps = props.some(p => this.needToCreateAssignment(p, elements));
 
         if (hasComplexProps && options.componentContext === SyntaxKind.ThisKeyword) {
             const hasSimpleProps = props.some(p => p.canBeDestructured);
             const initValue = (hasSimpleProps ? [new SpreadAssignment(new Identifier("props"))] : []) as (PropertyAssignment | SpreadAssignment)[];
 
             const destructedProps = props.reduce((acc, p) => {
-                if(this.needToCreateAssignment(p)){
+                if(this.needToCreateAssignment(p, elements)){
                     acc.push(new PropertyAssignment(
                         p._name,
                         new PropertyAccess(

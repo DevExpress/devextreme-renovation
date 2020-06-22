@@ -41,7 +41,7 @@ import { ImportClause } from "./base-generator/expressions/import";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input"
 import { Component, getProps } from "./base-generator/expressions/component";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access";
-import { BindingPattern } from "./base-generator/expressions/binding-pattern";
+import { BindingPattern, BindingElement } from "./base-generator/expressions/binding-pattern";
 import { processComponentContext, capitalizeFirstLetter } from "./base-generator/utils/string";
 import { Decorators } from "./component_declaration/decorators";
 
@@ -1616,22 +1616,25 @@ export class AngularComponent extends Component {
 }
 
 export class PropertyAccess extends BasePropertyAccess {
-    processProps(result: string, options: toStringOptions) {
-        const props = getProps(options.members);
-        const expression = new ObjectLiteral(
-            props.map(p => new PropertyAssignment(
-                p._name,
-                new PropertyAccess(
+    processProps(result: string, options: toStringOptions, elements: BindingElement[] = []) {
+        const props = getProps(options.members).filter(p => elements.length === 0 || elements.some(e => (e.propertyName || e.name).toString() === p._name.toString()));
+        if (props.some(p => !p.canBeDestructured) || props.length === 0) {
+            const expression = new ObjectLiteral(
+                props.map(p => new PropertyAssignment(
+                    p._name,
                     new PropertyAccess(
-                        new Identifier(this.calculateComponentContext(options)),
-                        new Identifier("props")
-                    ),
-                    p._name
-                )
-            )),
-            true
-        );
-        return expression.toString(options);
+                        new PropertyAccess(
+                            new Identifier(this.calculateComponentContext(options)),
+                            new Identifier("props")
+                        ),
+                        p._name
+                    )
+                )),
+                true
+            );
+            return expression.toString(options);
+        }
+        return options.newComponentContext!;
     }
 
     compileStateSetting(value: string, property: Property, toStringOptions?: toStringOptions) {
@@ -1643,10 +1646,6 @@ export class PropertyAccess extends BasePropertyAccess {
 }
 
 export class VariableDeclaration extends BaseVariableDeclaration { 
-    processProps(result: string, options:toStringOptions) { 
-        return options.newComponentContext!
-    }
-
     toString(options?:toStringOptions) { 
         if (this.isJsx()) { 
             return "";

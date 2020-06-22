@@ -30,6 +30,11 @@ export default {
     };
   },
   methods: {
+    __getHeight(){
+      const {height}=this.props();
+      const {height:_height}=this.props();
+      return height+_height;
+    },
     __getProps() {
       return this.props();
     },
