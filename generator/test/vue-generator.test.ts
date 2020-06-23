@@ -5,6 +5,7 @@ import generator, { VueComponent, JsxExpression } from "../vue-generator";
 import { printSourceCodeAst as getAst, removeSpaces } from "./helpers/common";
 import componentCreator from "./helpers/create-component";
 import { toStringOptions } from "../angular-generator";
+import { Decorators } from "../component_declaration/decorators";
 const { createDecorator, createComponentDecorator, createComponent } = componentCreator(generator);
 
 
@@ -2745,6 +2746,84 @@ mocha.describe("Vue-generator", function () {
                     );
                 });
 
+            });
+
+            mocha.describe("Pass Widget to template property", function () {
+                const getComponent = () => generator.createClassDeclaration(
+                    [createDecorator(Decorators.Component)],
+                    [],
+                    generator.createIdentifier("ComponentWithTemplate"),
+                    [],
+                    [],
+                    [
+                        generator.createProperty(
+                            [createDecorator(Decorators.Template)],
+                            [],
+                            generator.createIdentifier("contentTemplate")
+                        )
+                    ]
+                );
+
+                mocha.it("Pass widget into template. self-closing element", function () { 
+                    const component = getComponent();
+
+                    const element = generator.createJsxSelfClosingElement(
+                        generator.createIdentifier("ComponentWithTemplate"),
+                        [],
+                        [
+                            generator.createJsxAttribute(
+                                generator.createIdentifier("contentTemplate"),
+                                generator.createIdentifier("DxWidget")
+                            )
+                        ]
+                    );
+
+                    assert.strictEqual(removeSpaces(element.toString({
+                        members: component.members
+                    })), removeSpaces(`
+                        <ComponentWithTemplate>
+                            <template v-slot:contentTemplate="slotProps">
+                                <DxWidget :height="slotProps.height"
+                                    :width="slotProps.width"
+                                    :children="slotProps.children"/>
+                            </template>
+                        </ComponentWithTemplate>
+                    `));
+                });
+
+                mocha.it("Pass widget into template. Element", function () { 
+                    const component = getComponent();
+
+                    const element = generator.createJsxElement(
+                        generator.createJsxOpeningElement(
+                            generator.createIdentifier("ComponentWithTemplate"),
+                            [],
+                            [
+                                generator.createJsxAttribute(
+                                    generator.createIdentifier("contentTemplate"),
+                                    generator.createIdentifier("DxWidget")
+                                )
+                            ]
+                        ),
+                        [],
+                        generator.createJsxClosingElement(
+                            generator.createIdentifier("ComponentWithTemplate")
+                        )
+                    );
+
+                    assert.strictEqual(removeSpaces(element.toString({
+                        members: component.members
+                    })), removeSpaces(`
+                        <ComponentWithTemplate>
+                            <template v-slot:contentTemplate="slotProps">
+                                <DxWidget 
+                                    :height="slotProps.height"
+                                    :width="slotProps.width"
+                                    :children="slotProps.children"/>
+                            </template>
+                        </ComponentWithTemplate>
+                    `));
+                });
             });
 
         });

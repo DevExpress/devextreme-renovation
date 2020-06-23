@@ -355,10 +355,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
                 const name = template.initializer.toString();
                 const result = this.context.components?.[name]
                 if (result) {
-                acc.push({
-                    name: this.getTemplateName(template),
-                    component: result as Component,
-                });
+                    acc.push({
+                        name: this.getTemplateName(template),
+                        component: result as Component,
+                    });
                 }
                 return acc
             }, [] as ({name: string, component: Component})[]);
@@ -366,10 +366,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
             const functions = templates.reduce((acc, template) => {
                 const result = this.context.viewFunctions?.[template.initializer.toString()]
                 if (result && isFunction(result)) {
-                acc.push({
-                    name: this.getTemplateName(template),
-                    func: result,
-                });
+                    acc.push({
+                        name: this.getTemplateName(template),
+                        func: result,
+                    });
                 }
                 return acc
             }, [] as ({name: string,  func: BaseFunction | BaseArrowFunction})[]);
@@ -450,6 +450,10 @@ export class JsxAttribute extends BaseJsxAttribute {
         }
 
         if(this.isForwardRefAttribute(options)){
+            return this.getForwardRefValue(options); 
+        }
+
+        if(options?.members.some(m => m.isRef && m._name.toString() === getExpression(this.initializer).toString())){
             return this.getForwardRefValue(options); 
         }
 

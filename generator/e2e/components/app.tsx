@@ -18,6 +18,8 @@ import EffectsDOMUpdate from "./effects-dom-update.tsx";
 import EffectsStateUpdate from "./effects-state-update.tsx";
 import SumArray from "./render/sum-array.tsx";
 import PassRefFromChild from "./ref-on-children/ref-on-children-parent.tsx";
+import ForwardRefTemplate from "./ref-on-children/ref-on-children-template.tsx";
+import ForwardRefChild from "./ref-on-children/child.tsx";
 
 function view(model: App) {
     return <div>
@@ -87,6 +89,8 @@ function view(model: App) {
         />
 
         <PassRefFromChild></PassRefFromChild>
+
+        <ForwardRefTemplate contentTemplate={ForwardRefChild}/>
 
     </div>;
 }

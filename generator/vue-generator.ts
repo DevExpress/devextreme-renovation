@@ -747,8 +747,6 @@ export class AsExpression extends BaseAsExpression {
 }
 
 export class JsxAttribute extends BaseJsxAttribute { 
-    
-
     getTemplateProp(options?: toStringOptions) {
         return `v-bind:${this.name}="${this.compileInitializer(options)}"`;
     }
@@ -801,8 +799,8 @@ export class JsxAttribute extends BaseJsxAttribute {
         return value;
     }
 
-    skipValue() { 
-        return false;
+    skipValue(options?: toStringOptions) { 
+        return this.isTemplateAttribute(options);
     }
 
     compileEvent(options?: toStringOptions) {
@@ -908,6 +906,36 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
     }
 
+    getTemplateName(attribute: JsxAttribute) {
+        return attribute.name.toString();
+    }
+
+    functionToJsxElement(name: string, func: BaseFunction, options?: toStringOptions):JsxElement {      
+        const element = func.getTemplate(options, true);
+        const paramName = func.parameters[0].name.toString(options);
+
+        return new JsxElement(
+            new JsxOpeningElement(new Identifier(`template v-slot:${name}="${paramName}"`), undefined, [], this.context),
+            [element],
+            new JsxClosingElement(new Identifier('template'), this.context),
+        );
+    }
+
+    componentToJsxElement(name: string, component: Component): JsxElement {
+        const paramName = 'slotProps';
+        const attributes = getProps(component.members)
+            .map(prop => new JsxAttribute(prop._name, new PropertyAccess(new Identifier(paramName), prop._name)));
+        
+        const componentName = Object.keys(this.context.components!).find(k => this.context.components![k] === component)!;
+        const element = new JsxSelfClosingElement(new Identifier(componentName), undefined, attributes, component.context);
+
+        return new JsxElement(
+            new JsxOpeningElement(new Identifier(`template v-slot:${name}="${paramName}"`), undefined, [], this.context),
+            [element],
+            new JsxClosingElement(new Identifier('template'), this.context),
+        );
+    }
+
     clone() { 
         return new JsxOpeningElement(
             this.tagName,
@@ -964,34 +992,6 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
             this.typeArguments,
             this.attributes.slice(),
             this.context
-        );
-    }
-
-    getTemplateName(attribute: JsxAttribute) {
-        return attribute.name.toString();
-    }
-
-    functionToJsxElement(name: string, func: BaseFunction, options?: toStringOptions) {      
-        const element = func.getTemplate(options, true);
-        const paramName = func.parameters[0].name.toString(options);
-
-        return new JsxElement(
-            new JsxOpeningElement(new Identifier(`template v-slot:${name}="${paramName}"`), undefined, [], this.context),
-            [element],
-            new JsxClosingElement(new Identifier('template'), this.context),
-        );
-    }
-
-    componentToJsxElement(name: string, component: Component) {
-        const paramName = 'slotProps';
-        const attributes = getProps(component.members)
-            .map(prop => new JsxAttribute(prop._name, new PropertyAccess(new Identifier(paramName), prop._name)));
-        const element = new JsxSelfClosingElement(component._name, undefined, attributes, component.context);
-
-        return new JsxElement(
-            new JsxOpeningElement(new Identifier(`template v-slot:${name}="${paramName}"`), undefined, [], this.context),
-            [element],
-            new JsxClosingElement(new Identifier('template'), this.context),
         );
     }
 }

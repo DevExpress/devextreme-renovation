@@ -1,13 +1,13 @@
 import { Component, ComponentBindings, JSXComponent, OneWay, ForwardRef, Effect } from "../../../component_declaration/common";
 
 
-function view({ props: { childRef } }: RefOnChildrenChild) { 
-    return <div ref={childRef as any}></div>
+function view({ props: { childRef} }: RefOnChildrenChild) { 
+    return <div ref={childRef as never}></div>
 }
 
 @ComponentBindings()
 class Props { 
-   @ForwardRef() childRef: HTMLDivElement;
+    @ForwardRef() childRef: HTMLDivElement;
 }
 
 @Component({
