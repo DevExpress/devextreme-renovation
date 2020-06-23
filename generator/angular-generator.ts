@@ -453,8 +453,8 @@ export class JsxAttribute extends BaseJsxAttribute {
             return this.getForwardRefValue(options); 
         }
 
-        if(options?.members.some(m => m.isRef && m._name.toString() === getExpression(this.initializer).toString())){
-            return this.getForwardRefValue(options); 
+        if (this.name.toString() !== "ref" && options?.members.some(m => m.isRef && m._name.toString() === getMember(this.initializer, options)?._name.toString())) {
+            return this.getForwardRefValue(options);
         }
 
         return this.initializer.toString({
@@ -634,14 +634,25 @@ function getExpression(expression: Expression, options?: toStringOptions): Expre
         expression = options.variables[expression.toString()];
     }
 
-    if (expression instanceof Paren) {
+    if (
+        expression instanceof Paren || 
+        expression instanceof BaseAsExpression
+    ) {
         return getExpression(expression.expression, options)
-    } else if (expression instanceof BaseAsExpression) { 
+    } else if (expression instanceof BaseJsxExpression && expression.expression) { 
         return getExpression(expression.expression, options);
     }
 
     return expression;
  }
+
+function getMember(expression: Expression, options?: toStringOptions): BaseProperty | Method | undefined {
+    expression = getExpression(expression, options);
+        
+    if (expression instanceof BasePropertyAccess) {
+        return expression.getMember(options);
+    }
+}
 
 export class JsxExpression extends BaseJsxExpression {
     getIterator(expression: Expression): BaseBaseFunction| undefined {

@@ -1,7 +1,7 @@
  
   <template>
   <div style="display: contents">
-    <slot name="contentTemplate" v-bind:childRef="child"></slot>
+    <slot name="contentTemplate" v-bind:childRef="(ref=>{this.$refs.model.child=ref})"></slot>
   </div>
 </template>
 <script>
