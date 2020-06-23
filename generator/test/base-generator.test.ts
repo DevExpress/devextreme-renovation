@@ -670,7 +670,7 @@ mocha.describe("base-generator: expressions", function () {
             assert.equal(expression.toString(), "a?.b");
         });
     
-        mocha.it("createPropertyAccessChain without QuestionDotToken should add DotToken", function () { 
+        mocha.it("createPropertyAccessChain without QuestionDotToken", function () { 
             const expression = generator.createPropertyAccessChain(
                 generator.createThis(),
                 undefined,
@@ -678,6 +678,20 @@ mocha.describe("base-generator: expressions", function () {
             );
     
             assert.strictEqual(expression.toString(), "this.click");
+        });
+
+        mocha.it("createElementAccessChain", function () {
+            assert.equal(generator.createElementAccessChain(
+                generator.createIdentifier("a"),
+                generator.createToken(generator.SyntaxKind.QuestionDotToken),
+                generator.createIdentifier("b")
+            ).toString(), "a?.[b]");
+
+            assert.equal(generator.createElementAccessChain(
+                generator.createIdentifier("a"),
+                undefined,
+                generator.createIdentifier("b")
+            ).toString(), "a[b]");
         });
 
         mocha.it("createComputedPropertyName", function () { 

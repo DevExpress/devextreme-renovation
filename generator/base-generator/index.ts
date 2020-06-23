@@ -441,7 +441,11 @@ export default class Generator {
     }
 
     createElementAccess(expression: Expression, index: Expression): Expression {
-        return new ElementAccess(expression, index);
+        return new ElementAccess(expression, undefined, index);
+    }
+
+    createElementAccessChain(expression: Expression, questionDotToken: string | undefined, index: Expression) { 
+        return new ElementAccess(expression, questionDotToken, index);
     }
 
     createSpread(expression: Expression) { 
