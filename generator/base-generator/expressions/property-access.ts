@@ -9,13 +9,15 @@ import { BindingElement } from "./binding-pattern";
 
 export class ElementAccess extends ExpressionWithExpression {
     index: Expression;
-    constructor(expression: Expression, index: Expression) {
+    questionDotToken: string;
+    constructor(expression: Expression, questionDotToken: string = "", index: Expression) {
         super(expression);
         this.index = index;
+        this.questionDotToken = questionDotToken;
     }
 
     toString(options?: toStringOptions) {
-        return `${super.toString(options)}[${this.index.toString(options)}]`;
+        return `${super.toString(options)}${this.questionDotToken}[${this.index.toString(options)}]`;
     }
 
     getDependency() {
