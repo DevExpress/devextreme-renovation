@@ -2,7 +2,7 @@ import SyntaxKind from "./syntaxKind";
 import fs from "fs";
 import path from "path";
 import { compileCode } from "../component-compiler";
-import { ImportDeclaration, ImportClause, NamedImports, NamespaceImport, ImportSpecifier } from "./expressions/import";
+import { ImportDeclaration, ImportClause, NamedImportBindings, NamedImports, NamespaceImport, ImportSpecifier } from "./expressions/import";
 import { SimpleExpression, Expression } from "./expressions/base";
 import { Identifier, New, Delete, Paren, Call, NonNullExpression, TypeOf, Void, CallChain, AsExpression } from "./expressions/common";
 import {
@@ -301,7 +301,7 @@ export default class Generator {
                 const componentInputs: ComponentInput[] = this.cache[modulePath]
                     .filter((e: any) => e instanceof ComponentInput);
         
-                importClause.imports.forEach(i => {
+                importClause.imports?.forEach(i => {
                     const componentInput = componentInputs
                         .find(c => c.name.toString() === i && c.modifiers.indexOf("export") >= 0);
                     
@@ -309,7 +309,7 @@ export default class Generator {
                         this.addComponent(i, componentInput);
                     }
                 });
-                this.cache.__globals__ && importClause.imports.forEach(i => {
+                this.cache.__globals__ && importClause.imports?.forEach(i => {
                     if (this.cache.__globals__[i]) { 
                         context.globals = {
                             ...context.globals,
@@ -331,7 +331,7 @@ export default class Generator {
         return new NamedImports(node);
     }
 
-    createImportClause(name?: Identifier, namedBindings?: NamedImports) {
+    createImportClause(name?: Identifier, namedBindings?: NamedImportBindings) {
         return new ImportClause(name, namedBindings);
     }
 

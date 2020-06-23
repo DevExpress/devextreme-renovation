@@ -6,13 +6,11 @@ import {
     JsxOpeningElement as ReactJsxOpeningElement,
     JsxClosingElement as ReactJsxClosingElement,
     HeritageClause,
-    PropertyAccess,
 } from "./react-generator";
 import path from "path";
-import SyntaxKind from "./base-generator/syntaxKind";
 import { Expression } from "./base-generator/expressions/base";
-import { Identifier, Call } from "./base-generator/expressions/common";
-import { ImportClause, ImportDeclaration } from "./base-generator/expressions/import";
+import { Identifier } from "./base-generator/expressions/common";
+import { ImportClause, ImportDeclaration, isNamedImports } from "./base-generator/expressions/import";
 import { StringLiteral, ObjectLiteral } from "./base-generator/expressions/literal";
 import { TypeExpression } from "./base-generator/expressions/type";
 import { getModuleRelativePath } from "./base-generator/utils/path-utils";
@@ -20,7 +18,6 @@ import { GeneratorContext as BaseGeneratorContext } from "./base-generator/types
 import { Decorator } from "./base-generator/expressions/decorator";
 import { Method } from "./base-generator/expressions/class-members";
 import { compileType } from "./base-generator/utils/string";
-import { Block, ReturnStatement } from "./base-generator/expressions/statements";
 
 const BASE_JQUERY_WIDGET = "BASE_JQUERY_WIDGET";
 
@@ -42,27 +39,6 @@ export class PreactComponent extends ReactComponent {
 
     constructor(decorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>, context: GeneratorContext) {
         super(decorator, modifiers, name, typeParameters, heritageClauses, members, context);
-
-        if(getJQueryBaseComponentName([decorator], context)) {
-            const propsGetter = new Method(
-                [new Decorator(new Call(new Identifier("Method"), undefined, []), {})],
-                [],
-                undefined,
-                new Identifier("getProps"),
-                undefined,
-                [],
-                [],
-                undefined,
-                new Block([
-                    new ReturnStatement(new PropertyAccess(
-                        new Identifier(SyntaxKind.ThisKeyword),
-                        new Identifier("props")
-                    ))
-                ], true)
-            );
-            propsGetter.prefix = "__";
-            this.members.push(propsGetter);
-        }
     }
 
     compileImportStatements(hooks: string[], compats: string[]) {
@@ -114,7 +90,7 @@ class JQueryComponent {
         statements.splice(-1, 0, ...this.source.state.map(s => {
             return `props.${s.name}Change = this._stateChange('${s.name}')`
         }));
-    
+
         if(!statements.length) {
             return "";
         }
@@ -129,7 +105,7 @@ class JQueryComponent {
     }
     
     compileAPI() {
-        return (this.source.members.filter(a => a.isApiMethod && a.name.toString() !== "__getProps") as Method[])
+        return (this.source.members.filter(a => a.isApiMethod) as Method[])
             .map(a => `${a.name}(${a.parameters})${compileType(a.type.toString())} {
                 return this.viewRef.${a.name}(${a.parameters.map(p => p.name).join(",")});
             }`).join("\n");
@@ -146,8 +122,10 @@ class JQueryComponent {
             imports.push(`import BaseComponent from "${getModuleRelativePath(context.dirname!, context.jqueryBaseComponentModule!)}"`);
         } else {
             const importClause = context.noncomponentImports!.find(i => 
-                i.importClause.name?.toString() === component || 
-                i.importClause.namedBindings?.node.some(n => n.toString() === component));
+                i.importClause.name?.toString() === component || (
+                    isNamedImports(i.importClause.namedBindings) && 
+                    i.importClause.namedBindings.node.some(n => n.toString() === component)
+                ));
             if(importClause) {
                 imports.push(importClause.toString());
             }
