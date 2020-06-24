@@ -73,14 +73,6 @@ export interface toStringOptions extends  BaseToStringOptions {
     hasStyle?: boolean;
     keys?: Expression[];
     trackBy?: TrackByAttribute[];
-    forwardRefs?: { [name: string]: {
-        component: Component,
-        attributes: JsxAttribute[]
-    }},
-    
-    forwardRef?: {
-        [name: string]: Method
-    }
 }
 
 function processTagName(tagName: Expression, context: GeneratorContext) { 
