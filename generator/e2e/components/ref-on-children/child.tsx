@@ -1,8 +1,10 @@
-import { Component, ComponentBindings, JSXComponent, OneWay, ForwardRef, Effect } from "../../../component_declaration/common";
-
+import { Component, ComponentBindings, JSXComponent, ForwardRef, Effect } from "../../../component_declaration/common";
 
 function view({ props: { childRef} }: ForwardRefChild) { 
-    return <div ref={childRef as never}></div>
+    return (<span
+        className="forward-ref-child"
+        ref={childRef as never}>
+    </span>);
 }
 
 @ComponentBindings()

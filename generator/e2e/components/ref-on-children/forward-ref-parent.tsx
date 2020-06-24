@@ -18,6 +18,6 @@ export default class ForwardRefParent extends JSXComponent(Props) {
 
     @Effect()
     effect(){
-        this.child.style.border = "1px solid black";
+        this.child.style.backgroundColor = "rgb(120, 120, 120)";
     }
 }

@@ -88,9 +88,8 @@ function view(model: App) {
             array={model.arrayForSum}
         />
 
-        <ForwardRefParent/>
-
-        <ForwardRefTemplate contentTemplate={ForwardRefChild}/>
+        ForwardRef: <ForwardRefParent/>
+        ForwardRef Template:<ForwardRefTemplate contentTemplate={ForwardRefChild}/>
 
     </div>;
 }
