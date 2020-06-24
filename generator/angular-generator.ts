@@ -238,26 +238,6 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     }
 
     toString(options?: toStringOptions) {
-        if(
-            options &&
-            this.component?.members.some(m=>m.isForwardRefProp)
-        ){
-            const ref = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === "ref") as JsxAttribute | undefined;
-            if (ref) {
-                options.forwardRefs = options.forwardRefs || {};
-                const attributes = this.attributes.filter(a =>
-                    a instanceof JsxAttribute &&
-                    this.component?.members.some(m => m._name.toString() === a.name.toString())
-                ).map(a => (a as JsxAttribute));
-
-                options.forwardRefs[ref.initializer.toString()] = {
-                    component: this.component,
-                    attributes
-                };
-                    
-            }
-        }
-
         const templateProperty = this.getTemplateProperty(options) as Property;
         if (templateProperty) { 
             return this.compileTemplate(templateProperty, options);
@@ -436,11 +416,7 @@ export class JsxAttribute extends BaseJsxAttribute {
         if (this.isRefAttribute(options)) { 
             return this.getRefValue(options);
         }
-
-        if(this.isForwardRefAttribute(options)){
-            return this.getForwardRefValue(options); 
-        }
-
+        
         if (options?.members.some(m => m.isForwardRef && m._name.toString() === getMember(this.initializer, options)?._name.toString())) {
             return this.getForwardRefValue(options);
         }
@@ -531,10 +507,6 @@ export class JsxAttribute extends BaseJsxAttribute {
     isTemplateAttribute(options?: toStringOptions) {
         const templateProps = options?.jsxComponent?.members.filter(p => p.isTemplate);
         return templateProps?.some(p => p.name === this.name.toString()) || false;
-    }
-
-    isForwardRefAttribute(options?: toStringOptions) { 
-        return options?.jsxComponent?.members.some(m => m.isForwardRefProp && m._name.toString() === this.name.toString()) && getMember(this.initializer)?.isRef;
     }
 
     skipValue(options?: toStringOptions) { 

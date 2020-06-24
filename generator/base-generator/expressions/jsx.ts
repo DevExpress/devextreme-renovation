@@ -29,7 +29,7 @@ export class JsxAttribute {
     }
 
     getTemplateContext(options?: toStringOptions): PropertyAssignment | null { 
-        return new PropertyAssignment(this.name, this.initializer);
+        return null;
     }
     
     toString(options?:toStringOptions) { 
