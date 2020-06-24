@@ -1,7 +1,7 @@
 import { Component, ComponentBindings, JSXComponent, OneWay, ForwardRef, Effect } from "../../../component_declaration/common";
 
 
-function view({ props: { childRef} }: RefOnChildrenChild) { 
+function view({ props: { childRef} }: ForwardRefChild) { 
     return <div ref={childRef as never}></div>
 }
 
@@ -13,7 +13,7 @@ class Props {
 @Component({
     view
 })
-export default class RefOnChildrenChild extends JSXComponent(Props) {
+export default class ForwardRefChild extends JSXComponent(Props) {
     @Effect()
     effect(){
         this.props.childRef.innerHTML+= "childText";

@@ -17,8 +17,8 @@ import RefPass from "./ref-pass.tsx";
 import EffectsDOMUpdate from "./effects-dom-update.tsx";
 import EffectsStateUpdate from "./effects-state-update.tsx";
 import SumArray from "./render/sum-array.tsx";
-import PassRefFromChild from "./ref-on-children/ref-on-children-parent.tsx";
-import ForwardRefTemplate from "./ref-on-children/ref-on-children-template.tsx";
+import ForwardRefParent from "./ref-on-children/forward-ref-parent.tsx";
+import ForwardRefTemplate from "./ref-on-children/forward-ref-template.tsx";
 import ForwardRefChild from "./ref-on-children/child.tsx";
 
 function view(model: App) {
@@ -88,7 +88,7 @@ function view(model: App) {
             array={model.arrayForSum}
         />
 
-        <PassRefFromChild></PassRefFromChild>
+        <ForwardRefParent/>
 
         <ForwardRefTemplate contentTemplate={ForwardRefChild}/>
 
