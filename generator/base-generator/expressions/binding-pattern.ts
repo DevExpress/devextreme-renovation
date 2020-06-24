@@ -65,8 +65,8 @@ export class BindingPattern extends Expression {
     }
 
     remove(name: string) {
-        const element = this.elements.find(e => e.name?.toString() === name);
-        if (element) { 
+        const element = this.elements.find(e => e.name.toString() === name);
+        if (element) {
             this.removedElements.push(element);
             this.elements = this.elements.filter(e => e !== element);
         }
@@ -88,34 +88,27 @@ export class BindingPattern extends Expression {
 
     getVariableExpressions(startExpression: Expression): VariableExpression { 
         return this.elements.reduce((v: VariableExpression, e, index) => {
-            if (e.name) {
-                let expression: Expression | null = null;
-
-                if (this.type !== "object") {
-                    expression = new ElementAccess(startExpression, new SimpleExpression(index.toString()));
-                } else if (e.name instanceof Identifier) {
-                    expression = new PropertyAccess(startExpression, e.propertyName || e.name);
-                } else if (typeof e.name === "string") {
-                    const name = e.name;
-                    expression = new PropertyAccess(startExpression, new Identifier(name));
-                } else if (e.name instanceof BindingPattern && e.propertyName) { 
-                    return {
-                        ...e.name.getVariableExpressions(
-                            new PropertyAccess(startExpression, e.propertyName)
-                        ),
-                        ...v
-                    };
-                }   
-                /* istanbul ignore next */
-                if (expression) {
-                    return {
-                        [e.name.toString()]: expression,
-                        ...v,
-                    };
-                }
+            let expression: Expression | null = null;
+            if (this.type !== "object") {
+                expression = new ElementAccess(startExpression, new SimpleExpression(index.toString()));
+            } else if (e.name instanceof Identifier) {
+                expression = new PropertyAccess(startExpression, e.propertyName || e.name);
+            } else if (typeof e.name === "string") {
+                const name = e.name;
+                expression = new PropertyAccess(startExpression, new Identifier(name));
+            } else if (e.name instanceof BindingPattern && e.propertyName) {
+                return {
+                    ...e.name.getVariableExpressions(
+                        new PropertyAccess(startExpression, e.propertyName)
+                    ),
+                    ...v
+                };
             }
-            /* istanbul ignore next */
-            return v;
-        }, {})
+        
+            return {
+                [e.name.toString()]: expression!,
+                ...v,
+            };
+        }, {});
     }
 }
