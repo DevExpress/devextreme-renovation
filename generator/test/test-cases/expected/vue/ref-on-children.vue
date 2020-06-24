@@ -1,8 +1,6 @@
 <template>
   <Child
-    :childRef="(ref=>{
-                this.$refs.child = ref
-            })"
+    :childRef="forwardRef_child"
   />
 </template>
 <script>
@@ -18,6 +16,9 @@ export default {
   methods: {
     __restAttributes() {
       return {};
+    },
+    forwardRef_child(ref){
+      this.$refs.child=ref;
     },
     props() {
       return {};

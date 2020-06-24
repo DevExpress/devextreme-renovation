@@ -610,7 +610,7 @@ function getExpression(expression: Expression, options?: toStringOptions): Expre
     return expression;
  }
 
-function getMember(expression: Expression, options?: toStringOptions): BaseProperty | Method | undefined {
+export function getMember(expression: Expression, options?: toStringOptions): BaseProperty | Method | undefined {
     expression = getExpression(expression, options);
         
     if (expression instanceof BasePropertyAccess) {

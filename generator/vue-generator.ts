@@ -50,6 +50,7 @@ import {
     AngularDirective,
     toStringOptions,
     isElement,
+    getMember,
 } from "./angular-generator";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
@@ -324,6 +325,28 @@ export class VueComponent extends Component {
                         )
                     )
                 )
+            }
+            if (m.isForwardRef) { 
+                members.push(
+                    new Method(
+                        [],
+                        [],
+                        undefined,
+                        new Identifier(`forwardRef_${m.name}`),
+                        undefined,
+                        [],
+                        [new Parameter(
+                            [],
+                            [],
+                            undefined,
+                            new Identifier("ref")
+                        )],
+                        undefined,
+                        new Block([
+                            new SimpleExpression(`this.$refs.${m.name}=ref`)
+                        ], true)
+                    )
+                );
             }
             return members;
         }, members);
@@ -781,10 +804,9 @@ export class JsxAttribute extends BaseJsxAttribute {
         return `()=>${name}`;
     }
 
-    getForwardRefValue(options?: toStringOptions){
-        return `(ref=>{
-            this.$refs.${this.initializer.toString()} = ref
-        })`;
+    getForwardRefValue(options?: toStringOptions) {
+        const member = getMember(this.initializer, options)!;
+        return `forwardRef_${member.name}`;
     }
 
     compileRef(options?: toStringOptions) { 

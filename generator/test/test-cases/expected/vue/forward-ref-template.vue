@@ -1,7 +1,7 @@
  
   <template>
   <div style="display: contents">
-    <slot name="contentTemplate" v-bind:childRef="(ref=>{this.$refs.model.child=ref})"></slot>
+    <slot name="contentTemplate" v-bind:childRef="forwardRef_child"></slot>
   </div>
 </template>
 <script>
@@ -16,6 +16,9 @@ export default {
   methods: {
     __restAttributes() {
       return {};
+    },
+    forwardRef_child(ref){
+      this.$refs.child=ref;
     },
     props() {
       return { contentTemplate: this.$scopedSlots.contentTemplate };
