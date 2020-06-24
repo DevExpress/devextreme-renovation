@@ -1,7 +1,6 @@
 import { Input } from "@angular/core"
 class Props {
-    @Input() childRef!: () => void;
-
+    @Input() childRef: (ref: any) => void = () => { };
 }
 
 import { Component, NgModule, ViewChild, ElementRef } from "@angular/core";

@@ -86,8 +86,8 @@ export class BaseClassMember extends Expression {
         return this._hasDecorator(Decorators.Effect);
     }
 
-    get isForwardRef(){
-        return this._hasDecorator(Decorators.ForwardRef);
+    get isForwardRefProp(){
+        return this._hasDecorator(Decorators.ForwardRefProp);
     }
 
     get canBeDestructured() { 

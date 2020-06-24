@@ -114,7 +114,7 @@ export class Property extends BaseProperty {
             return "";
         }
     
-        const type = this.isRefProp || this.isForwardRef ? "Function" : calculatePropertyType(this.type);
+        const type = this.isRefProp || this.isForwardRefProp ? "Function" : calculatePropertyType(this.type);
         const parts = [];
         if (type) { 
             parts.push(`type: ${type}`)
@@ -145,7 +145,7 @@ export class Property extends BaseProperty {
         if (this.isState) {
             return `(${componentContext}${this.name} !== undefined ? ${componentContext}${this.name} : ${componentContext}${this.name}_state)`;
         }
-        if ((this.isForwardRef|| this.isRef) && componentContext.length) {
+        if ((this.isForwardRefProp|| this.isRef) && componentContext.length) {
             return `${componentContext}$refs.${this.name}`;
         }
         if(this.isRefProp)  {
@@ -472,7 +472,7 @@ export class VueComponent extends Component {
             }`);
         });
 
-        const forwardRefs = this.members.filter(m=>m.isForwardRef);
+        const forwardRefs = this.members.filter(m=>m.isForwardRefProp);
 
         if(forwardRefs.length){
             statements.push(`__forwardRef(){
@@ -556,7 +556,7 @@ export class VueComponent extends Component {
     generateMounted() { 
         const statements: string[] = [];
 
-        if(this.members.filter(m=>m.isForwardRef).length){
+        if(this.members.filter(m=>m.isForwardRefProp).length){
             statements.push(`this.__forwardRef()`);
         }
 
@@ -609,7 +609,7 @@ export class VueComponent extends Component {
     generateUpdated() { 
         const statements: string[] = [];
 
-        if(this.members.filter(m=>m.isForwardRef).length){
+        if(this.members.filter(m=>m.isForwardRefProp).length){
             statements.push(`this.__forwardRef()`);
         }
 

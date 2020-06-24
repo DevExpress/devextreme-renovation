@@ -108,7 +108,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     processForwardRef() { 
         const attributes = this.attributes;
         if(
-            this.component?.members.some(m=>m.isForwardRef) &&
+            this.component?.members.some(m=>m.isForwardRefProp) &&
             !attributes.some(a=>a instanceof JsxAttribute && a.name.toString()==="ref")
         ){
             attributes.push(
@@ -256,7 +256,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     toString(options?: toStringOptions) {
         if(
             options &&
-            this.component?.members.some(m=>m.isForwardRef)
+            this.component?.members.some(m=>m.isForwardRefProp)
         ){
             const ref = this.attributes.find(a => a instanceof JsxAttribute && a.name.toString() === "ref") as JsxAttribute | undefined;
             if (ref) {
@@ -574,7 +574,7 @@ export class JsxAttribute extends BaseJsxAttribute {
     }
 
     isForwardRefAttribute(options?: toStringOptions) { 
-        return options?.jsxComponent?.members.some(m => m.isForwardRef && m._name.toString() === this.name.toString()) && getMember(this.initializer)?.isRef;
+        return options?.jsxComponent?.members.some(m => m.isForwardRefProp && m._name.toString() === this.name.toString()) && getMember(this.initializer)?.isRef;
     }
 
     skipValue(options?: toStringOptions) { 
@@ -1085,7 +1085,7 @@ class Decorator extends BaseDecorator {
             this.name === Decorators.TwoWay || 
             this.name === Decorators.Template || 
             this.name===Decorators.RefProp ||
-            this.name ===Decorators.ForwardRef
+            this.name ===Decorators.ForwardRefProp
             ) {
             return "@Input()";
         } else if (this.name === Decorators.Effect || this.name === Decorators.Ref || this.name === Decorators.ApiRef || this.name === Decorators.InternalState || this.name === Decorators.Method) {
@@ -1116,7 +1116,7 @@ function compileCoreImports(members: Array<Property|Method>, context: AngularGen
         m.decorators.some(d =>
             d.name === Decorators.OneWay ||
             d.name === Decorators.RefProp ||
-            d.name === Decorators.ForwardRef
+            d.name === Decorators.ForwardRefProp
         )
     )) {
         imports.push("Input");
@@ -1200,7 +1200,7 @@ export class Property extends BaseProperty {
             }
         }
 
-        if (decorators.find(d => d.name === Decorators.ForwardRef)) {
+        if (decorators.find(d => d.name === Decorators.ForwardRefProp)) {
             type = new SimpleTypeExpression(`()=>void`);
             if (questionOrExclamationToken !== SyntaxKind.QuestionToken) { 
                 questionOrExclamationToken = SyntaxKind.ExclamationToken;
@@ -1231,6 +1231,10 @@ export class Property extends BaseProperty {
                 return this.${selector}?.nativeElement?.innerHTML.trim();
             }`;
         }
+
+        if (this.isForwardRefProp) { 
+            return `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.name}:(ref:any)=>void=()=>{}`;
+        }
         
         return defaultValue;
     }
@@ -1244,7 +1248,7 @@ export class Property extends BaseProperty {
         if (this.isRef) { 
             return `${componentContext}${this.name}${this.questionOrExclamationToken}.nativeElement`
         }
-        if (this.isForwardRef) { 
+        if (this.isForwardRefProp) { 
             return `${componentContext}${this.name}Ref${this.questionOrExclamationToken}.nativeElement`
         }
         if (this.isRefProp) { 
@@ -1355,7 +1359,7 @@ export class AngularComponent extends Component {
             }
         });
         members = super.processMembers(members);
-        members = members.concat(members.filter(m => m.isForwardRef).map(m => {
+        members = members.concat(members.filter(m => m.isForwardRefProp).map(m => {
             return new Property(
                 [
                     new Decorator(
@@ -1720,7 +1724,7 @@ export class AngularComponent extends Component {
                 componentRefs.push(decoratorToStringOptions.forwardRef![r]);
             });
 
-        this.members.filter(m => m.isForwardRef).forEach(m => {
+        this.members.filter(m => m.isForwardRefProp).forEach(m => {
             ngAfterViewInitStatements.push(`
                 this.${m.name}(this.${m.name}Ref);
             `);

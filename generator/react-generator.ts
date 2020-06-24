@@ -232,7 +232,7 @@ export class Property extends BaseProperty {
             return getLocalStateName(this.name, componentContext);
         } else if (this.decorators.some(d => d.name === Decorators.OneWay || d.name === Decorators.Event || d.name === Decorators.Template || d.name === Decorators.Slot)) {
             return getPropName(this.name, componentContext, scope);
-        } else if (this.decorators.some(d => d.name === Decorators.Ref || d.name === Decorators.ApiRef || d.name === Decorators.RefProp || d.name===Decorators.ForwardRef)) {
+        } else if (this.decorators.some(d => d.name === Decorators.Ref || d.name === Decorators.ApiRef || d.name === Decorators.RefProp || d.name === Decorators.ForwardRefProp)) {
             return `${scope}${this.name}${scope ? this.questionOrExclamationToken : ""}.current!`;
         } else if (this.isState) {
             const propName = getPropName(this.name, componentContext, scope);
@@ -246,7 +246,7 @@ export class Property extends BaseProperty {
             return [getLocalStateName(this.name)];
         } else if (this.decorators.some(d => d.name === Decorators.OneWay || d.name === Decorators.Event || d.name === Decorators.Template || d.name === Decorators.Slot)) {
             return [getPropName(this.name)];
-        } else if (this.decorators.some(d => d.name === Decorators.Ref || d.name === Decorators.ApiRef || d.name === Decorators.RefProp || d.name===Decorators.ForwardRef)) {
+        } else if (this.decorators.some(d => d.name === Decorators.Ref || d.name === Decorators.ApiRef || d.name === Decorators.RefProp || d.name===Decorators.ForwardRefProp)) {
             const scope = this.processComponentContext(this.scope)
             return this.questionOrExclamationToken === "?" ? [`${scope}${this.name.toString()}${scope ? this.questionOrExclamationToken : ""}.current`] : [];
         } else if (this.isState) {

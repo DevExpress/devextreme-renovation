@@ -8,7 +8,7 @@ export const enum Decorators  {
     Template = "Template",
     Event = "Event",
 
-    ForwardRef = "ForwardRef",
+    ForwardRefProp = "ForwardRefProp",
 
     InternalState = "InternalState",
     Ref = "Ref",
