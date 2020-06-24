@@ -28,7 +28,7 @@ export class JsxAttribute {
         this.initializer = initializer || new JsxExpression(undefined, new SimpleExpression("true"));
     }
 
-    getTemplateContext(): PropertyAssignment | null { 
+    getTemplateContext(options?: toStringOptions): PropertyAssignment | null { 
         return new PropertyAssignment(this.name, this.initializer);
     }
     
@@ -62,6 +62,7 @@ export class JsxOpeningElement extends Expression {
     }
 
     attributesString(options?: toStringOptions) { 
+        const inputOptions = options;
         if (this.component && options) { 
             options = {
                 ...options,
@@ -69,9 +70,15 @@ export class JsxOpeningElement extends Expression {
             }
         }
 
-        return this.attributes.map(a => a.toString(options))
+        const value = this.attributes.map(a => a.toString(options))
             .filter(s => s)
             .join("\n");
+        
+        if (inputOptions) { 
+            (inputOptions as any).forwardRef = (options as any).forwardRef;
+        }
+
+        return value;
     }
 
     toString(options?:toStringOptions) { 

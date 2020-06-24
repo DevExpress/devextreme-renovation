@@ -12,8 +12,8 @@ import { CommonModule } from "@angular/common"
 
 @Component({
     selector: "dx-ref-on-children-parent",
-    template: `<dx-ref-on-children-child #auto_ref0></dx-ref-on-children-child>`
-})
+    template: `<dx-ref-on-children-child [childRef]="forwardRef_childRef"
+#auto_ref0></dx-ref-on-children-child>`})
 export default class RefOnChildrenParent extends Props {
     @ViewChild("child", { static: false }) child!: ElementRef<HTMLDivElement>
     __effect(): any {
@@ -22,15 +22,24 @@ export default class RefOnChildrenParent extends Props {
     get __restAttributes(): any {
         return {}
     }
-    @ViewChild("auto_ref0", { static: false }) auto_ref0?: Child
+    get forwardRef_childRef(): (ref: any) => void {
+
+        if (this.__getterCache["forwardRef_childRef"] !== undefined) {
+            return this.__getterCache["forwardRef_childRef"];
+        }
+        return this.__getterCache["forwardRef_childRef"] = ((): (ref: any) => void => {
+            return (ref) => this.child = ref
+        })();
+    }
+
 
     __destroyEffects: any[] = [];
     __viewCheckedSubscribeEvent: Array<() => void> = [];
+    __getterCache: {
+        forwardRef_childRef?: (ref: any) => void
+    } = {}
 
     ngAfterViewInit() {
-        if (this.auto_ref0) {
-            this.child = this.auto_ref0.childRef;
-        }
         this.__destroyEffects.push(this.__effect());
     }
 

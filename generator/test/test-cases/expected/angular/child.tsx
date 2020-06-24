@@ -1,19 +1,26 @@
-import { ViewChild, ElementRef } from "@angular/core"
+import { Input } from "@angular/core"
 class Props {
-    @ViewChild("childRef", { static: false }) childRef!: ElementRef<HTMLDivElement>;
+    @Input() childRef!: () => void;
+
 }
 
-import { Component, NgModule } from "@angular/core";
+import { Component, NgModule, ViewChild, ElementRef } from "@angular/core";
 import { CommonModule } from "@angular/common"
 
 @Component({
     selector: "dx-ref-on-children-child",
-    template: `<div #childRef></div>`
+    template: `<div #childRefRef></div>`
 })
 export default class RefOnChildrenChild extends Props {
     get __restAttributes(): any {
         return {}
     }
+    @ViewChild("childRefRef", { static: false }) childRefRef: ElementRef<any>
+
+    ngAfterViewInit() {
+        this.childRef(this.childRefRef);
+    }
+
 }
 @NgModule({
     declarations: [RefOnChildrenChild],

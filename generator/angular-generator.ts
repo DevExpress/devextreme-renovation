@@ -76,7 +76,11 @@ export interface toStringOptions extends  BaseToStringOptions {
     forwardRefs?: { [name: string]: {
         component: Component,
         attributes: JsxAttribute[]
-    }}
+    }},
+    
+    forwardRef?: {
+        [name: string]: Method
+    }
 }
 
 function processTagName(tagName: Expression, context: GeneratorContext) { 
@@ -231,7 +235,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
     compileTemplate(templateProperty: Property, options?: toStringOptions) {
         const contextExpr = processComponentContext(options?.newComponentContext);
-        const contextElements = this.attributes.map(a => a.getTemplateContext()).filter(p => p) as PropertyAssignment[];
+        const contextElements = this.attributes.map(a => a.getTemplateContext(options)).filter(p => p) as PropertyAssignment[];
         const contextString = contextElements.length ? `; context:${(new ObjectLiteral(contextElements, false)).toString(options).replace(/"/gi, "'")}` : "";
         const attributes = this.attributes
             .filter(a => a instanceof AngularDirective)
@@ -441,7 +445,31 @@ export class JsxAttribute extends BaseJsxAttribute {
     }
 
     getForwardRefValue(options?: toStringOptions): string{
-        return "";
+        if (options) { 
+            options.forwardRef = options.forwardRef || {};
+            options.forwardRef[`forwardRef_${this.name}`] = new GetAccessor(
+                [],
+                [],
+                new Identifier(`forwardRef_${this.name}`),
+                [],
+                new FunctionTypeNode(
+                    [],
+                    [new Parameter(
+                        [],
+                        [],
+                        undefined,
+                        new Identifier("ref"),
+                        undefined,
+                        new SimpleTypeExpression("any")
+                    )],
+                    new SimpleTypeExpression("void")
+                ),
+                new Block([
+                    new SimpleExpression(`return (ref)=>this.${this.compileRef(options).replace("#", "")}=ref`)
+                ], true)
+            );
+        }
+        return `forwardRef_${this.name}`;
     }
 
     compileInitializer(options?: toStringOptions) { 
@@ -542,15 +570,15 @@ export class JsxAttribute extends BaseJsxAttribute {
 
     isTemplateAttribute(options?: toStringOptions) {
         const templateProps = options?.jsxComponent?.members.filter(p => p.isTemplate);
-        return templateProps?.some(p => p.name === this.name.toString())
+        return templateProps?.some(p => p.name === this.name.toString()) || false;
     }
 
     isForwardRefAttribute(options?: toStringOptions) { 
-        return options?.jsxComponent?.members.some(m => m.isForwardRef && m._name.toString() === this.name.toString());
+        return options?.jsxComponent?.members.some(m => m.isForwardRef && m._name.toString() === this.name.toString()) && getMember(this.initializer)?.isRef;
     }
 
     skipValue(options?: toStringOptions) { 
-        return this.isForwardRefAttribute(options);
+        return false;
     }
 
     toString(options?: toStringOptions) { 
@@ -593,6 +621,10 @@ export class JsxAttribute extends BaseJsxAttribute {
         }
 
         return this.compileBase(name, this.compileValue(name, this.compileInitializer(options)));
+    }
+
+    getTemplateContext(options?: toStringOptions): PropertyAssignment | null { 
+        return new PropertyAssignment(this.name, new SimpleExpression(this.compileInitializer(options)));
     }
 }
 
@@ -1083,7 +1115,8 @@ function compileCoreImports(members: Array<Property|Method>, context: AngularGen
     if (members.some(m =>
         m.decorators.some(d =>
             d.name === Decorators.OneWay ||
-            d.name === Decorators.RefProp
+            d.name === Decorators.RefProp ||
+            d.name === Decorators.ForwardRef
         )
     )) {
         imports.push("Input");
@@ -1098,7 +1131,7 @@ function compileCoreImports(members: Array<Property|Method>, context: AngularGen
         imports.push("Output", "EventEmitter");
     }
 
-    if (members.some(m => m.isSlot || m.isForwardRef)) {
+    if (members.some(m => m.isSlot)) {
         imports.push("ViewChild", "ElementRef");
     }
 
@@ -1166,6 +1199,13 @@ export class Property extends BaseProperty {
                 questionOrExclamationToken = SyntaxKind.ExclamationToken;
             }
         }
+
+        if (decorators.find(d => d.name === Decorators.ForwardRef)) {
+            type = new SimpleTypeExpression(`()=>void`);
+            if (questionOrExclamationToken !== SyntaxKind.QuestionToken) { 
+                questionOrExclamationToken = SyntaxKind.ExclamationToken;
+            }
+        }
         super(decorators, modifiers, name, questionOrExclamationToken, type, initializer, inherited);
     }
     typeDeclaration() { 
@@ -1177,7 +1217,7 @@ export class Property extends BaseProperty {
         if (eventDecorator) { 
             return `${eventDecorator} ${this.name}:EventEmitter${parseEventType(this.type)} = new EventEmitter()`
         }
-        if (this.isRef || this.isForwardRef) {
+        if (this.isRef) {
             return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:ElementRef<${this.type}>`;
         }
         if (this._hasDecorator(Decorators.ApiRef)) {
@@ -1201,8 +1241,11 @@ export class Property extends BaseProperty {
         if (this.isEvent) { 
             return `${componentContext}${this.name}.emit`;
         }
-        if (this.isRef||this.isForwardRef) { 
+        if (this.isRef) { 
             return `${componentContext}${this.name}${this.questionOrExclamationToken}.nativeElement`
+        }
+        if (this.isForwardRef) { 
+            return `${componentContext}${this.name}Ref${this.questionOrExclamationToken}.nativeElement`
         }
         if (this.isRefProp) { 
             return `${componentContext}${this.name}`;
@@ -1311,7 +1354,20 @@ export class AngularComponent extends Component {
                 });
             }
         });
-        return super.processMembers(members);
+        members = super.processMembers(members);
+        members = members.concat(members.filter(m => m.isForwardRef).map(m => {
+            return new Property(
+                [
+                    new Decorator(
+                        new Call(new Identifier(Decorators.Ref), [], []),
+                        this.context
+                    )
+                ],
+                [],
+                new Identifier(`${m.name}Ref`)
+            )
+        }));
+        return members;
     }
 
     addPrefixToMembers(members: Array<Property | Method>) { 
@@ -1380,8 +1436,8 @@ export class AngularComponent extends Component {
         return imports.join(";\n");
     }
 
-    compileGetterCache(ngOnChanges: string[]): string { 
-        const getters = this.members.filter(m => m instanceof GetAccessor && m.isMemorized());
+    compileGetterCache(ngOnChanges: string[], generatedMembers: Array<Property|Method>=[]): string { 
+        const getters = this.members.concat(generatedMembers).filter(m => m instanceof GetAccessor && m.isMemorized());
 
         if (getters.length) { 
             const statements = [
@@ -1657,39 +1713,18 @@ export class AngularComponent extends Component {
         const componentDecorator = this.decorator.toString(decoratorToStringOptions);
         const spreadAttributes = this.compileSpreadAttributes(ngOnChangesStatements, coreImports);
 
-        const componentRefs:Property[] = [];
-
-        Object.keys(decoratorToStringOptions.forwardRefs || [])
+        const componentRefs: Array<Property|Method> = [];
+        
+        Object.keys(decoratorToStringOptions.forwardRef || [])
             .forEach(r => {
-                if (decoratorToStringOptions.forwardRefs) {
-                    const attributes = decoratorToStringOptions.forwardRefs[r].attributes;
-                    const component = decoratorToStringOptions.forwardRefs[r].component;
-                    const autoRefType = Object.keys(this.context.components!).find(componentType => {
-                        return this.context.components![componentType] === component;
-                    })!;
-                        
-                    componentRefs.push(
-                        new Property(
-                            [new Decorator(
-                                new Call(new Identifier(Decorators.ApiRef), [], []),
-                                this.context
-                            )
-                            ],
-                            [],
-                            new Identifier(r),
-                            SyntaxKind.QuestionToken,
-                            new SimpleTypeExpression(autoRefType),
-                            undefined
-                        ));
-                        
-                    ngAfterViewInitStatements.push(
-                        `if(this.${r}){
-                        ${attributes.map(a =>
-                            `this.${a.compileRef(decoratorToStringOptions).replace("#", "")}=this.${r}.${a.name}`
-                        ).join("\n")}
-                        }`);
-                }
+                componentRefs.push(decoratorToStringOptions.forwardRef![r]);
             });
+
+        this.members.filter(m => m.isForwardRef).forEach(m => {
+            ngAfterViewInitStatements.push(`
+                this.${m.name}(this.${m.name}Ref);
+            `);
+        });
    
 
         return `
@@ -1710,7 +1745,7 @@ export class AngularComponent extends Component {
             ${spreadAttributes}
             ${this.compileTrackBy(decoratorToStringOptions)}
             ${this.compileEffects(ngAfterViewInitStatements, ngOnDestroyStatements, ngOnChangesStatements, ngAfterViewCheckedStatements)}
-            ${this.compileGetterCache(ngOnChangesStatements)}
+            ${this.compileGetterCache(ngOnChangesStatements, componentRefs)}
             ${this.compileNgModel()}
             ${this.compileLifeCycle("ngAfterViewInit", ngAfterViewInitStatements)}
             ${this.compileLifeCycle("ngOnChanges", ngOnChangesStatements, [`${ngOnChangesParameters[0]}: {[name:string]: any}`])}
