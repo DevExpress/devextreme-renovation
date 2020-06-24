@@ -177,7 +177,7 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it.only("forward-ref-template", function () {
+    mocha.it("forward-ref-template", function () {
         this.testGenerator(this.test!.title);
     });
 
