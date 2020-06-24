@@ -1,4 +1,4 @@
-import { Component, ComponentBindings, JSXComponent, Ref, Effect } from "../../../../component_declaration/common";
+import { Component, ComponentBindings, JSXComponent, Effect, ForwardRef } from "../../../../component_declaration/common";
 import Child from "./child";
 
 function view({ child }: RefOnChildrenParent) { 
@@ -14,7 +14,7 @@ class Props {
     view
 })
 export default class RefOnChildrenParent extends JSXComponent(Props) {
-    @Ref() child!: HTMLDivElement;
+    @ForwardRef() child!: HTMLDivElement;
 
     @Effect()
     effect(){

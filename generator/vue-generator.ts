@@ -145,7 +145,7 @@ export class Property extends BaseProperty {
         if (this.isState) {
             return `(${componentContext}${this.name} !== undefined ? ${componentContext}${this.name} : ${componentContext}${this.name}_state)`;
         }
-        if ((this.isForwardRefProp|| this.isRef) && componentContext.length) {
+        if ((this.isForwardRefProp || this.isRef || this.isForwardRef) && componentContext.length) {
             return `${componentContext}$refs.${this.name}`;
         }
         if(this.isRefProp)  {
@@ -841,10 +841,6 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     
             this.tagName = new SimpleExpression(name);
         }
-    }
-
-    processForwardRef() { 
-        
     }
 
     createJsxExpression(statement: Expression) { 

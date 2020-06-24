@@ -311,6 +311,13 @@ function getSubscriptions(methods: Method[]) {
 
 export class ReactComponent extends Component {
     processMembers(members: Array<BaseProperty | Method>) {
+        members.forEach(m => {
+            const forwardRefIndex = m.decorators.findIndex(d => d.name === Decorators.ForwardRef);
+            if (forwardRefIndex > -1) {
+                m.decorators[forwardRefIndex] = new Decorator(new Call(new Identifier(Decorators.Ref), undefined, []), {});
+            }
+        });
+
         return super.processMembers(members).map(p => {
             if (p.inherited) {
                 p.scope = "props"

@@ -102,22 +102,6 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     constructor(tagName: Expression, typeArguments: any, attributes: Array<JsxAttribute | JsxSpreadAttribute> = [], context: GeneratorContext) { 
         super(tagName, typeArguments, attributes, context);
         this.attributes = attributes;
-        this.processForwardRef();
-    }
-
-    processForwardRef() { 
-        const attributes = this.attributes;
-        if(
-            this.component?.members.some(m=>m.isForwardRefProp) &&
-            !attributes.some(a=>a instanceof JsxAttribute && a.name.toString()==="ref")
-        ){
-            attributes.push(
-                new JsxAttribute(
-                    new Identifier("ref"),
-                    new Identifier(`auto_ref${counter.get()}`)
-                )
-            )
-        }
     }
 
     processTagName(tagName: Expression) { 
@@ -444,32 +428,8 @@ export class JsxAttribute extends BaseJsxAttribute {
         return this.compileRef(options).replace("#", "");
     }
 
-    getForwardRefValue(options?: toStringOptions): string{
-        if (options) { 
-            options.forwardRef = options.forwardRef || {};
-            options.forwardRef[`forwardRef_${this.name}`] = new GetAccessor(
-                [],
-                [],
-                new Identifier(`forwardRef_${this.name}`),
-                [],
-                new FunctionTypeNode(
-                    [],
-                    [new Parameter(
-                        [],
-                        [],
-                        undefined,
-                        new Identifier("ref"),
-                        undefined,
-                        new SimpleTypeExpression("any")
-                    )],
-                    new SimpleTypeExpression("void")
-                ),
-                new Block([
-                    new SimpleExpression(`return (ref)=>this.${this.compileRef(options).replace("#", "")}=ref`)
-                ], true)
-            );
-        }
-        return `forwardRef_${this.name}`;
+    getForwardRefValue(options?: toStringOptions): string {
+        return `forwardRef_${this.getRefValue(options)}`;
     }
 
     compileInitializer(options?: toStringOptions) { 
@@ -481,7 +441,7 @@ export class JsxAttribute extends BaseJsxAttribute {
             return this.getForwardRefValue(options); 
         }
 
-        if (this.name.toString() !== "ref" && options?.members.some(m => m.isRef && m._name.toString() === getMember(this.initializer, options)?._name.toString())) {
+        if (options?.members.some(m => m.isForwardRef && m._name.toString() === getMember(this.initializer, options)?._name.toString())) {
             return this.getForwardRefValue(options);
         }
 
@@ -1088,7 +1048,14 @@ class Decorator extends BaseDecorator {
             this.name ===Decorators.ForwardRefProp
             ) {
             return "@Input()";
-        } else if (this.name === Decorators.Effect || this.name === Decorators.Ref || this.name === Decorators.ApiRef || this.name === Decorators.InternalState || this.name === Decorators.Method) {
+        } else if (
+            this.name === Decorators.Effect ||
+            this.name === Decorators.Ref ||
+            this.name === Decorators.ApiRef ||
+            this.name === Decorators.InternalState ||
+            this.name === Decorators.Method ||
+            this.name === Decorators.ForwardRef
+        ) {
             return "";
         } else if (this.name === Decorators.Component) {
             const parameters = (this.expression.arguments[0] as ObjectLiteral);
@@ -1133,6 +1100,10 @@ function compileCoreImports(members: Array<Property|Method>, context: AngularGen
 
     if (members.some(m => m.isSlot)) {
         imports.push("ViewChild", "ElementRef");
+    }
+
+    if (members.some(m => m.isForwardRef)) {
+        imports.push("ElementRef");
     }
 
     const set = new Set(context.angularCoreImports);
@@ -1235,6 +1206,10 @@ export class Property extends BaseProperty {
         if (this.isForwardRefProp) { 
             return `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.name}:(ref:any)=>void=()=>{}`;
         }
+
+        if (this.isForwardRef) { 
+            return `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.name}:ElementRef<${this.type}>`;
+        }
         
         return defaultValue;
     }
@@ -1245,7 +1220,7 @@ export class Property extends BaseProperty {
         if (this.isEvent) { 
             return `${componentContext}${this.name}.emit`;
         }
-        if (this.isRef) { 
+        if (this.isRef || this.isForwardRef) { 
             return `${componentContext}${this.name}${this.questionOrExclamationToken}.nativeElement`
         }
         if (this.isForwardRefProp) { 
@@ -1255,7 +1230,7 @@ export class Property extends BaseProperty {
             return `${componentContext}${this.name}`;
         }
         if (this._hasDecorator(Decorators.ApiRef)) { 
-            return `${componentContext}${this.name}${suffix}`
+            return `${componentContext}${this.name}${suffix}`;
         }
         return `${componentContext}${this.name}${suffix}`;
     }
@@ -1371,6 +1346,31 @@ export class AngularComponent extends Component {
                 new Identifier(`${m.name}Ref`)
             )
         }));
+
+        members = members.concat(members.filter(m => m.isForwardRef).map(m => { 
+            return new GetAccessor(
+                [],
+                [],
+                new Identifier(`forwardRef_${m.name}`),
+                [],
+                new FunctionTypeNode(
+                    [],
+                    [new Parameter(
+                        [],
+                        [],
+                        undefined,
+                        new Identifier("ref"),
+                        undefined,
+                        new SimpleTypeExpression("any")
+                    )],
+                    new SimpleTypeExpression("void")
+                ),
+                new Block([
+                    new SimpleExpression(`return (ref)=>this.${m.name}=ref`)
+                ], true)
+            );
+        }))
+
         return members;
     }
 
@@ -1440,8 +1440,8 @@ export class AngularComponent extends Component {
         return imports.join(";\n");
     }
 
-    compileGetterCache(ngOnChanges: string[], generatedMembers: Array<Property|Method>=[]): string { 
-        const getters = this.members.concat(generatedMembers).filter(m => m instanceof GetAccessor && m.isMemorized());
+    compileGetterCache(ngOnChanges: string[]): string { 
+        const getters = this.members.filter(m => m instanceof GetAccessor && m.isMemorized());
 
         if (getters.length) { 
             const statements = [
@@ -1717,19 +1717,11 @@ export class AngularComponent extends Component {
         const componentDecorator = this.decorator.toString(decoratorToStringOptions);
         const spreadAttributes = this.compileSpreadAttributes(ngOnChangesStatements, coreImports);
 
-        const componentRefs: Array<Property|Method> = [];
-        
-        Object.keys(decoratorToStringOptions.forwardRef || [])
-            .forEach(r => {
-                componentRefs.push(decoratorToStringOptions.forwardRef![r]);
-            });
-
         this.members.filter(m => m.isForwardRefProp).forEach(m => {
             ngAfterViewInitStatements.push(`
                 this.${m.name}(this.${m.name}Ref);
             `);
         });
-   
 
         return `
         ${this.compileImports(coreImports)}
@@ -1738,7 +1730,6 @@ export class AngularComponent extends Component {
         ${componentDecorator}
         ${this.modifiers.join(" ")} class ${this.name} ${props.length ? `extends ${props.join(" ")}`:""} ${implementedInterfaces.length ? `implements ${implementedInterfaces.join(",")}`:""} {
             ${this.members
-                .concat(componentRefs)
                 .filter(m => !m.inherited && !(m instanceof SetAccessor))
                 .map(m => m.toString({
                     members: this.members,
@@ -1749,7 +1740,7 @@ export class AngularComponent extends Component {
             ${spreadAttributes}
             ${this.compileTrackBy(decoratorToStringOptions)}
             ${this.compileEffects(ngAfterViewInitStatements, ngOnDestroyStatements, ngOnChangesStatements, ngAfterViewCheckedStatements)}
-            ${this.compileGetterCache(ngOnChangesStatements, componentRefs)}
+            ${this.compileGetterCache(ngOnChangesStatements)}
             ${this.compileNgModel()}
             ${this.compileLifeCycle("ngAfterViewInit", ngAfterViewInitStatements)}
             ${this.compileLifeCycle("ngOnChanges", ngOnChangesStatements, [`${ngOnChangesParameters[0]}: {[name:string]: any}`])}
