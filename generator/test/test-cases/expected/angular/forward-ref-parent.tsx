@@ -1,26 +1,31 @@
 import Child, { DxRefOnChildrenChildModule } from "./forward-ref-child"
 
+import { Input } from "@angular/core"
 class Props {
-
+    @Input() nullableRef: (ref: any) => void = () => { };
 }
 
-import { Component, NgModule, ElementRef } from "@angular/core";
+import { Component, NgModule, ViewChild, ElementRef } from "@angular/core";
 import { CommonModule } from "@angular/common"
 
 @Component({
     selector: "dx-ref-on-children-parent",
-    template: `<dx-ref-on-children-child [childRef]="forwardRef_child"></dx-ref-on-children-child>`
+    template: `<dx-ref-on-children-child 
+                [childRef]="forwardRef_child"
+                [nullableRef]="nullableRefRef">
+        </dx-ref-on-children-child>`
 })
 export default class RefOnChildrenParent extends Props {
     child!: ElementRef<HTMLDivElement>
     __effect(): any {
         this.child.nativeElement.innerHTML = "Ref from child"
+        const html = this.nullableRefRef?.nativeElement?.innerHTML
     }
     get __restAttributes(): any {
         return {}
     }
+    @ViewChild("nullableRefRef", { static: false }) nullableRefRef?: ElementRef<HTMLDivElement>
     get forwardRef_child(): (ref: any) => void {
-
         if (this.__getterCache["forwardRef_child"] !== undefined) {
             return this.__getterCache["forwardRef_child"];
         }
@@ -28,19 +33,33 @@ export default class RefOnChildrenParent extends Props {
             return (ref) => this.child = ref
         })();
     }
-
     __destroyEffects: any[] = [];
     __viewCheckedSubscribeEvent: Array<() => void> = [];
+    __schedule_effect() {
+        this.__destroyEffects[0]?.();
+        this.__viewCheckedSubscribeEvent[0] = () => {
+            this.__destroyEffects[0] = this.__effect()
+        }
+    }
     __getterCache: {
         forwardRef_child?: (ref: any) => void
     } = {}
 
     ngAfterViewInit() {
+        this.nullableRef(this.nullableRefRef);
         this.__destroyEffects.push(this.__effect());
     }
-
+    ngOnChanges(changes: { [name: string]: any }) {
+        if (this.__destroyEffects.length && ["nullableRef"].some(d => changes[d])) {
+            this.__schedule_effect();
+        }
+    }
     ngOnDestroy() {
         this.__destroyEffects.forEach(d => d && d());
+    }
+    ngAfterViewChecked() {
+        this.__viewCheckedSubscribeEvent.forEach(s => s?.());
+        this.__viewCheckedSubscribeEvent = [];
     }
 }
 @NgModule({

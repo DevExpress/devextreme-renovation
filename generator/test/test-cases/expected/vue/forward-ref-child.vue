@@ -1,11 +1,16 @@
-   <template>
-  <div ref="childRef"></div>
+<template>
+  <div ref="childRef">
+    <div ref="nullableRef"></div>
+  </div>
 </template>
-            <script>
+<script>
 const Props = {
   childRef: {
     type: Function,
     required: true
+  },
+  nullableRef: {
+    type: Function
   }
 };
 
@@ -16,10 +21,14 @@ export default {
       return {};
     },
     props() {
-      return { childRef: this.$refs.childRef };
+      return {
+        childRef: this.$refs.childRef,
+        nullableRef: this.$refs.nullableRef
+      };
     },
     __forwardRef() {
       this.childRef(this.$refs.childRef);
+      this.nullableRef(this.$refs.nullableRef);
     }
   },
   mounted() {

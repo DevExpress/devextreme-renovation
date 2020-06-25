@@ -211,19 +211,23 @@ export class Property extends BaseProperty {
     }
 
     typeDeclaration() {
+        let type = this.type;
+
         if (this.isSlot) {
-            return `${this.name}${this.questionOrExclamationToken}:React.ReactNode`;
+            type =  "React.ReactNode";
         }
         if (this.decorators.find(d => d.name === Decorators.Ref || d.name === Decorators.ApiRef)) {
-            return `${this.name}:any`;
+            type = "any";
         }
-        if (this.isRefProp) { 
-            return `${this.name}${this.questionOrExclamationToken}:RefObject<${this.type}>`;
+        if (this.isRefProp || this.isForwardRefProp) { 
+            type =  `RefObject<${this.type}>`;
         }
-        if (this.questionOrExclamationToken === SyntaxKind.ExclamationToken) {
-            return `${this.name}:${this.type}`;
-        }
-        return super.typeDeclaration();
+
+        const questionOrExclamationToken = this.questionOrExclamationToken === SyntaxKind.ExclamationToken || type === "any"
+            ? ""
+            : this.questionOrExclamationToken;
+       
+        return `${this.name}${questionOrExclamationToken}:${type}`;
     }
 
     getter(componentContext?: string) {
@@ -400,7 +404,7 @@ export class ReactComponent extends Component {
             hooks.push("useRef");
         }
 
-        if (this.members.some(m=>m.isRefProp)) {
+        if (this.members.some(m=>m.isRefProp || m.isForwardRefProp)) {
             hooks.push("RefObject");
         }
         

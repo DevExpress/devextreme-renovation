@@ -1,15 +1,19 @@
-function view({ props: { childRef } }: RefOnChildrenChild) {
-    return <div ref={childRef as any}></div>;
+
+function view({ props: { childRef, nullableRef } }: RefOnChildrenChild) {
+    return <div ref={childRef as any}>
+        <div ref={nullableRef as any}></div>
+    </div>;
 }
 export declare type PropsType = {
-    childRef: HTMLDivElement
+    childRef: RefObject<HTMLDivElement>;
+    nullableRef?: RefObject<HTMLDivElement>
 }
 const Props: PropsType = {
 
 } as PropsType;
 
 
-import React, { useCallback } from 'react';
+import React, { useCallback, RefObject } from 'react';
 
 declare type RestProps = { className?: string; style?: React.CSSProperties;[x: string]: any }
 interface RefOnChildrenChild {
@@ -19,7 +23,7 @@ interface RefOnChildrenChild {
 
 export default function RefOnChildrenChild(props: typeof Props & RestProps) {
     const __restAttributes = useCallback(function __restAttributes() {
-        const { childRef, ...restProps } = props
+        const { childRef, nullableRef, ...restProps } = props
         return restProps;
     }, [props]);
 

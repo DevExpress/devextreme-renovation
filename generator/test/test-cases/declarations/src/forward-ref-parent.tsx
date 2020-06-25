@@ -1,13 +1,13 @@
 import { Component, ComponentBindings, JSXComponent, Effect, ForwardRef } from "../../../../component_declaration/common";
 import Child from "./forward-ref-child";
 
-function view({ child }: RefOnChildrenParent) { 
-    return <Child childRef={child}/>
+function view({ child, props: {nullableRef} }: RefOnChildrenParent) { 
+    return <Child childRef={child} nullableRef={nullableRef} />;
 }
 
 @ComponentBindings()
 class Props { 
-   
+    @ForwardRef() nullableRef?: HTMLDivElement;
 }
 
 @Component({
@@ -19,6 +19,6 @@ export default class RefOnChildrenParent extends JSXComponent(Props) {
     @Effect()
     effect(){
         this.child.innerHTML = "Ref from child";
+        const html = this.props.nullableRef?.innerHTML;
     }
-    
 }

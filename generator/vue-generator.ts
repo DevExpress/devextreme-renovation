@@ -499,8 +499,8 @@ export class VueComponent extends Component {
 
         if(forwardRefs.length){
             statements.push(`__forwardRef(){
-                ${forwardRefs.map(m=>`this.${m._name}(this.$refs.${m._name});`)}
-            }`)
+                ${forwardRefs.map(m => `this.${m._name}(this.$refs.${m._name});`).join("\n")}
+            }`);
         }
 
         return `methods: {
