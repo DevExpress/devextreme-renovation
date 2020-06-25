@@ -1,5 +1,5 @@
 <template>
-  <Child :childRef="forwardRef_child" :nullableRef="nullableRef" />
+  <Child :childRef="forwardRef_child" :nullableRef="forwardRef_nullableRef" />
 </template>
 <script>
 import Child from "./forward-ref-child";
@@ -25,6 +25,9 @@ export default {
     },
     forwardRef_child(ref) {
       this.$refs.child = ref;
+    },
+    forwardRef_nullableRef(ref) {
+      this.$refs.nullableRef = ref;
     },
     props() {
       return { nullableRef: this.$refs.nullableRef };

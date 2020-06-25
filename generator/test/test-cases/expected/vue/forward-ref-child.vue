@@ -20,6 +20,12 @@ export default {
     __restAttributes() {
       return {};
     },
+    forwardRef_childRef(ref) {
+      this.$refs.childRef = ref;
+    },
+    forwardRef_nullableRef(ref) {
+      this.$refs.nullableRef = ref;
+    },
     props() {
       return {
         childRef: this.$refs.childRef,

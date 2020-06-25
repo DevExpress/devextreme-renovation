@@ -326,7 +326,7 @@ export class VueComponent extends Component {
                     )
                 )
             }
-            if (m.isForwardRef) { 
+            if (m.isForwardRef || m.isForwardRefProp) { 
                 members.push(
                     new Method(
                         [],
@@ -806,6 +806,9 @@ export class JsxAttribute extends BaseJsxAttribute {
 
     getForwardRefValue(options?: toStringOptions) {
         const member = getMember(this.initializer, options)!;
+        if (this.name.toString() === "ref") { 
+            return member.name;
+        }
         return `forwardRef_${member.name}`;
     }
 

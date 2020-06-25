@@ -409,7 +409,7 @@ export class JsxAttribute extends BaseJsxAttribute {
             return this.getRefValue(options);
         }
         
-        if (options?.members.some(m => m.isForwardRef && m._name.toString() === getMember(this.initializer, options)?._name.toString())) {
+        if (options?.members.some(m => m.isForwardRef || m.isForwardRefProp && m._name.toString() === getMember(this.initializer, options)?._name.toString())) {
             return this.getForwardRefValue(options);
         }
 
