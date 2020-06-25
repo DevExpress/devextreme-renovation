@@ -1805,18 +1805,6 @@ mocha.describe("base-generator: expressions", function () {
             assert.equal(expression.toString(), 'import "typescript"');
         });
     
-        mocha.it("createImportDeclaration exclude imports from component_declaration/jsx to component_declaration/jsx-g", function () { 
-            assert.equal(generator.createImportDeclaration(
-                undefined,
-                undefined,
-                generator.createImportClause(
-                    generator.createIdentifier("JSXConstructor"),
-                  undefined
-                ),
-                generator.createStringLiteral("../../component_declaration/jsx")
-              ), 'import JSXConstructor from "../../component_declaration/jsx-g"')
-        });
-    
         mocha.it("createImportDeclaration change import ", function () { 
             assert.equal(generator.createImportDeclaration(
                 undefined,
