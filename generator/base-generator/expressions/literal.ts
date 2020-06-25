@@ -75,6 +75,17 @@ export class ObjectLiteral extends Expression {
             }}`;
     }
 
+    toObject() {
+        const toObject = (literal: ObjectLiteral) => literal.properties.reduce((r: any, p) => {
+            if(p.key && p.value) {
+                r[p.key.toString()] = p.value instanceof ObjectLiteral ? toObject(p.value) : p.value.toString();
+            }
+            return r;
+        }, {})
+
+        return toObject(this);
+    }
+
     getDependency() {
         return this.properties.reduce((d: string[], p) => d.concat(p.getDependency()), []);
     }
