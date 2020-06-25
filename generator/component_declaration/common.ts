@@ -141,3 +141,9 @@ export function JSXComponent<PropsType, PropsConstructor = PropsType>(Props: { n
         setState() { }
     };
 }
+
+/**
+ * Create Elements function
+ * Import it for testing purpose
+ */
+export const h = react.createElement;

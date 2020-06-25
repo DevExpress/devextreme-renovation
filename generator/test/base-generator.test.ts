@@ -670,7 +670,7 @@ mocha.describe("base-generator: expressions", function () {
             assert.equal(expression.toString(), "a?.b");
         });
     
-        mocha.it("createPropertyAccessChain without QuestionDotToken should add DotToken", function () { 
+        mocha.it("createPropertyAccessChain without QuestionDotToken", function () { 
             const expression = generator.createPropertyAccessChain(
                 generator.createThis(),
                 undefined,
@@ -678,6 +678,20 @@ mocha.describe("base-generator: expressions", function () {
             );
     
             assert.strictEqual(expression.toString(), "this.click");
+        });
+
+        mocha.it("createElementAccessChain", function () {
+            assert.equal(generator.createElementAccessChain(
+                generator.createIdentifier("a"),
+                generator.createToken(generator.SyntaxKind.QuestionDotToken),
+                generator.createIdentifier("b")
+            ).toString(), "a?.[b]");
+
+            assert.equal(generator.createElementAccessChain(
+                generator.createIdentifier("a"),
+                undefined,
+                generator.createIdentifier("b")
+            ).toString(), "a[b]");
         });
 
         mocha.it("createComputedPropertyName", function () { 
@@ -1747,6 +1761,16 @@ mocha.describe("base-generator: expressions", function () {
                 ),
                 generator.createStringLiteral("./button")
             ), 'import Button from "./button"');
+
+            assert.equal(generator.createImportDeclaration(
+                undefined,
+                undefined,
+                generator.createImportClause(
+                    undefined,
+                    generator.createNamespaceImport(generator.createIdentifier("utilsModule"))
+                ),
+                generator.createStringLiteral("./utils-module")
+            ), 'import * as utilsModule from "./utils-module"');
         });
     
         mocha.it("ImportDeclaration: can remove named import", function () { 
@@ -1779,18 +1803,6 @@ mocha.describe("base-generator: expressions", function () {
             expression.importClause.remove("Node");
     
             assert.equal(expression.toString(), 'import "typescript"');
-        });
-    
-        mocha.it("createImportDeclaration exclude imports from component_declaration/jsx to component_declaration/jsx-g", function () { 
-            assert.equal(generator.createImportDeclaration(
-                undefined,
-                undefined,
-                generator.createImportClause(
-                    generator.createIdentifier("JSXConstructor"),
-                  undefined
-                ),
-                generator.createStringLiteral("../../component_declaration/jsx")
-              ), 'import JSXConstructor from "../../component_declaration/jsx-g"')
         });
     
         mocha.it("createImportDeclaration change import ", function () { 

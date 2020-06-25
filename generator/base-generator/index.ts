@@ -2,7 +2,7 @@ import SyntaxKind from "./syntaxKind";
 import fs from "fs";
 import path from "path";
 import { compileCode } from "../component-compiler";
-import { ImportDeclaration, ImportClause, NamedImports, NamespaceImport, ImportSpecifier } from "./expressions/import";
+import { ImportDeclaration, ImportClause, NamedImportBindings, NamedImports, NamespaceImport, ImportSpecifier } from "./expressions/import";
 import { SimpleExpression, Expression } from "./expressions/base";
 import { Identifier, New, Delete, Paren, Call, NonNullExpression, TypeOf, Void, CallChain, AsExpression } from "./expressions/common";
 import {
@@ -269,14 +269,10 @@ export default class Generator {
         const context = this.getContext();
         if (context.defaultOptionsModule && context.dirname) {
             const relativePath = getModuleRelativePath(context.dirname, context.defaultOptionsModule);
-            if (relativePath.toString()===moduleSpecifier.valueOf()) {
+            if (relativePath.toString() === moduleSpecifier.valueOf()) {
                 context.defaultOptionsImport = new ImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
                 return context.defaultOptionsImport;
             }
-        }
-        if (moduleSpecifier.toString().indexOf("component_declaration/jsx") >= 0) {
-            const importString = moduleSpecifier.expression.toString().replace("component_declaration/jsx", "component_declaration/jsx-g")
-            moduleSpecifier = new StringLiteral(importString);
         }
 
         const module = moduleSpecifier.expression.toString();
@@ -301,7 +297,7 @@ export default class Generator {
                 const componentInputs: ComponentInput[] = this.cache[modulePath]
                     .filter((e: any) => e instanceof ComponentInput);
         
-                importClause.imports.forEach(i => {
+                importClause.imports?.forEach(i => {
                     const componentInput = componentInputs
                         .find(c => c.name.toString() === i && c.modifiers.indexOf("export") >= 0);
                     
@@ -309,7 +305,7 @@ export default class Generator {
                         this.addComponent(i, componentInput);
                     }
                 });
-                this.cache.__globals__ && importClause.imports.forEach(i => {
+                this.cache.__globals__ && importClause.imports?.forEach(i => {
                     if (this.cache.__globals__[i]) { 
                         context.globals = {
                             ...context.globals,
@@ -331,7 +327,7 @@ export default class Generator {
         return new NamedImports(node);
     }
 
-    createImportClause(name?: Identifier, namedBindings?: NamedImports) {
+    createImportClause(name?: Identifier, namedBindings?: NamedImportBindings) {
         return new ImportClause(name, namedBindings);
     }
 
@@ -441,7 +437,11 @@ export default class Generator {
     }
 
     createElementAccess(expression: Expression, index: Expression): Expression {
-        return new ElementAccess(expression, index);
+        return new ElementAccess(expression, undefined, index);
+    }
+
+    createElementAccessChain(expression: Expression, questionDotToken: string | undefined, index: Expression) { 
+        return new ElementAccess(expression, questionDotToken, index);
     }
 
     createSpread(expression: Expression) { 
@@ -626,6 +626,8 @@ export default class Generator {
 
     cache: { [name: string]: any } = {};
 
+    meta: { [name: string]: any } = {};
+
     destination: string = "";
 
     defaultOptionsModule?: string;
@@ -653,8 +655,18 @@ export default class Generator {
         if(path) {
             this.cache[path] = codeFactoryResult;
         }
+        if(path && this.context.length === 1) {
+            const component = (codeFactoryResult.find((e: any) => e instanceof Component) as Component);
+            if(component) {
+                this.meta[path] = component.getMeta();
+            }
+        }
         result.push({ path: path && this.processSourceFileName(path), code: this.processCodeFactoryResult(codeFactoryResult) })
 
         return result;
+    }
+
+    getComponentsMeta(): any[] {
+        return Object.keys(this.meta).reduce((r: any[], path) => [...r, { ...this.meta[path], path }], []);
     }
 }

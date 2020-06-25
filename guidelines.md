@@ -185,7 +185,7 @@
 
 - `view` - чистая функция, возвращающая *HTML* разметку. Её аргументом является объект, содержащий члены класса `ViewModel` и объект **props**, содержащий члены класса *Model*;
 
-- `defaultOptionRules` - правила задания дефолтных пропертей относительно девайса (см [*button.tsx*](https://github.com/DevExpress/DevExtreme/blob/preact-button/js/renovation/button.tsx));
+- `defaultOptionRules` - правила задания дефолтных пропертей относительно девайса (см [*button.tsx*](https://github.com/DevExpress/DevExtreme/blob/20_2/js/renovation/button.tsx));
 
 - `jQuery` - настройки для генерации *jQuery* виджета.
 
@@ -257,7 +257,7 @@ Q. Так что же, могу наследоваться от кнопки и 
 
 Пример наследования модели и включения компонентов (а не прямое наследование) уже есть. Все главные компоненты (те, которые были и будут зарегистрированы как *jQuery* виджеты) устроены таким образом, что наследуют модель от главного виджета, а свой контент рисуют как *children* этого виджета.
 
-См [*button.tsx*](https://github.com/DevExpress/DevExtreme/blob/preact-button/js/renovation/button.tsx) в нашей базе. *Button* не наследует *Widget*, однако весь функционал виджета теперь есть в кнопке.
+См [*button.tsx*](https://github.com/DevExpress/DevExtreme/blob/20_2/js/renovation/button.tsx) в нашей базе. *Button* не наследует *Widget*, однако весь функционал виджета теперь есть в кнопке.
 
 ### Тестирование
 
@@ -413,7 +413,7 @@ Q. Так что же, могу наследоваться от кнопки и 
 
 ### Подписка на ивенты
 
-Мы не можем использовать нативные ивенты фреймворков. Мы могли бы подписаться на `click` ивент прямо в *JSX* разметке и иметь нативные ивенты в каждом фреймворке. Но мы должны поддержать наши старые *dxEvents*. Поэтому все подписки на ивенты совершайте из `@Effect()`. См. примеры в [Use cases](#@Effect), а также рабочий код в [*button.tsx*](https://github.com/DevExpress/DevExtreme/blob/preact-button/js/renovation/button.tsx) и [*widget.tsx*](https://github.com/DevExpress/DevExtreme/blob/preact-button/js/renovation/widget.tsx)
+Мы не можем использовать нативные ивенты фреймворков. Мы могли бы подписаться на `click` ивент прямо в *JSX* разметке и иметь нативные ивенты в каждом фреймворке. Но мы должны поддержать наши старые *dxEvents*. Поэтому все подписки на ивенты совершайте из `@Effect()`. См. примеры в [Use cases](#@Effect), а также рабочий код в [*button.tsx*](https://github.com/DevExpress/DevExtreme/blob/20_2/js/renovation/button.tsx) и [*widget.tsx*](https://github.com/DevExpress/DevExtreme/blob/20_2/js/renovation/widget.tsx)
 
 ### Темплейты
 
@@ -452,7 +452,7 @@ Q. Так что же, могу наследоваться от кнопки и 
 
 Корневой компонент (*Widget.tsx*) уже имеет такой ивент, райзит его на нажатии любой клавиши клавиатуры. В вашем компоненте надо на него подписаться, и делать свои действия (если вашему компоненту надо что-то делать при нажатии на клавиши). Однако сначала вам надо вызвать свой проп-ивент `onKeyDown`, и если он вернет `cancel == true`, то не выполнять свое действие.
 
-См `onWidgetKeyDown` в [*Button.tsx*](https://github.com/DevExpress/DevExtreme/blob/preact-button/js/renovation/button.tsx)
+См `onWidgetKeyDown` в [*Button.tsx*](https://github.com/DevExpress/DevExtreme/blob/20_2/js/renovation/button.tsx)
 
 ```typescript
 onWidgetKeyDown(event: Event, options) {
@@ -473,7 +473,7 @@ onWidgetKeyDown(event: Event, options) {
 
 ## Разработка
 
-Пока что разработка новых компонентов ведется в ветке [preact-button](https://github.com/DevExpress/DevExtreme/tree/preact-button). Все компоненты пока размещаются в папке [js/renovation](https://github.com/DevExpress/DevExtreme/tree/preact-button/js/renovation).
+Все компоненты пока размещаются в папке [js/renovation](https://github.com/DevExpress/DevExtreme/tree/20_2/js/renovation).
 
 Переписывание старых сложных компонентов следует производить поэтапно, обновляя сначала маленькие составные части и внедряя их в старые виджеты.
 
@@ -512,7 +512,7 @@ export default class Component extends JSXComponent<ComponentProps> {
 
 ### jQuery
 
-Как уже говорилось [выше](#ViewModel), в общем случае jQuery враппер над вашим компонентом должен быть полность работоспособным без дополнительных усилий. Однако могут быть случаи, когда базовая обертка либо не очень подходит для конкретного случая, либо еще не содержит какой-то функционал. В этом случае нужно реализовать промежуточную обертку (см [как реализована кнопка](https://github.com/DevExpress/DevExtreme/blob/preact-button/js/renovation/preact-wrapper/button.js)), в которой будет специфичный для компонента код.
+Как уже говорилось [выше](#ViewModel), в общем случае jQuery враппер над вашим компонентом должен быть полность работоспособным без дополнительных усилий. Однако могут быть случаи, когда базовая обертка либо не очень подходит для конкретного случая, либо еще не содержит какой-то функционал. В этом случае нужно реализовать промежуточную обертку (см [как реализована кнопка](https://github.com/DevExpress/DevExtreme/blob/20_2/js/renovation/preact-wrapper/button.js)), в которой будет специфичный для компонента код.
 
 Общий для всех jQuery компонентов функционал стоит реализовывать в единой базовой обертке, однако это может потребовать правки со стороны генератора - в этом случае можно реализовать в промежуточной обертке, либо сообщить команде генераторов.
 
@@ -520,7 +520,7 @@ export default class Component extends JSXComponent<ComponentProps> {
 
 ### Тестирование компонентов
 
-Тесты на декларации написаны с использование *jest*. Примеры тестов на существующие компоненты см в [testing/jest](https://github.com/DevExpress/DevExtreme/tree/preact-button/testing/jest).
+Тесты на декларации написаны с использование *jest*. Примеры тестов на существующие компоненты см в [testing/jest](https://github.com/DevExpress/DevExtreme/tree/20_2/testing/jest).
 
 Для запуска тестов достаточно просто выполнить команду `test-jest`.
 

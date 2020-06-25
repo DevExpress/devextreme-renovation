@@ -35,10 +35,13 @@ export class ImportSpecifier {
     }
 }
 
+export type NamedImportBindings = NamespaceImport | NamedImports;
+
+export const isNamedImports = (node: any): node is NamedImports => node instanceof NamedImports;
 export class ImportClause { 
     name?: Identifier;
-    namedBindings?: NamedImports;
-    constructor(name?: Identifier, namedBindings?: NamedImports) { 
+    namedBindings?: NamedImportBindings;
+    constructor(name?: Identifier, namedBindings?: NamedImportBindings) { 
         this.name = name;
         this.namedBindings = namedBindings;
     }
@@ -48,17 +51,17 @@ export class ImportClause {
     }
 
     get imports() { 
-        return this.namedBindings?.node.map(m => m.toString()) || [];
+        return isNamedImports(this.namedBindings) ? this.namedBindings.node.map(m => m.toString()) || [] : undefined;
     }
 
     remove(name:string) { 
-        if (this.namedBindings) { 
+        if (isNamedImports(this.namedBindings)) { 
             this.namedBindings.remove(name);
         }
     }
 
     add(name: string) { 
-        if (this.namedBindings) {
+        if (isNamedImports(this.namedBindings)) {
             this.namedBindings.add(name);
         } else { 
             this.namedBindings = new NamedImports([new ImportSpecifier(undefined, new Identifier(name))]);

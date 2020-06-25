@@ -232,4 +232,22 @@ export class Component extends Class implements Heritable {
         return isJSXComponent(this.heritageClauses);
     }
 
+    getMeta() {
+        const memberName = (member: BaseClassMember) => member._name.toString();
+        const props = getProps(this.members);
+        return {
+            name: this.name,
+            decorator: (this.decorators[0].expression.arguments[0] as ObjectLiteral).toObject(),
+            props: {
+                allProps: props.map(memberName),
+                oneway: props.filter(m => m._hasDecorator(Decorators.OneWay)).map(memberName),
+                twoway: props.filter(m => m.isState).map(memberName),
+                template: props.filter(m => m.isTemplate).map(memberName),
+                event: props.filter(m => m.isEvent).map(memberName),
+                ref: props.filter(m => m.isRefProp).map(memberName),
+                slot: props.filter(m => m.isSlot).map(memberName),
+            },
+            api: this.members.filter(m => m.isApiMethod).map(memberName)
+        }
+    }
 }
