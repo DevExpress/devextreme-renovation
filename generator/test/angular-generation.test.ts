@@ -161,11 +161,11 @@ mocha.describe("angular-generation", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it("ref-on-children", function () {
+    mocha.it("forward-ref-parent", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it("child", function () {
+    mocha.it("forward-ref-child", function () {
         this.testGenerator(this.test!.title);
     });
 

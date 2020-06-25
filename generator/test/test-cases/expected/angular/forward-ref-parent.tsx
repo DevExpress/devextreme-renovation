@@ -1,4 +1,4 @@
-import Child, { DxRefOnChildrenChildModule } from "./child"
+import Child, { DxRefOnChildrenChildModule } from "./forward-ref-child"
 
 class Props {
 

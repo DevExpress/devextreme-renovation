@@ -1,5 +1,5 @@
 import { Component, ComponentBindings, JSXComponent, Effect, ForwardRef } from "../../../../component_declaration/common";
-import Child from "./child";
+import Child from "./forward-ref-child";
 
 function view({ child }: RefOnChildrenParent) { 
     return <Child childRef={child}/>

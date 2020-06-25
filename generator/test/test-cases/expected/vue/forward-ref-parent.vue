@@ -4,7 +4,7 @@
   />
 </template>
 <script>
-import Child from "./child";
+import Child from "./forward-ref-child";
 
 const Props = {};
 
