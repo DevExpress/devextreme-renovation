@@ -12,6 +12,6 @@ export function convertRulesToOptions<T>(rules: Rule<T>[]): T {
     }, {} as T);
 }
 
-export default function createDefaultRules<T>(options: Rule<T>[] = []): Rule<T>[] {
+export function createDefaultOptionRules<T>(options: Rule<T>[] = []): Rule<T>[] {
     return options;
 }

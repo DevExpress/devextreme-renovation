@@ -269,14 +269,10 @@ export default class Generator {
         const context = this.getContext();
         if (context.defaultOptionsModule && context.dirname) {
             const relativePath = getModuleRelativePath(context.dirname, context.defaultOptionsModule);
-            if (relativePath.toString()===moduleSpecifier.valueOf()) {
+            if (relativePath.toString() === moduleSpecifier.valueOf()) {
                 context.defaultOptionsImport = new ImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
                 return context.defaultOptionsImport;
             }
-        }
-        if (moduleSpecifier.toString().indexOf("component_declaration/jsx") >= 0) {
-            const importString = moduleSpecifier.expression.toString().replace("component_declaration/jsx", "component_declaration/jsx-g")
-            moduleSpecifier = new StringLiteral(importString);
         }
 
         const module = moduleSpecifier.expression.toString();
