@@ -402,10 +402,7 @@ export class JsxAttribute extends BaseJsxAttribute {
 
     getForwardRefValue(options?: toStringOptions): string {
         const member = getMember(this.initializer, options)!;
-        if (this.name.toString() !== "ref") { 
-            return `forwardRef_${member.name.toString()}`;
-        }
-        return "";
+        return `forwardRef_${member.name.toString()}`;
     }
 
     compileInitializer(options?: toStringOptions) { 
