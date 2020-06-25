@@ -86,9 +86,8 @@ export class BindingPattern extends Expression {
         return this.elements.find(e => e.dotDotDotToken);
     }
 
-    getVariableExpressions(startExpression: Expression): VariableExpression {
+    getVariableExpressions(startExpression: Expression): VariableExpression { 
         return this.elements.reduce((v: VariableExpression, e, index) => {
-        
             let expression: Expression | null = null;
 
             if (this.type !== "object") {
@@ -113,11 +112,9 @@ export class BindingPattern extends Expression {
                     ...v,
                 };
             }
-        
-            return {
-                [e.name.toString()]: expression!,
-                ...v,
-            };
+            
+            /* istanbul ignore next */
+            return v;
         }, {});
     }
 }
