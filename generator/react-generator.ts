@@ -105,7 +105,8 @@ export class ComponentInput extends BaseComponentInput {
         }`]).join("&")}`;
 
         const typeCasting = properties.some(p =>
-            p.questionOrExclamationToken === SyntaxKind.ExclamationToken && !p.initializer
+            p.questionOrExclamationToken === SyntaxKind.ExclamationToken && !p.initializer ||
+            p.type.toString()==="any" && !p.questionOrExclamationToken && !p.initializer
         )
             ? ` as ${typeName}`
             : "";

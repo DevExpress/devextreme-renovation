@@ -12,9 +12,9 @@ import { CommonModule } from "@angular/common"
     template: `<dx-ref-on-children-child [childRef]="forwardRef_child"></dx-ref-on-children-child>`
 })
 export default class RefOnChildrenParent extends Props {
-    child: ElementRef<HTMLDivElement>
+    child!: ElementRef<HTMLDivElement>
     __effect(): any {
-        this.child!.nativeElement.innerHTML = "Ref from child"
+        this.child.nativeElement.innerHTML = "Ref from child"
     }
     get __restAttributes(): any {
         return {}

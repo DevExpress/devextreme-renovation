@@ -8,7 +8,7 @@ export declare type PropsType = {
 }
 const Props: PropsType = {
 
-};
+} as PropsType;
 
 
 import React, { useCallback, useEffect, useRef } from 'react';

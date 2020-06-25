@@ -1134,13 +1134,6 @@ export class Property extends BaseProperty {
                 questionOrExclamationToken = SyntaxKind.ExclamationToken;
             }
         }
-
-        if (decorators.find(d => d.name === Decorators.ForwardRefProp)) {
-            type = new SimpleTypeExpression(`()=>void`);
-            if (questionOrExclamationToken !== SyntaxKind.QuestionToken) { 
-                questionOrExclamationToken = SyntaxKind.ExclamationToken;
-            }
-        }
         super(decorators, modifiers, name, questionOrExclamationToken, type, initializer, inherited);
     }
     typeDeclaration() { 
@@ -1172,7 +1165,7 @@ export class Property extends BaseProperty {
         }
 
         if (this.isForwardRef) { 
-            return `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.name}:ElementRef<${this.type}>`;
+            return `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.name}${this.questionOrExclamationToken}:ElementRef<${this.type}>`;
         }
         
         return defaultValue;
@@ -1184,11 +1177,11 @@ export class Property extends BaseProperty {
         if (this.isEvent) { 
             return `${componentContext}${this.name}.emit`;
         }
-        if (this.isRef || this.isForwardRef) { 
-            return `${componentContext}${this.name}${this.questionOrExclamationToken}.nativeElement`
-        }
-        if (this.isForwardRefProp) { 
-            return `${componentContext}${this.name}Ref${this.questionOrExclamationToken}.nativeElement`
+        if (this.isRef || this.isForwardRef || this.isForwardRefProp) { 
+            const postfix = this.isForwardRefProp ? "Ref" : "";
+            return `${componentContext}${this.name}${postfix}${
+                this.questionOrExclamationToken === SyntaxKind.ExclamationToken ? "" : this.questionOrExclamationToken
+            }.nativeElement`
         }
         if (this.isRefProp) { 
             return `${componentContext}${this.name}`;
@@ -1298,7 +1291,7 @@ export class AngularComponent extends Component {
             }
         });
         members = super.processMembers(members);
-        members = members.concat(members.filter(m => m.isForwardRefProp).map(m => {
+        members = members.concat((members.filter(m => m.isForwardRefProp) as Property[]).map(m => {
             return new Property(
                 [
                     new Decorator(
@@ -1307,8 +1300,10 @@ export class AngularComponent extends Component {
                     )
                 ],
                 [],
-                new Identifier(`${m.name}Ref`)
-            )
+                new Identifier(`${m.name}Ref`),
+                m.questionOrExclamationToken,
+                m.type
+            );
         }));
 
         members = members.concat(members.filter(m => m.isForwardRef).map(m => { 

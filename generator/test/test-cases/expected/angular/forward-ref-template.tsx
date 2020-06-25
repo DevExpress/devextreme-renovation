@@ -11,7 +11,7 @@ import { CommonModule } from "@angular/common"
     template: `<ng-container *ngTemplateOutlet="contentTemplate; context:{childRef:forwardRef_child}"></ng-container>`
 })
 export default class RefOnChildrenTemplate extends Props {
-    child: ElementRef<HTMLDivElement>
+    child!: ElementRef<HTMLDivElement>
     __effect(): any {
         this.child.nativeElement.innerHTML += "ParentText"
     }

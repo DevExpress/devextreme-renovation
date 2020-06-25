@@ -2248,7 +2248,7 @@ mocha.describe("ComponentInput", function () {
 
         assert.strictEqual(getResult(expression.toString()), getResult(`
             export declare type BaseModelType = {contentTemplate: any,contentRender?: any,contentComponent?: any};
-            export const BaseModel:BaseModelType={};
+            export const BaseModel:BaseModelType={} as BaseModelType;
         `));
     });
 

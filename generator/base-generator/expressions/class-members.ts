@@ -205,7 +205,7 @@ export class Property extends BaseClassMember {
     }
 
     defaultDeclaration() {
-        return `${this.name}:${this.initializer}`;;
+        return `${this.name}:${this.initializer}`;
     }
 
     getter(componentContext?: string) {

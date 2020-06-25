@@ -14,7 +14,7 @@ export default class RefOnChildrenChild extends Props {
     get __restAttributes(): any {
         return {}
     }
-    @ViewChild("childRefRef", { static: false }) childRefRef: ElementRef<any>
+    @ViewChild("childRefRef", { static: false }) childRefRef!: ElementRef<HTMLDivElement>
 
     ngAfterViewInit() {
         this.childRef(this.childRefRef);
