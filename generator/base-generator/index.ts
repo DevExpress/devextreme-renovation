@@ -626,6 +626,8 @@ export default class Generator {
 
     cache: { [name: string]: any } = {};
 
+    meta: { [name: string]: any } = {};
+
     destination: string = "";
 
     defaultOptionsModule?: string;
@@ -653,8 +655,18 @@ export default class Generator {
         if(path) {
             this.cache[path] = codeFactoryResult;
         }
+        if(path && this.context.length === 1) {
+            const component = (codeFactoryResult.find((e: any) => e instanceof Component) as Component);
+            if(component) {
+                this.meta[path] = component.getMeta();
+            }
+        }
         result.push({ path: path && this.processSourceFileName(path), code: this.processCodeFactoryResult(codeFactoryResult) })
 
         return result;
+    }
+
+    getComponentsMeta(): any[] {
+        return Object.keys(this.meta).reduce((r: any[], path) => [...r, { ...this.meta[path], path }], []);
     }
 }
