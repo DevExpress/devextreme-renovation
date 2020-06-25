@@ -401,7 +401,11 @@ export class JsxAttribute extends BaseJsxAttribute {
     }
 
     getForwardRefValue(options?: toStringOptions): string {
-        return `forwardRef_${this.getRefValue(options)}`;
+        const member = getMember(this.initializer, options)!;
+        if (this.name.toString() !== "ref") { 
+            return `forwardRef_${member.name.toString()}`;
+        }
+        return "";
     }
 
     compileInitializer(options?: toStringOptions) { 
@@ -1306,7 +1310,7 @@ export class AngularComponent extends Component {
             );
         }));
 
-        members = members.concat(members.filter(m => m.isForwardRef).map(m => { 
+        members = members.concat(members.filter(m => m.isForwardRef||m.isForwardRefProp).map(m => { 
             return new GetAccessor(
                 [],
                 [],
@@ -1325,7 +1329,7 @@ export class AngularComponent extends Component {
                     new SimpleTypeExpression("void")
                 ),
                 new Block([
-                    new SimpleExpression(`return (ref)=>this.${m.name}=ref`)
+                    new SimpleExpression(`return (ref)=>this.${m.name}${m.isForwardRefProp ? "Ref" : ""}=ref`)
                 ], true)
             );
         }))
@@ -1405,7 +1409,7 @@ export class AngularComponent extends Component {
         if (getters.length) { 
             const statements = [
                 `__getterCache: {
-                    ${getters.map(g=>`${g._name}?:${g.type}`).join("\n;")}
+                    ${getters.map(g=>`${g._name}?:${g.type}`).join(";\n")}
                 } = {}`
             ];
 
