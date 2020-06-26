@@ -1722,6 +1722,7 @@ export class AngularComponent extends Component {
             exports: [${this.name}]
         })
         export class ${this.module} {}
+        ${this.compileDefaultComponentExport()}
         `;
     }
 }

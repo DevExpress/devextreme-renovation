@@ -659,6 +659,8 @@ export class ReactComponent extends Component {
                 );
             ${this.members.filter(m => m.isApiMethod).length === 0 ? `}` : `});\n${this.modifiers.join(" ")} ${this.name};`}
             
+            ${this.compileDefaultComponentExport()}
+
             ${this.compileDefaultProps()}
             ${this.compileDefaultOptionsMethod("[]", [
                     `${this.defaultPropsDest()} = {

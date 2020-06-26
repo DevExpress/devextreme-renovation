@@ -717,6 +717,16 @@ export class VueComponent extends Component {
 
         return imports.join(";\n");
     }
+
+    compileComponentExport(statements: string[]) {
+        const exportClause = this.modifiers.join(" ");
+        const head = exportClause === "export" ? `export const ${this.name} =` : exportClause;
+        const tail = exportClause === "export" ? `export default ${this.name}` : ``;
+        return `${head} {
+            ${statements.join(",\n")}
+        }
+        ${tail}`;
+    }
     
     toString() { 
         this.compileTemplate();
@@ -741,9 +751,7 @@ export class VueComponent extends Component {
         ${this.compileImports()}
         ${this.compileDefaultOptionsMethod(this.defaultOptionRules ? this.defaultOptionRules.toString() : "[]", [])}
         ${this.compileDefaultProps()}
-        ${this.modifiers.join(" ")} {
-            ${statements.join(",\n")}
-        }`;
+        ${this.compileComponentExport(statements)}`;
     }
 }
 

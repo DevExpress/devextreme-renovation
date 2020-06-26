@@ -36,6 +36,8 @@ export function Widget(props: typeof Props & RestProps) {
   );
 }
 
+export default Widget;
+
 Widget.defaultProps = {
   ...Props
 }
