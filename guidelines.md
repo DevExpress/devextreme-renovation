@@ -168,27 +168,27 @@
 
 - `@Slot()` - проп, через который можно передать некий контент для прямого отображения. В *Angular* это называется *transcluded content*, в *React* это просто *JSX* разметка. Если в компоненте объявлен слот с именем `default`, в него придет дочерний контент компонента из разметки пользователя компонента. Это аналог `children` в *React*.
 
-- `@Nested()` - генерирует `OneWay` проп, который может брать значение как из пропсы объекта, так и из `children` компонентов. Для `jQuery` работает только пропса. Для корректной генерации, нужно объявить в файле собственный тип для этой пропсы. Имя сгенерированных компонентов основано на имени этого типа (префикс в Angular зависит от того массив ли это объектов (i - iterable), или одиночный (o - object)):
-
-  |DeclaredType|React|Angilar|Vue|
+- `@Nested()` - генерирует `OneWay` проп, который может брать значение как из пропсы объекта, так и из `children` компонентов. Для `jQuery` работает только пропса. Для корректной генерации, нужно объявить в файле собственный тип для этой пропсы. Типы не должны пересекаться **(одно свойство - один тип)**. Имя сгенерированных компонентов основано на имени пропсы (префикс в Angular зависит от того массив ли это объектов (i - iterable), или одиночный объект (o - object)):
+  |Property Name|React|Angilar|Vue|
   |:---:|:---:|:---:|:---:|
-  Column|Column|dxi-column/dxo-column|DxColumn
+  Columns|Column|dxi-column/dxo-column|DxColumn
   GridEditing|GridEditing|dxi-grid-editing/dxo-grid-editing|DxGridEditing
-
   Пример декларации:
   ```typescript
   declare type Column {
     dataField?: string;
     // Other props
   }
+  declare type Editing {
+    // Props
+  }
 
   @ComponentBindings()
   export class GridProps {
     @Nested() columns?: (Column | string)[];
+    @Nested() gridEditing?: Editing;
   }
   ```
-
-
 #### ViewModel
 
 Для описания *ViewModel* используется класс, помеченный декоратором `@Component()` и наследующий `JSXComponent` от класса *Model*. В декораторе компонента обязательно указывается *View*-функция, а также опционально дополнительные параметры.
