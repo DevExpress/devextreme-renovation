@@ -42,6 +42,9 @@ export class ComponentInput extends BaseComponentInput {
     createChildrenForNested(members: Array<BaseProperty | Method>) {
         return null;
     }
+    exportNestedComponents() {
+        return "";
+    }
 }
 
 export class PreactComponent extends ReactComponent {

@@ -1,16 +1,16 @@
 declare type Column = { name: string, index?: number }
-declare type GridEditing = { editEnabled?: boolean }
+declare type Editing = { editEnabled?: boolean }
+declare type Custom = {}
 function view(model: Widget) {
     return <div />;
 }
+
 export declare type WidgetInputType = {
-    collect?: Array<Column | string>;
-    editing?: GridEditing
+    columns?: Array<Column | string>;
+    gridEditing?: Editing;
+    someArray?: Array<Custom>
 }
-const WidgetInput: WidgetInputType = {
-
-};
-
+const WidgetInput: WidgetInputType = { };
 
 import * as Preact from "preact";
 import { useCallback } from "preact/hooks"
@@ -21,24 +21,20 @@ interface Widget {
     getColumns: () => any;
     isEditable: any;
     restAttributes: RestProps;
-
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-
-
-
     const getColumns = useCallback(function getColumns() {
-
-        return props.collect?.map((el) => typeof el === "string" ? el : el.name);
-    }, [props.collect]);
+        return props.columns?.map((el) => typeof el === "string" ? el : el.name);
+    }, [props.columns]);
     const __isEditable = useCallback(function __isEditable() {
-        return props.editing?.editEnabled;
-    }, [props.editing]);
+        return props.gridEditing?.editEnabled;
+    }, [props.gridEditing]);
     const __restAttributes = useCallback(function __restAttributes() {
-        const { collect, editing, ...restProps } = {
-            collect: props.collect,
-            editing: props.editing
+        const { columns, gridEditing, someArray, ...restProps } = {
+            columns: props.columns,
+            gridEditing: props.gridEditing,
+            someArray: props.someArray
         }
         return restProps;
     }, [props]);

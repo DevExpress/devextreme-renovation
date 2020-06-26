@@ -14,7 +14,7 @@ import {
     GetAccessor as BaseGetAccessor,
     BaseClassMember
 } from "./base-generator/expressions/class-members";
-import { GeneratorContext, isTypeArray, extractComplexType } from "./base-generator/types";
+import { GeneratorContext, isTypeArray } from "./base-generator/types";
 import {
     TypeExpression,
     SimpleTypeExpression,
@@ -31,7 +31,7 @@ import {
     PropertySignature,
     MethodSignature,
 } from "./base-generator/expressions/type";
-import { capitalizeFirstLetter, variableDeclaration } from "./base-generator/utils/string";
+import { capitalizeFirstLetter, variableDeclaration, removePlural } from "./base-generator/utils/string";
 import SyntaxKind from "./base-generator/syntaxKind";
 import { Expression, SimpleExpression } from "./base-generator/expressions/base";
 import { ObjectLiteral, StringLiteral, NumericLiteral } from "./base-generator/expressions/literal";
@@ -160,9 +160,14 @@ export class Property extends BaseProperty {
             return `${componentContext}$slots.${name}`;
         }
         if (this.isNestedProp) { 
-            const type = extractComplexType(this.type);
-            const indexGetter = isTypeArray(this.type) ? "" : "?.[0]";
-            return `(${this.name} || this.__getNestedFromChild("Dx${type}")${indexGetter})`;
+            const isArray = isTypeArray(this.type);
+            const indexGetter = isArray ? "" : "?.[0]";
+            let nestedName = capitalizeFirstLetter(this.name);
+            if(isArray) {
+                nestedName = removePlural(nestedName);
+            }
+
+            return `(${componentContext}${this.name} || this.__getNestedFromChild("Dx${nestedName}")${indexGetter})`;
         }
         return baseValue
     }

@@ -43,7 +43,7 @@ import { ComponentInput as BaseComponentInput } from "./base-generator/expressio
 import { Component, getProps } from "./base-generator/expressions/component";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access";
 import { BindingPattern, BindingElement } from "./base-generator/expressions/binding-pattern";
-import { processComponentContext, capitalizeFirstLetter } from "./base-generator/utils/string";
+import { processComponentContext, capitalizeFirstLetter, removePlural } from "./base-generator/utils/string";
 import { Decorators } from "./component_declaration/decorators";
 
 // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
@@ -68,6 +68,12 @@ export const counter = (function () {
         }
     }
 })();
+
+const getAngularSelector = (name: string | Identifier, postfix: string = "") => {
+    name = name.toString()
+    const words = name.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
+    return [`dx${postfix}`].concat(words).join("-");
+}
 
 export interface toStringOptions extends  BaseToStringOptions {
     members: Array<Property | Method>;
@@ -1064,22 +1070,31 @@ class ComponentInput extends BaseComponentInput {
         
         if(parentSelector && types) {
             const result = nestedComponents.map(component => {
+                const relatedProp = nestedProps.find(prop => component.name.replace("Nested", "") === prop.name);
                 const nestedTypeName = component.type.toString();
                 const typeName = nestedTypeName.replace("Dx", "");
                 const type = types[typeName];
 
-                if (type instanceof TypeLiteralNode) {
+                if (relatedProp && type instanceof TypeLiteralNode) {
                     const fields = [...type.members].map(m => {
-                        const result = m.toString();
+                        const prop = this.createProperty(
+                            [this.createDecorator(new Call(new SimpleExpression("OneWay"), undefined, undefined), {})],
+                            undefined,
+                            m.name,
+                            m.questionToken,
+                            m.type,
+                            undefined,
+                        )
+                        const result = prop.toString();
                         if(m.questionToken !== "?") {
                             return result.replace(":", "!:");
                         }
                         return result;
                     }).join(';\n');
-                    const isArray = isTypeArray(nestedProps.find(prop => component.name.replace("Nested", "") === prop.name)?.type);
+                    const isArray = isTypeArray(relatedProp.type);
                     const postfix = isArray ? "i" : "o";
-                    const words = typeName.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
-                    const selector = [`dx${postfix}`].concat(words).join("-")
+                    let selectorName = isArray ? removePlural(relatedProp.name) : relatedProp.name;
+                    const selector = getAngularSelector(selectorName, postfix);
         
                     return `@Directive({
                         selector: "${parentSelector} ${selector}"
@@ -1175,7 +1190,7 @@ export class Property extends BaseProperty {
         }
         if (this.isNestedProp) {
             const indexGetter = isTypeArray(this.type) ?  "" : "?.[0]" ;
-            return `(${componentContext}${this.name} || ${componentContext}${this.name}Nested.toArray()${indexGetter})${this.questionOrExclamationToken}`;
+            return `(${componentContext}${this.name} || ${componentContext}${this.name}Nested.toArray()${indexGetter})`;
         }
         if (this._hasDecorator(Decorators.ApiRef)) { 
             return `${componentContext}${this.name}${suffix}`
@@ -1317,8 +1332,7 @@ export class AngularComponent extends Component {
     }
 
     get selector() {
-        const words = this._name.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
-        return ["dx"].concat(words).join("-");
+        return getAngularSelector(this._name);
     }
 
     get module() { 
@@ -1586,6 +1600,14 @@ export class AngularComponent extends Component {
         `;
     }
 
+    getAdditionalModules() {
+        const modules = this.members.filter(m => m.isNestedComp)
+        if(modules.length) {
+            return [""].concat(modules.map(m => m.type.toString())).join(',');
+        }
+        return "";
+    }
+
     toString() { 
         const props = this.heritageClauses.filter(h => h.isJsxComponent).map(h => h.types.map(t => t.type.toString()));
         
@@ -1659,11 +1681,11 @@ export class AngularComponent extends Component {
             ${this.compileNgStyleProcessor(decoratorToStringOptions)}
         }
         @NgModule({
-            declarations: [${this.name}],
+            declarations: [${this.name}${this.getAdditionalModules()}],
             imports: [
                 ${modules.join(",\n")}
             ],
-            exports: [${this.name}]
+            exports: [${this.name}${this.getAdditionalModules()}]
         })
         export class ${this.module} {}
         `;

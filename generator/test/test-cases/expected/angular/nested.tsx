@@ -1,66 +1,59 @@
 declare type Column = { name: string, index?: number }
-declare type GridEditing = { editEnabled?: boolean }
-
+declare type Editing = { editEnabled?: boolean }
+declare type Custom = {}
 
 import { Input, ContentChildren, QueryList, Directive } from "@angular/core"
 @Directive({
-  selector: "dx-widget dxi-column"
+    selector: "dx-widget dxi-column"
 })
 class DxColumn implements Column {
-  name!: string;
-  index?: number
+    @Input() name!: string;
+    @Input() index?: number
 }
 @Directive({
-  selector: "dx-widget dxo-grid-editing"
+    selector: "dx-widget dxo-grid-editing"
 })
-class DxGridEditing implements GridEditing {
-  editEnabled?: boolean
+class DxEditing implements Editing {
+    @Input() editEnabled?: boolean
+}
+@Directive({
+    selector: "dx-widget dxi-some-array"
+})
+class DxCustom implements Custom {
+
 }
 class WidgetInput {
-  @Input() collect?: Array<Column | string>;
-  @ContentChildren(DxColumn) collectNested!: QueryList<DxColumn>;
-  @Input() editing?: GridEditing;
-  @ContentChildren(DxGridEditing) editingNested!: QueryList<DxGridEditing>;
-
+    @Input() columns?: Array<Column | string>;
+    @ContentChildren(DxColumn) columnsNested!: QueryList<DxColumn>;
+    @Input() gridEditing?: Editing;
+    @ContentChildren(DxEditing) gridEditingNested!: QueryList<DxEditing>;
+    @Input() someArray?: Array<Custom>;
+    @ContentChildren(DxCustom) someArrayNested!: QueryList<DxCustom>;
 }
 
 import { Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common"
 
-
 @Component({
-  selector: "dx-widget",
-  template: `<div ></div>`
+    selector: "dx-widget",
+    template: `<div ></div>`
 })
 export default class Widget extends WidgetInput {
-  __getColumns(): any {
-
-    return (this.collect || this.collectNested.toArray())?.map((el) => typeof el === "string" ? el : el.name);
-  }
-  get __isEditable(): any {
-    return (this.editing || this.editingNested.toArray()?.[0])?.editEnabled;
-  }
-  get __restAttributes(): any {
-    return {}
-  }
-
-
-
-
-
-
-
-
-
-
-
-
+    __getColumns(): any {
+        return (this.columns || this.columnsNested.toArray())?.map((el) => typeof el === "string" ? el : el.name);
+    }
+    get __isEditable(): any {
+        return (this.gridEditing || this.gridEditingNested.toArray()?.[0])?.editEnabled;
+    }
+    get __restAttributes(): any {
+        return {}
+    }
 }
 @NgModule({
-  declarations: [Widget],
-  imports: [
-    CommonModule
-  ],
-  exports: [Widget]
+    declarations: [Widget, DxColumn, DxEditing, DxCustom],
+    imports: [
+        CommonModule
+    ],
+    exports: [Widget, DxColumn, DxEditing, DxCustom]
 })
 export class DxWidgetModule { }

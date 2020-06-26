@@ -18,6 +18,8 @@
         <Counter id="counter-control" v-model="counterValue"></Counter>
     </form>
     <div id="counter-form-value">{{counterValue}}</div>
+    <Nested :cells="[{ data: 'cell11'}, 'cell12']"></Nested>
+    <Nested><DxCell data="cell21"/><DxCell data="cell22"/></Nested>
  </div>
 </template>
 <script>
@@ -25,12 +27,14 @@
 import DxApp from "../../../../components/app.tsx";
 import ButtonWithTemplate from "../../../../components/button-with-template.tsx"
 import Counter from "../../../../components/counter.tsx"
+import Nested from "../../../../components/nested.tsx"
 
 export default {
   components: {
     DxApp,
     ButtonWithTemplate,
-    Counter
+    Counter,
+    Nested
   },
 
   data() {

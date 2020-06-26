@@ -41,7 +41,7 @@ export const isTypeArray = (type: string | TypeExpression | undefined) => type i
 
 export const extractComplexType = (type?: string | TypeExpression): string => {
     if(type instanceof TypeReferenceNode) {
-        if(type.typeName.toString() === "Array" && type.typeArguments[0] instanceof UnionTypeNode) {
+        if(type.typeName.toString() === "Array") {
             return extractComplexType(type.typeArguments[0]);
         }
         return `${type.typeName.toString()}`;

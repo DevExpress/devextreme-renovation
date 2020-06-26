@@ -5,9 +5,11 @@ declare type Column = {
     index?: number,
 }
 
-declare type GridEditing = {
+declare type Editing = {
     editEnabled?: boolean,
 }
+
+declare type Custom = {}
 
 function view(model: Widget) {
     return <div/>;
@@ -15,22 +17,22 @@ function view(model: Widget) {
 
 @ComponentBindings()
 class WidgetInput { 
-    @Nested() collect?: Array<Column | string>;
-    @Nested() editing?: GridEditing;
+    @Nested() columns?: Array<Column | string>;
+    @Nested() gridEditing?: Editing;
+    @Nested() someArray?: Array<Custom>;
 }
-
 
 @Component({
     view: view
 })
 export default class Widget extends JSXComponent(WidgetInput) {
     getColumns() {
-        const { collect } = this.props;
+        const { columns } = this.props;
 
-        return collect?.map((el) => typeof el === 'string' ? el : el.name)
+        return columns?.map((el) => typeof el === 'string' ? el : el.name)
     }
 
     get isEditable() {
-        return this.props.editing?.editEnabled;
+        return this.props.gridEditing?.editEnabled;
     }
 }

@@ -1,6 +1,6 @@
 import SyntaxKind from "./base-generator/syntaxKind";
 import path from "path";
-import { capitalizeFirstLetter } from "./base-generator/utils/string";
+import { capitalizeFirstLetter, removePlural } from "./base-generator/utils/string";
 import BaseGenerator from "./base-generator";
 import {
     Property as BaseProperty,
@@ -17,7 +17,7 @@ import {
     JsxOpeningElement as BaseJsxOpeningElement,
     JsxSpreadAttribute
 } from "./base-generator/expressions/jsx";
-import { toStringOptions, GeneratorContext, isTypeArray, extractComplexType } from "./base-generator/types";
+import { toStringOptions, GeneratorContext, isTypeArray } from "./base-generator/types";
 import { Component, getProps } from "./base-generator/expressions/component";
 import { HeritageClause as BaseHeritageClause } from "./base-generator/expressions/class";
 import { BindingElement, BindingPattern } from "./base-generator/expressions/binding-pattern";
@@ -117,13 +117,28 @@ export class ComponentInput extends BaseComponentInput {
                 !(m as Property).inherited && (m as Property).initializer &&
                 (m.decorators.find(d => d.name !== Decorators.TwoWay) || (m as Property).questionOrExclamationToken !== "?")) as Property[];
 
-        return `${typeDeclaration}
+        return `${this.exportNestedComponents()}
+        ${typeDeclaration}
         ${declarationModifiers.join(" ")} const ${this.name}:${typeName}={
            ${inherited
                 .concat(propertiesWithInitializer.map(p => p.defaultDeclaration()))
                 .join(",\n")}
         }${typeCasting};
         ${declarationModifiers !== this.modifiers ? `${this.modifiers.join(" ")} ${this.name}` : ""}`;
+    }
+
+    exportNestedComponents() {
+        const nestedComponents = this.members.filter(m => m.isNestedProp);
+        if(nestedComponents.length) {
+            return nestedComponents.map(m => {
+                let name = capitalizeFirstLetter(m.name);
+                if(isTypeArray(m.type)) {
+                    name = removePlural(name);
+                }
+                return `export const ${name} = () => null;`
+            }).join('\n');
+        }
+        return "";
     }
 
     createChildrenForNested(members: Array<BaseProperty | Method>) {        
@@ -254,9 +269,14 @@ export class Property extends BaseProperty {
 
     compileNestedPropGetter(componentContext: string, scope: string) {
         const propName = getPropName(this.name, componentContext, scope);
-        const indexGetter = isTypeArray(this.type) ? "" : "?.[0]";
-        const type = extractComplexType(this.type);
-        return `(${propName} || __getNestedFromChild("${type}")${indexGetter})`
+        const isArray = isTypeArray(this.type);
+        const indexGetter = isArray ? "" : "?.[0]";
+        let nestedName = capitalizeFirstLetter(this.name);
+        if(isArray) {
+            nestedName = removePlural(nestedName);
+        }
+
+        return `(${propName} || __getNestedFromChild("${nestedName}")${indexGetter})`
     }
 
     getter(componentContext?: string) {

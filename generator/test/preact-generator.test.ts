@@ -54,10 +54,6 @@ mocha.describe("preact-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
-    mocha.it("preact-jquery-getprops", function () {
-        this.testGenerator(this.test!.title);
-    });
-
     mocha.it("nested", function () {
         this.testGenerator(this.test!.title);
     });
