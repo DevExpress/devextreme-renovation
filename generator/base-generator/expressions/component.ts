@@ -97,7 +97,7 @@ export class Component extends Class implements Heritable {
         restPropsGetter.prefix = "__";
         members.push(restPropsGetter);
         const hasNested = members.some(m => m.isNestedProp);
-        if(hasNested){
+        if (hasNested){
             const nestedPropGetter = this.createNestedPropGetter();
             if (nestedPropGetter !== null) {
                 members.push(nestedPropGetter);

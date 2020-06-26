@@ -112,7 +112,12 @@ export class Property extends BaseProperty {
             return `${this.name}: ${this.initializer}`;
         } 
 
-        if (this.isEvent || this.isRef && !this.inherited || this.isSlot || this.isTemplate || (this.isNestedProp && !isTypeArray(this.type))) { 
+        if (this.isEvent ||
+            this.isRef && !this.inherited ||
+            this.isSlot ||
+            this.isTemplate ||
+            (this.isNestedProp && !isTypeArray(this.type))
+        ) { 
             return "";
         }
     
@@ -164,7 +169,7 @@ export class Property extends BaseProperty {
             const isArray = isTypeArray(this.type);
             const indexGetter = isArray ? "" : "?.[0]";
             let nestedName = capitalizeFirstLetter(this.name);
-            if(isArray) {
+            if (isArray) {
                 nestedName = removePlural(nestedName);
             }
 

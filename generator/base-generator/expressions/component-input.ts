@@ -149,7 +149,7 @@ export class ComponentInput extends Class implements Heritable {
             }
 
             const decorIndex = m.decorators.findIndex(d => d.name === Decorators.Nested);
-            if(decorIndex >= 0 && m instanceof Property) {
+            if (decorIndex >= 0 && m instanceof Property) {
                 const nestedPropDecorators = [...m.decorators];
                 nestedPropDecorators[decorIndex] = this.createDecorator(new Call(new Identifier(Decorators.NestedProp), undefined, []), {})
                 const nestedProp = this.createNestedProperty(nestedPropDecorators ,m.modifiers, m._name, m.questionOrExclamationToken, m.type, undefined);

@@ -10,7 +10,7 @@ export function capitalizeFirstLetter(string: string | Identifier) {
 export const removePlural = (string: string | Identifier) => {
     string = string.toString();
     let last = string.lastIndexOf("s");
-    if(last > 0 && last === string.length - 1) {
+    if (last > 0 && last === string.length - 1) {
         return string.slice(0, last);
     }
     return string;

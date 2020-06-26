@@ -40,8 +40,8 @@ export type GeneratorContext = {
 export const isTypeArray = (type: string | TypeExpression | undefined) => type instanceof ArrayTypeNode || (type instanceof TypeReferenceNode && type.typeName.toString() === "Array")
 
 export const extractComplexType = (type?: string | TypeExpression): string => {
-    if(type instanceof TypeReferenceNode) {
-        if(type.typeName.toString() === "Array") {
+    if (type instanceof TypeReferenceNode) {
+        if (type.typeName.toString() === "Array") {
             return extractComplexType(type.typeArguments[0]);
         }
         return `${type.typeName.toString()}`;
@@ -52,7 +52,7 @@ export const extractComplexType = (type?: string | TypeExpression): string => {
     if (type instanceof ParenthesizedType) {
         return extractComplexType(type.expression)
     }
-    if(type instanceof UnionTypeNode) {
+    if (type instanceof UnionTypeNode) {
         const nestedType = type.types.find(t => t instanceof TypeReferenceNode);
         if(nestedType) {
             return extractComplexType(nestedType);

@@ -1124,7 +1124,7 @@ class ComponentInput extends BaseComponentInput {
         const parentName = components && Object.keys(components).find(key => components[key] instanceof AngularComponent)
         const parentSelector = components && parentName && (components[parentName] as AngularComponent).selector;
         
-        if(parentSelector && types) {
+        if (parentSelector && types) {
             const result = nestedComponents.map(component => {
                 const relatedProp = nestedProps.find(prop => component.name.replace("Nested", "") === prop.name);
                 const nestedTypeName = component.type.toString();
@@ -1142,7 +1142,7 @@ class ComponentInput extends BaseComponentInput {
                             undefined,
                         )
                         const result = prop.toString();
-                        if(m.questionToken !== "?") {
+                        if (m.questionToken !== "?") {
                             return result.replace(":", "!:");
                         }
                         return result;
@@ -1709,7 +1709,7 @@ export class AngularComponent extends Component {
 
     getAdditionalModules() {
         const modules = this.members.filter(m => m.isNestedComp)
-        if(modules.length) {
+        if (modules.length) {
             return [""].concat(modules.map(m => m.type.toString())).join(',');
         }
         return "";

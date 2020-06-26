@@ -130,10 +130,10 @@ export class ComponentInput extends BaseComponentInput {
 
     exportNestedComponents() {
         const nestedComponents = this.members.filter(m => m.isNestedProp);
-        if(nestedComponents.length) {
+        if (nestedComponents.length) {
             return nestedComponents.map(m => {
                 let name = capitalizeFirstLetter(m.name);
-                if(isTypeArray(m.type)) {
+                if (isTypeArray(m.type)) {
                     name = removePlural(name);
                 }
                 return `export const ${name} = () => null;`
@@ -145,7 +145,7 @@ export class ComponentInput extends BaseComponentInput {
     createChildrenForNested(members: Array<BaseProperty | Method>) {        
         const hasChildren = members.some(m => m.isSlot && m.name === "children");
         const hasNested = members.some(m => m.isNestedProp);
-        if(hasNested && !hasChildren) {
+        if (hasNested && !hasChildren) {
             return new Property(
                 [new Decorator(new Call(new Identifier(Decorators.Slot), undefined, undefined), {})],
                 undefined,
@@ -277,7 +277,7 @@ export class Property extends BaseProperty {
         const isArray = isTypeArray(this.type);
         const indexGetter = isArray ? "" : "?.[0]";
         let nestedName = capitalizeFirstLetter(this.name);
-        if(isArray) {
+        if (isArray) {
             nestedName = removePlural(nestedName);
         }
 
@@ -312,7 +312,7 @@ export class Property extends BaseProperty {
             return this.questionOrExclamationToken === "?" ? [`${scope}${this.name.toString()}${scope ? this.questionOrExclamationToken : ""}.current`] : [];
         } else if (this.isState) {
             return [getPropName(this.name), getLocalStateName(this.name), getPropName(`${this.name}Change`)];
-        }else if (this.isNestedProp) {
+        } else if (this.isNestedProp) {
             return [getPropName(this.name)];
         }
         throw `Can't parse property: ${this._name}`;
