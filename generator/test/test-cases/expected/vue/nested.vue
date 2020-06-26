@@ -12,7 +12,7 @@ export default {
   props: WidgetInput,
   methods: {
     __getColumns() {
-      return (collect || this.__getNestedFromChild("Dx"))?.map(el =>
+      return (collect || this.__getNestedFromChild("DxColumn"))?.map(el =>
         typeof el === "string" ? el : el.name
       );
     },
@@ -29,7 +29,7 @@ export default {
     },
     props() {
       return {
-        collect: (collect || this.__getNestedFromChild("Dx")),
+        collect: (collect || this.__getNestedFromChild("DxColumn")),
         editing: (editing || this.__getNestedFromChild("DxEditing")?.[0])
       };
     }

@@ -55,7 +55,7 @@ export const extractComplexType = (type?: string | TypeExpression): string => {
     if(type instanceof UnionTypeNode) {
         const nestedType = type.types.find(t => t instanceof TypeReferenceNode);
         if(nestedType) {
-            return `${nestedType.toString()}`;
+            return extractComplexType(nestedType);
         }
     }
 
