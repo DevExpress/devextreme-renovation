@@ -60,6 +60,8 @@ import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressio
 import { PropertyAssignment, SpreadAssignment } from "./base-generator/expressions/property-assignment";
 import { getModuleRelativePath } from "./base-generator/utils/path-utils";
 import { Interface } from "./base-generator/expressions/interface";
+import { ImportClause, ImportDeclaration as BaseImportDeclaration } from "./base-generator/expressions/import";
+import path from "path";
 
 function calculatePropertyType(type: TypeExpression | string): string {
     if (type instanceof SimpleTypeExpression) {
@@ -1068,6 +1070,15 @@ export class ClosingTemplateWrapperElement extends JsxClosingElement {
     }
 }
 
+export class ImportDeclaration extends BaseImportDeclaration { 
+    toString() { 
+        if (path.extname(this.moduleSpecifier.expression.toString()) === ".d") { 
+            return "";
+        }
+        return super.toString();
+    }
+}
+
 export class JsxChildExpression extends BaseJsxChildExpression { 
 
     createJsxExpression(statement: Expression) { 
@@ -1268,6 +1279,10 @@ class VueGenerator extends BaseGenerator {
 
     createNonNullExpression(expression: Expression) {
         return new NonNullExpression(expression);
+    }
+
+    createImportDeclarationCore(decorators: Decorator[] | undefined, modifiers: string[] | undefined, importClause: ImportClause, moduleSpecifier: StringLiteral) {
+        return new ImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
     }
 
     createKeywordTypeNode(kind: string) {
