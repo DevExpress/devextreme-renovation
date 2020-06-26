@@ -15,7 +15,8 @@ import {
 } from "./base-generator/expressions/class-members"
 import {
     toStringOptions as BaseToStringOptions,
-    GeneratorContext
+    GeneratorContext,
+    isTypeArray
 } from "./base-generator/types";
 import SyntaxKind from "./base-generator/syntaxKind";
 import { Expression, SimpleExpression } from "./base-generator/expressions/base";
@@ -974,7 +975,7 @@ export class ArrowFunction extends BaseArrowFunction {
 
 class Decorator extends BaseDecorator { 
     toString(options?: toStringOptions) { 
-        if (this.name === Decorators.OneWay || this.name === Decorators.TwoWay || this.name === Decorators.Template || this.name===Decorators.RefProp) {
+        if (this.name === Decorators.OneWay || this.name === Decorators.TwoWay || this.name === Decorators.Template || this.name===Decorators.RefProp || this.name === Decorators.NestedProp) {
             return "@Input()";
         } else if (this.name === Decorators.Effect || this.name === Decorators.Ref || this.name === Decorators.ApiRef || this.name === Decorators.InternalState || this.name === Decorators.Method) {
             return "";
@@ -1000,7 +1001,7 @@ class Decorator extends BaseDecorator {
 }
 
 function compileCoreImports(members: Array<Property|Method>, context: AngularGeneratorContext, imports:string[] = []) { 
-    if (members.some(m => m.decorators.some(d => d.name === Decorators.OneWay || d.name===Decorators.RefProp))) {
+    if (members.some(m => m.decorators.some(d => d.name === Decorators.OneWay || d.name===Decorators.RefProp || d.name === Decorators.NestedProp))) {
         imports.push("Input");
     }
     if (members.some(m => m.isState)) { 
@@ -1015,6 +1016,10 @@ function compileCoreImports(members: Array<Property|Method>, context: AngularGen
 
     if (members.some(m => m.isSlot)) {
         imports.push("ViewChild", "ElementRef");
+    }
+
+    if (members.some(m => m.isNestedComp)) {
+        imports.push("ContentChildren", "QueryList", "Directive");
     }
 
     const set = new Set(context.angularCoreImports);
@@ -1047,9 +1052,50 @@ class ComponentInput extends BaseComponentInput {
         return null;
     }
 
+    compileNestedComponents() {
+        const nestedProps = this.members.filter(m => m.isNestedProp);
+        const nestedComponents = this.members.filter(m => m.isNestedComp);
+
+        const components = this.context.components;
+        const types = this.context.types;
+
+        const parentName = components && Object.keys(components).find(key => components[key] instanceof AngularComponent)
+        const parentSelector = components && parentName && (components[parentName] as AngularComponent).selector;
+        
+        if(parentSelector && types) {
+            const result = nestedComponents.map(component => {
+                const nestedTypeName = component.type.toString();
+                const typeName = nestedTypeName.replace("Dx", "");
+                const type = types[typeName];
+
+                if (type instanceof TypeLiteralNode) {
+                    const fields = [...type.members].map(m => {
+                        const result = m.toString();
+                        if(m.questionToken !== "?") {
+                            return result.replace(":", "!:");
+                        }
+                        return result;
+                    }).join(';\n');
+                    const isArray = isTypeArray(nestedProps.find(prop => component.name.replace("Nested", "") === prop.name)?.type);
+                    const postfix = isArray ? "i" : "o";
+        
+                    return `@Directive({
+                        selector: "${parentSelector} dx${postfix}-${typeName.toLowerCase()}"
+                    })
+                    class ${nestedTypeName} implements ${typeName} {
+                        ${fields}
+                    }`;
+                }
+            }).join('\n')
+            return result;
+        }
+        return "";
+    }
+
     toString() {
         return `
         ${compileCoreImports(this.members.filter(m => !m.inherited), this.context)}
+        ${this.compileNestedComponents()}
         ${this.modifiers.join(" ")} class ${this.name} ${this.heritageClauses.map(h => h.toString()).join(" ")} {
             ${this.members.filter(p => p instanceof Property && !p.inherited).map(m => m.toString()).filter(m => m).concat("").join(";\n")}
         }`;
@@ -1106,6 +1152,9 @@ export class Property extends BaseProperty {
                 return this.${selector}?.nativeElement?.innerHTML.trim();
             }`;
         }
+        if (this.isNestedComp) { 
+            return `@ContentChildren(${this.type}) ${this.name}!: QueryList<${this.type}>`;
+        }
         
         return defaultValue;
     }
@@ -1122,6 +1171,10 @@ export class Property extends BaseProperty {
         if (this.isRefProp) { 
             return `${componentContext}${this.name}`;
         }
+        if (this.isNestedProp) {
+            const indexGetter = isTypeArray(this.type) ?  "" : "?.[0]" ;
+            return `(${componentContext}${this.name} || ${componentContext}${this.name}Nested.toArray()${indexGetter})${this.questionOrExclamationToken}`;
+        }
         if (this._hasDecorator(Decorators.ApiRef)) { 
             return `${componentContext}${this.name}${suffix}`
         }
@@ -1137,7 +1190,7 @@ export class Property extends BaseProperty {
     }
 
     get canBeDestructured() { 
-        if (this.isEvent) { 
+        if (this.isEvent || this.isNestedProp) { 
             return false;
         }
         return super.canBeDestructured;

@@ -22,6 +22,8 @@ export function getProps(members: BaseClassMember[]): Property[] {
         .find(d =>
             d.name === Decorators.OneWay ||
             d.name === Decorators.TwoWay ||
+            d.name === Decorators.Nested ||
+            d.name === Decorators.NestedProp ||
             d.name === Decorators.Event ||
             d.name === Decorators.Template ||
             d.name === Decorators.Slot ||
@@ -93,6 +95,13 @@ export class Component extends Class implements Heritable {
         const restPropsGetter = this.createRestPropsGetter(members);
         restPropsGetter.prefix = "__";
         members.push(restPropsGetter);
+        const hasNested = members.some(m => m.isNestedProp);
+        if(hasNested){
+            const nestedPropGetter = this.createNestedPropGetter();
+            if (nestedPropGetter !== null) {
+                members.push(nestedPropGetter);
+            }
+        }
         return members;
     }
 
@@ -182,6 +191,10 @@ export class Component extends Class implements Heritable {
             new Block([
                 new SimpleExpression("return {}")
             ], true));
+    }
+    
+    createNestedPropGetter(): Method | null {
+        return null;
     }
 
     compileDefaultOptionsImport(imports: string[]): void { 

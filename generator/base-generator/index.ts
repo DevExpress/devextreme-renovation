@@ -469,7 +469,9 @@ export default class Generator {
     }
 
     createTypeAliasDeclaration(decorators: Decorator[] | undefined, modifiers: string[] | undefined, name: Identifier, typeParameters: any, type: TypeExpression) {
-        return new TypeAliasDeclaration(decorators, modifiers, name, typeParameters, type);
+        const result = new TypeAliasDeclaration(decorators, modifiers, name, typeParameters, type);
+        this.addType(name.toString(), result.type);
+        return result;
     }
 
     createIntersectionTypeNode(types: TypeExpression[]) {
@@ -596,6 +598,12 @@ export default class Generator {
         const context = this.getContext();
         context.components = context.components || {};
         context.components[name] = component;
+    }
+
+    addType(name: string, type: TypeExpression) {
+        const context = this.getContext();
+        context.types = context.types || {};
+        context.types[name] = type;
     }
 
     getInitialContext(): GeneratorContext {

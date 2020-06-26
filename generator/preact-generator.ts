@@ -6,6 +6,7 @@ import {
     JsxOpeningElement as ReactJsxOpeningElement,
     JsxClosingElement as ReactJsxClosingElement,
     HeritageClause,
+    ComponentInput as BaseComponentInput,
 } from "./react-generator";
 import path from "path";
 import { Expression } from "./base-generator/expressions/base";
@@ -32,6 +33,15 @@ const getJQueryBaseComponentName = (decorators: Decorator[], context: GeneratorC
         return undefined;
     }
     return baseComponent ? baseComponent.toString() : BASE_JQUERY_WIDGET;
+}
+
+export class ComponentInput extends BaseComponentInput {
+    createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: TypeExpression, initializer?: Expression) {
+        return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
+    }
+    createChildrenForNested(members: Array<BaseProperty | Method>) {
+        return null;
+    }
 }
 
 export class PreactComponent extends ReactComponent {
@@ -64,6 +74,10 @@ export class PreactComponent extends ReactComponent {
 
     compileRestProps() {
         return "declare type RestProps = { className?: string; style?: { [name: string]: any }; [x: string]: any }";
+    }
+
+    createNestedPropGetter() {
+        return null;
     }
 }
 
@@ -193,6 +207,14 @@ export class Property extends BaseProperty {
         }
         return super.typeDeclaration();
     }
+
+    compileNestedPropGetter(componentContext: string, scope: string) {
+        return `${componentContext}${scope}${this.name}`
+    }
+
+    inherit() {
+        return new Property(this.decorators, this.modifiers, this._name, this.questionOrExclamationToken, this.type, this.initializer, true);
+    }
 }
 
 const processTagName = (tagName: Expression) => tagName.toString() === "Fragment" ? new Identifier("Preact.Fragment") : tagName;
@@ -281,6 +303,10 @@ export class PreactGenerator extends Generator {
 
     createProperty(decorators: Decorator[], modifiers: string[] = [], name: Identifier, questionOrExclamationToken: string = "", type?: TypeExpression, initializer?: Expression) {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
+    }
+
+    createComponentBindings(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) {
+        return new ComponentInput(decorators, modifiers, name, typeParameters, heritageClauses, members)
     }
 }
 

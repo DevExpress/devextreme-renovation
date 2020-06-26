@@ -53,6 +53,14 @@ mocha.describe("preact-generator", function () {
     mocha.it("method-use-apiref", function () {
         this.testGenerator(this.test!.title);
     });
+
+    mocha.it("preact-jquery-getprops", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("nested", function () {
+        this.testGenerator(this.test!.title);
+    });
 });
 
 mocha.describe("preact-generator: expressions", function () {
