@@ -1274,16 +1274,16 @@ mocha.describe("base-generator: expressions", function () {
         });
         
         mocha.it("booleanAttribute", function () {
-            const expression = generator.createJsxElement(
-                generator.createJsxOpeningElement(generator.createIdentifier("div"), [], [
-                    generator.createJsxAttribute(generator.createIdentifier("selected"))
-                ]),
-                [],
-                generator.createJsxClosingElement(generator.createIdentifier("div"))
-            );
+            const expression = generator.createJsxAttribute(generator.createIdentifier("selected"));
     
-            assert.strictEqual(expression.toString(), "<div selected={true}></div>");
-      });
+            assert.strictEqual(expression.toString(), "selected={true}");
+        });
+
+        mocha.it("JsxAttribute.getTemplateContext()", function () {
+            const expression = generator.createJsxAttribute(generator.createIdentifier("selected"));
+
+            assert.strictEqual(expression.getTemplateContext(), null);
+        });
     });
 
     mocha.describe("BindingElement", function () {

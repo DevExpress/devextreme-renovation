@@ -3965,7 +3965,7 @@ mocha.describe("Angular generator", function () {
                     members: [propertyWithExclamation],
                     componentContext: generator.SyntaxKind.ThisKeyword,
                     newComponentContext: generator.SyntaxKind.ThisKeyword
-                }), "this.div!.nativeElement");
+                }), "this.div.nativeElement");
 
                 assert.strictEqual(expression.toString({
                     members: [propertyWithQuestion],

@@ -61,6 +61,12 @@ const propertyDecorator = function(target: any, propertyKey: string) { };
  * Define a property that user can pass to component. Component can't write to it.
  */
 export const OneWay = () => propertyDecorator;
+
+/**
+ * Property Decorator.
+ * Define a property that user can pass to component. Component can't write to it.
+ */
+export const ForwardRef = () => propertyDecorator;
 /**
 * Property Decorator.
 * Define a property that user can pass to component. Component can write to it.

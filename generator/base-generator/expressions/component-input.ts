@@ -111,6 +111,11 @@ export class ComponentInput extends Class implements Heritable {
             if (refIndex > -1) { 
                 m.decorators[refIndex] = this.createDecorator(new Call(new Identifier(Decorators.RefProp), undefined, []), {});
             }
+
+            const forwardRefIndex = m.decorators.findIndex(d => d.name === "ForwardRef");
+            if (forwardRefIndex > -1) { 
+                m.decorators[forwardRefIndex] = this.createDecorator(new Call(new Identifier(Decorators.ForwardRefProp), undefined, []), {});
+            }
      
             if (!(m instanceof Property)) {
                 warn(`${this.name} ComponentBindings has non-property member: ${m._name}`);

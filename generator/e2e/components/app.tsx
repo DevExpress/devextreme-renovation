@@ -1,4 +1,4 @@
-import { Component, ComponentBindings, JSXComponent, InternalState } from "../../component_declaration/common";
+import { Component, ComponentBindings, JSXComponent, InternalState, ForwardRef } from "../../component_declaration/common";
 
 import SimpleComponent from "./simple.tsx";
 import ButtonComponent from "./button.tsx";
@@ -17,6 +17,10 @@ import RefPass from "./ref-pass.tsx";
 import EffectsDOMUpdate from "./effects-dom-update.tsx";
 import EffectsStateUpdate from "./effects-state-update.tsx";
 import SumArray from "./render/sum-array.tsx";
+import ForwardRefParent from "./ref-on-children/forward-ref-parent.tsx";
+import ForwardRefTemplate from "./ref-on-children/forward-ref-template.tsx";
+import ForwardRefChild from "./ref-on-children/child.tsx";
+import ForwardRefDeep from "./ref-on-children/forward-ref-deep.tsx";
 
 function view(model: App) {
     return <div>
@@ -84,6 +88,10 @@ function view(model: App) {
             id={"sum-array"}
             array={model.arrayForSum}
         />
+
+        ForwardRef: <ForwardRefParent/>
+        ForwardRef Template:<ForwardRefTemplate contentTemplate={ForwardRefChild} />
+        ForwardRef Deep:<ForwardRefTemplate contentTemplate={ForwardRefDeep}/>
 
     </div>;
 }

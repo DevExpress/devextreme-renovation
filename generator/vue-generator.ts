@@ -50,6 +50,7 @@ import {
     AngularDirective,
     toStringOptions,
     isElement,
+    getMember,
 } from "./angular-generator";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
@@ -114,7 +115,7 @@ export class Property extends BaseProperty {
             return "";
         }
     
-        const type = this.isRefProp ? "Function" : calculatePropertyType(this.type);
+        const type = this.isRefProp || this.isForwardRefProp ? "Function" : calculatePropertyType(this.type);
         const parts = [];
         if (type) { 
             parts.push(`type: ${type}`)
@@ -145,7 +146,7 @@ export class Property extends BaseProperty {
         if (this.isState) {
             return `(${componentContext}${this.name} !== undefined ? ${componentContext}${this.name} : ${componentContext}${this.name}_state)`;
         }
-        if (this.isRef && componentContext.length) {
+        if ((this.isForwardRefProp || this.isRef || this.isForwardRef) && componentContext.length) {
             return `${componentContext}$refs.${this.name}`;
         }
         if(this.isRefProp)  {
@@ -325,6 +326,28 @@ export class VueComponent extends Component {
                     )
                 )
             }
+            if (m.isForwardRef || m.isForwardRefProp) { 
+                members.push(
+                    new Method(
+                        [],
+                        [],
+                        undefined,
+                        new Identifier(`forwardRef_${m.name}`),
+                        undefined,
+                        [],
+                        [new Parameter(
+                            [],
+                            [],
+                            undefined,
+                            new Identifier("ref")
+                        )],
+                        undefined,
+                        new Block([
+                            new SimpleExpression(`this.$refs.${m.name}=ref`)
+                        ], true)
+                    )
+                );
+            }
             return members;
         }, members);
 
@@ -472,6 +495,14 @@ export class VueComponent extends Component {
             }`);
         });
 
+        const forwardRefs = this.members.filter(m=>m.isForwardRefProp);
+
+        if(forwardRefs.length){
+            statements.push(`__forwardRef(){
+                ${forwardRefs.map(m => `this.${m._name}(this.$refs.${m._name});`).join("\n")}
+            }`);
+        }
+
         return `methods: {
             ${statements.concat(externalStatements).join(",\n")}
          }`;
@@ -546,8 +577,14 @@ export class VueComponent extends Component {
     }
 
     generateMounted() { 
-        const statements: string[] = this.effects.map((e, i) => { 
-            return `this.__destroyEffects[${i}]=this.${e.name}()`;
+        const statements: string[] = [];
+
+        if(this.members.filter(m=>m.isForwardRefProp).length){
+            statements.push(`this.__forwardRef()`);
+        }
+
+        this.effects.forEach((e, i) => { 
+            statements.push(`this.__destroyEffects[${i}]=this.${e.name}()`);
         });
 
         if (statements.length) { 
@@ -594,6 +631,10 @@ export class VueComponent extends Component {
 
     generateUpdated() { 
         const statements: string[] = [];
+
+        if(this.members.filter(m=>m.isForwardRefProp).length){
+            statements.push(`this.__forwardRef()`);
+        }
 
         if (this.effects.length) { 
             statements.push(`
@@ -729,8 +770,6 @@ export class AsExpression extends BaseAsExpression {
 }
 
 export class JsxAttribute extends BaseJsxAttribute { 
-    
-
     getTemplateProp(options?: toStringOptions) {
         return `v-bind:${this.name}="${this.compileInitializer(options)}"`;
     }
@@ -765,6 +804,14 @@ export class JsxAttribute extends BaseJsxAttribute {
         return `()=>${name}`;
     }
 
+    getForwardRefValue(options?: toStringOptions) {
+        const member = getMember(this.initializer, options)!;
+        if (this.name.toString() === "ref") { 
+            return member.name;
+        }
+        return `forwardRef_${member.name}`;
+    }
+
     compileRef(options?: toStringOptions) { 
         return `ref="${this.compileInitializer(options)}"`;
     }
@@ -775,6 +822,10 @@ export class JsxAttribute extends BaseJsxAttribute {
         }
 
         return value;
+    }
+
+    skipValue(options?: toStringOptions) { 
+        return this.isTemplateAttribute(options);
     }
 
     compileEvent(options?: toStringOptions) {
@@ -876,6 +927,36 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
     }
 
+    getTemplateName(attribute: JsxAttribute) {
+        return attribute.name.toString();
+    }
+
+    functionToJsxElement(name: string, func: BaseFunction, options?: toStringOptions):JsxElement {      
+        const element = func.getTemplate(options, true);
+        const paramName = func.parameters[0].name.toString(options);
+
+        return new JsxElement(
+            new JsxOpeningElement(new Identifier(`template v-slot:${name}="${paramName}"`), undefined, [], this.context),
+            [element],
+            new JsxClosingElement(new Identifier('template'), this.context),
+        );
+    }
+
+    componentToJsxElement(name: string, component: Component): JsxElement {
+        const paramName = 'slotProps';
+        const attributes = getProps(component.members)
+            .map(prop => new JsxAttribute(prop._name, new PropertyAccess(new Identifier(paramName), prop._name)));
+        
+        const componentName = Object.keys(this.context.components!).find(k => this.context.components![k] === component)!;
+        const element = new JsxSelfClosingElement(new Identifier(componentName), undefined, attributes, component.context);
+
+        return new JsxElement(
+            new JsxOpeningElement(new Identifier(`template v-slot:${name}="${paramName}"`), undefined, [], this.context),
+            [element],
+            new JsxClosingElement(new Identifier('template'), this.context),
+        );
+    }
+
     clone() { 
         return new JsxOpeningElement(
             this.tagName,
@@ -932,34 +1013,6 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
             this.typeArguments,
             this.attributes.slice(),
             this.context
-        );
-    }
-
-    getTemplateName(attribute: JsxAttribute) {
-        return attribute.name.toString();
-    }
-
-    functionToJsxElement(name: string, func: BaseFunction, options?: toStringOptions) {      
-        const element = func.getTemplate(options, true);
-        const paramName = func.parameters[0].name.toString(options);
-
-        return new JsxElement(
-            new JsxOpeningElement(new Identifier(`template v-slot:${name}="${paramName}"`), undefined, [], this.context),
-            [element],
-            new JsxClosingElement(new Identifier('template'), this.context),
-        );
-    }
-
-    componentToJsxElement(name: string, component: Component) {
-        const paramName = 'slotProps';
-        const attributes = getProps(component.members)
-            .map(prop => new JsxAttribute(prop._name, new PropertyAccess(new Identifier(paramName), prop._name)));
-        const element = new JsxSelfClosingElement(component._name, undefined, attributes, component.context);
-
-        return new JsxElement(
-            new JsxOpeningElement(new Identifier(`template v-slot:${name}="${paramName}"`), undefined, [], this.context),
-            [element],
-            new JsxClosingElement(new Identifier('template'), this.context),
         );
     }
 }

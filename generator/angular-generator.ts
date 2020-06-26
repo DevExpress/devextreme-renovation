@@ -211,7 +211,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
     compileTemplate(templateProperty: Property, options?: toStringOptions) {
         const contextExpr = processComponentContext(options?.newComponentContext);
-        const contextElements = this.attributes.map(a => a.getTemplateContext()).filter(p => p) as PropertyAssignment[];
+        const contextElements = this.attributes.map(a => a.getTemplateContext(options)).filter(p => p) as PropertyAssignment[];
         const contextString = contextElements.length ? `; context:${(new ObjectLiteral(contextElements, false)).toString(options).replace(/"/gi, "'")}` : "";
         const attributes = this.attributes
             .filter(a => a instanceof AngularDirective)
@@ -315,10 +315,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
                 const name = template.initializer.toString();
                 const result = this.context.components?.[name]
                 if (result) {
-                acc.push({
-                    name: this.getTemplateName(template),
-                    component: result as Component,
-                });
+                    acc.push({
+                        name: this.getTemplateName(template),
+                        component: result as Component,
+                    });
                 }
                 return acc
             }, [] as ({name: string, component: Component})[]);
@@ -326,10 +326,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
             const functions = templates.reduce((acc, template) => {
                 const result = this.context.viewFunctions?.[template.initializer.toString()]
                 if (result && isFunction(result)) {
-                acc.push({
-                    name: this.getTemplateName(template),
-                    func: result,
-                });
+                    acc.push({
+                        name: this.getTemplateName(template),
+                        func: result,
+                    });
                 }
                 return acc
             }, [] as ({name: string,  func: BaseFunction | BaseArrowFunction})[]);
@@ -400,9 +400,18 @@ export class JsxAttribute extends BaseJsxAttribute {
         return this.compileRef(options).replace("#", "");
     }
 
+    getForwardRefValue(options?: toStringOptions): string {
+        const member = getMember(this.initializer, options)!;
+        return `forwardRef_${member.name.toString()}`;
+    }
+
     compileInitializer(options?: toStringOptions) { 
         if (this.isRefAttribute(options)) { 
             return this.getRefValue(options);
+        }
+        
+        if (options?.members.some(m => m.isForwardRef || m.isForwardRefProp && m._name.toString() === getMember(this.initializer, options)?._name.toString())) {
+            return this.getForwardRefValue(options);
         }
 
         return this.initializer.toString({
@@ -490,14 +499,22 @@ export class JsxAttribute extends BaseJsxAttribute {
 
     isTemplateAttribute(options?: toStringOptions) {
         const templateProps = options?.jsxComponent?.members.filter(p => p.isTemplate);
-        return templateProps?.some(p => p.name === this.name.toString())
+        return templateProps?.some(p => p.name === this.name.toString()) || false;
     }
 
-    toString(options?:toStringOptions) { 
+    skipValue(options?: toStringOptions) { 
+        return false;
+    }
+
+    toString(options?: toStringOptions) { 
+        if (this.skipValue(options)) { 
+            return "";
+        }
+
         if (this.name.toString() === "ref") { 
             return this.compileRef(options);
         }
-        
+
         if (
             options?.jsxComponent?.members
                 .filter(m => m.isEvent)
@@ -529,6 +546,10 @@ export class JsxAttribute extends BaseJsxAttribute {
         }
 
         return this.compileBase(name, this.compileValue(name, this.compileInitializer(options)));
+    }
+
+    getTemplateContext(options?: toStringOptions): PropertyAssignment | null { 
+        return new PropertyAssignment(this.name, new SimpleExpression(this.compileInitializer(options)));
     }
 }
 
@@ -570,14 +591,25 @@ function getExpression(expression: Expression, options?: toStringOptions): Expre
         expression = options.variables[expression.toString()];
     }
 
-    if (expression instanceof Paren) {
+    if (
+        expression instanceof Paren || 
+        expression instanceof BaseAsExpression
+    ) {
         return getExpression(expression.expression, options)
-    } else if (expression instanceof BaseAsExpression) { 
+    } else if (expression instanceof BaseJsxExpression && expression.expression) { 
         return getExpression(expression.expression, options);
     }
 
     return expression;
  }
+
+export function getMember(expression: Expression, options?: toStringOptions): BaseProperty | Method | undefined {
+    expression = getExpression(expression, options);
+        
+    if (expression instanceof BasePropertyAccess) {
+        return expression.getMember(options);
+    }
+}
 
 export class JsxExpression extends BaseJsxExpression {
     getIterator(expression: Expression): BaseBaseFunction| undefined {
@@ -974,9 +1006,21 @@ export class ArrowFunction extends BaseArrowFunction {
 
 class Decorator extends BaseDecorator { 
     toString(options?: toStringOptions) { 
-        if (this.name === Decorators.OneWay || this.name === Decorators.TwoWay || this.name === Decorators.Template || this.name===Decorators.RefProp) {
+        if (this.name === Decorators.OneWay || 
+            this.name === Decorators.TwoWay || 
+            this.name === Decorators.Template || 
+            this.name===Decorators.RefProp ||
+            this.name ===Decorators.ForwardRefProp
+            ) {
             return "@Input()";
-        } else if (this.name === Decorators.Effect || this.name === Decorators.Ref || this.name === Decorators.ApiRef || this.name === Decorators.InternalState || this.name === Decorators.Method) {
+        } else if (
+            this.name === Decorators.Effect ||
+            this.name === Decorators.Ref ||
+            this.name === Decorators.ApiRef ||
+            this.name === Decorators.InternalState ||
+            this.name === Decorators.Method ||
+            this.name === Decorators.ForwardRef
+        ) {
             return "";
         } else if (this.name === Decorators.Component) {
             const parameters = (this.expression.arguments[0] as ObjectLiteral);
@@ -1000,7 +1044,13 @@ class Decorator extends BaseDecorator {
 }
 
 function compileCoreImports(members: Array<Property|Method>, context: AngularGeneratorContext, imports:string[] = []) { 
-    if (members.some(m => m.decorators.some(d => d.name === Decorators.OneWay || d.name===Decorators.RefProp))) {
+    if (members.some(m =>
+        m.decorators.some(d =>
+            d.name === Decorators.OneWay ||
+            d.name === Decorators.RefProp ||
+            d.name === Decorators.ForwardRefProp
+        )
+    )) {
         imports.push("Input");
     }
     if (members.some(m => m.isState)) { 
@@ -1015,6 +1065,10 @@ function compileCoreImports(members: Array<Property|Method>, context: AngularGen
 
     if (members.some(m => m.isSlot)) {
         imports.push("ViewChild", "ElementRef");
+    }
+
+    if (members.some(m => m.isForwardRef)) {
+        imports.push("ElementRef");
     }
 
     const set = new Set(context.angularCoreImports);
@@ -1106,6 +1160,14 @@ export class Property extends BaseProperty {
                 return this.${selector}?.nativeElement?.innerHTML.trim();
             }`;
         }
+
+        if (this.isForwardRefProp) { 
+            return `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.name}:(ref:any)=>void=()=>{}`;
+        }
+
+        if (this.isForwardRef) { 
+            return `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.name}${this.questionOrExclamationToken}:ElementRef<${this.type}>`;
+        }
         
         return defaultValue;
     }
@@ -1116,14 +1178,17 @@ export class Property extends BaseProperty {
         if (this.isEvent) { 
             return `${componentContext}${this.name}.emit`;
         }
-        if (this.isRef) { 
-            return `${componentContext}${this.name}${this.questionOrExclamationToken}.nativeElement`
+        if (this.isRef || this.isForwardRef || this.isForwardRefProp) { 
+            const postfix = this.isForwardRefProp ? "Ref" : "";
+            return `${componentContext}${this.name}${postfix}${
+                this.questionOrExclamationToken === SyntaxKind.ExclamationToken ? "" : this.questionOrExclamationToken
+            }.nativeElement`
         }
         if (this.isRefProp) { 
             return `${componentContext}${this.name}`;
         }
         if (this._hasDecorator(Decorators.ApiRef)) { 
-            return `${componentContext}${this.name}${suffix}`
+            return `${componentContext}${this.name}${suffix}`;
         }
         return `${componentContext}${this.name}${suffix}`;
     }
@@ -1226,7 +1291,47 @@ export class AngularComponent extends Component {
                 });
             }
         });
-        return super.processMembers(members);
+        members = super.processMembers(members);
+        members = members.concat((members.filter(m => m.isForwardRefProp) as Property[]).map(m => {
+            return new Property(
+                [
+                    new Decorator(
+                        new Call(new Identifier(Decorators.Ref), [], []),
+                        this.context
+                    )
+                ],
+                [],
+                new Identifier(`${m.name}Ref`),
+                m.questionOrExclamationToken,
+                m.type
+            );
+        }));
+
+        members = members.concat(members.filter(m => m.isForwardRef||m.isForwardRefProp).map(m => { 
+            return new GetAccessor(
+                [],
+                [],
+                new Identifier(`forwardRef_${m.name}`),
+                [],
+                new FunctionTypeNode(
+                    [],
+                    [new Parameter(
+                        [],
+                        [],
+                        undefined,
+                        new Identifier("ref"),
+                        undefined,
+                        new SimpleTypeExpression("any")
+                    )],
+                    new SimpleTypeExpression("void")
+                ),
+                new Block([
+                    new SimpleExpression(`return (ref)=>this.${m.name}${m.isForwardRefProp ? "Ref" : ""}=ref`)
+                ], true)
+            );
+        }))
+
+        return members;
     }
 
     addPrefixToMembers(members: Array<Property | Method>) { 
@@ -1301,7 +1406,7 @@ export class AngularComponent extends Component {
         if (getters.length) { 
             const statements = [
                 `__getterCache: {
-                    ${getters.map(g=>`${g._name}?:${g.type}`).join("\n;")}
+                    ${getters.map(g=>`${g._name}?:${g.type}`).join(";\n")}
                 } = {}`
             ];
 
@@ -1571,6 +1676,12 @@ export class AngularComponent extends Component {
 
         const componentDecorator = this.decorator.toString(decoratorToStringOptions);
         const spreadAttributes = this.compileSpreadAttributes(ngOnChangesStatements, coreImports);
+
+        this.members.filter(m => m.isForwardRefProp).forEach(m => {
+            ngAfterViewInitStatements.push(`
+                this.${m.name}(this.${m.name}Ref);
+            `);
+        });
 
         return `
         ${this.compileImports(coreImports)}

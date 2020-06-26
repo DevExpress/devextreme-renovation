@@ -86,6 +86,14 @@ export class BaseClassMember extends Expression {
         return this._hasDecorator(Decorators.Effect);
     }
 
+    get isForwardRefProp(){
+        return this._hasDecorator(Decorators.ForwardRefProp);
+    }
+
+    get isForwardRef(){
+        return this._hasDecorator(Decorators.ForwardRef);
+    }
+
     get canBeDestructured() { 
         if (this.required) { 
             return false;
@@ -197,7 +205,7 @@ export class Property extends BaseClassMember {
     }
 
     defaultDeclaration() {
-        return `${this.name}:${this.initializer}`;;
+        return `${this.name}:${this.initializer}`;
     }
 
     getter(componentContext?: string) {

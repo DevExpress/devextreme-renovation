@@ -177,6 +177,18 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("forward-ref-template", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("forward-ref-parent", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("forward-ref-child", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {
             generator.defaultOptionsModule = getModulePath("component_declaration/default_options");
@@ -2244,7 +2256,7 @@ mocha.describe("ComponentInput", function () {
 
         assert.strictEqual(getResult(expression.toString()), getResult(`
             export declare type BaseModelType = {contentTemplate: any,contentRender?: any,contentComponent?: any};
-            export const BaseModel:BaseModelType={};
+            export const BaseModel:BaseModelType={} as BaseModelType;
         `));
     });
 
