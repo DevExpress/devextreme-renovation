@@ -138,27 +138,32 @@ export class ComponentInput extends Class implements Heritable {
         });
 
         members = members.reduce((acc, m) => {
-          const refIndex = m.decorators.findIndex(d => d.name === Decorators.Ref);
-          if (refIndex > -1) { 
-              m.decorators[refIndex] = this.createDecorator(new Call(new Identifier(Decorators.RefProp), undefined, []), {});
-          }
+            const refIndex = m.decorators.findIndex(d => d.name === Decorators.Ref);
+            if (refIndex > -1) { 
+                m.decorators[refIndex] = this.createDecorator(new Call(new Identifier(Decorators.RefProp), undefined, []), {});
+            }
 
-          const decorIndex = m.decorators.findIndex(d => d.name === Decorators.Nested);
-          if(decorIndex >= 0 && m instanceof Property) {
-            const nestedPropDecorators = [...m.decorators];
-            nestedPropDecorators[decorIndex] = this.createDecorator(new Call(new Identifier(Decorators.NestedProp), undefined, []), {})
-            const nestedProp = this.createNestedProperty(nestedPropDecorators ,m.modifiers, m._name, m.questionOrExclamationToken, m.type, undefined);
-            
-            const nestedCompDecorators = [...m.decorators];
-            nestedCompDecorators[decorIndex] = this.createDecorator(new Call(new Identifier(Decorators.NestedComp), undefined, []), {})
-            const nestedComp = this.createNestedComponent(nestedCompDecorators ,m.modifiers, m._name, m.questionOrExclamationToken, m.type, undefined);
+            const forwardRefIndex = m.decorators.findIndex(d => d.name === "ForwardRef");
+            if (forwardRefIndex > -1) { 
+                m.decorators[forwardRefIndex] = this.createDecorator(new Call(new Identifier(Decorators.ForwardRefProp), undefined, []), {});
+            }
 
-            acc.push(nestedProp);
-            acc.push(nestedComp);
-          } else {
-            acc.push(m);
-          }
-          return acc;
+            const decorIndex = m.decorators.findIndex(d => d.name === Decorators.Nested);
+            if(decorIndex >= 0 && m instanceof Property) {
+                const nestedPropDecorators = [...m.decorators];
+                nestedPropDecorators[decorIndex] = this.createDecorator(new Call(new Identifier(Decorators.NestedProp), undefined, []), {})
+                const nestedProp = this.createNestedProperty(nestedPropDecorators ,m.modifiers, m._name, m.questionOrExclamationToken, m.type, undefined);
+                
+                const nestedCompDecorators = [...m.decorators];
+                nestedCompDecorators[decorIndex] = this.createDecorator(new Call(new Identifier(Decorators.NestedComp), undefined, []), {})
+                const nestedComp = this.createNestedComponent(nestedCompDecorators ,m.modifiers, m._name, m.questionOrExclamationToken, m.type, undefined);
+
+                acc.push(nestedProp);
+                acc.push(nestedComp);
+            } else {
+                acc.push(m);
+            }
+            return acc;
         }, [] as Array<Property | Method>)
 
         return inheritMembers(this.heritageClauses, super.processMembers(members.concat(

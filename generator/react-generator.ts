@@ -105,7 +105,8 @@ export class ComponentInput extends BaseComponentInput {
         }`]).join("&")}`;
 
         const typeCasting = properties.some(p =>
-            p.questionOrExclamationToken === SyntaxKind.ExclamationToken && !p.initializer
+            p.questionOrExclamationToken === SyntaxKind.ExclamationToken && !p.initializer ||
+            p.type.toString()==="any" && !p.questionOrExclamationToken && !p.initializer
         )
             ? ` as ${typeName}`
             : "";
@@ -252,19 +253,23 @@ export class Property extends BaseProperty {
     }
 
     typeDeclaration() {
+        let type = this.type;
+
         if (this.isSlot) {
-            return `${this.name}${this.questionOrExclamationToken}:React.ReactNode`;
+            type =  "React.ReactNode";
         }
         if (this.decorators.find(d => d.name === Decorators.Ref || d.name === Decorators.ApiRef)) {
-            return `${this.name}:any`;
+            type = "any";
         }
-        if (this.isRefProp) { 
-            return `${this.name}${this.questionOrExclamationToken}:RefObject<${this.type}>`;
+        if (this.isRefProp || this.isForwardRefProp) { 
+            type =  `RefObject<${this.type}>`;
         }
-        if (this.questionOrExclamationToken === SyntaxKind.ExclamationToken) {
-            return `${this.name}:${this.type}`;
-        }
-        return super.typeDeclaration();
+
+        const questionOrExclamationToken = this.questionOrExclamationToken === SyntaxKind.ExclamationToken || type === "any"
+            ? ""
+            : this.questionOrExclamationToken;
+       
+        return `${this.name}${questionOrExclamationToken}:${type}`;
     }
 
     compileNestedPropGetter(componentContext: string, scope: string) {
@@ -286,7 +291,7 @@ export class Property extends BaseProperty {
             return getLocalStateName(this.name, componentContext);
         } else if (this.decorators.some(d => d.name === Decorators.OneWay || d.name === Decorators.Event || d.name === Decorators.Template || d.name === Decorators.Slot)) {
             return getPropName(this.name, componentContext, scope);
-        } else if (this.decorators.some(d => d.name === Decorators.Ref || d.name === Decorators.ApiRef || d.name === Decorators.RefProp)) {
+        } else if (this.decorators.some(d => d.name === Decorators.Ref || d.name === Decorators.ApiRef || d.name === Decorators.RefProp || d.name === Decorators.ForwardRefProp)) {
             return `${scope}${this.name}${scope ? this.questionOrExclamationToken : ""}.current!`;
         } else if (this.isState) {
             const propName = getPropName(this.name, componentContext, scope);
@@ -302,7 +307,7 @@ export class Property extends BaseProperty {
             return [getLocalStateName(this.name)];
         } else if (this.decorators.some(d => d.name === Decorators.OneWay || d.name === Decorators.Event || d.name === Decorators.Template || d.name === Decorators.Slot)) {
             return [getPropName(this.name)];
-        } else if (this.decorators.some(d => d.name === Decorators.Ref || d.name === Decorators.ApiRef || d.name === Decorators.RefProp)) {
+        } else if (this.decorators.some(d => d.name === Decorators.Ref || d.name === Decorators.ApiRef || d.name === Decorators.RefProp || d.name===Decorators.ForwardRefProp)) {
             const scope = this.processComponentContext(this.scope)
             return this.questionOrExclamationToken === "?" ? [`${scope}${this.name.toString()}${scope ? this.questionOrExclamationToken : ""}.current`] : [];
         } else if (this.isState) {
@@ -369,6 +374,13 @@ function getSubscriptions(methods: Method[]) {
 
 export class ReactComponent extends Component {
     processMembers(members: Array<BaseProperty | Method>) {
+        members.forEach(m => {
+            const forwardRefIndex = m.decorators.findIndex(d => d.name === Decorators.ForwardRef);
+            if (forwardRefIndex > -1) {
+                m.decorators[forwardRefIndex] = new Decorator(new Call(new Identifier(Decorators.Ref), undefined, []), {});
+            }
+        });
+
         return super.processMembers(members).map(p => {
             if (p.inherited) {
                 p.scope = "props"
@@ -488,7 +500,7 @@ export class ReactComponent extends Component {
             hooks.push("useRef");
         }
 
-        if (this.members.some(m=>m.isRefProp)) {
+        if (this.members.some(m=>m.isRefProp || m.isForwardRefProp)) {
             hooks.push("RefObject");
         }
         

@@ -10,11 +10,11 @@ export default class Widget {
     @ViewChild("explicitRef", { static: false }) explicitRef!: ElementRef<HTMLDivElement>;
 
     __clickHandler(): any {
-        const html = this.divRef!.nativeElement.outerHTML + this.explicitRef!.nativeElement!.outerHTML;
+        const html = this.divRef.nativeElement.outerHTML + this.explicitRef.nativeElement!.outerHTML;
     }
 
     __getHeight(): any { 
-        return this.divRef!.nativeElement.outerHTML + this.nullableRef?.nativeElement?.outerHTML;
+        return this.divRef.nativeElement.outerHTML + this.nullableRef?.nativeElement?.outerHTML;
     }
     get __restAttributes(): any{
         return {}

@@ -1,8 +1,5 @@
 <template>
-  <WidgetWithTemplate
-    :template="CustomTemplate"
-    :componentTemplate="InnerWidget"
-  >
+  <WidgetWithTemplate>
     <template v-slot:componentTemplate="slotProps" >
       <InnerWidget
         :selected="slotProps.selected"
