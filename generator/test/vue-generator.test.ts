@@ -980,6 +980,94 @@ mocha.describe("Vue-generator", function () {
                     </div>`));
             });
 
+            mocha.it("Wrap single template in fragment. Function", function () {
+                const block = generator.createBlock([
+                    generator.createReturn(
+                        generator.createJsxSelfClosingElement(
+                            generator.createPropertyAccess(
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier("model"),
+                                    generator.createIdentifier("props")
+                                ),
+                                generator.createIdentifier("contentTemplate"),
+                            )
+                        )
+                    )
+                ], false);
+    
+                const expression = generator.createFunctionDeclaration(
+                    [],
+                    [],
+                    "",
+                    generator.createIdentifier("View"),
+                    [],
+                    [
+                        generator.createParameter(
+                            [],
+                            [],
+                            undefined,
+                            generator.createIdentifier("model"),
+                        )
+                    ],
+                    undefined,
+                    block
+                );
+
+                const templateProperty = generator.createProperty(
+                    [createDecorator(Decorators.Template)],
+                    undefined,
+                    generator.createIdentifier("contentTemplate")
+                )
+    
+                assert.strictEqual(expression.toString(), "");
+                assert.strictEqual(removeSpaces((expression.getTemplate({
+                    members: [templateProperty]
+                }) as string)), removeSpaces(`<div style="display:contents"><slot name="contentTemplate"></slot></div>`));
+            });
+
+            mocha.it("Wrap single template in fragment. ArrowFunction", function () {
+                const block = generator.createBlock([
+                    generator.createReturn(
+                        generator.createJsxSelfClosingElement(
+                            generator.createPropertyAccess(
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier("model"),
+                                    generator.createIdentifier("props")
+                                ),
+                                generator.createIdentifier("contentTemplate"),
+                            )
+                        )
+                    )
+                ], false);
+    
+                const expression = generator.createArrowFunction(
+                    [],
+                    [],
+                    [
+                        generator.createParameter(
+                            [],
+                            [],
+                            undefined,
+                            generator.createIdentifier("model"),
+                        )
+                    ],
+                    undefined,
+                    generator.SyntaxKind.EqualsGreaterThanToken,
+                    block
+                );
+
+                const templateProperty = generator.createProperty(
+                    [createDecorator(Decorators.Template)],
+                    undefined,
+                    generator.createIdentifier("contentTemplate")
+                )
+    
+                assert.strictEqual(expression.toString(), "");
+                assert.strictEqual(removeSpaces((expression.getTemplate({
+                    members: [templateProperty]
+                }) as string)), removeSpaces(`<div style="display:contents"><slot name="contentTemplate"></slot></div>`));
+            });
+
         });
 
         
