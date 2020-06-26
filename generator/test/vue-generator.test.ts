@@ -18,6 +18,17 @@ mocha.describe("Vue-generator", function () {
                     generator.createIdentifier("field"));
                 assert.equal(generator.createNonNullExpression(expression).toString(), "this.field")
             });
+
+            mocha.it("import .d module should be ignored", function () { 
+                const expression = generator.createImportDeclaration(
+                    [],
+                    [],
+                    undefined,
+                    generator.createStringLiteral("../dirname/component.types.d")
+                );
+
+                assert.strictEqual(expression.toString(), "");
+            });
         })
 
         mocha.describe("Type expressions should generate empty string", function () { 
