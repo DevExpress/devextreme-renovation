@@ -209,15 +209,42 @@ export class GetAccessor extends BaseGetAccessor {
     }
 }
 
+function processFunctionTemplate(template: string, context: GeneratorContext, options?: toStringOptions) {
+    if (template.startsWith("<slot")) {
+        return (new JsxElement(
+            new JsxOpeningElement(
+                new Identifier("Fragment"),
+                undefined,
+                undefined,
+                context
+            ),
+            [template],
+            new JsxClosingElement(
+                new Identifier("Fragment"),
+                context
+            )
+        )).toString(options);
+    }
+    return template;
+}
+
 export class Function extends AngularFunction { 
     constructor(decorators: Decorator[] | undefined, modifiers: string[] | undefined, asteriskToken: string, name: Identifier, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block, context: GeneratorContext) { 
         super(decorators, modifiers, asteriskToken, name, typeParameters, parameters, new SimpleTypeExpression(""), body, context)
+    }
+
+    getTemplate(options?: toStringOptions, doNotChangeContext?: boolean): string { 
+        return processFunctionTemplate(super.getTemplate(options, doNotChangeContext), this.context, options);
     }
 }
 
 export class ArrowFunction extends AngularArrowFunction { 
     constructor(modifiers: string[]|undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | string |undefined, equalsGreaterThanToken: string, body: Block | Expression, context: GeneratorContext) {
         super(modifiers, typeParameters, parameters, new SimpleTypeExpression(""), equalsGreaterThanToken, body, context);
+    }
+
+    getTemplate(options?: toStringOptions, doNotChangeContext?: boolean): string { 
+        return processFunctionTemplate(super.getTemplate(options, doNotChangeContext), this.context, options);
     }
 }
 
