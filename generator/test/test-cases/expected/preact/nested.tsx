@@ -1,11 +1,11 @@
 declare type Column = { name: string, index?: number }
-declare type Editing = { editEnabled?: boolean }
+declare type GridEditing = { editEnabled?: boolean }
 function view(model: Widget) {
     return <div />;
 }
 export declare type WidgetInputType = {
     collect?: Array<Column | string>;
-    editing?: Editing
+    editing?: GridEditing
 }
 const WidgetInput: WidgetInputType = {
 

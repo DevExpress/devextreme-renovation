@@ -17,7 +17,7 @@ export default {
       );
     },
     __isEditable() {
-      return (editing || this.__getNestedFromChild("DxEditing")?.[0])?.editEnabled;
+      return (editing || this.__getNestedFromChild("DxGridEditing")?.[0])?.editEnabled;
     },
     __restAttributes() {
       return {};
@@ -30,7 +30,7 @@ export default {
     props() {
       return {
         collect: (collect || this.__getNestedFromChild("DxColumn")),
-        editing: (editing || this.__getNestedFromChild("DxEditing")?.[0])
+        editing: (editing || this.__getNestedFromChild("DxGridEditing")?.[0])
       };
     }
   }

@@ -1078,9 +1078,11 @@ class ComponentInput extends BaseComponentInput {
                     }).join(';\n');
                     const isArray = isTypeArray(nestedProps.find(prop => component.name.replace("Nested", "") === prop.name)?.type);
                     const postfix = isArray ? "i" : "o";
+                    const words = typeName.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
+                    const selector = [`dx${postfix}`].concat(words).join("-")
         
                     return `@Directive({
-                        selector: "${parentSelector} dx${postfix}-${typeName.toLowerCase()}"
+                        selector: "${parentSelector} ${selector}"
                     })
                     class ${nestedTypeName} implements ${typeName} {
                         ${fields}

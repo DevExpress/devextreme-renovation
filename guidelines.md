@@ -173,6 +173,7 @@
   |DeclaredType|React|Angilar|Vue|
   |:---:|:---:|:---:|:---:|
   Column|Column|dxi-column/dxo-column|DxColumn
+  GridEditing|GridEditing|dxi-grid-editing/dxo-grid-editing|DxGridEditing
 
   Пример декларации:
   ```typescript

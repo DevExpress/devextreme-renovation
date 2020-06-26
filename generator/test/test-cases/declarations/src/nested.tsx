@@ -5,7 +5,7 @@ declare type Column = {
     index?: number,
 }
 
-declare type Editing = {
+declare type GridEditing = {
     editEnabled?: boolean,
 }
 
@@ -16,7 +16,7 @@ function view(model: Widget) {
 @ComponentBindings()
 class WidgetInput { 
     @Nested() collect?: Array<Column | string>;
-    @Nested() editing?: Editing;
+    @Nested() editing?: GridEditing;
 }
 
 

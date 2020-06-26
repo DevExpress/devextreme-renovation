@@ -1,11 +1,11 @@
 declare type Column = { name: string, index?: number }
-declare type Editing = { editEnabled?: boolean }
+declare type GridEditing = { editEnabled?: boolean }
 function view(model: Widget) {
     return <div />;
 }
 export declare type WidgetInputType = {
     collect?: Array<Column | string>;
-    editing?: Editing;
+    editing?: GridEditing;
     children?: React.ReactNode
 }
 const WidgetInput: WidgetInputType = {
@@ -34,13 +34,13 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
         return (props.collect || __getNestedFromChild("Column"))?.map((el) => typeof el === "string" ? el : el.name);
     }, [props.collect]);
     const __isEditable = useCallback(function __isEditable() {
-        return (props.editing || __getNestedFromChild("Editing")?.[0])?.editEnabled;
+        return (props.editing || __getNestedFromChild("GridEditing")?.[0])?.editEnabled;
     }, [props.editing]);
     const __restAttributes = useCallback(function __restAttributes() {
         const { children, collect, editing, ...restProps } = {
             ...props,
             collect: (props.collect || __getNestedFromChild("Column")),
-            editing: (props.editing || __getNestedFromChild("Editing")?.[0])
+            editing: (props.editing || __getNestedFromChild("GridEditing")?.[0])
         }
         return restProps;
     }, [props]);

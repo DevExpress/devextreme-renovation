@@ -1,5 +1,5 @@
 declare type Column = { name: string, index?: number }
-declare type Editing = { editEnabled?: boolean }
+declare type GridEditing = { editEnabled?: boolean }
 
 
 import { Input, ContentChildren, QueryList, Directive } from "@angular/core"
@@ -11,16 +11,16 @@ class DxColumn implements Column {
   index?: number
 }
 @Directive({
-  selector: "dx-widget dxo-editing"
+  selector: "dx-widget dxo-grid-editing"
 })
-class DxEditing implements Editing {
+class DxGridEditing implements GridEditing {
   editEnabled?: boolean
 }
 class WidgetInput {
   @Input() collect?: Array<Column | string>;
   @ContentChildren(DxColumn) collectNested!: QueryList<DxColumn>;
-  @Input() editing?: Editing;
-  @ContentChildren(DxEditing) editingNested!: QueryList<DxEditing>;
+  @Input() editing?: GridEditing;
+  @ContentChildren(DxGridEditing) editingNested!: QueryList<DxGridEditing>;
 
 }
 
