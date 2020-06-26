@@ -610,10 +610,6 @@ export class ReactComponent extends Component {
         return `typeof ${heritageClause.propsType}`;
     }
 
-    compileDefaultComponentExport() {
-        return this.modifiers.join(" ") === "export" ? `export default ${this.name}` : ``;
-    }
-
     getToStringOptions() {
         return {
             members: this.members,

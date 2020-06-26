@@ -1636,10 +1636,6 @@ export class AngularComponent extends Component {
         `;
     }
 
-    compileDefaultComponentExport() {
-        return this.modifiers.join(" ") === "export" ? `export default ${this.name}` : ``;
-    }
-
     toString() { 
         const props = this.heritageClauses.filter(h => h.isJsxComponent).map(h => h.types.map(t => t.type.toString()));
         
