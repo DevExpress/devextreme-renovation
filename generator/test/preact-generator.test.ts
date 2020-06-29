@@ -65,6 +65,10 @@ mocha.describe("preact-generator", function () {
     mocha.it("export-named", function () {
         this.testGenerator(this.test!.title);
     });
+
+    mocha.it("export-named-api-ref", function () {
+        this.testGenerator(this.test!.title);
+    });
 });
 
 mocha.describe("preact-generator: expressions", function () {

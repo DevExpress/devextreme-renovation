@@ -737,7 +737,9 @@ export class ReactComponent extends Component {
                         })`
                 : ""}
                 );
-            ${this.members.filter(m => m.isApiMethod).length === 0 ? `}` : `});\n${this.modifiers.join(" ")} ${this.name};`}
+            ${this.members.filter(m => m.isApiMethod).length === 0 ? `}` : `});\n${this.modifiers.join(" ")} ${
+                this.modifiers.join(" ") === "export" ? `{${this.name}}` : this.name
+            };`}
             
             ${this.compileDefaultComponentExport()}
 
