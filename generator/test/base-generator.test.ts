@@ -19,6 +19,7 @@ import componentCreator from "./helpers/create-component";
 import { toStringOptions } from "../base-generator/types";
 import { BindingPattern } from "../base-generator/expressions/binding-pattern";
 import { Property, Method } from "../base-generator/expressions/class-members";
+import { Decorators } from "../component_declaration/decorators";
 
 const { createComponentDecorator, createDecorator } = componentCreator(generator);
 
@@ -2218,6 +2219,27 @@ mocha.describe("ComponentInput", function () {
             ]);
 
             assert.deepEqual(this.getWarnings(), ["BaseModel ComponentBindings has property with multiple decorators: prop"]);
+        });
+
+        mocha.it("Ref and ForwardRef props should not throw warnings", function () { 
+            createComponentInput([
+                generator.createProperty(
+                    [
+                        createDecorator(Decorators.Ref),
+                    ],
+                    [],
+                    generator.createIdentifier("refProp")
+                ),
+                generator.createProperty(
+                    [
+                        createDecorator(Decorators.ForwardRef),
+                    ],
+                    [],
+                    generator.createIdentifier("forwardRef")
+                )
+            ]);
+
+            assert.deepEqual(this.getWarnings(), []);
         });
 
         mocha.it("internal state", function () { 

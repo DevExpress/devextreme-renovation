@@ -1,7 +1,8 @@
 import Child from "./forward-ref-child"
-function view({ child, props: { nullableRef } }: RefOnChildrenParent) {
+function view({ child, props: { nullableRef }, state }: RefOnChildrenParent) {
     return <Child childRef={child}
-        nullableRef={nullableRef} />;
+        nullableRef={nullableRef}
+        state={state} />;
 }
 export declare type PropsType = {
     nullableRef?: RefObject<HTMLDivElement>
@@ -10,19 +11,19 @@ const Props: PropsType = {
 
 };
 
-
-import React, { useCallback, useEffect, useRef, RefObject } from 'react';
+import React, { useState, useCallback, useEffect, useRef, RefObject } from 'react';
 
 declare type RestProps = { className?: string; style?: React.CSSProperties;[x: string]: any }
 interface RefOnChildrenParent {
     props: typeof Props & RestProps;
+    state: number;
     child: any;
     restAttributes: RestProps;
-
 }
 
 export default function RefOnChildrenParent(props: typeof Props & RestProps) {
     const child = useRef<HTMLDivElement>()
+    const [__state_state, __state_setState] = useState(10)
 
     const __restAttributes = useCallback(function __restAttributes() {
         const { nullableRef, ...restProps } = props
@@ -35,6 +36,7 @@ export default function RefOnChildrenParent(props: typeof Props & RestProps) {
     return view(
         ({
             props: { ...props },
+            state: __state_state,
             child,
             restAttributes: __restAttributes()
         })

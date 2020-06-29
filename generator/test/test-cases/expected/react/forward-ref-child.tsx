@@ -1,4 +1,3 @@
-
 function view({ props: { childRef, nullableRef } }: RefOnChildrenChild) {
     return <div ref={childRef as any}>
         <div ref={nullableRef as any}></div>
@@ -6,7 +5,8 @@ function view({ props: { childRef, nullableRef } }: RefOnChildrenChild) {
 }
 export declare type PropsType = {
     childRef: RefObject<HTMLDivElement>;
-    nullableRef?: RefObject<HTMLDivElement>
+    nullableRef?: RefObject<HTMLDivElement>;
+    state?: number
 }
 const Props: PropsType = {
 
@@ -23,7 +23,7 @@ interface RefOnChildrenChild {
 
 export default function RefOnChildrenChild(props: typeof Props & RestProps) {
     const __restAttributes = useCallback(function __restAttributes() {
-        const { childRef, nullableRef, ...restProps } = props
+        const { childRef, nullableRef, state, ...restProps } = props
         return restProps;
     }, [props]);
 
