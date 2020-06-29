@@ -16,7 +16,8 @@ import {
 import {
     toStringOptions as BaseToStringOptions,
     GeneratorContext,
-    isTypeArray
+    isTypeArray,
+    extractComplexType
 } from "./base-generator/types";
 import SyntaxKind from "./base-generator/syntaxKind";
 import { Expression, SimpleExpression } from "./base-generator/expressions/base";
@@ -45,6 +46,7 @@ import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressio
 import { BindingPattern, BindingElement } from "./base-generator/expressions/binding-pattern";
 import { processComponentContext, capitalizeFirstLetter, removePlural } from "./base-generator/utils/string";
 import { Decorators } from "./component_declaration/decorators";
+import { warn } from "./utils/messages";
 
 // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
 const VOID_ELEMENTS = 
@@ -1017,7 +1019,7 @@ class Decorator extends BaseDecorator {
             this.name === Decorators.TwoWay || 
             this.name === Decorators.Template || 
             this.name===Decorators.RefProp ||
-            this.name === Decorators.NestedProp ||
+            this.name === Decorators.Nested ||
             this.name ===Decorators.ForwardRefProp
             ) {
             return "@Input()";
@@ -1056,7 +1058,7 @@ function compileCoreImports(members: Array<Property|Method>, context: AngularGen
         m.decorators.some(d =>
             d.name === Decorators.OneWay ||
             d.name === Decorators.RefProp ||
-            d.name === Decorators.NestedProp ||
+            d.name === Decorators.Nested ||
             d.name === Decorators.ForwardRefProp
         )
     )) {
@@ -1102,7 +1104,7 @@ class ComponentInput extends BaseComponentInput {
         this.context = context;
     }
 
-    createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: TypeExpression, initializer?: Expression) {
+    createProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: TypeExpression | string, initializer?: Expression) {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
@@ -1114,8 +1116,34 @@ class ComponentInput extends BaseComponentInput {
         return null;
     }
 
+    processMembers(members: Array<BaseProperty | Method>) {
+        members = super.processMembers(members);
+
+        const nested = members.filter(m => m.decorators.some(d => d.name === Decorators.Nested)) as Property[];
+        nested.forEach(el => {
+            const nestedComp = this.createContentChildrenProperty(el);
+            if (nestedComp) {
+                members.push(nestedComp);
+            }
+        })
+
+        return members;
+    }
+
+    createContentChildrenProperty(property: Property) {
+        const { modifiers, questionOrExclamationToken, initializer, type, _name } = property;
+        const name = _name.toString();
+        
+        const decorator = this.createDecorator(new Call(new Identifier(Decorators.NestedComp), undefined, []), {});
+        const nestedType = extractComplexType(type);
+        if (nestedType === "any") {
+            warn(`One of "${name}" Nested property's types should be complex type`)
+        }
+        return this.createProperty([decorator], modifiers, new Identifier(`${name}Nested`), questionOrExclamationToken, `Dx${nestedType}`, initializer);
+    }
+
     compileNestedComponents() {
-        const nestedProps = this.members.filter(m => m.isNestedProp);
+        const nestedProps = this.members.filter(m => m.isNested);
         const nestedComponents = this.members.filter(m => m.isNestedComp);
 
         const components = this.context.components;
@@ -1255,7 +1283,7 @@ export class Property extends BaseProperty {
         if (this.isRefProp) { 
             return `${componentContext}${this.name}`;
         }
-        if (this.isNestedProp) {
+        if (this.isNested) {
             const indexGetter = isTypeArray(this.type) ?  "" : "?.[0]" ;
             return `(${componentContext}${this.name} || ${componentContext}${this.name}Nested.toArray()${indexGetter})`;
         }
@@ -1274,7 +1302,7 @@ export class Property extends BaseProperty {
     }
 
     get canBeDestructured() { 
-        if (this.isEvent || this.isNestedProp) { 
+        if (this.isEvent || this.isNested) { 
             return false;
         }
         return super.canBeDestructured;

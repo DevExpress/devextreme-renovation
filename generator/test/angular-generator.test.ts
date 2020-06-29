@@ -12,6 +12,8 @@ import { Decorators } from "../component_declaration/decorators";
 import factory from "./helpers/create-component";
 import { TypeExpression } from "../base-generator/expressions/type";
 import { Block } from "../base-generator/expressions/statements";
+import { Method } from "../base-generator/expressions/class-members";
+import sinon from "sinon";
 
 const {
     createComponent,
@@ -4476,4 +4478,103 @@ mocha.describe("Angular generator", function () {
         });
     });
 
+    mocha.describe("Warnings", function () {
+        this.beforeEach(function () { 
+            const warn = sinon.stub(console, "warn");
+            this.warn = warn;
+            this.getWarnings = () => warn.getCalls().map(c => c.args[2]);
+        });
+
+        this.afterEach(function () { 
+            this.warn.restore();
+        });
+
+        function createComponentInput(properties: Array<Property | Method>) { 
+            generator.createClassDeclaration(
+                [generator.createDecorator(generator.createCall(
+                    generator.createIdentifier("ComponentBindings"),
+                    [],
+                    []
+                ))],
+                ["export"],
+                generator.createIdentifier("BaseModel"),
+                [],
+                [],
+                properties
+            );
+        }
+
+        mocha.it("Nested component should not throw warn if one of types is TypeReferenceNode", function() {
+            createComponentInput([
+                generator.createProperty(
+                    [
+                        createDecorator("Nested")
+                    ],
+                    undefined,
+                    generator.createIdentifier("component"),
+                    undefined,
+                    generator.createTypeReferenceNode(generator.createIdentifier("Custom1"))
+                ),
+                generator.createProperty(
+                    [
+                        createDecorator("Nested")
+                    ],
+                    undefined,
+                    generator.createIdentifier("component"),
+                    undefined,
+                    generator.createArrayTypeNode(generator.createTypeReferenceNode(generator.createIdentifier("Custom2")))
+                ),
+                generator.createProperty(
+                    [
+                        createDecorator("Nested")
+                    ],
+                    undefined,
+                    generator.createIdentifier("component"),
+                    undefined,
+                    generator.createUnionTypeNode([
+                        generator.createTypeReferenceNode(generator.createIdentifier("Custom3")),
+                        generator.createIdentifier('string')])
+                ),
+                generator.createProperty(
+                    [
+                        createDecorator("Nested")
+                    ],
+                    undefined,
+                    generator.createIdentifier("component"),
+                    undefined,
+                    generator.createParenthesizedType(generator.createTypeReferenceNode(generator.createIdentifier("Custom4")))
+                ),
+            ]);
+            
+
+            assert.deepEqual(this.getWarnings(), []);
+        });
+
+        mocha.it("Nested component should throw warn with not TypeReferenceNode", function() {
+            createComponentInput([
+                generator.createProperty(
+                    [
+                        createDecorator("Nested")
+                    ],
+                    undefined,
+                    generator.createIdentifier("Custom1"),
+                ),
+                generator.createProperty(
+                    [
+                        createDecorator("Nested")
+                    ],
+                    undefined,
+                    generator.createIdentifier("Custom2"),
+                    undefined,
+                    generator.createIdentifier("string")
+                )
+            ]);
+            
+
+            assert.deepEqual(this.getWarnings(), [
+                "One of \"Custom1\" Nested property's types should be complex type",
+                "One of \"Custom2\" Nested property's types should be complex type",
+            ]);
+        });
+    });
 });

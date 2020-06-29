@@ -118,7 +118,7 @@ export class Property extends BaseProperty {
             this.isRef && !this.inherited ||
             this.isSlot ||
             this.isTemplate ||
-            (this.isNestedProp && !isTypeArray(this.type))
+            (this.isNested && !isTypeArray(this.type))
         ) { 
             return "";
         }
@@ -167,7 +167,7 @@ export class Property extends BaseProperty {
             const name = this.name === "children" ? "default" : this.name;
             return `${componentContext}$slots.${name}`;
         }
-        if (this.isNestedProp) { 
+        if (this.isNested) { 
             const isArray = isTypeArray(this.type);
             const indexGetter = isArray ? "" : "?.[0]";
             let nestedName = capitalizeFirstLetter(this.name);
@@ -185,7 +185,7 @@ export class Property extends BaseProperty {
     }
 
     get canBeDestructured() { 
-        if (this.isEvent || this.isState || this.isRefProp || this.isNestedProp) {
+        if (this.isEvent || this.isState || this.isRefProp || this.isNested) {
             return false;
         }
         return super.canBeDestructured;
@@ -292,9 +292,7 @@ export class VueComponentInput extends ComponentInput {
     }
 
     processMembers(members: (Property | Method)[]) {
-        members = super.processMembers(members);
-        members = members.filter(m => !m.isNestedComp);
-        return members;
+        return super.processMembers(members);
     }
 }
 
@@ -320,7 +318,7 @@ export class VueComponent extends Component {
             ], true));
     }
 
-    createNestedPropGetter(){
+    createNestedGetter(){
         const statements = [new VariableStatement(
             undefined,
             new VariableDeclarationList([

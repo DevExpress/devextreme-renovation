@@ -24,10 +24,10 @@ class DxCustom implements Custom {
 }
 class WidgetInput {
     @Input() columns?: Array<Column | string>;
-    @ContentChildren(DxColumn) columnsNested!: QueryList<DxColumn>;
     @Input() gridEditing?: Editing;
-    @ContentChildren(DxEditing) gridEditingNested!: QueryList<DxEditing>;
     @Input() someArray?: Array<Custom>;
+    @ContentChildren(DxColumn) columnsNested!: QueryList<DxColumn>;
+    @ContentChildren(DxEditing) gridEditingNested!: QueryList<DxEditing>;
     @ContentChildren(DxCustom) someArrayNested!: QueryList<DxCustom>;
 }
 
