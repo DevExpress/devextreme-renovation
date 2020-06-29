@@ -7,7 +7,7 @@ function view(viewModel: Widget) {
                 {viewModel.props.namedSlot}
             </div>
             <div>
-                {viewModel.props.default}
+                {viewModel.props.children}
             </div>
         </div>
     );
@@ -16,7 +16,7 @@ function view(viewModel: Widget) {
 @ComponentBindings()
 class WidgetInput { 
     @Slot() namedSlot?: any;
-    @Slot() default?: any;
+    @Slot() children?: any;
 }
 @Component({
     view: view

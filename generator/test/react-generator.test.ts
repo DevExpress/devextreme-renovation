@@ -335,7 +335,7 @@ mocha.describe("React Component", function () {
                     generator.createProperty(
                         [createDecorator(Decorators.Slot)],
                         [],
-                        generator.createIdentifier("default")
+                        generator.createIdentifier("children")
                     ),
                     generator.createProperty(
                         [createDecorator(Decorators.OneWay)],
@@ -366,7 +366,7 @@ mocha.describe("React Component", function () {
                                 generator.createBindingElement(
                                     undefined,
                                     undefined,
-                                    generator.createIdentifier("default"),
+                                    generator.createIdentifier("children"),
                                     undefined
                                 ),
                                 generator.createBindingElement(
@@ -399,7 +399,7 @@ mocha.describe("React Component", function () {
                         ),
                         generator.createJsxExpression(
                             undefined,
-                            generator.createIdentifier("default")
+                            generator.createIdentifier("children")
                         ),
                         generator.createJsxExpression(
                             undefined,
@@ -413,9 +413,9 @@ mocha.describe("React Component", function () {
             );
 
             assert.strictEqual(getResult(view.toString()), getResult(`
-                ({props:{children: default,p,template}}:Widget) => 
+                ({props:{children,p,template}}:Widget) => 
                     <div >{template()}
-                    {default}
+                    {children}
                     {p}</div>
             `));
         });
@@ -630,51 +630,6 @@ mocha.describe("React Component", function () {
 
             assert.strictEqual(getResult(view.toString()), getResult(`function view(viewModel:Widget){
                 viewModel.p
-            }`));
-        });
-
-        mocha.it("Rename default slot", function () {
-            const component = createComponent(
-                [
-                    generator.createProperty(
-                        [createDecorator(Decorators.Slot)],
-                        [],
-                        generator.createIdentifier("default")
-                    )
-                ]
-            );
-
-            const view = generator.createFunctionDeclaration(
-                [],
-                [],
-                "",
-                generator.createIdentifier("view"),
-                [],
-                [
-                    generator.createParameter(
-                        [],
-                        [],
-                        undefined,
-                        generator.createIdentifier("viewModel"),
-                        undefined,
-                        generator.createKeywordTypeNode(component.name),
-                        undefined
-                    )
-                ],
-                undefined,
-                generator.createBlock([
-                    generator.createPropertyAccess(
-                        generator.createPropertyAccess(
-                            generator.createIdentifier("viewModel"),
-                            generator.createIdentifier("props")
-                        ),
-                        generator.createIdentifier("default")
-                    )
-                ], false)
-            );
-
-            assert.strictEqual(getResult(view.toString()), getResult(`function view(viewModel:Widget){
-                viewModel.props.children
             }`));
         });
 
@@ -1503,66 +1458,6 @@ mocha.describe("Widget in jsx element", function () {
 
     this.afterEach(function () {
         generator.setContext(null);
-    });
-
-    mocha.it("default->children", function () {
-        generator.createClassDeclaration(
-            [createComponentDecorator({})],
-            [],
-            generator.createIdentifier("Widget"),
-            [],
-            [],
-            [
-                generator.createProperty(
-                    [createDecorator(Decorators.OneWay)],
-                    [],
-                    generator.createIdentifier("p"),
-                    undefined,
-                    undefined,
-                    undefined
-                ),
-                generator.createProperty(
-                    [createDecorator(Decorators.Slot)],
-                    [],
-                    generator.createIdentifier("default"),
-                    undefined,
-                    undefined,
-                    undefined
-                )
-            ]
-        );
-
-        const element = generator.createJsxSelfClosingElement(
-            generator.createIdentifier("Widget"),
-            [],
-            [
-                generator.createJsxAttribute(
-                    generator.createIdentifier("p"),
-                    generator.createJsxExpression(
-                        undefined,
-                        generator.createIdentifier("value1")
-                    )
-                ),
-                generator.createJsxAttribute(
-                    generator.createIdentifier("default"),
-                    generator.createJsxExpression(
-                        undefined,
-                        generator.createIdentifier("value2")
-                    )
-                )
-            ]
-        );
-
-        assert.strictEqual(
-            getResult(element.toString({
-                members: [],
-            })),
-            getResult(`
-            <Widget
-                p={value1}
-                children={value2}
-            />`)
-        );
     });
 
     mocha.it("Do not rename attribute if it has same name with getter", function () {

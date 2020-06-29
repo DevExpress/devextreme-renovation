@@ -677,7 +677,7 @@ mocha.describe("Angular generator", function () {
                 this.slotProperty = generator.createProperty(
                     [createDecorator("Slot")],
                     [],
-                    generator.createIdentifier("default"),
+                    generator.createIdentifier("children"),
                     generator.SyntaxKind.QuestionToken,
                     undefined,
                     undefined
@@ -685,7 +685,7 @@ mocha.describe("Angular generator", function () {
 
                 this.slotExpression = generator.createPropertyAccess(
                     generator.createIdentifier("viewModel"),
-                    generator.createIdentifier("default")
+                    generator.createIdentifier("children")
                 );
 
 
@@ -721,8 +721,8 @@ mocha.describe("Angular generator", function () {
                 )]);
 
                 assert.strictEqual(removeSpaces(element.children[0].toString(this.toStringOptions)), removeSpaces(`
-                    <div #slotDefault style="display: contents"><ng-content></ng-content></div>
-                    <ng-container *ngIf="!(default)">{{alternative}}</ng-container>
+                    <div #slotChildren style="display: contents"><ng-content></ng-content></div>
+                    <ng-container *ngIf="!(children)">{{alternative}}</ng-container>
               `));
                 
             });
@@ -1052,37 +1052,6 @@ mocha.describe("Angular generator", function () {
                 }), `<span ><div #slotName style="display: contents"><ng-content select="[name]"></ng-content></div></span>`);
             });
 
-            mocha.it("default slot", function () {
-                const expression = generator.createJsxElement(
-                    generator.createJsxOpeningElement(
-                        generator.createIdentifier("span"),
-                        undefined,
-                        []
-                    ),
-                    [generator.createJsxExpression(
-                        undefined,
-                        generator.createPropertyAccess(
-                            generator.createIdentifier("viewModel"),
-                            generator.createIdentifier("default")
-                        )
-                    )],
-                    generator.createJsxClosingElement(generator.createIdentifier("span"))
-                );
-
-                const slotProperty = generator.createProperty(
-                    [createDecorator("Slot")],
-                    [],
-                    generator.createIdentifier("default"),
-                    generator.SyntaxKind.QuestionToken,
-                    undefined,
-                    generator.createFalse()
-                );
-
-                assert.strictEqual(expression.toString({
-                    members: [slotProperty]
-                }), `<span ><div #slotDefault style="display: contents"><ng-content></ng-content></div></span>`);
-            });
-
             mocha.it("children slot", function () {
                 const expression = generator.createJsxElement(
                     generator.createJsxOpeningElement(
@@ -1329,7 +1298,7 @@ mocha.describe("Angular generator", function () {
                         const slotProperty = generator.createProperty(
                             [createDecorator("Slot")],
                             [],
-                            generator.createIdentifier("default")
+                            generator.createIdentifier("children")
                         );
                         const element = generator.createJsxSelfClosingElement(
                             generator.createIdentifier("Widget"),
@@ -1339,7 +1308,7 @@ mocha.describe("Angular generator", function () {
                                     generator.createIdentifier("children"),
                                     generator.createPropertyAccess(
                                         generator.createIdentifier("props"),
-                                        generator.createIdentifier("default")
+                                        generator.createIdentifier("children")
                                     )
                                 )
                             ]
@@ -1351,7 +1320,7 @@ mocha.describe("Angular generator", function () {
                                 newComponentContext: "",
                                 members: [slotProperty]
                             }),
-                            `<dx-widget ><div #slotDefault style="display: contents"><ng-content></ng-content></div></dx-widget>`
+                            `<dx-widget ><div #slotChildren style="display: contents"><ng-content></ng-content></div></dx-widget>`
                         );
                     });
 
@@ -1359,7 +1328,7 @@ mocha.describe("Angular generator", function () {
                         const slotProperty = generator.createProperty(
                             [createDecorator("Slot")],
                             [],
-                            generator.createIdentifier("default")
+                            generator.createIdentifier("children")
                         );
     
                         const namedSlot = generator.createProperty(
@@ -1376,7 +1345,7 @@ mocha.describe("Angular generator", function () {
                                     generator.createIdentifier("children"),
                                     generator.createPropertyAccess(
                                         generator.createIdentifier("props"),
-                                        generator.createIdentifier("default")
+                                        generator.createIdentifier("children")
                                     )
                                 ),
                                 generator.createJsxAttribute(
@@ -1397,7 +1366,7 @@ mocha.describe("Angular generator", function () {
                             })),
                             removeSpaces(`
                             <dx-widget >
-                                <div #slotDefault style="display: contents">
+                                <div #slotChildren style="display: contents">
                                     <ng-content></ng-content>
                                 </div>
                                 <div #slotNamedSlot style="display: contents">
@@ -1440,7 +1409,7 @@ mocha.describe("Angular generator", function () {
                         const slotProperty = generator.createProperty(
                             [createDecorator("Slot")],
                             [],
-                            generator.createIdentifier("default")
+                            generator.createIdentifier("children")
                         );
 
                         const element = generator.createJsxElement(
@@ -1452,7 +1421,7 @@ mocha.describe("Angular generator", function () {
                                         generator.createIdentifier("children"),
                                         generator.createPropertyAccess(
                                             generator.createIdentifier("props"),
-                                            generator.createIdentifier("default")
+                                            generator.createIdentifier("children")
                                         )
                                     )
                                 ]
@@ -1469,7 +1438,7 @@ mocha.describe("Angular generator", function () {
                                 newComponentContext: "",
                                 members: [slotProperty]
                             }),
-                            `<dx-widget ><div #slotDefault style="display: contents"><ng-content></ng-content></div></dx-widget>`
+                            `<dx-widget ><div #slotChildren style="display: contents"><ng-content></ng-content></div></dx-widget>`
                         );
                     });
     

@@ -203,13 +203,6 @@ export class Property extends BaseProperty {
         return this.defaultDeclaration();
     }
 
-    get name(): string {
-        if (this.isSlot && this._name.toString() === "default") {
-            return "children";
-        }
-        return super.name;
-    }
-
     typeDeclaration() {
         let type = this.type;
 
@@ -341,15 +334,6 @@ export class ReactComponent extends Component {
                     p._name,
                 )
             )
-            if (p.isSlot && !p.canBeDestructured) {
-                bindingElements.push(
-                    new BindingElement(
-                        undefined,
-                        p._name,
-                        'defaultSlot',
-                    )
-                )
-            }
             return bindingElements;
         }, [] as BindingElement[]).concat([
             new BindingElement(

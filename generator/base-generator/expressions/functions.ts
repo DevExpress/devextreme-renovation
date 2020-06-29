@@ -134,9 +134,7 @@ export class BaseFunction extends Expression {
                             const member = members.find(m => m._name.toString() === (e.propertyName || e.name).toString());
                             if (member) {
                                 member.scope = "";
-                                if (member.isSlot) {
-                                    e.propertyName = new Identifier(member.name);
-                                } else if (e.propertyName) {
+                                if (e.propertyName) {
                                     member._name = e.name as Identifier;
                                 }
                             }

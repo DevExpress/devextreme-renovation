@@ -5,10 +5,10 @@ class WidgetInput {
     get namedSlot() {
         return this.slotNamedSlot?.nativeElement?.innerHTML.trim();
     };
-    @ViewChild("slotDefault") slotDefault?: ElementRef<HTMLDivElement>;
+    @ViewChild("slotChildren") slotChildren?: ElementRef<HTMLDivElement>;
 
-    get default() {
-        return this.slotDefault?.nativeElement?.innerHTML.trim();
+    get children() {
+        return this.slotChildren?.nativeElement?.innerHTML.trim();
     };
 }
 
@@ -19,10 +19,10 @@ import { CommonModule } from "@angular/common";
     selector: "dx-widget",
     template: `<div>
         <div>
-            <div #slotNamedSlot style="display: contents"><ng-content select="[namedSlot]"></ng-content></div>
+            <div #slotNamedSlot style="display:contents"><ng-content select="[namedSlot]"></ng-content></div>
         </div>
         <div>
-            <div #slotDefault style="display:contents"><ng-content></ng-content></div>
+            <div #slotChildren style="display:contents"><ng-content></ng-content></div>
         </div>
     </div>`
 })

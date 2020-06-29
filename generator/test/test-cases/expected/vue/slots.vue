@@ -20,7 +20,7 @@ export default {
     props(){
       return {
         namedSlot:this.$slots.namedSlot,
-        default:this.$slots.default
+        children:this.$slots.default
       };
     }
   }
