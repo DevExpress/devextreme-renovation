@@ -1,5 +1,9 @@
 <template>
-  <Child :childRef="forwardRef_child" :nullableRef="forwardRef_nullableRef" />
+  <Child 
+    :childRef="forwardRef_child" 
+    :nullableRef="forwardRef_nullableRef" 
+    :state="state" 
+  />
 </template>
 <script>
 import Child from "./forward-ref-child";
@@ -15,6 +19,11 @@ export default {
     Child
   },
   props: Props,
+  data() {
+    return {
+      state: 10
+    };
+  },
 
   watch: {
     nullableRef: ["__schedule_effect"]

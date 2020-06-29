@@ -1,4 +1,4 @@
-<template>
+ <template>
   <div ref="childRef">
     <div ref="nullableRef"></div>
   </div>
@@ -11,6 +11,9 @@ const Props = {
   },
   nullableRef: {
     type: Function
+  },
+  state: {
+    type: Number
   }
 };
 
@@ -29,7 +32,8 @@ export default {
     props() {
       return {
         childRef: this.$refs.childRef,
-        nullableRef: this.$refs.nullableRef
+        nullableRef: this.$refs.nullableRef,
+        state: this.state
       };
     },
     __forwardRef() {
