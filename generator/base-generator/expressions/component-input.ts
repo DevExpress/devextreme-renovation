@@ -108,7 +108,7 @@ export class ComponentInput extends Class implements Heritable {
         return [];
     }
 
-    processMembers(members: Array<Property | Method>) { 
+    processMembers(members: Array<Property | Method>) {
         members.forEach(m => {     
             const refIndex = m.decorators.findIndex(d => d.name === Decorators.Ref);
             if (refIndex > -1) { 
@@ -119,43 +119,7 @@ export class ComponentInput extends Class implements Heritable {
             if (forwardRefIndex > -1) { 
                 m.decorators[forwardRefIndex] = this.createDecorator(new Call(new Identifier(Decorators.ForwardRefProp), undefined, []), {});
             }
-
-            if (!(m instanceof Property)) {
-                warn(`${this.name} ComponentBindings has non-property member: ${m._name}`);
-                return;
-            }
-            if (m.decorators.length !== 1) { 
-                if (m.decorators.length === 0) {
-                    warn(`${this.name} ComponentBindings has property without decorator: ${m._name}`);
-                } else { 
-                    warn(`${this.name} ComponentBindings has property with multiple decorators: ${m._name}`);
-                }
-            } else if (getProps([m]).length === 0) {
-                warn(`${this.name} ComponentBindings has property "${m._name}" with incorrect decorator: ${m.decorators[0].name}`);
-            }
-
-            if (RESERVED_NAMES.some(n => n === m._name.toString())) { 
-                warn(`${this.name} ComponentBindings has property with reserved name: ${m._name}`);
-            }
         });
-
-        // members = members.reduce((acc, m) => {
-
-        //     const decorIndex = m.decorators.findIndex(d => d.name === Decorators.Nested);
-        //     if (decorIndex >= 0 && m instanceof Property) {
-        //         // const component = this.createNestedComponent
-                
-        //         // const nestedCompDecorators = [...m.decorators];
-        //         // nestedCompDecorators[decorIndex] = this.createDecorator(new Call(new Identifier(Decorators.NestedComp), undefined, []), {})
-        //         // const decorator = this.createDecorator(new Call(new Identifier(Decorators.NestedComp), undefined, []), {});
-        //         const nestedComp = this.createNestedComponent([] ,m.modifiers, m._name, m.questionOrExclamationToken, m.type, undefined);
-
-        //         acc.push(nestedComp);
-        //     } else {
-        //         acc.push(m);
-        //     }
-        //     return acc;
-        // }, [] as Array<Property | Method>)
 
         const nested = members.filter(m => m.decorators.some(d => d.name === Decorators.Nested)) as Property[];
         nested.forEach(el => {
@@ -166,6 +130,26 @@ export class ComponentInput extends Class implements Heritable {
         })
         if (nested.length) {
         }
+
+        members.forEach(m => {     
+            if (!(m instanceof Property)) {
+                warn(`${this.name} ComponentBindings has non-property member: ${m._name}`);
+                return;
+            }
+            if (m.decorators.length !== 1) { 
+                if (m.decorators.length === 0) {
+                    warn(`${this.name} ComponentBindings has property without decorator: ${m._name}`);
+                } else { 
+                    warn(`${this.name} ComponentBindings has property with multiple decorators: ${m._name}`);
+                }
+            } else if (getProps([m]).length === 0 && !m.isNestedComp) {
+                warn(`${this.name} ComponentBindings has property "${m._name}" with incorrect decorator: ${m.decorators[0].name}`);
+            }
+
+            if (RESERVED_NAMES.some(n => n === m._name.toString())) { 
+                warn(`${this.name} ComponentBindings has property with reserved name: ${m._name}`);
+            }
+        });
 
         return inheritMembers(this.heritageClauses, super.processMembers(members.concat(
             members.filter(m => m.isState).reduce((properties: Property[], p) => {

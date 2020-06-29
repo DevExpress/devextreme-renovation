@@ -1,4 +1,4 @@
-import { Component, ComponentBindings, JSXComponent, ForwardRef } from "../../../../component_declaration/common";
+import { Component, ComponentBindings, JSXComponent, ForwardRef, OneWay } from "../../../../component_declaration/common";
 
 
 function view({ props: { childRef, nullableRef } }: RefOnChildrenChild) {
@@ -11,6 +11,7 @@ function view({ props: { childRef, nullableRef } }: RefOnChildrenChild) {
 class Props { 
     @ForwardRef() childRef!: HTMLDivElement;
     @ForwardRef() nullableRef?: HTMLDivElement;
+    @OneWay() state?: number;
 }
 
 @Component({
