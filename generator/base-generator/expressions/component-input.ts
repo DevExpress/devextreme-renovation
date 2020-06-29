@@ -9,7 +9,7 @@ import { capitalizeFirstLetter } from "../utils/string";
 import { Decorator } from "./decorator";
 import { warn } from "../../utils/messages";
 import { getProps } from "./component";
-import { GeneratorContext, extractComplexType } from "../types";
+import { GeneratorContext } from "../types";
 import { Decorators } from "../../component_declaration/decorators";
 
 const RESERVED_NAMES = [
@@ -44,16 +44,8 @@ export class ComponentInput extends Class implements Heritable {
         return new Decorator(expression, context);
     }
 
-    createNestedProperty(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: string | TypeExpression, initializer?: Expression) {
-        return this.createProperty(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
-    }
-
-    createNestedComponent(decorators: Decorator[], modifiers: string[] | undefined, name: Identifier, questionOrExclamationToken?: string, type?: string | TypeExpression, initializer?: Expression) {
-        const nestedType = extractComplexType(type);
-        if (nestedType === "any") {
-            warn(`One of "${name}" Nested property's types should be complex type`)
-        }
-        return this.createProperty(decorators, modifiers, new Identifier(`${name}Nested`), questionOrExclamationToken, `Dx${nestedType}`, initializer);
+    createNestedComponent(property: Property): Property | null {
+        return null;
     }
 
     buildChangeStateType(stateMember: Property) {
@@ -118,6 +110,16 @@ export class ComponentInput extends Class implements Heritable {
 
     processMembers(members: Array<Property | Method>) { 
         members.forEach(m => {     
+            const refIndex = m.decorators.findIndex(d => d.name === Decorators.Ref);
+            if (refIndex > -1) { 
+                m.decorators[refIndex] = this.createDecorator(new Call(new Identifier(Decorators.RefProp), undefined, []), {});
+            }
+
+            const forwardRefIndex = m.decorators.findIndex(d => d.name === "ForwardRef");
+            if (forwardRefIndex > -1) { 
+                m.decorators[forwardRefIndex] = this.createDecorator(new Call(new Identifier(Decorators.ForwardRefProp), undefined, []), {});
+            }
+
             if (!(m instanceof Property)) {
                 warn(`${this.name} ComponentBindings has non-property member: ${m._name}`);
                 return;
@@ -137,34 +139,33 @@ export class ComponentInput extends Class implements Heritable {
             }
         });
 
-        members = members.reduce((acc, m) => {
-            const refIndex = m.decorators.findIndex(d => d.name === Decorators.Ref);
-            if (refIndex > -1) { 
-                m.decorators[refIndex] = this.createDecorator(new Call(new Identifier(Decorators.RefProp), undefined, []), {});
-            }
+        // members = members.reduce((acc, m) => {
 
-            const forwardRefIndex = m.decorators.findIndex(d => d.name === "ForwardRef");
-            if (forwardRefIndex > -1) { 
-                m.decorators[forwardRefIndex] = this.createDecorator(new Call(new Identifier(Decorators.ForwardRefProp), undefined, []), {});
-            }
-
-            const decorIndex = m.decorators.findIndex(d => d.name === Decorators.Nested);
-            if (decorIndex >= 0 && m instanceof Property) {
-                const nestedPropDecorators = [...m.decorators];
-                nestedPropDecorators[decorIndex] = this.createDecorator(new Call(new Identifier(Decorators.NestedProp), undefined, []), {})
-                const nestedProp = this.createNestedProperty(nestedPropDecorators ,m.modifiers, m._name, m.questionOrExclamationToken, m.type, undefined);
+        //     const decorIndex = m.decorators.findIndex(d => d.name === Decorators.Nested);
+        //     if (decorIndex >= 0 && m instanceof Property) {
+        //         // const component = this.createNestedComponent
                 
-                const nestedCompDecorators = [...m.decorators];
-                nestedCompDecorators[decorIndex] = this.createDecorator(new Call(new Identifier(Decorators.NestedComp), undefined, []), {})
-                const nestedComp = this.createNestedComponent(nestedCompDecorators ,m.modifiers, m._name, m.questionOrExclamationToken, m.type, undefined);
+        //         // const nestedCompDecorators = [...m.decorators];
+        //         // nestedCompDecorators[decorIndex] = this.createDecorator(new Call(new Identifier(Decorators.NestedComp), undefined, []), {})
+        //         // const decorator = this.createDecorator(new Call(new Identifier(Decorators.NestedComp), undefined, []), {});
+        //         const nestedComp = this.createNestedComponent([] ,m.modifiers, m._name, m.questionOrExclamationToken, m.type, undefined);
 
-                acc.push(nestedProp);
-                acc.push(nestedComp);
-            } else {
-                acc.push(m);
+        //         acc.push(nestedComp);
+        //     } else {
+        //         acc.push(m);
+        //     }
+        //     return acc;
+        // }, [] as Array<Property | Method>)
+
+        const nested = members.filter(m => m.decorators.some(d => d.name === Decorators.Nested)) as Property[];
+        nested.forEach(el => {
+            const nestedComp = this.createNestedComponent(el);
+            if (nestedComp) {
+                members.push(nestedComp);
             }
-            return acc;
-        }, [] as Array<Property | Method>)
+        })
+        if (nested.length) {
+        }
 
         return inheritMembers(this.heritageClauses, super.processMembers(members.concat(
             members.filter(m => m.isState).reduce((properties: Property[], p) => {

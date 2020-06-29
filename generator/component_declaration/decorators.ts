@@ -5,7 +5,6 @@ export const enum Decorators  {
     OneWay = "OneWay",
     TwoWay = "TwoWay",
     Nested = "Nested",
-    NestedProp = "NestedProp",
     NestedComp = "NestedComp",
     Slot = "Slot",
     Template = "Template",
