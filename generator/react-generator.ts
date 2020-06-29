@@ -308,7 +308,7 @@ export class Property extends BaseProperty {
         } else if (this.isState) {
             return [getPropName(this.name), getLocalStateName(this.name), getPropName(`${this.name}Change`)];
         } else if (this.isNested) {
-            return [getPropName(this.name)];
+            return [getPropName(this.name), getPropName("children")];
         }
         throw `Can't parse property: ${this._name}`;
     }

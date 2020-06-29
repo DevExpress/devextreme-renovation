@@ -29,10 +29,10 @@ interface Widget {
 export default function Widget(props: typeof WidgetInput & RestProps) {
     const getColumns = useCallback(function getColumns(): any {
         return (props.columns || __getNestedFromChild<Column>("Column"))?.map((el) => typeof el === "string" ? el : el.name);
-    }, [props.columns]);
+    }, [props.columns, props.children]);
     const __isEditable = useCallback(function __isEditable(): any {
         return (props.gridEditing || __getNestedFromChild<Editing>("GridEditing")?.[0])?.editEnabled;
-    }, [props.gridEditing]);
+    }, [props.gridEditing, props.children]);
     const __restAttributes = useCallback(function __restAttributes(): RestProps {
         const { children, columns, gridEditing, someArray, ...restProps } = {
             ...props,
