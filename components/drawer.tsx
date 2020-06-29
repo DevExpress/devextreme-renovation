@@ -11,7 +11,7 @@ export class DrawerInput {
   @TwoWay() opened?: boolean;
 
   @Slot() drawer: any;
-  @Slot() default: any;
+  @Slot() children: any;
 }
 
 @Component({
@@ -50,7 +50,7 @@ function view(viewModel: Drawer) {
       <div
         className="dx-drawer-content"
         onClick={viewModel.onClickHandler}>
-        { viewModel.props.default }
+        { viewModel.props.children }
       </div>
     </div>
   );

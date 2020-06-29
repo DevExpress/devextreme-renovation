@@ -1731,7 +1731,7 @@ mocha.describe("Vue-generator", function () {
                     this.slotProperty = generator.createProperty(
                         [createDecorator("Slot")],
                         [],
-                        generator.createIdentifier("default"),
+                        generator.createIdentifier("children"),
                         generator.SyntaxKind.QuestionToken,
                         undefined,
                         undefined
@@ -1739,7 +1739,7 @@ mocha.describe("Vue-generator", function () {
     
                     this.slotExpression = generator.createPropertyAccess(
                         generator.createIdentifier("viewModel"),
-                        generator.createIdentifier("default")
+                        generator.createIdentifier("children")
                     );
     
     
@@ -2442,43 +2442,6 @@ mocha.describe("Vue-generator", function () {
         });
 
         mocha.describe("Slot", function () {
-            mocha.it("defaultSlot", function () {
-                const expression = generator.createJsxElement(
-                    generator.createJsxOpeningElement(
-                        generator.createIdentifier("div"),
-                        [],
-                        []
-                    ),
-                    [
-                        generator.createJsxExpression(
-                            undefined,
-                            generator.createPropertyAccess(
-                                generator.createIdentifier("viewModel"),
-                                generator.createIdentifier("default")
-                            )
-                        )
-                    ],
-                    generator.createJsxClosingElement(
-                        generator.createIdentifier("div")
-                    )
-                )
-    
-                const slotProperty = generator.createProperty(
-                    [createDecorator("Slot")],
-                    [],
-                    generator.createIdentifier("default"),
-                    generator.SyntaxKind.QuestionToken,
-                    undefined,
-                    undefined
-                );
-    
-                assert.strictEqual(expression.toString({
-                    members: [slotProperty],
-                    componentContext: "viewModel",
-                    newComponentContext: ""
-                }), `<div ><slot></slot></div>`);
-            });
-
             mocha.it("children slot is default", function () {
                 const expression = generator.createJsxElement(
                     generator.createJsxOpeningElement(
@@ -2707,7 +2670,7 @@ mocha.describe("Vue-generator", function () {
                     const slotProperty = generator.createProperty(
                         [createDecorator("Slot")],
                         [],
-                        generator.createIdentifier("default")
+                        generator.createIdentifier("children")
                     );
                     const element = generator.createJsxSelfClosingElement(
                         generator.createIdentifier("Widget"),
@@ -2717,7 +2680,7 @@ mocha.describe("Vue-generator", function () {
                                 generator.createIdentifier("children"),
                                 generator.createPropertyAccess(
                                     generator.createIdentifier("props"),
-                                    generator.createIdentifier("default")
+                                    generator.createIdentifier("children")
                                 )
                             )
                         ]
@@ -2737,7 +2700,7 @@ mocha.describe("Vue-generator", function () {
                     const slotProperty = generator.createProperty(
                         [createDecorator("Slot")],
                         [],
-                        generator.createIdentifier("default")
+                        generator.createIdentifier("children")
                     );
 
                     const namedSlot = generator.createProperty(
@@ -2754,7 +2717,7 @@ mocha.describe("Vue-generator", function () {
                                 generator.createIdentifier("children"),
                                 generator.createPropertyAccess(
                                     generator.createIdentifier("props"),
-                                    generator.createIdentifier("default")
+                                    generator.createIdentifier("children")
                                 )
                             ),
                             generator.createJsxAttribute(
@@ -2810,7 +2773,7 @@ mocha.describe("Vue-generator", function () {
                     const slotProperty = generator.createProperty(
                         [createDecorator("Slot")],
                         [],
-                        generator.createIdentifier("default")
+                        generator.createIdentifier("children")
                     );
 
                     const element = generator.createJsxElement(
@@ -2822,7 +2785,7 @@ mocha.describe("Vue-generator", function () {
                                     generator.createIdentifier("children"),
                                     generator.createPropertyAccess(
                                         generator.createIdentifier("props"),
-                                        generator.createIdentifier("default")
+                                        generator.createIdentifier("children")
                                     )
                                 )
                             ]

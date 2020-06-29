@@ -1211,7 +1211,7 @@ export class JsxChildExpression extends BaseJsxChildExpression {
     }
 
     compileSlot(slot: Property) {
-        if (slot.name.toString() === "default" || slot.name.toString() === "children") {
+        if (slot.name.toString() === "children") {
             return `<slot></slot>`;
         }
         return `<slot name="${slot.name}"></slot>`;

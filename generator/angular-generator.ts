@@ -671,7 +671,7 @@ export class JsxChildExpression extends JsxExpression {
     }
 
     compileSlot(slot: Property) {
-        const slotValue = slot.name.toString() === "default" || slot.name.toString() === "children"
+        const slotValue = slot.name.toString() === "children"
             ? "<ng-content></ng-content>"
             : `<ng-content select="[${slot.name}]"></ng-content>`;
         
