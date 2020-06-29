@@ -61,6 +61,8 @@ import { PropertyAssignment, SpreadAssignment } from "./base-generator/expressio
 import { getModuleRelativePath } from "./base-generator/utils/path-utils";
 import { Interface } from "./base-generator/expressions/interface";
 import { VariableStatement, VariableDeclarationList } from "./base-generator/expressions/variables";
+import { ImportClause, ImportDeclaration as BaseImportDeclaration } from "./base-generator/expressions/import";
+import path from "path";
 
 function calculatePropertyType(type: TypeExpression | string): string {
     if (type instanceof SimpleTypeExpression) {
@@ -223,15 +225,42 @@ export class GetAccessor extends BaseGetAccessor {
     }
 }
 
+function processFunctionTemplate(template: string, context: GeneratorContext, options?: toStringOptions) {
+    if (template.startsWith("<slot")) {
+        return (new JsxElement(
+            new JsxOpeningElement(
+                new Identifier("Fragment"),
+                undefined,
+                undefined,
+                context
+            ),
+            [template],
+            new JsxClosingElement(
+                new Identifier("Fragment"),
+                context
+            )
+        )).toString(options);
+    }
+    return template;
+}
+
 export class Function extends AngularFunction { 
     constructor(decorators: Decorator[] | undefined, modifiers: string[] | undefined, asteriskToken: string, name: Identifier, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block, context: GeneratorContext) { 
         super(decorators, modifiers, asteriskToken, name, typeParameters, parameters, new SimpleTypeExpression(""), body, context)
+    }
+
+    getTemplate(options?: toStringOptions, doNotChangeContext?: boolean): string { 
+        return processFunctionTemplate(super.getTemplate(options, doNotChangeContext), this.context, options);
     }
 }
 
 export class ArrowFunction extends AngularArrowFunction { 
     constructor(modifiers: string[]|undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | string |undefined, equalsGreaterThanToken: string, body: Block | Expression, context: GeneratorContext) {
         super(modifiers, typeParameters, parameters, new SimpleTypeExpression(""), equalsGreaterThanToken, body, context);
+    }
+
+    getTemplate(options?: toStringOptions, doNotChangeContext?: boolean): string { 
+        return processFunctionTemplate(super.getTemplate(options, doNotChangeContext), this.context, options);
     }
 }
 
@@ -747,6 +776,16 @@ export class VueComponent extends Component {
 
         return imports.join(";\n");
     }
+
+    compileComponentExport(statements: string[]) {
+        const exportClause = this.modifiers.join(" ");
+        const head = exportClause === "export" ? `export const ${this.name} =` : exportClause;
+        const tail = exportClause === "export" ? `export default ${this.name}` : ``;
+        return `${head} {
+            ${statements.join(",\n")}
+        }
+        ${tail}`;
+    }
     
     toString() { 
         this.compileTemplate();
@@ -771,9 +810,7 @@ export class VueComponent extends Component {
         ${this.compileImports()}
         ${this.compileDefaultOptionsMethod(this.defaultOptionRules ? this.defaultOptionRules.toString() : "[]", [])}
         ${this.compileDefaultProps()}
-        ${this.modifiers.join(" ")} {
-            ${statements.join(",\n")}
-        }`;
+        ${this.compileComponentExport(statements)}`;
     }
 }
 
@@ -1127,6 +1164,15 @@ export class ClosingTemplateWrapperElement extends JsxClosingElement {
     }
 }
 
+export class ImportDeclaration extends BaseImportDeclaration { 
+    toString() { 
+        if (path.extname(this.moduleSpecifier.expression.toString()) === ".d") { 
+            return "";
+        }
+        return super.toString();
+    }
+}
+
 export class JsxChildExpression extends BaseJsxChildExpression { 
 
     createJsxExpression(statement: Expression) { 
@@ -1327,6 +1373,10 @@ class VueGenerator extends BaseGenerator {
 
     createNonNullExpression(expression: Expression) {
         return new NonNullExpression(expression);
+    }
+
+    createImportDeclarationCore(decorators: Decorator[] | undefined, modifiers: string[] | undefined, importClause: ImportClause, moduleSpecifier: StringLiteral) {
+        return new ImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
     }
 
     createKeywordTypeNode(kind: string) {

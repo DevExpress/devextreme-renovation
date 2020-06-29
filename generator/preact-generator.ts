@@ -82,6 +82,10 @@ export class PreactComponent extends ReactComponent {
     createNestedPropGetter() {
         return null;
     }
+
+    compileDefaultComponentExport() {
+        return "";
+    }
 }
 
 class JQueryComponent {
@@ -149,7 +153,10 @@ class JQueryComponent {
         }
 
         const relativePath = getModuleRelativePath(context.dirname!, context.path!);
-        imports.push(`import ${this.source.name}Component from '${processModuleFileName(relativePath.replace(path.extname(relativePath), ''))}'`);
+        const defaultImport = this.source.modifiers.indexOf('default') !== -1;
+        const widget = this.source.name;
+        const widgetComponent = `${widget}Component`;
+        imports.push(`import ${defaultImport ? `${widgetComponent}` : `{ ${widget} as ${widgetComponent} }` } from '${processModuleFileName(relativePath.replace(path.extname(relativePath), ''))}'`);
 
         return imports.join(";\n");
     }

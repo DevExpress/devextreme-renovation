@@ -262,6 +262,10 @@ export default class Generator {
         return new NamespaceImport(name);
     }
 
+    createImportDeclarationCore(decorators: Decorator[] | undefined, modifiers: string[] | undefined, importClause: ImportClause, moduleSpecifier: StringLiteral) {
+        return new ImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
+    }
+
     createImportDeclaration(decorators: Decorator[]|undefined, modifiers: string[]|undefined, importClause: ImportClause=new ImportClause(), moduleSpecifier: StringLiteral) {
         if (moduleSpecifier.toString().indexOf("component_declaration/common") >= 0) {
             return "";
@@ -316,7 +320,7 @@ export default class Generator {
             }
         }
 
-        return new ImportDeclaration(decorators, modifiers, importClause, moduleSpecifier);
+        return this.createImportDeclarationCore(decorators, modifiers, importClause, moduleSpecifier);
     }
 
     createImportSpecifier(propertyName: Identifier | undefined, name: Identifier) {

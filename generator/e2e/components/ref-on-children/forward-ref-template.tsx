@@ -1,9 +1,7 @@
-import { Component, ComponentBindings, JSXComponent, Effect, Template, Fragment, ForwardRef } from "../../../component_declaration/common";
+import { Component, ComponentBindings, JSXComponent, Effect, Template, ForwardRef } from "../../../component_declaration/common";
 
 function view({ props: { contentTemplate: Template }, child }: ForwardRefTemplate) { 
-    return <Fragment>
-        <Template childRef={child} />
-    </Fragment>;
+    return <Template childRef={child} />;
 }
 
 @ComponentBindings()

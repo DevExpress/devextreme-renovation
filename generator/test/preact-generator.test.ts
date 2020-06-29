@@ -57,6 +57,14 @@ mocha.describe("preact-generator", function () {
     mocha.it("nested", function () {
         this.testGenerator(this.test!.title);
     });
+
+    mocha.it("export-default", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("export-named", function () {
+        this.testGenerator(this.test!.title);
+    });
 });
 
 mocha.describe("preact-generator: expressions", function () {
@@ -289,6 +297,10 @@ mocha.describe("preact-generator: jQuery generation", function () {
     });
 
     mocha.it("jquery-custom-base-with-module-import", function () {
+        this.testGenerator(this.test!.title);
+    });
+
+    mocha.it("jquery-export-named", function () {
         this.testGenerator(this.test!.title);
     });
 });

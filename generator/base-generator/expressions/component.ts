@@ -237,6 +237,10 @@ export class Component extends Class implements Heritable {
         return "";
     }
 
+    compileDefaultComponentExport() {
+        return this.modifiers.join(" ") === "export" ? `export default ${this.name}` : ``;
+    }
+
     processModuleFileName(module: string) {
         return module;
     }
