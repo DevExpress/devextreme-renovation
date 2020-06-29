@@ -633,7 +633,7 @@ class MyComponentProps {
 @Component({ view: viewFunction })
 class MyComponent extends JSXComponent<MyComponentProps> {
   onClick() {
-    this.value = this.value + 1;
+    this.props.value = this.props.value + 1;
   }
 }
 
@@ -713,7 +713,7 @@ class MyComponentProps {
 @Component({ view: viewFunction })
 class MyComponent extends JSXComponent<MyComponentProps> {
   onClick() {
-    this.value = this.value + 1;
+    this.props.value = this.props.value + 1;
   }
 }
 
