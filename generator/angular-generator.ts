@@ -1116,7 +1116,21 @@ class ComponentInput extends BaseComponentInput {
         return null;
     }
 
-    createNestedComponent(property: Property) {
+    processMembers(members: Array<BaseProperty | Method>) {
+        members = super.processMembers(members);
+
+        const nested = members.filter(m => m.decorators.some(d => d.name === Decorators.Nested)) as Property[];
+        nested.forEach(el => {
+            const nestedComp = this.createContentChildrenProperty(el);
+            if (nestedComp) {
+                members.push(nestedComp);
+            }
+        })
+
+        return members;
+    }
+
+    createContentChildrenProperty(property: Property) {
         const { modifiers, questionOrExclamationToken, initializer, type, _name } = property;
         const name = _name.toString();
         

@@ -44,10 +44,6 @@ export class ComponentInput extends Class implements Heritable {
         return new Decorator(expression, context);
     }
 
-    createNestedComponent(property: Property): Property | null {
-        return null;
-    }
-
     buildChangeStateType(stateMember: Property) {
         return new FunctionTypeNode(
             undefined,
@@ -120,16 +116,6 @@ export class ComponentInput extends Class implements Heritable {
                 m.decorators[forwardRefIndex] = this.createDecorator(new Call(new Identifier(Decorators.ForwardRefProp), undefined, []), {});
             }
         });
-
-        const nested = members.filter(m => m.decorators.some(d => d.name === Decorators.Nested)) as Property[];
-        nested.forEach(el => {
-            const nestedComp = this.createNestedComponent(el);
-            if (nestedComp) {
-                members.push(nestedComp);
-            }
-        })
-        if (nested.length) {
-        }
 
         members.forEach(m => {     
             if (!(m instanceof Property)) {
