@@ -22,11 +22,11 @@ interface Child {
 }
 
 export default function Child(props: typeof ChildInput & RestProps) {
-    const getProps = useCallback(function getProps() {
+    const getProps = useCallback(function getProps(): typeof WidgetProps {
         return { height: props.height } as typeof WidgetProps;
     }, [props.height]);
     
-    const __restAttributes = useCallback(function __restAttributes() {
+    const __restAttributes = useCallback(function __restAttributes(): RestProps {
         const { children, height, onClick, width, ...restProps } = props
         return restProps;
     }, [props]);

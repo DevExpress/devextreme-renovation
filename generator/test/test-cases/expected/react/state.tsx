@@ -45,23 +45,23 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   const [__state_state2, __state_setState2] = useState(() => props.state2 !== undefined ? props.state2 : props.defaultState2!);
   const [__state_stateProp, __state_setStateProp] = useState(() => props.stateProp !== undefined ? props.stateProp : props.defaultStateProp)
 
-  const updateState = useCallback(function updateState() {
+  const updateState = useCallback(function updateState(): any {
     (__state_setState1(__state_state1 => !(props.state1 !== undefined ? props.state1 : __state_state1)), props.state1Change!(!(props.state1 !== undefined ? props.state1 : __state_state1)))
   }, [props.state1, __state_state1, props.state1Change]);
 
-  const updateState2 = useCallback(function updateState2() {
+  const updateState2 = useCallback(function updateState2(): any {
     const cur = (props.state2 !== undefined ? props.state2 : __state_state2);
     (__state_setState2(__state_state2 => cur !== false ? false : true), props.state2Change!(cur !== false ? false : true));
   }, [props.state2, __state_state2, props.state2Change]);
 
-  const destruct = useCallback(function destruct() {
+  const destruct = useCallback(function destruct(): any {
     const s = (props.state1 !== undefined ? props.state1 : __state_state1)
   }, [props.state1, __state_state1, props.state1Change]);
 
-  const stateChange = useCallback(function stateChange(stateProp: boolean) {
+  const stateChange = useCallback(function stateChange(stateProp: boolean): any {
     (__state_setStateProp(__state_stateProp => stateProp), props.statePropChange!(stateProp))
   }, []);
-  const __restAttributes = useCallback(function __restAttributes() {
+  const __restAttributes = useCallback(function __restAttributes(): RestProps {
     const { defaultState1, defaultState2, defaultStateProp, state1, state1Change, state2, state2Change, stateProp, statePropChange, ...restProps } = {
       ...props,
       state1: (props.state1 !== undefined ? props.state1 : __state_state1),

@@ -14,13 +14,13 @@ interface Widget {
 export function Widget(props: {
 
 } & RestProps) {
-  const onClick = useCallback(function onClick(e: Event) {
+  const onClick = useCallback(function onClick(e: Event):any {
 
   }, []);
-  const onPointerMove = useCallback(function onPointerMove(a = "a", b = 0, c = true) {
+  const onPointerMove = useCallback(function onPointerMove(a = "a", b = 0, c = true):any {
 
   }, []);
-  const __restAttributes = useCallback(function __restAttributes() {
+  const __restAttributes = useCallback(function __restAttributes(): RestProps {
     const { ...restProps } = props
     return restProps;
   }, [props]);

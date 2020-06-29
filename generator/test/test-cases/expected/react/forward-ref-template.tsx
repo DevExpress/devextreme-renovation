@@ -33,7 +33,7 @@ export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
     const child = useRef<HTMLDivElement>()
 
 
-    const __restAttributes = useCallback(function __restAttributes() {
+    const __restAttributes = useCallback(function __restAttributes(): RestProps {
         const { contentComponent, contentRender, contentTemplate, ...restProps } = props
         return restProps;
     }, [props]);

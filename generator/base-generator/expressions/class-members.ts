@@ -135,7 +135,7 @@ export class Method extends BaseClassMember {
     }
 
     declaration(options?: toStringOptions) {
-        return `function ${this.name}(${this.parameters})${this.body.toString(options)}`;
+        return `function ${this.name}(${this.parameters})${compileType(this.type.toString())}${this.body.toString(options)}`;
     }
 
     arrowDeclaration(options?:any) {

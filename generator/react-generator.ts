@@ -429,7 +429,10 @@ export class ReactComponent extends Component {
                     new Identifier("children"),
                     undefined,
                     new PropertyAccess(
-                        new SimpleExpression("this.props"),
+                        new PropertyAccess(
+                            new SimpleExpression(SyntaxKind.ThisKeyword),
+                            new Identifier("props")
+                        ),
                         new Identifier("children")
                     )
                 ),

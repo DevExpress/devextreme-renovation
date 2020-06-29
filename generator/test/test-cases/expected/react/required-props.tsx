@@ -25,14 +25,14 @@ interface Widget {
 }
 
 export default function Widget(props: Required<typeof WidgetInput> & RestProps) {
-    const __getHeight = useCallback(function __getHeight() {
+    const __getHeight = useCallback(function __getHeight(): number {
         return props.size.height;
     }, [props.size]);
-    const __type = useCallback(function __type() {
+    const __type = useCallback(function __type(): string {
         const { type } = props
         return type;
     }, [props.type]);
-    const __restAttributes = useCallback(function __restAttributes() {
+    const __restAttributes = useCallback(function __restAttributes(): RestProps {
         const { size, type, ...restProps } = props
         return restProps;
     }, [props]);

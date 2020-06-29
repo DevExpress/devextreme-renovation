@@ -11,7 +11,7 @@ export default function Widget(props: {
   height?: number,
   width?: number
 } & RestProps) {
-  const __restAttributes = useCallback(function __restAttributes() {
+  const __restAttributes = useCallback(function __restAttributes(): RestProps {
     const { height, width, ...restProps } = props
     return restProps;
   }, [props]);

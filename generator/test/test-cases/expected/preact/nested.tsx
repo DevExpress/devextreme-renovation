@@ -24,13 +24,13 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-    const getColumns = useCallback(function getColumns() {
+    const getColumns = useCallback(function getColumns(): any {
         return props.columns?.map((el) => typeof el === "string" ? el : el.name);
     }, [props.columns]);
-    const __isEditable = useCallback(function __isEditable() {
+    const __isEditable = useCallback(function __isEditable(): any {
         return props.gridEditing?.editEnabled;
     }, [props.gridEditing]);
-    const __restAttributes = useCallback(function __restAttributes() {
+    const __restAttributes = useCallback(function __restAttributes(): RestProps {
         const { columns, gridEditing, someArray, ...restProps } = {
             columns: props.columns,
             gridEditing: props.gridEditing,

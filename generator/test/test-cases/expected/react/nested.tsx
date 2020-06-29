@@ -23,17 +23,17 @@ interface Widget {
     getColumns: () => any;
     isEditable: any;
     restAttributes: RestProps;
-    __getNestedFromChild: (typeName: string) => { [name: string]: any }[];
+    __getNestedFromChild: <T>(typeName: string) => Array<T>;
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-    const getColumns = useCallback(function getColumns() {
-        return (props.columns || __getNestedFromChild("Column"))?.map((el) => typeof el === "string" ? el : el.name);
+    const getColumns = useCallback(function getColumns(): any {
+        return (props.columns || __getNestedFromChild<Column>("Column")).map((el) => typeof el === "string" ? el : el.name);
     }, [props.columns]);
-    const __isEditable = useCallback(function __isEditable() {
-        return (props.gridEditing || __getNestedFromChild("GridEditing")?.[0])?.editEnabled;
+    const __isEditable = useCallback(function __isEditable(): any {
+        return (props.gridEditing || __getNestedFromChild<Editing>("GridEditing")[0])?.editEnabled;
     }, [props.gridEditing]);
-    const __restAttributes = useCallback(function __restAttributes() {
+    const __restAttributes = useCallback(function __restAttributes(): RestProps {
         const { children, columns, gridEditing, someArray, ...restProps } = {
             ...props,
             columns: (props.columns || __getNestedFromChild("Column")),
@@ -42,7 +42,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
         }
         return restProps;
     }, [props]);
-    const __getNestedFromChild = useCallback(function __getNestedFromChild(typeName: string) {
+    const __getNestedFromChild = useCallback(function __getNestedFromChild<T>(typeName: string): Array<T> {
         const children = props.children, nestedComponents = React.Children.toArray(children)
             .filter(child => React.isValidElement(child) && typeof child.type !== "string" && child.type.name === typeName) as React.ReactElement[]
         return nestedComponents.map(comp => comp.props);

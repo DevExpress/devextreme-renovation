@@ -30,19 +30,19 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 
   const [__state_selected, __state_setSelected] = useState(() => props.selected !== undefined ? props.selected : props.defaultSelected!);
 
-  const getHeight = useCallback(function getHeight() {
+  const getHeight = useCallback(function getHeight(): number {
     const { height } = props;
     const { height: _height } = props;
     return height + _height;
   }, [props.height]);
 
-  const getProps = useCallback(function getProps() {
+  const getProps = useCallback(function getProps(): any {
     return {
       ...props,
       selected: (props.selected !== undefined ? props.selected : __state_selected),
     };
   }, [props]);
-  const __restAttributes = useCallback(function __restAttributes() {
+  const __restAttributes = useCallback(function __restAttributes(): RestProps {
     const { defaultSelected, height, selected, selectedChange, ...restProps } = {
       ...props,
       selected: (props.selected !== undefined ? props.selected : __state_selected),

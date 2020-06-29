@@ -31,7 +31,7 @@ export default function ModelWidget(props: typeof ModelWidgetInput & RestProps) 
     const [__state_modelStateProp, __state_setModelStateProp] = useState(() => props.modelStateProp !== undefined ? props.modelStateProp : props.defaultModelStateProp);
     const [__state_value, __state_setValue] = useState(() => props.value !== undefined ? props.value : props.defaultValue)
 
-    const __restAttributes = useCallback(function __restAttributes() {
+    const __restAttributes = useCallback(function __restAttributes(): RestProps {
         const {
             baseStateProp,
             baseStatePropChange,

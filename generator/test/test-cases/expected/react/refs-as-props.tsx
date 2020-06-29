@@ -24,16 +24,16 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     const divRef = useRef<HTMLDivElement>();
 
     const getSize = useCallback(
-        function getSize() {
+        function getSize(): any {
             return divRef.current!.outerHTML + props.nullableRef?.current?.outerHTML;
         }, [props.nullableRef?.current]);
     
-    const getNullable = useCallback(function getNullable() {
+    const getNullable = useCallback(function getNullable(): any {
         return props.nullableRef?.current?.outerHTML;
     }, [props.nullableRef?.current]);
     
     const __restAttributes = useCallback(
-        function __restAttributes() {
+        function __restAttributes(): RestProps {
             const { nullableRef, ...restProps } = props;
             return restProps;
         }, [props]);
