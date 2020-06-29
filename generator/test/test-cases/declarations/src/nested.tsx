@@ -29,7 +29,7 @@ export default class Widget extends JSXComponent(WidgetInput) {
     getColumns() {
         const { columns } = this.props;
 
-        return columns?.map((el) => typeof el === 'string' ? el : el.name)
+        return columns?.map((el) => typeof el === 'string' ? el : el.name);
     }
 
     get isEditable() {

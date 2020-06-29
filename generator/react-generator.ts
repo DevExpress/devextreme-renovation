@@ -17,7 +17,7 @@ import {
     JsxOpeningElement as BaseJsxOpeningElement,
     JsxSpreadAttribute
 } from "./base-generator/expressions/jsx";
-import { toStringOptions, GeneratorContext, isTypeArray } from "./base-generator/types";
+import { toStringOptions, GeneratorContext, isTypeArray, extractComplexType } from "./base-generator/types";
 import { Component, getProps } from "./base-generator/expressions/component";
 import { HeritageClause as BaseHeritageClause } from "./base-generator/expressions/class";
 import { BindingElement, BindingPattern } from "./base-generator/expressions/binding-pattern";
@@ -30,7 +30,8 @@ import {
     TypeExpression,
     TypeReferenceNode as BaseTypeReferenceNode,
     FunctionTypeNode,
-    SimpleTypeExpression
+    SimpleTypeExpression,
+    ArrayTypeNode
 } from "./base-generator/expressions/type";
 import { Parameter } from "./base-generator/expressions/functions";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input";
@@ -269,13 +270,14 @@ export class Property extends BaseProperty {
     compileNestedPropGetter(componentContext: string, scope: string) {
         const propName = getPropName(this.name, componentContext, scope);
         const isArray = isTypeArray(this.type);
+        const type = extractComplexType(this.type);
         const indexGetter = isArray ? "" : "?.[0]";
         let nestedName = capitalizeFirstLetter(this.name);
         if (isArray) {
             nestedName = removePlural(nestedName);
         }
 
-        return `(${propName} || __getNestedFromChild("${nestedName}")${indexGetter})`
+        return `(${propName} || __getNestedFromChild<${type}>("${nestedName}")${indexGetter})`
     }
 
     getter(componentContext?: string) {
@@ -454,13 +456,19 @@ export class ReactComponent extends Component {
             undefined,
             new Identifier('__getNestedFromChild'),
             undefined,
-            [],
+            [
+                new TypeParameterDeclaration(
+                    new Identifier("T")
+                )
+            ],
             [
                 new Parameter([], [], "", new Identifier("typeName"), undefined, 'string', undefined),
             ],
-            new SimpleTypeExpression("{ [name:string]: any }[]"),
+            new ArrayTypeNode(
+                new Identifier("T")
+            ),
             new Block(statements, true)
-        )
+        );
     }
 
     compileImportStatements(hooks: string[], compats: string[]) {

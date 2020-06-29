@@ -23,26 +23,26 @@ interface Widget {
     getColumns: () => any;
     isEditable: any;
     restAttributes: RestProps;
-    __getNestedFromChild: <T>(typeName: string) => Array<T>;
+    __getNestedFromChild: <T>(typeName: string) => T[];
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
     const getColumns = useCallback(function getColumns(): any {
-        return (props.columns || __getNestedFromChild<Column>("Column")).map((el) => typeof el === "string" ? el : el.name);
+        return (props.columns || __getNestedFromChild<Column>("Column"))?.map((el) => typeof el === "string" ? el : el.name);
     }, [props.columns]);
     const __isEditable = useCallback(function __isEditable(): any {
-        return (props.gridEditing || __getNestedFromChild<Editing>("GridEditing")[0])?.editEnabled;
+        return (props.gridEditing || __getNestedFromChild<Editing>("GridEditing")?.[0])?.editEnabled;
     }, [props.gridEditing]);
     const __restAttributes = useCallback(function __restAttributes(): RestProps {
         const { children, columns, gridEditing, someArray, ...restProps } = {
             ...props,
-            columns: (props.columns || __getNestedFromChild("Column")),
-            gridEditing: (props.gridEditing || __getNestedFromChild("GridEditing")?.[0]),
-            someArray: (props.someArray || __getNestedFromChild("SomeArray"))
+            columns: (props.columns || __getNestedFromChild<Column>("Column")),
+            gridEditing: (props.gridEditing || __getNestedFromChild<Editing>("GridEditing")?.[0]),
+            someArray: (props.someArray || __getNestedFromChild<Custom>("SomeArray"))
         }
         return restProps;
     }, [props]);
-    const __getNestedFromChild = useCallback(function __getNestedFromChild<T>(typeName: string): Array<T> {
+    const __getNestedFromChild = useCallback(function __getNestedFromChild<T>(typeName: string): T[] {
         const children = props.children, nestedComponents = React.Children.toArray(children)
             .filter(child => React.isValidElement(child) && typeof child.type !== "string" && child.type.name === typeName) as React.ReactElement[]
         return nestedComponents.map(comp => comp.props);

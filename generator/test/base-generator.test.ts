@@ -1498,7 +1498,7 @@ mocha.describe("base-generator: expressions", function () {
             assert.strictEqual(getAst(expression.toString()), getAst("@d1() @d2() public name():string{}"));
         });
 
-        mocha.it.only("Method with TypeParameters", function () { 
+        mocha.it("Method with TypeParameters", function () { 
             const method = generator.createMethod(
                 [],
                 [],
