@@ -15,8 +15,7 @@ import {
 } from "./base-generator/expressions/class-members"
 import {
     toStringOptions as BaseToStringOptions,
-    GeneratorContext,
-    isTypeArray
+    GeneratorContext
 } from "./base-generator/types";
 import SyntaxKind from "./base-generator/syntaxKind";
 import { Expression, SimpleExpression } from "./base-generator/expressions/base";
@@ -36,7 +35,7 @@ import {
     isFunction,
 } from "./base-generator/expressions/functions";
 import { TemplateExpression } from "./base-generator/expressions/template";
-import { SimpleTypeExpression, TypeExpression, FunctionTypeNode, TypeLiteralNode, PropertySignature, isComplexType } from "./base-generator/expressions/type";
+import { SimpleTypeExpression, TypeExpression, FunctionTypeNode, TypeLiteralNode, PropertySignature, isComplexType, isTypeArray } from "./base-generator/expressions/type";
 import { HeritageClause } from "./base-generator/expressions/class";
 import { ImportClause } from "./base-generator/expressions/import";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input"

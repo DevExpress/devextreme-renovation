@@ -1,6 +1,6 @@
 import { Class, Heritable, inheritMembers, HeritageClause } from "./class";
 import { Parameter } from "./functions";
-import { SimpleTypeExpression, FunctionTypeNode, TypeExpression } from "./type";
+import { SimpleTypeExpression, FunctionTypeNode, TypeExpression, extractComplexType } from "./type";
 import { Property, Method, BaseClassMember } from "./class-members";
 import { Identifier, Call } from "./common";
 import SyntaxKind from "../syntaxKind";
@@ -9,7 +9,7 @@ import { capitalizeFirstLetter } from "../utils/string";
 import { Decorator } from "./decorator";
 import { warn } from "../../utils/messages";
 import { getProps } from "./component";
-import { GeneratorContext, extractComplexType } from "../types";
+import { GeneratorContext } from "../types";
 import { Decorators } from "../../component_declaration/decorators";
 
 const RESERVED_NAMES = [

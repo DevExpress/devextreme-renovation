@@ -17,7 +17,7 @@ import {
     JsxOpeningElement as BaseJsxOpeningElement,
     JsxSpreadAttribute
 } from "./base-generator/expressions/jsx";
-import { toStringOptions, GeneratorContext, isTypeArray, extractComplexType } from "./base-generator/types";
+import { toStringOptions, GeneratorContext } from "./base-generator/types";
 import { Component, getProps } from "./base-generator/expressions/component";
 import { HeritageClause as BaseHeritageClause } from "./base-generator/expressions/class";
 import { BindingElement, BindingPattern } from "./base-generator/expressions/binding-pattern";
@@ -31,7 +31,9 @@ import {
     TypeReferenceNode as BaseTypeReferenceNode,
     FunctionTypeNode,
     SimpleTypeExpression,
-    ArrayTypeNode
+    ArrayTypeNode,
+    isTypeArray,
+    extractComplexType
 } from "./base-generator/expressions/type";
 import { Parameter } from "./base-generator/expressions/functions";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input";
@@ -272,12 +274,9 @@ export class Property extends BaseProperty {
         const isArray = isTypeArray(this.type);
         const type = extractComplexType(this.type);
         const indexGetter = isArray ? "" : "?.[0]";
-        let nestedName = capitalizeFirstLetter(this.name);
-        if (isArray) {
-            nestedName = removePlural(nestedName);
-        }
+        const nestedName = isArray ? removePlural(this.name) : this.name;
 
-        return `(${propName} || __getNestedFromChild<${type}>("${nestedName}")${indexGetter})`
+        return `(${propName} || __getNestedFromChild<${type}>("${capitalizeFirstLetter(nestedName)}")${indexGetter})`
     }
 
     getter(componentContext?: string) {

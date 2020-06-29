@@ -14,7 +14,7 @@ import {
     GetAccessor as BaseGetAccessor,
     BaseClassMember
 } from "./base-generator/expressions/class-members";
-import { GeneratorContext, isTypeArray } from "./base-generator/types";
+import { GeneratorContext } from "./base-generator/types";
 import {
     TypeExpression,
     SimpleTypeExpression,
@@ -30,6 +30,7 @@ import {
     TypeOperatorNode,
     PropertySignature,
     MethodSignature,
+    isTypeArray,
 } from "./base-generator/expressions/type";
 import { capitalizeFirstLetter, variableDeclaration, removePlural } from "./base-generator/utils/string";
 import SyntaxKind from "./base-generator/syntaxKind";
