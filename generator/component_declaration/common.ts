@@ -78,6 +78,11 @@ export const TwoWay = (args?: {
      */
     isModel?: boolean;
 }) => propertyDecorator;
+/**
+* Property Decorator.
+* Define a property that user can pass to component as property or as nested component.
+*/
+export const Nested = () => propertyDecorator;
 
 /**
  * Property Decorator. 

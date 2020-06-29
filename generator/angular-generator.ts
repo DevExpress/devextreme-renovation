@@ -15,7 +15,8 @@ import {
 } from "./base-generator/expressions/class-members"
 import {
     toStringOptions as BaseToStringOptions,
-    GeneratorContext
+    GeneratorContext,
+    isTypeArray
 } from "./base-generator/types";
 import SyntaxKind from "./base-generator/syntaxKind";
 import { Expression, SimpleExpression } from "./base-generator/expressions/base";
@@ -42,7 +43,7 @@ import { ComponentInput as BaseComponentInput } from "./base-generator/expressio
 import { Component, getProps } from "./base-generator/expressions/component";
 import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressions/property-access";
 import { BindingPattern, BindingElement } from "./base-generator/expressions/binding-pattern";
-import { processComponentContext, capitalizeFirstLetter } from "./base-generator/utils/string";
+import { processComponentContext, capitalizeFirstLetter, removePlural } from "./base-generator/utils/string";
 import { Decorators } from "./component_declaration/decorators";
 
 // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
@@ -67,6 +68,12 @@ export const counter = (function () {
         }
     }
 })();
+
+const getAngularSelector = (name: string | Identifier, postfix: string = "") => {
+    name = name.toString()
+    const words = name.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
+    return [`dx${postfix}`].concat(words).join("-");
+}
 
 export interface toStringOptions extends  BaseToStringOptions {
     members: Array<Property | Method>;
@@ -1010,6 +1017,7 @@ class Decorator extends BaseDecorator {
             this.name === Decorators.TwoWay || 
             this.name === Decorators.Template || 
             this.name===Decorators.RefProp ||
+            this.name === Decorators.NestedProp ||
             this.name ===Decorators.ForwardRefProp
             ) {
             return "@Input()";
@@ -1048,6 +1056,7 @@ function compileCoreImports(members: Array<Property|Method>, context: AngularGen
         m.decorators.some(d =>
             d.name === Decorators.OneWay ||
             d.name === Decorators.RefProp ||
+            d.name === Decorators.NestedProp ||
             d.name === Decorators.ForwardRefProp
         )
     )) {
@@ -1065,6 +1074,10 @@ function compileCoreImports(members: Array<Property|Method>, context: AngularGen
 
     if (members.some(m => m.isSlot)) {
         imports.push("ViewChild", "ElementRef");
+    }
+
+    if (members.some(m => m.isNestedComp)) {
+        imports.push("ContentChildren", "QueryList", "Directive");
     }
 
     if (members.some(m => m.isForwardRef)) {
@@ -1101,9 +1114,61 @@ class ComponentInput extends BaseComponentInput {
         return null;
     }
 
+    compileNestedComponents() {
+        const nestedProps = this.members.filter(m => m.isNestedProp);
+        const nestedComponents = this.members.filter(m => m.isNestedComp);
+
+        const components = this.context.components;
+        const types = this.context.types;
+
+        const parentName = components && Object.keys(components).find(key => components[key] instanceof AngularComponent)
+        const parentSelector = components && parentName && (components[parentName] as AngularComponent).selector;
+        
+        if (parentSelector && types) {
+            const result = nestedComponents.map(component => {
+                const relatedProp = nestedProps.find(prop => component.name.replace("Nested", "") === prop.name);
+                const nestedTypeName = component.type.toString();
+                const typeName = nestedTypeName.replace("Dx", "");
+                const type = types[typeName];
+
+                if (relatedProp && type instanceof TypeLiteralNode) {
+                    const fields = [...type.members].map(m => {
+                        const prop = this.createProperty(
+                            [this.createDecorator(new Call(new SimpleExpression("OneWay"), undefined, undefined), {})],
+                            undefined,
+                            m.name,
+                            m.questionToken,
+                            m.type,
+                            undefined,
+                        )
+                        const result = prop.toString();
+                        if (m.questionToken !== "?") {
+                            return result.replace(":", "!:");
+                        }
+                        return result;
+                    }).join(';\n');
+                    const isArray = isTypeArray(relatedProp.type);
+                    const postfix = isArray ? "i" : "o";
+                    let selectorName = isArray ? removePlural(relatedProp.name) : relatedProp.name;
+                    const selector = getAngularSelector(selectorName, postfix);
+        
+                    return `@Directive({
+                        selector: "${parentSelector} ${selector}"
+                    })
+                    class ${nestedTypeName} implements ${typeName} {
+                        ${fields}
+                    }`;
+                }
+            }).join('\n')
+            return result;
+        }
+        return "";
+    }
+
     toString() {
         return `
         ${compileCoreImports(this.members.filter(m => !m.inherited), this.context)}
+        ${this.compileNestedComponents()}
         ${this.modifiers.join(" ")} class ${this.name} ${this.heritageClauses.map(h => h.toString()).join(" ")} {
             ${this.members.filter(p => p instanceof Property && !p.inherited).map(m => m.toString()).filter(m => m).concat("").join(";\n")}
         }`;
@@ -1160,6 +1225,9 @@ export class Property extends BaseProperty {
                 return this.${selector}?.nativeElement?.innerHTML.trim();
             }`;
         }
+        if (this.isNestedComp) { 
+            return `@ContentChildren(${this.type}) ${this.name}!: QueryList<${this.type}>`;
+        }
 
         if (this.isForwardRefProp) { 
             return `${this.modifiers.join(" ")} ${this.decorators.map(d => d.toString()).join(" ")} ${this.name}:(ref:any)=>void=()=>{}`;
@@ -1187,6 +1255,10 @@ export class Property extends BaseProperty {
         if (this.isRefProp) { 
             return `${componentContext}${this.name}`;
         }
+        if (this.isNestedProp) {
+            const indexGetter = isTypeArray(this.type) ?  "" : "?.[0]" ;
+            return `(${componentContext}${this.name} || ${componentContext}${this.name}Nested.toArray()${indexGetter})`;
+        }
         if (this._hasDecorator(Decorators.ApiRef)) { 
             return `${componentContext}${this.name}${suffix}`;
         }
@@ -1202,7 +1274,7 @@ export class Property extends BaseProperty {
     }
 
     get canBeDestructured() { 
-        if (this.isEvent) { 
+        if (this.isEvent || this.isNestedProp) { 
             return false;
         }
         return super.canBeDestructured;
@@ -1367,8 +1439,7 @@ export class AngularComponent extends Component {
     }
 
     get selector() {
-        const words = this._name.toString().split(/(?=[A-Z])/).map(w => w.toLowerCase());
-        return ["dx"].concat(words).join("-");
+        return getAngularSelector(this._name);
     }
 
     get module() { 
@@ -1636,6 +1707,14 @@ export class AngularComponent extends Component {
         `;
     }
 
+    getAdditionalModules() {
+        const modules = this.members.filter(m => m.isNestedComp)
+        if (modules.length) {
+            return [""].concat(modules.map(m => m.type.toString())).join(',');
+        }
+        return "";
+    }
+
     toString() { 
         const props = this.heritageClauses.filter(h => h.isJsxComponent).map(h => h.types.map(t => t.type.toString()));
         
@@ -1715,11 +1794,11 @@ export class AngularComponent extends Component {
             ${this.compileNgStyleProcessor(decoratorToStringOptions)}
         }
         @NgModule({
-            declarations: [${this.name}],
+            declarations: [${this.name}${this.getAdditionalModules()}],
             imports: [
                 ${modules.join(",\n")}
             ],
-            exports: [${this.name}]
+            exports: [${this.name}${this.getAdditionalModules()}]
         })
         export class ${this.module} {}
         ${this.compileDefaultComponentExport()}

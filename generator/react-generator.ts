@@ -1,6 +1,6 @@
 import SyntaxKind from "./base-generator/syntaxKind";
 import path from "path";
-import { capitalizeFirstLetter } from "./base-generator/utils/string";
+import { capitalizeFirstLetter, removePlural } from "./base-generator/utils/string";
 import BaseGenerator from "./base-generator";
 import {
     Property as BaseProperty,
@@ -17,7 +17,7 @@ import {
     JsxOpeningElement as BaseJsxOpeningElement,
     JsxSpreadAttribute
 } from "./base-generator/expressions/jsx";
-import { toStringOptions, GeneratorContext } from "./base-generator/types";
+import { toStringOptions, GeneratorContext, isTypeArray } from "./base-generator/types";
 import { Component, getProps } from "./base-generator/expressions/component";
 import { HeritageClause as BaseHeritageClause } from "./base-generator/expressions/class";
 import { BindingElement, BindingPattern } from "./base-generator/expressions/binding-pattern";
@@ -118,13 +118,55 @@ export class ComponentInput extends BaseComponentInput {
                 !(m as Property).inherited && (m as Property).initializer &&
                 (m.decorators.find(d => d.name !== Decorators.TwoWay) || (m as Property).questionOrExclamationToken !== "?")) as Property[];
 
-        return `${typeDeclaration}
+        return `${this.exportNestedComponents()}
+        ${typeDeclaration}
         ${declarationModifiers.join(" ")} const ${this.name}:${typeName}={
            ${inherited
                 .concat(propertiesWithInitializer.map(p => p.defaultDeclaration()))
                 .join(",\n")}
         }${typeCasting};
         ${declarationModifiers !== this.modifiers ? `${this.modifiers.join(" ")} ${this.name}` : ""}`;
+    }
+
+    exportNestedComponents() {
+        const nestedComponents = this.members.filter(m => m.isNestedProp);
+        if (nestedComponents.length) {
+            return nestedComponents.map(m => {
+                let name = capitalizeFirstLetter(m.name);
+                if (isTypeArray(m.type)) {
+                    name = removePlural(name);
+                }
+                return `export const ${name} = () => null;`
+            }).join('\n');
+        }
+        return "";
+    }
+
+    createChildrenForNested(members: Array<BaseProperty | Method>) {        
+        const hasChildren = members.some(m => m.isSlot && m.name === "children");
+        const hasNested = members.some(m => m.isNestedProp);
+        if (hasNested && !hasChildren) {
+            return new Property(
+                [new Decorator(new Call(new Identifier(Decorators.Slot), undefined, undefined), {})],
+                undefined,
+                new Identifier('children'),
+                "?",
+                undefined,
+                undefined,
+                undefined,
+            );
+        }
+        return null;
+    }
+    
+
+    processMembers(members: Array<BaseProperty | Method>) {
+        members = super.processMembers(members).filter(m => !m.isNestedComp);
+        const children = this.createChildrenForNested(members);
+        if (children !== null) {
+            members.push(children);
+        }
+        return members;
     }
 }
 
@@ -230,6 +272,18 @@ export class Property extends BaseProperty {
         return `${this.name}${questionOrExclamationToken}:${type}`;
     }
 
+    compileNestedPropGetter(componentContext: string, scope: string) {
+        const propName = getPropName(this.name, componentContext, scope);
+        const isArray = isTypeArray(this.type);
+        const indexGetter = isArray ? "" : "?.[0]";
+        let nestedName = capitalizeFirstLetter(this.name);
+        if (isArray) {
+            nestedName = removePlural(nestedName);
+        }
+
+        return `(${propName} || __getNestedFromChild("${nestedName}")${indexGetter})`
+    }
+
     getter(componentContext?: string) {
         componentContext = this.processComponentContext(componentContext);
         const scope = this.processComponentContext(this.scope);
@@ -242,6 +296,8 @@ export class Property extends BaseProperty {
         } else if (this.isState) {
             const propName = getPropName(this.name, componentContext, scope);
             return `(${propName}!==undefined?${propName}:${getLocalStateName(this.name, componentContext)})`;
+        } else if (this.isNestedProp) {
+            return this.compileNestedPropGetter(componentContext, scope);
         }
         throw `Can't parse property: ${this._name}`;
     }
@@ -256,6 +312,8 @@ export class Property extends BaseProperty {
             return this.questionOrExclamationToken === "?" ? [`${scope}${this.name.toString()}${scope ? this.questionOrExclamationToken : ""}.current`] : [];
         } else if (this.isState) {
             return [getPropName(this.name), getLocalStateName(this.name), getPropName(`${this.name}Change`)];
+        } else if (this.isNestedProp) {
+            return [getPropName(this.name)];
         }
         throw `Can't parse property: ${this._name}`;
     }
@@ -278,7 +336,7 @@ export class Property extends BaseProperty {
     }
 
     get canBeDestructured() {
-        if (this.isState || this.isRefProp) {
+        if (this.isState || this.isRefProp || this.isNestedProp) {
             return false;
         }
         return super.canBeDestructured;
@@ -377,6 +435,44 @@ export class ReactComponent extends Component {
         ), new ReturnStatement(new SimpleExpression("restProps"))];
 
         return new GetAccessor(undefined, undefined, new Identifier('restAttributes'), [], new SimpleTypeExpression('RestProps'), new Block(statements, true));
+    }
+    
+    createNestedPropGetter(): Method | null {
+        const statements = [new VariableStatement(
+            undefined,
+            new VariableDeclarationList([
+                new VariableDeclaration(
+                    new Identifier("children"),
+                    undefined,
+                    new PropertyAccess(
+                        new SimpleExpression("this.props"),
+                        new Identifier("children")
+                    )
+                ),
+                new VariableDeclaration(
+                    new Identifier('nestedComponents'),
+                    undefined,
+                    new SimpleExpression(`React.Children.toArray(children)
+                        .filter(child => React.isValidElement(child) && typeof child.type !== "string" && child.type.name === typeName) as React.ReactElement[]`
+                    )
+                ),
+
+            ], SyntaxKind.ConstKeyword)
+        ), new ReturnStatement(new SimpleExpression("nestedComponents.map(comp => comp.props)"))];
+
+        return new Method(
+            undefined,
+            undefined,
+            undefined,
+            new Identifier('__getNestedFromChild'),
+            undefined,
+            [],
+            [
+                new Parameter([], [], "", new Identifier("typeName"), undefined, 'string', undefined),
+            ],
+            new SimpleTypeExpression("{ [name:string]: any }[]"),
+            new Block(statements, true)
+        )
     }
 
     compileImportStatements(hooks: string[], compats: string[]) {

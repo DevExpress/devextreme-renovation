@@ -14,7 +14,7 @@ import {
     GetAccessor as BaseGetAccessor,
     BaseClassMember
 } from "./base-generator/expressions/class-members";
-import { GeneratorContext } from "./base-generator/types";
+import { GeneratorContext, isTypeArray } from "./base-generator/types";
 import {
     TypeExpression,
     SimpleTypeExpression,
@@ -31,7 +31,7 @@ import {
     PropertySignature,
     MethodSignature,
 } from "./base-generator/expressions/type";
-import { capitalizeFirstLetter, variableDeclaration } from "./base-generator/utils/string";
+import { capitalizeFirstLetter, variableDeclaration, removePlural } from "./base-generator/utils/string";
 import SyntaxKind from "./base-generator/syntaxKind";
 import { Expression, SimpleExpression } from "./base-generator/expressions/base";
 import { ObjectLiteral, StringLiteral, NumericLiteral } from "./base-generator/expressions/literal";
@@ -60,6 +60,7 @@ import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressio
 import { PropertyAssignment, SpreadAssignment } from "./base-generator/expressions/property-assignment";
 import { getModuleRelativePath } from "./base-generator/utils/path-utils";
 import { Interface } from "./base-generator/expressions/interface";
+import { VariableStatement, VariableDeclarationList } from "./base-generator/expressions/variables";
 import { ImportClause, ImportDeclaration as BaseImportDeclaration } from "./base-generator/expressions/import";
 import path from "path";
 
@@ -113,7 +114,12 @@ export class Property extends BaseProperty {
             return `${this.name}: ${this.initializer}`;
         } 
 
-        if (this.isEvent || this.isRef && !this.inherited || this.isSlot || this.isTemplate) { 
+        if (this.isEvent ||
+            this.isRef && !this.inherited ||
+            this.isSlot ||
+            this.isTemplate ||
+            (this.isNestedProp && !isTypeArray(this.type))
+        ) { 
             return "";
         }
     
@@ -161,6 +167,16 @@ export class Property extends BaseProperty {
             const name = this.name === "children" ? "default" : this.name;
             return `${componentContext}$slots.${name}`;
         }
+        if (this.isNestedProp) { 
+            const isArray = isTypeArray(this.type);
+            const indexGetter = isArray ? "" : "?.[0]";
+            let nestedName = capitalizeFirstLetter(this.name);
+            if (isArray) {
+                nestedName = removePlural(nestedName);
+            }
+
+            return `(${componentContext}${this.name} || this.__getNestedFromChild("Dx${nestedName}")${indexGetter})`;
+        }
         return baseValue
     }
 
@@ -169,7 +185,7 @@ export class Property extends BaseProperty {
     }
 
     get canBeDestructured() { 
-        if (this.isEvent || this.isState || this.isRefProp) {
+        if (this.isEvent || this.isState || this.isRefProp || this.isNestedProp) {
             return false;
         }
         return super.canBeDestructured;
@@ -274,6 +290,12 @@ export class VueComponentInput extends ComponentInput {
         };
         ${modifiers !== this.modifiers ? `${this.modifiers.join(" ")} ${this.name}`: ""}`;
     }
+
+    processMembers(members: (Property | Method)[]) {
+        members = super.processMembers(members);
+        members = members.filter(m => !m.isNestedComp);
+        return members;
+    }
 }
 
 function getComponentListFromContext(context: GeneratorContext) { 
@@ -296,6 +318,43 @@ export class VueComponent extends Component {
             new Block([
                 new SimpleExpression("return {}")
             ], true));
+    }
+
+    createNestedPropGetter(){
+        const statements = [new VariableStatement(
+            undefined,
+            new VariableDeclarationList([
+                new VariableDeclaration(
+                    new Identifier("children"),
+                    undefined,
+                    new PropertyAccess(
+                        new SimpleExpression("this"),
+                        new Identifier("$options._renderChildren || []")
+                    )
+                ),
+                new VariableDeclaration(
+                    new Identifier('nestedComponents'),
+                    undefined,
+                    new SimpleExpression(`children.filter(child => child.tag === typeName)`
+                    )
+                ),
+
+            ], SyntaxKind.ConstKeyword)
+        ), new ReturnStatement(new SimpleExpression("nestedComponents.map(child => child.data?.attrs || {})"))];
+
+        return new Method(
+            undefined,
+            undefined,
+            undefined,
+            new Identifier('__getNestedFromChild'),
+            undefined,
+            [],
+            [
+                new Parameter([], [], "", new Identifier("typeName"), undefined, 'string', undefined),
+            ],
+            new SimpleTypeExpression("{ [name:string]: any }[]"),
+            new Block(statements, true)
+        )
     }
 
     createPropsGetter(members: Array<Property | Method>) { 

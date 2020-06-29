@@ -7,6 +7,15 @@ export function capitalizeFirstLetter(string: string | Identifier) {
     return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
+export const removePlural = (string: string | Identifier) => {
+    string = string.toString();
+    let last = string.lastIndexOf("s");
+    if (last > 0 && last === string.length - 1) {
+        return string.slice(0, last);
+    }
+    return string;
+}
+
 export const compileType = (type: string = "", questionToken: string = "") =>
     type ? `${questionToken}:${type}` : "";
 

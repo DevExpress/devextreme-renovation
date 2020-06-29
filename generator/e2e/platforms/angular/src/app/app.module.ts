@@ -5,6 +5,7 @@ import { AppComponent } from './app.component';
 import { DxAppModule } from '../../../../components/app';
 import { DxButtonWithTemplateModule } from '../../../../components/button-with-template';
 import { DxCounterModule } from "../../../../components/counter"
+import { DxWithNestedModule } from "../../../../components/nested"
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { DxCounterModule } from "../../../../components/counter"
     FormsModule,
     DxAppModule,
     DxButtonWithTemplateModule,
-    DxCounterModule
+    DxCounterModule,
+    DxWithNestedModule
   ],
   providers: [],
   bootstrap: [AppComponent]
