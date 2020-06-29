@@ -1135,7 +1135,7 @@ class ComponentInput extends BaseComponentInput {
         const name = _name.toString();
         
         const decorator = this.createDecorator(new Call(new Identifier(Decorators.NestedComp), undefined, []), {});
-        const nestedType = extractComplexType(type);
+        const nestedType = extractComplexType(type).toString();
         if (nestedType === "any") {
             warn(`One of "${name}" Nested property's types should be complex type`)
         }

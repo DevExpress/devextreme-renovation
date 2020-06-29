@@ -39,12 +39,12 @@ export type GeneratorContext = {
 
 export const isTypeArray = (type: string | TypeExpression | undefined) => type instanceof ArrayTypeNode || (type instanceof TypeReferenceNode && type.typeName.toString() === "Array")
 
-export const extractComplexType = (type?: string | TypeExpression): string => {
+export const extractComplexType = (type?: string | TypeExpression): TypeExpression | string => {
     if (type instanceof TypeReferenceNode) {
         if (type.typeName.toString() === "Array") {
             return extractComplexType(type.typeArguments[0]);
         }
-        return `${type.typeName.toString()}`;
+        return type;
     }
     if (type instanceof ArrayTypeNode) {
         return extractComplexType(type.elementType);
@@ -59,5 +59,5 @@ export const extractComplexType = (type?: string | TypeExpression): string => {
         }
     }
 
-    return 'any';
+    return "any";
 }
