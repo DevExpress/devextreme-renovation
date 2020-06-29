@@ -201,6 +201,10 @@ mocha.describe("react-generator", function () {
         this.testGenerator(this.test!.title);
     });
 
+    mocha.it("export-named-api-ref", function () {
+        this.testGenerator(this.test!.title);
+    });
+
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {
             generator.defaultOptionsModule = getModulePath("component_declaration/default_options");
