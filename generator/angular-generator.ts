@@ -1125,7 +1125,7 @@ class ComponentInput extends BaseComponentInput {
         if (nestedType === "any") {
             warn(`One of "${name}" Nested property's types should be complex type`)
         }
-        return this.createProperty([decorator], modifiers, new Identifier(`${name.toString()}Nested`), questionOrExclamationToken, `Dx${nestedType}`, initializer);
+        return this.createProperty([decorator], modifiers, new Identifier(`${name}Nested`), questionOrExclamationToken, `Dx${nestedType}`, initializer);
     }
 
     compileNestedComponents() {
