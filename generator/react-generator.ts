@@ -38,6 +38,7 @@ import { ObjectLiteral } from "./base-generator/expressions/literal";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { PropertyAssignment, SpreadAssignment } from "./base-generator/expressions/property-assignment";
 import { Decorators } from "./component_declaration/decorators";
+import { TypeParameterDeclaration } from "./base-generator/expressions/type-parameter-declaration";
 
 const eventsDictionary = {
     pointerover: "onPointerOver",
@@ -894,7 +895,7 @@ export class Generator extends BaseGenerator {
         return new TypeReferenceNode(typeName, typeArguments, this.getContext());
     }
 
-    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string|undefined, name: Identifier, questionToken: string | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
+    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string | undefined, name: Identifier, questionToken: string | undefined, typeParameters: TypeParameterDeclaration[] | undefined, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 }

@@ -45,6 +45,7 @@ import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressio
 import { BindingPattern, BindingElement } from "./base-generator/expressions/binding-pattern";
 import { processComponentContext, capitalizeFirstLetter, removePlural } from "./base-generator/utils/string";
 import { Decorators } from "./component_declaration/decorators";
+import { TypeParameterDeclaration } from "./base-generator/expressions/type-parameter-declaration";
 
 // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
 const VOID_ELEMENTS = 
@@ -1915,7 +1916,7 @@ export class AngularGenerator extends Generator {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
-    createMethod(decorators: Decorator[], modifiers: string[] | undefined, asteriskToken: string | undefined, name: Identifier, questionToken: string | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
+    createMethod(decorators: Decorator[], modifiers: string[] | undefined, asteriskToken: string | undefined, name: Identifier, questionToken: string | undefined, typeParameters: TypeParameterDeclaration[] | undefined, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 

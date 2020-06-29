@@ -476,6 +476,41 @@ mocha.describe("base-generator: expressions", function () {
                 undefined
             ).toString(), "name(a:string,b:string):any");
         });
+
+        mocha.describe("TypeParameterDeclaration", function () {
+            mocha.it("only name is defined", function () { 
+                const expression = generator.createTypeParameterDeclaration(
+                    generator.createIdentifier("T")
+                );
+
+                assert.strictEqual(expression.toString(), "T");
+            });
+
+            mocha.it("with constraint", function () { 
+                const expression = generator.createTypeParameterDeclaration(
+                    generator.createIdentifier("T"),
+                    generator.createTypeReferenceNode(
+                        generator.createIdentifier("I"),
+                        undefined
+                      )
+                );
+
+                assert.strictEqual(expression.toString(), "T extends I");
+            });
+
+            mocha.it("with default", function () { 
+                const expression = generator.createTypeParameterDeclaration(
+                    generator.createIdentifier("T"),
+                    undefined,
+                    generator.createTypeReferenceNode(
+                        generator.createIdentifier("I"),
+                        undefined
+                      )
+                );
+
+                assert.strictEqual(expression.toString(), "T = I");
+            });
+        });
     });
 
     mocha.describe("Statements", function () { 
@@ -1461,6 +1496,40 @@ mocha.describe("base-generator: expressions", function () {
 
             assert.strictEqual(expression.isReadOnly(), true);
             assert.strictEqual(getAst(expression.toString()), getAst("@d1() @d2() public name():string{}"));
+        });
+
+        mocha.it.only("Method with TypeParameters", function () { 
+            const method = generator.createMethod(
+                [],
+                [],
+                undefined,
+                generator.createIdentifier("m"),
+                undefined,
+                [
+                    generator.createTypeParameterDeclaration(
+                        generator.createIdentifier("T1")
+                    ),
+                    generator.createTypeParameterDeclaration(
+                        generator.createIdentifier("T2")
+                    )
+                ],
+                [],
+                generator.createUnionTypeNode(
+                    [
+                        generator.createTypeReferenceNode(
+                            generator.createIdentifier("T1")
+                        ),
+                        generator.createTypeReferenceNode(
+                            generator.createIdentifier("T2")
+                        )
+                    ]
+                ),
+                generator.createBlock([], false)
+            );
+
+            assert.strictEqual(method.typeDeclaration(), "m:<T1,T2>()=>T1|T2");
+            assert.strictEqual(getAst(method.declaration()), getAst("function m<T1,T2>():T1|T2{}"));
+            assert.strictEqual(getAst(method.toString()), getAst("m<T1,T2>():T1|T2{}"));
         });
 
         mocha.it("GetAccessor", function () { 

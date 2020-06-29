@@ -7,6 +7,7 @@ import { Block } from "./statements";
 import { compileType, processComponentContext } from "../utils/string";
 import { Decorator } from "./decorator";
 import { Decorators } from "../../component_declaration/decorators";
+import { TypeParameterDeclaration } from "./type-parameter-declaration";
 
 export class BaseClassMember extends Expression { 
     decorators: Decorator[];
@@ -117,11 +118,11 @@ export class BaseClassMember extends Expression {
 export class Method extends BaseClassMember {
     asteriskToken?: string;
     questionToken: string;
-    typeParameters: any;
+    typeParameters: TypeParameterDeclaration[];
     parameters: Parameter[];
     body: Block;
    
-    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string | undefined, name: Identifier, questionToken: string = "", typeParameters: any[], parameters: Parameter[], type: TypeExpression|string = new SimpleExpression("any"), body: Block) {
+    constructor(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string | undefined, name: Identifier, questionToken: string = "", typeParameters: TypeParameterDeclaration[] | undefined = [], parameters: Parameter[], type: TypeExpression | string = new SimpleExpression("any"), body: Block) {
         super(decorators, modifiers, name, type);
         this.asteriskToken = asteriskToken;
         this.questionToken = questionToken;
@@ -130,12 +131,19 @@ export class Method extends BaseClassMember {
         this.body = body;
     }
 
+    compileTypeParameters():string { 
+        if (this.typeParameters.length) { 
+            return `<${this.typeParameters}>`;
+        }
+        return "";
+    }
+
     typeDeclaration() {
-        return `${this.name}${this.questionToken}:(${this.parameters.map(p => p.typeDeclaration()).join(",")})=>${this.type}`
+        return `${this.name}${this.questionToken}:${this.compileTypeParameters()}(${this.parameters.map(p => p.typeDeclaration()).join(",")})=>${this.type}`
     }
 
     declaration(options?: toStringOptions) {
-        return `function ${this.name}(${this.parameters})${compileType(this.type.toString())}${this.body.toString(options)}`;
+        return `function ${this.name}${this.compileTypeParameters()}(${this.parameters})${compileType(this.type.toString())}${this.body.toString(options)}`;
     }
 
     arrowDeclaration(options?:any) {
@@ -176,7 +184,7 @@ export class Method extends BaseClassMember {
     }
 
     toString(options?: toStringOptions) { 
-        return `${this.decorators.join(" ")} ${this.modifiers.join(" ")} ${this.name}(${this.parameters})${compileType(this.type.toString())}${this.body.toString(options)}`;
+        return `${this.decorators.join(" ")} ${this.modifiers.join(" ")} ${this.name}${this.compileTypeParameters()}(${this.parameters})${compileType(this.type.toString())}${this.body.toString(options)}`;
     }
 }
 
