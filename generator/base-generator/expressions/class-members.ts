@@ -71,8 +71,8 @@ export class BaseClassMember extends Expression {
         return this._hasDecorator(Decorators.RefProp);
     }
 
-    get isNestedProp() { 
-        return this._hasDecorator(Decorators.NestedProp);
+    get isNested() { 
+        return this._hasDecorator(Decorators.Nested);
     }
 
     get isNestedComp() { 

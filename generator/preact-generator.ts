@@ -79,7 +79,7 @@ export class PreactComponent extends ReactComponent {
         return "declare type RestProps = { className?: string; style?: { [name: string]: any }; [x: string]: any }";
     }
 
-    createNestedPropGetter() {
+    createNestedGetter() {
         return null;
     }
 
@@ -218,7 +218,7 @@ export class Property extends BaseProperty {
         return super.typeDeclaration();
     }
 
-    compileNestedPropGetter(componentContext: string, scope: string) {
+    compileNestedGetter(componentContext: string, scope: string) {
         return `${componentContext}${scope}${this.name}`
     }
 
