@@ -1780,6 +1780,46 @@ mocha.describe("Vue-generator", function () {
                   `));
                     
                 });
+                
+                mocha.it("render slot if template is not exist", function() {
+                    const element = createElement([generator.createJsxExpression(
+                        undefined,
+                        generator.createBinary(
+                            generator.createPrefix(
+                                generator.SyntaxKind.ExclamationToken,
+                                generator.createIdentifier("template")
+                            ),
+                            generator.SyntaxKind.AmpersandAmpersandToken,
+                            this.slotExpression
+                        )
+                    )]);
+
+                    const templateProperty = generator.createProperty(
+                        [createDecorator(Decorators.Template)],
+                        [],
+                        generator.createIdentifier("template")
+                    )
+    
+                    assert.strictEqual(removeSpaces(element.children[0].toString({
+                        ...this.toStringOptions,
+                        members: [
+                            ...this.toStringOptions.members,
+                            templateProperty
+                        ],
+                        variables: {
+                            "template": generator.createPropertyAccess(
+                                generator.createPropertyAccess(
+                                    generator.createIdentifier("viewModel"),
+                                    generator.createIdentifier("props"),
+                                ),
+                                generator.createIdentifier("template")
+                            )
+                        }
+                    })), removeSpaces(`
+                        <template v-if="!$scopedSlots.template"><slot></slot></template>
+                  `));
+                    
+                });
             });
         });
 
