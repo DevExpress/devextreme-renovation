@@ -89,12 +89,7 @@ export const Nested = () => propertyDecorator;
  * Declares an input property that the user can set for custom rendering.
  * Property type should be a function that receives model and returns markup.
  */
-export const Template = (args?: { 
-    /**
-     * Better use @Slot 
-     */
-    canBeAnonymous?: boolean;
-}) => propertyDecorator;
+export const Template = () => propertyDecorator;
 /**
  * Property Decorator.
  * Declares an input property that the user can set custom rendering part of widget.
