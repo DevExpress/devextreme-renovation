@@ -24,7 +24,7 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>((props: typ
             return 0;
         }
     }), [])
-    const __restAttributes = useCallback(function __restAttributes() {
+    const __restAttributes = useCallback(function __restAttributes(): RestProps {
         const { ...restProps } = props
         return restProps;
     }, [props]);

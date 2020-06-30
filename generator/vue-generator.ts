@@ -14,7 +14,7 @@ import {
     GetAccessor as BaseGetAccessor,
     BaseClassMember
 } from "./base-generator/expressions/class-members";
-import { GeneratorContext, isTypeArray } from "./base-generator/types";
+import { GeneratorContext } from "./base-generator/types";
 import {
     TypeExpression,
     SimpleTypeExpression,
@@ -30,6 +30,7 @@ import {
     TypeOperatorNode,
     PropertySignature,
     MethodSignature,
+    isTypeArray,
 } from "./base-generator/expressions/type";
 import { capitalizeFirstLetter, variableDeclaration, removePlural } from "./base-generator/utils/string";
 import SyntaxKind from "./base-generator/syntaxKind";
@@ -63,6 +64,7 @@ import { Interface } from "./base-generator/expressions/interface";
 import { VariableStatement, VariableDeclarationList } from "./base-generator/expressions/variables";
 import { ImportClause, ImportDeclaration as BaseImportDeclaration } from "./base-generator/expressions/import";
 import path from "path";
+import { TypeParameterDeclaration } from "./base-generator/expressions/type-parameter-declaration";
 
 function calculatePropertyType(type: TypeExpression | string): string {
     if (type instanceof SimpleTypeExpression) {
@@ -1282,7 +1284,7 @@ class VueGenerator extends BaseGenerator {
         return new GetAccessor(decorators, modifiers, name, parameters, type, body);
     }
 
-    createMethod(decorators: Decorator[]| undefined, modifiers: string[]|undefined, asteriskToken: string|undefined, name: Identifier, questionToken: string | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
+    createMethod(decorators: Decorator[] | undefined, modifiers: string[] | undefined, asteriskToken: string | undefined, name: Identifier, questionToken: string | undefined, typeParameters: TypeParameterDeclaration[] | undefined, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 

@@ -27,10 +27,10 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-    const onClick = useCallback(function onClick() {
+    const onClick = useCallback(function onClick(): void {
 
     }, []);
-    const __restAttributes = useCallback(function __restAttributes() {
+    const __restAttributes = useCallback(function __restAttributes(): RestProps {
         const { height, p, ...restProps } = props
         return restProps;
     }, [props]);

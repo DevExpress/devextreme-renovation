@@ -225,6 +225,14 @@ export class Property extends BaseProperty {
     inherit() {
         return new Property(this.decorators, this.modifiers, this._name, this.questionOrExclamationToken, this.type, this.initializer, true);
     }
+
+    getDependency() { 
+        const baseValue = super.getDependency();
+        if (this.isNested) {
+            return [baseValue[0]];
+        }
+        return baseValue
+    }
 }
 
 const processTagName = (tagName: Expression) => tagName.toString() === "Fragment" ? new Identifier("Preact.Fragment") : tagName;

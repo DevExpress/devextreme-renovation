@@ -476,6 +476,41 @@ mocha.describe("base-generator: expressions", function () {
                 undefined
             ).toString(), "name(a:string,b:string):any");
         });
+
+        mocha.describe("TypeParameterDeclaration", function () {
+            mocha.it("only name is defined", function () { 
+                const expression = generator.createTypeParameterDeclaration(
+                    generator.createIdentifier("T")
+                );
+
+                assert.strictEqual(expression.toString(), "T");
+            });
+
+            mocha.it("with constraint", function () { 
+                const expression = generator.createTypeParameterDeclaration(
+                    generator.createIdentifier("T"),
+                    generator.createTypeReferenceNode(
+                        generator.createIdentifier("I"),
+                        undefined
+                      )
+                );
+
+                assert.strictEqual(expression.toString(), "T extends I");
+            });
+
+            mocha.it("with default", function () { 
+                const expression = generator.createTypeParameterDeclaration(
+                    generator.createIdentifier("T"),
+                    undefined,
+                    generator.createTypeReferenceNode(
+                        generator.createIdentifier("I"),
+                        undefined
+                      )
+                );
+
+                assert.strictEqual(expression.toString(), "T = I");
+            });
+        });
     });
 
     mocha.describe("Statements", function () { 
@@ -1463,6 +1498,40 @@ mocha.describe("base-generator: expressions", function () {
             assert.strictEqual(getAst(expression.toString()), getAst("@d1() @d2() public name():string{}"));
         });
 
+        mocha.it("Method with TypeParameters", function () { 
+            const method = generator.createMethod(
+                [],
+                [],
+                undefined,
+                generator.createIdentifier("m"),
+                undefined,
+                [
+                    generator.createTypeParameterDeclaration(
+                        generator.createIdentifier("T1")
+                    ),
+                    generator.createTypeParameterDeclaration(
+                        generator.createIdentifier("T2")
+                    )
+                ],
+                [],
+                generator.createUnionTypeNode(
+                    [
+                        generator.createTypeReferenceNode(
+                            generator.createIdentifier("T1")
+                        ),
+                        generator.createTypeReferenceNode(
+                            generator.createIdentifier("T2")
+                        )
+                    ]
+                ),
+                generator.createBlock([], false)
+            );
+
+            assert.strictEqual(method.typeDeclaration(), "m:<T1,T2>()=>T1|T2");
+            assert.strictEqual(getAst(method.declaration()), getAst("function m<T1,T2>():T1|T2{}"));
+            assert.strictEqual(getAst(method.toString()), getAst("m<T1,T2>():T1|T2{}"));
+        });
+
         mocha.it("GetAccessor", function () { 
             const expression = generator.createGetAccessor(
                 undefined,
@@ -2348,6 +2417,77 @@ mocha.describe("ComponentInput", function () {
             assert.deepEqual(this.getWarnings(), [
                 'Component ComponentName has Prop and Api method with same name: p1',
                 'Component ComponentName has Prop and Api method with same name: p2'
+            ]);
+        });
+
+        mocha.it("Nested component should not throw warn if one of types is TypeReferenceNode", function() {
+            createComponentInput([
+                generator.createProperty(
+                    [
+                        createDecorator("Nested")
+                    ],
+                    undefined,
+                    generator.createIdentifier("component"),
+                    undefined,
+                    generator.createTypeReferenceNode(generator.createIdentifier("Custom1"))
+                ),
+                generator.createProperty(
+                    [
+                        createDecorator("Nested")
+                    ],
+                    undefined,
+                    generator.createIdentifier("component"),
+                    undefined,
+                    generator.createArrayTypeNode(generator.createTypeReferenceNode(generator.createIdentifier("Custom2")))
+                ),
+                generator.createProperty(
+                    [
+                        createDecorator("Nested")
+                    ],
+                    undefined,
+                    generator.createIdentifier("component"),
+                    undefined,
+                    generator.createUnionTypeNode([
+                        generator.createTypeReferenceNode(generator.createIdentifier("Custom3")),
+                        generator.createIdentifier('string')])
+                ),
+                generator.createProperty(
+                    [
+                        createDecorator("Nested")
+                    ],
+                    undefined,
+                    generator.createIdentifier("component"),
+                    undefined,
+                    generator.createParenthesizedType(generator.createTypeReferenceNode(generator.createIdentifier("Custom4")))
+                ),
+            ]);
+
+            assert.deepEqual(this.getWarnings(), []);
+        });
+
+        mocha.it("Nested component should throw warn with not TypeReferenceNode", function() {
+            createComponentInput([
+                generator.createProperty(
+                    [
+                        createDecorator("Nested")
+                    ],
+                    undefined,
+                    generator.createIdentifier("Custom1"),
+                ),
+                generator.createProperty(
+                    [
+                        createDecorator("Nested")
+                    ],
+                    undefined,
+                    generator.createIdentifier("Custom2"),
+                    undefined,
+                    generator.createIdentifier("string")
+                )
+            ]);
+
+            assert.deepEqual(this.getWarnings(), [
+                "One of \"Custom1\" Nested property's types should be complex type",
+                "One of \"Custom2\" Nested property's types should be complex type",
             ]);
         });
     });

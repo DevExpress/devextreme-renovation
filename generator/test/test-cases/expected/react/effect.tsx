@@ -37,11 +37,11 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     const [__state_i, __state_setI] = useState(10)
     const [__state_j, __state_setJ] = useState(20)
 
-    const getP = useCallback(function getP(){
+    const getP = useCallback(function getP(): any {
         return props.p;
     }, [props.p]);
 
-    const __restAttributes=useCallback(function __restAttributes(){
+    const __restAttributes=useCallback(function __restAttributes(): RestProps{
         const { defaultS, p, r, s, sChange, ...restProps } = {
           ...props,
           s: (props.s !== undefined ? props.s : __state_s)

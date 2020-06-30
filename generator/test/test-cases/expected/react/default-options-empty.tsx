@@ -16,7 +16,7 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetProps & RestProps) {
-    const __restAttributes=useCallback(function __restAttributes(){
+    const __restAttributes=useCallback(function __restAttributes(): RestProps{
         const { ...restProps } = props;
         return restProps;
     }, [props]);

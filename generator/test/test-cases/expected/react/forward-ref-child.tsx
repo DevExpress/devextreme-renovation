@@ -22,7 +22,7 @@ interface RefOnChildrenChild {
 }
 
 export default function RefOnChildrenChild(props: typeof Props & RestProps) {
-    const __restAttributes = useCallback(function __restAttributes() {
+    const __restAttributes = useCallback(function __restAttributes(): RestProps {
         const { childRef, nullableRef, state, ...restProps } = props
         return restProps;
     }, [props]);

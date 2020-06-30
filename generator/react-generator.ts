@@ -17,7 +17,7 @@ import {
     JsxOpeningElement as BaseJsxOpeningElement,
     JsxSpreadAttribute
 } from "./base-generator/expressions/jsx";
-import { toStringOptions, GeneratorContext, isTypeArray } from "./base-generator/types";
+import { toStringOptions, GeneratorContext } from "./base-generator/types";
 import { Component, getProps } from "./base-generator/expressions/component";
 import { HeritageClause as BaseHeritageClause } from "./base-generator/expressions/class";
 import { BindingElement, BindingPattern } from "./base-generator/expressions/binding-pattern";
@@ -30,7 +30,10 @@ import {
     TypeExpression,
     TypeReferenceNode as BaseTypeReferenceNode,
     FunctionTypeNode,
-    SimpleTypeExpression
+    SimpleTypeExpression,
+    ArrayTypeNode,
+    isTypeArray,
+    extractComplexType
 } from "./base-generator/expressions/type";
 import { Parameter } from "./base-generator/expressions/functions";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input";
@@ -38,6 +41,7 @@ import { ObjectLiteral } from "./base-generator/expressions/literal";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { PropertyAssignment, SpreadAssignment } from "./base-generator/expressions/property-assignment";
 import { Decorators } from "./component_declaration/decorators";
+import { TypeParameterDeclaration } from "./base-generator/expressions/type-parameter-declaration";
 
 const eventsDictionary = {
     pointerover: "onPointerOver",
@@ -268,13 +272,11 @@ export class Property extends BaseProperty {
     compileNestedGetter(componentContext: string, scope: string) {
         const propName = getPropName(this.name, componentContext, scope);
         const isArray = isTypeArray(this.type);
+        const type = extractComplexType(this.type);
         const indexGetter = isArray ? "" : "?.[0]";
-        let nestedName = capitalizeFirstLetter(this.name);
-        if (isArray) {
-            nestedName = removePlural(nestedName);
-        }
+        const nestedName = isArray ? removePlural(this.name) : this.name;
 
-        return `(${propName} || __getNestedFromChild("${nestedName}")${indexGetter})`
+        return `(${propName} || __getNestedFromChild<${type}>("${capitalizeFirstLetter(nestedName)}")${indexGetter})`
     }
 
     getter(componentContext?: string) {
@@ -306,7 +308,7 @@ export class Property extends BaseProperty {
         } else if (this.isState) {
             return [getPropName(this.name), getLocalStateName(this.name), getPropName(`${this.name}Change`)];
         } else if (this.isNested) {
-            return [getPropName(this.name)];
+            return [getPropName(this.name), getPropName("children")];
         }
         throw `Can't parse property: ${this._name}`;
     }
@@ -429,7 +431,10 @@ export class ReactComponent extends Component {
                     new Identifier("children"),
                     undefined,
                     new PropertyAccess(
-                        new SimpleExpression("this.props"),
+                        new PropertyAccess(
+                            new SimpleExpression(SyntaxKind.ThisKeyword),
+                            new Identifier("props")
+                        ),
                         new Identifier("children")
                     )
                 ),
@@ -450,13 +455,19 @@ export class ReactComponent extends Component {
             undefined,
             new Identifier('__getNestedFromChild'),
             undefined,
-            [],
+            [
+                new TypeParameterDeclaration(
+                    new Identifier("T")
+                )
+            ],
             [
                 new Parameter([], [], "", new Identifier("typeName"), undefined, 'string', undefined),
             ],
-            new SimpleTypeExpression("{ [name:string]: any }[]"),
+            new ArrayTypeNode(
+                new Identifier("T")
+            ),
             new Block(statements, true)
-        )
+        );
     }
 
     compileImportStatements(hooks: string[], compats: string[]) {
@@ -891,7 +902,7 @@ export class Generator extends BaseGenerator {
         return new TypeReferenceNode(typeName, typeArguments, this.getContext());
     }
 
-    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string|undefined, name: Identifier, questionToken: string | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
+    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string | undefined, name: Identifier, questionToken: string | undefined, typeParameters: TypeParameterDeclaration[] | undefined, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 }

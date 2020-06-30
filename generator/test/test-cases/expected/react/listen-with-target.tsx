@@ -14,13 +14,13 @@ interface Widget {
 export function Widget(props: {
 
 } & RestProps) {
-  const onPointerUp = useCallback(function onPointerUp() {
+  const onPointerUp = useCallback(function onPointerUp(): any {
 
   }, []);
-  const scrollHandler = useCallback(function scrollHandler() {
+  const scrollHandler = useCallback(function scrollHandler(): any {
 
   }, []);
-  const __restAttributes = useCallback(function __restAttributes() {
+  const __restAttributes = useCallback(function __restAttributes(): RestProps {
     const { ...restProps } = props
     return restProps;
   }, [props]);

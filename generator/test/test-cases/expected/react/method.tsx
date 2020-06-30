@@ -30,7 +30,7 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>((props: typ
             return `${props.prop1} + ${divRef.current!.innerHTML}`;
         }
     }), [props.prop1, props.prop2]);
-    const __restAttributes=useCallback(function __restAttributes(){
+    const __restAttributes=useCallback(function __restAttributes(): RestProps{
         const { prop1, prop2, ...restProps } = props;
         return restProps;
     }, [props]);

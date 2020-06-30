@@ -20,11 +20,11 @@ interface Widget {
 }
 
 export function Widget(props: typeof Props & RestProps) {
-    const clickHandler = useCallback(function clickHandler() {
+    const clickHandler = useCallback(function clickHandler():any {
         props.onClick!({ type: props.type })
     }, [props.onClick, props.type]);
 
-    const __restAttributes = useCallback(function __restAttributes() {
+    const __restAttributes = useCallback(function __restAttributes(): RestProps {
         const { onClick, type, ...restProps } = props
         return restProps;
     }, [props]);

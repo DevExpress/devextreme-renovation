@@ -15,9 +15,7 @@ import {
 } from "./base-generator/expressions/class-members"
 import {
     toStringOptions as BaseToStringOptions,
-    GeneratorContext,
-    isTypeArray,
-    extractComplexType
+    GeneratorContext
 } from "./base-generator/types";
 import SyntaxKind from "./base-generator/syntaxKind";
 import { Expression, SimpleExpression } from "./base-generator/expressions/base";
@@ -37,7 +35,7 @@ import {
     isFunction,
 } from "./base-generator/expressions/functions";
 import { TemplateExpression } from "./base-generator/expressions/template";
-import { SimpleTypeExpression, TypeExpression, FunctionTypeNode, TypeLiteralNode, PropertySignature, isComplexType } from "./base-generator/expressions/type";
+import { SimpleTypeExpression, TypeExpression, FunctionTypeNode, TypeLiteralNode, PropertySignature, isComplexType, isTypeArray, extractComplexType } from "./base-generator/expressions/type";
 import { HeritageClause } from "./base-generator/expressions/class";
 import { ImportClause } from "./base-generator/expressions/import";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input"
@@ -46,7 +44,7 @@ import { PropertyAccess as BasePropertyAccess } from "./base-generator/expressio
 import { BindingPattern, BindingElement } from "./base-generator/expressions/binding-pattern";
 import { processComponentContext, capitalizeFirstLetter, removePlural } from "./base-generator/utils/string";
 import { Decorators } from "./component_declaration/decorators";
-import { warn } from "./utils/messages";
+import { TypeParameterDeclaration } from "./base-generator/expressions/type-parameter-declaration";
 
 // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
 const VOID_ELEMENTS = 
@@ -1131,14 +1129,10 @@ class ComponentInput extends BaseComponentInput {
     }
 
     createContentChildrenProperty(property: Property) {
-        const { modifiers, questionOrExclamationToken, initializer, type, _name } = property;
-        const name = _name.toString();
+        const { modifiers, questionOrExclamationToken, initializer, type, name } = property;
         
         const decorator = this.createDecorator(new Call(new Identifier(Decorators.NestedComp), undefined, []), {});
         const nestedType = extractComplexType(type);
-        if (nestedType === "any") {
-            warn(`One of "${name}" Nested property's types should be complex type`)
-        }
         return this.createProperty([decorator], modifiers, new Identifier(`${name}Nested`), questionOrExclamationToken, `Dx${nestedType}`, initializer);
     }
 
@@ -1943,7 +1937,7 @@ export class AngularGenerator extends Generator {
         return new Property(decorators, modifiers, name, questionOrExclamationToken, type, initializer);
     }
 
-    createMethod(decorators: Decorator[], modifiers: string[] | undefined, asteriskToken: string | undefined, name: Identifier, questionToken: string | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
+    createMethod(decorators: Decorator[], modifiers: string[] | undefined, asteriskToken: string | undefined, name: Identifier, questionToken: string | undefined, typeParameters: TypeParameterDeclaration[] | undefined, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 

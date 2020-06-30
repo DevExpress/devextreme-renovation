@@ -17,7 +17,7 @@ interface WidgetWithRefProp {
 }
 
 export default function WidgetWithRefProp(props: typeof WidgetWithRefPropInput & RestProps) {
-    const __restAttributes = useCallback(function __restAttributes() {
+    const __restAttributes = useCallback(function __restAttributes(): RestProps {
         const { nullableRef, parentRef, ...restProps } = props
         return restProps;
     }, [props]);

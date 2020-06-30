@@ -39,7 +39,7 @@ function getTemplate(props: any, template: string, render: string, component: st
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-    const __restAttributes = useCallback(function __restAttributes() {
+    const __restAttributes = useCallback(function __restAttributes(): RestProps {
         const { component,contentComponent,contentRender,contentTemplate,footerComponent,footerRender,footerTemplate,headerComponent,headerRender,headerTemplate,render,template, ...restProps } = props;
         return restProps;
     }, [props]);

@@ -303,3 +303,28 @@ export function isComplexType(type: TypeExpression | string): boolean {
     }
     return false;
 }
+
+export const isTypeArray = (type: string | TypeExpression | undefined) => type instanceof ArrayTypeNode || (type instanceof TypeReferenceNode && type.typeName.toString() === "Array")
+
+export const extractComplexType = (type?: string | TypeExpression): string => {
+    if (type instanceof TypeReferenceNode) {
+        if (type.typeName.toString() === "Array") {
+            return extractComplexType(type.typeArguments[0]);
+        }
+        return `${type.typeName.toString()}`;
+    }
+    if (type instanceof ArrayTypeNode) {
+        return extractComplexType(type.elementType);
+    }
+    if (type instanceof ParenthesizedType) {
+        return extractComplexType(type.expression)
+    }
+    if (type instanceof UnionTypeNode) {
+        const nestedType = type.types.find(t => t instanceof TypeReferenceNode);
+        if(nestedType) {
+            return extractComplexType(nestedType);
+        }
+    }
+
+    return 'any';
+}

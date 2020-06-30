@@ -55,6 +55,7 @@ import { getModuleRelativePath } from "./utils/path-utils";
 import { Decorator } from "./expressions/decorator";
 import { Interface } from "./expressions/interface";
 import { Decorators } from "../component_declaration/decorators";
+import { TypeParameterDeclaration } from "./expressions/type-parameter-declaration";
 
 export default class Generator {
     NodeFlags = {
@@ -420,7 +421,7 @@ export default class Generator {
         return expression;
     }
 
-    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string|undefined, name: Identifier, questionToken: string | undefined, typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
+    createMethod(decorators: Decorator[] = [], modifiers: string[] = [], asteriskToken: string | undefined, name: Identifier, questionToken: string | undefined, typeParameters: TypeParameterDeclaration[] | undefined, parameters: Parameter[], type: TypeExpression | undefined, body: Block) {
         return new Method(decorators, modifiers, asteriskToken, name, questionToken, typeParameters, parameters, type, body);
     }
 
@@ -590,6 +591,10 @@ export default class Generator {
 
     createMethodSignature(typeParameters: any, parameters: Parameter[], type: TypeExpression | undefined, name: Identifier, questionToken?: string) {
         return new MethodSignature(typeParameters, parameters, type, name, questionToken);
+    }
+
+    createTypeParameterDeclaration(name: Identifier, constraint?: TypeExpression, defaultType?: TypeExpression) { 
+        return new TypeParameterDeclaration(name, constraint, defaultType);
     }
     
     createRegularExpressionLiteral(text: string) { 
