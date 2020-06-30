@@ -1798,7 +1798,7 @@ mocha.describe("Vue-generator", function () {
                         [createDecorator(Decorators.Template)],
                         [],
                         generator.createIdentifier("template")
-                    )
+                    );
     
                     assert.strictEqual(removeSpaces(element.children[0].toString({
                         ...this.toStringOptions,

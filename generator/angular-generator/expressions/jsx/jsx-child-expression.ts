@@ -17,7 +17,7 @@ import { StringLiteral } from "../../../base-generator/expressions/literal";
 import { getJsxExpression, JsxClosingElement } from "../../../base-generator/expressions/jsx";
 import { isElement, JsxElement } from "./elements";
 import { JsxOpeningElement, JsxSelfClosingElement } from "./jsx-opening-element";
-import { getExpression, counter } from "../../utils";
+import { getExpression, counter, getMember } from "../../utils";
 
 export class JsxChildExpression extends JsxExpression {
     constructor(expression: JsxExpression) {
@@ -83,15 +83,20 @@ export class JsxChildExpression extends JsxExpression {
         );
     }
 
-    processSlotInConditional(statement: Expression, options?: toStringOptions) { 
+    processSlotInConditional(statement: Expression, condition?: Expression, options?: toStringOptions) { 
         const slot = this.getSlot(statement.toString(options), options);
-        if (slot && slot.getter(options?.newComponentContext)===statement.toString(options)) { 
-            return new JsxChildExpression(this.createJsxExpression(statement)).toString(options);
+        
+        if (
+            slot &&
+            slot.getter(options?.newComponentContext) === statement.toString(options) &&
+            condition && getMember(condition, options) === slot
+        ) {
+           return new JsxChildExpression(this.createJsxExpression(statement)).toString(options);
         }
     }
 
     compileStatement(statement: Expression, condition?: Expression, options?: toStringOptions): string {
-        const slot = this.processSlotInConditional(statement, options);
+        const slot = this.processSlotInConditional(statement, condition, options);
         if (slot) { 
             return slot;
         }

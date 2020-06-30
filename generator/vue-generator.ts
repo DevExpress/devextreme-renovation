@@ -1191,7 +1191,7 @@ export class JsxChildExpression extends BaseJsxChildExpression {
         );
     }
 
-    processSlotInConditional(statement: Expression, options?: toStringOptions) { 
+    processSlotInConditional() { 
         return undefined;
     }
     
