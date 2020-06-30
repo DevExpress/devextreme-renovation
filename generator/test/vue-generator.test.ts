@@ -4,7 +4,7 @@ import generator, { VueComponent, JsxExpression } from "../vue-generator";
 
 import { printSourceCodeAst as getAst, removeSpaces } from "./helpers/common";
 import componentCreator from "./helpers/create-component";
-import { toStringOptions } from "../angular-generator";
+import { toStringOptions } from "../angular-generator/types";
 import { Decorators } from "../component_declaration/decorators";
 const { createDecorator, createComponentDecorator, createComponent } = componentCreator(generator);
 

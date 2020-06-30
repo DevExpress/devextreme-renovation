@@ -38,21 +38,6 @@ import { Expression, SimpleExpression } from "./base-generator/expressions/base"
 import { ObjectLiteral, StringLiteral, NumericLiteral } from "./base-generator/expressions/literal";
 import { Parameter as BaseParameter, getTemplate, BaseFunction } from "./base-generator/expressions/functions";
 import { Block, ReturnStatement } from "./base-generator/expressions/statements";
-import {
-    Function as AngularFunction,
-    ArrowFunction as AngularArrowFunction,
-    VariableDeclaration,
-    JsxExpression as BaseJsxExpression,
-    JsxElement as BaseJsxElement,
-    JsxOpeningElement as BaseJsxOpeningElement,
-    JsxChildExpression as BaseJsxChildExpression,
-    JsxAttribute as BaseJsxAttribute,
-    JsxSpreadAttribute as BaseJsxSpreadAttribute,
-    AngularDirective,
-    toStringOptions,
-    isElement,
-    getMember,
-} from "./angular-generator";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { BindingPattern } from "./base-generator/expressions/binding-pattern";
 import { ComponentInput } from "./base-generator/expressions/component-input";
@@ -65,6 +50,18 @@ import { VariableStatement, VariableDeclarationList } from "./base-generator/exp
 import { ImportClause, ImportDeclaration as BaseImportDeclaration } from "./base-generator/expressions/import";
 import path from "path";
 import { TypeParameterDeclaration } from "./base-generator/expressions/type-parameter-declaration";
+import { toStringOptions } from "./angular-generator/types";
+import { Function as AngularFunction } from "./angular-generator/expressions/functions/function";
+import { ArrowFunction as AngularArrowFunction } from "./angular-generator/expressions/functions/arrow-function";
+import { JsxExpression as BaseJsxExpression } from "./angular-generator/expressions/jsx/jsx-expression";
+import { JsxElement as BaseJsxElement, isElement } from "./angular-generator/expressions/jsx/elements";
+import { JsxSpreadAttribute as BaseJsxSpreadAttribute } from "./angular-generator/expressions/jsx/spread-attribute";
+import { JsxOpeningElement as BaseJsxOpeningElement } from "./angular-generator/expressions/jsx/jsx-opening-element";
+import { JsxChildExpression as BaseJsxChildExpression } from "./angular-generator/expressions/jsx/jsx-child-expression";
+import { JsxAttribute as BaseJsxAttribute } from "./angular-generator/expressions/jsx/attribute";
+import { VariableDeclaration } from "./angular-generator/expressions/variable-expression";
+import { AngularDirective } from "./angular-generator/expressions/jsx/angular-directive";
+import { getMember } from "./angular-generator/utils";
 
 function calculatePropertyType(type: TypeExpression | string): string {
     if (type instanceof SimpleTypeExpression) {
