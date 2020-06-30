@@ -95,14 +95,7 @@ class JQueryComponent {
         const statements: string[] = [];
 
         const templates = this.source.props.filter(p => p.decorators.find(d => d.name === "Template"))
-        statements.splice(-1, 0, ...templates.map(t => {
-            const params = ["props", `props.${t.name}`];
-            if(t.decorators.find(d => d.name === "Template")!.getParameter("canBeAnonymous")?.toString() === "true") {
-                params.push("true");
-            }
-    
-            return `props.${t.name} = this._createTemplateComponent(${params.join(",")});`;
-        }));
+        statements.splice(-1, 0, ...templates.map(t => `props.${t.name} = this._createTemplateComponent(props, props.${t.name});`));
 
         if(this.source.props.find(p => p.name === "onKeyDown" && p.isEvent)) {
             statements.push("props.onKeyDown = this._wrapKeyDownHandler(props.onKeyDown);");

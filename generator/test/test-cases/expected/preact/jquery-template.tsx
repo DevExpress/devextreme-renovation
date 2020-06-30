@@ -9,10 +9,6 @@ export default class Widget extends BaseComponent {
 
         props.anotherTemplate = this._createTemplateComponent(props, props.anotherTemplate);
 
-        props.containerTemplate = this._createTemplateComponent(props, props.containerTemplate);
-
-        props.contentTemplate = this._createTemplateComponent(props, props.contentTemplate, true);
-
         return props;
     }
 

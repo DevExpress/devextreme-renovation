@@ -3,9 +3,7 @@ import { Component, Template, ComponentBindings, JSXComponent } from "../../../.
 @ComponentBindings()
 export class WidgetInput { 
     @Template() template: () => any = () => <div></div>;
-    @Template({}) anotherTemplate: () => any = () => <div></div>;
-    @Template({ canBeAnonymous: false }) containerTemplate: () => any = () => <div></div>;
-    @Template({ canBeAnonymous: true }) contentTemplate: () => any = () => <div></div>;
+    @Template() anotherTemplate: () => any = () => <div></div>;
 }
 
 @Component({
@@ -18,7 +16,5 @@ function view(viewModel: Widget) {
     return (<div>
         <viewModel.props.template />
         <viewModel.props.anotherTemplate />
-        <viewModel.props.containerTemplate />
-        <viewModel.props.contentTemplate />
     </div>)
 }
