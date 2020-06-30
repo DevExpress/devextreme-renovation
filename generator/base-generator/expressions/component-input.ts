@@ -1,6 +1,6 @@
 import { Class, Heritable, inheritMembers, HeritageClause } from "./class";
 import { Parameter } from "./functions";
-import { SimpleTypeExpression, FunctionTypeNode, TypeExpression } from "./type";
+import { SimpleTypeExpression, FunctionTypeNode, TypeExpression, extractComplexType } from "./type";
 import { Property, Method, BaseClassMember } from "./class-members";
 import { Identifier, Call } from "./common";
 import SyntaxKind from "../syntaxKind";
@@ -128,8 +128,12 @@ export class ComponentInput extends Class implements Heritable {
                 } else { 
                     warn(`${this.name} ComponentBindings has property with multiple decorators: ${m._name}`);
                 }
-            } else if (getProps([m]).length === 0 && !m.isNestedComp) {
+            } else if (getProps([m]).length === 0) {
                 warn(`${this.name} ComponentBindings has property "${m._name}" with incorrect decorator: ${m.decorators[0].name}`);
+            }
+
+            if (m.isNested && extractComplexType(m.type) === "any") {
+                warn(`One of "${m.name}" Nested property's types should be complex type`);
             }
 
             if (RESERVED_NAMES.some(n => n === m._name.toString())) { 

@@ -45,7 +45,6 @@ import { BindingPattern, BindingElement } from "./base-generator/expressions/bin
 import { processComponentContext, capitalizeFirstLetter, removePlural } from "./base-generator/utils/string";
 import { Decorators } from "./component_declaration/decorators";
 import { TypeParameterDeclaration } from "./base-generator/expressions/type-parameter-declaration";
-import { warn } from "./utils/messages";
 
 // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
 const VOID_ELEMENTS = 
@@ -1130,14 +1129,10 @@ class ComponentInput extends BaseComponentInput {
     }
 
     createContentChildrenProperty(property: Property) {
-        const { modifiers, questionOrExclamationToken, initializer, type, _name } = property;
-        const name = _name.toString();
+        const { modifiers, questionOrExclamationToken, initializer, type, name } = property;
         
         const decorator = this.createDecorator(new Call(new Identifier(Decorators.NestedComp), undefined, []), {});
         const nestedType = extractComplexType(type);
-        if (nestedType === "any") {
-            warn(`One of "${name}" Nested property's types should be complex type`)
-        }
         return this.createProperty([decorator], modifiers, new Identifier(`${name}Nested`), questionOrExclamationToken, `Dx${nestedType}`, initializer);
     }
 
