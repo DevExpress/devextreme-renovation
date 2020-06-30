@@ -1620,6 +1620,65 @@ mocha.describe("Angular generator", function () {
                         <ng-container *ngTemplateOutlet="template; context:{a1: 'str',a2: 10}"></ng-container>
                     </ng-container>`));
             });
+
+            mocha.it("render slot if template is not exist", function () {
+                const templateProperty = generator.createProperty(
+                    [createDecorator(Decorators.Template)],
+                    [],
+                    generator.createIdentifier("template")
+                );
+
+                const slotProperty = generator.createProperty(
+                    [createDecorator(Decorators.Slot)],
+                    [],
+                    generator.createIdentifier("children"),
+                    generator.SyntaxKind.QuestionToken
+                );
+
+                const expression = generator.createJsxElement(
+                    generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        []
+                    ),
+                    [
+                        generator.createJsxExpression(
+                            undefined,
+                            generator.createBinary(
+                                generator.createPrefix(
+                                    generator.SyntaxKind.ExclamationToken,
+                                    generator.createIdentifier("template")
+                                ),
+                                generator.SyntaxKind.AmpersandAmpersandToken,
+                                generator.createPropertyAccess(
+                                    generator.createPropertyAccess(
+                                        generator.createIdentifier("viewModel"),
+                                        generator.createIdentifier("props"),
+                                    ),
+                                    generator.createIdentifier("children")
+                                )
+                            )
+                        )
+                    ],
+                    generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                    )
+                );
+
+                assert.strictEqual(removeSpaces(expression.toString({
+                    members: [templateProperty, slotProperty],
+                    componentContext: "viewModel",
+                    newComponentContext: ""
+                })), removeSpaces(`
+                    <div>
+                        <ng-container *ngIf="!template">
+                            <div #slotChildren style="display:contents">
+                                <ng-content></ng-content>
+                            </div>
+                        </ng-container>
+                    </div>`
+                ));
+            });
         });
 
         mocha.describe("Parse Map function", function () {

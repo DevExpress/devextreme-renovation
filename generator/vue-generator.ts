@@ -1144,7 +1144,7 @@ export class TemplateWrapperElement extends JsxOpeningElement {
 
     constructor(attributes: Array<JsxAttribute | JsxSpreadAttribute>) { 
         super(
-            new Identifier("template"),
+            new SimpleExpression("template"),
             undefined,
             attributes,
             {}
@@ -1155,7 +1155,7 @@ export class TemplateWrapperElement extends JsxOpeningElement {
 export class ClosingTemplateWrapperElement extends JsxClosingElement { 
     constructor() { 
         super(
-            new Identifier("template"),
+            new SimpleExpression("template"),
             {}
         );
     }
@@ -1191,7 +1191,7 @@ export class JsxChildExpression extends BaseJsxChildExpression {
         );
     }
 
-    processSlotInConditional(statement: Expression, options?: toStringOptions) { 
+    processSlotInConditional() { 
         return undefined;
     }
     
