@@ -41,7 +41,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
             p2: (props.p2 !== undefined ? props.p2 : __state_p2)
         }
         return restProps;
-    }, [props]);
+    }, [props, __state_p1, __state_p2]);
 
     return view();
 }

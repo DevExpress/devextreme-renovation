@@ -47,7 +47,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
           s: (props.s !== undefined ? props.s : __state_s)
         }
         return restProps;
-    }, [props]);
+    }, [props, __state_s]);
 
     useEffect(() => {
         const id = subscribe(getP(), (props.s !== undefined ? props.s : __state_s), __state_i)
