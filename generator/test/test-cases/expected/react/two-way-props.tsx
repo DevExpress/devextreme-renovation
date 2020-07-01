@@ -41,14 +41,14 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
       ...props,
       selected: (props.selected !== undefined ? props.selected : __state_selected),
     };
-  }, [props]);
+  }, [props, __state_selected]);
   const __restAttributes = useCallback(function __restAttributes(): RestProps {
     const { defaultSelected, height, selected, selectedChange, ...restProps } = {
       ...props,
       selected: (props.selected !== undefined ? props.selected : __state_selected),
     }
     return restProps;
-  }, [props]);
+  }, [props, __state_selected]);
 
   return view(
     ({

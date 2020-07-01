@@ -69,7 +69,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
       stateProp: (props.stateProp !== undefined ? props.stateProp : __state_stateProp)
     }
     return restProps;
-  }, [props]);
+  }, [props, __state_state1, __state_state2, __state_stateProp]);
 
   return view(({
     props: {

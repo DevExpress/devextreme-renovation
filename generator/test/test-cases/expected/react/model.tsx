@@ -45,12 +45,12 @@ export default function ModelWidget(props: typeof ModelWidgetInput & RestProps) 
             ...restProps
         } = {
             ...props,
-            baseStateProp:(props.baseStateProp!==undefined?props.baseStateProp:__state_baseStateProp),
-            modelStateProp:(props.modelStateProp!==undefined?props.modelStateProp:__state_modelStateProp),
-            value:(props.value!==undefined?props.value:__state_value)
+            baseStateProp: (props.baseStateProp !== undefined ? props.baseStateProp : __state_baseStateProp),
+            modelStateProp: (props.modelStateProp !== undefined ? props.modelStateProp : __state_modelStateProp),
+            value: (props.value !== undefined ? props.value : __state_value)
         }
-      return restProps;
-    }, [props]);
+        return restProps;
+    }, [props, __state_baseStateProp, __state_modelStateProp, __state_value]);
 
     return view(
         ({
