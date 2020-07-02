@@ -1642,7 +1642,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.deepEqual(this.internalStateAccess.getDependency(), ["i1"]);
     });
 
-    mocha.it("= operator for state - set state and rise change state", function () {
+    mocha.it("= operator for state - set state and raise change state", function () {
         const expression = generator.createBinary(
             this.stateAccess,
             generator.SyntaxKind.EqualsToken,
@@ -1666,6 +1666,18 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.equal(getResult(expression.toString({
             members: [this.state, this.prop, this.internalState]
         })), getResult("__state_setI1(__state_i1 => a);"));
+    });
+
+    mocha.it("set object literal in state", function () {
+        const expression = generator.createBinary(
+            this.internalStateAccess,
+            generator.SyntaxKind.EqualsToken,
+            generator.createObjectLiteral([], false)
+        );
+
+        assert.equal(getResult(expression.toString({
+            members: [this.state, this.prop, this.internalState]
+        })), getResult("__state_setI1(__state_i1 => ({}));"));
     });
 
     mocha.it("= operator for prop - throw error", function () {
