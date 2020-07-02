@@ -38,26 +38,6 @@ mocha.describe("code-compiler: gulp integration", function() {
         assert.deepEqual(generator.getContext(), { components: {} });
         setContextSpy.restore();
     });
-
-    mocha.describe("Default options", function () {
-        const defaultOptionsModule = "../component_declaration/default_options";
-        this.beforeEach(function () {
-            generator.defaultOptionsModule = defaultOptionsModule
-        });
-        this.afterEach(function () { 
-            generator.defaultOptionsModule = undefined;
-        });
-        mocha.it("copy default_options", async function () { 
-            const setContextSpy = sinon.spy(generator, "setContext");
-            await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/src/props-in-listener.tsx`))
-                .pipe(generateComponents(generator))
-            );
-
-            assert.strictEqual(setContextSpy.firstCall.args[0]!.defaultOptionsModule, path.resolve(defaultOptionsModule));
-
-            setContextSpy.restore();
-        });
-    });
 });
 
 mocha.describe("Gathering meta information about components", function() {
@@ -102,24 +82,14 @@ mocha.describe("jQuery", function () {
     const jqueryComponentRegistratorModule = "../component_declaration/jquery_component_registrator";
     const jqueryBaseComponentModule = "../component_declaration/jquery_base_component";
 
-     this.beforeEach(function () {
-        generator.jqueryComponentRegistratorModule = jqueryComponentRegistratorModule
-        generator.jqueryBaseComponentModule = jqueryBaseComponentModule
+    this.beforeEach(function () {
+        generator.options = {
+            jqueryComponentRegistratorModule,
+            jqueryBaseComponentModule
+        }
     });
     this.afterEach(function () { 
-        generator.jqueryComponentRegistratorModule = undefined
-        generator.jqueryBaseComponentModule = undefined
-    });
-    mocha.it("copy utils modules", async function () { 
-        const setContextSpy = sinon.spy(generator, "setContext");
-        await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/src/props-in-listener.tsx`))
-            .pipe(generateComponents(generator))
-        );
-
-        assert.strictEqual(setContextSpy.firstCall.args[0]!.jqueryComponentRegistratorModule, path.resolve(jqueryComponentRegistratorModule));
-        assert.strictEqual(setContextSpy.firstCall.args[0]!.jqueryBaseComponentModule, path.resolve(jqueryBaseComponentModule));
-
-        setContextSpy.restore();
+        generator.options = {};
     });
 
      mocha.it("createCodeGenerator returns correct filename", async function () {

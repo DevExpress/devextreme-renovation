@@ -25,8 +25,7 @@ export function compileCode(generator: Generator, code: string, file: { dirname:
     generator.setContext({ 
         path: file.path, 
         dirname: file.dirname,
-        importedModules: file.importedModules,
-        ...generator.getInitialContext()
+        importedModules: file.importedModules
     });
     const codeFactory = generateFactoryCode(ts, source);
 

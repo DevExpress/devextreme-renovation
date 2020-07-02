@@ -15,7 +15,7 @@ import { ImportClause, ImportDeclaration, isNamedImports } from "./base-generato
 import { StringLiteral, ObjectLiteral } from "./base-generator/expressions/literal";
 import { TypeExpression } from "./base-generator/expressions/type";
 import { getModuleRelativePath } from "./base-generator/utils/path-utils";
-import { GeneratorContext as BaseGeneratorContext } from "./base-generator/types";
+import { GeneratorContext as BaseGeneratorContext, GeneratorOptions as BaseGeneratorOptions } from "./base-generator/types";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { Method } from "./base-generator/expressions/class-members";
 import { compileType } from "./base-generator/utils/string";
@@ -242,15 +242,16 @@ class JsxClosingElement extends ReactJsxClosingElement {
     }
 }
 
-export type GeneratorContext = BaseGeneratorContext & {
+export type GeneratorOptions = {
     jqueryComponentRegistratorModule?: string
     jqueryBaseComponentModule?: string
     noncomponentImports?: ImportDeclaration[];
-}
+} & BaseGeneratorOptions;
+
+export type GeneratorContext = BaseGeneratorContext & GeneratorOptions
 
 export class PreactGenerator extends Generator { 
-    jqueryComponentRegistratorModule?: string
-    jqueryBaseComponentModule?: string
+    options: GeneratorOptions = {};
 
     context: GeneratorContext[] = [];
 
@@ -260,10 +261,11 @@ export class PreactGenerator extends Generator {
     }
 
     getInitialContext(): GeneratorContext {
+        const options = this.options;
         return {
             ...super.getInitialContext(),
-            jqueryComponentRegistratorModule: this.jqueryComponentRegistratorModule && path.resolve(this.jqueryComponentRegistratorModule),
-            jqueryBaseComponentModule: this.jqueryBaseComponentModule && path.resolve(this.jqueryBaseComponentModule)
+            jqueryComponentRegistratorModule: options.jqueryComponentRegistratorModule && path.resolve(options.jqueryComponentRegistratorModule),
+            jqueryBaseComponentModule: options.jqueryBaseComponentModule && path.resolve(options.jqueryBaseComponentModule)
         };
     }
 

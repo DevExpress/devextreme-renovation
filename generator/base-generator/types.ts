@@ -25,14 +25,17 @@ export type VariableExpression = {
     [name: string]: IExpression;
 }
 
+export type GeneratorOptions =  {
+    defaultOptionsModule?: string;
+}
+
 export type GeneratorContext = {
     path?: string;
     dirname?: string;
     components?: { [name: string]: Heritable };
     types?: { [name: string]: TypeExpression };
     defaultOptionsImport?: ImportDeclaration;
-    defaultOptionsModule?: string;
     viewFunctions?: { [name: string]: Function | ArrowFunction };
     globals?: VariableExpression;
     importedModules?: string[];
-}
+} & GeneratorOptions;

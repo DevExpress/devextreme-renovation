@@ -41,7 +41,7 @@ import { CaseClause, DefaultClause, CaseBlock, Switch, If, Conditional } from ".
 import { ShorthandPropertyAssignment, SpreadAssignment, PropertyAssignment } from "./expressions/property-assignment";
 import { Binary, Prefix, Postfix } from "./expressions/operators";
 import { ReturnStatement, Block } from "./expressions/statements";
-import { GeneratorContext } from "./types";
+import { GeneratorContext, GeneratorOptions } from "./types";
 import { VariableDeclaration, VariableDeclarationList, VariableStatement } from "./expressions/variables";
 import { StringLiteral, ArrayLiteral, ObjectLiteral, NumericLiteral } from "./expressions/literal";
 import { Class, HeritageClause } from "./expressions/class";
@@ -617,7 +617,7 @@ export default class Generator {
 
     getInitialContext(): GeneratorContext {
         return {
-            defaultOptionsModule: this.defaultOptionsModule && path.resolve(this.defaultOptionsModule)
+            defaultOptionsModule: this.options.defaultOptionsModule && path.resolve(this.options.defaultOptionsModule)
         };
     }
 
@@ -629,7 +629,10 @@ export default class Generator {
         if (!context) {
             this.context.pop();
         } else {
-            this.context.push(context);
+            this.context.push({
+                ...this.getInitialContext(),
+                ...context,
+            });
         }
     }
 
@@ -647,7 +650,7 @@ export default class Generator {
 
     destination: string = "";
 
-    defaultOptionsModule?: string;
+    options: GeneratorOptions = {};
 
     processCodeFactoryResult(codeFactoryResult: Array<any>) { 
         const context = this.getContext();

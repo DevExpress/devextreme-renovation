@@ -22,8 +22,9 @@ module.exports = function(source) {
     default:
       throw new Error('Invalid platform');
   }
-
-  generator.defaultOptionsModule = defaultOptionsModule;
+  generator.options = {
+    defaultOptionsModule
+  };
 
   const normalizedPath = path.normalize(this.resourcePath);
   const moduleParts = normalizedPath.split(/(\/|\\)/);
