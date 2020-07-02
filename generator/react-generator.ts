@@ -206,6 +206,10 @@ export class PropertyAccess extends BasePropertyAccess {
         return setState;
     }
 
+    getAssignmentDependency() {
+        return [`${this.name}Change`];
+    }
+
     needToCreateAssignment(property: BaseProperty, elements: BindingElement[]) {
         return !property.canBeDestructured &&
             !property.isRefProp &&
@@ -306,7 +310,7 @@ export class Property extends BaseProperty {
             const scope = this.processComponentContext(this.scope)
             return this.questionOrExclamationToken === "?" ? [`${scope}${this.name.toString()}${scope ? this.questionOrExclamationToken : ""}.current`] : [];
         } else if (this.isState) {
-            return [getPropName(this.name), getLocalStateName(this.name), getPropName(`${this.name}Change`)];
+            return [getPropName(this.name), getLocalStateName(this.name)];
         } else if (this.isNested) {
             return [getPropName(this.name), getPropName("children")];
         }

@@ -30,6 +30,7 @@ mocha.describe("base-generator: expressions", function () {
 
             assert.strictEqual(expression.toString(), "");
             assert.deepEqual(expression.getDependency(), []);
+            assert.deepEqual(expression.getAssignmentDependency(), expression.getDependency());
             assert.deepEqual(expression.getAllDependency(), []);
         });
     });

@@ -7,6 +7,7 @@ import { TypeExpression } from "./expressions/type"
 
 export interface IExpression { 
     getDependency(): string[];
+    getAssignmentDependency(): string[];
     toString(options?: toStringOptions): string;
     getAllDependency(): string[];
     isJsx(): boolean;
