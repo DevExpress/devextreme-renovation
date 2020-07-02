@@ -133,7 +133,7 @@ export default class Generator {
         return new BindingPattern(elements, "object");
     }
 
-    createPropertyAssignment(key: Identifier, value: Expression) {
+    createPropertyAssignment(key: Identifier | ComputedPropertyName, value: Expression) {
         return new PropertyAssignment(key, value)
     }
 
