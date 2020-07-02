@@ -1,21 +1,25 @@
 import { Expression, ExpressionWithOptionalExpression, ExpressionWithExpression } from "./base";
 import { toStringOptions } from "../types";
 import { Identifier } from "./common";
+import { ComputedPropertyName } from "./property-access";
 
 export class PropertyAssignment extends Expression {
-    key: Identifier;
+    key: Identifier | ComputedPropertyName;
     value: Expression;
-    constructor(key: Identifier, value: Expression) {
+    constructor(key: Identifier | ComputedPropertyName, value: Expression) {
         super();
         this.key = key;
         this.value = value;
     }
+
     toString(options?: toStringOptions) {
-        return `${this.key}:${this.value.toString(options)}`;
+        const key = this.key instanceof ComputedPropertyName ? this.key.toString(options) : this.key.toString();
+        return `${key}:${this.value.toString(options)}`;
     }
 
     getDependency() {
-        return this.value.getDependency();
+        const keyDependency = this.key instanceof ComputedPropertyName ? this.key.getDependency() : [];
+        return keyDependency.concat(this.value.getDependency());
     }
 }
 

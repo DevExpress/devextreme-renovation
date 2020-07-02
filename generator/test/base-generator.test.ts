@@ -177,6 +177,37 @@ mocha.describe("base-generator: expressions", function () {
                     
                 assert.equal(objectLiteral.toString(), '{a,\n...obj}');
             });
+
+            mocha.it("can use computed property", function () { 
+                const property = generator.createProperty(
+                    [],
+                    [],
+                    generator.createIdentifier("p")
+                );
+
+                const expression = generator.createObjectLiteral(
+                    [
+                        generator.createPropertyAssignment(
+                            generator.createComputedPropertyName(
+                                generator.createPropertyAccess(
+                                    generator.createThis(),
+                                    generator.createIdentifier("p")
+                                )
+                            ),
+                            generator.createIdentifier("v")
+                        )
+                    ],
+                    false
+                );
+
+                assert.strictEqual(expression.toString({
+                    members: [property],
+                    componentContext: "this",
+                    newComponentContext: ""
+                }), "{[p]:v}");
+
+                assert.deepEqual(expression.getDependency(), ["p"]);
+            });
         });
 
         mocha.it("createRegularExpressionLiteral", function () {
