@@ -207,16 +207,17 @@ mocha.describe("react-generator", function () {
 
     mocha.describe("Default option rules", function () {
         this.beforeEach(function () {
-            generator.defaultOptionsModule = getModulePath("component_declaration/default_options");
+            generator.options = {
+                defaultOptionsModule: getModulePath("component_declaration/default_options")
+            }
             generator.setContext({
-                dirname: path.resolve(__dirname, "./test-cases/declarations/src"),
-                defaultOptionsModule: path.resolve(generator.defaultOptionsModule)
+                dirname: path.resolve(__dirname, "./test-cases/declarations/src")
             });
         });
 
         this.afterEach(function () {
             generator.setContext(null);
-            generator.defaultOptionsModule = "";
+            generator.options = {};
         });
 
         mocha.it("default-options-empty", function () {
@@ -2419,7 +2420,7 @@ mocha.describe("Default_options", function () {
     });
 
     this.afterEach(function () {
-        generator.defaultOptionsModule = "";
+        generator.options = {};
         generator.setContext(null);
     });
 

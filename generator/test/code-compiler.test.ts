@@ -42,10 +42,12 @@ mocha.describe("code-compiler: gulp integration", function() {
     mocha.describe("Default options", function () {
         const defaultOptionsModule = "../component_declaration/default_options";
         this.beforeEach(function () {
-            generator.defaultOptionsModule = defaultOptionsModule
+            generator.options = {
+                defaultOptionsModule
+            }
         });
         this.afterEach(function () { 
-            generator.defaultOptionsModule = undefined;
+            generator.options = {};
         });
         mocha.it("copy default_options", async function () { 
             const setContextSpy = sinon.spy(generator, "setContext");
@@ -102,13 +104,14 @@ mocha.describe("jQuery", function () {
     const jqueryComponentRegistratorModule = "../component_declaration/jquery_component_registrator";
     const jqueryBaseComponentModule = "../component_declaration/jquery_base_component";
 
-     this.beforeEach(function () {
-        generator.jqueryComponentRegistratorModule = jqueryComponentRegistratorModule
-        generator.jqueryBaseComponentModule = jqueryBaseComponentModule
+    this.beforeEach(function () {
+        generator.options = {
+            jqueryComponentRegistratorModule,
+            jqueryBaseComponentModule
+        }
     });
     this.afterEach(function () { 
-        generator.jqueryComponentRegistratorModule = undefined
-        generator.jqueryBaseComponentModule = undefined
+        generator.options = {};
     });
     mocha.it("copy utils modules", async function () { 
         const setContextSpy = sinon.spy(generator, "setContext");

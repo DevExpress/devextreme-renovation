@@ -3515,7 +3515,7 @@ mocha.describe("Angular generator", function () {
             });
         
             this.afterEach(function () {
-                generator.defaultOptionsModule = "";
+                generator.options = {};
                 generator.setContext(null);
             });
 

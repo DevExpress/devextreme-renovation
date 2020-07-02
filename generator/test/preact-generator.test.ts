@@ -23,14 +23,15 @@ mocha.describe("preact-generator", function () {
     });
 
     this.beforeEach(function () {
-        generator.jqueryComponentRegistratorModule = getModulePath("component_declaration/jquery_component_registrator");
-        generator.jqueryBaseComponentModule = getModulePath("component_declaration/jquery_base_component");
+        generator.options = {
+            jqueryComponentRegistratorModule: getModulePath("component_declaration/jquery_component_registrator"),
+            jqueryBaseComponentModule: getModulePath("component_declaration/jquery_base_component")
+        };
     });
 
     this.afterEach(function () {
         generator.setContext(null);
-        generator.jqueryComponentRegistratorModule = "";
-        generator.jqueryBaseComponentModule = "";
+        generator.options = {};
         if (this.currentTest!.state !== "passed") {
             console.log(this.code); // TODO: diff with expected
         }
@@ -238,23 +239,22 @@ mocha.describe("preact-generator: jQuery generation", function () {
         this.testGenerator = function (componentName: string) {
             generator.setContext({ 
                 dirname: path.resolve(__dirname, "./test-cases/declarations/src"), 
-                path: getModulePath(`${componentName}.tsx`),
-                jqueryComponentRegistratorModule: generator.jqueryComponentRegistratorModule && path.resolve(generator.jqueryComponentRegistratorModule),
-                jqueryBaseComponentModule: generator.jqueryBaseComponentModule && path.resolve(generator.jqueryBaseComponentModule)
+                path: getModulePath(`${componentName}.tsx`)
             });
             testGenerator.call(this, componentName, generator, 1);
         };
     });
 
     this.beforeEach(function () {
-        generator.jqueryComponentRegistratorModule = getModulePath("component_declaration/jquery_component_registrator");
-        generator.jqueryBaseComponentModule = getModulePath("component_declaration/jquery_base_component");
+        generator.options = {
+            jqueryComponentRegistratorModule: getModulePath("component_declaration/jquery_component_registrator"),
+            jqueryBaseComponentModule: getModulePath("component_declaration/jquery_base_component")
+        };
     });
     
     this.afterEach(function () {
         generator.setContext(null);
-        generator.jqueryComponentRegistratorModule = "";
-        generator.jqueryBaseComponentModule = "";
+        generator.options = {};
         if (this.currentTest!.state !== "passed") {
             console.log(this.code); // TODO: diff with expected
         }
@@ -271,8 +271,7 @@ mocha.describe("preact-generator: jQuery generation", function () {
     });
 
     mocha.it("jquery-without-modules", function () {
-        generator.jqueryComponentRegistratorModule = undefined;
-        generator.jqueryBaseComponentModule = undefined;
+        generator.options = {};
         this.testGenerator(this.test!.title);
     });
 
