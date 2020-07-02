@@ -199,7 +199,7 @@ export class HeritageClause extends BaseHeritageClause {
 
 export class PropertyAccess extends BasePropertyAccess {
     compileStateSetting(state: string, property: Property, options?: toStringOptions) {
-        const setState = `${stateSetter(this.name)}(${getLocalStateName(this.name)} => ${state})`;
+        const setState = `${stateSetter(this.name)}(${getLocalStateName(this.name)} => ${state.startsWith("{") ? `(${state})` : state})`;
         if (property.isState) {
             return `(${setState}, props.${this.name}Change!(${state}))`;
         }
