@@ -88,10 +88,8 @@
     @Slot() namedSlot?: any;
   }
 
-  @Component({
-    view: viewFunction
-  })
-  export default class MyComponent extends JSXComponent<MyComponentProps> {
+  @Component({ view: viewFunction })
+  export default class MyComponent extends JSXComponent(MyComponentProps) {
     innerState: boolean = false;
 
     @Ref() rootRef! HTMLDivElement;
@@ -518,10 +516,8 @@ export class ComponentProps {
   // Your props go here
 }
 
-@Component({
-  view: viewFunction,
-})
-export default class Component extends JSXComponent<ComponentProps> {
+@Component({ view: viewFunction })
+export default class Component extends JSXComponent(ComponentProps) {
   // ViewModel getters, Effects, Refs, go here  
 }
 ```
@@ -577,7 +573,7 @@ class MyComponentProps {
 }
 
 @Component({ view: viewFunction })
-class MyComponent extends JSXComponent<MyComponentProps> {
+class MyComponent extends JSXComponent(MyComponentProps) {
 }
 
 function viewFunction(viewModel) {
@@ -628,7 +624,7 @@ class MyComponentProps {
 }
 
 @Component({ view: viewFunction })
-class MyComponent extends JSXComponent<MyComponentProps> {
+class MyComponent extends JSXComponent(MyComponentProps) {
   onClick() {
     this.props.value = this.props.value + 1;
   }
@@ -708,7 +704,7 @@ class MyComponentProps {
 }
 
 @Component({ view: viewFunction })
-class MyComponent extends JSXComponent<MyComponentProps> {
+class MyComponent extends JSXComponent(MyComponentProps) {
   onClick() {
     this.props.value = this.props.value + 1;
   }
@@ -745,7 +741,7 @@ class MyComponentProps {
 }
 
 @Component({ view: viewFunction })
-class MyComponent extends JSXComponent<MyComponentProps> {
+class MyComponent extends JSXComponent(MyComponentProps) {
   onClickHandler() {
     const { cancel } = this.props.onClick?({ type: this.props.type })
     if(cancel) {
@@ -772,7 +768,7 @@ function viewFunction(viewModel) {
 class MyComponentProps {}
 
 @Component({ view: viewFunction })
-class MyComponent extends JSXComponent<MyComponentProps> {
+class MyComponent extends JSXComponent(MyComponentProps) {
   @Ref() rootRef!: HTMLDivElement;
 }
 
@@ -811,7 +807,7 @@ class MyComponentProps {
 @Component({
     view: viewFunction
 })
-class MyComponent extends JSXComponent<MyComponentProps> {
+class MyComponent extends JSXComponent(MyComponentProps) {
     @Effect()
     singleEffect() {
       const id = subscriber.on(() => {
@@ -844,7 +840,7 @@ class MyComponentProps {
 }
 
 @Component({ view: viewFunction })
-class MyComponent extends JSXComponent<MyComponentProps> {
+class MyComponent extends JSXComponent(MyComponentProps) {
 }
 
 function viewFunction(viewModel) {
@@ -884,7 +880,7 @@ class ComponentWithSlotsProps {
 }
 
 @Component({ view: viewFunction })
-class ComponentWithSlots extends JSXComponent<ComponentWithSlotsProps> {
+class ComponentWithSlots extends JSXComponent(ComponentWithSlotsProps) {
 }
 
 function viewFunction(viewModel: ComponentWithSlots) {
@@ -909,7 +905,7 @@ class MyComponentProps {
 }
 
 @Component({ view: viewFunction })
-class MyComponent extends JSXComponent<MyComponentProps> {
+class MyComponent extends JSXComponent(MyComponentProps) {
 }
 
 function viewFunction(viewModel: MyComponent) {
@@ -952,7 +948,7 @@ class MyComponentProps {
 }
 
 @Component({ view: viewFunction })
-class MyComponent extends JSXComponent<MyComponentProps> {
+class MyComponent extends JSXComponent(MyComponentProps) {
   @Ref() rootRef!: HTMLDivElement;
 
   @Method()
@@ -986,7 +982,7 @@ class MyComponentProps {
 }
 
 @Component({ view: viewFunction })
-class MyComponent extends JSXComponent<MyComponentProps> {
+class MyComponent extends JSXComponent(MyComponentProps) {
   @Ref() editorRef?: MyEditorComponent;
 
   @Method()
@@ -1019,7 +1015,7 @@ class MyComponentProps {
 }
 
 @Component({ view: viewFunction })
-class MyComponent extends JSXComponent<MyComponentProps> {
+class MyComponent extends JSXComponent(MyComponentProps) {
 }
 
 function viewFunction(viewModel: MyComponent) {
