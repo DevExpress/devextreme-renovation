@@ -1111,7 +1111,10 @@ export default class Generator {
   options: GeneratorOptions = {};
 
   format(code: string) {
-    return prettier.format(code, { parser: "typescript" });
+    return prettier.format(code, {
+      parser: "typescript",
+      htmlWhitespaceSensitivity: "strict",
+    });
   }
 
   processCodeFactoryResult(codeFactoryResult: Array<any>) {

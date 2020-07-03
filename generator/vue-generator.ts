@@ -1698,7 +1698,10 @@ class VueGenerator extends BaseGenerator {
     if (code.indexOf("<script>") === -1) {
       return code;
     }
-    return prettier.format(code, { parser: "vue" });
+    return prettier.format(code, {
+      parser: "vue",
+      htmlWhitespaceSensitivity: "strict",
+    });
   }
 
   processCodeFactoryResult(codeFactoryResult: Array<any>) {
