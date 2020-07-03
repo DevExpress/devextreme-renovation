@@ -62,6 +62,7 @@ import { JsxAttribute as BaseJsxAttribute } from "./angular-generator/expression
 import { VariableDeclaration } from "./angular-generator/expressions/variable-expression";
 import { AngularDirective } from "./angular-generator/expressions/jsx/angular-directive";
 import { getMember } from "./angular-generator/utils";
+import prettier from "prettier";
 
 function calculatePropertyType(type: TypeExpression | string): string {
     if (type instanceof SimpleTypeExpression) {
@@ -1310,13 +1311,20 @@ class VueGenerator extends BaseGenerator {
         return name.replace(/\.tsx$/, ext);
     }
 
+    format(code: string) { 
+        if (code.indexOf("<script>") === -1) { 
+            return code;
+        }
+        return prettier.format(code, { parser: "vue" });
+      }
+
     processCodeFactoryResult(codeFactoryResult: Array<any>) { 
         const code = super.processCodeFactoryResult(codeFactoryResult);
         if (getComponentListFromContext(this.getContext()).length === 0) {
             return code;
         }
         const template = codeFactoryResult.find(r => r instanceof VueComponent)?.template;
-        return `
+        return this.format(`
             ${template ? `
             <template>
             ${template}
@@ -1325,7 +1333,7 @@ class VueGenerator extends BaseGenerator {
             ${"<script>"}
             ${code}
             ${"</script>"}
-        `;
+        `);
     }
 
     createPropertyAccess(expression: Expression, name: Identifier) {

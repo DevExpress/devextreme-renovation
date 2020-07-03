@@ -1,5 +1,5 @@
- <template>
-   <div ></div>
+<template>
+  <div></div>
 </template>
 <script>
 function subscribe(p, s, i) {
@@ -13,24 +13,24 @@ export const WidgetInput = {
     type: String,
     default() {
       return "10";
-    }
+    },
   },
   r: {
     type: String,
     default() {
       return "20";
-    }
+    },
   },
   s: {
     type: Number,
-    default: undefined
+    default: undefined,
   },
   defaultS: {
     type: Number,
     default() {
       return 10;
-    }
-  }
+    },
+  },
 };
 
 export default {
@@ -39,7 +39,7 @@ export default {
     return {
       i: 10,
       j: 20,
-      s_state: this.defaultS
+      s_state: this.defaultS,
     };
   },
 
@@ -51,30 +51,38 @@ export default {
     j: ["__schedule_alwaysEffect"],
     r: ["__schedule_alwaysEffect"],
     defaultS: ["__schedule_alwaysEffect"],
-    sChange: ["__schedule_alwaysEffect"]
+    sChange: ["__schedule_alwaysEffect"],
   },
   methods: {
-    __getP(){
+    __getP() {
       return this.p;
     },
     __restAttributes() {
       return {};
     },
-    props(){
+    props() {
       return {
-        p:this.p,
-        r:this.r,
-        s:(this.s !== undefined ? this.s : this.s_state),
-        sChange:this.sChange
+        p: this.p,
+        r: this.r,
+        s: this.s !== undefined ? this.s : this.s_state,
+        sChange: this.sChange,
       };
     },
     __setupData() {
-      const id = subscribe(this.__getP(), (this.s !== undefined ? this.s : this.s_state), this.i);
+      const id = subscribe(
+        this.__getP(),
+        this.s !== undefined ? this.s : this.s_state,
+        this.i
+      );
       this.i = 15;
       return () => unsubscribe(id);
     },
     __onceEffect() {
-      const id = subscribe(this.__getP(), (this.s !== undefined ? this.s : this.s_state), this.i);
+      const id = subscribe(
+        this.__getP(),
+        this.s !== undefined ? this.s : this.s_state,
+        this.i
+      );
       this.i = 15;
       return () => unsubscribe(id);
     },
@@ -82,25 +90,27 @@ export default {
       const id = subscribe(this.__getP(), 1, 2);
       return () => unsubscribe(id);
     },
-    sChange(...args){
+    sChange(...args) {
       this.$emit("update:s", ...args);
     },
     __schedule_setupData() {
       this.__scheduleEffect(0, "__setupData");
     },
     __schedule_alwaysEffect() {
-        this.__scheduleEffect(2, "__alwaysEffect");
-     },
+      this.__scheduleEffect(2, "__alwaysEffect");
+    },
     __scheduleEffect(index, name) {
-      if(!this.__scheduleEffects[index]){
-        this.__scheduleEffects[index]=()=>{
-          this.__destroyEffects[index]&&this.__destroyEffects[index]();
-          this.__destroyEffects[index]=this[name]();
+      if (!this.__scheduleEffects[index]) {
+        this.__scheduleEffects[index] = () => {
+          this.__destroyEffects[index] && this.__destroyEffects[index]();
+          this.__destroyEffects[index] = this[name]();
           this.__scheduleEffects[index] = null;
-        }
-        this.$nextTick(()=>this.__scheduleEffects[index]&&this.__scheduleEffects[index]());
+        };
+        this.$nextTick(
+          () => this.__scheduleEffects[index] && this.__scheduleEffects[index]()
+        );
       }
-    }
+    },
   },
   created() {
     this.__destroyEffects = [];
@@ -121,6 +131,6 @@ export default {
       this.__destroyEffects[i] && this.__destroyEffects[i]();
     });
     this.__destroyEffects = null;
-  }
+  },
 };
 </script>

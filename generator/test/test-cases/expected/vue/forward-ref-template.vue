@@ -1,6 +1,5 @@
- 
-  <template>
-  <div style="display: contents">
+<template>
+  <div style="display: contents;">
     <slot name="contentTemplate" v-bind:childRef="forwardRef_child"></slot>
   </div>
 </template>
@@ -11,14 +10,14 @@ export default {
   props: Props,
 
   watch: {
-    child: ["__schedule_effect"]
+    child: ["__schedule_effect"],
   },
   methods: {
     __restAttributes() {
       return {};
     },
-    forwardRef_child(ref){
-      this.$refs.child=ref;
+    forwardRef_child(ref) {
+      this.$refs.child = ref;
     },
     props() {
       return { contentTemplate: this.$scopedSlots.contentTemplate };
@@ -40,7 +39,7 @@ export default {
           () => this.__scheduleEffects[index] && this.__scheduleEffects[index]()
         );
       }
-    }
+    },
   },
   created() {
     this.__destroyEffects = [];
@@ -59,6 +58,6 @@ export default {
       this.__destroyEffects[i] && this.__destroyEffects[i]();
     });
     this.__destroyEffects = null;
-  }
+  },
 };
 </script>

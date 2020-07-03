@@ -1,4 +1,4 @@
- <template>
+<template>
   <div>
     <div>
       <slot name="namedSlot"></slot>
@@ -10,19 +10,19 @@
   </div>
 </template>
 <script>
-const WidgetInput = { };
+const WidgetInput = {};
 export default {
   props: WidgetInput,
   methods: {
     __restAttributes() {
       return {};
     },
-    props(){
+    props() {
       return {
-        namedSlot:this.$slots.namedSlot,
-        children:this.$slots.default
+        namedSlot: this.$slots.namedSlot,
+        children: this.$slots.default,
       };
-    }
-  }
+    },
+  },
 };
 </script>

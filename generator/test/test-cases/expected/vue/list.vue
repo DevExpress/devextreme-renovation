@@ -1,13 +1,13 @@
 <template>
   <div>
-      <div :key="item.key" v-for="item of items">{{item.text}}</div>
+    <div :key="item.key" v-for="item of items">{{ item.text }}</div>
   </div>
 </template>
 <script>
 export const ListInput = {
   items: {
-    type: Array
-  }
+    type: Array,
+  },
 };
 
 export default {
@@ -16,9 +16,9 @@ export default {
     __restAttributes() {
       return {};
     },
-    props(){
-      return {items:this.items};
-    }
-  }
+    props() {
+      return { items: this.items };
+    },
+  },
 };
 </script>

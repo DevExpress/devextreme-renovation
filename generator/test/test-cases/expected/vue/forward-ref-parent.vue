@@ -1,8 +1,8 @@
 <template>
-  <Child 
-    :childRef="forwardRef_child" 
-    :nullableRef="forwardRef_nullableRef" 
-    :state="state" 
+  <Child
+    :childRef="forwardRef_child"
+    :nullableRef="forwardRef_nullableRef"
+    :state="state"
   />
 </template>
 <script>
@@ -10,23 +10,23 @@ import Child from "./forward-ref-child";
 
 const Props = {
   nullableRef: {
-    type: Function
-  }
+    type: Function,
+  },
 };
 
 export default {
   components: {
-    Child
+    Child,
   },
   props: Props,
   data() {
     return {
-      state: 10
+      state: 10,
     };
   },
 
   watch: {
-    nullableRef: ["__schedule_effect"]
+    nullableRef: ["__schedule_effect"],
   },
   methods: {
     __restAttributes() {
@@ -62,7 +62,7 @@ export default {
           () => this.__scheduleEffects[index] && this.__scheduleEffects[index]()
         );
       }
-    }
+    },
   },
   created() {
     this.__destroyEffects = [];
@@ -84,6 +84,6 @@ export default {
       this.__destroyEffects[i] && this.__destroyEffects[i]();
     });
     this.__destroyEffects = null;
-  }
+  },
 };
 </script>

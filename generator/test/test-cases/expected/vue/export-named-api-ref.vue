@@ -15,9 +15,8 @@ export const Widget = {
     },
     getValue() {
       return 0;
-    }
-  }
+    },
+  },
 };
 export default Widget;
 </script>
-        

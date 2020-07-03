@@ -1,11 +1,10 @@
- <template>
+<template>
   <div ref="host" v-bind="__attr1()">
     <input v-bind="__attr2()" />
-    <input ref="i1" v-bind="__attr2()"/>
+    <input ref="i1" v-bind="__attr2()" />
   </div>
 </template>
 <script>
-
 export const WidgetInput = {};
 
 export default {
@@ -20,9 +19,9 @@ export default {
     __restAttributes() {
       return {};
     },
-    props(){
+    props() {
       return {};
-    }
-  }
+    },
+  },
 };
 </script>

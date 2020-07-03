@@ -1,43 +1,47 @@
-  <template>
-  <div v-bind:style="__processStyle({
-        width:100,
-        height:100
-    })"></div>
+<template>
+  <div
+    v-bind:style="
+      __processStyle({
+        width: 100,
+        height: 100
+      })
+    "
+  ></div>
 </template>
 <script>
 export const InnerWidgetProps = {
   selected: {
-    type: Boolean
+    type: Boolean,
   },
   value: {
     type: Number,
-    default: undefined
+    default: undefined,
   },
   defaultValue: {
-    type: Number
-  }
+    type: Number,
+  },
 };
 export default {
   props: InnerWidgetProps,
   model: {
     prop: "value",
-    event: "update:value"
+    event: "update:value",
   },
   data() {
     return {
-      value_state: this.defaultValue
+      value_state: this.defaultValue,
     };
   },
   methods: {
     __restAttributes() {
       return {};
     },
-    props(){
+    props() {
       return {
-        selected:this.selected,
-        value:(this.value !== undefined ? this.value : this.value_state),
-        onSelect:this.onSelect,
-        valueChange:this.valueChange
+        selected: this.selected,
+        value: this.value !== undefined ? this.value : this.value_state,
+        onSelect: this.onSelect,
+        valueChange: this.valueChange,
       };
     },
     __processStyle(value) {
@@ -53,12 +57,12 @@ export default {
       }
       return value;
     },
-    onSelect(...args){
+    onSelect(...args) {
       this.$emit("select", ...args);
     },
-    valueChange(...args){
+    valueChange(...args) {
       this.$emit("update:value", ...args);
-    }
-  }
+    },
+  },
 };
 </script>

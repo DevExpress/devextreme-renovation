@@ -1,66 +1,74 @@
- <template>
-  <div>{{(baseStateProp !== undefined ? baseStateProp : baseStateProp_state)}}</div>
+<template>
+  <div>
+    {{(baseStateProp !== undefined ? baseStateProp : baseStateProp_state)}}
+  </div>
 </template>
 <script>
 const ModelWidgetInput = {
   baseStateProp: {
     type: Boolean,
-    default: undefined
+    default: undefined,
   },
   modelStateProp: {
     type: Boolean,
-    default: undefined
+    default: undefined,
   },
   value: {
     type: Boolean,
-    default: undefined
+    default: undefined,
   },
   defaultBaseStateProp: {
-    type: Boolean
+    type: Boolean,
   },
   defaultModelStateProp: {
-    type: Boolean
+    type: Boolean,
   },
   defaultValue: {
-    type: Boolean
-  }
+    type: Boolean,
+  },
 };
 export default {
   props: ModelWidgetInput,
   model: {
     prop: "modelStateProp",
-    event: "update:model-state-prop"
+    event: "update:model-state-prop",
   },
   data() {
     return {
       baseStateProp_state: this.defaultBaseStateProp,
       modelStateProp_state: this.defaultModelStateProp,
-      value_state: this.defaultValue
+      value_state: this.defaultValue,
     };
   },
   methods: {
     __restAttributes() {
       return {};
     },
-    props(){
+    props() {
       return {
-        baseStateProp:(this.baseStateProp !== undefined ? this.baseStateProp : this.baseStateProp_state),
-        baseStatePropChange:this.baseStatePropChange,
-        modelStateProp:(this.modelStateProp !== undefined ? this.modelStateProp : this.modelStateProp_state),
-        value:(this.value !== undefined ? this.value : this.value_state),
-        modelStatePropChange:this.modelStatePropChange,
-        valueChange:this.valueChange
+        baseStateProp:
+          this.baseStateProp !== undefined
+            ? this.baseStateProp
+            : this.baseStateProp_state,
+        baseStatePropChange: this.baseStatePropChange,
+        modelStateProp:
+          this.modelStateProp !== undefined
+            ? this.modelStateProp
+            : this.modelStateProp_state,
+        value: this.value !== undefined ? this.value : this.value_state,
+        modelStatePropChange: this.modelStatePropChange,
+        valueChange: this.valueChange,
       };
     },
-    baseStatePropChange(...args){
+    baseStatePropChange(...args) {
       this.$emit("update:base-state-prop", ...args);
     },
-    modelStatePropChange(...args){
+    modelStatePropChange(...args) {
       this.$emit("update:model-state-prop", ...args);
     },
-    valueChange(...args){
+    valueChange(...args) {
       this.$emit("update:value", ...args);
-    }
-  }
+    },
+  },
 };
 </script>

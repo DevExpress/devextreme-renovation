@@ -19,7 +19,6 @@ import { GeneratorContext as BaseGeneratorContext, GeneratorOptions as BaseGener
 import { Decorator } from "./base-generator/expressions/decorator";
 import { Method } from "./base-generator/expressions/class-members";
 import { compileType } from "./base-generator/utils/string";
-import prettier from "prettier";
 
 const BASE_JQUERY_WIDGET = "BASE_JQUERY_WIDGET";
 
@@ -277,7 +276,7 @@ export class PreactGenerator extends Generator {
         const { path } = this.getContext();
         const source = path && this.cache[path].find((e: any) => e instanceof PreactComponent);
         if(source) {
-            result.push({ path: `${path!.replace(/\.tsx$/, ".j.tsx")}`, code: prettier.format((new JQueryComponent(source)).toString(), { parser: "babel" }) });
+            result.push({ path: `${path!.replace(/\.tsx$/, ".j.tsx")}`, code: this.format((new JQueryComponent(source)).toString()) });
         }
         
         if (this.options.generateJQueryOnly) {

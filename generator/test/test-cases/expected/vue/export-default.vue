@@ -1,11 +1,11 @@
- <template>
+<template>
   <div></div>
 </template>
 <script>
 const WidgetInput = {
   prop: {
-    type: Boolean
-  }
+    type: Boolean,
+  },
 };
 export default {
   props: WidgetInput,
@@ -13,11 +13,11 @@ export default {
     __restAttributes() {
       return {};
     },
-    props(){
+    props() {
       return {
-        prop:this.prop
+        prop: this.prop,
       };
-    }
-  }
+    },
+  },
 };
 </script>

@@ -10,8 +10,8 @@ const WidgetInput = {
     type: String,
     default() {
       return "10";
-    }
-  }
+    },
+  },
 };
 
 export default {
@@ -23,8 +23,7 @@ export default {
     },
     props() {
       return { p: this.p, height: this.height };
-    }
-  }
+    },
+  },
 };
 </script>
-        

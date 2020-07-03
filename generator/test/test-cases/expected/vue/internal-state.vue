@@ -1,24 +1,23 @@
 <template>
-  <span ></span>
+  <span></span>
 </template>
 <script>
-
 export default {
-  data(){
-      return {
-        _hovered: false
-      };
+  data() {
+    return {
+      _hovered: false,
+    };
   },
   methods: {
-    __updateState(){
-        this._hovered=!this._hovered;
+    __updateState() {
+      this._hovered = !this._hovered;
     },
     __restAttributes() {
       return {};
     },
-    props(){
+    props() {
       return {};
     },
-  }
+  },
 };
 </script>

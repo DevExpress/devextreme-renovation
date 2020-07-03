@@ -1,42 +1,44 @@
-import {ViewChild,ElementRef} from "@angular/core"
+import { ViewChild, ElementRef } from "@angular/core";
 class WidgetInput {
-    @ViewChild("slotNamedSlot") slotNamedSlot?: ElementRef<HTMLDivElement>;
+  @ViewChild("slotNamedSlot") slotNamedSlot?: ElementRef<HTMLDivElement>;
 
-    get namedSlot() {
-        return this.slotNamedSlot?.nativeElement?.innerHTML.trim();
-    };
-    @ViewChild("slotChildren") slotChildren?: ElementRef<HTMLDivElement>;
+  get namedSlot() {
+    return this.slotNamedSlot?.nativeElement?.innerHTML.trim();
+  }
+  @ViewChild("slotChildren") slotChildren?: ElementRef<HTMLDivElement>;
 
-    get children() {
-        return this.slotChildren?.nativeElement?.innerHTML.trim();
-    };
+  get children() {
+    return this.slotChildren?.nativeElement?.innerHTML.trim();
+  }
 }
 
 import { Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 @Component({
-    selector: "dx-widget",
-    template: `<div>
-        <div>
-            <div #slotNamedSlot style="display:contents"><ng-content select="[namedSlot]"></ng-content></div>
-        </div>
-        <div>
-            <div #slotChildren style="display:contents"><ng-content></ng-content></div>
-        </div>
-    </div>`
+  selector: "dx-widget",
+  template: `<div>
+    <div>
+      <div #slotNamedSlot style="display:contents">
+        <ng-content select="[namedSlot]"></ng-content>
+      </div>
+    </div>
+    <div>
+      <div #slotChildren style="display:contents">
+        <ng-content></ng-content>
+      </div>
+    </div>
+  </div>`,
 })
 export default class Widget extends WidgetInput {
-    get __restAttributes(): any {
-        return {}
-    }
+  get __restAttributes(): any {
+    return {};
+  }
 }
 
 @NgModule({
-    declarations: [Widget],
-    imports: [
-        CommonModule
-    ],
-    exports: [Widget]
+  declarations: [Widget],
+  imports: [CommonModule],
+  exports: [Widget],
 })
-export class DxWidgetModule { }
+export class DxWidgetModule {}

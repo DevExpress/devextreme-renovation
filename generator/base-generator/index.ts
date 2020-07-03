@@ -56,6 +56,7 @@ import { Decorator } from "./expressions/decorator";
 import { Interface } from "./expressions/interface";
 import { Decorators } from "../component_declaration/decorators";
 import { TypeParameterDeclaration } from "./expressions/type-parameter-declaration";
+import prettier from "prettier";
 
 export default class Generator {
     NodeFlags = {
@@ -650,7 +651,11 @@ export default class Generator {
 
     destination: string = "";
 
-    options: GeneratorOptions = {};
+  options: GeneratorOptions = {};
+  
+    format(code: string) { 
+      return prettier.format(code, { parser: "typescript" })
+    }
 
     processCodeFactoryResult(codeFactoryResult: Array<any>) { 
         const context = this.getContext();
@@ -664,7 +669,7 @@ export default class Generator {
             }
         });
         this.cache.__globals__ = context.globals;
-        return codeFactoryResult.join("\n");
+        return this.format(codeFactoryResult.join("\n"));
     }
 
     generate(factory: any): { path?: string, code: string }[] {
@@ -681,7 +686,10 @@ export default class Generator {
                 this.meta[path] = component.getMeta();
             }
         }
-        result.push({ path: path && this.processSourceFileName(path), code: this.processCodeFactoryResult(codeFactoryResult) })
+      result.push({
+        path: path && this.processSourceFileName(path),
+        code: this.processCodeFactoryResult(codeFactoryResult)
+      })
 
         return result;
     }

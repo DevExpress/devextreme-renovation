@@ -1,6 +1,6 @@
 <template>
   <WidgetWithTemplate>
-    <template v-slot:componentTemplate="slotProps" >
+    <template v-slot:componentTemplate="slotProps">
       <InnerWidget
         :selected="slotProps.selected"
         :value="slotProps.value"
@@ -9,30 +9,29 @@
         @update:value="slotProps.valueChange"
       />
     </template>
-    <template v-slot:template="{text}" >
-      <span >{{text}}</span>
+    <template v-slot:template="{ text }">
+      <span>{{ text }}</span>
     </template>
   </WidgetWithTemplate>
 </template>
 <script>
+import WidgetWithTemplate from "./dx-widget-with-template";
+import InnerWidget from "./dx-inner-widget";
 
-import WidgetWithTemplate from "./dx-widget-with-template"
-import InnerWidget from "./dx-inner-widget"
-
-export const WidgetProps = { };
+export const WidgetProps = {};
 export default {
   components: {
     WidgetWithTemplate,
-    InnerWidget
+    InnerWidget,
   },
   props: WidgetProps,
   methods: {
-    __restAttributes(){
-      return {}
-    },
-    props(){
+    __restAttributes() {
       return {};
-    }
-  }
-}
+    },
+    props() {
+      return {};
+    },
+  },
+};
 </script>
