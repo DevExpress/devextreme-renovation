@@ -43,8 +43,8 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 
     const __restAttributes=useCallback(function __restAttributes(): RestProps{
         const { defaultS, p, r, s, sChange, ...restProps } = {
-          ...props,
-          s: (props.s !== undefined ? props.s : __state_s)
+            ...props,
+            s: (props.s !== undefined ? props.s : __state_s)
         }
         return restProps;
     }, [props, __state_s]);
@@ -53,7 +53,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
         const id = subscribe(getP(), (props.s !== undefined ? props.s : __state_s), __state_i)
         __state_setI(__state_i => 15)
         return () => unsubscribe(id);
-    }, [props.p, props.s, __state_s, props.sChange, __state_i]);
+    }, [props.p, props.s, __state_s, __state_i]);
 
     useEffect(() => {
         const id = subscribe(getP(), (props.s !== undefined ? props.s : __state_s), __state_i);
@@ -64,7 +64,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     useEffect(() => {
         const id = subscribe(getP(), 1, 2);
         return () => unsubscribe(id);
-    }, [__state_i, __state_j, props.p, props.r, props.s, __state_s, props.sChange, props.defaultS]);
+    }, [__state_i, __state_j, props.p, props.r, props.s, __state_s, props.defaultS, props.sChange]);
 
     return view(({
         props: {

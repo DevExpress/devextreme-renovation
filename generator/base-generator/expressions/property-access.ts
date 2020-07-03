@@ -114,10 +114,14 @@ export class PropertyAccess extends ExpressionWithExpression {
         }
         return dependency;
     }
+    
+    getAssignmentDependency(options?: toStringOptions): string[] {
+        return this.getDependency(options);
+    }
 
     isPropsScope(options?: toStringOptions) {
         if (this.expression instanceof PropertyAccess &&
-            this.expression.expression.toString(options) === options?.componentContext &&
+            this.expression.expression.toString(options) === (options?.componentContext) &&
             this.expression.name.toString() === "props"
         ) { 
             return true;

@@ -54,6 +54,9 @@ export class Binary extends Expression {
 
     getDependency() {
         if (this.operator === SyntaxKind.EqualsToken) {
+            if(this.left instanceof PropertyAccess && this.left.isPropsScope({ members: [], componentContext: this.left.calculateComponentContext() })) {
+                return this.left.getAssignmentDependency().concat(this.right.getDependency());
+            }
             return this.right.getDependency();
         }
         return this.getAllDependency();

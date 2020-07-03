@@ -1643,7 +1643,22 @@ mocha.describe("Expressions with props/state/internal state", function () {
         assert.deepEqual(this.internalStateAccess.getDependency(), ["i1"]);
     });
 
-    mocha.it("= operator for state - set state and raise change state", function () {
+    mocha.it("PropertyAccess. Dependencies on assignment", function () {
+        const expression = generator.createPropertyAccess(
+            generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("props")
+            ), generator.createIdentifier("s1"));
+
+        this.state.inherited = true;
+
+        assert.equal(expression.toString({
+            members: [this.state, this.prop, this.internalState]
+        }), "(props.s1!==undefined?props.s1:__state_s1)");
+        assert.deepEqual(expression.getAssignmentDependency(), ["s1Change"]);
+    });
+
+    mocha.it("= operator for state - set state and rise change state", function () {
         const expression = generator.createBinary(
             this.stateAccess,
             generator.SyntaxKind.EqualsToken,
@@ -1992,7 +2007,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
 
         assert.deepEqual(method.getDependency(
             [this.internalState, this.state, this.prop]
-        ), ["props.p1", "__state_i1", "props.s1", "__state_s1", "props.s1Change"]);
+        ), ["props.p1", "__state_i1", "props.s1", "__state_s1"]);
     });
 
     mocha.it("Method should not return dependency for unknown property", function () {
