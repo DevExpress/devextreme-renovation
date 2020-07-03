@@ -1,22 +1,27 @@
-import { Component, ComponentBindings, JSXComponent, Effect, ForwardRef } from "../../../component_declaration/common";
+import {
+  Component,
+  ComponentBindings,
+  JSXComponent,
+  Effect,
+  ForwardRef,
+} from "../../../component_declaration/common";
 import Child from "./child.tsx";
 
-function view({ props: { childRef} }: ForwardRefDeep) { 
-    return <Child childRef={childRef}/>
+function view({ props: { childRef } }: ForwardRefDeep) {
+  return <Child childRef={childRef} />;
 }
 
 @ComponentBindings()
-class Props { 
-    @ForwardRef() childRef!: HTMLDivElement;
+class Props {
+  @ForwardRef() childRef!: HTMLDivElement;
 }
 
 @Component({
-    view
+  view,
 })
 export default class ForwardRefDeep extends JSXComponent(Props) {
-
-    @Effect()
-    effect(){
-        this.props.childRef.style.border = "1px solid rgb(0, 0, 128)";
-    }
+  @Effect()
+  effect() {
+    this.props.childRef.style.border = "1px solid rgb(0, 0, 128)";
+  }
 }

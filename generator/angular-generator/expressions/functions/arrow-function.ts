@@ -5,16 +5,16 @@ import { isElement } from "../jsx/elements";
 import { toStringOptions } from "../../types";
 
 export class ArrowFunction extends BaseArrowFunction {
-    processTemplateExpression(expression?: JsxExpression) {
-        if (expression && !isElement(expression)) {
-            return new JsxChildExpression(expression);
-        }
-        return super.processTemplateExpression(expression);
+  processTemplateExpression(expression?: JsxExpression) {
+    if (expression && !isElement(expression)) {
+      return new JsxChildExpression(expression);
     }
-    toString(options?: toStringOptions) {
-        if (this.isJsx()) {
-            return "";
-        }
-        return super.toString(options);
+    return super.processTemplateExpression(expression);
+  }
+  toString(options?: toStringOptions) {
+    if (this.isJsx()) {
+      return "";
     }
+    return super.toString(options);
+  }
 }

@@ -1,18 +1,21 @@
-import { Component, ComponentBindings, JSXComponent, OneWay, Fragment } from "../../component_declaration/common";
+import {
+  Component,
+  ComponentBindings,
+  JSXComponent,
+  OneWay,
+  Fragment,
+} from "../../component_declaration/common";
 
 function view(model: ComponentWithRest) {
-    return (
-        <div {...model.restAttributes}></div>
-    );
+  return <div {...model.restAttributes}></div>;
 }
 
 @ComponentBindings()
 class WidgetInput {
-    @OneWay() containerId: string = "default";
+  @OneWay() containerId: string = "default";
 }
 
 @Component({
-    view
+  view,
 })
-
 export default class ComponentWithRest extends JSXComponent(WidgetInput) {}

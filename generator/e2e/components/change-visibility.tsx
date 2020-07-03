@@ -1,51 +1,61 @@
-import { Component, OneWay, ComponentBindings, JSXComponent, InternalState, Ref, Effect } from "../../component_declaration/common";
-import ButtonComponent from "./button.tsx"
+import {
+  Component,
+  OneWay,
+  ComponentBindings,
+  JSXComponent,
+  InternalState,
+  Ref,
+  Effect,
+} from "../../component_declaration/common";
+import ButtonComponent from "./button.tsx";
 
-function view(model: VisibilityChange) { 
-    return <div>
-        <ButtonComponent
-            id="change-visibility-open-element"
-            onClick={model.clickHandler}>
-            {"Change visibility"}
-        </ButtonComponent>
-        {model.visible ? <div
-            id={"change-visibility-hide-element"}
-            ref={model.element as any}
-            style={{
-                width: 100,
-                height: 20,
-                backgroundColor: "green"
-            }}
-        ></div>:null}
-        </div>;
+function view(model: VisibilityChange) {
+  return (
+    <div>
+      <ButtonComponent
+        id="change-visibility-open-element"
+        onClick={model.clickHandler}
+      >
+        {"Change visibility"}
+      </ButtonComponent>
+      {model.visible ? (
+        <div
+          id={"change-visibility-hide-element"}
+          ref={model.element as any}
+          style={{
+            width: 100,
+            height: 20,
+            backgroundColor: "green",
+          }}
+        ></div>
+      ) : null}
+    </div>
+  );
 }
 
 @ComponentBindings()
-class WidgetInput { 
-    
-}
+class WidgetInput {}
 
 @Component({
-    view
+  view,
 })
-
 export default class VisibilityChange extends JSXComponent(WidgetInput) {
-    @InternalState() visible: boolean = false;
-    @Ref() element?: HTMLDivElement;
+  @InternalState() visible: boolean = false;
+  @Ref() element?: HTMLDivElement;
 
-    @Effect()
-    elementClick() { 
-        const handler = (e) => {
-            this.visible = false
-        };
-        if (this.visible) {
-            this.element?.addEventListener("click", handler);
-        }
-        
-        return () => this.element?.removeEventListener("click", handler);
+  @Effect()
+  elementClick() {
+    const handler = (e) => {
+      this.visible = false;
+    };
+    if (this.visible) {
+      this.element?.addEventListener("click", handler);
     }
 
-    clickHandler() { 
-        this.visible = !this.visible;
-    }
+    return () => this.element?.removeEventListener("click", handler);
+  }
+
+  clickHandler() {
+    this.visible = !this.visible;
+  }
 }

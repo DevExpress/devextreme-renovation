@@ -1,23 +1,26 @@
-import { Component, ComponentBindings, JSXComponent, ForwardRef, Effect } from "../../../component_declaration/common";
+import {
+  Component,
+  ComponentBindings,
+  JSXComponent,
+  ForwardRef,
+  Effect,
+} from "../../../component_declaration/common";
 
-function view({ props: { childRef} }: ForwardRefChild) { 
-    return (<span
-        className="forward-ref-child"
-        ref={childRef as never}>
-    </span>);
+function view({ props: { childRef } }: ForwardRefChild) {
+  return <span className="forward-ref-child" ref={childRef as never}></span>;
 }
 
 @ComponentBindings()
-class Props { 
-    @ForwardRef() childRef: HTMLDivElement;
+class Props {
+  @ForwardRef() childRef: HTMLDivElement;
 }
 
 @Component({
-    view
+  view,
 })
 export default class ForwardRefChild extends JSXComponent(Props) {
-    @Effect()
-    effect(){
-        this.props.childRef.innerHTML+= "childText";
-    }
+  @Effect()
+  effect() {
+    this.props.childRef.innerHTML += "childText";
+  }
 }

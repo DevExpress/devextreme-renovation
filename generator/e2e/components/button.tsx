@@ -1,37 +1,49 @@
-import { Component, ComponentBindings, JSXComponent, Event, Slot, Effect, Ref, OneWay } from "../../component_declaration/common";
+import {
+  Component,
+  ComponentBindings,
+  JSXComponent,
+  Event,
+  Slot,
+  Effect,
+  Ref,
+  OneWay,
+} from "../../component_declaration/common";
 
-function view(model: Button) { 
-    return <div
-        id={model.props.id}
-        ref={model.host as any} style={{ 
+function view(model: Button) {
+  return (
+    <div
+      id={model.props.id}
+      ref={model.host as any}
+      style={{
         border: "1px solid black",
         padding: 10,
-        display: "inline-block"
-        }}>{
-            model.props.children ? model.props.children : "Default Text"
-        }</div>;
+        display: "inline-block",
+      }}
+    >
+      {model.props.children ? model.props.children : "Default Text"}
+    </div>
+  );
 }
 
 @ComponentBindings()
-export class ButtonInput { 
-    @Event() onClick?: (e: Event) => void;
-    @Slot() children?: any; 
-    @OneWay() id?: string;
+export class ButtonInput {
+  @Event() onClick?: (e: Event) => void;
+  @Slot() children?: any;
+  @OneWay() id?: string;
 }
 
 @Component({
-    view
+  view,
 })
-
 export default class Button extends JSXComponent(ButtonInput) {
-    @Ref() host: HTMLDivElement;
+  @Ref() host: HTMLDivElement;
 
-    @Effect() clickEffect() { 
-        const handler = (e) => {
-            this.props.onClick?.(e);
-        };
-        this.host.addEventListener("click", handler);
+  @Effect() clickEffect() {
+    const handler = (e) => {
+      this.props.onClick?.(e);
+    };
+    this.host.addEventListener("click", handler);
 
-        return () => this.host.removeEventListener("click", handler);
-    }
+    return () => this.host.removeEventListener("click", handler);
+  }
 }

@@ -1,7 +1,3 @@
-export default class CustomBaseComponent {
+export default class CustomBaseComponent {}
 
-}
-
-export class JQueryCustomBaseComponent {
-
-}
+export class JQueryCustomBaseComponent {}

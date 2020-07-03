@@ -1,3 +1,1 @@
-export default function registerComponent(name: string, componentClass: any) {
-
-}
+export default function registerComponent(name: string, componentClass: any) {}

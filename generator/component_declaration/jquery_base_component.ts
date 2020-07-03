@@ -1,3 +1,1 @@
-export default class JQueryBaseComponent{
-
-}
+export default class JQueryBaseComponent {}
