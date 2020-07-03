@@ -6,11 +6,27 @@ import { toStringOptions } from "../../types";
 import { Parameter } from "../../../base-generator/expressions/functions";
 import { Block } from "../../../base-generator/expressions/statements";
 
-export class SetAccessor extends Method { 
-    constructor(decorators: Decorator[] | undefined, modifiers: string[] | undefined, name: Identifier, parameters: Parameter[], body: Block) {
-        super(decorators, modifiers, "", name, "", [], parameters, new SimpleTypeExpression(""), body);
-    }
-    toString(options?: toStringOptions) { 
-        return `set ${super.toString(options)}`;
-    }
+export class SetAccessor extends Method {
+  constructor(
+    decorators: Decorator[] | undefined,
+    modifiers: string[] | undefined,
+    name: Identifier,
+    parameters: Parameter[],
+    body: Block
+  ) {
+    super(
+      decorators,
+      modifiers,
+      "",
+      name,
+      "",
+      [],
+      parameters,
+      new SimpleTypeExpression(""),
+      body
+    );
+  }
+  toString(options?: toStringOptions) {
+    return `set ${super.toString(options)}`;
+  }
 }

@@ -1,30 +1,28 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Mocha Tests",
-            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
-            "args": [
-                "--timeout",
-                "999999",
-                "--colors",
-                //"${workspaceFolder}/build/test/angular-generation.test",
-                // "${workspaceFolder}/build/test/angular-generator.test"
-                // "${workspaceFolder}/build/test/react-generator.test"
-                //"${workspaceFolder}/build/test/vue-generation.test",
-                "${workspaceFolder}/build/test"
-            ],
-            // "preLaunchTask": "tsc: build - tsconfig.json",
-            // "outFiles": ["${workspaceFolder}/out/**/*.js"],
-            "internalConsoleOptions": "openOnSessionStart",
-            "skipFiles": [
-                "<node_internals>/**"
-            ]
-        }
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Mocha Tests",
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "args": [
+        "--timeout",
+        "999999",
+        "--colors",
+        //"${workspaceFolder}/build/test/angular-generation.test",
+        // "${workspaceFolder}/build/test/angular-generator.test"
+        // "${workspaceFolder}/build/test/react-generator.test"
+        //"${workspaceFolder}/build/test/vue-generation.test",
+        "${workspaceFolder}/build/test"
+      ],
+      // "preLaunchTask": "tsc: build - tsconfig.json",
+      // "outFiles": ["${workspaceFolder}/out/**/*.js"],
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ]
 }

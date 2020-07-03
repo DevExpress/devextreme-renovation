@@ -1,17 +1,19 @@
 function view(model: Widget) {
-  return <div ></div>;
+  return <div></div>;
 }
 export declare type PropsType = {
   type?: string;
-  onClick?: (e: any) => void
-}
-export const Props: PropsType = {
-
+  onClick?: (e: any) => void;
 };
+export const Props: PropsType = {};
 
-import React, { useCallback } from 'react';
+import React, { useCallback } from "react";
 
-declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any };
+declare type RestProps = {
+  className?: string;
+  style?: React.CSSProperties;
+  [x: string]: any;
+};
 interface Widget {
   props: typeof Props & RestProps;
   clickHandler: () => any;
@@ -19,25 +21,29 @@ interface Widget {
 }
 
 export function Widget(props: typeof Props & RestProps) {
-  const clickHandler = useCallback(function clickHandler(): any {
-    props.onClick!({ type: props.type })
-  }, [props.onClick, props.type]);
-  const __restAttributes = useCallback(function __restAttributes(): RestProps {
-    const { onClick, type, ...restProps } = props
-    return restProps;
-  }, [props]);
-
-  return view(
-    ({
-      props: { ...props },
-      clickHandler,
-      restAttributes: __restAttributes()
-    })
+  const clickHandler = useCallback(
+    function clickHandler(): any {
+      props.onClick!({ type: props.type });
+    },
+    [props.onClick, props.type]
   );
+  const __restAttributes = useCallback(
+    function __restAttributes(): RestProps {
+      const { onClick, type, ...restProps } = props;
+      return restProps;
+    },
+    [props]
+  );
+
+  return view({
+    props: { ...props },
+    clickHandler,
+    restAttributes: __restAttributes(),
+  });
 }
 
 export default Widget;
 
 Widget.defaultProps = {
-  ...Props
-}
+  ...Props,
+};

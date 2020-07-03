@@ -1,5 +1,10 @@
 import { Identifier } from "./common";
-import { GetAccessor, Property, Method, BaseClassMember } from "./class-members";
+import {
+  GetAccessor,
+  Property,
+  Method,
+  BaseClassMember,
+} from "./class-members";
 import { SimpleExpression, Expression } from "./base";
 import { ObjectLiteral } from "./literal";
 import { HeritageClause, inheritMembers, Class, Heritable } from "./class";
@@ -7,263 +12,362 @@ import { GeneratorContext } from "../types";
 import { Block, ReturnStatement } from "./statements";
 import { getModuleRelativePath } from "../utils/path-utils";
 import { Decorator } from "./decorator";
-import { BaseFunction } from './functions';
+import { BaseFunction } from "./functions";
 import { compileType } from "../utils/string";
 import SyntaxKind from "../syntaxKind";
 import { warn } from "../../utils/messages";
 import { Decorators } from "../../component_declaration/decorators";
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
-    return heritageClauses.some(h => h.isJsxComponent);
+  return heritageClauses.some((h) => h.isJsxComponent);
 }
 
 export function getProps(members: BaseClassMember[]): Property[] {
-    return members.filter(m => m.decorators
-        .find(d =>
-            d.name === Decorators.OneWay ||
-            d.name === Decorators.TwoWay ||
-            d.name === Decorators.Nested ||
-            d.name === Decorators.Event ||
-            d.name === Decorators.Template ||
-            d.name === Decorators.Slot ||
-            d.name === Decorators.ForwardRefProp ||
-            d.name === Decorators.RefProp)
-    ) as Property[];
+  return members.filter((m) =>
+    m.decorators.find(
+      (d) =>
+        d.name === Decorators.OneWay ||
+        d.name === Decorators.TwoWay ||
+        d.name === Decorators.Nested ||
+        d.name === Decorators.Event ||
+        d.name === Decorators.Template ||
+        d.name === Decorators.Slot ||
+        d.name === Decorators.ForwardRefProp ||
+        d.name === Decorators.RefProp
+    )
+  ) as Property[];
 }
 
 export class Component extends Class implements Heritable {
-    props: Property[] = [];
-    modelProp?: Property;
-    state: Property[] = [];
-    internalState: Property[];
-    refs: Property[];
-    apiRefs: Property[];
+  props: Property[] = [];
+  modelProp?: Property;
+  state: Property[] = [];
+  internalState: Property[];
+  refs: Property[];
+  apiRefs: Property[];
 
+  listeners: Method[];
+  methods: Method[];
+  effects: Method[];
+  slots: Property[];
 
-    listeners: Method[];
-    methods: Method[];
-    effects: Method[];
-    slots: Property[];
+  view: any;
+  viewModel: any;
 
-    view: any;
-    viewModel: any;
+  context: GeneratorContext;
 
-    context: GeneratorContext;
+  defaultOptionRules?: Expression | null;
 
-    defaultOptionRules?: Expression | null;
+  get name() {
+    return this._name.toString();
+  }
 
-    get name() { 
-        return this._name.toString();
-    }
+  addPrefixToMembers(members: Array<Property | Method>) {
+    members
+      .filter((m) => !m.inherited && m instanceof GetAccessor)
+      .forEach((m) => {
+        m.prefix = "__";
+      });
+    return members;
+  }
 
-    addPrefixToMembers(members: Array<Property | Method>) {
-        members.filter(m => !m.inherited && m instanceof GetAccessor).forEach(m => {
-            m.prefix = "__";
-        });
-        return members;
-    }
+  get needGenerateDefaultOptions(): boolean {
+    return (
+      !!this.context.defaultOptionsModule &&
+      (!this.defaultOptionRules ||
+        this.defaultOptionRules.toString() !== "null")
+    );
+  }
 
-    get needGenerateDefaultOptions(): boolean { 
-        return !!this.context.defaultOptionsModule && (!this.defaultOptionRules || this.defaultOptionRules.toString() !== "null");
-    }
+  processMembers(members: Array<Property | Method>) {
+    members = members.map((m) => {
+      if (
+        m instanceof Property &&
+        m.decorators.length === 0 &&
+        m.initializer instanceof BaseFunction
+      ) {
+        const body =
+          m.initializer.body instanceof Block
+            ? m.initializer.body
+            : new Block(
+                [new ReturnStatement(m.initializer.body as Expression)],
+                true
+              );
 
-    processMembers(members: Array<Property | Method>) { 
-        members = members.map(m => {
-            if (m instanceof Property && m.decorators.length === 0 && m.initializer instanceof BaseFunction) {
-                const body = m.initializer.body instanceof Block
-                    ? m.initializer.body
-                    : new Block([new ReturnStatement(m.initializer.body as Expression)], true);
-                  
-                return new Method([], m.modifiers, undefined, m._name, undefined, [], m.initializer.parameters, m.initializer.type, body);
-            }
-            return m;
-        });
-
-        const api = members.filter(m => m.decorators.find(d => d.name === "Method"));
-        const props = inheritMembers(this.heritageClauses, []);
-        
-        api.filter(m => props.some(p => p._name.toString() === m._name.toString())).forEach(a => {
-            warn(`Component ${this.name} has Prop and Api method with same name: ${a._name}`);
-        });
-        
-        members = super.processMembers(
-            inheritMembers(
-                this.heritageClauses,
-                this.addPrefixToMembers(members)
-            )
+        return new Method(
+          [],
+          m.modifiers,
+          undefined,
+          m._name,
+          undefined,
+          [],
+          m.initializer.parameters,
+          m.initializer.type,
+          body
         );
-        const restPropsGetter = this.createRestPropsGetter(members);
-        restPropsGetter.prefix = "__";
-        members.push(restPropsGetter);
-        const hasNested = members.some(m => m.isNested);
-        if (hasNested){
-            const nestedPropGetter = this.createNestedGetter();
-            if (nestedPropGetter !== null) {
-                members.push(nestedPropGetter);
-            }
-        }
-        return members;
-    }
+      }
+      return m;
+    });
 
-    constructor(decorator: Decorator, modifiers: string[] = [], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[] = [], members: Array<Property | Method>, context: GeneratorContext) {
-        super(
-            [decorator],
-            modifiers,
-            name,
-            typeParameters,
-            heritageClauses.filter(h => h.token === SyntaxKind.ExtendsKeyword),
-            members
+    const api = members.filter((m) =>
+      m.decorators.find((d) => d.name === "Method")
+    );
+    const props = inheritMembers(this.heritageClauses, []);
+
+    api
+      .filter((m) =>
+        props.some((p) => p._name.toString() === m._name.toString())
+      )
+      .forEach((a) => {
+        warn(
+          `Component ${this.name} has Prop and Api method with same name: ${a._name}`
         );
-        members = this.members;
-        this.props = members
-            .filter(m => m.decorators.find(d => d.name === "OneWay" || d.name === "Event" || d.name === "Template")) as Property[];
+      });
 
-        const refs = members.filter(m => m.decorators.find(d => d.name === "Ref")).reduce((r: {refs: Property[], apiRefs: Property[]}, p) => {
-            if(context.components && context.components[p.type!.toString()] instanceof Component) {
-                p.decorators.find(d => d.name === "Ref")!.expression.expression = new SimpleExpression("ApiRef");
-                r.apiRefs.push(p as Property);
-            } else {
-                r.refs.push(p as Property);
-            }
-            return r;
-        }, { refs: [], apiRefs: []});
-        this.refs = refs.refs;
-        this.apiRefs = refs.apiRefs;
+    members = super.processMembers(
+      inheritMembers(this.heritageClauses, this.addPrefixToMembers(members))
+    );
+    const restPropsGetter = this.createRestPropsGetter(members);
+    restPropsGetter.prefix = "__";
+    members.push(restPropsGetter);
+    const hasNested = members.some((m) => m.isNested);
+    if (hasNested) {
+      const nestedPropGetter = this.createNestedGetter();
+      if (nestedPropGetter !== null) {
+        members.push(nestedPropGetter);
+      }
+    }
+    return members;
+  }
 
-        this.internalState = members
-            .filter(m => m.isInternalState) as Property[];
+  constructor(
+    decorator: Decorator,
+    modifiers: string[] = [],
+    name: Identifier,
+    typeParameters: string[],
+    heritageClauses: HeritageClause[] = [],
+    members: Array<Property | Method>,
+    context: GeneratorContext
+  ) {
+    super(
+      [decorator],
+      modifiers,
+      name,
+      typeParameters,
+      heritageClauses.filter((h) => h.token === SyntaxKind.ExtendsKeyword),
+      members
+    );
+    members = this.members;
+    this.props = members.filter((m) =>
+      m.decorators.find(
+        (d) =>
+          d.name === "OneWay" || d.name === "Event" || d.name === "Template"
+      )
+    ) as Property[];
 
-        this.state = members.filter(m => m.isState) as Property[];
+    const refs = members
+      .filter((m) => m.decorators.find((d) => d.name === "Ref"))
+      .reduce(
+        (r: { refs: Property[]; apiRefs: Property[] }, p) => {
+          if (
+            context.components &&
+            context.components[p.type!.toString()] instanceof Component
+          ) {
+            p.decorators.find(
+              (d) => d.name === "Ref"
+            )!.expression.expression = new SimpleExpression("ApiRef");
+            r.apiRefs.push(p as Property);
+          } else {
+            r.refs.push(p as Property);
+          }
+          return r;
+        },
+        { refs: [], apiRefs: [] }
+      );
+    this.refs = refs.refs;
+    this.apiRefs = refs.apiRefs;
 
-        let modelProps = this.state.filter(m => m.decorators.find(d => (d.expression.arguments[0] as ObjectLiteral)?.getProperty("isModel")?.toString() === "true"));
+    this.internalState = members.filter((m) => m.isInternalState) as Property[];
 
-        if(modelProps.length > 1) {
-            throw `There should be only one model prop. Props marked as isModel: ${modelProps.map(s => s._name).join(", ")}`; 
-        }
+    this.state = members.filter((m) => m.isState) as Property[];
 
-        this.modelProp = modelProps[0] || this.state.find(s => s._name.toString() === "value");
+    let modelProps = this.state.filter((m) =>
+      m.decorators.find(
+        (d) =>
+          (d.expression.arguments[0] as ObjectLiteral)
+            ?.getProperty("isModel")
+            ?.toString() === "true"
+      )
+    );
 
-        this.methods = members.filter(m => m instanceof Method && m.decorators.length === 0 || m instanceof GetAccessor) as Method[];
-
-        this.listeners = members.filter(m => m.decorators.find(d => d.name === "Listen")) as Method[];
-
-        this.effects = members.filter(m => m.isEffect) as Method[];
-
-        this.slots = members.filter(m => m.isSlot) as Property[];
-
-        this.view = decorator.getParameter("view");
-        this.viewModel = decorator.getParameter("viewModel") || "";
-
-        this.defaultOptionRules = decorator.getParameter("defaultOptionRules");
-
-        this.context = context;
-
-        if (context.defaultOptionsImport) { 
-            context.defaultOptionsImport.add("convertRulesToOptions");
-            context.defaultOptionsImport.add("Rule");
-        }
+    if (modelProps.length > 1) {
+      throw `There should be only one model prop. Props marked as isModel: ${modelProps
+        .map((s) => s._name)
+        .join(", ")}`;
     }
 
-    compileDefaultProps() { 
-        return "";
-    }
+    this.modelProp =
+      modelProps[0] || this.state.find((s) => s._name.toString() === "value");
 
-    get heritageProperties() {
-        return getProps(this.members)
-            .map(p=>p as Property)
-            .map(p => {
-                const property = new Property(p.decorators, p.modifiers, p._name, p.questionOrExclamationToken, p.type, p.initializer);
-                property.inherited = true;
-                return property;
-            });
-    }
+    this.methods = members.filter(
+      (m) =>
+        (m instanceof Method && m.decorators.length === 0) ||
+        m instanceof GetAccessor
+    ) as Method[];
 
-    defaultPropsDest() { 
-        return "";
-    }
+    this.listeners = members.filter((m) =>
+      m.decorators.find((d) => d.name === "Listen")
+    ) as Method[];
 
-    createRestPropsGetter(members: BaseClassMember[]) {
-        return new GetAccessor(
-            undefined,
-            undefined,
-            new Identifier('restAttributes'),
-            [], undefined,
-            new Block([
-                new SimpleExpression("return {}")
-            ], true));
-    }
-    
-    createNestedGetter(): Method | null {
-        return null;
-    }
+    this.effects = members.filter((m) => m.isEffect) as Method[];
 
-    compileDefaultOptionsImport(imports: string[]): void { 
-        if (!this.context.defaultOptionsImport && this.needGenerateDefaultOptions && this.context.defaultOptionsModule && this.context.dirname) {
-            const relativePath = getModuleRelativePath(this.context.dirname, this.context.defaultOptionsModule);
-            imports.push(`import {convertRulesToOptions, Rule} from "${relativePath}"`);
-        }
+    this.slots = members.filter((m) => m.isSlot) as Property[];
+
+    this.view = decorator.getParameter("view");
+    this.viewModel = decorator.getParameter("viewModel") || "";
+
+    this.defaultOptionRules = decorator.getParameter("defaultOptionRules");
+
+    this.context = context;
+
+    if (context.defaultOptionsImport) {
+      context.defaultOptionsImport.add("convertRulesToOptions");
+      context.defaultOptionsImport.add("Rule");
     }
+  }
 
-    compilePropsType() {
-        return (this.isJSXComponent ? this.heritageClauses[0].types[0].type : this.name).toString();
+  compileDefaultProps() {
+    return "";
+  }
+
+  get heritageProperties() {
+    return getProps(this.members)
+      .map((p) => p as Property)
+      .map((p) => {
+        const property = new Property(
+          p.decorators,
+          p.modifiers,
+          p._name,
+          p.questionOrExclamationToken,
+          p.type,
+          p.initializer
+        );
+        property.inherited = true;
+        return property;
+      });
+  }
+
+  defaultPropsDest() {
+    return "";
+  }
+
+  createRestPropsGetter(members: BaseClassMember[]) {
+    return new GetAccessor(
+      undefined,
+      undefined,
+      new Identifier("restAttributes"),
+      [],
+      undefined,
+      new Block([new SimpleExpression("return {}")], true)
+    );
+  }
+
+  createNestedGetter(): Method | null {
+    return null;
+  }
+
+  compileDefaultOptionsImport(imports: string[]): void {
+    if (
+      !this.context.defaultOptionsImport &&
+      this.needGenerateDefaultOptions &&
+      this.context.defaultOptionsModule &&
+      this.context.dirname
+    ) {
+      const relativePath = getModuleRelativePath(
+        this.context.dirname,
+        this.context.defaultOptionsModule
+      );
+      imports.push(
+        `import {convertRulesToOptions, Rule} from "${relativePath}"`
+      );
     }
+  }
 
-    compileDefaultOptionsPropsType() { 
-        return this.compilePropsType();
-    }
+  compilePropsType() {
+    return (this.isJSXComponent
+      ? this.heritageClauses[0].types[0].type
+      : this.name
+    ).toString();
+  }
 
-    compileDefaultOptionsRuleTypeName() { 
-        const defaultOptionsTypeName = `${this.name}OptionRule`;
-        return defaultOptionsTypeName;
-    }
+  compileDefaultOptionsPropsType() {
+    return this.compilePropsType();
+  }
 
-    compileDefaultOptionRulesType() { 
-        const defaultOptionsTypeArgument = this.compileDefaultOptionsPropsType();
-        return `type ${this.compileDefaultOptionsRuleTypeName()} = Rule<${defaultOptionsTypeArgument}>;`;
-    }
+  compileDefaultOptionsRuleTypeName() {
+    const defaultOptionsTypeName = `${this.name}OptionRule`;
+    return defaultOptionsTypeName;
+  }
 
-    compileDefaultOptionsMethod(defaultOptionRulesInitializer:string = "[]", statements: string[]=[]) { 
-        if (this.needGenerateDefaultOptions) { 
-            const defaultOptionsTypeName = this.compileDefaultOptionsRuleTypeName();
-            return `${this.compileDefaultOptionRulesType()}
+  compileDefaultOptionRulesType() {
+    const defaultOptionsTypeArgument = this.compileDefaultOptionsPropsType();
+    return `type ${this.compileDefaultOptionsRuleTypeName()} = Rule<${defaultOptionsTypeArgument}>;`;
+  }
 
-            const __defaultOptionRules${compileType(defaultOptionsTypeName ? `${defaultOptionsTypeName}[]` : "")} = ${defaultOptionRulesInitializer};
-            export function defaultOptions(rule${compileType(defaultOptionsTypeName)}) { 
+  compileDefaultOptionsMethod(
+    defaultOptionRulesInitializer: string = "[]",
+    statements: string[] = []
+  ) {
+    if (this.needGenerateDefaultOptions) {
+      const defaultOptionsTypeName = this.compileDefaultOptionsRuleTypeName();
+      return `${this.compileDefaultOptionRulesType()}
+
+            const __defaultOptionRules${compileType(
+              defaultOptionsTypeName ? `${defaultOptionsTypeName}[]` : ""
+            )} = ${defaultOptionRulesInitializer};
+            export function defaultOptions(rule${compileType(
+              defaultOptionsTypeName
+            )}) { 
                 __defaultOptionRules.push(rule);
                 ${statements.join("\n")}
             }`;
-        }
-        return "";
     }
+    return "";
+  }
 
-    compileDefaultComponentExport() {
-        return this.modifiers.join(" ") === "export" ? `export default ${this.name}` : ``;
-    }
+  compileDefaultComponentExport() {
+    return this.modifiers.join(" ") === "export"
+      ? `export default ${this.name}`
+      : ``;
+  }
 
-    processModuleFileName(module: string) {
-        return module;
-    }
+  processModuleFileName(module: string) {
+    return module;
+  }
 
-    get isJSXComponent() {
-        return isJSXComponent(this.heritageClauses);
-    }
+  get isJSXComponent() {
+    return isJSXComponent(this.heritageClauses);
+  }
 
-    getMeta() {
-        const memberName = (member: BaseClassMember) => member._name.toString();
-        const props = getProps(this.members);
-        return {
-            name: this.name,
-            decorator: (this.decorators[0].expression.arguments[0] as ObjectLiteral).toObject(),
-            props: {
-                allProps: props.map(memberName),
-                oneway: props.filter(m => m._hasDecorator(Decorators.OneWay)).map(memberName),
-                twoway: props.filter(m => m.isState).map(memberName),
-                template: props.filter(m => m.isTemplate).map(memberName),
-                event: props.filter(m => m.isEvent).map(memberName),
-                ref: props.filter(m => m.isRefProp).map(memberName),
-                slot: props.filter(m => m.isSlot).map(memberName),
-            },
-            api: this.members.filter(m => m.isApiMethod).map(memberName)
-        }
-    }
+  getMeta() {
+    const memberName = (member: BaseClassMember) => member._name.toString();
+    const props = getProps(this.members);
+    return {
+      name: this.name,
+      decorator: (this.decorators[0].expression
+        .arguments[0] as ObjectLiteral).toObject(),
+      props: {
+        allProps: props.map(memberName),
+        oneway: props
+          .filter((m) => m._hasDecorator(Decorators.OneWay))
+          .map(memberName),
+        twoway: props.filter((m) => m.isState).map(memberName),
+        template: props.filter((m) => m.isTemplate).map(memberName),
+        event: props.filter((m) => m.isEvent).map(memberName),
+        ref: props.filter((m) => m.isRefProp).map(memberName),
+        slot: props.filter((m) => m.isSlot).map(memberName),
+      },
+      api: this.members.filter((m) => m.isApiMethod).map(memberName),
+    };
+  }
 }

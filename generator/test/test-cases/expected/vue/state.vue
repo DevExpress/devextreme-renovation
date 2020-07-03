@@ -1,90 +1,94 @@
- <template>
-  <div>{{(state1 !== undefined ? state1 : state1_state)}}<BaseState @update:base-state-prop="__stateChange"></BaseState></div>
+<template>
+  <div>
+    {{(state1 !== undefined ? state1 : state1_state)
+    }}<BaseState @update:base-state-prop="__stateChange"></BaseState>
+  </div>
 </template>
 <script>
 import BaseState from "./model";
 const WidgetInput = {
   state1: {
     type: Boolean,
-    default: undefined
+    default: undefined,
   },
   state2: {
     type: Boolean,
-    default: undefined
+    default: undefined,
   },
   stateProp: {
     type: Boolean,
-    default: undefined
+    default: undefined,
   },
   defaultState1: {
     type: Boolean,
     default() {
       return false;
-    }
+    },
   },
   defaultState2: {
     type: Boolean,
     default() {
       return false;
-    }
+    },
   },
   defaultStateProp: {
-    type: Boolean
-  }
+    type: Boolean,
+  },
 };
 export default {
   components: {
-    BaseState
+    BaseState,
   },
   props: WidgetInput,
   data() {
     return {
       state1_state: this.defaultState1,
       state2_state: this.defaultState2,
-      stateProp_state: this.defaultStateProp
+      stateProp_state: this.defaultStateProp,
     };
   },
   methods: {
     __updateState() {
-        this.state1_state = !(this.state1 !== undefined
+      (this.state1_state = !(this.state1 !== undefined
         ? this.state1
-        : this.state1_state),
+        : this.state1_state)),
         this.state1Change(this.state1_state);
     },
     __updateState2() {
-      const cur = (this.state2 !== undefined ? this.state2 : this.state2_state)
-      this.state2_state = cur !== false ? false : true,
-      this.state2Change(this.state2_state);
+      const cur = this.state2 !== undefined ? this.state2 : this.state2_state;
+      (this.state2_state = cur !== false ? false : true),
+        this.state2Change(this.state2_state);
     },
-    __destruct(){
-      const s = (this.state1 !== undefined ? this.state1 : this.state1_state);
+    __destruct() {
+      const s = this.state1 !== undefined ? this.state1 : this.state1_state;
     },
     __stateChange(stateProp) {
-      this.stateProp_state = stateProp,
-      this.statePropChange(this.stateProp_state);
+      (this.stateProp_state = stateProp),
+        this.statePropChange(this.stateProp_state);
     },
     __restAttributes() {
       return {};
     },
-    props(){
+    props() {
       return {
-        state1:(this.state1 !== undefined ? this.state1 : this.state1_state),
-        state2:(this.state2 !== undefined ? this.state2 : this.state2_state),
-        stateProp:(this.stateProp !== undefined ? this.stateProp : this.stateProp_state),
-        state1Change:this.state1Change,
-        state2Change:this.state2Change,
-        statePropChange:this.statePropChange
+        state1: this.state1 !== undefined ? this.state1 : this.state1_state,
+        state2: this.state2 !== undefined ? this.state2 : this.state2_state,
+        stateProp:
+          this.stateProp !== undefined ? this.stateProp : this.stateProp_state,
+        state1Change: this.state1Change,
+        state2Change: this.state2Change,
+        statePropChange: this.statePropChange,
       };
     },
-    state1Change(...args){
+    state1Change(...args) {
       this.$emit("update:state1", ...args);
     },
-    state2Change(...args){
+    state2Change(...args) {
       this.$emit("update:state2", ...args);
     },
-    statePropChange(...args){
+    statePropChange(...args) {
       this.$emit("update:state-prop", ...args);
-    }
-  }
+    },
+  },
 };
 </script>

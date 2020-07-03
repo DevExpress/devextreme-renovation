@@ -1,10 +1,9 @@
-
 export declare type WidgetPropsType = {
-    height?: number
-}
+  height?: number;
+};
 
 const WidgetProps: WidgetPropsType = {
-    height: 10
+  height: 10,
 };
 
 export default WidgetProps;

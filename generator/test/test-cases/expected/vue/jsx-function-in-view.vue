@@ -4,7 +4,7 @@
       <div>{{ __loadingProps().text }}</div>
     </template>
     <template v-else>
-      <span>{{ ""+greetings+" "+__name()+"" }}</span>
+      <span>{{ "" + greetings + " " + __name() + "" }}</span>
     </template>
   </div>
 </template>
@@ -15,14 +15,14 @@ export const WidgetInput = {
     type: Boolean,
     default() {
       return true;
-    }
+    },
   },
   greetings: {
     type: String,
     default() {
       return "Hello";
-    }
-  }
+    },
+  },
 };
 
 export default {
@@ -40,9 +40,9 @@ export default {
     props() {
       return {
         loading: this.loading,
-        greetings: this.greetings
+        greetings: this.greetings,
       };
-    }
-  }
+    },
+  },
 };
 </script>

@@ -1,23 +1,24 @@
 <dx-app></dx-app>
 
-<dx-button-with-template
-    text="With Template"
-    [template]="template1"
->
-<ng-template #template1 let-text="text">
+<dx-button-with-template text="With Template" [template]="template1">
+  <ng-template #template1 let-text="text">
     <div style="border: 1px solid blue;">
-      {{text+"!"}}
+      {{ text + "!" }}
     </div>
   </ng-template>
 </dx-button-with-template>
 
-<dx-button-with-template
-    text="Without Template"
-></dx-button-with-template>
+<dx-button-with-template text="Without Template"></dx-button-with-template>
 
 <form #form="ngForm" class="my-form">
-  <dx-counter id="counter-control" [(ngModel)]="counterValue" name="counter"></dx-counter>
+  <dx-counter
+    id="counter-control"
+    [(ngModel)]="counterValue"
+    name="counter"
+  ></dx-counter>
 </form>
 <div id="counter-form-value">{{ form.value.counter }}</div>
 <dx-with-nested [cells]="[{ data: 'cell11' }, 'cell12']"></dx-with-nested>
-<dx-with-nested><dxi-cell data="cell21"></dxi-cell><dxi-cell data="cell22"></dxi-cell></dx-with-nested>
+<dx-with-nested
+  ><dxi-cell data="cell21"></dxi-cell><dxi-cell data="cell22"></dxi-cell
+></dx-with-nested>

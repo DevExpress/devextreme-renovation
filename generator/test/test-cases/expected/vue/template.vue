@@ -1,7 +1,12 @@
 <template>
   <div>
     <slot name="headerTemplate"></slot>
-    <slot name="contentTemplate" v-bind:data="{p1: 'value'}" v-bind:index="10" v-if="$scopedSlots.contentTemplate"></slot>
+    <slot
+      name="contentTemplate"
+      v-bind:data="{ p1: 'value' }"
+      v-bind:index="10"
+      v-if="$scopedSlots.contentTemplate"
+    ></slot>
     <slot name="template" v-if="!$scopedSlots.contentTemplate"></slot>
     <slot name="footerTemplate" v-bind:someProp="true"></slot>
   </div>
@@ -16,14 +21,14 @@ export default {
     __restAttributes() {
       return {};
     },
-    props(){
+    props() {
       return {
         headerTemplate: this.$scopedSlots.headerTemplate,
         template: this.$scopedSlots.template,
         contentTemplate: this.$scopedSlots.contentTemplate,
-        footerTemplate: this.$scopedSlots.footerTemplate
+        footerTemplate: this.$scopedSlots.footerTemplate,
       };
-    }
-  }
+    },
+  },
 };
 </script>

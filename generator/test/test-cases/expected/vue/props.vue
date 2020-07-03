@@ -1,5 +1,5 @@
 <template>
-  <span ></span>
+  <span></span>
 </template>
 <script>
 const WidgetInput = {
@@ -7,8 +7,8 @@ const WidgetInput = {
     type: Number,
     default() {
       return 10;
-    }
-  }
+    },
+  },
 };
 
 export default {
@@ -20,18 +20,19 @@ export default {
       this.onClick(11);
       return this.height;
     },
+
     __restAttributes() {
       return {};
     },
-    props(){
+    props() {
       return {
-        height:this.height,
-        onClick:this.onClick
+        height: this.height,
+        onClick: this.onClick,
       };
     },
     onClick(...args) {
       this.$emit("click", ...args);
-    }
-  }
+    },
+  },
 };
 </script>

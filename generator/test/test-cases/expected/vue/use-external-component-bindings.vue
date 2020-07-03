@@ -1,7 +1,7 @@
- <template>
-  <div>{{height}}</div>
+<template>
+  <div>{{ height }}</div>
 </template>
- <script>
+<script>
 import Props from "./component-bindings-only";
 
 import { convertRulesToOptions } from "../../../../component_declaration/default_options";
@@ -20,20 +20,20 @@ export default {
       const twoWayPropName =
         propName.indexOf("default") === 0 &&
         twoWayProps.find(
-          p => "default" + p.charAt(0).toUpperCase() + p.slice(1) === propName
+          (p) => "default" + p.charAt(0).toUpperCase() + p.slice(1) === propName
         );
       const defaultPropName = twoWayPropName ? twoWayPropName : propName;
 
       if (typeof prop.default === "function") {
         const defaultValue = prop.default;
-        prop.default = function() {
+        prop.default = function () {
           return this._defaultOptions[defaultPropName] !== undefined
             ? this._defaultOptions[defaultPropName]
             : defaultValue();
         };
-      } else if (!twoWayProps.some(p => p === propName)) {
+      } else if (!twoWayProps.some((p) => p === propName)) {
         const defaultValue = prop.default;
-        prop.default = function() {
+        prop.default = function () {
           return this._defaultOptions[defaultPropName] !== undefined
             ? this._defaultOptions[defaultPropName]
             : defaultValue;
@@ -48,14 +48,14 @@ export default {
     __restAttributes() {
       return {};
     },
-    props(){
+    props() {
       return {
-        height:this.height
+        height: this.height,
       };
-    }
+    },
   },
   beforeCreate() {
     this._defaultOptions = convertRulesToOptions(__defaultOptionRules);
-  }
+  },
 };
 </script>

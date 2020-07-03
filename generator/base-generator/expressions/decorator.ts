@@ -5,43 +5,45 @@ import { ObjectLiteral } from "./literal";
 import { ArrowFunction, Function } from "./functions";
 
 export class Decorator {
-    expression: Call;
-    context: GeneratorContext;
-    viewParameter?: Expression | null;
+  expression: Call;
+  context: GeneratorContext;
+  viewParameter?: Expression | null;
 
-    constructor(expression: Call, context: GeneratorContext) {
-        this.expression = expression;
-        this.context = context;
-        if (this.name === "Component") { 
-            this.viewParameter = this.getParameter("view");
-        }
+  constructor(expression: Call, context: GeneratorContext) {
+    this.expression = expression;
+    this.context = context;
+    if (this.name === "Component") {
+      this.viewParameter = this.getParameter("view");
+    }
+  }
+
+  addParameter(name: string, value: Expression) {
+    const parameters = this.expression.arguments[0] as ObjectLiteral;
+    parameters.setProperty(name, value);
+  }
+
+  getParameter(name: string) {
+    const parameters = this.expression.arguments[0] as ObjectLiteral;
+    return parameters?.getProperty(name);
+  }
+
+  getViewFunction() {
+    const viewFunctionValue = this.viewParameter;
+    let viewFunction: ArrowFunction | Function | null = null;
+    if (viewFunctionValue instanceof Identifier) {
+      viewFunction = this.context.viewFunctions
+        ? this.context.viewFunctions[viewFunctionValue.toString()]
+        : null;
     }
 
-    addParameter(name: string, value: Expression) {
-        const parameters = (this.expression.arguments[0] as ObjectLiteral);
-        parameters.setProperty(name, value);
-    }
+    return viewFunction;
+  }
 
-    getParameter(name: string) { 
-        const parameters = (this.expression.arguments[0] as ObjectLiteral);
-        return parameters?.getProperty(name);
-    }
+  get name() {
+    return this.expression.expression.toString();
+  }
 
-    getViewFunction() {
-        const viewFunctionValue = this.viewParameter
-        let viewFunction: ArrowFunction | Function | null = null;
-        if (viewFunctionValue instanceof Identifier) {
-            viewFunction = this.context.viewFunctions ? this.context.viewFunctions[viewFunctionValue.toString()] : null;
-        }
-
-        return viewFunction
-    }
-
-    get name() {
-        return this.expression.expression.toString();
-    }
-
-    toString() {
-        return `@${this.expression.toString()}`;
-    }
+  toString() {
+    return `@${this.expression.toString()}`;
+  }
 }

@@ -1,9 +1,9 @@
 import registerComponent from "../../../../component_declaration/jquery_component_registrator";
-import BaseComponent from "../../../../component_declaration/jquery_base_component"
-import WidgetComponent from "../../../../jquery-events"
+import BaseComponent from "../../../../component_declaration/jquery_base_component";
+import WidgetComponent from "../../../../jquery-events";
 
 export default class Widget extends BaseComponent {
-  getProps(props:any) {
+  getProps(props: any) {
     props.onKeyDown = this._wrapKeyDownHandler(props.onKeyDown);
 
     return props;
@@ -12,13 +12,13 @@ export default class Widget extends BaseComponent {
   _getActionConfigs() {
     return {
       onEventWithConfig: { someAction: "config" },
-      onEventWithEmptyConfig: {}
+      onEventWithEmptyConfig: {},
     };
   }
 
   get _viewComponent() {
-      return WidgetComponent;
+    return WidgetComponent;
   }
 }
 
-registerComponent('dxrWidget', Widget);
+registerComponent("dxrWidget", Widget);

@@ -4,36 +4,38 @@ import { Identifier } from "./common";
 import { HeritageClause } from "./class";
 import { PropertySignature, MethodSignature } from "./type";
 
-export class Interface extends Expression { 
-    decorators: Decorator[];
-    modifiers: string[];
-    name: Identifier;
-    typeParameters?: any[];
-    heritageClauses: HeritageClause[];
-    members: Array<PropertySignature | MethodSignature>;
+export class Interface extends Expression {
+  decorators: Decorator[];
+  modifiers: string[];
+  name: Identifier;
+  typeParameters?: any[];
+  heritageClauses: HeritageClause[];
+  members: Array<PropertySignature | MethodSignature>;
 
-    constructor(
-        decorators: Decorator[] = [],
-        modifiers: string[] = [],
-        name: Identifier,
-        typeParameters: any[] | undefined,
-        heritageClauses: HeritageClause[] = [],
-        members: Array<PropertySignature | MethodSignature>
-    ) { 
-        super();
-        this.decorators = decorators;
-        this.modifiers = modifiers;
-        this.name = name;
-        this.typeParameters = typeParameters;
-        this.heritageClauses = heritageClauses;
-        this.members = members;
-    }
+  constructor(
+    decorators: Decorator[] = [],
+    modifiers: string[] = [],
+    name: Identifier,
+    typeParameters: any[] | undefined,
+    heritageClauses: HeritageClause[] = [],
+    members: Array<PropertySignature | MethodSignature>
+  ) {
+    super();
+    this.decorators = decorators;
+    this.modifiers = modifiers;
+    this.name = name;
+    this.typeParameters = typeParameters;
+    this.heritageClauses = heritageClauses;
+    this.members = members;
+  }
 
-    toString() { 
-        return `
+  toString() {
+    return `
             ${this.decorators.join("\n")}
-            ${this.modifiers.join(" ")} interface ${this.name} ${this.heritageClauses.join(" ")} {
+            ${this.modifiers.join(" ")} interface ${
+      this.name
+    } ${this.heritageClauses.join(" ")} {
                 ${this.members.join(";\n")}
             }`;
-    }
+  }
 }

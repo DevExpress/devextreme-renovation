@@ -10,12 +10,12 @@ const ChildInput = {
     type: Number,
     default() {
       return 10;
-    }
-  }
+    },
+  },
 };
 export default {
   components: {
-    Base
+    Base,
   },
   props: ChildInput,
   methods: {
@@ -25,18 +25,17 @@ export default {
     __restAttributes() {
       return {};
     },
-    props(){
+    props() {
       return {
-        height:this.height,
-        onClick:this.onClick,
-        width:this.width,
-        children: this.$slots.default
+        height: this.height,
+        onClick: this.onClick,
+        width: this.width,
+        children: this.$slots.default,
       };
     },
-    onClick(...args){
+    onClick(...args) {
       this.$emit("click", ...args);
-    }
-  }
+    },
+  },
 };
 </script>
-        

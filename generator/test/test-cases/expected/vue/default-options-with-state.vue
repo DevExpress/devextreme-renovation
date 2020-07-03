@@ -1,26 +1,26 @@
- <script>
+<script>
 function view() {}
 export const WidgetProps = {
   p1: {
     type: String,
-    default: undefined
+    default: undefined,
   },
   p2: {
     type: String,
-    default: undefined
+    default: undefined,
   },
   defaultP1: {
     type: String,
     default() {
       return "";
-    }
+    },
   },
   defaultP2: {
     type: String,
     default() {
       return "";
-    }
-  }
+    },
+  },
 };
 
 import { convertRulesToOptions } from "../../../../component_declaration/default_options";
@@ -39,20 +39,20 @@ export default {
       const twoWayPropName =
         propName.indexOf("default") === 0 &&
         twoWayProps.find(
-          p => "default" + p.charAt(0).toUpperCase() + p.slice(1) === propName
+          (p) => "default" + p.charAt(0).toUpperCase() + p.slice(1) === propName
         );
       const defaultPropName = twoWayPropName ? twoWayPropName : propName;
 
       if (typeof prop.default === "function") {
         const defaultValue = prop.default;
-        prop.default = function() {
+        prop.default = function () {
           return this._defaultOptions[defaultPropName] !== undefined
             ? this._defaultOptions[defaultPropName]
             : defaultValue();
         };
-      } else if (!twoWayProps.some(p => p === propName)) {
+      } else if (!twoWayProps.some((p) => p === propName)) {
         const defaultValue = prop.default;
-        prop.default = function() {
+        prop.default = function () {
           return this._defaultOptions[defaultPropName] !== undefined
             ? this._defaultOptions[defaultPropName]
             : defaultValue;
@@ -66,19 +66,19 @@ export default {
   data() {
     return {
       p1_state: this.defaultP1,
-      p2_state: this.defaultP2
+      p2_state: this.defaultP2,
     };
   },
   methods: {
     __restAttributes() {
       return {};
     },
-    props(){
+    props() {
       return {
-        p1:(this.p1 !== undefined ? this.p1 : this.p1_state),
-        p2:(this.p2 !== undefined ? this.p2 : this.p2_state),
-        p1Change:this.p1Change,
-        p2Change:this.p2Change
+        p1: this.p1 !== undefined ? this.p1 : this.p1_state,
+        p2: this.p2 !== undefined ? this.p2 : this.p2_state,
+        p1Change: this.p1Change,
+        p2Change: this.p2Change,
       };
     },
     p1Change(...args) {
@@ -86,10 +86,10 @@ export default {
     },
     p2Change(...args) {
       this.$emit("update:p2", ...args);
-    }
+    },
   },
   beforeCreate() {
     this._defaultOptions = convertRulesToOptions(__defaultOptionRules);
-  }
+  },
 };
 </script>

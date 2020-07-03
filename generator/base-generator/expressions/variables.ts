@@ -8,156 +8,185 @@ import { compileType } from "../utils/string";
 import { getProps } from "./component";
 
 export class VariableDeclaration extends Expression {
-    name: Identifier | BindingPattern;
-    type?: TypeExpression;
-    initializer?: Expression;
+  name: Identifier | BindingPattern;
+  type?: TypeExpression;
+  initializer?: Expression;
 
-    constructor(name: Identifier | BindingPattern, type?: TypeExpression, initializer?: Expression) {
-        super();
-        this.name = name;
-        this.type = type;
-        this.initializer = initializer;
+  constructor(
+    name: Identifier | BindingPattern,
+    type?: TypeExpression,
+    initializer?: Expression
+  ) {
+    super();
+    this.name = name;
+    this.type = type;
+    this.initializer = initializer;
+  }
+
+  toString(options?: toStringOptions) {
+    if (
+      this.name instanceof BindingPattern &&
+      options?.members.length &&
+      this.initializer instanceof PropertyAccess &&
+      this.initializer
+        .toString({
+          members: [],
+          variables: { ...options.variables },
+        })
+        .endsWith("props")
+    ) {
+      const dependency = this.name.getDependency();
+      const members = getProps(options.members).filter(
+        (m) =>
+          !m.canBeDestructured && dependency.indexOf(m._name.toString()) >= 0
+      );
+
+      const variables = members.reduce((v: VariableExpression, m) => {
+        const bindingPattern = this.name as BindingPattern;
+        bindingPattern.remove(m._name.toString());
+        if (bindingPattern.hasRest()) {
+          bindingPattern.add(
+            new BindingElement(undefined, undefined, new Identifier(m.name))
+          );
+        }
+        return {
+          ...v,
+          [m._name.toString()]: this.initializer
+            ? new PropertyAccess(this.initializer, new Identifier(m.name))
+            : new SimpleExpression(m.name),
+        };
+      }, options.variables || {});
+
+      options.variables = variables;
     }
 
-    toString(options?: toStringOptions) {
-        if (this.name instanceof BindingPattern &&
-            options?.members.length &&
-            this.initializer instanceof PropertyAccess &&
-            this.initializer.toString({
-                members: [],
-                variables: { ...options.variables }
-            }).endsWith("props")
-        ) {
-            const dependency = this.name.getDependency();
-            const members = getProps(options.members)
-                .filter(m => !m.canBeDestructured && dependency.indexOf(m._name.toString()) >= 0);
-                
-            const variables = members.reduce((v: VariableExpression, m) => {
-                const bindingPattern = this.name as BindingPattern;
-                bindingPattern.remove(m._name.toString());
-                if (bindingPattern.hasRest()) {
-                    bindingPattern.add(
-                        new BindingElement(undefined, undefined, new Identifier(m.name))
-                    );
-                }
-                return {
-                    ...v,
-                    [m._name.toString()]: this.initializer ?
-                        new PropertyAccess(this.initializer, new Identifier(m.name)) :
-                        new SimpleExpression(m.name)
-                };
-            }, options.variables || {});
-                
-            options.variables = variables;
-        }
-        
-        let initializer: string | undefined = this.initializer?.toString(options);
+    let initializer: string | undefined = this.initializer?.toString(options);
 
-        if (this.initializer instanceof PropertyAccess && this.initializer.checkPropsAccess(this.initializer.toString(), options) && options) { 
-            let elements: BindingElement[] = [];
-            if (this.name instanceof BindingPattern && !this.name.hasRest()) { 
-                elements = this.name.elements
-            }
-            initializer = this.initializer.toString(options, elements);
-        }
-
-        if (this.name.toString()) { 
-            return `${this.name}${compileType(this.type?.toString())}${initializer ? `=${initializer}`:""}`;
-        }
-        return "";
+    if (
+      this.initializer instanceof PropertyAccess &&
+      this.initializer.checkPropsAccess(this.initializer.toString(), options) &&
+      options
+    ) {
+      let elements: BindingElement[] = [];
+      if (this.name instanceof BindingPattern && !this.name.hasRest()) {
+        elements = this.name.elements;
+      }
+      initializer = this.initializer.toString(options, elements);
     }
 
-    getDependency() {
-        if (this.initializer && typeof this.initializer !== "string") {
-            const initializerDependency = this.initializer.getDependency();
-            if (this.name instanceof BindingPattern && this.initializer.toString().startsWith("this")) {
-                if (this.name.hasRest()) {
-                    return initializerDependency;
-                }
-                return this.name.getDependency();
-            }
-            return initializerDependency;
-        }
-        return [];
+    if (this.name.toString()) {
+      return `${this.name}${compileType(this.type?.toString())}${
+        initializer ? `=${initializer}` : ""
+      }`;
     }
+    return "";
+  }
 
-    getVariableExpressions(): VariableExpression { 
-        if (this.name instanceof Identifier && this.initializer instanceof Expression) { 
-            const expression =
-                this.initializer instanceof SimpleExpression ||
-                    this.initializer.isJsx() ||
-                    this.initializer instanceof Call ?
-                
-                    this.initializer :
-                    new Paren(this.initializer);
-            
-            return {
-                [this.name.toString()]: expression
-            };
+  getDependency() {
+    if (this.initializer && typeof this.initializer !== "string") {
+      const initializerDependency = this.initializer.getDependency();
+      if (
+        this.name instanceof BindingPattern &&
+        this.initializer.toString().startsWith("this")
+      ) {
+        if (this.name.hasRest()) {
+          return initializerDependency;
         }
-        if (this.name instanceof BindingPattern && this.initializer) {
-            return this.name.getVariableExpressions(this.initializer);
-        }
-        return {};
+        return this.name.getDependency();
+      }
+      return initializerDependency;
     }
+    return [];
+  }
 
-    isJsx() { 
-        return this.initializer instanceof Expression && this.initializer.isJsx()
+  getVariableExpressions(): VariableExpression {
+    if (
+      this.name instanceof Identifier &&
+      this.initializer instanceof Expression
+    ) {
+      const expression =
+        this.initializer instanceof SimpleExpression ||
+        this.initializer.isJsx() ||
+        this.initializer instanceof Call
+          ? this.initializer
+          : new Paren(this.initializer);
+
+      return {
+        [this.name.toString()]: expression,
+      };
     }
+    if (this.name instanceof BindingPattern && this.initializer) {
+      return this.name.getVariableExpressions(this.initializer);
+    }
+    return {};
+  }
+
+  isJsx() {
+    return this.initializer instanceof Expression && this.initializer.isJsx();
+  }
 }
 
 export class VariableDeclarationList extends Expression {
-    declarations: VariableDeclaration[];
-    flags?: string;
+  declarations: VariableDeclaration[];
+  flags?: string;
 
-    constructor(declarations: VariableDeclaration[], flags?: string) {
-        super();
-        this.declarations = declarations;
-        this.flags = flags;
-    }
+  constructor(declarations: VariableDeclaration[], flags?: string) {
+    super();
+    this.declarations = declarations;
+    this.flags = flags;
+  }
 
-    toString(options?: toStringOptions) {
-        const declarations = this.declarations.map(d => d.toString(options)).filter(d => d);
-        if (declarations.length === 0) { 
-            return "";
-        }
-        return `${this.flags} ${declarations}`;
+  toString(options?: toStringOptions) {
+    const declarations = this.declarations
+      .map((d) => d.toString(options))
+      .filter((d) => d);
+    if (declarations.length === 0) {
+      return "";
     }
+    return `${this.flags} ${declarations}`;
+  }
 
-    getDependency() {
-        return this.declarations.reduce((d: string[], p) => d.concat(p.getDependency()), []);
-    }
+  getDependency() {
+    return this.declarations.reduce(
+      (d: string[], p) => d.concat(p.getDependency()),
+      []
+    );
+  }
 
-    getVariableExpressions(): VariableExpression { 
-        return this.declarations.reduce((v: VariableExpression, d) => { 
-            return {
-                ...v,
-                ...d.getVariableExpressions()
-            }
-        }, {});
-    }
+  getVariableExpressions(): VariableExpression {
+    return this.declarations.reduce((v: VariableExpression, d) => {
+      return {
+        ...v,
+        ...d.getVariableExpressions(),
+      };
+    }, {});
+  }
 }
 
 export class VariableStatement extends Expression {
-    declarationList: VariableDeclarationList;
-    modifiers: string[];
-    constructor(modifiers: string[] = [], declarationList: VariableDeclarationList) {
-        super();
-        this.modifiers = modifiers;
-        this.declarationList = declarationList;
-    }
+  declarationList: VariableDeclarationList;
+  modifiers: string[];
+  constructor(
+    modifiers: string[] = [],
+    declarationList: VariableDeclarationList
+  ) {
+    super();
+    this.modifiers = modifiers;
+    this.declarationList = declarationList;
+  }
 
+  toString(options?: toStringOptions) {
+    const declarationList = this.declarationList.toString(options);
+    return declarationList
+      ? `${this.modifiers.join(" ")} ${declarationList}`
+      : "";
+  }
 
-    toString(options?: toStringOptions) {
-        const declarationList = this.declarationList.toString(options);
-        return declarationList ? `${this.modifiers.join(" ")} ${declarationList}` : "";
-    }
+  getDependency() {
+    return this.declarationList.getDependency();
+  }
 
-    getDependency() {
-        return this.declarationList.getDependency();
-    }
-
-    getVariableExpressions() { 
-        return this.declarationList.getVariableExpressions();
-    }
+  getVariableExpressions() {
+    return this.declarationList.getVariableExpressions();
+  }
 }

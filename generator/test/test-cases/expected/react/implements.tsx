@@ -1,49 +1,51 @@
-import BaseProps from "./component-bindings-only"
-const view = (model: Widget) => <span />
+import BaseProps from "./component-bindings-only";
+const view = (model: Widget) => <span />;
 
 interface PropsI {
-    p: string
+  p: string;
 }
 
 interface WidgetI {
-    onClick(): void
+  onClick(): void;
 }
 export declare type WidgetInputType = typeof BaseProps & {
-    p: string
-}
+  p: string;
+};
 const WidgetInput: WidgetInputType = {
-    ...BaseProps,
-    p: "10"
+  ...BaseProps,
+  p: "10",
 };
 
+import React, { useCallback } from "react";
 
-import React, { useCallback } from 'react';
-
-declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any };
+declare type RestProps = {
+  className?: string;
+  style?: React.CSSProperties;
+  [x: string]: any;
+};
 interface Widget {
-    props: typeof WidgetInput & RestProps;
-    onClick: () => void;
-    restAttributes: RestProps;
+  props: typeof WidgetInput & RestProps;
+  onClick: () => void;
+  restAttributes: RestProps;
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-    const onClick = useCallback(function onClick(): void {
+  const onClick = useCallback(function onClick(): void {}, []);
+  const __restAttributes = useCallback(
+    function __restAttributes(): RestProps {
+      const { height, p, ...restProps } = props;
+      return restProps;
+    },
+    [props]
+  );
 
-    }, []);
-    const __restAttributes = useCallback(function __restAttributes(): RestProps {
-        const { height, p, ...restProps } = props
-        return restProps;
-    }, [props]);
-
-    return view(
-        ({
-            props: { ...props },
-            onClick,
-            restAttributes: __restAttributes()
-        })
-    );
+  return view({
+    props: { ...props },
+    onClick,
+    restAttributes: __restAttributes(),
+  });
 }
 
 Widget.defaultProps = {
-    ...WidgetInput
-}
+  ...WidgetInput,
+};

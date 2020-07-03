@@ -1,54 +1,51 @@
-import { Input } from "@angular/core"
+import { Input } from "@angular/core";
 
 export class Props {
-    @Input() p: number = 10;
+  @Input() p: number = 10;
 }
 
 import { Component, NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common"
+import { CommonModule } from "@angular/common";
 
 @Component({
-    selector: "dx-widget",
-    template: `<div ></div>`
+  selector: "dx-widget",
+  template: `<div></div>`,
 })
 export default class Widget extends Props {
-    i: number = 10
-    get __g1(): number[] {
-        if (this.__getterCache["g1"]!==undefined) {
-            return this.__getterCache["g1"]
-        }
-        return this.__getterCache["g1"] = ((): number[] => {
-            return [this.p, this.i];
-        })();
+  i: number = 10;
+  get __g1(): number[] {
+    if (this.__getterCache["g1"] !== undefined) {
+      return this.__getterCache["g1"];
     }
-    get __g2(): number {
-        return this.p;
-    }
-    get __restAttributes(): any {
-        return {}
-    }
+    return (this.__getterCache["g1"] = ((): number[] => {
+      return [this.p, this.i];
+    })());
+  }
+  get __g2(): number {
+    return this.p;
+  }
+  get __restAttributes(): any {
+    return {};
+  }
 
-    __getterCache: {
-        g1?: number[]
-    } = {};
+  __getterCache: {
+    g1?: number[];
+  } = {};
 
-    ngOnChanges(changes: {[name:string]: any}){
-        if (["p"].some(d=>changes[d])) {
-            this.__getterCache["g1"] = undefined;
-        }
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (["p"].some((d) => changes[d])) {
+      this.__getterCache["g1"] = undefined;
     }
+  }
 
-    set _i(i: number) {
-        this.i = i;
-        this.__getterCache["g1"] = undefined;
-    }
-
+  set _i(i: number) {
+    this.i = i;
+    this.__getterCache["g1"] = undefined;
+  }
 }
 @NgModule({
-    declarations: [Widget],
-    imports: [
-        CommonModule
-    ],
-    exports: [Widget]
+  declarations: [Widget],
+  imports: [CommonModule],
+  exports: [Widget],
 })
-export class DxWidgetModule { }
+export class DxWidgetModule {}

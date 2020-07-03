@@ -1,6 +1,6 @@
- <template>
-  <InnerWidget 
-    v-bind="{...props(),...{valueChange:undefined}}"
+<template>
+  <InnerWidget
+    v-bind="{ ...props(), ...{ valueChange: undefined } }"
     @update:value="valueChange"
   />
 </template>
@@ -9,45 +9,45 @@ import InnerWidget from "./dx-inner-widget";
 
 export const WidgetInput = {
   visible: {
-    type: Boolean
+    type: Boolean,
   },
   value: {
     type: Boolean,
-    default: undefined
+    default: undefined,
   },
   defaultValue: {
-    type: Boolean
-  }
+    type: Boolean,
+  },
 };
 
 export default {
   components: {
-    InnerWidget
+    InnerWidget,
   },
   props: WidgetInput,
   model: {
     prop: "value",
-    event: "update:value"
+    event: "update:value",
   },
   data() {
     return {
-      value_state: this.defaultValue
+      value_state: this.defaultValue,
     };
   },
   methods: {
     __restAttributes() {
       return {};
     },
-    props(){
-      return {visible:this.visible,
-        value:(this.value !== undefined ? this.value : this.value_state),
-        valueChange:this.valueChange
+    props() {
+      return {
+        visible: this.visible,
+        value: this.value !== undefined ? this.value : this.value_state,
+        valueChange: this.valueChange,
       };
     },
-    valueChange(...args){
+    valueChange(...args) {
       this.$emit("update:value", ...args);
-    }
-  }
+    },
+  },
 };
 </script>
-        

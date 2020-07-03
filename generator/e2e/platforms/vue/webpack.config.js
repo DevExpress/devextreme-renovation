@@ -1,64 +1,57 @@
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const VueLoaderPlugin = require("vue-loader/lib/plugin");
 const path = require("path");
-const webpack = require('webpack');
+const webpack = require("webpack");
 
 module.exports = {
-    mode: 'development',
-    entry: path.resolve(__dirname, "./app/src/index.js"),
-    module: {
-        rules: [
-            {
-                test: /\.tsx$/,
-                loaders: [
-                    {
-                        loader: 'vue-loader'
-                    },
-                    {
-                        loader: path.resolve('./e2e/platforms/loader.js'),
-                        options: {
-                            platform: 'vue',
-                            defaultOptionsModule: "./build/component_declaration/default_options"
-                        }
-                    }
-                ],
-
-                exclude: ['/node_modules/']
+  mode: "development",
+  entry: path.resolve(__dirname, "./app/src/index.js"),
+  module: {
+    rules: [
+      {
+        test: /\.tsx$/,
+        loaders: [
+          {
+            loader: "vue-loader",
+          },
+          {
+            loader: path.resolve("./e2e/platforms/loader.js"),
+            options: {
+              platform: "vue",
+              defaultOptionsModule:
+                "./build/component_declaration/default_options",
             },
+          },
+        ],
 
-            {
-                test: /\.vue$/,
-                loader: 'vue-loader'
-            },
-            {
-                test: /\.js$/,
-                loader: 'babel-loader',
-                options: {
-                    presets: [
-                        "@babel/preset-env"
-                    ]
-                }
-            },
+        exclude: ["/node_modules/"],
+      },
 
-            {
-                test: /\.css$/,
-                use: [
-                    'vue-style-loader',
-                    'css-loader'
-                ]
-            }
-        ]
-    },
+      {
+        test: /\.vue$/,
+        loader: "vue-loader",
+      },
+      {
+        test: /\.js$/,
+        loader: "babel-loader",
+        options: {
+          presets: ["@babel/preset-env"],
+        },
+      },
 
-    output: {
-        path: __dirname + '/dist',
-        publicPath: '/',
-        filename: 'bundle.js'
-    },
+      {
+        test: /\.css$/,
+        use: ["vue-style-loader", "css-loader"],
+      },
+    ],
+  },
 
-    resolve: { alias: { vue: 'vue/dist/vue.esm.js' } },
+  output: {
+    path: __dirname + "/dist",
+    publicPath: "/",
+    filename: "bundle.js",
+  },
 
-    plugins: [
-        new VueLoaderPlugin(),
-        new webpack.HotModuleReplacementPlugin()
-    ]
-}
+  resolve: { alias: { vue: "vue/dist/vue.esm.js" } },
+
+  plugins: [new VueLoaderPlugin(), new webpack.HotModuleReplacementPlugin()],
+};

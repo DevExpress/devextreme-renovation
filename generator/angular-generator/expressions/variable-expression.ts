@@ -2,10 +2,10 @@ import { VariableDeclaration as BaseVariableDeclaration } from "../../base-gener
 import { toStringOptions } from "../../base-generator/types";
 
 export class VariableDeclaration extends BaseVariableDeclaration {
-    toString(options?: toStringOptions) {
-        if (this.isJsx()) {
-            return "";
-        }
-        return super.toString(options);
+  toString(options?: toStringOptions) {
+    if (this.isJsx()) {
+      return "";
     }
+    return super.toString(options);
+  }
 }
