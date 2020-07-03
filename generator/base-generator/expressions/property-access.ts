@@ -121,7 +121,7 @@ export class PropertyAccess extends ExpressionWithExpression {
 
     isPropsScope(options?: toStringOptions) {
         if (this.expression instanceof PropertyAccess &&
-            (this.expression.expression.toString(options) === (options?.componentContext) || this.expression.expression.toString(options) === SyntaxKind.ThisKeyword) &&
+            this.expression.expression.toString(options) === (options?.componentContext) &&
             this.expression.name.toString() === "props"
         ) { 
             return true;
