@@ -65,7 +65,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
         const id = subscribe(getP(), 1, 2);
         return () => unsubscribe(id);
     }, [__state_i, __state_j, props.p, props.r, props.s, __state_s, props.defaultS, props.sChange]);
-    
+
     return view(({
         props: {
             ...props,

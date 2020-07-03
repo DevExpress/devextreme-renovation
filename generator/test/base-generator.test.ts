@@ -30,7 +30,6 @@ mocha.describe("base-generator: expressions", function () {
 
             assert.strictEqual(expression.toString(), "");
             assert.deepEqual(expression.getDependency(), []);
-            assert.deepEqual(expression.getAssignmentDependency(), expression.getDependency());
             assert.deepEqual(expression.getAllDependency(), []);
         });
     });
@@ -686,10 +685,14 @@ mocha.describe("base-generator: expressions", function () {
 
     mocha.describe("Property Access", function () {
         mocha.it("PropertyAccess", function () {
-            assert.equal(generator.createPropertyAccess(
+            const expression = generator.createPropertyAccess(
                 generator.createThis(),
                 generator.createIdentifier("field")
-            ).toString(), "this.field");
+            )
+
+            assert.equal(expression.toString(), "this.field");
+            assert.deepEqual(expression.getDependency(), ["field"]);
+            assert.deepEqual(expression.getAssignmentDependency(), expression.getDependency());
         });
 
         mocha.it("PropertyAccess compileStateSetting", function () {

@@ -4,10 +4,6 @@ export class Expression implements IExpression {
     getDependency(): string[] {
         return [];
     }
-    
-    getAssignmentDependency(): string[] {
-        return this.getDependency();
-    }
 
     toString(options?: toStringOptions) {
         return "";
