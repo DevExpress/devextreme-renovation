@@ -19,10 +19,11 @@ import { GeneratorContext as BaseGeneratorContext, GeneratorOptions as BaseGener
 import { Decorator } from "./base-generator/expressions/decorator";
 import { Method } from "./base-generator/expressions/class-members";
 import { compileType } from "./base-generator/utils/string";
+import prettier from "prettier";
 
 const BASE_JQUERY_WIDGET = "BASE_JQUERY_WIDGET";
 
-const processModuleFileName = (module: string) => `${module}.p`;
+const processModuleFileName = (module: string) => `${module}`;
 
 const getJQueryBaseComponentName = (decorators: Decorator[], context: GeneratorContext): string | undefined => {
     const jQueryProp = (decorators.find(d => d.name === "Component")!.getParameter("jQuery") as ObjectLiteral);
@@ -128,7 +129,7 @@ class JQueryComponent {
     compileImports(component: string) {
         const context = this.source.context;
 
-        const imports: string[] = [`import * as Preact from "preact"`];
+        const imports: string[] = [];
         
         imports.push(`import registerComponent from "${getModuleRelativePath(context.dirname!, context.jqueryComponentRegistratorModule!)}"`);
 
@@ -246,6 +247,7 @@ export type GeneratorOptions = {
     jqueryComponentRegistratorModule?: string
     jqueryBaseComponentModule?: string
     noncomponentImports?: ImportDeclaration[];
+    generateJQueryOnly?: boolean
 } & BaseGeneratorOptions;
 
 export type GeneratorContext = BaseGeneratorContext & GeneratorOptions
@@ -275,7 +277,11 @@ export class PreactGenerator extends Generator {
         const { path } = this.getContext();
         const source = path && this.cache[path].find((e: any) => e instanceof PreactComponent);
         if(source) {
-            result.push({ path: `${path!.replace(/\.tsx$/, ".j.tsx")}`, code: (new JQueryComponent(source)).toString() });
+            result.push({ path: `${path!.replace(/\.tsx$/, ".j.tsx")}`, code: prettier.format((new JQueryComponent(source)).toString(), { parser: "babel" }) });
+        }
+        
+        if (this.options.generateJQueryOnly) {
+            return result[1] ? [result[1]] : [{ code: '' }];
         }
 
         return result;
@@ -299,7 +305,7 @@ export class PreactGenerator extends Generator {
     }
 
     processSourceFileName(name: string) {
-        return name.replace(/\.tsx$/, ".p.tsx");
+        return name.replace(/\.tsx$/, ".tsx");
     }
 
     createComponent(componentDecorator: Decorator, modifiers: string[], name: Identifier, typeParameters: string[], heritageClauses: HeritageClause[], members: Array<Property | Method>) { 

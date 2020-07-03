@@ -81,16 +81,6 @@ mocha.describe("preact-generator: expressions", function () {
         this.afterEach(function () { 
             generator.setContext(null);
         });
-        mocha.it("Rename import if it is component declaration", function () {
-            assert.equal(generator.createImportDeclaration(
-                undefined,
-                undefined,
-                undefined,
-                generator.createStringLiteral("./test-cases/declarations/src/empty-component")
-            ), 'import "./test-cases/declarations/src/empty-component.p"');
-    
-            generator.setContext(null);
-        });
     
         mocha.it("Do not rename module without declaration", function () {
             assert.equal(generator.createImportDeclaration(

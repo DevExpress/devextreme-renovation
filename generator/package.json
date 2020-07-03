@@ -22,6 +22,7 @@
     "code-block-writer": "^10.1.0",
     "gulp": "^4.0.2",
     "mocha-junit-reporter": "^1.23.3",
+    "prettier": "^2.0.5",
     "react": "^16.13.1",
     "typescript": "^3.7.2"
   },
@@ -38,6 +39,7 @@
     "@types/gulp": "^4.0.6",
     "@types/mocha": "5.2.7",
     "@types/node": "^12.12.14",
+    "@types/prettier": "^2.0.1",
     "@types/sinon": "^7.5.1",
     "@types/typescript": "^2.0.0",
     "angular2-template-loader": "^0.6.2",

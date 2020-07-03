@@ -1,6 +1,7 @@
 import assert from "assert";
 import mocha from "./helpers/mocha";
 import generator from "../preact-generator";
+import vueGenerator from "../vue-generator";
 import gulp from "gulp";
 import fs from "fs";
 import path from "path";
@@ -23,20 +24,28 @@ async function readData(stream:NodeJS.ReadableStream):Promise<File[]> {
     });
 }
 
-mocha.describe("code-compiler: gulp integration", function() { 
-    mocha.it("createCodeGenerator stream", async function () { 
+mocha.describe("code-compiler: gulp integration", function () { 
+    mocha.it("createCodeGenerator stream", async function () {
         const setContextSpy = sinon.spy(generator, "setContext");
         const result = await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/src/props-in-listener.tsx`))
             .pipe(generateComponents(generator))
         );
         
         assert.strictEqual(printSourceCodeAst(result[0].contents!.toString()), printSourceCodeAst(fs.readFileSync(`${__dirname}/test-cases/expected/preact/props-in-listener.tsx`).toString()));
-        assert.ok(result[0].path.endsWith("props-in-listener.p.tsx"));
+        assert.ok(result[0].path.endsWith("props-in-listener.tsx"));
 
         const dirname = setContextSpy.firstCall.args[0]!.dirname!;
         assert.ok(dirname.endsWith("declarations/src") || dirname.endsWith("declarations\\src"));
         assert.deepEqual(generator.getContext(), { components: {} });
         setContextSpy.restore();
+    });
+
+    mocha.it("rename file name", async function () { 
+        const result = await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/src/props.tsx`))
+            .pipe(generateComponents(vueGenerator))
+        );
+        
+        assert.ok(result[0].path.endsWith("props.vue"));
     });
 });
 
@@ -44,7 +53,7 @@ mocha.describe("Gathering meta information about components", function() {
     this.beforeEach(function() {
         generator.meta = {};
     });
-    mocha.it("Can not get meta withot preliminary generation phase", function() {
+    mocha.it("Can not get meta without preliminary generation phase", function() {
         assert.equal(generator.getComponentsMeta().length, 0);
     });
 
@@ -92,12 +101,37 @@ mocha.describe("jQuery", function () {
         generator.options = {};
     });
 
-     mocha.it("createCodeGenerator returns correct filename", async function () {
+    mocha.it("createCodeGenerator returns correct filename", async function () {
         const result = await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/src/jquery-empty.tsx`))
             .pipe(generateComponents(generator))
         );
 
         assert.ok(result[1].path.endsWith("jquery-empty.j.tsx"));
+    });
+    
+    mocha.it("can skip file from result", async function () {
+        generator.options = {
+            ...generator.options,
+            generateJQueryOnly: true
+        }
+        const result = await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/src/jquery-empty.tsx`))
+            .pipe(generateComponents(generator))
+        );
+
+        assert.equal(result.length, 1);
+        assert.ok(result[0].path.endsWith("jquery-empty.j.tsx"));
+    });
+
+    mocha.it("can skip file from result no data", async function () {
+        generator.options = {
+            ...generator.options,
+            generateJQueryOnly: true
+        }
+        const result = await readData(gulp.src(path.resolve(`${__dirname}/test-cases/declarations/src/functions.tsx`))
+            .pipe(generateComponents(generator))
+        );
+        
+        assert.equal(result.length, 0);
     });
 });
 
