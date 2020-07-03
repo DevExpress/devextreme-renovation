@@ -858,10 +858,6 @@ mocha.describe("base-generator: expressions", function () {
       assert.equal(propertyAssignment.value, "k");
     });
 
-    mocha.it("my-test", function () {
-      const a = 10;
-    });
-
     mocha.it("ShorthandPropertyAssignment with expression", function () {
       const propertyAssignment = generator.createShorthandPropertyAssignment(
         generator.createIdentifier("k"),

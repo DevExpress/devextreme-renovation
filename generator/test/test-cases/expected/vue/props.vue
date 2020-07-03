@@ -20,6 +20,7 @@ export default {
       this.onClick(11);
       return this.height;
     },
+
     __restAttributes() {
       return {};
     },
