@@ -1,7 +1,6 @@
-import * as Preact from "preact";
 import registerComponent from "../../../../component_declaration/jquery_component_registrator";
 import BaseComponent from "../../../../component_declaration/jquery_base_component"
-import WidgetComponent from "../../../../jquery-api.p"
+import WidgetComponent from "../../../../jquery-api"
 
 export default class Widget extends BaseComponent {
     getHeight(p:number=10, p1: any): string {

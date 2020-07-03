@@ -1,4 +1,4 @@
-import BaseWidget from "./method.p";
+import BaseWidget from "./method";
 
 function view(viewModel: WidgetWithApiRef) {
     return <BaseWidget
@@ -11,7 +11,7 @@ export declare type WidgetWithApiRefInputType = {
 }
 const WidgetWithApiRefInput: WidgetWithApiRefInputType = { };
 
-import { WidgetRef as BaseWidgetRef } from "./method.p";
+import { WidgetRef as BaseWidgetRef } from "./method";
 import * as Preact from "preact";
 import { useCallback, useRef, useImperativeHandle } from 'preact/hooks'
 import { forwardRef } from 'preact/compat'
