@@ -1,11 +1,14 @@
 import mocha from "./helpers/mocha";
 import assert from "assert";
-import generator, { VueComponent, JsxExpression } from "../vue-generator";
+import generator from "../vue-generator";
 
 import { printSourceCodeAst as getAst, removeSpaces } from "./helpers/common";
 import componentCreator from "./helpers/create-component";
 import { toStringOptions } from "../angular-generator/types";
 import { Decorators } from "../component_declaration/decorators";
+import { VueComponent } from "../vue-generator/expressions/vue-component";
+import { JsxExpression } from "../vue-generator/expressions/jsx/jsx-expression";
+
 const {
   createDecorator,
   createComponentDecorator,
