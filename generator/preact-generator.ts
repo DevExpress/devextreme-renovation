@@ -1,5 +1,5 @@
 import {
-  Generator,
+  ReactGenerator,
   ReactComponent,
   Property as BaseProperty,
   JsxAttribute,
@@ -364,7 +364,7 @@ export type GeneratorOptions = {
 
 export type GeneratorContext = BaseGeneratorContext & GeneratorOptions;
 
-export class PreactGenerator extends Generator {
+export class PreactGenerator extends ReactGenerator {
   options: GeneratorOptions = {};
 
   context: GeneratorContext[] = [];

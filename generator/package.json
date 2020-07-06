@@ -1,6 +1,6 @@
 {
   "name": "devextreme-generator",
-  "version": "1.0.84",
+  "version": "1.0.85",
   "description": "Component generator",
   "scripts": {
     "test": "nyc mocha ./build/test --timeout 30000",
@@ -24,7 +24,8 @@
     "mocha-junit-reporter": "^1.23.3",
     "prettier": "^2.0.5",
     "react": "^16.13.1",
-    "typescript": "^3.7.2"
+    "typescript": "^3.7.2",
+    "loader-utils": "^2.0.0"
   },
   "devDependencies": {
     "@angular/common": "^9.1.0",
@@ -37,6 +38,7 @@
     "@babel/preset-env": "^7.9.0",
     "@babel/preset-react": "^7.9.4",
     "@types/gulp": "^4.0.6",
+    "@types/loader-utils": "^2.0.1",
     "@types/mocha": "5.2.7",
     "@types/node": "^12.12.14",
     "@types/prettier": "^2.0.1",
@@ -52,7 +54,6 @@
     "gulp-typescript": "^6.0.0-alpha.1",
     "html-loader": "^1.0.0",
     "html-webpack-plugin": "^4.0.3",
-    "loader-utils": "^2.0.0",
     "looks-same": "^7.2.2",
     "mocha": "^6.2.2",
     "nyc": "^15.0.0",

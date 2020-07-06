@@ -1212,7 +1212,7 @@ export class JsxClosingElement extends JsxOpeningElement {
   }
 }
 
-export class Generator extends BaseGenerator {
+export class ReactGenerator extends BaseGenerator {
   createHeritageClause(token: string, types: ExpressionWithTypeArguments[]) {
     return new HeritageClause(token, types, this.getContext());
   }
@@ -1363,4 +1363,4 @@ export class Generator extends BaseGenerator {
   }
 }
 
-export default new Generator();
+export default new ReactGenerator();
