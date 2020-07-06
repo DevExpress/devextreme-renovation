@@ -3,7 +3,9 @@ import BaseComponent from "../../../../component_declaration/jquery_base_compone
 import WidgetComponent from "../../../../jquery-template";
 
 export default class Widget extends BaseComponent {
-  getProps(props: any) {
+  getProps() {
+    const props = super.getProps();
+
     props.template = this._createTemplateComponent(props, props.template);
 
     props.anotherTemplate = this._createTemplateComponent(

@@ -28,7 +28,7 @@ import {
 } from "./base-generator/types";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { Method } from "./base-generator/expressions/class-members";
-import { compileType } from "./base-generator/utils/string";
+import { capitalizeFirstLetter, compileType } from "./base-generator/utils/string";
 
 const BASE_JQUERY_WIDGET = "BASE_JQUERY_WIDGET";
 
@@ -162,22 +162,14 @@ class JQueryComponent {
       );
     }
 
-    statements.splice(
-      -1,
-      0,
-      ...this.source.state.map((s) => {
-        return `props.${s.name}Change = this._stateChange('${s.name}')`;
-      })
-    );
-
     if (!statements.length) {
       return "";
     }
 
     return `
-        getProps(props:any) {
+        getProps() {
+            const props = super.getProps();
             ${statements.join("\n")}
-    
             return props;
         }
         `;
@@ -272,6 +264,20 @@ class JQueryComponent {
         `;
   }
 
+  compileTwoWayPropsInfo() {
+    if (!this.source.state.length) {
+      return "";
+    }
+
+    return `
+        get _twoWayProps() {
+            return [
+                ${this.source.state.map((s) => `['${s.name}', 'default${capitalizeFirstLetter(s.name)}', '${s.name}Change']`)}
+            ]
+        }
+        `;
+  }
+
   toString() {
     const baseComponent = getJQueryBaseComponentName(
       this.source.decorators,
@@ -294,6 +300,8 @@ class JQueryComponent {
             ${this.compileAPI()}
     
             ${this.compileEventMap()}
+
+            ${this.compileTwoWayPropsInfo()}
 
             get _viewComponent() {
                 return ${this.source.name}Component;

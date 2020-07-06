@@ -3,11 +3,11 @@ import BaseComponent from "../../../../component_declaration/jquery_base_compone
 import WidgetComponent from "../../../../jquery-state";
 
 export default class Widget extends BaseComponent {
-  getProps(props: any) {
-    props.state1Change = this._stateChange("state1");
-    props.state2Change = this._stateChange("state2");
-
-    return props;
+  get _twoWayProps() {
+    return [
+        ['state1', 'defaultState1', 'state1Change'],
+        ['state2', 'defaultState2', 'state2Change']
+    ]
   }
 
   get _viewComponent() {
