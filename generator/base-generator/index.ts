@@ -245,12 +245,16 @@ export default class Generator {
     return new SimpleExpression(this.SyntaxKind.ThisKeyword);
   }
 
+  createSuper() {
+    return new SimpleExpression(this.SyntaxKind.SuperKeyword);
+  }
+
   createBreak(label?: string | Identifier) {
-    return new SimpleExpression("break");
+    return new SimpleExpression(this.SyntaxKind.BreakKeyword);
   }
 
   createContinue(label?: string | Identifier) {
-    return new SimpleExpression("continue");
+    return new SimpleExpression(this.SyntaxKind.ContinueKeyword);
   }
 
   createEmptyStatement() {
