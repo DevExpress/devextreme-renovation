@@ -5,6 +5,7 @@ import Stream from "stream";
 import File from "vinyl";
 import { GeneratorAPI, GeneratorResult } from "./base-generator/generator-api";
 import { compileCode } from "./code-compiler";
+import path from "path";
 
 export function deleteFolderRecursive(path: string) {
   if (fs.existsSync(path)) {
@@ -56,7 +57,7 @@ export default function compile(dir: string, outDir: string) {
   }
   fs.mkdirSync(outDir);
   fs.readdirSync(dir, { withFileTypes: true })
-    .filter(({ name }) => name.endsWith(".tsx"))
+    .filter(({ name }) => name.search(/.ts(x?)$/) >= -1)
     .forEach(({ name }) => {
       const source = ts.createSourceFile(
         name,
@@ -65,7 +66,10 @@ export default function compile(dir: string, outDir: string) {
         true
       );
       const factoryCode = generateFactoryCode(ts, source);
-      fs.writeFileSync(`${outDir}/${name.replace(".tsx", ".js")}`, factoryCode);
+      fs.writeFileSync(
+        `${outDir}/${name.replace(path.extname(name), ".js")}`,
+        factoryCode
+      );
     });
 }
 
