@@ -18,6 +18,7 @@ import { AngularComponent } from "../angular-generator/expressions/component";
 import { toStringOptions } from "../angular-generator/types";
 import { JsxExpression } from "../angular-generator/expressions/jsx/jsx-expression";
 import { AngularDirective } from "../angular-generator/expressions/jsx/angular-directive";
+import { SetAccessor } from "../angular-generator/expressions/class-members/set-accessor";
 
 const { createComponent, createComponentDecorator, createDecorator } = factory(
   generator
@@ -4092,6 +4093,120 @@ mocha.describe("Angular generator", function () {
         );
       }
     );
+
+    mocha.describe("Add setAccessor for InternalState", function () {
+      mocha.it("InternalState without token and type", function () {
+        const component = createComponent([
+          generator.createProperty(
+            [createDecorator(Decorators.InternalState)],
+            [],
+            generator.createIdentifier("p")
+          ),
+        ]);
+
+        const setter = component.members.filter(
+          (m) => m instanceof SetAccessor
+        );
+        assert.strictEqual(setter.length, 1);
+        assert.strictEqual(
+          getResult(setter[0].toString()),
+          getResult(`set _p(p:any){
+          this.p=p
+        }`)
+        );
+      });
+
+      mocha.it("InternalState with question token and type", function () {
+        const component = createComponent([
+          generator.createProperty(
+            [createDecorator(Decorators.InternalState)],
+            [],
+            generator.createIdentifier("p"),
+            generator.SyntaxKind.QuestionToken,
+            generator.createKeywordTypeNode("string")
+          ),
+        ]);
+
+        const setter = component.members.filter(
+          (m) => m instanceof SetAccessor
+        );
+        assert.strictEqual(setter.length, 1);
+        assert.strictEqual(
+          getResult(setter[0].toString()),
+          getResult(`set _p(p?:string){
+          this.p=p
+        }`)
+        );
+      });
+
+      mocha.it("InternalState without question token and type", function () {
+        const component = createComponent([
+          generator.createProperty(
+            [createDecorator(Decorators.InternalState)],
+            [],
+            generator.createIdentifier("p"),
+            undefined,
+            generator.createKeywordTypeNode("string")
+          ),
+        ]);
+
+        const setter = component.members.filter(
+          (m) => m instanceof SetAccessor
+        );
+        assert.strictEqual(setter.length, 1);
+        assert.strictEqual(
+          getResult(setter[0].toString()),
+          getResult(`set _p(p:string){
+          this.p=p
+        }`)
+        );
+      });
+      mocha.it("InternalState with question token and any type", function () {
+        const component = createComponent([
+          generator.createProperty(
+            [createDecorator(Decorators.InternalState)],
+            [],
+            generator.createIdentifier("p"),
+            generator.SyntaxKind.QuestionToken,
+            generator.createKeywordTypeNode("any")
+          ),
+        ]);
+
+        const setter = component.members.filter(
+          (m) => m instanceof SetAccessor
+        );
+        assert.strictEqual(setter.length, 1);
+        assert.strictEqual(
+          getResult(setter[0].toString()),
+          getResult(`set _p(p:any){
+          this.p=p
+        }`)
+        );
+      });
+
+      mocha.it("InternalState with exclamation token", function () {
+        const component = createComponent([
+          generator.createProperty(
+            [createDecorator(Decorators.InternalState)],
+            [],
+            generator.createIdentifier("p"),
+            generator.SyntaxKind.QuestionToken,
+            generator.createKeywordTypeNode("any")
+          ),
+        ]);
+
+        const setter = component.members.filter(
+          (m) => m instanceof SetAccessor
+        );
+        assert.strictEqual(setter.length, 1);
+        assert.strictEqual(
+          getResult(setter[0].toString()),
+          getResult(`set _p(p:any){
+          this.p=p
+        }`)
+        );
+      });
+    });
 
     mocha.describe("Default options", function () {
       function setupGenerator(context: GeneratorContext) {
