@@ -140,5 +140,19 @@ mocha.describe("webpack-loader", function () {
 
       assert.strictEqual(output, "var a = 10;\n");
     });
+
+    mocha.it(
+      "tsconfig with extend - merge compiler options",
+      async function () {
+        const stats = await compiler(fixtureFileName, {
+          platform: "preact",
+          tsConfig: "test/test-cases/webpack-loader.test.tsconfig.json",
+        });
+
+        const output = stats.toJson().modules![0].source;
+
+        assert.strictEqual(output, "const a = 10;\n");
+      }
+    );
   });
 });

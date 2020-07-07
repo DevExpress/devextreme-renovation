@@ -11,7 +11,7 @@ import { compileCode } from "./component-compiler";
 
 function getTsConfig(filename: string) {
   const { config, error } = ts.readConfigFile(filename, ts.sys.readFile);
-  if (error && error.length) {
+  if (error) {
     return {};
   }
   let baseConfig: any = {};
