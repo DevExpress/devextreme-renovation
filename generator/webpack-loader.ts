@@ -1,5 +1,4 @@
 import { getOptions } from "loader-utils";
-import { compileCode } from "./component-compiler";
 import { ReactGenerator } from "./react-generator";
 import { AngularGenerator } from "./angular-generator/angular-generator";
 import { VueGenerator } from "./vue-generator/vue-generator";
@@ -7,30 +6,11 @@ import { PreactGenerator } from "./preact-generator";
 import ts from "typescript";
 import path from "path";
 import { GeneratorOptions } from "./base-generator/types";
+import { loader } from "webpack";
+import { compileCode } from "./component-compiler";
+import { getTsConfig } from "./utils/typescript-utils";
 
-function getTsConfig(filename: string) {
-  const { config, error } = ts.readConfigFile(filename, ts.sys.readFile);
-  if (error && error.length) {
-    return {};
-  }
-  let baseConfig: any = {};
-  if (config.extends) {
-    baseConfig = getTsConfig(
-      path.resolve(path.dirname(filename), config.extends)
-    );
-  }
-  return {
-    ...baseConfig,
-    ...config,
-    compilerOptions: {
-      ...baseConfig.compilerOptions,
-      ...config.compilerOptions,
-      sourceMap: false,
-    },
-  };
-}
-
-export default function (this: any, source: string) {
+export default function (this: loader.LoaderContext, source: string) {
   const {
     platform,
     defaultOptionsModule,
@@ -79,8 +59,11 @@ export default function (this: any, source: string) {
   );
 
   if (tsConfig) {
-    return ts.transpileModule(result as string, getTsConfig(tsConfig))
-      .outputText;
+    const compilationResult = ts.transpileModule(
+      result as string,
+      getTsConfig(tsConfig)
+    );
+    return compilationResult.outputText;
   }
   return result;
 }

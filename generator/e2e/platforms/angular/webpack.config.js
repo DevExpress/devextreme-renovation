@@ -31,7 +31,7 @@ module.exports = {
             },
           },
           {
-            loader: path.resolve("./e2e/platforms/loader.js"),
+            loader: path.resolve("./build/webpack-loader.js"),
             options: {
               platform: "angular",
               defaultOptionsModule: "./component_declaration/default_options",

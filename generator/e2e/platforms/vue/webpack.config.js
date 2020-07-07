@@ -14,7 +14,7 @@ module.exports = {
             loader: "vue-loader",
           },
           {
-            loader: path.resolve("./e2e/platforms/loader.js"),
+            loader: path.resolve("./build/webpack-loader.js"),
             options: {
               platform: "vue",
               defaultOptionsModule:

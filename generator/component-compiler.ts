@@ -1,7 +1,10 @@
 import ts from "typescript";
 import fs from "fs";
 import { generateFactoryCode } from "./factoryCodeGenerator";
-import Generator from "./base-generator";
+import Stream from "stream";
+import File from "vinyl";
+import { GeneratorAPI, GeneratorResult } from "./base-generator/generator-api";
+import { compileCode } from "./code-compiler";
 
 export function deleteFolderRecursive(path: string) {
   if (fs.existsSync(path)) {
@@ -17,46 +20,20 @@ export function deleteFolderRecursive(path: string) {
   }
 }
 
-import Stream from "stream";
-import File from "vinyl";
-
-export function compileCode(
-  generator: Generator,
-  code: string,
-  file: { dirname: string; path: string; importedModules?: string[] },
-  includeExtraComponents: boolean = false
-): { path?: string; code: string }[] | string {
-  const source = ts.createSourceFile(
-    file.path,
-    code,
-    ts.ScriptTarget.ES2016,
-    true
-  );
-  generator.setContext({
-    path: file.path,
-    dirname: file.dirname,
-    importedModules: file.importedModules,
-  });
-  const codeFactory = generateFactoryCode(ts, source);
-
-  const codeFactoryResult = generator.generate(eval(codeFactory));
-  generator.setContext(null);
-
-  if (includeExtraComponents) {
-    return codeFactoryResult;
-  }
-  return codeFactoryResult[0].code;
-}
-
-export function generateComponents(generator: Generator) {
+export function generateComponents(generator: GeneratorAPI) {
   const stream = new Stream.Transform({
     objectMode: true,
     transform(originalFile: File, _, callback) {
       if (originalFile.contents instanceof Buffer) {
         const code = originalFile.contents.toString();
-        const components: {} = compileCode(generator, code, originalFile, true);
+        const components: GeneratorResult[] = compileCode(
+          generator,
+          code,
+          originalFile,
+          true
+        ) as GeneratorResult[];
 
-        (components as { path?: string; code: string }[])
+        components
           .filter((c) => c.path && c.code)
           .forEach((c) => {
             const generatedFile = originalFile.clone();
@@ -91,3 +68,5 @@ export default function compile(dir: string, outDir: string) {
       fs.writeFileSync(`${outDir}/${name.replace(".tsx", ".js")}`, factoryCode);
     });
 }
+
+export { compileCode };
