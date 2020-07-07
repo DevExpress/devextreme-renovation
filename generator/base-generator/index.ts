@@ -101,8 +101,9 @@ import { Interface } from "./expressions/interface";
 import { Decorators } from "../component_declaration/decorators";
 import { TypeParameterDeclaration } from "./expressions/type-parameter-declaration";
 import prettier from "prettier";
+import { GeneratorAPI, GeneratorResult } from "./generator-api";
 
-export default class Generator {
+export default class Generator implements GeneratorAPI {
   NodeFlags = {
     Const: "const",
     Let: "let",
@@ -1132,8 +1133,8 @@ export default class Generator {
     return this.format(codeFactoryResult.join("\n"));
   }
 
-  generate(factory: any): { path?: string; code: string }[] {
-    const result: { path?: string; code: string }[] = [];
+  generate(factory: any): GeneratorResult[] {
+    const result: GeneratorResult[] = [];
     const codeFactoryResult = factory(this);
     const { path } = this.getContext();
 

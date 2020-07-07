@@ -1,7 +1,6 @@
 import ts from "typescript";
 import fs from "fs";
 import { generateFactoryCode } from "./factoryCodeGenerator";
-import Generator from "./base-generator";
 
 export function deleteFolderRecursive(path: string) {
   if (fs.existsSync(path)) {
@@ -19,13 +18,14 @@ export function deleteFolderRecursive(path: string) {
 
 import Stream from "stream";
 import File from "vinyl";
+import { GeneratorAPI, GeneratorResult } from "./base-generator/generator-api";
 
 export function compileCode(
-  generator: Generator,
+  generator: GeneratorAPI,
   code: string,
   file: { dirname: string; path: string; importedModules?: string[] },
   includeExtraComponents: boolean = false
-): { path?: string; code: string }[] | string {
+): GeneratorResult[] | string {
   const source = ts.createSourceFile(
     file.path,
     code,
@@ -48,15 +48,20 @@ export function compileCode(
   return codeFactoryResult[0].code;
 }
 
-export function generateComponents(generator: Generator) {
+export function generateComponents(generator: GeneratorAPI) {
   const stream = new Stream.Transform({
     objectMode: true,
     transform(originalFile: File, _, callback) {
       if (originalFile.contents instanceof Buffer) {
         const code = originalFile.contents.toString();
-        const components: {} = compileCode(generator, code, originalFile, true);
+        const components: GeneratorResult[] = compileCode(
+          generator,
+          code,
+          originalFile,
+          true
+        ) as GeneratorResult[];
 
-        (components as { path?: string; code: string }[])
+        components
           .filter((c) => c.path && c.code)
           .forEach((c) => {
             const generatedFile = originalFile.clone();
