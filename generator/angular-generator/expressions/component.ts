@@ -215,6 +215,12 @@ export class AngularComponent extends Component {
       });
     members = members.reduce((members, member) => {
       if (member.isInternalState) {
+        const property = member as Property;
+        const token =
+          property.questionOrExclamationToken === SyntaxKind.QuestionToken &&
+          property.type.toString() !== "any"
+            ? SyntaxKind.QuestionToken
+            : undefined;
         members.push(
           new SetAccessor(
             undefined,
@@ -226,7 +232,7 @@ export class AngularComponent extends Component {
                 [],
                 undefined,
                 member._name,
-                (member as Property).questionOrExclamationToken,
+                token,
                 member.type,
                 undefined
               ),
