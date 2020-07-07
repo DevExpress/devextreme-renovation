@@ -1,6 +1,10 @@
 import ts from "typescript";
 import fs from "fs";
 import { generateFactoryCode } from "./factoryCodeGenerator";
+import Stream from "stream";
+import File from "vinyl";
+import { GeneratorAPI, GeneratorResult } from "./base-generator/generator-api";
+import { compileCode } from "./code-compiler";
 
 export function deleteFolderRecursive(path: string) {
   if (fs.existsSync(path)) {
@@ -14,38 +18,6 @@ export function deleteFolderRecursive(path: string) {
     });
     fs.rmdirSync(path);
   }
-}
-
-import Stream from "stream";
-import File from "vinyl";
-import { GeneratorAPI, GeneratorResult } from "./base-generator/generator-api";
-
-export function compileCode(
-  generator: GeneratorAPI,
-  code: string,
-  file: { dirname: string; path: string; importedModules?: string[] },
-  includeExtraComponents: boolean = false
-): GeneratorResult[] | string {
-  const source = ts.createSourceFile(
-    file.path,
-    code,
-    ts.ScriptTarget.ES2016,
-    true
-  );
-  generator.setContext({
-    path: file.path,
-    dirname: file.dirname,
-    importedModules: file.importedModules,
-  });
-  const codeFactory = generateFactoryCode(ts, source);
-
-  const codeFactoryResult = generator.generate(eval(codeFactory));
-  generator.setContext(null);
-
-  if (includeExtraComponents) {
-    return codeFactoryResult;
-  }
-  return codeFactoryResult[0].code;
 }
 
 export function generateComponents(generator: GeneratorAPI) {
@@ -96,3 +68,5 @@ export default function compile(dir: string, outDir: string) {
       fs.writeFileSync(`${outDir}/${name.replace(".tsx", ".js")}`, factoryCode);
     });
 }
+
+export { compileCode };

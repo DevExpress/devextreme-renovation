@@ -13,7 +13,7 @@ import { VueGenerator } from "../vue-generator/vue-generator";
 
 const fixtureFileName = "test/test-cases/declarations/src/props.tsx";
 
-mocha.describe.only("webpack-loader", function () {
+mocha.describe("webpack-loader", function () {
   this.beforeEach(function () {
     this.codeCompilerStub = sinon
       .stub(ComponentCompiler, "compileCode")
