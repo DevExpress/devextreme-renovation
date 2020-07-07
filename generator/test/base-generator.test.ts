@@ -739,6 +739,10 @@ mocha.describe("base-generator: expressions", function () {
     mocha.it("CreateBreak", function () {
       assert.strictEqual(generator.createBreak().toString(), "break");
     });
+
+    mocha.it("CreateSuper", function () {
+      assert.strictEqual(generator.createSuper().toString(), "super");
+    });
   });
 
   mocha.describe("Conditions", function () {

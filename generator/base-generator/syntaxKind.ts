@@ -18,6 +18,7 @@ export default {
   BarToken: "|",
   BigIntKeyword: "bigint",
   BooleanKeyword: "boolean",
+  BreakKeyword: "break",
   CaretToken: "^",
   CaseKeyword: "case",
   CatchKeyword: "catch",
