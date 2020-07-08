@@ -125,7 +125,7 @@ export class Component extends Class implements Heritable {
       });
 
     members = super.processMembers(
-      inheritMembers(this.heritageClauses, this.addPrefixToMembers(members))
+      this.addPrefixToMembers(members).concat(props)
     );
     const restPropsGetter = this.createRestPropsGetter(members);
     restPropsGetter.prefix = "__";
