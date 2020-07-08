@@ -1,4 +1,6 @@
 import path from "path";
+import fs from "fs";
+import { GeneratorCache } from "../types";
 
 export function getRelativePath(
   src: string,
@@ -26,4 +28,32 @@ export function getModuleRelativePath(src: string, moduleSpecifier: string) {
   );
 
   return getRelativePath(src, folderPath, moduleParts[moduleParts.length - 1]);
+}
+
+export function readModule(
+  module: string,
+  cache: GeneratorCache
+): string | null {
+  if (cache[module]) {
+    return module;
+  }
+  if (fs.existsSync(module)) {
+    return module;
+  }
+
+  return null;
+}
+
+export function resolveModule(
+  module: string,
+  cache: GeneratorCache
+): string | null {
+  const ext = path.extname(module);
+  if (ext) {
+    return readModule(module, cache);
+  }
+
+  return (
+    readModule(`${module}.tsx`, cache) || readModule(`${module}.ts`, cache)
+  );
 }

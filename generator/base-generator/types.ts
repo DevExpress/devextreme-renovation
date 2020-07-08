@@ -29,6 +29,10 @@ export type GeneratorOptions = {
   defaultOptionsModule?: string;
 };
 
+export type GeneratorCache = {
+  [name: string]: any;
+};
+
 export type GeneratorContext = {
   path?: string;
   dirname?: string;
