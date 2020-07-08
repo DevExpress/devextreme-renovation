@@ -14,9 +14,8 @@ function view(model: Widget) {
 
 @ComponentBindings()
 export class WidgetInput {
-  @OneWay() myArray: Array<string> = [];
-  @OneWay() myObject: object = {};
-  @OneWay() mySimple: string = "";
+  @OneWay() propArray: Array<string> = [];
+  @OneWay() propObject: object = {};
 }
 
 @Component({
@@ -25,17 +24,21 @@ export class WidgetInput {
 export default class Widget extends JSXComponent(WidgetInput) {
   @InternalState() internalArray: string[] = [];
   @InternalState() internalObject: object = {};
-  @InternalState() internalSimple: string = "";
-  counter: number = 0;
+  @InternalState() keys: string[] = [];
+  @InternalState() counter: number = 0;
 
   @Effect()
-  effect() {}
+  effect() {
+    const { propObject } = this.props;
+    const { internalObject } = this;
+    this.keys = Object.keys(propObject).concat(Object.keys(internalObject));
+  }
 
   @Effect()
   effectWithObservables() {
-    const { myArray } = this.props;
-    const { internalArray, counter } = this;
-    this.counter = myArray.length + internalArray.length + counter;
+    const { propArray } = this.props;
+    const { internalArray } = this;
+    this.counter = propArray.length + internalArray.length;
   }
 
   @Effect({ run: "once" })
