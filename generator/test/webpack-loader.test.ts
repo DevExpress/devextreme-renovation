@@ -10,6 +10,7 @@ import { PreactGenerator } from "../preact-generator";
 import { ReactGenerator } from "../react-generator";
 import { AngularGenerator } from "../angular-generator/angular-generator";
 import { VueGenerator } from "../vue-generator/vue-generator";
+import { assertCode } from "./helpers/common";
 
 const fixtureFileName = "test/test-cases/declarations/src/props.tsx";
 
@@ -113,9 +114,9 @@ mocha.describe("webpack-loader", function () {
         tsConfig: "test/test-cases/tsconfig.json",
       });
 
-      const output = stats.toJson().modules![0].source;
+      const output = stats.toJson().modules![0].source!;
 
-      assert.strictEqual(output, '"use strict";\nconst a = 10;\n');
+      assertCode(output, '"use strict";\nconst a = 10;\n');
     });
 
     mocha.it("ignore ts errors", async function () {
@@ -125,9 +126,9 @@ mocha.describe("webpack-loader", function () {
         tsConfig: "test/test-cases/tsconfig.json",
       });
 
-      const output = stats.toJson().modules![0].source;
+      const output = stats.toJson().modules![0].source!;
 
-      assert.strictEqual(output, '"use strict";\nconst a = null;\n');
+      assertCode(output, '"use strict";\nconst a = null;\n');
     });
 
     mocha.it("tsconfig error - use default", async function () {
@@ -136,9 +137,9 @@ mocha.describe("webpack-loader", function () {
         tsConfig: "incorrect.tsconfig.json",
       });
 
-      const output = stats.toJson().modules![0].source;
+      const output = stats.toJson().modules![0].source!;
 
-      assert.strictEqual(output, "var a = 10;\n");
+      assertCode(output, "var a = 10;\n");
     });
 
     mocha.it(
@@ -149,9 +150,9 @@ mocha.describe("webpack-loader", function () {
           tsConfig: "test/test-cases/webpack-loader.test.tsconfig.json",
         });
 
-        const output = stats.toJson().modules![0].source;
+        const output = stats.toJson().modules![0].source!;
 
-        assert.strictEqual(output, "const a = 10;\n");
+        assertCode(output, "const a = 10;\n");
       }
     );
   });
