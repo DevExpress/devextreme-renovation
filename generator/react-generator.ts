@@ -293,9 +293,6 @@ function getChangeEventToken(property: Property): string {
     }
   }
 
-  console.log(property.questionOrExclamationToken);
-  console.log(property.initializer?.toString());
-  console.log(property.name);
   return "";
 }
 
