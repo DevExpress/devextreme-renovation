@@ -20,6 +20,7 @@ import {
 import {
   SimpleTypeExpression,
   FunctionTypeNode,
+  isTypeArray,
 } from "../../base-generator/expressions/type";
 import { Property } from "./class-members/property";
 import { Method } from "../../base-generator/expressions/class-members";
@@ -352,7 +353,8 @@ export class AngularComponent extends Component {
     ngAfterViewInitStatements: string[],
     ngOnDestroyStatements: string[],
     ngOnChanges: string[],
-    ngAfterViewCheckedStatements: string[]
+    ngAfterViewCheckedStatements: string[],
+    ngDoCheckStatements: string[]
   ) {
     const effects = this.members.filter((m) => m.isEffect) as Method[];
     let hasInternalStateDependency = false;
@@ -362,6 +364,7 @@ export class AngularComponent extends Component {
         "__destroyEffects: any[] = [];",
         "__viewCheckedSubscribeEvent: Array<()=>void> = [];",
       ];
+      let usedIterables = new Set();
 
       const subscribe = (e: Method) => `this.${e.getter()}()`;
       effects.map((e, i) => {
@@ -369,6 +372,9 @@ export class AngularComponent extends Component {
         const [propsDependency, internalStateDependency] = separateDependency(
           allDeps,
           this.internalState
+        );
+        const iterableDeps = allDeps.filter((dep) =>
+          isTypeArray(this.members.find((m) => m.name === dep)?.type)
         );
 
         const updateEffectMethod = `__schedule_${e._name}`;
@@ -390,10 +396,36 @@ export class AngularComponent extends Component {
             );
           }
 
+          const iterableProps = propsDependency.filter((dep) =>
+            isTypeArray(this.members.find((m) => m.name === dep)?.type)
+          );
+          const assignments = iterableProps
+            .map(
+              (p) => `if (${ngOnChangesParameters[0]}["${p}"]) {
+            this.__cachedObservables["${p}"] = [...${ngOnChangesParameters[0]}["${p}"].currentValue];
+          }`
+            )
+            .join("\n");
           ngOnChanges.push(`
                         if (${conditionArray.join("&&")}) {
+                            ${assignments}
                             this.${updateEffectMethod}();
                         }`);
+        }
+
+        if (iterableDeps.length) {
+          usedIterables = new Set([...usedIterables].concat(iterableDeps));
+          const observableConditionArray = ["this.__destroyEffects.length"];
+          observableConditionArray.push(
+            `this.__checkObservables([${iterableDeps
+              .map((d) => `"${d}"`)
+              .join(",")}])`
+          );
+
+          ngDoCheckStatements.push(`
+          if (${observableConditionArray.join("&&")}) {
+              this.${updateEffectMethod}();
+          }`);
         }
 
         internalStateDependency.forEach((name) => {
@@ -401,6 +433,20 @@ export class AngularComponent extends Component {
             (p) => p.name === `_${name}`
           ) as SetAccessor;
           if (setter) {
+            if (
+              usedIterables.has(name) &&
+              !setter.body.statements.some(
+                (expr) =>
+                  expr.toString() ===
+                  `this.__cachedObservables["${name}"] = [...${name}];`
+              )
+            ) {
+              setter.body.statements.push(
+                new SimpleExpression(
+                  `this.__cachedObservables["${name}"] = [...${name}];`
+                )
+              );
+            }
             setter.body.statements.push(
               new SimpleExpression(`
                             if (this.__destroyEffects.length) {
@@ -416,6 +462,29 @@ export class AngularComponent extends Component {
                 this.__viewCheckedSubscribeEvent.forEach(s=>s?.());
                 this.__viewCheckedSubscribeEvent = [];
                 `);
+      }
+      if (usedIterables.size > 0) {
+        statements.push(
+          "__cachedObservables: { [name: string]: Array<any> } = {}"
+        );
+        statements.push(`__checkObservables(keys: string[]) {
+          let isChanged = false;
+          keys.forEach((key) => {
+            const cached = this.__cachedObservables[key];
+            const current = (this as any)[key];
+            if (cached.length !== current.length || !cached.every((v, i) => current[i] === v)) {
+              isChanged = true;
+              this.__cachedObservables[key] = [...current];
+            }
+          })
+          
+          return isChanged;
+        }`);
+        usedIterables.forEach((i) => {
+          ngAfterViewInitStatements.push(
+            `this.__cachedObservables["${i}"] = this.${i}`
+          );
+        });
       }
       ngAfterViewInitStatements.push(
         `this.__destroyEffects.push(${effects
@@ -604,6 +673,7 @@ export class AngularComponent extends Component {
     const ngAfterViewInitStatements: string[] = [];
     const ngOnDestroyStatements: string[] = [];
     const ngAfterViewCheckedStatements: string[] = [];
+    const ngDoCheckStatements: string[] = [];
     const constructorStatements: string[] = [];
     const coreImports: string[] = [];
 
@@ -678,7 +748,8 @@ export class AngularComponent extends Component {
               ngAfterViewInitStatements,
               ngOnDestroyStatements,
               ngOnChangesStatements,
-              ngAfterViewCheckedStatements
+              ngAfterViewCheckedStatements,
+              ngDoCheckStatements
             )}
             ${this.compileGetterCache(ngOnChangesStatements)}
             ${this.compileNgModel()}
@@ -694,6 +765,7 @@ export class AngularComponent extends Component {
               "ngAfterViewChecked",
               ngAfterViewCheckedStatements
             )}
+            ${this.compileLifeCycle("ngDoCheck", ngDoCheckStatements)}
             ${this.compileLifeCycle(
               "constructor",
               constructorStatements.length
