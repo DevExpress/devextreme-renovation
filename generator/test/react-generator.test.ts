@@ -1863,6 +1863,22 @@ mocha.describe("Expressions with props/state/internal state", function () {
       generator.createThis(),
       generator.createIdentifier("i1")
     );
+
+    this.stateChange = generator.createProperty(
+      [createDecorator(Decorators.Event)],
+      [],
+      generator.createIdentifier(`${this.state.name}Change`),
+      generator.SyntaxKind.QuestionToken,
+      undefined,
+      generator.createArrowFunction(
+        [],
+        [],
+        [],
+        undefined,
+        generator.SyntaxKind.EqualsGreaterThanToken,
+        generator.createBlock([], false)
+      )
+    );
   });
 
   mocha.it("PropertyAccess. Prop", function () {
@@ -1990,7 +2006,7 @@ mocha.describe("Expressions with props/state/internal state", function () {
   });
 
   mocha.it(
-    "= operator for state - set state and rise change state",
+    "= operator for state - set state and raise change state",
     function () {
       const expression = generator.createBinary(
         this.stateAccess,
@@ -2000,9 +2016,70 @@ mocha.describe("Expressions with props/state/internal state", function () {
 
       assert.equal(
         expression.toString({
-          members: [this.state, this.prop, this.internalState],
+          members: [
+            this.state,
+            this.prop,
+            this.internalState,
+            this.stateChange,
+          ],
         }),
         "(__state_setS1(__state_s1 => a), props.s1Change!(a))"
+      );
+      assert.deepEqual(expression.getDependency(), []);
+      assert.deepEqual(expression.getAllDependency(), ["s1"]);
+    }
+  );
+
+  mocha.it(
+    "= operator for state - add .? token if change property has not initializer",
+    function () {
+      const expression = generator.createBinary(
+        this.stateAccess,
+        generator.SyntaxKind.EqualsToken,
+        generator.createIdentifier("a")
+      );
+
+      this.stateChange.initializer = undefined;
+
+      assert.equal(
+        expression.toString({
+          members: [
+            this.state,
+            this.prop,
+            this.internalState,
+            this.stateChange,
+          ],
+        }),
+        "(__state_setS1(__state_s1 => a), props.s1Change?.(a))"
+      );
+      assert.deepEqual(expression.getDependency(), []);
+      assert.deepEqual(expression.getAllDependency(), ["s1"]);
+    }
+  );
+
+  mocha.it(
+    "= operator for state - do not add token if change property has exclamation token",
+    function () {
+      const expression = generator.createBinary(
+        this.stateAccess,
+        generator.SyntaxKind.EqualsToken,
+        generator.createIdentifier("a")
+      );
+
+      this.stateChange.initializer = undefined;
+      this.stateChange.questionOrExclamationToken =
+        generator.SyntaxKind.ExclamationToken;
+
+      assert.equal(
+        expression.toString({
+          members: [
+            this.state,
+            this.prop,
+            this.internalState,
+            this.stateChange,
+          ],
+        }),
+        "(__state_setS1(__state_s1 => a), props.s1Change(a))"
       );
       assert.deepEqual(expression.getDependency(), []);
       assert.deepEqual(expression.getAllDependency(), ["s1"]);
@@ -2258,7 +2335,12 @@ mocha.describe("Expressions with props/state/internal state", function () {
     assert.equal(
       getResult(
         arrowFunction.toString({
-          members: [this.state, this.prop, this.internalState],
+          members: [
+            this.state,
+            this.prop,
+            this.internalState,
+            this.stateChange,
+          ],
         })
       ),
       getResult("()=>(__state_setS1(__state_s1 => 10), props.s1Change!(10))")
@@ -2283,7 +2365,12 @@ mocha.describe("Expressions with props/state/internal state", function () {
     assert.equal(
       getResult(
         arrowFunction.toString({
-          members: [this.state, this.prop, this.internalState],
+          members: [
+            this.state,
+            this.prop,
+            this.internalState,
+            this.stateChange,
+          ],
         })
       ),
       getResult("()=>__state_setI1(__state_i1 => 10)")
@@ -2308,7 +2395,12 @@ mocha.describe("Expressions with props/state/internal state", function () {
     assert.equal(
       getResult(
         arrowFunction.toString({
-          members: [this.state, this.prop, this.internalState],
+          members: [
+            this.state,
+            this.prop,
+            this.internalState,
+            this.stateChange,
+          ],
         })
       ),
       getResult(

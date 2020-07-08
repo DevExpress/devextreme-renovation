@@ -123,7 +123,7 @@ export class PropertyAccess extends ExpressionWithExpression {
   compileStateSetting(
     state: string,
     property: Property,
-    options?: toStringOptions
+    options: toStringOptions
   ) {
     return `this.${property.name}=${state}`;
   }

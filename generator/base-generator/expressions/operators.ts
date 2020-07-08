@@ -56,7 +56,7 @@ export class Binary extends Expression {
         return `${(this.left as PropertyAccess).compileStateSetting(
           rightExpression,
           dependencyMember as Property,
-          options
+          options!
         )}`;
       }
     }
@@ -111,7 +111,7 @@ export class Prefix extends Expression {
       return `${(this.operand as PropertyAccess).compileStateSetting(
         rightExpression,
         dependencyMember as Property,
-        options
+        options!
       )}`;
     }
     return "";

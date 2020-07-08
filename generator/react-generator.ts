@@ -284,17 +284,39 @@ export class HeritageClause extends BaseHeritageClause {
   }
 }
 
+function getChangeEventToken(property: Property): string {
+  if (property.questionOrExclamationToken === SyntaxKind.QuestionToken) {
+    if (property.initializer) {
+      return SyntaxKind.ExclamationToken;
+    } else {
+      return SyntaxKind.QuestionDotToken;
+    }
+  }
+
+  console.log(property.questionOrExclamationToken);
+  console.log(property.initializer?.toString());
+  console.log(property.name);
+  return "";
+}
+
 export class PropertyAccess extends BasePropertyAccess {
   compileStateSetting(
     state: string,
     property: Property,
-    options?: toStringOptions
+    options: toStringOptions
   ) {
     const setState = `${stateSetter(this.name)}(${getLocalStateName(
       this.name
     )} => ${state.startsWith("{") ? `(${state})` : state})`;
     if (property.isState) {
-      return `(${setState}, props.${this.name}Change!(${state}))`;
+      const propertyName = `${this.name}Change`;
+      const props = getProps(options.members);
+      const changeProperty = props.find(
+        (m) => m.name === propertyName
+      ) as Property;
+      return `(${setState}, props.${this.name}Change${getChangeEventToken(
+        changeProperty
+      )}(${state}))`;
     }
     return setState;
   }
