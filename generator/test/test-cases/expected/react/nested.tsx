@@ -4,9 +4,9 @@ declare type Custom = {};
 function view(model: Widget) {
   return <div />;
 }
-export const Column = () => null;
-export const GridEditing = () => null;
-export const SomeArray = () => null;
+export const Column: React.FunctionComponent<Column> = () => null;
+export const GridEditing: React.FunctionComponent<Editing> = () => null;
+export const SomeArray: React.FunctionComponent<Custom> = () => null;
 export declare type WidgetInputType = {
   columns?: Array<Column | string>;
   gridEditing?: Editing;

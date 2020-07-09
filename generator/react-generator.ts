@@ -210,10 +210,11 @@ export class ComponentInput extends BaseComponentInput {
       return nestedComponents
         .map((m) => {
           let name = capitalizeFirstLetter(m.name);
+          const type = extractComplexType(m.type);
           if (isTypeArray(m.type)) {
             name = removePlural(name);
           }
-          return `export const ${name} = () => null;`;
+          return `export const ${name}: React.FunctionComponent<${type}> = () => null;`;
         })
         .join("\n");
     }
