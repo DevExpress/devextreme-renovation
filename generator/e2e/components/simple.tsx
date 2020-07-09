@@ -28,4 +28,4 @@ class WidgetInput {
 @Component({
   view,
 })
-export default class Simple extends JSXComponent(WidgetInput) {}
+export class SimpleComponent extends JSXComponent(WidgetInput) {}

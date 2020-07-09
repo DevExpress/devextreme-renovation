@@ -525,7 +525,7 @@ export default class Generator implements GeneratorAPI {
         }
 
         const componentInputs: ComponentInput[] = this.cache[modulePath].filter(
-          (e: any) => e instanceof ComponentInput
+          (e: any) => e instanceof Component || e instanceof ComponentInput
         );
 
         importClause.imports?.forEach((i) => {
@@ -534,7 +534,7 @@ export default class Generator implements GeneratorAPI {
           );
 
           if (componentInput) {
-            this.addComponent(i, componentInput);
+            this.addComponent(i, componentInput, importClause);
           }
         });
         this.cache.__globals__ &&

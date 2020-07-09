@@ -3,10 +3,9 @@ import {
   ComponentBindings,
   JSXComponent,
   InternalState,
-  ForwardRef,
 } from "../../component_declaration/common";
 
-import SimpleComponent from "./simple.tsx";
+import { SimpleComponent } from "./simple.tsx";
 import ButtonComponent from "./button.tsx";
 import ButtonWithState from "./state.tsx";
 import ComponentWithSpread from "./spread-attributes.tsx";

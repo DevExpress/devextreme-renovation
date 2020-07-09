@@ -60,6 +60,7 @@ import { AsExpression } from "./expressions/as-expression";
 import { NonNullExpression } from "./expressions/non-null-expression";
 import { ImportDeclaration } from "./expressions/import-declaration";
 import prettier from "prettier";
+import path from "path";
 
 const emptyToString = () => "";
 
@@ -246,7 +247,7 @@ export class VueGenerator extends BaseGenerator {
     const ext = getComponentListFromContext(this.getContext()).length
       ? ".vue"
       : ".js";
-    return name.replace(/\.tsx$/, ext);
+    return name.replace(path.extname(name), ext);
   }
 
   format(code: string) {

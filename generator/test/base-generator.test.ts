@@ -2413,6 +2413,30 @@ mocha.describe("base-generator: expressions", function () {
       }
     );
 
+    mocha.it("Add named imported component in context", function () {
+      generator.createImportDeclaration(
+        undefined,
+        undefined,
+        generator.createImportClause(
+          undefined,
+          generator.createNamedImports([
+            generator.createImportSpecifier(
+              undefined,
+              generator.createIdentifier("Widget")
+            ),
+          ])
+        ),
+        generator.createStringLiteral(
+          "./test-cases/declarations/src/export-named-api-ref"
+        )
+      );
+
+      assert.strictEqual(
+        generator.getContext().components?.["Widget"].name,
+        "Widget"
+      );
+    });
+
     mocha.it(
       "import module declaration with component should fill component if it is imported",
       function () {
