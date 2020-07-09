@@ -1,7 +1,7 @@
 import assert from "assert";
 import mocha from "./helpers/mocha";
 import Generator from "../base-generator";
-import { printSourceCodeAst as getAst } from "./helpers/common";
+import { printSourceCodeAst as getAst, assertCode } from "./helpers/common";
 import {
   Expression,
   SimpleExpression,
@@ -2443,6 +2443,55 @@ mocha.describe("base-generator: expressions", function () {
         );
       }
     );
+  });
+
+  mocha.describe("export", function () {
+    mocha.it("named exports", function () {
+      const expression = generator.createExportDeclaration(
+        undefined,
+        undefined,
+        generator.createNamedExports([
+          generator.createExportSpecifier(
+            undefined,
+            generator.createIdentifier("named1")
+          ),
+          generator.createExportSpecifier(
+            generator.createIdentifier("named2"),
+            generator.createIdentifier("_named2")
+          ),
+        ]),
+        undefined
+      );
+
+      assertCode(expression.toString(), "export {named1, named2 as _named2}");
+    });
+
+    mocha.it("named exports with module specifier", function () {
+      const expression = generator.createExportDeclaration(
+        [],
+        [],
+        generator.createNamedExports([
+          generator.createExportSpecifier(
+            undefined,
+            generator.createIdentifier("named")
+          ),
+        ]),
+        generator.createStringLiteral("./module")
+      );
+
+      assertCode(expression.toString(), `export {named} from "./module`);
+    });
+
+    mocha.it("export all from module", function () {
+      const expression = generator.createExportDeclaration(
+        undefined,
+        undefined,
+        undefined,
+        generator.createStringLiteral("./module")
+      );
+
+      assert.strictEqual(expression.toString(), `export * from "./module"`);
+    });
   });
 
   mocha.describe("Interface", function () {

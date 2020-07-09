@@ -102,6 +102,11 @@ import { Decorators } from "../component_declaration/decorators";
 import { TypeParameterDeclaration } from "./expressions/type-parameter-declaration";
 import prettier from "prettier";
 import { GeneratorAPI, GeneratorResult } from "./generator-api";
+import {
+  ExportDeclaration,
+  ExportSpecifier,
+  NamedExports,
+} from "./expressions/export";
 
 export default class Generator implements GeneratorAPI {
   NodeFlags = {
@@ -565,6 +570,31 @@ export default class Generator implements GeneratorAPI {
 
   createImportClause(name?: Identifier, namedBindings?: NamedImportBindings) {
     return new ImportClause(name, namedBindings);
+  }
+
+  createExportSpecifier(
+    propertyName: Identifier | undefined,
+    name: Identifier
+  ) {
+    return new ExportSpecifier(propertyName, name);
+  }
+
+  createNamedExports(elements: ExportSpecifier[]) {
+    return new NamedExports(elements);
+  }
+
+  createExportDeclaration(
+    decorators: Decorator[] | undefined,
+    modifiers: string[] | undefined,
+    exportClause: NamedImports | undefined,
+    moduleSpecifier?: Expression
+  ) {
+    return new ExportDeclaration(
+      decorators,
+      modifiers,
+      exportClause,
+      moduleSpecifier
+    );
   }
 
   createDecorator(expression: Call) {
