@@ -49,8 +49,8 @@ export default function (generator: Generator) {
     properties: Array<Property | Method> = [],
     parameters: { [name: string]: Expression } = {}
   ) {
-    return generator.createComponent(
-      createComponentDecorator(parameters),
+    return generator.createClassDeclaration(
+      [createComponentDecorator(parameters)],
       [],
       generator.createIdentifier("BaseWidget"),
       [],

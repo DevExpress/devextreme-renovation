@@ -2,7 +2,7 @@ import { Expression, ExpressionWithExpression } from "./base";
 import { toStringOptions } from "../types";
 import { Identifier } from "./common";
 import SyntaxKind from "../syntaxKind";
-import { Property } from "./class-members";
+import { Property, Method } from "./class-members";
 import { getProps } from "./component";
 import { processComponentContext } from "../utils/string";
 import { BindingElement } from "./binding-pattern";
@@ -72,17 +72,15 @@ export class PropertyAccess extends ExpressionWithExpression {
       },
     });
     const componentContext = this.calculateComponentContext(options);
-    const usePropsSpace = `${processComponentContext(componentContext)}props`;
-    if (
-      expressionString === componentContext ||
-      expressionString === usePropsSpace
-    ) {
-      const props = getProps(options?.members || []);
-      return options?.members.filter((m) =>
-        expressionString === usePropsSpace
-          ? m instanceof Property && props.indexOf(m) > -1
-          : (m instanceof Property && props.indexOf(m)) || true
-      );
+    const usePropsSpace =
+      expressionString === `${processComponentContext(componentContext)}props`;
+    if (expressionString === componentContext || usePropsSpace) {
+      const props = getProps(options?.members || []) as Array<
+        Property | Method
+      >;
+      return usePropsSpace
+        ? props
+        : options?.members.filter((m) => props.indexOf(m) === -1);
     }
   }
 

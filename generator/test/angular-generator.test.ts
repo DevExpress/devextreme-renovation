@@ -804,7 +804,10 @@ mocha.describe("Angular generator", function () {
         );
 
         this.slotExpression = generator.createPropertyAccess(
-          generator.createIdentifier("viewModel"),
+          generator.createPropertyAccess(
+            generator.createIdentifier("viewModel"),
+            generator.createIdentifier("props")
+          ),
           generator.createIdentifier("children")
         );
 
@@ -849,7 +852,7 @@ mocha.describe("Angular generator", function () {
       });
     });
 
-    mocha.describe("Spread Attributes", function () {
+    mocha.describe("Spread Attributes on html element", function () {
       this.beforeEach(function () {
         generator.setContext(null);
         generator.setContext({
@@ -953,6 +956,292 @@ mocha.describe("Angular generator", function () {
           assert.strictEqual(spreadAttributes.length, 2);
         }
       );
+    });
+
+    mocha.describe("Spread attribute on component", function () {
+      this.beforeEach(function () {
+        generator.setContext({
+          dirname: __dirname,
+        });
+      });
+
+      this.afterEach(function () {
+        generator.setContext(null);
+      });
+
+      mocha.it("...props - pick only props those exist in widget", function () {
+        const component = createComponent([
+          generator.createProperty(
+            [createDecorator(Decorators.OneWay)],
+            [],
+            generator.createIdentifier("p1")
+          ),
+        ]);
+
+        const element = generator.createJsxSelfClosingElement(
+          component._name,
+          [],
+          [
+            generator.createJsxSpreadAttribute(
+              generator.createIdentifier("props")
+            ),
+          ]
+        );
+
+        const p1 = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("p1")
+        );
+
+        const p2 = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("p2")
+        );
+
+        assert.strictEqual(
+          element.toString({
+            componentContext: "",
+            newComponentContext: "",
+            members: [p1, p2],
+          }),
+          `<dx-base-widget [p1]="p1"></dx-base-widget>`
+        );
+      });
+
+      mocha.it("...props, method - pick method", function () {
+        const component = createComponent([
+          generator.createProperty(
+            [createDecorator(Decorators.OneWay)],
+            [],
+            generator.createIdentifier("p1")
+          ),
+        ]);
+
+        const element = generator.createJsxSelfClosingElement(
+          component._name,
+          [],
+          [
+            generator.createJsxSpreadAttribute(
+              generator.createPropertyAccess(
+                generator.createIdentifier("viewModel"),
+                generator.createIdentifier("props")
+              )
+            ),
+            generator.createJsxAttribute(
+              generator.createIdentifier("p1"),
+              generator.createPropertyAccess(
+                generator.createIdentifier("viewModel"),
+                generator.createIdentifier("p1")
+              )
+            ),
+          ]
+        );
+
+        const p1 = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("p1")
+        );
+
+        const p1Method = generator.createMethod(
+          [],
+          [],
+          undefined,
+          generator.createIdentifier("p1"),
+          undefined,
+          undefined,
+          [],
+          undefined,
+          generator.createBlock([], false)
+        );
+
+        p1Method.prefix = "__";
+
+        assert.strictEqual(
+          element.toString({
+            componentContext: "viewModel",
+            newComponentContext: "",
+            members: [p1, p1Method],
+          }),
+          `<dx-base-widget [p1]="__p1"></dx-base-widget>`
+        );
+      });
+
+      mocha.it(
+        "method, ...props - pick method if props is not exist",
+        function () {
+          const component = createComponent([
+            generator.createProperty(
+              [createDecorator(Decorators.OneWay)],
+              [],
+              generator.createIdentifier("p1")
+            ),
+          ]);
+
+          const element = generator.createJsxSelfClosingElement(
+            component._name,
+            [],
+            [
+              generator.createJsxAttribute(
+                generator.createIdentifier("p1"),
+                generator.createPropertyAccess(
+                  generator.createIdentifier("viewModel"),
+                  generator.createIdentifier("p1")
+                )
+              ),
+              generator.createJsxSpreadAttribute(
+                generator.createPropertyAccess(
+                  generator.createIdentifier("viewModel"),
+                  generator.createIdentifier("props")
+                )
+              ),
+            ]
+          );
+
+          const p1 = generator.createProperty(
+            [createDecorator(Decorators.OneWay)],
+            [],
+            generator.createIdentifier("p1")
+          );
+
+          const p1Method = generator.createMethod(
+            [],
+            [],
+            undefined,
+            generator.createIdentifier("p1"),
+            undefined,
+            undefined,
+            [],
+            undefined,
+            generator.createBlock([], false)
+          );
+
+          p1Method.prefix = "__";
+
+          assert.strictEqual(
+            element.toString({
+              componentContext: "viewModel",
+              newComponentContext: "",
+              members: [p1, p1Method],
+            }),
+            `<dx-base-widget [p1]="(p1!==undefined?p1:__p1)"></dx-base-widget>`
+          );
+        }
+      );
+
+      mocha.it("getter, ...props - pick getter, prop", function () {
+        const component = createComponent([
+          generator.createProperty(
+            [createDecorator(Decorators.OneWay)],
+            [],
+            generator.createIdentifier("p1")
+          ),
+        ]);
+
+        const element = generator.createJsxSelfClosingElement(
+          component._name,
+          [],
+          [
+            generator.createJsxAttribute(
+              generator.createIdentifier("p1"),
+              generator.createPropertyAccess(
+                generator.createIdentifier("viewModel"),
+                generator.createIdentifier("p1")
+              )
+            ),
+            generator.createJsxSpreadAttribute(
+              generator.createPropertyAccess(
+                generator.createIdentifier("viewModel"),
+                generator.createIdentifier("props")
+              )
+            ),
+          ]
+        );
+
+        const p1 = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("p1")
+        );
+
+        const p1Method = generator.createGetAccessor(
+          [],
+          [],
+          generator.createIdentifier("p1"),
+          [],
+          undefined,
+          generator.createBlock([], false)
+        );
+
+        p1Method.prefix = "__";
+
+        assert.strictEqual(
+          element.toString({
+            componentContext: "viewModel",
+            newComponentContext: "",
+            members: [p1, p1Method],
+          }),
+          `<dx-base-widget [p1]="(p1!==undefined?p1:__p1)"></dx-base-widget>`
+        );
+      });
+
+      mocha.it("...props, getter - pick props,getter", function () {
+        const component = createComponent([
+          generator.createProperty(
+            [createDecorator(Decorators.OneWay)],
+            [],
+            generator.createIdentifier("p1")
+          ),
+        ]);
+
+        const element = generator.createJsxSelfClosingElement(
+          component._name,
+          [],
+          [
+            generator.createJsxSpreadAttribute(
+              generator.createPropertyAccess(
+                generator.createIdentifier("viewModel"),
+                generator.createIdentifier("props")
+              )
+            ),
+            generator.createJsxAttribute(
+              generator.createIdentifier("p1"),
+              generator.createPropertyAccess(
+                generator.createIdentifier("viewModel"),
+                generator.createIdentifier("p1")
+              )
+            ),
+          ]
+        );
+
+        const p1 = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("p1")
+        );
+
+        const p1Method = generator.createGetAccessor(
+          [],
+          [],
+          generator.createIdentifier("p1"),
+          [],
+          undefined,
+          generator.createBlock([], false)
+        );
+
+        p1Method.prefix = "__";
+
+        assert.strictEqual(
+          element.toString({
+            componentContext: "viewModel",
+            newComponentContext: "",
+            members: [p1, p1Method],
+          }),
+          `<dx-base-widget [p1]="(__p1!==undefined?__p1:p1)"></dx-base-widget>`
+        );
+      });
     });
 
     mocha.describe("hasStyle", function () {
@@ -4626,7 +4915,10 @@ mocha.describe("Angular generator", function () {
 
         const expression = generator.createCall(
           generator.createPropertyAccess(
-            generator.createThis(),
+            generator.createPropertyAccess(
+              generator.createThis(),
+              generator.createIdentifier("props")
+            ),
             generator.createIdentifier("onClick")
           ),
           [],
@@ -4655,7 +4947,10 @@ mocha.describe("Angular generator", function () {
 
         const expression = generator.createBinary(
           generator.createPropertyAccess(
-            generator.createThis(),
+            generator.createPropertyAccess(
+              generator.createThis(),
+              generator.createIdentifier("props")
+            ),
             generator.createIdentifier("width")
           ),
           generator.SyntaxKind.EqualsToken,
@@ -4686,7 +4981,10 @@ mocha.describe("Angular generator", function () {
 
         const expression = generator.createBinary(
           generator.createPropertyAccess(
-            generator.createThis(),
+            generator.createPropertyAccess(
+              generator.createThis(),
+              generator.createIdentifier("props")
+            ),
             generator.createIdentifier("width")
           ),
           generator.SyntaxKind.EqualsToken,
@@ -4695,6 +4993,8 @@ mocha.describe("Angular generator", function () {
         let error = null;
         try {
           expression.toString({
+            componentContext: generator.SyntaxKind.ThisKeyword,
+            newComponentContext: generator.SyntaxKind.ThisKeyword,
             members: [property],
           });
         } catch (e) {
@@ -4702,7 +5002,7 @@ mocha.describe("Angular generator", function () {
         }
         assert.strictEqual(
           error,
-          "Error: Can't assign property use TwoWay() or Internal State - this.width=10"
+          "Error: Can't assign property use TwoWay() or Internal State - this.props.width=10"
         );
       });
 
@@ -4715,7 +5015,10 @@ mocha.describe("Angular generator", function () {
 
         const expression = generator.createPostfix(
           generator.createPropertyAccess(
-            generator.createThis(),
+            generator.createPropertyAccess(
+              generator.createThis(),
+              generator.createIdentifier("props")
+            ),
             generator.createIdentifier("width")
           ),
           generator.SyntaxKind.PlusPlusToken
@@ -4723,6 +5026,8 @@ mocha.describe("Angular generator", function () {
         let error = null;
         try {
           expression.toString({
+            componentContext: generator.SyntaxKind.ThisKeyword,
+            newComponentContext: generator.SyntaxKind.ThisKeyword,
             members: [property],
           });
         } catch (e) {
@@ -4730,7 +5035,7 @@ mocha.describe("Angular generator", function () {
         }
         assert.strictEqual(
           error,
-          "Error: Can't assign property use TwoWay() or Internal State - this.width++"
+          "Error: Can't assign property use TwoWay() or Internal State - this.props.width++"
         );
       });
 
