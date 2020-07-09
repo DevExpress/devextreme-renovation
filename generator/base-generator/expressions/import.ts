@@ -4,7 +4,7 @@ import { Decorator } from "./decorator";
 
 export class NamedImports {
   node: ImportSpecifier[];
-  constructor(node: ImportSpecifier[], elements?: any[]) {
+  constructor(node: ImportSpecifier[]) {
     this.node = node;
   }
 
