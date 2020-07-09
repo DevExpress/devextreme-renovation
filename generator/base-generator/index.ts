@@ -70,7 +70,7 @@ import {
 } from "./expressions/property-assignment";
 import { Binary, Prefix, Postfix } from "./expressions/operators";
 import { ReturnStatement, Block } from "./expressions/statements";
-import { GeneratorContext, GeneratorOptions } from "./types";
+import { GeneratorContext, GeneratorOptions, GeneratorCache } from "./types";
 import {
   VariableDeclaration,
   VariableDeclarationList,
@@ -95,7 +95,7 @@ import { BindingPattern, BindingElement } from "./expressions/binding-pattern";
 import { ComponentInput } from "./expressions/component-input";
 import { Component } from "./expressions/component";
 import { ExpressionWithTypeArguments } from "./expressions/type";
-import { getModuleRelativePath } from "./utils/path-utils";
+import { getModuleRelativePath, resolveModule } from "./utils/path-utils";
 import { Decorator } from "./expressions/decorator";
 import { Interface } from "./expressions/interface";
 import { Decorators } from "../component_declaration/decorators";
@@ -492,15 +492,15 @@ export default class Generator implements GeneratorAPI {
 
     const module = moduleSpecifier.expression.toString();
     if (context.dirname) {
-      const modulePath = path.join(
-        context.dirname,
-        module.endsWith(".tsx") ? module : `${module}.tsx`
+      const modulePath = resolveModule(
+        path.join(context.dirname, module),
+        this.cache
       );
 
       const importedModules = context.importedModules || [];
       const hasModule = importedModules.some((m) => m === modulePath);
 
-      if (fs.existsSync(modulePath) && !hasModule) {
+      if (modulePath && !hasModule) {
         compileCode(this, fs.readFileSync(modulePath).toString(), {
           dirname: context.dirname,
           path: modulePath,
@@ -1107,7 +1107,7 @@ export default class Generator implements GeneratorAPI {
     }
   }
 
-  cache: { [name: string]: any } = {};
+  cache: GeneratorCache = {};
 
   meta: { [name: string]: any } = {};
 

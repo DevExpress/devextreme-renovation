@@ -910,7 +910,7 @@ mocha.describe("base-generator: expressions", function () {
       );
 
       assert.equal(
-        expression.compileStateSetting("value", property),
+        expression.compileStateSetting("value", property, { members: [] }),
         "this.field=value"
       );
     });
@@ -2873,7 +2873,7 @@ mocha.describe("ComponentInput", function () {
       ]);
     });
 
-    mocha.it("Prop and Api Method has same names", function () {
+    mocha.it("Prop and Api Method has same names - warning", function () {
       createComponentInput([
         generator.createProperty(
           [createDecorator("OneWay")],
@@ -2923,6 +2923,54 @@ mocha.describe("ComponentInput", function () {
         "Component ComponentName has Prop and Api method with same name: p1",
         "Component ComponentName has Prop and Api method with same name: p2",
       ]);
+    });
+
+    mocha.it("Prop and Method has same names - no warning", function () {
+      createComponentInput([
+        generator.createProperty(
+          [createDecorator("OneWay")],
+          [],
+          generator.createIdentifier("p1")
+        ),
+      ]);
+
+      const component = generator.createClassDeclaration(
+        [createDecorator("Component", {})],
+        [],
+        generator.createIdentifier("ComponentName"),
+        [],
+        [
+          generator.createHeritageClause(generator.SyntaxKind.ExtendsKeyword, [
+            generator.createExpressionWithTypeArguments(
+              undefined,
+              generator.createCall(
+                generator.createIdentifier("JSXComponent"),
+                undefined,
+                [generator.createIdentifier("BaseModel")]
+              )
+            ),
+          ]),
+        ],
+        [
+          generator.createMethod(
+            [],
+            [],
+            undefined,
+            generator.createIdentifier("p1"),
+            undefined,
+            undefined,
+            [],
+            undefined,
+            generator.createBlock([], false)
+          ),
+        ]
+      );
+
+      assert.strictEqual(
+        component.members.filter((m) => m._name.toString() === "p1").length,
+        2
+      );
+      assert.deepEqual(this.getWarnings(), []);
     });
 
     mocha.it(

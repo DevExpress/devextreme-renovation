@@ -4806,7 +4806,7 @@ mocha.describe("Angular generator", function () {
 
           const ngOnChanges: string[] = [];
           assert.strictEqual(
-            getResult(component.compileEffects([], [], ngOnChanges, [])),
+            getResult(component.compileEffects([], [], ngOnChanges, [], [])),
             getResult(`
                         __destroyEffects: any[] = [];
                         __viewCheckedSubscribeEvent: Array<()=>void> = [];
@@ -4860,7 +4860,7 @@ mocha.describe("Angular generator", function () {
 
           const ngOnChanges: string[] = [];
           assert.strictEqual(
-            getResult(component.compileEffects([], [], ngOnChanges, [])),
+            getResult(component.compileEffects([], [], ngOnChanges, [], [])),
             getResult(`
                         __destroyEffects: any[] = [];
                         __viewCheckedSubscribeEvent: Array<()=>void> = [];
@@ -4928,7 +4928,7 @@ mocha.describe("Angular generator", function () {
 
           const ngOnChanges: string[] = [];
           assert.strictEqual(
-            getResult(component.compileEffects([], [], ngOnChanges, [])),
+            getResult(component.compileEffects([], [], ngOnChanges, [], [])),
             getResult(`
                         __destroyEffects: any[] = [];
                         __viewCheckedSubscribeEvent: Array<()=>void> = [];
@@ -4984,7 +4984,7 @@ mocha.describe("Angular generator", function () {
 
           const ngOnChanges: string[] = [];
           assert.strictEqual(
-            getResult(component.compileEffects([], [], ngOnChanges, [])),
+            getResult(component.compileEffects([], [], ngOnChanges, [], [])),
             getResult(`
                         __destroyEffects: any[] = [];
                         __viewCheckedSubscribeEvent: Array<()=>void> = [];

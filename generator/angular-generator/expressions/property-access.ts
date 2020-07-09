@@ -45,12 +45,10 @@ export class PropertyAccess extends BasePropertyAccess {
   compileStateSetting(
     value: string,
     property: Property,
-    toStringOptions?: toStringOptions
+    options: toStringOptions
   ) {
     if (property.isState) {
-      return `this.${this.name}Change.emit(${this.toString(
-        toStringOptions
-      )}=${value})`;
+      return `this.${this.name}Change.emit(${this.toString(options)}=${value})`;
     }
     return `this._${property.name}=${value}`;
   }
