@@ -6,6 +6,7 @@ import path from "path";
 import {
   printSourceCodeAst as getResult,
   removeSpaces,
+  assertCode,
 } from "./helpers/common";
 import { GeneratorContext } from "../base-generator/types";
 import { Identifier } from "../base-generator/expressions/common";
@@ -1311,6 +1312,37 @@ mocha.describe("Angular generator", function () {
             assert.strictEqual(
               expression.toString(),
               `import Component,{DxWidgetModule} from "./test-cases/declarations/src/empty-component"`
+            );
+          }
+        );
+
+        mocha.it(
+          "import named exported component statement should have import module",
+          function () {
+            const expression = generator.createImportDeclaration(
+              undefined,
+              undefined,
+              generator.createImportClause(
+                undefined,
+                generator.createNamedImports([
+                  generator.createImportSpecifier(
+                    undefined,
+                    generator.createIdentifier("Widget")
+                  ),
+                ])
+              ),
+              generator.createStringLiteral(
+                "./test-cases/declarations/src/export-named-api-ref"
+              )
+            );
+
+            assert.strictEqual(
+              generator.getContext().components?.["Widget"].name,
+              "Widget"
+            );
+            assertCode(
+              expression.toString(),
+              `import {Widget, DxWidgetModule} from "./test-cases/declarations/src/export-named-api-ref"`
             );
           }
         );

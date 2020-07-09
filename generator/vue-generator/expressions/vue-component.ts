@@ -405,16 +405,18 @@ export class VueComponent extends Component {
     });
 
     if (methods.length !== startMethodsLength) {
-      methods.push(`__scheduleEffect(index, name) {
-                  if(!this.__scheduleEffects[index]){
-                      this.__scheduleEffects[index]=()=>{
-                          this.__destroyEffects[index]&&this.__destroyEffects[index]();
-                          this.__destroyEffects[index]=this[name]();
-                          this.__scheduleEffects[index] = null;
-                      }
-                      this.$nextTick(()=>this.__scheduleEffects[index]&&this.__scheduleEffects[index]());
-                  }
-              }`);
+      methods.push(
+        `__scheduleEffect(index, name) {
+            if(!this.__scheduleEffects[index]){
+                this.__scheduleEffects[index]=()=>{
+                    this.__destroyEffects[index]&&this.__destroyEffects[index]();
+                    this.__destroyEffects[index]=this[name]();
+                    this.__scheduleEffects[index] = null;
+                }
+                this.$nextTick(()=>this.__scheduleEffects[index]&&this.__scheduleEffects[index]());
+            }
+        }`
+      );
     }
 
     const watchStatements = Object.keys(watches).map((k) => {
@@ -424,11 +426,9 @@ export class VueComponent extends Component {
     });
 
     if (watchStatements.length) {
-      return `
-                  watch: {
-                      ${watchStatements.join(",\n")}
-                  }
-              `;
+      return `watch: {
+                  ${watchStatements.join(",\n")}
+              }`;
     }
 
     return "";
