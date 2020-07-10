@@ -1929,17 +1929,17 @@ mocha.describe("Vue-generator", function () {
           );
 
           const elseStatement = generator.createPropertyAccess(
-            generator.createIdentifier("viewModel"),
+            generator.createPropertyAccess(
+              generator.createIdentifier("model"),
+              generator.createIdentifier("props")
+            ),
             generator.createIdentifier("value")
           );
 
-          const property = generator.createGetAccessor(
+          const property = generator.createProperty(
             [createDecorator("Template")],
             [],
-            generator.createIdentifier("template"),
-            [],
-            undefined,
-            undefined
+            generator.createIdentifier("template")
           );
 
           generator.createJsxExpression(
@@ -2022,7 +2022,10 @@ mocha.describe("Vue-generator", function () {
           );
 
           this.slotExpression = generator.createPropertyAccess(
-            generator.createIdentifier("viewModel"),
+            generator.createPropertyAccess(
+              generator.createIdentifier("viewModel"),
+              generator.createIdentifier("props")
+            ),
             generator.createIdentifier("children")
           );
 
@@ -2796,7 +2799,10 @@ mocha.describe("Vue-generator", function () {
       mocha.it("Template with condition", function () {
         const expression = generator.createJsxSelfClosingElement(
           generator.createPropertyAccess(
-            generator.createIdentifier("viewModel"),
+            generator.createPropertyAccess(
+              generator.createIdentifier("viewModel"),
+              generator.createIdentifier("props")
+            ),
             generator.createIdentifier("template")
           ),
           [],
@@ -2814,7 +2820,10 @@ mocha.describe("Vue-generator", function () {
               undefined,
               generator.createBinary(
                 generator.createPropertyAccess(
-                  generator.createIdentifier("viewModel"),
+                  generator.createPropertyAccess(
+                    generator.createIdentifier("viewModel"),
+                    generator.createIdentifier("props")
+                  ),
                   generator.createIdentifier("template")
                 ),
                 generator.SyntaxKind.AmpersandAmpersandToken,
@@ -2857,7 +2866,10 @@ mocha.describe("Vue-generator", function () {
             generator.createJsxExpression(
               undefined,
               generator.createPropertyAccess(
-                generator.createIdentifier("viewModel"),
+                generator.createPropertyAccess(
+                  generator.createIdentifier("viewModel"),
+                  generator.createIdentifier("props")
+                ),
                 generator.createIdentifier("children")
               )
             ),
@@ -2895,7 +2907,10 @@ mocha.describe("Vue-generator", function () {
             generator.createJsxExpression(
               undefined,
               generator.createPropertyAccess(
-                generator.createIdentifier("viewModel"),
+                generator.createPropertyAccess(
+                  generator.createIdentifier("viewModel"),
+                  generator.createIdentifier("props")
+                ),
                 generator.createIdentifier("slotName")
               )
             ),

@@ -37,7 +37,7 @@ import { JsxChildExpression } from "./jsx-child-expression";
 import { JsxElement } from "./elements";
 import { GeneratorContext } from "../../../base-generator/types";
 import { AngularComponent } from "../component";
-import { getExpression, counter } from "../../utils";
+import { getExpression, counter, getMember } from "../../utils";
 
 export function processTagName(tagName: Expression, context: GeneratorContext) {
   const component = context.components?.[tagName.toString()];
@@ -46,6 +46,10 @@ export function processTagName(tagName: Expression, context: GeneratorContext) {
     return new Identifier(selector);
   }
   return tagName;
+}
+
+function pickSpreadValue(first: string, second: string): string {
+  return `(${second}!==undefined?${second}:${first})`;
 }
 
 export class JsxOpeningElement extends BaseJsxOpeningElement {
@@ -126,10 +130,26 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         (a) =>
           a instanceof JsxAttribute && a.name.toString() === propName.toString()
       ) as JsxAttribute;
-      const attrValue = attr?.initializer.toString();
-      const value = attrValue
-        ? `(${spreadValue}!==undefined?${spreadValue}:${attrValue})`
-        : spreadValue;
+      let value = spreadValue;
+      if (attr) {
+        const spreadIndex = this.attributes.indexOf(spreadAttribute);
+        const attrIndex = this.attributes.indexOf(attr);
+        const attrValue = attr.initializer.toString(options);
+        const member = getMember(attr.initializer, options);
+        if (
+          member instanceof Method &&
+          !(member instanceof GetAccessor) &&
+          attrIndex > spreadIndex
+        ) {
+          value = attrValue;
+        } else {
+          if (spreadIndex < attrIndex) {
+            value = pickSpreadValue(spreadValue, attrValue);
+          } else {
+            value = pickSpreadValue(attrValue, spreadValue);
+          }
+        }
+      }
 
       acc.push(this.createJsxAttribute(propName, new SimpleExpression(value)));
       return acc;
