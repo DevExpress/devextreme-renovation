@@ -34,6 +34,7 @@ import { AsExpression } from "./expressions/as-expression";
 import { counter } from "./utils";
 import { GeneratorContext } from "../base-generator/types";
 import { AngularGeneratorContext } from "./types";
+import { NonNullExpression } from "./expressions/non-null-expression";
 
 export class AngularGenerator extends Generator {
   createJsxExpression(dotDotDotToken: string = "", expression?: Expression) {
@@ -245,6 +246,10 @@ export class AngularGenerator extends Generator {
 
   createAsExpression(expression: Expression, type: TypeExpression) {
     return new AsExpression(expression, type);
+  }
+
+  createNonNullExpression(expression: Expression) {
+    return new NonNullExpression(expression);
   }
 
   context: AngularGeneratorContext[] = [];
