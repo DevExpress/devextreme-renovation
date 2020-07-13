@@ -337,12 +337,29 @@ export class VueComponent extends Component {
     return "";
   }
 
+  generateComputed() {
+    const statements: string[] = this.methods
+      .filter((m) => m instanceof GetAccessor)
+      .map((m) =>
+        m.toString({
+          members: this.members,
+          componentContext: "this",
+          newComponentContext: "this",
+        })
+      );
+
+    return `computed: {
+              ${statements.join(",\n")}
+           }`;
+  }
+
   generateMethods(externalStatements: string[]) {
     const statements: string[] = [];
 
     statements.push.apply(
       statements,
       this.methods
+        .filter((m) => m instanceof Method && !(m instanceof GetAccessor))
         .concat(this.effects)
         .concat(this.members.filter((m) => m.isApiMethod) as Method[])
         .map((m) =>
@@ -375,9 +392,13 @@ export class VueComponent extends Component {
               }`);
     }
 
-    return `methods: {
-              ${statements.concat(externalStatements).join(",\n")}
-           }`;
+    if (statements.length || externalStatements.length) {
+      return `methods: {
+        ${statements.concat(externalStatements).join(",\n")}
+      }`;
+    }
+
+    return "";
   }
 
   generateWatch(methods: string[]) {
@@ -587,6 +608,7 @@ export class VueComponent extends Component {
       this.generateProps(),
       this.generateModel(),
       this.generateData(),
+      this.generateComputed(),
       this.generateWatch(methods),
       this.generateMethods(methods),
       this.generateBeforeCreate(),

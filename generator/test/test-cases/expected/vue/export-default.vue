@@ -9,14 +9,12 @@ const WidgetInput = {
 };
 export default {
   props: WidgetInput,
-  methods: {
+  computed: {
     __restAttributes() {
       return {};
     },
     props() {
-      return {
-        prop: this.prop,
-      };
+      return { prop: this.prop };
     },
   },
 };

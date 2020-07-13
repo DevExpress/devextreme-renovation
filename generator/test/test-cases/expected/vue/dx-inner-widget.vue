@@ -3,7 +3,7 @@
     v-bind:style="
       __processStyle({
         width: 100,
-        height: 100
+        height: 100,
       })
     "
   ></div>
@@ -32,7 +32,7 @@ export default {
       value_state: this.defaultValue,
     };
   },
-  methods: {
+  computed: {
     __restAttributes() {
       return {};
     },
@@ -44,6 +44,8 @@ export default {
         valueChange: this.valueChange,
       };
     },
+  },
+  methods: {
     __processStyle(value) {
       if (typeof value === "object") {
         return Object.keys(value).reduce((v, k) => {

@@ -69,7 +69,7 @@ export default {
       p2_state: this.defaultP2,
     };
   },
-  methods: {
+  computed: {
     __restAttributes() {
       return {};
     },
@@ -81,6 +81,8 @@ export default {
         p2Change: this.p2Change,
       };
     },
+  },
+  methods: {
     p1Change(...args) {
       this.$emit("update:p1", ...args);
     },

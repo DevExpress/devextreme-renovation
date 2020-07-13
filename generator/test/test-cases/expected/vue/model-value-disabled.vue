@@ -33,7 +33,7 @@ export default {
       notValue_state: this.defaultNotValue,
     };
   },
-  methods: {
+  computed: {
     __restAttributes() {
       return {};
     },
@@ -47,6 +47,8 @@ export default {
         notValueChange: this.notValueChange,
       };
     },
+  },
+  methods: {
     valueChange(...args) {
       this.$emit("update:value", ...args);
     },

@@ -8,19 +8,20 @@ const Props = {};
 
 export default {
   props: Props,
-
+  computed: {
+    __restAttributes() {
+      return {};
+    },
+    props() {
+      return { contentTemplate: this.$scopedSlots.contentTemplate };
+    },
+  },
   watch: {
     child: ["__schedule_effect"],
   },
   methods: {
-    __restAttributes() {
-      return {};
-    },
     forwardRef_child(ref) {
       this.$refs.child = ref;
-    },
-    props() {
-      return { contentTemplate: this.$scopedSlots.contentTemplate };
     },
     __effect() {
       this.$refs.child.innerHTML += "ParentText";

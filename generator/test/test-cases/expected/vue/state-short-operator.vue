@@ -24,6 +24,18 @@ export default {
       propState_state: this.defaultPropState,
     };
   },
+  computed: {
+    __restAttributes() {
+      return {};
+    },
+    props() {
+      return {
+        propState:
+          this.propState !== undefined ? this.propState : this.propState_state,
+        propStateChange: this.propStateChange,
+      };
+    },
+  },
   methods: {
     __updateState() {
       this.innerState = this.innerState + 1;
@@ -46,16 +58,6 @@ export default {
         (this.propState !== undefined ? this.propState : this.propState_state) +
         1),
         this.propStateChange(this.propState_state);
-    },
-    __restAttributes() {
-      return {};
-    },
-    props() {
-      return {
-        propState:
-          this.propState !== undefined ? this.propState : this.propState_state,
-        propStateChange: this.propStateChange,
-      };
     },
     propStateChange(...args) {
       this.$emit("update:prop-state", ...args);

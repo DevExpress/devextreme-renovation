@@ -7,6 +7,14 @@
 </template>
 <script>
 export default {
+  computed: {
+    __restAttributes() {
+      return {};
+    },
+    props() {
+      return {};
+    },
+  },
   methods: {
     __clickHandler() {
       const html =
@@ -14,12 +22,6 @@ export default {
     },
     __getHeight() {
       return this.$refs.divRef.outerHTML + this.$refs.nullableRef?.outerHTML;
-    },
-    __restAttributes() {
-      return {};
-    },
-    props() {
-      return {};
     },
   },
 };

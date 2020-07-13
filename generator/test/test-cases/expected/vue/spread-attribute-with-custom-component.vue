@@ -1,12 +1,9 @@
 <template>
   <InnerWidget
     :selected="false"
-    v-bind="{
-      ...__attr1(),
-      ...{ onSelect: undefined, valueChange: undefined },
-    }"
-    @select="__attr1().onSelect"
-    @update:value="__attr1().valueChange"
+    v-bind="{ ...__attr1, ...{ onSelect: undefined, valueChange: undefined } }"
+    @select="__attr1.onSelect"
+    @update:value="__attr1.valueChange"
   />
 </template>
 <script>
@@ -19,7 +16,7 @@ export default {
     InnerWidget,
   },
   props: WidgetInput,
-  methods: {
+  computed: {
     __attr1() {
       return { value: 100, selected: true };
     },

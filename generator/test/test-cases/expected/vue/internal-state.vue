@@ -8,15 +8,17 @@ export default {
       _hovered: false,
     };
   },
-  methods: {
-    __updateState() {
-      this._hovered = !this._hovered;
-    },
+  computed: {
     __restAttributes() {
       return {};
     },
     props() {
       return {};
+    },
+  },
+  methods: {
+    __updateState() {
+      this._hovered = !this._hovered;
     },
   },
 };

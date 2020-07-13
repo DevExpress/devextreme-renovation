@@ -16,14 +16,16 @@ const WidgetInput = {
 
 export default {
   props: WidgetInput,
-  methods: {
-    __onClick() {},
+  computed: {
     __restAttributes() {
       return {};
     },
     props() {
       return { p: this.p, height: this.height };
     },
+  },
+  methods: {
+    __onClick() {},
   },
 };
 </script>

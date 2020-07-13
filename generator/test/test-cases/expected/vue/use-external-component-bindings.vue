@@ -44,14 +44,12 @@ export default {
       return props;
     }, {});
   })(),
-  methods: {
+  computed: {
     __restAttributes() {
       return {};
     },
     props() {
-      return {
-        height: this.height,
-      };
+      return { height: this.height };
     },
   },
   beforeCreate() {

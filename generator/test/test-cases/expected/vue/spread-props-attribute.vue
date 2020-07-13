@@ -1,6 +1,6 @@
 <template>
   <InnerWidget
-    v-bind="{ ...props(), ...{ valueChange: undefined } }"
+    v-bind="{ ...props, ...{ valueChange: undefined } }"
     @update:value="valueChange"
   />
 </template>
@@ -34,7 +34,7 @@ export default {
       value_state: this.defaultValue,
     };
   },
-  methods: {
+  computed: {
     __restAttributes() {
       return {};
     },
@@ -45,6 +45,8 @@ export default {
         valueChange: this.valueChange,
       };
     },
+  },
+  methods: {
     valueChange(...args) {
       this.$emit("update:value", ...args);
     },

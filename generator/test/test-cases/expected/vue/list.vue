@@ -12,7 +12,7 @@ export const ListInput = {
 
 export default {
   props: ListInput,
-  methods: {
+  computed: {
     __restAttributes() {
       return {};
     },

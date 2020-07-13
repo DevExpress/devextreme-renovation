@@ -13,13 +13,15 @@ const WidgetInput = {
 
 export default {
   props: WidgetInput,
-  methods: {
+  computed: {
     __restAttributes() {
       return {};
     },
     props() {
       return { prop1: this.prop1, prop2: this.prop2 };
     },
+  },
+  methods: {
     getHeight(p = 10, p1) {
       return `${this.prop1} + ${this.prop2} + ${this.$refs.divRef.innerHTML} + ${p}`;
     },
