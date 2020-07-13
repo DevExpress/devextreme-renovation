@@ -107,6 +107,7 @@ import {
   ExportSpecifier,
   NamedExports,
 } from "./expressions/export";
+import { Enum, EnumMember } from "./expressions/enum";
 
 export default class Generator implements GeneratorAPI {
   NodeFlags = {
@@ -428,6 +429,19 @@ export default class Generator implements GeneratorAPI {
 
   createSpreadAssignment(expression: Expression) {
     return new SpreadAssignment(expression);
+  }
+
+  createEnumMember(name: Identifier, initializer: Expression) {
+    return new EnumMember(name, initializer);
+  }
+
+  createEnumDeclaration(
+    decorators: Decorator[] | undefined,
+    modifiers: string[] | undefined,
+    name: Identifier,
+    members: EnumMember[]
+  ) {
+    return new Enum(decorators, modifiers, name, members);
   }
 
   createTypeReferenceNode(

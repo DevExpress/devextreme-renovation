@@ -2607,6 +2607,45 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
   });
+
+  mocha.describe("Enum", function () {
+    mocha.it("member", function () {
+      const result = generator.createEnumMember(
+        generator.createIdentifier("E1"),
+        new SimpleExpression("'test'")
+      );
+
+      assert.equal(result.toString(), "E1='test'");
+    });
+
+    mocha.it("declaration", function () {
+      const result = generator.createEnumDeclaration(
+        [],
+        ["export"],
+        generator.createIdentifier("MyEnum"),
+        [
+          generator.createEnumMember(
+            generator.createIdentifier("E1"),
+            new SimpleExpression("'test1'")
+          ),
+          generator.createEnumMember(
+            generator.createIdentifier("E2"),
+            new SimpleExpression("'test2'")
+          ),
+        ]
+      );
+
+      assert.strictEqual(
+        getAst(result.toString()),
+        getAst(`
+          export enum MyEnum {
+            E1='test1',
+            E2='test2',
+          }
+        `)
+      );
+    });
+  });
 });
 
 mocha.describe("common", function () {
