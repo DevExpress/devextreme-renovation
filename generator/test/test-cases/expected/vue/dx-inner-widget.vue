@@ -3,7 +3,7 @@
     v-bind:style="
       __processStyle({
         width: 100,
-        height: 100,
+        height: 100
       })
     "
   ></div>
