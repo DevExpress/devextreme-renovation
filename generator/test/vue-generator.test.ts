@@ -873,6 +873,21 @@ mocha.describe("Vue-generator", function () {
       );
     });
 
+    mocha.it("Parameter with spread", function () {
+      const parameter = generator.createParameter(
+        [],
+        [],
+        "...",
+        generator.createIdentifier("a"),
+        undefined,
+        generator.createKeywordTypeNode("object[]"),
+        undefined
+      );
+
+      assert.equal(parameter.toString(), "...a");
+      assert.equal(parameter.typeDeclaration(), "a:any");
+    });
+
     mocha.it("GetAccessor", function () {
       const expression = generator.createGetAccessor(
         [createDecorator("SomeDecorator")],

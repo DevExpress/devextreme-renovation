@@ -23,10 +23,14 @@ export function variableDeclaration(
   name: Identifier | BindingPattern,
   type: string = "",
   initializer?: Expression,
-  questionToken: string = ""
+  questionToken: string = "",
+  dotDotDotToken: string = ""
 ): string {
   const initializerDeclaration = initializer ? `=${initializer}` : "";
-  return `${name}${compileType(type, questionToken)}${initializerDeclaration}`;
+  return `${dotDotDotToken}${name}${compileType(
+    type,
+    questionToken
+  )}${initializerDeclaration}`;
 }
 
 export function processComponentContext(componentContext: string = "") {

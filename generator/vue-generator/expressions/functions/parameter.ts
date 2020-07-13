@@ -7,7 +7,8 @@ export class Parameter extends BaseParameter {
       this.name,
       undefined,
       this.initializer,
-      undefined
+      undefined,
+      this.dotDotDotToken
     );
   }
 }
