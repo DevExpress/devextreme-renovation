@@ -560,7 +560,7 @@ import { _Component_, viewFunction as _Component_Component } from '<path>';
 describe('_Component_', () => {
   describe('View', () => {
     it('render props', () => {
-      const props = { props: {} } as _Component_;
+      const props = { props: {} } as Partial<_Component_>;
       const tree = shallow(<_Component_Component {...props as any} /> as any);
     });
   });
