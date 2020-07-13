@@ -226,7 +226,7 @@ export class VueGenerator extends BaseGenerator {
   createParameter(
     decorators: Decorator[] = [],
     modifiers: string[] = [],
-    dotDotDotToken: any,
+    dotDotDotToken: string | undefined,
     name: Identifier | BindingPattern,
     questionToken?: string,
     type?: TypeExpression,

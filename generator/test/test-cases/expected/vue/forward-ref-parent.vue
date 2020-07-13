@@ -24,22 +24,23 @@ export default {
       state: 10,
     };
   },
-
+  computed: {
+    __restAttributes() {
+      return {};
+    },
+    props() {
+      return { nullableRef: this.$refs.nullableRef };
+    },
+  },
   watch: {
     nullableRef: ["__schedule_effect"],
   },
   methods: {
-    __restAttributes() {
-      return {};
-    },
     forwardRef_child(ref) {
       this.$refs.child = ref;
     },
     forwardRef_nullableRef(ref) {
       this.$refs.nullableRef = ref;
-    },
-    props() {
-      return { nullableRef: this.$refs.nullableRef };
     },
     __effect() {
       this.$refs.child.innerHTML = "Ref from child";

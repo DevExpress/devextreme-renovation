@@ -42,6 +42,19 @@ export default {
       s_state: this.defaultS,
     };
   },
+  computed: {
+    __restAttributes() {
+      return {};
+    },
+    props() {
+      return {
+        p: this.p,
+        r: this.r,
+        s: this.s !== undefined ? this.s : this.s_state,
+        sChange: this.sChange,
+      };
+    },
+  },
 
   watch: {
     p: ["__schedule_setupData", "__schedule_alwaysEffect"],
@@ -56,17 +69,6 @@ export default {
   methods: {
     __getP() {
       return this.p;
-    },
-    __restAttributes() {
-      return {};
-    },
-    props() {
-      return {
-        p: this.p,
-        r: this.r,
-        s: this.s !== undefined ? this.s : this.s_state,
-        sChange: this.sChange,
-      };
     },
     __setupData() {
       const id = subscribe(

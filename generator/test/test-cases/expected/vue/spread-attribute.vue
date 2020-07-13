@@ -1,7 +1,7 @@
 <template>
-  <div ref="host" v-bind="__attr1()">
-    <input v-bind="__attr2()" />
-    <input ref="i1" v-bind="__attr2()" />
+  <div ref="host" v-bind="__attr1">
+    <input v-bind="__attr2" />
+    <input ref="i1" v-bind="__attr2" />
   </div>
 </template>
 <script>
@@ -9,7 +9,7 @@ export const WidgetInput = {};
 
 export default {
   props: WidgetInput,
-  methods: {
+  computed: {
     __attr1() {
       return {};
     },

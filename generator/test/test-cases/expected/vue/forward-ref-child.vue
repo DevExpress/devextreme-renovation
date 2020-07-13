@@ -19,15 +19,9 @@ const Props = {
 
 export default {
   props: Props,
-  methods: {
+  computed: {
     __restAttributes() {
       return {};
-    },
-    forwardRef_childRef(ref) {
-      this.$refs.childRef = ref;
-    },
-    forwardRef_nullableRef(ref) {
-      this.$refs.nullableRef = ref;
     },
     props() {
       return {
@@ -35,6 +29,14 @@ export default {
         nullableRef: this.$refs.nullableRef,
         state: this.state,
       };
+    },
+  },
+  methods: {
+    forwardRef_childRef(ref) {
+      this.$refs.childRef = ref;
+    },
+    forwardRef_nullableRef(ref) {
+      this.$refs.nullableRef = ref;
     },
     __forwardRef() {
       this.childRef(this.$refs.childRef);

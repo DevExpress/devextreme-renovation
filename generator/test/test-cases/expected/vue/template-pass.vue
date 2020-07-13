@@ -25,7 +25,7 @@ export default {
     InnerWidget,
   },
   props: WidgetProps,
-  methods: {
+  computed: {
     __restAttributes() {
       return {};
     },

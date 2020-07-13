@@ -6,10 +6,4 @@ export class GetAccessor extends BaseGetAccessor {
   toString(options?: toStringOptions): string {
     return compileMethod(this, options);
   }
-
-  getter(componentContext?: string) {
-    return `${this.processComponentContext(
-      componentContext
-    )}${super.getter()}()`;
-  }
 }

@@ -1085,6 +1085,21 @@ mocha.describe("base-generator: expressions", function () {
         assert.equal(parameter.toString(), 'a?:string="str"');
         assert.equal(parameter.typeDeclaration(), "a?:string");
       });
+
+      mocha.it("Parameter with spread", function () {
+        const parameter = generator.createParameter(
+          [],
+          [],
+          "...",
+          generator.createIdentifier("a"),
+          undefined,
+          generator.createKeywordTypeNode("object[]"),
+          undefined
+        );
+
+        assert.equal(parameter.toString(), "...a:object[]");
+        assert.equal(parameter.typeDeclaration(), "a:object[]");
+      });
     });
   });
 

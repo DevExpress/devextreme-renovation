@@ -14,12 +14,7 @@ const WidgetInput = {
 
 export default {
   props: WidgetInput,
-  methods: {
-    __getColumns() {
-      return (
-        this.columns || this.__getNestedFromChild("DxColumn")
-      )?.map((el) => (typeof el === "string" ? el : el.name));
-    },
+  computed: {
     __isEditable() {
       return (
         this.gridEditing || this.__getNestedFromChild("DxGridEditing")?.[0]
@@ -28,11 +23,6 @@ export default {
     __restAttributes() {
       return {};
     },
-    __getNestedFromChild(typeName) {
-      const children = this.$options._renderChildren || [],
-        nestedComponents = children.filter((child) => child.tag === typeName);
-      return nestedComponents.map((child) => child.data?.attrs || {});
-    },
     props() {
       return {
         columns: this.columns || this.__getNestedFromChild("DxColumn"),
@@ -40,6 +30,18 @@ export default {
           this.gridEditing || this.__getNestedFromChild("DxGridEditing")?.[0],
         someArray: this.someArray || this.__getNestedFromChild("DxSomeArray"),
       };
+    },
+  },
+  methods: {
+    __getColumns() {
+      return (
+        this.columns || this.__getNestedFromChild("DxColumn")
+      )?.map((el) => (typeof el === "string" ? el : el.name));
+    },
+    __getNestedFromChild(typeName) {
+      const children = this.$options._renderChildren || [],
+        nestedComponents = children.filter((child) => child.tag === typeName);
+      return nestedComponents.map((child) => child.data?.attrs || {});
     },
   },
 };

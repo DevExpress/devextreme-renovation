@@ -13,14 +13,7 @@ const WidgetInput = {
 
 export default {
   props: WidgetInput,
-  methods: {
-    __getHeight() {
-      this.onClick(10);
-
-      this.onClick(11);
-      return this.height;
-    },
-
+  computed: {
     __restAttributes() {
       return {};
     },
@@ -29,6 +22,14 @@ export default {
         height: this.height,
         onClick: this.onClick,
       };
+    },
+  },
+  methods: {
+    __getHeight() {
+      this.onClick(10);
+
+      this.onClick(11);
+      return this.height;
     },
     onClick(...args) {
       this.$emit("click", ...args);

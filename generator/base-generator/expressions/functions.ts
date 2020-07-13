@@ -19,7 +19,7 @@ import { Property } from "./class-members";
 export class Parameter {
   decorators: Decorator[];
   modifiers: string[];
-  dotDotDotToken: any;
+  dotDotDotToken: string;
   name: Identifier | BindingPattern;
   questionToken: string;
   type?: TypeExpression | string;
@@ -27,7 +27,7 @@ export class Parameter {
   constructor(
     decorators: Decorator[],
     modifiers: string[],
-    dotDotDotToken: any,
+    dotDotDotToken: string = "",
     name: Identifier | BindingPattern,
     questionToken: string = "",
     type?: TypeExpression | string,
@@ -56,7 +56,8 @@ export class Parameter {
       this.name,
       this.type?.toString(),
       this.initializer,
-      this.questionToken
+      this.questionToken,
+      this.dotDotDotToken
     );
   }
 }
