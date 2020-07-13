@@ -20,18 +20,20 @@ export default {
     WidgetWithRefProp,
   },
   props: WidgetInput,
+  computed: {
+    __restAttributes() {
+      return {};
+    },
+    props() {
+      return { nullableRef: this.nullableRef() };
+    },
+  },
   methods: {
     __getSize() {
       return this.$refs.divRef.outerHTML + this.nullableRef()?.outerHTML;
     },
     __getNullable() {
       return this.nullableRef()?.outerHTML;
-    },
-    __restAttributes() {
-      return {};
-    },
-    props() {
-      return { nullableRef: this.nullableRef() };
     },
   },
 };

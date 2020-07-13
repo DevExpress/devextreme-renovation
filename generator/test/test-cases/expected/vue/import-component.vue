@@ -18,10 +18,7 @@ export default {
     Base,
   },
   props: ChildInput,
-  methods: {
-    __getProps() {
-      return { height: this.height };
-    },
+  computed: {
     __restAttributes() {
       return {};
     },
@@ -32,6 +29,11 @@ export default {
         width: this.width,
         children: this.$slots.default,
       };
+    },
+  },
+  methods: {
+    __getProps() {
+      return { height: this.height };
     },
     onClick(...args) {
       this.$emit("click", ...args);

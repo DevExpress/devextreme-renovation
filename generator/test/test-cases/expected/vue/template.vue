@@ -17,7 +17,7 @@ export const WidgetInput = {};
 
 export default {
   props: WidgetInput,
-  methods: {
+  computed: {
     __restAttributes() {
       return {};
     },

@@ -40,7 +40,7 @@ export default {
       value_state: this.defaultValue,
     };
   },
-  methods: {
+  computed: {
     __restAttributes() {
       return {};
     },
@@ -60,6 +60,8 @@ export default {
         valueChange: this.valueChange,
       };
     },
+  },
+  methods: {
     baseStatePropChange(...args) {
       this.$emit("update:base-state-prop", ...args);
     },

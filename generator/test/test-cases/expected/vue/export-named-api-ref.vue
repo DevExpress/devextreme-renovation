@@ -6,13 +6,15 @@ const WidgetInput = {};
 
 export const Widget = {
   props: WidgetInput,
-  methods: {
+  computed: {
     __restAttributes() {
       return {};
     },
     props() {
       return {};
     },
+  },
+  methods: {
     getValue() {
       return 0;
     },

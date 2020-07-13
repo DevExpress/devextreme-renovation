@@ -1,6 +1,7 @@
 <template>
   <div>
     {{(state1 !== undefined ? state1 : state1_state)
+
     }}<BaseState @update:base-state-prop="__stateChange"></BaseState>
   </div>
 </template>
@@ -47,6 +48,22 @@ export default {
       stateProp_state: this.defaultStateProp,
     };
   },
+  computed: {
+    __restAttributes() {
+      return {};
+    },
+    props() {
+      return {
+        state1: this.state1 !== undefined ? this.state1 : this.state1_state,
+        state2: this.state2 !== undefined ? this.state2 : this.state2_state,
+        stateProp:
+          this.stateProp !== undefined ? this.stateProp : this.stateProp_state,
+        state1Change: this.state1Change,
+        state2Change: this.state2Change,
+        statePropChange: this.statePropChange,
+      };
+    },
+  },
   methods: {
     __updateState() {
       (this.state1_state = !(this.state1 !== undefined
@@ -65,20 +82,6 @@ export default {
     __stateChange(stateProp) {
       (this.stateProp_state = stateProp),
         this.statePropChange(this.stateProp_state);
-    },
-    __restAttributes() {
-      return {};
-    },
-    props() {
-      return {
-        state1: this.state1 !== undefined ? this.state1 : this.state1_state,
-        state2: this.state2 !== undefined ? this.state2 : this.state2_state,
-        stateProp:
-          this.stateProp !== undefined ? this.stateProp : this.stateProp_state,
-        state1Change: this.state1Change,
-        state2Change: this.state2Change,
-        statePropChange: this.statePropChange,
-      };
     },
     state1Change(...args) {
       this.$emit("update:state1", ...args);

@@ -1,10 +1,10 @@
 <template>
   <div>
     <template v-if="loading">
-      <div>{{ __loadingProps().text }}</div>
+      <div>{{ __loadingProps.text }}</div>
     </template>
     <template v-else>
-      <span>{{ "" + greetings + " " + __name() + "" }}</span>
+      <span>{{ "" + greetings + " " + __name + "" }}</span>
     </template>
   </div>
 </template>
@@ -27,7 +27,7 @@ export const WidgetInput = {
 
 export default {
   props: WidgetInput,
-  methods: {
+  computed: {
     __loadingProps() {
       return { text: "Loading..." };
     },
@@ -38,10 +38,7 @@ export default {
       return {};
     },
     props() {
-      return {
-        loading: this.loading,
-        greetings: this.greetings,
-      };
+      return { loading: this.loading, greetings: this.greetings };
     },
   },
 };

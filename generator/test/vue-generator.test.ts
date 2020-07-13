@@ -906,8 +906,8 @@ mocha.describe("Vue-generator", function () {
         ),
         getAst("m(){}")
       );
-      assert.strictEqual(expression.getter(), "m()");
-      assert.strictEqual(expression.getter("this"), "this.m()");
+      assert.strictEqual(expression.getter(), "m");
+      assert.strictEqual(expression.getter("this"), "this.m");
     });
   });
 
@@ -1868,7 +1868,7 @@ mocha.describe("Vue-generator", function () {
               })
             ),
             removeSpaces(
-              `<input :a="_value()" v-if="condition"/>\n<input :a="_value()" v-else/>`
+              `<input :a="_value" v-if="condition"/>\n<input :a="_value" v-else/>`
             )
           );
         }
@@ -1928,7 +1928,7 @@ mocha.describe("Vue-generator", function () {
               })
             ),
             removeSpaces(
-              `<template v-if="condition">{{_value()}}</template><template v-else>{{!_value()}}</template>`
+              `<template v-if="condition">{{_value}}</template><template v-else>{{!_value}}</template>`
             )
           );
         }

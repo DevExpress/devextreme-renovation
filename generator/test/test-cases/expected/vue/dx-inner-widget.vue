@@ -32,7 +32,7 @@ export default {
       value_state: this.defaultValue,
     };
   },
-  methods: {
+  computed: {
     __restAttributes() {
       return {};
     },
@@ -44,6 +44,8 @@ export default {
         valueChange: this.valueChange,
       };
     },
+  },
+  methods: {
     __processStyle(value) {
       if (typeof value === "object") {
         return Object.keys(value).reduce((v, k) => {

@@ -28,15 +28,7 @@ export default {
       selected_state: this.defaultSelected,
     };
   },
-  methods: {
-    __getHeight() {
-      const { height } = this.props();
-      const { height: _height } = this.props();
-      return height + _height;
-    },
-    __getProps() {
-      return this.props();
-    },
+  computed: {
     __restAttributes() {
       return {};
     },
@@ -47,6 +39,16 @@ export default {
           this.selected !== undefined ? this.selected : this.selected_state,
         selectedChange: this.selectedChange,
       };
+    },
+  },
+  methods: {
+    __getHeight() {
+      const { height } = this.props;
+      const { height: _height } = this.props;
+      return height + _height;
+    },
+    __getProps() {
+      return this.props;
     },
     selectedChange(...args) {
       this.$emit("update:selected", ...args);

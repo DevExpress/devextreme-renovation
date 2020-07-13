@@ -54,22 +54,19 @@ export default {
       return props;
     }, {});
   })(),
-  methods: {
+  computed: {
     __getHeight() {
       return this.size.height;
     },
     __type() {
-      const { type } = this.props();
+      const { type } = this.props;
       return type;
     },
     __restAttributes() {
       return {};
     },
     props() {
-      return {
-        size: this.size,
-        type: this.type,
-      };
+      return { size: this.size, type: this.type };
     },
   },
   beforeCreate() {

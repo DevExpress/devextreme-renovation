@@ -43,7 +43,7 @@ export default {
       return props;
     }, {});
   })(),
-  methods: {
+  computed: {
     __restAttributes() {
       return {};
     },
