@@ -56,7 +56,8 @@ export class Parameter {
       this.name,
       this.type?.toString(),
       this.initializer,
-      this.questionToken
+      this.questionToken,
+      this.dotDotDotToken
     );
   }
 }
