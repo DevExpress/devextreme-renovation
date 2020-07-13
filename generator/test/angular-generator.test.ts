@@ -5709,7 +5709,69 @@ mocha.describe("Angular generator", function () {
       );
     });
 
-    mocha.it("empty expression", function () {
+    mocha.describe("NonNullExpression", function () {
+      mocha.it(
+        "NonNullExpression with this context - expression!",
+        function () {
+          const prop = generator.createProperty(
+            [createDecorator(Decorators.OneWay)],
+            [],
+            generator.createIdentifier("p")
+          );
+          const expression = generator.createNonNullExpression(
+            generator.createPropertyAccess(
+              generator.createThis(),
+              generator.createIdentifier("p")
+            )
+          );
+
+          assert.strictEqual(
+            expression.toString({
+              members: [prop],
+              componentContext: "this",
+              newComponentContext: "",
+            }),
+            "p!"
+          );
+        }
+      );
+
+      mocha.it("without options - expression!", function () {
+        const expression = generator.createNonNullExpression(
+          generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("p")
+          )
+        );
+
+        assert.strictEqual(expression.toString(), "this.p!");
+      });
+
+      mocha.it("with non-this context - expression", function () {
+        const prop = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("p")
+        );
+        const expression = generator.createNonNullExpression(
+          generator.createPropertyAccess(
+            generator.createIdentifier("viewModel"),
+            generator.createIdentifier("p")
+          )
+        );
+
+        assert.strictEqual(
+          expression.toString({
+            members: [prop],
+            componentContext: "viewModel",
+            newComponentContext: "",
+          }),
+          "p"
+        );
+      });
+    });
+
+    mocha.it("empty jsx expression", function () {
       const expression = generator.createJsxElement(
         generator.createJsxOpeningElement(generator.createIdentifier("div")),
         [generator.createJsxExpression(undefined, undefined)],
