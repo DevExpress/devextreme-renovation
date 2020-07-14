@@ -9,6 +9,12 @@ const WidgetInput = {
       return 10;
     },
   },
+  export: {
+    type: Object,
+    default() {
+      return {};
+    },
+  },
 };
 
 export default {
@@ -20,6 +26,7 @@ export default {
     props() {
       return {
         height: this.height,
+        export: this.export,
         onClick: this.onClick,
       };
     },
