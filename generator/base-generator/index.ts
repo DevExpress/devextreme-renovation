@@ -98,6 +98,7 @@ import { ExpressionWithTypeArguments } from "./expressions/type";
 import { getModuleRelativePath, resolveModule } from "./utils/path-utils";
 import { Decorator } from "./expressions/decorator";
 import { Interface } from "./expressions/interface";
+import { Throw } from "./expressions/throw";
 import { Decorators } from "../component_declaration/decorators";
 import { TypeParameterDeclaration } from "./expressions/type-parameter-declaration";
 import prettier from "prettier";
@@ -253,6 +254,10 @@ export default class Generator implements GeneratorAPI {
 
   createSuper() {
     return new SimpleExpression(this.SyntaxKind.SuperKeyword);
+  }
+
+  createThrow(expression: Expression) {
+    return new Throw(expression);
   }
 
   createBreak(label?: string | Identifier) {

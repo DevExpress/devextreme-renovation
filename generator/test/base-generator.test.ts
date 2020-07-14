@@ -164,6 +164,32 @@ mocha.describe("base-generator: expressions", function () {
 
       assert.strictEqual(expression.toString(), "this as any");
     });
+
+    mocha.it("Throw", function () {
+      const property = generator.createProperty(
+        [createDecorator(Decorators.OneWay)],
+        [],
+        generator.createIdentifier("p")
+      );
+
+      const expression = generator.createThrow(
+        generator.createPropertyAccess(
+          generator.createThis(),
+          generator.createIdentifier("p")
+        )
+      );
+
+      assert.strictEqual(
+        expression.toString({
+          componentContext: generator.SyntaxKind.ThisKeyword,
+          newComponentContext: "",
+          members: [property],
+        }),
+        "throw p"
+      );
+
+      assert.deepEqual(expression.getDependency(), ["p"]);
+    });
   });
 
   mocha.describe("literal expressions", function () {
