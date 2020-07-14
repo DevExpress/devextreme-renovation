@@ -8,7 +8,6 @@ import { toStringOptions } from "../angular-generator/types";
 import { Decorators } from "../component_declaration/decorators";
 import { VueComponent } from "../vue-generator/expressions/vue-component";
 import { JsxExpression } from "../vue-generator/expressions/jsx/jsx-expression";
-import { SimpleExpression } from "../base-generator/expressions/base";
 
 const {
   createDecorator,
@@ -230,16 +229,16 @@ mocha.describe("Vue-generator", function () {
       mocha.it("member", function () {
         const result = generator.createEnumMember(
           generator.createIdentifier("E1"),
-          new SimpleExpression("'test'")
+          generator.createStringLiteral("test")
         );
 
-        assert.equal(result.toString(), "E1:'test'");
+        assert.equal(result.toString(), 'E1:"test"');
       });
 
       mocha.it("declaration", function () {
         const result = generator.createEnumDeclaration(
           [],
-          ["export"],
+          ["export", "default"],
           generator.createIdentifier("MyEnum"),
           [
             generator.createEnumMember(generator.createIdentifier("E1")),
@@ -262,7 +261,7 @@ mocha.describe("Vue-generator", function () {
         assert.strictEqual(
           getAst(result.toString()),
           getAst(`
-            export const MyEnum = {
+            export default const MyEnum = {
               E1:0,
               E2:"test1",
               E3:"test2",
@@ -270,6 +269,20 @@ mocha.describe("Vue-generator", function () {
               E5:11
             }
           `)
+        );
+      });
+
+      mocha.it("empty declaration", function () {
+        const result = generator.createEnumDeclaration(
+          undefined,
+          undefined,
+          generator.createIdentifier("MyEnum"),
+          []
+        );
+
+        assert.strictEqual(
+          getAst(result.toString()),
+          getAst("const MyEnum = {}")
         );
       });
     });

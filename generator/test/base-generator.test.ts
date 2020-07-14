@@ -2627,16 +2627,16 @@ mocha.describe("base-generator: expressions", function () {
     mocha.it("member", function () {
       const result = generator.createEnumMember(
         generator.createIdentifier("E1"),
-        new SimpleExpression("'test'")
+        generator.createStringLiteral("test")
       );
 
-      assert.equal(result.toString(), "E1='test'");
+      assert.equal(result.toString(), 'E1="test"');
     });
 
     mocha.it("declaration", function () {
       const result = generator.createEnumDeclaration(
         [],
-        ["export"],
+        ["export", "default"],
         generator.createIdentifier("MyEnum"),
         [
           generator.createEnumMember(generator.createIdentifier("E1")),
@@ -2659,7 +2659,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(
         getAst(result.toString()),
         getAst(`
-          export enum MyEnum {
+          export default enum MyEnum {
             E1,
             E2="test1",
             E3="test2",
@@ -2668,6 +2668,17 @@ mocha.describe("base-generator: expressions", function () {
           }
         `)
       );
+    });
+
+    mocha.it("empty declaration", function () {
+      const result = generator.createEnumDeclaration(
+        undefined,
+        undefined,
+        generator.createIdentifier("MyEnum"),
+        []
+      );
+
+      assert.strictEqual(getAst(result.toString()), getAst("enum MyEnum {}"));
     });
   });
 });
