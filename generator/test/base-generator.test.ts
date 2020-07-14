@@ -194,7 +194,17 @@ mocha.describe("base-generator: expressions", function () {
 
   mocha.describe("literal expressions", function () {
     mocha.it("createStringLiteral", function () {
-      assert.strictEqual(generator.createStringLiteral("a").toString(), '"a"');
+      assert.strictEqual(generator.createStringLiteral("a").toString(), `"a"`);
+      assert.strictEqual(
+        generator.createStringLiteral('"a"').toString(),
+        `"\\"a\\""`,
+        "double quote in string"
+      );
+      assert.strictEqual(
+        generator.createStringLiteral('"a"').toString(),
+        `"\\"a\\""`,
+        "double quote with backslash in string"
+      );
     });
 
     mocha.it("createNumericLiteral", function () {
