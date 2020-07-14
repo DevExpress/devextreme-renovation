@@ -624,7 +624,15 @@ export class ReactComponent extends Component {
     const props = getProps(members);
     const bindingElements = props
       .reduce((bindingElements, p) => {
-        bindingElements.push(new BindingElement(undefined, undefined, p._name));
+        if (p._name.toString() === "export") {
+          bindingElements.push(
+            new BindingElement(undefined, p._name, "exportProp")
+          );
+        } else {
+          bindingElements.push(
+            new BindingElement(undefined, undefined, p._name)
+          );
+        }
         return bindingElements;
       }, [] as BindingElement[])
       .concat([

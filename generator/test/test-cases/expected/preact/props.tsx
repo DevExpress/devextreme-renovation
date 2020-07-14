@@ -1,17 +1,21 @@
 function view(model: Widget) {
   return <span></span>;
 }
+
 export declare type WidgetInputType = {
   height: number;
+  export: object;
   onClick: (a: number) => null;
 };
 const WidgetInput: WidgetInputType = {
   height: 10,
+  export: {},
   onClick: () => null,
 };
 
 import * as Preact from "preact";
 import { useCallback } from "preact/hooks";
+
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
@@ -35,11 +39,12 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { height, onClick, ...restProps } = props;
+      const { export: exportProp, height, onClick, ...restProps } = props;
       return restProps;
     },
     [props]
   );
+
   return view({
     props: { ...props },
     getHeight,
