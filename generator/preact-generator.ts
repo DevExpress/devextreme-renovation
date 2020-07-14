@@ -239,15 +239,15 @@ class JQueryComponent {
 
   compileEventMap() {
     const statements = this.source.props.reduce((r: string[], p) => {
-      const actionConfig =
-        p.isEvent &&
-        p.decorators
+      if(p.isEvent
+        && !this.source.state.find((s) => `${s.name}Change` === p.name)
+        && p.name !== "onKeyDown") {
+        const actionConfig = p.decorators
           .find((d) => d.name === "Event")!
-          .getParameter("actionConfig");
-      if (actionConfig) {
-        r.push(`${p.name}: ${actionConfig as ObjectLiteral}`);
-      }
+          .getParameter("actionConfig");  
 
+        r.push(`${p.name}: ${actionConfig as ObjectLiteral || "{}"}`);
+      }
       return r;
     }, []);
 

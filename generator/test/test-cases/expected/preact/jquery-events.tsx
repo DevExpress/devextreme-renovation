@@ -13,8 +13,9 @@ export default class Widget extends BaseComponent {
 
   _getActionConfigs() {
     return {
+      onEventWithoutConfig: {},
       onEventWithConfig: { someAction: "config" },
-      onEventWithEmptyConfig: {},
+      onEventWithEmptyConfig: {}
     };
   }
 
