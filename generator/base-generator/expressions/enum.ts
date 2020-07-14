@@ -3,15 +3,18 @@ import { Identifier } from "./common";
 import { Expression } from "./base";
 
 export class EnumMember {
-  name: Identifier;
-  initializer: Expression;
-  constructor(name: Identifier, initializer: Expression) {
+  name: Expression;
+  initializer?: Expression;
+
+  constructor(name: Expression, initializer?: Expression) {
     this.name = name;
     this.initializer = initializer;
   }
 
   toString() {
-    return `${this.name}=${this.initializer}`;
+    return this.initializer
+      ? `${this.name}=${this.initializer}`
+      : `${this.name}`;
   }
 }
 
@@ -20,6 +23,7 @@ export class Enum {
   modifiers: string[];
   name: Identifier;
   members: EnumMember[];
+
   constructor(
     decorators: Decorator[] = [],
     modifiers: string[] = [],
@@ -34,7 +38,7 @@ export class Enum {
 
   toString() {
     return `${this.modifiers.join(" ")} enum ${this.name} {
-            ${this.members.join(",\n")}
-        }`;
+        ${this.members.join(",\n")}
+    }`;
   }
 }

@@ -2639,14 +2639,20 @@ mocha.describe("base-generator: expressions", function () {
         ["export"],
         generator.createIdentifier("MyEnum"),
         [
-          generator.createEnumMember(
-            generator.createIdentifier("E1"),
-            new SimpleExpression("'test1'")
-          ),
+          generator.createEnumMember(generator.createIdentifier("E1")),
           generator.createEnumMember(
             generator.createIdentifier("E2"),
-            new SimpleExpression("'test2'")
+            generator.createStringLiteral("test1")
           ),
+          generator.createEnumMember(
+            generator.createIdentifier("E3"),
+            generator.createStringLiteral("test2")
+          ),
+          generator.createEnumMember(
+            generator.createIdentifier("E4"),
+            generator.createNumericLiteral("10")
+          ),
+          generator.createEnumMember(generator.createIdentifier("E5")),
         ]
       );
 
@@ -2654,8 +2660,11 @@ mocha.describe("base-generator: expressions", function () {
         getAst(result.toString()),
         getAst(`
           export enum MyEnum {
-            E1='test1',
-            E2='test2',
+            E1,
+            E2="test1",
+            E3="test2",
+            E4=10,
+            E5,
           }
         `)
       );

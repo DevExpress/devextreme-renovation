@@ -431,7 +431,7 @@ export default class Generator implements GeneratorAPI {
     return new SpreadAssignment(expression);
   }
 
-  createEnumMember(name: Identifier, initializer: Expression) {
+  createEnumMember(name: Identifier, initializer?: Expression) {
     return new EnumMember(name, initializer);
   }
 
