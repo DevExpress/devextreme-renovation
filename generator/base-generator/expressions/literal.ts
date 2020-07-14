@@ -14,7 +14,9 @@ export class StringLiteral extends SimpleExpression {
     this.quoteSymbol = quoteSymbol;
   }
   toString() {
-    return `${this.quoteSymbol}${this.expression}${this.quoteSymbol}`;
+    return `${this.quoteSymbol}${this.expression.replace(/"/g, '\\"')}${
+      this.quoteSymbol
+    }`;
   }
   valueOf() {
     return this.expression;
