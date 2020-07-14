@@ -2658,6 +2658,65 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
   });
+
+  mocha.describe("Enum", function () {
+    mocha.it("member", function () {
+      const result = generator.createEnumMember(
+        generator.createIdentifier("E1"),
+        generator.createStringLiteral("test")
+      );
+
+      assert.equal(result.toString(), 'E1="test"');
+    });
+
+    mocha.it("declaration", function () {
+      const result = generator.createEnumDeclaration(
+        [],
+        ["export", "default"],
+        generator.createIdentifier("MyEnum"),
+        [
+          generator.createEnumMember(generator.createIdentifier("E1")),
+          generator.createEnumMember(
+            generator.createIdentifier("E2"),
+            generator.createStringLiteral("test1")
+          ),
+          generator.createEnumMember(
+            generator.createIdentifier("E3"),
+            generator.createStringLiteral("test2")
+          ),
+          generator.createEnumMember(
+            generator.createIdentifier("E4"),
+            generator.createNumericLiteral("10")
+          ),
+          generator.createEnumMember(generator.createIdentifier("E5")),
+        ]
+      );
+
+      assert.strictEqual(
+        getAst(result.toString()),
+        getAst(`
+          export default enum MyEnum {
+            E1,
+            E2="test1",
+            E3="test2",
+            E4=10,
+            E5,
+          }
+        `)
+      );
+    });
+
+    mocha.it("empty declaration", function () {
+      const result = generator.createEnumDeclaration(
+        undefined,
+        undefined,
+        generator.createIdentifier("MyEnum"),
+        []
+      );
+
+      assert.strictEqual(getAst(result.toString()), getAst("enum MyEnum {}"));
+    });
+  });
 });
 
 mocha.describe("common", function () {

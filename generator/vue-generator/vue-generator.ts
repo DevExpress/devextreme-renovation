@@ -61,6 +61,7 @@ import { NonNullExpression } from "./expressions/non-null-expression";
 import { ImportDeclaration } from "./expressions/import-declaration";
 import prettier from "prettier";
 import path from "path";
+import { EnumMember, Enum } from "./expressions/enum";
 
 const emptyToString = () => "";
 
@@ -468,5 +469,18 @@ export class VueGenerator extends BaseGenerator {
         members
       )
     );
+  }
+
+  createEnumMember(name: Identifier, initializer?: Expression) {
+    return new EnumMember(name, initializer);
+  }
+
+  createEnumDeclaration(
+    decorators: Decorator[] | undefined,
+    modifiers: string[] | undefined,
+    name: Identifier,
+    members: EnumMember[]
+  ) {
+    return new Enum(decorators, modifiers, name, members);
   }
 }
