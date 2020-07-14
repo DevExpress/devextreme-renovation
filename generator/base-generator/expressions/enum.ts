@@ -38,7 +38,7 @@ export class Enum {
 
   toString() {
     return `${this.modifiers.join(" ")} enum ${this.name} {
-        ${this.members.join(",\n")}
+      ${this.members.join(",\n")}
     }`;
   }
 }

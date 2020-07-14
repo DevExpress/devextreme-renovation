@@ -45,7 +45,7 @@ export class Enum extends BaseEnum {
 
   toString() {
     return `${this.modifiers.join(" ")} const ${this.name} = {
-        ${this.members.join(",\n")}
+      ${this.members.join(",\n")}
     }`;
   }
 }
