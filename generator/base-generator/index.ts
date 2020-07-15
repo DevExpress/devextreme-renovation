@@ -1171,6 +1171,21 @@ export default class Generator implements GeneratorAPI {
     });
   }
 
+  removeJQueryBaseModule(codeFactoryResult: Array<any>, component: Component) {
+    const jqueryBaseComponentName = component.getJQueryBaseComponentName();
+    if (jqueryBaseComponentName) {
+      codeFactoryResult.some((node, index) => {
+        if (
+          node instanceof ImportDeclaration &&
+          node.has(jqueryBaseComponentName)
+        ) {
+          codeFactoryResult.splice(index, 1);
+          return true;
+        }
+      });
+    }
+  }
+
   processCodeFactoryResult(codeFactoryResult: Array<any>) {
     const context = this.getContext();
     codeFactoryResult.forEach((e) => {
@@ -1180,6 +1195,9 @@ export default class Generator implements GeneratorAPI {
           ...context.viewFunctions,
           ...e.getVariableExpressions(),
         };
+      }
+      if (e instanceof Component) {
+        this.removeJQueryBaseModule(codeFactoryResult, e);
       }
     });
     this.cache.__globals__ = context.globals;

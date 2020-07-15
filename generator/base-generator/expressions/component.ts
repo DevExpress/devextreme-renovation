@@ -370,4 +370,12 @@ export class Component extends Class implements Heritable {
       api: this.members.filter((m) => m.isApiMethod).map(memberName),
     };
   }
+
+  getJQueryBaseComponentName(): string | undefined {
+    const jQueryProp = this.decorators[0].getParameter(
+      "jQuery"
+    ) as ObjectLiteral;
+    const baseComponent = jQueryProp?.getProperty("component");
+    return baseComponent?.toString();
+  }
 }
