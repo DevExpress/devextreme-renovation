@@ -28,32 +28,14 @@ import {
 } from "./base-generator/types";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { Method } from "./base-generator/expressions/class-members";
-import { capitalizeFirstLetter, compileType } from "./base-generator/utils/string";
+import {
+  capitalizeFirstLetter,
+  compileType,
+} from "./base-generator/utils/string";
 
 const BASE_JQUERY_WIDGET = "BASE_JQUERY_WIDGET";
 
 const processModuleFileName = (module: string) => `${module}`;
-
-const getJQueryBaseComponentName = (
-  decorators: Decorator[],
-  context: GeneratorContext
-): string | undefined => {
-  const jQueryProp = decorators
-    .find((d) => d.name === "Component")!
-    .getParameter("jQuery") as ObjectLiteral;
-  const baseComponent = jQueryProp?.getProperty("component");
-
-  if (
-    !(
-      jQueryProp?.getProperty("register")?.toString() === "true" &&
-      !!context.jqueryComponentRegistratorModule &&
-      (!!baseComponent || !!context.jqueryBaseComponentModule)
-    )
-  ) {
-    return undefined;
-  }
-  return baseComponent ? baseComponent.toString() : BASE_JQUERY_WIDGET;
-};
 
 export class ComponentInput extends BaseComponentInput {
   createProperty(
@@ -135,6 +117,21 @@ export class PreactComponent extends ReactComponent {
 
   compileDefaultComponentExport() {
     return "";
+  }
+
+  getJQueryBaseComponentName(): string | undefined {
+    const jqueryProp = this.decorators[0].getParameter(
+      "jQuery"
+    ) as ObjectLiteral;
+    const context = this.context;
+    if (
+      !context.jqueryBaseComponentModule ||
+      !context.jqueryBaseComponentModule ||
+      jqueryProp?.getProperty("register")?.toString() !== "true"
+    ) {
+      return undefined;
+    }
+    return super.getJQueryBaseComponentName() || BASE_JQUERY_WIDGET;
   }
 }
 
@@ -272,17 +269,19 @@ class JQueryComponent {
     return `
         get _twoWayProps() {
             return [
-                ${this.source.state.map((s) => `['${s.name}', 'default${capitalizeFirstLetter(s.name)}', '${s.name}Change']`)}
+                ${this.source.state.map(
+                  (s) =>
+                    `['${s.name}', 'default${capitalizeFirstLetter(
+                      s.name
+                    )}', '${s.name}Change']`
+                )}
             ]
         }
         `;
   }
 
   toString() {
-    const baseComponent = getJQueryBaseComponentName(
-      this.source.decorators,
-      this.source.context
-    );
+    const baseComponent = this.source.getJQueryBaseComponentName();
     if (!baseComponent) {
       return "";
     }
@@ -525,6 +524,8 @@ export class PreactGenerator extends ReactGenerator {
       members
     );
   }
+
+  removeJQueryBaseModule() {}
 }
 
 export default new PreactGenerator();
