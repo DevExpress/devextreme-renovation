@@ -24,3 +24,7 @@
     
     const regExp = /.+\/([^.]+)\..+$/;
 }
+
+const items: any[] = [];
+const options = {};
+(items as any[] || []).forEach(() => {});
