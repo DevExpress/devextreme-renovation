@@ -26,4 +26,4 @@
 
 const items: any[] = [];
 const options = {};
-(items as any[] || []).forEach(() => {});
+((items as any[]) || []).forEach(() => {});
