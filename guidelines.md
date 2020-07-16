@@ -602,7 +602,7 @@ describe('_Component_', () => {
 
 Для watch `test-jest --watch`.
 
-Рекомендуется к использованию плагин https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest
+Рекомендуется к использованию плагин [vscode-jest](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest)
 
 Также ознакомьтесь с информацией в [разделе тестирования](#тестирование).
 
