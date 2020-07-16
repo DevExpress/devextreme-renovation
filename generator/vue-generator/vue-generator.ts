@@ -264,7 +264,7 @@ export class VueGenerator extends BaseGenerator {
   processCodeFactoryResult(codeFactoryResult: Array<any>) {
     const code = super.processCodeFactoryResult(codeFactoryResult);
     if (getComponentListFromContext(this.getContext()).length === 0) {
-      return code;
+      return prettier.format(code, { parser: "babel" });
     }
     const template = codeFactoryResult.find((r) => r instanceof VueComponent)
       ?.template;

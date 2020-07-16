@@ -1201,7 +1201,7 @@ export default class Generator implements GeneratorAPI {
       }
     });
     this.cache.__globals__ = context.globals;
-    return this.format(codeFactoryResult.join("\n"));
+    return this.format(codeFactoryResult.join(";\n"));
   }
 
   generate(factory: any): GeneratorResult[] {
