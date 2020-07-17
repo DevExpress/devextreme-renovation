@@ -1,6 +1,6 @@
 export declare type WidgetInputType = {
   headerTemplate?: any;
-  template: (props: any) => any;
+  template: (props: { textProp: string; textPropExpr: string }) => any;
   contentTemplate: (props: { data: { p1: string }; index: number }) => any;
   footerTemplate: (props: { someProp: boolean }) => any;
 
@@ -107,9 +107,16 @@ function view(viewModel: Widget) {
   return (
     <div>
       {viewModel.props.headerTemplate()}
+      
       {viewModel.props.contentTemplate &&
         viewModel.props.contentTemplate({ data: { p1: "value" }, index: 10 })}
-      {!viewModel.props.contentTemplate && viewModel.props.template({})}
+
+      {!viewModel.props.contentTemplate &&
+        viewModel.props.template({
+          textProp: "textPropValue",
+          textPropExpr: "textPropExrpValue",
+        })}
+
       {viewModel.props.footerTemplate({ someProp: true })}
     </div>
   );

@@ -21,7 +21,7 @@ import { CommonModule } from "@angular/common";
       ></ng-container>
     </ng-container>
     <ng-container *ngIf="!contentTemplate">
-      <ng-container *ngTemplateOutlet="template"></ng-container>
+      <ng-container *ngTemplateOutlet="template; context: { textProp: 'textPropValue', textPropExpr: 'textPropExrpValue' }"></ng-container>
     </ng-container>
     <ng-container
       *ngTemplateOutlet="footerTemplate; context: { someProp: true }"

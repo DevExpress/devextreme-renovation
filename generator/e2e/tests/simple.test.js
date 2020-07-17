@@ -217,3 +217,17 @@ cloneTest("Forward refs", async (t) => {
     .expect(await el.nth(2).getStyleProperty("border-bottom-color"))
     .eql("rgb(0, 0, 128)");
 });
+
+cloneTest("Check templates passing with events binding", async (t) => {
+  const el = Selector("#template-app-clicks");
+
+  await t.expect(await el.textContent).eql("");
+
+  await t.click(Selector("#header-component-button"));
+
+  await t.expect(await el.textContent).eql("_header");
+
+  await t.click(Selector("#body-component-button"));
+
+  await t.expect(await el.textContent).eql("_header_body");
+});

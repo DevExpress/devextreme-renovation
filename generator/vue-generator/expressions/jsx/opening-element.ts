@@ -23,6 +23,7 @@ import { PropertyAccess } from "../property-access";
 import { JsxExpression, JsxChildExpression } from "./jsx-expression";
 import SyntaxKind from "../../../base-generator/syntaxKind";
 import { JsxElement } from "./element";
+import { getMember } from "../../../angular-generator/utils";
 
 export class JsxOpeningElement extends BaseJsxOpeningElement {
   attributes: Array<JsxAttribute | JsxSpreadAttribute>;
@@ -156,6 +157,22 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         this.context
       ),
       [element],
+      new JsxClosingElement(new Identifier("template"), this.context)
+    );
+  }
+
+  templatePropToJsxElement(template: JsxAttribute, options?: toStringOptions): JsxElement {
+    const destSlotName = this.getTemplateName(template);
+    const slotName = getMember(template.initializer, options)!.name;
+
+    return new JsxElement(
+      new JsxOpeningElement(
+        new Identifier(`template v-slot:${destSlotName}="slotProps"`),
+        undefined,
+        [],
+        this.context
+      ),
+      [`<slot name=${slotName} v-bind="slotProps"></slot>`],
       new JsxClosingElement(new Identifier("template"), this.context)
     );
   }
