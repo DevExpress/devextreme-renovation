@@ -335,6 +335,13 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     );
   }
 
+  templatePropToJsxElement(
+    template: JsxAttribute,
+    options?: toStringOptions
+  ): JsxElement | null {
+    return null;
+  }
+
   functionToJsxElement(
     name: string,
     func: BaseFunction,
@@ -401,6 +408,13 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         return acc;
       }, [] as { name: string; func: BaseFunction }[]);
 
+      const props = templates.filter(
+        (t) =>
+          !(components as { name: string }[])
+            .concat(functions)
+            .some(({ name }) => name === this.getTemplateName(t))
+      );
+
       const result = [
         ...components.map(({ name, component }) =>
           this.componentToJsxElement(name, component)
@@ -408,6 +422,9 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         ...functions.map(({ name, func }) =>
           this.functionToJsxElement(name, func, options)
         ),
+        ...(props
+          .map((t) => this.templatePropToJsxElement(t, options))
+          .filter((e) => e !== null) as JsxElement[]),
       ];
 
       return result;

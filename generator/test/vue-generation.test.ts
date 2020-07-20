@@ -226,6 +226,10 @@ mocha.describe("vue-generation", function () {
     });
   });
 
+  mocha.it("template-transit", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("template-pass", function () {
     this.testGenerator(this.test!.title);
   });

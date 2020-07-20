@@ -17,7 +17,7 @@ const screenshotTest = async (t, selector, etalonName) => {
     fs.unlinkSync(screenshotPath);
   }
 
-  await t.takeElementScreenshot(selector, etalonName);
+  await t.takeScreenshot({ path: etalonName, fullPage: true })
   return new Promise((resolve, fail) => {
     if (fs.existsSync(etalonPath)) {
       looksSame(etalonPath, screenshotPath, (error, { equal }) => {
