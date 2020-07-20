@@ -2076,47 +2076,366 @@ mocha.describe("Angular generator", function () {
         );
       });
 
-      mocha.it(
-        "template jsx spread attributes -> template context",
+      mocha.describe(
+        "Template with spread attribute -> template context",
         function () {
-          const expression = generator.createJsxSelfClosingElement(
-            generator.createPropertyAccess(
-              generator.createIdentifier("viewModel"),
+          mocha.it("template jsx spread attributes", function () {
+            const expression = generator.createJsxSelfClosingElement(
+              generator.createPropertyAccess(
+                generator.createIdentifier("viewModel"),
+                generator.createIdentifier("template")
+              ),
+              [],
+              [
+                generator.createJsxAttribute(
+                  generator.createIdentifier("a1"),
+                  generator.createNumericLiteral("10")
+                ),
+                generator.createJsxSpreadAttribute(
+                  generator.createIdentifier("spreadContext")
+                ),
+              ]
+            );
+
+            const templateProperty = generator.createProperty(
+              [createDecorator("Template")],
+              [],
+              generator.createIdentifier("template"),
+              generator.SyntaxKind.QuestionToken,
+              undefined,
+              undefined
+            );
+
+            assert.strictEqual(
+              removeSpaces(
+                expression.toString({
+                  members: [templateProperty],
+                  componentContext: "viewModel",
+                  newComponentContext: "",
+                })
+              ),
+              removeSpaces(
+                `<ng-container *ngTemplateOutlet="template; context:{a1: 10}"></ng-container>`
+              )
+            );
+          });
+
+          mocha.it("...getter", function () {
+            generator.createClassDeclaration(
+              [createDecorator(Decorators.ComponentBindings)],
+              [],
+              generator.createIdentifier("Props"),
+              [],
+              [],
+              [
+                generator.createProperty(
+                  [createDecorator(Decorators.OneWay)],
+                  [],
+                  generator.createIdentifier("p1")
+                ),
+                generator.createProperty(
+                  [createDecorator(Decorators.OneWay)],
+                  [],
+                  generator.createIdentifier("p2")
+                ),
+              ]
+            );
+            const expression = generator.createJsxSelfClosingElement(
+              generator.createPropertyAccess(
+                generator.createIdentifier("viewModel"),
+                generator.createIdentifier("template")
+              ),
+              [],
+              [
+                generator.createJsxSpreadAttribute(
+                  generator.createPropertyAccess(
+                    generator.createIdentifier("viewModel"),
+                    generator.createIdentifier("spread")
+                  )
+                ),
+              ]
+            );
+
+            const templateProperty = generator.createProperty(
+              [createDecorator("Template")],
+              [],
               generator.createIdentifier("template")
-            ),
-            [],
-            [
-              generator.createJsxAttribute(
-                generator.createIdentifier("a1"),
-                generator.createNumericLiteral("10")
-              ),
-              generator.createJsxSpreadAttribute(
-                generator.createIdentifier("spreadContext")
-              ),
-            ]
-          );
+            );
 
-          const templateProperty = generator.createProperty(
-            [createDecorator("Template")],
-            [],
-            generator.createIdentifier("template"),
-            generator.SyntaxKind.QuestionToken,
-            undefined,
-            undefined
-          );
+            const spreadGetter = generator.createGetAccessor(
+              [],
+              [],
+              generator.createIdentifier("spread"),
+              [],
+              generator.createTypeReferenceNode(
+                generator.createIdentifier("Props")
+              ),
+              generator.createBlock([], false)
+            );
 
-          assert.strictEqual(
-            removeSpaces(
-              expression.toString({
-                members: [templateProperty],
-                componentContext: "viewModel",
-                newComponentContext: "",
-              })
-            ),
-            removeSpaces(
-              `<ng-container *ngTemplateOutlet="template; context:{a1: 10}"></ng-container>`
-            )
-          );
+            assert.strictEqual(
+              removeSpaces(
+                expression.toString({
+                  members: [templateProperty, spreadGetter],
+                  componentContext: "viewModel",
+                  newComponentContext: "",
+                })
+              ),
+              removeSpaces(
+                `<ng-container *ngTemplateOutlet="template; context:{p1:spread.p1,p2:spread.p2}"></ng-container>`
+              )
+            );
+          });
+
+          mocha.it("...getter as type", function () {
+            generator.createClassDeclaration(
+              [createDecorator(Decorators.ComponentBindings)],
+              [],
+              generator.createIdentifier("Props"),
+              [],
+              [],
+              [
+                generator.createProperty(
+                  [createDecorator(Decorators.OneWay)],
+                  [],
+                  generator.createIdentifier("p1")
+                ),
+                generator.createProperty(
+                  [createDecorator(Decorators.OneWay)],
+                  [],
+                  generator.createIdentifier("p2")
+                ),
+              ]
+            );
+            const expression = generator.createJsxSelfClosingElement(
+              generator.createPropertyAccess(
+                generator.createIdentifier("viewModel"),
+                generator.createIdentifier("template")
+              ),
+              [],
+              [
+                generator.createJsxSpreadAttribute(
+                  generator.createAsExpression(
+                    generator.createPropertyAccess(
+                      generator.createIdentifier("viewModel"),
+                      generator.createIdentifier("spread")
+                    ),
+                    generator.createTypeReferenceNode(
+                      generator.createIdentifier("Props")
+                    )
+                  )
+                ),
+              ]
+            );
+
+            const templateProperty = generator.createProperty(
+              [createDecorator("Template")],
+              [],
+              generator.createIdentifier("template")
+            );
+
+            const spreadGetter = generator.createGetAccessor(
+              [],
+              [],
+              generator.createIdentifier("spread"),
+              [],
+              undefined,
+              generator.createBlock([], false)
+            );
+
+            assert.strictEqual(
+              removeSpaces(
+                expression.toString({
+                  members: [templateProperty, spreadGetter],
+                  componentContext: "viewModel",
+                  newComponentContext: "",
+                  disableTemplates: true,
+                })
+              ),
+              removeSpaces(
+                `<ng-container *ngTemplateOutlet="template; context:{p1:spread.p1,p2:spread.p2}"></ng-container>`
+              )
+            );
+          });
+
+          mocha.it("...{x, y}", function () {
+            const expression = generator.createJsxSelfClosingElement(
+              generator.createPropertyAccess(
+                generator.createIdentifier("viewModel"),
+                generator.createIdentifier("template")
+              ),
+              [],
+              [
+                generator.createJsxSpreadAttribute(
+                  generator.createObjectLiteral(
+                    [
+                      generator.createPropertyAssignment(
+                        generator.createIdentifier("x"),
+                        generator.createIdentifier("_x")
+                      ),
+                      generator.createShorthandPropertyAssignment(
+                        generator.createIdentifier("y")
+                      ),
+                    ],
+                    false
+                  )
+                ),
+              ]
+            );
+
+            const templateProperty = generator.createProperty(
+              [createDecorator("Template")],
+              [],
+              generator.createIdentifier("template")
+            );
+
+            assert.strictEqual(
+              removeSpaces(
+                expression.toString({
+                  members: [templateProperty],
+                  componentContext: "viewModel",
+                  newComponentContext: "",
+                })
+              ),
+              removeSpaces(
+                `<ng-container *ngTemplateOutlet="template; context:{x:_x,y:y}"></ng-container>`
+              )
+            );
+          });
+
+          mocha.it("...{x, y, ...getter}", function () {
+            generator.createClassDeclaration(
+              [createDecorator(Decorators.ComponentBindings)],
+              [],
+              generator.createIdentifier("Props"),
+              [],
+              [],
+              [
+                generator.createProperty(
+                  [createDecorator(Decorators.OneWay)],
+                  [],
+                  generator.createIdentifier("p1")
+                ),
+                generator.createProperty(
+                  [createDecorator(Decorators.OneWay)],
+                  [],
+                  generator.createIdentifier("p2")
+                ),
+              ]
+            );
+
+            const expression = generator.createJsxSelfClosingElement(
+              generator.createPropertyAccess(
+                generator.createIdentifier("viewModel"),
+                generator.createIdentifier("template")
+              ),
+              [],
+              [
+                generator.createJsxSpreadAttribute(
+                  generator.createObjectLiteral(
+                    [
+                      generator.createShorthandPropertyAssignment(
+                        generator.createIdentifier("y")
+                      ),
+                      generator.createSpreadAssignment(
+                        generator.createPropertyAccess(
+                          generator.createIdentifier("viewModel"),
+                          generator.createIdentifier("spread")
+                        )
+                      ),
+                    ],
+                    false
+                  )
+                ),
+              ]
+            );
+
+            const templateProperty = generator.createProperty(
+              [createDecorator("Template")],
+              [],
+              generator.createIdentifier("template")
+            );
+
+            const spreadGetter = generator.createGetAccessor(
+              [],
+              [],
+              generator.createIdentifier("spread"),
+              [],
+              generator.createTypeReferenceNode(
+                generator.createIdentifier("Props")
+              ),
+              generator.createBlock([], false)
+            );
+
+            assert.strictEqual(
+              removeSpaces(
+                expression.toString({
+                  members: [templateProperty, spreadGetter],
+                  componentContext: "viewModel",
+                  newComponentContext: "",
+                })
+              ),
+              removeSpaces(
+                `<ng-container *ngTemplateOutlet="template; context:{y:y, p1:spread.p1, p2:spread.p2}"></ng-container>`
+              )
+            );
+          });
+
+          mocha.it("...{x, y, ...restAttributes}", function () {
+            const expression = generator.createJsxSelfClosingElement(
+              generator.createPropertyAccess(
+                generator.createIdentifier("viewModel"),
+                generator.createIdentifier("template")
+              ),
+              [],
+              [
+                generator.createJsxSpreadAttribute(
+                  generator.createObjectLiteral(
+                    [
+                      generator.createShorthandPropertyAssignment(
+                        generator.createIdentifier("y")
+                      ),
+                      generator.createSpreadAssignment(
+                        generator.createPropertyAccess(
+                          generator.createIdentifier("viewModel"),
+                          generator.createIdentifier("restAttributes")
+                        )
+                      ),
+                    ],
+                    false
+                  )
+                ),
+              ]
+            );
+
+            const templateProperty = generator.createProperty(
+              [createDecorator("Template")],
+              [],
+              generator.createIdentifier("template")
+            );
+
+            const restAttributes = generator.createGetAccessor(
+              [],
+              [],
+              generator.createIdentifier("restAttributes"),
+              [],
+              undefined,
+              generator.createBlock([], false)
+            );
+
+            assert.strictEqual(
+              removeSpaces(
+                expression.toString({
+                  members: [templateProperty, restAttributes],
+                  componentContext: "viewModel",
+                  newComponentContext: "",
+                })
+              ),
+              removeSpaces(
+                `<ng-container *ngTemplateOutlet="template; context:{y:y}"></ng-container>`
+              )
+            );
+          });
         }
       );
 

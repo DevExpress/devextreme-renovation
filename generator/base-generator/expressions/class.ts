@@ -120,4 +120,5 @@ export interface Heritable {
   heritageProperties: Property[];
   compileDefaultProps(): string;
   defaultPropsDest(): string;
+  members: Array<Property | Method>;
 }

@@ -178,10 +178,12 @@ export class JsxAttribute extends BaseJsxAttribute {
     );
   }
 
-  getTemplateContext(options?: toStringOptions): PropertyAssignment | null {
-    return new PropertyAssignment(
-      this.name,
-      new SimpleExpression(this.compileInitializer(options))
-    );
+  getTemplateContext(options?: toStringOptions): PropertyAssignment[] {
+    return [
+      new PropertyAssignment(
+        this.name,
+        new SimpleExpression(this.compileInitializer(options))
+      ),
+    ];
   }
 }

@@ -41,8 +41,8 @@ export class JsxAttribute {
       initializer || new JsxExpression(undefined, new SimpleExpression("true"));
   }
 
-  getTemplateContext(options?: toStringOptions): PropertyAssignment | null {
-    return null;
+  getTemplateContext(options?: toStringOptions): PropertyAssignment[] {
+    return [];
   }
 
   toString(options?: toStringOptions) {
@@ -217,7 +217,7 @@ export class JsxSpreadAttribute extends JsxExpression {
     this.expression = expression;
   }
 
-  getTemplateContext(): SpreadAssignment | null {
-    return new SpreadAssignment(this.expression);
+  getTemplateContext(): (PropertyAssignment | SpreadAssignment)[] {
+    return [new SpreadAssignment(this.expression)];
   }
 }
