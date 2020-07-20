@@ -278,7 +278,10 @@ export class Property extends BaseClassMember {
   }
 
   typeDeclaration() {
-    return `${this.name}${this.questionOrExclamationToken}:${this.type}`;
+    return `${this.name}${compileType(
+      this.type.toString(),
+      this.questionOrExclamationToken
+    )}`;
   }
 
   defaultDeclaration() {
@@ -309,7 +312,7 @@ export class Property extends BaseClassMember {
     );
   }
 
-  toString() {
+  toString(options?: toStringOptions) {
     return `${this.modifiers.join(" ")} ${this.decorators
       .map((d) => d.toString())
       .join(" ")} ${this.typeDeclaration()} ${
@@ -324,5 +327,22 @@ export class Property extends BaseClassMember {
       this.decorators.length === 0 ||
       this._hasDecorator(Decorators.InternalState)
     );
+  }
+}
+
+export class Constructor {
+  constructor(
+    public decorators: Decorator[] = [],
+    public modifiers: string[] = [],
+    public parameters: Parameter[],
+    public body: Block | undefined
+  ) {}
+
+  toString() {
+    return `${this.decorators.join(" ")} 
+      ${this.modifiers.join(" ")} constructor(${this.parameters})${
+      this.body || "{}"
+    }
+    `;
   }
 }

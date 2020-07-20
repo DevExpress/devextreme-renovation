@@ -73,6 +73,9 @@ export class Property extends BaseProperty {
   }
 
   toString(options?: toStringOptions) {
+    if (!options) {
+      return super.toString();
+    }
     if (this.isInternalState) {
       return `${this.name}: ${this.initializer}`;
     }

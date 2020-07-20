@@ -323,7 +323,11 @@ export class VueComponent extends Component {
     if (this.internalState.length) {
       statements.push.apply(
         statements,
-        this.internalState.map((i) => i.toString())
+        this.internalState.map((i) =>
+          i.toString({
+            members: this.members,
+          })
+        )
       );
     }
 

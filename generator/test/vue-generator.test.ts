@@ -306,7 +306,7 @@ mocha.describe("Vue-generator", function () {
           );
 
           assert.strictEqual(
-            getAst(expression.toString()),
+            getAst(expression.toString({ members: [] })),
             getAst("p: {type: String}")
           );
           assert.strictEqual(expression.getter(), "p");
@@ -323,7 +323,10 @@ mocha.describe("Vue-generator", function () {
             undefined
           );
 
-          assert.strictEqual(getAst(expression.toString()), getAst("p: {}"));
+          assert.strictEqual(
+            getAst(expression.toString({ members: [] })),
+            getAst("p: {}")
+          );
         });
 
         mocha.it("Property with KeywordTypeNode - undefined", function () {
@@ -336,7 +339,10 @@ mocha.describe("Vue-generator", function () {
             undefined
           );
 
-          assert.strictEqual(getAst(expression.toString()), getAst("p: {}"));
+          assert.strictEqual(
+            getAst(expression.toString({ members: [] })),
+            getAst("p: {}")
+          );
           assert.strictEqual(expression.getter(), "p");
           assert.strictEqual(expression.getter("this"), "this.p");
         });
@@ -354,7 +360,7 @@ mocha.describe("Vue-generator", function () {
           );
 
           assert.strictEqual(
-            getAst(expression.toString()),
+            getAst(expression.toString({ members: [] })),
             getAst("p: {type: Array}")
           );
         });
@@ -374,7 +380,7 @@ mocha.describe("Vue-generator", function () {
           );
 
           assert.strictEqual(
-            getAst(expression.toString()),
+            getAst(expression.toString({ members: [] })),
             getAst("p: {type: Function")
           );
         });
@@ -393,7 +399,7 @@ mocha.describe("Vue-generator", function () {
           );
 
           assert.strictEqual(
-            getAst(expression.toString()),
+            getAst(expression.toString({ members: [] })),
             getAst("p: {type: Array")
           );
         });
@@ -412,7 +418,7 @@ mocha.describe("Vue-generator", function () {
             );
 
             assert.strictEqual(
-              getAst(expression.toString()),
+              getAst(expression.toString({ members: [] })),
               getAst("p: {type: Object}")
             );
           });
@@ -430,7 +436,7 @@ mocha.describe("Vue-generator", function () {
             );
 
             assert.strictEqual(
-              getAst(expression.toString()),
+              getAst(expression.toString({ members: [] })),
               getAst("p: {type: String}")
             );
           });
@@ -448,7 +454,7 @@ mocha.describe("Vue-generator", function () {
             );
 
             assert.strictEqual(
-              getAst(expression.toString()),
+              getAst(expression.toString({ members: [] })),
               getAst("p: {type: Number}")
             );
           });
@@ -469,7 +475,7 @@ mocha.describe("Vue-generator", function () {
             );
 
             assert.strictEqual(
-              getAst(expression.toString()),
+              getAst(expression.toString({ members: [] })),
               getAst("p: {type: [String,Number]}")
             );
           });
@@ -488,7 +494,7 @@ mocha.describe("Vue-generator", function () {
             );
 
             assert.strictEqual(
-              getAst(expression.toString()),
+              getAst(expression.toString({ members: [] })),
               getAst("p: {type: [String]}")
             );
           });
@@ -514,7 +520,7 @@ mocha.describe("Vue-generator", function () {
             );
 
             assert.strictEqual(
-              getAst(expression.toString()),
+              getAst(expression.toString({ members: [] })),
               getAst("p: {type: [String, Number]}")
             );
           });
@@ -542,7 +548,7 @@ mocha.describe("Vue-generator", function () {
               );
 
               assert.strictEqual(
-                getAst(expression.toString()),
+                getAst(expression.toString({ members: [] })),
                 getAst("p: {type: String}")
               );
             }
@@ -559,7 +565,10 @@ mocha.describe("Vue-generator", function () {
             undefined
           );
 
-          assert.strictEqual(getAst(expression.toString()), getAst("p: {}"));
+          assert.strictEqual(
+            getAst(expression.toString({ members: [] })),
+            getAst("p: {}")
+          );
         });
       });
 
@@ -574,7 +583,7 @@ mocha.describe("Vue-generator", function () {
         );
 
         assert.strictEqual(
-          getAst(expression.toString()),
+          getAst(expression.toString({ members: [] })),
           getAst(`p: {
                     type: String,
                     required: true
@@ -593,7 +602,7 @@ mocha.describe("Vue-generator", function () {
         );
 
         assert.strictEqual(
-          getAst(expression.toString()),
+          getAst(expression.toString({ members: [] })),
           getAst(`p: { default(){
                     return 10;
                 }}`)
@@ -612,7 +621,7 @@ mocha.describe("Vue-generator", function () {
           );
 
           assert.strictEqual(
-            getAst(expression.toString()),
+            getAst(expression.toString({ members: [] })),
             getAst("p: {type: Boolean, default: undefined}")
           );
         });
@@ -629,7 +638,7 @@ mocha.describe("Vue-generator", function () {
             generator.createTrue()
           );
 
-          assert.strictEqual(expression.toString(), "");
+          assert.strictEqual(expression.toString({ members: [] }), "");
           assert.strictEqual(expression.getter("this"), "this.$slots.p");
         });
 
@@ -643,7 +652,7 @@ mocha.describe("Vue-generator", function () {
             generator.createTrue()
           );
 
-          assert.strictEqual(expression.toString(), "");
+          assert.strictEqual(expression.toString({ members: [] }), "");
           assert.strictEqual(expression.getter("this"), "this.$slots.default");
         });
 
@@ -657,7 +666,7 @@ mocha.describe("Vue-generator", function () {
             generator.createTrue()
           );
 
-          assert.strictEqual(expression.toString(), "");
+          assert.strictEqual(expression.toString({ members: [] }), "");
           assert.strictEqual(expression.getter("this"), "this.$slots.default");
         });
       });
@@ -675,7 +684,7 @@ mocha.describe("Vue-generator", function () {
               generator.createTrue()
             );
 
-            assert.strictEqual(expression.toString(), "");
+            assert.strictEqual(expression.toString({ members: [] }), "");
           }
         );
       });
@@ -695,7 +704,7 @@ mocha.describe("Vue-generator", function () {
         );
 
         assert.strictEqual(
-          getAst(expression.toString()),
+          getAst(expression.toString({ members: [] })),
           getAst("p: undefined")
         );
         assert.strictEqual(expression.getter(), "p");
@@ -711,7 +720,10 @@ mocha.describe("Vue-generator", function () {
           generator.createNumericLiteral("10")
         );
 
-        assert.strictEqual(getAst(expression.toString()), getAst("p: 10"));
+        assert.strictEqual(
+          getAst(expression.toString({ members: [] })),
+          getAst("p: 10")
+        );
       });
     });
 
@@ -726,7 +738,7 @@ mocha.describe("Vue-generator", function () {
           undefined
         );
 
-        assert.strictEqual(expression.toString(), "");
+        assert.strictEqual(expression.toString({ members: [] }), "");
       });
     });
 
@@ -741,7 +753,7 @@ mocha.describe("Vue-generator", function () {
           undefined
         );
 
-        assert.strictEqual(expression.toString(), "");
+        assert.strictEqual(expression.toString({ members: [] }), "");
       });
 
       mocha.it("getter", function () {

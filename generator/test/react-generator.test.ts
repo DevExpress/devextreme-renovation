@@ -85,6 +85,10 @@ mocha.describe("react-generator", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("class", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("objects", function () {
     this.testGenerator(this.test!.title);
   });

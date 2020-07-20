@@ -38,7 +38,11 @@ export class VueComponentInput extends ComponentInput {
         this.members
           .filter((m) => !m.inherited)
           .map((m) => (m instanceof Property ? m.inherit() : m))
-          .map((m) => m.toString())
+          .map((m) =>
+            m.toString({
+              members: [],
+            })
+          )
       )
       .filter((m) => m);
     const modifiers =
