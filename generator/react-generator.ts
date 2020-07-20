@@ -117,6 +117,27 @@ function buildTemplateProperty(
 }
 
 export class ComponentInput extends BaseComponentInput {
+  context: GeneratorContext;
+  constructor(
+    decorators: Decorator[],
+    modifiers: string[] | undefined,
+    name: Identifier,
+    typeParameters: any[],
+    heritageClauses: HeritageClause[] = [],
+    members: Array<Property | Method>,
+    context: GeneratorContext
+  ) {
+    super(
+      decorators,
+      modifiers,
+      name,
+      typeParameters,
+      heritageClauses,
+      members
+    );
+    this.context = context;
+  }
+
   createProperty(
     decorators: Decorator[],
     modifiers: string[] | undefined,
@@ -188,8 +209,7 @@ export class ComponentInput extends BaseComponentInput {
           (m as Property).questionOrExclamationToken !== "?")
     ) as Property[];
 
-    return `${this.exportNestedComponents()}
-        ${typeDeclaration}
+    return `${typeDeclaration}
         ${declarationModifiers.join(" ")} const ${this.name}:${typeName}={
            ${inherited
              .concat(
@@ -202,23 +222,6 @@ export class ComponentInput extends BaseComponentInput {
             ? `${this.modifiers.join(" ")} ${this.name}`
             : ""
         }`;
-  }
-
-  exportNestedComponents() {
-    const nestedComponents = this.members.filter((m) => m.isNested);
-    if (nestedComponents.length) {
-      return nestedComponents
-        .map((m) => {
-          let name = capitalizeFirstLetter(m.name);
-          const type = extractComplexType(m.type);
-          if (isTypeArray(m.type)) {
-            name = removePlural(name);
-          }
-          return `export const ${name}: React.FunctionComponent<${type}> = () => null;`;
-        })
-        .join("\n");
-    }
-    return "";
   }
 
   createChildrenForNested(members: Array<BaseProperty | Method>) {
@@ -418,7 +421,7 @@ export class Property extends BaseProperty {
     const indexGetter = isArray ? "" : "?.[0]";
     const nestedName = isArray ? removePlural(this.name) : this.name;
 
-    return `(${propName} || __getNestedFromChild<${type}>("${capitalizeFirstLetter(
+    return `(${propName} || __getNestedFromChild<${type}Type>("${capitalizeFirstLetter(
       nestedName
     )}")${indexGetter})`;
   }
@@ -1044,6 +1047,111 @@ export class ReactComponent extends Component {
     };
   }
 
+  getNestedImports(components: ComponentInput[]) {
+    const outerComponents = components.filter(
+      ({ name }) => !this.context.components![name]
+    );
+    const imports = outerComponents.reduce(
+      (acc, component) => {
+        const path = component.context.path;
+        if (path) {
+          let relativePath = getModuleRelativePath(
+            this.context.dirname!,
+            component.context.path!
+          );
+          relativePath = relativePath.slice(0, relativePath.lastIndexOf("."));
+
+          if (!acc[relativePath]) {
+            acc[relativePath] = [];
+          }
+          acc[relativePath].push(`${component.name}Type`);
+        }
+
+        return acc;
+      },
+      {} as {
+        [x: string]: string[];
+      }
+    );
+
+    const result = Object.keys(imports).map((path) => {
+      return `import { ${imports[path].join(", ")} } from "${path}";`;
+    });
+
+    return result;
+  }
+
+  getNestedExports(component: ComponentInput, property: Property) {
+    let name = capitalizeFirstLetter(property.name);
+    if (isTypeArray(property.type)) {
+      name = removePlural(name);
+    }
+    return `export const ${name}: React.FunctionComponent<${component.name}Type> = () => null;`;
+  }
+
+  getNestedFromComponentInput(
+    component: ComponentInput
+  ): {
+    component: ComponentInput;
+    property: Property;
+  }[] {
+    const nestedProps = component.members.filter((m) => m.isNested);
+    const components = component.context.components!;
+
+    const nested = Object.keys(components).reduce(
+      (acc, key) => {
+        const property = nestedProps.find(
+          ({ type }) => extractComplexType(type) === key
+        ) as Property;
+        if (property) {
+          acc.push({
+            property,
+            component: components[key] as ComponentInput,
+          });
+        }
+        return acc;
+      },
+      [] as {
+        component: ComponentInput;
+        property: Property;
+      }[]
+    );
+
+    return nested.concat(
+      nested.reduce(
+        (acc, el) => {
+          return acc.concat(this.getNestedFromComponentInput(el.component));
+        },
+        [] as {
+          component: ComponentInput;
+          property: Property;
+        }[]
+      )
+    );
+  }
+
+  compileNestedComponents() {
+    const components = this.context.components!;
+    if (this.heritageClauses.length) {
+      const heritage = this.heritageClauses[0].typeNodes[0];
+      if (heritage instanceof Call && heritage.arguments.length) {
+        const inheritFrom = heritage.arguments[0].toString();
+        const heritageInput = components[inheritFrom] as ComponentInput;
+
+        const bindings = this.getNestedFromComponentInput(heritageInput);
+        const imports = this.getNestedImports(
+          bindings.map(({ component }) => component)
+        );
+        const nested = bindings.map(({ component, property }) =>
+          this.getNestedExports(component, property)
+        );
+
+        return imports.concat(nested).join("\n");
+      }
+    }
+    return "";
+  }
+
   toString() {
     const viewFunction = this.context.viewFunctions?.[this.view];
     const getTemplateFunc = this.props.some((p) => p.isTemplate)
@@ -1061,6 +1169,7 @@ export class ReactComponent extends Component {
 
     return `
             ${this.compileImports()}
+            ${this.compileNestedComponents()}
             ${this.compileComponentRef()}
             ${this.compileRestProps()}
             ${this.compileComponentInterface()}
@@ -1278,7 +1387,8 @@ export class ReactGenerator extends BaseGenerator {
       name,
       typeParameters,
       heritageClauses,
-      members
+      members,
+      this.getContext()
     );
   }
 

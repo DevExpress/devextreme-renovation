@@ -168,6 +168,10 @@ mocha.describe("vue-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("nested-props", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("forward-ref-parent", function () {
     this.testGenerator(this.test!.title);
   });

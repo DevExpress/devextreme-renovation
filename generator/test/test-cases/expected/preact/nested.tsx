@@ -1,16 +1,7 @@
-declare type Column = { name: string; index?: number };
-declare type Editing = { editEnabled?: boolean };
-declare type Custom = {};
+import { WidgetInput } from "./nested-props";
 function view(model: Widget) {
   return <div />;
 }
-
-export declare type WidgetInputType = {
-  columns?: Array<Column | string>;
-  gridEditing?: Editing;
-  someArray?: Array<Custom>;
-};
-const WidgetInput: WidgetInputType = {};
 
 import * as Preact from "preact";
 import { useCallback } from "preact/hooks";
@@ -44,10 +35,9 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { columns, gridEditing, someArray, ...restProps } = {
+      const { columns, gridEditing, ...restProps } = {
         columns: props.columns,
         gridEditing: props.gridEditing,
-        someArray: props.someArray,
       };
       return restProps;
     },

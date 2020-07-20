@@ -1,16 +1,8 @@
 <template>
   <div />
 </template>
-
 <script>
-const WidgetInput = {
-  columns: {
-    type: Array,
-  },
-  someArray: {
-    type: Array,
-  },
-};
+import { WidgetInput } from "./nested-props";
 
 export default {
   props: WidgetInput,
@@ -28,7 +20,6 @@ export default {
         columns: this.columns || this.__getNestedFromChild("DxColumn"),
         gridEditing:
           this.gridEditing || this.__getNestedFromChild("DxGridEditing")?.[0],
-        someArray: this.someArray || this.__getNestedFromChild("DxSomeArray"),
       };
     },
   },

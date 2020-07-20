@@ -28,7 +28,10 @@ import {
 } from "./base-generator/types";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { Method } from "./base-generator/expressions/class-members";
-import { capitalizeFirstLetter, compileType } from "./base-generator/utils/string";
+import {
+  capitalizeFirstLetter,
+  compileType,
+} from "./base-generator/utils/string";
 
 const BASE_JQUERY_WIDGET = "BASE_JQUERY_WIDGET";
 
@@ -75,9 +78,6 @@ export class ComponentInput extends BaseComponentInput {
   }
   createChildrenForNested(members: Array<BaseProperty | Method>) {
     return null;
-  }
-  exportNestedComponents() {
-    return "";
   }
 }
 
@@ -134,6 +134,10 @@ export class PreactComponent extends ReactComponent {
   }
 
   compileDefaultComponentExport() {
+    return "";
+  }
+
+  compileNestedComponents() {
     return "";
   }
 }
@@ -239,14 +243,16 @@ class JQueryComponent {
 
   compileEventMap() {
     const statements = this.source.props.reduce((r: string[], p) => {
-      if(p.isEvent
-        && !this.source.state.find((s) => `${s.name}Change` === p.name)
-        && p.name !== "onKeyDown") {
+      if (
+        p.isEvent &&
+        !this.source.state.find((s) => `${s.name}Change` === p.name) &&
+        p.name !== "onKeyDown"
+      ) {
         const actionConfig = p.decorators
           .find((d) => d.name === "Event")!
-          .getParameter("actionConfig");  
+          .getParameter("actionConfig");
 
-        r.push(`${p.name}: ${actionConfig as ObjectLiteral || "{}"}`);
+        r.push(`${p.name}: ${(actionConfig as ObjectLiteral) || "{}"}`);
       }
       return r;
     }, []);
@@ -272,7 +278,12 @@ class JQueryComponent {
     return `
         get _twoWayProps() {
             return [
-                ${this.source.state.map((s) => `['${s.name}', 'default${capitalizeFirstLetter(s.name)}', '${s.name}Change']`)}
+                ${this.source.state.map(
+                  (s) =>
+                    `['${s.name}', 'default${capitalizeFirstLetter(
+                      s.name
+                    )}', '${s.name}Change']`
+                )}
             ]
         }
         `;
@@ -522,7 +533,8 @@ export class PreactGenerator extends ReactGenerator {
       name,
       typeParameters,
       heritageClauses,
-      members
+      members,
+      this.getContext()
     );
   }
 }

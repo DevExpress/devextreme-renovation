@@ -1,13 +1,5 @@
-import {
-  Component,
-  ComponentBindings,
-  JSXComponent,
-  Nested,
-} from "../../component_declaration/common";
-
-declare type Cell = {
-  data: string;
-};
+import { Component, JSXComponent } from "../../component_declaration/common";
+import { WithNestedInput } from "./nested-props.ts";
 
 function view(model: WithNested) {
   return (
@@ -17,11 +9,6 @@ function view(model: WithNested) {
       ))}
     </div>
   );
-}
-
-@ComponentBindings()
-export class WithNestedInput {
-  @Nested() cells?: (Cell | string)[];
 }
 
 @Component({

@@ -193,6 +193,10 @@ mocha.describe("react-generator", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("nested-props", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("forward-ref-template", function () {
     this.testGenerator(this.test!.title);
   });
@@ -1570,7 +1574,8 @@ mocha.describe("import Components", function () {
       generator.createIdentifier("Model"),
       [],
       [heritageClause],
-      []
+      [],
+      {}
     );
 
     assert.strictEqual(
@@ -1625,7 +1630,8 @@ mocha.describe("import Components", function () {
           generator.createKeywordTypeNode("string"),
           generator.createStringLiteral("10px")
         ),
-      ]
+      ],
+      {}
     );
 
     assert.deepEqual(
@@ -1663,7 +1669,8 @@ mocha.describe("import Components", function () {
             generator.createKeywordTypeNode("string"),
             undefined
           ),
-        ]
+        ],
+        {}
       );
       assert.strictEqual(
         getResult(model.toString()),
@@ -1693,7 +1700,8 @@ mocha.describe("import Components", function () {
             generator.createKeywordTypeNode("string"),
             undefined
           ),
-        ]
+        ],
+        {}
       );
 
       const members = model.members as Property[];
@@ -1736,7 +1744,8 @@ mocha.describe("import Components", function () {
             generator.createKeywordTypeNode("any"),
             undefined
           ),
-        ]
+        ],
+        {}
       );
 
       const members = model.members as Property[];
