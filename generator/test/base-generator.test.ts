@@ -2518,6 +2518,63 @@ mocha.describe("base-generator: expressions", function () {
         );
       }
     );
+
+    mocha.describe("has", function () {
+      mocha.it("without default and named imports", function () {
+        const expression = generator.createImportDeclaration(
+          undefined,
+          undefined,
+          undefined,
+          generator.createStringLiteral("typescript")
+        ) as ImportDeclaration;
+
+        assert.strictEqual(expression.has("typescript"), false);
+      });
+
+      mocha.it("with default import and named imports", function () {
+        const expression = generator.createImportDeclaration(
+          undefined,
+          undefined,
+          generator.createImportClause(
+            generator.createIdentifier("ts"),
+            generator.createNamedImports([
+              generator.createImportSpecifier(
+                undefined,
+                generator.createIdentifier("Node")
+              ),
+              generator.createImportSpecifier(
+                generator.createIdentifier("isNode"),
+                generator.createIdentifier("_isNode")
+              ),
+            ])
+          ),
+          generator.createStringLiteral("typescript")
+        ) as ImportDeclaration;
+
+        assert.strictEqual(expression.has("ts"), true);
+        assert.strictEqual(expression.has("Node"), true);
+        assert.strictEqual(expression.has("_isNode"), true);
+        assert.strictEqual(expression.has("isNode"), false);
+        assert.strictEqual(expression.has("any"), false);
+      });
+
+      mocha.it("with namespace import", function () {
+        const expression = generator.createImportDeclaration(
+          undefined,
+          undefined,
+          generator.createImportClause(
+            undefined,
+            generator.createNamespaceImport(
+              generator.createIdentifier("utilsModule")
+            )
+          ),
+          generator.createStringLiteral("./utils-module")
+        ) as ImportDeclaration;
+
+        assert.strictEqual(expression.has("utilsModule"), true);
+        assert.strictEqual(expression.has("any"), false);
+      });
+    });
   });
 
   mocha.describe("export", function () {

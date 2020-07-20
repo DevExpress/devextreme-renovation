@@ -137,6 +137,7 @@ innerState: boolean = false;
 function viewFunction(viewModel: MyComponent) {
 const hasTemplate = !!viewModel.props.userTemplate;
 return (
+
 <div
 ref={viewModel.rootRef as any}
 className="my-class"
@@ -585,7 +586,38 @@ export default class Component extends JSXComponent(ComponentProps) {
 
 Тесты на декларации написаны с использование _jest_. Примеры тестов на существующие компоненты см в [testing/jest](https://github.com/DevExpress/DevExtreme/tree/20_2/testing/jest).
 
+Стартовый шаблон кода test-a:
+
+```tsx
+/* eslint-disable jest/expect-expect */
+import { h } from "preact";
+import { shallow } from "enzyme";
+import { _Component_, viewFunction as _Component_Component } from "<path>";
+
+describe("_Component_", () => {
+  describe("View", () => {
+    it("render props", () => {
+      const props = { props: {} } as Partial<_Component_>;
+      const tree = shallow(
+        (<_Component_Component {...(props as any)} />) as any
+      );
+    });
+  });
+  describe("Behaviuor", () => {
+    it("Getters", () => {
+      const component = new _Component_({
+        /* параметры */
+      });
+    });
+  });
+});
+```
+
 Для запуска тестов достаточно просто выполнить команду `test-jest`.
+
+Для watch `test-jest --watch`.
+
+Рекомендуется к использованию плагин [vscode-jest](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest)
 
 Также ознакомьтесь с информацией в [разделе тестирования](#тестирование).
 

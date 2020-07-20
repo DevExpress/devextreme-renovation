@@ -12,19 +12,8 @@ export class Block extends Expression {
 
   toString(options?: toStringOptions) {
     return `{
-            ${this.statements
-              .map((s, i, arr) => {
-                const main = s.toString(options);
-                const tail =
-                  arr[i + 1] &&
-                  !main.trim().endsWith("}") &&
-                  arr[i + 1].toString(options).trim().startsWith("(")
-                    ? ";"
-                    : "";
-                return `${main}${tail}`;
-              })
-              .join("\n")}
-        }`;
+      ${this.statements.map((s) => s.toString(options)).join(";\n")}
+    }`;
   }
 
   getDependency() {

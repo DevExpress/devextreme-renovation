@@ -221,6 +221,10 @@ mocha.describe("react-generator", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("jquery-custom-base", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {

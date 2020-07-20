@@ -13,6 +13,10 @@ export class NamedImports {
     this.node.push(new ImportSpecifier(undefined, new Identifier(name)));
   }
 
+  has(name: string) {
+    return this.node.some((n) => n.name.toString() === name);
+  }
+
   remove(name: string) {
     this.node = this.node.filter((n) => n.toString() !== name);
   }
@@ -65,6 +69,13 @@ export class ImportClause {
     }
   }
 
+  has(name: string) {
+    if (name === this.default?.toString()) {
+      return true;
+    }
+    return this.namedBindings?.has(name) || false;
+  }
+
   add(name: string) {
     if (isNamedImports(this.namedBindings)) {
       this.namedBindings.add(name);
@@ -106,6 +117,10 @@ export class ImportDeclaration {
     this.importClause.add(name);
   }
 
+  has(name: string) {
+    return this.importClause.has(name);
+  }
+
   constructor(
     decorators: Decorator[] = [],
     modifiers: string[] = [],
@@ -128,6 +143,10 @@ export class NamespaceImport {
 
   constructor(name: Identifier) {
     this.name = name;
+  }
+
+  has(name: string) {
+    return this.name.toString() === name;
   }
 
   toString() {
