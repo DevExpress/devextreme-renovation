@@ -526,7 +526,7 @@ export default class Generator implements GeneratorAPI {
 
       if (modulePath && !hasModule) {
         compileCode(this, fs.readFileSync(modulePath).toString(), {
-          dirname: context.dirname,
+          dirname: path.dirname(modulePath),
           path: modulePath,
           importedModules: [...importedModules, modulePath],
         });
