@@ -107,7 +107,7 @@ function view(viewModel: Widget) {
   return (
     <div>
       {viewModel.props.headerTemplate()}
-      
+
       {viewModel.props.contentTemplate &&
         viewModel.props.contentTemplate({ data: { p1: "value" }, index: 10 })}
 

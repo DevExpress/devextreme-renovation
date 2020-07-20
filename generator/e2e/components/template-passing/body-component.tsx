@@ -9,10 +9,14 @@ import {
 import Button from "../button.tsx";
 
 function view({ props: { text }, click }: BodyComponent) {
-return <Fragment>
-    <span>{text}</span>
-    <Button id="body-component-button" onClick={click}>Push me!</Button>
-  </Fragment>;
+  return (
+    <Fragment>
+      <span>{text}</span>
+      <Button id="body-component-button" onClick={click}>
+        Push me!
+      </Button>
+    </Fragment>
+  );
 }
 
 @ComponentBindings()

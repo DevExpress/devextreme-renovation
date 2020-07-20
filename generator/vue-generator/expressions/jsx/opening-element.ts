@@ -161,7 +161,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     );
   }
 
-  templatePropToJsxElement(template: JsxAttribute, options?: toStringOptions): JsxElement {
+  templatePropToJsxElement(
+    template: JsxAttribute,
+    options?: toStringOptions
+  ): JsxElement {
     const destSlotName = this.getTemplateName(template);
     const slotName = getMember(template.initializer, options)!.name;
 

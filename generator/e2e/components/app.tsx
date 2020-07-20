@@ -29,7 +29,7 @@ import ForwardRefTemplate from "./ref-on-children/forward-ref-template.tsx";
 import ForwardRefChild from "./ref-on-children/child.tsx";
 import ForwardRefDeep from "./ref-on-children/forward-ref-deep.tsx";
 
-import TemplateApp from "./template-passing/template-app.tsx"
+import TemplateApp from "./template-passing/template-app.tsx";
 
 function view(model: App) {
   return (
@@ -113,8 +113,7 @@ function view(model: App) {
       <ForwardRefTemplate contentTemplate={ForwardRefChild} />
       ForwardRef Deep:
       <ForwardRefTemplate contentTemplate={ForwardRefDeep} />
-
-      <div style={{border: "1px solid grey"}}>
+      <div style={{ border: "1px solid grey" }}>
         Check templates
         <TemplateApp />
       </div>

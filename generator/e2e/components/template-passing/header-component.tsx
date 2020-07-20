@@ -9,10 +9,14 @@ import {
 import Button from "../button.tsx";
 
 function view({ props: { text }, click }: HeaderComponent) {
-return <Fragment>
-    <span>{text}</span>
-    <Button id="header-component-button" onClick={click}>Touch me!</Button>
-  </Fragment>;
+  return (
+    <Fragment>
+      <span>{text}</span>
+      <Button id="header-component-button" onClick={click}>
+        Touch me!
+      </Button>
+    </Fragment>
+  );
 }
 
 @ComponentBindings()
@@ -24,7 +28,9 @@ class HeaderComponentProps {
 @Component({
   view,
 })
-export default class HeaderComponent extends JSXComponent(HeaderComponentProps) {
+export default class HeaderComponent extends JSXComponent(
+  HeaderComponentProps
+) {
   click() {
     this.props.onClick();
   }

@@ -1121,7 +1121,10 @@ export class ReactComponent extends Component {
 
 export class JsxAttribute extends BaseJsxAttribute {
   getTemplateContext(): PropertyAssignment[] {
-    const initializer = this.initializer instanceof JsxExpression ? this.initializer : new JsxExpression(undefined, this.initializer);
+    const initializer =
+      this.initializer instanceof JsxExpression
+        ? this.initializer
+        : new JsxExpression(undefined, this.initializer);
     return [new PropertyAssignment(this.name, initializer.getExpression()!)];
   }
 

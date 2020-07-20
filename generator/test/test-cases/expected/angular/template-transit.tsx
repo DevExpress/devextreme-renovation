@@ -15,9 +15,9 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-template-transit-widget",
   template: `<dx-widget-with-template
-      [template]="templateProp"
-      [componentTemplate]="componentTemplateProp"
-    ></dx-widget-with-template>`,
+    [template]="templateProp"
+    [componentTemplate]="componentTemplateProp"
+  ></dx-widget-with-template>`,
 })
 export default class TemplateTransitWidget extends TemplateTransitWidgetInput {
   get __restAttributes(): any {

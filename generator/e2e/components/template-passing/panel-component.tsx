@@ -6,19 +6,30 @@ import {
   Template,
 } from "../../../component_declaration/common";
 
-const lorem = "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Blanditiis velit vero alias deserunt adipisci minima eum incidunt architecto, possimus delectus commodi similique tempore optio quaerat facere laborum eius iste perspiciatis!";
+const lorem =
+  "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Blanditiis velit vero alias deserunt adipisci minima eum incidunt architecto, possimus delectus commodi similique tempore optio quaerat facere laborum eius iste perspiciatis!";
 
 function view(vm: PanelComponent) {
-  return <div>
+  return (
     <div>
-      <span>Header:</span>
-      <vm.props.headerTemplate text="Panel header" onClick={vm.headerClick.bind(this)}/> {/* remove .bind(this) hack once #306 fixed*/}
+      <div>
+        <span>Header:</span>
+        <vm.props.headerTemplate
+          text="Panel header"
+          onClick={vm.headerClick.bind(this)}
+        />{" "}
+        {/* remove .bind(this) hack once #306 fixed*/}
+      </div>
+      <div>
+        <span>Body:</span>
+        <vm.props.bodyTemplate
+          text={lorem}
+          onClick={vm.bodyClick.bind(this)}
+        />{" "}
+        {/* remove .bind(this) hack once #306 fixed*/}
+      </div>
     </div>
-    <div>
-      <span>Body:</span>
-      <vm.props.bodyTemplate text={lorem} onClick={vm.bodyClick.bind(this)}/> {/* remove .bind(this) hack once #306 fixed*/}
-    </div>
-  </div>;
+  );
 }
 
 @ComponentBindings()

@@ -10,13 +10,15 @@ import BodyComponent from "./body-component.tsx";
 
 function view(vm: TemplateApp) {
   return (
-    <InterComponent titleTemplate={HeaderComponent} contentTemplate={BodyComponent}/>
+    <InterComponent
+      titleTemplate={HeaderComponent}
+      contentTemplate={BodyComponent}
+    />
   );
 }
 
 @ComponentBindings()
-class TemplateAppProps {
-}
+class TemplateAppProps {}
 
 @Component({
   view,

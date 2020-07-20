@@ -11,7 +11,8 @@
       name="template"
       v-bind:textProp="'textPropValue'"
       v-bind:textPropExpr="'textPropExrpValue'"
-      v-if="!$scopedSlots.contentTemplate"></slot>
+      v-if="!$scopedSlots.contentTemplate"
+    ></slot>
     <slot name="footerTemplate" v-bind:someProp="true"></slot>
   </div>
 </template>

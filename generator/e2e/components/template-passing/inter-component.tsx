@@ -7,9 +7,14 @@ import {
   InternalState,
 } from "../../../component_declaration/common";
 
-import PanelComponent from './panel-component.tsx';
+import PanelComponent from "./panel-component.tsx";
 
-function view({ props: { titleTemplate, contentTemplate }, clicks, headerClick, bodyClick }: InterComponent) {
+function view({
+  props: { titleTemplate, contentTemplate },
+  clicks,
+  headerClick,
+  bodyClick,
+}: InterComponent) {
   return (
     <Fragment>
       <div id="template-app-clicks">{clicks}</div>
@@ -38,7 +43,7 @@ export default class InterComponent extends JSXComponent(InterComponentProps) {
     this.log("header");
   }
 
-  bodyClick(){
+  bodyClick() {
     this.log("body");
   }
 
