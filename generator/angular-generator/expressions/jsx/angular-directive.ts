@@ -3,7 +3,7 @@ import { toStringOptions } from "../../types";
 
 export class AngularDirective extends JsxAttribute {
   getTemplateContext() {
-    return null;
+    return [];
   }
   toString(options?: toStringOptions) {
     const initializer = this.compileInitializer(options);

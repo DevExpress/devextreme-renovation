@@ -1120,9 +1120,9 @@ export class ReactComponent extends Component {
 }
 
 export class JsxAttribute extends BaseJsxAttribute {
-  getTemplateContext(): PropertyAssignment | null {
+  getTemplateContext(): PropertyAssignment[] {
     const expression = (this.initializer as JsxExpression).getExpression()!;
-    return new PropertyAssignment(this.name, expression);
+    return [new PropertyAssignment(this.name, expression)];
   }
 
   toString(options?: toStringOptions) {
@@ -1182,9 +1182,12 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       return super.toString(options);
     }
 
-    const contextElements = this.attributes
-      .map((a) => a.getTemplateContext())
-      .filter((p) => p) as (PropertyAssignment | SpreadAssignment)[];
+    const contextElements = this.attributes.reduce(
+      (elements: (PropertyAssignment | SpreadAssignment)[], a) => {
+        return elements.concat(a.getTemplateContext());
+      },
+      []
+    );
     const templateParams = contextElements.length
       ? new ObjectLiteral(contextElements, false)
           .toString(options)

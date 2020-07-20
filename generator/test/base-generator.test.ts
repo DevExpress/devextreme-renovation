@@ -1759,7 +1759,7 @@ mocha.describe("base-generator: expressions", function () {
         generator.createIdentifier("selected")
       );
 
-      assert.strictEqual(expression.getTemplateContext(), null);
+      assert.deepEqual(expression.getTemplateContext(), []);
     });
   });
 

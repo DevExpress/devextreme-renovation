@@ -228,9 +228,17 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
   compileTemplate(templateProperty: Property, options?: toStringOptions) {
     const contextExpr = processComponentContext(options?.newComponentContext);
-    const contextElements = this.attributes
-      .map((a) => a.getTemplateContext(options))
-      .filter((p) => p) as PropertyAssignment[];
+    const contextElements = this.attributes.reduce(
+      (elements: PropertyAssignment[], a) => {
+        const contextElements = a.getTemplateContext(
+          options,
+          this.context.components
+        );
+        return elements.concat(contextElements);
+      },
+      []
+    );
+
     const contextString = contextElements.length
       ? `; context:${new ObjectLiteral(contextElements, false)
           .toString(options)
