@@ -2489,6 +2489,29 @@ mocha.describe("base-generator: expressions", function () {
     });
 
     mocha.it(
+      "Import component in different folder with current module",
+      function () {
+        generator.createImportDeclaration(
+          undefined,
+          undefined,
+          generator.createImportClause(generator.createIdentifier("Widget")),
+          generator.createStringLiteral(
+            "./test-cases/declarations/src/use-external-component-bindings"
+          )
+        );
+
+        const widget = generator.getContext().components?.[
+          "Widget"
+        ] as Component;
+
+        assert.deepEqual(
+          widget.members.map((m) => m.name),
+          ["height", "__restAttributes"]
+        );
+      }
+    );
+
+    mocha.it(
       "import module declaration with component should fill component if it is imported",
       function () {
         generator.createImportDeclaration(

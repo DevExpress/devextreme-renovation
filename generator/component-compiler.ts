@@ -57,7 +57,7 @@ export default function compile(dir: string, outDir: string) {
   }
   fs.mkdirSync(outDir);
   fs.readdirSync(dir, { withFileTypes: true })
-    .filter(({ name }) => name.search(/.ts(x?)$/) >= -1)
+    .filter(({ name }) => name.search(/.ts(x?)$/) >= 0)
     .forEach(({ name }) => {
       const source = ts.createSourceFile(
         name,
