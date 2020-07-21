@@ -52,6 +52,9 @@ mocha.describe("preact-generator", function () {
     this.code = null;
     this.expectedCode = null;
   });
+  mocha.it("class", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   mocha.it("props-in-listener", function () {
     this.testGenerator(this.test!.title);

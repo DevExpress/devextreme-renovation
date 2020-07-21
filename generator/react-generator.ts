@@ -512,7 +512,10 @@ export class Property extends BaseProperty {
     );
   }
 
-  toString() {
+  toString(options?: toStringOptions) {
+    if (!options) {
+      return super.toString();
+    }
     if (this.isState) {
       const propName = getPropName(this.name);
       const defaultExclamationToken =
@@ -858,7 +861,10 @@ export class ReactComponent extends Component {
   }
 
   stateDeclaration() {
-    return `${this.state.concat(this.internalState).join(";\n")}`;
+    return `${this.state
+      .concat(this.internalState)
+      .map((p) => p.toString(this.getToStringOptions()))
+      .join(";\n")}`;
   }
 
   compileUseEffect() {

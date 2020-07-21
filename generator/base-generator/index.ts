@@ -53,7 +53,12 @@ import {
   TypeOperatorNode,
   TypeAliasDeclaration,
 } from "./expressions/type";
-import { Method, GetAccessor, Property } from "./expressions/class-members";
+import {
+  Method,
+  GetAccessor,
+  Property,
+  Constructor,
+} from "./expressions/class-members";
 import { For, ForIn, Do, While } from "./expressions/cycle";
 import {
   CaseClause,
@@ -851,6 +856,15 @@ export default class Generator implements GeneratorAPI {
     body?: Block
   ) {
     return new GetAccessor(decorators, modifiers, name, parameters, type, body);
+  }
+
+  createConstructor(
+    decorators: Decorator[] | undefined,
+    modifiers: string[] | undefined,
+    parameters: Parameter[],
+    body: Block | undefined
+  ) {
+    return new Constructor(decorators, modifiers, parameters, body);
   }
 
   createPrefix(operator: string, operand: Expression) {
