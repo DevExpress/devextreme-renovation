@@ -42,6 +42,28 @@ module.exports = {
         test: /\.css$/,
         use: ["vue-style-loader", "css-loader"],
       },
+
+      {
+        test: /\.ts$/,
+        loaders: [
+          {
+            loader: "babel-loader",
+            options: {
+              presets: ["@babel/preset-env"],
+            },
+          },
+          {
+            loader: path.resolve("./build/webpack-loader.js"),
+            options: {
+              platform: "vue",
+              defaultOptionsModule:
+                "./build/component_declaration/default_options",
+            },
+          },
+        ],
+
+        exclude: ["/node_modules/"],
+      },
     ],
   },
 

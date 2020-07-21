@@ -180,18 +180,20 @@
 
 - `@Slot()` - проп, через который можно передать некий контент для прямого отображения. В *Angular* это называется *transcluded content*, в *React* это просто *JSX* разметка. Если в компоненте объявлен слот с именем `children`, в него придет дочерний контент компонента из разметки пользователя компонента. Это аналог `children` в *React*.
 
-- `@Nested()` - генерирует `OneWay` проп, который может брать значение как из пропсы объекта, так и из `children` компонентов. Для `jQuery` работает только пропса. Для корректной генерации, нужно объявить в файле собственный тип для этой пропсы. Типы не должны пересекаться **(одно свойство - один тип)**. Имя сгенерированных компонентов основано на имени пропсы (префикс в Angular зависит от того массив ли это объектов (i - iterable), или одиночный объект (o - object)):
-  |Property Name|React|Angular|Vue|
-  |:---:|:---:|:---:|:---:|
-  Columns|Column|dxi-column/dxo-column|DxColumn
-  GridEditing|GridEditing|dxi-grid-editing/dxo-grid-editing|DxGridEditing
+- `@Nested()` - генерирует `OneWay` проп, который может брать значение как из пропсы объекта, так и из `children` компонентов. Для `jQuery` работает только пропса. В качестве Nested пропсы может использоваться любой другой класс с декоратором `@BindingComponent()`. **Важно! Если используемый компонент лежит в другом файле, необходимо его экспортировать. Без экспорта компонента, генератор не сможет его заимпортить.** Имя сгенерированных компонентов основано на имени пропсы (префикс в Angular зависит от того массив ли это объектов (i - iterable), или одиночный объект (o - object)):
+  |Property Name|isArray|React|Angular|Vue|
+  |:---:|:---:|:---:|:---:|:---:|
+  Columns|YES|Column|dxi-column|DxColumn
+  GridEditing|NO|GridEditing|dxo-grid-editing|DxGridEditing
   Пример декларации:
   ```typescript
-  declare type Column {
-    dataField?: string;
+  @ComponentBindings()
+  export class Column {
+    @OneWay() dataField?: string = "Default Value";
     // Other props
   }
-  declare type Editing {
+  @ComponentBindings()
+  export class Editing {
     // Props
   }
 

@@ -12,7 +12,7 @@ export class Block extends Expression {
 
   toString(options?: toStringOptions) {
     return `{
-      ${this.statements.map(s => s.toString(options)).join(";\n")}
+      ${this.statements.map((s) => s.toString(options)).join(";\n")}
     }`;
   }
 

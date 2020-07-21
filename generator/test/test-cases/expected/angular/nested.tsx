@@ -1,41 +1,33 @@
-declare type Column = { name: string; index?: number };
-declare type Editing = { editEnabled?: boolean };
-declare type Custom = {};
+import { WidgetInput } from "./nested-props";
 
-import { Input, ContentChildren, QueryList, Directive } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  Input,
+  ContentChildren,
+  QueryList,
+  Directive,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { GridColumn, Editing, Custom } from "./nested-props";
+
 @Directive({
-  selector: "dx-widget dxi-column",
+  selector: "dx-widget dxi-custom",
 })
-class DxColumn implements Column {
-  @Input() name!: string;
-  @Input() index?: number;
-}
+class DxCustom extends Custom {}
+
 @Directive({
   selector: "dx-widget dxo-grid-editing",
 })
-class DxEditing implements Editing {
-  @Input() editEnabled?: boolean;
+class DxEditing extends Editing {
+  @ContentChildren(DxCustom) customNested!: QueryList<DxCustom>;
 }
+
 @Directive({
-  selector: "dx-widget dxi-some-array",
+  selector: "dx-widget dxi-column",
 })
-class DxCustom implements Custom {}
-class WidgetInput {
-  @Input() columns?: Array<Column | string>;
-  @Input() gridEditing?: Editing;
-  @Input() someArray?: Array<Custom>;
-  @ContentChildren(DxColumn) columnsNested!: QueryList<DxColumn>;
-  @ContentChildren(DxEditing) gridEditingNested!: QueryList<DxEditing>;
-  @ContentChildren(DxCustom) someArrayNested!: QueryList<DxCustom>;
-}
-
-import { Component, NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
-@Component({
-  selector: "dx-widget",
-  template: `<div></div>`,
-})
+class DxGridColumn extends GridColumn {}
+@Component({ selector: "dx-widget", template: `<div></div>` })
 export default class Widget extends WidgetInput {
   __getColumns(): any {
     return (this.columns || this.columnsNested.toArray())?.map((el) =>
@@ -49,10 +41,14 @@ export default class Widget extends WidgetInput {
   get __restAttributes(): any {
     return {};
   }
+  @Input() columns?: Array<DxGridColumn | string>;
+  @Input() gridEditing?: DxEditing;
+  @ContentChildren(DxGridColumn) columnsNested!: QueryList<DxGridColumn>;
+  @ContentChildren(DxEditing) gridEditingNested!: QueryList<DxEditing>;
 }
 @NgModule({
-  declarations: [Widget, DxColumn, DxEditing, DxCustom],
+  declarations: [Widget, DxGridColumn, DxEditing],
   imports: [CommonModule],
-  exports: [Widget, DxColumn, DxEditing, DxCustom],
+  exports: [Widget, DxGridColumn, DxEditing],
 })
 export class DxWidgetModule {}

@@ -22,7 +22,8 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx$/,
+        test: /\.tsx?$/,
+        include: path.resolve("./e2e/components"),
         loaders: [
           {
             loader: "ts-loader",
@@ -42,6 +43,7 @@ module.exports = {
       },
       {
         test: /\.ts$/,
+        exclude: path.resolve("./e2e/components"),
         loaders: [
           {
             loader: "awesome-typescript-loader",

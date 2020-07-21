@@ -76,6 +76,10 @@ mocha.describe("preact-generator", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("nested-props", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("export-default", function () {
     this.testGenerator(this.test!.title);
   });

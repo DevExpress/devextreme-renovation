@@ -58,9 +58,6 @@ export class ComponentInput extends BaseComponentInput {
   createChildrenForNested(members: Array<BaseProperty | Method>) {
     return null;
   }
-  exportNestedComponents() {
-    return "";
-  }
 }
 
 export class PreactComponent extends ReactComponent {
@@ -119,6 +116,9 @@ export class PreactComponent extends ReactComponent {
     return "";
   }
 
+  compileNestedComponents() {
+    return "";
+  }
   getJQueryBaseComponentName(): string | undefined {
     const jqueryProp = this.decorators[0].getParameter(
       "jQuery"
@@ -236,14 +236,16 @@ class JQueryComponent {
 
   compileEventMap() {
     const statements = this.source.props.reduce((r: string[], p) => {
-      if(p.isEvent
-        && !this.source.state.find((s) => `${s.name}Change` === p.name)
-        && p.name !== "onKeyDown") {
+      if (
+        p.isEvent &&
+        !this.source.state.find((s) => `${s.name}Change` === p.name) &&
+        p.name !== "onKeyDown"
+      ) {
         const actionConfig = p.decorators
           .find((d) => d.name === "Event")!
-          .getParameter("actionConfig");  
+          .getParameter("actionConfig");
 
-        r.push(`${p.name}: ${actionConfig as ObjectLiteral || "{}"}`);
+        r.push(`${p.name}: ${(actionConfig as ObjectLiteral) || "{}"}`);
       }
       return r;
     }, []);
@@ -521,7 +523,8 @@ export class PreactGenerator extends ReactGenerator {
       name,
       typeParameters,
       heritageClauses,
-      members
+      members,
+      this.getContext()
     );
   }
 

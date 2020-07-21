@@ -1,21 +1,13 @@
-declare type Column = { name: string; index?: number };
-declare type Editing = { editEnabled?: boolean };
-declare type Custom = {};
+import { WidgetInput } from "./nested-props";
 function view(model: Widget) {
   return <div />;
 }
-export const Column: React.FunctionComponent<Column> = () => null;
-export const GridEditing: React.FunctionComponent<Editing> = () => null;
-export const SomeArray: React.FunctionComponent<Custom> = () => null;
-export declare type WidgetInputType = {
-  columns?: Array<Column | string>;
-  gridEditing?: Editing;
-  someArray?: Array<Custom>;
-  children?: React.ReactNode;
-};
-const WidgetInput: WidgetInputType = {};
 
 import React, { useCallback } from "react";
+import { GridColumnType, EditingType, CustomType } from "./nested-props";
+export const Column: React.FunctionComponent<GridColumnType> = () => null;
+export const GridEditing: React.FunctionComponent<EditingType> = () => null;
+export const Custom: React.FunctionComponent<CustomType> = () => null;
 
 declare type RestProps = {
   className?: string;
@@ -34,7 +26,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   const getColumns = useCallback(
     function getColumns(): any {
       return (
-        props.columns || __getNestedFromChild<Column>("Column")
+        props.columns || __getNestedFromChild<GridColumnType>("Column")
       )?.map((el) => (typeof el === "string" ? el : el.name));
     },
     [props.columns, props.children]
@@ -42,20 +34,21 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   const __isEditable = useCallback(
     function __isEditable(): any {
       return (
-        props.gridEditing || __getNestedFromChild<Editing>("GridEditing")?.[0]
+        props.gridEditing ||
+        __getNestedFromChild<EditingType>("GridEditing")?.[0]
       )?.editEnabled;
     },
     [props.gridEditing, props.children]
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { children, columns, gridEditing, someArray, ...restProps } = {
+      const { children, columns, gridEditing, ...restProps } = {
         ...props,
-        columns: props.columns || __getNestedFromChild<Column>("Column"),
+        columns:
+          props.columns || __getNestedFromChild<GridColumnType>("Column"),
         gridEditing:
           props.gridEditing ||
-          __getNestedFromChild<Editing>("GridEditing")?.[0],
-        someArray: props.someArray || __getNestedFromChild<Custom>("SomeArray"),
+          __getNestedFromChild<EditingType>("GridEditing")?.[0],
       };
       return restProps;
     },

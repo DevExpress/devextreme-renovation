@@ -949,7 +949,6 @@ export default class Generator implements GeneratorAPI {
       typeParameters,
       type
     );
-    this.addType(name.toString(), result.type);
     return result;
   }
 
@@ -1131,12 +1130,6 @@ export default class Generator implements GeneratorAPI {
     const context = this.getContext();
     context.components = context.components || {};
     context.components[name] = component;
-  }
-
-  addType(name: string, type: TypeExpression) {
-    const context = this.getContext();
-    context.types = context.types || {};
-    context.types[name] = type;
   }
 
   getInitialContext(): GeneratorContext {

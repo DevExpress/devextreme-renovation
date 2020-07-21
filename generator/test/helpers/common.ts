@@ -52,7 +52,12 @@ export const assertCode = (code: string, expectedCode: string) => {
 
 export function printSourceCodeAst(source: string) {
   return print(
-    ts.createSourceFile("result.tsx", source.replace(/};/gm, "}"), ts.ScriptTarget.ES2016, true)
+    ts.createSourceFile(
+      "result.tsx",
+      source.replace(/};/gm, "}"),
+      ts.ScriptTarget.ES2016,
+      true
+    )
   ).join("\n");
 }
 
