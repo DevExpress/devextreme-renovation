@@ -5194,6 +5194,117 @@ mocha.describe("Angular generator", function () {
         );
       });
 
+      mocha.it("Access props - const {p} = this.props", function () {
+        const expression = generator.createPropertyAccess(
+          generator.createThis(),
+          generator.createIdentifier("props")
+        );
+
+        const members = [
+          generator.createProperty(
+            [createDecorator(Decorators.OneWay)],
+            [],
+            generator.createIdentifier("p1")
+          ),
+          generator.createProperty(
+            [createDecorator(Decorators.TwoWay)],
+            [],
+            generator.createIdentifier("p2")
+          ),
+          generator.createProperty(
+            [createDecorator(Decorators.Event)],
+            [],
+            generator.createIdentifier("p3")
+          ),
+        ];
+
+        const stringValue = generator
+          .createVariableDeclaration(
+            generator.createObjectBindingPattern([
+              generator.createBindingElement(
+                undefined,
+                undefined,
+                generator.createIdentifier("p1")
+              ),
+              generator.createBindingElement(
+                undefined,
+                generator.createIdentifier("p3"),
+                generator.createIdentifier("_p3")
+              ),
+            ]),
+            undefined,
+            expression
+          )
+          .toString({
+            componentContext: generator.SyntaxKind.ThisKeyword,
+            newComponentContext: generator.SyntaxKind.ThisKeyword,
+            members: members,
+          });
+
+        assert.strictEqual(
+          getResult(stringValue),
+          getResult(`{p1, p3:_p3}={p1:this.p1, p3:this.p3.emit}`)
+        );
+      });
+
+      mocha.it("Access props - const {p} = (this.props as any)", function () {
+        const expression = generator.createParen(
+          generator.createAsExpression(
+            generator.createPropertyAccess(
+              generator.createThis(),
+              generator.createIdentifier("props")
+            ),
+            generator.createKeywordTypeNode("any")
+          )
+        );
+
+        const members = [
+          generator.createProperty(
+            [createDecorator(Decorators.OneWay)],
+            [],
+            generator.createIdentifier("p1")
+          ),
+          generator.createProperty(
+            [createDecorator(Decorators.TwoWay)],
+            [],
+            generator.createIdentifier("p2")
+          ),
+          generator.createProperty(
+            [createDecorator(Decorators.Event)],
+            [],
+            generator.createIdentifier("p3")
+          ),
+        ];
+
+        const stringValue = generator
+          .createVariableDeclaration(
+            generator.createObjectBindingPattern([
+              generator.createBindingElement(
+                undefined,
+                undefined,
+                generator.createIdentifier("p1")
+              ),
+              generator.createBindingElement(
+                undefined,
+                generator.createIdentifier("p3"),
+                generator.createIdentifier("_p3")
+              ),
+            ]),
+            undefined,
+            expression
+          )
+          .toString({
+            componentContext: generator.SyntaxKind.ThisKeyword,
+            newComponentContext: generator.SyntaxKind.ThisKeyword,
+            members: members,
+          });
+
+        assert.strictEqual(
+          getResult(stringValue),
+          getResult(`{p1, p3:_p3}=({p1:this.p1, p3:this.p3.emit} as any)`)
+        );
+      });
+
       mocha.it("Access TwoWay props - this.props.prop", function () {
         const property = generator.createProperty(
           [createDecorator(Decorators.TwoWay)],
