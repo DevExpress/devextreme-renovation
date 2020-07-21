@@ -7,6 +7,7 @@ import {
   JsxClosingElement as ReactJsxClosingElement,
   HeritageClause,
   ComponentInput as BaseComponentInput,
+  TypeReferenceNode as BaseTypeReferenceNode,
 } from "./react-generator";
 import path from "path";
 import { Expression } from "./base-generator/expressions/base";
@@ -364,6 +365,15 @@ class JsxClosingElement extends ReactJsxClosingElement {
   }
 }
 
+export class TypeReferenceNode extends BaseTypeReferenceNode {
+  toString() {
+    if (this.typeName.toString().startsWith("JSX.")) {
+      return "any";
+    }
+    return super.toString();
+  }
+}
+
 export type GeneratorOptions = {
   jqueryComponentRegistratorModule?: string;
   jqueryBaseComponentModule?: string;
@@ -489,6 +499,13 @@ export class PreactGenerator extends ReactGenerator {
 
   createJsxClosingElement(tagName: Identifier) {
     return new JsxClosingElement(tagName);
+  }
+
+  createTypeReferenceNode(
+    typeName: Identifier,
+    typeArguments?: TypeExpression[]
+  ) {
+    return new TypeReferenceNode(typeName, typeArguments, this.getContext());
   }
 
   createProperty(

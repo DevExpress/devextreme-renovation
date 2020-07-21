@@ -1,4 +1,4 @@
-function view(model: Widget) {
+function view(model: Widget): JSX.Element {
   return <span></span>;
 }
 

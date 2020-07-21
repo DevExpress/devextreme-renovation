@@ -11,7 +11,7 @@ export class WidgetInput {
   @Template() template: (props: {
     textProp: string;
     textPropExpr: string;
-  }) => any = () => <div></div>;
+  }) => JSX.Element = () => <div></div>;
   @Template() contentTemplate: (props: {
     data: { p1: string };
     index: number;
