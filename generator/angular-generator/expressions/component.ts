@@ -762,7 +762,8 @@ export class AngularComponent extends Component {
       .map(({ name, type }) => {
         const nestedType = extractComplexType(type);
         return `@ContentChildren(Dx${nestedType}) ${name}Nested!: QueryList<Dx${nestedType}>;`;
-      });
+      })
+      .join("\n");
 
     return `
       @Directive({

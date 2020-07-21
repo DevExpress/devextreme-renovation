@@ -4,10 +4,17 @@ function view(model: Widget) {
 }
 
 import React, { useCallback } from "react";
-import { GridColumnType, EditingType, CustomType } from "./nested-props";
+import {
+  GridColumnType,
+  EditingType,
+  CustomType,
+  AnotherCustomType,
+} from "./nested-props";
 export const Column: React.FunctionComponent<GridColumnType> = () => null;
 export const GridEditing: React.FunctionComponent<EditingType> = () => null;
 export const Custom: React.FunctionComponent<CustomType> = () => null;
+export const AnotherCustom: React.FunctionComponent<AnotherCustomType> = () =>
+  null;
 
 declare type RestProps = {
   className?: string;
