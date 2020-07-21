@@ -15,9 +15,13 @@ export class GridColumn {
 export class Custom {}
 
 @ComponentBindings()
+export class AnotherCustom {}
+
+@ComponentBindings()
 export class Editing {
   @OneWay() editEnabled?: boolean = false;
   @Nested() custom?: Custom[] = [];
+  @Nested() anotherCustom?: AnotherCustom = {};
 }
 
 @ComponentBindings()

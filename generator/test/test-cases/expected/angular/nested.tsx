@@ -1,5 +1,4 @@
 import { WidgetInput } from "./nested-props";
-
 import {
   Component,
   NgModule,
@@ -9,7 +8,12 @@ import {
   Directive,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { GridColumn, Editing, Custom } from "./nested-props";
+import { GridColumn, Editing, Custom, AnotherCustom } from "./nested-props";
+
+@Directive({
+  selector: "dx-widget dxo-another-custom",
+})
+class DxAnotherCustom extends AnotherCustom {}
 
 @Directive({
   selector: "dx-widget dxi-custom",
@@ -21,6 +25,9 @@ class DxCustom extends Custom {}
 })
 class DxEditing extends Editing {
   @ContentChildren(DxCustom) customNested!: QueryList<DxCustom>;
+  @ContentChildren(DxAnotherCustom) anotherCustomNested!: QueryList<
+    DxAnotherCustom
+  >;
 }
 
 @Directive({

@@ -20,6 +20,8 @@ export const GridColumn = {
 
 export const Custom = {};
 
+export const AnotherCustom = {};
+
 export const Editing = {
   editEnabled: {
     type: Boolean,

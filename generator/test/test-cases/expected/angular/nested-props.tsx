@@ -7,9 +7,12 @@ export class GridColumn {
 
 export class Custom {}
 
+export class AnotherCustom {}
+
 export class Editing {
   @Input() editEnabled?: boolean = false;
   @Input() custom?: Custom[] = [];
+  @Input() anotherCustom?: AnotherCustom = {};
 }
 
 export class WidgetInput {
