@@ -30,7 +30,10 @@ import {
 } from "../../../base-generator/expressions/base";
 import { AngularDirective } from "./angular-directive";
 import { ObjectLiteral } from "../../../base-generator/expressions/literal";
-import { PropertyAssignment } from "../../../base-generator/expressions/property-assignment";
+import {
+  PropertyAssignment,
+  ShorthandPropertyAssignment,
+} from "../../../base-generator/expressions/property-assignment";
 import { processComponentContext } from "../../../base-generator/utils/string";
 import { JsxExpression } from "./jsx-expression";
 import { JsxChildExpression } from "./jsx-child-expression";
@@ -99,6 +102,39 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       options
     );
 
+    if (spreadAttributesExpression instanceof ObjectLiteral) {
+      const attributesFromObject: JsxAttribute[] = spreadAttributesExpression.properties.reduce(
+        (values: JsxAttribute[], p) => {
+          if (p instanceof PropertyAssignment) {
+            return values.concat([
+              this.createJsxAttribute(
+                new Identifier(p.key.toString()),
+                p.value
+              ),
+            ]);
+          }
+          if (p instanceof ShorthandPropertyAssignment) {
+            return values.concat([
+              this.createJsxAttribute(
+                new Identifier(p.key.toString()),
+                p.value
+              ),
+            ]);
+          }
+
+          return values.concat(
+            this.spreadToArray(
+              new JsxSpreadAttribute(undefined, p.expression),
+              options
+            )
+          );
+        },
+        []
+      );
+
+      return attributesFromObject;
+    }
+
     if (spreadAttributesExpression instanceof PropertyAccess) {
       const member = spreadAttributesExpression.getMember(options);
       if (
@@ -139,7 +175,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         if (
           member instanceof Method &&
           !(member instanceof GetAccessor) &&
-          attrIndex > spreadIndex
+          (attrIndex > spreadIndex || attrIndex === -1)
         ) {
           value = attrValue;
         } else {

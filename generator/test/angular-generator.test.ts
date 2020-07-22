@@ -1242,6 +1242,115 @@ mocha.describe("Angular generator", function () {
           `<dx-base-widget [p1]="(__p1!==undefined?__p1:p1)"></dx-base-widget>`
         );
       });
+
+      mocha.it("...{...props, ...restAttributes} - pick props", function () {
+        const component = createComponent([
+          generator.createProperty(
+            [createDecorator(Decorators.OneWay)],
+            [],
+            generator.createIdentifier("p1")
+          ),
+        ]);
+
+        const element = generator.createJsxSelfClosingElement(
+          component._name,
+          [],
+          [
+            generator.createJsxSpreadAttribute(
+              generator.createObjectLiteral(
+                [
+                  generator.createSpreadAssignment(
+                    generator.createPropertyAccess(
+                      generator.createIdentifier("viewModel"),
+                      generator.createIdentifier("props")
+                    )
+                  ),
+                  generator.createSpreadAssignment(
+                    generator.createPropertyAccess(
+                      generator.createIdentifier("viewModel"),
+                      generator.createIdentifier("restAttributes")
+                    )
+                  ),
+                ],
+                false
+              )
+            ),
+          ]
+        );
+
+        const p1 = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("p1")
+        );
+
+        const restAttributes = generator.createGetAccessor(
+          [],
+          [],
+          generator.createIdentifier("restAttributes"),
+          [],
+          undefined,
+          generator.createBlock([], false)
+        );
+
+        restAttributes.prefix = "__";
+
+        assert.strictEqual(
+          element.toString({
+            componentContext: "viewModel",
+            newComponentContext: "",
+            members: [p1, restAttributes],
+          }),
+          `<dx-base-widget [p1]="p1"></dx-base-widget>`
+        );
+      });
+
+      mocha.it("...{x: x, y}", function () {
+        const component = createComponent([
+          generator.createProperty(
+            [createDecorator(Decorators.OneWay)],
+            [],
+            generator.createIdentifier("x")
+          ),
+          generator.createProperty(
+            [createDecorator(Decorators.OneWay)],
+            [],
+            generator.createIdentifier("y")
+          ),
+        ]);
+
+        const element = generator.createJsxSelfClosingElement(
+          component._name,
+          [],
+          [
+            generator.createJsxSpreadAttribute(
+              generator.createObjectLiteral(
+                [
+                  generator.createPropertyAssignment(
+                    generator.createIdentifier("x"),
+                    generator.createIdentifier("xValue")
+                  ),
+                  generator.createShorthandPropertyAssignment(
+                    generator.createIdentifier("y")
+                  ),
+                ],
+                false
+              )
+            ),
+          ]
+        );
+
+        assert.strictEqual(
+          removeSpaces(
+            element.toString({
+              componentContext: "viewModel",
+              newComponentContext: "",
+              members: [],
+            })
+          ),
+          removeSpaces(`<dx-base-widget [x]="xValue" [y]="y"></dx-base-widget>`)
+        );
+      });
     });
 
     mocha.describe("hasStyle", function () {
