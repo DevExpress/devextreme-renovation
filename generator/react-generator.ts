@@ -76,7 +76,7 @@ function getLocalStateName(
   return `${componentContext}__state_${name}`;
 }
 
-export function getPropName(
+function getPropName(
   name: Identifier | string,
   componentContext: string = "",
   scope = "props."

@@ -21,9 +21,8 @@ interface Widget {
 export default function Widget(props: typeof WidgetInput & RestProps) {
   const getColumns = useCallback(
     function getColumns(): any {
-      return props.columns?.map((el) =>
-        typeof el === "string" ? el : el.name
-      );
+      const { columns } = props;
+      return columns?.map((el) => (typeof el === "string" ? el : el.name));
     },
     [props.columns]
   );
@@ -37,10 +36,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { columns, gridEditing, ...restProps } = {
-        columns: props.columns,
-        gridEditing: props.gridEditing,
-      };
+      const { columns, gridEditing, ...restProps } = props;
       return restProps;
     },
     [props]

@@ -8,11 +8,10 @@ import {
   HeritageClause,
   ComponentInput as BaseComponentInput,
   TypeReferenceNode as BaseTypeReferenceNode,
-  getPropName,
 } from "./react-generator";
 import path from "path";
 import { Expression } from "./base-generator/expressions/base";
-import { Identifier } from "./base-generator/expressions/common";
+import { Identifier, Call } from "./base-generator/expressions/common";
 import {
   ImportClause,
   ImportDeclaration,
@@ -34,6 +33,7 @@ import {
   capitalizeFirstLetter,
   compileType,
 } from "./base-generator/utils/string";
+import { Decorators } from "./component_declaration/decorators";
 
 const BASE_JQUERY_WIDGET = "BASE_JQUERY_WIDGET";
 
@@ -57,8 +57,24 @@ export class ComponentInput extends BaseComponentInput {
       initializer
     );
   }
-  createChildrenForNested(members: Array<BaseProperty | Method>) {
-    return null;
+
+  processMembers(members: Array<Property | Method>) {
+    members = members.map((m) => {
+      if (m.isNested) {
+        const index = m.decorators.findIndex(
+          (d) => d.name === Decorators.Nested
+        );
+        if (index > -1) {
+          m.decorators[index] = this.createDecorator(
+            new Call(new Identifier(Decorators.OneWay), undefined, []),
+            {}
+          );
+        }
+      }
+      return m;
+    });
+
+    return super.processMembers(members);
   }
 }
 
@@ -88,11 +104,7 @@ export class PreactComponent extends ReactComponent {
   compileImportStatements(hooks: string[], compats: string[]) {
     const imports = [`import * as Preact from "preact"`];
     if (hooks.length) {
-      imports.push(
-        `import {${hooks
-          .filter((hook) => hook !== "useMemo")
-          .join(",")}} from "preact/hooks"`
-      );
+      imports.push(`import {${hooks.join(",")}} from "preact/hooks"`);
     }
 
     if (compats.length) {
@@ -112,10 +124,6 @@ export class PreactComponent extends ReactComponent {
 
   compileRestProps() {
     return "declare type RestProps = { className?: string; style?: { [name: string]: any }; [x: string]: any }";
-  }
-
-  createNestedGetter() {
-    return null;
   }
 
   compileDefaultComponentExport() {
@@ -138,9 +146,6 @@ export class PreactComponent extends ReactComponent {
       return undefined;
     }
     return super.getJQueryBaseComponentName() || BASE_JQUERY_WIDGET;
-  }
-  createNestedPropertyGetter() {
-    return "";
   }
 }
 
@@ -345,18 +350,10 @@ export class Property extends BaseProperty {
 
   getDependency() {
     const baseValue = super.getDependency();
-    if (this.isNested) {
-      return [baseValue[0]];
-    }
     return baseValue;
   }
 
   getter(componentContext?: string) {
-    if (this.isNested) {
-      componentContext = this.processComponentContext(componentContext);
-      const scope = this.processComponentContext(this.scope);
-      return getPropName(this.name, componentContext, scope);
-    }
     return super.getter(componentContext);
   }
 }
