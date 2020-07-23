@@ -200,6 +200,10 @@ mocha.describe("vue-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  // mocha.it("vue-types-import", function () {
+  //   this.testGenerator(this.test!.title);
+  // });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {

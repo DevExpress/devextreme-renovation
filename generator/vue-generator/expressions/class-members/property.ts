@@ -59,7 +59,11 @@ function calculatePropertyType(type: TypeExpression | string): string {
   }
 
   if (type instanceof TypeReferenceNode) {
-    return type.typeName.toString();
+    const typeString = type.type.toString();
+    if (typeString === "Array") {
+      return "Array";
+    }
+    return "Object";
   }
   return "";
 }

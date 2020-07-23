@@ -385,7 +385,7 @@ mocha.describe("Vue-generator", function () {
           );
         });
 
-        mocha.it("Property with TypeReferenceNode", function () {
+        mocha.it("Property with array as TypeReferenceNode", function () {
           const expression = generator.createProperty(
             decorators,
             undefined,
@@ -401,6 +401,24 @@ mocha.describe("Vue-generator", function () {
           assert.strictEqual(
             getAst(expression.toString({ members: [] })),
             getAst("p: {type: Array")
+          );
+        });
+
+        mocha.it("Property with custom TypeReferenceNode", function () {
+          const expression = generator.createProperty(
+            decorators,
+            undefined,
+            name,
+            undefined,
+            generator.createTypeReferenceNode(
+              generator.createIdentifier("CustomType")
+            ),
+            undefined
+          );
+
+          assert.strictEqual(
+            getAst(expression.toString({ members: [] })),
+            getAst("p: {type: Object")
           );
         });
 
