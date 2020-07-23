@@ -351,7 +351,10 @@ export function isComplexType(type: TypeExpression | string): boolean {
 
 export const isTypeArray = (type: string | TypeExpression | undefined) =>
   type instanceof ArrayTypeNode ||
-  (type instanceof TypeReferenceNode && type.typeName.toString() === "Array");
+  (type instanceof TypeReferenceNode && type.typeName.toString() === "Array") ||
+  (typeof type === "string" &&
+    (type.indexOf("Array") === 0 ||
+      type.lastIndexOf("[]") === type.length - 2));
 
 export const extractComplexType = (type?: string | TypeExpression): string => {
   if (type instanceof TypeReferenceNode) {

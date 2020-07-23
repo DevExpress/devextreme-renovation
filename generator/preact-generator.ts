@@ -8,6 +8,7 @@ import {
   HeritageClause,
   ComponentInput as BaseComponentInput,
   TypeReferenceNode as BaseTypeReferenceNode,
+  getPropName,
 } from "./react-generator";
 import path from "path";
 import { Expression } from "./base-generator/expressions/base";
@@ -87,7 +88,11 @@ export class PreactComponent extends ReactComponent {
   compileImportStatements(hooks: string[], compats: string[]) {
     const imports = [`import * as Preact from "preact"`];
     if (hooks.length) {
-      imports.push(`import {${hooks.join(",")}} from "preact/hooks"`);
+      imports.push(
+        `import {${hooks
+          .filter((hook) => hook !== "useMemo")
+          .join(",")}} from "preact/hooks"`
+      );
     }
 
     if (compats.length) {
@@ -133,6 +138,9 @@ export class PreactComponent extends ReactComponent {
       return undefined;
     }
     return super.getJQueryBaseComponentName() || BASE_JQUERY_WIDGET;
+  }
+  createNestedPropertyGetter() {
+    return "";
   }
 }
 
@@ -323,10 +331,6 @@ export class Property extends BaseProperty {
     return super.typeDeclaration();
   }
 
-  compileNestedGetter(componentContext: string, scope: string) {
-    return `${componentContext}${scope}${this.name}`;
-  }
-
   inherit() {
     return new Property(
       this.decorators,
@@ -345,6 +349,15 @@ export class Property extends BaseProperty {
       return [baseValue[0]];
     }
     return baseValue;
+  }
+
+  getter(componentContext?: string) {
+    if (this.isNested) {
+      componentContext = this.processComponentContext(componentContext);
+      const scope = this.processComponentContext(this.scope);
+      return getPropName(this.name, componentContext, scope);
+    }
+    return super.getter(componentContext);
   }
 }
 

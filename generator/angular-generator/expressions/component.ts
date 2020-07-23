@@ -32,7 +32,10 @@ import { isElement } from "./jsx/elements";
 import { GeneratorContext } from "../../base-generator/types";
 import { ComponentInput } from "./component-input";
 import { getModuleRelativePath } from "../../base-generator/utils/path-utils";
-import { removePlural } from "../../base-generator/utils/string";
+import {
+  removePlural,
+  capitalizeFirstLetter,
+} from "../../base-generator/utils/string";
 
 export function compileCoreImports(
   members: Array<Property | Method>,
@@ -191,6 +194,15 @@ export class AngularComponent extends Component {
     );
   }
 
+  createNestedPropertyGetter(property: Property) {
+    const indexGetter = isTypeArray(property.type) ? "" : "?.[0]";
+    return `get __getNested${capitalizeFirstLetter(property.name)}() {
+      return (${SyntaxKind.ThisKeyword}.${property.name} || ${
+      SyntaxKind.ThisKeyword
+    }.${property.name}Nested.toArray()${indexGetter})
+    }`;
+  }
+
   processMembers(members: Array<Property | Method>) {
     this.heritageClauses.forEach((h) => {
       if (h.isRequired) {
@@ -256,13 +268,15 @@ export class AngularComponent extends Component {
         })
     );
 
-    const nestedProps = members.filter((m) => m.isNested) as Property[];
-    members = members.concat(
-      nestedProps.map((m) => this.createNestedProperty(m))
-    );
-    members = members.concat(
-      nestedProps.map((m) => this.createContentChildrenProperty(m))
-    );
+    members = members.reduce((acc, m) => {
+      if (m.isNested && m instanceof Property) {
+        acc.push(this.createNestedProperty(m));
+        acc.push(this.createContentChildrenProperty(m));
+      } else {
+        acc.push(m);
+      }
+      return acc;
+    }, [] as Array<Property | Method>);
 
     return members;
   }
@@ -757,11 +771,13 @@ export class AngularComponent extends Component {
     const selectorName = isArray ? removePlural(propName) : propName;
     const selector = getAngularSelector(selectorName, postfix);
 
-    const innerNested = component.members
-      .filter((m) => m.isNested)
-      .map(({ name, type }) => {
-        const nestedType = extractComplexType(type);
-        return `@ContentChildren(Dx${nestedType}) ${name}Nested!: QueryList<Dx${nestedType}>;`;
+    const innerNested = (component.members.filter(
+      (m) => m.isNested
+    ) as Property[])
+      .map((m) => {
+        return `${this.createNestedProperty(m).toString()}
+      ${this.createContentChildrenProperty(m).toString()}
+      ${this.createNestedPropertyGetter(m)}`;
       })
       .join("\n");
 
@@ -902,6 +918,12 @@ export class AngularComponent extends Component {
             `);
       });
 
+    const nestedPropertyGetters = (this.members.filter(
+      (m) => m.isNested && !m.inherited
+    ) as Property[])
+      .map((m) => this.createNestedPropertyGetter(m))
+      .join("\n");
+
     return `
         ${this.compileImports(coreImports)}
         ${this.compileNestedComponents()};
@@ -936,6 +958,7 @@ export class AngularComponent extends Component {
               ngDoCheckStatements
             )}
             ${this.compileGetterCache(ngOnChangesStatements)}
+            ${nestedPropertyGetters}
             ${this.compileNgModel()}
             ${this.compileLifeCycle(
               "ngAfterViewInit",

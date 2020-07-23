@@ -142,13 +142,12 @@ export class Property extends BaseProperty {
     }
     if (this.isNested) {
       const isArray = isTypeArray(this.type);
-      const indexGetter = isArray ? "" : "?.[0]";
       let nestedName = capitalizeFirstLetter(this.name);
       if (isArray) {
         nestedName = removePlural(nestedName);
       }
 
-      return `(${componentContext}${this.name} || this.__getNestedFromChild("Dx${nestedName}")${indexGetter})`;
+      return `${componentContext}__getNested${nestedName}`;
     }
     return baseValue;
   }

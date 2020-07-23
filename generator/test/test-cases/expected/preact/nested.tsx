@@ -29,7 +29,9 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   );
   const __isEditable = useCallback(
     function __isEditable(): any {
-      return props.gridEditing?.editEnabled;
+      return (
+        props.gridEditing?.editEnabled || props.gridEditing?.custom?.length
+      );
     },
     [props.gridEditing]
   );
