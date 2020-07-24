@@ -19,6 +19,9 @@ export default class Widget extends JSXComponent(WidgetInput) {
   }
 
   get isEditable() {
-    return this.props.gridEditing?.editEnabled;
+    return (
+      this.props.gridEditing?.editEnabled ||
+      this.props.gridEditing?.custom?.length
+    );
   }
 }

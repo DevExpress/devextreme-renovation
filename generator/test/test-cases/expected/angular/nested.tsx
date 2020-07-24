@@ -24,10 +24,18 @@ class DxCustom extends Custom {}
   selector: "dx-widget dxo-grid-editing",
 })
 class DxEditing extends Editing {
+  @Input() custom?: DxCustom[] = [];
   @ContentChildren(DxCustom) customNested!: QueryList<DxCustom>;
+  get __getNestedCustom() {
+    return this.custom || this.customNested.toArray();
+  }
+  @Input() anotherCustom?: DxAnotherCustom = {};
   @ContentChildren(DxAnotherCustom) anotherCustomNested!: QueryList<
     DxAnotherCustom
   >;
+  get __getNestedAnotherCustom() {
+    return this.anotherCustom || this.anotherCustomNested.toArray()?.[0];
+  }
 }
 
 @Directive({
@@ -37,21 +45,30 @@ class DxGridColumn extends GridColumn {}
 @Component({ selector: "dx-widget", template: `<div></div>` })
 export default class Widget extends WidgetInput {
   __getColumns(): any {
-    return (this.columns || this.columnsNested.toArray())?.map((el) =>
+    return this.__getNestedColumns?.map((el) =>
       typeof el === "string" ? el : el.name
     );
   }
   get __isEditable(): any {
-    return (this.gridEditing || this.gridEditingNested.toArray()?.[0])
-      ?.editEnabled;
+    return (
+      this.__getNestedGridEditing?.editEnabled ||
+      this.__getNestedGridEditing?.custom?.length
+    );
   }
+  @Input() columns?: Array<DxGridColumn | string>;
+  @ContentChildren(DxGridColumn) columnsNested!: QueryList<DxGridColumn>;
+  @Input() gridEditing?: DxEditing;
+  @ContentChildren(DxEditing) gridEditingNested!: QueryList<DxEditing>;
   get __restAttributes(): any {
     return {};
   }
-  @Input() columns?: Array<DxGridColumn | string>;
-  @Input() gridEditing?: DxEditing;
-  @ContentChildren(DxGridColumn) columnsNested!: QueryList<DxGridColumn>;
-  @ContentChildren(DxEditing) gridEditingNested!: QueryList<DxEditing>;
+
+  get __getNestedColumns() {
+    return this.columns || this.columnsNested.toArray();
+  }
+  get __getNestedGridEditing() {
+    return this.gridEditing || this.gridEditingNested.toArray()?.[0];
+  }
 }
 @NgModule({
   declarations: [Widget, DxGridColumn, DxEditing],

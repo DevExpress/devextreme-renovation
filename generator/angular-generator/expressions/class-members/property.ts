@@ -3,7 +3,6 @@ import { Identifier } from "../../../base-generator/expressions/common";
 import { Decorator } from "../decorator";
 import {
   SimpleTypeExpression,
-  isTypeArray,
   TypeExpression,
   FunctionTypeNode,
 } from "../../../base-generator/expressions/type";
@@ -135,8 +134,9 @@ export class Property extends BaseProperty {
       return `${componentContext}${this.name}`;
     }
     if (this.isNested) {
-      const indexGetter = isTypeArray(this.type) ? "" : "?.[0]";
-      return `(${componentContext}${this.name} || ${componentContext}${this.name}Nested.toArray()${indexGetter})`;
+      return `${componentContext}__getNested${capitalizeFirstLetter(
+        this.name
+      )}`;
     }
     if (this._hasDecorator(Decorators.ApiRef)) {
       return `${componentContext}${this.name}${suffix}`;

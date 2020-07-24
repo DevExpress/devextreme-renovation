@@ -414,18 +414,6 @@ export class Property extends BaseProperty {
     return `${this.name}${questionOrExclamationToken}:${type}`;
   }
 
-  compileNestedGetter(componentContext: string, scope: string) {
-    const propName = getPropName(this.name, componentContext, scope);
-    const isArray = isTypeArray(this.type);
-    const type = extractComplexType(this.type);
-    const indexGetter = isArray ? "" : "?.[0]";
-    const nestedName = isArray ? removePlural(this.name) : this.name;
-
-    return `(${propName} || __getNestedFromChild<${type}Type>("${capitalizeFirstLetter(
-      nestedName
-    )}")${indexGetter})`;
-  }
-
   getter(componentContext?: string) {
     componentContext = this.processComponentContext(componentContext);
     const scope = this.processComponentContext(this.scope);
@@ -460,7 +448,7 @@ export class Property extends BaseProperty {
         componentContext
       )})`;
     } else if (this.isNested) {
-      return this.compileNestedGetter(componentContext, scope);
+      return `__getNested${capitalizeFirstLetter(this.name)}`;
     }
     throw `Can't parse property: ${this._name}`;
   }
@@ -749,6 +737,10 @@ export class ReactComponent extends Component {
 
     if (this.listeners.length || this.methods.length) {
       hooks.push("useCallback");
+    }
+
+    if (this.members.some((m) => m.isNested)) {
+      hooks.push("useMemo");
     }
 
     if (getSubscriptions(this.listeners).length || this.effects.length) {
@@ -1158,6 +1150,29 @@ export class ReactComponent extends Component {
     return "";
   }
 
+  createNestedPropertyGetter(property: Property) {
+    const propName = getPropName(property.name);
+    const isArray = isTypeArray(property.type);
+    const type = extractComplexType(property.type);
+    const indexGetter = isArray ? "" : "?.[0]";
+    const nestedName = isArray ? removePlural(property.name) : property.name;
+
+    const getterName = `__getNested${capitalizeFirstLetter(property.name)}`;
+    const getterType = property.type
+      .toString()
+      .replace(`typeof ${type}`, `${type}Type`);
+
+    return `const ${getterName} = useMemo(
+      function ${getterName}(): ${getterType} {
+        return (${propName} || __getNestedFromChild<${type}Type>("${capitalizeFirstLetter(
+      nestedName
+    )}")${indexGetter})
+      }, [${property.getDependency()}]
+    )
+    
+    `;
+  }
+
   toString() {
     const viewFunction = this.context.viewFunctions?.[this.view];
     const getTemplateFunc = this.props.some((p) => p.isTemplate)
@@ -1172,6 +1187,12 @@ export class ReactComponent extends Component {
         }
         `
       : "";
+
+    const nestedPropertyGetters = (this.members.filter(
+      (m) => m.isNested
+    ) as Property[])
+      .map((m) => this.createNestedPropertyGetter(m))
+      .join("\n");
 
     return `
             ${this.compileImports()}
@@ -1201,6 +1222,7 @@ export class ReactComponent extends Component {
                   })
                   .join("\n")}
                 ${this.compileUseEffect()}
+                ${nestedPropertyGetters}
                 return ${this.view}(
                     ${
                       viewFunction?.parameters.length

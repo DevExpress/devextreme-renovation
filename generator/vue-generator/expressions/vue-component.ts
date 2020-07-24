@@ -21,12 +21,18 @@ import { Parameter } from "./functions/parameter";
 import { toStringOptions } from "../types";
 import { getEventName } from "./utils";
 import { getModuleRelativePath } from "../../base-generator/utils/path-utils";
-import { capitalizeFirstLetter } from "../../base-generator/utils/string";
+import {
+  capitalizeFirstLetter,
+  removePlural,
+} from "../../base-generator/utils/string";
 import { Decorator } from "../../base-generator/expressions/decorator";
 import { ObjectLiteral } from "../../base-generator/expressions/literal";
 import { PropertyAccess } from "./property-access";
 import { PropertyAssignment } from "../../base-generator/expressions/property-assignment";
-import { SimpleTypeExpression } from "../../base-generator/expressions/type";
+import {
+  SimpleTypeExpression,
+  isTypeArray,
+} from "../../base-generator/expressions/type";
 import SyntaxKind from "../../base-generator/syntaxKind";
 import { Property } from "./class-members/property";
 
@@ -341,7 +347,22 @@ export class VueComponent extends Component {
     return "";
   }
 
+  createNestedPropertyGetter(property: Property) {
+    const isArray = isTypeArray(property.type);
+    const indexGetter = isArray ? "" : "?.[0]";
+    let nestedName = capitalizeFirstLetter(property.name);
+    if (isArray) {
+      nestedName = removePlural(nestedName);
+    }
+    return `__getNested${nestedName}() {
+      return ${SyntaxKind.ThisKeyword}.${property.name} || ${SyntaxKind.ThisKeyword}.__getNestedFromChild("Dx${nestedName}")${indexGetter}
+    }`;
+  }
+
   generateComputed() {
+    const nestedGetters = (this.members.filter(
+      (m) => m.isNested
+    ) as Property[]).map((m) => this.createNestedPropertyGetter(m));
     const statements: string[] = this.methods
       .filter((m) => m instanceof GetAccessor)
       .map((m) =>
@@ -353,7 +374,8 @@ export class VueComponent extends Component {
       );
 
     return `computed: {
-              ${statements.join(",\n")}
+              ${statements.join(",\n")},
+              ${nestedGetters.join(",\n")}
            }`;
   }
 
