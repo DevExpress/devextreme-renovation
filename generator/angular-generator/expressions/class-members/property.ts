@@ -119,7 +119,7 @@ export class Property extends BaseProperty {
     if (this.isRef || this.isForwardRef || this.isForwardRefProp) {
       const postfix = this.isForwardRefProp ? "Ref" : "";
       const type = this.type.toString();
-      const isElement = type.startsWith("HTML") && type.endsWith("Element");
+      const isElement = type.includes("HTML") && type.includes("Element");
       return `${componentContext}${this.name}${postfix}${
         isElement
           ? `${

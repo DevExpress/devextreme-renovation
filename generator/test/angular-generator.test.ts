@@ -5611,7 +5611,10 @@ mocha.describe("Angular generator", function () {
           [],
           generator.createIdentifier("div"),
           undefined,
-          generator.createKeywordTypeNode("HTMLDivElement")
+          generator.createUnionTypeNode([
+            generator.createKeywordTypeNode("HTMLDivElement"),
+            generator.createKeywordTypeNode("undefined"),
+          ])
         );
 
         const propertyWithExclamation = generator.createProperty(
