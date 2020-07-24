@@ -847,6 +847,16 @@ export class AngularComponent extends Component {
     return "";
   }
 
+  compileBindEvents(constructorStatements: string[]) {
+    this.members
+      .filter((m) => m.isEvent)
+      .forEach((m) => {
+        constructorStatements.push(
+          `this._${m.name}=this.${m.name}.emit.bind(this.${m.name});`
+        );
+      });
+  }
+
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -909,6 +919,8 @@ export class AngularComponent extends Component {
                 this.${m.name}(this.${m.name}Ref);
             `);
       });
+
+    this.compileBindEvents(constructorStatements);
 
     return `
         ${this.compileImports(coreImports)}

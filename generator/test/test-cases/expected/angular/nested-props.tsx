@@ -3,6 +3,7 @@ export class GridColumn {
   @Input() name: string = "";
   @Input() index: number = 0;
   @Output() indexChange: EventEmitter<number> = new EventEmitter();
+  _indexChange!: (index: number) => void;
 }
 
 export class Custom {}

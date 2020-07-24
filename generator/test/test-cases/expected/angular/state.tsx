@@ -1,13 +1,15 @@
 import BaseState, { DxModelWidgetModule } from "./model";
-
 import { Input, Output, EventEmitter } from "@angular/core";
 class WidgetInput {
   @Input() state1?: boolean = false;
   @Input() state2: boolean = false;
   @Input() stateProp?: boolean;
   @Output() state1Change: EventEmitter<boolean> = new EventEmitter();
+  _state1Change!: (state1: boolean) => void;
   @Output() state2Change: EventEmitter<boolean> = new EventEmitter();
+  _state2Change!: (state2: boolean) => void;
   @Output() statePropChange: EventEmitter<boolean> = new EventEmitter();
+  _statePropChange!: (stateProp: boolean) => void;
 }
 
 import { Component, NgModule } from "@angular/core";
@@ -24,25 +26,30 @@ import { CommonModule } from "@angular/common";
 })
 export default class Widget extends WidgetInput {
   __updateState(): any {
-    this.state1Change.emit((this.state1 = !this.state1));
+    this._state1Change((this.state1 = !this.state1));
   }
-
   __updateState2(): any {
     const cur = this.state2;
-    this.state2Change.emit((this.state2 = cur !== false ? false : true));
+    this._state2Change((this.state2 = cur !== false ? false : true));
   }
-
   __destruct(): any {
     const { state1 } = this;
     const s = state1;
   }
-
   __stateChange(stateProp: boolean): any {
-    this.statePropChange.emit((this.stateProp = stateProp));
+    this._statePropChange((this.stateProp = stateProp));
   }
-
   get __restAttributes(): any {
     return {};
+  }
+
+  constructor() {
+    super();
+    this._state1Change = this.state1Change.emit.bind(this.state1Change);
+    this._state2Change = this.state2Change.emit.bind(this.state2Change);
+    this._statePropChange = this.statePropChange.emit.bind(
+      this.statePropChange
+    );
   }
 }
 @NgModule({

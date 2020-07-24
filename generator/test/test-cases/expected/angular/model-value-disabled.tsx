@@ -4,7 +4,9 @@ class ModelWidgetInput {
   @Input() value?: boolean;
   @Input() notValue?: boolean;
   @Output() valueChange: EventEmitter<boolean> = new EventEmitter();
+  _valueChange!: (value: boolean) => void;
   @Output() notValueChange: EventEmitter<boolean> = new EventEmitter();
+  _notValueChange!: (notValue: boolean) => void;
 }
 
 import { Component, NgModule, forwardRef, HostListener } from "@angular/core";
@@ -16,7 +18,6 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   useExisting: forwardRef(() => ModelWidget),
   multi: true,
 };
-
 @Component({
   selector: "dx-model-widget",
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
@@ -44,6 +45,12 @@ export default class ModelWidget extends ModelWidgetInput
   }
   registerOnTouched(fn: () => void): void {
     this.touched = fn;
+  }
+
+  constructor() {
+    super();
+    this._valueChange = this.valueChange.emit.bind(this.valueChange);
+    this._notValueChange = this.notValueChange.emit.bind(this.notValueChange);
   }
 }
 @NgModule({

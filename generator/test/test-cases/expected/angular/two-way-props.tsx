@@ -3,15 +3,13 @@ class WidgetInput {
   @Input() height: number = 10;
   @Input() selected: boolean = false;
   @Output() selectedChange: EventEmitter<boolean> = new EventEmitter();
+  _selectedChange!: (selected: boolean) => void;
 }
 
 import { Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-@Component({
-  selector: "dx-widget",
-  template: `<span></span>`,
-})
+@Component({ selector: "dx-widget", template: `<span></span>` })
 export default class Widget extends WidgetInput {
   __getHeight(): number {
     const { height } = this;
@@ -22,11 +20,16 @@ export default class Widget extends WidgetInput {
     return {
       height: this.height,
       selected: this.selected,
-      selectedChange: this.selectedChange.emit,
+      selectedChange: this._selectedChange,
     };
   }
   get __restAttributes(): any {
     return {};
+  }
+
+  constructor() {
+    super();
+    this._selectedChange = this.selectedChange.emit.bind(this.selectedChange);
   }
 }
 @NgModule({

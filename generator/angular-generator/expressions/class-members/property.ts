@@ -8,9 +8,13 @@ import {
   FunctionTypeNode,
 } from "../../../base-generator/expressions/type";
 import { Decorators } from "../../../component_declaration/decorators";
-import { capitalizeFirstLetter } from "../../../base-generator/utils/string";
+import {
+  capitalizeFirstLetter,
+  compileType,
+} from "../../../base-generator/utils/string";
 import SyntaxKind from "../../../base-generator/syntaxKind";
 import { Expression } from "../../../base-generator/expressions/base";
+import syntaxKind from "../../../base-generator/syntaxKind";
 
 function parseEventType(type: TypeExpression | string) {
   if (type instanceof FunctionTypeNode) {
@@ -66,7 +70,11 @@ export class Property extends BaseProperty {
     if (eventDecorator) {
       return `${eventDecorator} ${this.name}:EventEmitter${parseEventType(
         this.type
-      )} = new EventEmitter()`;
+      )} = new EventEmitter();
+      _${this.name}${compileType(
+        this.type.toString(),
+        syntaxKind.ExclamationToken
+      )}`;
     }
     if (this.isRef) {
       return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:ElementRef<${this.type}>`;
@@ -107,7 +115,7 @@ export class Property extends BaseProperty {
     const suffix = this.required ? "!" : "";
     componentContext = this.processComponentContext(componentContext);
     if (this.isEvent) {
-      return `${componentContext}${this.name}.emit`;
+      return `${componentContext}_${this.name}`;
     }
     if (this.isRef || this.isForwardRef || this.isForwardRefProp) {
       const postfix = this.isForwardRefProp ? "Ref" : "";

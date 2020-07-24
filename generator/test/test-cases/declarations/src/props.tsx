@@ -14,7 +14,7 @@ function view(model: Widget): JSX.Element {
 class WidgetInput {
   @OneWay() height: number = 10;
   @OneWay() export: object = {};
-  @Event() onClick: (a: number) => null = () => null;
+  @Event() onClick: (a: number) => void = () => {};
 }
 
 @Component({

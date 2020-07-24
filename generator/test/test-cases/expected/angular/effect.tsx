@@ -11,6 +11,7 @@ export class WidgetInput {
   @Input() r: string = "20";
   @Input() s: number = 10;
   @Output() sChange: EventEmitter<number> = new EventEmitter();
+  _sChange!: (s: number) => void;
 }
 
 import { Component, NgModule } from "@angular/core";
@@ -88,6 +89,10 @@ export default class Widget extends WidgetInput {
     }
   }
 
+  constructor() {
+    super();
+    this._sChange = this.sChange.emit.bind(this.sChange);
+  }
   set _i(i: number) {
     this.i = i;
 

@@ -4384,8 +4384,11 @@ mocha.describe("Angular generator", function () {
       );
 
       assert.strictEqual(
-        property.toString(),
-        "@Output() onClick:EventEmitter<any> = new EventEmitter()"
+        getResult(property.toString()),
+        getResult(`
+          @Output() onClick:EventEmitter<any> = new EventEmitter();
+          _onClick!:any
+        `)
       );
     });
 
@@ -4430,8 +4433,11 @@ mocha.describe("Angular generator", function () {
       );
 
       assert.strictEqual(
-        property.toString(),
-        "@Output() onClick:EventEmitter<string|undefined,number> = new EventEmitter()"
+        getResult(property.toString()),
+        getResult(`
+          @Output() onClick:EventEmitter<string|undefined,number> = new EventEmitter();
+          _onClick!:(a?:string,b:number)=>any
+          `)
       );
     });
 
@@ -4459,8 +4465,11 @@ mocha.describe("Angular generator", function () {
         );
 
         assert.strictEqual(
-          property.toString(),
-          "@Output() onClick:EventEmitter = new EventEmitter()"
+          getResult(property.toString()),
+          getResult(`
+            @Output() onClick:EventEmitter = new EventEmitter();
+            _onClick!:()=>any;
+          `)
         );
       }
     );
@@ -4486,8 +4495,11 @@ mocha.describe("Angular generator", function () {
 
       assert.strictEqual(bindings.members.length, 2);
       assert.strictEqual(
-        bindings.members[1].toString(),
-        "@Output() p1Change:EventEmitter<number> = new EventEmitter()"
+        getResult(bindings.members[1].toString()),
+        getResult(`
+          @Output() p1Change:EventEmitter<number> = new EventEmitter();
+          _p1Change!:(p1:number)=>void
+        `)
       );
     });
 
@@ -5296,7 +5308,7 @@ mocha.describe("Angular generator", function () {
           getResult(`{
                     p1:this.p1,
                     p2:this.p2,
-                    p3:this.p3.emit,
+                    p3:this._p3,
                     p4:this.p4,
                     p5:this.p5
                 }`)
@@ -5352,7 +5364,7 @@ mocha.describe("Angular generator", function () {
 
         assert.strictEqual(
           getResult(stringValue),
-          getResult(`{p1, p3:_p3}={p1:this.p1, p3:this.p3.emit}`)
+          getResult(`{p1, p3:_p3}={p1:this.p1, p3:this._p3}`)
         );
       });
 
@@ -5410,7 +5422,7 @@ mocha.describe("Angular generator", function () {
 
         assert.strictEqual(
           getResult(stringValue),
-          getResult(`{p1, p3:_p3}=({p1:this.p1, p3:this.p3.emit} as any)`)
+          getResult(`{p1, p3:_p3}=({p1:this.p1, p3:this._p3} as any)`)
         );
       });
 
@@ -5470,7 +5482,7 @@ mocha.describe("Angular generator", function () {
             componentContext: generator.SyntaxKind.ThisKeyword,
             newComponentContext: generator.SyntaxKind.ThisKeyword,
           }),
-          "this.onClick.emit(10)"
+          "this._onClick(10)"
         );
       });
 
@@ -5504,7 +5516,7 @@ mocha.describe("Angular generator", function () {
               newComponentContext: generator.SyntaxKind.ThisKeyword,
             })
           ),
-          getResult("this.widthChange.emit(this.width=10)")
+          getResult("this._widthChange(this.width=10)")
         );
       });
 
