@@ -6,9 +6,10 @@ import {
 import { Identifier, Call } from "./common";
 import { Parameter } from "./functions";
 import { toStringOptions } from "../types";
-import { compileType } from "../utils/string";
+import { compileType, compileTypeParameters } from "../utils/string";
 import { Decorator } from "./decorator";
 import { ObjectLiteral } from "./literal";
+import { TypeParameterDeclaration } from "./type-parameter-declaration";
 
 export class TypeExpression extends Expression {}
 
@@ -306,28 +307,20 @@ export class TypeOperatorNode extends TypeExpression {
 }
 
 export class TypeAliasDeclaration extends TypeExpression {
-  decorators: Decorator[];
-  modifiers: string[];
-  name: Identifier;
-  typeParameters: any;
-  type: TypeExpression;
   constructor(
-    decorators: Decorator[] = [],
-    modifiers: string[] = [],
-    name: Identifier,
-    typeParameters: any,
-    type: TypeExpression
+    public decorators: Decorator[] = [],
+    public modifiers: string[] = [],
+    public name: Identifier,
+    public typeParameters: TypeParameterDeclaration[] | undefined,
+    public type: TypeExpression
   ) {
     super();
-    this.decorators = decorators;
-    this.modifiers = modifiers;
-    this.name = name;
-    this.typeParameters = typeParameters;
-    this.type = type;
   }
 
   toString() {
-    return `${this.modifiers.join(" ")} type ${this.name} = ${this.type}`;
+    return `${this.modifiers.join(" ")} type ${
+      this.name
+    }${compileTypeParameters(this.typeParameters)} = ${this.type}`;
   }
 }
 
@@ -378,3 +371,52 @@ export const extractComplexType = (type?: string | TypeExpression): string => {
 
   return "any";
 };
+
+export class TypePredicateNode extends TypeExpression {
+  constructor(
+    public assertsModifier: string | undefined,
+    public parameterName: Identifier,
+    public type: TypeExpression
+  ) {
+    super();
+  }
+
+  toString() {
+    return `${this.parameterName} is ${this.type}`;
+  }
+}
+
+export class InferTypeNode extends TypeExpression {
+  constructor(public typeParameter: TypeExpression) {
+    super();
+  }
+
+  toString() {
+    return `infer ${this.typeParameter}`;
+  }
+}
+
+export class TupleTypeNode extends TypeExpression {
+  constructor(public elementTypes: TypeExpression[]) {
+    super();
+  }
+
+  toString() {
+    return `[${this.elementTypes.join(", ")}]`;
+  }
+}
+
+export class ConditionalTypeNode extends TypeExpression {
+  constructor(
+    public checkType: TypeExpression,
+    public extendsType: TypeExpression,
+    public trueType: TypeExpression,
+    public falseType: TypeExpression
+  ) {
+    super();
+  }
+
+  toString() {
+    return `${this.checkType} extends ${this.extendsType} ? ${this.trueType} : ${this.falseType}`;
+  }
+}

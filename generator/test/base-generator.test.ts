@@ -455,6 +455,22 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
+    mocha.it("createTypeAliasDeclaration with TypeParameters", function () {
+      const expression = generator.createTypeAliasDeclaration(
+        undefined,
+        undefined,
+        generator.createIdentifier("Name"),
+        [
+          generator.createTypeParameterDeclaration(
+            generator.createIdentifier("T")
+          ),
+        ],
+        generator.createTypeReferenceNode(generator.createIdentifier("T"))
+      );
+
+      assert.strictEqual(expression.toString(), " type Name<T> = T");
+    });
+
     mocha.it("createTypeAliasDeclaration without modifiers", function () {
       const literalNode = generator.createTypeLiteralNode([
         generator.createPropertySignature(
@@ -732,6 +748,56 @@ mocha.describe("base-generator: expressions", function () {
 
         assert.strictEqual(expression.toString(), "T = I");
       });
+    });
+
+    mocha.it("TypePredicateNodeWithModifier", function () {
+      assert.strictEqual(
+        generator
+          .createTypePredicateNodeWithModifier(
+            undefined,
+            generator.createIdentifier("obj"),
+            generator.createTypeReferenceNode(
+              generator.createIdentifier("Type")
+            )
+          )
+          .toString(),
+        "obj is Type"
+      );
+    });
+
+    mocha.it("TupleTypeNode", function () {
+      assert.strictEqual(
+        generator
+          .createTupleTypeNode([
+            generator.createKeywordTypeNode("string"),
+            generator.createKeywordTypeNode("number"),
+          ])
+          .toString(),
+        "[string, number]"
+      );
+    });
+
+    mocha.it("InferTypeNode", function () {
+      assert.strictEqual(
+        generator
+          .createInferTypeNode(generator.createKeywordTypeNode("string"))
+          .toString(),
+        "infer string"
+      );
+    });
+
+    mocha.it("ConditionalTypeNode", function () {
+      assert.strictEqual(
+        generator
+          .createConditionalTypeNode(
+            generator.createKeywordTypeNode("c"),
+            generator.createKeywordTypeNode("e"),
+            generator.createKeywordTypeNode("t"),
+            generator.createKeywordTypeNode("f")
+          )
+          .toString(),
+        "c extends e ? t : f"
+      );
     });
   });
 
