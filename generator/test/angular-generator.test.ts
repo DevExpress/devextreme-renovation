@@ -5686,6 +5686,7 @@ mocha.describe("Angular generator", function () {
             getResult(`
                         __destroyEffects: any[] = [];
                         __viewCheckedSubscribeEvent: Array<()=>void> = [];
+                        _effectTimeout: any;
                         __schedule_e(){
                             this.__destroyEffects[0]?.();
                             this.__viewCheckedSubscribeEvent[0] = ()=>{
@@ -5740,6 +5741,7 @@ mocha.describe("Angular generator", function () {
             getResult(`
                         __destroyEffects: any[] = [];
                         __viewCheckedSubscribeEvent: Array<()=>void> = [];
+                        _effectTimeout: any;
                         __schedule_e(){
                             this.__destroyEffects[0]?.();
                             this.__viewCheckedSubscribeEvent[0] = ()=>{
@@ -5808,6 +5810,7 @@ mocha.describe("Angular generator", function () {
             getResult(`
                         __destroyEffects: any[] = [];
                         __viewCheckedSubscribeEvent: Array<()=>void> = [];
+                        _effectTimeout: any;
                         __schedule_e(){
                             this.__destroyEffects[0]?.();
                             this.__viewCheckedSubscribeEvent[0] = ()=>{
@@ -5864,6 +5867,7 @@ mocha.describe("Angular generator", function () {
             getResult(`
                         __destroyEffects: any[] = [];
                         __viewCheckedSubscribeEvent: Array<()=>void> = [];
+                        _effectTimeout: any;
                 `)
           );
 

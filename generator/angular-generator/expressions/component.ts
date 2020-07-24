@@ -422,6 +422,7 @@ export class AngularComponent extends Component {
       const statements = [
         "__destroyEffects: any[] = [];",
         "__viewCheckedSubscribeEvent: Array<()=>void> = [];",
+        "_effectTimeout: any;",
       ];
       let usedIterables = new Set();
 
@@ -518,9 +519,12 @@ export class AngularComponent extends Component {
       });
       if (ngOnChanges.length || hasInternalStateDependency) {
         ngAfterViewCheckedStatements.push(`
-                this.__viewCheckedSubscribeEvent.forEach(s=>s?.());
-                this.__viewCheckedSubscribeEvent = [];
-                `);
+                if(this.__viewCheckedSubscribeEvent.length){
+                this._effectTimeout = setTimeout(()=>{
+                    this.__viewCheckedSubscribeEvent.forEach(s=>s?.());
+                    this.__viewCheckedSubscribeEvent = [];
+                  });
+              }`);
       }
       if (usedIterables.size > 0) {
         statements.push(
@@ -546,12 +550,16 @@ export class AngularComponent extends Component {
         });
       }
       ngAfterViewInitStatements.push(
-        `this.__destroyEffects.push(${effects
-          .map((e) => subscribe(e))
-          .join(",")});`
+        `this._effectTimeout = setTimeout(()=>{
+          this.__destroyEffects.push(${effects
+            .map((e) => subscribe(e))
+            .join(",")});
+          }, 0)`
       );
       ngOnDestroyStatements.push(
-        `this.__destroyEffects.forEach(d => d && d());`
+        `this.__destroyEffects.forEach(d => d && d());
+         clearTimeout(this._effectTimeout);
+        `
       );
       return statements.join("\n");
     }
