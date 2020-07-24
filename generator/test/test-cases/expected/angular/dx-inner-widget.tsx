@@ -42,6 +42,14 @@ export default class InnerWidget extends InnerWidgetProps
     this.touched = fn;
   }
 
+  _onSelect: (e: any) => any;
+  _valueChange: (value: number) => void;
+  constructor() {
+    super();
+    this._onSelect = this.onSelect.emit.bind(this.onSelect);
+    this._valueChange = this.valueChange.emit.bind(this.valueChange);
+  }
+
   __processNgStyle(value: any) {
     if (typeof value === "object") {
       return Object.keys(value).reduce((v: { [name: string]: any }, k) => {

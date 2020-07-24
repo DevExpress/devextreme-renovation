@@ -1,5 +1,4 @@
 import { Input, Output, EventEmitter } from "@angular/core";
-
 class WidgetInput {
   @Input() height: number = 10;
   @Input() export: object = {};
@@ -12,13 +11,18 @@ import { CommonModule } from "@angular/common";
 @Component({ selector: "dx-widget", template: `<span></span>` })
 export default class Widget extends WidgetInput {
   __getHeight(): number {
-    this.onClick.emit(10);
-
-    this.onClick.emit(11);
+    this._onClick(10);
+    this._onClick(11);
     return this.height;
   }
   get __restAttributes(): any {
     return {};
+  }
+
+  _onClick: (a: number) => void;
+  constructor() {
+    super();
+    this._onClick = this.onClick.emit.bind(this.onClick);
   }
 }
 @NgModule({

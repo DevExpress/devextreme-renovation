@@ -35,6 +35,7 @@ import { getModuleRelativePath } from "../../base-generator/utils/path-utils";
 import {
   removePlural,
   capitalizeFirstLetter,
+  compileType,
 } from "../../base-generator/utils/string";
 
 export function compileCoreImports(
@@ -436,6 +437,7 @@ export class AngularComponent extends Component {
       const statements = [
         "__destroyEffects: any[] = [];",
         "__viewCheckedSubscribeEvent: Array<()=>void> = [];",
+        "_effectTimeout: any;",
       ];
       let usedIterables = new Set();
 
@@ -532,9 +534,12 @@ export class AngularComponent extends Component {
       });
       if (ngOnChanges.length || hasInternalStateDependency) {
         ngAfterViewCheckedStatements.push(`
-                this.__viewCheckedSubscribeEvent.forEach(s=>s?.());
-                this.__viewCheckedSubscribeEvent = [];
-                `);
+                if(this.__viewCheckedSubscribeEvent.length){
+                this._effectTimeout = setTimeout(()=>{
+                    this.__viewCheckedSubscribeEvent.forEach(s=>s?.());
+                    this.__viewCheckedSubscribeEvent = [];
+                  });
+              }`);
       }
       if (usedIterables.size > 0) {
         statements.push(
@@ -560,12 +565,16 @@ export class AngularComponent extends Component {
         });
       }
       ngAfterViewInitStatements.push(
-        `this.__destroyEffects.push(${effects
-          .map((e) => subscribe(e))
-          .join(",")});`
+        `this._effectTimeout = setTimeout(()=>{
+          this.__destroyEffects.push(${effects
+            .map((e) => subscribe(e))
+            .join(",")});
+          }, 0)`
       );
       ngOnDestroyStatements.push(
-        `this.__destroyEffects.forEach(d => d && d());`
+        `this.__destroyEffects.forEach(d => d && d());
+         clearTimeout(this._effectTimeout);
+        `
       );
       return statements.join("\n");
     }
@@ -855,6 +864,19 @@ export class AngularComponent extends Component {
     return "";
   }
 
+  compileBindEvents(constructorStatements: string[]) {
+    const events = this.members.filter((m) => m.isEvent);
+
+    return events
+      .map((e) => {
+        constructorStatements.push(
+          `this._${e.name}=this.${e.name}.emit.bind(this.${e.name});`
+        );
+        return `_${e.name}${compileType(e.type.toString())}`;
+      })
+      .join(";\n");
+  }
+
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -973,6 +995,7 @@ export class AngularComponent extends Component {
               ngAfterViewCheckedStatements
             )}
             ${this.compileLifeCycle("ngDoCheck", ngDoCheckStatements)}
+            ${this.compileBindEvents(constructorStatements)}
             ${this.compileLifeCycle(
               "constructor",
               constructorStatements.length

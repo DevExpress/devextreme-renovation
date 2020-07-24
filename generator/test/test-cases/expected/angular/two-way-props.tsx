@@ -8,10 +8,7 @@ class WidgetInput {
 import { Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-@Component({
-  selector: "dx-widget",
-  template: `<span></span>`,
-})
+@Component({ selector: "dx-widget", template: `<span></span>` })
 export default class Widget extends WidgetInput {
   __getHeight(): number {
     const { height } = this;
@@ -22,11 +19,17 @@ export default class Widget extends WidgetInput {
     return {
       height: this.height,
       selected: this.selected,
-      selectedChange: this.selectedChange.emit,
+      selectedChange: this._selectedChange,
     };
   }
   get __restAttributes(): any {
     return {};
+  }
+
+  _selectedChange: (selected: boolean) => void;
+  constructor() {
+    super();
+    this._selectedChange = this.selectedChange.emit.bind(this.selectedChange);
   }
 }
 @NgModule({

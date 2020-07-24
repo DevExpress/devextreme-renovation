@@ -1,5 +1,4 @@
 import Base, { WidgetProps, DxWidgetModule } from "./component-input";
-
 import { Input, Output, EventEmitter } from "@angular/core";
 class ChildInput extends WidgetProps {
   @Input() height: number = 10;
@@ -15,12 +14,16 @@ import { CommonModule } from "@angular/common";
 })
 export default class Child extends ChildInput {
   __getProps(): WidgetProps {
-    return {
-      height: this.height,
-    } as WidgetProps;
+    return { height: this.height } as WidgetProps;
   }
   get __restAttributes(): any {
     return {};
+  }
+
+  _onClick: (a: number) => void;
+  constructor() {
+    super();
+    this._onClick = this.onClick.emit.bind(this.onClick);
   }
 }
 @NgModule({

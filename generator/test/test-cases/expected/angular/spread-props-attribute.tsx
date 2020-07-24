@@ -1,5 +1,4 @@
 import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
-
 import { Input, Output, EventEmitter } from "@angular/core";
 export class WidgetInput {
   @Input() visible?: boolean;
@@ -16,13 +15,12 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   useExisting: forwardRef(() => Widget),
   multi: true,
 };
-
 @Component({
   selector: "dx-widget",
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
   template: `<dx-inner-widget
     [value]="value"
-    (valueChange)="valueChange.emit($event)"
+    (valueChange)="_valueChange($event)"
   ></dx-inner-widget>`,
 })
 export default class Widget extends WidgetInput
@@ -43,6 +41,12 @@ export default class Widget extends WidgetInput
   }
   registerOnTouched(fn: () => void): void {
     this.touched = fn;
+  }
+
+  _valueChange: (value: boolean) => void;
+  constructor() {
+    super();
+    this._valueChange = this.valueChange.emit.bind(this.valueChange);
   }
 }
 @NgModule({
