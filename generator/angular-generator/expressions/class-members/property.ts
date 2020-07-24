@@ -119,11 +119,17 @@ export class Property extends BaseProperty {
     }
     if (this.isRef || this.isForwardRef || this.isForwardRefProp) {
       const postfix = this.isForwardRefProp ? "Ref" : "";
+      const type = this.type.toString();
+      const isElement = type.startsWith("HTML") && type.endsWith("Element");
       return `${componentContext}${this.name}${postfix}${
-        this.questionOrExclamationToken === SyntaxKind.ExclamationToken
-          ? ""
-          : this.questionOrExclamationToken
-      }.nativeElement`;
+        isElement
+          ? `${
+              this.questionOrExclamationToken === SyntaxKind.ExclamationToken
+                ? ""
+                : this.questionOrExclamationToken
+            }.nativeElement`
+          : ""
+      }`;
     }
     if (this.isRefProp) {
       return `${componentContext}${this.name}`;

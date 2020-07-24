@@ -1524,7 +1524,7 @@ mocha.describe("Angular generator", function () {
               [],
               generator.createIdentifier("refName"),
               undefined,
-              undefined,
+              generator.createKeywordTypeNode("HTMLDivElement"),
               undefined
             ),
           ],
@@ -4366,6 +4366,21 @@ mocha.describe("Angular generator", function () {
       );
     });
 
+    mocha.it("Ref Prop getter type is not element", function () {
+      const property = generator.createProperty(
+        [createDecorator(Decorators.Ref)],
+        [],
+        generator.createIdentifier("host"),
+        generator.SyntaxKind.QuestionToken,
+        generator.createKeywordTypeNode("NotElement")
+      );
+
+      assert.strictEqual(
+        property.getter(generator.SyntaxKind.ThisKeyword),
+        "this.host"
+      );
+    });
+
     mocha.it("Event Prop generates Event EventEmitter", function () {
       const property = generator.createProperty(
         [createDecorator(Decorators.Event)],
@@ -5594,21 +5609,25 @@ mocha.describe("Angular generator", function () {
         const property = generator.createProperty(
           [createDecorator(Decorators.Ref)],
           [],
-          generator.createIdentifier("div")
+          generator.createIdentifier("div"),
+          undefined,
+          generator.createKeywordTypeNode("HTMLDivElement")
         );
 
         const propertyWithExclamation = generator.createProperty(
           [createDecorator(Decorators.Ref)],
           [],
           generator.createIdentifier("div"),
-          "!"
+          generator.SyntaxKind.ExclamationToken,
+          generator.createKeywordTypeNode("HTMLSpanElement")
         );
 
         const propertyWithQuestion = generator.createProperty(
           [createDecorator(Decorators.Ref)],
           [],
           generator.createIdentifier("div"),
-          "?"
+          generator.SyntaxKind.QuestionToken,
+          generator.createKeywordTypeNode("HTMLDivElement")
         );
 
         const expression = generator.createPropertyAccess(
