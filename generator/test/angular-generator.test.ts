@@ -2185,6 +2185,115 @@ mocha.describe("Angular generator", function () {
         );
       });
 
+      mocha.it(
+        "template attributes -> template context. bind method to this",
+        function () {
+          const expression = generator.createJsxSelfClosingElement(
+            generator.createPropertyAccess(
+              generator.createIdentifier("viewModel"),
+              generator.createIdentifier("template")
+            ),
+            [],
+            [
+              generator.createJsxAttribute(
+                generator.createIdentifier("m"),
+                generator.createPropertyAccess(
+                  generator.createIdentifier("viewModel"),
+                  generator.createIdentifier("m")
+                )
+              ),
+            ]
+          );
+
+          const templateProperty = generator.createProperty(
+            [createDecorator("Template")],
+            [],
+            generator.createIdentifier("template"),
+            generator.SyntaxKind.QuestionToken,
+            undefined,
+            undefined
+          );
+
+          const method = generator.createMethod(
+            [],
+            [],
+            undefined,
+            generator.createIdentifier("m"),
+            undefined,
+            undefined,
+            [],
+            undefined,
+            generator.createBlock([], false)
+          );
+
+          assert.strictEqual(
+            removeSpaces(
+              expression.toString({
+                members: [templateProperty, method],
+                componentContext: "viewModel",
+                newComponentContext: "",
+              })
+            ),
+            removeSpaces(
+              `<ng-container*ngTemplateOutlet="template;context:{m:m.bind(this)}"></ng-container>`
+            )
+          );
+        }
+      );
+
+      mocha.it(
+        "template attributes -> template context. Do not bind GetAccessor to this",
+        function () {
+          const expression = generator.createJsxSelfClosingElement(
+            generator.createPropertyAccess(
+              generator.createIdentifier("viewModel"),
+              generator.createIdentifier("template")
+            ),
+            [],
+            [
+              generator.createJsxAttribute(
+                generator.createIdentifier("m"),
+                generator.createPropertyAccess(
+                  generator.createIdentifier("viewModel"),
+                  generator.createIdentifier("m")
+                )
+              ),
+            ]
+          );
+
+          const templateProperty = generator.createProperty(
+            [createDecorator("Template")],
+            [],
+            generator.createIdentifier("template"),
+            generator.SyntaxKind.QuestionToken,
+            undefined,
+            undefined
+          );
+
+          const getter = generator.createGetAccessor(
+            [],
+            [],
+            generator.createIdentifier("m"),
+            [],
+            undefined,
+            generator.createBlock([], false)
+          );
+
+          assert.strictEqual(
+            removeSpaces(
+              expression.toString({
+                members: [templateProperty, getter],
+                componentContext: "viewModel",
+                newComponentContext: "",
+              })
+            ),
+            removeSpaces(
+              `<ng-container*ngTemplateOutlet="template;context:{m:m}"></ng-container>`
+            )
+          );
+        }
+      );
+
       mocha.describe(
         "Template with spread attribute -> template context",
         function () {

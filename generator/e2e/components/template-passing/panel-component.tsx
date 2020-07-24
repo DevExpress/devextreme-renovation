@@ -21,7 +21,10 @@ function view(vm: PanelComponent) {
       </div>
       <div>
         <span>Body:</span>
-        <vm.props.bodyTemplate text={lorem} onClick={vm.bodyClick} />{" "}
+        <vm.props.bodyTemplate
+          text={lorem}
+          onClick={vm.props.onBodyClick}
+        />{" "}
       </div>
     </div>
   );
