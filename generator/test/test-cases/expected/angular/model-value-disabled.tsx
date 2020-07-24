@@ -4,9 +4,7 @@ class ModelWidgetInput {
   @Input() value?: boolean;
   @Input() notValue?: boolean;
   @Output() valueChange: EventEmitter<boolean> = new EventEmitter();
-  _valueChange!: (value: boolean) => void;
   @Output() notValueChange: EventEmitter<boolean> = new EventEmitter();
-  _notValueChange!: (notValue: boolean) => void;
 }
 
 import { Component, NgModule, forwardRef, HostListener } from "@angular/core";
@@ -47,6 +45,8 @@ export default class ModelWidget extends ModelWidgetInput
     this.touched = fn;
   }
 
+  _valueChange: (value: boolean) => void;
+  _notValueChange: (notValue: boolean) => void;
   constructor() {
     super();
     this._valueChange = this.valueChange.emit.bind(this.valueChange);

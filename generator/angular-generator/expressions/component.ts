@@ -35,6 +35,7 @@ import { getModuleRelativePath } from "../../base-generator/utils/path-utils";
 import {
   removePlural,
   capitalizeFirstLetter,
+  compileType,
 } from "../../base-generator/utils/string";
 
 export function compileCoreImports(
@@ -864,13 +865,16 @@ export class AngularComponent extends Component {
   }
 
   compileBindEvents(constructorStatements: string[]) {
-    this.members
-      .filter((m) => m.isEvent)
-      .forEach((m) => {
+    const events = this.members.filter((m) => m.isEvent);
+
+    return events
+      .map((e) => {
         constructorStatements.push(
-          `this._${m.name}=this.${m.name}.emit.bind(this.${m.name});`
+          `this._${e.name}=this.${e.name}.emit.bind(this.${e.name});`
         );
-      });
+        return `_${e.name}${compileType(e.type.toString())}`;
+      })
+      .join(";\n");
   }
 
   toString() {
@@ -936,7 +940,6 @@ export class AngularComponent extends Component {
             `);
       });
 
-    this.compileBindEvents(constructorStatements);
     const nestedPropertyGetters = (this.members.filter(
       (m) => m.isNested && !m.inherited
     ) as Property[])
@@ -992,6 +995,7 @@ export class AngularComponent extends Component {
               ngAfterViewCheckedStatements
             )}
             ${this.compileLifeCycle("ngDoCheck", ngDoCheckStatements)}
+            ${this.compileBindEvents(constructorStatements)}
             ${this.compileLifeCycle(
               "constructor",
               constructorStatements.length

@@ -4,7 +4,6 @@ export class WidgetInput {
   @Input() visible?: boolean;
   @Input() value?: boolean;
   @Output() valueChange: EventEmitter<boolean> = new EventEmitter();
-  _valueChange!: (value: boolean) => void;
 }
 
 import { Component, NgModule, forwardRef, HostListener } from "@angular/core";
@@ -44,6 +43,7 @@ export default class Widget extends WidgetInput
     this.touched = fn;
   }
 
+  _valueChange: (value: boolean) => void;
   constructor() {
     super();
     this._valueChange = this.valueChange.emit.bind(this.valueChange);

@@ -5,11 +5,8 @@ class WidgetInput {
   @Input() state2: boolean = false;
   @Input() stateProp?: boolean;
   @Output() state1Change: EventEmitter<boolean> = new EventEmitter();
-  _state1Change!: (state1: boolean) => void;
   @Output() state2Change: EventEmitter<boolean> = new EventEmitter();
-  _state2Change!: (state2: boolean) => void;
   @Output() statePropChange: EventEmitter<boolean> = new EventEmitter();
-  _statePropChange!: (stateProp: boolean) => void;
 }
 
 import { Component, NgModule } from "@angular/core";
@@ -43,6 +40,9 @@ export default class Widget extends WidgetInput {
     return {};
   }
 
+  _state1Change: (state1: boolean) => void;
+  _state2Change: (state2: boolean) => void;
+  _statePropChange: (stateProp: boolean) => void;
   constructor() {
     super();
     this._state1Change = this.state1Change.emit.bind(this.state1Change);

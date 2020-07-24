@@ -2,7 +2,6 @@ import { Input, Output, EventEmitter } from "@angular/core";
 class WidgetInput {
   @Input() propState: number = 1;
   @Output() propStateChange: EventEmitter<number> = new EventEmitter();
-  _propStateChange!: (propState: number) => void;
 }
 
 import { Component, NgModule } from "@angular/core";
@@ -25,6 +24,7 @@ export default class Widget extends WidgetInput {
     return {};
   }
 
+  _propStateChange: (propState: number) => void;
   constructor() {
     super();
     this._propStateChange = this.propStateChange.emit.bind(

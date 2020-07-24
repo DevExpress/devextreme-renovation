@@ -3,7 +3,6 @@ import { Input, Output, EventEmitter } from "@angular/core";
 class ChildInput extends WidgetProps {
   @Input() height: number = 10;
   @Output() onClick: EventEmitter<number> = new EventEmitter();
-  _onClick!: (a: number) => void;
 }
 
 import { Component, NgModule } from "@angular/core";
@@ -21,6 +20,7 @@ export default class Child extends ChildInput {
     return {};
   }
 
+  _onClick: (a: number) => void;
   constructor() {
     super();
     this._onClick = this.onClick.emit.bind(this.onClick);

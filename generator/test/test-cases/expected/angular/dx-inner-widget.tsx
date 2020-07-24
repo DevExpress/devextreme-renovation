@@ -3,9 +3,7 @@ export class InnerWidgetProps {
   @Input() selected?: boolean;
   @Input() value?: number;
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
-  _onSelect!: (e: any) => any;
   @Output() valueChange: EventEmitter<number> = new EventEmitter();
-  _valueChange!: (value: number) => void;
 }
 
 import { Component, NgModule, forwardRef, HostListener } from "@angular/core";
@@ -44,6 +42,8 @@ export default class InnerWidget extends InnerWidgetProps
     this.touched = fn;
   }
 
+  _onSelect: (e: any) => any;
+  _valueChange: (value: number) => void;
   constructor() {
     super();
     this._onSelect = this.onSelect.emit.bind(this.onSelect);

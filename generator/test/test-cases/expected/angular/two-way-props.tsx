@@ -3,7 +3,6 @@ class WidgetInput {
   @Input() height: number = 10;
   @Input() selected: boolean = false;
   @Output() selectedChange: EventEmitter<boolean> = new EventEmitter();
-  _selectedChange!: (selected: boolean) => void;
 }
 
 import { Component, NgModule } from "@angular/core";
@@ -27,6 +26,7 @@ export default class Widget extends WidgetInput {
     return {};
   }
 
+  _selectedChange: (selected: boolean) => void;
   constructor() {
     super();
     this._selectedChange = this.selectedChange.emit.bind(this.selectedChange);

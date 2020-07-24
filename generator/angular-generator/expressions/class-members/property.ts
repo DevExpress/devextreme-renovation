@@ -7,13 +7,9 @@ import {
   FunctionTypeNode,
 } from "../../../base-generator/expressions/type";
 import { Decorators } from "../../../component_declaration/decorators";
-import {
-  capitalizeFirstLetter,
-  compileType,
-} from "../../../base-generator/utils/string";
+import { capitalizeFirstLetter } from "../../../base-generator/utils/string";
 import SyntaxKind from "../../../base-generator/syntaxKind";
 import { Expression } from "../../../base-generator/expressions/base";
-import syntaxKind from "../../../base-generator/syntaxKind";
 
 function parseEventType(type: TypeExpression | string) {
   if (type instanceof FunctionTypeNode) {
@@ -69,11 +65,7 @@ export class Property extends BaseProperty {
     if (eventDecorator) {
       return `${eventDecorator} ${this.name}:EventEmitter${parseEventType(
         this.type
-      )} = new EventEmitter();
-      _${this.name}${compileType(
-        this.type.toString(),
-        syntaxKind.ExclamationToken
-      )}`;
+      )} = new EventEmitter();`;
     }
     if (this.isRef) {
       return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:ElementRef<${this.type}>`;

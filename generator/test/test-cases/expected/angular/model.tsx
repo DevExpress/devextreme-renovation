@@ -2,13 +2,10 @@ import { Input, Output, EventEmitter } from "@angular/core";
 class ModelWidgetInput {
   @Input() baseStateProp?: boolean;
   @Output() baseStatePropChange: EventEmitter<boolean> = new EventEmitter();
-  _baseStatePropChange!: (stateProp: boolean) => void;
   @Input() modelStateProp?: boolean;
   @Input() value?: boolean;
   @Output() modelStatePropChange: EventEmitter<boolean> = new EventEmitter();
-  _modelStatePropChange!: (modelStateProp: boolean) => void;
   @Output() valueChange: EventEmitter<boolean> = new EventEmitter();
-  _valueChange!: (value: boolean) => void;
 }
 
 import { Component, NgModule, forwardRef, HostListener } from "@angular/core";
@@ -45,6 +42,9 @@ export default class ModelWidget extends ModelWidgetInput
     this.touched = fn;
   }
 
+  _baseStatePropChange: (stateProp: boolean) => void;
+  _modelStatePropChange: (modelStateProp: boolean) => void;
+  _valueChange: (value: boolean) => void;
   constructor() {
     super();
     this._baseStatePropChange = this.baseStatePropChange.emit.bind(

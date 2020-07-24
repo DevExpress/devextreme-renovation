@@ -4402,7 +4402,6 @@ mocha.describe("Angular generator", function () {
         getResult(property.toString()),
         getResult(`
           @Output() onClick:EventEmitter<any> = new EventEmitter();
-          _onClick!:any
         `)
       );
     });
@@ -4451,7 +4450,6 @@ mocha.describe("Angular generator", function () {
         getResult(property.toString()),
         getResult(`
           @Output() onClick:EventEmitter<string|undefined,number> = new EventEmitter();
-          _onClick!:(a?:string,b:number)=>any
           `)
       );
     });
@@ -4483,7 +4481,6 @@ mocha.describe("Angular generator", function () {
           getResult(property.toString()),
           getResult(`
             @Output() onClick:EventEmitter = new EventEmitter();
-            _onClick!:()=>any;
           `)
         );
       }
@@ -4513,7 +4510,6 @@ mocha.describe("Angular generator", function () {
         getResult(bindings.members[1].toString()),
         getResult(`
           @Output() p1Change:EventEmitter<number> = new EventEmitter();
-          _p1Change!:(p1:number)=>void
         `)
       );
     });

@@ -3,7 +3,6 @@ class WidgetInput {
   @Input() height: number = 10;
   @Input() export: object = {};
   @Output() onClick: EventEmitter<number> = new EventEmitter();
-  _onClick!: (a: number) => void;
 }
 
 import { Component, NgModule } from "@angular/core";
@@ -20,6 +19,7 @@ export default class Widget extends WidgetInput {
     return {};
   }
 
+  _onClick: (a: number) => void;
   constructor() {
     super();
     this._onClick = this.onClick.emit.bind(this.onClick);
