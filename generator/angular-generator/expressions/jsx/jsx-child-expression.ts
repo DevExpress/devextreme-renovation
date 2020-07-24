@@ -253,6 +253,11 @@ export class JsxChildExpression extends JsxExpression {
         templateExpression as JsxExpression
       );
       template = expression.toString(templateOptions);
+      if (options) {
+        options.trackBy = (options.trackBy || []).concat(
+          templateOptions.trackBy || []
+        );
+      }
     }
 
     const item = `let ${itemName} of ${itemsExpressionString}`;

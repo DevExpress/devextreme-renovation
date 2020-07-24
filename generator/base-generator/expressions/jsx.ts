@@ -1,4 +1,4 @@
-import { Identifier, Paren } from "./common";
+import { Identifier, Paren, Call } from "./common";
 import {
   Expression,
   ExpressionWithExpression,
@@ -22,6 +22,8 @@ export function getJsxExpression(
     e instanceof JsxOpeningElement
   ) {
     return e as JsxExpression;
+  } else if (e instanceof Call) {
+    return new JsxExpression(undefined, e);
   } else if (
     e instanceof ExpressionWithExpression ||
     e instanceof ExpressionWithOptionalExpression
