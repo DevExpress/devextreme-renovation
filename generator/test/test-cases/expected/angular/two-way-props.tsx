@@ -26,7 +26,7 @@ export default class Widget extends WidgetInput {
     return {};
   }
 
-  _selectedChange: (selected: boolean) => void;
+  _selectedChange: any;
   constructor() {
     super();
     this._selectedChange = this.selectedChange.emit.bind(this.selectedChange);

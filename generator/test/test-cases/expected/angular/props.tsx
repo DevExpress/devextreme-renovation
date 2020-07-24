@@ -19,7 +19,7 @@ export default class Widget extends WidgetInput {
     return {};
   }
 
-  _onClick: (a: number) => void;
+  _onClick: any;
   constructor() {
     super();
     this._onClick = this.onClick.emit.bind(this.onClick);

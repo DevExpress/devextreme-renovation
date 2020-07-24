@@ -43,7 +43,7 @@ export default class Widget extends WidgetInput
     this.touched = fn;
   }
 
-  _valueChange: (value: boolean) => void;
+  _valueChange: any;
   constructor() {
     super();
     this._valueChange = this.valueChange.emit.bind(this.valueChange);

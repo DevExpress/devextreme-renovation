@@ -42,9 +42,9 @@ export default class ModelWidget extends ModelWidgetInput
     this.touched = fn;
   }
 
-  _baseStatePropChange: (stateProp: boolean) => void;
-  _modelStatePropChange: (modelStateProp: boolean) => void;
-  _valueChange: (value: boolean) => void;
+  _baseStatePropChange: any;
+  _modelStatePropChange: any;
+  _valueChange: any;
   constructor() {
     super();
     this._baseStatePropChange = this.baseStatePropChange.emit.bind(

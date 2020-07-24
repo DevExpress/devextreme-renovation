@@ -24,7 +24,7 @@ export default class Widget extends WidgetInput {
     return {};
   }
 
-  _propStateChange: (propState: number) => void;
+  _propStateChange: any;
   constructor() {
     super();
     this._propStateChange = this.propStateChange.emit.bind(

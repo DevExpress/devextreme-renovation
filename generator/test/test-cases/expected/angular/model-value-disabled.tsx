@@ -45,8 +45,8 @@ export default class ModelWidget extends ModelWidgetInput
     this.touched = fn;
   }
 
-  _valueChange: (value: boolean) => void;
-  _notValueChange: (notValue: boolean) => void;
+  _valueChange: any;
+  _notValueChange: any;
   constructor() {
     super();
     this._valueChange = this.valueChange.emit.bind(this.valueChange);

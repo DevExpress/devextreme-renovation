@@ -20,7 +20,7 @@ export default class Child extends ChildInput {
     return {};
   }
 
-  _onClick: (a: number) => void;
+  _onClick: any;
   constructor() {
     super();
     this._onClick = this.onClick.emit.bind(this.onClick);
