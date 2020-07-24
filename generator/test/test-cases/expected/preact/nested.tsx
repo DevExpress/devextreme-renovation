@@ -21,24 +21,22 @@ interface Widget {
 export default function Widget(props: typeof WidgetInput & RestProps) {
   const getColumns = useCallback(
     function getColumns(): any {
-      return props.columns?.map((el) =>
-        typeof el === "string" ? el : el.name
-      );
+      const { columns } = props;
+      return columns?.map((el) => (typeof el === "string" ? el : el.name));
     },
     [props.columns]
   );
   const __isEditable = useCallback(
     function __isEditable(): any {
-      return props.gridEditing?.editEnabled;
+      return (
+        props.gridEditing?.editEnabled || props.gridEditing?.custom?.length
+      );
     },
     [props.gridEditing]
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { columns, gridEditing, ...restProps } = {
-        columns: props.columns,
-        gridEditing: props.gridEditing,
-      };
+      const { columns, gridEditing, ...restProps } = props;
       return restProps;
     },
     [props]
