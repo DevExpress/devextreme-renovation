@@ -872,7 +872,7 @@ export class AngularComponent extends Component {
         constructorStatements.push(
           `this._${e.name}=this.${e.name}.emit.bind(this.${e.name});`
         );
-        return `_${e.name}${compileType(e.type.toString())}`;
+        return `_${e.name}${compileType("any")}`;
       })
       .join(";\n");
   }

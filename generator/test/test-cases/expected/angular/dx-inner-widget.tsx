@@ -42,8 +42,8 @@ export default class InnerWidget extends InnerWidgetProps
     this.touched = fn;
   }
 
-  _onSelect: (e: any) => any;
-  _valueChange: (value: number) => void;
+  _onSelect: any;
+  _valueChange: any;
   constructor() {
     super();
     this._onSelect = this.onSelect.emit.bind(this.onSelect);

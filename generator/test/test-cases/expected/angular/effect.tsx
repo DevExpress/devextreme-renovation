@@ -88,7 +88,7 @@ export default class Widget extends WidgetInput {
     }
   }
 
-  _sChange: (s: number) => void;
+  _sChange: any;
   constructor() {
     super();
     this._sChange = this.sChange.emit.bind(this.sChange);

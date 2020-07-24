@@ -40,9 +40,9 @@ export default class Widget extends WidgetInput {
     return {};
   }
 
-  _state1Change: (state1: boolean) => void;
-  _state2Change: (state2: boolean) => void;
-  _statePropChange: (stateProp: boolean) => void;
+  _state1Change: any;
+  _state2Change: any;
+  _statePropChange: any;
   constructor() {
     super();
     this._state1Change = this.state1Change.emit.bind(this.state1Change);
