@@ -50,6 +50,14 @@ export class JsxElement extends BaseJsxElement {
   }
 
   toString(options?: toStringOptions) {
+    const elementString = this.openingElement.compileJsxElementsForVariable(
+      options,
+      this.children.slice()
+    );
+    if (elementString) {
+      return elementString;
+    }
+
     const openingElementString = this.openingElement.toString(options);
     const children = this.children.concat([
       ...this.openingElement.getSlotsFromAttributes(options),
