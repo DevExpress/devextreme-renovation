@@ -177,6 +177,10 @@ mocha.describe("react-generator", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("component-pass", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("import-component", function () {
     this.testGenerator(this.test!.title);
   });

@@ -6,6 +6,7 @@ import { toStringOptions, VariableExpression } from "../types";
 import { BindingPattern, BindingElement } from "./binding-pattern";
 import { compileType } from "../utils/string";
 import { getProps } from "./component";
+import { Conditional } from "./conditions";
 
 export class VariableDeclaration extends Expression {
   name: Identifier | BindingPattern;
@@ -107,7 +108,8 @@ export class VariableDeclaration extends Expression {
       const expression =
         this.initializer instanceof SimpleExpression ||
         this.initializer.isJsx() ||
-        this.initializer instanceof Call
+        this.initializer instanceof Call ||
+        this.initializer instanceof Conditional
           ? this.initializer
           : new Paren(this.initializer);
 
