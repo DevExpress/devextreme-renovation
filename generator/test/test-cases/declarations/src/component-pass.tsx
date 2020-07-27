@@ -9,8 +9,13 @@ import WidgetOne from "./component-pass-one";
 import WidgetTwo from "./component-pass-two";
 
 function view(model: Widget) {
-  const ComponentByCondition = model.props.mode ? WidgetOne : WidgetTwo;
   const ComponentFromVar = WidgetOne;
+  const ComponentByCondition = model.props.mode ? ComponentFromVar : WidgetTwo;
+  const SelfClosingComponentByCondition = model.props.mode
+    ? ComponentFromVar
+    : WidgetTwo;
+  const SelfClosingComponentFromVar = WidgetTwo;
+  const SelfClosingComponentByConditionFromVar = SelfClosingComponentByCondition;
   return (
     <Fragment>
       <ComponentByCondition text={model.props.firstText}>
@@ -19,6 +24,9 @@ function view(model: Widget) {
       <ComponentFromVar text={model.props.secondText}>
         <div>Children go here</div>
       </ComponentFromVar>
+      <SelfClosingComponentByCondition text="self closing by condition" />
+      <SelfClosingComponentFromVar text="self closing" />
+      <SelfClosingComponentByConditionFromVar text={model.props.secondText} />
     </Fragment>
   );
 }

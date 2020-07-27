@@ -27,11 +27,10 @@ export function getExpression(
   expression: Expression,
   options?: toStringOptions
 ): Expression {
-  if (
-    expression instanceof Identifier &&
-    options?.variables?.[expression.toString()]
-  ) {
-    expression = options.variables[expression.toString()];
+  if (expression instanceof Identifier) {
+    while (options?.variables?.[expression.toString()]) {
+      expression = options.variables[expression.toString()];
+    }
   }
 
   if (expression instanceof Paren || expression instanceof AsExpression) {

@@ -2,51 +2,20 @@ import {
   JsxElement as BaseJsxElement,
   JsxClosingElement,
 } from "../../../base-generator/expressions/jsx";
-import { JsxAttribute } from "./attribute";
 import { JsxExpression } from "./jsx-expression";
 import { JsxChildExpression } from "./jsx-child-expression";
 import {
   JsxOpeningElement,
   JsxSelfClosingElement,
-  processTagName,
 } from "./jsx-opening-element";
 import { toStringOptions } from "../../types";
 import { JsxSpreadAttributeMeta } from "./spread-attribute";
 import { JsxOpeningElement as BaseJsxOpeningElement } from "../../../base-generator/expressions/jsx";
-import { Conditional } from "../../../base-generator/expressions/conditions";
-import { AngularDirective } from "./angular-directive";
-import { Identifier, Paren } from "../../../base-generator/expressions/common";
-import { Prefix } from "../../../base-generator/expressions/operators";
-import SyntaxKind from "../../../base-generator/syntaxKind";
-import { Expression } from "../../../base-generator/expressions/base";
 
 export const isElement = (e: any): e is JsxElement | JsxSelfClosingElement =>
   e instanceof JsxElement ||
   e instanceof JsxSelfClosingElement ||
   e instanceof BaseJsxOpeningElement;
-
-export const creteJsxElementForVariable = function (
-  sourceElement: JsxOpeningElement,
-  children: Array<
-    JsxElement | string | JsxChildExpression | JsxSelfClosingElement
-  > = [],
-  expression: Expression,
-  attributes: JsxAttribute[] = [],
-  options?: toStringOptions
-): string {
-  const element = new JsxElement(
-    new JsxOpeningElement(
-      expression,
-      sourceElement.typeArguments,
-      (sourceElement.attributes as JsxAttribute[]).concat(attributes),
-      sourceElement.context
-    ),
-    children,
-    new JsxClosingElement(processTagName(expression, sourceElement.context))
-  );
-
-  return element.toString(options);
-};
 
 export class JsxElement extends BaseJsxElement {
   createChildJsxExpression(expression: JsxExpression) {
@@ -80,51 +49,11 @@ export class JsxElement extends BaseJsxElement {
     return this.openingElement.tagName.toString() === "Fragment";
   }
 
-  compileElementForVariable(options?: toStringOptions): string | undefined {
-    const variable =
-      options?.variables &&
-      options.variables[this.openingElement.tagName.toString()];
-
-    if (variable instanceof Conditional) {
-      const thenComp = creteJsxElementForVariable(
-        this.openingElement,
-        this.children.slice(),
-        variable.thenStatement,
-        [new AngularDirective(new Identifier("*ngIf"), variable.expression)],
-        options
-      );
-
-      const elseComp = creteJsxElementForVariable(
-        this.openingElement,
-        this.children.slice(),
-        variable.elseStatement,
-        [
-          new AngularDirective(
-            new Identifier("*ngIf"),
-            new Prefix(
-              SyntaxKind.ExclamationToken,
-              new Paren(variable.expression)
-            )
-          ),
-        ],
-        options
-      );
-
-      return `${thenComp}\n${elseComp}`;
-    }
-    if (variable instanceof Identifier) {
-      return creteJsxElementForVariable(
-        this.openingElement,
-        this.children.slice(),
-        variable,
-        [],
-        options
-      );
-    }
-  }
-
   toString(options?: toStringOptions) {
-    const elementString = this.compileElementForVariable(options);
+    const elementString = this.openingElement.compileJsxElementsForVariable(
+      options,
+      this.children.slice()
+    );
     if (elementString) {
       return elementString;
     }

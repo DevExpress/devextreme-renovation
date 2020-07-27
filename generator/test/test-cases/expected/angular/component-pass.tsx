@@ -18,9 +18,24 @@ import { CommonModule } from "@angular/common";
     <dx-widget-two [text]="firstText" *ngIf="!mode">
       <div>Slot content</div>
     </dx-widget-two>
+
     <dx-widget-one [text]="secondText">
       <div>Children go here</div>
-    </dx-widget-one>`,
+    </dx-widget-one>
+
+    <dx-widget-one
+      text="self closing by condition"
+      *ngIf="mode"
+    ></dx-widget-one>
+    <dx-widget-two
+      text="self closing by condition"
+      *ngIf="!mode"
+    ></dx-widget-two>
+
+    <dx-widget-two text="selfclosing"></dx-widget-two>
+
+    <dx-widget-one [text]="secondText" *ngIf="mode"></dx-widget-one>
+    <dx-widget-two [text]="secondText" *ngIf="!mode"></dx-widget-two>`,
 })
 export default class Widget extends WidgetProps {
   get __restAttributes(): any {
