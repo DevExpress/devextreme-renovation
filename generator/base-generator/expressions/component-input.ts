@@ -5,6 +5,10 @@ import {
   FunctionTypeNode,
   TypeExpression,
   extractComplexType,
+  LiteralTypeNode,
+  UnionTypeNode,
+  TypeReferenceNode,
+  IntersectionTypeNode,
 } from "./type";
 import { Property, Method, BaseClassMember } from "./class-members";
 import { Identifier, Call } from "./common";
@@ -16,6 +20,7 @@ import { warn } from "../../utils/messages";
 import { getProps } from "./component";
 import { GeneratorContext } from "../types";
 import { Decorators } from "../../component_declaration/decorators";
+import { StringLiteral } from "./literal";
 
 const RESERVED_NAMES = ["class", "key", "ref", "style", "class"];
 
@@ -233,4 +238,69 @@ export class ComponentInput extends Class implements Heritable {
   defaultPropsDest() {
     return this.name.toString();
   }
+}
+
+export function getMemberListFromTypeExpression(
+  type: TypeExpression
+): string[] {
+  if (
+    type instanceof LiteralTypeNode &&
+    type.expression instanceof StringLiteral
+  ) {
+    return [type.expression.expression];
+  }
+
+  if (type instanceof UnionTypeNode) {
+    return type.types.reduce(
+      (types: string[], t) => types.concat(getMemberListFromTypeExpression(t)),
+      []
+    );
+  }
+  return [];
+}
+
+const omit = (members: string[]) => (p: Property | Method) =>
+  !members.some((m) => m === p.name);
+const pick = (members: string[]) => (p: Property | Method) =>
+  members.some((m) => m === p.name);
+
+function findComponentInput(type: TypeExpression, context: GeneratorContext) {
+  return context.components?.[type.toString().replace("typeof ", "")];
+}
+
+export function membersFromTypeDeclaration(
+  type: TypeExpression,
+  context: GeneratorContext
+): (Property | Method)[] {
+  if (
+    type instanceof TypeReferenceNode &&
+    (type.type.toString() === "Omit" || type.type.toString() === "Pick") &&
+    type.typeArguments.length
+  ) {
+    const componentInput = findComponentInput(type.typeArguments[0], context);
+    const members = getMemberListFromTypeExpression(type.typeArguments[1]);
+    if (componentInput instanceof ComponentInput) {
+      const filter =
+        type.type.toString() === "Omit" ? omit(members) : pick(members);
+
+      return componentInput.members.filter(filter);
+    }
+  }
+
+  if (type instanceof TypeReferenceNode) {
+    const componentInput = findComponentInput(type, context);
+    if (componentInput) {
+      return componentInput.members;
+    }
+  }
+
+  if (type instanceof IntersectionTypeNode) {
+    return type.types.reduce(
+      (members: (Property | Method)[], t) =>
+        members.concat(membersFromTypeDeclaration(t, context)),
+      []
+    );
+  }
+
+  return [];
 }

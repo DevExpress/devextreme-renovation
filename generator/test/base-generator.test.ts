@@ -3382,6 +3382,209 @@ mocha.describe("ComponentInput", function () {
   });
 });
 
+mocha.describe("ComponentInput from type", function () {
+  this.beforeEach(function () {
+    generator.setContext({});
+
+    generator.createClassDeclaration(
+      [createDecorator(Decorators.ComponentBindings)],
+      [],
+      generator.createIdentifier("BaseProps"),
+      [],
+      [],
+      [
+        generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("p1")
+        ),
+        generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("p2")
+        ),
+        generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("p3")
+        ),
+      ]
+    );
+  });
+
+  this.afterEach(function () {
+    generator.setContext(null);
+  });
+
+  mocha.it("Omit<BaseProps, 'p1'>", function () {
+    const expression = generator.createTypeAliasDeclaration(
+      [],
+      [],
+      generator.createIdentifier("Props"),
+      undefined,
+      generator.createTypeReferenceNode(generator.createIdentifier("Omit"), [
+        generator.createTypeReferenceNode(
+          generator.createIdentifier("BaseProps"),
+          undefined
+        ),
+        generator.createLiteralTypeNode(generator.createStringLiteral("p1")),
+      ])
+    );
+
+    assert.ok(expression instanceof ComponentInput);
+    assert.deepEqual(
+      (expression as ComponentInput).members.map((m) => m.name),
+      ["p2", "p3"]
+    );
+    assert.equal(generator.getContext().components?.["Props"], expression);
+  });
+
+  mocha.it("Omit<BaseProps, 'p1' | 'p3'>", function () {
+    const expression = generator.createTypeAliasDeclaration(
+      [],
+      [],
+      generator.createIdentifier("Props"),
+      undefined,
+      generator.createTypeReferenceNode(generator.createIdentifier("Omit"), [
+        generator.createTypeReferenceNode(
+          generator.createIdentifier("BaseProps"),
+          undefined
+        ),
+        generator.createUnionTypeNode([
+          generator.createLiteralTypeNode(generator.createStringLiteral("p1")),
+          generator.createLiteralTypeNode(generator.createStringLiteral("p3")),
+        ]),
+      ])
+    );
+
+    assert.ok(expression instanceof ComponentInput);
+    assert.deepEqual(
+      (expression as ComponentInput).members.map((m) => m.name),
+      ["p2"]
+    );
+  });
+
+  mocha.it("Pick<BaseProps, 'p1'>", function () {
+    const expression = generator.createTypeAliasDeclaration(
+      [],
+      [],
+      generator.createIdentifier("Props"),
+      undefined,
+      generator.createTypeReferenceNode(generator.createIdentifier("Pick"), [
+        generator.createTypeReferenceNode(
+          generator.createIdentifier("BaseProps"),
+          undefined
+        ),
+        generator.createLiteralTypeNode(generator.createStringLiteral("p1")),
+      ])
+    );
+
+    assert.ok(expression instanceof ComponentInput);
+    assert.deepEqual(
+      (expression as ComponentInput).members.map((m) => m.name),
+      ["p1"]
+    );
+  });
+
+  mocha.it(
+    "Pick<BaseProps, 10> - do not convert to component input",
+    function () {
+      const expression = generator.createTypeAliasDeclaration(
+        [],
+        [],
+        generator.createIdentifier("Props"),
+        undefined,
+        generator.createTypeReferenceNode(generator.createIdentifier("Pick"), [
+          generator.createTypeReferenceNode(
+            generator.createIdentifier("BaseProps"),
+            undefined
+          ),
+          generator.createLiteralTypeNode(generator.createNumericLiteral("10")),
+        ])
+      );
+
+      assert.ok(!(expression instanceof ComponentInput));
+    }
+  );
+
+  mocha.it("Pick & Omit", function () {
+    const expression = generator.createTypeAliasDeclaration(
+      [],
+      [],
+      generator.createIdentifier("Props"),
+      undefined,
+      generator.createIntersectionTypeNode([
+        generator.createTypeReferenceNode(generator.createIdentifier("Pick"), [
+          generator.createTypeReferenceNode(
+            generator.createIdentifier("BaseProps"),
+            undefined
+          ),
+          generator.createLiteralTypeNode(generator.createStringLiteral("p1")),
+        ]),
+        generator.createTypeReferenceNode(generator.createIdentifier("Omit"), [
+          generator.createTypeReferenceNode(
+            generator.createIdentifier("BaseProps"),
+            undefined
+          ),
+          generator.createUnionTypeNode([
+            generator.createLiteralTypeNode(
+              generator.createStringLiteral("p1")
+            ),
+            generator.createLiteralTypeNode(
+              generator.createStringLiteral("p3")
+            ),
+          ]),
+        ]),
+      ])
+    );
+
+    assert.ok(expression instanceof ComponentInput);
+    assert.deepEqual(
+      (expression as ComponentInput).members.map((m) => m.name),
+      ["p1", "p2"]
+    );
+  });
+
+  mocha.it("Props1 & Props2", function () {
+    generator.createClassDeclaration(
+      [createDecorator(Decorators.ComponentBindings)],
+      [],
+      generator.createIdentifier("Props2"),
+      [],
+      [],
+      [
+        generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("p4")
+        ),
+      ]
+    );
+    const expression = generator.createTypeAliasDeclaration(
+      [],
+      [],
+      generator.createIdentifier("Props"),
+      undefined,
+      generator.createIntersectionTypeNode([
+        generator.createTypeReferenceNode(
+          generator.createIdentifier("BaseProps"),
+          undefined
+        ),
+        generator.createTypeReferenceNode(
+          generator.createIdentifier("Props2"),
+          undefined
+        ),
+      ])
+    );
+
+    assert.ok(expression instanceof ComponentInput);
+    assert.deepEqual(
+      (expression as ComponentInput).members.map((m) => m.name),
+      ["p1", "p2", "p3", "p4"]
+    );
+  });
+});
+
 mocha.describe("import Components", function () {
   this.beforeEach(function () {
     generator.setContext({ dirname: path.resolve(__dirname) });

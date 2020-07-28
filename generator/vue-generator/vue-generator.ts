@@ -425,15 +425,19 @@ export class VueGenerator extends BaseGenerator {
     typeParameters: any,
     type: TypeExpression
   ) {
-    return addEmptyToString<TypeAliasDeclaration>(
-      super.createTypeAliasDeclaration(
-        decorators,
-        modifiers,
-        name,
-        typeParameters,
-        type
-      )
+    const base = super.createTypeAliasDeclaration(
+      decorators,
+      modifiers,
+      name,
+      typeParameters,
+      type
     );
+
+    if (base instanceof TypeAliasDeclaration) {
+      return addEmptyToString<TypeAliasDeclaration>(base);
+    }
+
+    return base;
   }
 
   createTypeOperatorNode(type: TypeExpression) {
