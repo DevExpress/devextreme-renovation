@@ -31,7 +31,8 @@ import {
   JsxOpeningElement,
   JsxSelfClosingElement,
 } from "./jsx-opening-element";
-import { getExpression, counter, getMember } from "../../utils";
+import { counter } from "../../counter";
+import { getExpression, getMember } from "../../../base-generator/utils/expressions";
 
 export class JsxChildExpression extends JsxExpression {
   constructor(expression: JsxExpression) {

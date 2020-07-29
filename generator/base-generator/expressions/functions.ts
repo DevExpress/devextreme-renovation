@@ -1,5 +1,5 @@
 import { Expression, SimpleExpression } from "./base";
-import { Identifier } from "./common";
+import { Identifier, Paren } from "./common";
 import { TypeExpression } from "./type";
 import {
   toStringOptions,
@@ -169,8 +169,29 @@ export class BaseFunction extends Expression {
         members,
         componentContext: componentParameter.name.toString(),
         newComponentContext: componentParameter.name.toString(),
-        variables: {},
       };
+
+      options.variables = (this.body instanceof Block
+        ? this.body.statements
+        : [this.body]
+      ).reduce((v: VariableExpression, statement) => {
+        if (statement instanceof VariableStatement ) {
+          const allVars = statement.declarationList.getVariableExpressions();
+          const vars: VariableExpression = {};
+          for(const varName in allVars) {
+            const expr = allVars[varName] instanceof Paren ? (allVars[varName] as Paren).expression : allVars[varName];
+            if(members.some(m => m.isTemplate && m.getter(options!.componentContext) === expr.toString())) {
+              vars[varName] = allVars[varName];
+            }
+          }
+          return {
+            ...vars,
+            ...v,
+          };
+        }
+        return v;
+      }, {});
+
       if (
         componentParameter &&
         componentParameter.name instanceof BindingPattern

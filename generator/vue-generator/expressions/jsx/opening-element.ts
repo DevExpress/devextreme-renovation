@@ -23,7 +23,7 @@ import { PropertyAccess } from "../property-access";
 import { JsxExpression, JsxChildExpression } from "./jsx-expression";
 import SyntaxKind from "../../../base-generator/syntaxKind";
 import { JsxElement } from "./element";
-import { getMember, getExpression } from "../../../angular-generator/utils";
+import { getMember, getExpression } from "../../../base-generator/utils/expressions";
 import { VueDirective } from "./vue-directive";
 import { Conditional } from "../../../base-generator/expressions/conditions";
 
