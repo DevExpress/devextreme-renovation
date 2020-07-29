@@ -8,4 +8,4 @@ export default class Widget extends JQueryCustomBaseComponent {
   }
 }
 
-registerComponent("dxrWidget", Widget);
+registerComponent("dxWidget", Widget);

@@ -15,7 +15,7 @@ export default class Widget extends BaseComponent {
     return {
       onEventWithoutConfig: {},
       onEventWithConfig: { someAction: "config" },
-      onEventWithEmptyConfig: {}
+      onEventWithEmptyConfig: {},
     };
   }
 
@@ -24,4 +24,4 @@ export default class Widget extends BaseComponent {
   }
 }
 
-registerComponent("dxrWidget", Widget);
+registerComponent("dxWidget", Widget);

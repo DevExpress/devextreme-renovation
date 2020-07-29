@@ -323,7 +323,7 @@ class JQueryComponent {
             }
         }
     
-        registerComponent("dxr${this.source.name}", ${this.source.name});
+        registerComponent("dx${this.source.name}", ${this.source.name});
         `;
   }
 }

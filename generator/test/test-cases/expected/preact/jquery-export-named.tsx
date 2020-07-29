@@ -8,4 +8,4 @@ export default class Widget extends BaseComponent {
   }
 }
 
-registerComponent("dxrWidget", Widget);
+registerComponent("dxWidget", Widget);
