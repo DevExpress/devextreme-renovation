@@ -1337,7 +1337,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       ? "{}"
       : "";
 
-    return `${this.tagName.toString(options)}(${templateParams})`;
+    return `${this.tagName.toString({
+      ...options,
+      variables: undefined,
+    } as toStringOptions)}(${templateParams})`;
   }
 }
 

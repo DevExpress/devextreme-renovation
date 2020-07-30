@@ -40,10 +40,11 @@ import { JsxChildExpression } from "./jsx-child-expression";
 import { JsxElement } from "./elements";
 import { GeneratorContext } from "../../../base-generator/types";
 import { AngularComponent } from "../component";
-import { getExpression, counter, getMember } from "../../utils";
+import { counter } from "../../counter";
 import { Conditional } from "../../../base-generator/expressions/conditions";
 import { Prefix } from "../../../base-generator/expressions/operators";
 import SyntaxKind from "../../../base-generator/syntaxKind";
+import { getExpression, getMember } from "../../../base-generator/utils/expressions";
 
 export function processTagName(tagName: Expression, context: GeneratorContext) {
   const component = context.components?.[tagName.toString()];
@@ -79,7 +80,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   }
 
   getTemplateProperty(options?: toStringOptions) {
-    const tagName = this.tagName.toString(options);
+    const tagName = getExpression(this.tagName, options).toString(options);
     const contextExpr = processComponentContext(options?.newComponentContext);
     return options?.members
       .filter((m) => m.isTemplate)

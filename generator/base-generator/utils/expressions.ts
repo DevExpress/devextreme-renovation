@@ -1,27 +1,13 @@
-import { Expression } from "../base-generator/expressions/base";
-import { toStringOptions } from "./types";
+import { Expression } from "../expressions/base";
+import { toStringOptions } from "../types";
 import {
   Identifier,
   Paren,
   AsExpression,
-} from "../base-generator/expressions/common";
-import { JsxExpression } from "../base-generator/expressions/jsx";
-import { PropertyAccess } from "../base-generator/expressions/property-access";
-import { Property, Method } from "../base-generator/expressions/class-members";
-
-export const counter = (function () {
-  let i = 0;
-
-  return {
-    get() {
-      return i++;
-    },
-
-    reset() {
-      i = 0;
-    },
-  };
-})();
+} from "../expressions/common";
+import { JsxExpression } from "../expressions/jsx";
+import { PropertyAccess } from "../expressions/property-access";
+import { Property, Method } from "../expressions/class-members";
 
 export function getExpression(
   expression: Expression,
