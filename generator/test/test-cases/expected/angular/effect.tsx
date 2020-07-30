@@ -4,6 +4,7 @@ function subscribe(p: string, s: number, i: number) {
 function unsubscribe(id: number) {
   return undefined;
 }
+
 import { Input, Output, EventEmitter } from "@angular/core";
 export class WidgetInput {
   @Input() p: string = "10";
@@ -14,10 +15,8 @@ export class WidgetInput {
 
 import { Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-@Component({
-  selector: "dx-widget",
-  template: `<div></div>`,
-})
+
+@Component({ selector: "dx-widget", template: `<div></div>` })
 export default class Widget extends WidgetInput {
   i: number = 10;
   j: number = 20;
@@ -26,36 +25,31 @@ export default class Widget extends WidgetInput {
     this._i = 15;
     return () => unsubscribe(id);
   }
-
   __onceEffect(): any {
     const id = subscribe(this.__getP(), this.s, this.i);
     this._i = 15;
     return () => unsubscribe(id);
   }
-
   __alwaysEffect(): any {
     const id = subscribe(this.__getP(), 1, 2);
     return () => unsubscribe(id);
   }
-
   __getP(): any {
     return this.p;
   }
-
   get __restAttributes(): any {
     return {};
   }
 
   __destroyEffects: any[] = [];
   __viewCheckedSubscribeEvent: Array<() => void> = [];
-
+  _effectTimeout: any;
   __schedule_setupData() {
     this.__destroyEffects[0]?.();
     this.__viewCheckedSubscribeEvent[0] = () => {
       this.__destroyEffects[0] = this.__setupData();
     };
   }
-
   __schedule_alwaysEffect() {
     this.__destroyEffects[2]?.();
     this.__viewCheckedSubscribeEvent[2] = () => {
@@ -64,13 +58,14 @@ export default class Widget extends WidgetInput {
   }
 
   ngAfterViewInit() {
-    this.__destroyEffects.push(
-      this.__setupData(),
-      this.__onceEffect(),
-      this.__alwaysEffect()
-    );
+    this._effectTimeout = setTimeout(() => {
+      this.__destroyEffects.push(
+        this.__setupData(),
+        this.__onceEffect(),
+        this.__alwaysEffect()
+      );
+    }, 0);
   }
-
   ngOnChanges(changes: { [name: string]: any }) {
     if (this.__destroyEffects.length && ["p", "s"].some((d) => changes[d])) {
       this.__schedule_setupData();
@@ -80,28 +75,38 @@ export default class Widget extends WidgetInput {
       this.__schedule_alwaysEffect();
     }
   }
-
   ngOnDestroy() {
     this.__destroyEffects.forEach((d) => d && d());
+    clearTimeout(this._effectTimeout);
   }
-
   ngAfterViewChecked() {
-    this.__viewCheckedSubscribeEvent.forEach((s) => s?.());
-    this.__viewCheckedSubscribeEvent = [];
+    if (this.__viewCheckedSubscribeEvent.length) {
+      this._effectTimeout = setTimeout(() => {
+        this.__viewCheckedSubscribeEvent.forEach((s) => s?.());
+        this.__viewCheckedSubscribeEvent = [];
+      });
+    }
   }
 
+  _sChange: any;
+  constructor() {
+    super();
+    this._sChange = this.sChange.emit.bind(this.sChange);
+  }
   set _i(i: number) {
     this.i = i;
+
     if (this.__destroyEffects.length) {
       this.__schedule_setupData();
     }
+
     if (this.__destroyEffects.length) {
       this.__schedule_alwaysEffect();
     }
   }
-
   set _j(j: number) {
     this.j = j;
+
     if (this.__destroyEffects.length) {
       this.__schedule_alwaysEffect();
     }

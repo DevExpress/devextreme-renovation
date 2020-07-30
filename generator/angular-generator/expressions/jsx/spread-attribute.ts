@@ -2,7 +2,7 @@ import { JsxExpression } from "./jsx-expression";
 import { Expression } from "../../../base-generator/expressions/base";
 import { toStringOptions } from "../../types";
 import { Heritable } from "../../../base-generator/expressions/class";
-import { getMember } from "../../utils";
+import { getMember } from "../../../base-generator/utils/expressions";
 import {
   PropertyAssignment,
   ShorthandPropertyAssignment,

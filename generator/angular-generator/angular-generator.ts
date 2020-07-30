@@ -31,7 +31,7 @@ import { Function } from "./expressions/functions/function";
 import { JsxClosingElement } from "../base-generator/expressions/jsx";
 import { PropertyAccess } from "./expressions/property-access";
 import { AsExpression } from "./expressions/as-expression";
-import { counter } from "./utils";
+import { counter } from "./counter";
 import { GeneratorContext } from "../base-generator/types";
 import { AngularGeneratorContext } from "./types";
 import { NonNullExpression } from "./expressions/non-null-expression";

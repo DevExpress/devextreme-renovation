@@ -12,7 +12,7 @@ import {
   BaseFunction,
   isFunction,
 } from "../../../base-generator/expressions/functions";
-import { Identifier } from "../../../base-generator/expressions/common";
+import { Identifier, Paren } from "../../../base-generator/expressions/common";
 import {
   TypeLiteralNode,
   PropertySignature,
@@ -30,14 +30,24 @@ import {
 } from "../../../base-generator/expressions/base";
 import { AngularDirective } from "./angular-directive";
 import { ObjectLiteral } from "../../../base-generator/expressions/literal";
-import { PropertyAssignment } from "../../../base-generator/expressions/property-assignment";
+import {
+  PropertyAssignment,
+  ShorthandPropertyAssignment,
+} from "../../../base-generator/expressions/property-assignment";
 import { processComponentContext } from "../../../base-generator/utils/string";
 import { JsxExpression } from "./jsx-expression";
 import { JsxChildExpression } from "./jsx-child-expression";
 import { JsxElement } from "./elements";
 import { GeneratorContext } from "../../../base-generator/types";
 import { AngularComponent } from "../component";
-import { getExpression, counter, getMember } from "../../utils";
+import { counter } from "../../counter";
+import { Conditional } from "../../../base-generator/expressions/conditions";
+import { Prefix } from "../../../base-generator/expressions/operators";
+import SyntaxKind from "../../../base-generator/syntaxKind";
+import {
+  getExpression,
+  getMember,
+} from "../../../base-generator/utils/expressions";
 
 export function processTagName(tagName: Expression, context: GeneratorContext) {
   const component = context.components?.[tagName.toString()];
@@ -73,7 +83,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   }
 
   getTemplateProperty(options?: toStringOptions) {
-    const tagName = this.tagName.toString(options);
+    const tagName = getExpression(this.tagName, options).toString(options);
     const contextExpr = processComponentContext(options?.newComponentContext);
     return options?.members
       .filter((m) => m.isTemplate)
@@ -98,6 +108,39 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       spreadAttribute.expression,
       options
     );
+
+    if (spreadAttributesExpression instanceof ObjectLiteral) {
+      const attributesFromObject: JsxAttribute[] = spreadAttributesExpression.properties.reduce(
+        (values: JsxAttribute[], p) => {
+          if (p instanceof PropertyAssignment) {
+            return values.concat([
+              this.createJsxAttribute(
+                new Identifier(p.key.toString()),
+                p.value
+              ),
+            ]);
+          }
+          if (p instanceof ShorthandPropertyAssignment) {
+            return values.concat([
+              this.createJsxAttribute(
+                new Identifier(p.key.toString()),
+                p.value
+              ),
+            ]);
+          }
+
+          return values.concat(
+            this.spreadToArray(
+              new JsxSpreadAttribute(undefined, p.expression),
+              options
+            )
+          );
+        },
+        []
+      );
+
+      return attributesFromObject;
+    }
 
     if (spreadAttributesExpression instanceof PropertyAccess) {
       const member = spreadAttributesExpression.getMember(options);
@@ -139,7 +182,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         if (
           member instanceof Method &&
           !(member instanceof GetAccessor) &&
-          attrIndex > spreadIndex
+          (attrIndex > spreadIndex || attrIndex === -1)
         ) {
           value = attrValue;
         } else {
@@ -453,6 +496,63 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
     return result.filter((a) => a) as JsxSpreadAttributeMeta[];
   }
+
+  creteJsxElementForVariable(
+    expression: Expression,
+    children: Array<
+      JsxElement | string | JsxChildExpression | JsxSelfClosingElement
+    > = [],
+    attributes: JsxAttribute[] = []
+  ): JsxElement {
+    const element = new JsxElement(
+      new JsxOpeningElement(
+        expression,
+        this.typeArguments,
+        (this.attributes as JsxAttribute[]).concat(attributes),
+        this.context
+      ),
+      children,
+      new JsxClosingElement(processTagName(expression, this.context))
+    );
+
+    return element;
+  }
+
+  compileJsxElementsForVariable(
+    options?: toStringOptions,
+    children: Array<
+      JsxElement | string | JsxChildExpression | JsxSelfClosingElement
+    > = []
+  ): string | undefined {
+    const variable = getExpression(this.tagName, options);
+
+    if (variable === this.tagName) {
+      return;
+    }
+    if (variable instanceof Conditional) {
+      return [
+        this.creteJsxElementForVariable(variable.thenStatement, children, [
+          new AngularDirective(new Identifier("*ngIf"), variable.expression),
+        ]),
+        this.creteJsxElementForVariable(variable.elseStatement, children, [
+          new AngularDirective(
+            new Identifier("*ngIf"),
+            new Prefix(
+              SyntaxKind.ExclamationToken,
+              new Paren(variable.expression)
+            )
+          ),
+        ]),
+      ]
+        .map((c) => c.toString(options))
+        .join("");
+    }
+    if (variable instanceof Identifier) {
+      return this.creteJsxElementForVariable(variable, children, []).toString(
+        options
+      );
+    }
+  }
 }
 
 // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
@@ -481,6 +581,11 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
 
     if (this.getTemplateProperty(options)) {
       return super.toString(options);
+    }
+
+    const elementString = this.compileJsxElementsForVariable(options);
+    if (elementString) {
+      return elementString;
     }
 
     const openingElement = super.toString(options);

@@ -23,7 +23,12 @@ import { PropertyAccess } from "../property-access";
 import { JsxExpression, JsxChildExpression } from "./jsx-expression";
 import SyntaxKind from "../../../base-generator/syntaxKind";
 import { JsxElement } from "./element";
-import { getMember } from "../../../angular-generator/utils";
+import {
+  getMember,
+  getExpression,
+} from "../../../base-generator/utils/expressions";
+import { VueDirective } from "./vue-directive";
+import { Conditional } from "../../../base-generator/expressions/conditions";
 
 export class JsxOpeningElement extends BaseJsxOpeningElement {
   attributes: Array<JsxAttribute | JsxSpreadAttribute>;
@@ -188,12 +193,51 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       this.context
     );
   }
+
+  compileJsxElementsForVariable(
+    options?: toStringOptions,
+    children: Array<
+      JsxElement | string | JsxChildExpression | JsxSelfClosingElement
+    > = []
+  ): string | undefined {
+    const variable = getExpression(this.tagName, options);
+
+    if (variable === this.tagName) {
+      return;
+    }
+
+    if (variable instanceof Conditional) {
+      return this.creteJsxElementForVariable(
+        new Identifier("component"),
+        children,
+        [
+          new VueDirective(
+            new Identifier(":is"),
+            new Conditional(
+              variable.expression,
+              new SimpleExpression(
+                `"${variable.thenStatement.toString(options)}"`
+              ),
+              new SimpleExpression(
+                `"${variable.elseStatement.toString(options)}"`
+              )
+            )
+          ),
+        ]
+      ).toString(options);
+    }
+  }
 }
 
 export class JsxSelfClosingElement extends JsxOpeningElement {
   toString(options?: toStringOptions) {
     if (this.getTemplateProperty(options)) {
       return super.toString(options);
+    }
+
+    const elementString = this.compileJsxElementsForVariable(options);
+    if (elementString) {
+      return elementString;
     }
 
     const baseValue = super.toString(options);

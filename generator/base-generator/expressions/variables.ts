@@ -1,5 +1,5 @@
 import { Expression, SimpleExpression } from "./base";
-import { Identifier, Paren, Call } from "./common";
+import { Identifier, Paren, Call, AsExpression } from "./common";
 import { TypeExpression } from "./type";
 import { PropertyAccess } from "./property-access";
 import { toStringOptions, VariableExpression } from "../types";
@@ -7,6 +7,12 @@ import { BindingPattern, BindingElement } from "./binding-pattern";
 import { compileType } from "../utils/string";
 import { getProps } from "./component";
 
+function getInitializer(expression?: Expression): Expression | undefined {
+  if (expression instanceof AsExpression || expression instanceof Paren) {
+    return getInitializer(expression.expression);
+  }
+  return expression;
+}
 export class VariableDeclaration extends Expression {
   name: Identifier | BindingPattern;
   type?: TypeExpression;
@@ -62,16 +68,24 @@ export class VariableDeclaration extends Expression {
 
     let initializer: string | undefined = this.initializer?.toString(options);
 
+    const initializerExpression = getInitializer(this.initializer);
+
     if (
-      this.initializer instanceof PropertyAccess &&
-      this.initializer.checkPropsAccess(this.initializer.toString(), options) &&
+      initializerExpression instanceof PropertyAccess &&
+      initializerExpression.checkPropsAccess(
+        initializerExpression.toString(),
+        options
+      ) &&
       options
     ) {
       let elements: BindingElement[] = [];
       if (this.name instanceof BindingPattern && !this.name.hasRest()) {
         elements = this.name.elements;
       }
-      initializer = this.initializer.toString(options, elements);
+      initializer = this.initializer!.toString().replace(
+        initializerExpression.toString(),
+        initializerExpression.toString(options, elements)
+      );
     }
 
     if (this.name.toString()) {

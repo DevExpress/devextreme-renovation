@@ -1,6 +1,5 @@
 import Child, { DxRefOnChildrenChildModule } from "./forward-ref-child";
 import { Input } from "@angular/core";
-
 class Props {
   @Input() nullableRef: (ref: any) => void = () => {};
 }
@@ -14,8 +13,7 @@ import { CommonModule } from "@angular/common";
     [childRef]="forwardRef_child"
     [nullableRef]="forwardRef_nullableRef"
     [state]="state"
-  >
-  </dx-ref-on-children-child>`,
+  ></dx-ref-on-children-child>`,
 })
 export default class RefOnChildrenParent extends Props {
   child!: ElementRef<HTMLDivElement>;
@@ -53,6 +51,7 @@ export default class RefOnChildrenParent extends Props {
 
   __destroyEffects: any[] = [];
   __viewCheckedSubscribeEvent: Array<() => void> = [];
+  _effectTimeout: any;
   __schedule_effect() {
     this.__destroyEffects[0]?.();
     this.__viewCheckedSubscribeEvent[0] = () => {
@@ -66,7 +65,10 @@ export default class RefOnChildrenParent extends Props {
 
   ngAfterViewInit() {
     this.nullableRef(this.nullableRefRef);
-    this.__destroyEffects.push(this.__effect());
+
+    this._effectTimeout = setTimeout(() => {
+      this.__destroyEffects.push(this.__effect());
+    }, 0);
   }
   ngOnChanges(changes: { [name: string]: any }) {
     if (
@@ -78,10 +80,15 @@ export default class RefOnChildrenParent extends Props {
   }
   ngOnDestroy() {
     this.__destroyEffects.forEach((d) => d && d());
+    clearTimeout(this._effectTimeout);
   }
   ngAfterViewChecked() {
-    this.__viewCheckedSubscribeEvent.forEach((s) => s?.());
-    this.__viewCheckedSubscribeEvent = [];
+    if (this.__viewCheckedSubscribeEvent.length) {
+      this._effectTimeout = setTimeout(() => {
+        this.__viewCheckedSubscribeEvent.forEach((s) => s?.());
+        this.__viewCheckedSubscribeEvent = [];
+      });
+    }
   }
 
   set _state(state: number) {
