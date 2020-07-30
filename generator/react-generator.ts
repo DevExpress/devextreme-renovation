@@ -265,17 +265,16 @@ export class HeritageClause extends BaseHeritageClause {
     super(token, types, context);
     this.defaultProps = types.reduce(
       (defaultProps: string[], { type, isJsxComponent }) => {
+        const name = type.toString().replace("typeof ", "");
         if (isJsxComponent) {
-          defaultProps.push(type.toString());
+          defaultProps.push(name);
         } else {
-          const importName = type.toString().replace("typeof ", "");
-          const component =
-            context.components && context.components[importName];
+          const component = context.components && context.components[name];
           if (component && component.compileDefaultProps() !== "") {
             defaultProps.push(
               `${component
                 .defaultPropsDest()
-                .replace(component.name.toString(), importName)}${
+                .replace(component.name.toString(), name)}${
                 type.toString().indexOf("typeof ") === 0 ? "Type" : ""
               }`
             );

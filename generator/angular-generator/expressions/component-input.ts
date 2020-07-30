@@ -57,6 +57,10 @@ export class ComponentInput extends BaseComponentInput {
     return null;
   }
 
+  getInitializerScope(name: string): string {
+    return `${name}.prototype`;
+  }
+
   toString() {
     return `
         ${compileCoreImports(
