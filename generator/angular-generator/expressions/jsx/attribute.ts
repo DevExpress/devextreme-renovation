@@ -7,7 +7,7 @@ import { isFunction } from "../../../base-generator/expressions/functions";
 import { PropertyAssignment } from "../../../base-generator/expressions/property-assignment";
 import { SimpleExpression } from "../../../base-generator/expressions/base";
 import { StringLiteral } from "../../../base-generator/expressions/literal";
-import { getMember } from "../../utils";
+import { getMember } from "../../../base-generator/utils/expressions";
 import {
   Method,
   GetAccessor,

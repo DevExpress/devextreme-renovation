@@ -128,6 +128,10 @@ mocha.describe("vue-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("component-pass", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("jsx-function-in-view", function () {
     this.testGenerator(this.test!.title);
   });

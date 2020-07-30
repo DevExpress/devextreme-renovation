@@ -3,11 +3,14 @@ import {
   Template,
   ComponentBindings,
   JSXComponent,
+  OneWay,
 } from "../../../../component_declaration/common";
 
 @ComponentBindings()
 export class WidgetInput {
-  @Template() headerTemplate?: any;
+  @OneWay() someProp: boolean = false;
+  @Template()
+  headerTemplate?: any;
   @Template() template: (props: {
     textProp: string;
     textPropExpr: string;
@@ -27,6 +30,8 @@ export class WidgetInput {
 export default class Widget extends JSXComponent(WidgetInput) {}
 
 function view(viewModel: Widget) {
+  const myvar = viewModel.props.someProp;
+  const FooterTemplate = viewModel.props.footerTemplate;
   return (
     <div>
       <viewModel.props.headerTemplate />
@@ -39,9 +44,7 @@ function view(viewModel: Widget) {
           textPropExpr={"textPropExrpValue"}
         />
       )}
-      <viewModel.props.footerTemplate
-        someProp={true}
-      ></viewModel.props.footerTemplate>
+      <FooterTemplate someProp={myvar}></FooterTemplate>
     </div>
   );
 }
