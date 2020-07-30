@@ -11,12 +11,12 @@ import { CommonModule } from "@angular/common";
 import { GridColumn, Editing, Custom, AnotherCustom } from "./nested-props";
 
 @Directive({
-  selector: "dx-widget dxo-another-custom",
+  selector: "dx-widget dxo-grid-editing dxo-another-custom",
 })
 class DxAnotherCustom extends AnotherCustom {}
 
 @Directive({
-  selector: "dx-widget dxi-custom",
+  selector: "dx-widget dxo-grid-editing dxi-custom",
 })
 class DxCustom extends Custom {}
 
@@ -24,17 +24,35 @@ class DxCustom extends Custom {}
   selector: "dx-widget dxo-grid-editing",
 })
 class DxEditing extends Editing {
-  @Input() custom?: DxCustom[] = [];
+  private __custom?: DxCustom[] = [];
   @ContentChildren(DxCustom) customNested!: QueryList<DxCustom>;
-  get __getNestedCustom() {
-    return this.custom || this.customNested.toArray();
+  @Input() set custom(value: DxCustom[] | undefined) {
+    this.__custom = value;
   }
-  @Input() anotherCustom?: DxAnotherCustom = {};
+  get custom(): DxCustom[] | undefined {
+    if (this.__custom) {
+      return this.__custom;
+    }
+    const nested = this.customNested.toArray();
+    if (nested.length) {
+      return nested;
+    }
+  }
+  private __anotherCustom?: DxAnotherCustom = {};
   @ContentChildren(DxAnotherCustom) anotherCustomNested!: QueryList<
     DxAnotherCustom
   >;
-  get __getNestedAnotherCustom() {
-    return this.anotherCustom || this.anotherCustomNested.toArray()?.[0];
+  @Input() set anotherCustom(value: DxAnotherCustom | undefined) {
+    this.__anotherCustom = value;
+  }
+  get anotherCustom(): DxAnotherCustom | undefined {
+    if (this.__anotherCustom) {
+      return this.__anotherCustom;
+    }
+    const nested = this.anotherCustomNested.toArray();
+    if (nested.length) {
+      return nested[0];
+    }
   }
 }
 
@@ -45,34 +63,48 @@ class DxGridColumn extends GridColumn {}
 @Component({ selector: "dx-widget", template: `<div></div>` })
 export default class Widget extends WidgetInput {
   __getColumns(): any {
-    return this.__getNestedColumns?.map((el) =>
-      typeof el === "string" ? el : el.name
-    );
+    const { columns } = this;
+    return columns?.map((el) => (typeof el === "string" ? el : el.name));
   }
   get __isEditable(): any {
-    return (
-      this.__getNestedGridEditing?.editEnabled ||
-      this.__getNestedGridEditing?.custom?.length
-    );
+    return this.gridEditing?.editEnabled || this.gridEditing?.custom?.length;
   }
-  @Input() columns?: Array<DxGridColumn | string>;
+  private __columns?: Array<DxGridColumn | string>;
   @ContentChildren(DxGridColumn) columnsNested!: QueryList<DxGridColumn>;
-  @Input() gridEditing?: DxEditing;
+  get columns(): Array<DxGridColumn | string> | undefined {
+    if (this.__columns) {
+      return this.__columns;
+    }
+    const nested = this.columnsNested.toArray();
+    if (nested.length) {
+      return nested;
+    }
+  }
+  private __gridEditing?: DxEditing;
   @ContentChildren(DxEditing) gridEditingNested!: QueryList<DxEditing>;
+  get gridEditing(): DxEditing | undefined {
+    if (this.__gridEditing) {
+      return this.__gridEditing;
+    }
+    const nested = this.gridEditingNested.toArray();
+    if (nested.length) {
+      return nested[0];
+    }
+  }
   get __restAttributes(): any {
     return {};
   }
 
-  get __getNestedColumns() {
-    return this.columns || this.columnsNested.toArray();
+  @Input() set columns(value: Array<DxGridColumn | string> | undefined) {
+    this.__columns = value;
   }
-  get __getNestedGridEditing() {
-    return this.gridEditing || this.gridEditingNested.toArray()?.[0];
+  @Input() set gridEditing(value: DxEditing | undefined) {
+    this.__gridEditing = value;
   }
 }
 @NgModule({
-  declarations: [Widget, DxGridColumn, DxEditing],
+  declarations: [Widget, DxGridColumn, DxEditing, DxCustom, DxAnotherCustom],
   imports: [CommonModule],
-  exports: [Widget, DxGridColumn, DxEditing],
+  exports: [Widget, DxGridColumn, DxEditing, DxCustom, DxAnotherCustom],
 })
 export class DxWidgetModule {}
