@@ -507,6 +507,10 @@ export class Property extends BaseProperty {
     if (!options) {
       return super.toString();
     }
+    const undefinedType =
+      this.questionOrExclamationToken === SyntaxKind.QuestionToken
+        ? " | undefined"
+        : "";
     if (this.isState) {
       const propName = getPropName(this.name);
       const defaultExclamationToken =
@@ -517,13 +521,15 @@ export class Property extends BaseProperty {
 
       return `const [${getLocalStateName(this.name)}, ${stateSetter(
         this.name
-      )}] = useState(()=>${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(
+      )}] = useState<${
+        this.type
+      }${undefinedType}>(()=>${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(
         this.name
       )}${defaultExclamationToken})`;
     }
     return `const [${getLocalStateName(this.name)}, ${stateSetter(
       this.name
-    )}] = useState(${this.initializer})`;
+    )}] = useState<${this.type}${undefinedType}>(${this.initializer})`;
   }
 
   get canBeDestructured() {
