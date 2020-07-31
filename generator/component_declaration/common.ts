@@ -137,7 +137,7 @@ export function JSXComponent<PropsType, PropsConstructor = PropsType>(Props: {
     static defaultProps = new Props(); // for testing purpose
     props!: PropsType & { ref?: React.Component<PropsType> };
     restAttributes: { [name: string]: any } = {
-      restAttributes: "restAttributes",
+      "rest-attributes": "restAttributes",
     }; // for testing purpose
     setState() {}
   };
