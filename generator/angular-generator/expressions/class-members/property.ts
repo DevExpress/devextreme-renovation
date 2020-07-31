@@ -125,11 +125,6 @@ export class Property extends BaseProperty {
     if (this.isRefProp) {
       return `${componentContext}${this.name}`;
     }
-    if (this.isNested) {
-      return `${componentContext}__getNested${capitalizeFirstLetter(
-        this.name
-      )}`;
-    }
     if (this._hasDecorator(Decorators.ApiRef)) {
       return `${componentContext}${this.name}${suffix}`;
     }

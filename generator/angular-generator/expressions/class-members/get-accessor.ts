@@ -28,7 +28,7 @@ export class GetAccessor extends BaseGetAccessor {
     modifiers: string[] | undefined,
     name: Identifier,
     parameters: Parameter[],
-    type?: TypeExpression,
+    type?: TypeExpression | string,
     body?: Block
   ) {
     if (type && body && isComplexType(type)) {

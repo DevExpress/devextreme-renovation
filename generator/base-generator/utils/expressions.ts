@@ -1,10 +1,6 @@
 import { Expression } from "../expressions/base";
 import { toStringOptions } from "../types";
-import {
-  Identifier,
-  Paren,
-  AsExpression,
-} from "../expressions/common";
+import { Identifier, Paren, AsExpression } from "../expressions/common";
 import { JsxExpression } from "../expressions/jsx";
 import { PropertyAccess } from "../expressions/property-access";
 import { Property, Method } from "../expressions/class-members";

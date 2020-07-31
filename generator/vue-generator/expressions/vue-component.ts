@@ -32,6 +32,7 @@ import { PropertyAssignment } from "../../base-generator/expressions/property-as
 import {
   SimpleTypeExpression,
   isTypeArray,
+  ArrayTypeNode,
 } from "../../base-generator/expressions/type";
 import SyntaxKind from "../../base-generator/syntaxKind";
 import { Property } from "./class-members/property";
@@ -66,18 +67,10 @@ export class VueComponent extends Component {
         new VariableDeclarationList(
           [
             new VariableDeclaration(
-              new Identifier("children"),
-              undefined,
-              new PropertyAccess(
-                new SimpleExpression("this"),
-                new Identifier("$options._renderChildren || []")
-              )
-            ),
-            new VariableDeclaration(
               new Identifier("nestedComponents"),
               undefined,
               new SimpleExpression(
-                `children.filter(child => child.tag === typeName)`
+                `children.filter(child => child.tag?.startsWith("Dx"))`
               )
             ),
           ],
@@ -86,7 +79,38 @@ export class VueComponent extends Component {
       ),
       new ReturnStatement(
         new SimpleExpression(
-          "nestedComponents.map(child => child.data?.attrs || {})"
+          `nestedComponents.map(child => {
+            let name = (child.tag.replace("Dx" , ""))
+            name = name[0].toLowerCase() + name.slice(1);
+            const collectedChildren = {};
+            if(child.children) {
+              this.__collectChildren(child.children).forEach(
+                ({ __name, ...cProps }) => {
+                  if (!collectedChildren[__name]) {
+                    collectedChildren[__name] = [];
+                    collectedChildren[__name + "s"] = [];
+                  }
+                  collectedChildren[__name].push(cProps);
+                  collectedChildren[__name + "s"].push(cProps);
+                }
+              );
+            };
+            const childProps = {};
+            if (child.data) {
+              Object.keys(child.data.attrs).forEach(key => {
+                let attr = key.split("-");
+                attr = ([attr[0], ...attr.slice(1).map(a => a[0].toUpperCase() + a.slice(1))]).join("");
+                childProps[attr] = child.data.attrs[key];
+              })
+            }
+
+            return {
+              ...collectedChildren,
+              ...childProps,
+              __name: name,
+            };
+
+          })`
         )
       ),
     ];
@@ -95,7 +119,7 @@ export class VueComponent extends Component {
       undefined,
       undefined,
       undefined,
-      new Identifier("__getNestedFromChild"),
+      new Identifier("__collectChildren"),
       undefined,
       [],
       [
@@ -103,9 +127,9 @@ export class VueComponent extends Component {
           [],
           [],
           "",
-          new Identifier("typeName"),
+          new Identifier("children"),
           undefined,
-          "string",
+          new ArrayTypeNode(new Identifier("Object")),
           undefined
         ),
       ],
@@ -355,7 +379,15 @@ export class VueComponent extends Component {
       nestedName = removePlural(nestedName);
     }
     return `__getNested${nestedName}() {
-      return ${SyntaxKind.ThisKeyword}.${property.name} || ${SyntaxKind.ThisKeyword}.__getNestedFromChild("Dx${nestedName}")${indexGetter}
+      if (${SyntaxKind.ThisKeyword}.${property.name}) {
+        return ${SyntaxKind.ThisKeyword}.${property.name};
+      }
+      if(this.$slots.default) {
+        const nested = ${SyntaxKind.ThisKeyword}.__collectChildren(this.$slots.default);
+        if (nested.length) {
+          return nested${indexGetter}
+        }
+      }
     }`;
   }
 

@@ -22,12 +22,26 @@ export default {
       };
     },
     __getNestedColumn() {
-      return this.columns || this.__getNestedFromChild("DxColumn");
+      if (this.columns) {
+        return this.columns;
+      }
+      if (this.$slots.default) {
+        const nested = this.__collectChildren(this.$slots.default);
+        if (nested.length) {
+          return nested;
+        }
+      }
     },
     __getNestedGridEditing() {
-      return (
-        this.gridEditing || this.__getNestedFromChild("DxGridEditing")?.[0]
-      );
+      if (this.gridEditing) {
+        return this.gridEditing;
+      }
+      if (this.$slots.default) {
+        const nested = this.__collectChildren(this.$slots.default);
+        if (nested.length) {
+          return nested?.[0];
+        }
+      }
     },
   },
   methods: {
@@ -36,10 +50,44 @@ export default {
         typeof el === "string" ? el : el.name
       );
     },
-    __getNestedFromChild(typeName) {
-      const children = this.$options._renderChildren || [],
-        nestedComponents = children.filter((child) => child.tag === typeName);
-      return nestedComponents.map((child) => child.data?.attrs || {});
+    __collectChildren(children) {
+      const nestedComponents = children.filter((child) =>
+        child.tag?.startsWith("Dx")
+      );
+      return nestedComponents.map((child) => {
+        let name = child.tag.replace("Dx", "");
+        name = name[0].toLowerCase() + name.slice(1);
+        const collectedChildren = {};
+        if (child.children) {
+          this.__collectChildren(child.children).forEach(
+            ({ __name, ...cProps }) => {
+              if (!collectedChildren[__name]) {
+                collectedChildren[__name] = [];
+                collectedChildren[__name + "s"] = [];
+              }
+              collectedChildren[__name].push(cProps);
+              collectedChildren[__name + "s"].push(cProps);
+            }
+          );
+        }
+        const childProps = {};
+        if (child.data) {
+          Object.keys(child.data.attrs).forEach((key) => {
+            let attr = key.split("-");
+            attr = [
+              attr[0],
+              ...attr.slice(1).map((a) => a[0].toUpperCase() + a.slice(1)),
+            ].join("");
+            childProps[attr] = child.data.attrs[key];
+          });
+        }
+
+        return {
+          ...collectedChildren,
+          ...childProps,
+          __name: name,
+        };
+      });
     },
   },
 };

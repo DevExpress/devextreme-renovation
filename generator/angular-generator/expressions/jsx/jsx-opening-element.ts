@@ -44,7 +44,10 @@ import { counter } from "../../counter";
 import { Conditional } from "../../../base-generator/expressions/conditions";
 import { Prefix } from "../../../base-generator/expressions/operators";
 import SyntaxKind from "../../../base-generator/syntaxKind";
-import { getExpression, getMember } from "../../../base-generator/utils/expressions";
+import {
+  getExpression,
+  getMember,
+} from "../../../base-generator/utils/expressions";
 
 export function processTagName(tagName: Expression, context: GeneratorContext) {
   const component = context.components?.[tagName.toString()];
