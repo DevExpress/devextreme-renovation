@@ -13,8 +13,24 @@
       <Counter id="counter-control" v-model="counterValue"></Counter>
     </form>
     <div id="counter-form-value">{{ counterValue }}</div>
-    <Nested :cells="[{ data: 'cell11' }, 'cell12']"></Nested>
-    <Nested><DxCell data="cell21" /><DxCell data="cell22" /></Nested>
+    <Nested
+      :grid-data-rows="[
+        { gridDataCells: [{ gridData: 'cell11' }, 'cell12'] },
+        { gridDataCells: ['cell21', 'cell22'] },
+      ]"
+    ></Nested>
+    <Nested>
+      <DxGridDataRow
+        :grid-data-cells="['cell31', { gridData: 'cell32' }]"
+      ></DxGridDataRow>
+    </Nested>
+    <Nested>
+      <DxGridDataRow>
+        <DxGridDataCell grid-data="cell41"></DxGridDataCell>
+        <DxGridDataCell grid-data="cell42"></DxGridDataCell>
+      </DxGridDataRow>
+    </Nested>
+    <Nested> </Nested>
   </div>
 </template>
 <script>

@@ -4,12 +4,12 @@ function view(model: Child) {
 }
 export declare type ChildInputType = typeof WidgetProps & {
   height: number;
-  onClick: (a: number) => null;
+  onClick: (a: number) => void;
 };
 const ChildInput: ChildInputType = {
   ...WidgetProps,
   height: 10,
-  onClick: () => null,
+  onClick: () => {},
 };
 
 import React, { useCallback } from "react";

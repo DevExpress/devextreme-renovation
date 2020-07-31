@@ -7,7 +7,11 @@ import { isFunction } from "../../../base-generator/expressions/functions";
 import { PropertyAssignment } from "../../../base-generator/expressions/property-assignment";
 import { SimpleExpression } from "../../../base-generator/expressions/base";
 import { StringLiteral } from "../../../base-generator/expressions/literal";
-import { getMember } from "../../utils";
+import { getMember } from "../../../base-generator/utils/expressions";
+import {
+  Method,
+  GetAccessor,
+} from "../../../base-generator/expressions/class-members";
 
 const ATTR_BINDING_ATTRIBUTES = ["aria-label"];
 
@@ -179,10 +183,15 @@ export class JsxAttribute extends BaseJsxAttribute {
   }
 
   getTemplateContext(options?: toStringOptions): PropertyAssignment[] {
+    const member = getMember(this.initializer, options);
+    const binding =
+      member instanceof Method && !(member instanceof GetAccessor)
+        ? ".bind(this)"
+        : "";
     return [
       new PropertyAssignment(
         this.name,
-        new SimpleExpression(this.compileInitializer(options))
+        new SimpleExpression(`${this.compileInitializer(options)}${binding}`)
       ),
     ];
   }

@@ -1,4 +1,4 @@
-import { Identifier, Paren } from "./common";
+import { Identifier, Paren, Call } from "./common";
 import {
   Expression,
   ExpressionWithExpression,
@@ -10,6 +10,7 @@ import SyntaxKind from "../syntaxKind";
 import { Conditional } from "./conditions";
 import { Component } from "./component";
 import { PropertyAssignment, SpreadAssignment } from "./property-assignment";
+import { getExpression } from "../utils/expressions";
 
 export function getJsxExpression(
   e: ExpressionWithExpression | Expression | undefined
@@ -22,6 +23,8 @@ export function getJsxExpression(
     e instanceof JsxOpeningElement
   ) {
     return e as JsxExpression;
+  } else if (e instanceof Call) {
+    return new JsxExpression(undefined, e);
   } else if (
     e instanceof ExpressionWithExpression ||
     e instanceof ExpressionWithOptionalExpression
@@ -115,7 +118,7 @@ export class JsxOpeningElement extends Expression {
   }
 
   getTemplateProperty(options?: toStringOptions) {
-    const tagName = this.tagName.toString(options);
+    const tagName = getExpression(this.tagName, options).toString(options);
     return options?.members.find(
       (s) =>
         s.isTemplate && tagName === `${s.getter(options?.newComponentContext)}`

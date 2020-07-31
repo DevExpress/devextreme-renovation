@@ -667,35 +667,31 @@ export class ReactComponent extends Component {
     );
   }
 
-  createNestedGetter(): Method | null {
+  createNestedGetter() {
     const statements = [
-      new VariableStatement(
-        undefined,
-        new VariableDeclarationList(
-          [
-            new VariableDeclaration(
-              new Identifier("children"),
-              undefined,
-              new PropertyAccess(
-                new PropertyAccess(
-                  new SimpleExpression(SyntaxKind.ThisKeyword),
-                  new Identifier("props")
-                ),
-                new Identifier("children")
-              )
-            ),
-            new VariableDeclaration(
-              new Identifier("nestedComponents"),
-              undefined,
-              new SimpleExpression(`React.Children.toArray(children)
-                        .filter(child => React.isValidElement(child) && typeof child.type !== "string" && child.type.name === typeName) as React.ReactElement[]`)
-            ),
-          ],
-          SyntaxKind.ConstKeyword
-        )
-      ),
       new ReturnStatement(
-        new SimpleExpression("nestedComponents.map(comp => comp.props)")
+        new SimpleExpression(`(React.Children.toArray(children)
+          .filter((child) =>
+            React.isValidElement(child) &&
+            typeof child.type !== "string") as (React.ReactElement & { type: { name: string } })[])
+          .map(child => {
+            const { children: childChildren, ...childProps } = child.props;
+            const collectedChildren = {} as any;
+            __collectChildren(childChildren).forEach(({ __name, ...restProps }: any) => {
+                if(!collectedChildren[__name]) {
+                  collectedChildren[__name] = [];
+                  collectedChildren[__name+"s"] = [];
+                }
+                collectedChildren[__name].push(restProps);
+                collectedChildren[__name+"s"].push(restProps);
+              }
+            );
+            return {
+              ...collectedChildren,
+              ...childProps,
+              __name: child.type.name[0].toLowerCase() + child.type.name.slice(1),
+            }
+          })`)
       ),
     ];
 
@@ -703,7 +699,7 @@ export class ReactComponent extends Component {
       undefined,
       undefined,
       undefined,
-      new Identifier("__getNestedFromChild"),
+      new Identifier("__collectChildren"),
       undefined,
       [new TypeParameterDeclaration(new Identifier("T"))],
       [
@@ -711,9 +707,9 @@ export class ReactComponent extends Component {
           [],
           [],
           "",
-          new Identifier("typeName"),
+          new Identifier("children"),
           undefined,
-          "string",
+          "React.ReactNode",
           undefined
         ),
       ],
@@ -984,11 +980,19 @@ export class ReactComponent extends Component {
           )}", "${getTemplatePropName(t.name, "component")}")`
       );
 
+    const nestedProps = this.members
+      .filter((m) => m.isNested)
+      .map((n) => `${n.name}: ${n.getter()}`);
+
     const props = this.isJSXComponent
       ? [
-          `props:{${["...props"].concat(state).concat(template).join(",\n")}}`,
+          `props:{${["...props"]
+            .concat(state)
+            .concat(template)
+            .concat(nestedProps)
+            .join(",\n")}}`,
         ].concat(internalState)
-      : ["...props"].concat(internalState).concat(state);
+      : ["...props"].concat(internalState).concat(state).concat(nestedProps);
 
     return props
       .concat(this.listeners.map((l) => l.name.toString()))
@@ -1156,6 +1160,8 @@ export class ReactComponent extends Component {
     const type = extractComplexType(property.type);
     const indexGetter = isArray ? "" : "?.[0]";
     const nestedName = isArray ? removePlural(property.name) : property.name;
+    const undefinedType =
+      property.questionOrExclamationToken === "?" ? " | undefined" : "";
 
     const getterName = `__getNested${capitalizeFirstLetter(property.name)}`;
     const getterType = property.type
@@ -1163,10 +1169,16 @@ export class ReactComponent extends Component {
       .replace(`typeof ${type}`, `${type}Type`);
 
     return `const ${getterName} = useMemo(
-      function ${getterName}(): ${getterType} {
-        return (${propName} || __getNestedFromChild<${type}Type>("${capitalizeFirstLetter(
-      nestedName
-    )}")${indexGetter})
+      function ${getterName}(): ${getterType}${undefinedType} {
+        if (${propName}) {
+          return ${propName};
+        }
+        const nested = __collectChildren<${type}Type & { __name: string }>(${getPropName(
+      "children"
+    )}).filter(child => child.__name === "${nestedName}");
+        if(nested.length) {
+          return nested${indexGetter};
+        }
       }, [${property.getDependency()}]
     )
     
@@ -1337,7 +1349,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       ? "{}"
       : "";
 
-    return `${this.tagName.toString(options)}(${templateParams})`;
+    return `${this.tagName.toString({
+      ...options,
+      variables: undefined,
+    } as toStringOptions)}(${templateParams})`;
   }
 }
 

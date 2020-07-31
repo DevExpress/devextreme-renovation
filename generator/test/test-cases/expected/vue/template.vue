@@ -13,12 +13,19 @@
       v-bind:textPropExpr="'textPropExrpValue'"
       v-if="!$scopedSlots.contentTemplate"
     ></slot>
-    <slot name="footerTemplate" v-bind:someProp="true"></slot>
+    <slot name="footerTemplate" v-bind:someProp="someProp"></slot>
   </div>
 </template>
 
 <script>
-export const WidgetInput = {};
+export const WidgetInput = {
+  someProp: {
+    type: Boolean,
+    default() {
+      return false;
+    },
+  },
+};
 
 export default {
   props: WidgetInput,
@@ -28,6 +35,7 @@ export default {
     },
     props() {
       return {
+        someProp: this.someProp,
         headerTemplate: this.$scopedSlots.headerTemplate,
         template: this.$scopedSlots.template,
         contentTemplate: this.$scopedSlots.contentTemplate,

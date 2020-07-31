@@ -17,7 +17,6 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   useExisting: forwardRef(() => ModelWidget),
   multi: true,
 };
-
 @Component({
   selector: "dx-model-widget",
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
@@ -41,6 +40,20 @@ export default class ModelWidget extends ModelWidgetInput
   }
   registerOnTouched(fn: () => void): void {
     this.touched = fn;
+  }
+
+  _baseStatePropChange: any;
+  _modelStatePropChange: any;
+  _valueChange: any;
+  constructor() {
+    super();
+    this._baseStatePropChange = this.baseStatePropChange.emit.bind(
+      this.baseStatePropChange
+    );
+    this._modelStatePropChange = this.modelStatePropChange.emit.bind(
+      this.modelStatePropChange
+    );
+    this._valueChange = this.valueChange.emit.bind(this.valueChange);
   }
 }
 @NgModule({

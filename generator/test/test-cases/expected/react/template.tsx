@@ -1,4 +1,5 @@
 export declare type WidgetInputType = {
+  someProp: boolean;
   headerTemplate?: any;
   template: (props: { textProp: string; textPropExpr: string }) => JSX.Element;
   contentTemplate: (props: { data: { p1: string }; index: number }) => any;
@@ -16,6 +17,7 @@ export declare type WidgetInputType = {
   footerComponent?: any;
 };
 export const WidgetInput: WidgetInputType = {
+  someProp: false,
   template: () => <div></div>,
   contentTemplate: (props) => <div>{props.data.p1}</div>,
   footerTemplate: () => <div></div>,
@@ -64,6 +66,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
         headerRender,
         headerTemplate,
         render,
+        someProp,
         template,
         ...restProps
       } = props;
@@ -104,6 +107,8 @@ Widget.defaultProps = {
 };
 
 function view(viewModel: Widget) {
+  const myvar = viewModel.props.someProp;
+  const FooterTemplate = viewModel.props.footerTemplate;
   return (
     <div>
       {viewModel.props.headerTemplate()}
@@ -117,7 +122,7 @@ function view(viewModel: Widget) {
           textPropExpr: "textPropExrpValue",
         })}
 
-      {viewModel.props.footerTemplate({ someProp: true })}
+      {FooterTemplate({ someProp: myvar })}
     </div>
   );
 }

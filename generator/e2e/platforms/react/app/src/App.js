@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import App from "../../../../components/app.tsx";
 import ButtonWithTemplate from "../../../../components/button-with-template.tsx";
 import Counter from "../../../../components/counter.tsx";
-import Nested, { Cell } from "../../../../components/nested.tsx";
+import Nested, {
+  GridDataRow,
+  GridDataCell,
+} from "../../../../components/nested.tsx";
 
 const buttonTemplate = ({ text }) => (
   <div style={{ border: "1px solid blue" }}>{text + "!"}</div>
@@ -28,11 +31,22 @@ export default () => {
         ></Counter>
       </form>
       <div id="counter-form-value">{counterValue}</div>
-      <Nested cells={[{ data: "cell11" }, "cell12"]}></Nested>
+      <Nested
+        gridDataRows={[
+          { gridDataCells: [{ gridData: "cell11" }, "cell12"] },
+          { gridDataCells: ["cell21", "cell22"] },
+        ]}
+      ></Nested>
       <Nested>
-        <Cell data="cell21" />
-        <Cell data="cell22" />
+        <GridDataRow gridDataCells={["cell31", { gridData: "cell32" }]} />
       </Nested>
+      <Nested>
+        <GridDataRow>
+          <GridDataCell gridData="cell41" />
+          <GridDataCell gridData="cell42" />
+        </GridDataRow>
+      </Nested>
+      <Nested></Nested>
     </div>
   );
 };

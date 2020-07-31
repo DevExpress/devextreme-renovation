@@ -31,7 +31,11 @@ import {
   JsxOpeningElement,
   JsxSelfClosingElement,
 } from "./jsx-opening-element";
-import { getExpression, counter, getMember } from "../../utils";
+import { counter } from "../../counter";
+import {
+  getExpression,
+  getMember,
+} from "../../../base-generator/utils/expressions";
 
 export class JsxChildExpression extends JsxExpression {
   constructor(expression: JsxExpression) {
@@ -253,6 +257,11 @@ export class JsxChildExpression extends JsxExpression {
         templateExpression as JsxExpression
       );
       template = expression.toString(templateOptions);
+      if (options) {
+        options.trackBy = (options.trackBy || []).concat(
+          templateOptions.trackBy || []
+        );
+      }
     }
 
     const item = `let ${itemName} of ${itemsExpressionString}`;

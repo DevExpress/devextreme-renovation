@@ -1,5 +1,6 @@
 import { Input, TemplateRef } from "@angular/core";
 export class WidgetInput {
+  @Input() someProp: boolean = false;
   @Input() headerTemplate?: TemplateRef<any>;
   @Input() template!: TemplateRef<any>;
   @Input() contentTemplate!: TemplateRef<any>;
@@ -32,7 +33,7 @@ import { CommonModule } from "@angular/common";
       ></ng-container>
     </ng-container>
     <ng-container
-      *ngTemplateOutlet="footerTemplate; context: { someProp: true }"
+      *ngTemplateOutlet="footerTemplate; context: { someProp: someProp }"
     ></ng-container>
   </div>`,
 })

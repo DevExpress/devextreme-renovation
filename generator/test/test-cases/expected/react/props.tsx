@@ -5,12 +5,12 @@ function view(model: Widget): JSX.Element {
 export declare type WidgetInputType = {
   height: number;
   export: object;
-  onClick: (a: number) => null;
+  onClick: (a: number) => void;
 };
 const WidgetInput: WidgetInputType = {
   height: 10,
   export: {},
-  onClick: () => null,
+  onClick: () => {},
 };
 
 import React, { useCallback } from "react";

@@ -20,7 +20,6 @@ export default class RefOnChildrenTemplate extends Props {
   get __restAttributes(): any {
     return {};
   }
-
   get forwardRef_child(): (ref: any) => void {
     if (this.__getterCache["forwardRef_child"] !== undefined) {
       return this.__getterCache["forwardRef_child"];
@@ -34,6 +33,7 @@ export default class RefOnChildrenTemplate extends Props {
 
   __destroyEffects: any[] = [];
   __viewCheckedSubscribeEvent: Array<() => void> = [];
+  _effectTimeout: any;
   __schedule_effect() {
     this.__destroyEffects[0]?.();
     this.__viewCheckedSubscribeEvent[0] = () => {
@@ -45,7 +45,9 @@ export default class RefOnChildrenTemplate extends Props {
   } = {};
 
   ngAfterViewInit() {
-    this.__destroyEffects.push(this.__effect());
+    this._effectTimeout = setTimeout(() => {
+      this.__destroyEffects.push(this.__effect());
+    }, 0);
   }
   ngOnChanges(changes: { [name: string]: any }) {
     if (this.__destroyEffects.length && ["child"].some((d) => changes[d])) {
@@ -54,10 +56,15 @@ export default class RefOnChildrenTemplate extends Props {
   }
   ngOnDestroy() {
     this.__destroyEffects.forEach((d) => d && d());
+    clearTimeout(this._effectTimeout);
   }
   ngAfterViewChecked() {
-    this.__viewCheckedSubscribeEvent.forEach((s) => s?.());
-    this.__viewCheckedSubscribeEvent = [];
+    if (this.__viewCheckedSubscribeEvent.length) {
+      this._effectTimeout = setTimeout(() => {
+        this.__viewCheckedSubscribeEvent.forEach((s) => s?.());
+        this.__viewCheckedSubscribeEvent = [];
+      });
+    }
   }
 }
 @NgModule({

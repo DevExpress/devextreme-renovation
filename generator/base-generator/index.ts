@@ -52,6 +52,10 @@ import {
   MethodSignature,
   TypeOperatorNode,
   TypeAliasDeclaration,
+  TypePredicateNode,
+  InferTypeNode,
+  TupleTypeNode,
+  ConditionalTypeNode,
 } from "./expressions/type";
 import {
   Method,
@@ -228,6 +232,31 @@ export default class Generator implements GeneratorAPI {
 
   createArrayTypeNode(elementType: TypeExpression) {
     return new ArrayTypeNode(elementType);
+  }
+
+  createTypePredicateNodeWithModifier(
+    assertsModifier: string | undefined,
+    parameterName: Identifier,
+    type: TypeExpression
+  ) {
+    return new TypePredicateNode(assertsModifier, parameterName, type);
+  }
+
+  createInferTypeNode(typeParameter: TypeExpression) {
+    return new InferTypeNode(typeParameter);
+  }
+
+  createTupleTypeNode(elementTypes: TypeExpression[]) {
+    return new TupleTypeNode(elementTypes);
+  }
+
+  createConditionalTypeNode(
+    checkType: TypeExpression,
+    extendsType: TypeExpression,
+    trueType: TypeExpression,
+    falseType: TypeExpression
+  ) {
+    return new ConditionalTypeNode(checkType, extendsType, trueType, falseType);
   }
 
   createFalse() {
@@ -939,7 +968,7 @@ export default class Generator implements GeneratorAPI {
     decorators: Decorator[] | undefined,
     modifiers: string[] | undefined,
     name: Identifier,
-    typeParameters: any,
+    typeParameters: TypeParameterDeclaration[] | undefined,
     type: TypeExpression
   ) {
     const result = new TypeAliasDeclaration(

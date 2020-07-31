@@ -16,7 +16,7 @@ export class SetAccessor extends Method {
   ) {
     super(
       decorators,
-      modifiers,
+      [...(modifiers || []), "set"],
       "",
       name,
       "",
@@ -27,6 +27,6 @@ export class SetAccessor extends Method {
     );
   }
   toString(options?: toStringOptions) {
-    return `set ${super.toString(options)}`;
+    return `${super.toString(options)}`;
   }
 }

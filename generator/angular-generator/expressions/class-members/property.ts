@@ -65,7 +65,7 @@ export class Property extends BaseProperty {
     if (eventDecorator) {
       return `${eventDecorator} ${this.name}:EventEmitter${parseEventType(
         this.type
-      )} = new EventEmitter()`;
+      )} = new EventEmitter();`;
     }
     if (this.isRef) {
       return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:ElementRef<${this.type}>`;
@@ -106,23 +106,24 @@ export class Property extends BaseProperty {
     const suffix = this.required ? "!" : "";
     componentContext = this.processComponentContext(componentContext);
     if (this.isEvent) {
-      return `${componentContext}${this.name}.emit`;
+      return `${componentContext}_${this.name}`;
     }
     if (this.isRef || this.isForwardRef || this.isForwardRefProp) {
       const postfix = this.isForwardRefProp ? "Ref" : "";
+      const type = this.type.toString();
+      const isElement = type.includes("HTML") && type.includes("Element");
       return `${componentContext}${this.name}${postfix}${
-        this.questionOrExclamationToken === SyntaxKind.ExclamationToken
-          ? ""
-          : this.questionOrExclamationToken
-      }.nativeElement`;
+        isElement
+          ? `${
+              this.questionOrExclamationToken === SyntaxKind.ExclamationToken
+                ? ""
+                : this.questionOrExclamationToken
+            }.nativeElement`
+          : ""
+      }`;
     }
     if (this.isRefProp) {
       return `${componentContext}${this.name}`;
-    }
-    if (this.isNested) {
-      return `${componentContext}__getNested${capitalizeFirstLetter(
-        this.name
-      )}`;
     }
     if (this._hasDecorator(Decorators.ApiRef)) {
       return `${componentContext}${this.name}${suffix}`;

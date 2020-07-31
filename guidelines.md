@@ -39,6 +39,7 @@
       - [@TwoWay()](#twoway)
       - [@Event()](#event)
       - [@Ref()](#ref)
+      - [@ForwardRef()](#forwardref)
       - [@Effect()](#effect)
       - [@Template()](#template)
       - [@Slot()](#slot)
@@ -847,7 +848,78 @@ function viewFunction(viewModel: MyComponent) {
 }
 ```
 
+Реф может быть также передан в качестве пропа в дочерний компонент.
+
+```tsx
+@ComponentBindings()
+class MyComponentProps {
+  @Ref() parentElement?: HTMLDivElement;
+}
+
+@Component({ view: viewFunction })
+class MyComponent extends JSXComponent(MyComponentProps) {
+  @InternalState() width: number = 0;
+
+  @Effect()
+  calculateWidth(){
+    this.width = getWidth(this.parentElement) / 2;
+  }
+}
+
+```
+
 Примеры использования рефов смотри ниже.
+
+#### @ForwardRef()
+
+*ForwardRef*, как и *Ref*, предоставляет ссылку на элемент или другой компонент для доступа к *DOM* или *API* другого компонента.
+Отличие заключается в том, что *ForwardRef* инициализируется в дочернем компоненте.
+
+```tsx
+//parent.tsx
+
+import ChildComponent from "./child";
+
+@ComponentBindings()
+class ParentProps {}
+
+@Component({ view: parentView })
+class ParentComponent extends JSXComponent(ParentProps) {
+  @ForwardRef() childElement!: HTMLDivElement;
+
+  @Effect()
+  effect(){
+    // You have access to childElement here
+    const childWidth = getWidth(this.childElement);
+  }
+}
+
+function viewFunction(viewModel: ParentComponent) {
+  return (
+    <ChildComponent elementRef={viewModel.childElement}/>
+  );
+}
+```
+
+```tsx
+//child.tsx
+
+@ComponentBindings()
+class ChildProps {
+  @ForwardRef() elementRef!: HTMLDivElement;
+}
+
+@Component({ view: parentView })
+class ChildComponent extends JSXComponent(ParentProps) {
+  
+}
+
+function viewFunction(viewModel: ChildComponent) {
+  return (
+    <div ref={viewModel.props.elementRef}></div>
+  );
+}
+```
 
 #### @Effect()
 

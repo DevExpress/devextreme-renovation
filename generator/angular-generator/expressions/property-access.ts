@@ -48,7 +48,7 @@ export class PropertyAccess extends BasePropertyAccess {
     options: toStringOptions
   ) {
     if (property.isState) {
-      return `this.${this.name}Change.emit(${this.toString(options)}=${value})`;
+      return `this._${this.name}Change(${this.toString(options)}=${value})`;
     }
     return `this._${property.name}=${value}`;
   }

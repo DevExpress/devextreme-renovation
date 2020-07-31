@@ -1,5 +1,4 @@
 import { Input } from "@angular/core";
-
 export class WidgetInput {
   @Input() propArray: Array<string> = [];
   @Input() propObject: object = {};
@@ -33,6 +32,8 @@ export default class Widget extends WidgetInput {
 
   __destroyEffects: any[] = [];
   __viewCheckedSubscribeEvent: Array<() => void> = [];
+  _effectTimeout: any;
+
   __schedule_effect() {
     this.__destroyEffects[0]?.();
     this.__viewCheckedSubscribeEvent[0] = () => {
@@ -73,12 +74,14 @@ export default class Widget extends WidgetInput {
     this.__cachedObservables["propArray"] = this.propArray;
     this.__cachedObservables["internalArray"] = this.internalArray;
     this.__cachedObservables["keys"] = this.keys;
-    this.__destroyEffects.push(
-      this.__effect(),
-      this.__effectWithObservables(),
-      this.__onceEffect(),
-      this.__alwaysEffect()
-    );
+    this._effectTimeout = setTimeout(() => {
+      this.__destroyEffects.push(
+        this.__effect(),
+        this.__effectWithObservables(),
+        this.__onceEffect(),
+        this.__alwaysEffect()
+      );
+    }, 0);
   }
   ngOnChanges(changes: { [name: string]: any }) {
     if (
@@ -108,10 +111,15 @@ export default class Widget extends WidgetInput {
   }
   ngOnDestroy() {
     this.__destroyEffects.forEach((d) => d && d());
+    clearTimeout(this._effectTimeout);
   }
   ngAfterViewChecked() {
-    this.__viewCheckedSubscribeEvent.forEach((s) => s?.());
-    this.__viewCheckedSubscribeEvent = [];
+    if (this.__viewCheckedSubscribeEvent.length) {
+      this._effectTimeout = setTimeout(() => {
+        this.__viewCheckedSubscribeEvent.forEach((s) => s?.());
+        this.__viewCheckedSubscribeEvent = [];
+      });
+    }
   }
   ngDoCheck() {
     if (

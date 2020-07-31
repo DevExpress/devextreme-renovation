@@ -1,6 +1,6 @@
 import { JsxAttribute as BaseJsxAttribute } from "../../../angular-generator/expressions/jsx/attribute";
 import { toStringOptions } from "../../types";
-import { getMember } from "../../../angular-generator/utils";
+import { getMember } from "../../../base-generator/utils/expressions";
 import { getEventName } from "../utils";
 
 export class JsxAttribute extends BaseJsxAttribute {

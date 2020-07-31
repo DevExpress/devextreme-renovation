@@ -16,17 +16,15 @@ function view(vm: PanelComponent) {
         <span>Header:</span>
         <vm.props.headerTemplate
           text="Panel header"
-          onClick={vm.headerClick.bind(this)}
+          onClick={vm.headerClick}
         />{" "}
-        {/* remove .bind(this) hack once #306 fixed*/}
       </div>
       <div>
         <span>Body:</span>
         <vm.props.bodyTemplate
           text={lorem}
-          onClick={vm.bodyClick.bind(this)}
+          onClick={vm.props.onBodyClick}
         />{" "}
-        {/* remove .bind(this) hack once #306 fixed*/}
       </div>
     </div>
   );
