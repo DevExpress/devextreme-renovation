@@ -791,6 +791,41 @@ mocha.describe("Vue-generator", function () {
   });
 
   mocha.describe("Call", function () {
+    mocha.it("Call with typeParameter", function () {
+      assert.equal(
+        generator
+          .createCall(
+            generator.createIdentifier("a"),
+            [
+              generator.createTypeParameterDeclaration(
+                generator.createIdentifier("TypeParameter")
+              ),
+            ],
+            []
+          )
+          .toString(),
+        "a()"
+      );
+    });
+
+    mocha.it("CallChain with typeParameter", function () {
+      assert.equal(
+        generator
+          .createCallChain(
+            generator.createIdentifier("a"),
+            generator.SyntaxKind.QuestionDotToken,
+            [
+              generator.createTypeParameterDeclaration(
+                generator.createIdentifier("TypeParameter")
+              ),
+            ],
+            []
+          )
+          .toString(),
+        "a?.()"
+      );
+    });
+
     mocha.it("Call expression generates usual call if not event", function () {
       assert.equal(
         generator

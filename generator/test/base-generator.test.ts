@@ -105,6 +105,23 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
+    mocha.it("Call with typeArguments", function () {
+      assert.equal(
+        generator
+          .createCall(
+            generator.createIdentifier("a"),
+            [
+              generator.createTypeParameterDeclaration(
+                generator.createIdentifier("TypeParameter")
+              ),
+            ],
+            []
+          )
+          .toString(),
+        "a<TypeParameter>()"
+      );
+    });
+
     mocha.it("createCallChain", function () {
       const expression = generator.createCallChain(
         generator.createPropertyAccessChain(
@@ -3409,6 +3426,17 @@ mocha.describe("ComponentInput", function () {
           props
         );
 
+        const typeParameters: TypeExpression[] = [
+          generator.createTypeReferenceNode(
+            generator.createIdentifier("Props"),
+            undefined
+          ),
+        ];
+
+        if (requiredPropsList) {
+          typeParameters.push(requiredPropsList);
+        }
+
         return generator.createClassDeclaration(
           [createDecorator(Decorators.Component)],
           [],
@@ -3422,13 +3450,7 @@ mocha.describe("ComponentInput", function () {
                   undefined,
                   generator.createCall(
                     generator.createIdentifier("JSXComponent"),
-                    [
-                      generator.createTypeReferenceNode(
-                        generator.createIdentifier("Props"),
-                        undefined
-                      ),
-                      requiredPropsList,
-                    ],
+                    typeParameters,
                     []
                   )
                 ),

@@ -1,7 +1,7 @@
 import { Identifier } from "../expressions/common";
 import { BindingPattern } from "../expressions/binding-pattern";
 import { Expression } from "../expressions/base";
-import { TypeParameterDeclaration } from "../expressions/type-parameter-declaration";
+import { TypeExpression } from "../expressions/type";
 
 export function capitalizeFirstLetter(string: string | Identifier) {
   string = string.toString();
@@ -21,7 +21,7 @@ export const compileType = (type: string = "", questionToken: string = "") =>
   type ? `${questionToken}:${type}` : "";
 
 export const compileTypeParameters = (
-  typeParameters: TypeParameterDeclaration[] | undefined
+  typeParameters: TypeExpression[] | undefined
 ) => (typeParameters?.length ? `<${typeParameters}>` : "");
 
 export function variableDeclaration(

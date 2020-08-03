@@ -272,7 +272,7 @@ export default class Generator implements GeneratorAPI {
 
   createNew(
     expression: Expression,
-    typeArguments: string[] = [],
+    typeArguments: TypeExpression[] | undefined,
     argumentsArray: Expression[]
   ) {
     return new New(expression, typeArguments, argumentsArray);
@@ -450,7 +450,7 @@ export default class Generator implements GeneratorAPI {
 
   createCall(
     expression: Expression,
-    typeArguments: any,
+    typeArguments: TypeExpression[] | undefined,
     argumentsArray?: Expression[]
   ) {
     return new Call(expression, typeArguments, argumentsArray);
