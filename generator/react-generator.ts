@@ -254,6 +254,10 @@ export class ComponentInput extends BaseComponentInput {
     }
     return members;
   }
+
+  getInitializerScope(component: string, name: string) {
+    return `${component}.${name}`;
+  }
 }
 
 export class HeritageClause extends BaseHeritageClause {

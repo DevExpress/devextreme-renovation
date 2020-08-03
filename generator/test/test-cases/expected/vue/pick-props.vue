@@ -7,7 +7,9 @@ const WidgetProps = {
   height: {
     type: Number,
     default() {
-      return Props.height;
+      return typeof Props.height.default === "function"
+        ? Props.height.default()
+        : Props.height.default;
     },
   },
 };

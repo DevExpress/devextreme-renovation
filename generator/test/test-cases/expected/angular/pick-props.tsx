@@ -1,7 +1,7 @@
 import Props from "./component-bindings-only";
 import { Input } from "@angular/core";
 class WidgetProps {
-  @Input() height?: number = Props.prototype.height;
+  @Input() height?: number = new Props().height;
 }
 
 import { Component, NgModule } from "@angular/core";

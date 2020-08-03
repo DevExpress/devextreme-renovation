@@ -3588,7 +3588,10 @@ mocha.describe("ComponentInput from type", function () {
       members.map((m) => m.name),
       ["p2", "p3"]
     );
-    assert.strictEqual(members[0].initializer?.toString(), "BaseProps.p2");
+    assert.strictEqual(
+      members[0].initializer?.toString(),
+      "new BaseProps().p2"
+    );
     assert.equal(generator.getContext().components?.["Props"], expression);
     assert.deepEqual(expression.modifiers, ["export"]);
   });
@@ -3769,9 +3772,15 @@ mocha.describe("ComponentInput from type", function () {
       ["p1", "p2", "p3", "p4", "defaultP3", "p3Change"]
     );
 
-    assert.strictEqual(members[0].initializer?.toString(), "BaseProps.p1");
-    assert.strictEqual(members[3].initializer?.toString(), "Props2.p4");
-    assert.strictEqual(members[4].initializer?.toString(), "Props2.defaultP3");
+    assert.strictEqual(
+      members[0].initializer?.toString(),
+      "new BaseProps().p1"
+    );
+    assert.strictEqual(members[3].initializer?.toString(), "new Props2().p4");
+    assert.strictEqual(
+      members[4].initializer?.toString(),
+      "new Props2().defaultP3"
+    );
   });
 });
 

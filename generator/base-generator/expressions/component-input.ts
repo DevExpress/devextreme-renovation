@@ -248,8 +248,8 @@ export class ComponentInput extends Class implements Heritable {
     return this.name.toString();
   }
 
-  getInitializerScope(name: string) {
-    return name;
+  getInitializerScope(component: string, name: string) {
+    return `new ${component}().${name}`;
   }
 }
 
@@ -267,7 +267,7 @@ function processMembersFromType(
     const m = p.inherit();
     m.inherited = false;
     m.initializer = new SimpleExpression(
-      `${componentInput.getInitializerScope(baseComponentInput)}.${m.name}`
+      `${componentInput.getInitializerScope(baseComponentInput, m.name)}`
     );
     return m;
   });
