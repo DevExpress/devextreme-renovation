@@ -1,12 +1,16 @@
-import { Class, Heritable, inheritMembers, HeritageClause } from "./class";
+import {
+  Class,
+  Heritable,
+  inheritMembers,
+  HeritageClause,
+  getMemberListFromTypeExpression,
+} from "./class";
 import { Parameter } from "./functions";
 import {
   SimpleTypeExpression,
   FunctionTypeNode,
   TypeExpression,
   extractComplexType,
-  LiteralTypeNode,
-  UnionTypeNode,
   TypeReferenceNode,
   IntersectionTypeNode,
 } from "./type";
@@ -20,7 +24,6 @@ import { warn } from "../../utils/messages";
 import { getProps } from "./component";
 import { GeneratorContext } from "../types";
 import { Decorators } from "../../component_declaration/decorators";
-import { StringLiteral } from "./literal";
 
 const RESERVED_NAMES = ["class", "key", "ref", "style", "class"];
 
@@ -247,25 +250,6 @@ export class ComponentInput extends Class implements Heritable {
   getInitializerScope(name: string) {
     return name;
   }
-}
-
-export function getMemberListFromTypeExpression(
-  type: TypeExpression
-): string[] {
-  if (
-    type instanceof LiteralTypeNode &&
-    type.expression instanceof StringLiteral
-  ) {
-    return [type.expression.expression];
-  }
-
-  if (type instanceof UnionTypeNode) {
-    return type.types.reduce(
-      (types: string[], t) => types.concat(getMemberListFromTypeExpression(t)),
-      []
-    );
-  }
-  return [];
 }
 
 const omit = (members: string[]) => (p: Property | Method) =>

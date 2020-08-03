@@ -1,7 +1,11 @@
 import assert from "assert";
 import mocha from "./helpers/mocha";
 import Generator from "../base-generator";
-import { printSourceCodeAst as getAst, assertCode } from "./helpers/common";
+import {
+  printSourceCodeAst as getAst,
+  assertCode,
+  removeSpaces,
+} from "./helpers/common";
 import {
   Expression,
   SimpleExpression,
@@ -13,7 +17,7 @@ import {
 } from "../base-generator/expressions/property-access";
 import { Class } from "../base-generator/expressions/class";
 import { ComponentInput } from "../base-generator/expressions/component-input";
-import { Component } from "../base-generator/expressions/component";
+import { Component, getProps } from "../base-generator/expressions/component";
 import { ImportDeclaration } from "../base-generator/expressions/import";
 import sinon from "sinon";
 
@@ -26,6 +30,7 @@ import { toStringOptions } from "../base-generator/types";
 import { BindingPattern } from "../base-generator/expressions/binding-pattern";
 import { Property, Method } from "../base-generator/expressions/class-members";
 import { Decorators } from "../component_declaration/decorators";
+import { TypeExpression } from "../base-generator/expressions/type";
 
 const { createComponentDecorator, createDecorator } = componentCreator(
   generator
@@ -3379,6 +3384,130 @@ mocha.describe("ComponentInput", function () {
         ]);
       }
     );
+
+    mocha.describe("Required props", function () {
+      this.beforeEach(function () {
+        generator.setContext({
+          path: "component.tsx",
+        });
+      });
+
+      this.afterEach(function () {
+        generator.setContext(null);
+      });
+
+      function createComponent(
+        props: Property[],
+        requiredPropsList?: TypeExpression
+      ) {
+        generator.createClassDeclaration(
+          [createDecorator(Decorators.ComponentBindings)],
+          [],
+          generator.createIdentifier("Props"),
+          [],
+          [],
+          props
+        );
+
+        return generator.createClassDeclaration(
+          [createDecorator(Decorators.Component)],
+          [],
+          generator.createIdentifier("Widget"),
+          [],
+          [
+            generator.createHeritageClause(
+              generator.SyntaxKind.ExtendsKeyword,
+              [
+                generator.createExpressionWithTypeArguments(
+                  undefined,
+                  generator.createCall(
+                    generator.createIdentifier("JSXComponent"),
+                    [
+                      generator.createTypeReferenceNode(
+                        generator.createIdentifier("Props"),
+                        undefined
+                      ),
+                      requiredPropsList,
+                    ],
+                    []
+                  )
+                ),
+              ]
+            ),
+          ],
+          []
+        );
+      }
+
+      mocha.it(
+        "Component has one Required props - throw exception if they not included to component declaration",
+        function () {
+          createComponent([
+            generator.createProperty(
+              [createDecorator(Decorators.OneWay)],
+              [],
+              generator.createIdentifier("p1"),
+              generator.SyntaxKind.ExclamationToken
+            ),
+            generator.createProperty(
+              [createDecorator(Decorators.OneWay)],
+              [],
+              generator.createIdentifier("p2")
+            ),
+
+            generator.createProperty(
+              [createDecorator(Decorators.OneWay)],
+              [],
+              generator.createIdentifier("p3"),
+              generator.SyntaxKind.ExclamationToken
+            ),
+          ]);
+
+          assert.strictEqual(
+            removeSpaces(this.getWarnings()[0]),
+            removeSpaces(
+              `Widget component declaration is not correct. Props have required properties. Include their keys to declaration
+             Widget extends JSXComponent<Props, "p1"|"p3">`
+            )
+          );
+        }
+      );
+
+      mocha.it("Component has one Required props", function () {
+        const component = createComponent(
+          [
+            generator.createProperty(
+              [createDecorator(Decorators.OneWay)],
+              [],
+              generator.createIdentifier("p1"),
+              generator.SyntaxKind.ExclamationToken
+            ),
+            generator.createProperty(
+              [createDecorator(Decorators.OneWay)],
+              [],
+              generator.createIdentifier("p2")
+            ),
+
+            generator.createProperty(
+              [createDecorator(Decorators.OneWay)],
+              [],
+              generator.createIdentifier("p3"),
+              generator.SyntaxKind.ExclamationToken
+            ),
+          ],
+          generator.createUnionTypeNode([
+            generator.createLiteralTypeNode(
+              generator.createStringLiteral("p1")
+            ),
+            generator.createLiteralTypeNode(
+              generator.createStringLiteral("p3")
+            ),
+          ])
+        );
+
+        assert.strictEqual(getProps(component.members).length, 3);
+      });
+    });
   });
 });
 

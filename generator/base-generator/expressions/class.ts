@@ -1,8 +1,14 @@
 import { Identifier, Call } from "./common";
 import { Property, Method } from "./class-members";
-import { ExpressionWithTypeArguments } from "./type";
+import {
+  ExpressionWithTypeArguments,
+  TypeExpression,
+  LiteralTypeNode,
+  UnionTypeNode,
+} from "./type";
 import { GeneratorContext } from "../types";
 import { Decorator } from "./decorator";
+import { StringLiteral } from "./literal";
 
 export function inheritMembers(
   heritageClauses: HeritageClause[],
@@ -14,6 +20,25 @@ export function inheritMembers(
     );
     return m.concat(members);
   }, members);
+}
+
+export function getMemberListFromTypeExpression(
+  type: TypeExpression
+): string[] {
+  if (
+    type instanceof LiteralTypeNode &&
+    type.expression instanceof StringLiteral
+  ) {
+    return [type.expression.expression];
+  }
+
+  if (type instanceof UnionTypeNode) {
+    return type.types.reduce(
+      (types: string[], t) => types.concat(getMemberListFromTypeExpression(t)),
+      []
+    );
+  }
+  return [];
 }
 
 export class HeritageClause {
@@ -44,6 +69,18 @@ export class HeritageClause {
         .startsWith("Required");
     }
     return false;
+  }
+
+  get requiredProps() {
+    if (
+      this.types[0].expression instanceof Call &&
+      this.types[0].expression.typeArguments?.[1]
+    ) {
+      return getMemberListFromTypeExpression(
+        this.types[0].expression.typeArguments[1]
+      );
+    }
+    return [];
   }
 
   constructor(

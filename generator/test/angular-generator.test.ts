@@ -4799,7 +4799,7 @@ mocha.describe("Angular generator", function () {
 
       assert.strictEqual(
         property.toString(),
-        " @Input() name?:TemplateRef<any> = false"
+        " @Input() name?:TemplateRef<any> | null = null"
       );
     });
 

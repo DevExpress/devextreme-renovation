@@ -9,7 +9,10 @@ import {
 import { Decorators } from "../../../component_declaration/decorators";
 import { capitalizeFirstLetter } from "../../../base-generator/utils/string";
 import SyntaxKind from "../../../base-generator/syntaxKind";
-import { Expression } from "../../../base-generator/expressions/base";
+import {
+  Expression,
+  SimpleExpression,
+} from "../../../base-generator/expressions/base";
 
 function parseEventType(type: TypeExpression | string) {
   if (type instanceof FunctionTypeNode) {
@@ -39,10 +42,8 @@ export class Property extends BaseProperty {
     inherited: boolean = false
   ) {
     if (decorators.find((d) => d.name === Decorators.Template)) {
-      type = new SimpleTypeExpression(`TemplateRef<any>`);
-      if (questionOrExclamationToken !== SyntaxKind.QuestionToken) {
-        questionOrExclamationToken = SyntaxKind.ExclamationToken;
-      }
+      type = new SimpleTypeExpression(`TemplateRef<any> | null`);
+      initializer = new SimpleExpression("null");
     }
     super(
       decorators,
