@@ -36,6 +36,7 @@ import {
   removePlural,
   capitalizeFirstLetter,
   compileType,
+  calculateType,
 } from "../../base-generator/utils/string";
 
 export function compileCoreImports(
@@ -296,6 +297,7 @@ export class AngularComponent extends Component {
           property.type.toString() !== "any"
             ? SyntaxKind.QuestionToken
             : undefined;
+
         members.push(
           new SetAccessor(
             undefined,
@@ -308,7 +310,9 @@ export class AngularComponent extends Component {
                 undefined,
                 member._name,
                 token,
-                member.type,
+                member.type.toString() ||
+                  calculateType(property.initializer) ||
+                  "any",
                 undefined
               ),
             ],

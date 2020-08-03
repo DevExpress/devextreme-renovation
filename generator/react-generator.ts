@@ -3,6 +3,7 @@ import path from "path";
 import {
   capitalizeFirstLetter,
   removePlural,
+  compileType,
 } from "./base-generator/utils/string";
 import BaseGenerator from "./base-generator";
 import {
@@ -414,7 +415,14 @@ export class Property extends BaseProperty {
         ? ""
         : this.questionOrExclamationToken;
 
-    return `${this.name}${questionOrExclamationToken}:${type}`;
+    const typeString = compileType(
+      type.toString(),
+      questionOrExclamationToken,
+      this.initializer,
+      "any"
+    );
+
+    return `${this.name}${typeString}`;
   }
 
   getter(componentContext?: string) {

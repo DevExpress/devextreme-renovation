@@ -55,9 +55,6 @@ export class Property extends BaseProperty {
       inherited
     );
   }
-  typeDeclaration() {
-    return `${this.name}${this.questionOrExclamationToken}:${this.type}`;
-  }
   toString() {
     const eventDecorator = this.decorators.find(
       (d) => d.name === Decorators.Event

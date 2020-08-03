@@ -4761,7 +4761,21 @@ mocha.describe("Angular generator", function () {
 
       assert.strictEqual(
         getResult(property.toString()),
-        getResult(`@Input() pressed?:any = false`)
+        getResult(`@Input() pressed?:boolean = false`)
+      );
+    });
+
+    mocha.it("TwoWay without type and initializer", function () {
+      const property = generator.createProperty(
+        [createDecorator(Decorators.TwoWay)],
+        [],
+        generator.createIdentifier("pressed"),
+        generator.SyntaxKind.QuestionToken
+      );
+
+      assert.strictEqual(
+        getResult(property.toString()),
+        getResult(`@Input() pressed?:any`)
       );
     });
 

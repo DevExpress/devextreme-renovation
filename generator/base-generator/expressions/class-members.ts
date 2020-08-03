@@ -1,5 +1,5 @@
 import { Identifier } from "./common";
-import { TypeExpression } from "./type";
+import { TypeExpression, SimpleTypeExpression } from "./type";
 import { Expression, SimpleExpression } from "./base";
 import { toStringOptions } from "../types";
 import { Parameter } from "./functions";
@@ -26,7 +26,7 @@ export class BaseClassMember extends Expression {
     decorators: Decorator[] = [],
     modifiers: string[] = [],
     name: Identifier,
-    type: TypeExpression | string = new SimpleExpression(""),
+    type: TypeExpression | string = new SimpleTypeExpression(""),
     inherited: boolean = false
   ) {
     super();
@@ -268,7 +268,7 @@ export class Property extends BaseClassMember {
     modifiers: string[] = [],
     name: Identifier,
     questionOrExclamationToken: string = "",
-    type: TypeExpression | string = new SimpleExpression("any"),
+    type: TypeExpression | string = new SimpleTypeExpression(""),
     initializer?: Expression,
     inherited: boolean = false
   ) {
@@ -280,7 +280,9 @@ export class Property extends BaseClassMember {
   typeDeclaration() {
     return `${this.name}${compileType(
       this.type.toString(),
-      this.questionOrExclamationToken
+      this.questionOrExclamationToken,
+      this.initializer,
+      "any"
     )}`;
   }
 

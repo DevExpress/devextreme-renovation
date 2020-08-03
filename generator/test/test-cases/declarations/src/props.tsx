@@ -12,7 +12,7 @@ function view(model: Widget): JSX.Element {
 
 @ComponentBindings()
 class WidgetInput {
-  @OneWay() height: number = 10;
+  @OneWay() height = 10;
   @OneWay() export: object = {};
   @Event() onClick: (a: number) => void = () => {};
 }
