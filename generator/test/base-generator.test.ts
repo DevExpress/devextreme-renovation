@@ -3570,7 +3570,7 @@ mocha.describe("ComponentInput from type", function () {
   mocha.it("Omit<BaseProps, 'p1'>", function () {
     const expression = generator.createTypeAliasDeclaration(
       [],
-      [],
+      ["export"],
       generator.createIdentifier("Props"),
       undefined,
       generator.createTypeReferenceNode(generator.createIdentifier("Omit"), [
@@ -3590,6 +3590,7 @@ mocha.describe("ComponentInput from type", function () {
     );
     assert.strictEqual(members[0].initializer?.toString(), "BaseProps.p2");
     assert.equal(generator.getContext().components?.["Props"], expression);
+    assert.deepEqual(expression.modifiers, ["export"]);
   });
 
   mocha.it("Omit<BaseProps, 'p1' | 'p3'>", function () {
