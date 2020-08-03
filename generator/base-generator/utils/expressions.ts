@@ -1,13 +1,11 @@
 import { Expression } from "../expressions/base";
-import { toStringOptions } from "../types";
-import {
-  Identifier,
-  Paren,
-  AsExpression,
-} from "../expressions/common";
+import { toStringOptions, GeneratorContext } from "../types";
+import { Identifier, Paren, AsExpression } from "../expressions/common";
 import { JsxExpression } from "../expressions/jsx";
 import { PropertyAccess } from "../expressions/property-access";
 import { Property, Method } from "../expressions/class-members";
+import { TypeReferenceNode } from "../expressions/type";
+import { ComponentInput } from "../expressions/component-input";
 
 export function getExpression(
   expression: Expression,
@@ -37,4 +35,13 @@ export function getMember(
   if (expression instanceof PropertyAccess) {
     return expression.getMember(options);
   }
+}
+
+export function findComponentInput(
+  type: TypeReferenceNode,
+  context: GeneratorContext
+): ComponentInput {
+  return context.components?.[
+    type.type.toString().replace("typeof ", "")
+  ] as ComponentInput;
 }

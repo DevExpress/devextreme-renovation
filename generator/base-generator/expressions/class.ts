@@ -5,10 +5,13 @@ import {
   TypeExpression,
   LiteralTypeNode,
   UnionTypeNode,
+  TypeOperatorNode,
+  TypeReferenceNode,
 } from "./type";
 import { GeneratorContext } from "../types";
 import { Decorator } from "./decorator";
 import { StringLiteral } from "./literal";
+import { findComponentInput } from "../utils/expressions";
 
 export function inheritMembers(
   heritageClauses: HeritageClause[],
@@ -23,7 +26,8 @@ export function inheritMembers(
 }
 
 export function getMemberListFromTypeExpression(
-  type: TypeExpression
+  type: TypeExpression,
+  context: GeneratorContext
 ): string[] {
   if (
     type instanceof LiteralTypeNode &&
@@ -34,9 +38,20 @@ export function getMemberListFromTypeExpression(
 
   if (type instanceof UnionTypeNode) {
     return type.types.reduce(
-      (types: string[], t) => types.concat(getMemberListFromTypeExpression(t)),
+      (types: string[], t) =>
+        types.concat(getMemberListFromTypeExpression(t, context)),
       []
     );
+  }
+
+  if (type instanceof TypeOperatorNode) {
+    const component = findComponentInput(
+      type.type as TypeReferenceNode,
+      context
+    );
+    if (component) {
+      return component.members.map((m) => m.name);
+    }
   }
   return [];
 }
@@ -77,7 +92,8 @@ export class HeritageClause {
       this.types[0].expression.typeArguments?.[1]
     ) {
       return getMemberListFromTypeExpression(
-        this.types[0].expression.typeArguments[1]
+        this.types[0].expression.typeArguments[1],
+        this.context
       );
     }
     return [];
@@ -86,7 +102,7 @@ export class HeritageClause {
   constructor(
     token: string,
     types: ExpressionWithTypeArguments[],
-    context: GeneratorContext
+    public context: GeneratorContext
   ) {
     this.token = token;
     this.types = types;

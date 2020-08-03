@@ -3661,6 +3661,32 @@ mocha.describe("ComponentInput from type", function () {
     }
   );
 
+  mocha.it("Pick<BaseProps, keyof BaseProps>", function () {
+    const expression = generator.createTypeAliasDeclaration(
+      [],
+      [],
+      generator.createIdentifier("Props"),
+      undefined,
+      generator.createTypeReferenceNode(generator.createIdentifier("Pick"), [
+        generator.createTypeReferenceNode(
+          generator.createIdentifier("BaseProps"),
+          undefined
+        ),
+        generator.createTypeOperatorNode(
+          generator.createTypeReferenceNode(
+            generator.createIdentifier("BaseProps")
+          )
+        ),
+      ])
+    );
+
+    assert.ok(expression instanceof ComponentInput);
+    assert.deepEqual(
+      (expression as ComponentInput).members.map((m) => m.name),
+      ["p1", "p2", "p3"]
+    );
+  });
+
   mocha.it("Pick & Omit", function () {
     const expression = generator.createTypeAliasDeclaration(
       [],

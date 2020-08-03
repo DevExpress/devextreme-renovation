@@ -24,6 +24,7 @@ import { warn } from "../../utils/messages";
 import { getProps } from "./component";
 import { GeneratorContext } from "../types";
 import { Decorators } from "../../component_declaration/decorators";
+import { findComponentInput } from "../utils/expressions";
 
 const RESERVED_NAMES = ["class", "key", "ref", "style", "class"];
 
@@ -257,15 +258,6 @@ const omit = (members: string[]) => (p: Property | Method) =>
 const pick = (members: string[]) => (p: Property | Method) =>
   members.some((m) => m === p.name);
 
-function findComponentInput(
-  type: TypeReferenceNode,
-  context: GeneratorContext
-): ComponentInput {
-  return context.components?.[
-    type.type.toString().replace("typeof ", "")
-  ] as ComponentInput;
-}
-
 function processMembersFromType(
   members: (Property | Method)[],
   baseComponentInput: string,
@@ -309,7 +301,10 @@ export function membersFromTypeDeclaration(
       type.typeArguments[0] as TypeReferenceNode,
       context
     );
-    const members = getMemberListFromTypeExpression(type.typeArguments[1]);
+    const members = getMemberListFromTypeExpression(
+      type.typeArguments[1],
+      context
+    );
     if (componentInput instanceof ComponentInput) {
       const filter =
         type.type.toString() === "Omit" ? omit(members) : pick(members);
