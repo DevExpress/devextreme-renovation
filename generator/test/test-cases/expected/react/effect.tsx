@@ -21,13 +21,17 @@ export const WidgetInput: WidgetInputType = {
   defaultS: 10,
   sChange: () => {},
 };
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  HtmlHTMLAttributes,
+} from "react";
 
-import React, { useState, useCallback, useEffect } from "react";
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof WidgetInput
+>;
 interface Widget {
   props: typeof WidgetInput & RestProps;
   i: number;
@@ -49,7 +53,6 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     },
     [props.p]
   );
-
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { defaultS, p, r, s, sChange, ...restProps } = {
@@ -60,7 +63,6 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     },
     [props, __state_s]
   );
-
   useEffect(() => {
     const id = subscribe(
       getP(),
@@ -70,7 +72,6 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     __state_setI((__state_i) => 15);
     return () => unsubscribe(id);
   }, [props.p, props.s, __state_s, __state_i]);
-
   useEffect(() => {
     const id = subscribe(
       getP(),
@@ -80,7 +81,6 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     __state_setI((__state_i) => 15);
     return () => unsubscribe(id);
   }, []);
-
   useEffect(() => {
     const id = subscribe(getP(), 1, 2);
     return () => unsubscribe(id);
@@ -96,10 +96,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   ]);
 
   return view({
-    props: {
-      ...props,
-      s: props.s !== undefined ? props.s : __state_s,
-    },
+    props: { ...props, s: props.s !== undefined ? props.s : __state_s },
     i: __state_i,
     j: __state_j,
     getP,

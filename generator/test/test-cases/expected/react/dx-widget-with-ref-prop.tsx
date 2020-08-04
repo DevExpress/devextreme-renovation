@@ -2,16 +2,13 @@ export declare type WidgetWithRefPropInputType = {
   parentRef?: RefObject<any>;
   nullableRef?: RefObject<any>;
 };
-
 export const WidgetWithRefPropInput: WidgetWithRefPropInputType = {};
+import React, { useCallback, RefObject, HtmlHTMLAttributes } from "react";
 
-import React, { useCallback, RefObject } from "react";
-
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof WidgetWithRefPropInput
+>;
 interface WidgetWithRefProp {
   props: typeof WidgetWithRefPropInput & RestProps;
   restAttributes: RestProps;
@@ -37,7 +34,6 @@ export default function WidgetWithRefProp(
 WidgetWithRefProp.defaultProps = {
   ...WidgetWithRefPropInput,
 };
-
 function view(viewModel: WidgetWithRefProp) {
   return <div></div>;
 }

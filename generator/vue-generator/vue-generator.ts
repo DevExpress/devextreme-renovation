@@ -62,6 +62,7 @@ import { ImportDeclaration } from "./expressions/import-declaration";
 import prettier from "prettier";
 import path from "path";
 import { EnumMember, Enum } from "./expressions/enum";
+import { Call } from "./expressions/call";
 
 const emptyToString = () => "";
 
@@ -213,15 +214,23 @@ export class VueGenerator extends BaseGenerator {
   createCallChain(
     expression: Expression,
     questionDotToken: string | undefined,
-    typeArguments: any,
+    typeArguments: TypeExpression[] | undefined,
     argumentsArray: Expression[] | undefined
   ) {
     return new CallChain(
       expression,
       questionDotToken,
-      typeArguments,
+      undefined,
       argumentsArray
     );
+  }
+
+  createCall(
+    expression: Expression,
+    typeArguments: TypeExpression[] | undefined,
+    argumentsArray?: Expression[]
+  ) {
+    return new Call(expression, typeArguments, argumentsArray);
   }
 
   createParameter(
@@ -425,15 +434,19 @@ export class VueGenerator extends BaseGenerator {
     typeParameters: any,
     type: TypeExpression
   ) {
-    return addEmptyToString<TypeAliasDeclaration>(
-      super.createTypeAliasDeclaration(
-        decorators,
-        modifiers,
-        name,
-        typeParameters,
-        type
-      )
+    const base = super.createTypeAliasDeclaration(
+      decorators,
+      modifiers,
+      name,
+      typeParameters,
+      type
     );
+
+    if (base instanceof TypeAliasDeclaration) {
+      return addEmptyToString<TypeAliasDeclaration>(base);
+    }
+
+    return base;
   }
 
   createTypeOperatorNode(type: TypeExpression) {

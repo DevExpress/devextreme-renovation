@@ -2,18 +2,13 @@
 function view() {}
 const WidgetInput = {
   size: {
-    default() {
-      return { width: 10, height: 20 };
-    },
+    required: true,
   },
   type: {
     type: String,
-    default() {
-      return "type";
-    },
+    required: true,
   },
 };
-
 import { convertRulesToOptions } from "../../../../component_declaration/default_options";
 
 const __defaultOptionRules = [];

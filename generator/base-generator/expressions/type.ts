@@ -205,7 +205,13 @@ export class ExpressionWithTypeArguments extends ExpressionWithExpression {
       return typeArgument.type;
     }
     if (this.expression instanceof Call) {
-      return this.expression.arguments[0];
+      if (this.expression.arguments[0]) {
+        return this.expression.arguments[0];
+      }
+      const typeArgument = this.expression.typeArguments?.[0];
+      if (typeArgument instanceof TypeReferenceNode) {
+        return typeArgument.type;
+      }
     }
     return this.typeNode;
   }

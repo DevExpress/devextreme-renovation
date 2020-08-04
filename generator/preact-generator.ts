@@ -115,12 +115,8 @@ export class PreactComponent extends ReactComponent {
     return processModuleFileName(module);
   }
 
-  defaultPropsDest() {
-    return `(${this.name} as any).defaultProps`;
-  }
-
   compileRestProps() {
-    return "declare type RestProps = { className?: string; style?: { [name: string]: any }; [x: string]: any }";
+    return "declare type RestProps = { className?: string; style?: { [name: string]: any }, key?: any, ref?: any }";
   }
 
   compileDefaultComponentExport() {

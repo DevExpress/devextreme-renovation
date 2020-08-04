@@ -1,10 +1,12 @@
-import React, { useCallback } from "react";
+import React, { useCallback, HtmlHTMLAttributes } from "react";
 
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof {
+    height?: number;
+    width?: number;
+  }
+>;
 interface Widget {
   height?: number;
   width?: number;

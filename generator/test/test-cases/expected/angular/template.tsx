@@ -1,10 +1,10 @@
 import { Input, TemplateRef } from "@angular/core";
 export class WidgetInput {
   @Input() someProp: boolean = false;
-  @Input() headerTemplate?: TemplateRef<any>;
-  @Input() template!: TemplateRef<any>;
-  @Input() contentTemplate!: TemplateRef<any>;
-  @Input() footerTemplate!: TemplateRef<any>;
+  @Input() headerTemplate?: TemplateRef<any> | null = null;
+  @Input() template: TemplateRef<any> | null = null;
+  @Input() contentTemplate: TemplateRef<any> | null = null;
+  @Input() footerTemplate: TemplateRef<any> | null = null;
 }
 
 import { Component, NgModule } from "@angular/core";

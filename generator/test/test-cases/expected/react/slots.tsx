@@ -2,6 +2,7 @@ function view(viewModel: Widget) {
   return (
     <div>
       <div>{viewModel.props.namedSlot}</div>
+
       <div>{viewModel.props.children}</div>
     </div>
   );
@@ -11,14 +12,12 @@ export declare type WidgetInputType = {
   children?: React.ReactNode;
 };
 const WidgetInput: WidgetInputType = {};
+import React, { useCallback, HtmlHTMLAttributes } from "react";
 
-import React, { useCallback } from "react";
-
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof WidgetInput
+>;
 interface Widget {
   props: typeof WidgetInput & RestProps;
   restAttributes: RestProps;
@@ -32,6 +31,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     },
     [props]
   );
+
   return view({
     props: { ...props },
     restAttributes: __restAttributes(),

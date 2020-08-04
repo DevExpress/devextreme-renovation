@@ -1,25 +1,28 @@
+import Props from "./component-bindings-only";
 function view(model: Widget) {
-  return <div></div>;
+  return <div>{model.props.height}</div>;
 }
-export declare type WidgetInputType = {
-  prop?: boolean;
+export declare type WidgetPropsType = {
+  height?: number;
 };
-const WidgetInput: WidgetInputType = {};
+const WidgetProps: WidgetPropsType = {
+  height: Props.height,
+};
 import React, { useCallback, HtmlHTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HtmlHTMLAttributes<HTMLDivElement>,
-  keyof typeof WidgetInput
+  keyof typeof WidgetProps
 >;
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: typeof WidgetProps & RestProps;
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+export default function Widget(props: typeof WidgetProps & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { prop, ...restProps } = props;
+      const { height, ...restProps } = props;
       return restProps;
     },
     [props]
@@ -32,5 +35,5 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 }
 
 Widget.defaultProps = {
-  ...WidgetInput,
+  ...WidgetProps,
 };

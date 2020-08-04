@@ -2,13 +2,9 @@ function view(model: Widget) {
   return <div></div>;
 }
 
-import React, { useCallback } from "react";
+import React, { useCallback, HtmlHTMLAttributes } from "react";
 
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<HtmlHTMLAttributes<HTMLDivElement>, keyof {}>;
 interface Widget {
   onClick: (e: Event) => any;
   onPointerMove: (a: any, b: any, c: any) => any;

@@ -282,15 +282,6 @@ export class AngularComponent extends Component {
   }
 
   processMembers(members: Array<Property | Method>) {
-    this.heritageClauses.forEach((h) => {
-      if (h.isRequired) {
-        h.members
-          .filter((m) => m instanceof Property)
-          .forEach((m) => {
-            (m as Property).required = true;
-          });
-      }
-    });
     members = super.processMembers(members);
     members = members.concat(
       (members.filter((m) => m.isForwardRefProp) as Property[]).map((m) => {
@@ -371,6 +362,7 @@ export class AngularComponent extends Component {
           property.type.toString() !== "any"
             ? SyntaxKind.QuestionToken
             : undefined;
+
         members.push(
           new SetAccessor(
             undefined,
@@ -762,7 +754,7 @@ export class AngularComponent extends Component {
   compileDefaultOptions(constructorStatements: string[]): string {
     if (this.needGenerateDefaultOptions) {
       constructorStatements.push(`
-            const defaultOptions = convertRulesToOptions(__defaultOptionRules);
+            const defaultOptions = convertRulesToOptions<${this.compilePropsType()}>(__defaultOptionRules);
             Object.keys(defaultOptions).forEach(option=>{
                 (this as any)[option] = (defaultOptions as any)[option];
             });`);

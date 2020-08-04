@@ -609,7 +609,7 @@ mocha.describe("Vue-generator", function () {
         );
       });
 
-      mocha.it("Property with initializer", function () {
+      mocha.it("Property with initializer - number", function () {
         const expression = generator.createProperty(
           decorators,
           undefined,
@@ -621,9 +621,31 @@ mocha.describe("Vue-generator", function () {
 
         assert.strictEqual(
           getAst(expression.toString({ members: [] })),
-          getAst(`p: { default(){
-                    return 10;
-                }}`)
+          getAst(`p: { 
+            type: Number,
+            default(){
+              return 10;
+          }}`)
+        );
+      });
+
+      mocha.it("Property with initializer string", function () {
+        const expression = generator.createProperty(
+          decorators,
+          undefined,
+          name,
+          undefined,
+          undefined,
+          generator.createStringLiteral("10")
+        );
+
+        assert.strictEqual(
+          getAst(expression.toString({ members: [] })),
+          getAst(`p: { 
+            type: String,
+            default(){
+              return "10";
+          }}`)
         );
       });
 
@@ -791,6 +813,41 @@ mocha.describe("Vue-generator", function () {
   });
 
   mocha.describe("Call", function () {
+    mocha.it("Call with typeParameter", function () {
+      assert.equal(
+        generator
+          .createCall(
+            generator.createIdentifier("a"),
+            [
+              generator.createTypeParameterDeclaration(
+                generator.createIdentifier("TypeParameter")
+              ),
+            ],
+            []
+          )
+          .toString(),
+        "a()"
+      );
+    });
+
+    mocha.it("CallChain with typeParameter", function () {
+      assert.equal(
+        generator
+          .createCallChain(
+            generator.createIdentifier("a"),
+            generator.SyntaxKind.QuestionDotToken,
+            [
+              generator.createTypeParameterDeclaration(
+                generator.createIdentifier("TypeParameter")
+              ),
+            ],
+            []
+          )
+          .toString(),
+        "a?.()"
+      );
+    });
+
     mocha.it("Call expression generates usual call if not event", function () {
       assert.equal(
         generator

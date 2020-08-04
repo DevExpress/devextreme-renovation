@@ -2,6 +2,7 @@ import { toStringOptions } from "../types";
 import SyntaxKind from "../syntaxKind";
 import { ExpressionWithExpression, Expression, SimpleExpression } from "./base";
 import { TypeExpression } from "./type";
+import { compileTypeParameters } from "../utils/string";
 
 export class Identifier extends SimpleExpression {
   constructor(name: string) {
@@ -49,16 +50,16 @@ export class Paren extends ExpressionWithExpression {
 }
 
 export class Call extends ExpressionWithExpression {
-  typeArguments: any[];
-  argumentsArray: Expression[];
   constructor(
     expression: Expression,
-    typeArguments: any,
-    argumentsArray: Expression[] = []
+    public typeArguments?: TypeExpression[],
+    public argumentsArray: Expression[] = []
   ) {
     super(expression);
-    this.typeArguments = typeArguments;
-    this.argumentsArray = argumentsArray;
+  }
+
+  compileTypeArguments() {
+    return compileTypeParameters(this.typeArguments);
   }
 
   get arguments() {
@@ -68,7 +69,9 @@ export class Call extends ExpressionWithExpression {
   toString(options?: toStringOptions) {
     return `${this.expression.toString(
       options
-    )}(${this.argumentsArray.map((a) => a.toString(options)).join(",")})`;
+    )}${this.compileTypeArguments()}(${this.argumentsArray
+      .map((a) => a.toString(options))
+      .join(",")})`;
   }
 
   getDependency() {
