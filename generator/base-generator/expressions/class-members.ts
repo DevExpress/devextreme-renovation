@@ -228,7 +228,7 @@ export class GetAccessor extends Method {
     modifiers: string[] = [],
     name: Identifier,
     parameters: Parameter[],
-    type?: TypeExpression,
+    type?: TypeExpression | string,
     body?: Block
   ) {
     super(

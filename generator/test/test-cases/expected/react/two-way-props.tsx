@@ -27,7 +27,7 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const [__state_selected, __state_setSelected] = useState(() =>
+  const [__state_selected, __state_setSelected] = useState<boolean>(() =>
     props.selected !== undefined ? props.selected : props.defaultSelected!
   );
 

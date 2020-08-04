@@ -6,10 +6,15 @@ import {
 
 @ComponentBindings()
 export class GridCell {
-  @OneWay() data?: string = "";
+  @OneWay() gridData?: string = "";
+}
+
+@ComponentBindings()
+export class GridRow {
+  @Nested() gridDataCells?: (GridCell | string)[];
 }
 
 @ComponentBindings()
 export class WithNestedInput {
-  @Nested() cells?: (GridCell | string)[];
+  @Nested() gridDataRows?: GridRow[];
 }

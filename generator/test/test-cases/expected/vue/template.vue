@@ -23,8 +23,8 @@ export const WidgetInput = {
     type: Boolean,
     default() {
       return false;
-    }
-  }
+    },
+  },
 };
 
 export default {

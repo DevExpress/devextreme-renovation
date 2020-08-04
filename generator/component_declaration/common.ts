@@ -143,7 +143,7 @@ export function JSXComponent<
       (Props && new Props()) || ({} as DefaultPropsType); // for testing purpose
     props!: PropsType & { ref?: React.Component<PropsType> };
     restAttributes: { [name: string]: any } = {
-      restAttributes: "restAttributes",
+      "rest-attributes": "restAttributes",
     }; // for testing purpose
     setState() {}
   };

@@ -28,7 +28,7 @@ interface RefOnChildrenParent {
 
 export default function RefOnChildrenParent(props: typeof Props & RestProps) {
   const child = useRef<HTMLDivElement>();
-  const [__state_state, __state_setState] = useState(10);
+  const [__state_state, __state_setState] = useState<number>(10);
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {

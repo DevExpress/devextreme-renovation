@@ -43,13 +43,15 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const [__state_state1, __state_setState1] = useState(() =>
-    props.state1 !== undefined ? props.state1 : props.defaultState1
+  const [__state_state1, __state_setState1] = useState<boolean | undefined>(
+    () => (props.state1 !== undefined ? props.state1 : props.defaultState1)
   );
-  const [__state_state2, __state_setState2] = useState(() =>
+  const [__state_state2, __state_setState2] = useState<boolean>(() =>
     props.state2 !== undefined ? props.state2 : props.defaultState2!
   );
-  const [__state_stateProp, __state_setStateProp] = useState(() =>
+  const [__state_stateProp, __state_setStateProp] = useState<
+    boolean | undefined
+  >(() =>
     props.stateProp !== undefined ? props.stateProp : props.defaultStateProp
   );
 

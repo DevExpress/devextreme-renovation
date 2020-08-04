@@ -12,7 +12,7 @@ interface Widget {
 }
 
 export default function Widget(props: {} & RestProps) {
-  const [__state__hovered, __state_set_hovered] = useState(false);
+  const [__state__hovered, __state_set_hovered] = useState<Boolean>(false);
 
   const updateState = useCallback(
     function updateState(): any {

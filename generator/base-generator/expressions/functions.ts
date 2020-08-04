@@ -175,12 +175,21 @@ export class BaseFunction extends Expression {
         ? this.body.statements
         : [this.body]
       ).reduce((v: VariableExpression, statement) => {
-        if (statement instanceof VariableStatement ) {
+        if (statement instanceof VariableStatement) {
           const allVars = statement.declarationList.getVariableExpressions();
           const vars: VariableExpression = {};
-          for(const varName in allVars) {
-            const expr = allVars[varName] instanceof Paren ? (allVars[varName] as Paren).expression : allVars[varName];
-            if(members.some(m => m.isTemplate && m.getter(options!.componentContext) === expr.toString())) {
+          for (const varName in allVars) {
+            const expr =
+              allVars[varName] instanceof Paren
+                ? (allVars[varName] as Paren).expression
+                : allVars[varName];
+            if (
+              members.some(
+                (m) =>
+                  m.isTemplate &&
+                  m.getter(options!.componentContext) === expr.toString()
+              )
+            ) {
               vars[varName] = allVars[varName];
             }
           }

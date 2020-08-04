@@ -41,11 +41,11 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const [__state_s, __state_setS] = useState(() =>
+  const [__state_s, __state_setS] = useState<number>(() =>
     props.s !== undefined ? props.s : props.defaultS!
   );
-  const [__state_i, __state_setI] = useState(10);
-  const [__state_j, __state_setJ] = useState(20);
+  const [__state_i, __state_setI] = useState<number>(10);
+  const [__state_j, __state_setJ] = useState<number>(20);
 
   const getP = useCallback(
     function getP(): any {
