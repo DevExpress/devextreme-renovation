@@ -1,12 +1,9 @@
 function view() {}
 export declare type WidgetInputType = {
-  size?: { width: number; height: number };
-  type?: string;
+  size: { width: number; height: number };
+  type: string;
 };
-const WidgetInput: WidgetInputType = {
-  size: { width: 10, height: 20 },
-  type: "type",
-};
+const WidgetInput: WidgetInputType = {} as WidgetInputType;
 import {
   convertRulesToOptions,
   Rule,
@@ -15,18 +12,16 @@ import React, { useCallback, HtmlHTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HtmlHTMLAttributes<HTMLDivElement>,
-  keyof Required<typeof WidgetInput>
+  keyof typeof WidgetInput
 >;
 interface Widget {
-  props: Required<typeof WidgetInput> & RestProps;
+  props: typeof WidgetInput & RestProps;
   getHeight: number;
   type: string;
   restAttributes: RestProps;
 }
 
-export default function Widget(
-  props: Required<typeof WidgetInput> & RestProps
-) {
+export default function Widget(props: typeof WidgetInput & RestProps) {
   const __getHeight = useCallback(
     function __getHeight(): number {
       return props.size.height;
@@ -65,8 +60,6 @@ export function defaultOptions(rule: WidgetOptionRule) {
   __defaultOptionRules.push(rule);
   Widget.defaultProps = {
     ...__createDefaultProps(),
-    ...convertRulesToOptions<Required<typeof WidgetInput>>(
-      __defaultOptionRules
-    ),
+    ...convertRulesToOptions<typeof WidgetInput>(__defaultOptionRules),
   };
 }

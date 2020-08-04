@@ -18,8 +18,6 @@ export class BaseClassMember extends Expression {
 
   scope: string = "";
 
-  required: boolean = false;
-
   prefix: string = "";
 
   constructor(
@@ -110,9 +108,6 @@ export class BaseClassMember extends Expression {
   }
 
   get canBeDestructured() {
-    if (this.required) {
-      return false;
-    }
     return this.name === this._name.toString();
   }
 

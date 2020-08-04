@@ -2,8 +2,8 @@ function view() {}
 
 import { Input } from "@angular/core";
 class WidgetInput {
-  @Input() size?: { width: number; height: number } = { width: 10, height: 20 };
-  @Input() type?: string = "type";
+  @Input() size!: { width: number; height: number };
+  @Input() type!: string;
 }
 
 import { Component, NgModule } from "@angular/core";
@@ -22,10 +22,11 @@ export function defaultOptions(rule: WidgetOptionRule) {
 @Component({ selector: "dx-widget" })
 export default class Widget extends WidgetInput {
   get __getHeight(): number {
-    return this.size!.height;
+    return this.size.height;
   }
   get __type(): string {
-    return this.type!;
+    const { type } = this;
+    return type;
   }
   get __restAttributes(): any {
     return {};

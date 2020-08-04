@@ -101,7 +101,6 @@ export class Property extends BaseProperty {
   }
 
   getter(componentContext?: string) {
-    const suffix = this.required ? "!" : "";
     componentContext = this.processComponentContext(componentContext);
     if (this.isEvent) {
       return `${componentContext}_${this.name}`;
@@ -124,9 +123,9 @@ export class Property extends BaseProperty {
       return `${componentContext}${this.name}`;
     }
     if (this._hasDecorator(Decorators.ApiRef)) {
-      return `${componentContext}${this.name}${suffix}`;
+      return `${componentContext}${this.name}`;
     }
-    return `${componentContext}${this.name}${suffix}`;
+    return `${componentContext}${this.name}`;
   }
 
   getDependency() {

@@ -77,15 +77,6 @@ export class HeritageClause {
     return this.types.some((t) => t.isJsxComponent);
   }
 
-  get isRequired() {
-    if (this.types[0].expression instanceof Call) {
-      return this.types[0].expression.typeArguments?.[0]
-        .toString()
-        .startsWith("Required");
-    }
-    return false;
-  }
-
   get requiredProps() {
     if (
       this.types[0].expression instanceof Call &&

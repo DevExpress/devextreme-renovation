@@ -286,15 +286,6 @@ export class AngularComponent extends Component {
   }
 
   processMembers(members: Array<Property | Method>) {
-    this.heritageClauses.forEach((h) => {
-      if (h.isRequired) {
-        h.members
-          .filter((m) => m instanceof Property)
-          .forEach((m) => {
-            (m as Property).required = true;
-          });
-      }
-    });
     members = super.processMembers(members);
     members = members.concat(
       (members.filter((m) => m.isForwardRefProp) as Property[]).map((m) => {
