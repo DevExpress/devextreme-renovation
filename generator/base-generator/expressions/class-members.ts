@@ -4,7 +4,11 @@ import { Expression, SimpleExpression } from "./base";
 import { toStringOptions } from "../types";
 import { Parameter } from "./functions";
 import { Block } from "./statements";
-import { compileType, processComponentContext } from "../utils/string";
+import {
+  compileType,
+  processComponentContext,
+  calculateType,
+} from "../utils/string";
 import { Decorator } from "./decorator";
 import { Decorators } from "../../component_declaration/decorators";
 import { TypeParameterDeclaration } from "./type-parameter-declaration";
@@ -263,11 +267,17 @@ export class Property extends BaseClassMember {
     modifiers: string[] = [],
     name: Identifier,
     questionOrExclamationToken: string = "",
-    type: TypeExpression | string = new SimpleTypeExpression(""),
+    type?: TypeExpression | string,
     initializer?: Expression,
     inherited: boolean = false
   ) {
-    super(decorators, modifiers, name, type, inherited);
+    super(
+      decorators,
+      modifiers,
+      name,
+      type || new SimpleTypeExpression(calculateType(initializer) || "any"),
+      inherited
+    );
     this.questionOrExclamationToken = questionOrExclamationToken;
     this.initializer = initializer;
   }
@@ -275,9 +285,7 @@ export class Property extends BaseClassMember {
   typeDeclaration() {
     return `${this.name}${compileType(
       this.type.toString(),
-      this.questionOrExclamationToken,
-      this.initializer,
-      "any"
+      this.questionOrExclamationToken
     )}`;
   }
 

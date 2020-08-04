@@ -12,7 +12,6 @@ import SyntaxKind from "../../../base-generator/syntaxKind";
 import {
   capitalizeFirstLetter,
   removePlural,
-  calculateType,
 } from "../../../base-generator/utils/string";
 import {
   StringLiteral,
@@ -29,9 +28,6 @@ function calculatePropertyType(
 ): string {
   if (type instanceof SimpleTypeExpression) {
     const typeString = type.type.toString();
-    if (typeString === "") {
-      return capitalizeFirstLetter(calculateType(initializer));
-    }
     if (
       typeString !== SyntaxKind.AnyKeyword &&
       typeString !== SyntaxKind.UndefinedKeyword

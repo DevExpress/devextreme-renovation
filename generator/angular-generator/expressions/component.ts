@@ -35,11 +35,7 @@ import { isElement } from "./jsx/elements";
 import { GeneratorContext } from "../../base-generator/types";
 import { ComponentInput } from "./component-input";
 import { getModuleRelativePath } from "../../base-generator/utils/path-utils";
-import {
-  removePlural,
-  compileType,
-  calculateType,
-} from "../../base-generator/utils/string";
+import { removePlural, compileType } from "../../base-generator/utils/string";
 
 export function compileCoreImports(
   members: Array<Property | Method>,
@@ -379,9 +375,7 @@ export class AngularComponent extends Component {
                 undefined,
                 member._name,
                 token,
-                member.type.toString() ||
-                  calculateType(property.initializer) ||
-                  "any",
+                member.type,
                 undefined
               ),
             ],
