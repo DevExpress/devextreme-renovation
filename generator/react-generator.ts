@@ -415,12 +415,7 @@ export class Property extends BaseProperty {
         ? ""
         : this.questionOrExclamationToken;
 
-    const typeString = compileType(
-      type.toString(),
-      questionOrExclamationToken,
-      this.initializer,
-      "any"
-    );
+    const typeString = compileType(type.toString(), questionOrExclamationToken);
 
     return `${this.name}${typeString}`;
   }

@@ -32,15 +32,7 @@ export const calculateType = (initializer?: Expression): string => {
   return "";
 };
 
-export const compileType = (
-  type: string = "",
-  questionToken: string = "",
-  initializer?: Expression,
-  defaultType = ""
-) => {
-  if (!type) {
-    type = calculateType(initializer) || defaultType;
-  }
+export const compileType = (type: string = "", questionToken: string = "") => {
   return type ? `${questionToken}:${type}` : "";
 };
 
