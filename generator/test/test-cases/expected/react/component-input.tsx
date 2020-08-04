@@ -1,27 +1,22 @@
 export const COMPONENT_INPUT_CLASS = "c3";
-
 function view(model: Widget) {
   return <div></div>;
 }
-
 export declare type WidgetPropsType = {
   height?: number;
   width?: number;
   children?: React.ReactNode;
 };
-
 export const WidgetProps: WidgetPropsType = {
   height: 10,
   width: 10,
 };
+import React, { useCallback, HtmlHTMLAttributes } from "react";
 
-import React, { useCallback } from "react";
-
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof WidgetProps
+>;
 interface Widget {
   props: typeof WidgetProps & RestProps;
   onClick: () => any;

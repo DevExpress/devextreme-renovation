@@ -15,18 +15,16 @@ export const WidgetProps: WidgetPropsType = {
   defaultP2: "",
   p2Change: () => {},
 };
-
 import {
   convertRulesToOptions,
   Rule,
 } from "../../../../component_declaration/default_options";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, HtmlHTMLAttributes } from "react";
 
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof WidgetProps
+>;
 interface Widget {
   props: typeof WidgetProps & RestProps;
   restAttributes: RestProps;

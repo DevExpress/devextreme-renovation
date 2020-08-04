@@ -16,14 +16,12 @@ const ModelWidgetInput: ModelWidgetInputType = {
   modelStatePropChange: () => {},
   valueChange: () => {},
 };
+import React, { useState, useCallback, HtmlHTMLAttributes } from "react";
 
-import React, { useState, useCallback } from "react";
-
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof ModelWidgetInput
+>;
 interface ModelWidget {
   props: typeof ModelWidgetInput & RestProps;
   restAttributes: RestProps;

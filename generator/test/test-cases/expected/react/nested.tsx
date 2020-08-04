@@ -3,7 +3,7 @@ function view(model: Widget) {
   return <div />;
 }
 
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, HtmlHTMLAttributes } from "react";
 import {
   GridColumnType,
   EditingType,
@@ -16,11 +16,10 @@ export const Custom: React.FunctionComponent<CustomType> = () => null;
 export const AnotherCustom: React.FunctionComponent<AnotherCustomType> = () =>
   null;
 
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof WidgetInput
+>;
 interface Widget {
   props: typeof WidgetInput & RestProps;
   getColumns: () => any;

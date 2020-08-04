@@ -3,15 +3,16 @@ function view(model: Widget) {
 }
 export declare type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
-
 import * as Preact from "preact";
 import { useCallback, useImperativeHandle } from "preact/hooks";
 import { forwardRef } from "preact/compat";
+
 export type WidgetRef = { getValue: () => any };
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
-  [x: string]: any;
+  key?: any;
+  ref?: any;
 };
 interface Widget {
   props: typeof WidgetInput & RestProps;
@@ -45,6 +46,6 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
 );
 export { Widget };
 
-(Widget as any).defaultProps = {
+Widget.defaultProps = {
   ...WidgetInput,
 };

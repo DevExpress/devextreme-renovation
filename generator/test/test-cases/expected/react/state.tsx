@@ -1,9 +1,9 @@
 import BaseState from "./model";
-
 function view(model: Widget) {
   return (
     <div>
       {model.props.state1}
+
       <BaseState baseStatePropChange={model.stateChange}></BaseState>
     </div>
   );
@@ -12,12 +12,10 @@ export declare type WidgetInputType = {
   state1?: boolean;
   state2: boolean;
   stateProp?: boolean;
-
   defaultState1?: boolean;
   state1Change?: (state1: boolean) => void;
   defaultState2?: boolean;
   state2Change?: (state2: boolean) => void;
-
   defaultStateProp?: boolean;
   statePropChange?: (stateProp: boolean) => void;
 };
@@ -29,14 +27,12 @@ const WidgetInput: WidgetInputType = {
   state2Change: () => {},
   statePropChange: () => {},
 };
+import React, { useState, useCallback, HtmlHTMLAttributes } from "react";
 
-import React, { useState, useCallback } from "react";
-
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof WidgetInput
+>;
 interface Widget {
   props: typeof WidgetInput & RestProps;
   updateState: () => any;
@@ -77,14 +73,12 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     },
     [props.state2, __state_state2, props.state2Change]
   );
-
   const destruct = useCallback(
     function destruct(): any {
       const s = props.state1 !== undefined ? props.state1 : __state_state1;
     },
     [props.state1, __state_state1]
   );
-
   const stateChange = useCallback(
     function stateChange(stateProp: boolean): any {
       __state_setStateProp((__state_stateProp) => stateProp),

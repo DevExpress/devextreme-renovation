@@ -4,24 +4,19 @@ export declare type WidgetInputType = {
   type?: string;
 };
 const WidgetInput: WidgetInputType = {
-  size: {
-    width: 10,
-    height: 20,
-  },
+  size: { width: 10, height: 20 },
   type: "type",
 };
-
 import {
   convertRulesToOptions,
   Rule,
 } from "../../../../component_declaration/default_options";
-import React, { useCallback } from "react";
+import React, { useCallback, HtmlHTMLAttributes } from "react";
 
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof Required<typeof WidgetInput>
+>;
 interface Widget {
   props: Required<typeof WidgetInput> & RestProps;
   getHeight: number;

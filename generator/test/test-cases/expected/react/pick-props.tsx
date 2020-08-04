@@ -8,13 +8,12 @@ export declare type WidgetPropsType = {
 const WidgetProps: WidgetPropsType = {
   height: Props.height,
 };
-import React, { useCallback } from "react";
+import React, { useCallback, HtmlHTMLAttributes } from "react";
 
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof WidgetProps
+>;
 interface Widget {
   props: typeof WidgetProps & RestProps;
   restAttributes: RestProps;

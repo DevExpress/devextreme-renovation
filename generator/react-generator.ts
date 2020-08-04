@@ -734,7 +734,12 @@ export class ReactComponent extends Component {
   }
 
   compileImportStatements(hooks: string[], compats: string[]) {
-    return [`import React, {${hooks.concat(compats).join(",")}} from 'react';`];
+    return [
+      `import React, {${hooks
+        .concat(compats)
+        .concat(["HtmlHTMLAttributes"])
+        .join(",")}} from 'react';`,
+    ];
   }
 
   compileImports() {
@@ -1015,24 +1020,20 @@ export class ReactComponent extends Component {
   }
 
   compileRestProps(): string {
-    return "declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any }";
+    return `declare type RestProps = Omit<HtmlHTMLAttributes<HTMLDivElement>, keyof ${this.getPropsType()}>`;
   }
 
-  compilePropsType() {
-    const restPropsType = " & RestProps";
-
+  getPropsType() {
     if (this.isJSXComponent) {
       const type = this.heritageClauses[0].types[0];
       if (
         type.expression instanceof Call &&
         type.expression.typeArguments?.length
       ) {
-        return type.expression.typeArguments[0]
-          .toString()
-          .concat(restPropsType);
+        return type.expression.typeArguments[0].toString();
       }
 
-      return this.compileDefaultOptionsPropsType().concat(restPropsType);
+      return this.compileDefaultOptionsPropsType();
     }
     return `{
             ${this.props
@@ -1040,7 +1041,11 @@ export class ReactComponent extends Component {
               .concat(this.slots)
               .map((p) => p.typeDeclaration())
               .join(",\n")}
-        }${restPropsType}`;
+        }`;
+  }
+
+  compilePropsType() {
+    return this.getPropsType().concat(" & RestProps");
   }
 
   compileDefaultOptionsPropsType() {

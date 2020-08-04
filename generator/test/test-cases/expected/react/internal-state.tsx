@@ -2,13 +2,9 @@ function view(model: Widget) {
   return <span></span>;
 }
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, HtmlHTMLAttributes } from "react";
 
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<HtmlHTMLAttributes<HTMLDivElement>, keyof {}>;
 interface Widget {
   _hovered: Boolean;
   updateState: () => any;
@@ -24,7 +20,6 @@ export default function Widget(props: {} & RestProps) {
     },
     [__state__hovered]
   );
-
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { ...restProps } = props;

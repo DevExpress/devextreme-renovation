@@ -6,13 +6,10 @@ export declare type WidgetInputType = {
   footerTemplate: (props: { someProp: boolean }) => any;
   headerRender?: any;
   headerComponent?: any;
-
   render?: any;
   component?: any;
-
   contentRender?: any;
   contentComponent?: any;
-
   footerRender?: any;
   footerComponent?: any;
 };
@@ -22,13 +19,12 @@ export const WidgetInput: WidgetInputType = {
   contentTemplate: (props) => <div>{props.data.p1}</div>,
   footerTemplate: () => <div></div>,
 };
-import React, { useCallback } from "react";
+import React, { useCallback, HtmlHTMLAttributes } from "react";
 
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof WidgetInput
+>;
 interface Widget {
   props: typeof WidgetInput & RestProps;
   restAttributes: RestProps;
@@ -105,7 +101,6 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 Widget.defaultProps = {
   ...WidgetInput,
 };
-
 function view(viewModel: Widget) {
   const myvar = viewModel.props.someProp;
   const FooterTemplate = viewModel.props.footerTemplate;
