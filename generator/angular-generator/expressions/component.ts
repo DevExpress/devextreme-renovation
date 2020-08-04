@@ -691,7 +691,7 @@ export class AngularComponent extends Component {
   compileDefaultOptions(constructorStatements: string[]): string {
     if (this.needGenerateDefaultOptions) {
       constructorStatements.push(`
-            const defaultOptions = convertRulesToOptions(__defaultOptionRules);
+            const defaultOptions = convertRulesToOptions<${this.compilePropsType()}>(__defaultOptionRules);
             Object.keys(defaultOptions).forEach(option=>{
                 (this as any)[option] = (defaultOptions as any)[option];
             });`);

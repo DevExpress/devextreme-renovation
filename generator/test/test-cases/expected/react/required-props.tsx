@@ -65,6 +65,8 @@ export function defaultOptions(rule: WidgetOptionRule) {
   __defaultOptionRules.push(rule);
   Widget.defaultProps = {
     ...__createDefaultProps(),
-    ...convertRulesToOptions(__defaultOptionRules),
+    ...convertRulesToOptions<Required<typeof WidgetInput>>(
+      __defaultOptionRules
+    ),
   };
 }

@@ -32,7 +32,9 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
 function __createDefaultProps() {
   return {
     ...WidgetProps,
-    ...convertRulesToOptions([{ device: true, options: {} }]),
+    ...convertRulesToOptions<typeof WidgetProps>([
+      { device: true, options: {} },
+    ]),
   };
 }
 Widget.defaultProps = __createDefaultProps();
@@ -44,6 +46,6 @@ export function defaultOptions(rule: WidgetOptionRule) {
   __defaultOptionRules.push(rule);
   Widget.defaultProps = {
     ...__createDefaultProps(),
-    ...convertRulesToOptions(__defaultOptionRules),
+    ...convertRulesToOptions<typeof WidgetProps>(__defaultOptionRules),
   };
 }
