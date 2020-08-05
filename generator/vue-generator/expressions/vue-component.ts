@@ -139,14 +139,8 @@ export class VueComponent extends Component {
   }
 
   createPropsGetter(members: Array<Property | Method>) {
-    const defaultStatePropsName = members
-      .filter((p) => p.isState)
-      .map((m) => `default${capitalizeFirstLetter(m.name)}`);
-    const props = getProps(members).filter(
-      (m) => !defaultStatePropsName.some((s) => s === m.name)
-    );
     const expression = new ObjectLiteral(
-      props.map(
+      getProps(members).map(
         (p) =>
           new PropertyAssignment(
             p._name,
@@ -198,9 +192,7 @@ export class VueComponent extends Component {
             new Identifier(`${m._name}_state`),
             "",
             m.type,
-            new SimpleExpression(
-              `this.default${capitalizeFirstLetter(base.name)}`
-            )
+            new SimpleExpression(`this.${base.name}`)
           )
         );
       }
@@ -300,35 +292,21 @@ export class VueComponent extends Component {
       let props = this.heritageClauses[0].propsType.toString();
       if (this.needGenerateDefaultOptions) {
         props = `(()=>{
-                      const twoWayProps = [${this.state.map(
-                        (s) => `"${s.name}"`
-                      )}];
-                      return Object.keys(${props}).reduce((props, propName)=>{
-                          const prop = {...${props}[propName]};
-                          
-                          const twoWayPropName = propName.indexOf("default") === 0 &&
-                                  twoWayProps.find(p=>"default"+p.charAt(0).toUpperCase() + p.slice(1)===propName);
-                          const defaultPropName = twoWayPropName? twoWayPropName: propName;
-  
-                          if(typeof prop.default === "function"){
-                              const defaultValue = prop.default;
-                              prop.default = function() {
-                                  return this._defaultOptions[defaultPropName] !== undefined
-                                      ? this._defaultOptions[defaultPropName] 
-                                      : defaultValue();
-                              }
-                          } else if(!twoWayProps.some(p=>p===propName)){
-                              const defaultValue = prop.default;
-                              prop.default = function() {
-                                  return this._defaultOptions[defaultPropName] !== undefined
-                                      ? this._defaultOptions[defaultPropName] 
-                                      : defaultValue;
-                              }
-                          }
-  
-                          props[propName] = prop;
-                          return props;
-                      }, {});
+                    return Object.keys(${props}).reduce((props, propName)=>{
+                        const prop = {...${props}[propName]};
+                        const defaultValue = prop.default;
+
+                        prop.default = function () {
+                          return this._defaultOptions[propName] !== undefined
+                            ? this._defaultOptions[propName]
+                            : typeof defaultValue === "function"
+                            ? defaultValue()
+                            : defaultValue;
+                        };
+
+                        props[propName] = prop;
+                        return props;
+                    }, {});
                   })()`;
       }
       return `props: ${props}`;
@@ -497,6 +475,16 @@ export class VueComponent extends Component {
         }`
       );
     }
+
+    this.state.forEach((p) => {
+      const stateName = p.name.toString();
+      const stateWatcherName = `__${stateName}_watcher`;
+      methods.push(`${stateWatcherName}(s) {
+                      this.${stateName}_state = s;
+                  }`);
+      watches[stateName] = watches[stateName] || [];
+      watches[stateName].push(`"${stateWatcherName}"`);
+    });
 
     const watchStatements = Object.keys(watches).map((k) => {
       return `${k}: [

@@ -1,12 +1,5 @@
 <template>
-  <div
-    v-bind:style="
-      __processStyle({
-        width: 100,
-        height: 100
-      })
-    "
-  ></div>
+  <div v-bind:style="__processStyle({ width: 100, height: 100 })"></div>
 </template>
 <script>
 export const InnerWidgetProps = {
@@ -14,10 +7,6 @@ export const InnerWidgetProps = {
     type: Boolean,
   },
   value: {
-    type: Number,
-    default: undefined,
-  },
-  defaultValue: {
     type: Number,
   },
 };
@@ -29,7 +18,7 @@ export default {
   },
   data() {
     return {
-      value_state: this.defaultValue,
+      value_state: this.value,
     };
   },
   computed: {
@@ -39,11 +28,14 @@ export default {
     props() {
       return {
         selected: this.selected,
-        value: this.value !== undefined ? this.value : this.value_state,
+        value: this.value_state,
         onSelect: this.onSelect,
         valueChange: this.valueChange,
       };
     },
+  },
+  watch: {
+    value: ["__value_watcher"],
   },
   methods: {
     __processStyle(value) {
@@ -64,6 +56,9 @@ export default {
     },
     valueChange(...args) {
       this.$emit("update:value", ...args);
+    },
+    __value_watcher(s) {
+      this.value_state = s;
     },
   },
 };

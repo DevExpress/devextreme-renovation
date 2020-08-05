@@ -1,5 +1,5 @@
 <template>
-  <div>{{(value !== undefined ? value : value_state)}}</div>
+  <div>{{ value_state }}</div>
 </template>
 <script>
 const ModelWidgetInput = {
@@ -8,16 +8,8 @@ const ModelWidgetInput = {
   },
   value: {
     type: Boolean,
-    default: undefined,
   },
   notValue: {
-    type: Boolean,
-    default: undefined,
-  },
-  defaultValue: {
-    type: Boolean,
-  },
-  defaultNotValue: {
     type: Boolean,
   },
 };
@@ -29,8 +21,8 @@ export default {
   },
   data() {
     return {
-      value_state: this.defaultValue,
-      notValue_state: this.defaultNotValue,
+      value_state: this.value,
+      notValue_state: this.notValue,
     };
   },
   computed: {
@@ -40,13 +32,16 @@ export default {
     props() {
       return {
         disabled: this.disabled,
-        value: this.value !== undefined ? this.value : this.value_state,
-        notValue:
-          this.notValue !== undefined ? this.notValue : this.notValue_state,
+        value: this.value_state,
+        notValue: this.notValue_state,
         valueChange: this.valueChange,
         notValueChange: this.notValueChange,
       };
     },
+  },
+  watch: {
+    value: ["__value_watcher"],
+    notValue: ["__notValue_watcher"],
   },
   methods: {
     valueChange(...args) {
@@ -54,6 +49,12 @@ export default {
     },
     notValueChange(...args) {
       this.$emit("update:not-value", ...args);
+    },
+    __value_watcher(s) {
+      this.value_state = s;
+    },
+    __notValue_watcher(s) {
+      this.notValue_state = s;
     },
   },
 };

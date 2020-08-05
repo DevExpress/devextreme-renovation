@@ -62,4 +62,8 @@ export class VueComponentInput extends ComponentInput {
     const initializer = `${component}.${name}.default`;
     return `typeof ${initializer}==="function"?${initializer}():${initializer}`;
   }
+
+  buildDefaultStateProperty() {
+    return null;
+  }
 }

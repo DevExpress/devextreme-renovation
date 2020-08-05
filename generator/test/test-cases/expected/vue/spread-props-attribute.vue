@@ -13,10 +13,6 @@ export const WidgetInput = {
   },
   value: {
     type: Boolean,
-    default: undefined,
-  },
-  defaultValue: {
-    type: Boolean,
   },
 };
 
@@ -31,7 +27,7 @@ export default {
   },
   data() {
     return {
-      value_state: this.defaultValue,
+      value_state: this.value,
     };
   },
   computed: {
@@ -41,14 +37,20 @@ export default {
     props() {
       return {
         visible: this.visible,
-        value: this.value !== undefined ? this.value : this.value_state,
+        value: this.value_state,
         valueChange: this.valueChange,
       };
     },
   },
+  watch: {
+    value: ["__value_watcher"],
+  },
   methods: {
     valueChange(...args) {
       this.$emit("update:value", ...args);
+    },
+    __value_watcher(s) {
+      this.value_state = s;
     },
   },
 };

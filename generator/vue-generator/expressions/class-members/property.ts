@@ -114,15 +114,10 @@ export class Property extends BaseProperty {
     if (this.questionOrExclamationToken === SyntaxKind.ExclamationToken) {
       parts.push("required: true");
     }
-    const isState = this.isState;
-    if (this.initializer && !isState) {
+    if (this.initializer) {
       parts.push(`default(){
                   return ${this.initializer}
               }`);
-    }
-
-    if (this.isState) {
-      parts.push("default: undefined");
     }
 
     return `${this.name}: {
@@ -134,7 +129,7 @@ export class Property extends BaseProperty {
     const baseValue = super.getter(componentContext);
     componentContext = this.processComponentContext(componentContext);
     if (this.isState) {
-      return `(${componentContext}${this.name} !== undefined ? ${componentContext}${this.name} : ${componentContext}${this.name}_state)`;
+      return `${componentContext}${this.name}_state`;
     }
     if (
       (this.isForwardRefProp || this.isRef || this.isForwardRef) &&
@@ -185,7 +180,7 @@ export class Property extends BaseProperty {
 
   getDependency() {
     if (this.isState) {
-      return super.getDependency().concat([`${this.name}_state`]);
+      return [`${this.name}_state`];
     }
     return super.getDependency();
   }
