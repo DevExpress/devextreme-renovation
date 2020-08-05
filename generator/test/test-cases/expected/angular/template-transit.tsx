@@ -5,8 +5,8 @@ import WidgetWithTemplate, {
 import { Input, TemplateRef } from "@angular/core";
 
 export class TemplateTransitWidgetInput {
-  @Input() templateProp?: TemplateRef<any>;
-  @Input() componentTemplateProp?: TemplateRef<any>;
+  @Input() templateProp?: TemplateRef<any> | null = null;
+  @Input() componentTemplateProp?: TemplateRef<any> | null = null;
 }
 
 import { Component, NgModule } from "@angular/core";

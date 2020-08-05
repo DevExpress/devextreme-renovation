@@ -11,14 +11,12 @@ const ChildInput: ChildInputType = {
   height: 10,
   onClick: () => {},
 };
+import React, { useCallback, HtmlHTMLAttributes } from "react";
 
-import React, { useCallback } from "react";
-
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof ChildInput
+>;
 interface Child {
   props: typeof ChildInput & RestProps;
   getProps: () => typeof WidgetProps;
@@ -32,7 +30,6 @@ export default function Child(props: typeof ChildInput & RestProps) {
     },
     [props.height]
   );
-
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { children, height, onClick, width, ...restProps } = props;

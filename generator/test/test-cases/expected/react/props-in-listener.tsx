@@ -6,14 +6,12 @@ export declare type PropsType = {
   onClick?: (e: any) => void;
 };
 export const Props: PropsType = {};
+import React, { useCallback, HtmlHTMLAttributes } from "react";
 
-import React, { useCallback } from "react";
-
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof Props
+>;
 interface Widget {
   props: typeof Props & RestProps;
   clickHandler: () => any;

@@ -1,22 +1,17 @@
 import "typescript";
-
 function view() {}
-
 export declare type WidgetPropsType = {};
-
 export const WidgetProps: WidgetPropsType = {};
-
 import {
   convertRulesToOptions,
   Rule,
 } from "../../../../component_declaration/default_options";
-import React, { useCallback } from "react";
+import React, { useCallback, HtmlHTMLAttributes } from "react";
 
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof WidgetProps
+>;
 interface Widget {
   props: typeof WidgetProps & RestProps;
   restAttributes: RestProps;
@@ -30,16 +25,18 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
     },
     [props]
   );
+
   return view();
 }
 
 function __createDefaultProps() {
   return {
     ...WidgetProps,
-    ...convertRulesToOptions([{ device: true, options: {} }]),
+    ...convertRulesToOptions<typeof WidgetProps>([
+      { device: true, options: {} },
+    ]),
   };
 }
-
 Widget.defaultProps = __createDefaultProps();
 
 type WidgetOptionRule = Rule<typeof WidgetProps>;
@@ -49,6 +46,6 @@ export function defaultOptions(rule: WidgetOptionRule) {
   __defaultOptionRules.push(rule);
   Widget.defaultProps = {
     ...__createDefaultProps(),
-    ...convertRulesToOptions(__defaultOptionRules),
+    ...convertRulesToOptions<typeof WidgetProps>(__defaultOptionRules),
   };
 }

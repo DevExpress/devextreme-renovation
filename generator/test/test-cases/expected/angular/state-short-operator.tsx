@@ -9,7 +9,7 @@ import { CommonModule } from "@angular/common";
 
 @Component({ selector: "dx-widget", template: `<div></div>` })
 export default class Widget extends WidgetInput {
-  innerState: any = 0;
+  innerState: number = 0;
   __updateState(): any {
     this._innerState = this.innerState + 1;
     this._innerState = this.innerState + 1;
@@ -31,7 +31,7 @@ export default class Widget extends WidgetInput {
       this.propStateChange
     );
   }
-  set _innerState(innerState: any) {
+  set _innerState(innerState: number) {
     this.innerState = innerState;
   }
 }

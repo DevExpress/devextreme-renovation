@@ -1,5 +1,4 @@
 import Props from "./component-bindings-only";
-
 import { Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
@@ -12,10 +11,8 @@ const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {
   __defaultOptionRules.push(rule);
 }
-@Component({
-  selector: "dx-widget",
-  template: `<div>{{ height }}</div>`,
-})
+
+@Component({ selector: "dx-widget", template: `<div>{{ height }}</div>` })
 export default class Widget extends Props {
   get __restAttributes(): any {
     return {};
@@ -24,7 +21,7 @@ export default class Widget extends Props {
   constructor() {
     super();
 
-    const defaultOptions = convertRulesToOptions(__defaultOptionRules);
+    const defaultOptions = convertRulesToOptions<Props>(__defaultOptionRules);
     Object.keys(defaultOptions).forEach((option) => {
       (this as any)[option] = (defaultOptions as any)[option];
     });

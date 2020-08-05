@@ -30,11 +30,13 @@ import ForwardRefChild from "./ref-on-children/child.tsx";
 import ForwardRefDeep from "./ref-on-children/forward-ref-deep.tsx";
 
 import TemplateApp from "./template-passing/template-app.tsx";
+import { PickPropsComponent } from "./pick-props.tsx";
 
 function view(model: App) {
   return (
     <div>
       <SimpleComponent width={25} height={25}></SimpleComponent>
+      <PickPropsComponent />
       <ButtonComponent id="button-1" onClick={model.onButtonClick}>
         {"DefaultSlot"}
       </ButtonComponent>

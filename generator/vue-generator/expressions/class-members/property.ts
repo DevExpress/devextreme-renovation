@@ -20,8 +20,12 @@ import {
 } from "../../../base-generator/expressions/literal";
 import { Property as BaseProperty } from "../../../base-generator/expressions/class-members";
 import { toStringOptions } from "../../types";
+import { Expression } from "../../../base-generator/expressions/base";
 
-function calculatePropertyType(type: TypeExpression | string): string {
+function calculatePropertyType(
+  type: TypeExpression | string,
+  initializer?: Expression
+): string {
   if (type instanceof SimpleTypeExpression) {
     const typeString = type.type.toString();
     if (
@@ -76,6 +80,10 @@ export class Property extends BaseProperty {
     return this._name.toString();
   }
 
+  typeDeclaration() {
+    return this.name;
+  }
+
   toString(options?: toStringOptions) {
     if (!options) {
       return super.toString();
@@ -97,7 +105,7 @@ export class Property extends BaseProperty {
     const type =
       this.isRefProp || this.isForwardRefProp
         ? "Function"
-        : calculatePropertyType(this.type);
+        : calculatePropertyType(this.type, this.initializer);
     const parts = [];
     if (type) {
       parts.push(`type: ${type}`);

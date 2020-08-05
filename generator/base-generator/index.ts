@@ -101,7 +101,10 @@ import {
   Spread,
 } from "./expressions/property-access";
 import { BindingPattern, BindingElement } from "./expressions/binding-pattern";
-import { ComponentInput } from "./expressions/component-input";
+import {
+  ComponentInput,
+  membersFromTypeDeclaration,
+} from "./expressions/component-input";
 import { Component } from "./expressions/component";
 import { ExpressionWithTypeArguments } from "./expressions/type";
 import { getModuleRelativePath, resolveModule } from "./utils/path-utils";
@@ -269,7 +272,7 @@ export default class Generator implements GeneratorAPI {
 
   createNew(
     expression: Expression,
-    typeArguments: string[] = [],
+    typeArguments: TypeExpression[] | undefined,
     argumentsArray: Expression[]
   ) {
     return new New(expression, typeArguments, argumentsArray);
@@ -447,7 +450,7 @@ export default class Generator implements GeneratorAPI {
 
   createCall(
     expression: Expression,
-    typeArguments: any,
+    typeArguments: TypeExpression[] | undefined,
     argumentsArray?: Expression[]
   ) {
     return new Call(expression, typeArguments, argumentsArray);
@@ -971,6 +974,31 @@ export default class Generator implements GeneratorAPI {
     typeParameters: TypeParameterDeclaration[] | undefined,
     type: TypeExpression
   ) {
+    const members = membersFromTypeDeclaration(type, this.getContext());
+
+    if (members.length) {
+      const componentBindings = this.createComponentBindings(
+        [
+          this.createDecorator(
+            this.createCall(
+              this.createIdentifier("ComponentBindings"),
+              undefined,
+              []
+            )
+          ),
+        ],
+        modifiers,
+        name,
+        [],
+        [],
+        members
+      );
+
+      this.addComponent(name.toString(), componentBindings);
+
+      return componentBindings;
+    }
+
     const result = new TypeAliasDeclaration(
       decorators,
       modifiers,

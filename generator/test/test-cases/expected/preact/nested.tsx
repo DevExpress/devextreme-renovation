@@ -9,7 +9,8 @@ import { useCallback } from "preact/hooks";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
-  [x: string]: any;
+  key?: any;
+  ref?: any;
 };
 interface Widget {
   props: typeof WidgetInput & RestProps;
@@ -50,6 +51,6 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   });
 }
 
-(Widget as any).defaultProps = {
+Widget.defaultProps = {
   ...WidgetInput,
 };

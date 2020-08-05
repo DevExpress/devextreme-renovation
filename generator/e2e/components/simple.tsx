@@ -5,7 +5,7 @@ import {
   JSXComponent,
 } from "../../component_declaration/common";
 
-function view(model: Simple) {
+function view(model: SimpleComponent) {
   return (
     <div
       id="simple"
@@ -19,7 +19,7 @@ function view(model: Simple) {
 }
 
 @ComponentBindings()
-class WidgetInput {
+export class WidgetInput {
   @OneWay() height: number = 10;
   @OneWay() width: number = 10;
   @OneWay() color?: string = "red";

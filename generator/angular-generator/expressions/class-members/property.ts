@@ -9,7 +9,10 @@ import {
 import { Decorators } from "../../../component_declaration/decorators";
 import { capitalizeFirstLetter } from "../../../base-generator/utils/string";
 import SyntaxKind from "../../../base-generator/syntaxKind";
-import { Expression } from "../../../base-generator/expressions/base";
+import {
+  Expression,
+  SimpleExpression,
+} from "../../../base-generator/expressions/base";
 
 function parseEventType(type: TypeExpression | string) {
   if (type instanceof FunctionTypeNode) {
@@ -39,10 +42,8 @@ export class Property extends BaseProperty {
     inherited: boolean = false
   ) {
     if (decorators.find((d) => d.name === Decorators.Template)) {
-      type = new SimpleTypeExpression(`TemplateRef<any>`);
-      if (questionOrExclamationToken !== SyntaxKind.QuestionToken) {
-        questionOrExclamationToken = SyntaxKind.ExclamationToken;
-      }
+      type = new SimpleTypeExpression(`TemplateRef<any> | null`);
+      initializer = new SimpleExpression("null");
     }
     super(
       decorators,
@@ -53,9 +54,6 @@ export class Property extends BaseProperty {
       initializer,
       inherited
     );
-  }
-  typeDeclaration() {
-    return `${this.name}${this.questionOrExclamationToken}:${this.type}`;
   }
   toString() {
     const eventDecorator = this.decorators.find(
@@ -103,7 +101,6 @@ export class Property extends BaseProperty {
   }
 
   getter(componentContext?: string) {
-    const suffix = this.required ? "!" : "";
     componentContext = this.processComponentContext(componentContext);
     if (this.isEvent) {
       return `${componentContext}_${this.name}`;
@@ -126,9 +123,9 @@ export class Property extends BaseProperty {
       return `${componentContext}${this.name}`;
     }
     if (this._hasDecorator(Decorators.ApiRef)) {
-      return `${componentContext}${this.name}${suffix}`;
+      return `${componentContext}${this.name}`;
     }
-    return `${componentContext}${this.name}${suffix}`;
+    return `${componentContext}${this.name}`;
   }
 
   getDependency() {

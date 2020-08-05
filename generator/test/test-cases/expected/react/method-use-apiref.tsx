@@ -1,5 +1,4 @@
 import BaseWidget from "./method";
-
 function view(viewModel: WidgetWithApiRef) {
   return (
     <BaseWidget
@@ -8,29 +7,24 @@ function view(viewModel: WidgetWithApiRef) {
     ></BaseWidget>
   );
 }
-
 export declare type WidgetWithApiRefInputType = {
   prop1?: number;
 };
 const WidgetWithApiRefInput: WidgetWithApiRefInputType = {};
-
 import { WidgetRef as BaseWidgetRef } from "./method";
 import React, {
   useCallback,
   useRef,
   useImperativeHandle,
   forwardRef,
+  HtmlHTMLAttributes,
 } from "react";
 
-export type WidgetWithApiRefRef = {
-  getSomething: () => string;
-};
-
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+export type WidgetWithApiRefRef = { getSomething: () => string };
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof WidgetWithApiRefInput
+>;
 interface WidgetWithApiRef {
   props: typeof WidgetWithApiRefInput & RestProps;
   baseRef: any;
@@ -66,7 +60,6 @@ const WidgetWithApiRef = forwardRef<
     restAttributes: __restAttributes(),
   });
 });
-
 export default WidgetWithApiRef;
 
 WidgetWithApiRef.defaultProps = {

@@ -295,7 +295,7 @@ mocha.describe("import Components", function () {
       assert.equal(
         getResult(component.compileDefaultProps()),
         getResult(
-          "(Component as any).defaultProps = {...(Base as any).defaultProps, childProp:10}"
+          "Component.defaultProps = {...Base.defaultProps, childProp:10}"
         )
       );
     }

@@ -6,20 +6,19 @@ export declare type PropsType = {
   nullableRef?: RefObject<HTMLDivElement>;
 };
 const Props: PropsType = {};
-
 import React, {
   useState,
   useCallback,
   useEffect,
   useRef,
   RefObject,
+  HtmlHTMLAttributes,
 } from "react";
 
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof Props
+>;
 interface RefOnChildrenParent {
   props: typeof Props & RestProps;
   state: number;
@@ -42,6 +41,7 @@ export default function RefOnChildrenParent(props: typeof Props & RestProps) {
     child.current!.innerHTML = "Ref from child";
     const html = props.nullableRef?.current?.innerHTML;
   }, [props.nullableRef?.current]);
+
   return view({
     props: { ...props },
     state: __state_state,

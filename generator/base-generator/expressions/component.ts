@@ -112,7 +112,27 @@ export class Component extends Class implements Heritable {
     const api = members.filter((m) =>
       m.decorators.find((d) => d.name === "Method")
     );
-    const props = inheritMembers(this.heritageClauses, []);
+    const props = inheritMembers(this.heritageClauses, []) as Property[];
+
+    const requiredProps = props.filter(
+      (p) => p.questionOrExclamationToken === SyntaxKind.ExclamationToken
+    );
+
+    if (requiredProps.length) {
+      const requiredPropsList = this.heritageClauses[0].requiredProps;
+
+      if (
+        requiredProps.some((p) => !requiredPropsList.find((n) => p.name === n))
+      ) {
+        warn(`${
+          this.name
+        } component declaration is not correct. Props have required properties. Include their keys to declaration
+          ${this.name} extends JSXComponent<${
+          this.heritageClauses[0].propsType
+        }, ${requiredProps.map((p) => `"${p.name}"`).join("|")}>
+        `);
+      }
+    }
 
     api
       .filter((m) =>

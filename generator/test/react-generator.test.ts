@@ -229,6 +229,10 @@ mocha.describe("react-generator", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("pick-props", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {
@@ -3193,7 +3197,9 @@ mocha.describe("Default_options", function () {
     );
     assert.strictEqual(
       getResult(component.compileImports()),
-      getResult(`import React, { useCallback } from "react";`)
+      getResult(
+        `import React, { useCallback, HtmlHTMLAttributes } from "react";`
+      )
     );
   });
 
@@ -3259,7 +3265,7 @@ mocha.describe("Default_options", function () {
       assert.strictEqual(
         getResult(component.compileImports()),
         getResult(
-          `import {convertRulesToOptions, Rule} from "../default_options"; import React, { useCallback } from "react";`
+          `import {convertRulesToOptions, Rule} from "../default_options"; import React, { useCallback, HtmlHTMLAttributes } from "react";`
         )
       );
     }
@@ -3282,7 +3288,9 @@ mocha.describe("Default_options", function () {
 
       assert.strictEqual(
         getResult(component.compileImports()),
-        getResult(`import React, { useCallback } from "react";`)
+        getResult(
+          `import React, { useCallback, HtmlHTMLAttributes } from "react";`
+        )
       );
     }
   );
