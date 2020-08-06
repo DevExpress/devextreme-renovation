@@ -8,10 +8,6 @@ export const GridColumn = {
   },
   index: {
     type: Number,
-    default: undefined,
-  },
-  defaultIndex: {
-    type: Number,
     default() {
       return 0;
     },

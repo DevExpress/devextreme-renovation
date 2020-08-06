@@ -5,7 +5,6 @@
         :selected="slotProps.selected"
         :value="slotProps.value"
         @select="slotProps.onSelect"
-        :defaultValue="slotProps.defaultValue"
         @update:value="slotProps.valueChange"
       />
     </template>

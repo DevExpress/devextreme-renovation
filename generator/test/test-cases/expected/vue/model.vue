@@ -1,29 +1,17 @@
 <template>
   <div>
-    {{(baseStateProp !== undefined ? baseStateProp : baseStateProp_state)}}
+    {{ baseStateProp_state }}
   </div>
 </template>
 <script>
 const ModelWidgetInput = {
   baseStateProp: {
     type: Boolean,
-    default: undefined,
   },
   modelStateProp: {
     type: Boolean,
-    default: undefined,
   },
   value: {
-    type: Boolean,
-    default: undefined,
-  },
-  defaultBaseStateProp: {
-    type: Boolean,
-  },
-  defaultModelStateProp: {
-    type: Boolean,
-  },
-  defaultValue: {
     type: Boolean,
   },
 };
@@ -35,9 +23,9 @@ export default {
   },
   data() {
     return {
-      baseStateProp_state: this.defaultBaseStateProp,
-      modelStateProp_state: this.defaultModelStateProp,
-      value_state: this.defaultValue,
+      baseStateProp_state: this.baseStateProp,
+      modelStateProp_state: this.modelStateProp,
+      value_state: this.value,
     };
   },
   computed: {
@@ -46,20 +34,19 @@ export default {
     },
     props() {
       return {
-        baseStateProp:
-          this.baseStateProp !== undefined
-            ? this.baseStateProp
-            : this.baseStateProp_state,
+        baseStateProp: this.baseStateProp_state,
         baseStatePropChange: this.baseStatePropChange,
-        modelStateProp:
-          this.modelStateProp !== undefined
-            ? this.modelStateProp
-            : this.modelStateProp_state,
-        value: this.value !== undefined ? this.value : this.value_state,
+        modelStateProp: this.modelStateProp_state,
+        value: this.value_state,
         modelStatePropChange: this.modelStatePropChange,
         valueChange: this.valueChange,
       };
     },
+  },
+  watch: {
+    baseStateProp: ["__baseStateProp_watcher"],
+    modelStateProp: ["__modelStateProp_watcher"],
+    value: ["__value_watcher"],
   },
   methods: {
     baseStatePropChange(...args) {
@@ -70,6 +57,15 @@ export default {
     },
     valueChange(...args) {
       this.$emit("update:value", ...args);
+    },
+    __baseStateProp_watcher(s) {
+      this.baseStateProp_state = s;
+    },
+    __modelStateProp_watcher(s) {
+      this.modelStateProp_state = s;
+    },
+    __value_watcher(s) {
+      this.value_state = s;
     },
   },
 };

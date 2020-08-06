@@ -649,24 +649,6 @@ mocha.describe("Vue-generator", function () {
         );
       });
 
-      mocha.describe("TwoWay", function () {
-        mocha.it("should always have undefined initializer", function () {
-          const expression = generator.createProperty(
-            [createDecorator("TwoWay")],
-            undefined,
-            name,
-            generator.SyntaxKind.QuestionToken,
-            generator.createKeywordTypeNode("boolean"),
-            generator.createTrue()
-          );
-
-          assert.strictEqual(
-            getAst(expression.toString({ members: [] })),
-            getAst("p: {type: Boolean, default: undefined}")
-          );
-        });
-      });
-
       mocha.describe("Slots", function () {
         mocha.it("default slot", function () {
           const expression = generator.createProperty(

@@ -3,19 +3,11 @@ function view() {}
 export const WidgetProps = {
   p1: {
     type: String,
-    default: undefined,
-  },
-  p2: {
-    type: String,
-    default: undefined,
-  },
-  defaultP1: {
-    type: String,
     default() {
       return "";
     },
   },
-  defaultP2: {
+  p2: {
     type: String,
     default() {
       return "";
@@ -32,32 +24,17 @@ export function defaultOptions(rule) {
 
 export default {
   props: (() => {
-    const twoWayProps = ["p1", "p2"];
     return Object.keys(WidgetProps).reduce((props, propName) => {
       const prop = { ...WidgetProps[propName] };
+      const defaultValue = prop.default;
 
-      const twoWayPropName =
-        propName.indexOf("default") === 0 &&
-        twoWayProps.find(
-          (p) => "default" + p.charAt(0).toUpperCase() + p.slice(1) === propName
-        );
-      const defaultPropName = twoWayPropName ? twoWayPropName : propName;
-
-      if (typeof prop.default === "function") {
-        const defaultValue = prop.default;
-        prop.default = function () {
-          return this._defaultOptions[defaultPropName] !== undefined
-            ? this._defaultOptions[defaultPropName]
-            : defaultValue();
-        };
-      } else if (!twoWayProps.some((p) => p === propName)) {
-        const defaultValue = prop.default;
-        prop.default = function () {
-          return this._defaultOptions[defaultPropName] !== undefined
-            ? this._defaultOptions[defaultPropName]
-            : defaultValue;
-        };
-      }
+      prop.default = function () {
+        return this._defaultOptions[propName] !== undefined
+          ? this._defaultOptions[propName]
+          : typeof defaultValue === "function"
+          ? defaultValue()
+          : defaultValue;
+      };
 
       props[propName] = prop;
       return props;
@@ -65,8 +42,8 @@ export default {
   })(),
   data() {
     return {
-      p1_state: this.defaultP1,
-      p2_state: this.defaultP2,
+      p1_state: this.p1,
+      p2_state: this.p2,
     };
   },
   computed: {
@@ -75,12 +52,16 @@ export default {
     },
     props() {
       return {
-        p1: this.p1 !== undefined ? this.p1 : this.p1_state,
-        p2: this.p2 !== undefined ? this.p2 : this.p2_state,
+        p1: this.p1_state,
+        p2: this.p2_state,
         p1Change: this.p1Change,
         p2Change: this.p2Change,
       };
     },
+  },
+  watch: {
+    p1: ["__p1_watcher"],
+    p2: ["__p2_watcher"],
   },
   methods: {
     p1Change(...args) {
@@ -88,6 +69,12 @@ export default {
     },
     p2Change(...args) {
       this.$emit("update:p2", ...args);
+    },
+    __p1_watcher(s) {
+      this.p1_state = s;
+    },
+    __p2_watcher(s) {
+      this.p2_state = s;
     },
   },
   beforeCreate() {
