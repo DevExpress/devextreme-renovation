@@ -294,15 +294,17 @@ export class VueComponent extends Component {
         props = `(()=>{
                     return Object.keys(${props}).reduce((props, propName)=>{
                         const prop = {...${props}[propName]};
-                        const defaultValue = prop.default;
 
-                        prop.default = function () {
-                          return this._defaultOptions[propName] !== undefined
-                            ? this._defaultOptions[propName]
-                            : typeof defaultValue === "function"
-                            ? defaultValue()
-                            : defaultValue;
-                        };
+                        if(prop.type !== Function) {
+                          const defaultValue = prop.default;
+                          prop.default = function () {
+                            return this._defaultOptions[propName] !== undefined
+                              ? this._defaultOptions[propName]
+                              : typeof defaultValue === "function"
+                              ? defaultValue()
+                              : defaultValue;
+                          };
+                        }
 
                         props[propName] = prop;
                         return props;
