@@ -11,25 +11,13 @@ export function defaultOptions(rule) {
 }
 
 export default {
-  props: (() => {
-    return Object.keys(WidgetProps).reduce((props, propName) => {
-      const prop = { ...WidgetProps[propName] };
-
-      if (prop.type !== Function) {
-        const defaultValue = prop.default;
-        prop.default = function () {
-          return this._defaultOptions[propName] !== undefined
-            ? this._defaultOptions[propName]
-            : typeof defaultValue === "function"
-            ? defaultValue()
-            : defaultValue;
-        };
-      }
-
-      props[propName] = prop;
-      return props;
-    }, {});
-  })(),
+  props: Object.keys(WidgetProps).reduce(
+    (props, propName) => ({
+      ...props,
+      [propName]: { ...WidgetProps[propName] },
+    }),
+    {}
+  ),
   computed: {
     __restAttributes() {
       return {};
@@ -39,7 +27,15 @@ export default {
     },
   },
   beforeCreate() {
-    this._defaultOptions = convertRulesToOptions(__defaultOptionRules);
+    const defaultOptions = convertRulesToOptions(__defaultOptionRules);
+    Object.keys(this.$options.props).forEach((propName) => {
+      const defaultValue = defaultOptions[propName];
+      const prop = this.$options.props[propName];
+      if (defaultValue !== undefined) {
+        prop.default =
+          prop.type !== Function ? () => defaultValue : defaultValue;
+      }
+    });
   },
 };
 </script>

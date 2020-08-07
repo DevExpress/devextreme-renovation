@@ -108,7 +108,7 @@ cloneTest("Click on component with default options", async (t) => {
 
   await t.click(await el.child(0));
 
-  await t.expect(await el.textContent).eql("ab164");
+  await t.expect(await el.textContent).eql("ab164abcobjfunc");
 });
 
 cloneTest("Click on list item", async (t) => {

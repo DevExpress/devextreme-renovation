@@ -17,25 +17,13 @@ export function defaultOptions(rule) {
 }
 
 export default {
-  props: (() => {
-    return Object.keys(WidgetInput).reduce((props, propName) => {
-      const prop = { ...WidgetInput[propName] };
-
-      if (prop.type !== Function) {
-        const defaultValue = prop.default;
-        prop.default = function () {
-          return this._defaultOptions[propName] !== undefined
-            ? this._defaultOptions[propName]
-            : typeof defaultValue === "function"
-            ? defaultValue()
-            : defaultValue;
-        };
-      }
-
-      props[propName] = prop;
-      return props;
-    }, {});
-  })(),
+  props: Object.keys(WidgetInput).reduce(
+    (props, propName) => ({
+      ...props,
+      [propName]: { ...WidgetInput[propName] },
+    }),
+    {}
+  ),
   computed: {
     __getHeight() {
       return this.size.height;
@@ -52,7 +40,15 @@ export default {
     },
   },
   beforeCreate() {
-    this._defaultOptions = convertRulesToOptions(__defaultOptionRules);
+    const defaultOptions = convertRulesToOptions(__defaultOptionRules);
+    Object.keys(this.$options.props).forEach((propName) => {
+      const defaultValue = defaultOptions[propName];
+      const prop = this.$options.props[propName];
+      if (defaultValue !== undefined) {
+        prop.default =
+          prop.type !== Function ? () => defaultValue : defaultValue;
+      }
+    });
   },
 };
 </script>
