@@ -499,7 +499,7 @@ export class VueGenerator extends BaseGenerator {
 
   addComponent(
     name: string,
-    component: VueComponentInput,
+    component: VueComponent | VueComponentInput,
     importClause?: ImportClause
   ) {
     if (
