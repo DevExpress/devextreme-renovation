@@ -16,7 +16,7 @@ export const WidgetInput = {
   },
 };
 
-export default {
+export const DxWidget = {
   components: {
     InnerWidget,
   },
@@ -54,4 +54,5 @@ export default {
     },
   },
 };
+export default DxWidget;
 </script>

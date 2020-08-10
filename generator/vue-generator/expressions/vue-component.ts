@@ -626,14 +626,11 @@ export class VueComponent extends Component {
   }
 
   compileComponentExport(statements: string[]) {
-    const exportClause = this.modifiers.join(" ");
-    const head =
-      exportClause === "export" ? `export const ${this.name} =` : exportClause;
-    const tail = exportClause === "export" ? `export default ${this.name}` : ``;
-    return `${head} {
+    const name = `Dx${this.name}`;
+    return `export const ${name} = {
               ${statements.join(",\n")}
           }
-          ${tail}`;
+          export default ${name}`;
   }
 
   toString() {

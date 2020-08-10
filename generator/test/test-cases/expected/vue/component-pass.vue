@@ -39,7 +39,7 @@ export const WidgetProps = {
     type: String,
   },
 };
-export default {
+export const DxWidget = {
   components: {
     WidgetOne,
     WidgetTwo,
@@ -58,4 +58,5 @@ export default {
     },
   },
 };
+export default DxWidget;
 </script>
