@@ -23,7 +23,7 @@
 </template>
 <script>
 import WidgetOne from "./component-pass-one";
-import WidgetTwo from "./component-pass-two";
+import { DxWidgetTwo as WidgetTwo } from "./component-pass-two";
 
 export const WidgetProps = {
   mode: {

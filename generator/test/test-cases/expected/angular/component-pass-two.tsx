@@ -21,7 +21,7 @@ import { CommonModule } from "@angular/common";
     </div>
   </div>`,
 })
-export default class WidgetTwo extends WidgetTwoProps {
+export class WidgetTwo extends WidgetTwoProps {
   get __restAttributes(): any {
     return {};
   }

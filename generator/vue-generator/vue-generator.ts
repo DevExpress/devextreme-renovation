@@ -496,4 +496,20 @@ export class VueGenerator extends BaseGenerator {
   ) {
     return new Enum(decorators, modifiers, name, members);
   }
+
+  addComponent(
+    name: string,
+    component: VueComponentInput,
+    importClause?: ImportClause
+  ) {
+    if (
+      component instanceof VueComponent &&
+      importClause?.default?.toString() !== name
+    ) {
+      importClause?.remove(name);
+      importClause?.add(name, `Dx${name}`);
+    }
+
+    super.addComponent(name, component, importClause);
+  }
 }

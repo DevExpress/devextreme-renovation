@@ -28,9 +28,7 @@ class HeaderComponentProps {
 @Component({
   view,
 })
-export default class HeaderComponent extends JSXComponent(
-  HeaderComponentProps
-) {
+export class HeaderComponent extends JSXComponent(HeaderComponentProps) {
   click() {
     this.props.onClick();
   }
