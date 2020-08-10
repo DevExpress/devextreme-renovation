@@ -130,6 +130,9 @@ setDefaultOptions({
     oneWayPropWithDefault: "b",
     twoWayProp: 15,
     twoWayPropWithDefault: 3,
+    arrayProp: ["a", "b", "c"],
+    objectProp: { val: "obj" },
+    functionProp: () => "func",
   },
 });
 

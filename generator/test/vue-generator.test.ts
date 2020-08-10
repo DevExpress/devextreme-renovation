@@ -629,7 +629,7 @@ mocha.describe("Vue-generator", function () {
         );
       });
 
-      mocha.it("Property with initializer string", function () {
+      mocha.it("Property with initializer - string", function () {
         const expression = generator.createProperty(
           decorators,
           undefined,
@@ -646,6 +646,36 @@ mocha.describe("Vue-generator", function () {
             default(){
               return "10";
           }}`)
+        );
+      });
+
+      mocha.it("Property with initializer - function", function () {
+        const expression = generator.createProperty(
+          decorators,
+          undefined,
+          name,
+          undefined,
+          generator.createFunctionTypeNode(
+            undefined,
+            [],
+            generator.createKeywordTypeNode("string")
+          ),
+          generator.createArrowFunction(
+            [],
+            [],
+            [],
+            undefined,
+            generator.SyntaxKind.EqualsGreaterThanToken,
+            generator.createNull()
+          )
+        );
+
+        assert.strictEqual(
+          getAst(expression.toString({ members: [] })),
+          getAst(`p: { 
+            type: Function,
+            default: () => null
+          }`)
         );
       });
 

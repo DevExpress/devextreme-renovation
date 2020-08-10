@@ -291,23 +291,10 @@ export class VueComponent extends Component {
     if (this.isJSXComponent) {
       let props = this.heritageClauses[0].propsType.toString();
       if (this.needGenerateDefaultOptions) {
-        props = `(()=>{
-                    return Object.keys(${props}).reduce((props, propName)=>{
-                        const prop = {...${props}[propName]};
-                        const defaultValue = prop.default;
-
-                        prop.default = function () {
-                          return this._defaultOptions[propName] !== undefined
-                            ? this._defaultOptions[propName]
-                            : typeof defaultValue === "function"
-                            ? defaultValue()
-                            : defaultValue;
-                        };
-
-                        props[propName] = prop;
-                        return props;
-                    }, {});
-                  })()`;
+        props = `Object.keys(${props}).reduce((props, propName)=>({
+                          ...props,
+                          [propName]: {...${props}[propName]}
+                        }), {})`;
       }
       return `props: ${props}`;
     }
@@ -559,9 +546,14 @@ export class VueComponent extends Component {
     const statements: string[] = [];
 
     if (this.needGenerateDefaultOptions) {
-      statements.push(
-        "this._defaultOptions = convertRulesToOptions(__defaultOptionRules);"
-      );
+      statements.push(`const defaultOptions = convertRulesToOptions(__defaultOptionRules);
+        Object.keys(this.$options.props).forEach((propName) => {
+          const defaultValue = defaultOptions[propName];
+          const prop = this.$options.props[propName];
+          if (defaultValue !== undefined) {
+            prop.default = prop.type !== Function ? () => defaultValue : defaultValue;
+          }
+        });`);
     }
 
     if (statements.length) {

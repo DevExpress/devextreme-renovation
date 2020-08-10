@@ -15,6 +15,9 @@ function view(model: DefaultOptionRulesComponent) {
       <span>{model.props.oneWayPropWithDefault}</span>
       <span>{model.props.twoWayProp}</span>
       <span>{model.props.twoWayPropWithDefault}</span>
+      <span>{model.props.arrayProp.join("")}</span>
+      <span>{model.props.objectProp.val}</span>
+      <span>{model.props.functionProp()}</span>
     </div>
   );
 }
@@ -25,6 +28,9 @@ export class Props {
   @OneWay() oneWayPropWithDefault?: string = "";
   @TwoWay() twoWayProp?: number;
   @TwoWay() twoWayPropWithDefault?: number = 3;
+  @OneWay() arrayProp?: string[] = ["arr"];
+  @OneWay() objectProp?: any = { val: 1 };
+  @OneWay() functionProp?: () => string = () => "";
 }
 
 @Component({

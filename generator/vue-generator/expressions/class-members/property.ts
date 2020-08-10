@@ -114,10 +114,12 @@ export class Property extends BaseProperty {
     if (this.questionOrExclamationToken === SyntaxKind.ExclamationToken) {
       parts.push("required: true");
     }
-    if (this.initializer) {
+    if (this.initializer && type !== "Function") {
       parts.push(`default(){
                   return ${this.initializer}
               }`);
+    } else if (this.initializer) {
+      parts.push(`default:${this.initializer}`);
     }
 
     return `${this.name}: {
