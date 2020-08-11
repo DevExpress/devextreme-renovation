@@ -27,7 +27,7 @@ export const WidgetInput = {
   },
 };
 
-export default {
+export const DxWidget = {
   props: WidgetInput,
   computed: {
     __restAttributes() {
@@ -44,4 +44,5 @@ export default {
     },
   },
 };
+export default DxWidget;
 </script>

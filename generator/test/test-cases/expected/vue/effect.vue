@@ -29,7 +29,7 @@ export const WidgetInput = {
   },
 };
 
-export default {
+export const DxWidget = {
   props: WidgetInput,
   data() {
     return {
@@ -119,4 +119,5 @@ export default {
     this.__destroyEffects = null;
   },
 };
+export default DxWidget;
 </script>

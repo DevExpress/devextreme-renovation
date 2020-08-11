@@ -23,7 +23,7 @@
 </template>
 <script>
 import WidgetOne from "./component-pass-one";
-import WidgetTwo from "./component-pass-two";
+import { DxWidgetTwo as WidgetTwo } from "./component-pass-two";
 
 export const WidgetProps = {
   mode: {
@@ -39,7 +39,7 @@ export const WidgetProps = {
     type: String,
   },
 };
-export default {
+export const DxWidget = {
   components: {
     WidgetOne,
     WidgetTwo,
@@ -58,4 +58,5 @@ export default {
     },
   },
 };
+export default DxWidget;
 </script>

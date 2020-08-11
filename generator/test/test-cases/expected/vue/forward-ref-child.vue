@@ -17,7 +17,7 @@ const Props = {
   },
 };
 
-export default {
+export const DxRefOnChildrenChild = {
   props: Props,
   computed: {
     __restAttributes() {
@@ -50,4 +50,5 @@ export default {
     this.__forwardRef();
   },
 };
+export default DxRefOnChildrenChild;
 </script>

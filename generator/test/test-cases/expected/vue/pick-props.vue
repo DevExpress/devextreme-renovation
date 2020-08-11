@@ -13,7 +13,7 @@ const WidgetProps = {
     },
   },
 };
-export default {
+export const DxWidget = {
   props: WidgetProps,
   computed: {
     __restAttributes() {
@@ -24,4 +24,5 @@ export default {
     },
   },
 };
+export default DxWidget;
 </script>

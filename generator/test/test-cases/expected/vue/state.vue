@@ -23,7 +23,7 @@ const WidgetInput = {
     type: Boolean,
   },
 };
-export default {
+export const DxWidget = {
   components: {
     BaseState,
   },
@@ -92,4 +92,5 @@ export default {
     },
   },
 };
+export default DxWidget;
 </script>

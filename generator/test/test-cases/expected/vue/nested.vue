@@ -3,7 +3,7 @@
 </template>
 <script>
 import { WidgetInput } from "./nested-props";
-export default {
+export const DxWidget = {
   props: WidgetInput,
   computed: {
     __isEditable() {
@@ -91,4 +91,5 @@ export default {
     },
   },
 };
+export default DxWidget;
 </script>

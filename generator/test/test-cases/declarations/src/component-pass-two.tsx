@@ -24,4 +24,4 @@ export class WidgetTwoProps {
 @Component({
   view: view,
 })
-export default class WidgetTwo extends JSXComponent(WidgetTwoProps) {}
+export class WidgetTwo extends JSXComponent(WidgetTwoProps) {}

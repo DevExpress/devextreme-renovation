@@ -49,6 +49,10 @@ export function getComponentListFromContext(context: GeneratorContext) {
 export class VueComponent extends Component {
   template?: string;
 
+  get exportedName() {
+    return `Dx${this.name}`;
+  }
+
   createRestPropsGetter(members: BaseClassMember[]) {
     return new GetAccessor(
       undefined,
@@ -626,14 +630,11 @@ export class VueComponent extends Component {
   }
 
   compileComponentExport(statements: string[]) {
-    const exportClause = this.modifiers.join(" ");
-    const head =
-      exportClause === "export" ? `export const ${this.name} =` : exportClause;
-    const tail = exportClause === "export" ? `export default ${this.name}` : ``;
-    return `${head} {
+    const name = this.exportedName;
+    return `export const ${name} = {
               ${statements.join(",\n")}
           }
-          ${tail}`;
+          export default ${name}`;
   }
 
   toString() {
