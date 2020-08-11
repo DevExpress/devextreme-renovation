@@ -507,7 +507,7 @@ export class VueGenerator extends BaseGenerator {
       importClause?.default?.toString() !== name
     ) {
       importClause?.remove(name);
-      importClause?.add(name, `Dx${name}`);
+      importClause?.add(name, component.exportedName);
     }
 
     super.addComponent(name, component, importClause);
