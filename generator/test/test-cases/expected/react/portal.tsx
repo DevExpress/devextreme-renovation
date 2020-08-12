@@ -14,14 +14,19 @@ export declare type WidgetPropsType = {
   someRef?: RefObject<HTMLElement>;
 };
 export const WidgetProps: WidgetPropsType = {};
-import React, { useState, useCallback, useEffect, RefObject } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  RefObject,
+  HtmlHTMLAttributes,
+} from "react";
 import { createPortal } from "react-dom";
 
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof WidgetProps
+>;
 interface Widget {
   props: typeof WidgetProps & RestProps;
   rendered: boolean;
@@ -29,7 +34,7 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetProps & RestProps) {
-  const [__state_rendered, __state_setRendered] = useState(false);
+  const [__state_rendered, __state_setRendered] = useState<boolean>(false);
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {

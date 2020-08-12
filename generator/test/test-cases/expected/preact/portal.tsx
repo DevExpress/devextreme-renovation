@@ -21,7 +21,8 @@ import { createPortal } from "preact/compat";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
-  [x: string]: any;
+  key?: any;
+  ref?: any;
 };
 interface Widget {
   props: typeof WidgetProps & RestProps;
@@ -30,7 +31,7 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetProps & RestProps) {
-  const [__state_rendered, __state_setRendered] = useState(false);
+  const [__state_rendered, __state_setRendered] = useState<boolean>(false);
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
@@ -50,6 +51,6 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   });
 }
 
-(Widget as any).defaultProps = {
+Widget.defaultProps = {
   ...WidgetProps,
 };

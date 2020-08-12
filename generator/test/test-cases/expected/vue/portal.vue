@@ -43,7 +43,7 @@ const DxPortal = Vue.extend({
   },
 });
 
-export default {
+export const DxWidget = {
   components: {
     DxPortal,
   },
@@ -85,4 +85,5 @@ export default {
     this.__destroyEffects = null;
   },
 };
+export default DxWidget;
 </script>
