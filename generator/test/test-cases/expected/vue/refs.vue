@@ -6,7 +6,7 @@
   </div>
 </template>
 <script>
-export default {
+export const DxWidget = {
   computed: {
     __restAttributes() {
       return {};
@@ -25,4 +25,5 @@ export default {
     },
   },
 };
+export default DxWidget;
 </script>

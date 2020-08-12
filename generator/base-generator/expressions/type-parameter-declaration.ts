@@ -1,7 +1,7 @@
 import { Identifier } from "./common";
 import { TypeExpression } from "./type";
 
-export class TypeParameterDeclaration {
+export class TypeParameterDeclaration extends TypeExpression {
   name: Identifier;
   constraint?: TypeExpression;
   defaultType?: TypeExpression;
@@ -10,6 +10,7 @@ export class TypeParameterDeclaration {
     constraint?: TypeExpression,
     defaultType?: TypeExpression
   ) {
+    super();
     this.name = name;
     this.constraint = constraint;
     this.defaultType = defaultType;

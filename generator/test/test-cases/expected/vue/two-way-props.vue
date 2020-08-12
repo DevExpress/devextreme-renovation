@@ -11,21 +11,17 @@ const WidgetInput = {
   },
   selected: {
     type: Boolean,
-    default: undefined,
-  },
-  defaultSelected: {
-    type: Boolean,
     default() {
       return false;
     },
   },
 };
 
-export default {
+export const DxWidget = {
   props: WidgetInput,
   data() {
     return {
-      selected_state: this.defaultSelected,
+      selected_state: this.selected,
     };
   },
   computed: {
@@ -35,11 +31,13 @@ export default {
     props() {
       return {
         height: this.height,
-        selected:
-          this.selected !== undefined ? this.selected : this.selected_state,
+        selected: this.selected_state,
         selectedChange: this.selectedChange,
       };
     },
+  },
+  watch: {
+    selected: ["__selected_watcher"],
   },
   methods: {
     __getHeight() {
@@ -53,6 +51,10 @@ export default {
     selectedChange(...args) {
       this.$emit("update:selected", ...args);
     },
+    __selected_watcher(s) {
+      this.selected_state = s;
+    },
   },
 };
+export default DxWidget;
 </script>

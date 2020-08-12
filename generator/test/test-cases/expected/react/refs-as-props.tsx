@@ -13,14 +13,17 @@ export declare type WidgetInputType = {
   nullableRef?: RefObject<HTMLDivElement>;
 };
 const WidgetInput: WidgetInputType = {};
+import React, {
+  useCallback,
+  useRef,
+  RefObject,
+  HtmlHTMLAttributes,
+} from "react";
 
-import React, { useCallback, useRef, RefObject } from "react";
-
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof WidgetInput
+>;
 interface Widget {
   props: typeof WidgetInput & RestProps;
   divRef: any;
@@ -38,14 +41,12 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     },
     [props.nullableRef?.current]
   );
-
   const getNullable = useCallback(
     function getNullable(): any {
       return props.nullableRef?.current?.outerHTML;
     },
     [props.nullableRef?.current]
   );
-
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { nullableRef, ...restProps } = props;

@@ -13,7 +13,7 @@ const ChildInput = {
     },
   },
 };
-export default {
+export const DxChild = {
   components: {
     Base,
   },
@@ -40,4 +40,5 @@ export default {
     },
   },
 };
+export default DxChild;
 </script>

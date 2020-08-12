@@ -13,14 +13,12 @@ const WidgetInput: WidgetInputType = {
   defaultSelected: false,
   selectedChange: () => {},
 };
+import React, { useState, useCallback, HtmlHTMLAttributes } from "react";
 
-import React, { useState, useCallback } from "react";
-
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof WidgetInput
+>;
 interface Widget {
   props: typeof WidgetInput & RestProps;
   getHeight: () => number;
@@ -29,7 +27,7 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const [__state_selected, __state_setSelected] = useState(() =>
+  const [__state_selected, __state_setSelected] = useState<boolean>(() =>
     props.selected !== undefined ? props.selected : props.defaultSelected!
   );
 
@@ -41,7 +39,6 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     },
     [props.height]
   );
-
   const getProps = useCallback(
     function getProps(): any {
       return {

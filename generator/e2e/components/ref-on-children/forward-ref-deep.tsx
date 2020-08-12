@@ -19,7 +19,7 @@ class Props {
 @Component({
   view,
 })
-export default class ForwardRefDeep extends JSXComponent(Props) {
+export default class ForwardRefDeep extends JSXComponent<Props, "childRef">() {
   @Effect()
   effect() {
     this.props.childRef.style.border = "1px solid rgb(0, 0, 128)";

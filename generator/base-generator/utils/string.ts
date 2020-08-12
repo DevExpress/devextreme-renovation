@@ -1,7 +1,8 @@
 import { Identifier } from "../expressions/common";
 import { BindingPattern } from "../expressions/binding-pattern";
 import { Expression } from "../expressions/base";
-import { TypeParameterDeclaration } from "../expressions/type-parameter-declaration";
+import { TypeExpression } from "../expressions/type";
+import { StringLiteral, NumericLiteral } from "../expressions/literal";
 
 export function capitalizeFirstLetter(string: string | Identifier) {
   string = string.toString();
@@ -17,11 +18,26 @@ export const removePlural = (string: string | Identifier) => {
   return string;
 };
 
-export const compileType = (type: string = "", questionToken: string = "") =>
-  type ? `${questionToken}:${type}` : "";
+export const calculateType = (initializer?: Expression): string => {
+  if (initializer instanceof StringLiteral) {
+    return "string";
+  }
+  if (initializer instanceof NumericLiteral) {
+    return "number";
+  }
+  const initializerString = initializer?.toString();
+  if (initializerString === "true" || initializerString === "false") {
+    return "boolean";
+  }
+  return "";
+};
+
+export const compileType = (type: string = "", questionToken: string = "") => {
+  return type ? `${questionToken}:${type}` : "";
+};
 
 export const compileTypeParameters = (
-  typeParameters: TypeParameterDeclaration[] | undefined
+  typeParameters: TypeExpression[] | undefined
 ) => (typeParameters?.length ? `<${typeParameters}>` : "");
 
 export function variableDeclaration(

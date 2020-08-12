@@ -1,7 +1,7 @@
 import { Input, TemplateRef } from "@angular/core";
 export class WidgetWithTemplateInput {
-  @Input() template?: TemplateRef<any>;
-  @Input() componentTemplate?: TemplateRef<any>;
+  @Input() template?: TemplateRef<any> | null = null;
+  @Input() componentTemplate?: TemplateRef<any> | null = null;
 }
 
 import { Component, NgModule } from "@angular/core";

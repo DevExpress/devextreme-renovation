@@ -1,10 +1,18 @@
-import { Class, Heritable, inheritMembers, HeritageClause } from "./class";
+import {
+  Class,
+  Heritable,
+  inheritMembers,
+  HeritageClause,
+  getMemberListFromTypeExpression,
+} from "./class";
 import { Parameter } from "./functions";
 import {
   SimpleTypeExpression,
   FunctionTypeNode,
   TypeExpression,
   extractComplexType,
+  TypeReferenceNode,
+  IntersectionTypeNode,
 } from "./type";
 import { Property, Method, BaseClassMember } from "./class-members";
 import { Identifier, Call } from "./common";
@@ -16,6 +24,7 @@ import { warn } from "../../utils/messages";
 import { getProps } from "./component";
 import { GeneratorContext } from "../types";
 import { Decorators } from "../../component_declaration/decorators";
+import { findComponentInput } from "../utils/expressions";
 
 const RESERVED_NAMES = ["class", "key", "ref", "style", "class"];
 
@@ -118,15 +127,20 @@ export class ComponentInput extends Class implements Heritable {
 
   buildStateProperties(stateMember: Property, members: BaseClassMember[]) {
     const props: Property[] = [];
-    const defaultStateProperty = this.buildDefaultStateProperty(stateMember);
+    const defaultStatePropName = `default${capitalizeFirstLetter(
+      stateMember._name
+    )}`;
+    if (!members.some((m) => m._name.toString() === defaultStatePropName)) {
+      const defaultStateProperty = this.buildDefaultStateProperty(stateMember);
 
-    if (defaultStateProperty) {
-      props.push(defaultStateProperty);
+      if (defaultStateProperty) {
+        props.push(defaultStateProperty);
+      }
     }
 
     const stateName = `${stateMember._name}Change`;
 
-    if (!members.find((m) => m._name.toString() === stateName)) {
+    if (!members.some((m) => m._name.toString() === stateName)) {
       props.push(this.buildChangeState(stateMember, new Identifier(stateName)));
     }
 
@@ -233,4 +247,96 @@ export class ComponentInput extends Class implements Heritable {
   defaultPropsDest() {
     return this.name.toString();
   }
+
+  getInitializerScope(component: string, name: string) {
+    return `new ${component}().${name}`;
+  }
+}
+
+const omit = (members: string[]) => (p: Property | Method) =>
+  !members.some((m) => m === p.name);
+const pick = (members: string[]) => (p: Property | Method) =>
+  members.some((m) => m === p.name);
+
+function processMembersFromType(
+  members: (Property | Method)[],
+  baseComponentInput: string,
+  componentInput: ComponentInput
+) {
+  return (members as Property[]).map((p) => {
+    const m = p.inherit();
+    m.inherited = false;
+    m.initializer = new SimpleExpression(
+      `${componentInput.getInitializerScope(baseComponentInput, m.name)}`
+    );
+    return m;
+  });
+}
+
+function removeDuplicates(members: (Property | Method)[]) {
+  const dictionary = members.reduce(
+    (d: { [name: string]: Property | Method }, m) => {
+      d[m.name] = m;
+      return d;
+    },
+    {}
+  );
+
+  return Object.keys(dictionary).map((k) => dictionary[k]);
+}
+
+export function membersFromTypeDeclaration(
+  type: TypeExpression,
+  context: GeneratorContext
+): (Property | Method)[] {
+  let result: (Property | Method)[] = [];
+
+  if (
+    type instanceof TypeReferenceNode &&
+    (type.type.toString() === "Omit" || type.type.toString() === "Pick") &&
+    type.typeArguments.length &&
+    type.typeArguments[0] instanceof TypeReferenceNode
+  ) {
+    const componentInput = findComponentInput(
+      type.typeArguments[0] as TypeReferenceNode,
+      context
+    );
+    const members = getMemberListFromTypeExpression(
+      type.typeArguments[1],
+      context
+    );
+    if (componentInput instanceof ComponentInput) {
+      const filter =
+        type.type.toString() === "Omit" ? omit(members) : pick(members);
+      const componentInputName = (type
+        .typeArguments[0] as TypeReferenceNode).type
+        .toString()
+        .replace("typeof ", "");
+      result = processMembersFromType(
+        componentInput.members.filter(filter),
+        componentInputName,
+        componentInput
+      );
+    }
+  } else if (type instanceof TypeReferenceNode) {
+    const componentInput = findComponentInput(type, context);
+    const componentInputName = type.type.toString().replace("typeof ", "");
+    if (componentInput) {
+      result = processMembersFromType(
+        componentInput.members,
+        componentInputName,
+        componentInput
+      );
+    }
+  }
+
+  if (type instanceof IntersectionTypeNode) {
+    result = type.types.reduce(
+      (members: (Property | Method)[], t) =>
+        members.concat(membersFromTypeDeclaration(t, context)),
+      []
+    );
+  }
+
+  return removeDuplicates(result);
 }

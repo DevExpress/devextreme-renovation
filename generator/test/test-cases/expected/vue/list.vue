@@ -10,7 +10,7 @@ export const ListInput = {
   },
 };
 
-export default {
+export const DxList = {
   props: ListInput,
   computed: {
     __restAttributes() {
@@ -21,4 +21,5 @@ export default {
     },
   },
 };
+export default DxList;
 </script>

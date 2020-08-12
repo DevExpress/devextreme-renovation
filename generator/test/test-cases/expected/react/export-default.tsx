@@ -5,14 +5,12 @@ export declare type WidgetInputType = {
   prop?: boolean;
 };
 const WidgetInput: WidgetInputType = {};
+import React, { useCallback, HtmlHTMLAttributes } from "react";
 
-import React, { useCallback } from "react";
-
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof WidgetInput
+>;
 interface Widget {
   props: typeof WidgetInput & RestProps;
   restAttributes: RestProps;

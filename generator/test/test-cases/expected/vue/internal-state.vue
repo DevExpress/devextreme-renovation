@@ -2,7 +2,7 @@
   <span></span>
 </template>
 <script>
-export default {
+export const DxWidget = {
   data() {
     return {
       _hovered: false,
@@ -22,4 +22,5 @@ export default {
     },
   },
 };
+export default DxWidget;
 </script>

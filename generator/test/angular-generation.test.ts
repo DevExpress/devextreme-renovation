@@ -42,6 +42,10 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("pick-props", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("state", function () {
     this.testGenerator(this.test!.title);
   });
@@ -135,6 +139,10 @@ mocha.describe("angular-generation", function () {
   });
 
   mocha.it("import-component", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("import-component-named", function () {
     this.testGenerator(this.test!.title);
   });
 

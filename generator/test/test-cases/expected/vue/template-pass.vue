@@ -5,7 +5,6 @@
         :selected="slotProps.selected"
         :value="slotProps.value"
         @select="slotProps.onSelect"
-        :defaultValue="slotProps.defaultValue"
         @update:value="slotProps.valueChange"
       />
     </template>
@@ -19,7 +18,7 @@ import WidgetWithTemplate from "./dx-widget-with-template";
 import InnerWidget from "./dx-inner-widget";
 
 export const WidgetProps = {};
-export default {
+export const DxWidget = {
   components: {
     WidgetWithTemplate,
     InnerWidget,
@@ -34,4 +33,5 @@ export default {
     },
   },
 };
+export default DxWidget;
 </script>

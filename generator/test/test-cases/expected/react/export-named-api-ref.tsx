@@ -3,14 +3,18 @@ function view(model: Widget) {
 }
 export declare type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
+import React, {
+  useCallback,
+  useImperativeHandle,
+  forwardRef,
+  HtmlHTMLAttributes,
+} from "react";
 
-import React, { useCallback, useImperativeHandle, forwardRef } from "react";
 export type WidgetRef = { getValue: () => any };
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof WidgetInput
+>;
 interface Widget {
   props: typeof WidgetInput & RestProps;
   restAttributes: RestProps;
@@ -41,8 +45,8 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
     });
   }
 );
-
 export { Widget };
+
 export default Widget;
 
 Widget.defaultProps = {

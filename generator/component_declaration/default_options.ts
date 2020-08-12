@@ -1,6 +1,6 @@
 export type Rule<T> = {
   device: any;
-  options: T;
+  options: Partial<T>;
 };
 
 export function convertRulesToOptions<T>(rules: Rule<T>[]): T {

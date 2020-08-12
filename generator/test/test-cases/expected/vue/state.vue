@@ -1,7 +1,6 @@
 <template>
   <div>
-    {{(state1 !== undefined ? state1 : state1_state)
-
+    {{ state1_state
     }}<BaseState @update:base-state-prop="__stateChange"></BaseState>
   </div>
 </template>
@@ -10,42 +9,30 @@ import BaseState from "./model";
 const WidgetInput = {
   state1: {
     type: Boolean,
-    default: undefined,
+    default() {
+      return false;
+    },
   },
   state2: {
     type: Boolean,
-    default: undefined,
+    default() {
+      return false;
+    },
   },
   stateProp: {
     type: Boolean,
-    default: undefined,
-  },
-  defaultState1: {
-    type: Boolean,
-    default() {
-      return false;
-    },
-  },
-  defaultState2: {
-    type: Boolean,
-    default() {
-      return false;
-    },
-  },
-  defaultStateProp: {
-    type: Boolean,
   },
 };
-export default {
+export const DxWidget = {
   components: {
     BaseState,
   },
   props: WidgetInput,
   data() {
     return {
-      state1_state: this.defaultState1,
-      state2_state: this.defaultState2,
-      stateProp_state: this.defaultStateProp,
+      state1_state: this.state1,
+      state2_state: this.state2,
+      stateProp_state: this.stateProp,
     };
   },
   computed: {
@@ -54,30 +41,32 @@ export default {
     },
     props() {
       return {
-        state1: this.state1 !== undefined ? this.state1 : this.state1_state,
-        state2: this.state2 !== undefined ? this.state2 : this.state2_state,
-        stateProp:
-          this.stateProp !== undefined ? this.stateProp : this.stateProp_state,
+        state1: this.state1_state,
+        state2: this.state2_state,
+        stateProp: this.stateProp_state,
         state1Change: this.state1Change,
         state2Change: this.state2Change,
         statePropChange: this.statePropChange,
       };
     },
   },
+  watch: {
+    state1: ["__state1_watcher"],
+    state2: ["__state2_watcher"],
+    stateProp: ["__stateProp_watcher"],
+  },
   methods: {
     __updateState() {
-      (this.state1_state = !(this.state1 !== undefined
-        ? this.state1
-        : this.state1_state)),
+      (this.state1_state = !this.state1_state),
         this.state1Change(this.state1_state);
     },
     __updateState2() {
-      const cur = this.state2 !== undefined ? this.state2 : this.state2_state;
+      const cur = this.state2_state;
       (this.state2_state = cur !== false ? false : true),
         this.state2Change(this.state2_state);
     },
     __destruct() {
-      const s = this.state1 !== undefined ? this.state1 : this.state1_state;
+      const s = this.state1_state;
     },
     __stateChange(stateProp) {
       (this.stateProp_state = stateProp),
@@ -92,6 +81,16 @@ export default {
     statePropChange(...args) {
       this.$emit("update:state-prop", ...args);
     },
+    __state1_watcher(s) {
+      this.state1_state = s;
+    },
+    __state2_watcher(s) {
+      this.state2_state = s;
+    },
+    __stateProp_watcher(s) {
+      this.stateProp_state = s;
+    },
   },
 };
+export default DxWidget;
 </script>

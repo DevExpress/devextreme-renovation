@@ -29,10 +29,7 @@ import {
 } from "./base-generator/types";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { Method } from "./base-generator/expressions/class-members";
-import {
-  capitalizeFirstLetter,
-  compileType,
-} from "./base-generator/utils/string";
+import { compileType } from "./base-generator/utils/string";
 import { Decorators } from "./component_declaration/decorators";
 
 const BASE_JQUERY_WIDGET = "BASE_JQUERY_WIDGET";
@@ -122,12 +119,8 @@ export class PreactComponent extends ReactComponent {
     return processModuleFileName(module);
   }
 
-  defaultPropsDest() {
-    return `(${this.name} as any).defaultProps`;
-  }
-
   compileRestProps() {
-    return "declare type RestProps = { className?: string; style?: { [name: string]: any }; [x: string]: any }";
+    return "declare type RestProps = { className?: string; style?: { [name: string]: any }, key?: any, ref?: any }";
   }
 
   compileDefaultComponentExport() {
@@ -291,9 +284,9 @@ class JQueryComponent {
             return [
                 ${this.source.state.map(
                   (s) =>
-                    `['${s.name}', 'default${capitalizeFirstLetter(
-                      s.name
-                    )}', '${s.name}Change']`
+                    `['${s.name}', '${s.name}Change'${
+                      s.initializer ? `,${s.initializer}` : ``
+                    }]`
                 )}
             ]
         }
@@ -327,7 +320,7 @@ class JQueryComponent {
             }
         }
     
-        registerComponent("dxr${this.source.name}", ${this.source.name});
+        registerComponent("dx${this.source.name}", ${this.source.name});
         `;
   }
 }

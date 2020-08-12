@@ -6,22 +6,18 @@
 const WidgetInput = {
   propState: {
     type: Number,
-    default: undefined,
-  },
-  defaultPropState: {
-    type: Number,
     default() {
       return 1;
     },
   },
 };
 
-export default {
+export const DxWidget = {
   props: WidgetInput,
   data() {
     return {
       innerState: 0,
-      propState_state: this.defaultPropState,
+      propState_state: this.propState,
     };
   },
   computed: {
@@ -30,11 +26,13 @@ export default {
     },
     props() {
       return {
-        propState:
-          this.propState !== undefined ? this.propState : this.propState_state,
+        propState: this.propState_state,
         propStateChange: this.propStateChange,
       };
     },
+  },
+  watch: {
+    propState: ["__propState_watcher"],
   },
   methods: {
     __updateState() {
@@ -42,26 +40,22 @@ export default {
       this.innerState = this.innerState + 1;
       this.innerState = this.innerState + 1;
       this.innerState = this.innerState + 1;
-      (this.propState_state =
-        (this.propState !== undefined ? this.propState : this.propState_state) +
-        1),
+      (this.propState_state = this.propState_state + 1),
         this.propStateChange(this.propState_state);
-      (this.propState_state =
-        (this.propState !== undefined ? this.propState : this.propState_state) +
-        1),
+      (this.propState_state = this.propState_state + 1),
         this.propStateChange(this.propState_state);
-      (this.propState_state =
-        (this.propState !== undefined ? this.propState : this.propState_state) +
-        1),
+      (this.propState_state = this.propState_state + 1),
         this.propStateChange(this.propState_state);
-      (this.propState_state =
-        (this.propState !== undefined ? this.propState : this.propState_state) +
-        1),
+      (this.propState_state = this.propState_state + 1),
         this.propStateChange(this.propState_state);
     },
     propStateChange(...args) {
       this.$emit("update:prop-state", ...args);
     },
+    __propState_watcher(s) {
+      this.propState_state = s;
+    },
   },
 };
+export default DxWidget;
 </script>

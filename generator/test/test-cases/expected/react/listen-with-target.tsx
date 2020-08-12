@@ -1,12 +1,8 @@
 function view() {}
 
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, HtmlHTMLAttributes } from "react";
 
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<HtmlHTMLAttributes<HTMLDivElement>, keyof {}>;
 interface Widget {
   onPointerUp: () => any;
   scrollHandler: () => any;
@@ -31,6 +27,7 @@ export function Widget(props: {} & RestProps) {
       window.removeEventListener("scroll", scrollHandler);
     };
   });
+
   return view();
 }
 

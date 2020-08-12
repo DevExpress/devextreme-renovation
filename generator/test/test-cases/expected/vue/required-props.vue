@@ -2,18 +2,13 @@
 function view() {}
 const WidgetInput = {
   size: {
-    default() {
-      return { width: 10, height: 20 };
-    },
+    required: true,
   },
   type: {
     type: String,
-    default() {
-      return "type";
-    },
+    required: true,
   },
 };
-
 import { convertRulesToOptions } from "../../../../component_declaration/default_options";
 
 const __defaultOptionRules = [];
@@ -21,39 +16,14 @@ export function defaultOptions(rule) {
   __defaultOptionRules.push(rule);
 }
 
-export default {
-  props: (() => {
-    const twoWayProps = [];
-    return Object.keys(WidgetInput).reduce((props, propName) => {
-      const prop = { ...WidgetInput[propName] };
-
-      const twoWayPropName =
-        propName.indexOf("default") === 0 &&
-        twoWayProps.find(
-          (p) => "default" + p.charAt(0).toUpperCase() + p.slice(1) === propName
-        );
-      const defaultPropName = twoWayPropName ? twoWayPropName : propName;
-
-      if (typeof prop.default === "function") {
-        const defaultValue = prop.default;
-        prop.default = function () {
-          return this._defaultOptions[defaultPropName] !== undefined
-            ? this._defaultOptions[defaultPropName]
-            : defaultValue();
-        };
-      } else if (!twoWayProps.some((p) => p === propName)) {
-        const defaultValue = prop.default;
-        prop.default = function () {
-          return this._defaultOptions[defaultPropName] !== undefined
-            ? this._defaultOptions[defaultPropName]
-            : defaultValue;
-        };
-      }
-
-      props[propName] = prop;
-      return props;
-    }, {});
-  })(),
+export const DxWidget = {
+  props: Object.keys(WidgetInput).reduce(
+    (props, propName) => ({
+      ...props,
+      [propName]: { ...WidgetInput[propName] },
+    }),
+    {}
+  ),
   computed: {
     __getHeight() {
       return this.size.height;
@@ -70,7 +40,16 @@ export default {
     },
   },
   beforeCreate() {
-    this._defaultOptions = convertRulesToOptions(__defaultOptionRules);
+    const defaultOptions = convertRulesToOptions(__defaultOptionRules);
+    Object.keys(this.$options.props).forEach((propName) => {
+      const defaultValue = defaultOptions[propName];
+      const prop = this.$options.props[propName];
+      if (defaultValue !== undefined) {
+        prop.default =
+          prop.type !== Function ? () => defaultValue : defaultValue;
+      }
+    });
   },
 };
+export default DxWidget;
 </script>

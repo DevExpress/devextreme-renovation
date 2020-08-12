@@ -16,14 +16,12 @@ const ModelWidgetInput: ModelWidgetInputType = {
   modelStatePropChange: () => {},
   valueChange: () => {},
 };
+import React, { useState, useCallback, HtmlHTMLAttributes } from "react";
 
-import React, { useState, useCallback } from "react";
-
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof ModelWidgetInput
+>;
 interface ModelWidget {
   props: typeof ModelWidgetInput & RestProps;
   restAttributes: RestProps;
@@ -32,17 +30,21 @@ interface ModelWidget {
 export default function ModelWidget(
   props: typeof ModelWidgetInput & RestProps
 ) {
-  const [__state_baseStateProp, __state_setBaseStateProp] = useState(() =>
+  const [__state_baseStateProp, __state_setBaseStateProp] = useState<
+    boolean | undefined
+  >(() =>
     props.baseStateProp !== undefined
       ? props.baseStateProp
       : props.defaultBaseStateProp
   );
-  const [__state_modelStateProp, __state_setModelStateProp] = useState(() =>
+  const [__state_modelStateProp, __state_setModelStateProp] = useState<
+    boolean | undefined
+  >(() =>
     props.modelStateProp !== undefined
       ? props.modelStateProp
       : props.defaultModelStateProp
   );
-  const [__state_value, __state_setValue] = useState(() =>
+  const [__state_value, __state_setValue] = useState<boolean | undefined>(() =>
     props.value !== undefined ? props.value : props.defaultValue
   );
 

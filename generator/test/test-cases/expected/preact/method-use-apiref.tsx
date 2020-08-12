@@ -1,5 +1,4 @@
 import BaseWidget from "./method";
-
 function view(viewModel: WidgetWithApiRef) {
   return (
     <BaseWidget
@@ -8,25 +7,21 @@ function view(viewModel: WidgetWithApiRef) {
     ></BaseWidget>
   );
 }
-
 export declare type WidgetWithApiRefInputType = {
   prop1?: number;
 };
 const WidgetWithApiRefInput: WidgetWithApiRefInputType = {};
-
 import { WidgetRef as BaseWidgetRef } from "./method";
 import * as Preact from "preact";
 import { useCallback, useRef, useImperativeHandle } from "preact/hooks";
 import { forwardRef } from "preact/compat";
 
-export type WidgetWithApiRefRef = {
-  getSomething: () => string;
-};
-
+export type WidgetWithApiRefRef = { getSomething: () => string };
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
-  [x: string]: any;
+  key?: any;
+  ref?: any;
 };
 interface WidgetWithApiRef {
   props: typeof WidgetWithApiRefInput & RestProps;
@@ -49,7 +44,6 @@ const WidgetWithApiRef = forwardRef<
     }),
     [props.prop1, baseRef.current]
   );
-
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { prop1, ...restProps } = props;
@@ -64,9 +58,8 @@ const WidgetWithApiRef = forwardRef<
     restAttributes: __restAttributes(),
   });
 });
-
 export default WidgetWithApiRef;
 
-(WidgetWithApiRef as any).defaultProps = {
+WidgetWithApiRef.defaultProps = {
   ...WidgetWithApiRefInput,
 };

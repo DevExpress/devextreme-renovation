@@ -8,13 +8,9 @@ function view(viewModel: Widget) {
   );
 }
 
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, HtmlHTMLAttributes } from "react";
 
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<HtmlHTMLAttributes<HTMLDivElement>, keyof {}>;
 interface Widget {
   divRef: any;
   nullableRef: any;
@@ -32,14 +28,12 @@ export default function Widget(props: {} & RestProps) {
   const clickHandler = useCallback(function clickHandler(): any {
     const html = divRef.current!.outerHTML + explicitRef.current!.outerHTML;
   }, []);
-
   const getHeight = useCallback(
     function getHeight(): any {
       return divRef.current!.outerHTML + nullableRef.current?.outerHTML;
     },
     [nullableRef.current]
   );
-
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { ...restProps } = props;

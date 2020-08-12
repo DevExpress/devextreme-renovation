@@ -12,7 +12,7 @@
 import WidgetWithTemplate from "./dx-widget-with-template";
 
 export const TemplateTransitWidgetInput = {};
-export default {
+export const DxTemplateTransitWidget = {
   components: {
     WidgetWithTemplate,
   },
@@ -29,4 +29,5 @@ export default {
     },
   },
 };
+export default DxTemplateTransitWidget;
 </script>

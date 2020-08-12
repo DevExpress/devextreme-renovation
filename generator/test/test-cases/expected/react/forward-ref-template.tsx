@@ -11,14 +11,17 @@ export declare type PropsType = {
   contentComponent?: any;
 };
 const Props: PropsType = {} as PropsType;
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  HtmlHTMLAttributes,
+} from "react";
 
-import React, { useCallback, useEffect, useRef } from "react";
-
-declare type RestProps = {
-  className?: string;
-  style?: React.CSSProperties;
-  [x: string]: any;
-};
+declare type RestProps = Omit<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  keyof typeof Props
+>;
 interface RefOnChildrenTemplate {
   props: typeof Props & RestProps;
   child: any;
@@ -60,6 +63,7 @@ export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
   useEffect(() => {
     child.current!.innerHTML += "ParentText";
   }, []);
+
   return view({
     props: {
       ...props,

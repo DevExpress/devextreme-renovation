@@ -3,6 +3,7 @@ import path from "path";
 import {
   capitalizeFirstLetter,
   removePlural,
+  compileType,
 } from "./base-generator/utils/string";
 import BaseGenerator from "./base-generator";
 import {
@@ -254,6 +255,10 @@ export class ComponentInput extends BaseComponentInput {
     }
     return members;
   }
+
+  getInitializerScope(component: string, name: string) {
+    return `${component}.${name}`;
+  }
 }
 
 export class HeritageClause extends BaseHeritageClause {
@@ -265,17 +270,16 @@ export class HeritageClause extends BaseHeritageClause {
     super(token, types, context);
     this.defaultProps = types.reduce(
       (defaultProps: string[], { type, isJsxComponent }) => {
+        const name = type.toString().replace("typeof ", "");
         if (isJsxComponent) {
-          defaultProps.push(type.toString());
+          defaultProps.push(name);
         } else {
-          const importName = type.toString().replace("typeof ", "");
-          const component =
-            context.components && context.components[importName];
+          const component = context.components && context.components[name];
           if (component && component.compileDefaultProps() !== "") {
             defaultProps.push(
               `${component
                 .defaultPropsDest()
-                .replace(component.name.toString(), importName)}${
+                .replace(component.name.toString(), name)}${
                 type.toString().indexOf("typeof ") === 0 ? "Type" : ""
               }`
             );
@@ -411,7 +415,9 @@ export class Property extends BaseProperty {
         ? ""
         : this.questionOrExclamationToken;
 
-    return `${this.name}${questionOrExclamationToken}:${type}`;
+    const typeString = compileType(type.toString(), questionOrExclamationToken);
+
+    return `${this.name}${typeString}`;
   }
 
   getter(componentContext?: string) {
@@ -510,6 +516,11 @@ export class Property extends BaseProperty {
     if (!options) {
       return super.toString();
     }
+    const type = `${this.type}${
+      this.questionOrExclamationToken === SyntaxKind.QuestionToken
+        ? " | undefined"
+        : ""
+    }`;
     if (this.isState) {
       const propName = getPropName(this.name);
       const defaultExclamationToken =
@@ -520,13 +531,13 @@ export class Property extends BaseProperty {
 
       return `const [${getLocalStateName(this.name)}, ${stateSetter(
         this.name
-      )}] = useState(()=>${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(
+      )}] = useState<${type}>(()=>${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(
         this.name
       )}${defaultExclamationToken})`;
     }
     return `const [${getLocalStateName(this.name)}, ${stateSetter(
       this.name
-    )}] = useState(${this.initializer})`;
+    )}] = useState<${type}>(${this.initializer})`;
   }
 
   get canBeDestructured() {
@@ -723,7 +734,10 @@ export class ReactComponent extends Component {
 
   compileImportStatements(hooks: string[], compats: string[]) {
     const imports = [
-      `import React, {${hooks.concat(compats).join(",")}} from 'react';`,
+      `import React, {${hooks
+        .concat(compats)
+        .concat(["HtmlHTMLAttributes"])
+        .join(",")}} from 'react';`,
     ];
 
     if (this.containsPortal()) {
@@ -807,7 +821,7 @@ export class ReactComponent extends Component {
   compileConvertRulesToOptions(rules: string | Expression) {
     return this.state.length
       ? `__processTwoWayProps(convertRulesToOptions(${rules}))`
-      : `convertRulesToOptions(${rules})`;
+      : `convertRulesToOptions<${this.getPropsType()}>(${rules})`;
   }
 
   compileDefaultProps() {
@@ -1019,24 +1033,20 @@ export class ReactComponent extends Component {
   }
 
   compileRestProps(): string {
-    return "declare type RestProps = { className?: string; style?: React.CSSProperties; [x: string]: any }";
+    return `declare type RestProps = Omit<HtmlHTMLAttributes<HTMLDivElement>, keyof ${this.getPropsType()}>`;
   }
 
-  compilePropsType() {
-    const restPropsType = " & RestProps";
-
+  getPropsType() {
     if (this.isJSXComponent) {
       const type = this.heritageClauses[0].types[0];
       if (
         type.expression instanceof Call &&
         type.expression.typeArguments?.length
       ) {
-        return type.expression.typeArguments[0]
-          .toString()
-          .concat(restPropsType);
+        return type.expression.typeArguments[0].toString();
       }
 
-      return this.compileDefaultOptionsPropsType().concat(restPropsType);
+      return this.compileDefaultOptionsPropsType();
     }
     return `{
             ${this.props
@@ -1044,7 +1054,11 @@ export class ReactComponent extends Component {
               .concat(this.slots)
               .map((p) => p.typeDeclaration())
               .join(",\n")}
-        }${restPropsType}`;
+        }`;
+  }
+
+  compilePropsType() {
+    return this.getPropsType().concat(" & RestProps");
   }
 
   compileDefaultOptionsPropsType() {

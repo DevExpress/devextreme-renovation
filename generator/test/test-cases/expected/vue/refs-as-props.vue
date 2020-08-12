@@ -15,7 +15,7 @@ const WidgetInput = {
   },
 };
 
-export default {
+export const DxWidget = {
   components: {
     WidgetWithRefProp,
   },
@@ -37,4 +37,5 @@ export default {
     },
   },
 };
+export default DxWidget;
 </script>

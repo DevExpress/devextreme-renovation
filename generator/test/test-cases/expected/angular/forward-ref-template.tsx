@@ -1,6 +1,6 @@
 import { Input, TemplateRef } from "@angular/core";
 class Props {
-  @Input() contentTemplate!: TemplateRef<any>;
+  @Input() contentTemplate: TemplateRef<any> | null = null;
 }
 
 import { Component, NgModule, ElementRef } from "@angular/core";

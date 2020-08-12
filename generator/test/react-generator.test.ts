@@ -181,6 +181,10 @@ mocha.describe("react-generator", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("import-component-named", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("implements", function () {
     this.testGenerator(this.test!.title);
   });
@@ -230,6 +234,10 @@ mocha.describe("react-generator", function () {
   });
 
   mocha.it("portal", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("pick-props", function () {
     this.testGenerator(this.test!.title);
   });
 
@@ -485,7 +493,7 @@ mocha.describe("React Component", function () {
       assert.strictEqual(
         getResult(view.toString()),
         getResult(`
-                ({props:{children,p,template}}:Widget) => 
+                ({props:{children,p,template}}:Widget) =>
                     <div >{template()}
                     {children}
                     {p}</div>
@@ -3197,7 +3205,9 @@ mocha.describe("Default_options", function () {
     );
     assert.strictEqual(
       getResult(component.compileImports()),
-      getResult(`import React, { useCallback } from "react";`)
+      getResult(
+        `import React, { useCallback, HtmlHTMLAttributes } from "react";`
+      )
     );
   });
 
@@ -3263,7 +3273,7 @@ mocha.describe("Default_options", function () {
       assert.strictEqual(
         getResult(component.compileImports()),
         getResult(
-          `import {convertRulesToOptions, Rule} from "../default_options"; import React, { useCallback } from "react";`
+          `import {convertRulesToOptions, Rule} from "../default_options"; import React, { useCallback, HtmlHTMLAttributes } from "react";`
         )
       );
     }
@@ -3286,7 +3296,9 @@ mocha.describe("Default_options", function () {
 
       assert.strictEqual(
         getResult(component.compileImports()),
-        getResult(`import React, { useCallback } from "react";`)
+        getResult(
+          `import React, { useCallback, HtmlHTMLAttributes } from "react";`
+        )
       );
     }
   );

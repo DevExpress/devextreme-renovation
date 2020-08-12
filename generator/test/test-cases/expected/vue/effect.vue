@@ -23,23 +23,19 @@ export const WidgetInput = {
   },
   s: {
     type: Number,
-    default: undefined,
-  },
-  defaultS: {
-    type: Number,
     default() {
       return 10;
     },
   },
 };
 
-export default {
+export const DxWidget = {
   props: WidgetInput,
   data() {
     return {
       i: 10,
       j: 20,
-      s_state: this.defaultS,
+      s_state: this.s,
     };
   },
   computed: {
@@ -47,44 +43,29 @@ export default {
       return {};
     },
     props() {
-      return {
-        p: this.p,
-        r: this.r,
-        s: this.s !== undefined ? this.s : this.s_state,
-        sChange: this.sChange,
-      };
+      return { p: this.p, r: this.r, s: this.s_state, sChange: this.sChange };
     },
   },
-
   watch: {
     p: ["__schedule_setupData", "__schedule_alwaysEffect"],
-    s: ["__schedule_setupData", "__schedule_alwaysEffect"],
     s_state: ["__schedule_setupData", "__schedule_alwaysEffect"],
     i: ["__schedule_setupData", "__schedule_alwaysEffect"],
     j: ["__schedule_alwaysEffect"],
     r: ["__schedule_alwaysEffect"],
-    defaultS: ["__schedule_alwaysEffect"],
     sChange: ["__schedule_alwaysEffect"],
+    s: ["__s_watcher"],
   },
   methods: {
     __getP() {
       return this.p;
     },
     __setupData() {
-      const id = subscribe(
-        this.__getP(),
-        this.s !== undefined ? this.s : this.s_state,
-        this.i
-      );
+      const id = subscribe(this.__getP(), this.s_state, this.i);
       this.i = 15;
       return () => unsubscribe(id);
     },
     __onceEffect() {
-      const id = subscribe(
-        this.__getP(),
-        this.s !== undefined ? this.s : this.s_state,
-        this.i
-      );
+      const id = subscribe(this.__getP(), this.s_state, this.i);
       this.i = 15;
       return () => unsubscribe(id);
     },
@@ -113,6 +94,9 @@ export default {
         );
       }
     },
+    __s_watcher(s) {
+      this.s_state = s;
+    },
   },
   created() {
     this.__destroyEffects = [];
@@ -135,4 +119,5 @@ export default {
     this.__destroyEffects = null;
   },
 };
+export default DxWidget;
 </script>

@@ -20,8 +20,12 @@ import {
 } from "../../../base-generator/expressions/literal";
 import { Property as BaseProperty } from "../../../base-generator/expressions/class-members";
 import { toStringOptions } from "../../types";
+import { Expression } from "../../../base-generator/expressions/base";
 
-function calculatePropertyType(type: TypeExpression | string): string {
+function calculatePropertyType(
+  type: TypeExpression | string,
+  initializer?: Expression
+): string {
   if (type instanceof SimpleTypeExpression) {
     const typeString = type.type.toString();
     if (
@@ -76,6 +80,10 @@ export class Property extends BaseProperty {
     return this._name.toString();
   }
 
+  typeDeclaration() {
+    return this.name;
+  }
+
   toString(options?: toStringOptions) {
     if (!options) {
       return super.toString();
@@ -97,7 +105,7 @@ export class Property extends BaseProperty {
     const type =
       this.isRefProp || this.isForwardRefProp
         ? "Function"
-        : calculatePropertyType(this.type);
+        : calculatePropertyType(this.type, this.initializer);
     const parts = [];
     if (type) {
       parts.push(`type: ${type}`);
@@ -106,15 +114,12 @@ export class Property extends BaseProperty {
     if (this.questionOrExclamationToken === SyntaxKind.ExclamationToken) {
       parts.push("required: true");
     }
-    const isState = this.isState;
-    if (this.initializer && !isState) {
+    if (this.initializer && type !== "Function") {
       parts.push(`default(){
                   return ${this.initializer}
               }`);
-    }
-
-    if (this.isState) {
-      parts.push("default: undefined");
+    } else if (this.initializer) {
+      parts.push(`default:${this.initializer}`);
     }
 
     return `${this.name}: {
@@ -126,7 +131,7 @@ export class Property extends BaseProperty {
     const baseValue = super.getter(componentContext);
     componentContext = this.processComponentContext(componentContext);
     if (this.isState) {
-      return `(${componentContext}${this.name} !== undefined ? ${componentContext}${this.name} : ${componentContext}${this.name}_state)`;
+      return `${componentContext}${this.name}_state`;
     }
     if (
       (this.isForwardRefProp || this.isRef || this.isForwardRef) &&
@@ -177,7 +182,7 @@ export class Property extends BaseProperty {
 
   getDependency() {
     if (this.isState) {
-      return super.getDependency().concat([`${this.name}_state`]);
+      return [`${this.name}_state`];
     }
     return super.getDependency();
   }

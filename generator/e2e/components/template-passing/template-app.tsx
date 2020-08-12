@@ -5,7 +5,7 @@ import {
 } from "../../../component_declaration/common";
 
 import InterComponent from "./inter-component.tsx";
-import HeaderComponent from "./header-component.tsx";
+import { HeaderComponent } from "./header-component.tsx";
 import BodyComponent from "./body-component.tsx";
 
 function view(vm: TemplateApp) {

@@ -5,7 +5,6 @@ import { TypeExpression } from "../../base-generator/expressions/type";
 import { Expression } from "../../base-generator/expressions/base";
 import { Property } from "./class-members/property";
 import { GeneratorContext } from "../../base-generator/types";
-import { Method } from "./class-members/method";
 import SyntaxKind from "../../base-generator/syntaxKind";
 
 export class VueComponentInput extends ComponentInput {
@@ -59,7 +58,12 @@ export class VueComponentInput extends ComponentInput {
           }`;
   }
 
-  processMembers(members: (Property | Method)[]) {
-    return super.processMembers(members);
+  getInitializerScope(component: string, name: string) {
+    const initializer = `${component}.${name}.default`;
+    return `typeof ${initializer}==="function"?${initializer}():${initializer}`;
+  }
+
+  buildDefaultStateProperty() {
+    return null;
   }
 }
