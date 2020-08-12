@@ -111,6 +111,10 @@ export class PreactComponent extends ReactComponent {
       imports.push(`import {${compats.join(",")}} from "preact/compat"`);
     }
 
+    if (this.containsPortal()) {
+      imports.push(`import { createPortal } from 'preact/compat';`);
+    }
+
     return imports;
   }
 

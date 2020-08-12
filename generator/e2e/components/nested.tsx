@@ -2,10 +2,6 @@ import { Component, JSXComponent } from "../../component_declaration/common";
 import { WithNestedInput } from "./nested-props.ts";
 
 function view(model: WithNested) {
-  if (model.props.gridDataRows) {
-    debugger;
-    console.log(model.props);
-  }
   return (
     <div>
       {model.props.gridDataRows?.map((_, index) => (

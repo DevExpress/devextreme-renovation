@@ -1,8 +1,18 @@
-import react from "react";
+import * as react from "react";
+import { createPortal } from "react-dom";
 import { Rule } from "./default_options";
 
 export const React = react;
 export const Fragment = react.Fragment;
+
+declare type PortalProps = {
+  children: react.ReactNode;
+  container: Element;
+};
+export const Portal: react.ElementType = ({
+  children,
+  container,
+}: PortalProps) => createPortal(children, container);
 
 /**
  * Class Decorator.

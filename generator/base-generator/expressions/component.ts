@@ -378,4 +378,14 @@ export class Component extends Class implements Heritable {
     const baseComponent = jQueryProp?.getProperty("component");
     return baseComponent?.toString();
   }
+
+  containsPortal() {
+    const viewFunctions = this.context.viewFunctions;
+    if (viewFunctions) {
+      return Object.keys(viewFunctions).some((key) =>
+        viewFunctions[key].containsPortal()
+      );
+    }
+    return false;
+  }
 }

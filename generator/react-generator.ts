@@ -438,9 +438,12 @@ export class Property extends BaseProperty {
           d.name === Decorators.ForwardRefProp
       )
     ) {
-      return `${scope}${this.name}${
-        scope ? this.questionOrExclamationToken : ""
-      }.current!`;
+      if (componentContext === "") {
+        return `${scope}${this.name}${
+          scope ? this.questionOrExclamationToken : ""
+        }.current!`;
+      }
+      return getPropName(this.name, componentContext, scope);
     } else if (this.isState) {
       const propName = getPropName(this.name, componentContext, scope);
       return `(${propName}!==undefined?${propName}:${getLocalStateName(
@@ -719,7 +722,15 @@ export class ReactComponent extends Component {
   }
 
   compileImportStatements(hooks: string[], compats: string[]) {
-    return [`import React, {${hooks.concat(compats).join(",")}} from 'react';`];
+    const imports = [
+      `import React, {${hooks.concat(compats).join(",")}} from 'react';`,
+    ];
+
+    if (this.containsPortal()) {
+      imports.push("import { createPortal } from 'react-dom';");
+    }
+
+    return imports;
   }
 
   compileImports() {
@@ -1294,6 +1305,26 @@ export class JsxAttribute extends BaseJsxAttribute {
 }
 
 export class JsxElement extends BaseJsxElement {
+  compilePortal(children: string, options?: toStringOptions) {
+    const container = this.openingElement.attributes.find(
+      (attr) =>
+        attr instanceof JsxAttribute && attr.name.toString() === "container"
+    ) as JsxAttribute;
+    const expression = (container.initializer as JsxExpression).getExpression()!;
+
+    const propName =
+      expression instanceof PropertyAccess
+        ? expression.name.toString()
+        : expression.toString();
+    const relatedProp = options?.members.find(
+      (m) => m.name.toString() === propName
+    ) as Property | undefined;
+
+    const token = relatedProp?.questionOrExclamationToken ?? "";
+    const getter = relatedProp ? ".current!" : "";
+    return `${expression}${token}${getter} && createPortal(${children}, ${expression}${token}${getter})`;
+  }
+
   toString(options?: toStringOptions) {
     const children: string = this.children
       .map((c) => {
@@ -1304,8 +1335,8 @@ export class JsxElement extends BaseJsxElement {
         ) {
           str = `{${c.openingElement.toString(options)}}`;
         } else if (
-          c instanceof JsxOpeningElement &&
-          c.getTemplateProperty(options)
+          (c instanceof JsxOpeningElement && c.getTemplateProperty(options)) ||
+          (c instanceof JsxElement && c.isPortal())
         ) {
           str = `{${c.toString(options)}}`;
         } else {
@@ -1314,6 +1345,10 @@ export class JsxElement extends BaseJsxElement {
         return str;
       })
       .join("\n");
+
+    if (this.isPortal()) {
+      return this.compilePortal(children, options);
+    }
 
     return `${this.openingElement.toString(
       options

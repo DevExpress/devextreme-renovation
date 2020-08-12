@@ -946,6 +946,99 @@ export class AngularComponent extends Component {
       .join(";\n");
   }
 
+  compilePortalComponent(
+    coreImports: string[],
+    cdkImports: string[],
+    importModules: string[]
+  ) {
+    coreImports.push("ViewChild");
+    coreImports.push("ComponentFactoryResolver");
+    coreImports.push("ApplicationRef");
+    coreImports.push("Injector");
+    coreImports.push("ElementRef");
+    cdkImports.push("DomPortalOutlet");
+    cdkImports.push("DomPortal");
+    importModules.push("DxPortal");
+
+    return `@Component({
+        selector: "dx-portal",
+        template: \`<div #content style="display:contents" *ngIf="container">
+          <ng-content></ng-content>
+        </div>\`
+      })
+      class DxPortal {
+        @Input() container?: HTMLElement;
+        @ViewChild("content") content?: ElementRef<HTMLDivElement>;
+        _portal?: DomPortal;
+        _outlet?: DomPortalOutlet;
+
+        constructor(
+          private _cfr: ComponentFactoryResolver,
+          private _ar: ApplicationRef,
+          private _injector: Injector,
+        ) {}
+
+        _renderPortal() {
+          if(this._portal && this._portal.isAttached) {
+            this._portal.detach();
+          }
+          if (this.content) {
+            this._portal = new DomPortal(this.content);
+          }
+        }
+
+        _renderOutlet() {
+          if(this._outlet) {
+            this._outlet.detach();
+          }
+          if (this.container && document) {
+            this._outlet = new DomPortalOutlet(
+              this.container,
+              this._cfr,
+              this._ar,
+              this._injector,
+              document
+            );
+          }
+        }
+
+        _attachPortal() {
+          if(this._outlet && this._portal) {
+            this._outlet.attach(this._portal);
+          }
+        }
+
+        ngAfterViewInit(changes: any) {
+          this._renderPortal();
+          this._renderOutlet();
+          this._attachPortal();
+        }
+
+        ngOnChanges(changes: any) {
+          if (changes.container) {
+            this._renderPortal();
+            this._renderOutlet();
+            this._attachPortal();
+          }
+        }
+
+        ngOnDestroy() {
+          if(this._outlet) {
+            this._outlet.dispose();
+          }
+        }
+      }`;
+  }
+
+  compileCdkImports(cdkImports: string[] = []) {
+    if (cdkImports.length) {
+      return `import { ${[...new Set(cdkImports)].join(
+        ","
+      )} } from "@angular/cdk/portal"`;
+    }
+    return "";
+  }
+
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -966,6 +1059,7 @@ export class AngularComponent extends Component {
     const ngDoCheckStatements: string[] = [];
     const constructorStatements: string[] = [];
     const coreImports: string[] = [];
+    const cdkImports: string[] = [];
 
     const decoratorToStringOptions: toStringOptions = {
       members: this.members,
@@ -1010,10 +1104,17 @@ export class AngularComponent extends Component {
       });
 
     const nestedModules = [] as string[];
+    const importModules = [] as string[];
+
+    const portalComponent = this.containsPortal()
+      ? this.compilePortalComponent(coreImports, cdkImports, importModules)
+      : "";
 
     return `
         ${this.compileImports(coreImports)}
-        ${this.compileNestedComponents(nestedModules)};
+        ${this.compileCdkImports(cdkImports)}
+        ${this.compileNestedComponents(nestedModules)}
+        ${portalComponent}
         ${this.compileDefaultOptions(constructorStatements)}
         ${valueAccessor}
         ${componentDecorator}
@@ -1070,7 +1171,9 @@ export class AngularComponent extends Component {
             ${this.compileNgStyleProcessor(decoratorToStringOptions)}
         }
         @NgModule({
-            declarations: [${this.name}, ${nestedModules.join(", ")}],
+            declarations: [${this.name}, ${nestedModules
+      .concat(importModules)
+      .join(", ")}],
             imports: [
                 ${modules.join(",\n")}
             ],
