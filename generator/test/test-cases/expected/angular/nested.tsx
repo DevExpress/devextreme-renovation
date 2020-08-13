@@ -2,6 +2,8 @@ import { WidgetInput } from "./nested-props";
 import {
   Component,
   NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Input,
   ContentChildren,
   QueryList,
@@ -60,7 +62,11 @@ class DxEditing extends Editing {
   selector: "dx-widget dxi-column",
 })
 class DxGridColumn extends GridColumn {}
-@Component({ selector: "dx-widget", template: `<div></div>` })
+@Component({
+  selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<div></div>`,
+})
 export default class Widget extends WidgetInput {
   __getColumns(): any {
     const { columns } = this;
@@ -95,6 +101,9 @@ export default class Widget extends WidgetInput {
     return {};
   }
 
+  constructor(private changeDetection: ChangeDetectorRef) {
+    super();
+  }
   @Input() set columns(value: Array<DxGridColumn | string> | undefined) {
     this.__columns = value;
   }

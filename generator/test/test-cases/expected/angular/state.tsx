@@ -9,11 +9,17 @@ class WidgetInput {
   @Output() statePropChange: EventEmitter<boolean> = new EventEmitter();
 }
 
-import { Component, NgModule } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div>
     {{ state1
     }}<dx-model-widget
@@ -43,7 +49,7 @@ export default class Widget extends WidgetInput {
   _state1Change: any;
   _state2Change: any;
   _statePropChange: any;
-  constructor() {
+  constructor(private changeDetection: ChangeDetectorRef) {
     super();
     this._state1Change = this.state1Change.emit.bind(this.state1Change);
     this._state2Change = this.state2Change.emit.bind(this.state2Change);

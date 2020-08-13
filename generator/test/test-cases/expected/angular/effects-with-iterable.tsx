@@ -4,10 +4,19 @@ export class WidgetInput {
   @Input() propObject: object = {};
 }
 
-import { Component, NgModule } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-@Component({ selector: "dx-widget", template: `<div></div>` })
+@Component({
+  selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<div></div>`,
+})
 export default class Widget extends WidgetInput {
   internalArray: string[] = [];
   internalObject: object = {};
@@ -33,7 +42,6 @@ export default class Widget extends WidgetInput {
   __destroyEffects: any[] = [];
   __viewCheckedSubscribeEvent: Array<() => void> = [];
   _effectTimeout: any;
-
   __schedule_effect() {
     this.__destroyEffects[0]?.();
     this.__viewCheckedSubscribeEvent[0] = () => {
@@ -126,6 +134,7 @@ export default class Widget extends WidgetInput {
       this.__destroyEffects.length &&
       this.__checkObservables(["propArray", "internalArray"])
     ) {
+      this.changeDetection.detectChanges();
       this.__schedule_effectWithObservables();
     }
 
@@ -133,12 +142,17 @@ export default class Widget extends WidgetInput {
       this.__destroyEffects.length &&
       this.__checkObservables(["internalArray", "keys", "propArray"])
     ) {
+      this.changeDetection.detectChanges();
       this.__schedule_alwaysEffect();
     }
   }
 
+  constructor(private changeDetection: ChangeDetectorRef) {
+    super();
+  }
   set _internalArray(internalArray: string[]) {
     this.internalArray = internalArray;
+    this.changeDetection.detectChanges();
     this.__cachedObservables["internalArray"] = [...internalArray];
 
     if (this.__destroyEffects.length) {
@@ -151,6 +165,7 @@ export default class Widget extends WidgetInput {
   }
   set _internalObject(internalObject: object) {
     this.internalObject = internalObject;
+    this.changeDetection.detectChanges();
 
     if (this.__destroyEffects.length) {
       this.__schedule_effect();
@@ -162,6 +177,7 @@ export default class Widget extends WidgetInput {
   }
   set _keys(keys: string[]) {
     this.keys = keys;
+    this.changeDetection.detectChanges();
     this.__cachedObservables["keys"] = [...keys];
 
     if (this.__destroyEffects.length) {
@@ -170,6 +186,7 @@ export default class Widget extends WidgetInput {
   }
   set _counter(counter: number) {
     this.counter = counter;
+    this.changeDetection.detectChanges();
 
     if (this.__destroyEffects.length) {
       this.__schedule_alwaysEffect();

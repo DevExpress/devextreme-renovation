@@ -5,10 +5,19 @@ class WidgetInput {
   @Output() selectedChange: EventEmitter<boolean> = new EventEmitter();
 }
 
-import { Component, NgModule } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-@Component({ selector: "dx-widget", template: `<span></span>` })
+@Component({
+  selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<span></span>`,
+})
 export default class Widget extends WidgetInput {
   __getHeight(): number {
     const { height } = this;
@@ -27,7 +36,7 @@ export default class Widget extends WidgetInput {
   }
 
   _selectedChange: any;
-  constructor() {
+  constructor(private changeDetection: ChangeDetectorRef) {
     super();
     this._selectedChange = this.selectedChange.emit.bind(this.selectedChange);
   }

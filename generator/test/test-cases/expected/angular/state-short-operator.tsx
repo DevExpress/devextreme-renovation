@@ -4,10 +4,19 @@ class WidgetInput {
   @Output() propStateChange: EventEmitter<number> = new EventEmitter();
 }
 
-import { Component, NgModule } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-@Component({ selector: "dx-widget", template: `<div></div>` })
+@Component({
+  selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<div></div>`,
+})
 export default class Widget extends WidgetInput {
   innerState: number = 0;
   __updateState(): any {
@@ -25,7 +34,7 @@ export default class Widget extends WidgetInput {
   }
 
   _propStateChange: any;
-  constructor() {
+  constructor(private changeDetection: ChangeDetectorRef) {
     super();
     this._propStateChange = this.propStateChange.emit.bind(
       this.propStateChange
@@ -33,6 +42,7 @@ export default class Widget extends WidgetInput {
   }
   set _innerState(innerState: number) {
     this.innerState = innerState;
+    this.changeDetection.detectChanges();
   }
 }
 @NgModule({

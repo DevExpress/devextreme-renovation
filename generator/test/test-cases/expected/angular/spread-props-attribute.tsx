@@ -6,7 +6,14 @@ export class WidgetInput {
   @Output() valueChange: EventEmitter<boolean> = new EventEmitter();
 }
 
-import { Component, NgModule, forwardRef, HostListener } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  forwardRef,
+  HostListener,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 
@@ -17,6 +24,7 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
 };
 @Component({
   selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
   template: `<dx-inner-widget
     [value]="value"
@@ -44,7 +52,7 @@ export default class Widget extends WidgetInput
   }
 
   _valueChange: any;
-  constructor() {
+  constructor(private changeDetection: ChangeDetectorRef) {
     super();
     this._valueChange = this.valueChange.emit.bind(this.valueChange);
   }

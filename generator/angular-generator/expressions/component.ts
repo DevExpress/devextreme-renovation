@@ -144,6 +144,10 @@ export class AngularComponent extends Component {
       "selector",
       new StringLiteral(this.selector)
     );
+    componentDecorator.addParameter(
+      "changeDetection",
+      new SimpleExpression("ChangeDetectionStrategy.OnPush")
+    );
     this.decorator = componentDecorator;
   }
 
@@ -380,7 +384,10 @@ export class AngularComponent extends Component {
               ),
             ],
             new Block(
-              [new SimpleExpression(`this.${member.name}=${member._name}`)],
+              [
+                new SimpleExpression(`this.${member.name}=${member._name}`),
+                new SimpleExpression("this.changeDetection.detectChanges()"),
+              ],
               false
             )
           )
@@ -566,6 +573,7 @@ export class AngularComponent extends Component {
 
           ngDoCheckStatements.push(`
           if (${observableConditionArray.join("&&")}) {
+              this.changeDetection.detectChanges();
               this.${updateEffectMethod}();
           }`);
         }
@@ -739,7 +747,7 @@ export class AngularComponent extends Component {
     statements: string[],
     parameters: string[] = []
   ): string {
-    if (statements.length) {
+    if (statements.length || (name !== "ngOnChanges" && parameters.length)) {
       return `${name}(${parameters.join(",")}){
                 ${statements.join("\n")}
             }`;
@@ -957,7 +965,13 @@ export class AngularComponent extends Component {
     const ngAfterViewCheckedStatements: string[] = [];
     const ngDoCheckStatements: string[] = [];
     const constructorStatements: string[] = [];
-    const coreImports: string[] = [];
+    const constructorParams: string[] = [
+      "private changeDetection: ChangeDetectorRef",
+    ];
+    const coreImports: string[] = [
+      "ChangeDetectionStrategy",
+      "ChangeDetectorRef",
+    ];
 
     const decoratorToStringOptions: toStringOptions = {
       members: this.members,
@@ -1054,9 +1068,11 @@ export class AngularComponent extends Component {
             ${this.compileBindEvents(constructorStatements)}
             ${this.compileLifeCycle(
               "constructor",
-              constructorStatements.length
+              (constructorStatements.length || constructorParams.length) &&
+                this.heritageClauses.length
                 ? ["super()"].concat(constructorStatements)
-                : constructorStatements
+                : constructorStatements,
+              constructorParams
             )}
             ${this.members.filter((m) => m instanceof SetAccessor).join("\n")}
             ${this.compileNgStyleProcessor(decoratorToStringOptions)}

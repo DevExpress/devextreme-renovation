@@ -6,7 +6,14 @@ export class InnerWidgetProps {
   @Output() valueChange: EventEmitter<number> = new EventEmitter();
 }
 
-import { Component, NgModule, forwardRef, HostListener } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  forwardRef,
+  HostListener,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 
@@ -17,6 +24,7 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
 };
 @Component({
   selector: "dx-inner-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
   template: `<div
     [ngStyle]="__processNgStyle({ width: 100, height: 100 })"
@@ -44,7 +52,7 @@ export default class InnerWidget extends InnerWidgetProps
 
   _onSelect: any;
   _valueChange: any;
-  constructor() {
+  constructor(private changeDetection: ChangeDetectorRef) {
     super();
     this._onSelect = this.onSelect.emit.bind(this.onSelect);
     this._valueChange = this.valueChange.emit.bind(this.valueChange);

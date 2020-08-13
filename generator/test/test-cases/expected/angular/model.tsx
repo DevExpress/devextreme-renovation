@@ -8,7 +8,14 @@ class ModelWidgetInput {
   @Output() valueChange: EventEmitter<boolean> = new EventEmitter();
 }
 
-import { Component, NgModule, forwardRef, HostListener } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  forwardRef,
+  HostListener,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 
@@ -19,6 +26,7 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
 };
 @Component({
   selector: "dx-model-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
   template: `<div>{{ baseStateProp }}</div>`,
 })
@@ -45,7 +53,7 @@ export default class ModelWidget extends ModelWidgetInput
   _baseStatePropChange: any;
   _modelStatePropChange: any;
   _valueChange: any;
-  constructor() {
+  constructor(private changeDetection: ChangeDetectorRef) {
     super();
     this._baseStatePropChange = this.baseStatePropChange.emit.bind(
       this.baseStatePropChange
