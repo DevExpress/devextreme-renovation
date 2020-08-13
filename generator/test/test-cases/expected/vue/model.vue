@@ -15,7 +15,7 @@ const ModelWidgetInput = {
     type: Boolean,
   },
 };
-export default {
+export const DxModelWidget = {
   props: ModelWidgetInput,
   model: {
     prop: "modelStateProp",
@@ -69,4 +69,5 @@ export default {
     },
   },
 };
+export default DxModelWidget;
 </script>

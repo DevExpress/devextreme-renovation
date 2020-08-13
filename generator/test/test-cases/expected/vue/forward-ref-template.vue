@@ -6,7 +6,7 @@
 <script>
 const Props = {};
 
-export default {
+export const DxRefOnChildrenTemplate = {
   props: Props,
   computed: {
     __restAttributes() {
@@ -61,4 +61,5 @@ export default {
     this.__destroyEffects = null;
   },
 };
+export default DxRefOnChildrenTemplate;
 </script>

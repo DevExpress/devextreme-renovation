@@ -1,11 +1,10 @@
 <template>
-  <Base :height="__getProps().height" />
+  <Widget :prop="true" />
 </template>
 <script>
-import Base, { WidgetProps } from "./component-input";
+import { DxWidget as Widget } from "./export-named";
 
 const ChildInput = {
-  ...WidgetProps,
   height: {
     type: Number,
     default() {
@@ -15,7 +14,7 @@ const ChildInput = {
 };
 export const DxChild = {
   components: {
-    Base,
+    Widget,
   },
   props: ChildInput,
   computed: {
@@ -25,18 +24,7 @@ export const DxChild = {
     props() {
       return {
         height: this.height,
-        onClick: this.onClick,
-        width: this.width,
-        children: this.$slots.default,
       };
-    },
-  },
-  methods: {
-    __getProps() {
-      return { height: this.height };
-    },
-    onClick(...args) {
-      this.$emit("click", ...args);
     },
   },
 };

@@ -18,7 +18,7 @@ import WidgetWithTemplate from "./dx-widget-with-template";
 import InnerWidget from "./dx-inner-widget";
 
 export const WidgetProps = {};
-export default {
+export const DxWidget = {
   components: {
     WidgetWithTemplate,
     InnerWidget,
@@ -33,4 +33,5 @@ export default {
     },
   },
 };
+export default DxWidget;
 </script>

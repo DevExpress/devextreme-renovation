@@ -4,13 +4,18 @@ import { Decorator } from "./decorator";
 
 export class NamedImports {
   node: ImportSpecifier[];
-  constructor(node: ImportSpecifier[]) {
+  constructor(node: ImportSpecifier[] = []) {
     this.node = node;
   }
 
-  add(name: string) {
+  add(name: string, propertyName?: string) {
     this.remove(name);
-    this.node.push(new ImportSpecifier(undefined, new Identifier(name)));
+    this.node.push(
+      new ImportSpecifier(
+        propertyName ? new Identifier(propertyName) : undefined,
+        new Identifier(name)
+      )
+    );
   }
 
   has(name: string) {
@@ -76,14 +81,12 @@ export class ImportClause {
     return this.namedBindings?.has(name) || false;
   }
 
-  add(name: string) {
-    if (isNamedImports(this.namedBindings)) {
-      this.namedBindings.add(name);
-    } else {
-      this.namedBindings = new NamedImports([
-        new ImportSpecifier(undefined, new Identifier(name)),
-      ]);
+  add(name: string, propertyName?: string) {
+    if (!isNamedImports(this.namedBindings)) {
+      this.namedBindings = new NamedImports();
     }
+
+    this.namedBindings.add(name, propertyName);
   }
 
   toString() {

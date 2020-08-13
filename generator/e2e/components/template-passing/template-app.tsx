@@ -5,7 +5,7 @@ import {
 } from "../../../component_declaration/common";
 
 import InterComponent from "./inter-component";
-import HeaderComponent from "./header-component";
+import { HeaderComponent } from "./header-component";
 import BodyComponent from "./body-component";
 
 function view(vm: TemplateApp) {
