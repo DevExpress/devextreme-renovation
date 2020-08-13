@@ -133,7 +133,17 @@ export class ImportDeclaration {
     this.moduleSpecifier = moduleSpecifier;
   }
 
+  compileComponentDeclarationImport() {
+    return "";
+  }
+
   toString() {
+    if (
+      this.moduleSpecifier.toString().indexOf("component_declaration/common") >=
+      0
+    ) {
+      return this.compileComponentDeclarationImport();
+    }
     return `import ${this.importClause}${this.moduleSpecifier}`;
   }
 }

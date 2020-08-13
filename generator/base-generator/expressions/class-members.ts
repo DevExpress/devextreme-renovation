@@ -111,6 +111,21 @@ export class BaseClassMember extends Expression {
     return this._hasDecorator(Decorators.ForwardRef);
   }
 
+  get isConsumer() {
+    return this._hasDecorator(Decorators.Consumer);
+  }
+
+  get isProvider() {
+    return this._hasDecorator(Decorators.Provider);
+  }
+
+  get context() {
+    const decorator = this.decorators.find(
+      (d) => d.name === Decorators.Consumer || d.name === Decorators.Provider
+    ) as Decorator;
+    return decorator.expression.arguments[0];
+  }
+
   get canBeDestructured() {
     return this.name === this._name.toString();
   }

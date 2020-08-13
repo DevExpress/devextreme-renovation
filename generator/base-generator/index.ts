@@ -529,11 +529,6 @@ export default class Generator implements GeneratorAPI {
     importClause: ImportClause = new ImportClause(),
     moduleSpecifier: StringLiteral
   ) {
-    if (
-      moduleSpecifier.toString().indexOf("component_declaration/common") >= 0
-    ) {
-      return "";
-    }
     const context = this.getContext();
     if (context.defaultOptionsModule && context.dirname) {
       const relativePath = getModuleRelativePath(
@@ -552,7 +547,10 @@ export default class Generator implements GeneratorAPI {
     }
 
     const module = moduleSpecifier.expression.toString();
-    if (context.dirname) {
+    if (
+      context.dirname &&
+      module.indexOf("component_declaration/common") === -1
+    ) {
       const modulePath = resolveModule(
         path.join(context.dirname, module),
         this.cache

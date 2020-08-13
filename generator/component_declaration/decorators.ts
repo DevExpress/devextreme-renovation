@@ -20,4 +20,7 @@ export const enum Decorators {
 
   ApiRef = "ApiRef",
   RefProp = "RefProp",
+
+  Consumer = "Consumer",
+  Provider = "Provider",
 }
