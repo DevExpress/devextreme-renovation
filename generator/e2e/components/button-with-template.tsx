@@ -5,7 +5,7 @@ import {
   OneWay,
   Template,
 } from "../../component_declaration/common";
-import Button, { ButtonInput } from "./button.tsx";
+import Button, { ButtonInput } from "./button";
 
 function view(model: ButtonWithTemplate) {
   return (
@@ -21,7 +21,7 @@ function view(model: ButtonWithTemplate) {
 
 @ComponentBindings()
 class Props extends ButtonInput {
-  @OneWay() text?: string = "Click Me";
+  @OneWay() text: string = "Click Me";
   @Template() template?: (props: { text: string }) => any;
 }
 

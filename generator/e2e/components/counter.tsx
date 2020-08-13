@@ -5,7 +5,7 @@ import {
   OneWay,
   TwoWay,
 } from "../../component_declaration/common";
-import Button from "./button.tsx";
+import Button from "./button";
 
 function view(model: Counter) {
   return (
@@ -18,7 +18,7 @@ function view(model: Counter) {
 @ComponentBindings()
 export class CounterInput {
   @OneWay() id?: string;
-  @TwoWay() value?: number;
+  @TwoWay() value: number = 0;
 }
 
 @Component({

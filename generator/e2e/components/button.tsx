@@ -36,10 +36,10 @@ export class ButtonInput {
   view,
 })
 export default class Button extends JSXComponent(ButtonInput) {
-  @Ref() host: HTMLDivElement;
+  @Ref() host!: HTMLDivElement;
 
   @Effect() clickEffect() {
-    const handler = (e) => {
+    const handler = (e: Event) => {
       this.props.onClick?.(e);
     };
     this.host.addEventListener("click", handler);

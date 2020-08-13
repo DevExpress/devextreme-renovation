@@ -6,7 +6,7 @@ import {
   Fragment,
   OneWay,
 } from "../../../component_declaration/common";
-import Button from "../button.tsx";
+import Button from "../button";
 
 function view({ props: { text }, click }: HeaderComponent) {
   return (
@@ -32,6 +32,6 @@ export default class HeaderComponent extends JSXComponent(
   HeaderComponentProps
 ) {
   click() {
-    this.props.onClick();
+    this.props.onClick?.();
   }
 }

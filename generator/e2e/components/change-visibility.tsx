@@ -7,7 +7,7 @@ import {
   Ref,
   Effect,
 } from "../../component_declaration/common";
-import ButtonComponent from "./button.tsx";
+import ButtonComponent from "./button";
 
 function view(model: VisibilityChange) {
   return (
@@ -45,7 +45,7 @@ export default class VisibilityChange extends JSXComponent(WidgetInput) {
 
   @Effect()
   elementClick() {
-    const handler = (e) => {
+    const handler = (e: Event) => {
       this.visible = false;
     };
     if (this.visible) {
