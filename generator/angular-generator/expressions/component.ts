@@ -172,17 +172,27 @@ export class AngularComponent extends Component {
     modifiers: string[],
     name: string,
     questionOrExclamationToken: string,
-    type: string
+    type: string,
+    onPushStrategy: boolean
   ) {
     if (questionOrExclamationToken === "?") {
       type = type + "| undefined";
     }
+    const statements = [new SimpleExpression(`this.__${name}=value;`)];
+    if (onPushStrategy) {
+      statements.push(
+        new SimpleExpression(`this.changeDetection.detectChanges();`)
+      );
+    }
+
+    onPushStrategy;
+
     return new SetAccessor(
       decorator,
       modifiers,
       new Identifier(`${name}`),
       [new Parameter([], [], undefined, new Identifier("value"), "", type)],
-      new Block([new SimpleExpression(`this.__${name}=value;`)], true)
+      new Block(statements, true)
     );
   }
 
@@ -235,7 +245,7 @@ export class AngularComponent extends Component {
     );
   }
 
-  processNestedProperty(m: Property) {
+  processNestedProperty(m: Property, onPushStrategy: boolean = false) {
     const {
       decorators,
       modifiers,
@@ -274,7 +284,8 @@ export class AngularComponent extends Component {
         modifiers,
         name,
         questionOrExclamationToken,
-        complexType
+        complexType,
+        onPushStrategy
       ),
       this.createNestedPropertyGetter(
         modifiers,
@@ -343,7 +354,7 @@ export class AngularComponent extends Component {
 
     members = members.reduce((acc, m) => {
       if (m.isNested && m instanceof Property) {
-        return acc.concat(this.processNestedProperty(m));
+        return acc.concat(this.processNestedProperty(m, true));
       }
       acc.push(m);
       return acc;

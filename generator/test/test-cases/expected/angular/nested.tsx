@@ -106,9 +106,11 @@ export default class Widget extends WidgetInput {
   }
   @Input() set columns(value: Array<DxGridColumn | string> | undefined) {
     this.__columns = value;
+    this.changeDetection.detectChanges();
   }
   @Input() set gridEditing(value: DxEditing | undefined) {
     this.__gridEditing = value;
+    this.changeDetection.detectChanges();
   }
 }
 @NgModule({
