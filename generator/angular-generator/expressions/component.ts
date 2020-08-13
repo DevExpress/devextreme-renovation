@@ -958,6 +958,21 @@ export class AngularComponent extends Component {
     const ngDoCheckStatements: string[] = [];
     const constructorStatements: string[] = [];
     const coreImports: string[] = [];
+    const constructorArguments: string[] = [];
+
+    this.members.forEach((m) => {
+      if (m.isProvider) {
+        constructorArguments.push(`private ${m.name}: ${m.context}`);
+        constructorStatements.push(
+          `this.${m.name}.value = ${(m as Property).initializer}`
+        );
+      }
+      if (m.isConsumer) {
+        constructorArguments.push(
+          `@SkipSelf() @Host() private ${m.name}: ${m.context}`
+        );
+      }
+    });
 
     const decoratorToStringOptions: toStringOptions = {
       members: this.members,
@@ -1055,8 +1070,9 @@ export class AngularComponent extends Component {
             ${this.compileLifeCycle(
               "constructor",
               constructorStatements.length
-                ? ["super()"].concat(constructorStatements)
-                : constructorStatements
+                ? [`super()`].concat(constructorStatements)
+                : constructorStatements,
+              constructorArguments
             )}
             ${this.members.filter((m) => m instanceof SetAccessor).join("\n")}
             ${this.compileNgStyleProcessor(decoratorToStringOptions)}

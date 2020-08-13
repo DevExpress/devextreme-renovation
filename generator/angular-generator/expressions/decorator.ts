@@ -3,6 +3,7 @@ import { toStringOptions } from "../types";
 import { Decorators } from "../../component_declaration/decorators";
 import { ObjectLiteral } from "../../base-generator/expressions/literal";
 import { TemplateExpression } from "../../base-generator/expressions/template";
+import { SimpleExpression } from "../../base-generator/expressions/base";
 
 export class Decorator extends BaseDecorator {
   toString(options?: toStringOptions) {
@@ -35,6 +36,19 @@ export class Decorator extends BaseDecorator {
             new TemplateExpression(template, [])
           );
         }
+      }
+
+      const contextProperties = options?.members.filter(
+        (m) => m.isConsumer || m.isProvider
+      );
+      if (contextProperties?.length) {
+        const context = [
+          ...new Set(contextProperties.map((p) => p.context.toString())),
+        ];
+        parameters.setProperty(
+          "providers",
+          new SimpleExpression(`[${context}]`)
+        );
       }
 
       parameters.removeProperty("view");
