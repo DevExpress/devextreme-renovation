@@ -86,7 +86,9 @@
 
    Common events are also considered redundant. These include `onDisposing`, `onInitialized`, `onOptionChanged`.
 
-   `onContentReady` event and component specific events (e.g. `onClick`) are implemented.
+   `onContentReady` event is implemented but we are going to move it to jQuery wrapper
+   
+   Component specific events (e.g. `onClick`) are implemented.
 
 1. Event argument only contains event specific data.
 
