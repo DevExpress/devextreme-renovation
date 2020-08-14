@@ -1,9 +1,18 @@
 export class WidgetInput {}
 
-import { Component, NgModule, ViewChild, ElementRef } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  ViewChild,
+  ElementRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
+
 @Component({
   selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div #_auto_ref_0></div>`,
 })
 export default class Widget extends WidgetInput {
@@ -13,11 +22,9 @@ export default class Widget extends WidgetInput {
   get __restAttributes(): any {
     return {};
   }
-
   @ViewChild("_auto_ref_0", { static: false }) _auto_ref_0?: ElementRef<
     HTMLDivElement
   >;
-
   __applyAttributes__() {
     const _attr_0: { [name: string]: string } = this.__attr1 || {};
     const _ref_0 = this._auto_ref_0?.nativeElement;
@@ -30,6 +37,10 @@ export default class Widget extends WidgetInput {
 
   ngOnChanges(changes: { [name: string]: any }) {
     this.__applyAttributes__();
+  }
+
+  constructor(private changeDetection: ChangeDetectorRef) {
+    super();
   }
 }
 @NgModule({

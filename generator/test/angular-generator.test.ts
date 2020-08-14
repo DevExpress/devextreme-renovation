@@ -4779,7 +4779,7 @@ mocha.describe("Angular generator", function () {
       );
     });
 
-    mocha.it("@Slot prop should generate viewChild and getter", function () {
+    mocha.it("@Slot prop should generate getter", function () {
       const property = generator.createProperty(
         [createDecorator("Slot")],
         [],
@@ -4792,10 +4792,10 @@ mocha.describe("Angular generator", function () {
       assert.strictEqual(
         getResult(property.toString()),
         getResult(`
-                @ViewChild("slotName") slotName?: ElementRef<HTMLDivElement>;
+                __slotName?: ElementRef<HTMLDivElement>;
 
                 get name(){
-                    return this.slotName?.nativeElement?.innerHTML.trim();
+                    return this.__slotName?.nativeElement?.innerHTML.trim();
                 }
             `)
       );
@@ -4875,7 +4875,7 @@ mocha.describe("Angular generator", function () {
       assert.strictEqual(component.selector, "dx-base-widget");
       assert.strictEqual(
         decorator.toString(),
-        `@Component({selector:"dx-base-widget"})`
+        `@Component({selector:"dx-base-widget",changeDetection:ChangeDetectionStrategy.OnPush})`
       );
     });
 
@@ -5011,7 +5011,7 @@ mocha.describe("Angular generator", function () {
       assert.strictEqual(
         getResult(component.toString()),
         getResult(`
-                import {Component,NgModule} from "@angular/core";
+                import {Component,NgModule,ChangeDetectionStrategy,ChangeDetectorRef} from "@angular/core";
                 import {CommonModule} from "@angular/common";
 
                 ${component.decorator}
@@ -5019,6 +5019,7 @@ mocha.describe("Angular generator", function () {
                     get __restAttributes(): any{
                         return {}
                     }
+                    constructor(private changeDetection: ChangeDetectorRef) {}
                 }
 
                 @NgModule({
@@ -5092,13 +5093,16 @@ mocha.describe("Angular generator", function () {
         assert.strictEqual(
           getResult(component.toString()),
           getResult(`
-                import {Component,NgModule} from "@angular/core";
+                import {Component,NgModule,ChangeDetectionStrategy,ChangeDetectorRef} from "@angular/core";
                 import {CommonModule} from "@angular/common";
                 
                 ${component.decorator}
                 export default class BaseWidget extends Input {
                     get __restAttributes(): any{
                         return {}
+                    }
+                    constructor(private changeDetection: ChangeDetectorRef) {
+                      super();
                     }
                 }
 
@@ -5132,7 +5136,8 @@ mocha.describe("Angular generator", function () {
         assert.strictEqual(
           getResult(setter[0].toString()),
           getResult(`set _p(p:any){
-          this.p=p
+          this.p=p;
+          this.changeDetection.detectChanges();
         }`)
         );
       });
@@ -5155,7 +5160,8 @@ mocha.describe("Angular generator", function () {
         assert.strictEqual(
           getResult(setter[0].toString()),
           getResult(`set _p(p?:string){
-          this.p=p
+          this.p=p;
+          this.changeDetection.detectChanges();
         }`)
         );
       });
@@ -5178,7 +5184,8 @@ mocha.describe("Angular generator", function () {
         assert.strictEqual(
           getResult(setter[0].toString()),
           getResult(`set _p(p:string){
-          this.p=p
+          this.p=p;
+          this.changeDetection.detectChanges();
         }`)
         );
       });
@@ -5200,7 +5207,8 @@ mocha.describe("Angular generator", function () {
         assert.strictEqual(
           getResult(setter[0].toString()),
           getResult(`set _p(p:any){
-          this.p=p
+          this.p=p;
+          this.changeDetection.detectChanges();
         }`)
         );
       });
@@ -5223,7 +5231,8 @@ mocha.describe("Angular generator", function () {
         assert.strictEqual(
           getResult(setter[0].toString()),
           getResult(`set _p(p:any){
-          this.p=p
+          this.p=p;
+          this.changeDetection.detectChanges();
         }`)
         );
       });
@@ -6104,7 +6113,10 @@ mocha.describe("Angular generator", function () {
           const p1Setter = component.members.find((p) => p.name === "_p1");
           assert.strictEqual(
             getResult(p1Setter?.toString() || ""),
-            getResult(`set  _p1(p1:any){this.p1=p1}`)
+            getResult(`set _p1(p1:any){
+              this.p1=p1
+              this.changeDetection.detectChanges();
+            }`)
           );
 
           const p2Setter = component.members.find((p) => p.name === "_p2");
@@ -6112,7 +6124,8 @@ mocha.describe("Angular generator", function () {
             getResult(p2Setter?.toString() || ""),
             getResult(`
                     set _p2(p2:any){
-                        this.p2=p2
+                        this.p2=p2;
+                        this.changeDetection.detectChanges();
                         if (this.__destroyEffects.length) {
                             this.__schedule_e();
                         }
@@ -6421,6 +6434,7 @@ mocha.describe("Angular generator", function () {
               getResult(`
                             set _p(p:any){
                                 this.p=p;
+                                this.changeDetection.detectChanges();
                                 this.__getterCache["name"] = undefined;
                             }`)
             );
@@ -6431,7 +6445,8 @@ mocha.describe("Angular generator", function () {
               ),
               getResult(`
                                 set _p1(p1:any){
-                                    this.p1=p1
+                                    this.p1=p1;
+                                    this.changeDetection.detectChanges();
                                 }`)
             );
           });

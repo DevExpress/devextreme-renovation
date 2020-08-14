@@ -1,25 +1,30 @@
 import WidgetWithRefProp, {
   DxWidgetWithRefPropModule,
 } from "./dx-widget-with-ref-prop";
-
 import { Input } from "@angular/core";
 class WidgetInput {
   @Input() nullableRef?: HTMLDivElement;
 }
 
-import { Component, NgModule, ViewChild, ElementRef } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  ViewChild,
+  ElementRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "dx-widget",
-  template: `
-    <div #divRef>
-      <dx-widget-with-ref-prop
-        [parentRef]="divRef"
-        [nullableRef]="nullableRef"
-      ></dx-widget-with-ref-prop>
-    </div>
-  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<div #divRef>
+    <dx-widget-with-ref-prop
+      [parentRef]="divRef"
+      [nullableRef]="nullableRef"
+    ></dx-widget-with-ref-prop>
+  </div>`,
 })
 export default class Widget extends WidgetInput {
   @ViewChild("divRef", { static: false }) divRef!: ElementRef<HTMLDivElement>;
@@ -32,6 +37,10 @@ export default class Widget extends WidgetInput {
   }
   get __restAttributes(): any {
     return {};
+  }
+
+  constructor(private changeDetection: ChangeDetectorRef) {
+    super();
   }
 }
 @NgModule({

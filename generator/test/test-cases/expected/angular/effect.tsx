@@ -13,10 +13,19 @@ export class WidgetInput {
   @Output() sChange: EventEmitter<number> = new EventEmitter();
 }
 
-import { Component, NgModule } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-@Component({ selector: "dx-widget", template: `<div></div>` })
+@Component({
+  selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<div></div>`,
+})
 export default class Widget extends WidgetInput {
   i: number = 10;
   j: number = 20;
@@ -89,12 +98,16 @@ export default class Widget extends WidgetInput {
   }
 
   _sChange: any;
-  constructor() {
+  constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._sChange = this.sChange.emit.bind(this.sChange);
+    this._sChange = (s: number) => {
+      this.sChange.emit(s);
+      this.changeDetection.detectChanges();
+    };
   }
   set _i(i: number) {
     this.i = i;
+    this.changeDetection.detectChanges();
 
     if (this.__destroyEffects.length) {
       this.__schedule_setupData();
@@ -106,6 +119,7 @@ export default class Widget extends WidgetInput {
   }
   set _j(j: number) {
     this.j = j;
+    this.changeDetection.detectChanges();
 
     if (this.__destroyEffects.length) {
       this.__schedule_alwaysEffect();

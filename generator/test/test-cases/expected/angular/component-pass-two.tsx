@@ -9,7 +9,12 @@ export class WidgetTwoProps {
   }
 }
 
-import { Component, NgModule } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 @Component({

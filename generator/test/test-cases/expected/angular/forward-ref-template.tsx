@@ -3,11 +3,18 @@ class Props {
   @Input() contentTemplate: TemplateRef<any> | null = null;
 }
 
-import { Component, NgModule, ElementRef } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  ElementRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "dx-ref-on-children-template",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-container
     *ngTemplateOutlet="contentTemplate; context: { childRef: forwardRef_child }"
   ></ng-container>`,
@@ -65,6 +72,10 @@ export default class RefOnChildrenTemplate extends Props {
         this.__viewCheckedSubscribeEvent = [];
       });
     }
+  }
+
+  constructor(private changeDetection: ChangeDetectorRef) {
+    super();
   }
 }
 @NgModule({

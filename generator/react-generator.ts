@@ -1183,10 +1183,13 @@ export class ReactComponent extends Component {
     const getterType = property.type
       .toString()
       .replace(`typeof ${type}`, `${type}Type`);
+    const condition = `${propName}`.concat(
+      isArray ? `&& ${propName}.length` : ""
+    );
 
     return `const ${getterName} = useMemo(
       function ${getterName}(): ${getterType}${undefinedType} {
-        if (${propName}) {
+        if (${condition}) {
           return ${propName};
         }
         const nested = __collectChildren<${type}Type & { __name: string }>(${getPropName(

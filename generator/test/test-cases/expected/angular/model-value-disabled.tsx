@@ -7,7 +7,14 @@ class ModelWidgetInput {
   @Output() notValueChange: EventEmitter<boolean> = new EventEmitter();
 }
 
-import { Component, NgModule, forwardRef, HostListener } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  forwardRef,
+  HostListener,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 
@@ -18,6 +25,7 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
 };
 @Component({
   selector: "dx-model-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
   template: `<div>{{ value }}</div>`,
 })
@@ -32,6 +40,7 @@ export default class ModelWidget extends ModelWidgetInput
 
   writeValue(value: any): void {
     this.value = value;
+    this.changeDetection.detectChanges();
   }
 
   setDisabledState(isDisabled: boolean): void {
@@ -47,10 +56,16 @@ export default class ModelWidget extends ModelWidgetInput
 
   _valueChange: any;
   _notValueChange: any;
-  constructor() {
+  constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._valueChange = this.valueChange.emit.bind(this.valueChange);
-    this._notValueChange = this.notValueChange.emit.bind(this.notValueChange);
+    this._valueChange = (value: boolean) => {
+      this.valueChange.emit(value);
+      this.changeDetection.detectChanges();
+    };
+    this._notValueChange = (notValue: boolean) => {
+      this.notValueChange.emit(notValue);
+      this.changeDetection.detectChanges();
+    };
   }
 }
 @NgModule({
