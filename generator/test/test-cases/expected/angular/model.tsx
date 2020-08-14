@@ -41,6 +41,7 @@ export default class ModelWidget extends ModelWidgetInput
 
   writeValue(value: any): void {
     this.modelStateProp = value;
+    this.changeDetection.detectChanges();
   }
 
   registerOnChange(fn: () => void): void {
@@ -55,13 +56,18 @@ export default class ModelWidget extends ModelWidgetInput
   _valueChange: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._baseStatePropChange = this.baseStatePropChange.emit.bind(
-      this.baseStatePropChange
-    );
-    this._modelStatePropChange = this.modelStatePropChange.emit.bind(
-      this.modelStatePropChange
-    );
-    this._valueChange = this.valueChange.emit.bind(this.valueChange);
+    this._baseStatePropChange = (stateProp: boolean) => {
+      this.baseStatePropChange.emit(stateProp);
+      this.changeDetection.detectChanges();
+    };
+    this._modelStatePropChange = (modelStateProp: boolean) => {
+      this.modelStatePropChange.emit(modelStateProp);
+      this.changeDetection.detectChanges();
+    };
+    this._valueChange = (value: boolean) => {
+      this.valueChange.emit(value);
+      this.changeDetection.detectChanges();
+    };
   }
 }
 @NgModule({

@@ -41,6 +41,7 @@ export default class InnerWidget extends InnerWidgetProps
 
   writeValue(value: any): void {
     this.value = value;
+    this.changeDetection.detectChanges();
   }
 
   registerOnChange(fn: () => void): void {
@@ -54,8 +55,14 @@ export default class InnerWidget extends InnerWidgetProps
   _valueChange: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._onSelect = this.onSelect.emit.bind(this.onSelect);
-    this._valueChange = this.valueChange.emit.bind(this.valueChange);
+    this._onSelect = (e: any) => {
+      this.onSelect.emit(e);
+      this.changeDetection.detectChanges();
+    };
+    this._valueChange = (value: number) => {
+      this.valueChange.emit(value);
+      this.changeDetection.detectChanges();
+    };
   }
 
   __processNgStyle(value: any) {

@@ -819,6 +819,7 @@ export class AngularComponent extends Component {
         
         writeValue(value: any): void {
             this.${this.modelProp.name} = value;
+            this.changeDetection.detectChanges();
         }
     
         ${
@@ -967,8 +968,12 @@ export class AngularComponent extends Component {
 
     return events
       .map((e) => {
+        const parameters = (e.type as FunctionTypeNode).parameters || [];
         constructorStatements.push(
-          `this._${e.name}=this.${e.name}.emit.bind(this.${e.name});`
+          `this._${e.name}=(${parameters.join(",")}) => {
+            this.${e.name}.emit(${parameters.map((p) => p.name).join(",")});
+            this.changeDetection.detectChanges();
+          }`
         );
         return `_${e.name}${compileType("any")}`;
       })

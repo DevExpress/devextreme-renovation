@@ -38,7 +38,10 @@ export default class Widget extends WidgetInput {
   _selectedChange: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._selectedChange = this.selectedChange.emit.bind(this.selectedChange);
+    this._selectedChange = (selected: boolean) => {
+      this.selectedChange.emit(selected);
+      this.changeDetection.detectChanges();
+    };
   }
 }
 @NgModule({

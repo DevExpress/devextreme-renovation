@@ -31,7 +31,10 @@ export default class Widget extends WidgetInput {
   _onClick: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._onClick = this.onClick.emit.bind(this.onClick);
+    this._onClick = (a: number) => {
+      this.onClick.emit(a);
+      this.changeDetection.detectChanges();
+    };
   }
 }
 @NgModule({

@@ -40,6 +40,7 @@ export default class ModelWidget extends ModelWidgetInput
 
   writeValue(value: any): void {
     this.value = value;
+    this.changeDetection.detectChanges();
   }
 
   setDisabledState(isDisabled: boolean): void {
@@ -57,8 +58,14 @@ export default class ModelWidget extends ModelWidgetInput
   _notValueChange: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._valueChange = this.valueChange.emit.bind(this.valueChange);
-    this._notValueChange = this.notValueChange.emit.bind(this.notValueChange);
+    this._valueChange = (value: boolean) => {
+      this.valueChange.emit(value);
+      this.changeDetection.detectChanges();
+    };
+    this._notValueChange = (notValue: boolean) => {
+      this.notValueChange.emit(notValue);
+      this.changeDetection.detectChanges();
+    };
   }
 }
 @NgModule({

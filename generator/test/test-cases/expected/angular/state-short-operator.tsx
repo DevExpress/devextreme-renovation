@@ -36,9 +36,10 @@ export default class Widget extends WidgetInput {
   _propStateChange: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._propStateChange = this.propStateChange.emit.bind(
-      this.propStateChange
-    );
+    this._propStateChange = (propState: number) => {
+      this.propStateChange.emit(propState);
+      this.changeDetection.detectChanges();
+    };
   }
   set _innerState(innerState: number) {
     this.innerState = innerState;

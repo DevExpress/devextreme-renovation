@@ -51,11 +51,18 @@ export default class Widget extends WidgetInput {
   _statePropChange: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._state1Change = this.state1Change.emit.bind(this.state1Change);
-    this._state2Change = this.state2Change.emit.bind(this.state2Change);
-    this._statePropChange = this.statePropChange.emit.bind(
-      this.statePropChange
-    );
+    this._state1Change = (state1: boolean) => {
+      this.state1Change.emit(state1);
+      this.changeDetection.detectChanges();
+    };
+    this._state2Change = (state2: boolean) => {
+      this.state2Change.emit(state2);
+      this.changeDetection.detectChanges();
+    };
+    this._statePropChange = (stateProp: boolean) => {
+      this.statePropChange.emit(stateProp);
+      this.changeDetection.detectChanges();
+    };
   }
 }
 @NgModule({

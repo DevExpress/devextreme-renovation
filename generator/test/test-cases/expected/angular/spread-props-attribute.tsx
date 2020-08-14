@@ -42,6 +42,7 @@ export default class Widget extends WidgetInput
 
   writeValue(value: any): void {
     this.value = value;
+    this.changeDetection.detectChanges();
   }
 
   registerOnChange(fn: () => void): void {
@@ -54,7 +55,10 @@ export default class Widget extends WidgetInput
   _valueChange: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._valueChange = this.valueChange.emit.bind(this.valueChange);
+    this._valueChange = (value: boolean) => {
+      this.valueChange.emit(value);
+      this.changeDetection.detectChanges();
+    };
   }
 }
 @NgModule({
