@@ -21,8 +21,7 @@ export class Decorator extends BaseDecorator {
       this.name === Decorators.ApiRef ||
       this.name === Decorators.InternalState ||
       this.name === Decorators.Method ||
-      this.name === Decorators.ForwardRef ||
-      this.name === Decorators.SlotSetter
+      this.name === Decorators.ForwardRef
     ) {
       return "";
     } else if (this.name === Decorators.Component) {

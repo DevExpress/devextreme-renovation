@@ -88,11 +88,10 @@ export class BaseClassMember extends Expression {
   }
 
   get isSlot() {
-    return this._hasDecorator(Decorators.Slot);
-  }
-
-  get isSlotSetter() {
-    return this._hasDecorator(Decorators.SlotSetter);
+    return (
+      this._hasDecorator(Decorators.Slot) ||
+      this._hasDecorator(Decorators.ViewChild)
+    );
   }
 
   get isTemplate() {

@@ -35,7 +35,11 @@ import { isElement } from "./jsx/elements";
 import { GeneratorContext } from "../../base-generator/types";
 import { ComponentInput } from "./component-input";
 import { getModuleRelativePath } from "../../base-generator/utils/path-utils";
-import { removePlural, compileType } from "../../base-generator/utils/string";
+import {
+  removePlural,
+  compileType,
+  capitalizeFirstLetter,
+} from "../../base-generator/utils/string";
 
 export function compileCoreImports(
   members: Array<Property | Method>,
@@ -66,10 +70,6 @@ export function compileCoreImports(
   }
 
   if (members.some((m) => m.isSlot)) {
-    imports.push("ElementRef");
-  }
-
-  if (members.some((m) => m.isSlotSetter)) {
     imports.push("ViewChild", "ElementRef");
   }
 
@@ -370,12 +370,36 @@ export class AngularComponent extends Component {
 
     const slots = members.filter((m) => m.isSlot);
     slots.forEach((s) => {
-      const decorator = new Decorator(
-        new Call(new Identifier("SlotSetter"), undefined, []),
-        {}
+      const name = new Identifier(`slot${capitalizeFirstLetter(s.name)}`);
+      const decorators = [
+        new Decorator(
+          new Call(new Identifier("ViewChild"), undefined, [
+            new SimpleExpression(`"${name}"`),
+          ]),
+          {}
+        ),
+      ];
+      const parameters = [
+        new Parameter(
+          [],
+          [],
+          undefined,
+          new Identifier("slot"),
+          undefined,
+          new SimpleTypeExpression("ElementRef<HTMLDivElement>")
+        ),
+      ];
+      const body = new Block(
+        [
+          new SimpleExpression(`
+          this.__${name} = slot;
+          this.changeDetection.detectChanges();
+        `),
+        ],
+        true
       );
-      const prop = new Property([decorator], undefined, s._name, "", s.type);
-      members.push(prop);
+
+      members.push(new SetAccessor(decorators, [], name, parameters, body));
     });
 
     return members;

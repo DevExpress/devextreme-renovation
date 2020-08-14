@@ -4801,29 +4801,6 @@ mocha.describe("Angular generator", function () {
       );
     });
 
-    mocha.it("@SlotSetter prop should generate @ViewChild", function () {
-      const property = generator.createProperty(
-        [createDecorator("SlotSetter")],
-        [],
-        generator.createIdentifier("name"),
-        generator.SyntaxKind.QuestionToken,
-        undefined,
-        generator.createFalse()
-      );
-
-      assert.strictEqual(
-        getResult(property.toString()),
-        getResult(`
-            @ViewChild("slotName") set slotName(
-              slot: ElementRef<HTMLDivElement>
-            ) {
-              this.__slotName = slot;
-              this.changeDetection.detectChanges();
-            }
-        `)
-      );
-    });
-
     mocha.it("@Template prop without type", function () {
       const property = generator.createProperty(
         [createDecorator("Template")],

@@ -79,13 +79,6 @@ export class Property extends BaseProperty {
                 return this.__${selector}?.nativeElement?.innerHTML.trim();
             }`;
     }
-    if (this.isSlotSetter) {
-      const selector = `slot${capitalizeFirstLetter(this.name)}`;
-      return `@ViewChild("${selector}") set ${selector}(slot: ElementRef<HTMLDivElement>) {
-              this.__${selector} = slot;
-              this.changeDetection.detectChanges();
-            };`;
-    }
     if (this.isNestedComp) {
       return `@ContentChildren(${this.type}) ${this.name}!: QueryList<${this.type}>`;
     }

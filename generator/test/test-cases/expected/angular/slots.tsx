@@ -1,4 +1,4 @@
-import { ElementRef } from "@angular/core";
+import { ViewChild, ElementRef } from "@angular/core";
 class WidgetInput {
   __slotNamedSlot?: ElementRef<HTMLDivElement>;
 
@@ -17,7 +17,6 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -41,6 +40,10 @@ export default class Widget extends WidgetInput {
   get __restAttributes(): any {
     return {};
   }
+
+  constructor(private changeDetection: ChangeDetectorRef) {
+    super();
+  }
   @ViewChild("slotNamedSlot") set slotNamedSlot(
     slot: ElementRef<HTMLDivElement>
   ) {
@@ -52,10 +55,6 @@ export default class Widget extends WidgetInput {
   ) {
     this.__slotChildren = slot;
     this.changeDetection.detectChanges();
-  }
-
-  constructor(private changeDetection: ChangeDetectorRef) {
-    super();
   }
 }
 @NgModule({

@@ -7,7 +7,6 @@ export const enum Decorators {
   Nested = "Nested",
   NestedComp = "NestedComp",
   Slot = "Slot",
-  SlotSetter = "SlotSetter",
   Template = "Template",
   Event = "Event",
 
@@ -21,4 +20,6 @@ export const enum Decorators {
 
   ApiRef = "ApiRef",
   RefProp = "RefProp",
+
+  ViewChild = "ViewChild",
 }

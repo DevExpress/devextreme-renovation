@@ -27,12 +27,6 @@ export default class Child extends ChildInput {
   get __restAttributes(): any {
     return {};
   }
-  @ViewChild("slotChildren") set slotChildren(
-    slot: ElementRef<HTMLDivElement>
-  ) {
-    this.__slotChildren = slot;
-    this.changeDetection.detectChanges();
-  }
 
   _onClick: any;
   constructor(private changeDetection: ChangeDetectorRef) {
@@ -41,6 +35,12 @@ export default class Child extends ChildInput {
       this.onClick.emit(a);
       this.changeDetection.detectChanges();
     };
+  }
+  @ViewChild("slotChildren") set slotChildren(
+    slot: ElementRef<HTMLDivElement>
+  ) {
+    this.__slotChildren = slot;
+    this.changeDetection.detectChanges();
   }
 }
 @NgModule({
