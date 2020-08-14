@@ -1,15 +1,12 @@
 {
   "compilerOptions": {
     "target": "ES2016",
-    "module": "ESNext",
-    "strict": false,
-    "esModuleInterop": false,
-    "typeRoots": ["node_modules/@types"],
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
-    "jsx": "preserve",
-    "declaration": true,
-    "experimentalDecorators": true
-  },
-  "include": ["**/*"],
-  "exclude": ["node_modules"]
+    "jsx": "preserve"
+  }
 }

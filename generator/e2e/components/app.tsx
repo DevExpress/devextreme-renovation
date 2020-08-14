@@ -5,32 +5,32 @@ import {
   InternalState,
 } from "../../component_declaration/common";
 
-import { SimpleComponent } from "./simple.tsx";
-import ButtonComponent from "./button.tsx";
-import ButtonWithState from "./state.tsx";
-import ComponentWithSpread from "./spread-attributes.tsx";
-import VisibilityChange from "./change-visibility.tsx";
-import VisibilityChangeProp from "./change-visibility-prop.tsx";
-import ComponentWithRest from "./rest-attributes.tsx";
-import CallMethodInGetterWidget from "./call-method-in-getter.tsx";
-import ComponentWithFragment from "./component-with-fragment.tsx";
+import { SimpleComponent } from "./simple";
+import ButtonComponent from "./button";
+import ButtonWithState from "./state";
+import ComponentWithSpread from "./spread-attributes";
+import VisibilityChange from "./change-visibility";
+import VisibilityChangeProp from "./change-visibility-prop";
+import ComponentWithRest from "./rest-attributes";
+import CallMethodInGetterWidget from "./call-method-in-getter";
+import ComponentWithFragment from "./component-with-fragment";
 import ComponentWithDefaultOptionRules, {
   defaultOptions as setDefaultOptions,
-} from "./default-option-rules.tsx";
-import List from "./list.tsx";
-import SpreadProps from "./spread-props.tsx";
-import TemplatePass from "./template-pass.tsx";
-import RefPass from "./ref-pass.tsx";
-import EffectsDOMUpdate from "./effects-dom-update.tsx";
-import EffectsStateUpdate from "./effects-state-update.tsx";
-import SumArray from "./render/sum-array.tsx";
-import ForwardRefParent from "./ref-on-children/forward-ref-parent.tsx";
-import ForwardRefTemplate from "./ref-on-children/forward-ref-template.tsx";
-import ForwardRefChild from "./ref-on-children/child.tsx";
-import ForwardRefDeep from "./ref-on-children/forward-ref-deep.tsx";
+} from "./default-option-rules";
+import List from "./list";
+import SpreadProps from "./spread-props";
+import TemplatePass from "./template-pass";
+import RefPass from "./ref-pass";
+import EffectsDOMUpdate from "./effects-dom-update";
+import EffectsStateUpdate from "./effects-state-update";
+import SumArray from "./render/sum-array";
+import ForwardRefParent from "./ref-on-children/forward-ref-parent";
+import ForwardRefTemplate from "./ref-on-children/forward-ref-template";
+import ForwardRefChild from "./ref-on-children/child";
+import ForwardRefDeep from "./ref-on-children/forward-ref-deep";
 
-import TemplateApp from "./template-passing/template-app.tsx";
-import { PickPropsComponent } from "./pick-props.tsx";
+import TemplateApp from "./template-passing/template-app";
+import { PickPropsComponent } from "./pick-props";
 
 function view(model: App) {
   return (

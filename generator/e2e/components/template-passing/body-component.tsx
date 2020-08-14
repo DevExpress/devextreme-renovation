@@ -6,7 +6,7 @@ import {
   Fragment,
   OneWay,
 } from "../../../component_declaration/common";
-import Button from "../button.tsx";
+import Button from "../button";
 
 function view({ props: { text }, click }: BodyComponent) {
   return (
@@ -30,6 +30,6 @@ class BodyComponentProps {
 })
 export default class BodyComponent extends JSXComponent(BodyComponentProps) {
   click() {
-    this.props.onClick();
+    this.props.onClick?.();
   }
 }

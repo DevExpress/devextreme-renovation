@@ -12,13 +12,13 @@ function view(model: RefProps) {
 
 @ComponentBindings()
 class Props {
-  @Ref() parentRef: HTMLDivElement;
+  @Ref() parentRef!: HTMLDivElement;
 }
 
 @Component({
   view,
 })
-export default class RefProps extends JSXComponent(Props) {
+export default class RefProps extends JSXComponent<Props, "parentRef">() {
   @Effect()
   loadEffect() {
     const { parentRef } = this.props;

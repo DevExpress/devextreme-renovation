@@ -7,7 +7,7 @@ import {
   InternalState,
 } from "../../../component_declaration/common";
 
-import PanelComponent from "./panel-component.tsx";
+import PanelComponent from "./panel-component";
 
 function view({
   props: { titleTemplate, contentTemplate },
@@ -47,7 +47,7 @@ export default class InterComponent extends JSXComponent(InterComponentProps) {
     this.log("body");
   }
 
-  log(msg) {
+  log(msg: string) {
     this.clicks = `${this.clicks}_${msg}`;
   }
 }

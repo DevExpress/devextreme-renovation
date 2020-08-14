@@ -3,13 +3,10 @@ import {
   ComponentBindings,
   JSXComponent,
   Event,
-  Slot,
-  Effect,
-  Ref,
   OneWay,
   InternalState,
 } from "../../component_declaration/common";
-import ListItem from "./list-item.tsx";
+import ListItem from "./list-item";
 
 function view({ items, restAttributes, counter }: List) {
   const firstList = items.map((item) =>
@@ -60,7 +57,7 @@ function view({ items, restAttributes, counter }: List) {
 
 @ComponentBindings()
 export class ListProps {
-  @OneWay() items?: {
+  @OneWay() items: {
     text: string;
     key: number;
     color?: string;

@@ -6,7 +6,7 @@ import {
   Ref,
   Method,
 } from "../../component_declaration/common";
-import RefProps from "./ref-props.tsx";
+import RefProps from "./ref-props";
 
 function view({ contentRef }: RefPass) {
   return (
@@ -23,7 +23,7 @@ class Props {}
   view,
 })
 export default class RefPass extends JSXComponent(Props) {
-  @Ref() contentRef: HTMLDivElement;
+  @Ref() contentRef!: HTMLDivElement;
 
   @Effect()
   loadEffect() {

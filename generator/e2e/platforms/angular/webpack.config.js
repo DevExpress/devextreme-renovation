@@ -26,16 +26,11 @@ module.exports = {
         include: path.resolve("./e2e/components"),
         loaders: [
           {
-            loader: "ts-loader",
-            options: {
-              configFile: path.resolve("./e2e/platforms/angular/tsconfig.json"),
-            },
-          },
-          {
             loader: path.resolve("./build/webpack-loader.js"),
             options: {
               platform: "angular",
               defaultOptionsModule: "./component_declaration/default_options",
+              tsConfig: path.resolve("./e2e/platforms/angular/tsconfig.json"),
             },
           },
         ],
@@ -46,11 +41,10 @@ module.exports = {
         exclude: path.resolve("./e2e/components"),
         loaders: [
           {
-            loader: "awesome-typescript-loader",
+            loader: "ts-loader",
             options: {
-              configFileName: path.resolve(
-                "./e2e/platforms/angular/src/tsconfig.json"
-              ),
+              ignoreDiagnostics: [2614, 2769],
+              configFile: path.resolve("./e2e/platforms/angular/tsconfig.json"),
             },
           },
           "angular2-template-loader",

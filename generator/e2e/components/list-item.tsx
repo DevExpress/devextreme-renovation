@@ -19,9 +19,9 @@ function view({ props: { text }, style, host }: ListItem) {
 
 @ComponentBindings()
 export class ListItemProps {
-  @OneWay() text: string;
-  @OneWay() color: string;
-  @Event() onClick: () => void;
+  @OneWay() text!: string;
+  @OneWay() color!: string;
+  @Event() onClick!: () => void;
 
   @Event() onReady?: () => void;
 }
@@ -29,8 +29,11 @@ export class ListItemProps {
 @Component({
   view,
 })
-export default class ListItem extends JSXComponent(ListItemProps) {
-  @Ref() host: HTMLDivElement;
+export default class ListItem extends JSXComponent<
+  ListItemProps,
+  "text" | "color" | "onClick"
+>() {
+  @Ref() host!: HTMLDivElement;
 
   @Effect()
   onClickEffect() {
