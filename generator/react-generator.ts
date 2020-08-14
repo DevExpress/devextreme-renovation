@@ -740,15 +740,10 @@ export class ReactComponent extends Component {
         .join(",")}} from 'react';`,
     ];
 
-    if (this.containsPortal()) {
-      imports.push("import { createPortal } from 'react-dom';");
-    }
-
     return imports;
   }
 
-  compileImports() {
-    const imports: string[] = [];
+  compileImports(imports: string[] = []) {
     const hooks: string[] = [];
     const compats: string[] = [];
 
@@ -1213,7 +1208,23 @@ export class ReactComponent extends Component {
     `;
   }
 
+  compilePortalComponent(imports: string[]) {
+    imports.push("import { createPortal } from 'react-dom';");
+
+    return `declare type PortalProps = {
+      container?: HTMLElement | null;
+      children: React.ReactNode,
+    }
+    const Portal = ({ container, children }: PortalProps): React.ReactPortal | null => {
+      if(container) {
+        return createPortal(children, container);
+      }
+      return null;
+    }`;
+  }
+
   toString() {
+    const imports: string[] = [];
     const viewFunction = this.context.viewFunctions?.[this.view];
     const getTemplateFunc = this.props.some((p) => p.isTemplate)
       ? `
@@ -1234,8 +1245,13 @@ export class ReactComponent extends Component {
       .map((m) => this.createNestedPropertyGetter(m))
       .join("\n");
 
+    const portal = this.containsPortal()
+      ? this.compilePortalComponent(imports)
+      : "";
+
     return `
-            ${this.compileImports()}
+            ${this.compileImports(imports)}
+            ${portal}
             ${this.compileNestedComponents()}
             ${this.compileComponentRef()}
             ${this.compileRestProps()}
@@ -1322,26 +1338,6 @@ export class JsxAttribute extends BaseJsxAttribute {
 }
 
 export class JsxElement extends BaseJsxElement {
-  compilePortal(children: string, options?: toStringOptions) {
-    const container = this.openingElement.attributes.find(
-      (attr) =>
-        attr instanceof JsxAttribute && attr.name.toString() === "container"
-    ) as JsxAttribute;
-    const expression = (container.initializer as JsxExpression).getExpression()!;
-
-    const propName =
-      expression instanceof PropertyAccess
-        ? expression.name.toString()
-        : expression.toString();
-    const relatedProp = options?.members.find(
-      (m) => m.name.toString() === propName
-    ) as Property | undefined;
-
-    const token = relatedProp?.questionOrExclamationToken ?? "";
-    const getter = relatedProp ? ".current!" : "";
-    return `${expression}${token}${getter} && createPortal(${children}, ${expression}${token}${getter})`;
-  }
-
   toString(options?: toStringOptions) {
     const children: string = this.children
       .map((c) => {
@@ -1352,8 +1348,8 @@ export class JsxElement extends BaseJsxElement {
         ) {
           str = `{${c.openingElement.toString(options)}}`;
         } else if (
-          (c instanceof JsxOpeningElement && c.getTemplateProperty(options)) ||
-          (c instanceof JsxElement && c.isPortal())
+          c instanceof JsxOpeningElement &&
+          c.getTemplateProperty(options)
         ) {
           str = `{${c.toString(options)}}`;
         } else {
@@ -1362,10 +1358,6 @@ export class JsxElement extends BaseJsxElement {
         return str;
       })
       .join("\n");
-
-    if (this.isPortal()) {
-      return this.compilePortal(children, options);
-    }
 
     return `${this.openingElement.toString(
       options
@@ -1378,6 +1370,40 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return tagName.toString() === "Fragment"
       ? new Identifier("React.Fragment")
       : tagName;
+  }
+
+  attributesString(options?: toStringOptions) {
+    if (this.isPortal()) {
+      const containerIndex = this.attributes.findIndex(
+        (attr) =>
+          attr instanceof JsxAttribute && attr.name.toString() === "container"
+      );
+      if (containerIndex > -1) {
+        const attr = this.attributes[containerIndex] as JsxAttribute;
+        const expression = (attr.initializer as JsxExpression).getExpression()!;
+
+        const propName =
+          expression instanceof PropertyAccess
+            ? expression.name.toString()
+            : expression.toString();
+        const relatedProp = options?.members.find(
+          (m) => m.name.toString() === propName
+        ) as Property | undefined;
+
+        const token = relatedProp?.questionOrExclamationToken ?? "";
+        const getter = relatedProp ? ".current!" : "";
+
+        this.attributes[containerIndex] = new JsxAttribute(
+          attr.name,
+          new JsxExpression(
+            undefined,
+            new SimpleExpression(`${expression}${token}${getter}`)
+          )
+        );
+      }
+    }
+
+    return super.attributesString(options);
   }
 
   toString(options?: toStringOptions) {

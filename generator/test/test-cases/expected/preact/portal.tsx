@@ -1,12 +1,15 @@
 function view(model: Widget) {
   return (
     <div>
-      {model.rendered &&
-        document.body &&
-        createPortal(<span></span>, document.body)}
+      {model.rendered && (
+        <Portal container={document.body}>
+          <span></span>
+        </Portal>
+      )}
 
-      {model.props.someRef?.current! &&
-        createPortal(<span></span>, model.props.someRef?.current!)}
+      <Portal container={model.props.someRef?.current!}>
+        <span></span>
+      </Portal>
     </div>
   );
 }
@@ -14,9 +17,19 @@ export declare type WidgetPropsType = {
   someRef?: RefObject<HTMLElement>;
 };
 export const WidgetProps: WidgetPropsType = {};
+import { createPortal } from "preact/compat";
 import * as Preact from "preact";
 import { useState, useCallback, useEffect, RefObject } from "preact/hooks";
-import { createPortal } from "preact/compat";
+declare type PortalProps = {
+  container?: HTMLElement | null;
+  children: any;
+};
+const Portal = ({ container, children }: PortalProps): any => {
+  if (container) {
+    return createPortal(children, container);
+  }
+  return null;
+};
 
 declare type RestProps = {
   className?: string;

@@ -1,12 +1,15 @@
 function view(model: Widget) {
   return (
     <div>
-      {model.rendered &&
-        document.body &&
-        createPortal(<span></span>, document.body)}
+      {model.rendered && (
+        <Portal container={document.body}>
+          <span></span>
+        </Portal>
+      )}
 
-      {model.props.someRef?.current! &&
-        createPortal(<span></span>, model.props.someRef?.current!)}
+      <Portal container={model.props.someRef?.current!}>
+        <span></span>
+      </Portal>
     </div>
   );
 }
@@ -14,6 +17,7 @@ export declare type WidgetPropsType = {
   someRef?: RefObject<HTMLElement>;
 };
 export const WidgetProps: WidgetPropsType = {};
+import { createPortal } from "react-dom";
 import React, {
   useState,
   useCallback,
@@ -21,7 +25,19 @@ import React, {
   RefObject,
   HtmlHTMLAttributes,
 } from "react";
-import { createPortal } from "react-dom";
+declare type PortalProps = {
+  container?: HTMLElement | null;
+  children: React.ReactNode;
+};
+const Portal = ({
+  container,
+  children,
+}: PortalProps): React.ReactPortal | null => {
+  if (container) {
+    return createPortal(children, container);
+  }
+  return null;
+};
 
 declare type RestProps = Omit<
   HtmlHTMLAttributes<HTMLDivElement>,
