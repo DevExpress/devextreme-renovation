@@ -12,9 +12,10 @@ import { variableDeclaration, compileType } from "../utils/string";
 import { Component } from "./component";
 import { VariableStatement } from "./variables";
 import SyntaxKind from "../syntaxKind";
-import { getJsxExpression, JsxExpression } from "./jsx";
+import { getJsxExpression, JsxExpression, JsxElement } from "./jsx";
 import { Decorator } from "./decorator";
 import { Property } from "./class-members";
+import { containsPortalsInStatements } from "../utils/functions";
 
 export class Parameter {
   decorators: Decorator[];
@@ -162,7 +163,11 @@ export class BaseFunction extends Expression {
 
     if (widget instanceof Component) {
       const members = (widget.members.filter(
-        (m) => m.isTemplate || (m.isSlot && m._name.toString() !== m.name)
+        (m) =>
+          m.isTemplate ||
+          (m.isSlot && m._name.toString() !== m.name) ||
+          m.isRefProp ||
+          m.isRef
       ) as Property[]).map((p) => Object.create(p));
 
       options = {
@@ -242,6 +247,21 @@ export class BaseFunction extends Expression {
         getTemplate(this, options, doNotChangeContext, this.context.globals)
       )?.toString(options) || ""
     );
+  }
+
+  containsPortal() {
+    const body = this.body;
+    if (body instanceof Block) {
+      const statement = body.statements.find(
+        (state) => state instanceof ReturnStatement
+      ) as ReturnStatement;
+      if (statement && statement.expression) {
+        return containsPortalsInStatements(
+          statement.expression as Paren | JsxExpression | JsxElement
+        );
+      }
+    }
+    return false;
   }
 }
 

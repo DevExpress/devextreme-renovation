@@ -182,29 +182,16 @@
 
 - `@Slot()` - проп, через который можно передать некий контент для прямого отображения. В *Angular* это называется *transcluded content*, в *React* это просто *JSX* разметка. Если в компоненте объявлен слот с именем `children`, в него придет дочерний контент компонента из разметки пользователя компонента. Это аналог `children` в *React*.
 
-- `@Nested()` - генерирует `OneWay` проп, который может брать значение как из пропсы объекта, так и из `children` компонентов. Для `jQuery` работает только пропса. В качестве Nested пропсы может использоваться любой другой класс с декоратором `@BindingComponent()`. **Важно! Если используемый компонент лежит в другом файле, необходимо его экспортировать. Без экспорта компонента, генератор не сможет его заимпортить.** Имя сгенерированных компонентов основано на имени пропсы (префикс в Angular зависит от того массив ли это объектов (i - iterable), или одиночный объект (o - object)):
+- `@Nested()` - генерирует `OneWay` проп, который может брать значение как из пропсы объекта, так и из `children` компонентов. Для `jQuery` работает только пропса. В качестве Nested пропсы может использоваться любой другой класс с декоратором `@BindingComponent()`.
+
+  **Важно!** Если используемый компонент лежит в другом файле, необходимо его экспортировать. Без экспорта компонента, генератор не сможет его заимпортить.
+
+  Имя сгенерированных компонентов основано на имени пропсы (префикс в Angular зависит от того массив ли это объектов (i - iterable), или одиночный объект (o - object)):
   |Property Name|isArray|React|Angular|Vue|
   |:---:|:---:|:---:|:---:|:---:|
   Columns|YES|Column|dxi-column|DxColumn
   GridEditing|NO|GridEditing|dxo-grid-editing|DxGridEditing
-  Пример декларации:
-  ```typescript
-  @ComponentBindings()
-  export class Column {
-    @OneWay() dataField?: string = "Default Value";
-    // Other props
-  }
-  @ComponentBindings()
-  export class Editing {
-    // Props
-  }
 
-  @ComponentBindings()
-  export class GridProps {
-    @Nested() columns?: (Column | string)[];
-    @Nested() gridEditing?: Editing;
-  }
-  ```
 #### ViewModel
 
 Для описания *ViewModel* используется класс, помеченный декоратором `@Component()` и наследующий `JSXComponent` от класса *Model*. В декораторе компонента обязательно указывается *View*-функция, а также опционально дополнительные параметры.
@@ -823,6 +810,39 @@ function viewFunction(viewModel) {
 
 Как следствие из этого, всегда указывайте дефолтное значение для `TwoWay` пропов.
 
+#### @Nested()
+
+Как было уже сказано, это OneWay проп, и обращение к нему происходит как к OneWay, то есть мы можем только читать оттуда данные. При этом он собирает эти данные как со свойств, так и с nested компонентов.
+**Важно!** Свойства имеют приоритет над компонентами.
+
+Пример использования:
+
+```ts
+@ComponentBindings()
+export class Column {
+  @OneWay() dataField?: string = "Default Value";
+  // Other props
+}
+@ComponentBindings()
+export class Editing {
+  // Props
+}
+
+@ComponentBindings()
+export class GridProps {
+  @Nested() columns?: (Column | string)[];
+  @Nested() gridEditing?: Editing;
+}
+
+@Component({ view: viewFunction })
+class MyComponent extends JSXComponent(GridProps) {
+  getColumnNames() {
+    return this.props.columns.map(col => typeof col === "string" ? col : col.dataField);
+  }
+}
+
+```
+
 #### @Event()
 
 Как вы уже догадались, этот проп это колбек. Зачем его отделять от `OneWay` пропа, можно же в простой проп функцию передать?
@@ -1201,6 +1221,56 @@ function viewFunction(viewModel: MyComponent) {
         Second element
       </div>
     </Fragment>
+  );
+}
+```
+
+#### Portals
+
+Portal - специальный JSX компонент, позволяющий рендерить элемент в любом месте в DOM-е. Этот компонент принимает на вход всего один параметр - container. Это может быть ссылка, на элемент, либо конкретный HTML элемент (например, полученный через `document.getElementByID()`). При этом компонент продолжает получать свойства, переданные родителем и рендерить разметку, на основе этих свойств. Самые частые сценарии использования порталов - `drag-drop` элементы и элементы, которые должны рендерится поверх остальных (например, `Overlay`). Обратите внимание, что при первом рендере разметки во фреймворках отсутствуют ссылки, они появляются только после первого рендера. Это надо учитвывать при разработке таких опций как `opened` в `Lookup` (пример WA - см. пример)
+
+**Важно!** При использовании элементов, полученных через `document` (например `document.body`, см. пример), необходимо выносить их в геттеры. Это позволит компонентам правильно пересчитывать ссылки во всех подходах. При разработке компонентов учитывайте возможность их рендера в SSR, где `document` на этапе создания не существует и искомый компонент может быть `undefined`.
+
+В некоторых подходах (React, Preact), портал ожидает увидеть один элемент, в качестве потомка. Если вам необходимо сгенерить несколько компонентов рядом в одном портале - оберните их во `Fragment`.
+
+Пример:
+
+```tsx
+import { Portal } from 'devextreme-generator/component_declaration/common';
+
+@ComponentBindings()
+class MyComponentProps {
+  @Ref() someElement!: HTMLDivElement;
+  @OneWay() opened?: boolean = false;
+}
+
+@Component({ view: viewFunction })
+class MyComponent extends JSXComponent(MyComponentProps) {
+  rendered = false;
+  get bodyElement() {
+    return document?.body;
+  }
+  
+  @Effect({ run: 'once' })
+  afterInit() {
+    this.rendered = true;
+  }
+}
+
+function viewFunction(viewModel: MyComponent) {
+  return (
+    <div>
+      <Portal container={viewModel.bodyElement}>
+        <div>
+          Element in body
+        </div>
+      </Portal>
+      {viewModel.rendered && viewModel.props.opened && <Portal container={viewModel.props.someElement}>
+        <div>
+          Element by ref
+        </div>
+      </Portal>}
+    </div>
   );
 }
 ```

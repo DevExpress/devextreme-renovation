@@ -444,9 +444,12 @@ export class Property extends BaseProperty {
           d.name === Decorators.ForwardRefProp
       )
     ) {
-      return `${scope}${this.name}${
-        scope ? this.questionOrExclamationToken : ""
-      }.current!`;
+      if (componentContext === "") {
+        return `${scope}${this.name}${
+          scope ? this.questionOrExclamationToken : ""
+        }.current!`;
+      }
+      return getPropName(this.name, componentContext, scope);
     } else if (this.isState) {
       const propName = getPropName(this.name, componentContext, scope);
       return `(${propName}!==undefined?${propName}:${getLocalStateName(
@@ -730,16 +733,17 @@ export class ReactComponent extends Component {
   }
 
   compileImportStatements(hooks: string[], compats: string[]) {
-    return [
+    const imports = [
       `import React, {${hooks
         .concat(compats)
         .concat(["HtmlHTMLAttributes"])
         .join(",")}} from 'react';`,
     ];
+
+    return imports;
   }
 
-  compileImports() {
-    const imports: string[] = [];
+  compileImports(imports: string[] = []) {
     const hooks: string[] = [];
     const compats: string[] = [];
 
@@ -1204,7 +1208,23 @@ export class ReactComponent extends Component {
     `;
   }
 
+  compilePortalComponent(imports: string[]) {
+    imports.push("import { createPortal } from 'react-dom';");
+
+    return `declare type PortalProps = {
+      container?: HTMLElement | null;
+      children: React.ReactNode,
+    }
+    const Portal = ({ container, children }: PortalProps): React.ReactPortal | null => {
+      if(container) {
+        return createPortal(children, container);
+      }
+      return null;
+    }`;
+  }
+
   toString() {
+    const imports: string[] = [];
     const viewFunction = this.context.viewFunctions?.[this.view];
     const getTemplateFunc = this.props.some((p) => p.isTemplate)
       ? `
@@ -1225,8 +1245,13 @@ export class ReactComponent extends Component {
       .map((m) => this.createNestedPropertyGetter(m))
       .join("\n");
 
+    const portal = this.containsPortal()
+      ? this.compilePortalComponent(imports)
+      : "";
+
     return `
-            ${this.compileImports()}
+            ${this.compileImports(imports)}
+            ${portal}
             ${this.compileNestedComponents()}
             ${this.compileComponentRef()}
             ${this.compileRestProps()}
@@ -1345,6 +1370,40 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return tagName.toString() === "Fragment"
       ? new Identifier("React.Fragment")
       : tagName;
+  }
+
+  attributesString(options?: toStringOptions) {
+    if (this.isPortal()) {
+      const containerIndex = this.attributes.findIndex(
+        (attr) =>
+          attr instanceof JsxAttribute && attr.name.toString() === "container"
+      );
+      if (containerIndex > -1) {
+        const attr = this.attributes[containerIndex] as JsxAttribute;
+        const expression = (attr.initializer as JsxExpression).getExpression()!;
+
+        const propName =
+          expression instanceof PropertyAccess
+            ? expression.name.toString()
+            : expression.toString();
+        const relatedProp = options?.members.find(
+          (m) => m.name.toString() === propName
+        ) as Property | undefined;
+
+        const token = relatedProp?.questionOrExclamationToken ?? "";
+        const getter = relatedProp ? ".current!" : "";
+
+        this.attributes[containerIndex] = new JsxAttribute(
+          attr.name,
+          new JsxExpression(
+            undefined,
+            new SimpleExpression(`${expression}${token}${getter}`)
+          )
+        );
+      }
+    }
+
+    return super.attributesString(options);
   }
 
   toString(options?: toStringOptions) {

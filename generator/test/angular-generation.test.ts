@@ -218,6 +218,10 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("portal", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {
