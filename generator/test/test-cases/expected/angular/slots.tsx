@@ -1,10 +1,12 @@
 import { ElementRef } from "@angular/core";
 class WidgetInput {
   __slotNamedSlot?: ElementRef<HTMLDivElement>;
+
   get namedSlot() {
     return this.__slotNamedSlot?.nativeElement?.innerHTML.trim();
   }
   __slotChildren?: ElementRef<HTMLDivElement>;
+
   get children() {
     return this.__slotChildren?.nativeElement?.innerHTML.trim();
   }

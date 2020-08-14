@@ -185,7 +185,7 @@ export class AngularComponent extends Component {
     const statements = [new SimpleExpression(`this.__${name}=value;`)];
     if (onPushStrategy) {
       statements.push(
-        new SimpleExpression(`this.changeDetection.detectChanges();`)
+        new SimpleExpression(`this.changeDetection?.detectChanges();`)
       );
     }
 
@@ -206,7 +206,11 @@ export class AngularComponent extends Component {
     questionOrExclamationToken: string,
     type: string
   ) {
-    const indexGetter = isTypeArray(type) ? "" : "[0]";
+    const isArray = isTypeArray(type);
+    const indexGetter = isArray ? "" : "[0]";
+    const condition = `this.__${name}`.concat(
+      isArray ? `&& this.__${name}.length` : ""
+    );
     if (questionOrExclamationToken === "?") {
       type = type + "| undefined";
     }
@@ -218,7 +222,7 @@ export class AngularComponent extends Component {
       type,
       new Block(
         [
-          new SimpleExpression(`if (this.__${name}) {
+          new SimpleExpression(`if (${condition}) {
           return this.__${name};
         }
         const nested = this.${name}Nested.toArray();
@@ -1041,6 +1045,10 @@ export class AngularComponent extends Component {
       });
 
     const nestedModules = [] as string[];
+
+    if (this.members.some((m) => m.isNestedComp)) {
+      ngAfterViewInitStatements.push("this.changeDetection.detectChanges()");
+    }
 
     return `
         ${this.compileImports(coreImports)}

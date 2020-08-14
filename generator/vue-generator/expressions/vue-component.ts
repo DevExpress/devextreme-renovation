@@ -347,9 +347,14 @@ export class VueComponent extends Component {
     if (isArray) {
       nestedName = removePlural(nestedName);
     }
+    const propName = `${SyntaxKind.ThisKeyword}.${property.name}`;
+    const condition = `${propName}`.concat(
+      isArray ? `&& ${propName}.length` : ""
+    );
+
     return `__getNested${nestedName}() {
-      if (${SyntaxKind.ThisKeyword}.${property.name}) {
-        return ${SyntaxKind.ThisKeyword}.${property.name};
+      if (${condition}) {
+        return ${propName};
       }
       if(this.$slots.default) {
         const nested = ${SyntaxKind.ThisKeyword}.__collectChildren(this.$slots.default);
