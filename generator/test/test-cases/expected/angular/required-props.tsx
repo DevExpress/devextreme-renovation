@@ -6,7 +6,12 @@ class WidgetInput {
   @Input() type!: string;
 }
 
-import { Component, NgModule } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   convertRulesToOptions,
@@ -19,7 +24,10 @@ export function defaultOptions(rule: WidgetOptionRule) {
   __defaultOptionRules.push(rule);
 }
 
-@Component({ selector: "dx-widget" })
+@Component({
+  selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
 export default class Widget extends WidgetInput {
   get __getHeight(): number {
     return this.size.height;
@@ -32,7 +40,7 @@ export default class Widget extends WidgetInput {
     return {};
   }
 
-  constructor() {
+  constructor(private changeDetection: ChangeDetectorRef) {
     super();
 
     const defaultOptions = convertRulesToOptions<WidgetInput>(

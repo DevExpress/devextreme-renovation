@@ -5,7 +5,7 @@ import {
   Effect,
   ForwardRef,
 } from "../../../component_declaration/common";
-import Child from "./child.tsx";
+import Child from "./child";
 
 function view({ props: { childRef } }: ForwardRefDeep) {
   return <Child childRef={childRef} />;

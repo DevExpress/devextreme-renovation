@@ -4,11 +4,19 @@ class Props {
   @Input() nullableRef: (ref: any) => void = () => {};
 }
 
-import { Component, NgModule, ViewChild, ElementRef } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  ViewChild,
+  ElementRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "dx-ref-on-children-parent",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<dx-ref-on-children-child
     [childRef]="forwardRef_child"
     [nullableRef]="forwardRef_nullableRef"
@@ -91,8 +99,12 @@ export default class RefOnChildrenParent extends Props {
     }
   }
 
+  constructor(private changeDetection: ChangeDetectorRef) {
+    super();
+  }
   set _state(state: number) {
     this.state = state;
+    this.changeDetection.detectChanges();
   }
 }
 @NgModule({

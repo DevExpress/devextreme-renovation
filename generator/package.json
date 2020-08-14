@@ -1,6 +1,6 @@
 {
   "name": "devextreme-generator",
-  "version": "1.0.101",
+  "version": "1.0.102",
   "description": "Component generator",
   "scripts": {
     "test": "nyc mocha ./build/test --timeout 30000",
@@ -47,7 +47,6 @@
     "@types/typescript": "^2.0.0",
     "@types/react-dom": "^16.9.8",
     "angular2-template-loader": "^0.6.2",
-    "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.1.0",
     "babel-preset-react-app": "^9.1.2",
     "core-js": "^3.6.4",

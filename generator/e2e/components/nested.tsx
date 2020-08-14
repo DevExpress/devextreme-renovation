@@ -1,5 +1,5 @@
 import { Component, JSXComponent } from "../../component_declaration/common";
-import { WithNestedInput } from "./nested-props.ts";
+import { WithNestedInput } from "./nested-props";
 
 function view(model: WithNested) {
   return (
@@ -19,7 +19,7 @@ function view(model: WithNested) {
   view,
 })
 export default class WithNested extends JSXComponent(WithNestedInput) {
-  getRowCells(index) {
+  getRowCells(index: number) {
     const cells = this.props.gridDataRows[index].gridDataCells;
     return (
       cells

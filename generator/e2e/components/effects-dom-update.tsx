@@ -23,14 +23,14 @@ function view(model: EffectsDOMUpdate) {
 @ComponentBindings()
 class Props {
   @OneWay() name?: string;
-  @OneWay() text: string;
+  @OneWay() text!: string;
 }
 
 @Component({
   view,
 })
-export default class EffectsDOMUpdate extends JSXComponent(Props) {
-  @Ref() divRef: HTMLDivElement;
+export default class EffectsDOMUpdate extends JSXComponent<Props, "text">() {
+  @Ref() divRef!: HTMLDivElement;
 
   @Effect()
   noDepsEffect() {

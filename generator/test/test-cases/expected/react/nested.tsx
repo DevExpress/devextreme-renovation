@@ -86,7 +86,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 
   const __getNestedColumns = useMemo(
     function __getNestedColumns(): Array<GridColumnType | string> | undefined {
-      if (props.columns) {
+      if (props.columns && props.columns.length) {
         return props.columns;
       }
       const nested = __collectChildren<GridColumnType & { __name: string }>(

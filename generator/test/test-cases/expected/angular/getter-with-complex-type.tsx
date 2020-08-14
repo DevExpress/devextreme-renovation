@@ -1,14 +1,19 @@
 import { Input } from "@angular/core";
-
 export class Props {
   @Input() p: number = 10;
 }
 
-import { Component, NgModule } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div></div>`,
 })
 export default class Widget extends Props {
@@ -38,8 +43,12 @@ export default class Widget extends Props {
     }
   }
 
+  constructor(private changeDetection: ChangeDetectorRef) {
+    super();
+  }
   set _i(i: number) {
     this.i = i;
+    this.changeDetection.detectChanges();
     this.__getterCache["g1"] = undefined;
   }
 }

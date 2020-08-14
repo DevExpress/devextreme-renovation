@@ -23,7 +23,7 @@ class Props {
   view,
 })
 export default class ForwardRefTemplate extends JSXComponent(Props) {
-  @ForwardRef() child: HTMLDivElement;
+  @ForwardRef() child!: HTMLDivElement;
 
   @Effect()
   effect() {

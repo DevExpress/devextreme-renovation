@@ -35,7 +35,11 @@ import { isElement } from "./jsx/elements";
 import { GeneratorContext } from "../../base-generator/types";
 import { ComponentInput } from "./component-input";
 import { getModuleRelativePath } from "../../base-generator/utils/path-utils";
-import { removePlural, compileType } from "../../base-generator/utils/string";
+import {
+  removePlural,
+  compileType,
+  capitalizeFirstLetter,
+} from "../../base-generator/utils/string";
 
 export function compileCoreImports(
   members: Array<Property | Method>,
@@ -144,6 +148,10 @@ export class AngularComponent extends Component {
       "selector",
       new StringLiteral(this.selector)
     );
+    componentDecorator.addParameter(
+      "changeDetection",
+      new SimpleExpression("ChangeDetectionStrategy.OnPush")
+    );
     this.decorator = componentDecorator;
   }
 
@@ -168,17 +176,27 @@ export class AngularComponent extends Component {
     modifiers: string[],
     name: string,
     questionOrExclamationToken: string,
-    type: string
+    type: string,
+    onPushStrategy: boolean
   ) {
     if (questionOrExclamationToken === "?") {
       type = type + "| undefined";
     }
+    const statements = [new SimpleExpression(`this.__${name}=value;`)];
+    if (onPushStrategy) {
+      statements.push(
+        new SimpleExpression(`this.changeDetection?.detectChanges();`)
+      );
+    }
+
+    onPushStrategy;
+
     return new SetAccessor(
       decorator,
       modifiers,
       new Identifier(`${name}`),
       [new Parameter([], [], undefined, new Identifier("value"), "", type)],
-      new Block([new SimpleExpression(`this.__${name}=value;`)], true)
+      new Block(statements, true)
     );
   }
 
@@ -188,7 +206,11 @@ export class AngularComponent extends Component {
     questionOrExclamationToken: string,
     type: string
   ) {
-    const indexGetter = isTypeArray(type) ? "" : "[0]";
+    const isArray = isTypeArray(type);
+    const indexGetter = isArray ? "" : "[0]";
+    const condition = `this.__${name}`.concat(
+      isArray ? `&& this.__${name}.length` : ""
+    );
     if (questionOrExclamationToken === "?") {
       type = type + "| undefined";
     }
@@ -200,7 +222,7 @@ export class AngularComponent extends Component {
       type,
       new Block(
         [
-          new SimpleExpression(`if (this.__${name}) {
+          new SimpleExpression(`if (${condition}) {
           return this.__${name};
         }
         const nested = this.${name}Nested.toArray();
@@ -231,7 +253,7 @@ export class AngularComponent extends Component {
     );
   }
 
-  processNestedProperty(m: Property) {
+  processNestedProperty(m: Property, onPushStrategy: boolean = false) {
     const {
       decorators,
       modifiers,
@@ -270,7 +292,8 @@ export class AngularComponent extends Component {
         modifiers,
         name,
         questionOrExclamationToken,
-        complexType
+        complexType,
+        onPushStrategy
       ),
       this.createNestedPropertyGetter(
         modifiers,
@@ -339,11 +362,45 @@ export class AngularComponent extends Component {
 
     members = members.reduce((acc, m) => {
       if (m.isNested && m instanceof Property) {
-        return acc.concat(this.processNestedProperty(m));
+        return acc.concat(this.processNestedProperty(m, true));
       }
       acc.push(m);
       return acc;
     }, [] as Array<Property | Method>);
+
+    const slots = members.filter((m) => m.isSlot);
+    slots.forEach((s) => {
+      const name = new Identifier(`slot${capitalizeFirstLetter(s.name)}`);
+      const decorators = [
+        new Decorator(
+          new Call(new Identifier("ViewChild"), undefined, [
+            new SimpleExpression(`"${name}"`),
+          ]),
+          {}
+        ),
+      ];
+      const parameters = [
+        new Parameter(
+          [],
+          [],
+          undefined,
+          new Identifier("slot"),
+          undefined,
+          new SimpleTypeExpression("ElementRef<HTMLDivElement>")
+        ),
+      ];
+      const body = new Block(
+        [
+          new SimpleExpression(`
+          this.__${name} = slot;
+          this.changeDetection.detectChanges();
+        `),
+        ],
+        true
+      );
+
+      members.push(new SetAccessor(decorators, [], name, parameters, body));
+    });
 
     return members;
   }
@@ -380,7 +437,10 @@ export class AngularComponent extends Component {
               ),
             ],
             new Block(
-              [new SimpleExpression(`this.${member.name}=${member._name}`)],
+              [
+                new SimpleExpression(`this.${member.name}=${member._name}`),
+                new SimpleExpression("this.changeDetection.detectChanges()"),
+              ],
               false
             )
           )
@@ -566,6 +626,7 @@ export class AngularComponent extends Component {
 
           ngDoCheckStatements.push(`
           if (${observableConditionArray.join("&&")}) {
+              this.changeDetection.detectChanges();
               this.${updateEffectMethod}();
           }`);
         }
@@ -739,7 +800,7 @@ export class AngularComponent extends Component {
     statements: string[],
     parameters: string[] = []
   ): string {
-    if (statements.length) {
+    if (statements.length || (name !== "ngOnChanges" && parameters.length)) {
       return `${name}(${parameters.join(",")}){
                 ${statements.join("\n")}
             }`;
@@ -782,6 +843,7 @@ export class AngularComponent extends Component {
         
         writeValue(value: any): void {
             this.${this.modelProp.name} = value;
+            this.changeDetection.detectChanges();
         }
     
         ${
@@ -930,8 +992,12 @@ export class AngularComponent extends Component {
 
     return events
       .map((e) => {
+        const parameters = (e.type as FunctionTypeNode).parameters || [];
         constructorStatements.push(
-          `this._${e.name}=this.${e.name}.emit.bind(this.${e.name});`
+          `this._${e.name}=(${parameters.join(",")}) => {
+            this.${e.name}.emit(${parameters.map((p) => p.name).join(",")});
+            this.changeDetection.detectChanges();
+          }`
         );
         return `_${e.name}${compileType("any")}`;
       })
@@ -1050,8 +1116,14 @@ export class AngularComponent extends Component {
     const ngAfterViewCheckedStatements: string[] = [];
     const ngDoCheckStatements: string[] = [];
     const constructorStatements: string[] = [];
-    const coreImports: string[] = [];
     const cdkImports: string[] = [];
+    const coreImports: string[] = [
+      "ChangeDetectionStrategy",
+      "ChangeDetectorRef",
+    ];
+    const constructorParams: string[] = [
+      "private changeDetection: ChangeDetectorRef",
+    ];
 
     const decoratorToStringOptions: toStringOptions = {
       members: this.members,
@@ -1101,6 +1173,10 @@ export class AngularComponent extends Component {
     const portalComponent = this.containsPortal()
       ? this.compilePortalComponent(coreImports, cdkImports, importModules)
       : "";
+
+    if (this.members.some((m) => m.isNestedComp)) {
+      ngAfterViewInitStatements.push("this.changeDetection.detectChanges()");
+    }
 
     return `
         ${this.compileImports(coreImports)}
@@ -1155,9 +1231,11 @@ export class AngularComponent extends Component {
             ${this.compileBindEvents(constructorStatements)}
             ${this.compileLifeCycle(
               "constructor",
-              constructorStatements.length
+              (constructorStatements.length || constructorParams.length) &&
+                this.heritageClauses.length
                 ? ["super()"].concat(constructorStatements)
-                : constructorStatements
+                : constructorStatements,
+              constructorParams
             )}
             ${this.members.filter((m) => m instanceof SetAccessor).join("\n")}
             ${this.compileNgStyleProcessor(decoratorToStringOptions)}

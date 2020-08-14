@@ -22,7 +22,7 @@ export const DxWidget = {
       };
     },
     __getNestedColumn() {
-      if (this.columns) {
+      if (this.columns && this.columns.length) {
         return this.columns;
       }
       if (this.$slots.default) {

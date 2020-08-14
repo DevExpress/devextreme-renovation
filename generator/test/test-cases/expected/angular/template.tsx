@@ -7,21 +7,27 @@ export class WidgetInput {
   @Input() footerTemplate: TemplateRef<any> | null = null;
 }
 
-import { Component, NgModule } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
+
 @Component({
   selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div>
-    <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
-    <ng-container *ngIf="contentTemplate">
+    <ng-container *ngTemplateOutlet="headerTemplate"></ng-container
+    ><ng-container *ngIf="contentTemplate">
       <ng-container
         *ngTemplateOutlet="
           contentTemplate;
           context: { data: { p1: 'value' }, index: 10 }
         "
-      ></ng-container>
-    </ng-container>
-    <ng-container *ngIf="!contentTemplate">
+      ></ng-container> </ng-container
+    ><ng-container *ngIf="!contentTemplate">
       <ng-container
         *ngTemplateOutlet="
           template;
@@ -30,9 +36,8 @@ import { CommonModule } from "@angular/common";
             textPropExpr: 'textPropExrpValue'
           }
         "
-      ></ng-container>
-    </ng-container>
-    <ng-container
+      ></ng-container> </ng-container
+    ><ng-container
       *ngTemplateOutlet="footerTemplate; context: { someProp: someProp }"
     ></ng-container>
   </div>`,
@@ -40,6 +45,10 @@ import { CommonModule } from "@angular/common";
 export default class Widget extends WidgetInput {
   get __restAttributes(): any {
     return {};
+  }
+
+  constructor(private changeDetection: ChangeDetectorRef) {
+    super();
   }
 }
 @NgModule({
