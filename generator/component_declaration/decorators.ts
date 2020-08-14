@@ -7,6 +7,7 @@ export const enum Decorators {
   Nested = "Nested",
   NestedComp = "NestedComp",
   Slot = "Slot",
+  SlotSetter = "SlotSetter",
   Template = "Template",
   Event = "Event",
 

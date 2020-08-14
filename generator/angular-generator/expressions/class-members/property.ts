@@ -73,11 +73,18 @@ export class Property extends BaseProperty {
     }
     if (this.isSlot) {
       const selector = `slot${capitalizeFirstLetter(this.name)}`;
-      return `@ViewChild("${selector}") ${selector}?: ElementRef<HTMLDivElement>;
+      return `__${selector}?: ElementRef<HTMLDivElement>;
 
             get ${this.name}(){
-                return this.${selector}?.nativeElement?.innerHTML.trim();
+                return this.__${selector}?.nativeElement?.innerHTML.trim();
             }`;
+    }
+    if (this.isSlotSetter) {
+      const selector = `slot${capitalizeFirstLetter(this.name)}`;
+      return `@ViewChild("${selector}") set ${selector}(slot: ElementRef<HTMLDivElement>) {
+              this.__${selector} = slot;
+              this.changeDetection.detectChanges();
+            };`;
     }
     if (this.isNestedComp) {
       return `@ContentChildren(${this.type}) ${this.name}!: QueryList<${this.type}>`;

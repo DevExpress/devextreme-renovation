@@ -66,6 +66,10 @@ export function compileCoreImports(
   }
 
   if (members.some((m) => m.isSlot)) {
+    imports.push("ElementRef");
+  }
+
+  if (members.some((m) => m.isSlotSetter)) {
     imports.push("ViewChild", "ElementRef");
   }
 
@@ -359,6 +363,16 @@ export class AngularComponent extends Component {
       acc.push(m);
       return acc;
     }, [] as Array<Property | Method>);
+
+    const slots = members.filter((m) => m.isSlot);
+    slots.forEach((s) => {
+      const decorator = new Decorator(
+        new Call(new Identifier("SlotSetter"), undefined, []),
+        {}
+      );
+      const prop = new Property([decorator], undefined, s._name, "", s.type);
+      members.push(prop);
+    });
 
     return members;
   }

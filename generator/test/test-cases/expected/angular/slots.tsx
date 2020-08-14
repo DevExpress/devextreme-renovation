@@ -1,14 +1,12 @@
-import { ViewChild, ElementRef } from "@angular/core";
+import { ElementRef } from "@angular/core";
 class WidgetInput {
-  @ViewChild("slotNamedSlot") slotNamedSlot?: ElementRef<HTMLDivElement>;
-
+  __slotNamedSlot?: ElementRef<HTMLDivElement>;
   get namedSlot() {
-    return this.slotNamedSlot?.nativeElement?.innerHTML.trim();
+    return this.__slotNamedSlot?.nativeElement?.innerHTML.trim();
   }
-  @ViewChild("slotChildren") slotChildren?: ElementRef<HTMLDivElement>;
-
+  __slotChildren?: ElementRef<HTMLDivElement>;
   get children() {
-    return this.slotChildren?.nativeElement?.innerHTML.trim();
+    return this.__slotChildren?.nativeElement?.innerHTML.trim();
   }
 }
 
@@ -17,6 +15,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -39,6 +38,18 @@ import { CommonModule } from "@angular/common";
 export default class Widget extends WidgetInput {
   get __restAttributes(): any {
     return {};
+  }
+  @ViewChild("slotNamedSlot") set slotNamedSlot(
+    slot: ElementRef<HTMLDivElement>
+  ) {
+    this.__slotNamedSlot = slot;
+    this.changeDetection.detectChanges();
+  }
+  @ViewChild("slotChildren") set slotChildren(
+    slot: ElementRef<HTMLDivElement>
+  ) {
+    this.__slotChildren = slot;
+    this.changeDetection.detectChanges();
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {

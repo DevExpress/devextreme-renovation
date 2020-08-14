@@ -91,6 +91,10 @@ export class BaseClassMember extends Expression {
     return this._hasDecorator(Decorators.Slot);
   }
 
+  get isSlotSetter() {
+    return this._hasDecorator(Decorators.SlotSetter);
+  }
+
   get isTemplate() {
     return this._hasDecorator(Decorators.Template);
   }

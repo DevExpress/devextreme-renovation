@@ -4779,7 +4779,7 @@ mocha.describe("Angular generator", function () {
       );
     });
 
-    mocha.it("@Slot prop should generate viewChild and getter", function () {
+    mocha.it("@Slot prop should generate getter", function () {
       const property = generator.createProperty(
         [createDecorator("Slot")],
         [],
@@ -4792,12 +4792,35 @@ mocha.describe("Angular generator", function () {
       assert.strictEqual(
         getResult(property.toString()),
         getResult(`
-                @ViewChild("slotName") slotName?: ElementRef<HTMLDivElement>;
+                __slotName?: ElementRef<HTMLDivElement>;
 
                 get name(){
-                    return this.slotName?.nativeElement?.innerHTML.trim();
+                    return this.__slotName?.nativeElement?.innerHTML.trim();
                 }
             `)
+      );
+    });
+
+    mocha.it("@SlotSetter prop should generate @ViewChild", function () {
+      const property = generator.createProperty(
+        [createDecorator("SlotSetter")],
+        [],
+        generator.createIdentifier("name"),
+        generator.SyntaxKind.QuestionToken,
+        undefined,
+        generator.createFalse()
+      );
+
+      assert.strictEqual(
+        getResult(property.toString()),
+        getResult(`
+            @ViewChild("slotName") set slotName(
+              slot: ElementRef<HTMLDivElement>
+            ) {
+              this.__slotName = slot;
+              this.changeDetection.detectChanges();
+            }
+        `)
       );
     });
 

@@ -10,6 +10,8 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewChild,
+  ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -24,6 +26,12 @@ export default class Child extends ChildInput {
   }
   get __restAttributes(): any {
     return {};
+  }
+  @ViewChild("slotChildren") set slotChildren(
+    slot: ElementRef<HTMLDivElement>
+  ) {
+    this.__slotChildren = slot;
+    this.changeDetection.detectChanges();
   }
 
   _onClick: any;
