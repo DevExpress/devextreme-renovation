@@ -832,7 +832,7 @@ export class GridProps {
 @Component({ view: viewFunction })
 class MyComponent extends JSXComponent(GridProps) {
   getColumnNames() {
-    return columns.map(col => typeof col === "string" ? col : col.dataField);
+    return this.props.columns.map(col => typeof col === "string" ? col : col.dataField);
   }
 }
 
@@ -1222,7 +1222,9 @@ function viewFunction(viewModel: MyComponent) {
 
 Portal - специальный JSX компонент, позволяющий рендерить элемент в любом месте в DOM-е. Этот компонент принимает на вход всего один параметр - container. Это может быть ссылка, на элемент, либо конкретный HTML элемент (например, полученный через `document.getElementByID()`). При этом компонент продолжает получать свойства, переданные родителем и рендерить разметку, на основе этих свойств. Самые частые сценарии использования порталов - `drag-drop` элементы и элементы, которые должны рендерится поверх остальных (например, `Overlay`).
 
-**Важно!** При использовании элементов, полученных через `document` (например `document.body`, см. пример), необходимо выносить их в геттеры. Это позволит компонентам правильно пересчитывать ссылки во всех подходах. Так же необходимо учесть, что в некоторых подходах (React, Preact), портал ожидате увидеть один элемент, в качестве потомка. Если вам необходимо сгенерить несколько компонентов рядом в одном портале - оберните их во `Fragment`.
+**Важно!** При использовании элементов, полученных через `document` (например `document.body`, см. пример), необходимо выносить их в геттеры. Это позволит компонентам правильно пересчитывать ссылки во всех подходах. При разработке компонентов учитывайте возможность их рендера в SSR, где `document` на этапе создания не существует и искомый компонент может быть `undefined`.
+
+В некоторых подходах (React, Preact), портал ожидает увидеть один элемент, в качестве потомка. Если вам необходимо сгенерить несколько компонентов рядом в одном портале - оберните их во `Fragment`.
 
 Пример:
 
@@ -1236,7 +1238,7 @@ class MyComponentProps {
 
 @Component({ view: viewFunction })
 class MyComponent extends JSXComponent(MyComponentProps) {
-  get __bodyElement() {
+  get bodyElement() {
     return document?.body;
   }
 }
@@ -1244,7 +1246,7 @@ class MyComponent extends JSXComponent(MyComponentProps) {
 function viewFunction(viewModel: MyComponent) {
   return (
     <div>
-      <Portal container={viewModel.__bodyElement}>
+      <Portal container={viewModel.bodyElement}>
         <div>
           Element in body
         </div>
