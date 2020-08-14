@@ -1,5 +1,3 @@
-[[toc]]
-
 ### Common BC's
 
 1. Components can not have props and methods (API methods, getters etc.) with the same name.
