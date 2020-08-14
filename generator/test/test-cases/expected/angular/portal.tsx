@@ -6,6 +6,8 @@ export class WidgetProps {
 import {
   Component,
   NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   ViewChild,
   ComponentFactoryResolver,
   ApplicationRef,
@@ -86,6 +88,7 @@ class DxPortal {
 
 @Component({
   selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div>
     <dx-portal [container]="document.body" *ngIf="rendered"
       ><span></span></dx-portal
@@ -116,8 +119,12 @@ export default class Widget extends WidgetProps {
     clearTimeout(this._effectTimeout);
   }
 
+  constructor(private changeDetection: ChangeDetectorRef) {
+    super();
+  }
   set _rendered(rendered: boolean) {
     this.rendered = rendered;
+    this.changeDetection.detectChanges();
   }
 }
 @NgModule({
