@@ -1220,7 +1220,7 @@ function viewFunction(viewModel: MyComponent) {
 
 #### Portals
 
-Portal - специальный JSX компонент, позволяющий рендерить элемент в любом месте в DOM-е. Этот компонент принимает на вход всего один параметр - container. Это может быть ссылка, на элемент, либо конкретный HTML элемент (например, полученный через `document.getElementByID()`). При этом компонент продолжает получать свойства, переданные родителем и рендерить разметку, на основе этих свойств. Самые частые сценарии использования порталов - `drag-drop` элементы и элементы, которые должны рендерится поверх остальных (например, `Overlay`).
+Portal - специальный JSX компонент, позволяющий рендерить элемент в любом месте в DOM-е. Этот компонент принимает на вход всего один параметр - container. Это может быть ссылка, на элемент, либо конкретный HTML элемент (например, полученный через `document.getElementByID()`). При этом компонент продолжает получать свойства, переданные родителем и рендерить разметку, на основе этих свойств. Самые частые сценарии использования порталов - `drag-drop` элементы и элементы, которые должны рендерится поверх остальных (например, `Overlay`). Обратите внимание, что при первом рендере разметки во фреймворках отсутствуют ссылки, они появляются только после первого рендера. Это надо учитвывать при разработке таких опций как `opened` в `Lookup` (пример WA - см. пример)
 
 **Важно!** При использовании элементов, полученных через `document` (например `document.body`, см. пример), необходимо выносить их в геттеры. Это позволит компонентам правильно пересчитывать ссылки во всех подходах. При разработке компонентов учитывайте возможность их рендера в SSR, где `document` на этапе создания не существует и искомый компонент может быть `undefined`.
 
@@ -1234,12 +1234,19 @@ import { Portal } from 'devextreme-generator/component_declaration/common';
 @ComponentBindings()
 class MyComponentProps {
   @Ref() someElement!: HTMLDivElement;
+  @OneWay() opened?: boolean = false;
 }
 
 @Component({ view: viewFunction })
 class MyComponent extends JSXComponent(MyComponentProps) {
+  rendered = false;
   get bodyElement() {
     return document?.body;
+  }
+  
+  @Effect({ run: 'once' })
+  afterInit() {
+    this.rendered = true;
   }
 }
 
@@ -1251,11 +1258,11 @@ function viewFunction(viewModel: MyComponent) {
           Element in body
         </div>
       </Portal>
-      <Portal container={viewModel.props.someElement}>
+      {viewModel.rendered && viewModel.props.opened && <Portal container={viewModel.props.someElement}>
         <div>
           Element by ref
         </div>
-      </Portal>
+      </Portal>}
     </div>
   );
 }
