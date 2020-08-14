@@ -73,7 +73,10 @@ module.exports = {
     filename: "bundle.js",
   },
 
-  resolve: { alias: { vue: "vue/dist/vue.esm.js" } },
+  resolve: {
+    alias: { vue: "vue/dist/vue.esm.js" },
+    extensions: [".js", ".tsx", ".ts"],
+  },
 
   plugins: [new VueLoaderPlugin(), new webpack.HotModuleReplacementPlugin()],
 };

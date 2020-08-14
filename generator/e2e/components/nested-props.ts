@@ -16,5 +16,5 @@ export class GridRow {
 
 @ComponentBindings()
 export class WithNestedInput {
-  @Nested() gridDataRows?: GridRow[];
+  @Nested() gridDataRows: GridRow[] = [];
 }

@@ -7,7 +7,7 @@ import {
   Ref,
   OneWay,
 } from "../../component_declaration/common";
-import Button from "./button.tsx";
+import Button from "./button";
 
 function view(model: EffectsStateUpdate) {
   return (
@@ -33,7 +33,7 @@ class Props {
   view,
 })
 export default class EffectsStateUpdate extends JSXComponent(Props) {
-  @Ref() divRef: HTMLDivElement;
+  @Ref() divRef!: HTMLDivElement;
   @InternalState() state1: number = 0;
 
   @Effect()

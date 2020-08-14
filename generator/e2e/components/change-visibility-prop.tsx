@@ -42,7 +42,7 @@ export default class VisibilityChangeProp extends JSXComponent(WidgetInput) {
 
   @Effect()
   elementClick() {
-    const handler = (e) => {
+    const handler = (e: Event) => {
       this.counter = this.counter + 1;
     };
     if (this.props.visible) {
