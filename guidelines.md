@@ -1,4 +1,4 @@
-#DevExtreme - Declaration Guidelines
+# DevExtreme - Declaration Guidelines
 
 Описание подхода создания нативных компонентов.
 
