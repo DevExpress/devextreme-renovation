@@ -14,7 +14,7 @@ const Props = {
   },
 };
 
-export default {
+export const DxRefOnChildrenParent = {
   components: {
     Child,
   },
@@ -87,4 +87,5 @@ export default {
     this.__destroyEffects = null;
   },
 };
+export default DxRefOnChildrenParent;
 </script>

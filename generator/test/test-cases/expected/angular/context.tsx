@@ -23,8 +23,8 @@ export default class Widget extends Props {
   }
 
   constructor(
-    @SkipSelf() @Host() private context: P1Context,
-    private provider: P1Context
+    @SkipSelf() private context: P1Context,
+    @Host() private provider: P1Context
   ) {
     super();
     this.provider.value = 10;

@@ -10,7 +10,7 @@ export const InnerWidgetProps = {
     type: Number,
   },
 };
-export default {
+export const DxInnerWidget = {
   props: InnerWidgetProps,
   model: {
     prop: "value",
@@ -62,4 +62,6 @@ export default {
     },
   },
 };
+
+export default DxInnerWidget;
 </script>

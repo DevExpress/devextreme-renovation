@@ -28,16 +28,16 @@ export class Props {
   @OneWay() oneWayPropWithDefault?: string = "";
   @TwoWay() twoWayProp?: number;
   @TwoWay() twoWayPropWithDefault?: number = 3;
-  @OneWay() arrayProp?: string[] = ["arr"];
+  @OneWay() arrayProp: string[] = ["arr"];
   @OneWay() objectProp?: any = { val: 1 };
-  @OneWay() functionProp?: () => string = () => "";
+  @OneWay() functionProp: () => string = () => "";
 }
 
 @Component({
   view,
 })
 export default class DefaultOptionRulesComponent extends JSXComponent(Props) {
-  @Ref() host: HTMLDivElement;
+  @Ref() host!: HTMLDivElement;
   @Effect()
   onClick() {
     const handler = () => {

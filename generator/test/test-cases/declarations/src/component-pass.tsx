@@ -6,7 +6,7 @@ import {
   OneWay,
 } from "../../../../component_declaration/common";
 import WidgetOne from "./component-pass-one";
-import WidgetTwo from "./component-pass-two";
+import { WidgetTwo } from "./component-pass-two";
 
 function view(model: Widget) {
   const ComponentFromVar = WidgetOne;

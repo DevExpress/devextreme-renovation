@@ -3,7 +3,6 @@ import {
   ComponentBindings,
   JSXComponent,
   OneWay,
-  Fragment,
 } from "../../component_declaration/common";
 
 function view(model: ComponentWithRest) {

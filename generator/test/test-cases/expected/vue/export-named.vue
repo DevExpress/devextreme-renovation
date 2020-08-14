@@ -7,7 +7,7 @@ const WidgetInput = {
     type: Boolean,
   },
 };
-export const Widget = {
+export const DxWidget = {
   props: WidgetInput,
   computed: {
     __restAttributes() {
@@ -19,5 +19,5 @@ export const Widget = {
   },
 };
 
-export default Widget;
+export default DxWidget;
 </script>

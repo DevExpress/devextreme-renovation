@@ -5,8 +5,8 @@ import {
   OneWay,
   Template,
 } from "../../component_declaration/common";
-import Button from "./button-with-template.tsx";
-import ButtonTemplate from "./button-template.tsx";
+import Button from "./button-with-template";
+import ButtonTemplate from "./button-template";
 
 function CustomTemplate(props: { text: string }) {
   return <span style={{ backgroundColor: "#aa0000" }}>{props.text}</span>;

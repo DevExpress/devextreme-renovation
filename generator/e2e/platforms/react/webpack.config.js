@@ -16,15 +16,10 @@ module.exports = {
             },
           },
           {
-            loader: "ts-loader",
-            options: {
-              configFile: path.resolve("./e2e/platforms/react/tsconfig.json"),
-            },
-          },
-          {
             loader: path.resolve("./build/webpack-loader.js"),
             options: {
               platform: "react",
+              tsConfig: path.resolve("./e2e/platforms/react/tsconfig.json"),
               defaultOptionsModule:
                 "./build/component_declaration/default_options",
             },
@@ -44,7 +39,9 @@ module.exports = {
       },
     ],
   },
-
+  resolve: {
+    extensions: [".js", ".tsx", ".ts"],
+  },
   output: {
     path: __dirname + "/dist",
     publicPath: "/",

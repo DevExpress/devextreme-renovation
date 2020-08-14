@@ -34,8 +34,8 @@ function view(vm: PanelComponent) {
 class PanelComponentProps {
   @Template() headerTemplate?: any;
   @Template() bodyTemplate?: any;
-  @Event() onHeaderClick?: () => void = () => void 0;
-  @Event() onBodyClick?: () => void = () => void 0;
+  @Event() onHeaderClick: () => void = () => void 0;
+  @Event() onBodyClick: () => void = () => void 0;
 }
 
 @Component({

@@ -962,14 +962,14 @@ export class AngularComponent extends Component {
 
     this.members.forEach((m) => {
       if (m.isProvider) {
-        constructorArguments.push(`private ${m.name}: ${m.context}`);
+        constructorArguments.push(`@Host() private ${m.name}: ${m.context}`);
         constructorStatements.push(
           `this.${m.name}.value = ${(m as Property).initializer}`
         );
       }
       if (m.isConsumer) {
         constructorArguments.push(
-          `@SkipSelf() @Host() private ${m.name}: ${m.context}`
+          `@SkipSelf() private ${m.name}: ${m.context}`
         );
       }
     });

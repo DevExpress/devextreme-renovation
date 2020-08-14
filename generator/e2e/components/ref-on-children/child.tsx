@@ -12,13 +12,13 @@ function view({ props: { childRef } }: ForwardRefChild) {
 
 @ComponentBindings()
 class Props {
-  @ForwardRef() childRef: HTMLDivElement;
+  @ForwardRef() childRef!: HTMLDivElement;
 }
 
 @Component({
   view,
 })
-export default class ForwardRefChild extends JSXComponent(Props) {
+export default class ForwardRefChild extends JSXComponent<Props, "childRef">() {
   @Effect()
   effect() {
     this.props.childRef.innerHTML += "childText";

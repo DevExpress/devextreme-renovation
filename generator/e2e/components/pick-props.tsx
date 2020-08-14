@@ -1,7 +1,7 @@
 import { Component, JSXComponent } from "../../component_declaration/common";
-import { WidgetInput, SimpleComponent } from "./simple.tsx";
+import { WidgetInput, SimpleComponent } from "./simple";
 
-function view({ props: { color } }: SimpleComponent) {
+function view({ props: { color } }: PickPropsComponent) {
   return <SimpleComponent color={color} />;
 }
 type PickPropsInput = Pick<WidgetInput, "color">;

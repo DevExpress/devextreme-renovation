@@ -16,7 +16,7 @@ export function defaultOptions(rule) {
   __defaultOptionRules.push(rule);
 }
 
-export default {
+export const DxWidget = {
   props: Object.keys(WidgetInput).reduce(
     (props, propName) => ({
       ...props,
@@ -51,4 +51,5 @@ export default {
     });
   },
 };
+export default DxWidget;
 </script>

@@ -12,7 +12,7 @@ const WidgetInput = {
   },
 };
 
-export default {
+export const DxWidget = {
   props: WidgetInput,
   data() {
     return {
@@ -57,4 +57,5 @@ export default {
     },
   },
 };
+export default DxWidget;
 </script>

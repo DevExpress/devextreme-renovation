@@ -4,9 +4,9 @@ import {
   JSXComponent,
 } from "../../../component_declaration/common";
 
-import InterComponent from "./inter-component.tsx";
-import HeaderComponent from "./header-component.tsx";
-import BodyComponent from "./body-component.tsx";
+import InterComponent from "./inter-component";
+import { HeaderComponent } from "./header-component";
+import BodyComponent from "./body-component";
 
 function view(vm: TemplateApp) {
   return (
