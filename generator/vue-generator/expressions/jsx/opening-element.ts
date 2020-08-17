@@ -50,6 +50,24 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     }
   }
 
+  attributesString(options?: toStringOptions) {
+    if (this.isPortal()) {
+      const containerIndex = this.attributes.findIndex(
+        (attr) =>
+          attr instanceof JsxAttribute && attr.name.toString() === "container"
+      );
+      if (containerIndex > -1) {
+        const attr = this.attributes[containerIndex] as JsxAttribute;
+        this.attributes[containerIndex] = new JsxAttribute(
+          attr.name,
+          new SimpleExpression(attr.getRefValue(options))
+        );
+      }
+    }
+
+    return super.attributesString(options);
+  }
+
   createJsxExpression(statement: Expression) {
     return new JsxExpression(undefined, statement);
   }
@@ -61,6 +79,9 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   processTagName(tagName: Expression) {
     if (tagName.toString() === "Fragment") {
       return new SimpleExpression('div style="display: contents"');
+    }
+    if (tagName.toString() === "Portal") {
+      return new SimpleExpression("DxPortal");
     }
 
     return tagName;
@@ -207,7 +228,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     }
 
     if (variable instanceof Conditional) {
-      return this.creteJsxElementForVariable(
+      return this.createJsxElementForVariable(
         new Identifier("component"),
         children,
         [
@@ -274,6 +295,9 @@ export class JsxClosingElement extends JsxOpeningElement {
   processTagName(tagName: Expression) {
     if (tagName.toString() === "Fragment") {
       return new SimpleExpression("div");
+    }
+    if (tagName.toString() === "Portal") {
+      return new SimpleExpression("DxPortal");
     }
 
     return tagName;

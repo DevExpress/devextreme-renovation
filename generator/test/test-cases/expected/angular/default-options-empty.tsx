@@ -3,7 +3,12 @@ function view() {}
 
 export class WidgetProps {}
 
-import { Component, NgModule } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   convertRulesToOptions,
@@ -18,13 +23,16 @@ export function defaultOptions(rule: WidgetOptionRule) {
   __defaultOptionRules.push(rule);
 }
 
-@Component({ selector: "dx-widget" })
+@Component({
+  selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
 export default class Widget extends WidgetProps {
   get __restAttributes(): any {
     return {};
   }
 
-  constructor() {
+  constructor(private changeDetection: ChangeDetectorRef) {
     super();
 
     const defaultOptions = convertRulesToOptions<WidgetProps>(

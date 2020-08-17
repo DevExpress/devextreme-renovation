@@ -460,9 +460,12 @@ export class Property extends BaseProperty {
           d.name === Decorators.ForwardRefProp
       )
     ) {
-      return `${scope}${this.name}${
-        scope ? this.questionOrExclamationToken : ""
-      }.current!`;
+      if (componentContext === "") {
+        return `${scope}${this.name}${
+          scope ? this.questionOrExclamationToken : ""
+        }.current!`;
+      }
+      return getPropName(this.name, componentContext, scope);
     } else if (this.isState) {
       const propName = getPropName(this.name, componentContext, scope);
       return `(${propName}!==undefined?${propName}:${getLocalStateName(
@@ -759,12 +762,14 @@ export class ReactComponent extends Component {
   }
 
   compileImportStatements(hooks: string[], compats: string[]) {
-    return [
+    const imports = [
       `import React, {${hooks
         .concat(compats)
         .concat(["HtmlHTMLAttributes"])
         .join(",")}} from 'react';`,
     ];
+
+    return imports;
   }
 
   compileImports() {
@@ -1230,10 +1235,13 @@ export class ReactComponent extends Component {
     const getterType = property.type
       .toString()
       .replace(`typeof ${type}`, `${type}Type`);
+    const condition = `${propName}`.concat(
+      isArray ? `&& ${propName}.length` : ""
+    );
 
     return `const ${getterName} = useMemo(
       function ${getterName}(): ${getterType}${undefinedType} {
-        if (${propName}) {
+        if (${condition}) {
           return ${propName};
         }
         const nested = __collectChildren<${type}Type & { __name: string }>(${getPropName(
@@ -1246,6 +1254,20 @@ export class ReactComponent extends Component {
     )
     
     `;
+  }
+
+  compilePortalComponent() {
+    return `import { createPortal } from "react-dom";
+    declare type PortalProps = {
+      container?: HTMLElement | null;
+      children: React.ReactNode,
+    }
+    const Portal = ({ container, children }: PortalProps): React.ReactPortal | null => {
+      if(container) {
+        return createPortal(children, container);
+      }
+      return null;
+    }`;
   }
 
   compileViewCall() {
@@ -1293,8 +1315,11 @@ export class ReactComponent extends Component {
       .map((m) => this.createNestedPropertyGetter(m))
       .join("\n");
 
+    const portal = this.containsPortal() ? this.compilePortalComponent() : "";
+
     return `
             ${this.compileImports()}
+            ${portal}
             ${this.compileNestedComponents()}
             ${this.compileComponentRef()}
             ${this.compileRestProps()}
@@ -1409,6 +1434,40 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return tagName.toString() === "Fragment"
       ? new Identifier("React.Fragment")
       : tagName;
+  }
+
+  attributesString(options?: toStringOptions) {
+    if (this.isPortal()) {
+      const containerIndex = this.attributes.findIndex(
+        (attr) =>
+          attr instanceof JsxAttribute && attr.name.toString() === "container"
+      );
+      if (containerIndex > -1) {
+        const attr = this.attributes[containerIndex] as JsxAttribute;
+        const expression = (attr.initializer as JsxExpression).getExpression()!;
+
+        const propName =
+          expression instanceof PropertyAccess
+            ? expression.name.toString()
+            : expression.toString();
+        const relatedProp = options?.members.find(
+          (m) => m.name.toString() === propName
+        ) as Property | undefined;
+
+        const token = relatedProp?.questionOrExclamationToken ?? "";
+        const getter = relatedProp ? ".current!" : "";
+
+        this.attributes[containerIndex] = new JsxAttribute(
+          attr.name,
+          new JsxExpression(
+            undefined,
+            new SimpleExpression(`${expression}${token}${getter}`)
+          )
+        );
+      }
+    }
+
+    return super.attributesString(options);
   }
 
   toString(options?: toStringOptions) {

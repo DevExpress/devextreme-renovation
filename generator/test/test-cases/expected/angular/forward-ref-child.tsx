@@ -5,14 +5,20 @@ class Props {
   @Input() state?: number;
 }
 
-import { Component, NgModule, ViewChild, ElementRef } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  ViewChild,
+  ElementRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "dx-ref-on-children-child",
-  template: `<div #childRefRef>
-    <div #nullableRefRef></div>
-  </div>`,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<div #childRefRef><div #nullableRefRef></div></div>`,
 })
 export default class RefOnChildrenChild extends Props {
   get __restAttributes(): any {
@@ -52,7 +58,12 @@ export default class RefOnChildrenChild extends Props {
 
   ngAfterViewInit() {
     this.childRef(this.childRefRef);
+
     this.nullableRef(this.nullableRefRef);
+  }
+
+  constructor(private changeDetection: ChangeDetectorRef) {
+    super();
   }
 }
 @NgModule({

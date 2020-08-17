@@ -1,7 +1,16 @@
-import { Component, NgModule, ViewChild, ElementRef } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  ViewChild,
+  ElementRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
+
 @Component({
   selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div #divRef>
     <div #explicitRef><div #nullableRef></div></div>
   </div>`,
@@ -14,13 +23,11 @@ export default class Widget {
   @ViewChild("explicitRef", { static: false }) explicitRef!: ElementRef<
     HTMLDivElement
   >;
-
   __clickHandler(): any {
     const html =
       this.divRef.nativeElement.outerHTML +
       this.explicitRef.nativeElement!.outerHTML;
   }
-
   __getHeight(): any {
     return (
       this.divRef.nativeElement.outerHTML +
@@ -30,6 +37,8 @@ export default class Widget {
   get __restAttributes(): any {
     return {};
   }
+
+  constructor(private changeDetection: ChangeDetectorRef) {}
 }
 @NgModule({
   declarations: [Widget],

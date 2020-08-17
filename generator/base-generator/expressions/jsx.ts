@@ -124,6 +124,10 @@ export class JsxOpeningElement extends Expression {
         s.isTemplate && tagName === `${s.getter(options?.newComponentContext)}`
     );
   }
+
+  isPortal() {
+    return this.tagName.toString() === "Portal";
+  }
 }
 
 export class JsxElement extends Expression {
@@ -158,6 +162,10 @@ export class JsxElement extends Expression {
 
   isJsx() {
     return true;
+  }
+
+  isPortal() {
+    return this.openingElement.isPortal();
   }
 }
 

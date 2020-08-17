@@ -237,6 +237,10 @@ mocha.describe("react-generator", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("portal", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("pick-props", function () {
     this.testGenerator(this.test!.title);
   });

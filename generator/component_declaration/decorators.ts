@@ -23,4 +23,6 @@ export const enum Decorators {
 
   Consumer = "Consumer",
   Provider = "Provider",
+
+  ViewChild = "ViewChild", // Angular
 }

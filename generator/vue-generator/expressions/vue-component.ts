@@ -347,9 +347,14 @@ export class VueComponent extends Component {
     if (isArray) {
       nestedName = removePlural(nestedName);
     }
+    const propName = `${SyntaxKind.ThisKeyword}.${property.name}`;
+    const condition = `${propName}`.concat(
+      isArray ? `&& ${propName}.length` : ""
+    );
+
     return `__getNested${nestedName}() {
-      if (${SyntaxKind.ThisKeyword}.${property.name}) {
-        return ${SyntaxKind.ThisKeyword}.${property.name};
+      if (${condition}) {
+        return ${propName};
       }
       if(this.$slots.default) {
         const nested = ${SyntaxKind.ThisKeyword}.__collectChildren(this.$slots.default);
@@ -492,12 +497,12 @@ export class VueComponent extends Component {
     return "";
   }
 
-  generateComponents() {
-    const components = Object.keys(this.context.components || {}).filter(
-      (k) => {
+  generateComponents(components: string[] = []) {
+    components = components.concat(
+      Object.keys(this.context.components || {}).filter((k) => {
         const component = this.context.components?.[k];
         return component instanceof VueComponent && component !== this;
-      }
+      })
     );
 
     if (components.length) {
@@ -622,8 +627,7 @@ export class VueComponent extends Component {
     return "";
   }
 
-  compileImports() {
-    const imports: string[] = [];
+  compileImports(imports: string[] = []) {
     this.compileDefaultOptionsImport(imports);
 
     return imports.join(";\n");
@@ -661,13 +665,54 @@ export class VueComponent extends Component {
     return "";
   }
 
+  compilePortalComponent(imports: string[], components: string[]) {
+    imports.push('import Vue from "vue"');
+    components.push("DxPortal");
+    return `const DxPortal = Vue.extend({
+      render: function (createElement) {
+        if(this.$attrs.container()) {
+          return createElement(
+            'div',
+            {
+              style: {
+                display: "contents"
+              }
+            },
+            this.$slots.default
+          )
+        }
+        return null;
+      },
+      mounted: function () {
+        this.$nextTick(this.__renderPortal);
+      },
+      updated: function () {
+        this.$nextTick(this.__renderPortal);
+      },
+      methods: {
+        __renderPortal() {
+          const container = this.$attrs.container();
+          if (container) {
+            container.append(this.$el);
+          }
+        }
+      }
+    });`;
+  }
+
   toString() {
     this.compileTemplate();
 
     const methods: string[] = [];
+    const imports: string[] = [];
+    const components: string[] = [];
+
+    const portalComponent = this.containsPortal()
+      ? this.compilePortalComponent(imports, components)
+      : "";
 
     const statements = [
-      this.generateComponents(),
+      this.generateComponents(components),
       this.generateProps(),
       this.generateModel(),
       this.generateData(),
@@ -684,7 +729,8 @@ export class VueComponent extends Component {
     ].filter((s) => s);
 
     return `
-          ${this.compileImports()}
+          ${this.compileImports(imports)}
+          ${portalComponent}
           ${this.compileDefaultOptionsMethod(
             this.defaultOptionRules ? this.defaultOptionRules.toString() : "[]",
             []

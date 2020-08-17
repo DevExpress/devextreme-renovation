@@ -2,6 +2,8 @@ import { WidgetInput } from "./nested-props";
 import {
   Component,
   NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Input,
   ContentChildren,
   QueryList,
@@ -30,7 +32,7 @@ class DxEditing extends Editing {
     this.__custom = value;
   }
   get custom(): DxCustom[] | undefined {
-    if (this.__custom) {
+    if (this.__custom && this.__custom.length) {
       return this.__custom;
     }
     const nested = this.customNested.toArray();
@@ -60,7 +62,11 @@ class DxEditing extends Editing {
   selector: "dx-widget dxi-column",
 })
 class DxGridColumn extends GridColumn {}
-@Component({ selector: "dx-widget", template: `<div></div>` })
+@Component({
+  selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<div></div>`,
+})
 export default class Widget extends WidgetInput {
   __getColumns(): any {
     const { columns } = this;
@@ -72,7 +78,7 @@ export default class Widget extends WidgetInput {
   private __columns?: Array<DxGridColumn | string>;
   @ContentChildren(DxGridColumn) columnsNested!: QueryList<DxGridColumn>;
   get columns(): Array<DxGridColumn | string> | undefined {
-    if (this.__columns) {
+    if (this.__columns && this.__columns.length) {
       return this.__columns;
     }
     const nested = this.columnsNested.toArray();
@@ -95,11 +101,20 @@ export default class Widget extends WidgetInput {
     return {};
   }
 
+  ngAfterViewInit() {
+    this.changeDetection.detectChanges();
+  }
+
+  constructor(private changeDetection: ChangeDetectorRef) {
+    super();
+  }
   @Input() set columns(value: Array<DxGridColumn | string> | undefined) {
     this.__columns = value;
+    this.changeDetection?.detectChanges();
   }
   @Input() set gridEditing(value: DxEditing | undefined) {
     this.__gridEditing = value;
+    this.changeDetection?.detectChanges();
   }
 }
 @NgModule({

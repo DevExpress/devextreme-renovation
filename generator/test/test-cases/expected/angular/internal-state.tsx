@@ -1,7 +1,14 @@
-import { Component, NgModule } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
+
 @Component({
   selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<span></span>`,
 })
 export default class Widget {
@@ -13,8 +20,10 @@ export default class Widget {
     return {};
   }
 
+  constructor(private changeDetection: ChangeDetectorRef) {}
   set __hovered(_hovered: Boolean) {
     this._hovered = _hovered;
+    this.changeDetection.detectChanges();
   }
 }
 @NgModule({

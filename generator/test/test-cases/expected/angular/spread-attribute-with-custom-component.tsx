@@ -1,12 +1,17 @@
 import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
-
 export class WidgetInput {}
 
-import { Component, NgModule } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<dx-inner-widget
     [selected]="__attr1.selected !== undefined ? __attr1.selected : false"
     [value]="__attr1.value"
@@ -20,6 +25,10 @@ export default class Widget extends WidgetInput {
   }
   get __restAttributes(): any {
     return {};
+  }
+
+  constructor(private changeDetection: ChangeDetectorRef) {
+    super();
   }
 }
 @NgModule({

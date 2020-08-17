@@ -5,10 +5,19 @@ class WidgetInput {
   @Output() onClick: EventEmitter<number> = new EventEmitter();
 }
 
-import { Component, NgModule } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-@Component({ selector: "dx-widget", template: `<span></span>` })
+@Component({
+  selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<span></span>`,
+})
 export default class Widget extends WidgetInput {
   __getHeight(): number {
     this._onClick(10);
@@ -20,9 +29,12 @@ export default class Widget extends WidgetInput {
   }
 
   _onClick: any;
-  constructor() {
+  constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._onClick = this.onClick.emit.bind(this.onClick);
+    this._onClick = (a: number) => {
+      this.onClick.emit(a);
+      this.changeDetection.detectChanges();
+    };
   }
 }
 @NgModule({

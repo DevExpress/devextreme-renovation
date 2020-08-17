@@ -98,6 +98,20 @@ export class PreactComponent extends ReactComponent {
     );
   }
 
+  compilePortalComponent() {
+    return `import { createPortal } from "preact/compat";
+    declare type PortalProps = {
+      container?: HTMLElement | null;
+      children: any,
+    }
+    const Portal = ({ container, children }: PortalProps): any => {
+      if(container) {
+        return createPortal(children, container);
+      }
+      return null;
+    }`;
+  }
+
   compileImportStatements(hooks: string[], compats: string[]) {
     const imports = [`import * as Preact from "preact"`];
     if (hooks.length) {
@@ -191,10 +205,8 @@ class JQueryComponent {
       .join("\n");
   }
 
-  compileImports(component: string) {
+  compileImports(component: string, imports: string[] = []) {
     const context = this.source.context;
-
-    const imports: string[] = [];
 
     imports.push(
       `import registerComponent from "${getModuleRelativePath(

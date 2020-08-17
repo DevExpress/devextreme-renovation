@@ -55,6 +55,9 @@ export function processTagName(tagName: Expression, context: GeneratorContext) {
     const selector = (component as AngularComponent).selector;
     return new Identifier(selector);
   }
+  if (tagName.toString() === "Portal") {
+    return new Identifier("dx-portal");
+  }
   return tagName;
 }
 
@@ -78,6 +81,9 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     if (this.component instanceof AngularComponent) {
       const selector = this.component.selector;
       return new Identifier(selector);
+    }
+    if (tagName.toString() === "Portal") {
+      return new Identifier("dx-portal");
     }
     return super.processTagName(tagName);
   }
@@ -497,7 +503,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return result.filter((a) => a) as JsxSpreadAttributeMeta[];
   }
 
-  creteJsxElementForVariable(
+  createJsxElementForVariable(
     expression: Expression,
     children: Array<
       JsxElement | string | JsxChildExpression | JsxSelfClosingElement
@@ -531,10 +537,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     }
     if (variable instanceof Conditional) {
       return [
-        this.creteJsxElementForVariable(variable.thenStatement, children, [
+        this.createJsxElementForVariable(variable.thenStatement, children, [
           new AngularDirective(new Identifier("*ngIf"), variable.expression),
         ]),
-        this.creteJsxElementForVariable(variable.elseStatement, children, [
+        this.createJsxElementForVariable(variable.elseStatement, children, [
           new AngularDirective(
             new Identifier("*ngIf"),
             new Prefix(
@@ -548,7 +554,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         .join("");
     }
     if (variable instanceof Identifier) {
-      return this.creteJsxElementForVariable(variable, children, []).toString(
+      return this.createJsxElementForVariable(variable, children, []).toString(
         options
       );
     }

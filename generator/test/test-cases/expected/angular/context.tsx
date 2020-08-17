@@ -9,11 +9,17 @@ class Props {
   @Input() p1: number = 10;
 }
 
-import { Component, NgModule } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<span></span>`,
   providers: [P1Context],
 })
@@ -27,6 +33,7 @@ export default class Widget extends Props {
   }
 
   constructor(
+    private changeDetection: ChangeDetectorRef,
     @SkipSelf() private context: P1Context,
     @Host() private provider: P1Context
   ) {
