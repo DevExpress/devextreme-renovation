@@ -20,8 +20,8 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<span></span>`,
   providers: [P1Context],
+  template: `<span></span>`,
 })
 export default class Widget extends Props {
   get __sum(): any {
