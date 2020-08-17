@@ -1,4 +1,5 @@
 import SimpleProviderComponent from "./provider";
+import SimpleContextConsumerComponents from "./consumer";
 import {
   ComponentBindings,
   Component,
@@ -16,6 +17,7 @@ function view(model: ContextApp) {
     <div>
       <div id="context-simple-context">
         <SimpleProviderComponent />
+        <SimpleContextConsumerComponents />
       </div>
 
       <GridComponent>

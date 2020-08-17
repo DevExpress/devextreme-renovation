@@ -1,4 +1,4 @@
-import { Injectable, SkipSelf, Host } from "@angular/core";
+import { Injectable, SkipSelf, Optional, Host } from "@angular/core";
 @Injectable()
 class P1Context {
   public value: number = 5;
@@ -27,17 +27,19 @@ export default class Widget extends Props {
   get __sum(): any {
     return this.provider.value + this.context.value;
   }
-
   get __restAttributes(): any {
     return {};
   }
 
   constructor(
     private changeDetection: ChangeDetectorRef,
-    @SkipSelf() private context: P1Context,
+    @SkipSelf() @Optional() private context: P1Context,
     @Host() private provider: P1Context
   ) {
     super();
+    if (!context) {
+      this.context = new P1Context();
+    }
     this.provider.value = 10;
   }
 }

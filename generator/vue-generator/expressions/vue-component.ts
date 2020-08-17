@@ -542,6 +542,15 @@ export class VueComponent extends Component {
       statements.push("this.__scheduleEffects=[]");
     }
 
+    const providers = this.members.filter((p) => p.isProvider) as Property[];
+    if (providers.length) {
+      statements.push(
+        providers
+          .map((p) => `this.${p.name} = this._provided.${p.context}`)
+          .join(";")
+      );
+    }
+
     if (statements.length) {
       return `created(){
                   ${statements.join(";\n")}
@@ -648,7 +657,7 @@ export class VueComponent extends Component {
         return {
           ${providers
             .map((p) => {
-              return `${p.name}: ${p.context}(${p.initializer})`;
+              return `${p.context}: ${p.context}(${p.initializer})`;
             })
             .join(",")}
         };
@@ -660,7 +669,14 @@ export class VueComponent extends Component {
   generateInject(): string {
     const consumers = this.members.filter((m) => m.isConsumer);
     if (consumers.length) {
-      return `inject: [${consumers.map((c) => `"${c.name}"`)}]`;
+      return `inject: {
+        ${consumers.map(
+          (c) => `${c.name}: {
+          from: "${c.context}",
+          default: ${c.context}()
+        }`
+        )}
+      }`;
     }
     return "";
   }

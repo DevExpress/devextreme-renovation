@@ -1133,7 +1133,12 @@ export class AngularComponent extends Component {
       }
       if (m.isConsumer) {
         constructorArguments.push(
-          `@SkipSelf() private ${m.name}: ${m.context}`
+          `@SkipSelf() @Optional() private ${m.name}: ${m.context}`
+        );
+        constructorStatements.push(
+          `if(!${m.name}){
+            this.${m.name} = new ${m.context}();
+          }`
         );
       }
     });

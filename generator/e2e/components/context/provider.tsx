@@ -12,6 +12,7 @@ import ConsumerComponent from "./consumer";
 function view(model: ProviderComponent) {
   return (
     <div>
+      ProviderValue:{model.contextProvider}
       <ConsumerComponent />
     </div>
   );
@@ -25,5 +26,5 @@ class Props {}
 })
 export default class ProviderComponent extends JSXComponent(Props) {
   @Provider(SimpleContext)
-  context: number = 40;
+  contextProvider: number = 40;
 }

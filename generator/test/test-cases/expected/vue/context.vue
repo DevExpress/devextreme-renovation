@@ -28,11 +28,19 @@ export const DxWidget = {
       return { p1: this.p1 };
     },
   },
-  inject: ["context"],
+  inject: {
+    context: {
+      from: "P1Context",
+      default: P1Context(),
+    },
+  },
   provide() {
     return {
-      provider: P1Context(10),
+      P1Context: P1Context(10),
     };
+  },
+  created() {
+    this.provider = this._provided.P1Context;
   },
 };
 export default DxWidget;

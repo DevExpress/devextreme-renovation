@@ -8,7 +8,7 @@ export class ImportDeclaration extends BaseImportDeclaration {
       imports.push("Injectable");
     }
     if (this.has(Decorators.Consumer)) {
-      imports.push("SkipSelf");
+      imports.push("SkipSelf", "Optional");
     }
 
     if (this.has(Decorators.Provider)) {
