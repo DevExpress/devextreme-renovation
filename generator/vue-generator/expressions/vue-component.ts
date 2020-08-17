@@ -637,6 +637,30 @@ export class VueComponent extends Component {
           export default ${name}`;
   }
 
+  generateContextProviders(): string {
+    const providers = this.members.filter((m) => m.isProvider) as Property[];
+    if (providers.length) {
+      return `provide(){
+        return {
+          ${providers
+            .map((p) => {
+              return `${p.name}: ${p.context}(${p.initializer})`;
+            })
+            .join(",")}
+        };
+      }`;
+    }
+    return "";
+  }
+
+  generateInject(): string {
+    const consumers = this.members.filter((m) => m.isConsumer);
+    if (consumers.length) {
+      return `inject: [${consumers.map((c) => `"${c.name}"`)}]`;
+    }
+    return "";
+  }
+
   toString() {
     this.compileTemplate();
 
@@ -648,6 +672,8 @@ export class VueComponent extends Component {
       this.generateModel(),
       this.generateData(),
       this.generateComputed(),
+      this.generateInject(),
+      this.generateContextProviders(),
       this.generateWatch(methods),
       this.generateMethods(methods),
       this.generateBeforeCreate(),

@@ -18,6 +18,10 @@ import { CommonModule } from "@angular/common";
   providers: [P1Context],
 })
 export default class Widget extends Props {
+  get __sum(): any {
+    return this.provider.value + this.context.value;
+  }
+
   get __restAttributes(): any {
     return {};
   }

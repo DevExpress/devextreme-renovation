@@ -22,6 +22,7 @@ declare type RestProps = Omit<
 >;
 interface Widget {
   props: typeof Props & RestProps;
+  sum: any;
   restAttributes: RestProps;
   context: number;
   provider: number;
@@ -30,6 +31,12 @@ interface Widget {
 export default function Widget(props: typeof Props & RestProps) {
   const context = useContext(P1Context);
   const [provider] = useState(10);
+  const __sum = useCallback(
+    function __sum(): any {
+      return provider + context;
+    },
+    [provider, context]
+  );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { p1, ...restProps } = props;
@@ -44,6 +51,7 @@ export default function Widget(props: typeof Props & RestProps) {
         props: { ...props },
         context,
         provider,
+        sum: __sum(),
         restAttributes: __restAttributes(),
       })}
     </P1Context.Provider>

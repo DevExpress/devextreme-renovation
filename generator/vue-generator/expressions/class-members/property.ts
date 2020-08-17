@@ -149,6 +149,9 @@ export class Property extends BaseProperty {
       const name = this.name === "children" ? "default" : this.name;
       return `${componentContext}$slots.${name}`;
     }
+    if (this.isConsumer || this.isProvider) {
+      return `${componentContext}${this.name}.value`;
+    }
     if (this.isNested) {
       const isArray = isTypeArray(this.type);
       let nestedName = capitalizeFirstLetter(this.name);

@@ -28,4 +28,8 @@ export default class Widget extends JSXComponent<Props>() {
 
   @Provider(P1Context)
   provider: number = 10;
+
+  get sum() {
+    return this.provider + this.context;
+  }
 }
