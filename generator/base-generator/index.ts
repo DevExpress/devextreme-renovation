@@ -710,6 +710,24 @@ export default class Generator implements GeneratorAPI {
     );
   }
 
+  createClassDeclarationCore(
+    decorators: Decorator[] = [],
+    modifiers: string[] | undefined,
+    name: Identifier,
+    typeParameters: string[],
+    heritageClauses: HeritageClause[],
+    members: Array<Property | Method>
+  ) {
+    return new Class(
+      decorators,
+      modifiers,
+      name,
+      typeParameters,
+      heritageClauses,
+      members
+    );
+  }
+
   createClassDeclaration(
     decorators: Decorator[] = [],
     modifiers: string[] | undefined,
@@ -746,7 +764,7 @@ export default class Generator implements GeneratorAPI {
       this.addComponent(name.toString(), componentInput);
       result = componentInput;
     } else {
-      result = new Class(
+      result = this.createClassDeclarationCore(
         decorators,
         modifiers,
         name,

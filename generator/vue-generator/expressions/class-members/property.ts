@@ -80,13 +80,9 @@ export class Property extends BaseProperty {
     return this._name.toString();
   }
 
-  typeDeclaration() {
-    return this.name;
-  }
-
   toString(options?: toStringOptions) {
     if (!options) {
-      return super.toString();
+      return "";
     }
     if (this.isInternalState) {
       return `${this.name}: ${this.initializer}`;
