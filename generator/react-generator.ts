@@ -1005,24 +1005,15 @@ export class ReactComponent extends Component {
   compileComponentInterface() {
     const props = this.isJSXComponent
       ? [`props: ${this.compilePropsType()}`]
-      : this.props.concat(this.state).map((p) => p.typeDeclaration());
+      : [];
 
     return `interface ${this.name}{
             ${props
               .concat(
-                this.internalState
-                  .concat(this.refs, this.apiRefs)
-                  .concat(this.slots.filter((s) => !s.inherited))
-                  .map((p) => p.typeDeclaration())
-              )
-              .concat(this.listeners.map((l) => l.typeDeclaration()))
-              .concat(this.methods.map((m) => m.typeDeclaration()))
-              .concat(
                 this.members
-                  .filter((m) => m.isProvider || m.isConsumer)
+                  .filter((m) => !m.inherited && !m.isEffect && !m.isApiMethod)
                   .map((m) => m.typeDeclaration())
               )
-              .concat([""])
               .join(";\n")}
         }`;
   }

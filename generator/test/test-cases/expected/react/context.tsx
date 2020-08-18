@@ -22,10 +22,10 @@ declare type RestProps = Omit<
 >;
 interface Widget {
   props: typeof Props & RestProps;
-  sum: any;
-  restAttributes: RestProps;
   context: number;
   provider: number;
+  sum: any;
+  restAttributes: RestProps;
 }
 
 export default function Widget(props: typeof Props & RestProps) {
