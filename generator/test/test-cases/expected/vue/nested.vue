@@ -8,8 +8,8 @@ export const DxWidget = {
   computed: {
     __isEditable() {
       return (
-        this.__getNestedGridEditing?.editEnabled ||
-        this.__getNestedGridEditing?.custom?.length
+        this.__getNestedEditing?.editEnabled ||
+        this.__getNestedEditing?.custom?.length
       );
     },
     __restAttributes() {
@@ -18,7 +18,7 @@ export const DxWidget = {
     props() {
       return {
         columns: this.__getNestedColumn,
-        gridEditing: this.__getNestedGridEditing,
+        editing: this.__getNestedEditing,
       };
     },
     __getNestedColumn() {
@@ -32,9 +32,9 @@ export const DxWidget = {
         }
       }
     },
-    __getNestedGridEditing() {
-      if (this.gridEditing) {
-        return this.gridEditing;
+    __getNestedEditing() {
+      if (this.editing) {
+        return this.editing;
       }
       if (this.$slots.default) {
         const nested = this.__collectChildren(this.$slots.default);
