@@ -32,6 +32,7 @@ import ForwardRefDeep from "./ref-on-children/forward-ref-deep";
 import TemplateApp from "./template-passing/template-app";
 import PortalContainer from "./portal-container";
 import { PickPropsComponent } from "./pick-props";
+import ContextApp from "./context/context-app";
 
 function view(model: App) {
   return (
@@ -120,6 +121,7 @@ function view(model: App) {
         Check templates
         <TemplateApp />
       </div>
+      <ContextApp />
       <PortalContainer />
     </div>
   );

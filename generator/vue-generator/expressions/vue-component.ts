@@ -542,6 +542,15 @@ export class VueComponent extends Component {
       statements.push("this.__scheduleEffects=[]");
     }
 
+    const providers = this.members.filter((p) => p.isProvider) as Property[];
+    if (providers.length) {
+      statements.push(
+        providers
+          .map((p) => `this.${p.name} = this._provided.${p.context}`)
+          .join(";")
+      );
+    }
+
     if (statements.length) {
       return `created(){
                   ${statements.join(";\n")}
@@ -641,6 +650,37 @@ export class VueComponent extends Component {
           export default ${name}`;
   }
 
+  generateContextProviders(): string {
+    const providers = this.members.filter((m) => m.isProvider) as Property[];
+    if (providers.length) {
+      return `provide(){
+        return {
+          ${providers
+            .map((p) => {
+              return `${p.context}: ${p.context}(${p.initializer})`;
+            })
+            .join(",")}
+        };
+      }`;
+    }
+    return "";
+  }
+
+  generateInject(): string {
+    const consumers = this.members.filter((m) => m.isConsumer);
+    if (consumers.length) {
+      return `inject: {
+        ${consumers.map(
+          (c) => `${c.name}: {
+          from: "${c.context}",
+          default: ${c.context}()
+        }`
+        )}
+      }`;
+    }
+    return "";
+  }
+
   compilePortalComponent(imports: string[], components: string[]) {
     imports.push('import Vue from "vue"');
     components.push("DxPortal");
@@ -693,6 +733,8 @@ export class VueComponent extends Component {
       this.generateModel(),
       this.generateData(),
       this.generateComputed(),
+      this.generateInject(),
+      this.generateContextProviders(),
       this.generateWatch(methods),
       this.generateMethods(methods),
       this.generateBeforeCreate(),

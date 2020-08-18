@@ -21,8 +21,8 @@ declare type RestProps = Omit<
 >;
 interface RefOnChildrenParent {
   props: typeof Props & RestProps;
-  state: number;
   child: any;
+  state: number;
   restAttributes: RestProps;
 }
 

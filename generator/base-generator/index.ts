@@ -529,11 +529,6 @@ export default class Generator implements GeneratorAPI {
     importClause: ImportClause = new ImportClause(),
     moduleSpecifier: StringLiteral
   ) {
-    if (
-      moduleSpecifier.toString().indexOf("component_declaration/common") >= 0
-    ) {
-      return "";
-    }
     const context = this.getContext();
     if (context.defaultOptionsModule && context.dirname) {
       const relativePath = getModuleRelativePath(
@@ -552,7 +547,10 @@ export default class Generator implements GeneratorAPI {
     }
 
     const module = moduleSpecifier.expression.toString();
-    if (context.dirname) {
+    if (
+      context.dirname &&
+      module.indexOf("component_declaration/common") === -1
+    ) {
       const modulePath = resolveModule(
         path.join(context.dirname, module),
         this.cache
@@ -712,6 +710,24 @@ export default class Generator implements GeneratorAPI {
     );
   }
 
+  createClassDeclarationCore(
+    decorators: Decorator[] = [],
+    modifiers: string[] | undefined,
+    name: Identifier,
+    typeParameters: string[],
+    heritageClauses: HeritageClause[],
+    members: Array<Property | Method>
+  ) {
+    return new Class(
+      decorators,
+      modifiers,
+      name,
+      typeParameters,
+      heritageClauses,
+      members
+    );
+  }
+
   createClassDeclaration(
     decorators: Decorator[] = [],
     modifiers: string[] | undefined,
@@ -748,7 +764,7 @@ export default class Generator implements GeneratorAPI {
       this.addComponent(name.toString(), componentInput);
       result = componentInput;
     } else {
-      result = new Class(
+      result = this.createClassDeclarationCore(
         decorators,
         modifiers,
         name,

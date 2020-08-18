@@ -231,3 +231,23 @@ cloneTest("Check templates passing with events binding", async (t) => {
 
   await t.expect(await el.textContent).eql("_header_body");
 });
+
+cloneTest("Context - share object", async (t) => {
+  const checkValue = async (expected) => {
+    const pagerValueEl = await Selector("#context-pager-input");
+    const pagingEl = await Selector("#context-paging-value");
+    const appEl = await Selector("#context-app-input");
+
+    await t.expect(await pagerValueEl.value).eql(expected);
+    await t
+      .expect((await pagingEl.textContent).trim())
+      .eql(`paging:${expected}`);
+    await t.expect(await appEl.value).eql(expected);
+  };
+
+  await t.typeText("#context-app-input", "32");
+  await checkValue("132");
+
+  await t.typeText("#context-pager-input", "55");
+  await checkValue("13255");
+});

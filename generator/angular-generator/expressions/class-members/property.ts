@@ -83,6 +83,10 @@ export class Property extends BaseProperty {
       return `@ContentChildren(${this.type}) ${this.name}!: QueryList<${this.type}>`;
     }
 
+    if (this.isProvider || this.isConsumer) {
+      return "";
+    }
+
     if (this.isForwardRefProp) {
       return `${this.modifiers.join(" ")} ${this.decorators
         .map((d) => d.toString())
@@ -121,6 +125,9 @@ export class Property extends BaseProperty {
     }
     if (this.isRefProp) {
       return `${componentContext}${this.name}`;
+    }
+    if (this.isConsumer || this.isProvider) {
+      return `${componentContext}${this.name}.value`;
     }
     if (this._hasDecorator(Decorators.ApiRef)) {
       return `${componentContext}${this.name}`;

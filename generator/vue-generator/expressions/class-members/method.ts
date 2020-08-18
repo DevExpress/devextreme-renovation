@@ -16,7 +16,7 @@ export function compileMethod(
 export class Method extends BaseMethod {
   toString(options?: toStringOptions): string {
     if (!options) {
-      return super.toString();
+      return `${this.name}(${this.parameters})${this.body.toString()}`;
     }
     return compileMethod(this, options);
   }

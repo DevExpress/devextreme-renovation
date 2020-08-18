@@ -80,13 +80,9 @@ export class Property extends BaseProperty {
     return this._name.toString();
   }
 
-  typeDeclaration() {
-    return this.name;
-  }
-
   toString(options?: toStringOptions) {
     if (!options) {
-      return super.toString();
+      return "";
     }
     if (this.isInternalState) {
       return `${this.name}: ${this.initializer}`;
@@ -148,6 +144,9 @@ export class Property extends BaseProperty {
     if (this.isSlot) {
       const name = this.name === "children" ? "default" : this.name;
       return `${componentContext}$slots.${name}`;
+    }
+    if (this.isConsumer || this.isProvider) {
+      return `${componentContext}${this.name}.value`;
     }
     if (this.isNested) {
       const isArray = isTypeArray(this.type);

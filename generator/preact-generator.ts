@@ -98,10 +98,9 @@ export class PreactComponent extends ReactComponent {
     );
   }
 
-  compilePortalComponent(imports: string[]) {
-    imports.push("import { createPortal } from 'preact/compat';");
-
-    return `declare type PortalProps = {
+  compilePortalComponent() {
+    return `import { createPortal } from "preact/compat";
+    declare type PortalProps = {
       container?: HTMLElement | null;
       children: any,
     }

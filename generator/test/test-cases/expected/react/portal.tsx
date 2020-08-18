@@ -17,7 +17,6 @@ export declare type WidgetPropsType = {
   someRef?: RefObject<HTMLElement>;
 };
 export const WidgetProps: WidgetPropsType = {};
-import { createPortal } from "react-dom";
 import React, {
   useState,
   useCallback,
@@ -25,6 +24,7 @@ import React, {
   RefObject,
   HtmlHTMLAttributes,
 } from "react";
+import { createPortal } from "react-dom";
 declare type PortalProps = {
   container?: HTMLElement | null;
   children: React.ReactNode;
