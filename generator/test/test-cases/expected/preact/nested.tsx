@@ -29,15 +29,13 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   );
   const __isEditable = useCallback(
     function __isEditable(): any {
-      return (
-        props.gridEditing?.editEnabled || props.gridEditing?.custom?.length
-      );
+      return props.editing?.editEnabled || props.editing?.custom?.length;
     },
-    [props.gridEditing]
+    [props.editing]
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { columns, gridEditing, ...restProps } = props;
+      const { columns, editing, ...restProps } = props;
       return restProps;
     },
     [props]

@@ -9,6 +9,7 @@ import {
 export class GridColumn {
   @OneWay() name: string = "";
   @TwoWay() index: number = 0;
+  @Nested() editing?: ColumnEditing = {};
 }
 
 @ComponentBindings()
@@ -25,7 +26,12 @@ export class Editing {
 }
 
 @ComponentBindings()
+export class ColumnEditing {
+  @OneWay() editEnabled?: boolean = false;
+}
+
+@ComponentBindings()
 export class WidgetInput {
   @Nested() columns?: Array<GridColumn | string>;
-  @Nested() gridEditing?: Editing;
+  @Nested() editing?: Editing;
 }

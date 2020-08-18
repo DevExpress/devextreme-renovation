@@ -13,11 +13,8 @@ export const GridColumn = {
     },
   },
 };
-
 export const Custom = {};
-
 export const AnotherCustom = {};
-
 export const Editing = {
   editEnabled: {
     type: Boolean,
@@ -32,7 +29,14 @@ export const Editing = {
     },
   },
 };
-
+export const ColumnEditing = {
+  editEnabled: {
+    type: Boolean,
+    default() {
+      return false;
+    },
+  },
+};
 export const WidgetInput = {
   columns: {
     type: Array,

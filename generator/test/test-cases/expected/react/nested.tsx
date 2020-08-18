@@ -4,17 +4,34 @@ function view(model: Widget) {
 }
 
 import React, { useCallback, useMemo, HtmlHTMLAttributes } from "react";
+
 import {
   GridColumnType,
   EditingType,
+  ColumnEditingType,
   CustomType,
   AnotherCustomType,
 } from "./nested-props";
-export const Column: React.FunctionComponent<GridColumnType> = () => null;
-export const GridEditing: React.FunctionComponent<EditingType> = () => null;
-export const Custom: React.FunctionComponent<CustomType> = () => null;
-export const AnotherCustom: React.FunctionComponent<AnotherCustomType> = () =>
-  null;
+export const Column: React.FunctionComponent<GridColumnType> & {
+  propName: string;
+} = () => null;
+Column.propName = "columns";
+export const Editing: React.FunctionComponent<EditingType> & {
+  propName: string;
+} = () => null;
+Editing.propName = "editing";
+export const ColumnEditing: React.FunctionComponent<ColumnEditingType> & {
+  propName: string;
+} = () => null;
+ColumnEditing.propName = "editing";
+export const EditingCustom: React.FunctionComponent<CustomType> & {
+  propName: string;
+} = () => null;
+EditingCustom.propName = "custom";
+export const EditingAnotherCustom: React.FunctionComponent<
+  AnotherCustomType
+> & { propName: string } = () => null;
+EditingAnotherCustom.propName = "anotherCustom";
 
 declare type RestProps = Omit<
   HtmlHTMLAttributes<HTMLDivElement>,
@@ -40,18 +57,17 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   const __isEditable = useCallback(
     function __isEditable(): any {
       return (
-        __getNestedGridEditing?.editEnabled ||
-        __getNestedGridEditing?.custom?.length
+        __getNestedEditing?.editEnabled || __getNestedEditing?.custom?.length
       );
     },
-    [props.gridEditing, props.children]
+    [props.editing, props.children]
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { children, columns, gridEditing, ...restProps } = {
+      const { children, columns, editing, ...restProps } = {
         ...props,
         columns: __getNestedColumns,
-        gridEditing: __getNestedGridEditing,
+        editing: __getNestedEditing,
       };
       return restProps;
     },
@@ -62,23 +78,25 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   ): T[] {
     return (React.Children.toArray(children).filter(
       (child) => React.isValidElement(child) && typeof child.type !== "string"
-    ) as (React.ReactElement & { type: { name: string } })[]).map((child) => {
+    ) as (React.ReactElement & {
+      type: { propName: string };
+    })[]).map((child) => {
       const { children: childChildren, ...childProps } = child.props;
       const collectedChildren = {} as any;
       __collectChildren(childChildren).forEach(
         ({ __name, ...restProps }: any) => {
-          if (!collectedChildren[__name]) {
-            collectedChildren[__name] = [];
-            collectedChildren[__name + "s"] = [];
+          if (__name) {
+            if (!collectedChildren[__name]) {
+              collectedChildren[__name] = [];
+            }
+            collectedChildren[__name].push(restProps);
           }
-          collectedChildren[__name].push(restProps);
-          collectedChildren[__name + "s"].push(restProps);
         }
       );
       return {
         ...collectedChildren,
         ...childProps,
-        __name: child.type.name[0].toLowerCase() + child.type.name.slice(1),
+        __name: child.type.propName,
       };
     });
   },
@@ -91,7 +109,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
       }
       const nested = __collectChildren<GridColumnType & { __name: string }>(
         props.children
-      ).filter((child) => child.__name === "column");
+      ).filter((child) => child.__name === "columns");
       if (nested.length) {
         return nested;
       }
@@ -99,26 +117,26 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     [props.columns, props.children]
   );
 
-  const __getNestedGridEditing = useMemo(
-    function __getNestedGridEditing(): EditingType | undefined {
-      if (props.gridEditing) {
-        return props.gridEditing;
+  const __getNestedEditing = useMemo(
+    function __getNestedEditing(): EditingType | undefined {
+      if (props.editing) {
+        return props.editing;
       }
       const nested = __collectChildren<EditingType & { __name: string }>(
         props.children
-      ).filter((child) => child.__name === "gridEditing");
+      ).filter((child) => child.__name === "editing");
       if (nested.length) {
         return nested?.[0];
       }
     },
-    [props.gridEditing, props.children]
+    [props.editing, props.children]
   );
 
   return view({
     props: {
       ...props,
       columns: __getNestedColumns,
-      gridEditing: __getNestedGridEditing,
+      editing: __getNestedEditing,
     },
     getColumns,
     isEditable: __isEditable(),
