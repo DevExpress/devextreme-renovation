@@ -54,7 +54,10 @@ import {
 } from "./base-generator/expressions/type";
 import { Parameter } from "./base-generator/expressions/functions";
 import { ComponentInput as BaseComponentInput } from "./base-generator/expressions/component-input";
-import { ObjectLiteral } from "./base-generator/expressions/literal";
+import {
+  ObjectLiteral,
+  StringLiteral,
+} from "./base-generator/expressions/literal";
 import { Decorator } from "./base-generator/expressions/decorator";
 import {
   PropertyAssignment,
@@ -62,6 +65,10 @@ import {
 } from "./base-generator/expressions/property-assignment";
 import { Decorators } from "./component_declaration/decorators";
 import { TypeParameterDeclaration } from "./base-generator/expressions/type-parameter-declaration";
+import {
+  ImportDeclaration as BaseImportDeclaration,
+  ImportClause,
+} from "./base-generator/expressions/import";
 
 const eventsDictionary = {
   pointerover: "onPointerOver",
@@ -292,6 +299,15 @@ export class HeritageClause extends BaseHeritageClause {
   }
 }
 
+export class ImportDeclaration extends BaseImportDeclaration {
+  compileComponentDeclarationImport() {
+    if (this.has("createContext")) {
+      return `import { createContext } from "react"`;
+    }
+    return super.compileComponentDeclarationImport();
+  }
+}
+
 function getChangeEventToken(property: Property): string {
   if (property.questionOrExclamationToken === SyntaxKind.QuestionToken) {
     if (property.initializer) {
@@ -458,6 +474,8 @@ export class Property extends BaseProperty {
       )})`;
     } else if (this.isNested) {
       return `__getNested${capitalizeFirstLetter(this.name)}`;
+    } else if (this.isProvider || this.isConsumer) {
+      return this.name;
     }
     throw `Can't parse property: ${this._name}`;
   }
@@ -496,6 +514,8 @@ export class Property extends BaseProperty {
       return [getPropName(this.name), getLocalStateName(this.name)];
     } else if (this.isNested) {
       return [getPropName(this.name), getPropName("children")];
+    } else if (this.isProvider || this.isConsumer) {
+      return [this.name];
     }
     throw `Can't parse property: ${this._name}`;
   }
@@ -535,6 +555,15 @@ export class Property extends BaseProperty {
         this.name
       )}${defaultExclamationToken})`;
     }
+
+    if (this.isConsumer) {
+      return `const ${this.name} = useContext(${this.context})`;
+    }
+
+    if (this.isProvider) {
+      return `const [${this.name}] = useState(${this.initializer})`;
+    }
+
     return `const [${getLocalStateName(this.name)}, ${stateSetter(
       this.name
     )}] = useState<${type}>(${this.initializer})`;
@@ -743,12 +772,21 @@ export class ReactComponent extends Component {
     return imports;
   }
 
-  compileImports(imports: string[] = []) {
+  compileImports() {
+    const imports: string[] = [];
     const hooks: string[] = [];
     const compats: string[] = [];
 
-    if (this.internalState.length || this.state.length) {
+    if (
+      this.internalState.length ||
+      this.state.length ||
+      this.members.some((m) => m.isProvider)
+    ) {
       hooks.push("useState");
+    }
+
+    if (this.members.some((m) => m.isConsumer)) {
+      hooks.push("useContext");
     }
 
     if (this.listeners.length || this.methods.length) {
@@ -967,19 +1005,15 @@ export class ReactComponent extends Component {
   compileComponentInterface() {
     const props = this.isJSXComponent
       ? [`props: ${this.compilePropsType()}`]
-      : this.props.concat(this.state).map((p) => p.typeDeclaration());
+      : [];
 
     return `interface ${this.name}{
             ${props
               .concat(
-                this.internalState
-                  .concat(this.refs, this.apiRefs)
-                  .concat(this.slots.filter((s) => !s.inherited))
-                  .map((p) => p.typeDeclaration())
+                this.members
+                  .filter((m) => !m.inherited && !m.isEffect && !m.isApiMethod)
+                  .map((m) => m.typeDeclaration())
               )
-              .concat(this.listeners.map((l) => l.typeDeclaration()))
-              .concat(this.methods.map((m) => m.typeDeclaration()))
-              .concat([""])
               .join(";\n")}
         }`;
   }
@@ -1018,6 +1052,11 @@ export class ReactComponent extends Component {
       .concat(this.listeners.map((l) => l.name.toString()))
       .concat(this.refs.map((r) => r.name.toString()))
       .concat(this.apiRefs.map((r) => r.name.toString()))
+      .concat(
+        this.members
+          .filter((m) => m.isConsumer || m.isProvider)
+          .map((m) => m.name.toString())
+      )
       .concat(
         this.methods.map((m) =>
           m._name.toString() !== m.getter()
@@ -1208,10 +1247,9 @@ export class ReactComponent extends Component {
     `;
   }
 
-  compilePortalComponent(imports: string[]) {
-    imports.push("import { createPortal } from 'react-dom';");
-
-    return `declare type PortalProps = {
+  compilePortalComponent() {
+    return `import { createPortal } from "react-dom";
+    declare type PortalProps = {
       container?: HTMLElement | null;
       children: React.ReactNode,
     }
@@ -1223,9 +1261,32 @@ export class ReactComponent extends Component {
     }`;
   }
 
-  toString() {
-    const imports: string[] = [];
+  compileViewCall() {
     const viewFunction = this.context.viewFunctions?.[this.view];
+    const callView = `${this.view}(
+      ${
+        viewFunction?.parameters.length
+          ? `${this.viewModel}({
+              ${this.compileViewModelArguments().join(",\n")}
+          })`
+          : ""
+      }
+  )`;
+
+    const providers = this.members.filter((m) => m.isProvider);
+
+    if (providers.length) {
+      return providers.reduce((result, p) => {
+        return `<${p.context}.Provider value={${p.getter()}}>
+            ${result}
+          </${p.context}.Provider>`;
+      }, `{${callView}}`);
+    }
+
+    return callView;
+  }
+
+  toString() {
     const getTemplateFunc = this.props.some((p) => p.isTemplate)
       ? `
         function getTemplate(props: any, template: string, render: string, component: string) {
@@ -1245,12 +1306,10 @@ export class ReactComponent extends Component {
       .map((m) => this.createNestedPropertyGetter(m))
       .join("\n");
 
-    const portal = this.containsPortal()
-      ? this.compilePortalComponent(imports)
-      : "";
+    const portal = this.containsPortal() ? this.compilePortalComponent() : "";
 
     return `
-            ${this.compileImports(imports)}
+            ${this.compileImports()}
             ${portal}
             ${this.compileNestedComponents()}
             ${this.compileComponentRef()}
@@ -1269,6 +1328,10 @@ export class ReactComponent extends Component {
                 ${this.compileUseRef()}
                 ${this.stateDeclaration()}
                 ${this.compileUseImperativeHandle()}
+                ${this.members
+                  .filter((m) => m.isConsumer || m.isProvider)
+                  .map((m) => m.toString(this.getToStringOptions()))
+                  .join(";\n")}
                 ${this.listeners
                   .concat(this.methods)
                   .map((m) => {
@@ -1279,15 +1342,7 @@ export class ReactComponent extends Component {
                   .join("\n")}
                 ${this.compileUseEffect()}
                 ${nestedPropertyGetters}
-                return ${this.view}(
-                    ${
-                      viewFunction?.parameters.length
-                        ? `${this.viewModel}({
-                            ${this.compileViewModelArguments().join(",\n")}
-                        })`
-                        : ""
-                    }
-                );
+                return ${this.compileViewCall()}
             ${
               this.members.filter((m) => m.isApiMethod).length === 0
                 ? `}`
@@ -1521,6 +1576,20 @@ export class ReactGenerator extends BaseGenerator {
 
   createJsxAttribute(name: Identifier, initializer: Expression) {
     return new JsxAttribute(name, initializer);
+  }
+
+  createImportDeclarationCore(
+    decorators: Decorator[] | undefined,
+    modifiers: string[] | undefined,
+    importClause: ImportClause,
+    moduleSpecifier: StringLiteral
+  ) {
+    return new ImportDeclaration(
+      decorators,
+      modifiers,
+      importClause,
+      moduleSpecifier
+    );
   }
 
   createJsxOpeningElement(

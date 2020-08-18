@@ -35,6 +35,13 @@ import { counter } from "./counter";
 import { GeneratorContext } from "../base-generator/types";
 import { AngularGeneratorContext } from "./types";
 import { NonNullExpression } from "./expressions/non-null-expression";
+import { StringLiteral } from "../base-generator/expressions/literal";
+import { ImportDeclaration } from "./expressions/import-declaration";
+import {
+  VariableDeclarationList,
+  VariableStatement,
+} from "../base-generator/expressions/variables";
+import { ContextDeclaration } from "./expressions/context-declaration";
 
 export class AngularGenerator extends Generator {
   createJsxExpression(dotDotDotToken: string = "", expression?: Expression) {
@@ -64,6 +71,20 @@ export class AngularGenerator extends Generator {
       attributes,
       this.getContext()
     );
+  }
+
+  createVariableStatement(
+    modifiers: string[] | undefined,
+    declarationList: VariableDeclarationList
+  ) {
+    if (
+      declarationList.declarations[0].initializer
+        ?.toString()
+        .startsWith("createContext")
+    ) {
+      return new ContextDeclaration(modifiers, declarationList);
+    }
+    return new VariableStatement(modifiers, declarationList);
   }
 
   createJsxSelfClosingElement(
@@ -250,6 +271,20 @@ export class AngularGenerator extends Generator {
 
   createNonNullExpression(expression: Expression) {
     return new NonNullExpression(expression);
+  }
+
+  createImportDeclarationCore(
+    decorators: Decorator[] | undefined,
+    modifiers: string[] | undefined,
+    importClause: ImportClause,
+    moduleSpecifier: StringLiteral
+  ) {
+    return new ImportDeclaration(
+      decorators,
+      modifiers,
+      importClause,
+      moduleSpecifier
+    );
   }
 
   context: AngularGeneratorContext[] = [];

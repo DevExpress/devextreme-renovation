@@ -21,5 +21,8 @@ export const enum Decorators {
   ApiRef = "ApiRef",
   RefProp = "RefProp",
 
-  ViewChild = "ViewChild",
+  Consumer = "Consumer",
+  Provider = "Provider",
+
+  ViewChild = "ViewChild", // Angular
 }

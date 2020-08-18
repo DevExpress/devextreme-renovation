@@ -17,9 +17,9 @@ export declare type WidgetPropsType = {
   someRef?: RefObject<HTMLElement>;
 };
 export const WidgetProps: WidgetPropsType = {};
-import { createPortal } from "preact/compat";
 import * as Preact from "preact";
 import { useState, useCallback, useEffect, RefObject } from "preact/hooks";
+import { createPortal } from "preact/compat";
 declare type PortalProps = {
   container?: HTMLElement | null;
   children: any;

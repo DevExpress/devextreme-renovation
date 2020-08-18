@@ -120,6 +120,12 @@ export const Event = (args?: { actionConfig?: any }) => propertyDecorator;
  */
 export const InternalState = () => propertyDecorator;
 
+export const Provider = (Context: any) => propertyDecorator;
+
+export const Consumer = (Context: any) => propertyDecorator;
+
+export const createContext = <T>(defaultValue: T) => defaultValue;
+
 export const Listen = (
   eventName?: string,
   parameters?: { target?: Document | Window | string }

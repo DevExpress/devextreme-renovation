@@ -41,6 +41,8 @@ import {
   capitalizeFirstLetter,
 } from "../../base-generator/utils/string";
 
+const CUSTOM_VALUE_ACCESSOR_PROVIDER = "CUSTOM_VALUE_ACCESSOR_PROVIDER";
+
 export function compileCoreImports(
   members: Array<Property | Method>,
   context: AngularGeneratorContext,
@@ -1097,6 +1099,48 @@ export class AngularComponent extends Component {
     return "";
   }
 
+  fillProviders() {
+    let providers: string[] = [];
+
+    const contextProperties = this.members.filter(
+      (m) => m.isConsumer || m.isProvider
+    );
+
+    if (contextProperties.length) {
+      providers = [
+        ...providers,
+        ...new Set(contextProperties.map((p) => p.context.toString())),
+      ];
+    }
+
+    if (this.modelProp) {
+      providers.push(CUSTOM_VALUE_ACCESSOR_PROVIDER);
+    }
+
+    if (providers.length) {
+      this.decorator.addParameter(
+        "providers",
+        new ArrayLiteral(
+          providers.map((p) => new SimpleExpression(p)),
+          true
+        )
+      );
+    }
+  }
+
+  compileValueAccessor(implementedInterfaces: string[]): string {
+    if (this.modelProp) {
+      implementedInterfaces.push("ControlValueAccessor");
+      return `const ${CUSTOM_VALUE_ACCESSOR_PROVIDER} = {
+                provide: NG_VALUE_ACCESSOR,
+                useExisting: forwardRef(() => ${this.name}),
+                multi: true
+            }`;
+    }
+
+    return "";
+  }
+
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -1116,14 +1160,33 @@ export class AngularComponent extends Component {
     const ngAfterViewCheckedStatements: string[] = [];
     const ngDoCheckStatements: string[] = [];
     const constructorStatements: string[] = [];
-    const cdkImports: string[] = [];
     const coreImports: string[] = [
       "ChangeDetectionStrategy",
       "ChangeDetectorRef",
     ];
-    const constructorParams: string[] = [
+    const constructorArguments: string[] = [
       "private changeDetection: ChangeDetectorRef",
     ];
+
+    this.members.forEach((m) => {
+      if (m.isProvider) {
+        constructorArguments.push(`@Host() private ${m.name}: ${m.context}`);
+        constructorStatements.push(
+          `this.${m.name}.value = ${(m as Property).initializer}`
+        );
+      }
+      if (m.isConsumer) {
+        constructorArguments.push(
+          `@SkipSelf() @Optional() private ${m.name}: ${m.context}`
+        );
+        constructorStatements.push(
+          `if(!${m.name}){
+            this.${m.name} = new ${m.context}();
+          }`
+        );
+      }
+    });
+    const cdkImports: string[] = [];
 
     const decoratorToStringOptions: toStringOptions = {
       members: this.members,
@@ -1132,24 +1195,8 @@ export class AngularComponent extends Component {
     };
 
     const implementedInterfaces: string[] = [];
-    let valueAccessor = "";
-    if (this.modelProp) {
-      implementedInterfaces.push("ControlValueAccessor");
 
-      valueAccessor = `const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
-                provide: NG_VALUE_ACCESSOR,
-                useExisting: forwardRef(() => ${this.name}),
-                multi: true
-            }`;
-
-      this.decorator.addParameter(
-        "providers",
-        new ArrayLiteral(
-          [new SimpleExpression("CUSTOM_VALUE_ACCESSOR_PROVIDER")],
-          true
-        )
-      );
-    }
+    this.fillProviders();
 
     const componentDecorator = this.decorator.toString(
       decoratorToStringOptions
@@ -1184,7 +1231,7 @@ export class AngularComponent extends Component {
         ${this.compileNestedComponents(nestedModules)}
         ${portalComponent}
         ${this.compileDefaultOptions(constructorStatements)}
-        ${valueAccessor}
+        ${this.compileValueAccessor(implementedInterfaces)}
         ${componentDecorator}
         ${this.modifiers.join(" ")} class ${this.name} ${
       props.length ? `extends ${props.join(" ")}` : ""
@@ -1231,11 +1278,11 @@ export class AngularComponent extends Component {
             ${this.compileBindEvents(constructorStatements)}
             ${this.compileLifeCycle(
               "constructor",
-              (constructorStatements.length || constructorParams.length) &&
+              (constructorStatements.length || constructorArguments.length) &&
                 this.heritageClauses.length
                 ? ["super()"].concat(constructorStatements)
                 : constructorStatements,
-              constructorParams
+              constructorArguments
             )}
             ${this.members.filter((m) => m instanceof SetAccessor).join("\n")}
             ${this.compileNgStyleProcessor(decoratorToStringOptions)}

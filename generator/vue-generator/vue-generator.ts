@@ -32,8 +32,6 @@ import { ImportClause } from "../base-generator/expressions/import";
 
 import { TypeParameterDeclaration } from "../base-generator/expressions/type-parameter-declaration";
 
-import { VariableDeclaration } from "../angular-generator/expressions/variable-expression";
-
 import { VueComponentInput } from "./expressions/vue-component-input";
 import { Property } from "./expressions/class-members/property";
 import { Method } from "./expressions/class-members/method";
@@ -63,6 +61,8 @@ import prettier from "prettier";
 import path from "path";
 import { EnumMember, Enum } from "./expressions/enum";
 import { Call } from "./expressions/call";
+import { VariableDeclaration } from "./expressions/variable-declaration";
+import { Class } from "./expressions/class";
 
 const emptyToString = () => "";
 
@@ -495,6 +495,24 @@ export class VueGenerator extends BaseGenerator {
     members: EnumMember[]
   ) {
     return new Enum(decorators, modifiers, name, members);
+  }
+
+  createClassDeclarationCore(
+    decorators: Decorator[] = [],
+    modifiers: string[] | undefined,
+    name: Identifier,
+    typeParameters: string[],
+    heritageClauses: HeritageClause[],
+    members: Array<Property | Method>
+  ) {
+    return new Class(
+      decorators,
+      modifiers,
+      name,
+      typeParameters,
+      heritageClauses,
+      members
+    );
   }
 
   addComponent(
