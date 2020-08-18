@@ -116,7 +116,7 @@
 
 1. Nested components of nested components includes parent name (React and Vue).
 
-   According the docs, if we use few level of nested components, and some nested properties have equal name on different levels - components should have different names.
+   According to the docs, if we use few levels of nested components, and some nested properties have equal names on different levels - components should have different names.
 
    For example, in the Grid we have the `headerFilter` nested property and the `headerFilter` property for nested `columns` property. These options have equal name but different components:
 
@@ -134,7 +134,7 @@
 
    (https://js.devexpress.com/Documentation/Guide/Widgets/DataGrid/Filtering_and_Searching/)
 
-   But now, the in wrappers we collect all possible options from all nested properties with the same name. So, in demo we can see the next code (and it works):
+   But now, in the wrappers we collect all possible options from all nested properties with the same name. So, in demo we can see the next code (and it works):
 
    ```jsx
    <Grid>
