@@ -120,11 +120,13 @@ export const Event = (args?: { actionConfig?: any }) => propertyDecorator;
  */
 export const InternalState = () => propertyDecorator;
 
-export const Provider = (Context: any) => propertyDecorator;
+class Context {}
 
-export const Consumer = (Context: any) => propertyDecorator;
+export const Provider = (Context: Context) => propertyDecorator;
 
-export const createContext = <T>(defaultValue: T) => defaultValue;
+export const Consumer = (Context: Context) => propertyDecorator;
+
+export const createContext = <T>(defaultValue: T) => new Context();
 
 export const Listen = (
   eventName?: string,
