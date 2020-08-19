@@ -8,11 +8,11 @@ import {
 @Injectable()
 class P1Context {
   _value: number = 5;
-  change: ContextEmitter<any> = new ContextEmitter();
-  get value(): any {
+  change: ContextEmitter<number> = new ContextEmitter();
+  get value(): number {
     return this._value;
   }
-  set value(value: any) {
+  set value(value: number) {
     if (this._value !== value) {
       this._value = value;
       this.change.emit(value);
@@ -22,11 +22,11 @@ class P1Context {
 @Injectable()
 class GetterContext {
   _value: string = "default";
-  change: ContextEmitter<any> = new ContextEmitter();
-  get value(): any {
+  change: ContextEmitter<string> = new ContextEmitter();
+  get value(): string {
     return this._value;
   }
-  set value(value: any) {
+  set value(value: string) {
     if (this._value !== value) {
       this._value = value;
       this.change.emit(value);

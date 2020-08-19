@@ -15,6 +15,15 @@ export class ContextDeclaration extends VariableStatement {
     const createContextExpression = this.declarationList.declarations[0];
     const initializer = (createContextExpression.initializer as Call)
       .arguments[0];
+    const valueProperty = new Property(
+      [],
+      [],
+      new Identifier("_value"),
+      undefined,
+      undefined,
+      initializer
+    );
+
     const declaration = new Class(
       [new Decorator(new Call(new Identifier("Injectable")), {})],
       this.modifiers,
@@ -22,21 +31,13 @@ export class ContextDeclaration extends VariableStatement {
       [],
       [],
       [
-        new Property(
-          [],
-          [],
-          new Identifier("_value"),
-          undefined,
-          undefined,
-          initializer
-        ),
-
+        valueProperty,
         new Property(
           [],
           [],
           new Identifier("change"),
           undefined,
-          new SimpleTypeExpression("ContextEmitter<any>"),
+          new SimpleTypeExpression(`ContextEmitter<${valueProperty.type}>`),
           new SimpleExpression("new ContextEmitter()")
         ),
 
@@ -45,7 +46,7 @@ export class ContextDeclaration extends VariableStatement {
           [],
           new Identifier("value"),
           [],
-          undefined,
+          valueProperty.type,
           new Block([new SimpleExpression("return this._value")], false)
         ),
 
@@ -60,7 +61,7 @@ export class ContextDeclaration extends VariableStatement {
               undefined,
               new Identifier("value"),
               undefined,
-              new SimpleTypeExpression("any")
+              valueProperty.type
             ),
           ],
           new Block(
