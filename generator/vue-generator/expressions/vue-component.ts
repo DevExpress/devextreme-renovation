@@ -433,6 +433,17 @@ export class VueComponent extends Component {
         });
     });
 
+    this.members
+      .filter((m) => m.isProvider && m instanceof GetAccessor)
+      .forEach((m) => {
+        watches[m.name] = watches[m.name] || [];
+        const methodName = `provide${capitalizeFirstLetter(m.name)}`;
+        methods.push(`${methodName}(){
+        this._provided.${m.context}.value = ${m.getter(SyntaxKind.ThisKeyword)}
+      }`);
+        watches[m.name].push(`"${methodName}"`);
+      });
+
     if (methods.length !== startMethodsLength) {
       methods.push(
         `__scheduleEffect(index, name) {
@@ -522,7 +533,13 @@ export class VueComponent extends Component {
     if (providers.length) {
       statements.push(
         providers
-          .map((p) => `this.${p.name} = this._provided.${p.context}`)
+          .map((p) => {
+            if (!(p instanceof GetAccessor)) {
+              return `this.${p.name} = this._provided.${p.context}`;
+            } else {
+              return `this.provide${capitalizeFirstLetter(p.name)}()`;
+            }
+          })
           .join(";")
       );
     }
@@ -612,7 +629,8 @@ export class VueComponent extends Component {
     return "";
   }
 
-  compileImports(imports: string[] = []) {
+  compileImports() {
+    const imports: string[] = [];
     this.compileDefaultOptionsImport(imports);
 
     return imports.join(";\n");
@@ -657,8 +675,7 @@ export class VueComponent extends Component {
     return "";
   }
 
-  compilePortalComponent(imports: string[], components: string[]) {
-    imports.push('import Vue from "vue"');
+  compilePortalComponent(components: string[]) {
     components.push("DxPortal");
     return `const DxPortal = Vue.extend({
       render: function (createElement) {
@@ -814,11 +831,10 @@ export class VueComponent extends Component {
     this.compileTemplate();
 
     const methods: string[] = [];
-    const imports: string[] = [];
     const components: string[] = [];
 
     const portalComponent = this.containsPortal()
-      ? this.compilePortalComponent(imports, components)
+      ? this.compilePortalComponent(components)
       : "";
 
     const statements = [
@@ -839,7 +855,7 @@ export class VueComponent extends Component {
     ].filter((s) => s);
 
     return `
-          ${this.compileImports(imports)}
+          ${this.compileImports()}
           ${this.compileNestedComponents()}
           ${portalComponent}
           ${this.compileDefaultOptionsMethod(

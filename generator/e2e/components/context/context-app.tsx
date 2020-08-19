@@ -12,12 +12,16 @@ import GridComponent from "./grid";
 import Pager from "./pager";
 import Paging from "./paging";
 
+import GetterProvider from "./getter-context";
+
 function view(model: ContextApp) {
   return (
     <div>
       <div id="context-simple-context">
         <SimpleProviderComponent />
         <SimpleContextConsumerComponents />
+
+        <GetterProvider p={model.pageIndex} />
       </div>
 
       <GridComponent>
@@ -51,7 +55,7 @@ export default class ContextApp extends JSXComponent(Props) {
   @Effect()
   inputEffect() {
     this.input.addEventListener("input", () => {
-      this.pageIndex = Number(this.input.value) || 0;
+      this.setPageIndex(Number(this.input.value) || 0);
     });
   }
 

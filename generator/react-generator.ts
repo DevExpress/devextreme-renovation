@@ -1033,7 +1033,9 @@ export class ReactComponent extends Component {
       .concat(this.apiRefs.map((r) => r.name.toString()))
       .concat(
         this.members
-          .filter((m) => m.isConsumer || m.isProvider)
+          .filter(
+            (m) => (m.isConsumer || m.isProvider) && !(m instanceof GetAccessor)
+          )
           .map((m) => m.name.toString())
       )
       .concat(
@@ -1313,7 +1315,11 @@ export class ReactComponent extends Component {
                 ${this.stateDeclaration()}
                 ${this.compileUseImperativeHandle()}
                 ${this.members
-                  .filter((m) => m.isConsumer || m.isProvider)
+                  .filter(
+                    (m) =>
+                      (m.isConsumer || m.isProvider) &&
+                      !(m instanceof GetAccessor)
+                  )
                   .map((m) => m.toString(this.getToStringOptions()))
                   .join(";\n")}
                 ${this.listeners

@@ -14,6 +14,8 @@ function view(model: Widget): JSX.Element {
 
 const P1Context = createContext(5);
 
+const GetterContext = createContext("default");
+
 @ComponentBindings()
 class Props {
   @OneWay() p1 = 10;
@@ -31,5 +33,10 @@ export default class Widget extends JSXComponent<Props>() {
 
   get sum() {
     return this.provider + this.context;
+  }
+
+  @Provider(GetterContext)
+  get contextProvider() {
+    return "provide";
   }
 }

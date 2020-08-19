@@ -126,7 +126,10 @@ export class Property extends BaseProperty {
     if (this.isRefProp) {
       return `${componentContext}${this.name}`;
     }
-    if (this.isConsumer || this.isProvider) {
+    if (this.isConsumer) {
+      return `${componentContext}${this.name}Consumer`;
+    }
+    if (this.isProvider) {
       return `${componentContext}${this.name}.value`;
     }
     if (this._hasDecorator(Decorators.ApiRef)) {

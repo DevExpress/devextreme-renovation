@@ -6,12 +6,12 @@
   </div>
 </template>
 <script>
+import Vue from "vue";
 export const WidgetProps = {
   someRef: {
     type: Function,
   },
 };
-import Vue from "vue";
 const DxPortal = Vue.extend({
   render: function (createElement) {
     if (this.$attrs.container()) {

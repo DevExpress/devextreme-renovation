@@ -21,6 +21,7 @@ import {
 import { Binary } from "../../../base-generator/expressions/operators";
 
 import SyntaxKind from "../../../base-generator/syntaxKind";
+import { Decorators } from "../../../component_declaration/decorators";
 
 export class GetAccessor extends BaseGetAccessor {
   constructor(
@@ -31,39 +32,46 @@ export class GetAccessor extends BaseGetAccessor {
     type?: TypeExpression | string,
     body?: Block
   ) {
-    if (type && body && isComplexType(type)) {
+    const isProvider = decorators?.some((d) => d.name === Decorators.Provider);
+    if (body && ((type && isComplexType(type)) || isProvider)) {
       const cacheAccess = `this.__getterCache["${name.toString()}"]`;
+      const setCacheExpression = new Binary(
+        new SimpleExpression(cacheAccess),
+        SyntaxKind.EqualsToken,
+        new Call(
+          new Paren(
+            new ArrowFunction(
+              [],
+              undefined,
+              [],
+              type,
+              SyntaxKind.EqualsGreaterThanToken,
+              new Block(body.statements, false),
+              {}
+            )
+          ),
+          undefined
+        )
+      );
+      const returnExpression = !isProvider
+        ? setCacheExpression
+        : new Binary(
+            new SimpleExpression(`this.${name}Provider.value`),
+            SyntaxKind.EqualsToken,
+            setCacheExpression
+          );
       body.statements = [
         new SimpleExpression(`
                     if(${cacheAccess}!==undefined){
                         return ${cacheAccess};
                     }`),
-        new ReturnStatement(
-          new Binary(
-            new SimpleExpression(cacheAccess),
-            SyntaxKind.EqualsToken,
-            new Call(
-              new Paren(
-                new ArrowFunction(
-                  [],
-                  undefined,
-                  [],
-                  type,
-                  SyntaxKind.EqualsGreaterThanToken,
-                  new Block(body.statements, false),
-                  {}
-                )
-              ),
-              undefined
-            )
-          )
-        ),
+        new ReturnStatement(returnExpression),
       ];
     }
     super(decorators, modifiers, name, parameters, type, body);
   }
 
   isMemorized(): boolean {
-    return isComplexType(this.type);
+    return isComplexType(this.type) || this.isProvider;
   }
 }
