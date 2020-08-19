@@ -24,8 +24,8 @@
     </Nested>
     <Nested>
       <DxRow>
-        <DxCell grid-data="cell41"></DxCell>
-        <DxCell grid-data="cell42"></DxCell>
+        <DxRowCell grid-data="cell41"></DxRowCell>
+        <DxRowCell grid-data="cell42"></DxRowCell>
       </DxRow>
     </Nested>
     <Nested> </Nested>
@@ -35,7 +35,7 @@
 import DxApp from "../../../../components/app.tsx";
 import ButtonWithTemplate from "../../../../components/button-with-template.tsx";
 import Counter from "../../../../components/counter.tsx";
-import Nested from "../../../../components/nested.tsx";
+import Nested, { DxRow, DxRowCell } from "../../../../components/nested.tsx";
 
 export default {
   components: {
@@ -43,6 +43,8 @@ export default {
     ButtonWithTemplate,
     Counter,
     Nested,
+    DxRow,
+    DxRowCell,
   },
 
   data() {

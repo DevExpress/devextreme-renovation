@@ -706,7 +706,8 @@ export default class Generator implements GeneratorAPI {
       name,
       typeParameters,
       heritageClauses,
-      members
+      members,
+      this.getContext()
     );
   }
 

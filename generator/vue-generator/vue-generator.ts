@@ -85,7 +85,8 @@ export class VueGenerator extends BaseGenerator {
       name,
       typeParameters,
       heritageClauses,
-      members
+      members,
+      this.getContext()
     );
   }
 

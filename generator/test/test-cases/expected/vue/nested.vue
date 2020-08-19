@@ -3,6 +3,34 @@
 </template>
 <script>
 import { WidgetInput } from "./nested-props";
+import {
+  GridColumn,
+  Editing,
+  ColumnEditing,
+  Custom,
+  AnotherCustom,
+} from "./nested-props";
+export const DxColumn = {
+  props: GridColumn,
+};
+DxColumn.propName = "columns";
+export const DxEditing = {
+  props: Editing,
+};
+DxEditing.propName = "editing";
+export const DxColumnEditing = {
+  props: ColumnEditing,
+};
+DxColumnEditing.propName = "editing";
+export const DxEditingCustom = {
+  props: Custom,
+};
+DxEditingCustom.propName = "custom";
+export const DxEditingAnotherCustom = {
+  props: AnotherCustom,
+};
+DxEditingAnotherCustom.propName = "anotherCustom";
+
 export const DxWidget = {
   props: WidgetInput,
   computed: {
@@ -26,7 +54,9 @@ export const DxWidget = {
         return this.columns;
       }
       if (this.$slots.default) {
-        const nested = this.__collectChildren(this.$slots.default);
+        const nested = this.__collectChildren(this.$slots.default).filter(
+          (c) => c.__name === "columns"
+        );
         if (nested.length) {
           return nested;
         }
@@ -37,7 +67,9 @@ export const DxWidget = {
         return this.editing;
       }
       if (this.$slots.default) {
-        const nested = this.__collectChildren(this.$slots.default);
+        const nested = this.__collectChildren(this.$slots.default).filter(
+          (c) => c.__name === "editing"
+        );
         if (nested.length) {
           return nested?.[0];
         }
@@ -51,43 +83,32 @@ export const DxWidget = {
       );
     },
     __collectChildren(children) {
-      const nestedComponents = children.filter((child) =>
-        child.tag?.startsWith("Dx")
-      );
-      return nestedComponents.map((child) => {
-        let name = child.tag.replace("Dx", "");
-        name = name[0].toLowerCase() + name.slice(1);
-        const collectedChildren = {};
-        if (child.children) {
-          this.__collectChildren(child.children).forEach(
-            ({ __name, ...cProps }) => {
-              if (!collectedChildren[__name]) {
-                collectedChildren[__name] = [];
-                collectedChildren[__name + "s"] = [];
+      return children.reduce((acc, child) => {
+        const name = child.componentOptions?.Ctor?.extendOptions?.propName;
+        if (name) {
+          const collectedChildren = {};
+          const childProps = child.componentOptions.propsData;
+          if (child.componentOptions.children) {
+            this.__collectChildren(child.componentOptions.children).forEach(
+              ({ __name, ...cProps }) => {
+                if (__name) {
+                  if (!collectedChildren[__name]) {
+                    collectedChildren[__name] = [];
+                  }
+                  collectedChildren[__name].push(cProps);
+                }
               }
-              collectedChildren[__name].push(cProps);
-              collectedChildren[__name + "s"].push(cProps);
-            }
-          );
-        }
-        const childProps = {};
-        if (child.data) {
-          Object.keys(child.data.attrs).forEach((key) => {
-            let attr = key.split("-");
-            attr = [
-              attr[0],
-              ...attr.slice(1).map((a) => a[0].toUpperCase() + a.slice(1)),
-            ].join("");
-            childProps[attr] = child.data.attrs[key];
+            );
+          }
+
+          acc.push({
+            ...collectedChildren,
+            ...childProps,
+            __name: name,
           });
         }
-
-        return {
-          ...collectedChildren,
-          ...childProps,
-          __name: name,
-        };
-      });
+        return acc;
+      }, []);
     },
   },
 };

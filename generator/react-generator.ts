@@ -125,27 +125,6 @@ function buildTemplateProperty(
 }
 
 export class ComponentInput extends BaseComponentInput {
-  context: GeneratorContext;
-  constructor(
-    decorators: Decorator[],
-    modifiers: string[] | undefined,
-    name: Identifier,
-    typeParameters: any[],
-    heritageClauses: HeritageClause[] = [],
-    members: Array<Property | Method>,
-    context: GeneratorContext
-  ) {
-    super(
-      decorators,
-      modifiers,
-      name,
-      typeParameters,
-      heritageClauses,
-      members
-    );
-    this.context = context;
-  }
-
   createProperty(
     decorators: Decorator[],
     modifiers: string[] | undefined,
