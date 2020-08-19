@@ -14,21 +14,19 @@
     </form>
     <div id="counter-form-value">{{ counterValue }}</div>
     <Nested
-      :grid-data-rows="[
-        { gridDataCells: [{ gridData: 'cell11' }, 'cell12'] },
-        { gridDataCells: ['cell21', 'cell22'] },
+      :rows="[
+        { cells: [{ gridData: 'cell11' }, 'cell12'] },
+        { cells: ['cell21', 'cell22'] },
       ]"
     ></Nested>
     <Nested>
-      <DxGridDataRow
-        :grid-data-cells="['cell31', { gridData: 'cell32' }]"
-      ></DxGridDataRow>
+      <DxRow :cells="['cell31', { gridData: 'cell32' }]"></DxRow>
     </Nested>
     <Nested>
-      <DxGridDataRow>
-        <DxGridDataCell grid-data="cell41"></DxGridDataCell>
-        <DxGridDataCell grid-data="cell42"></DxGridDataCell>
-      </DxGridDataRow>
+      <DxRow>
+        <DxRowCell grid-data="cell41"></DxRowCell>
+        <DxRowCell grid-data="cell42"></DxRowCell>
+      </DxRow>
     </Nested>
     <Nested> </Nested>
   </div>
@@ -37,7 +35,7 @@
 import DxApp from "../../../../components/app.tsx";
 import ButtonWithTemplate from "../../../../components/button-with-template.tsx";
 import Counter from "../../../../components/counter.tsx";
-import Nested from "../../../../components/nested.tsx";
+import Nested, { DxRow, DxRowCell } from "../../../../components/nested.tsx";
 
 export default {
   components: {
@@ -45,6 +43,8 @@ export default {
     ButtonWithTemplate,
     Counter,
     Nested,
+    DxRow,
+    DxRowCell,
   },
 
   data() {

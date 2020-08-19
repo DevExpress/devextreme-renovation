@@ -125,27 +125,6 @@ function buildTemplateProperty(
 }
 
 export class ComponentInput extends BaseComponentInput {
-  context: GeneratorContext;
-  constructor(
-    decorators: Decorator[],
-    modifiers: string[] | undefined,
-    name: Identifier,
-    typeParameters: any[],
-    heritageClauses: HeritageClause[] = [],
-    members: Array<Property | Method>,
-    context: GeneratorContext
-  ) {
-    super(
-      decorators,
-      modifiers,
-      name,
-      typeParameters,
-      heritageClauses,
-      members
-    );
-    this.context = context;
-  }
-
   createProperty(
     decorators: Decorator[],
     modifiers: string[] | undefined,
@@ -716,23 +695,23 @@ export class ReactComponent extends Component {
         new SimpleExpression(`(React.Children.toArray(children)
           .filter((child) =>
             React.isValidElement(child) &&
-            typeof child.type !== "string") as (React.ReactElement & { type: { name: string } })[])
+            typeof child.type !== "string") as (React.ReactElement & { type: { propName: string } })[])
           .map(child => {
             const { children: childChildren, ...childProps } = child.props;
             const collectedChildren = {} as any;
             __collectChildren(childChildren).forEach(({ __name, ...restProps }: any) => {
-                if(!collectedChildren[__name]) {
-                  collectedChildren[__name] = [];
-                  collectedChildren[__name+"s"] = [];
+                if(__name) {
+                  if(!collectedChildren[__name]) {
+                    collectedChildren[__name] = [];
+                  }
+                  collectedChildren[__name].push(restProps);
                 }
-                collectedChildren[__name].push(restProps);
-                collectedChildren[__name+"s"].push(restProps);
               }
             );
             return {
               ...collectedChildren,
               ...childProps,
-              __name: child.type.name[0].toLowerCase() + child.type.name.slice(1),
+              __name: child.type.propName,
             }
           })`)
       ),
@@ -1144,19 +1123,18 @@ export class ReactComponent extends Component {
     return result;
   }
 
-  getNestedExports(component: ComponentInput, property: Property) {
-    let name = capitalizeFirstLetter(property.name);
-    if (isTypeArray(property.type)) {
-      name = removePlural(name);
-    }
-    return `export const ${name}: React.FunctionComponent<${component.name}Type> = () => null;`;
+  getNestedExports(component: ComponentInput, name: string, propName: string) {
+    return `export const ${name}: React.FunctionComponent<${component.name}Type> & { propName: string } = () => null;
+    ${name}.propName="${propName}"`;
   }
 
   getNestedFromComponentInput(
-    component: ComponentInput
+    component: ComponentInput,
+    parentName: string = ""
   ): {
     component: ComponentInput;
-    property: Property;
+    name: string;
+    propName: string;
   }[] {
     const nestedProps = component.members.filter((m) => m.isNested);
     const components = component.context.components!;
@@ -1167,27 +1145,34 @@ export class ReactComponent extends Component {
           ({ type }) => extractComplexType(type) === key
         ) as Property;
         if (property) {
+          const componentName = capitalizeFirstLetter(
+            isTypeArray(property.type)
+              ? removePlural(property.name)
+              : property.name
+          );
           acc.push({
-            property,
             component: components[key] as ComponentInput,
+            name: `${parentName}${componentName}`,
+            propName: property.name,
           });
         }
         return acc;
       },
       [] as {
         component: ComponentInput;
-        property: Property;
+        name: string;
+        propName: string;
       }[]
     );
 
     return nested.concat(
       nested.reduce(
-        (acc, el) => {
-          return acc.concat(this.getNestedFromComponentInput(el.component));
-        },
+        (acc, { component, name }) =>
+          acc.concat(this.getNestedFromComponentInput(component, name)),
         [] as {
           component: ComponentInput;
-          property: Property;
+          name: string;
+          propName: string;
         }[]
       )
     );
@@ -1205,8 +1190,8 @@ export class ReactComponent extends Component {
         const imports = this.getNestedImports(
           bindings.map(({ component }) => component)
         );
-        const nested = bindings.map(({ component, property }) =>
-          this.getNestedExports(component, property)
+        const nested = bindings.map(({ component, name, propName }) =>
+          this.getNestedExports(component, name, propName)
         );
 
         return imports.concat(nested).join("\n");
@@ -1220,7 +1205,6 @@ export class ReactComponent extends Component {
     const isArray = isTypeArray(property.type);
     const type = extractComplexType(property.type);
     const indexGetter = isArray ? "" : "?.[0]";
-    const nestedName = isArray ? removePlural(property.name) : property.name;
     const undefinedType =
       property.questionOrExclamationToken === "?" ? " | undefined" : "";
 
@@ -1239,7 +1223,7 @@ export class ReactComponent extends Component {
         }
         const nested = __collectChildren<${type}Type & { __name: string }>(${getPropName(
       "children"
-    )}).filter(child => child.__name === "${nestedName}");
+    )}).filter(child => child.__name === "${property.name}");
         if(nested.length) {
           return nested${indexGetter};
         }

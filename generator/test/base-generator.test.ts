@@ -3957,7 +3957,8 @@ mocha.describe("import Components", function () {
       generator.createIdentifier("Model"),
       [],
       [heritageClause],
-      []
+      [],
+      generator.getContext()
     );
 
     assert.deepEqual(

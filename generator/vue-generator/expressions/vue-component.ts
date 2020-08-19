@@ -11,11 +11,6 @@ import {
   ReturnStatement,
 } from "../../base-generator/expressions/statements";
 import { SimpleExpression } from "../../base-generator/expressions/base";
-import {
-  VariableStatement,
-  VariableDeclarationList,
-  VariableDeclaration,
-} from "../../base-generator/expressions/variables";
 import { Method } from "./class-members/method";
 import { Parameter } from "./functions/parameter";
 import { toStringOptions } from "../types";
@@ -33,9 +28,11 @@ import {
   SimpleTypeExpression,
   isTypeArray,
   ArrayTypeNode,
+  extractComplexType,
 } from "../../base-generator/expressions/type";
 import SyntaxKind from "../../base-generator/syntaxKind";
 import { Property } from "./class-members/property";
+import { VueComponentInput } from "./vue-component-input";
 
 export function getComponentListFromContext(context: GeneratorContext) {
   return Object.keys(context.components || {})
@@ -66,55 +63,34 @@ export class VueComponent extends Component {
 
   createNestedGetter() {
     const statements = [
-      new VariableStatement(
-        undefined,
-        new VariableDeclarationList(
-          [
-            new VariableDeclaration(
-              new Identifier("nestedComponents"),
-              undefined,
-              new SimpleExpression(
-                `children.filter(child => child.tag?.startsWith("Dx"))`
-              )
-            ),
-          ],
-          SyntaxKind.ConstKeyword
-        )
-      ),
       new ReturnStatement(
         new SimpleExpression(
-          `nestedComponents.map(child => {
-            let name = (child.tag.replace("Dx" , ""))
-            name = name[0].toLowerCase() + name.slice(1);
-            const collectedChildren = {};
-            if(child.children) {
-              this.__collectChildren(child.children).forEach(
-                ({ __name, ...cProps }) => {
-                  if (!collectedChildren[__name]) {
-                    collectedChildren[__name] = [];
-                    collectedChildren[__name + "s"] = [];
+          `children.reduce((acc, child) => {
+            const name = child.componentOptions?.Ctor?.extendOptions?.propName;
+            if(name) {
+              const collectedChildren = {};
+              const childProps = child.componentOptions.propsData;
+              if(child.componentOptions.children) {
+                this.__collectChildren(child.componentOptions.children).forEach(
+                  ({ __name, ...cProps }) => {
+                    if(__name) {
+                      if (!collectedChildren[__name]) {
+                        collectedChildren[__name] = [];
+                      }
+                      collectedChildren[__name].push(cProps);
+                    }
                   }
-                  collectedChildren[__name].push(cProps);
-                  collectedChildren[__name + "s"].push(cProps);
-                }
-              );
-            };
-            const childProps = {};
-            if (child.data) {
-              Object.keys(child.data.attrs).forEach(key => {
-                let attr = key.split("-");
-                attr = ([attr[0], ...attr.slice(1).map(a => a[0].toUpperCase() + a.slice(1))]).join("");
-                childProps[attr] = child.data.attrs[key];
-              })
+                );
+              };
+  
+              acc.push({
+                ...collectedChildren,
+                ...childProps,
+                __name: name,
+              });
             }
-
-            return {
-              ...collectedChildren,
-              ...childProps,
-              __name: name,
-            };
-
-          })`
+            return acc;
+          }, [])`
         )
       ),
     ];
@@ -357,7 +333,7 @@ export class VueComponent extends Component {
         return ${propName};
       }
       if(this.$slots.default) {
-        const nested = ${SyntaxKind.ThisKeyword}.__collectChildren(this.$slots.default);
+        const nested = ${SyntaxKind.ThisKeyword}.__collectChildren(this.$slots.default).filter(c => c.__name === "${property.name}");
         if (nested.length) {
           return nested${indexGetter}
         }
@@ -733,6 +709,124 @@ export class VueComponent extends Component {
     });`;
   }
 
+  compileNestedComponents() {
+    const components = this.context.components!;
+    if (this.heritageClauses.length) {
+      const heritage = this.heritageClauses[0].typeNodes[0];
+      if (heritage instanceof Call && heritage.arguments.length) {
+        const inheritFrom = heritage.arguments[0].toString();
+        const heritageInput = components[inheritFrom] as VueComponentInput;
+
+        const bindings = this.getNestedFromComponentInput(heritageInput);
+        const imports = this.getNestedImports(
+          bindings.map(({ component }) => component)
+        );
+        const nested = bindings.map(({ component, name, propName }) =>
+          this.getNestedExports(component, name, propName)
+        );
+
+        return imports.concat(nested).join("\n");
+      }
+    }
+    return "";
+  }
+
+  getNestedImports(components: VueComponentInput[]) {
+    const outerComponents = components.filter(
+      ({ name }) => !this.context.components![name]
+    );
+
+    const imports = outerComponents.reduce(
+      (acc, component) => {
+        const path = component.context.path;
+        if (path) {
+          let relativePath = getModuleRelativePath(
+            this.context.dirname!,
+            component.context.path!
+          );
+          relativePath = relativePath.slice(0, relativePath.lastIndexOf("."));
+
+          if (!acc[relativePath]) {
+            acc[relativePath] = [];
+          }
+          acc[relativePath].push(`${component.name}`);
+        }
+
+        return acc;
+      },
+      {} as {
+        [x: string]: string[];
+      }
+    );
+
+    const result = Object.keys(imports).map((path) => {
+      return `import { ${imports[path].join(", ")} } from "${path}";`;
+    });
+
+    return result;
+  }
+
+  getNestedExports(
+    component: VueComponentInput,
+    name: string,
+    propName: string
+  ) {
+    return `export const Dx${name} = {
+      props: ${component.name}
+    }
+    Dx${name}.propName="${propName}"`;
+  }
+
+  getNestedFromComponentInput(
+    component: VueComponentInput,
+    parentName: string = ""
+  ): {
+    component: VueComponentInput;
+    name: string;
+    propName: string;
+  }[] {
+    const nestedProps = component.members.filter((m) => m.isNested);
+    const components = component.context.components!;
+
+    const nested = Object.keys(components).reduce(
+      (acc, key) => {
+        const property = nestedProps.find(
+          ({ type }) => extractComplexType(type) === key
+        ) as Property;
+        if (property) {
+          const componentName = capitalizeFirstLetter(
+            isTypeArray(property.type)
+              ? removePlural(property.name)
+              : property.name
+          );
+          acc.push({
+            component: components[key] as VueComponentInput,
+            name: `${parentName}${componentName}`,
+            propName: property.name,
+          });
+        }
+        return acc;
+      },
+      [] as {
+        component: VueComponentInput;
+        name: string;
+        propName: string;
+      }[]
+    );
+
+    return nested.concat(
+      nested.reduce(
+        (acc, { component, name }) =>
+          acc.concat(this.getNestedFromComponentInput(component, name)),
+        [] as {
+          component: VueComponentInput;
+          name: string;
+          propName: string;
+        }[]
+      )
+    );
+  }
+
   toString() {
     this.compileTemplate();
 
@@ -762,6 +856,7 @@ export class VueComponent extends Component {
 
     return `
           ${this.compileImports()}
+          ${this.compileNestedComponents()}
           ${portalComponent}
           ${this.compileDefaultOptionsMethod(
             this.defaultOptionRules ? this.defaultOptionRules.toString() : "[]",

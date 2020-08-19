@@ -29,13 +29,15 @@ import { findComponentInput } from "../utils/expressions";
 const RESERVED_NAMES = ["class", "key", "ref", "style", "class"];
 
 export class ComponentInput extends Class implements Heritable {
+  context: GeneratorContext;
   constructor(
     decorators: Decorator[],
     modifiers: string[] | undefined,
     name: Identifier,
     typeParameters: any[],
     heritageClauses: HeritageClause[] = [],
-    members: Array<Property | Method>
+    members: Array<Property | Method>,
+    context: GeneratorContext
   ) {
     super(
       decorators,
@@ -45,6 +47,7 @@ export class ComponentInput extends Class implements Heritable {
       heritageClauses.filter((h) => h.token === SyntaxKind.ExtendsKeyword),
       members
     );
+    this.context = context;
   }
 
   get baseTypes() {

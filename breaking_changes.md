@@ -114,6 +114,44 @@
    }
    ```
 
+1. Nested components of nested components includes parent name (React and Vue).
+
+   According to the docs, if we use few levels of nested components, and some nested properties have equal names on different levels - components should have different names.
+
+   For example, in the Grid we have the `headerFilter` nested property and the `headerFilter` property for nested `columns` property. These options have equal name but different components:
+
+   ```jsx
+   <Grid>
+     <HeaderFilter />
+     <Column>
+       <ColumnHeaderFilter />
+     </Column>
+     <Column>
+       <ColumnHeaderFilter />
+     </Column>
+   </Grid>
+   ```
+
+   (https://js.devexpress.com/Documentation/Guide/Widgets/DataGrid/Filtering_and_Searching/)
+
+   But now, in the wrappers we collect all possible options from all nested properties with the same name. So, in demo we can see the next code (and it works):
+
+   ```jsx
+   <Grid>
+     <HeaderFilter />
+     <Column>
+       <HeaderFilter />
+     </Column>
+     <Column>
+       <HeaderFilter />
+     </Column>
+   </Grid>
+   ```
+
+   (https://js.devexpress.com/Demos/WidgetsGallery/Demo/DataGrid/Filtering/React/Light/)
+
+   In new components we support only first example.
+
 ### Other notes
 
 #### Button Breaking Changes

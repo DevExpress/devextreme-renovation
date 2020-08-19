@@ -2,10 +2,7 @@ import React, { useState } from "react";
 import App from "../../../../components/app.tsx";
 import ButtonWithTemplate from "../../../../components/button-with-template.tsx";
 import Counter from "../../../../components/counter.tsx";
-import Nested, {
-  GridDataRow,
-  GridDataCell,
-} from "../../../../components/nested.tsx";
+import Nested, { Row, RowCell } from "../../../../components/nested.tsx";
 
 const buttonTemplate = ({ text }) => (
   <div style={{ border: "1px solid blue" }}>{text + "!"}</div>
@@ -32,19 +29,19 @@ export default () => {
       </form>
       <div id="counter-form-value">{counterValue}</div>
       <Nested
-        gridDataRows={[
-          { gridDataCells: [{ gridData: "cell11" }, "cell12"] },
-          { gridDataCells: ["cell21", "cell22"] },
+        rows={[
+          { cells: [{ gridData: "cell11" }, "cell12"] },
+          { cells: ["cell21", "cell22"] },
         ]}
       ></Nested>
       <Nested>
-        <GridDataRow gridDataCells={["cell31", { gridData: "cell32" }]} />
+        <Row cells={["cell31", { gridData: "cell32" }]} />
       </Nested>
       <Nested>
-        <GridDataRow>
-          <GridDataCell gridData="cell41" />
-          <GridDataCell gridData="cell42" />
-        </GridDataRow>
+        <Row>
+          <RowCell gridData="cell41" />
+          <RowCell gridData="cell42" />
+        </Row>
       </Nested>
       <Nested></Nested>
     </div>

@@ -1,36 +1,13 @@
 import { ComponentInput as BaseComponentInput } from "../../base-generator/expressions/component-input";
 import { Call, Identifier } from "../../base-generator/expressions/common";
-import { Method } from "../../base-generator/expressions/class-members";
 import { TypeExpression } from "../../base-generator/expressions/type";
 import { Decorator } from "./decorator";
 import { AngularGeneratorContext } from "../types";
 import { Property } from "./class-members/property";
-import { HeritageClause } from "../../base-generator/expressions/class";
 import { Expression } from "../../base-generator/expressions/base";
 import { compileCoreImports } from "./component";
 
 export class ComponentInput extends BaseComponentInput {
-  context: AngularGeneratorContext;
-  constructor(
-    decorators: Decorator[],
-    modifiers: string[] = [],
-    name: Identifier,
-    typeParameters: string[],
-    heritageClauses: HeritageClause[],
-    members: Array<Property | Method>,
-    context: AngularGeneratorContext
-  ) {
-    super(
-      decorators,
-      modifiers,
-      name,
-      typeParameters,
-      heritageClauses,
-      members
-    );
-    this.context = context;
-  }
-
   createProperty(
     decorators: Decorator[],
     modifiers: string[] | undefined,

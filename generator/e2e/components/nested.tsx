@@ -4,13 +4,13 @@ import { WithNestedInput } from "./nested-props";
 function view(model: WithNested) {
   return (
     <div>
-      {model.props.gridDataRows?.map((_, index) => (
+      {model.props.rows?.map((_, index) => (
         <span key={index}>
           {model.getRowCells(index)}
           <br />
         </span>
       ))}
-      {!model.props.gridDataRows && <span>{"No Data"}</span>}
+      {!model.props.rows && <span>{"No Data"}</span>}
     </div>
   );
 }
@@ -20,7 +20,7 @@ function view(model: WithNested) {
 })
 export default class WithNested extends JSXComponent(WithNestedInput) {
   getRowCells(index: number) {
-    const cells = this.props.gridDataRows[index].gridDataCells;
+    const cells = this.props.rows[index].cells;
     return (
       cells
         ?.map((cell) => (typeof cell === "string" ? cell : cell.gridData))
