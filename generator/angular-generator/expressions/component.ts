@@ -366,6 +366,18 @@ export class AngularComponent extends Component {
       if (m.isNested && m instanceof Property) {
         return acc.concat(this.processNestedProperty(m, true));
       }
+      if (m.isConsumer) {
+        return acc.concat(
+          new Property(
+            [],
+            [],
+            new Identifier(`${m.name}Consumer`),
+            undefined,
+            m.type
+          ),
+          m
+        );
+      }
       acc.push(m);
       return acc;
     }, [] as Array<Property | Method>);
@@ -1141,6 +1153,58 @@ export class AngularComponent extends Component {
     return "";
   }
 
+  compileContext(
+    constructorStatements: string[],
+    constructorArguments: string[],
+    ngDoCheckStatements: string[],
+    ngOnDestroyStatements: string[]
+  ): string {
+    let destroyContext = "";
+    this.members.forEach((m) => {
+      if (m.isProvider) {
+        const name = m instanceof GetAccessor ? `${m._name}Provider` : m.name;
+        constructorArguments.push(`@Host() private ${name}: ${m.context}`);
+
+        if (!(m instanceof GetAccessor)) {
+          constructorStatements.push(
+            `this.${m.name}.value = ${(m as Property).initializer}`
+          );
+        } else {
+          if (m instanceof GetAccessor) {
+            ngDoCheckStatements.push(m.getter(SyntaxKind.ThisKeyword));
+          }
+        }
+      }
+      if (m.isConsumer) {
+        constructorArguments.push(
+          `@SkipSelf() @Optional() private ${m.name}: ${m.context}`
+        );
+        destroyContext = "_destroyContext: Array<()=>void> = [];";
+        constructorStatements.push(
+          `if(!${m.name}){
+            this.${m.name} = new ${m.context}();
+          } else {
+            const changeHandler = (value: ${m.type})=>{
+              this.${m.name}Consumer = value
+              changeDetection.detectChanges();
+            };
+            const subscription = ${m.name}.change.subscribe(changeHandler);
+            this._destroyContext.push(()=>{
+              subscription.unsubscribe();
+            });
+          }
+          this.${m.name}Consumer = this.${m.name}.value;
+          `
+        );
+      }
+    });
+
+    if (destroyContext.length) {
+      ngOnDestroyStatements.push(`this._destroyContext.forEach(d=>d())`);
+    }
+    return destroyContext;
+  }
+
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -1168,24 +1232,6 @@ export class AngularComponent extends Component {
       "private changeDetection: ChangeDetectorRef",
     ];
 
-    this.members.forEach((m) => {
-      if (m.isProvider) {
-        constructorArguments.push(`@Host() private ${m.name}: ${m.context}`);
-        constructorStatements.push(
-          `this.${m.name}.value = ${(m as Property).initializer}`
-        );
-      }
-      if (m.isConsumer) {
-        constructorArguments.push(
-          `@SkipSelf() @Optional() private ${m.name}: ${m.context}`
-        );
-        constructorStatements.push(
-          `if(!${m.name}){
-            this.${m.name} = new ${m.context}();
-          }`
-        );
-      }
-    });
     const cdkImports: string[] = [];
 
     const decoratorToStringOptions: toStringOptions = {
@@ -1253,6 +1299,12 @@ export class AngularComponent extends Component {
               .join("\n")}
             ${spreadAttributes}
             ${this.compileTrackBy(decoratorToStringOptions)}
+            ${this.compileContext(
+              constructorStatements,
+              constructorArguments,
+              ngDoCheckStatements,
+              ngOnDestroyStatements
+            )}
             ${this.compileEffects(
               ngAfterViewInitStatements,
               ngOnDestroyStatements,

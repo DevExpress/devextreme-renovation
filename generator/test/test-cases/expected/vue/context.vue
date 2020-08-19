@@ -7,6 +7,11 @@ const P1Context = (value = 5) => {
     value,
   };
 };
+const GetterContext = (value = "default") => {
+  return {
+    value,
+  };
+};
 const Props = {
   p1: {
     type: Number,
@@ -20,6 +25,9 @@ export const DxWidget = {
   computed: {
     __sum() {
       return this.provider.value + this.context.value;
+    },
+    __contextProvider() {
+      return "provide";
     },
     __restAttributes() {
       return {};
@@ -37,10 +45,12 @@ export const DxWidget = {
   provide() {
     return {
       P1Context: P1Context(10),
+      GetterContext: GetterContext(undefined),
     };
   },
   created() {
     this.provider = this._provided.P1Context;
+    this.__contextProvider = this._provided.GetterContext;
   },
 };
 export default DxWidget;
