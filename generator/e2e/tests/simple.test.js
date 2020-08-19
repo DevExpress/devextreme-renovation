@@ -237,12 +237,16 @@ cloneTest("Context - share object", async (t) => {
     const pagerValueEl = await Selector("#context-pager-input");
     const pagingEl = await Selector("#context-paging-value");
     const appEl = await Selector("#context-app-input");
+    const getterContext = await Selector("#context-getter-provider");
 
     await t.expect(await pagerValueEl.value).eql(expected);
     await t
       .expect((await pagingEl.textContent).trim())
       .eql(`paging:${expected}`);
     await t.expect(await appEl.value).eql(expected);
+    await t
+      .expect(await getterContext.textContent)
+      .eql(`Consumer Value:${expected}`);
   };
 
   await t.typeText("#context-app-input", "32");

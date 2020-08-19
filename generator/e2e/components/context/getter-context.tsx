@@ -11,7 +11,7 @@ import ConsumerComponent from "./consumer";
 
 function view(model: GetterProvider) {
   return (
-    <div>
+    <div id="context-getter-provider">
       <ConsumerComponent />
     </div>
   );

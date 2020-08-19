@@ -9,9 +9,9 @@ export class VariableDeclaration extends BaseVariableDeclaration {
       this.initializer.toString().startsWith("createContext")
     ) {
       return `${this.name} = (value=${this.initializer.arguments[0]})=>{
-              return {
+              return Vue.observable({
                 value
-              }
+              })
             }`;
     }
     return super.toString(options);

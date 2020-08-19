@@ -2,15 +2,16 @@
   <span></span>
 </template>
 <script>
+import Vue from "vue";
 const P1Context = (value = 5) => {
-  return {
+  return Vue.observable({
     value,
-  };
+  });
 };
 const GetterContext = (value = "default") => {
-  return {
+  return Vue.observable({
     value,
-  };
+  });
 };
 const Props = {
   p1: {
@@ -48,9 +49,29 @@ export const DxWidget = {
       GetterContext: GetterContext(undefined),
     };
   },
+  watch: {
+    __contextProvider: ["provide__contextProvider"],
+  },
+  methods: {
+    provide__contextProvider() {
+      this._provided.GetterContext.value = this.__contextProvider;
+    },
+    __scheduleEffect(index, name) {
+      if (!this.__scheduleEffects[index]) {
+        this.__scheduleEffects[index] = () => {
+          this.__destroyEffects[index] && this.__destroyEffects[index]();
+          this.__destroyEffects[index] = this[name]();
+          this.__scheduleEffects[index] = null;
+        };
+        this.$nextTick(
+          () => this.__scheduleEffects[index] && this.__scheduleEffects[index]()
+        );
+      }
+    },
+  },
   created() {
     this.provider = this._provided.P1Context;
-    this.__contextProvider = this._provided.GetterContext;
+    this.provide__contextProvider();
   },
 };
 export default DxWidget;
