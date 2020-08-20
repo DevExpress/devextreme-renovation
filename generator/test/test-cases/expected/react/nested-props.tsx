@@ -6,13 +6,12 @@ export declare type GridColumnType = {
   indexChange?: (index: number) => void;
   children?: React.ReactNode;
 };
-export const GridColumn: GridColumnType = {
+export const GridColumn: GridColumnType = ({
   name: "",
-  index: 0,
   editing: {},
   defaultIndex: 0,
   indexChange: () => {},
-};
+} as any) as GridColumnType;
 export declare type CustomType = {};
 export const Custom: CustomType = {};
 export declare type AnotherCustomType = {};

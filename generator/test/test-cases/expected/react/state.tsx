@@ -19,14 +19,13 @@ export declare type WidgetInputType = {
   defaultStateProp?: boolean;
   statePropChange?: (stateProp: boolean) => void;
 };
-const WidgetInput: WidgetInputType = {
-  state2: false,
+const WidgetInput: WidgetInputType = ({
   defaultState1: false,
   state1Change: () => {},
   defaultState2: false,
   state2Change: () => {},
   statePropChange: () => {},
-};
+} as any) as WidgetInputType;
 import React, { useState, useCallback, HtmlHTMLAttributes } from "react";
 
 declare type RestProps = Omit<
