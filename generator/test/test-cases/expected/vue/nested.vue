@@ -3,6 +3,34 @@
 </template>
 <script>
 import { WidgetInput } from "./nested-props";
+function __collectChildren(children) {
+  return children.reduce((acc, child) => {
+    const name = child.componentOptions?.Ctor?.extendOptions?.propName;
+    if (name) {
+      const collectedChildren = {};
+      const childProps = child.componentOptions.propsData;
+      if (child.componentOptions.children) {
+        __collectChildren(child.componentOptions.children).forEach(
+          ({ __name, ...cProps }) => {
+            if (__name) {
+              if (!collectedChildren[__name]) {
+                collectedChildren[__name] = [];
+              }
+              collectedChildren[__name].push(cProps);
+            }
+          }
+        );
+      }
+
+      acc.push({
+        ...collectedChildren,
+        ...childProps,
+        __name: name,
+      });
+    }
+    return acc;
+  }, []);
+}
 import {
   GridColumn,
   Editing,
@@ -49,31 +77,28 @@ export const DxWidget = {
         editing: this.__getNestedEditing,
       };
     },
+    __nestedChildren() {
+      return this.$slots.default ? __collectChildren(this.$slots.default) : [];
+    },
     __getNestedColumn() {
-      if (this.columns && this.columns.length) {
-        return this.columns;
-      }
-      if (this.$slots.default) {
-        const nested = this.__collectChildren(this.$slots.default).filter(
-          (c) => c.__name === "columns"
-        );
-        if (nested.length) {
-          return nested;
-        }
-      }
+      const nested = this.__nestedChildren.filter(
+        (child) => child.__name === "columns"
+      );
+      return this.columns && this.columns.length
+        ? this.columns
+        : nested.length
+        ? nested
+        : undefined;
     },
     __getNestedEditing() {
-      if (this.editing) {
-        return this.editing;
-      }
-      if (this.$slots.default) {
-        const nested = this.__collectChildren(this.$slots.default).filter(
-          (c) => c.__name === "editing"
-        );
-        if (nested.length) {
-          return nested?.[0];
-        }
-      }
+      const nested = this.__nestedChildren.filter(
+        (child) => child.__name === "editing"
+      );
+      return this.editing
+        ? this.editing
+        : nested.length
+        ? nested?.[0]
+        : undefined;
     },
   },
   methods: {
@@ -81,34 +106,6 @@ export const DxWidget = {
       return this.__getNestedColumn?.map((el) =>
         typeof el === "string" ? el : el.name
       );
-    },
-    __collectChildren(children) {
-      return children.reduce((acc, child) => {
-        const name = child.componentOptions?.Ctor?.extendOptions?.propName;
-        if (name) {
-          const collectedChildren = {};
-          const childProps = child.componentOptions.propsData;
-          if (child.componentOptions.children) {
-            this.__collectChildren(child.componentOptions.children).forEach(
-              ({ __name, ...cProps }) => {
-                if (__name) {
-                  if (!collectedChildren[__name]) {
-                    collectedChildren[__name] = [];
-                  }
-                  collectedChildren[__name].push(cProps);
-                }
-              }
-            );
-          }
-
-          acc.push({
-            ...collectedChildren,
-            ...childProps,
-            __name: name,
-          });
-        }
-        return acc;
-      }, []);
     },
   },
 };

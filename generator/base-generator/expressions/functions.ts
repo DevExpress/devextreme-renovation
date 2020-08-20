@@ -263,6 +263,13 @@ export class BaseFunction extends Expression {
     }
     return false;
   }
+
+  compileTypeParameters(): string {
+    if (this.typeParameters?.length) {
+      return `<${this.typeParameters}>`;
+    }
+    return "";
+  }
 }
 
 export class Function extends BaseFunction {
@@ -290,9 +297,11 @@ export class Function extends BaseFunction {
 
   toString(options?: toStringOptions) {
     options = this.getToStringOptions(options);
-    return `${this.modifiers.join(" ")} function ${this.name || ""}(${
-      this.parameters
-    })${compileType(this.type?.toString())}${this.body.toString(options)}`;
+    return `${this.modifiers.join(" ")} function ${
+      this.name || ""
+    }${this.compileTypeParameters()}(${this.parameters})${compileType(
+      this.type?.toString()
+    )}${this.body.toString(options)}`;
   }
 }
 

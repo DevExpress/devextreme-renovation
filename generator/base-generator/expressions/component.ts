@@ -150,13 +150,6 @@ export class Component extends Class implements Heritable {
     const restPropsGetter = this.createRestPropsGetter(members);
     restPropsGetter.prefix = "__";
     members.push(restPropsGetter);
-    const hasNested = members.some((m) => m.isNested);
-    if (hasNested) {
-      const nestedPropGetter = this.createNestedGetter();
-      if (nestedPropGetter !== null) {
-        members.push(nestedPropGetter);
-      }
-    }
     return members;
   }
 
@@ -290,10 +283,6 @@ export class Component extends Class implements Heritable {
       undefined,
       new Block([new SimpleExpression("return {}")], true)
     );
-  }
-
-  createNestedGetter(): Method | null {
-    return null;
   }
 
   compileDefaultOptionsImport(imports: string[]): void {
