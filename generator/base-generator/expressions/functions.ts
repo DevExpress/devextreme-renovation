@@ -8,7 +8,12 @@ import {
 } from "../types";
 import { Block, ReturnStatement } from "./statements";
 import { BindingPattern } from "./binding-pattern";
-import { variableDeclaration, compileType } from "../utils/string";
+import {
+  variableDeclaration,
+  compileType,
+  compileTypeParameters,
+  compileArrowTypeParameters,
+} from "../utils/string";
 import { Component } from "./component";
 import { VariableStatement } from "./variables";
 import SyntaxKind from "../syntaxKind";
@@ -16,6 +21,7 @@ import { getJsxExpression, JsxExpression, JsxElement } from "./jsx";
 import { Decorator } from "./decorator";
 import { Property } from "./class-members";
 import { containsPortalsInStatements } from "../utils/functions";
+import { TypeParameterDeclaration } from "./type-parameter-declaration";
 
 export class Parameter {
   decorators: Decorator[];
@@ -128,7 +134,7 @@ export function getTemplate(
 
 export class BaseFunction extends Expression {
   modifiers: string[];
-  typeParameters: string[];
+  typeParameters: TypeParameterDeclaration[] | string[];
   parameters: Parameter[];
   type?: TypeExpression | string;
   body: Block | Expression;
@@ -136,7 +142,7 @@ export class BaseFunction extends Expression {
 
   constructor(
     modifiers: string[] = [],
-    typeParameters: any,
+    typeParameters: TypeParameterDeclaration[] | string[],
     parameters: Parameter[],
     type: TypeExpression | string | undefined,
     body: Block | Expression,
@@ -265,10 +271,7 @@ export class BaseFunction extends Expression {
   }
 
   compileTypeParameters(): string {
-    if (this.typeParameters?.length) {
-      return `<${this.typeParameters}>`;
-    }
-    return "";
+    return compileTypeParameters(this.typeParameters);
   }
 }
 
@@ -282,7 +285,7 @@ export class Function extends BaseFunction {
     modifiers: string[] | undefined,
     asteriskToken: string,
     name: Identifier | undefined,
-    typeParameters: any,
+    typeParameters: TypeParameterDeclaration[] | string[],
     parameters: Parameter[],
     type: TypeExpression | string | undefined,
     body: Block,
@@ -306,13 +309,13 @@ export class Function extends BaseFunction {
 }
 
 export class ArrowFunction extends BaseFunction {
-  typeParameters: string[];
+  typeParameters: TypeParameterDeclaration[] | string[];
   parameters: Parameter[];
   body: Block | Expression;
   equalsGreaterThanToken: string;
   constructor(
     modifiers: string[] | undefined,
-    typeParameters: any,
+    typeParameters: TypeParameterDeclaration[] | string[],
     parameters: Parameter[],
     type: TypeExpression | string | undefined,
     equalsGreaterThanToken: string,
@@ -326,11 +329,17 @@ export class ArrowFunction extends BaseFunction {
     this.equalsGreaterThanToken = equalsGreaterThanToken;
   }
 
+  compileTypeParameters() {
+    return compileArrowTypeParameters(this.typeParameters);
+  }
+
   toString(options?: toStringOptions) {
     const bodyString = this.body.toString(this.getToStringOptions(options));
-    return `${this.modifiers.join(" ")} (${this.parameters})${compileType(
-      this.type?.toString()
-    )} ${this.equalsGreaterThanToken} ${bodyString}`;
+    return `${this.modifiers.join(" ")} ${this.compileTypeParameters()}(${
+      this.parameters
+    })${compileType(this.type?.toString())} ${
+      this.equalsGreaterThanToken
+    } ${bodyString}`;
   }
 }
 

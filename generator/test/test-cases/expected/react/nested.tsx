@@ -3,7 +3,7 @@ function view(model: Widget) {
   return <div />;
 }
 
-import React, { useCallback, useMemo, HtmlHTMLAttributes } from "react";
+import React, { useCallback, HtmlHTMLAttributes } from "react";
 
 function __collectChildren<T>(children: React.ReactNode): T[] {
   return (React.Children.toArray(children).filter(

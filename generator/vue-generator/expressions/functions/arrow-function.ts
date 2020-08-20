@@ -38,4 +38,8 @@ export class ArrowFunction extends AngularArrowFunction {
       options
     );
   }
+
+  compileTypeParameters(): string {
+    return "";
+  }
 }

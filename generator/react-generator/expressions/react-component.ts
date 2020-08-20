@@ -280,10 +280,6 @@ export class ReactComponent extends Component {
       hooks.push("useCallback");
     }
 
-    if (this.members.some((m) => m.isNested)) {
-      hooks.push("useMemo");
-    }
-
     if (getSubscriptions(this.listeners).length || this.effects.length) {
       hooks.push("useEffect");
     }

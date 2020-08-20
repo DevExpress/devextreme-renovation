@@ -42,7 +42,7 @@ export class GetAccessor extends BaseGetAccessor {
           new Paren(
             new ArrowFunction(
               [],
-              undefined,
+              [],
               [],
               type,
               SyntaxKind.EqualsGreaterThanToken,
