@@ -10,7 +10,7 @@ export declare type PropsType = {
   contentRender?: any;
   contentComponent?: any;
 };
-const Props: PropsType = {} as PropsType;
+const Props: PropsType = ({} as any) as PropsType;
 import React, {
   useCallback,
   useEffect,

@@ -7,12 +7,11 @@ export declare type WidgetInputType = {
   defaultSelected?: boolean;
   selectedChange?: (selected: boolean) => void;
 };
-const WidgetInput: WidgetInputType = {
+const WidgetInput: WidgetInputType = ({
   height: 10,
-  selected: false,
   defaultSelected: false,
   selectedChange: () => {},
-};
+} as any) as WidgetInputType;
 import React, { useState, useCallback, HtmlHTMLAttributes } from "react";
 
 declare type RestProps = Omit<

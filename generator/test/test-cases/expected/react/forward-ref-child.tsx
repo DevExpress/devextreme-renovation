@@ -10,7 +10,7 @@ export declare type PropsType = {
   nullableRef?: RefObject<HTMLDivElement>;
   state?: number;
 };
-const Props: PropsType = {} as PropsType;
+const Props: PropsType = ({} as any) as PropsType;
 import React, { useCallback, RefObject, HtmlHTMLAttributes } from "react";
 
 declare type RestProps = Omit<

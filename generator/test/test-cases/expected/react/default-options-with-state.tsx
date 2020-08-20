@@ -7,14 +7,12 @@ export declare type WidgetPropsType = {
   defaultP2?: string;
   p2Change?: (p2: string) => void;
 };
-export const WidgetProps: WidgetPropsType = {
-  p1: "",
-  p2: "",
+export const WidgetProps: WidgetPropsType = ({
   defaultP1: "",
   p1Change: () => {},
   defaultP2: "",
   p2Change: () => {},
-};
+} as any) as WidgetPropsType;
 import {
   convertRulesToOptions,
   Rule,

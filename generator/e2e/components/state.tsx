@@ -17,7 +17,7 @@ function view(model: ButtonWithState) {
 
 @ComponentBindings()
 class ButtonWithStateInput extends ButtonInput {
-  @TwoWay() pressed?: boolean;
+  @TwoWay() pressed: boolean = false;
   @Event() pressedChange?: (p: boolean) => void = () => null;
 }
 

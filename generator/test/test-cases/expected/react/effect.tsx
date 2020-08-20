@@ -14,13 +14,12 @@ export declare type WidgetInputType = {
   defaultS?: number;
   sChange?: (s: number) => void;
 };
-export const WidgetInput: WidgetInputType = {
+export const WidgetInput: WidgetInputType = ({
   p: "10",
   r: "20",
-  s: 10,
   defaultS: 10,
   sChange: () => {},
-};
+} as any) as WidgetInputType;
 import React, {
   useState,
   useCallback,
