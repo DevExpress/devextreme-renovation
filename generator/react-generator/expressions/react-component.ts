@@ -197,7 +197,7 @@ export class ReactComponent extends Component {
     );
   }
 
-  createNestedChildrenCollector(): Function {
+  createNestedChildrenCollector() {
     const statements = [
       new ReturnStatement(
         new SimpleExpression(`(React.Children.toArray(children)
