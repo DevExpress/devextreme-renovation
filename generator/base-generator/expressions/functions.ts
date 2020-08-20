@@ -134,7 +134,7 @@ export function getTemplate(
 
 export class BaseFunction extends Expression {
   modifiers: string[];
-  typeParameters: TypeParameterDeclaration[] | string[];
+  typeParameters: TypeParameterDeclaration[] | undefined;
   parameters: Parameter[];
   type?: TypeExpression | string;
   body: Block | Expression;
@@ -142,7 +142,7 @@ export class BaseFunction extends Expression {
 
   constructor(
     modifiers: string[] = [],
-    typeParameters: TypeParameterDeclaration[] | string[],
+    typeParameters: TypeParameterDeclaration[] | undefined,
     parameters: Parameter[],
     type: TypeExpression | string | undefined,
     body: Block | Expression,
@@ -285,7 +285,7 @@ export class Function extends BaseFunction {
     modifiers: string[] | undefined,
     asteriskToken: string,
     name: Identifier | undefined,
-    typeParameters: TypeParameterDeclaration[] | string[],
+    typeParameters: TypeParameterDeclaration[] | undefined,
     parameters: Parameter[],
     type: TypeExpression | string | undefined,
     body: Block,
@@ -309,13 +309,13 @@ export class Function extends BaseFunction {
 }
 
 export class ArrowFunction extends BaseFunction {
-  typeParameters: TypeParameterDeclaration[] | string[];
+  typeParameters: TypeParameterDeclaration[] | undefined;
   parameters: Parameter[];
   body: Block | Expression;
   equalsGreaterThanToken: string;
   constructor(
     modifiers: string[] | undefined,
-    typeParameters: TypeParameterDeclaration[] | string[],
+    typeParameters: TypeParameterDeclaration[] | undefined,
     parameters: Parameter[],
     type: TypeExpression | string | undefined,
     equalsGreaterThanToken: string,

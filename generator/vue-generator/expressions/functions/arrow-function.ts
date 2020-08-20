@@ -9,11 +9,12 @@ import { Block } from "../../../base-generator/expressions/statements";
 import { Expression } from "../../../base-generator/expressions/base";
 import { toStringOptions } from "../../types";
 import { Parameter } from "./parameter";
+import { TypeParameterDeclaration } from "../../../base-generator/expressions/type-parameter-declaration";
 
 export class ArrowFunction extends AngularArrowFunction {
   constructor(
     modifiers: string[] | undefined,
-    typeParameters: any,
+    typeParameters: TypeParameterDeclaration[] | undefined,
     parameters: Parameter[],
     type: TypeExpression | string | undefined,
     equalsGreaterThanToken: string,
