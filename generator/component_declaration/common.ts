@@ -156,9 +156,11 @@ export function JSXComponent<
   >
 >(Props?: { new (): PropsType }) {
   type DefaultPropsType = Omit<PropsType, RequiredProps>;
-  return class extends React.Component<PropsType> {
-    static defaultProps: DefaultPropsType =
-      (Props && new Props()) || ({} as DefaultPropsType); // for testing purpose
+  type RealPropsType = Partial<Omit<PropsType, RequiredProps>> &
+    Pick<PropsType, RequiredProps>;
+  return class extends React.Component<RealPropsType> {
+    static defaultProps: DefaultPropsType = ((Props && new Props()) ||
+      {}) as DefaultPropsType;
     props!: PropsType & { ref?: React.Component<PropsType> };
     restAttributes: { [name: string]: any } = {
       "rest-attributes": "restAttributes",

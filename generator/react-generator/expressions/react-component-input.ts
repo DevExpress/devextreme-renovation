@@ -98,9 +98,10 @@ export class ComponentInput extends BaseComponentInput {
           !p.initializer) ||
         (p.type.toString() === "any" &&
           !p.questionOrExclamationToken &&
-          !p.initializer)
+          !p.initializer) ||
+        (p.isState && p.questionOrExclamationToken === "")
     )
-      ? ` as ${typeName}`
+      ? ` as any as ${typeName}`
       : "";
 
     const declarationModifiers =
@@ -110,8 +111,7 @@ export class ComponentInput extends BaseComponentInput {
       (m) =>
         !(m as Property).inherited &&
         (m as Property).initializer &&
-        (m.decorators.find((d) => d.name !== Decorators.TwoWay) ||
-          (m as Property).questionOrExclamationToken !== "?")
+        m.decorators.find((d) => d.name !== Decorators.TwoWay)
     ) as Property[];
 
     return `${typeDeclaration}

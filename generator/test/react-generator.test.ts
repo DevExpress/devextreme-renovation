@@ -1462,7 +1462,7 @@ mocha.describe("import Components", function () {
         getResult(model.toString()),
         getResult(`
             export declare type ModelType = {height:string}
-            const Model:ModelType={} as ModelType
+            const Model:ModelType={} as any as ModelType
         `)
       );
     }
@@ -2533,7 +2533,7 @@ mocha.describe("ComponentInput", function () {
         getResult(expression.toString()),
         getResult(`
             export declare type BaseModelType = {contentTemplate: any,contentRender?: any,contentComponent?: any};
-            export const BaseModel:BaseModelType={} as BaseModelType;
+            export const BaseModel:BaseModelType={} as any as BaseModelType;
         `)
       );
     }
