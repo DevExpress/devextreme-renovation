@@ -1,14 +1,4 @@
-import {
-  ReactGenerator,
-  ReactComponent,
-  Property as BaseProperty,
-  JsxAttribute,
-  JsxOpeningElement as ReactJsxOpeningElement,
-  JsxClosingElement as ReactJsxClosingElement,
-  HeritageClause,
-  ComponentInput as BaseComponentInput,
-  TypeReferenceNode as BaseTypeReferenceNode,
-} from "./react-generator";
+import { ReactGenerator } from "./react-generator";
 import path from "path";
 import { Expression } from "./base-generator/expressions/base";
 import { Identifier, Call } from "./base-generator/expressions/common";
@@ -31,6 +21,14 @@ import { Decorator } from "./base-generator/expressions/decorator";
 import { Method } from "./base-generator/expressions/class-members";
 import { compileType } from "./base-generator/utils/string";
 import { Decorators } from "./component_declaration/decorators";
+import { ComponentInput as BaseComponentInput } from "./react-generator/expressions/react-component-input";
+import { Property as ReactProperty } from "./react-generator/expressions/class-members/property";
+import { HeritageClause } from "./react-generator/expressions/heritage-clause";
+import { ReactComponent } from "./react-generator/expressions/react-component";
+import { TypeReferenceNode as ReactTypeReferenceNode } from "./react-generator/expressions/type-refence-node";
+import { JsxClosingElement as ReactJsxClosingElement } from "./react-generator/expressions/jsx/jsx-closing-element";
+import { JsxOpeningElement as ReactJsxOpeningElement } from "./react-generator/expressions/jsx/jsx-opening-element";
+import { JsxAttribute } from "./react-generator/expressions/jsx/jsx-attribute";
 
 const BASE_JQUERY_WIDGET = "BASE_JQUERY_WIDGET";
 
@@ -333,7 +331,7 @@ class JQueryComponent {
   }
 }
 
-export class Property extends BaseProperty {
+export class Property extends ReactProperty {
   typeDeclaration() {
     if (this.decorators.find((d) => d.name === "Slot")) {
       return `${this.name}${this.questionOrExclamationToken}:any`;
@@ -380,7 +378,7 @@ class JsxClosingElement extends ReactJsxClosingElement {
   }
 }
 
-export class TypeReferenceNode extends BaseTypeReferenceNode {
+export class TypeReferenceNode extends ReactTypeReferenceNode {
   toString() {
     if (this.typeName.toString().startsWith("JSX.")) {
       return "any";

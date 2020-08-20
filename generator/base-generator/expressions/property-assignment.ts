@@ -8,12 +8,11 @@ import { Identifier } from "./common";
 import { ComputedPropertyName } from "./property-access";
 
 export class PropertyAssignment extends Expression {
-  key: Identifier | ComputedPropertyName;
-  value: Expression;
-  constructor(key: Identifier | ComputedPropertyName, value: Expression) {
+  constructor(
+    public key: Identifier | ComputedPropertyName,
+    public value: Expression
+  ) {
     super();
-    this.key = key;
-    this.value = value;
   }
 
   toString(options?: toStringOptions) {
