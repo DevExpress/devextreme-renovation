@@ -8,6 +8,7 @@ import {
   compileType,
   processComponentContext,
   calculateType,
+  compileTypeParameters,
 } from "../utils/string";
 import { Decorator } from "./decorator";
 import { Decorators } from "../../component_declaration/decorators";
@@ -165,10 +166,7 @@ export class Method extends BaseClassMember {
   }
 
   compileTypeParameters(): string {
-    if (this.typeParameters.length) {
-      return `<${this.typeParameters}>`;
-    }
-    return "";
+    return compileTypeParameters(this.typeParameters);
   }
 
   typeDeclaration() {

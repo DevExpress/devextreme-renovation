@@ -33,6 +33,13 @@ import {
 import SyntaxKind from "../../base-generator/syntaxKind";
 import { Property } from "./class-members/property";
 import { VueComponentInput } from "./vue-component-input";
+import { Function } from "./functions/function";
+import { Conditional } from "../../base-generator/expressions/conditions";
+import {
+  VariableStatement,
+  VariableDeclarationList,
+  VariableDeclaration,
+} from "../../base-generator/expressions/variables";
 
 export function getComponentListFromContext(context: GeneratorContext) {
   return Object.keys(context.components || {})
@@ -61,7 +68,7 @@ export class VueComponent extends Component {
     );
   }
 
-  createNestedGetter() {
+  createNestedChildrenCollector() {
     const statements = [
       new ReturnStatement(
         new SimpleExpression(
@@ -71,7 +78,7 @@ export class VueComponent extends Component {
               const collectedChildren = {};
               const childProps = child.componentOptions.propsData;
               if(child.componentOptions.children) {
-                this.__collectChildren(child.componentOptions.children).forEach(
+                __collectChildren(child.componentOptions.children).forEach(
                   ({ __name, ...cProps }) => {
                     if(__name) {
                       if (!collectedChildren[__name]) {
@@ -95,12 +102,11 @@ export class VueComponent extends Component {
       ),
     ];
 
-    return new Method(
+    return new Function(
       undefined,
       undefined,
-      undefined,
+      "",
       new Identifier("__collectChildren"),
-      undefined,
       [],
       [
         new Parameter(
@@ -114,8 +120,31 @@ export class VueComponent extends Component {
         ),
       ],
       new SimpleTypeExpression("{ [name:string]: any }[]"),
+      new Block(statements, true),
+      this.context
+    );
+  }
+
+  createNestedChildrenGetter() {
+    const statements = [
+      new ReturnStatement(
+        new Conditional(
+          new SimpleExpression("this.$slots.default"),
+          new SimpleExpression("__collectChildren(this.$slots.default)"),
+          new SimpleExpression("[]")
+        )
+      ),
+    ];
+    const result = new GetAccessor(
+      [],
+      undefined,
+      new Identifier("__nestedChildren"),
+      [],
+      undefined,
       new Block(statements, true)
     );
+
+    return result;
   }
 
   createPropsGetter(members: Array<Property | Method>) {
@@ -195,6 +224,13 @@ export class VueComponent extends Component {
     }, members);
 
     members.push(this.createPropsGetter(members));
+
+    if (members.some((m) => m.isNested)) {
+      members.push(this.createNestedChildrenGetter());
+    }
+    (members.filter((m) => m.isNested) as Property[]).forEach((m) => {
+      members.push(this.createNestedPropertyGetter(m));
+    });
 
     return members;
   }
@@ -328,23 +364,45 @@ export class VueComponent extends Component {
       isArray ? `&& ${propName}.length` : ""
     );
 
-    return `__getNested${nestedName}() {
-      if (${condition}) {
-        return ${propName};
-      }
-      if(this.$slots.default) {
-        const nested = ${SyntaxKind.ThisKeyword}.__collectChildren(this.$slots.default).filter(c => c.__name === "${property.name}");
-        if (nested.length) {
-          return nested${indexGetter}
-        }
-      }
-    }`;
+    const statements = [
+      new VariableStatement(
+        undefined,
+        new VariableDeclarationList(
+          [
+            new VariableDeclaration(
+              new Identifier("nested"),
+              undefined,
+              new SimpleExpression(
+                `this.__nestedChildren.filter(child => child.__name === "${property.name}")`
+              )
+            ),
+          ],
+          SyntaxKind.ConstKeyword
+        )
+      ),
+      new ReturnStatement(
+        new Conditional(
+          new SimpleExpression(condition),
+          new SimpleExpression(propName),
+          new Conditional(
+            new SimpleExpression("nested.length"),
+            new SimpleExpression(`nested${indexGetter}`),
+            new SimpleExpression("undefined")
+          )
+        )
+      ),
+    ];
+    return new GetAccessor(
+      undefined,
+      undefined,
+      new Identifier(`__getNested${nestedName}`),
+      [],
+      undefined,
+      new Block(statements, true)
+    );
   }
 
   generateComputed() {
-    const nestedGetters = (this.members.filter(
-      (m) => m.isNested
-    ) as Property[]).map((m) => this.createNestedPropertyGetter(m));
     const statements: string[] = this.methods
       .filter((m) => m instanceof GetAccessor)
       .map((m) =>
@@ -357,7 +415,6 @@ export class VueComponent extends Component {
 
     return `computed: {
               ${statements.join(",\n")},
-              ${nestedGetters.join(",\n")}
            }`;
   }
 
@@ -856,6 +913,11 @@ export class VueComponent extends Component {
 
     return `
           ${this.compileImports()}
+          ${
+            this.members.some((m) => m.isNested)
+              ? this.createNestedChildrenCollector()
+              : ""
+          }
           ${this.compileNestedComponents()}
           ${portalComponent}
           ${this.compileDefaultOptionsMethod(

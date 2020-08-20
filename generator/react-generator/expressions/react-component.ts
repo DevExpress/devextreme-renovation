@@ -32,7 +32,10 @@ import {
   isTypeArray,
 } from "../../base-generator/expressions/type";
 import { TypeParameterDeclaration } from "../../base-generator/expressions/type-parameter-declaration";
-import { Parameter } from "../../base-generator/expressions/functions";
+import {
+  Parameter,
+  Function,
+} from "../../base-generator/expressions/functions";
 import { getModuleRelativePath } from "../../base-generator/utils/path-utils";
 import { Property, getPropName } from "./class-members/property";
 import { Property as BaseProperty } from "../../base-generator/expressions/class-members";
@@ -45,6 +48,7 @@ import {
   capitalizeFirstLetter,
   removePlural,
 } from "../../base-generator/utils/string";
+import { Conditional } from "../../base-generator/expressions/conditions";
 
 function getSubscriptions(methods: Method[]) {
   return methods
@@ -81,12 +85,63 @@ export class ReactComponent extends Component {
       }
     });
 
-    return super.processMembers(members).map((p) => {
+    members = super.processMembers(members).map((p) => {
       if (p.inherited) {
         p.scope = "props";
       }
       return p;
     });
+
+    if (members.some((m) => m.isNested)) {
+      members.push(this.createNestedChildrenGetter());
+    }
+    (members.filter((m) => m.isNested) as Property[]).forEach((m) => {
+      members.push(this.createNestedPropertyGetter(m));
+    });
+
+    return members;
+  }
+
+  createNestedChildrenGetter() {
+    const statements = [
+      new VariableStatement(
+        undefined,
+        new VariableDeclarationList(
+          [
+            new VariableDeclaration(
+              new BindingPattern(
+                [
+                  new BindingElement(
+                    undefined,
+                    undefined,
+                    new Identifier("children")
+                  ),
+                ],
+                "object"
+              ),
+              undefined,
+              new PropertyAccess(
+                new SimpleExpression("this"),
+                new Identifier("props")
+              )
+            ),
+          ],
+          SyntaxKind.ConstKeyword
+        )
+      ),
+      new ReturnStatement(new SimpleExpression(`__collectChildren(children)`)),
+    ];
+    return new Method(
+      [],
+      undefined,
+      undefined,
+      new Identifier("__nestedChildren"),
+      undefined,
+      [new TypeParameterDeclaration(new Identifier("T"))],
+      [],
+      new ArrayTypeNode(new Identifier("T")),
+      new Block(statements, true)
+    );
   }
 
   createRestPropsGetter(members: BaseClassMember[]) {
@@ -142,7 +197,7 @@ export class ReactComponent extends Component {
     );
   }
 
-  createNestedGetter() {
+  createNestedChildrenCollector() {
     const statements = [
       new ReturnStatement(
         new SimpleExpression(`(React.Children.toArray(children)
@@ -170,12 +225,11 @@ export class ReactComponent extends Component {
       ),
     ];
 
-    return new Method(
+    return new Function(
       undefined,
       undefined,
-      undefined,
+      "",
       new Identifier("__collectChildren"),
-      undefined,
       [new TypeParameterDeclaration(new Identifier("T"))],
       [
         new Parameter(
@@ -189,7 +243,8 @@ export class ReactComponent extends Component {
         ),
       ],
       new ArrayTypeNode(new Identifier("T")),
-      new Block(statements, true)
+      new Block(statements, true),
+      this.context
     );
   }
 
@@ -223,10 +278,6 @@ export class ReactComponent extends Component {
 
     if (this.listeners.length || this.methods.length) {
       hooks.push("useCallback");
-    }
-
-    if (this.members.some((m) => m.isNested)) {
-      hooks.push("useMemo");
     }
 
     if (getSubscriptions(this.listeners).length || this.effects.length) {
@@ -671,21 +722,59 @@ export class ReactComponent extends Component {
       isArray ? `&& ${propName}.length` : ""
     );
 
-    return `const ${getterName} = useMemo(
-        function ${getterName}(): ${getterType}${undefinedType} {
-          if (${condition}) {
-            return ${propName};
-          }
-          const nested = __collectChildren<${type}Type & { __name: string }>(${getPropName(
-      "children"
-    )}).filter(child => child.__name === "${property.name}");
-          if(nested.length) {
-            return nested${indexGetter};
-          }
-        }, [${property.getDependency()}]
-      )
-      
-      `;
+    const statements = [
+      new VariableStatement(
+        undefined,
+        new VariableDeclarationList(
+          [
+            new VariableDeclaration(
+              new BindingPattern(
+                [
+                  new BindingElement(
+                    undefined,
+                    undefined,
+                    new Identifier(property.name)
+                  ),
+                ],
+                "object"
+              ),
+              undefined,
+              new PropertyAccess(
+                new SimpleExpression("this"),
+                new Identifier("props")
+              )
+            ),
+            new VariableDeclaration(
+              new Identifier("nested"),
+              undefined,
+              new SimpleExpression(
+                `__nestedChildren<${type}Type & { __name: string }>().filter(child => child.__name === "${property.name}")`
+              )
+            ),
+          ],
+          SyntaxKind.ConstKeyword
+        )
+      ),
+      new ReturnStatement(
+        new Conditional(
+          new SimpleExpression(condition),
+          new SimpleExpression(propName),
+          new Conditional(
+            new SimpleExpression("nested.length"),
+            new SimpleExpression(`nested${indexGetter}`),
+            new SimpleExpression("undefined")
+          )
+        )
+      ),
+    ];
+    return new GetAccessor(
+      undefined,
+      undefined,
+      new Identifier(getterName),
+      [],
+      new SimpleTypeExpression(`${getterType}${undefinedType}`),
+      new Block(statements, true)
+    );
   }
 
   compilePortalComponent() {
@@ -741,17 +830,16 @@ export class ReactComponent extends Component {
           `
       : "";
 
-    const nestedPropertyGetters = (this.members.filter(
-      (m) => m.isNested
-    ) as Property[])
-      .map((m) => this.createNestedPropertyGetter(m))
-      .join("\n");
-
     const portal = this.containsPortal() ? this.compilePortalComponent() : "";
 
     return `
               ${this.compileImports()}
               ${portal}
+              ${
+                this.members.some((m) => m.isNested)
+                  ? this.createNestedChildrenCollector()
+                  : ""
+              }
               ${this.compileNestedComponents()}
               ${this.compileComponentRef()}
               ${this.compileRestProps()}
@@ -786,7 +874,6 @@ export class ReactComponent extends Component {
                     })
                     .join("\n")}
                   ${this.compileUseEffect()}
-                  ${nestedPropertyGetters}
                   return ${this.compileViewCall()}
               ${
                 this.members.filter((m) => m.isApiMethod).length === 0

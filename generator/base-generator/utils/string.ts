@@ -37,8 +37,12 @@ export const compileType = (type: string = "", questionToken: string = "") => {
 };
 
 export const compileTypeParameters = (
-  typeParameters: TypeExpression[] | undefined
+  typeParameters: TypeExpression[] | string[] | undefined
 ) => (typeParameters?.length ? `<${typeParameters}>` : "");
+
+export const compileArrowTypeParameters = (
+  typeParameters: TypeExpression[] | string[] | undefined
+) => (typeParameters?.length ? `<${typeParameters} extends unknown>` : "");
 
 export function variableDeclaration(
   name: Identifier | BindingPattern,

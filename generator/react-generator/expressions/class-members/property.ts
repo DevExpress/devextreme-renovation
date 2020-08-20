@@ -97,7 +97,7 @@ export class Property extends BaseProperty {
         componentContext
       )})`;
     } else if (this.isNested) {
-      return `__getNested${capitalizeFirstLetter(this.name)}`;
+      return `__getNested${capitalizeFirstLetter(this.name)}()`;
     } else if (this.isProvider || this.isConsumer) {
       return this.name;
     }

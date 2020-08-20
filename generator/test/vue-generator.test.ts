@@ -182,6 +182,26 @@ mocha.describe("Vue-generator", function () {
           assert.strictEqual(getAst(expression.toString()), getAst("()=>{}"));
         });
 
+        mocha.it(
+          "ArrowFunction with defined typeParameters should ignore it",
+          function () {
+            const expression = generator.createArrowFunction(
+              undefined,
+              [
+                generator.createTypeParameterDeclaration(
+                  generator.createIdentifier("SomeType")
+                ),
+              ],
+              [],
+              undefined,
+              "",
+              generator.createBlock([], true)
+            );
+
+            assert.strictEqual(getAst(expression.toString()), getAst("()=>{}"));
+          }
+        );
+
         mocha.it("Function with Token type should ignore it", function () {
           const expression = generator.createFunctionDeclaration(
             [],

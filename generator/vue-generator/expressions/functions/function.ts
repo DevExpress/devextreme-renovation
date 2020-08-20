@@ -64,4 +64,8 @@ export class Function extends AngularFunction {
       options
     );
   }
+
+  compileTypeParameters(): string {
+    return "";
+  }
 }
