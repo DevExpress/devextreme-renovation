@@ -13,8 +13,6 @@ export class PropertyAssignment extends Expression {
     public value: Expression
   ) {
     super();
-    this.key = key;
-    this.value = value;
   }
 
   toString(options?: toStringOptions) {
