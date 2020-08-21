@@ -22,7 +22,7 @@
   - [Разметка и стили](#разметка-и-стили)		
   - [Использование необъявленных атрибутов](#использование-необъявленных-атрибутов)		
 - [Обратная совместимость](#обратная-совместимость)		
-  - [### Значения для TwoWay пропов](#значения-для-twoway-пропов)		
+  - [Значения для TwoWay пропов](#значения-для-twoway-пропов)		
   - [Подписка на ивенты](#подписка-на-ивенты)		
   - [Ивенты комопнентов](#ивенты-комопнентов)		
   - [Темплейты](#темплейты)		
@@ -44,7 +44,8 @@
     - [@Effect()](#effect)		
     - [@Template()](#template)	
     - [@Slot()](#slot)		
-    - [@Method()](#method)		
+    - [@Method()](#method)	
+    - [Context](#context)	
     - [JSX](#jsx)
 
 ## Цели
@@ -1189,6 +1190,64 @@ function viewFunction(viewModel: MyComponent) {
     </div>
   );
 }
+```
+
+#### Context
+
+Контекст служит для неявной передачи данных от родителя к потомкам. Контекст стоит использовать для передачи глобальных настроек или данных, например `rtlEnabled` конфиг или глобальное хранилище данных в плагинной системе.
+
+##### Создание контекста
+
+```tsx
+import { createContext } from 'devextreme-generator/component_declaration/common';
+
+const defaultValue = false;
+const RtlEnabledContext = createContext<boolean>(defaultValue);
+
+```
+
+##### Передача контеста 
+
+Для передачи контекста необходимо использовать проперти копонента или геттер. Для этого его необходимо отметить декоратором `Provider`.
+
+```tsx
+import { Provider, JSXComponent, ComponentBindings, OneWay } from 'devextreme-generator/component_declaration/common';
+
+@ComponentBindings()
+export class Props {
+  @OneWay() rtlEnabled = false;
+}
+
+@Component()
+export class ProviderComponent extends JSXComponent(Props){
+  @Provider(RtlEnabledContext)
+  get rtlEnabledProvider(){
+    return this.props.rtlEnabled;
+  }
+} 
+```
+
+##### Получение контекста
+
+Получить контекст может проперти копонента отмеченное декоратором `Counsumer`. Такое проперти будет иметь значение ближайшего провайдера контекста, найденного вверху дерева. Если такого провайдера нет, то значение будет равно `defaultValue` (см [Создание контекста](#cоздание-контекста)).
+
+```tsx
+import { Consumer, JSXComponent, ComponentBindings, OneWay, Component } from 'devextreme-generator/component_declaration/common';
+
+
+const view = ({ rtlEnabled }: ConsumerComponent) => 
+  (<div dir={rtlEnabled?"rtl":"ltr"}></div>)
+
+@ComponentBindings()
+export class Props {
+}
+
+@Component()
+export class ConsumerComponent extends JSXComponent(Props){
+  @Consumer(RtlEnabledContext)
+  rtlEnabled!: boolean;
+} 
+
 ```
 
 #### JSX
