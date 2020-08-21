@@ -255,3 +255,9 @@ cloneTest("Context - share object", async (t) => {
   await t.typeText("#context-pager-input", "55");
   await checkValue("13255");
 });
+
+cloneTest("Property access chain in view", async (t) => {
+  const el = await Selector("#test-property-access-chain");
+
+  await t.expect((await el.textContent).trim()).eql(`undefinedundefinedvalue`);
+});

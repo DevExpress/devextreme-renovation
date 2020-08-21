@@ -42,6 +42,7 @@ import {
   VariableStatement,
 } from "../base-generator/expressions/variables";
 import { ContextDeclaration } from "./expressions/context-declaration";
+import { PropertyAccessChain } from "./expressions/property-access-chain";
 
 export class AngularGenerator extends Generator {
   createJsxExpression(dotDotDotToken: string = "", expression?: Expression) {
@@ -263,6 +264,14 @@ export class AngularGenerator extends Generator {
 
   createPropertyAccess(expression: Expression, name: Identifier) {
     return new PropertyAccess(expression, name);
+  }
+
+  createPropertyAccessChain(
+    expression: Expression,
+    questionDotToken: string | undefined,
+    name: Expression
+  ) {
+    return new PropertyAccessChain(expression, questionDotToken, name);
   }
 
   createAsExpression(expression: Expression, type: TypeExpression) {

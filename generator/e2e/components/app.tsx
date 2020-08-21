@@ -33,6 +33,7 @@ import TemplateApp from "./template-passing/template-app";
 import PortalContainer from "./portal-container";
 import { PickPropsComponent } from "./pick-props";
 import ContextApp from "./context/context-app";
+import TestPropertyAccessChain from "./property-access-chain";
 
 function view(model: App) {
   return (
@@ -123,6 +124,7 @@ function view(model: App) {
       </div>
       <ContextApp />
       <PortalContainer />
+      <TestPropertyAccessChain />
     </div>
   );
 }

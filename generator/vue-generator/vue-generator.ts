@@ -63,6 +63,7 @@ import { EnumMember, Enum } from "./expressions/enum";
 import { Call } from "./expressions/call";
 import { VariableDeclaration } from "./expressions/variable-declaration";
 import { Class } from "./expressions/class";
+import { PropertyAccessChain } from "../angular-generator/expressions/property-access-chain";
 
 const emptyToString = () => "";
 
@@ -295,6 +296,14 @@ export class VueGenerator extends BaseGenerator {
 
   createPropertyAccess(expression: Expression, name: Identifier) {
     return new PropertyAccess(expression, name);
+  }
+
+  createPropertyAccessChain(
+    expression: Expression,
+    questionDotToken: string | undefined,
+    name: Expression
+  ) {
+    return new PropertyAccessChain(expression, questionDotToken, name);
   }
 
   createJsxExpression(dotDotDotToken: string = "", expression?: Expression) {

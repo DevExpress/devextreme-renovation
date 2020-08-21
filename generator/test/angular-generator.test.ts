@@ -6608,6 +6608,30 @@ mocha.describe("Angular generator", function () {
       });
     });
 
+    mocha.it("createPropertyAccessChain", function () {
+      const expression = generator.createPropertyAccessChain(
+        generator.createIdentifier("a"),
+        generator.createToken(generator.SyntaxKind.QuestionDotToken),
+        generator.createIdentifier("b")
+      );
+
+      assert.equal(expression.toString(), "a?.b");
+      assert.equal(
+        expression.toString({
+          members: [],
+          newComponentContext: "",
+        }),
+        "(a===undefined||a===null?undefined:a.b)"
+      );
+      assert.equal(
+        expression.toString({
+          members: [],
+          newComponentContext: generator.SyntaxKind.ThisKeyword,
+        }),
+        "a?.b"
+      );
+    });
+
     mocha.it("empty jsx expression", function () {
       const expression = generator.createJsxElement(
         generator.createJsxOpeningElement(generator.createIdentifier("div")),
