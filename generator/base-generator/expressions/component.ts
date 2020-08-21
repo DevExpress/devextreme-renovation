@@ -1,4 +1,4 @@
-import { Identifier } from "./common";
+import { Identifier, Call } from "./common";
 import {
   GetAccessor,
   Property,
@@ -13,10 +13,16 @@ import { Block, ReturnStatement } from "./statements";
 import { getModuleRelativePath } from "../utils/path-utils";
 import { Decorator } from "./decorator";
 import { BaseFunction } from "./functions";
-import { compileType } from "../utils/string";
+import {
+  compileType,
+  capitalizeFirstLetter,
+  removePlural,
+} from "../utils/string";
 import SyntaxKind from "../syntaxKind";
 import { warn } from "../../utils/messages";
 import { Decorators } from "../../component_declaration/decorators";
+import { ComponentInput } from "./component-input";
+import { extractComplexType, isTypeArray } from "./type";
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
   return heritageClauses.some((h) => h.isJsxComponent);
@@ -396,5 +402,107 @@ export class Component extends Class implements Heritable {
       );
     }
     return false;
+  }
+
+  getNestedImportName(name: string) {
+    return name;
+  }
+
+  getNestedFromComponentInput(
+    component: ComponentInput,
+    parentName: string = ""
+  ): {
+    component: ComponentInput;
+    name: string;
+    propName?: string;
+  }[] {
+    const nestedProps = component.members.filter((m) => m.isNested);
+    const components = component.context.components!;
+
+    const nested = Object.keys(components).reduce(
+      (acc, key) => {
+        const property = nestedProps.find(
+          ({ type }) => extractComplexType(type) === key
+        ) as Property;
+        if (property) {
+          const componentName = capitalizeFirstLetter(
+            isTypeArray(property.type)
+              ? removePlural(property.name)
+              : property.name
+          );
+          acc.push({
+            component: components[key] as ComponentInput,
+            name: `${parentName}${componentName}`,
+            propName: property.name,
+          });
+        }
+        return acc;
+      },
+      [] as {
+        component: ComponentInput;
+        name: string;
+        propName?: string;
+      }[]
+    );
+
+    return nested.concat(
+      nested.reduce(
+        (acc, { component, name }) =>
+          acc.concat(this.getNestedFromComponentInput(component, name)),
+        [] as {
+          component: ComponentInput;
+          name: string;
+          propName?: string;
+        }[]
+      )
+    );
+  }
+
+  collectNestedComponents() {
+    const components = this.context.components!;
+    if (this.heritageClauses.length) {
+      const heritage = this.heritageClauses[0].typeNodes[0];
+      if (heritage instanceof Call && heritage.arguments.length) {
+        const inheritFrom = heritage.arguments[0].toString();
+        const heritageInput = components[inheritFrom] as ComponentInput;
+
+        return this.getNestedFromComponentInput(heritageInput);
+      }
+    }
+    return [];
+  }
+
+  getNestedImports(components: ComponentInput[]) {
+    const outerComponents = components.filter(
+      ({ name }) => !this.context.components![name]
+    );
+    const imports = outerComponents.reduce(
+      (acc, component) => {
+        const path = component.context.path;
+        if (path) {
+          let relativePath = getModuleRelativePath(
+            this.context.dirname!,
+            component.context.path!
+          );
+          relativePath = relativePath.slice(0, relativePath.lastIndexOf("."));
+
+          if (!acc[relativePath]) {
+            acc[relativePath] = [];
+          }
+          acc[relativePath].push(this.getNestedImportName(component.name));
+        }
+
+        return acc;
+      },
+      {} as {
+        [x: string]: string[];
+      }
+    );
+
+    const result = Object.keys(imports).map(
+      (path) => `import { ${[...new Set(imports[path])]} } from "${path}";`
+    );
+
+    return result;
   }
 }

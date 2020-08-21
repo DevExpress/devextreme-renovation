@@ -10,6 +10,7 @@ export class GridColumn {
   @OneWay() name: string = "";
   @TwoWay() index: number = 0;
   @Nested() editing?: ColumnEditing = {};
+  @Nested() custom?: Custom[] = [];
 }
 
 @ComponentBindings()

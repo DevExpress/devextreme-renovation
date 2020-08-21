@@ -14,36 +14,43 @@ import { CommonModule } from "@angular/common";
 import {
   GridColumn,
   Editing,
-  ColumnEditing,
   Custom,
+  ColumnEditing,
   AnotherCustom,
 } from "./nested-props";
 
 @Directive({
   selector: "dx-widget dxo-editing dxo-another-custom",
 })
-class DxAnotherCustom extends AnotherCustom {}
+class DxWidgetEditingAnotherCustom extends AnotherCustom {}
 
 @Directive({
   selector: "dx-widget dxo-editing dxi-custom",
 })
-class DxCustom extends Custom {}
+class DxWidgetEditingCustom extends Custom {}
 
 @Directive({
   selector: "dx-widget dxi-column dxo-editing",
 })
-class DxColumnEditing extends ColumnEditing {}
+class DxWidgetColumnEditing extends ColumnEditing {}
+
+@Directive({
+  selector: "dx-widget dxi-column dxi-custom",
+})
+class DxWidgetColumnCustom extends Custom {}
 
 @Directive({
   selector: "dx-widget dxo-editing",
 })
-class DxEditing extends Editing {
-  private __custom?: DxCustom[] = [];
-  @ContentChildren(DxCustom) customNested!: QueryList<DxCustom>;
-  @Input() set custom(value: DxCustom[] | undefined) {
+class DxWidgetEditing extends Editing {
+  private __custom?: DxWidgetEditingCustom[] = [];
+  @ContentChildren(DxWidgetEditingCustom) customNested!: QueryList<
+    DxWidgetEditingCustom
+  >;
+  @Input() set custom(value: DxWidgetEditingCustom[] | undefined) {
     this.__custom = value;
   }
-  get custom(): DxCustom[] | undefined {
+  get custom(): DxWidgetEditingCustom[] | undefined {
     if (this.__custom && this.__custom.length) {
       return this.__custom;
     }
@@ -52,14 +59,13 @@ class DxEditing extends Editing {
       return nested;
     }
   }
-  private __anotherCustom?: DxAnotherCustom = {};
-  @ContentChildren(DxAnotherCustom) anotherCustomNested!: QueryList<
-    DxAnotherCustom
-  >;
-  @Input() set anotherCustom(value: DxAnotherCustom | undefined) {
+  private __anotherCustom?: DxWidgetEditingAnotherCustom = {};
+  @ContentChildren(DxWidgetEditingAnotherCustom)
+  anotherCustomNested!: QueryList<DxWidgetEditingAnotherCustom>;
+  @Input() set anotherCustom(value: DxWidgetEditingAnotherCustom | undefined) {
     this.__anotherCustom = value;
   }
-  get anotherCustom(): DxAnotherCustom | undefined {
+  get anotherCustom(): DxWidgetEditingAnotherCustom | undefined {
     if (this.__anotherCustom) {
       return this.__anotherCustom;
     }
@@ -73,19 +79,37 @@ class DxEditing extends Editing {
 @Directive({
   selector: "dx-widget dxi-column",
 })
-class DxGridColumn extends GridColumn {
-  private __editing?: DxColumnEditing = {};
-  @ContentChildren(DxColumnEditing) editingNested!: QueryList<DxColumnEditing>;
-  @Input() set editing(value: DxColumnEditing | undefined) {
+class DxWidgetColumn extends GridColumn {
+  private __editing?: DxWidgetColumnEditing = {};
+  @ContentChildren(DxWidgetColumnEditing) editingNested!: QueryList<
+    DxWidgetColumnEditing
+  >;
+  @Input() set editing(value: DxWidgetColumnEditing | undefined) {
     this.__editing = value;
   }
-  get editing(): DxColumnEditing | undefined {
+  get editing(): DxWidgetColumnEditing | undefined {
     if (this.__editing) {
       return this.__editing;
     }
     const nested = this.editingNested.toArray();
     if (nested.length) {
       return nested[0];
+    }
+  }
+  private __custom?: DxWidgetColumnCustom[] = [];
+  @ContentChildren(DxWidgetColumnCustom) customNested!: QueryList<
+    DxWidgetColumnCustom
+  >;
+  @Input() set custom(value: DxWidgetColumnCustom[] | undefined) {
+    this.__custom = value;
+  }
+  get custom(): DxWidgetColumnCustom[] | undefined {
+    if (this.__custom && this.__custom.length) {
+      return this.__custom;
+    }
+    const nested = this.customNested.toArray();
+    if (nested.length) {
+      return nested;
     }
   }
 }
@@ -103,9 +127,9 @@ export default class Widget extends WidgetInput {
   get __isEditable(): any {
     return this.editing?.editEnabled || this.editing?.custom?.length;
   }
-  private __columns?: Array<DxGridColumn | string>;
-  @ContentChildren(DxGridColumn) columnsNested!: QueryList<DxGridColumn>;
-  get columns(): Array<DxGridColumn | string> | undefined {
+  private __columns?: Array<DxWidgetColumn | string>;
+  @ContentChildren(DxWidgetColumn) columnsNested!: QueryList<DxWidgetColumn>;
+  get columns(): Array<DxWidgetColumn | string> | undefined {
     if (this.__columns && this.__columns.length) {
       return this.__columns;
     }
@@ -114,9 +138,9 @@ export default class Widget extends WidgetInput {
       return nested;
     }
   }
-  private __editing?: DxEditing;
-  @ContentChildren(DxEditing) editingNested!: QueryList<DxEditing>;
-  get editing(): DxEditing | undefined {
+  private __editing?: DxWidgetEditing;
+  @ContentChildren(DxWidgetEditing) editingNested!: QueryList<DxWidgetEditing>;
+  get editing(): DxWidgetEditing | undefined {
     if (this.__editing) {
       return this.__editing;
     }
@@ -136,11 +160,11 @@ export default class Widget extends WidgetInput {
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
   }
-  @Input() set columns(value: Array<DxGridColumn | string> | undefined) {
+  @Input() set columns(value: Array<DxWidgetColumn | string> | undefined) {
     this.__columns = value;
     this.changeDetection?.detectChanges();
   }
-  @Input() set editing(value: DxEditing | undefined) {
+  @Input() set editing(value: DxWidgetEditing | undefined) {
     this.__editing = value;
     this.changeDetection?.detectChanges();
   }
@@ -148,20 +172,22 @@ export default class Widget extends WidgetInput {
 @NgModule({
   declarations: [
     Widget,
-    DxGridColumn,
-    DxEditing,
-    DxColumnEditing,
-    DxCustom,
-    DxAnotherCustom,
+    DxWidgetColumn,
+    DxWidgetEditing,
+    DxWidgetColumnCustom,
+    DxWidgetColumnEditing,
+    DxWidgetEditingCustom,
+    DxWidgetEditingAnotherCustom,
   ],
   imports: [CommonModule],
   exports: [
     Widget,
-    DxGridColumn,
-    DxEditing,
-    DxColumnEditing,
-    DxCustom,
-    DxAnotherCustom,
+    DxWidgetColumn,
+    DxWidgetEditing,
+    DxWidgetColumnCustom,
+    DxWidgetColumnEditing,
+    DxWidgetEditingCustom,
+    DxWidgetEditingAnotherCustom,
   ],
 })
 export class DxWidgetModule {}

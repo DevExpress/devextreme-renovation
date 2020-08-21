@@ -31,8 +31,8 @@ function __collectChildren<T>(children: React.ReactNode): T[] {
 import {
   GridColumnType,
   EditingType,
-  ColumnEditingType,
   CustomType,
+  ColumnEditingType,
   AnotherCustomType,
 } from "./nested-props";
 export const Column: React.FunctionComponent<GridColumnType> & {
@@ -43,6 +43,10 @@ export const Editing: React.FunctionComponent<EditingType> & {
   propName: string;
 } = () => null;
 Editing.propName = "editing";
+export const ColumnCustom: React.FunctionComponent<CustomType> & {
+  propName: string;
+} = () => null;
+ColumnCustom.propName = "custom";
 export const ColumnEditing: React.FunctionComponent<ColumnEditingType> & {
   propName: string;
 } = () => null;
