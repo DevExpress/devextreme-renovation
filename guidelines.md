@@ -1240,7 +1240,7 @@ const RtlEnabledContext = createContext<boolean>(defaultValue);
 
 ##### Передача контеста 
 
-Для передачи контекста необходимо использовать проперти копонента или геттер. Для этого его необходимо отметить декоратором `Provider`.
+Для передачи контекста необходимо использовать проперти компонента или геттер. Для этого его необходимо отметить декоратором `Provider`.
 
 ```tsx
 import { Provider, JSXComponent, ComponentBindings, OneWay } from 'devextreme-generator/component_declaration/common';
