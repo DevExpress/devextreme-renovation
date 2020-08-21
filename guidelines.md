@@ -22,7 +22,7 @@
   - [Разметка и стили](#разметка-и-стили)		
   - [Использование необъявленных атрибутов](#использование-необъявленных-атрибутов)		
 - [Обратная совместимость](#обратная-совместимость)		
-  - [### Значения для TwoWay пропов](#значения-для-twoway-пропов)		
+  - [Значения для TwoWay пропов](#значения-для-twoway-пропов)		
   - [Подписка на ивенты](#подписка-на-ивенты)		
   - [Ивенты комопнентов](#ивенты-комопнентов)		
   - [Темплейты](#темплейты)		
@@ -44,7 +44,8 @@
     - [@Effect()](#effect)		
     - [@Template()](#template)	
     - [@Slot()](#slot)		
-    - [@Method()](#method)		
+    - [@Method()](#method)	
+    - [Context](#context)	
     - [JSX](#jsx)
 
 ## Цели
@@ -98,11 +99,11 @@
 
   @ComponentBindings()
   export class MyComponentProps {
-    @OneWay() readonlyProp?: string = "default value";
-    @TwoWay() selected? boolean = false;
+    @OneWay() readonlyProp: string = "default value";
+    @TwoWay() selected: boolean = false;
     @Event() onSmthHappened?: () => void;
-    @Template() userTemplate?: any;
-    @Slot() namedSlot?: any;
+    @Template() userTemplate: any;
+    @Slot() namedSlot: any;
   }
 
   @Component({ view: viewFunction })
@@ -385,7 +386,39 @@ Q. Так что же, могу наследоваться от кнопки и 
 
 Очень важно, чтобы модель была описана целиком и полностью, не допускается каких-то неявных расширений, неописанных параметров. В *React* можно неописанные пропы передавать в компонент, а в *Angular* нельзя - отсюда такое ограничение.
 
-Также старайтесь делать все пропы необязательными . Иначе это может привести к нежелательному и неочевидному поведению, а также к разному поведению в разных фреймворках. Вы можете указать дефолтное значение любого параметра, поэтому нет необходимости в обязательных параметрах.
+Все пропы публичных компонентов должны быть необязательными. Для этого нужно задать для пропа инициализатор или сделать его опциональным, используя `?` токен, в этом случае одно из возможных значений пропа будет `undefined`.
+
+```tsx
+@ComponentBindings()
+export class MyComponentProps {
+  @OneWay() p1: string = "default value"; // Optional prop
+  @OneWay() p2?: string; // Optional prop
+  @OneWay() p2!: string; // Required prop
+}
+```
+
+Для внутренних компонентов иногда удобно использовать обязательные пропы, чтобы не забыть передать их в компонент.
+Для пропов, которые обязательно должны быть переданы в компонент, необходимо перечислить их ключи при декларации компонета.
+В этом случает тайпскрипт будет сообщать о пропущенном пропе.
+
+```tsx
+@Component({ view: viewFunction })
+export class MyComponent extends JSXComponent<MyComponentProps, "p1"|"p2">(MyComponentProps) {
+}
+
+<MyComponent /> // error p1, p2 is missed
+```
+
+Пропы не всегда удобно описывать с помощью класса. Например, компонент имеет подмножество пропов своего родительского компонента.
+В этом случае можно объявить пропы так
+
+```tsx
+type Props = Pick<ParentProps, "p1"|"p2">;
+
+@Component({ view: viewFunction })
+export class MyComponent extends JSXComponent<Props>() {
+}
+```
 
 ### Жизненный цикл компонента
 
@@ -648,7 +681,7 @@ describe('_Component_', () => {
 ```tsx
 @ComponentBindings()
 class MyComponentProps {
-  @OneWay() type?: 'bad' | 'good' = 'good';
+  @OneWay() type: 'bad' | 'good' = 'good';
 }
 
 @Component({ view: viewFunction })
@@ -699,7 +732,7 @@ A. Потому что в разных фреймворках мы генери�
 ```tsx
 @ComponentBindings()
 class MyComponentProps {
-  @TwoWay() value?: number = 0;
+  @TwoWay() value: number = 0;
 }
 
 @Component({ view: viewFunction })
@@ -778,7 +811,7 @@ onCounterChange(counter) {
 ```tsx
 @ComponentBindings()
 class MyComponentProps {
-  @TwoWay() value?: number = 0;
+  @TwoWay() value: number = 0;
   @Event() valueChange?: (value: number) => void;
 }
 
@@ -819,7 +852,7 @@ function viewFunction(viewModel) {
 ```ts
 @ComponentBindings()
 export class Column {
-  @OneWay() dataField?: string = "Default Value";
+  @OneWay() dataField: string = "Default Value";
   // Other props
 }
 @ComponentBindings()
@@ -855,7 +888,7 @@ class MyComponent extends JSXComponent(GridProps) {
 ```tsx
 @ComponentBindings()
 class MyComponentProps {
-  @OneWay() type?: 'bad' | 'good' = 'good';
+  @OneWay() type: 'bad' | 'good' = 'good';
   @Event() onClick?: (e: { type: 'bad' | 'good' }) => any;
 }
 
@@ -1134,7 +1167,7 @@ function viewFunction(viewModel: MyComponent) {
 ```tsx
 @ComponentBindings()
 class MyComponentProps {
-  @OneWay() type?: 'bad' | 'good' = 'good';
+  @OneWay() type: 'bad' | 'good' = 'good';
 }
 
 @Component({ view: viewFunction })
@@ -1168,7 +1201,7 @@ import MyEditorComponent from './my_funny_editor';
 
 @ComponentBindings()
 class MyComponentProps {
-  @OneWay() type?: 'bad' | 'good' = 'good';
+  @OneWay() type: 'bad' | 'good' = 'good';
 }
 
 @Component({ view: viewFunction })
@@ -1189,6 +1222,64 @@ function viewFunction(viewModel: MyComponent) {
     </div>
   );
 }
+```
+
+#### Context
+
+Контекст служит для неявной передачи данных от родителя к потомкам. Контекст стоит использовать для передачи глобальных настроек или данных, например `rtlEnabled` конфиг или глобальное хранилище данных в плагинной системе.
+
+##### Создание контекста
+
+```tsx
+import { createContext } from 'devextreme-generator/component_declaration/common';
+
+const defaultValue = false;
+const RtlEnabledContext = createContext<boolean>(defaultValue);
+
+```
+
+##### Передача контеста 
+
+Для передачи контекста необходимо использовать проперти компонента или геттер. Для этого его необходимо отметить декоратором `Provider`.
+
+```tsx
+import { Provider, JSXComponent, ComponentBindings, OneWay } from 'devextreme-generator/component_declaration/common';
+
+@ComponentBindings()
+export class Props {
+  @OneWay() rtlEnabled = false;
+}
+
+@Component()
+export class ProviderComponent extends JSXComponent(Props){
+  @Provider(RtlEnabledContext)
+  get rtlEnabledProvider(){
+    return this.props.rtlEnabled;
+  }
+} 
+```
+
+##### Получение контекста
+
+Получить контекст может проперти компонента, отмеченное декоратором `Counsumer`. Такое проперти будет иметь значение ближайшего провайдера контекста, найденного вверху дерева. Если такого провайдера нет, то значение будет равно `defaultValue` (см [Создание контекста](#cоздание-контекста)).
+
+```tsx
+import { Consumer, JSXComponent, ComponentBindings, OneWay, Component } from 'devextreme-generator/component_declaration/common';
+
+
+const view = ({ rtlEnabled }: ConsumerComponent) => 
+  (<div dir={rtlEnabled?"rtl":"ltr"}></div>)
+
+@ComponentBindings()
+export class Props {
+}
+
+@Component()
+export class ConsumerComponent extends JSXComponent(Props){
+  @Consumer(RtlEnabledContext)
+  rtlEnabled!: boolean;
+} 
+
 ```
 
 #### JSX
@@ -1240,7 +1331,7 @@ import { Portal } from 'devextreme-generator/component_declaration/common';
 @ComponentBindings()
 class MyComponentProps {
   @Ref() someElement!: HTMLDivElement;
-  @OneWay() opened?: boolean = false;
+  @OneWay() opened: boolean = false;
 }
 
 @Component({ view: viewFunction })
