@@ -365,8 +365,18 @@ mocha.describe("base-generator: expressions", function () {
             expression
           )
           .toString(),
-        "this.field=this.field"
+        "this.field = this.field"
       );
+    });
+
+    mocha.it("instanceof", function () {
+      const expression = generator.createBinary(
+        generator.createIdentifier("a"),
+        generator.SyntaxKind.InstanceOfKeyword,
+        generator.createIdentifier("b")
+      );
+
+      assert.equal(expression.toString(), "a instanceof b");
     });
 
     mocha.it("Prefix", function () {
@@ -1544,7 +1554,7 @@ mocha.describe("base-generator: expressions", function () {
 
           const list = expression.getVariableExpressions();
           assert.strictEqual(Object.keys(list).length, 1);
-          assert.strictEqual(list["a"].toString(), `(i-j)`);
+          assert.strictEqual(list["a"].toString(), `(i - j)`);
         }
       );
 

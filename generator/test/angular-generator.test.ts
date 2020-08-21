@@ -449,7 +449,7 @@ mocha.describe("Angular generator", function () {
         ]
       );
 
-      assert.strictEqual(expression.toString(), `<input [a]="s1+s2"/>`);
+      assert.strictEqual(expression.toString(), `<input [a]="s1 + s2"/>`);
     });
 
     mocha.it(
@@ -496,7 +496,7 @@ mocha.describe("Angular generator", function () {
 
         assert.strictEqual(
           error,
-          "Operator + is not supported: viewModel.input+<input ></input>"
+          "Operator + is not supported: viewModel.input + <input ></input>"
         );
       }
     );
@@ -521,7 +521,7 @@ mocha.describe("Angular generator", function () {
         generator.createJsxClosingElement(generator.createIdentifier("div"))
       );
 
-      assert.strictEqual(expression.toString(), "<div >{{s1+s2}}</div>");
+      assert.strictEqual(expression.toString(), "<div >{{s1 + s2}}</div>");
     });
 
     mocha.it(
@@ -596,7 +596,7 @@ mocha.describe("Angular generator", function () {
 
         assert.strictEqual(
           expression.children[0].toString(),
-          `<input *ngIf="viewModel==='input'"/>`
+          `<input *ngIf="viewModel === 'input'"/>`
         );
       }
     );
@@ -5822,7 +5822,7 @@ mocha.describe("Angular generator", function () {
         }
         assert.strictEqual(
           error,
-          "Error: Can't assign property use TwoWay() or Internal State - this.props.width=10"
+          "Error: Can't assign property use TwoWay() or Internal State - this.props.width = 10"
         );
       });
 

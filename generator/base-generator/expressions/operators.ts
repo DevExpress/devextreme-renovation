@@ -60,9 +60,9 @@ export class Binary extends Expression {
         )}`;
       }
     }
-    return `${this.left.toString(options)}${this.operator}${this.right.toString(
-      options
-    )}`;
+    return `${this.left.toString(options)} ${
+      this.operator
+    } ${this.right.toString(options)}`;
   }
 
   getDependency() {
