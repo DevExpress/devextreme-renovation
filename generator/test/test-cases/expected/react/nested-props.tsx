@@ -2,6 +2,7 @@ export declare type GridColumnType = {
   name: string;
   index: number;
   editing?: typeof ColumnEditing;
+  custom?: typeof Custom[];
   defaultIndex?: number;
   indexChange?: (index: number) => void;
   children?: React.ReactNode;
@@ -9,6 +10,7 @@ export declare type GridColumnType = {
 export const GridColumn: GridColumnType = ({
   name: "",
   editing: {},
+  custom: [],
   defaultIndex: 0,
   indexChange: () => {},
 } as any) as GridColumnType;

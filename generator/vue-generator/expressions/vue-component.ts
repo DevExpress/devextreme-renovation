@@ -28,7 +28,6 @@ import {
   SimpleTypeExpression,
   isTypeArray,
   ArrayTypeNode,
-  extractComplexType,
 } from "../../base-generator/expressions/type";
 import SyntaxKind from "../../base-generator/syntaxKind";
 import { Property } from "./class-members/property";
@@ -766,61 +765,28 @@ export class VueComponent extends Component {
     });`;
   }
 
-  compileNestedComponents() {
-    const components = this.context.components!;
-    if (this.heritageClauses.length) {
-      const heritage = this.heritageClauses[0].typeNodes[0];
-      if (heritage instanceof Call && heritage.arguments.length) {
-        const inheritFrom = heritage.arguments[0].toString();
-        const heritageInput = components[inheritFrom] as VueComponentInput;
-
-        const bindings = this.getNestedFromComponentInput(heritageInput);
-        const imports = this.getNestedImports(
-          bindings.map(({ component }) => component)
-        );
-        const nested = bindings.map(({ component, name, propName }) =>
-          this.getNestedExports(component, name, propName)
-        );
-
-        return imports.concat(nested).join("\n");
-      }
-    }
-    return "";
+  collectNestedComponents() {
+    return super.collectNestedComponents() as {
+      component: VueComponentInput;
+      name: string;
+      propName: string;
+    }[];
   }
 
-  getNestedImports(components: VueComponentInput[]) {
-    const outerComponents = components.filter(
-      ({ name }) => !this.context.components![name]
-    );
+  compileNestedComponents() {
+    const collectedComponents = this.collectNestedComponents();
+    if (collectedComponents.length) {
+      const imports = this.getNestedImports(
+        collectedComponents.map(({ component }) => component)
+      );
+      const nestedComponents = collectedComponents.map(
+        ({ component, name, propName }) =>
+          this.getNestedExports(component, name, propName)
+      );
 
-    const imports = outerComponents.reduce(
-      (acc, component) => {
-        const path = component.context.path;
-        if (path) {
-          let relativePath = getModuleRelativePath(
-            this.context.dirname!,
-            component.context.path!
-          );
-          relativePath = relativePath.slice(0, relativePath.lastIndexOf("."));
-
-          if (!acc[relativePath]) {
-            acc[relativePath] = [];
-          }
-          acc[relativePath].push(`${component.name}`);
-        }
-
-        return acc;
-      },
-      {} as {
-        [x: string]: string[];
-      }
-    );
-
-    const result = Object.keys(imports).map((path) => {
-      return `import { ${imports[path].join(", ")} } from "${path}";`;
-    });
-
-    return result;
+      return imports.concat(nestedComponents).join("\n");
+    }
+    return "";
   }
 
   getNestedExports(
@@ -832,56 +798,6 @@ export class VueComponent extends Component {
       props: ${component.name}
     }
     Dx${name}.propName="${propName}"`;
-  }
-
-  getNestedFromComponentInput(
-    component: VueComponentInput,
-    parentName: string = ""
-  ): {
-    component: VueComponentInput;
-    name: string;
-    propName: string;
-  }[] {
-    const nestedProps = component.members.filter((m) => m.isNested);
-    const components = component.context.components!;
-
-    const nested = Object.keys(components).reduce(
-      (acc, key) => {
-        const property = nestedProps.find(
-          ({ type }) => extractComplexType(type) === key
-        ) as Property;
-        if (property) {
-          const componentName = capitalizeFirstLetter(
-            isTypeArray(property.type)
-              ? removePlural(property.name)
-              : property.name
-          );
-          acc.push({
-            component: components[key] as VueComponentInput,
-            name: `${parentName}${componentName}`,
-            propName: property.name,
-          });
-        }
-        return acc;
-      },
-      [] as {
-        component: VueComponentInput;
-        name: string;
-        propName: string;
-      }[]
-    );
-
-    return nested.concat(
-      nested.reduce(
-        (acc, { component, name }) =>
-          acc.concat(this.getNestedFromComponentInput(component, name)),
-        [] as {
-          component: VueComponentInput;
-          name: string;
-          propName: string;
-        }[]
-      )
-    );
   }
 
   toString() {

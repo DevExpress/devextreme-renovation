@@ -44,10 +44,7 @@ import { GetAccessor } from "./class-members/get-accessor";
 import { ObjectLiteral } from "../../base-generator/expressions/literal";
 import path from "path";
 import { ComponentInput, getTemplatePropName } from "./react-component-input";
-import {
-  capitalizeFirstLetter,
-  removePlural,
-} from "../../base-generator/utils/string";
+import { capitalizeFirstLetter } from "../../base-generator/utils/string";
 import { Conditional } from "../../base-generator/expressions/conditions";
 
 function getSubscriptions(methods: Method[]) {
@@ -595,38 +592,8 @@ export class ReactComponent extends Component {
     };
   }
 
-  getNestedImports(components: ComponentInput[]) {
-    const outerComponents = components.filter(
-      ({ name }) => !this.context.components![name]
-    );
-    const imports = outerComponents.reduce(
-      (acc, component) => {
-        const path = component.context.path;
-        if (path) {
-          let relativePath = getModuleRelativePath(
-            this.context.dirname!,
-            component.context.path!
-          );
-          relativePath = relativePath.slice(0, relativePath.lastIndexOf("."));
-
-          if (!acc[relativePath]) {
-            acc[relativePath] = [];
-          }
-          acc[relativePath].push(`${component.name}Type`);
-        }
-
-        return acc;
-      },
-      {} as {
-        [x: string]: string[];
-      }
-    );
-
-    const result = Object.keys(imports).map((path) => {
-      return `import { ${imports[path].join(", ")} } from "${path}";`;
-    });
-
-    return result;
+  getNestedImportName(name: string) {
+    return `${name}Type`;
   }
 
   getNestedExports(component: ComponentInput, name: string, propName: string) {
@@ -634,74 +601,26 @@ export class ReactComponent extends Component {
       ${name}.propName="${propName}"`;
   }
 
-  getNestedFromComponentInput(
-    component: ComponentInput,
-    parentName: string = ""
-  ): {
-    component: ComponentInput;
-    name: string;
-    propName: string;
-  }[] {
-    const nestedProps = component.members.filter((m) => m.isNested);
-    const components = component.context.components!;
-
-    const nested = Object.keys(components).reduce(
-      (acc, key) => {
-        const property = nestedProps.find(
-          ({ type }) => extractComplexType(type) === key
-        ) as Property;
-        if (property) {
-          const componentName = capitalizeFirstLetter(
-            isTypeArray(property.type)
-              ? removePlural(property.name)
-              : property.name
-          );
-          acc.push({
-            component: components[key] as ComponentInput,
-            name: `${parentName}${componentName}`,
-            propName: property.name,
-          });
-        }
-        return acc;
-      },
-      [] as {
-        component: ComponentInput;
-        name: string;
-        propName: string;
-      }[]
-    );
-
-    return nested.concat(
-      nested.reduce(
-        (acc, { component, name }) =>
-          acc.concat(this.getNestedFromComponentInput(component, name)),
-        [] as {
-          component: ComponentInput;
-          name: string;
-          propName: string;
-        }[]
-      )
-    );
+  collectNestedComponents() {
+    return super.collectNestedComponents() as {
+      component: ComponentInput;
+      name: string;
+      propName: string;
+    }[];
   }
 
   compileNestedComponents() {
-    const components = this.context.components!;
-    if (this.heritageClauses.length) {
-      const heritage = this.heritageClauses[0].typeNodes[0];
-      if (heritage instanceof Call && heritage.arguments.length) {
-        const inheritFrom = heritage.arguments[0].toString();
-        const heritageInput = components[inheritFrom] as ComponentInput;
-
-        const bindings = this.getNestedFromComponentInput(heritageInput);
-        const imports = this.getNestedImports(
-          bindings.map(({ component }) => component)
-        );
-        const nested = bindings.map(({ component, name, propName }) =>
+    const collectedComponents = this.collectNestedComponents();
+    if (collectedComponents.length) {
+      const imports = this.getNestedImports(
+        collectedComponents.map(({ component }) => component)
+      );
+      const nestedComponents = collectedComponents.map(
+        ({ component, name, propName }) =>
           this.getNestedExports(component, name, propName)
-        );
+      );
 
-        return imports.concat(nested).join("\n");
-      }
+      return imports.concat(nestedComponents).join("\n");
     }
     return "";
   }

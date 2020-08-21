@@ -12,6 +12,12 @@ export const GridColumn = {
       return 0;
     },
   },
+  custom: {
+    type: Array,
+    default() {
+      return [];
+    },
+  },
 };
 export const Custom = {};
 export const AnotherCustom = {};

@@ -34,7 +34,6 @@ import { Decorators } from "../../component_declaration/decorators";
 import { isElement } from "./jsx/elements";
 import { GeneratorContext } from "../../base-generator/types";
 import { ComponentInput } from "./component-input";
-import { getModuleRelativePath } from "../../base-generator/utils/path-utils";
 import {
   removePlural,
   compileType,
@@ -125,6 +124,13 @@ export const getAngularSelector = (
     .map((w) => w.toLowerCase());
   return [`dx${postfix}`].concat(words).join("-");
 };
+
+export const convertSelectorToName = (selector: string) =>
+  selector
+    .replace(/dx[io]?-/g, "")
+    .split(/[- ]/)
+    .map((str) => capitalizeFirstLetter(str))
+    .join("");
 
 export class AngularComponent extends Component {
   decorator: Decorator;
@@ -250,12 +256,16 @@ export class AngularComponent extends Component {
       modifiers,
       new Identifier(`${name}Nested`),
       questionOrExclamationToken,
-      `Dx${type}`,
+      type,
       initializer
     );
   }
 
-  processNestedProperty(m: Property, onPushStrategy: boolean = false) {
+  processNestedProperty(
+    m: Property,
+    onPushStrategy: boolean = false,
+    selector: string = this.selector
+  ) {
     const {
       decorators,
       modifiers,
@@ -271,8 +281,13 @@ export class AngularComponent extends Component {
         {}
       ),
     ];
-    const nestedType = extractComplexType(type);
-    const complexType = type.toString().replace(nestedType, `Dx${nestedType}`);
+
+    const nestedName = `Dx${convertSelectorToName(
+      `${selector} ${isTypeArray(type) ? removePlural(name) : name}`
+    )}`;
+    const complexType = type
+      .toString()
+      .replace(extractComplexType(type), nestedName);
 
     return [
       this.createNestedState(
@@ -286,7 +301,7 @@ export class AngularComponent extends Component {
         modifiers,
         name,
         questionOrExclamationToken,
-        nestedType,
+        nestedName,
         initializer
       ),
       this.createNestedPropertySetter(
@@ -873,52 +888,20 @@ export class AngularComponent extends Component {
         `;
   }
 
-  getNestedImports(components: ComponentInput[]) {
-    const outerComponents = components.filter(
-      ({ name }) => !this.context.components![name]
-    );
-    const imports = outerComponents.reduce(
-      (acc, component) => {
-        const path = component.context.path;
-        if (path) {
-          let relativePath = getModuleRelativePath(
-            this.context.dirname!,
-            component.context.path!
-          );
-          relativePath = relativePath.slice(0, relativePath.lastIndexOf("."));
-
-          if (!acc[relativePath]) {
-            acc[relativePath] = [];
-          }
-          acc[relativePath].push(component.name);
-        }
-
-        return acc;
-      },
-      {} as {
-        [x: string]: string[];
-      }
-    );
-
-    const result = Object.keys(imports).map((path) => {
-      return `import { ${imports[path].join(", ")} } from "${path}";`;
-    });
-
-    return result;
-  }
-
   getNestedExports(component: ComponentInput, selector: string) {
     const innerNested = (component.members.filter(
       (m) => m.isNested
     ) as Property[])
-      .map((m) => this.processNestedProperty(m).join("\n"))
+      .map((m) => this.processNestedProperty(m, false, selector).join("\n"))
       .join("\n");
+
+    const name = convertSelectorToName(selector);
 
     return `
       @Directive({
         selector: "${selector}"
       })
-      class Dx${component.name} extends ${component.name} {
+      class Dx${name} extends ${component.name} {
         ${innerNested}
       }
     `;
@@ -926,8 +909,8 @@ export class AngularComponent extends Component {
 
   getNestedFromComponentInput(
     component: ComponentInput,
-    parentSelector: string
-  ): { component: ComponentInput; parentSelector: string }[] {
+    parentSelector: string = this.selector
+  ): { component: ComponentInput; name: string }[] {
     const nestedProps = component.members.filter(
       (m) => m.isNested
     ) as Property[];
@@ -947,14 +930,14 @@ export class AngularComponent extends Component {
 
           acc.push({
             component: components[key] as ComponentInput,
-            parentSelector: `${parentSelector} ${selector}`,
+            name: `${parentSelector} ${selector}`,
           });
         }
         return acc;
       },
       [] as {
         component: ComponentInput;
-        parentSelector: string;
+        name: string;
       }[]
     );
 
@@ -962,41 +945,38 @@ export class AngularComponent extends Component {
       nested.reduce(
         (acc, el) => {
           return acc.concat(
-            this.getNestedFromComponentInput(el.component, el.parentSelector)
+            this.getNestedFromComponentInput(el.component, el.name)
           );
         },
         [] as {
           component: ComponentInput;
-          parentSelector: string;
+          name: string;
         }[]
       )
     );
   }
 
+  collectNestedComponents() {
+    return super.collectNestedComponents() as {
+      component: ComponentInput;
+      name: string;
+    }[];
+  }
+
   compileNestedComponents(nestedModules: string[]) {
-    const components = this.context.components!;
-    if (this.heritageClauses.length) {
-      const heritage = this.heritageClauses[0].typeNodes[0];
-      if (heritage instanceof Call && heritage.arguments.length) {
-        const inheritFrom = heritage.arguments[0].toString();
-        const heritageInput = components[inheritFrom] as ComponentInput;
+    const collectedComponents = this.collectNestedComponents();
+    if (collectedComponents.length) {
+      const imports = this.getNestedImports(
+        collectedComponents.map(({ component }) => component)
+      );
+      const nestedComponents = collectedComponents
+        .map(({ component, name }) => {
+          nestedModules.push(`Dx${convertSelectorToName(name)}`);
+          return this.getNestedExports(component, name);
+        })
+        .reverse();
 
-        const collectedComponents = this.getNestedFromComponentInput(
-          heritageInput,
-          this.selector
-        );
-        const imports = this.getNestedImports(
-          collectedComponents.map(({ component }) => component)
-        );
-        const nestedComponents = collectedComponents
-          .map(({ component, parentSelector }) => {
-            nestedModules.push(`Dx${component.name}`);
-            return this.getNestedExports(component, parentSelector);
-          })
-          .reverse();
-
-        return imports.concat(nestedComponents).join("\n");
-      }
+      return imports.concat(nestedComponents).join("\n");
     }
     return "";
   }

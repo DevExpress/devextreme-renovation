@@ -34,8 +34,8 @@ function __collectChildren(children) {
 import {
   GridColumn,
   Editing,
-  ColumnEditing,
   Custom,
+  ColumnEditing,
   AnotherCustom,
 } from "./nested-props";
 export const DxColumn = {
@@ -46,6 +46,10 @@ export const DxEditing = {
   props: Editing,
 };
 DxEditing.propName = "editing";
+export const DxColumnCustom = {
+  props: Custom,
+};
+DxColumnCustom.propName = "custom";
 export const DxColumnEditing = {
   props: ColumnEditing,
 };
