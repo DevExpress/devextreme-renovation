@@ -1,4 +1,8 @@
-import { Identifier, Call } from "../../base-generator/expressions/common";
+import {
+  Identifier,
+  Call,
+  Paren,
+} from "../../base-generator/expressions/common";
 import { Decorators } from "../../component_declaration/decorators";
 import { Decorator } from "../../base-generator/expressions/decorator";
 import { BaseClassMember } from "../../base-generator/expressions/class-members";
@@ -46,6 +50,7 @@ import path from "path";
 import { ComponentInput, getTemplatePropName } from "./react-component-input";
 import { capitalizeFirstLetter } from "../../base-generator/utils/string";
 import { Conditional } from "../../base-generator/expressions/conditions";
+import { JsxElement } from "./jsx/jsx-element";
 
 function getSubscriptions(methods: Method[]) {
   return methods
@@ -551,7 +556,24 @@ export class ReactComponent extends Component {
   }
 
   compileRestProps(): string {
-    return `declare type RestProps = Omit<HtmlHTMLAttributes<HTMLDivElement>, keyof ${this.getPropsType()}>`;
+    let openingElementTagName = "";
+
+    const viewFunction = this.context.viewFunctions?.[this.view];
+    if (viewFunction) {
+      if (viewFunction.body instanceof Block) {
+        const returnStatement = viewFunction.body.statements.find(
+          (el) => el instanceof ReturnStatement
+        ) as ReturnStatement;
+        let element = returnStatement.expression;
+        if (element instanceof Paren) element = element.expression;
+        if (element instanceof JsxElement)
+          openingElementTagName = element.openingElement.tagName.toString();
+      }
+    }
+    const elementType =
+      openingElementTagName === "svg" ? "SVGElement" : "HTMLDivElement";
+    return `declare type RestProps = Omit<HtmlHTMLAttributes<${elementType}>, keyof ${this.getPropsType()}>`;
+    // return `declare type RestProps = Omit<HtmlHTMLAttributes<HTMLDivElement>, keyof ${this.getPropsType()}>`;
   }
 
   getPropsType() {
