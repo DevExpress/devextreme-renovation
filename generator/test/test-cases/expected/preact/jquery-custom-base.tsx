@@ -3,6 +3,13 @@ import MyBaseComponent from "../../../../component_declaration/jquery_custom_bas
 import WidgetComponent from "../../../../jquery-custom-base";
 
 export default class Widget extends MyBaseComponent {
+  get _propsInfo() {
+    return {
+      twoway: [],
+      allowNull: [],
+    };
+  }
+
   get _viewComponent() {
     return WidgetComponent;
   }

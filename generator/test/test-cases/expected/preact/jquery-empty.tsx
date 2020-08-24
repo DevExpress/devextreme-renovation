@@ -3,6 +3,13 @@ import BaseComponent from "../../../../component_declaration/jquery_base_compone
 import WidgetComponent from "../../../../jquery-empty";
 
 export default class Widget extends BaseComponent {
+  get _propsInfo() {
+    return {
+      twoway: [],
+      allowNull: [],
+    };
+  }
+
   get _viewComponent() {
     return WidgetComponent;
   }

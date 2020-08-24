@@ -11,6 +11,13 @@ export default class Widget extends BaseComponent {
     return this.viewRef.getSize();
   }
 
+  get _propsInfo() {
+    return {
+      twoway: [],
+      allowNull: [],
+    };
+  }
+
   get _viewComponent() {
     return WidgetComponent;
   }
