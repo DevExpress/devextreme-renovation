@@ -51,6 +51,7 @@ import { ComponentInput, getTemplatePropName } from "./react-component-input";
 import { capitalizeFirstLetter } from "../../base-generator/utils/string";
 import { Conditional } from "../../base-generator/expressions/conditions";
 import { JsxElement } from "./jsx/jsx-element";
+import { JsxOpeningElement } from "./jsx/jsx-opening-element";
 
 function getSubscriptions(methods: Method[]) {
   return methods
@@ -250,30 +251,38 @@ export class ReactComponent extends Component {
     );
   }
 
-  getComponentTag(): string {
-    let openingElementTagName = "";
+  getComponentOpeningElement(): JsxOpeningElement | undefined {
     const viewFunction = this.context.viewFunctions?.[this.view];
     if (viewFunction) {
       if (viewFunction.body instanceof Block) {
         const returnStatement = viewFunction.body.statements.find(
           (el) => el instanceof ReturnStatement
         ) as ReturnStatement;
-
-        let element = returnStatement.expression;
-        if (element instanceof Paren) {
-          element = element.expression;
-        }
+        const expression = returnStatement.expression;
+        const element =
+          expression instanceof Paren ? expression.expression : expression;
         if (element instanceof JsxElement) {
-          openingElementTagName = element.openingElement.tagName.toString();
+          return element.openingElement as JsxOpeningElement;
         }
       }
+
+      if (viewFunction.body instanceof Paren) {
+        const element = viewFunction.body.expression;
+        if (element instanceof JsxElement) {
+          return element.openingElement as JsxOpeningElement;
+        }
+      }
+      if (viewFunction.body instanceof JsxElement) {
+        return viewFunction.body.openingElement as JsxOpeningElement;
+      }
     }
-    return openingElementTagName;
+    return;
   }
 
   compileImportStatements(hooks: string[], compats: string[]) {
-    const elementAttributes =
-      this.getComponentTag() === "svg" ? "SVGAttributes" : "HtmlHTMLAttributes";
+    const elementAttributes = this.getComponentOpeningElement()?.isSVG()
+      ? "SVGAttributes"
+      : "HtmlHTMLAttributes";
     const imports = [
       `import React, {${hooks
         .concat(compats)
@@ -579,11 +588,9 @@ export class ReactComponent extends Component {
   }
 
   compileRestProps(): string {
-    const elementType =
-      this.getComponentTag() === "svg"
-        ? "SVGAttributes<SVGElement>"
-        : "HtmlHTMLAttributes<HTMLDivElement>";
-
+    const elementType = this.getComponentOpeningElement()?.isSVG()
+      ? "SVGAttributes<SVGElement>"
+      : "HtmlHTMLAttributes<HTMLDivElement>";
     return `declare type RestProps = Omit<${elementType}, keyof ${this.getPropsType()}>`;
   }
 

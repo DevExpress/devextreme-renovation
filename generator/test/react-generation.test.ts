@@ -204,6 +204,12 @@ mocha.describe("react-generation", function () {
   mocha.it("svg-element", function () {
     this.testGenerator(this.test!.title);
   });
+  mocha.it("svg-element-arrow-function", function () {
+    this.testGenerator(this.test!.title);
+  });
+  mocha.it("svg-element-arrow-paren", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
