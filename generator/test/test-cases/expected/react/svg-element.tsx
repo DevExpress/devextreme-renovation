@@ -1,9 +1,9 @@
 export declare type WidgetInputType = {};
 export const WidgetInput: WidgetInputType = {};
-import React, { useCallback, HtmlHTMLAttributes } from "react";
+import React, { useCallback, SVGAttributes } from "react";
 
 declare type RestProps = Omit<
-  HtmlHTMLAttributes<SVGElement>,
+  SVGAttributes<SVGElement>,
   keyof typeof WidgetInput
 >;
 interface Widget {

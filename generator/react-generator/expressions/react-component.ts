@@ -250,11 +250,34 @@ export class ReactComponent extends Component {
     );
   }
 
+  getComponentTag(): string {
+    let openingElementTagName = "";
+    const viewFunction = this.context.viewFunctions?.[this.view];
+    if (viewFunction) {
+      if (viewFunction.body instanceof Block) {
+        const returnStatement = viewFunction.body.statements.find(
+          (el) => el instanceof ReturnStatement
+        ) as ReturnStatement;
+
+        let element = returnStatement.expression;
+        if (element instanceof Paren) {
+          element = element.expression;
+        }
+        if (element instanceof JsxElement) {
+          openingElementTagName = element.openingElement.tagName.toString();
+        }
+      }
+    }
+    return openingElementTagName;
+  }
+
   compileImportStatements(hooks: string[], compats: string[]) {
+    const elementAttributes =
+      this.getComponentTag() === "svg" ? "SVGAttributes" : "HtmlHTMLAttributes";
     const imports = [
       `import React, {${hooks
         .concat(compats)
-        .concat(["HtmlHTMLAttributes"])
+        .concat([elementAttributes])
         .join(",")}} from 'react';`,
     ];
 
@@ -556,24 +579,12 @@ export class ReactComponent extends Component {
   }
 
   compileRestProps(): string {
-    let openingElementTagName = "";
-
-    const viewFunction = this.context.viewFunctions?.[this.view];
-    if (viewFunction) {
-      if (viewFunction.body instanceof Block) {
-        const returnStatement = viewFunction.body.statements.find(
-          (el) => el instanceof ReturnStatement
-        ) as ReturnStatement;
-        let element = returnStatement.expression;
-        if (element instanceof Paren) element = element.expression;
-        if (element instanceof JsxElement)
-          openingElementTagName = element.openingElement.tagName.toString();
-      }
-    }
     const elementType =
-      openingElementTagName === "svg" ? "SVGElement" : "HTMLDivElement";
-    return `declare type RestProps = Omit<HtmlHTMLAttributes<${elementType}>, keyof ${this.getPropsType()}>`;
-    // return `declare type RestProps = Omit<HtmlHTMLAttributes<HTMLDivElement>, keyof ${this.getPropsType()}>`;
+      this.getComponentTag() === "svg"
+        ? "SVGAttributes<SVGElement>"
+        : "HtmlHTMLAttributes<HTMLDivElement>";
+
+    return `declare type RestProps = Omit<${elementType}, keyof ${this.getPropsType()}>`;
   }
 
   getPropsType() {
