@@ -11,7 +11,10 @@ import {
   StringLiteral,
   ObjectLiteral,
 } from "./base-generator/expressions/literal";
-import { TypeExpression } from "./base-generator/expressions/type";
+import {
+  TypeExpression,
+  UnionTypeNode,
+} from "./base-generator/expressions/type";
 import { getModuleRelativePath } from "./base-generator/utils/path-utils";
 import {
   GeneratorContext as BaseGeneratorContext,
@@ -280,21 +283,26 @@ class JQueryComponent {
         `;
   }
 
-  compileTwoWayPropsInfo() {
-    if (!this.source.state.length) {
-      return "";
-    }
+  compilePropsInfo() {
+    const withNullType = this.source.props
+      .concat(this.source.state)
+      .reduce((arr: string[], prop) => {
+        if (prop.type instanceof UnionTypeNode) {
+          if (prop.type.types.some((t) => t.toString() === "null")) {
+            return [...arr, `'${prop.name}'`];
+          }
+        }
+        return arr;
+      }, []);
 
     return `
-        get _twoWayProps() {
-            return [
-                ${this.source.state.map(
-                  (s) =>
-                    `['${s.name}', '${s.name}Change'${
-                      s.initializer ? `,${s.initializer}` : ``
-                    }]`
-                )}
-            ]
+        get _propsInfo() {
+            return {
+                twoway: [${this.source.state.map(
+                  (s) => `['${s.name}', ${s.initializer}, '${s.name}Change']`
+                )}],
+                allowNull: [${withNullType}]
+            };
         }
         `;
   }
@@ -314,18 +322,18 @@ class JQueryComponent {
         : baseComponent.toString()
     } {
             ${this.compileGetProps()}
-            
+
             ${this.compileAPI()}
-    
+
             ${this.compileEventMap()}
 
-            ${this.compileTwoWayPropsInfo()}
+            ${this.compilePropsInfo()}
 
             get _viewComponent() {
                 return ${this.source.name}Component;
             }
         }
-    
+
         registerComponent("dx${this.source.name}", ${this.source.name});
         `;
   }

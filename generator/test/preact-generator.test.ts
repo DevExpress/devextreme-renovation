@@ -369,7 +369,7 @@ mocha.describe("preact-generator: jQuery generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it("jquery-state", function () {
+  mocha.it("jquery-props-info", function () {
     this.testGenerator(this.test!.title);
   });
 

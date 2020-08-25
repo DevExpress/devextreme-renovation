@@ -19,6 +19,13 @@ export default class Widget extends BaseComponent {
     };
   }
 
+  get _propsInfo() {
+    return {
+      twoway: [],
+      allowNull: [],
+    };
+  }
+
   get _viewComponent() {
     return WidgetComponent;
   }
