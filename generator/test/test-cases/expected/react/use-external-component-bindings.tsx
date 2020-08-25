@@ -7,12 +7,9 @@ import {
   convertRulesToOptions,
   Rule,
 } from "../../../../component_declaration/default_options";
-import React, { useCallback, HtmlHTMLAttributes } from "react";
+import React, { useCallback, HTMLAttributes } from "react";
 
-declare type RestProps = Omit<
-  HtmlHTMLAttributes<HTMLDivElement>,
-  keyof typeof Props
->;
+declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
 interface Widget {
   props: typeof Props & RestProps;
   restAttributes: RestProps;

@@ -282,7 +282,7 @@ export class ReactComponent extends Component {
   compileImportStatements(hooks: string[], compats: string[]) {
     const elementAttributes = this.getComponentOpeningElement()?.isSVG()
       ? "SVGAttributes"
-      : "HtmlHTMLAttributes";
+      : "HTMLAttributes";
     const imports = [
       `import React, {${hooks
         .concat(compats)
@@ -590,7 +590,7 @@ export class ReactComponent extends Component {
   compileRestProps(): string {
     const elementType = this.getComponentOpeningElement()?.isSVG()
       ? "SVGAttributes<SVGElement>"
-      : "HtmlHTMLAttributes<HTMLDivElement>";
+      : "HTMLAttributes<HTMLElement>";
     return `declare type RestProps = Omit<${elementType}, keyof ${this.getPropsType()}>`;
   }
 

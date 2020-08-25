@@ -11,10 +11,10 @@ const ChildInput: ChildInputType = {
   height: 10,
   onClick: () => {},
 };
-import React, { useCallback, HtmlHTMLAttributes } from "react";
+import React, { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
-  HtmlHTMLAttributes<HTMLDivElement>,
+  HTMLAttributes<HTMLElement>,
   keyof typeof ChildInput
 >;
 interface Child {

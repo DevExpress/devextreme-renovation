@@ -11,7 +11,7 @@ import React, {
   useRef,
   useImperativeHandle,
   forwardRef,
-  HtmlHTMLAttributes,
+  HTMLAttributes,
 } from "react";
 
 export type WidgetRef = {
@@ -19,7 +19,7 @@ export type WidgetRef = {
   getSize: () => string;
 };
 declare type RestProps = Omit<
-  HtmlHTMLAttributes<HTMLDivElement>,
+  HTMLAttributes<HTMLElement>,
   keyof typeof WidgetInput
 >;
 interface Widget {

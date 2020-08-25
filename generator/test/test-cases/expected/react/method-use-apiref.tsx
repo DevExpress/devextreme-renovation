@@ -17,12 +17,12 @@ import React, {
   useRef,
   useImperativeHandle,
   forwardRef,
-  HtmlHTMLAttributes,
+  HTMLAttributes,
 } from "react";
 
 export type WidgetWithApiRefRef = { getSomething: () => string };
 declare type RestProps = Omit<
-  HtmlHTMLAttributes<HTMLDivElement>,
+  HTMLAttributes<HTMLElement>,
   keyof typeof WidgetWithApiRefInput
 >;
 interface WidgetWithApiRef {
