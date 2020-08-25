@@ -49,6 +49,8 @@ export default class Widget extends WidgetInput {
   get __restAttributes(): any {
     return {};
   }
+  subscribe: any = subscribe;
+  unsubscribe: any = unsubscribe;
 
   __destroyEffects: any[] = [];
   __viewCheckedSubscribeEvent: Array<() => void> = [];

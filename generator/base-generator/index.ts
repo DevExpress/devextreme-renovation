@@ -161,7 +161,7 @@ export default class Generator implements GeneratorAPI {
     initializer?: Expression
   ) {
     if (initializer) {
-      this.addViewFunction(name.toString(), initializer);
+      this.addFunction(name.toString(), initializer);
     }
     return this.createVariableDeclarationCore(name, type, initializer);
   }
@@ -338,10 +338,7 @@ export default class Generator implements GeneratorAPI {
       type,
       body
     );
-    this.addViewFunction(
-      functionDeclaration.name!.toString(),
-      functionDeclaration
-    );
+    this.addFunction(functionDeclaration.name!.toString(), functionDeclaration);
     return functionDeclaration;
   }
 
@@ -598,6 +595,17 @@ export default class Generator implements GeneratorAPI {
                 ...context.globals,
                 [i]: this.cache.__globals__[i],
               };
+            } else {
+              const originalName = Object.keys(
+                this.cache.__globals__
+              ).find((key) => i.startsWith(`${key} as `));
+              if (originalName) {
+                const newName = i.replace(`${originalName} as `, "");
+                context.globals = {
+                  ...context.globals,
+                  [newName]: this.cache.__globals__[originalName],
+                };
+              }
             }
           });
       }
@@ -1229,11 +1237,16 @@ export default class Generator implements GeneratorAPI {
     }
   }
 
-  addViewFunction(name: string, f: any) {
-    if ((f instanceof Function || f instanceof ArrowFunction) && f.isJsx()) {
+  addFunction(name: string, f: any) {
+    if (f instanceof Function || f instanceof ArrowFunction) {
       const context = this.getContext();
-      context.viewFunctions = context.viewFunctions || {};
-      context.viewFunctions[name] = f;
+      if (f.isJsx()) {
+        context.viewFunctions = context.viewFunctions || {};
+        context.viewFunctions[name] = f;
+      } else {
+        context.globals = context.globals || {};
+        context.globals[name] = f;
+      }
     }
   }
 

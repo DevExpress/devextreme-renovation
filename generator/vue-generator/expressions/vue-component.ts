@@ -412,6 +412,11 @@ export class VueComponent extends Component {
         })
       );
 
+    const external = this.getExternalFunctionNames();
+    external.forEach((name) =>
+      statements.push(`${name}() { return ${name}; }`)
+    );
+
     return `computed: {
               ${statements.join(",\n")},
            }`;

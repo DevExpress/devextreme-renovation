@@ -1,4 +1,6 @@
-function namedFunction() {}
+export function namedFunction() {
+  return {};
+}
 const b = function (a: string) {
   return a;
 };
@@ -13,7 +15,6 @@ export function plus(a: number = 45, c: any, b?: number): number {
   if (p != null) {
     a = p + 10;
   }
-
   (p as any).SomeMethod({});
   return a + (b ? b : 0);
 }

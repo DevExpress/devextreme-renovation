@@ -28,7 +28,6 @@ export const WidgetInput = {
     },
   },
 };
-
 export const DxWidget = {
   props: WidgetInput,
   data() {
@@ -44,6 +43,12 @@ export const DxWidget = {
     },
     props() {
       return { p: this.p, r: this.r, s: this.s_state, sChange: this.sChange };
+    },
+    subscribe() {
+      return subscribe;
+    },
+    unsubscribe() {
+      return unsubscribe;
     },
   },
   watch: {
