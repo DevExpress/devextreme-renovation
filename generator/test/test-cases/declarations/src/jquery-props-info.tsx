@@ -2,6 +2,7 @@ import {
   Component,
   TwoWay,
   ComponentBindings,
+  OneWay,
   JSXComponent,
 } from "../../../../component_declaration/common";
 
@@ -16,7 +17,9 @@ class WidgetInput {
   @TwoWay() state3?: (e: any) => number = (e: any) => {
     return e.num;
   };
-  @TwoWay() state4?: number;
+  @TwoWay() state4?: number | null;
+  @OneWay() prop1: string | null = "default";
+  @OneWay() prop2: string = "default";
 }
 @Component({
   view,
