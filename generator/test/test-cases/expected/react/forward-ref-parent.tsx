@@ -12,13 +12,10 @@ import React, {
   useEffect,
   useRef,
   RefObject,
-  HtmlHTMLAttributes,
+  HTMLAttributes,
 } from "react";
 
-declare type RestProps = Omit<
-  HtmlHTMLAttributes<HTMLDivElement>,
-  keyof typeof Props
->;
+declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
 interface RefOnChildrenParent {
   props: typeof Props & RestProps;
   child: any;

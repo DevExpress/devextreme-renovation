@@ -2977,9 +2977,7 @@ mocha.describe("Default_options", function () {
     );
     assert.strictEqual(
       getResult(component.compileImports()),
-      getResult(
-        `import React, { useCallback, HtmlHTMLAttributes } from "react";`
-      )
+      getResult(`import React, { useCallback, HTMLAttributes } from "react";`)
     );
   });
 
@@ -3045,7 +3043,7 @@ mocha.describe("Default_options", function () {
       assert.strictEqual(
         getResult(component.compileImports()),
         getResult(
-          `import {convertRulesToOptions, Rule} from "../default_options"; import React, { useCallback, HtmlHTMLAttributes } from "react";`
+          `import {convertRulesToOptions, Rule} from "../default_options"; import React, { useCallback, HTMLAttributes } from "react";`
         )
       );
     }
@@ -3068,9 +3066,7 @@ mocha.describe("Default_options", function () {
 
       assert.strictEqual(
         getResult(component.compileImports()),
-        getResult(
-          `import React, { useCallback, HtmlHTMLAttributes } from "react";`
-        )
+        getResult(`import React, { useCallback, HTMLAttributes } from "react";`)
       );
     }
   );

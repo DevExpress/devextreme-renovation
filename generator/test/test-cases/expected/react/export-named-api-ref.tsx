@@ -7,12 +7,12 @@ import React, {
   useCallback,
   useImperativeHandle,
   forwardRef,
-  HtmlHTMLAttributes,
+  HTMLAttributes,
 } from "react";
 
 export type WidgetRef = { getValue: () => any };
 declare type RestProps = Omit<
-  HtmlHTMLAttributes<HTMLDivElement>,
+  HTMLAttributes<HTMLElement>,
   keyof typeof WidgetInput
 >;
 interface Widget {

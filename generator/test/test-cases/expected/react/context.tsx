@@ -14,13 +14,10 @@ import React, {
   useState,
   useContext,
   useCallback,
-  HtmlHTMLAttributes,
+  HTMLAttributes,
 } from "react";
 
-declare type RestProps = Omit<
-  HtmlHTMLAttributes<HTMLDivElement>,
-  keyof typeof Props
->;
+declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
 interface Widget {
   props: typeof Props & RestProps;
   context: number;

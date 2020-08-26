@@ -2,9 +2,9 @@ function view(model: Widget) {
   return <span></span>;
 }
 
-import React, { useState, useCallback, HtmlHTMLAttributes } from "react";
+import React, { useState, useCallback, HTMLAttributes } from "react";
 
-declare type RestProps = Omit<HtmlHTMLAttributes<HTMLDivElement>, keyof {}>;
+declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof {}>;
 interface Widget {
   _hovered: Boolean;
   updateState: () => any;

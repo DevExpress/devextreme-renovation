@@ -3,7 +3,7 @@ function view(model: Widget) {
   return <div />;
 }
 
-import React, { useCallback, HtmlHTMLAttributes } from "react";
+import React, { useCallback, HTMLAttributes } from "react";
 
 function __collectChildren<T>(children: React.ReactNode): T[] {
   return (React.Children.toArray(children).filter(
@@ -61,7 +61,7 @@ export const EditingAnotherCustom: React.FunctionComponent<
 EditingAnotherCustom.propName = "anotherCustom";
 
 declare type RestProps = Omit<
-  HtmlHTMLAttributes<HTMLDivElement>,
+  HTMLAttributes<HTMLElement>,
   keyof typeof WidgetInput
 >;
 interface Widget {

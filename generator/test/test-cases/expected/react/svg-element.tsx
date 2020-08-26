@@ -1,14 +1,11 @@
-function view(model: Widget) {
-  return <div></div>;
-}
-export declare type WidgetInputType = {
-  prop?: boolean;
-};
-const WidgetInput: WidgetInputType = {};
-import React, { useCallback, HTMLAttributes } from "react";
+export declare type WidgetInputType = {};
+export const WidgetInput: WidgetInputType = {};
+const view = (viewModel: Widget) => <svg {...viewModel.restAttributes}></svg>;
+
+import React, { useCallback, SVGAttributes } from "react";
 
 declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
+  SVGAttributes<SVGElement>,
   keyof typeof WidgetInput
 >;
 interface Widget {
@@ -16,10 +13,10 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetInput & RestProps) {
+export default function Widget(props: typeof WidgetInput & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { prop, ...restProps } = props;
+      const { ...restProps } = props;
       return restProps;
     },
     [props]
@@ -30,8 +27,6 @@ export function Widget(props: typeof WidgetInput & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-export default Widget;
 
 Widget.defaultProps = {
   ...WidgetInput,

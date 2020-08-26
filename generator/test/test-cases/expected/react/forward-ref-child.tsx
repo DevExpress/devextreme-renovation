@@ -11,12 +11,9 @@ export declare type PropsType = {
   state?: number;
 };
 const Props: PropsType = ({} as any) as PropsType;
-import React, { useCallback, RefObject, HtmlHTMLAttributes } from "react";
+import React, { useCallback, RefObject, HTMLAttributes } from "react";
 
-declare type RestProps = Omit<
-  HtmlHTMLAttributes<HTMLDivElement>,
-  keyof typeof Props
->;
+declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
 interface RefOnChildrenChild {
   props: typeof Props & RestProps;
   restAttributes: RestProps;
