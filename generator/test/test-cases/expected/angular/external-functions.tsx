@@ -1,7 +1,4 @@
 import { namedFunction as externalFunction } from "./functions";
-function simpleFunction(index: number): string {
-  return `element_${index}`;
-}
 const arrowFunction: () => string = () => {
   return "defaultClassName";
 };
@@ -29,7 +26,6 @@ export default class Widget extends WidgetProps {
     return {};
   }
   externalFunction: any = externalFunction;
-  simpleFunction: any = simpleFunction;
   arrowFunction: any = arrowFunction;
   CLASS_NAME: any = CLASS_NAME;
 

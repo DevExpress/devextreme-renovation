@@ -161,7 +161,7 @@ export default class Generator implements GeneratorAPI {
     initializer?: Expression
   ) {
     if (initializer) {
-      this.addFunction(name.toString(), initializer);
+      this.addViewFunction(name.toString(), initializer);
     }
     return this.createVariableDeclarationCore(name, type, initializer);
   }
@@ -338,7 +338,10 @@ export default class Generator implements GeneratorAPI {
       type,
       body
     );
-    this.addFunction(functionDeclaration.name!.toString(), functionDeclaration);
+    this.addViewFunction(
+      functionDeclaration.name!.toString(),
+      functionDeclaration
+    );
     return functionDeclaration;
   }
 
@@ -1237,16 +1240,11 @@ export default class Generator implements GeneratorAPI {
     }
   }
 
-  addFunction(name: string, f: any) {
-    if (f instanceof Function || f instanceof ArrowFunction) {
+  addViewFunction(name: string, f: any) {
+    if ((f instanceof Function || f instanceof ArrowFunction) && f.isJsx()) {
       const context = this.getContext();
-      if (f.isJsx()) {
-        context.viewFunctions = context.viewFunctions || {};
-        context.viewFunctions[name] = f;
-      } else {
-        context.globals = context.globals || {};
-        context.globals[name] = f;
-      }
+      context.viewFunctions = context.viewFunctions || {};
+      context.viewFunctions[name] = f;
     }
   }
 

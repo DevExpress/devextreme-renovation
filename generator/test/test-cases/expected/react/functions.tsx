@@ -1,6 +1,6 @@
-export function namedFunction() {
+export const namedFunction = () => {
   return {};
-}
+};
 const b = function (a: string) {
   return a;
 };

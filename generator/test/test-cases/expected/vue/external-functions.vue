@@ -1,15 +1,8 @@
 <template>
-  <div
-    :key="simpleFunction(model.props.index)"
-    v-bind:class="CLASS_NAME"
-    v-bind:style="externalFunction()"
-  ></div>
+  <div v-bind:class="CLASS_NAME" v-bind:style="externalFunction()"></div>
 </template>
 <script>
 import { namedFunction as externalFunction } from "./functions";
-function simpleFunction(index) {
-  return `element_${index}`;
-}
 const arrowFunction = () => {
   return "defaultClassName";
 };
@@ -33,9 +26,6 @@ export const DxWidget = {
     },
     externalFunction() {
       return externalFunction;
-    },
-    simpleFunction() {
-      return simpleFunction;
     },
     arrowFunction() {
       return arrowFunction;
