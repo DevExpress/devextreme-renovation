@@ -592,12 +592,8 @@ export class ReactComponent extends Component {
     };
   }
 
-  getNestedImportName(name: string) {
-    return `${name}Type`;
-  }
-
   getNestedExports(component: ComponentInput, name: string, propName: string) {
-    return `export const ${name}: React.FunctionComponent<${component.name}Type> & { propName: string } = () => null;
+    return `export const ${name}: React.FunctionComponent<typeof ${component.name}> & { propName: string } = () => null;
       ${name}.propName="${propName}"`;
   }
 
@@ -634,9 +630,7 @@ export class ReactComponent extends Component {
       property.questionOrExclamationToken === "?" ? " | undefined" : "";
 
     const getterName = `__getNested${capitalizeFirstLetter(property.name)}`;
-    const getterType = property.type
-      .toString()
-      .replace(`typeof ${type}`, `${type}Type`);
+    const getterType = property.type.toString();
     const condition = `${propName}`.concat(
       isArray ? `&& ${propName}.length` : ""
     );
@@ -667,7 +661,7 @@ export class ReactComponent extends Component {
               new Identifier("nested"),
               undefined,
               new SimpleExpression(
-                `__nestedChildren<${type}Type & { __name: string }>().filter(child => child.__name === "${property.name}")`
+                `__nestedChildren<typeof ${type} & { __name: string }>().filter(child => child.__name === "${property.name}")`
               )
             ),
           ],

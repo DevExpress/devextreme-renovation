@@ -2,7 +2,8 @@
   <div />
 </template>
 <script>
-import { PickedProps } from "./nested-props";
+import { PickedProps, GridColumnProps } from "./nested-props";
+export const CustomColumnComponent = (props) => {};
 function __collectChildren(children) {
   return children.reduce((acc, child) => {
     const name = child.componentOptions?.Ctor?.extendOptions?.propName;
@@ -32,34 +33,33 @@ function __collectChildren(children) {
   }, []);
 }
 import {
-  GridColumn,
-  Editing,
-  Custom,
-  ColumnEditing,
-  AnotherCustom,
+  EditingProps,
+  CustomProps,
+  ColumnEditingProps,
+  AnotherCustomProps,
 } from "./nested-props";
 export const DxColumn = {
-  props: GridColumn,
+  props: GridColumnProps,
 };
 DxColumn.propName = "columns";
 export const DxEditing = {
-  props: Editing,
+  props: EditingProps,
 };
 DxEditing.propName = "editing";
 export const DxColumnCustom = {
-  props: Custom,
+  props: CustomProps,
 };
 DxColumnCustom.propName = "custom";
 export const DxColumnEditing = {
-  props: ColumnEditing,
+  props: ColumnEditingProps,
 };
 DxColumnEditing.propName = "editing";
 export const DxEditingCustom = {
-  props: Custom,
+  props: CustomProps,
 };
 DxEditingCustom.propName = "custom";
 export const DxEditingAnotherCustom = {
-  props: AnotherCustom,
+  props: AnotherCustomProps,
 };
 DxEditingAnotherCustom.propName = "anotherCustom";
 

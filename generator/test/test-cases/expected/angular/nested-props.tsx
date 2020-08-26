@@ -1,32 +1,33 @@
 import { Input, Output, EventEmitter } from "@angular/core";
-export class GridColumn {
+export class GridColumnProps {
   @Input() name: string = "";
   @Input() index: number = 0;
-  @Input() editing?: ColumnEditing;
-  @Input() custom?: Custom[];
+  @Input() editing?: ColumnEditingProps;
+  @Input() custom?: CustomProps[];
   @Output() indexChange: EventEmitter<number> = new EventEmitter();
 }
 
-export class Custom {}
+export class CustomProps {}
 
-export class AnotherCustom {}
+export class AnotherCustomProps {}
 
-export class Editing {
+export class EditingProps {
   @Input() editEnabled?: boolean = false;
-  @Input() custom?: Custom[];
-  @Input() anotherCustom?: AnotherCustom;
+  @Input() custom?: CustomProps[];
+  @Input() anotherCustom?: AnotherCustomProps;
 }
 
-export class ColumnEditing {
+export class ColumnEditingProps {
   @Input() editEnabled?: boolean = false;
 }
 
-export class WidgetInput {
-  @Input() columns?: Array<GridColumn | string>;
-  @Input() editing?: Editing;
+export class WidgetProps {
+  @Input() columns?: Array<GridColumnProps | string>;
+  @Input() editing?: EditingProps;
 }
 
 export class PickedProps {
-  @Input() columns?: Array<GridColumn | string> = new WidgetInput().columns;
-  @Input() editing?: Editing = new WidgetInput().editing;
+  @Input() columns?: Array<GridColumnProps | string> = new WidgetProps()
+    .columns;
+  @Input() editing?: EditingProps = new WidgetProps().editing;
 }

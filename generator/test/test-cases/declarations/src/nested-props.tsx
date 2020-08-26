@@ -6,35 +6,35 @@ import {
 } from "../../../../component_declaration/common";
 
 @ComponentBindings()
-export class GridColumn {
+export class GridColumnProps {
   @OneWay() name: string = "";
   @TwoWay() index: number = 0;
-  @Nested() editing?: ColumnEditing;
-  @Nested() custom?: Custom[];
+  @Nested() editing?: ColumnEditingProps;
+  @Nested() custom?: CustomProps[];
 }
 
 @ComponentBindings()
-export class Custom {}
+export class CustomProps {}
 
 @ComponentBindings()
-export class AnotherCustom {}
+export class AnotherCustomProps {}
 
 @ComponentBindings()
-export class Editing {
+export class EditingProps {
   @OneWay() editEnabled?: boolean = false;
-  @Nested() custom?: Custom[];
-  @Nested() anotherCustom?: AnotherCustom;
+  @Nested() custom?: CustomProps[];
+  @Nested() anotherCustom?: AnotherCustomProps;
 }
 
 @ComponentBindings()
-export class ColumnEditing {
+export class ColumnEditingProps {
   @OneWay() editEnabled?: boolean = false;
 }
 
 @ComponentBindings()
-export class WidgetInput {
-  @Nested() columns?: Array<GridColumn | string>;
-  @Nested() editing?: Editing;
+export class WidgetProps {
+  @Nested() columns?: Array<GridColumnProps | string>;
+  @Nested() editing?: EditingProps;
 }
 
-export type PickedProps = Pick<WidgetInput, "editing" | "columns">;
+export type PickedProps = Pick<WidgetProps, "editing" | "columns">;

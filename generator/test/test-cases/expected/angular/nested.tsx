@@ -1,4 +1,5 @@
-import { PickedProps } from "./nested-props";
+import { PickedProps, GridColumnProps } from "./nested-props";
+export const CustomColumnComponent = (props: GridColumnProps) => {};
 import {
   Component,
   NgModule,
@@ -12,37 +13,36 @@ import {
 import { CommonModule } from "@angular/common";
 
 import {
-  GridColumn,
-  Editing,
-  Custom,
-  ColumnEditing,
-  AnotherCustom,
+  EditingProps,
+  CustomProps,
+  ColumnEditingProps,
+  AnotherCustomProps,
 } from "./nested-props";
 
 @Directive({
   selector: "dx-widget dxo-editing dxo-another-custom",
 })
-class DxWidgetEditingAnotherCustom extends AnotherCustom {}
+class DxWidgetEditingAnotherCustom extends AnotherCustomProps {}
 
 @Directive({
   selector: "dx-widget dxo-editing dxi-custom",
 })
-class DxWidgetEditingCustom extends Custom {}
+class DxWidgetEditingCustom extends CustomProps {}
 
 @Directive({
   selector: "dx-widget dxi-column dxo-editing",
 })
-class DxWidgetColumnEditing extends ColumnEditing {}
+class DxWidgetColumnEditing extends ColumnEditingProps {}
 
 @Directive({
   selector: "dx-widget dxi-column dxi-custom",
 })
-class DxWidgetColumnCustom extends Custom {}
+class DxWidgetColumnCustom extends CustomProps {}
 
 @Directive({
   selector: "dx-widget dxo-editing",
 })
-class DxWidgetEditing extends Editing {
+class DxWidgetEditing extends EditingProps {
   private __custom?: DxWidgetEditingCustom[];
   @ContentChildren(DxWidgetEditingCustom) customNested!: QueryList<
     DxWidgetEditingCustom
@@ -79,7 +79,7 @@ class DxWidgetEditing extends Editing {
 @Directive({
   selector: "dx-widget dxi-column",
 })
-class DxWidgetColumn extends GridColumn {
+class DxWidgetColumn extends GridColumnProps {
   private __editing?: DxWidgetColumnEditing;
   @ContentChildren(DxWidgetColumnEditing) editingNested!: QueryList<
     DxWidgetColumnEditing

@@ -404,10 +404,6 @@ export class Component extends Class implements Heritable {
     return false;
   }
 
-  getNestedImportName(name: string) {
-    return name;
-  }
-
   getNestedFromComponentInput(
     component: ComponentInput,
     parentName: string = ""
@@ -493,7 +489,7 @@ export class Component extends Class implements Heritable {
           if (!acc[relativePath]) {
             acc[relativePath] = [];
           }
-          acc[relativePath].push(this.getNestedImportName(component.name));
+          acc[relativePath].push(component.name);
         }
 
         return acc;

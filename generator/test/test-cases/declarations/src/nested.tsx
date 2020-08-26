@@ -2,7 +2,9 @@ import {
   Component,
   JSXComponent,
 } from "../../../../component_declaration/common";
-import { PickedProps } from "./nested-props";
+import { PickedProps, GridColumnProps } from "./nested-props";
+
+export const CustomColumnComponent = (props: GridColumnProps) => {};
 
 function view(model: Widget) {
   return <div />;
