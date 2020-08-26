@@ -28,7 +28,6 @@ export const WidgetInput = {
     },
   },
 };
-
 export const DxWidget = {
   props: WidgetInput,
   data() {

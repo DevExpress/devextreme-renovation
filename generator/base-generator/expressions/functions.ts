@@ -1,5 +1,5 @@
 import { Expression, SimpleExpression } from "./base";
-import { Identifier, Paren } from "./common";
+import { Identifier, Paren, Call } from "./common";
 import { TypeExpression } from "./type";
 import {
   toStringOptions,
@@ -346,3 +346,6 @@ export class ArrowFunction extends BaseFunction {
 export const isFunction = (
   expression: Expression
 ): expression is BaseFunction => expression instanceof BaseFunction;
+
+export const isCallable = (expression: Expression): expression is Call =>
+  expression instanceof Call;

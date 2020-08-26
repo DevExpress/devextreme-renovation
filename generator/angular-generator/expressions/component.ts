@@ -1251,6 +1251,21 @@ export class AngularComponent extends Component {
       ngAfterViewInitStatements.push("this.changeDetection.detectChanges()");
     }
 
+    const external = this.getExternalFunctionNames();
+    external.forEach((name) =>
+      this.members.push(
+        new Property(
+          [],
+          [],
+          new Identifier(name),
+          undefined,
+          undefined,
+          new SimpleExpression(name),
+          undefined
+        )
+      )
+    );
+
     return `
         ${this.compileImports(coreImports)}
         ${this.compileCdkImports(cdkImports)}
