@@ -152,6 +152,7 @@ export default class Widget extends PickedProps {
   get __restAttributes(): any {
     return {};
   }
+  CustomColumnComponent: any = CustomColumnComponent;
 
   ngAfterViewInit() {
     this.changeDetection.detectChanges();
