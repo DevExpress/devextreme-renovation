@@ -1,5 +1,7 @@
 export declare type WidgetInputType = {};
 export const WidgetInput: WidgetInputType = {};
+const view = (viewModel: Widget) => <svg {...viewModel.restAttributes}></svg>;
+
 import React, { useCallback, SVGAttributes } from "react";
 
 declare type RestProps = Omit<
@@ -29,6 +31,3 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 Widget.defaultProps = {
   ...WidgetInput,
 };
-function view(viewModel: Widget) {
-  return <svg {...viewModel.restAttributes}></svg>;
-}

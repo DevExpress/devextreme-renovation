@@ -1,8 +1,4 @@
-import {
-  Identifier,
-  Call,
-  Paren,
-} from "../../base-generator/expressions/common";
+import { Identifier, Call } from "../../base-generator/expressions/common";
 import { Decorators } from "../../component_declaration/decorators";
 import { Decorator } from "../../base-generator/expressions/decorator";
 import { BaseClassMember } from "../../base-generator/expressions/class-members";
@@ -50,7 +46,6 @@ import path from "path";
 import { ComponentInput, getTemplatePropName } from "./react-component-input";
 import { capitalizeFirstLetter } from "../../base-generator/utils/string";
 import { Conditional } from "../../base-generator/expressions/conditions";
-import { JsxElement } from "./jsx/jsx-element";
 import { JsxOpeningElement } from "./jsx/jsx-opening-element";
 
 function getSubscriptions(methods: Method[]) {
@@ -253,30 +248,7 @@ export class ReactComponent extends Component {
 
   getComponentOpeningElement(): JsxOpeningElement | undefined {
     const viewFunction = this.context.viewFunctions?.[this.view];
-    if (viewFunction) {
-      if (viewFunction.body instanceof Block) {
-        const returnStatement = viewFunction.body.statements.find(
-          (el) => el instanceof ReturnStatement
-        ) as ReturnStatement;
-        const expression = returnStatement.expression;
-        const element =
-          expression instanceof Paren ? expression.expression : expression;
-        if (element instanceof JsxElement) {
-          return element.openingElement as JsxOpeningElement;
-        }
-      }
-
-      if (viewFunction.body instanceof Paren) {
-        const element = viewFunction.body.expression;
-        if (element instanceof JsxElement) {
-          return element.openingElement as JsxOpeningElement;
-        }
-      }
-      if (viewFunction.body instanceof JsxElement) {
-        return viewFunction.body.openingElement as JsxOpeningElement;
-      }
-    }
-    return;
+    return viewFunction?.getRootElement() as JsxOpeningElement;
   }
 
   compileImportStatements(hooks: string[], compats: string[]) {
