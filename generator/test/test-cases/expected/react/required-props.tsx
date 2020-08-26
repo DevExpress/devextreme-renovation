@@ -8,10 +8,10 @@ import {
   convertRulesToOptions,
   Rule,
 } from "../../../../component_declaration/default_options";
-import React, { useCallback, HtmlHTMLAttributes } from "react";
+import React, { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
-  HtmlHTMLAttributes<HTMLDivElement>,
+  HTMLAttributes<HTMLElement>,
   keyof typeof WidgetInput
 >;
 interface Widget {

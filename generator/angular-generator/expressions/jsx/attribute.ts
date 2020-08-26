@@ -3,7 +3,10 @@ import {
   JsxExpression,
 } from "../../../base-generator/expressions/jsx";
 import { toStringOptions } from "../../types";
-import { isFunction } from "../../../base-generator/expressions/functions";
+import {
+  isFunction,
+  isCallable,
+} from "../../../base-generator/expressions/functions";
 import { PropertyAssignment } from "../../../base-generator/expressions/property-assignment";
 import { SimpleExpression } from "../../../base-generator/expressions/base";
 import { StringLiteral } from "../../../base-generator/expressions/literal";
@@ -171,7 +174,7 @@ export class JsxAttribute extends BaseJsxAttribute {
     if (this.initializer instanceof JsxExpression) {
       const funcName = this.initializer.toString();
       const template = this.initializer.getExpression(options)!;
-      if (isFunction(template)) {
+      if (isFunction(template) || isCallable(template)) {
         return this.compileBase(name, funcName);
       }
     }

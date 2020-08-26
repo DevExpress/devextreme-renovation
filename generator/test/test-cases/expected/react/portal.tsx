@@ -22,7 +22,7 @@ import React, {
   useCallback,
   useEffect,
   RefObject,
-  HtmlHTMLAttributes,
+  HTMLAttributes,
 } from "react";
 import { createPortal } from "react-dom";
 declare type PortalProps = {
@@ -40,7 +40,7 @@ const Portal = ({
 };
 
 declare type RestProps = Omit<
-  HtmlHTMLAttributes<HTMLDivElement>,
+  HTMLAttributes<HTMLElement>,
   keyof typeof WidgetProps
 >;
 interface Widget {

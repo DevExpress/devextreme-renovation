@@ -13,15 +13,10 @@ export declare type WidgetInputType = {
   nullableRef?: RefObject<HTMLDivElement>;
 };
 const WidgetInput: WidgetInputType = {};
-import React, {
-  useCallback,
-  useRef,
-  RefObject,
-  HtmlHTMLAttributes,
-} from "react";
+import React, { useCallback, useRef, RefObject, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
-  HtmlHTMLAttributes<HTMLDivElement>,
+  HTMLAttributes<HTMLElement>,
   keyof typeof WidgetInput
 >;
 interface Widget {

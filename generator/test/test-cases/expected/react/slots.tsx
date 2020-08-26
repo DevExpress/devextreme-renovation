@@ -12,10 +12,10 @@ export declare type WidgetInputType = {
   children?: React.ReactNode;
 };
 const WidgetInput: WidgetInputType = {};
-import React, { useCallback, HtmlHTMLAttributes } from "react";
+import React, { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
-  HtmlHTMLAttributes<HTMLDivElement>,
+  HTMLAttributes<HTMLElement>,
   keyof typeof WidgetInput
 >;
 interface Widget {

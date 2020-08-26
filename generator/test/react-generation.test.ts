@@ -201,6 +201,10 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("svg-element", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {

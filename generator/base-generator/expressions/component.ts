@@ -1,4 +1,4 @@
-import { Identifier, Call } from "./common";
+import { Identifier, Call, Paren } from "./common";
 import {
   GetAccessor,
   Property,
@@ -12,7 +12,7 @@ import { GeneratorContext } from "../types";
 import { Block, ReturnStatement } from "./statements";
 import { getModuleRelativePath } from "../utils/path-utils";
 import { Decorator } from "./decorator";
-import { BaseFunction } from "./functions";
+import { BaseFunction, isCallable, isFunction } from "./functions";
 import {
   compileType,
   capitalizeFirstLetter,
@@ -504,5 +504,31 @@ export class Component extends Class implements Heritable {
     );
 
     return result;
+  }
+
+  getExternalFunctionNames() {
+    const { globals, viewFunctions } = this.context;
+    if (globals && viewFunctions) {
+      const views = Object.keys(viewFunctions);
+      const external = Object.keys(globals)
+        .filter((key) => !views.includes(key) && key !== this.view.toString())
+        .reduce((acc, key) => {
+          let body = globals[key];
+          if (body instanceof Paren) {
+            body = body.expression;
+          }
+          if (
+            (isCallable(body) &&
+              body.expression.toString() !== "createContext") ||
+            isFunction(body)
+          ) {
+            acc.push(key);
+          }
+          return acc;
+        }, [] as string[]);
+
+      return external;
+    }
+    return [];
   }
 }

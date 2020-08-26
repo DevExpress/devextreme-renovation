@@ -11,17 +11,9 @@ export declare type PropsType = {
   contentComponent?: any;
 };
 const Props: PropsType = ({} as any) as PropsType;
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  HtmlHTMLAttributes,
-} from "react";
+import React, { useCallback, useEffect, useRef, HTMLAttributes } from "react";
 
-declare type RestProps = Omit<
-  HtmlHTMLAttributes<HTMLDivElement>,
-  keyof typeof Props
->;
+declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
 interface RefOnChildrenTemplate {
   props: typeof Props & RestProps;
   child: any;

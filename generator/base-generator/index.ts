@@ -598,6 +598,17 @@ export default class Generator implements GeneratorAPI {
                 ...context.globals,
                 [i]: this.cache.__globals__[i],
               };
+            } else {
+              const originalName = Object.keys(
+                this.cache.__globals__
+              ).find((key) => i.startsWith(`${key} as `));
+              if (originalName) {
+                const newName = i.replace(`${originalName} as `, "");
+                context.globals = {
+                  ...context.globals,
+                  [newName]: this.cache.__globals__[originalName],
+                };
+              }
             }
           });
       }
