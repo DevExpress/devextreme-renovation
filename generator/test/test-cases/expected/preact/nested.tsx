@@ -1,4 +1,4 @@
-import { WidgetInput } from "./nested-props";
+import { PickedProps } from "./nested-props";
 function view(model: Widget) {
   return <div />;
 }
@@ -13,13 +13,13 @@ declare type RestProps = {
   ref?: any;
 };
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: typeof PickedProps & RestProps;
   getColumns: () => any;
   isEditable: any;
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+export default function Widget(props: typeof PickedProps & RestProps) {
   const getColumns = useCallback(
     function getColumns(): any {
       const { columns } = props;
@@ -50,5 +50,5 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 }
 
 Widget.defaultProps = {
-  ...WidgetInput,
+  ...PickedProps,
 };

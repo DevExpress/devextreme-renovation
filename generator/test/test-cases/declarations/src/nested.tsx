@@ -2,7 +2,7 @@ import {
   Component,
   JSXComponent,
 } from "../../../../component_declaration/common";
-import { WidgetInput } from "./nested-props";
+import { PickedProps } from "./nested-props";
 
 function view(model: Widget) {
   return <div />;
@@ -11,7 +11,7 @@ function view(model: Widget) {
 @Component({
   view: view,
 })
-export default class Widget extends JSXComponent(WidgetInput) {
+export default class Widget extends JSXComponent<PickedProps>() {
   getColumns() {
     const { columns } = this.props;
 

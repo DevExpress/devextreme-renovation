@@ -2,8 +2,8 @@ import { Input, Output, EventEmitter } from "@angular/core";
 export class GridColumn {
   @Input() name: string = "";
   @Input() index: number = 0;
-  @Input() editing?: ColumnEditing = {};
-  @Input() custom?: Custom[] = [];
+  @Input() editing?: ColumnEditing;
+  @Input() custom?: Custom[];
   @Output() indexChange: EventEmitter<number> = new EventEmitter();
 }
 
@@ -13,8 +13,8 @@ export class AnotherCustom {}
 
 export class Editing {
   @Input() editEnabled?: boolean = false;
-  @Input() custom?: Custom[] = [];
-  @Input() anotherCustom?: AnotherCustom = {};
+  @Input() custom?: Custom[];
+  @Input() anotherCustom?: AnotherCustom;
 }
 
 export class ColumnEditing {
@@ -24,4 +24,9 @@ export class ColumnEditing {
 export class WidgetInput {
   @Input() columns?: Array<GridColumn | string>;
   @Input() editing?: Editing;
+}
+
+export class PickedProps {
+  @Input() columns?: Array<GridColumn | string> = new WidgetInput().columns;
+  @Input() editing?: Editing = new WidgetInput().editing;
 }

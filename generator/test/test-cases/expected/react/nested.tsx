@@ -1,4 +1,4 @@
-import { WidgetInput } from "./nested-props";
+import { PickedProps } from "./nested-props";
 function view(model: Widget) {
   return <div />;
 }
@@ -62,10 +62,10 @@ EditingAnotherCustom.propName = "anotherCustom";
 
 declare type RestProps = Omit<
   HtmlHTMLAttributes<HTMLDivElement>,
-  keyof typeof WidgetInput
+  keyof typeof PickedProps
 >;
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: typeof PickedProps & RestProps;
   getColumns: () => any;
   isEditable: any;
   restAttributes: RestProps;
@@ -74,7 +74,7 @@ interface Widget {
   __getNestedEditing: EditingType | undefined;
 }
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+export default function Widget(props: typeof PickedProps & RestProps) {
   const getColumns = useCallback(
     function getColumns(): any {
       return __getNestedColumns()?.map((el) =>
@@ -153,5 +153,5 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 }
 
 Widget.defaultProps = {
-  ...WidgetInput,
+  ...PickedProps,
 };

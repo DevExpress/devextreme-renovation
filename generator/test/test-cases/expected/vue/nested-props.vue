@@ -14,9 +14,6 @@ export const GridColumn = {
   },
   custom: {
     type: Array,
-    default() {
-      return [];
-    },
   },
 };
 export const Custom = {};
@@ -30,9 +27,6 @@ export const Editing = {
   },
   custom: {
     type: Array,
-    default() {
-      return [];
-    },
   },
 };
 export const ColumnEditing = {
@@ -46,6 +40,16 @@ export const ColumnEditing = {
 export const WidgetInput = {
   columns: {
     type: Array,
+  },
+};
+export const PickedProps = {
+  columns: {
+    type: Array,
+    default() {
+      return typeof WidgetInput.columns.default === "function"
+        ? WidgetInput.columns.default()
+        : WidgetInput.columns.default;
+    },
   },
 };
 </script>

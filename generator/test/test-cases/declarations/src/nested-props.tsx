@@ -9,8 +9,8 @@ import {
 export class GridColumn {
   @OneWay() name: string = "";
   @TwoWay() index: number = 0;
-  @Nested() editing?: ColumnEditing = {};
-  @Nested() custom?: Custom[] = [];
+  @Nested() editing?: ColumnEditing;
+  @Nested() custom?: Custom[];
 }
 
 @ComponentBindings()
@@ -22,8 +22,8 @@ export class AnotherCustom {}
 @ComponentBindings()
 export class Editing {
   @OneWay() editEnabled?: boolean = false;
-  @Nested() custom?: Custom[] = [];
-  @Nested() anotherCustom?: AnotherCustom = {};
+  @Nested() custom?: Custom[];
+  @Nested() anotherCustom?: AnotherCustom;
 }
 
 @ComponentBindings()
@@ -36,3 +36,5 @@ export class WidgetInput {
   @Nested() columns?: Array<GridColumn | string>;
   @Nested() editing?: Editing;
 }
+
+export type PickedProps = Pick<WidgetInput, "editing" | "columns">;

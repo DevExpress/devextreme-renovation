@@ -459,14 +459,18 @@ export class Component extends Class implements Heritable {
   }
 
   collectNestedComponents() {
-    const components = this.context.components!;
-    if (this.heritageClauses.length) {
-      const heritage = this.heritageClauses[0].typeNodes[0];
-      if (heritage instanceof Call && heritage.arguments.length) {
-        const inheritFrom = heritage.arguments[0].toString();
-        const heritageInput = components[inheritFrom] as ComponentInput;
-
-        return this.getNestedFromComponentInput(heritageInput);
+    if (this.members.some((m) => m.isNested)) {
+      const components = this.context.components;
+      const heritage = this.heritageClauses?.[0].typeNodes[0];
+      if (components && heritage instanceof Call) {
+        const inheritFrom = heritage.typeArguments?.length
+          ? (heritage.typeArguments[0] as any).typeName
+          : heritage.arguments[0]?.toString();
+        if (inheritFrom) {
+          return this.getNestedFromComponentInput(
+            components[inheritFrom] as ComponentInput
+          );
+        }
       }
     }
     return [];

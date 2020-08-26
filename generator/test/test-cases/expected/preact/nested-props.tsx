@@ -8,8 +8,6 @@ export declare type GridColumnType = {
 };
 export const GridColumn: GridColumnType = ({
   name: "",
-  editing: {},
-  custom: [],
   defaultIndex: 0,
   indexChange: () => {},
 } as any) as GridColumnType;
@@ -24,8 +22,6 @@ export declare type EditingType = {
 };
 export const Editing: EditingType = {
   editEnabled: false,
-  custom: [],
-  anotherCustom: {},
 };
 export declare type ColumnEditingType = {
   editEnabled?: boolean;
@@ -38,3 +34,11 @@ export declare type WidgetInputType = {
   editing?: typeof Editing;
 };
 export const WidgetInput: WidgetInputType = {};
+export declare type PickedPropsType = {
+  columns?: Array<typeof GridColumn | string>;
+  editing?: typeof Editing;
+};
+export const PickedProps: PickedPropsType = {
+  columns: WidgetInput.columns,
+  editing: WidgetInput.editing,
+};

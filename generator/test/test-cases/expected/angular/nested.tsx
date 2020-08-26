@@ -1,4 +1,4 @@
-import { WidgetInput } from "./nested-props";
+import { PickedProps } from "./nested-props";
 import {
   Component,
   NgModule,
@@ -43,7 +43,7 @@ class DxWidgetColumnCustom extends Custom {}
   selector: "dx-widget dxo-editing",
 })
 class DxWidgetEditing extends Editing {
-  private __custom?: DxWidgetEditingCustom[] = [];
+  private __custom?: DxWidgetEditingCustom[];
   @ContentChildren(DxWidgetEditingCustom) customNested!: QueryList<
     DxWidgetEditingCustom
   >;
@@ -59,7 +59,7 @@ class DxWidgetEditing extends Editing {
       return nested;
     }
   }
-  private __anotherCustom?: DxWidgetEditingAnotherCustom = {};
+  private __anotherCustom?: DxWidgetEditingAnotherCustom;
   @ContentChildren(DxWidgetEditingAnotherCustom)
   anotherCustomNested!: QueryList<DxWidgetEditingAnotherCustom>;
   @Input() set anotherCustom(value: DxWidgetEditingAnotherCustom | undefined) {
@@ -80,7 +80,7 @@ class DxWidgetEditing extends Editing {
   selector: "dx-widget dxi-column",
 })
 class DxWidgetColumn extends GridColumn {
-  private __editing?: DxWidgetColumnEditing = {};
+  private __editing?: DxWidgetColumnEditing;
   @ContentChildren(DxWidgetColumnEditing) editingNested!: QueryList<
     DxWidgetColumnEditing
   >;
@@ -96,7 +96,7 @@ class DxWidgetColumn extends GridColumn {
       return nested[0];
     }
   }
-  private __custom?: DxWidgetColumnCustom[] = [];
+  private __custom?: DxWidgetColumnCustom[];
   @ContentChildren(DxWidgetColumnCustom) customNested!: QueryList<
     DxWidgetColumnCustom
   >;
@@ -119,7 +119,7 @@ class DxWidgetColumn extends GridColumn {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div></div>`,
 })
-export default class Widget extends WidgetInput {
+export default class Widget extends PickedProps {
   __getColumns(): any {
     const { columns } = this;
     return columns?.map((el) => (typeof el === "string" ? el : el.name));

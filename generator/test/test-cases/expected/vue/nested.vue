@@ -2,7 +2,7 @@
   <div />
 </template>
 <script>
-import { WidgetInput } from "./nested-props";
+import { PickedProps } from "./nested-props";
 function __collectChildren(children) {
   return children.reduce((acc, child) => {
     const name = child.componentOptions?.Ctor?.extendOptions?.propName;
@@ -64,7 +64,7 @@ export const DxEditingAnotherCustom = {
 DxEditingAnotherCustom.propName = "anotherCustom";
 
 export const DxWidget = {
-  props: WidgetInput,
+  props: PickedProps,
   computed: {
     __isEditable() {
       return (
