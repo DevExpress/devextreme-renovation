@@ -257,11 +257,17 @@ export class AngularComponent extends Component {
   }
 
   processNestedProperty(
-    m: Property,
+    property: Property,
     onPushStrategy: boolean = false,
     selector: string = this.selector
   ) {
-    const { decorators, modifiers, questionOrExclamationToken, type, name } = m;
+    const {
+      decorators,
+      modifiers,
+      questionOrExclamationToken,
+      type,
+      name,
+    } = property;
 
     const nestedCompDecorator = [
       new Decorator(
