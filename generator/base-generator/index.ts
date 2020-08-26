@@ -490,7 +490,7 @@ export default class Generator implements GeneratorAPI {
     typeName: Identifier,
     typeArguments?: TypeExpression[]
   ) {
-    return new TypeReferenceNode(typeName, typeArguments);
+    return new TypeReferenceNode(typeName, typeArguments, this.getContext());
   }
 
   createIf(

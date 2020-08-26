@@ -452,6 +452,10 @@ export class VueGenerator extends BaseGenerator {
       type
     );
 
+    const context = this.getContext();
+    context.types = context.types || {};
+    context.types[name.toString()] = type;
+
     if (base instanceof TypeAliasDeclaration) {
       return addEmptyToString<TypeAliasDeclaration>(base);
     }

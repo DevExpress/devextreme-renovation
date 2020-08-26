@@ -5,7 +5,7 @@ import {
 } from "./base";
 import { Identifier, Call } from "./common";
 import { Parameter } from "./functions";
-import { toStringOptions } from "../types";
+import { toStringOptions, GeneratorContext } from "../types";
 import { compileType, compileTypeParameters } from "../utils/string";
 import { Decorator } from "./decorator";
 import { ObjectLiteral } from "./literal";
@@ -93,10 +93,16 @@ export class TypeQueryNode extends TypeExpression {
 export class TypeReferenceNode extends TypeExpression {
   typeName: Identifier;
   typeArguments: TypeExpression[];
-  constructor(typeName: Identifier, typeArguments: TypeExpression[] = []) {
+  context: GeneratorContext;
+  constructor(
+    typeName: Identifier,
+    typeArguments: TypeExpression[] = [],
+    context: GeneratorContext
+  ) {
     super();
     this.typeName = typeName;
     this.typeArguments = typeArguments;
+    this.context = context;
   }
   toString() {
     const typeArguments = this.typeArguments.length

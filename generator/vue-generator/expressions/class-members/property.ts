@@ -67,6 +67,9 @@ function calculatePropertyType(
     if (typeString === "Array") {
       return "Array";
     }
+    if (type.context.types) {
+      return calculatePropertyType(type.context.types[typeString]);
+    }
     return "Object";
   }
   return "";

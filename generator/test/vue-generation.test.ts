@@ -261,4 +261,8 @@ mocha.describe("vue-generation", function () {
   mocha.it("template-pass", function () {
     this.testGenerator(this.test!.title);
   });
+
+  mocha.it("prop-types-enum", function () {
+    this.testGenerator(this.test!.title);
+  });
 });
