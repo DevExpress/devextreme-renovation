@@ -5,25 +5,21 @@ import {
   OneWay,
 } from "../../../../component_declaration/common";
 
-export declare type EnumType = "data" | "none";
-export declare type Union = string | number;
-export declare type ObjType = {
-  number: number;
-  text: string;
-};
-
 export const viewFunction = (viewModel: Widget) => {
   return <div></div>;
 };
 
 @ComponentBindings()
 export class WidgetProps {
-  @OneWay() data: EnumType = "data";
-  @OneWay() union: Union = "uniontext";
-  @OneWay() obj: ObjType = {
-    number: 123,
-    text: "sda",
-  };
+  @OneWay() str: String = "";
+  @OneWay() num: Number = 1;
+  @OneWay() bool: Boolean = true;
+  @OneWay() arr: Array<any> = [];
+  @OneWay() strArr: Array<String> = ["a", "b"];
+  @OneWay() obj: Object = {};
+  @OneWay() date: Date = new Date();
+  @OneWay() func: Function = () => {};
+  @OneWay() symbol: Symbol = Symbol("x");
 }
 
 @Component({ view: viewFunction })

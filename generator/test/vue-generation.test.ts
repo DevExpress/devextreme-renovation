@@ -262,7 +262,10 @@ mocha.describe("vue-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it("prop-types-enum", function () {
+  mocha.it("types", function () {
+    this.testGenerator(this.test!.title);
+  });
+  mocha.it.only("types-external", function () {
     this.testGenerator(this.test!.title);
   });
 });

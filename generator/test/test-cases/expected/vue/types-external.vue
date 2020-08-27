@@ -20,6 +20,12 @@ export const WidgetProps = {
       return { number: 123, text: "sda" };
     },
   },
+  strArr: {
+    type: Array,
+    default() {
+      return ["ba", "ab"];
+    },
+  },
 };
 export const DxWidget = {
   props: WidgetProps,
@@ -32,6 +38,7 @@ export const DxWidget = {
         data: this.data,
         union: this.union,
         obj: this.obj,
+        strArr: this.strArr,
       };
     },
   },
