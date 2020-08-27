@@ -4,19 +4,19 @@
 <script>
 export const WidgetProps = {
   str: {
-    type: Object,
+    type: String,
     default() {
       return "";
     },
   },
   num: {
-    type: Object,
+    type: Number,
     default() {
       return 1;
     },
   },
   bool: {
-    type: Object,
+    type: Boolean,
     default() {
       return true;
     },
@@ -40,19 +40,17 @@ export const WidgetProps = {
     },
   },
   date: {
-    type: Object,
+    type: Date,
     default() {
       return new Date();
     },
   },
   func: {
-    type: Object,
-    default() {
-      return () => {};
-    },
+    type: Function,
+    default: () => {},
   },
   symbol: {
-    type: Object,
+    type: Symbol,
     default() {
       return Symbol("x");
     },

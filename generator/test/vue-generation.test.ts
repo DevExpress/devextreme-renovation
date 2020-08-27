@@ -265,7 +265,7 @@ mocha.describe("vue-generation", function () {
   mocha.it("types", function () {
     this.testGenerator(this.test!.title);
   });
-  mocha.it.only("types-external", function () {
+  mocha.it("types-external", function () {
     this.testGenerator(this.test!.title);
   });
 });

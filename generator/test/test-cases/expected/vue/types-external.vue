@@ -16,6 +16,7 @@ export const WidgetProps = {
     },
   },
   obj: {
+    type: Object,
     default() {
       return { number: 123, text: "sda" };
     },
@@ -24,6 +25,12 @@ export const WidgetProps = {
     type: Array,
     default() {
       return ["ba", "ab"];
+    },
+  },
+  s: {
+    type: String,
+    default() {
+      return "";
     },
   },
 };
@@ -39,6 +46,7 @@ export const DxWidget = {
         union: this.union,
         obj: this.obj,
         strArr: this.strArr,
+        s: this.s,
       };
     },
   },

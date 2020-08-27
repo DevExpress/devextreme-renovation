@@ -7,6 +7,7 @@ import {
   LiteralTypeNode,
   TypeReferenceNode,
   isTypeArray,
+  TypeLiteralNode,
 } from "../../../base-generator/expressions/type";
 import SyntaxKind from "../../../base-generator/syntaxKind";
 import {
@@ -61,16 +62,27 @@ function calculatePropertyType(
       return "Number";
     }
   }
-
+  if (type instanceof TypeLiteralNode) {
+    return "Object";
+  }
   if (type instanceof TypeReferenceNode) {
     const typeString = type.type.toString();
     if (typeString === "Array") {
       return "Array";
     }
-    if (type.context.types) {
+    if (type.context.types && type.context.types[typeString]) {
       return calculatePropertyType(type.context.types[typeString]);
     }
-    return "Object";
+    const BasicTypes = [
+      "String",
+      "Number",
+      "Boolean",
+      "Array",
+      "Date",
+      "Function",
+      "Symbol",
+    ];
+    return BasicTypes.includes(typeString) ? typeString : "Object";
   }
   return "";
 }

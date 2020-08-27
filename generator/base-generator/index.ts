@@ -1023,6 +1023,10 @@ export default class Generator implements GeneratorAPI {
       typeParameters,
       type
     );
+    const context = this.getContext();
+    context.types = context.types || {};
+    context.types[name.toString()] = type;
+
     return result;
   }
 

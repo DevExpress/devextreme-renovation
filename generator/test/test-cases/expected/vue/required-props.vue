@@ -2,6 +2,7 @@
 function view() {}
 const WidgetInput = {
   size: {
+    type: Object,
     required: true,
   },
   type: {
