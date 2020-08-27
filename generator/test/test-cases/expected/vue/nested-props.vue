@@ -1,5 +1,5 @@
 <script>
-export const GridColumn = {
+export const GridColumnProps = {
   name: {
     type: String,
     default() {
@@ -14,14 +14,11 @@ export const GridColumn = {
   },
   custom: {
     type: Array,
-    default() {
-      return [];
-    },
   },
 };
-export const Custom = {};
-export const AnotherCustom = {};
-export const Editing = {
+export const CustomProps = {};
+export const AnotherCustomProps = {};
+export const EditingProps = {
   editEnabled: {
     type: Boolean,
     default() {
@@ -30,12 +27,9 @@ export const Editing = {
   },
   custom: {
     type: Array,
-    default() {
-      return [];
-    },
   },
 };
-export const ColumnEditing = {
+export const ColumnEditingProps = {
   editEnabled: {
     type: Boolean,
     default() {
@@ -43,9 +37,19 @@ export const ColumnEditing = {
     },
   },
 };
-export const WidgetInput = {
+export const WidgetProps = {
   columns: {
     type: Array,
+  },
+};
+export const PickedProps = {
+  columns: {
+    type: Array,
+    default() {
+      return typeof WidgetProps.columns.default === "function"
+        ? WidgetProps.columns.default()
+        : WidgetProps.columns.default;
+    },
   },
 };
 </script>

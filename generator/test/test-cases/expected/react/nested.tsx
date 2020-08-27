@@ -1,4 +1,5 @@
-import { WidgetInput } from "./nested-props";
+import { PickedProps, GridColumnProps } from "./nested-props";
+export const CustomColumnComponent = (props: typeof GridColumnProps) => {};
 function view(model: Widget) {
   return <div />;
 }
@@ -29,52 +30,51 @@ function __collectChildren<T>(children: React.ReactNode): T[] {
   });
 }
 import {
-  GridColumnType,
-  EditingType,
-  CustomType,
-  ColumnEditingType,
-  AnotherCustomType,
+  EditingProps,
+  CustomProps,
+  ColumnEditingProps,
+  AnotherCustomProps,
 } from "./nested-props";
-export const Column: React.FunctionComponent<GridColumnType> & {
+export const Column: React.FunctionComponent<typeof GridColumnProps> & {
   propName: string;
 } = () => null;
 Column.propName = "columns";
-export const Editing: React.FunctionComponent<EditingType> & {
+export const Editing: React.FunctionComponent<typeof EditingProps> & {
   propName: string;
 } = () => null;
 Editing.propName = "editing";
-export const ColumnCustom: React.FunctionComponent<CustomType> & {
+export const ColumnCustom: React.FunctionComponent<typeof CustomProps> & {
   propName: string;
 } = () => null;
 ColumnCustom.propName = "custom";
-export const ColumnEditing: React.FunctionComponent<ColumnEditingType> & {
-  propName: string;
-} = () => null;
+export const ColumnEditing: React.FunctionComponent<
+  typeof ColumnEditingProps
+> & { propName: string } = () => null;
 ColumnEditing.propName = "editing";
-export const EditingCustom: React.FunctionComponent<CustomType> & {
+export const EditingCustom: React.FunctionComponent<typeof CustomProps> & {
   propName: string;
 } = () => null;
 EditingCustom.propName = "custom";
 export const EditingAnotherCustom: React.FunctionComponent<
-  AnotherCustomType
+  typeof AnotherCustomProps
 > & { propName: string } = () => null;
 EditingAnotherCustom.propName = "anotherCustom";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput
+  keyof typeof PickedProps
 >;
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: typeof PickedProps & RestProps;
   getColumns: () => any;
   isEditable: any;
   restAttributes: RestProps;
   __nestedChildren: <T>() => T[];
-  __getNestedColumns: Array<GridColumnType | string> | undefined;
-  __getNestedEditing: EditingType | undefined;
+  __getNestedColumns: Array<typeof GridColumnProps | string> | undefined;
+  __getNestedEditing: typeof EditingProps | undefined;
 }
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+export default function Widget(props: typeof PickedProps & RestProps) {
   const getColumns = useCallback(
     function getColumns(): any {
       return __getNestedColumns()?.map((el) =>
@@ -111,9 +111,11 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     [props.children]
   );
   const __getNestedColumns = useCallback(
-    function __getNestedColumns(): Array<GridColumnType | string> | undefined {
+    function __getNestedColumns():
+      | Array<typeof GridColumnProps | string>
+      | undefined {
       const nested = __nestedChildren<
-        GridColumnType & { __name: string }
+        typeof GridColumnProps & { __name: string }
       >().filter((child) => child.__name === "columns");
       return props.columns && props.columns.length
         ? props.columns
@@ -124,9 +126,9 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     [props.columns, props.children]
   );
   const __getNestedEditing = useCallback(
-    function __getNestedEditing(): EditingType | undefined {
+    function __getNestedEditing(): typeof EditingProps | undefined {
       const nested = __nestedChildren<
-        EditingType & { __name: string }
+        typeof EditingProps & { __name: string }
       >().filter((child) => child.__name === "editing");
       return props.editing
         ? props.editing
@@ -153,5 +155,5 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 }
 
 Widget.defaultProps = {
-  ...WidgetInput,
+  ...PickedProps,
 };

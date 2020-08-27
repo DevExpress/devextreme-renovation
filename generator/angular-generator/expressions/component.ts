@@ -9,10 +9,7 @@ import {
 } from "../../base-generator/expressions/literal";
 import { HeritageClause } from "../../base-generator/expressions/class";
 import { Identifier, Call } from "../../base-generator/expressions/common";
-import {
-  SimpleExpression,
-  Expression,
-} from "../../base-generator/expressions/base";
+import { SimpleExpression } from "../../base-generator/expressions/base";
 import { Block } from "../../base-generator/expressions/statements";
 import { toStringOptions, AngularGeneratorContext } from "../types";
 import SyntaxKind from "../../base-generator/syntaxKind";
@@ -166,8 +163,7 @@ export class AngularComponent extends Component {
   createNestedState(
     name: string,
     questionOrExclamationToken: string,
-    type: string,
-    initializer?: Expression
+    type: string
   ) {
     return new Property(
       [],
@@ -175,7 +171,7 @@ export class AngularComponent extends Component {
       new Identifier(`__${name}`),
       questionOrExclamationToken,
       `${type}`,
-      initializer
+      undefined
     );
   }
 
@@ -248,8 +244,7 @@ export class AngularComponent extends Component {
     modifiers: string[],
     name: string,
     questionOrExclamationToken: string,
-    type: string,
-    initializer?: Expression
+    type: string
   ) {
     return new Property(
       decorator,
@@ -257,12 +252,12 @@ export class AngularComponent extends Component {
       new Identifier(`${name}Nested`),
       questionOrExclamationToken,
       type,
-      initializer
+      undefined
     );
   }
 
   processNestedProperty(
-    m: Property,
+    property: Property,
     onPushStrategy: boolean = false,
     selector: string = this.selector
   ) {
@@ -270,10 +265,9 @@ export class AngularComponent extends Component {
       decorators,
       modifiers,
       questionOrExclamationToken,
-      initializer,
       type,
       name,
-    } = m;
+    } = property;
 
     const nestedCompDecorator = [
       new Decorator(
@@ -290,19 +284,13 @@ export class AngularComponent extends Component {
       .replace(extractComplexType(type), nestedName);
 
     return [
-      this.createNestedState(
-        name,
-        questionOrExclamationToken,
-        complexType,
-        initializer
-      ),
+      this.createNestedState(name, questionOrExclamationToken, complexType),
       this.createContentChildrenProperty(
         nestedCompDecorator,
         modifiers,
         name,
         questionOrExclamationToken,
-        nestedName,
-        initializer
+        nestedName
       ),
       this.createNestedPropertySetter(
         decorators,

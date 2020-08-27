@@ -1,4 +1,5 @@
-import { WidgetInput } from "./nested-props";
+import { PickedProps, GridColumnProps } from "./nested-props";
+export const CustomColumnComponent = (props: GridColumnProps) => {};
 import {
   Component,
   NgModule,
@@ -12,38 +13,37 @@ import {
 import { CommonModule } from "@angular/common";
 
 import {
-  GridColumn,
-  Editing,
-  Custom,
-  ColumnEditing,
-  AnotherCustom,
+  EditingProps,
+  CustomProps,
+  ColumnEditingProps,
+  AnotherCustomProps,
 } from "./nested-props";
 
 @Directive({
   selector: "dx-widget dxo-editing dxo-another-custom",
 })
-class DxWidgetEditingAnotherCustom extends AnotherCustom {}
+class DxWidgetEditingAnotherCustom extends AnotherCustomProps {}
 
 @Directive({
   selector: "dx-widget dxo-editing dxi-custom",
 })
-class DxWidgetEditingCustom extends Custom {}
+class DxWidgetEditingCustom extends CustomProps {}
 
 @Directive({
   selector: "dx-widget dxi-column dxo-editing",
 })
-class DxWidgetColumnEditing extends ColumnEditing {}
+class DxWidgetColumnEditing extends ColumnEditingProps {}
 
 @Directive({
   selector: "dx-widget dxi-column dxi-custom",
 })
-class DxWidgetColumnCustom extends Custom {}
+class DxWidgetColumnCustom extends CustomProps {}
 
 @Directive({
   selector: "dx-widget dxo-editing",
 })
-class DxWidgetEditing extends Editing {
-  private __custom?: DxWidgetEditingCustom[] = [];
+class DxWidgetEditing extends EditingProps {
+  private __custom?: DxWidgetEditingCustom[];
   @ContentChildren(DxWidgetEditingCustom) customNested!: QueryList<
     DxWidgetEditingCustom
   >;
@@ -59,7 +59,7 @@ class DxWidgetEditing extends Editing {
       return nested;
     }
   }
-  private __anotherCustom?: DxWidgetEditingAnotherCustom = {};
+  private __anotherCustom?: DxWidgetEditingAnotherCustom;
   @ContentChildren(DxWidgetEditingAnotherCustom)
   anotherCustomNested!: QueryList<DxWidgetEditingAnotherCustom>;
   @Input() set anotherCustom(value: DxWidgetEditingAnotherCustom | undefined) {
@@ -79,8 +79,8 @@ class DxWidgetEditing extends Editing {
 @Directive({
   selector: "dx-widget dxi-column",
 })
-class DxWidgetColumn extends GridColumn {
-  private __editing?: DxWidgetColumnEditing = {};
+class DxWidgetColumn extends GridColumnProps {
+  private __editing?: DxWidgetColumnEditing;
   @ContentChildren(DxWidgetColumnEditing) editingNested!: QueryList<
     DxWidgetColumnEditing
   >;
@@ -96,7 +96,7 @@ class DxWidgetColumn extends GridColumn {
       return nested[0];
     }
   }
-  private __custom?: DxWidgetColumnCustom[] = [];
+  private __custom?: DxWidgetColumnCustom[];
   @ContentChildren(DxWidgetColumnCustom) customNested!: QueryList<
     DxWidgetColumnCustom
   >;
@@ -119,7 +119,7 @@ class DxWidgetColumn extends GridColumn {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div></div>`,
 })
-export default class Widget extends WidgetInput {
+export default class Widget extends PickedProps {
   __getColumns(): any {
     const { columns } = this;
     return columns?.map((el) => (typeof el === "string" ? el : el.name));
@@ -152,6 +152,7 @@ export default class Widget extends WidgetInput {
   get __restAttributes(): any {
     return {};
   }
+  CustomColumnComponent: any = CustomColumnComponent;
 
   ngAfterViewInit() {
     this.changeDetection.detectChanges();

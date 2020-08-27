@@ -37,7 +37,8 @@
   - [Ограничения](#ограничения)
   - [Use Cases](#use-cases)		
     - [@OneWay()](#oneway)		
-    - [@TwoWay()](#twoway)		
+    - [@TwoWay()](#twoway)	
+    - [@Nested()](#nested)			
     - [@Event()](#event)		
     - [@Ref()](#ref)		
     - [@ForwardRef()](#forwardref)		
@@ -893,6 +894,8 @@ function viewFunction(viewModel) {
 
 Как было уже сказано, это OneWay проп, и обращение к нему происходит как к OneWay, то есть мы можем только читать оттуда данные. При этом он собирает эти данные как со свойств, так и с nested компонентов.
 
+**Важно!** Во избежание ошибок, рекомендуется именовать `ComponentBingings` как `{SomeName}Props` (см. пример ниже). Это связано с возможным пересечением генерируемых имен нестед компонентов и типов.
+
 Пример использования:
 
 ```ts
@@ -902,14 +905,14 @@ export class Column {
   // Other props
 }
 @ComponentBindings()
-export class Editing {
+export class EditingProps {
   // Props
 }
 
 @ComponentBindings()
 export class GridProps {
   @Nested() columns?: (Column | string)[];
-  @Nested() gridEditing?: Editing;
+  @Nested() gridEditing?: EditingProps;
 }
 
 @Component({ view: viewFunction })
