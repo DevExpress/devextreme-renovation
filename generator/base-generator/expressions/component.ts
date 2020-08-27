@@ -456,18 +456,14 @@ export class Component extends Class implements Heritable {
 
   collectNestedComponents() {
     if (this.members.some((m) => m.isNested)) {
-      const components = this.context.components;
-      const heritage = this.heritageClauses?.[0].typeNodes[0];
-      if (components && heritage instanceof Call) {
-        const inheritFrom = heritage.typeArguments?.length
-          ? (heritage.typeArguments[0] as any).typeName
-          : heritage.arguments[0]?.toString();
-        if (inheritFrom) {
-          return this.getNestedFromComponentInput(
-            components[inheritFrom] as ComponentInput
-          );
-        }
-      }
+      const components = this.context.components!;
+      const heritage = this.heritageClauses[0].typeNodes[0] as Call;
+      const inheritFrom = heritage.typeArguments?.length
+        ? (heritage.typeArguments[0] as any).typeName
+        : heritage.arguments[0].toString();
+      return this.getNestedFromComponentInput(
+        components[inheritFrom] as ComponentInput
+      );
     }
     return [];
   }
@@ -478,19 +474,16 @@ export class Component extends Class implements Heritable {
     );
     const imports = outerComponents.reduce(
       (acc, component) => {
-        const path = component.context.path;
-        if (path) {
-          let relativePath = getModuleRelativePath(
-            this.context.dirname!,
-            component.context.path!
-          );
-          relativePath = relativePath.slice(0, relativePath.lastIndexOf("."));
+        let relativePath = getModuleRelativePath(
+          this.context.dirname!,
+          component.context.path!
+        );
+        relativePath = relativePath.slice(0, relativePath.lastIndexOf("."));
 
-          if (!acc[relativePath]) {
-            acc[relativePath] = [];
-          }
-          acc[relativePath].push(component.name);
+        if (!acc[relativePath]) {
+          acc[relativePath] = [];
         }
+        acc[relativePath].push(component.name);
 
         return acc;
       },
