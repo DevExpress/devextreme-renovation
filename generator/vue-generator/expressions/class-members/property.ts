@@ -23,6 +23,16 @@ import { Property as BaseProperty } from "../../../base-generator/expressions/cl
 import { toStringOptions } from "../../types";
 import { Expression } from "../../../base-generator/expressions/base";
 
+const BasicTypes = [
+  "String",
+  "Number",
+  "Boolean",
+  "Array",
+  "Date",
+  "Function",
+  "Symbol",
+];
+
 function calculatePropertyType(
   type: TypeExpression | string,
   initializer?: Expression
@@ -73,15 +83,6 @@ function calculatePropertyType(
     if (type.context.types && type.context.types[typeString]) {
       return calculatePropertyType(type.context.types[typeString]);
     }
-    const BasicTypes = [
-      "String",
-      "Number",
-      "Boolean",
-      "Array",
-      "Date",
-      "Function",
-      "Symbol",
-    ];
     return BasicTypes.includes(typeString) ? typeString : "Object";
   }
   return "";

@@ -33,6 +33,12 @@ export const WidgetProps = {
       return "";
     },
   },
+  strDate: {
+    type: [String, Date],
+    default() {
+      return new Date();
+    },
+  },
 };
 export const DxWidget = {
   props: WidgetProps,
@@ -47,6 +53,7 @@ export const DxWidget = {
         obj: this.obj,
         strArr: this.strArr,
         s: this.s,
+        strDate: this.strDate,
       };
     },
   },
