@@ -46,6 +46,22 @@
 
    WA - Not needed, but `undefined` value might be deprecated and users have to change projects to use `null`.
 
+1. Assigning `undefined` to option resets it to default value (or `null`)
+
+   To overcome Preact limitaion on setting `undefined` to TwoWay props, we changed the way jQuery widget process `undefined` option value.
+
+   When user sets `undefined` to some option, jQuery widget pass option's default value or `null` if it is allowed by declaration.
+
+   This does not affect option reading.
+
+   ```ts
+   $(selector).dxWidget("option", "someOption", undefined); // sets default value to someOption, e.g. 15
+
+   $(selector).dxWidget("option", "someOption") === undefined; // true, jQuery widget stores user's values
+   ```
+
+   Current widgets implementation behaves pretty similar, so this change should be unnoticeable for users.
+
 ### Wrappers
 
 1. Component's instance is now jQuery wrapper that only contains its own members and declared API (`@Method` decorator)
