@@ -6,7 +6,11 @@ export class AngularDirective extends JsxAttribute {
     return [];
   }
   toString(options?: toStringOptions) {
-    const initializer = this.compileInitializer(options);
+    const initializer = this.compileInitializer({
+      members: [],
+      isDirective: true,
+      ...options,
+    });
     const value = initializer ? `="${initializer}"` : "";
     return `${this.name}${value}`;
   }

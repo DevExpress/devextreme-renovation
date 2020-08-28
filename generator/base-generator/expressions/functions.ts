@@ -370,5 +370,5 @@ export const isFunction = (
   expression: Expression
 ): expression is BaseFunction => expression instanceof BaseFunction;
 
-export const isCallable = (expression: Expression): expression is Call =>
+export const isCall = (expression: Expression): expression is Call =>
   expression instanceof Call;

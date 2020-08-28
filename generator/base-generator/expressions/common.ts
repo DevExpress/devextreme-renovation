@@ -3,6 +3,7 @@ import SyntaxKind from "../syntaxKind";
 import { ExpressionWithExpression, Expression, SimpleExpression } from "./base";
 import { TypeExpression } from "./type";
 import { compileTypeParameters } from "../utils/string";
+import { isCall, isFunction } from "./functions";
 
 export class Identifier extends SimpleExpression {
   constructor(name: string) {
@@ -16,7 +17,15 @@ export class Identifier extends SimpleExpression {
   toString(options?: toStringOptions) {
     const baseValue = super.toString();
     if (options?.variables && options.variables[baseValue]) {
-      if (options.variables[baseValue].toString() === baseValue) {
+      let expression = options.variables[baseValue];
+      if (expression instanceof Paren) {
+        expression = expression.expression;
+      }
+      const isFunctionOrCall = isFunction(expression) || isCall(expression);
+      if (
+        (options.isDirective && isFunctionOrCall) ||
+        options.variables[baseValue].toString() === baseValue
+      ) {
         return baseValue;
       }
       return options.variables[baseValue].toString(options);
