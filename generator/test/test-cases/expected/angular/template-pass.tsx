@@ -34,7 +34,7 @@ import { CommonModule } from "@angular/common";
     ><ng-template #CustomTemplate let-text="text" let-value="value"
       ><span>{{ text }}</span></ng-template
     ><ng-template #__arrowTemplate__generated let-name="name" let-id="id"
-      ><div>{{ data }}</div></ng-template
+      ><div>{{ name }}</div></ng-template
     ></dx-widget-with-template
   >`,
 })

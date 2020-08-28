@@ -12,7 +12,7 @@
       <span>{{ text }}</span>
     </template>
     <template v-slot:__arrowTemplate__generated="data">
-      <div>{{ data }}</div>
+      <div>{{ data.name }}</div>
     </template>
   </WidgetWithTemplate>
 </template>
