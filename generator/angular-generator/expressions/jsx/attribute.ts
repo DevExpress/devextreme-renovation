@@ -172,6 +172,9 @@ export class JsxAttribute extends BaseJsxAttribute {
       const funcName = this.initializer.toString();
       const template = this.initializer.getExpression(options)!;
       if (isFunction(template)) {
+        if (this.isTemplateAttribute(options) && funcName == "") {
+          return this.compileBase(name, `__${name}__generated`);
+        }
         return this.compileBase(name, funcName);
       }
     }
