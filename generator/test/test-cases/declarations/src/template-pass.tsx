@@ -18,7 +18,7 @@ function view(model: Widget) {
     <WidgetWithTemplate
       template={CustomTemplate}
       componentTemplate={InnerWidget}
-      arrowTemplate={(data: any) => <div>{data}</div>}
+      arrowTemplate={(data: { name: string; id: number }) => <div>{data}</div>}
     />
   );
 }
