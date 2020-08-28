@@ -7,6 +7,7 @@ import {
   LiteralTypeNode,
   TypeReferenceNode,
   isTypeArray,
+  TypeLiteralNode,
 } from "../../../base-generator/expressions/type";
 import SyntaxKind from "../../../base-generator/syntaxKind";
 import {
@@ -21,6 +22,16 @@ import {
 import { Property as BaseProperty } from "../../../base-generator/expressions/class-members";
 import { toStringOptions } from "../../types";
 import { Expression } from "../../../base-generator/expressions/base";
+
+const BasicTypes = [
+  "String",
+  "Number",
+  "Boolean",
+  "Array",
+  "Date",
+  "Function",
+  "Symbol",
+];
 
 function calculatePropertyType(
   type: TypeExpression | string,
@@ -61,13 +72,18 @@ function calculatePropertyType(
       return "Number";
     }
   }
-
+  if (type instanceof TypeLiteralNode) {
+    return "Object";
+  }
   if (type instanceof TypeReferenceNode) {
     const typeString = type.type.toString();
     if (typeString === "Array") {
       return "Array";
     }
-    return "Object";
+    if (type.context.types && type.context.types[typeString]) {
+      return calculatePropertyType(type.context.types[typeString]);
+    }
+    return BasicTypes.includes(typeString) ? typeString : "Object";
   }
   return "";
 }

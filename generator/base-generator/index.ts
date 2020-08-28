@@ -490,7 +490,7 @@ export default class Generator implements GeneratorAPI {
     typeName: Identifier,
     typeArguments?: TypeExpression[]
   ) {
-    return new TypeReferenceNode(typeName, typeArguments);
+    return new TypeReferenceNode(typeName, typeArguments, this.getContext());
   }
 
   createIf(
@@ -1034,6 +1034,10 @@ export default class Generator implements GeneratorAPI {
       typeParameters,
       type
     );
+    const context = this.getContext();
+    context.types = context.types || {};
+    context.types[name.toString()] = type;
+
     return result;
   }
 
