@@ -12,7 +12,7 @@ import { GeneratorContext } from "../types";
 import { Block, ReturnStatement } from "./statements";
 import { getModuleRelativePath } from "../utils/path-utils";
 import { Decorator } from "./decorator";
-import { BaseFunction, isCallable, isFunction } from "./functions";
+import { BaseFunction, isCall, isFunction } from "./functions";
 import {
   compileType,
   capitalizeFirstLetter,
@@ -511,8 +511,7 @@ export class Component extends Class implements Heritable {
             body = body.expression;
           }
           if (
-            (isCallable(body) &&
-              body.expression.toString() !== "createContext") ||
+            (isCall(body) && body.expression.toString() !== "createContext") ||
             isFunction(body)
           ) {
             acc.push(key);

@@ -1,17 +1,24 @@
 <template>
-  <div v-bind:class="CLASS_NAME" v-bind:style="externalFunction()"></div>
+  <div v-bind:class="CLASS_NAME" v-bind:style="externalFunction()">
+    <span :key="index" v-for="(cell, index) of cells"
+      ><div v-if="conditionFn(cell) && index > 0">{{ index }}</div></span
+    >
+  </div>
 </template>
 <script>
 import { namedFunction as externalFunction } from "./functions";
 const arrowFunction = () => {
   return "defaultClassName";
 };
+const conditionFn = (cell) => {
+  return cell.visible;
+};
 const CLASS_NAME = arrowFunction();
 export const WidgetProps = {
-  index: {
-    type: Number,
+  cells: {
+    type: Array,
     default() {
-      return 0;
+      return [];
     },
   },
 };
@@ -22,13 +29,16 @@ export const DxWidget = {
       return {};
     },
     props() {
-      return { index: this.index };
+      return { cells: this.cells };
     },
     externalFunction() {
       return externalFunction;
     },
     arrowFunction() {
       return arrowFunction;
+    },
+    conditionFn() {
+      return conditionFn;
     },
     CLASS_NAME() {
       return CLASS_NAME;

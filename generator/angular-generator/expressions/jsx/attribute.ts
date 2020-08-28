@@ -5,7 +5,7 @@ import {
 import { toStringOptions } from "../../types";
 import {
   isFunction,
-  isCallable,
+  isCall,
 } from "../../../base-generator/expressions/functions";
 import { PropertyAssignment } from "../../../base-generator/expressions/property-assignment";
 import { SimpleExpression } from "../../../base-generator/expressions/base";
@@ -174,7 +174,7 @@ export class JsxAttribute extends BaseJsxAttribute {
     if (this.initializer instanceof JsxExpression) {
       const funcName = this.initializer.toString();
       const template = this.initializer.getExpression(options)!;
-      if (isFunction(template) || isCallable(template)) {
+      if (isFunction(template) || isCall(template)) {
         return this.compileBase(name, funcName);
       }
     }

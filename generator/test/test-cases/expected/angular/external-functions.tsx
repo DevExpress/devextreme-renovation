@@ -1,11 +1,15 @@
 import { namedFunction as externalFunction } from "./functions";
+declare type Cell = { text: string; visible: boolean };
 const arrowFunction: () => string = () => {
   return "defaultClassName";
+};
+const conditionFn: (cell: Cell) => boolean = (cell) => {
+  return cell.visible;
 };
 const CLASS_NAME = arrowFunction();
 import { Input } from "@angular/core";
 export class WidgetProps {
-  @Input() index: number = 0;
+  @Input() cells: Cell[] = [];
 }
 
 import {
@@ -19,7 +23,14 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div [class]="CLASS_NAME" [ngStyle]="externalFunction()"></div>`,
+  template: `<div [class]="CLASS_NAME" [ngStyle]="externalFunction()">
+    <ng-container
+      *ngFor="let cell of cells; index as index; trackBy: _trackBy_cells_0"
+      ><span
+        ><div *ngIf="conditionFn(cell) && index > 0">{{ index }}</div></span
+      ></ng-container
+    >
+  </div>`,
 })
 export default class Widget extends WidgetProps {
   get __restAttributes(): any {
@@ -27,7 +38,12 @@ export default class Widget extends WidgetProps {
   }
   externalFunction: any = externalFunction;
   arrowFunction: any = arrowFunction;
+  conditionFn: any = conditionFn;
   CLASS_NAME: any = CLASS_NAME;
+
+  _trackBy_cells_0(index: number, cell: any) {
+    return index;
+  }
 
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
