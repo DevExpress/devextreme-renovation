@@ -1,19 +1,30 @@
-import { Component, Template, ComponentBindings, JSXComponent } from "../../../../component_declaration/common";
+import {
+  Component,
+  Template,
+  ComponentBindings,
+  JSXComponent,
+} from "../../../../component_declaration/common";
 
 @ComponentBindings()
-export class WidgetWithTemplateInput { 
-    @Template() template?: any;
-    @Template() componentTemplate?: any;
+export class WidgetWithTemplateInput {
+  @Template() template?: any;
+  @Template() componentTemplate?: any;
+  @Template() arrowTemplate?: any;
 }
 
 @Component({
-    view: view
+  view: view,
 })
-export default class WidgetWithTemplate extends JSXComponent(WidgetWithTemplateInput) {}
+export default class WidgetWithTemplate extends JSXComponent(
+  WidgetWithTemplateInput
+) {}
 
-function view(viewModel: WidgetWithTemplate) { 
-    return (<div>
-        <viewModel.props.componentTemplate />
-        <viewModel.props.template />
-    </div>)
+function view(viewModel: WidgetWithTemplate) {
+  return (
+    <div>
+      <viewModel.props.componentTemplate />
+      <viewModel.props.template />
+      <viewModel.props.arrowTemplate />
+    </div>
+  );
 }

@@ -1,25 +1,32 @@
-import { Component, ComponentBindings, JSXComponent, OneWay, Event, TwoWay } from "../../../../component_declaration/common";
+import {
+  Component,
+  ComponentBindings,
+  JSXComponent,
+  OneWay,
+  Event,
+  TwoWay,
+} from "../../../../component_declaration/common";
 import WidgetWithTemplate from "./dx-widget-with-template";
-import InnerWidget from './dx-inner-widget';
+import InnerWidget from "./dx-inner-widget";
 
-const CustomTemplate = ({ text }: {text: string, value: number}) => {
-    return <span>{text}</span>;
-}
+const CustomTemplate = ({ text }: { text: string; value: number }) => {
+  return <span>{text}</span>;
+};
 
 function view(model: Widget) {
-    return <WidgetWithTemplate
-        template={CustomTemplate}
-        componentTemplate={InnerWidget}
+  return (
+    <WidgetWithTemplate
+      template={CustomTemplate}
+      componentTemplate={InnerWidget}
+      arrowTemplate={(data: any) => <div>{data}</div>}
     />
-    
+  );
 }
 
 @ComponentBindings()
-export class WidgetProps {
-}
+export class WidgetProps {}
 
 @Component({
-    view: view
+  view: view,
 })
-export default class Widget extends JSXComponent(WidgetProps) {
-}
+export default class Widget extends JSXComponent(WidgetProps) {}

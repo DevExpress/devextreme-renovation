@@ -18,6 +18,7 @@ import { CommonModule } from "@angular/common";
   template: `<dx-widget-with-template
     [template]="CustomTemplate"
     [componentTemplate]="InnerWidget"
+    [arrowTemplate]="__arrowTemplate__generated"
     ><ng-template
       #InnerWidget
       let-selected="selected"
@@ -32,6 +33,8 @@ import { CommonModule } from "@angular/common";
       ></dx-inner-widget></ng-template
     ><ng-template #CustomTemplate let-text="text" let-value="value"
       ><span>{{ text }}</span></ng-template
+    ><ng-template #__arrowTemplate__generated
+      ><div>{{ data }}</div></ng-template
     ></dx-widget-with-template
   >`,
 })

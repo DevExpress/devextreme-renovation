@@ -2,6 +2,7 @@ import { Input, TemplateRef } from "@angular/core";
 export class WidgetWithTemplateInput {
   @Input() template?: TemplateRef<any> | null = null;
   @Input() componentTemplate?: TemplateRef<any> | null = null;
+  @Input() arrowTemplate?: TemplateRef<any> | null = null;
 }
 
 import {
@@ -17,7 +18,8 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div>
     <ng-container *ngTemplateOutlet="componentTemplate"></ng-container
-    ><ng-container *ngTemplateOutlet="template"></ng-container>
+    ><ng-container *ngTemplateOutlet="template"></ng-container
+    ><ng-container *ngTemplateOutlet="arrowTemplate"></ng-container>
   </div>`,
 })
 export default class WidgetWithTemplate extends WidgetWithTemplateInput {

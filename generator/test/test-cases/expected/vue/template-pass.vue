@@ -11,12 +11,14 @@
     <template v-slot:template="{ text }">
       <span>{{ text }}</span>
     </template>
+    <template v-slot:__arrowTemplate__generated="data">
+      <div>{{ data }}</div>
+    </template>
   </WidgetWithTemplate>
 </template>
 <script>
 import WidgetWithTemplate from "./dx-widget-with-template";
 import InnerWidget from "./dx-inner-widget";
-
 export const WidgetProps = {};
 export const DxWidget = {
   components: {
