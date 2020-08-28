@@ -1,43 +1,48 @@
-export declare type GridColumnType = {
+export declare type GridColumnPropsType = {
   name: string;
   index: number;
-  editing?: typeof ColumnEditing;
-  custom?: typeof Custom[];
+  editing?: typeof ColumnEditingProps;
+  custom?: typeof CustomProps[];
   defaultIndex?: number;
   indexChange?: (index: number) => void;
   children?: React.ReactNode;
 };
-export const GridColumn: GridColumnType = ({
+export const GridColumnProps: GridColumnPropsType = ({
   name: "",
-  editing: {},
-  custom: [],
   defaultIndex: 0,
   indexChange: () => {},
-} as any) as GridColumnType;
-export declare type CustomType = {};
-export const Custom: CustomType = {};
-export declare type AnotherCustomType = {};
-export const AnotherCustom: AnotherCustomType = {};
-export declare type EditingType = {
+} as any) as GridColumnPropsType;
+export declare type CustomPropsType = {};
+export const CustomProps: CustomPropsType = {};
+export declare type AnotherCustomPropsType = {};
+export const AnotherCustomProps: AnotherCustomPropsType = {};
+export declare type EditingPropsType = {
   editEnabled?: boolean;
-  custom?: typeof Custom[];
-  anotherCustom?: typeof AnotherCustom;
+  custom?: typeof CustomProps[];
+  anotherCustom?: typeof AnotherCustomProps;
   children?: React.ReactNode;
 };
-export const Editing: EditingType = {
+export const EditingProps: EditingPropsType = {
   editEnabled: false,
-  custom: [],
-  anotherCustom: {},
 };
-export declare type ColumnEditingType = {
+export declare type ColumnEditingPropsType = {
   editEnabled?: boolean;
 };
-export const ColumnEditing: ColumnEditingType = {
+export const ColumnEditingProps: ColumnEditingPropsType = {
   editEnabled: false,
 };
-export declare type WidgetInputType = {
-  columns?: Array<typeof GridColumn | string>;
-  editing?: typeof Editing;
+export declare type WidgetPropsType = {
+  columns?: Array<typeof GridColumnProps | string>;
+  editing?: typeof EditingProps;
   children?: React.ReactNode;
 };
-export const WidgetInput: WidgetInputType = {};
+export const WidgetProps: WidgetPropsType = {};
+export declare type PickedPropsType = {
+  columns?: Array<typeof GridColumnProps | string>;
+  editing?: typeof EditingProps;
+  children?: React.ReactNode;
+};
+export const PickedProps: PickedPropsType = {
+  columns: WidgetProps.columns,
+  editing: WidgetProps.editing,
+};
