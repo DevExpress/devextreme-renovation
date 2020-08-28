@@ -295,6 +295,12 @@ class JQueryComponent {
         return arr;
       }, []);
 
+    const withoutInitializer = this.source.state.filter((s) => !s.initializer);
+    if (withoutInitializer.length) {
+      throw `You should specify default value other than 'undefined' for the following TwoWay props: ${withoutInitializer
+        .map((s) => s.name)
+        .join(", ")}`;
+    }
     return `
         get _propsInfo() {
             return {

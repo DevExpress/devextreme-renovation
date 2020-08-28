@@ -7,7 +7,7 @@ export default class Widget extends BaseComponent {
     return {
       twoway: [
         ["state1", false, "state1Change"],
-        ["state2", "default value", "state2Change"],
+        ["state2", undefined, "state2Change"],
         [
           "state3",
           (e: any) => {
@@ -15,7 +15,7 @@ export default class Widget extends BaseComponent {
           },
           "state3Change",
         ],
-        ["state4", null, "state4Change"],
+        ["state4", undefined, "state4Change"],
       ],
       allowNull: ["prop1", "defaultState4", "state4"],
     };

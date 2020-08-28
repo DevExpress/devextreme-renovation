@@ -12,14 +12,14 @@ function view(model: Widget) {
 
 @ComponentBindings()
 class WidgetInput {
-  @TwoWay() state1?: boolean = false;
-  @TwoWay() state2?: string = "default value";
-  @TwoWay() state3?: (e: any) => number = (e: any) => {
+  @TwoWay() state1 = false;
+  @TwoWay() state2?: string;
+  @TwoWay() state3: (e: any) => number = (e: any) => {
     return e.num;
   };
-  @TwoWay() state4: number | null = null;
-  @OneWay() prop1: string | null = "default";
-  @OneWay() prop2: string = "default";
+  @TwoWay() state4?: number | null;
+  @OneWay() prop1?: string | null;
+  @OneWay() prop2?: string;
 }
 @Component({
   view,

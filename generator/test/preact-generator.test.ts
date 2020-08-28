@@ -388,4 +388,21 @@ mocha.describe("preact-generator: jQuery generation", function () {
   mocha.it("jquery-export-named", function () {
     this.testGenerator(this.test!.title);
   });
+
+  mocha.it(
+    "should throw an error with TwoWay props without initializer",
+    function () {
+      let error;
+      try {
+        this.testGenerator("jquery-props-without-initializer");
+      } catch (e) {
+        error = e;
+      }
+
+      assert.strictEqual(
+        error,
+        "You should specify default value other than 'undefined' for the following TwoWay props: state2, state4"
+      );
+    }
+  );
 });
