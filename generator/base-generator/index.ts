@@ -556,6 +556,12 @@ export default class Generator implements GeneratorAPI {
         this.cache
       );
 
+      if (modulePath) {
+        const relativePath = getModuleRelativePath(context.dirname, modulePath);
+        context.imports = context.imports || {};
+        context.imports[relativePath] = importClause;
+      }
+
       const importedModules = context.importedModules || [];
       const hasModule = importedModules.some((m) => m === modulePath);
 
@@ -728,7 +734,8 @@ export default class Generator implements GeneratorAPI {
     name: Identifier,
     typeParameters: string[],
     heritageClauses: HeritageClause[],
-    members: Array<Property | Method>
+    members: Array<Property | Method>,
+    context: GeneratorContext
   ) {
     return new Class(
       decorators,
@@ -736,7 +743,8 @@ export default class Generator implements GeneratorAPI {
       name,
       typeParameters,
       heritageClauses,
-      members
+      members,
+      context
     );
   }
 
@@ -782,7 +790,8 @@ export default class Generator implements GeneratorAPI {
         name,
         typeParameters,
         heritageClauses,
-        members
+        members,
+        this.getContext()
       );
     }
 

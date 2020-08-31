@@ -174,7 +174,8 @@ export class Component extends Class implements Heritable {
       name,
       typeParameters,
       heritageClauses.filter((h) => h.token === SyntaxKind.ExtendsKeyword),
-      members
+      members,
+      context
     );
     members = this.members;
     this.props = members.filter((m) =>

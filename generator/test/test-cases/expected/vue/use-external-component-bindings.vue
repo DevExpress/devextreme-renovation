@@ -3,7 +3,6 @@
 </template>
 <script>
 import Props from "./component-bindings-only";
-
 import { convertRulesToOptions } from "../../../../component_declaration/default_options";
 
 const __defaultOptionRules = [];
@@ -24,7 +23,7 @@ export const DxWidget = {
       return {};
     },
     props() {
-      return { height: this.height };
+      return { height: this.height, data: this.data, info: this.info };
     },
   },
   beforeCreate() {
