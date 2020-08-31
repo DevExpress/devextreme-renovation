@@ -173,3 +173,8 @@
 #### Button Breaking Changes
 
 1. Ink ripple markup is added to the tree on rendering, not on user action.
+
+#### Grid pager Breaking WA
+
+1. Use 'all' value for allowedPageSizes to add 'All' item into page size section of pager. We add default localization for it (dxPager-pageSizesAllText). (T725186, T535399)
+2. For controll of pager UI apperance use displayMode option in pager section. It can take on the following values: 'adaptive', 'compact' or 'full'. (T672366, T709640, T745052)
