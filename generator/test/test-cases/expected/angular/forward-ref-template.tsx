@@ -8,6 +8,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
   ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -36,6 +37,12 @@ export default class RefOnChildrenTemplate extends Props {
     ) => void) => {
       return (ref) => (this.child = ref);
     })());
+  }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
   }
 
   __destroyEffects: any[] = [];

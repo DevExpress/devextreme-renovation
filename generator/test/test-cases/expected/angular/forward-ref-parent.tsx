@@ -9,6 +9,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
   ViewChild,
   ElementRef,
 } from "@angular/core";
@@ -55,6 +56,12 @@ export default class RefOnChildrenParent extends Props {
     ) => void) => {
       return (ref) => (this.nullableRefRef = ref);
     })());
+  }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
   }
 
   __destroyEffects: any[] = [];
@@ -104,7 +111,7 @@ export default class RefOnChildrenParent extends Props {
   }
   set _state(state: number) {
     this.state = state;
-    this.changeDetection.detectChanges();
+    this._detectChanges();
   }
 }
 @NgModule({

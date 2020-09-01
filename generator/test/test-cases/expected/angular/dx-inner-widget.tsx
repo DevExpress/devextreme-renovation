@@ -11,6 +11,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
   forwardRef,
   HostListener,
 } from "@angular/core";
@@ -35,13 +36,19 @@ export default class InnerWidget extends InnerWidgetProps
   get __restAttributes(): any {
     return {};
   }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
+  }
 
   @HostListener("valueChange", ["$event"]) change() {}
   @HostListener("onBlur", ["$event"]) touched = () => {};
 
   writeValue(value: any): void {
     this.value = value;
-    this.changeDetection.detectChanges();
+    this._detectChanges();
   }
 
   registerOnChange(fn: () => void): void {
@@ -57,11 +64,11 @@ export default class InnerWidget extends InnerWidgetProps
     super();
     this._onSelect = (e: any) => {
       this.onSelect.emit(e);
-      this.changeDetection.detectChanges();
+      this._detectChanges();
     };
     this._valueChange = (value: number) => {
       this.valueChange.emit(value);
-      this.changeDetection.detectChanges();
+      this._detectChanges();
     };
   }
 

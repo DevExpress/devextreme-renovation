@@ -9,6 +9,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -32,18 +33,24 @@ export default class Widget extends WidgetInput {
   get __restAttributes(): any {
     return {};
   }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
+  }
 
   _propStateChange: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
     this._propStateChange = (propState: number) => {
       this.propStateChange.emit(propState);
-      this.changeDetection.detectChanges();
+      this._detectChanges();
     };
   }
   set _innerState(innerState: number) {
     this.innerState = innerState;
-    this.changeDetection.detectChanges();
+    this._detectChanges();
   }
 }
 @NgModule({

@@ -9,6 +9,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
   ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -25,6 +26,12 @@ export default class WidgetWithApiRef extends WidgetWithApiRefInput {
   }
   get __restAttributes(): any {
     return {};
+  }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {
