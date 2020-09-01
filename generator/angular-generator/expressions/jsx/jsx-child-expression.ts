@@ -334,6 +334,13 @@ export class JsxChildExpression extends JsxExpression {
 
         return templateExpression;
       }
+      if (template) {
+        return `{{${expression.toString({
+          members: [],
+          disableTemplates: true,
+          ...options,
+        })}}}`;
+      }
     }
 
     if (expression instanceof Conditional) {
