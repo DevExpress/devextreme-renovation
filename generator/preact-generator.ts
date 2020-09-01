@@ -304,7 +304,7 @@ class JQueryComponent {
     return `
         get _propsInfo() {
             return {
-                twoway: [${this.source.state.map(
+                twoWay: [${this.source.state.map(
                   (s) => `['${s.name}', ${s.initializer}, '${s.name}Change']`
                 )}],
                 allowNull: [${withNullType}]

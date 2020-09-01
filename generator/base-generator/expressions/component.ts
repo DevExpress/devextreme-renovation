@@ -373,10 +373,10 @@ export class Component extends Class implements Heritable {
         .arguments[0] as ObjectLiteral).toObject(),
       props: {
         allProps: props.map(memberName),
-        oneway: props
+        oneWay: props
           .filter((m) => m._hasDecorator(Decorators.OneWay))
           .map(memberName),
-        twoway: props.filter((m) => m.isState).map(memberName),
+        twoWay: props.filter((m) => m.isState).map(memberName),
         template: props.filter((m) => m.isTemplate).map(memberName),
         event: props.filter((m) => m.isEvent).map(memberName),
         ref: props.filter((m) => m.isRefProp).map(memberName),
