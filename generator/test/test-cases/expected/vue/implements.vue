@@ -3,7 +3,6 @@
 </template>
 <script>
 import BaseProps from "./component-bindings-only";
-
 const WidgetInput = {
   ...BaseProps,
   p: {
@@ -13,7 +12,6 @@ const WidgetInput = {
     },
   },
 };
-
 export const DxWidget = {
   props: WidgetInput,
   computed: {
@@ -21,7 +19,12 @@ export const DxWidget = {
       return {};
     },
     props() {
-      return { p: this.p, height: this.height };
+      return {
+        p: this.p,
+        height: this.height,
+        data: this.data,
+        info: this.info,
+      };
     },
   },
   methods: {

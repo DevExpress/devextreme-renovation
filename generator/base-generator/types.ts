@@ -1,6 +1,6 @@
 import { Property, Method } from "./expressions/class-members";
 import { Heritable } from "./expressions/class";
-import { ImportDeclaration } from "./expressions/import";
+import { ImportDeclaration, ImportClause } from "./expressions/import";
 import { ArrowFunction, Function } from "./expressions/functions";
 import { Component } from "./expressions/component";
 import { TypeExpression } from "./expressions/type";
@@ -43,4 +43,7 @@ export type GeneratorContext = {
   viewFunctions?: { [name: string]: Function | ArrowFunction };
   globals?: VariableExpression;
   importedModules?: string[];
+  imports?: {
+    [name: string]: ImportClause;
+  };
 } & GeneratorOptions;
