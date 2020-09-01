@@ -1,7 +1,9 @@
-import Props from "./component-bindings-only";
+import Props, { Options } from "./component-bindings-only";
 import { Input } from "@angular/core";
+import { AdditionalOptions } from "./component-bindings-only";
 class WidgetProps {
-  @Input() height?: number = new Props().height;
+  @Input() data?: Options = new Props().data;
+  @Input() info?: AdditionalOptions = new Props().info;
 }
 
 import {
@@ -15,15 +17,26 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div>{{ height }}</div>`,
+  template: `<div>
+    {{
+      model.props.data === undefined || model.props.data === null
+        ? undefined
+        : model.props.data.value
+    }}
+  </div>`,
 })
 export default class Widget extends WidgetProps {
+  innerData: Options = { value: "" };
   get __restAttributes(): any {
     return {};
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
+  }
+  set _innerData(innerData: Options) {
+    this.innerData = innerData;
+    this.changeDetection.detectChanges();
   }
 }
 @NgModule({

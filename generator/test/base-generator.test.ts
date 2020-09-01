@@ -2639,7 +2639,7 @@ mocha.describe("base-generator: expressions", function () {
 
         assert.deepEqual(
           widget.members.map((m) => m.name),
-          ["height", "__restAttributes"]
+          ["height", "data", "info", "__restAttributes"]
         );
       }
     );
