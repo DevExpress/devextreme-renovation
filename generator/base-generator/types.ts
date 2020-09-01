@@ -19,7 +19,6 @@ export type toStringOptions = {
   newComponentContext?: string;
   variables?: VariableExpression;
   jsxComponent?: Component;
-  isDirective?: boolean;
 };
 
 export type VariableExpression = {
