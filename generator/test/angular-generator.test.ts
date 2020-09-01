@@ -5011,13 +5011,19 @@ mocha.describe("Angular generator", function () {
       assert.strictEqual(
         getResult(component.toString()),
         getResult(`
-                import {Component,NgModule,ChangeDetectionStrategy,ChangeDetectorRef} from "@angular/core";
+                import {Component,NgModule,ChangeDetectionStrategy,ChangeDetectorRef,ViewRef} from "@angular/core";
                 import {CommonModule} from "@angular/common";
 
                 ${component.decorator}
                 export default class BaseWidget {
                     get __restAttributes(): any{
                         return {}
+                    }
+                    _detectChanges(): void {
+                      setTimeout(() => {
+                        if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+                          this.changeDetection.detectChanges();
+                      });
                     }
                     constructor(private changeDetection: ChangeDetectorRef) {}
                 }
@@ -5093,13 +5099,19 @@ mocha.describe("Angular generator", function () {
         assert.strictEqual(
           getResult(component.toString()),
           getResult(`
-                import {Component,NgModule,ChangeDetectionStrategy,ChangeDetectorRef} from "@angular/core";
+                import {Component,NgModule,ChangeDetectionStrategy,ChangeDetectorRef,ViewRef} from "@angular/core";
                 import {CommonModule} from "@angular/common";
                 
                 ${component.decorator}
                 export default class BaseWidget extends Input {
                     get __restAttributes(): any{
                         return {}
+                    }
+                    _detectChanges(): void {
+                      setTimeout(() => {
+                        if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+                          this.changeDetection.detectChanges();
+                      });
                     }
                     constructor(private changeDetection: ChangeDetectorRef) {
                       super();
@@ -5137,7 +5149,7 @@ mocha.describe("Angular generator", function () {
           getResult(setter[0].toString()),
           getResult(`set _p(p:any){
           this.p=p;
-          this.changeDetection.detectChanges();
+          this._detectChanges();
         }`)
         );
       });
@@ -5161,7 +5173,7 @@ mocha.describe("Angular generator", function () {
           getResult(setter[0].toString()),
           getResult(`set _p(p?:string){
           this.p=p;
-          this.changeDetection.detectChanges();
+          this._detectChanges();
         }`)
         );
       });
@@ -5185,7 +5197,7 @@ mocha.describe("Angular generator", function () {
           getResult(setter[0].toString()),
           getResult(`set _p(p:string){
           this.p=p;
-          this.changeDetection.detectChanges();
+          this._detectChanges();
         }`)
         );
       });
@@ -5208,7 +5220,7 @@ mocha.describe("Angular generator", function () {
           getResult(setter[0].toString()),
           getResult(`set _p(p:any){
           this.p=p;
-          this.changeDetection.detectChanges();
+          this._detectChanges();
         }`)
         );
       });
@@ -5232,7 +5244,7 @@ mocha.describe("Angular generator", function () {
           getResult(setter[0].toString()),
           getResult(`set _p(p:any){
           this.p=p;
-          this.changeDetection.detectChanges();
+          this._detectChanges();
         }`)
         );
       });
@@ -6115,7 +6127,7 @@ mocha.describe("Angular generator", function () {
             getResult(p1Setter?.toString() || ""),
             getResult(`set _p1(p1:any){
               this.p1=p1
-              this.changeDetection.detectChanges();
+              this._detectChanges();
             }`)
           );
 
@@ -6125,7 +6137,7 @@ mocha.describe("Angular generator", function () {
             getResult(`
                     set _p2(p2:any){
                         this.p2=p2;
-                        this.changeDetection.detectChanges();
+                        this._detectChanges();
                         if (this.__destroyEffects.length) {
                             this.__schedule_e();
                         }
@@ -6434,7 +6446,7 @@ mocha.describe("Angular generator", function () {
               getResult(`
                             set _p(p:any){
                                 this.p=p;
-                                this.changeDetection.detectChanges();
+                                this._detectChanges();
                                 this.__getterCache["name"] = undefined;
                             }`)
             );
@@ -6446,7 +6458,7 @@ mocha.describe("Angular generator", function () {
               getResult(`
                                 set _p1(p1:any){
                                     this.p1=p1;
-                                    this.changeDetection.detectChanges();
+                                    this._detectChanges();
                                 }`)
             );
           });

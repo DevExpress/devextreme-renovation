@@ -5,6 +5,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
   ViewChild,
   ElementRef,
 } from "@angular/core";
@@ -26,6 +27,12 @@ export default class Widget extends WidgetInput {
   }
   get __restAttributes(): any {
     return {};
+  }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
   }
   @ViewChild("_auto_ref_0", { static: false }) _auto_ref_0?: ElementRef<
     HTMLDivElement

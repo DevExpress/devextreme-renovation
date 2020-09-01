@@ -8,6 +8,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
   ViewChild,
   ComponentFactoryResolver,
   ApplicationRef,
@@ -103,6 +104,12 @@ export default class Widget extends WidgetProps {
   get __restAttributes(): any {
     return {};
   }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
+  }
 
   __destroyEffects: any[] = [];
   __viewCheckedSubscribeEvent: Array<() => void> = [];
@@ -124,7 +131,7 @@ export default class Widget extends WidgetProps {
   }
   set _rendered(rendered: boolean) {
     this.rendered = rendered;
-    this.changeDetection.detectChanges();
+    this._detectChanges();
   }
 }
 @NgModule({

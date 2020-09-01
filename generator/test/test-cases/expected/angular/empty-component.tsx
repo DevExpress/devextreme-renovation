@@ -3,6 +3,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
   Input,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -19,6 +20,12 @@ export default class Widget {
   @Input() width?: number;
   get __restAttributes(): any {
     return {};
+  }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {}

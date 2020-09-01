@@ -3,6 +3,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
   ViewChild,
   ElementRef,
 } from "@angular/core";
@@ -36,6 +37,12 @@ export default class Widget {
   }
   get __restAttributes(): any {
     return {};
+  }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {}

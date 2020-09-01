@@ -17,6 +17,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -40,6 +41,12 @@ export default class Widget extends WidgetInput {
   get __restAttributes(): any {
     return {};
   }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
+  }
 
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
@@ -48,13 +55,13 @@ export default class Widget extends WidgetInput {
     slot: ElementRef<HTMLDivElement>
   ) {
     this.__slotNamedSlot = slot;
-    this.changeDetection.detectChanges();
+    this._detectChanges();
   }
   @ViewChild("slotChildren") set slotChildren(
     slot: ElementRef<HTMLDivElement>
   ) {
     this.__slotChildren = slot;
-    this.changeDetection.detectChanges();
+    this._detectChanges();
   }
 }
 @NgModule({
