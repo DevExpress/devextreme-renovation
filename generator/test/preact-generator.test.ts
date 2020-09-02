@@ -95,6 +95,10 @@ mocha.describe("preact-generator", function () {
   mocha.it("portal", function () {
     this.testGenerator(this.test!.title);
   });
+
+  mocha.it("context", function () {
+    this.testGenerator(this.test!.title);
+  });
 });
 
 mocha.describe("preact-generator: expressions", function () {
