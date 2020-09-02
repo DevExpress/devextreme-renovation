@@ -13,12 +13,13 @@ function view(model: Widget) {
     </div>
   );
 }
+
 export declare type WidgetPropsType = {
   someRef?: RefObject<HTMLElement>;
 };
 export const WidgetProps: WidgetPropsType = {};
-import * as Preact from "preact";
-import { useState, useCallback, useEffect, RefObject } from "preact/hooks";
+import Preact, { RefObject } from "preact";
+import { useState, useCallback, useEffect } from "preact/hooks";
 import { createPortal } from "preact/compat";
 declare type PortalProps = {
   container?: HTMLElement | null;
@@ -56,7 +57,6 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   useEffect(() => {
     __state_setRendered((__state_rendered) => true);
   }, []);
-
   return view({
     props: { ...props },
     rendered: __state_rendered,

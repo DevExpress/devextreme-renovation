@@ -113,8 +113,9 @@ export class PreactComponent extends ReactComponent {
     }`;
   }
 
-  compileImportStatements(hooks: string[], compats: string[]) {
-    const imports = [`import * as Preact from "preact"`];
+  compileImportStatements(hooks: string[], compats: string[], core: string[]) {
+    const namedCoreImports = core.length ? `, {${core.join(",")}}` : "";
+    const imports = [`import Preact ${namedCoreImports} from "preact"`];
     if (hooks.length) {
       imports.push(`import {${hooks.join(",")}} from "preact/hooks"`);
     }
