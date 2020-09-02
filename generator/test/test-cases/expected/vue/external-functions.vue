@@ -1,7 +1,9 @@
 <template>
   <div v-bind:class="CLASS_NAME" v-bind:style="externalFunction()">
     <span :key="index" v-for="(cell, index) of cells"
-      ><div v-if="conditionFn(cell) && index > 0">{{ index }}</div></span
+      ><div v-if="conditionFn(cell) && index > 0">
+        {{ getValue(cell) }}{{ __addPostfix(index) }}
+      </div></span
     >
   </div>
 </template>
@@ -13,6 +15,7 @@ const arrowFunction = () => {
 const conditionFn = (cell) => {
   return cell.visible;
 };
+const getValue = (cell) => cell.text;
 const CLASS_NAME = arrowFunction();
 export const WidgetProps = {
   cells: {
@@ -40,11 +43,17 @@ export const DxWidget = {
     conditionFn() {
       return conditionFn;
     },
+    getValue() {
+      return getValue;
+    },
     CLASS_NAME() {
       return CLASS_NAME;
     },
   },
   methods: {
+    __addPostfix(index) {
+      return `_#${index}`;
+    },
     __processStyle(value) {
       if (typeof value === "object") {
         return Object.keys(value).reduce((v, k) => {

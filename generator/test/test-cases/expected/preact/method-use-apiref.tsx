@@ -12,7 +12,7 @@ export declare type WidgetWithApiRefInputType = {
 };
 const WidgetWithApiRefInput: WidgetWithApiRefInputType = {};
 import { WidgetRef as BaseWidgetRef } from "./method";
-import * as Preact from "preact";
+import Preact from "preact";
 import { useCallback, useRef, useImperativeHandle } from "preact/hooks";
 import { forwardRef } from "preact/compat";
 

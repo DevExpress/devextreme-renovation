@@ -13,6 +13,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
   forwardRef,
   HostListener,
 } from "@angular/core";
@@ -35,13 +36,19 @@ export default class ModelWidget extends ModelWidgetInput
   get __restAttributes(): any {
     return {};
   }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
+  }
 
   @HostListener("modelStatePropChange", ["$event"]) change() {}
   @HostListener("onBlur", ["$event"]) touched = () => {};
 
   writeValue(value: any): void {
     this.modelStateProp = value;
-    this.changeDetection.detectChanges();
+    this._detectChanges();
   }
 
   registerOnChange(fn: () => void): void {
@@ -58,15 +65,15 @@ export default class ModelWidget extends ModelWidgetInput
     super();
     this._baseStatePropChange = (stateProp: boolean) => {
       this.baseStatePropChange.emit(stateProp);
-      this.changeDetection.detectChanges();
+      this._detectChanges();
     };
     this._modelStatePropChange = (modelStateProp: boolean) => {
       this.modelStatePropChange.emit(modelStateProp);
-      this.changeDetection.detectChanges();
+      this._detectChanges();
     };
     this._valueChange = (value: boolean) => {
       this.valueChange.emit(value);
-      this.changeDetection.detectChanges();
+      this._detectChanges();
     };
   }
 }

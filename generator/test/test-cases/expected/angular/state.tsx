@@ -14,6 +14,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -28,6 +29,7 @@ import { CommonModule } from "@angular/common";
   </div>`,
 })
 export default class Widget extends WidgetInput {
+  innerData?: string;
   __updateState(): any {
     this._state1Change((this.state1 = !this.state1));
   }
@@ -45,6 +47,12 @@ export default class Widget extends WidgetInput {
   get __restAttributes(): any {
     return {};
   }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
+  }
 
   _state1Change: any;
   _state2Change: any;
@@ -53,16 +61,20 @@ export default class Widget extends WidgetInput {
     super();
     this._state1Change = (state1: boolean) => {
       this.state1Change.emit(state1);
-      this.changeDetection.detectChanges();
+      this._detectChanges();
     };
     this._state2Change = (state2: boolean) => {
       this.state2Change.emit(state2);
-      this.changeDetection.detectChanges();
+      this._detectChanges();
     };
     this._statePropChange = (stateProp: boolean) => {
       this.statePropChange.emit(stateProp);
-      this.changeDetection.detectChanges();
+      this._detectChanges();
     };
+  }
+  set _innerData(innerData: string) {
+    this.innerData = innerData;
+    this._detectChanges();
   }
 }
 @NgModule({

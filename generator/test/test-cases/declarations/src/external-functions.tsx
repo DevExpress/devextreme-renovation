@@ -19,6 +19,8 @@ const conditionFn: (cell: Cell) => boolean = (cell) => {
   return cell.visible;
 };
 
+const getValue: (cell: Cell) => string = (cell) => cell.text;
+
 const CLASS_NAME = arrowFunction();
 
 function view(model: Widget) {
@@ -26,7 +28,12 @@ function view(model: Widget) {
     <div className={CLASS_NAME} style={externalFunction()}>
       {model.props.cells.map((cell, index) => (
         <span key={index}>
-          {conditionFn(cell) && index > 0 && <div>{index}</div>}
+          {conditionFn(cell) && index > 0 && (
+            <div>
+              {getValue(cell)}
+              {model.addPostfix(index)}
+            </div>
+          )}
         </span>
       ))}
     </div>
@@ -41,4 +48,8 @@ export class WidgetProps {
 @Component({
   view: view,
 })
-export default class Widget extends JSXComponent(WidgetProps) {}
+export default class Widget extends JSXComponent(WidgetProps) {
+  addPostfix(index: number) {
+    return `_#${index}`;
+  }
+}

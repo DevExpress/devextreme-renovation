@@ -11,6 +11,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
   forwardRef,
   HostListener,
 } from "@angular/core";
@@ -36,13 +37,19 @@ export default class Widget extends WidgetInput
   get __restAttributes(): any {
     return {};
   }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
+  }
 
   @HostListener("valueChange", ["$event"]) change() {}
   @HostListener("onBlur", ["$event"]) touched = () => {};
 
   writeValue(value: any): void {
     this.value = value;
-    this.changeDetection.detectChanges();
+    this._detectChanges();
   }
 
   registerOnChange(fn: () => void): void {
@@ -57,7 +64,7 @@ export default class Widget extends WidgetInput
     super();
     this._valueChange = (value: boolean) => {
       this.valueChange.emit(value);
-      this.changeDetection.detectChanges();
+      this._detectChanges();
     };
   }
 }

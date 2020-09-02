@@ -36,6 +36,7 @@ import {
   compileType,
   capitalizeFirstLetter,
 } from "../../base-generator/utils/string";
+import { If } from "../../base-generator/expressions/conditions";
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = "CUSTOM_VALUE_ACCESSOR_PROVIDER";
 
@@ -188,9 +189,7 @@ export class AngularComponent extends Component {
     }
     const statements = [new SimpleExpression(`this.__${name}=value;`)];
     if (onPushStrategy) {
-      statements.push(
-        new SimpleExpression(`this.changeDetection?.detectChanges();`)
-      );
+      statements.push(new SimpleExpression(`this._detectChanges();`));
     }
 
     onPushStrategy;
@@ -410,7 +409,7 @@ export class AngularComponent extends Component {
         [
           new SimpleExpression(`
           this.__${name} = slot;
-          this.changeDetection.detectChanges();
+          this._detectChanges();
         `),
         ],
         true
@@ -418,6 +417,32 @@ export class AngularComponent extends Component {
 
       members.push(new SetAccessor(decorators, [], name, parameters, body));
     });
+
+    members.push(
+      new Method(
+        undefined,
+        undefined,
+        undefined,
+        new Identifier("_detectChanges"),
+        undefined,
+        undefined,
+        [],
+        SyntaxKind.VoidKeyword,
+        new Block(
+          [
+            new SimpleExpression(`setTimeout(() => {
+            ${new If(
+              new SimpleExpression(
+                "this.changeDetection && !(this.changeDetection as ViewRef).destroyed"
+              ),
+              new SimpleExpression("this.changeDetection.detectChanges()")
+            )}
+          })`),
+          ],
+          true
+        )
+      )
+    );
 
     return members;
   }
@@ -430,13 +455,6 @@ export class AngularComponent extends Component {
       });
     members = members.reduce((members, member) => {
       if (member.isInternalState) {
-        const property = member as Property;
-        const token =
-          property.questionOrExclamationToken === SyntaxKind.QuestionToken &&
-          property.type.toString() !== "any"
-            ? SyntaxKind.QuestionToken
-            : undefined;
-
         members.push(
           new SetAccessor(
             undefined,
@@ -448,7 +466,7 @@ export class AngularComponent extends Component {
                 [],
                 undefined,
                 member._name,
-                token,
+                "",
                 member.type,
                 undefined
               ),
@@ -456,7 +474,7 @@ export class AngularComponent extends Component {
             new Block(
               [
                 new SimpleExpression(`this.${member.name}=${member._name}`),
-                new SimpleExpression("this.changeDetection.detectChanges()"),
+                new SimpleExpression("this._detectChanges()"),
               ],
               false
             )
@@ -643,7 +661,7 @@ export class AngularComponent extends Component {
 
           ngDoCheckStatements.push(`
           if (${observableConditionArray.join("&&")}) {
-              this.changeDetection.detectChanges();
+              this._detectChanges();
               this.${updateEffectMethod}();
           }`);
         }
@@ -860,7 +878,7 @@ export class AngularComponent extends Component {
         
         writeValue(value: any): void {
             this.${this.modelProp.name} = value;
-            this.changeDetection.detectChanges();
+            this._detectChanges();
         }
     
         ${
@@ -978,7 +996,7 @@ export class AngularComponent extends Component {
         constructorStatements.push(
           `this._${e.name}=(${parameters.join(",")}) => {
             this.${e.name}.emit(${parameters.map((p) => p.name).join(",")});
-            this.changeDetection.detectChanges();
+            this._detectChanges();
           }`
         );
         return `_${e.name}${compileType("any")}`;
@@ -1154,7 +1172,7 @@ export class AngularComponent extends Component {
           } else {
             const changeHandler = (value: ${m.type})=>{
               this.${m.name}Consumer = value
-              changeDetection.detectChanges();
+              this._detectChanges();
             };
             const subscription = ${m.name}.change.subscribe(changeHandler);
             this._destroyContext.push(()=>{
@@ -1195,6 +1213,7 @@ export class AngularComponent extends Component {
     const coreImports: string[] = [
       "ChangeDetectionStrategy",
       "ChangeDetectorRef",
+      "ViewRef",
     ];
     const constructorArguments: string[] = [
       "private changeDetection: ChangeDetectorRef",
@@ -1236,7 +1255,7 @@ export class AngularComponent extends Component {
       : "";
 
     if (this.members.some((m) => m.isNestedComp)) {
-      ngAfterViewInitStatements.push("this.changeDetection.detectChanges()");
+      ngAfterViewInitStatements.push("this._detectChanges()");
     }
 
     const external = this.getExternalFunctionNames();

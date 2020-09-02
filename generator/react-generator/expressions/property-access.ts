@@ -46,6 +46,9 @@ export class PropertyAccess extends BasePropertyAccess {
         changeProperty
       )}(${state}))`;
     }
+    if (property.isRef) {
+      return `${property.name}.current=${state}`;
+    }
     return setState;
   }
 

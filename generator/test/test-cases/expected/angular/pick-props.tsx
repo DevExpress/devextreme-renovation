@@ -12,6 +12,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -31,13 +32,19 @@ export default class Widget extends WidgetProps {
   get __restAttributes(): any {
     return {};
   }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
+  }
 
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
   }
   set _innerData(innerData: Options) {
     this.innerData = innerData;
-    this.changeDetection.detectChanges();
+    this._detectChanges();
   }
 }
 @NgModule({

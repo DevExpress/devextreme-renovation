@@ -8,6 +8,7 @@ function view(model: Widget) {
     </div>
   );
 }
+
 export declare type WidgetInputType = {
   state1?: boolean;
   state2: boolean;
@@ -34,6 +35,7 @@ declare type RestProps = Omit<
 >;
 interface Widget {
   props: typeof WidgetInput & RestProps;
+  innerData?: string;
   updateState: () => any;
   updateState2: () => any;
   destruct: () => any;
@@ -53,6 +55,9 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   >(() =>
     props.stateProp !== undefined ? props.stateProp : props.defaultStateProp
   );
+  const [__state_innerData, __state_setInnerData] = useState<
+    string | undefined
+  >(undefined);
 
   const updateState = useCallback(
     function updateState(): any {
@@ -120,6 +125,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
       stateProp:
         props.stateProp !== undefined ? props.stateProp : __state_stateProp,
     },
+    innerData: __state_innerData,
     updateState,
     updateState2,
     destruct,

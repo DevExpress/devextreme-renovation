@@ -6,6 +6,7 @@ const arrowFunction: () => string = () => {
 const conditionFn: (cell: Cell) => boolean = (cell) => {
   return cell.visible;
 };
+const getValue: (cell: Cell) => string = (cell) => cell.text;
 const CLASS_NAME = arrowFunction();
 import { Input } from "@angular/core";
 export class WidgetProps {
@@ -17,6 +18,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -27,18 +29,30 @@ import { CommonModule } from "@angular/common";
     <ng-container
       *ngFor="let cell of cells; index as index; trackBy: _trackBy_cells_0"
       ><span
-        ><div *ngIf="conditionFn(cell) && index > 0">{{ index }}</div></span
+        ><div *ngIf="conditionFn(cell) && index > 0">
+          {{ getValue(cell) }}{{ __addPostfix(index) }}
+        </div></span
       ></ng-container
     >
   </div>`,
 })
 export default class Widget extends WidgetProps {
+  __addPostfix(index: number): any {
+    return `_#${index}`;
+  }
   get __restAttributes(): any {
     return {};
+  }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
   }
   externalFunction: any = externalFunction;
   arrowFunction: any = arrowFunction;
   conditionFn: any = conditionFn;
+  getValue: any = getValue;
   CLASS_NAME: any = CLASS_NAME;
 
   _trackBy_cells_0(index: number, cell: any) {

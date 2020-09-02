@@ -1,8 +1,11 @@
 <template>
   <div>
-    <DxPortal :container="() => document.body" v-if="rendered"
-      ><span></span></DxPortal
-    ><DxPortal :container="() => someRef()"><span></span></DxPortal>
+    <DxPortal :container="() => document.body" v-if="rendered">
+      <span></span>
+    </DxPortal>
+    <DxPortal :container="() => props.someRef">
+      <span></span>
+    </DxPortal>
   </div>
 </template>
 <script>
