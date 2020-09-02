@@ -2,14 +2,7 @@ import {
   OneWay,
   ComponentBindings,
 } from "../../../../component_declaration/common";
-
-export declare type Options = {
-  value: string;
-};
-
-export declare type AdditionalOptions = {
-  index: number;
-};
+import { Options, AdditionalOptions } from "./types.d";
 
 @ComponentBindings()
 export default class WidgetProps {

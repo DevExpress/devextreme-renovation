@@ -1,5 +1,4 @@
-export declare type Options = { value: string };
-export declare type AdditionalOptions = { index: number };
+import { Options, AdditionalOptions } from "./types.d";
 
 import { Input } from "@angular/core";
 export default class WidgetProps {
@@ -7,3 +6,4 @@ export default class WidgetProps {
   @Input() data?: Options = { value: "" };
   @Input() info?: AdditionalOptions = { index: 0 };
 }
+export { Options, AdditionalOptions };

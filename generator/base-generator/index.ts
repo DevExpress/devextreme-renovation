@@ -1291,6 +1291,31 @@ export default class Generator implements GeneratorAPI {
     }
   }
 
+  getReExports() {
+    const context = this.getContext();
+    if (context.imports) {
+      return Object.keys(context.imports).reduce((acc, path) => {
+        const importClause = context.imports![path];
+        if (
+          importClause.imports?.length &&
+          importClause.namedBindings instanceof NamedImports
+        ) {
+          const exportClause = new NamedExports(
+            importClause.imports.map((imp) => {
+              const bind = (importClause.namedBindings as NamedImports).node.find(
+                (el) => el.toString() === imp
+              )!;
+              return new ImportSpecifier(undefined, bind.name);
+            })
+          );
+          acc.push(exportClause);
+        }
+        return acc;
+      }, [] as NamedExports[]);
+    }
+    return [];
+  }
+
   processCodeFactoryResult(codeFactoryResult: Array<any>) {
     const context = this.getContext();
     codeFactoryResult.forEach((e) => {
@@ -1304,6 +1329,11 @@ export default class Generator implements GeneratorAPI {
       if (e instanceof Component) {
         this.removeJQueryBaseModule(codeFactoryResult, e);
       }
+    });
+    this.getReExports().forEach((namedExport) => {
+      codeFactoryResult.push(
+        new ExportDeclaration(undefined, [], namedExport, undefined)
+      );
     });
     this.cache.__globals__ = context.globals;
     return this.format(codeFactoryResult.join(";\n"));

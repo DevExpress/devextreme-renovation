@@ -1,5 +1,5 @@
-export declare type Options = { value: string };
-export declare type AdditionalOptions = { index: number };
+import { Options, AdditionalOptions } from "./types.d";
+
 export declare type WidgetPropsType = {
   height?: number;
   data?: Options;
@@ -11,3 +11,4 @@ const WidgetProps: WidgetPropsType = {
   info: { index: 0 },
 };
 export default WidgetProps;
+export { Options, AdditionalOptions };

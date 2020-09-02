@@ -1,4 +1,5 @@
-import Props, { Options } from "./component-bindings-only";
+import Props from "./component-bindings-only";
+import { Options } from "./types.d";
 import { Input } from "@angular/core";
 import { AdditionalOptions } from "./component-bindings-only";
 class WidgetProps {
@@ -52,3 +53,5 @@ export default class Widget extends WidgetProps {
   exports: [Widget],
 })
 export class DxWidgetModule {}
+
+export { Options };

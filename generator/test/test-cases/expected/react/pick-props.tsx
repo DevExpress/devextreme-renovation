@@ -1,4 +1,5 @@
-import Props, { Options } from "./component-bindings-only";
+import Props from "./component-bindings-only";
+import { Options } from "./types.d";
 function view(model: Widget) {
   return <div>{model.props.data?.value}</div>;
 }
@@ -46,3 +47,4 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
 Widget.defaultProps = {
   ...WidgetProps,
 };
+export { Options };

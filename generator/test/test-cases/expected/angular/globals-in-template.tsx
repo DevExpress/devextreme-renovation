@@ -38,3 +38,5 @@ export default class WidgetWithGlobals extends WidgetProps {
   exports: [WidgetWithGlobals],
 })
 export class DxWidgetWithGlobalsModule {}
+
+export { COMPONENT_INPUT_CLASS };

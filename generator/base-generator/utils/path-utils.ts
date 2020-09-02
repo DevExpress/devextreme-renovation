@@ -49,10 +49,9 @@ export function resolveModule(
   cache: GeneratorCache
 ): string | null {
   const ext = path.extname(module);
-  if (ext) {
+  if (ext === ".tsx" || ext === ".ts") {
     return readModule(module, cache);
   }
-
   return (
     readModule(`${module}.tsx`, cache) || readModule(`${module}.ts`, cache)
   );
