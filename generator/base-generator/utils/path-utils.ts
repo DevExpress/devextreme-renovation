@@ -56,3 +56,7 @@ export function resolveModule(
     readModule(`${module}.tsx`, cache) || readModule(`${module}.ts`, cache)
   );
 }
+
+export function isPathExists(value: string): boolean {
+  return fs.existsSync(value);
+}

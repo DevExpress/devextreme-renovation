@@ -806,7 +806,7 @@ export default class Generator implements GeneratorAPI {
     heritageClauses: HeritageClause[] | undefined,
     members: Array<PropertySignature | MethodSignature>
   ) {
-    return new Interface(
+    const result = new Interface(
       decorators,
       modifiers,
       name,
@@ -814,6 +814,12 @@ export default class Generator implements GeneratorAPI {
       heritageClauses,
       members
     );
+
+    const context = this.getContext();
+    context.interfaces = context.interfaces || {};
+    context.interfaces[name.toString()] = result;
+
+    return result;
   }
 
   createPropertyAccess(expression: Expression, name: Identifier) {
@@ -1036,18 +1042,17 @@ export default class Generator implements GeneratorAPI {
       return componentBindings;
     }
 
-    const result = new TypeAliasDeclaration(
+    const context = this.getContext();
+    context.types = context.types || {};
+    context.types[name.toString()] = type;
+
+    return new TypeAliasDeclaration(
       decorators,
       modifiers,
       name,
       typeParameters,
       type
     );
-    const context = this.getContext();
-    context.types = context.types || {};
-    context.types[name.toString()] = type;
-
-    return result;
   }
 
   createIntersectionTypeNode(types: TypeExpression[]) {

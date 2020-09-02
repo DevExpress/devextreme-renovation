@@ -4,6 +4,7 @@ import { ImportDeclaration, ImportClause } from "./expressions/import";
 import { ArrowFunction, Function } from "./expressions/functions";
 import { Component } from "./expressions/component";
 import { TypeExpression } from "./expressions/type";
+import { Interface } from "./expressions/interface";
 
 export interface IExpression {
   getDependency(): string[];
@@ -38,6 +39,7 @@ export type GeneratorContext = {
   dirname?: string;
   components?: { [name: string]: Heritable };
   types?: { [name: string]: TypeExpression };
+  interfaces?: { [name: string]: Interface };
   defaultOptionsImport?: ImportDeclaration;
   viewFunctions?: { [name: string]: Function | ArrowFunction };
   globals?: VariableExpression;
