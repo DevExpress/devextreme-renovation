@@ -11,7 +11,7 @@ const WidgetInput: WidgetInputType = {
   export: {},
   onClick: () => {},
 };
-import * as Preact from "preact";
+import Preact from "preact";
 import { useCallback } from "preact/hooks";
 
 declare type RestProps = {

@@ -4,7 +4,7 @@ import { Expression } from "./base-generator/expressions/base";
 import { Identifier, Call } from "./base-generator/expressions/common";
 import {
   ImportClause,
-  ImportDeclaration,
+  ImportDeclaration as BaseImportDeclaration,
   isNamedImports,
 } from "./base-generator/expressions/import";
 import {
@@ -113,8 +113,9 @@ export class PreactComponent extends ReactComponent {
     }`;
   }
 
-  compileImportStatements(hooks: string[], compats: string[]) {
-    const imports = [`import * as Preact from "preact"`];
+  compileImportStatements(hooks: string[], compats: string[], core: string[]) {
+    const namedCoreImports = core.length ? `, {${core.join(",")}}` : "";
+    const imports = [`import Preact ${namedCoreImports} from "preact"`];
     if (hooks.length) {
       imports.push(`import {${hooks.join(",")}} from "preact/hooks"`);
     }
@@ -410,6 +411,15 @@ export type GeneratorOptions = {
 
 export type GeneratorContext = BaseGeneratorContext & GeneratorOptions;
 
+export class ImportDeclaration extends BaseImportDeclaration {
+  compileComponentDeclarationImport() {
+    if (this.has("createContext")) {
+      return `import { createContext } from "preact"`;
+    }
+    return super.compileComponentDeclarationImport();
+  }
+}
+
 export class PreactGenerator extends ReactGenerator {
   options: GeneratorOptions = {};
 
@@ -569,6 +579,20 @@ export class PreactGenerator extends ReactGenerator {
       heritageClauses,
       members,
       this.getContext()
+    );
+  }
+
+  createImportDeclarationCore(
+    decorators: Decorator[] | undefined,
+    modifiers: string[] | undefined,
+    importClause: ImportClause,
+    moduleSpecifier: StringLiteral
+  ) {
+    return new ImportDeclaration(
+      decorators,
+      modifiers,
+      importClause,
+      moduleSpecifier
     );
   }
 
