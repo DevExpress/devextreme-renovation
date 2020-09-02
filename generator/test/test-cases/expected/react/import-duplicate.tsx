@@ -1,8 +1,15 @@
 import { Options } from "./types.d";
 export const viewFunction = (viewModel: Marker) => <div></div>;
 
+export interface InterfaceConfig {
+  value?: boolean;
+}
+export type TypeConfig = { value?: boolean };
+
 export declare type MarkerPropsType = {
   color?: Options;
+  date?: Date;
+  config?: InterfaceConfig | TypeConfig;
 };
 export const MarkerProps: MarkerPropsType = {};
 import React, { useCallback, HTMLAttributes } from "react";
@@ -19,7 +26,7 @@ interface Marker {
 export function Marker(props: typeof MarkerProps & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { color, ...restProps } = props;
+      const { color, config, date, ...restProps } = props;
       return restProps;
     },
     [props]

@@ -12,7 +12,7 @@ import { GeneratorContext } from "../types";
 import { Decorator } from "./decorator";
 import { StringLiteral } from "./literal";
 import { findComponentInput } from "../utils/expressions";
-import { getModuleRelativePath } from "../utils/path-utils";
+import { getModuleRelativePath, isPathExists } from "../utils/path-utils";
 import { ImportClause } from "./import";
 
 export function inheritMembers(
@@ -163,12 +163,15 @@ export class Class {
         }`;
   }
 
-  isImported(name: string) {
+  alreadyExistsInContext(name: string) {
     return (
-      this.context.imports &&
-      Object.keys(this.context.imports).some((path) =>
-        this.context.imports![path].has(name)
-      )
+      (this.context.imports &&
+        Object.keys(this.context.imports).some((path) =>
+          this.context.imports![path].has(name)
+        )) ||
+      (this.context.types && Object.keys(this.context.types).includes(name)) ||
+      (this.context.interfaces &&
+        Object.keys(this.context.interfaces).includes(name))
     );
   }
 
@@ -192,12 +195,13 @@ export class Class {
         (t) =>
           t instanceof TypeReferenceNode &&
           t.typeName.toString() !== "Array" &&
-          t.context.path
+          t.context.path &&
+          isPathExists(t.context.path)
       ) as TypeReferenceNode[];
     types.forEach((type) => {
       if (
         !this.context.components?.[type.typeName.toString()] &&
-        !this.isImported(type.typeName.toString())
+        !this.alreadyExistsInContext(type.typeName.toString())
       ) {
         let relativePath = getModuleRelativePath(
           this.context.dirname!,

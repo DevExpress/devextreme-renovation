@@ -97,11 +97,11 @@ export class ComponentInput extends BaseComponentInput {
     return super.processMembers(members);
   }
 
-  isImported(name: string) {
+  alreadyExistsInContext(name: string) {
     return (
       this.context.nonComponentImports?.some(
         (imp) => imp instanceof ImportDeclaration && imp.importClause.has(name)
-      ) || super.isImported(name)
+      ) || super.alreadyExistsInContext(name)
     );
   }
 }
