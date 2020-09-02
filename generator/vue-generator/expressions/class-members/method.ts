@@ -9,11 +9,8 @@ export function compileMethod(
   options?: toStringOptions
 ): string {
   if (expression.name === "props") {
-    options = {
-      members: [],
-      isComputedProps = true,
-      ...options
-    };
+    options = options || {members:[]}
+    options.isComputedProps = true
   }
   return `${expression.name}(${
     expression.parameters
