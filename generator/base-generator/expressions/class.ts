@@ -163,6 +163,15 @@ export class Class {
         }`;
   }
 
+  isImported(name: string) {
+    return (
+      this.context.imports &&
+      Object.keys(this.context.imports).some((path) =>
+        this.context.imports![path].has(name)
+      )
+    );
+  }
+
   collectMissedImports() {
     const missedImports: { [path: string]: string[] } = {};
 
@@ -181,31 +190,28 @@ export class Class {
       .map((m) => m.type)
       .filter(
         (t) =>
-          t instanceof TypeReferenceNode && t.typeName.toString() !== "Array"
+          t instanceof TypeReferenceNode &&
+          t.typeName.toString() !== "Array" &&
+          t.context.path
       ) as TypeReferenceNode[];
     types.forEach((type) => {
       if (
-        type.context.path &&
-        !this.context.components?.[type.typeName.toString()]
+        !this.context.components?.[type.typeName.toString()] &&
+        !this.isImported(type.typeName.toString())
       ) {
         let relativePath = getModuleRelativePath(
           this.context.dirname!,
           type.context.path!
         );
-        const typeExists = this.context.imports?.[relativePath]?.has(
-          type.toString()
-        );
-        if (!typeExists) {
-          if (!this.context.imports?.[relativePath]) {
-            this.context.imports = this.context.imports || {};
-            this.context.imports[relativePath] = new ImportClause();
-          }
-          this.context.imports[relativePath].add(type.typeName.toString());
-
-          relativePath = relativePath.slice(0, relativePath.lastIndexOf("."));
-          missedImports[relativePath] = missedImports[relativePath] || [];
-          missedImports[relativePath].push(type.typeName.toString());
+        if (!this.context.imports?.[relativePath]) {
+          this.context.imports = this.context.imports || {};
+          this.context.imports[relativePath] = new ImportClause();
         }
+        this.context.imports[relativePath].add(type.typeName.toString());
+
+        relativePath = relativePath.slice(0, relativePath.lastIndexOf("."));
+        missedImports[relativePath] = missedImports[relativePath] || [];
+        missedImports[relativePath].push(type.typeName.toString());
       }
     });
 

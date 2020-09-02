@@ -38,6 +38,28 @@ const BASE_JQUERY_WIDGET = "BASE_JQUERY_WIDGET";
 const processModuleFileName = (module: string) => `${module}`;
 
 export class ComponentInput extends BaseComponentInput {
+  context!: GeneratorContext;
+
+  constructor(
+    decorators: Decorator[],
+    modifiers: string[] | undefined,
+    name: Identifier,
+    typeParameters: any[],
+    heritageClauses: HeritageClause[] = [],
+    members: Array<Property | Method>,
+    context: GeneratorContext
+  ) {
+    super(
+      decorators,
+      modifiers,
+      name,
+      typeParameters,
+      heritageClauses,
+      members,
+      context
+    );
+  }
+
   createProperty(
     decorators: Decorator[],
     modifiers: string[] | undefined,
@@ -73,6 +95,14 @@ export class ComponentInput extends BaseComponentInput {
     });
 
     return super.processMembers(members);
+  }
+
+  isImported(name: string) {
+    return (
+      this.context.nonComponentImports?.some(
+        (imp) => imp instanceof ImportDeclaration && imp.importClause.has(name)
+      ) || super.isImported(name)
+    );
   }
 }
 
@@ -224,7 +254,7 @@ class JQueryComponent {
         )}"`
       );
     } else {
-      const importClause = context.noncomponentImports!.find(
+      const importClause = context.nonComponentImports!.find(
         (i) =>
           i.importClause.name?.toString() === component ||
           (isNamedImports(i.importClause.namedBindings) &&
@@ -404,7 +434,7 @@ export class TypeReferenceNode extends ReactTypeReferenceNode {
 export type GeneratorOptions = {
   jqueryComponentRegistratorModule?: string;
   jqueryBaseComponentModule?: string;
-  noncomponentImports?: ImportDeclaration[];
+  nonComponentImports?: ImportDeclaration[];
   generateJQueryOnly?: boolean;
 } & BaseGeneratorOptions;
 
@@ -417,8 +447,8 @@ export class PreactGenerator extends ReactGenerator {
 
   setContext(context: GeneratorContext | null) {
     context &&
-      !context.noncomponentImports &&
-      (context.noncomponentImports = []);
+      !context.nonComponentImports &&
+      (context.nonComponentImports = []);
     super.setContext(context);
   }
 
@@ -480,7 +510,7 @@ export class PreactGenerator extends ReactGenerator {
         );
       } else {
         importStatement &&
-          context.noncomponentImports!.push(
+          context.nonComponentImports!.push(
             importStatement as ImportDeclaration
           );
       }

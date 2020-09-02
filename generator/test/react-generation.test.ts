@@ -145,6 +145,10 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("import-duplicate", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("implements", function () {
     this.testGenerator(this.test!.title);
   });
