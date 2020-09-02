@@ -6,3 +6,4 @@ export default class WidgetProps {
   @Input() data?: Options = { value: "" };
   @Input() info?: AdditionalOptions = { index: 0 };
 }
+export { Options, AdditionalOptions };

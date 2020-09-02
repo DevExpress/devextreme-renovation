@@ -192,3 +192,5 @@ export default class Widget extends PickedProps {
   ],
 })
 export class DxWidgetModule {}
+
+export { PickedProps, GridColumnProps };

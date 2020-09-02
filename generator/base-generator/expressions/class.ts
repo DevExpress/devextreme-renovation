@@ -203,10 +203,10 @@ export class Class {
           this.context.dirname!,
           type.context.path!
         );
-        if (!this.context.imports?.[relativePath]) {
-          this.context.imports = this.context.imports || {};
-          this.context.imports[relativePath] = new ImportClause();
-        }
+
+        this.context.imports = this.context.imports || {};
+        this.context.imports[relativePath] =
+          this.context.imports[relativePath] || new ImportClause();
         this.context.imports[relativePath].add(type.typeName.toString());
 
         relativePath = relativePath.slice(0, relativePath.lastIndexOf("."));

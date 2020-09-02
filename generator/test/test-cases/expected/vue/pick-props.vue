@@ -4,7 +4,7 @@
   </div>
 </template>
 <script>
-import Props, { Options } from "./component-bindings-only";
+import Props from "./component-bindings-only";
 const WidgetProps = {
   data: {
     type: Object,

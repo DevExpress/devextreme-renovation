@@ -36,3 +36,4 @@ export default Marker;
 Marker.defaultProps = {
   ...MarkerProps,
 };
+export { Options };
