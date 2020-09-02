@@ -2,19 +2,17 @@
   <div ref="divRef">
     <WidgetWithRefProp
       :parentRef="() => this.$refs.divRef"
-      :nullableRef="() => nullableRef()"
+      :nullableRef="() => props.nullableRef"
     />
   </div>
 </template>
 <script>
 import WidgetWithRefProp from "./dx-widget-with-ref-prop";
-
 const WidgetInput = {
   nullableRef: {
     type: Function,
   },
 };
-
 export const DxWidget = {
   components: {
     WidgetWithRefProp,
@@ -30,10 +28,10 @@ export const DxWidget = {
   },
   methods: {
     __getSize() {
-      return this.$refs.divRef.outerHTML + this.nullableRef()?.outerHTML;
+      return this.$refs.divRef.outerHTML + this.props.nullableRef?.outerHTML;
     },
     __getNullable() {
-      return this.nullableRef()?.outerHTML;
+      return this.props.nullableRef?.outerHTML;
     },
   },
 };

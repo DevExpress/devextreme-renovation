@@ -8,6 +8,9 @@ export function compileMethod(
   expression: Method | GetAccessor,
   options?: toStringOptions
 ): string {
+  if (expression.name === "props" && options) {
+    options.isComputedProps = true;
+  }
   return `${expression.name}(${
     expression.parameters
   })${expression.body.toString(options)}`;

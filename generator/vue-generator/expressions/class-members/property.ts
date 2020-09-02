@@ -139,7 +139,7 @@ export class Property extends BaseProperty {
           }`;
   }
 
-  getter(componentContext?: string) {
+  getter(componentContext?: string, isComputedProps: boolean = false) {
     const baseValue = super.getter(componentContext);
     componentContext = this.processComponentContext(componentContext);
     if (this.isState) {
@@ -152,7 +152,10 @@ export class Property extends BaseProperty {
       return `${componentContext}$refs.${this.name}`;
     }
     if (this.isRefProp) {
-      return `${componentContext}${this.name}()`;
+      if (isComputedProps) {
+        return `${componentContext}${this.name}()`;
+      }
+      return `${componentContext}props.${this.name}`;
     }
     if (this.isTemplate) {
       return `${componentContext}$scopedSlots.${this.name}`;

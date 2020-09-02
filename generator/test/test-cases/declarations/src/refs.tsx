@@ -1,26 +1,33 @@
-import { Component, Ref, Listen } from "../../../../component_declaration/common";
+import {
+  Component,
+  Ref,
+  Listen,
+} from "../../../../component_declaration/common";
 
-function view(viewModel: Widget) { 
-    return <div ref={viewModel.divRef as any}>
-        <div ref={viewModel.explicitRef as any}>
-            <div ref={viewModel.nullableRef as any}></div>
-        </div>
+function view(viewModel: Widget) {
+  return (
+    <div ref={viewModel.divRef as any}>
+      <div ref={viewModel.explicitRef as any}>
+        <div ref={viewModel.nullableRef as any}></div>
+      </div>
     </div>
+  );
 }
 
 @Component({
-    view: view
+  view: view,
 })
 export default class Widget {
-    @Ref() divRef!: HTMLDivElement;
-    @Ref() nullableRef?: HTMLDivElement;
-    @Ref() explicitRef!: HTMLDivElement;
+  @Ref() divRef!: HTMLDivElement;
+  @Ref() nullableRef?: HTMLDivElement;
+  @Ref() explicitRef!: HTMLDivElement;
 
-    clickHandler() {
-        const html = this.divRef.outerHTML + this.explicitRef!.outerHTML;
-    }
+  clickHandler() {
+    const html = this.divRef.outerHTML + this.explicitRef!.outerHTML;
+    this.divRef = this.explicitRef;
+  }
 
-    getHeight() { 
-        return this.divRef.outerHTML + this.nullableRef?.outerHTML;
-    }
+  getHeight() {
+    return this.divRef.outerHTML + this.nullableRef?.outerHTML;
+  }
 }
