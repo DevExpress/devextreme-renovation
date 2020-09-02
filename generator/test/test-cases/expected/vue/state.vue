@@ -1,7 +1,7 @@
 <template>
   <div>
-    {{ state1_state
-    }}<BaseState @update:base-state-prop="__stateChange"></BaseState>
+    {{ state1_state }}
+    <BaseState @update:base-state-prop="__stateChange"></BaseState>
   </div>
 </template>
 <script>
@@ -30,6 +30,7 @@ export const DxWidget = {
   props: WidgetInput,
   data() {
     return {
+      innerData: undefined,
       state1_state: this.state1,
       state2_state: this.state2,
       stateProp_state: this.stateProp,

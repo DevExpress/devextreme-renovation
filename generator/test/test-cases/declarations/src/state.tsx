@@ -25,6 +25,7 @@ class WidgetInput {
   view,
 })
 export default class Widget extends JSXComponent(WidgetInput) {
+  innerData?: string;
   updateState() {
     this.props.state1 = !this.props.state1;
   }

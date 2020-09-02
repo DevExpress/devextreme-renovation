@@ -29,6 +29,7 @@ import { CommonModule } from "@angular/common";
   </div>`,
 })
 export default class Widget extends WidgetInput {
+  innerData?: string;
   __updateState(): any {
     this._state1Change((this.state1 = !this.state1));
   }
@@ -70,6 +71,10 @@ export default class Widget extends WidgetInput {
       this.statePropChange.emit(stateProp);
       this._detectChanges();
     };
+  }
+  set _innerData(innerData: string) {
+    this.innerData = innerData;
+    this._detectChanges();
   }
 }
 @NgModule({

@@ -5171,7 +5171,7 @@ mocha.describe("Angular generator", function () {
         assert.strictEqual(setter.length, 1);
         assert.strictEqual(
           getResult(setter[0].toString()),
-          getResult(`set _p(p?:string){
+          getResult(`set _p(p:string){
           this.p=p;
           this._detectChanges();
         }`)
