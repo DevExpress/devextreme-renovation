@@ -50,6 +50,9 @@ export class PropertyAccess extends BasePropertyAccess {
     if (property.isState) {
       return `this._${this.name}Change(${this.toString(options)}=${value})`;
     }
+    if (property.isRef) {
+      return `this.${property.name}.nativeElement=${value}`;
+    }
     return `this._${property.name}=${value}`;
   }
 }

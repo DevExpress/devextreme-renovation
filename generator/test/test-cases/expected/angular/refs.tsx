@@ -28,6 +28,7 @@ export default class Widget {
     const html =
       this.divRef.nativeElement.outerHTML +
       this.explicitRef.nativeElement!.outerHTML;
+    this.divRef.nativeElement = this.explicitRef.nativeElement;
   }
   __getHeight(): any {
     return (
