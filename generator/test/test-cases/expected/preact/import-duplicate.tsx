@@ -5,7 +5,7 @@ export declare type MarkerPropsType = {
   color?: Options;
 };
 export const MarkerProps: MarkerPropsType = {};
-import * as Preact from "preact";
+import Preact from "preact";
 import { useCallback } from "preact/hooks";
 
 declare type RestProps = {
