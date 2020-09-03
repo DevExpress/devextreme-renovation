@@ -57,4 +57,4 @@ export default class Child extends ChildInput {
 })
 export class DxChildModule {}
 
-export { WidgetProps, DxWidgetModule };
+export * from "./component-input";

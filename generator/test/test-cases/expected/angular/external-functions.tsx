@@ -85,4 +85,4 @@ export default class Widget extends WidgetProps {
 })
 export class DxWidgetModule {}
 
-export { externalFunction };
+export * from "./functions";

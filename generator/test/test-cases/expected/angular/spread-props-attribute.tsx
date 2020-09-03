@@ -75,4 +75,4 @@ export default class Widget extends WidgetInput
 })
 export class DxWidgetModule {}
 
-export { DxInnerWidgetModule };
+export * from "./dx-inner-widget";

@@ -54,4 +54,4 @@ export default class Widget extends WidgetProps {
 })
 export class DxWidgetModule {}
 
-export { Options };
+export * from "./types.d";

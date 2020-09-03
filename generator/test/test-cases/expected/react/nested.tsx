@@ -157,4 +157,4 @@ export default function Widget(props: typeof PickedProps & RestProps) {
 Widget.defaultProps = {
   ...PickedProps,
 };
-export { PickedProps, GridColumnProps };
+export * from "./nested-props";

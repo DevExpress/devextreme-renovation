@@ -47,4 +47,4 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
 Widget.defaultProps = {
   ...WidgetProps,
 };
-export { Options };
+export * from "./types.d";

@@ -1301,22 +1301,11 @@ export default class Generator implements GeneratorAPI {
     if (context.imports) {
       return Object.keys(context.imports).reduce((acc, path) => {
         const importClause = context.imports![path];
-        if (
-          importClause.imports?.length &&
-          importClause.namedBindings instanceof NamedImports
-        ) {
-          const exportClause = new NamedExports(
-            importClause.imports.map((imp) => {
-              const bind = (importClause.namedBindings as NamedImports).node.find(
-                (el) => el.toString() === imp
-              )!;
-              return new ImportSpecifier(undefined, bind.name);
-            })
-          );
-          acc.push(exportClause);
+        if (importClause.imports?.length) {
+          acc.push(path.slice(0, path.lastIndexOf(".")));
         }
         return acc;
-      }, [] as NamedExports[]);
+      }, [] as string[]);
     }
     return [];
   }
@@ -1335,9 +1324,14 @@ export default class Generator implements GeneratorAPI {
         this.removeJQueryBaseModule(codeFactoryResult, e);
       }
     });
-    this.getReExports().forEach((namedExport) => {
+    this.getReExports().forEach((path) => {
       codeFactoryResult.push(
-        new ExportDeclaration(undefined, [], namedExport, undefined)
+        new ExportDeclaration(
+          undefined,
+          [],
+          undefined,
+          new SimpleExpression(`"${path}"`)
+        )
       );
     });
     this.cache.__globals__ = context.globals;
