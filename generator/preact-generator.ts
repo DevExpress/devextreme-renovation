@@ -96,14 +96,6 @@ export class ComponentInput extends BaseComponentInput {
 
     return super.processMembers(members);
   }
-
-  alreadyExistsInContext(name: string) {
-    return (
-      this.context.nonComponentImports?.some(
-        (imp) => imp instanceof ImportDeclaration && imp.importClause.has(name)
-      ) || super.alreadyExistsInContext(name)
-    );
-  }
 }
 
 export class PreactComponent extends ReactComponent {
@@ -624,6 +616,10 @@ export class PreactGenerator extends ReactGenerator {
       importClause,
       moduleSpecifier
     );
+  }
+
+  getReExports() {
+    return [];
   }
 
   removeJQueryBaseModule() {}

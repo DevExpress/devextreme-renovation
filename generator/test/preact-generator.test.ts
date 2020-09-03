@@ -103,10 +103,6 @@ mocha.describe("preact-generator", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it("pick-props", function () {
-    this.testGenerator(this.test!.title);
-  });
-
   mocha.it("context", function () {
     this.testGenerator(this.test!.title);
   });
