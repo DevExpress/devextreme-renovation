@@ -196,7 +196,8 @@ export class Class {
           t instanceof TypeReferenceNode &&
           t.typeName.toString() !== "Array" &&
           t.context.path &&
-          isPathExists(t.context.path)
+          isPathExists(t.context.path) &&
+          this.context.path !== t.context.path
       ) as TypeReferenceNode[];
     types.forEach((type) => {
       if (
