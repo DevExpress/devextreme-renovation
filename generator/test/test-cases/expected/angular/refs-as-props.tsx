@@ -57,4 +57,4 @@ export default class Widget extends WidgetInput {
 })
 export class DxWidgetModule {}
 
-export { DxWidgetWithRefPropModule };
+export * from "./dx-widget-with-ref-prop";

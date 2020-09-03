@@ -40,4 +40,4 @@ export default class Child extends ChildInput {
 })
 export class DxChildModule {}
 
-export { Widget, DxWidgetModule };
+export * from "./export-named";

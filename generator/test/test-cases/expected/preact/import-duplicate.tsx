@@ -44,4 +44,4 @@ export function Marker(props: typeof MarkerProps & RestProps) {
 Marker.defaultProps = {
   ...MarkerProps,
 };
-export { Options };
+export * from "./types.d";

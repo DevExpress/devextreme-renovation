@@ -49,4 +49,4 @@ export default function Child(props: typeof ChildInput & RestProps) {
 Child.defaultProps = {
   ...ChildInput,
 };
-export { WidgetProps };
+export * from "./component-input";

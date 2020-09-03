@@ -43,4 +43,4 @@ export default Marker;
 Marker.defaultProps = {
   ...MarkerProps,
 };
-export { Options };
+export * from "./types.d";

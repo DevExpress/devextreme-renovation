@@ -59,5 +59,5 @@ export default class Widget extends WidgetProps {
 })
 export class DxWidgetModule {}
 
-export { DxWidgetOneModule };
-export { WidgetTwo, DxWidgetTwoModule };
+export * from "./component-pass-one";
+export * from "./component-pass-two";

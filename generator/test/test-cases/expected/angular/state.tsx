@@ -84,4 +84,4 @@ export default class Widget extends WidgetInput {
 })
 export class DxWidgetModule {}
 
-export { DxModelWidgetModule };
+export * from "./model";
