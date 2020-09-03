@@ -20,7 +20,10 @@ mocha.describe("preact-generator", function () {
     this.testGenerator = function (componentName: string) {
       generator.setContext({
         dirname: path.resolve(__dirname, "./test-cases/declarations/src"),
-        path: `${componentName}.tsx`,
+        path: path.resolve(
+          __dirname,
+          `./test-cases/declarations/src/${componentName}.tsx`
+        ),
         jqueryComponentRegistratorModule: getModulePath(
           "component_declaration/jquery_component_registrator"
         ),
