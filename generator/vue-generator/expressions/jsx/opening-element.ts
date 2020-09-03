@@ -142,11 +142,13 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   ): JsxElement {
     const element = func.getTemplate(options, true);
 
-    const paramName = func.parameters[0]?.name.toString(options) || "";
+    const paramName = func.parameters[0]?.name.toString(options);
 
     return new JsxElement(
       new JsxOpeningElement(
-        new Identifier(`template v-slot:${name}="${paramName}"`),
+        new Identifier(
+          `template v-slot:${name}${paramName ? `="${paramName}"` : ""}`
+        ),
         undefined,
         [],
         this.context
