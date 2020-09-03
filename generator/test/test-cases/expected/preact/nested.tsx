@@ -53,4 +53,3 @@ export default function Widget(props: typeof PickedProps & RestProps) {
 Widget.defaultProps = {
   ...PickedProps,
 };
-export * from "./nested-props";
