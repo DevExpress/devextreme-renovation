@@ -141,7 +141,8 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     options?: toStringOptions
   ): JsxElement {
     const element = func.getTemplate(options, true);
-    const paramName = func.parameters[0].name.toString(options);
+
+    const paramName = func.parameters[0]?.name.toString(options) || "";
 
     return new JsxElement(
       new JsxOpeningElement(
@@ -192,7 +193,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     options?: toStringOptions
   ): JsxElement {
     const destSlotName = this.getTemplateName(template);
-    const slotName = getMember(template.initializer, options)!.name;
+    const slotName =
+      template.initializer instanceof PropertyAccess
+        ? template.initializer.name.toString()
+        : getMember(template.initializer, options)!.name;
 
     return new JsxElement(
       new JsxOpeningElement(
