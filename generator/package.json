@@ -5,6 +5,7 @@
   "scripts": {
     "test": "nyc mocha ./build/test --timeout 30000",
     "test:with-reporters": "nyc --reporter cobertura mocha ./build/test --timeout 30000 --reporter mocha-junit-reporter --reporter-options mochaFile=./build/test/report/test-result.xml",
+    "test:with-replace": "nyc mocha ./build/test --timeout 30000 --replace",
     "tsc": "tsc",
     "build": "gulp build",
     "build-dist": "gulp build-dist",
