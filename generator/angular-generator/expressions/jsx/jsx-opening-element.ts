@@ -397,7 +397,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     options?: toStringOptions
   ) {
     const element = func.getTemplate(options);
-    const paramType = func.parameters[0].type;
+    const paramType = func.parameters[0]?.type;
     const templateAttr =
       paramType instanceof TypeLiteralNode
         ? paramType.members
