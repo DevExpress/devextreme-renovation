@@ -5,11 +5,7 @@ import {
   Template,
   OneWay,
   React,
-  TwoWay,
-  Method,
-  Listen,
-  Ref,
-} from "../generator/component_declaration/common";
+} from "../../../../component_declaration/common";
 
 @ComponentBindings()
 export class ListInput {
