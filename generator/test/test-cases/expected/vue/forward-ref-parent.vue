@@ -2,18 +2,16 @@
   <Child
     :childRef="forwardRef_child"
     :nullableRef="forwardRef_nullableRef"
-    :state="state"
+    :state="innerState"
   />
 </template>
 <script>
 import Child from "./forward-ref-child";
-
 const Props = {
   nullableRef: {
     type: Function,
   },
 };
-
 export const DxRefOnChildrenParent = {
   components: {
     Child,
@@ -21,7 +19,7 @@ export const DxRefOnChildrenParent = {
   props: Props,
   data() {
     return {
-      state: 10,
+      innerState: 10,
     };
   },
   computed: {
