@@ -144,6 +144,16 @@ export const Ref = () => propertyDecorator;
  */
 export const Effect = (args?: { run?: "once" | "always" }) => propertyDecorator;
 
+interface JSXComponentBase<P> {
+  context: any;
+  forceUpdate: any;
+  refs: any;
+  render(): any;
+  setState(): any;
+  state(): any;
+}
+class JSXComponentBase<P> {}
+
 /**
  * A function that returns base class for any Component.
  * Pass ComponentBindings as an argument
@@ -155,17 +165,18 @@ export function JSXComponent<
     keyof PropsType
   >
 >(Props?: { new (): PropsType }) {
-  type DefaultPropsType = Omit<PropsType, RequiredProps>;
+  type DefaultPropsType = Omit<PropsType, RequiredProps> & {
+    [name: string]: any;
+  };
   type RealPropsType = Partial<Omit<PropsType, RequiredProps>> &
     Pick<PropsType, RequiredProps>;
-  return class extends React.Component<RealPropsType> {
+  return class extends JSXComponentBase<RealPropsType> {
     static defaultProps: DefaultPropsType = ((Props && new Props()) ||
       {}) as DefaultPropsType;
     props!: PropsType & { ref?: React.Component<PropsType> };
     restAttributes: { [name: string]: any } = {
       "rest-attributes": "restAttributes",
     }; // for testing purpose
-    setState() {}
   };
 }
 
