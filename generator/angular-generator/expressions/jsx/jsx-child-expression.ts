@@ -258,9 +258,10 @@ export class JsxChildExpression extends JsxExpression {
       );
       template = expression.toString(templateOptions);
       if (options) {
-        options.trackBy = (options.trackBy || []).concat(
+        const arr = (options.trackBy || []).concat(
           templateOptions.trackBy || []
         );
+        options.trackBy = [...new Set(arr)];
       }
     }
 
@@ -278,9 +279,10 @@ export class JsxChildExpression extends JsxExpression {
       );
       ngForValue.push(`trackBy: ${trackByName}`);
       if (options) {
-        options.trackBy = (options.trackBy || []).concat(
+        const arr = (options.trackBy || []).concat(
           templateOptions.trackBy || []
         );
+        options.trackBy = [...new Set(arr)];
         options.trackBy.push(
           new TrackByAttribute(
             trackByName,
