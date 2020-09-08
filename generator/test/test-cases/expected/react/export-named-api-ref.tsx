@@ -23,16 +23,6 @@ interface Widget {
 
 const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
   (props: typeof WidgetInput & RestProps, ref) => {
-    useImperativeHandle(
-      ref,
-      () => ({
-        getValue: () => {
-          return 0;
-        },
-      }),
-      []
-    );
-
     const __restAttributes = useCallback(
       function __restAttributes(): RestProps {
         const { ...restProps } = props;
@@ -40,7 +30,11 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
       },
       [props]
     );
+    const getValue = useCallback(function getValue(): any {
+      return 0;
+    }, []);
 
+    useImperativeHandle(ref, () => ({ getValue }), [getValue]);
     return view({
       props: { ...props },
       restAttributes: __restAttributes(),
