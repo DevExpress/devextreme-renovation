@@ -20,12 +20,12 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div #divRef>
-    <dx-widget-with-ref-prop
+  template: `<div #divRef
+    ><dx-widget-with-ref-prop
       [parentRef]="divRef"
       [nullableRef]="nullableRef"
-    ></dx-widget-with-ref-prop>
-  </div>`,
+    ></dx-widget-with-ref-prop
+  ></div>`,
 })
 export default class Widget extends WidgetInput {
   @ViewChild("divRef", { static: false }) divRef!: ElementRef<HTMLDivElement>;

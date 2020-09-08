@@ -1,13 +1,7 @@
 <template>
-  <div>
-    <div>
-      <slot name="namedSlot"></slot>
-    </div>
-
-    <div>
-      <slot></slot>
-    </div>
-  </div>
+  <div
+    ><div><slot name="namedSlot"></slot></div><div><slot></slot></div
+  ></div>
 </template>
 <script>
 const WidgetInput = {};

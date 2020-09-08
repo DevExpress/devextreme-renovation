@@ -15,18 +15,17 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-list",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div>
-    <div>
-      <ng-container *ngFor="let item of items; trackBy: _trackBy_items_0"
+  template: `<div
+    ><div
+      ><ng-container *ngFor="let item of items; trackBy: _trackBy_items_0"
         ><div>One -{{ item.key }}</div></ng-container
-      >
-    </div>
-    <div>
-      <ng-container *ngFor="let item of items; trackBy: _trackBy_items_1"
+      ></div
+    ><div
+      ><ng-container *ngFor="let item of items; trackBy: _trackBy_items_1"
         ><div>Two -{{ item.key }}</div></ng-container
-      >
-    </div>
-  </div>`,
+      ></div
+    ></div
+  >`,
 })
 export default class List extends ListInput {
   get __restAttributes(): any {

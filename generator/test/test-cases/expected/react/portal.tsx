@@ -13,6 +13,7 @@ function view(model: Widget) {
     </div>
   );
 }
+
 export declare type WidgetPropsType = {
   someRef?: RefObject<HTMLElement>;
 };

@@ -5,6 +5,7 @@ function view(model: RefOnChildrenTemplate) {
     </React.Fragment>
   );
 }
+
 export declare type PropsType = {
   contentTemplate: any;
   contentRender?: any;

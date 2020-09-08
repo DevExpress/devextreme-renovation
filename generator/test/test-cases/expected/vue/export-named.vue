@@ -18,6 +18,5 @@ export const DxWidget = {
     },
   },
 };
-
 export default DxWidget;
 </script>

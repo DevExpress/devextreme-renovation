@@ -19,13 +19,11 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div>
-    {{
-      model.props.data === undefined || model.props.data === null
-        ? undefined
-        : model.props.data.value
-    }}
-  </div>`,
+  template: `<div>{{
+    model.props.data === undefined || model.props.data === null
+      ? undefined
+      : model.props.data.value
+  }}</div>`,
 })
 export default class Widget extends WidgetProps {
   innerData: Options = { value: "" };

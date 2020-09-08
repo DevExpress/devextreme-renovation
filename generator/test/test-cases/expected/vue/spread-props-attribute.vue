@@ -6,7 +6,6 @@
 </template>
 <script>
 import InnerWidget from "./dx-inner-widget";
-
 export const WidgetInput = {
   visible: {
     type: Boolean,
@@ -15,7 +14,6 @@ export const WidgetInput = {
     type: Boolean,
   },
 };
-
 export const DxWidget = {
   components: {
     InnerWidget,

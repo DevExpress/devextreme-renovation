@@ -1,6 +1,7 @@
 function view(viewModel: Widget) {
   return <div></div>;
 }
+
 export declare type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
 import React, { useCallback, HTMLAttributes } from "react";

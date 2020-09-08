@@ -7,6 +7,7 @@ function subscribe(p: string, s: number, i: number) {
 function unsubscribe(id: number) {
   return undefined;
 }
+
 export declare type WidgetInputType = {
   p: string;
   r: string;

@@ -5,6 +5,7 @@ function view({ props: { childRef, nullableRef } }: RefOnChildrenChild) {
     </div>
   );
 }
+
 export declare type PropsType = {
   childRef: RefObject<HTMLDivElement>;
   nullableRef?: RefObject<HTMLDivElement>;

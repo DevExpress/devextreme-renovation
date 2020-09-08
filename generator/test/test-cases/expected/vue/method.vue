@@ -10,7 +10,6 @@ const WidgetInput = {
     type: Number,
   },
 };
-
 export const DxWidget = {
   props: WidgetInput,
   computed: {
