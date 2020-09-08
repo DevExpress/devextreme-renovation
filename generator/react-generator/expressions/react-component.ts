@@ -372,7 +372,7 @@ export class ReactComponent extends Component {
                           const twoWayProps:string[] = [${this.state.map(
                             (s) => `"${s.name}"`
                           )}];
-                          
+
                           return Object.keys(defaultProps).reduce((props, propName)=>{
                               const propValue = (defaultProps as any)[propName];
                               const defaultPropName = twoWayProps.some(p=>p===propName) ? "default"+propName.charAt(0).toUpperCase() + propName.slice(1): propName;
@@ -382,7 +382,7 @@ export class ReactComponent extends Component {
                       }`
                       : ""
                   }
-                  
+
                   function __createDefaultProps(){
                       return {
                           ${defaultProps.join(",\n")}
@@ -750,11 +750,12 @@ export class ReactComponent extends Component {
       ? `
           function getTemplate(props: any, template: string, render: string, component: string) {
               const getRender = (render: any) => (props: any) => (("data" in props) ? render(props.data, props.index) : render(props));
-              const Component = props[component];
-              
-              return props[template] ||
+              const PropTemplate = props[template];
+              const PropComponent = props[component];
+
+              return (PropTemplate && ((props: any) => <PropTemplate {...props} />)) ||
                           (props[render] && getRender(props[render])) ||
-                          (Component && ((props: any) => <Component {...props} />));
+                          (PropComponent && ((props: any) => <PropComponent {...props} />));
           }
           `
       : "";
@@ -823,9 +824,9 @@ export class ReactComponent extends Component {
                         : this.name
                     };`
               }
-              
+
               ${this.compileDefaultComponentExport()}
-  
+
               ${this.compileDefaultProps()}
               ${this.compileDefaultOptionsMethod("[]", [
                 `${this.defaultPropsDest()} = {
