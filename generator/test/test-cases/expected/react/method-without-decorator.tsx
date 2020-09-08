@@ -11,7 +11,6 @@ declare type RestProps = Omit<
 >;
 interface Widget {
   props: typeof WidgetInput & RestProps;
-  privateMethod: (a: number) => any;
   method1: (a: number) => void;
   method2: () => null;
   restAttributes: RestProps;
@@ -36,7 +35,6 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 
   return view({
     props: { ...props },
-    privateMethod,
     method1,
     method2,
     restAttributes: __restAttributes(),
