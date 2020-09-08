@@ -459,13 +459,9 @@ export class ReactComponent extends Component {
     const api = this.members.reduce(
       (r: { methods: string[]; deps: string[] }, a) => {
         if (a.isApiMethod) {
-          r.methods.push(
-            `${a.name}: ${(a as Method).arrowDeclaration(
-              this.getToStringOptions()
-            )}`
-          );
+          r.methods.push(`${a.name}`);
 
-          r.deps = [...new Set(r.deps.concat(a.getDependency(this.members)))];
+          r.deps = [...new Set(r.deps.concat(a.name))];
         }
 
         return r;
@@ -789,7 +785,6 @@ export class ReactComponent extends Component {
               }
                   ${this.compileUseRef()}
                   ${this.stateDeclaration()}
-                  ${this.compileUseImperativeHandle()}
                   ${this.members
                     .filter(
                       (m) =>
@@ -798,16 +793,27 @@ export class ReactComponent extends Component {
                     )
                     .map((m) => m.toString(this.getToStringOptions()))
                     .join(";\n")}
-                  ${this.listeners
-                    .concat(this.methods)
-                    .map((m) => {
-                      return `const ${m.name}=useCallback(${m.declaration(
-                        this.getToStringOptions()
-                      )}, [${m.getDependency(this.members)}]);`;
-                    })
-                    .join("\n")}
+                                          ${this.listeners
+                                            .concat(this.methods)
+                                            .concat(
+                                              this.members.filter(
+                                                (m) => m.isApiMethod
+                                              ) as Array<Method>
+                                            )
+                                            .map((m) => {
+                                              return `const ${
+                                                m.name
+                                              }=useCallback(${m.declaration(
+                                                this.getToStringOptions()
+                                              )}, [${m.getDependency(
+                                                this.members
+                                              )}]);`;
+                                            })
+                                            .join("\n")}
                   ${this.compileUseEffect()}
+                  ${this.compileUseImperativeHandle()}
                   return ${this.compileViewCall()}
+                  
               ${
                 this.members.filter((m) => m.isApiMethod).length === 0
                   ? `}`
