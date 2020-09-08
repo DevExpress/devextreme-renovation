@@ -13,14 +13,15 @@ mocha.describe("angular-generation", function () {
       `${__dirname}/test-cases/componentFactory`
     );
     this.testGenerator = function (componentName: string) {
+      generator.setContext({
+        dirname: path.resolve(__dirname, "./test-cases/declarations/src"),
+        path: path.resolve(
+          __dirname,
+          `./test-cases/declarations/src/${componentName}.tsx`
+        ),
+      });
       testGenerator.call(this, componentName, generator);
     };
-  });
-
-  this.beforeEach(function () {
-    generator.setContext({
-      dirname: path.resolve(__dirname, "./test-cases/declarations/src"),
-    });
   });
 
   this.afterEach(function () {
@@ -231,6 +232,14 @@ mocha.describe("angular-generation", function () {
   });
 
   mocha.it("external-functions", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("iterables-repeat", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("import-type", function () {
     this.testGenerator(this.test!.title);
   });
 

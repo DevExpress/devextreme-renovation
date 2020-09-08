@@ -4,7 +4,7 @@ import { Expression } from "./base-generator/expressions/base";
 import { Identifier, Call } from "./base-generator/expressions/common";
 import {
   ImportClause,
-  ImportDeclaration,
+  ImportDeclaration as BaseImportDeclaration,
   isNamedImports,
 } from "./base-generator/expressions/import";
 import {
@@ -38,6 +38,28 @@ const BASE_JQUERY_WIDGET = "BASE_JQUERY_WIDGET";
 const processModuleFileName = (module: string) => `${module}`;
 
 export class ComponentInput extends BaseComponentInput {
+  context!: GeneratorContext;
+
+  constructor(
+    decorators: Decorator[],
+    modifiers: string[] | undefined,
+    name: Identifier,
+    typeParameters: any[],
+    heritageClauses: HeritageClause[] = [],
+    members: Array<Property | Method>,
+    context: GeneratorContext
+  ) {
+    super(
+      decorators,
+      modifiers,
+      name,
+      typeParameters,
+      heritageClauses,
+      members,
+      context
+    );
+  }
+
   createProperty(
     decorators: Decorator[],
     modifiers: string[] | undefined,
@@ -113,8 +135,9 @@ export class PreactComponent extends ReactComponent {
     }`;
   }
 
-  compileImportStatements(hooks: string[], compats: string[]) {
-    const imports = [`import * as Preact from "preact"`];
+  compileImportStatements(hooks: string[], compats: string[], core: string[]) {
+    const namedCoreImports = core.length ? `, {${core.join(",")}}` : "";
+    const imports = [`import Preact ${namedCoreImports} from "preact"`];
     if (hooks.length) {
       imports.push(`import {${hooks.join(",")}} from "preact/hooks"`);
     }
@@ -224,7 +247,7 @@ class JQueryComponent {
         )}"`
       );
     } else {
-      const importClause = context.noncomponentImports!.find(
+      const importClause = context.nonComponentImports!.find(
         (i) =>
           i.importClause.name?.toString() === component ||
           (isNamedImports(i.importClause.namedBindings) &&
@@ -304,7 +327,7 @@ class JQueryComponent {
     return `
         get _propsInfo() {
             return {
-                twoway: [${this.source.state.map(
+                twoWay: [${this.source.state.map(
                   (s) => `['${s.name}', ${s.initializer}, '${s.name}Change']`
                 )}],
                 allowNull: [${withNullType}]
@@ -404,11 +427,20 @@ export class TypeReferenceNode extends ReactTypeReferenceNode {
 export type GeneratorOptions = {
   jqueryComponentRegistratorModule?: string;
   jqueryBaseComponentModule?: string;
-  noncomponentImports?: ImportDeclaration[];
+  nonComponentImports?: ImportDeclaration[];
   generateJQueryOnly?: boolean;
 } & BaseGeneratorOptions;
 
 export type GeneratorContext = BaseGeneratorContext & GeneratorOptions;
+
+export class ImportDeclaration extends BaseImportDeclaration {
+  compileComponentDeclarationImport() {
+    if (this.has("createContext")) {
+      return `import { createContext } from "preact"`;
+    }
+    return super.compileComponentDeclarationImport();
+  }
+}
 
 export class PreactGenerator extends ReactGenerator {
   options: GeneratorOptions = {};
@@ -417,8 +449,8 @@ export class PreactGenerator extends ReactGenerator {
 
   setContext(context: GeneratorContext | null) {
     context &&
-      !context.noncomponentImports &&
-      (context.noncomponentImports = []);
+      !context.nonComponentImports &&
+      (context.nonComponentImports = []);
     super.setContext(context);
   }
 
@@ -480,7 +512,7 @@ export class PreactGenerator extends ReactGenerator {
         );
       } else {
         importStatement &&
-          context.noncomponentImports!.push(
+          context.nonComponentImports!.push(
             importStatement as ImportDeclaration
           );
       }
@@ -570,6 +602,24 @@ export class PreactGenerator extends ReactGenerator {
       members,
       this.getContext()
     );
+  }
+
+  createImportDeclarationCore(
+    decorators: Decorator[] | undefined,
+    modifiers: string[] | undefined,
+    importClause: ImportClause,
+    moduleSpecifier: StringLiteral
+  ) {
+    return new ImportDeclaration(
+      decorators,
+      modifiers,
+      importClause,
+      moduleSpecifier
+    );
+  }
+
+  getReExports() {
+    return [];
   }
 
   removeJQueryBaseModule() {}

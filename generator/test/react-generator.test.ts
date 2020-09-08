@@ -2732,6 +2732,46 @@ mocha.describe("ComponentInput", function () {
         )
       );
     });
+
+    mocha.it("Exclude private members", function () {
+      const component = createComponent(
+        [],
+        [
+          generator.createGetAccessor(
+            [],
+            [generator.SyntaxKind.PrivateKeyword],
+            generator.createIdentifier("property"),
+            [],
+            undefined,
+            undefined
+          ),
+
+          generator.createMethod(
+            [],
+            [generator.SyntaxKind.PrivateKeyword],
+            undefined,
+            generator.createIdentifier("method"),
+            undefined,
+            undefined,
+            [],
+            undefined,
+            generator.createBlock([], false)
+          ),
+        ]
+      );
+
+      assert.strictEqual(
+        getResult(component.compileComponentInterface()),
+        getResult(
+          "interface Widget{props: typeof Input & RestProps; restAttributes:RestProps;}"
+        )
+      );
+
+      assert.strictEqual(
+        getResult(`{${component.compileViewModelArguments().join(",")}}`),
+        getResult("{props:{...props}, restAttributes: __restAttributes() }")
+      );
+    });
   });
 
   mocha.describe("Property. getters, getDependency", function () {

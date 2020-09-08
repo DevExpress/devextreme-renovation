@@ -1,14 +1,18 @@
 import Props from "./component-bindings-only";
+import { Options } from "./types.d";
 function view(model: Widget) {
-  return <div>{model.props.height}</div>;
+  return <div>{model.props.data?.value}</div>;
 }
+import { AdditionalOptions } from "./component-bindings-only";
 export declare type WidgetPropsType = {
-  height?: number;
+  data?: Options;
+  info?: AdditionalOptions;
 };
 const WidgetProps: WidgetPropsType = {
-  height: Props.height,
+  data: Props.data,
+  info: Props.info,
 };
-import React, { useCallback, HTMLAttributes } from "react";
+import React, { useState, useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
@@ -16,13 +20,18 @@ declare type RestProps = Omit<
 >;
 interface Widget {
   props: typeof WidgetProps & RestProps;
+  innerData: Options;
   restAttributes: RestProps;
 }
 
 export default function Widget(props: typeof WidgetProps & RestProps) {
+  const [__state_innerData, __state_setInnerData] = useState<Options>({
+    value: "",
+  });
+
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { height, ...restProps } = props;
+      const { data, info, ...restProps } = props;
       return restProps;
     },
     [props]
@@ -30,6 +39,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
 
   return view({
     props: { ...props },
+    innerData: __state_innerData,
     restAttributes: __restAttributes(),
   });
 }
@@ -37,3 +47,4 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
 Widget.defaultProps = {
   ...WidgetProps,
 };
+export * from "./types.d";

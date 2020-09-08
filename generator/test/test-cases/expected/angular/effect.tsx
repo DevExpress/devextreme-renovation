@@ -18,6 +18,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -48,6 +49,12 @@ export default class Widget extends WidgetInput {
   }
   get __restAttributes(): any {
     return {};
+  }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
   }
 
   __destroyEffects: any[] = [];
@@ -102,12 +109,12 @@ export default class Widget extends WidgetInput {
     super();
     this._sChange = (s: number) => {
       this.sChange.emit(s);
-      this.changeDetection.detectChanges();
+      this._detectChanges();
     };
   }
   set _i(i: number) {
     this.i = i;
-    this.changeDetection.detectChanges();
+    this._detectChanges();
 
     if (this.__destroyEffects.length) {
       this.__schedule_setupData();
@@ -119,7 +126,7 @@ export default class Widget extends WidgetInput {
   }
   set _j(j: number) {
     this.j = j;
-    this.changeDetection.detectChanges();
+    this._detectChanges();
 
     if (this.__destroyEffects.length) {
       this.__schedule_alwaysEffect();

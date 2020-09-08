@@ -7,13 +7,21 @@ import {
 import InterComponent from "./inter-component";
 import { HeaderComponent } from "./header-component";
 import BodyComponent from "./body-component";
+import TemplateParent from "./template-as-template-prop-parent";
+
+const CustomTemplate = () => {
+  return <span>SecondTemplateText</span>;
+};
 
 function view(vm: TemplateApp) {
   return (
-    <InterComponent
-      titleTemplate={HeaderComponent}
-      contentTemplate={BodyComponent}
-    />
+    <div>
+      <InterComponent
+        titleTemplate={HeaderComponent}
+        contentTemplate={BodyComponent}
+      />
+      <TemplateParent secondTemplate={CustomTemplate}></TemplateParent>
+    </div>
   );
 }
 

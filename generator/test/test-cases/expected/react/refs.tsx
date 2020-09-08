@@ -27,6 +27,7 @@ export default function Widget(props: {} & RestProps) {
 
   const clickHandler = useCallback(function clickHandler(): any {
     const html = divRef.current!.outerHTML + explicitRef.current!.outerHTML;
+    divRef.current = explicitRef.current!;
   }, []);
   const getHeight = useCallback(
     function getHeight(): any {

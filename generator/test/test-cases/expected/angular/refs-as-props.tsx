@@ -11,6 +11,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
   ViewChild,
   ElementRef,
 } from "@angular/core";
@@ -38,6 +39,12 @@ export default class Widget extends WidgetInput {
   get __restAttributes(): any {
     return {};
   }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
+  }
 
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
@@ -49,3 +56,5 @@ export default class Widget extends WidgetInput {
   exports: [Widget],
 })
 export class DxWidgetModule {}
+
+export * from "./dx-widget-with-ref-prop";

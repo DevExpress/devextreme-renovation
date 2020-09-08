@@ -2,6 +2,7 @@ import { Widget } from "./export-named";
 function view(model: Child) {
   return <Widget prop={true} />;
 }
+
 export declare type ChildInputType = {
   height: number;
 };
@@ -37,3 +38,4 @@ export default function Child(props: typeof ChildInput & RestProps) {
 Child.defaultProps = {
   ...ChildInput,
 };
+export * from "./export-named";

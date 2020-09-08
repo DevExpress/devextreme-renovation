@@ -23,7 +23,7 @@ export class Identifier extends SimpleExpression {
       }
       const isFunctionOrCall = isFunction(expression) || isCall(expression);
       if (
-        (options.isDirective && isFunctionOrCall) ||
+        (options.disableTemplates && isFunctionOrCall) ||
         options.variables[baseValue].toString() === baseValue
       ) {
         return baseValue;

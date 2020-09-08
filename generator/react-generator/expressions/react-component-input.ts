@@ -71,6 +71,17 @@ export class ComponentInput extends BaseComponentInput {
     ];
   }
 
+  compileImports() {
+    const imports: string[] = [];
+
+    const missedImports = this.collectMissedImports();
+    Object.keys(missedImports).forEach((path) => {
+      imports.push(`import { ${missedImports[path]} } from "${path}"`);
+    });
+
+    return imports;
+  }
+
   toString() {
     const inherited = this.baseTypes.map((t) => `...${t}`);
 
@@ -114,7 +125,8 @@ export class ComponentInput extends BaseComponentInput {
         m.decorators.find((d) => d.name !== Decorators.TwoWay)
     ) as Property[];
 
-    return `${typeDeclaration}
+    return `${this.compileImports()}
+          ${typeDeclaration}
           ${declarationModifiers.join(" ")} const ${this.name}:${typeName}={
              ${inherited
                .concat(

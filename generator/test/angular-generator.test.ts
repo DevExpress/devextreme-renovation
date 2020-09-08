@@ -3056,6 +3056,104 @@ mocha.describe("Angular generator", function () {
         }
       );
 
+      mocha.it("map - can use prop in key", function () {
+        const expression = generator.createJsxElement(
+          generator.createJsxOpeningElement(
+            generator.createIdentifier("div"),
+            undefined,
+            []
+          ),
+          [
+            generator.createJsxExpression(
+              undefined,
+              generator.createCall(
+                generator.createPropertyAccess(
+                  generator.createPropertyAccess(
+                    generator.createIdentifier("viewModel"),
+                    generator.createIdentifier("items")
+                  ),
+                  generator.createIdentifier("map")
+                ),
+                undefined,
+                [
+                  generator.createArrowFunction(
+                    undefined,
+                    undefined,
+                    [
+                      generator.createParameter(
+                        undefined,
+                        undefined,
+                        undefined,
+                        generator.createIdentifier("item"),
+                        undefined,
+                        undefined,
+                        undefined
+                      ),
+                    ],
+                    undefined,
+                    generator.createToken(
+                      generator.SyntaxKind.EqualsGreaterThanToken
+                    ),
+                    generator.createJsxElement(
+                      generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        generator.createJsxAttributes([
+                          generator.createJsxAttribute(
+                            generator.createIdentifier("key"),
+                            generator.createElementAccess(
+                              generator.createIdentifier("item"),
+                              generator.createPropertyAccess(
+                                generator.createPropertyAccess(
+                                  generator.createIdentifier("viewModel"),
+                                  generator.createIdentifier("props")
+                                ),
+                                generator.createIdentifier("keyExpr")
+                              )
+                            )
+                          ),
+                        ])
+                      ),
+                      [],
+                      generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                      )
+                    )
+                  ),
+                ]
+              )
+            ),
+          ],
+          generator.createJsxClosingElement(generator.createIdentifier("div"))
+        );
+
+        const keyExpr = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          undefined,
+          generator.createIdentifier("keyExpr")
+        );
+
+        const options: toStringOptions = {
+          members: [keyExpr],
+          componentContext: "viewModel",
+          newComponentContext: "viewModel",
+        };
+
+        assert.strictEqual(
+          expression.children[0].toString(options),
+          `<ng-container *ngFor="let item of viewModel.items;trackBy: _trackBy_viewModel_items_0"><div ></div></ng-container>`
+        );
+        const trackByAttrs = options.trackBy!;
+        assert.strictEqual(trackByAttrs.length, 1);
+        assert.strictEqual(trackByAttrs[0].toString(), "");
+        assert.strictEqual(
+          getResult(trackByAttrs[0].getTrackByDeclaration()),
+          getResult(`_trackBy_viewModel_items_0(_index: number, item: any){
+                    return item[this.keyExpr];
+                }`)
+        );
+      });
+
       mocha.it("map inside an other map", function () {
         const insideExpression = generator.createCall(
           generator.createPropertyAccess(
@@ -5011,13 +5109,19 @@ mocha.describe("Angular generator", function () {
       assert.strictEqual(
         getResult(component.toString()),
         getResult(`
-                import {Component,NgModule,ChangeDetectionStrategy,ChangeDetectorRef} from "@angular/core";
+                import {Component,NgModule,ChangeDetectionStrategy,ChangeDetectorRef,ViewRef} from "@angular/core";
                 import {CommonModule} from "@angular/common";
 
                 ${component.decorator}
                 export default class BaseWidget {
                     get __restAttributes(): any{
                         return {}
+                    }
+                    _detectChanges(): void {
+                      setTimeout(() => {
+                        if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+                          this.changeDetection.detectChanges();
+                      });
                     }
                     constructor(private changeDetection: ChangeDetectorRef) {}
                 }
@@ -5093,13 +5197,19 @@ mocha.describe("Angular generator", function () {
         assert.strictEqual(
           getResult(component.toString()),
           getResult(`
-                import {Component,NgModule,ChangeDetectionStrategy,ChangeDetectorRef} from "@angular/core";
+                import {Component,NgModule,ChangeDetectionStrategy,ChangeDetectorRef,ViewRef} from "@angular/core";
                 import {CommonModule} from "@angular/common";
                 
                 ${component.decorator}
                 export default class BaseWidget extends Input {
                     get __restAttributes(): any{
                         return {}
+                    }
+                    _detectChanges(): void {
+                      setTimeout(() => {
+                        if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+                          this.changeDetection.detectChanges();
+                      });
                     }
                     constructor(private changeDetection: ChangeDetectorRef) {
                       super();
@@ -5137,7 +5247,7 @@ mocha.describe("Angular generator", function () {
           getResult(setter[0].toString()),
           getResult(`set _p(p:any){
           this.p=p;
-          this.changeDetection.detectChanges();
+          this._detectChanges();
         }`)
         );
       });
@@ -5159,9 +5269,9 @@ mocha.describe("Angular generator", function () {
         assert.strictEqual(setter.length, 1);
         assert.strictEqual(
           getResult(setter[0].toString()),
-          getResult(`set _p(p?:string){
+          getResult(`set _p(p:string){
           this.p=p;
-          this.changeDetection.detectChanges();
+          this._detectChanges();
         }`)
         );
       });
@@ -5185,7 +5295,7 @@ mocha.describe("Angular generator", function () {
           getResult(setter[0].toString()),
           getResult(`set _p(p:string){
           this.p=p;
-          this.changeDetection.detectChanges();
+          this._detectChanges();
         }`)
         );
       });
@@ -5208,7 +5318,7 @@ mocha.describe("Angular generator", function () {
           getResult(setter[0].toString()),
           getResult(`set _p(p:any){
           this.p=p;
-          this.changeDetection.detectChanges();
+          this._detectChanges();
         }`)
         );
       });
@@ -5232,7 +5342,7 @@ mocha.describe("Angular generator", function () {
           getResult(setter[0].toString()),
           getResult(`set _p(p:any){
           this.p=p;
-          this.changeDetection.detectChanges();
+          this._detectChanges();
         }`)
         );
       });
@@ -6115,7 +6225,7 @@ mocha.describe("Angular generator", function () {
             getResult(p1Setter?.toString() || ""),
             getResult(`set _p1(p1:any){
               this.p1=p1
-              this.changeDetection.detectChanges();
+              this._detectChanges();
             }`)
           );
 
@@ -6125,7 +6235,7 @@ mocha.describe("Angular generator", function () {
             getResult(`
                     set _p2(p2:any){
                         this.p2=p2;
-                        this.changeDetection.detectChanges();
+                        this._detectChanges();
                         if (this.__destroyEffects.length) {
                             this.__schedule_e();
                         }
@@ -6434,7 +6544,7 @@ mocha.describe("Angular generator", function () {
               getResult(`
                             set _p(p:any){
                                 this.p=p;
-                                this.changeDetection.detectChanges();
+                                this._detectChanges();
                                 this.__getterCache["name"] = undefined;
                             }`)
             );
@@ -6446,7 +6556,7 @@ mocha.describe("Angular generator", function () {
               getResult(`
                                 set _p1(p1:any){
                                     this.p1=p1;
-                                    this.changeDetection.detectChanges();
+                                    this._detectChanges();
                                 }`)
             );
           });

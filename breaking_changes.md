@@ -46,6 +46,22 @@
 
    WA - Not needed, but `undefined` value might be deprecated and users have to change projects to use `null`.
 
+1. Assigning `undefined` to option resets it to default value (or `null`)
+
+   To overcome Preact limitaion on setting `undefined` to TwoWay props, we changed the way jQuery widget process `undefined` option value.
+
+   When user sets `undefined` to some option, jQuery widget pass option's default value or `null` if it is allowed by declaration.
+
+   This does not affect option reading.
+
+   ```ts
+   $(selector).dxWidget("option", "someOption", undefined); // sets default value to someOption, e.g. 15
+
+   $(selector).dxWidget("option", "someOption") === undefined; // true, jQuery widget stores user's values
+   ```
+
+   Current widgets implementation behaves pretty similar, so this change should be unnoticeable for users.
+
 ### Wrappers
 
 1. Component's instance is now jQuery wrapper that only contains its own members and declared API (`@Method` decorator)
@@ -157,3 +173,8 @@
 #### Button Breaking Changes
 
 1. Ink ripple markup is added to the tree on rendering, not on user action.
+
+#### Grid pager Breaking WA
+
+1. Use 'all' value for allowedPageSizes to add 'All' item into page size section of pager. We add default localization for it (dxPager-pageSizesAllText). (T725186, T535399)
+2. For controll of pager UI apperance use displayMode option in pager section. It can take on the following values: 'adaptive', 'compact' or 'full'. (T672366, T709640, T745052)

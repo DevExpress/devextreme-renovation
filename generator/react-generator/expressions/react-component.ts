@@ -251,13 +251,14 @@ export class ReactComponent extends Component {
     return viewFunction?.getRootElement() as JsxOpeningElement;
   }
 
-  compileImportStatements(hooks: string[], compats: string[]) {
+  compileImportStatements(hooks: string[], compats: string[], core: string[]) {
     const elementAttributes = this.getComponentOpeningElement()?.isSVG()
       ? "SVGAttributes"
       : "HTMLAttributes";
     const imports = [
       `import React, {${hooks
         .concat(compats)
+        .concat(core)
         .concat([elementAttributes])
         .join(",")}} from 'react';`,
     ];
@@ -269,6 +270,7 @@ export class ReactComponent extends Component {
     const imports: string[] = [];
     const hooks: string[] = [];
     const compats: string[] = [];
+    const core: string[] = [];
 
     if (
       this.internalState.length ||
@@ -295,7 +297,7 @@ export class ReactComponent extends Component {
     }
 
     if (this.members.some((m) => m.isRefProp || m.isForwardRefProp)) {
-      hooks.push("RefObject");
+      core.push("RefObject");
     }
 
     if (this.members.filter((a) => a.isApiMethod).length) {
@@ -332,7 +334,7 @@ export class ReactComponent extends Component {
     this.compileDefaultOptionsImport(imports);
 
     return imports
-      .concat(this.compileImportStatements(hooks, compats))
+      .concat(this.compileImportStatements(hooks, compats, core))
       .join(";\n");
   }
 
@@ -501,7 +503,11 @@ export class ReactComponent extends Component {
                 .concat(
                   this.members
                     .filter(
-                      (m) => !m.inherited && !m.isEffect && !m.isApiMethod
+                      (m) =>
+                        !m.inherited &&
+                        !m.isEffect &&
+                        !m.isApiMethod &&
+                        !m.isPrivate
                     )
                     .map((m) => m.typeDeclaration())
                 )
@@ -551,11 +557,13 @@ export class ReactComponent extends Component {
           .map((m) => m.name.toString())
       )
       .concat(
-        this.methods.map((m) =>
-          m._name.toString() !== m.getter()
-            ? `${m._name}:${m.getter()}`
-            : m.getter()
-        )
+        this.methods
+          .filter((m) => !m.isPrivate)
+          .map((m) =>
+            m._name.toString() !== m.getter()
+              ? `${m._name}:${m.getter()}`
+              : m.getter()
+          )
       );
   }
 

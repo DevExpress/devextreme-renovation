@@ -405,7 +405,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     options?: toStringOptions
   ) {
     const element = func.getTemplate(options);
-    const paramType = func.parameters[0].type;
+    const paramType = func.parameters[0]?.type;
     const templateAttr =
       paramType instanceof TypeLiteralNode
         ? paramType.members
@@ -466,6 +466,15 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
             func: result,
           });
         }
+        if (
+          template.initializer.isJsx() &&
+          isFunction(getExpression(template.initializer))
+        ) {
+          acc.push({
+            name: `__${template.name.toString()}__generated`,
+            func: getExpression(template.initializer) as BaseFunction,
+          });
+        }
         return acc;
       }, [] as { name: string; func: BaseFunction }[]);
 
@@ -473,7 +482,11 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         (t) =>
           !(components as { name: string }[])
             .concat(functions)
-            .some(({ name }) => name === this.getTemplateName(t))
+            .some(
+              ({ name }) =>
+                name === this.getTemplateName(t) ||
+                name === `__${this.getTemplateName(t)}__generated`
+            )
       );
 
       const result = [

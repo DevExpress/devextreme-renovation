@@ -5,7 +5,7 @@ import WidgetComponent from "../../../../jquery-custom-base";
 export default class Widget extends MyBaseComponent {
   get _propsInfo() {
     return {
-      twoway: [],
+      twoWay: [],
       allowNull: [],
     };
   }

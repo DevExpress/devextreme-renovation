@@ -12,6 +12,8 @@ import { GeneratorContext } from "../types";
 import { Decorator } from "./decorator";
 import { StringLiteral } from "./literal";
 import { findComponentInput } from "../utils/expressions";
+import { getModuleRelativePath, isPathExists } from "../utils/path-utils";
+import { ImportClause } from "./import";
 
 export function inheritMembers(
   heritageClauses: HeritageClause[],
@@ -124,6 +126,7 @@ export class Class {
   members: Array<Property | Method>;
   modifiers: string[];
   heritageClauses: HeritageClause[];
+  context: GeneratorContext;
 
   get name() {
     return this._name.toString();
@@ -139,13 +142,15 @@ export class Class {
     name: Identifier,
     typeParameters: any[],
     heritageClauses: HeritageClause[] = [],
-    members: Array<Property | Method>
+    members: Array<Property | Method>,
+    context: GeneratorContext
   ) {
     this._name = name;
     this.decorators = decorators;
     this.modifiers = modifiers;
     this.heritageClauses = heritageClauses;
     this.members = this.processMembers(members);
+    this.context = context;
   }
 
   toString() {
@@ -156,6 +161,66 @@ export class Class {
     } {
             ${this.members.join("\n")}
         }`;
+  }
+
+  alreadyExistsInContext(name: string) {
+    return (
+      (this.context.imports &&
+        Object.keys(this.context.imports).some((path) =>
+          this.context.imports![path].has(name)
+        )) ||
+      (this.context.types && Object.keys(this.context.types).includes(name)) ||
+      (this.context.interfaces &&
+        Object.keys(this.context.interfaces).includes(name))
+    );
+  }
+
+  collectMissedImports() {
+    const missedImports: { [path: string]: string[] } = {};
+
+    const types = this.members
+      .filter(
+        (m) =>
+          !m.inherited &&
+          !(
+            m.isRef ||
+            m.isRefProp ||
+            m.isForwardRef ||
+            m.isForwardRefProp ||
+            m.isSlot
+          )
+      )
+      .map((m) => m.type)
+      .filter(
+        (t) =>
+          t instanceof TypeReferenceNode &&
+          t.typeName.toString() !== "Array" &&
+          t.context.path &&
+          isPathExists(t.context.path) &&
+          this.context.path !== t.context.path
+      ) as TypeReferenceNode[];
+    types.forEach((type) => {
+      if (
+        !this.context.components?.[type.typeName.toString()] &&
+        !this.alreadyExistsInContext(type.typeName.toString())
+      ) {
+        let relativePath = getModuleRelativePath(
+          this.context.dirname!,
+          type.context.path!
+        );
+
+        this.context.imports = this.context.imports || {};
+        this.context.imports[relativePath] =
+          this.context.imports[relativePath] || new ImportClause();
+        this.context.imports[relativePath].add(type.typeName.toString());
+
+        relativePath = relativePath.slice(0, relativePath.lastIndexOf("."));
+        missedImports[relativePath] = missedImports[relativePath] || [];
+        missedImports[relativePath].push(type.typeName.toString());
+      }
+    });
+
+    return missedImports;
   }
 }
 

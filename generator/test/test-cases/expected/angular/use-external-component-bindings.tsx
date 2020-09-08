@@ -4,12 +4,14 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   convertRulesToOptions,
   Rule,
 } from "../../../../component_declaration/default_options";
+
 type WidgetOptionRule = Rule<Partial<Props>>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
@@ -25,6 +27,12 @@ export function defaultOptions(rule: WidgetOptionRule) {
 export default class Widget extends Props {
   get __restAttributes(): any {
     return {};
+  }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {

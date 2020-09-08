@@ -5,7 +5,7 @@ import WidgetComponent from "../../../../jquery-props-info";
 export default class Widget extends BaseComponent {
   get _propsInfo() {
     return {
-      twoway: [
+      twoWay: [
         ["state1", false, "state1Change"],
         ["state2", undefined, "state2Change"],
         [

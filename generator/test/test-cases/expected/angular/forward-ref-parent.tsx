@@ -9,6 +9,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
   ViewChild,
   ElementRef,
 } from "@angular/core";
@@ -20,12 +21,12 @@ import { CommonModule } from "@angular/common";
   template: `<dx-ref-on-children-child
     [childRef]="forwardRef_child"
     [nullableRef]="forwardRef_nullableRef"
-    [state]="state"
+    [state]="innerState"
   ></dx-ref-on-children-child>`,
 })
 export default class RefOnChildrenParent extends Props {
   child!: ElementRef<HTMLDivElement>;
-  state: number = 10;
+  innerState: number = 10;
   __effect(): any {
     this.child.nativeElement.innerHTML = "Ref from child";
     const html = this.nullableRefRef?.nativeElement?.innerHTML;
@@ -55,6 +56,12 @@ export default class RefOnChildrenParent extends Props {
     ) => void) => {
       return (ref) => (this.nullableRefRef = ref);
     })());
+  }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
   }
 
   __destroyEffects: any[] = [];
@@ -102,9 +109,9 @@ export default class RefOnChildrenParent extends Props {
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
   }
-  set _state(state: number) {
-    this.state = state;
-    this.changeDetection.detectChanges();
+  set _innerState(innerState: number) {
+    this.innerState = innerState;
+    this._detectChanges();
   }
 }
 @NgModule({
@@ -113,3 +120,5 @@ export default class RefOnChildrenParent extends Props {
   exports: [RefOnChildrenParent],
 })
 export class DxRefOnChildrenParentModule {}
+
+export * from "./forward-ref-child";

@@ -19,6 +19,7 @@ export const DxWidget = {
     __clickHandler() {
       const html =
         this.$refs.divRef.outerHTML + this.$refs.explicitRef.outerHTML;
+      this.$refs.divRef = this.$refs.explicitRef;
     },
     __getHeight() {
       return this.$refs.divRef.outerHTML + this.$refs.nullableRef?.outerHTML;

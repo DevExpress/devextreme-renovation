@@ -76,7 +76,8 @@ export class ContextDeclaration extends VariableStatement {
             false
           )
         ),
-      ]
+      ],
+      {}
     );
     return declaration.toString();
   }

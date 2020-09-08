@@ -556,6 +556,12 @@ export default class Generator implements GeneratorAPI {
         this.cache
       );
 
+      if (modulePath) {
+        const relativePath = getModuleRelativePath(context.dirname, modulePath);
+        context.imports = context.imports || {};
+        context.imports[relativePath] = importClause;
+      }
+
       const importedModules = context.importedModules || [];
       const hasModule = importedModules.some((m) => m === modulePath);
 
@@ -633,8 +639,12 @@ export default class Generator implements GeneratorAPI {
     return new NamedImports(node);
   }
 
-  createImportClause(name?: Identifier, namedBindings?: NamedImportBindings) {
-    return new ImportClause(name, namedBindings);
+  createImportClause(
+    name?: Identifier,
+    namedBindings?: NamedImportBindings,
+    isTypeOnly?: boolean
+  ) {
+    return new ImportClause(name, namedBindings, isTypeOnly);
   }
 
   createExportSpecifier(
@@ -728,7 +738,8 @@ export default class Generator implements GeneratorAPI {
     name: Identifier,
     typeParameters: string[],
     heritageClauses: HeritageClause[],
-    members: Array<Property | Method>
+    members: Array<Property | Method>,
+    context: GeneratorContext
   ) {
     return new Class(
       decorators,
@@ -736,7 +747,8 @@ export default class Generator implements GeneratorAPI {
       name,
       typeParameters,
       heritageClauses,
-      members
+      members,
+      context
     );
   }
 
@@ -782,7 +794,8 @@ export default class Generator implements GeneratorAPI {
         name,
         typeParameters,
         heritageClauses,
-        members
+        members,
+        this.getContext()
       );
     }
 
@@ -797,7 +810,7 @@ export default class Generator implements GeneratorAPI {
     heritageClauses: HeritageClause[] | undefined,
     members: Array<PropertySignature | MethodSignature>
   ) {
-    return new Interface(
+    const result = new Interface(
       decorators,
       modifiers,
       name,
@@ -805,6 +818,12 @@ export default class Generator implements GeneratorAPI {
       heritageClauses,
       members
     );
+
+    const context = this.getContext();
+    context.interfaces = context.interfaces || {};
+    context.interfaces[name.toString()] = result;
+
+    return result;
   }
 
   createPropertyAccess(expression: Expression, name: Identifier) {
@@ -1027,18 +1046,17 @@ export default class Generator implements GeneratorAPI {
       return componentBindings;
     }
 
-    const result = new TypeAliasDeclaration(
+    const context = this.getContext();
+    context.types = context.types || {};
+    context.types[name.toString()] = type;
+
+    return new TypeAliasDeclaration(
       decorators,
       modifiers,
       name,
       typeParameters,
       type
     );
-    const context = this.getContext();
-    context.types = context.types || {};
-    context.types[name.toString()] = type;
-
-    return result;
   }
 
   createIntersectionTypeNode(types: TypeExpression[]) {
@@ -1282,6 +1300,20 @@ export default class Generator implements GeneratorAPI {
     }
   }
 
+  getReExports() {
+    const context = this.getContext();
+    if (context.imports) {
+      return Object.keys(context.imports).reduce((acc, path) => {
+        const importClause = context.imports![path];
+        if (importClause.imports?.length) {
+          acc.push(path.slice(0, path.lastIndexOf(".")));
+        }
+        return acc;
+      }, [] as string[]);
+    }
+    return [];
+  }
+
   processCodeFactoryResult(codeFactoryResult: Array<any>) {
     const context = this.getContext();
     codeFactoryResult.forEach((e) => {
@@ -1295,6 +1327,16 @@ export default class Generator implements GeneratorAPI {
       if (e instanceof Component) {
         this.removeJQueryBaseModule(codeFactoryResult, e);
       }
+    });
+    this.getReExports().forEach((path) => {
+      codeFactoryResult.push(
+        new ExportDeclaration(
+          undefined,
+          [],
+          undefined,
+          new SimpleExpression(`"${path}"`)
+        )
+      );
     });
     this.cache.__globals__ = context.globals;
     return this.format(codeFactoryResult.join(";\n"));

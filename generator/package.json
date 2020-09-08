@@ -1,17 +1,18 @@
 {
   "name": "devextreme-generator",
-  "version": "1.0.109",
+  "version": "1.0.115",
   "description": "Component generator",
   "scripts": {
     "test": "nyc mocha ./build/test --timeout 30000",
     "test:with-reporters": "nyc --reporter cobertura mocha ./build/test --timeout 30000 --reporter mocha-junit-reporter --reporter-options mochaFile=./build/test/report/test-result.xml",
+    "test:with-replace": "nyc mocha ./build/test --timeout 30000 --replace",
     "tsc": "tsc",
     "build": "gulp build",
     "build-dist": "gulp build-dist",
     "dev": "gulp watch",
     "test:testcafe": "start-server-and-test testcafe:start-test-servers \"3000|3001\" testcafe",
     "test:testcafe-headless": "start-server-and-test testcafe:start-test-servers \"3000|3001\" 'testcafe chrome:headless'",
-    "testcafe:start-test-servers": "NODE_ENV=development node ./e2e/start-servers.js",
+    "testcafe:start-test-servers": "cross-env NODE_ENV=development node ./e2e/start-servers.js",
     "test:compile-check": "gulp compile-check",
     "gulp": "gulp"
   },
@@ -24,7 +25,7 @@
     "mocha-junit-reporter": "^1.23.3",
     "prettier": "^2.0.5",
     "react": "^16.13.1",
-    "typescript": "^3.7.2",
+    "typescript": "3.8",
     "loader-utils": "^2.0.0"
   },
   "devDependencies": {
@@ -43,13 +44,14 @@
     "@types/mocha": "5.2.7",
     "@types/node": "^12.12.14",
     "@types/prettier": "^2.0.1",
+    "@types/react-dom": "^16.9.8",
     "@types/sinon": "^7.5.1",
     "@types/typescript": "^2.0.0",
-    "@types/react-dom": "^16.9.8",
     "angular2-template-loader": "^0.6.2",
     "babel-loader": "^8.1.0",
     "babel-preset-react-app": "^9.1.2",
     "core-js": "^3.6.4",
+    "cross-env": "^7.0.2",
     "gulp-plumber": "^1.2.1",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-typescript": "^6.0.0-alpha.1",
@@ -59,6 +61,7 @@
     "memfs": "^3.2.0",
     "mocha": "^6.2.2",
     "nyc": "^15.0.0",
+    "preact": "^10.4.8",
     "raw-loader": "1.0.0",
     "react-dom": "^16.13.1",
     "rxjs": "^6.5.4",
@@ -70,8 +73,8 @@
     "vue": "^2.6.11",
     "vue-loader": "^15.9.1",
     "vue-template-compiler": "^2.6.11",
-    "webpack": "^4.42.1",
-    "webpack-dev-server": "^3.10.3",
+    "webpack": "^4.44.1",
+    "webpack-dev-server": "^3.11.0",
     "zone.js": "^0.10.3"
   }
 }

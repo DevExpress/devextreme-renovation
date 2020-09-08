@@ -8,7 +8,7 @@ export class AngularDirective extends JsxAttribute {
   toString(options?: toStringOptions) {
     const initializer = this.compileInitializer({
       members: [],
-      isDirective: true,
+      disableTemplates: true,
       ...options,
     });
     const value = initializer ? `="${initializer}"` : "";

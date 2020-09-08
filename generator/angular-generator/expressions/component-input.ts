@@ -34,12 +34,25 @@ export class ComponentInput extends BaseComponentInput {
     return null;
   }
 
+  compileImports() {
+    const imports: string[] = [
+      `${compileCoreImports(
+        this.members.filter((m) => !m.inherited),
+        this.context
+      )}`,
+    ];
+
+    const missedImports = this.collectMissedImports();
+    Object.keys(missedImports).forEach((path) => {
+      imports.push(`import { ${missedImports[path]} } from "${path}"`);
+    });
+
+    return imports.join(";\n");
+  }
+
   toString() {
     return `
-        ${compileCoreImports(
-          this.members.filter((m) => !m.inherited),
-          this.context
-        )}
+        ${this.compileImports()}
         ${this.modifiers.join(" ")} class ${
       this.name
     } ${this.heritageClauses.map((h) => h.toString()).join(" ")} {

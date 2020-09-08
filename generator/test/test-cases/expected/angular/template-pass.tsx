@@ -9,6 +9,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -18,6 +19,7 @@ import { CommonModule } from "@angular/common";
   template: `<dx-widget-with-template
     [template]="CustomTemplate"
     [componentTemplate]="InnerWidget"
+    [arrowTemplate]="__arrowTemplate__generated"
     ><ng-template
       #InnerWidget
       let-selected="selected"
@@ -40,12 +42,20 @@ import { CommonModule } from "@angular/common";
       ></dx-inner-widget></ng-template
     ><ng-template #CustomTemplate let-text="text" let-value="value"
       ><span>{{ text }}</span></ng-template
+    ><ng-template #__arrowTemplate__generated let-name="name" let-id="id"
+      ><div>{{ name }}</div></ng-template
     ></dx-widget-with-template
   >`,
 })
 export default class Widget extends WidgetProps {
   get __restAttributes(): any {
     return {};
+  }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {
@@ -64,3 +74,6 @@ export default class Widget extends WidgetProps {
   exports: [Widget],
 })
 export class DxWidgetModule {}
+
+export * from "./dx-widget-with-template";
+export * from "./dx-inner-widget";

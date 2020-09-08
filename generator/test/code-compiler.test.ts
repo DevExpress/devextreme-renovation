@@ -124,7 +124,7 @@ mocha.describe("Gathering meta information about components", function () {
             "renderProp2",
             "componentProp2",
           ],
-          oneway: [
+          oneWay: [
             "oneWayProp1",
             "oneWayProp2",
             "defaultTwoWayProp1",
@@ -134,7 +134,7 @@ mocha.describe("Gathering meta information about components", function () {
             "renderProp2",
             "componentProp2",
           ],
-          twoway: ["twoWayProp1", "twoWayProp2"],
+          twoWay: ["twoWayProp1", "twoWayProp2"],
           template: ["templateProp1", "templateProp2"],
           event: [
             "eventProp1",

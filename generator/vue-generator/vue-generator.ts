@@ -64,6 +64,7 @@ import { Call } from "./expressions/call";
 import { VariableDeclaration } from "./expressions/variable-declaration";
 import { Class } from "./expressions/class";
 import { PropertyAccessChain } from "../angular-generator/expressions/property-access-chain";
+import { GeneratorContext } from "../base-generator/types";
 
 const emptyToString = () => "";
 
@@ -270,6 +271,10 @@ export class VueGenerator extends BaseGenerator {
       parser: "vue",
       htmlWhitespaceSensitivity: "strict",
     });
+  }
+
+  getReExports() {
+    return [];
   }
 
   processCodeFactoryResult(codeFactoryResult: Array<any>) {
@@ -513,7 +518,8 @@ export class VueGenerator extends BaseGenerator {
     name: Identifier,
     typeParameters: string[],
     heritageClauses: HeritageClause[],
-    members: Array<Property | Method>
+    members: Array<Property | Method>,
+    context: GeneratorContext
   ) {
     return new Class(
       decorators,
@@ -521,7 +527,8 @@ export class VueGenerator extends BaseGenerator {
       name,
       typeParameters,
       heritageClauses,
-      members
+      members,
+      context
     );
   }
 

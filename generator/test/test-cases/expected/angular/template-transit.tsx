@@ -13,6 +13,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -28,6 +29,12 @@ export default class TemplateTransitWidget extends TemplateTransitWidgetInput {
   get __restAttributes(): any {
     return {};
   }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
+  }
 
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
@@ -39,3 +46,5 @@ export default class TemplateTransitWidget extends TemplateTransitWidgetInput {
   exports: [TemplateTransitWidget],
 })
 export class DxTemplateTransitWidgetModule {}
+
+export * from "./dx-widget-with-template";

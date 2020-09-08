@@ -10,6 +10,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
   ViewChild,
   ElementRef,
 } from "@angular/core";
@@ -27,20 +28,26 @@ export default class Child extends ChildInput {
   get __restAttributes(): any {
     return {};
   }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
+  }
 
   _onClick: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
     this._onClick = (a: number) => {
       this.onClick.emit(a);
-      this.changeDetection.detectChanges();
+      this._detectChanges();
     };
   }
   @ViewChild("slotChildren") set slotChildren(
     slot: ElementRef<HTMLDivElement>
   ) {
     this.__slotChildren = slot;
-    this.changeDetection.detectChanges();
+    this._detectChanges();
   }
 }
 @NgModule({
@@ -49,3 +56,5 @@ export default class Child extends ChildInput {
   exports: [Child],
 })
 export class DxChildModule {}
+
+export * from "./component-input";

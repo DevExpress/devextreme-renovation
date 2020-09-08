@@ -2,6 +2,7 @@ import Base, { WidgetProps } from "./component-input";
 function view(model: Child) {
   return <Base height={model.getProps().height} />;
 }
+
 export declare type ChildInputType = typeof WidgetProps & {
   height: number;
   onClick: (a: number) => void;
@@ -48,3 +49,4 @@ export default function Child(props: typeof ChildInput & RestProps) {
 Child.defaultProps = {
   ...ChildInput,
 };
+export * from "./component-input";

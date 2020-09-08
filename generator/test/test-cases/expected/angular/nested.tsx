@@ -5,6 +5,7 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewRef,
   Input,
   ContentChildren,
   QueryList,
@@ -152,10 +153,16 @@ export default class Widget extends PickedProps {
   get __restAttributes(): any {
     return {};
   }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
+  }
   CustomColumnComponent: any = CustomColumnComponent;
 
   ngAfterViewInit() {
-    this.changeDetection.detectChanges();
+    this._detectChanges();
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {
@@ -163,11 +170,11 @@ export default class Widget extends PickedProps {
   }
   @Input() set columns(value: Array<DxWidgetColumn | string> | undefined) {
     this.__columns = value;
-    this.changeDetection?.detectChanges();
+    this._detectChanges();
   }
   @Input() set editing(value: DxWidgetEditing | undefined) {
     this.__editing = value;
-    this.changeDetection?.detectChanges();
+    this._detectChanges();
   }
 }
 @NgModule({
@@ -192,3 +199,5 @@ export default class Widget extends PickedProps {
   ],
 })
 export class DxWidgetModule {}
+
+export * from "./nested-props";
