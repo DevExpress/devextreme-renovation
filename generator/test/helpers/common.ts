@@ -90,7 +90,7 @@ export function createTestGenerator(
       if (
         expectedFolder === "vue" &&
         code.indexOf("<template>") === -1 &&
-        code.indexOf("<script>")
+        code.indexOf("<script>") === -1
       ) {
         fs.writeFileSync(realExpectedPath, `<script>\n${code}</script>\n`);
       } else {

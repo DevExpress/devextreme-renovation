@@ -56,6 +56,7 @@ export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
   useEffect(() => {
     child.current!.innerHTML += "ParentText";
   }, []);
+
   return view({
     props: {
       ...props,

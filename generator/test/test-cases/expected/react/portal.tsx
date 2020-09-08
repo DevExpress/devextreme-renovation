@@ -63,6 +63,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   useEffect(() => {
     __state_setRendered((__state_rendered) => true);
   }, []);
+
   return view({
     props: { ...props },
     rendered: __state_rendered,
