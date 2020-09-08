@@ -3056,6 +3056,104 @@ mocha.describe("Angular generator", function () {
         }
       );
 
+      mocha.it("map - can use prop in key", function () {
+        const expression = generator.createJsxElement(
+          generator.createJsxOpeningElement(
+            generator.createIdentifier("div"),
+            undefined,
+            []
+          ),
+          [
+            generator.createJsxExpression(
+              undefined,
+              generator.createCall(
+                generator.createPropertyAccess(
+                  generator.createPropertyAccess(
+                    generator.createIdentifier("viewModel"),
+                    generator.createIdentifier("items")
+                  ),
+                  generator.createIdentifier("map")
+                ),
+                undefined,
+                [
+                  generator.createArrowFunction(
+                    undefined,
+                    undefined,
+                    [
+                      generator.createParameter(
+                        undefined,
+                        undefined,
+                        undefined,
+                        generator.createIdentifier("item"),
+                        undefined,
+                        undefined,
+                        undefined
+                      ),
+                    ],
+                    undefined,
+                    generator.createToken(
+                      generator.SyntaxKind.EqualsGreaterThanToken
+                    ),
+                    generator.createJsxElement(
+                      generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        generator.createJsxAttributes([
+                          generator.createJsxAttribute(
+                            generator.createIdentifier("key"),
+                            generator.createElementAccess(
+                              generator.createIdentifier("item"),
+                              generator.createPropertyAccess(
+                                generator.createPropertyAccess(
+                                  generator.createIdentifier("viewModel"),
+                                  generator.createIdentifier("props")
+                                ),
+                                generator.createIdentifier("keyExpr")
+                              )
+                            )
+                          ),
+                        ])
+                      ),
+                      [],
+                      generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                      )
+                    )
+                  ),
+                ]
+              )
+            ),
+          ],
+          generator.createJsxClosingElement(generator.createIdentifier("div"))
+        );
+
+        const keyExpr = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          undefined,
+          generator.createIdentifier("keyExpr")
+        );
+
+        const options: toStringOptions = {
+          members: [keyExpr],
+          componentContext: "viewModel",
+          newComponentContext: "viewModel",
+        };
+
+        assert.strictEqual(
+          expression.children[0].toString(options),
+          `<ng-container *ngFor="let item of viewModel.items;trackBy: _trackBy_viewModel_items_0"><div ></div></ng-container>`
+        );
+        const trackByAttrs = options.trackBy!;
+        assert.strictEqual(trackByAttrs.length, 1);
+        assert.strictEqual(trackByAttrs[0].toString(), "");
+        assert.strictEqual(
+          getResult(trackByAttrs[0].getTrackByDeclaration()),
+          getResult(`_trackBy_viewModel_items_0(_index: number, item: any){
+                    return item[this.keyExpr];
+                }`)
+        );
+      });
+
       mocha.it("map inside an other map", function () {
         const insideExpression = generator.createCall(
           generator.createPropertyAccess(

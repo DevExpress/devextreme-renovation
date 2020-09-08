@@ -286,7 +286,10 @@ export class JsxChildExpression extends JsxExpression {
         options.trackBy.push(
           new TrackByAttribute(
             trackByName,
-            keyAttribute.toString(templateOptions),
+            keyAttribute.toString({
+              ...templateOptions,
+              newComponentContext: SyntaxKind.ThisKeyword,
+            }),
             iterator.parameters[1]?.name.toString() || "",
             itemName
           )
