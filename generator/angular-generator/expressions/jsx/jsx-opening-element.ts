@@ -359,9 +359,17 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   }
 
   componentToJsxElement(name: string, component: Component) {
-    const attributes = getProps(component.members).map(
-      (prop) => new JsxAttribute(prop._name, prop._name)
-    );
+    const attributes = getProps(component.members).map((prop) => {
+      let initializer: Expression = prop._name;
+      if (prop.initializer) {
+        initializer = this.createJsxExpression(
+          new SimpleExpression(
+            `(${prop._name} !== undefined ? ${prop._name} : ${component.name}Defaults.${prop._name})`
+          )
+        );
+      }
+      return new JsxAttribute(prop._name, initializer);
+    });
     const element = new JsxSelfClosingElement(
       component._name,
       undefined,
@@ -443,6 +451,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         }
         return acc;
       }, [] as { name: string; component: Component }[]);
+      options &&
+        (options.templateComponents = (options.templateComponents || []).concat(
+          components.map((c) => c.component)
+        ));
 
       const functions = templates.reduce((acc, template) => {
         const result = this.context.viewFunctions?.[

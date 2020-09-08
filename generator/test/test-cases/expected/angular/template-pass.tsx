@@ -26,9 +26,17 @@ import { CommonModule } from "@angular/common";
       let-valueChange="valueChange"
       ><dx-inner-widget
         [selected]="selected"
-        [value]="value"
-        (onSelect)="onSelect($event)"
-        (valueChange)="valueChange($event)"
+        [value]="value !== undefined ? value : InnerWidgetDefaults.value"
+        (onSelect)="
+          (onSelect !== undefined ? onSelect : InnerWidgetDefaults.onSelect)(
+            $event
+          )
+        "
+        (valueChange)="
+          (valueChange !== undefined
+            ? valueChange
+            : InnerWidgetDefaults.valueChange)($event)
+        "
       ></dx-inner-widget></ng-template
     ><ng-template #CustomTemplate let-text="text" let-value="value"
       ><span>{{ text }}</span></ng-template
@@ -43,6 +51,12 @@ export default class Widget extends WidgetProps {
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
   }
+
+  InnerWidgetDefaults = {
+    value: 14,
+    onSelect: (e: any) => void 0,
+    valueChange: () => {},
+  };
 }
 @NgModule({
   declarations: [Widget],

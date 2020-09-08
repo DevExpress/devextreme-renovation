@@ -5,13 +5,20 @@ import {
   Event,
   Fragment,
   OneWay,
+  TwoWay,
 } from "../../../component_declaration/common";
 import Button from "../button";
 
-function view({ props: { text }, click }: BodyComponent) {
+function view({
+  props: { text, textWithDefault, counter },
+  click,
+}: BodyComponent) {
   return (
     <Fragment>
-      <span>{text}</span>
+      <span>{textWithDefault}</span>
+      <span>
+        {counter} - {text}
+      </span>
       <Button id="body-component-button" onClick={click}>
         Push me!
       </Button>
@@ -22,7 +29,9 @@ function view({ props: { text }, click }: BodyComponent) {
 @ComponentBindings()
 class BodyComponentProps {
   @OneWay() text?: string;
-  @Event() onClick? = () => void 0;
+  @OneWay() textWithDefault = "Body: ";
+  @TwoWay() counter = 13;
+  @Event() onClick?: () => void;
 }
 
 @Component({
@@ -30,6 +39,7 @@ class BodyComponentProps {
 })
 export default class BodyComponent extends JSXComponent(BodyComponentProps) {
   click() {
+    this.props.counter = this.props.counter + 1;
     this.props.onClick?.();
   }
 }

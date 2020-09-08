@@ -1,7 +1,7 @@
 import { Input, Output, EventEmitter } from "@angular/core";
 export class InnerWidgetProps {
   @Input() selected?: boolean;
-  @Input() value?: number;
+  @Input() value: number = 14;
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() valueChange: EventEmitter<number> = new EventEmitter();
 }

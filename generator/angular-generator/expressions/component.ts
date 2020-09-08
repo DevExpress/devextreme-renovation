@@ -700,7 +700,7 @@ export class AngularComponent extends Component {
               this.__cachedObservables[key] = [...current];
             }
           })
-          
+
           return isChanged;
         }`);
         usedIterables.forEach((i) => {
@@ -805,7 +805,7 @@ export class AngularComponent extends Component {
                             return v;
                         }, {});
                     }
-            
+
                     return value;
                 }`;
     }
@@ -857,12 +857,12 @@ export class AngularComponent extends Component {
     return `
         @HostListener('${this.modelProp.name}Change', ['$event']) change() { }
         @HostListener('onBlur', ['$event']) touched = () => {};
-        
+
         writeValue(value: any): void {
             this.${this.modelProp.name} = value;
             this.changeDetection.detectChanges();
         }
-    
+
         ${
           disabledProp
             ? `setDisabledState(isDisabled: boolean): void {
@@ -870,7 +870,7 @@ export class AngularComponent extends Component {
         }`
             : ""
         }
-    
+
         registerOnChange(fn: () => void): void { this.change = fn; }
         registerOnTouched(fn: () => void): void { this.touched = fn; }
         `;
@@ -1173,6 +1173,22 @@ export class AngularComponent extends Component {
     return destroyContext;
   }
 
+  compileDefaultPropsForTemplates(options: toStringOptions) {
+    if (options.templateComponents?.length) {
+      return options.templateComponents
+        .map((c) => {
+          const defaults = getProps(c.members)
+            .filter((p) => p.initializer)
+            .map((p) => `${p.name}: ${p.initializer}`)
+            .join(",");
+          return defaults ? `${c.name}Defaults = {${defaults}}` : "";
+        })
+        .filter((d) => d)
+        .join("\n");
+    }
+    return "";
+  }
+
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -1211,7 +1227,6 @@ export class AngularComponent extends Component {
     const implementedInterfaces: string[] = [];
 
     this.fillProviders();
-
     const componentDecorator = this.decorator.toString(
       decoratorToStringOptions
     );
@@ -1321,6 +1336,7 @@ export class AngularComponent extends Component {
             )}
             ${this.members.filter((m) => m instanceof SetAccessor).join("\n")}
             ${this.compileNgStyleProcessor(decoratorToStringOptions)}
+            ${this.compileDefaultPropsForTemplates(decoratorToStringOptions)}
         }
         @NgModule({
             declarations: [${this.name}, ${nestedModules

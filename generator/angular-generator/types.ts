@@ -2,6 +2,7 @@ import {
   toStringOptions as BaseToStringOptions,
   GeneratorContext,
 } from "../base-generator/types";
+import { Heritable } from "../base-generator/expressions/class";
 import { TrackByAttribute } from "./expressions/jsx/track-by-attribute";
 import { Expression } from "../base-generator/expressions/base";
 import { Property } from "./expressions/class-members/property";
@@ -12,6 +13,7 @@ export interface toStringOptions extends BaseToStringOptions {
   hasStyle?: boolean;
   keys?: Expression[];
   trackBy?: TrackByAttribute[];
+  templateComponents?: Heritable[];
 }
 
 export type AngularGeneratorContext = GeneratorContext & {
