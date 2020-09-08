@@ -1,4 +1,5 @@
 function view() {}
+
 export declare type WidgetPropsType = {
   p1: string;
   p2: string;

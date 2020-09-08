@@ -13,6 +13,7 @@ function view(model: Widget) {
     </div>
   );
 }
+
 export declare type WidgetPropsType = {
   someRef?: RefObject<HTMLElement>;
 };
@@ -62,7 +63,6 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   useEffect(() => {
     __state_setRendered((__state_rendered) => true);
   }, []);
-
   return view({
     props: { ...props },
     rendered: __state_rendered,

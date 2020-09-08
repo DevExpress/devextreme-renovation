@@ -4,6 +4,7 @@ function view(model: Widget): JSX.Element {
 }
 const P1Context = createContext(5);
 const GetterContext = createContext("default");
+
 export declare type PropsType = {
   p1: number;
 };

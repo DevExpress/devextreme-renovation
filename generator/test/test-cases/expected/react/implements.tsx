@@ -8,6 +8,7 @@ interface PropsI {
 interface WidgetI {
   onClick(): void;
 }
+
 export declare type WidgetInputType = typeof BaseProps & {
   p: string;
 };

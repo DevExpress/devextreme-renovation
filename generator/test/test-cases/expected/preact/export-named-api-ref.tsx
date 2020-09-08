@@ -1,6 +1,7 @@
 function view(model: Widget) {
   return <div></div>;
 }
+
 export declare type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
 import Preact from "preact";
@@ -30,6 +31,7 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
       }),
       []
     );
+
     const __restAttributes = useCallback(
       function __restAttributes(): RestProps {
         const { ...restProps } = props;

@@ -1,12 +1,9 @@
 <template>
-  <div>
-    <DxPortal :container="() => document.body" v-if="rendered">
-      <span></span>
-    </DxPortal>
-    <DxPortal :container="() => props.someRef">
-      <span></span>
-    </DxPortal>
-  </div>
+  <div
+    ><DxPortal :container="() => document.body" v-if="rendered"
+      ><span></span></DxPortal
+    ><DxPortal :container="() => props.someRef"><span></span></DxPortal
+  ></div>
 </template>
 <script>
 import Vue from "vue";

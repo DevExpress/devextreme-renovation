@@ -1,12 +1,10 @@
 <template>
-  <div ref="host" v-bind="__attr1">
-    <input v-bind="__attr2" />
-    <input ref="i1" v-bind="__attr2" />
-  </div>
+  <div ref="host" v-bind="__attr1"
+    ><input v-bind="__attr2" /><input ref="i1" v-bind="__attr2"
+  /></div>
 </template>
 <script>
 export const WidgetInput = {};
-
 export const DxWidget = {
   props: WidgetInput,
   computed: {

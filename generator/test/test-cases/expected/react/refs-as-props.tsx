@@ -9,6 +9,7 @@ function view(viewModel: Widget) {
     </div>
   );
 }
+
 export declare type WidgetInputType = {
   nullableRef?: RefObject<HTMLDivElement>;
 };

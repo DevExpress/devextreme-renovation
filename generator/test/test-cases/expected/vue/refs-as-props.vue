@@ -1,10 +1,9 @@
 <template>
-  <div ref="divRef">
-    <WidgetWithRefProp
+  <div ref="divRef"
+    ><WidgetWithRefProp
       :parentRef="() => this.$refs.divRef"
       :nullableRef="() => props.nullableRef"
-    />
-  </div>
+  /></div>
 </template>
 <script>
 import WidgetWithRefProp from "./dx-widget-with-ref-prop";

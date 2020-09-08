@@ -87,7 +87,11 @@ export function createTestGenerator(
           componentName
         )}`
       );
-      if (expectedFolder === "vue" && !code.startsWith("<template>")) {
+      if (
+        expectedFolder === "vue" &&
+        code.indexOf("<template>") === -1 &&
+        code.indexOf("<script>")
+      ) {
         fs.writeFileSync(realExpectedPath, `<script>\n${code}</script>\n`);
       } else {
         fs.writeFileSync(realExpectedPath, code);

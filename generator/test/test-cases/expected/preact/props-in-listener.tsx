@@ -1,6 +1,7 @@
 function view(model: Widget) {
   return <div></div>;
 }
+
 export declare type PropsType = {
   type?: string;
   onClick?: (e: any) => void;

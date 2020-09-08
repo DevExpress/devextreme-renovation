@@ -1,11 +1,10 @@
 <template>
-  <div style="display: contents;">
-    <slot name="contentTemplate" v-bind:childRef="forwardRef_child"></slot>
-  </div>
+  <div style="display: contents;"
+    ><slot name="contentTemplate" v-bind:childRef="forwardRef_child"></slot
+  ></div>
 </template>
 <script>
 const Props = {};
-
 export const DxRefOnChildrenTemplate = {
   props: Props,
   computed: {

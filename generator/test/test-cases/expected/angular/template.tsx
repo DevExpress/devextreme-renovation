@@ -19,8 +19,8 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div>
-    <ng-container *ngTemplateOutlet="headerTemplate"></ng-container
+  template: `<div
+    ><ng-container *ngTemplateOutlet="headerTemplate"></ng-container
     ><ng-container *ngIf="contentTemplate">
       <ng-container
         *ngTemplateOutlet="
@@ -40,8 +40,8 @@ import { CommonModule } from "@angular/common";
       ></ng-container> </ng-container
     ><ng-container
       *ngTemplateOutlet="footerTemplate; context: { someProp: someProp }"
-    ></ng-container>
-  </div>`,
+    ></ng-container
+  ></div>`,
 })
 export default class Widget extends WidgetInput {
   get __restAttributes(): any {

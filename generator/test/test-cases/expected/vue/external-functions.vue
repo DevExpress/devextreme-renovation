@@ -1,11 +1,11 @@
 <template>
-  <div v-bind:class="CLASS_NAME" v-bind:style="externalFunction()">
-    <span :key="index" v-for="(cell, index) of cells"
-      ><div v-if="conditionFn(cell) && index > 0">
-        {{ getValue(cell) }}{{ __addPostfix(index) }}
-      </div></span
-    >
-  </div>
+  <div v-bind:class="CLASS_NAME" v-bind:style="externalFunction()"
+    ><span :key="index" v-for="(cell, index) of cells"
+      ><div v-if="conditionFn(cell) && index > 0"
+        >{{ getValue(cell) }}{{ __addPostfix(index) }}</div
+      ></span
+    ></div
+  >
 </template>
 <script>
 import { namedFunction as externalFunction } from "./functions";

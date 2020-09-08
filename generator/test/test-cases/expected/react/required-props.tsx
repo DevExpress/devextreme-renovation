@@ -1,4 +1,5 @@
 function view() {}
+
 export declare type WidgetInputType = {
   size: { width: number; height: number };
   type: string;

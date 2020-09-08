@@ -1,6 +1,7 @@
 function view(viewModel: Widget) {
   return <div ref={viewModel.divRef as any}></div>;
 }
+
 export declare type WidgetInputType = {
   prop1?: number;
   prop2?: number;
@@ -46,6 +47,7 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
       }),
       [props.prop1, props.prop2]
     );
+
     const __restAttributes = useCallback(
       function __restAttributes(): RestProps {
         const { prop1, prop2, ...restProps } = props;

@@ -17,13 +17,11 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-import",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div>
-    {{
-      viewModel.props.Test === undefined || viewModel.props.Test === null
-        ? undefined
-        : viewModel.props.Test.value
-    }}
-  </div>`,
+  template: `<div>{{
+    viewModel.props.Test === undefined || viewModel.props.Test === null
+      ? undefined
+      : viewModel.props.Test.value
+  }}</div>`,
 })
 export default class Import extends ImportProps {
   get __restAttributes(): any {

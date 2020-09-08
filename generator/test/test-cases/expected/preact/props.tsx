@@ -1,6 +1,7 @@
 function view(model: Widget): any {
   return <span></span>;
 }
+
 export declare type WidgetInputType = {
   height: number;
   export: object;

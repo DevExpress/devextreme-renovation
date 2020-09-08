@@ -16,7 +16,6 @@ const WidgetInput = {
     },
   },
 };
-
 export const DxWidget = {
   props: WidgetInput,
   computed: {
@@ -34,7 +33,6 @@ export const DxWidget = {
   methods: {
     __getHeight() {
       this.onClick(10);
-
       this.onClick(11);
       return this.height;
     },

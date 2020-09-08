@@ -62,6 +62,5 @@ export const DxInnerWidget = {
     },
   },
 };
-
 export default DxInnerWidget;
 </script>

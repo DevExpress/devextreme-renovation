@@ -1,20 +1,17 @@
 <template>
-  <WidgetWithTemplate>
-    <template v-slot:componentTemplate="slotProps">
-      <InnerWidget
+  <WidgetWithTemplate
+    ><template v-slot:componentTemplate="slotProps"
+      ><InnerWidget
         :selected="slotProps.selected"
         :value="slotProps.value"
         @select="slotProps.onSelect"
-        @update:value="slotProps.valueChange"
-      />
-    </template>
-    <template v-slot:template="{ text }">
-      <span>{{ text }}</span>
-    </template>
-    <template v-slot:__arrowTemplate__generated="data">
-      <div>{{ data.name }}</div>
-    </template>
-  </WidgetWithTemplate>
+        @update:value="slotProps.valueChange" /></template
+    ><template v-slot:template="{ text }"
+      ><span>{{ text }}</span></template
+    ><template v-slot:__arrowTemplate__generated="data"
+      ><div>{{ data.name }}</div></template
+    ></WidgetWithTemplate
+  >
 </template>
 <script>
 import WidgetWithTemplate from "./dx-widget-with-template";

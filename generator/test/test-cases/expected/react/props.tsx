@@ -1,6 +1,7 @@
 function view(model: Widget): JSX.Element {
   return <span></span>;
 }
+
 export declare type WidgetInputType = {
   height: number;
   export: object;

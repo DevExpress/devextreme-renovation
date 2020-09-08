@@ -90,11 +90,11 @@ class DxPortal {
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div>
-    <dx-portal [container]="document.body" *ngIf="rendered"
+  template: `<div
+    ><dx-portal [container]="document.body" *ngIf="rendered"
       ><span></span></dx-portal
-    ><dx-portal [container]="someRef"><span></span></dx-portal>
-  </div>`,
+    ><dx-portal [container]="someRef"><span></span></dx-portal
+  ></div>`,
 })
 export default class Widget extends WidgetProps {
   rendered: boolean = false;

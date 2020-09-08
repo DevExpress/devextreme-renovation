@@ -5,6 +5,7 @@ function view(model: RefOnChildrenTemplate) {
     </React.Fragment>
   );
 }
+
 export declare type PropsType = {
   contentTemplate: any;
   contentRender?: any;
@@ -55,7 +56,6 @@ export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
   useEffect(() => {
     child.current!.innerHTML += "ParentText";
   }, []);
-
   return view({
     props: {
       ...props,

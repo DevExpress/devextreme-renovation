@@ -27,7 +27,6 @@ export function Widget(props: {} & RestProps) {
       window.removeEventListener("scroll", scrollHandler);
     };
   });
-
   return view();
 }
 

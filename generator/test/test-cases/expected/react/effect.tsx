@@ -7,6 +7,7 @@ function subscribe(p: string, s: number, i: number) {
 function unsubscribe(id: number) {
   return undefined;
 }
+
 export declare type WidgetInputType = {
   p: string;
   r: string;
@@ -88,7 +89,6 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     props.defaultS,
     props.sChange,
   ]);
-
   return view({
     props: { ...props, s: props.s !== undefined ? props.s : __state_s },
     i: __state_i,

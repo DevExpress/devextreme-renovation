@@ -3,7 +3,6 @@
 </template>
 <script>
 import Base, { WidgetProps } from "./component-input";
-
 const ChildInput = {
   ...WidgetProps,
   height: {

@@ -1,5 +1,6 @@
 import "typescript";
 function view() {}
+
 export declare type WidgetPropsType = {};
 export const WidgetProps: WidgetPropsType = {};
 import {
