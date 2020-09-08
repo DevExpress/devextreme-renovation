@@ -1,6 +1,7 @@
 function view(model: Widget) {
   return <div></div>;
 }
+
 export declare type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
 import React, {
@@ -31,6 +32,7 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
       }),
       []
     );
+
     const __restAttributes = useCallback(
       function __restAttributes(): RestProps {
         const { ...restProps } = props;
@@ -44,7 +46,9 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
       restAttributes: __restAttributes(),
     });
   }
-);
+) as React.FC<
+  typeof WidgetInput & RestProps & { ref: React.Ref<WidgetRef> }
+> & { defaultProps: typeof WidgetInput };
 export { Widget };
 
 export default Widget;

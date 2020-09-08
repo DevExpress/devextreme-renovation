@@ -7,6 +7,7 @@ function view(viewModel: WidgetWithApiRef) {
     ></BaseWidget>
   );
 }
+
 export declare type WidgetWithApiRefInputType = {
   prop1?: number;
 };
@@ -44,6 +45,7 @@ const WidgetWithApiRef = forwardRef<
     }),
     [props.prop1, baseRef.current]
   );
+
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { prop1, ...restProps } = props;
@@ -57,7 +59,9 @@ const WidgetWithApiRef = forwardRef<
     baseRef,
     restAttributes: __restAttributes(),
   });
-});
+}) as Preact.FunctionalComponent<typeof WidgetWithApiRefInput & RestProps> & {
+  defaultProps: typeof WidgetWithApiRefInput;
+};
 export default WidgetWithApiRef;
 
 WidgetWithApiRef.defaultProps = {

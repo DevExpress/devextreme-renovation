@@ -210,6 +210,14 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("dx-widget-with-props", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("props-with-initial", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {

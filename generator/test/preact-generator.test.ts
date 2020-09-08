@@ -106,6 +106,14 @@ mocha.describe("preact-generator", function () {
   mocha.it("context", function () {
     this.testGenerator(this.test!.title);
   });
+
+  mocha.it("dx-widget-with-props", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("props-with-initial", function () {
+    this.testGenerator(this.test!.title);
+  });
 });
 
 mocha.describe("preact-generator: expressions", function () {
