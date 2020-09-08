@@ -106,7 +106,9 @@ export class ImportClause {
       namedBindings && result.push(namedBindings);
     }
 
-    return result.length ? `${result.join(",")} from ` : "";
+    return result.length
+      ? `${this.isTypeOnly ? "type " : ""}${result.join(",")} from `
+      : "";
   }
 }
 
@@ -154,8 +156,7 @@ export class ImportDeclaration {
     ) {
       return this.compileComponentDeclarationImport();
     }
-    const typeString = this.importClause.isTypeOnly ? "type " : "";
-    return `import ${typeString}${this.importClause}${this.moduleSpecifier}`;
+    return `import ${this.importClause}${this.moduleSpecifier}`;
   }
 }
 
