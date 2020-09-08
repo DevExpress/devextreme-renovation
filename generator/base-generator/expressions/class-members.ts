@@ -13,6 +13,7 @@ import {
 import { Decorator } from "./decorator";
 import { Decorators } from "../../component_declaration/decorators";
 import { TypeParameterDeclaration } from "./type-parameter-declaration";
+import SyntaxKind from "../syntaxKind";
 
 export class BaseClassMember extends Expression {
   decorators: Decorator[];
@@ -136,6 +137,10 @@ export class BaseClassMember extends Expression {
 
   getDependency() {
     return [this.name];
+  }
+
+  get isPrivate() {
+    return this.modifiers.indexOf(SyntaxKind.PrivateKeyword) !== -1;
   }
 }
 

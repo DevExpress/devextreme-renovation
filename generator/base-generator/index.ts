@@ -639,8 +639,12 @@ export default class Generator implements GeneratorAPI {
     return new NamedImports(node);
   }
 
-  createImportClause(name?: Identifier, namedBindings?: NamedImportBindings) {
-    return new ImportClause(name, namedBindings);
+  createImportClause(
+    name?: Identifier,
+    namedBindings?: NamedImportBindings,
+    isTypeOnly?: boolean
+  ) {
+    return new ImportClause(name, namedBindings, isTypeOnly);
   }
 
   createExportSpecifier(

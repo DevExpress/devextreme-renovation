@@ -503,7 +503,11 @@ export class ReactComponent extends Component {
                 .concat(
                   this.members
                     .filter(
-                      (m) => !m.inherited && !m.isEffect && !m.isApiMethod
+                      (m) =>
+                        !m.inherited &&
+                        !m.isEffect &&
+                        !m.isApiMethod &&
+                        !m.isPrivate
                     )
                     .map((m) => m.typeDeclaration())
                 )
@@ -553,11 +557,13 @@ export class ReactComponent extends Component {
           .map((m) => m.name.toString())
       )
       .concat(
-        this.methods.map((m) =>
-          m._name.toString() !== m.getter()
-            ? `${m._name}:${m.getter()}`
-            : m.getter()
-        )
+        this.methods
+          .filter((m) => !m.isPrivate)
+          .map((m) =>
+            m._name.toString() !== m.getter()
+              ? `${m._name}:${m.getter()}`
+              : m.getter()
+          )
       );
   }
 
