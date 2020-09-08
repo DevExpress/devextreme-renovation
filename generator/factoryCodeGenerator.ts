@@ -3690,6 +3690,8 @@ export function generateFactoryCode(
       else {
         writeNodeText(node.namedBindings);
       }
+      writer.write(",").newLine();
+      writer.write(node.isTypeOnly.toString());
     });
     writer.write(")");
   }

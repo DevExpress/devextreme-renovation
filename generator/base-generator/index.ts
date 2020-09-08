@@ -523,15 +523,6 @@ export default class Generator implements GeneratorAPI {
     );
   }
 
-  createImportEqualsDeclaration(
-    decorators: Decorator[] | undefined,
-    modifiers: string[] | undefined,
-    name: Identifier,
-    moduleSpecifier: StringLiteral
-  ) {
-    return `import ${name.toString()}`;
-  }
-
   createImportDeclaration(
     decorators: Decorator[] | undefined,
     modifiers: string[] | undefined,
@@ -648,8 +639,12 @@ export default class Generator implements GeneratorAPI {
     return new NamedImports(node);
   }
 
-  createImportClause(name?: Identifier, namedBindings?: NamedImportBindings) {
-    return new ImportClause(name, namedBindings);
+  createImportClause(
+    name?: Identifier,
+    namedBindings?: NamedImportBindings,
+    isTypeOnly?: boolean
+  ) {
+    return new ImportClause(name, namedBindings, isTypeOnly);
   }
 
   createExportSpecifier(
@@ -1344,7 +1339,7 @@ export default class Generator implements GeneratorAPI {
       );
     });
     this.cache.__globals__ = context.globals;
-    return this.format(codeFactoryResult.join("\n"));
+    return this.format(codeFactoryResult.join(";\n"));
   }
 
   generate(factory: any): GeneratorResult[] {

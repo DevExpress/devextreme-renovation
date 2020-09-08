@@ -5,3 +5,7 @@ export declare type Options = {
 export declare type AdditionalOptions = {
   index: number;
 };
+
+export class CustomClass {
+  inputInt: number;
+}

@@ -277,18 +277,7 @@ export class VueGenerator extends BaseGenerator {
     return [];
   }
 
-  deleteImportType(arr: Array<any>) {
-    while (arr.includes("import type")) {
-      arr.splice(
-        arr.findIndex((e) => e === "import type"),
-        arr.findIndex((e) => e instanceof StringLiteral)
-      );
-    }
-    return arr;
-  }
-
   processCodeFactoryResult(codeFactoryResult: Array<any>) {
-    codeFactoryResult = this.deleteImportType(codeFactoryResult);
     const code = super.processCodeFactoryResult(codeFactoryResult);
     if (getComponentListFromContext(this.getContext()).length === 0) {
       return prettier.format(code, { parser: "babel" });

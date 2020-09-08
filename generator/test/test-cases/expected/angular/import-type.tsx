@@ -1,6 +1,5 @@
 import type { Options } from "./types.d";
-import type { AdditionalOptions } from "./types.d";
-
+import type { CustomClass } from "./types.d";
 import { Input } from "@angular/core";
 export class ImportProps {
   @Input() Test?: Options;
@@ -47,3 +46,5 @@ export default class Import extends ImportProps {
   exports: [Import],
 })
 export class DxImportModule {}
+
+export * from "./types.d";
