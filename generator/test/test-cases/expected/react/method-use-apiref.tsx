@@ -7,6 +7,7 @@ function view(viewModel: WidgetWithApiRef) {
     ></BaseWidget>
   );
 }
+
 export declare type WidgetWithApiRefInputType = {
   prop1?: number;
 };
@@ -37,15 +38,6 @@ const WidgetWithApiRef = forwardRef<
 >((props: typeof WidgetWithApiRefInput & RestProps, ref) => {
   const baseRef = useRef<BaseWidgetRef>();
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      getSomething: () => {
-        return `${props.prop1} + ${baseRef.current?.getHeight(1, undefined)}`;
-      },
-    }),
-    [props.prop1, baseRef.current]
-  );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { prop1, ...restProps } = props;
@@ -53,7 +45,14 @@ const WidgetWithApiRef = forwardRef<
     },
     [props]
   );
+  const getSomething = useCallback(
+    function getSomething(): string {
+      return `${props.prop1} + ${baseRef.current?.getHeight(1, undefined)}`;
+    },
+    [props.prop1, baseRef.current]
+  );
 
+  useImperativeHandle(ref, () => ({ getSomething }), [getSomething]);
   return view({
     props: { ...props },
     baseRef,
