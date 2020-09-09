@@ -1,7 +1,6 @@
 <template>
   <div></div>
 </template>
-
 <script>
 const WidgetInput = {
   propState: {
@@ -11,7 +10,6 @@ const WidgetInput = {
     },
   },
 };
-
 export const DxWidget = {
   props: WidgetInput,
   data() {

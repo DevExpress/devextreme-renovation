@@ -1,22 +1,21 @@
 <template>
-  <div>
-    <slot name="headerTemplate"></slot>
-    <slot
+  <div
+    ><slot name="headerTemplate"></slot
+    ><slot
       name="contentTemplate"
       v-bind:data="{ p1: 'value' }"
       v-bind:index="10"
       v-if="$scopedSlots.contentTemplate"
-    ></slot>
-    <slot
+    ></slot
+    ><slot
       name="template"
       v-bind:textProp="'textPropValue'"
       v-bind:textPropExpr="'textPropExrpValue'"
       v-if="!$scopedSlots.contentTemplate"
-    ></slot>
-    <slot name="footerTemplate" v-bind:someProp="someProp"></slot>
-  </div>
+    ></slot
+    ><slot name="footerTemplate" v-bind:someProp="someProp"></slot
+  ></div>
 </template>
-
 <script>
 export const WidgetInput = {
   someProp: {
@@ -26,7 +25,6 @@ export const WidgetInput = {
     },
   },
 };
-
 export const DxWidget = {
   props: WidgetInput,
   computed: {

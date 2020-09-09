@@ -6,7 +6,6 @@ export default class Widget extends BaseComponent {
   getHeight(p: number = 10, p1: any): string {
     return this.viewRef.getHeight(p, p1);
   }
-
   getSize(): string {
     return this.viewRef.getSize();
   }

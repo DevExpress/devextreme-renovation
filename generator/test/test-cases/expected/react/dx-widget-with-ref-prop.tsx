@@ -3,7 +3,8 @@ export declare type WidgetWithRefPropInputType = {
   nullableRef?: RefObject<any>;
 };
 export const WidgetWithRefPropInput: WidgetWithRefPropInputType = {};
-import React, { useCallback, RefObject, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, RefObject, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,

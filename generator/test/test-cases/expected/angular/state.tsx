@@ -21,12 +21,12 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div>
-    {{ state1
+  template: `<div
+    >{{ state1
     }}<dx-model-widget
       (baseStatePropChange)="__stateChange($event)"
-    ></dx-model-widget>
-  </div>`,
+    ></dx-model-widget
+  ></div>`,
 })
 export default class Widget extends WidgetInput {
   innerData?: string;

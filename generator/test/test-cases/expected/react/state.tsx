@@ -27,7 +27,8 @@ const WidgetInput: WidgetInputType = ({
   state2Change: () => {},
   statePropChange: () => {},
 } as any) as WidgetInputType;
-import React, { useState, useCallback, HTMLAttributes } from "react";
+import * as React from "react";
+import { useState, useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
@@ -59,8 +60,8 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     string | undefined
   >(undefined);
 
-  const updateState = useCallback(
-    function updateState(): any {
+  const __updateState = useCallback(
+    function __updateState(): any {
       __state_setState1(
         (__state_state1) =>
           !(props.state1 !== undefined ? props.state1 : __state_state1)
@@ -71,22 +72,22 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     },
     [props.state1Change, props.state1, __state_state1]
   );
-  const updateState2 = useCallback(
-    function updateState2(): any {
+  const __updateState2 = useCallback(
+    function __updateState2(): any {
       const cur = props.state2 !== undefined ? props.state2 : __state_state2;
       __state_setState2((__state_state2) => (cur !== false ? false : true)),
         props.state2Change!(cur !== false ? false : true);
     },
     [props.state2, __state_state2, props.state2Change]
   );
-  const destruct = useCallback(
-    function destruct(): any {
+  const __destruct = useCallback(
+    function __destruct(): any {
       const s = props.state1 !== undefined ? props.state1 : __state_state1;
     },
     [props.state1, __state_state1]
   );
-  const stateChange = useCallback(
-    function stateChange(stateProp: boolean): any {
+  const __stateChange = useCallback(
+    function __stateChange(stateProp: boolean): any {
       __state_setStateProp((__state_stateProp) => stateProp),
         props.statePropChange!(stateProp);
     },
@@ -126,10 +127,10 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
         props.stateProp !== undefined ? props.stateProp : __state_stateProp,
     },
     innerData: __state_innerData,
-    updateState,
-    updateState2,
-    destruct,
-    stateChange,
+    updateState: __updateState,
+    updateState2: __updateState2,
+    destruct: __destruct,
+    stateChange: __stateChange,
     restAttributes: __restAttributes(),
   });
 }

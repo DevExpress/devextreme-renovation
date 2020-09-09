@@ -45,6 +45,9 @@ export class Property extends BaseProperty {
       type = new SimpleTypeExpression(`TemplateRef<any> | null`);
       initializer = new SimpleExpression("null");
     }
+    if (!initializer && decorators.find((d) => d.name === Decorators.Event)) {
+      initializer = new SimpleExpression("(e: any) => void 0");
+    }
     super(
       decorators,
       modifiers,

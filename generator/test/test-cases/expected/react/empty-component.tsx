@@ -1,4 +1,5 @@
-import React, { useCallback, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
@@ -37,6 +38,7 @@ function view1(viewModel: Widget) {
   return (
     <div style={{ height: viewModel.height }}>
       <span></span>
+
       <span></span>
     </div>
   );

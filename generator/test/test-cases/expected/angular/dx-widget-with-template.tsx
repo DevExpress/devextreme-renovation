@@ -17,11 +17,11 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget-with-template",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div>
-    <ng-container *ngTemplateOutlet="componentTemplate"></ng-container
+  template: `<div
+    ><ng-container *ngTemplateOutlet="componentTemplate"></ng-container
     ><ng-container *ngTemplateOutlet="template"></ng-container
-    ><ng-container *ngTemplateOutlet="arrowTemplate"></ng-container>
-  </div>`,
+    ><ng-container *ngTemplateOutlet="arrowTemplate"></ng-container
+  ></div>`,
 })
 export default class WidgetWithTemplate extends WidgetWithTemplateInput {
   get __restAttributes(): any {

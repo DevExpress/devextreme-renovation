@@ -12,9 +12,9 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div #divRef>
-    <div #explicitRef><div #nullableRef></div></div>
-  </div>`,
+  template: `<div #divRef
+    ><div #explicitRef><div #nullableRef></div></div
+  ></div>`,
 })
 export default class Widget {
   @ViewChild("divRef", { static: false }) divRef!: ElementRef<HTMLDivElement>;

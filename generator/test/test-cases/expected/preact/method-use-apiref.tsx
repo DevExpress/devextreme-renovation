@@ -7,12 +7,13 @@ function view(viewModel: WidgetWithApiRef) {
     ></BaseWidget>
   );
 }
+
 export declare type WidgetWithApiRefInputType = {
   prop1?: number;
 };
 const WidgetWithApiRefInput: WidgetWithApiRefInputType = {};
 import { WidgetRef as BaseWidgetRef } from "./method";
-import Preact from "preact";
+import * as Preact from "preact";
 import { useCallback, useRef, useImperativeHandle } from "preact/hooks";
 import { forwardRef } from "preact/compat";
 
@@ -35,15 +36,6 @@ const WidgetWithApiRef = forwardRef<
 >((props: typeof WidgetWithApiRefInput & RestProps, ref) => {
   const baseRef = useRef<BaseWidgetRef>();
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      getSomething: () => {
-        return `${props.prop1} + ${baseRef.current?.getHeight(1, undefined)}`;
-      },
-    }),
-    [props.prop1, baseRef.current]
-  );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { prop1, ...restProps } = props;
@@ -51,7 +43,16 @@ const WidgetWithApiRef = forwardRef<
     },
     [props]
   );
+  const __getSomething = useCallback(
+    function __getSomething(): string {
+      return `${props.prop1} + ${baseRef.current?.getHeight(1, undefined)}`;
+    },
+    [props.prop1, baseRef.current]
+  );
 
+  useImperativeHandle(ref, () => ({ getSomething: __getSomething }), [
+    __getSomething,
+  ]);
   return view({
     props: { ...props },
     baseRef,

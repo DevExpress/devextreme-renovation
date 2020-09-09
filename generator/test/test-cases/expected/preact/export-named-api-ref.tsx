@@ -1,9 +1,10 @@
 function view(model: Widget) {
   return <div></div>;
 }
+
 export declare type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
-import Preact from "preact";
+import * as Preact from "preact";
 import { useCallback, useImperativeHandle } from "preact/hooks";
 import { forwardRef } from "preact/compat";
 
@@ -21,15 +22,6 @@ interface Widget {
 
 const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
   (props: typeof WidgetInput & RestProps, ref) => {
-    useImperativeHandle(
-      ref,
-      () => ({
-        getValue: () => {
-          return 0;
-        },
-      }),
-      []
-    );
     const __restAttributes = useCallback(
       function __restAttributes(): RestProps {
         const { ...restProps } = props;
@@ -37,7 +29,11 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
       },
       [props]
     );
+    const __getValue = useCallback(function __getValue(): any {
+      return 0;
+    }, []);
 
+    useImperativeHandle(ref, () => ({ getValue: __getValue }), [__getValue]);
     return view({
       props: { ...props },
       restAttributes: __restAttributes(),

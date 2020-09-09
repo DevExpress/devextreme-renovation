@@ -5,26 +5,18 @@ import {
   Event,
   Template,
 } from "../../../component_declaration/common";
+import BodyComponent from "./body-component";
 
-const lorem =
-  "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Blanditiis velit vero alias deserunt adipisci minima eum incidunt architecto, possimus delectus commodi similique tempore optio quaerat facere laborum eius iste perspiciatis!";
+const lorem = "Lorem ipsum dolor sit amet consectetur, adipisicing elit";
 
 function view(vm: PanelComponent) {
   return (
     <div>
       <div>
-        <span>Header:</span>
-        <vm.props.headerTemplate
-          text="Panel header"
-          onClick={vm.headerClick}
-        />{" "}
+        <vm.props.headerTemplate text="Panel header" onClick={vm.headerClick} />
       </div>
       <div>
-        <span>Body:</span>
-        <vm.props.bodyTemplate
-          text={lorem}
-          onClick={vm.props.onBodyClick}
-        />{" "}
+        <vm.props.bodyTemplate text={lorem} onClick={vm.bodyClick} />
       </div>
     </div>
   );
@@ -34,8 +26,8 @@ function view(vm: PanelComponent) {
 class PanelComponentProps {
   @Template() headerTemplate?: any;
   @Template() bodyTemplate?: any;
-  @Event() onHeaderClick: () => void = () => void 0;
-  @Event() onBodyClick: () => void = () => void 0;
+  @Event() onHeaderClick?: () => void;
+  @Event() onBodyClick?: () => void;
 }
 
 @Component({

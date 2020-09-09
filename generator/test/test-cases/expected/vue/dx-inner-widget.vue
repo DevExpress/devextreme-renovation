@@ -8,6 +8,9 @@ export const InnerWidgetProps = {
   },
   value: {
     type: Number,
+    default() {
+      return 14;
+    },
   },
 };
 export const DxInnerWidget = {
@@ -62,6 +65,5 @@ export const DxInnerWidget = {
     },
   },
 };
-
 export default DxInnerWidget;
 </script>

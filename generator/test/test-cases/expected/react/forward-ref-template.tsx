@@ -5,13 +5,15 @@ function view(model: RefOnChildrenTemplate) {
     </React.Fragment>
   );
 }
+
 export declare type PropsType = {
   contentTemplate: any;
   contentRender?: any;
   contentComponent?: any;
 };
 const Props: PropsType = ({} as any) as PropsType;
-import React, { useCallback, useEffect, useRef, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, useEffect, useRef, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
 interface RefOnChildrenTemplate {
@@ -28,12 +30,13 @@ function getTemplate(
 ) {
   const getRender = (render: any) => (props: any) =>
     "data" in props ? render(props.data, props.index) : render(props);
-  const Component = props[component];
+  const PropTemplate = props[template];
+  const PropComponent = props[component];
 
   return (
-    props[template] ||
+    (PropTemplate && ((props: any) => <PropTemplate {...props} />)) ||
     (props[render] && getRender(props[render])) ||
-    (Component && ((props: any) => <Component {...props} />))
+    (PropComponent && ((props: any) => <PropComponent {...props} />))
   );
 }
 

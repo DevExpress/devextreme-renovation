@@ -19,6 +19,5 @@ const WidgetProps = {
     },
   },
 };
-
 export default WidgetProps;
 </script>

@@ -1,12 +1,14 @@
 import "typescript";
 function view() {}
+
 export declare type WidgetPropsType = {};
 export const WidgetProps: WidgetPropsType = {};
 import {
   convertRulesToOptions,
   Rule,
 } from "../../../../component_declaration/default_options";
-import React, { useCallback, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,

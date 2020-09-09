@@ -175,7 +175,7 @@ export class Method extends BaseClassMember {
   }
 
   typeDeclaration() {
-    return `${this.name}${
+    return `${this._name}${
       this.questionToken
     }:${this.compileTypeParameters()}(${this.parameters
       .map((p) => p.typeDeclaration())
@@ -273,7 +273,7 @@ export class GetAccessor extends Method {
   }
 
   toString(options?: toStringOptions) {
-    return `get ${this.name}()${compileType(
+    return `${this.modifiers.join(" ")} get ${this.name}()${compileType(
       this.type.toString()
     )}${this.body.toString(options)}`;
   }

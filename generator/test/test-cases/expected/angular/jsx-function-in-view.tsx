@@ -16,14 +16,14 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div>
-    <ng-container *ngIf="loading"
+  template: `<div
+    ><ng-container *ngIf="loading"
       ><div>{{ __loadingProps.text }}</div></ng-container
     >
     <ng-container *ngIf="!loading"
       ><span>{{ "" + greetings + " " + __name + "" }}</span></ng-container
-    >
-  </div>`,
+    ></div
+  >`,
 })
 export default class Widget extends WidgetInput {
   get __loadingProps(): any {

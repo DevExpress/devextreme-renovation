@@ -2,7 +2,8 @@ function view(model: Widget) {
   return <span></span>;
 }
 
-import React, { useState, useCallback, HTMLAttributes } from "react";
+import * as React from "react";
+import { useState, useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof {}>;
 interface Widget {
@@ -14,8 +15,8 @@ interface Widget {
 export default function Widget(props: {} & RestProps) {
   const [__state__hovered, __state_set_hovered] = useState<Boolean>(false);
 
-  const updateState = useCallback(
-    function updateState(): any {
+  const __updateState = useCallback(
+    function __updateState(): any {
       __state_set_hovered((__state__hovered) => !__state__hovered);
     },
     [__state__hovered]
@@ -31,7 +32,7 @@ export default function Widget(props: {} & RestProps) {
   return view({
     ...props,
     _hovered: __state__hovered,
-    updateState,
+    updateState: __updateState,
     restAttributes: __restAttributes(),
   });
 }

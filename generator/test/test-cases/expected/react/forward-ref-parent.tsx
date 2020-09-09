@@ -13,7 +13,8 @@ export declare type PropsType = {
   nullableRef?: RefObject<HTMLDivElement>;
 };
 const Props: PropsType = {};
-import React, {
+import * as React from "react";
+import {
   useState,
   useCallback,
   useEffect,
@@ -45,6 +46,7 @@ export default function RefOnChildrenParent(props: typeof Props & RestProps) {
     child.current!.innerHTML = "Ref from child";
     const html = props.nullableRef?.current?.innerHTML;
   }, [props.nullableRef?.current]);
+
   return view({
     props: { ...props },
     innerState: __state_innerState,

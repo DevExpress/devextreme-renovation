@@ -7,12 +7,14 @@ function view(viewModel: Widget) {
     </div>
   );
 }
+
 export declare type WidgetInputType = {
   namedSlot?: React.ReactNode;
   children?: React.ReactNode;
 };
 const WidgetInput: WidgetInputType = {};
-import React, { useCallback, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,

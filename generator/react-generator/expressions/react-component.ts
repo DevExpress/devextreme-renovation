@@ -97,6 +97,13 @@ export class ReactComponent extends Component {
       members.push(this.createNestedPropertyGetter(m));
     });
 
+    members = members.map((m) => {
+      if (m instanceof Method) {
+        m.prefix = "__";
+      }
+      return m;
+    });
+
     return members;
   }
 
@@ -133,7 +140,7 @@ export class ReactComponent extends Component {
       [],
       undefined,
       undefined,
-      new Identifier("__nestedChildren"),
+      new Identifier("nestedChildren"),
       undefined,
       [new TypeParameterDeclaration(new Identifier("T"))],
       [],
@@ -255,13 +262,14 @@ export class ReactComponent extends Component {
     const elementAttributes = this.getComponentOpeningElement()?.isSVG()
       ? "SVGAttributes"
       : "HTMLAttributes";
-    const imports = [
-      `import React, {${hooks
-        .concat(compats)
-        .concat(core)
-        .concat([elementAttributes])
-        .join(",")}} from 'react';`,
-    ];
+    const imports = ["import * as React from 'react'"];
+    const namedImports = hooks
+      .concat(compats)
+      .concat(core)
+      .concat([elementAttributes]);
+    if (namedImports.length) {
+      imports.push(`import {${namedImports.join(",")}} from 'react'`);
+    }
 
     return imports;
   }
@@ -372,7 +380,7 @@ export class ReactComponent extends Component {
                           const twoWayProps:string[] = [${this.state.map(
                             (s) => `"${s.name}"`
                           )}];
-                          
+
                           return Object.keys(defaultProps).reduce((props, propName)=>{
                               const propValue = (defaultProps as any)[propName];
                               const defaultPropName = twoWayProps.some(p=>p===propName) ? "default"+propName.charAt(0).toUpperCase() + propName.slice(1): propName;
@@ -382,7 +390,7 @@ export class ReactComponent extends Component {
                       }`
                       : ""
                   }
-                  
+
                   function __createDefaultProps(){
                       return {
                           ${defaultProps.join(",\n")}
@@ -459,13 +467,9 @@ export class ReactComponent extends Component {
     const api = this.members.reduce(
       (r: { methods: string[]; deps: string[] }, a) => {
         if (a.isApiMethod) {
-          r.methods.push(
-            `${a.name}: ${(a as Method).arrowDeclaration(
-              this.getToStringOptions()
-            )}`
-          );
+          r.methods.push(`${a._name}: ${a.name}`);
 
-          r.deps = [...new Set(r.deps.concat(a.getDependency(this.members)))];
+          r.deps = [...new Set(r.deps.concat(a.name))];
         }
 
         return r;
@@ -517,7 +521,7 @@ export class ReactComponent extends Component {
 
   compileViewModelArguments(): string[] {
     const compileState = (state: BaseProperty[]) =>
-      state.map((s) => `${s.name}:${s.getter()}`);
+      state.filter((s) => !s.isPrivate).map((s) => `${s.name}:${s.getter()}`);
     const state = compileState(this.state);
     const internalState = compileState(this.internalState);
 
@@ -546,7 +550,7 @@ export class ReactComponent extends Component {
       : ["...props"].concat(internalState).concat(state).concat(nestedProps);
 
     return props
-      .concat(this.listeners.map((l) => l.name.toString()))
+      .concat(this.listeners.map((l) => `${l._name}: ${l.name}`))
       .concat(this.refs.map((r) => r.name.toString()))
       .concat(this.apiRefs.map((r) => r.name.toString()))
       .concat(
@@ -754,11 +758,12 @@ export class ReactComponent extends Component {
       ? `
           function getTemplate(props: any, template: string, render: string, component: string) {
               const getRender = (render: any) => (props: any) => (("data" in props) ? render(props.data, props.index) : render(props));
-              const Component = props[component];
-              
-              return props[template] ||
+              const PropTemplate = props[template];
+              const PropComponent = props[component];
+
+              return (PropTemplate && ((props: any) => <PropTemplate {...props} />)) ||
                           (props[render] && getRender(props[render])) ||
-                          (Component && ((props: any) => <Component {...props} />));
+                          (PropComponent && ((props: any) => <PropComponent {...props} />));
           }
           `
       : "";
@@ -789,7 +794,6 @@ export class ReactComponent extends Component {
               }
                   ${this.compileUseRef()}
                   ${this.stateDeclaration()}
-                  ${this.compileUseImperativeHandle()}
                   ${this.members
                     .filter(
                       (m) =>
@@ -798,16 +802,27 @@ export class ReactComponent extends Component {
                     )
                     .map((m) => m.toString(this.getToStringOptions()))
                     .join(";\n")}
-                  ${this.listeners
-                    .concat(this.methods)
-                    .map((m) => {
-                      return `const ${m.name}=useCallback(${m.declaration(
-                        this.getToStringOptions()
-                      )}, [${m.getDependency(this.members)}]);`;
-                    })
-                    .join("\n")}
+                                          ${this.listeners
+                                            .concat(this.methods)
+                                            .concat(
+                                              this.members.filter(
+                                                (m) => m.isApiMethod
+                                              ) as Array<Method>
+                                            )
+                                            .map((m) => {
+                                              return `const ${
+                                                m.name
+                                              }=useCallback(${m.declaration(
+                                                this.getToStringOptions()
+                                              )}, [${m.getDependency(
+                                                this.members
+                                              )}]);`;
+                                            })
+                                            .join("\n")}
                   ${this.compileUseEffect()}
+                  ${this.compileUseImperativeHandle()}
                   return ${this.compileViewCall()}
+                  
               ${
                 this.members.filter((m) => m.isApiMethod).length === 0
                   ? `}`
@@ -817,9 +832,9 @@ export class ReactComponent extends Component {
                         : this.name
                     };`
               }
-              
+
               ${this.compileDefaultComponentExport()}
-  
+
               ${this.compileDefaultProps()}
               ${this.compileDefaultOptionsMethod("[]", [
                 `${this.defaultPropsDest()} = {

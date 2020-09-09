@@ -14,7 +14,6 @@ export const WidgetProps = {
     },
   },
 };
-
 import { convertRulesToOptions } from "../../../../component_declaration/default_options";
 
 const __defaultOptionRules = [];

@@ -8,6 +8,7 @@ interface PropsI {
 interface WidgetI {
   onClick(): void;
 }
+
 export declare type WidgetInputType = typeof BaseProps & {
   p: string;
 };
@@ -15,7 +16,8 @@ const WidgetInput: WidgetInputType = {
   ...BaseProps,
   p: "10",
 };
-import React, { useCallback, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
@@ -28,7 +30,7 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const onClick = useCallback(function onClick(): void {}, []);
+  const __onClick = useCallback(function __onClick(): void {}, []);
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { data, height, info, p, ...restProps } = props;
@@ -39,7 +41,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 
   return view({
     props: { ...props },
-    onClick,
+    onClick: __onClick,
     restAttributes: __restAttributes(),
   });
 }

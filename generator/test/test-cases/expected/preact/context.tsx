@@ -11,7 +11,7 @@ export declare type PropsType = {
 const Props: PropsType = {
   p1: 10,
 };
-import Preact from "preact";
+import * as Preact from "preact";
 import { useState, useContext, useCallback } from "preact/hooks";
 
 declare type RestProps = {

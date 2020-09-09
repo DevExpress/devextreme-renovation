@@ -26,7 +26,9 @@ export default class Widget extends WidgetInput {
     return `${this.prop1} + ${this.prop2} + ${this.divRef.nativeElement.innerHTML} + ${p}`;
   }
   getSize(): string {
-    return `${this.prop1} + ${this.divRef.nativeElement.innerHTML}`;
+    return `${this.prop1} + ${
+      this.divRef.nativeElement.innerHTML
+    } + ${this.getHeight(0, 0)}`;
   }
   get __restAttributes(): any {
     return {};

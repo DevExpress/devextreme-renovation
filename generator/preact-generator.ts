@@ -136,8 +136,10 @@ export class PreactComponent extends ReactComponent {
   }
 
   compileImportStatements(hooks: string[], compats: string[], core: string[]) {
-    const namedCoreImports = core.length ? `, {${core.join(",")}}` : "";
-    const imports = [`import Preact ${namedCoreImports} from "preact"`];
+    const imports = ["import * as Preact from 'preact'"];
+    if (core.length) {
+      imports.push(`import {${core.join(",")}} from "preact"`);
+    }
     if (hooks.length) {
       imports.push(`import {${hooks.join(",")}} from "preact/hooks"`);
     }
@@ -220,8 +222,8 @@ class JQueryComponent {
   compileAPI() {
     return (this.source.members.filter((a) => a.isApiMethod) as Method[])
       .map(
-        (a) => `${a.name}(${a.parameters})${compileType(a.type.toString())} {
-                return this.viewRef.${a.name}(${a.parameters
+        (a) => `${a._name}(${a.parameters})${compileType(a.type.toString())} {
+                return this.viewRef.${a._name}(${a.parameters
           .map((p) => p.name)
           .join(",")});
             }`

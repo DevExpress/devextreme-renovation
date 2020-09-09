@@ -1,7 +1,5 @@
 <template>
-  <div ref="childRef">
-    <div ref="nullableRef"></div>
-  </div>
+  <div ref="childRef"><div ref="nullableRef"></div></div>
 </template>
 <script>
 const Props = {
@@ -16,7 +14,6 @@ const Props = {
     type: Number,
   },
 };
-
 export const DxRefOnChildrenChild = {
   props: Props,
   computed: {

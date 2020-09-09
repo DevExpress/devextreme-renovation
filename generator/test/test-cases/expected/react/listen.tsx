@@ -2,7 +2,8 @@ function view(model: Widget) {
   return <div></div>;
 }
 
-import React, { useCallback, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof {}>;
 interface Widget {
@@ -12,8 +13,8 @@ interface Widget {
 }
 
 export function Widget(props: {} & RestProps) {
-  const onClick = useCallback(function onClick(e: Event): any {}, []);
-  const onPointerMove = useCallback(function onPointerMove(
+  const __onClick = useCallback(function __onClick(e: Event): any {}, []);
+  const __onPointerMove = useCallback(function __onPointerMove(
     a = "a",
     b = 0,
     c = true
@@ -29,8 +30,8 @@ export function Widget(props: {} & RestProps) {
 
   return view({
     ...props,
-    onClick,
-    onPointerMove,
+    onClick: __onClick,
+    onPointerMove: __onPointerMove,
     restAttributes: __restAttributes(),
   });
 }

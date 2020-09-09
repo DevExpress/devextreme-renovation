@@ -1,6 +1,7 @@
 function view() {}
 
-import React, { useCallback, useEffect, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, useEffect, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof {}>;
 interface Widget {
@@ -10,8 +11,8 @@ interface Widget {
 }
 
 export function Widget(props: {} & RestProps) {
-  const onPointerUp = useCallback(function onPointerUp(): any {}, []);
-  const scrollHandler = useCallback(function scrollHandler(): any {}, []);
+  const __onPointerUp = useCallback(function __onPointerUp(): any {}, []);
+  const __scrollHandler = useCallback(function __scrollHandler(): any {}, []);
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { ...restProps } = props;
@@ -20,11 +21,11 @@ export function Widget(props: {} & RestProps) {
     [props]
   );
   useEffect(() => {
-    document.addEventListener("pointerup", onPointerUp);
-    window.addEventListener("scroll", scrollHandler);
+    document.addEventListener("pointerup", __onPointerUp);
+    window.addEventListener("scroll", __scrollHandler);
     return function cleanup() {
-      document.removeEventListener("pointerup", onPointerUp);
-      window.removeEventListener("scroll", scrollHandler);
+      document.removeEventListener("pointerup", __onPointerUp);
+      window.removeEventListener("scroll", __scrollHandler);
     };
   });
 

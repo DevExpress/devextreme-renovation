@@ -1,6 +1,7 @@
 function view(model: ModelWidget) {
   return <div>{model.props.baseStateProp}</div>;
 }
+
 export declare type ModelWidgetInputType = {
   baseStateProp?: boolean;
   baseStatePropChange?: (stateProp: boolean) => void;
@@ -16,7 +17,8 @@ const ModelWidgetInput: ModelWidgetInputType = {
   modelStatePropChange: () => {},
   valueChange: () => {},
 };
-import React, { useState, useCallback, HTMLAttributes } from "react";
+import * as React from "react";
+import { useState, useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,

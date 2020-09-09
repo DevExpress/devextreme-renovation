@@ -53,9 +53,15 @@ export const isNamedImports = (node: any): node is NamedImports =>
 export class ImportClause {
   name?: Identifier;
   namedBindings?: NamedImportBindings;
-  constructor(name?: Identifier, namedBindings?: NamedImportBindings) {
+  isTypeOnly?: boolean;
+  constructor(
+    name?: Identifier,
+    namedBindings?: NamedImportBindings,
+    isTypeOnly?: boolean
+  ) {
     this.name = name;
     this.namedBindings = namedBindings;
+    this.isTypeOnly = isTypeOnly;
   }
 
   get default() {
@@ -94,12 +100,15 @@ export class ImportClause {
     if (this.name) {
       result.push(this.name.toString());
     }
+
     if (this.namedBindings) {
       const namedBindings = this.namedBindings.toString();
       namedBindings && result.push(namedBindings);
     }
 
-    return result.length ? `${result.join(",")} from ` : "";
+    return result.length
+      ? `${this.isTypeOnly ? "type " : ""}${result.join(",")} from `
+      : "";
   }
 }
 

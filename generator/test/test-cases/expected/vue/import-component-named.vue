@@ -3,7 +3,6 @@
 </template>
 <script>
 import { DxWidget as Widget } from "./export-named";
-
 const ChildInput = {
   height: {
     type: Number,
@@ -22,9 +21,7 @@ export const DxChild = {
       return {};
     },
     props() {
-      return {
-        height: this.height,
-      };
+      return { height: this.height };
     },
   },
 };

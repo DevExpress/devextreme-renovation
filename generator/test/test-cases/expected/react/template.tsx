@@ -19,7 +19,8 @@ export const WidgetInput: WidgetInputType = {
   contentTemplate: (props) => <div>{props.data.p1}</div>,
   footerTemplate: () => <div></div>,
 };
-import React, { useCallback, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
@@ -38,12 +39,13 @@ function getTemplate(
 ) {
   const getRender = (render: any) => (props: any) =>
     "data" in props ? render(props.data, props.index) : render(props);
-  const Component = props[component];
+  const PropTemplate = props[template];
+  const PropComponent = props[component];
 
   return (
-    props[template] ||
+    (PropTemplate && ((props: any) => <PropTemplate {...props} />)) ||
     (props[render] && getRender(props[render])) ||
-    (Component && ((props: any) => <Component {...props} />))
+    (PropComponent && ((props: any) => <PropComponent {...props} />))
   );
 }
 

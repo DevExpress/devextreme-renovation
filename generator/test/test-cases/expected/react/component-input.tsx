@@ -2,6 +2,7 @@ export const COMPONENT_INPUT_CLASS = "c3";
 function view(model: Widget) {
   return <div></div>;
 }
+
 export declare type WidgetPropsType = {
   height?: number;
   width?: number;
@@ -11,7 +12,8 @@ export const WidgetProps: WidgetPropsType = {
   height: 10,
   width: 10,
 };
-import React, { useCallback, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
@@ -24,8 +26,8 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetProps & RestProps) {
-  const onClick = useCallback(
-    function onClick(): any {
+  const __onClick = useCallback(
+    function __onClick(): any {
       const v = props.height;
     },
     [props.height]
@@ -40,7 +42,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
 
   return view({
     props: { ...props },
-    onClick,
+    onClick: __onClick,
     restAttributes: __restAttributes(),
   });
 }

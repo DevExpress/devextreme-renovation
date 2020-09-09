@@ -3,7 +3,6 @@
 </template>
 <script>
 const WidgetInput = {};
-
 export const DxWidget = {
   props: WidgetInput,
   computed: {

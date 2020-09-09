@@ -4,18 +4,15 @@ function view(model: Widget): JSX.Element {
 }
 const P1Context = createContext(5);
 const GetterContext = createContext("default");
+
 export declare type PropsType = {
   p1: number;
 };
 const Props: PropsType = {
   p1: 10,
 };
-import React, {
-  useState,
-  useContext,
-  useCallback,
-  HTMLAttributes,
-} from "react";
+import * as React from "react";
+import { useState, useContext, useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
 interface Widget {

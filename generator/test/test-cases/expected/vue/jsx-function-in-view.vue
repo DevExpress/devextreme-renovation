@@ -1,14 +1,13 @@
 <template>
-  <div>
-    <template v-if="loading">
-      <div>{{ __loadingProps.text }}</div>
-    </template>
-    <template v-else>
-      <span>{{ "" + greetings + " " + __name + "" }}</span>
-    </template>
-  </div>
+  <div
+    ><template v-if="loading"
+      ><div>{{ __loadingProps.text }}</div></template
+    >
+    <template v-else
+      ><span>{{ "" + greetings + " " + __name + "" }}</span></template
+    ></div
+  >
 </template>
-
 <script>
 export const WidgetInput = {
   loading: {
@@ -24,7 +23,6 @@ export const WidgetInput = {
     },
   },
 };
-
 export const DxWidget = {
   props: WidgetInput,
   computed: {

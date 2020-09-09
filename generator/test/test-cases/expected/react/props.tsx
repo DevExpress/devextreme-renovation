@@ -1,6 +1,7 @@
 function view(model: Widget): JSX.Element {
   return <span></span>;
 }
+
 export declare type WidgetInputType = {
   height: number;
   export: object;
@@ -11,7 +12,8 @@ const WidgetInput: WidgetInputType = {
   export: {},
   onClick: () => {},
 };
-import React, { useCallback, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
@@ -24,8 +26,8 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const getHeight = useCallback(
-    function getHeight(): number {
+  const __getHeight = useCallback(
+    function __getHeight(): number {
       props.onClick(10);
       const { onClick } = props;
       onClick(11);
@@ -43,7 +45,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 
   return view({
     props: { ...props },
-    getHeight,
+    getHeight: __getHeight,
     restAttributes: __restAttributes(),
   });
 }

@@ -1,12 +1,14 @@
 function view(viewModel: Widget) {
   return <div ref={viewModel.divRef as any}></div>;
 }
+
 export declare type WidgetInputType = {
   prop1?: number;
   prop2?: number;
 };
 const WidgetInput: WidgetInputType = {};
-import React, {
+import * as React from "react";
+import {
   useCallback,
   useRef,
   useImperativeHandle,
@@ -32,20 +34,6 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
   (props: typeof WidgetInput & RestProps, ref) => {
     const divRef = useRef<HTMLDivElement>();
 
-    useImperativeHandle(
-      ref,
-      () => ({
-        getHeight: (p: number = 10, p1: any) => {
-          return `${props.prop1} + ${props.prop2} + ${
-            divRef.current!.innerHTML
-          } + ${p}`;
-        },
-        getSize: () => {
-          return `${props.prop1} + ${divRef.current!.innerHTML}`;
-        },
-      }),
-      [props.prop1, props.prop2]
-    );
     const __restAttributes = useCallback(
       function __restAttributes(): RestProps {
         const { prop1, prop2, ...restProps } = props;
@@ -53,7 +41,29 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
       },
       [props]
     );
+    const __getHeight = useCallback(
+      function __getHeight(p: number = 10, p1: any): string {
+        return `${props.prop1} + ${props.prop2} + ${
+          divRef.current!.innerHTML
+        } + ${p}`;
+      },
+      [props.prop1, props.prop2]
+    );
+    const __getSize = useCallback(
+      function __getSize(): string {
+        return `${props.prop1} + ${divRef.current!.innerHTML} + ${__getHeight(
+          0,
+          0
+        )}`;
+      },
+      [props.prop1, props.prop2]
+    );
 
+    useImperativeHandle(
+      ref,
+      () => ({ getHeight: __getHeight, getSize: __getSize }),
+      [__getHeight, __getSize]
+    );
     return view({
       props: { ...props },
       divRef,
