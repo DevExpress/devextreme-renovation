@@ -3,11 +3,11 @@ import BaseComponent from "../../../../component_declaration/jquery_base_compone
 import WidgetComponent from "../../../../jquery-api";
 
 export default class Widget extends BaseComponent {
-  __getHeight(p: number = 10, p1: any): string {
-    return this.viewRef.__getHeight(p, p1);
+  getHeight(p: number = 10, p1: any): string {
+    return this.viewRef.getHeight(p, p1);
   }
-  __getSize(): string {
-    return this.viewRef.__getSize();
+  getSize(): string {
+    return this.viewRef.getSize();
   }
 
   get _propsInfo() {
