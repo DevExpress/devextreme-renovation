@@ -2737,6 +2737,11 @@ mocha.describe("ComponentInput", function () {
       const component = createComponent(
         [],
         [
+          generator.createProperty(
+            [createDecorator(Decorators.InternalState)],
+            [generator.SyntaxKind.PrivateKeyword],
+            generator.createIdentifier("s")
+          ),
           generator.createGetAccessor(
             [],
             [generator.SyntaxKind.PrivateKeyword],

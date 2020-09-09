@@ -618,10 +618,6 @@ export class PreactGenerator extends ReactGenerator {
     );
   }
 
-  getReExports() {
-    return [];
-  }
-
   removeJQueryBaseModule() {}
 }
 

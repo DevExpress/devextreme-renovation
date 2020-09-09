@@ -58,6 +58,3 @@ export default class Widget extends WidgetProps {
   exports: [Widget],
 })
 export class DxWidgetModule {}
-
-export * from "./component-pass-one";
-export * from "./component-pass-two";

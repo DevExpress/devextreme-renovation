@@ -38,4 +38,3 @@ export default function Child(props: typeof ChildInput & RestProps) {
 Child.defaultProps = {
   ...ChildInput,
 };
-export * from "./export-named";

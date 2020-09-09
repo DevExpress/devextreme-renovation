@@ -44,5 +44,3 @@ export default class WidgetWithApiRef extends WidgetWithApiRefInput {
   exports: [WidgetWithApiRef],
 })
 export class DxWidgetWithApiRefModule {}
-
-export * from "./method";
