@@ -38,4 +38,3 @@ export default function Import(props: typeof ImportProps & RestProps) {
 Import.defaultProps = {
   ...ImportProps,
 };
-export * from "./types.d";

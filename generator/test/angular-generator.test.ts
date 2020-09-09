@@ -6279,6 +6279,29 @@ mocha.describe("Angular generator", function () {
     });
 
     mocha.describe("GetAccessor", function () {
+      mocha.it("add modifiers", function () {
+        const getter = generator.createGetAccessor(
+          [],
+          [
+            generator.SyntaxKind.PrivateKeyword,
+            generator.SyntaxKind.StaticKeyword,
+          ],
+          generator.createIdentifier("g"),
+          [],
+          undefined,
+          generator.createBlock([], false)
+        );
+
+        assert.strictEqual(
+          getResult(
+            getter.toString({
+              members: [getter],
+            })
+          ),
+          getResult(`private static get g(): any{}`)
+        );
+      });
+
       mocha.describe("Memorize GetAccessor with complexType", function () {
         function createGetAccessor(
           type?: TypeExpression,
