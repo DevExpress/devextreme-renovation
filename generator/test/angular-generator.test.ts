@@ -6644,6 +6644,25 @@ mocha.describe("Angular generator", function () {
       );
     });
 
+    mocha.it("createVariableStatement without initializer", function () {
+      assert.strictEqual(
+        generator
+          .createVariableStatement(
+            [],
+            generator.createVariableDeclarationList(
+              [
+                generator.createVariableDeclaration(
+                  generator.createIdentifier("a")
+                ),
+              ],
+              generator.SyntaxKind.LetKeyword
+            )
+          )
+          .toString(),
+        " let a"
+      );
+    });
+
     mocha.it("AsExpression", function () {
       const prop = generator.createProperty(
         [createDecorator(Decorators.OneWay)],

@@ -202,11 +202,12 @@ export class Class {
       ) as TypeReferenceNode[];
     types.forEach((type) => {
       if (
-        !this.context.components?.[type.typeName.toString()] &&
+        !this.context.components![type.typeName.toString()] &&
         !this.alreadyExistsInContext(type.typeName.toString())
       ) {
-        const importPath = Object.keys(type.context.imports || {}).find((k) =>
-          type.context.imports?.[k].has(type.typeName.toString())
+        const typeImports = type.context.imports || {};
+        const importPath = Object.keys(typeImports).find((k) =>
+          typeImports[k].has(type.typeName.toString())
         );
 
         let relativePath = getModuleRelativePath(
