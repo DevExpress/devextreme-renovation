@@ -19,7 +19,8 @@ export const WidgetInput: WidgetInputType = {
   contentTemplate: (props) => <div>{props.data.p1}</div>,
   footerTemplate: () => <div></div>,
 };
-import React, { useCallback, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,

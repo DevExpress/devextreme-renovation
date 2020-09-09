@@ -4,7 +4,8 @@ function view(model: Widget) {
 
 export declare type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
-import React, {
+import * as React from "react";
+import {
   useCallback,
   useImperativeHandle,
   forwardRef,

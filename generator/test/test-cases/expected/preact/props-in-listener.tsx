@@ -7,7 +7,7 @@ export declare type PropsType = {
   onClick?: (e: any) => void;
 };
 export const Props: PropsType = {};
-import Preact from "preact";
+import * as Preact from "preact";
 import { useCallback } from "preact/hooks";
 
 declare type RestProps = {

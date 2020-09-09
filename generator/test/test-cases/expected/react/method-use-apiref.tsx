@@ -13,7 +13,8 @@ export declare type WidgetWithApiRefInputType = {
 };
 const WidgetWithApiRefInput: WidgetWithApiRefInputType = {};
 import { WidgetRef as BaseWidgetRef } from "./method";
-import React, {
+import * as React from "react";
+import {
   useCallback,
   useRef,
   useImperativeHandle,

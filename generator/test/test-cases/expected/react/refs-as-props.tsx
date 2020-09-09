@@ -14,7 +14,8 @@ export declare type WidgetInputType = {
   nullableRef?: RefObject<HTMLDivElement>;
 };
 const WidgetInput: WidgetInputType = {};
-import React, { useCallback, useRef, RefObject, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, useRef, RefObject, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
