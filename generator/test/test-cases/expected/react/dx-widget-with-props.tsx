@@ -5,7 +5,8 @@ export declare type WidgetWithPropsInputType = {
 export const WidgetWithPropsInput: WidgetWithPropsInputType = {
   value: "default text",
 };
-import React, {
+import * as React from "react";
+import {
   useCallback,
   useImperativeHandle,
   forwardRef,
@@ -26,8 +27,6 @@ const WidgetWithProps = forwardRef<
   WidgetWithPropsRef,
   typeof WidgetWithPropsInput & RestProps
 >((props: typeof WidgetWithPropsInput & RestProps, ref) => {
-  useImperativeHandle(ref, () => ({ doSomething: () => {} }), []);
-
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { optionalValue, value, ...restProps } = props;
@@ -35,7 +34,11 @@ const WidgetWithProps = forwardRef<
     },
     [props]
   );
+  const __doSomething = useCallback(function __doSomething(): any {}, []);
 
+  useImperativeHandle(ref, () => ({ doSomething: __doSomething }), [
+    __doSomething,
+  ]);
   return view({
     props: { ...props },
     restAttributes: __restAttributes(),

@@ -5,7 +5,7 @@ export declare type WidgetWithPropsInputType = {
 export const WidgetWithPropsInput: WidgetWithPropsInputType = {
   value: "default text",
 };
-import Preact from "preact";
+import * as Preact from "preact";
 import { useCallback, useImperativeHandle } from "preact/hooks";
 import { forwardRef } from "preact/compat";
 
@@ -25,8 +25,6 @@ const WidgetWithProps = forwardRef<
   WidgetWithPropsRef,
   typeof WidgetWithPropsInput & RestProps
 >((props: typeof WidgetWithPropsInput & RestProps, ref) => {
-  useImperativeHandle(ref, () => ({ doSomething: () => {} }), []);
-
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { optionalValue, value, ...restProps } = props;
@@ -34,7 +32,11 @@ const WidgetWithProps = forwardRef<
     },
     [props]
   );
+  const __doSomething = useCallback(function __doSomething(): any {}, []);
 
+  useImperativeHandle(ref, () => ({ doSomething: __doSomething }), [
+    __doSomething,
+  ]);
   return view({
     props: { ...props },
     restAttributes: __restAttributes(),
