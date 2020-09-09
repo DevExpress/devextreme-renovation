@@ -513,7 +513,7 @@ export class ReactComponent extends Component {
 
   compileViewModelArguments(): string[] {
     const compileState = (state: BaseProperty[]) =>
-      state.map((s) => `${s.name}:${s.getter()}`);
+      state.filter((s) => !s.isPrivate).map((s) => `${s.name}:${s.getter()}`);
     const state = compileState(this.state);
     const internalState = compileState(this.internalState);
 

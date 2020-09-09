@@ -273,7 +273,7 @@ export class GetAccessor extends Method {
   }
 
   toString(options?: toStringOptions) {
-    return `get ${this.name}()${compileType(
+    return `${this.modifiers.join(" ")} get ${this.name}()${compileType(
       this.type.toString()
     )}${this.body.toString(options)}`;
   }
