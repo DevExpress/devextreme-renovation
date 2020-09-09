@@ -19,10 +19,12 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const privateMethod = useCallback(function privateMethod(a: number): any {},
+  const __privateMethod = useCallback(function __privateMethod(
+    a: number
+  ): any {},
   []);
   const method1 = useCallback(function method1(a: number): void {
-    return privateMethod(a);
+    return __privateMethod(a);
   }, []);
   const method2 = useCallback(function method2(): null {
     return null;

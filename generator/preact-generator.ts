@@ -222,8 +222,8 @@ class JQueryComponent {
   compileAPI() {
     return (this.source.members.filter((a) => a.isApiMethod) as Method[])
       .map(
-        (a) => `${a.name}(${a.parameters})${compileType(a.type.toString())} {
-                return this.viewRef.${a.name}(${a.parameters
+        (a) => `${a._name}(${a.parameters})${compileType(a.type.toString())} {
+                return this.viewRef.${a._name}(${a.parameters
           .map((p) => p.name)
           .join(",")});
             }`

@@ -70,14 +70,14 @@ interface Widget {
   getColumns: () => any;
   isEditable: any;
   restAttributes: RestProps;
-  __nestedChildren: <T>() => T[];
+  nestedChildren: <T>() => T[];
   __getNestedColumns: Array<typeof GridColumnProps | string> | undefined;
   __getNestedEditing: typeof EditingProps | undefined;
 }
 
 export default function Widget(props: typeof PickedProps & RestProps) {
-  const getColumns = useCallback(
-    function getColumns(): any {
+  const __getColumns = useCallback(
+    function __getColumns(): any {
       return __getNestedColumns()?.map((el) =>
         typeof el === "string" ? el : el.name
       );
@@ -146,10 +146,10 @@ export default function Widget(props: typeof PickedProps & RestProps) {
       columns: __getNestedColumns(),
       editing: __getNestedEditing(),
     },
-    getColumns,
+    getColumns: __getColumns,
     isEditable: __isEditable(),
     restAttributes: __restAttributes(),
-    __nestedChildren,
+    nestedChildren: __nestedChildren,
     __getNestedColumns: __getNestedColumns(),
     __getNestedEditing: __getNestedEditing(),
   });

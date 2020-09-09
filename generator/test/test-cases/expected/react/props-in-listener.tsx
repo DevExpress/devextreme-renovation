@@ -18,8 +18,8 @@ interface Widget {
 }
 
 export function Widget(props: typeof Props & RestProps) {
-  const clickHandler = useCallback(
-    function clickHandler(): any {
+  const __clickHandler = useCallback(
+    function __clickHandler(): any {
       props.onClick!({ type: props.type });
     },
     [props.onClick, props.type]
@@ -34,7 +34,7 @@ export function Widget(props: typeof Props & RestProps) {
 
   return view({
     props: { ...props },
-    clickHandler,
+    clickHandler: __clickHandler,
     restAttributes: __restAttributes(),
   });
 }

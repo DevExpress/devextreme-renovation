@@ -32,16 +32,16 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     props.selected !== undefined ? props.selected : props.defaultSelected!
   );
 
-  const getHeight = useCallback(
-    function getHeight(): number {
+  const __getHeight = useCallback(
+    function __getHeight(): number {
       const { height } = props;
       const { height: _height } = props;
       return height + _height;
     },
     [props.height]
   );
-  const getProps = useCallback(
-    function getProps(): any {
+  const __getProps = useCallback(
+    function __getProps(): any {
       return {
         ...props,
         selected:
@@ -74,8 +74,8 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
       selected:
         props.selected !== undefined ? props.selected : __state_selected,
     },
-    getHeight,
-    getProps,
+    getHeight: __getHeight,
+    getProps: __getProps,
     restAttributes: __restAttributes(),
   });
 }

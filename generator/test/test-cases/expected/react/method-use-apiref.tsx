@@ -46,14 +46,16 @@ const WidgetWithApiRef = forwardRef<
     },
     [props]
   );
-  const getSomething = useCallback(
-    function getSomething(): string {
+  const __getSomething = useCallback(
+    function __getSomething(): string {
       return `${props.prop1} + ${baseRef.current?.getHeight(1, undefined)}`;
     },
     [props.prop1, baseRef.current]
   );
 
-  useImperativeHandle(ref, () => ({ getSomething }), [getSomething]);
+  useImperativeHandle(ref, () => ({ getSomething: __getSomething }), [
+    __getSomething,
+  ]);
   return view({
     props: { ...props },
     baseRef,

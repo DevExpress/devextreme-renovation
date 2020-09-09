@@ -175,7 +175,7 @@ export class Method extends BaseClassMember {
   }
 
   typeDeclaration() {
-    return `${this.name}${
+    return `${this._name}${
       this.questionToken
     }:${this.compileTypeParameters()}(${this.parameters
       .map((p) => p.typeDeclaration())

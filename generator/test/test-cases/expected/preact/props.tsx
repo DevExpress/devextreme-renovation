@@ -28,8 +28,8 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const getHeight = useCallback(
-    function getHeight(): number {
+  const __getHeight = useCallback(
+    function __getHeight(): number {
       props.onClick(10);
       const { onClick } = props;
       onClick(11);
@@ -47,7 +47,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 
   return view({
     props: { ...props },
-    getHeight,
+    getHeight: __getHeight,
     restAttributes: __restAttributes(),
   });
 }

@@ -43,8 +43,8 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   const [__state_i, __state_setI] = useState<number>(10);
   const [__state_j, __state_setJ] = useState<number>(20);
 
-  const getP = useCallback(
-    function getP(): any {
+  const __getP = useCallback(
+    function __getP(): any {
       return props.p;
     },
     [props.p]
@@ -61,7 +61,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   );
   useEffect(() => {
     const id = subscribe(
-      getP(),
+      __getP(),
       props.s !== undefined ? props.s : __state_s,
       __state_i
     );
@@ -70,7 +70,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   }, [props.p, props.s, __state_s, __state_i]);
   useEffect(() => {
     const id = subscribe(
-      getP(),
+      __getP(),
       props.s !== undefined ? props.s : __state_s,
       __state_i
     );
@@ -78,7 +78,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     return () => unsubscribe(id);
   }, []);
   useEffect(() => {
-    const id = subscribe(getP(), 1, 2);
+    const id = subscribe(__getP(), 1, 2);
     return () => unsubscribe(id);
   }, [
     __state_i,
@@ -95,7 +95,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     props: { ...props, s: props.s !== undefined ? props.s : __state_s },
     i: __state_i,
     j: __state_j,
-    getP,
+    getP: __getP,
     restAttributes: __restAttributes(),
   });
 }

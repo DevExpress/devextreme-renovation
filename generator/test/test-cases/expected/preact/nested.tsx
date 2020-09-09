@@ -21,8 +21,8 @@ interface Widget {
 }
 
 export default function Widget(props: typeof PickedProps & RestProps) {
-  const getColumns = useCallback(
-    function getColumns(): any {
+  const __getColumns = useCallback(
+    function __getColumns(): any {
       const { columns } = props;
       return columns?.map((el) => (typeof el === "string" ? el : el.name));
     },
@@ -44,7 +44,7 @@ export default function Widget(props: typeof PickedProps & RestProps) {
 
   return view({
     props: { ...props },
-    getColumns,
+    getColumns: __getColumns,
     isEditable: __isEditable(),
     restAttributes: __restAttributes(),
   });
