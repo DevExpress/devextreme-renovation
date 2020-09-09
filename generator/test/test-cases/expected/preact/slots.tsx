@@ -13,7 +13,7 @@ export declare type WidgetInputType = {
   children?: any;
 };
 const WidgetInput: WidgetInputType = {};
-import Preact from "preact";
+import * as Preact from "preact";
 import { useCallback } from "preact/hooks";
 
 declare type RestProps = {

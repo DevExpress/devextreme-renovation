@@ -8,7 +8,8 @@ function view(viewModel: Widget) {
   );
 }
 
-import React, { useCallback, useRef, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, useRef, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof {}>;
 interface Widget {

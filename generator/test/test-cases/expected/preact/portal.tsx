@@ -18,7 +18,8 @@ export declare type WidgetPropsType = {
   someRef?: RefObject<HTMLElement>;
 };
 export const WidgetProps: WidgetPropsType = {};
-import Preact, { RefObject } from "preact";
+import * as Preact from "preact";
+import { RefObject } from "preact";
 import { useState, useCallback, useEffect } from "preact/hooks";
 import { createPortal } from "preact/compat";
 declare type PortalProps = {

@@ -7,7 +7,8 @@ export declare type WidgetInputType = {
   prop2?: number;
 };
 const WidgetInput: WidgetInputType = {};
-import React, {
+import * as React from "react";
+import {
   useCallback,
   useRef,
   useImperativeHandle,

@@ -11,12 +11,8 @@ export declare type PropsType = {
 const Props: PropsType = {
   p1: 10,
 };
-import React, {
-  useState,
-  useContext,
-  useCallback,
-  HTMLAttributes,
-} from "react";
+import * as React from "react";
+import { useState, useContext, useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
 interface Widget {

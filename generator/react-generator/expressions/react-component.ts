@@ -255,13 +255,14 @@ export class ReactComponent extends Component {
     const elementAttributes = this.getComponentOpeningElement()?.isSVG()
       ? "SVGAttributes"
       : "HTMLAttributes";
-    const imports = [
-      `import React, {${hooks
-        .concat(compats)
-        .concat(core)
-        .concat([elementAttributes])
-        .join(",")}} from 'react';`,
-    ];
+    const imports = ["import * as React from 'react'"];
+    const namedImports = hooks
+      .concat(compats)
+      .concat(core)
+      .concat([elementAttributes]);
+    if (namedImports.length) {
+      imports.push(`import {${namedImports.join(",")}} from 'react'`);
+    }
 
     return imports;
   }

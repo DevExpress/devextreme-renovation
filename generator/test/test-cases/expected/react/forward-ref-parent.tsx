@@ -13,7 +13,8 @@ export declare type PropsType = {
   nullableRef?: RefObject<HTMLDivElement>;
 };
 const Props: PropsType = {};
-import React, {
+import * as React from "react";
+import {
   useState,
   useCallback,
   useEffect,

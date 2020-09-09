@@ -1,6 +1,7 @@
 function view() {}
 
-import React, { useCallback, useEffect, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, useEffect, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof {}>;
 interface Widget {

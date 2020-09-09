@@ -13,7 +13,8 @@ const WidgetInput: WidgetInputType = ({
   defaultSelected: false,
   selectedChange: () => {},
 } as any) as WidgetInputType;
-import React, { useState, useCallback, HTMLAttributes } from "react";
+import * as React from "react";
+import { useState, useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,

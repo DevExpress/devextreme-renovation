@@ -4,7 +4,7 @@ function view(model: Widget) {
 
 export declare type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
-import Preact from "preact";
+import * as Preact from "preact";
 import { useCallback, useImperativeHandle } from "preact/hooks";
 import { forwardRef } from "preact/compat";
 

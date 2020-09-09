@@ -4,7 +4,8 @@ function view(model: Widget) {
   return <div />;
 }
 
-import React, { useCallback, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, HTMLAttributes } from "react";
 
 function __collectChildren<T>(children: React.ReactNode): T[] {
   return (React.Children.toArray(children).filter(
