@@ -74,6 +74,3 @@ export default class Widget extends WidgetProps {
   exports: [Widget],
 })
 export class DxWidgetModule {}
-
-export * from "./dx-widget-with-template";
-export * from "./dx-inner-widget";

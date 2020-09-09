@@ -120,5 +120,3 @@ export default class RefOnChildrenParent extends Props {
   exports: [RefOnChildrenParent],
 })
 export class DxRefOnChildrenParentModule {}
-
-export * from "./forward-ref-child";

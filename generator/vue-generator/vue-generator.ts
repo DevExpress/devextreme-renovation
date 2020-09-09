@@ -273,10 +273,6 @@ export class VueGenerator extends BaseGenerator {
     });
   }
 
-  getReExports() {
-    return [];
-  }
-
   processCodeFactoryResult(codeFactoryResult: Array<any>) {
     const code = super.processCodeFactoryResult(codeFactoryResult);
     if (getComponentListFromContext(this.getContext()).length === 0) {

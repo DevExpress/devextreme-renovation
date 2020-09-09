@@ -3,7 +3,7 @@ import { Options } from "./types.d";
 function view(model: Widget) {
   return <div>{model.props.data?.value}</div>;
 }
-import { AdditionalOptions } from "./component-bindings-only";
+import { AdditionalOptions } from "./types.d";
 export declare type WidgetPropsType = {
   data?: Options;
   info?: AdditionalOptions;
@@ -48,4 +48,3 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
 Widget.defaultProps = {
   ...WidgetProps,
 };
-export * from "./types.d";

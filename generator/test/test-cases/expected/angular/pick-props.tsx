@@ -1,7 +1,7 @@
 import Props from "./component-bindings-only";
 import { Options } from "./types.d";
 import { Input } from "@angular/core";
-import { AdditionalOptions } from "./component-bindings-only";
+import { AdditionalOptions } from "./types.d";
 class WidgetProps {
   @Input() data?: Options = new Props().data;
   @Input() info?: AdditionalOptions = new Props().info;
@@ -51,5 +51,3 @@ export default class Widget extends WidgetProps {
   exports: [Widget],
 })
 export class DxWidgetModule {}
-
-export * from "./types.d";

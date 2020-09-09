@@ -199,5 +199,3 @@ export default class Widget extends PickedProps {
   ],
 })
 export class DxWidgetModule {}
-
-export * from "./nested-props";

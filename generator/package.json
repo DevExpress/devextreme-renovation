@@ -1,6 +1,6 @@
 {
   "name": "devextreme-generator",
-  "version": "1.0.115",
+  "version": "1.0.116",
   "description": "Component generator",
   "scripts": {
     "test": "nyc mocha ./build/test --timeout 30000",

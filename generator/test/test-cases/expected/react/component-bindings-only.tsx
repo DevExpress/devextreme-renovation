@@ -11,4 +11,3 @@ const WidgetProps: WidgetPropsType = {
   info: { index: 0 },
 };
 export default WidgetProps;
-export * from "./types.d";

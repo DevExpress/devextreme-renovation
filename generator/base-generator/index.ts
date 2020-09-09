@@ -1300,20 +1300,6 @@ export default class Generator implements GeneratorAPI {
     }
   }
 
-  getReExports() {
-    const context = this.getContext();
-    if (context.imports) {
-      return Object.keys(context.imports).reduce((acc, path) => {
-        const importClause = context.imports![path];
-        if (importClause.imports?.length) {
-          acc.push(path.slice(0, path.lastIndexOf(".")));
-        }
-        return acc;
-      }, [] as string[]);
-    }
-    return [];
-  }
-
   processCodeFactoryResult(codeFactoryResult: Array<any>) {
     const context = this.getContext();
     codeFactoryResult.forEach((e) => {
@@ -1327,16 +1313,6 @@ export default class Generator implements GeneratorAPI {
       if (e instanceof Component) {
         this.removeJQueryBaseModule(codeFactoryResult, e);
       }
-    });
-    this.getReExports().forEach((path) => {
-      codeFactoryResult.push(
-        new ExportDeclaration(
-          undefined,
-          [],
-          undefined,
-          new SimpleExpression(`"${path}"`)
-        )
-      );
     });
     this.cache.__globals__ = context.globals;
     return this.format(codeFactoryResult.join(";\n"));

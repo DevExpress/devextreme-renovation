@@ -14,6 +14,7 @@ import { StringLiteral } from "./literal";
 import { findComponentInput } from "../utils/expressions";
 import { getModuleRelativePath, isPathExists } from "../utils/path-utils";
 import { ImportClause } from "./import";
+import path from "path";
 
 export function inheritMembers(
   heritageClauses: HeritageClause[],
@@ -201,12 +202,18 @@ export class Class {
       ) as TypeReferenceNode[];
     types.forEach((type) => {
       if (
-        !this.context.components?.[type.typeName.toString()] &&
+        !this.context.components![type.typeName.toString()] &&
         !this.alreadyExistsInContext(type.typeName.toString())
       ) {
+        const typeImports = type.context.imports || {};
+        const importPath = Object.keys(typeImports).find((k) =>
+          typeImports[k].has(type.typeName.toString())
+        );
+
         let relativePath = getModuleRelativePath(
           this.context.dirname!,
-          type.context.path!
+          (importPath && path.join(type.context.dirname!, importPath)) ||
+            type.context.path!
         );
 
         this.context.imports = this.context.imports || {};
