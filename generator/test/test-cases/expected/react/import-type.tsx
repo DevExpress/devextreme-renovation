@@ -1,4 +1,4 @@
-import { Options } from "./types.d";
+import type { Options } from "./types.d";
 import type { CustomClass } from "./types.d";
 export const viewFunction = (viewModel: Import) => {
   return <div>{viewModel.props.Test?.value}</div>;
@@ -8,7 +8,8 @@ export declare type ImportPropsType = {
   Test?: Options;
 };
 export const ImportProps: ImportPropsType = {};
-import React, { useCallback, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,

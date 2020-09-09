@@ -1,7 +1,5 @@
 <template>
-  <div>
-    {{ baseStateProp_state }}
-  </div>
+  <div>{{ baseStateProp_state }}</div>
 </template>
 <script>
 const ModelWidgetInput = {

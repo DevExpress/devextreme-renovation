@@ -5,7 +5,16 @@
 const WidgetInput = {};
 export const DxWidget = {
   props: WidgetInput,
+  data() {
+    return {
+      decoratedState: "",
+      simpleState: "",
+    };
+  },
   computed: {
+    __privateGetter() {
+      return this.decoratedState.concat(this.simpleState);
+    },
     __restAttributes() {
       return {};
     },
@@ -14,8 +23,8 @@ export const DxWidget = {
     },
   },
   methods: {
-    getValue() {
-      return 0;
+    __simpleGetter() {
+      return this.decoratedState.concat(this.simpleState);
     },
   },
 };

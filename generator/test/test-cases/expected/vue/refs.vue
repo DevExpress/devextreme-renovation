@@ -1,9 +1,7 @@
 <template>
-  <div ref="divRef">
-    <div ref="explicitRef">
-      <div ref="nullableRef"></div>
-    </div>
-  </div>
+  <div ref="divRef"
+    ><div ref="explicitRef"><div ref="nullableRef"></div></div
+  ></div>
 </template>
 <script>
 export const DxWidget = {

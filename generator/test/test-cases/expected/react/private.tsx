@@ -4,8 +4,7 @@ function view(model: Widget) {
 
 export declare type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
-import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import React, { useState, useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
@@ -13,10 +12,28 @@ declare type RestProps = Omit<
 >;
 interface Widget {
   props: typeof WidgetInput & RestProps;
+  simpleGetter: () => any;
   restAttributes: RestProps;
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
+  const [__state_decoratedState, __state_setDecoratedState] = useState<string>(
+    ""
+  );
+  const [__state_simpleState, __state_setSimpleState] = useState<string>("");
+
+  const __privateGetter = useCallback(
+    function __privateGetter(): any {
+      return __state_decoratedState.concat(__state_simpleState);
+    },
+    [__state_decoratedState, __state_simpleState]
+  );
+  const simpleGetter = useCallback(
+    function simpleGetter(): any {
+      return __state_decoratedState.concat(__state_simpleState);
+    },
+    [__state_decoratedState, __state_simpleState]
+  );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { ...restProps } = props;
@@ -27,6 +44,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 
   return view({
     props: { ...props },
+    simpleGetter,
     restAttributes: __restAttributes(),
   });
 }

@@ -1,12 +1,14 @@
 function view(model: Widget) {
   return <div></div>;
 }
+
 export declare type PropsType = {
   type?: string;
   onClick?: (e: any) => void;
 };
 export const Props: PropsType = {};
-import React, { useCallback, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
 interface Widget {
@@ -16,8 +18,8 @@ interface Widget {
 }
 
 export function Widget(props: typeof Props & RestProps) {
-  const clickHandler = useCallback(
-    function clickHandler(): any {
+  const __clickHandler = useCallback(
+    function __clickHandler(): any {
       props.onClick!({ type: props.type });
     },
     [props.onClick, props.type]
@@ -32,7 +34,7 @@ export function Widget(props: typeof Props & RestProps) {
 
   return view({
     props: { ...props },
-    clickHandler,
+    clickHandler: __clickHandler,
     restAttributes: __restAttributes(),
   });
 }

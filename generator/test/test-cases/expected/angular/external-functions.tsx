@@ -25,16 +25,16 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div [class]="CLASS_NAME" [ngStyle]="externalFunction()">
-    <ng-container
+  template: `<div [class]="CLASS_NAME" [ngStyle]="externalFunction()"
+    ><ng-container
       *ngFor="let cell of cells; index as index; trackBy: _trackBy_cells_0"
       ><span
-        ><div *ngIf="conditionFn(cell) && index > 0">
-          {{ getValue(cell) }}{{ __addPostfix(index) }}
-        </div></span
+        ><div *ngIf="conditionFn(cell) && index > 0"
+          >{{ getValue(cell) }}{{ __addPostfix(index) }}</div
+        ></span
       ></ng-container
-    >
-  </div>`,
+    ></div
+  >`,
 })
 export default class Widget extends WidgetProps {
   __addPostfix(index: number): any {

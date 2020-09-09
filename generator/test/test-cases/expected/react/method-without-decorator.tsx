@@ -1,9 +1,11 @@
 function view(viewModel: Widget) {
   return <div></div>;
 }
+
 export declare type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
-import React, { useCallback, HTMLAttributes } from "react";
+import * as React from "react";
+import { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
@@ -17,10 +19,12 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const privateMethod = useCallback(function privateMethod(a: number): any {},
+  const __privateMethod = useCallback(function __privateMethod(
+    a: number
+  ): any {},
   []);
   const method1 = useCallback(function method1(a: number): void {
-    return privateMethod(a);
+    return __privateMethod(a);
   }, []);
   const method2 = useCallback(function method2(): null {
     return null;

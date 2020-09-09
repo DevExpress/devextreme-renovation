@@ -114,6 +114,10 @@ mocha.describe("preact-generator", function () {
   mocha.it("props-with-initial", function () {
     this.testGenerator(this.test!.title);
   });
+
+  mocha.it("private", function () {
+    this.testGenerator(this.test!.title);
+  });
 });
 
 mocha.describe("preact-generator: expressions", function () {

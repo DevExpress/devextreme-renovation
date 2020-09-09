@@ -2,9 +2,6 @@ import {
   Component,
   ComponentBindings,
   JSXComponent,
-  OneWay,
-  Event,
-  TwoWay,
 } from "../../../../component_declaration/common";
 import WidgetWithTemplate from "./dx-widget-with-template";
 import InnerWidget from "./dx-inner-widget";

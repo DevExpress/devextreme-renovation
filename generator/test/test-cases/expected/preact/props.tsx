@@ -1,6 +1,7 @@
 function view(model: Widget): any {
   return <span></span>;
 }
+
 export declare type WidgetInputType = {
   height: number;
   export: object;
@@ -11,7 +12,7 @@ const WidgetInput: WidgetInputType = {
   export: {},
   onClick: () => {},
 };
-import Preact from "preact";
+import * as Preact from "preact";
 import { useCallback } from "preact/hooks";
 
 declare type RestProps = {
@@ -27,8 +28,8 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const getHeight = useCallback(
-    function getHeight(): number {
+  const __getHeight = useCallback(
+    function __getHeight(): number {
       props.onClick(10);
       const { onClick } = props;
       onClick(11);
@@ -46,7 +47,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 
   return view({
     props: { ...props },
-    getHeight,
+    getHeight: __getHeight,
     restAttributes: __restAttributes(),
   });
 }

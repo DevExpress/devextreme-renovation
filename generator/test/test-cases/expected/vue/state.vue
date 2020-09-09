@@ -1,8 +1,8 @@
 <template>
-  <div>
-    {{ state1_state }}
-    <BaseState @update:base-state-prop="__stateChange"></BaseState>
-  </div>
+  <div
+    >{{ state1_state
+    }}<BaseState @update:base-state-prop="__stateChange"></BaseState
+  ></div>
 </template>
 <script>
 import BaseState from "./model";

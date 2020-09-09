@@ -10,7 +10,6 @@ const WidgetInput = {
     type: Number,
   },
 };
-
 export const DxWidget = {
   props: WidgetInput,
   computed: {
@@ -26,7 +25,10 @@ export const DxWidget = {
       return `${this.prop1} + ${this.prop2} + ${this.$refs.divRef.innerHTML} + ${p}`;
     },
     getSize() {
-      return `${this.prop1} + ${this.$refs.divRef.innerHTML}`;
+      return `${this.prop1} + ${this.$refs.divRef.innerHTML} + ${this.getHeight(
+        0,
+        0
+      )}`;
     },
   },
 };

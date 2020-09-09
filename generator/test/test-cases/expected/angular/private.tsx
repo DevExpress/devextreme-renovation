@@ -1,11 +1,4 @@
-import Props from "./component-bindings-only";
-import { Options } from "./types.d";
-import { Input } from "@angular/core";
-import { AdditionalOptions } from "./component-bindings-only";
-class WidgetProps {
-  @Input() data?: Options = new Props().data;
-  @Input() info?: AdditionalOptions = new Props().info;
-}
+class WidgetInput {}
 
 import {
   Component,
@@ -19,14 +12,17 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div>{{
-    model.props.data === undefined || model.props.data === null
-      ? undefined
-      : model.props.data.value
-  }}</div>`,
+  template: `<div></div>`,
 })
-export default class Widget extends WidgetProps {
-  innerData: Options = { value: "" };
+export default class Widget extends WidgetInput {
+  private decoratedState: string = "";
+  private simpleState: string = "";
+  private get __privateGetter(): any {
+    return this.decoratedState.concat(this.simpleState);
+  }
+  __simpleGetter(): any {
+    return this.decoratedState.concat(this.simpleState);
+  }
   get __restAttributes(): any {
     return {};
   }
@@ -40,8 +36,12 @@ export default class Widget extends WidgetProps {
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
   }
-  set _innerData(innerData: Options) {
-    this.innerData = innerData;
+  set _decoratedState(decoratedState: string) {
+    this.decoratedState = decoratedState;
+    this._detectChanges();
+  }
+  set _simpleState(simpleState: string) {
+    this.simpleState = simpleState;
     this._detectChanges();
   }
 }
@@ -51,5 +51,3 @@ export default class Widget extends WidgetProps {
   exports: [Widget],
 })
 export class DxWidgetModule {}
-
-export * from "./types.d";

@@ -13,11 +13,13 @@ function view(model: Widget) {
     </div>
   );
 }
+
 export declare type WidgetPropsType = {
   someRef?: RefObject<HTMLElement>;
 };
 export const WidgetProps: WidgetPropsType = {};
-import React, {
+import * as React from "react";
+import {
   useState,
   useCallback,
   useEffect,

@@ -5,9 +5,7 @@ import WidgetComponent from "../../../../jquery-events";
 export default class Widget extends BaseComponent {
   getProps() {
     const props = super.getProps();
-
     props.onKeyDown = this._wrapKeyDownHandler(props.onKeyDown);
-
     return props;
   }
 
