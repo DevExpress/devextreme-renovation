@@ -70,7 +70,9 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
       restAttributes: __restAttributes(),
     });
   }
-);
+) as React.FC<
+  typeof WidgetInput & RestProps & { ref: React.Ref<WidgetRef> }
+> & { defaultProps: typeof WidgetInput };
 export default Widget;
 
 Widget.defaultProps = {

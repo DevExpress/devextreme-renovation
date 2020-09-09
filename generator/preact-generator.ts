@@ -180,6 +180,10 @@ export class PreactComponent extends ReactComponent {
     }
     return super.getJQueryBaseComponentName() || BASE_JQUERY_WIDGET;
   }
+
+  compileFunctionalComponentType() {
+    return `Preact.FunctionalComponent<${this.compilePropsType()}> & { defaultProps: ${this.getPropsType()}}`;
+  }
 }
 
 class JQueryComponent {

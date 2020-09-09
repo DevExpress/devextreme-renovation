@@ -4,7 +4,7 @@ function view(model: Widget) {
 
 export declare type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
-import Preact from "preact";
+import * as Preact from "preact";
 import { useState, useCallback } from "preact/hooks";
 
 declare type RestProps = {
@@ -31,8 +31,8 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     },
     [__state_decoratedState, __state_simpleState]
   );
-  const simpleGetter = useCallback(
-    function simpleGetter(): any {
+  const __simpleGetter = useCallback(
+    function __simpleGetter(): any {
       return __state_decoratedState.concat(__state_simpleState);
     },
     [__state_decoratedState, __state_simpleState]
@@ -47,7 +47,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 
   return view({
     props: { ...props },
-    simpleGetter,
+    simpleGetter: __simpleGetter,
     restAttributes: __restAttributes(),
   });
 }
