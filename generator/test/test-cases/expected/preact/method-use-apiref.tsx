@@ -58,7 +58,9 @@ const WidgetWithApiRef = forwardRef<
     baseRef,
     restAttributes: __restAttributes(),
   });
-});
+}) as Preact.FunctionalComponent<typeof WidgetWithApiRefInput & RestProps> & {
+  defaultProps: typeof WidgetWithApiRefInput;
+};
 export default WidgetWithApiRef;
 
 WidgetWithApiRef.defaultProps = {

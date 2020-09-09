@@ -753,6 +753,12 @@ export class ReactComponent extends Component {
     return callView;
   }
 
+  compileFunctionalComponentType() {
+    return `React.FC<${this.compilePropsType()} & { ref: React.Ref<${
+      this.name
+    }Ref> }> & { defaultProps: ${this.getPropsType()}}`;
+  }
+
   toString() {
     const getTemplateFunc = this.props.some((p) => p.isTemplate)
       ? `
@@ -826,7 +832,9 @@ export class ReactComponent extends Component {
               ${
                 this.members.filter((m) => m.isApiMethod).length === 0
                   ? `}`
-                  : `});\n${this.modifiers.join(" ")} ${
+                  : `}) as ${this.compileFunctionalComponentType()};\n${this.modifiers.join(
+                      " "
+                    )} ${
                       this.modifiers.join(" ") === "export"
                         ? `{${this.name}}`
                         : this.name

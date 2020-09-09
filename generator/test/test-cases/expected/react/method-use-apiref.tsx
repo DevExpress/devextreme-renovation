@@ -61,7 +61,10 @@ const WidgetWithApiRef = forwardRef<
     baseRef,
     restAttributes: __restAttributes(),
   });
-});
+}) as React.FC<
+  typeof WidgetWithApiRefInput &
+    RestProps & { ref: React.Ref<WidgetWithApiRefRef> }
+> & { defaultProps: typeof WidgetWithApiRefInput };
 export default WidgetWithApiRef;
 
 WidgetWithApiRef.defaultProps = {

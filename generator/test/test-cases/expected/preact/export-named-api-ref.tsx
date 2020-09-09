@@ -39,7 +39,9 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
       restAttributes: __restAttributes(),
     });
   }
-);
+) as Preact.FunctionalComponent<typeof WidgetInput & RestProps> & {
+  defaultProps: typeof WidgetInput;
+};
 export { Widget };
 
 Widget.defaultProps = {
