@@ -25,8 +25,8 @@ interface Child {
 }
 
 export default function Child(props: typeof ChildInput & RestProps) {
-  const getProps = useCallback(
-    function getProps(): typeof WidgetProps {
+  const __getProps = useCallback(
+    function __getProps(): typeof WidgetProps {
       return { height: props.height } as typeof WidgetProps;
     },
     [props.height]
@@ -41,7 +41,7 @@ export default function Child(props: typeof ChildInput & RestProps) {
 
   return view({
     props: { ...props },
-    getProps,
+    getProps: __getProps,
     restAttributes: __restAttributes(),
   });
 }

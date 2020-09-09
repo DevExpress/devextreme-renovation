@@ -25,8 +25,8 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetProps & RestProps) {
-  const onClick = useCallback(
-    function onClick(): any {
+  const __onClick = useCallback(
+    function __onClick(): any {
       const v = props.height;
     },
     [props.height]
@@ -41,7 +41,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
 
   return view({
     props: { ...props },
-    onClick,
+    onClick: __onClick,
     restAttributes: __restAttributes(),
   });
 }

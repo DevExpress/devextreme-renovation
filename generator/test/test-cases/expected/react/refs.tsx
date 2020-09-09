@@ -25,12 +25,12 @@ export default function Widget(props: {} & RestProps) {
   const nullableRef = useRef<HTMLDivElement>();
   const explicitRef = useRef<HTMLDivElement>();
 
-  const clickHandler = useCallback(function clickHandler(): any {
+  const __clickHandler = useCallback(function __clickHandler(): any {
     const html = divRef.current!.outerHTML + explicitRef.current!.outerHTML;
     divRef.current = explicitRef.current!;
   }, []);
-  const getHeight = useCallback(
-    function getHeight(): any {
+  const __getHeight = useCallback(
+    function __getHeight(): any {
       return divRef.current!.outerHTML + nullableRef.current?.outerHTML;
     },
     [nullableRef.current]
@@ -48,8 +48,8 @@ export default function Widget(props: {} & RestProps) {
     divRef,
     nullableRef,
     explicitRef,
-    clickHandler,
-    getHeight,
+    clickHandler: __clickHandler,
+    getHeight: __getHeight,
     restAttributes: __restAttributes(),
   });
 }

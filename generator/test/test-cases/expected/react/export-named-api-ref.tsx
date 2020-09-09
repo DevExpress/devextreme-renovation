@@ -30,11 +30,11 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
       },
       [props]
     );
-    const getValue = useCallback(function getValue(): any {
+    const __getValue = useCallback(function __getValue(): any {
       return 0;
     }, []);
 
-    useImperativeHandle(ref, () => ({ getValue }), [getValue]);
+    useImperativeHandle(ref, () => ({ getValue: __getValue }), [__getValue]);
     return view({
       props: { ...props },
       restAttributes: __restAttributes(),

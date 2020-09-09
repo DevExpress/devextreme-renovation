@@ -40,25 +40,29 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
       },
       [props]
     );
-    const getHeight = useCallback(
-      function getHeight(p: number = 10, p1: any): string {
+    const __getHeight = useCallback(
+      function __getHeight(p: number = 10, p1: any): string {
         return `${props.prop1} + ${props.prop2} + ${
           divRef.current!.innerHTML
         } + ${p}`;
       },
       [props.prop1, props.prop2]
     );
-    const getSize = useCallback(
-      function getSize(): string {
-        return `${props.prop1} + ${divRef.current!.innerHTML}`;
+    const __getSize = useCallback(
+      function __getSize(): string {
+        return `${props.prop1} + ${divRef.current!.innerHTML} + ${__getHeight(
+          0,
+          0
+        )}`;
       },
-      [props.prop1]
+      [props.prop1, props.prop2]
     );
 
-    useImperativeHandle(ref, () => ({ getHeight, getSize }), [
-      getHeight,
-      getSize,
-    ]);
+    useImperativeHandle(
+      ref,
+      () => ({ getHeight: __getHeight, getSize: __getSize }),
+      [__getHeight, __getSize]
+    );
     return view({
       props: { ...props },
       divRef,

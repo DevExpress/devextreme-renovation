@@ -97,6 +97,13 @@ export class ReactComponent extends Component {
       members.push(this.createNestedPropertyGetter(m));
     });
 
+    members = members.map((m) => {
+      if (m instanceof Method) {
+        m.prefix = "__";
+      }
+      return m;
+    });
+
     return members;
   }
 
@@ -133,7 +140,7 @@ export class ReactComponent extends Component {
       [],
       undefined,
       undefined,
-      new Identifier("__nestedChildren"),
+      new Identifier("nestedChildren"),
       undefined,
       [new TypeParameterDeclaration(new Identifier("T"))],
       [],
@@ -459,7 +466,7 @@ export class ReactComponent extends Component {
     const api = this.members.reduce(
       (r: { methods: string[]; deps: string[] }, a) => {
         if (a.isApiMethod) {
-          r.methods.push(`${a.name}`);
+          r.methods.push(`${a._name}: ${a.name}`);
 
           r.deps = [...new Set(r.deps.concat(a.name))];
         }
@@ -542,7 +549,7 @@ export class ReactComponent extends Component {
       : ["...props"].concat(internalState).concat(state).concat(nestedProps);
 
     return props
-      .concat(this.listeners.map((l) => l.name.toString()))
+      .concat(this.listeners.map((l) => `${l._name}: ${l.name}`))
       .concat(this.refs.map((r) => r.name.toString()))
       .concat(this.apiRefs.map((r) => r.name.toString()))
       .concat(

@@ -31,14 +31,14 @@ interface Widget {
 export default function Widget(props: typeof WidgetInput & RestProps) {
   const divRef = useRef<HTMLDivElement>();
 
-  const getSize = useCallback(
-    function getSize(): any {
+  const __getSize = useCallback(
+    function __getSize(): any {
       return divRef.current!.outerHTML + props.nullableRef?.current?.outerHTML;
     },
     [props.nullableRef?.current]
   );
-  const getNullable = useCallback(
-    function getNullable(): any {
+  const __getNullable = useCallback(
+    function __getNullable(): any {
       return props.nullableRef?.current?.outerHTML;
     },
     [props.nullableRef?.current]
@@ -54,8 +54,8 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   return view({
     props: { ...props },
     divRef,
-    getSize,
-    getNullable,
+    getSize: __getSize,
+    getNullable: __getNullable,
     restAttributes: __restAttributes(),
   });
 }
