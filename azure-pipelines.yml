@@ -32,7 +32,7 @@ steps:
 
 - script: |
     cd ./generator
-    npm run test:with-reporters
+    npm run test
   displayName: 'tests'
 
 - script: |
