@@ -37,4 +37,3 @@ export default Widget;
 Widget.defaultProps = {
   ...WidgetInput,
 };
-export * from "./dx-widget-with-props";
