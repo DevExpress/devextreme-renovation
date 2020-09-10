@@ -151,9 +151,9 @@ interface JSXComponentBase<P> {
   render(): any;
   setState(): any;
   state(): any;
+  isReactComponent: any;
 }
 class JSXComponentBase<P> {}
-
 /**
  * A function that returns base class for any Component.
  * Pass ComponentBindings as an argument
@@ -170,14 +170,21 @@ export function JSXComponent<
   };
   type RealPropsType = Partial<Omit<PropsType, RequiredProps>> &
     Pick<PropsType, RequiredProps>;
-  return class extends JSXComponentBase<RealPropsType> {
+  const BaseComponent = class extends JSXComponentBase<RealPropsType> {
     static defaultProps: DefaultPropsType = ((Props && new Props()) ||
       {}) as DefaultPropsType;
+    static isReactComponent = {};
+    constructor(props: RealPropsType) {
+      super();
+      this.props = props as PropsType & { ref?: React.Component<PropsType> };
+    }
     props!: PropsType & { ref?: React.Component<PropsType> };
     restAttributes: { [name: string]: any } = {
       "rest-attributes": "restAttributes",
     }; // for testing purpose
   };
+  BaseComponent.prototype.isReactComponent = {}; // for enzyme tests
+  return BaseComponent;
 }
 
 /**
