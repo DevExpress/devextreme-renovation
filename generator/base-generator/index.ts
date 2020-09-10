@@ -56,6 +56,7 @@ import {
   InferTypeNode,
   TupleTypeNode,
   ConditionalTypeNode,
+  OptionalTypeNode,
 } from "./expressions/type";
 import {
   Method,
@@ -896,6 +897,10 @@ export default class Generator implements GeneratorAPI {
     type: TypeExpression
   ) {
     return new FunctionTypeNode(typeParameters, parameters, type);
+  }
+
+  createOptionalTypeNode(type: TypeExpression) {
+    return new OptionalTypeNode(type);
   }
 
   createExpressionStatement(expression: Expression) {

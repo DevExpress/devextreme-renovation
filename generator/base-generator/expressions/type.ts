@@ -59,6 +59,16 @@ export class FunctionTypeNode extends TypeExpression {
   }
 }
 
+export class OptionalTypeNode extends TypeExpression {
+  constructor(public type: TypeExpression) {
+    super();
+  }
+
+  toString() {
+    return `${this.type}?`;
+  }
+}
+
 export class IntersectionTypeNode extends TypeExpression {
   types: TypeExpression[];
   constructor(types: TypeExpression[]) {
