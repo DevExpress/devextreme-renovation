@@ -545,6 +545,15 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
+    mocha.it("createOptionalTypeNode", function () {
+      assert.equal(
+        generator.createOptionalTypeNode(
+          generator.createKeywordTypeNode("string")
+        ),
+        "string?"
+      );
+    });
+
     mocha.it("createUnionTypeNode", function () {
       assert.equal(
         generator.createUnionTypeNode([
