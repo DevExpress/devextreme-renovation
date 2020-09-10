@@ -1,3 +1,4 @@
+// NOTE: this file uses for checking compilation
 import { WidgetWithProps } from "./dx-widget-with-props";
 
 const WithEmptyProps = new WidgetWithProps({});
