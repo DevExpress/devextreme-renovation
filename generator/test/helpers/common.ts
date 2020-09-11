@@ -81,24 +81,29 @@ export function createTestGenerator(
         componentName
       )}`
     );
-    if (process.argv.includes("--replace")) {
-      const realExpectedPath = path.resolve(
-        `${__dirname}/../../../test/test-cases/expected/${expectedFolder}/${expectedCodePath(
-          componentName
-        )}`
-      );
-      if (
-        expectedFolder === "vue" &&
-        code.indexOf("<template>") === -1 &&
-        code.indexOf("<script>") === -1
-      ) {
-        fs.writeFileSync(realExpectedPath, `<script>\n${code}</script>\n`);
-      } else {
-        fs.writeFileSync(realExpectedPath, code);
-      }
-    }
+
     this.expectedCode = fs.readFileSync(expectedPath).toString();
-    checkCode(code, this.expectedCode);
+    try {
+      checkCode(code, this.expectedCode);
+    } catch (e) {
+      if (process.argv.includes("--replace")) {
+        const realExpectedPath = path.resolve(
+          `${__dirname}/../../../test/test-cases/expected/${expectedFolder}/${expectedCodePath(
+            componentName
+          )}`
+        );
+        if (
+          expectedFolder === "vue" &&
+          code.indexOf("<template>") === -1 &&
+          code.indexOf("<script>") === -1
+        ) {
+          fs.writeFileSync(realExpectedPath, `<script>\n${code}</script>\n`);
+        } else {
+          fs.writeFileSync(realExpectedPath, code);
+        }
+      }
+      throw e;
+    }
   };
 }
 
