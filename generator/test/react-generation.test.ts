@@ -98,6 +98,14 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("template-pass", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("template-transit", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("refs", function () {
     this.testGenerator(this.test!.title);
   });

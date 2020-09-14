@@ -22,23 +22,14 @@ interface RefOnChildrenTemplate {
   restAttributes: RestProps;
 }
 
-function getTemplate(
-  props: any,
-  template: string,
-  render: string,
-  component: string
-) {
-  const getRender = (render: any) => (props: any) =>
-    "data" in props ? render(props.data, props.index) : render(props);
-  const PropTemplate = props[template];
-  const PropComponent = props[component];
-
-  return (
-    (PropTemplate && ((props: any) => <PropTemplate {...props} />)) ||
-    (props[render] && getRender(props[render])) ||
-    (PropComponent && ((props: any) => <PropComponent {...props} />))
-  );
-}
+const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
+  TemplateProp ||
+  (RenderProp &&
+    ((props: any) =>
+      RenderProp(
+        ...("data" in props ? [props.data, props.index] : [props])
+      ))) ||
+  (ComponentProp && ((props: any) => <ComponentProp {...props} />));
 
 export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
   const child = useRef<HTMLDivElement>();
@@ -63,10 +54,9 @@ export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
     props: {
       ...props,
       contentTemplate: getTemplate(
-        props,
-        "contentTemplate",
-        "contentRender",
-        "contentComponent"
+        props.contentTemplate,
+        props.contentRender,
+        props.contentComponent
       ),
     },
     child,
