@@ -94,6 +94,14 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("dx-inner-widget", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("dx-widget-with-template", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("template", function () {
     this.testGenerator(this.test!.title);
   });
