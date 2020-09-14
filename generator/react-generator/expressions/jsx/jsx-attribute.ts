@@ -5,6 +5,8 @@ import {
 import { PropertyAssignment } from "../../../base-generator/expressions/property-assignment";
 import { toStringOptions } from "../../../base-generator/types";
 import { getProps } from "../../../base-generator/expressions/component";
+import { getTemplatePropName } from "../react-component-input";
+import { getTemplateProperty } from "../../../base-generator/utils/expressions";
 
 const eventsDictionary = {
   pointerover: "onPointerOver",
@@ -23,6 +25,7 @@ export class JsxAttribute extends BaseJsxAttribute {
   }
 
   toString(options?: toStringOptions) {
+    let tsOptions = options;
     let name = this.name.toString(options);
     if (options?.jsxComponent) {
       const member = getProps(options.jsxComponent.members).find(
@@ -30,10 +33,17 @@ export class JsxAttribute extends BaseJsxAttribute {
       );
       if (member) {
         name = member.name;
+
+        if (member.isTemplate) {
+          if (!getTemplateProperty(this.initializer, options)) {
+            name = getTemplatePropName(name, "component");
+          }
+          tsOptions = { ...options, variables: undefined };
+        }
       }
     }
     return `${
       (eventsDictionary as any)[name] || name
-    }=${this.initializer.toString(options)}`;
+    }=${this.initializer.toString(tsOptions)}`;
   }
 }
