@@ -191,7 +191,7 @@ cloneTest("Check form values binding", async (t) => {
 cloneTest("Forward refs", async (t) => {
   const el = Selector(".forward-ref-child");
 
-  await t.expect(await el.count).eql(3);
+  await t.expect(await el.count).eql(4);
 
   await t.expect(await el.nth(0).textContent).eql("childText");
   await t
@@ -201,20 +201,28 @@ cloneTest("Forward refs", async (t) => {
     .expect(await el.nth(0).getStyleProperty("border-bottom-color"))
     .eql("rgb(0, 0, 0)");
 
-  await t.expect(await el.nth(1).textContent).eql("childText");
+  await t.expect(await el.nth(1).textContent).eql("assignChildText");
   await t
     .expect((await el.nth(1).style)["background-color"])
-    .eql("rgb(120, 120, 120)");
+    .eql("rgb(200, 200, 200)");
   await t
     .expect(await el.nth(1).getStyleProperty("border-bottom-color"))
     .eql("rgb(0, 0, 0)");
 
-  await t.expect(await el.nth(1).textContent).eql("childText");
+  await t.expect(await el.nth(2).textContent).eql("childText");
   await t
-    .expect((await el.nth(1).style)["background-color"])
+    .expect((await el.nth(2).style)["background-color"])
     .eql("rgb(120, 120, 120)");
   await t
     .expect(await el.nth(2).getStyleProperty("border-bottom-color"))
+    .eql("rgb(0, 0, 0)");
+
+  await t.expect(await el.nth(3).textContent).eql("childText");
+  await t
+    .expect((await el.nth(3).style)["background-color"])
+    .eql("rgb(120, 120, 120)");
+  await t
+    .expect(await el.nth(3).getStyleProperty("border-bottom-color"))
     .eql("rgb(0, 0, 128)");
 });
 

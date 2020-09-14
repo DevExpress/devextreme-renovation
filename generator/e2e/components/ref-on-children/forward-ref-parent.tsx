@@ -6,9 +6,15 @@ import {
   ForwardRef,
 } from "../../../component_declaration/common";
 import Child from "./child";
+import ChildWithAssign from "./child-with-assign";
 
-function view({ child }: ForwardRefParent) {
-  return <Child childRef={child} />;
+function view({ firstChild, secondChild }: ForwardRefParent) {
+  return (
+    <span>
+      <Child childRef={firstChild} />
+      <ChildWithAssign childRef={secondChild} />
+    </span>
+  );
 }
 
 @ComponentBindings()
@@ -18,10 +24,12 @@ class Props {}
   view,
 })
 export default class ForwardRefParent extends JSXComponent(Props) {
-  @ForwardRef() child!: HTMLDivElement;
+  @ForwardRef() firstChild!: HTMLDivElement;
+  @ForwardRef() secondChild!: HTMLDivElement;
 
   @Effect()
   effect() {
-    this.child.style.backgroundColor = "rgb(120, 120, 120)";
+    this.firstChild.style.backgroundColor = "rgb(120, 120, 120)";
+    this.secondChild.style.backgroundColor = "rgb(200, 200, 200)";
   }
 }

@@ -82,8 +82,8 @@ export function createTestGenerator(
       )}`
     );
 
-    this.expectedCode = fs.readFileSync(expectedPath).toString();
     try {
+      this.expectedCode = fs.readFileSync(expectedPath).toString();
       checkCode(code, this.expectedCode);
     } catch (e) {
       if (process.argv.includes("--replace")) {

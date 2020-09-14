@@ -11,8 +11,15 @@ export class PropertyAccess extends BasePropertyAccess {
     if (isState) {
       return `${stateSetting},\nthis.${property._name}Change(this.${propertyName})`;
     }
-    if (property.isRef) {
+    if (property.isRef || property.isForwardRef) {
       return `this.$refs.${propertyName}=${state}`;
+    }
+    if (property.isForwardRefProp) {
+      return `this.forwardRef_${propertyName}(${state});
+      this.${propertyName}(${state})`;
+    }
+    if (property.isRefProp) {
+      return `this.props.${propertyName}=${state}`;
     }
     return stateSetting;
   }

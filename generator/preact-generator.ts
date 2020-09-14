@@ -99,6 +99,7 @@ export class ComponentInput extends BaseComponentInput {
 }
 
 export class PreactComponent extends ReactComponent {
+  REF_OBJECT_TYPE = "RefObject";
   context!: GeneratorContext;
 
   constructor(
@@ -375,6 +376,8 @@ class JQueryComponent {
 }
 
 export class Property extends ReactProperty {
+  REF_OBJECT_TYPE = "RefObject";
+
   typeDeclaration() {
     if (this.decorators.find((d) => d.name === "Slot")) {
       return `${this.name}${this.questionOrExclamationToken}:any`;

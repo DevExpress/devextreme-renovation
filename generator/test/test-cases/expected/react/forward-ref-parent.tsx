@@ -10,7 +10,7 @@ function view({
 }
 
 export declare type PropsType = {
-  nullableRef?: RefObject<HTMLDivElement>;
+  nullableRef?: MutableRefObject<HTMLDivElement>;
 };
 const Props: PropsType = {};
 import * as React from "react";
@@ -19,7 +19,7 @@ import {
   useCallback,
   useEffect,
   useRef,
-  RefObject,
+  MutableRefObject,
   HTMLAttributes,
 } from "react";
 

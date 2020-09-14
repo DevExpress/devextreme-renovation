@@ -70,6 +70,8 @@ function getSubscriptions(methods: Method[]) {
 }
 
 export class ReactComponent extends Component {
+  REF_OBJECT_TYPE = "MutableRefObject";
+
   processMembers(members: Array<BaseProperty | Method>) {
     members.forEach((m) => {
       const forwardRefIndex = m.decorators.findIndex(
@@ -305,7 +307,7 @@ export class ReactComponent extends Component {
     }
 
     if (this.members.some((m) => m.isRefProp || m.isForwardRefProp)) {
-      core.push("RefObject");
+      core.push(this.REF_OBJECT_TYPE);
     }
 
     if (this.members.filter((a) => a.isApiMethod).length) {

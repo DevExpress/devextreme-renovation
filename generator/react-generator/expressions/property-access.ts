@@ -3,6 +3,7 @@ import {
   Property,
   getLocalStateName,
   stateSetter,
+  getPropName,
 } from "./class-members/property";
 import { Property as BaseProperty } from "../../base-generator/expressions/class-members";
 import { toStringOptions } from "../../base-generator/types";
@@ -46,8 +47,22 @@ export class PropertyAccess extends BasePropertyAccess {
         changeProperty
       )}(${state}))`;
     }
-    if (property.isRef) {
-      return `${property.name}.current=${state}`;
+    if (
+      property.isRef ||
+      property.isRefProp ||
+      property.isForwardRef ||
+      property.isForwardRefProp
+    ) {
+      const componentContext = property.processComponentContext(
+        options.newComponentContext
+      );
+      const scope = property.processComponentContext(property.scope);
+      if (componentContext === "") {
+        return `${scope}${this.name}${
+          scope ? property.questionOrExclamationToken : ""
+        }.current=${state}`;
+      }
+      return `${getPropName(this.name, componentContext, scope)}=${state}`;
     }
     return setState;
   }

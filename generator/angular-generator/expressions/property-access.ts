@@ -51,7 +51,17 @@ export class PropertyAccess extends BasePropertyAccess {
       return `this._${this.name}Change(${this.toString(options)}=${value})`;
     }
     if (property.isRef) {
-      return `this.${property.name}.nativeElement=${value}`;
+      return `this.${property.name} = new ElementRef(${value})`;
+    }
+    if (property.isRefProp) {
+      return `this.${property.name}=${value}`;
+    }
+    if (property.isForwardRef) {
+      return `this.${property.name} = new ElementRef(${value})`;
+    }
+    if (property.isForwardRefProp) {
+      return `this.forwardRef_${property.name}(new ElementRef(${value}));
+      this.${property.name}(new ElementRef(${value}))`;
     }
     return `this._${property.name}=${value}`;
   }
