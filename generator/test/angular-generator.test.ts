@@ -5134,6 +5134,7 @@ mocha.describe("Angular generator", function () {
                     exports: [BaseWidget]
                 })
                 export class DxBaseWidgetModule {}
+                export { BaseWidget as DxBaseWidgetComponent }
             `)
       );
     });
@@ -5224,6 +5225,7 @@ mocha.describe("Angular generator", function () {
                     exports: [BaseWidget]
                 })
                 export class DxBaseWidgetModule {}
+                export { BaseWidget as DxBaseWidgetComponent }
             `)
         );
       }
