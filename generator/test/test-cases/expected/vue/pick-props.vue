@@ -7,7 +7,6 @@
 import Props from "./component-bindings-only";
 const WidgetProps = {
   data: {
-    type: Object,
     default() {
       return typeof Props.data.default === "function"
         ? Props.data.default()
@@ -15,7 +14,6 @@ const WidgetProps = {
     },
   },
   info: {
-    type: Object,
     default() {
       return typeof Props.info.default === "function"
         ? Props.info.default()

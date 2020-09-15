@@ -4,6 +4,13 @@ import {
   JSXComponent,
   OneWay,
 } from "../../../../component_declaration/common";
+import {
+  EnumType,
+  Union,
+  ObjType,
+  StringArr,
+  StringType,
+} from "./types-external";
 
 export const viewFunction = (viewModel: Widget) => {
   return <div></div>;
@@ -20,6 +27,15 @@ export class WidgetProps {
   @OneWay() date: Date = new Date();
   @OneWay() func: Function = () => {};
   @OneWay() symbol: Symbol = Symbol("x");
+
+  @OneWay() externalEnum: EnumType = "data";
+  @OneWay() externalUnion: Union = 0;
+  @OneWay() externalObj: ObjType = {
+    number: 0,
+    text: "text",
+  };
+  @OneWay() externalArray: StringArr = ["s1", "s2"];
+  @OneWay() externalString: StringType = "someValue";
 }
 
 @Component({ view: viewFunction })
