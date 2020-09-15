@@ -1367,6 +1367,7 @@ export class AngularComponent extends Component {
             exports: [${this.name}, ${nestedModules.join(", ")}]
         })
         export class ${this.module} {}
+        export { ${this.name} as Dx${this.name}Component };
         ${this.compileDefaultComponentExport()}
         `;
   }

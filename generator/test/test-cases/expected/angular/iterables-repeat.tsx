@@ -55,3 +55,4 @@ export default class List extends ListInput {
   exports: [List],
 })
 export class DxListModule {}
+export { List as DxListComponent };

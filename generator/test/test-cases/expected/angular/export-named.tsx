@@ -38,4 +38,5 @@ export class Widget extends WidgetInput {
   exports: [Widget],
 })
 export class DxWidgetModule {}
+export { Widget as DxWidgetComponent };
 export default Widget;

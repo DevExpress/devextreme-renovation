@@ -199,3 +199,4 @@ export default class Widget extends PickedProps {
   ],
 })
 export class DxWidgetModule {}
+export { Widget as DxWidgetComponent };
