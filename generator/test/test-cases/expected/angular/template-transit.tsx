@@ -46,3 +46,4 @@ export default class TemplateTransitWidget extends TemplateTransitWidgetInput {
   exports: [TemplateTransitWidget],
 })
 export class DxTemplateTransitWidgetModule {}
+export { TemplateTransitWidget as DxTemplateTransitWidgetComponent };

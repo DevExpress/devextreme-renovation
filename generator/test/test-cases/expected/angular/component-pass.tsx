@@ -58,3 +58,4 @@ export default class Widget extends WidgetProps {
   exports: [Widget],
 })
 export class DxWidgetModule {}
+export { Widget as DxWidgetComponent };

@@ -39,3 +39,4 @@ export default class Child extends ChildInput {
   exports: [Child],
 })
 export class DxChildModule {}
+export { Child as DxChildComponent };

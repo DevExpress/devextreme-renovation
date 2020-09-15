@@ -120,3 +120,4 @@ export default class RefOnChildrenParent extends Props {
   exports: [RefOnChildrenParent],
 })
 export class DxRefOnChildrenParentModule {}
+export { RefOnChildrenParent as DxRefOnChildrenParentComponent };
