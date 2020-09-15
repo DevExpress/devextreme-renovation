@@ -12,7 +12,7 @@ export declare type ObjType = {
   text: string;
 };
 export declare type StringArr = Array<String>;
-export declare type str = String;
+export declare type StringType = String;
 export declare type StrDate = string | Date;
 
 export const viewFunction = (viewModel: Widget) => {
@@ -28,7 +28,7 @@ export class WidgetProps {
     text: "sda",
   };
   @OneWay() strArr: StringArr = ["ba", "ab"];
-  @OneWay() s: str = "";
+  @OneWay() s: StringType = "";
   @OneWay() strDate: StrDate = new Date();
 }
 

@@ -37,6 +37,16 @@ function calculatePropertyType(
   type: TypeExpression | string,
   initializer?: Expression
 ): string {
+  if (type instanceof TypeReferenceNode && type.context.imports) {
+    const imports = type.context.imports;
+    if (
+      Object.keys(imports).some((key) =>
+        imports[key].has(type.typeName.toString())
+      )
+    ) {
+      return "";
+    }
+  }
   if (type instanceof SimpleTypeExpression) {
     const typeString = type.type.toString();
     if (
