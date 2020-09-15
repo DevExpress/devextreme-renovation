@@ -7,13 +7,13 @@ function view({ props: { childRef, nullableRef } }: RefOnChildrenChild) {
 }
 
 export declare type PropsType = {
-  childRef: RefObject<HTMLDivElement>;
-  nullableRef?: RefObject<HTMLDivElement>;
+  childRef: MutableRefObject<HTMLDivElement>;
+  nullableRef?: MutableRefObject<HTMLDivElement>;
   state?: number;
 };
 const Props: PropsType = ({} as any) as PropsType;
 import * as React from "react";
-import { useCallback, RefObject, HTMLAttributes } from "react";
+import { useCallback, MutableRefObject, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
 interface RefOnChildrenChild {

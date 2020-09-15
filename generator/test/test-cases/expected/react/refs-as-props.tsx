@@ -11,11 +11,11 @@ function view(viewModel: Widget) {
 }
 
 export declare type WidgetInputType = {
-  nullableRef?: RefObject<HTMLDivElement>;
+  nullableRef?: MutableRefObject<HTMLDivElement>;
 };
 const WidgetInput: WidgetInputType = {};
 import * as React from "react";
-import { useCallback, useRef, RefObject, HTMLAttributes } from "react";
+import { useCallback, useRef, MutableRefObject, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,

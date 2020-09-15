@@ -15,7 +15,7 @@ function view(model: Widget) {
 }
 
 export declare type WidgetPropsType = {
-  someRef?: RefObject<HTMLElement>;
+  someRef?: MutableRefObject<HTMLElement>;
 };
 export const WidgetProps: WidgetPropsType = {};
 import * as React from "react";
@@ -23,7 +23,7 @@ import {
   useState,
   useCallback,
   useEffect,
-  RefObject,
+  MutableRefObject,
   HTMLAttributes,
 } from "react";
 import { createPortal } from "react-dom";
