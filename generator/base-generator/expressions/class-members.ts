@@ -135,7 +135,7 @@ export class BaseClassMember extends Expression {
     return this.name === this._name.toString();
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     return [this.name];
   }
 

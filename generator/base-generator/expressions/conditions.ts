@@ -29,7 +29,7 @@ export class If extends ExpressionWithExpression {
         ${elseStatement}`;
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     return super
       .getDependency(options)
       .concat(this.thenStatement.getDependency(options))
@@ -73,7 +73,7 @@ export class CaseClause extends ExpressionWithOptionalExpression {
         `;
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     return this.statements
       .reduce((d: string[], s) => {
         return d.concat(s.getDependency(options));

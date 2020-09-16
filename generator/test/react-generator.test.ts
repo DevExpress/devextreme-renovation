@@ -1691,7 +1691,12 @@ mocha.describe(
         }),
         "props.p1"
       );
-      assert.deepEqual(this.propAccess.getDependency(), ["p1"]);
+      assert.deepEqual(
+        this.propAccess.getDependency({
+          members: [],
+        }),
+        ["p1"]
+      );
     });
 
     mocha.it("Property access. this.props.p1", function () {
@@ -1711,7 +1716,12 @@ mocha.describe(
         }),
         "props.p1"
       );
-      assert.deepEqual(expression.getDependency(), ["p1"]);
+      assert.deepEqual(
+        expression.getDependency({
+          members: [],
+        }),
+        ["p1"]
+      );
     });
 
     mocha.it("Not member Property access.", function () {
@@ -1728,7 +1738,12 @@ mocha.describe(
         }),
         "items.item"
       );
-      assert.deepEqual(expression.getDependency(), []);
+      assert.deepEqual(
+        expression.getDependency({
+          members: [],
+        }),
+        []
+      );
     });
 
     mocha.it("Property access. this.props", function () {
@@ -1745,7 +1760,12 @@ mocha.describe(
         }),
         "{...props,\ns1:(props.s1!==undefined?props.s1:__state_s1)}"
       );
-      assert.deepEqual(expression.getDependency(), ["props"]);
+      assert.deepEqual(
+        expression.getDependency({
+          members: [],
+        }),
+        ["props"]
+      );
     });
 
     mocha.it("PropertyAccess. State", function () {
@@ -1755,7 +1775,12 @@ mocha.describe(
         }),
         "(props.s1!==undefined?props.s1:__state_s1)"
       );
-      assert.deepEqual(this.stateAccess.getDependency(), ["s1"]);
+      assert.deepEqual(
+        this.stateAccess.getDependency({
+          members: [],
+        }),
+        ["s1"]
+      );
     });
 
     mocha.it("PropertyAccess. State in props", function () {
@@ -1775,7 +1800,12 @@ mocha.describe(
         }),
         "(props.s1!==undefined?props.s1:__state_s1)"
       );
-      assert.deepEqual(expression.getDependency(), ["s1"]);
+      assert.deepEqual(
+        expression.getDependency({
+          members: [],
+        }),
+        ["s1"]
+      );
     });
 
     mocha.it("PropertyAccess. Internal State", function () {
@@ -1785,7 +1815,12 @@ mocha.describe(
         }),
         ["__state_i1"]
       );
-      assert.deepEqual(this.internalStateAccess.getDependency(), ["i1"]);
+      assert.deepEqual(
+        this.internalStateAccess.getDependency({
+          members: [],
+        }),
+        ["i1"]
+      );
     });
 
     mocha.it("PropertyAccess. Dependencies on assignment", function () {
@@ -1828,8 +1863,18 @@ mocha.describe(
           }),
           "(__state_setS1(__state_s1 => a), props.s1Change!(a))"
         );
-        assert.deepEqual(expression.getDependency(), ["s1Change"]);
-        assert.deepEqual(expression.getAllDependency(), ["s1"]);
+        assert.deepEqual(
+          expression.getDependency({
+            members: [],
+          }),
+          ["s1Change"]
+        );
+        assert.deepEqual(
+          expression.getAllDependency({
+            members: [],
+          }),
+          ["s1"]
+        );
       }
     );
 
@@ -1957,8 +2002,18 @@ mocha.describe(
         }),
         "(props.s1!==undefined?props.s1:__state_s1) === props.p1"
       );
-      assert.deepEqual(expression.getDependency(), ["s1", "p1"]);
-      assert.deepEqual(expression.getAllDependency(), ["s1", "p1"]);
+      assert.deepEqual(
+        expression.getDependency({
+          members: [],
+        }),
+        ["s1", "p1"]
+      );
+      assert.deepEqual(
+        expression.getAllDependency({
+          members: [],
+        }),
+        ["s1", "p1"]
+      );
     });
 
     mocha.it("Set ref.InnerHtml", function () {
@@ -1987,7 +2042,12 @@ mocha.describe(
         }),
         "div.current!.InnerHtml = value"
       );
-      assert.deepEqual(expression.getDependency(), []);
+      assert.deepEqual(
+        expression.getDependency({
+          members: [],
+        }),
+        []
+      );
     });
 
     mocha.it("Set ref.InnerHtml unary", function () {
@@ -2069,7 +2129,12 @@ mocha.describe(
           )
         );
 
-        assert.deepEqual(expression.getDependency(), ["p1", "s1"]);
+        assert.deepEqual(
+          expression.getDependency({
+            members: [],
+          }),
+          ["p1", "s1"]
+        );
       }
     );
 
@@ -2092,7 +2157,12 @@ mocha.describe(
           )
         );
 
-        assert.deepEqual(expression.getDependency(), ["height"]);
+        assert.deepEqual(
+          expression.getDependency({
+            members: [],
+          }),
+          ["height"]
+        );
       }
     );
 
@@ -2115,7 +2185,12 @@ mocha.describe(
           )
         );
 
-        assert.deepEqual(expression.getDependency(), ["props"]);
+        assert.deepEqual(
+          expression.getDependency({
+            members: [],
+          }),
+          ["props"]
+        );
       }
     );
 
@@ -2133,7 +2208,12 @@ mocha.describe(
         )
       );
 
-      assert.deepEqual(arrowFunction.getDependency(), ["s1Change"]);
+      assert.deepEqual(
+        arrowFunction.getDependency({
+          members: [],
+        }),
+        ["s1Change"]
+      );
       assert.equal(
         getResult(
           arrowFunction.toString({
@@ -2163,7 +2243,12 @@ mocha.describe(
         )
       );
 
-      assert.deepEqual(arrowFunction.getDependency(), []);
+      assert.deepEqual(
+        arrowFunction.getDependency({
+          members: [],
+        }),
+        []
+      );
       assert.equal(
         getResult(
           arrowFunction.toString({
@@ -2193,7 +2278,12 @@ mocha.describe(
         )
       );
 
-      assert.deepEqual(arrowFunction.getDependency(), ["s1Change", "p1"]);
+      assert.deepEqual(
+        arrowFunction.getDependency({
+          members: [],
+        }),
+        ["s1Change", "p1"]
+      );
       assert.equal(
         getResult(
           arrowFunction.toString({
@@ -2248,7 +2338,12 @@ mocha.describe(
         }),
         "props.p1?.call((props.s1!==undefined?props.s1:__state_s1))"
       );
-      assert.deepEqual(expression.getDependency(), ["p1", "s1"]);
+      assert.deepEqual(
+        expression.getDependency({
+          members: [],
+        }),
+        ["p1", "s1"]
+      );
     });
 
     mocha.it(
@@ -2271,7 +2366,12 @@ mocha.describe(
           }),
           "model?.onClick(props.p1,(props.s1!==undefined?props.s1:__state_s1),__state_i1)"
         );
-        assert.deepEqual(expression.getDependency(), ["p1", "s1", "i1"]);
+        assert.deepEqual(
+          expression.getDependency({
+            members: [],
+          }),
+          ["p1", "s1", "i1"]
+        );
       }
     );
 
@@ -2293,7 +2393,12 @@ mocha.describe(
         }),
         "props.p1?.onClick()"
       );
-      assert.deepEqual(expression.getDependency(), ["p1"]);
+      assert.deepEqual(
+        expression.getDependency({
+          members: [],
+        }),
+        ["p1"]
+      );
     });
 
     mocha.it("Method should return dependency for all properties", function () {
@@ -2801,7 +2906,12 @@ mocha.describe("ComponentInput", function () {
         );
 
         assert.strictEqual(property.getter(), "__state_p");
-        assert.deepEqual(property.getDependency(), ["__state_p"]);
+        assert.deepEqual(
+          property.getDependency({
+            members: [],
+          }),
+          ["__state_p"]
+        );
       }
     );
 
@@ -2829,7 +2939,9 @@ mocha.describe("ComponentInput", function () {
       );
 
       try {
-        property.getDependency();
+        property.getDependency({
+          members: [],
+        });
       } catch (e) {
         assert.strictEqual(e, "Can't parse property: p");
       }

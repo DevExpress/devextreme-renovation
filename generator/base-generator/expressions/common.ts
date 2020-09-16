@@ -43,7 +43,7 @@ export class Identifier extends SimpleExpression {
     return baseValue;
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     const expression = getIdentifierExpressionFromVariable(this, options);
     if (expression) {
       return expression.getDependency(options);
@@ -101,7 +101,7 @@ export class Call extends ExpressionWithExpression {
       .join(",")})`;
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     const argumentsDependency = this.argumentsArray.reduce((d: string[], a) => {
       return d.concat(a.getDependency(options));
     }, []);

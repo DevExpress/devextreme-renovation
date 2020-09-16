@@ -97,7 +97,7 @@ export class VariableDeclaration extends Expression {
     return "";
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     if (this.initializer && typeof this.initializer !== "string") {
       const initializerDependency = this.initializer.getDependency(options);
       if (
@@ -163,7 +163,7 @@ export class VariableDeclarationList extends Expression {
     return `${this.flags} ${declarations}`;
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     return this.declarations.reduce(
       (d: string[], p) => d.concat(p.getDependency(options)),
       []
@@ -199,7 +199,7 @@ export class VariableStatement extends Expression {
       : "";
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     return this.declarationList.getDependency(options);
   }
 

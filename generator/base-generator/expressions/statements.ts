@@ -16,7 +16,7 @@ export class Block extends Expression {
     }`;
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     return this.statements.reduce((d: string[], s) => {
       return d.concat(s.getDependency(options));
     }, []);

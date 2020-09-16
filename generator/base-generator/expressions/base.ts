@@ -1,7 +1,7 @@
 import { IExpression, toStringOptions } from "../types";
 
 export class Expression implements IExpression {
-  getDependency(options?: toStringOptions): string[] {
+  getDependency(options: toStringOptions): string[] {
     return [];
   }
 
@@ -9,7 +9,7 @@ export class Expression implements IExpression {
     return "";
   }
 
-  getAllDependency(options?: toStringOptions) {
+  getAllDependency(options: toStringOptions) {
     return this.getDependency(options);
   }
 
@@ -42,7 +42,7 @@ export class ExpressionWithExpression extends Expression {
     return this.expression.toString(options);
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     return this.expression.getDependency(options);
   }
 
@@ -67,7 +67,7 @@ export class ExpressionWithOptionalExpression extends Expression {
     return this.expression?.isJsx() || false;
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     return (this.expression && this.expression.getDependency(options)) || [];
   }
 }

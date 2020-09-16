@@ -16,14 +16,17 @@ export class CallChain extends BaseCallChain {
     ) {
       expression = options.variables[expression.toString()];
     }
-    const eventMember = checkDependency(
-      expression,
-      options?.members.filter((m) => m.isEvent)
-    );
-    if (eventMember) {
-      return `${expression.toString(options)}(${this.argumentsArray
-        .map((a) => a.toString(options))
-        .join(",")})`;
+    if (options) {
+      const eventMember = checkDependency(
+        expression,
+        options.members.filter((m) => m.isEvent),
+        options
+      );
+      if (eventMember) {
+        return `${expression.toString(options)}(${this.argumentsArray
+          .map((a) => a.toString(options))
+          .join(",")})`;
+      }
     }
     return super.toString(options);
   }

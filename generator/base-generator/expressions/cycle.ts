@@ -51,7 +51,7 @@ export class For extends ExpressionWithExpression {
     )}`;
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     return super
       .getDependency(options)
       .concat(
@@ -85,7 +85,7 @@ export class ForIn extends ExpressionWithExpression {
     return `for(${initializer} in ${expression})${statement}`;
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     return super
       .getDependency(options)
       .concat(this.initializer.getDependency(options))

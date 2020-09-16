@@ -29,7 +29,7 @@ export class BindingElement extends Expression {
     return `${key}${this.dotDotDotToken}${nameString}`;
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     if (!this.propertyName) {
       return [this.name.toString()];
     }
@@ -84,7 +84,7 @@ export class BindingPattern extends Expression {
     this.elements.push(element);
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     return this.elements
       .concat(this.removedElements)
       .reduce((d: string[], e) => d.concat(e.getDependency(options)), []);

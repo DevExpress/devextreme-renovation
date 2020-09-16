@@ -10,7 +10,7 @@ export class PropertyAccessChain extends BasePropertyAccessChain {
     return super.toString(options);
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     return super
       .getDependency(options)
       .concat(this.name.getDependency(options));

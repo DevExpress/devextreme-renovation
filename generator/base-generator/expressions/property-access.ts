@@ -26,7 +26,7 @@ export class ElementAccess extends ExpressionWithExpression {
     }[${this.index.toString(options)}]`;
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     return super
       .getDependency(options)
       .concat(this.index.getDependency(options));
@@ -128,7 +128,7 @@ export class PropertyAccess extends ExpressionWithExpression {
     return `this.${property.name}=${state}`;
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     const expressionString = this.expression.toString();
     const componentContext =
       options?.componentContext || SyntaxKind.ThisKeyword;
@@ -149,7 +149,7 @@ export class PropertyAccess extends ExpressionWithExpression {
     return dependency;
   }
 
-  getAssignmentDependency(options?: toStringOptions): string[] {
+  getAssignmentDependency(options: toStringOptions): string[] {
     return this.getDependency(options);
   }
 
@@ -188,7 +188,7 @@ export class PropertyAccessChain extends ExpressionWithExpression {
     }${this.name.toString(options)}`;
   }
 
-  getDependency(options?: toStringOptions) {
+  getDependency(options: toStringOptions) {
     return super
       .getDependency(options)
       .concat(this.name.getDependency(options));
