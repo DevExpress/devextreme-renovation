@@ -38,9 +38,9 @@ export class ArrayLiteral extends Expression {
     return `[${this.elements.map((e) => e.toString(options))}]`;
   }
 
-  getDependency() {
+  getDependency(options: toStringOptions) {
     return this.elements.reduce(
-      (d: string[], p) => d.concat(p.getDependency()),
+      (d: string[], p) => d.concat(p.getDependency(options)),
       []
     );
   }
@@ -104,9 +104,9 @@ export class ObjectLiteral extends Expression {
     return toObject(this);
   }
 
-  getDependency() {
+  getDependency(options: toStringOptions) {
     return this.properties.reduce(
-      (d: string[], p) => d.concat(p.getDependency()),
+      (d: string[], p) => d.concat(p.getDependency(options)),
       []
     );
   }

@@ -51,12 +51,16 @@ export class For extends ExpressionWithExpression {
     )}`;
   }
 
-  getDependency() {
+  getDependency(options: toStringOptions) {
     return super
-      .getDependency()
-      .concat((this.initializer && this.initializer.getDependency()) || [])
-      .concat((this.condition && this.condition.getDependency()) || [])
-      .concat((this.incrementor && this.incrementor.getDependency()) || []);
+      .getDependency(options)
+      .concat(
+        (this.initializer && this.initializer.getDependency(options)) || []
+      )
+      .concat((this.condition && this.condition.getDependency(options)) || [])
+      .concat(
+        (this.incrementor && this.incrementor.getDependency(options)) || []
+      );
   }
 }
 
@@ -81,10 +85,10 @@ export class ForIn extends ExpressionWithExpression {
     return `for(${initializer} in ${expression})${statement}`;
   }
 
-  getDependency() {
+  getDependency(options: toStringOptions) {
     return super
-      .getDependency()
-      .concat(this.initializer.getDependency())
-      .concat(this.statement.getDependency());
+      .getDependency(options)
+      .concat(this.initializer.getDependency(options))
+      .concat(this.statement.getDependency(options));
   }
 }

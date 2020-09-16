@@ -5,6 +5,16 @@ import { TypeExpression } from "./type";
 import { compileTypeParameters } from "../utils/string";
 import { isCall, isFunction } from "./functions";
 
+function getIdentifierExpressionFromVariable(
+  expression: Expression,
+  options?: toStringOptions
+) {
+  const stringValue = expression.toString();
+  if (options?.variables && options.variables[stringValue]) {
+    return options.variables[stringValue];
+  }
+}
+
 export class Identifier extends SimpleExpression {
   constructor(name: string) {
     super(name);
@@ -31,6 +41,14 @@ export class Identifier extends SimpleExpression {
       return options.variables[baseValue].toString(options);
     }
     return baseValue;
+  }
+
+  getDependency(options: toStringOptions) {
+    const expression = getIdentifierExpressionFromVariable(this, options);
+    if (expression) {
+      return expression.getDependency(options);
+    }
+    return [];
   }
 }
 
@@ -83,11 +101,11 @@ export class Call extends ExpressionWithExpression {
       .join(",")})`;
   }
 
-  getDependency() {
+  getDependency(options: toStringOptions) {
     const argumentsDependency = this.argumentsArray.reduce((d: string[], a) => {
-      return d.concat(a.getDependency());
+      return d.concat(a.getDependency(options));
     }, []);
-    return super.getDependency().concat(argumentsDependency);
+    return super.getDependency(options).concat(argumentsDependency);
   }
 }
 

@@ -65,7 +65,7 @@ export class Binary extends Expression {
     } ${this.right.toString(options)}`;
   }
 
-  getDependency() {
+  getDependency(options: toStringOptions) {
     if (this.operator === SyntaxKind.EqualsToken) {
       if (
         this.left instanceof PropertyAccess &&
@@ -75,16 +75,18 @@ export class Binary extends Expression {
         })
       ) {
         return this.left
-          .getAssignmentDependency()
-          .concat(this.right.getDependency());
+          .getAssignmentDependency(options)
+          .concat(this.right.getDependency(options));
       }
-      return this.right.getDependency();
+      return this.right.getDependency(options);
     }
-    return this.getAllDependency();
+    return this.getAllDependency(options);
   }
 
-  getAllDependency() {
-    return this.left.getDependency().concat(this.right.getDependency());
+  getAllDependency(options: toStringOptions) {
+    return this.left
+      .getDependency(options)
+      .concat(this.right.getDependency(options));
   }
 }
 
@@ -124,8 +126,8 @@ export class Prefix extends Expression {
     return `${this.operator}${this.operand.toString(options)}`;
   }
 
-  getDependency() {
-    return this.operand.getDependency();
+  getDependency(options: toStringOptions) {
+    return this.operand.getDependency(options);
   }
 }
 

@@ -13,6 +13,7 @@ import {
   Expression,
   SimpleExpression,
 } from "../../../base-generator/expressions/base";
+import { toStringOptions } from "../../../base-generator/types";
 
 function parseEventType(type: TypeExpression | string) {
   if (type instanceof FunctionTypeNode) {
@@ -141,7 +142,7 @@ export class Property extends BaseProperty {
     return `${componentContext}${this.name}`;
   }
 
-  getDependency() {
+  getDependency(options: toStringOptions) {
     return [this.name];
   }
 

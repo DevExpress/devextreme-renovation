@@ -37,9 +37,9 @@ export class TemplateExpression extends Expression {
     return `\`${this.head}${templateSpansStrings.join("")}\``;
   }
 
-  getDependency() {
+  getDependency(options: toStringOptions) {
     return this.templateSpans.reduce(
-      (d: string[], t) => d.concat(t.getDependency()),
+      (d: string[], t) => d.concat(t.getDependency(options)),
       []
     );
   }

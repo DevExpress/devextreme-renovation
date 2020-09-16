@@ -42,8 +42,18 @@ mocha.describe("base-generator: expressions", function () {
       const expression = new Expression();
 
       assert.strictEqual(expression.toString(), "");
-      assert.deepEqual(expression.getDependency(), []);
-      assert.deepEqual(expression.getAllDependency(), []);
+      assert.deepEqual(
+        expression.getDependency({
+          members: [],
+        }),
+        []
+      );
+      assert.deepEqual(
+        expression.getAllDependency({
+          members: [],
+        }),
+        []
+      );
     });
   });
 
@@ -51,7 +61,44 @@ mocha.describe("base-generator: expressions", function () {
     mocha.it("Identifier", function () {
       const identifier = generator.createIdentifier("a");
       assert.equal(identifier, "a");
-      assert.deepEqual(identifier.getDependency(), []);
+      assert.deepEqual(
+        identifier.getDependency({
+          members: [],
+        }),
+        []
+      );
+    });
+
+    mocha.it("Identifier. Get dependency from variable", function () {
+      const identifier = generator.createIdentifier("a");
+      assert.equal(identifier, "a");
+      assert.deepEqual(
+        identifier.getDependency({
+          members: [],
+          variables: {
+            a: generator.createPropertyAccess(
+              generator.createThis(),
+              generator.createIdentifier("b")
+            ),
+          },
+        }),
+        ["b"]
+      );
+
+      assert.deepEqual(
+        identifier.getDependency({
+          members: [],
+          variables: {
+            a: generator.createParen(
+              generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("b")
+              )
+            ),
+          },
+        }),
+        ["b"]
+      );
     });
 
     mocha.it("createVoid", function () {
@@ -135,7 +182,12 @@ mocha.describe("base-generator: expressions", function () {
       );
 
       assert.deepEqual(expression.toString(), "model?.onClick(e)");
-      assert.deepEqual(expression.getDependency(), []);
+      assert.deepEqual(
+        expression.getDependency({
+          members: [],
+        }),
+        []
+      );
     });
 
     mocha.it(
@@ -153,7 +205,12 @@ mocha.describe("base-generator: expressions", function () {
         );
 
         assert.deepEqual(expression.toString(), "model.onClick()");
-        assert.deepEqual(expression.getDependency(), []);
+        assert.deepEqual(
+          expression.getDependency({
+            members: [],
+          }),
+          []
+        );
       }
     );
 
@@ -210,7 +267,12 @@ mocha.describe("base-generator: expressions", function () {
         "throw p"
       );
 
-      assert.deepEqual(expression.getDependency(), ["p"]);
+      assert.deepEqual(
+        expression.getDependency({
+          members: [],
+        }),
+        ["p"]
+      );
     });
   });
 
@@ -339,7 +401,12 @@ mocha.describe("base-generator: expressions", function () {
           "{[p]:v}"
         );
 
-        assert.deepEqual(expression.getDependency(), ["p"]);
+        assert.deepEqual(
+          expression.getDependency({
+            members: [],
+          }),
+          ["p"]
+        );
       });
     });
 
@@ -978,7 +1045,12 @@ mocha.describe("base-generator: expressions", function () {
             `)
       );
 
-      assert.deepEqual(expression.getDependency(), ["expr", "name"]);
+      assert.deepEqual(
+        expression.getDependency({
+          members: [],
+        }),
+        ["expr", "name"]
+      );
     });
   });
 
@@ -1031,10 +1103,19 @@ mocha.describe("base-generator: expressions", function () {
       );
 
       assert.equal(expression.toString(), "this.field");
-      assert.deepEqual(expression.getDependency(), ["field"]);
       assert.deepEqual(
-        expression.getAssignmentDependency(),
-        expression.getDependency()
+        expression.getDependency({
+          members: [],
+        }),
+        ["field"]
+      );
+      assert.deepEqual(
+        expression.getAssignmentDependency({
+          members: [],
+        }),
+        expression.getDependency({
+          members: [],
+        })
       );
     });
 
@@ -1068,7 +1149,12 @@ mocha.describe("base-generator: expressions", function () {
       );
       assert.equal(expression.toString(), "this.field[10]");
 
-      assert.deepEqual(expression.getDependency(), ["field"]);
+      assert.deepEqual(
+        expression.getDependency({
+          members: [],
+        }),
+        ["field"]
+      );
     });
 
     mocha.it("createSpread", function () {
@@ -1146,7 +1232,12 @@ mocha.describe("base-generator: expressions", function () {
         );
         assert.equal(expression.toString(), "this.field[this.field1]");
 
-        assert.deepEqual(expression.getDependency(), ["field", "field1"]);
+        assert.deepEqual(
+          expression.getDependency({
+            members: [],
+          }),
+          ["field", "field1"]
+        );
       }
     );
 
@@ -1354,7 +1445,12 @@ mocha.describe("base-generator: expressions", function () {
           getAst(expression.toString()),
           getAst("for(i;true;i++){continue}")
         );
-        assert.deepEqual(expression.getDependency(), []);
+        assert.deepEqual(
+          expression.getDependency({
+            members: [],
+          }),
+          []
+        );
       });
 
       mocha.it("For without initializer, condition, incrementor", function () {
@@ -1377,7 +1473,12 @@ mocha.describe("base-generator: expressions", function () {
           getAst(expression.toString()),
           getAst("for(;;){this.name}")
         );
-        assert.deepEqual(expression.getDependency(), ["name"]);
+        assert.deepEqual(
+          expression.getDependency({
+            members: [],
+          }),
+          ["name"]
+        );
       });
 
       mocha.it(
@@ -1399,7 +1500,12 @@ mocha.describe("base-generator: expressions", function () {
             generator.createBlock([generator.createContinue()], true)
           );
 
-          assert.deepEqual(expression.getDependency(), ["i", "c", "ii"]);
+          assert.deepEqual(
+            expression.getDependency({
+              members: [],
+            }),
+            ["i", "c", "ii"]
+          );
         }
       );
     });
@@ -1462,7 +1568,12 @@ mocha.describe("base-generator: expressions", function () {
         getAst(actualString),
         getAst("for(let i in this.i){this.ii}")
       );
-      assert.deepEqual(expression.getDependency(), ["i", "ii"]);
+      assert.deepEqual(
+        expression.getDependency({
+          members: [],
+        }),
+        ["i", "ii"]
+      );
     });
   });
 
@@ -1914,7 +2025,12 @@ mocha.describe("base-generator: expressions", function () {
       );
 
       assert.strictEqual(expression.toString(), "v");
-      assert.deepEqual(expression.getDependency(), ["v"]);
+      assert.deepEqual(
+        expression.getDependency({
+          members: [],
+        }),
+        ["v"]
+      );
     });
 
     mocha.it(
@@ -1926,7 +2042,12 @@ mocha.describe("base-generator: expressions", function () {
           generator.createIdentifier("v")
         );
         assert.strictEqual(expression.toString(), "a:v");
-        assert.deepEqual(expression.getDependency(), ["a"]);
+        assert.deepEqual(
+          expression.getDependency({
+            members: [],
+          }),
+          ["a"]
+        );
       }
     );
 
@@ -2229,7 +2350,13 @@ mocha.describe("base-generator: expressions", function () {
 
           const members = [p1, p2, method1, method2];
 
-          assert.deepEqual(method1.getDependency(members), ["p1"]);
+          assert.deepEqual(
+            method1.getDependency({
+              members,
+              componentContext: generator.SyntaxKind.ThisKeyword,
+            }),
+            ["p1"]
+          );
         }
       );
 
@@ -2269,7 +2396,13 @@ mocha.describe("base-generator: expressions", function () {
 
         const members = [p1, method];
 
-        assert.deepEqual(method.getDependency(members), ["p1"]);
+        assert.deepEqual(
+          method.getDependency({
+            members,
+            componentContext: generator.SyntaxKind.ThisKeyword,
+          }),
+          ["p1"]
+        );
       });
     });
   });

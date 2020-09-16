@@ -6,6 +6,7 @@ import { toStringOptions, VariableExpression } from "../types";
 import { BindingPattern, BindingElement } from "./binding-pattern";
 import { compileType } from "../utils/string";
 import { getProps } from "./component";
+import syntaxKind from "../syntaxKind";
 
 function getInitializer(expression?: Expression): Expression | undefined {
   if (expression instanceof AsExpression || expression instanceof Paren) {
@@ -41,7 +42,7 @@ export class VariableDeclaration extends Expression {
         })
         .endsWith("props")
     ) {
-      const dependency = this.name.getDependency();
+      const dependency = this.name.getDependency(options);
       const members = getProps(options.members).filter(
         (m) =>
           !m.canBeDestructured && dependency.indexOf(m._name.toString()) >= 0
@@ -96,17 +97,19 @@ export class VariableDeclaration extends Expression {
     return "";
   }
 
-  getDependency() {
+  getDependency(options: toStringOptions) {
     if (this.initializer && typeof this.initializer !== "string") {
-      const initializerDependency = this.initializer.getDependency();
+      const initializerDependency = this.initializer.getDependency(options);
       if (
         this.name instanceof BindingPattern &&
-        this.initializer.toString().startsWith("this")
+        this.initializer
+          .toString()
+          .startsWith(options?.componentContext || syntaxKind.ThisKeyword)
       ) {
         if (this.name.hasRest()) {
           return initializerDependency;
         }
-        return this.name.getDependency();
+        return this.name.getDependency(options);
       }
       return initializerDependency;
     }
@@ -160,9 +163,9 @@ export class VariableDeclarationList extends Expression {
     return `${this.flags} ${declarations}`;
   }
 
-  getDependency() {
+  getDependency(options: toStringOptions) {
     return this.declarations.reduce(
-      (d: string[], p) => d.concat(p.getDependency()),
+      (d: string[], p) => d.concat(p.getDependency(options)),
       []
     );
   }
@@ -196,8 +199,8 @@ export class VariableStatement extends Expression {
       : "";
   }
 
-  getDependency() {
-    return this.declarationList.getDependency();
+  getDependency(options: toStringOptions) {
+    return this.declarationList.getDependency(options);
   }
 
   getVariableExpressions() {

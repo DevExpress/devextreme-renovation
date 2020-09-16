@@ -20,6 +20,7 @@ import { toStringOptions } from "../angular-generator/types";
 import { JsxExpression } from "../angular-generator/expressions/jsx/jsx-expression";
 import { AngularDirective } from "../angular-generator/expressions/jsx/angular-directive";
 import { SetAccessor } from "../angular-generator/expressions/class-members/set-accessor";
+import { Expression } from "../base-generator/expressions/base";
 
 const { createComponent, createComponentDecorator, createDecorator } = factory(
   generator
@@ -4583,6 +4584,216 @@ mocha.describe("Angular generator", function () {
         );
 
         assert.strictEqual(decorator.toString(), `@Component({})`);
+      });
+
+      mocha.describe("CompileSpreadAttributes", function () {
+        const createView = (spreadExpression: Expression) =>
+          generator.createVariableDeclaration(
+            generator.createIdentifier("view"),
+            undefined,
+            generator.createArrowFunction(
+              [],
+              [],
+              [
+                generator.createParameter(
+                  [],
+                  [],
+                  undefined,
+                  generator.createIdentifier("viewModel"),
+                  undefined,
+                  generator.createTypeReferenceNode(
+                    generator.createIdentifier("BaseWidget")
+                  )
+                ),
+              ],
+              undefined,
+              generator.SyntaxKind.EqualsGreaterThanToken,
+              generator.createJsxSelfClosingElement(
+                generator.createIdentifier("div"),
+                undefined,
+                [
+                  generator.createJsxAttribute(
+                    generator.createIdentifier("ref"),
+                    generator.createIdentifier("ref")
+                  ),
+                  generator.createJsxSpreadAttribute(spreadExpression),
+                ]
+              )
+            )
+          );
+
+        mocha.it("...prop", function () {
+          const prop = generator.createProperty(
+            [createDecorator(Decorators.OneWay)],
+            [],
+            generator.createIdentifier("attr")
+          );
+          createView(
+            generator.createPropertyAccess(
+              generator.createPropertyAccess(
+                generator.createIdentifier("viewModel"),
+                generator.createIdentifier("props")
+              ),
+              generator.createIdentifier("attr")
+            )
+          );
+          const component = createComponent([prop], {
+            view: generator.createIdentifier("view"),
+          }) as AngularComponent;
+
+          const ngOnChanges: string[] = [];
+          component.compileSpreadAttributes(ngOnChanges, [], [], []);
+
+          assert.strictEqual(
+            getResult(ngOnChanges.join(";\n")),
+            getResult(`
+              if(["attr"].some(d=>changes[d] && !changes[d].firstChange)){
+                    this.scheduledApplyAttributes = true;
+              }`)
+          );
+        });
+
+        mocha.it("...getter", function () {
+          const prop = generator.createProperty(
+            [createDecorator(Decorators.OneWay)],
+            [],
+            generator.createIdentifier("prop")
+          );
+          const getter = generator.createGetAccessor(
+            [],
+            [],
+            generator.createIdentifier("attr"),
+            [],
+            undefined,
+            generator.createBlock(
+              [
+                generator.createReturn(
+                  generator.createPropertyAccess(
+                    generator.createPropertyAccess(
+                      generator.createThis(),
+                      generator.createIdentifier("props")
+                    ),
+                    generator.createIdentifier("prop")
+                  )
+                ),
+              ],
+              false
+            )
+          );
+          createView(
+            generator.createPropertyAccess(
+              generator.createIdentifier("viewModel"),
+              generator.createIdentifier("attr")
+            )
+          );
+          const component = createComponent([prop, getter], {
+            view: generator.createIdentifier("view"),
+          }) as AngularComponent;
+
+          const ngOnChanges: string[] = [];
+          component.compileSpreadAttributes(ngOnChanges, [], [], []);
+
+          assert.strictEqual(
+            getResult(ngOnChanges.join(";\n")),
+            getResult(`
+              if(["prop"].some(d=>changes[d] && !changes[d].firstChange)){
+                    this.scheduledApplyAttributes = true;
+              }`)
+          );
+        });
+
+        mocha.it("...method", function () {
+          const prop = generator.createProperty(
+            [createDecorator(Decorators.OneWay)],
+            [],
+            generator.createIdentifier("prop")
+          );
+          const method = generator.createMethod(
+            [],
+            [],
+            undefined,
+            generator.createIdentifier("attr"),
+            undefined,
+            undefined,
+            [],
+            undefined,
+            generator.createBlock(
+              [
+                generator.createVariableDeclaration(
+                  generator.createObjectBindingPattern([
+                    generator.createBindingElement(
+                      undefined,
+                      undefined,
+                      generator.createIdentifier("prop")
+                    ),
+                  ]),
+                  undefined,
+                  generator.createThis()
+                ),
+              ],
+              false
+            )
+          );
+          createView(
+            generator.createCall(
+              generator.createPropertyAccess(
+                generator.createIdentifier("viewModel"),
+                generator.createIdentifier("attr")
+              ),
+              undefined,
+              []
+            )
+          );
+          const component = createComponent([prop, method], {
+            view: generator.createIdentifier("view"),
+          }) as AngularComponent;
+
+          const ngOnChanges: string[] = [];
+          component.compileSpreadAttributes(ngOnChanges, [], [], []);
+
+          assert.strictEqual(
+            getResult(ngOnChanges.join(";\n")),
+            getResult(`
+              if(["prop"].some(d=>changes[d] && !changes[d].firstChange)){
+                    this.scheduledApplyAttributes = true;
+              }`)
+          );
+        });
+
+        mocha.it("...internalState", function () {
+          const state = generator.createProperty(
+            [createDecorator(Decorators.InternalState)],
+            [],
+            generator.createIdentifier("attr")
+          );
+          createView(
+            generator.createPropertyAccess(
+              generator.createIdentifier("viewModel"),
+              generator.createIdentifier("attr")
+            )
+          );
+          const component = createComponent([state], {
+            view: generator.createIdentifier("view"),
+          }) as AngularComponent;
+
+          const ngOnChanges: string[] = [];
+          component.compileSpreadAttributes(ngOnChanges, [], [], []);
+
+          const internalStateSetter = component.members.find(
+            (m) => m.name.toString() === `_${state.name}`
+          ) as SetAccessor;
+
+          assert.strictEqual(ngOnChanges.join(";\n"), "");
+
+          assert.strictEqual(
+            getResult(internalStateSetter.body.toString()),
+            getResult(`{
+              this.attr=attr;
+              this._detectChanges();
+              this.scheduledApplyAttributes = this;
+            }`)
+          );
+        });
       });
     });
   });

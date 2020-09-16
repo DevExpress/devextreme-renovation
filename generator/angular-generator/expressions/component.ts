@@ -37,6 +37,7 @@ import {
   capitalizeFirstLetter,
 } from "../../base-generator/utils/string";
 import { If } from "../../base-generator/expressions/conditions";
+import { PropertyAccess } from "../../base-generator/expressions/property-access";
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = "CUSTOM_VALUE_ACCESSOR_PROVIDER";
 
@@ -540,7 +541,10 @@ export class AngularComponent extends Component {
       ];
 
       getters.map((g) => {
-        const allDeps = g.getDependency(this.members);
+        const allDeps = g.getDependency({
+          members: this.members,
+          componentContext: SyntaxKind.ThisKeyword,
+        });
         const [propsDependency, internalStateDependency] = separateDependency(
           allDeps,
           this.internalState
@@ -605,7 +609,10 @@ export class AngularComponent extends Component {
 
       const subscribe = (e: Method) => `this.${e.getter()}()`;
       effects.map((e, i) => {
-        const allDeps = e.getDependency(this.members);
+        const allDeps = e.getDependency({
+          members: this.members,
+          componentContext: SyntaxKind.ThisKeyword,
+        });
         const [propsDependency, internalStateDependency] = separateDependency(
           allDeps,
           this.internalState
@@ -755,7 +762,9 @@ export class AngularComponent extends Component {
 
   compileSpreadAttributes(
     ngOnChangesStatements: string[],
-    coreImports: string[]
+    coreImports: string[],
+    ngAfterViewInitStatements: string[],
+    ngAfterViewCheckedStatements: string[]
   ): string {
     const viewFunction = this.decorator.getViewFunction();
     if (viewFunction) {
@@ -767,11 +776,36 @@ export class AngularComponent extends Component {
         newComponentContext: this.viewModel ? "_viewModel" : "",
       };
       const expression = getTemplate(viewFunction, options);
+      const allDependency: string[] = [];
       if (isElement(expression)) {
-        options.newComponentContext = "this";
+        options.newComponentContext = SyntaxKind.ThisKeyword;
         const members = [];
         const statements = expression.getSpreadAttributes().map((o, i) => {
           const expressionString = o.expression.toString(options);
+          const dependency = (o.expression as PropertyAccess).getDependency(
+            options
+          );
+
+          const dependencyMembers = this.members.filter((m) =>
+            dependency.some((d) => d === m._name.toString())
+          );
+
+          allDependency.push.apply(
+            allDependency,
+            dependencyMembers
+              .filter((m) => m instanceof Method)
+              .reduce(
+                (d: string[], m) =>
+                  d.concat(
+                    m.getDependency({
+                      ...options,
+                      componentContext: SyntaxKind.ThisKeyword,
+                    })
+                  ),
+                dependency
+              )
+          );
+
           const refString =
             o.refExpression instanceof SimpleExpression
               ? `this.${o.refExpression.toString()}?.nativeElement`
@@ -797,11 +831,56 @@ export class AngularComponent extends Component {
 
         if (statements.length) {
           const methodName = "__applyAttributes__";
-          ngOnChangesStatements.push(`this.${methodName}()`);
+          const scheduledApplyAttributes = "scheduledApplyAttributes";
+          ngAfterViewCheckedStatements.push(`if(this.${scheduledApplyAttributes}){
+            this.${methodName}();
+            this.${scheduledApplyAttributes} = false;
+          }`);
 
-          members.push(`${methodName}(){
-                        ${statements.join("\n")}
-                    }`);
+          const [propsDependency, internalStateDependency] = separateDependency(
+            allDependency.filter(
+              (d) =>
+                !this.members.some(
+                  (m) => m._name.toString() === d && m instanceof Method
+                )
+            ),
+            this.members.filter((m) => m.isInternalState) as Property[]
+          );
+
+          internalStateDependency.forEach((name) => {
+            const setter = this.members.find(
+              (p) => p.name === `_${name}`
+            ) as SetAccessor;
+            if (setter) {
+              const expression = `this.${scheduledApplyAttributes} = this`;
+              if (
+                !setter.body.statements.some(
+                  (expr) => expr.toString() === expression
+                )
+              ) {
+                setter.body.statements.push(new SimpleExpression(expression));
+              }
+            }
+          });
+
+          if (propsDependency.length) {
+            ngOnChangesStatements.push(`if([${propsDependency
+              .map((d) => `"${d}"`)
+              .join(",")}].some(d=>
+              ${ngOnChangesParameters[0]}[d] && !${
+              ngOnChangesParameters[0]
+            }[d].firstChange)){
+                this.${scheduledApplyAttributes} = true;
+            }`);
+          }
+
+          ngAfterViewInitStatements.push(`this.${methodName}()`);
+
+          members.push(`
+            ${scheduledApplyAttributes} = false;
+            ${methodName}(){
+              ${statements.join("\n")}
+            }`);
 
           return members.join(";\n");
         }
@@ -996,7 +1075,13 @@ export class AngularComponent extends Component {
         constructorStatements.push(
           `this._${e.name}=(${parameters.join(",")}) => {
             this.${e.name}.emit(${parameters.map((p) => p.name).join(",")});
-            this._detectChanges();
+            ${
+              this.members.some(
+                (m) => m.isState && e.name === `${m.name}Change`
+              )
+                ? "this._detectChanges();"
+                : ""
+            }
           }`
         );
         return `_${e.name}${compileType("any")}`;
@@ -1251,7 +1336,9 @@ export class AngularComponent extends Component {
     );
     const spreadAttributes = this.compileSpreadAttributes(
       ngOnChangesStatements,
-      coreImports
+      coreImports,
+      ngAfterViewInitStatements,
+      ngAfterViewCheckedStatements
     );
 
     this.members

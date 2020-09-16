@@ -1,9 +1,13 @@
-import { Property, getLocalStateName } from "./property";
-import { Method as BaseMethod } from "../../../base-generator/expressions/class-members";
+import { getLocalStateName } from "./property";
+import {
+  Method as BaseMethod,
+  BaseClassMember,
+} from "../../../base-generator/expressions/class-members";
+import { toStringOptions } from "../../../base-generator/types";
 
 export function calculateMethodDependency(
   dependency: string[],
-  members: Array<Property | Method>
+  members: BaseClassMember[]
 ): string[] {
   const twoWayProps = members.filter((m) => m.isState);
   if (twoWayProps.length && dependency.indexOf("props") !== -1) {
@@ -23,7 +27,10 @@ export class Method extends BaseMethod {
     return dependencies.filter((d) => d !== "props");
   }
 
-  getDependency(members: Array<Property | Method>) {
-    return calculateMethodDependency(super.getDependency(members), members);
+  getDependency(options: toStringOptions) {
+    return calculateMethodDependency(
+      super.getDependency(options),
+      options.members
+    );
   }
 }

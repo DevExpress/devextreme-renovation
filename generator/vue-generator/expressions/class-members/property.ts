@@ -208,10 +208,10 @@ export class Property extends BaseProperty {
     return super.canBeDestructured;
   }
 
-  getDependency() {
+  getDependency(options: toStringOptions) {
     if (this.isState) {
       return [`${this.name}_state`];
     }
-    return super.getDependency();
+    return super.getDependency(options);
   }
 }

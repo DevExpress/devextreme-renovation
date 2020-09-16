@@ -40,7 +40,6 @@ export default class Child extends ChildInput {
     super();
     this._onClick = (a: number) => {
       this.onClick.emit(a);
-      this._detectChanges();
     };
   }
   @ViewChild("slotChildren") set slotChildren(

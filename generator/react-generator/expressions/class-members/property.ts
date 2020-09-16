@@ -106,7 +106,7 @@ export class Property extends BaseProperty {
     throw `Can't parse property: ${this._name}`;
   }
 
-  getDependency() {
+  getDependency(options: toStringOptions) {
     if (this.isInternalState) {
       return [getLocalStateName(this.name)];
     } else if (
