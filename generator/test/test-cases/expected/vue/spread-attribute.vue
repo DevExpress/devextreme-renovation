@@ -1,10 +1,17 @@
 <template>
   <div ref="host" v-bind="__attr1"
-    ><input v-bind="__attr2" /><input ref="i1" v-bind="__attr2"
+    ><input v-bind="__attr2" /><input ref="i1" v-bind="__attr2" /><input
+      v-bind="prop"
   /></div>
 </template>
 <script>
-export const WidgetInput = {};
+export const WidgetInput = {
+  prop: {
+    default() {
+      return {};
+    },
+  },
+};
 export const DxWidget = {
   props: WidgetInput,
   computed: {
@@ -18,7 +25,7 @@ export const DxWidget = {
       return {};
     },
     props() {
-      return {};
+      return { prop: this.prop };
     },
   },
 };

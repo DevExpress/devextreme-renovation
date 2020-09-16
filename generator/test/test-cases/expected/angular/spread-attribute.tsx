@@ -1,4 +1,7 @@
-export class WidgetInput {}
+import { Input } from "@angular/core";
+export class WidgetInput {
+  @Input() prop: any = {};
+}
 
 import {
   Component,
@@ -14,7 +17,9 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div #host><input #_auto_ref_0 /><input #i1 /></div>`,
+  template: `<div #host
+    ><input #_auto_ref_0 /><input #i1 /><input #_auto_ref_1
+  /></div>`,
 })
 export default class Widget extends WidgetInput {
   @ViewChild("host", { static: false }) host?: ElementRef<HTMLDivElement>;
@@ -35,6 +40,9 @@ export default class Widget extends WidgetInput {
     });
   }
   @ViewChild("_auto_ref_0", { static: false }) _auto_ref_0?: ElementRef<
+    HTMLDivElement
+  >;
+  @ViewChild("_auto_ref_1", { static: false }) _auto_ref_1?: ElementRef<
     HTMLDivElement
   >;
 
@@ -63,10 +71,23 @@ export default class Widget extends WidgetInput {
         _ref_2.setAttribute(key, _attr_2[key]);
       }
     }
+
+    const _attr_3: { [name: string]: string } = this.prop || {};
+    const _ref_3 = this._auto_ref_1?.nativeElement;
+    if (_ref_3) {
+      for (let key in _attr_3) {
+        _ref_3.setAttribute(key, _attr_3[key]);
+      }
+    }
   }
 
   ngAfterViewInit() {
     this.__applyAttributes__();
+  }
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (["prop"].some((d) => changes[d] && !changes[d].firstChange)) {
+      this.scheduledApplyAttributes = true;
+    }
   }
 
   ngAfterViewChecked() {
