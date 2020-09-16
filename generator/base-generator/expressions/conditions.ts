@@ -29,11 +29,13 @@ export class If extends ExpressionWithExpression {
         ${elseStatement}`;
   }
 
-  getDependency() {
+  getDependency(options?: toStringOptions) {
     return super
-      .getDependency()
-      .concat(this.thenStatement.getDependency())
-      .concat(this.elseStatement ? this.elseStatement.getDependency() : []);
+      .getDependency(options)
+      .concat(this.thenStatement.getDependency(options))
+      .concat(
+        this.elseStatement ? this.elseStatement.getDependency(options) : []
+      );
   }
 
   isJsx() {
@@ -71,12 +73,12 @@ export class CaseClause extends ExpressionWithOptionalExpression {
         `;
   }
 
-  getDependency() {
+  getDependency(options?: toStringOptions) {
     return this.statements
       .reduce((d: string[], s) => {
-        return d.concat(s.getDependency());
+        return d.concat(s.getDependency(options));
       }, [])
-      .concat(super.getDependency());
+      .concat(super.getDependency(options));
   }
 }
 

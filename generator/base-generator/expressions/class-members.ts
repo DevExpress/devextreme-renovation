@@ -135,7 +135,7 @@ export class BaseClassMember extends Expression {
     return this.name === this._name.toString();
   }
 
-  getDependency() {
+  getDependency(options?: toStringOptions) {
     return [this.name];
   }
 
@@ -196,13 +196,19 @@ export class Method extends BaseClassMember {
     return dependencies;
   }
 
-  getDependency(members: Array<Property | Method> = []) {
+  getDependency(options: toStringOptions) {
+    const members = options.members;
     const run = this.decorators
       .find((d) => d.name === Decorators.Effect)
       ?.getParameter("run")
       ?.valueOf();
     const depsReducer = (d: string[], p: Method | Property | undefined) =>
-      d.concat(p!.getDependency(members.filter((p) => p !== this)));
+      d.concat(
+        p!.getDependency({
+          ...options,
+          members: members.filter((p) => p !== this),
+        })
+      );
 
     let result: string[] = [];
     if (run === "always") {
@@ -212,7 +218,7 @@ export class Method extends BaseClassMember {
           .reduce(depsReducer, ["props"])
       );
     } else if (run !== "once") {
-      const dependency = this.body.getDependency();
+      const dependency = this.body.getDependency(options);
       const additionalDependency = [];
 
       if (dependency.find((d) => d === "props")) {

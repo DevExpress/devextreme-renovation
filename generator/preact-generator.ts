@@ -394,11 +394,6 @@ export class Property extends ReactProperty {
     );
   }
 
-  getDependency() {
-    const baseValue = super.getDependency();
-    return baseValue;
-  }
-
   getter(componentContext?: string) {
     return super.getter(componentContext);
   }

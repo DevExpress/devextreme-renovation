@@ -54,6 +54,38 @@ mocha.describe("base-generator: expressions", function () {
       assert.deepEqual(identifier.getDependency(), []);
     });
 
+    mocha.it("Identifier. Get dependency from variable", function () {
+      const identifier = generator.createIdentifier("a");
+      assert.equal(identifier, "a");
+      assert.deepEqual(
+        identifier.getDependency({
+          members: [],
+          variables: {
+            a: generator.createPropertyAccess(
+              generator.createThis(),
+              generator.createIdentifier("b")
+            ),
+          },
+        }),
+        ["b"]
+      );
+
+      assert.deepEqual(
+        identifier.getDependency({
+          members: [],
+          variables: {
+            a: generator.createParen(
+              generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("b")
+              )
+            ),
+          },
+        }),
+        ["b"]
+      );
+    });
+
     mocha.it("createVoid", function () {
       const expression = generator.createVoid(
         generator.createNumericLiteral("0")
@@ -2229,7 +2261,13 @@ mocha.describe("base-generator: expressions", function () {
 
           const members = [p1, p2, method1, method2];
 
-          assert.deepEqual(method1.getDependency(members), ["p1"]);
+          assert.deepEqual(
+            method1.getDependency({
+              members,
+              componentContext: generator.SyntaxKind.ThisKeyword,
+            }),
+            ["p1"]
+          );
         }
       );
 
@@ -2269,7 +2307,13 @@ mocha.describe("base-generator: expressions", function () {
 
         const members = [p1, method];
 
-        assert.deepEqual(method.getDependency(members), ["p1"]);
+        assert.deepEqual(
+          method.getDependency({
+            members,
+            componentContext: generator.SyntaxKind.ThisKeyword,
+          }),
+          ["p1"]
+        );
       });
     });
   });

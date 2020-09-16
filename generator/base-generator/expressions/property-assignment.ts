@@ -23,10 +23,12 @@ export class PropertyAssignment extends Expression {
     return `${key}:${this.value.toString(options)}`;
   }
 
-  getDependency() {
+  getDependency(options?: toStringOptions) {
     const keyDependency =
-      this.key instanceof ComputedPropertyName ? this.key.getDependency() : [];
-    return keyDependency.concat(this.value.getDependency());
+      this.key instanceof ComputedPropertyName
+        ? this.key.getDependency(options)
+        : [];
+    return keyDependency.concat(this.value.getDependency(options));
   }
 }
 

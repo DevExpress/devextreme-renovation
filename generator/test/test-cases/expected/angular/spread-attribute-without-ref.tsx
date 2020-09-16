@@ -32,6 +32,8 @@ export default class Widget extends WidgetInput {
   @ViewChild("_auto_ref_0", { static: false }) _auto_ref_0?: ElementRef<
     HTMLDivElement
   >;
+
+  scheduledApplyAttributes = false;
   __applyAttributes__() {
     const _attr_0: { [name: string]: string } = this.__attr1 || {};
     const _ref_0 = this._auto_ref_0?.nativeElement;
@@ -42,8 +44,15 @@ export default class Widget extends WidgetInput {
     }
   }
 
-  ngOnChanges(changes: { [name: string]: any }) {
+  ngAfterViewInit() {
     this.__applyAttributes__();
+  }
+
+  ngAfterViewChecked() {
+    if (this.scheduledApplyAttributes) {
+      this.__applyAttributes__();
+      this.scheduledApplyAttributes = false;
+    }
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {

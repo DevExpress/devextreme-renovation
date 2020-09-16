@@ -1,6 +1,6 @@
 import { Expression, SimpleExpression } from "./base";
 import { Identifier } from "./common";
-import { VariableExpression } from "../types";
+import { VariableExpression, toStringOptions } from "../types";
 import { ElementAccess, PropertyAccess } from "./property-access";
 
 export class BindingElement extends Expression {
@@ -29,7 +29,7 @@ export class BindingElement extends Expression {
     return `${key}${this.dotDotDotToken}${nameString}`;
   }
 
-  getDependency() {
+  getDependency(options?: toStringOptions) {
     if (!this.propertyName) {
       return [this.name.toString()];
     }
@@ -84,10 +84,10 @@ export class BindingPattern extends Expression {
     this.elements.push(element);
   }
 
-  getDependency() {
+  getDependency(options?: toStringOptions) {
     return this.elements
       .concat(this.removedElements)
-      .reduce((d: string[], e) => d.concat(e.getDependency()), []);
+      .reduce((d: string[], e) => d.concat(e.getDependency(options)), []);
   }
 
   hasRest() {

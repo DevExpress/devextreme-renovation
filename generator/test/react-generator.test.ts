@@ -2313,7 +2313,10 @@ mocha.describe(
       );
 
       assert.deepEqual(
-        method.getDependency([this.internalState, this.state, this.prop]),
+        method.getDependency({
+          members: [this.internalState, this.state, this.prop],
+          componentContext: generator.SyntaxKind.ThisKeyword,
+        }),
         ["props.p1", "__state_i1", "props.s1", "__state_s1"]
       );
     });
@@ -2336,9 +2339,13 @@ mocha.describe(
           )
         );
 
-        assert.deepEqual(method.getDependency([this.state, this.prop]), [
-          "props.p1",
-        ]);
+        assert.deepEqual(
+          method.getDependency({
+            members: [this.state, this.prop],
+            componentContext: generator.SyntaxKind.ThisKeyword,
+          }),
+          ["props.p1"]
+        );
       }
     );
 
@@ -2368,7 +2375,10 @@ mocha.describe(
         );
 
         assert.deepEqual(
-          method.getDependency([this.internalState, this.state, this.prop]),
+          method.getDependency({
+            members: [this.internalState, this.state, this.prop],
+            componentContext: generator.SyntaxKind.ThisKeyword,
+          }),
           ["__state_s1", "props"]
         );
       }

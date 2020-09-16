@@ -157,8 +157,8 @@ export class BaseFunction extends Expression {
     this.context = context;
   }
 
-  getDependency() {
-    return this.body.getDependency();
+  getDependency(options?: toStringOptions) {
+    return this.body.getDependency(options);
   }
 
   getToStringOptions(options?: toStringOptions) {

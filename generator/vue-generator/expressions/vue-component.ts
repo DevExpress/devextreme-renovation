@@ -476,7 +476,10 @@ export class VueComponent extends Component {
     const startMethodsLength = methods.length;
 
     this.effects.forEach((effect, index) => {
-      const dependency = effect.getDependency(this.members);
+      const dependency = effect.getDependency({
+        members: this.members,
+        componentContext: SyntaxKind.ThisKeyword,
+      });
 
       const scheduleEffectName = `__schedule_${effect._name}`;
 

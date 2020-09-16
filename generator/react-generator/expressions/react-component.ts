@@ -447,7 +447,10 @@ export class ReactComponent extends Component {
           (e) =>
             `useEffect(${e.arrowDeclaration(
               this.getToStringOptions()
-            )}, [${e.getDependency(this.members)}])`
+            )}, [${e.getDependency({
+              members: this.members,
+              componentContext: SyntaxKind.ThisKeyword,
+            })}])`
         )
         .join(";\n")
     );
@@ -820,9 +823,11 @@ export class ReactComponent extends Component {
                                                 m.name
                                               }=useCallback(${m.declaration(
                                                 this.getToStringOptions()
-                                              )}, [${m.getDependency(
-                                                this.members
-                                              )}]);`;
+                                              )}, [${m.getDependency({
+                                                members: this.members,
+                                                componentContext:
+                                                  SyntaxKind.ThisKeyword,
+                                              })}]);`;
                                             })
                                             .join("\n")}
                   ${this.compileUseEffect()}
