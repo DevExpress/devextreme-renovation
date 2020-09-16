@@ -168,6 +168,40 @@
 
    In new components we support only first example.
 
+1. Angular templates API is changed
+
+   New Angular components use native template syntax with ng-template directive
+
+   old syntax
+
+   ```html
+   <dx-button *ngFor="let item of items" text="Click Me!" template="template1">
+     <div *dxTemplate="let data of 'template1'">
+       <div style="border: 1px solid blue;">
+         {{ data.text + "!" }}
+       </div>
+     </div>
+   </dx-button>
+   -->
+   ```
+
+   new syntax
+
+   ```html
+   <dx-button
+     *ngFor="let item of items"
+     text="Click Me!"
+     [template]="template1"
+   >
+     <ng-template #template1 let-data="data">
+       <div style="border: 1px solid blue;">
+         {{ data.text + "!" }}
+       </div>
+     </ng-template>
+   </dx-button>
+   -->
+   ```
+
 ### Other notes
 
 #### Button Breaking Changes
