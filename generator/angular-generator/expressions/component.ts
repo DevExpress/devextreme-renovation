@@ -1075,7 +1075,13 @@ export class AngularComponent extends Component {
         constructorStatements.push(
           `this._${e.name}=(${parameters.join(",")}) => {
             this.${e.name}.emit(${parameters.map((p) => p.name).join(",")});
-            this._detectChanges();
+            ${
+              this.members.some(
+                (m) => m.isState && e.name === `${m.name}Change`
+              )
+                ? "this._detectChanges();"
+                : ""
+            }
           }`
         );
         return `_${e.name}${compileType("any")}`;

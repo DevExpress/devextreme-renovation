@@ -40,7 +40,6 @@ export default class Widget extends WidgetInput {
     super();
     this._onClick = (a: number) => {
       this.onClick.emit(a);
-      this._detectChanges();
     };
   }
 }

@@ -64,7 +64,6 @@ export default class InnerWidget extends InnerWidgetProps
     super();
     this._onSelect = (e: any) => {
       this.onSelect.emit(e);
-      this._detectChanges();
     };
     this._valueChange = (value: number) => {
       this.valueChange.emit(value);
