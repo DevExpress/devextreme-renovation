@@ -31,23 +31,14 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-function getTemplate(
-  props: any,
-  template: string,
-  render: string,
-  component: string
-) {
-  const getRender = (render: any) => (props: any) =>
-    "data" in props ? render(props.data, props.index) : render(props);
-  const PropTemplate = props[template];
-  const PropComponent = props[component];
-
-  return (
-    (PropTemplate && ((props: any) => <PropTemplate {...props} />)) ||
-    (props[render] && getRender(props[render])) ||
-    (PropComponent && ((props: any) => <PropComponent {...props} />))
-  );
-}
+const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
+  TemplateProp ||
+  (RenderProp &&
+    ((props: any) =>
+      RenderProp(
+        ...("data" in props ? [props.data, props.index] : [props])
+      ))) ||
+  (ComponentProp && ((props: any) => <ComponentProp {...props} />));
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
   const __restAttributes = useCallback(
@@ -77,23 +68,20 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     props: {
       ...props,
       headerTemplate: getTemplate(
-        props,
-        "headerTemplate",
-        "headerRender",
-        "headerComponent"
+        props.headerTemplate,
+        props.headerRender,
+        props.headerComponent
       ),
-      template: getTemplate(props, "template", "render", "component"),
+      template: getTemplate(props.template, props.render, props.component),
       contentTemplate: getTemplate(
-        props,
-        "contentTemplate",
-        "contentRender",
-        "contentComponent"
+        props.contentTemplate,
+        props.contentRender,
+        props.contentComponent
       ),
       footerTemplate: getTemplate(
-        props,
-        "footerTemplate",
-        "footerRender",
-        "footerComponent"
+        props.footerTemplate,
+        props.footerRender,
+        props.footerComponent
       ),
     },
     restAttributes: __restAttributes(),

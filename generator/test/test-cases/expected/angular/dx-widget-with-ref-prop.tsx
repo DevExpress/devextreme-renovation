@@ -39,3 +39,4 @@ export default class WidgetWithRefProp extends WidgetWithRefPropInput {
   exports: [WidgetWithRefProp],
 })
 export class DxWidgetWithRefPropModule {}
+export { WidgetWithRefProp as DxWidgetWithRefPropComponent };

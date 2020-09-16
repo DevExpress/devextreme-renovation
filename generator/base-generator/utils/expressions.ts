@@ -37,6 +37,17 @@ export function getMember(
   }
 }
 
+export function getTemplateProperty(
+  expression: Expression,
+  options?: toStringOptions
+) {
+  const tagName = getExpression(expression, options).toString(options);
+  return options?.members.find(
+    (s) =>
+      s.isTemplate && tagName === `${s.getter(options?.newComponentContext)}`
+  );
+}
+
 export function findComponentInput(
   type: TypeReferenceNode,
   context: GeneratorContext

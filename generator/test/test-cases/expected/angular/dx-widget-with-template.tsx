@@ -44,3 +44,4 @@ export default class WidgetWithTemplate extends WidgetWithTemplateInput {
   exports: [WidgetWithTemplate],
 })
 export class DxWidgetWithTemplateModule {}
+export { WidgetWithTemplate as DxWidgetWithTemplateComponent };

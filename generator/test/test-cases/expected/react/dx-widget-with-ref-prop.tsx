@@ -1,10 +1,10 @@
 export declare type WidgetWithRefPropInputType = {
-  parentRef?: RefObject<any>;
-  nullableRef?: RefObject<any>;
+  parentRef?: MutableRefObject<any>;
+  nullableRef?: MutableRefObject<any>;
 };
 export const WidgetWithRefPropInput: WidgetWithRefPropInputType = {};
 import * as React from "react";
-import { useCallback, RefObject, HTMLAttributes } from "react";
+import { useCallback, MutableRefObject, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,

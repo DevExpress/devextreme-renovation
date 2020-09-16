@@ -70,6 +70,8 @@ function getSubscriptions(methods: Method[]) {
 }
 
 export class ReactComponent extends Component {
+  REF_OBJECT_TYPE = "MutableRefObject";
+
   processMembers(members: Array<BaseProperty | Method>) {
     members.forEach((m) => {
       const forwardRefIndex = m.decorators.findIndex(
@@ -305,7 +307,7 @@ export class ReactComponent extends Component {
     }
 
     if (this.members.some((m) => m.isRefProp || m.isForwardRefProp)) {
-      core.push("RefObject");
+      core.push(this.REF_OBJECT_TYPE);
     }
 
     if (this.members.filter((a) => a.isApiMethod).length) {
@@ -532,10 +534,10 @@ export class ReactComponent extends Component {
       .filter((p) => p.isTemplate)
       .map(
         (t) =>
-          `${t.name}: getTemplate(props, "${t.name}", "${getTemplatePropName(
+          `${t.name}: getTemplate(props.${t.name}, props.${getTemplatePropName(
             t.name,
             "render"
-          )}", "${getTemplatePropName(t.name, "component")}")`
+          )}, props.${getTemplatePropName(t.name, "component")})`
       );
 
     const nestedProps = this.members
@@ -765,15 +767,15 @@ export class ReactComponent extends Component {
   toString() {
     const getTemplateFunc = this.props.some((p) => p.isTemplate)
       ? `
-          function getTemplate(props: any, template: string, render: string, component: string) {
-              const getRender = (render: any) => (props: any) => (("data" in props) ? render(props.data, props.index) : render(props));
-              const PropTemplate = props[template];
-              const PropComponent = props[component];
-
-              return (PropTemplate && ((props: any) => <PropTemplate {...props} />)) ||
-                          (props[render] && getRender(props[render])) ||
-                          (PropComponent && ((props: any) => <PropComponent {...props} />));
-          }
+          const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) => (
+              TemplateProp ||
+              (RenderProp &&
+                ((props: any) =>
+                  RenderProp(
+                    ...("data" in props ? [props.data, props.index] : [props])
+                  ))) ||
+              (ComponentProp && ((props: any) => <ComponentProp {...props} />))
+          );
           `
       : "";
 
@@ -833,7 +835,6 @@ export class ReactComponent extends Component {
                   ${this.compileUseEffect()}
                   ${this.compileUseImperativeHandle()}
                   return ${this.compileViewCall()}
-                  
               ${
                 this.members.filter((m) => m.isApiMethod).length === 0
                   ? `}`

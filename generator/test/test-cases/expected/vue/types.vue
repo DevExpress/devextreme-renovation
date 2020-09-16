@@ -2,6 +2,13 @@
   <div></div>
 </template>
 <script>
+import {
+  EnumType,
+  Union,
+  ObjType,
+  StringArr,
+  StringType,
+} from "./types-external";
 export const WidgetProps = {
   str: {
     type: String,
@@ -55,6 +62,31 @@ export const WidgetProps = {
       return Symbol("x");
     },
   },
+  externalEnum: {
+    default() {
+      return "data";
+    },
+  },
+  externalUnion: {
+    default() {
+      return 0;
+    },
+  },
+  externalObj: {
+    default() {
+      return { number: 0, text: "text" };
+    },
+  },
+  externalArray: {
+    default() {
+      return ["s1", "s2"];
+    },
+  },
+  externalString: {
+    default() {
+      return "someValue";
+    },
+  },
 };
 export const DxWidget = {
   props: WidgetProps,
@@ -73,6 +105,11 @@ export const DxWidget = {
         date: this.date,
         func: this.func,
         symbol: this.symbol,
+        externalEnum: this.externalEnum,
+        externalUnion: this.externalUnion,
+        externalObj: this.externalObj,
+        externalArray: this.externalArray,
+        externalString: this.externalString,
       };
     },
   },

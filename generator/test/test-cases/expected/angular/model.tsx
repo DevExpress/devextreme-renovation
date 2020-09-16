@@ -83,3 +83,4 @@ export default class ModelWidget extends ModelWidgetInput
   exports: [ModelWidget],
 })
 export class DxModelWidgetModule {}
+export { ModelWidget as DxModelWidgetComponent };

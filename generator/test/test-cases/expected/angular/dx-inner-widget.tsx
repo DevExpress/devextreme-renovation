@@ -92,3 +92,4 @@ export default class InnerWidget extends InnerWidgetProps
   exports: [InnerWidget],
 })
 export class DxInnerWidgetModule {}
+export { InnerWidget as DxInnerWidgetComponent };

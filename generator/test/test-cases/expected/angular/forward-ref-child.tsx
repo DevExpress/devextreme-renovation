@@ -79,3 +79,4 @@ export default class RefOnChildrenChild extends Props {
   exports: [RefOnChildrenChild],
 })
 export class DxRefOnChildrenChildModule {}
+export { RefOnChildrenChild as DxRefOnChildrenChildComponent };

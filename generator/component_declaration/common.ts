@@ -73,7 +73,7 @@ export const OneWay = () => propertyDecorator;
 
 /**
  * Property Decorator.
- * Define a property that user can pass to component. Component can't write to it.
+ * Define a property that user can pass to component.
  */
 export const ForwardRef = () => propertyDecorator;
 /**

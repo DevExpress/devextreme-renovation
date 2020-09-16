@@ -44,3 +44,4 @@ export default class Import extends ImportProps {
   exports: [Import],
 })
 export class DxImportModule {}
+export { Import as DxImportComponent };

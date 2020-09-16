@@ -10,7 +10,7 @@ import SyntaxKind from "../syntaxKind";
 import { Conditional } from "./conditions";
 import { Component } from "./component";
 import { PropertyAssignment, SpreadAssignment } from "./property-assignment";
-import { getExpression } from "../utils/expressions";
+import { getTemplateProperty } from "../utils/expressions";
 
 export function getJsxExpression(
   e: ExpressionWithExpression | Expression | undefined
@@ -118,11 +118,7 @@ export class JsxOpeningElement extends Expression {
   }
 
   getTemplateProperty(options?: toStringOptions) {
-    const tagName = getExpression(this.tagName, options).toString(options);
-    return options?.members.find(
-      (s) =>
-        s.isTemplate && tagName === `${s.getter(options?.newComponentContext)}`
-    );
+    return getTemplateProperty(this.tagName, options);
   }
 
   isPortal() {

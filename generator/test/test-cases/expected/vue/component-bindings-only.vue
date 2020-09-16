@@ -7,13 +7,11 @@ const WidgetProps = {
     },
   },
   data: {
-    type: Object,
     default() {
       return { value: "" };
     },
   },
   info: {
-    type: Object,
     default() {
       return { index: 0 };
     },

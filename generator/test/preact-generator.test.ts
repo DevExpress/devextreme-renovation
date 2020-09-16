@@ -118,6 +118,10 @@ mocha.describe("preact-generator", function () {
   mocha.it("private", function () {
     this.testGenerator(this.test!.title);
   });
+
+  mocha.it("refs", function () {
+    this.testGenerator(this.test!.title);
+  });
 });
 
 mocha.describe("preact-generator: expressions", function () {

@@ -13,13 +13,33 @@ export class TemplateTransitWidgetInput {
 }
 
 @Component({
-  view: view,
+  view: view_1,
 })
 export default class TemplateTransitWidget extends JSXComponent(
   TemplateTransitWidgetInput
 ) {}
 
-function view(viewModel: TemplateTransitWidget) {
+function view_1({
+  props: { templateProp, componentTemplateProp: ComponentTemplateProp },
+}: TemplateTransitWidget) {
+  return (
+    <WidgetWithTemplate
+      template={templateProp}
+      componentTemplate={ComponentTemplateProp}
+    />
+  );
+}
+function view_2(viewModel: TemplateTransitWidget) {
+  const { templateProp: TemplateProp } = viewModel.props;
+  const ComponentTemplateProp = viewModel.props.componentTemplateProp;
+  return (
+    <WidgetWithTemplate
+      template={TemplateProp}
+      componentTemplate={ComponentTemplateProp}
+    />
+  );
+}
+function view_3(viewModel: TemplateTransitWidget) {
   return (
     <WidgetWithTemplate
       template={viewModel.props.templateProp}

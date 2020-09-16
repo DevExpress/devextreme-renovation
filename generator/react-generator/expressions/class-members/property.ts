@@ -28,6 +28,8 @@ export function stateSetter(stateName: Identifier | string) {
 }
 
 export class Property extends BaseProperty {
+  REF_OBJECT_TYPE = "MutableRefObject";
+
   defaultProps() {
     return this.defaultDeclaration();
   }
@@ -46,7 +48,7 @@ export class Property extends BaseProperty {
       type = "any";
     }
     if (this.isRefProp || this.isForwardRefProp) {
-      type = `RefObject<${this.type}>`;
+      type = `${this.REF_OBJECT_TYPE}<${this.type}>`;
     }
 
     const questionOrExclamationToken =

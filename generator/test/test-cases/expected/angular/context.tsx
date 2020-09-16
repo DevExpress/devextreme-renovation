@@ -123,3 +123,4 @@ export default class Widget extends Props {
   exports: [Widget],
 })
 export class DxWidgetModule {}
+export { Widget as DxWidgetComponent };
