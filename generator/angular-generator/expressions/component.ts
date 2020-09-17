@@ -780,22 +780,23 @@ export class AngularComponent extends Component {
       if (isElement(expression)) {
         options.newComponentContext = SyntaxKind.ThisKeyword;
         const members = [];
-        const vars = Object.values(
+        const viewArgs = Object.values(
           (options?.variables as object) || {}
         )?.map((v) => v.name?.toString());
         const optionsMembersName = options.members.map((o) =>
           o.name.toString()
         );
-        let spreadName = vars.filter((v) => !optionsMembersName.includes(v));
+        let spreadName = viewArgs.filter(
+          (v) => !optionsMembersName.includes(v) && v !== "restAttributes"
+        );
         spreadName = spreadName.length ? spreadName[0] : undefined;
         if (spreadName) {
           const props = this.members.filter((m) => m.inherited);
-          const rightVars = vars.filter((v) => v != spreadName);
-          const wrongVars = props
-            .filter((p) => !rightVars.some((v) => v === p._name.toString()))
+          const inSpreadVars = props
+            .filter((p) => !viewArgs.some((v) => v === p._name.toString()))
             .map((p) => p._name.toString());
           members.push(`__${spreadName}(){
-            return {${wrongVars.map((v) => `${v}: this.${v}`).join(", ")}};
+            return {${inSpreadVars.map((v) => `${v}: this.${v}`).join(", ")}};
           }`);
         }
         const statements = expression.getSpreadAttributes().map((o, i) => {
