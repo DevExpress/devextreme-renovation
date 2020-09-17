@@ -782,24 +782,31 @@ export class AngularComponent extends Component {
         const members = [];
         const viewArgs = Object.values(
           (options?.variables as object) || {}
-        )?.map((v) => v.name?.toString());
-        const optionsMembersName = options.members.map((o) =>
-          o.name.toString()
+        )?.map((arg) => arg.name?.toString());
+
+        const optionsMembersName = options.members.map((member) =>
+          member.name.toString()
         );
         let spreadName = viewArgs.filter(
-          (v) =>
-            !optionsMembersName.includes(v) &&
-            v !== "restAttributes" &&
-            !optionsMembersName.includes(`__${v}`)
+          (arg) =>
+            !optionsMembersName.includes(arg) &&
+            arg !== "restAttributes" &&
+            !optionsMembersName.includes(`__${arg}`)
         );
         spreadName = spreadName.length ? spreadName[0] : undefined;
         if (spreadName) {
-          const props = this.members.filter((m) => m.inherited);
+          const props = this.members.filter((member) => member.inherited);
+
           const inSpreadVars = props
-            .filter((p) => !viewArgs.some((v) => v === p._name.toString()))
-            .map((p) => p._name.toString());
+            .filter(
+              (prop) => !viewArgs.some((arg) => arg === prop._name.toString())
+            )
+            .map((prop) => prop._name.toString());
+
           members.push(`__${spreadName}(){
-            return {${inSpreadVars.map((v) => `${v}: this.${v}`).join(", ")}};
+            return {${inSpreadVars
+              .map((spr_var) => `${spr_var}: this.${spr_var}`)
+              .join(", ")}};
           }`);
         }
         const statements = expression.getSpreadAttributes().map((o, i) => {
