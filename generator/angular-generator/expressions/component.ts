@@ -774,12 +774,30 @@ export class AngularComponent extends Component {
         internalState: [],
         props: [],
         newComponentContext: this.viewModel ? "_viewModel" : "",
-      };
+      } as toStringOptions;
       const expression = getTemplate(viewFunction, options);
       const allDependency: string[] = [];
       if (isElement(expression)) {
         options.newComponentContext = SyntaxKind.ThisKeyword;
         const members = [];
+        const vars = Object.values(
+          (options?.variables as object) || {}
+        )?.map((v) => v.name?.toString());
+        const optionsMembersName = options.members.map((o) =>
+          o.name.toString()
+        );
+        let spreadName = vars.filter((v) => !optionsMembersName.includes(v));
+        spreadName = spreadName.length ? spreadName[0] : undefined;
+        if (spreadName) {
+          const props = this.members.filter((m) => m.inherited);
+          const rightVars = vars.filter((v) => v != spreadName);
+          const wrongVars = props
+            .filter((p) => !rightVars.some((v) => v === p._name.toString()))
+            .map((p) => p._name.toString());
+          members.push(`__${spreadName}(){
+            return {${wrongVars.map((v) => `${v}: this.${v}`).join(", ")}};
+          }`);
+        }
         const statements = expression.getSpreadAttributes().map((o, i) => {
           const expressionString = o.expression.toString(options);
           const dependency = (o.expression as PropertyAccess).getDependency(
@@ -819,11 +837,13 @@ export class AngularComponent extends Component {
             );
           }
           return `
-                    const _attr_${i}:{[name: string]:string } = ${expressionString} || {};
+                    const _attr_${i}:{[name: string]:any } = ${
+            spreadName ? `this.__${spreadName}()` : expressionString
+          } || {};
                     const _ref_${i} = ${refString};
                     if(_ref_${i}){
                         for(let key in _attr_${i}) {
-                            _ref_${i}.setAttribute(key, _attr_${i}[key]);
+                            _ref_${i}.setAttribute(key, _attr_${i}[key]?.toString());
                         }
                     }
                     `;

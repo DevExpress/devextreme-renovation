@@ -39,6 +39,11 @@ import {
   VariableDeclarationList,
   VariableDeclaration,
 } from "../../base-generator/expressions/variables";
+import {
+  BindingPattern,
+  BindingElement,
+} from "../../base-generator/expressions/binding-pattern";
+import { ArrowFunction } from "../../base-generator/expressions/functions";
 
 export function getComponentListFromContext(context: GeneratorContext) {
   return Object.keys(context.components || {})
@@ -249,6 +254,14 @@ export class VueComponent extends Component {
     }
   }
 
+  getViewFunctionBindingPattern(viewFunction: Function | ArrowFunction) {
+    const obj = viewFunction.parameters[0]?.name;
+    return obj instanceof BindingPattern &&
+      obj.elements[0].name instanceof BindingPattern
+      ? obj.elements[0].name.elements
+      : undefined;
+  }
+
   compileTemplate() {
     const viewFunction = this.decorators[0].getViewFunction();
     if (viewFunction) {
@@ -256,7 +269,41 @@ export class VueComponent extends Component {
         members: this.members,
         newComponentContext: "",
       };
+
+      const parameters = this.getViewFunctionBindingPattern(viewFunction);
       this.template = viewFunction.getTemplate(options);
+
+      const restVar = parameters
+        ? parameters.find((p: BindingElement) => p.dotDotDotToken === "...")
+        : undefined;
+      if (restVar) {
+        const vars = parameters
+          ?.map((p: BindingElement) => p.dotDotDotToken + p.name.toString())
+          .join(",");
+        this.methods.push(
+          new Method(
+            [],
+            [],
+            undefined,
+            new Identifier(`__${restVar.name.toString()}`),
+            undefined,
+            [],
+            [],
+            undefined,
+            new Block(
+              [
+                new SimpleExpression(`const {${vars}} = this.props`),
+                new ReturnStatement(
+                  new SimpleExpression(
+                    `{${restVar.dotDotDotToken}${restVar.name}}`
+                  )
+                ),
+              ],
+              true
+            )
+          )
+        );
+      }
 
       if (options.hasStyle) {
         this.methods.push(

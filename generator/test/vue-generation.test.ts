@@ -282,4 +282,8 @@ mocha.describe("vue-generation", function () {
   mocha.it("import-type", function () {
     this.testGenerator(this.test!.title);
   });
+
+  mocha.it("spread-in-view", function () {
+    this.testGenerator(this.test!.title);
+  });
 });

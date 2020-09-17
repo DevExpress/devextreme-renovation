@@ -65,6 +65,29 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       }
     }
 
+    const spreadAttributeIndex = this.attributes.findIndex(
+      (a) => a instanceof JsxSpreadAttribute
+    );
+    if (spreadAttributeIndex > -1) {
+      const spreadAttribute = this.attributes[
+        spreadAttributeIndex
+      ] as JsxSpreadAttribute;
+      const spreadAttributeName = spreadAttribute.expression.toString();
+      const isMemberOrRestProp = options?.members.some(
+        (m) => m._name.toString() === spreadAttributeName
+      );
+
+      if (
+        options?.variables &&
+        options.variables[spreadAttributeName] &&
+        !isMemberOrRestProp
+      ) {
+        this.attributes[spreadAttributeIndex] = new JsxAttribute(
+          new Identifier("v-bind"),
+          new SimpleExpression(`__${spreadAttributeName}()`)
+        );
+      }
+    }
     return super.attributesString(options);
   }
 
