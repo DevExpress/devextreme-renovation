@@ -787,7 +787,10 @@ export class AngularComponent extends Component {
           o.name.toString()
         );
         let spreadName = viewArgs.filter(
-          (v) => !optionsMembersName.includes(v) && v !== "restAttributes"
+          (v) =>
+            !optionsMembersName.includes(v) &&
+            v !== "restAttributes" &&
+            !optionsMembersName.includes(`__${v}`)
         );
         spreadName = spreadName.length ? spreadName[0] : undefined;
         if (spreadName) {
