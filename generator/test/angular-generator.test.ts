@@ -6558,6 +6558,32 @@ mocha.describe("Angular generator", function () {
           assert.strictEqual(getter.isMemorized(), true);
         });
 
+        mocha.it("Memorize createTypeLiteralNode", function () {
+          const getter = createGetAccessor(
+            generator.createTypeLiteralNode([
+              generator.createPropertySignature(
+                undefined,
+                generator.createIdentifier("field"),
+                undefined,
+                generator.createKeywordTypeNode(
+                  generator.SyntaxKind.StringKeyword
+                ),
+                undefined
+              ),
+            ])
+          );
+
+          assert.strictEqual(getter.isMemorized(), true);
+        });
+
+        mocha.it("Memorize object", function () {
+          const getter = createGetAccessor(
+            generator.createKeywordTypeNode(generator.SyntaxKind.ObjectKeyword)
+          );
+
+          assert.strictEqual(getter.isMemorized(), true);
+        });
+
         mocha.it("Do not memorize primitive type", function () {
           const getter = createGetAccessor(
             generator.createKeywordTypeNode("string")

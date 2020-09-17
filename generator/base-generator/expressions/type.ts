@@ -356,8 +356,10 @@ export function isComplexType(type: TypeExpression | string): boolean {
     type instanceof ArrayTypeNode ||
     type instanceof TypeReferenceNode ||
     type instanceof ObjectLiteral ||
+    type instanceof TypeLiteralNode ||
     (type instanceof LiteralTypeNode &&
-      type.expression instanceof ObjectLiteral)
+      type.expression instanceof ObjectLiteral) ||
+    type.toString() === "object"
   ) {
     return true;
   }
