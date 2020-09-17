@@ -80,7 +80,7 @@ export class Property extends BaseProperty {
       return `__${selector}?: ElementRef<HTMLDivElement>;
 
             get ${this.name}(){
-                return this.__${selector}?.nativeElement?.innerHTML.trim();
+                return this.__${selector}?.nativeElement?.innerHTML.trim()||"";
             }`;
     }
     if (this.isNestedComp) {

@@ -3,12 +3,12 @@ class WidgetInput {
   __slotNamedSlot?: ElementRef<HTMLDivElement>;
 
   get namedSlot() {
-    return this.__slotNamedSlot?.nativeElement?.innerHTML.trim();
+    return this.__slotNamedSlot?.nativeElement?.innerHTML.trim() || "";
   }
   __slotChildren?: ElementRef<HTMLDivElement>;
 
   get children() {
-    return this.__slotChildren?.nativeElement?.innerHTML.trim();
+    return this.__slotChildren?.nativeElement?.innerHTML.trim() || "";
   }
 }
 
@@ -50,14 +50,22 @@ export default class Widget extends WidgetInput {
   @ViewChild("slotNamedSlot") set slotNamedSlot(
     slot: ElementRef<HTMLDivElement>
   ) {
+    const oldValue = this.namedSlot;
     this.__slotNamedSlot = slot;
-    this._detectChanges();
+    const newValue = this.namedSlot;
+    if (oldValue.length ^ newValue.length) {
+      this._detectChanges();
+    }
   }
   @ViewChild("slotChildren") set slotChildren(
     slot: ElementRef<HTMLDivElement>
   ) {
+    const oldValue = this.children;
     this.__slotChildren = slot;
-    this._detectChanges();
+    const newValue = this.children;
+    if (oldValue.length ^ newValue.length) {
+      this._detectChanges();
+    }
   }
 }
 @NgModule({

@@ -5104,7 +5104,7 @@ mocha.describe("Angular generator", function () {
                 __slotName?: ElementRef<HTMLDivElement>;
 
                 get name(){
-                    return this.__slotName?.nativeElement?.innerHTML.trim();
+                    return this.__slotName?.nativeElement?.innerHTML.trim() || "";
                 }
             `)
       );
