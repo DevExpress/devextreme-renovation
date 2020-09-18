@@ -409,8 +409,12 @@ export class AngularComponent extends Component {
       const body = new Block(
         [
           new SimpleExpression(`
+          const oldValue = this.${s.name};
           this.__${name} = slot;
-          this._detectChanges();
+          const newValue = this.${s.name};
+          if(!!oldValue !== !!newValue){
+            this._detectChanges();
+          }
         `),
         ],
         true
