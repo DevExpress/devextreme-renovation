@@ -47,7 +47,7 @@ export default class Widget extends WidgetProps {
     const oldValue = this.children;
     this.__slotChildren = slot;
     const newValue = this.children;
-    if (oldValue.length ^ newValue.length) {
+    if (!!oldValue !== !!newValue) {
       this._detectChanges();
     }
   }

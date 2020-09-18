@@ -412,7 +412,7 @@ export class AngularComponent extends Component {
           const oldValue = this.${s.name};
           this.__${name} = slot;
           const newValue = this.${s.name};
-          if(oldValue.length ^ newValue.length){
+          if(!!oldValue !== !!newValue){
             this._detectChanges();
           }
         `),
