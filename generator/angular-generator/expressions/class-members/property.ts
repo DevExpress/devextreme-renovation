@@ -45,6 +45,10 @@ export class Property extends BaseProperty {
     if (decorators.find((d) => d.name === Decorators.Template)) {
       type = new SimpleTypeExpression(`TemplateRef<any> | null`);
       initializer = new SimpleExpression("null");
+      questionOrExclamationToken =
+        questionOrExclamationToken === SyntaxKind.ExclamationToken
+          ? ""
+          : questionOrExclamationToken;
     }
     if (!initializer && decorators.find((d) => d.name === Decorators.Event)) {
       initializer = new SimpleExpression("(e: any) => void 0");
