@@ -73,6 +73,8 @@ export class VueComponent extends Component {
         new SimpleExpression(
           `children.reduce((acc, child) => {
             const name = child.componentOptions?.Ctor?.extendOptions?.propName;
+            const tag = child.tag || "";
+            const isUnregisteredDxTag = tag.indexOf("Dx") === 0;
             if(name) {
               const collectedChildren = {};
               const childProps = child.componentOptions.propsData;
@@ -94,6 +96,8 @@ export class VueComponent extends Component {
                 ...childProps,
                 __name: name,
               });
+            } else if (isUnregisteredDxTag) {
+              throw new Error(\`Unknown custom element: <\${tag}> - did you register the component correctly?'\`);
             }
             return acc;
           }, [])`
