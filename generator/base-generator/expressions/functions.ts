@@ -145,7 +145,7 @@ export function getTemplate(
     return getJsxExpression(returnStatement);
   }
 }
-function getViewFunctionBindingPattern(viewFunction: BaseFunction) {
+export function getViewFunctionBindingPattern(viewFunction: BaseFunction) {
   const obj = viewFunction.parameters[0]?.name;
   return obj instanceof BindingPattern &&
     obj.elements[0].name instanceof BindingPattern

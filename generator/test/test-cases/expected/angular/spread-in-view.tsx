@@ -30,8 +30,9 @@ export default class Widget extends WidgetProps {
         this.changeDetection.detectChanges();
     });
   }
-  __rest() {
-    return { id: this.id };
+  get rest(): any {
+    const { a, ...rest } = this.props;
+    return { ...rest };
   }
   @ViewChild("_auto_ref_0", { static: false }) _auto_ref_0?: ElementRef<
     HTMLDivElement
@@ -39,7 +40,7 @@ export default class Widget extends WidgetProps {
 
   scheduledApplyAttributes = false;
   __applyAttributes__() {
-    const _attr_0: { [name: string]: any } = this.__rest() || {};
+    const _attr_0: { [name: string]: any } = this.rest || {};
     const _ref_0 = this._auto_ref_0?.nativeElement;
     if (_ref_0) {
       for (let key in _attr_0) {
@@ -52,7 +53,7 @@ export default class Widget extends WidgetProps {
     this.__applyAttributes__();
   }
   ngOnChanges(changes: { [name: string]: any }) {
-    if (["rest"].some((d) => changes[d] && !changes[d].firstChange)) {
+    if (["props"].some((d) => changes[d] && !changes[d].firstChange)) {
       this.scheduledApplyAttributes = true;
     }
   }

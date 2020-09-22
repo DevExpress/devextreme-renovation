@@ -10,12 +10,17 @@ import {
 import { HeritageClause } from "../../base-generator/expressions/class";
 import { Identifier, Call } from "../../base-generator/expressions/common";
 import { SimpleExpression } from "../../base-generator/expressions/base";
-import { Block } from "../../base-generator/expressions/statements";
+import {
+  Block,
+  ReturnStatement,
+} from "../../base-generator/expressions/statements";
 import { toStringOptions, AngularGeneratorContext } from "../types";
 import SyntaxKind from "../../base-generator/syntaxKind";
 import {
   Parameter,
   getTemplate,
+  getViewFunctionBindingPattern,
+  BaseFunction,
 } from "../../base-generator/expressions/functions";
 import {
   SimpleTypeExpression,
@@ -38,6 +43,12 @@ import {
 } from "../../base-generator/utils/string";
 import { If } from "../../base-generator/expressions/conditions";
 import { PropertyAccess } from "../../base-generator/expressions/property-access";
+import {
+  BindingElement,
+  BindingPattern,
+} from "../../base-generator/expressions/binding-pattern";
+import { VariableDeclaration } from "./variable-expression";
+import { VariableDeclarationList } from "../../base-generator/expressions/variables";
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = "CUSTOM_VALUE_ACCESSOR_PROVIDER";
 
@@ -777,35 +788,45 @@ export class AngularComponent extends Component {
       if (isElement(expression)) {
         options.newComponentContext = SyntaxKind.ThisKeyword;
         const members = [];
-        const viewArgs = (Object.values(options?.variables || {}).filter(
-          (arg) => arg instanceof PropertyAccess
-        ) as PropertyAccess[]).map((arg) => arg.name.toString());
+        // const viewArgs = (Object.values(options?.variables || {}).filter(
+        //   (arg) => arg instanceof PropertyAccess
+        // ) as PropertyAccess[]).map((arg) => arg.name.toString());
+        // const optionsMembersName = options.members.map((member) =>
+        //   member.name.toString()
+        // );
+        // const spreadNames = viewArgs.filter(
+        //   (arg) =>
+        //     !optionsMembersName.includes(arg) &&
+        //     arg !== "restAttributes" &&
+        //     !optionsMembersName.includes(`__${arg}`)
+        // );
+        // const spreadName = spreadNames.length ? spreadNames[0] : undefined;
 
-        const optionsMembersName = options.members.map((member) =>
-          member.name.toString()
-        );
-        const spreadNames = viewArgs.filter(
-          (arg) =>
-            !optionsMembersName.includes(arg) &&
-            arg !== "restAttributes" &&
-            !optionsMembersName.includes(`__${arg}`)
-        );
-        const spreadName = spreadNames.length ? spreadNames[0] : undefined;
-        if (spreadName) {
-          const props = this.members.filter((member) => member.inherited);
+        // if (spreadName) {
+        //   const props = this.members.filter((member) => member.inherited);
 
-          const inSpreadVars = props
-            .filter(
-              (prop) => !viewArgs.some((arg) => arg === prop._name.toString())
-            )
-            .map((prop) => prop._name.toString());
+        //   const inSpreadVars = props
+        //     .filter(
+        //       (prop) => !viewArgs.some((arg) => arg === prop._name.toString())
+        //     )
+        //     .map((prop) => prop._name.toString());
+        //   options.members.push(new GetAccessor(
+        //     [],
+        //     undefined,
+        //     new Identifier(spreadName),
+        //     [],
+        //     undefined,
+        //     new Block([
+        //       new SimpleExpression(`return {${inSpreadVars.map(spr_var => `${spr_var}: this.${spr_var}`)}}`),
+        //     ],
+        //       true)));
+        //   // members.push(`__${spreadName}(){
+        //   //   return {${inSpreadVars
+        //   //     .map((spr_var) => `${spr_var}: this.${spr_var}`)
+        //   //     .join(", ")}};
+        //   // }`);
+        // }
 
-          members.push(`__${spreadName}(){
-            return {${inSpreadVars
-              .map((spr_var) => `${spr_var}: this.${spr_var}`)
-              .join(", ")}};
-          }`);
-        }
         const statements = expression.getSpreadAttributes().map((o, i) => {
           const expressionString = o.expression.toString(options);
           const dependency = (o.expression as PropertyAccess).getDependency(
@@ -845,9 +866,7 @@ export class AngularComponent extends Component {
             );
           }
           return `
-                    const _attr_${i}:{[name: string]:any } = ${
-            spreadName ? `this.__${spreadName}()` : expressionString
-          } || {};
+                    const _attr_${i}:{[name: string]:any } = ${expressionString} || {};
                     const _ref_${i} = ${refString};
                     if(_ref_${i}){
                         for(let key in _attr_${i}) {
@@ -1320,6 +1339,56 @@ export class AngularComponent extends Component {
     return "";
   }
 
+  handleViewFunctionSpread() {
+    const viewFunction =
+      this.decorator.getViewFunction() ||
+      new BaseFunction(
+        undefined,
+        undefined,
+        [],
+        undefined,
+        new Block([], false),
+        this.context
+      );
+    const parameters = getViewFunctionBindingPattern(viewFunction);
+    const spreadVar = parameters
+      ? parameters.find((p: BindingElement) => p.dotDotDotToken === "...")
+      : undefined;
+    if (spreadVar) {
+      const spreadGetAccessor = new GetAccessor(
+        undefined,
+        undefined,
+        new Identifier(`${spreadVar.name.toString()}`),
+        [],
+        undefined,
+        new Block(
+          [
+            new VariableDeclarationList(
+              [
+                new VariableDeclaration(
+                  new BindingPattern(parameters || [], "object"),
+                  undefined,
+                  new PropertyAccess(
+                    new SimpleExpression(`this`),
+                    new Identifier("props")
+                  )
+                ),
+              ],
+              "const"
+            ),
+            new ReturnStatement(
+              new SimpleExpression(
+                `{${spreadVar.dotDotDotToken}${spreadVar.name}}`
+              )
+            ),
+          ],
+          true
+        )
+      );
+      this.members.push(spreadGetAccessor);
+      this.methods.push(spreadGetAccessor);
+    }
+  }
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -1349,6 +1418,8 @@ export class AngularComponent extends Component {
     ];
 
     const cdkImports: string[] = [];
+
+    this.handleViewFunctionSpread();
 
     const decoratorToStringOptions: toStringOptions = {
       members: this.members,

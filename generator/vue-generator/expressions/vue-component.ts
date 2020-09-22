@@ -43,7 +43,7 @@ import {
   BindingPattern,
   BindingElement,
 } from "../../base-generator/expressions/binding-pattern";
-import { ArrowFunction } from "../../base-generator/expressions/functions";
+import { getViewFunctionBindingPattern } from "../../base-generator/expressions/functions";
 
 export function getComponentListFromContext(context: GeneratorContext) {
   return Object.keys(context.components || {})
@@ -254,14 +254,6 @@ export class VueComponent extends Component {
     }
   }
 
-  getViewFunctionBindingPattern(viewFunction: Function | ArrowFunction) {
-    const obj = viewFunction.parameters[0]?.name;
-    return obj instanceof BindingPattern &&
-      obj.elements[0].name instanceof BindingPattern
-      ? obj.elements[0].name.elements
-      : undefined;
-  }
-
   compileTemplate() {
     const viewFunction = this.decorators[0].getViewFunction();
     if (viewFunction) {
@@ -270,18 +262,12 @@ export class VueComponent extends Component {
         newComponentContext: "",
       };
 
-      const parameters = this.getViewFunctionBindingPattern(viewFunction);
-      this.template = viewFunction.getTemplate(options);
-
+      const parameters = getViewFunctionBindingPattern(viewFunction);
       const spreadVar = parameters
         ? parameters.find((p: BindingElement) => p.dotDotDotToken === "...")
         : undefined;
 
-      if (spreadVar && options.variables) {
-        const vars = parameters
-          ?.map((p: BindingElement) => p.dotDotDotToken + p.name.toString())
-          .join(",");
-
+      if (spreadVar) {
         const spreadGetAccessor = new GetAccessor(
           undefined,
           undefined,
@@ -290,7 +276,19 @@ export class VueComponent extends Component {
           undefined,
           new Block(
             [
-              new SimpleExpression(`const {${vars}} = this.props`),
+              new VariableDeclarationList(
+                [
+                  new VariableDeclaration(
+                    new BindingPattern(parameters || [], "object"),
+                    undefined,
+                    new PropertyAccess(
+                      new SimpleExpression(`this`),
+                      new Identifier("props")
+                    )
+                  ),
+                ],
+                "const"
+              ),
               new ReturnStatement(
                 new SimpleExpression(
                   `{${spreadVar.dotDotDotToken}${spreadVar.name}}`
@@ -303,6 +301,7 @@ export class VueComponent extends Component {
         this.members.push(spreadGetAccessor);
         this.methods.push(spreadGetAccessor);
       }
+      this.template = viewFunction.getTemplate(options);
 
       if (options.hasStyle) {
         this.methods.push(
