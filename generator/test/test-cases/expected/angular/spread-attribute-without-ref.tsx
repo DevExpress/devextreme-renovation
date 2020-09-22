@@ -39,7 +39,7 @@ export default class Widget extends WidgetInput {
     const _ref_0 = this._auto_ref_0?.nativeElement;
     if (_ref_0) {
       for (let key in _attr_0) {
-        _ref_0.setAttribute(key, _attr_0[key]?.toString());
+        _ref_0.setAttribute(key, _attr_0[key].toString());
       }
     }
   }

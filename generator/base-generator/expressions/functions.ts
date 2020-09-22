@@ -7,7 +7,7 @@ import {
   VariableExpression,
 } from "../types";
 import { Block, ReturnStatement } from "./statements";
-import { BindingPattern } from "./binding-pattern";
+import { BindingElement, BindingPattern } from "./binding-pattern";
 import {
   variableDeclaration,
   compileType,
@@ -23,6 +23,7 @@ import { Property } from "./class-members";
 import { containsPortalsInStatements } from "../utils/functions";
 import { TypeParameterDeclaration } from "./type-parameter-declaration";
 import { JsxOpeningElement } from "./jsx";
+import { PropertyAccess } from "./property-access";
 export class Parameter {
   decorators: Decorator[];
   modifiers: string[];
@@ -128,10 +129,29 @@ export function getTemplate(
       }
     }
 
+    const parameters = getViewFunctionBindingPattern(functionWithTemplate);
+    if (parameters && options?.variables) {
+      const spreadVar = parameters.find(
+        (p: BindingElement) => p.dotDotDotToken === "..."
+      );
+      if (spreadVar?.name) {
+        const optionsSpreadVar = options.variables[spreadVar.name.toString()];
+        if (optionsSpreadVar instanceof PropertyAccess) {
+          optionsSpreadVar.expression = new SimpleExpression("this");
+        }
+      }
+    }
+
     return getJsxExpression(returnStatement);
   }
 }
-
+function getViewFunctionBindingPattern(viewFunction: BaseFunction) {
+  const obj = viewFunction.parameters[0]?.name;
+  return obj instanceof BindingPattern &&
+    obj.elements[0].name instanceof BindingPattern
+    ? obj.elements[0].name.elements
+    : undefined;
+}
 export class BaseFunction extends Expression {
   modifiers: string[];
   typeParameters: TypeParameterDeclaration[] | undefined;

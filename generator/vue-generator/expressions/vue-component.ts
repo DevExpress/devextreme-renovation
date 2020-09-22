@@ -273,36 +273,35 @@ export class VueComponent extends Component {
       const parameters = this.getViewFunctionBindingPattern(viewFunction);
       this.template = viewFunction.getTemplate(options);
 
-      const restVar = parameters
+      const spreadVar = parameters
         ? parameters.find((p: BindingElement) => p.dotDotDotToken === "...")
         : undefined;
-      if (restVar) {
+
+      if (spreadVar && options.variables) {
         const vars = parameters
           ?.map((p: BindingElement) => p.dotDotDotToken + p.name.toString())
           .join(",");
-        this.methods.push(
-          new Method(
-            [],
-            [],
-            undefined,
-            new Identifier(`__${restVar.name.toString()}`),
-            undefined,
-            [],
-            [],
-            undefined,
-            new Block(
-              [
-                new SimpleExpression(`const {${vars}} = this.props`),
-                new ReturnStatement(
-                  new SimpleExpression(
-                    `{${restVar.dotDotDotToken}${restVar.name}}`
-                  )
-                ),
-              ],
-              true
-            )
+
+        const spreadGetAccessor = new GetAccessor(
+          undefined,
+          undefined,
+          new Identifier(`${spreadVar.name.toString()}`),
+          [],
+          undefined,
+          new Block(
+            [
+              new SimpleExpression(`const {${vars}} = this.props`),
+              new ReturnStatement(
+                new SimpleExpression(
+                  `{${spreadVar.dotDotDotToken}${spreadVar.name}}`
+                )
+              ),
+            ],
+            true
           )
         );
+        this.members.push(spreadGetAccessor);
+        this.methods.push(spreadGetAccessor);
       }
 
       if (options.hasStyle) {

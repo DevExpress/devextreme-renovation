@@ -1,5 +1,5 @@
 <template>
-  <div v-bind="__rest()"></div>
+  <div v-bind="rest"></div>
 </template>
 <script>
 export const WidgetProps = {
@@ -25,9 +25,7 @@ export const DxWidget = {
     props() {
       return { a: this.a, id: this.id };
     },
-  },
-  methods: {
-    __rest() {
+    rest() {
       const { a, ...rest } = this.props;
       return { ...rest };
     },

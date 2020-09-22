@@ -52,7 +52,7 @@ export default class Widget extends WidgetInput {
     const _ref_0 = this.host?.nativeElement as any;
     if (_ref_0) {
       for (let key in _attr_0) {
-        _ref_0.setAttribute(key, _attr_0[key]?.toString());
+        _ref_0.setAttribute(key, _attr_0[key].toString());
       }
     }
 
@@ -60,7 +60,7 @@ export default class Widget extends WidgetInput {
     const _ref_1 = this._auto_ref_0?.nativeElement;
     if (_ref_1) {
       for (let key in _attr_1) {
-        _ref_1.setAttribute(key, _attr_1[key]?.toString());
+        _ref_1.setAttribute(key, _attr_1[key].toString());
       }
     }
 
@@ -68,7 +68,7 @@ export default class Widget extends WidgetInput {
     const _ref_2 = this.i1?.nativeElement as any;
     if (_ref_2) {
       for (let key in _attr_2) {
-        _ref_2.setAttribute(key, _attr_2[key]?.toString());
+        _ref_2.setAttribute(key, _attr_2[key].toString());
       }
     }
 
@@ -76,7 +76,7 @@ export default class Widget extends WidgetInput {
     const _ref_3 = this._auto_ref_1?.nativeElement;
     if (_ref_3) {
       for (let key in _attr_3) {
-        _ref_3.setAttribute(key, _attr_3[key]?.toString());
+        _ref_3.setAttribute(key, _attr_3[key].toString());
       }
     }
   }

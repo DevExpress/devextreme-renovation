@@ -768,32 +768,29 @@ export class AngularComponent extends Component {
   ): string {
     const viewFunction = this.decorator.getViewFunction();
     if (viewFunction) {
-      const options = {
+      const options: toStringOptions = {
         members: this.members,
-        state: [],
-        internalState: [],
-        props: [],
         newComponentContext: this.viewModel ? "_viewModel" : "",
-      } as toStringOptions;
+      };
       const expression = getTemplate(viewFunction, options);
       const allDependency: string[] = [];
       if (isElement(expression)) {
         options.newComponentContext = SyntaxKind.ThisKeyword;
         const members = [];
-        const viewArgs = Object.values(
-          (options?.variables as object) || {}
-        )?.map((arg) => arg.name?.toString());
+        const viewArgs = (Object.values(options?.variables || {}).filter(
+          (arg) => arg instanceof PropertyAccess
+        ) as PropertyAccess[]).map((arg) => arg.name.toString());
 
         const optionsMembersName = options.members.map((member) =>
           member.name.toString()
         );
-        let spreadName = viewArgs.filter(
+        const spreadNames = viewArgs.filter(
           (arg) =>
             !optionsMembersName.includes(arg) &&
             arg !== "restAttributes" &&
             !optionsMembersName.includes(`__${arg}`)
         );
-        spreadName = spreadName.length ? spreadName[0] : undefined;
+        const spreadName = spreadNames.length ? spreadNames[0] : undefined;
         if (spreadName) {
           const props = this.members.filter((member) => member.inherited);
 
@@ -854,7 +851,7 @@ export class AngularComponent extends Component {
                     const _ref_${i} = ${refString};
                     if(_ref_${i}){
                         for(let key in _attr_${i}) {
-                            _ref_${i}.setAttribute(key, _attr_${i}[key]?.toString());
+                            _ref_${i}.setAttribute(key, _attr_${i}[key].toString());
                         }
                     }
                     `;
