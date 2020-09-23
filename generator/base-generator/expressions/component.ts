@@ -8,11 +8,16 @@ import {
 import { SimpleExpression, Expression } from "./base";
 import { ObjectLiteral } from "./literal";
 import { HeritageClause, inheritMembers, Class, Heritable } from "./class";
-import { GeneratorContext } from "../types";
+import { GeneratorContext, toStringOptions } from "../types";
 import { Block, ReturnStatement } from "./statements";
 import { getModuleRelativePath } from "../utils/path-utils";
 import { Decorator } from "./decorator";
-import { BaseFunction, isCall, isFunction } from "./functions";
+import {
+  BaseFunction,
+  getViewFunctionBindingPattern,
+  isCall,
+  isFunction,
+} from "./functions";
 import {
   compileType,
   capitalizeFirstLetter,
@@ -23,6 +28,7 @@ import { warn } from "../../utils/messages";
 import { Decorators } from "../../component_declaration/decorators";
 import { ComponentInput } from "./component-input";
 import { extractComplexType, isTypeArray } from "./type";
+import { BindingElement, BindingPattern } from "./binding-pattern";
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
   return heritageClauses.some((h) => h.isJsxComponent);
@@ -523,5 +529,36 @@ export class Component extends Class implements Heritable {
       return external;
     }
     return [];
+  }
+
+  returnGetAccessorBlock(
+    argumentPattern: BindingPattern,
+    options: toStringOptions,
+    spreadVar: BindingElement
+  ) {
+    return new Block([], true);
+  }
+
+  getViewSpreadAccessor() {
+    const viewFunction = this.decorators[0].getViewFunction();
+    const argumentPattern = getViewFunctionBindingPattern(viewFunction);
+    const spreadVar = argumentPattern.elements.find(
+      (p: BindingElement) => p.dotDotDotToken === "..."
+    );
+
+    if (spreadVar) {
+      return this.createViewSpreadAccessor(
+        new Identifier(`${spreadVar.name.toString()}`),
+        this.returnGetAccessorBlock(
+          argumentPattern,
+          { members: this.members },
+          spreadVar
+        )
+      );
+    } else return undefined;
+  }
+
+  createViewSpreadAccessor(name: Identifier, body: Block) {
+    return new GetAccessor(undefined, undefined, name, [], undefined, body);
   }
 }

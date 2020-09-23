@@ -145,16 +145,22 @@ export function getTemplate(
     return getJsxExpression(returnStatement);
   }
 }
-export function getViewFunctionBindingPattern(viewFunction: BaseFunction) {
-  const obj = viewFunction.parameters[0]?.name;
-  return obj instanceof BindingPattern &&
-    obj.elements[0].name instanceof BindingPattern
-    ? obj.elements[0].name
-    : new BindingPattern(
-        [new BindingElement(undefined, undefined, "", undefined)],
-        "object"
-      );
+export function getViewFunctionBindingPattern(
+  viewFunction: BaseFunction | null
+) {
+  const noopReturn = new BindingPattern(
+    [new BindingElement(undefined, undefined, "", undefined)],
+    "object"
+  );
+  if (viewFunction) {
+    const obj = viewFunction.parameters[0]?.name;
+    return obj instanceof BindingPattern &&
+      obj.elements[0].name instanceof BindingPattern
+      ? obj.elements[0].name
+      : noopReturn;
+  } else return noopReturn;
 }
+
 export class BaseFunction extends Expression {
   modifiers: string[];
   typeParameters: TypeParameterDeclaration[] | undefined;

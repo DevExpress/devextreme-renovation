@@ -51,6 +51,11 @@ export default class Widget extends WidgetProps {
   ngAfterViewInit() {
     this.__applyAttributes__();
   }
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (["id"].some((d) => changes[d] && !changes[d].firstChange)) {
+      this.scheduledApplyAttributes = true;
+    }
+  }
 
   ngAfterViewChecked() {
     if (this.scheduledApplyAttributes) {

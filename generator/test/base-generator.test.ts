@@ -27,10 +27,20 @@ const generator = new Generator();
 
 import componentCreator from "./helpers/create-component";
 import { toStringOptions } from "../base-generator/types";
-import { BindingPattern } from "../base-generator/expressions/binding-pattern";
-import { Property, Method } from "../base-generator/expressions/class-members";
+import {
+  BindingElement,
+  BindingPattern,
+} from "../base-generator/expressions/binding-pattern";
+import {
+  Property,
+  Method,
+  GetAccessor,
+} from "../base-generator/expressions/class-members";
 import { Decorators } from "../component_declaration/decorators";
 import { TypeExpression } from "../base-generator/expressions/type";
+import { Call, Identifier } from "../base-generator/expressions/common";
+import { Decorator } from "../base-generator/expressions/decorator";
+import { Block } from "../base-generator/expressions/statements";
 
 const { createComponentDecorator, createDecorator } = componentCreator(
   generator
@@ -3202,6 +3212,39 @@ mocha.describe("Component", function () {
       );
     }
   );
+
+  mocha.it("should generate empty block and spreadAccessor", function () {
+    const comp = generator.createComponent(
+      new Decorator(new Call(new Identifier("OneWay")), generator.getContext()),
+      undefined,
+      new Identifier("Component"),
+      [],
+      [],
+      []
+    );
+    const block = comp.returnGetAccessorBlock(
+      new BindingPattern([], "object"),
+      { members: comp.members },
+      new BindingElement(undefined, undefined, new Identifier(""))
+    );
+    const accessor = comp.createViewSpreadAccessor(
+      new Identifier("spr"),
+      new Block([], true)
+    );
+
+    assert.deepEqual(block, new Block([], true));
+    assert.deepEqual(
+      accessor,
+      new GetAccessor(
+        undefined,
+        undefined,
+        new Identifier("spr"),
+        [],
+        undefined,
+        new Block([], true)
+      )
+    );
+  });
 });
 
 mocha.describe("ComponentInput", function () {

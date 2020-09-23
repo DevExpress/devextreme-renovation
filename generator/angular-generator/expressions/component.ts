@@ -19,8 +19,6 @@ import SyntaxKind from "../../base-generator/syntaxKind";
 import {
   Parameter,
   getTemplate,
-  getViewFunctionBindingPattern,
-  BaseFunction,
 } from "../../base-generator/expressions/functions";
 import {
   SimpleTypeExpression,
@@ -47,8 +45,6 @@ import {
   BindingElement,
   BindingPattern,
 } from "../../base-generator/expressions/binding-pattern";
-import { VariableDeclaration } from "./variable-expression";
-import { VariableDeclarationList } from "../../base-generator/expressions/variables";
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = "CUSTOM_VALUE_ACCESSOR_PROVIDER";
 
@@ -788,44 +784,6 @@ export class AngularComponent extends Component {
       if (isElement(expression)) {
         options.newComponentContext = SyntaxKind.ThisKeyword;
         const members = [];
-        // const viewArgs = (Object.values(options?.variables || {}).filter(
-        //   (arg) => arg instanceof PropertyAccess
-        // ) as PropertyAccess[]).map((arg) => arg.name.toString());
-        // const optionsMembersName = options.members.map((member) =>
-        //   member.name.toString()
-        // );
-        // const spreadNames = viewArgs.filter(
-        //   (arg) =>
-        //     !optionsMembersName.includes(arg) &&
-        //     arg !== "restAttributes" &&
-        //     !optionsMembersName.includes(`__${arg}`)
-        // );
-        // const spreadName = spreadNames.length ? spreadNames[0] : undefined;
-
-        // if (spreadName) {
-        //   const props = this.members.filter((member) => member.inherited);
-
-        //   const inSpreadVars = props
-        //     .filter(
-        //       (prop) => !viewArgs.some((arg) => arg === prop._name.toString())
-        //     )
-        //     .map((prop) => prop._name.toString());
-        //   options.members.push(new GetAccessor(
-        //     [],
-        //     undefined,
-        //     new Identifier(spreadName),
-        //     [],
-        //     undefined,
-        //     new Block([
-        //       new SimpleExpression(`return {${inSpreadVars.map(spr_var => `${spr_var}: this.${spr_var}`)}}`),
-        //     ],
-        //       true)));
-        //   // members.push(`__${spreadName}(){
-        //   //   return {${inSpreadVars
-        //   //     .map((spr_var) => `${spr_var}: this.${spr_var}`)
-        //   //     .join(", ")}};
-        //   // }`);
-        // }
 
         const statements = expression.getSpreadAttributes().map((o, i) => {
           const expressionString = o.expression.toString(options);
@@ -1339,51 +1297,31 @@ export class AngularComponent extends Component {
     return "";
   }
 
-  handleViewFunctionSpread() {
-    const viewFunction =
-      this.decorator.getViewFunction() ||
-      new BaseFunction(
-        undefined,
-        undefined,
-        [],
-        undefined,
-        new Block([], false),
-        this.context
+  returnGetAccessorBlock(
+    argumentPattern: BindingPattern,
+    options: toStringOptions,
+    spreadVar: BindingElement
+  ) {
+    const propsNames = getProps(options.members).map((p) => p._name.toString());
+    const argNames = argumentPattern.getAllDependency(options);
+    const res = propsNames
+      .filter((p) => !argNames.includes(p))
+      .map(
+        (r) =>
+          new BindingElement(
+            "",
+            new Identifier(r),
+            new Identifier(`this.${r}`),
+            undefined
+          )
       );
-    const options: toStringOptions = {
-      members: this.members,
-    };
-    const argumentPattern = getViewFunctionBindingPattern(viewFunction);
-    const spreadVar = argumentPattern
-      ? argumentPattern.elements.find(
-          (p: BindingElement) => p.dotDotDotToken === "..."
-        )
-      : undefined;
-    if (spreadVar) {
-      const propsNames = this.members
-        .filter((m) => m.inherited)
-        .map((m) => m._name.toString());
-      const argNames = argumentPattern.getAllDependency(options);
-      const res = propsNames.filter((p) => !argNames.includes(p));
-
-      const spreadGetAccessor = new GetAccessor(
-        undefined,
-        undefined,
-        new Identifier(`${spreadVar.name.toString()}`),
-        [],
-        undefined,
-        new Block(
-          [
-            new ReturnStatement(
-              new SimpleExpression(`{${res.map((r) => `${r} : this.${r},`)}}`)
-            ),
-          ],
-          true
-        )
-      );
-      this.members.push(spreadGetAccessor);
-      this.methods.push(spreadGetAccessor);
-    }
+    return new Block(
+      [new ReturnStatement(new BindingPattern(res, "object"))],
+      true
+    );
+  }
+  createViewSpreadAccessor(name: Identifier, body: Block) {
+    return new GetAccessor(undefined, undefined, name, [], undefined, body);
   }
   toString() {
     const props = this.heritageClauses
@@ -1414,7 +1352,11 @@ export class AngularComponent extends Component {
     ];
 
     const cdkImports: string[] = [];
-    this.handleViewFunctionSpread();
+
+    const spreadGetAccessor = this.getViewSpreadAccessor();
+    if (spreadGetAccessor) {
+      this.members.push(spreadGetAccessor);
+    }
 
     const decoratorToStringOptions: toStringOptions = {
       members: this.members,
