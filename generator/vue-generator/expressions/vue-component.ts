@@ -262,9 +262,11 @@ export class VueComponent extends Component {
         newComponentContext: "",
       };
 
-      const parameters = getViewFunctionBindingPattern(viewFunction);
-      const spreadVar = parameters
-        ? parameters.find((p: BindingElement) => p.dotDotDotToken === "...")
+      const argumentPattern = getViewFunctionBindingPattern(viewFunction);
+      const spreadVar = argumentPattern
+        ? argumentPattern.elements.find(
+            (p: BindingElement) => p.dotDotDotToken === "..."
+          )
         : undefined;
 
       if (spreadVar) {
@@ -279,7 +281,7 @@ export class VueComponent extends Component {
               new VariableDeclarationList(
                 [
                   new VariableDeclaration(
-                    new BindingPattern(parameters || [], "object"),
+                    argumentPattern,
                     undefined,
                     new PropertyAccess(
                       new SimpleExpression(`this`),

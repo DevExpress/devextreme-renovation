@@ -31,8 +31,7 @@ export default class Widget extends WidgetProps {
     });
   }
   get rest(): any {
-    const { a, ...rest } = this.props;
-    return { ...rest };
+    return { id: this.id };
   }
   @ViewChild("_auto_ref_0", { static: false }) _auto_ref_0?: ElementRef<
     HTMLDivElement
@@ -51,11 +50,6 @@ export default class Widget extends WidgetProps {
 
   ngAfterViewInit() {
     this.__applyAttributes__();
-  }
-  ngOnChanges(changes: { [name: string]: any }) {
-    if (["props"].some((d) => changes[d] && !changes[d].firstChange)) {
-      this.scheduledApplyAttributes = true;
-    }
   }
 
   ngAfterViewChecked() {

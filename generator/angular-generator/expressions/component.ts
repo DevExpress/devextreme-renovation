@@ -1350,11 +1350,22 @@ export class AngularComponent extends Component {
         new Block([], false),
         this.context
       );
-    const parameters = getViewFunctionBindingPattern(viewFunction);
-    const spreadVar = parameters
-      ? parameters.find((p: BindingElement) => p.dotDotDotToken === "...")
+    const options: toStringOptions = {
+      members: this.members,
+    };
+    const argumentPattern = getViewFunctionBindingPattern(viewFunction);
+    const spreadVar = argumentPattern
+      ? argumentPattern.elements.find(
+          (p: BindingElement) => p.dotDotDotToken === "..."
+        )
       : undefined;
     if (spreadVar) {
+      const propsNames = this.members
+        .filter((m) => m.inherited)
+        .map((m) => m._name.toString());
+      const argNames = argumentPattern.getAllDependency(options);
+      const res = propsNames.filter((p) => !argNames.includes(p));
+
       const spreadGetAccessor = new GetAccessor(
         undefined,
         undefined,
@@ -1363,23 +1374,8 @@ export class AngularComponent extends Component {
         undefined,
         new Block(
           [
-            new VariableDeclarationList(
-              [
-                new VariableDeclaration(
-                  new BindingPattern(parameters || [], "object"),
-                  undefined,
-                  new PropertyAccess(
-                    new SimpleExpression(`this`),
-                    new Identifier("props")
-                  )
-                ),
-              ],
-              "const"
-            ),
             new ReturnStatement(
-              new SimpleExpression(
-                `{${spreadVar.dotDotDotToken}${spreadVar.name}}`
-              )
+              new SimpleExpression(`{${res.map((r) => `${r} : this.${r},`)}}`)
             ),
           ],
           true
@@ -1418,7 +1414,6 @@ export class AngularComponent extends Component {
     ];
 
     const cdkImports: string[] = [];
-
     this.handleViewFunctionSpread();
 
     const decoratorToStringOptions: toStringOptions = {

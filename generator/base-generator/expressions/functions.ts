@@ -129,9 +129,9 @@ export function getTemplate(
       }
     }
 
-    const parameters = getViewFunctionBindingPattern(functionWithTemplate);
-    if (parameters && options?.variables) {
-      const spreadVar = parameters.find(
+    const argumentPattern = getViewFunctionBindingPattern(functionWithTemplate);
+    if (argumentPattern && options?.variables) {
+      const spreadVar = argumentPattern.elements.find(
         (p: BindingElement) => p.dotDotDotToken === "..."
       );
       if (spreadVar?.name) {
@@ -149,8 +149,11 @@ export function getViewFunctionBindingPattern(viewFunction: BaseFunction) {
   const obj = viewFunction.parameters[0]?.name;
   return obj instanceof BindingPattern &&
     obj.elements[0].name instanceof BindingPattern
-    ? obj.elements[0].name.elements
-    : undefined;
+    ? obj.elements[0].name
+    : new BindingPattern(
+        [new BindingElement(undefined, undefined, "", undefined)],
+        "object"
+      );
 }
 export class BaseFunction extends Expression {
   modifiers: string[];
