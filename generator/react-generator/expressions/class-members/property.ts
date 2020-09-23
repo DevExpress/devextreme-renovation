@@ -64,7 +64,7 @@ export class Property extends BaseProperty {
     return `${this.name}${this.compileTypeDeclarationType(type)}`;
   }
 
-  getter(componentContext?: string) {
+  getter(componentContext?: string, keepRef: boolean = false) {
     componentContext = this.processComponentContext(componentContext);
     const scope = this.processComponentContext(this.scope);
     if (this.isInternalState) {
@@ -89,6 +89,9 @@ export class Property extends BaseProperty {
       )
     ) {
       if (componentContext === "") {
+        if (keepRef) {
+          return `${scope}${this.name}`;
+        }
         return `${scope}${this.name}${
           scope ? this.questionOrExclamationToken : ""
         }.current!`;

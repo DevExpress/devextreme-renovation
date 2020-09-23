@@ -396,10 +396,6 @@ export class Property extends ReactProperty {
       true
     );
   }
-
-  getter(componentContext?: string) {
-    return super.getter(componentContext);
-  }
 }
 
 const processTagName = (tagName: Expression) =>

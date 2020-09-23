@@ -152,7 +152,7 @@ export class VueComponent extends Component {
 
   createPropsGetter(members: Array<Property | Method>) {
     const expression = new ObjectLiteral(
-      getProps(members).map(
+      getProps(members.filter((member) => !member.isForwardRefProp)).map(
         (p) =>
           new PropertyAssignment(
             p._name,
@@ -460,7 +460,10 @@ export class VueComponent extends Component {
     if (forwardRefs.length) {
       statements.push(`__forwardRef(){
                   ${forwardRefs
-                    .map((m) => `this.${m._name}(this.$refs.${m._name});`)
+                    .map((m) => {
+                      const token = (m as Property).isOptional ? "?." : "";
+                      return `this.${m._name}${token}(this.$refs.${m._name});`;
+                    })
                     .join("\n")}
               }`);
     }
