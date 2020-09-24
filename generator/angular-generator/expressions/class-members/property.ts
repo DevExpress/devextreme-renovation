@@ -98,7 +98,9 @@ export class Property extends BaseProperty {
     if (this.isForwardRefProp) {
       return `${this.modifiers.join(" ")} ${this.decorators
         .map((d) => d.toString())
-        .join(" ")} ${this.name}:(ref:any)=>void=()=>{}`;
+        .join(" ")} ${this.name}${
+        this.questionOrExclamationToken
+      }:(ref:any)=>void`;
     }
 
     if (this.isForwardRef) {
@@ -112,12 +114,15 @@ export class Property extends BaseProperty {
     return defaultValue;
   }
 
-  getter(componentContext?: string) {
+  getter(componentContext?: string, keepRef: boolean = false) {
     componentContext = this.processComponentContext(componentContext);
     if (this.isEvent) {
       return `${componentContext}_${this.name}`;
     }
     if (this.isRef || this.isForwardRef || this.isForwardRefProp) {
+      if (keepRef) {
+        return `${componentContext}${this.name}`;
+      }
       const postfix = this.isForwardRefProp ? "Ref" : "";
       const type = this.type.toString();
       const isElement = type.includes("HTML") && type.includes("Element");

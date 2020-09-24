@@ -1348,8 +1348,9 @@ export class AngularComponent extends Component {
     this.members
       .filter((m) => m.isForwardRefProp)
       .forEach((m) => {
+        const token = (m as Property).isOptional ? "?." : "";
         ngAfterViewInitStatements.push(`
-                this.${m.name}(this.${m.name}Ref);
+                this.${m.name}${token}(this.${m.name}Ref);
             `);
       });
 

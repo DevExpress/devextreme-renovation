@@ -58,7 +58,7 @@ export const DxWidget = {
       return {};
     },
     props() {
-      return { someRef: this.someRef() };
+      return { someRef: this.someRef?.() };
     },
   },
   methods: {

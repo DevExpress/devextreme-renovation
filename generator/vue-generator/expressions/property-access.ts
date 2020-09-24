@@ -15,8 +15,7 @@ export class PropertyAccess extends BasePropertyAccess {
       return `this.$refs.${propertyName}=${state}`;
     }
     if (property.isForwardRefProp) {
-      return `this.forwardRef_${propertyName}(${state});
-      this.${propertyName}(${state})`;
+      return `this.forwardRef_${propertyName}(${state}), this.${propertyName}(${state})`;
     }
     if (property.isRefProp) {
       return `this.props.${propertyName}=${state}`;
@@ -27,10 +26,7 @@ export class PropertyAccess extends BasePropertyAccess {
   toString(options?: toStringOptions, elements: BindingElement[] = []) {
     const member = this.getMember(options);
     if (member && member.isRefProp && member instanceof Property) {
-      return `${member.getter(
-        options!.newComponentContext,
-        options?.isComputedProps
-      )}`;
+      return `${member.getter(options!.newComponentContext, options?.keepRef)}`;
     }
     return super.toString(options, elements);
   }

@@ -1,7 +1,7 @@
 import Child, { DxRefOnChildrenChildModule } from "./forward-ref-child";
 import { Input } from "@angular/core";
 class Props {
-  @Input() nullableRef: (ref: any) => void = () => {};
+  @Input() nullableRef?: (ref: any) => void;
 }
 
 import {
@@ -79,7 +79,7 @@ export default class RefOnChildrenParent extends Props {
   } = {};
 
   ngAfterViewInit() {
-    this.nullableRef(this.nullableRefRef);
+    this.nullableRef?.(this.nullableRefRef);
 
     this._effectTimeout = setTimeout(() => {
       this.__destroyEffects.push(this.__effect());

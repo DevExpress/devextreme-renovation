@@ -149,21 +149,27 @@ export class Property extends BaseProperty {
           }`;
   }
 
-  getter(componentContext?: string, isComputedProps: boolean = false) {
+  getter(componentContext?: string, keepRef: boolean = false) {
     const baseValue = super.getter(componentContext);
     componentContext = this.processComponentContext(componentContext);
     if (this.isState) {
       return `${componentContext}${this.name}_state`;
     }
     if (
-      (this.isForwardRefProp || this.isRef || this.isForwardRef) &&
+      (this.isRef || this.isForwardRef || this.isForwardRefProp) &&
       componentContext.length
     ) {
+      if (keepRef) {
+        return this.isForwardRefProp
+          ? `${componentContext}${this.name}`
+          : `${componentContext}$refs`;
+      }
       return `${componentContext}$refs.${this.name}`;
     }
     if (this.isRefProp) {
-      if (isComputedProps) {
-        return `${componentContext}${this.name}()`;
+      if (keepRef) {
+        const token = this.isOptional ? "?." : "";
+        return `${componentContext}${this.name}${token}()`;
       }
       return `${componentContext}props.${this.name}`;
     }
