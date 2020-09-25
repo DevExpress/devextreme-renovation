@@ -763,7 +763,6 @@ export class ReactComponent extends Component {
       this.name
     }Ref> }> & { defaultProps: ${this.getPropsType()}}`;
   }
-
   toString() {
     const getTemplateFunc = this.props.some((p) => p.isTemplate)
       ? `
@@ -801,7 +800,9 @@ export class ReactComponent extends Component {
                     }(props: ${this.compilePropsType()}){`
                   : `const ${this.name} = forwardRef<${
                       this.name
-                    }Ref, ${this.compilePropsType()}>((props: ${this.compilePropsType()}, ref) => {`
+                    }Ref, ${this.compilePropsType()}>(function ${
+                      this.name.charAt(0).toLowerCase() + this.name.slice(1)
+                    }(props: ${this.compilePropsType()}, ref){`
               }
                   ${this.compileUseRef()}
                   ${this.stateDeclaration()}

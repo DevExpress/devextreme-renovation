@@ -24,7 +24,10 @@ interface WidgetWithProps {
 const WidgetWithProps = forwardRef<
   WidgetWithPropsRef,
   typeof WidgetWithPropsInput & RestProps
->((props: typeof WidgetWithPropsInput & RestProps, ref) => {
+>(function widgetWithProps(
+  props: typeof WidgetWithPropsInput & RestProps,
+  ref
+) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { optionalValue, value, ...restProps } = props;
