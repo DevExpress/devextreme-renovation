@@ -1,7 +1,9 @@
 <template>
-  <div
-    >{{(model.props.data===undefined||model.props.data===null?undefined:model.props.data.value)}}</div
-  >
+  <div>{{
+    model.props.data === undefined || model.props.data === null
+      ? undefined
+      : model.props.data.value
+  }}</div>
 </template>
 <script>
 import Props from "./component-bindings-only";
