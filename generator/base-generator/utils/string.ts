@@ -9,6 +9,11 @@ export function capitalizeFirstLetter(string: string | Identifier) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+export function lowerizeFirstLeter(string: string | Identifier) {
+  string = string.toString();
+  return string.charAt(0).toLowerCase() + string.slice(1);
+}
+
 export const removePlural = (string: string | Identifier) => {
   string = string.toString();
   let last = string.lastIndexOf("s");

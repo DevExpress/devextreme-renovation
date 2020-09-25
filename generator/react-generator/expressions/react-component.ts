@@ -44,7 +44,10 @@ import { GetAccessor } from "./class-members/get-accessor";
 import { ObjectLiteral } from "../../base-generator/expressions/literal";
 import path from "path";
 import { ComponentInput, getTemplatePropName } from "./react-component-input";
-import { capitalizeFirstLetter } from "../../base-generator/utils/string";
+import {
+  capitalizeFirstLetter,
+  lowerizeFirstLeter,
+} from "../../base-generator/utils/string";
 import { Conditional } from "../../base-generator/expressions/conditions";
 import { JsxOpeningElement } from "./jsx/jsx-opening-element";
 
@@ -800,9 +803,9 @@ export class ReactComponent extends Component {
                     }(props: ${this.compilePropsType()}){`
                   : `const ${this.name} = forwardRef<${
                       this.name
-                    }Ref, ${this.compilePropsType()}>(function ${
-                      this.name.charAt(0).toLowerCase() + this.name.slice(1)
-                    }(props: ${this.compilePropsType()}, ref){`
+                    }Ref, ${this.compilePropsType()}>(function ${lowerizeFirstLeter(
+                      this.name
+                    )}(props: ${this.compilePropsType()}, ref){`
               }
                   ${this.compileUseRef()}
                   ${this.stateDeclaration()}
