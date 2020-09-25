@@ -39,6 +39,10 @@ import {
   VariableDeclarationList,
   VariableDeclaration,
 } from "../../base-generator/expressions/variables";
+import {
+  BindingElement,
+  BindingPattern,
+} from "../../base-generator/expressions/binding-pattern";
 
 export function getComponentListFromContext(context: GeneratorContext) {
   return Object.keys(context.components || {})
@@ -73,6 +77,8 @@ export class VueComponent extends Component {
         new SimpleExpression(
           `children.reduce((acc, child) => {
             const name = child.componentOptions?.Ctor?.extendOptions?.propName;
+            const tag = child.tag || "";
+            const isUnregisteredDxTag = tag.indexOf("Dx") === 0;
             if(name) {
               const collectedChildren = {};
               const childProps = child.componentOptions.propsData;
@@ -94,6 +100,8 @@ export class VueComponent extends Component {
                 ...childProps,
                 __name: name,
               });
+            } else if (isUnregisteredDxTag) {
+              throw new Error(\`Unknown custom element: <\${tag}> - did you register the component correctly?'\`);
             }
             return acc;
           }, [])`
@@ -148,7 +156,7 @@ export class VueComponent extends Component {
 
   createPropsGetter(members: Array<Property | Method>) {
     const expression = new ObjectLiteral(
-      getProps(members).map(
+      getProps(members.filter((member) => !member.isForwardRefProp)).map(
         (p) =>
           new PropertyAssignment(
             p._name,
@@ -230,7 +238,10 @@ export class VueComponent extends Component {
     (members.filter((m) => m.isNested) as Property[]).forEach((m) => {
       members.push(this.createNestedPropertyGetter(m));
     });
-
+    const spreadGetAccessor = this.getViewSpreadAccessor();
+    if (spreadGetAccessor) {
+      members.push(spreadGetAccessor);
+    }
     return members;
   }
 
@@ -249,6 +260,37 @@ export class VueComponent extends Component {
     }
   }
 
+  returnGetAccessorBlock(
+    argumentPattern: BindingPattern,
+    options: toStringOptions,
+    spreadVar: BindingElement
+  ) {
+    return new Block(
+      [
+        new VariableDeclarationList(
+          [
+            new VariableDeclaration(
+              argumentPattern,
+              undefined,
+              new PropertyAccess(
+                new SimpleExpression(`this`),
+                new Identifier("props")
+              )
+            ),
+          ],
+          "const"
+        ),
+        new ReturnStatement(
+          new SimpleExpression(`{${spreadVar.dotDotDotToken}${spreadVar.name}}`)
+        ),
+      ],
+      true
+    );
+  }
+
+  createViewSpreadAccessor(name: Identifier, body: Block) {
+    return new GetAccessor(undefined, undefined, name, [], undefined, body);
+  }
   compileTemplate() {
     const viewFunction = this.decorators[0].getViewFunction();
     if (viewFunction) {
@@ -256,6 +298,7 @@ export class VueComponent extends Component {
         members: this.members,
         newComponentContext: "",
       };
+
       this.template = viewFunction.getTemplate(options);
 
       if (options.hasStyle) {
@@ -456,7 +499,10 @@ export class VueComponent extends Component {
     if (forwardRefs.length) {
       statements.push(`__forwardRef(){
                   ${forwardRefs
-                    .map((m) => `this.${m._name}(this.$refs.${m._name});`)
+                    .map((m) => {
+                      const token = (m as Property).isOptional ? "?." : "";
+                      return `this.${m._name}${token}(this.$refs.${m._name});`;
+                    })
                     .join("\n")}
               }`);
     }

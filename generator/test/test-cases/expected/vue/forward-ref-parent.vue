@@ -27,7 +27,7 @@ export const DxRefOnChildrenParent = {
       return {};
     },
     props() {
-      return { nullableRef: this.$refs.nullableRef };
+      return {};
     },
   },
   watch: {
@@ -45,7 +45,7 @@ export const DxRefOnChildrenParent = {
       const html = this.$refs.nullableRef?.innerHTML;
     },
     __forwardRef() {
-      this.nullableRef(this.$refs.nullableRef);
+      this.nullableRef?.(this.$refs.nullableRef);
     },
     __schedule_effect() {
       this.__scheduleEffect(0, "__effect");

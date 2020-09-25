@@ -53,9 +53,7 @@ export class PropertyAccess extends BasePropertyAccess {
       property.isForwardRefProp
     ) {
       const scope = property.processComponentContext(property.scope);
-      return `${scope}${this.name}${
-        scope ? property.questionOrExclamationToken : ""
-      }.current=${state}`;
+      return `${scope}${this.name}.current=${state}`;
     }
     return setState;
   }

@@ -10,7 +10,7 @@ export function compileMethod(
 ): string {
   if (expression.name === "props") {
     options = options || { members: [] };
-    options.isComputedProps = true;
+    options.keepRef = true;
   }
   return `${expression.name}(${
     expression.parameters

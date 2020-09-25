@@ -21,11 +21,7 @@ export const DxRefOnChildrenChild = {
       return {};
     },
     props() {
-      return {
-        childRef: this.$refs.childRef,
-        nullableRef: this.$refs.nullableRef,
-        state: this.state,
-      };
+      return { state: this.state };
     },
   },
   methods: {
@@ -37,7 +33,7 @@ export const DxRefOnChildrenChild = {
     },
     __forwardRef() {
       this.childRef(this.$refs.childRef);
-      this.nullableRef(this.$refs.nullableRef);
+      this.nullableRef?.(this.$refs.nullableRef);
     },
   },
   mounted() {

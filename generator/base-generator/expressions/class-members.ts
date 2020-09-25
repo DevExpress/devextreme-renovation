@@ -320,7 +320,7 @@ export class Property extends BaseClassMember {
     return `${this.name}:${this.initializer}`;
   }
 
-  getter(componentContext?: string) {
+  getter(componentContext?: string, keepRef: boolean = false) {
     return `${this.processComponentContext(
       componentContext
     )}${this._name.toString()}`;
@@ -359,6 +359,10 @@ export class Property extends BaseClassMember {
       this.decorators.length === 0 ||
       this._hasDecorator(Decorators.InternalState)
     );
+  }
+
+  get isOptional() {
+    return this.questionOrExclamationToken === SyntaxKind.QuestionToken;
   }
 }
 

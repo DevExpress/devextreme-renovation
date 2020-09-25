@@ -1,7 +1,7 @@
 import { Input } from "@angular/core";
 class Props {
-  @Input() childRef: (ref: any) => void = () => {};
-  @Input() nullableRef: (ref: any) => void = () => {};
+  @Input() childRef!: (ref: any) => void;
+  @Input() nullableRef?: (ref: any) => void;
   @Input() state?: number;
 }
 
@@ -66,7 +66,7 @@ export default class RefOnChildrenChild extends Props {
   ngAfterViewInit() {
     this.childRef(this.childRefRef);
 
-    this.nullableRef(this.nullableRefRef);
+    this.nullableRef?.(this.nullableRefRef);
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {

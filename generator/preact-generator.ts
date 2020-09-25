@@ -379,8 +379,8 @@ export class Property extends ReactProperty {
   REF_OBJECT_TYPE = "RefObject";
 
   typeDeclaration() {
-    if (this.decorators.find((d) => d.name === "Slot")) {
-      return `${this.name}${this.questionOrExclamationToken}:any`;
+    if (this.isSlot) {
+      return `${this.name}${this.compileTypeDeclarationType("any")}`;
     }
     return super.typeDeclaration();
   }
@@ -395,10 +395,6 @@ export class Property extends ReactProperty {
       this.initializer,
       true
     );
-  }
-
-  getter(componentContext?: string) {
-    return super.getter(componentContext);
   }
 }
 

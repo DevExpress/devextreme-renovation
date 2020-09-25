@@ -22,7 +22,7 @@ export const DxWidget = {
       return {};
     },
     props() {
-      return { nullableRef: this.nullableRef() };
+      return { nullableRef: this.nullableRef?.() };
     },
   },
   methods: {

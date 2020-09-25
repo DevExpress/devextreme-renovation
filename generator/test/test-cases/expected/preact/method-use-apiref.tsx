@@ -26,7 +26,7 @@ declare type RestProps = {
 };
 interface WidgetWithApiRef {
   props: typeof WidgetWithApiRefInput & RestProps;
-  baseRef: any;
+  baseRef?: any;
   restAttributes: RestProps;
 }
 

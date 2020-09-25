@@ -4925,6 +4925,24 @@ mocha.describe("Angular generator", function () {
       );
     });
 
+    mocha.it(
+      "Template property with exclamation token should ignore token",
+      function () {
+        const property = generator.createProperty(
+          [createDecorator(Decorators.Template)],
+          [],
+          generator.createIdentifier("template"),
+          generator.SyntaxKind.ExclamationToken,
+          generator.createKeywordTypeNode(generator.SyntaxKind.AnyKeyword)
+        );
+
+        assert.strictEqual(
+          property.toString(),
+          " @Input() template:TemplateRef<any> | null = null"
+        );
+      }
+    );
+
     mocha.it("Event Prop generates Event EventEmitter", function () {
       const property = generator.createProperty(
         [createDecorator(Decorators.Event)],
@@ -5104,7 +5122,7 @@ mocha.describe("Angular generator", function () {
                 __slotName?: ElementRef<HTMLDivElement>;
 
                 get name(){
-                    return this.__slotName?.nativeElement?.innerHTML.trim();
+                    return this.__slotName?.nativeElement?.innerHTML.trim() || "";
                 }
             `)
       );
@@ -6553,6 +6571,32 @@ mocha.describe("Angular generator", function () {
                                 return result;
                             })();
                         }`)
+          );
+
+          assert.strictEqual(getter.isMemorized(), true);
+        });
+
+        mocha.it("Memorize createTypeLiteralNode", function () {
+          const getter = createGetAccessor(
+            generator.createTypeLiteralNode([
+              generator.createPropertySignature(
+                undefined,
+                generator.createIdentifier("field"),
+                undefined,
+                generator.createKeywordTypeNode(
+                  generator.SyntaxKind.StringKeyword
+                ),
+                undefined
+              ),
+            ])
+          );
+
+          assert.strictEqual(getter.isMemorized(), true);
+        });
+
+        mocha.it("Memorize object", function () {
+          const getter = createGetAccessor(
+            generator.createKeywordTypeNode(generator.SyntaxKind.ObjectKeyword)
           );
 
           assert.strictEqual(getter.isMemorized(), true);

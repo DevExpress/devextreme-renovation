@@ -7,7 +7,7 @@ import {
   VariableExpression,
 } from "../types";
 import { Block, ReturnStatement } from "./statements";
-import { BindingPattern } from "./binding-pattern";
+import { BindingElement, BindingPattern } from "./binding-pattern";
 import {
   variableDeclaration,
   compileType,
@@ -22,6 +22,7 @@ import { Decorator } from "./decorator";
 import { Property } from "./class-members";
 import { containsPortalsInStatements } from "../utils/functions";
 import { TypeParameterDeclaration } from "./type-parameter-declaration";
+import { PropertyAccess } from "./property-access";
 export class Parameter {
   decorators: Decorator[];
   modifiers: string[];
@@ -127,8 +128,36 @@ export function getTemplate(
       }
     }
 
+    const argumentPattern = getViewFunctionBindingPattern(functionWithTemplate);
+    if (argumentPattern && options?.variables) {
+      const spreadVar = argumentPattern.elements.find(
+        (p: BindingElement) => p.dotDotDotToken === "..."
+      );
+      if (spreadVar?.name) {
+        const optionsSpreadVar = options.variables[spreadVar.name.toString()];
+        if (optionsSpreadVar instanceof PropertyAccess) {
+          optionsSpreadVar.expression = new SimpleExpression("this");
+        }
+      }
+    }
+
     return getJsxExpression(returnStatement);
   }
+}
+export function getViewFunctionBindingPattern(
+  viewFunction: BaseFunction | null
+) {
+  const noopReturn = new BindingPattern(
+    [new BindingElement(undefined, undefined, "", undefined)],
+    "object"
+  );
+  if (viewFunction) {
+    const obj = viewFunction.parameters[0]?.name;
+    return obj instanceof BindingPattern &&
+      obj.elements[0].name instanceof BindingPattern
+      ? obj.elements[0].name
+      : noopReturn;
+  } else return noopReturn;
 }
 
 export class BaseFunction extends Expression {

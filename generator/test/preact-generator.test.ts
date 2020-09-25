@@ -10,6 +10,11 @@ import {
   getModulePath,
 } from "./helpers/common";
 
+import factory from "./helpers/create-component";
+import { Decorators } from "../component_declaration/decorators";
+
+const { createDecorator } = factory(generator);
+
 mocha.describe("preact-generator", function () {
   const testGenerator = createTestGenerator("preact");
   this.beforeAll(function () {
@@ -199,15 +204,7 @@ mocha.describe("preact-generator: expressions", function () {
   mocha.describe("Property: type declaration", function () {
     mocha.it("Slot by default - any", function () {
       const property = generator.createProperty(
-        [
-          generator.createDecorator(
-            generator.createCall(
-              generator.createIdentifier("Slot"),
-              undefined,
-              []
-            )
-          ),
-        ],
+        [createDecorator(Decorators.Slot)],
         undefined,
         generator.createIdentifier("p")
       );
@@ -215,37 +212,21 @@ mocha.describe("preact-generator: expressions", function () {
       assert.strictEqual(property.typeDeclaration(), "p:any");
     });
 
-    mocha.it("Slot with type - any", function () {
+    mocha.it("Slot with type with exclamation token - any", function () {
       const property = generator.createProperty(
-        [
-          generator.createDecorator(
-            generator.createCall(
-              generator.createIdentifier("Slot"),
-              undefined,
-              []
-            )
-          ),
-        ],
+        [createDecorator(Decorators.Slot)],
         undefined,
         generator.createIdentifier("p"),
         generator.SyntaxKind.ExclamationToken,
         generator.createKeywordTypeNode("string")
       );
 
-      assert.strictEqual(property.typeDeclaration(), "p!:any");
+      assert.strictEqual(property.typeDeclaration(), "p:any");
     });
 
     mocha.it("Not Slot Property - use base type declaration", function () {
       const property = generator.createProperty(
-        [
-          generator.createDecorator(
-            generator.createCall(
-              generator.createIdentifier("OneWay"),
-              undefined,
-              []
-            )
-          ),
-        ],
+        [createDecorator(Decorators.OneWay)],
         undefined,
         generator.createIdentifier("p"),
         generator.SyntaxKind.ExclamationToken,

@@ -45,8 +45,12 @@ export default class Child extends ChildInput {
   @ViewChild("slotChildren") set slotChildren(
     slot: ElementRef<HTMLDivElement>
   ) {
+    const oldValue = this.children;
     this.__slotChildren = slot;
-    this._detectChanges();
+    const newValue = this.children;
+    if (!!oldValue !== !!newValue) {
+      this._detectChanges();
+    }
   }
 }
 @NgModule({

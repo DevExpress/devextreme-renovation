@@ -3,6 +3,8 @@ import { toStringOptions } from "../types";
 import SyntaxKind from "../syntaxKind";
 import { Property } from "./class-members";
 import { PropertyAccess } from "./property-access";
+import { getConditionalOptions } from "../utils/options";
+import { Paren, Call } from "./common";
 
 const isShortOperator = (operator: string) => {
   return (
@@ -13,11 +15,25 @@ const isShortOperator = (operator: string) => {
   );
 };
 
+const isLogicalOperator = (operator: string) => {
+  return (
+    operator === SyntaxKind.AmpersandAmpersandToken ||
+    operator === SyntaxKind.BarBarToken
+  );
+};
+
 const unaryPlusOrMinus = (operator: string) => {
   return (
     operator === SyntaxKind.PlusPlusToken ||
     operator === SyntaxKind.MinusMinusToken
   );
+};
+
+const isCondition = (expression: Expression): boolean => {
+  if (expression instanceof Paren) {
+    return isCondition(expression.expression);
+  }
+  return expression instanceof Binary || expression instanceof Call;
 };
 
 export class Binary extends Expression {
@@ -34,6 +50,10 @@ export class Binary extends Expression {
   toString(options?: toStringOptions) {
     const dependencyMember =
       this.left instanceof PropertyAccess && this.left.getMember(options);
+    const leftOptions =
+      isLogicalOperator(this.operator) && !isCondition(this.left)
+        ? getConditionalOptions(options)
+        : options;
     if (dependencyMember) {
       let rightExpression;
 
@@ -44,7 +64,7 @@ export class Binary extends Expression {
       if (isShortOperator(this.operator)) {
         const operator = this.operator[0];
         rightExpression = `${this.left.toString(
-          options
+          leftOptions
         )}${operator}${this.right.toString(options)}`;
       }
 
@@ -60,7 +80,7 @@ export class Binary extends Expression {
         )}`;
       }
     }
-    return `${this.left.toString(options)} ${
+    return `${this.left.toString(leftOptions)} ${
       this.operator
     } ${this.right.toString(options)}`;
   }

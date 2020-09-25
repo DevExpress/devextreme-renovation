@@ -29,7 +29,7 @@ declare type RestProps = Omit<
 >;
 interface WidgetWithApiRef {
   props: typeof WidgetWithApiRefInput & RestProps;
-  baseRef: any;
+  baseRef?: any;
   restAttributes: RestProps;
 }
 

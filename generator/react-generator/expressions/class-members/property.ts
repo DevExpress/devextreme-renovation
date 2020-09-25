@@ -7,6 +7,7 @@ import {
 } from "../../../base-generator/utils/string";
 import { toStringOptions } from "../../../base-generator/types";
 import { Identifier } from "../../../base-generator/expressions/common";
+import { TypeExpression } from "../../../base-generator/expressions/type";
 
 export function getLocalStateName(
   name: Identifier | string,
@@ -34,6 +35,15 @@ export class Property extends BaseProperty {
     return this.defaultDeclaration();
   }
 
+  compileTypeDeclarationType(type: string | TypeExpression) {
+    return compileType(
+      type.toString(),
+      this.questionOrExclamationToken === SyntaxKind.ExclamationToken
+        ? ""
+        : this.questionOrExclamationToken
+    );
+  }
+
   typeDeclaration() {
     let type = this.type;
 
@@ -51,18 +61,10 @@ export class Property extends BaseProperty {
       type = `${this.REF_OBJECT_TYPE}<${this.type}>`;
     }
 
-    const questionOrExclamationToken =
-      this.questionOrExclamationToken === SyntaxKind.ExclamationToken ||
-      type === "any"
-        ? ""
-        : this.questionOrExclamationToken;
-
-    const typeString = compileType(type.toString(), questionOrExclamationToken);
-
-    return `${this.name}${typeString}`;
+    return `${this.name}${this.compileTypeDeclarationType(type)}`;
   }
 
-  getter(componentContext?: string) {
+  getter(componentContext?: string, keepRef: boolean = false) {
     componentContext = this.processComponentContext(componentContext);
     const scope = this.processComponentContext(this.scope);
     if (this.isInternalState) {
@@ -87,6 +89,9 @@ export class Property extends BaseProperty {
       )
     ) {
       if (componentContext === "") {
+        if (keepRef) {
+          return `${scope}${this.name}`;
+        }
         return `${scope}${this.name}${
           scope ? this.questionOrExclamationToken : ""
         }.current!`;
