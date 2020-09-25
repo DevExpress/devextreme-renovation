@@ -1,14 +1,17 @@
 import {
   Component,
+  Slot,
   ComponentBindings,
   JSXComponent,
 } from "../../../../component_declaration/common";
 
+const view = (model: Widget): JSX.Element => model.props.children;
+
 @ComponentBindings()
-export class WidgetInput {}
-const view = (viewModel: Widget) => <svg {...viewModel.restAttributes}></svg>;
+class WidgetInput {
+  @Slot() children?: any;
+}
 @Component({
   view,
-  isSVG: true,
 })
 export default class Widget extends JSXComponent(WidgetInput) {}

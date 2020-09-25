@@ -242,6 +242,14 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("view-without-tag", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("view-without-tag-arrow", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {

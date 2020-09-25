@@ -10,6 +10,8 @@ import { Expression } from "../../../base-generator/expressions/base";
 import { toStringOptions } from "../../types";
 import { Parameter } from "./parameter";
 import { TypeParameterDeclaration } from "../../../base-generator/expressions/type-parameter-declaration";
+import { isElement } from "../../../angular-generator/expressions/jsx/elements";
+import { JsxChildExpression, JsxExpression } from "../jsx/jsx-expression";
 
 export class ArrowFunction extends AngularArrowFunction {
   constructor(
@@ -30,6 +32,13 @@ export class ArrowFunction extends AngularArrowFunction {
       body,
       context
     );
+  }
+
+  processTemplateExpression(expression?: JsxExpression) {
+    if (expression && !isElement(expression)) {
+      return new JsxChildExpression(expression);
+    }
+    return super.processTemplateExpression(expression);
   }
 
   getTemplate(options?: toStringOptions, doNotChangeContext?: boolean): string {

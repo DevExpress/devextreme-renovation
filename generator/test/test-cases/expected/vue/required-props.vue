@@ -1,5 +1,4 @@
 <script>
-function view() {}
 const WidgetInput = {
   size: {
     type: Object,

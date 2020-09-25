@@ -46,7 +46,6 @@ import path from "path";
 import { ComponentInput, getTemplatePropName } from "./react-component-input";
 import { capitalizeFirstLetter } from "../../base-generator/utils/string";
 import { Conditional } from "../../base-generator/expressions/conditions";
-import { JsxOpeningElement } from "./jsx/jsx-opening-element";
 
 function getSubscriptions(methods: Method[]) {
   return methods
@@ -255,13 +254,8 @@ export class ReactComponent extends Component {
     );
   }
 
-  getComponentOpeningElement(): JsxOpeningElement | undefined {
-    const viewFunction = this.context.viewFunctions?.[this.view];
-    return viewFunction?.getRootElement() as JsxOpeningElement;
-  }
-
   compileImportStatements(hooks: string[], compats: string[], core: string[]) {
-    const elementAttributes = this.getComponentOpeningElement()?.isSVG()
+    const elementAttributes = this.isSVGComponent
       ? "SVGAttributes"
       : "HTMLAttributes";
     const imports = ["import * as React from 'react'"];
@@ -577,7 +571,7 @@ export class ReactComponent extends Component {
   }
 
   compileRestProps(): string {
-    const elementType = this.getComponentOpeningElement()?.isSVG()
+    const elementType = this.isSVGComponent
       ? "SVGAttributes<SVGElement>"
       : "HTMLAttributes<HTMLElement>";
     return `declare type RestProps = Omit<${elementType}, keyof ${this.getPropsType()}>`;

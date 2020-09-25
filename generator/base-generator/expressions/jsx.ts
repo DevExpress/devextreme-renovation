@@ -26,7 +26,7 @@ export function getJsxExpression(
   } else if (e instanceof Call) {
     return new JsxExpression(undefined, e);
   } else if (
-    e instanceof ExpressionWithExpression ||
+    e instanceof Paren ||
     e instanceof ExpressionWithOptionalExpression
   ) {
     return getJsxExpression(e.expression);

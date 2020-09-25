@@ -1,4 +1,3 @@
-import "typescript";
 function view() {}
 
 export declare type WidgetPropsType = {};

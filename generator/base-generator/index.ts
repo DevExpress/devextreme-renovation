@@ -122,6 +122,7 @@ import {
   NamedExports,
 } from "./expressions/export";
 import { Enum, EnumMember } from "./expressions/enum";
+import { getExpression } from "./utils/expressions";
 
 export default class Generator implements GeneratorAPI {
   NodeFlags = {
@@ -1267,8 +1268,11 @@ export default class Generator implements GeneratorAPI {
     }
   }
 
-  addViewFunction(name: string, f: any) {
-    if ((f instanceof Function || f instanceof ArrowFunction) && f.isJsx()) {
+  addViewFunction(name: string, f: any, force = false) {
+    if (
+      (f instanceof Function || f instanceof ArrowFunction) &&
+      (f.isJsx() || force)
+    ) {
       const context = this.getContext();
       context.viewFunctions = context.viewFunctions || {};
       context.viewFunctions[name] = f;
@@ -1307,6 +1311,7 @@ export default class Generator implements GeneratorAPI {
 
   processCodeFactoryResult(codeFactoryResult: Array<any>) {
     const context = this.getContext();
+    const functions: Function[] = [];
     codeFactoryResult.forEach((e) => {
       if (e instanceof VariableStatement) {
         context.globals = {
@@ -1317,6 +1322,22 @@ export default class Generator implements GeneratorAPI {
       }
       if (e instanceof Component) {
         this.removeJQueryBaseModule(codeFactoryResult, e);
+      }
+      if (e instanceof Function) {
+        functions.push(e);
+      }
+    });
+    codeFactoryResult.forEach((e) => {
+      if (e instanceof Component) {
+        const name = e.view.toString();
+        const globalView =
+          context.globals?.[name] ||
+          functions.find((f) => f.name!.toString() === name);
+        if (!context.viewFunctions?.[name] && globalView) {
+          const viewFunction = getExpression(globalView);
+          viewFunction.isJsx = () => true;
+          this.addViewFunction(name, viewFunction, true);
+        }
       }
     });
     this.cache.__globals__ = context.globals;
