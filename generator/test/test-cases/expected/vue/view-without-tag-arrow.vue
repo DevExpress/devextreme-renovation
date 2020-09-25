@@ -1,5 +1,5 @@
 <template>
-  <div style="display: contents;"><slot></slot></div>
+  <div style="display: contents"><slot></slot> </div>
 </template>
 <script>
 const WidgetInput = {};
