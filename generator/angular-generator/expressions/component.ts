@@ -10,7 +10,10 @@ import {
 import { HeritageClause } from "../../base-generator/expressions/class";
 import { Identifier, Call } from "../../base-generator/expressions/common";
 import { SimpleExpression } from "../../base-generator/expressions/base";
-import { Block } from "../../base-generator/expressions/statements";
+import {
+  Block,
+  ReturnStatement,
+} from "../../base-generator/expressions/statements";
 import { toStringOptions, AngularGeneratorContext } from "../types";
 import SyntaxKind from "../../base-generator/syntaxKind";
 import {
@@ -38,6 +41,10 @@ import {
 } from "../../base-generator/utils/string";
 import { If } from "../../base-generator/expressions/conditions";
 import { PropertyAccess } from "../../base-generator/expressions/property-access";
+import {
+  BindingElement,
+  BindingPattern,
+} from "../../base-generator/expressions/binding-pattern";
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = "CUSTOM_VALUE_ACCESSOR_PROVIDER";
 
@@ -772,11 +779,8 @@ export class AngularComponent extends Component {
   ): string {
     const viewFunction = this.decorator.getViewFunction();
     if (viewFunction) {
-      const options = {
+      const options: toStringOptions = {
         members: this.members,
-        state: [],
-        internalState: [],
-        props: [],
         newComponentContext: this.viewModel ? "_viewModel" : "",
       };
       const expression = getTemplate(viewFunction, options);
@@ -784,6 +788,7 @@ export class AngularComponent extends Component {
       if (isElement(expression)) {
         options.newComponentContext = SyntaxKind.ThisKeyword;
         const members = [];
+
         const statements = expression.getSpreadAttributes().map((o, i) => {
           const expressionString = o.expression.toString(options);
           const dependency = (o.expression as PropertyAccess).getDependency(
@@ -823,11 +828,11 @@ export class AngularComponent extends Component {
             );
           }
           return `
-                    const _attr_${i}:{[name: string]:string } = ${expressionString} || {};
+                    const _attr_${i}:{[name: string]:any } = ${expressionString} || {};
                     const _ref_${i} = ${refString};
                     if(_ref_${i}){
                         for(let key in _attr_${i}) {
-                            _ref_${i}.setAttribute(key, _attr_${i}[key]);
+                            _ref_${i}.setAttribute(key, _attr_${i}[key].toString());
                         }
                     }
                     `;
@@ -1296,6 +1301,32 @@ export class AngularComponent extends Component {
     return "";
   }
 
+  returnGetAccessorBlock(
+    argumentPattern: BindingPattern,
+    options: toStringOptions,
+    spreadVar: BindingElement
+  ) {
+    const propsNames = getProps(options.members).map((p) => p._name.toString());
+    const argNames = argumentPattern.getAllDependency(options);
+    const res = propsNames
+      .filter((p) => !argNames.includes(p))
+      .map(
+        (r) =>
+          new BindingElement(
+            "",
+            new Identifier(r),
+            new Identifier(`this.${r}`),
+            undefined
+          )
+      );
+    return new Block(
+      [new ReturnStatement(new BindingPattern(res, "object"))],
+      true
+    );
+  }
+  createViewSpreadAccessor(name: Identifier, body: Block) {
+    return new GetAccessor(undefined, undefined, name, [], undefined, body);
+  }
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -1325,6 +1356,11 @@ export class AngularComponent extends Component {
     ];
 
     const cdkImports: string[] = [];
+
+    const spreadGetAccessor = this.getViewSpreadAccessor();
+    if (spreadGetAccessor) {
+      this.members.push(spreadGetAccessor);
+    }
 
     const decoratorToStringOptions: toStringOptions = {
       members: this.members,

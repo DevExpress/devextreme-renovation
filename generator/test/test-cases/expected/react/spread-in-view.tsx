@@ -1,0 +1,42 @@
+export const viewFunction = ({ props: { a, ...rest } }: Widget) => {
+  return <div {...rest}></div>;
+};
+
+export declare type WidgetPropsType = {
+  a: Array<Number>;
+  id: string;
+};
+export const WidgetProps: WidgetPropsType = {
+  a: [1, 2, 3],
+  id: "1",
+};
+import * as React from "react";
+import { useCallback, HTMLAttributes } from "react";
+
+declare type RestProps = Omit<
+  HTMLAttributes<HTMLElement>,
+  keyof typeof WidgetProps
+>;
+interface Widget {
+  props: typeof WidgetProps & RestProps;
+  restAttributes: RestProps;
+}
+
+export default function Widget(props: typeof WidgetProps & RestProps) {
+  const __restAttributes = useCallback(
+    function __restAttributes(): RestProps {
+      const { a, id, ...restProps } = props;
+      return restProps;
+    },
+    [props]
+  );
+
+  return viewFunction({
+    props: { ...props },
+    restAttributes: __restAttributes(),
+  });
+}
+
+Widget.defaultProps = {
+  ...WidgetProps,
+};

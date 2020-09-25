@@ -164,7 +164,7 @@ export function JSXComponent<
     keyof PropsType,
     keyof PropsType
   >
->(Props?: { new (): PropsType }) {
+>(Props?: { new (): PropsType & { ref?: React.Component<PropsType> } }) {
   type DefaultPropsType = Omit<PropsType, RequiredProps> & {
     [name: string]: any;
   };
@@ -176,9 +176,9 @@ export function JSXComponent<
     static isReactComponent = {};
     constructor(props: RealPropsType) {
       super();
-      this.props = props as PropsType & { ref?: React.Component<PropsType> };
+      this.props = props as PropsType;
     }
-    props!: PropsType & { ref?: React.Component<PropsType> };
+    props!: PropsType;
     restAttributes: { [name: string]: any } = {
       "rest-attributes": "restAttributes",
     }; // for testing purpose

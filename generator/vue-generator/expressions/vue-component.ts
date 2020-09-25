@@ -39,6 +39,10 @@ import {
   VariableDeclarationList,
   VariableDeclaration,
 } from "../../base-generator/expressions/variables";
+import {
+  BindingElement,
+  BindingPattern,
+} from "../../base-generator/expressions/binding-pattern";
 
 export function getComponentListFromContext(context: GeneratorContext) {
   return Object.keys(context.components || {})
@@ -234,7 +238,10 @@ export class VueComponent extends Component {
     (members.filter((m) => m.isNested) as Property[]).forEach((m) => {
       members.push(this.createNestedPropertyGetter(m));
     });
-
+    const spreadGetAccessor = this.getViewSpreadAccessor();
+    if (spreadGetAccessor) {
+      members.push(spreadGetAccessor);
+    }
     return members;
   }
 
@@ -253,6 +260,37 @@ export class VueComponent extends Component {
     }
   }
 
+  returnGetAccessorBlock(
+    argumentPattern: BindingPattern,
+    options: toStringOptions,
+    spreadVar: BindingElement
+  ) {
+    return new Block(
+      [
+        new VariableDeclarationList(
+          [
+            new VariableDeclaration(
+              argumentPattern,
+              undefined,
+              new PropertyAccess(
+                new SimpleExpression(`this`),
+                new Identifier("props")
+              )
+            ),
+          ],
+          "const"
+        ),
+        new ReturnStatement(
+          new SimpleExpression(`{${spreadVar.dotDotDotToken}${spreadVar.name}}`)
+        ),
+      ],
+      true
+    );
+  }
+
+  createViewSpreadAccessor(name: Identifier, body: Block) {
+    return new GetAccessor(undefined, undefined, name, [], undefined, body);
+  }
   compileTemplate() {
     const viewFunction = this.decorators[0].getViewFunction();
     if (viewFunction) {
@@ -260,6 +298,7 @@ export class VueComponent extends Component {
         members: this.members,
         newComponentContext: "",
       };
+
       this.template = viewFunction.getTemplate(options);
 
       if (options.hasStyle) {
