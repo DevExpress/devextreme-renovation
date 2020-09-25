@@ -5,7 +5,7 @@ import {
   JSXComponent,
 } from "../../../../component_declaration/common";
 
-function view(model: Widget): JSX.Element {
+function view(model: Widget): any {
   return model.props.children;
 }
 

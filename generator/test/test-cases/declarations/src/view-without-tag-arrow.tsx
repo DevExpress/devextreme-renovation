@@ -5,7 +5,7 @@ import {
   JSXComponent,
 } from "../../../../component_declaration/common";
 
-const view = (model: Widget): JSX.Element => model.props.children;
+const view = (model: Widget): any => model.props.children;
 
 @ComponentBindings()
 class WidgetInput {
