@@ -21,7 +21,7 @@ interface Widget {
 }
 
 const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
-  (props: typeof WidgetInput & RestProps, ref) => {
+  function widget(props: typeof WidgetInput & RestProps, ref) {
     const __restAttributes = useCallback(
       function __restAttributes(): RestProps {
         const { ...restProps } = props;

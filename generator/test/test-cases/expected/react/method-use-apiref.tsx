@@ -36,7 +36,10 @@ interface WidgetWithApiRef {
 const WidgetWithApiRef = forwardRef<
   WidgetWithApiRefRef,
   typeof WidgetWithApiRefInput & RestProps
->((props: typeof WidgetWithApiRefInput & RestProps, ref) => {
+>(function widgetWithApiRef(
+  props: typeof WidgetWithApiRefInput & RestProps,
+  ref
+) {
   const baseRef = useRef<BaseWidgetRef>();
 
   const __restAttributes = useCallback(
