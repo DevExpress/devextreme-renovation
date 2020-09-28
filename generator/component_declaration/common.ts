@@ -33,6 +33,11 @@ export function Component(arg: {
   defaultOptionRules?: Rule<any>[] | null;
 
   /**
+   * Set tot `true` if component is SVG-based
+   */
+  isSVG?: boolean;
+
+  /**
    * jQuery wrapper specific settings
    */
   jQuery?: {

@@ -375,7 +375,7 @@ export class Constructor {
   ) {}
 
   toString() {
-    return `${this.decorators.join(" ")} 
+    return `${this.decorators.join(" ")}
       ${this.modifiers.join(" ")} constructor(${this.parameters})${
       this.body || "{}"
     }

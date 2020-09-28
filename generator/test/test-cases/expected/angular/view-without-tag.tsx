@@ -1,7 +1,10 @@
-import { Input } from "@angular/core";
+import { ViewChild, ElementRef } from "@angular/core";
 class WidgetInput {
-  @Input() size!: { width: number; height: number };
-  @Input() type!: string;
+  __slotChildren?: ElementRef<HTMLDivElement>;
+
+  get children() {
+    return this.__slotChildren?.nativeElement?.innerHTML.trim() || "";
+  }
 }
 
 import {
@@ -12,30 +15,15 @@ import {
   ViewRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import {
-  convertRulesToOptions,
-  Rule,
-} from "../../../../component_declaration/default_options";
-
-type WidgetOptionRule = Rule<Partial<WidgetInput>>;
-
-const __defaultOptionRules: WidgetOptionRule[] = [];
-export function defaultOptions(rule: WidgetOptionRule) {
-  __defaultOptionRules.push(rule);
-}
 
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<div #slotChildren style="display: contents"
+    ><ng-content></ng-content
+  ></div>`,
 })
 export default class Widget extends WidgetInput {
-  get __getHeight(): number {
-    return this.size.height;
-  }
-  get __type(): string {
-    const { type } = this;
-    return type;
-  }
   get __restAttributes(): any {
     return {};
   }
@@ -48,13 +36,16 @@ export default class Widget extends WidgetInput {
 
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-
-    const defaultOptions = convertRulesToOptions<WidgetInput>(
-      __defaultOptionRules
-    );
-    Object.keys(defaultOptions).forEach((option) => {
-      (this as any)[option] = (defaultOptions as any)[option];
-    });
+  }
+  @ViewChild("slotChildren") set slotChildren(
+    slot: ElementRef<HTMLDivElement>
+  ) {
+    const oldValue = this.children;
+    this.__slotChildren = slot;
+    const newValue = this.children;
+    if (!!oldValue !== !!newValue) {
+      this._detectChanges();
+    }
   }
 }
 @NgModule({

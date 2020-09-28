@@ -1,0 +1,11 @@
+{
+  "htmlWhitespaceSensitivity": "strict",
+  "overrides": [
+    {
+      "files": "*.vue",
+      "options": {
+        "parser": "vue"
+      }
+    }
+  ]
+}

@@ -11,6 +11,8 @@ import { GeneratorContext } from "../../../base-generator/types";
 import { toStringOptions } from "../../types";
 import { JsxElement } from "../jsx/element";
 import { JsxOpeningElement, JsxClosingElement } from "../jsx/opening-element";
+import { isElement } from "../../../angular-generator/expressions/jsx/elements";
+import { JsxChildExpression, JsxExpression } from "../jsx/jsx-expression";
 
 export function processFunctionTemplate(
   template: string,
@@ -55,6 +57,13 @@ export class Function extends AngularFunction {
       body,
       context
     );
+  }
+
+  processTemplateExpression(expression?: JsxExpression) {
+    if (expression && !isElement(expression)) {
+      return new JsxChildExpression(expression);
+    }
+    return super.processTemplateExpression(expression);
   }
 
   getTemplate(options?: toStringOptions, doNotChangeContext?: boolean): string {

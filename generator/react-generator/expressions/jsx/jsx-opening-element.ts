@@ -17,7 +17,6 @@ import {
 } from "../../../base-generator/expressions/property-assignment";
 import { ObjectLiteral } from "../../../base-generator/expressions/literal";
 import { FunctionTypeNode } from "../../../base-generator/expressions/type";
-import { SVGTags } from "../../../base-generator/constants";
 
 export class JsxOpeningElement extends BaseJsxOpeningElement {
   processTagName(tagName: Expression) {
@@ -85,9 +84,5 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       ...options,
       variables: undefined,
     } as toStringOptions)}(${templateParams})`;
-  }
-
-  isSVG() {
-    return SVGTags.includes(this.tagName.toString());
   }
 }

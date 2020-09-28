@@ -1,17 +1,20 @@
-import { JSXComponent, Component, ComponentBindings } from "../../../../component_declaration/common";
-import "typescript";
+import {
+  JSXComponent,
+  Component,
+  ComponentBindings,
+} from "../../../../component_declaration/common";
 
-function view() { }
+function view() {}
 
 @ComponentBindings()
-export class WidgetProps { }
+export class WidgetProps {}
 @Component({
-    view: view,
-    defaultOptionRules: [{
-        device: true,
-        options: {}
-    }]
+  view: view,
+  defaultOptionRules: [
+    {
+      device: true,
+      options: {},
+    },
+  ],
 })
-export default class Widget extends JSXComponent(WidgetProps) {
-    
-}
+export default class Widget extends JSXComponent(WidgetProps) {}

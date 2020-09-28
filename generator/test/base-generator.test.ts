@@ -1345,41 +1345,6 @@ mocha.describe("base-generator: expressions", function () {
         assert.equal(parameter.typeDeclaration(), "a:object[]");
       });
     });
-
-    mocha.describe("JSX functions", function () {
-      mocha.it("return undefined if function is not JSX", function () {
-        const fn = generator.createFunctionDeclaration(
-          undefined,
-          undefined,
-          "",
-          generator.createIdentifier("myFunc"),
-          undefined,
-          [],
-          undefined,
-          generator.createBlock([], true)
-        );
-        assert.equal(fn.getRootElement(), undefined);
-      });
-      mocha.it("return element if function is JSX", function () {
-        const SVGSelfClosing = generator.createJsxSelfClosingElement(
-          generator.createIdentifier("svg"),
-          [],
-          undefined
-        );
-        const fn = generator.createFunctionDeclaration(
-          undefined,
-          undefined,
-          "",
-          generator.createIdentifier("myFunc"),
-          undefined,
-          [],
-          undefined,
-          generator.createBlock([generator.createReturn(SVGSelfClosing)], false)
-        );
-
-        assert.equal(fn.getRootElement(), SVGSelfClosing);
-      });
-    });
   });
 
   mocha.describe("Template string", function () {

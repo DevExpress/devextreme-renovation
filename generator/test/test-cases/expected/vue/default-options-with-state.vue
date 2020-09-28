@@ -1,5 +1,4 @@
 <script>
-function view() {}
 export const WidgetProps = {
   p1: {
     type: String,

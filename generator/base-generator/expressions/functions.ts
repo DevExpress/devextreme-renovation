@@ -22,7 +22,6 @@ import { Decorator } from "./decorator";
 import { Property } from "./class-members";
 import { containsPortalsInStatements } from "../utils/functions";
 import { TypeParameterDeclaration } from "./type-parameter-declaration";
-import { JsxOpeningElement } from "./jsx";
 import { PropertyAccess } from "./property-access";
 export class Parameter {
   decorators: Decorator[];
@@ -301,29 +300,6 @@ export class BaseFunction extends Expression {
 
   compileTypeParameters(): string {
     return compileTypeParameters(this.typeParameters);
-  }
-
-  getRootElement(): JsxOpeningElement | undefined {
-    if (this.isJsx()) {
-      let result = this.body;
-
-      if (result instanceof Block) {
-        const statement = result.statements.find(
-          (el) => el instanceof ReturnStatement
-        ) as ReturnStatement;
-        result = statement.expression!;
-      }
-
-      if (result instanceof Paren) {
-        result = result.expression;
-      }
-
-      if (result instanceof JsxElement) {
-        result = result.openingElement;
-      }
-      return result as JsxOpeningElement;
-    }
-    return undefined;
   }
 }
 

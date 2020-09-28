@@ -1,6 +1,3 @@
-import "typescript";
-function view() {}
-
 export class WidgetProps {}
 
 import {

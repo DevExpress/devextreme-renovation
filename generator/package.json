@@ -1,6 +1,6 @@
 {
   "name": "devextreme-generator",
-  "version": "1.0.120",
+  "version": "1.0.121",
   "description": "Component generator",
   "scripts": {
     "test": "nyc mocha ./build/test --timeout 30000",
@@ -23,7 +23,7 @@
     "code-block-writer": "^10.1.0",
     "gulp": "^4.0.2",
     "mocha-junit-reporter": "^1.23.3",
-    "prettier": "^2.0.5",
+    "prettier": "^2.1.0",
     "react": "^16.13.1",
     "typescript": "3.8",
     "loader-utils": "^2.0.0"
@@ -43,7 +43,7 @@
     "@types/loader-utils": "^2.0.1",
     "@types/mocha": "5.2.7",
     "@types/node": "^12.12.14",
-    "@types/prettier": "^2.0.1",
+    "@types/prettier": "^2.1.0",
     "@types/react-dom": "^16.9.8",
     "@types/sinon": "^7.5.1",
     "@types/typescript": "^2.0.0",

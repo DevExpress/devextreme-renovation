@@ -66,6 +66,8 @@ export class Component extends Class implements Heritable {
   view: any;
   viewModel: any;
 
+  isSVGComponent: boolean;
+
   context: GeneratorContext;
 
   defaultOptionRules?: Expression | null;
@@ -254,6 +256,9 @@ export class Component extends Class implements Heritable {
 
     this.defaultOptionRules = decorator.getParameter("defaultOptionRules");
 
+    this.isSVGComponent =
+      decorator.getParameter("isSVG")?.valueOf().toString() === "true";
+
     this.context = context;
 
     if (context.defaultOptionsImport) {
@@ -349,7 +354,7 @@ export class Component extends Class implements Heritable {
             )} = ${defaultOptionRulesInitializer};
             export function defaultOptions(rule${compileType(
               defaultOptionsTypeName
-            )}) { 
+            )}) {
                 __defaultOptionRules.push(rule);
                 ${statements.join("\n")}
             }`;

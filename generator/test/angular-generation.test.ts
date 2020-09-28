@@ -247,6 +247,14 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("view-without-tag", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("view-without-tag-arrow", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("spread-in-view", function () {
     this.testGenerator(this.test!.title);
   });

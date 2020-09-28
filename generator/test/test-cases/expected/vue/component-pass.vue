@@ -1,5 +1,5 @@
 <template>
-  <div style="display: contents;"
+  <div style="display: contents"
     ><component :text="firstText" :is="mode ? 'WidgetOne' : 'WidgetTwo'"
       ><div>Slot content</div></component
     ><WidgetOne :text="secondText"><div>Children go here</div></WidgetOne
