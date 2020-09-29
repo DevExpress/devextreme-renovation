@@ -1,7 +1,7 @@
 export declare type WidgetInputType = {
   someProp: boolean;
   headerTemplate?: any;
-  template: (props: { textProp: string; textPropExpr: string }) => JSX.Element;
+  template: (props: { textProp: string; textPropExpr: string }) => any;
   contentTemplate: (props: { data: { p1: string }; index: number }) => any;
   footerTemplate: (props: { someProp: boolean }) => any;
   headerRender?: any;

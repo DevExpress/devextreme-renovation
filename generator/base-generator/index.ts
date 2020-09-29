@@ -1268,11 +1268,8 @@ export default class Generator implements GeneratorAPI {
     }
   }
 
-  addViewFunction(name: string, f: any, force = false) {
-    if (
-      (f instanceof Function || f instanceof ArrowFunction) &&
-      (f.isJsx() || force)
-    ) {
+  addViewFunction(name: string, f: any) {
+    if ((f instanceof Function || f instanceof ArrowFunction) && f.isJsx()) {
       const context = this.getContext();
       context.viewFunctions = context.viewFunctions || {};
       context.viewFunctions[name] = f;
@@ -1336,7 +1333,7 @@ export default class Generator implements GeneratorAPI {
         if (!context.viewFunctions?.[name] && globalView) {
           const viewFunction = getExpression(globalView);
           viewFunction.isJsx = () => true;
-          this.addViewFunction(name, viewFunction, true);
+          this.addViewFunction(name, viewFunction);
         }
       }
     });

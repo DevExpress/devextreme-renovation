@@ -1,5 +1,5 @@
 import { WidgetWithProps } from "./dx-widget-with-props";
-function view(model: Widget): JSX.Element {
+function view(model: Widget): any {
   return <WidgetWithProps />;
 }
 

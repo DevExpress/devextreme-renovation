@@ -9,6 +9,9 @@ export class TypeReferenceNode extends BaseTypeReferenceNode {
     ) {
       return `typeof ${super.toString()}`;
     }
+    if (this.typeName.toString().startsWith("JSX.")) {
+      return "any";
+    }
     return super.toString();
   }
 }
