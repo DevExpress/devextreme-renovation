@@ -1,5 +1,5 @@
 import { createContext } from "react";
-function view(model: Widget): JSX.Element {
+function view(model: Widget): any {
   return <span></span>;
 }
 const P1Context = createContext(5);
