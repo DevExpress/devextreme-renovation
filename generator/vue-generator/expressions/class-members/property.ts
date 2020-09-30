@@ -93,7 +93,9 @@ function calculatePropertyType(
     if (type.context.types && type.context.types[typeString]) {
       return calculatePropertyType(type.context.types[typeString]);
     }
-    return BasicTypes.includes(typeString) ? typeString : "Object";
+    return BasicTypes.includes(typeString) || typeString.endsWith("Element")
+      ? typeString
+      : "Object";
   }
   return "";
 }

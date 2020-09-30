@@ -283,6 +283,10 @@ mocha.describe("vue-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("types-element", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("types-external", function () {
     this.testGenerator(this.test!.title);
   });
