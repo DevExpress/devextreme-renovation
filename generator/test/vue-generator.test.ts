@@ -466,6 +466,32 @@ mocha.describe("Vue-generator", function () {
           );
         });
 
+        mocha.it("Property with *Element type", function () {
+          const elementTypes = [
+            "Element",
+            "HTMLElement",
+            "HTMLDivElement",
+            "SVGElement",
+          ];
+          elementTypes.forEach((type) => {
+            const expression = generator.createProperty(
+              decorators,
+              undefined,
+              name,
+              undefined,
+              generator.createTypeReferenceNode(
+                generator.createIdentifier(type)
+              ),
+              undefined
+            );
+
+            assert.strictEqual(
+              getAst(expression.toString({ members: [] })),
+              getAst(`p: {type: ${type}`)
+            );
+          });
+        });
+
         mocha.describe("Property with LiteralTypeNode", function () {
           mocha.it("Object", function () {
             const expression = generator.createProperty(
