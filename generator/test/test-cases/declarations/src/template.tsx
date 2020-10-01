@@ -44,7 +44,7 @@ function view(viewModel: Widget) {
           textPropExpr={"textPropExrpValue"}
         />
       )}
-      <FooterTemplate someProp={myvar}></FooterTemplate>
+      {FooterTemplate && <FooterTemplate someProp={myvar}></FooterTemplate>}
     </div>
   );
 }
