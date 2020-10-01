@@ -81,7 +81,7 @@ mocha.describe("react-generator: expressions", function () {
             generator.createIdentifier("JSXTemplate"),
             [
               generator.createTypeReferenceNode(
-                generator.createIdentifier("Widget")
+                generator.createIdentifier("WidgetProps")
               ),
             ]
           )
@@ -89,7 +89,7 @@ mocha.describe("react-generator: expressions", function () {
 
         assert.strictEqual(
           property.typeDeclaration(),
-          "template:(props: Partial<Widget>) => JSX.Element"
+          "template:(props: Partial<WidgetProps>) => JSX.Element"
         );
       });
 
@@ -103,7 +103,7 @@ mocha.describe("react-generator: expressions", function () {
             generator.createIdentifier("JSXTemplate"),
             [
               generator.createTypeReferenceNode(
-                generator.createIdentifier("Widget")
+                generator.createIdentifier("WidgetProps")
               ),
               generator.createLiteralTypeNode(
                 generator.createStringLiteral("value | index")
@@ -114,7 +114,7 @@ mocha.describe("react-generator: expressions", function () {
 
         assert.strictEqual(
           property.typeDeclaration(),
-          'template:(props: Partial<Omit<Widget, "value | index">> & Required<Pick<Widget, "value | index">>) => JSX.Element'
+          'template:(props: Partial<Omit<WidgetProps, "value | index">> & Required<Pick<WidgetProps, "value | index">>) => JSX.Element'
         );
       });
 
