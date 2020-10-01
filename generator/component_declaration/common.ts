@@ -193,6 +193,20 @@ export function JSXComponent<
 }
 
 /**
+ * JSX.Element with declared properties.
+ */
+export type JSXTemplate<
+  PropsType,
+  RequiredProps extends keyof PropsType = Exclude<
+    keyof PropsType,
+    keyof PropsType
+  >
+> = (
+  props: Partial<Omit<PropsType, RequiredProps>> &
+    Required<Pick<PropsType, RequiredProps>>
+) => JSX.Element;
+
+/**
  * Create Elements function
  * Import it for testing purpose
  */

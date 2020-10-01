@@ -71,6 +71,53 @@ mocha.describe("react-generator: expressions", function () {
         assert.strictEqual(expression.typeDeclaration(), "name:any");
       });
 
+      mocha.it("JSXTemplate type", function () {
+        const property = generator.createProperty(
+          [],
+          undefined,
+          generator.createIdentifier("template"),
+          undefined,
+          generator.createTypeReferenceNode(
+            generator.createIdentifier("JSXTemplate"),
+            [
+              generator.createTypeReferenceNode(
+                generator.createIdentifier("Widget")
+              ),
+            ]
+          )
+        );
+
+        assert.strictEqual(
+          property.typeDeclaration(),
+          "template:(props: Partial<Widget>) => JSX.Element"
+        );
+      });
+
+      mocha.it("JSXTemplate type with required", function () {
+        const property = generator.createProperty(
+          [],
+          undefined,
+          generator.createIdentifier("template"),
+          undefined,
+          generator.createTypeReferenceNode(
+            generator.createIdentifier("JSXTemplate"),
+            [
+              generator.createTypeReferenceNode(
+                generator.createIdentifier("Widget")
+              ),
+              generator.createLiteralTypeNode(
+                generator.createStringLiteral("value | index")
+              ),
+            ]
+          )
+        );
+
+        assert.strictEqual(
+          property.typeDeclaration(),
+          'template:(props: Partial<Omit<Widget, "value | index">> & Required<Pick<Widget, "value | index">>) => JSX.Element'
+        );
+      });
+
       mocha.it("getter is call", function () {
         const expression = generator.createGetAccessor(
           [],

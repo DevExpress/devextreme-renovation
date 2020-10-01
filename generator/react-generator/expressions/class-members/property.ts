@@ -8,6 +8,7 @@ import {
 import { toStringOptions } from "../../../base-generator/types";
 import { Identifier } from "../../../base-generator/expressions/common";
 import { TypeExpression } from "../../../base-generator/expressions/type";
+import { TypeReferenceNode } from "../type-refence-node";
 
 export function getLocalStateName(
   name: Identifier | string,
@@ -59,6 +60,17 @@ export class Property extends BaseProperty {
     }
     if (this.isRefProp || this.isForwardRefProp) {
       type = `${this.REF_OBJECT_TYPE}<${this.type}>`;
+    }
+    if (
+      type instanceof TypeReferenceNode &&
+      type.typeName.toString() === "JSXTemplate"
+    ) {
+      const args = type.typeArguments;
+      const partialType =
+        args.length === 1
+          ? `Partial<${args[0]}>`
+          : `Partial<Omit<${args[0]}, ${args[1]}>> & Required<Pick<${args[0]}, ${args[1]}>>`;
+      type = `(props: ${partialType}) => JSX.Element`;
     }
 
     return `${this.name}${this.compileTypeDeclarationType(type)}`;

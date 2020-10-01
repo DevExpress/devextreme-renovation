@@ -1106,15 +1106,22 @@ function viewFunction(viewModel: MyComponent) {
 
 Все что нам нужно - корректно указать *props* во *View*-функции. Ну собственно так, будто мы просто рендерим другой компонент.
 
-Ну и наши декларативные компоненты конечно могут выступать в роли темплейтов в других компонентах.
+Ну и наши декларативные компоненты конечно могут выступать в роли темплейтов в других компонентах. Если вам необходимо указать пропсы, используемые каким-либо компонентом в качестве пропсов темплейта, используйте тип JSXTemplate.
 
 Также не забывайте о правилах [обратной совместимости](#Темплейты) для *jQuery* виджетов.
 
 ```tsx
+import {
+  ...,
+  JSXTemplate
+} from 'devextreme-generator/component_declaration/common';
+import SomeWidget from './some_widget';
+
 @ComponentBindings()
 class MyComponentProps {
   @OneWay() item?: Item;
   @Template() itemTemplate?: any;
+  @Template() componentTemplate?: JSXTemplate<SomeWidget>;
 }
 
 @Component({ view: viewFunction })
