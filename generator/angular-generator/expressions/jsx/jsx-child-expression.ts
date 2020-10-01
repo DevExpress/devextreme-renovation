@@ -120,7 +120,13 @@ export class JsxChildExpression extends JsxExpression {
     condition?: Expression,
     options?: toStringOptions
   ) {
-    const slot = this.getSlot(statement.toString(options), options);
+    const slot = this.getSlot(
+      statement.toString({
+        members: [],
+        ...options,
+      }),
+      options
+    );
 
     if (
       slot &&
@@ -258,6 +264,9 @@ export class JsxChildExpression extends JsxExpression {
     ).toString();
     const itemsExpressionString = itemsExpression.toString(options);
 
+    templateOptions.mapItemName = itemName;
+    templateOptions.mapItemExpression = itemsExpression;
+
     let template = "";
 
     if (isElement(templateExpression)) {
@@ -336,6 +345,7 @@ export class JsxChildExpression extends JsxExpression {
 
     if (options) {
       options.hasStyle = options.hasStyle || templateOptions.hasStyle;
+      options.dynamicComponents = templateOptions.dynamicComponents;
     }
 
     return `<ng-container *ngFor="${ngForValue.join(

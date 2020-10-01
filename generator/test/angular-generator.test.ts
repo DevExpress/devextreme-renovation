@@ -940,6 +940,266 @@ mocha.describe("Angular generator", function () {
       );
     });
 
+    mocha.describe("Dynamic components", function () {
+      mocha.it(
+        "<DynamicComponent /> -> <ng-template dynamicComponent>",
+        function () {
+          const getterName = "DynamicComponent";
+          const getter = generator.createGetAccessor(
+            [],
+            undefined,
+            generator.createIdentifier(getterName),
+            [],
+            undefined,
+            generator.createBlock([], false)
+          );
+
+          const element = generator.createJsxSelfClosingElement(
+            generator.createPropertyAccess(
+              generator.createIdentifier("viewModel"),
+              generator.createIdentifier(getterName)
+            )
+          );
+
+          const options: toStringOptions = {
+            members: [getter],
+            componentContext: "viewModel",
+            newComponentContext: "",
+          };
+
+          assert.strictEqual(
+            element.toString(options),
+            `<ng-template dynamicComponent [index]="0"></ng-template>`
+          );
+          assert.strictEqual(options.dynamicComponents?.length, 1);
+          assert.strictEqual(
+            options.dynamicComponents![0].expression.toString(),
+            "viewModel.DynamicComponent"
+          );
+          assert.deepEqual(options.dynamicComponents![0].props, []);
+        }
+      );
+
+      mocha.it("<DynamicComponent [props]='value'/>", function () {
+        const getterName = "DynamicComponent";
+        const getter = generator.createGetAccessor(
+          [],
+          undefined,
+          generator.createIdentifier(getterName),
+          [],
+          undefined,
+          generator.createBlock([], false)
+        );
+
+        const element = generator.createJsxSelfClosingElement(
+          generator.createPropertyAccess(
+            generator.createIdentifier("viewModel"),
+            generator.createIdentifier(getterName)
+          ),
+          undefined,
+          [
+            generator.createJsxAttribute(
+              generator.createIdentifier("prop1"),
+              generator.createStringLiteral("value1")
+            ),
+            generator.createJsxAttribute(
+              generator.createIdentifier("prop2"),
+              generator.createStringLiteral("value2")
+            ),
+          ]
+        );
+
+        const options: toStringOptions = {
+          members: [getter],
+          componentContext: "viewModel",
+          newComponentContext: "",
+        };
+
+        assert.strictEqual(
+          element.toString(options),
+          `<ng-template dynamicComponent [index]="0"></ng-template>`
+        );
+        assert.strictEqual(options.dynamicComponents?.length, 1);
+        assert.strictEqual(
+          options.dynamicComponents![0].expression.toString(),
+          "viewModel.DynamicComponent"
+        );
+        assert.strictEqual(
+          options.dynamicComponents![0].props.toString(),
+          'prop1="value1",prop2="value2"'
+        );
+      });
+
+      mocha.it(
+        "<DynamicComponent></DynamicComponent> -> <ng-template dynamicComponent>",
+        function () {
+          const getterName = "DynamicComponent";
+          const getter = generator.createGetAccessor(
+            [],
+            undefined,
+            generator.createIdentifier(getterName),
+            [],
+            undefined,
+            generator.createBlock([], false)
+          );
+
+          const tag = generator.createPropertyAccess(
+            generator.createIdentifier("viewModel"),
+            generator.createIdentifier(getterName)
+          );
+          const element = generator.createJsxElement(
+            generator.createJsxOpeningElement(tag, undefined, []),
+            [],
+            generator.createJsxClosingElement(tag)
+          );
+
+          assert.strictEqual(
+            element.toString({
+              members: [getter],
+              componentContext: "viewModel",
+              newComponentContext: "",
+            }),
+            `<ng-template dynamicComponent [index]="0"></ng-template>`
+          );
+        }
+      );
+
+      mocha.it(
+        "condition && <DynamicComponent /> -> <ng-template *ngIf dynamicComponent>",
+        function () {
+          const getterName = "DynamicComponent";
+          const getter = generator.createGetAccessor(
+            [],
+            undefined,
+            generator.createIdentifier(getterName),
+            [],
+            undefined,
+            generator.createBlock([], false)
+          );
+
+          const element = generator.createJsxElement(
+            generator.createJsxOpeningElement(
+              generator.createIdentifier("div")
+            ),
+            [
+              generator.createJsxExpression(
+                undefined,
+                generator.createBinary(
+                  generator.createIdentifier("condition"),
+                  generator.SyntaxKind.AmpersandAmpersandToken,
+                  generator.createJsxSelfClosingElement(
+                    generator.createPropertyAccess(
+                      generator.createIdentifier("viewModel"),
+                      generator.createIdentifier(getterName)
+                    )
+                  )
+                )
+              ),
+            ],
+            generator.createJsxClosingElement(generator.createIdentifier("div"))
+          );
+
+          const options: toStringOptions = {
+            members: [getter],
+            componentContext: "viewModel",
+            newComponentContext: "",
+          };
+
+          assert.strictEqual(
+            removeSpaces(element.toString(options)),
+            removeSpaces(
+              `<div>
+              <ng-template dynamicComponent *ngIf="condition" [index]="1"></ng-template>
+            </div>`
+            )
+          );
+          assert.strictEqual(options.dynamicComponents?.length, 1);
+          assert.strictEqual(
+            options.dynamicComponents![0].expression.toString(),
+            "viewModel.DynamicComponent"
+          );
+          assert.strictEqual(options.dynamicComponents![0].index, 1);
+          assert.deepEqual(options.dynamicComponents![0].props, []);
+        }
+      );
+
+      mocha.it("map <DynamicComponent />", function () {
+        const getterName = "DynamicComponent";
+        const getter = generator.createGetAccessor(
+          [],
+          undefined,
+          generator.createIdentifier(getterName),
+          [],
+          undefined,
+          generator.createBlock([], false)
+        );
+
+        const element = generator.createJsxElement(
+          generator.createJsxOpeningElement(generator.createIdentifier("div")),
+          [
+            generator.createJsxExpression(
+              undefined,
+              generator.createCall(
+                generator.createPropertyAccess(
+                  generator.createPropertyAccess(
+                    generator.createIdentifier("viewModel"),
+                    generator.createIdentifier(getterName)
+                  ),
+                  generator.createIdentifier("map")
+                ),
+                undefined,
+                [
+                  generator.createArrowFunction(
+                    undefined,
+                    undefined,
+                    [
+                      generator.createParameter(
+                        undefined,
+                        undefined,
+                        undefined,
+                        generator.createIdentifier("item"),
+                        undefined,
+                        undefined,
+                        undefined
+                      ),
+                    ],
+                    undefined,
+                    generator.createToken(
+                      generator.SyntaxKind.EqualsGreaterThanToken
+                    ),
+                    generator.createJsxSelfClosingElement(
+                      generator.createIdentifier("item")
+                    )
+                  ),
+                ]
+              )
+            ),
+          ],
+          generator.createJsxClosingElement(generator.createIdentifier("div"))
+        );
+
+        const options: toStringOptions = {
+          members: [getter],
+          componentContext: "viewModel",
+          newComponentContext: "",
+        };
+
+        assert.strictEqual(
+          removeSpaces(element.toString(options)),
+          removeSpaces(`<div>
+            <ng-container *ngFor="let item of DynamicComponent">
+              <ng-template dynamicComponent [index]="0"></ng-template>
+            </ng-container>
+          </div>`)
+        );
+        assert.strictEqual(options.dynamicComponents?.length, 1);
+        assert.strictEqual(
+          options.dynamicComponents![0].expression.toString(),
+          "viewModel.DynamicComponent"
+        );
+      });
+    });
+
     mocha.describe("Slots with conditional rendering", function () {
       this.beforeEach(function () {
         this.slotProperty = generator.createProperty(

@@ -45,9 +45,12 @@ import SetForwardRefDeep from "./set-ref/set-forward-ref-deep/parent";
 import InlineArrowFunction from "./inline-arrow-function";
 import ListTemplate from "./list-template";
 
+import DynamicComponent from "./dynamic-components/dynamic-component";
+
 function view(model: App) {
   return (
     <div>
+      <DynamicComponent></DynamicComponent>
       <SimpleComponent width={25} height={25}></SimpleComponent>
       <PickPropsComponent />
       <ButtonComponent id="button-1" onClick={model.onButtonClick}>

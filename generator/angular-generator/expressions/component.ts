@@ -10,12 +10,19 @@ import {
 } from "../../base-generator/expressions/literal";
 import { HeritageClause } from "../../base-generator/expressions/class";
 import { Identifier, Call } from "../../base-generator/expressions/common";
-import { SimpleExpression } from "../../base-generator/expressions/base";
 import {
   Block,
   ReturnStatement,
 } from "../../base-generator/expressions/statements";
-import { toStringOptions, AngularGeneratorContext } from "../types";
+import {
+  Expression,
+  SimpleExpression,
+} from "../../base-generator/expressions/base";
+import {
+  toStringOptions,
+  AngularGeneratorContext,
+  DynamicComponent,
+} from "../types";
 import SyntaxKind from "../../base-generator/syntaxKind";
 import {
   Parameter,
@@ -47,6 +54,8 @@ import {
   BindingPattern,
 } from "../../base-generator/expressions/binding-pattern";
 import { PropertyAssignment } from "../../base-generator/expressions/property-assignment";
+import { JsxAttribute } from "../../base-generator/expressions/jsx";
+import { getMember } from "../../base-generator/utils/expressions";
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = "CUSTOM_VALUE_ACCESSOR_PROVIDER";
 
@@ -117,6 +126,32 @@ function separateDependency(
 
     return r;
   }, result);
+}
+
+function getDependencyFromViewExpression(
+  expression: Expression,
+  options: toStringOptions
+): string[] {
+  const members = options.members;
+
+  const dependency = expression.getDependency(options);
+
+  const dependencyMembers = members.filter((m) =>
+    dependency.some((d) => d === m._name.toString())
+  );
+
+  return dependencyMembers
+    .filter((m) => m instanceof Method)
+    .reduce(
+      (d: string[], m) =>
+        d.concat(
+          m.getDependency({
+            ...options,
+            componentContext: SyntaxKind.ThisKeyword,
+          })
+        ),
+      dependency
+    );
 }
 
 const ngOnChangesParameters = ["changes"];
@@ -825,28 +860,10 @@ export class AngularComponent extends Component {
 
         const statements = expression.getSpreadAttributes().map((o, i) => {
           const expressionString = o.expression.toString(options);
-          const dependency = (o.expression as PropertyAccess).getDependency(
-            options
-          );
-
-          const dependencyMembers = this.members.filter((m) =>
-            dependency.some((d) => d === m._name.toString())
-          );
 
           allDependency.push.apply(
             allDependency,
-            dependencyMembers
-              .filter((m) => m instanceof Method)
-              .reduce(
-                (d: string[], m) =>
-                  d.concat(
-                    m.getDependency({
-                      ...options,
-                      componentContext: SyntaxKind.ThisKeyword,
-                    })
-                  ),
-                dependency
-              )
+            getDependencyFromViewExpression(o.expression, options)
           );
 
           const refString =
@@ -1215,6 +1232,27 @@ export class AngularComponent extends Component {
       }`;
   }
 
+  compileDynamicComponentDirective(
+    decoratorToStringOptions: toStringOptions,
+    coreImports: string[],
+    importModules: string[]
+  ) {
+    if (!decoratorToStringOptions.dynamicComponents?.length) {
+      return "";
+    }
+
+    coreImports.push("Directive", "ViewContainerRef", "Input");
+    importModules.push("DynamicComponentDirective");
+
+    return `@Directive({
+      selector: '[dynamicComponent]',
+    })
+    export class DynamicComponentDirective {
+      @Input() index: number = 0;
+      constructor(public viewContainerRef: ViewContainerRef) { }
+    }`;
+  }
+
   compileCdkImports(cdkImports: string[] = []) {
     if (cdkImports.length) {
       return `import { ${[...new Set(cdkImports)].join(
@@ -1364,6 +1402,178 @@ export class AngularComponent extends Component {
   createViewSpreadAccessor(name: Identifier, body: Block) {
     return new GetAccessor(undefined, undefined, name, [], undefined, body);
   }
+  compileDynamicComponents(
+    decoratorToStringOptions: toStringOptions,
+    constructorArguments: string[],
+    coreImports: string[],
+    ngAfterViewInitStatements: string[],
+    ngAfterViewCheckedStatements: string[]
+  ): string {
+    if (decoratorToStringOptions.dynamicComponents?.length) {
+      constructorArguments.push(
+        "private componentFactoryResolver: ComponentFactoryResolver"
+      );
+      coreImports.push(
+        "ComponentFactoryResolver, ViewChildren, EventEmitter, QueryList"
+      );
+
+      const createDynamicComponentName = (
+        expression: Expression,
+        index: number
+      ) =>
+        `create${capitalizeFirstLetter(expression.toString()).replace(
+          ".",
+          "_"
+        )}${index}`;
+
+      const toStringOptions = {
+        ...decoratorToStringOptions,
+        newComponentContext: SyntaxKind.ThisKeyword,
+      };
+
+      const setAttribute = (
+        componentExpression: string,
+        attribute: JsxAttribute,
+        detectChanges: boolean = false,
+        checkComponent = false
+      ) => {
+        const prop = attribute.name.toString();
+        const value = attribute.initializer.toString(toStringOptions);
+        const member = getMember(
+          attribute.initializer,
+          decoratorToStringOptions
+        );
+        const valueExpression =
+          member instanceof Method ? `${value}.bind(this)` : value;
+
+        const setAttribute = `
+          ${componentExpression}.${prop} instanceof EventEmitter ?
+          ${componentExpression}.${prop}.subscribe(${valueExpression})
+          : ${componentExpression}.${prop} = ${valueExpression};
+          ${
+            detectChanges
+              ? `${componentExpression}.changeDetection.detectChanges()`
+              : ""
+          }
+        `;
+
+        return checkComponent
+          ? `if(${componentExpression}){
+          ${setAttribute}
+        }`
+          : setAttribute;
+      };
+
+      const compileCreateDynamicComponent = (
+        dynamicComponent: DynamicComponent
+      ) => {
+        const expression = dynamicComponent.expression.toString(
+          toStringOptions
+        );
+        const index = dynamicComponent.index;
+        return `
+          ${createDynamicComponentName(
+            dynamicComponent.expression,
+            dynamicComponent.index
+          )}(){
+            const containers = this.dynamicComponentHost.toArray().filter(c=>c.index===${index});
+            this.dynamicComponents[${index}] = [];
+            if(!containers.length){
+              return;
+            }
+
+            const expression = ${expression};
+            const expressions = expression instanceof Array ? expression: [expression];
+
+            containers.forEach((container, index)=>{
+              const componentFactory = this.componentFactoryResolver.resolveComponentFactory(expressions[index]);
+              container.viewContainerRef.clear();
+              const component = container.viewContainerRef.createComponent<any>(componentFactory).instance;
+              ${dynamicComponent.props
+                .map((p) => {
+                  if (p instanceof JsxAttribute) {
+                    return setAttribute("component", p);
+                  }
+                  return "";
+                })
+                .join(";\n")}
+              this.dynamicComponents[${index}][index] = component;
+              component.changeDetection.detectChanges();
+            });
+          }
+        `;
+      };
+
+      decoratorToStringOptions.dynamicComponents.forEach(
+        (dynamicComponents) => {
+          dynamicComponents.props.forEach((prop) => {
+            if (prop instanceof JsxAttribute) {
+              const dependency = getDependencyFromViewExpression(
+                prop.initializer,
+                decoratorToStringOptions
+              );
+              const [
+                propsDependency,
+                internalStateDependency,
+              ] = separateDependency(dependency, this.internalState);
+
+              propsDependency.forEach((d) => {
+                // TODO process propsDependency
+              });
+
+              internalStateDependency.forEach((d) => {
+                const setter = this.members.find(
+                  (p) => p.name === `_${d}`
+                ) as SetAccessor;
+                if (setter) {
+                  const expression = `this.dynamicComponents[${
+                    dynamicComponents.index
+                  }].forEach(component=>{
+                  ${setAttribute("component", prop, true, true)};
+                })`;
+
+                  if (
+                    !setter.body.statements.some(
+                      (expr) => expr.toString() === expression
+                    )
+                  ) {
+                    setter.body.statements.push(
+                      new SimpleExpression(expression)
+                    );
+                  }
+                }
+              });
+            }
+          });
+
+          const createComponentCall = `this.${createDynamicComponentName(
+            dynamicComponents.expression,
+            dynamicComponents.index
+          )}()`;
+          ngAfterViewCheckedStatements.push(
+            `if(this.dynamicComponents[${dynamicComponents.index}].length !== this.dynamicComponentHost.toArray().filter(c=>c.index===${dynamicComponents.index}).length){
+              ${createComponentCall}
+          }`
+          );
+
+          ngAfterViewInitStatements.push(createComponentCall);
+        }
+      );
+
+      return `
+      @ViewChildren(DynamicComponentDirective) dynamicComponentHost!: QueryList<
+      DynamicComponentDirective
+      >;
+      dynamicComponents: {[name: number]: any} = [];
+      ${decoratorToStringOptions.dynamicComponents
+        .map((dynamicComponents) =>
+          compileCreateDynamicComponent(dynamicComponents)
+        )
+        .join("\n")}`;
+    }
+    return "";
+  }
+
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -1376,6 +1586,10 @@ export class AngularComponent extends Component {
       .filter((c) => c instanceof AngularComponent && c !== this)
       .map((c) => (c as AngularComponent).module)
       .concat(["CommonModule"]);
+
+    const entryComponents = Object.keys(components).filter(
+      (k) => components[k] instanceof AngularComponent && components[k] !== this
+    );
 
     const ngOnChangesStatements: string[] = [];
     const ngAfterViewInitStatements: string[] = [];
@@ -1446,10 +1660,25 @@ export class AngularComponent extends Component {
 
     const trackBy = this.compileTrackBy(decoratorToStringOptions);
 
+    const dynamicComponents = this.compileDynamicComponents(
+      decoratorToStringOptions,
+      constructorArguments,
+      coreImports,
+      ngAfterViewInitStatements,
+      ngAfterViewCheckedStatements
+    );
+
+    const dynamicComponentDirective = this.compileDynamicComponentDirective(
+      decoratorToStringOptions,
+      coreImports,
+      importModules
+    );
+
     return `
         ${this.compileImports(coreImports)}
         ${this.compileCdkImports(cdkImports)}
         ${this.compileNestedComponents(nestedModules)}
+        ${dynamicComponentDirective}
         ${portalComponent}
         ${this.compileDefaultOptions(constructorStatements)}
         ${this.compileValueAccessor(implementedInterfaces)}
@@ -1485,6 +1714,7 @@ export class AngularComponent extends Component {
               ngDoCheckStatements,
               ngOnDestroyStatements
             )}
+            ${dynamicComponents}
             ${this.compileEffects(
               ngAfterViewInitStatements,
               ngOnDestroyStatements,
@@ -1527,6 +1757,13 @@ export class AngularComponent extends Component {
             imports: [
                 ${modules.join(",\n")}
             ],
+            ${
+              entryComponents.length
+                ? `entryComponents: [ 
+              ${entryComponents.join(",\n")}
+            ],`
+                : ""
+            }
             exports: [${this.name}, ${nestedModules.join(", ")}]
         })
         export class ${this.module} {}
