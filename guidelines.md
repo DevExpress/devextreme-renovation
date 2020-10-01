@@ -1115,13 +1115,13 @@ import {
   ...,
   JSXTemplate
 } from 'devextreme-generator/component_declaration/common';
-import SomeWidget from './some_widget';
+import { SomeWidgetProps } from './some_widget';
 
 @ComponentBindings()
 class MyComponentProps {
   @OneWay() item?: Item;
   @Template() itemTemplate?: any;
-  @Template() componentTemplate?: JSXTemplate<SomeWidget>;
+  @Template() componentTemplate?: JSXTemplate<SomeWidgetProps>;
 }
 
 @Component({ view: viewFunction })
