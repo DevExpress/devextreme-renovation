@@ -102,6 +102,7 @@ function calculatePropertyType(
 
 export class Property extends BaseProperty {
   get name() {
+    //strange
     if (this.isTemplate) {
       return this._name.toString();
     }

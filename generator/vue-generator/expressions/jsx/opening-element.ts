@@ -89,9 +89,18 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
   compileTemplate(templateProperty: Property, options?: toStringOptions) {
     const attributes = this.attributes.map((a) => a.getTemplateProp(options));
-    return `<slot name="${templateProperty.name}" ${attributes.join(
-      " "
-    )}></slot>`;
+    const init = templateProperty?.initializer;
+    const name = templateProperty.name;
+
+    if (init && init instanceof BaseFunction) {
+      // const initJsx = this.functionToJsxElement('', init)
+      return `<slot name="${name}" v-if="${name}" ${attributes.join(
+        " "
+      )}></slot>
+      <slot name="${name}" v-else>
+        ${init.getTemplate()}
+      </slot>`;
+    } else return `<slot name="${name}" ${attributes.join(" ")}></slot>`;
   }
 
   createJsxAttribute(name: Identifier, value: Expression) {
@@ -279,7 +288,10 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
         .map((c) => c.toString(options))
         .join("")}</${this.processTagName(this.tagName)}>`;
     }
+    // else if () {
 
+    // }
+    //если у нас есть инит для пропсы
     return baseValue.replace(/>$/, "/>");
   }
 
