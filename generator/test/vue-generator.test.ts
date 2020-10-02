@@ -2256,6 +2256,49 @@ mocha.describe("Vue-generator", function () {
         }
       );
 
+      mocha.it("Condition with identifer that point to element", function () {
+        const identifier = generator.createIdentifier("var");
+
+        const expression = generator.createJsxElement(
+          generator.createJsxOpeningElement(
+            generator.createIdentifier("div"),
+            undefined,
+            []
+          ),
+          [
+            generator.createJsxExpression(
+              undefined,
+              generator.createConditional(
+                generator.createIdentifier("condition"),
+                generator.createJsxSelfClosingElement(
+                  generator.createIdentifier("input"),
+                  [],
+                  []
+                ),
+                identifier
+              )
+            ),
+          ],
+          generator.createJsxClosingElement(generator.createIdentifier("div"))
+        );
+
+        assert.strictEqual(
+          removeSpaces(
+            expression.children[0].toString({
+              componentContext: "model",
+              newComponentContext: "",
+              members: [],
+              variables: {
+                [identifier.toString()]: generator.createJsxSelfClosingElement(
+                  generator.createIdentifier("span")
+                ),
+              },
+            })
+          ),
+          removeSpaces(`<input v-if="condition"/><span v-else/>`)
+        );
+      });
+
       mocha.describe("Slots with conditional rendering", function () {
         this.beforeEach(function () {
           this.slotProperty = generator.createProperty(

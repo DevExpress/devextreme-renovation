@@ -13,10 +13,18 @@ import { PropertyAssignment, SpreadAssignment } from "./property-assignment";
 import { getTemplateProperty } from "../utils/expressions";
 
 export function getJsxExpression(
-  e: ExpressionWithExpression | Expression | undefined
+  e: ExpressionWithExpression | Expression | undefined,
+  options?: toStringOptions
 ): JsxExpression | undefined {
   if (e instanceof Conditional && e.isJsx()) {
     return new JsxExpression(undefined, e);
+  } else if (
+    options &&
+    e instanceof Identifier &&
+    options.variables?.[e.toString()]
+  ) {
+    const expression = options.variables[e.toString()];
+    return getJsxExpression(expression, options);
   } else if (
     e instanceof JsxExpression ||
     e instanceof JsxElement ||
@@ -29,7 +37,7 @@ export function getJsxExpression(
     e instanceof Paren ||
     e instanceof ExpressionWithOptionalExpression
   ) {
-    return getJsxExpression(e.expression);
+    return getJsxExpression(e.expression, options);
   } else if (e instanceof Expression) {
     return new JsxExpression(undefined, e);
   }
