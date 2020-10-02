@@ -142,7 +142,7 @@ export class JsxChildExpression extends JsxExpression {
 
     const conditionAttribute = this.createIfAttribute(condition!);
 
-    const expression = getJsxExpression(statement);
+    const expression = getJsxExpression(statement, options);
     if (isElement(expression)) {
       const element = expression.clone();
       element.addAttribute(conditionAttribute);
