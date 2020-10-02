@@ -93,10 +93,16 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     const name = templateProperty.name;
 
     if (init && init instanceof BaseFunction) {
-      // const initJsx = this.functionToJsxElement('', init)
-      return `<slot name="${name}" v-if="${name}" ${attributes.join(
-        " "
-      )}></slot>
+      const conditionAttrId = attributes.findIndex((a) => a.includes("v-if"));
+      if (conditionAttrId > -1) {
+        attributes[conditionAttrId] = `${attributes[conditionAttrId].slice(
+          0,
+          -1
+        )} && ${name}"`;
+      } else {
+        attributes.push(`v-if="${name}"`);
+      }
+      return `<slot name="${name}" ${attributes.join(" ")}></slot>
       <slot name="${name}" v-else>
         ${init.getTemplate()}
       </slot>`;

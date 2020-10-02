@@ -113,7 +113,7 @@ mocha.describe("vue-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it.only("template", function () {
+  mocha.it("template", function () {
     this.testGenerator(this.test!.title);
   });
 

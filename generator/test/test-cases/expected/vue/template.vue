@@ -3,25 +3,23 @@
     ><slot name="headerTemplate"></slot
     ><slot
       name="contentTemplate"
-      v-if="contentTemplate"
       v-bind:data="{ p1: 'value' }"
       v-bind:index="10"
-      v-if="$scopedSlots.contentTemplate"
+      v-if="$scopedSlots.contentTemplate && contentTemplate"
     ></slot>
     <slot name="contentTemplate" v-else>
       <div>{{ props.data.p1 }}</div> </slot
     ><slot
       name="template"
-      v-if="template"
       v-bind:textProp="'textPropValue'"
       v-bind:textPropExpr="'textPropExrpValue'"
-      v-if="!$scopedSlots.contentTemplate"
+      v-if="!$scopedSlots.contentTemplate && template"
     ></slot>
     <slot name="template" v-else> <div></div> </slot
     ><slot
       name="footerTemplate"
-      v-if="footerTemplate"
       v-bind:someProp="someProp"
+      v-if="footerTemplate"
     ></slot>
     <slot name="footerTemplate" v-else> <div></div> </slot
   ></div>
