@@ -33,7 +33,7 @@ export function Component(arg: {
   defaultOptionRules?: Rule<any>[] | null;
 
   /**
-   * Set tot `true` if component is SVG-based
+   * Set to `true` if component is SVG-based
    */
   isSVG?: boolean;
 
