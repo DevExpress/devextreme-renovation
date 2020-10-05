@@ -4,6 +4,7 @@ import { Decorators } from "../../component_declaration/decorators";
 import { ObjectLiteral } from "../../base-generator/expressions/literal";
 import { TemplateExpression } from "../../base-generator/expressions/template";
 import { isElement } from "./jsx/elements";
+import { getJsxExpression } from "../../base-generator/expressions/jsx";
 
 export class Decorator extends BaseDecorator {
   toString(options?: toStringOptions) {
@@ -31,10 +32,11 @@ export class Decorator extends BaseDecorator {
       if (viewFunction) {
         let template = viewFunction.getTemplate(options);
         Object.keys(options?.variables || {}).forEach((i) => {
-          if (isElement(options!.variables![i])) {
+          const expression = getJsxExpression(options!.variables![i]);
+          if (isElement(expression)) {
             template += `
             <ng-template #${i}>
-              ${options!.variables![i].toString(options)}
+              ${expression.toString(options)}
               </ng-template>
             `;
           }

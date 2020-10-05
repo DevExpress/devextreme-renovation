@@ -4713,6 +4713,68 @@ mocha.describe("Angular generator", function () {
         );
       });
 
+      mocha.it("Add templates for variable with element in paren", function () {
+        generator.createFunctionDeclaration(
+          [],
+          [],
+          "",
+          generator.createIdentifier("viewFunction"),
+          [],
+          [],
+          undefined,
+          generator.createBlock(
+            [
+              generator.createReturn(
+                generator.createJsxSelfClosingElement(
+                  generator.createIdentifier("div")
+                )
+              ),
+            ],
+            false
+          )
+        );
+
+        const decorator = generator.createDecorator(
+          generator.createCall(
+            generator.createIdentifier("Component"),
+            [],
+            [
+              generator.createObjectLiteral(
+                [
+                  generator.createPropertyAssignment(
+                    generator.createIdentifier("view"),
+                    generator.createIdentifier("viewFunction")
+                  ),
+                ],
+                false
+              ),
+            ]
+          )
+        );
+
+        assert.strictEqual(
+          removeSpaces(
+            decorator.toString({
+              members: [],
+              variables: {
+                v1: generator.createParen(
+                  generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("span")
+                  )
+                ),
+              },
+            })
+          ),
+          removeSpaces(
+            "@Component({template:`<div ></div>\n" +
+              "<ng-template #v1>" +
+              "<span ></span>" +
+              "</ng-template>" +
+              "`})"
+          )
+        );
+      });
+
       mocha.it("Remove viewModel", function () {
         const decorator = generator.createDecorator(
           generator.createCall(
