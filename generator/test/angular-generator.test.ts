@@ -793,6 +793,94 @@ mocha.describe("Angular generator", function () {
       }
     );
 
+    mocha.it("render element from variable", function () {
+      const variable = generator.createJsxElement(
+        generator.createJsxOpeningElement(
+          generator.createIdentifier("span"),
+          undefined,
+          []
+        ),
+        [],
+        generator.createJsxClosingElement(generator.createIdentifier("span"))
+      );
+
+      const expression = generator.createJsxElement(
+        generator.createJsxOpeningElement(
+          generator.createIdentifier("div"),
+          undefined,
+          []
+        ),
+        [
+          generator.createJsxExpression(
+            undefined,
+            generator.createIdentifier("var")
+          ),
+        ],
+        generator.createJsxClosingElement(generator.createIdentifier("div"))
+      );
+
+      assert.strictEqual(
+        expression.toString({
+          members: [],
+          variables: {
+            var: variable,
+          },
+        }),
+        `<div ><ng-container *ngTemplateOutlet="var"></ng-container></div>`
+      );
+    });
+
+    mocha.it("render element from variable in condition", function () {
+      const variable = generator.createJsxElement(
+        generator.createJsxOpeningElement(
+          generator.createIdentifier("span"),
+          undefined,
+          []
+        ),
+        [],
+        generator.createJsxClosingElement(generator.createIdentifier("span"))
+      );
+
+      const expression = generator.createJsxElement(
+        generator.createJsxOpeningElement(
+          generator.createIdentifier("div"),
+          undefined,
+          []
+        ),
+        [
+          generator.createJsxExpression(
+            undefined,
+            generator.createConditional(
+              generator.createIdentifier("condition"),
+              generator.createIdentifier("var"),
+              generator.createIdentifier("var")
+            )
+          ),
+        ],
+        generator.createJsxClosingElement(generator.createIdentifier("div"))
+      );
+
+      assert.strictEqual(
+        removeSpaces(
+          expression.toString({
+            members: [],
+            variables: {
+              var: variable,
+            },
+          })
+        ),
+        removeSpaces(`
+          <div >
+            <ng-container *ngIf="condition"> 
+              <ng-container *ngTemplateOutlet="var"></ng-container>
+            </ng-container>
+            <ng-container *ngIf="!(condition)">
+              <ng-container *ngTemplateOutlet="var"></ng-container>
+            </ng-container>
+          </div>`)
+      );
+    });
+
     mocha.describe("Slots with conditional rendering", function () {
       this.beforeEach(function () {
         this.slotProperty = generator.createProperty(
@@ -4169,7 +4257,7 @@ mocha.describe("Angular generator", function () {
           expression.getTemplate({
             members: [],
           }),
-          `<div ><span ></span></div>`
+          `<div ><ng-container *ngTemplateOutlet="v"></ng-container></div>`
         );
       });
 
@@ -4561,6 +4649,67 @@ mocha.describe("Angular generator", function () {
         assert.strictEqual(
           decorator.toString(),
           `@Component({template:\`<div ></div>\`})`
+        );
+      });
+
+      mocha.it("Add templates for variable with element", function () {
+        generator.createFunctionDeclaration(
+          [],
+          [],
+          "",
+          generator.createIdentifier("viewFunction"),
+          [],
+          [],
+          undefined,
+          generator.createBlock(
+            [
+              generator.createReturn(
+                generator.createJsxSelfClosingElement(
+                  generator.createIdentifier("div")
+                )
+              ),
+            ],
+            false
+          )
+        );
+
+        const decorator = generator.createDecorator(
+          generator.createCall(
+            generator.createIdentifier("Component"),
+            [],
+            [
+              generator.createObjectLiteral(
+                [
+                  generator.createPropertyAssignment(
+                    generator.createIdentifier("view"),
+                    generator.createIdentifier("viewFunction")
+                  ),
+                ],
+                false
+              ),
+            ]
+          )
+        );
+
+        assert.strictEqual(
+          removeSpaces(
+            decorator.toString({
+              members: [],
+              variables: {
+                v1: generator.createJsxSelfClosingElement(
+                  generator.createIdentifier("span")
+                ),
+                v2: generator.createIdentifier("id"),
+              },
+            })
+          ),
+          removeSpaces(
+            "@Component({template:`<div ></div>\n" +
+              "<ng-template #v1>" +
+              "<span ></span>" +
+              "</ng-template>" +
+              "`})"
+          )
         );
       });
 

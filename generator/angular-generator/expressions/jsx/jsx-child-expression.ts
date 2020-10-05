@@ -1,6 +1,9 @@
 import { JsxExpression } from "./jsx-expression";
 import { toStringOptions } from "../../types";
-import { Expression } from "../../../base-generator/expressions/base";
+import {
+  Expression,
+  SimpleExpression,
+} from "../../../base-generator/expressions/base";
 import SyntaxKind from "../../../base-generator/syntaxKind";
 import { Binary, Prefix } from "../../../base-generator/expressions/operators";
 import {
@@ -130,6 +133,10 @@ export class JsxChildExpression extends JsxExpression {
     }
   }
 
+  getExpressionFromStatement(statement: Expression, options?: toStringOptions) {
+    return getJsxExpression(statement);
+  }
+
   compileStatement(
     statement: Expression,
     condition?: Expression,
@@ -142,7 +149,7 @@ export class JsxChildExpression extends JsxExpression {
 
     const conditionAttribute = this.createIfAttribute(condition!);
 
-    const expression = getJsxExpression(statement, options);
+    const expression = this.getExpressionFromStatement(statement, options);
     if (isElement(expression)) {
       const element = expression.clone();
       element.addAttribute(conditionAttribute);
@@ -304,6 +311,32 @@ export class JsxChildExpression extends JsxExpression {
     return `<ng-container *ngFor="${ngForValue.join(
       ";"
     )}">${template}</ng-container>`;
+  }
+
+  getTemplateForVariable(
+    element: JsxElement | JsxSelfClosingElement,
+    identifier: Identifier
+  ): JsxElement | JsxSelfClosingElement {
+    return new JsxSelfClosingElement(
+      new SimpleExpression("ng-container"),
+      undefined,
+      [
+        new AngularDirective(
+          new Identifier("*ngTemplateOutlet"),
+          new SimpleExpression(identifier.toString())
+        ),
+      ],
+      {}
+    );
+  }
+
+  getExpression(options?: toStringOptions) {
+    const baseExpression = super.getExpression(options);
+    if (this.expression instanceof Identifier && isElement(baseExpression)) {
+      return this.getTemplateForVariable(baseExpression, this.expression);
+    }
+
+    return baseExpression;
   }
 
   toString(options?: toStringOptions) {

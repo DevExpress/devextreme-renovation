@@ -3,6 +3,7 @@ import { toStringOptions } from "../types";
 import { Decorators } from "../../component_declaration/decorators";
 import { ObjectLiteral } from "../../base-generator/expressions/literal";
 import { TemplateExpression } from "../../base-generator/expressions/template";
+import { isElement } from "./jsx/elements";
 
 export class Decorator extends BaseDecorator {
   toString(options?: toStringOptions) {
@@ -28,7 +29,16 @@ export class Decorator extends BaseDecorator {
       const parameters = this.expression.arguments[0] as ObjectLiteral;
       const viewFunction = this.getViewFunction();
       if (viewFunction) {
-        const template = viewFunction.getTemplate(options);
+        let template = viewFunction.getTemplate(options);
+        Object.keys(options?.variables || {}).forEach((i) => {
+          if (isElement(options!.variables![i])) {
+            template += `
+            <ng-template #${i}>
+              ${options!.variables![i].toString(options)}
+              </ng-template>
+            `;
+          }
+        });
         if (template) {
           parameters.setProperty(
             "template",
