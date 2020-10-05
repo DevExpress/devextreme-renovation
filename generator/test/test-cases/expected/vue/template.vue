@@ -14,9 +14,14 @@
       v-if="!$scopedSlots.contentTemplate"
     ></slot
     ><slot name="footerTemplate" v-bind:someProp="someProp"></slot
+    ><slot name="componentTemplate" v-bind:value="'Test Value'"></slot
   ></div>
 </template>
 <script>
+import {
+  WidgetWithPropsInput,
+  DxWidgetWithProps as WidgetWithProps,
+} from "./dx-widget-with-props";
 export const WidgetInput = {
   someProp: {
     type: Boolean,
@@ -26,6 +31,9 @@ export const WidgetInput = {
   },
 };
 export const DxWidget = {
+  components: {
+    WidgetWithProps,
+  },
   props: WidgetInput,
   computed: {
     __restAttributes() {
@@ -38,6 +46,7 @@ export const DxWidget = {
         template: this.$scopedSlots.template,
         contentTemplate: this.$scopedSlots.contentTemplate,
         footerTemplate: this.$scopedSlots.footerTemplate,
+        componentTemplate: this.$scopedSlots.componentTemplate,
       };
     },
   },

@@ -29,6 +29,42 @@ export function stateSetter(stateName: Identifier | string) {
   return `__state_set${capitalizeFirstLetter(stateName)}`;
 }
 
+// TODO: move these types to generator's common
+//       (for example as DxFunctionalComponentType and DxComponentType)
+export function compileJSXElementType(type: string | TypeExpression) {
+  if (
+    type instanceof TypeReferenceNode &&
+    type.typeName.toString() === "JSXTemplate"
+  ) {
+    const args = type.typeArguments;
+    const properties = args.length
+      ? args.length === 1
+        ? `Partial<${args[0]}>`
+        : `Partial<Omit<${args}>> & Required<Pick<${args}>>`
+      : "any";
+    return `React.JSXElementConstructor<${properties}>`;
+  }
+
+  return type;
+}
+
+export function compileJSXFuncElementType(type: string | TypeExpression) {
+  if (
+    type instanceof TypeReferenceNode &&
+    type.typeName.toString() === "JSXTemplate"
+  ) {
+    const args = type.typeArguments;
+    const properties = args.length
+      ? args.length === 1
+        ? `Partial<${args[0]}>`
+        : `Partial<Omit<${args}>> & Required<Pick<${args}>>`
+      : "any";
+    return `React.FunctionComponent<${properties}>`;
+  }
+
+  return type;
+}
+
 export class Property extends BaseProperty {
   REF_OBJECT_TYPE = "MutableRefObject";
 
@@ -61,16 +97,8 @@ export class Property extends BaseProperty {
     if (this.isRefProp || this.isForwardRefProp) {
       type = `${this.REF_OBJECT_TYPE}<${this.type}>`;
     }
-    if (
-      type instanceof TypeReferenceNode &&
-      type.typeName.toString() === "JSXTemplate"
-    ) {
-      const args = type.typeArguments;
-      const partialType =
-        args.length === 1
-          ? `Partial<${args[0]}>`
-          : `Partial<Omit<${args[0]}, ${args[1]}>> & Required<Pick<${args[0]}, ${args[1]}>>`;
-      type = `(props: ${partialType}) => JSX.Element`;
+    if (this.isTemplate) {
+      type = compileJSXFuncElementType(type);
     }
 
     return `${this.name}${this.compileTypeDeclarationType(type)}`;

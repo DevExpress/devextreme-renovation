@@ -48,7 +48,7 @@ const WidgetWithProps = forwardRef<
   });
 }) as React.FC<
   typeof WidgetWithPropsInput &
-    RestProps & { ref: React.Ref<WidgetWithPropsRef> }
+    RestProps & { ref?: React.Ref<WidgetWithPropsRef> }
 > & { defaultProps: typeof WidgetWithPropsInput };
 export { WidgetWithProps };
 
