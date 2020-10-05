@@ -3,11 +3,7 @@ import { Decorator } from "../../base-generator/expressions/decorator";
 import { Identifier, Call } from "../../base-generator/expressions/common";
 import { TypeExpression } from "../../base-generator/expressions/type";
 import { Expression } from "../../base-generator/expressions/base";
-import {
-  compileJSXElementType,
-  compileJSXFuncElementType,
-  Property,
-} from "./class-members/property";
+import { compileJSXTemplateType, Property } from "./class-members/property";
 import { Property as BaseProperty } from "../../base-generator/expressions/class-members";
 import { BaseClassMember } from "../../base-generator/expressions/class-members";
 import { Decorators } from "../../component_declaration/decorators";
@@ -34,8 +30,8 @@ export function buildTemplateProperty(
   if (!members.find((m) => m._name.toString() === templatePropName)) {
     const type =
       propName === "render"
-        ? compileJSXFuncElementType(templateMember.type)
-        : compileJSXElementType(templateMember.type);
+        ? compileJSXTemplateType(templateMember.type)
+        : compileJSXTemplateType(templateMember.type, true);
     return new Property(
       [new Decorator(new Call(new Identifier("OneWay"), undefined, []), {})],
       [],

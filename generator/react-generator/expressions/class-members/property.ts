@@ -39,27 +39,17 @@ function compileJSXTemplateProps(args: TypeExpression[]) {
     : "any";
 }
 
-export function compileJSXElementType(type: string | TypeExpression) {
+export function compileJSXTemplateType(
+  type: string | TypeExpression,
+  isComponent = false
+) {
   if (
     type instanceof TypeReferenceNode &&
     type.typeName.toString() === "JSXTemplate"
   ) {
-    return `React.JSXElementConstructor<${compileJSXTemplateProps(
-      type.typeArguments
-    )}>`;
-  }
-
-  return type;
-}
-
-export function compileJSXFuncElementType(type: string | TypeExpression) {
-  if (
-    type instanceof TypeReferenceNode &&
-    type.typeName.toString() === "JSXTemplate"
-  ) {
-    return `React.FunctionComponent<${compileJSXTemplateProps(
-      type.typeArguments
-    )}>`;
+    return `React.${
+      isComponent ? "JSXElementConstructor" : "FunctionComponent"
+    }<${compileJSXTemplateProps(type.typeArguments)}>`;
   }
 
   return type;
@@ -98,7 +88,7 @@ export class Property extends BaseProperty {
       type = `${this.REF_OBJECT_TYPE}<${this.type}>`;
     }
     if (this.isTemplate) {
-      type = compileJSXFuncElementType(type);
+      type = compileJSXTemplateType(type);
     }
 
     return `${this.name}${this.compileTypeDeclarationType(type)}`;
