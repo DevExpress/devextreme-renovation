@@ -45,9 +45,10 @@ import { CommonModule } from "@angular/common";
           }
         "
       ></ng-container> </ng-container
-    ><ng-container
-      *ngTemplateOutlet="footerTemplate; context: { someProp: someProp }"
-    ></ng-container
+    ><ng-container *ngIf="footerTemplate">
+      <ng-container
+        *ngTemplateOutlet="footerTemplate; context: { someProp: someProp }"
+      ></ng-container> </ng-container
     ><ng-container
       *ngTemplateOutlet="componentTemplate; context: { value: 'Test Value' }"
     ></ng-container
