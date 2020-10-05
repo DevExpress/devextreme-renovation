@@ -27,7 +27,6 @@ export class WidgetProps {
 }
 
 export class PickedProps {
-  @Input() columns?: Array<GridColumnProps | string> = new WidgetProps()
-    .columns;
-  @Input() editing?: EditingProps = new WidgetProps().editing;
+  @Input() columns?: Array<GridColumnProps | string>;
+  @Input() editing?: EditingProps;
 }
