@@ -31,18 +31,22 @@ export function stateSetter(stateName: Identifier | string) {
 
 // TODO: move these types to generator's common
 //       (for example as DxFunctionalComponentType and DxComponentType)
+function compileJSXTemplateProps(args: TypeExpression[]) {
+  return args.length
+    ? args.length === 1
+      ? `Partial<${args[0]}>`
+      : `Partial<Omit<${args}>> & Required<Pick<${args}>>`
+    : "any";
+}
+
 export function compileJSXElementType(type: string | TypeExpression) {
   if (
     type instanceof TypeReferenceNode &&
     type.typeName.toString() === "JSXTemplate"
   ) {
-    const args = type.typeArguments;
-    const properties = args.length
-      ? args.length === 1
-        ? `Partial<${args[0]}>`
-        : `Partial<Omit<${args}>> & Required<Pick<${args}>>`
-      : "any";
-    return `React.JSXElementConstructor<${properties}>`;
+    return `React.JSXElementConstructor<${compileJSXTemplateProps(
+      type.typeArguments
+    )}>`;
   }
 
   return type;
@@ -53,13 +57,9 @@ export function compileJSXFuncElementType(type: string | TypeExpression) {
     type instanceof TypeReferenceNode &&
     type.typeName.toString() === "JSXTemplate"
   ) {
-    const args = type.typeArguments;
-    const properties = args.length
-      ? args.length === 1
-        ? `Partial<${args[0]}>`
-        : `Partial<Omit<${args}>> & Required<Pick<${args}>>`
-      : "any";
-    return `React.FunctionComponent<${properties}>`;
+    return `React.FunctionComponent<${compileJSXTemplateProps(
+      type.typeArguments
+    )}>`;
   }
 
   return type;
