@@ -830,6 +830,64 @@ mocha.describe("Angular generator", function () {
       );
     });
 
+    mocha.it(
+      "render element from variable in condition expression in parens",
+      function () {
+        const variable = generator.createParen(
+          generator.createJsxElement(
+            generator.createJsxOpeningElement(
+              generator.createIdentifier("span"),
+              undefined,
+              []
+            ),
+            [],
+            generator.createJsxClosingElement(
+              generator.createIdentifier("span")
+            )
+          )
+        );
+
+        const expression = generator.createJsxElement(
+          generator.createJsxOpeningElement(
+            generator.createIdentifier("div"),
+            undefined,
+            []
+          ),
+          [
+            generator.createJsxExpression(
+              undefined,
+              generator.createConditional(
+                generator.createIdentifier("condition"),
+                generator.createParen(generator.createIdentifier("var")),
+                generator.createParen(generator.createIdentifier("var"))
+              )
+            ),
+          ],
+          generator.createJsxClosingElement(generator.createIdentifier("div"))
+        );
+
+        assert.strictEqual(
+          removeSpaces(
+            expression.toString({
+              members: [],
+              variables: {
+                var: variable,
+              },
+            })
+          ),
+          removeSpaces(`
+          <div >
+            <ng-container *ngIf="condition"> 
+              <ng-container *ngTemplateOutlet="var"></ng-container>
+            </ng-container>
+            <ng-container *ngIf="!(condition)">
+              <ng-container *ngTemplateOutlet="var"></ng-container>
+            </ng-container>
+          </div>`)
+        );
+      }
+    );
+
     mocha.it("render element from variable in condition", function () {
       const variable = generator.createJsxElement(
         generator.createJsxOpeningElement(

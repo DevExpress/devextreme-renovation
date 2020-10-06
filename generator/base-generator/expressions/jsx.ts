@@ -43,6 +43,15 @@ export function getJsxExpression(
   }
 }
 
+export function getExpressionFromParens(
+  expression: Expression | undefined
+): Expression | undefined {
+  if (expression instanceof Paren) {
+    return getExpressionFromParens(expression.expression);
+  }
+  return expression;
+}
+
 export class JsxAttribute {
   name: Identifier;
   initializer: Expression;
@@ -210,18 +219,15 @@ export class JsxExpression extends ExpressionWithOptionalExpression {
 
   getExpression(options?: toStringOptions): Expression | undefined {
     let variableExpression;
+    const expression = getExpressionFromParens(this.expression);
     if (
-      this.expression instanceof Identifier &&
-      options?.variables?.[this.expression.toString()]
+      expression instanceof Identifier &&
+      options?.variables?.[expression.toString()]
     ) {
-      variableExpression = options.variables[this.expression.toString()];
+      variableExpression = options.variables[expression.toString()];
     }
 
-    if (variableExpression instanceof Paren) {
-      return variableExpression.expression;
-    }
-
-    return variableExpression || this.expression;
+    return getExpressionFromParens(variableExpression) || expression;
   }
 }
 

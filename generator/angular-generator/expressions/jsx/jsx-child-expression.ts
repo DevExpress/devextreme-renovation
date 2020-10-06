@@ -26,6 +26,7 @@ import { TrackByAttribute } from "./track-by-attribute";
 import { Conditional } from "../../../base-generator/expressions/conditions";
 import { StringLiteral } from "../../../base-generator/expressions/literal";
 import {
+  getExpressionFromParens,
   getJsxExpression,
   JsxClosingElement,
 } from "../../../base-generator/expressions/jsx";
@@ -332,8 +333,9 @@ export class JsxChildExpression extends JsxExpression {
 
   getExpression(options?: toStringOptions) {
     const baseExpression = super.getExpression(options);
-    if (this.expression instanceof Identifier && isElement(baseExpression)) {
-      return this.getTemplateForVariable(baseExpression, this.expression);
+    const expression = getExpressionFromParens(this.expression);
+    if (expression instanceof Identifier && isElement(baseExpression)) {
+      return this.getTemplateForVariable(baseExpression, expression);
     }
 
     return baseExpression;
