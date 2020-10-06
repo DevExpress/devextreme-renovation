@@ -268,9 +268,11 @@ function processMembersFromType(
   return (members as Property[]).map((p) => {
     const m = p.inherit();
     m.inherited = false;
-    m.initializer = new SimpleExpression(
-      `${componentInput.getInitializerScope(baseComponentInput, m.name)}`
-    );
+    if (m.initializer) {
+      m.initializer = new SimpleExpression(
+        `${componentInput.getInitializerScope(baseComponentInput, m.name)}`
+      );
+    }
     return m;
   });
 }

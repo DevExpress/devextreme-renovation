@@ -1867,6 +1867,43 @@ mocha.describe("Vue-generator", function () {
         assert.strictEqual(expression.toString(), `v-bind="{a:'str'}"`);
       });
 
+      mocha.it("render element from variable", function () {
+        const variable = generator.createJsxElement(
+          generator.createJsxOpeningElement(
+            generator.createIdentifier("span"),
+            undefined,
+            []
+          ),
+          [],
+          generator.createJsxClosingElement(generator.createIdentifier("span"))
+        );
+
+        const expression = generator.createJsxElement(
+          generator.createJsxOpeningElement(
+            generator.createIdentifier("div"),
+            undefined,
+            []
+          ),
+          [
+            generator.createJsxExpression(
+              undefined,
+              generator.createIdentifier("var")
+            ),
+          ],
+          generator.createJsxClosingElement(generator.createIdentifier("div"))
+        );
+
+        assert.strictEqual(
+          expression.toString({
+            members: [],
+            variables: {
+              var: variable,
+            },
+          }),
+          `<div ><span ></span></div>`
+        );
+      });
+
       mocha.describe("Attributes", function () {
         mocha.it("title attribute", function () {
           const expression = generator.createJsxAttribute(

@@ -53,7 +53,7 @@ export const DxRefOnChildrenTemplate = {
       this.__scheduleEffects[i] && this.__scheduleEffects[i]();
     });
   },
-  destroyed() {
+  beforeDestroy() {
     this.__destroyEffects.forEach((_, i) => {
       this.__destroyEffects[i] && this.__destroyEffects[i]();
     });

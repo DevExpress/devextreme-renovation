@@ -45,11 +45,6 @@ export const WidgetProps = {
 export const PickedProps = {
   columns: {
     type: Array,
-    default() {
-      return typeof WidgetProps.columns.default === "function"
-        ? WidgetProps.columns.default()
-        : WidgetProps.columns.default;
-    },
   },
 };
 </script>
