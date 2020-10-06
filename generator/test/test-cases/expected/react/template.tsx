@@ -1,23 +1,54 @@
+import { WidgetWithProps, WidgetWithPropsInput } from "./dx-widget-with-props";
+
 export declare type WidgetInputType = {
   someProp: boolean;
-  headerTemplate?: any;
-  template: (props: { textProp: string; textPropExpr: string }) => any;
-  contentTemplate: (props: { data: { p1: string }; index: number }) => any;
-  footerTemplate: (props: { someProp: boolean }) => any;
-  headerRender?: any;
-  headerComponent?: any;
-  render?: any;
-  component?: any;
-  contentRender?: any;
-  contentComponent?: any;
-  footerRender?: any;
-  footerComponent?: any;
+  headerTemplate: React.FunctionComponent<any>;
+  template: React.FunctionComponent<
+    Partial<{ textProp: string; textPropExpr: string }>
+  >;
+  contentTemplate: React.FunctionComponent<
+    Partial<Omit<{ data: { p1: string }; index: number }, "data">> &
+      Required<Pick<{ data: { p1: string }; index: number }, "data">>
+  >;
+  footerTemplate: React.FunctionComponent<Partial<{ someProp: boolean }>>;
+  componentTemplate: React.FunctionComponent<
+    Partial<Omit<typeof WidgetWithPropsInput, "value">> &
+      Required<Pick<typeof WidgetWithPropsInput, "value">>
+  >;
+  headerRender?: React.FunctionComponent<any>;
+  headerComponent?: React.JSXElementConstructor<any>;
+  render?: React.FunctionComponent<
+    Partial<{ textProp: string; textPropExpr: string }>
+  >;
+  component?: React.JSXElementConstructor<
+    Partial<{ textProp: string; textPropExpr: string }>
+  >;
+  contentRender?: React.FunctionComponent<
+    Partial<Omit<{ data: { p1: string }; index: number }, "data">> &
+      Required<Pick<{ data: { p1: string }; index: number }, "data">>
+  >;
+  contentComponent?: React.JSXElementConstructor<
+    Partial<Omit<{ data: { p1: string }; index: number }, "data">> &
+      Required<Pick<{ data: { p1: string }; index: number }, "data">>
+  >;
+  footerRender?: React.FunctionComponent<Partial<{ someProp: boolean }>>;
+  footerComponent?: React.JSXElementConstructor<Partial<{ someProp: boolean }>>;
+  componentRender?: React.FunctionComponent<
+    Partial<Omit<typeof WidgetWithPropsInput, "value">> &
+      Required<Pick<typeof WidgetWithPropsInput, "value">>
+  >;
+  componentComponent?: React.JSXElementConstructor<
+    Partial<Omit<typeof WidgetWithPropsInput, "value">> &
+      Required<Pick<typeof WidgetWithPropsInput, "value">>
+  >;
 };
 export const WidgetInput: WidgetInputType = {
   someProp: false,
+  headerTemplate: () => null,
   template: () => <div></div>,
   contentTemplate: (props) => <div>{props.data.p1}</div>,
   footerTemplate: () => <div></div>,
+  componentTemplate: WidgetWithProps,
 };
 import * as React from "react";
 import { useCallback, HTMLAttributes } from "react";
@@ -45,6 +76,9 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     function __restAttributes(): RestProps {
       const {
         component,
+        componentComponent,
+        componentRender,
+        componentTemplate,
         contentComponent,
         contentRender,
         contentTemplate,
@@ -83,6 +117,11 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
         props.footerRender,
         props.footerComponent
       ),
+      componentTemplate: getTemplate(
+        props.componentTemplate,
+        props.componentRender,
+        props.componentComponent
+      ),
     },
     restAttributes: __restAttributes(),
   });
@@ -94,9 +133,10 @@ Widget.defaultProps = {
 function view(viewModel: Widget) {
   const myvar = viewModel.props.someProp;
   const FooterTemplate = viewModel.props.footerTemplate;
+  const ComponentTemplate = viewModel.props.componentTemplate;
   return (
     <div>
-      {viewModel.props.headerTemplate()}
+      {viewModel.props.headerTemplate({})}
 
       {viewModel.props.contentTemplate &&
         viewModel.props.contentTemplate({ data: { p1: "value" }, index: 10 })}
@@ -106,8 +146,9 @@ function view(viewModel: Widget) {
           textProp: "textPropValue",
           textPropExpr: "textPropExrpValue",
         })}
-
       {viewModel.props.footerTemplate && FooterTemplate({ someProp: myvar })}
+
+      {ComponentTemplate({ value: "Test Value" })}
     </div>
   );
 }

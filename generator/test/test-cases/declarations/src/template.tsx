@@ -4,24 +4,34 @@ import {
   ComponentBindings,
   JSXComponent,
   OneWay,
+  JSXTemplate,
 } from "../../../../component_declaration/common";
+import { WidgetWithProps, WidgetWithPropsInput } from "./dx-widget-with-props";
 
 @ComponentBindings()
 export class WidgetInput {
   @OneWay() someProp: boolean = false;
   @Template()
-  headerTemplate?: any;
-  @Template() template: (props: {
+  headerTemplate: JSXTemplate = () => null;
+  @Template() template: JSXTemplate<{
     textProp: string;
     textPropExpr: string;
-  }) => JSX.Element = () => <div></div>;
-  @Template() contentTemplate: (props: {
-    data: { p1: string };
-    index: number;
-  }) => any = (props) => <div>{props.data.p1}</div>;
-  @Template() footerTemplate: (props: { someProp: boolean }) => any = () => (
-    <div></div>
-  );
+  }> = () => <div></div>;
+  @Template() contentTemplate: JSXTemplate<
+    {
+      data: { p1: string };
+      index: number;
+    },
+    "data"
+  > = (props) => <div>{props.data.p1}</div>;
+  @Template() footerTemplate: JSXTemplate<{
+    someProp: boolean;
+  }> = () => <div></div>;
+  @Template()
+  componentTemplate: JSXTemplate<
+    WidgetWithPropsInput,
+    "value"
+  > = WidgetWithProps;
 }
 
 @Component({
@@ -32,6 +42,7 @@ export default class Widget extends JSXComponent(WidgetInput) {}
 function view(viewModel: Widget) {
   const myvar = viewModel.props.someProp;
   const FooterTemplate = viewModel.props.footerTemplate;
+  const ComponentTemplate = viewModel.props.componentTemplate;
   return (
     <div>
       <viewModel.props.headerTemplate />
@@ -45,6 +56,7 @@ function view(viewModel: Widget) {
         />
       )}
       {FooterTemplate && <FooterTemplate someProp={myvar}></FooterTemplate>}
+      <ComponentTemplate value="Test Value" />
     </div>
   );
 }

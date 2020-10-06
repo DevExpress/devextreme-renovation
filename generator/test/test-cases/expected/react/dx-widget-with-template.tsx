@@ -78,11 +78,11 @@ WidgetWithTemplate.defaultProps = {
 function view(viewModel: WidgetWithTemplate) {
   return (
     <div>
-      {viewModel.props.componentTemplate()}
+      {viewModel.props.componentTemplate({})}
 
-      {viewModel.props.template()}
+      {viewModel.props.template({})}
 
-      {viewModel.props.arrowTemplate()}
+      {viewModel.props.arrowTemplate({})}
     </div>
   );
 }
