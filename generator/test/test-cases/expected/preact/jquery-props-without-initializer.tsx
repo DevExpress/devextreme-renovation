@@ -18,6 +18,7 @@ export default class Widget extends BaseComponent {
         ["state4", undefined, "state4Change"],
       ],
       allowNull: ["prop1", "defaultState4", "state4"],
+      elements: [],
     };
   }
 

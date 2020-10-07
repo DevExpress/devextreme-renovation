@@ -112,6 +112,7 @@ import { getModuleRelativePath, resolveModule } from "./utils/path-utils";
 import { Decorator } from "./expressions/decorator";
 import { Interface } from "./expressions/interface";
 import { Throw } from "./expressions/throw";
+import { CatchClause, Try } from "./expressions/try-catch";
 import { Decorators } from "../component_declaration/decorators";
 import { TypeParameterDeclaration } from "./expressions/type-parameter-declaration";
 import prettier from "prettier";
@@ -298,6 +299,21 @@ export default class Generator implements GeneratorAPI {
 
   createThrow(expression: Expression) {
     return new Throw(expression);
+  }
+
+  createTry(
+    tryBlock: Expression,
+    catchClause?: Expression,
+    finallyBlock?: Expression
+  ) {
+    return new Try(tryBlock, catchClause, finallyBlock);
+  }
+
+  createCatchClause(
+    variableDeclaration: Expression | undefined,
+    expression: Expression
+  ) {
+    return new CatchClause(variableDeclaration, expression);
   }
 
   createBreak(label?: string | Identifier) {

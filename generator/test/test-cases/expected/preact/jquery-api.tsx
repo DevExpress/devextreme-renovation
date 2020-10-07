@@ -14,6 +14,7 @@ export default class Widget extends BaseComponent {
     return {
       twoWay: [],
       allowNull: [],
+      elements: [],
     };
   }
 

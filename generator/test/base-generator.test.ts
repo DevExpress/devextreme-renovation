@@ -284,6 +284,118 @@ mocha.describe("base-generator: expressions", function () {
         ["p"]
       );
     });
+
+    mocha.describe("TryCatch", function () {
+      mocha.it("createTry", function () {
+        const expression = generator.createTry(
+          generator.createBlock(
+            [
+              generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("name")
+              ),
+            ],
+            true
+          )
+        );
+
+        assert.equal(
+          getAst(expression.toString()),
+          getAst("try { this.name; }")
+        );
+      });
+
+      mocha.it("createTry with catch", function () {
+        const expression = generator.createTry(
+          generator.createBlock(
+            [
+              generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("name")
+              ),
+            ],
+            true
+          ),
+          generator.createCatchClause(
+            generator.createIdentifier("error"),
+            generator.createBlock(
+              [
+                generator.createPropertyAccess(
+                  generator.createThis(),
+                  generator.createIdentifier("name")
+                ),
+              ],
+              true
+            )
+          )
+        );
+
+        assert.equal(
+          getAst(expression.toString()),
+          getAst("try { this.name; } catch(error) { this.name; }")
+        );
+      });
+
+      mocha.it("createTry with catch without variable", function () {
+        const expression = generator.createTry(
+          generator.createBlock(
+            [
+              generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("name")
+              ),
+            ],
+            true
+          ),
+          generator.createCatchClause(
+            undefined,
+            generator.createBlock(
+              [
+                generator.createPropertyAccess(
+                  generator.createThis(),
+                  generator.createIdentifier("name")
+                ),
+              ],
+              true
+            )
+          )
+        );
+
+        assert.equal(
+          getAst(expression.toString()),
+          getAst("try { this.name; } catch { this.name; }")
+        );
+      });
+
+      mocha.it("createTry with finally", function () {
+        const expression = generator.createTry(
+          generator.createBlock(
+            [
+              generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("name")
+              ),
+            ],
+            true
+          ),
+          undefined,
+          generator.createBlock(
+            [
+              generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("name")
+              ),
+            ],
+            true
+          )
+        );
+
+        assert.equal(
+          getAst(expression.toString()),
+          getAst("try { this.name; } finally { this.name; }")
+        );
+      });
+    });
   });
 
   mocha.describe("literal expressions", function () {

@@ -20,6 +20,9 @@ class WidgetInput {
   @TwoWay() state4: number | null = null;
   @OneWay() prop1: string | null = "default";
   @OneWay() prop2: string = "default";
+
+  @OneWay() target1?: HTMLDivElement;
+  @OneWay() target2?: HTMLDivElement | string;
 }
 @Component({
   view,

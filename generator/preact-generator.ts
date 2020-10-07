@@ -226,13 +226,26 @@ class JQueryComponent {
 
   compileAPI() {
     return (this.source.members.filter((a) => a.isApiMethod) as Method[])
-      .map(
-        (a) => `${a._name}(${a.parameters})${compileType(a.type.toString())} {
-                return this.viewRef.${a._name}(${a.parameters
-          .map((p) => p.name)
-          .join(",")});
-            }`
-      )
+      .map((a) => {
+        const returnsElementType = a.type?.toString().endsWith("Element");
+        const call = `this.viewRef.${a._name}(${a.parameters
+          .map((p) => {
+            const param = p.name;
+            const hasElementType = p.type
+              ?.toString()
+              .split("|")
+              .some((t) => t.endsWith("Element"));
+
+            return hasElementType ? `this._patchElementParam(${param})` : param;
+          })
+          .join(",")})`;
+
+        return `${a._name}(${a.parameters})${compileType(a.type.toString())} {
+                return ${
+                  returnsElementType ? `this._toPublicElement(${call})` : call
+                };
+            }`;
+      })
       .join("\n");
   }
 
@@ -325,19 +338,34 @@ class JQueryComponent {
         return arr;
       }, []);
 
+    const withElementType = this.source.props.reduce((arr: string[], prop) => {
+      if (
+        prop.type
+          .toString()
+          .split("|")
+          .some((t) => t.endsWith("Element"))
+      ) {
+        return [...arr, `'${prop.name}'`];
+      }
+
+      return arr;
+    }, []);
+
     const withoutInitializer = this.source.state.filter((s) => !s.initializer);
     if (withoutInitializer.length) {
       throw `You should specify default value other than 'undefined' for the following TwoWay props: ${withoutInitializer
         .map((s) => s.name)
         .join(", ")}`;
     }
+
     return `
         get _propsInfo() {
             return {
                 twoWay: [${this.source.state.map(
                   (s) => `['${s.name}', ${s.initializer}, '${s.name}Change']`
                 )}],
-                allowNull: [${withNullType}]
+                allowNull: [${withNullType}],
+                elements: [${withElementType}]
             };
         }
         `;
