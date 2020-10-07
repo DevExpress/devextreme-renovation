@@ -21,6 +21,7 @@ import { VueDirective } from "./vue-directive";
 import { isElement } from "../../../angular-generator/expressions/jsx/elements";
 import { JsxElement } from "./element";
 import { JsxSelfClosingElement } from "./opening-element";
+import { getJsxExpression } from "../../../base-generator/expressions/jsx";
 
 export class JsxExpression extends BaseJsxExpression {}
 
@@ -45,6 +46,16 @@ export class JsxChildExpression extends BaseJsxChildExpression {
       new Identifier(condition ? "v-if" : "v-else"),
       condition || new SimpleExpression("")
     );
+  }
+
+  getExpressionFromStatement(statement: Expression, options?: toStringOptions) {
+    return getJsxExpression(statement, options);
+  }
+
+  getTemplateForVariable(
+    element: JsxElement | JsxSelfClosingElement
+  ): JsxElement | JsxSelfClosingElement {
+    return element;
   }
 
   processSlotInConditional() {

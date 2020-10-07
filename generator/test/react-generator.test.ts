@@ -73,7 +73,15 @@ mocha.describe("react-generator: expressions", function () {
 
       mocha.it("JSXTemplate type", function () {
         const property = generator.createProperty(
-          [],
+          [
+            generator.createDecorator(
+              generator.createCall(
+                generator.createIdentifier("Template"),
+                undefined,
+                undefined
+              )
+            ),
+          ],
           undefined,
           generator.createIdentifier("template"),
           undefined,
@@ -89,13 +97,21 @@ mocha.describe("react-generator: expressions", function () {
 
         assert.strictEqual(
           property.typeDeclaration(),
-          "template:(props: Partial<WidgetProps>) => JSX.Element"
+          "template:React.FunctionComponent<Partial<WidgetProps>>"
         );
       });
 
       mocha.it("JSXTemplate type with required", function () {
         const property = generator.createProperty(
-          [],
+          [
+            generator.createDecorator(
+              generator.createCall(
+                generator.createIdentifier("Template"),
+                undefined,
+                undefined
+              )
+            ),
+          ],
           undefined,
           generator.createIdentifier("template"),
           undefined,
@@ -114,7 +130,7 @@ mocha.describe("react-generator: expressions", function () {
 
         assert.strictEqual(
           property.typeDeclaration(),
-          'template:(props: Partial<Omit<WidgetProps, "value | index">> & Required<Pick<WidgetProps, "value | index">>) => JSX.Element'
+          'template:React.FunctionComponent<Partial<Omit<WidgetProps,"value | index">> & Required<Pick<WidgetProps,"value | index">>>'
         );
       });
 
@@ -307,7 +323,7 @@ mocha.describe("React Component", function () {
         getResult(view.toString()),
         getResult(`
                 ({props:{children,p,template}}:Widget) =>
-                    <div >{template()}
+                    <div >{template({})}
                     {children}
                     {p}</div>
             `)
@@ -373,7 +389,7 @@ mocha.describe("React Component", function () {
       assert.strictEqual(
         getResult(view.toString()),
         getResult(`
-                ({props:{template:Template}}:Widget) => <div >{Template()}</div>
+                ({props:{template:Template}}:Widget) => <div >{Template({})}</div>
             `)
       );
     });
@@ -674,7 +690,7 @@ mocha.describe("React Component", function () {
         assert.strictEqual(
           getResult(view.toString()),
           getResult(`function view(viewModel:Widget){
-                    return viewModel.props.template()
+                    return viewModel.props.template({})
                 }`)
         );
       });
@@ -736,7 +752,7 @@ mocha.describe("React Component", function () {
           assert.strictEqual(
             getResult(view.toString()),
             getResult(`function view(viewModel:Widget){
-                    return <div>{viewModel.props.template()}</div>
+                    return <div>{viewModel.props.template({})}</div>
                 }`)
           );
         }
@@ -807,7 +823,7 @@ mocha.describe("React Component", function () {
           assert.strictEqual(
             getResult(view.toString()),
             getResult(`function view(viewModel:Widget){
-                    return <div>{viewModel.props.template()}</div>
+                    return <div>{viewModel.props.template({})}</div>
                 }`)
           );
         }
@@ -879,7 +895,7 @@ mocha.describe("React Component", function () {
           assert.strictEqual(
             getResult(view.toString()),
             getResult(`function view(viewModel:Widget){
-                    return <div>{true && viewModel.props.template()}</div>
+                    return <div>{true && viewModel.props.template({})}</div>
                 }`)
           );
         }
@@ -2670,8 +2686,58 @@ mocha.describe("ComponentInput", function () {
       assert.strictEqual(
         getResult(expression.toString()),
         getResult(`
-            export declare type BaseModelType={template: (a?: string, b: number) => any;render?: any;component?: any};
+            export declare type BaseModelType={
+              template: (a?: string, b: number) => any;
+              render?: (a?:string,b:number)=>any;
+              component?: (a?:string,b:number)=>any
+            };
             export const BaseModel:BaseModelType={};
+        `)
+      );
+    }
+  );
+
+  mocha.it(
+    "Should replace template property with JSXTemplate type",
+    function () {
+      const expression = generator.createClassDeclaration(
+        this.decorators,
+        ["export"],
+        generator.createIdentifier("BaseModel"),
+        [],
+        [],
+        [
+          generator.createProperty(
+            [createDecorator(Decorators.Template)],
+            [],
+            generator.createIdentifier("template"),
+            undefined,
+            generator.createTypeReferenceNode(
+              generator.createIdentifier("JSXTemplate"),
+              [
+                generator.createTypeReferenceNode(
+                  generator.createIdentifier("widgetProps"),
+                  []
+                ),
+                generator.createStringLiteral("requiredProperty"),
+              ]
+            ),
+            undefined
+          ),
+        ]
+      );
+
+      console.log(expression.toString());
+
+      assert.strictEqual(
+        getResult(expression.toString()),
+        getResult(`
+          export declare type BaseModelType = {
+            template:React.FunctionComponent<Partial<Omit<widgetProps,"requiredProperty">> & Required<Pick<widgetProps,"requiredProperty">>>;
+            render?:React.FunctionComponent<Partial<Omit<widgetProps,"requiredProperty">> & Required<Pick<widgetProps,"requiredProperty">>>;
+            component?:React.JSXElementConstructor<Partial<Omit<widgetProps,"requiredProperty">> & Required<Pick<widgetProps,"requiredProperty">>>
+          }
+          export const BaseModel:BaseModelType={ };
         `)
       );
     }

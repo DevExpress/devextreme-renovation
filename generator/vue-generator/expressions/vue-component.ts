@@ -705,20 +705,20 @@ export class VueComponent extends Component {
     return "";
   }
 
-  generateDestroyed() {
+  generateBeforeDestroy() {
     const statements: string[] = [];
 
     if (this.effects.length) {
       statements.push(`
-                  this.__destroyEffects.forEach((_,i)=>{
-                      this.__destroyEffects[i]&&this.__destroyEffects[i]()
-                  });
-                  this.__destroyEffects = null;
-              `);
+        this.__destroyEffects.forEach((_,i)=>{
+            this.__destroyEffects[i]&&this.__destroyEffects[i]()
+        });
+        this.__destroyEffects = null;
+    `);
     }
 
     if (statements.length) {
-      return `destroyed(){
+      return `beforeDestroy(){
                   ${statements.join("\n")}
               }`;
     }
@@ -873,7 +873,7 @@ export class VueComponent extends Component {
       this.generateCreated(),
       this.generateMounted(),
       this.generateUpdated(),
-      this.generateDestroyed(),
+      this.generateBeforeDestroy(),
     ].filter((s) => s);
 
     return `

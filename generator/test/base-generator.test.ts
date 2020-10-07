@@ -3742,12 +3742,18 @@ mocha.describe("ComponentInput from type", function () {
         generator.createProperty(
           [createDecorator(Decorators.OneWay)],
           [],
-          generator.createIdentifier("p1")
+          generator.createIdentifier("p1"),
+          undefined,
+          undefined,
+          generator.createIdentifier("value")
         ),
         generator.createProperty(
           [createDecorator(Decorators.OneWay)],
           [],
-          generator.createIdentifier("p2")
+          generator.createIdentifier("p2"),
+          undefined,
+          undefined,
+          generator.createIdentifier("value")
         ),
         generator.createProperty(
           [createDecorator(Decorators.OneWay)],
@@ -3787,6 +3793,7 @@ mocha.describe("ComponentInput from type", function () {
       members[0].initializer?.toString(),
       "new BaseProps().p2"
     );
+    assert.strictEqual(members[1].initializer, undefined);
     assert.equal(generator.getContext().components?.["Props"], expression);
     assert.deepEqual(expression.modifiers, ["export"]);
   });
@@ -3934,12 +3941,18 @@ mocha.describe("ComponentInput from type", function () {
         generator.createProperty(
           [createDecorator(Decorators.TwoWay)],
           [],
-          generator.createIdentifier("p3")
+          generator.createIdentifier("p3"),
+          undefined,
+          undefined,
+          generator.createIdentifier("value")
         ),
         generator.createProperty(
           [createDecorator(Decorators.OneWay)],
           [],
-          generator.createIdentifier("p4")
+          generator.createIdentifier("p4"),
+          undefined,
+          undefined,
+          generator.createIdentifier("value")
         ),
       ]
     );

@@ -42,7 +42,4 @@ export declare type PickedPropsType = {
   editing?: typeof EditingProps;
   children?: React.ReactNode;
 };
-export const PickedProps: PickedPropsType = {
-  columns: WidgetProps.columns,
-  editing: WidgetProps.editing,
-};
+export const PickedProps: PickedPropsType = {};
