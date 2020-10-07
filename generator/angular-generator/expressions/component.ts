@@ -1401,21 +1401,6 @@ export class AngularComponent extends Component {
       ngAfterViewInitStatements.push("this._detectChanges()");
     }
 
-    const external = this.getExternalFunctionNames();
-    external.forEach((name) =>
-      this.members.push(
-        new Property(
-          [],
-          [],
-          new Identifier(name),
-          undefined,
-          undefined,
-          new SimpleExpression(name),
-          undefined
-        )
-      )
-    );
-
     return `
         ${this.compileImports(coreImports)}
         ${this.compileCdkImports(cdkImports)}
@@ -1431,6 +1416,9 @@ export class AngularComponent extends Component {
         ? `implements ${implementedInterfaces.join(",")}`
         : ""
     } {
+            ${this.extractGlobalsFromTemplate(componentDecorator, " = ").join(
+              ";\n"
+            )}
             ${this.members
               .filter((m) => !m.inherited && !(m instanceof SetAccessor))
               .map((m) =>

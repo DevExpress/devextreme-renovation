@@ -1,8 +1,10 @@
 <template>
-  <div v-bind:class="CLASS_NAME" v-bind:style="externalFunction()"
+  <div
+    v-bind:class="global_CLASS_NAME"
+    v-bind:style="__processStyle(global_externalFunction())"
     ><span :key="index" v-for="(cell, index) of cells"
-      ><div v-if="conditionFn(cell) && index > 0"
-        >{{ getValue(cell) }}{{ __addPostfix(index) }}</div
+      ><div v-if="global_conditionFn(cell) && index > 0"
+        >{{ global_getValue(cell) }}{{ __addPostfix(index) }}</div
       ></span
     ></div
   >
@@ -27,27 +29,20 @@ export const WidgetProps = {
 };
 export const DxWidget = {
   props: WidgetProps,
+  data() {
+    return {
+      global_CLASS_NAME: CLASS_NAME,
+      global_externalFunction: externalFunction,
+      global_conditionFn: conditionFn,
+      global_getValue: getValue,
+    };
+  },
   computed: {
     __restAttributes() {
       return {};
     },
     props() {
       return { cells: this.cells };
-    },
-    externalFunction() {
-      return externalFunction;
-    },
-    arrowFunction() {
-      return arrowFunction;
-    },
-    conditionFn() {
-      return conditionFn;
-    },
-    getValue() {
-      return getValue;
-    },
-    CLASS_NAME() {
-      return CLASS_NAME;
     },
   },
   methods: {
