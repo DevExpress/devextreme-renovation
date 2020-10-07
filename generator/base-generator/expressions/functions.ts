@@ -69,6 +69,33 @@ export class Parameter {
   }
 }
 
+function processGlobals(
+  globals: VariableExpression | undefined,
+  componentContext: string | undefined
+): VariableExpression {
+  return Object.keys(globals || {}).reduce(
+    (variables: VariableExpression, name) => {
+      const value = globals![name];
+
+      if (value.isJsx()) {
+        return variables;
+      }
+
+      const identifier = new Identifier(`global_${name}`);
+
+      return {
+        ...variables,
+        [name]: componentContext
+          ? new PropertyAccess(new Identifier(componentContext), identifier)
+          : identifier,
+      };
+    },
+    {
+      ...globals,
+    }
+  );
+}
+
 export function getTemplate(
   functionWithTemplate: BaseFunction,
   options?: toStringOptions,
@@ -96,31 +123,6 @@ export function getTemplate(
         options.componentContext = componentParameter.name.toString();
       }
 
-      const globalVariables = Object.keys(globals || {}).reduce(
-        (variables: VariableExpression, name) => {
-          const value = globals![name];
-
-          if (value.isJsx()) {
-            return variables;
-          }
-
-          const identifier = new Identifier(`global_${name}`);
-
-          return {
-            ...variables,
-            [name]: options.componentContext
-              ? new PropertyAccess(
-                  new Identifier(options.componentContext),
-                  identifier
-                )
-              : identifier,
-          };
-        },
-        {
-          ...globals,
-        }
-      );
-
       options.variables = statements.reduce(
         (v: VariableExpression, statement) => {
           if (statement instanceof VariableStatement) {
@@ -132,7 +134,7 @@ export function getTemplate(
           return v;
         },
         {
-          ...globalVariables,
+          ...processGlobals(globals, options.componentContext),
           ...options.variables,
         }
       );
