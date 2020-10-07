@@ -3,10 +3,6 @@ import {
   JsxExpression,
 } from "../../../base-generator/expressions/jsx";
 import { toStringOptions } from "../../types";
-import {
-  isFunction,
-  isCall,
-} from "../../../base-generator/expressions/functions";
 import { PropertyAssignment } from "../../../base-generator/expressions/property-assignment";
 import { SimpleExpression } from "../../../base-generator/expressions/base";
 import { StringLiteral } from "../../../base-generator/expressions/literal";
@@ -15,6 +11,10 @@ import {
   Method,
   GetAccessor,
 } from "../../../base-generator/expressions/class-members";
+import {
+  isCall,
+  isFunction,
+} from "../../../base-generator/expressions/functions";
 
 const ATTR_BINDING_ATTRIBUTES = ["aria-label"];
 
@@ -175,10 +175,13 @@ export class JsxAttribute extends BaseJsxAttribute {
       const funcName = this.initializer.toString();
       const template = this.initializer.getExpression(options)!;
       if (isFunction(template) || isCall(template)) {
-        if (this.isTemplateAttribute(options) && funcName == "") {
-          return this.compileBase(name, `__${name}__generated`);
+        if (this.isTemplateAttribute(options)) {
+          if (funcName) {
+            return this.compileBase(name, funcName);
+          } else {
+            return this.compileBase(name, `__${name}__generated`);
+          }
         }
-        return this.compileBase(name, funcName);
       }
     }
 

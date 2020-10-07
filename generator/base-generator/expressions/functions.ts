@@ -69,6 +69,33 @@ export class Parameter {
   }
 }
 
+function processGlobals(
+  globals: VariableExpression | undefined,
+  componentContext: string | undefined
+): VariableExpression {
+  return Object.keys(globals || {}).reduce(
+    (variables: VariableExpression, name) => {
+      const value = globals![name];
+
+      if (value.isJsx()) {
+        return variables;
+      }
+
+      const identifier = new Identifier(`global_${name}`);
+
+      return {
+        ...variables,
+        [name]: componentContext
+          ? new PropertyAccess(new Identifier(componentContext), identifier)
+          : identifier,
+      };
+    },
+    {
+      ...globals,
+    }
+  );
+}
+
 export function getTemplate(
   functionWithTemplate: BaseFunction,
   options?: toStringOptions,
@@ -107,8 +134,8 @@ export function getTemplate(
           return v;
         },
         {
+          ...processGlobals(globals, options.componentContext),
           ...options.variables,
-          ...globals,
         }
       );
 

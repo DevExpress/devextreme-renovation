@@ -15,9 +15,11 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget-with-globals",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div [class]="'dx' + 'c1' + 'c2' + 'c3'"></div>`,
+  template: `<div [class]="global_CLASS_NAME"></div>`,
 })
 export default class WidgetWithGlobals extends WidgetProps {
+  global_CLASS_NAME = CLASS_NAME;
+
   get __restAttributes(): any {
     return {};
   }

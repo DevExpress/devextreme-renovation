@@ -3,7 +3,6 @@ import SyntaxKind from "../syntaxKind";
 import { ExpressionWithExpression, Expression, SimpleExpression } from "./base";
 import { TypeExpression } from "./type";
 import { compileTypeParameters } from "../utils/string";
-import { isCall, isFunction } from "./functions";
 
 function getIdentifierExpressionFromVariable(
   expression: Expression,
@@ -31,11 +30,7 @@ export class Identifier extends SimpleExpression {
       if (expression instanceof Paren) {
         expression = expression.expression;
       }
-      const isFunctionOrCall = isFunction(expression) || isCall(expression);
-      if (
-        (options.disableTemplates && isFunctionOrCall) ||
-        options.variables[baseValue].toString() === baseValue
-      ) {
+      if (options.variables[baseValue].toString() === baseValue) {
         return baseValue;
       }
       return options.variables[baseValue].toString(options);

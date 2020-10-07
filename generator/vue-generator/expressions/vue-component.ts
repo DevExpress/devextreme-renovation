@@ -372,7 +372,7 @@ export class VueComponent extends Component {
   }
 
   generateData() {
-    const statements: string[] = [];
+    const statements: string[] = this.extractGlobalsFromTemplate(this.template);
     if (this.internalState.length) {
       statements.push.apply(
         statements,
@@ -454,11 +454,6 @@ export class VueComponent extends Component {
           newComponentContext: "this",
         })
       );
-
-    const external = this.getExternalFunctionNames();
-    external.forEach((name) =>
-      statements.push(`${name}() { return ${name}; }`)
-    );
 
     return `computed: {
               ${statements.join(",\n")},
