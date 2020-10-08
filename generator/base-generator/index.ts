@@ -301,17 +301,13 @@ export default class Generator implements GeneratorAPI {
     return new Throw(expression);
   }
 
-  createTry(
-    tryBlock: Expression,
-    catchClause?: Expression,
-    finallyBlock?: Expression
-  ) {
+  createTry(tryBlock: Block, catchClause?: CatchClause, finallyBlock?: Block) {
     return new Try(tryBlock, catchClause, finallyBlock);
   }
 
   createCatchClause(
     variableDeclaration: Expression | undefined,
-    expression: Expression
+    expression: Block
   ) {
     return new CatchClause(variableDeclaration, expression);
   }

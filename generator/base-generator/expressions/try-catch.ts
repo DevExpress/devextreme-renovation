@@ -1,14 +1,12 @@
 import { Expression, ExpressionWithExpression } from "./base";
+import { Block } from "./statements";
 import { toStringOptions } from "../types";
 
 export class Try extends ExpressionWithExpression {
-  catchClause?: Expression;
-  finallyBlock?: Expression;
-
   constructor(
-    tryBlock: Expression,
-    catchClause?: Expression,
-    finallyBlock?: Expression
+    tryBlock: Block,
+    public catchClause?: CatchClause,
+    public finallyBlock?: Block
   ) {
     super(tryBlock);
     this.catchClause = catchClause;
@@ -29,11 +27,9 @@ export class Try extends ExpressionWithExpression {
 }
 
 export class CatchClause extends ExpressionWithExpression {
-  variableDeclaration?: Expression;
-
   constructor(
-    variableDeclaration: Expression | undefined,
-    expression: Expression
+    public variableDeclaration: Expression | undefined,
+    expression: Block
   ) {
     super(expression);
     this.variableDeclaration = variableDeclaration;

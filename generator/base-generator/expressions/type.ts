@@ -77,13 +77,13 @@ export class IntersectionTypeNode extends TypeExpression {
   }
 
   toString() {
-    return this.types.map((t) => `${t}`).join("&");
+    return this.types.join("&");
   }
 }
 
 export class UnionTypeNode extends IntersectionTypeNode {
   toString() {
-    return this.types.map((t) => `${t}`).join("|");
+    return this.types.join("|");
   }
 }
 
