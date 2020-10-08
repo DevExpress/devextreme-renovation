@@ -29,17 +29,6 @@ mocha.describe("Vue-generator", function () {
         );
       });
 
-      mocha.it("import .d module should be ignored", function () {
-        const expression = generator.createImportDeclaration(
-          [],
-          [],
-          undefined,
-          generator.createStringLiteral("../dirname/component.types.d")
-        );
-
-        assert.strictEqual(expression.toString(), "");
-      });
-
       mocha.it("createPropertyAccessChain", function () {
         const expression = generator.createPropertyAccessChain(
           generator.createIdentifier("a"),
@@ -328,6 +317,34 @@ mocha.describe("Vue-generator", function () {
           getAst(result.toString()),
           getAst("const MyEnum = {}")
         );
+      });
+    });
+
+    mocha.describe("Import declaration", function () {
+      mocha.it("import .d module should be ignored", function () {
+        const expression = generator.createImportDeclaration(
+          [],
+          [],
+          undefined,
+          generator.createStringLiteral("../dirname/component.types.d")
+        );
+
+        assert.strictEqual(expression.toString(), "");
+      });
+
+      mocha.it("import type should be ignored", function () {
+        const expression = generator.createImportDeclaration(
+          [],
+          [],
+          generator.createImportClause(
+            generator.createIdentifier("Type"),
+            undefined,
+            true
+          ),
+          generator.createStringLiteral("../dirname/component.types")
+        );
+
+        assert.strictEqual(expression.toString(), "");
       });
     });
   });

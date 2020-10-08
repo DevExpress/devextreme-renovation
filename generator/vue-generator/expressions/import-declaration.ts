@@ -10,7 +10,10 @@ export class ImportDeclaration extends BaseImportDeclaration {
     return super.compileComponentDeclarationImport();
   }
   toString() {
-    if (path.extname(this.moduleSpecifier.expression.toString()) === ".d") {
+    if (
+      path.extname(this.moduleSpecifier.expression.toString()) === ".d" ||
+      this.importClause.isTypeOnly
+    ) {
       return "";
     }
     return super.toString();
