@@ -8,6 +8,7 @@ import {
   assertCode,
   getModulePath,
 } from "./helpers/common";
+import { resolveModule } from "../base-generator/utils/path-utils";
 
 function getPartFromSourceFile(code: string, tagName: string) {
   const tag = `<${tagName}>`;
@@ -57,10 +58,13 @@ mocha.describe("vue-generation", function () {
     this.testGenerator = function (componentName: string) {
       generator.setContext({
         dirname: path.resolve(__dirname, "./test-cases/declarations/src"),
-        path: path.resolve(
-          __dirname,
-          `./test-cases/declarations/src/${componentName}.tsx`
-        ),
+        path: resolveModule(
+          path.resolve(
+            __dirname,
+            `./test-cases/declarations/src/${componentName}`
+          ),
+          generator.cache
+        )!,
       });
       testGenerator.call(this, componentName, generator);
     };

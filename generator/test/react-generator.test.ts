@@ -2727,8 +2727,6 @@ mocha.describe("ComponentInput", function () {
         ]
       );
 
-      console.log(expression.toString());
-
       assert.strictEqual(
         getResult(expression.toString()),
         getResult(`

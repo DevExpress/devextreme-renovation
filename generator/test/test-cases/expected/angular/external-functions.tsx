@@ -1,4 +1,5 @@
 import { namedFunction as externalFunction } from "./functions";
+import { SomeClass } from "./class";
 declare type Cell = { text: string; visible: boolean };
 const arrowFunction: () => string = () => {
   return "defaultClassName";
@@ -32,7 +33,8 @@ import { CommonModule } from "@angular/common";
       *ngFor="let cell of cells; index as index; trackBy: _trackBy_cells_0"
       ><span
         ><div *ngIf="global_conditionFn(cell) && index > 0"
-          >{{ global_getValue(cell) }}{{ __addPostfix(index) }}</div
+          >{{ global_getValue(cell) }}{{ __addPostfix(index)
+          }}{{ global_SomeClass.name }}</div
         ></span
       ></ng-container
     ></div
@@ -43,6 +45,7 @@ export default class Widget extends WidgetProps {
   global_externalFunction = externalFunction;
   global_conditionFn = conditionFn;
   global_getValue = getValue;
+  global_SomeClass = SomeClass;
   __addPostfix(index: number): any {
     return `_#${index}`;
   }

@@ -2639,20 +2639,23 @@ mocha.describe("base-generator: expressions", function () {
       }
     );
 
-    mocha.it("createImportDeclaration change import ", function () {
-      assert.equal(
-        generator.createImportDeclaration(
-          undefined,
-          undefined,
-          generator.createImportClause(
-            generator.createIdentifier("Button"),
-            undefined
+    mocha.it(
+      "component_declaration/common module should be an empty string",
+      function () {
+        assert.equal(
+          generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+              generator.createIdentifier("Button"),
+              undefined
+            ),
+            generator.createStringLiteral("../../component_declaration/common")
           ),
-          generator.createStringLiteral("../../component_declaration/common")
-        ),
-        ""
-      );
-    });
+          ""
+        );
+      }
+    );
 
     mocha.it("createNamespaceImport", function () {
       const expression = generator.createNamespaceImport(
@@ -2846,6 +2849,53 @@ mocha.describe("base-generator: expressions", function () {
 
         assert.strictEqual(expression.has("utilsModule"), true);
         assert.strictEqual(expression.has("any"), false);
+      });
+    });
+
+    mocha.describe("getVariableExpressions", function () {
+      mocha.it("empty for component_declaration/common module", function () {
+        const expression = generator.createImportDeclaration(
+          undefined,
+          undefined,
+          generator.createImportClause(
+            generator.createIdentifier("Button"),
+            generator.createNamedImports([
+              generator.createImportSpecifier(
+                undefined,
+                generator.createIdentifier("JSXComponent")
+              ),
+            ])
+          ),
+          generator.createStringLiteral("../../component_declaration/common")
+        );
+        assert.deepEqual(expression.getVariableExpressions(), {});
+      });
+
+      mocha.it("get Identifiers for imports", function () {
+        const expression = generator.createImportDeclaration(
+          undefined,
+          undefined,
+          generator.createImportClause(
+            generator.createIdentifier("Button"),
+            generator.createNamedImports([
+              generator.createImportSpecifier(
+                undefined,
+                generator.createIdentifier("JSXComponent")
+              ),
+              generator.createImportSpecifier(
+                generator.createIdentifier("e"),
+                generator.createIdentifier("myE")
+              ),
+            ])
+          ),
+          generator.createStringLiteral("./module_path")
+        );
+
+        const result = expression.getVariableExpressions();
+        assert.strictEqual(Object.keys(result).length, 3);
+        assert.strictEqual(result["Button"].toString(), "Button");
+        assert.strictEqual(result["JSXComponent"].toString(), "JSXComponent");
+        assert.strictEqual(result["myE"].toString(), "myE");
       });
     });
   });

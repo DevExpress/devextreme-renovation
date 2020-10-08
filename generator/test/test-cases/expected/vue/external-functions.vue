@@ -4,13 +4,15 @@
     v-bind:style="__processStyle(global_externalFunction())"
     ><span :key="index" v-for="(cell, index) of cells"
       ><div v-if="global_conditionFn(cell) && index > 0"
-        >{{ global_getValue(cell) }}{{ __addPostfix(index) }}</div
+        >{{ global_getValue(cell) }}{{ __addPostfix(index)
+        }}{{ global_SomeClass.name }}</div
       ></span
     ></div
   >
 </template>
 <script>
 import { namedFunction as externalFunction } from "./functions";
+import { SomeClass } from "./class";
 const arrowFunction = () => {
   return "defaultClassName";
 };
@@ -35,6 +37,7 @@ export const DxWidget = {
       global_externalFunction: externalFunction,
       global_conditionFn: conditionFn,
       global_getValue: getValue,
+      global_SomeClass: SomeClass,
     };
   },
   computed: {
