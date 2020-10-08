@@ -9,8 +9,15 @@ export class Try extends ExpressionWithExpression {
     public finallyBlock?: Block
   ) {
     super(tryBlock);
-    this.catchClause = catchClause;
-    this.finallyBlock = finallyBlock;
+  }
+
+  getDependency(options: toStringOptions) {
+    return super
+      .getDependency(options)
+      .concat(this.catchClause ? this.catchClause.getDependency(options) : [])
+      .concat(
+        this.finallyBlock ? this.finallyBlock.getDependency(options) : []
+      );
   }
 
   toString(options?: toStringOptions) {
@@ -32,12 +39,11 @@ export class CatchClause extends ExpressionWithExpression {
     expression: Block
   ) {
     super(expression);
-    this.variableDeclaration = variableDeclaration;
   }
 
   toString(options?: toStringOptions) {
     const variable = this.variableDeclaration
-      ? `(${this.variableDeclaration.toString(options)})`
+      ? `(${this.variableDeclaration})`
       : "";
     return `catch${variable} ${this.expression.toString(options)}`;
   }

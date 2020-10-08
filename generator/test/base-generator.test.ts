@@ -306,12 +306,22 @@ mocha.describe("base-generator: expressions", function () {
       });
 
       mocha.it("createTry with catch", function () {
+        const property1 = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("prop1")
+        );
+        const property2 = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("prop2")
+        );
         const expression = generator.createTry(
           generator.createBlock(
             [
               generator.createPropertyAccess(
                 generator.createThis(),
-                generator.createIdentifier("name")
+                generator.createIdentifier("prop1")
               ),
             ],
             true
@@ -322,7 +332,7 @@ mocha.describe("base-generator: expressions", function () {
               [
                 generator.createPropertyAccess(
                   generator.createThis(),
-                  generator.createIdentifier("name")
+                  generator.createIdentifier("prop2")
                 ),
               ],
               true
@@ -331,8 +341,21 @@ mocha.describe("base-generator: expressions", function () {
         );
 
         assert.equal(
-          getAst(expression.toString()),
-          getAst("try { this.name; } catch(error) { this.name; }")
+          getAst(
+            expression.toString({
+              componentContext: generator.SyntaxKind.ThisKeyword,
+              newComponentContext: "",
+              members: [property1, property2],
+            })
+          ),
+          getAst("try { prop1; } catch(error) { prop2; }")
+        );
+
+        assert.deepEqual(
+          expression.getDependency({
+            members: [],
+          }),
+          ["prop1", "prop2"]
         );
       });
 
@@ -368,12 +391,22 @@ mocha.describe("base-generator: expressions", function () {
       });
 
       mocha.it("createTry with finally", function () {
+        const property1 = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("prop1")
+        );
+        const property2 = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("prop2")
+        );
         const expression = generator.createTry(
           generator.createBlock(
             [
               generator.createPropertyAccess(
                 generator.createThis(),
-                generator.createIdentifier("name")
+                generator.createIdentifier("prop1")
               ),
             ],
             true
@@ -383,7 +416,7 @@ mocha.describe("base-generator: expressions", function () {
             [
               generator.createPropertyAccess(
                 generator.createThis(),
-                generator.createIdentifier("name")
+                generator.createIdentifier("prop2")
               ),
             ],
             true
@@ -391,8 +424,21 @@ mocha.describe("base-generator: expressions", function () {
         );
 
         assert.equal(
-          getAst(expression.toString()),
-          getAst("try { this.name; } finally { this.name; }")
+          getAst(
+            expression.toString({
+              componentContext: generator.SyntaxKind.ThisKeyword,
+              newComponentContext: "",
+              members: [property1, property2],
+            })
+          ),
+          getAst("try { prop1; } finally { prop2; }")
+        );
+
+        assert.deepEqual(
+          expression.getDependency({
+            members: [],
+          }),
+          ["prop1", "prop2"]
         );
       });
     });
