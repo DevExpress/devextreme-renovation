@@ -27,4 +27,15 @@ class Props {
 export default class RefOnChildrenChild extends JSXComponent<
   Props,
   "childRef"
->() {}
+>() {
+  method() {
+    const { nullableRef } = this.props;
+    const nullableRefHtml = nullableRef?.innerHTML;
+
+    if (nullableRef) {
+      this.props.nullableRef = this.props.childRef;
+    }
+
+    return nullableRefHtml;
+  }
+}

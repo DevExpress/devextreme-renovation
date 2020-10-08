@@ -80,7 +80,7 @@ export class VariableDeclaration extends Expression {
       options
     ) {
       let elements: BindingElement[] = [];
-      if (this.name instanceof BindingPattern && !this.name.hasRest()) {
+      if (this.name instanceof BindingPattern) {
         elements = this.name.elements;
       }
       initializer = this.initializer!.toString().replace(
