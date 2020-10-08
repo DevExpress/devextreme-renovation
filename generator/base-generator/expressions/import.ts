@@ -1,6 +1,7 @@
 import { StringLiteral } from "./literal";
 import { Identifier } from "./common";
 import { Decorator } from "./decorator";
+import { VariableExpression } from "../types";
 
 export class NamedImports {
   node: ImportSpecifier[];
@@ -70,7 +71,7 @@ export class ImportClause {
 
   get imports() {
     return isNamedImports(this.namedBindings)
-      ? this.namedBindings.node.map((m) => m.toString()) || []
+      ? this.namedBindings.node.map((m) => m.name.toString()) || []
       : undefined;
   }
 
@@ -113,10 +114,12 @@ export class ImportClause {
 }
 
 export class ImportDeclaration {
-  decorators: Decorator[];
-  modifiers: string[];
-  importClause: ImportClause;
-  moduleSpecifier: StringLiteral;
+  constructor(
+    public decorators: Decorator[] = [],
+    public modifiers: string[] = [],
+    public importClause: ImportClause,
+    public moduleSpecifier: StringLiteral
+  ) {}
 
   replaceSpecifier(search: string | RegExp, replaceValue: string) {
     this.moduleSpecifier.expression = this.moduleSpecifier.expression.replace(
@@ -133,16 +136,30 @@ export class ImportDeclaration {
     return this.importClause.has(name);
   }
 
-  constructor(
-    decorators: Decorator[] = [],
-    modifiers: string[] = [],
-    importClause: ImportClause,
-    moduleSpecifier: StringLiteral
-  ) {
-    this.decorators = decorators;
-    this.modifiers = modifiers;
-    this.importClause = importClause;
-    this.moduleSpecifier = moduleSpecifier;
+  getVariableExpressions(): VariableExpression {
+    if (this.isCommonDeclarationModule()) {
+      return {};
+    }
+    return (this.importClause.imports || []).reduce(
+      (result: VariableExpression, name: string) => {
+        return {
+          ...result,
+          [name]: new Identifier(name),
+        };
+      },
+      {
+        ...(this.importClause.default && {
+          [this.importClause.default.toString()]: this.importClause.default,
+        }),
+      }
+    );
+  }
+
+  isCommonDeclarationModule() {
+    return (
+      this.moduleSpecifier.toString().indexOf("component_declaration/common") >=
+      0
+    );
   }
 
   compileComponentDeclarationImport() {
@@ -150,10 +167,7 @@ export class ImportDeclaration {
   }
 
   toString() {
-    if (
-      this.moduleSpecifier.toString().indexOf("component_declaration/common") >=
-      0
-    ) {
+    if (this.isCommonDeclarationModule()) {
       return this.compileComponentDeclarationImport();
     }
     return `import ${this.importClause}${this.moduleSpecifier}`;

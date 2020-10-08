@@ -1,6 +1,7 @@
 <template>
   <div
-    ><slot name="headerTemplate"> </slot
+    ><slot name="headerTemplate">
+      <div style="display: contents;">{{ null }}</div> </slot
     ><slot
       name="contentTemplate"
       v-bind:data="{ p1: 'value' }"
@@ -25,15 +26,24 @@
         :settextPropExpr="(textPropExpr = 'textPropExrpValue')"
         ><div></div
       ></div> </slot
-    ><slot name="footerTemplate" v-bind:someProp="viewModel.props.someProp">
+    ><slot
+      name="footerTemplate"
+      v-bind:someProp="viewModel.props.someProp"
+      v-if="viewModel.props.footerTemplate"
+    >
       <div
         style="display: contents;"
         :setsomeProp="(someProp = viewModel.props.someProp)"
         ><div></div
       ></div> </slot
+    ><slot name="componentTemplate" v-bind:value="'Test Value'"></slot
   ></div>
 </template>
 <script>
+import {
+  WidgetWithPropsInput,
+  DxWidgetWithProps as WidgetWithProps,
+} from "./dx-widget-with-props";
 export const WidgetInput = {
   someProp: {
     type: Boolean,
@@ -43,6 +53,9 @@ export const WidgetInput = {
   },
 };
 export const DxWidget = {
+  components: {
+    WidgetWithProps,
+  },
   props: WidgetInput,
   computed: {
     __restAttributes() {
@@ -55,6 +68,7 @@ export const DxWidget = {
         template: this.$scopedSlots.template,
         contentTemplate: this.$scopedSlots.contentTemplate,
         footerTemplate: this.$scopedSlots.footerTemplate,
+        componentTemplate: this.$scopedSlots.componentTemplate,
       };
     },
   },

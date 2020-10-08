@@ -38,7 +38,4 @@ export declare type PickedPropsType = {
   columns?: Array<typeof GridColumnProps | string>;
   editing?: typeof EditingProps;
 };
-export const PickedProps: PickedPropsType = {
-  columns: WidgetProps.columns,
-  editing: WidgetProps.editing,
-};
+export const PickedProps: PickedPropsType = {};

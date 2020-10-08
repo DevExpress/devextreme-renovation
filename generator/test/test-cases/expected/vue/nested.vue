@@ -110,9 +110,6 @@ export const DxWidget = {
         ? nested?.[0]
         : undefined;
     },
-    CustomColumnComponent() {
-      return CustomColumnComponent;
-    },
   },
   methods: {
     __getColumns() {

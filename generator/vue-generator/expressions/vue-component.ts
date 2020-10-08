@@ -372,7 +372,7 @@ export class VueComponent extends Component {
   }
 
   generateData() {
-    const statements: string[] = [];
+    const statements: string[] = this.extractGlobalsFromTemplate(this.template);
     if (this.internalState.length) {
       statements.push.apply(
         statements,
@@ -454,11 +454,6 @@ export class VueComponent extends Component {
           newComponentContext: "this",
         })
       );
-
-    const external = this.getExternalFunctionNames();
-    external.forEach((name) =>
-      statements.push(`${name}() { return ${name}; }`)
-    );
 
     return `computed: {
               ${statements.join(",\n")},
@@ -710,20 +705,20 @@ export class VueComponent extends Component {
     return "";
   }
 
-  generateDestroyed() {
+  generateBeforeDestroy() {
     const statements: string[] = [];
 
     if (this.effects.length) {
       statements.push(`
-                  this.__destroyEffects.forEach((_,i)=>{
-                      this.__destroyEffects[i]&&this.__destroyEffects[i]()
-                  });
-                  this.__destroyEffects = null;
-              `);
+        this.__destroyEffects.forEach((_,i)=>{
+            this.__destroyEffects[i]&&this.__destroyEffects[i]()
+        });
+        this.__destroyEffects = null;
+    `);
     }
 
     if (statements.length) {
-      return `destroyed(){
+      return `beforeDestroy(){
                   ${statements.join("\n")}
               }`;
     }
@@ -878,7 +873,7 @@ export class VueComponent extends Component {
       this.generateCreated(),
       this.generateMounted(),
       this.generateUpdated(),
-      this.generateDestroyed(),
+      this.generateBeforeDestroy(),
     ].filter((s) => s);
 
     return `

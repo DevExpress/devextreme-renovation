@@ -284,6 +284,164 @@ mocha.describe("base-generator: expressions", function () {
         ["p"]
       );
     });
+
+    mocha.describe("TryCatch", function () {
+      mocha.it("createTry", function () {
+        const expression = generator.createTry(
+          generator.createBlock(
+            [
+              generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("name")
+              ),
+            ],
+            true
+          )
+        );
+
+        assert.equal(
+          getAst(expression.toString()),
+          getAst("try { this.name; }")
+        );
+      });
+
+      mocha.it("createTry with catch", function () {
+        const property1 = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("prop1")
+        );
+        const property2 = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("prop2")
+        );
+        const expression = generator.createTry(
+          generator.createBlock(
+            [
+              generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("prop1")
+              ),
+            ],
+            true
+          ),
+          generator.createCatchClause(
+            generator.createIdentifier("error"),
+            generator.createBlock(
+              [
+                generator.createPropertyAccess(
+                  generator.createThis(),
+                  generator.createIdentifier("prop2")
+                ),
+              ],
+              true
+            )
+          )
+        );
+
+        assert.equal(
+          getAst(
+            expression.toString({
+              componentContext: generator.SyntaxKind.ThisKeyword,
+              newComponentContext: "",
+              members: [property1, property2],
+            })
+          ),
+          getAst("try { prop1; } catch(error) { prop2; }")
+        );
+
+        assert.deepEqual(
+          expression.getDependency({
+            members: [],
+          }),
+          ["prop1", "prop2"]
+        );
+      });
+
+      mocha.it("createTry with catch without variable", function () {
+        const expression = generator.createTry(
+          generator.createBlock(
+            [
+              generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("name")
+              ),
+            ],
+            true
+          ),
+          generator.createCatchClause(
+            undefined,
+            generator.createBlock(
+              [
+                generator.createPropertyAccess(
+                  generator.createThis(),
+                  generator.createIdentifier("name")
+                ),
+              ],
+              true
+            )
+          )
+        );
+
+        assert.equal(
+          getAst(expression.toString()),
+          getAst("try { this.name; } catch { this.name; }")
+        );
+      });
+
+      mocha.it("createTry with finally", function () {
+        const property1 = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("prop1")
+        );
+        const property2 = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("prop2")
+        );
+        const expression = generator.createTry(
+          generator.createBlock(
+            [
+              generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("prop1")
+              ),
+            ],
+            true
+          ),
+          undefined,
+          generator.createBlock(
+            [
+              generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("prop2")
+              ),
+            ],
+            true
+          )
+        );
+
+        assert.equal(
+          getAst(
+            expression.toString({
+              componentContext: generator.SyntaxKind.ThisKeyword,
+              newComponentContext: "",
+              members: [property1, property2],
+            })
+          ),
+          getAst("try { prop1; } finally { prop2; }")
+        );
+
+        assert.deepEqual(
+          expression.getDependency({
+            members: [],
+          }),
+          ["prop1", "prop2"]
+        );
+      });
+    });
   });
 
   mocha.describe("literal expressions", function () {
@@ -2639,20 +2797,23 @@ mocha.describe("base-generator: expressions", function () {
       }
     );
 
-    mocha.it("createImportDeclaration change import ", function () {
-      assert.equal(
-        generator.createImportDeclaration(
-          undefined,
-          undefined,
-          generator.createImportClause(
-            generator.createIdentifier("Button"),
-            undefined
+    mocha.it(
+      "component_declaration/common module should be an empty string",
+      function () {
+        assert.equal(
+          generator.createImportDeclaration(
+            undefined,
+            undefined,
+            generator.createImportClause(
+              generator.createIdentifier("Button"),
+              undefined
+            ),
+            generator.createStringLiteral("../../component_declaration/common")
           ),
-          generator.createStringLiteral("../../component_declaration/common")
-        ),
-        ""
-      );
-    });
+          ""
+        );
+      }
+    );
 
     mocha.it("createNamespaceImport", function () {
       const expression = generator.createNamespaceImport(
@@ -2846,6 +3007,53 @@ mocha.describe("base-generator: expressions", function () {
 
         assert.strictEqual(expression.has("utilsModule"), true);
         assert.strictEqual(expression.has("any"), false);
+      });
+    });
+
+    mocha.describe("getVariableExpressions", function () {
+      mocha.it("empty for component_declaration/common module", function () {
+        const expression = generator.createImportDeclaration(
+          undefined,
+          undefined,
+          generator.createImportClause(
+            generator.createIdentifier("Button"),
+            generator.createNamedImports([
+              generator.createImportSpecifier(
+                undefined,
+                generator.createIdentifier("JSXComponent")
+              ),
+            ])
+          ),
+          generator.createStringLiteral("../../component_declaration/common")
+        );
+        assert.deepEqual(expression.getVariableExpressions(), {});
+      });
+
+      mocha.it("get Identifiers for imports", function () {
+        const expression = generator.createImportDeclaration(
+          undefined,
+          undefined,
+          generator.createImportClause(
+            generator.createIdentifier("Button"),
+            generator.createNamedImports([
+              generator.createImportSpecifier(
+                undefined,
+                generator.createIdentifier("JSXComponent")
+              ),
+              generator.createImportSpecifier(
+                generator.createIdentifier("e"),
+                generator.createIdentifier("myE")
+              ),
+            ])
+          ),
+          generator.createStringLiteral("./module_path")
+        );
+
+        const result = expression.getVariableExpressions();
+        assert.strictEqual(Object.keys(result).length, 3);
+        assert.strictEqual(result["Button"].toString(), "Button");
+        assert.strictEqual(result["JSXComponent"].toString(), "JSXComponent");
+        assert.strictEqual(result["myE"].toString(), "myE");
       });
     });
   });
@@ -3742,12 +3950,18 @@ mocha.describe("ComponentInput from type", function () {
         generator.createProperty(
           [createDecorator(Decorators.OneWay)],
           [],
-          generator.createIdentifier("p1")
+          generator.createIdentifier("p1"),
+          undefined,
+          undefined,
+          generator.createIdentifier("value")
         ),
         generator.createProperty(
           [createDecorator(Decorators.OneWay)],
           [],
-          generator.createIdentifier("p2")
+          generator.createIdentifier("p2"),
+          undefined,
+          undefined,
+          generator.createIdentifier("value")
         ),
         generator.createProperty(
           [createDecorator(Decorators.OneWay)],
@@ -3787,6 +4001,7 @@ mocha.describe("ComponentInput from type", function () {
       members[0].initializer?.toString(),
       "new BaseProps().p2"
     );
+    assert.strictEqual(members[1].initializer, undefined);
     assert.equal(generator.getContext().components?.["Props"], expression);
     assert.deepEqual(expression.modifiers, ["export"]);
   });
@@ -3934,12 +4149,18 @@ mocha.describe("ComponentInput from type", function () {
         generator.createProperty(
           [createDecorator(Decorators.TwoWay)],
           [],
-          generator.createIdentifier("p3")
+          generator.createIdentifier("p3"),
+          undefined,
+          undefined,
+          generator.createIdentifier("value")
         ),
         generator.createProperty(
           [createDecorator(Decorators.OneWay)],
           [],
-          generator.createIdentifier("p4")
+          generator.createIdentifier("p4"),
+          undefined,
+          undefined,
+          generator.createIdentifier("value")
         ),
       ]
     );

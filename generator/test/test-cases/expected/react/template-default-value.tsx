@@ -9,8 +9,8 @@ export const viewFunction = (model: TemplateDefaultValue) => (
 export declare type TemplateDefaultValuePropsType = {
   contentTemplate: (props: { data: { p1: string } }) => any;
   stringToRender: string;
-  contentRender?: any;
-  contentComponent?: any;
+  contentRender?: (props: { data: { p1: string } }) => any;
+  contentComponent?: (props: { data: { p1: string } }) => any;
 };
 export const TemplateDefaultValueProps: TemplateDefaultValuePropsType = {
   contentTemplate: (props) => <span>{props.data.p1}</span>,

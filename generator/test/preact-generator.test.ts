@@ -397,6 +397,10 @@ mocha.describe("preact-generator: jQuery generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("jquery-element-type", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it(
     "should throw an error with TwoWay props without initializer",
     function () {

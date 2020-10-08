@@ -33,7 +33,7 @@ export function Component(arg: {
   defaultOptionRules?: Rule<any>[] | null;
 
   /**
-   * Set tot `true` if component is SVG-based
+   * Set to `true` if component is SVG-based
    */
   isSVG?: boolean;
 
@@ -191,6 +191,22 @@ export function JSXComponent<
   BaseComponent.prototype.isReactComponent = {}; // for enzyme tests
   return BaseComponent;
 }
+
+/**
+ * JSX.Element with declared properties.
+ */
+export type JSXTemplate<
+  PropsType = {},
+  RequiredProps extends keyof PropsType = Exclude<
+    keyof PropsType,
+    keyof PropsType
+  >
+> = React.JSXElementConstructor<
+  Partial<Omit<PropsType, RequiredProps>> &
+    Required<Pick<PropsType, RequiredProps>> & {
+      ref?: React.Component<PropsType>;
+    }
+>;
 
 /**
  * Create Elements function

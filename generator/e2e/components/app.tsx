@@ -35,6 +35,7 @@ import { PickPropsComponent } from "./pick-props";
 import ContextApp from "./context/context-app";
 import TestPropertyAccessChain from "./property-access-chain";
 import TemplateDefaultValue from "./template-passing/template-default-value";
+import RenderSlotCondition from "./slot/render-slot-condition";
 
 function view(model: App) {
   return (
@@ -127,6 +128,7 @@ function view(model: App) {
       <PortalContainer />
       <TestPropertyAccessChain />
       <TemplateDefaultValue stringToRender={"I am passed from app"} />
+      <RenderSlotCondition>content</RenderSlotCondition>
     </div>
   );
 }

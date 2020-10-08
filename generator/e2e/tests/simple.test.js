@@ -269,3 +269,25 @@ cloneTest("Property access chain in view", async (t) => {
 
   await t.expect((await el.textContent).trim()).eql(`undefinedundefinedvalue`);
 });
+
+cloneTest("Render slot conditionally", async (t) => {
+  const switchButton = await Selector("#render-slot-condition-switch");
+
+  const assert = async (button = false) => {
+    const content = await Selector("#render-slot-condition-content");
+    await t.expect((await content.textContent).trim()).eql("content");
+    const buttonEl = Selector("#render-slot-condition-in-button").exists;
+    if (button) {
+      await t.expect(buttonEl).ok();
+    } else {
+      await t.expect(buttonEl).notOk();
+    }
+  };
+
+  await assert(false);
+  await t.click(switchButton);
+
+  await assert(true);
+  await t.click(switchButton);
+  await assert(false);
+});

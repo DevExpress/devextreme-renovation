@@ -16,7 +16,6 @@ import {
   SpreadAssignment,
 } from "../../../base-generator/expressions/property-assignment";
 import { ObjectLiteral } from "../../../base-generator/expressions/literal";
-import { FunctionTypeNode } from "../../../base-generator/expressions/type";
 
 export class JsxOpeningElement extends BaseJsxOpeningElement {
   processTagName(tagName: Expression) {
@@ -75,10 +74,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       ? new ObjectLiteral(contextElements, false)
           .toString(options)
           .replace(/"/gi, "'")
-      : templateProperty.type instanceof FunctionTypeNode &&
-        templateProperty.type.parameters.length
-      ? "{}"
-      : "";
+      : "{}";
 
     return `${this.tagName.toString({
       ...options,

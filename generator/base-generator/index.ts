@@ -80,7 +80,12 @@ import {
 } from "./expressions/property-assignment";
 import { Binary, Prefix, Postfix } from "./expressions/operators";
 import { ReturnStatement, Block } from "./expressions/statements";
-import { GeneratorContext, GeneratorOptions, GeneratorCache } from "./types";
+import {
+  GeneratorContext,
+  GeneratorOptions,
+  GeneratorCache,
+  VariableExpression,
+} from "./types";
 import {
   VariableDeclaration,
   VariableDeclarationList,
@@ -112,6 +117,7 @@ import { getModuleRelativePath, resolveModule } from "./utils/path-utils";
 import { Decorator } from "./expressions/decorator";
 import { Interface } from "./expressions/interface";
 import { Throw } from "./expressions/throw";
+import { CatchClause, Try } from "./expressions/try-catch";
 import { Decorators } from "../component_declaration/decorators";
 import { TypeParameterDeclaration } from "./expressions/type-parameter-declaration";
 import prettier from "prettier";
@@ -298,6 +304,17 @@ export default class Generator implements GeneratorAPI {
 
   createThrow(expression: Expression) {
     return new Throw(expression);
+  }
+
+  createTry(tryBlock: Block, catchClause?: CatchClause, finallyBlock?: Block) {
+    return new Try(tryBlock, catchClause, finallyBlock);
+  }
+
+  createCatchClause(
+    variableDeclaration: Expression | undefined,
+    expression: Block
+  ) {
+    return new CatchClause(variableDeclaration, expression);
   }
 
   createBreak(label?: string | Identifier) {
@@ -606,17 +623,6 @@ export default class Generator implements GeneratorAPI {
                 ...context.globals,
                 [i]: this.cache.__globals__[i],
               };
-            } else {
-              const originalName = Object.keys(
-                this.cache.__globals__
-              ).find((key) => i.startsWith(`${key} as `));
-              if (originalName) {
-                const newName = i.replace(`${originalName} as `, "");
-                context.globals = {
-                  ...context.globals,
-                  [newName]: this.cache.__globals__[originalName],
-                };
-              }
             }
           });
       }
@@ -1310,13 +1316,25 @@ export default class Generator implements GeneratorAPI {
     const context = this.getContext();
     const functions: Function[] = [];
     codeFactoryResult.forEach((e) => {
-      if (e instanceof VariableStatement) {
+      if (e instanceof VariableStatement || e instanceof ImportDeclaration) {
+        const variables = e.getVariableExpressions();
         context.globals = {
           ...context.globals,
-          ...context.viewFunctions,
-          ...e.getVariableExpressions(),
+          ...Object.keys(variables).reduce(
+            (result: VariableExpression, key) => {
+              if (context.components?.[key]) {
+                return result;
+              }
+              return {
+                ...result,
+                [key]: variables[key],
+              };
+            },
+            {}
+          ),
         };
       }
+
       if (e instanceof Component) {
         this.removeJQueryBaseModule(codeFactoryResult, e);
       }
@@ -1324,6 +1342,12 @@ export default class Generator implements GeneratorAPI {
         functions.push(e);
       }
     });
+
+    context.globals = {
+      ...context.globals,
+      ...context.viewFunctions,
+    };
+
     codeFactoryResult.forEach((e) => {
       if (e instanceof Component) {
         const name = e.view.toString();

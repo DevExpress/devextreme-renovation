@@ -8,6 +8,7 @@ import {
 import { toStringOptions } from "../../../base-generator/types";
 import { Identifier } from "../../../base-generator/expressions/common";
 import { TypeExpression } from "../../../base-generator/expressions/type";
+import { TypeReferenceNode } from "../type-refence-node";
 
 export function getLocalStateName(
   name: Identifier | string,
@@ -26,6 +27,32 @@ export function getPropName(
 
 export function stateSetter(stateName: Identifier | string) {
   return `__state_set${capitalizeFirstLetter(stateName)}`;
+}
+
+// TODO: move these types to generator's common
+//       (for example as DxFunctionalComponentType and DxComponentType)
+function compileJSXTemplateProps(args: TypeExpression[]) {
+  return args.length
+    ? args.length === 1
+      ? `Partial<${args[0]}>`
+      : `Partial<Omit<${args}>> & Required<Pick<${args}>>`
+    : "any";
+}
+
+export function compileJSXTemplateType(
+  type: string | TypeExpression,
+  isComponent = false
+) {
+  if (
+    type instanceof TypeReferenceNode &&
+    type.typeName.toString() === "JSXTemplate"
+  ) {
+    return `React.${
+      isComponent ? "JSXElementConstructor" : "FunctionComponent"
+    }<${compileJSXTemplateProps(type.typeArguments)}>`;
+  }
+
+  return type;
 }
 
 export class Property extends BaseProperty {
@@ -59,6 +86,9 @@ export class Property extends BaseProperty {
     }
     if (this.isRefProp || this.isForwardRefProp) {
       type = `${this.REF_OBJECT_TYPE}<${this.type}>`;
+    }
+    if (this.isTemplate) {
+      type = compileJSXTemplateType(type);
     }
 
     return `${this.name}${this.compileTypeDeclarationType(type)}`;

@@ -1,4 +1,4 @@
-import { Identifier, Call, Paren } from "./common";
+import { Identifier, Call } from "./common";
 import {
   GetAccessor,
   Property,
@@ -12,12 +12,7 @@ import { GeneratorContext, toStringOptions } from "../types";
 import { Block, ReturnStatement } from "./statements";
 import { getModuleRelativePath } from "../utils/path-utils";
 import { Decorator } from "./decorator";
-import {
-  BaseFunction,
-  getViewFunctionBindingPattern,
-  isCall,
-  isFunction,
-} from "./functions";
+import { BaseFunction, getViewFunctionBindingPattern } from "./functions";
 import {
   compileType,
   capitalizeFirstLetter,
@@ -511,29 +506,17 @@ export class Component extends Class implements Heritable {
     return result;
   }
 
-  getExternalFunctionNames() {
-    const { globals, viewFunctions } = this.context;
-    if (globals && viewFunctions) {
-      const views = Object.keys(viewFunctions);
-      const external = Object.keys(globals)
-        .filter((key) => !views.includes(key) && key !== this.view.toString())
-        .reduce((acc, key) => {
-          let body = globals[key];
-          if (body instanceof Paren) {
-            body = body.expression;
-          }
-          if (
-            (isCall(body) && body.expression.toString() !== "createContext") ||
-            isFunction(body)
-          ) {
-            acc.push(key);
-          }
-          return acc;
-        }, [] as string[]);
-
-      return external;
-    }
-    return [];
+  extractGlobalsFromTemplate(
+    template: string | undefined,
+    delimiter = ": "
+  ): string[] {
+    return (
+      template
+        ?.match(/global_\w+/gi)
+        ?.map(
+          (global) => `${global}${delimiter}${global.replace("global_", "")}`
+        ) || []
+    );
   }
 
   returnGetAccessorBlock(

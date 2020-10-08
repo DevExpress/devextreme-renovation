@@ -1,10 +1,17 @@
+import {
+  WidgetWithProps,
+  WidgetWithPropsInput,
+  DxWidgetWithPropsModule,
+} from "./dx-widget-with-props";
+
 import { Input, TemplateRef } from "@angular/core";
 export class WidgetInput {
   @Input() someProp: boolean = false;
-  @Input() headerTemplate?: TemplateRef<any> | null = null;
+  @Input() headerTemplate: TemplateRef<any> | null = null;
   @Input() template: TemplateRef<any> | null = null;
   @Input() contentTemplate: TemplateRef<any> | null = null;
   @Input() footerTemplate: TemplateRef<any> | null = null;
+  @Input() componentTemplate: TemplateRef<any> | null = null;
 }
 
 import {
@@ -20,7 +27,10 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div
-    ><ng-container *ngTemplateOutlet="headerTemplate"></ng-container
+    ><ng-container
+      *ngTemplateOutlet="headerTemplate || headerTemplateDefault"
+    ></ng-container>
+    <ng-template #headerTemplateDefault>{{ null }}</ng-template
     ><ng-container *ngIf="contentTemplate">
       <ng-container
         *ngTemplateOutlet="
@@ -47,14 +57,19 @@ import { CommonModule } from "@angular/common";
         let-textPropExpr="textPropExpr"
         ><div></div
       ></ng-template> </ng-container
+    ><ng-container *ngIf="footerTemplate">
+      <ng-container
+        *ngTemplateOutlet="
+          footerTemplate || footerTemplateDefault;
+          context: { someProp: someProp }
+        "
+      ></ng-container>
+      <ng-template #footerTemplateDefault let-someProp="someProp"
+        ><div></div
+      ></ng-template> </ng-container
     ><ng-container
-      *ngTemplateOutlet="
-        footerTemplate || footerTemplateDefault;
-        context: { someProp: someProp }
-      "
-    ></ng-container>
-    <ng-template #footerTemplateDefault let-someProp="someProp"
-      ><div></div></ng-template
+      *ngTemplateOutlet="componentTemplate; context: { value: 'Test Value' }"
+    ></ng-container
   ></div>`,
 })
 export default class Widget extends WidgetInput {
@@ -74,7 +89,7 @@ export default class Widget extends WidgetInput {
 }
 @NgModule({
   declarations: [Widget],
-  imports: [CommonModule],
+  imports: [DxWidgetWithPropsModule, CommonModule],
   exports: [Widget],
 })
 export class DxWidgetModule {}

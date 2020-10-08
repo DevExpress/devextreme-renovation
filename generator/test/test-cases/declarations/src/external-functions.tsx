@@ -5,6 +5,7 @@ import {
   OneWay,
 } from "../../../../component_declaration/common";
 import { namedFunction as externalFunction } from "./functions";
+import { SomeClass } from "./class";
 
 declare type Cell = {
   text: string;
@@ -32,6 +33,7 @@ function view(model: Widget) {
             <div>
               {getValue(cell)}
               {model.addPostfix(index)}
+              {SomeClass.name}
             </div>
           )}
         </span>

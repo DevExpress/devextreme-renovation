@@ -1,4 +1,5 @@
 import { namedFunction as externalFunction } from "./functions";
+import { SomeClass } from "./class";
 declare type Cell = { text: string; visible: boolean };
 const arrowFunction: () => string = () => {
   return "defaultClassName";
@@ -25,18 +26,26 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div [class]="CLASS_NAME" [ngStyle]="externalFunction()"
+  template: `<div
+    [class]="global_CLASS_NAME"
+    [ngStyle]="__processNgStyle(global_externalFunction())"
     ><ng-container
       *ngFor="let cell of cells; index as index; trackBy: _trackBy_cells_0"
       ><span
-        ><div *ngIf="conditionFn(cell) && index > 0"
-          >{{ getValue(cell) }}{{ __addPostfix(index) }}</div
+        ><div *ngIf="global_conditionFn(cell) && index > 0"
+          >{{ global_getValue(cell) }}{{ __addPostfix(index)
+          }}{{ global_SomeClass.name }}</div
         ></span
       ></ng-container
     ></div
   >`,
 })
 export default class Widget extends WidgetProps {
+  global_CLASS_NAME = CLASS_NAME;
+  global_externalFunction = externalFunction;
+  global_conditionFn = conditionFn;
+  global_getValue = getValue;
+  global_SomeClass = SomeClass;
   __addPostfix(index: number): any {
     return `_#${index}`;
   }
@@ -49,11 +58,6 @@ export default class Widget extends WidgetProps {
         this.changeDetection.detectChanges();
     });
   }
-  externalFunction: any = externalFunction;
-  arrowFunction: any = arrowFunction;
-  conditionFn: any = conditionFn;
-  getValue: any = getValue;
-  CLASS_NAME: any = CLASS_NAME;
 
   _trackBy_cells_0(index: number, cell: any) {
     return index;

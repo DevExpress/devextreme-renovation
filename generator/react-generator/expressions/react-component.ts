@@ -756,7 +756,7 @@ export class ReactComponent extends Component {
   }
 
   compileFunctionalComponentType() {
-    return `React.FC<${this.compilePropsType()} & { ref: React.Ref<${
+    return `React.FC<${this.compilePropsType()} & { ref?: React.Ref<${
       this.name
     }Ref> }> & { defaultProps: ${this.getPropsType()}}`;
   }

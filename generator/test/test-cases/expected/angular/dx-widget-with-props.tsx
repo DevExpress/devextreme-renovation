@@ -1,7 +1,8 @@
-import { COMPONENT_INPUT_CLASS } from "./component-input";
-export const PREFIX = "dx";
-export const CLASS_NAME = PREFIX + "c1" + "c2" + COMPONENT_INPUT_CLASS;
-export class WidgetProps {}
+import { Input } from "@angular/core";
+export class WidgetWithPropsInput {
+  @Input() value: string = "default text";
+  @Input() optionalValue?: string;
+}
 
 import {
   Component,
@@ -13,13 +14,12 @@ import {
 import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: "dx-widget-with-globals",
+  selector: "dx-widget-with-props",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div [class]="global_CLASS_NAME"></div>`,
+  template: `<div>{{ optionalValue || value }}</div>`,
 })
-export default class WidgetWithGlobals extends WidgetProps {
-  global_CLASS_NAME = CLASS_NAME;
-
+export class WidgetWithProps extends WidgetWithPropsInput {
+  doSomething(): any {}
   get __restAttributes(): any {
     return {};
   }
@@ -35,9 +35,10 @@ export default class WidgetWithGlobals extends WidgetProps {
   }
 }
 @NgModule({
-  declarations: [WidgetWithGlobals],
+  declarations: [WidgetWithProps],
   imports: [CommonModule],
-  exports: [WidgetWithGlobals],
+  exports: [WidgetWithProps],
 })
-export class DxWidgetWithGlobalsModule {}
-export { WidgetWithGlobals as DxWidgetWithGlobalsComponent };
+export class DxWidgetWithPropsModule {}
+export { WidgetWithProps as DxWidgetWithPropsComponent };
+export default WidgetWithProps;

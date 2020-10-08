@@ -13,10 +13,18 @@ import { PropertyAssignment, SpreadAssignment } from "./property-assignment";
 import { getTemplateProperty } from "../utils/expressions";
 
 export function getJsxExpression(
-  e: ExpressionWithExpression | Expression | undefined
+  e: ExpressionWithExpression | Expression | undefined,
+  options?: toStringOptions
 ): JsxExpression | undefined {
   if (e instanceof Conditional && e.isJsx()) {
     return new JsxExpression(undefined, e);
+  } else if (
+    options &&
+    e instanceof Identifier &&
+    options.variables?.[e.toString()]
+  ) {
+    const expression = options.variables[e.toString()];
+    return getJsxExpression(expression, options);
   } else if (
     e instanceof JsxExpression ||
     e instanceof JsxElement ||
@@ -29,10 +37,19 @@ export function getJsxExpression(
     e instanceof Paren ||
     e instanceof ExpressionWithOptionalExpression
   ) {
-    return getJsxExpression(e.expression);
+    return getJsxExpression(e.expression, options);
   } else if (e instanceof Expression) {
     return new JsxExpression(undefined, e);
   }
+}
+
+export function getExpressionFromParens(
+  expression: Expression | undefined
+): Expression | undefined {
+  if (expression instanceof Paren) {
+    return getExpressionFromParens(expression.expression);
+  }
+  return expression;
 }
 
 export class JsxAttribute {
@@ -202,18 +219,15 @@ export class JsxExpression extends ExpressionWithOptionalExpression {
 
   getExpression(options?: toStringOptions): Expression | undefined {
     let variableExpression;
+    const expression = getExpressionFromParens(this.expression);
     if (
-      this.expression instanceof Identifier &&
-      options?.variables?.[this.expression.toString()]
+      expression instanceof Identifier &&
+      options?.variables?.[expression.toString()]
     ) {
-      variableExpression = options.variables[this.expression.toString()];
+      variableExpression = options.variables[expression.toString()];
     }
 
-    if (variableExpression instanceof Paren) {
-      return variableExpression.expression;
-    }
-
-    return variableExpression || this.expression;
+    return getExpressionFromParens(variableExpression) || expression;
   }
 }
 

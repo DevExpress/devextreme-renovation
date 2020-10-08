@@ -29,17 +29,6 @@ mocha.describe("Vue-generator", function () {
         );
       });
 
-      mocha.it("import .d module should be ignored", function () {
-        const expression = generator.createImportDeclaration(
-          [],
-          [],
-          undefined,
-          generator.createStringLiteral("../dirname/component.types.d")
-        );
-
-        assert.strictEqual(expression.toString(), "");
-      });
-
       mocha.it("createPropertyAccessChain", function () {
         const expression = generator.createPropertyAccessChain(
           generator.createIdentifier("a"),
@@ -328,6 +317,34 @@ mocha.describe("Vue-generator", function () {
           getAst(result.toString()),
           getAst("const MyEnum = {}")
         );
+      });
+    });
+
+    mocha.describe("Import declaration", function () {
+      mocha.it("import .d module should be ignored", function () {
+        const expression = generator.createImportDeclaration(
+          [],
+          [],
+          undefined,
+          generator.createStringLiteral("../dirname/component.types.d")
+        );
+
+        assert.strictEqual(expression.toString(), "");
+      });
+
+      mocha.it("import type should be ignored", function () {
+        const expression = generator.createImportDeclaration(
+          [],
+          [],
+          generator.createImportClause(
+            generator.createIdentifier("Type"),
+            undefined,
+            true
+          ),
+          generator.createStringLiteral("../dirname/component.types")
+        );
+
+        assert.strictEqual(expression.toString(), "");
       });
     });
   });
@@ -1867,6 +1884,43 @@ mocha.describe("Vue-generator", function () {
         assert.strictEqual(expression.toString(), `v-bind="{a:'str'}"`);
       });
 
+      mocha.it("render element from variable", function () {
+        const variable = generator.createJsxElement(
+          generator.createJsxOpeningElement(
+            generator.createIdentifier("span"),
+            undefined,
+            []
+          ),
+          [],
+          generator.createJsxClosingElement(generator.createIdentifier("span"))
+        );
+
+        const expression = generator.createJsxElement(
+          generator.createJsxOpeningElement(
+            generator.createIdentifier("div"),
+            undefined,
+            []
+          ),
+          [
+            generator.createJsxExpression(
+              undefined,
+              generator.createIdentifier("var")
+            ),
+          ],
+          generator.createJsxClosingElement(generator.createIdentifier("div"))
+        );
+
+        assert.strictEqual(
+          expression.toString({
+            members: [],
+            variables: {
+              var: variable,
+            },
+          }),
+          `<div ><span ></span></div>`
+        );
+      });
+
       mocha.describe("Attributes", function () {
         mocha.it("title attribute", function () {
           const expression = generator.createJsxAttribute(
@@ -2255,6 +2309,49 @@ mocha.describe("Vue-generator", function () {
           );
         }
       );
+
+      mocha.it("Condition with identifer that point to element", function () {
+        const identifier = generator.createIdentifier("var");
+
+        const expression = generator.createJsxElement(
+          generator.createJsxOpeningElement(
+            generator.createIdentifier("div"),
+            undefined,
+            []
+          ),
+          [
+            generator.createJsxExpression(
+              undefined,
+              generator.createConditional(
+                generator.createIdentifier("condition"),
+                generator.createJsxSelfClosingElement(
+                  generator.createIdentifier("input"),
+                  [],
+                  []
+                ),
+                identifier
+              )
+            ),
+          ],
+          generator.createJsxClosingElement(generator.createIdentifier("div"))
+        );
+
+        assert.strictEqual(
+          removeSpaces(
+            expression.children[0].toString({
+              componentContext: "model",
+              newComponentContext: "",
+              members: [],
+              variables: {
+                [identifier.toString()]: generator.createJsxSelfClosingElement(
+                  generator.createIdentifier("span")
+                ),
+              },
+            })
+          ),
+          removeSpaces(`<input v-if="condition"/><span v-else/>`)
+        );
+      });
 
       mocha.describe("Slots with conditional rendering", function () {
         this.beforeEach(function () {
