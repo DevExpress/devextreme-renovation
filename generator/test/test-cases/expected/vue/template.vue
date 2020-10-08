@@ -1,27 +1,36 @@
 <template>
   <div
-    ><slot name="headerTemplate"></slot
+    ><slot name="headerTemplate"> </slot
     ><slot
       name="contentTemplate"
       v-bind:data="{ p1: 'value' }"
       v-bind:index="10"
-      v-if="$scopedSlots.contentTemplate && contentTemplate"
-    ></slot>
-    <slot name="contentTemplate" v-else>
-      <div>{{ props.data.p1 }}</div> </slot
+      v-if="$scopedSlots.contentTemplate"
+    >
+      <div
+        style="display: contents;"
+        :setdata="(data = { p1: 'value' })"
+        :setindex="(index = 10)"
+        ><div>{{ data.p1 }}</div></div
+      > </slot
     ><slot
       name="template"
       v-bind:textProp="'textPropValue'"
       v-bind:textPropExpr="'textPropExrpValue'"
-      v-if="!$scopedSlots.contentTemplate && template"
-    ></slot>
-    <slot name="template" v-else> <div></div> </slot
-    ><slot
-      name="footerTemplate"
-      v-bind:someProp="someProp"
-      v-if="footerTemplate"
-    ></slot>
-    <slot name="footerTemplate" v-else> <div></div> </slot
+      v-if="!viewModel.props.contentTemplate"
+    >
+      <div
+        style="display: contents;"
+        :settextProp="(textProp = 'textPropValue')"
+        :settextPropExpr="(textPropExpr = 'textPropExrpValue')"
+        ><div></div
+      ></div> </slot
+    ><slot name="footerTemplate" v-bind:someProp="viewModel.props.someProp">
+      <div
+        style="display: contents;"
+        :setsomeProp="(someProp = viewModel.props.someProp)"
+        ><div></div
+      ></div> </slot
   ></div>
 </template>
 <script>

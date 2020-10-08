@@ -1,24 +1,30 @@
-function view(model: RefOnChildrenTemplate) {
-  return (
-    <React.Fragment>
-      {model.props.contentTemplate({ childRef: model.child })}
-    </React.Fragment>
-  );
-}
+export const viewFunction = (model: TemplateDefaultValue) => (
+  <div>
+    {" "}
+    TemplateDefaultValue
+    {model.props.contentTemplate({ data: { p1: model.props.stringToRender } })}
+  </div>
+);
 
-export declare type PropsType = {
-  contentTemplate: any;
+export declare type TemplateDefaultValuePropsType = {
+  contentTemplate: (props: { data: { p1: string } }) => any;
+  stringToRender: string;
   contentRender?: any;
   contentComponent?: any;
 };
-const Props: PropsType = ({} as any) as PropsType;
+export const TemplateDefaultValueProps: TemplateDefaultValuePropsType = {
+  contentTemplate: (props) => <span>{props.data.p1}</span>,
+  stringToRender: "default string",
+};
 import * as React from "react";
-import { useCallback, useEffect, useRef, HTMLAttributes } from "react";
+import { useCallback, HTMLAttributes } from "react";
 
-declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
-interface RefOnChildrenTemplate {
-  props: typeof Props & RestProps;
-  child: any;
+declare type RestProps = Omit<
+  HTMLAttributes<HTMLElement>,
+  keyof typeof TemplateDefaultValueProps
+>;
+interface TemplateDefaultValue {
+  props: typeof TemplateDefaultValueProps & RestProps;
   restAttributes: RestProps;
 }
 
@@ -33,26 +39,24 @@ const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
       ))) ||
   (ComponentProp && ((props: any) => <ComponentProp {...props} />));
 
-export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
-  const child = useRef<HTMLDivElement>();
-
+export default function TemplateDefaultValue(
+  props: typeof TemplateDefaultValueProps & RestProps
+) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
         contentComponent,
         contentRender,
         contentTemplate,
+        stringToRender,
         ...restProps
       } = props;
       return restProps;
     },
     [props]
   );
-  useEffect(() => {
-    child.current!.innerHTML += "ParentText";
-  }, []);
 
-  return view({
+  return viewFunction({
     props: {
       ...props,
       contentTemplate: getTemplate(
@@ -61,11 +65,10 @@ export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
         props.contentComponent
       ),
     },
-    child,
     restAttributes: __restAttributes(),
   });
 }
 
-RefOnChildrenTemplate.defaultProps = {
-  ...Props,
+TemplateDefaultValue.defaultProps = {
+  ...TemplateDefaultValueProps,
 };

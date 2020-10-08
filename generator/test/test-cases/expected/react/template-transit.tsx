@@ -22,7 +22,9 @@ interface TemplateTransitWidget {
 }
 
 const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
-  TemplateProp ||
+  (TemplateProp &&
+    ((props: any) =>
+      TemplateProp({ ...TemplateProp.defaultProps, ...props }))) ||
   (RenderProp &&
     ((props: any) =>
       RenderProp(

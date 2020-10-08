@@ -294,4 +294,8 @@ mocha.describe("vue-generation", function () {
   mocha.it("spread-in-view", function () {
     this.testGenerator(this.test!.title);
   });
+
+  mocha.it("template-default-value", function () {
+    this.testGenerator(this.test!.title);
+  });
 });

@@ -29,7 +29,7 @@ import {
 } from "../../../base-generator/utils/expressions";
 import { VueDirective } from "./vue-directive";
 import { Conditional } from "../../../base-generator/expressions/conditions";
-
+import { JsxAttribute as BaseJsxAttribute } from "../../../base-generator/expressions/jsx";
 export class JsxOpeningElement extends BaseJsxOpeningElement {
   attributes: Array<JsxAttribute | JsxSpreadAttribute>;
   constructor(
@@ -90,25 +90,36 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   compileTemplate(templateProperty: Property, options?: toStringOptions) {
     const attributes = this.attributes.map((a) => a.getTemplateProp(options));
     const init = templateProperty?.initializer;
-    const name = templateProperty.name;
+    const defaultAttrs = this.attributes.filter(
+      (a) => a instanceof JsxAttribute
+    ) as JsxAttribute[];
 
-    if (init && init instanceof BaseFunction) {
-      const conditionAttrId = attributes.findIndex((a) => a.includes("v-if"));
-      if (conditionAttrId > -1) {
-        attributes[conditionAttrId] = `${attributes[conditionAttrId].slice(
-          0,
-          -1
-        )} && ${name}"`;
-      } else {
-        attributes.push(`v-if="${name}"`);
-      }
-      return `<slot name="${name}" ${attributes.join(" ")}></slot>
-      <slot name="${name}" v-else>
-        ${init.getTemplate()}
+    if (init instanceof BaseFunction) {
+      return `<slot name="${templateProperty.name}" ${attributes.join(" ")}>
+        <div style="display:contents" ${this.createSetAttributes(
+          defaultAttrs,
+          options
+        )}>${init.getTemplate(options)}</div>
       </slot>`;
-    } else return `<slot name="${name}" ${attributes.join(" ")}></slot>`;
-  }
+    }
 
+    return `<slot name="${templateProperty.name}" ${attributes.join(
+      " "
+    )}></slot>`;
+  }
+  createSetAttributes(
+    attrs: BaseJsxAttribute[],
+    options?: toStringOptions
+  ): string {
+    return attrs
+      .map(
+        (a) =>
+          `:set${a.name.toString()}='${a.name.toString()}=${a.initializer.toString(
+            options
+          )}'`
+      )
+      .join(" ");
+  }
   createJsxAttribute(name: Identifier, value: Expression) {
     return new JsxAttribute(name, value);
   }

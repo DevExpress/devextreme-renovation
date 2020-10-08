@@ -764,7 +764,7 @@ export class ReactComponent extends Component {
     const getTemplateFunc = this.props.some((p) => p.isTemplate)
       ? `
           const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) => (
-              TemplateProp ||
+              (TemplateProp && ((props: any) => TemplateProp({ ...TemplateProp.defaultProps, ...props }))) ||
               (RenderProp &&
                 ((props: any) =>
                   RenderProp(

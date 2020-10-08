@@ -24,23 +24,37 @@ import { CommonModule } from "@angular/common";
     ><ng-container *ngIf="contentTemplate">
       <ng-container
         *ngTemplateOutlet="
-          contentTemplate;
+          contentTemplate || contentTemplateDefault;
           context: { data: { p1: 'value' }, index: 10 }
         "
-      ></ng-container> </ng-container
+      ></ng-container>
+      <ng-template #contentTemplateDefault let-data="data" let-index="index"
+        ><div>{{ data.p1 }}</div></ng-template
+      > </ng-container
     ><ng-container *ngIf="!contentTemplate">
       <ng-container
         *ngTemplateOutlet="
-          template;
+          template || templateDefault;
           context: {
             textProp: 'textPropValue',
             textPropExpr: 'textPropExrpValue'
           }
         "
-      ></ng-container> </ng-container
+      ></ng-container>
+      <ng-template
+        #templateDefault
+        let-textProp="textProp"
+        let-textPropExpr="textPropExpr"
+        ><div></div
+      ></ng-template> </ng-container
     ><ng-container
-      *ngTemplateOutlet="footerTemplate; context: { someProp: someProp }"
-    ></ng-container
+      *ngTemplateOutlet="
+        footerTemplate || footerTemplateDefault;
+        context: { someProp: someProp }
+      "
+    ></ng-container>
+    <ng-template #footerTemplateDefault let-someProp="someProp"
+      ><div></div></ng-template
   ></div>`,
 })
 export default class Widget extends WidgetInput {

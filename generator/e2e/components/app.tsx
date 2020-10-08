@@ -34,6 +34,7 @@ import PortalContainer from "./portal-container";
 import { PickPropsComponent } from "./pick-props";
 import ContextApp from "./context/context-app";
 import TestPropertyAccessChain from "./property-access-chain";
+import TemplateDefaultValue from "./template-passing/template-default-value";
 
 function view(model: App) {
   return (
@@ -125,6 +126,7 @@ function view(model: App) {
       <ContextApp />
       <PortalContainer />
       <TestPropertyAccessChain />
+      <TemplateDefaultValue stringToRender={"I am passed from app"} />
     </div>
   );
 }

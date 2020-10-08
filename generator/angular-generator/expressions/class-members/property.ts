@@ -44,7 +44,9 @@ export class Property extends BaseProperty {
   ) {
     if (decorators.find((d) => d.name === Decorators.Template)) {
       type = new SimpleTypeExpression(`TemplateRef<any> | null`);
-      initializer = new SimpleExpression("null");
+
+      if (!initializer) initializer = new SimpleExpression("null");
+
       questionOrExclamationToken =
         questionOrExclamationToken === SyntaxKind.ExclamationToken
           ? ""
@@ -111,6 +113,11 @@ export class Property extends BaseProperty {
       }>`;
     }
 
+    if (this.isTemplate) {
+      return `${this.modifiers.join(" ")} ${this.decorators
+        .map((d) => d.toString())
+        .join(" ")} ${this.typeDeclaration()} = null`;
+    }
     return defaultValue;
   }
 
