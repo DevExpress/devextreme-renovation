@@ -1,5 +1,5 @@
 <template>
-  <div style="display: contents;"
+  <div style="display: contents"
     ><slot name="contentTemplate" v-bind:childRef="forwardRef_child"></slot
   ></div>
 </template>

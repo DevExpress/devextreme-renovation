@@ -4,7 +4,7 @@
       name="contentTemplate"
       v-bind:data="{ p1: stringToRender }"
     >
-      <div style="display: contents;" :setdata="(data = { p1: stringToRender })"
+      <div style="display: contents" :setdata="(data = { p1: stringToRender })"
         ><span>{{ data.p1 }}</span></div
       >
     </slot></div

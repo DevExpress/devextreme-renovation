@@ -1,7 +1,7 @@
 <template>
   <div
     ><slot name="headerTemplate">
-      <div style="display: contents;">{{ null }}</div> </slot
+      <div style="display: contents">{{ null }}</div> </slot
     ><slot
       name="contentTemplate"
       v-bind:data="{ p1: 'value' }"
@@ -9,7 +9,7 @@
       v-if="$scopedSlots.contentTemplate"
     >
       <div
-        style="display: contents;"
+        style="display: contents"
         :setdata="(data = { p1: 'value' })"
         :setindex="(index = 10)"
         ><div>{{ data.p1 }}</div></div
@@ -21,7 +21,7 @@
       v-if="!viewModel.props.contentTemplate"
     >
       <div
-        style="display: contents;"
+        style="display: contents"
         :settextProp="(textProp = 'textPropValue')"
         :settextPropExpr="(textPropExpr = 'textPropExrpValue')"
         ><div></div
@@ -32,7 +32,7 @@
       v-if="viewModel.props.footerTemplate"
     >
       <div
-        style="display: contents;"
+        style="display: contents"
         :setsomeProp="(someProp = viewModel.props.someProp)"
         ><div></div
       ></div> </slot
