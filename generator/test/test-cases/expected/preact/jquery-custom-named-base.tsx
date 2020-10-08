@@ -7,6 +7,7 @@ export default class Widget extends JQueryCustomBaseComponent {
     return {
       twoWay: [],
       allowNull: [],
+      elements: [],
     };
   }
 

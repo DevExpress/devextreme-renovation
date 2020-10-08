@@ -284,6 +284,164 @@ mocha.describe("base-generator: expressions", function () {
         ["p"]
       );
     });
+
+    mocha.describe("TryCatch", function () {
+      mocha.it("createTry", function () {
+        const expression = generator.createTry(
+          generator.createBlock(
+            [
+              generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("name")
+              ),
+            ],
+            true
+          )
+        );
+
+        assert.equal(
+          getAst(expression.toString()),
+          getAst("try { this.name; }")
+        );
+      });
+
+      mocha.it("createTry with catch", function () {
+        const property1 = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("prop1")
+        );
+        const property2 = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("prop2")
+        );
+        const expression = generator.createTry(
+          generator.createBlock(
+            [
+              generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("prop1")
+              ),
+            ],
+            true
+          ),
+          generator.createCatchClause(
+            generator.createIdentifier("error"),
+            generator.createBlock(
+              [
+                generator.createPropertyAccess(
+                  generator.createThis(),
+                  generator.createIdentifier("prop2")
+                ),
+              ],
+              true
+            )
+          )
+        );
+
+        assert.equal(
+          getAst(
+            expression.toString({
+              componentContext: generator.SyntaxKind.ThisKeyword,
+              newComponentContext: "",
+              members: [property1, property2],
+            })
+          ),
+          getAst("try { prop1; } catch(error) { prop2; }")
+        );
+
+        assert.deepEqual(
+          expression.getDependency({
+            members: [],
+          }),
+          ["prop1", "prop2"]
+        );
+      });
+
+      mocha.it("createTry with catch without variable", function () {
+        const expression = generator.createTry(
+          generator.createBlock(
+            [
+              generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("name")
+              ),
+            ],
+            true
+          ),
+          generator.createCatchClause(
+            undefined,
+            generator.createBlock(
+              [
+                generator.createPropertyAccess(
+                  generator.createThis(),
+                  generator.createIdentifier("name")
+                ),
+              ],
+              true
+            )
+          )
+        );
+
+        assert.equal(
+          getAst(expression.toString()),
+          getAst("try { this.name; } catch { this.name; }")
+        );
+      });
+
+      mocha.it("createTry with finally", function () {
+        const property1 = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("prop1")
+        );
+        const property2 = generator.createProperty(
+          [createDecorator(Decorators.OneWay)],
+          [],
+          generator.createIdentifier("prop2")
+        );
+        const expression = generator.createTry(
+          generator.createBlock(
+            [
+              generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("prop1")
+              ),
+            ],
+            true
+          ),
+          undefined,
+          generator.createBlock(
+            [
+              generator.createPropertyAccess(
+                generator.createThis(),
+                generator.createIdentifier("prop2")
+              ),
+            ],
+            true
+          )
+        );
+
+        assert.equal(
+          getAst(
+            expression.toString({
+              componentContext: generator.SyntaxKind.ThisKeyword,
+              newComponentContext: "",
+              members: [property1, property2],
+            })
+          ),
+          getAst("try { prop1; } finally { prop2; }")
+        );
+
+        assert.deepEqual(
+          expression.getDependency({
+            members: [],
+          }),
+          ["prop1", "prop2"]
+        );
+      });
+    });
   });
 
   mocha.describe("literal expressions", function () {
