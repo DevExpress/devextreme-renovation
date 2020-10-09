@@ -9,9 +9,15 @@ import InnerWidget from "./dx-inner-widget";
 export const WidgetInput = {
   visible: {
     type: Boolean,
+    default() {
+      return undefined;
+    },
   },
   value: {
     type: Boolean,
+    default() {
+      return undefined;
+    },
   },
 };
 export const DxWidget = {

@@ -5,6 +5,9 @@
 const WidgetInput = {
   prop: {
     type: Boolean,
+    default() {
+      return undefined;
+    },
   },
 };
 export const DxWidget = {

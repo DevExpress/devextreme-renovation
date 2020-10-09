@@ -5,6 +5,9 @@
 export const InnerWidgetProps = {
   selected: {
     type: Boolean,
+    default() {
+      return undefined;
+    },
   },
   value: {
     type: Number,

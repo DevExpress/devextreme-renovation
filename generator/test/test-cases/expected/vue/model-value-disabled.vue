@@ -5,12 +5,21 @@
 const ModelWidgetInput = {
   disabled: {
     type: Boolean,
+    default() {
+      return undefined;
+    },
   },
   value: {
     type: Boolean,
+    default() {
+      return undefined;
+    },
   },
   notValue: {
     type: Boolean,
+    default() {
+      return undefined;
+    },
   },
 };
 export const DxModelWidget = {
