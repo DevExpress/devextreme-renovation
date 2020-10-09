@@ -302,7 +302,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
     let elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${name}${contextString}"></ng-container>`;
 
-    if (init && init instanceof BaseFunction) {
+    if (init instanceof BaseFunction) {
       const paramString = contextElements
         .map((el) => `let-${el.key}=${el.key}`)
         .join(" ");
