@@ -1,4 +1,8 @@
 import { COMPONENT_INPUT_CLASS } from "./component-input";
+import {
+  WidgetTwo as ExternalComponent,
+  DxWidgetTwoModule,
+} from "./component-pass-two";
 export const PREFIX = "dx";
 export const CLASS_NAME = PREFIX + "c1" + "c2" + COMPONENT_INPUT_CLASS;
 export class WidgetProps {}
@@ -15,11 +19,12 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget-with-globals",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div [class]="global_CLASS_NAME"></div>`,
+  template: `<div [class]="global_CLASS_NAME"
+    ><span [class]="global_CLASS_NAME"></span><dx-widget-two></dx-widget-two
+  ></div>`,
 })
 export default class WidgetWithGlobals extends WidgetProps {
   global_CLASS_NAME = CLASS_NAME;
-
   get __restAttributes(): any {
     return {};
   }
@@ -36,7 +41,7 @@ export default class WidgetWithGlobals extends WidgetProps {
 }
 @NgModule({
   declarations: [WidgetWithGlobals],
-  imports: [CommonModule],
+  imports: [DxWidgetTwoModule, CommonModule],
   exports: [WidgetWithGlobals],
 })
 export class DxWidgetWithGlobalsModule {}

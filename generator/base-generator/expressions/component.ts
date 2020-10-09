@@ -510,13 +510,13 @@ export class Component extends Class implements Heritable {
     template: string | undefined,
     delimiter = ": "
   ): string[] {
-    return (
+    const globals =
       template
         ?.match(/global_\w+/gi)
         ?.map(
           (global) => `${global}${delimiter}${global.replace("global_", "")}`
-        ) || []
-    );
+        ) || [];
+    return [...new Set(globals)];
   }
 
   returnGetAccessorBlock(

@@ -3055,6 +3055,40 @@ mocha.describe("base-generator: expressions", function () {
         assert.strictEqual(result["JSXComponent"].toString(), "JSXComponent");
         assert.strictEqual(result["myE"].toString(), "myE");
       });
+
+      mocha.describe("ImportClause: resolveImport", function () {
+        mocha.it("Named import", function () {
+          const importClause = generator.createImportClause(
+            undefined,
+            generator.createNamedImports([
+              generator.createImportSpecifier(
+                undefined,
+                generator.createIdentifier("onlyName")
+              ),
+              generator.createImportSpecifier(
+                generator.createIdentifier("name"),
+                generator.createIdentifier("alias")
+              ),
+            ])
+          );
+
+          assert.strictEqual(
+            importClause.resolveImport("onlyName"),
+            "onlyName"
+          );
+          assert.strictEqual(importClause.resolveImport("alias"), "name");
+          assert.strictEqual(importClause.resolveImport("unknown"), undefined);
+        });
+
+        mocha.it("Namespace import", function () {
+          const importClause = generator.createImportClause(
+            undefined,
+            generator.createNamespaceImport(generator.createIdentifier("name"))
+          );
+
+          assert.strictEqual(importClause.resolveImport("name"), undefined);
+        });
+      });
     });
   });
 
