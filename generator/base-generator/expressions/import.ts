@@ -75,6 +75,17 @@ export class ImportClause {
       : undefined;
   }
 
+  resolveImport(name: string): string | undefined {
+    if (isNamedImports(this.namedBindings)) {
+      const node = this.namedBindings.node.find(
+        (n) => n.name.toString() === name
+      );
+      if (node) {
+        return node.propertyName?.toString() || name;
+      }
+    }
+  }
+
   remove(name: string) {
     if (isNamedImports(this.namedBindings)) {
       this.namedBindings.remove(name);
