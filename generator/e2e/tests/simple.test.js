@@ -297,7 +297,7 @@ cloneTest("Default props", async (t) => {
 
   const assert = async (selector, value) => {
     const content = await Selector(`.${selector}`);
-    await t.expect((await content.textContent).trim()).eql("content");
+    await t.expect((await content.textContent).trim()).eql(value);
   };
 
   await assert("default-props-optional-boolean", "undefined");
