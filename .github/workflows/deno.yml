@@ -54,6 +54,7 @@ jobs:
           npx gulp localization
 
       - name: Build Preact
+        continue-on-error: true
         run: |
           cd ./DevExtreme
           npx gulp generate-components 
