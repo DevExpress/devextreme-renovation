@@ -51,9 +51,15 @@ jobs:
         run: |
           cd ./DevExtreme
           npm install --no-package-lock --no-audit --no-fund
-          
+          npx gulp localization
+
       - name: Build Preact
         run: |
           cd ./DevExtreme
           npx gulp generate-components 
+          
+      - name: Build React
+        run: |
+          cd ./DevExtreme
+          npx gulp react-compilation-check
           
