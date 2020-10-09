@@ -297,17 +297,17 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       .filter((a) => a instanceof AngularDirective)
       .map((a) => a.toString(options));
 
-    const init = templateProperty?.initializer;
+    const initializer = templateProperty?.initializer;
     const name = templateProperty.name;
 
     let elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${name}${contextString}"></ng-container>`;
 
-    if (init instanceof BaseFunction) {
+    if (initializer instanceof BaseFunction) {
       const paramString = contextElements
         .map((el) => `let-${el.key}=${el.key}`)
         .join(" ");
       elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${name}||${name}Default${contextString}"></ng-container>
-       <ng-template #${name}Default ${paramString}>${init.getTemplate({
+       <ng-template #${name}Default ${paramString}>${initializer.getTemplate({
         members: [],
         newComponentContext: "",
       })}</ng-template>`;

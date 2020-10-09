@@ -16,6 +16,4 @@ export class WidgetProps {
 }
 
 @Component({ view: viewFunction })
-export default class Widget extends JSXComponent(WidgetProps) {
-  // ViewModel getters, Effects, Refs, go here
-}
+export default class Widget extends JSXComponent(WidgetProps) {}

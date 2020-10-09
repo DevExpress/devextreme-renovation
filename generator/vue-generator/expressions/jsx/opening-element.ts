@@ -305,10 +305,6 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
         .map((c) => c.toString(options))
         .join("")}</${this.processTagName(this.tagName)}>`;
     }
-    // else if () {
-
-    // }
-    //если у нас есть инит для пропсы
     return baseValue.replace(/>$/, "/>");
   }
 
