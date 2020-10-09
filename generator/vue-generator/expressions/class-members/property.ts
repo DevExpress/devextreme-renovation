@@ -144,6 +144,10 @@ export class Property extends BaseProperty {
               }`);
     } else if (this.initializer) {
       parts.push(`default:${this.initializer}`);
+    } else if (!this.initializer && type.indexOf("Boolean") >= 0) {
+      parts.push(`default(){
+        return undefined
+      }`);
     }
 
     return `${this.name}: {

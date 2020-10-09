@@ -35,6 +35,7 @@ import { PickPropsComponent } from "./pick-props";
 import ContextApp from "./context/context-app";
 import TestPropertyAccessChain from "./property-access-chain";
 import RenderSlotCondition from "./slot/render-slot-condition";
+import DefaultPropsComponent from "./default-props/default-props-component";
 
 function view(model: App) {
   return (
@@ -127,6 +128,7 @@ function view(model: App) {
       <PortalContainer />
       <TestPropertyAccessChain />
       <RenderSlotCondition>content</RenderSlotCondition>
+      <DefaultPropsComponent />
     </div>
   );
 }
