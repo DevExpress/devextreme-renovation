@@ -76,5 +76,5 @@ jobs:
       - name: Build Components
         run: |
           cd ./DevExtreme
-          npx gulp ${{TASK}} 
+          npx gulp $TASK 
           
