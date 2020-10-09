@@ -521,13 +521,24 @@ export class ReactComponent extends Component {
           }`;
   }
 
-  compileViewModelArguments(): string[] {
-    const compileState = (state: BaseProperty[]) =>
-      state.filter((s) => !s.isPrivate).map((s) => `${s.name}:${s.getter()}`);
-    const state = compileState(this.state);
-    const internalState = compileState(this.internalState);
+  compileTemplateGetter(): string {
+    return this.props.some((p) => p.isTemplate)
+      ? `
+          const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) => (
+              TemplateProp ||
+              (RenderProp &&
+                ((props: any) =>
+                  RenderProp(
+                    ...("data" in props ? [props.data, props.index] : [props])
+                  ))) ||
+              (ComponentProp && ((props: any) => <ComponentProp {...props} />))
+          );
+      `
+      : "";
+  }
 
-    const template = this.props
+  processTemplates() {
+    return this.props
       .filter((p) => p.isTemplate)
       .map(
         (t) =>
@@ -536,6 +547,15 @@ export class ReactComponent extends Component {
             "render"
           )}, props.${getTemplatePropName(t.name, "component")})`
       );
+  }
+
+  compileViewModelArguments(): string[] {
+    const compileState = (state: BaseProperty[]) =>
+      state.filter((s) => !s.isPrivate).map((s) => `${s.name}:${s.getter()}`);
+    const state = compileState(this.state);
+    const internalState = compileState(this.internalState);
+
+    const template = this.processTemplates();
 
     const nestedProps = this.members
       .filter((m) => m.isNested)
@@ -761,19 +781,7 @@ export class ReactComponent extends Component {
     }Ref> }> & { defaultProps: ${this.getPropsType()}}`;
   }
   toString() {
-    const getTemplateFunc = this.props.some((p) => p.isTemplate)
-      ? `
-          const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) => (
-              TemplateProp ||
-              (RenderProp &&
-                ((props: any) =>
-                  RenderProp(
-                    ...("data" in props ? [props.data, props.index] : [props])
-                  ))) ||
-              (ComponentProp && ((props: any) => <ComponentProp {...props} />))
-          );
-          `
-      : "";
+    const getTemplateFunc = this.compileTemplateGetter();
 
     const portal = this.containsPortal() ? this.compilePortalComponent() : "";
 
