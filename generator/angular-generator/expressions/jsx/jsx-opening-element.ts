@@ -314,7 +314,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     }
     if (attributes.length) {
       return `<ng-container ${attributes.join("\n")}>
-        ${elementString} 
+        ${elementString}
       </ng-container>`;
     }
 
