@@ -1,0 +1,63 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Build Devextreme
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+      - name: Get sources
+        uses: actions/checkout@v2
+        
+      - name: Restore Generator npm cache
+        uses: actions/cache@v2
+        with:
+          path: ./generator/node_modules
+          key: generator-modules-${{ hashFiles('./generator/package.json') }}
+          restore-keys: |
+            generator-modules
+            
+      - name: Build Generator
+        run: |
+          cd ./generator
+          npm install --no-package-lock --no-audit --no-fund
+          npm run build-dist 
+          
+      - name: Get DevExtreme
+        run: git clone https://github.com/DevExpress/DevExtreme
+      
+      - name: Restore DevExtreme npm cache
+        uses: actions/cache@v2
+        with:
+          path: ./DevExtreme/node_modules
+          key: devextreme-modules-${{ hashFiles('./DevExtreme/package.json') }}
+          restore-keys: |
+            devextreme-modules
+            
+      - name: Install Generator
+        run: |
+          cd ./DevExtreme
+          npm i ../generator/build
+      - name: Build DevExtreme
+        run: |
+          cd ./DevExtreme
+          npm install --no-package-lock --no-audit --no-fund
+          npx gulp localization
+      - name: Build Preact
+        run: |
+          cd ./DevExtreme
+          npx gulp generate-components 
+          
+      - name: Build React
+        run: |
+          cd ./DevExtreme
+          npx gulp react-compilation-check
+          
