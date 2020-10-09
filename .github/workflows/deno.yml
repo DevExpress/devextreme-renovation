@@ -46,36 +46,18 @@ jobs:
         run: |
           cd ./DevExtreme
           npm i ../generator/build
-
       - name: Build DevExtreme
         run: |
           cd ./DevExtreme
           npm install --no-package-lock --no-audit --no-fund
           npx gulp localization
-          
-      - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v2.2.0
-        with:
-          name: DevExtreme
-          path: ./DevExtreme
-      
-  test:
-    runs-on: ubuntu-latest
-    needs: [build]
-
-    strategy:
-      matrix:
-        TASK: [generate-components, react-compilation-check]
-      
-    steps:
-      - name: Download a Build Artifact
-        uses: actions/download-artifact@v2.0.5
-        with:
-          name: DevExtreme
-          path: ./DevExtreme
-          
-      - name: Build Components
+      - name: Build Preact
         run: |
           cd ./DevExtreme
-          npx gulp $TASK 
+          npx gulp generate-components 
+          
+      - name: Build React
+        run: |
+          cd ./DevExtreme
+          npx gulp react-compilation-check
           
