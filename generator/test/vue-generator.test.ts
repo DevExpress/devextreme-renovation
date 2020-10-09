@@ -537,36 +537,33 @@ mocha.describe("Vue-generator", function () {
           );
         });
 
-        mocha.it.only(
-          "Property has Boolean type with initializer",
-          function () {
-            const expression = generator.createProperty(
-              decorators,
-              undefined,
-              name,
-              undefined,
-              generator.createUnionTypeNode([
-                generator.createKeywordTypeNode(
-                  generator.SyntaxKind.BooleanKeyword
-                ),
-                generator.createKeywordTypeNode(
-                  generator.SyntaxKind.NumberKeyword
-                ),
-              ]),
-              generator.createFalse()
-            );
+        mocha.it("Property has Boolean type with initializer", function () {
+          const expression = generator.createProperty(
+            decorators,
+            undefined,
+            name,
+            undefined,
+            generator.createUnionTypeNode([
+              generator.createKeywordTypeNode(
+                generator.SyntaxKind.BooleanKeyword
+              ),
+              generator.createKeywordTypeNode(
+                generator.SyntaxKind.NumberKeyword
+              ),
+            ]),
+            generator.createFalse()
+          );
 
-            assert.strictEqual(
-              getAst(expression.toString({ members: [] })),
-              getAst(`p: {
+          assert.strictEqual(
+            getAst(expression.toString({ members: [] })),
+            getAst(`p: {
                 type: [Boolean, Number],
                 default(){
                   return false
                 }
               }`)
-            );
-          }
-        );
+          );
+        });
 
         mocha.describe("Property with LiteralTypeNode", function () {
           mocha.it("Object", function () {
