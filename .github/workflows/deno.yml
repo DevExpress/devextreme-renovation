@@ -59,6 +59,7 @@ jobs:
           npx gulp generate-components 
           
       - name: Build React
+        continue-on-error: true
         run: |
           cd ./DevExtreme
           npx gulp react-compilation-check
