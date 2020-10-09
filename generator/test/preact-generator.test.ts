@@ -127,6 +127,10 @@ mocha.describe("preact-generator", function () {
   mocha.it("refs", function () {
     this.testGenerator(this.test!.title);
   });
+
+  mocha.it("template", function () {
+    this.testGenerator(this.test!.title);
+  });
 });
 
 mocha.describe("preact-generator: expressions", function () {
@@ -149,8 +153,6 @@ mocha.describe("preact-generator: expressions", function () {
         ),
         'import "typescript"'
       );
-
-      generator.setContext({ dirname: path.resolve(__dirname) });
     });
   });
 

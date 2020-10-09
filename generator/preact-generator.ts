@@ -96,6 +96,10 @@ export class ComponentInput extends BaseComponentInput {
 
     return super.processMembers(members);
   }
+
+  buildTemplateProperties() {
+    return [];
+  }
 }
 
 export class PreactComponent extends ReactComponent {
@@ -184,6 +188,14 @@ export class PreactComponent extends ReactComponent {
 
   compileFunctionalComponentType() {
     return `Preact.FunctionalComponent<${this.compilePropsType()}> & { defaultProps: ${this.getPropsType()}}`;
+  }
+
+  compileTemplateGetter() {
+    return "";
+  }
+
+  processTemplates() {
+    return [];
   }
 }
 
@@ -407,7 +419,7 @@ export class Property extends ReactProperty {
   REF_OBJECT_TYPE = "RefObject";
 
   typeDeclaration() {
-    if (this.isSlot) {
+    if (this.isSlot || this.isTemplate) {
       return `${this.name}${this.compileTypeDeclarationType("any")}`;
     }
     return super.typeDeclaration();
