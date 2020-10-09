@@ -22,6 +22,16 @@ import { CommonModule } from "@angular/common";
   template: `<div #childRefRef><div #nullableRefRef></div></div>`,
 })
 export default class RefOnChildrenChild extends Props {
+  __method(): any {
+    const nullableRefHtml = this.nullableRefRef?.nativeElement?.innerHTML;
+    if (this.nullableRef) {
+      this.forwardRef_nullableRef(
+        new ElementRef(this.childRefRef.nativeElement)
+      ),
+        this.nullableRef(new ElementRef(this.childRefRef.nativeElement));
+    }
+    return nullableRefHtml;
+  }
   get __restAttributes(): any {
     return {};
   }

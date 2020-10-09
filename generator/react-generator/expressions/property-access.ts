@@ -89,7 +89,8 @@ export class PropertyAccess extends BasePropertyAccess {
       options.componentContext === SyntaxKind.ThisKeyword
     ) {
       const hasSimpleProps = props.some((p) => p.canBeDestructured);
-      const initValue = (hasSimpleProps
+      const initValue = (hasSimpleProps ||
+      elements.some((e) => e.dotDotDotToken)
         ? [new SpreadAssignment(new Identifier("props"))]
         : []) as (PropertyAssignment | SpreadAssignment)[];
 
