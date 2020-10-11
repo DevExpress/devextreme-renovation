@@ -63,7 +63,9 @@ interface Widget {
 }
 
 const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
-  TemplateProp ||
+  (TemplateProp &&
+    ((props: any) =>
+      TemplateProp({ ...TemplateProp.defaultProps, ...props }))) ||
   (RenderProp &&
     ((props: any) =>
       RenderProp(
@@ -146,6 +148,7 @@ function view(viewModel: Widget) {
           textProp: "textPropValue",
           textPropExpr: "textPropExrpValue",
         })}
+
       {viewModel.props.footerTemplate && FooterTemplate({ someProp: myvar })}
 
       {ComponentTemplate({ value: "Test Value" })}
