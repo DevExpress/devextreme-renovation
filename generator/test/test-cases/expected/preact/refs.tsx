@@ -109,7 +109,12 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
         requiredForwardRefProp,
         requiredRefProp,
         ...restProps
-      } = props;
+      } = {
+        ...props,
+        outerDivRef: props.outerDivRef?.current!,
+        forwardRefProp: props.forwardRefProp?.current!,
+        requiredForwardRefProp: props.requiredForwardRefProp!.current!,
+      };
       return restProps;
     },
     [props]

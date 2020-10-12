@@ -37,7 +37,10 @@ export default function RefOnChildrenParent(props: typeof Props & RestProps) {
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { nullableRef, ...restProps } = props;
+      const { nullableRef, ...restProps } = {
+        ...props,
+        nullableRef: props.nullableRef?.current!,
+      };
       return restProps;
     },
     [props]

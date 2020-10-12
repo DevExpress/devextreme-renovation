@@ -183,7 +183,7 @@ export class Property extends BaseProperty {
   }
 
   get canBeDestructured() {
-    if (this.isEvent || this.isNested) {
+    if (this.isEvent || this.isNested || this.isForwardRefProp) {
       return false;
     }
     return super.canBeDestructured;

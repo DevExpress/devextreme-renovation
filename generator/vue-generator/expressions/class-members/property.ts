@@ -141,6 +141,10 @@ export class Property extends BaseProperty {
               }`);
     } else if (this.initializer) {
       parts.push(`default:${this.initializer}`);
+    } else if (!this.initializer && type.indexOf("Boolean") >= 0) {
+      parts.push(`default(){
+        return undefined
+      }`);
     }
 
     return `${this.name}: {
@@ -207,7 +211,13 @@ export class Property extends BaseProperty {
   }
 
   get canBeDestructured() {
-    if (this.isEvent || this.isState || this.isRefProp || this.isNested) {
+    if (
+      this.isEvent ||
+      this.isState ||
+      this.isRefProp ||
+      this.isNested ||
+      this.isForwardRefProp
+    ) {
       return false;
     }
     return super.canBeDestructured;

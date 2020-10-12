@@ -25,6 +25,14 @@ export const DxRefOnChildrenChild = {
     },
   },
   methods: {
+    __method() {
+      const nullableRefHtml = this.$refs.nullableRef?.innerHTML;
+      if (this.nullableRef) {
+        this.forwardRef_nullableRef(this.$refs.childRef),
+          this.nullableRef(this.$refs.childRef);
+      }
+      return nullableRefHtml;
+    },
     forwardRef_childRef(ref) {
       this.$refs.childRef = ref;
     },

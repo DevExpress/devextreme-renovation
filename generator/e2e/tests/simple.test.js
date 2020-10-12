@@ -291,3 +291,20 @@ cloneTest("Render slot conditionally", async (t) => {
   await t.click(switchButton);
   await assert(false);
 });
+
+cloneTest("Default props", async (t) => {
+  const switchButton = await Selector("#render-slot-condition-switch");
+
+  const assert = async (selector, value) => {
+    const content = await Selector(`.${selector}`);
+    await t.expect((await content.textContent).trim()).eql(value);
+  };
+
+  await assert("default-props-optional-boolean", "undefined");
+  await assert("default-props-boolean-with-default", "false");
+
+  await assert("default-props-optional-number", "undefined");
+  await assert("default-props-number-with-default", "1");
+
+  await assert("default-props-optional-boolean-or-number", "undefined");
+});

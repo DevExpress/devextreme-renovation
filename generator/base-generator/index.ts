@@ -607,13 +607,16 @@ export default class Generator implements GeneratorAPI {
           (e: any) => e instanceof Component || e instanceof ComponentInput
         );
 
-        importClause.imports?.forEach((i) => {
+        importClause.imports?.forEach((name) => {
+          const originalName = importClause.resolveImport(name);
           const componentInput = componentInputs.find(
-            (c) => c.name.toString() === i && c.modifiers.indexOf("export") >= 0
+            (c) =>
+              c.name.toString() === originalName &&
+              c.modifiers.indexOf("export") >= 0
           );
 
           if (componentInput) {
-            this.addComponent(i, componentInput, importClause);
+            this.addComponent(name, componentInput, importClause);
           }
         });
         this.cache.__globals__ &&

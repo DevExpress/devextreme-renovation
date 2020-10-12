@@ -5,12 +5,21 @@
 const ModelWidgetInput = {
   baseStateProp: {
     type: Boolean,
+    default() {
+      return undefined;
+    },
   },
   modelStateProp: {
     type: Boolean,
+    default() {
+      return undefined;
+    },
   },
   value: {
     type: Boolean,
+    default() {
+      return undefined;
+    },
   },
 };
 export const DxModelWidget = {

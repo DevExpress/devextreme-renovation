@@ -36,6 +36,7 @@ import ContextApp from "./context/context-app";
 import TestPropertyAccessChain from "./property-access-chain";
 import TemplateDefaultValue from "./template-passing/template-default-value";
 import RenderSlotCondition from "./slot/render-slot-condition";
+import DefaultPropsComponent from "./default-props/default-props-component";
 
 function view(model: App) {
   return (
@@ -129,6 +130,7 @@ function view(model: App) {
       <TestPropertyAccessChain />
       <TemplateDefaultValue stringToRender={"I am passed from app"} />
       <RenderSlotCondition>content</RenderSlotCondition>
+      <DefaultPropsComponent />
     </div>
   );
 }

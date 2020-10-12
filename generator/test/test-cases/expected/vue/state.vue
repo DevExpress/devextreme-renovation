@@ -21,6 +21,9 @@ const WidgetInput = {
   },
   stateProp: {
     type: Boolean,
+    default() {
+      return undefined;
+    },
   },
 };
 export const DxWidget = {
