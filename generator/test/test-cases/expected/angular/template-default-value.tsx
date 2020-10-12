@@ -28,16 +28,15 @@ export function defaultOptions(rule: TemplateDefaultValueOptionRule) {
   selector: "dx-template-default-value",
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div
-    >TemplateDefaultValue<ng-container
-      *ngTemplateOutlet="
-        contentTemplate || contentTemplateDefault;
-        context: { data: { p1: stringToRender } }
-      "
-    ></ng-container>
-    <ng-template #contentTemplateDefault let-data="data"
+      >TemplateDefaultValue<ng-container
+        *ngTemplateOutlet="
+          contentTemplate || contentTemplateDefault;
+          context: { data: { p1: stringToRender } }
+        "
+      ></ng-container> </div
+    ><ng-template #contentTemplateDefault let-data="data"
       ><span>{{ data.p1 }}</span></ng-template
-    ></div
-  >`,
+    > `,
 })
 export default class TemplateDefaultValue extends TemplateDefaultValueProps {
   get __restAttributes(): any {

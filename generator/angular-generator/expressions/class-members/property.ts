@@ -2,12 +2,14 @@ import { Property as BaseProperty } from "../../../base-generator/expressions/cl
 import { Identifier } from "../../../base-generator/expressions/common";
 import { Decorator } from "../decorator";
 import {
-  SimpleTypeExpression,
   TypeExpression,
   FunctionTypeNode,
 } from "../../../base-generator/expressions/type";
 import { Decorators } from "../../../component_declaration/decorators";
-import { capitalizeFirstLetter } from "../../../base-generator/utils/string";
+import {
+  capitalizeFirstLetter,
+  compileType,
+} from "../../../base-generator/utils/string";
 import SyntaxKind from "../../../base-generator/syntaxKind";
 import {
   Expression,
@@ -43,7 +45,6 @@ export class Property extends BaseProperty {
     inherited: boolean = false
   ) {
     if (decorators.find((d) => d.name === Decorators.Template)) {
-      type = new SimpleTypeExpression(`TemplateRef<any> | null`);
       questionOrExclamationToken =
         questionOrExclamationToken === SyntaxKind.ExclamationToken
           ? ""
@@ -157,6 +158,16 @@ export class Property extends BaseProperty {
 
   getDependency(options: toStringOptions) {
     return [this.name];
+  }
+
+  typeDeclaration(): string {
+    if (this.isTemplate) {
+      return `${this.name}${compileType(
+        `TemplateRef<any> | null`,
+        this.questionOrExclamationToken
+      )}`;
+    }
+    return super.typeDeclaration();
   }
 
   inherit() {

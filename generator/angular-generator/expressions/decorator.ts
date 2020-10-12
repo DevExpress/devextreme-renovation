@@ -5,6 +5,15 @@ import { ObjectLiteral } from "../../base-generator/expressions/literal";
 import { TemplateExpression } from "../../base-generator/expressions/template";
 import { isElement } from "./jsx/elements";
 import { getJsxExpression } from "../../base-generator/expressions/jsx";
+import { Property } from "./class-members/property";
+import { BaseFunction } from "../../base-generator/expressions/functions";
+import {
+  FunctionTypeNode,
+  PropertySignature,
+  TypeLiteralNode,
+  TypeReferenceNode,
+} from "../../base-generator/expressions/type";
+import { Identifier } from "../../base-generator/expressions/common";
 
 export class Decorator extends BaseDecorator {
   toString(options?: toStringOptions) {
@@ -41,6 +50,54 @@ export class Decorator extends BaseDecorator {
             `;
           }
         });
+        if (options?.members) {
+          const defaultTemplateStatements = options?.members
+            ? options.members
+                .map((m) => {
+                  if (
+                    m.isTemplate &&
+                    m instanceof Property &&
+                    m.initializer instanceof BaseFunction
+                  ) {
+                    let contextVars: Identifier[] = [];
+                    if (m.type instanceof FunctionTypeNode) {
+                      if (
+                        m.type.parameters[0].type instanceof TypeLiteralNode &&
+                        m.type.parameters[0].type.members
+                      ) {
+                        contextVars = m.type.parameters[0].type.members.map(
+                          (m) => m.name
+                        );
+                      }
+                    }
+                    if (m.type instanceof TypeReferenceNode) {
+                      if (m.type.typeArguments) {
+                        m.type.typeArguments.map((arg) => {
+                          if (arg instanceof TypeLiteralNode) {
+                            arg.members.map((m) => {
+                              if (m instanceof PropertySignature) {
+                                contextVars.push(m.name);
+                              }
+                            });
+                          }
+                        });
+                      }
+                    }
+                    return `<ng-template #${m.name}Default ${
+                      contextVars
+                        ? contextVars.map((v) => `let-${v}="${v}"`)
+                        : ""
+                    }>${m.initializer.getTemplate({
+                      members: [],
+                      newComponentContext: "",
+                    })}</ng-template>`;
+                  }
+                })
+                .filter((s) => s)
+            : "";
+          if (defaultTemplateStatements)
+            template += defaultTemplateStatements.join("\n");
+        }
         if (template) {
           parameters.setProperty(
             "template",
