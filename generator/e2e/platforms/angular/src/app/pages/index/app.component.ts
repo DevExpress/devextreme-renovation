@@ -6,5 +6,4 @@ import { Component } from "@angular/core";
 })
 export class AppComponent {
   title = "my-app";
-  counterValue = 15;
 }

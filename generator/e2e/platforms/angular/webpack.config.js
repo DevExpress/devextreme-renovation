@@ -1,11 +1,12 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
+const { getPages, getEntries } = require("../../helpers/pages");
 
 module.exports = {
   mode: "development",
 
   entry: {
-    app: path.resolve("./e2e/platforms/angular/src/main.ts"),
+    ...getEntries(path.resolve(__dirname, "./src"), "ts"),
   },
 
   output: {
@@ -66,9 +67,5 @@ module.exports = {
     ],
   },
 
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: path.resolve("./e2e/platforms/angular/src/index.html"),
-    }),
-  ],
+  plugins: [...getPages(path.resolve(__dirname, "./src"))],
 };
