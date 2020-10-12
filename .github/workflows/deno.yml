@@ -46,13 +46,14 @@ jobs:
         run: |
           cd ./DevExtreme
           npm i ../generator/build
+          
       - name: Build DevExtreme
         run: |
           cd ./DevExtreme
           npm install --no-package-lock --no-audit --no-fund
           npx gulp localization
           
-      - name: Test Generation
+      - name: Test Generation - ${{ matrix.TASK }}
         env:
           TASK: ${{ matrix.TASK }}
         run: |
