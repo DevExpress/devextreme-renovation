@@ -6,7 +6,7 @@ import { Input, TemplateRef } from "@angular/core";
 export class TemplateDefaultValueProps {
   @Input() contentTemplate: TemplateRef<any> | null = null;
   @Input() stringToRender: string = "default string";
-  @Input() componentTemplate: TemplateRef<any> | null = null;
+  @Input() compTemplate: TemplateRef<any> | null = null;
 }
 
 import {
@@ -30,14 +30,14 @@ import { CommonModule } from "@angular/common";
       ></ng-container
       >ComponentTemplateDefaultValue<ng-container
         *ngTemplateOutlet="
-          componentTemplate || componentTemplateDefault;
+          compTemplate || compTemplateDefault;
           context: { value: stringToRender }
         "
       ></ng-container></div
     ><ng-template #contentTemplateDefault let-data="data" ,let-index="index"
       ><span>{{ data.p1 }}</span></ng-template
     >
-    <ng-template #componentTemplateDefault let-value="value"
+    <ng-template #compTemplateDefault let-value="value"
       ><div>{{ optionalValue || value }}</div></ng-template
     >`,
 })

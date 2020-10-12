@@ -12,7 +12,7 @@
         ><span>{{ data.p1 }}</span></div
       > </slot
     >ComponentTemplateDefaultValue<slot
-      name="componentTemplate"
+      name="compTemplate"
       v-bind:value="model.props.stringToRender"
     ></slot
   ></div>
@@ -40,7 +40,7 @@ export const DxTemplateDefaultValue = {
       return {
         contentTemplate: this.$scopedSlots.contentTemplate,
         stringToRender: this.stringToRender,
-        componentTemplate: this.$scopedSlots.componentTemplate,
+        compTemplate: this.$scopedSlots.compTemplate,
       };
     },
   },

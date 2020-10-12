@@ -16,7 +16,7 @@ export const viewFunction = (model: TemplateDefaultValue) => (
       index={5}
     />
     ComponentTemplateDefaultValue
-    <model.props.componentTemplate value={model.props.stringToRender} />
+    <model.props.compTemplate value={model.props.stringToRender} />
   </div>
 );
 
@@ -27,7 +27,7 @@ export class TemplateDefaultValueProps {
     index: number;
   }) => JSX.Element = (props) => <span>{props.data.p1}</span>;
   @OneWay() stringToRender: string = "default string";
-  @Template() componentTemplate: JSXTemplate<{
+  @Template() compTemplate: JSXTemplate<{
     value: string;
   }> = WidgetWithProps;
 }

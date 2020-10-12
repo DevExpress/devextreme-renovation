@@ -8,23 +8,23 @@ export const viewFunction = (model: TemplateDefaultValue) => (
       index: 5,
     })}
     ComponentTemplateDefaultValue
-    {model.props.componentTemplate({ value: model.props.stringToRender })}
+    {model.props.compTemplate({ value: model.props.stringToRender })}
   </div>
 );
 
 export declare type TemplateDefaultValuePropsType = {
   contentTemplate: (props: { data: { p1: string }; index: number }) => any;
   stringToRender: string;
-  componentTemplate: React.FunctionComponent<Partial<{ value: string }>>;
+  compTemplate: React.FunctionComponent<Partial<{ value: string }>>;
   contentRender?: (props: { data: { p1: string }; index: number }) => any;
   contentComponent?: (props: { data: { p1: string }; index: number }) => any;
-  componentRender?: React.FunctionComponent<Partial<{ value: string }>>;
-  componentComponent?: React.JSXElementConstructor<Partial<{ value: string }>>;
+  compRender?: React.FunctionComponent<Partial<{ value: string }>>;
+  compComponent?: React.JSXElementConstructor<Partial<{ value: string }>>;
 };
 export const TemplateDefaultValueProps: TemplateDefaultValuePropsType = {
   contentTemplate: (props) => <span>{props.data.p1}</span>,
   stringToRender: "default string",
-  componentTemplate: WidgetWithProps,
+  compTemplate: WidgetWithProps,
 };
 import * as React from "react";
 import { useCallback, HTMLAttributes } from "react";
@@ -55,9 +55,9 @@ export default function TemplateDefaultValue(
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
-        componentComponent,
-        componentRender,
-        componentTemplate,
+        compComponent,
+        compRender,
+        compTemplate,
         contentComponent,
         contentRender,
         contentTemplate,
@@ -77,10 +77,10 @@ export default function TemplateDefaultValue(
         props.contentRender,
         props.contentComponent
       ),
-      componentTemplate: getTemplate(
-        props.componentTemplate,
-        props.componentRender,
-        props.componentComponent
+      compTemplate: getTemplate(
+        props.compTemplate,
+        props.compRender,
+        props.compComponent
       ),
     },
     restAttributes: __restAttributes(),
