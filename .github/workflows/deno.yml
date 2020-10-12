@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        TASK: [generate-components, react-compilation-check, generate-vue]
+        TASK: [generate-components, react-compilation-check]
 
     steps:
       - name: Get sources
