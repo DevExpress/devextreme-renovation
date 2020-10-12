@@ -97,9 +97,9 @@ export class ComponentInput extends BaseComponentInput {
     return super.processMembers(members);
   }
 
-  // buildTemplateProperties() {
-  //   return [];
-  // }
+  buildTemplateProperties() {
+    return [];
+  }
 }
 
 export class PreactComponent extends ReactComponent {
@@ -190,13 +190,13 @@ export class PreactComponent extends ReactComponent {
     return `Preact.FunctionalComponent<${this.compilePropsType()}> & { defaultProps: ${this.getPropsType()}}`;
   }
 
-  // compileTemplateGetter() {
-  //   return "";
-  // }
+  compileTemplateGetter() {
+    return "";
+  }
 
-  // processTemplates() {
-  //   return [];
-  // }
+  processTemplates() {
+    return [];
+  }
 }
 
 class JQueryComponent {
