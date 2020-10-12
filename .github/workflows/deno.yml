@@ -53,6 +53,8 @@ jobs:
           npx gulp localization
           
       - name: Test Generation
+        env:
+          TASK: ${{ matrix.TASK }}
         run: |
           cd ./DevExtreme
           npx gulp $TASK 
