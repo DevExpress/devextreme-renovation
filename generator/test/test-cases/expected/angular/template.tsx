@@ -55,7 +55,10 @@ import { CommonModule } from "@angular/common";
           "
         ></ng-container> </ng-container
       ><ng-container
-        *ngTemplateOutlet="componentTemplate; context: { value: 'Test Value' }"
+        *ngTemplateOutlet="
+          componentTemplate || componentTemplateDefault;
+          context: { value: 'Test Value' }
+        "
       ></ng-container></div
     ><ng-template #headerTemplateDefault>{{ null }}</ng-template>
     <ng-template
@@ -69,7 +72,10 @@ import { CommonModule } from "@angular/common";
     >
     <ng-template #footerTemplateDefault let-someProp="someProp"
       ><div></div
-    ></ng-template>`,
+    ></ng-template>
+    <ng-template #componentTemplateDefault let-value="value"
+      ><div>{{ optionalValue || value }}</div></ng-template
+    >`,
 })
 export default class Widget extends WidgetInput {
   get __restAttributes(): any {

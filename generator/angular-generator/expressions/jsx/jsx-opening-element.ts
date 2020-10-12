@@ -302,7 +302,12 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
     let elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${name}${contextString}"></ng-container>`;
 
-    if (initializer instanceof BaseFunction) {
+    if (
+      initializer instanceof BaseFunction ||
+      (initializer instanceof Identifier &&
+        this.context.components &&
+        this.context.components[initializer.toString()])
+    ) {
       elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${name}||${name}Default${contextString}"></ng-container>`;
     }
     if (attributes.length) {

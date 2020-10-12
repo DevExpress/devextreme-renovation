@@ -1,7 +1,12 @@
+import {
+  WidgetWithProps,
+  DxWidgetWithPropsModule,
+} from "./dx-widget-with-props";
 import { Input, TemplateRef } from "@angular/core";
 export class TemplateDefaultValueProps {
   @Input() contentTemplate: TemplateRef<any> | null = null;
   @Input() stringToRender: string = "default string";
+  @Input() componentTemplate: TemplateRef<any> | null = null;
 }
 
 import {
@@ -12,17 +17,6 @@ import {
   ViewRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import {
-  convertRulesToOptions,
-  Rule,
-} from "../../../../component_declaration/default_options";
-
-type TemplateDefaultValueOptionRule = Rule<Partial<TemplateDefaultValueProps>>;
-
-const __defaultOptionRules: TemplateDefaultValueOptionRule[] = [];
-export function defaultOptions(rule: TemplateDefaultValueOptionRule) {
-  __defaultOptionRules.push(rule);
-}
 
 @Component({
   selector: "dx-template-default-value",
@@ -31,12 +25,21 @@ export function defaultOptions(rule: TemplateDefaultValueOptionRule) {
       >TemplateDefaultValue<ng-container
         *ngTemplateOutlet="
           contentTemplate || contentTemplateDefault;
-          context: { data: { p1: stringToRender } }
+          context: { data: { p1: stringToRender }, index: 5 }
         "
-      ></ng-container> </div
-    ><ng-template #contentTemplateDefault let-data="data"
+      ></ng-container
+      >ComponentTemplateDefaultValue<ng-container
+        *ngTemplateOutlet="
+          componentTemplate || componentTemplateDefault;
+          context: { value: stringToRender }
+        "
+      ></ng-container></div
+    ><ng-template #contentTemplateDefault let-data="data" ,let-index="index"
       ><span>{{ data.p1 }}</span></ng-template
-    > `,
+    >
+    <ng-template #componentTemplateDefault let-value="value"
+      ><div>{{ optionalValue || value }}</div></ng-template
+    >`,
 })
 export default class TemplateDefaultValue extends TemplateDefaultValueProps {
   get __restAttributes(): any {
@@ -51,18 +54,11 @@ export default class TemplateDefaultValue extends TemplateDefaultValueProps {
 
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-
-    const defaultOptions = convertRulesToOptions<TemplateDefaultValueProps>(
-      __defaultOptionRules
-    );
-    Object.keys(defaultOptions).forEach((option) => {
-      (this as any)[option] = (defaultOptions as any)[option];
-    });
   }
 }
 @NgModule({
   declarations: [TemplateDefaultValue],
-  imports: [CommonModule],
+  imports: [DxWidgetWithPropsModule, CommonModule],
   exports: [TemplateDefaultValue],
 })
 export class DxTemplateDefaultValueModule {}

@@ -1,20 +1,30 @@
+import { WidgetWithProps } from "./dx-widget-with-props";
 export const viewFunction = (model: TemplateDefaultValue) => (
   <div>
     {" "}
     TemplateDefaultValue
-    {model.props.contentTemplate({ data: { p1: model.props.stringToRender } })}
+    {model.props.contentTemplate({
+      data: { p1: model.props.stringToRender },
+      index: 5,
+    })}
+    ComponentTemplateDefaultValue
+    {model.props.componentTemplate({ value: model.props.stringToRender })}
   </div>
 );
 
 export declare type TemplateDefaultValuePropsType = {
-  contentTemplate: (props: { data: { p1: string } }) => any;
+  contentTemplate: (props: { data: { p1: string }; index: number }) => any;
   stringToRender: string;
-  contentRender?: (props: { data: { p1: string } }) => any;
-  contentComponent?: (props: { data: { p1: string } }) => any;
+  componentTemplate: React.FunctionComponent<Partial<{ value: string }>>;
+  contentRender?: (props: { data: { p1: string }; index: number }) => any;
+  contentComponent?: (props: { data: { p1: string }; index: number }) => any;
+  componentRender?: React.FunctionComponent<Partial<{ value: string }>>;
+  componentComponent?: React.JSXElementConstructor<Partial<{ value: string }>>;
 };
 export const TemplateDefaultValueProps: TemplateDefaultValuePropsType = {
   contentTemplate: (props) => <span>{props.data.p1}</span>,
   stringToRender: "default string",
+  componentTemplate: WidgetWithProps,
 };
 import * as React from "react";
 import { useCallback, HTMLAttributes } from "react";
@@ -45,6 +55,9 @@ export default function TemplateDefaultValue(
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
+        componentComponent,
+        componentRender,
+        componentTemplate,
         contentComponent,
         contentRender,
         contentTemplate,
@@ -63,6 +76,11 @@ export default function TemplateDefaultValue(
         props.contentTemplate,
         props.contentRender,
         props.contentComponent
+      ),
+      componentTemplate: getTemplate(
+        props.componentTemplate,
+        props.componentRender,
+        props.componentComponent
       ),
     },
     restAttributes: __restAttributes(),

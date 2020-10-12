@@ -267,6 +267,10 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("template-default-value", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {
@@ -293,10 +297,6 @@ mocha.describe("angular-generation", function () {
     });
 
     mocha.it("use-external-component-bindings", function () {
-      this.testGenerator(this.test!.title);
-    });
-
-    mocha.it("template-default-value", function () {
       this.testGenerator(this.test!.title);
     });
   });
