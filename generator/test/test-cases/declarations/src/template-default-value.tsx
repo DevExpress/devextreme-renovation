@@ -27,9 +27,12 @@ export class TemplateDefaultValueProps {
     index: number;
   }) => JSX.Element = (props) => <span>{props.data.p1}</span>;
   @OneWay() stringToRender: string = "default string";
-  @Template() compTemplate: JSXTemplate<{
-    value: string;
-  }> = WidgetWithProps;
+  @Template() compTemplate: JSXTemplate<
+    {
+      value: string;
+    },
+    "value"
+  > = WidgetWithProps;
 }
 
 @Component({
