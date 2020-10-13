@@ -29,7 +29,11 @@ interface Widget {
   props: typeof WidgetInput & RestProps;
   restAttributes: RestProps;
 }
-
+const getTemplate = (TemplateProp: any) =>
+  TemplateProp &&
+  (TemplateProp.defaultProps
+    ? (props: any) => <TemplateProp {...props} />
+    : TemplateProp);
 export default function Widget(props: typeof WidgetInput & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
@@ -50,31 +54,11 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   return view({
     props: {
       ...props,
-      headerTemplate:
-        props.headerTemplate &&
-        (props.headerTemplate.defaultProps
-          ? (props: any) => <props.headerTemplate {...props} />
-          : props.headerTemplate),
-      template:
-        props.template &&
-        (props.template.defaultProps
-          ? (props: any) => <props.template {...props} />
-          : props.template),
-      contentTemplate:
-        props.contentTemplate &&
-        (props.contentTemplate.defaultProps
-          ? (props: any) => <props.contentTemplate {...props} />
-          : props.contentTemplate),
-      footerTemplate:
-        props.footerTemplate &&
-        (props.footerTemplate.defaultProps
-          ? (props: any) => <props.footerTemplate {...props} />
-          : props.footerTemplate),
-      componentTemplate:
-        props.componentTemplate &&
-        (props.componentTemplate.defaultProps
-          ? (props: any) => <props.componentTemplate {...props} />
-          : props.componentTemplate),
+      headerTemplate: getTemplate(props.headerTemplate),
+      template: getTemplate(props.template),
+      contentTemplate: getTemplate(props.contentTemplate),
+      footerTemplate: getTemplate(props.footerTemplate),
+      componentTemplate: getTemplate(props.componentTemplate),
     },
     restAttributes: __restAttributes(),
   });
