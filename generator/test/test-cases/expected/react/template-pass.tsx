@@ -6,9 +6,9 @@ const CustomTemplate = ({ text }: { text: string; value: number }) => {
 function view(model: Widget) {
   return (
     <WidgetWithTemplate
-      component={CustomTemplate}
-      componentComponent={InnerWidget}
-      arrowComponent={(data: { name: string; id: number }) => (
+      template={CustomTemplate}
+      componentTemplate={InnerWidget}
+      arrowTemplate={(data: { name: string; id: number }) => (
         <div>{data.name}</div>
       )}
     />

@@ -13,4 +13,19 @@ const cloneTest = (testName, testBody, page = "") =>
       testBody
     )
   );
+
 export default cloneTest;
+
+/**
+ *
+ * @param {string} page
+ */
+export const createCloneTest = (page) => {
+  /**
+   *
+   * @param {string} testName
+   * @param {(t:TestController)=>Promise<any>} testBody
+   */
+  const test = (testName, testBody) => cloneTest(testName, testBody, page);
+  return test;
+};
