@@ -2,6 +2,16 @@ const webpack = require("webpack");
 const path = require("path");
 const { getEntries, getPages } = require("../../helpers/pages");
 
+const babelPresets = [
+  "@babel/preset-env",
+  [
+    "@babel/preset-react",
+    {
+      pragma: "Preact.h",
+    },
+  ],
+];
+
 module.exports = {
   mode: "development",
   entry: getEntries(path.resolve(__dirname, "./app/src"), "js"),
@@ -13,14 +23,14 @@ module.exports = {
           {
             loader: "babel-loader",
             options: {
-              presets: ["@babel/preset-env", "@babel/preset-react"],
+              presets: babelPresets,
             },
           },
           {
             loader: path.resolve("./build/webpack-loader.js"),
             options: {
-              platform: "react",
-              tsConfig: path.resolve("./e2e/platforms/react/tsconfig.json"),
+              platform: "preact",
+              tsConfig: path.resolve("./e2e/platforms/preact/tsconfig.json"),
               defaultOptionsModule:
                 "./build/component_declaration/default_options",
             },
@@ -34,7 +44,7 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
-            presets: ["@babel/preset-env", "@babel/preset-react"],
+            presets: babelPresets,
           },
         },
       },
