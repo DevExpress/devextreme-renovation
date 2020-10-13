@@ -203,9 +203,7 @@ export type JSXTemplate<
   >
 > = React.JSXElementConstructor<
   Partial<Omit<PropsType, RequiredProps>> &
-    Required<Pick<PropsType, RequiredProps>> & {
-      ref?: React.Component<PropsType>;
-    }
+    Required<Pick<PropsType, RequiredProps>>
 >;
 
 /**

@@ -63,6 +63,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     if (!templateProperty) {
       return super.toString(options);
     }
+    this.checkTemplatePropUsage(templateProperty);
 
     const contextElements = this.attributes.reduce(
       (elements: (PropertyAssignment | SpreadAssignment)[], a) => {
