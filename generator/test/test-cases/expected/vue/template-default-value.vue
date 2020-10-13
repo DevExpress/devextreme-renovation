@@ -15,6 +15,11 @@
       name="compTemplate"
       v-bind:value="model.props.stringToRender"
     ></slot
+    ><slot
+      name="compTemplate"
+      v-bind:value="'I am 5 string'"
+      v-bind:index="5"
+    ></slot
   ></div>
 </template>
 <script>

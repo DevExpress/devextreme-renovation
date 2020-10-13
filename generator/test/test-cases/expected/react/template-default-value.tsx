@@ -9,6 +9,7 @@ export const viewFunction = (model: TemplateDefaultValue) => (
     })}
     ComponentTemplateDefaultValue
     {model.props.compTemplate({ value: model.props.stringToRender })}
+    {model.props.compTemplate({ value: "I am 5 string", index: 5 })}
   </div>
 );
 
@@ -16,18 +17,18 @@ export declare type TemplateDefaultValuePropsType = {
   contentTemplate: (props: { data: { p1: string }; index: number }) => any;
   stringToRender: string;
   compTemplate: React.FunctionComponent<
-    Partial<Omit<{ value: string }, "value">> &
-      Required<Pick<{ value: string }, "value">>
+    Partial<Omit<{ value?: string; index?: number }, "value">> &
+      Required<Pick<{ value?: string; index?: number }, "value">>
   >;
   contentRender?: (props: { data: { p1: string }; index: number }) => any;
   contentComponent?: (props: { data: { p1: string }; index: number }) => any;
   compRender?: React.FunctionComponent<
-    Partial<Omit<{ value: string }, "value">> &
-      Required<Pick<{ value: string }, "value">>
+    Partial<Omit<{ value?: string; index?: number }, "value">> &
+      Required<Pick<{ value?: string; index?: number }, "value">>
   >;
   compComponent?: React.JSXElementConstructor<
-    Partial<Omit<{ value: string }, "value">> &
-      Required<Pick<{ value: string }, "value">>
+    Partial<Omit<{ value?: string; index?: number }, "value">> &
+      Required<Pick<{ value?: string; index?: number }, "value">>
   >;
 };
 export const TemplateDefaultValueProps: TemplateDefaultValuePropsType = {

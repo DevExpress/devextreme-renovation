@@ -23,12 +23,13 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div >TemplateDefaultValue<ng-container *ngTemplateOutlet="contentTemplate||contentTemplateDefault; context:{data:{p1:stringToRender},index:5}">
       </ng-container>ComponentTemplateDefaultValue<ng-container *ngTemplateOutlet="compTemplate||compTemplateDefault; context:{value:stringToRender}">
+      </ng-container><ng-container *ngTemplateOutlet="compTemplate||compTemplateDefault; context:{value:'I am 5 string',index:5}">
       </ng-container></div>
         <ng-template #contentTemplateDefault let-data="data",let-index="index">
           <span >{{data.p1}}</span>
           </ng-template>
 
-        <ng-template #compTemplateDefault><WidgetWithProps [value]="value"/>
+        <ng-template #compTemplateDefault><WidgetWithProps [value]="value",[index]="index"/>
           </ng-template>`,
 })
 export default class TemplateDefaultValue extends TemplateDefaultValueProps {

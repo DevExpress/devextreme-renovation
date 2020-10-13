@@ -17,6 +17,7 @@ export const viewFunction = (model: TemplateDefaultValue) => (
     />
     ComponentTemplateDefaultValue
     <model.props.compTemplate value={model.props.stringToRender} />
+    <model.props.compTemplate value={"I am 5 string"} index={5} />
   </div>
 );
 
@@ -29,7 +30,8 @@ export class TemplateDefaultValueProps {
   @OneWay() stringToRender: string = "default string";
   @Template() compTemplate: JSXTemplate<
     {
-      value: string;
+      value?: string;
+      index?: number;
     },
     "value"
   > = WidgetWithProps;

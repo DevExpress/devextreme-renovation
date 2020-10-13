@@ -297,7 +297,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       .filter((a) => a instanceof AngularDirective)
       .map((a) => a.toString(options));
 
-    const initializer = templateProperty?.initializer;
+    const initializer = templateProperty.initializer;
     const name = templateProperty.name;
 
     let elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${name}${contextString}"></ng-container>`;
@@ -315,11 +315,26 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
           options.defaultTemplates = {
             [name]: { variables: contextElements, initializer },
           };
-        } else
-          options.defaultTemplates[name] = {
-            variables: contextElements,
-            initializer,
-          };
+        } else {
+          if (!options.defaultTemplates[name]?.variables) {
+            options.defaultTemplates[name] = {
+              variables: contextElements,
+              initializer,
+            };
+          } else {
+            const extravars = contextElements
+              .map((el) => {
+                if (
+                  !options.defaultTemplates![name].variables.filter(
+                    (v) => v.key.toString() === el.key.toString()
+                  ).length
+                )
+                  return el;
+              })
+              .filter((v) => v) as PropertyAssignment[];
+            options.defaultTemplates![name].variables.push(...extravars);
+          }
+        }
       }
     }
     if (attributes.length) {
