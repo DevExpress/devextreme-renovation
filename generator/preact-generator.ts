@@ -192,7 +192,9 @@ export class PreactComponent extends ReactComponent {
 
   compileTemplateGetter() {
     return this.props.some((p) => p.isTemplate)
-      ? `const getTemplate = (TemplateProp: any) => ((TemplateProp && (TemplateProp.defaultProps ? (props: any) => <TemplateProp {...props} /> : TemplateProp)));`
+      ? `const getTemplate = (TemplateProp: any) => (
+          (TemplateProp && (TemplateProp.defaultProps ? (props: any) => <TemplateProp {...props} /> : TemplateProp))
+        );`
       : "";
   }
 
