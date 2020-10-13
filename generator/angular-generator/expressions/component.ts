@@ -219,9 +219,6 @@ export class AngularComponent extends Component {
   ) {
     const isArray = isTypeArray(type);
     const indexGetter = isArray ? "" : "[0]";
-    const condition = `this.__${name}`.concat(
-      isArray ? `&& this.__${name}.length` : ""
-    );
     if (questionOrExclamationToken === "?") {
       type = type + "| undefined";
     }
@@ -233,7 +230,7 @@ export class AngularComponent extends Component {
       type,
       new Block(
         [
-          new SimpleExpression(`if (${condition}) {
+          new SimpleExpression(`if (this.__${name}) {
           return this.__${name};
         }
         const nested = this.${name}Nested.toArray();

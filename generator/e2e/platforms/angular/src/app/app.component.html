@@ -2,7 +2,7 @@
 
 <dx-button-with-template text="With Template" [template]="template1">
   <ng-template #template1 let-text="text">
-    <div style="border: 1px solid blue;">
+    <div style="border: 1px solid blue">
       {{ text + "!" }}
     </div>
   </ng-template>
@@ -34,4 +34,5 @@
     <dxi-cell gridData="cell42"></dxi-cell>
   </dxi-row>
 </dx-with-nested>
+<dx-with-nested [rows]="[]"> </dx-with-nested>
 <dx-with-nested> </dx-with-nested>
