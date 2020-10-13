@@ -32,7 +32,8 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
     (valueChange)="_valueChange($event)"
   ></dx-inner-widget>`,
 })
-export default class Widget extends WidgetInput
+export default class Widget
+  extends WidgetInput
   implements ControlValueAccessor {
   get __restAttributes(): any {
     return {};
@@ -62,8 +63,8 @@ export default class Widget extends WidgetInput
   _valueChange: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._valueChange = (value: boolean) => {
-      this.valueChange.emit(value);
+    this._valueChange = (e: any) => {
+      this.valueChange.emit(e);
       this._detectChanges();
     };
   }

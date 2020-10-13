@@ -11,6 +11,7 @@ import { Conditional } from "./conditions";
 import { Component } from "./component";
 import { PropertyAssignment, SpreadAssignment } from "./property-assignment";
 import { getTemplateProperty } from "../utils/expressions";
+import { Property } from "./class-members";
 
 export function getJsxExpression(
   e: ExpressionWithExpression | Expression | undefined,
@@ -136,6 +137,16 @@ export class JsxOpeningElement extends Expression {
 
   getTemplateProperty(options?: toStringOptions) {
     return getTemplateProperty(this.tagName, options);
+  }
+
+  checkTemplatePropUsage(templateProperty: Property) {
+    if (
+      this.attributes.some(
+        (c) => c instanceof JsxAttribute && c.name.toString() === "ref"
+      )
+    ) {
+      throw `Templates do not support refs. See '${templateProperty.name}' prop usage in view function`;
+    }
   }
 
   isPortal() {

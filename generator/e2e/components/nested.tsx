@@ -10,7 +10,12 @@ function view(model: WithNested) {
           <br />
         </span>
       ))}
-      {!model.props.rows && <span>{"No Data"}</span>}
+      {/*
+        should be model.props.rows.length conditions after #501 is fixed 
+      */}
+      {!(model.props.rows && model.props.rows.length) && (
+        <span>{"No Data"}</span>
+      )}
     </div>
   );
 }

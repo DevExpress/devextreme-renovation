@@ -1080,10 +1080,9 @@ export class AngularComponent extends Component {
 
     return events
       .map((e) => {
-        const parameters = (e.type as FunctionTypeNode).parameters || [];
         constructorStatements.push(
-          `this._${e.name}=(${parameters.join(",")}) => {
-            this.${e.name}.emit(${parameters.map((p) => p.name).join(",")});
+          `this._${e.name}=(e:any) => {
+            this.${e.name}.emit(e);
             ${
               this.members.some(
                 (m) => m.isState && e.name === `${m.name}Change`
@@ -1401,6 +1400,8 @@ export class AngularComponent extends Component {
       ngAfterViewInitStatements.push("this._detectChanges()");
     }
 
+    const trackBy = this.compileTrackBy(decoratorToStringOptions);
+
     return `
         ${this.compileImports(coreImports)}
         ${this.compileCdkImports(cdkImports)}
@@ -1416,9 +1417,10 @@ export class AngularComponent extends Component {
         ? `implements ${implementedInterfaces.join(",")}`
         : ""
     } {
-            ${this.extractGlobalsFromTemplate(componentDecorator, " = ").join(
-              ";\n"
-            )}
+            ${this.extractGlobalsFromTemplate(
+              componentDecorator + trackBy,
+              " = "
+            ).join(";\n")}
             ${this.members
               .filter((m) => !m.inherited && !(m instanceof SetAccessor))
               .map((m) =>
@@ -1431,7 +1433,7 @@ export class AngularComponent extends Component {
               .filter((m) => m)
               .join("\n")}
             ${spreadAttributes}
-            ${this.compileTrackBy(decoratorToStringOptions)}
+            ${trackBy}
             ${this.compileContext(
               constructorStatements,
               constructorArguments,

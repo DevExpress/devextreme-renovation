@@ -585,11 +585,17 @@ export default class Generator implements GeneratorAPI {
       const hasModule = importedModules.some((m) => m === modulePath);
 
       if (modulePath && !hasModule) {
-        compileCode(this, fs.readFileSync(modulePath).toString(), {
-          dirname: path.dirname(modulePath),
-          path: modulePath,
-          importedModules: [...importedModules, modulePath],
-        });
+        compileCode(
+          this,
+          fs.readFileSync(modulePath).toString(),
+          {
+            dirname: path.dirname(modulePath),
+            path: modulePath,
+            importedModules: [...importedModules, modulePath],
+          },
+          false,
+          true
+        );
 
         if (importClause.default) {
           this.addComponent(
@@ -1287,6 +1293,10 @@ export default class Generator implements GeneratorAPI {
 
   cache: GeneratorCache = {};
 
+  resetCache() {
+    this.cache = {};
+  }
+
   meta: { [name: string]: any } = {};
 
   destination: string = "";
@@ -1315,7 +1325,10 @@ export default class Generator implements GeneratorAPI {
     }
   }
 
-  processCodeFactoryResult(codeFactoryResult: Array<any>) {
+  processCodeFactoryResult(
+    codeFactoryResult: Array<any>,
+    createFactoryOnly: boolean
+  ) {
     const context = this.getContext();
     const functions: Function[] = [];
     codeFactoryResult.forEach((e) => {
@@ -1365,10 +1378,13 @@ export default class Generator implements GeneratorAPI {
       }
     });
     this.cache.__globals__ = context.globals;
+    if (createFactoryOnly) {
+      return "";
+    }
     return this.format(codeFactoryResult.join(";\n"));
   }
 
-  generate(factory: any): GeneratorResult[] {
+  generate(factory: any, createFactoryOnly = false): GeneratorResult[] {
     const result: GeneratorResult[] = [];
     const codeFactoryResult = factory(this);
     const { path } = this.getContext();
@@ -1384,9 +1400,10 @@ export default class Generator implements GeneratorAPI {
         this.meta[path] = component.getMeta();
       }
     }
+
     result.push({
       path: path && this.processSourceFileName(path),
-      code: this.processCodeFactoryResult(codeFactoryResult),
+      code: this.processCodeFactoryResult(codeFactoryResult, createFactoryOnly),
     });
 
     return result;

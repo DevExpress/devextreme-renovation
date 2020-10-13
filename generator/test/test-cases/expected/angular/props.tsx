@@ -1,8 +1,11 @@
+type EventCallBack<Type> = (e: Type) => void;
+
 import { Input, Output, EventEmitter } from "@angular/core";
 class WidgetInput {
   @Input() height: number = 10;
   @Input() export: object = {};
   @Output() onClick: EventEmitter<number> = new EventEmitter();
+  @Output() onSomething: EventEmitter<any> = new EventEmitter();
 }
 
 import {
@@ -36,10 +39,14 @@ export default class Widget extends WidgetInput {
   }
 
   _onClick: any;
+  _onSomething: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._onClick = (a: number) => {
-      this.onClick.emit(a);
+    this._onClick = (e: any) => {
+      this.onClick.emit(e);
+    };
+    this._onSomething = (e: any) => {
+      this.onSomething.emit(e);
     };
   }
 }

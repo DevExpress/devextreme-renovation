@@ -1,4 +1,5 @@
 import mocha from "./helpers/mocha";
+import assert from "assert";
 import compile from "../component-compiler";
 import { createTestGenerator, getModulePath } from "./helpers/common";
 import generator from "../react-generator";
@@ -116,6 +117,17 @@ mocha.describe("react-generation", function () {
 
   mocha.it("template-transit", function () {
     this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("Throw error if ref is passed to template", function () {
+    try {
+      this.testGenerator("template-with-ref");
+    } catch (e) {
+      assert.strictEqual(
+        e,
+        "Templates do not support refs. See 'headerTemplate' prop usage in view function"
+      );
+    }
   });
 
   mocha.it("refs", function () {

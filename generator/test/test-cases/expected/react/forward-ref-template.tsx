@@ -24,8 +24,9 @@ interface RefOnChildrenTemplate {
 
 const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
   (TemplateProp &&
-    ((props: any) =>
-      TemplateProp({ ...TemplateProp.defaultProps, ...props }))) ||
+    (TemplateProp.defaultProps
+      ? (props: any) => <TemplateProp {...props} />
+      : TemplateProp)) ||
   (RenderProp &&
     ((props: any) =>
       RenderProp(

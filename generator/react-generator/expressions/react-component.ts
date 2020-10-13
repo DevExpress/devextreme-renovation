@@ -524,15 +524,15 @@ export class ReactComponent extends Component {
   compileTemplateGetter(): string {
     return this.props.some((p) => p.isTemplate)
       ? `
-      const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) => (
-          (TemplateProp && ((props: any) => TemplateProp({ ...TemplateProp.defaultProps, ...props }))) ||
-          (RenderProp &&
-            ((props: any) =>
-              RenderProp(
-                ...("data" in props ? [props.data, props.index] : [props])
-              ))) ||
-          (ComponentProp && ((props: any) => <ComponentProp {...props} />))
-      );
+          const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) => (
+            (TemplateProp && (TemplateProp.defaultProps ? (props: any) => <TemplateProp {...props} /> : TemplateProp)) ||
+              (RenderProp &&
+                ((props: any) =>
+                  RenderProp(
+                    ...("data" in props ? [props.data, props.index] : [props])
+                  ))) ||
+              (ComponentProp && ((props: any) => <ComponentProp {...props} />))
+          );
       `
       : "";
   }
