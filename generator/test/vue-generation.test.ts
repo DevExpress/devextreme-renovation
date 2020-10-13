@@ -229,6 +229,10 @@ mocha.describe("vue-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("globals-in-template", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("private", function () {
     this.testGenerator(this.test!.title);
   });

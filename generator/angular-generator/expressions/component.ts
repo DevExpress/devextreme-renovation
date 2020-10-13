@@ -1401,6 +1401,8 @@ export class AngularComponent extends Component {
       ngAfterViewInitStatements.push("this._detectChanges()");
     }
 
+    const trackBy = this.compileTrackBy(decoratorToStringOptions);
+
     return `
         ${this.compileImports(coreImports)}
         ${this.compileCdkImports(cdkImports)}
@@ -1416,9 +1418,10 @@ export class AngularComponent extends Component {
         ? `implements ${implementedInterfaces.join(",")}`
         : ""
     } {
-            ${this.extractGlobalsFromTemplate(componentDecorator, " = ").join(
-              ";\n"
-            )}
+            ${this.extractGlobalsFromTemplate(
+              componentDecorator + trackBy,
+              " = "
+            ).join(";\n")}
             ${this.members
               .filter((m) => !m.inherited && !(m instanceof SetAccessor))
               .map((m) =>
@@ -1431,7 +1434,7 @@ export class AngularComponent extends Component {
               .filter((m) => m)
               .join("\n")}
             ${spreadAttributes}
-            ${this.compileTrackBy(decoratorToStringOptions)}
+            ${trackBy}
             ${this.compileContext(
               constructorStatements,
               constructorArguments,
