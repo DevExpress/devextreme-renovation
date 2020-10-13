@@ -16,7 +16,6 @@ export class WidgetInput {
 })
 export default class Widget extends JSXComponent(WidgetInput) {
   @Ref() headerRef?: any;
-  @Ref() footerRef?: any;
 }
 
 function view(viewModel: Widget) {
