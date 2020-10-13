@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x]
+        TASK: [generate-components, react-compilation-check]
 
     steps:
       - name: Get sources
@@ -46,18 +46,17 @@ jobs:
         run: |
           cd ./DevExtreme
           npm i ../generator/build
+          
       - name: Build DevExtreme
         run: |
           cd ./DevExtreme
           npm install --no-package-lock --no-audit --no-fund
           npx gulp localization
-      - name: Build Preact
-        run: |
-          cd ./DevExtreme
-          npx gulp generate-components 
           
-      - name: Build React
+      - name: Test Generation - ${{ matrix.TASK }}
+        env:
+          TASK: ${{ matrix.TASK }}
         run: |
           cd ./DevExtreme
-          npx gulp react-compilation-check
+          npx gulp $TASK 
           
