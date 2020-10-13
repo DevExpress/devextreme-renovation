@@ -2,9 +2,11 @@ const VueLoaderPlugin = require("vue-loader/lib/plugin");
 const path = require("path");
 const webpack = require("webpack");
 
+const { getEntries, getPages } = require("../../helpers/pages");
+
 module.exports = {
   mode: "development",
-  entry: path.resolve(__dirname, "./app/src/index.js"),
+  entry: getEntries(path.resolve(__dirname, "./app/src"), "js"),
   module: {
     rules: [
       {
@@ -67,16 +69,21 @@ module.exports = {
     ],
   },
 
-  output: {
-    path: __dirname + "/dist",
-    publicPath: "/",
-    filename: "bundle.js",
-  },
-
   resolve: {
     alias: { vue: "vue/dist/vue.esm.js" },
     extensions: [".js", ".tsx", ".ts"],
   },
 
-  plugins: [new VueLoaderPlugin(), new webpack.HotModuleReplacementPlugin()],
+  output: {
+    path: path.resolve("./e2e/platforms/angular/dist"),
+    publicPath: "/",
+    filename: "[name].js",
+    chunkFilename: "[id].chunk.js",
+  },
+
+  plugins: [
+    ...getPages(path.resolve(__dirname, "./app/src")),
+    new VueLoaderPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+  ],
 };

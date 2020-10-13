@@ -10,11 +10,14 @@ function view(model: Widget): JSX.Element {
   return <span></span>;
 }
 
+type EventCallBack<Type> = (e: Type) => void;
+
 @ComponentBindings()
 class WidgetInput {
   @OneWay() height = 10;
   @OneWay() export: object = {};
   @Event() onClick: (a: number) => void = () => {};
+  @Event() onSomething: EventCallBack<number> = () => {};
 }
 
 @Component({

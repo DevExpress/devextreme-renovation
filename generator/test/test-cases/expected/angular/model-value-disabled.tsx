@@ -30,7 +30,8 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
   template: `<div>{{ value }}</div>`,
 })
-export default class ModelWidget extends ModelWidgetInput
+export default class ModelWidget
+  extends ModelWidgetInput
   implements ControlValueAccessor {
   get __restAttributes(): any {
     return {};
@@ -65,12 +66,12 @@ export default class ModelWidget extends ModelWidgetInput
   _notValueChange: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._valueChange = (value: boolean) => {
-      this.valueChange.emit(value);
+    this._valueChange = (e: any) => {
+      this.valueChange.emit(e);
       this._detectChanges();
     };
-    this._notValueChange = (notValue: boolean) => {
-      this.notValueChange.emit(notValue);
+    this._notValueChange = (e: any) => {
+      this.notValueChange.emit(e);
       this._detectChanges();
     };
   }
