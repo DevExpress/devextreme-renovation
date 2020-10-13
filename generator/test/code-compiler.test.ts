@@ -54,6 +54,8 @@ mocha.describe("code-compiler: gulp integration", function () {
     );
     assert.ok(result[0].path.endsWith("props-in-listener.tsx"));
 
+    assert.deepEqual(generator.cache, {});
+
     const dirname = setContextSpy.firstCall.args[0]!.dirname!;
     assert.ok(
       dirname.endsWith("declarations/src") ||

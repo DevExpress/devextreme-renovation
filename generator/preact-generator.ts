@@ -513,8 +513,11 @@ export class PreactGenerator extends ReactGenerator {
     };
   }
 
-  generate(factory: any): { path?: string; code: string }[] {
-    const result = super.generate(factory);
+  generate(
+    factory: any,
+    createFactoryOnly: boolean
+  ): { path?: string; code: string }[] {
+    const result = super.generate(factory, createFactoryOnly);
 
     const { path } = this.getContext();
     const source =
