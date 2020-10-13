@@ -1,16 +1,19 @@
 function view(model: Widget): any {
   return <span></span>;
 }
+type EventCallBack<Type> = (e: Type) => void;
 
 export declare type WidgetInputType = {
   height: number;
   export: object;
   onClick: (a: number) => void;
+  onSomething: EventCallBack<number>;
 };
 const WidgetInput: WidgetInputType = {
   height: 10,
   export: {},
   onClick: () => {},
+  onSomething: () => {},
 };
 import * as React from "react";
 import { useCallback, HTMLAttributes } from "react";
@@ -37,7 +40,13 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { export: exportProp, height, onClick, ...restProps } = props;
+      const {
+        export: exportProp,
+        height,
+        onClick,
+        onSomething,
+        ...restProps
+      } = props;
       return restProps;
     },
     [props]
