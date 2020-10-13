@@ -48,7 +48,34 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   );
 
   return view({
-    props: { ...props },
+    props: {
+      ...props,
+      headerTemplate:
+        props.headerTemplate &&
+        (props.headerTemplate.defaultProps
+          ? (props: any) => <props.headerTemplate {...props} />
+          : props.headerTemplate),
+      template:
+        props.template &&
+        (props.template.defaultProps
+          ? (props: any) => <props.template {...props} />
+          : props.template),
+      contentTemplate:
+        props.contentTemplate &&
+        (props.contentTemplate.defaultProps
+          ? (props: any) => <props.contentTemplate {...props} />
+          : props.contentTemplate),
+      footerTemplate:
+        props.footerTemplate &&
+        (props.footerTemplate.defaultProps
+          ? (props: any) => <props.footerTemplate {...props} />
+          : props.footerTemplate),
+      componentTemplate:
+        props.componentTemplate &&
+        (props.componentTemplate.defaultProps
+          ? (props: any) => <props.componentTemplate {...props} />
+          : props.componentTemplate),
+    },
     restAttributes: __restAttributes(),
   });
 }
