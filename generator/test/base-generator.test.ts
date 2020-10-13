@@ -2020,7 +2020,13 @@ mocha.describe("base-generator: expressions", function () {
           const identifer = generator.createIdentifier("render");
           const element = generator.createJsxElement(
             generator.createJsxOpeningElement(identifer, [], []),
-            [],
+            [
+              generator.createJsxElement(
+                generator.createJsxOpeningElement(identifer, [], []),
+                [],
+                generator.createJsxClosingElement(identifer)
+              ),
+            ],
             generator.createJsxClosingElement(identifer)
           );
 
@@ -2033,7 +2039,7 @@ mocha.describe("base-generator: expressions", function () {
                 render: expression,
               },
             }),
-            "<viewModel.props.template ></viewModel.props.template>"
+            "<viewModel.props.template ><viewModel.props.template ></viewModel.props.template></viewModel.props.template>"
           );
         }
       );

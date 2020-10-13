@@ -273,8 +273,14 @@ export class VueGenerator extends BaseGenerator {
     });
   }
 
-  processCodeFactoryResult(codeFactoryResult: Array<any>) {
-    const code = super.processCodeFactoryResult(codeFactoryResult);
+  processCodeFactoryResult(
+    codeFactoryResult: Array<any>,
+    createFactoryOnly: boolean
+  ) {
+    const code = super.processCodeFactoryResult(
+      codeFactoryResult,
+      createFactoryOnly
+    );
     if (getComponentListFromContext(this.getContext()).length === 0) {
       return prettier.format(code, { parser: "babel" });
     }
