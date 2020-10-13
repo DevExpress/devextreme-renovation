@@ -21,25 +21,15 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-template-default-value",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div
-      >TemplateDefaultValue<ng-container
-        *ngTemplateOutlet="
-          contentTemplate || contentTemplateDefault;
-          context: { data: { p1: stringToRender }, index: 5 }
-        "
-      ></ng-container
-      >ComponentTemplateDefaultValue<ng-container
-        *ngTemplateOutlet="
-          compTemplate || compTemplateDefault;
-          context: { value: stringToRender }
-        "
-      ></ng-container></div
-    ><ng-template #contentTemplateDefault let-data="data" ,let-index="index"
-      ><span>{{ data.p1 }}</span></ng-template
-    >
-    <ng-template #compTemplateDefault let-value="value"
-      ><div>{{ optionalValue || value }}</div></ng-template
-    >`,
+  template: `<div >TemplateDefaultValue<ng-container *ngTemplateOutlet="contentTemplate||contentTemplateDefault; context:{data:{p1:stringToRender},index:5}">
+      </ng-container>ComponentTemplateDefaultValue<ng-container *ngTemplateOutlet="compTemplate||compTemplateDefault; context:{value:stringToRender}">
+      </ng-container></div>
+        <ng-template #contentTemplateDefault let-data="data",let-index="index">
+          <span >{{data.p1}}</span>
+          </ng-template>
+
+        <ng-template #compTemplateDefault><WidgetWithProps [value]="value"/>
+          </ng-template>`,
 })
 export default class TemplateDefaultValue extends TemplateDefaultValueProps {
   get __restAttributes(): any {
