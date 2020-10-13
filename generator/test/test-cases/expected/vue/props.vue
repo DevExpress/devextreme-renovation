@@ -27,6 +27,7 @@ export const DxWidget = {
         height: this.height,
         export: this.export,
         onClick: this.onClick,
+        onSomething: this.onSomething,
       };
     },
   },
@@ -38,6 +39,9 @@ export const DxWidget = {
     },
     onClick(...args) {
       this.$emit("click", ...args);
+    },
+    onSomething(...args) {
+      this.$emit("something", ...args);
     },
   },
 };

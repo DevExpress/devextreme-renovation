@@ -5,8 +5,6 @@ import {
 import { PropertyAssignment } from "../../../base-generator/expressions/property-assignment";
 import { toStringOptions } from "../../../base-generator/types";
 import { getProps } from "../../../base-generator/expressions/component";
-import { getTemplatePropName } from "../react-component-input";
-import { getTemplateProperty } from "../../../base-generator/utils/expressions";
 
 const eventsDictionary = {
   pointerover: "onPointerOver",
@@ -35,9 +33,6 @@ export class JsxAttribute extends BaseJsxAttribute {
         name = member.name;
 
         if (member.isTemplate) {
-          if (!getTemplateProperty(this.initializer, options)) {
-            name = getTemplatePropName(name, "component");
-          }
           tsOptions = { ...options, variables: undefined };
         }
       }

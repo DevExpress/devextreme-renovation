@@ -40,6 +40,7 @@ import {
   getExpression,
   getMember,
 } from "../../../base-generator/utils/expressions";
+import { VariableExpression } from "../../../base-generator/types";
 
 export class JsxChildExpression extends JsxExpression {
   constructor(expression: JsxExpression) {
@@ -297,6 +298,28 @@ export class JsxChildExpression extends JsxExpression {
             keyAttribute.toString({
               ...templateOptions,
               newComponentContext: SyntaxKind.ThisKeyword,
+              variables: Object.keys(templateOptions.variables || {}).reduce(
+                (variables: VariableExpression, k) => {
+                  const variable = templateOptions.variables![k];
+                  if (
+                    variable instanceof Identifier &&
+                    variable.toString(templateOptions).startsWith("global")
+                  ) {
+                    return {
+                      ...variables,
+                      [k]: new PropertyAccess(
+                        new SimpleExpression(SyntaxKind.ThisKeyword),
+                        variable
+                      ),
+                    };
+                  }
+                  return {
+                    ...variables,
+                    [k]: variable,
+                  };
+                },
+                {}
+              ),
             }),
             iterator.parameters[1]?.name.toString() || "",
             itemName

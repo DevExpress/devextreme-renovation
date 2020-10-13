@@ -1,9 +1,10 @@
 const webpack = require("webpack");
 const path = require("path");
+const { getEntries, getPages } = require("../../helpers/pages");
 
 module.exports = {
   mode: "development",
-  entry: path.resolve("./e2e/platforms/react/app/src/index.js"),
+  entry: getEntries(path.resolve(__dirname, "./app/src"), "js"),
   module: {
     rules: [
       {
@@ -45,8 +46,12 @@ module.exports = {
   output: {
     path: __dirname + "/dist",
     publicPath: "/",
-    filename: "bundle.js",
+    filename: "[name].js",
+    chunkFilename: "[id].chunk.js",
   },
 
-  plugins: [new webpack.HotModuleReplacementPlugin()],
+  plugins: [
+    ...getPages(path.resolve(__dirname, "./app/src")),
+    new webpack.HotModuleReplacementPlugin(),
+  ],
 };

@@ -31,7 +31,8 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
     [ngStyle]="__processNgStyle({ width: 100, height: 100 })"
   ></div>`,
 })
-export default class InnerWidget extends InnerWidgetProps
+export default class InnerWidget
+  extends InnerWidgetProps
   implements ControlValueAccessor {
   get __restAttributes(): any {
     return {};
@@ -65,8 +66,8 @@ export default class InnerWidget extends InnerWidgetProps
     this._onSelect = (e: any) => {
       this.onSelect.emit(e);
     };
-    this._valueChange = (value: number) => {
-      this.valueChange.emit(value);
+    this._valueChange = (e: any) => {
+      this.valueChange.emit(e);
       this._detectChanges();
     };
   }

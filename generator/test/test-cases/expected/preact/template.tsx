@@ -29,7 +29,11 @@ interface Widget {
   props: typeof WidgetInput & RestProps;
   restAttributes: RestProps;
 }
-
+const getTemplate = (TemplateProp: any) =>
+  TemplateProp &&
+  (TemplateProp.defaultProps
+    ? (props: any) => <TemplateProp {...props} />
+    : TemplateProp);
 export default function Widget(props: typeof WidgetInput & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
@@ -48,7 +52,14 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   );
 
   return view({
-    props: { ...props },
+    props: {
+      ...props,
+      headerTemplate: getTemplate(props.headerTemplate),
+      template: getTemplate(props.template),
+      contentTemplate: getTemplate(props.contentTemplate),
+      footerTemplate: getTemplate(props.footerTemplate),
+      componentTemplate: getTemplate(props.componentTemplate),
+    },
     restAttributes: __restAttributes(),
   });
 }
