@@ -16,7 +16,7 @@ export default () => {
     <div>
       <ButtonWithTemplate
         text={"With Template"}
-        render={buttonTemplate}
+        template={buttonTemplate}
       ></ButtonWithTemplate>
 
       <ButtonWithTemplate text={"Without Template"}></ButtonWithTemplate>
