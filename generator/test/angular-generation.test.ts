@@ -1,3 +1,4 @@
+import assert from "assert";
 import mocha from "./helpers/mocha";
 import generator from "../angular-generator";
 import compile from "../component-compiler";
@@ -121,6 +122,17 @@ mocha.describe("angular-generation", function () {
 
   mocha.it("template-pass", function () {
     this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("Throw error if ref is passed to template", function () {
+    try {
+      this.testGenerator("template-with-ref");
+    } catch (e) {
+      assert.strictEqual(
+        e,
+        "Templates do not support refs. See 'headerTemplate' prop usage in view function"
+      );
+    }
   });
 
   mocha.it("method", function () {
