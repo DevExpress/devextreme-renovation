@@ -59,16 +59,16 @@ export default class Widget extends WidgetInput {
   _statePropChange: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._state1Change = (state1: boolean) => {
-      this.state1Change.emit(state1);
+    this._state1Change = (e: any) => {
+      this.state1Change.emit(e);
       this._detectChanges();
     };
-    this._state2Change = (state2: boolean) => {
-      this.state2Change.emit(state2);
+    this._state2Change = (e: any) => {
+      this.state2Change.emit(e);
       this._detectChanges();
     };
-    this._statePropChange = (stateProp: boolean) => {
-      this.statePropChange.emit(stateProp);
+    this._statePropChange = (e: any) => {
+      this.statePropChange.emit(e);
       this._detectChanges();
     };
   }
