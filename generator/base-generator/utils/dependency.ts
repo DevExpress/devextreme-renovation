@@ -4,7 +4,7 @@ import { toStringOptions } from "../types";
 
 export function checkDependency(
   expression: Expression,
-  properties: Array<BaseClassMember> = [],
+  properties: Array<BaseClassMember>,
   options: toStringOptions
 ) {
   const dependency = expression

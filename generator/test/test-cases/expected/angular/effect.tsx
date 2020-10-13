@@ -107,8 +107,8 @@ export default class Widget extends WidgetInput {
   _sChange: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._sChange = (s: number) => {
-      this.sChange.emit(s);
+    this._sChange = (e: any) => {
+      this.sChange.emit(e);
       this._detectChanges();
     };
   }

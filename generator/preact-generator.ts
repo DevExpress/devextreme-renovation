@@ -195,7 +195,12 @@ export class PreactComponent extends ReactComponent {
   }
 
   processTemplates() {
-    return [];
+    return this.props
+      .filter((p) => p.isTemplate)
+      .map(
+        (t) =>
+          `${t.name}: props.${t.name} && (props.${t.name}.defaultProps ? (props: any) => <props.${t.name} {...props} /> : props.${t.name})`
+      );
   }
 }
 

@@ -45,8 +45,8 @@ export default class Widget extends WidgetInput {
   _selectedChange: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._selectedChange = (selected: boolean) => {
-      this.selectedChange.emit(selected);
+    this._selectedChange = (e: any) => {
+      this.selectedChange.emit(e);
       this._detectChanges();
     };
   }
