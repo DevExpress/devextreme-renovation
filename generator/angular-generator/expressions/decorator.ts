@@ -8,6 +8,7 @@ import { getJsxExpression } from "../../base-generator/expressions/jsx";
 import { BaseFunction } from "../../base-generator/expressions/functions";
 import { Identifier } from "../../base-generator/expressions/common";
 import { GeneratorContext } from "../../base-generator/types";
+import { getAngularSelector } from "./component";
 
 export class Decorator extends BaseDecorator {
   toString(options?: toStringOptions) {
@@ -45,7 +46,7 @@ export class Decorator extends BaseDecorator {
           }
         });
         const templates = compileDefaultTemplates(options, this.context);
-        if (templates?.length) template += templates.join("\n");
+        if (templates?.length) template += templates.join("");
         if (template) {
           parameters.setProperty(
             "template",
@@ -76,22 +77,26 @@ function compileDefaultTemplates(
 
         if (template.initializer instanceof Identifier && context?.components) {
           const component = context.components[template.initializer.toString()];
-          return `
-        <ng-template #${name}Default><${
+          const templateString = `<ng-template #${name}Default ${template.variables
+            .map((v) => `let-${v.key}="${v.key}"`)
+            .join(" ")}><${getAngularSelector(
             component.name
-          } ${template.variables.map((v) => `[${v.key}]="${v.key}"`)}/>
-          </ng-template>`;
+          )} ${template.variables
+            .map((v) => `[${v.key}]="${v.key}"`)
+            .join(" ")}></${getAngularSelector(component.name)}>
+            </ng-template>`;
+          return templateString;
         }
         if (template.initializer instanceof BaseFunction) {
-          return `
-        <ng-template #${name}Default ${template.variables.map(
-            (v) => `let-${v.key}="${v.key}"`
-          )}>
-          ${template.initializer.getTemplate({
-            members: [],
-            newComponentContext: "",
-          })}
-          </ng-template>`;
+          const templateString = `  <ng-template #${name}Default ${template.variables
+            .map((v) => `let-${v.key}="${v.key}"`)
+            .join(" ")}>
+            ${template.initializer.getTemplate({
+              members: [],
+              newComponentContext: "",
+            })}
+            </ng-template>`;
+          return templateString;
         }
       })
       .filter((s) => s) as string[];
