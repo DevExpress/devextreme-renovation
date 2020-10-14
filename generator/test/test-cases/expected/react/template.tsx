@@ -152,7 +152,7 @@ function view(viewModel: Widget) {
 
       {viewModel.props.footerTemplate && FooterTemplate({ someProp: myvar })}
 
-      {ComponentTemplate({ value: "Test Value" })}
+      {ComponentTemplate({ value: "Test Value", key: "0" })}
     </div>
   );
 }
