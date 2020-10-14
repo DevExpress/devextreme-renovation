@@ -38,8 +38,8 @@ export default class Child extends ChildInput {
   _onClick: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._onClick = (a: number) => {
-      this.onClick.emit(a);
+    this._onClick = (e: any) => {
+      this.onClick.emit(e);
     };
   }
   @ViewChild("slotChildren") set slotChildren(

@@ -2,7 +2,7 @@ import { Selector } from "testcafe";
 import cloneTest from "./utils/check-all-platforms";
 import screenshotTest from "./utils/screenshot-test";
 
-fixture`Simple component`;
+fixture`Index Page`;
 
 cloneTest("Check default render", async (t) => {
   await t.expect(await screenshotTest(t, "body", "simple.png")).eql(true);
@@ -178,16 +178,6 @@ cloneTest("Dom Events should not lead to render", async (t) => {
   await t.expect(Selector("#sum-array .update-count").textContent).eql("1");
 });
 
-cloneTest("Check form values binding", async (t) => {
-  const el = Selector("#counter-form-value");
-
-  await t.expect(await el.textContent).eql("15");
-
-  await t.click(Selector("#counter-control"));
-
-  await t.expect(await el.textContent).eql("16");
-});
-
 cloneTest("Forward refs", async (t) => {
   const el = Selector(".forward-ref-child");
 
@@ -293,8 +283,6 @@ cloneTest("Render slot conditionally", async (t) => {
 });
 
 cloneTest("Default props", async (t) => {
-  const switchButton = await Selector("#render-slot-condition-switch");
-
   const assert = async (selector, value) => {
     const content = await Selector(`.${selector}`);
     await t.expect((await content.textContent).trim()).eql(value);

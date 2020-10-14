@@ -48,6 +48,8 @@ export function generateComponents(generator: GeneratorAPI) {
     },
   });
 
+  stream.on("end", () => generator.resetCache());
+
   return stream;
 }
 

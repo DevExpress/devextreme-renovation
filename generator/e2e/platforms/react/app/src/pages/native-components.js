@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import App from "../../../../components/app.tsx";
-import ButtonWithTemplate from "../../../../components/button-with-template.tsx";
-import Counter from "../../../../components/counter.tsx";
-import Nested, { Row, RowCell } from "../../../../components/nested.tsx";
+
+import Counter from "../../../../../components/counter";
+import ButtonWithTemplate from "../../../../../components/button-with-template";
+import Nested, { Row, RowCell } from "../../../../../components/nested";
 
 const buttonTemplate = ({ text }) => (
   <div style={{ border: "1px solid blue" }}>{text + "!"}</div>
@@ -12,14 +12,12 @@ export default () => {
   const [counterValue, counterValueChange] = useState(15);
   return (
     <div>
-      <App></App>
       <ButtonWithTemplate
         text={"With Template"}
         render={buttonTemplate}
       ></ButtonWithTemplate>
 
       <ButtonWithTemplate text={"Without Template"}></ButtonWithTemplate>
-
       <form>
         <Counter
           id="counter-control"
@@ -28,6 +26,7 @@ export default () => {
         ></Counter>
       </form>
       <div id="counter-form-value">{counterValue}</div>
+
       <Nested
         rows={[
           { cells: [{ gridData: "cell11" }, "cell12"] },

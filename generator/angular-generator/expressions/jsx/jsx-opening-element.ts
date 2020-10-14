@@ -312,6 +312,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   toString(options?: toStringOptions) {
     const templateProperty = this.getTemplateProperty(options) as Property;
     if (templateProperty) {
+      this.checkTemplatePropUsage(templateProperty);
       return this.compileTemplate(templateProperty, options);
     }
 

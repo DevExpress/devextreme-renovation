@@ -191,11 +191,17 @@ export class PreactComponent extends ReactComponent {
   }
 
   compileTemplateGetter() {
-    return "";
+    return this.props.some((p) => p.isTemplate)
+      ? `const getTemplate = (TemplateProp: any) => (
+          (TemplateProp && (TemplateProp.defaultProps ? (props: any) => <TemplateProp {...props} /> : TemplateProp))
+        );`
+      : "";
   }
 
   processTemplates() {
-    return [];
+    return this.props
+      .filter((p) => p.isTemplate)
+      .map((t) => `${t.name}: getTemplate(props.${t.name})`);
   }
 }
 
@@ -507,8 +513,11 @@ export class PreactGenerator extends ReactGenerator {
     };
   }
 
-  generate(factory: any): { path?: string; code: string }[] {
-    const result = super.generate(factory);
+  generate(
+    factory: any,
+    createFactoryOnly: boolean
+  ): { path?: string; code: string }[] {
+    const result = super.generate(factory, createFactoryOnly);
 
     const { path } = this.getContext();
     const source =

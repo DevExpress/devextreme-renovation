@@ -6,7 +6,8 @@ export function compileCode(
   generator: GeneratorAPI,
   code: string,
   file: { dirname: string; path: string; importedModules?: string[] },
-  includeExtraComponents: boolean = false
+  includeExtraComponents: boolean = false,
+  createFactoryOnly = false
 ): GeneratorResult[] | string {
   const source = ts.createSourceFile(
     file.path,
@@ -21,7 +22,15 @@ export function compileCode(
   });
   const codeFactory = generateFactoryCode(ts, source);
 
-  const codeFactoryResult = generator.generate(eval(codeFactory));
+  if (createFactoryOnly && generator.cache[file.path]) {
+    generator.setContext(null);
+    return "";
+  }
+
+  const codeFactoryResult = generator.generate(
+    eval(codeFactory),
+    createFactoryOnly
+  );
   generator.setContext(null);
 
   if (includeExtraComponents) {
