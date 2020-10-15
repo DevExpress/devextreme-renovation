@@ -1,12 +1,8 @@
-import {
-  WidgetWithProps,
-  DxWidgetWithPropsModule,
-} from "./dx-widget-with-props";
+import SampleWidget, { DxSampleWidgetModule } from "./sample-widget";
 import { Input, TemplateRef } from "@angular/core";
 export class TemplateDefaultValueProps {
   @Input() contentTemplate: TemplateRef<any> | null = null;
   @Input() stringToRender: string = "default string";
-  @Input() compTemplate: TemplateRef<any> | null = null;
 }
 
 import {
@@ -23,34 +19,35 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div
       >TemplateDefaultValue<ng-container
-        *ngTemplateOutlet="
-          contentTemplate || contentTemplateDefault;
-          context: { data: { p1: stringToRender }, index: 5 }
-        "
+        *ngTemplateOutlet="contentTemplate || contentTemplateDefault"
       >
       </ng-container
-      >ComponentTemplateDefaultValue<ng-container
+      ><ng-container
         *ngTemplateOutlet="
-          compTemplate || compTemplateDefault;
-          context: { value: stringToRender }
+          contentTemplate || contentTemplateDefault;
+          context: { text: stringToRender }
         "
       >
       </ng-container
       ><ng-container
         *ngTemplateOutlet="
-          compTemplate || compTemplateDefault;
-          context: { value: 'I am 5 string', index: 5 }
+          contentTemplate || contentTemplateDefault;
+          context: { textWithDefault: stringToRender }
         "
       >
-      </ng-container
-    ></div>
-    <ng-template #contentTemplateDefault let-data="data" let-index="index">
-      <span>{{ data.p1 }}</span> </ng-template
-    ><ng-template #compTemplateDefault let-value="value" let-index="index"
-      ><dx-widget-with-props
-        [value]="value"
-        [index]="index"
-      ></dx-widget-with-props>
+      </ng-container></div
+    ><ng-template
+      #contentTemplateDefault
+      let-text="text"
+      let-textWithDefault="textWithDefault"
+      ><dx-sample-widget
+        [text]="text !== undefined ? text : SampleWidgetDefaults.text"
+        [textWithDefault]="
+          textWithDefault !== undefined
+            ? textWithDefault
+            : SampleWidgetDefaults.textWithDefault
+        "
+      ></dx-sample-widget>
     </ng-template>`,
 })
 export default class TemplateDefaultValue extends TemplateDefaultValueProps {
@@ -67,10 +64,12 @@ export default class TemplateDefaultValue extends TemplateDefaultValueProps {
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
   }
+
+  SampleWidgetDefaults = { textWithDefault: "swtext", number: 42 };
 }
 @NgModule({
   declarations: [TemplateDefaultValue],
-  imports: [DxWidgetWithPropsModule, CommonModule],
+  imports: [DxSampleWidgetModule, CommonModule],
   exports: [TemplateDefaultValue],
 })
 export class DxTemplateDefaultValueModule {}

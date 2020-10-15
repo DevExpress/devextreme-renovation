@@ -38,6 +38,18 @@ import TemplateDefaultValue from "./template-passing/template-default-value";
 import RenderSlotCondition from "./slot/render-slot-condition";
 import DefaultPropsComponent from "./default-props/default-props-component";
 
+const CustomTemplate = (props: {
+  text?: string;
+  textWithDefault?: string;
+  number?: number;
+}) => {
+  return (
+    <div>
+      CUSTOM|{props.text || ""}|{props.textWithDefault || ""}|
+      {props.number || ""}
+    </div>
+  );
+};
 function view(model: App) {
   return (
     <div>
@@ -129,6 +141,7 @@ function view(model: App) {
       <PortalContainer />
       <TestPropertyAccessChain />
       <TemplateDefaultValue stringToRender={"I am passed from app"} />
+      <TemplateDefaultValue contentTemplate={CustomTemplate} />
       <RenderSlotCondition>content</RenderSlotCondition>
       <DefaultPropsComponent />
     </div>

@@ -1,40 +1,31 @@
-import { WidgetWithProps } from "./dx-widget-with-props";
+import SampleWidget from "./sample-widget";
 export const viewFunction = (model: TemplateDefaultValue) => (
   <div>
     {" "}
     TemplateDefaultValue
+    {model.props.contentTemplate({})}
+    {model.props.contentTemplate({ text: model.props.stringToRender })}
     {model.props.contentTemplate({
-      data: { p1: model.props.stringToRender },
-      index: 5,
+      textWithDefault: model.props.stringToRender,
     })}
-    ComponentTemplateDefaultValue
-    {model.props.compTemplate({ value: model.props.stringToRender })}
-    {model.props.compTemplate({ value: "I am 5 string", index: 5 })}
   </div>
 );
 
 export declare type TemplateDefaultValuePropsType = {
-  contentTemplate: (props: { data: { p1: string }; index: number }) => any;
+  contentTemplate: React.FunctionComponent<
+    Partial<{ text?: string; textWithDefault?: string; number?: number }>
+  >;
   stringToRender: string;
-  compTemplate: React.FunctionComponent<
-    Partial<Omit<{ value?: string; index?: number }, "value">> &
-      Required<Pick<{ value?: string; index?: number }, "value">>
+  contentRender?: React.FunctionComponent<
+    Partial<{ text?: string; textWithDefault?: string; number?: number }>
   >;
-  contentRender?: (props: { data: { p1: string }; index: number }) => any;
-  contentComponent?: (props: { data: { p1: string }; index: number }) => any;
-  compRender?: React.FunctionComponent<
-    Partial<Omit<{ value?: string; index?: number }, "value">> &
-      Required<Pick<{ value?: string; index?: number }, "value">>
-  >;
-  compComponent?: React.JSXElementConstructor<
-    Partial<Omit<{ value?: string; index?: number }, "value">> &
-      Required<Pick<{ value?: string; index?: number }, "value">>
+  contentComponent?: React.JSXElementConstructor<
+    Partial<{ text?: string; textWithDefault?: string; number?: number }>
   >;
 };
 export const TemplateDefaultValueProps: TemplateDefaultValuePropsType = {
-  contentTemplate: (props) => <span>{props.data.p1}</span>,
+  contentTemplate: SampleWidget,
   stringToRender: "default string",
-  compTemplate: WidgetWithProps,
 };
 import * as React from "react";
 import { useCallback, HTMLAttributes } from "react";
@@ -66,9 +57,6 @@ export default function TemplateDefaultValue(
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
-        compComponent,
-        compRender,
-        compTemplate,
         contentComponent,
         contentRender,
         contentTemplate,
@@ -87,11 +75,6 @@ export default function TemplateDefaultValue(
         props.contentTemplate,
         props.contentRender,
         props.contentComponent
-      ),
-      compTemplate: getTemplate(
-        props.compTemplate,
-        props.compRender,
-        props.compComponent
       ),
     },
     restAttributes: __restAttributes(),

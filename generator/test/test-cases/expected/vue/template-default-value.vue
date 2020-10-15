@@ -1,29 +1,12 @@
 <template>
   <div
-    >TemplateDefaultValue<slot
-      name="contentTemplate"
-      v-bind:data="{ p1: stringToRender }"
-      v-bind:index="5"
-    >
-      <div
-        style="display: contents"
-        :setdata="(data = { p1: stringToRender })"
-        :setindex="(index = 5)"
-        ><span>{{ data.p1 }}</span></div
-      > </slot
-    >ComponentTemplateDefaultValue<slot
-      name="compTemplate"
-      v-bind:value="model.props.stringToRender"
-    ></slot
-    ><slot
-      name="compTemplate"
-      v-bind:value="'I am 5 string'"
-      v-bind:index="5"
-    ></slot
+    >TemplateDefaultValue<slot name="contentTemplate"></slot
+    ><slot name="contentTemplate" v-bind:text="stringToRender"></slot
+    ><slot name="contentTemplate" v-bind:textWithDefault="stringToRender"></slot
   ></div>
 </template>
 <script>
-import { DxWidgetWithProps as WidgetWithProps } from "./dx-widget-with-props";
+import SampleWidget from "./sample-widget";
 export const TemplateDefaultValueProps = {
   stringToRender: {
     type: String,
@@ -34,7 +17,7 @@ export const TemplateDefaultValueProps = {
 };
 export const DxTemplateDefaultValue = {
   components: {
-    WidgetWithProps,
+    SampleWidget,
   },
   props: TemplateDefaultValueProps,
   computed: {
@@ -45,7 +28,6 @@ export const DxTemplateDefaultValue = {
       return {
         contentTemplate: this.$scopedSlots.contentTemplate,
         stringToRender: this.stringToRender,
-        compTemplate: this.$scopedSlots.compTemplate,
       };
     },
   },

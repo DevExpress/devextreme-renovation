@@ -78,18 +78,21 @@ function compileDefaultTemplates(
         if (template.initializer instanceof Identifier && context?.components) {
           const component = context.components[template.initializer.toString()];
           const templateString = `<ng-template #${name}Default ${template.variables
-            .map((v) => `let-${v.key}="${v.key}"`)
+            .map((v) => `let-${v}="${v}"`)
             .join(" ")}><${getAngularSelector(
             component.name
           )} ${template.variables
-            .map((v) => `[${v.key}]="${v.key}"`)
+            .map(
+              (v) =>
+                `[${v}]="${v} !== undefined ? ${v} : ${component.name}Defaults.${v}"`
+            )
             .join(" ")}></${getAngularSelector(component.name)}>
             </ng-template>`;
           return templateString;
         }
         if (template.initializer instanceof BaseFunction) {
           const templateString = `  <ng-template #${name}Default ${template.variables
-            .map((v) => `let-${v.key}="${v.key}"`)
+            .map((v) => `let-${v}="${v}"`)
             .join(" ")}>
             ${template.initializer.getTemplate({
               members: [],

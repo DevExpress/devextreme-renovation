@@ -302,40 +302,36 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
     let elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${name}${contextString}"></ng-container>`;
 
+    const initializerComponent =
+      initializer instanceof Identifier &&
+      this.context.components &&
+      this.context.components[initializer.toString()]
+        ? this.context.components[initializer.toString()]
+        : undefined;
     if (
-      initializer instanceof BaseFunction ||
-      (initializer instanceof Identifier &&
-        this.context.components &&
-        this.context.components[initializer.toString()])
+      options &&
+      (initializer instanceof BaseFunction ||
+        (initializer instanceof Identifier && initializerComponent))
     ) {
       elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${name}||${name}Default${contextString}">
       </ng-container>`;
-      if (options) {
-        if (!options.defaultTemplates) {
-          options.defaultTemplates = {
-            [name]: { variables: contextElements, initializer },
-          };
-        } else {
-          if (!options.defaultTemplates[name]?.variables) {
-            options.defaultTemplates[name] = {
-              variables: contextElements,
-              initializer,
-            };
-          } else {
-            const extravars = contextElements
-              .map((el) => {
-                if (
-                  !options.defaultTemplates![name].variables.filter(
-                    (v) => v.key.toString() === el.key.toString()
-                  ).length
-                )
-                  return el;
-              })
-              .filter((v) => v) as PropertyAssignment[];
-            options.defaultTemplates![name].variables.push(...extravars);
-          }
-        }
+      if (initializerComponent) {
+        options.templateComponents = options.templateComponents
+          ? [...new Set([...options.templateComponents, initializerComponent])]
+          : [initializerComponent];
       }
+      const contextElementsStr = contextElements.map((el) => el.key.toString());
+      options.defaultTemplates = options.defaultTemplates || {};
+      if (options.defaultTemplates[name]) {
+        const oldVariables = options.defaultTemplates[name].variables;
+        options.defaultTemplates[name].variables = [
+          ...new Set([...oldVariables, ...contextElementsStr]),
+        ];
+      } else
+        options.defaultTemplates[name] = {
+          variables: contextElementsStr,
+          initializer,
+        };
     }
     if (attributes.length) {
       return `<ng-container ${attributes.join("\n")}>

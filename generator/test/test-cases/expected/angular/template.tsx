@@ -82,7 +82,9 @@ import { CommonModule } from "@angular/common";
     <ng-template #footerTemplateDefault let-someProp="someProp">
       <div></div> </ng-template
     ><ng-template #componentTemplateDefault let-value="value"
-      ><dx-widget-with-props [value]="value"></dx-widget-with-props>
+      ><dx-widget-with-props
+        [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
+      ></dx-widget-with-props>
     </ng-template>`,
 })
 export default class Widget extends WidgetInput {
@@ -99,6 +101,8 @@ export default class Widget extends WidgetInput {
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
   }
+
+  WidgetWithPropsDefaults = { value: "default text" };
 }
 @NgModule({
   declarations: [Widget],

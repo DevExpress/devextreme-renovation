@@ -19,7 +19,7 @@ export interface toStringOptions extends BaseToStringOptions {
   templateComponents?: Heritable[];
   defaultTemplates?: {
     [name: string]: {
-      variables: PropertyAssignment[];
+      variables: string[];
       initializer: BaseFunction | Identifier;
     };
   };
