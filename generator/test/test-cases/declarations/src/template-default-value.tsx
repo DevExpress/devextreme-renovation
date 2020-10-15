@@ -6,24 +6,33 @@ import {
   OneWay,
   Template,
 } from "../../../../component_declaration/common";
-import SampleWidget from "./sample-widget";
+import { WidgetWithProps } from "./dx-widget-with-props";
 
 export const viewFunction = (model: TemplateDefaultValue) => (
   <div>
     TemplateDefaultValue
-    <model.props.contentTemplate />
-    <model.props.contentTemplate text={model.props.stringToRender} />
-    <model.props.contentTemplate textWithDefault={model.props.stringToRender} />
+    <model.props.contentTemplate
+      value={model.props.stringToRender}
+      number={21}
+    />
+    <model.props.contentTemplate value={""} />
+    <model.props.contentTemplate
+      value={""}
+      optionalValue={"optional" + model.props.stringToRender}
+    />
   </div>
 );
 
 @ComponentBindings()
 export class TemplateDefaultValueProps {
-  @Template() contentTemplate: JSXTemplate<{
-    text?: string;
-    textWithDefault?: string;
-    number?: number;
-  }> = SampleWidget;
+  @Template() contentTemplate: JSXTemplate<
+    {
+      value: string;
+      optionalValue?: string;
+      number: number;
+    },
+    "value"
+  > = WidgetWithProps;
   @OneWay() stringToRender: string = "default string";
 }
 

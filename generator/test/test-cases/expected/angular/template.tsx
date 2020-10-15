@@ -102,7 +102,7 @@ export default class Widget extends WidgetInput {
     super();
   }
 
-  WidgetWithPropsDefaults = { value: "default text" };
+  WidgetWithPropsDefaults = { value: "default text", number: 42 };
 }
 @NgModule({
   declarations: [Widget],
