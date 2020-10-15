@@ -1,8 +1,17 @@
 <template>
   <div
-    >TemplateDefaultValue<slot name="contentTemplate"></slot
-    ><slot name="contentTemplate" v-bind:text="stringToRender"></slot
-    ><slot name="contentTemplate" v-bind:textWithDefault="stringToRender"></slot
+    >TemplateDefaultValue<slot name="contentTemplate">
+      <div style="display: contents"><SampleWidget /></div> </slot
+    ><slot name="contentTemplate" v-bind:text="stringToRender">
+      <div style="display: contents" :settext="(text = stringToRender)"
+        ><SampleWidget :text="text"
+      /></div> </slot
+    ><slot name="contentTemplate" v-bind:textWithDefault="stringToRender">
+      <div
+        style="display: contents"
+        :settextWithDefault="(textWithDefault = stringToRender)"
+        ><SampleWidget :textWithDefault="textWithDefault"
+      /></div> </slot
   ></div>
 </template>
 <script>

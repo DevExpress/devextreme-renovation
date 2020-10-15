@@ -89,17 +89,31 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
   compileTemplate(templateProperty: Property, options?: toStringOptions) {
     const attributes = this.attributes.map((a) => a.getTemplateProp(options));
-    const init = templateProperty?.initializer;
+    const initializer = templateProperty?.initializer;
     const defaultAttrs = this.attributes.filter(
       (a) => a instanceof JsxAttribute
     ) as JsxAttribute[];
 
-    if (init instanceof BaseFunction) {
+    const initializerComponent =
+      initializer instanceof Identifier &&
+      this.context.components &&
+      this.context.components[initializer.toString()]
+        ? this.context.components[initializer.toString()]
+        : undefined;
+    const componentTag = initializerComponent
+      ? `<${initializerComponent.name} ${defaultAttrs
+          .map((a) => `:${a.name.toString()}=${a.name.toString()}`)
+          .join(" ")}/>`
+      : "";
+    let body = componentTag;
+    if (initializer instanceof BaseFunction)
+      body = initializer.getTemplate(options);
+    if (body) {
       return `<slot name="${templateProperty.name}" ${attributes.join(" ")}>
         <div style="display:contents" ${this.createSetAttributes(
           defaultAttrs,
           options
-        )}>${init.getTemplate(options)}</div>
+        )}>${body}</div>
       </slot>`;
     }
 

@@ -36,7 +36,10 @@
         :setsomeProp="(someProp = viewModel.props.someProp)"
         ><div></div
       ></div> </slot
-    ><slot name="componentTemplate" v-bind:value="'Test Value'"></slot
+    ><slot name="componentTemplate" v-bind:value="'Test Value'">
+      <div style="display: contents" :setvalue="(value = 'Test Value')"
+        ><WidgetWithProps :value="value"
+      /></div> </slot
   ></div>
 </template>
 <script>
