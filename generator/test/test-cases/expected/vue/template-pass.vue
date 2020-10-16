@@ -8,7 +8,7 @@
         @update:value="slotProps.valueChange" /></template
     ><template v-slot:template="{ text }"
       ><span>{{ text }}</span></template
-    ><template v-slot:__arrowTemplate__generated="data"
+    ><template v-slot:arrowTemplate="data"
       ><div>{{ data.name }}</div></template
     ></WidgetWithTemplate
   >

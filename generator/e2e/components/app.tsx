@@ -36,6 +36,7 @@ import ContextApp from "./context/context-app";
 import TestPropertyAccessChain from "./property-access-chain";
 import RenderSlotCondition from "./slot/render-slot-condition";
 import DefaultPropsComponent from "./default-props/default-props-component";
+import InlineArrowFunction from "./inline-arrow-function";
 
 function view(model: App) {
   return (
@@ -129,6 +130,7 @@ function view(model: App) {
       <TestPropertyAccessChain />
       <RenderSlotCondition>content</RenderSlotCondition>
       <DefaultPropsComponent />
+      <InlineArrowFunction />
     </div>
   );
 }
