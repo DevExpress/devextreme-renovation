@@ -37,6 +37,7 @@ import TestPropertyAccessChain from "./property-access-chain";
 import TemplateDefaultValue from "./template-passing/template-default-value";
 import RenderSlotCondition from "./slot/render-slot-condition";
 import DefaultPropsComponent from "./default-props/default-props-component";
+import InlineArrowFunction from "./inline-arrow-function";
 
 const CustomTemplate = (props: {
   text?: string;
@@ -150,6 +151,7 @@ function view(model: App) {
       <TemplateDefaultValue contentTemplate={CustomTemplate} />
       <RenderSlotCondition>content</RenderSlotCondition>
       <DefaultPropsComponent />
+      <InlineArrowFunction />
     </div>
   );
 }

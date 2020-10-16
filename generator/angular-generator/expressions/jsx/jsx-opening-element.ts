@@ -505,7 +505,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
           isFunction(getExpression(template.initializer))
         ) {
           acc.push({
-            name: `__${template.name.toString()}__generated`,
+            name: this.getArrowFunctionGeneratedName(template.name.toString()),
             func: getExpression(template.initializer) as BaseFunction,
           });
         }
@@ -540,7 +540,9 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
     return [];
   }
-
+  getArrowFunctionGeneratedName(templateName: string) {
+    return `__${templateName}__generated`;
+  }
   getSpreadAttributes() {
     if (this.component) {
       return [];

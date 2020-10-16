@@ -294,6 +294,9 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       ).toString(options);
     }
   }
+  getArrowFunctionGeneratedName(templateName: string) {
+    return templateName;
+  }
 }
 
 export class JsxSelfClosingElement extends JsxOpeningElement {
