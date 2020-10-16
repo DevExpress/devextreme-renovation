@@ -40,6 +40,7 @@ export default () => {
       <Nested
         rows={[{ cells: [{ gridData: "cell41" }, { gridData: "cell42" }] }]}
       ></Nested>
+      <Nested rows={[]}></Nested>
       <Nested></Nested>
     </div>
   );

@@ -42,6 +42,7 @@ export default () => {
           <RowCell gridData="cell42" />
         </Row>
       </Nested>
+      <Nested rows={[]}></Nested>
       <Nested></Nested>
     </div>
   );
