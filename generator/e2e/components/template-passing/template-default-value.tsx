@@ -14,6 +14,7 @@ export const viewFunction = (model: TemplateDefaultValue) => (
     <model.props.contentTemplate />
     <model.props.contentTemplate text={model.props.stringToRender} />
     <model.props.contentTemplate textWithDefault={model.props.stringToRender} />
+    <model.props.funcTemplate string="works" />
   </div>
 );
 
@@ -25,6 +26,9 @@ export class TemplateDefaultValueProps {
     number?: number;
   }> = SampleWidget;
   @OneWay() stringToRender: string = "default string";
+  @Template() funcTemplate: (props: { string: string }) => JSX.Element = (
+    props
+  ) => <div>JSXDefault template{props.string}</div>;
 }
 
 @Component({
