@@ -402,9 +402,6 @@ export class VueComponent extends Component {
       nestedName = removePlural(nestedName);
     }
     const propName = `${SyntaxKind.ThisKeyword}.${property.name}`;
-    const condition = `${propName}`.concat(
-      isArray ? `&& ${propName}.length` : ""
-    );
 
     const statements = [
       new VariableStatement(
@@ -424,7 +421,7 @@ export class VueComponent extends Component {
       ),
       new ReturnStatement(
         new Conditional(
-          new SimpleExpression(condition),
+          new SimpleExpression(propName),
           new SimpleExpression(propName),
           new Conditional(
             new SimpleExpression("nested.length"),

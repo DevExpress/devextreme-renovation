@@ -39,6 +39,7 @@ import DefaultPropsComponent from "./default-props/default-props-component";
 import SetNonElementRef from "./set-ref/set-non-element-ref";
 import SetForwardRef from "./set-ref/set-forward-ref-parent";
 import SetForwardRefDeep from "./set-ref/set-forward-ref-deep/parent";
+import InlineArrowFunction from "./inline-arrow-function";
 
 function view(model: App) {
   return (
@@ -137,6 +138,7 @@ function view(model: App) {
       <TestPropertyAccessChain />
       <RenderSlotCondition>content</RenderSlotCondition>
       <DefaultPropsComponent />
+      <InlineArrowFunction />
     </div>
   );
 }

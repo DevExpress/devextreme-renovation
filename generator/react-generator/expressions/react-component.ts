@@ -677,9 +677,6 @@ export class ReactComponent extends Component {
 
     const getterName = `__getNested${capitalizeFirstLetter(property.name)}`;
     const getterType = property.type.toString();
-    const condition = `${propName}`.concat(
-      isArray ? `&& ${propName}.length` : ""
-    );
 
     const statements = [
       new VariableStatement(
@@ -716,7 +713,7 @@ export class ReactComponent extends Component {
       ),
       new ReturnStatement(
         new Conditional(
-          new SimpleExpression(condition),
+          new SimpleExpression(propName),
           new SimpleExpression(propName),
           new Conditional(
             new SimpleExpression("nested.length"),
