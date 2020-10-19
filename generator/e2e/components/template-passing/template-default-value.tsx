@@ -11,24 +11,30 @@ import SampleWidget from "./sample-widget";
 export const viewFunction = (model: TemplateDefaultValue) => (
   <div>
     TemplateDefaultValue
-    <model.props.contentTemplate />
-    <model.props.contentTemplate text={model.props.stringToRender} />
-    <model.props.contentTemplate textWithDefault={model.props.stringToRender} />
-    <model.props.funcTemplate string="works" />
+    <model.props.compTemplate
+      text={model.props.stringToRender}
+      textWithDefault={"twdComp"}
+    />
+    <model.props.compTemplate text={model.props.stringToRender} />
+    <model.props.funcTemplate text={model.props.stringToRender} />
   </div>
 );
 
 @ComponentBindings()
 export class TemplateDefaultValueProps {
-  @Template() contentTemplate: JSXTemplate<{
+  @Template() compTemplate: JSXTemplate<{
     text?: string;
     textWithDefault?: string;
-    number?: number;
   }> = SampleWidget;
-  @OneWay() stringToRender: string = "default string";
-  @Template() funcTemplate: (props: { string: string }) => JSX.Element = (
-    props
-  ) => <div>JSXDefault template{props.string}</div>;
+  @Template() funcTemplate: JSXTemplate<{
+    text?: string;
+    textWithDefault?: string;
+  }> = (props: { text?: string; textWithDefault?: string }) => (
+    <div>
+      !DefaultFunc:{props.textWithDefault || "ftwdCompDefault"} | {props.text}
+    </div>
+  );
+  @OneWay() stringToRender: string = "strCompDefault";
 }
 
 @Component({

@@ -4,8 +4,9 @@ import {
 } from "./dx-widget-with-props";
 import { Input, TemplateRef } from "@angular/core";
 export class TemplateDefaultValueProps {
-  @Input() contentTemplate: TemplateRef<any> | null = null;
-  @Input() stringToRender: string = "default string";
+  @Input() defaultCompTemplate: TemplateRef<any> | null = null;
+  @Input() defaultFuncTemplate: TemplateRef<any> | null = null;
+  @Input() stringToRender: string = "strCompDefault";
 }
 
 import {
@@ -23,41 +24,42 @@ import { CommonModule } from "@angular/common";
   template: `<div
       >TemplateDefaultValue<ng-container
         *ngTemplateOutlet="
-          contentTemplate || contentTemplateDefault;
-          context: { value: stringToRender, number: 21 }
+          defaultCompTemplate || defaultCompTemplateDefault;
+          context: { optionalValue: stringToRender, value: 'twdComp' }
         "
       >
       </ng-container
       ><ng-container
         *ngTemplateOutlet="
-          contentTemplate || contentTemplateDefault;
-          context: { value: '' }
+          defaultCompTemplate || defaultCompTemplateDefault;
+          context: { optionalValue: stringToRender }
         "
       >
       </ng-container
       ><ng-container
         *ngTemplateOutlet="
-          contentTemplate || contentTemplateDefault;
-          context: { value: '', optionalValue: 'optional' + stringToRender }
+          defaultFuncTemplate || defaultFuncTemplateDefault;
+          context: { optionalValue: stringToRender }
         "
       >
       </ng-container></div
     ><ng-template
-      #contentTemplateDefault
-      let-value="value"
-      let-number="number"
+      #defaultCompTemplateDefault
       let-optionalValue="optionalValue"
+      let-value="value"
       ><dx-widget-with-props
-        [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
-        [number]="
-          number !== undefined ? number : WidgetWithPropsDefaults.number
-        "
         [optionalValue]="
           optionalValue !== undefined
             ? optionalValue
             : WidgetWithPropsDefaults.optionalValue
         "
+        [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
       ></dx-widget-with-props>
+    </ng-template>
+    <ng-template #defaultFuncTemplateDefault let-optionalValue="optionalValue">
+      <div
+        >!DefaultFunc:{{ value || "ftwdCompDefault" }}{{ optionalValue }}</div
+      >
     </ng-template>`,
 })
 export default class TemplateDefaultValue extends TemplateDefaultValueProps {

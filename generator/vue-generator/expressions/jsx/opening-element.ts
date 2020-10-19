@@ -102,15 +102,25 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         : undefined;
     const componentTag = initializerComponent
       ? `<${initializerComponent.name} ${defaultAttrs
-          .map((a) => `:${a.name.toString()}=${a.name.toString()}`)
+          .map(
+            (a) =>
+              `:${a.name.toString()}=${
+                templateProperty.name
+              }Default.${a.name.toString()}`
+          )
           .join(" ")}/>`
       : "";
     let body = componentTag;
+    const slotOptions: toStringOptions = {
+      newComponentContext: `${templateProperty.name}Default`,
+      members: options?.members || [],
+    };
     if (initializer instanceof BaseFunction)
-      body = initializer.getTemplate(options);
+      body = initializer.getTemplate(slotOptions);
     if (body) {
       return `<slot name="${templateProperty.name}" ${attributes.join(" ")}>
         <div style="display:contents" ${this.createSetAttributes(
+          templateProperty,
           defaultAttrs,
           options
         )}>${body}</div>
@@ -122,17 +132,19 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     )}></slot>`;
   }
   createSetAttributes(
+    templateProperty: Property,
     attrs: BaseJsxAttribute[],
     options?: toStringOptions
   ): string {
-    return attrs
-      .map(
-        (a) =>
-          `:set${a.name.toString()}='${a.name.toString()}=${a.initializer.toString(
-            options
-          )}'`
-      )
-      .join(" ");
+    return `:set='${templateProperty.name}Default={${attrs
+      .map((a) => {
+        return `${a.name.toString()}:${a.initializer.toString(
+          options?.componentContext === "model"
+            ? options
+            : { componentContext: "model", members: options!.members }
+        )}`;
+      })
+      .join(",")}}'`;
   }
   createJsxAttribute(name: Identifier, value: Expression) {
     return new JsxAttribute(name, value);

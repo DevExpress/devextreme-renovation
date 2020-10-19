@@ -51,9 +51,6 @@ const CustomTemplate = (props: {
     </div>
   );
 };
-const FuncTemplate = (props: { string: string }) => (
-  <div>JSXFuncTemplate {props.string}</div>
-);
 function view(model: App) {
   return (
     <div>
@@ -145,10 +142,16 @@ function view(model: App) {
       <PortalContainer />
       <TestPropertyAccessChain />
       <TemplateDefaultValue
-        stringToRender={"I am passed from app"}
-        funcTemplate={FuncTemplate}
+        funcTemplate={(props: {
+          text?: string | undefined;
+          textWithDefault?: string | undefined;
+        }) => (
+          <div>
+            FApp:{props.text} | {props.textWithDefault}
+          </div>
+        )}
       />
-      <TemplateDefaultValue contentTemplate={CustomTemplate} />
+      <TemplateDefaultValue compTemplate={CustomTemplate} />
       <RenderSlotCondition>content</RenderSlotCondition>
       <DefaultPropsComponent />
       <InlineArrowFunction />

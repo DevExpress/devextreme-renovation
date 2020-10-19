@@ -1,7 +1,9 @@
 <template>
   <div
     ><slot name="headerTemplate">
-      <div style="display: contents">{{ null }}</div> </slot
+      <div style="display: contents" :set="(headerTemplateDefault = {})">{{
+        null
+      }}</div> </slot
     ><slot
       name="contentTemplate"
       v-bind:data="{ p1: 'value' }"
@@ -10,35 +12,40 @@
     >
       <div
         style="display: contents"
-        :setdata="(data = { p1: 'value' })"
-        :setindex="(index = 10)"
-        ><div>{{ data.p1 }}</div></div
+        :set="(contentTemplateDefault = { data: { p1: 'value' }, index: 10 })"
+        ><div>{{ contentTemplateDefault.data.p1 }}</div></div
       > </slot
     ><slot
       name="template"
       v-bind:textProp="'textPropValue'"
       v-bind:textPropExpr="'textPropExrpValue'"
-      v-if="!viewModel.props.contentTemplate"
+      v-if="!$scopedSlots.contentTemplate"
     >
       <div
         style="display: contents"
-        :settextProp="(textProp = 'textPropValue')"
-        :settextPropExpr="(textPropExpr = 'textPropExrpValue')"
+        :set="
+          (templateDefault = {
+            textProp: 'textPropValue',
+            textPropExpr: 'textPropExrpValue',
+          })
+        "
         ><div></div
       ></div> </slot
     ><slot
       name="footerTemplate"
-      v-bind:someProp="viewModel.props.someProp"
-      v-if="viewModel.props.footerTemplate"
+      v-bind:someProp="someProp"
+      v-if="$scopedSlots.footerTemplate"
     >
       <div
         style="display: contents"
-        :setsomeProp="(someProp = viewModel.props.someProp)"
+        :set="(footerTemplateDefault = { someProp: myvar })"
         ><div></div
       ></div> </slot
     ><slot name="componentTemplate" v-bind:value="'Test Value'">
-      <div style="display: contents" :setvalue="(value = 'Test Value')"
-        ><WidgetWithProps :value="value"
+      <div
+        style="display: contents"
+        :set="(componentTemplateDefault = { value: 'Test Value' })"
+        ><WidgetWithProps :value="componentTemplateDefault.value"
       /></div> </slot
   ></div>
 </template>

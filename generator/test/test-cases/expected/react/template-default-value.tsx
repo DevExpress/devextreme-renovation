@@ -3,48 +3,50 @@ export const viewFunction = (model: TemplateDefaultValue) => (
   <div>
     {" "}
     TemplateDefaultValue
-    {model.props.contentTemplate({
-      value: model.props.stringToRender,
-      number: 21,
+    {model.props.defaultCompTemplate({
+      optionalValue: model.props.stringToRender,
+      value: "twdComp",
     })}
-    {model.props.contentTemplate({ value: "" })}
-    {model.props.contentTemplate({
-      value: "",
-      optionalValue: "optional" + model.props.stringToRender,
+    {model.props.defaultCompTemplate({
+      optionalValue: model.props.stringToRender,
+    })}
+    {model.props.defaultFuncTemplate({
+      optionalValue: model.props.stringToRender,
     })}
   </div>
 );
 
 export declare type TemplateDefaultValuePropsType = {
-  contentTemplate: React.FunctionComponent<
-    Partial<
-      Omit<{ value: string; optionalValue?: string; number: number }, "value">
-    > &
-      Required<
-        Pick<{ value: string; optionalValue?: string; number: number }, "value">
-      >
+  defaultCompTemplate: React.FunctionComponent<
+    Partial<{ optionalValue?: string; value: string }>
+  >;
+  defaultFuncTemplate: React.FunctionComponent<
+    Partial<{ optionalValue?: string; value: string }>
   >;
   stringToRender: string;
-  contentRender?: React.FunctionComponent<
-    Partial<
-      Omit<{ value: string; optionalValue?: string; number: number }, "value">
-    > &
-      Required<
-        Pick<{ value: string; optionalValue?: string; number: number }, "value">
-      >
+  defaultCompRender?: React.FunctionComponent<
+    Partial<{ optionalValue?: string; value: string }>
   >;
-  contentComponent?: React.JSXElementConstructor<
-    Partial<
-      Omit<{ value: string; optionalValue?: string; number: number }, "value">
-    > &
-      Required<
-        Pick<{ value: string; optionalValue?: string; number: number }, "value">
-      >
+  defaultCompComponent?: React.JSXElementConstructor<
+    Partial<{ optionalValue?: string; value: string }>
+  >;
+  defaultFuncRender?: React.FunctionComponent<
+    Partial<{ optionalValue?: string; value: string }>
+  >;
+  defaultFuncComponent?: React.JSXElementConstructor<
+    Partial<{ optionalValue?: string; value: string }>
   >;
 };
 export const TemplateDefaultValueProps: TemplateDefaultValuePropsType = {
-  contentTemplate: WidgetWithProps,
-  stringToRender: "default string",
+  defaultCompTemplate: WidgetWithProps,
+  defaultFuncTemplate: (props) => (
+    <div>
+      !DefaultFunc:
+      {props.value || "ftwdCompDefault"}
+      {props.optionalValue}
+    </div>
+  ),
+  stringToRender: "strCompDefault",
 };
 import * as React from "react";
 import { useCallback, HTMLAttributes } from "react";
@@ -76,9 +78,12 @@ export default function TemplateDefaultValue(
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
-        contentComponent,
-        contentRender,
-        contentTemplate,
+        defaultCompComponent,
+        defaultCompRender,
+        defaultCompTemplate,
+        defaultFuncComponent,
+        defaultFuncRender,
+        defaultFuncTemplate,
         stringToRender,
         ...restProps
       } = props;
@@ -90,10 +95,15 @@ export default function TemplateDefaultValue(
   return viewFunction({
     props: {
       ...props,
-      contentTemplate: getTemplate(
-        props.contentTemplate,
-        props.contentRender,
-        props.contentComponent
+      defaultCompTemplate: getTemplate(
+        props.defaultCompTemplate,
+        props.defaultCompRender,
+        props.defaultCompComponent
+      ),
+      defaultFuncTemplate: getTemplate(
+        props.defaultFuncTemplate,
+        props.defaultFuncRender,
+        props.defaultFuncComponent
       ),
     },
     restAttributes: __restAttributes(),

@@ -11,29 +11,35 @@ import { WidgetWithProps } from "./dx-widget-with-props";
 export const viewFunction = (model: TemplateDefaultValue) => (
   <div>
     TemplateDefaultValue
-    <model.props.contentTemplate
-      value={model.props.stringToRender}
-      number={21}
+    <model.props.defaultCompTemplate
+      optionalValue={model.props.stringToRender}
+      value={"twdComp"}
     />
-    <model.props.contentTemplate value={""} />
-    <model.props.contentTemplate
-      value={""}
-      optionalValue={"optional" + model.props.stringToRender}
+    <model.props.defaultCompTemplate
+      optionalValue={model.props.stringToRender}
+    />
+    <model.props.defaultFuncTemplate
+      optionalValue={model.props.stringToRender}
     />
   </div>
 );
 
 @ComponentBindings()
 export class TemplateDefaultValueProps {
-  @Template() contentTemplate: JSXTemplate<
-    {
-      value: string;
-      optionalValue?: string;
-      number: number;
-    },
-    "value"
-  > = WidgetWithProps;
-  @OneWay() stringToRender: string = "default string";
+  @Template() defaultCompTemplate: JSXTemplate<{
+    optionalValue?: string;
+    value: string;
+  }> = WidgetWithProps;
+  @Template() defaultFuncTemplate: JSXTemplate<{
+    optionalValue?: string;
+    value: string;
+  }> = (props) => (
+    <div>
+      !DefaultFunc:{props.value || "ftwdCompDefault"}
+      {props.optionalValue}
+    </div>
+  );
+  @OneWay() stringToRender: string = "strCompDefault";
 }
 
 @Component({
