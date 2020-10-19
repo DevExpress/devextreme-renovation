@@ -284,7 +284,9 @@ export class JsxChildExpression extends JsxExpression {
 
     if (keyAttribute) {
       const trackByName = new Identifier(
-        `_trackBy_${itemsExpressionString.replace(".", "_")}_${counter.get()}`
+        `_trackBy_${itemsExpressionString
+          .replace(".", "_")
+          .replace(/[(\s|\[\])]/gi, "")}_${counter.get()}`
       );
       ngForValue.push(`trackBy: ${trackByName}`);
       if (options) {

@@ -296,3 +296,13 @@ cloneTest("Default props", async (t) => {
 
   await assert("default-props-optional-boolean-or-number", "undefined");
 });
+
+cloneTest("Set forward ref", async (t) => {
+  const content = await Selector("#set-ref");
+
+  await t
+    .expect((await content.textContent).trim())
+    .eql(
+      "non-object-ref-value: 10content in forwardRefcontent in forwardRefDeep"
+    );
+});

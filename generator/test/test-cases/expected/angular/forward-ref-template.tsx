@@ -35,7 +35,11 @@ export default class RefOnChildrenTemplate extends Props {
     return (this.__getterCache["forwardRef_child"] = ((): ((
       ref: any
     ) => void) => {
-      return (ref) => (this.child = ref);
+      return (ref) => {
+        this.child = ref;
+
+        return ref;
+      };
     })());
   }
   _detectChanges(): void {

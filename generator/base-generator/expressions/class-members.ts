@@ -65,6 +65,14 @@ export class BaseClassMember extends Expression {
     return this.decorators.some((d) => d.name === name);
   }
 
+  get isElementRef() {
+    const type = this.type.toString();
+    if (type.includes("HTML") && type.includes("Element")) {
+      return true;
+    }
+    return false;
+  }
+
   get isEvent() {
     return this._hasDecorator(Decorators.Event);
   }

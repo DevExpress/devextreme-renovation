@@ -124,10 +124,8 @@ export class Property extends BaseProperty {
         return `${componentContext}${this.name}`;
       }
       const postfix = this.isForwardRefProp ? "Ref" : "";
-      const type = this.type.toString();
-      const isElement = type.includes("HTML") && type.includes("Element");
       return `${componentContext}${this.name}${postfix}${
-        isElement
+        this.isElementRef
           ? `${
               this.questionOrExclamationToken === SyntaxKind.ExclamationToken
                 ? ""
