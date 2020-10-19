@@ -26,14 +26,20 @@ export const viewFunction = (model: TemplateDefaultValue) => (
 
 @ComponentBindings()
 export class TemplateDefaultValueProps {
-  @Template() defaultCompTemplate: JSXTemplate<{
-    optionalValue?: string;
-    value: string;
-  }> = WidgetWithProps;
-  @Template() defaultFuncTemplate: JSXTemplate<{
-    optionalValue?: string;
-    value: string;
-  }> = (props) => (
+  @Template() defaultCompTemplate: JSXTemplate<
+    {
+      optionalValue?: string;
+      value: string;
+    },
+    "value"
+  > = WidgetWithProps;
+  @Template() defaultFuncTemplate: JSXTemplate<
+    {
+      optionalValue?: string;
+      value: string;
+    },
+    "value"
+  > = (props) => (
     <div>
       !DefaultFunc:{props.value || "ftwdCompDefault"}
       {props.optionalValue}
