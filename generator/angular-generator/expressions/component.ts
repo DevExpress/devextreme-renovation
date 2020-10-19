@@ -622,7 +622,7 @@ export class AngularComponent extends Component {
     if (effects.length) {
       const statements = [
         "__destroyEffects: any[] = [];",
-        "__viewCheckedSubscribeEvent: Array<()=>void> = [];",
+        "__viewCheckedSubscribeEvent: Array<(()=>void)|null> = [];",
         "_effectTimeout: any;",
       ];
       let usedIterables = new Set();
@@ -714,22 +714,34 @@ export class AngularComponent extends Component {
             }
             setter.body.statements.push(
               new SimpleExpression(`
-                            if (this.__destroyEffects.length) {
-                                this.${updateEffectMethod}();
-                            }`)
+                if (this.__destroyEffects.length) {
+                    this.${updateEffectMethod}();
+                }`)
+            );
+            setter.body.statements.push(
+              new SimpleExpression("this._updateEffects()")
             );
             hasInternalStateDependency = true;
           }
         });
       });
       if (ngOnChanges.length || hasInternalStateDependency) {
-        ngAfterViewCheckedStatements.push(`
-                if(this.__viewCheckedSubscribeEvent.length){
-                this._effectTimeout = setTimeout(()=>{
-                    this.__viewCheckedSubscribeEvent.forEach(s=>s?.());
-                    this.__viewCheckedSubscribeEvent = [];
+        statements.push(`
+          _updateEffects(){
+            if(this.__viewCheckedSubscribeEvent.length){
+              clearTimeout(this._effectTimeout);
+              this._effectTimeout = setTimeout(()=>{
+                  this.__viewCheckedSubscribeEvent.forEach((s, i)=>{
+                    s?.();
+                    if(this.__viewCheckedSubscribeEvent[i]===s){
+                      this.__viewCheckedSubscribeEvent[i]=null;
+                    }
                   });
-              }`);
+                });
+            }
+          }
+        `);
+        ngAfterViewCheckedStatements.push(`this._updateEffects()`);
       }
       if (usedIterables.size > 0) {
         statements.push(

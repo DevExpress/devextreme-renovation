@@ -6672,15 +6672,29 @@ mocha.describe("Angular generator", function () {
           assert.strictEqual(
             getResult(component.compileEffects([], [], ngOnChanges, [], [])),
             getResult(`
-                        __destroyEffects: any[] = [];
-                        __viewCheckedSubscribeEvent: Array<()=>void> = [];
-                        _effectTimeout: any;
-                        __schedule_e(){
-                            this.__destroyEffects[0]?.();
-                            this.__viewCheckedSubscribeEvent[0] = ()=>{
-                                this.__destroyEffects[0] = this.__e()
-                            }
-                        }
+                __destroyEffects: any[] = [];
+                __viewCheckedSubscribeEvent: Array<(()=>void)|null> = [];
+                _effectTimeout: any;
+                __schedule_e(){
+                    this.__destroyEffects[0]?.();
+                    this.__viewCheckedSubscribeEvent[0] = ()=>{
+                        this.__destroyEffects[0] = this.__e()
+                    }
+                }
+            
+                _updateEffects(){
+                  if(this.__viewCheckedSubscribeEvent.length){
+                    clearTimeout(this._effectTimeout);
+                    this._effectTimeout = setTimeout(()=>{
+                        this.__viewCheckedSubscribeEvent.forEach((s, i)=>{
+                          s?.();
+                          if(this.__viewCheckedSubscribeEvent[i]===s){
+                            this.__viewCheckedSubscribeEvent[i]=null;
+                          }
+                        });
+                      });
+                  }
+                }
                 `)
           );
 
@@ -6728,13 +6742,26 @@ mocha.describe("Angular generator", function () {
             getResult(component.compileEffects([], [], ngOnChanges, [], [])),
             getResult(`
                         __destroyEffects: any[] = [];
-                        __viewCheckedSubscribeEvent: Array<()=>void> = [];
+                        __viewCheckedSubscribeEvent: Array<(()=>void) | null> = [];
                         _effectTimeout: any;
                         __schedule_e(){
                             this.__destroyEffects[0]?.();
                             this.__viewCheckedSubscribeEvent[0] = ()=>{
                                 this.__destroyEffects[0] = this.__e()
                             }
+                        }
+                        _updateEffects(){
+                          if(this.__viewCheckedSubscribeEvent.length){
+                            clearTimeout(this._effectTimeout);
+                            this._effectTimeout = setTimeout(()=>{
+                                this.__viewCheckedSubscribeEvent.forEach((s, i)=>{
+                                  s?.();
+                                  if(this.__viewCheckedSubscribeEvent[i]===s){
+                                    this.__viewCheckedSubscribeEvent[i]=null;
+                                  }
+                                });
+                              });
+                          }
                         }
                 `)
           );
@@ -6797,13 +6824,26 @@ mocha.describe("Angular generator", function () {
             getResult(component.compileEffects([], [], ngOnChanges, [], [])),
             getResult(`
                         __destroyEffects: any[] = [];
-                        __viewCheckedSubscribeEvent: Array<()=>void> = [];
+                        __viewCheckedSubscribeEvent: Array<(()=>void) | null> = [];
                         _effectTimeout: any;
                         __schedule_e(){
                             this.__destroyEffects[0]?.();
                             this.__viewCheckedSubscribeEvent[0] = ()=>{
                                 this.__destroyEffects[0] = this.__e()
                             }
+                        }
+                        _updateEffects(){
+                          if(this.__viewCheckedSubscribeEvent.length){
+                            clearTimeout(this._effectTimeout);
+                            this._effectTimeout = setTimeout(()=>{
+                                this.__viewCheckedSubscribeEvent.forEach((s, i)=>{
+                                  s?.();
+                                  if(this.__viewCheckedSubscribeEvent[i]===s){
+                                    this.__viewCheckedSubscribeEvent[i]=null;
+                                  }
+                                });
+                              });
+                          }
                         }
                 `)
           );
@@ -6829,6 +6869,7 @@ mocha.describe("Angular generator", function () {
                         if (this.__destroyEffects.length) {
                             this.__schedule_e();
                         }
+                        this._updateEffects();
                     }
                 `)
           );
@@ -6858,7 +6899,7 @@ mocha.describe("Angular generator", function () {
             getResult(component.compileEffects([], [], ngOnChanges, [], [])),
             getResult(`
                         __destroyEffects: any[] = [];
-                        __viewCheckedSubscribeEvent: Array<()=>void> = [];
+                        __viewCheckedSubscribeEvent: Array<(()=>void) | null> = [];
                         _effectTimeout: any;
                 `)
           );

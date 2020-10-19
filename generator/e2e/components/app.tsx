@@ -23,6 +23,7 @@ import TemplatePass from "./template-pass";
 import RefPass from "./ref-pass";
 import EffectsDOMUpdate from "./effects-dom-update";
 import EffectsStateUpdate from "./effects-state-update";
+import EffectSubscription from "./effect-subscribe-unsubscribe";
 import SumArray from "./render/sum-array";
 import ForwardRefParent from "./ref-on-children/forward-ref-parent";
 import ForwardRefTemplate from "./ref-on-children/forward-ref-template";
@@ -117,6 +118,7 @@ function view(model: App) {
           text={model.domEffectsText}
         />
         <EffectsStateUpdate name="effects-state-update" />
+        <EffectSubscription />
       </div>
       <SumArray id={"sum-array"} array={model.arrayForSum} />
       ForwardRef: <ForwardRefParent />
