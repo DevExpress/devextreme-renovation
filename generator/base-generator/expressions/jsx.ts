@@ -173,7 +173,12 @@ export class JsxElement extends Expression {
 
   toString(options?: toStringOptions) {
     const children: string = this.children
-      .map((c) => c.toString(options))
+      .map((c) => {
+        if (typeof c === "string") {
+          return c.trim();
+        }
+        return c.toString(options);
+      })
       .join("\n");
     return `${this.openingElement.toString(
       options

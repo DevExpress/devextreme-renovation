@@ -2138,6 +2138,20 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.toString(), "<div name={value}></div>");
     });
 
+    mocha.it("JsxElement - trim string children", function () {
+      const expression = generator.createJsxElement(
+        generator.createJsxOpeningElement(
+          generator.createIdentifier("div"),
+          [],
+          []
+        ),
+        ["   content   "],
+        generator.createJsxClosingElement(generator.createIdentifier("div"))
+      );
+
+      assert.strictEqual(expression.toString(), "<div >content</div>");
+    });
+
     mocha.it("booleanAttribute", function () {
       const expression = generator.createJsxAttribute(
         generator.createIdentifier("selected")
