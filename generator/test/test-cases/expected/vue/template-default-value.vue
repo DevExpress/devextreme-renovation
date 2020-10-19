@@ -17,17 +17,16 @@
           :optionalValue="defaultCompTemplateDefault.optionalValue"
           :value="defaultCompTemplateDefault.value"
       /></div> </slot
-    ><slot name="defaultCompTemplate" v-bind:optionalValue="stringToRender">
+    ><slot name="defaultCompTemplate" v-bind:value="stringToRender">
       <div
         style="display: contents"
-        :set="(defaultCompTemplateDefault = { optionalValue: stringToRender })"
-        ><WidgetWithProps
-          :optionalValue="defaultCompTemplateDefault.optionalValue"
+        :set="(defaultCompTemplateDefault = { value: stringToRender })"
+        ><WidgetWithProps :value="defaultCompTemplateDefault.value"
       /></div> </slot
-    ><slot name="defaultFuncTemplate" v-bind:optionalValue="stringToRender">
+    ><slot name="defaultFuncTemplate" v-bind:value="stringToRender">
       <div
         style="display: contents"
-        :set="(defaultFuncTemplateDefault = { optionalValue: stringToRender })"
+        :set="(defaultFuncTemplateDefault = { value: stringToRender })"
         ><div
           >!DefaultFunc:{{
             defaultFuncTemplateDefault.value || "ftwdCompDefault"

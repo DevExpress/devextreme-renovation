@@ -32,14 +32,14 @@ import { CommonModule } from "@angular/common";
       ><ng-container
         *ngTemplateOutlet="
           defaultCompTemplate || defaultCompTemplateDefault;
-          context: { optionalValue: stringToRender }
+          context: { value: stringToRender }
         "
       >
       </ng-container
       ><ng-container
         *ngTemplateOutlet="
           defaultFuncTemplate || defaultFuncTemplateDefault;
-          context: { optionalValue: stringToRender }
+          context: { value: stringToRender }
         "
       >
       </ng-container></div
@@ -56,7 +56,7 @@ import { CommonModule } from "@angular/common";
         [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
       ></dx-widget-with-props>
     </ng-template>
-    <ng-template #defaultFuncTemplateDefault let-optionalValue="optionalValue">
+    <ng-template #defaultFuncTemplateDefault let-value="value">
       <div
         >!DefaultFunc:{{ value || "ftwdCompDefault" }}{{ optionalValue }}</div
       >

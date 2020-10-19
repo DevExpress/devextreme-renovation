@@ -15,12 +15,8 @@ export const viewFunction = (model: TemplateDefaultValue) => (
       optionalValue={model.props.stringToRender}
       value={"twdComp"}
     />
-    <model.props.defaultCompTemplate
-      optionalValue={model.props.stringToRender}
-    />
-    <model.props.defaultFuncTemplate
-      optionalValue={model.props.stringToRender}
-    />
+    <model.props.defaultCompTemplate value={model.props.stringToRender} />
+    <model.props.defaultFuncTemplate value={model.props.stringToRender} />
   </div>
 );
 
@@ -28,14 +24,14 @@ export const viewFunction = (model: TemplateDefaultValue) => (
 export class TemplateDefaultValueProps {
   @Template() defaultCompTemplate: JSXTemplate<
     {
-      optionalValue?: string;
+      optionalValue?: string | undefined;
       value: string;
     },
     "value"
   > = WidgetWithProps;
   @Template() defaultFuncTemplate: JSXTemplate<
     {
-      optionalValue?: string;
+      optionalValue?: string | undefined;
       value: string;
     },
     "value"

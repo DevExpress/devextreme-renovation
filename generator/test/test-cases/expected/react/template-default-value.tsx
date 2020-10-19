@@ -7,40 +7,60 @@ export const viewFunction = (model: TemplateDefaultValue) => (
       optionalValue: model.props.stringToRender,
       value: "twdComp",
     })}
-    {model.props.defaultCompTemplate({
-      optionalValue: model.props.stringToRender,
-    })}
-    {model.props.defaultFuncTemplate({
-      optionalValue: model.props.stringToRender,
-    })}
+    {model.props.defaultCompTemplate({ value: model.props.stringToRender })}
+    {model.props.defaultFuncTemplate({ value: model.props.stringToRender })}
   </div>
 );
 
 export declare type TemplateDefaultValuePropsType = {
   defaultCompTemplate: React.FunctionComponent<
-    Partial<Omit<{ optionalValue?: string; value: string }, "value">> &
-      Required<Pick<{ optionalValue?: string; value: string }, "value">>
+    Partial<
+      Omit<{ optionalValue?: string | undefined; value: string }, "value">
+    > &
+      Required<
+        Pick<{ optionalValue?: string | undefined; value: string }, "value">
+      >
   >;
   defaultFuncTemplate: React.FunctionComponent<
-    Partial<Omit<{ optionalValue?: string; value: string }, "value">> &
-      Required<Pick<{ optionalValue?: string; value: string }, "value">>
+    Partial<
+      Omit<{ optionalValue?: string | undefined; value: string }, "value">
+    > &
+      Required<
+        Pick<{ optionalValue?: string | undefined; value: string }, "value">
+      >
   >;
   stringToRender: string;
   defaultCompRender?: React.FunctionComponent<
-    Partial<Omit<{ optionalValue?: string; value: string }, "value">> &
-      Required<Pick<{ optionalValue?: string; value: string }, "value">>
+    Partial<
+      Omit<{ optionalValue?: string | undefined; value: string }, "value">
+    > &
+      Required<
+        Pick<{ optionalValue?: string | undefined; value: string }, "value">
+      >
   >;
   defaultCompComponent?: React.JSXElementConstructor<
-    Partial<Omit<{ optionalValue?: string; value: string }, "value">> &
-      Required<Pick<{ optionalValue?: string; value: string }, "value">>
+    Partial<
+      Omit<{ optionalValue?: string | undefined; value: string }, "value">
+    > &
+      Required<
+        Pick<{ optionalValue?: string | undefined; value: string }, "value">
+      >
   >;
   defaultFuncRender?: React.FunctionComponent<
-    Partial<Omit<{ optionalValue?: string; value: string }, "value">> &
-      Required<Pick<{ optionalValue?: string; value: string }, "value">>
+    Partial<
+      Omit<{ optionalValue?: string | undefined; value: string }, "value">
+    > &
+      Required<
+        Pick<{ optionalValue?: string | undefined; value: string }, "value">
+      >
   >;
   defaultFuncComponent?: React.JSXElementConstructor<
-    Partial<Omit<{ optionalValue?: string; value: string }, "value">> &
-      Required<Pick<{ optionalValue?: string; value: string }, "value">>
+    Partial<
+      Omit<{ optionalValue?: string | undefined; value: string }, "value">
+    > &
+      Required<
+        Pick<{ optionalValue?: string | undefined; value: string }, "value">
+      >
   >;
 };
 export const TemplateDefaultValueProps: TemplateDefaultValuePropsType = {
