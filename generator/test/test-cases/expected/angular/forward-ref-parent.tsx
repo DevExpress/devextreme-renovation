@@ -44,7 +44,11 @@ export default class RefOnChildrenParent extends Props {
     return (this.__getterCache["forwardRef_child"] = ((): ((
       ref: any
     ) => void) => {
-      return (ref) => (this.child = ref);
+      return (ref) => {
+        this.child = ref;
+
+        return ref;
+      };
     })());
   }
   get forwardRef_nullableRef(): (ref: any) => void {
@@ -54,7 +58,11 @@ export default class RefOnChildrenParent extends Props {
     return (this.__getterCache["forwardRef_nullableRef"] = ((): ((
       ref: any
     ) => void) => {
-      return (ref) => (this.nullableRefRef = ref);
+      return (ref) => {
+        this.nullableRefRef = ref;
+        this.nullableRef?.(ref);
+        return ref;
+      };
     })());
   }
   _detectChanges(): void {

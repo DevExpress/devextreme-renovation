@@ -36,6 +36,9 @@ import ContextApp from "./context/context-app";
 import TestPropertyAccessChain from "./property-access-chain";
 import RenderSlotCondition from "./slot/render-slot-condition";
 import DefaultPropsComponent from "./default-props/default-props-component";
+import SetNonElementRef from "./set-ref/set-non-element-ref";
+import SetForwardRef from "./set-ref/set-forward-ref-parent";
+import SetForwardRefDeep from "./set-ref/set-forward-ref-deep/parent";
 
 function view(model: App) {
   return (
@@ -120,6 +123,11 @@ function view(model: App) {
       <ForwardRefTemplate contentTemplate={ForwardRefChild} />
       ForwardRef Deep:
       <ForwardRefTemplate contentTemplate={ForwardRefDeep} />
+      <div id="set-ref">
+        <SetNonElementRef />
+        <SetForwardRef />
+        <SetForwardRefDeep />
+      </div>
       <div style={{ border: "1px solid grey" }}>
         Check templates
         <TemplateApp />

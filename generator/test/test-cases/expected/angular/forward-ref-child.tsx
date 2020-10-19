@@ -27,8 +27,7 @@ export default class RefOnChildrenChild extends Props {
     if (this.nullableRef) {
       this.forwardRef_nullableRef(
         new ElementRef(this.childRefRef.nativeElement)
-      ),
-        this.nullableRef(new ElementRef(this.childRefRef.nativeElement));
+      );
     }
     return nullableRefHtml;
   }
@@ -48,7 +47,11 @@ export default class RefOnChildrenChild extends Props {
     return (this.__getterCache["forwardRef_childRef"] = ((): ((
       ref: any
     ) => void) => {
-      return (ref) => (this.childRefRef = ref);
+      return (ref) => {
+        this.childRefRef = ref;
+        this.childRef(ref);
+        return ref;
+      };
     })());
   }
   get forwardRef_nullableRef(): (ref: any) => void {
@@ -58,7 +61,11 @@ export default class RefOnChildrenChild extends Props {
     return (this.__getterCache["forwardRef_nullableRef"] = ((): ((
       ref: any
     ) => void) => {
-      return (ref) => (this.nullableRefRef = ref);
+      return (ref) => {
+        this.nullableRefRef = ref;
+        this.nullableRef?.(ref);
+        return ref;
+      };
     })());
   }
   _detectChanges(): void {

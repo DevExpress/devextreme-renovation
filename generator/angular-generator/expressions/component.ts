@@ -361,9 +361,21 @@ export class AngularComponent extends Component {
             new Block(
               [
                 new SimpleExpression(
-                  `return (ref)=>this.${m.name}${
-                    m.isForwardRefProp ? "Ref" : ""
-                  }=ref`
+                  `return (ref)=>{
+                    this.${m.name}${m.isForwardRefProp ? "Ref" : ""}=ref;
+                  ${
+                    m.isForwardRefProp
+                      ? `this.${m.name}
+                    ${
+                      (m as Property).questionOrExclamationToken ===
+                      SyntaxKind.QuestionToken
+                        ? SyntaxKind.QuestionDotToken
+                        : ""
+                    }(ref)`
+                      : ""
+                  }
+                  return ref;
+                }`
                 ),
               ],
               true
