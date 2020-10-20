@@ -35,6 +35,7 @@ import PortalContainer from "./portal-container";
 import { PickPropsComponent } from "./pick-props";
 import ContextApp from "./context/context-app";
 import TestPropertyAccessChain from "./property-access-chain";
+import TemplateDefaultValueApp from "./template-passing/template-default-value-app";
 import RenderSlotCondition from "./slot/render-slot-condition";
 import DefaultPropsComponent from "./default-props/default-props-component";
 import SetNonElementRef from "./set-ref/set-non-element-ref";
@@ -138,6 +139,9 @@ function view(model: App) {
       <ContextApp />
       <PortalContainer />
       <TestPropertyAccessChain />
+      <div style={{ border: "1px solid grey", padding: "5px" }}>
+        <TemplateDefaultValueApp />
+      </div>
       <RenderSlotCondition>content</RenderSlotCondition>
       <DefaultPropsComponent />
       <InlineArrowFunction />

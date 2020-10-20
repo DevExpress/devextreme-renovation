@@ -17,6 +17,4 @@ export class ImportProps {
 }
 
 @Component({ view: viewFunction })
-export default class Import extends JSXComponent(ImportProps) {
-  // ViewModel getters, Effects, Refs, go here
-}
+export default class Import extends JSXComponent(ImportProps) {}

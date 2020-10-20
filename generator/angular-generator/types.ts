@@ -7,6 +7,8 @@ import { TrackByAttribute } from "./expressions/jsx/track-by-attribute";
 import { Expression } from "../base-generator/expressions/base";
 import { Property } from "./expressions/class-members/property";
 import { Method } from "../base-generator/expressions/class-members";
+import { BaseFunction } from "../base-generator/expressions/functions";
+import { Identifier } from "../base-generator/expressions/common";
 
 export interface toStringOptions extends BaseToStringOptions {
   members: Array<Property | Method>;
@@ -14,6 +16,12 @@ export interface toStringOptions extends BaseToStringOptions {
   keys?: Expression[];
   trackBy?: TrackByAttribute[];
   templateComponents?: Heritable[];
+  defaultTemplates?: {
+    [name: string]: {
+      variables: string[];
+      initializer: BaseFunction | Identifier;
+    };
+  };
 }
 
 export type AngularGeneratorContext = GeneratorContext & {

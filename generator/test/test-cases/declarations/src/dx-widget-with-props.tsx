@@ -10,6 +10,7 @@ import {
 export class WidgetWithPropsInput {
   @OneWay() value = "default text";
   @OneWay() optionalValue?: string;
+  @OneWay() number? = 42;
 }
 
 @Component({

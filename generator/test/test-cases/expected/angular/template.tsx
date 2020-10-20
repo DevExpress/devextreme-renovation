@@ -27,32 +27,65 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div
-    ><ng-container *ngTemplateOutlet="headerTemplate"></ng-container
-    ><ng-container *ngIf="contentTemplate">
-      <ng-container
+      ><ng-container
+        *ngTemplateOutlet="headerTemplate || headerTemplateDefault"
+      >
+      </ng-container
+      ><ng-container *ngIf="contentTemplate">
+        <ng-container
+          *ngTemplateOutlet="
+            contentTemplate || contentTemplateDefault;
+            context: { data: { p1: 'value' }, index: 10 }
+          "
+        >
+        </ng-container> </ng-container
+      ><ng-container *ngIf="!contentTemplate">
+        <ng-container
+          *ngTemplateOutlet="
+            template || templateDefault;
+            context: {
+              textProp: 'textPropValue',
+              textPropExpr: 'textPropExrpValue'
+            }
+          "
+        >
+        </ng-container> </ng-container
+      ><ng-container *ngIf="footerTemplate">
+        <ng-container
+          *ngTemplateOutlet="
+            footerTemplate || footerTemplateDefault;
+            context: { someProp: someProp }
+          "
+        >
+        </ng-container> </ng-container
+      ><ng-container
         *ngTemplateOutlet="
-          contentTemplate;
-          context: { data: { p1: 'value' }, index: 10 }
+          componentTemplate || componentTemplateDefault;
+          context: { value: 'Test Value' }
         "
-      ></ng-container> </ng-container
-    ><ng-container *ngIf="!contentTemplate">
-      <ng-container
-        *ngTemplateOutlet="
-          template;
-          context: {
-            textProp: 'textPropValue',
-            textPropExpr: 'textPropExrpValue'
-          }
-        "
-      ></ng-container> </ng-container
-    ><ng-container *ngIf="footerTemplate">
-      <ng-container
-        *ngTemplateOutlet="footerTemplate; context: { someProp: someProp }"
-      ></ng-container> </ng-container
-    ><ng-container
-      *ngTemplateOutlet="componentTemplate; context: { value: 'Test Value' }"
-    ></ng-container
-  ></div>`,
+      >
+      </ng-container
+    ></div>
+    <ng-template #headerTemplateDefault>
+      {{ null }}
+    </ng-template>
+    <ng-template #contentTemplateDefault let-data="data" let-index="index">
+      <div>{{ data.p1 }}</div>
+    </ng-template>
+    <ng-template
+      #templateDefault
+      let-textProp="textProp"
+      let-textPropExpr="textPropExpr"
+    >
+      <div></div>
+    </ng-template>
+    <ng-template #footerTemplateDefault let-someProp="someProp">
+      <div></div> </ng-template
+    ><ng-template #componentTemplateDefault let-value="value"
+      ><dx-widget-with-props
+        [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
+      ></dx-widget-with-props>
+    </ng-template>`,
 })
 export default class Widget extends WidgetInput {
   get __restAttributes(): any {
@@ -68,6 +101,8 @@ export default class Widget extends WidgetInput {
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
   }
+
+  WidgetWithPropsDefaults = { value: "default text", number: 42 };
 }
 @NgModule({
   declarations: [Widget],

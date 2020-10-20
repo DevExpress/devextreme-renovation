@@ -2,6 +2,7 @@ import { Input } from "@angular/core";
 export class WidgetWithPropsInput {
   @Input() value: string = "default text";
   @Input() optionalValue?: string;
+  @Input() number?: number = 42;
 }
 
 import {

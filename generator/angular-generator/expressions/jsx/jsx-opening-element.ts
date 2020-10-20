@@ -295,15 +295,48 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       : "";
     const attributes = this.attributes
       .filter((a) => a instanceof AngularDirective)
-      .map((a) => a.toString(options))
-      .join("\n");
+      .map((a) => a.toString(options));
 
-    const elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${templateProperty.name}${contextString}"></ng-container>`;
+    const initializer = templateProperty.initializer;
+    const name = templateProperty.name;
 
+    let elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${name}${contextString}"></ng-container>`;
+
+    const initializerComponent =
+      initializer instanceof Identifier &&
+      this.context.components &&
+      this.context.components[initializer.toString()]
+        ? this.context.components[initializer.toString()]
+        : undefined;
+    if (
+      options &&
+      (initializer instanceof BaseFunction ||
+        (initializer instanceof Identifier && initializerComponent))
+    ) {
+      elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${name}||${name}Default${contextString}">
+      </ng-container>`;
+      if (initializerComponent) {
+        options.templateComponents = options.templateComponents
+          ? [...new Set([...options.templateComponents, initializerComponent])]
+          : [initializerComponent];
+      }
+      const contextElementsStr = contextElements.map((el) => el.key.toString());
+      options.defaultTemplates = options.defaultTemplates || {};
+      if (options.defaultTemplates[name]) {
+        const oldVariables = options.defaultTemplates[name].variables;
+        options.defaultTemplates[name].variables = [
+          ...new Set([...oldVariables, ...contextElementsStr]),
+        ];
+      } else
+        options.defaultTemplates[name] = {
+          variables: contextElementsStr,
+          initializer,
+        };
+    }
     if (attributes.length) {
-      return `<ng-container ${attributes}>
-                    ${elementString}
-                </ng-container>`;
+      return `<ng-container ${attributes.join("\n")}>
+        ${elementString}
+      </ng-container>`;
     }
 
     return elementString;

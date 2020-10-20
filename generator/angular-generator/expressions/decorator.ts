@@ -5,6 +5,10 @@ import { ObjectLiteral } from "../../base-generator/expressions/literal";
 import { TemplateExpression } from "../../base-generator/expressions/template";
 import { isElement } from "./jsx/elements";
 import { getJsxExpression } from "../../base-generator/expressions/jsx";
+import { BaseFunction } from "../../base-generator/expressions/functions";
+import { Identifier } from "../../base-generator/expressions/common";
+import { GeneratorContext } from "../../base-generator/types";
+import { getAngularSelector } from "./component";
 
 export class Decorator extends BaseDecorator {
   toString(options?: toStringOptions) {
@@ -37,10 +41,12 @@ export class Decorator extends BaseDecorator {
             template += `
             <ng-template #${i}>
               ${expression.toString(options)}
-              </ng-template>
+            </ng-template>
             `;
           }
         });
+        const templates = compileDefaultTemplates(options, this.context);
+        if (templates?.length) template += templates.join("");
         if (template) {
           parameters.setProperty(
             "template",
@@ -57,5 +63,45 @@ export class Decorator extends BaseDecorator {
       return "@Output()";
     }
     return super.toString();
+  }
+}
+
+function compileDefaultTemplates(
+  options?: toStringOptions,
+  context?: GeneratorContext
+): string[] | undefined {
+  if (options?.defaultTemplates) {
+    return Object.entries(options.defaultTemplates)
+      .map((i) => {
+        const [name, template] = i;
+
+        if (template.initializer instanceof Identifier && context?.components) {
+          const component = context.components[template.initializer.toString()];
+          const templateString = `<ng-template #${name}Default ${template.variables
+            .map((v) => `let-${v}="${v}"`)
+            .join(" ")}><${getAngularSelector(
+            component.name
+          )} ${template.variables
+            .map(
+              (v) =>
+                `[${v}]="${v} !== undefined ? ${v} : ${component.name}Defaults.${v}"`
+            )
+            .join(" ")}></${getAngularSelector(component.name)}>
+            </ng-template>`;
+          return templateString;
+        }
+        if (template.initializer instanceof BaseFunction) {
+          const templateString = `  <ng-template #${name}Default ${template.variables
+            .map((v) => `let-${v}="${v}"`)
+            .join(" ")}>
+            ${template.initializer.getTemplate({
+              members: [],
+              newComponentContext: "",
+            })}
+            </ng-template>`;
+          return templateString;
+        }
+      })
+      .filter((s) => s) as string[];
   }
 }
