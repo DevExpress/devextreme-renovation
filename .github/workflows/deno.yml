@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Get sources
         uses: actions/checkout@v2
-        
+
       - name: Restore Generator npm cache
         uses: actions/cache@v2
         with:
@@ -24,16 +24,16 @@ jobs:
           key: generator-modules-${{ hashFiles('./generator/package.json') }}
           restore-keys: |
             generator-modules
-            
+
       - name: Build Generator
         run: |
           cd ./generator
           npm install --no-package-lock --no-audit --no-fund
-          npm run build-dist 
-          
+          npm run build-dist
+
       - name: Get DevExtreme
         run: git clone https://github.com/DevExpress/DevExtreme
-      
+
       - name: Restore DevExtreme npm cache
         uses: actions/cache@v2
         with:
@@ -41,22 +41,21 @@ jobs:
           key: devextreme-modules-${{ hashFiles('./DevExtreme/package.json') }}
           restore-keys: |
             devextreme-modules
-            
+
       - name: Install Generator
         run: |
           cd ./DevExtreme
           npm i ../generator/build
-          
+
       - name: Build DevExtreme
         run: |
           cd ./DevExtreme
           npm install --no-package-lock --no-audit --no-fund
           npx gulp localization
-          
+
       - name: Test Generation - ${{ matrix.TASK }}
         env:
           TASK: ${{ matrix.TASK }}
         run: |
           cd ./DevExtreme
-          npx gulp $TASK 
-          
+          npx gulp $TASK

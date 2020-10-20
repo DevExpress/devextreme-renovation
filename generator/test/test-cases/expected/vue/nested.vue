@@ -94,11 +94,7 @@ export const DxWidget = {
       const nested = this.__nestedChildren.filter(
         (child) => child.__name === "columns"
       );
-      return this.columns && this.columns.length
-        ? this.columns
-        : nested.length
-        ? nested
-        : undefined;
+      return this.columns ? this.columns : nested.length ? nested : undefined;
     },
     __getNestedEditing() {
       const nested = this.__nestedChildren.filter(

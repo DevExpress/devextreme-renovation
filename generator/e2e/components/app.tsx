@@ -23,6 +23,7 @@ import TemplatePass from "./template-pass";
 import RefPass from "./ref-pass";
 import EffectsDOMUpdate from "./effects-dom-update";
 import EffectsStateUpdate from "./effects-state-update";
+import EffectSubscription from "./effect-subscribe-unsubscribe";
 import SumArray from "./render/sum-array";
 import ForwardRefParent from "./ref-on-children/forward-ref-parent";
 import ForwardRefTemplate from "./ref-on-children/forward-ref-template";
@@ -34,8 +35,13 @@ import PortalContainer from "./portal-container";
 import { PickPropsComponent } from "./pick-props";
 import ContextApp from "./context/context-app";
 import TestPropertyAccessChain from "./property-access-chain";
+import TemplateDefaultValueApp from "./template-passing/template-default-value-app";
 import RenderSlotCondition from "./slot/render-slot-condition";
 import DefaultPropsComponent from "./default-props/default-props-component";
+import SetNonElementRef from "./set-ref/set-non-element-ref";
+import SetForwardRef from "./set-ref/set-forward-ref-parent";
+import SetForwardRefDeep from "./set-ref/set-forward-ref-deep/parent";
+import InlineArrowFunction from "./inline-arrow-function";
 
 function view(model: App) {
   return (
@@ -113,6 +119,7 @@ function view(model: App) {
           text={model.domEffectsText}
         />
         <EffectsStateUpdate name="effects-state-update" />
+        <EffectSubscription />
       </div>
       <SumArray id={"sum-array"} array={model.arrayForSum} />
       ForwardRef: <ForwardRefParent />
@@ -120,6 +127,11 @@ function view(model: App) {
       <ForwardRefTemplate contentTemplate={ForwardRefChild} />
       ForwardRef Deep:
       <ForwardRefTemplate contentTemplate={ForwardRefDeep} />
+      <div id="set-ref">
+        <SetNonElementRef />
+        <SetForwardRef />
+        <SetForwardRefDeep />
+      </div>
       <div style={{ border: "1px solid grey" }}>
         Check templates
         <TemplateApp />
@@ -127,8 +139,12 @@ function view(model: App) {
       <ContextApp />
       <PortalContainer />
       <TestPropertyAccessChain />
+      <div style={{ border: "1px solid grey", padding: "5px" }}>
+        <TemplateDefaultValueApp />
+      </div>
       <RenderSlotCondition>content</RenderSlotCondition>
       <DefaultPropsComponent />
+      <InlineArrowFunction />
     </div>
   );
 }

@@ -112,7 +112,7 @@ export default class Widget extends WidgetProps {
   }
 
   __destroyEffects: any[] = [];
-  __viewCheckedSubscribeEvent: Array<() => void> = [];
+  __viewCheckedSubscribeEvent: Array<(() => void) | null> = [];
   _effectTimeout: any;
 
   ngAfterViewInit() {

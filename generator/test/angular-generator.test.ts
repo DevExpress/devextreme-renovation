@@ -3203,6 +3203,96 @@ mocha.describe("Angular generator", function () {
         }
       );
 
+      mocha.it("generate trackByName from complex expression", function () {
+        const expression = generator.createJsxElement(
+          generator.createJsxOpeningElement(
+            generator.createIdentifier("div"),
+            undefined,
+            []
+          ),
+          [
+            generator.createJsxExpression(
+              undefined,
+              generator.createCall(
+                generator.createPropertyAccess(
+                  generator.createParen(
+                    generator.createBinary(
+                      generator.createPropertyAccess(
+                        generator.createIdentifier("viewModel"),
+                        generator.createIdentifier("items")
+                      ),
+                      "||",
+                      generator.createArrayLiteral([], false)
+                    )
+                  ),
+                  generator.createIdentifier("map")
+                ),
+                undefined,
+                [
+                  generator.createArrowFunction(
+                    undefined,
+                    undefined,
+                    [
+                      generator.createParameter(
+                        undefined,
+                        undefined,
+                        undefined,
+                        generator.createIdentifier("item"),
+                        undefined,
+                        undefined,
+                        undefined
+                      ),
+                    ],
+                    undefined,
+                    generator.createToken(
+                      generator.SyntaxKind.EqualsGreaterThanToken
+                    ),
+                    generator.createJsxElement(
+                      generator.createJsxOpeningElement(
+                        generator.createIdentifier("div"),
+                        undefined,
+                        generator.createJsxAttributes([
+                          generator.createJsxAttribute(
+                            generator.createIdentifier("key"),
+                            generator.createPropertyAccess(
+                              generator.createIdentifier("item"),
+                              generator.createIdentifier("id")
+                            )
+                          ),
+                        ])
+                      ),
+                      [],
+                      generator.createJsxClosingElement(
+                        generator.createIdentifier("div")
+                      )
+                    )
+                  ),
+                ]
+              )
+            ),
+          ],
+          generator.createJsxClosingElement(generator.createIdentifier("div"))
+        );
+
+        const options: toStringOptions = {
+          members: [],
+        };
+
+        assert.strictEqual(
+          expression.children[0].toString(options),
+          `<ng-container *ngFor="let item of (viewModel.items || []);trackBy: _trackBy_viewModel_items_0"><div ></div></ng-container>`
+        );
+        const trackByAttrs = options.trackBy!;
+        assert.strictEqual(trackByAttrs.length, 1);
+        assert.strictEqual(trackByAttrs[0].toString(), "");
+        assert.strictEqual(
+          getResult(trackByAttrs[0].getTrackByDeclaration()),
+          getResult(`_trackBy_viewModel_items_0(_index: number, item: any){
+                    return item.id;
+                }`)
+        );
+      });
+
       mocha.it("map - can use prop in key", function () {
         const expression = generator.createJsxElement(
           generator.createJsxOpeningElement(
@@ -6582,15 +6672,29 @@ mocha.describe("Angular generator", function () {
           assert.strictEqual(
             getResult(component.compileEffects([], [], ngOnChanges, [], [])),
             getResult(`
-                        __destroyEffects: any[] = [];
-                        __viewCheckedSubscribeEvent: Array<()=>void> = [];
-                        _effectTimeout: any;
-                        __schedule_e(){
-                            this.__destroyEffects[0]?.();
-                            this.__viewCheckedSubscribeEvent[0] = ()=>{
-                                this.__destroyEffects[0] = this.__e()
-                            }
-                        }
+                __destroyEffects: any[] = [];
+                __viewCheckedSubscribeEvent: Array<(()=>void)|null> = [];
+                _effectTimeout: any;
+                __schedule_e(){
+                    this.__destroyEffects[0]?.();
+                    this.__viewCheckedSubscribeEvent[0] = ()=>{
+                        this.__destroyEffects[0] = this.__e()
+                    }
+                }
+            
+                _updateEffects(){
+                  if(this.__viewCheckedSubscribeEvent.length){
+                    clearTimeout(this._effectTimeout);
+                    this._effectTimeout = setTimeout(()=>{
+                        this.__viewCheckedSubscribeEvent.forEach((s, i)=>{
+                          s?.();
+                          if(this.__viewCheckedSubscribeEvent[i]===s){
+                            this.__viewCheckedSubscribeEvent[i]=null;
+                          }
+                        });
+                      });
+                  }
+                }
                 `)
           );
 
@@ -6638,13 +6742,26 @@ mocha.describe("Angular generator", function () {
             getResult(component.compileEffects([], [], ngOnChanges, [], [])),
             getResult(`
                         __destroyEffects: any[] = [];
-                        __viewCheckedSubscribeEvent: Array<()=>void> = [];
+                        __viewCheckedSubscribeEvent: Array<(()=>void) | null> = [];
                         _effectTimeout: any;
                         __schedule_e(){
                             this.__destroyEffects[0]?.();
                             this.__viewCheckedSubscribeEvent[0] = ()=>{
                                 this.__destroyEffects[0] = this.__e()
                             }
+                        }
+                        _updateEffects(){
+                          if(this.__viewCheckedSubscribeEvent.length){
+                            clearTimeout(this._effectTimeout);
+                            this._effectTimeout = setTimeout(()=>{
+                                this.__viewCheckedSubscribeEvent.forEach((s, i)=>{
+                                  s?.();
+                                  if(this.__viewCheckedSubscribeEvent[i]===s){
+                                    this.__viewCheckedSubscribeEvent[i]=null;
+                                  }
+                                });
+                              });
+                          }
                         }
                 `)
           );
@@ -6707,13 +6824,26 @@ mocha.describe("Angular generator", function () {
             getResult(component.compileEffects([], [], ngOnChanges, [], [])),
             getResult(`
                         __destroyEffects: any[] = [];
-                        __viewCheckedSubscribeEvent: Array<()=>void> = [];
+                        __viewCheckedSubscribeEvent: Array<(()=>void) | null> = [];
                         _effectTimeout: any;
                         __schedule_e(){
                             this.__destroyEffects[0]?.();
                             this.__viewCheckedSubscribeEvent[0] = ()=>{
                                 this.__destroyEffects[0] = this.__e()
                             }
+                        }
+                        _updateEffects(){
+                          if(this.__viewCheckedSubscribeEvent.length){
+                            clearTimeout(this._effectTimeout);
+                            this._effectTimeout = setTimeout(()=>{
+                                this.__viewCheckedSubscribeEvent.forEach((s, i)=>{
+                                  s?.();
+                                  if(this.__viewCheckedSubscribeEvent[i]===s){
+                                    this.__viewCheckedSubscribeEvent[i]=null;
+                                  }
+                                });
+                              });
+                          }
                         }
                 `)
           );
@@ -6739,6 +6869,7 @@ mocha.describe("Angular generator", function () {
                         if (this.__destroyEffects.length) {
                             this.__schedule_e();
                         }
+                        this._updateEffects();
                     }
                 `)
           );
@@ -6768,7 +6899,7 @@ mocha.describe("Angular generator", function () {
             getResult(component.compileEffects([], [], ngOnChanges, [], [])),
             getResult(`
                         __destroyEffects: any[] = [];
-                        __viewCheckedSubscribeEvent: Array<()=>void> = [];
+                        __viewCheckedSubscribeEvent: Array<(()=>void) | null> = [];
                         _effectTimeout: any;
                 `)
           );

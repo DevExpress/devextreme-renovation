@@ -178,6 +178,20 @@ cloneTest("Dom Events should not lead to render", async (t) => {
   await t.expect(Selector("#sum-array .update-count").textContent).eql("1");
 });
 
+cloneTest("Effect subscription/un-subscription", async (t) => {
+  const el = Selector("#effect-subscribe-unsubscribe-button");
+
+  await t.click(el);
+  await t.click(el);
+  await t.click(el);
+
+  await t
+    .expect(
+      Selector("#effect-subscribe-unsubscribe-button-content").textContent
+    )
+    .eql("2");
+});
+
 cloneTest("Forward refs", async (t) => {
   const el = Selector(".forward-ref-child");
 
@@ -295,4 +309,14 @@ cloneTest("Default props", async (t) => {
   await assert("default-props-number-with-default", "1");
 
   await assert("default-props-optional-boolean-or-number", "undefined");
+});
+
+cloneTest("Set forward ref", async (t) => {
+  const content = await Selector("#set-ref");
+
+  await t
+    .expect((await content.textContent).trim())
+    .eql(
+      "non-object-ref-value: 10content in forwardRefcontent in forwardRefDeep"
+    );
 });

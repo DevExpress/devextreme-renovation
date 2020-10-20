@@ -118,11 +118,7 @@ export default function Widget(props: typeof PickedProps & RestProps) {
       const nested = __nestedChildren<
         typeof GridColumnProps & { __name: string }
       >().filter((child) => child.__name === "columns");
-      return props.columns && props.columns.length
-        ? props.columns
-        : nested.length
-        ? nested
-        : undefined;
+      return props.columns ? props.columns : nested.length ? nested : undefined;
     },
     [props.columns, props.children]
   );

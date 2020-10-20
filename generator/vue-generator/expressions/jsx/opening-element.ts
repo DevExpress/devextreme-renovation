@@ -29,7 +29,7 @@ import {
 } from "../../../base-generator/utils/expressions";
 import { VueDirective } from "./vue-directive";
 import { Conditional } from "../../../base-generator/expressions/conditions";
-
+import { JsxAttribute as BaseJsxAttribute } from "../../../base-generator/expressions/jsx";
 export class JsxOpeningElement extends BaseJsxOpeningElement {
   attributes: Array<JsxAttribute | JsxSpreadAttribute>;
   constructor(
@@ -89,11 +89,63 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
   compileTemplate(templateProperty: Property, options?: toStringOptions) {
     const attributes = this.attributes.map((a) => a.getTemplateProp(options));
+    const initializer = templateProperty?.initializer;
+    const defaultAttrs = this.attributes.filter(
+      (a) => a instanceof JsxAttribute
+    ) as JsxAttribute[];
+
+    const initializerComponent =
+      initializer instanceof Identifier &&
+      this.context.components &&
+      this.context.components[initializer.toString()]
+        ? this.context.components[initializer.toString()]
+        : undefined;
+    const componentTag = initializerComponent
+      ? `<${initializerComponent.name} ${defaultAttrs
+          .map(
+            (a) =>
+              `:${a.name.toString()}=${
+                templateProperty.name
+              }Default.${a.name.toString()}`
+          )
+          .join(" ")}/>`
+      : "";
+    let body = componentTag;
+    const slotOptions: toStringOptions = {
+      newComponentContext: `${templateProperty.name}Default`,
+      members: options?.members || [],
+    };
+    if (initializer instanceof BaseFunction)
+      body = initializer.getTemplate(slotOptions);
+    if (body) {
+      return `<slot name="${templateProperty.name}" ${attributes.join(" ")}>
+        <div style="display:contents" ${this.createSetAttributes(
+          templateProperty,
+          defaultAttrs,
+          options
+        )}>${body}</div>
+      </slot>`;
+    }
+
     return `<slot name="${templateProperty.name}" ${attributes.join(
       " "
     )}></slot>`;
   }
-
+  createSetAttributes(
+    templateProperty: Property,
+    attrs: BaseJsxAttribute[],
+    options?: toStringOptions
+  ): string {
+    return `:set='${templateProperty.name}Default={${attrs
+      .map((a) => {
+        return `${a.name.toString()}:${a.initializer.toString(
+          options?.componentContext === "model"
+            ? options
+            : { componentContext: "model", members: options!.members }
+        )}`;
+      })
+      .join(",")}}'`;
+  }
   createJsxAttribute(name: Identifier, value: Expression) {
     return new JsxAttribute(name, value);
   }
@@ -254,6 +306,9 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       ).toString(options);
     }
   }
+  getArrowFunctionGeneratedName(templateName: string) {
+    return templateName;
+  }
 }
 
 export class JsxSelfClosingElement extends JsxOpeningElement {
@@ -279,7 +334,6 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
         .map((c) => c.toString(options))
         .join("")}</${this.processTagName(this.tagName)}>`;
     }
-
     return baseValue.replace(/>$/, "/>");
   }
 

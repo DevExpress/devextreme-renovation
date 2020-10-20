@@ -52,7 +52,7 @@ class DxWidgetEditing extends EditingProps {
     this.__custom = value;
   }
   get custom(): DxWidgetEditingCustom[] | undefined {
-    if (this.__custom && this.__custom.length) {
+    if (this.__custom) {
       return this.__custom;
     }
     const nested = this.customNested.toArray();
@@ -105,7 +105,7 @@ class DxWidgetColumn extends GridColumnProps {
     this.__custom = value;
   }
   get custom(): DxWidgetColumnCustom[] | undefined {
-    if (this.__custom && this.__custom.length) {
+    if (this.__custom) {
       return this.__custom;
     }
     const nested = this.customNested.toArray();
@@ -131,7 +131,7 @@ export default class Widget extends PickedProps {
   private __columns?: Array<DxWidgetColumn | string>;
   @ContentChildren(DxWidgetColumn) columnsNested!: QueryList<DxWidgetColumn>;
   get columns(): Array<DxWidgetColumn | string> | undefined {
-    if (this.__columns && this.__columns.length) {
+    if (this.__columns) {
       return this.__columns;
     }
     const nested = this.columnsNested.toArray();

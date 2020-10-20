@@ -1,9 +1,11 @@
 export declare type WidgetWithPropsInputType = {
   value: string;
   optionalValue?: string;
+  number?: number;
 };
 export const WidgetWithPropsInput: WidgetWithPropsInputType = {
   value: "default text",
+  number: 42,
 };
 import * as Preact from "preact";
 import { useCallback, useImperativeHandle } from "preact/hooks";
@@ -30,7 +32,7 @@ const WidgetWithProps = forwardRef<
 ) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { optionalValue, value, ...restProps } = props;
+      const { number, optionalValue, value, ...restProps } = props;
       return restProps;
     },
     [props]

@@ -39,14 +39,10 @@ export default class Widget extends WidgetProps {
     this.refProp && (this.refProp = this.divRef.nativeElement);
     someRef = this.refProp ? this.refProp : this.divRef.nativeElement;
     if (this.forwardRefProp) {
-      this.forwardRef_forwardRefProp(new ElementRef(this.divRef.nativeElement)),
-        this.forwardRefProp(new ElementRef(this.divRef.nativeElement));
+      this.forwardRef_forwardRefProp(new ElementRef(this.divRef.nativeElement));
     }
     this.forwardRefProp &&
-      (this.forwardRef_forwardRefProp(
-        new ElementRef(this.divRef.nativeElement)
-      ),
-      this.forwardRefProp(new ElementRef(this.divRef.nativeElement)));
+      this.forwardRef_forwardRefProp(new ElementRef(this.divRef.nativeElement));
     someRef = this.forwardRefPropRef?.nativeElement
       ? this.forwardRefPropRef?.nativeElement
       : this.divRef.nativeElement;
@@ -70,8 +66,7 @@ export default class Widget extends WidgetProps {
     this.requiredRefProp = this.divRef.nativeElement;
     this.forwardRef_requiredForwardRefProp(
       new ElementRef(this.divRef.nativeElement)
-    ),
-      this.requiredForwardRefProp(new ElementRef(this.divRef.nativeElement));
+    );
   }
   __readRefs(): any {
     const outer_1 = this.refProp?.outerHTML;
@@ -100,7 +95,11 @@ export default class Widget extends WidgetProps {
     return (this.__getterCache["forwardRef_forwardRef"] = ((): ((
       ref: any
     ) => void) => {
-      return (ref) => (this.forwardRef = ref);
+      return (ref) => {
+        this.forwardRef = ref;
+
+        return ref;
+      };
     })());
   }
   get forwardRef_existingForwardRef(): (ref: any) => void {
@@ -110,7 +109,11 @@ export default class Widget extends WidgetProps {
     return (this.__getterCache["forwardRef_existingForwardRef"] = ((): ((
       ref: any
     ) => void) => {
-      return (ref) => (this.existingForwardRef = ref);
+      return (ref) => {
+        this.existingForwardRef = ref;
+
+        return ref;
+      };
     })());
   }
   get forwardRef_outerDivRef(): (ref: any) => void {
@@ -120,7 +123,11 @@ export default class Widget extends WidgetProps {
     return (this.__getterCache["forwardRef_outerDivRef"] = ((): ((
       ref: any
     ) => void) => {
-      return (ref) => (this.outerDivRefRef = ref);
+      return (ref) => {
+        this.outerDivRefRef = ref;
+        this.outerDivRef?.(ref);
+        return ref;
+      };
     })());
   }
   get forwardRef_forwardRefProp(): (ref: any) => void {
@@ -130,7 +137,11 @@ export default class Widget extends WidgetProps {
     return (this.__getterCache["forwardRef_forwardRefProp"] = ((): ((
       ref: any
     ) => void) => {
-      return (ref) => (this.forwardRefPropRef = ref);
+      return (ref) => {
+        this.forwardRefPropRef = ref;
+        this.forwardRefProp?.(ref);
+        return ref;
+      };
     })());
   }
   get forwardRef_requiredForwardRefProp(): (ref: any) => void {
@@ -140,7 +151,11 @@ export default class Widget extends WidgetProps {
     return (this.__getterCache["forwardRef_requiredForwardRefProp"] = ((): ((
       ref: any
     ) => void) => {
-      return (ref) => (this.requiredForwardRefPropRef = ref);
+      return (ref) => {
+        this.requiredForwardRefPropRef = ref;
+        this.requiredForwardRefProp(ref);
+        return ref;
+      };
     })());
   }
   _detectChanges(): void {

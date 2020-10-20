@@ -58,7 +58,7 @@ export default class Widget extends WidgetInput {
   }
 
   __destroyEffects: any[] = [];
-  __viewCheckedSubscribeEvent: Array<() => void> = [];
+  __viewCheckedSubscribeEvent: Array<(() => void) | null> = [];
   _effectTimeout: any;
   __schedule_setupData() {
     this.__destroyEffects[0]?.();
@@ -71,6 +71,20 @@ export default class Widget extends WidgetInput {
     this.__viewCheckedSubscribeEvent[2] = () => {
       this.__destroyEffects[2] = this.__alwaysEffect();
     };
+  }
+
+  _updateEffects() {
+    if (this.__viewCheckedSubscribeEvent.length) {
+      clearTimeout(this._effectTimeout);
+      this._effectTimeout = setTimeout(() => {
+        this.__viewCheckedSubscribeEvent.forEach((s, i) => {
+          s?.();
+          if (this.__viewCheckedSubscribeEvent[i] === s) {
+            this.__viewCheckedSubscribeEvent[i] = null;
+          }
+        });
+      });
+    }
   }
 
   ngAfterViewInit() {
@@ -96,12 +110,7 @@ export default class Widget extends WidgetInput {
     clearTimeout(this._effectTimeout);
   }
   ngAfterViewChecked() {
-    if (this.__viewCheckedSubscribeEvent.length) {
-      this._effectTimeout = setTimeout(() => {
-        this.__viewCheckedSubscribeEvent.forEach((s) => s?.());
-        this.__viewCheckedSubscribeEvent = [];
-      });
-    }
+    this._updateEffects();
   }
 
   _sChange: any;
@@ -119,10 +128,12 @@ export default class Widget extends WidgetInput {
     if (this.__destroyEffects.length) {
       this.__schedule_setupData();
     }
+    this._updateEffects();
 
     if (this.__destroyEffects.length) {
       this.__schedule_alwaysEffect();
     }
+    this._updateEffects();
   }
   set _j(j: number) {
     this.j = j;
@@ -131,6 +142,7 @@ export default class Widget extends WidgetInput {
     if (this.__destroyEffects.length) {
       this.__schedule_alwaysEffect();
     }
+    this._updateEffects();
   }
 }
 @NgModule({
