@@ -42,6 +42,7 @@ import SetNonElementRef from "./set-ref/set-non-element-ref";
 import SetForwardRef from "./set-ref/set-forward-ref-parent";
 import SetForwardRefDeep from "./set-ref/set-forward-ref-deep/parent";
 import InlineArrowFunction from "./inline-arrow-function";
+import ListTemplate from "./list-template";
 
 function view(model: App) {
   return (
@@ -102,6 +103,7 @@ function view(model: App) {
         items={model.listItems}
         onClick={model.onListItemClick}
       />
+      <ListTemplate />
       <SpreadProps onClick={model.onButtonClick} id="spread-props">
         Can Spread Props
       </SpreadProps>
