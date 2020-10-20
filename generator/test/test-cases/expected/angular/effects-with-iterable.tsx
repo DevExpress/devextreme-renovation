@@ -47,7 +47,7 @@ export default class Widget extends WidgetInput {
   }
 
   __destroyEffects: any[] = [];
-  __viewCheckedSubscribeEvent: Array<() => void> = [];
+  __viewCheckedSubscribeEvent: Array<(() => void) | null> = [];
   _effectTimeout: any;
   __schedule_effect() {
     this.__destroyEffects[0]?.();
@@ -67,6 +67,21 @@ export default class Widget extends WidgetInput {
       this.__destroyEffects[3] = this.__alwaysEffect();
     };
   }
+
+  _updateEffects() {
+    if (this.__viewCheckedSubscribeEvent.length) {
+      clearTimeout(this._effectTimeout);
+      this._effectTimeout = setTimeout(() => {
+        this.__viewCheckedSubscribeEvent.forEach((s, i) => {
+          s?.();
+          if (this.__viewCheckedSubscribeEvent[i] === s) {
+            this.__viewCheckedSubscribeEvent[i] = null;
+          }
+        });
+      });
+    }
+  }
+
   __cachedObservables: { [name: string]: Array<any> } = {};
   __checkObservables(keys: string[]) {
     let isChanged = false;
@@ -129,12 +144,7 @@ export default class Widget extends WidgetInput {
     clearTimeout(this._effectTimeout);
   }
   ngAfterViewChecked() {
-    if (this.__viewCheckedSubscribeEvent.length) {
-      this._effectTimeout = setTimeout(() => {
-        this.__viewCheckedSubscribeEvent.forEach((s) => s?.());
-        this.__viewCheckedSubscribeEvent = [];
-      });
-    }
+    this._updateEffects();
   }
   ngDoCheck() {
     if (
@@ -165,10 +175,12 @@ export default class Widget extends WidgetInput {
     if (this.__destroyEffects.length) {
       this.__schedule_effectWithObservables();
     }
+    this._updateEffects();
 
     if (this.__destroyEffects.length) {
       this.__schedule_alwaysEffect();
     }
+    this._updateEffects();
   }
   set _internalObject(internalObject: object) {
     this.internalObject = internalObject;
@@ -177,10 +189,12 @@ export default class Widget extends WidgetInput {
     if (this.__destroyEffects.length) {
       this.__schedule_effect();
     }
+    this._updateEffects();
 
     if (this.__destroyEffects.length) {
       this.__schedule_alwaysEffect();
     }
+    this._updateEffects();
   }
   set _keys(keys: string[]) {
     this.keys = keys;
@@ -190,6 +204,7 @@ export default class Widget extends WidgetInput {
     if (this.__destroyEffects.length) {
       this.__schedule_alwaysEffect();
     }
+    this._updateEffects();
   }
   set _counter(counter: number) {
     this.counter = counter;
@@ -198,6 +213,7 @@ export default class Widget extends WidgetInput {
     if (this.__destroyEffects.length) {
       this.__schedule_alwaysEffect();
     }
+    this._updateEffects();
   }
 }
 @NgModule({

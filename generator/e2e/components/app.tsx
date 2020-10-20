@@ -23,6 +23,7 @@ import TemplatePass from "./template-pass";
 import RefPass from "./ref-pass";
 import EffectsDOMUpdate from "./effects-dom-update";
 import EffectsStateUpdate from "./effects-state-update";
+import EffectSubscription from "./effect-subscribe-unsubscribe";
 import SumArray from "./render/sum-array";
 import ForwardRefParent from "./ref-on-children/forward-ref-parent";
 import ForwardRefTemplate from "./ref-on-children/forward-ref-template";
@@ -37,6 +38,9 @@ import TestPropertyAccessChain from "./property-access-chain";
 import TemplateDefaultValue from "./template-passing/template-default-value";
 import RenderSlotCondition from "./slot/render-slot-condition";
 import DefaultPropsComponent from "./default-props/default-props-component";
+import SetNonElementRef from "./set-ref/set-non-element-ref";
+import SetForwardRef from "./set-ref/set-forward-ref-parent";
+import SetForwardRefDeep from "./set-ref/set-forward-ref-deep/parent";
 import InlineArrowFunction from "./inline-arrow-function";
 
 const CustomTemplate = (props: {
@@ -127,6 +131,7 @@ function view(model: App) {
           text={model.domEffectsText}
         />
         <EffectsStateUpdate name="effects-state-update" />
+        <EffectSubscription />
       </div>
       <SumArray id={"sum-array"} array={model.arrayForSum} />
       ForwardRef: <ForwardRefParent />
@@ -134,6 +139,11 @@ function view(model: App) {
       <ForwardRefTemplate contentTemplate={ForwardRefChild} />
       ForwardRef Deep:
       <ForwardRefTemplate contentTemplate={ForwardRefDeep} />
+      <div id="set-ref">
+        <SetNonElementRef />
+        <SetForwardRef />
+        <SetForwardRefDeep />
+      </div>
       <div style={{ border: "1px solid grey" }}>
         Check templates
         <TemplateApp />

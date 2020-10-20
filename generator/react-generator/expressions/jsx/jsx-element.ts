@@ -21,6 +21,8 @@ export class JsxElement extends BaseJsxElement {
             c.getTemplateProperty(options)
           ) {
             str = `{${c.toString(options)}}`;
+          } else if (typeof c === "string") {
+            str = c.trim();
           } else {
             str = c.toString(options);
           }
