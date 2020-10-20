@@ -1,7 +1,6 @@
 import { WidgetWithProps } from "./dx-widget-with-props";
 export const viewFunction = (model: TemplateDefaultValue) => (
   <div>
-    {" "}
     TemplateDefaultValue
     {model.props.defaultCompTemplate({
       optionalValue: model.props.stringToRender,
@@ -67,7 +66,6 @@ export const TemplateDefaultValueProps: TemplateDefaultValuePropsType = {
   defaultCompTemplate: WidgetWithProps,
   defaultFuncTemplate: (props) => (
     <div>
-      {" "}
       !DefaultFunc:
       {props.value || "ftwdCompDefault"}
       {props.optionalValue}
