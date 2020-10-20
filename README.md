@@ -1,6 +1,6 @@
 # devextreme-renovation
 
-[![Build Status](https://dev.azure.com/pavelgruba/devextreme-renovation/_apis/build/status/DevExpress.devextreme-renovation?branchName=master)](https://dev.azure.com/pavelgruba/devextreme-renovation/_build/latest?definitionId=1&branchName=master)
+[![Build Status](https://dev.azure.com/pavelgruba/devextreme-renovation/_apis/build/status/DevExpress.devextreme-renovation?branchName=master)](https://dev.azure.com/pavelgruba/devextreme-renovation/_build/latest?definitionId=1&branchName=master) ![Build Devextreme](https://github.com/DevExpress/devextreme-renovation/workflows/Build%20Devextreme/badge.svg)
 
 ## Generator
 
@@ -38,8 +38,12 @@ const generator = require('devextreme-generator/preact-generator').default;
 // const generator = require('devextreme-generator/react-generator').default;
 // const generator = require('devextreme-generator/angular-generator').default;
 
-// Optional set defaultOptionsModule
-generator.defaultOptionsModule = 'pathToYourModule or node_modules/devextreme-generator/component_declaration/default_options';
+// Optional set options
+generator.options = {
+    defaultOptionsModule: 'pathToYourModule or node_modules/devextreme-generator/component_declaration/default_options',
+    jqueryComponentRegistratorModule: 'path',
+    jqueryBaseComponentModule: 'preact_wrapper/component',
+};
 
 gulp.task('generate-components', function() {
     return gulp.src(SRC)
@@ -59,4 +63,41 @@ const result = compileCode(generator, source, {
     path: path,
     dirname: dirname
 });
+ ```
+ 
+  ##### With webpack
+   
+ ```javascript
+// webpack.config.js
+
+module.exports = {
+    // ...
+    module: {
+        rules: [
+            {
+                test: /\.tsx?$/,
+                loaders: [
+                    {
+                        loader: 'babel-loader',
+                    },
+                    {
+                        loader: 'devextreme-generator/webpack-loader',
+                        options: {
+                            platform: 'preact',
+                            defaultOptionsModule: 'path',
+                            // ...
+                            tsConfig: path.resolve('./preact.tsconfig.json')
+                        },
+                    },
+                ],
+                exclude: ['/node_modules/'],
+            },
+            // ...
+            ]
+    },
+    resolve: {
+        extensions: ['.js', '.tsx', '.ts'],
+    }
+};
+
  ```
