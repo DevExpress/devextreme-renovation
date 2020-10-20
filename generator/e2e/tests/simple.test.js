@@ -178,6 +178,20 @@ cloneTest("Dom Events should not lead to render", async (t) => {
   await t.expect(Selector("#sum-array .update-count").textContent).eql("1");
 });
 
+cloneTest("Effect subscription/un-subscription", async (t) => {
+  const el = Selector("#effect-subscribe-unsubscribe-button");
+
+  await t.click(el);
+  await t.click(el);
+  await t.click(el);
+
+  await t
+    .expect(
+      Selector("#effect-subscribe-unsubscribe-button-content").textContent
+    )
+    .eql("2");
+});
+
 cloneTest("Forward refs", async (t) => {
   const el = Selector(".forward-ref-child");
 

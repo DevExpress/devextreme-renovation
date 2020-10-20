@@ -73,7 +73,7 @@ export default class RefOnChildrenParent extends Props {
   }
 
   __destroyEffects: any[] = [];
-  __viewCheckedSubscribeEvent: Array<() => void> = [];
+  __viewCheckedSubscribeEvent: Array<(() => void) | null> = [];
   _effectTimeout: any;
   __schedule_effect() {
     this.__destroyEffects[0]?.();
@@ -81,6 +81,21 @@ export default class RefOnChildrenParent extends Props {
       this.__destroyEffects[0] = this.__effect();
     };
   }
+
+  _updateEffects() {
+    if (this.__viewCheckedSubscribeEvent.length) {
+      clearTimeout(this._effectTimeout);
+      this._effectTimeout = setTimeout(() => {
+        this.__viewCheckedSubscribeEvent.forEach((s, i) => {
+          s?.();
+          if (this.__viewCheckedSubscribeEvent[i] === s) {
+            this.__viewCheckedSubscribeEvent[i] = null;
+          }
+        });
+      });
+    }
+  }
+
   __getterCache: {
     forwardRef_child?: (ref: any) => void;
     forwardRef_nullableRef?: (ref: any) => void;
@@ -106,12 +121,7 @@ export default class RefOnChildrenParent extends Props {
     clearTimeout(this._effectTimeout);
   }
   ngAfterViewChecked() {
-    if (this.__viewCheckedSubscribeEvent.length) {
-      this._effectTimeout = setTimeout(() => {
-        this.__viewCheckedSubscribeEvent.forEach((s) => s?.());
-        this.__viewCheckedSubscribeEvent = [];
-      });
-    }
+    this._updateEffects();
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {
