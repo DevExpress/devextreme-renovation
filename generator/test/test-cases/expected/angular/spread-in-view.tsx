@@ -1,7 +1,8 @@
-import { Input } from "@angular/core";
+import { Input, Output, EventEmitter } from "@angular/core";
 export class WidgetProps {
   @Input() a: Array<Number> = [1, 2, 3];
   @Input() id: string = "1";
+  @Output() onClick: EventEmitter<any> = new EventEmitter();
 }
 
 import {
@@ -31,7 +32,7 @@ export default class Widget extends WidgetProps {
     });
   }
   get rest(): any {
-    return { id: this.id };
+    return { id: this.id, onClick: this._onClick };
   }
   @ViewChild("_auto_ref_0", { static: false }) _auto_ref_0?: ElementRef<
     HTMLDivElement
@@ -52,7 +53,7 @@ export default class Widget extends WidgetProps {
     this.__applyAttributes__();
   }
   ngOnChanges(changes: { [name: string]: any }) {
-    if (["id"].some((d) => changes[d] && !changes[d].firstChange)) {
+    if (["id", "onClick"].some((d) => changes[d] && !changes[d].firstChange)) {
       this.scheduledApplyAttributes = true;
     }
   }
@@ -64,8 +65,12 @@ export default class Widget extends WidgetProps {
     }
   }
 
+  _onClick: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
+    this._onClick = (e: any) => {
+      this.onClick.emit(e);
+    };
   }
 }
 @NgModule({
