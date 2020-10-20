@@ -35,7 +35,7 @@ import PortalContainer from "./portal-container";
 import { PickPropsComponent } from "./pick-props";
 import ContextApp from "./context/context-app";
 import TestPropertyAccessChain from "./property-access-chain";
-import TemplateDefaultValue from "./template-passing/template-default-value";
+import TemplateDefaultValueApp from "./template-passing/template-default-value-app";
 import RenderSlotCondition from "./slot/render-slot-condition";
 import DefaultPropsComponent from "./default-props/default-props-component";
 import SetNonElementRef from "./set-ref/set-non-element-ref";
@@ -43,18 +43,6 @@ import SetForwardRef from "./set-ref/set-forward-ref-parent";
 import SetForwardRefDeep from "./set-ref/set-forward-ref-deep/parent";
 import InlineArrowFunction from "./inline-arrow-function";
 
-const CustomTemplate = (props: {
-  text?: string;
-  textWithDefault?: string;
-  number?: number;
-}) => {
-  return (
-    <div>
-      CUSTOM|{props.text || ""}|{props.textWithDefault || ""}|
-      {props.number || ""}
-    </div>
-  );
-};
 function view(model: App) {
   return (
     <div>
@@ -151,17 +139,9 @@ function view(model: App) {
       <ContextApp />
       <PortalContainer />
       <TestPropertyAccessChain />
-      <TemplateDefaultValue
-        funcTemplate={(props: {
-          text?: string | undefined;
-          textWithDefault?: string | undefined;
-        }) => (
-          <div>
-            FApp:{props.text} | {props.textWithDefault}
-          </div>
-        )}
-      />
-      <TemplateDefaultValue compTemplate={CustomTemplate} />
+      <div style={{ border: "1px solid grey", padding: "5px" }}>
+        <TemplateDefaultValueApp />
+      </div>
       <RenderSlotCondition>content</RenderSlotCondition>
       <DefaultPropsComponent />
       <InlineArrowFunction />

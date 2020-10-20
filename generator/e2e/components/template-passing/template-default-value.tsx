@@ -10,10 +10,9 @@ import SampleWidget from "./sample-widget";
 
 export const viewFunction = (model: TemplateDefaultValue) => (
   <div>
-    TemplateDefaultValue
     <model.props.compTemplate
       text={model.props.stringToRender}
-      textWithDefault={"twdComp"}
+      textWithDefault={"component text"}
     />
     <model.props.compTemplate text={model.props.stringToRender} />
     <model.props.funcTemplate text={model.props.stringToRender} />
@@ -31,10 +30,13 @@ export class TemplateDefaultValueProps {
     textWithDefault?: string;
   }> = (props: { text?: string; textWithDefault?: string }) => (
     <div>
-      !DefaultFunc:{props.textWithDefault || "ftwdCompDefault"} | {props.text}
+      <span>Function Default:</span>
+      <span>{props.textWithDefault || "functional default text"}</span>
+      <span>|</span>
+      <span>{props.text}</span>
     </div>
   );
-  @OneWay() stringToRender: string = "strCompDefault";
+  @OneWay() stringToRender: string = "stringPropDefault";
 }
 
 @Component({

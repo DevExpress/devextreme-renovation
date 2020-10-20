@@ -8,7 +8,10 @@ import {
 function view(model: SampleWidget) {
   return (
     <div>
-      !Sample Def:{model.props.textWithDefault}|{model.props.text}!
+      <span>Component Default:</span>
+      <span>{model.props.textWithDefault}</span>
+      <span>|</span>
+      <span>{model.props.text}</span>
     </div>
   );
 }
@@ -16,7 +19,7 @@ function view(model: SampleWidget) {
 @ComponentBindings()
 class SampleWidgetProps {
   @OneWay() text?: string;
-  @OneWay() textWithDefault = "swtext";
+  @OneWay() textWithDefault = "sample widget";
 }
 
 @Component({
