@@ -3,6 +3,7 @@ import {
   ComponentBindings,
   JSXComponent,
   OneWay,
+  Event,
 } from "../../../../component_declaration/common";
 
 export const viewFunction = ({ props: { a, ...rest } }: Widget) => {
@@ -13,6 +14,7 @@ export const viewFunction = ({ props: { a, ...rest } }: Widget) => {
 export class WidgetProps {
   @OneWay() a: Array<Number> = [1, 2, 3];
   @OneWay() id: string = "1";
+  @Event() onClick?: (e: any) => void;
 }
 
 @Component({ view: viewFunction })

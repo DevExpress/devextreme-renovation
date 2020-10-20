@@ -6,6 +6,7 @@ import { Decorator } from "./decorator";
 import {
   StringLiteral,
   ArrayLiteral,
+  ObjectLiteral,
 } from "../../base-generator/expressions/literal";
 import { HeritageClause } from "../../base-generator/expressions/class";
 import { Identifier, Call } from "../../base-generator/expressions/common";
@@ -45,6 +46,7 @@ import {
   BindingElement,
   BindingPattern,
 } from "../../base-generator/expressions/binding-pattern";
+import { PropertyAssignment } from "../../base-generator/expressions/property-assignment";
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = "CUSTOM_VALUE_ACCESSOR_PROVIDER";
 
@@ -1332,15 +1334,19 @@ export class AngularComponent extends Component {
       .filter((p) => !argNames.includes(p))
       .map(
         (r) =>
-          new BindingElement(
-            "",
+          new PropertyAssignment(
             new Identifier(r),
-            new Identifier(`this.${r}`),
-            undefined
+            new PropertyAccess(
+              new PropertyAccess(
+                new SimpleExpression(SyntaxKind.ThisKeyword),
+                new Identifier("props")
+              ),
+              new Identifier(r)
+            )
           )
       );
     return new Block(
-      [new ReturnStatement(new BindingPattern(res, "object"))],
+      [new ReturnStatement(new ObjectLiteral(res, false))],
       true
     );
   }

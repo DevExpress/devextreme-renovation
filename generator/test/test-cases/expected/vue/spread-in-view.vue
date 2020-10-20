@@ -23,11 +23,16 @@ export const DxWidget = {
       return {};
     },
     props() {
-      return { a: this.a, id: this.id };
+      return { a: this.a, id: this.id, onClick: this.onClick };
     },
     rest() {
       const { a, ...rest } = this.props;
       return { ...rest };
+    },
+  },
+  methods: {
+    onClick(...args) {
+      this.$emit("click", ...args);
     },
   },
 };

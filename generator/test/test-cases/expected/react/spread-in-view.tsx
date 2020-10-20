@@ -5,6 +5,7 @@ export const viewFunction = ({ props: { a, ...rest } }: Widget) => {
 export declare type WidgetPropsType = {
   a: Array<Number>;
   id: string;
+  onClick?: (e: any) => void;
 };
 export const WidgetProps: WidgetPropsType = {
   a: [1, 2, 3],
@@ -25,7 +26,7 @@ interface Widget {
 export default function Widget(props: typeof WidgetProps & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { a, id, ...restProps } = props;
+      const { a, id, onClick, ...restProps } = props;
       return restProps;
     },
     [props]
