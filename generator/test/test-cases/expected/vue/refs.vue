@@ -38,9 +38,7 @@ export const DxWidget = {
     __writeRefs() {
       let someRef;
       if (this.refProp?.()) {
-        this.props.refProp = this.$refs.divRef;
       }
-      this.refProp?.() && (this.props.refProp = this.$refs.divRef);
       someRef = this.props.refProp ? this.props.refProp : this.$refs.divRef;
       if (this.forwardRefProp) {
         this.forwardRef_forwardRefProp(this.$refs.divRef),
@@ -52,21 +50,17 @@ export const DxWidget = {
       someRef = this.$refs.forwardRefProp
         ? this.$refs.forwardRefProp
         : this.$refs.divRef;
-      if (this.$refs) {
+      if (!this.$refs) {
         this.$refs.ref = this.$refs.divRef;
       }
-      this.$refs && (this.$refs.ref = this.$refs.divRef);
+      !this.$refs && (this.$refs.ref = this.$refs.divRef);
       someRef = this.$refs.ref ? this.$refs.ref : this.$refs.divRef;
-      if (this.$refs) {
-        this.$refs.forwardRef = this.$refs.divRef;
+      if (!this.$refs) {
       }
-      this.$refs && (this.$refs.forwardRef = this.$refs.divRef);
       someRef = this.$refs.forwardRef
         ? this.$refs.forwardRef
         : this.$refs.divRef;
       this.$refs.existingRef = this.$refs.divRef;
-      this.$refs.existingForwardRef = this.$refs.divRef;
-      this.props.requiredRefProp = this.$refs.divRef;
       this.forwardRef_requiredForwardRefProp(this.$refs.divRef),
         this.requiredForwardRefProp(this.$refs.divRef);
     },

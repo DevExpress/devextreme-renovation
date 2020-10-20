@@ -6522,7 +6522,7 @@ mocha.describe("Angular generator", function () {
         }
         assert.strictEqual(
           error,
-          "Error: Can't assign property use TwoWay() or Internal State - this.props.width = 10"
+          "Error: Can't assign property use TwoWay, Internal State, Ref, ForwardRef prop - this.props.width = 10"
         );
       });
 

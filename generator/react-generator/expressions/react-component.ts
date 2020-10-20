@@ -1,5 +1,4 @@
 import { Identifier, Call } from "../../base-generator/expressions/common";
-import { Decorators } from "../../component_declaration/decorators";
 import { Decorator } from "../../base-generator/expressions/decorator";
 import { BaseClassMember } from "../../base-generator/expressions/class-members";
 import {
@@ -49,6 +48,8 @@ import {
   lowerizeFirstLeter,
 } from "../../base-generator/utils/string";
 import { Conditional } from "../../base-generator/expressions/conditions";
+import { GeneratorContext } from "../../base-generator/types";
+import { HeritageClause } from "./heritage-clause";
 
 function getSubscriptions(methods: Method[]) {
   return methods
@@ -74,19 +75,31 @@ function getSubscriptions(methods: Method[]) {
 export class ReactComponent extends Component {
   REF_OBJECT_TYPE = "MutableRefObject";
 
-  processMembers(members: Array<BaseProperty | Method>) {
-    members.forEach((m) => {
-      const forwardRefIndex = m.decorators.findIndex(
-        (d) => d.name === Decorators.ForwardRef
-      );
-      if (forwardRefIndex > -1) {
-        m.decorators[forwardRefIndex] = new Decorator(
-          new Call(new Identifier(Decorators.Ref), undefined, []),
-          {}
-        );
-      }
-    });
+  constructor(
+    decorator: Decorator,
+    modifiers: string[] = [],
+    name: Identifier,
+    typeParameters: string[],
+    heritageClauses: HeritageClause[] = [],
+    members: Array<Property | Method>,
+    context: GeneratorContext
+  ) {
+    super(
+      decorator,
+      modifiers,
+      name,
+      typeParameters,
+      heritageClauses,
+      members,
+      context
+    );
 
+    this.refs = this.refs.concat(
+      this.members.filter((m) => m.isForwardRef) as Property[]
+    );
+  }
+
+  processMembers(members: Array<BaseProperty | Method>) {
     members = super.processMembers(members).map((p) => {
       if (p.inherited) {
         p.scope = "props";

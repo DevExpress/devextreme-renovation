@@ -2335,6 +2335,40 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.getter(), "p");
     });
 
+    mocha.it("Property.isReadOnly", function () {
+      const props: { [name: string]: boolean } = {
+        [Decorators.OneWay]: true,
+        [Decorators.TwoWay]: false,
+        [Decorators.InternalState]: false,
+        [Decorators.ApiRef]: true,
+        [Decorators.Ref]: false,
+        [Decorators.ForwardRef]: true,
+        [Decorators.ForwardRefProp]: false,
+        [Decorators.Slot]: true,
+        [Decorators.Template]: true,
+        [Decorators.Nested]: true,
+        [Decorators.Event]: true,
+        [Decorators.ForwardRef]: true,
+      };
+
+      Object.keys(props).forEach((decoratorName) => {
+        const expression = generator.createProperty(
+          [createDecorator(decoratorName)],
+          [],
+          generator.createIdentifier("p"),
+          generator.SyntaxKind.QuestionToken
+        );
+
+        const expectedValue = props[decoratorName];
+
+        assert.strictEqual(
+          expression.isReadOnly(),
+          expectedValue,
+          decoratorName
+        );
+      });
+    });
+
     mocha.it("Method", function () {
       const expression = generator.createMethod(
         undefined,

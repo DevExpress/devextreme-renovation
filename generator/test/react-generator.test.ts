@@ -2062,7 +2062,7 @@ mocha.describe(
 
       assert.strictEqual(
         error,
-        "Error: Can't assign property use TwoWay() or Internal State - this.props.p1 = a"
+        "Error: Can't assign property use TwoWay, Internal State, Ref, ForwardRef prop - this.props.p1 = a"
       );
     });
 

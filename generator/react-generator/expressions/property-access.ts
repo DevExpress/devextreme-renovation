@@ -46,12 +46,7 @@ export class PropertyAccess extends BasePropertyAccess {
         changeProperty
       )}(${state}))`;
     }
-    if (
-      property.isRef ||
-      property.isRefProp ||
-      property.isForwardRef ||
-      property.isForwardRefProp
-    ) {
+    if (property.isRef || property.isForwardRefProp) {
       const scope = property.processComponentContext(property.scope);
       return `${scope}${this.name}.current=${state}`;
     }
