@@ -32,6 +32,7 @@ export class Decorator extends BaseDecorator {
       return "";
     } else if (this.name === Decorators.Component) {
       const parameters = this.expression.arguments[0] as ObjectLiteral;
+
       const viewFunction = this.getViewFunction();
       if (viewFunction) {
         let template = viewFunction.getTemplate(options);
@@ -55,10 +56,14 @@ export class Decorator extends BaseDecorator {
         }
       }
 
-      parameters.removeProperty("view");
-      parameters.removeProperty("viewModel");
-      parameters.removeProperty("defaultOptionRules");
-      parameters.removeProperty("jQuery");
+      [
+        "view",
+        "defaultOptionRules",
+        "jQuery",
+        "isSVG",
+        "name",
+        "components",
+      ].forEach((name) => parameters.removeProperty(name));
     } else if (this.name === Decorators.Event) {
       return "@Output()";
     }
