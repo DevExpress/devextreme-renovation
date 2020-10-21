@@ -39,17 +39,15 @@ interface Widget {
 export default function Widget(props: typeof WidgetProps & RestProps) {
   const divRef = useRef<HTMLDivElement>();
   const ref = useRef<HTMLDivElement>();
-  const forwardRef = useRef<HTMLDivElement>();
   const existingRef = useRef<HTMLDivElement>();
+  const forwardRef = useRef<HTMLDivElement>();
   const existingForwardRef = useRef<HTMLDivElement>();
 
   const __writeRefs = useCallback(
     function __writeRefs(): any {
       let someRef;
-      if (props.refProp) {
-        props.refProp.current = divRef.current!;
+      if (props.refProp?.current!) {
       }
-      props.refProp && (props.refProp.current = divRef.current!);
       someRef = props.refProp?.current!
         ? props.refProp?.current!
         : divRef.current!;
@@ -60,19 +58,18 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
       someRef = props.forwardRefProp?.current!
         ? props.forwardRefProp?.current!
         : divRef.current!;
-      if (ref) {
+      if (!ref.current!) {
         ref.current = divRef.current!;
       }
-      ref && (ref.current = divRef.current!);
+      !ref.current! && (ref.current = divRef.current!);
       someRef = ref.current! ? ref.current! : divRef.current!;
-      if (forwardRef) {
-        forwardRef.current = divRef.current!;
+      if (!forwardRef.current!) {
       }
-      forwardRef && (forwardRef.current = divRef.current!);
+      if (props.forwardRefProp) {
+        props.forwardRefProp.current = divRef.current!;
+      }
       someRef = forwardRef.current! ? forwardRef.current! : divRef.current!;
       existingRef.current = divRef.current!;
-      existingForwardRef.current = divRef.current!;
-      props.requiredRefProp.current = divRef.current!;
       props.requiredForwardRefProp.current = divRef.current!;
     },
     [
@@ -124,8 +121,8 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
     props: { ...props },
     divRef,
     ref,
-    forwardRef,
     existingRef,
+    forwardRef,
     existingForwardRef,
     writeRefs: __writeRefs,
     readRefs: __readRefs,

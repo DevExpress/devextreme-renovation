@@ -34,9 +34,7 @@ export default class Widget extends WidgetProps {
   __writeRefs(): any {
     let someRef;
     if (this.refProp) {
-      this.refProp = this.divRef.nativeElement;
     }
-    this.refProp && (this.refProp = this.divRef.nativeElement);
     someRef = this.refProp ? this.refProp : this.divRef.nativeElement;
     if (this.forwardRefProp) {
       this.forwardRef_forwardRefProp(new ElementRef(this.divRef.nativeElement));
@@ -46,24 +44,22 @@ export default class Widget extends WidgetProps {
     someRef = this.forwardRefPropRef?.nativeElement
       ? this.forwardRefPropRef?.nativeElement
       : this.divRef.nativeElement;
-    if (this.ref) {
+    if (!this.ref) {
       this.ref = new ElementRef(this.divRef.nativeElement);
     }
-    this.ref && (this.ref = new ElementRef(this.divRef.nativeElement));
+    !this.ref && (this.ref = new ElementRef(this.divRef.nativeElement));
     someRef = this.ref?.nativeElement
       ? this.ref?.nativeElement
       : this.divRef.nativeElement;
-    if (this.forwardRef) {
-      this.forwardRef = new ElementRef(this.divRef.nativeElement);
+    if (!this.forwardRef) {
     }
-    this.forwardRef &&
-      (this.forwardRef = new ElementRef(this.divRef.nativeElement));
+    if (this.forwardRefProp) {
+      this.forwardRef_forwardRefProp(new ElementRef(this.divRef.nativeElement));
+    }
     someRef = this.forwardRef?.nativeElement
       ? this.forwardRef?.nativeElement
       : this.divRef.nativeElement;
     this.existingRef = new ElementRef(this.divRef.nativeElement);
-    this.existingForwardRef = new ElementRef(this.divRef.nativeElement);
-    this.requiredRefProp = this.divRef.nativeElement;
     this.forwardRef_requiredForwardRefProp(
       new ElementRef(this.divRef.nativeElement)
     );

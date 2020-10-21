@@ -79,7 +79,10 @@ export class Property extends BaseProperty {
     }
     if (
       this.decorators.find(
-        (d) => d.name === Decorators.Ref || d.name === Decorators.ApiRef
+        (d) =>
+          d.name === Decorators.Ref ||
+          d.name === Decorators.ApiRef ||
+          d.name === Decorators.ForwardRef
       )
     ) {
       type = "any";
@@ -113,13 +116,14 @@ export class Property extends BaseProperty {
       this.decorators.some(
         (d) =>
           d.name === Decorators.Ref ||
+          d.name === Decorators.ForwardRef ||
           d.name === Decorators.ApiRef ||
           d.name === Decorators.RefProp ||
           d.name === Decorators.ForwardRefProp
       )
     ) {
       if (componentContext === "") {
-        if (keepRef) {
+        if (keepRef && this.isForwardRefProp) {
           return `${scope}${this.name}`;
         }
         return `${scope}${this.name}${
@@ -158,6 +162,7 @@ export class Property extends BaseProperty {
       this.decorators.some(
         (d) =>
           d.name === Decorators.Ref ||
+          d.name === Decorators.ForwardRef ||
           d.name === Decorators.ApiRef ||
           d.name === Decorators.RefProp ||
           d.name === Decorators.ForwardRefProp

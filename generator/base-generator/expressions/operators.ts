@@ -70,7 +70,7 @@ export class Binary extends Expression {
 
       if (rightExpression) {
         if (dependencyMember.isReadOnly()) {
-          throw `Error: Can't assign property use TwoWay() or Internal State - ${this.toString()}`;
+          throw `Error: Can't assign property use TwoWay, Internal State, Ref, ForwardRef prop - ${this.toString()}`;
         }
 
         return `${(this.left as PropertyAccess).compileStateSetting(

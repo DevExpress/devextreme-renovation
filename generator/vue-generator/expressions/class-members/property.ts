@@ -162,10 +162,8 @@ export class Property extends BaseProperty {
       (this.isRef || this.isForwardRef || this.isForwardRefProp) &&
       componentContext.length
     ) {
-      if (keepRef) {
-        return this.isForwardRefProp
-          ? `${componentContext}${this.name}`
-          : `${componentContext}$refs`;
+      if (keepRef && this.isForwardRefProp) {
+        return `${componentContext}${this.name}`;
       }
       return `${componentContext}$refs.${this.name}`;
     }

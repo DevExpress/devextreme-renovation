@@ -335,8 +335,16 @@ export class Property extends BaseClassMember {
   }
 
   isReadOnly() {
-    return !!this.decorators.find(
-      (d) => d.name === Decorators.OneWay || d.name === Decorators.Event
+    return this.decorators.some(
+      (d) =>
+        d.name === Decorators.OneWay ||
+        d.name === Decorators.Event ||
+        d.name === Decorators.RefProp ||
+        d.name === Decorators.ForwardRef ||
+        d.name === Decorators.ApiRef ||
+        d.name === Decorators.Nested ||
+        d.name === Decorators.Slot ||
+        d.name === Decorators.Template
     );
   }
 

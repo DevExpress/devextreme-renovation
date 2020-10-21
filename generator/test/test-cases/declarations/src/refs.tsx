@@ -43,9 +43,7 @@ export default class Widget extends JSXComponent<
     let someRef;
 
     if (this.props.refProp) {
-      this.props.refProp = this.divRef;
     }
-    this.props.refProp && (this.props.refProp = this.divRef);
     someRef = this.props.refProp ? this.props.refProp : this.divRef;
 
     if (this.props.forwardRefProp) {
@@ -56,21 +54,22 @@ export default class Widget extends JSXComponent<
       ? this.props.forwardRefProp
       : this.divRef;
 
-    if (this.ref) {
+    if (!this.ref) {
       this.ref = this.divRef;
     }
-    this.ref && (this.ref = this.divRef);
+    !this.ref && (this.ref = this.divRef);
     someRef = this.ref ? this.ref : this.divRef;
 
-    if (this.forwardRef) {
-      this.forwardRef = this.divRef;
+    if (!this.forwardRef) {
     }
-    this.forwardRef && (this.forwardRef = this.divRef);
+
+    if (this.props.forwardRefProp) {
+      this.props.forwardRefProp = this.divRef;
+    }
+
     someRef = this.forwardRef ? this.forwardRef : this.divRef;
 
     this.existingRef = this.divRef;
-    this.existingForwardRef = this.divRef;
-    this.props.requiredRefProp = this.divRef;
     this.props.requiredForwardRefProp = this.divRef;
   }
 
