@@ -53,6 +53,9 @@ export default class Widget extends WidgetProps {
       : this.divRef.nativeElement;
     if (!this.forwardRef) {
     }
+    if (this.forwardRefProp) {
+      this.forwardRef_forwardRefProp(new ElementRef(this.divRef.nativeElement));
+    }
     someRef = this.forwardRef?.nativeElement
       ? this.forwardRef?.nativeElement
       : this.divRef.nativeElement;

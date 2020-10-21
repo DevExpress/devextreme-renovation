@@ -57,6 +57,10 @@ export const DxWidget = {
       someRef = this.$refs.ref ? this.$refs.ref : this.$refs.divRef;
       if (!this.$refs) {
       }
+      if (this.forwardRefProp) {
+        this.forwardRef_forwardRefProp(this.$refs.divRef),
+          this.forwardRefProp(this.$refs.divRef);
+      }
       someRef = this.$refs.forwardRef
         ? this.$refs.forwardRef
         : this.$refs.divRef;

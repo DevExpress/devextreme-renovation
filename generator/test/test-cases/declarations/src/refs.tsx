@@ -63,6 +63,10 @@ export default class Widget extends JSXComponent<
     if (!this.forwardRef) {
     }
 
+    if (this.props.forwardRefProp) {
+      this.props.forwardRefProp = this.divRef;
+    }
+
     someRef = this.forwardRef ? this.forwardRef : this.divRef;
 
     this.existingRef = this.divRef;
