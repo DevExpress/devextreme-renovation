@@ -50,12 +50,12 @@ export const DxWidget = {
       someRef = this.$refs.forwardRefProp
         ? this.$refs.forwardRefProp
         : this.$refs.divRef;
-      if (!this.$refs) {
+      if (!this.$refs.ref) {
         this.$refs.ref = this.$refs.divRef;
       }
-      !this.$refs && (this.$refs.ref = this.$refs.divRef);
+      !this.$refs.ref && (this.$refs.ref = this.$refs.divRef);
       someRef = this.$refs.ref ? this.$refs.ref : this.$refs.divRef;
-      if (!this.$refs) {
+      if (!this.$refs.forwardRef) {
       }
       if (this.forwardRefProp) {
         this.forwardRef_forwardRefProp(this.$refs.divRef),
