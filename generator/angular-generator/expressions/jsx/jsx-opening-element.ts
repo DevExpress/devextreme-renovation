@@ -277,23 +277,28 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
   compileTemplate(templateProperty: Property, options?: toStringOptions) {
     const contextExpr = processComponentContext(options?.newComponentContext);
-    const contextElements = this.attributes.reduce(
-      (elements: PropertyAssignment[], a) => {
+    const contextElements = this.attributes
+      .reduce((elements: PropertyAssignment[], a) => {
         const contextElements = a.getTemplateContext(
           options,
           this.context.components
         );
         return elements.concat(contextElements);
-      },
-      []
-    );
+      }, [])
+      .filter((el) => el.key.toString() !== "key");
 
+    const keyAttribute = this.attributes.find(
+      (el) => el instanceof JsxAttribute && el.name.toString() == "key"
+    );
+    if (keyAttribute instanceof JsxAttribute) {
+      keyAttribute.compileKey(options);
+    }
     const contextString = contextElements.length
       ? `; context:${new ObjectLiteral(contextElements, false)
           .toString(options)
           .replace(/"/gi, "'")}`
       : "";
-    const attributes = this.attributes
+    const containerAttributes = this.attributes
       .filter((a) => a instanceof AngularDirective)
       .map((a) => a.toString(options));
 
@@ -333,8 +338,8 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
           initializer,
         };
     }
-    if (attributes.length) {
-      return `<ng-container ${attributes.join("\n")}>
+    if (containerAttributes.length) {
+      return `<ng-container ${containerAttributes.join("\n")}>
         ${elementString}
       </ng-container>`;
     }

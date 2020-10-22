@@ -56,7 +56,7 @@ function view(viewModel: Widget) {
         />
       )}
       {FooterTemplate && <FooterTemplate someProp={myvar}></FooterTemplate>}
-      <ComponentTemplate value="Test Value" key="0" />
+      <ComponentTemplate value="Test Value" />
     </div>
   );
 }

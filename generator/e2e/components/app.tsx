@@ -103,7 +103,11 @@ function view(model: App) {
         items={model.listItems}
         onClick={model.onListItemClick}
       />
-      <ListTemplate />
+      <ListTemplate
+        id={"list-2"}
+        items={model.listItems}
+        onClick={model.onListItemClick}
+      />
       <SpreadProps onClick={model.onButtonClick} id="spread-props">
         Can Spread Props
       </SpreadProps>

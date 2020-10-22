@@ -10,7 +10,12 @@ import {
 } from "../../component_declaration/common";
 import ListItem, { ListItemProps } from "./list-item";
 
-function view({ items, ListItemTemplate, restAttributes, counter }: List) {
+function view({
+  items,
+  ListItemTemplate,
+  restAttributes,
+  counter,
+}: ListComponent) {
   const firstList = items.map((item) =>
     item !== null ? (
       <ListItemTemplate
@@ -58,7 +63,7 @@ function view({ items, ListItemTemplate, restAttributes, counter }: List) {
 }
 
 @ComponentBindings()
-export class ListProps {
+export class ListComponentProps {
   @OneWay() items: {
     text: string;
     key: number;
@@ -74,7 +79,7 @@ export class ListProps {
 @Component({
   view,
 })
-export default class List extends JSXComponent(ListProps) {
+export default class ListComponent extends JSXComponent(ListComponentProps) {
   @InternalState() counter = 0;
 
   get items() {

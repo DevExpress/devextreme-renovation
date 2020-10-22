@@ -133,6 +133,28 @@ cloneTest("Click on list item", async (t) => {
   await t.expect(await readyCounter.textContent).eql("6");
 });
 
+cloneTest("Click on template list item", async (t) => {
+  const el = await Selector("#list-2 .list-item");
+
+  const count = await el.count;
+
+  await t.click(el);
+
+  const changedElements = await Selector("#list-2 .list-item");
+  const changedCount = await changedElements.count;
+
+  await t.expect(changedCount).eql(count);
+
+  await t.expect((await el.style)["background-color"]).eql("rgb(0, 0, 0)");
+  await t
+    .expect((await el.nth(1).style)["background-color"])
+    .eql("rgb(255, 0, 0)");
+
+  const readyCounter = await Selector("#list-2 .ready-counter");
+
+  await t.expect(await readyCounter.textContent).eql("6");
+});
+
 cloneTest("Can spread props", async (t) => {
   const el = Selector("#spread-props");
 

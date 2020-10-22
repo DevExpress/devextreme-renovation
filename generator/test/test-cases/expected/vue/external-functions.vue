@@ -2,11 +2,13 @@
   <div
     v-bind:class="global_CLASS_NAME"
     v-bind:style="__processStyle(global_externalFunction())"
-    ><span :key="index" v-for="(cell, index) of cells"
-      ><div v-if="global_conditionFn(cell) && index > 0"
-        >{{ global_getValue(cell) }}{{ __addPostfix(index)
-        }}{{ global_SomeClass.name }}</div
-      ></span
+    ><template v-for="(cell, index) of cells"
+      ><span :key="index"
+        ><div v-if="global_conditionFn(cell) && index > 0"
+          >{{ global_getValue(cell) }}{{ __addPostfix(index)
+          }}{{ global_SomeClass.name }}</div
+        ></span
+      ></template
     ></div
   >
 </template>
