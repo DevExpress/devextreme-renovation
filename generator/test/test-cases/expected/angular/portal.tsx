@@ -66,7 +66,7 @@ class DxPortal {
     }
   }
 
-  ngAfterViewInit(changes: any) {
+  ngAfterViewInit() {
     this._renderPortal();
     this._renderOutlet();
     this._attachPortal();

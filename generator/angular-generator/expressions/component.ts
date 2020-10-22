@@ -1182,7 +1182,7 @@ export class AngularComponent extends Component {
           }
         }
 
-        ngAfterViewInit(changes: any) {
+        ngAfterViewInit() {
           this._renderPortal();
           this._renderOutlet();
           this._attachPortal();
