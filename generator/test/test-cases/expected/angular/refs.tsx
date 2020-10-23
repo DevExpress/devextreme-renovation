@@ -1,10 +1,16 @@
 import { Input } from "@angular/core";
 class WidgetProps {
-  @Input() outerDivRef?: (ref: any) => void;
+  @Input() outerDivRef?: (
+    ref?: ElementRef<HTMLDivElement>
+  ) => ElementRef<HTMLDivElement> | undefined;
   @Input() refProp?: HTMLDivElement;
-  @Input() forwardRefProp?: (ref: any) => void;
+  @Input() forwardRefProp?: (
+    ref?: ElementRef<HTMLDivElement>
+  ) => ElementRef<HTMLDivElement> | undefined;
   @Input() requiredRefProp!: HTMLDivElement;
-  @Input() requiredForwardRefProp!: (ref: any) => void;
+  @Input() requiredForwardRefProp!: (
+    ref?: ElementRef<HTMLDivElement>
+  ) => ElementRef<HTMLDivElement>;
 }
 
 import {
@@ -41,8 +47,8 @@ export default class Widget extends WidgetProps {
     }
     this.forwardRefProp &&
       this.forwardRef_forwardRefProp(new ElementRef(this.divRef.nativeElement));
-    someRef = this.forwardRefPropRef?.nativeElement
-      ? this.forwardRefPropRef?.nativeElement
+    someRef = this.forwardRefProp?.()?.nativeElement
+      ? this.forwardRefProp?.()?.nativeElement
       : this.divRef.nativeElement;
     if (!this.ref) {
       this.ref = new ElementRef(this.divRef.nativeElement);
@@ -66,13 +72,13 @@ export default class Widget extends WidgetProps {
   }
   __readRefs(): any {
     const outer_1 = this.refProp?.outerHTML;
-    const outer_2 = this.forwardRefPropRef?.nativeElement?.outerHTML;
+    const outer_2 = this.forwardRefProp?.()?.nativeElement?.outerHTML;
     const outer_3 = this.ref?.nativeElement?.outerHTML;
     const outer_4 = this.forwardRef?.nativeElement?.outerHTML;
     const outer_5 = this.existingRef.nativeElement.outerHTML;
     const outer_6 = this.existingForwardRef.nativeElement.outerHTML;
     const outer_7 = this.requiredRefProp.outerHTML;
-    const outer_8 = this.requiredForwardRefPropRef.nativeElement.outerHTML;
+    const outer_8 = this.requiredForwardRefProp?.().nativeElement.outerHTML;
   }
   get __restAttributes(): any {
     return {};
@@ -80,78 +86,109 @@ export default class Widget extends WidgetProps {
   @ViewChild("outerDivRefRef", { static: false }) outerDivRefRef?: ElementRef<
     HTMLDivElement
   >;
-  @ViewChild("forwardRefPropRef", { static: false })
   forwardRefPropRef?: ElementRef<HTMLDivElement>;
-  @ViewChild("requiredForwardRefPropRef", { static: false })
   requiredForwardRefPropRef!: ElementRef<HTMLDivElement>;
-  get forwardRef_forwardRef(): (ref: any) => void {
+  get forwardRef_forwardRef(): (
+    ref?: ElementRef<HTMLDivElement>
+  ) => ElementRef<HTMLDivElement> | undefined {
     if (this.__getterCache["forwardRef_forwardRef"] !== undefined) {
       return this.__getterCache["forwardRef_forwardRef"];
     }
     return (this.__getterCache["forwardRef_forwardRef"] = ((): ((
-      ref: any
-    ) => void) => {
-      return (ref) => {
-        this.forwardRef = ref;
-
-        return ref;
-      };
+      ref?: ElementRef<HTMLDivElement>
+    ) => ElementRef<HTMLDivElement> | undefined) => {
+      return function (
+        this: Widget,
+        ref?: ElementRef<HTMLDivElement>
+      ): ElementRef<HTMLDivElement> | undefined {
+        if (arguments.length) {
+          this.forwardRef = ref;
+        }
+        return this.forwardRef;
+      }.bind(this);
     })());
   }
-  get forwardRef_existingForwardRef(): (ref: any) => void {
+  get forwardRef_existingForwardRef(): (
+    ref?: ElementRef<HTMLDivElement>
+  ) => ElementRef<HTMLDivElement> {
     if (this.__getterCache["forwardRef_existingForwardRef"] !== undefined) {
       return this.__getterCache["forwardRef_existingForwardRef"];
     }
     return (this.__getterCache["forwardRef_existingForwardRef"] = ((): ((
-      ref: any
-    ) => void) => {
-      return (ref) => {
-        this.existingForwardRef = ref;
-
-        return ref;
-      };
+      ref?: ElementRef<HTMLDivElement>
+    ) => ElementRef<HTMLDivElement>) => {
+      return function (
+        this: Widget,
+        ref?: ElementRef<HTMLDivElement>
+      ): ElementRef<HTMLDivElement> {
+        if (arguments.length) {
+          this.existingForwardRef = ref!;
+        }
+        return this.existingForwardRef;
+      }.bind(this);
     })());
   }
-  get forwardRef_outerDivRef(): (ref: any) => void {
+  get forwardRef_outerDivRef(): (
+    ref?: ElementRef<HTMLDivElement>
+  ) => ElementRef<HTMLDivElement> | undefined {
     if (this.__getterCache["forwardRef_outerDivRef"] !== undefined) {
       return this.__getterCache["forwardRef_outerDivRef"];
     }
     return (this.__getterCache["forwardRef_outerDivRef"] = ((): ((
-      ref: any
-    ) => void) => {
-      return (ref) => {
-        this.outerDivRefRef = ref;
-        this.outerDivRef?.(ref);
-        return ref;
-      };
+      ref?: ElementRef<HTMLDivElement>
+    ) => ElementRef<HTMLDivElement> | undefined) => {
+      return function (
+        this: Widget,
+        ref?: ElementRef<HTMLDivElement>
+      ): ElementRef<HTMLDivElement> | undefined {
+        if (arguments.length) {
+          this.outerDivRefRef = ref;
+          this.outerDivRef?.(ref);
+        }
+        return this.outerDivRef?.();
+      }.bind(this);
     })());
   }
-  get forwardRef_forwardRefProp(): (ref: any) => void {
+  get forwardRef_forwardRefProp(): (
+    ref?: ElementRef<HTMLDivElement>
+  ) => ElementRef<HTMLDivElement> | undefined {
     if (this.__getterCache["forwardRef_forwardRefProp"] !== undefined) {
       return this.__getterCache["forwardRef_forwardRefProp"];
     }
     return (this.__getterCache["forwardRef_forwardRefProp"] = ((): ((
-      ref: any
-    ) => void) => {
-      return (ref) => {
-        this.forwardRefPropRef = ref;
-        this.forwardRefProp?.(ref);
-        return ref;
-      };
+      ref?: ElementRef<HTMLDivElement>
+    ) => ElementRef<HTMLDivElement> | undefined) => {
+      return function (
+        this: Widget,
+        ref?: ElementRef<HTMLDivElement>
+      ): ElementRef<HTMLDivElement> | undefined {
+        if (arguments.length) {
+          this.forwardRefPropRef = ref;
+          this.forwardRefProp?.(ref);
+        }
+        return this.forwardRefProp?.();
+      }.bind(this);
     })());
   }
-  get forwardRef_requiredForwardRefProp(): (ref: any) => void {
+  get forwardRef_requiredForwardRefProp(): (
+    ref?: ElementRef<HTMLDivElement>
+  ) => ElementRef<HTMLDivElement> {
     if (this.__getterCache["forwardRef_requiredForwardRefProp"] !== undefined) {
       return this.__getterCache["forwardRef_requiredForwardRefProp"];
     }
     return (this.__getterCache["forwardRef_requiredForwardRefProp"] = ((): ((
-      ref: any
-    ) => void) => {
-      return (ref) => {
-        this.requiredForwardRefPropRef = ref;
-        this.requiredForwardRefProp(ref);
-        return ref;
-      };
+      ref?: ElementRef<HTMLDivElement>
+    ) => ElementRef<HTMLDivElement>) => {
+      return function (
+        this: Widget,
+        ref?: ElementRef<HTMLDivElement>
+      ): ElementRef<HTMLDivElement> {
+        if (arguments.length) {
+          this.requiredForwardRefPropRef = ref!;
+          this.requiredForwardRefProp(ref);
+        }
+        return this.requiredForwardRefProp();
+      }.bind(this);
     })());
   }
   _detectChanges(): void {
@@ -162,19 +199,25 @@ export default class Widget extends WidgetProps {
   }
 
   __getterCache: {
-    forwardRef_forwardRef?: (ref: any) => void;
-    forwardRef_existingForwardRef?: (ref: any) => void;
-    forwardRef_outerDivRef?: (ref: any) => void;
-    forwardRef_forwardRefProp?: (ref: any) => void;
-    forwardRef_requiredForwardRefProp?: (ref: any) => void;
+    forwardRef_forwardRef?: (
+      ref?: ElementRef<HTMLDivElement>
+    ) => ElementRef<HTMLDivElement> | undefined;
+    forwardRef_existingForwardRef?: (
+      ref?: ElementRef<HTMLDivElement>
+    ) => ElementRef<HTMLDivElement>;
+    forwardRef_outerDivRef?: (
+      ref?: ElementRef<HTMLDivElement>
+    ) => ElementRef<HTMLDivElement> | undefined;
+    forwardRef_forwardRefProp?: (
+      ref?: ElementRef<HTMLDivElement>
+    ) => ElementRef<HTMLDivElement> | undefined;
+    forwardRef_requiredForwardRefProp?: (
+      ref?: ElementRef<HTMLDivElement>
+    ) => ElementRef<HTMLDivElement>;
   } = {};
 
   ngAfterViewInit() {
     this.outerDivRef?.(this.outerDivRefRef);
-
-    this.forwardRefProp?.(this.forwardRefPropRef);
-
-    this.requiredForwardRefProp(this.requiredForwardRefPropRef);
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {

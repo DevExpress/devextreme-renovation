@@ -223,7 +223,18 @@ export class VueComponent extends Component {
             [],
             [new Parameter([], [], undefined, new Identifier("ref"))],
             undefined,
-            new Block([new SimpleExpression(`this.$refs.${m.name}=ref`)], true)
+            new Block(
+              [
+                new SimpleExpression(`
+              if(arguments.length){
+                this.$refs.${m.name}=ref;
+                ${m.isForwardRefProp ? `this.${m.name}?.(ref);` : ""}
+              }
+              return this.$refs.${m.name}
+            `),
+              ],
+              true
+            )
           )
         );
       }
@@ -291,7 +302,7 @@ export class VueComponent extends Component {
   createViewSpreadAccessor(name: Identifier, body: Block) {
     return new GetAccessor(undefined, undefined, name, [], undefined, body);
   }
-  compileTemplate() {
+  compileTemplate(methods: string[]) {
     const viewFunction = this.decorators[0].getViewFunction();
     if (viewFunction) {
       const options: toStringOptions = {
@@ -341,6 +352,22 @@ export class VueComponent extends Component {
             )
           )
         );
+      }
+
+      const forwardRefs = this.members.filter((m) => m.isForwardRefProp);
+
+      if (forwardRefs.length) {
+        methods.push(`__forwardRef(){
+          ${forwardRefs
+            .filter((m) =>
+              options.forwardRefs?.some((forwardRef) => forwardRef === m)
+            )
+            .map((m) => {
+              const token = (m as Property).isOptional ? "?." : "";
+              return `this.${m._name}${token}(this.$refs.${m._name});`;
+            })
+            .join("\n")}
+                }`);
       }
     }
   }
@@ -485,19 +512,6 @@ export class VueComponent extends Component {
                   )}", ...args);
               }`);
       });
-
-    const forwardRefs = this.members.filter((m) => m.isForwardRefProp);
-
-    if (forwardRefs.length) {
-      statements.push(`__forwardRef(){
-                  ${forwardRefs
-                    .map((m) => {
-                      const token = (m as Property).isOptional ? "?." : "";
-                      return `this.${m._name}${token}(this.$refs.${m._name});`;
-                    })
-                    .join("\n")}
-              }`);
-    }
 
     if (statements.length || externalStatements.length) {
       return `methods: {
@@ -847,10 +861,10 @@ export class VueComponent extends Component {
   }
 
   toString() {
-    this.compileTemplate();
-
     const methods: string[] = [];
     const components: string[] = [];
+
+    this.compileTemplate(methods);
 
     const portalComponent = this.containsPortal()
       ? this.compilePortalComponent(components)
