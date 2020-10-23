@@ -12,7 +12,7 @@ export class WidgetWithPropsInput {
   @OneWay() value = "default text";
   @OneWay() optionalValue?: string;
   @OneWay() number? = 42;
-  @Event() onClick: (e: any) => void = (e: any) => {};
+  @Event() onClick?: (e: any) => void;
 }
 
 @Component({

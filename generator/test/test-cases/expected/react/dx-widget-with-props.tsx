@@ -2,12 +2,11 @@ export declare type WidgetWithPropsInputType = {
   value: string;
   optionalValue?: string;
   number?: number;
-  onClick: (e: any) => void;
+  onClick?: (e: any) => void;
 };
 export const WidgetWithPropsInput: WidgetWithPropsInputType = {
   value: "default text",
   number: 42,
-  onClick: (e: any) => {},
 };
 import * as React from "react";
 import {
