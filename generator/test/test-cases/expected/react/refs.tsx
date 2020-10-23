@@ -30,6 +30,12 @@ interface Widget {
   existingForwardRef: any;
   writeRefs: () => any;
   readRefs: () => any;
+  getRestRefs: () => {
+    refProp?: HTMLDivElement;
+    forwardRefProp?: HTMLDivElement;
+    requiredRefProp: HTMLDivElement;
+    requiredForwardRefProp: HTMLDivElement;
+  };
   restAttributes: RestProps;
 }
 
@@ -94,6 +100,25 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
       forwardRef.current,
     ]
   );
+  const __getRestRefs = useCallback(
+    function __getRestRefs(): {
+      refProp?: HTMLDivElement;
+      forwardRefProp?: HTMLDivElement;
+      requiredRefProp: HTMLDivElement;
+      requiredForwardRefProp: HTMLDivElement;
+    } {
+      const { outerDivRef, ...restProps } = {
+        ...props,
+        outerDivRef: props.outerDivRef?.current!,
+        refProp: props.refProp?.current!,
+        forwardRefProp: props.forwardRefProp?.current!,
+        requiredRefProp: props.requiredRefProp!.current!,
+        requiredForwardRefProp: props.requiredForwardRefProp!.current!,
+      };
+      return restProps;
+    },
+    [props]
+  );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
@@ -106,7 +131,9 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
       } = {
         ...props,
         outerDivRef: props.outerDivRef?.current!,
+        refProp: props.refProp?.current!,
         forwardRefProp: props.forwardRefProp?.current!,
+        requiredRefProp: props.requiredRefProp!.current!,
         requiredForwardRefProp: props.requiredForwardRefProp!.current!,
       };
       return restProps;
@@ -123,6 +150,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
     existingForwardRef,
     writeRefs: __writeRefs,
     readRefs: __readRefs,
+    getRestRefs: __getRestRefs,
     restAttributes: __restAttributes(),
   });
 }

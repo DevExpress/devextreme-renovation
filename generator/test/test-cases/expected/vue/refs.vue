@@ -81,6 +81,10 @@ export const DxWidget = {
       const outer_7 = this.props.requiredRefProp.outerHTML;
       const outer_8 = this.requiredForwardRefProp().outerHTML;
     },
+    __getRestRefs() {
+      const { outerDivRef, ...restProps } = this.props;
+      return restProps;
+    },
     forwardRef_forwardRef(ref) {
       if (arguments.length) {
         this.$refs.forwardRef = ref;
