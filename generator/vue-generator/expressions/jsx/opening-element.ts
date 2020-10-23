@@ -115,11 +115,13 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       ? `<${initializerComponent.name} ${defaultAttrs
           .map((a) => {
             if (
-              options?.jsxComponent?.members
-                .filter((m) => m.isEvent)
-                .find((p) => p.name === a.name.toString())
+              options &&
+              options.jsxComponent &&
+              options.jsxComponent.members.find(
+                (m) => m.isEvent && m.name === a.name.toString()
+              )
             ) {
-              return `@${getEventName(a.name, options?.jsxComponent?.state)}="${
+              return `@${getEventName(a.name, options.jsxComponent.state)}="${
                 templateProperty.name
               }Default.${a.name.toString(options)}"`;
             }

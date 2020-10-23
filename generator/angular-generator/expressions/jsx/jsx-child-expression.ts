@@ -262,6 +262,8 @@ export class JsxChildExpression extends JsxExpression {
 
     if (isElement(templateExpression)) {
       template = templateExpression.toString(templateOptions);
+      if (options)
+        options.defaultTemplates = templateOptions.defaultTemplates || {};
     } else {
       const expression = new JsxChildExpression(
         templateExpression as JsxExpression

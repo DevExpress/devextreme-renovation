@@ -77,7 +77,11 @@ export default class TemplateDefaultValue extends TemplateDefaultValueProps {
     super();
   }
 
-  WidgetWithPropsDefaults = { value: "default text", number: 42 };
+  WidgetWithPropsDefaults = {
+    value: "default text",
+    number: 42,
+    onClick: (e: any) => {},
+  };
 }
 @NgModule({
   declarations: [TemplateDefaultValue],
