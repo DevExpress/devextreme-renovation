@@ -27,7 +27,7 @@ export const DxRefOnChildrenParent = {
       return {};
     },
     props() {
-      return {};
+      return { nullableRef: this.nullableRef?.() };
     },
   },
   watch: {

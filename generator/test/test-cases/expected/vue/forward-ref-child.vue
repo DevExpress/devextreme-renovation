@@ -21,7 +21,11 @@ export const DxRefOnChildrenChild = {
       return {};
     },
     props() {
-      return { state: this.state };
+      return {
+        childRef: this.childRef?.(),
+        nullableRef: this.nullableRef?.(),
+        state: this.state,
+      };
     },
   },
   methods: {

@@ -29,8 +29,11 @@ export const DxWidget = {
     },
     props() {
       return {
+        outerDivRef: this.outerDivRef?.(),
         refProp: this.refProp?.(),
+        forwardRefProp: this.forwardRefProp?.(),
         requiredRefProp: this.requiredRefProp(),
+        requiredForwardRefProp: this.requiredForwardRefProp?.(),
       };
     },
   },

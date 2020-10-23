@@ -155,22 +155,23 @@ export class VueComponent extends Component {
   }
 
   createPropsGetter(members: Array<Property | Method>) {
-    const expression = new ObjectLiteral(
-      getProps(members.filter((member) => !member.isForwardRefProp)).map(
-        (p) =>
-          new PropertyAssignment(
-            p._name,
+    const props = getProps(members);
+
+    const propertyAssignments = props.map((p) => {
+      const expression = p.isForwardRefProp
+        ? new SimpleExpression(`this.${p.name}?.()`)
+        : new PropertyAccess(
             new PropertyAccess(
-              new PropertyAccess(
-                new Identifier(SyntaxKind.ThisKeyword),
-                new Identifier("props")
-              ),
-              p._name
-            )
-          )
-      ),
-      true
-    );
+              new Identifier(SyntaxKind.ThisKeyword),
+              new Identifier("props")
+            ),
+            p._name
+          );
+
+      return new PropertyAssignment(p._name, expression);
+    });
+
+    const expression = new ObjectLiteral(propertyAssignments, true);
 
     return new GetAccessor(
       [],
