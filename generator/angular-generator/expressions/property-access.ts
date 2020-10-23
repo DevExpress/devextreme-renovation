@@ -13,8 +13,10 @@ export class PropertyAccess extends BasePropertyAccess {
     options: toStringOptions,
     elements: BindingElement[] = []
   ) {
+    const hasRest = elements.some((e) => e.dotDotDotToken);
     const props = getProps(options.members).filter(
       (p) =>
+        hasRest ||
         elements.length === 0 ||
         elements.some(
           (e) => (e.propertyName || e.name).toString() === p._name.toString()

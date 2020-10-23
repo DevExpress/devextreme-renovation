@@ -30,4 +30,12 @@ export default class Widget extends JSXComponent(WidgetInput) {
     onClick(11);
     return this.props.height;
   }
+
+  getRestProps(): {
+    export: object;
+    onSomething: EventCallBack<number>;
+  } {
+    const { height, onClick, ...rest } = this.props;
+    return rest;
+  }
 }
