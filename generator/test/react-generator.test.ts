@@ -2733,7 +2733,9 @@ mocha.describe("ComponentInput", function () {
                   generator.createIdentifier("widgetProps"),
                   []
                 ),
-                generator.createStringLiteral("requiredProperty"),
+                generator.createLiteralTypeNode(
+                  generator.createStringLiteral("requiredProperty")
+                ),
               ]
             ),
             undefined

@@ -1,6 +1,6 @@
 import { Identifier } from "./common";
 import { TypeExpression, SimpleTypeExpression } from "./type";
-import { Expression, SimpleExpression } from "./base";
+import { Expression } from "./base";
 import { toStringOptions } from "../types";
 import { Parameter } from "./functions";
 import { Block } from "./statements";
@@ -176,7 +176,7 @@ export class Method extends BaseClassMember {
     questionToken: string = "",
     typeParameters: TypeParameterDeclaration[] | undefined = [],
     parameters: Parameter[],
-    type: TypeExpression | string = new SimpleExpression("any"),
+    type: TypeExpression | string = new SimpleTypeExpression("any"),
     body: Block
   ) {
     super(decorators, modifiers, name, type);

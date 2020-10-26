@@ -37,7 +37,10 @@ import {
   GetAccessor,
 } from "../base-generator/expressions/class-members";
 import { Decorators } from "../component_declaration/decorators";
-import { TypeExpression } from "../base-generator/expressions/type";
+import {
+  TypeExpression,
+  TypeReferenceNode,
+} from "../base-generator/expressions/type";
 import { Call, Identifier } from "../base-generator/expressions/common";
 import { Decorator } from "../base-generator/expressions/decorator";
 import { Block } from "../base-generator/expressions/statements";
@@ -845,7 +848,7 @@ mocha.describe("base-generator: expressions", function () {
         );
       });
 
-      mocha.it("with question token token", function () {
+      mocha.it("with question token", function () {
         assert.strictEqual(
           generator
             .createPropertySignature(
@@ -1074,6 +1077,96 @@ mocha.describe("base-generator: expressions", function () {
           .toString(),
         "c extends e ? t : f"
       );
+    });
+
+    mocha.describe("getImports", function () {
+      this.beforeEach(function () {
+        generator.setContext({
+          dirname: __dirname,
+          path: path.resolve(__dirname, "module1.tsx"),
+        });
+
+        this.testType = generator.createTypeReferenceNode(
+          generator.createIdentifier("TestType")
+        );
+
+        this.testType2 = generator.createTypeReferenceNode(
+          generator.createIdentifier("TestType2")
+        );
+
+        generator.setContext({
+          dirname: __dirname,
+          path: path.resolve(__dirname, "module2.tsx"),
+        });
+      });
+
+      this.afterEach(function () {
+        generator.setContext(null);
+        generator.setContext(null);
+      });
+
+      mocha.it(
+        "TypeReferenceNode should return import if it is created in other module",
+        function () {
+          const imports = (this.testType as TypeReferenceNode).getImports(
+            generator.getContext()
+          );
+
+          assert.strictEqual(
+            imports.join("\n"),
+            `import {TestType} from "./module1"`
+          );
+        }
+      );
+
+      mocha.it(
+        "TypeReferenceNode should not return import if it is created in this module",
+        function () {
+          const type = generator.createTypeReferenceNode(
+            generator.createIdentifier("TestType")
+          );
+          const imports = type.getImports(generator.getContext());
+
+          assert.deepEqual(imports, []);
+        }
+      );
+
+      mocha.it(
+        "TypeReferenceNode should return from typeArguments",
+        function () {
+          const type = generator.createTypeReferenceNode(
+            generator.createIdentifier("MyType"),
+            [this.testType]
+          );
+          const imports = type.getImports(generator.getContext());
+
+          assert.strictEqual(
+            imports.join("\n"),
+            `import {TestType} from "./module1"`
+          );
+        }
+      );
+
+      mocha.it("imports should have duplicates", function () {
+        const type = generator.createTypeReferenceNode(
+          generator.createIdentifier("MyType"),
+          [this.testType, this.testType, this.testType2]
+        );
+        const imports = type.getImports(generator.getContext());
+
+        assert.strictEqual(
+          imports.join("\n"),
+          `import {TestType,TestType2} from "./module1"`
+        );
+      });
+
+      mocha.it("LiteralTypeNode", function () {
+        const type = generator.createLiteralTypeNode(
+          generator.createStringLiteral("TestType")
+        );
+
+        assert.deepEqual(type.getImports(generator.getContext()), []);
+      });
     });
   });
 
@@ -3848,7 +3941,7 @@ mocha.describe("ComponentInput", function () {
               generator.createTypeReferenceNode(
                 generator.createIdentifier("Custom3")
               ),
-              generator.createIdentifier("string"),
+              generator.createKeywordTypeNode("string"),
             ])
           ),
           generator.createProperty(
@@ -3882,7 +3975,7 @@ mocha.describe("ComponentInput", function () {
             undefined,
             generator.createIdentifier("Custom2"),
             undefined,
-            generator.createIdentifier("string")
+            generator.createKeywordTypeNode("string")
           ),
         ]);
 

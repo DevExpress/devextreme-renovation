@@ -19,7 +19,11 @@ export function getRelativePath(
   return relativePath;
 }
 
-export function getModuleRelativePath(src: string, moduleSpecifier: string) {
+export function getModuleRelativePath(
+  src: string,
+  moduleSpecifier: string,
+  cleanExtension = false
+) {
   const normalizedPath = path.normalize(moduleSpecifier);
   const moduleParts = normalizedPath.split(/(\/|\\)/);
 
@@ -27,7 +31,17 @@ export function getModuleRelativePath(src: string, moduleSpecifier: string) {
     moduleParts.slice(0, moduleParts.length - 2).join("/")
   );
 
-  return getRelativePath(src, folderPath, moduleParts[moduleParts.length - 1]);
+  const relativePath = getRelativePath(
+    src,
+    folderPath,
+    moduleParts[moduleParts.length - 1]
+  );
+
+  if (cleanExtension) {
+    return relativePath.replace(path.extname(relativePath), "");
+  }
+
+  return relativePath;
 }
 
 export function readModule(

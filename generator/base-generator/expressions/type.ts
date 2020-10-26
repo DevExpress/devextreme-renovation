@@ -8,10 +8,52 @@ import { Parameter } from "./functions";
 import { toStringOptions, GeneratorContext } from "../types";
 import { compileType, compileTypeParameters } from "../utils/string";
 import { Decorator } from "./decorator";
-import { ObjectLiteral } from "./literal";
+import { ObjectLiteral, StringLiteral } from "./literal";
 import { TypeParameterDeclaration } from "./type-parameter-declaration";
+import { getModuleRelativePath } from "../utils/path-utils";
+import {
+  ImportClause,
+  ImportDeclaration,
+  ImportSpecifier,
+  NamedImports,
+} from "./import";
 
-export class TypeExpression extends Expression {}
+export type TypeExpressionImports = ImportDeclaration[];
+
+export class TypeExpression extends Expression {
+  getImports(context: GeneratorContext): TypeExpressionImports {
+    return [];
+  }
+}
+
+function convertTypeExpressionImportsToDictionary(
+  imports: TypeExpressionImports
+) {
+  return imports.reduce(
+    (modules: { [name: string]: ImportDeclaration }, typeImports) => {
+      const moduleSpecifier = typeImports.moduleSpecifier.toString();
+      const cachedImportDeclaration = modules[moduleSpecifier];
+      if (cachedImportDeclaration) {
+        typeImports.importClause.imports?.forEach((name) => {
+          cachedImportDeclaration.add(name);
+        });
+      } else {
+        modules[moduleSpecifier] = typeImports;
+      }
+      return modules;
+    },
+    {}
+  );
+}
+
+function mergeTypeExpressionImports(...imports: TypeExpressionImports[]) {
+  const allImports = imports.reduce((result, typeImports) => {
+    return result.concat(typeImports);
+  }, []);
+  const dictionary = convertTypeExpressionImportsToDictionary(allImports);
+
+  return Object.keys(dictionary).map((key) => dictionary[key]);
+}
 
 export class SimpleTypeExpression extends TypeExpression {
   type: string;
@@ -101,18 +143,12 @@ export class TypeQueryNode extends TypeExpression {
 }
 
 export class TypeReferenceNode extends TypeExpression {
-  typeName: Identifier;
-  typeArguments: TypeExpression[];
-  context: GeneratorContext;
   constructor(
-    typeName: Identifier,
-    typeArguments: TypeExpression[] = [],
-    context: GeneratorContext
+    public typeName: Identifier,
+    public typeArguments: TypeExpression[] = [],
+    public context: GeneratorContext
   ) {
     super();
-    this.typeName = typeName;
-    this.typeArguments = typeArguments;
-    this.context = context;
   }
   toString() {
     const typeArguments = this.typeArguments.length
@@ -123,6 +159,35 @@ export class TypeReferenceNode extends TypeExpression {
 
   get type(): Expression {
     return this.typeName;
+  }
+
+  getImports(context: GeneratorContext) {
+    const result: TypeExpressionImports = [];
+    if (this.context.path !== context.path) {
+      const moduleSpecifier = getModuleRelativePath(
+        context.dirname!,
+        this.context.path!,
+        true
+      );
+      result.push(
+        new ImportDeclaration(
+          [],
+          [],
+          new ImportClause(
+            undefined,
+            new NamedImports([new ImportSpecifier(undefined, this.typeName)])
+          ),
+          new StringLiteral(moduleSpecifier)
+        )
+      );
+    }
+
+    return mergeTypeExpressionImports(
+      result,
+      this.typeArguments.reduce((imports: TypeExpressionImports, type) => {
+        return imports.concat(type.getImports(context));
+      }, [])
+    );
   }
 }
 
