@@ -57,9 +57,9 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
         ? props.forwardRefProp?.current!
         : __divRef.current!;
       if (!__ref.current!) {
-        ref.current = __divRef.current!;
+        __ref.current = __divRef.current!;
       }
-      !__ref.current! && (ref.current = __divRef.current!);
+      !__ref.current! && (__ref.current = __divRef.current!);
       someRef = __ref.current! ? __ref.current! : __divRef.current!;
       if (!__forwardRef.current!) {
       }
@@ -69,7 +69,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
       someRef = __forwardRef.current!
         ? __forwardRef.current!
         : __divRef.current!;
-      existingRef.current = __divRef.current!;
+      __existingRef.current = __divRef.current!;
       props.requiredForwardRefProp.current = __divRef.current!;
     },
     [
