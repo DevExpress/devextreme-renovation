@@ -41,13 +41,9 @@ export class ComponentInput extends BaseComponentInput {
         this.context
       )}`,
     ];
+    const missedImports = this.getImports(this.context);
 
-    const missedImports = this.collectMissedImports();
-    Object.keys(missedImports).forEach((path) => {
-      imports.push(`import { ${missedImports[path]} } from "${path}"`);
-    });
-
-    return imports.join(";\n");
+    return imports.concat(missedImports.map((i) => i.toString())).join(";\n");
   }
 
   toString() {

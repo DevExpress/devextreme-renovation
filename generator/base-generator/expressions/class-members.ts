@@ -412,6 +412,13 @@ export class Property extends BaseClassMember {
   get isOptional() {
     return this.questionOrExclamationToken === SyntaxKind.QuestionToken;
   }
+
+  getImports(context: GeneratorContext) {
+    if (this.type instanceof TypeExpression) {
+      return this.type.getImports(context);
+    }
+    return [];
+  }
 }
 
 export class Constructor {

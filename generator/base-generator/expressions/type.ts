@@ -15,6 +15,7 @@ import { Decorator } from "./decorator";
 import { ObjectLiteral, StringLiteral } from "./literal";
 import { TypeParameterDeclaration } from "./type-parameter-declaration";
 import { getModuleRelativePath } from "../utils/path-utils";
+import path from "path";
 import {
   ImportClause,
   ImportDeclaration,
@@ -132,26 +133,59 @@ export class TypeReferenceNode extends TypeExpression {
 
   getImports(context: GeneratorContext) {
     const result: TypeExpressionImports = [];
-    if (
-      this.context.path !== context.path &&
-      this.context.types?.[this.typeName.toString()]
-    ) {
-      const moduleSpecifier = getModuleRelativePath(
-        context.dirname!,
-        this.context.path!,
-        true
-      );
-      result.push(
-        new ImportDeclaration(
-          [],
-          [],
-          new ImportClause(
-            undefined,
-            new NamedImports([new ImportSpecifier(undefined, this.typeName)])
-          ),
-          new StringLiteral(moduleSpecifier)
-        )
-      );
+    if (this.context.path !== context.path) {
+      if (this.context.types?.[this.typeName.toString()]) {
+        const moduleSpecifier = getModuleRelativePath(
+          context.dirname!,
+          this.context.path!,
+          true
+        );
+        result.push(
+          new ImportDeclaration(
+            [],
+            [],
+            new ImportClause(
+              undefined,
+              new NamedImports([new ImportSpecifier(undefined, this.typeName)])
+            ),
+            new StringLiteral(moduleSpecifier)
+          )
+        );
+      }
+
+      const importClause = Object.values(
+        this.context.imports || {}
+      ).find((importClause) => importClause.has(this.typeName.toString()));
+
+      if (importClause) {
+        const importClauseRelativePath = Object.keys(
+          this.context.imports!
+        ).find((key) => this.context.imports![key] === importClause)!;
+        const moduleSpecifier = getModuleRelativePath(
+          context.dirname!,
+          path.resolve(this.context.dirname!, importClauseRelativePath),
+          false
+        );
+        if (
+          !context.imports?.[moduleSpecifier]?.has(this.typeName.toString())
+        ) {
+          result.push(
+            new ImportDeclaration(
+              [],
+              [],
+              new ImportClause(
+                undefined,
+                new NamedImports([
+                  new ImportSpecifier(undefined, this.typeName),
+                ])
+              ),
+              new StringLiteral(
+                moduleSpecifier.replace(path.extname(moduleSpecifier), "")
+              )
+            )
+          );
+        }
+      }
     }
 
     return mergeTypeExpressionImports(
