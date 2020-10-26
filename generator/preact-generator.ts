@@ -19,6 +19,7 @@ import { getModuleRelativePath } from "./base-generator/utils/path-utils";
 import {
   GeneratorContext as BaseGeneratorContext,
   GeneratorOptions as BaseGeneratorOptions,
+  TypeExpressionImports,
 } from "./base-generator/types";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { Method } from "./base-generator/expressions/class-members";
@@ -389,6 +390,20 @@ class JQueryComponent {
         `;
   }
 
+  compileImportTypes(): string {
+    const context = {
+      ...this.source.context,
+      path: `${this.source.context.dirname}/jquery.tsx`,
+    };
+    return (this.source.members.filter((a) => a.isApiMethod) as Method[])
+      .reduce(
+        (missedImports: TypeExpressionImports, method) =>
+          missedImports.concat(method.getImports(context)),
+        []
+      )
+      .join("\n");
+  }
+
   toString() {
     const baseComponent = this.source.getJQueryBaseComponentName();
     if (!baseComponent) {
@@ -397,6 +412,8 @@ class JQueryComponent {
 
     return `
         ${this.compileImports(baseComponent)}
+
+        ${this.compileImportTypes()}
 
         export default class ${this.source.name} extends ${
       baseComponent === BASE_JQUERY_WIDGET

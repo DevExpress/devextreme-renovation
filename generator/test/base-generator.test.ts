@@ -1086,12 +1086,32 @@ mocha.describe("base-generator: expressions", function () {
           path: path.resolve(__dirname, "module1.tsx"),
         });
 
+        generator.createTypeAliasDeclaration(
+          [],
+          [],
+          generator.createIdentifier("TestType"),
+          [],
+          generator.createKeywordTypeNode("number")
+        );
+
+        generator.createTypeAliasDeclaration(
+          [],
+          [],
+          generator.createIdentifier("TestType2"),
+          [],
+          generator.createKeywordTypeNode("number")
+        );
+
         this.testType = generator.createTypeReferenceNode(
           generator.createIdentifier("TestType")
         );
 
         this.testType2 = generator.createTypeReferenceNode(
           generator.createIdentifier("TestType2")
+        );
+
+        this.globalType = generator.createTypeReferenceNode(
+          generator.createIdentifier("HTMLDivElement")
         );
 
         generator.setContext({
@@ -1128,6 +1148,17 @@ mocha.describe("base-generator: expressions", function () {
           const imports = type.getImports(generator.getContext());
 
           assert.deepEqual(imports, []);
+        }
+      );
+
+      mocha.it(
+        "TypeReferenceNode should not add import for global type",
+        function () {
+          const imports = (this.globalType as TypeReferenceNode).getImports(
+            generator.getContext()
+          );
+
+          assert.strictEqual(imports.join("\n"), "");
         }
       );
 

@@ -1,7 +1,15 @@
 import { Identifier } from "./common";
-import { TypeExpression, SimpleTypeExpression } from "./type";
+import {
+  TypeExpression,
+  SimpleTypeExpression,
+  mergeTypeExpressionImports,
+} from "./type";
 import { Expression } from "./base";
-import { toStringOptions } from "../types";
+import {
+  GeneratorContext,
+  toStringOptions,
+  TypeExpressionImports,
+} from "../types";
 import { Parameter } from "./functions";
 import { Block } from "./statements";
 import {
@@ -262,6 +270,21 @@ export class Method extends BaseClassMember {
     }${this.compileTypeParameters()}(${this.parameters})${compileType(
       this.type.toString()
     )}${this.body.toString(options)}`;
+  }
+
+  getImports(context: GeneratorContext) {
+    let result: TypeExpressionImports = [];
+    if (this.type instanceof TypeExpression) {
+      result = this.type.getImports(context);
+    }
+    const parametersImport = this.parameters.reduce(
+      (result: TypeExpressionImports, p) => {
+        return result.concat(p.getImports(context));
+      },
+      []
+    );
+
+    return mergeTypeExpressionImports(result, parametersImport);
   }
 }
 

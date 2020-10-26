@@ -23,6 +23,7 @@ import { Property } from "./class-members";
 import { containsPortalsInStatements } from "../utils/functions";
 import { TypeParameterDeclaration } from "./type-parameter-declaration";
 import { PropertyAccess } from "./property-access";
+
 export class Parameter {
   decorators: Decorator[];
   modifiers: string[];
@@ -66,6 +67,14 @@ export class Parameter {
       this.questionToken,
       this.dotDotDotToken
     );
+  }
+
+  getImports(context: GeneratorContext) {
+    if (this.type instanceof TypeExpression) {
+      return this.type.getImports(context);
+    }
+
+    return [];
   }
 }
 

@@ -5,7 +5,11 @@ import {
 } from "./base";
 import { Identifier, Call } from "./common";
 import { Parameter } from "./functions";
-import { toStringOptions, GeneratorContext } from "../types";
+import {
+  toStringOptions,
+  GeneratorContext,
+  TypeExpressionImports,
+} from "../types";
 import { compileType, compileTypeParameters } from "../utils/string";
 import { Decorator } from "./decorator";
 import { ObjectLiteral, StringLiteral } from "./literal";
@@ -18,42 +22,7 @@ import {
   NamedImports,
 } from "./import";
 
-export type TypeExpressionImports = ImportDeclaration[];
-
-export class TypeExpression extends Expression {
-  getImports(context: GeneratorContext): TypeExpressionImports {
-    return [];
-  }
-}
-
-function convertTypeExpressionImportsToDictionary(
-  imports: TypeExpressionImports
-) {
-  return imports.reduce(
-    (modules: { [name: string]: ImportDeclaration }, typeImports) => {
-      const moduleSpecifier = typeImports.moduleSpecifier.toString();
-      const cachedImportDeclaration = modules[moduleSpecifier];
-      if (cachedImportDeclaration) {
-        typeImports.importClause.imports?.forEach((name) => {
-          cachedImportDeclaration.add(name);
-        });
-      } else {
-        modules[moduleSpecifier] = typeImports;
-      }
-      return modules;
-    },
-    {}
-  );
-}
-
-function mergeTypeExpressionImports(...imports: TypeExpressionImports[]) {
-  const allImports = imports.reduce((result, typeImports) => {
-    return result.concat(typeImports);
-  }, []);
-  const dictionary = convertTypeExpressionImportsToDictionary(allImports);
-
-  return Object.keys(dictionary).map((key) => dictionary[key]);
-}
+export class TypeExpression extends Expression {}
 
 export class SimpleTypeExpression extends TypeExpression {
   type: string;
@@ -163,7 +132,10 @@ export class TypeReferenceNode extends TypeExpression {
 
   getImports(context: GeneratorContext) {
     const result: TypeExpressionImports = [];
-    if (this.context.path !== context.path) {
+    if (
+      this.context.path !== context.path &&
+      this.context.types?.[this.typeName.toString()]
+    ) {
       const moduleSpecifier = getModuleRelativePath(
         context.dirname!,
         this.context.path!,
@@ -508,4 +480,35 @@ export class ConditionalTypeNode extends TypeExpression {
   toString() {
     return `${this.checkType} extends ${this.extendsType} ? ${this.trueType} : ${this.falseType}`;
   }
+}
+
+function convertTypeExpressionImportsToDictionary(
+  imports: TypeExpressionImports
+) {
+  return imports.reduce(
+    (modules: { [name: string]: ImportDeclaration }, typeImports) => {
+      const moduleSpecifier = typeImports.moduleSpecifier.toString();
+      const cachedImportDeclaration = modules[moduleSpecifier];
+      if (cachedImportDeclaration) {
+        typeImports.importClause.imports?.forEach((name) => {
+          cachedImportDeclaration.add(name);
+        });
+      } else {
+        modules[moduleSpecifier] = typeImports;
+      }
+      return modules;
+    },
+    {}
+  );
+}
+
+export function mergeTypeExpressionImports(
+  ...imports: TypeExpressionImports[]
+) {
+  const allImports = imports.reduce((result, typeImports) => {
+    return result.concat(typeImports);
+  }, []);
+  const dictionary = convertTypeExpressionImportsToDictionary(allImports);
+
+  return Object.keys(dictionary).map((key) => dictionary[key]);
 }

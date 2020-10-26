@@ -1,4 +1,9 @@
-import { IExpression, toStringOptions } from "../types";
+import {
+  GeneratorContext,
+  IExpression,
+  toStringOptions,
+  TypeExpressionImports,
+} from "../types";
 
 export class Expression implements IExpression {
   getDependency(options: toStringOptions): string[] {
@@ -15,6 +20,10 @@ export class Expression implements IExpression {
 
   isJsx() {
     return false;
+  }
+
+  getImports(context: GeneratorContext): TypeExpressionImports {
+    return [];
   }
 }
 

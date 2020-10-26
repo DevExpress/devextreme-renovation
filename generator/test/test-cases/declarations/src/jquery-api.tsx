@@ -11,6 +11,12 @@ function view(viewModel: Widget) {
   return <div ref={viewModel.divRef as any}></div>;
 }
 
+export type MyType = {
+  value: number;
+};
+
+export type MyTypeReturn = number;
+
 @ComponentBindings()
 class WidgetInput {
   @OneWay() prop1?: number;
@@ -32,5 +38,10 @@ export default class Widget extends JSXComponent(WidgetInput) {
   @Method()
   getSize(): string {
     return `${this.props.prop1} + ${this.divRef.innerHTML}`;
+  }
+
+  @Method()
+  getValue(arg: MyType): MyTypeReturn {
+    return arg.value;
   }
 }
