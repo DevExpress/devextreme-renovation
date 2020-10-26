@@ -41,10 +41,14 @@ export const DxModelWidget = {
     },
     props() {
       return {
-        baseStateProp: this.baseStateProp_state,
+        ...(this.baseStateProp_state !== undefined && {
+          baseStateProp: this.baseStateProp_state,
+        }),
         baseStatePropChange: this.baseStatePropChange,
-        modelStateProp: this.modelStateProp_state,
-        value: this.value_state,
+        ...(this.modelStateProp_state !== undefined && {
+          modelStateProp: this.modelStateProp_state,
+        }),
+        ...(this.value_state !== undefined && { value: this.value_state }),
         modelStatePropChange: this.modelStatePropChange,
         valueChange: this.valueChange,
       };

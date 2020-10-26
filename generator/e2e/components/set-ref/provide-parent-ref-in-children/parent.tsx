@@ -22,7 +22,8 @@ class Props {
   view,
 })
 export default class ProvideRefFromParentToChildren extends JSXComponent<
-  Props
+  Props,
+  "children"
 >() {
   @Ref() host!: HTMLDivElement;
 

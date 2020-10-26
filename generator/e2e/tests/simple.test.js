@@ -331,6 +331,7 @@ cloneTest("Default props", async (t) => {
   await assert("default-props-number-with-default", "1");
 
   await assert("default-props-optional-boolean-or-number", "undefined");
+  await assert("default-props-optional-boolean-in-rest", "false");
 });
 
 cloneTest("Set forward ref", async (t) => {

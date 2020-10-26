@@ -40,8 +40,8 @@ export const DxWidget = {
     },
     props() {
       return {
-        visible: this.visible,
-        value: this.value_state,
+        ...(this.visible !== undefined && { visible: this.visible }),
+        ...(this.value_state !== undefined && { value: this.value_state }),
         valueChange: this.valueChange,
       };
     },

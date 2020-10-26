@@ -40,9 +40,11 @@ export const DxModelWidget = {
     },
     props() {
       return {
-        disabled: this.disabled,
-        value: this.value_state,
-        notValue: this.notValue_state,
+        ...(this.disabled !== undefined && { disabled: this.disabled }),
+        ...(this.value_state !== undefined && { value: this.value_state }),
+        ...(this.notValue_state !== undefined && {
+          notValue: this.notValue_state,
+        }),
         valueChange: this.valueChange,
         notValueChange: this.notValueChange,
       };

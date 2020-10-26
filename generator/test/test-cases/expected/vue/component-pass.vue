@@ -42,7 +42,7 @@ export const DxWidget = {
     },
     props() {
       return {
-        mode: this.mode,
+        ...(this.mode !== undefined && { mode: this.mode }),
         firstText: this.firstText,
         secondText: this.secondText,
       };

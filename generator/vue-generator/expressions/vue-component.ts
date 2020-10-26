@@ -23,14 +23,17 @@ import {
 import { Decorator } from "../../base-generator/expressions/decorator";
 import { ObjectLiteral } from "../../base-generator/expressions/literal";
 import { PropertyAccess } from "./property-access";
-import { PropertyAssignment } from "../../base-generator/expressions/property-assignment";
+import {
+  PropertyAssignment,
+  SpreadAssignment,
+} from "../../base-generator/expressions/property-assignment";
 import {
   SimpleTypeExpression,
   isTypeArray,
   ArrayTypeNode,
 } from "../../base-generator/expressions/type";
 import SyntaxKind from "../../base-generator/syntaxKind";
-import { Property } from "./class-members/property";
+import { calculatePropertyType, Property } from "./class-members/property";
 import { VueComponentInput } from "./vue-component-input";
 import { Function } from "./functions/function";
 import { Conditional } from "../../base-generator/expressions/conditions";
@@ -43,6 +46,7 @@ import {
   BindingElement,
   BindingPattern,
 } from "../../base-generator/expressions/binding-pattern";
+import { Binary } from "../../base-generator/expressions/operators";
 
 export function getComponentListFromContext(context: GeneratorContext) {
   return Object.keys(context.components || {})
@@ -168,7 +172,23 @@ export class VueComponent extends Component {
             p._name
           );
 
-      return new PropertyAssignment(p._name, expression);
+      const propertyAssignment = new PropertyAssignment(p._name, expression);
+
+      if (p.isOptional && calculatePropertyType(p.type) === "Boolean") {
+        return new SpreadAssignment(
+          new Binary(
+            new Binary(
+              expression,
+              SyntaxKind.ExclamationEqualsEqualsToken,
+              new SimpleExpression(SyntaxKind.UndefinedKeyword)
+            ),
+            SyntaxKind.AmpersandAmpersandToken,
+            new ObjectLiteral([propertyAssignment], false)
+          )
+        );
+      }
+
+      return propertyAssignment;
     });
 
     const expression = new ObjectLiteral(propertyAssignments, true);

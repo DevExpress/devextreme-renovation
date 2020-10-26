@@ -32,8 +32,7 @@ const BasicTypes = [
   "Function",
   "Symbol",
 ];
-
-function calculatePropertyType(
+export function calculatePropertyType(
   type: TypeExpression | string,
   initializer?: Expression
 ): string {
