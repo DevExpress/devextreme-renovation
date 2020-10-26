@@ -1,9 +1,8 @@
 <template>
   <div v-bind:class="global_CLASS_NAME"
-    ><span v-bind:class="global_CLASS_NAME"></span><ExternalComponent /><div
-      :key="global_getKey(item)"
-      v-for="item of items"
-    ></div
+    ><span v-bind:class="global_CLASS_NAME"></span
+    ><ExternalComponent /><template v-for="item of items"
+      ><div :key="global_getKey(item)"></div></template
   ></div>
 </template>
 <script>

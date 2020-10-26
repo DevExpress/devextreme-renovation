@@ -249,6 +249,7 @@ export class JsxChildExpression extends JsxExpression {
       ? { ...options, ...{ keys: [] } }
       : { members: [] };
     const templateExpression = getTemplate(iterator, templateOptions, true);
+
     const itemsExpression = (expression.expression as PropertyAccess)
       .expression;
     const itemName = this.getIteratorItemName(
@@ -261,12 +262,15 @@ export class JsxChildExpression extends JsxExpression {
 
     if (isElement(templateExpression)) {
       template = templateExpression.toString(templateOptions);
+      if (options)
+        options.defaultTemplates = templateOptions.defaultTemplates || {};
     } else {
       const expression = new JsxChildExpression(
         templateExpression as JsxExpression
       );
       template = expression.toString(templateOptions);
       if (options) {
+        options.defaultTemplates = templateOptions.defaultTemplates || {};
         const arr = (options.trackBy || []).concat(
           templateOptions.trackBy || []
         );
@@ -277,7 +281,7 @@ export class JsxChildExpression extends JsxExpression {
     const item = `let ${itemName} of ${itemsExpressionString}`;
     const ngForValue = [item];
     if (iterator.parameters[1]) {
-      ngForValue.push(`index as ${iterator.parameters[1]}`);
+      ngForValue.push(`index as ${iterator.parameters[1].name.toString()}`);
     }
 
     const keyAttribute = templateOptions.keys?.[0];

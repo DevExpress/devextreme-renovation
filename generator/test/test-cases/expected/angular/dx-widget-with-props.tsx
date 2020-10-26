@@ -1,8 +1,9 @@
-import { Input } from "@angular/core";
+import { Input, Output, EventEmitter } from "@angular/core";
 export class WidgetWithPropsInput {
   @Input() value: string = "default text";
   @Input() optionalValue?: string;
   @Input() number?: number = 42;
+  @Output() onClick: EventEmitter<any> = new EventEmitter();
 }
 
 import {
@@ -31,8 +32,12 @@ export class WidgetWithProps extends WidgetWithPropsInput {
     });
   }
 
+  _onClick: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
+    this._onClick = (e: any) => {
+      this.onClick.emit(e);
+    };
   }
 }
 @NgModule({

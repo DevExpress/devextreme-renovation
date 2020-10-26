@@ -2573,7 +2573,7 @@ mocha.describe("Vue-generator", function () {
 
         assert.strictEqual(
           expression.children[0].toString(),
-          `<div v-for="items of viewModel.items"></div>`
+          `<template v-for="items of viewModel.items"><div ></div></template>`
         );
       });
 
@@ -2750,7 +2750,7 @@ mocha.describe("Vue-generator", function () {
 
           assert.strictEqual(
             expression.children[0].toString(),
-            `<div v-for="(items,i) of viewModel.items"></div>`
+            `<template v-for="(items,i) of viewModel.items"><div ></div></template>`
           );
         }
       );
@@ -2823,7 +2823,7 @@ mocha.describe("Vue-generator", function () {
         assert.strictEqual(
           removeSpaces(expression.children[0].toString()),
           removeSpaces(
-            `<div :key="item.id" v-for="item of viewModel.items"></div>`
+            `<templatev-for="itemofviewModel.items"><div:key="item.id"></div></template>`
           )
         );
       });
@@ -2955,9 +2955,13 @@ mocha.describe("Vue-generator", function () {
         assert.strictEqual(
           removeSpaces(expression.toString()),
           removeSpaces(
-            `<div :key="item.id" v-for="item of viewModel.items">
-                            <div :key="i" v-for="(_,i) of item"></div>
-                        </div>`
+            `<templatev-for="itemofviewModel.items">
+              <div:key="item.id">
+                <templatev-for="(_,i)ofitem">
+                  <div:key="i"></div>
+                </template>
+              </div>
+            </template>`
           )
         );
       });
@@ -3051,7 +3055,7 @@ mocha.describe("Vue-generator", function () {
             componentContext: "model",
             newComponentContext: "",
           }),
-          `<div v-for="{p1,p2} of viewModel.items">{{p1}}{{p2}}</div>`
+          `<template v-for="{p1,p2} of viewModel.items"><div >{{p1}}{{p2}}</div></template>`
         );
       });
     });

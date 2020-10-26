@@ -5,6 +5,10 @@ import { getEventName } from "../utils";
 
 export class JsxAttribute extends BaseJsxAttribute {
   getTemplateProp(options?: toStringOptions) {
+    if (this.name.toString() === "key") {
+      this.compileKey(options);
+      return "";
+    }
     return `v-bind:${this.name}="${this.compileInitializer(options)}"`;
   }
 
@@ -25,8 +29,16 @@ export class JsxAttribute extends BaseJsxAttribute {
     return name;
   }
 
-  compileKey() {
-    return null;
+  compileKey(options?: toStringOptions): string | null {
+    if (options) {
+      options.keys = options.keys || [];
+      options.keys.push(this.initializer);
+    }
+    const name = this.compileName(options);
+    return this.compileBase(
+      name,
+      this.compileValue(name, this.compileInitializer(options))
+    );
   }
 
   getRefValue(options?: toStringOptions) {

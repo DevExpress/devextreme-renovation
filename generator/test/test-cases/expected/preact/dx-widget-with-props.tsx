@@ -2,6 +2,7 @@ export declare type WidgetWithPropsInputType = {
   value: string;
   optionalValue?: string;
   number?: number;
+  onClick?: (e: any) => void;
 };
 export const WidgetWithPropsInput: WidgetWithPropsInputType = {
   value: "default text",
@@ -32,7 +33,7 @@ const WidgetWithProps = forwardRef<
 ) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { number, optionalValue, value, ...restProps } = props;
+      const { number, onClick, optionalValue, value, ...restProps } = props;
       return restProps;
     },
     [props]
