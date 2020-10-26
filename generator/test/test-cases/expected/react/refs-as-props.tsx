@@ -1,9 +1,9 @@
 import WidgetWithRefProp from "./dx-widget-with-ref-prop";
 function view(viewModel: Widget) {
   return (
-    <div ref={viewModel.divRef as any}>
+    <div ref={viewModel.__divRef as any}>
       <WidgetWithRefProp
-        parentRef={viewModel.divRef}
+        parentRef={viewModel.__divRef}
         nullableRef={viewModel.props.nullableRef}
       />
     </div>
@@ -23,18 +23,20 @@ declare type RestProps = Omit<
 >;
 interface Widget {
   props: typeof WidgetInput & RestProps;
-  divRef: any;
+  __divRef: any;
   getSize: () => any;
   getNullable: () => any;
   restAttributes: RestProps;
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const divRef = useRef<HTMLDivElement>();
+  const __divRef = useRef<HTMLDivElement>();
 
   const __getSize = useCallback(
     function __getSize(): any {
-      return divRef.current!.outerHTML + props.nullableRef?.current?.outerHTML;
+      return (
+        __divRef.current!.outerHTML + props.nullableRef?.current?.outerHTML
+      );
     },
     [props.nullableRef?.current]
   );
@@ -54,7 +56,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 
   return view({
     props: { ...props },
-    divRef,
+    __divRef,
     getSize: __getSize,
     getNullable: __getNullable,
     restAttributes: __restAttributes(),

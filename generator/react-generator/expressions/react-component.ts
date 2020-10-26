@@ -118,6 +118,9 @@ export class ReactComponent extends Component {
       if (m instanceof Method) {
         m.prefix = "__";
       }
+      if (m.isRef || m.isForwardRef) {
+        m.prefix = "__";
+      }
       return m;
     });
 

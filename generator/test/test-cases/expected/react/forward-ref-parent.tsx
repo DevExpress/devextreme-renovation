@@ -26,13 +26,13 @@ import {
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
 interface RefOnChildrenParent {
   props: typeof Props & RestProps;
-  child: any;
+  __child: any;
   innerState: number;
   restAttributes: RestProps;
 }
 
 export default function RefOnChildrenParent(props: typeof Props & RestProps) {
-  const child = useRef<HTMLDivElement>();
+  const __child = useRef<HTMLDivElement>();
   const [__state_innerState, __state_setInnerState] = useState<number>(10);
 
   const __restAttributes = useCallback(
@@ -46,14 +46,14 @@ export default function RefOnChildrenParent(props: typeof Props & RestProps) {
     [props]
   );
   useEffect(() => {
-    child.current!.innerHTML = "Ref from child";
+    __child.current!.innerHTML = "Ref from child";
     const html = props.nullableRef?.current?.innerHTML;
   }, [props.nullableRef?.current]);
 
   return view({
     props: { ...props },
     innerState: __state_innerState,
-    child,
+    __child,
     restAttributes: __restAttributes(),
   });
 }

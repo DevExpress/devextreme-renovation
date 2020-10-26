@@ -26,7 +26,7 @@ declare type RestProps = {
 };
 interface WidgetWithApiRef {
   props: typeof WidgetWithApiRefInput & RestProps;
-  baseRef?: any;
+  __baseRef?: any;
   restAttributes: RestProps;
 }
 
@@ -37,7 +37,7 @@ const WidgetWithApiRef = forwardRef<
   props: typeof WidgetWithApiRefInput & RestProps,
   ref
 ) {
-  const baseRef = useRef<BaseWidgetRef>();
+  const __baseRef = useRef<BaseWidgetRef>();
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
@@ -48,9 +48,9 @@ const WidgetWithApiRef = forwardRef<
   );
   const __getSomething = useCallback(
     function __getSomething(): string {
-      return `${props.prop1} + ${baseRef.current?.getHeight(1, undefined)}`;
+      return `${props.prop1} + ${__baseRef.current?.getHeight(1, undefined)}`;
     },
-    [props.prop1, baseRef.current]
+    [props.prop1, __baseRef.current]
   );
 
   useImperativeHandle(ref, () => ({ getSomething: __getSomething }), [
@@ -58,7 +58,7 @@ const WidgetWithApiRef = forwardRef<
   ]);
   return view({
     props: { ...props },
-    baseRef,
+    __baseRef,
     restAttributes: __restAttributes(),
   });
 }) as Preact.FunctionalComponent<typeof WidgetWithApiRefInput & RestProps> & {

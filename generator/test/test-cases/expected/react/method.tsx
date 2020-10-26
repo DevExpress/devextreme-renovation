@@ -1,5 +1,5 @@
 function view(viewModel: Widget) {
-  return <div ref={viewModel.divRef as any}></div>;
+  return <div ref={viewModel.__divRef as any}></div>;
 }
 
 export declare type WidgetInputType = {
@@ -26,13 +26,13 @@ declare type RestProps = Omit<
 >;
 interface Widget {
   props: typeof WidgetInput & RestProps;
-  divRef: any;
+  __divRef: any;
   restAttributes: RestProps;
 }
 
 const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
   function widget(props: typeof WidgetInput & RestProps, ref) {
-    const divRef = useRef<HTMLDivElement>();
+    const __divRef = useRef<HTMLDivElement>();
 
     const __restAttributes = useCallback(
       function __restAttributes(): RestProps {
@@ -44,14 +44,14 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
     const __getHeight = useCallback(
       function __getHeight(p: number = 10, p1: any): string {
         return `${props.prop1} + ${props.prop2} + ${
-          divRef.current!.innerHTML
+          __divRef.current!.innerHTML
         } + ${p}`;
       },
       [props.prop1, props.prop2]
     );
     const __getSize = useCallback(
       function __getSize(): string {
-        return `${props.prop1} + ${divRef.current!.innerHTML} + ${__getHeight(
+        return `${props.prop1} + ${__divRef.current!.innerHTML} + ${__getHeight(
           0,
           0
         )}`;
@@ -66,7 +66,7 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
     );
     return view({
       props: { ...props },
-      divRef,
+      __divRef,
       restAttributes: __restAttributes(),
     });
   }
