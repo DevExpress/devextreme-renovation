@@ -9,6 +9,7 @@ import { BaseFunction } from "../../base-generator/expressions/functions";
 import { Identifier } from "../../base-generator/expressions/common";
 import { GeneratorContext } from "../../base-generator/types";
 import { getAngularSelector } from "./component";
+import { FunctionTypeNode } from "../../base-generator/expressions/type";
 
 export class Decorator extends BaseDecorator {
   toString(options?: toStringOptions) {
@@ -82,10 +83,15 @@ function compileDefaultTemplates(
             .join(" ")}><${getAngularSelector(
             component.name
           )} ${template.variables
-            .map(
-              (v) =>
-                `[${v}]="${v} !== undefined ? ${v} : ${component.name}Defaults.${v}"`
-            )
+            .map((v) => {
+              const componentProp = component.heritageProperties.find(
+                (p) => p.name.toString() === v
+              );
+              if (componentProp?.type instanceof FunctionTypeNode) {
+                return `(${v})="${v} !== undefined ? ${v}($event) : ${component.name}Defaults.${v}($event)"`;
+              }
+              return `[${v}]="${v} !== undefined ? ${v} : ${component.name}Defaults.${v}"`;
+            })
             .join(" ")}></${getAngularSelector(component.name)}>
             </ng-template>`;
           return templateString;

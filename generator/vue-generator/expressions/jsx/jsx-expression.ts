@@ -87,7 +87,9 @@ export class JsxChildExpression extends BaseJsxChildExpression {
     expression: Call,
     options?: toStringOptions
   ): string {
-    const templateOptions = options ? { ...options } : { members: [] };
+    const templateOptions = options
+      ? { ...options, ...{ keys: [] } }
+      : { members: [], hasStyle: false };
     const templateExpression = getTemplate(iterator, templateOptions, true);
     const itemsExpression = (expression.expression as PropertyAccess)
       .expression;
@@ -108,9 +110,9 @@ export class JsxChildExpression extends BaseJsxChildExpression {
 
     if (isElement(templateExpression)) {
       const element = templateExpression.clone();
-      element.addAttribute(vForAttribute);
-
-      const elementString = element.toString(templateOptions);
+      const elementString = `<template ${vForAttribute}>${element.toString(
+        templateOptions
+      )}</template>`;
       if (options) {
         options.hasStyle = options.hasStyle || templateOptions.hasStyle;
       }
