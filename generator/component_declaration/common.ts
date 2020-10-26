@@ -14,15 +14,7 @@ export const Portal: react.ElementType = ({
   container,
 }: PortalProps) => createPortal(children, container);
 
-/**
- * Class Decorator.
- * Declare class that contains all internal logic and public methods.
- * Class should extend JSXComponent<ComponentBindings>.
- * Class can contain properties with the following decorators: Ref, InternalState(optional).
- * Class can contain methods with the following decorators: Effect, Method, Listen.
- * Class can contain methods without any decorator.
- */
-export function Component(arg: {
+export type ComponentParameters = {
   name?: string;
   components?: any[];
   /**
@@ -50,7 +42,17 @@ export function Component(arg: {
      */
     component?: any;
   };
-}) {
+};
+
+/**
+ * Class Decorator.
+ * Declare class that contains all internal logic and public methods.
+ * Class should extend JSXComponent<ComponentBindings>.
+ * Class can contain properties with the following decorators: [ForwardRef](https://github.com/DevExpress/devextreme-renovation/blob/master/guidelines.md#forwardref) [Ref](https://github.com/DevExpress/devextreme-renovation/blob/master/guidelines.md#ref), InternalState(optional), Provider, Consumer (see [Context](https://github.com/DevExpress/devextreme-renovation/blob/master/guidelines.md#context)).
+ * Class can contain methods with the following decorators: [Effect](https://github.com/DevExpress/devextreme-renovation/blob/master/guidelines.md#effect), [Method](https://github.com/DevExpress/devextreme-renovation/blob/master/guidelines.md#method).
+ * Class can contain methods without any decorator.
+ */
+export function Component(arg: ComponentParameters) {
   return function ComponentDecorator(constructor: Function) {
     constructor.prototype.render = function () {
       return arg.view(this);
