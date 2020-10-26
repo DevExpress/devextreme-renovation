@@ -142,6 +142,7 @@ export const convertSelectorToName = (selector: string) =>
 
 export class AngularComponent extends Component {
   decorator: Decorator;
+  members!: (Property | Method)[];
   constructor(
     componentDecorator: Decorator,
     modifiers: string[],
@@ -338,6 +339,22 @@ export class AngularComponent extends Component {
       members
         .filter((m) => m.isForwardRef || m.isForwardRefProp)
         .map((m) => {
+          const property = m as Property;
+          const type = new SimpleTypeExpression(`ElementRef<${m.type}>`);
+          const isOptional =
+            property.questionOrExclamationToken === SyntaxKind.QuestionToken;
+          const questionDotTokenIfNeed = isOptional
+            ? SyntaxKind.QuestionDotToken
+            : "";
+          const returnType = `${type}${isOptional ? "|undefined" : ""}`;
+          const parameter = new Parameter(
+            [],
+            [],
+            undefined,
+            new Identifier("ref"),
+            SyntaxKind.QuestionToken,
+            type
+          );
           return new GetAccessor(
             [],
             [],
@@ -345,36 +362,30 @@ export class AngularComponent extends Component {
             [],
             new FunctionTypeNode(
               [],
-              [
-                new Parameter(
-                  [],
-                  [],
-                  undefined,
-                  new Identifier("ref"),
-                  undefined,
-                  new SimpleTypeExpression("any")
-                ),
-              ],
-              new SimpleTypeExpression("void")
+              [parameter],
+              new SimpleTypeExpression(returnType)
             ),
             new Block(
               [
                 new SimpleExpression(
-                  `return (ref)=>{
-                    this.${m.name}${m.isForwardRefProp ? "Ref" : ""}=ref;
-                  ${
-                    m.isForwardRefProp
-                      ? `this.${m.name}
-                    ${
-                      (m as Property).questionOrExclamationToken ===
-                      SyntaxKind.QuestionToken
-                        ? SyntaxKind.QuestionDotToken
-                        : ""
-                    }(ref)`
-                      : ""
+                  `return (function(this: ${
+                    this.name
+                  }, ${parameter}): ${returnType}{
+                    if(arguments.length){
+                      this.${m.name}${m.isForwardRefProp ? "Ref" : ""} = ref${
+                    !isOptional ? "!" : ""
+                  };
+                      ${
+                        m.isForwardRefProp
+                          ? `this.${m.name}
+                        ${questionDotTokenIfNeed}(ref)`
+                          : ""
+                      }
+                    }
+                  return this.${m.name}${
+                    m.isForwardRefProp ? `${questionDotTokenIfNeed}()` : ""
                   }
-                  return ref;
-                }`
+                }).bind(this)`
                 ),
               ],
               true
@@ -1408,7 +1419,13 @@ export class AngularComponent extends Component {
     );
 
     this.members
-      .filter((m) => m.isForwardRefProp)
+      .filter(
+        (m) =>
+          m.isForwardRefProp &&
+          decoratorToStringOptions.forwardRefs?.some(
+            (forwardRef) => forwardRef === m
+          )
+      )
       .forEach((m) => {
         const token = (m as Property).isOptional ? "?." : "";
         ngAfterViewInitStatements.push(`
@@ -1455,6 +1472,7 @@ export class AngularComponent extends Component {
                   members: this.members,
                   componentContext: SyntaxKind.ThisKeyword,
                   newComponentContext: SyntaxKind.ThisKeyword,
+                  forwardRefs: decoratorToStringOptions.forwardRefs,
                 })
               )
               .filter((m) => m)

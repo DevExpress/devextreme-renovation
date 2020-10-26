@@ -6612,6 +6612,24 @@ mocha.describe("Angular generator", function () {
           generator.createKeywordTypeNode("SVGGraphicsElement")
         );
 
+        const element = generator.createProperty(
+          [createDecorator(Decorators.Ref)],
+          [],
+          generator.createIdentifier("div"),
+          undefined,
+          generator.createKeywordTypeNode("Element")
+        );
+
+        const getHtmlElement = generator.createProperty(
+          [createDecorator(Decorators.Ref)],
+          [],
+          generator.createIdentifier("div"),
+          undefined,
+          generator.createTypeReferenceNode(
+            generator.createIdentifier("GetHtmlElement")
+          )
+        );
+
         assert.strictEqual(
           expression.toString({
             members: [property],
@@ -6646,6 +6664,24 @@ mocha.describe("Angular generator", function () {
             newComponentContext: generator.SyntaxKind.ThisKeyword,
           }),
           "this.div.nativeElement"
+        );
+
+        assert.strictEqual(
+          expression.toString({
+            members: [element],
+            componentContext: generator.SyntaxKind.ThisKeyword,
+            newComponentContext: generator.SyntaxKind.ThisKeyword,
+          }),
+          "this.div.nativeElement"
+        );
+
+        assert.strictEqual(
+          expression.toString({
+            members: [getHtmlElement],
+            componentContext: generator.SyntaxKind.ThisKeyword,
+            newComponentContext: generator.SyntaxKind.ThisKeyword,
+          }),
+          "this.div"
         );
       });
     });

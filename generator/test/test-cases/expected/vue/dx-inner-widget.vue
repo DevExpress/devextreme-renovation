@@ -33,7 +33,7 @@ export const DxInnerWidget = {
     },
     props() {
       return {
-        selected: this.selected,
+        ...(this.selected !== undefined && { selected: this.selected }),
         value: this.value_state,
         onSelect: this.onSelect,
         valueChange: this.valueChange,

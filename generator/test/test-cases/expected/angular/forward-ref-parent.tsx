@@ -1,7 +1,9 @@
 import Child, { DxRefOnChildrenChildModule } from "./forward-ref-child";
 import { Input } from "@angular/core";
 class Props {
-  @Input() nullableRef?: (ref: any) => void;
+  @Input() nullableRef?: (
+    ref?: ElementRef<HTMLDivElement>
+  ) => ElementRef<HTMLDivElement> | undefined;
 }
 
 import {
@@ -29,40 +31,51 @@ export default class RefOnChildrenParent extends Props {
   innerState: number = 10;
   __effect(): any {
     this.child.nativeElement.innerHTML = "Ref from child";
-    const html = this.nullableRefRef?.nativeElement?.innerHTML;
+    const html = this.nullableRef?.()?.nativeElement?.innerHTML;
   }
   get __restAttributes(): any {
     return {};
   }
-  @ViewChild("nullableRefRef", { static: false }) nullableRefRef?: ElementRef<
-    HTMLDivElement
-  >;
-  get forwardRef_child(): (ref: any) => void {
+  nullableRefRef?: ElementRef<HTMLDivElement>;
+  get forwardRef_child(): (
+    ref?: ElementRef<HTMLDivElement>
+  ) => ElementRef<HTMLDivElement> {
     if (this.__getterCache["forwardRef_child"] !== undefined) {
       return this.__getterCache["forwardRef_child"];
     }
     return (this.__getterCache["forwardRef_child"] = ((): ((
-      ref: any
-    ) => void) => {
-      return (ref) => {
-        this.child = ref;
-
-        return ref;
-      };
+      ref?: ElementRef<HTMLDivElement>
+    ) => ElementRef<HTMLDivElement>) => {
+      return function (
+        this: RefOnChildrenParent,
+        ref?: ElementRef<HTMLDivElement>
+      ): ElementRef<HTMLDivElement> {
+        if (arguments.length) {
+          this.child = ref!;
+        }
+        return this.child;
+      }.bind(this);
     })());
   }
-  get forwardRef_nullableRef(): (ref: any) => void {
+  get forwardRef_nullableRef(): (
+    ref?: ElementRef<HTMLDivElement>
+  ) => ElementRef<HTMLDivElement> | undefined {
     if (this.__getterCache["forwardRef_nullableRef"] !== undefined) {
       return this.__getterCache["forwardRef_nullableRef"];
     }
     return (this.__getterCache["forwardRef_nullableRef"] = ((): ((
-      ref: any
-    ) => void) => {
-      return (ref) => {
-        this.nullableRefRef = ref;
-        this.nullableRef?.(ref);
-        return ref;
-      };
+      ref?: ElementRef<HTMLDivElement>
+    ) => ElementRef<HTMLDivElement> | undefined) => {
+      return function (
+        this: RefOnChildrenParent,
+        ref?: ElementRef<HTMLDivElement>
+      ): ElementRef<HTMLDivElement> | undefined {
+        if (arguments.length) {
+          this.nullableRefRef = ref;
+          this.nullableRef?.(ref);
+        }
+        return this.nullableRef?.();
+      }.bind(this);
     })());
   }
   _detectChanges(): void {
@@ -97,13 +110,15 @@ export default class RefOnChildrenParent extends Props {
   }
 
   __getterCache: {
-    forwardRef_child?: (ref: any) => void;
-    forwardRef_nullableRef?: (ref: any) => void;
+    forwardRef_child?: (
+      ref?: ElementRef<HTMLDivElement>
+    ) => ElementRef<HTMLDivElement>;
+    forwardRef_nullableRef?: (
+      ref?: ElementRef<HTMLDivElement>
+    ) => ElementRef<HTMLDivElement> | undefined;
   } = {};
 
   ngAfterViewInit() {
-    this.nullableRef?.(this.nullableRefRef);
-
     this._effectTimeout = setTimeout(() => {
       this.__destroyEffects.push(this.__effect());
     }, 0);

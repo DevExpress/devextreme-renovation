@@ -47,18 +47,12 @@ export class JsxAttribute extends BaseJsxAttribute {
   }
 
   compileRef(options?: toStringOptions) {
-    const refString = this.initializer.toString(options);
-    const componentContext = options?.newComponentContext
-      ? `${options.newComponentContext}.`
-      : "";
-    const match = refString
-      .replace(/[\?!]/, "")
-      .match(new RegExp(`${componentContext}(\\w+).nativeElement`));
-    if (match && match[1]) {
-      return `#${match[1]}`;
+    const member = getMember(this.initializer, options);
+    if (member) {
+      return `#${member.name}${member.isForwardRefProp ? "Ref" : ""}`;
     }
 
-    return `#${refString}`;
+    return `#${this.initializer.toString(options)}`;
   }
 
   compileEvent(options?: toStringOptions) {
@@ -146,6 +140,11 @@ export class JsxAttribute extends BaseJsxAttribute {
     }
 
     if (this.name.toString() === "ref") {
+      const member = getMember(this.initializer, options);
+      if (member?.isForwardRef || member?.isForwardRefProp) {
+        options!.forwardRefs = options!.forwardRefs || [];
+        options!.forwardRefs.push(member);
+      }
       return this.compileRef(options);
     }
 

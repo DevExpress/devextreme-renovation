@@ -50,7 +50,10 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { someRef, ...restProps } = props;
+      const { someRef, ...restProps } = {
+        ...props,
+        someRef: props.someRef?.current!,
+      };
       return restProps;
     },
     [props]

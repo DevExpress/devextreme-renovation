@@ -29,6 +29,7 @@ import ForwardRefParent from "./ref-on-children/forward-ref-parent";
 import ForwardRefTemplate from "./ref-on-children/forward-ref-template";
 import ForwardRefChild from "./ref-on-children/child";
 import ForwardRefDeep from "./ref-on-children/forward-ref-deep";
+import ProvideRefInFromParentToChildren from "./set-ref/provide-parent-ref-in-children/ref-provider";
 
 import TemplateApp from "./template-passing/template-app";
 import PortalContainer from "./portal-container";
@@ -137,6 +138,7 @@ function view(model: App) {
         <SetNonElementRef />
         <SetForwardRef />
         <SetForwardRefDeep />
+        <ProvideRefInFromParentToChildren />
       </div>
       <div style={{ border: "1px solid grey" }}>
         Check templates

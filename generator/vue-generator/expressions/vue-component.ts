@@ -23,14 +23,17 @@ import {
 import { Decorator } from "../../base-generator/expressions/decorator";
 import { ObjectLiteral } from "../../base-generator/expressions/literal";
 import { PropertyAccess } from "./property-access";
-import { PropertyAssignment } from "../../base-generator/expressions/property-assignment";
+import {
+  PropertyAssignment,
+  SpreadAssignment,
+} from "../../base-generator/expressions/property-assignment";
 import {
   SimpleTypeExpression,
   isTypeArray,
   ArrayTypeNode,
 } from "../../base-generator/expressions/type";
 import SyntaxKind from "../../base-generator/syntaxKind";
-import { Property } from "./class-members/property";
+import { calculatePropertyType, Property } from "./class-members/property";
 import { VueComponentInput } from "./vue-component-input";
 import { Function } from "./functions/function";
 import { Conditional } from "../../base-generator/expressions/conditions";
@@ -43,6 +46,7 @@ import {
   BindingElement,
   BindingPattern,
 } from "../../base-generator/expressions/binding-pattern";
+import { Binary } from "../../base-generator/expressions/operators";
 
 export function getComponentListFromContext(context: GeneratorContext) {
   return Object.keys(context.components || {})
@@ -155,22 +159,39 @@ export class VueComponent extends Component {
   }
 
   createPropsGetter(members: Array<Property | Method>) {
-    const expression = new ObjectLiteral(
-      getProps(members.filter((member) => !member.isForwardRefProp)).map(
-        (p) =>
-          new PropertyAssignment(
-            p._name,
+    const props = getProps(members);
+
+    const propertyAssignments = props.map((p) => {
+      const expression = p.isForwardRefProp
+        ? new SimpleExpression(`this.${p.name}?.()`)
+        : new PropertyAccess(
             new PropertyAccess(
-              new PropertyAccess(
-                new Identifier(SyntaxKind.ThisKeyword),
-                new Identifier("props")
-              ),
-              p._name
-            )
+              new Identifier(SyntaxKind.ThisKeyword),
+              new Identifier("props")
+            ),
+            p._name
+          );
+
+      const propertyAssignment = new PropertyAssignment(p._name, expression);
+
+      if (p.isOptional && calculatePropertyType(p.type) === "Boolean") {
+        return new SpreadAssignment(
+          new Binary(
+            new Binary(
+              expression,
+              SyntaxKind.ExclamationEqualsEqualsToken,
+              new SimpleExpression(SyntaxKind.UndefinedKeyword)
+            ),
+            SyntaxKind.AmpersandAmpersandToken,
+            new ObjectLiteral([propertyAssignment], false)
           )
-      ),
-      true
-    );
+        );
+      }
+
+      return propertyAssignment;
+    });
+
+    const expression = new ObjectLiteral(propertyAssignments, true);
 
     return new GetAccessor(
       [],
@@ -223,7 +244,18 @@ export class VueComponent extends Component {
             [],
             [new Parameter([], [], undefined, new Identifier("ref"))],
             undefined,
-            new Block([new SimpleExpression(`this.$refs.${m.name}=ref`)], true)
+            new Block(
+              [
+                new SimpleExpression(`
+              if(arguments.length){
+                this.$refs.${m.name}=ref;
+                ${m.isForwardRefProp ? `this.${m.name}?.(ref);` : ""}
+              }
+              return this.$refs.${m.name}
+            `),
+              ],
+              true
+            )
           )
         );
       }
@@ -291,7 +323,7 @@ export class VueComponent extends Component {
   createViewSpreadAccessor(name: Identifier, body: Block) {
     return new GetAccessor(undefined, undefined, name, [], undefined, body);
   }
-  compileTemplate() {
+  compileTemplate(methods: string[]) {
     const viewFunction = this.decorators[0].getViewFunction();
     if (viewFunction) {
       const options: toStringOptions = {
@@ -341,6 +373,22 @@ export class VueComponent extends Component {
             )
           )
         );
+      }
+
+      const forwardRefs = this.members.filter((m) => m.isForwardRefProp);
+
+      if (forwardRefs.length) {
+        methods.push(`__forwardRef(){
+          ${forwardRefs
+            .filter((m) =>
+              options.forwardRefs?.some((forwardRef) => forwardRef === m)
+            )
+            .map((m) => {
+              const token = (m as Property).isOptional ? "?." : "";
+              return `this.${m._name}${token}(this.$refs.${m._name});`;
+            })
+            .join("\n")}
+                }`);
       }
     }
   }
@@ -485,19 +533,6 @@ export class VueComponent extends Component {
                   )}", ...args);
               }`);
       });
-
-    const forwardRefs = this.members.filter((m) => m.isForwardRefProp);
-
-    if (forwardRefs.length) {
-      statements.push(`__forwardRef(){
-                  ${forwardRefs
-                    .map((m) => {
-                      const token = (m as Property).isOptional ? "?." : "";
-                      return `this.${m._name}${token}(this.$refs.${m._name});`;
-                    })
-                    .join("\n")}
-              }`);
-    }
 
     if (statements.length || externalStatements.length) {
       return `methods: {
@@ -847,10 +882,10 @@ export class VueComponent extends Component {
   }
 
   toString() {
-    this.compileTemplate();
-
     const methods: string[] = [];
     const components: string[] = [];
+
+    this.compileTemplate(methods);
 
     const portalComponent = this.containsPortal()
       ? this.compilePortalComponent(components)

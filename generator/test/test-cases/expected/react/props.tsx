@@ -25,6 +25,7 @@ declare type RestProps = Omit<
 interface Widget {
   props: typeof WidgetInput & RestProps;
   getHeight: () => number;
+  getRestProps: () => { export: object; onSomething: EventCallBack<number> };
   restAttributes: RestProps;
 }
 
@@ -37,6 +38,16 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
       return props.height;
     },
     [props.onClick, props.height]
+  );
+  const __getRestProps = useCallback(
+    function __getRestProps(): {
+      export: object;
+      onSomething: EventCallBack<number>;
+    } {
+      const { height, onClick, ...rest } = props;
+      return rest;
+    },
+    [props]
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
@@ -55,6 +66,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   return view({
     props: { ...props },
     getHeight: __getHeight,
+    getRestProps: __getRestProps,
     restAttributes: __restAttributes(),
   });
 }

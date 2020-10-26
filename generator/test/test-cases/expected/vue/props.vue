@@ -37,6 +37,10 @@ export const DxWidget = {
       this.onClick(11);
       return this.height;
     },
+    __getRestProps() {
+      const { height, onClick, ...rest } = this.props;
+      return rest;
+    },
     onClick(...args) {
       this.$emit("click", ...args);
     },
