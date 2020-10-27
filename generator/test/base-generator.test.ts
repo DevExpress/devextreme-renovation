@@ -18,7 +18,10 @@ import {
 import { Class } from "../base-generator/expressions/class";
 import { ComponentInput } from "../base-generator/expressions/component-input";
 import { Component, getProps } from "../base-generator/expressions/component";
-import { ImportDeclaration } from "../base-generator/expressions/import";
+import {
+  ImportClause,
+  ImportDeclaration,
+} from "../base-generator/expressions/import";
 import sinon from "sinon";
 
 import path from "path";
@@ -1177,6 +1180,32 @@ mocha.describe("base-generator: expressions", function () {
           assert.deepEqual(imports, []);
         }
       );
+
+      mocha.it("Do not add import if module has such import", function () {
+        generator.createImportDeclaration(
+          [],
+          [],
+          new ImportClause(
+            undefined,
+            generator.createNamedImports([
+              generator.createImportSpecifier(
+                undefined,
+                generator.createIdentifier("TestType")
+              ),
+            ])
+          ),
+          generator.createStringLiteral("./module.tsx")
+        );
+
+        const imports = (this.testType as TypeReferenceNode).getImports(
+          generator.getContext()
+        );
+
+        assert.strictEqual(
+          imports.join("\n"),
+          `import {TestType} from "./module1"`
+        );
+      });
 
       mocha.it(
         "TypeReferenceNode should not add import for global type",
@@ -2895,6 +2924,7 @@ mocha.describe("base-generator: expressions", function () {
 
     this.afterEach(function () {
       generator.setContext(null);
+      generator.resetCache();
     });
 
     mocha.it("createImportDeclaration", function () {
@@ -3124,7 +3154,7 @@ mocha.describe("base-generator: expressions", function () {
           undefined,
           generator.createImportClause(generator.createIdentifier("Widget")),
           generator.createStringLiteral(
-            "./test-cases/declarations/src/use-external-component-bindings"
+            "./test-cases/declarations/src/use-external-component-bindings.tsx"
           )
         );
 

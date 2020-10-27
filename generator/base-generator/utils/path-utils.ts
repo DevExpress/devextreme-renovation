@@ -2,14 +2,12 @@ import path from "path";
 import fs from "fs";
 import { GeneratorCache } from "../types";
 
-export function getRelativePath(
-  src: string,
-  dst: string,
-  moduleName: string = ""
-) {
-  const relativePath = `${path.relative(src, dst)}${
-    moduleName ? `/${moduleName}` : ""
-  }`.replace(/\\/gi, "/");
+export function getRelativePath(src: string, dst: string, moduleName: string) {
+  const relativePath = `${path.relative(src, dst)}/${moduleName}`.replace(
+    /\\/gi,
+    "/"
+  );
+
   if (relativePath.startsWith("/")) {
     return `.${relativePath}`;
   }
@@ -69,8 +67,4 @@ export function resolveModule(
   return (
     readModule(`${module}.tsx`, cache) || readModule(`${module}.ts`, cache)
   );
-}
-
-export function isPathExists(value: string): boolean {
-  return fs.existsSync(value);
 }
