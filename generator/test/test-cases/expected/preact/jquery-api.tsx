@@ -14,6 +14,9 @@ export default class Widget extends BaseComponent {
   getValue(arg: MyType): MyTypeReturn {
     return this.viewRef.getValue(arg);
   }
+  getValue2(arg: MyType): MyTypeReturn {
+    return this.viewRef.getValue2(arg);
+  }
 
   get _propsInfo() {
     return {

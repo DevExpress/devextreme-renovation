@@ -44,4 +44,9 @@ export default class Widget extends JSXComponent(WidgetInput) {
   getValue(arg: MyType): MyTypeReturn {
     return arg.value;
   }
+
+  @Method()
+  getValue2(arg: MyType): MyTypeReturn {
+    return arg.value;
+  }
 }

@@ -12,6 +12,7 @@ import {
   ObjectLiteral,
 } from "./base-generator/expressions/literal";
 import {
+  mergeTypeExpressionImports,
   TypeExpression,
   UnionTypeNode,
 } from "./base-generator/expressions/type";
@@ -395,13 +396,16 @@ class JQueryComponent {
       ...this.source.context,
       path: `${this.source.context.dirname}/jquery.tsx`,
     };
-    return (this.source.members.filter((a) => a.isApiMethod) as Method[])
-      .reduce(
-        (missedImports: TypeExpressionImports, method) =>
-          missedImports.concat(method.getImports(context)),
-        []
-      )
-      .join("\n");
+
+    const missedImports = (this.source.members.filter(
+      (a) => a.isApiMethod
+    ) as Method[]).reduce(
+      (missedImports: TypeExpressionImports, method) =>
+        missedImports.concat(method.getImports(context)),
+      []
+    );
+
+    return mergeTypeExpressionImports(missedImports).join("\n");
   }
 
   toString() {
