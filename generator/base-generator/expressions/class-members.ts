@@ -141,6 +141,10 @@ export class BaseClassMember extends Expression {
     return this._hasDecorator(Decorators.Provider);
   }
 
+  get isApiRef() {
+    return this._hasDecorator(Decorators.ApiRef);
+  }
+
   get context() {
     const decorator = this.decorators.find(
       (d) => d.name === Decorators.Consumer || d.name === Decorators.Provider

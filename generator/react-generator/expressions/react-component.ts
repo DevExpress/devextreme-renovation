@@ -592,7 +592,9 @@ export class ReactComponent extends Component {
       .concat(
         this.refs.map((r) => `${r._name.toString()}:${r.name.toString()}`)
       )
-      .concat(this.apiRefs.map((r) => r.name.toString()))
+      .concat(
+        this.apiRefs.map((r) => `${r._name.toString()}:${r.name.toString()}`)
+      )
       .concat(
         this.members
           .filter(

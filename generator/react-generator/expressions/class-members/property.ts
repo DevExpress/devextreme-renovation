@@ -94,7 +94,7 @@ export class Property extends BaseProperty {
       type = compileJSXTemplateType(type);
     }
     let name = this.name;
-    if (this.isRef || this.isForwardRef) {
+    if (this.isRef || this.isForwardRef || this.isApiRef) {
       name = this._name.toString();
     }
 

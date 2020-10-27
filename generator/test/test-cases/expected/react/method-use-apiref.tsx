@@ -29,7 +29,7 @@ declare type RestProps = Omit<
 >;
 interface WidgetWithApiRef {
   props: typeof WidgetWithApiRefInput & RestProps;
-  __baseRef?: any;
+  baseRef?: any;
   restAttributes: RestProps;
 }
 
@@ -61,7 +61,7 @@ const WidgetWithApiRef = forwardRef<
   ]);
   return view({
     props: { ...props },
-    __baseRef,
+    baseRef: __baseRef,
     restAttributes: __restAttributes(),
   });
 }) as React.FC<
