@@ -13,7 +13,7 @@ export class VueComponentInput extends ComponentInput {
     modifiers: string[] | undefined,
     name: Identifier,
     questionOrExclamationToken?: string,
-    type?: string | TypeExpression,
+    type?: TypeExpression,
     initializer?: Expression
   ) {
     return new Property(

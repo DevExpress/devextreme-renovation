@@ -260,7 +260,7 @@ export class ReactComponent extends Component {
           "",
           new Identifier("children"),
           undefined,
-          "React.ReactNode",
+          new SimpleTypeExpression("React.ReactNode"),
           undefined
         ),
       ],

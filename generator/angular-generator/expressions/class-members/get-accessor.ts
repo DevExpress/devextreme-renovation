@@ -29,7 +29,7 @@ export class GetAccessor extends BaseGetAccessor {
     modifiers: string[] | undefined,
     name: Identifier,
     parameters: Parameter[],
-    type?: TypeExpression | string,
+    type?: TypeExpression,
     body?: Block
   ) {
     const isProvider = decorators?.some((d) => d.name === Decorators.Provider);

@@ -223,7 +223,9 @@ mocha.describe("Vue-generator", function () {
             generator.createIdentifier("f"),
             undefined,
             [],
-            generator.createToken(generator.SyntaxKind.VoidKeyword),
+            generator.createKeywordTypeNode(
+              generator.createToken(generator.SyntaxKind.VoidKeyword)
+            ),
             generator.createBlock([], true)
           );
 

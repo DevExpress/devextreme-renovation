@@ -7,7 +7,10 @@ import {
 } from "../../../base-generator/utils/string";
 import { toStringOptions } from "../../../base-generator/types";
 import { Identifier } from "../../../base-generator/expressions/common";
-import { TypeExpression } from "../../../base-generator/expressions/type";
+import {
+  SimpleTypeExpression,
+  TypeExpression,
+} from "../../../base-generator/expressions/type";
 import { TypeReferenceNode } from "../type-refence-node";
 
 export function getLocalStateName(
@@ -40,16 +43,18 @@ function compileJSXTemplateProps(args: TypeExpression[]) {
 }
 
 export function compileJSXTemplateType(
-  type: string | TypeExpression,
+  type: TypeExpression,
   isComponent = false
-) {
+): TypeExpression {
   if (
     type instanceof TypeReferenceNode &&
     type.typeName.toString() === "JSXTemplate"
   ) {
-    return `React.${
-      isComponent ? "JSXElementConstructor" : "FunctionComponent"
-    }<${compileJSXTemplateProps(type.typeArguments)}>`;
+    return new SimpleTypeExpression(
+      `React.${
+        isComponent ? "JSXElementConstructor" : "FunctionComponent"
+      }<${compileJSXTemplateProps(type.typeArguments)}>`
+    );
   }
 
   return type;
@@ -72,7 +77,7 @@ export class Property extends BaseProperty {
   }
 
   typeDeclaration() {
-    let type = this.type;
+    let type = this.type.toString();
 
     if (this.isSlot) {
       type = "React.ReactNode";
@@ -91,7 +96,7 @@ export class Property extends BaseProperty {
       type = `${this.REF_OBJECT_TYPE}<${this.type}>`;
     }
     if (this.isTemplate) {
-      type = compileJSXTemplateType(type);
+      type = compileJSXTemplateType(this.type).toString();
     }
 
     return `${this.name}${this.compileTypeDeclarationType(type)}`;

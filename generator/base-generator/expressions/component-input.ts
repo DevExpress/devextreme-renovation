@@ -62,7 +62,7 @@ export class ComponentInput extends Class implements Heritable {
     modifiers: string[] | undefined,
     name: Identifier,
     questionOrExclamationToken?: string,
-    type?: string | TypeExpression,
+    type?: TypeExpression,
     initializer?: Expression
   ) {
     return new Property(

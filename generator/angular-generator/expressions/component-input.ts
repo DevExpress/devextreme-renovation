@@ -13,7 +13,7 @@ export class ComponentInput extends BaseComponentInput {
     modifiers: string[] | undefined,
     name: Identifier,
     questionOrExclamationToken?: string,
-    type?: TypeExpression | string,
+    type?: TypeExpression,
     initializer?: Expression
   ) {
     return new Property(

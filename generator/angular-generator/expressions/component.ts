@@ -182,7 +182,7 @@ export class AngularComponent extends Component {
       ["private"],
       new Identifier(`__${name}`),
       questionOrExclamationToken,
-      `${type}`,
+      new SimpleTypeExpression(type),
       undefined
     );
   }
@@ -209,7 +209,16 @@ export class AngularComponent extends Component {
       decorator,
       modifiers,
       new Identifier(`${name}`),
-      [new Parameter([], [], undefined, new Identifier("value"), "", type)],
+      [
+        new Parameter(
+          [],
+          [],
+          undefined,
+          new Identifier("value"),
+          "",
+          new SimpleTypeExpression(type)
+        ),
+      ],
       new Block(statements, true)
     );
   }
@@ -230,7 +239,7 @@ export class AngularComponent extends Component {
       modifiers,
       new Identifier(`${name}`),
       [],
-      type,
+      new SimpleTypeExpression(type),
       new Block(
         [
           new SimpleExpression(`if (this.__${name}) {
@@ -258,7 +267,7 @@ export class AngularComponent extends Component {
       modifiers,
       new Identifier(`${name}Nested`),
       questionOrExclamationToken,
-      type,
+      new SimpleTypeExpression(type),
       undefined
     );
   }
@@ -461,7 +470,7 @@ export class AngularComponent extends Component {
         undefined,
         undefined,
         [],
-        SyntaxKind.VoidKeyword,
+        new SimpleTypeExpression(SyntaxKind.VoidKeyword),
         new Block(
           [
             new SimpleExpression(`setTimeout(() => {

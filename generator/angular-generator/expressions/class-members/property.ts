@@ -40,7 +40,7 @@ export class Property extends BaseProperty {
     modifiers: string[] = [],
     name: Identifier,
     questionOrExclamationToken: string = "",
-    type?: TypeExpression | string,
+    type?: TypeExpression,
     initializer?: Expression,
     inherited: boolean = false
   ) {
