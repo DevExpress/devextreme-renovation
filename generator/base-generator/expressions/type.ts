@@ -138,7 +138,11 @@ export class TypeReferenceNode extends TypeExpression {
   getImports(context: GeneratorContext) {
     const result: TypeExpressionImports = [];
     if (this.context.path !== context.path) {
-      if (this.context.types?.[this.typeName.toString()]) {
+      const typeNameString = this.typeName.toString();
+      if (
+        this.context.types?.[typeNameString] ||
+        this.context.interfaces?.[typeNameString]
+      ) {
         const moduleSpecifier = getModuleRelativePath(
           context.dirname!,
           this.context.path!,
@@ -159,7 +163,7 @@ export class TypeReferenceNode extends TypeExpression {
 
       const importClause = Object.values(
         this.context.imports || {}
-      ).find((importClause) => importClause.has(this.typeName.toString()));
+      ).find((importClause) => importClause.has(typeNameString));
 
       if (importClause) {
         const importClauseRelativePath = Object.keys(
@@ -170,9 +174,7 @@ export class TypeReferenceNode extends TypeExpression {
           path.resolve(this.context.dirname!, importClauseRelativePath),
           false
         );
-        if (
-          !context.imports?.[moduleSpecifier]?.has(this.typeName.toString())
-        ) {
+        if (!context.imports?.[moduleSpecifier]?.has(typeNameString)) {
           result.push(
             new ImportDeclaration(
               [],

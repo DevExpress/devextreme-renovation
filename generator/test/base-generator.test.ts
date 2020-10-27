@@ -1106,6 +1106,19 @@ mocha.describe("base-generator: expressions", function () {
           generator.createIdentifier("TestType")
         );
 
+        generator.createInterfaceDeclaration(
+          [],
+          [],
+          generator.createIdentifier("MyInterface"),
+          [],
+          [],
+          []
+        );
+
+        this.interfaceType = generator.createTypeReferenceNode(
+          generator.createIdentifier("MyInterface")
+        );
+
         this.testType2 = generator.createTypeReferenceNode(
           generator.createIdentifier("TestType2")
         );
@@ -1135,6 +1148,20 @@ mocha.describe("base-generator: expressions", function () {
           assert.strictEqual(
             imports.join("\n"),
             `import {TestType} from "./module1"`
+          );
+        }
+      );
+
+      mocha.it(
+        "TypeReferenceNode on interface should return import if it is created in other module",
+        function () {
+          const imports = (this.interfaceType as TypeReferenceNode).getImports(
+            generator.getContext()
+          );
+
+          assert.strictEqual(
+            imports.join("\n"),
+            `import {MyInterface} from "./module1"`
           );
         }
       );
