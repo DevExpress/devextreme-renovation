@@ -30,11 +30,13 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const divRef = useRef<HTMLDivElement>();
+  const __divRef = useRef<HTMLDivElement>();
 
   const __getSize = useCallback(
     function __getSize(): any {
-      return divRef.current!.outerHTML + props.nullableRef?.current?.outerHTML;
+      return (
+        __divRef.current!.outerHTML + props.nullableRef?.current?.outerHTML
+      );
     },
     [props.nullableRef?.current]
   );
@@ -57,7 +59,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 
   return view({
     props: { ...props },
-    divRef,
+    divRef: __divRef,
     getSize: __getSize,
     getNullable: __getNullable,
     restAttributes: __restAttributes(),
