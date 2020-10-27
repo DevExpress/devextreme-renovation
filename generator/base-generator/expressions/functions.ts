@@ -228,7 +228,7 @@ export class BaseFunction extends Expression {
           m.isTemplate ||
           (m.isSlot && m._name.toString() !== m.name) ||
           m.isRefProp ||
-          m.isRef
+          m.isForwardRefProp
       ) as Property[]).map((p) => Object.create(p));
 
       options = {

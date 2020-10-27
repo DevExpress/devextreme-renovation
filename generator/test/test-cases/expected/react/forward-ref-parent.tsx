@@ -26,7 +26,7 @@ import {
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
 interface RefOnChildrenParent {
   props: typeof Props & RestProps;
-  __child: any;
+  child: any;
   innerState: number;
   restAttributes: RestProps;
 }
@@ -53,7 +53,7 @@ export default function RefOnChildrenParent(props: typeof Props & RestProps) {
   return view({
     props: { ...props },
     innerState: __state_innerState,
-    __child,
+    child: __child,
     restAttributes: __restAttributes(),
   });
 }

@@ -589,7 +589,9 @@ export class ReactComponent extends Component {
 
     return props
       .concat(this.listeners.map((l) => `${l._name}: ${l.name}`))
-      .concat(this.refs.map((r) => r.name.toString()))
+      .concat(
+        this.refs.map((r) => `${r._name.toString()}:${r.name.toString()}`)
+      )
       .concat(this.apiRefs.map((r) => r.name.toString()))
       .concat(
         this.members

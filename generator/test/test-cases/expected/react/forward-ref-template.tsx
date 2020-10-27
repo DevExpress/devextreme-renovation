@@ -18,7 +18,7 @@ import { useCallback, useEffect, useRef, HTMLAttributes } from "react";
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
 interface RefOnChildrenTemplate {
   props: typeof Props & RestProps;
-  __child: any;
+  child: any;
   restAttributes: RestProps;
 }
 
@@ -62,7 +62,7 @@ export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
         props.contentComponent
       ),
     },
-    __child,
+    child: __child,
     restAttributes: __restAttributes(),
   });
 }

@@ -1,6 +1,6 @@
 function view(viewModel: Widget) {
   return (
-    <div ref={viewModel.__divRef as any}>
+    <div ref={viewModel.divRef as any}>
       <div ref={viewModel.props.outerDivRef as any}></div>
     </div>
   );
@@ -26,11 +26,11 @@ declare type RestProps = {
 };
 interface Widget {
   props: typeof WidgetProps & RestProps;
-  __divRef: any;
-  __ref?: any;
-  __forwardRef?: any;
-  __existingRef: any;
-  __existingForwardRef: any;
+  divRef: any;
+  ref?: any;
+  forwardRef?: any;
+  existingRef: any;
+  existingForwardRef: any;
   writeRefs: () => any;
   readRefs: () => any;
   getRestRefs: () => {
@@ -149,11 +149,11 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
 
   return view({
     props: { ...props },
-    __divRef,
-    __ref,
-    __existingRef,
-    __forwardRef,
-    __existingForwardRef,
+    divRef: __divRef,
+    ref: __ref,
+    existingRef: __existingRef,
+    forwardRef: __forwardRef,
+    existingForwardRef: __existingForwardRef,
     writeRefs: __writeRefs,
     readRefs: __readRefs,
     getRestRefs: __getRestRefs,

@@ -1,5 +1,5 @@
 function view(viewModel: Widget) {
-  return <div ref={viewModel.__divRef as any}></div>;
+  return <div ref={viewModel.divRef as any}></div>;
 }
 
 export declare type WidgetInputType = {
@@ -26,7 +26,7 @@ declare type RestProps = Omit<
 >;
 interface Widget {
   props: typeof WidgetInput & RestProps;
-  __divRef: any;
+  divRef: any;
   restAttributes: RestProps;
 }
 
@@ -66,7 +66,7 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
     );
     return view({
       props: { ...props },
-      __divRef,
+      divRef: __divRef,
       restAttributes: __restAttributes(),
     });
   }

@@ -93,8 +93,12 @@ export class Property extends BaseProperty {
     if (this.isTemplate) {
       type = compileJSXTemplateType(type);
     }
+    let name = this.name;
+    if (this.isRef || this.isForwardRef) {
+      name = this._name.toString();
+    }
 
-    return `${this.name}${this.compileTypeDeclarationType(type)}`;
+    return `${name}${this.compileTypeDeclarationType(type)}`;
   }
 
   getter(componentContext?: string, keepRef: boolean = false) {
