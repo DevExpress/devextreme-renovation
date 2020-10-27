@@ -3,10 +3,13 @@ import {
   TypeExpression,
   SimpleTypeExpression,
   mergeTypeExpressionImports,
-  reduceTypeExpressionImports,
 } from "./type";
 import { Expression } from "./base";
-import { GeneratorContext, toStringOptions } from "../types";
+import {
+  GeneratorContext,
+  toStringOptions,
+  TypeExpressionImports,
+} from "../types";
 import { Parameter } from "./functions";
 import { Block } from "./statements";
 import {
@@ -24,7 +27,7 @@ export class BaseClassMember extends Expression {
   decorators: Decorator[];
   modifiers: string[];
   _name: Identifier;
-  type: TypeExpression;
+  type: TypeExpression | string;
   inherited: boolean;
 
   scope: string = "";
@@ -35,7 +38,7 @@ export class BaseClassMember extends Expression {
     decorators: Decorator[] = [],
     modifiers: string[] = [],
     name: Identifier,
-    type: TypeExpression,
+    type: TypeExpression | string = new SimpleTypeExpression(""),
     inherited: boolean = false
   ) {
     super();
@@ -174,14 +177,14 @@ export class Method extends BaseClassMember {
   body: Block;
 
   constructor(
-    decorators: Decorator[] | undefined,
-    modifiers: string[] | undefined,
+    decorators: Decorator[] = [],
+    modifiers: string[] = [],
     asteriskToken: string | undefined,
     name: Identifier,
     questionToken: string = "",
     typeParameters: TypeParameterDeclaration[] | undefined = [],
     parameters: Parameter[],
-    type: TypeExpression = new SimpleTypeExpression("any"),
+    type: TypeExpression | string = new SimpleTypeExpression("any"),
     body: Block
   ) {
     super(decorators, modifiers, name, type);
@@ -270,25 +273,28 @@ export class Method extends BaseClassMember {
   }
 
   getImports(context: GeneratorContext) {
-    const parametersImport = reduceTypeExpressionImports(
-      this.parameters.map((p) => p.type).filter((t) => t) as TypeExpression[],
-      context
+    let result: TypeExpressionImports = [];
+    if (this.type instanceof TypeExpression) {
+      result = this.type.getImports(context);
+    }
+    const parametersImport = this.parameters.reduce(
+      (result: TypeExpressionImports, p) => {
+        return result.concat(p.getImports(context));
+      },
+      []
     );
 
-    return mergeTypeExpressionImports(
-      this.type.getImports(context),
-      parametersImport
-    );
+    return mergeTypeExpressionImports(result, parametersImport);
   }
 }
 
 export class GetAccessor extends Method {
   constructor(
-    decorators: Decorator[] | undefined,
-    modifiers: string[] | undefined,
+    decorators: Decorator[] = [],
+    modifiers: string[] = [],
     name: Identifier,
     parameters: Parameter[],
-    type?: TypeExpression,
+    type?: TypeExpression | string,
     body?: Block
   ) {
     super(
@@ -324,11 +330,11 @@ export class Property extends BaseClassMember {
   initializer?: Expression;
 
   constructor(
-    decorators: Decorator[] | undefined,
-    modifiers: string[] | undefined,
+    decorators: Decorator[] = [],
+    modifiers: string[] = [],
     name: Identifier,
     questionOrExclamationToken: string = "",
-    type?: TypeExpression,
+    type?: TypeExpression | string,
     initializer?: Expression,
     inherited: boolean = false
   ) {
@@ -408,7 +414,10 @@ export class Property extends BaseClassMember {
   }
 
   getImports(context: GeneratorContext) {
-    return this.type.getImports(context);
+    if (this.type instanceof TypeExpression) {
+      return this.type.getImports(context);
+    }
+    return [];
   }
 }
 

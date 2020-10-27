@@ -24,17 +24,30 @@ import { containsPortalsInStatements } from "../utils/functions";
 import { TypeParameterDeclaration } from "./type-parameter-declaration";
 import { PropertyAccess } from "./property-access";
 
-export class Parameter extends Expression {
+export class Parameter {
+  decorators: Decorator[];
+  modifiers: string[];
+  dotDotDotToken: string;
+  name: Identifier | BindingPattern;
+  questionToken: string;
+  type?: TypeExpression | string;
+  initializer?: Expression;
   constructor(
-    public decorators: Decorator[],
-    public modifiers: string[],
-    public dotDotDotToken: string = "",
-    public name: Identifier | BindingPattern,
-    public questionToken: string = "",
-    public type?: TypeExpression,
-    public initializer?: Expression
+    decorators: Decorator[],
+    modifiers: string[],
+    dotDotDotToken: string = "",
+    name: Identifier | BindingPattern,
+    questionToken: string = "",
+    type?: TypeExpression | string,
+    initializer?: Expression
   ) {
-    super();
+    this.decorators = decorators;
+    this.modifiers = modifiers;
+    this.dotDotDotToken = dotDotDotToken;
+    this.name = name;
+    this.questionToken = questionToken;
+    this.type = type;
+    this.initializer = initializer;
   }
 
   typeDeclaration() {
@@ -54,6 +67,14 @@ export class Parameter extends Expression {
       this.questionToken,
       this.dotDotDotToken
     );
+  }
+
+  getImports(context: GeneratorContext) {
+    if (this.type instanceof TypeExpression) {
+      return this.type.getImports(context);
+    }
+
+    return [];
   }
 }
 
@@ -179,7 +200,7 @@ export class BaseFunction extends Expression {
   modifiers: string[];
   typeParameters: TypeParameterDeclaration[] | undefined;
   parameters: Parameter[];
-  type?: TypeExpression;
+  type?: TypeExpression | string;
   body: Block | Expression;
   context: GeneratorContext;
 
@@ -187,7 +208,7 @@ export class BaseFunction extends Expression {
     modifiers: string[] = [],
     typeParameters: TypeParameterDeclaration[] | undefined,
     parameters: Parameter[],
-    type: TypeExpression | undefined,
+    type: TypeExpression | string | undefined,
     body: Block | Expression,
     context: GeneratorContext
   ) {
@@ -330,7 +351,7 @@ export class Function extends BaseFunction {
     name: Identifier | undefined,
     typeParameters: TypeParameterDeclaration[] | undefined,
     parameters: Parameter[],
-    type: TypeExpression | undefined,
+    type: TypeExpression | string | undefined,
     body: Block,
     context: GeneratorContext
   ) {
@@ -360,7 +381,7 @@ export class ArrowFunction extends BaseFunction {
     modifiers: string[] | undefined,
     typeParameters: TypeParameterDeclaration[] | undefined,
     parameters: Parameter[],
-    type: TypeExpression | undefined,
+    type: TypeExpression | string | undefined,
     equalsGreaterThanToken: string,
     body: Block | Expression,
     context: GeneratorContext

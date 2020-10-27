@@ -344,7 +344,7 @@ export default class Generator implements GeneratorAPI {
     name: Identifier,
     typeParameters: any,
     parameters: Parameter[],
-    type: TypeExpression | undefined,
+    type: TypeExpression | string | undefined,
     body: Block
   ) {
     const functionDeclaration = this.createFunctionDeclarationCore(
@@ -371,7 +371,7 @@ export default class Generator implements GeneratorAPI {
     name: Identifier | undefined,
     typeParameters: any,
     parameters: Parameter[],
-    type: TypeExpression | undefined,
+    type: TypeExpression | string | undefined,
     body: Block
   ) {
     return new Function(
@@ -417,7 +417,7 @@ export default class Generator implements GeneratorAPI {
     name: Identifier | undefined,
     typeParameters: any,
     parameters: Parameter[],
-    type: TypeExpression | undefined,
+    type: TypeExpression | string | undefined,
     body: Block
   ) {
     return this.createFunctionDeclarationCore(
@@ -440,7 +440,7 @@ export default class Generator implements GeneratorAPI {
     modifiers: string[] | undefined,
     typeParameters: any,
     parameters: Parameter[],
-    type: TypeExpression | undefined,
+    type: TypeExpression | string | undefined,
     equalsGreaterThanToken: string,
     body: Block | Expression
   ) {
