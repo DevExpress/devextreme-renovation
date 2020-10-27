@@ -60,6 +60,11 @@ mocha.describe("preact-generator", function () {
     this.code = null;
     this.expectedCode = null;
   });
+
+  this.afterAll(() => {
+    generator.resetCache();
+  });
+
   mocha.it("class", function () {
     this.testGenerator(this.test!.title);
   });
@@ -352,6 +357,10 @@ mocha.describe("preact-generator: jQuery generation", function () {
     }
     this.code = null;
     this.expectedCode = null;
+  });
+
+  this.afterAll(() => {
+    generator.resetCache();
   });
 
   mocha.it("jquery-empty", function () {

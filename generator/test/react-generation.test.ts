@@ -39,6 +39,10 @@ mocha.describe("react-generation", function () {
     }
   });
 
+  this.afterAll(() => {
+    generator.resetCache();
+  });
+
   mocha.it("variable-declaration", function () {
     this.testGenerator(this.test!.title);
   });

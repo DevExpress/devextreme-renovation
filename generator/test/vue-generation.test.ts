@@ -82,6 +82,10 @@ mocha.describe("vue-generation", function () {
     }
   });
 
+  this.afterAll(() => {
+    generator.resetCache();
+  });
+
   mocha.it("class", function () {
     this.testGenerator(this.test!.title);
   });
