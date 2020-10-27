@@ -1198,6 +1198,18 @@ mocha.describe("base-generator: expressions", function () {
 
         assert.deepEqual(type.getImports(generator.getContext()), []);
       });
+
+      mocha.it("UnionTypeNode", function () {
+        const type = generator.createUnionTypeNode([
+          generator.createKeywordTypeNode("number"),
+          this.testType,
+        ]);
+
+        assert.deepEqual(
+          type.getImports(generator.getContext()).join(";\n"),
+          `import {TestType} from "./module1"`
+        );
+      });
     });
   });
 

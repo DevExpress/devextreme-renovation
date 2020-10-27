@@ -97,6 +97,10 @@ export class UnionTypeNode extends IntersectionTypeNode {
   toString() {
     return this.types.join("|");
   }
+
+  getImports(context: GeneratorContext) {
+    return reduceTypeExpressionImports(this.types, context);
+  }
 }
 
 export class TypeQueryNode extends TypeExpression {
@@ -545,4 +549,13 @@ export function mergeTypeExpressionImports(
   const dictionary = convertTypeExpressionImportsToDictionary(allImports);
 
   return Object.keys(dictionary).map((key) => dictionary[key]);
+}
+
+export function reduceTypeExpressionImports(
+  expressions: Expression[],
+  context: GeneratorContext
+) {
+  return expressions.reduce((imports: TypeExpressionImports, e) => {
+    return imports.concat(e.getImports(context));
+  }, []);
 }
