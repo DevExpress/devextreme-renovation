@@ -40,11 +40,11 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetProps & RestProps) {
-  const divRef = useRef<HTMLDivElement>();
-  const ref = useRef<HTMLDivElement>();
-  const existingRef = useRef<HTMLDivElement>();
-  const forwardRef = useRef<HTMLDivElement>();
-  const existingForwardRef = useRef<HTMLDivElement>();
+  const __divRef = useRef<HTMLDivElement>();
+  const __ref = useRef<HTMLDivElement>();
+  const __existingRef = useRef<HTMLDivElement>();
+  const __forwardRef = useRef<HTMLDivElement>();
+  const __existingForwardRef = useRef<HTMLDivElement>();
 
   const __writeRefs = useCallback(
     function __writeRefs(): any {
@@ -53,51 +53,54 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
       }
       someRef = props.refProp?.current!
         ? props.refProp?.current!
-        : divRef.current!;
+        : __divRef.current!;
       if (props.forwardRefProp) {
-        props.forwardRefProp.current = divRef.current!;
+        props.forwardRefProp.current = __divRef.current!;
       }
-      props.forwardRefProp && (props.forwardRefProp.current = divRef.current!);
+      props.forwardRefProp &&
+        (props.forwardRefProp.current = __divRef.current!);
       someRef = props.forwardRefProp?.current!
         ? props.forwardRefProp?.current!
-        : divRef.current!;
-      if (!ref.current!) {
-        ref.current = divRef.current!;
+        : __divRef.current!;
+      if (!__ref.current!) {
+        __ref.current = __divRef.current!;
       }
-      !ref.current! && (ref.current = divRef.current!);
-      someRef = ref.current! ? ref.current! : divRef.current!;
-      if (!forwardRef.current!) {
+      !__ref.current! && (__ref.current = __divRef.current!);
+      someRef = __ref.current! ? __ref.current! : __divRef.current!;
+      if (!__forwardRef.current!) {
       }
       if (props.forwardRefProp) {
-        props.forwardRefProp.current = divRef.current!;
+        props.forwardRefProp.current = __divRef.current!;
       }
-      someRef = forwardRef.current! ? forwardRef.current! : divRef.current!;
-      existingRef.current = divRef.current!;
-      props.requiredForwardRefProp.current = divRef.current!;
+      someRef = __forwardRef.current!
+        ? __forwardRef.current!
+        : __divRef.current!;
+      __existingRef.current = __divRef.current!;
+      props.requiredForwardRefProp.current = __divRef.current!;
     },
     [
       props.refProp?.current,
       props.forwardRefProp?.current,
-      ref.current,
-      forwardRef.current,
+      __ref.current,
+      __forwardRef.current,
     ]
   );
   const __readRefs = useCallback(
     function __readRefs(): any {
       const outer_1 = props.refProp?.current?.outerHTML;
       const outer_2 = props.forwardRefProp?.current?.outerHTML;
-      const outer_3 = ref.current?.outerHTML;
-      const outer_4 = forwardRef.current?.outerHTML;
-      const outer_5 = existingRef.current!.outerHTML;
-      const outer_6 = existingForwardRef.current!.outerHTML;
+      const outer_3 = __ref.current?.outerHTML;
+      const outer_4 = __forwardRef.current?.outerHTML;
+      const outer_5 = __existingRef.current!.outerHTML;
+      const outer_6 = __existingForwardRef.current!.outerHTML;
       const outer_7 = props.requiredRefProp!.current!.outerHTML;
       const outer_8 = props.requiredForwardRefProp!.current!.outerHTML;
     },
     [
       props.refProp?.current,
       props.forwardRefProp?.current,
-      ref.current,
-      forwardRef.current,
+      __ref.current,
+      __forwardRef.current,
     ]
   );
   const __getRestRefs = useCallback(
@@ -143,11 +146,11 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
 
   return view({
     props: { ...props },
-    divRef,
-    ref,
-    existingRef,
-    forwardRef,
-    existingForwardRef,
+    divRef: __divRef,
+    ref: __ref,
+    existingRef: __existingRef,
+    forwardRef: __forwardRef,
+    existingForwardRef: __existingForwardRef,
     writeRefs: __writeRefs,
     readRefs: __readRefs,
     getRestRefs: __getRestRefs,

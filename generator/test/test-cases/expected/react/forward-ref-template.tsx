@@ -35,7 +35,7 @@ const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
   (ComponentProp && ((props: any) => <ComponentProp {...props} />));
 
 export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
-  const child = useRef<HTMLDivElement>();
+  const __child = useRef<HTMLDivElement>();
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
@@ -50,7 +50,7 @@ export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
     [props]
   );
   useEffect(() => {
-    child.current!.innerHTML += "ParentText";
+    __child.current!.innerHTML += "ParentText";
   }, []);
 
   return view({
@@ -62,7 +62,7 @@ export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
         props.contentComponent
       ),
     },
-    child,
+    child: __child,
     restAttributes: __restAttributes(),
   });
 }
