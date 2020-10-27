@@ -115,10 +115,7 @@ export class ReactComponent extends Component {
     });
 
     members = members.map((m) => {
-      if (m instanceof Method) {
-        m.prefix = "__";
-      }
-      if (m.isRef || m.isForwardRef) {
+      if (m instanceof Method || m.isRef || m.isForwardRef) {
         m.prefix = "__";
       }
       return m;
@@ -587,13 +584,16 @@ export class ReactComponent extends Component {
         ].concat(internalState)
       : ["...props"].concat(internalState).concat(state).concat(nestedProps);
 
+    const listenersAndRefs: BaseClassMember[] = [
+      ...this.listeners,
+      ...this.refs,
+      ...this.apiRefs,
+    ];
     return props
-      .concat(this.listeners.map((l) => `${l._name}: ${l.name}`))
       .concat(
-        this.refs.map((r) => `${r._name.toString()}:${r.name.toString()}`)
-      )
-      .concat(
-        this.apiRefs.map((r) => `${r._name.toString()}:${r.name.toString()}`)
+        listenersAndRefs.map(
+          (r) => `${r._name.toString()}:${r.name.toString()}`
+        )
       )
       .concat(
         this.members

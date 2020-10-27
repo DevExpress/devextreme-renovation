@@ -48,8 +48,7 @@ export class PropertyAccess extends BasePropertyAccess {
     }
     if (property.isRef || property.isForwardRefProp) {
       const scope = property.processComponentContext(property.scope);
-      const prefix = property.prefix;
-      return `${scope}${prefix}${this.name}.current=${state}`;
+      return `${scope}​​​​​​​​​${property.name}​​​​​​​​.current=${state}​​​​​​​​`;
     }
     return setState;
   }
