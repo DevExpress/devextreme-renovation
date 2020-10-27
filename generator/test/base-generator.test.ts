@@ -1266,6 +1266,69 @@ mocha.describe("base-generator: expressions", function () {
           `import {TestType} from "./module1"`
         );
       });
+
+      mocha.it("ArrayTypeNode", function () {
+        const type = generator.createArrayTypeNode(this.testType);
+
+        assert.deepEqual(
+          type.getImports(generator.getContext()).join(";\n"),
+          `import {TestType} from "./module1"`
+        );
+      });
+
+      mocha.it("ParenthesizedType", function () {
+        const type = generator.createParenthesizedType(this.testType);
+
+        assert.deepEqual(
+          type.getImports(generator.getContext()).join(";\n"),
+          `import {TestType} from "./module1"`
+        );
+      });
+
+      mocha.it("OptionalTypeNode", function () {
+        const type = generator.createOptionalTypeNode(this.testType);
+
+        assert.deepEqual(
+          type.getImports(generator.getContext()).join(";\n"),
+          `import {TestType} from "./module1"`
+        );
+      });
+
+      mocha.it("FunctionalTypeNode", function () {
+        const type = generator.createFunctionTypeNode(
+          undefined,
+          [
+            generator.createParameter(
+              [],
+              [],
+              undefined,
+              generator.createIdentifier("a"),
+              undefined,
+              this.testType
+            ),
+            generator.createParameter(
+              [],
+              [],
+              undefined,
+              generator.createIdentifier("b")
+            ),
+            generator.createParameter(
+              [],
+              [],
+              undefined,
+              generator.createIdentifier("b"),
+              undefined,
+              this.interfaceType
+            ),
+          ],
+          this.testType2
+        );
+
+        assert.deepEqual(
+          type.getImports(generator.getContext()).join(";\n"),
+          `import {TestType2,TestType,MyInterface} from "./module1"`
+        );
+      });
     });
   });
 

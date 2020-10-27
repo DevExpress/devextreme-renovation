@@ -49,6 +49,10 @@ export class ArrayTypeNode extends TypeExpression {
   toString() {
     return `${this.elementType}[]`;
   }
+
+  getImports(context: GeneratorContext) {
+    return this.elementType.getImports(context);
+  }
 }
 
 export class FunctionTypeNode extends TypeExpression {
@@ -69,6 +73,17 @@ export class FunctionTypeNode extends TypeExpression {
   toString() {
     return `(${this.parameters})=>${this.type}`;
   }
+
+  getImports(context: GeneratorContext) {
+    const parametersImport = reduceTypeExpressionImports(
+      this.parameters.map((p) => p.type).filter((t) => t) as TypeExpression[],
+      context
+    );
+    return mergeTypeExpressionImports(
+      this.type.getImports(context),
+      parametersImport
+    );
+  }
 }
 
 export class OptionalTypeNode extends TypeExpression {
@@ -78,6 +93,10 @@ export class OptionalTypeNode extends TypeExpression {
 
   toString() {
     return `${this.type}?`;
+  }
+
+  getImports(context: GeneratorContext) {
+    return this.type.getImports(context);
   }
 }
 
@@ -91,15 +110,15 @@ export class IntersectionTypeNode extends TypeExpression {
   toString() {
     return this.types.join("&");
   }
+
+  getImports(context: GeneratorContext) {
+    return reduceTypeExpressionImports(this.types, context);
+  }
 }
 
 export class UnionTypeNode extends IntersectionTypeNode {
   toString() {
     return this.types.join("|");
-  }
-
-  getImports(context: GeneratorContext) {
-    return reduceTypeExpressionImports(this.types, context);
   }
 }
 
@@ -319,6 +338,10 @@ export class ParenthesizedType extends TypeExpression {
 
   toString() {
     return `(${this.expression})`;
+  }
+
+  getImports(context: GeneratorContext) {
+    return this.expression.getImports(context);
   }
 }
 
