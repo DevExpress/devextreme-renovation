@@ -228,8 +228,12 @@ export class BaseFunction extends Expression {
           m.isTemplate ||
           (m.isSlot && m._name.toString() !== m.name) ||
           m.isRefProp ||
-          m.isForwardRefProp
-      ) as Property[]).map((p) => Object.create(p));
+          m.isRef
+      ) as Property[]).map((p) => {
+        const property = Object.create(p);
+        property.prefix = "";
+        return property;
+      });
 
       options = {
         members,
