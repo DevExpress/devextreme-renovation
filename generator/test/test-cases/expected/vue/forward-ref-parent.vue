@@ -27,7 +27,7 @@ export const DxRefOnChildrenParent = {
       return {};
     },
     props() {
-      return {};
+      return { nullableRef: this.nullableRef?.() };
     },
   },
   watch: {
@@ -35,18 +35,23 @@ export const DxRefOnChildrenParent = {
   },
   methods: {
     forwardRef_child(ref) {
-      this.$refs.child = ref;
+      if (arguments.length) {
+        this.$refs.child = ref;
+      }
+      return this.$refs.child;
     },
     forwardRef_nullableRef(ref) {
-      this.$refs.nullableRef = ref;
+      if (arguments.length) {
+        this.$refs.nullableRef = ref;
+        this.nullableRef?.(ref);
+      }
+      return this.$refs.nullableRef;
     },
     __effect() {
       this.$refs.child.innerHTML = "Ref from child";
-      const html = this.$refs.nullableRef?.innerHTML;
+      const html = this.nullableRef?.()?.innerHTML;
     },
-    __forwardRef() {
-      this.nullableRef?.(this.$refs.nullableRef);
-    },
+    __forwardRef() {},
     __schedule_effect() {
       this.__scheduleEffect(0, "__effect");
     },

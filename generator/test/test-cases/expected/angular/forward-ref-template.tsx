@@ -28,18 +28,24 @@ export default class RefOnChildrenTemplate extends Props {
   get __restAttributes(): any {
     return {};
   }
-  get forwardRef_child(): (ref: any) => void {
+  get forwardRef_child(): (
+    ref?: ElementRef<HTMLDivElement>
+  ) => ElementRef<HTMLDivElement> {
     if (this.__getterCache["forwardRef_child"] !== undefined) {
       return this.__getterCache["forwardRef_child"];
     }
     return (this.__getterCache["forwardRef_child"] = ((): ((
-      ref: any
-    ) => void) => {
-      return (ref) => {
-        this.child = ref;
-
-        return ref;
-      };
+      ref?: ElementRef<HTMLDivElement>
+    ) => ElementRef<HTMLDivElement>) => {
+      return function (
+        this: RefOnChildrenTemplate,
+        ref?: ElementRef<HTMLDivElement>
+      ): ElementRef<HTMLDivElement> {
+        if (arguments.length) {
+          this.child = ref!;
+        }
+        return this.child;
+      }.bind(this);
     })());
   }
   _detectChanges(): void {
@@ -74,7 +80,9 @@ export default class RefOnChildrenTemplate extends Props {
   }
 
   __getterCache: {
-    forwardRef_child?: (ref: any) => void;
+    forwardRef_child?: (
+      ref?: ElementRef<HTMLDivElement>
+    ) => ElementRef<HTMLDivElement>;
   } = {};
 
   ngAfterViewInit() {

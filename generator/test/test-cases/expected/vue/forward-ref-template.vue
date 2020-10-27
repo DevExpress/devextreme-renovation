@@ -20,7 +20,10 @@ export const DxRefOnChildrenTemplate = {
   },
   methods: {
     forwardRef_child(ref) {
-      this.$refs.child = ref;
+      if (arguments.length) {
+        this.$refs.child = ref;
+      }
+      return this.$refs.child;
     },
     __effect() {
       this.$refs.child.innerHTML += "ParentText";

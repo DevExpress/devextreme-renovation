@@ -83,4 +83,15 @@ export default class Widget extends JSXComponent<
     const outer_7 = this.props.requiredRefProp.outerHTML;
     const outer_8 = this.props.requiredForwardRefProp.outerHTML;
   }
+
+  getRestRefs(): {
+    refProp?: HTMLDivElement;
+    forwardRefProp?: HTMLDivElement;
+    requiredRefProp: HTMLDivElement;
+    requiredForwardRefProp: HTMLDivElement;
+  } {
+    const { outerDivRef, ...restProps } = this.props;
+
+    return restProps;
+  }
 }

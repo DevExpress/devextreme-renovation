@@ -6,7 +6,10 @@ import { Heritable } from "../base-generator/expressions/class";
 import { TrackByAttribute } from "./expressions/jsx/track-by-attribute";
 import { Expression } from "../base-generator/expressions/base";
 import { Property } from "./expressions/class-members/property";
-import { Method } from "../base-generator/expressions/class-members";
+import {
+  BaseClassMember,
+  Method,
+} from "../base-generator/expressions/class-members";
 import { BaseFunction } from "../base-generator/expressions/functions";
 import { Identifier } from "../base-generator/expressions/common";
 
@@ -22,6 +25,7 @@ export interface toStringOptions extends BaseToStringOptions {
       initializer: BaseFunction | Identifier;
     };
   };
+  forwardRefs?: BaseClassMember[];
 }
 
 export type AngularGeneratorContext = GeneratorContext & {

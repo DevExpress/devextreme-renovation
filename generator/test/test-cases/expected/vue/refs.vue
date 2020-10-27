@@ -29,8 +29,11 @@ export const DxWidget = {
     },
     props() {
       return {
+        outerDivRef: this.outerDivRef?.(),
         refProp: this.refProp?.(),
+        forwardRefProp: this.forwardRefProp?.(),
         requiredRefProp: this.requiredRefProp(),
+        requiredForwardRefProp: this.requiredForwardRefProp?.(),
       };
     },
   },
@@ -47,8 +50,8 @@ export const DxWidget = {
       this.forwardRefProp &&
         (this.forwardRef_forwardRefProp(this.$refs.divRef),
         this.forwardRefProp(this.$refs.divRef));
-      someRef = this.$refs.forwardRefProp
-        ? this.$refs.forwardRefProp
+      someRef = this.forwardRefProp?.()
+        ? this.forwardRefProp?.()
         : this.$refs.divRef;
       if (!this.$refs.ref) {
         this.$refs.ref = this.$refs.divRef;
@@ -70,33 +73,53 @@ export const DxWidget = {
     },
     __readRefs() {
       const outer_1 = this.props.refProp?.outerHTML;
-      const outer_2 = this.$refs.forwardRefProp?.outerHTML;
+      const outer_2 = this.forwardRefProp?.()?.outerHTML;
       const outer_3 = this.$refs.ref?.outerHTML;
       const outer_4 = this.$refs.forwardRef?.outerHTML;
       const outer_5 = this.$refs.existingRef.outerHTML;
       const outer_6 = this.$refs.existingForwardRef.outerHTML;
       const outer_7 = this.props.requiredRefProp.outerHTML;
-      const outer_8 = this.$refs.requiredForwardRefProp.outerHTML;
+      const outer_8 = this.requiredForwardRefProp().outerHTML;
+    },
+    __getRestRefs() {
+      const { outerDivRef, ...restProps } = this.props;
+      return restProps;
     },
     forwardRef_forwardRef(ref) {
-      this.$refs.forwardRef = ref;
+      if (arguments.length) {
+        this.$refs.forwardRef = ref;
+      }
+      return this.$refs.forwardRef;
     },
     forwardRef_existingForwardRef(ref) {
-      this.$refs.existingForwardRef = ref;
+      if (arguments.length) {
+        this.$refs.existingForwardRef = ref;
+      }
+      return this.$refs.existingForwardRef;
     },
     forwardRef_outerDivRef(ref) {
-      this.$refs.outerDivRef = ref;
+      if (arguments.length) {
+        this.$refs.outerDivRef = ref;
+        this.outerDivRef?.(ref);
+      }
+      return this.$refs.outerDivRef;
     },
     forwardRef_forwardRefProp(ref) {
-      this.$refs.forwardRefProp = ref;
+      if (arguments.length) {
+        this.$refs.forwardRefProp = ref;
+        this.forwardRefProp?.(ref);
+      }
+      return this.$refs.forwardRefProp;
     },
     forwardRef_requiredForwardRefProp(ref) {
-      this.$refs.requiredForwardRefProp = ref;
+      if (arguments.length) {
+        this.$refs.requiredForwardRefProp = ref;
+        this.requiredForwardRefProp?.(ref);
+      }
+      return this.$refs.requiredForwardRefProp;
     },
     __forwardRef() {
       this.outerDivRef?.(this.$refs.outerDivRef);
-      this.forwardRefProp?.(this.$refs.forwardRefProp);
-      this.requiredForwardRefProp(this.$refs.requiredForwardRefProp);
     },
   },
   mounted() {

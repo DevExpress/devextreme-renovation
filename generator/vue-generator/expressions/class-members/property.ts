@@ -32,8 +32,7 @@ const BasicTypes = [
   "Function",
   "Symbol",
 ];
-
-function calculatePropertyType(
+export function calculatePropertyType(
   type: TypeExpression | string,
   initializer?: Expression
 ): string {
@@ -162,8 +161,16 @@ export class Property extends BaseProperty {
       (this.isRef || this.isForwardRef || this.isForwardRefProp) &&
       componentContext.length
     ) {
-      if (keepRef && this.isForwardRefProp) {
-        return `${componentContext}${this.name}`;
+      if (this.isForwardRefProp) {
+        if (keepRef) {
+          return `${componentContext}${this.name}`;
+        }
+
+        return `${componentContext}${this.name}${
+          this.questionOrExclamationToken === SyntaxKind.QuestionToken
+            ? SyntaxKind.QuestionDotToken
+            : ""
+        }()`;
       }
       return `${componentContext}$refs.${this.name}`;
     }

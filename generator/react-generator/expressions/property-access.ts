@@ -58,14 +58,18 @@ export class PropertyAccess extends BasePropertyAccess {
     return [`${this.name}Change`];
   }
 
-  needToCreateAssignment(property: BaseProperty, elements: BindingElement[]) {
+  needToCreateAssignment(
+    property: BaseProperty,
+    elements: BindingElement[],
+    hasRest: boolean
+  ) {
     return (
       !property.canBeDestructured &&
-      !property.isRefProp &&
       (elements.length === 0 ||
         elements.some(
           (e) =>
-            (e.propertyName || e.name).toString() === property._name.toString()
+            (e.propertyName || e.name).toString() ===
+              property._name.toString() || hasRest
         ))
     );
   }
@@ -76,8 +80,9 @@ export class PropertyAccess extends BasePropertyAccess {
     elements: BindingElement[] = []
   ) {
     const props = getProps(options.members);
+    const hasRest = elements.some((e) => e.dotDotDotToken);
     const hasComplexProps = props.some((p) =>
-      this.needToCreateAssignment(p, elements)
+      this.needToCreateAssignment(p, elements, hasRest)
     );
 
     if (
@@ -91,7 +96,7 @@ export class PropertyAccess extends BasePropertyAccess {
         : []) as (PropertyAssignment | SpreadAssignment)[];
 
       const destructedProps = props.reduce((acc, p) => {
-        if (this.needToCreateAssignment(p, elements)) {
+        if (this.needToCreateAssignment(p, elements, hasRest)) {
           acc.push(
             new PropertyAssignment(
               p._name,

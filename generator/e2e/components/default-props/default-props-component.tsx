@@ -13,6 +13,7 @@ function view({
     optionalNumber,
     optionalBooleanOrNumber,
   },
+  booleanPropsInRest,
 }: DefaultPropsComponent) {
   return (
     <div>
@@ -33,6 +34,10 @@ function view({
       <span className="default-props-optional-boolean-or-number">
         {optionalBooleanOrNumber + ""}
       </span>
+
+      <span className="default-props-optional-boolean-in-rest">
+        {booleanPropsInRest.optionalBoolean + ""}
+      </span>
     </div>
   );
 }
@@ -51,4 +56,20 @@ class Props {
 @Component({
   view,
 })
-export default class DefaultPropsComponent extends JSXComponent(Props) {}
+export default class DefaultPropsComponent extends JSXComponent(Props) {
+  get booleanPropsInRest(): {
+    optionalBoolean: boolean;
+  } {
+    const {
+      optionalBooleanOrNumber,
+      optionalNumber,
+      numberWithDefault,
+      booleanWithDefault,
+      ...rest
+    } = this.props;
+    return {
+      optionalBoolean: false,
+      ...rest,
+    };
+  }
+}

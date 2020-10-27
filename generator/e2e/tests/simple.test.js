@@ -331,6 +331,7 @@ cloneTest("Default props", async (t) => {
   await assert("default-props-number-with-default", "1");
 
   await assert("default-props-optional-boolean-or-number", "undefined");
+  await assert("default-props-optional-boolean-in-rest", "false");
 });
 
 cloneTest("Set forward ref", async (t) => {
@@ -339,6 +340,6 @@ cloneTest("Set forward ref", async (t) => {
   await t
     .expect((await content.textContent).trim())
     .eql(
-      "non-object-ref-value: 10content in forwardRefcontent in forwardRefDeep"
+      "non-object-ref-value: 10content in forwardRefcontent in forwardRefDeepconsumer is rendered:element passed"
     );
 });

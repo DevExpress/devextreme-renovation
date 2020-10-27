@@ -21,6 +21,7 @@ import { JsxExpression } from "../angular-generator/expressions/jsx/jsx-expressi
 import { AngularDirective } from "../angular-generator/expressions/jsx/angular-directive";
 import { SetAccessor } from "../angular-generator/expressions/class-members/set-accessor";
 import { Expression } from "../base-generator/expressions/base";
+import { ComponentParameters } from "../component_declaration/common";
 
 const { createComponent, createComponentDecorator, createDecorator } = factory(
   generator
@@ -4923,19 +4924,30 @@ mocha.describe("Angular generator", function () {
         );
       });
 
-      mocha.it("Remove viewModel", function () {
+      mocha.it("should remove all declaration parameters", function () {
+        const parameters: Required<
+          { [key in keyof ComponentParameters]: boolean }
+        > = {
+          components: true,
+          name: true,
+          isSVG: true,
+          view: true,
+          defaultOptionRules: true,
+          jQuery: true,
+        };
+
         const decorator = generator.createDecorator(
           generator.createCall(
             generator.createIdentifier("Component"),
             [],
             [
               generator.createObjectLiteral(
-                [
+                Object.keys(parameters).map((name) =>
                   generator.createPropertyAssignment(
-                    generator.createIdentifier("viewModel"),
-                    generator.createIdentifier("viewModel")
-                  ),
-                ],
+                    generator.createIdentifier(name),
+                    generator.createIdentifier(name)
+                  )
+                ),
                 false
               ),
             ]
@@ -6592,6 +6604,32 @@ mocha.describe("Angular generator", function () {
           generator.createIdentifier("div")
         );
 
+        const svgElement = generator.createProperty(
+          [createDecorator(Decorators.Ref)],
+          [],
+          generator.createIdentifier("div"),
+          undefined,
+          generator.createKeywordTypeNode("SVGGraphicsElement")
+        );
+
+        const element = generator.createProperty(
+          [createDecorator(Decorators.Ref)],
+          [],
+          generator.createIdentifier("div"),
+          undefined,
+          generator.createKeywordTypeNode("Element")
+        );
+
+        const getHtmlElement = generator.createProperty(
+          [createDecorator(Decorators.Ref)],
+          [],
+          generator.createIdentifier("div"),
+          undefined,
+          generator.createTypeReferenceNode(
+            generator.createIdentifier("GetHtmlElement")
+          )
+        );
+
         assert.strictEqual(
           expression.toString({
             members: [property],
@@ -6617,6 +6655,33 @@ mocha.describe("Angular generator", function () {
             newComponentContext: generator.SyntaxKind.ThisKeyword,
           }),
           "this.div?.nativeElement"
+        );
+
+        assert.strictEqual(
+          expression.toString({
+            members: [svgElement],
+            componentContext: generator.SyntaxKind.ThisKeyword,
+            newComponentContext: generator.SyntaxKind.ThisKeyword,
+          }),
+          "this.div.nativeElement"
+        );
+
+        assert.strictEqual(
+          expression.toString({
+            members: [element],
+            componentContext: generator.SyntaxKind.ThisKeyword,
+            newComponentContext: generator.SyntaxKind.ThisKeyword,
+          }),
+          "this.div.nativeElement"
+        );
+
+        assert.strictEqual(
+          expression.toString({
+            members: [getHtmlElement],
+            componentContext: generator.SyntaxKind.ThisKeyword,
+            newComponentContext: generator.SyntaxKind.ThisKeyword,
+          }),
+          "this.div"
         );
       });
     });

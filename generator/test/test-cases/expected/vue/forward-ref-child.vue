@@ -21,23 +21,35 @@ export const DxRefOnChildrenChild = {
       return {};
     },
     props() {
-      return { state: this.state };
+      return {
+        childRef: this.childRef?.(),
+        nullableRef: this.nullableRef?.(),
+        state: this.state,
+      };
     },
   },
   methods: {
     __method() {
-      const nullableRefHtml = this.$refs.nullableRef?.innerHTML;
+      const nullableRefHtml = this.nullableRef?.()?.innerHTML;
       if (this.nullableRef) {
-        this.forwardRef_nullableRef(this.$refs.childRef),
-          this.nullableRef(this.$refs.childRef);
+        this.forwardRef_nullableRef(this.childRef()),
+          this.nullableRef(this.childRef());
       }
       return nullableRefHtml;
     },
     forwardRef_childRef(ref) {
-      this.$refs.childRef = ref;
+      if (arguments.length) {
+        this.$refs.childRef = ref;
+        this.childRef?.(ref);
+      }
+      return this.$refs.childRef;
     },
     forwardRef_nullableRef(ref) {
-      this.$refs.nullableRef = ref;
+      if (arguments.length) {
+        this.$refs.nullableRef = ref;
+        this.nullableRef?.(ref);
+      }
+      return this.$refs.nullableRef;
     },
     __forwardRef() {
       this.childRef(this.$refs.childRef);

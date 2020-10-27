@@ -15,7 +15,7 @@ import {
   Expression,
   SimpleExpression,
 } from "../../../base-generator/expressions/base";
-import { toStringOptions } from "../../../base-generator/types";
+import { toStringOptions } from "../../types";
 
 function parseEventType(type: TypeExpression | string) {
   if (type instanceof FunctionTypeNode) {
@@ -63,7 +63,7 @@ export class Property extends BaseProperty {
       inherited
     );
   }
-  toString() {
+  toString(options?: toStringOptions) {
     const eventDecorator = this.decorators.find(
       (d) => d.name === Decorators.Event
     );
@@ -74,7 +74,16 @@ export class Property extends BaseProperty {
       )} = new EventEmitter();`;
     }
     if (this.isRef) {
-      return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:ElementRef<${this.type}>`;
+      const decoratorString =
+        !options?.forwardRefs?.some(
+          (forwardRef) => `${forwardRef.name}Ref` === this.name
+        ) &&
+        options?.members
+          .filter((m) => m.isForwardRefProp || m.isForwardRef)
+          .some((forwardRef) => `${forwardRef.name}Ref` === this.name)
+          ? ""
+          : `@ViewChild("${this.name}", {static: false}) `;
+      return `${decoratorString}${this.name}${this.questionOrExclamationToken}:ElementRef<${this.type}>`;
     }
     if (this._hasDecorator(Decorators.ApiRef)) {
       return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:${this.type}`;
@@ -96,11 +105,17 @@ export class Property extends BaseProperty {
     }
 
     if (this.isForwardRefProp) {
+      const type = `ElementRef<${this.type}>`;
+      const returnType = `${type}${
+        this.questionOrExclamationToken === SyntaxKind.QuestionToken
+          ? "|undefined"
+          : ""
+      }`;
       return `${this.modifiers.join(" ")} ${this.decorators
         .map((d) => d.toString())
         .join(" ")} ${this.name}${
         this.questionOrExclamationToken
-      }:(ref:any)=>void`;
+      }:(ref?:${type})=>${returnType}`;
     }
 
     if (this.isForwardRef) {
@@ -129,6 +144,17 @@ export class Property extends BaseProperty {
         return `${componentContext}${this.name}`;
       }
       const postfix = this.isForwardRefProp ? "Ref" : "";
+      if (this.isForwardRefProp) {
+        return `${componentContext}${this.name}?.()${
+          this.isElementRef
+            ? `${
+                this.questionOrExclamationToken === SyntaxKind.ExclamationToken
+                  ? ""
+                  : this.questionOrExclamationToken
+              }.nativeElement`
+            : ""
+        }`;
+      }
       return `${componentContext}${this.name}${postfix}${
         this.isElementRef
           ? `${

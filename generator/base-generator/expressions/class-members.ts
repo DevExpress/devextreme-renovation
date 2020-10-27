@@ -67,7 +67,16 @@ export class BaseClassMember extends Expression {
 
   get isElementRef() {
     const type = this.type.toString();
-    if (type.includes("HTML") && type.includes("Element")) {
+    const isElement = type
+      .match(/\w+/gi)
+      ?.some(
+        (type) =>
+          ((type.includes("HTML") || type.includes("SVG")) &&
+            type.includes("Element")) ||
+          type === "Element"
+      );
+
+    if (isElement) {
       return true;
     }
     return false;

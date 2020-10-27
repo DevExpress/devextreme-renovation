@@ -17,7 +17,7 @@ export const DxWidget = {
       return {};
     },
     props() {
-      return { prop: this.prop };
+      return { ...(this.prop !== undefined && { prop: this.prop }) };
     },
   },
 };
