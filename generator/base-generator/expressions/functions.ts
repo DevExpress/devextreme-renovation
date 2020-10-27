@@ -68,14 +68,6 @@ export class Parameter {
       this.dotDotDotToken
     );
   }
-
-  getImports(context: GeneratorContext) {
-    if (this.type instanceof TypeExpression) {
-      return this.type.getImports(context);
-    }
-
-    return [];
-  }
 }
 
 function processGlobals(

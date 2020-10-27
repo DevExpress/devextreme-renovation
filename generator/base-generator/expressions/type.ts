@@ -56,18 +56,12 @@ export class ArrayTypeNode extends TypeExpression {
 }
 
 export class FunctionTypeNode extends TypeExpression {
-  typeParameters: any;
-  parameters: Parameter[];
-  type: TypeExpression;
   constructor(
-    typeParameters: any,
-    parameters: Parameter[],
-    type: TypeExpression
+    public typeParameters: any,
+    public parameters: Parameter[],
+    public type: TypeExpression | string
   ) {
     super();
-    this.typeParameters = typeParameters;
-    this.parameters = parameters;
-    this.type = type;
   }
 
   toString() {
@@ -75,13 +69,9 @@ export class FunctionTypeNode extends TypeExpression {
   }
 
   getImports(context: GeneratorContext) {
-    const parametersImport = reduceTypeExpressionImports(
-      this.parameters.map((p) => p.type).filter((t) => t) as TypeExpression[],
+    return reduceTypeExpressionImports(
+      [this.type, ...this.parameters.map((p) => p.type)],
       context
-    );
-    return mergeTypeExpressionImports(
-      this.type.getImports(context),
-      parametersImport
     );
   }
 }
@@ -215,9 +205,7 @@ export class TypeReferenceNode extends TypeExpression {
 
     return mergeTypeExpressionImports(
       result,
-      this.typeArguments.reduce((imports: TypeExpressionImports, type) => {
-        return imports.concat(type.getImports(context));
-      }, [])
+      reduceTypeExpressionImports(this.typeArguments, context)
     );
   }
 }
@@ -577,10 +565,13 @@ export function mergeTypeExpressionImports(
 }
 
 export function reduceTypeExpressionImports(
-  expressions: Expression[],
+  expressions: (Expression | string | undefined)[],
   context: GeneratorContext
 ) {
   return expressions.reduce((imports: TypeExpressionImports, e) => {
-    return imports.concat(e.getImports(context));
+    if (e instanceof Expression) {
+      return imports.concat(e.getImports(context));
+    }
+    return imports;
   }, []);
 }

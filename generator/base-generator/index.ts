@@ -393,7 +393,7 @@ export default class Generator implements GeneratorAPI {
     dotDotDotToken: any,
     name: Identifier | BindingPattern,
     questionToken?: string,
-    type?: TypeExpression,
+    type?: TypeExpression | string,
     initializer?: Expression
   ) {
     return new Parameter(
@@ -910,7 +910,7 @@ export default class Generator implements GeneratorAPI {
   createFunctionTypeNode(
     typeParameters: any,
     parameters: Parameter[],
-    type: TypeExpression
+    type: TypeExpression | string
   ) {
     return new FunctionTypeNode(typeParameters, parameters, type);
   }

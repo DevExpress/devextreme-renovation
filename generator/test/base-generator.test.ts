@@ -41,6 +41,7 @@ import {
 } from "../base-generator/expressions/class-members";
 import { Decorators } from "../component_declaration/decorators";
 import {
+  mergeTypeExpressionImports,
   TypeExpression,
   TypeReferenceNode,
 } from "../base-generator/expressions/type";
@@ -1325,8 +1326,32 @@ mocha.describe("base-generator: expressions", function () {
         );
 
         assert.deepEqual(
-          type.getImports(generator.getContext()).join(";\n"),
+          mergeTypeExpressionImports(
+            type.getImports(generator.getContext())
+          ).join(";\n"),
           `import {TestType2,TestType,MyInterface} from "./module1"`
+        );
+      });
+
+      mocha.it("FunctionalTypeNode with token type", function () {
+        const type = generator.createFunctionTypeNode(
+          undefined,
+          [
+            generator.createParameter(
+              [],
+              [],
+              undefined,
+              generator.createIdentifier("a"),
+              undefined,
+              generator.createToken(generator.SyntaxKind.VoidKeyword)
+            ),
+          ],
+          generator.createToken(generator.SyntaxKind.VoidKeyword)
+        );
+
+        assert.deepEqual(
+          type.getImports(generator.getContext()).join(";\n"),
+          ""
         );
       });
     });

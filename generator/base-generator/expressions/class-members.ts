@@ -3,6 +3,7 @@ import {
   TypeExpression,
   SimpleTypeExpression,
   mergeTypeExpressionImports,
+  reduceTypeExpressionImports,
 } from "./type";
 import { Expression } from "./base";
 import {
@@ -277,11 +278,11 @@ export class Method extends BaseClassMember {
     if (this.type instanceof TypeExpression) {
       result = this.type.getImports(context);
     }
-    const parametersImport = this.parameters.reduce(
-      (result: TypeExpressionImports, p) => {
-        return result.concat(p.getImports(context));
-      },
-      []
+    const parametersImport = reduceTypeExpressionImports(
+      this.parameters
+        .map((p) => p.type)
+        .filter((t) => t instanceof TypeExpression) as TypeExpression[],
+      context
     );
 
     return mergeTypeExpressionImports(result, parametersImport);

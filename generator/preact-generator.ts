@@ -13,6 +13,7 @@ import {
 } from "./base-generator/expressions/literal";
 import {
   mergeTypeExpressionImports,
+  reduceTypeExpressionImports,
   TypeExpression,
   UnionTypeNode,
 } from "./base-generator/expressions/type";
@@ -20,7 +21,6 @@ import { getModuleRelativePath } from "./base-generator/utils/path-utils";
 import {
   GeneratorContext as BaseGeneratorContext,
   GeneratorOptions as BaseGeneratorOptions,
-  TypeExpressionImports,
 } from "./base-generator/types";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { Method } from "./base-generator/expressions/class-members";
@@ -397,12 +397,9 @@ class JQueryComponent {
       path: `${this.source.context.dirname}/jquery.tsx`,
     };
 
-    const missedImports = (this.source.members.filter(
-      (a) => a.isApiMethod
-    ) as Method[]).reduce(
-      (missedImports: TypeExpressionImports, method) =>
-        missedImports.concat(method.getImports(context)),
-      []
+    const missedImports = reduceTypeExpressionImports(
+      this.source.members.filter((a) => a.isApiMethod) as Method[],
+      context
     );
 
     return mergeTypeExpressionImports(missedImports).join("\n");
