@@ -12,6 +12,8 @@ import {
   ObjectLiteral,
 } from "./base-generator/expressions/literal";
 import {
+  mergeTypeExpressionImports,
+  reduceTypeExpressionImports,
   TypeExpression,
   UnionTypeNode,
 } from "./base-generator/expressions/type";
@@ -389,6 +391,20 @@ class JQueryComponent {
         `;
   }
 
+  compileImportTypes(): string {
+    const context = {
+      ...this.source.context,
+      path: `${this.source.context.dirname}/jquery.tsx`,
+    };
+
+    const missedImports = reduceTypeExpressionImports(
+      this.source.members.filter((a) => a.isApiMethod) as Method[],
+      context
+    );
+
+    return mergeTypeExpressionImports(missedImports).join("\n");
+  }
+
   toString() {
     const baseComponent = this.source.getJQueryBaseComponentName();
     if (!baseComponent) {
@@ -397,6 +413,8 @@ class JQueryComponent {
 
     return `
         ${this.compileImports(baseComponent)}
+
+        ${this.compileImportTypes()}
 
         export default class ${this.source.name} extends ${
       baseComponent === BASE_JQUERY_WIDGET

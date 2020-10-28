@@ -7085,8 +7085,12 @@ mocha.describe("Angular generator", function () {
         mocha.it("Do not memorize union with primitive type", function () {
           const getter = createGetAccessor(
             generator.createUnionTypeNode([
-              generator.createStringLiteral("1"),
-              generator.createStringLiteral("2"),
+              generator.createLiteralTypeNode(
+                generator.createStringLiteral("1")
+              ),
+              generator.createLiteralTypeNode(
+                generator.createStringLiteral("2")
+              ),
             ])
           );
 
@@ -7101,8 +7105,12 @@ mocha.describe("Angular generator", function () {
         mocha.it("Memorize union with complex type", function () {
           const getter = createGetAccessor(
             generator.createUnionTypeNode([
-              generator.createStringLiteral("1"),
-              generator.createObjectLiteral([], false),
+              generator.createLiteralTypeNode(
+                generator.createStringLiteral("1")
+              ),
+              generator.createLiteralTypeNode(
+                generator.createObjectLiteral([], false)
+              ),
             ])
           );
 

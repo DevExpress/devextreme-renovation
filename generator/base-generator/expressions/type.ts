@@ -5,11 +5,23 @@ import {
 } from "./base";
 import { Identifier, Call } from "./common";
 import { Parameter } from "./functions";
-import { toStringOptions, GeneratorContext } from "../types";
+import {
+  toStringOptions,
+  GeneratorContext,
+  TypeExpressionImports,
+} from "../types";
 import { compileType, compileTypeParameters } from "../utils/string";
 import { Decorator } from "./decorator";
-import { ObjectLiteral } from "./literal";
+import { ObjectLiteral, StringLiteral } from "./literal";
 import { TypeParameterDeclaration } from "./type-parameter-declaration";
+import { getModuleRelativePath } from "../utils/path-utils";
+import path from "path";
+import {
+  ImportClause,
+  ImportDeclaration,
+  ImportSpecifier,
+  NamedImports,
+} from "./import";
 
 export class TypeExpression extends Expression {}
 
@@ -37,25 +49,30 @@ export class ArrayTypeNode extends TypeExpression {
   toString() {
     return `${this.elementType}[]`;
   }
+
+  getImports(context: GeneratorContext) {
+    return this.elementType.getImports(context);
+  }
 }
 
 export class FunctionTypeNode extends TypeExpression {
-  typeParameters: any;
-  parameters: Parameter[];
-  type: TypeExpression;
   constructor(
-    typeParameters: any,
-    parameters: Parameter[],
-    type: TypeExpression
+    public typeParameters: any,
+    public parameters: Parameter[],
+    public type: TypeExpression | string
   ) {
     super();
-    this.typeParameters = typeParameters;
-    this.parameters = parameters;
-    this.type = type;
   }
 
   toString() {
     return `(${this.parameters})=>${this.type}`;
+  }
+
+  getImports(context: GeneratorContext) {
+    return reduceTypeExpressionImports(
+      [this.type, ...this.parameters.map((p) => p.type)],
+      context
+    );
   }
 }
 
@@ -66,6 +83,10 @@ export class OptionalTypeNode extends TypeExpression {
 
   toString() {
     return `${this.type}?`;
+  }
+
+  getImports(context: GeneratorContext) {
+    return this.type.getImports(context);
   }
 }
 
@@ -78,6 +99,10 @@ export class IntersectionTypeNode extends TypeExpression {
 
   toString() {
     return this.types.join("&");
+  }
+
+  getImports(context: GeneratorContext) {
+    return reduceTypeExpressionImports(this.types, context);
   }
 }
 
@@ -101,18 +126,12 @@ export class TypeQueryNode extends TypeExpression {
 }
 
 export class TypeReferenceNode extends TypeExpression {
-  typeName: Identifier;
-  typeArguments: TypeExpression[];
-  context: GeneratorContext;
   constructor(
-    typeName: Identifier,
-    typeArguments: TypeExpression[] = [],
-    context: GeneratorContext
+    public typeName: Identifier,
+    public typeArguments: TypeExpression[] = [],
+    public context: GeneratorContext
   ) {
     super();
-    this.typeName = typeName;
-    this.typeArguments = typeArguments;
-    this.context = context;
   }
   toString() {
     const typeArguments = this.typeArguments.length
@@ -123,6 +142,71 @@ export class TypeReferenceNode extends TypeExpression {
 
   get type(): Expression {
     return this.typeName;
+  }
+
+  getImports(context: GeneratorContext) {
+    const result: TypeExpressionImports = [];
+    if (this.context.path !== context.path) {
+      const typeNameString = this.typeName.toString();
+      if (
+        this.context.types?.[typeNameString] ||
+        this.context.interfaces?.[typeNameString]
+      ) {
+        const moduleSpecifier = getModuleRelativePath(
+          context.dirname!,
+          this.context.path!,
+          true
+        );
+        result.push(
+          new ImportDeclaration(
+            [],
+            [],
+            new ImportClause(
+              undefined,
+              new NamedImports([new ImportSpecifier(undefined, this.typeName)])
+            ),
+            new StringLiteral(moduleSpecifier)
+          )
+        );
+      }
+
+      const importClause = Object.values(
+        this.context.imports || {}
+      ).find((importClause) => importClause.has(typeNameString));
+
+      if (importClause) {
+        const importClauseRelativePath = Object.keys(
+          this.context.imports!
+        ).find((key) => this.context.imports![key] === importClause)!;
+        const moduleSpecifier = getModuleRelativePath(
+          context.dirname!,
+          path.resolve(this.context.dirname!, importClauseRelativePath),
+          false
+        );
+        if (!context.imports?.[moduleSpecifier]?.has(typeNameString)) {
+          result.push(
+            new ImportDeclaration(
+              [],
+              [],
+              new ImportClause(
+                undefined,
+                new NamedImports([
+                  new ImportSpecifier(undefined, this.typeName),
+                ])
+              ),
+              new StringLiteral(
+                moduleSpecifier.replace(path.extname(moduleSpecifier), "")
+              )
+            )
+          );
+        }
+      }
+    }
+
+    return mergeTypeExpressionImports(
+      result,
+      reduceTypeExpressionImports(this.typeArguments, context)
+    );
   }
 }
 
@@ -242,6 +326,10 @@ export class ParenthesizedType extends TypeExpression {
 
   toString() {
     return `(${this.expression})`;
+  }
+
+  getImports(context: GeneratorContext) {
+    return this.expression.getImports(context);
   }
 }
 
@@ -443,4 +531,47 @@ export class ConditionalTypeNode extends TypeExpression {
   toString() {
     return `${this.checkType} extends ${this.extendsType} ? ${this.trueType} : ${this.falseType}`;
   }
+}
+
+function convertTypeExpressionImportsToDictionary(
+  imports: TypeExpressionImports
+) {
+  return imports.reduce(
+    (modules: { [name: string]: ImportDeclaration }, typeImports) => {
+      const moduleSpecifier = typeImports.moduleSpecifier.toString();
+      const cachedImportDeclaration = modules[moduleSpecifier];
+      if (cachedImportDeclaration) {
+        typeImports.importClause.imports?.forEach((name) => {
+          cachedImportDeclaration.add(name);
+        });
+      } else {
+        modules[moduleSpecifier] = typeImports;
+      }
+      return modules;
+    },
+    {}
+  );
+}
+
+export function mergeTypeExpressionImports(
+  ...imports: TypeExpressionImports[]
+) {
+  const allImports = imports.reduce((result, typeImports) => {
+    return result.concat(typeImports);
+  }, []);
+  const dictionary = convertTypeExpressionImportsToDictionary(allImports);
+
+  return Object.keys(dictionary).map((key) => dictionary[key]);
+}
+
+export function reduceTypeExpressionImports(
+  expressions: (Expression | string | undefined)[],
+  context: GeneratorContext
+) {
+  return expressions.reduce((imports: TypeExpressionImports, e) => {
+    if (e instanceof Expression) {
+      return imports.concat(e.getImports(context));
+    }
+    return imports;
+  }, []);
 }

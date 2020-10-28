@@ -2,14 +2,12 @@ import path from "path";
 import fs from "fs";
 import { GeneratorCache } from "../types";
 
-export function getRelativePath(
-  src: string,
-  dst: string,
-  moduleName: string = ""
-) {
-  const relativePath = `${path.relative(src, dst)}${
-    moduleName ? `/${moduleName}` : ""
-  }`.replace(/\\/gi, "/");
+export function getRelativePath(src: string, dst: string, moduleName: string) {
+  const relativePath = `${path.relative(src, dst)}/${moduleName}`.replace(
+    /\\/gi,
+    "/"
+  );
+
   if (relativePath.startsWith("/")) {
     return `.${relativePath}`;
   }
@@ -19,7 +17,11 @@ export function getRelativePath(
   return relativePath;
 }
 
-export function getModuleRelativePath(src: string, moduleSpecifier: string) {
+export function getModuleRelativePath(
+  src: string,
+  moduleSpecifier: string,
+  cleanExtension = false
+) {
   const normalizedPath = path.normalize(moduleSpecifier);
   const moduleParts = normalizedPath.split(/(\/|\\)/);
 
@@ -27,7 +29,17 @@ export function getModuleRelativePath(src: string, moduleSpecifier: string) {
     moduleParts.slice(0, moduleParts.length - 2).join("/")
   );
 
-  return getRelativePath(src, folderPath, moduleParts[moduleParts.length - 1]);
+  const relativePath = getRelativePath(
+    src,
+    folderPath,
+    moduleParts[moduleParts.length - 1]
+  );
+
+  if (cleanExtension) {
+    return relativePath.replace(path.extname(relativePath), "");
+  }
+
+  return relativePath;
 }
 
 export function readModule(
@@ -55,8 +67,4 @@ export function resolveModule(
   return (
     readModule(`${module}.tsx`, cache) || readModule(`${module}.ts`, cache)
   );
-}
-
-export function isPathExists(value: string): boolean {
-  return fs.existsSync(value);
 }

@@ -18,7 +18,10 @@ import {
 import { Class } from "../base-generator/expressions/class";
 import { ComponentInput } from "../base-generator/expressions/component-input";
 import { Component, getProps } from "../base-generator/expressions/component";
-import { ImportDeclaration } from "../base-generator/expressions/import";
+import {
+  ImportClause,
+  ImportDeclaration,
+} from "../base-generator/expressions/import";
 import sinon from "sinon";
 
 import path from "path";
@@ -37,7 +40,11 @@ import {
   GetAccessor,
 } from "../base-generator/expressions/class-members";
 import { Decorators } from "../component_declaration/decorators";
-import { TypeExpression } from "../base-generator/expressions/type";
+import {
+  mergeTypeExpressionImports,
+  TypeExpression,
+  TypeReferenceNode,
+} from "../base-generator/expressions/type";
 import { Call, Identifier } from "../base-generator/expressions/common";
 import { Decorator } from "../base-generator/expressions/decorator";
 import { Block } from "../base-generator/expressions/statements";
@@ -845,7 +852,7 @@ mocha.describe("base-generator: expressions", function () {
         );
       });
 
-      mocha.it("with question token token", function () {
+      mocha.it("with question token", function () {
         assert.strictEqual(
           generator
             .createPropertySignature(
@@ -1074,6 +1081,279 @@ mocha.describe("base-generator: expressions", function () {
           .toString(),
         "c extends e ? t : f"
       );
+    });
+
+    mocha.describe("getImports", function () {
+      this.beforeEach(function () {
+        generator.setContext({
+          dirname: __dirname,
+          path: path.resolve(__dirname, "module1.tsx"),
+        });
+
+        generator.createTypeAliasDeclaration(
+          [],
+          [],
+          generator.createIdentifier("TestType"),
+          [],
+          generator.createKeywordTypeNode("number")
+        );
+
+        generator.createTypeAliasDeclaration(
+          [],
+          [],
+          generator.createIdentifier("TestType2"),
+          [],
+          generator.createKeywordTypeNode("number")
+        );
+
+        this.testType = generator.createTypeReferenceNode(
+          generator.createIdentifier("TestType")
+        );
+
+        generator.createInterfaceDeclaration(
+          [],
+          [],
+          generator.createIdentifier("MyInterface"),
+          [],
+          [],
+          []
+        );
+
+        this.interfaceType = generator.createTypeReferenceNode(
+          generator.createIdentifier("MyInterface")
+        );
+
+        this.testType2 = generator.createTypeReferenceNode(
+          generator.createIdentifier("TestType2")
+        );
+
+        this.globalType = generator.createTypeReferenceNode(
+          generator.createIdentifier("HTMLDivElement")
+        );
+
+        generator.setContext({
+          dirname: __dirname,
+          path: path.resolve(__dirname, "module2.tsx"),
+        });
+      });
+
+      this.afterEach(function () {
+        generator.setContext(null);
+        generator.setContext(null);
+      });
+
+      mocha.it(
+        "TypeReferenceNode should return import if it is created in other module",
+        function () {
+          const imports = (this.testType as TypeReferenceNode).getImports(
+            generator.getContext()
+          );
+
+          assert.strictEqual(
+            imports.join("\n"),
+            `import {TestType} from "./module1"`
+          );
+        }
+      );
+
+      mocha.it(
+        "TypeReferenceNode on interface should return import if it is created in other module",
+        function () {
+          const imports = (this.interfaceType as TypeReferenceNode).getImports(
+            generator.getContext()
+          );
+
+          assert.strictEqual(
+            imports.join("\n"),
+            `import {MyInterface} from "./module1"`
+          );
+        }
+      );
+
+      mocha.it(
+        "TypeReferenceNode should not return import if it is created in this module",
+        function () {
+          const type = generator.createTypeReferenceNode(
+            generator.createIdentifier("TestType")
+          );
+          const imports = type.getImports(generator.getContext());
+
+          assert.deepEqual(imports, []);
+        }
+      );
+
+      mocha.it("Do not add import if module has such import", function () {
+        generator.createImportDeclaration(
+          [],
+          [],
+          new ImportClause(
+            undefined,
+            generator.createNamedImports([
+              generator.createImportSpecifier(
+                undefined,
+                generator.createIdentifier("TestType")
+              ),
+            ])
+          ),
+          generator.createStringLiteral("./module.tsx")
+        );
+
+        const imports = (this.testType as TypeReferenceNode).getImports(
+          generator.getContext()
+        );
+
+        assert.strictEqual(
+          imports.join("\n"),
+          `import {TestType} from "./module1"`
+        );
+      });
+
+      mocha.it(
+        "TypeReferenceNode should not add import for global type",
+        function () {
+          const imports = (this.globalType as TypeReferenceNode).getImports(
+            generator.getContext()
+          );
+
+          assert.strictEqual(imports.join("\n"), "");
+        }
+      );
+
+      mocha.it(
+        "TypeReferenceNode should return from typeArguments",
+        function () {
+          const type = generator.createTypeReferenceNode(
+            generator.createIdentifier("MyType"),
+            [this.testType]
+          );
+          const imports = type.getImports(generator.getContext());
+
+          assert.strictEqual(
+            imports.join("\n"),
+            `import {TestType} from "./module1"`
+          );
+        }
+      );
+
+      mocha.it("imports should have duplicates", function () {
+        const type = generator.createTypeReferenceNode(
+          generator.createIdentifier("MyType"),
+          [this.testType, this.testType, this.testType2]
+        );
+        const imports = type.getImports(generator.getContext());
+
+        assert.strictEqual(
+          imports.join("\n"),
+          `import {TestType,TestType2} from "./module1"`
+        );
+      });
+
+      mocha.it("LiteralTypeNode", function () {
+        const type = generator.createLiteralTypeNode(
+          generator.createStringLiteral("TestType")
+        );
+
+        assert.deepEqual(type.getImports(generator.getContext()), []);
+      });
+
+      mocha.it("UnionTypeNode", function () {
+        const type = generator.createUnionTypeNode([
+          generator.createKeywordTypeNode("number"),
+          this.testType,
+        ]);
+
+        assert.deepEqual(
+          type.getImports(generator.getContext()).join(";\n"),
+          `import {TestType} from "./module1"`
+        );
+      });
+
+      mocha.it("ArrayTypeNode", function () {
+        const type = generator.createArrayTypeNode(this.testType);
+
+        assert.deepEqual(
+          type.getImports(generator.getContext()).join(";\n"),
+          `import {TestType} from "./module1"`
+        );
+      });
+
+      mocha.it("ParenthesizedType", function () {
+        const type = generator.createParenthesizedType(this.testType);
+
+        assert.deepEqual(
+          type.getImports(generator.getContext()).join(";\n"),
+          `import {TestType} from "./module1"`
+        );
+      });
+
+      mocha.it("OptionalTypeNode", function () {
+        const type = generator.createOptionalTypeNode(this.testType);
+
+        assert.deepEqual(
+          type.getImports(generator.getContext()).join(";\n"),
+          `import {TestType} from "./module1"`
+        );
+      });
+
+      mocha.it("FunctionalTypeNode", function () {
+        const type = generator.createFunctionTypeNode(
+          undefined,
+          [
+            generator.createParameter(
+              [],
+              [],
+              undefined,
+              generator.createIdentifier("a"),
+              undefined,
+              this.testType
+            ),
+            generator.createParameter(
+              [],
+              [],
+              undefined,
+              generator.createIdentifier("b")
+            ),
+            generator.createParameter(
+              [],
+              [],
+              undefined,
+              generator.createIdentifier("b"),
+              undefined,
+              this.interfaceType
+            ),
+          ],
+          this.testType2
+        );
+
+        assert.deepEqual(
+          mergeTypeExpressionImports(
+            type.getImports(generator.getContext())
+          ).join(";\n"),
+          `import {TestType2,TestType,MyInterface} from "./module1"`
+        );
+      });
+
+      mocha.it("FunctionalTypeNode with token type", function () {
+        const type = generator.createFunctionTypeNode(
+          undefined,
+          [
+            generator.createParameter(
+              [],
+              [],
+              undefined,
+              generator.createIdentifier("a"),
+              undefined,
+              generator.createToken(generator.SyntaxKind.VoidKeyword)
+            ),
+          ],
+          generator.createToken(generator.SyntaxKind.VoidKeyword)
+        );
+
+        assert.deepEqual(
+          type.getImports(generator.getContext()).join(";\n"),
+          ""
+        );
+      });
     });
   });
 
@@ -2732,6 +3012,7 @@ mocha.describe("base-generator: expressions", function () {
 
     this.afterEach(function () {
       generator.setContext(null);
+      generator.resetCache();
     });
 
     mocha.it("createImportDeclaration", function () {
@@ -2961,7 +3242,7 @@ mocha.describe("base-generator: expressions", function () {
           undefined,
           generator.createImportClause(generator.createIdentifier("Widget")),
           generator.createStringLiteral(
-            "./test-cases/declarations/src/use-external-component-bindings"
+            "./test-cases/declarations/src/use-external-component-bindings.tsx"
           )
         );
 
@@ -3848,7 +4129,7 @@ mocha.describe("ComponentInput", function () {
               generator.createTypeReferenceNode(
                 generator.createIdentifier("Custom3")
               ),
-              generator.createIdentifier("string"),
+              generator.createKeywordTypeNode("string"),
             ])
           ),
           generator.createProperty(
@@ -3882,7 +4163,7 @@ mocha.describe("ComponentInput", function () {
             undefined,
             generator.createIdentifier("Custom2"),
             undefined,
-            generator.createIdentifier("string")
+            generator.createKeywordTypeNode("string")
           ),
         ]);
 
@@ -4285,157 +4566,6 @@ mocha.describe("ComponentInput from type", function () {
       members[4].initializer?.toString(),
       "new Props2().defaultP3"
     );
-  });
-
-  mocha.describe("collectMissedImports", function () {
-    this.beforeEach(function () {
-      generator.setContext({
-        dirname: __dirname,
-        path: __filename,
-      });
-    });
-
-    this.afterEach(function () {
-      generator.setContext(null);
-    });
-    mocha.it("Without import in context", function () {
-      generator.createTypeAliasDeclaration(
-        [],
-        [generator.SyntaxKind.ExportKeyword],
-        generator.createIdentifier("MyType"),
-        undefined,
-        generator.createKeywordTypeNode("number")
-      );
-
-      const TypeReferenceNode = generator.createTypeReferenceNode(
-        generator.createIdentifier("MyType")
-      );
-
-      generator.setContext({
-        dirname: __dirname,
-        path: path.resolve("./test-cases/src/props.tsx"),
-      });
-
-      const expression = generator.createClassDeclaration(
-        [createDecorator(Decorators.ComponentBindings)],
-        [],
-        generator.createIdentifier("Props"),
-        [],
-        [],
-        [
-          generator.createProperty(
-            [createDecorator(Decorators.OneWay)],
-            undefined,
-            generator.createIdentifier("p"),
-            undefined,
-            TypeReferenceNode
-          ),
-        ]
-      );
-
-      generator.setContext(null);
-
-      assert.deepEqual(expression.collectMissedImports(), {
-        "./base-generator.test": ["MyType"],
-      });
-    });
-
-    mocha.it("Do not import if module has such type", function () {
-      generator.createTypeAliasDeclaration(
-        [],
-        [generator.SyntaxKind.ExportKeyword],
-        generator.createIdentifier("MyType"),
-        undefined,
-        generator.createKeywordTypeNode("number")
-      );
-
-      const TypeReferenceNode = generator.createTypeReferenceNode(
-        generator.createIdentifier("MyType")
-      );
-
-      generator.setContext({
-        dirname: __dirname,
-        path: path.resolve("./test-cases/src/props.tsx"),
-      });
-
-      generator.createTypeAliasDeclaration(
-        [],
-        [generator.SyntaxKind.ExportKeyword],
-        generator.createIdentifier("MyType"),
-        undefined,
-        generator.createKeywordTypeNode("number")
-      );
-
-      const expression = generator.createClassDeclaration(
-        [createDecorator(Decorators.ComponentBindings)],
-        [],
-        generator.createIdentifier("Props"),
-        [],
-        [],
-        [
-          generator.createProperty(
-            [createDecorator(Decorators.OneWay)],
-            undefined,
-            generator.createIdentifier("p"),
-            undefined,
-            TypeReferenceNode
-          ),
-        ]
-      );
-
-      generator.setContext(null);
-
-      assert.deepEqual(expression.collectMissedImports(), {});
-    });
-
-    mocha.it("Do not import if module has such interface", function () {
-      generator.createTypeAliasDeclaration(
-        [],
-        [generator.SyntaxKind.ExportKeyword],
-        generator.createIdentifier("MyType"),
-        undefined,
-        generator.createKeywordTypeNode("number")
-      );
-
-      const TypeReferenceNode = generator.createTypeReferenceNode(
-        generator.createIdentifier("MyType")
-      );
-
-      generator.setContext({
-        dirname: __dirname,
-        path: path.resolve("./test-cases/src/props.tsx"),
-      });
-
-      generator.createInterfaceDeclaration(
-        [],
-        [],
-        generator.createIdentifier("MyType"),
-        [],
-        [],
-        []
-      );
-
-      const expression = generator.createClassDeclaration(
-        [createDecorator(Decorators.ComponentBindings)],
-        [],
-        generator.createIdentifier("Props"),
-        [],
-        [],
-        [
-          generator.createProperty(
-            [createDecorator(Decorators.OneWay)],
-            undefined,
-            generator.createIdentifier("p"),
-            undefined,
-            TypeReferenceNode
-          ),
-        ]
-      );
-
-      generator.setContext(null);
-
-      assert.deepEqual(expression.collectMissedImports(), {});
-    });
   });
 });
 

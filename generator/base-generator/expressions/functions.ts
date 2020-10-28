@@ -23,6 +23,7 @@ import { Property } from "./class-members";
 import { containsPortalsInStatements } from "../utils/functions";
 import { TypeParameterDeclaration } from "./type-parameter-declaration";
 import { PropertyAccess } from "./property-access";
+
 export class Parameter {
   decorators: Decorator[];
   modifiers: string[];

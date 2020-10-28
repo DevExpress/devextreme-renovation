@@ -126,7 +126,7 @@ export class VueComponent extends Component {
           "",
           new Identifier("children"),
           undefined,
-          new ArrayTypeNode(new Identifier("Object")),
+          new ArrayTypeNode(new SimpleTypeExpression("Object")),
           undefined
         ),
       ],

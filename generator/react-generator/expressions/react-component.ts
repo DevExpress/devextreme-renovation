@@ -161,7 +161,7 @@ export class ReactComponent extends Component {
       undefined,
       [new TypeParameterDeclaration(new Identifier("T"))],
       [],
-      new ArrayTypeNode(new Identifier("T")),
+      new ArrayTypeNode(new SimpleTypeExpression("T")),
       new Block(statements, true)
     );
   }
@@ -264,7 +264,7 @@ export class ReactComponent extends Component {
           undefined
         ),
       ],
-      new ArrayTypeNode(new Identifier("T")),
+      new ArrayTypeNode(new SimpleTypeExpression("T")),
       new Block(statements, true),
       this.context
     );

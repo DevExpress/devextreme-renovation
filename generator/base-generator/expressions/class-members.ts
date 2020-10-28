@@ -1,7 +1,16 @@
 import { Identifier } from "./common";
-import { TypeExpression, SimpleTypeExpression } from "./type";
-import { Expression, SimpleExpression } from "./base";
-import { toStringOptions } from "../types";
+import {
+  TypeExpression,
+  SimpleTypeExpression,
+  mergeTypeExpressionImports,
+  reduceTypeExpressionImports,
+} from "./type";
+import { Expression } from "./base";
+import {
+  GeneratorContext,
+  toStringOptions,
+  TypeExpressionImports,
+} from "../types";
 import { Parameter } from "./functions";
 import { Block } from "./statements";
 import {
@@ -180,7 +189,7 @@ export class Method extends BaseClassMember {
     questionToken: string = "",
     typeParameters: TypeParameterDeclaration[] | undefined = [],
     parameters: Parameter[],
-    type: TypeExpression | string = new SimpleExpression("any"),
+    type: TypeExpression | string = new SimpleTypeExpression("any"),
     body: Block
   ) {
     super(decorators, modifiers, name, type);
@@ -266,6 +275,21 @@ export class Method extends BaseClassMember {
     }${this.compileTypeParameters()}(${this.parameters})${compileType(
       this.type.toString()
     )}${this.body.toString(options)}`;
+  }
+
+  getImports(context: GeneratorContext) {
+    let result: TypeExpressionImports = [];
+    if (this.type instanceof TypeExpression) {
+      result = this.type.getImports(context);
+    }
+    const parametersImport = reduceTypeExpressionImports(
+      this.parameters
+        .map((p) => p.type)
+        .filter((t) => t instanceof TypeExpression) as TypeExpression[],
+      context
+    );
+
+    return mergeTypeExpressionImports(result, parametersImport);
   }
 }
 
@@ -392,6 +416,13 @@ export class Property extends BaseClassMember {
 
   get isOptional() {
     return this.questionOrExclamationToken === SyntaxKind.QuestionToken;
+  }
+
+  getImports(context: GeneratorContext) {
+    if (this.type instanceof TypeExpression) {
+      return this.type.getImports(context);
+    }
+    return [];
   }
 }
 
