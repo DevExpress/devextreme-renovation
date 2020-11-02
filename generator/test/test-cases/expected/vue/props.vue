@@ -2,7 +2,7 @@
   <span></span>
 </template>
 <script>
-const WidgetInput = {
+export const WidgetInput = {
   height: {
     type: Number,
     default() {

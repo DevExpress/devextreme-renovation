@@ -87,13 +87,20 @@ export class JsxChildExpression extends BaseJsxChildExpression {
     expression: Call,
     options?: toStringOptions
   ): string {
-    const templateOptions = options
+    const templateOptions: toStringOptions = options
       ? { ...options, ...{ keys: [] } }
       : { members: [], hasStyle: false };
     const templateExpression = getTemplate(iterator, templateOptions, true);
     const itemsExpression = (expression.expression as PropertyAccess)
       .expression;
     const vForValue = [iterator.parameters[0].name.toString()];
+
+    templateOptions.mapItemName = this.getIteratorItemName(
+      iterator.parameters[0].name,
+      { ...templateOptions }
+    ).toString();
+
+    templateOptions.mapItemExpression = itemsExpression;
 
     if (iterator.parameters[1]) {
       vForValue.push(iterator.parameters[1].toString());

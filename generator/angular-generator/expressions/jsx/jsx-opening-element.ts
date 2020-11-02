@@ -171,7 +171,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       }
     }
 
-    return properties.reduce((acc, prop: Method | Property) => {
+    return properties.reduce((acc: JsxAttribute[], prop: Method | Property) => {
       const propName = prop._name;
       const spreadValueExpression = new PropertyAccess(
         spreadAttributesExpression,
@@ -215,7 +215,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
       acc.push(this.createJsxAttribute(propName, new SimpleExpression(value)));
       return acc;
-    }, [] as JsxAttribute[]);
+    }, []);
   }
 
   createJsxAttribute(name: Identifier, value: Expression) {
@@ -288,7 +288,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return super.attributesString(options);
   }
 
-  compileTemplate(templateProperty: Property, options?: toStringOptions) {
+  compileTemplate(templateProperty: Property, options: toStringOptions) {
     const contextExpr = processComponentContext(options?.newComponentContext);
     const contextElements = this.attributes
       .reduce((elements: PropertyAssignment[], a) => {
@@ -360,39 +360,46 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return elementString;
   }
 
+  compileDynamicComponent(
+    options: toStringOptions,
+    expression: Expression
+  ): string {
+    const index = counter.get();
+
+    options!.dynamicComponents = [
+      ...(options!.dynamicComponents || []),
+      {
+        expression,
+        index,
+        props: this.attributes.filter((a) => !(a instanceof AngularDirective)),
+      },
+    ];
+    const directives = this.attributes
+      .filter((a) => a instanceof AngularDirective)
+      .map((d) => d.toString(options))
+      .concat(`[index]="${index}"`)
+      .join("\n");
+
+    return `<ng-template dynamicComponent ${directives}></ng-template>`;
+  }
+
   toString(options?: toStringOptions) {
-    const templateProperty = this.getTemplateProperty(options) as Property;
+    const templateProperty = this.getTemplateProperty(options) as
+      | Property
+      | undefined;
     if (templateProperty) {
       this.checkTemplatePropUsage(templateProperty);
-      return this.compileTemplate(templateProperty, options);
+      return this.compileTemplate(templateProperty, options!);
     }
 
     const isDynamicComponent = this.isDynamicComponent(options);
     if (isDynamicComponent) {
       let expression = this.tagName;
-      if (this.tagName.toString(options) === options?.mapItemName) {
-        expression = options.mapItemExpression!;
+      if (this.tagName.toString(options) === options!.mapItemName) {
+        expression = options!.mapItemExpression!;
       }
 
-      const index = counter.get();
-
-      options!.dynamicComponents = [
-        ...(options!.dynamicComponents || []),
-        {
-          expression,
-          index,
-          props: this.attributes.filter(
-            (a) => !(a instanceof AngularDirective)
-          ),
-        },
-      ];
-      const directives = this.attributes
-        .filter((a) => a instanceof AngularDirective)
-        .map((d) => d.toString(options))
-        .concat(`[index]="${index}"`)
-        .join("\n");
-
-      return `<ng-template dynamicComponent ${directives}></ng-template>`;
+      return this.compileDynamicComponent(options!, expression);
     }
 
     return super.toString(options);

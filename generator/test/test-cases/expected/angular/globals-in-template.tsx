@@ -54,6 +54,7 @@ export default class WidgetWithGlobals extends WidgetProps {
 @NgModule({
   declarations: [WidgetWithGlobals],
   imports: [DxWidgetTwoModule, CommonModule],
+  entryComponents: [ExternalComponent],
   exports: [WidgetWithGlobals],
 })
 export class DxWidgetWithGlobalsModule {}

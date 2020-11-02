@@ -3,9 +3,10 @@ import {
   ComponentBindings,
   InternalState,
   JSXComponent,
+  JSXTemplate,
 } from "../../../component_declaration/common";
 
-import Button from "../counter";
+import Button, { CounterInput } from "../counter";
 import Button1 from "../button";
 
 function view({
@@ -19,14 +20,11 @@ function view({
       <ButtonComponent value={value} valueChange={onClick}></ButtonComponent>
       <div>----</div>
       {value > 20 && value < 1000 && (
-        <ButtonComponent
-          value={value + 1}
-          valueChange={onClick}
-        ></ButtonComponent>
+        <ButtonComponent value={value + 1} valueChange={onClick} />
       )}
       <div>----</div>
       {ButtonComponents.map((B) => (
-        <B value={value}></B>
+        <B value={value} />
       ))}
     </div>
   );
@@ -41,11 +39,11 @@ class Props {}
 export default class DynamicComponent extends JSXComponent(Props) {
   @InternalState() value = 1;
 
-  get ButtonComponent() {
+  get ButtonComponent(): JSXTemplate<CounterInput> {
     return Button;
   }
 
-  get ButtonComponents() {
+  get ButtonComponents(): JSXTemplate<CounterInput>[] {
     return [Button, Button1];
   }
 

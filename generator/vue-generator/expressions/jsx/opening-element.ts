@@ -31,6 +31,8 @@ import { VueDirective } from "./vue-directive";
 import { Conditional } from "../../../base-generator/expressions/conditions";
 import { JsxAttribute as BaseJsxAttribute } from "../../../base-generator/expressions/jsx";
 import { getEventName } from "../utils";
+import { extractComponentFromType } from "../vue-component-utils";
+
 export class JsxOpeningElement extends BaseJsxOpeningElement {
   attributes: Array<JsxAttribute | JsxSpreadAttribute>;
   constructor(
@@ -88,9 +90,9 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return tagName;
   }
 
-  compileTemplate(templateProperty: Property, options?: toStringOptions) {
+  compileTemplate(templateProperty: Property, options: toStringOptions) {
     const attributes = this.attributes.map((a) => a.getTemplateProp(options));
-    const initializer = templateProperty?.initializer;
+    const initializer = templateProperty.initializer;
     const defaultAttrs = this.attributes.filter(
       (a) => a instanceof JsxAttribute && a.name.toString() !== "key"
     ) as JsxAttribute[];
@@ -105,11 +107,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     const keyAttribute = this.attributes.find(
       (a) => a instanceof JsxAttribute && a.name.toString() === "key"
     );
-    if (options) {
-      options.jsxComponent = (initializerComponent as Component) || {
-        members: [],
-      };
-    }
+
+    options.jsxComponent = (initializerComponent as Component) || {
+      members: [],
+    };
 
     const componentTag = initializerComponent
       ? `<${initializerComponent.name} ${defaultAttrs
@@ -211,6 +212,26 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     }
 
     return spreadAttribute;
+  }
+
+  compileDynamicComponent(
+    options: toStringOptions,
+    expression: Expression
+  ): string {
+    const member = getMember(expression, options);
+    const component = extractComponentFromType(member?.type, this.context);
+
+    const attributesOptions: toStringOptions = component
+      ? {
+          ...options,
+          jsxComponent: component,
+        }
+      : options;
+
+    return `<component 
+              v-bind:is="${this.tagName.toString(options)}"
+              ${this.attributesString(attributesOptions)}
+            ></component>`;
   }
 
   processSpreadAttributesOnNativeElement() {}
@@ -347,6 +368,10 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
   toString(options?: toStringOptions) {
     if (this.getTemplateProperty(options)) {
       return super.toString(options);
+    }
+
+    if (this.isDynamicComponent(options)) {
+      return super.toString(options).replace("></component>", "/>");
     }
 
     const elementString = this.compileJsxElementsForVariable(options);

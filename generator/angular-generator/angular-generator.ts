@@ -43,6 +43,7 @@ import {
 } from "../base-generator/expressions/variables";
 import { ContextDeclaration } from "./expressions/context-declaration";
 import { PropertyAccessChain } from "./expressions/property-access-chain";
+import { TypeReferenceNode } from "./expressions/type-reference-node";
 
 export class AngularGenerator extends Generator {
   createJsxExpression(dotDotDotToken: string = "", expression?: Expression) {
@@ -276,6 +277,13 @@ export class AngularGenerator extends Generator {
 
   createAsExpression(expression: Expression, type: TypeExpression) {
     return new AsExpression(expression, type);
+  }
+
+  createTypeReferenceNode(
+    typeName: Identifier,
+    typeArguments?: TypeExpression[]
+  ) {
+    return new TypeReferenceNode(typeName, typeArguments, this.getContext());
   }
 
   createNonNullExpression(expression: Expression) {
