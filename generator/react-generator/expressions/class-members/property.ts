@@ -11,7 +11,7 @@ import { TypeExpression } from "../../../base-generator/expressions/type";
 import {
   compileJSXTemplateProps,
   TypeReferenceNode,
-} from "../type-refence-node";
+} from "../type-reference-node";
 
 export function getLocalStateName(
   name: Identifier | string,
