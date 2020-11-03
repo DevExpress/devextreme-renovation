@@ -286,8 +286,12 @@ mocha.describe("angular-generation", function () {
   mocha.it("template-default-value", function () {
     this.testGenerator(this.test!.title);
   });
-  
+
   mocha.it("dynamic-component", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("dynamic-components-array", function () {
     this.testGenerator(this.test!.title);
   });
 
