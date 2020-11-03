@@ -6,25 +6,34 @@ import {
   JSXTemplate,
 } from "../../../component_declaration/common";
 
-import Button, { CounterInput } from "../counter";
-import Button1 from "../button";
+import Counter, { CounterInput } from "../counter";
 
 function view({
-  ButtonComponent,
-  ButtonComponents,
+  CounterComponent,
+  CounterComponents,
   onClick,
   value,
 }: DynamicComponent) {
   return (
-    <div>
-      <ButtonComponent value={value} valueChange={onClick}></ButtonComponent>
+    <div id={"dynamic-component-container"}>
+      <CounterComponent
+        id={"dynamic-component"}
+        value={value}
+        valueChange={onClick}
+      />
       <div>----</div>
-      {value > 20 && value < 1000 && (
-        <ButtonComponent value={value + 1} valueChange={onClick} />
+      {value > 1 && value < 26 && (
+        <CounterComponent
+          id={"dynamic-component-condition"}
+          value={value + 1}
+          valueChange={onClick}
+        ></CounterComponent>
       )}
       <div>----</div>
-      {ButtonComponents.map((B) => (
-        <B value={value} />
+      {CounterComponents.map((B) => (
+        <span className={"dynamic-component-array"}>
+          <B value={value} valueChange={onClick} />
+        </span>
       ))}
     </div>
   );
@@ -39,12 +48,12 @@ class Props {}
 export default class DynamicComponent extends JSXComponent(Props) {
   @InternalState() value = 1;
 
-  get ButtonComponent(): JSXTemplate<CounterInput> {
-    return Button;
+  get CounterComponent(): JSXTemplate<CounterInput> {
+    return Counter as JSXTemplate<CounterInput>;
   }
 
-  get ButtonComponents(): JSXTemplate<CounterInput>[] {
-    return [Button, Button1];
+  get CounterComponents(): JSXTemplate<CounterInput>[] {
+    return [Counter, Counter] as JSXTemplate<CounterInput>[];
   }
 
   onClick(e: number) {
