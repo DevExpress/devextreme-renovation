@@ -58,11 +58,6 @@ export class JsxElement extends BaseJsxElement {
       return elementString;
     }
 
-    if (this.openingElement.isDynamicComponent(options)) {
-      return this.openingElement.toString(options);
-    }
-
-    const openingElementString = this.openingElement.toString(options);
     const children = this.children.concat([
       ...this.openingElement.getSlotsFromAttributes(options),
       ...this.openingElement.getTemplatesFromAttributes(options),
@@ -75,11 +70,20 @@ export class JsxElement extends BaseJsxElement {
     if (this.compileOnlyChildren()) {
       return childrenString;
     }
+
+    if (this.openingElement.isDynamicComponent(options)) {
+      return `${this.openingElement.toString(
+        options
+      )}${childrenString}${this.closingElement.toString(options)}`;
+    }
+
     const closingElementString = !this.openingElement.getTemplateProperty(
       options
     )
       ? this.closingElement.toString(options)
       : "";
+
+    const openingElementString = this.openingElement.toString(options);
 
     return `${openingElementString}${childrenString}${closingElementString}`;
   }

@@ -16,6 +16,7 @@ import {
   QueryList,
   Directive,
   ViewContainerRef,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -24,15 +25,39 @@ import { CommonModule } from "@angular/common";
 })
 export class DynamicComponentDirective {
   @Input() index: number = 0;
-  constructor(public viewContainerRef: ViewContainerRef) {}
+  constructor(
+    public viewContainerRef: ViewContainerRef,
+    private templateRef: TemplateRef<any>
+  ) {}
+  renderChildView(model: any = {}) {
+    const childView = this.templateRef.createEmbeddedView(model);
+    childView.detectChanges();
+    return childView;
+  }
 }
 
 @Component({
   selector: "dx-dynamic-component-creator",
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div
-    ><ng-template dynamicComponent [index]="0"></ng-template
-    ><ng-template dynamicComponent [index]="1"></ng-template
+    ><ng-template
+      dynamicComponent
+      [index]="0"
+      let-internalStateValue="internalStateValue"
+      let-Component="Component"
+      let-JSXTemplateComponent="JSXTemplateComponent"
+      let-restAttributes="restAttributes"
+      let-height="height"
+    ></ng-template
+    ><ng-template
+      dynamicComponent
+      [index]="1"
+      let-internalStateValue="internalStateValue"
+      let-Component="Component"
+      let-JSXTemplateComponent="JSXTemplateComponent"
+      let-restAttributes="restAttributes"
+      let-height="height"
+    ></ng-template
   ></div>`,
 })
 export default class DynamicComponentCreator extends Props {
@@ -62,7 +87,7 @@ export default class DynamicComponentCreator extends Props {
   @ViewChildren(DynamicComponentDirective) dynamicComponentHost!: QueryList<
     DynamicComponentDirective
   >;
-  dynamicComponents: { [name: number]: any } = [];
+  dynamicComponents: any[][] = [];
 
   createJSXTemplateComponent0() {
     const containers = this.dynamicComponentHost
@@ -81,8 +106,12 @@ export default class DynamicComponentCreator extends Props {
         expressions[index]
       );
       container.viewContainerRef.clear();
+      const childView = container.renderChildView(this);
       const component = container.viewContainerRef.createComponent<any>(
-        componentFactory
+        componentFactory,
+        0,
+        undefined,
+        [childView.rootNodes]
       ).instance;
 
       component.height instanceof EventEmitter
@@ -93,6 +122,7 @@ export default class DynamicComponentCreator extends Props {
         ? component.onClick.subscribe(this.__onComponentClick.bind(this))
         : (component.onClick = this.__onComponentClick.bind(this));
 
+      component._embeddedView = childView;
       this.dynamicComponents[0][index] = component;
       component.changeDetection.detectChanges();
     });
@@ -115,8 +145,12 @@ export default class DynamicComponentCreator extends Props {
         expressions[index]
       );
       container.viewContainerRef.clear();
+      const childView = container.renderChildView(this);
       const component = container.viewContainerRef.createComponent<any>(
-        componentFactory
+        componentFactory,
+        0,
+        undefined,
+        [childView.rootNodes]
       ).instance;
 
       component.height instanceof EventEmitter
@@ -127,6 +161,7 @@ export default class DynamicComponentCreator extends Props {
         ? component.onClick.subscribe(this.__onComponentClick.bind(this))
         : (component.onClick = this.__onComponentClick.bind(this));
 
+      component._embeddedView = childView;
       this.dynamicComponents[1][index] = component;
       component.changeDetection.detectChanges();
     });
@@ -154,6 +189,12 @@ export default class DynamicComponentCreator extends Props {
     ) {
       this.createComponent1();
     }
+
+    this.dynamicComponents.forEach((components) =>
+      components.forEach((component: any) => {
+        component._embeddedView.detectChanges();
+      })
+    );
   }
 
   constructor(

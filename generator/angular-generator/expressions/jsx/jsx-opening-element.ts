@@ -1,7 +1,4 @@
-import {
-  JsxOpeningElement as BaseJsxOpeningElement,
-  JsxClosingElement,
-} from "../../../base-generator/expressions/jsx";
+import { JsxOpeningElement as BaseJsxOpeningElement } from "../../../base-generator/expressions/jsx";
 import { JsxSpreadAttributeMeta, JsxSpreadAttribute } from "./spread-attribute";
 import { JsxAttribute } from "./attribute";
 import {
@@ -77,7 +74,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     this.attributes = attributes;
   }
 
-  processTagName(tagName: Expression) {
+  processTagName(tagName: Expression, options?: toStringOptions) {
     if (this.component instanceof AngularComponent) {
       const selector = this.component.selector;
       return new Identifier(selector);
@@ -374,13 +371,20 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         props: this.attributes.filter((a) => !(a instanceof AngularDirective)),
       },
     ];
+
+    const params = options.members
+      .filter((m) => m.isInternalState || m instanceof GetAccessor)
+      .concat(getProps(options.members))
+      .map((prop) => `let-${prop._name}="${prop._name}"`);
+
     const directives = this.attributes
       .filter((a) => a instanceof AngularDirective)
       .map((d) => d.toString(options))
       .concat(`[index]="${index}"`)
+      .concat(params)
       .join("\n");
 
-    return `<ng-template dynamicComponent ${directives}></ng-template>`;
+    return `<ng-template dynamicComponent ${directives}>`;
   }
 
   toString(options?: toStringOptions) {
@@ -699,8 +703,12 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
       return `${super.toString(options).replace(">", "/>")}`;
     }
 
-    if (this.getTemplateProperty(options) || this.isDynamicComponent(options)) {
+    if (this.getTemplateProperty(options)) {
       return super.toString(options);
+    }
+
+    if (this.isDynamicComponent(options)) {
+      return `${super.toString(options)}</ng-template>`;
     }
 
     const elementString = this.compileJsxElementsForVariable(options);
@@ -726,5 +734,18 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
       (this.attributes as JsxAttribute[]).slice(),
       this.context
     );
+  }
+}
+
+export class JsxClosingElement extends JsxOpeningElement {
+  constructor(tagName: Expression) {
+    super(tagName, [], [], {});
+  }
+
+  toString(options?: toStringOptions) {
+    if (this.isDynamicComponent(options)) {
+      return "</ng-template>";
+    }
+    return `</${this.processTagName(this.tagName).toString(options)}>`;
   }
 }

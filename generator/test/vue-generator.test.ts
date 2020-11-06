@@ -3464,6 +3464,42 @@ mocha.describe("Vue-generator", function () {
       );
 
       mocha.it(
+        "<DynamicComponent><span/></DynamicComponent> -> <component></component>",
+        function () {
+          const getter = createGetter();
+
+          const tag = generator.createPropertyAccess(
+            generator.createIdentifier("viewModel"),
+            getter._name
+          );
+          const element = generator.createJsxElement(
+            generator.createJsxOpeningElement(tag, undefined, []),
+            [
+              generator.createJsxSelfClosingElement(
+                generator.createIdentifier("span")
+              ),
+            ],
+            generator.createJsxClosingElement(tag)
+          );
+
+          assert.strictEqual(
+            removeSpaces(
+              element.toString({
+                members: [getter],
+                componentContext: "viewModel",
+                newComponentContext: "",
+              })
+            ),
+            removeSpaces(`
+              <component v-bind:is="DynamicComponent">
+                <span/>
+              </component>
+            `)
+          );
+        }
+      );
+
+      mocha.it(
         "<DynamicComponent prop={value}></DynamicComponent> -> <component :props='value'></component>",
         function () {
           const props = createProps();

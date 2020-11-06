@@ -1241,7 +1241,7 @@ export class AngularComponent extends Component {
       return "";
     }
 
-    coreImports.push("Directive", "ViewContainerRef", "Input");
+    coreImports.push("Directive", "ViewContainerRef", "Input", "TemplateRef");
     importModules.push("DynamicComponentDirective");
 
     return `@Directive({
@@ -1249,7 +1249,13 @@ export class AngularComponent extends Component {
     })
     export class DynamicComponentDirective {
       @Input() index: number = 0;
-      constructor(public viewContainerRef: ViewContainerRef) { }
+      @ContentChildren
+      constructor(public viewContainerRef: ViewContainerRef, private templateRef: TemplateRef<any>) { }
+      renderChildView(model: any = {}){
+        const childView = this.templateRef.createEmbeddedView(model);
+        childView.detectChanges();
+        return childView;
+      }
     }`;
   }
 
@@ -1488,7 +1494,13 @@ export class AngularComponent extends Component {
             containers.forEach((container, index)=>{
               const componentFactory = this.componentFactoryResolver.resolveComponentFactory(expressions[index]);
               container.viewContainerRef.clear();
-              const component = container.viewContainerRef.createComponent<any>(componentFactory).instance;
+              const childView = container.renderChildView(this);
+              const component = container.viewContainerRef.createComponent<any>(
+                  componentFactory,
+                  0,
+                  undefined,
+                  [childView.rootNodes]
+                ).instance;
               ${dynamicComponent.props
                 .map((p) => {
                   if (p instanceof JsxAttribute) {
@@ -1497,6 +1509,7 @@ export class AngularComponent extends Component {
                   return "";
                 })
                 .join(";\n")}
+              component._embeddedView = childView;
               this.dynamicComponents[${index}][index] = component;
               component.changeDetection.detectChanges();
             });
@@ -1560,11 +1573,17 @@ export class AngularComponent extends Component {
         }
       );
 
+      ngAfterViewCheckedStatements.push(`
+        this.dynamicComponents.forEach(components=>components.forEach((component:any)=>{
+          component._embeddedView.detectChanges();
+        }))
+      `);
+
       return `
       @ViewChildren(DynamicComponentDirective) dynamicComponentHost!: QueryList<
       DynamicComponentDirective
       >;
-      dynamicComponents: {[name: number]: any} = [];
+      dynamicComponents: any[][] = [];
       ${decoratorToStringOptions.dynamicComponents
         .map((dynamicComponents) =>
           compileCreateDynamicComponent(dynamicComponents)

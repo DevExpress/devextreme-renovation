@@ -8,9 +8,12 @@ import {
 
 import Counter, { CounterInput } from "../counter";
 
+import Button, { ButtonInput } from "../button";
+
 function view({
   CounterComponent,
   CounterComponents,
+  ButtonComponent,
   onClick,
   value,
 }: DynamicComponent) {
@@ -30,11 +33,15 @@ function view({
         ></CounterComponent>
       )}
       <div>----</div>
-      {CounterComponents.map((B) => (
-        <span className={"dynamic-component-array"}>
+      {CounterComponents.map((B, index) => (
+        <span key={index} className={"dynamic-component-array"}>
           <B value={value} valueChange={onClick} />
         </span>
       ))}
+      <span>|</span>
+      <ButtonComponent id="dynamic-component-slot">
+        Slot:<span>{value}</span>
+      </ButtonComponent>
     </div>
   );
 }
@@ -54,6 +61,10 @@ export default class DynamicComponent extends JSXComponent(Props) {
 
   get CounterComponents(): JSXTemplate<CounterInput>[] {
     return [Counter, Counter] as JSXTemplate<CounterInput>[];
+  }
+
+  get ButtonComponent(): JSXTemplate<ButtonInput> {
+    return Button;
   }
 
   onClick(e: number) {

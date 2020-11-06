@@ -968,8 +968,13 @@ mocha.describe("Angular generator", function () {
           };
 
           assert.strictEqual(
-            element.toString(options),
-            `<ng-template dynamicComponent [index]="0"></ng-template>`
+            removeSpaces(element.toString(options)),
+            removeSpaces(`
+              <ng-template dynamicComponent
+                [index]="0"
+                let-DynamicComponent="DynamicComponent"
+              >
+              </ng-template>`)
           );
           assert.strictEqual(options.dynamicComponents?.length, 1);
           assert.strictEqual(
@@ -1016,8 +1021,12 @@ mocha.describe("Angular generator", function () {
         };
 
         assert.strictEqual(
-          element.toString(options),
-          `<ng-template dynamicComponent [index]="0"></ng-template>`
+          removeSpaces(element.toString(options)),
+          removeSpaces(`
+            <ng-template dynamicComponent
+              [index]="0"
+              let-DynamicComponent="DynamicComponent">
+            </ng-template>`)
         );
         assert.strictEqual(options.dynamicComponents?.length, 1);
         assert.strictEqual(
@@ -1054,12 +1063,18 @@ mocha.describe("Angular generator", function () {
           );
 
           assert.strictEqual(
-            element.toString({
-              members: [getter],
-              componentContext: "viewModel",
-              newComponentContext: "",
-            }),
-            `<ng-template dynamicComponent [index]="0"></ng-template>`
+            removeSpaces(
+              element.toString({
+                members: [getter],
+                componentContext: "viewModel",
+                newComponentContext: "",
+              })
+            ),
+            removeSpaces(`
+              <ng-template dynamicComponent
+                [index]="0"
+                let-DynamicComponent="DynamicComponent">
+              </ng-template>`)
           );
         }
       );
@@ -1109,7 +1124,11 @@ mocha.describe("Angular generator", function () {
             removeSpaces(element.toString(options)),
             removeSpaces(
               `<div>
-              <ng-template dynamicComponent *ngIf="condition" [index]="1"></ng-template>
+              <ng-template dynamicComponent 
+                *ngIf="condition" 
+                [index]="1" 
+                let-DynamicComponent="DynamicComponent">
+              </ng-template>
             </div>`
             )
           );
@@ -1188,7 +1207,7 @@ mocha.describe("Angular generator", function () {
           removeSpaces(element.toString(options)),
           removeSpaces(`<div>
             <ng-container *ngFor="let item of DynamicComponent">
-              <ng-template dynamicComponent [index]="0"></ng-template>
+              <ng-template dynamicComponent [index]="0" let-DynamicComponent="DynamicComponent"></ng-template>
             </ng-container>
           </div>`)
         );
@@ -1358,7 +1377,7 @@ mocha.describe("Angular generator", function () {
 
           assert.strictEqual(
             element.toString(),
-            "<div #_auto_ref_0><input #_auto_ref_1/></div>"
+            "<div #_auto_ref_1><input #_auto_ref_0/></div>"
           );
           const spreadAttributes = element.getSpreadAttributes();
           assert.strictEqual(spreadAttributes.length, 2);

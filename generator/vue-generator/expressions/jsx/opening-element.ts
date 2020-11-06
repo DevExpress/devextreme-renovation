@@ -231,7 +231,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return `<component 
               v-bind:is="${this.tagName.toString(options)}"
               ${this.attributesString(attributesOptions)}
-            ></component>`;
+            >`;
   }
 
   processSpreadAttributesOnNativeElement() {}
@@ -371,7 +371,7 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
     }
 
     if (this.isDynamicComponent(options)) {
-      return super.toString(options).replace("></component>", "/>");
+      return super.toString(options).replace(">", "/>");
     }
 
     const elementString = this.compileJsxElementsForVariable(options);
@@ -420,7 +420,14 @@ export class JsxClosingElement extends JsxOpeningElement {
     return tagName;
   }
 
+  compileDynamicComponent() {
+    return "</component>";
+  }
+
   toString(options: toStringOptions) {
+    if (this.isDynamicComponent(options)) {
+      return this.compileDynamicComponent();
+    }
     return `</${this.processTagName(this.tagName).toString(options)}>`;
   }
 }

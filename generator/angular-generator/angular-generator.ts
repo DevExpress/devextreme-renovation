@@ -18,6 +18,7 @@ import {
   JsxOpeningElement,
   processTagName,
   JsxSelfClosingElement,
+  JsxClosingElement,
 } from "./expressions/jsx/jsx-opening-element";
 import { JsxElement } from "./expressions/jsx/elements";
 import { Decorator } from "./expressions/decorator";
@@ -28,7 +29,6 @@ import { GetAccessor } from "./expressions/class-members/get-accessor";
 import { VariableDeclaration } from "./expressions/variable-expression";
 import { ArrowFunction } from "./expressions/functions/arrow-function";
 import { Function } from "./expressions/functions/function";
-import { JsxClosingElement } from "../base-generator/expressions/jsx";
 import { PropertyAccess } from "./expressions/property-access";
 import { AsExpression } from "./expressions/as-expression";
 import { counter } from "./counter";

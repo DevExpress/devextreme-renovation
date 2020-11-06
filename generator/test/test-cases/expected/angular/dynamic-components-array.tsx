@@ -16,6 +16,7 @@ import {
   QueryList,
   Directive,
   ViewContainerRef,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -24,7 +25,15 @@ import { CommonModule } from "@angular/common";
 })
 export class DynamicComponentDirective {
   @Input() index: number = 0;
-  constructor(public viewContainerRef: ViewContainerRef) {}
+  constructor(
+    public viewContainerRef: ViewContainerRef,
+    private templateRef: TemplateRef<any>
+  ) {}
+  renderChildView(model: any = {}) {
+    const childView = this.templateRef.createEmbeddedView(model);
+    childView.detectChanges();
+    return childView;
+  }
 }
 
 @Component({
@@ -32,7 +41,13 @@ export class DynamicComponentDirective {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div
     ><ng-container *ngFor="let C of __Components; index as index"
-      ><ng-template dynamicComponent [index]="0"></ng-template></ng-container
+      ><ng-template
+        dynamicComponent
+        [index]="0"
+        let-Components="Components"
+        let-restAttributes="restAttributes"
+        let-height="height"
+      ></ng-template></ng-container
   ></div>`,
 })
 export default class DynamicComponentCreator extends Props {
@@ -58,7 +73,7 @@ export default class DynamicComponentCreator extends Props {
   @ViewChildren(DynamicComponentDirective) dynamicComponentHost!: QueryList<
     DynamicComponentDirective
   >;
-  dynamicComponents: { [name: number]: any } = [];
+  dynamicComponents: any[][] = [];
 
   createComponents0() {
     const containers = this.dynamicComponentHost
@@ -77,8 +92,12 @@ export default class DynamicComponentCreator extends Props {
         expressions[index]
       );
       container.viewContainerRef.clear();
+      const childView = container.renderChildView(this);
       const component = container.viewContainerRef.createComponent<any>(
-        componentFactory
+        componentFactory,
+        0,
+        undefined,
+        [childView.rootNodes]
       ).instance;
 
       component.key instanceof EventEmitter
@@ -89,6 +108,7 @@ export default class DynamicComponentCreator extends Props {
         ? component.onClick.subscribe(this.__onComponentClick.bind(this))
         : (component.onClick = this.__onComponentClick.bind(this));
 
+      component._embeddedView = childView;
       this.dynamicComponents[0][index] = component;
       component.changeDetection.detectChanges();
     });
@@ -109,6 +129,12 @@ export default class DynamicComponentCreator extends Props {
     ) {
       this.createComponents0();
     }
+
+    this.dynamicComponents.forEach((components) =>
+      components.forEach((component: any) => {
+        component._embeddedView.detectChanges();
+      })
+    );
   }
 
   constructor(
