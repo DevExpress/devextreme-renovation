@@ -8,6 +8,7 @@ import {
 import {
   BaseFunction,
   isFunction,
+  Parameter,
 } from "../../../base-generator/expressions/functions";
 import { Identifier, Paren } from "../../../base-generator/expressions/common";
 import {
@@ -46,6 +47,7 @@ import {
   getMember,
 } from "../../../base-generator/utils/expressions";
 import { extractComponentFromType } from "../../../base-generator/utils/component-utils";
+import { BindingPattern } from "../../../base-generator/expressions/binding-pattern";
 
 export function processTagName(tagName: Expression, context: GeneratorContext) {
   const component = context.components?.[tagName.toString()];
@@ -61,6 +63,36 @@ export function processTagName(tagName: Expression, context: GeneratorContext) {
 
 function pickSpreadValue(first: string, second: string): string {
   return `(${second}!==undefined?${second}:${first})`;
+}
+
+function functionParameterToTemplateVariables(
+  parameter?: Parameter,
+  options?: toStringOptions
+): AngularDirective[] {
+  if (!parameter) {
+    return [];
+  }
+
+  if (parameter.type instanceof TypeLiteralNode) {
+    return parameter.type.members.map((param: Property | PropertySignature) => {
+      const name = param.name.toString(options);
+      return new AngularDirective(
+        new Identifier(`let-${name}`),
+        new Identifier(name)
+      );
+    });
+  }
+
+  if (parameter.name instanceof BindingPattern) {
+    return parameter.name.elements.map((element) => {
+      return new AngularDirective(
+        new Identifier(`let-${element.name}`),
+        new Identifier(`${element.propertyName || element.name}`)
+      );
+    });
+  }
+
+  throw `Can't convert function parameter ${parameter.toString()} into template parameter: Use BindingPattern or TypeLiteralNode`;
 }
 
 export class JsxOpeningElement extends BaseJsxOpeningElement {
@@ -574,7 +606,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   functionToJsxElement(
     name: string,
     func: BaseFunction,
-    options: toStringOptions
+    options?: toStringOptions
   ) {
     const templateOptions: toStringOptions = {
       members: [],
@@ -583,21 +615,15 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
     const element = func.getTemplate(templateOptions);
 
-    options.hasStyle = options?.hasStyle || templateOptions.hasStyle;
+    if (options) {
+      options.hasStyle = options.hasStyle || templateOptions.hasStyle;
+    }
 
-    const paramType = func.parameters[0]?.type;
-    const templateAttr =
-      paramType instanceof TypeLiteralNode
-        ? paramType.members.map((param: Property | PropertySignature) => {
-            const name = param.name.toString(options);
-            return new AngularDirective(
-              new Identifier(`let-${name}`),
-              new SimpleExpression(name)
-            );
-          })
-        : [];
-
-    return this.createTemplateElement(name, templateAttr, element);
+    return this.createTemplateElement(
+      name,
+      functionParameterToTemplateVariables(func.parameters[0]),
+      element
+    );
   }
 
   getTemplatesFromAttributes(options?: toStringOptions) {
@@ -668,7 +694,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
           this.componentToJsxElement(name, component)
         ),
         ...functions.map(({ name, func }) =>
-          this.functionToJsxElement(name, func, options!)
+          this.functionToJsxElement(name, func, options)
         ),
         ...(props
           .map((t) => this.templatePropToJsxElement(t, options))

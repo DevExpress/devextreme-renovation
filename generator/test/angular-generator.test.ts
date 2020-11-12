@@ -23,6 +23,7 @@ import { SetAccessor } from "../angular-generator/expressions/class-members/set-
 import { Expression } from "../base-generator/expressions/base";
 import { ComponentParameters } from "../component_declaration/common";
 import { JsxAttribute } from "../angular-generator/expressions/jsx/attribute";
+import { Parameter } from "../base-generator/expressions/functions";
 
 const { createComponent, createComponentDecorator, createDecorator } = factory(
   generator
@@ -3375,6 +3376,166 @@ mocha.describe("Angular generator", function () {
                         </ng-container>
                     </div>`)
         );
+      });
+
+      mocha.describe("function->ng-template", function () {
+        this.beforeEach(function () {
+          generator.setContext({
+            path: __filename,
+            dirname: __dirname,
+          });
+
+          createComponent([
+            generator.createProperty(
+              [createDecorator(Decorators.Template)],
+              [],
+              generator.createIdentifier("template")
+            ),
+          ]);
+        });
+
+        this.afterEach(function () {
+          generator.setContext(null);
+        });
+
+        const createElement = (parameter?: Parameter) =>
+          generator.createJsxSelfClosingElement(
+            generator.createIdentifier("BaseWidget"),
+            undefined,
+            [
+              generator.createJsxAttribute(
+                generator.createIdentifier("template"),
+                generator.createJsxExpression(
+                  undefined,
+                  generator.createArrowFunction(
+                    [],
+                    undefined,
+                    parameter ? [parameter] : [],
+                    undefined,
+                    generator.SyntaxKind.EqualsGreaterThanToken,
+                    generator.createJsxSelfClosingElement(
+                      generator.createIdentifier("div")
+                    )
+                  )
+                )
+              ),
+            ]
+          );
+
+        mocha.it("w/o parameter", function () {
+          const element = createElement();
+          assert.strictEqual(
+            removeSpaces(
+              element.toString({
+                members: [],
+              })
+            ),
+            removeSpaces(`
+              <dx-base-widget [template]="__template__generated">
+                <ng-template #__template__generated>
+                  <div ></div>
+                </ng-template>
+              </dx-base-widget>
+            `)
+          );
+        });
+
+        mocha.it("binding pattern parameter", function () {
+          const element = createElement(
+            generator.createParameter(
+              [],
+              [],
+              undefined,
+              generator.createObjectBindingPattern([
+                generator.createBindingElement(
+                  undefined,
+                  undefined,
+                  generator.createIdentifier("p1")
+                ),
+                generator.createBindingElement(
+                  undefined,
+                  generator.createIdentifier("p2"),
+                  generator.createIdentifier("myP2")
+                ),
+              ]),
+              undefined
+            )
+          );
+          assert.strictEqual(
+            removeSpaces(
+              element.toString({
+                members: [],
+              })
+            ),
+            removeSpaces(`
+              <dx-base-widget [template]="__template__generated">
+                <ng-template #__template__generated let-p1="p1" let-myP2="p2">
+                  <div ></div>
+                </ng-template>
+              </dx-base-widget>
+            `)
+          );
+        });
+
+        mocha.it("parameter with literal type node", function () {
+          const element = createElement(
+            generator.createParameter(
+              [],
+              [],
+              undefined,
+              generator.createIdentifier("props"),
+              undefined,
+              generator.createTypeLiteralNode([
+                generator.createPropertySignature(
+                  [],
+                  generator.createIdentifier("p1"),
+                  undefined,
+                  generator.createKeywordTypeNode("string")
+                ),
+                generator.createPropertySignature(
+                  [],
+                  generator.createIdentifier("p2"),
+                  undefined,
+                  generator.createKeywordTypeNode("number")
+                ),
+              ])
+            )
+          );
+          assert.strictEqual(
+            removeSpaces(
+              element.toString({
+                members: [],
+              })
+            ),
+            removeSpaces(`
+              <dx-base-widget [template]="__template__generated">
+                <ng-template #__template__generated let-p1="p1" let-p2="p2">
+                  <div ></div>
+                </ng-template>
+              </dx-base-widget>
+            `)
+          );
+        });
+
+        mocha.it("can't parse parameter without type", function () {
+          const element = createElement(
+            generator.createParameter(
+              [],
+              [],
+              undefined,
+              generator.createIdentifier("props")
+            )
+          );
+
+          try {
+            removeSpaces(element.toString());
+          } catch (e) {
+            assert.strictEqual(
+              e,
+              "Can't convert function parameter props into template parameter: Use BindingPattern or TypeLiteralNode"
+            );
+          }
+        });
       });
     });
 

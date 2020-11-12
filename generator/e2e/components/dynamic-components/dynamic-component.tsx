@@ -49,14 +49,14 @@ function view({
       <ButtonWithTemplateComponent
         id={"dynamic-component-button-with-template"}
         text={value.toString()}
-        template={(props: { text?: string }) => (
+        template={({ text }) => (
           <div
             style={{
               backgroundColor: "black",
               color: "white",
             }}
           >
-            Template:{props.text}
+            Template:{text}
           </div>
         )}
       />
