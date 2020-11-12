@@ -10,29 +10,64 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   ViewRef,
-  ComponentFactoryResolver,
   ViewChildren,
   EventEmitter,
   QueryList,
   Directive,
   ViewContainerRef,
   TemplateRef,
+  ComponentFactoryResolver,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+
+function updateDynamicComponent(
+  component: any,
+  props: { [name: string]: any }
+) {
+  if (component) {
+    Object.keys(props).forEach((prop) => {
+      const value = props[prop];
+      component[prop] instanceof EventEmitter
+        ? component[prop].subscribe(value)
+        : (component[prop] = value);
+    });
+    component.changeDetection.detectChanges();
+  }
+}
 
 @Directive({
   selector: "[dynamicComponent]",
 })
 export class DynamicComponentDirective {
   @Input() index: number = 0;
+
   constructor(
     public viewContainerRef: ViewContainerRef,
-    private templateRef: TemplateRef<any>
+    private templateRef: TemplateRef<any>,
+    private componentFactoryResolver: ComponentFactoryResolver
   ) {}
+
   renderChildView(model: any = {}) {
     const childView = this.templateRef.createEmbeddedView(model);
     childView.detectChanges();
     return childView;
+  }
+
+  createComponent(Component: any, model: any, props: { [name: string]: any }) {
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
+      Component
+    );
+    this.viewContainerRef.clear();
+    const childView = this.renderChildView(model);
+    const component = this.viewContainerRef.createComponent<any>(
+      componentFactory,
+      0,
+      undefined,
+      [childView.rootNodes]
+    ).instance;
+    component._embeddedView = childView;
+    updateDynamicComponent(component, props);
+    return component;
   }
 }
 
@@ -88,29 +123,10 @@ export default class DynamicComponentCreator extends Props {
     const expressions = expression instanceof Array ? expression : [expression];
 
     containers.forEach((container, index) => {
-      const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
-        expressions[index]
-      );
-      container.viewContainerRef.clear();
-      const childView = container.renderChildView(this);
-      const component = container.viewContainerRef.createComponent<any>(
-        componentFactory,
-        0,
-        undefined,
-        [childView.rootNodes]
-      ).instance;
-
-      component.key instanceof EventEmitter
-        ? component.key.subscribe(index)
-        : (component.key = index);
-
-      component.onClick instanceof EventEmitter
-        ? component.onClick.subscribe(this.__onComponentClick.bind(this))
-        : (component.onClick = this.__onComponentClick.bind(this));
-
-      component._embeddedView = childView;
+      const component = container.createComponent(expressions[index], this, {
+        onClick: this.__onComponentClick.bind(this),
+      });
       this.dynamicComponents[0][index] = component;
-      component.changeDetection.detectChanges();
     });
   }
 
@@ -137,10 +153,7 @@ export default class DynamicComponentCreator extends Props {
     );
   }
 
-  constructor(
-    private changeDetection: ChangeDetectorRef,
-    private componentFactoryResolver: ComponentFactoryResolver
-  ) {
+  constructor(private changeDetection: ChangeDetectorRef) {
     super();
   }
 }

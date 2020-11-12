@@ -22,6 +22,7 @@ import { AngularDirective } from "../angular-generator/expressions/jsx/angular-d
 import { SetAccessor } from "../angular-generator/expressions/class-members/set-accessor";
 import { Expression } from "../base-generator/expressions/base";
 import { ComponentParameters } from "../component_declaration/common";
+import { JsxAttribute } from "../angular-generator/expressions/jsx/attribute";
 
 const { createComponent, createComponentDecorator, createDecorator } = factory(
   generator
@@ -1229,6 +1230,8 @@ mocha.describe("Angular generator", function () {
               templateRefProperty: "templateRef0",
             },
           ]);
+
+          assert.deepEqual(options.dynamicComponents?.[0].props, []);
         }
       );
 
@@ -1334,13 +1337,33 @@ mocha.describe("Angular generator", function () {
                         undefined,
                         undefined
                       ),
+                      generator.createParameter(
+                        undefined,
+                        undefined,
+                        undefined,
+                        generator.createIdentifier("index"),
+                        undefined,
+                        undefined,
+                        undefined
+                      ),
                     ],
                     undefined,
                     generator.createToken(
                       generator.SyntaxKind.EqualsGreaterThanToken
                     ),
                     generator.createJsxSelfClosingElement(
-                      generator.createIdentifier("item")
+                      generator.createIdentifier("item"),
+                      undefined,
+                      [
+                        generator.createJsxAttribute(
+                          generator.createIdentifier("key"),
+                          generator.createIdentifier("index")
+                        ),
+                        generator.createJsxAttribute(
+                          generator.createIdentifier("prop"),
+                          generator.createIdentifier("value")
+                        ),
+                      ]
                     )
                   ),
                 ]
@@ -1359,7 +1382,7 @@ mocha.describe("Angular generator", function () {
         assert.strictEqual(
           removeSpaces(element.toString(options)),
           removeSpaces(`<div>
-            <ng-container *ngFor="let item of DynamicComponent">
+            <ng-container *ngFor="let item of DynamicComponent; index as index">
               <ng-template dynamicComponent [index]="0" let-DynamicComponent="DynamicComponent"></ng-template>
             </ng-container>
           </div>`)
@@ -1368,6 +1391,13 @@ mocha.describe("Angular generator", function () {
         assert.strictEqual(
           options.dynamicComponents![0].expression.toString(),
           "viewModel.DynamicComponent"
+        );
+
+        assert.deepEqual(
+          options.dynamicComponents?.[0].props.map((p) =>
+            (p as JsxAttribute).name.toString()
+          ),
+          ["prop"]
         );
       });
     });

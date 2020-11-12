@@ -412,13 +412,23 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     const component = extractComponentFromType(member?.type, this.context);
     this.component = component;
     const templates = component?.members.filter((m) => m.isTemplate);
+    const props = this.attributes.filter(
+      (a) =>
+        !(a instanceof AngularDirective) &&
+        a instanceof JsxAttribute &&
+        a.name.toString() !== "key" &&
+        !(
+          a instanceof JsxAttribute &&
+          templates?.some((m) => m.name === a.name.toString())
+        )
+    );
 
     options!.dynamicComponents = [
       ...(options!.dynamicComponents || []),
       {
         expression,
         index,
-        props: this.attributes.filter((a) => !(a instanceof AngularDirective)),
+        props,
         templates: this.attributes
           .filter(
             (a) =>
