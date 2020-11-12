@@ -351,6 +351,9 @@ cloneTest("Dynamic components", async (t) => {
   );
   const dynamicComponentArray = await Selector(".dynamic-component-array");
   const dynamicComponentSlot = await Selector("#dynamic-component-slot");
+  const dynamicComponentWithTemplate = await Selector(
+    "#dynamic-component-button-with-template"
+  );
 
   const checkContent = async (value, conditionIsVisible) => {
     await t.expect((await dynamicComponent.textContent).trim()).eql(`${value}`);
@@ -374,6 +377,10 @@ cloneTest("Dynamic components", async (t) => {
     await t
       .expect((await dynamicComponentSlot.textContent).trim())
       .eql(`Slot:${value}`);
+
+    await t
+      .expect((await dynamicComponentWithTemplate.textContent).trim())
+      .eql(`Template:${value}`);
   };
 
   await checkContent(1, false);

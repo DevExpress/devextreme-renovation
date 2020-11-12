@@ -19,6 +19,11 @@ export type DynamicComponent = {
   expression: Expression;
   props: (JsxAttribute | JsxSpreadAttribute)[];
   index: number;
+  templates: Array<{
+    propertyName: string;
+    templateRef: string;
+    templateRefProperty: string;
+  }>;
 };
 
 export interface toStringOptions extends BaseToStringOptions {

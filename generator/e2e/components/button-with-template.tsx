@@ -21,7 +21,7 @@ function view(model: ButtonWithTemplate) {
 }
 
 @ComponentBindings()
-class Props extends ButtonInput {
+export class Props extends ButtonInput {
   @OneWay() text: string = "Click Me";
   @Template() template?: JSXTemplate<{ text: string }>;
 }

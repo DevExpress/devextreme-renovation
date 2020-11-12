@@ -7,13 +7,16 @@ import {
 } from "../../../component_declaration/common";
 
 import Counter, { CounterInput } from "../counter";
-
 import Button, { ButtonInput } from "../button";
+import ButtonWithTemplate, {
+  Props as ButtonWithTemplateProps,
+} from "../button-with-template";
 
 function view({
   CounterComponent,
   CounterComponents,
   ButtonComponent,
+  ButtonWithTemplateComponent,
   onClick,
   value,
 }: DynamicComponent) {
@@ -42,6 +45,21 @@ function view({
       <ButtonComponent id="dynamic-component-slot">
         Slot:<span>{value}</span>
       </ButtonComponent>
+
+      <ButtonWithTemplateComponent
+        id={"dynamic-component-button-with-template"}
+        text={value.toString()}
+        template={(props: { text?: string }) => (
+          <div
+            style={{
+              backgroundColor: "black",
+              color: "white",
+            }}
+          >
+            Template:{props.text}
+          </div>
+        )}
+      />
     </div>
   );
 }
@@ -65,6 +83,10 @@ export default class DynamicComponent extends JSXComponent(Props) {
 
   get ButtonComponent(): JSXTemplate<ButtonInput> {
     return Button;
+  }
+
+  get ButtonWithTemplateComponent(): JSXTemplate<ButtonWithTemplateProps> {
+    return ButtonWithTemplate;
   }
 
   onClick(e: number) {

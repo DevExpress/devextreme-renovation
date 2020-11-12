@@ -3567,6 +3567,124 @@ mocha.describe("Vue-generator", function () {
       );
 
       mocha.it(
+        "<DynamicComponent template={()=><div/>}></DynamicComponent> -> <component><template></component>",
+        function () {
+          const component = createComponent([
+            generator.createProperty(
+              [createDecorator(Decorators.Template)],
+              [],
+              generator.createIdentifier("template")
+            ),
+          ]);
+          const getter = createGetter(
+            generator.createTypeReferenceNode(component._name)
+          );
+
+          const tag = generator.createPropertyAccess(
+            generator.createIdentifier("viewModel"),
+            getter._name
+          );
+          const element = generator.createJsxElement(
+            generator.createJsxOpeningElement(tag, undefined, [
+              generator.createJsxAttribute(
+                generator.createIdentifier("template"),
+                generator.createArrowFunction(
+                  [],
+                  undefined,
+                  [],
+                  undefined,
+                  generator.SyntaxKind.EqualsGreaterThanToken,
+                  generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("div")
+                  )
+                )
+              ),
+            ]),
+            [],
+            generator.createJsxClosingElement(tag)
+          );
+
+          assert.strictEqual(
+            removeSpaces(
+              element.toString({
+                members: [getter],
+                componentContext: "viewModel",
+                newComponentContext: "",
+              })
+            ),
+            removeSpaces(`
+                <component
+                  v-bind:is="DynamicComponent"
+                >
+                  <template v-slot:template>
+                    <div/>
+                  </template>
+                </component>
+              `)
+          );
+        }
+      );
+
+      mocha.it(
+        "<DynamicComponent template={()=><div/>}/> -> <component><template></component>",
+        function () {
+          const component = createComponent([
+            generator.createProperty(
+              [createDecorator(Decorators.Template)],
+              [],
+              generator.createIdentifier("template")
+            ),
+          ]);
+          const getter = createGetter(
+            generator.createTypeReferenceNode(component._name)
+          );
+
+          const tag = generator.createPropertyAccess(
+            generator.createIdentifier("viewModel"),
+            getter._name
+          );
+          const element = generator.createJsxSelfClosingElement(
+            tag,
+            undefined,
+            [
+              generator.createJsxAttribute(
+                generator.createIdentifier("template"),
+                generator.createArrowFunction(
+                  [],
+                  undefined,
+                  [],
+                  undefined,
+                  generator.SyntaxKind.EqualsGreaterThanToken,
+                  generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("div")
+                  )
+                )
+              ),
+            ]
+          );
+
+          assert.strictEqual(
+            removeSpaces(
+              element.toString({
+                members: [getter],
+                componentContext: "viewModel",
+                newComponentContext: "",
+              })
+            ),
+            removeSpaces(`
+                <component
+                  v-bind:is="DynamicComponent"
+                >
+                  <template v-slot:template>
+                    <div/>
+                  </template>
+                </component>
+              `)
+          );
+        }
+      );
+
+      mocha.it(
         "condition && <DynamicComponent /> -> <component v-if='condition'>",
         function () {
           const getterName = "DynamicComponent";

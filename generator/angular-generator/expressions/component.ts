@@ -1249,7 +1249,7 @@ export class AngularComponent extends Component {
     })
     export class DynamicComponentDirective {
       @Input() index: number = 0;
-      @ContentChildren
+    
       constructor(public viewContainerRef: ViewContainerRef, private templateRef: TemplateRef<any>) { }
       renderChildView(model: any = {}){
         const childView = this.templateRef.createEmbeddedView(model);
@@ -1420,7 +1420,10 @@ export class AngularComponent extends Component {
         "private componentFactoryResolver: ComponentFactoryResolver"
       );
       coreImports.push(
-        "ComponentFactoryResolver, ViewChildren, EventEmitter, QueryList"
+        "ComponentFactoryResolver",
+        "ViewChildren",
+        "EventEmitter",
+        "QueryList"
       );
 
       const createDynamicComponentName = (
@@ -1452,7 +1455,8 @@ export class AngularComponent extends Component {
         const valueExpression =
           member instanceof Method ? `${value}.bind(this)` : value;
 
-        const setAttribute = `
+        const setAttribute = valueExpression
+          ? `
           ${componentExpression}.${prop} instanceof EventEmitter ?
           ${componentExpression}.${prop}.subscribe(${valueExpression})
           : ${componentExpression}.${prop} = ${valueExpression};
@@ -1461,7 +1465,8 @@ export class AngularComponent extends Component {
               ? `${componentExpression}.changeDetection.detectChanges()`
               : ""
           }
-        `;
+        `
+          : "";
 
         return checkComponent
           ? `if(${componentExpression}){
@@ -1477,7 +1482,18 @@ export class AngularComponent extends Component {
           toStringOptions
         );
         const index = dynamicComponent.index;
+
+        const templateRefs = dynamicComponent.templates.map(
+          (templateInfo) =>
+            `@ViewChild("${templateInfo.templateRef}", {static: true}) ${templateInfo.templateRefProperty}?: TemplateRef<any>`
+        );
+
+        if (templateRefs.length) {
+          coreImports.push("ViewChild");
+        }
+
         return `
+          ${templateRefs.join(";")}
           ${createDynamicComponentName(
             dynamicComponent.expression,
             dynamicComponent.index
@@ -1509,6 +1525,11 @@ export class AngularComponent extends Component {
                   return "";
                 })
                 .join(";\n")}
+                ${dynamicComponent.templates
+                  .map((templateInfo) => {
+                    return `component.${templateInfo.propertyName}=this.${templateInfo.templateRefProperty}`;
+                  })
+                  .join(";\n")}
               component._embeddedView = childView;
               this.dynamicComponents[${index}][index] = component;
               component.changeDetection.detectChanges();

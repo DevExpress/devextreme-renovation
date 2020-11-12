@@ -1,5 +1,5 @@
 import { HeritageClause } from "../../base-generator/expressions/class";
-import { Identifier } from "../../base-generator/expressions/common";
+import { Identifier, Call } from "../../base-generator/expressions/common";
 import { Decorator } from "../../base-generator/expressions/decorator";
 import {
   ExpressionWithTypeArguments,
@@ -11,14 +11,13 @@ import {
 } from "../../base-generator/expressions/type";
 import { GeneratorContext } from "../../base-generator/types";
 import { Decorators } from "../../component_declaration/decorators";
-import { Call } from "./call";
-import { VueComponent } from "./vue-component";
-import { VueComponentInput } from "./vue-component-input";
+import { Component } from "../expressions/component";
+import { ComponentInput } from "../expressions/component-input";
 
 export function extractComponentFromType(
   typeExpression: string | TypeExpression | undefined,
   context: GeneratorContext
-): VueComponent | undefined {
+): Component | undefined {
   const type = isTypeArray(typeExpression)
     ? extractElementType(typeExpression)
     : typeExpression;
@@ -31,8 +30,8 @@ export function extractComponentFromType(
     const propsName = (type
       .typeArguments[0] as TypeReferenceNode).type.toString();
     const componentInput = context.components?.[propsName];
-    if (componentInput instanceof VueComponentInput) {
-      return new VueComponent(
+    if (componentInput instanceof ComponentInput) {
+      return new Component(
         new Decorator(new Call(new Identifier(Decorators.Component)), context),
         [],
         new Identifier("temp"),
@@ -57,15 +56,15 @@ export function extractComponentFromType(
 
   if (
     type instanceof TypeReferenceNode &&
-    context.components?.[type.typeName.toString()] instanceof VueComponent
+    context.components?.[type.typeName.toString()] instanceof Component
   ) {
-    return context.components![type.typeName.toString()] as VueComponent;
+    return context.components![type.typeName.toString()] as Component;
   }
 
   if (
     type instanceof TypeQueryNode &&
-    context.components?.[type.expression.toString()] instanceof VueComponent
+    context.components?.[type.expression.toString()] instanceof Component
   ) {
-    return context.components![type.expression.toString()] as VueComponent;
+    return context.components![type.expression.toString()] as Component;
   }
 }

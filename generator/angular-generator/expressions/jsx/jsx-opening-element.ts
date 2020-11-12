@@ -45,6 +45,7 @@ import {
   getExpression,
   getMember,
 } from "../../../base-generator/utils/expressions";
+import { extractComponentFromType } from "../../../base-generator/utils/component-utils";
 
 export function processTagName(tagName: Expression, context: GeneratorContext) {
   const component = context.components?.[tagName.toString()];
@@ -75,6 +76,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   }
 
   processTagName(tagName: Expression, options?: toStringOptions) {
+    if (this.isDynamicComponent(options)) {
+      return new SimpleExpression("ng-template");
+    }
+
     if (this.component instanceof AngularComponent) {
       const selector = this.component.selector;
       return new Identifier(selector);
@@ -95,6 +100,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
   isDynamicComponent(options?: toStringOptions): boolean {
     const member = getMember(this.tagName, options);
+
     if (member instanceof GetAccessor) {
       return true;
     }
@@ -357,11 +363,55 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return elementString;
   }
 
+  separateChildrenForDynamicComponent(
+    children: Array<string | Expression>,
+    options?: toStringOptions
+  ): [string, string] | null {
+    if (this.isDynamicComponent(options) && children.length) {
+      const templates = children.filter(
+        (c) =>
+          c instanceof JsxElement &&
+          c.openingElement.tagName.toString() === "ng-template"
+      ) as JsxElement[];
+
+      const refs = templates.map((c) => {
+        const refAttr = c.openingElement.attributes.find(
+          (a) =>
+            a instanceof AngularDirective && a.name.toString().startsWith("#")
+        ) as AngularDirective;
+        return refAttr.name.toString().replace("#", "");
+      });
+      const dynamicComponents = options!.dynamicComponents!;
+      const dynamicComponent = dynamicComponents[dynamicComponents.length - 1];
+      refs?.forEach((ref, index) => {
+        dynamicComponent.templates[index].templateRef = ref;
+      });
+
+      const childrenString = children
+        .filter((c) => !templates.some((t) => t === c))
+        .map((c) => c.toString(options))
+        .join("");
+
+      const templatesString = templates
+        .map((c) => c.toString(options))
+        .join("");
+
+      return [childrenString, templatesString];
+    }
+
+    return null;
+  }
+
   compileDynamicComponent(
     options: toStringOptions,
     expression: Expression
   ): string {
     const index = counter.get();
+
+    const member = getMember(expression, options);
+    const component = extractComponentFromType(member?.type, this.context);
+    this.component = component;
+    const templates = component?.members.filter((m) => m.isTemplate);
 
     options!.dynamicComponents = [
       ...(options!.dynamicComponents || []),
@@ -369,6 +419,19 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         expression,
         index,
         props: this.attributes.filter((a) => !(a instanceof AngularDirective)),
+        templates: this.attributes
+          .filter(
+            (a) =>
+              a instanceof JsxAttribute &&
+              templates?.some((m) => m.name === a.name.toString())
+          )
+          .map((a) => {
+            return {
+              propertyName: (a as JsxAttribute).name.toString(),
+              templateRef: "",
+              templateRefProperty: `templateRef${index}`,
+            };
+          }),
       },
     ];
 
@@ -449,6 +512,23 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return attribute.initializer.toString();
   }
 
+  createTemplateElement(
+    name: string,
+    parameters: AngularDirective[],
+    element: string | JsxExpression | JsxSelfClosingElement | JsxElement
+  ): JsxElement {
+    const tag = new SimpleExpression("ng-template");
+    const ref = new AngularDirective(
+      new Identifier(`#${name}`),
+      new SimpleExpression("")
+    );
+    return new JsxElement(
+      new JsxOpeningElement(tag, undefined, [ref, ...parameters], this.context),
+      [element],
+      new JsxClosingElement(tag)
+    );
+  }
+
   componentToJsxElement(name: string, component: Component) {
     const attributes = getProps(component.members).map((prop) => {
       let initializer: Expression = prop._name;
@@ -467,20 +547,12 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       attributes,
       component.context
     );
-    const templateAttr = getProps(component.members)
-      .map((prop) => `let-${prop._name}="${prop._name}"`)
-      .join(" ");
-
-    return new JsxElement(
-      new JsxOpeningElement(
-        new Identifier(`ng-template #${name.toString()} ${templateAttr}`),
-        undefined,
-        [],
-        this.context
-      ),
-      [element],
-      new JsxClosingElement(new Identifier("ng-template"))
+    const templateAttr = getProps(component.members).map(
+      (prop) =>
+        new AngularDirective(new Identifier(`let-${prop._name}`), prop._name)
     );
+
+    return this.createTemplateElement(name, templateAttr, element);
   }
 
   templatePropToJsxElement(
@@ -493,30 +565,30 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   functionToJsxElement(
     name: string,
     func: BaseFunction,
-    options?: toStringOptions
+    options: toStringOptions
   ) {
-    const element = func.getTemplate(options);
+    const templateOptions: toStringOptions = {
+      members: [],
+      ...options,
+    };
+
+    const element = func.getTemplate(templateOptions);
+
+    options.hasStyle = options?.hasStyle || templateOptions.hasStyle;
+
     const paramType = func.parameters[0]?.type;
     const templateAttr =
       paramType instanceof TypeLiteralNode
-        ? paramType.members
-            .map((param: Property | PropertySignature) => {
-              const name = param.name.toString(options);
-              return `let-${name}="${name}"`;
-            })
-            .join(" ")
-        : "";
+        ? paramType.members.map((param: Property | PropertySignature) => {
+            const name = param.name.toString(options);
+            return new AngularDirective(
+              new Identifier(`let-${name}`),
+              new SimpleExpression(name)
+            );
+          })
+        : [];
 
-    return new JsxElement(
-      new JsxOpeningElement(
-        new Identifier(`ng-template #${name} ${templateAttr}`),
-        undefined,
-        [],
-        this.context
-      ),
-      [element],
-      new JsxClosingElement(new Identifier("ng-template"))
-    );
+    return this.createTemplateElement(name, templateAttr, element);
   }
 
   getTemplatesFromAttributes(options?: toStringOptions) {
@@ -542,10 +614,12 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         }
         return acc;
       }, [] as { name: string; component: Component }[]);
-      options &&
-        (options.templateComponents = (options.templateComponents || []).concat(
+
+      if (options) {
+        options.templateComponents = (options.templateComponents || []).concat(
           components.map((c) => c.component)
-        ));
+        );
+      }
 
       const functions = templates.reduce((acc, template) => {
         const result = this.context.viewFunctions?.[
@@ -585,7 +659,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
           this.componentToJsxElement(name, component)
         ),
         ...functions.map(({ name, func }) =>
-          this.functionToJsxElement(name, func, options)
+          this.functionToJsxElement(name, func, options!)
         ),
         ...(props
           .map((t) => this.templatePropToJsxElement(t, options))
@@ -707,10 +781,6 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
       return super.toString(options);
     }
 
-    if (this.isDynamicComponent(options)) {
-      return `${super.toString(options)}</ng-template>`;
-    }
-
     const elementString = this.compileJsxElementsForVariable(options);
     if (elementString) {
       return elementString;
@@ -722,9 +792,25 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
       ...this.getTemplatesFromAttributes(options),
     ];
 
-    return `${openingElement}${children
-      .map((c) => c.toString(options))
-      .join("")}</${this.processTagName(this.tagName)}>`;
+    const separatedChildren = this.separateChildrenForDynamicComponent(
+      children,
+      options
+    );
+
+    if (separatedChildren) {
+      return `${openingElement}${separatedChildren[0]}</${this.processTagName(
+        this.tagName,
+        options
+      )}>
+        ${separatedChildren[1]}`;
+    }
+
+    const childrenString = children.map((c) => c.toString(options)).join("");
+
+    return `${openingElement}${childrenString}</${this.processTagName(
+      this.tagName,
+      options
+    )}>`;
   }
 
   clone() {
@@ -743,9 +829,6 @@ export class JsxClosingElement extends JsxOpeningElement {
   }
 
   toString(options?: toStringOptions) {
-    if (this.isDynamicComponent(options)) {
-      return "</ng-template>";
-    }
-    return `</${this.processTagName(this.tagName).toString(options)}>`;
+    return `</${this.processTagName(this.tagName, options).toString(options)}>`;
   }
 }

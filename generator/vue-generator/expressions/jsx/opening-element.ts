@@ -31,7 +31,7 @@ import { VueDirective } from "./vue-directive";
 import { Conditional } from "../../../base-generator/expressions/conditions";
 import { JsxAttribute as BaseJsxAttribute } from "../../../base-generator/expressions/jsx";
 import { getEventName } from "../utils";
-import { extractComponentFromType } from "../vue-component-utils";
+import { extractComponentFromType } from "../../../base-generator/utils/component-utils";
 
 export class JsxOpeningElement extends BaseJsxOpeningElement {
   attributes: Array<JsxAttribute | JsxSpreadAttribute>;
@@ -79,14 +79,16 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return new JsxChildExpression(statement);
   }
 
-  processTagName(tagName: Expression) {
+  processTagName(tagName: Expression, options?: toStringOptions) {
     if (tagName.toString() === "Fragment") {
       return new SimpleExpression('div style="display: contents"');
     }
     if (tagName.toString() === "Portal") {
       return new SimpleExpression("DxPortal");
     }
-
+    if (this.isDynamicComponent(options)) {
+      return new Identifier("component");
+    }
     return tagName;
   }
 
@@ -214,12 +216,17 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return spreadAttribute;
   }
 
+  separateChildrenForDynamicComponent() {
+    return null;
+  }
+
   compileDynamicComponent(
     options: toStringOptions,
     expression: Expression
   ): string {
     const member = getMember(expression, options);
     const component = extractComponentFromType(member?.type, this.context);
+    this.component = component;
 
     const attributesOptions: toStringOptions = component
       ? {
@@ -243,7 +250,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   functionToJsxElement(
     name: string,
     func: BaseFunction,
-    options?: toStringOptions
+    options: toStringOptions
   ): JsxElement {
     const element = func.getTemplate(options, true);
 
@@ -370,10 +377,6 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
       return super.toString(options);
     }
 
-    if (this.isDynamicComponent(options)) {
-      return super.toString(options).replace(">", "/>");
-    }
-
     const elementString = this.compileJsxElementsForVariable(options);
     if (elementString) {
       return elementString;
@@ -389,7 +392,7 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
     if (children.length) {
       return `${baseValue}${children
         .map((c) => c.toString(options))
-        .join("")}</${this.processTagName(this.tagName)}>`;
+        .join("")}</${this.processTagName(this.tagName, options)}>`;
     }
     return baseValue.replace(/>$/, "/>");
   }

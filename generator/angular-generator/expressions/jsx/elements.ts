@@ -1,12 +1,10 @@
-import {
-  JsxElement as BaseJsxElement,
-  JsxClosingElement,
-} from "../../../base-generator/expressions/jsx";
+import { JsxElement as BaseJsxElement } from "../../../base-generator/expressions/jsx";
 import { JsxExpression } from "./jsx-expression";
 import { JsxChildExpression } from "./jsx-child-expression";
 import {
   JsxOpeningElement,
   JsxSelfClosingElement,
+  JsxClosingElement,
 } from "./jsx-opening-element";
 import { toStringOptions } from "../../types";
 import { JsxSpreadAttributeMeta } from "./spread-attribute";
@@ -23,6 +21,7 @@ export class JsxElement extends BaseJsxElement {
   }
 
   openingElement: JsxOpeningElement;
+  closingElement: JsxClosingElement;
   children: Array<
     JsxElement | string | JsxChildExpression | JsxSelfClosingElement
   >;
@@ -58,6 +57,8 @@ export class JsxElement extends BaseJsxElement {
       return elementString;
     }
 
+    const openingElementString = this.openingElement.toString(options);
+
     const children = this.children.concat([
       ...this.openingElement.getSlotsFromAttributes(options),
       ...this.openingElement.getTemplatesFromAttributes(options),
@@ -71,19 +72,20 @@ export class JsxElement extends BaseJsxElement {
       return childrenString;
     }
 
-    if (this.openingElement.isDynamicComponent(options)) {
-      return `${this.openingElement.toString(
-        options
-      )}${childrenString}${this.closingElement.toString(options)}`;
-    }
-
     const closingElementString = !this.openingElement.getTemplateProperty(
       options
     )
       ? this.closingElement.toString(options)
       : "";
 
-    const openingElementString = this.openingElement.toString(options);
+    const separatedChildren = this.openingElement.separateChildrenForDynamicComponent(
+      children,
+      options
+    );
+
+    if (separatedChildren) {
+      return `${openingElementString}${separatedChildren[0]}${closingElementString}${separatedChildren[1]}`;
+    }
 
     return `${openingElementString}${childrenString}${closingElementString}`;
   }

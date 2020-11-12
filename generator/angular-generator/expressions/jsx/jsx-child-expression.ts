@@ -28,12 +28,12 @@ import { StringLiteral } from "../../../base-generator/expressions/literal";
 import {
   getExpressionFromParens,
   getJsxExpression,
-  JsxClosingElement,
 } from "../../../base-generator/expressions/jsx";
 import { isElement, JsxElement } from "./elements";
 import {
   JsxOpeningElement,
   JsxSelfClosingElement,
+  JsxClosingElement,
 } from "./jsx-opening-element";
 import { counter } from "../../counter";
 import {
