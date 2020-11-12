@@ -3,7 +3,16 @@
     ><component
       v-bind:is="__JSXTemplateComponent"
       :height="internalStateValue"
-      @click="__onComponentClick" /><component
+      v-bind="{
+        ...__spreadProps,
+        ...{ onClick: undefined, onSomething: undefined },
+      }"
+      @click="
+        __spreadProps.onClick !== undefined
+          ? __spreadProps.onClick
+          : __onComponentClick
+      "
+      @something="__spreadProps.onSomething" /><component
       v-bind:is="__Component"
       :height="height"
       @click="__onComponentClick"
@@ -35,6 +44,9 @@ export const DxDynamicComponentCreator = {
     },
     __JSXTemplateComponent() {
       return DynamicComponent;
+    },
+    __spreadProps() {
+      return { export: {} };
     },
     __restAttributes() {
       return {};

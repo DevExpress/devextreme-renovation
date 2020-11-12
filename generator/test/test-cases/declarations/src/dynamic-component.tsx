@@ -14,6 +14,7 @@ function view({
   Component,
   JSXTemplateComponent,
   internalStateValue,
+  spreadProps,
   props: { height },
   onComponentClick,
 }: DynamicComponentCreator): JSX.Element {
@@ -22,6 +23,7 @@ function view({
       <JSXTemplateComponent
         height={internalStateValue}
         onClick={onComponentClick}
+        {...spreadProps}
       />
       <Component height={height} onClick={onComponentClick} />
     </div>
@@ -45,6 +47,10 @@ export default class DynamicComponentCreator extends JSXComponent(Props) {
 
   get JSXTemplateComponent(): JSXTemplate<WidgetInput> {
     return DynamicComponent as JSXTemplate<WidgetInput>;
+  }
+
+  get spreadProps() {
+    return { export: {} };
   }
 
   onComponentClick() {}

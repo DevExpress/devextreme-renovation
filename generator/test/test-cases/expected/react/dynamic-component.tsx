@@ -5,12 +5,14 @@ function view({
   internalStateValue,
   onComponentClick,
   props: { height },
+  spreadProps,
 }: DynamicComponentCreator): any {
   return (
     <div>
       <JSXTemplateComponent
         height={internalStateValue}
         onClick={onComponentClick}
+        {...spreadProps}
       />
 
       <Component height={height} onClick={onComponentClick} />
@@ -33,6 +35,7 @@ interface DynamicComponentCreator {
   internalStateValue: number;
   Component: typeof DynamicComponent;
   JSXTemplateComponent: React.FunctionComponent<Partial<typeof WidgetInput>>;
+  spreadProps: any;
   onComponentClick: () => any;
   restAttributes: RestProps;
 }
@@ -60,6 +63,9 @@ export default function DynamicComponentCreator(
     },
     []
   );
+  const __spreadProps = useCallback(function __spreadProps(): any {
+    return { export: {} };
+  }, []);
   const __onComponentClick = useCallback(function __onComponentClick(): any {},
   []);
   const __restAttributes = useCallback(
@@ -75,6 +81,7 @@ export default function DynamicComponentCreator(
     internalStateValue: __state_internalStateValue,
     Component: __Component(),
     JSXTemplateComponent: __JSXTemplateComponent(),
+    spreadProps: __spreadProps(),
     onComponentClick: __onComponentClick,
     restAttributes: __restAttributes(),
   });

@@ -415,8 +415,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     const props = this.attributes.filter(
       (a) =>
         !(a instanceof AngularDirective) &&
-        a instanceof JsxAttribute &&
-        a.name.toString() !== "key" &&
+        !(a instanceof JsxAttribute && a.name.toString() === "key") &&
         !(
           a instanceof JsxAttribute &&
           templates?.some((m) => m.name === a.name.toString())

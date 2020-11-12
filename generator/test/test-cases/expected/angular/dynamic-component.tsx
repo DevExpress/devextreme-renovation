@@ -81,6 +81,7 @@ export class DynamicComponentDirective {
       let-internalStateValue="internalStateValue"
       let-Component="Component"
       let-JSXTemplateComponent="JSXTemplateComponent"
+      let-spreadProps="spreadProps"
       let-restAttributes="restAttributes"
       let-height="height"
     ></ng-template
@@ -90,6 +91,7 @@ export class DynamicComponentDirective {
       let-internalStateValue="internalStateValue"
       let-Component="Component"
       let-JSXTemplateComponent="JSXTemplateComponent"
+      let-spreadProps="spreadProps"
       let-restAttributes="restAttributes"
       let-height="height"
     ></ng-template
@@ -107,6 +109,9 @@ export default class DynamicComponentCreator extends Props {
     return (this.__getterCache["JSXTemplateComponent"] = ((): any => {
       return DynamicComponent as any;
     })());
+  }
+  get __spreadProps(): any {
+    return { export: {} };
   }
   __onComponentClick(): any {}
   get __restAttributes(): any {
@@ -140,6 +145,7 @@ export default class DynamicComponentCreator extends Props {
       const component = container.createComponent(expressions[index], this, {
         height: this.internalStateValue,
         onClick: this.__onComponentClick.bind(this),
+        ...this.__spreadProps,
       });
       this.dynamicComponents[0][index] = component;
     });
