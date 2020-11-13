@@ -24,7 +24,7 @@ import {
 import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: "dx-widget",
+  selector: "dx-widget-with-template",
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div
       ><ng-container
@@ -87,7 +87,7 @@ import { CommonModule } from "@angular/common";
       ></dx-widget-with-props>
     </ng-template>`,
 })
-export default class Widget extends WidgetInput {
+export default class WidgetWithTemplate extends WidgetInput {
   get __restAttributes(): any {
     return {};
   }
@@ -109,10 +109,10 @@ export default class Widget extends WidgetInput {
   };
 }
 @NgModule({
-  declarations: [Widget],
+  declarations: [WidgetWithTemplate],
   imports: [DxWidgetWithPropsModule, CommonModule],
   entryComponents: [WidgetWithProps],
-  exports: [Widget],
+  exports: [WidgetWithTemplate],
 })
-export class DxWidgetModule {}
-export { Widget as DxWidgetComponent };
+export class DxWidgetWithTemplateModule {}
+export { WidgetWithTemplate as DxWidgetWithTemplateComponent };

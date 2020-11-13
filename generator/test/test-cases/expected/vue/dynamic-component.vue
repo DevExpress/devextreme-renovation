@@ -12,14 +12,23 @@
           ? __spreadProps.onClick
           : __onComponentClick
       "
-      @something="__spreadProps.onSomething" /><component
+      @something="__spreadProps.onSomething"
+    /><component
       v-bind:is="__Component"
       :height="height"
       @click="__onComponentClick"
-  /></div>
+    /><component v-bind:is="__ComponentWithTemplate"
+      ><template v-slot:template="{ textProp }"
+        ><div>{{ textProp }}</div></template
+      ></component
+    ></div
+  >
 </template>
 <script>
 import DynamicComponent, { WidgetInput } from "./props";
+import DynamicComponentWithTemplate, {
+  WidgetInput as PropsWithTemplate,
+} from "./template";
 const Props = {
   height: {
     type: Number,
@@ -31,6 +40,7 @@ const Props = {
 export const DxDynamicComponentCreator = {
   components: {
     DynamicComponent,
+    DynamicComponentWithTemplate,
   },
   props: Props,
   data() {
@@ -44,6 +54,9 @@ export const DxDynamicComponentCreator = {
     },
     __JSXTemplateComponent() {
       return DynamicComponent;
+    },
+    __ComponentWithTemplate() {
+      return DynamicComponentWithTemplate;
     },
     __spreadProps() {
       return { export: {} };

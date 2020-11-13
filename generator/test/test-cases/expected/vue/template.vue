@@ -62,7 +62,7 @@ export const WidgetInput = {
     },
   },
 };
-export const DxWidget = {
+export const DxWidgetWithTemplate = {
   components: {
     WidgetWithProps,
   },
@@ -83,5 +83,5 @@ export const DxWidget = {
     },
   },
 };
-export default DxWidget;
+export default DxWidgetWithTemplate;
 </script>

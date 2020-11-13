@@ -1,4 +1,8 @@
 import DynamicComponent, { WidgetInput, DxWidgetModule } from "./props";
+import DynamicComponentWithTemplate, {
+  WidgetInput as PropsWithTemplate,
+  DxWidgetWithTemplateModule,
+} from "./template";
 import { Input } from "@angular/core";
 class Props {
   @Input() height: number = 10;
@@ -13,6 +17,7 @@ import {
   ViewChildren,
   EventEmitter,
   QueryList,
+  ViewChild,
   Directive,
   ViewContainerRef,
   TemplateRef,
@@ -81,6 +86,7 @@ export class DynamicComponentDirective {
       let-internalStateValue="internalStateValue"
       let-Component="Component"
       let-JSXTemplateComponent="JSXTemplateComponent"
+      let-ComponentWithTemplate="ComponentWithTemplate"
       let-spreadProps="spreadProps"
       let-restAttributes="restAttributes"
       let-height="height"
@@ -91,11 +97,26 @@ export class DynamicComponentDirective {
       let-internalStateValue="internalStateValue"
       let-Component="Component"
       let-JSXTemplateComponent="JSXTemplateComponent"
+      let-ComponentWithTemplate="ComponentWithTemplate"
       let-spreadProps="spreadProps"
       let-restAttributes="restAttributes"
       let-height="height"
     ></ng-template
-  ></div>`,
+    ><ng-template
+      dynamicComponent
+      [index]="2"
+      let-internalStateValue="internalStateValue"
+      let-Component="Component"
+      let-JSXTemplateComponent="JSXTemplateComponent"
+      let-ComponentWithTemplate="ComponentWithTemplate"
+      let-spreadProps="spreadProps"
+      let-restAttributes="restAttributes"
+      let-height="height"
+    ></ng-template>
+    <ng-template #__template__generated let-textProp="textProp"
+      ><div>{{ textProp }}</div></ng-template
+    ></div
+  >`,
 })
 export default class DynamicComponentCreator extends Props {
   internalStateValue: number = 0;
@@ -108,6 +129,14 @@ export default class DynamicComponentCreator extends Props {
     }
     return (this.__getterCache["JSXTemplateComponent"] = ((): any => {
       return DynamicComponent as any;
+    })());
+  }
+  get __ComponentWithTemplate(): any {
+    if (this.__getterCache["ComponentWithTemplate"] !== undefined) {
+      return this.__getterCache["ComponentWithTemplate"];
+    }
+    return (this.__getterCache["ComponentWithTemplate"] = ((): any => {
+      return DynamicComponentWithTemplate as any;
     })());
   }
   get __spreadProps(): any {
@@ -172,13 +201,37 @@ export default class DynamicComponentCreator extends Props {
     });
   }
 
+  @ViewChild("__template__generated", { static: true })
+  templateRef2?: TemplateRef<any>;
+  createComponentWithTemplate2() {
+    const containers = this.dynamicComponentHost
+      .toArray()
+      .filter((c) => c.index === 2);
+    this.dynamicComponents[2] = [];
+    if (!containers.length) {
+      return;
+    }
+
+    const expression = this.__ComponentWithTemplate;
+    const expressions = expression instanceof Array ? expression : [expression];
+
+    containers.forEach((container, index) => {
+      const component = container.createComponent(expressions[index], this, {
+        template: this.templateRef2,
+      });
+      this.dynamicComponents[2][index] = component;
+    });
+  }
+
   __getterCache: {
     JSXTemplateComponent?: any;
+    ComponentWithTemplate?: any;
   } = {};
 
   ngAfterViewInit() {
     this.createJSXTemplateComponent0();
     this.createComponent1();
+    this.createComponentWithTemplate2();
   }
 
   ngAfterViewChecked() {
@@ -193,6 +246,12 @@ export default class DynamicComponentCreator extends Props {
       this.dynamicComponentHost.toArray().filter((c) => c.index === 1).length
     ) {
       this.createComponent1();
+    }
+    if (
+      this.dynamicComponents[2].length !==
+      this.dynamicComponentHost.toArray().filter((c) => c.index === 2).length
+    ) {
+      this.createComponentWithTemplate2();
     }
 
     this.dynamicComponents.forEach((components) =>
@@ -215,8 +274,8 @@ export default class DynamicComponentCreator extends Props {
 }
 @NgModule({
   declarations: [DynamicComponentCreator, DynamicComponentDirective],
-  imports: [DxWidgetModule, CommonModule],
-  entryComponents: [DynamicComponent],
+  imports: [DxWidgetModule, DxWidgetWithTemplateModule, CommonModule],
+  entryComponents: [DynamicComponent, DynamicComponentWithTemplate],
   exports: [DynamicComponentCreator],
 })
 export class DxDynamicComponentCreatorModule {}

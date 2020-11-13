@@ -1,6 +1,10 @@
 import DynamicComponent, { WidgetInput } from "./props";
+import DynamicComponentWithTemplate, {
+  WidgetInput as PropsWithTemplate,
+} from "./template";
 function view({
   Component,
+  ComponentWithTemplate,
   JSXTemplateComponent,
   internalStateValue,
   onComponentClick,
@@ -16,6 +20,10 @@ function view({
       />
 
       <Component height={height} onClick={onComponentClick} />
+
+      <ComponentWithTemplate
+        template={({ textProp }) => <div>{textProp}</div>}
+      />
     </div>
   );
 }
@@ -35,6 +43,9 @@ interface DynamicComponentCreator {
   internalStateValue: number;
   Component: typeof DynamicComponent;
   JSXTemplateComponent: React.FunctionComponent<Partial<typeof WidgetInput>>;
+  ComponentWithTemplate: React.FunctionComponent<
+    Partial<typeof PropsWithTemplate>
+  >;
   spreadProps: any;
   onComponentClick: () => any;
   restAttributes: RestProps;
@@ -63,6 +74,16 @@ export default function DynamicComponentCreator(
     },
     []
   );
+  const __ComponentWithTemplate = useCallback(
+    function __ComponentWithTemplate(): React.FunctionComponent<
+      Partial<typeof PropsWithTemplate>
+    > {
+      return DynamicComponentWithTemplate as React.FunctionComponent<
+        Partial<typeof PropsWithTemplate>
+      >;
+    },
+    []
+  );
   const __spreadProps = useCallback(function __spreadProps(): any {
     return { export: {} };
   }, []);
@@ -81,6 +102,7 @@ export default function DynamicComponentCreator(
     internalStateValue: __state_internalStateValue,
     Component: __Component(),
     JSXTemplateComponent: __JSXTemplateComponent(),
+    ComponentWithTemplate: __ComponentWithTemplate(),
     spreadProps: __spreadProps(),
     onComponentClick: __onComponentClick,
     restAttributes: __restAttributes(),
