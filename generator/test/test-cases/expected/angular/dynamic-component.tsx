@@ -233,6 +233,13 @@ export default class DynamicComponentCreator extends Props {
     this.createComponent1();
     this.createComponentWithTemplate2();
   }
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (["height"].some((d) => changes[d] && !changes[d].firstChange)) {
+      this.dynamicComponents[1].forEach((component) => {
+        updateDynamicComponent(component, { height: this.height });
+      });
+    }
+  }
 
   ngAfterViewChecked() {
     if (

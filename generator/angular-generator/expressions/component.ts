@@ -146,18 +146,18 @@ function getDependencyFromViewExpression(
     dependency.some((d) => d === m._name.toString())
   );
 
-  return dependencyMembers
-    .filter((m) => m instanceof Method)
-    .reduce(
-      (d: string[], m) =>
-        d.concat(
-          m.getDependency({
-            ...options,
-            componentContext: SyntaxKind.ThisKeyword,
-          })
-        ),
-      dependency
-    );
+  const methods = dependencyMembers.filter((m) => m instanceof Method);
+
+  return methods.reduce(
+    (d: string[], m) =>
+      d.concat(
+        m.getDependency({
+          ...options,
+          componentContext: SyntaxKind.ThisKeyword,
+        })
+      ),
+    dependency.filter((d) => !methods.some((m) => m._name.toString() === d))
+  );
 }
 
 const ngOnChangesParameters = ["changes"];
@@ -1457,7 +1457,8 @@ export class AngularComponent extends Component {
     decoratorToStringOptions: toStringOptions,
     coreImports: string[],
     ngAfterViewInitStatements: string[],
-    ngAfterViewCheckedStatements: string[]
+    ngAfterViewCheckedStatements: string[],
+    ngOnChangesStatements: string[]
   ): string {
     if (decoratorToStringOptions.dynamicComponents?.length) {
       coreImports.push("ViewChildren", "EventEmitter", "QueryList");
@@ -1565,10 +1566,6 @@ export class AngularComponent extends Component {
               internalStateDependency,
             ] = separateDependency(dependency, this.internalState);
 
-            propsDependency.forEach((d) => {
-              // TODO process propsDependency
-            });
-
             const updateExpression = `this.dynamicComponents[${
               dynamicComponents.index
             }].forEach(component=>{
@@ -1576,6 +1573,17 @@ export class AngularComponent extends Component {
                   toStringOptions
                 )});
               })`;
+
+            propsDependency.forEach((d) => {
+              ngOnChangesStatements.push(`if([${propsDependency
+                .map((d) => `"${d}"`)
+                .join(",")}].some(d=>
+                  ${ngOnChangesParameters[0]}[d] && !${
+                ngOnChangesParameters[0]
+              }[d].firstChange)){
+                    ${updateExpression}
+                }`);
+            });
 
             internalStateDependency.forEach((d) => {
               const setter = this.members.find(
@@ -1719,7 +1727,8 @@ export class AngularComponent extends Component {
       decoratorToStringOptions,
       coreImports,
       ngAfterViewInitStatements,
-      ngAfterViewCheckedStatements
+      ngAfterViewCheckedStatements,
+      ngOnChangesStatements
     );
 
     const dynamicComponentDirective = this.compileDynamicComponentDirective(
