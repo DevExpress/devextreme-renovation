@@ -475,7 +475,7 @@ export class MyComponent extends JSXComponent<Props>() {
 
 ### Подписка на ивенты
 
-Мы не можем использовать нативные ивенты фреймворков. Мы могли бы подписаться на `click` ивент прямо в *JSX* разметке и иметь нативные ивенты в каждом фреймворке. Но мы должны поддержать наши старые *dxEvents*. Поэтому все подписки на ивенты совершайте из `@Effect()`. См. примеры в [Use cases](#@Effect), а также рабочий код в [*button.tsx*](https://github.com/DevExpress/DevExtreme/blob/20_2/js/renovation/button.tsx) и [*widget.tsx*](https://github.com/DevExpress/DevExtreme/blob/20_2/js/renovation/widget.tsx)
+Мы не можем использовать нативные ивенты фреймворков. Мы могли бы подписаться на `click` ивент прямо в *JSX* разметке и иметь нативные ивенты в каждом фреймворке. Но мы должны поддержать наши старые *dxEvents*. Поэтому все подписки на ивенты совершайте из `@Effect()`. См. примеры в [Use cases](#@Effect), а также рабочий код в [*button.tsx*](https://github.com/DevExpress/DevExtreme/blob/21_1/js/renovation/ui/button.tsx) и [*widget.tsx*](https://github.com/DevExpress/DevExtreme/blob/21_1/js/renovation/ui/common/widget.tsx)
 
 ### Ивенты комопнентов
 
@@ -524,7 +524,7 @@ export class MyComponent extends JSXComponent<Props>() {
 
 Корневой компонент (*Widget.tsx*) уже имеет такой ивент, райзит его на нажатии любой клавиши клавиатуры. В вашем компоненте надо на него подписаться, и делать свои действия (если вашему компоненту надо что-то делать при нажатии на клавиши). Однако сначала вам надо вызвать свой проп-ивент `onKeyDown`, и если он вернет `cancel == true`, то не выполнять свое действие.
 
-См `onWidgetKeyDown` в [*Button.tsx*](https://github.com/DevExpress/DevExtreme/blob/20_2/js/renovation/button.tsx)
+См `onWidgetKeyDown` в [*Button.tsx*](https://github.com/DevExpress/DevExtreme/blob/67e81e01fe880851210cd20f638e0532235da521/js/renovation/ui/button.tsx#L193)
 
 ```typescript
 onWidgetKeyDown(event: Event, options) {
@@ -548,7 +548,7 @@ onWidgetKeyDown(event: Event, options) {
 Переписывание старых сложных компонентов следует производить поэтапно, обновляя сначала маленькие составные части и внедряя их в старые виджеты.
 
 ### Именование и структура файлов, папок
-Все компоненты пока размещаются в папке [js/renovation](https://github.com/DevExpress/DevExtreme/tree/20_2/js/renovation).
+Все компоненты пока размещаются в папке [js/renovation](https://github.com/DevExpress/DevExtreme/tree/21_1/js/renovation).
 
 Краткие правила:
 - Пробелы в файлах_заполняем_нижним_подчеркивание как в остальном devextreme.
@@ -606,7 +606,7 @@ export default class Component extends JSXComponent(ComponentProps) {
 
 ### jQuery
 
-Как уже говорилось [выше](#ViewModel), в общем случае jQuery враппер над вашим компонентом должен быть полность работоспособным без дополнительных усилий. Однако могут быть случаи, когда базовая обертка либо не очень подходит для конкретного случая, либо еще не содержит какую-то функциональность. В этом случае нужно реализовать промежуточную обертку (см [как реализована кнопка](https://github.com/DevExpress/DevExtreme/blob/20_2/js/renovation/preact-wrapper/button.js)), в которой будет специфичный для компонента код.
+Как уже говорилось [выше](#ViewModel), в общем случае jQuery враппер над вашим компонентом должен быть полность работоспособным без дополнительных усилий. Однако могут быть случаи, когда базовая обертка либо не очень подходит для конкретного случая, либо еще не содержит какую-то функциональность. В этом случае нужно реализовать промежуточную обертку (см [как реализована кнопка](https://github.com/DevExpress/DevExtreme/blob/21_1/js/renovation/preact_wrapper/button.ts)), в которой будет специфичный для компонента код.
 
 Общую для всех jQuery компонентов функциональность стоит реализовывать в единой базовой обертке, однако это может потребовать правки со стороны генератора - в этом случае можно реализовать в промежуточной обертке, либо сообщить команде генераторов.
 
