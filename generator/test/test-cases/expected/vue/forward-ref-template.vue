@@ -6,6 +6,7 @@
 <script>
 const Props = {};
 export const DxRefOnChildrenTemplate = {
+  name: "RefOnChildrenTemplate",
   props: Props,
   computed: {
     __restAttributes() {

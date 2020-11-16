@@ -63,6 +63,7 @@ export const WidgetInput = {
   },
 };
 export const DxWidgetWithTemplate = {
+  name: "WidgetWithTemplate",
   components: {
     WidgetWithProps,
   },

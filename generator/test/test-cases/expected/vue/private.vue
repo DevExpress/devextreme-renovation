@@ -4,6 +4,7 @@
 <script>
 const WidgetInput = {};
 export const DxWidget = {
+  name: "Widget",
   props: WidgetInput,
   data() {
     return {

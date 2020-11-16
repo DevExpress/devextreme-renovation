@@ -47,6 +47,7 @@ export const TemplateDefaultValueProps = {
   },
 };
 export const DxTemplateDefaultValue = {
+  name: "TemplateDefaultValue",
   components: {
     WidgetWithProps,
   },

@@ -70,6 +70,7 @@ export const DxEditingAnotherCustom = {
 DxEditingAnotherCustom.propName = "anotherCustom";
 
 export const DxWidget = {
+  name: "Widget",
   props: PickedProps,
   computed: {
     __isEditable() {

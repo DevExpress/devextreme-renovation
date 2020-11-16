@@ -1,9 +1,10 @@
 <template>
-  <div style="display: contents"><slot></slot> </div>
+  <div style="display: contents"><slot></slot></div>
 </template>
 <script>
 const WidgetInput = {};
 export const DxWidget = {
+  name: "Widget",
   props: WidgetInput,
   computed: {
     __restAttributes() {

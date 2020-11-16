@@ -10,6 +10,7 @@
 import WidgetWithTemplate from "./dx-widget-with-template";
 export const TemplateTransitWidgetInput = {};
 export const DxTemplateTransitWidget = {
+  name: "TemplateTransitWidget",
   components: {
     WidgetWithTemplate,
   },

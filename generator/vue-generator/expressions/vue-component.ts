@@ -892,6 +892,7 @@ export class VueComponent extends Component {
       : "";
 
     const statements = [
+      `name: "${this.name}"`,
       this.generateComponents(components),
       this.generateProps(),
       this.generateModel(),

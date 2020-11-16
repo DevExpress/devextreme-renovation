@@ -18,6 +18,7 @@ const Props = {
   },
 };
 export const DxDynamicComponentCreator = {
+  name: "DynamicComponentCreator",
   components: {
     DynamicComponent,
   },

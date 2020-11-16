@@ -21,6 +21,7 @@ export const WidgetInput = {
   },
 };
 export const DxWidget = {
+  name: "Widget",
   components: {
     InnerWidget,
   },
