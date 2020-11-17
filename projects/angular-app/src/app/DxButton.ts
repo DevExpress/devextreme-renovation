@@ -9,6 +9,7 @@ import {
   ElementRef,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -46,7 +47,12 @@ export const defaultOptionsRules: { device: () => boolean; options: any }[] = [
     (mousedown)="onPointerDown($event)"
     (click)="onClickHandler($event)"
   >
-    <div class="dx-button-content">
+    <ng-container *ngIf="template">
+      <ng-container *ngTemplateOutlet="template; context: { text: text }">
+      </ng-container>
+    </ng-container>
+
+    <div *ngIf="!template" class="dx-button-content">
       <span class="dx-button-text">{{ text }}</span>
     </div>
   </div>`,
@@ -64,6 +70,8 @@ export class DxButtonComponent {
       this[option] = defaultOptions[option];
     }
   }
+
+  @Input() template: TemplateRef<any> | null = null;
 
   changeDetection() {
     this.changeDetectorRef.detectChanges();
