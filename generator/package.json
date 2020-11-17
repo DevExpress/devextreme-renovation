@@ -24,7 +24,7 @@
     "gulp": "^4.0.2",
     "mocha-junit-reporter": "^1.23.3",
     "prettier": "^2.1.0",
-    "react": "^16.13.1",
+    "react": "^17.0.1",
     "typescript": "3.8",
     "loader-utils": "^2.0.0"
   },
