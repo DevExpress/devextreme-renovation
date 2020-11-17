@@ -1,26 +1,26 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { BrowserModule } from "@angular/platform-browser";
+import { NgModule } from "@angular/core";
 import { DxButtonModule } from "./DxButton";
 import { DxToggleButtonModule } from "./DxToggleButton";
-import { DxButtonGroupModule } from "./DxButtonGroup"
-import { DxDrawerModule } from "./DxDrawer"
-import { DxListModule } from "./DxList"
+import { DxButtonGroupModule } from "./DxButtonGroup";
+import { DxDrawerModule } from "./DxDrawer";
+import { DxListModule } from "./DxList";
+import { DxDynamicComponentCreatorModule } from "./DxDynamicComponent";
 
-import { AppComponent } from './app.component';
+import { AppComponent } from "./app.component";
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     DxButtonModule,
     DxToggleButtonModule,
     DxButtonGroupModule,
     DxDrawerModule,
-    DxListModule
+    DxListModule,
+    DxDynamicComponentCreatorModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
