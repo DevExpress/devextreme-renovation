@@ -722,7 +722,12 @@ mocha.describe("Angular generator", function () {
             })
           ),
           removeSpaces(
-            `<ng-container*ngIf="condition">{{_value}}</ng-container><ng-container*ngIf="!(condition)">{{!_value}}</ng-container>`
+            `<ng-container *ngIf="condition">
+              {{_value}}
+            </ng-container>
+            <ng-container *ngIf="!(condition)">
+              {{!_value}}
+            </ng-container>`
           )
         );
       }
@@ -1399,6 +1404,26 @@ mocha.describe("Angular generator", function () {
             (p as JsxAttribute).name.toString()
           ),
           ["prop"]
+        );
+      });
+    });
+
+    mocha.describe("Component", function () {
+      mocha.it("Render himself", function () {
+        const componentName = "BaseWidget";
+
+        const element = generator.createJsxSelfClosingElement(
+          generator.createIdentifier(componentName)
+        );
+
+        const component = createComponent([]);
+
+        assert.strictEqual(component.name, componentName);
+        assert.strictEqual(
+          element.toString({
+            members: [],
+          }),
+          "<dx-base-widget ></dx-base-widget>"
         );
       });
     });

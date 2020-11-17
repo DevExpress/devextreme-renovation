@@ -107,7 +107,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     this.attributes = attributes;
   }
 
-  processTagName(tagName: Expression, options?: toStringOptions) {
+  processTagName(tagName: Expression, options?: toStringOptions): Expression {
     if (this.isDynamicComponent(options)) {
       return new SimpleExpression("ng-template");
     }
@@ -492,6 +492,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   }
 
   toString(options?: toStringOptions) {
+    this.fillComponent();
     const templateProperty = this.getTemplateProperty(options) as
       | Property
       | undefined;
