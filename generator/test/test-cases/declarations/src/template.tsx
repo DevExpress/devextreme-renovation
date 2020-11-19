@@ -37,9 +37,9 @@ export class WidgetInput {
 @Component({
   view: view,
 })
-export default class Widget extends JSXComponent(WidgetInput) {}
+export default class WidgetWithTemplate extends JSXComponent(WidgetInput) {}
 
-function view(viewModel: Widget) {
+function view(viewModel: WidgetWithTemplate) {
   const myvar = viewModel.props.someProp;
   const FooterTemplate = viewModel.props.footerTemplate;
   const ComponentTemplate = viewModel.props.componentTemplate;

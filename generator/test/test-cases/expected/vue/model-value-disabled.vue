@@ -23,6 +23,7 @@ const ModelWidgetInput = {
   },
 };
 export const DxModelWidget = {
+  name: "ModelWidget",
   props: ModelWidgetInput,
   model: {
     prop: "value",

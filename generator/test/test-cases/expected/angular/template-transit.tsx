@@ -43,6 +43,7 @@ export default class TemplateTransitWidget extends TemplateTransitWidgetInput {
 @NgModule({
   declarations: [TemplateTransitWidget],
   imports: [DxWidgetWithTemplateModule, CommonModule],
+  entryComponents: [WidgetWithTemplate],
   exports: [TemplateTransitWidget],
 })
 export class DxTemplateTransitWidgetModule {}

@@ -13,7 +13,7 @@ function view(model: Widget): JSX.Element {
 type EventCallBack<Type> = (e: Type) => void;
 
 @ComponentBindings()
-class WidgetInput {
+export class WidgetInput {
   @OneWay() height = 10;
   @OneWay() export: object = {};
   @Event() onClick: (a: number) => void = () => {};

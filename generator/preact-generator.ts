@@ -30,7 +30,7 @@ import { ComponentInput as BaseComponentInput } from "./react-generator/expressi
 import { Property as ReactProperty } from "./react-generator/expressions/class-members/property";
 import { HeritageClause } from "./react-generator/expressions/heritage-clause";
 import { ReactComponent } from "./react-generator/expressions/react-component";
-import { TypeReferenceNode as ReactTypeReferenceNode } from "./react-generator/expressions/type-refence-node";
+import { TypeReferenceNode as ReactTypeReferenceNode } from "./react-generator/expressions/type-reference-node";
 import { JsxClosingElement as ReactJsxClosingElement } from "./react-generator/expressions/jsx/jsx-closing-element";
 import { JsxOpeningElement as ReactJsxOpeningElement } from "./react-generator/expressions/jsx/jsx-opening-element";
 import { JsxAttribute } from "./react-generator/expressions/jsx/jsx-attribute";

@@ -31,6 +31,7 @@ export const WidgetProps = {
   },
 };
 export const DxWidget = {
+  name: "Widget",
   components: {
     WidgetOne,
     WidgetTwo,

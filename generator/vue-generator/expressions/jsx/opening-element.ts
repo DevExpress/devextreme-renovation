@@ -31,6 +31,8 @@ import { VueDirective } from "./vue-directive";
 import { Conditional } from "../../../base-generator/expressions/conditions";
 import { JsxAttribute as BaseJsxAttribute } from "../../../base-generator/expressions/jsx";
 import { getEventName } from "../utils";
+import { extractComponentFromType } from "../../../base-generator/utils/component-utils";
+
 export class JsxOpeningElement extends BaseJsxOpeningElement {
   attributes: Array<JsxAttribute | JsxSpreadAttribute>;
   constructor(
@@ -77,20 +79,22 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return new JsxChildExpression(statement);
   }
 
-  processTagName(tagName: Expression) {
+  processTagName(tagName: Expression, options?: toStringOptions) {
     if (tagName.toString() === "Fragment") {
       return new SimpleExpression('div style="display: contents"');
     }
     if (tagName.toString() === "Portal") {
       return new SimpleExpression("DxPortal");
     }
-
+    if (this.isDynamicComponent(options)) {
+      return new Identifier("component");
+    }
     return tagName;
   }
 
-  compileTemplate(templateProperty: Property, options?: toStringOptions) {
+  compileTemplate(templateProperty: Property, options: toStringOptions) {
     const attributes = this.attributes.map((a) => a.getTemplateProp(options));
-    const initializer = templateProperty?.initializer;
+    const initializer = templateProperty.initializer;
     const defaultAttrs = this.attributes.filter(
       (a) => a instanceof JsxAttribute && a.name.toString() !== "key"
     ) as JsxAttribute[];
@@ -105,11 +109,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     const keyAttribute = this.attributes.find(
       (a) => a instanceof JsxAttribute && a.name.toString() === "key"
     );
-    if (options) {
-      options.jsxComponent = (initializerComponent as Component) || {
-        members: [],
-      };
-    }
+
+    options.jsxComponent = (initializerComponent as Component) || {
+      members: [],
+    };
 
     const componentTag = initializerComponent
       ? `<${initializerComponent.name} ${defaultAttrs
@@ -213,6 +216,31 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return spreadAttribute;
   }
 
+  separateChildrenForDynamicComponent() {
+    return null;
+  }
+
+  compileDynamicComponent(
+    options: toStringOptions,
+    expression: Expression
+  ): string {
+    const member = getMember(expression, options);
+    const component = extractComponentFromType(member?.type, this.context);
+    this.component = component;
+
+    const attributesOptions: toStringOptions = component
+      ? {
+          ...options,
+          jsxComponent: component,
+        }
+      : options;
+
+    return `<component 
+              v-bind:is="${this.tagName.toString(options)}"
+              ${this.attributesString(attributesOptions)}
+            >`;
+  }
+
   processSpreadAttributesOnNativeElement() {}
 
   getTemplateName(attribute: JsxAttribute) {
@@ -222,7 +250,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   functionToJsxElement(
     name: string,
     func: BaseFunction,
-    options?: toStringOptions
+    options: toStringOptions
   ): JsxElement {
     const element = func.getTemplate(options, true);
 
@@ -364,7 +392,7 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
     if (children.length) {
       return `${baseValue}${children
         .map((c) => c.toString(options))
-        .join("")}</${this.processTagName(this.tagName)}>`;
+        .join("")}</${this.processTagName(this.tagName, options)}>`;
     }
     return baseValue.replace(/>$/, "/>");
   }
@@ -395,7 +423,14 @@ export class JsxClosingElement extends JsxOpeningElement {
     return tagName;
   }
 
+  compileDynamicComponent() {
+    return "</component>";
+  }
+
   toString(options: toStringOptions) {
+    if (this.isDynamicComponent(options)) {
+      return this.compileDynamicComponent();
+    }
     return `</${this.processTagName(this.tagName).toString(options)}>`;
   }
 }

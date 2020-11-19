@@ -74,10 +74,10 @@ export class JsxAttribute extends BaseJsxAttribute {
     return this.isTemplateAttribute(options);
   }
 
-  compileEvent(options?: toStringOptions) {
+  compileEvent(options: toStringOptions) {
     return `@${getEventName(
       this.name,
-      options?.jsxComponent?.state
+      options.jsxComponent!.state
     )}="${this.compileInitializer(options)}"`;
   }
 

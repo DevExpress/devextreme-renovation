@@ -94,7 +94,11 @@ export class JsxOpeningElement extends Expression {
     this.typeArguments = typeArguments;
     this.attributes = attributes;
     this.context = context;
-    const component = context.components?.[tagName.toString()];
+    this.fillComponent();
+  }
+
+  fillComponent() {
+    const component = this.context.components?.[this.tagName.toString()];
     if (component instanceof Component) {
       this.component = component;
     }

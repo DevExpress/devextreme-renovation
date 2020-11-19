@@ -45,6 +45,8 @@ import SetForwardRefDeep from "./set-ref/set-forward-ref-deep/parent";
 import InlineArrowFunction from "./inline-arrow-function";
 import ListTemplate from "./list-template";
 
+import DynamicComponent from "./dynamic-components/dynamic-component";
+
 function view(model: App) {
   return (
     <div>
@@ -153,6 +155,7 @@ function view(model: App) {
       <RenderSlotCondition>content</RenderSlotCondition>
       <DefaultPropsComponent />
       <InlineArrowFunction />
+      <DynamicComponent />
     </div>
   );
 }

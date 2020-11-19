@@ -22,6 +22,7 @@ const Props = {
   },
 };
 export const DxWidget = {
+  name: "Widget",
   props: Props,
   computed: {
     __sum() {

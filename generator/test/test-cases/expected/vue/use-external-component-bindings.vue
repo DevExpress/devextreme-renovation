@@ -11,6 +11,7 @@ export function defaultOptions(rule) {
 }
 
 export const DxWidget = {
+  name: "Widget",
   props: Object.keys(Props).reduce(
     (props, propName) => ({
       ...props,

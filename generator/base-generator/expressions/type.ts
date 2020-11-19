@@ -461,6 +461,20 @@ export const isTypeArray = (type: string | TypeExpression | undefined) =>
     (type.indexOf("Array") === 0 ||
       type.lastIndexOf("[]") === type.length - 2));
 
+export const extractElementType = (
+  type: string | TypeExpression | undefined
+): TypeExpression | void => {
+  if (type instanceof TypeReferenceNode) {
+    if (type.typeName.toString() === "Array") {
+      return type.typeArguments[0];
+    }
+  }
+
+  if (type instanceof ArrayTypeNode) {
+    return type.elementType;
+  }
+};
+
 export const extractComplexType = (type?: string | TypeExpression): string => {
   if (type instanceof TypeReferenceNode) {
     if (type.typeName.toString() === "Array") {

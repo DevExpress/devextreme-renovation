@@ -82,6 +82,7 @@ export default class List extends ListInput {
 @NgModule({
   declarations: [List],
   imports: [DxWidgetWithPropsModule, CommonModule],
+  entryComponents: [WidgetWithProps],
   exports: [List],
 })
 export class DxListModule {}

@@ -13,6 +13,7 @@ const Props = {
   },
 };
 export const DxRefOnChildrenParent = {
+  name: "RefOnChildrenParent",
   components: {
     Child,
   },

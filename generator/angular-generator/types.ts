@@ -12,12 +12,27 @@ import {
 } from "../base-generator/expressions/class-members";
 import { BaseFunction } from "../base-generator/expressions/functions";
 import { Identifier } from "../base-generator/expressions/common";
+import { JsxAttribute } from "./expressions/jsx/attribute";
+import { JsxSpreadAttribute } from "./expressions/jsx/spread-attribute";
+
+export type DynamicComponent = {
+  expression: Expression;
+  props: (JsxAttribute | JsxSpreadAttribute)[];
+  index: number;
+  templates: Array<{
+    propertyName: string;
+    templateRef: string;
+    templateRefProperty: string;
+  }>;
+};
 
 export interface toStringOptions extends BaseToStringOptions {
   members: Array<Property | Method>;
   hasStyle?: boolean;
   keys?: Expression[];
   trackBy?: TrackByAttribute[];
+  mapItemName?: string;
+  mapItemExpression?: Expression;
   templateComponents?: Heritable[];
   defaultTemplates?: {
     [name: string]: {
@@ -26,6 +41,7 @@ export interface toStringOptions extends BaseToStringOptions {
     };
   };
   forwardRefs?: BaseClassMember[];
+  dynamicComponents?: DynamicComponent[];
 }
 
 export type AngularGeneratorContext = GeneratorContext & {

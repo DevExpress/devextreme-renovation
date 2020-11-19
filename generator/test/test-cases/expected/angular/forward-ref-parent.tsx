@@ -150,6 +150,7 @@ export default class RefOnChildrenParent extends Props {
 @NgModule({
   declarations: [RefOnChildrenParent],
   imports: [DxRefOnChildrenChildModule, CommonModule],
+  entryComponents: [Child],
   exports: [RefOnChildrenParent],
 })
 export class DxRefOnChildrenParentModule {}

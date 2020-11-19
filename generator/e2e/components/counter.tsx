@@ -4,6 +4,7 @@ import {
   JSXComponent,
   OneWay,
   TwoWay,
+  Event,
 } from "../../component_declaration/common";
 import Button from "./button";
 
@@ -19,6 +20,7 @@ function view(model: Counter) {
 export class CounterInput {
   @OneWay() id?: string;
   @TwoWay() value: number = 0;
+  @Event() valueChange: (e: number) => void = () => {};
 }
 
 @Component({

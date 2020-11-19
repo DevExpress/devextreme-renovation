@@ -343,3 +343,57 @@ cloneTest("Set forward ref", async (t) => {
       "non-object-ref-value: 10content in forwardRefcontent in forwardRefDeepconsumer is rendered:element passed"
     );
 });
+
+cloneTest("Dynamic components", async (t) => {
+  const dynamicComponent = await Selector("#dynamic-component");
+  const dynamicComponentCondition = await Selector(
+    "#dynamic-component-condition"
+  );
+  const dynamicComponentArray = await Selector(".dynamic-component-array");
+  const dynamicComponentSlot = await Selector("#dynamic-component-slot");
+  const dynamicComponentWithTemplate = await Selector(
+    "#dynamic-component-button-with-template"
+  );
+
+  const checkContent = async (value, conditionIsVisible) => {
+    await t.expect((await dynamicComponent.textContent).trim()).eql(`${value}`);
+
+    if (conditionIsVisible) {
+      await t
+        .expect((await dynamicComponentCondition.textContent).trim())
+        .eql(`${value + 1}`);
+    } else {
+      await t.expect(dynamicComponentCondition.exists).notOk();
+    }
+
+    await t
+      .expect((await dynamicComponentArray.nth(0).textContent).trim())
+      .eql(`${value}`);
+
+    await t
+      .expect((await dynamicComponentArray.nth(1).textContent).trim())
+      .eql(`${value}`);
+
+    await t
+      .expect((await dynamicComponentSlot.textContent).trim())
+      .eql(`Slot:${value}`);
+
+    await t
+      .expect((await dynamicComponentWithTemplate.textContent).trim())
+      .eql(`Template:${value}`);
+  };
+
+  await checkContent(1, false);
+
+  await t.click(dynamicComponent);
+
+  await checkContent(4, true);
+
+  await t.click(dynamicComponentCondition);
+
+  await checkContent(12, true);
+
+  await t.click(dynamicComponentArray.nth(0));
+
+  await checkContent(26, false);
+});
