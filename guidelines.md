@@ -4,49 +4,50 @@
 
 ## Содержание
 
-- [Цели](#цели)		
-- [Принципы](#принципы)		
-- [Декларативные компоненты](#декларативные-компоненты)		
-  - [Описание компонента](#описание-компонента)		
-    - [Model](#model)		
-      - [Декораторы членов класса](#декораторы-членов-класса)		
-    - [ViewModel](#viewmodel)		
-      - [Декораторы членов класса](#декораторы-членов-класса-1)		
-    - [View](#view)		
-- [Рекомендации](#рекомендации)		
-  - [Код](#код)		
-  - [Компоненты](#компоненты)		
-  - [Тестирование](#тестирование)		
-  - [Описание пропов](#описание-пропов)		
-  - [Жизненный цикл компонента](#жизненный-цикл-компонента)		
-  - [Разметка и стили](#разметка-и-стили)		
-  - [Использование необъявленных атрибутов](#использование-необъявленных-атрибутов)		
-- [Обратная совместимость](#обратная-совместимость)		
-  - [Значения для TwoWay пропов](#значения-для-twoway-пропов)		
-  - [Подписка на ивенты](#подписка-на-ивенты)		
-  - [Ивенты комопнентов](#ивенты-комопнентов)		
-  - [Темплейты](#темплейты)		
-  - [registerKeyHandler](#registerkeyhandler)		
-- [Разработка](#разработка)		
-  - [Именование и структура файлов, папок](#именование-и-структура-файлов-папок)		
-  - [Исходный код](#исходный-код)		
-  - [jQuery](#jquery)		
-  - [Тестирование компонентов](#тестирование-компонентов)		
-  - [Playground](#playground)		
+- [Цели](#цели)
+- [Принципы](#принципы)
+- [Декларативные компоненты](#декларативные-компоненты)
+  - [Описание компонента](#описание-компонента)
+    - [Model](#model)
+      - [Декораторы членов класса](#декораторы-членов-класса)
+    - [ViewModel](#viewmodel)
+      - [Декораторы членов класса](#декораторы-членов-класса-1)
+    - [View](#view)
+- [Рекомендации](#рекомендации)
+  - [Код](#код)
+  - [Компоненты](#компоненты)
+  - [Тестирование](#тестирование)
+  - [Описание пропов](#описание-пропов)
+  - [Жизненный цикл компонента](#жизненный-цикл-компонента)
+  - [Разметка и стили](#разметка-и-стили)
+  - [Использование необъявленных атрибутов](#использование-необъявленных-атрибутов)
+- [Обратная совместимость](#обратная-совместимость)
+  - [Значения для TwoWay пропов](#значения-для-twoway-пропов)
+  - [Подписка на ивенты](#подписка-на-ивенты)
+  - [Ивенты комопнентов](#ивенты-комопнентов)
+  - [Темплейты](#темплейты)
+  - [registerKeyHandler](#registerkeyhandler)
+  - [Навешивание кастомных классов](#навешивание-кастомных-классов)
+- [Разработка](#разработка)
+  - [Именование и структура файлов, папок](#именование-и-структура-файлов-папок)
+  - [Исходный код](#исходный-код)
+  - [jQuery](#jquery)
+  - [Тестирование компонентов](#тестирование-компонентов)
+  - [Playground](#playground)
   - [Оформление багов](#оформление-багов)
   - [Ограничения](#ограничения)
-  - [Use Cases](#use-cases)		
-    - [@OneWay()](#oneway)		
-    - [@TwoWay()](#twoway)	
-    - [@Nested()](#nested)			
-    - [@Event()](#event)		
-    - [@Ref()](#ref)		
-    - [@ForwardRef()](#forwardref)		
-    - [@Effect()](#effect)		
-    - [@Template()](#template)	
-    - [@Slot()](#slot)		
-    - [@Method()](#method)	
-    - [Context](#context)	
+  - [Use Cases](#use-cases)
+    - [@OneWay()](#oneway)
+    - [@TwoWay()](#twoway)
+    - [@Nested()](#nested)
+    - [@Event()](#event)
+    - [@Ref()](#ref)
+    - [@ForwardRef()](#forwardref)
+    - [@Effect()](#effect)
+    - [@Template()](#template)
+    - [@Slot()](#slot)
+    - [@Method()](#method)
+    - [Context](#context)
     - [JSX](#jsx)
     - [Portals](#portals)
     - [Динамические компонеты](#динамические-компоненты)
@@ -544,6 +545,34 @@ onWidgetKeyDown(event: Event, options) {
   }
 }
 ```
+
+### Навешивание кастомных классов
+
+При использовании jQuery-враппера реновированного компонента в старом виджете часто возникает потребность передать компоненту CSS-классы.
+
+Сделать это можно несколькими способами:
+1. Компонент имеет соответствующий проп, который и используется для этого. Чаще всего это `className`
+1. Можно указать кастомные классы в разметке виджета. Здесь возможны два случая:
+    - Классы, начинающиеся на `dx-` можно указывать в разметке только ДО создания виджета. Если указать класс после создания виджета, то при перерисовках (например, на ховере) он удалится
+        ```ts
+        $('#button').addClass('dx-custom-class-1'); // сохранится на элементе при перерисовках
+        $('#button').dxSomeWidget({});
+        $('#button').addClass('dx-custom-class-2'); // пропадет при перерисовках виджета, например при смене стейта
+        ```
+    - Все остальные классы можно указывать в разметке в любой момент. Такие классы при перерисовках не удаляются
+        ```ts
+        $('#button').addClass('custom-class-1'); // сохранится на элементе при перерисовках
+        $('#button').dxSomeWidget({});
+        $('#button').addClass('custom-class-2'); // сохранится на элементе при перерисовках
+        ```
+1. Передать класс, используя опцию `elementAttr`, которая есть у всех jQuery-врапперов
+    ```ts
+    $('#button').dxSomeWidget({
+      elementAttr: {
+        class: 'dx-custom-class'
+      }
+    });
+    ```
 
 ## Разработка
 
@@ -1302,7 +1331,7 @@ const RtlEnabledContext = createContext<boolean>(defaultValue);
 
 ```
 
-##### Передача контеста 
+##### Передача контеста
 
 Для передачи контекста необходимо использовать проперти компонента или геттер. Для этого его необходимо отметить декоратором `Provider`.
 
@@ -1320,7 +1349,7 @@ export class ProviderComponent extends JSXComponent(Props){
   get rtlEnabledProvider(){
     return this.props.rtlEnabled;
   }
-} 
+}
 ```
 
 ##### Получение контекста
@@ -1331,7 +1360,7 @@ export class ProviderComponent extends JSXComponent(Props){
 import { Consumer, JSXComponent, ComponentBindings, OneWay, Component } from 'devextreme-generator/component_declaration/common';
 
 
-const view = ({ rtlEnabled }: ConsumerComponent) => 
+const view = ({ rtlEnabled }: ConsumerComponent) =>
   (<div dir={rtlEnabled?"rtl":"ltr"}></div>)
 
 @ComponentBindings()
@@ -1342,7 +1371,7 @@ export class Props {
 export class ConsumerComponent extends JSXComponent(Props){
   @Consumer(RtlEnabledContext)
   rtlEnabled!: boolean;
-} 
+}
 
 ```
 
@@ -1404,7 +1433,7 @@ class MyComponent extends JSXComponent(MyComponentProps) {
   get bodyElement() {
     return document?.body;
   }
-  
+
   @Effect({ run: 'once' })
   afterInit() {
     this.rendered = true;
@@ -1460,8 +1489,8 @@ export function viewFunction({
         }
     </Fragment>
 }
-  
-  
+
+
 const plugins: JSXTemplate<PlaceholderItemProps>[] = [];
 
 /*
@@ -1470,13 +1499,13 @@ const plugins: JSXTemplate<PlaceholderItemProps>[] = [];
 export const register = (component: JSXTemplate<PlaceholderItemProps>) => {
     plugins.unshift(component);
 };
-  
+
 @ComponentBindings()
 export class PlaceholderProps {
     @OneWay() column = 0;
     @OneWay() index = 0;
 }
-  
+
 @Component({ defaultOptionRules: null, view: viewFunction })
 export class Placeholder extends JSXComponent<PlaceholderProps>() {
     get currentComponent(): JSXTemplate<PlaceholderItemProps> {
@@ -1507,7 +1536,7 @@ function view({ props: { value, onClick, template: Template } }: ButtonItem) {
 @Component({
     view,
 })
-export default class ButtonItem extends JSXComponent<PlaceholderItemProps, "template">() { 
+export default class ButtonItem extends JSXComponent<PlaceholderItemProps, "template">() {
 
 }
 ```
