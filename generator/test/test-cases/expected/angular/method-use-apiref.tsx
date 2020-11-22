@@ -41,6 +41,7 @@ export default class WidgetWithApiRef extends WidgetWithApiRefInput {
 @NgModule({
   declarations: [WidgetWithApiRef],
   imports: [DxWidgetModule, CommonModule],
+  entryComponents: [BaseWidget],
   exports: [WidgetWithApiRef],
 })
 export class DxWidgetWithApiRefModule {}

@@ -12,6 +12,7 @@ export const ImportProps = {
   },
 };
 export const DxImport = {
+  name: "Import",
   props: ImportProps,
   computed: {
     __restAttributes() {

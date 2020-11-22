@@ -36,6 +36,7 @@ export default class Child extends ChildInput {
 @NgModule({
   declarations: [Child],
   imports: [DxWidgetModule, CommonModule],
+  entryComponents: [Widget],
   exports: [Child],
 })
 export class DxChildModule {}

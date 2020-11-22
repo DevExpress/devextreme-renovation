@@ -9,7 +9,7 @@ export declare type WidgetInputType = {
   onClick: (a: number) => void;
   onSomething: EventCallBack<number>;
 };
-const WidgetInput: WidgetInputType = {
+export const WidgetInput: WidgetInputType = {
   height: 10,
   export: {},
   onClick: () => {},

@@ -15,6 +15,7 @@ const Props = {
   },
 };
 export const DxRefOnChildrenChild = {
+  name: "RefOnChildrenChild",
   props: Props,
   computed: {
     __restAttributes() {

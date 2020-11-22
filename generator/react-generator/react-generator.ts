@@ -27,7 +27,7 @@ import { Parameter } from "../base-generator/expressions/functions";
 import { Block } from "../base-generator/expressions/statements";
 import { GetAccessor } from "./expressions/class-members/get-accessor";
 import { PropertyAccess } from "./expressions/property-access";
-import { TypeReferenceNode } from "./expressions/type-refence-node";
+import { TypeReferenceNode } from "./expressions/type-reference-node";
 import { TypeParameterDeclaration } from "../base-generator/expressions/type-parameter-declaration";
 
 export class ReactGenerator extends BaseGenerator {

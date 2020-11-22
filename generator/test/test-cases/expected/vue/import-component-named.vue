@@ -12,6 +12,7 @@ const ChildInput = {
   },
 };
 export const DxChild = {
+  name: "Child",
   components: {
     Widget,
   },

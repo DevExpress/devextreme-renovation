@@ -18,6 +18,7 @@ import WidgetWithTemplate from "./dx-widget-with-template";
 import InnerWidget from "./dx-inner-widget";
 export const WidgetProps = {};
 export const DxWidget = {
+  name: "Widget",
   components: {
     WidgetWithTemplate,
     InnerWidget,

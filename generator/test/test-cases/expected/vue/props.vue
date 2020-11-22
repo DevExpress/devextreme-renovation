@@ -2,7 +2,7 @@
   <span></span>
 </template>
 <script>
-const WidgetInput = {
+export const WidgetInput = {
   height: {
     type: Number,
     default() {
@@ -17,6 +17,7 @@ const WidgetInput = {
   },
 };
 export const DxWidget = {
+  name: "Widget",
   props: WidgetInput,
   computed: {
     __restAttributes() {

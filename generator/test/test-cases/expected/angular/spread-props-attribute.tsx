@@ -72,6 +72,7 @@ export default class Widget
 @NgModule({
   declarations: [Widget],
   imports: [DxInnerWidgetModule, CommonModule],
+  entryComponents: [InnerWidget],
   exports: [Widget],
 })
 export class DxWidgetModule {}

@@ -48,6 +48,8 @@
     - [@Method()](#method)	
     - [Context](#context)	
     - [JSX](#jsx)
+    - [Portals](#portals)
+    - [Динамические компонеты](#динамические-компоненты)
 
 ## Цели
 
@@ -1424,5 +1426,88 @@ function viewFunction(viewModel: MyComponent) {
       </Portal>}
     </div>
   );
+}
+```
+
+#### Динамические компоненты
+
+Крупные компоненты могут иметь нестатическую разметку, например, при реализации плагинов. В этом случае необходимо использовать динамические компоненты, которые будет рисовать некий ```placeholder``` компонент в зависимости от подключенных плагинов.
+
+Ниже представлена декларация такого компонента
+
+```typescript
+
+import {
+    JSXComponent, Component, ComponentBindings, OneWay, Fragment, JSXTemplate, InternalState,
+} from "../../../component_declaration/common";
+
+import { PlaceholderItemProps } from "./placeholder-props"; // здесь объявленны обычные пропсы компоненты см. [ComponentBindings](#описание-компонента)
+
+export function viewFunction({
+    currentComponent: CurrentComponent,
+    props: { column, index },
+}: Placeholder) {
+    return <Fragment>
+        {
+            CurrentComponent
+            && (
+                <CurrentComponent
+                    value={v}
+                    onClick={onClick}
+                    template={() => <Placeholder column={column} index={index + 1} />}
+                />
+            )
+        }
+    </Fragment>
+}
+  
+  
+const plugins: JSXTemplate<PlaceholderItemProps>[] = [];
+
+/*
+Экспорт функции, которая используется для регистрации динамических компонентов
+*/
+export const register = (component: JSXTemplate<PlaceholderItemProps>) => {
+    plugins.unshift(component);
+};
+  
+@ComponentBindings()
+export class PlaceholderProps {
+    @OneWay() column = 0;
+    @OneWay() index = 0;
+}
+  
+@Component({ defaultOptionRules: null, view: viewFunction })
+export class Placeholder extends JSXComponent<PlaceholderProps>() {
+    get currentComponent(): JSXTemplate<PlaceholderItemProps> {
+        return plugins[this.props.index];
+    }
+}
+
+```
+
+Ниже код компонента который будет рисовать наш плейсхолдер
+
+```typescript
+import {
+    JSXComponent, Component,
+    Fragment
+} from "../../../component_declaration/common";
+
+import { PlaceholderItemProps } from "./placeholder-props";
+import Button from "../button";
+
+function view({ props: { value, onClick, template: Template } }: ButtonItem) {
+    return <Fragment>
+        <Button onClick={onClick} >{value}</Button>
+        <Template />
+    </Fragment>
+}
+
+@Component({
+    view,
+})
+export default class ButtonItem extends JSXComponent<PlaceholderItemProps, "template">() { 
+
 }
 ```

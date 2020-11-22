@@ -86,6 +86,7 @@ export default class TemplateDefaultValue extends TemplateDefaultValueProps {
 @NgModule({
   declarations: [TemplateDefaultValue],
   imports: [DxWidgetWithPropsModule, CommonModule],
+  entryComponents: [WidgetWithProps],
   exports: [TemplateDefaultValue],
 })
 export class DxTemplateDefaultValueModule {}

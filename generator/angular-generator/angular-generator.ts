@@ -18,6 +18,7 @@ import {
   JsxOpeningElement,
   processTagName,
   JsxSelfClosingElement,
+  JsxClosingElement,
 } from "./expressions/jsx/jsx-opening-element";
 import { JsxElement } from "./expressions/jsx/elements";
 import { Decorator } from "./expressions/decorator";
@@ -28,7 +29,6 @@ import { GetAccessor } from "./expressions/class-members/get-accessor";
 import { VariableDeclaration } from "./expressions/variable-expression";
 import { ArrowFunction } from "./expressions/functions/arrow-function";
 import { Function } from "./expressions/functions/function";
-import { JsxClosingElement } from "../base-generator/expressions/jsx";
 import { PropertyAccess } from "./expressions/property-access";
 import { AsExpression } from "./expressions/as-expression";
 import { counter } from "./counter";
@@ -43,6 +43,7 @@ import {
 } from "../base-generator/expressions/variables";
 import { ContextDeclaration } from "./expressions/context-declaration";
 import { PropertyAccessChain } from "./expressions/property-access-chain";
+import { TypeReferenceNode } from "./expressions/type-reference-node";
 
 export class AngularGenerator extends Generator {
   createJsxExpression(dotDotDotToken: string = "", expression?: Expression) {
@@ -276,6 +277,13 @@ export class AngularGenerator extends Generator {
 
   createAsExpression(expression: Expression, type: TypeExpression) {
     return new AsExpression(expression, type);
+  }
+
+  createTypeReferenceNode(
+    typeName: Identifier,
+    typeArguments?: TypeExpression[]
+  ) {
+    return new TypeReferenceNode(typeName, typeArguments, this.getContext());
   }
 
   createNonNullExpression(expression: Expression) {

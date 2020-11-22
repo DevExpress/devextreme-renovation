@@ -44,6 +44,7 @@ const DxPortal = Vue.extend({
 });
 
 export const DxWidget = {
+  name: "Widget",
   components: {
     DxPortal,
   },

@@ -23,6 +23,7 @@ export const WidgetProps = {
   },
 };
 export const DxWidgetWithGlobals = {
+  name: "WidgetWithGlobals",
   components: {
     ExternalComponent,
   },

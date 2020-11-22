@@ -55,7 +55,7 @@ export class JsxAttribute extends BaseJsxAttribute {
     return `#${this.initializer.toString(options)}`;
   }
 
-  compileEvent(options?: toStringOptions) {
+  compileEvent(options: toStringOptions) {
     return `(${this.name})="${this.compileInitializer(options)}($event)"`;
   }
 

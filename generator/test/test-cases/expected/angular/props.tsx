@@ -1,7 +1,7 @@
 type EventCallBack<Type> = (e: Type) => void;
 
 import { Input, Output, EventEmitter } from "@angular/core";
-class WidgetInput {
+export class WidgetInput {
   @Input() height: number = 10;
   @Input() export: object = {};
   @Output() onClick: EventEmitter<number> = new EventEmitter();

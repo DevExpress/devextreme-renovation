@@ -1,27 +1,43 @@
-import { Component, EventEmitter, HostListener, Input, NgModule, Output, Renderer2, ElementRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  EventEmitter,
+  HostListener,
+  Input,
+  NgModule,
+  Output,
+  Renderer2,
+  ElementRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  TemplateRef,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
 
 // import convertRulesToOptions from 'core/options/utils';
-const convertRulesToOptions = (rules: { device: () => boolean, options: any }[]) => {
+const convertRulesToOptions = (
+  rules: { device: () => boolean; options: any }[]
+) => {
   return rules.reduce((options, rule) => {
     return {
       ...options,
-      ...(rule.device() ? rule.options : {})
+      ...(rule.device() ? rule.options : {}),
     };
   }, {});
 };
 
-export const defaultOptionsRules: { device: () => boolean, options: any }[] = [{
-  device: function() {
-    return true;
+export const defaultOptionsRules: { device: () => boolean; options: any }[] = [
+  {
+    device: function () {
+      return true;
+    },
+    options: {
+      text: "Push me!",
+    },
   },
-  options: {
-    text: "Push me!"
-  }
-}];
+];
 
 @Component({
-  selector: 'dx-button',
+  selector: "dx-button",
   template: `<div
     [class]="cssClasses"
     [title]="hint"
@@ -29,28 +45,49 @@ export const defaultOptionsRules: { device: () => boolean, options: any }[] = [{
     (mouseover)="onPointerOver($event)"
     (mouseout)="onPointerOut($event)"
     (mousedown)="onPointerDown($event)"
-    (click)="onClickHandler($event)">
-    <div class="dx-button-content">
-      <span class="dx-button-text">{{text}}</span>
+    (click)="onClickHandler($event)"
+  >
+    <ng-container *ngIf="template">
+      <ng-container *ngTemplateOutlet="template; context: { text: text }">
+      </ng-container>
+    </ng-container>
+
+    <div *ngIf="!template" class="dx-button-content">
+      <span class="dx-button-text">{{ text }}</span>
     </div>
   </div>`,
-  styleUrls: ['./dx-button.css']
+  styleUrls: ["./dx-button.css"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DxButtonComponent {
-  constructor(private renderer: Renderer2, private elRef: ElementRef) {
+  constructor(
+    private renderer: Renderer2,
+    private elRef: ElementRef,
+    private changeDetectorRef: ChangeDetectorRef
+  ) {
     const defaultOptions = convertRulesToOptions(defaultOptionsRules);
-    for(let option in defaultOptions) {
+    for (let option in defaultOptions) {
       this[option] = defaultOptions[option];
     }
   }
 
+  @Input() template: TemplateRef<any> | null = null;
+
+  changeDetection() {
+    this.changeDetectorRef.detectChanges();
+  }
+
   ngOnChanges() {
-    for(let key in this.elementAttr || {}) {
-      this.renderer.setAttribute(this.elRef.nativeElement, key, this.elementAttr[key]);
+    for (let key in this.elementAttr || {}) {
+      this.renderer.setAttribute(
+        this.elRef.nativeElement,
+        key,
+        this.elementAttr[key]
+      );
     }
   }
 
-  @Input() classNames?: Array<string>
+  @Input() classNames?: Array<string>;
   @Input() elementAttr?: { [name: string]: any };
   @Input() height?: string;
   @Input() hint?: string;
@@ -77,7 +114,7 @@ export class DxButtonComponent {
     this._active = true;
   }
 
-  @HostListener('document:mouseup', ['$event'])
+  @HostListener("document:mouseup", ["$event"])
   onPointerUp() {
     this._active = false;
   }
@@ -88,40 +125,40 @@ export class DxButtonComponent {
 
   get style() {
     return {
-      width: this.width
+      width: this.width,
     };
   }
 
   get cssClasses() {
-    const classNames = ['dx-button'];
+    const classNames = ["dx-button"];
 
-    if(this.stylingMode === 'outlined') {
-      classNames.push('dx-button-mode-outlined');
-    } else if(this.stylingMode === 'text') {
-      classNames.push('dx-button-mode-text');
+    if (this.stylingMode === "outlined") {
+      classNames.push("dx-button-mode-outlined");
+    } else if (this.stylingMode === "text") {
+      classNames.push("dx-button-mode-text");
     } else {
-      classNames.push('dx-button-mode-contained');
+      classNames.push("dx-button-mode-contained");
     }
 
-    if(this.type === 'danger') {
-      classNames.push('dx-button-danger');
-    } else if(this.type === 'default') {
-      classNames.push('dx-button-default');
-    } else if(this.type === 'success') {
-      classNames.push('dx-button-success');
+    if (this.type === "danger") {
+      classNames.push("dx-button-danger");
+    } else if (this.type === "default") {
+      classNames.push("dx-button-default");
+    } else if (this.type === "success") {
+      classNames.push("dx-button-success");
     } else {
-      classNames.push('dx-button-normal');
+      classNames.push("dx-button-normal");
     }
 
-    if(this.text) {
-      classNames.push('dx-button-has-text');
+    if (this.text) {
+      classNames.push("dx-button-has-text");
     }
 
-    if(this._hovered) {
+    if (this._hovered) {
       classNames.push("dx-state-hover");
     }
 
-    if(this.pressed || this._active) {
+    if (this.pressed || this._active) {
       classNames.push("dx-state-active");
     }
     return classNames.concat(this.classNames || []).join(" ");
@@ -130,9 +167,7 @@ export class DxButtonComponent {
 
 @NgModule({
   declarations: [DxButtonComponent],
-  imports: [
-    CommonModule
-  ],
-  exports: [DxButtonComponent]
+  imports: [CommonModule],
+  exports: [DxButtonComponent],
 })
-export class DxButtonModule { }
+export class DxButtonModule {}

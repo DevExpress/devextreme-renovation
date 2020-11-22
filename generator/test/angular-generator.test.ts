@@ -22,6 +22,8 @@ import { AngularDirective } from "../angular-generator/expressions/jsx/angular-d
 import { SetAccessor } from "../angular-generator/expressions/class-members/set-accessor";
 import { Expression } from "../base-generator/expressions/base";
 import { ComponentParameters } from "../component_declaration/common";
+import { JsxAttribute } from "../angular-generator/expressions/jsx/attribute";
+import { Parameter } from "../base-generator/expressions/functions";
 
 const { createComponent, createComponentDecorator, createDecorator } = factory(
   generator
@@ -720,7 +722,12 @@ mocha.describe("Angular generator", function () {
             })
           ),
           removeSpaces(
-            `<ng-container*ngIf="condition">{{_value}}</ng-container><ng-container*ngIf="!(condition)">{{!_value}}</ng-container>`
+            `<ng-container *ngIf="condition">
+              {{_value}}
+            </ng-container>
+            <ng-container *ngIf="!(condition)">
+              {{!_value}}
+            </ng-container>`
           )
         );
       }
@@ -938,6 +945,487 @@ mocha.describe("Angular generator", function () {
             </ng-container>
           </div>`)
       );
+    });
+
+    mocha.describe("Dynamic components", function () {
+      mocha.it(
+        "<DynamicComponent /> -> <ng-template dynamicComponent>",
+        function () {
+          const getterName = "DynamicComponent";
+          const getter = generator.createGetAccessor(
+            [],
+            undefined,
+            generator.createIdentifier(getterName),
+            [],
+            undefined,
+            generator.createBlock([], false)
+          );
+
+          const element = generator.createJsxSelfClosingElement(
+            generator.createPropertyAccess(
+              generator.createIdentifier("viewModel"),
+              generator.createIdentifier(getterName)
+            )
+          );
+
+          const options: toStringOptions = {
+            members: [getter],
+            componentContext: "viewModel",
+            newComponentContext: "",
+          };
+
+          assert.strictEqual(
+            removeSpaces(element.toString(options)),
+            removeSpaces(`
+              <ng-template dynamicComponent
+                [index]="0"
+                let-DynamicComponent="DynamicComponent"
+              >
+              </ng-template>`)
+          );
+          assert.strictEqual(options.dynamicComponents?.length, 1);
+          assert.strictEqual(
+            options.dynamicComponents![0].expression.toString(),
+            "viewModel.DynamicComponent"
+          );
+          assert.deepEqual(options.dynamicComponents![0].props, []);
+        }
+      );
+
+      mocha.it("<DynamicComponent [props]='value'/>", function () {
+        const getterName = "DynamicComponent";
+        const getter = generator.createGetAccessor(
+          [],
+          undefined,
+          generator.createIdentifier(getterName),
+          [],
+          undefined,
+          generator.createBlock([], false)
+        );
+
+        const element = generator.createJsxSelfClosingElement(
+          generator.createPropertyAccess(
+            generator.createIdentifier("viewModel"),
+            generator.createIdentifier(getterName)
+          ),
+          undefined,
+          [
+            generator.createJsxAttribute(
+              generator.createIdentifier("prop1"),
+              generator.createStringLiteral("value1")
+            ),
+            generator.createJsxAttribute(
+              generator.createIdentifier("prop2"),
+              generator.createStringLiteral("value2")
+            ),
+          ]
+        );
+
+        const options: toStringOptions = {
+          members: [getter],
+          componentContext: "viewModel",
+          newComponentContext: "",
+        };
+
+        assert.strictEqual(
+          removeSpaces(element.toString(options)),
+          removeSpaces(`
+            <ng-template dynamicComponent
+              [index]="0"
+              let-DynamicComponent="DynamicComponent">
+            </ng-template>`)
+        );
+        assert.strictEqual(options.dynamicComponents?.length, 1);
+        assert.strictEqual(
+          options.dynamicComponents![0].expression.toString(),
+          "viewModel.DynamicComponent"
+        );
+        assert.strictEqual(
+          options.dynamicComponents![0].props.toString(),
+          'prop1="value1",prop2="value2"'
+        );
+      });
+
+      mocha.it(
+        "<DynamicComponent></DynamicComponent> -> <ng-template dynamicComponent>",
+        function () {
+          const getterName = "DynamicComponent";
+          const getter = generator.createGetAccessor(
+            [],
+            undefined,
+            generator.createIdentifier(getterName),
+            [],
+            undefined,
+            generator.createBlock([], false)
+          );
+
+          const tag = generator.createPropertyAccess(
+            generator.createIdentifier("viewModel"),
+            generator.createIdentifier(getterName)
+          );
+          const element = generator.createJsxElement(
+            generator.createJsxOpeningElement(tag, undefined, []),
+            [],
+            generator.createJsxClosingElement(tag)
+          );
+
+          assert.strictEqual(
+            removeSpaces(
+              element.toString({
+                members: [getter],
+                componentContext: "viewModel",
+                newComponentContext: "",
+              })
+            ),
+            removeSpaces(`
+              <ng-template dynamicComponent
+                [index]="0"
+                let-DynamicComponent="DynamicComponent">
+              </ng-template>`)
+          );
+        }
+      );
+
+      mocha.it(
+        "<DynamicComponent template={()=><div/>}/> -> <component><template></component>",
+        function () {
+          const component = createComponent([
+            generator.createProperty(
+              [createDecorator(Decorators.Template)],
+              [],
+              generator.createIdentifier("template")
+            ),
+          ]);
+
+          const getterName = "DynamicComponent";
+          const getter = generator.createGetAccessor(
+            [],
+            undefined,
+            generator.createIdentifier(getterName),
+            [],
+            generator.createTypeReferenceNode(component._name),
+            generator.createBlock([], false)
+          );
+
+          const tag = generator.createPropertyAccess(
+            generator.createIdentifier("viewModel"),
+            getter._name
+          );
+          const element = generator.createJsxSelfClosingElement(
+            tag,
+            undefined,
+            [
+              generator.createJsxAttribute(
+                generator.createIdentifier("template"),
+                generator.createArrowFunction(
+                  [],
+                  undefined,
+                  [],
+                  undefined,
+                  generator.SyntaxKind.EqualsGreaterThanToken,
+                  generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("div")
+                  )
+                )
+              ),
+            ]
+          );
+
+          const options: toStringOptions = {
+            members: [getter],
+            componentContext: "viewModel",
+            newComponentContext: "",
+          };
+
+          assert.strictEqual(
+            removeSpaces(element.toString(options)),
+            removeSpaces(`
+              <ng-template dynamicComponent
+                [index]="0"
+                let-DynamicComponent="DynamicComponent">
+                </ng-template>
+                <ng-template #__template__generated>
+                    <div></div>
+                  </ng-template>
+            `)
+          );
+
+          assert.deepEqual(options.dynamicComponents?.[0].templates, [
+            {
+              propertyName: "template",
+              templateRef: "__template__generated",
+              templateRefProperty: "templateRef0",
+            },
+          ]);
+        }
+      );
+
+      mocha.it(
+        "<DynamicComponent template={()=><div/>}></DynamicComponent> -> <component><template></component>",
+        function () {
+          const component = createComponent([
+            generator.createProperty(
+              [createDecorator(Decorators.Template)],
+              [],
+              generator.createIdentifier("template")
+            ),
+          ]);
+
+          const getterName = "DynamicComponent";
+          const getter = generator.createGetAccessor(
+            [],
+            undefined,
+            generator.createIdentifier(getterName),
+            [],
+            generator.createTypeReferenceNode(component._name),
+            generator.createBlock([], false)
+          );
+
+          const tag = generator.createPropertyAccess(
+            generator.createIdentifier("viewModel"),
+            getter._name
+          );
+          const element = generator.createJsxElement(
+            generator.createJsxOpeningElement(tag, undefined, [
+              generator.createJsxAttribute(
+                generator.createIdentifier("template"),
+                generator.createArrowFunction(
+                  [],
+                  undefined,
+                  [],
+                  undefined,
+                  generator.SyntaxKind.EqualsGreaterThanToken,
+                  generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("div")
+                  )
+                )
+              ),
+            ]),
+            [
+              generator.createJsxSelfClosingElement(
+                generator.createIdentifier("div")
+              ),
+            ],
+            generator.createJsxClosingElement(tag)
+          );
+
+          const options: toStringOptions = {
+            members: [getter],
+            componentContext: "viewModel",
+            newComponentContext: "",
+          };
+
+          assert.strictEqual(
+            removeSpaces(element.toString(options)),
+            removeSpaces(`
+              <ng-template dynamicComponent
+                [index]="0"
+                let-DynamicComponent="DynamicComponent">
+                  <div></div>
+                </ng-template>
+                <ng-template #__template__generated>
+                  <div></div>
+                </ng-template>
+            `)
+          );
+
+          assert.deepEqual(options.dynamicComponents?.[0].templates, [
+            {
+              propertyName: "template",
+              templateRef: "__template__generated",
+              templateRefProperty: "templateRef0",
+            },
+          ]);
+
+          assert.deepEqual(options.dynamicComponents?.[0].props, []);
+        }
+      );
+
+      mocha.it(
+        "condition && <DynamicComponent /> -> <ng-template *ngIf dynamicComponent>",
+        function () {
+          const getterName = "DynamicComponent";
+          const getter = generator.createGetAccessor(
+            [],
+            undefined,
+            generator.createIdentifier(getterName),
+            [],
+            undefined,
+            generator.createBlock([], false)
+          );
+
+          const element = generator.createJsxElement(
+            generator.createJsxOpeningElement(
+              generator.createIdentifier("div")
+            ),
+            [
+              generator.createJsxExpression(
+                undefined,
+                generator.createBinary(
+                  generator.createIdentifier("condition"),
+                  generator.SyntaxKind.AmpersandAmpersandToken,
+                  generator.createJsxSelfClosingElement(
+                    generator.createPropertyAccess(
+                      generator.createIdentifier("viewModel"),
+                      generator.createIdentifier(getterName)
+                    )
+                  )
+                )
+              ),
+            ],
+            generator.createJsxClosingElement(generator.createIdentifier("div"))
+          );
+
+          const options: toStringOptions = {
+            members: [getter],
+            componentContext: "viewModel",
+            newComponentContext: "",
+          };
+
+          assert.strictEqual(
+            removeSpaces(element.toString(options)),
+            removeSpaces(
+              `<div>
+              <ng-template dynamicComponent 
+                *ngIf="condition" 
+                [index]="1" 
+                let-DynamicComponent="DynamicComponent">
+              </ng-template>
+            </div>`
+            )
+          );
+          assert.strictEqual(options.dynamicComponents?.length, 1);
+          assert.strictEqual(
+            options.dynamicComponents![0].expression.toString(),
+            "viewModel.DynamicComponent"
+          );
+          assert.strictEqual(options.dynamicComponents![0].index, 1);
+          assert.deepEqual(options.dynamicComponents![0].props, []);
+        }
+      );
+
+      mocha.it("map <DynamicComponent />", function () {
+        const getterName = "DynamicComponent";
+        const getter = generator.createGetAccessor(
+          [],
+          undefined,
+          generator.createIdentifier(getterName),
+          [],
+          undefined,
+          generator.createBlock([], false)
+        );
+
+        const element = generator.createJsxElement(
+          generator.createJsxOpeningElement(generator.createIdentifier("div")),
+          [
+            generator.createJsxExpression(
+              undefined,
+              generator.createCall(
+                generator.createPropertyAccess(
+                  generator.createPropertyAccess(
+                    generator.createIdentifier("viewModel"),
+                    generator.createIdentifier(getterName)
+                  ),
+                  generator.createIdentifier("map")
+                ),
+                undefined,
+                [
+                  generator.createArrowFunction(
+                    undefined,
+                    undefined,
+                    [
+                      generator.createParameter(
+                        undefined,
+                        undefined,
+                        undefined,
+                        generator.createIdentifier("item"),
+                        undefined,
+                        undefined,
+                        undefined
+                      ),
+                      generator.createParameter(
+                        undefined,
+                        undefined,
+                        undefined,
+                        generator.createIdentifier("index"),
+                        undefined,
+                        undefined,
+                        undefined
+                      ),
+                    ],
+                    undefined,
+                    generator.createToken(
+                      generator.SyntaxKind.EqualsGreaterThanToken
+                    ),
+                    generator.createJsxSelfClosingElement(
+                      generator.createIdentifier("item"),
+                      undefined,
+                      [
+                        generator.createJsxAttribute(
+                          generator.createIdentifier("key"),
+                          generator.createIdentifier("index")
+                        ),
+                        generator.createJsxAttribute(
+                          generator.createIdentifier("prop"),
+                          generator.createIdentifier("value")
+                        ),
+                      ]
+                    )
+                  ),
+                ]
+              )
+            ),
+          ],
+          generator.createJsxClosingElement(generator.createIdentifier("div"))
+        );
+
+        const options: toStringOptions = {
+          members: [getter],
+          componentContext: "viewModel",
+          newComponentContext: "",
+        };
+
+        assert.strictEqual(
+          removeSpaces(element.toString(options)),
+          removeSpaces(`<div>
+            <ng-container *ngFor="let item of DynamicComponent; index as index">
+              <ng-template dynamicComponent [index]="0" let-DynamicComponent="DynamicComponent"></ng-template>
+            </ng-container>
+          </div>`)
+        );
+        assert.strictEqual(options.dynamicComponents?.length, 1);
+        assert.strictEqual(
+          options.dynamicComponents![0].expression.toString(),
+          "viewModel.DynamicComponent"
+        );
+
+        assert.deepEqual(
+          options.dynamicComponents?.[0].props.map((p) =>
+            (p as JsxAttribute).name.toString()
+          ),
+          ["prop"]
+        );
+      });
+    });
+
+    mocha.describe("Component", function () {
+      mocha.it("Render himself", function () {
+        const componentName = "BaseWidget";
+
+        const element = generator.createJsxSelfClosingElement(
+          generator.createIdentifier(componentName)
+        );
+
+        const component = createComponent([]);
+
+        assert.strictEqual(component.name, componentName);
+        assert.strictEqual(
+          element.toString({
+            members: [],
+          }),
+          "<dx-base-widget ></dx-base-widget>"
+        );
+      });
     });
 
     mocha.describe("Slots with conditional rendering", function () {
@@ -2913,6 +3401,166 @@ mocha.describe("Angular generator", function () {
                         </ng-container>
                     </div>`)
         );
+      });
+
+      mocha.describe("function->ng-template", function () {
+        this.beforeEach(function () {
+          generator.setContext({
+            path: __filename,
+            dirname: __dirname,
+          });
+
+          createComponent([
+            generator.createProperty(
+              [createDecorator(Decorators.Template)],
+              [],
+              generator.createIdentifier("template")
+            ),
+          ]);
+        });
+
+        this.afterEach(function () {
+          generator.setContext(null);
+        });
+
+        const createElement = (parameter?: Parameter) =>
+          generator.createJsxSelfClosingElement(
+            generator.createIdentifier("BaseWidget"),
+            undefined,
+            [
+              generator.createJsxAttribute(
+                generator.createIdentifier("template"),
+                generator.createJsxExpression(
+                  undefined,
+                  generator.createArrowFunction(
+                    [],
+                    undefined,
+                    parameter ? [parameter] : [],
+                    undefined,
+                    generator.SyntaxKind.EqualsGreaterThanToken,
+                    generator.createJsxSelfClosingElement(
+                      generator.createIdentifier("div")
+                    )
+                  )
+                )
+              ),
+            ]
+          );
+
+        mocha.it("w/o parameter", function () {
+          const element = createElement();
+          assert.strictEqual(
+            removeSpaces(
+              element.toString({
+                members: [],
+              })
+            ),
+            removeSpaces(`
+              <dx-base-widget [template]="__template__generated">
+                <ng-template #__template__generated>
+                  <div ></div>
+                </ng-template>
+              </dx-base-widget>
+            `)
+          );
+        });
+
+        mocha.it("binding pattern parameter", function () {
+          const element = createElement(
+            generator.createParameter(
+              [],
+              [],
+              undefined,
+              generator.createObjectBindingPattern([
+                generator.createBindingElement(
+                  undefined,
+                  undefined,
+                  generator.createIdentifier("p1")
+                ),
+                generator.createBindingElement(
+                  undefined,
+                  generator.createIdentifier("p2"),
+                  generator.createIdentifier("myP2")
+                ),
+              ]),
+              undefined
+            )
+          );
+          assert.strictEqual(
+            removeSpaces(
+              element.toString({
+                members: [],
+              })
+            ),
+            removeSpaces(`
+              <dx-base-widget [template]="__template__generated">
+                <ng-template #__template__generated let-p1="p1" let-myP2="p2">
+                  <div ></div>
+                </ng-template>
+              </dx-base-widget>
+            `)
+          );
+        });
+
+        mocha.it("parameter with literal type node", function () {
+          const element = createElement(
+            generator.createParameter(
+              [],
+              [],
+              undefined,
+              generator.createIdentifier("props"),
+              undefined,
+              generator.createTypeLiteralNode([
+                generator.createPropertySignature(
+                  [],
+                  generator.createIdentifier("p1"),
+                  undefined,
+                  generator.createKeywordTypeNode("string")
+                ),
+                generator.createPropertySignature(
+                  [],
+                  generator.createIdentifier("p2"),
+                  undefined,
+                  generator.createKeywordTypeNode("number")
+                ),
+              ])
+            )
+          );
+          assert.strictEqual(
+            removeSpaces(
+              element.toString({
+                members: [],
+              })
+            ),
+            removeSpaces(`
+              <dx-base-widget [template]="__template__generated">
+                <ng-template #__template__generated let-p1="p1" let-p2="p2">
+                  <div ></div>
+                </ng-template>
+              </dx-base-widget>
+            `)
+          );
+        });
+
+        mocha.it("can't parse parameter without type", function () {
+          const element = createElement(
+            generator.createParameter(
+              [],
+              [],
+              undefined,
+              generator.createIdentifier("props")
+            )
+          );
+
+          try {
+            removeSpaces(element.toString());
+          } catch (e) {
+            assert.strictEqual(
+              e,
+              "Can't convert function parameter props into template parameter: Use BindingPattern or TypeLiteralNode"
+            );
+          }
+        });
       });
     });
 

@@ -33,6 +33,7 @@ export const ListInput = {
   },
 };
 export const DxList = {
+  name: "List",
   components: {
     WidgetWithProps,
   },

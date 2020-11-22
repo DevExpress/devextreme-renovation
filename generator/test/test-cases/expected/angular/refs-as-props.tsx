@@ -53,6 +53,7 @@ export default class Widget extends WidgetInput {
 @NgModule({
   declarations: [Widget],
   imports: [DxWidgetWithRefPropModule, CommonModule],
+  entryComponents: [WidgetWithRefProp],
   exports: [Widget],
 })
 export class DxWidgetModule {}

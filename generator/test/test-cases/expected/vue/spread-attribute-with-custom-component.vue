@@ -10,6 +10,7 @@
 import InnerWidget from "./dx-inner-widget";
 export const WidgetInput = {};
 export const DxWidget = {
+  name: "Widget",
   components: {
     InnerWidget,
   },

@@ -3,6 +3,7 @@
 </template>
 <script>
 export const DxWidget = {
+  name: "Widget",
   data() {
     return {
       _hovered: false,

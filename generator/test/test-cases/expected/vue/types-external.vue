@@ -41,6 +41,7 @@ export const WidgetProps = {
   },
 };
 export const DxWidget = {
+  name: "Widget",
   props: WidgetProps,
   computed: {
     __restAttributes() {

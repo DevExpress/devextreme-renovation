@@ -17,6 +17,7 @@ export const InnerWidgetProps = {
   },
 };
 export const DxInnerWidget = {
+  name: "InnerWidget",
   props: InnerWidgetProps,
   model: {
     prop: "value",

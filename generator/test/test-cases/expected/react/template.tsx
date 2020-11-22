@@ -57,7 +57,7 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof WidgetInput
 >;
-interface Widget {
+interface WidgetWithTemplate {
   props: typeof WidgetInput & RestProps;
   restAttributes: RestProps;
 }
@@ -74,7 +74,9 @@ const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
       ))) ||
   (ComponentProp && ((props: any) => <ComponentProp {...props} />));
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+export default function WidgetWithTemplate(
+  props: typeof WidgetInput & RestProps
+) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
@@ -130,10 +132,10 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   });
 }
 
-Widget.defaultProps = {
+WidgetWithTemplate.defaultProps = {
   ...WidgetInput,
 };
-function view(viewModel: Widget) {
+function view(viewModel: WidgetWithTemplate) {
   const myvar = viewModel.props.someProp;
   const FooterTemplate = viewModel.props.footerTemplate;
   const ComponentTemplate = viewModel.props.componentTemplate;
