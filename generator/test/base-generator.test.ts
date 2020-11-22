@@ -3000,6 +3000,117 @@ mocha.describe("base-generator: expressions", function () {
             }`)
       );
     });
+
+    mocha.describe("generic", function () {
+      mocha.it("createClassDeclaration generic class", function () {
+        const genericClass = generator.createClassDeclaration(
+          undefined,
+          undefined,
+          new Identifier("GenericClass"),
+          ["T"],
+          [],
+          []
+        );
+        assert.strictEqual(
+          getAst(genericClass.toString()),
+          getAst(`class GenericClass<T>{
+          }`)
+        );
+      });
+
+      mocha.it(
+        "createClassDeclaration generic class with heritable",
+        function () {
+          const genericClass = generator.createClassDeclaration(
+            undefined,
+            undefined,
+            new Identifier("GenericClass"),
+            ["T", "S"],
+            [
+              generator.createHeritageClause(
+                generator.SyntaxKind.ExtendsKeyword,
+                [
+                  generator.createExpressionWithTypeArguments(
+                    [
+                      generator.createTypeReferenceNode(
+                        generator.createIdentifier("T"),
+                        undefined
+                      ),
+                    ],
+                    generator.createIdentifier("PluginEntity")
+                  ),
+                ]
+              ),
+            ],
+            []
+          );
+          assert.strictEqual(
+            getAst(genericClass.toString()),
+            getAst(`
+          class GenericClass<T, S> extends PluginEntity<T> {
+          }`)
+          );
+        }
+      );
+
+      mocha.it("create generic function with generic return", function () {
+        const genericFunction = generator.createFunctionDeclaration(
+          undefined,
+          [generator.createModifier(generator.SyntaxKind.ExportKeyword)],
+          "",
+          generator.createIdentifier("createValue"),
+          [
+            generator.createTypeParameterDeclaration(
+              generator.createIdentifier("T"),
+              undefined,
+              undefined
+            ),
+          ],
+          [],
+          generator.createTypeReferenceNode(
+            generator.createIdentifier("PluginEntity"),
+            [
+              generator.createTypeReferenceNode(
+                generator.createIdentifier("T"),
+                undefined
+              ),
+              generator.createTypeReferenceNode(
+                generator.createIdentifier("T"),
+                undefined
+              ),
+            ]
+          ),
+          generator.createBlock(
+            [
+              generator.createReturn(
+                generator.createNew(
+                  generator.createIdentifier("PluginEntity"),
+                  [
+                    generator.createTypeReferenceNode(
+                      generator.createIdentifier("T"),
+                      undefined
+                    ),
+                    generator.createTypeReferenceNode(
+                      generator.createIdentifier("T"),
+                      undefined
+                    ),
+                  ],
+                  []
+                )
+              ),
+            ],
+            true
+          )
+        );
+        assert.strictEqual(
+          getAst(genericFunction.toString()),
+          getAst(`
+        export function createValue<T>(): PluginEntity<T, T> {
+          return new PluginEntity<T, T>();
+        }`)
+        );
+      });
+    });
   });
 
   mocha.describe("import", function () {

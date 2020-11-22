@@ -126,6 +126,7 @@ export class Class extends Expression {
   modifiers: string[];
   heritageClauses: HeritageClause[];
   context: GeneratorContext;
+  typeParameters: string[];
 
   get name() {
     return this._name.toString();
@@ -151,12 +152,17 @@ export class Class extends Expression {
     this.heritageClauses = heritageClauses;
     this.members = this.processMembers(members);
     this.context = context;
+    this.typeParameters = typeParameters;
   }
 
   toString() {
     return `${this.decorators.join("\n")}
         ${this.modifiers.join(" ")} 
-        class ${this.name} ${
+        class ${this.name}${
+      this.typeParameters && this.typeParameters.length
+        ? `<${this.typeParameters.join(",")}>`
+        : ""
+    } ${
       this.heritageClauses.length ? `${this.heritageClauses.join(" ")}` : ""
     } {
             ${this.members.join("\n")}

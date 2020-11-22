@@ -322,4 +322,8 @@ mocha.describe("vue-generation", function () {
   mocha.it("template-default-value", function () {
     this.testGenerator(this.test!.title);
   });
+
+  mocha.it("generic-class", function () {
+    this.testGenerator(this.test!.title);
+  });
 });

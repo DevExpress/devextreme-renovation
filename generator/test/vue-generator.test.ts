@@ -8,6 +8,7 @@ import { toStringOptions } from "../angular-generator/types";
 import { Decorators } from "../component_declaration/decorators";
 import { VueComponent } from "../vue-generator/expressions/vue-component";
 import { JsxExpression } from "../vue-generator/expressions/jsx/jsx-expression";
+import { Identifier } from "../base-generator/expressions/common";
 
 const {
   createDecorator,
@@ -345,6 +346,117 @@ mocha.describe("Vue-generator", function () {
         );
 
         assert.strictEqual(expression.toString(), "");
+      });
+    });
+
+    mocha.describe("generic types should be ignored", function () {
+      mocha.it("createClassDeclaration generic class", function () {
+        const genericClass = generator.createClassDeclaration(
+          undefined,
+          undefined,
+          new Identifier("GenericClass"),
+          ["T"],
+          [],
+          []
+        );
+        assert.strictEqual(
+          getAst(genericClass.toString()),
+          getAst(`class GenericClass{
+          }`)
+        );
+      });
+
+      mocha.it(
+        "createClassDeclaration generic class with heritable",
+        function () {
+          const genericClass = generator.createClassDeclaration(
+            undefined,
+            undefined,
+            new Identifier("GenericClass"),
+            ["T", "S"],
+            [
+              generator.createHeritageClause(
+                generator.SyntaxKind.ExtendsKeyword,
+                [
+                  generator.createExpressionWithTypeArguments(
+                    [
+                      generator.createTypeReferenceNode(
+                        generator.createIdentifier("T"),
+                        undefined
+                      ),
+                    ],
+                    generator.createIdentifier("PluginEntity")
+                  ),
+                ]
+              ),
+            ],
+            []
+          );
+          assert.strictEqual(
+            getAst(genericClass.toString()),
+            getAst(`
+          class GenericClass extends PluginEntity {
+          }`)
+          );
+        }
+      );
+
+      mocha.it("create generic function with generic return", function () {
+        const genericFunction = generator.createFunctionDeclaration(
+          undefined,
+          [generator.createModifier(generator.SyntaxKind.ExportKeyword)],
+          "",
+          generator.createIdentifier("createValue"),
+          [
+            generator.createTypeParameterDeclaration(
+              generator.createIdentifier("T"),
+              undefined,
+              undefined
+            ),
+          ],
+          [],
+          generator.createTypeReferenceNode(
+            generator.createIdentifier("PluginEntity"),
+            [
+              generator.createTypeReferenceNode(
+                generator.createIdentifier("T"),
+                undefined
+              ),
+              generator.createTypeReferenceNode(
+                generator.createIdentifier("T"),
+                undefined
+              ),
+            ]
+          ),
+          generator.createBlock(
+            [
+              generator.createReturn(
+                generator.createNew(
+                  generator.createIdentifier("PluginEntity"),
+                  [
+                    generator.createTypeReferenceNode(
+                      generator.createIdentifier("T"),
+                      undefined
+                    ),
+                    generator.createTypeReferenceNode(
+                      generator.createIdentifier("T"),
+                      undefined
+                    ),
+                  ],
+                  []
+                )
+              ),
+            ],
+            true
+          )
+        );
+        assert.strictEqual(
+          getAst(genericFunction.toString()),
+          getAst(`
+        export function createValue() {
+          return new PluginEntity();
+        }`)
+        );
       });
     });
   });
