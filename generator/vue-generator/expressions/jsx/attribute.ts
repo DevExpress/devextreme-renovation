@@ -2,8 +2,20 @@ import { JsxAttribute as BaseJsxAttribute } from "../../../angular-generator/exp
 import { toStringOptions } from "../../types";
 import { getMember } from "../../../base-generator/utils/expressions";
 import { getEventName } from "../utils";
+import {
+  Expression,
+  SimpleExpression,
+} from "../../../base-generator/expressions/base";
+import { Identifier } from "../../../base-generator/expressions/common";
+import { JsxExpression } from "./jsx-expression";
 
 export class JsxAttribute extends BaseJsxAttribute {
+  constructor(name: Identifier, initializer?: Expression) {
+    super(
+      name,
+      initializer || new JsxExpression(undefined, new SimpleExpression("true"))
+    );
+  }
   getTemplateProp(options?: toStringOptions) {
     if (this.name.toString() === "key") {
       this.compileKey(options);

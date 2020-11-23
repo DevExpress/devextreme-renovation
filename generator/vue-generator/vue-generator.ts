@@ -370,7 +370,7 @@ export class VueGenerator extends BaseGenerator {
     return new JsxElement(openingElement, children, closingElement);
   }
 
-  createJsxAttribute(name: Identifier, initializer: Expression) {
+  createJsxAttribute(name: Identifier, initializer?: Expression) {
     return new JsxAttribute(name, initializer);
   }
 

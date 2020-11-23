@@ -2037,6 +2037,30 @@ mocha.describe("Vue-generator", function () {
         );
       });
 
+      mocha.it("element with attribute without initializer", function () {
+        const expression = generator.createJsxElement(
+          generator.createJsxOpeningElement(
+            generator.createIdentifier("Component"),
+            [],
+            [
+              generator.createJsxAttribute(
+                generator.createIdentifier("a"),
+                undefined
+              ),
+            ]
+          ),
+          [],
+          generator.createJsxClosingElement(
+            generator.createIdentifier("Component")
+          )
+        );
+
+        assert.strictEqual(
+          removeSpaces(expression.toString()),
+          removeSpaces(`<Component :a="true"></Component>`)
+        );
+      });
+
       mocha.it(`JsxSpreadAttribute replace " -> '`, function () {
         const expression = generator.createJsxSpreadAttribute(
           generator.createObjectLiteral(
