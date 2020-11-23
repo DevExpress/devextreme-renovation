@@ -734,7 +734,7 @@ export default class Generator implements GeneratorAPI {
     decorators: Decorator[],
     modifiers: string[] | undefined,
     name: Identifier,
-    typeParameters: string[],
+    typeParameters: TypeExpression[] | string[] | undefined,
     heritageClauses: HeritageClause[],
     members: Array<Property | Method>
   ) {

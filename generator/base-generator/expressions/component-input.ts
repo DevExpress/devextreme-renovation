@@ -34,7 +34,7 @@ export class ComponentInput extends Class implements Heritable {
     decorators: Decorator[],
     modifiers: string[] | undefined,
     name: Identifier,
-    typeParameters: any[],
+    typeParameters: TypeExpression[] | string[] | undefined,
     heritageClauses: HeritageClause[] = [],
     members: Array<Property | Method>,
     context: GeneratorContext
