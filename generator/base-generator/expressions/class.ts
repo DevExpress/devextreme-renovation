@@ -13,6 +13,7 @@ import { Decorator } from "./decorator";
 import { StringLiteral } from "./literal";
 import { findComponentInput } from "../utils/expressions";
 import { Expression } from "./base";
+import { compileTypeParameters } from "../utils/string";
 
 export function inheritMembers(
   heritageClauses: HeritageClause[],
@@ -126,6 +127,7 @@ export class Class extends Expression {
   modifiers: string[];
   heritageClauses: HeritageClause[];
   context: GeneratorContext;
+  typeParameters: TypeExpression[] | string[] | undefined;
 
   get name() {
     return this._name.toString();
@@ -139,7 +141,7 @@ export class Class extends Expression {
     decorators: Decorator[],
     modifiers: string[] = [],
     name: Identifier,
-    typeParameters: any[],
+    typeParameters: TypeExpression[] | string[] | undefined,
     heritageClauses: HeritageClause[] = [],
     members: Array<Property | Method>,
     context: GeneratorContext
@@ -151,12 +153,13 @@ export class Class extends Expression {
     this.heritageClauses = heritageClauses;
     this.members = this.processMembers(members);
     this.context = context;
+    this.typeParameters = typeParameters;
   }
 
   toString() {
     return `${this.decorators.join("\n")}
         ${this.modifiers.join(" ")} 
-        class ${this.name} ${
+        class ${this.name}${compileTypeParameters(this.typeParameters)} ${
       this.heritageClauses.length ? `${this.heritageClauses.join(" ")}` : ""
     } {
             ${this.members.join("\n")}

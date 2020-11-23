@@ -60,11 +60,12 @@ import { ImportDeclaration } from "./expressions/import-declaration";
 import prettier from "prettier";
 import path from "path";
 import { EnumMember, Enum } from "./expressions/enum";
-import { Call } from "./expressions/call";
+import { Call, New } from "./expressions/call";
 import { VariableDeclaration } from "./expressions/variable-declaration";
 import { Class } from "./expressions/class";
 import { PropertyAccessChain } from "../angular-generator/expressions/property-access-chain";
 import { GeneratorContext } from "../base-generator/types";
+import { ExpressionWithTypeArguments } from "./types";
 
 const emptyToString = () => "";
 
@@ -236,6 +237,14 @@ export class VueGenerator extends BaseGenerator {
     return new Call(expression, typeArguments, argumentsArray);
   }
 
+  createNew(
+    expression: Expression,
+    typeArguments: TypeExpression[] | undefined,
+    argumentsArray: Expression[]
+  ) {
+    return new New(expression, typeArguments, argumentsArray);
+  }
+
   createParameter(
     decorators: Decorator[] = [],
     modifiers: string[] = [],
@@ -389,6 +398,13 @@ export class VueGenerator extends BaseGenerator {
       importClause,
       moduleSpecifier
     );
+  }
+
+  createExpressionWithTypeArguments(
+    typeArguments: TypeReferenceNode[] | undefined,
+    expression: Expression
+  ) {
+    return new ExpressionWithTypeArguments(typeArguments, expression);
   }
 
   createKeywordTypeNode(kind: string) {

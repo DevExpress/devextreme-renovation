@@ -22,7 +22,7 @@ import SyntaxKind from "../syntaxKind";
 import { warn } from "../../utils/messages";
 import { Decorators } from "../../component_declaration/decorators";
 import { ComponentInput } from "./component-input";
-import { extractComplexType, isTypeArray } from "./type";
+import { extractComplexType, isTypeArray, TypeExpression } from "./type";
 import { BindingElement, BindingPattern } from "./binding-pattern";
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
@@ -166,7 +166,7 @@ export class Component extends Class implements Heritable {
     decorator: Decorator,
     modifiers: string[] = [],
     name: Identifier,
-    typeParameters: string[],
+    typeParameters: TypeExpression[] | string[] | undefined,
     heritageClauses: HeritageClause[] = [],
     members: Array<Property | Method>,
     context: GeneratorContext
