@@ -1,6 +1,6 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-const PAGES = ["index", "native-components"];
+const PAGES = ["index", "native-components", "svg-components"];
 
 const getPages = (path) =>
   PAGES.map(

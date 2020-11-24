@@ -1720,7 +1720,7 @@ mocha.describe("Vue-generator", function () {
       );
     });
 
-    mocha.it("Component with heritage clauses", function () {
+    mocha.it("ComponentBindings with heritage clauses", function () {
       const expression = generator.createClassDeclaration(
         [createDecorator("ComponentBindings")],
         ["export"],
@@ -1963,6 +1963,55 @@ mocha.describe("Vue-generator", function () {
         );
       });
     });
+
+    mocha.describe("template", function () {
+      this.beforeEach(function () {
+        generator.setContext({
+          path: __filename,
+          dirname: __dirname,
+        });
+      });
+
+      this.afterEach(function () {
+        generator.setContext(null);
+      });
+
+      mocha.it("pass isSvg to template options", function () {
+        generator.createFunctionDeclaration(
+          [],
+          [],
+          "",
+          generator.createIdentifier("viewFunction"),
+          undefined,
+          [],
+          undefined,
+          generator.createBlock(
+            [
+              generator.createReturn(
+                generator.createJsxElement(
+                  generator.createJsxOpeningElement(
+                    generator.createIdentifier("Fragment")
+                  ),
+                  [],
+                  generator.createJsxClosingElement(
+                    generator.createIdentifier("Fragment")
+                  )
+                )
+              ),
+            ],
+            false
+          )
+        );
+        const component = createComponent([], {
+          view: generator.createIdentifier("viewFunction"),
+          isSVG: generator.createTrue(),
+        }) as VueComponent;
+
+        component.toString();
+
+        assert.strictEqual(component.template, "<g ></g>");
+      });
+    });
   });
 
   mocha.describe("Template Generation", function () {
@@ -2169,6 +2218,18 @@ mocha.describe("Vue-generator", function () {
           );
           assert.strictEqual(options.hasStyle, true);
         });
+
+        mocha.it("camelCase->camel-case", function () {
+          const attribute = generator.createJsxAttribute(
+            generator.createIdentifier("strokeWidth"),
+            generator.createJsxExpression(
+              undefined,
+              generator.createNumericLiteral("10")
+            )
+          );
+
+          assert.strictEqual(attribute.toString(), `:stroke-width="10"`);
+        });
       });
 
       mocha.describe("Fragment", function () {
@@ -2188,6 +2249,28 @@ mocha.describe("Vue-generator", function () {
           assert.strictEqual(
             element.toString(),
             `<div style="display: contents" ></div>`
+          );
+        });
+
+        mocha.it("svg: Fragment -> g", function () {
+          const element = generator.createJsxElement(
+            generator.createJsxOpeningElement(
+              generator.createIdentifier("Fragment"),
+              undefined,
+              []
+            ),
+            [],
+            generator.createJsxClosingElement(
+              generator.createIdentifier("Fragment")
+            )
+          );
+
+          assert.strictEqual(
+            element.toString({
+              members: [],
+              isSVG: true,
+            }),
+            `<g ></g>`
           );
         });
       });
@@ -4355,6 +4438,19 @@ mocha.describe("Vue-generator", function () {
                     `)
           );
         });
+      });
+    });
+
+    mocha.describe("Component", function () {
+      this.beforeEach(function () {
+        generator.setContext({
+          path: __filename,
+          dirname: __dirname,
+        });
+      });
+
+      this.afterEach(function () {
+        generator.setContext(null);
       });
     });
   });

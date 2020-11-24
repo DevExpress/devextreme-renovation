@@ -22,6 +22,10 @@ export class JsxAttribute extends BaseJsxAttribute {
     return [new PropertyAssignment(this.name, initializer.getExpression()!)];
   }
 
+  processName(name: string, options?: toStringOptions) {
+    return (eventsDictionary as any)[name] || name;
+  }
+
   toString(options?: toStringOptions) {
     let tsOptions = options;
     let name = this.name.toString(options);
@@ -37,8 +41,8 @@ export class JsxAttribute extends BaseJsxAttribute {
         }
       }
     }
-    return `${
-      (eventsDictionary as any)[name] || name
-    }=${this.initializer.toString(tsOptions)}`;
+    return `${this.processName(name, tsOptions)}=${this.initializer.toString(
+      tsOptions
+    )}`;
   }
 }

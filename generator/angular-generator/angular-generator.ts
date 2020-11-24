@@ -16,7 +16,6 @@ import { JsxAttribute } from "./expressions/jsx/attribute";
 import { JsxSpreadAttribute } from "./expressions/jsx/spread-attribute";
 import {
   JsxOpeningElement,
-  processTagName,
   JsxSelfClosingElement,
   JsxClosingElement,
 } from "./expressions/jsx/jsx-opening-element";
@@ -103,9 +102,7 @@ export class AngularGenerator extends Generator {
   }
 
   createJsxClosingElement(tagName: Expression) {
-    return new JsxClosingElement(
-      processTagName(tagName as Expression, this.getContext())
-    );
+    return new JsxClosingElement(tagName, this.getContext());
   }
 
   createJsxElement(

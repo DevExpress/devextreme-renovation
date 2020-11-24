@@ -81,7 +81,8 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
   processTagName(tagName: Expression, options?: toStringOptions) {
     if (tagName.toString() === "Fragment") {
-      return new SimpleExpression('div style="display: contents"');
+      const expression = options?.isSVG ? "g" : 'div style="display: contents"';
+      return new SimpleExpression(expression);
     }
     if (tagName.toString() === "Portal") {
       return new SimpleExpression("DxPortal");
@@ -412,10 +413,12 @@ export class JsxClosingElement extends JsxOpeningElement {
     super(tagName, [], [], context);
   }
 
-  processTagName(tagName: Expression) {
+  processTagName(tagName: Expression, options?: toStringOptions) {
     if (tagName.toString() === "Fragment") {
-      return new SimpleExpression("div");
+      const expression = options?.isSVG ? "g" : "div";
+      return new SimpleExpression(expression);
     }
+
     if (tagName.toString() === "Portal") {
       return new SimpleExpression("DxPortal");
     }
@@ -431,6 +434,6 @@ export class JsxClosingElement extends JsxOpeningElement {
     if (this.isDynamicComponent(options)) {
       return this.compileDynamicComponent();
     }
-    return `</${this.processTagName(this.tagName).toString(options)}>`;
+    return `</${this.processTagName(this.tagName, options).toString(options)}>`;
   }
 }

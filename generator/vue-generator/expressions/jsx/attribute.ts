@@ -8,6 +8,7 @@ import {
 } from "../../../base-generator/expressions/base";
 import { Identifier } from "../../../base-generator/expressions/common";
 import { JsxExpression } from "./jsx-expression";
+import { dasherize } from "../../../base-generator/utils/string";
 
 export class JsxAttribute extends BaseJsxAttribute {
   constructor(name: Identifier, initializer?: Expression) {
@@ -38,7 +39,7 @@ export class JsxAttribute extends BaseJsxAttribute {
       }
     }
 
-    return name;
+    return dasherize(name);
   }
 
   compileKey(options?: toStringOptions): string | null {

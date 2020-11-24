@@ -79,7 +79,11 @@ export class JsxOpeningElement extends Expression {
   context: GeneratorContext;
   component?: Component;
 
-  processTagName(tagName: Expression) {
+  processTagName(
+    tagName: Expression,
+    options?: toStringOptions,
+    isClosing: boolean = false
+  ) {
     return tagName;
   }
 
@@ -126,7 +130,7 @@ export class JsxOpeningElement extends Expression {
   }
 
   toString(options?: toStringOptions) {
-    return `<${this.processTagName(this.tagName).toString(
+    return `<${this.processTagName(this.tagName, options).toString(
       options
     )} ${this.attributesString(options)}>`;
   }
@@ -204,7 +208,7 @@ export class JsxElement extends Expression {
 
 export class JsxSelfClosingElement extends JsxOpeningElement {
   toString(options?: toStringOptions) {
-    return `<${this.processTagName(this.tagName).toString(
+    return `<${this.processTagName(this.tagName, options).toString(
       options
     )} ${this.attributesString(options)}/>`;
   }
@@ -216,7 +220,9 @@ export class JsxClosingElement extends JsxOpeningElement {
   }
 
   toString(options?: toStringOptions) {
-    return `</${this.processTagName(this.tagName).toString(options)}>`;
+    return `</${this.processTagName(this.tagName, options, true).toString(
+      options
+    )}>`;
   }
 }
 

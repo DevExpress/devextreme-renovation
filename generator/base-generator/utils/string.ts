@@ -9,10 +9,15 @@ export function capitalizeFirstLetter(string: string | Identifier) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-export function lowerizeFirstLeter(string: string | Identifier) {
+export function lowerizeFirstLetter(string: string | Identifier) {
   string = string.toString();
   return string.charAt(0).toLowerCase() + string.slice(1);
 }
+
+export const dasherize = (value: string): string => {
+  const words = value.split(/(?=[A-Z])/).map((w) => w.toLowerCase());
+  return words.join("-");
+};
 
 export const removePlural = (string: string | Identifier) => {
   string = string.toString();

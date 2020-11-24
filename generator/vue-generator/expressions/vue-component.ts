@@ -329,6 +329,7 @@ export class VueComponent extends Component {
       const options: toStringOptions = {
         members: this.members,
         newComponentContext: "",
+        isSVG: this.isSVGComponent,
       };
 
       this.template = viewFunction.getTemplate(options);

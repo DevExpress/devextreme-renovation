@@ -1,7 +1,7 @@
 <template>
   <Child
-    :childRef="forwardRef_child"
-    :nullableRef="forwardRef_nullableRef"
+    :child-ref="forwardRef_child"
+    :nullable-ref="forwardRef_nullableRef"
     :state="innerState"
   />
 </template>

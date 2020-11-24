@@ -103,15 +103,9 @@ export function getTemplate(
   doNotChangeContext = false,
   globals?: VariableExpression
 ) {
-  const statements =
-    functionWithTemplate.body instanceof Block
-      ? functionWithTemplate.body.statements
-      : [functionWithTemplate.body];
+  const statements = functionWithTemplate.statements;
 
-  const returnStatement =
-    functionWithTemplate.body instanceof Block
-      ? statements.find((s) => s instanceof ReturnStatement)
-      : statements[0];
+  const returnStatement = functionWithTemplate.returnExpression;
 
   if (returnStatement) {
     const componentParameter = functionWithTemplate.parameters[0];
@@ -332,6 +326,27 @@ export class BaseFunction extends Expression {
 
   compileTypeParameters(): string {
     return compileTypeParameters(this.typeParameters);
+  }
+
+  get statements(): Expression[] {
+    const statements =
+      this.body instanceof Block ? this.body.statements : [this.body];
+
+    return statements;
+  }
+
+  get returnExpression(): Expression | undefined {
+    const statements = this.statements;
+    const returnStatement =
+      this.body instanceof Block
+        ? statements.find((s) => s instanceof ReturnStatement)
+        : statements[0];
+
+    if (returnStatement instanceof ReturnStatement) {
+      return returnStatement.expression;
+    }
+
+    return returnStatement;
   }
 }
 

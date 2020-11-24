@@ -1,6 +1,9 @@
 import { JsxElement as BaseJsxElement } from "../../../base-generator/expressions/jsx";
 import { JsxExpression } from "./jsx-expression";
-import { JsxChildExpression } from "./jsx-child-expression";
+import {
+  JsxChildExpression,
+  mergeToStringOptions,
+} from "./jsx-child-expression";
 import {
   JsxOpeningElement,
   JsxSelfClosingElement,
@@ -64,9 +67,20 @@ export class JsxElement extends BaseJsxElement {
       ...this.openingElement.getTemplatesFromAttributes(options),
     ]);
 
+    const childrenOptions: toStringOptions | undefined =
+      this.openingElement.component?.isSVGComponent && !options?.isSVG
+        ? {
+            members: [],
+            ...options,
+            isSVG: this.openingElement.component.isSVGComponent,
+          }
+        : options;
+
     const childrenString: string = children
-      .map((c) => c.toString(options))
+      .map((c) => c.toString(childrenOptions))
       .join("");
+
+    mergeToStringOptions(options, childrenOptions);
 
     if (this.compileOnlyChildren()) {
       return childrenString;
