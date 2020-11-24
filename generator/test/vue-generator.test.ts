@@ -2037,7 +2037,7 @@ mocha.describe("Vue-generator", function () {
         );
       });
 
-      mocha.it("element with attribute without initializer", function () {
+      mocha.it("JsxAttribute without initializer", function () {
         const expression = generator.createJsxAttribute(
           generator.createIdentifier("a"),
           undefined

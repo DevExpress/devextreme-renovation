@@ -73,7 +73,7 @@ export class ReactGenerator extends BaseGenerator {
     );
   }
 
-  createJsxAttribute(name: Identifier, initializer: Expression) {
+  createJsxAttribute(name: Identifier, initializer?: Expression) {
     return new JsxAttribute(name, initializer);
   }
 
