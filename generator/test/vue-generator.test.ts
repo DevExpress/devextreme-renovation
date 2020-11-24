@@ -2037,6 +2037,17 @@ mocha.describe("Vue-generator", function () {
         );
       });
 
+      mocha.it("JsxAttribute without initializer", function () {
+        const expression = generator.createJsxAttribute(
+          generator.createIdentifier("a"),
+          undefined
+        );
+        assert.strictEqual(
+          removeSpaces(expression.toString()),
+          removeSpaces(`:a="true"`)
+        );
+      });
+
       mocha.it(`JsxSpreadAttribute replace " -> '`, function () {
         const expression = generator.createJsxSpreadAttribute(
           generator.createObjectLiteral(

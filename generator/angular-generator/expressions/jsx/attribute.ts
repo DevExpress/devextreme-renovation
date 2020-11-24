@@ -1,10 +1,10 @@
-import {
-  JsxAttribute as BaseJsxAttribute,
-  JsxExpression,
-} from "../../../base-generator/expressions/jsx";
+import { JsxAttribute as BaseJsxAttribute } from "../../../base-generator/expressions/jsx";
 import { toStringOptions } from "../../types";
 import { PropertyAssignment } from "../../../base-generator/expressions/property-assignment";
-import { SimpleExpression } from "../../../base-generator/expressions/base";
+import {
+  Expression,
+  SimpleExpression,
+} from "../../../base-generator/expressions/base";
 import { StringLiteral } from "../../../base-generator/expressions/literal";
 import { getMember } from "../../../base-generator/utils/expressions";
 import {
@@ -15,10 +15,18 @@ import {
   isCall,
   isFunction,
 } from "../../../base-generator/expressions/functions";
+import { Identifier } from "../../../base-generator/expressions/common";
+import { JsxExpression } from "./jsx-expression";
 
 const ATTR_BINDING_ATTRIBUTES = ["aria-label"];
 
 export class JsxAttribute extends BaseJsxAttribute {
+  constructor(name: Identifier, initializer?: Expression) {
+    super(
+      name,
+      initializer || new JsxExpression(undefined, new SimpleExpression("true"))
+    );
+  }
   getRefValue(options?: toStringOptions) {
     return this.compileRef(options).replace("#", "");
   }

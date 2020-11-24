@@ -151,6 +151,17 @@ mocha.describe("Angular generator", function () {
       }
     );
 
+    mocha.it("JsxAttribute without initializer", function () {
+      const expression = generator.createJsxAttribute(
+        generator.createIdentifier("a"),
+        undefined
+      );
+      assert.strictEqual(
+        removeSpaces(expression.toString()),
+        removeSpaces(`[a]="true"`)
+      );
+    });
+
     mocha.it(
       `JsxAttribute with string literal expression - attr="value"`,
       function () {

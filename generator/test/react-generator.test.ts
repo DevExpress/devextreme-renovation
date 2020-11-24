@@ -188,6 +188,17 @@ mocha.describe("react-generator: expressions", function () {
 
     assert.strictEqual(expression.toString(), "<div ></div>");
   });
+
+  mocha.it("JsxAttribute without initializer", function () {
+    const expression = generator.createJsxAttribute(
+      generator.createIdentifier("a"),
+      undefined
+    );
+    assert.strictEqual(
+      removeSpaces(expression.toString()),
+      removeSpaces(`a={true}`)
+    );
+  });
 });
 
 function createComponent(
