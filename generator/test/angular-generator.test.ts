@@ -311,6 +311,24 @@ mocha.describe("Angular generator", function () {
           'width="10px"'
         );
       });
+
+      mocha.it("do not dasherize not-kebab-case attribute", function () {
+        const expression = generator.createJsxAttribute(
+          generator.createIdentifier("viewBox"),
+          generator.createJsxExpression(
+            undefined,
+            generator.createIdentifier("value")
+          )
+        );
+
+        assert.strictEqual(
+          expression.toString({
+            members: [],
+            isSVG: true,
+          }),
+          `[attr.viewBox]="value"`
+        );
+      });
     });
 
     mocha.it("JSX element with Opening and Close Elements", function () {

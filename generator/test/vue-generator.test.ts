@@ -2219,7 +2219,7 @@ mocha.describe("Vue-generator", function () {
           assert.strictEqual(options.hasStyle, true);
         });
 
-        mocha.it("camelCase->camel-case", function () {
+        mocha.it("camelCase->camel-case for kebab attributes", function () {
           const attribute = generator.createJsxAttribute(
             generator.createIdentifier("strokeWidth"),
             generator.createJsxExpression(
@@ -2230,6 +2230,27 @@ mocha.describe("Vue-generator", function () {
 
           assert.strictEqual(attribute.toString(), `:stroke-width="10"`);
         });
+
+        mocha.it(
+          "camelCase->camelCase for not-kebab-case attribute",
+          function () {
+            const expression = generator.createJsxAttribute(
+              generator.createIdentifier("viewBox"),
+              generator.createJsxExpression(
+                undefined,
+                generator.createIdentifier("value")
+              )
+            );
+
+            assert.strictEqual(
+              expression.toString({
+                members: [],
+                isSVG: true,
+              }),
+              `:viewBox="value"`
+            );
+          }
+        );
       });
 
       mocha.describe("Fragment", function () {

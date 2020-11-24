@@ -35,6 +35,7 @@ import { TypeReferenceNode as ReactTypeReferenceNode } from "./react-generator/e
 import { JsxClosingElement as ReactJsxClosingElement } from "./react-generator/expressions/jsx/jsx-closing-element";
 import { JsxOpeningElement as ReactJsxOpeningElement } from "./react-generator/expressions/jsx/jsx-opening-element";
 import { JsxAttribute as ReactJsxAttribute } from "./react-generator/expressions/jsx/jsx-attribute";
+import { kebabSvgAttributes } from "./base-generator/utils/svg-utils/kebab-attributes";
 
 const BASE_JQUERY_WIDGET = "BASE_JQUERY_WIDGET";
 
@@ -482,7 +483,7 @@ class JsxClosingElement extends ReactJsxClosingElement {
 
 class JsxAttribute extends ReactJsxAttribute {
   processName(name: string, options?: toStringOptions) {
-    if (!options?.jsxComponent) {
+    if (!options?.jsxComponent && kebabSvgAttributes.has(name)) {
       return dasherize(name);
     }
     return super.processName(name, options);
@@ -637,9 +638,9 @@ export class PreactGenerator extends ReactGenerator {
     return new JsxClosingElement(tagName);
   }
 
-  // createJsxAttribute(name: Identifier, initializer: Expression) {
-  //   return new JsxAttribute(name, initializer);
-  // }
+  createJsxAttribute(name: Identifier, initializer: Expression) {
+    return new JsxAttribute(name, initializer);
+  }
 
   createTypeReferenceNode(
     typeName: Identifier,

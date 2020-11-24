@@ -179,7 +179,7 @@ mocha.describe("preact-generator: expressions", function () {
   );
 
   mocha.describe("JsxAttribute", function () {
-    mocha.it("dasherize attribute", function () {
+    mocha.it("dasherize attribute svg attribute", function () {
       const expression = generator.createJsxAttribute(
         generator.createIdentifier("strokeWidth"),
         generator.createJsxExpression(
@@ -219,6 +219,18 @@ mocha.describe("preact-generator: expressions", function () {
         }),
         "strokeWidth={value}"
       );
+    });
+
+    mocha.it("do not dasherize not-kebab-case attribute", function () {
+      const expression = generator.createJsxAttribute(
+        generator.createIdentifier("viewBox"),
+        generator.createJsxExpression(
+          undefined,
+          generator.createIdentifier("value")
+        )
+      );
+
+      assert.strictEqual(expression.toString(), "viewBox={value}");
     });
   });
 

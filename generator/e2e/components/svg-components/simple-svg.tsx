@@ -21,6 +21,7 @@ function view({
       className={className}
       width={width}
       height={height}
+      viewBox={`0 0 ${width * 2} ${height * 2}`}
     >
       <rect
         width={width}

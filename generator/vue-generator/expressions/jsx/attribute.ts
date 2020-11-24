@@ -9,6 +9,7 @@ import {
 import { Identifier } from "../../../base-generator/expressions/common";
 import { JsxExpression } from "./jsx-expression";
 import { dasherize } from "../../../base-generator/utils/string";
+import { kebabSvgAttributes } from "../../../base-generator/utils/svg-utils/kebab-attributes";
 
 export class JsxAttribute extends BaseJsxAttribute {
   constructor(name: Identifier, initializer?: Expression) {
@@ -37,9 +38,13 @@ export class JsxAttribute extends BaseJsxAttribute {
         }
         return "v-bind:style";
       }
+
+      if (kebabSvgAttributes.has(name)) {
+        return dasherize(name);
+      }
     }
 
-    return dasherize(name);
+    return name;
   }
 
   compileKey(options?: toStringOptions): string | null {
