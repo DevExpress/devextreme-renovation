@@ -112,10 +112,15 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     this.attributes = attributes;
   }
 
-  processAngularSelector(selector: string, isClosing = false) {
+  processAngularSelector(
+    selector: string,
+    isClosing = false,
+    options?: toStringOptions
+  ) {
+    const prefix = options?.isSVG ? "svg:" : "";
     return isClosing
       ? selector.replace(/\[.+\]/gi, "")
-      : selector.replace("[", "").replace("]", "");
+      : `${prefix}${selector.replace("[", "").replace("]", "")}`;
   }
 
   processTagName(
@@ -130,7 +135,8 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     if (this.component instanceof AngularComponent) {
       const selector = this.processAngularSelector(
         this.component.selector,
-        isClosing
+        isClosing,
+        options
       );
       return new Identifier(selector);
     }

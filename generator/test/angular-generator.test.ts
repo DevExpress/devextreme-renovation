@@ -2515,7 +2515,7 @@ mocha.describe("Angular generator", function () {
             members: [slotProperty],
             isSVG: true,
           }),
-          `<svg:svg ><g #slotChildren ><ng-content></ng-content></g></svg>`
+          `<svg:svg ><svg:g #slotChildren ><ng-content></ng-content></svg:g></svg>`
         );
       });
 

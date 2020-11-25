@@ -7,6 +7,7 @@ import {
 
 import SimpleComponent from "./simple-svg";
 import SvgRoot from "./svg-root";
+import SvgText from "./svg-text";
 
 function view(viewModel: SvgApp) {
   return (
@@ -18,6 +19,10 @@ function view(viewModel: SvgApp) {
             text
           </text>
         </Fragment>
+      </SvgRoot>
+
+      <SvgRoot width={100} height={30}>
+        <SvgText x={10} y={12} text={"MyText"} />
       </SvgRoot>
     </div>
   );
