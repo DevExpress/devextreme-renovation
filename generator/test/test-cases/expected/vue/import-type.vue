@@ -1,9 +1,5 @@
 <template>
-  <div>{{
-    viewModel.props.Test === undefined || viewModel.props.Test === null
-      ? undefined
-      : viewModel.props.Test.value
-  }}</div>
+  <div>{{ Test === undefined || Test === null ? undefined : Test.value }}</div>
 </template>
 <script>
 export const ImportProps = {

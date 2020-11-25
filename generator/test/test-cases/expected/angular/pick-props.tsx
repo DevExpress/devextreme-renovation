@@ -20,9 +20,7 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div>{{
-    model.props.data === undefined || model.props.data === null
-      ? undefined
-      : model.props.data.value
+    data === undefined || data === null ? undefined : data.value
   }}</div>`,
 })
 export default class Widget extends WidgetProps {
@@ -48,6 +46,7 @@ export default class Widget extends WidgetProps {
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}

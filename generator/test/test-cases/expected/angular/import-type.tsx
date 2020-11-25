@@ -18,9 +18,7 @@ import { CommonModule } from "@angular/common";
   selector: "dx-import",
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div>{{
-    viewModel.props.Test === undefined || viewModel.props.Test === null
-      ? undefined
-      : viewModel.props.Test.value
+    Test === undefined || Test === null ? undefined : Test.value
   }}</div>`,
 })
 export default class Import extends ImportProps {
@@ -41,6 +39,7 @@ export default class Import extends ImportProps {
 @NgModule({
   declarations: [Import],
   imports: [CommonModule],
+
   exports: [Import],
 })
 export class DxImportModule {}
