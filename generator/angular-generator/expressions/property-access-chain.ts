@@ -5,7 +5,8 @@ import SyntaxKind from "../../base-generator/syntaxKind";
 export class PropertyAccessChain extends BasePropertyAccessChain {
   toString(options?: toStringOptions) {
     if (options && options.newComponentContext !== SyntaxKind.ThisKeyword) {
-      return `(${this.expression}===undefined||${this.expression}===null?undefined:${this.expression}.${this.name})`;
+      const expression = this.expression.toString(options);
+      return `(${expression}===undefined||${expression}===null?undefined:${expression}.${this.name})`;
     }
     return super.toString(options);
   }
