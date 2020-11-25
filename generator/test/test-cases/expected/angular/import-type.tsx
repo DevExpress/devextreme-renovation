@@ -39,7 +39,6 @@ export default class Import extends ImportProps {
 @NgModule({
   declarations: [Import],
   imports: [CommonModule],
-
   exports: [Import],
 })
 export class DxImportModule {}
