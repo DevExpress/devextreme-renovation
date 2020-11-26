@@ -4461,18 +4461,5 @@ mocha.describe("Vue-generator", function () {
         });
       });
     });
-
-    mocha.describe("Component", function () {
-      this.beforeEach(function () {
-        generator.setContext({
-          path: __filename,
-          dirname: __dirname,
-        });
-      });
-
-      this.afterEach(function () {
-        generator.setContext(null);
-      });
-    });
   });
 });
