@@ -405,6 +405,89 @@ mocha.describe("Angular generator", function () {
       );
     });
 
+    mocha.it("Pass svg children into component", function () {
+      const component = createComponent([
+        generator.createProperty(
+          [
+            createDecorator(Decorators.Slot, {
+              isSVG: generator.createTrue(),
+            }),
+          ],
+          [],
+          generator.createIdentifier("children")
+        ),
+      ]);
+
+      const expression = generator.createJsxElement(
+        generator.createJsxOpeningElement(component._name),
+        [
+          generator.createJsxSelfClosingElement(
+            generator.createIdentifier("text")
+          ),
+        ],
+        generator.createJsxClosingElement(component._name)
+      );
+
+      assert.strictEqual(
+        expression.toString(),
+        "<dx-base-widget ><svg:text ></text></dx-base-widget>"
+      );
+    });
+
+    mocha.it(
+      "Pass not svg children into svg widget - throw exception",
+      function () {
+        const component = createComponent(
+          [
+            generator.createProperty(
+              [createDecorator(Decorators.Slot)],
+              [],
+              generator.createIdentifier("children")
+            ),
+          ],
+          {
+            isSVG: generator.createTrue(),
+          }
+        );
+
+        const expression = generator.createJsxElement(
+          generator.createJsxOpeningElement(component._name),
+          [
+            generator.createJsxExpression(
+              undefined,
+              generator.createPropertyAccess(
+                generator.createIdentifier("viewModel"),
+                generator.createIdentifier("children")
+              )
+            ),
+          ],
+          generator.createJsxClosingElement(component._name)
+        );
+
+        let error: string | null = null;
+        try {
+          expression.toString({
+            members: [
+              generator.createProperty(
+                [createDecorator(Decorators.Slot)],
+                [],
+                generator.createIdentifier("children")
+              ),
+            ],
+            componentContext: "viewModel",
+            newComponentContext: "",
+          });
+        } catch (e) {
+          error = e;
+        }
+
+        assert.strictEqual(
+          error,
+          "Can't pass children slot into BaseWidget: Use @Slot({isSVG: true})"
+        );
+      }
+    );
+
     mocha.it(
       "JSX element with with child element that transformed from expression - no wrap it {{}}",
       function () {

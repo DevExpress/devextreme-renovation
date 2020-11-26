@@ -566,19 +566,6 @@ export class AngularComponent extends Component {
     return members;
   }
 
-  // get isSVGRoot(): boolean {
-  //   const viewFunction = this.context.viewFunctions?.[this.view];
-  //   const expression = getJsxExpression(viewFunction?.returnExpression);
-
-  //   if (expression instanceof JsxSelfClosingElement && expression.tagName.toString()==="svg") {
-  //     return false;
-  //   }
-  //   if (expression instanceof JsxElement && expression.openingElement.tagName.toString() === "svg") {
-  //     return false;
-  //   }
-  //   return false;
-  // }
-
   get selector() {
     return getAngularSelector(this._name, "", this.isSVGComponent);
   }

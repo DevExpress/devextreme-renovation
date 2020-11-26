@@ -151,8 +151,8 @@ export class Class extends Expression {
     this.decorators = decorators;
     this.modifiers = modifiers;
     this.heritageClauses = heritageClauses;
-    this.members = this.processMembers(members);
     this.context = context;
+    this.members = this.processMembers(members);
     this.typeParameters = typeParameters;
   }
 

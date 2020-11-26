@@ -105,6 +105,8 @@ export class JsxChildExpression extends JsxExpression {
         ? "<ng-content></ng-content>"
         : `<ng-content select="[${slot.name}]"></ng-content>`;
 
+    options.checkSlot?.(slot, options);
+
     const wrapperTagName = options.isSVG ? "svg:g" : "div";
     const wrapperStyle = options.isSVG ? "" : `style="display: contents"`;
 

@@ -9,6 +9,8 @@ import SimpleComponent from "./simple-svg";
 import SvgRoot from "./svg-root";
 import SvgText from "./svg-text";
 
+import Wrapper from "./svg-component-wrapper";
+
 function view(viewModel: SvgApp) {
   return (
     <div>
@@ -24,6 +26,15 @@ function view(viewModel: SvgApp) {
       <SvgRoot width={100} height={30}>
         <SvgText x={10} y={12} text={"MyText"} />
       </SvgRoot>
+
+      <Wrapper>
+        <Fragment>
+          <SvgText x={10} y={12} text={"Component in wrapper"} />
+          <text x={10} y={22}>
+            Svg Element in Wrapper
+          </text>
+        </Fragment>
+      </Wrapper>
     </div>
   );
 }

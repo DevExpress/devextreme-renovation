@@ -52,20 +52,6 @@ import {
 import { extractComponentFromType } from "../../../base-generator/utils/component-utils";
 import { BindingPattern } from "../../../base-generator/expressions/binding-pattern";
 
-export function processTagName(tagName: Expression, context: GeneratorContext) {
-  const component = context.components?.[tagName.toString()];
-  if (component) {
-    const selector = (component as AngularComponent).selector
-      .replace("[", "")
-      .replace("]", "");
-    return new Identifier(selector);
-  }
-  if (tagName.toString() === "Portal") {
-    return new Identifier("dx-portal");
-  }
-  return tagName;
-}
-
 function pickSpreadValue(first: string, second: string): string {
   return `(${second}!==undefined?${second}:${first})`;
 }
@@ -117,7 +103,9 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     isClosing = false,
     options?: toStringOptions
   ) {
-    const prefix = options?.isSVG ? "svg:" : "";
+    const svgPrefix = "svg:";
+    const prefix =
+      options?.isSVG && selector.indexOf(svgPrefix) === -1 ? svgPrefix : "";
     return isClosing
       ? selector.replace(/\[.+\]/gi, "")
       : `${prefix}${selector.replace("[", "").replace("]", "")}`;

@@ -12,6 +12,7 @@ import {
 import { toStringOptions } from "../../types";
 import { JsxSpreadAttributeMeta } from "./spread-attribute";
 import { JsxOpeningElement as BaseJsxOpeningElement } from "../../../base-generator/expressions/jsx";
+import { Property } from "../class-members/property";
 
 export const isElement = (e: any): e is JsxElement | JsxSelfClosingElement =>
   e instanceof JsxElement ||
@@ -62,19 +63,33 @@ export class JsxElement extends BaseJsxElement {
 
     const openingElementString = this.openingElement.toString(options);
 
-    const children = this.children.concat([
-      ...this.openingElement.getSlotsFromAttributes(options),
-      ...this.openingElement.getTemplatesFromAttributes(options),
-    ]);
-
+    const hasSvgSlot = this.openingElement.component?.slots.some(
+      (s) => s.isSvgSlot
+    );
     const childrenOptions: toStringOptions | undefined =
-      this.openingElement.component?.isSVGComponent && !options?.isSVG
+      this.openingElement.component?.isSVGComponent ||
+      (hasSvgSlot && !options?.isSVG)
         ? {
             members: [],
             ...options,
-            isSVG: this.openingElement.component.isSVGComponent,
+            isSVG: true,
+            checkSlot:
+              (!hasSvgSlot &&
+                ((slot: Property, options: toStringOptions) => {
+                  if (!slot.isSvgSlot) {
+                    throw `Can't pass ${slot._name} slot into ${
+                      this.openingElement.component!._name
+                    }: Use @Slot({isSVG: true})`;
+                  }
+                })) ||
+              undefined,
           }
         : options;
+
+    const children = this.children.concat([
+      ...this.openingElement.getSlotsFromAttributes(childrenOptions),
+      ...this.openingElement.getTemplatesFromAttributes(childrenOptions),
+    ]);
 
     const childrenString: string = children
       .map((c) => c.toString(childrenOptions))

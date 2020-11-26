@@ -2649,6 +2649,42 @@ mocha.describe("base-generator: expressions", function () {
       });
     });
 
+    mocha.describe("isSvgSlot", function () {
+      mocha.it("@Slot({isSvg:true})", function () {
+        const expression = generator.createProperty(
+          [
+            createDecorator(Decorators.Slot, {
+              isSVG: generator.createTrue(),
+            }),
+          ],
+          [],
+          generator.createIdentifier("children")
+        );
+
+        assert.strictEqual(expression.isSvgSlot, true);
+      });
+
+      mocha.it("@Slot()", function () {
+        const expression = generator.createProperty(
+          [createDecorator(Decorators.Slot)],
+          [],
+          generator.createIdentifier("children")
+        );
+
+        assert.strictEqual(expression.isSvgSlot, false);
+      });
+
+      mocha.it("@OneWay({isSvg: true})", function () {
+        const expression = generator.createProperty(
+          [createDecorator(Decorators.Slot)],
+          [],
+          generator.createIdentifier("children")
+        );
+
+        assert.strictEqual(expression.isSvgSlot, false);
+      });
+    });
+
     mocha.it("Method", function () {
       const expression = generator.createMethod(
         undefined,
