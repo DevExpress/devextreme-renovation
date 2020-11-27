@@ -26,6 +26,8 @@ export class DynamicComponentDirective {
   private component: any;
   private subscriptions: {[name:string]:(e: any)=>void} = {};
 
+  private childView?: EmbeddedViewRef<any>;
+
   constructor(
     public viewContainerRef: ViewContainerRef,
     private templateRef: TemplateRef<any>,
@@ -73,7 +75,8 @@ export class DynamicComponentDirective {
   }
 
   createComponent(model: any){
-    if(this.component){
+    if (this.component) {
+      this.childView?.detectChanges();
       return;
     }
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.componentConstructor);
@@ -87,6 +90,9 @@ export class DynamicComponentDirective {
       ).instance;
 
     this.component = component;
+    if (childView.rootNodes.length) { 
+      this.childView = childView;
+    }
 
     this.createSubscriptions();
     this.updateDynamicComponent();
@@ -99,4 +105,5 @@ export const dynamicComponentDirectiveCoreImports = [
   "Input",
   "TemplateRef",
   "ComponentFactoryResolver",
+  "EmbeddedViewRef",
 ];

@@ -17,6 +17,7 @@ import {
   ViewContainerRef,
   TemplateRef,
   ComponentFactoryResolver,
+  EmbeddedViewRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -49,6 +50,8 @@ export class DynamicComponentDirective {
 
   private component: any;
   private subscriptions: { [name: string]: (e: any) => void } = {};
+
+  private childView?: EmbeddedViewRef<any>;
 
   constructor(
     public viewContainerRef: ViewContainerRef,
@@ -98,6 +101,7 @@ export class DynamicComponentDirective {
 
   createComponent(model: any) {
     if (this.component) {
+      this.childView?.detectChanges();
       return;
     }
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
@@ -113,6 +117,9 @@ export class DynamicComponentDirective {
     ).instance;
 
     this.component = component;
+    if (childView.rootNodes.length) {
+      this.childView = childView;
+    }
 
     this.createSubscriptions();
     this.updateDynamicComponent();
