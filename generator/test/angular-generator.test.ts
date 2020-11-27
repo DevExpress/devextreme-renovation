@@ -235,6 +235,102 @@ mocha.describe("Angular generator", function () {
       );
     });
 
+    mocha.describe("JsxAttribute SVG with svg", function () {
+      mocha.it("name -> [attr.name]", function () {
+        const attrName = "height";
+        const attribute = generator.createJsxAttribute(
+          generator.createIdentifier(attrName),
+          generator.createJsxExpression(
+            undefined,
+            generator.createNumericLiteral("10")
+          )
+        );
+
+        assert.strictEqual(
+          attribute.toString({
+            members: [],
+            isSVG: true,
+          }),
+          `[attr.${attrName}]="10"`,
+          attrName
+        );
+      });
+
+      mocha.it("className->attr.class", function () {
+        const attrName = "class";
+        const attribute = generator.createJsxAttribute(
+          generator.createIdentifier(attrName),
+          generator.createJsxExpression(
+            undefined,
+            generator.createNumericLiteral("10")
+          )
+        );
+
+        assert.strictEqual(
+          attribute.toString({
+            members: [],
+            isSVG: true,
+          }),
+          `[attr.${attrName}]="10"`,
+          attrName
+        );
+      });
+
+      mocha.it("camelCase -> camel-case", function () {
+        const attribute = generator.createJsxAttribute(
+          generator.createIdentifier("strokeWidth"),
+          generator.createJsxExpression(
+            undefined,
+            generator.createNumericLiteral("10")
+          )
+        );
+
+        assert.strictEqual(
+          attribute.toString({
+            members: [],
+            isSVG: true,
+          }),
+          `[attr.stroke-width]="10"`
+        );
+      });
+
+      mocha.it("Do not use attr.binding for string literal value", function () {
+        const attribute = generator.createJsxAttribute(
+          generator.createIdentifier("width"),
+          generator.createJsxExpression(
+            undefined,
+            generator.createStringLiteral("10px")
+          )
+        );
+
+        assert.strictEqual(
+          attribute.toString({
+            members: [],
+            isSVG: true,
+          }),
+          'width="10px"'
+        );
+      });
+
+      mocha.it("do not dasherize not-kebab-case attribute", function () {
+        const expression = generator.createJsxAttribute(
+          generator.createIdentifier("viewBox"),
+          generator.createJsxExpression(
+            undefined,
+            generator.createIdentifier("value")
+          )
+        );
+
+        assert.strictEqual(
+          expression.toString({
+            members: [],
+            isSVG: true,
+          }),
+          `[attr.viewBox]="value"`
+        );
+      });
+    });
+
     mocha.it("JSX element with Opening and Close Elements", function () {
       const expression = generator.createJsxElement(
         generator.createJsxOpeningElement(
@@ -308,6 +404,89 @@ mocha.describe("Angular generator", function () {
         "<parent ><child ></child></parent>"
       );
     });
+
+    mocha.it("Pass svg children into component", function () {
+      const component = createComponent([
+        generator.createProperty(
+          [
+            createDecorator(Decorators.Slot, {
+              isSVG: generator.createTrue(),
+            }),
+          ],
+          [],
+          generator.createIdentifier("children")
+        ),
+      ]);
+
+      const expression = generator.createJsxElement(
+        generator.createJsxOpeningElement(component._name),
+        [
+          generator.createJsxSelfClosingElement(
+            generator.createIdentifier("text")
+          ),
+        ],
+        generator.createJsxClosingElement(component._name)
+      );
+
+      assert.strictEqual(
+        expression.toString(),
+        "<dx-base-widget ><svg:text ></text></dx-base-widget>"
+      );
+    });
+
+    mocha.it(
+      "Pass not svg children into svg widget - throw exception",
+      function () {
+        const component = createComponent(
+          [
+            generator.createProperty(
+              [createDecorator(Decorators.Slot)],
+              [],
+              generator.createIdentifier("children")
+            ),
+          ],
+          {
+            isSVG: generator.createTrue(),
+          }
+        );
+
+        const expression = generator.createJsxElement(
+          generator.createJsxOpeningElement(component._name),
+          [
+            generator.createJsxExpression(
+              undefined,
+              generator.createPropertyAccess(
+                generator.createIdentifier("viewModel"),
+                generator.createIdentifier("children")
+              )
+            ),
+          ],
+          generator.createJsxClosingElement(component._name)
+        );
+
+        let error: string | null = null;
+        try {
+          expression.toString({
+            members: [
+              generator.createProperty(
+                [createDecorator(Decorators.Slot)],
+                [],
+                generator.createIdentifier("children")
+              ),
+            ],
+            componentContext: "viewModel",
+            newComponentContext: "",
+          });
+        } catch (e) {
+          error = e;
+        }
+
+        assert.strictEqual(
+          error,
+          "Can't pass children slot into BaseWidget: Use @Slot({isSVG: true})"
+        );
+      }
+    );
 
     mocha.it(
       "JSX element with with child element that transformed from expression - no wrap it {{}}",
@@ -1437,6 +1616,98 @@ mocha.describe("Angular generator", function () {
           "<dx-base-widget ></dx-base-widget>"
         );
       });
+
+      mocha.it("<SVGComponent/>", function () {
+        const component = createComponent([], {
+          isSVG: generator.createTrue(),
+        });
+
+        const element = generator.createJsxSelfClosingElement(
+          generator.createIdentifier(component.name)
+        );
+
+        assert.strictEqual(
+          element.toString({
+            members: [],
+          }),
+          `<g BaseWidget ></g >`
+        );
+      });
+
+      mocha.it(
+        "render svg component with children inside html component",
+        function () {
+          const component = createComponent([], {
+            isSVG: generator.createTrue(),
+          });
+
+          const element = generator.createJsxElement(
+            generator.createJsxOpeningElement(
+              generator.createIdentifier("div")
+            ),
+            [
+              generator.createJsxElement(
+                generator.createJsxOpeningElement(component._name),
+                [
+                  generator.createJsxSelfClosingElement(
+                    generator.createIdentifier("text"),
+                    undefined,
+                    [
+                      generator.createJsxAttribute(
+                        generator.createIdentifier("style"),
+                        generator.createIdentifier("styleValue")
+                      ),
+                    ]
+                  ),
+                ],
+                generator.createJsxClosingElement(component._name)
+              ),
+            ],
+            generator.createJsxClosingElement(generator.createIdentifier("div"))
+          );
+
+          const options: toStringOptions = {
+            members: [],
+            isSVG: false,
+          };
+
+          assert.strictEqual(
+            removeSpaces(element.toString(options)),
+            removeSpaces(`
+            <div>
+              <g BaseWidget >
+                <svg:text [ngStyle]="__processNgStyle(styleValue)"></text>
+              </g >
+            </div>`)
+          );
+
+          assert.strictEqual(options.isSVG, false);
+          assert.strictEqual(options.hasStyle, true);
+        }
+      );
+
+      mocha.it("<SVG Component></SVGComponent>", function () {
+        const component = createComponent([], {
+          isSVG: generator.createTrue(),
+        });
+
+        const element = generator.createJsxElement(
+          generator.createJsxOpeningElement(
+            generator.createIdentifier(component.name)
+          ),
+          [],
+          generator.createJsxClosingElement(
+            generator.createIdentifier(component.name)
+          )
+        );
+
+        assert.strictEqual(
+          element.toString({
+            members: [],
+          }),
+          `<g BaseWidget ></g >`
+        );
+      });
     });
 
     mocha.describe("Slots with conditional rendering", function () {
@@ -2291,6 +2562,43 @@ mocha.describe("Angular generator", function () {
             members: [slotProperty],
           }),
           `<span ><div #slotChildren style="display: contents"><ng-content></ng-content></div></span>`
+        );
+      });
+
+      mocha.it("slot in svg component", function () {
+        const expression = generator.createJsxElement(
+          generator.createJsxOpeningElement(
+            generator.createIdentifier("svg"),
+            undefined,
+            []
+          ),
+          [
+            generator.createJsxExpression(
+              undefined,
+              generator.createPropertyAccess(
+                generator.createIdentifier("viewModel"),
+                generator.createIdentifier("children")
+              )
+            ),
+          ],
+          generator.createJsxClosingElement(generator.createIdentifier("svg"))
+        );
+
+        const slotProperty = generator.createProperty(
+          [createDecorator("Slot")],
+          [],
+          generator.createIdentifier("children"),
+          generator.SyntaxKind.QuestionToken,
+          undefined,
+          generator.createFalse()
+        );
+
+        assert.strictEqual(
+          expression.toString({
+            members: [slotProperty],
+            isSVG: true,
+          }),
+          `<svg:svg ><svg:g #slotChildren ><ng-content></ng-content></svg:g></svg>`
         );
       });
 

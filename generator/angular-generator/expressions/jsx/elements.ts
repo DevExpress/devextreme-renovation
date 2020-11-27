@@ -1,6 +1,9 @@
 import { JsxElement as BaseJsxElement } from "../../../base-generator/expressions/jsx";
 import { JsxExpression } from "./jsx-expression";
-import { JsxChildExpression } from "./jsx-child-expression";
+import {
+  JsxChildExpression,
+  mergeToStringOptions,
+} from "./jsx-child-expression";
 import {
   JsxOpeningElement,
   JsxSelfClosingElement,
@@ -9,6 +12,7 @@ import {
 import { toStringOptions } from "../../types";
 import { JsxSpreadAttributeMeta } from "./spread-attribute";
 import { JsxOpeningElement as BaseJsxOpeningElement } from "../../../base-generator/expressions/jsx";
+import { Property } from "../class-members/property";
 
 export const isElement = (e: any): e is JsxElement | JsxSelfClosingElement =>
   e instanceof JsxElement ||
@@ -59,14 +63,39 @@ export class JsxElement extends BaseJsxElement {
 
     const openingElementString = this.openingElement.toString(options);
 
+    const hasSvgSlot = this.openingElement.component?.slots.some(
+      (s) => s.isSvgSlot
+    );
+    const childrenOptions: toStringOptions | undefined =
+      this.openingElement.component?.isSVGComponent ||
+      (hasSvgSlot && !options?.isSVG)
+        ? {
+            members: [],
+            ...options,
+            isSVG: true,
+            checkSlot:
+              (!hasSvgSlot &&
+                ((slot: Property, options: toStringOptions) => {
+                  if (!slot.isSvgSlot) {
+                    throw `Can't pass ${slot._name} slot into ${
+                      this.openingElement.component!._name
+                    }: Use @Slot({isSVG: true})`;
+                  }
+                })) ||
+              undefined,
+          }
+        : options;
+
     const children = this.children.concat([
-      ...this.openingElement.getSlotsFromAttributes(options),
-      ...this.openingElement.getTemplatesFromAttributes(options),
+      ...this.openingElement.getSlotsFromAttributes(childrenOptions),
+      ...this.openingElement.getTemplatesFromAttributes(childrenOptions),
     ]);
 
     const childrenString: string = children
-      .map((c) => c.toString(options))
+      .map((c) => c.toString(childrenOptions))
       .join("");
+
+    mergeToStringOptions(options, childrenOptions);
 
     if (this.compileOnlyChildren()) {
       return childrenString;

@@ -122,6 +122,11 @@ export class BaseClassMember extends Expression {
     );
   }
 
+  get isSvgSlot() {
+    const decorator = this.decorators.find((d) => d.name === Decorators.Slot);
+    return decorator?.getParameter("isSVG")?.toString() === "true";
+  }
+
   get isTemplate() {
     return this._hasDecorator(Decorators.Template);
   }

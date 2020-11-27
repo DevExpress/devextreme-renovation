@@ -17,6 +17,8 @@ import {
 } from "../../../base-generator/expressions/functions";
 import { Identifier } from "../../../base-generator/expressions/common";
 import { JsxExpression } from "./jsx-expression";
+import { dasherize } from "../../../base-generator/utils/string";
+import { kebabSvgAttributes } from "../../../base-generator/utils/svg-utils/kebab-attributes";
 
 const ATTR_BINDING_ATTRIBUTES = ["aria-label"];
 
@@ -71,7 +73,7 @@ export class JsxAttribute extends BaseJsxAttribute {
     const name = this.name.toString();
     if (!options?.jsxComponent) {
       if (name === "className") {
-        return "class";
+        return options?.isSVG ? "attr.class" : "class";
       }
       if (name === "style") {
         if (options) {
@@ -82,6 +84,10 @@ export class JsxAttribute extends BaseJsxAttribute {
 
       if (ATTR_BINDING_ATTRIBUTES.indexOf(name) > -1) {
         return `attr.${name}`;
+      }
+
+      if (options?.isSVG) {
+        return `attr.${kebabSvgAttributes.has(name) ? dasherize(name) : name}`;
       }
     }
 

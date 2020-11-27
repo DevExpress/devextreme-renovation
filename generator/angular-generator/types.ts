@@ -42,6 +42,8 @@ export interface toStringOptions extends BaseToStringOptions {
   };
   forwardRefs?: BaseClassMember[];
   dynamicComponents?: DynamicComponent[];
+  isSVG?: boolean;
+  checkSlot?: (slot: Property, options: toStringOptions) => void;
 }
 
 export type AngularGeneratorContext = GeneratorContext & {

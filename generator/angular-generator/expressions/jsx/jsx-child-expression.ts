@@ -42,6 +42,21 @@ import {
 } from "../../../base-generator/utils/expressions";
 import { VariableExpression } from "../../../base-generator/types";
 
+export const mergeToStringOptions = (
+  dst: toStringOptions | undefined,
+  src: toStringOptions | undefined
+) => {
+  if (dst === src || !dst || !src) {
+    return dst;
+  }
+  dst.hasStyle = dst.hasStyle || src.hasStyle;
+  dst.dynamicComponents = src.dynamicComponents;
+  dst.defaultTemplates = src.defaultTemplates || {};
+  const trackBy = (dst.trackBy || []).concat(src.trackBy || []);
+  dst.trackBy = [...new Set(trackBy)];
+  return dst;
+};
+
 export class JsxChildExpression extends JsxExpression {
   constructor(expression: JsxExpression) {
     super(expression.dotDotDotToken, expression.expression);
@@ -84,15 +99,20 @@ export class JsxChildExpression extends JsxExpression {
     return null;
   }
 
-  compileSlot(slot: Property) {
+  compileSlot(slot: Property, options: toStringOptions) {
     const slotValue =
       slot.name.toString() === "children"
         ? "<ng-content></ng-content>"
         : `<ng-content select="[${slot.name}]"></ng-content>`;
 
-    return `<div #slot${capitalizeFirstLetter(
+    options.checkSlot?.(slot, options);
+
+    const wrapperTagName = options.isSVG ? "svg:g" : "div";
+    const wrapperStyle = options.isSVG ? "" : `style="display: contents"`;
+
+    return `<${wrapperTagName} #slot${capitalizeFirstLetter(
       slot.name
-    )} style="display: contents">${slotValue}</div>`;
+    )} ${wrapperStyle}>${slotValue}</${wrapperTagName}>`;
   }
 
   createIfAttribute(condition: Expression): JsxAttribute {
@@ -111,7 +131,7 @@ export class JsxChildExpression extends JsxExpression {
     return new JsxElement(
       new JsxOpeningElement(containerIdentifer, undefined, attributes, {}),
       children,
-      new JsxClosingElement(containerIdentifer)
+      new JsxClosingElement(containerIdentifer, {})
     );
   }
 
@@ -271,20 +291,11 @@ export class JsxChildExpression extends JsxExpression {
 
     if (isElement(templateExpression)) {
       template = templateExpression.toString(templateOptions);
-      if (options)
-        options.defaultTemplates = templateOptions.defaultTemplates || {};
     } else {
       const expression = new JsxChildExpression(
         templateExpression as JsxExpression
       );
       template = expression.toString(templateOptions);
-      if (options) {
-        options.defaultTemplates = templateOptions.defaultTemplates || {};
-        const arr = (options.trackBy || []).concat(
-          templateOptions.trackBy || []
-        );
-        options.trackBy = [...new Set(arr)];
-      }
     }
 
     const item = `let ${itemName} of ${itemsExpressionString}`;
@@ -343,10 +354,7 @@ export class JsxChildExpression extends JsxExpression {
       }
     }
 
-    if (options) {
-      options.hasStyle = options.hasStyle || templateOptions.hasStyle;
-      options.dynamicComponents = templateOptions.dynamicComponents;
-    }
+    mergeToStringOptions(options, templateOptions);
 
     return `<ng-container *ngFor="${ngForValue.join(
       ";"
@@ -446,7 +454,7 @@ export class JsxChildExpression extends JsxExpression {
 
     const slot = this.getSlot(stringValue, options);
     if (slot) {
-      return this.compileSlot(slot as Property);
+      return this.compileSlot(slot as Property, options!);
     }
 
     return `{{${stringValue}}}`;

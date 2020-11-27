@@ -178,6 +178,62 @@ mocha.describe("preact-generator: expressions", function () {
     }
   );
 
+  mocha.describe("JsxAttribute", function () {
+    mocha.it("dasherize attribute svg attribute", function () {
+      const expression = generator.createJsxAttribute(
+        generator.createIdentifier("strokeWidth"),
+        generator.createJsxExpression(
+          undefined,
+          generator.createIdentifier("value")
+        )
+      );
+
+      assert.strictEqual(
+        expression.toString({
+          members: [],
+        }),
+        "stroke-width={value}"
+      );
+    });
+
+    mocha.it("do not dasherize component prop", function () {
+      const expression = generator.createJsxAttribute(
+        generator.createIdentifier("strokeWidth"),
+        generator.createJsxExpression(
+          undefined,
+          generator.createIdentifier("value")
+        )
+      );
+
+      assert.strictEqual(
+        expression.toString({
+          members: [],
+          jsxComponent: generator.createComponent(
+            createDecorator(Decorators.Component),
+            [],
+            generator.createIdentifier("Component"),
+            [],
+            [],
+            []
+          ),
+        }),
+        "strokeWidth={value}"
+      );
+    });
+
+    mocha.it("do not dasherize not-kebab-case attribute", function () {
+      const expression = generator.createJsxAttribute(
+        generator.createIdentifier("viewBox"),
+        generator.createJsxExpression(
+          undefined,
+          generator.createIdentifier("value")
+        )
+      );
+
+      assert.strictEqual(expression.toString(), "viewBox={value}");
+    });
+  });
+
   mocha.describe("Fragment", function () {
     mocha.it("React.Fragment -> Preact.Fragment", function () {
       const expression = generator.createJsxElement(

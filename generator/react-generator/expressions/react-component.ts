@@ -45,7 +45,7 @@ import path from "path";
 import { ComponentInput, getTemplatePropName } from "./react-component-input";
 import {
   capitalizeFirstLetter,
-  lowerizeFirstLeter,
+  lowerizeFirstLetter,
 } from "../../base-generator/utils/string";
 import { Conditional } from "../../base-generator/expressions/conditions";
 import { GeneratorContext } from "../../base-generator/types";
@@ -822,7 +822,7 @@ export class ReactComponent extends Component {
                     }(props: ${this.compilePropsType()}){`
                   : `const ${this.name} = forwardRef<${
                       this.name
-                    }Ref, ${this.compilePropsType()}>(function ${lowerizeFirstLeter(
+                    }Ref, ${this.compilePropsType()}>(function ${lowerizeFirstLetter(
                       this.name
                     )}(props: ${this.compilePropsType()}, ref){`
               }

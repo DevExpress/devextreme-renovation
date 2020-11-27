@@ -110,7 +110,12 @@ export const Template = () => propertyDecorator;
  * Property Decorator.
  * Declares an input property that the user can set custom rendering part of widget.
  */
-export const Slot = () => propertyDecorator;
+export const Slot = (args?: {
+  /**
+   * Specify whether to pass content as svg
+   */
+  isSVG?: boolean;
+}) => propertyDecorator;
 /**
  * Method Decorator.
  * Declare A method that be available for external using

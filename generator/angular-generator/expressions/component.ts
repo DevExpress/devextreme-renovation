@@ -164,13 +164,18 @@ const ngOnChangesParameters = ["changes"];
 
 export const getAngularSelector = (
   name: string | Identifier,
-  postfix: string = ""
+  postfix: string = "",
+  isSVG = false
 ) => {
   name = name.toString();
   const words = name
     .toString()
     .split(/(?=[A-Z])/)
     .map((w) => w.toLowerCase());
+
+  if (isSVG) {
+    return `g [${name}]`;
+  }
   return [`dx${postfix}`].concat(words).join("-");
 };
 
@@ -562,7 +567,7 @@ export class AngularComponent extends Component {
   }
 
   get selector() {
-    return getAngularSelector(this._name);
+    return getAngularSelector(this._name, "", this.isSVGComponent);
   }
 
   get module() {
@@ -955,8 +960,8 @@ export class AngularComponent extends Component {
     return "";
   }
 
-  compileNgStyleProcessor(options?: toStringOptions): string {
-    if (options?.hasStyle) {
+  compileNgStyleProcessor(options: toStringOptions): string {
+    if (options.hasStyle) {
       return `__processNgStyle(value:any){
                     if (typeof value === "object") {
                         return Object.keys(value).reduce((v: { [name: string]: any }, k) => {
@@ -1680,6 +1685,7 @@ export class AngularComponent extends Component {
       members: this.members,
       newComponentContext: this.viewModel ? "_viewModel" : "",
       disableTemplates: true,
+      isSVG: this.isSVGComponent,
     };
 
     const implementedInterfaces: string[] = [];

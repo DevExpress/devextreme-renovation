@@ -34,7 +34,10 @@ import {
 } from "../../../base-generator/expressions/property-assignment";
 import { processComponentContext } from "../../../base-generator/utils/string";
 import { JsxExpression } from "./jsx-expression";
-import { JsxChildExpression } from "./jsx-child-expression";
+import {
+  JsxChildExpression,
+  mergeToStringOptions,
+} from "./jsx-child-expression";
 import { JsxElement } from "./elements";
 import { GeneratorContext } from "../../../base-generator/types";
 import { AngularComponent } from "../component";
@@ -48,18 +51,6 @@ import {
 } from "../../../base-generator/utils/expressions";
 import { extractComponentFromType } from "../../../base-generator/utils/component-utils";
 import { BindingPattern } from "../../../base-generator/expressions/binding-pattern";
-
-export function processTagName(tagName: Expression, context: GeneratorContext) {
-  const component = context.components?.[tagName.toString()];
-  if (component) {
-    const selector = (component as AngularComponent).selector;
-    return new Identifier(selector);
-  }
-  if (tagName.toString() === "Portal") {
-    return new Identifier("dx-portal");
-  }
-  return tagName;
-}
 
 function pickSpreadValue(first: string, second: string): string {
   return `(${second}!==undefined?${second}:${first})`;
@@ -107,18 +98,44 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     this.attributes = attributes;
   }
 
-  processTagName(tagName: Expression, options?: toStringOptions): Expression {
+  processAngularSelector(
+    selector: string,
+    isClosing = false,
+    options?: toStringOptions
+  ) {
+    const svgPrefix = "svg:";
+    const prefix =
+      options?.isSVG && selector.indexOf(svgPrefix) === -1 ? svgPrefix : "";
+    return isClosing
+      ? selector.replace(/\[.+\]/gi, "")
+      : `${prefix}${selector.replace("[", "").replace("]", "")}`;
+  }
+
+  processTagName(
+    tagName: Expression,
+    options?: toStringOptions,
+    isClosing = false
+  ): Expression {
     if (this.isDynamicComponent(options)) {
       return new SimpleExpression("ng-template");
     }
 
     if (this.component instanceof AngularComponent) {
-      const selector = this.component.selector;
+      const selector = this.processAngularSelector(
+        this.component.selector,
+        isClosing,
+        options
+      );
       return new Identifier(selector);
     }
     if (tagName.toString() === "Portal") {
       return new Identifier("dx-portal");
     }
+
+    if (options?.isSVG && !isClosing) {
+      return new SimpleExpression(`svg:${super.processTagName(tagName)}`);
+    }
+
     return super.processTagName(tagName);
   }
 
@@ -567,7 +584,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return new JsxElement(
       new JsxOpeningElement(tag, undefined, [ref, ...parameters], this.context),
       [element],
-      new JsxClosingElement(tag)
+      new JsxClosingElement(tag, this.context)
     );
   }
 
@@ -616,9 +633,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
     const element = func.getTemplate(templateOptions);
 
-    if (options) {
-      options.hasStyle = options.hasStyle || templateOptions.hasStyle;
-    }
+    mergeToStringOptions(options, templateOptions);
 
     return this.createTemplateElement(
       name,
@@ -746,7 +761,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         this.context
       ),
       children,
-      new JsxClosingElement(processTagName(expression, this.context))
+      new JsxClosingElement(expression, this.context)
     );
 
     return element;
@@ -836,7 +851,8 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
     if (separatedChildren) {
       return `${openingElement}${separatedChildren[0]}</${this.processTagName(
         this.tagName,
-        options
+        options,
+        true
       )}>
         ${separatedChildren[1]}`;
     }
@@ -845,7 +861,8 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
 
     return `${openingElement}${childrenString}</${this.processTagName(
       this.tagName,
-      options
+      options,
+      true
     )}>`;
   }
 
@@ -860,8 +877,12 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
 }
 
 export class JsxClosingElement extends JsxOpeningElement {
-  constructor(tagName: Expression) {
-    super(tagName, [], [], {});
+  constructor(tagName: Expression, context: GeneratorContext) {
+    super(tagName, [], [], context);
+  }
+
+  processTagName(tagName: Expression, options?: toStringOptions): Expression {
+    return super.processTagName(tagName, options, true);
   }
 
   toString(options?: toStringOptions) {
