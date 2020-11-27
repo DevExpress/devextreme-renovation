@@ -20,26 +20,35 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-function updateDynamicComponent(
-  component: any,
-  props: { [name: string]: any }
-) {
-  if (component) {
-    Object.keys(props).forEach((prop) => {
-      const value = props[prop];
-      component[prop] instanceof EventEmitter
-        ? component[prop].subscribe(value)
-        : (component[prop] = value);
-    });
-    component.changeDetection.detectChanges();
-  }
-}
-
 @Directive({
   selector: "[dynamicComponent]",
 })
 export class DynamicComponentDirective {
-  @Input() index: number = 0;
+  private _props: { [name: string]: any } = {};
+  get props(): { [name: string]: any } {
+    return this._props;
+  }
+  @Input() set props(value: { [name: string]: any }) {
+    this._props = Object.keys(value).reduce(
+      (result: { [name: string]: any }, key) => {
+        if (key.indexOf("[spreadProp]") === 0) {
+          return {
+            ...result,
+            ...value[key],
+          };
+        }
+        return {
+          ...result,
+          [key]: value[key],
+        };
+      },
+      {}
+    );
+  }
+  @Input() componentConstructor: any;
+
+  private component: any;
+  private subscriptions: { [name: string]: (e: any) => void } = {};
 
   constructor(
     public viewContainerRef: ViewContainerRef,
@@ -53,9 +62,46 @@ export class DynamicComponentDirective {
     return childView;
   }
 
-  createComponent(Component: any, model: any, props: { [name: string]: any }) {
+  ngAfterViewChecked() {
+    this.updateDynamicComponent();
+  }
+
+  updateDynamicComponent() {
+    const component = this.component;
+    if (component) {
+      let updated = false;
+      Object.keys(this.props).forEach((prop) => {
+        const value = this.props[prop];
+        if (component[prop] !== value) {
+          if (component[prop] instanceof EventEmitter) {
+            this.subscriptions[prop] = value;
+          } else {
+            component[prop] = value;
+            updated = true;
+          }
+        }
+      });
+      updated && component.changeDetection.detectChanges();
+    }
+  }
+
+  createSubscriptions() {
+    const component = this.component;
+    Object.keys(this.props).forEach((prop) => {
+      if (component[prop] instanceof EventEmitter) {
+        component[prop].subscribe((e: any) => {
+          this.subscriptions[prop]?.(e);
+        });
+      }
+    });
+  }
+
+  createComponent(model: any) {
+    if (this.component) {
+      return;
+    }
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
-      Component
+      this.componentConstructor
     );
     this.viewContainerRef.clear();
     const childView = this.renderChildView(model);
@@ -65,9 +111,11 @@ export class DynamicComponentDirective {
       undefined,
       [childView.rootNodes]
     ).instance;
-    component._embeddedView = childView;
-    updateDynamicComponent(component, props);
-    return component;
+
+    this.component = component;
+
+    this.createSubscriptions();
+    this.updateDynamicComponent();
   }
 }
 
@@ -78,7 +126,8 @@ export class DynamicComponentDirective {
     ><ng-container *ngFor="let C of __Components; index as index"
       ><ng-template
         dynamicComponent
-        [index]="0"
+        [props]="{ onClick: __onComponentClick.bind(this) }"
+        [componentConstructor]="C"
         let-Components="Components"
         let-restAttributes="restAttributes"
         let-height="height"
@@ -108,25 +157,9 @@ export default class DynamicComponentCreator extends Props {
   @ViewChildren(DynamicComponentDirective) dynamicComponentHost!: QueryList<
     DynamicComponentDirective
   >;
-  dynamicComponents: any[][] = [];
-
-  createComponents0() {
-    const containers = this.dynamicComponentHost
-      .toArray()
-      .filter((c) => c.index === 0);
-    this.dynamicComponents[0] = [];
-    if (!containers.length) {
-      return;
-    }
-
-    const expression = this.__Components;
-    const expressions = expression instanceof Array ? expression : [expression];
-
-    containers.forEach((container, index) => {
-      const component = container.createComponent(expressions[index], this, {
-        onClick: this.__onComponentClick.bind(this),
-      });
-      this.dynamicComponents[0][index] = component;
+  createDynamicComponents() {
+    this.dynamicComponentHost.toArray().forEach((container) => {
+      container.createComponent(this);
     });
   }
 
@@ -135,22 +168,11 @@ export default class DynamicComponentCreator extends Props {
   } = {};
 
   ngAfterViewInit() {
-    this.createComponents0();
+    this.createDynamicComponents();
   }
 
   ngAfterViewChecked() {
-    if (
-      this.dynamicComponents[0].length !==
-      this.dynamicComponentHost.toArray().filter((c) => c.index === 0).length
-    ) {
-      this.createComponents0();
-    }
-
-    this.dynamicComponents.forEach((components) =>
-      components.forEach((component: any) => {
-        component._embeddedView.detectChanges();
-      })
-    );
+    this.createDynamicComponents();
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {

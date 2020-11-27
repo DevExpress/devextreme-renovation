@@ -50,7 +50,8 @@ export const mergeToStringOptions = (
     return dst;
   }
   dst.hasStyle = dst.hasStyle || src.hasStyle;
-  dst.dynamicComponents = src.dynamicComponents;
+  dst.hasDynamicComponents =
+    dst.hasDynamicComponents || src.hasDynamicComponents;
   dst.defaultTemplates = src.defaultTemplates || {};
   const trackBy = (dst.trackBy || []).concat(src.trackBy || []);
   dst.trackBy = [...new Set(trackBy)];
