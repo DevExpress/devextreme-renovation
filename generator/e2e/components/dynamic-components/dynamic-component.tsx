@@ -49,7 +49,7 @@ function view({
 
       <ButtonWithTemplateComponent
         id={"dynamic-component-button-with-template"}
-        text="10"
+        // text="10"  https://github.com/DevExpress/devextreme-renovation/issues/545
         {...spread}
         template={({ text }) => (
           <div
