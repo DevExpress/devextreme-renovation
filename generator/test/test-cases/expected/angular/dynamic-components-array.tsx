@@ -32,7 +32,7 @@ export class DynamicComponentDirective {
   @Input() set props(value: { [name: string]: any }) {
     this._props = Object.keys(value).reduce(
       (result: { [name: string]: any }, key) => {
-        if (key.indexOf("[spreadProp]") === 0) {
+        if (key.indexOf("dxSpreadProp") === 0) {
           return {
             ...result,
             ...value[key],

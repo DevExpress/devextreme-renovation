@@ -18,6 +18,7 @@ function view({
   ButtonComponent,
   ButtonWithTemplateComponent,
   onClick,
+  spread,
   value,
 }: DynamicComponent) {
   return (
@@ -48,7 +49,8 @@ function view({
 
       <ButtonWithTemplateComponent
         id={"dynamic-component-button-with-template"}
-        text={value.toString()}
+        text="10"
+        {...spread}
         template={({ text }) => (
           <div
             style={{
@@ -87,6 +89,13 @@ export default class DynamicComponent extends JSXComponent(Props) {
 
   get ButtonWithTemplateComponent(): JSXTemplate<ButtonWithTemplateProps> {
     return ButtonWithTemplate;
+  }
+
+  get spread(): { text: string; template: null } {
+    return {
+      text: this.value.toString(),
+      template: null,
+    };
   }
 
   onClick(e: number) {
