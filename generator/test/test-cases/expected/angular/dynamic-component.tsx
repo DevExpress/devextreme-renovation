@@ -17,34 +17,45 @@ import {
   ViewChildren,
   EventEmitter,
   QueryList,
-  ViewChild,
   Directive,
   ViewContainerRef,
   TemplateRef,
   ComponentFactoryResolver,
+  EmbeddedViewRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-
-function updateDynamicComponent(
-  component: any,
-  props: { [name: string]: any }
-) {
-  if (component) {
-    Object.keys(props).forEach((prop) => {
-      const value = props[prop];
-      component[prop] instanceof EventEmitter
-        ? component[prop].subscribe(value)
-        : (component[prop] = value);
-    });
-    component.changeDetection.detectChanges();
-  }
-}
 
 @Directive({
   selector: "[dynamicComponent]",
 })
 export class DynamicComponentDirective {
-  @Input() index: number = 0;
+  private _props: { [name: string]: any } = {};
+  get props(): { [name: string]: any } {
+    return this._props;
+  }
+  @Input() set props(value: { [name: string]: any }) {
+    this._props = Object.keys(value).reduce(
+      (result: { [name: string]: any }, key) => {
+        if (key.indexOf("dxSpreadProp") === 0) {
+          return {
+            ...result,
+            ...value[key],
+          };
+        }
+        return {
+          ...result,
+          [key]: value[key],
+        };
+      },
+      {}
+    );
+  }
+  @Input() componentConstructor: any;
+
+  private component: any;
+  private subscriptions: { [name: string]: (e: any) => void } = {};
+
+  private childView?: EmbeddedViewRef<any>;
 
   constructor(
     public viewContainerRef: ViewContainerRef,
@@ -58,9 +69,47 @@ export class DynamicComponentDirective {
     return childView;
   }
 
-  createComponent(Component: any, model: any, props: { [name: string]: any }) {
+  ngAfterViewChecked() {
+    this.updateDynamicComponent();
+  }
+
+  updateDynamicComponent() {
+    const component = this.component;
+    if (component) {
+      let updated = false;
+      Object.keys(this.props).forEach((prop) => {
+        const value = this.props[prop];
+        if (component[prop] !== value) {
+          if (component[prop] instanceof EventEmitter) {
+            this.subscriptions[prop] = value;
+          } else {
+            component[prop] = value;
+            updated = true;
+          }
+        }
+      });
+      updated && component.changeDetection.detectChanges();
+    }
+  }
+
+  createSubscriptions() {
+    const component = this.component;
+    Object.keys(this.props).forEach((prop) => {
+      if (component[prop] instanceof EventEmitter) {
+        component[prop].subscribe((e: any) => {
+          this.subscriptions[prop]?.(e);
+        });
+      }
+    });
+  }
+
+  createComponent(model: any) {
+    if (this.component) {
+      this.childView?.detectChanges();
+      return;
+    }
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
-      Component
+      this.componentConstructor
     );
     this.viewContainerRef.clear();
     const childView = this.renderChildView(model);
@@ -70,9 +119,14 @@ export class DynamicComponentDirective {
       undefined,
       [childView.rootNodes]
     ).instance;
-    component._embeddedView = childView;
-    updateDynamicComponent(component, props);
-    return component;
+
+    this.component = component;
+    if (childView.rootNodes.length) {
+      this.childView = childView;
+    }
+
+    this.createSubscriptions();
+    this.updateDynamicComponent();
   }
 }
 
@@ -82,7 +136,12 @@ export class DynamicComponentDirective {
   template: `<div
     ><ng-template
       dynamicComponent
-      [index]="0"
+      [props]="{
+        height: internalStateValue,
+        onClick: __onComponentClick.bind(this),
+        dxSpreadProp2: __spreadProps
+      }"
+      [componentConstructor]="__JSXTemplateComponent"
       let-internalStateValue="internalStateValue"
       let-Component="Component"
       let-JSXTemplateComponent="JSXTemplateComponent"
@@ -93,7 +152,8 @@ export class DynamicComponentDirective {
     ></ng-template
     ><ng-template
       dynamicComponent
-      [index]="1"
+      [props]="{ height: height, onClick: __onComponentClick.bind(this) }"
+      [componentConstructor]="__Component"
       let-internalStateValue="internalStateValue"
       let-Component="Component"
       let-JSXTemplateComponent="JSXTemplateComponent"
@@ -104,7 +164,8 @@ export class DynamicComponentDirective {
     ></ng-template
     ><ng-template
       dynamicComponent
-      [index]="2"
+      [props]="{ template: __template__generated }"
+      [componentConstructor]="__ComponentWithTemplate"
       let-internalStateValue="internalStateValue"
       let-Component="Component"
       let-JSXTemplateComponent="JSXTemplateComponent"
@@ -156,70 +217,9 @@ export default class DynamicComponentCreator extends Props {
   @ViewChildren(DynamicComponentDirective) dynamicComponentHost!: QueryList<
     DynamicComponentDirective
   >;
-  dynamicComponents: any[][] = [];
-
-  createJSXTemplateComponent0() {
-    const containers = this.dynamicComponentHost
-      .toArray()
-      .filter((c) => c.index === 0);
-    this.dynamicComponents[0] = [];
-    if (!containers.length) {
-      return;
-    }
-
-    const expression = this.__JSXTemplateComponent;
-    const expressions = expression instanceof Array ? expression : [expression];
-
-    containers.forEach((container, index) => {
-      const component = container.createComponent(expressions[index], this, {
-        height: this.internalStateValue,
-        onClick: this.__onComponentClick.bind(this),
-        ...this.__spreadProps,
-      });
-      this.dynamicComponents[0][index] = component;
-    });
-  }
-
-  createComponent1() {
-    const containers = this.dynamicComponentHost
-      .toArray()
-      .filter((c) => c.index === 1);
-    this.dynamicComponents[1] = [];
-    if (!containers.length) {
-      return;
-    }
-
-    const expression = this.__Component;
-    const expressions = expression instanceof Array ? expression : [expression];
-
-    containers.forEach((container, index) => {
-      const component = container.createComponent(expressions[index], this, {
-        height: this.height,
-        onClick: this.__onComponentClick.bind(this),
-      });
-      this.dynamicComponents[1][index] = component;
-    });
-  }
-
-  @ViewChild("__template__generated", { static: true })
-  templateRef2?: TemplateRef<any>;
-  createComponentWithTemplate2() {
-    const containers = this.dynamicComponentHost
-      .toArray()
-      .filter((c) => c.index === 2);
-    this.dynamicComponents[2] = [];
-    if (!containers.length) {
-      return;
-    }
-
-    const expression = this.__ComponentWithTemplate;
-    const expressions = expression instanceof Array ? expression : [expression];
-
-    containers.forEach((container, index) => {
-      const component = container.createComponent(expressions[index], this, {
-        template: this.templateRef2,
-      });
-      this.dynamicComponents[2][index] = component;
+  createDynamicComponents() {
+    this.dynamicComponentHost.toArray().forEach((container) => {
+      container.createComponent(this);
     });
   }
 
@@ -229,43 +229,11 @@ export default class DynamicComponentCreator extends Props {
   } = {};
 
   ngAfterViewInit() {
-    this.createJSXTemplateComponent0();
-    this.createComponent1();
-    this.createComponentWithTemplate2();
-  }
-  ngOnChanges(changes: { [name: string]: any }) {
-    if (["height"].some((d) => changes[d] && !changes[d].firstChange)) {
-      this.dynamicComponents[1].forEach((component) => {
-        updateDynamicComponent(component, { height: this.height });
-      });
-    }
+    this.createDynamicComponents();
   }
 
   ngAfterViewChecked() {
-    if (
-      this.dynamicComponents[0].length !==
-      this.dynamicComponentHost.toArray().filter((c) => c.index === 0).length
-    ) {
-      this.createJSXTemplateComponent0();
-    }
-    if (
-      this.dynamicComponents[1].length !==
-      this.dynamicComponentHost.toArray().filter((c) => c.index === 1).length
-    ) {
-      this.createComponent1();
-    }
-    if (
-      this.dynamicComponents[2].length !==
-      this.dynamicComponentHost.toArray().filter((c) => c.index === 2).length
-    ) {
-      this.createComponentWithTemplate2();
-    }
-
-    this.dynamicComponents.forEach((components) =>
-      components.forEach((component: any) => {
-        component._embeddedView.detectChanges();
-      })
-    );
+    this.createDynamicComponents();
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {
@@ -274,9 +242,6 @@ export default class DynamicComponentCreator extends Props {
   set _internalStateValue(internalStateValue: number) {
     this.internalStateValue = internalStateValue;
     this._detectChanges();
-    this.dynamicComponents[0].forEach((component) => {
-      updateDynamicComponent(component, { height: this.internalStateValue });
-    });
   }
 }
 @NgModule({
