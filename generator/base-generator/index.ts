@@ -612,18 +612,22 @@ export default class Generator implements GeneratorAPI {
         const componentInputs: ComponentInput[] = this.cache[modulePath].filter(
           (e: any) => e instanceof Component || e instanceof ComponentInput
         );
-
+        const interfaces: Interface[] = this.cache[modulePath].filter(
+          (e: any) => e instanceof Interface
+        );
+        const classes: Class[] = this.cache[modulePath].filter(
+          (e: any) => e instanceof Class
+        );
         importClause.imports?.forEach((name) => {
           const originalName = importClause.resolveImport(name);
-          const componentInput = componentInputs.find(
-            (c) =>
-              c.name.toString() === originalName &&
-              c.modifiers.indexOf("export") >= 0
+          this.addToContext(
+            name,
+            originalName,
+            importClause,
+            componentInputs,
+            interfaces,
+            classes
           );
-
-          if (componentInput) {
-            this.addComponent(name, componentInput, importClause);
-          }
         });
         this.cache.__globals__ &&
           importClause.imports?.forEach((i) => {
@@ -1260,6 +1264,63 @@ export default class Generator implements GeneratorAPI {
     context.components[name] = component;
   }
 
+  addInterface(name: string, _interface: Interface) {
+    const context = this.getContext();
+    context.interfaces = context.interfaces || {};
+    context.interfaces[name] = _interface;
+  }
+  addToContext(
+    name: string,
+    originalName: string | undefined,
+    importClause: ImportClause,
+    componentInputs: ComponentInput[],
+    interfaces: Interface[],
+    classes: Class[]
+  ) {
+    const componentInput = componentInputs.find(
+      (c) =>
+        c.name.toString() === originalName && c.modifiers.indexOf("export") >= 0
+    );
+
+    if (componentInput) {
+      this.addComponent(name, componentInput, importClause);
+    }
+    const importedInterface = interfaces.find(
+      (i) =>
+        i.name.toString() == originalName && i.modifiers.indexOf("export") >= 0
+    );
+    if (importedInterface) {
+      this.addInterface(name, importedInterface);
+    }
+    const importedTypeClass = classes.find(
+      (c) =>
+        c.name.toString() == originalName && c.modifiers.indexOf("export") >= 0
+    );
+    if (importedTypeClass) {
+      this.addInterface(
+        name,
+        new Interface(
+          importedTypeClass.decorators,
+          importedTypeClass.modifiers,
+          new Identifier(name),
+          importedTypeClass.typeParameters,
+          importedTypeClass.heritageClauses,
+          importedTypeClass.members
+            .filter((m) => m instanceof Property)
+            .map(
+              (p) =>
+                new PropertySignature(
+                  p.modifiers,
+                  p._name,
+                  "",
+                  p.type instanceof TypeExpression ? p.type : undefined,
+                  undefined
+                )
+            )
+        )
+      );
+    }
+  }
   getInitialContext(): GeneratorContext {
     return {
       defaultOptionsModule:

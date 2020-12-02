@@ -1,7 +1,6 @@
 import { JsxExpression } from "./jsx-expression";
 import { Expression } from "../../../base-generator/expressions/base";
 import { toStringOptions } from "../../types";
-import { Heritable } from "../../../base-generator/expressions/class";
 import { getMember } from "../../../base-generator/utils/expressions";
 import {
   PropertyAssignment,
@@ -13,6 +12,8 @@ import {
 } from "../../../base-generator/expressions/common";
 import { PropertyAccess } from "../property-access";
 import { ObjectLiteral } from "../../../base-generator/expressions/literal";
+import { GeneratorContext } from "../../../base-generator/types";
+import { TypeLiteralNode } from "../../../base-generator/expressions/type";
 
 export interface JsxSpreadAttributeMeta {
   refExpression: Expression;
@@ -33,9 +34,11 @@ export class JsxSpreadAttribute extends JsxExpression {
   getPropertyAssignmentFormSpread(
     expression: Expression,
     options?: toStringOptions,
-    components?: { [name: string]: Heritable }
+    context?: GeneratorContext
   ): PropertyAssignment[] {
     const member = getMember(expression, options);
+    const components = context?.components;
+
     if (member) {
       if (member._name.toString() === "restAttributes") {
         return [];
@@ -53,19 +56,31 @@ export class JsxSpreadAttribute extends JsxExpression {
             )
         );
       }
+      if (context?.interfaces?.[type.toString()]) {
+        return context?.interfaces?.[type.toString()].members.map(
+          (m) =>
+            new PropertyAssignment(
+              m.name,
+              new PropertyAccess(expression, m.name)
+            )
+        );
+      }
+      if (type instanceof TypeLiteralNode) {
+        return type.members.map(
+          (m) =>
+            new PropertyAssignment(
+              m.name,
+              new PropertyAccess(expression, m.name)
+            )
+        );
+      }
     }
-    // TODO: Support spread attributes in template context
-    console.warn(
-      "Angular generator doesn't support spread attributes in template"
-    );
     return [];
   }
 
-  getTemplateContext(
-    options?: toStringOptions,
-    components?: { [name: string]: Heritable }
-  ) {
+  getTemplateContext(options?: toStringOptions, context?: GeneratorContext) {
     const expression = this.getExpression(options);
+    const components = context?.components;
 
     if (expression instanceof ObjectLiteral) {
       return expression.properties.reduce((props: PropertyAssignment[], e) => {
@@ -85,11 +100,7 @@ export class JsxSpreadAttribute extends JsxExpression {
       }, []);
     }
 
-    return this.getPropertyAssignmentFormSpread(
-      expression,
-      options,
-      components
-    );
+    return this.getPropertyAssignmentFormSpread(expression, options, context);
   }
 
   toString(options?: toStringOptions) {

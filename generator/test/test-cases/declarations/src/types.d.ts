@@ -9,3 +9,7 @@ export declare type AdditionalOptions = {
 export class CustomClass {
   inputInt: number;
 }
+
+export interface InterfaceTemplateInput {
+  inputInt: number;
+}

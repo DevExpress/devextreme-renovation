@@ -330,4 +330,7 @@ mocha.describe("vue-generation", function () {
   mocha.it("template-default-value", function () {
     this.testGenerator(this.test!.title);
   });
+  mocha.it("jsx-template-spread", function () {
+    this.testGenerator(this.test!.title);
+  });
 });
