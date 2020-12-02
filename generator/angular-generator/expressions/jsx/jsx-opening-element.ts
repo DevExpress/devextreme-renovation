@@ -34,7 +34,10 @@ import {
 } from "../../../base-generator/expressions/property-assignment";
 import { processComponentContext } from "../../../base-generator/utils/string";
 import { JsxExpression } from "./jsx-expression";
-import { JsxChildExpression } from "./jsx-child-expression";
+import {
+  JsxChildExpression,
+  mergeToStringOptions,
+} from "./jsx-child-expression";
 import { JsxElement } from "./elements";
 import { GeneratorContext } from "../../../base-generator/types";
 import { AngularComponent } from "../component";
@@ -48,18 +51,6 @@ import {
 } from "../../../base-generator/utils/expressions";
 import { extractComponentFromType } from "../../../base-generator/utils/component-utils";
 import { BindingPattern } from "../../../base-generator/expressions/binding-pattern";
-
-export function processTagName(tagName: Expression, context: GeneratorContext) {
-  const component = context.components?.[tagName.toString()];
-  if (component) {
-    const selector = (component as AngularComponent).selector;
-    return new Identifier(selector);
-  }
-  if (tagName.toString() === "Portal") {
-    return new Identifier("dx-portal");
-  }
-  return tagName;
-}
 
 function pickSpreadValue(first: string, second: string): string {
   return `(${second}!==undefined?${second}:${first})`;
@@ -107,18 +98,44 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     this.attributes = attributes;
   }
 
-  processTagName(tagName: Expression, options?: toStringOptions): Expression {
+  processAngularSelector(
+    selector: string,
+    isClosing = false,
+    options?: toStringOptions
+  ) {
+    const svgPrefix = "svg:";
+    const prefix =
+      options?.isSVG && selector.indexOf(svgPrefix) === -1 ? svgPrefix : "";
+    return isClosing
+      ? selector.replace(/\[.+\]/gi, "")
+      : `${prefix}${selector.replace("[", "").replace("]", "")}`;
+  }
+
+  processTagName(
+    tagName: Expression,
+    options?: toStringOptions,
+    isClosing = false
+  ): Expression {
     if (this.isDynamicComponent(options)) {
       return new SimpleExpression("ng-template");
     }
 
     if (this.component instanceof AngularComponent) {
-      const selector = this.component.selector;
+      const selector = this.processAngularSelector(
+        this.component.selector,
+        isClosing,
+        options
+      );
       return new Identifier(selector);
     }
     if (tagName.toString() === "Portal") {
       return new Identifier("dx-portal");
     }
+
+    if (options?.isSVG && !isClosing) {
+      return new SimpleExpression(`svg:${super.processTagName(tagName)}`);
+    }
+
     return super.processTagName(tagName);
   }
 
@@ -403,19 +420,6 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
           c.openingElement.tagName.toString() === "ng-template"
       ) as JsxElement[];
 
-      const refs = templates.map((c) => {
-        const refAttr = c.openingElement.attributes.find(
-          (a) =>
-            a instanceof AngularDirective && a.name.toString().startsWith("#")
-        ) as AngularDirective;
-        return refAttr.name.toString().replace("#", "");
-      });
-      const dynamicComponents = options!.dynamicComponents!;
-      const dynamicComponent = dynamicComponents[dynamicComponents.length - 1];
-      refs?.forEach((ref, index) => {
-        dynamicComponent.templates[index].templateRef = ref;
-      });
-
       const childrenString = children
         .filter((c) => !templates.some((t) => t === c))
         .map((c) => c.toString(options))
@@ -435,8 +439,6 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     options: toStringOptions,
     expression: Expression
   ): string {
-    const index = counter.get();
-
     const member = getMember(expression, options);
     const component = extractComponentFromType(member?.type, this.context);
     this.component = component;
@@ -444,44 +446,55 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     const props = this.attributes.filter(
       (a) =>
         !(a instanceof AngularDirective) &&
-        !(a instanceof JsxAttribute && a.name.toString() === "key") &&
-        !(
-          a instanceof JsxAttribute &&
-          templates?.some((m) => m.name === a.name.toString())
-        )
+        !(a instanceof JsxAttribute && a.name.toString() === "key")
     );
 
-    options!.dynamicComponents = [
-      ...(options!.dynamicComponents || []),
-      {
-        expression,
-        index,
-        props,
-        templates: this.attributes
-          .filter(
-            (a) =>
-              a instanceof JsxAttribute &&
-              templates?.some((m) => m.name === a.name.toString())
-          )
-          .map((a) => {
-            return {
-              propertyName: (a as JsxAttribute).name.toString(),
-              templateRef: "",
-              templateRefProperty: `templateRef${index}`,
-            };
-          }),
-      },
-    ];
+    options.hasDynamicComponents = true;
 
     const params = options.members
       .filter((m) => m.isInternalState || m instanceof GetAccessor)
       .concat(getProps(options.members))
       .map((prop) => `let-${prop._name}="${prop._name}"`);
 
+    const propsObject = props.map((p, index) => {
+      if (p instanceof JsxSpreadAttribute) {
+        return new PropertyAssignment(
+          new Identifier(`dxSpreadProp${index}`),
+          p.expression
+        );
+      }
+      if (templates?.some((m) => m.name === p.name.toString())) {
+        const stringValue = p.toString({
+          ...options,
+          jsxComponent: component,
+        });
+        const templateValue = /"(.+)"/gi.exec(stringValue)?.[1];
+        return new PropertyAssignment(
+          p.name,
+          new SimpleExpression(templateValue || "null")
+        );
+      } else {
+        const member = getMember(p.initializer, options);
+        const valueExpression =
+          member instanceof Method
+            ? new SimpleExpression(
+                `${p.initializer.toString(options)}.bind(this)`
+              )
+            : p.initializer;
+        return new PropertyAssignment(p.name, valueExpression);
+      }
+    });
+
     const directives = this.attributes
       .filter((a) => a instanceof AngularDirective)
+      .concat([
+        new JsxAttribute(
+          new Identifier("props"),
+          new ObjectLiteral(propsObject, false)
+        ),
+      ])
       .map((d) => d.toString(options))
-      .concat(`[index]="${index}"`)
+      .concat(`[componentConstructor]="${this.tagName.toString(options)}"`)
       .concat(params)
       .join("\n");
 
@@ -564,7 +577,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return new JsxElement(
       new JsxOpeningElement(tag, undefined, [ref, ...parameters], this.context),
       [element],
-      new JsxClosingElement(tag)
+      new JsxClosingElement(tag, this.context)
     );
   }
 
@@ -613,9 +626,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
     const element = func.getTemplate(templateOptions);
 
-    if (options) {
-      options.hasStyle = options.hasStyle || templateOptions.hasStyle;
-    }
+    mergeToStringOptions(options, templateOptions);
 
     return this.createTemplateElement(
       name,
@@ -743,7 +754,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         this.context
       ),
       children,
-      new JsxClosingElement(processTagName(expression, this.context))
+      new JsxClosingElement(expression, this.context)
     );
 
     return element;
@@ -833,7 +844,8 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
     if (separatedChildren) {
       return `${openingElement}${separatedChildren[0]}</${this.processTagName(
         this.tagName,
-        options
+        options,
+        true
       )}>
         ${separatedChildren[1]}`;
     }
@@ -842,7 +854,8 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
 
     return `${openingElement}${childrenString}</${this.processTagName(
       this.tagName,
-      options
+      options,
+      true
     )}>`;
   }
 
@@ -857,8 +870,12 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
 }
 
 export class JsxClosingElement extends JsxOpeningElement {
-  constructor(tagName: Expression) {
-    super(tagName, [], [], {});
+  constructor(tagName: Expression, context: GeneratorContext) {
+    super(tagName, [], [], context);
+  }
+
+  processTagName(tagName: Expression, options?: toStringOptions): Expression {
+    return super.processTagName(tagName, options, true);
   }
 
   toString(options?: toStringOptions) {

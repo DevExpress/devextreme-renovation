@@ -21,10 +21,11 @@ import { getModuleRelativePath } from "./base-generator/utils/path-utils";
 import {
   GeneratorContext as BaseGeneratorContext,
   GeneratorOptions as BaseGeneratorOptions,
+  toStringOptions,
 } from "./base-generator/types";
 import { Decorator } from "./base-generator/expressions/decorator";
 import { Method } from "./base-generator/expressions/class-members";
-import { compileType } from "./base-generator/utils/string";
+import { compileType, dasherize } from "./base-generator/utils/string";
 import { Decorators } from "./component_declaration/decorators";
 import { ComponentInput as BaseComponentInput } from "./react-generator/expressions/react-component-input";
 import { Property as ReactProperty } from "./react-generator/expressions/class-members/property";
@@ -33,7 +34,8 @@ import { ReactComponent } from "./react-generator/expressions/react-component";
 import { TypeReferenceNode as ReactTypeReferenceNode } from "./react-generator/expressions/type-reference-node";
 import { JsxClosingElement as ReactJsxClosingElement } from "./react-generator/expressions/jsx/jsx-closing-element";
 import { JsxOpeningElement as ReactJsxOpeningElement } from "./react-generator/expressions/jsx/jsx-opening-element";
-import { JsxAttribute } from "./react-generator/expressions/jsx/jsx-attribute";
+import { JsxAttribute as ReactJsxAttribute } from "./react-generator/expressions/jsx/jsx-attribute";
+import { kebabSvgAttributes } from "./base-generator/utils/svg-utils/kebab-attributes";
 
 const BASE_JQUERY_WIDGET = "BASE_JQUERY_WIDGET";
 
@@ -392,8 +394,11 @@ class JQueryComponent {
   }
 
   compileImportTypes(): string {
-    const context = {
+    const context: GeneratorContext = {
       ...this.source.context,
+      imports: {},
+      types: {},
+      interfaces: {},
       path: `${this.source.context.dirname}/jquery.tsx`,
     };
 
@@ -476,6 +481,15 @@ class JsxOpeningElement extends ReactJsxOpeningElement {
 class JsxClosingElement extends ReactJsxClosingElement {
   processTagName(tagName: Expression) {
     return processTagName(tagName);
+  }
+}
+
+class JsxAttribute extends ReactJsxAttribute {
+  processName(name: string, options?: toStringOptions) {
+    if (!options?.jsxComponent && kebabSvgAttributes.has(name)) {
+      return dasherize(name);
+    }
+    return super.processName(name, options);
   }
 }
 
@@ -625,6 +639,10 @@ export class PreactGenerator extends ReactGenerator {
 
   createJsxClosingElement(tagName: Identifier) {
     return new JsxClosingElement(tagName);
+  }
+
+  createJsxAttribute(name: Identifier, initializer: Expression) {
+    return new JsxAttribute(name, initializer);
   }
 
   createTypeReferenceNode(

@@ -11,9 +11,9 @@ function view(viewModel: Widget) {
   return <div ref={viewModel.divRef as any}></div>;
 }
 
-export type MyType = {
+export interface MyType {
   value: number;
-};
+}
 
 export type MyTypeReturn = number;
 
