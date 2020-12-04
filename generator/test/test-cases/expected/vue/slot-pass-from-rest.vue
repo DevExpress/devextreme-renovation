@@ -22,7 +22,7 @@ export const DxSlotPass = {
     },
     rest() {
       const { ...rest } = this.props;
-      return { ...rest };
+      return rest;
     },
   },
 };

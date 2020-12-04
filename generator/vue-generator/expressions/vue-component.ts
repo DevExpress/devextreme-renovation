@@ -313,9 +313,7 @@ export class VueComponent extends Component {
           ],
           "const"
         ),
-        new ReturnStatement(
-          new SimpleExpression(`{${spreadVar.dotDotDotToken}${spreadVar.name}}`)
-        ),
+        new ReturnStatement(new SimpleExpression(spreadVar.name.toString())),
       ],
       true
     );

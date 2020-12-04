@@ -28,7 +28,7 @@ export const DxWidget = {
     },
     rest() {
       const { a, ...rest } = this.props;
-      return { ...rest };
+      return rest;
     },
   },
   methods: {
