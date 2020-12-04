@@ -390,8 +390,11 @@ class JQueryComponent {
   }
 
   compileImportTypes(): string {
-    const context = {
+    const context: GeneratorContext = {
       ...this.source.context,
+      imports: {},
+      types: {},
+      interfaces: {},
       path: `${this.source.context.dirname}/jquery.tsx`,
     };
 
