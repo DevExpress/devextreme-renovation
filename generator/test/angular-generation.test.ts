@@ -52,10 +52,6 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it("slot-pass", function () {
-    this.testGenerator(this.test!.title);
-  });
-
   mocha.it("pick-props", function () {
     this.testGenerator(this.test!.title);
   });
