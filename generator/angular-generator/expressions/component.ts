@@ -59,6 +59,7 @@ import {
   angularPortalCoreImports,
   angularPortalCdkImports,
 } from "./templates/portal-component";
+import { PropsGetAccessor } from "./class-members/props-get-accessor";
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = "CUSTOM_VALUE_ACCESSOR_PROVIDER";
 
@@ -1331,8 +1332,16 @@ export class AngularComponent extends Component {
       true
     );
   }
-  createViewSpreadAccessor(name: Identifier, body: Block) {
-    return new GetAccessor(undefined, undefined, name, [], undefined, body);
+  createViewSpreadAccessor(name: Identifier, body: Block, props: Property[]) {
+    return new PropsGetAccessor(
+      undefined,
+      undefined,
+      name,
+      [],
+      undefined,
+      body,
+      props
+    );
   }
   compileDynamicComponents(
     decoratorToStringOptions: toStringOptions,
@@ -1393,7 +1402,7 @@ export class AngularComponent extends Component {
 
     const cdkImports: string[] = [];
 
-    const spreadGetAccessor = this.getViewSpreadAccessor();
+    const spreadGetAccessor = this.getViewSpreadAccessor(this.members);
     if (spreadGetAccessor) {
       this.members.push(spreadGetAccessor);
     }

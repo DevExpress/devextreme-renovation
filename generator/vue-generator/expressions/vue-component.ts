@@ -47,6 +47,7 @@ import {
   BindingPattern,
 } from "../../base-generator/expressions/binding-pattern";
 import { Binary } from "../../base-generator/expressions/operators";
+import { PropsGetAccessor } from "./class-members/props-get-accessor";
 
 export function getComponentListFromContext(context: GeneratorContext) {
   return Object.keys(context.components || {})
@@ -270,7 +271,7 @@ export class VueComponent extends Component {
     (members.filter((m) => m.isNested) as Property[]).forEach((m) => {
       members.push(this.createNestedPropertyGetter(m));
     });
-    const spreadGetAccessor = this.getViewSpreadAccessor();
+    const spreadGetAccessor = this.getViewSpreadAccessor(members);
     if (spreadGetAccessor) {
       members.push(spreadGetAccessor);
     }
@@ -312,16 +313,22 @@ export class VueComponent extends Component {
           ],
           "const"
         ),
-        new ReturnStatement(
-          new SimpleExpression(`{${spreadVar.dotDotDotToken}${spreadVar.name}}`)
-        ),
+        new ReturnStatement(new SimpleExpression(spreadVar.name.toString())),
       ],
       true
     );
   }
 
-  createViewSpreadAccessor(name: Identifier, body: Block) {
-    return new GetAccessor(undefined, undefined, name, [], undefined, body);
+  createViewSpreadAccessor(name: Identifier, body: Block, props: Property[]) {
+    return new PropsGetAccessor(
+      undefined,
+      undefined,
+      name,
+      [],
+      undefined,
+      body,
+      props
+    );
   }
   compileTemplate(methods: string[]) {
     const viewFunction = this.decorators[0].getViewFunction();

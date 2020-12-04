@@ -122,6 +122,10 @@ mocha.describe("vue-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("slot-pass-from-rest", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("template", function () {
     this.testGenerator(this.test!.title);
   });
