@@ -6,7 +6,14 @@
 </template>
 <script>
 import Widget from "./slots";
-const WidgetInput = {};
+const WidgetInput = {
+  p: {
+    type: String,
+    default() {
+      return "";
+    },
+  },
+};
 export const DxSlotPass = {
   name: "SlotPass",
   components: {
@@ -18,10 +25,10 @@ export const DxSlotPass = {
       return {};
     },
     props() {
-      return { children: this.$slots.default };
+      return { p: this.p, children: this.$slots.default };
     },
     rest() {
-      const { ...rest } = this.props;
+      const { p, ...rest } = this.props;
       return rest;
     },
   },

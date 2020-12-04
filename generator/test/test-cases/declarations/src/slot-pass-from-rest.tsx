@@ -3,10 +3,11 @@ import {
   ComponentBindings,
   Slot,
   JSXComponent,
+  OneWay,
 } from "../../../../component_declaration/common";
 import Widget from "./slots";
 
-function view({ props: { ...rest } }: SlotPass) {
+function view({ props: { p, ...rest } }: SlotPass) {
   return (
     <div>
       <Widget {...rest} />
@@ -16,6 +17,7 @@ function view({ props: { ...rest } }: SlotPass) {
 
 @ComponentBindings()
 class WidgetInput {
+  @OneWay() p = "";
   @Slot() children?: JSX.Element;
 }
 @Component({
