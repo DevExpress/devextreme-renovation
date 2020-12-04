@@ -1,11 +1,11 @@
 import {
   Component,
-  OneWay,
   ComponentBindings,
   JSXComponent,
   InternalState,
   Ref,
   Effect,
+  RefObject,
 } from "../../component_declaration/common";
 import ButtonComponent from "./button";
 
@@ -21,7 +21,7 @@ function view(model: VisibilityChange) {
       {model.visible ? (
         <div
           id={"change-visibility-hide-element"}
-          ref={model.element as any}
+          ref={model.element}
           style={{
             width: 100,
             height: 20,
@@ -41,7 +41,7 @@ class WidgetInput {}
 })
 export default class VisibilityChange extends JSXComponent(WidgetInput) {
   @InternalState() visible: boolean = false;
-  @Ref() element?: HTMLDivElement;
+  @Ref() element?: RefObject<HTMLDivElement>;
 
   @Effect()
   elementClick() {

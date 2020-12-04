@@ -2,7 +2,7 @@ import BaseWidget from "./method";
 function view(viewModel: WidgetWithApiRef) {
   return (
     <BaseWidget
-      ref={viewModel.baseRef as any}
+      ref={viewModel.baseRef}
       prop1={viewModel.props.prop1}
     ></BaseWidget>
   );

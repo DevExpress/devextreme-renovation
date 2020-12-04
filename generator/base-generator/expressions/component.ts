@@ -24,6 +24,7 @@ import { Decorators } from "../../component_declaration/decorators";
 import { ComponentInput } from "./component-input";
 import { extractComplexType, isTypeArray, TypeExpression } from "./type";
 import { BindingElement, BindingPattern } from "./binding-pattern";
+import { extractRefType } from "../utils/expressions";
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
   return heritageClauses.some((h) => h.isJsxComponent);
@@ -194,7 +195,8 @@ export class Component extends Class implements Heritable {
         (r: { refs: Property[]; apiRefs: Property[] }, p) => {
           if (
             context.components &&
-            context.components[p.type!.toString()] instanceof Component
+            context.components[extractRefType(p.type!).toString()] instanceof
+              Component
           ) {
             p.decorators.find(
               (d) => d.name === "Ref"

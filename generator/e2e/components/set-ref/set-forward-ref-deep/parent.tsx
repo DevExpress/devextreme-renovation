@@ -4,6 +4,7 @@ import {
   JSXComponent,
   Effect,
   ForwardRef,
+  RefObject,
 } from "../../../../component_declaration/common";
 
 import SetForwardRef from "./middle";
@@ -19,7 +20,7 @@ class Props {}
   view,
 })
 export default class SetForwardRefDeepParent extends JSXComponent<Props>() {
-  @ForwardRef() host!: HTMLDivElement;
+  @ForwardRef() host!: RefObject<HTMLDivElement>;
 
   @Effect()
   setContent() {

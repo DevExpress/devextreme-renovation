@@ -5,6 +5,7 @@ import {
   Effect,
   Template,
   ForwardRef,
+  RefObject,
 } from "../../../component_declaration/common";
 
 function view({
@@ -23,7 +24,7 @@ class Props {
   view,
 })
 export default class ForwardRefTemplate extends JSXComponent(Props) {
-  @ForwardRef() child!: HTMLDivElement;
+  @ForwardRef() child!: RefObject<HTMLDivElement>;
 
   @Effect()
   effect() {

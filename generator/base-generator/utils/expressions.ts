@@ -4,7 +4,11 @@ import { Identifier, Paren, AsExpression } from "../expressions/common";
 import { JsxExpression } from "../expressions/jsx";
 import { PropertyAccess } from "../expressions/property-access";
 import { Property, Method } from "../expressions/class-members";
-import { TypeReferenceNode } from "../expressions/type";
+import {
+  TypeReferenceNode,
+  TypeExpression,
+  SimpleTypeExpression,
+} from "../expressions/type";
 import { ComponentInput } from "../expressions/component-input";
 
 export function getExpression(
@@ -55,4 +59,16 @@ export function findComponentInput(
   return context.components?.[
     type.type.toString().replace("typeof ", "")
   ] as ComponentInput;
+}
+
+export function extractRefType(type: TypeExpression | string) {
+  if (
+    type instanceof TypeReferenceNode &&
+    type.typeName.toString() === type.REF_OBJECT_TYPE
+  ) {
+    return type.typeArguments.length
+      ? type.typeArguments[0]
+      : new SimpleTypeExpression("any");
+  }
+  return type;
 }

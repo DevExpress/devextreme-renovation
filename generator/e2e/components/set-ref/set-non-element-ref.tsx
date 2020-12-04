@@ -4,10 +4,11 @@ import {
   JSXComponent,
   Effect,
   Ref,
+  RefObject,
 } from "../../../component_declaration/common";
 
 function view({ host }: SetNonElementRef) {
-  return <span className="set-non-element-ref" ref={host as any}></span>;
+  return <span className="set-non-element-ref" ref={host}></span>;
 }
 
 @ComponentBindings()
@@ -17,7 +18,7 @@ class Props {}
   view,
 })
 export default class SetNonElementRef extends JSXComponent<Props>() {
-  @Ref() host!: HTMLDivElement;
+  @Ref() host!: RefObject<HTMLDivElement>;
   @Ref() obj!: {
     value: number;
   };

@@ -4,20 +4,21 @@ import {
   JSXComponent,
   ForwardRef,
   OneWay,
+  RefObject,
 } from "../../../../component_declaration/common";
 
 function view({ props: { childRef, nullableRef } }: RefOnChildrenChild) {
   return (
-    <div ref={childRef as any}>
-      <div ref={nullableRef as any}></div>
+    <div ref={childRef}>
+      <div ref={nullableRef}></div>
     </div>
   );
 }
 
 @ComponentBindings()
 class Props {
-  @ForwardRef() childRef!: HTMLDivElement;
-  @ForwardRef() nullableRef?: HTMLDivElement;
+  @ForwardRef() childRef!: RefObject<HTMLDivElement>;
+  @ForwardRef() nullableRef?: RefObject<HTMLDivElement>;
   @OneWay() state?: number;
 }
 

@@ -1,7 +1,7 @@
 function view({ props: { childRef, nullableRef } }: RefOnChildrenChild) {
   return (
-    <div ref={childRef as any}>
-      <div ref={nullableRef as any}></div>
+    <div ref={childRef}>
+      <div ref={nullableRef}></div>
     </div>
   );
 }

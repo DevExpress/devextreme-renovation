@@ -3,6 +3,7 @@ import {
   ComponentBindings,
   JSXComponent,
   Ref,
+  RefObject,
 } from "../../component_declaration/common";
 import PortalComponent from "./portal-component";
 
@@ -27,5 +28,5 @@ class Props {}
   view,
 })
 export default class PortalContainer extends JSXComponent(Props) {
-  @Ref() containerRef: any;
+  @Ref() containerRef?: RefObject<HTMLDivElement>;
 }

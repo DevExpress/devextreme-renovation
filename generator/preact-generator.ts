@@ -160,10 +160,6 @@ export class PreactComponent extends ReactComponent {
     return imports;
   }
 
-  processModuleFileName(module: string) {
-    return processModuleFileName(module);
-  }
-
   compileRestProps() {
     return "declare type RestProps = { className?: string; style?: { [name: string]: any }, key?: any, ref?: any }";
   }
@@ -442,8 +438,6 @@ class JQueryComponent {
 }
 
 export class Property extends ReactProperty {
-  REF_OBJECT_TYPE = "RefObject";
-
   typeDeclaration() {
     if (this.isSlot || this.isTemplate) {
       return `${this.name}${this.compileTypeDeclarationType("any")}`;
@@ -491,6 +485,18 @@ class JsxAttribute extends ReactJsxAttribute {
 }
 
 export class TypeReferenceNode extends ReactTypeReferenceNode {
+  constructor(
+    public typeName: Identifier,
+    public typeArguments: TypeExpression[] = [],
+    public context: GeneratorContext
+  ) {
+    super(typeName, typeArguments, context);
+    if (typeName.toString() === "RefObject") {
+      this.typeName = new Identifier("any");
+      this.typeArguments = [];
+    }
+  }
+
   toString() {
     if (this.typeName.toString().startsWith("JSX.")) {
       return "any";

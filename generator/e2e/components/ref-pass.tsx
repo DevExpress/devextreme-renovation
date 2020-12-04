@@ -4,13 +4,13 @@ import {
   JSXComponent,
   Effect,
   Ref,
-  Method,
+  RefObject,
 } from "../../component_declaration/common";
 import RefProps from "./ref-props";
 
 function view({ contentRef }: RefPass) {
   return (
-    <div ref={contentRef as any}>
+    <div ref={contentRef}>
       <RefProps parentRef={contentRef} />
     </div>
   );
@@ -23,7 +23,7 @@ class Props {}
   view,
 })
 export default class RefPass extends JSXComponent(Props) {
-  @Ref() contentRef!: HTMLDivElement;
+  @Ref() contentRef!: RefObject<HTMLDivElement>;
 
   @Effect()
   loadEffect() {

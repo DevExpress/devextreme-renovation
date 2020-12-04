@@ -4,6 +4,7 @@ import {
   JSXComponent,
   Ref,
   Effect,
+  RefObject,
 } from "../../component_declaration/common";
 
 function view(model: RefProps) {
@@ -12,7 +13,7 @@ function view(model: RefProps) {
 
 @ComponentBindings()
 class Props {
-  @Ref() parentRef!: HTMLDivElement;
+  @Ref() parentRef!: RefObject<HTMLDivElement>;
 }
 
 @Component({

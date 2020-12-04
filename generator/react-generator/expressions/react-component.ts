@@ -50,6 +50,7 @@ import {
 import { Conditional } from "../../base-generator/expressions/conditions";
 import { GeneratorContext } from "../../base-generator/types";
 import { HeritageClause } from "./heritage-clause";
+import { extractRefType } from "../../base-generator/utils/expressions";
 
 function getSubscriptions(methods: Method[]) {
   return methods
@@ -73,6 +74,7 @@ function getSubscriptions(methods: Method[]) {
 }
 
 export class ReactComponent extends Component {
+  // TODO: refactor after remove Preact generator
   REF_OBJECT_TYPE = "MutableRefObject";
 
   constructor(
@@ -331,7 +333,7 @@ export class ReactComponent extends Component {
         0,
         ...this.apiRefs.reduce((imports: string[], ref) => {
           const baseComponent = this.context.components![
-            ref.type!.toString()
+            extractRefType(ref.type!).toString()
           ] as ReactComponent;
           if (this.context.dirname) {
             const relativePath = getModuleRelativePath(
@@ -339,9 +341,9 @@ export class ReactComponent extends Component {
               baseComponent.context.path!
             );
             imports.push(
-              `import {${baseComponent.name}Ref as ${
+              `import {${baseComponent.name}Ref as ${extractRefType(
                 ref.type
-              }Ref} from "${this.processModuleFileName(
+              )}Ref} from "${this.processModuleFileName(
                 relativePath.replace(path.extname(relativePath), "")
               )}"`
             );
@@ -502,11 +504,11 @@ export class ReactComponent extends Component {
   compileUseRef() {
     return this.refs
       .map((r) => {
-        return `const ${r.name}=useRef<${r.type}>()`;
+        return `const ${r.name}=useRef<${extractRefType(r.type)}>()`;
       })
       .concat(
         this.apiRefs.map((r) => {
-          return `const ${r.name}=useRef<${r.type}Ref>()`;
+          return `const ${r.name}=useRef<${extractRefType(r.type)}Ref>()`;
         })
       )
       .join(";\n");
