@@ -8,7 +8,10 @@ import {
 import { GeneratorContext } from "../../../base-generator/types";
 import { toStringOptions } from "../../types";
 import { Identifier } from "../../../base-generator/expressions/common";
-import { Property } from "../../../base-generator/expressions/class-members";
+import {
+  Property,
+  Method,
+} from "../../../base-generator/expressions/class-members";
 import {
   PropertyAssignment,
   SpreadAssignment,
@@ -32,6 +35,8 @@ import { Conditional } from "../../../base-generator/expressions/conditions";
 import { JsxAttribute as BaseJsxAttribute } from "../../../base-generator/expressions/jsx";
 import { getEventName } from "../utils";
 import { extractComponentFromType } from "../../../base-generator/utils/component-utils";
+import { PropsGetAccessor } from "../class-members/props-get-accessor";
+import { IPropsGetAccessor } from "../../../angular-generator/types";
 
 export class JsxOpeningElement extends BaseJsxOpeningElement {
   attributes: Array<JsxAttribute | JsxSpreadAttribute>;
@@ -51,6 +56,12 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
       this.tagName = new SimpleExpression(name);
     }
+  }
+
+  isPropsGetAccessor(
+    member: Property | Method | undefined
+  ): member is IPropsGetAccessor {
+    return member instanceof PropsGetAccessor;
   }
 
   attributesString(options?: toStringOptions) {

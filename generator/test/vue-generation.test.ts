@@ -118,7 +118,7 @@ mocha.describe("vue-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it("slots", function () {
+  mocha.it("slot-pass-from-rest", function () {
     this.testGenerator(this.test!.title);
   });
 
