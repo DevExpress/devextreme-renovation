@@ -61,10 +61,13 @@ export function findComponentInput(
   ] as ComponentInput;
 }
 
-export function extractRefType(type: TypeExpression | string) {
+export function extractRefType(
+  type: TypeExpression | string,
+  typeName: string
+) {
   if (
     type instanceof TypeReferenceNode &&
-    type.typeName.toString() === type.REF_OBJECT_TYPE
+    type.typeName.toString() === typeName
   ) {
     return type.typeArguments.length
       ? type.typeArguments[0]

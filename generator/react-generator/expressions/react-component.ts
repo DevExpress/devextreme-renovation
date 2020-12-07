@@ -29,6 +29,7 @@ import {
   ArrayTypeNode,
   extractComplexType,
   isTypeArray,
+  TypeExpression,
 } from "../../base-generator/expressions/type";
 import { TypeParameterDeclaration } from "../../base-generator/expressions/type-parameter-declaration";
 import {
@@ -51,6 +52,7 @@ import { Conditional } from "../../base-generator/expressions/conditions";
 import { GeneratorContext } from "../../base-generator/types";
 import { HeritageClause } from "./heritage-clause";
 import { extractRefType } from "../../base-generator/utils/expressions";
+import { TypeReferenceNode } from "./type-reference-node";
 
 function getSubscriptions(methods: Method[]) {
   return methods
@@ -74,7 +76,6 @@ function getSubscriptions(methods: Method[]) {
 }
 
 export class ReactComponent extends Component {
-  // TODO: refactor after remove Preact generator
   REF_OBJECT_TYPE = "MutableRefObject";
 
   constructor(
@@ -101,12 +102,36 @@ export class ReactComponent extends Component {
     );
   }
 
+  extractRefType(type: TypeExpression | string) {
+    return extractRefType(type, "MutableRefObject");
+  }
+
   processMembers(members: Array<BaseProperty | Method>) {
     members = super.processMembers(members).map((p) => {
       if (p.inherited) {
         p.scope = "props";
       }
       return p;
+    });
+
+    members = members.map((member) => {
+      if (
+        member.isRef ||
+        member.isRefProp ||
+        member.isForwardRef ||
+        member.isForwardRefProp
+      ) {
+        if (
+          member.type instanceof TypeReferenceNode &&
+          member.type.typeName.toString() === "RefObject"
+        ) {
+          member.type.typeName = new Identifier("MutableRefObject");
+          if (member.type.typeArguments.length === 0) {
+            member.type.typeArguments.push(new SimpleTypeExpression("any"));
+          }
+        }
+      }
+      return member;
     });
 
     if (members.some((m) => m.isNested)) {
@@ -333,7 +358,7 @@ export class ReactComponent extends Component {
         0,
         ...this.apiRefs.reduce((imports: string[], ref) => {
           const baseComponent = this.context.components![
-            extractRefType(ref.type!).toString()
+            this.extractRefType(ref.type!).toString()
           ] as ReactComponent;
           if (this.context.dirname) {
             const relativePath = getModuleRelativePath(
@@ -341,7 +366,7 @@ export class ReactComponent extends Component {
               baseComponent.context.path!
             );
             imports.push(
-              `import {${baseComponent.name}Ref as ${extractRefType(
+              `import {${baseComponent.name}Ref as ${this.extractRefType(
                 ref.type
               )}Ref} from "${this.processModuleFileName(
                 relativePath.replace(path.extname(relativePath), "")
@@ -504,11 +529,11 @@ export class ReactComponent extends Component {
   compileUseRef() {
     return this.refs
       .map((r) => {
-        return `const ${r.name}=useRef<${extractRefType(r.type)}>()`;
+        return `const ${r.name}=useRef<${this.extractRefType(r.type)}>()`;
       })
       .concat(
         this.apiRefs.map((r) => {
-          return `const ${r.name}=useRef<${extractRefType(r.type)}Ref>()`;
+          return `const ${r.name}=useRef<${this.extractRefType(r.type)}Ref>()`;
         })
       )
       .join(";\n");

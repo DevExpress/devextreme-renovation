@@ -126,8 +126,6 @@ export class TypeQueryNode extends TypeExpression {
 }
 
 export class TypeReferenceNode extends TypeExpression {
-  public readonly REF_OBJECT_TYPE: string = "";
-
   constructor(
     public typeName: Identifier,
     public typeArguments: TypeExpression[] = [],

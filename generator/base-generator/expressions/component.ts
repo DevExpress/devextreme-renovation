@@ -72,6 +72,10 @@ export class Component extends Class implements Heritable {
     return this._name.toString();
   }
 
+  extractRefType(type: TypeExpression | string) {
+    return extractRefType(type, "RefObject");
+  }
+
   addPrefixToMembers(members: Array<Property | Method>) {
     members
       .filter((m) => !m.inherited && m instanceof GetAccessor)
@@ -195,8 +199,9 @@ export class Component extends Class implements Heritable {
         (r: { refs: Property[]; apiRefs: Property[] }, p) => {
           if (
             context.components &&
-            context.components[extractRefType(p.type!).toString()] instanceof
-              Component
+            context.components[
+              this.extractRefType(p.type!).toString()
+            ] instanceof Component
           ) {
             p.decorators.find(
               (d) => d.name === "Ref"
