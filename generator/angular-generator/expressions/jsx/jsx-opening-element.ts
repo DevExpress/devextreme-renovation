@@ -15,7 +15,7 @@ import {
   TypeLiteralNode,
   PropertySignature,
 } from "../../../base-generator/expressions/type";
-import { toStringOptions } from "../../types";
+import { toStringOptions, IPropsGetAccessor } from "../../types";
 import {
   Property,
   GetAccessor,
@@ -51,6 +51,7 @@ import {
 } from "../../../base-generator/utils/expressions";
 import { extractComponentFromType } from "../../../base-generator/utils/component-utils";
 import { BindingPattern } from "../../../base-generator/expressions/binding-pattern";
+import { PropsGetAccessor } from "../class-members/props-get-accessor";
 
 function pickSpreadValue(first: string, second: string): string {
   return `(${second}!==undefined?${second}:${first})`;
@@ -88,6 +89,7 @@ function functionParameterToTemplateVariables(
 
 export class JsxOpeningElement extends BaseJsxOpeningElement {
   attributes: Array<JsxAttribute | JsxSpreadAttribute>;
+
   constructor(
     tagName: Expression,
     typeArguments: any,
@@ -165,6 +167,12 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return true;
   }
 
+  isPropsGetAccessor(
+    member: Property | Method | undefined
+  ): member is IPropsGetAccessor {
+    return member instanceof PropsGetAccessor;
+  }
+
   spreadToArray(
     spreadAttribute: JsxSpreadAttribute,
     options?: toStringOptions
@@ -220,6 +228,20 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         member._name.toString() === "restAttributes"
       ) {
         return [];
+      }
+      if (this.component && this.isPropsGetAccessor(member)) {
+        return member.props.map((p) => {
+          return this.createJsxAttribute(
+            new Identifier(p._name.toString()),
+            new PropertyAccess(
+              new PropertyAccess(
+                new Identifier(options!.componentContext!),
+                new Identifier("props")
+              ),
+              p._name
+            )
+          );
+        });
       }
     }
 

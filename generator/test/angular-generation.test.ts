@@ -80,6 +80,10 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("slot-pass-from-rest", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("effect", function () {
     this.testGenerator(this.test!.title);
   });

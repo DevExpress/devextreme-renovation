@@ -9,6 +9,8 @@ import { Property } from "./expressions/class-members/property";
 import {
   BaseClassMember,
   Method,
+  Property as BaseProperty,
+  GetAccessor,
 } from "../base-generator/expressions/class-members";
 import { BaseFunction } from "../base-generator/expressions/functions";
 import { Identifier } from "../base-generator/expressions/common";
@@ -36,3 +38,7 @@ export interface toStringOptions extends BaseToStringOptions {
 export type AngularGeneratorContext = GeneratorContext & {
   angularCoreImports?: string[];
 };
+
+export interface IPropsGetAccessor extends GetAccessor {
+  props: BaseProperty[];
+}
