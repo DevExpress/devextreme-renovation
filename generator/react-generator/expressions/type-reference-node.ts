@@ -1,11 +1,8 @@
 import {
   TypeExpression,
   TypeReferenceNode as BaseTypeReferenceNode,
-  SimpleTypeExpression,
 } from "../../base-generator/expressions/type";
 import { ComponentInput } from "./react-component-input";
-import { Identifier } from "../../base-generator/expressions/common";
-import { GeneratorContext } from "../../base-generator/types";
 
 // TODO: move these types to generator's common
 //       (for example as DxFunctionalComponentType and DxComponentType)
