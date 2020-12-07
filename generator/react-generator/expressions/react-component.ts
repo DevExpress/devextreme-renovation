@@ -106,32 +106,26 @@ export class ReactComponent extends Component {
     return extractRefType(type, "MutableRefObject");
   }
 
+  processRef(member: Property) {
+    if (
+      member.type instanceof TypeReferenceNode &&
+      member.type.typeName.toString() === "RefObject"
+    ) {
+      member.type.typeName = new Identifier("MutableRefObject");
+      if (member.type.typeArguments.length === 0) {
+        member.type.typeArguments.push(new SimpleTypeExpression("any"));
+      }
+    }
+
+    return member;
+  }
+
   processMembers(members: Array<BaseProperty | Method>) {
     members = super.processMembers(members).map((p) => {
       if (p.inherited) {
         p.scope = "props";
       }
       return p;
-    });
-
-    members = members.map((member) => {
-      if (
-        member.isRef ||
-        member.isRefProp ||
-        member.isForwardRef ||
-        member.isForwardRefProp
-      ) {
-        if (
-          member.type instanceof TypeReferenceNode &&
-          member.type.typeName.toString() === "RefObject"
-        ) {
-          member.type.typeName = new Identifier("MutableRefObject");
-          if (member.type.typeArguments.length === 0) {
-            member.type.typeArguments.push(new SimpleTypeExpression("any"));
-          }
-        }
-      }
-      return member;
     });
 
     if (members.some((m) => m.isNested)) {

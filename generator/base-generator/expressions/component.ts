@@ -93,6 +93,10 @@ export class Component extends Class implements Heritable {
     );
   }
 
+  processRef(member: Property) {
+    return member;
+  }
+
   processMembers(members: Array<Property | Method>) {
     members = members.map((m) => {
       if (
@@ -161,6 +165,19 @@ export class Component extends Class implements Heritable {
     members = super.processMembers(
       this.addPrefixToMembers(members).concat(props)
     );
+
+    members = members.map((member) => {
+      if (
+        member.isRef ||
+        member.isRefProp ||
+        member.isForwardRef ||
+        member.isForwardRefProp
+      ) {
+        return this.processRef(member as Property);
+      }
+      return member;
+    });
+
     const restPropsGetter = this.createRestPropsGetter(members);
     restPropsGetter.prefix = "__";
     members.push(restPropsGetter);
