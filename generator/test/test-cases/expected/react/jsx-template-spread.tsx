@@ -1,13 +1,18 @@
-import { InterfaceTemplateInput, CustomClass } from "./types.d";
+import {
+  InterfaceTemplateInput,
+  ClassTemplateInput,
+  TypeTemplateInput,
+} from "./types.d";
 
 interface TemplateInput {
   inputInt: number;
 }
 
 export declare type PropsType = {
-  PropFromClass?: CustomClass;
+  PropFromClass?: ClassTemplateInput;
   PropFromInterface?: TemplateInput;
   PropFromImportedInterface?: InterfaceTemplateInput;
+  PropFromImportedType?: TypeTemplateInput;
   template: React.FunctionComponent<
     Partial<Omit<{ width: string; height: string }, "width">> &
       Required<Pick<{ width: string; height: string }, "width">>
@@ -38,6 +43,8 @@ function view(model: Widget) {
       {model.props.template2({ ...model.props.PropFromInterface })}
 
       {model.props.template2({ ...model.props.PropFromImportedInterface })}
+
+      {model.props.template2({ ...model.props.PropFromImportedType })}
     </div>
   );
 }
@@ -77,6 +84,7 @@ export default function Widget(props: typeof Props & RestProps) {
       const {
         PropFromClass,
         PropFromImportedInterface,
+        PropFromImportedType,
         PropFromInterface,
         component,
         component2,

@@ -16,6 +16,10 @@
       <div style="display: contents" :set="(template2Default = {})"
         ><div></div
       ></div> </slot
+    ><slot name="template2" v-bind="PropFromImportedType">
+      <div style="display: contents" :set="(template2Default = {})"
+        ><div></div
+      ></div> </slot
   ></div>
 </template>
 <script>
@@ -25,6 +29,7 @@ const Props = {
     type: Object,
   },
   PropFromImportedInterface: {},
+  PropFromImportedType: {},
 };
 export const DxWidget = {
   name: "Widget",
@@ -41,6 +46,7 @@ export const DxWidget = {
         PropFromClass: this.PropFromClass,
         PropFromInterface: this.PropFromInterface,
         PropFromImportedInterface: this.PropFromImportedInterface,
+        PropFromImportedType: this.PropFromImportedType,
         template: this.$scopedSlots.template,
         template2: this.$scopedSlots.template2,
       };

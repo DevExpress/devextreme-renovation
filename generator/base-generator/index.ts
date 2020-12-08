@@ -609,25 +609,9 @@ export default class Generator implements GeneratorAPI {
           );
         }
 
-        const componentInputs: ComponentInput[] = this.cache[modulePath].filter(
-          (e: any) => e instanceof Component || e instanceof ComponentInput
-        );
-        const interfaces: Interface[] = this.cache[modulePath].filter(
-          (e: any) => e instanceof Interface
-        );
-        const classes: Class[] = this.cache[modulePath].filter(
-          (e: any) => e instanceof Class
-        );
         importClause.imports?.forEach((name) => {
           const originalName = importClause.resolveImport(name);
-          this.addToContext(
-            name,
-            originalName,
-            importClause,
-            componentInputs,
-            interfaces,
-            classes
-          );
+          this.addToContext(name, originalName, importClause, modulePath);
         });
         this.cache.__globals__ &&
           importClause.imports?.forEach((i) => {
@@ -1266,37 +1250,47 @@ export default class Generator implements GeneratorAPI {
 
   addInterface(name: string, _interface: Interface) {
     const context = this.getContext();
-    context.interfaces = context.interfaces || {};
-    context.interfaces[name] = _interface;
+    context.externalInterfaces = context.externalInterfaces || {};
+    context.externalInterfaces[name] = _interface;
+  }
+  addType(name: string, _type: TypeLiteralNode) {
+    const context = this.getContext();
+    context.externalTypes = context.externalTypes || {};
+    context.externalTypes[name] = _type;
   }
   addToContext(
     name: string,
     originalName: string | undefined,
     importClause: ImportClause,
-    componentInputs: ComponentInput[],
-    interfaces: Interface[],
-    classes: Class[]
+    modulePath: string
   ) {
-    const componentInput = componentInputs.find(
-      (c) =>
-        c.name.toString() === originalName && c.modifiers.indexOf("export") >= 0
+    const externalFile = this.cache[modulePath];
+    const componentInputs: ComponentInput[] = externalFile.filter(
+      (e: any) => e instanceof Component || e instanceof ComponentInput
     );
-
+    const interfaces: Interface[] = externalFile.filter(
+      (e: any) => e instanceof Interface
+    );
+    const classes: Class[] = externalFile.filter(
+      (e: any) => e instanceof Class
+    );
+    const types: TypeAliasDeclaration[] = externalFile.filter(
+      (e: any) => e instanceof TypeAliasDeclaration
+    );
+    const isImported = (i: {
+      name: Identifier | string;
+      modifiers: string[];
+    }): boolean =>
+      i.name.toString() === originalName && i.modifiers.indexOf("export") >= 0;
+    const componentInput = componentInputs.find(isImported);
+    const importedInterface = interfaces.find(isImported);
+    const importedTypeClass = classes.find(isImported);
+    const importedType = types.find(isImported);
     if (componentInput) {
       this.addComponent(name, componentInput, importClause);
-    }
-    const importedInterface = interfaces.find(
-      (i) =>
-        i.name.toString() == originalName && i.modifiers.indexOf("export") >= 0
-    );
-    if (importedInterface) {
+    } else if (importedInterface) {
       this.addInterface(name, importedInterface);
-    }
-    const importedTypeClass = classes.find(
-      (c) =>
-        c.name.toString() == originalName && c.modifiers.indexOf("export") >= 0
-    );
-    if (importedTypeClass) {
+    } else if (importedTypeClass) {
       this.addInterface(
         name,
         new Interface(
@@ -1319,6 +1313,8 @@ export default class Generator implements GeneratorAPI {
             )
         )
       );
+    } else if (importedType && importedType.type instanceof TypeLiteralNode) {
+      this.addType(name, importedType.type);
     }
   }
   getInitialContext(): GeneratorContext {

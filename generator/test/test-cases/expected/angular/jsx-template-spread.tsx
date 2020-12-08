@@ -1,4 +1,8 @@
-import { InterfaceTemplateInput, CustomClass } from "./types.d";
+import {
+  InterfaceTemplateInput,
+  ClassTemplateInput,
+  TypeTemplateInput,
+} from "./types.d";
 
 interface TemplateInput {
   inputInt: number;
@@ -6,9 +10,10 @@ interface TemplateInput {
 
 import { Input, TemplateRef } from "@angular/core";
 class Props {
-  @Input() PropFromClass?: CustomClass;
+  @Input() PropFromClass?: ClassTemplateInput;
   @Input() PropFromInterface?: TemplateInput;
   @Input() PropFromImportedInterface?: InterfaceTemplateInput;
+  @Input() PropFromImportedType?: TypeTemplateInput;
   @Input() template: TemplateRef<any> | null = null;
   @Input() template2: TemplateRef<any> | null = null;
 }
@@ -53,6 +58,13 @@ import { CommonModule } from "@angular/common";
         *ngTemplateOutlet="
           template2 || template2Default;
           context: { inputInt: PropFromImportedInterface.inputInt }
+        "
+      >
+      </ng-container
+      ><ng-container
+        *ngTemplateOutlet="
+          template2 || template2Default;
+          context: { inputInt: PropFromImportedType.inputInt }
         "
       >
       </ng-container

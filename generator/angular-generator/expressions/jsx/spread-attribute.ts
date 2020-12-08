@@ -13,8 +13,11 @@ import {
 import { PropertyAccess } from "../property-access";
 import { ObjectLiteral } from "../../../base-generator/expressions/literal";
 import { GeneratorContext } from "../../../base-generator/types";
-import { TypeLiteralNode } from "../../../base-generator/expressions/type";
-
+import {
+  PropertySignature,
+  MethodSignature,
+  TypeLiteralNode,
+} from "../../../base-generator/expressions/type";
 export interface JsxSpreadAttributeMeta {
   refExpression: Expression;
   expression: Expression;
@@ -56,23 +59,30 @@ export class JsxSpreadAttribute extends JsxExpression {
             )
         );
       }
-      if (context?.interfaces?.[type.toString()]) {
-        return context?.interfaces?.[type.toString()].members.map(
+      const extractPropertyAssignment = (container: {
+        members: Array<PropertySignature | MethodSignature>;
+      }) =>
+        container.members.map(
           (m) =>
             new PropertyAssignment(
               m.name,
               new PropertyAccess(expression, m.name)
             )
         );
+      const propInterface =
+        context?.interfaces?.[type.toString()] ||
+        context?.externalInterfaces?.[type.toString()];
+      if (propInterface) {
+        return extractPropertyAssignment(propInterface);
+      }
+      const propType =
+        context?.types?.[type.toString()] ||
+        context?.externalTypes?.[type.toString()];
+      if (propType instanceof TypeLiteralNode) {
+        return extractPropertyAssignment(propType);
       }
       if (type instanceof TypeLiteralNode) {
-        return type.members.map(
-          (m) =>
-            new PropertyAssignment(
-              m.name,
-              new PropertyAccess(expression, m.name)
-            )
-        );
+        return extractPropertyAssignment(type);
       }
     }
     return [];
@@ -80,7 +90,6 @@ export class JsxSpreadAttribute extends JsxExpression {
 
   getTemplateContext(options?: toStringOptions, context?: GeneratorContext) {
     const expression = this.getExpression(options);
-    const components = context?.components;
 
     if (expression instanceof ObjectLiteral) {
       return expression.properties.reduce((props: PropertyAssignment[], e) => {
@@ -91,11 +100,7 @@ export class JsxSpreadAttribute extends JsxExpression {
           return props.concat(new PropertyAssignment(e.key, e.name));
         }
         return props.concat(
-          this.getPropertyAssignmentFormSpread(
-            e.expression,
-            options,
-            components
-          )
+          this.getPropertyAssignmentFormSpread(e.expression, options, context)
         );
       }, []);
     }

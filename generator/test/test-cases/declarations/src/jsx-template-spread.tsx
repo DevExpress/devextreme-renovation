@@ -6,17 +6,21 @@ import {
   Template,
   OneWay,
 } from "../../../../component_declaration/common";
-import { InterfaceTemplateInput, CustomClass } from "./types.d";
-
+import {
+  InterfaceTemplateInput,
+  ClassTemplateInput,
+  TypeTemplateInput,
+} from "./types.d";
 interface TemplateInput {
   inputInt: number;
 }
 
 @ComponentBindings()
 class Props {
-  @OneWay() PropFromClass?: CustomClass;
+  @OneWay() PropFromClass?: ClassTemplateInput;
   @OneWay() PropFromInterface?: TemplateInput;
   @OneWay() PropFromImportedInterface?: InterfaceTemplateInput;
+  @OneWay() PropFromImportedType?: TypeTemplateInput;
   @Template() template: JSXTemplate<
     { width: string; height: string },
     "width"
@@ -36,6 +40,9 @@ function view(model: Widget) {
       ></model.props.template2>
       <model.props.template2
         {...model.props.PropFromImportedInterface}
+      ></model.props.template2>
+      <model.props.template2
+        {...model.props.PropFromImportedType}
       ></model.props.template2>
     </div>
   );
