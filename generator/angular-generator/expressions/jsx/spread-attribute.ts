@@ -18,6 +18,8 @@ import {
   MethodSignature,
   TypeLiteralNode,
 } from "../../../base-generator/expressions/type";
+import { Property } from "../class-members/property";
+import { Method } from "../../../base-generator/expressions/class-members";
 export interface JsxSpreadAttributeMeta {
   refExpression: Expression;
   expression: Expression;
@@ -50,39 +52,20 @@ export class JsxSpreadAttribute extends JsxExpression {
       const type =
         expression instanceof AsExpression ? expression.type : member.type;
 
-      if (components?.[type.toString()]) {
-        return components[type.toString()].members.map(
-          (m) =>
-            new PropertyAssignment(
-              new Identifier(m.name),
-              new PropertyAccess(expression, new Identifier(m.name))
-            )
-        );
-      }
-      const extractPropertyAssignment = (container: {
-        members: Array<PropertySignature | MethodSignature>;
-      }) =>
-        container.members.map(
-          (m) =>
-            new PropertyAssignment(
-              m.name,
-              new PropertyAccess(expression, m.name)
-            )
-        );
+      const propComponent = components?.[type.toString()];
       const propInterface =
         context?.interfaces?.[type.toString()] ||
         context?.externalInterfaces?.[type.toString()];
-      if (propInterface) {
-        return extractPropertyAssignment(propInterface);
-      }
       const propType =
         context?.types?.[type.toString()] ||
         context?.externalTypes?.[type.toString()];
-      if (propType instanceof TypeLiteralNode) {
-        return extractPropertyAssignment(propType);
-      }
-      if (type instanceof TypeLiteralNode) {
-        return extractPropertyAssignment(type);
+      const container =
+        propComponent ||
+        propInterface ||
+        (propType instanceof TypeLiteralNode ? propType : undefined) ||
+        (type instanceof TypeLiteralNode ? type : undefined);
+      if (container) {
+        return extractPropertyAssignment(container, expression);
       }
     }
     return [];
@@ -111,4 +94,16 @@ export class JsxSpreadAttribute extends JsxExpression {
   toString(options?: toStringOptions) {
     return "";
   }
+}
+
+function extractPropertyAssignment(
+  container: {
+    members: Array<PropertySignature | MethodSignature | Property | Method>;
+  },
+  expression: Expression
+) {
+  return container.members.map((m) => {
+    const name = m.name instanceof Identifier ? m.name : new Identifier(m.name);
+    return new PropertyAssignment(name, new PropertyAccess(expression, name));
+  });
 }

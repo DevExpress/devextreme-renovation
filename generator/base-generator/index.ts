@@ -1265,41 +1265,34 @@ export default class Generator implements GeneratorAPI {
     modulePath: string
   ) {
     const externalFile = this.cache[modulePath];
-    const componentInputs: ComponentInput[] = externalFile.filter(
-      (e: any) => e instanceof Component || e instanceof ComponentInput
-    );
-    const interfaces: Interface[] = externalFile.filter(
-      (e: any) => e instanceof Interface
-    );
-    const classes: Class[] = externalFile.filter(
-      (e: any) => e instanceof Class
-    );
-    const types: TypeAliasDeclaration[] = externalFile.filter(
-      (e: any) => e instanceof TypeAliasDeclaration
-    );
     const isImported = (i: {
       name: Identifier | string;
       modifiers: string[];
-    }): boolean =>
-      i.name.toString() === originalName && i.modifiers.indexOf("export") >= 0;
-    const componentInput = componentInputs.find(isImported);
-    const importedInterface = interfaces.find(isImported);
-    const importedTypeClass = classes.find(isImported);
-    const importedType = types.find(isImported);
-    if (componentInput) {
-      this.addComponent(name, componentInput, importClause);
-    } else if (importedInterface) {
-      this.addInterface(name, importedInterface);
-    } else if (importedTypeClass) {
+    }): boolean => {
+      const name = i.name instanceof Identifier ? i.name.toString() : i.name;
+      return name === originalName && i.modifiers.indexOf("export") >= 0;
+    };
+
+    const externalElement = externalFile.find(isImported);
+
+    if (
+      externalElement instanceof Component ||
+      externalElement instanceof ComponentInput
+    ) {
+      this.addComponent(name, externalElement, importClause);
+    }
+    if (externalElement instanceof Interface) {
+      this.addInterface(name, externalElement);
+    } else if (externalElement instanceof Class) {
       this.addInterface(
         name,
         new Interface(
-          importedTypeClass.decorators,
-          importedTypeClass.modifiers,
+          externalElement.decorators,
+          externalElement.modifiers,
           new Identifier(name),
-          importedTypeClass.typeParameters,
-          importedTypeClass.heritageClauses,
-          importedTypeClass.members
+          externalElement.typeParameters,
+          externalElement.heritageClauses,
+          externalElement.members
             .filter((m) => m instanceof Property)
             .map(
               (p) =>
@@ -1313,8 +1306,11 @@ export default class Generator implements GeneratorAPI {
             )
         )
       );
-    } else if (importedType && importedType.type instanceof TypeLiteralNode) {
-      this.addType(name, importedType.type);
+    } else if (
+      externalElement instanceof TypeAliasDeclaration &&
+      externalElement.type instanceof TypeLiteralNode
+    ) {
+      this.addType(name, externalElement.type);
     }
   }
   getInitialContext(): GeneratorContext {
