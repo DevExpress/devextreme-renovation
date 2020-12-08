@@ -382,8 +382,15 @@ Q. Так что же, могу наследоваться от кнопки и 
     });
   });
   ```
-
 </details>
+
+  Имена тестов должны кратко отражать его суть. Все тесты должны начинаться со слов `should` или `should not`. Также стоит обратить внимание на именование групп тестов (`describe`). Имена должны быть осмысленными в совокупности с именем теста и "складываться" в предложение.
+  
+  Пара примеров из приведенного выше кода:
+  
+  - Widget Render - should pass Ref into right HTML element
+  - Widget Render - should render children
+  - Logic Default Option Rules - should apply `useInkRipple` to true
 
 ### Описание пропов
 
