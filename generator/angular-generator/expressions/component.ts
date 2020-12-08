@@ -377,7 +377,6 @@ export class AngularComponent extends Component {
 
   processMembers(members: Array<Property | Method>) {
     members = super.processMembers(members);
-
     members = members.concat(
       (members.filter((m) => m.isForwardRefProp) as Property[]).map((m) => {
         return new Property(
