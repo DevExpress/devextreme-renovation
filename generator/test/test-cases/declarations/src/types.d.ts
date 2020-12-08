@@ -17,3 +17,7 @@ export interface InterfaceTemplateInput {
 export declare type TypeTemplateInput = {
   inputInt: number;
 };
+
+export class CustomClass {
+  inputInt: number;
+}
