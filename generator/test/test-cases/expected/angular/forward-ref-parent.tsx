@@ -20,6 +20,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-ref-on-children-parent",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["nullableRef"],
   template: `<dx-ref-on-children-child
     [childRef]="forwardRef_child"
     [nullableRef]="forwardRef_nullableRef"

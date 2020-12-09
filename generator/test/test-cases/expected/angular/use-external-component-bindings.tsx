@@ -22,6 +22,7 @@ export function defaultOptions(rule: WidgetOptionRule) {
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["height", "data", "info"],
   template: `<div>{{ height }}</div>`,
 })
 export default class Widget extends Props {

@@ -27,6 +27,8 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   selector: "dx-inner-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
+  inputs: ["selected", "value"],
+  outputs: ["onSelect", "valueChange"],
   template: `<div
     [ngStyle]="__processNgStyle({ width: 100, height: 100 })"
   ></div>`,

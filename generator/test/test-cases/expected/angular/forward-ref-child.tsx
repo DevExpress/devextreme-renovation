@@ -23,6 +23,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-ref-on-children-child",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["childRef", "nullableRef", "state"],
   template: `<div #childRefRef><div #nullableRefRef></div></div>`,
 })
 export default class RefOnChildrenChild extends Props {

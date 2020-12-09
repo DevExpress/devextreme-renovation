@@ -7,20 +7,58 @@ import { isElement } from "./jsx/elements";
 import { getJsxExpression } from "../../base-generator/expressions/jsx";
 import { BaseFunction } from "../../base-generator/expressions/functions";
 import { Identifier } from "../../base-generator/expressions/common";
+import { SimpleExpression } from "../../base-generator/expressions/base";
 import { GeneratorContext } from "../../base-generator/types";
 import { getAngularSelector } from "./component";
+import { getProps } from "../../base-generator/expressions/component";
 import { FunctionTypeNode } from "../../base-generator/expressions/type";
+import { Property } from "../../base-generator/expressions/class-members";
+
+function isInputDecorator(name: string) {
+  return (
+    name === Decorators.OneWay ||
+    name === Decorators.TwoWay ||
+    name === Decorators.Template ||
+    name === Decorators.RefProp ||
+    name === Decorators.Nested ||
+    name === Decorators.ForwardRefProp
+  );
+}
+
+function isOutputDecorator(name: string) {
+  return name === Decorators.Event;
+}
+
+function getProperiesName(
+  props: Property[],
+  specificDecorator: (name: string) => boolean
+): string {
+  return props
+    .filter((prop: Property) => {
+      return prop.decorators.some((d) => {
+        return specificDecorator(d.name);
+      });
+    })
+    .map((m) => m.name)
+    .join();
+}
+
+function setComponentProperty(
+  componentParameters: ObjectLiteral,
+  name: string,
+  value: string
+) {
+  if (value) {
+    componentParameters.setProperty(
+      name,
+      new SimpleExpression(`[${value.replace(/(\w+)/g, '"$1"')}]`)
+    );
+  }
+}
 
 export class Decorator extends BaseDecorator {
   toString(options?: toStringOptions) {
-    if (
-      this.name === Decorators.OneWay ||
-      this.name === Decorators.TwoWay ||
-      this.name === Decorators.Template ||
-      this.name === Decorators.RefProp ||
-      this.name === Decorators.Nested ||
-      this.name === Decorators.ForwardRefProp
-    ) {
+    if (isInputDecorator(this.name)) {
       return "@Input()";
     } else if (
       this.name === Decorators.Effect ||
@@ -33,6 +71,14 @@ export class Decorator extends BaseDecorator {
       return "";
     } else if (this.name === Decorators.Component) {
       const parameters = this.expression.arguments[0] as ObjectLiteral;
+      if (options) {
+        const props = getProps(options.members);
+        const inputs = getProperiesName(props, isInputDecorator);
+        const outputs = getProperiesName(props, isOutputDecorator);
+
+        setComponentProperty(parameters, "inputs", inputs);
+        setComponentProperty(parameters, "outputs", outputs);
+      }
 
       const viewFunction = this.getViewFunction();
       if (viewFunction) {
@@ -65,7 +111,7 @@ export class Decorator extends BaseDecorator {
         "name",
         "components",
       ].forEach((name) => parameters.removeProperty(name));
-    } else if (this.name === Decorators.Event) {
+    } else if (isOutputDecorator(this.name)) {
       return "@Output()";
     }
     return super.toString();

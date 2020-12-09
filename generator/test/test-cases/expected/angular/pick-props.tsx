@@ -19,6 +19,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["data", "info"],
   template: `<div>{{
     data === undefined || data === null ? undefined : data.value
   }}</div>`,

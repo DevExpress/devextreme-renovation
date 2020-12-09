@@ -21,6 +21,8 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["state1", "state2", "stateProp"],
+  outputs: ["state1Change", "state2Change", "statePropChange"],
   template: `<div
     >{{ state1
     }}<dx-model-widget

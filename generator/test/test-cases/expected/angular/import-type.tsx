@@ -17,6 +17,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-import",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["Test"],
   template: `<div>{{
     Test === undefined || Test === null ? undefined : Test.value
   }}</div>`,

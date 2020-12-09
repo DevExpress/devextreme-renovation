@@ -27,6 +27,7 @@ export function defaultOptions(rule: WidgetOptionRule) {
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["size", "type"],
 })
 export default class Widget extends WidgetInput {
   get __getHeight(): number {

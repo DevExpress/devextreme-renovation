@@ -11,6 +11,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["height", "width"],
   template: `<div [ngStyle]="__processNgStyle({ height: height })"
     ><span></span><span></span
   ></div>`,

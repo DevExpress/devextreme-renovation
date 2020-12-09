@@ -19,6 +19,7 @@ import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "dx-widget-one",
+  inputs: ["text"],
   template: `<div>
     <span>One - {{ text }}</span>
     <div #slotChildren style="display:contents">

@@ -29,6 +29,8 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   selector: "dx-model-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
+  inputs: ["baseStateProp", "modelStateProp", "value"],
+  outputs: ["baseStatePropChange", "modelStatePropChange", "valueChange"],
   template: `<div>{{ baseStateProp }}</div>`,
 })
 export default class ModelWidget

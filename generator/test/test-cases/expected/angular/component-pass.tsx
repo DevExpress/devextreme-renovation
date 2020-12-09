@@ -19,6 +19,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["mode", "firstText", "secondText"],
   template: `<dx-widget-one [text]="firstText" *ngIf="mode"
       ><div>Slot content</div></dx-widget-one
     ><dx-widget-two [text]="firstText" *ngIf="!mode"

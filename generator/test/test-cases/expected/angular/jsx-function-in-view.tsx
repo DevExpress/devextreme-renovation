@@ -16,6 +16,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["loading", "greetings"],
   template: `<div
     ><ng-container *ngIf="loading"
       ><div>{{ __loadingProps.text }}</div></ng-container
