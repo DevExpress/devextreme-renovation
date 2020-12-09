@@ -51,4 +51,6 @@ export type GeneratorContext = {
   imports?: {
     [name: string]: ImportClause;
   };
+  externalTypes?: { [name: string]: TypeExpression };
+  externalInterfaces?: { [name: string]: Interface };
 } & GeneratorOptions;

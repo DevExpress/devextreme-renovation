@@ -366,10 +366,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     const contextExpr = processComponentContext(options?.newComponentContext);
     const contextElements = this.attributes
       .reduce((elements: PropertyAssignment[], a) => {
-        const contextElements = a.getTemplateContext(
-          options,
-          this.context.components
-        );
+        const contextElements = a.getTemplateContext(options, this.context);
         return elements.concat(contextElements);
       }, [])
       .filter((el) => el.key.toString() !== "key");

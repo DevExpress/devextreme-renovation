@@ -1,7 +1,6 @@
 import { JsxExpression } from "./jsx-expression";
 import { Expression } from "../../../base-generator/expressions/base";
 import { toStringOptions } from "../../types";
-import { Heritable } from "../../../base-generator/expressions/class";
 import { getMember } from "../../../base-generator/utils/expressions";
 import {
   PropertyAssignment,
@@ -13,7 +12,14 @@ import {
 } from "../../../base-generator/expressions/common";
 import { PropertyAccess } from "../property-access";
 import { ObjectLiteral } from "../../../base-generator/expressions/literal";
-
+import { GeneratorContext } from "../../../base-generator/types";
+import {
+  PropertySignature,
+  MethodSignature,
+  TypeLiteralNode,
+} from "../../../base-generator/expressions/type";
+import { Property } from "../class-members/property";
+import { Method } from "../../../base-generator/expressions/class-members";
 export interface JsxSpreadAttributeMeta {
   refExpression: Expression;
   expression: Expression;
@@ -33,9 +39,11 @@ export class JsxSpreadAttribute extends JsxExpression {
   getPropertyAssignmentFormSpread(
     expression: Expression,
     options?: toStringOptions,
-    components?: { [name: string]: Heritable }
+    context?: GeneratorContext
   ): PropertyAssignment[] {
     const member = getMember(expression, options);
+    const components = context?.components;
+
     if (member) {
       if (member._name.toString() === "restAttributes") {
         return [];
@@ -44,27 +52,26 @@ export class JsxSpreadAttribute extends JsxExpression {
       const type =
         expression instanceof AsExpression ? expression.type : member.type;
 
-      if (components?.[type.toString()]) {
-        return components[type.toString()].members.map(
-          (m) =>
-            new PropertyAssignment(
-              new Identifier(m.name),
-              new PropertyAccess(expression, new Identifier(m.name))
-            )
-        );
+      const propComponent = components?.[type.toString()];
+      const propInterface =
+        context?.interfaces?.[type.toString()] ||
+        context?.externalInterfaces?.[type.toString()];
+      const propType =
+        context?.types?.[type.toString()] ||
+        context?.externalTypes?.[type.toString()];
+      const container =
+        propComponent ||
+        propInterface ||
+        (propType instanceof TypeLiteralNode ? propType : undefined) ||
+        (type instanceof TypeLiteralNode ? type : undefined);
+      if (container) {
+        return extractPropertyAssignment(container, expression);
       }
     }
-    // TODO: Support spread attributes in template context
-    console.warn(
-      "Angular generator doesn't support spread attributes in template"
-    );
     return [];
   }
 
-  getTemplateContext(
-    options?: toStringOptions,
-    components?: { [name: string]: Heritable }
-  ) {
+  getTemplateContext(options?: toStringOptions, context?: GeneratorContext) {
     const expression = this.getExpression(options);
 
     if (expression instanceof ObjectLiteral) {
@@ -76,23 +83,27 @@ export class JsxSpreadAttribute extends JsxExpression {
           return props.concat(new PropertyAssignment(e.key, e.name));
         }
         return props.concat(
-          this.getPropertyAssignmentFormSpread(
-            e.expression,
-            options,
-            components
-          )
+          this.getPropertyAssignmentFormSpread(e.expression, options, context)
         );
       }, []);
     }
 
-    return this.getPropertyAssignmentFormSpread(
-      expression,
-      options,
-      components
-    );
+    return this.getPropertyAssignmentFormSpread(expression, options, context);
   }
 
   toString(options?: toStringOptions) {
     return "";
   }
+}
+
+function extractPropertyAssignment(
+  container: {
+    members: Array<PropertySignature | MethodSignature | Property | Method>;
+  },
+  expression: Expression
+) {
+  return container.members.map((m) => {
+    const name = m.name instanceof Identifier ? m.name : new Identifier(m.name);
+    return new PropertyAssignment(name, new PropertyAccess(expression, name));
+  });
 }
