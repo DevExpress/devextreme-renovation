@@ -28,6 +28,8 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   selector: "dx-model-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
+  inputs: ["disabled", "value", "notValue"],
+  outputs: ["valueChange", "notValueChange"],
   template: `<div>{{ value }}</div>`,
 })
 export default class ModelWidget

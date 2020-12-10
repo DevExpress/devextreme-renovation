@@ -24,6 +24,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget-with-globals",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["items"],
   template: `<div [class]="global_CLASS_NAME"
     ><span [class]="global_CLASS_NAME"></span><dx-widget-two></dx-widget-two
     ><ng-container *ngFor="let item of items; trackBy: _trackBy_items_0"

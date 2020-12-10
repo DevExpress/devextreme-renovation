@@ -118,6 +118,7 @@ class DxWidgetColumn extends GridColumnProps {
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["columns", "editing"],
   template: `<div></div>`,
 })
 export default class Widget extends PickedProps {

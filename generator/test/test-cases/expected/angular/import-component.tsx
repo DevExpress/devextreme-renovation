@@ -19,6 +19,8 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-child",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["height", "width"],
+  outputs: ["onClick"],
   template: `<dx-widget [height]="__getProps().height"></dx-widget>`,
 })
 export default class Child extends ChildInput {

@@ -129,6 +129,7 @@ export class DynamicComponentDirective {
 @Component({
   selector: "dx-dynamic-component-creator",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["height"],
   template: `<div
     ><ng-container *ngFor="let C of __Components; index as index"
       ><ng-template

@@ -21,6 +21,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-template-default-value",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["defaultCompTemplate", "defaultFuncTemplate", "stringToRender"],
   template: `<div
       >TemplateDefaultValue<ng-container
         *ngTemplateOutlet="

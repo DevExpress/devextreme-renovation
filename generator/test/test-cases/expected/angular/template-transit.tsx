@@ -20,6 +20,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-template-transit-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["templateProp", "componentTemplateProp"],
   template: `<dx-widget-with-template
     [template]="templateProp"
     [componentTemplate]="componentTemplateProp"

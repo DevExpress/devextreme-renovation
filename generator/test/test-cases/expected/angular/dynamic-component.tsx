@@ -133,6 +133,7 @@ export class DynamicComponentDirective {
 @Component({
   selector: "dx-dynamic-component-creator",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["height"],
   template: `<div
     ><ng-template
       dynamicComponent

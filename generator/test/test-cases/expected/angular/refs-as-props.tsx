@@ -20,6 +20,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["nullableRef"],
   template: `<div #divRef
     ><dx-widget-with-ref-prop
       [parentRef]="divRef"

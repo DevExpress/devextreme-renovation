@@ -15,6 +15,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-list",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["items", "keyExpr"],
   template: `<div
     ><div
       ><ng-container *ngFor="let item of items; trackBy: _trackBy_items_0"

@@ -90,6 +90,7 @@ class DxPortal {
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["someRef"],
   template: `<div
     ><dx-portal [container]="document.body" *ngIf="rendered"
       ><span></span></dx-portal

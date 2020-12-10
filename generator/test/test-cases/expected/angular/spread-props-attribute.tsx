@@ -27,6 +27,8 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
+  inputs: ["visible", "value"],
+  outputs: ["valueChange"],
   template: `<dx-inner-widget
     [value]="value"
     (valueChange)="_valueChange($event)"

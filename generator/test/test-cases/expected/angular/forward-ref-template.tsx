@@ -16,6 +16,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-ref-on-children-template",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["contentTemplate"],
   template: `<ng-container
     *ngTemplateOutlet="contentTemplate; context: { childRef: forwardRef_child }"
   ></ng-container>`,

@@ -17,6 +17,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["prop"],
   template: `<div #host
     ><input #_auto_ref_0 /><input #i1 /><input #_auto_ref_1
   /></div>`,

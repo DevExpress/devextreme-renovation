@@ -17,6 +17,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget-with-template",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["template", "componentTemplate", "arrowTemplate"],
   template: `<div
     ><ng-container *ngTemplateOutlet="componentTemplate"></ng-container
     ><ng-container *ngTemplateOutlet="template"></ng-container

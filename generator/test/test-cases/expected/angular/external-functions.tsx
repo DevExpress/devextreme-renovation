@@ -26,6 +26,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["cells"],
   template: `<div
     [class]="global_CLASS_NAME"
     [ngStyle]="__processNgStyle(global_externalFunction())"

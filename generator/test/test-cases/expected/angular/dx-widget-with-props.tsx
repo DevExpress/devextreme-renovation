@@ -18,6 +18,8 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget-with-props",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["value", "optionalValue", "number"],
+  outputs: ["onClick"],
   template: `<div>{{ optionalValue || value }}</div>`,
 })
 export class WidgetWithProps extends WidgetWithPropsInput {

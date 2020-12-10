@@ -16,6 +16,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget-with-ref-prop",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["parentRef", "nullableRef"],
   template: `<div></div>`,
 })
 export default class WidgetWithRefProp extends WidgetWithRefPropInput {

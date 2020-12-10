@@ -27,6 +27,13 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: [
+    "outerDivRef",
+    "refProp",
+    "forwardRefProp",
+    "requiredRefProp",
+    "requiredForwardRefProp",
+  ],
   template: `<div #divRef><div #outerDivRefRef></div></div>`,
 })
 export default class Widget extends WidgetProps {
