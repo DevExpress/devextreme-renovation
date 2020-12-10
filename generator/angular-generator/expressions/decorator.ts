@@ -17,7 +17,7 @@ import { getProps } from "../../base-generator/expressions/component";
 import { FunctionTypeNode } from "../../base-generator/expressions/type";
 import { Property } from "../../base-generator/expressions/class-members";
 
-function isInputDecorator(name: string) {
+function isInputDecorator(name: string): boolean {
   return (
     name === Decorators.OneWay ||
     name === Decorators.TwoWay ||
@@ -28,7 +28,7 @@ function isInputDecorator(name: string) {
   );
 }
 
-function isOutputDecorator(name: string) {
+function isOutputDecorator(name: string): boolean {
   return name === Decorators.Event;
 }
 
@@ -37,9 +37,9 @@ function getProperiesName(
   specificDecorator: (name: string) => boolean
 ): StringLiteral[] {
   return props
-    .filter((prop: Property) => {
-      return prop.decorators.some((d) => {
-        return specificDecorator(d.name);
+    .filter(({ decorators }) => {
+      return decorators.some(({ name }) => {
+        return specificDecorator(name);
       });
     })
     .map((m) => new StringLiteral(m.name));
