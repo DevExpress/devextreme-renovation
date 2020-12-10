@@ -21,6 +21,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-slot-pass",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["p"],
   template: `<div
     ><dx-widget
       ><div #slotChildren style="display: contents"
