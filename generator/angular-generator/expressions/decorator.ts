@@ -37,11 +37,9 @@ function getProperiesName(
   specificDecorator: (name: string) => boolean
 ): StringLiteral[] {
   return props
-    .filter(({ decorators }) => {
-      return decorators.some(({ name }) => {
-        return specificDecorator(name);
-      });
-    })
+    .filter(({ decorators }) =>
+      decorators.some(({ name }) => specificDecorator(name))
+    )
     .map((m) => new StringLiteral(m.name));
 }
 
