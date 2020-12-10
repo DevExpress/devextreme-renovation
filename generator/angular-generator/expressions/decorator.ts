@@ -1,7 +1,10 @@
 import { Decorator as BaseDecorator } from "../../base-generator/expressions/decorator";
 import { toStringOptions } from "../types";
 import { Decorators } from "../../component_declaration/decorators";
-import { ObjectLiteral } from "../../base-generator/expressions/literal";
+import {
+  ObjectLiteral,
+  StringLiteral,
+} from "../../base-generator/expressions/literal";
 import { TemplateExpression } from "../../base-generator/expressions/template";
 import { isElement } from "./jsx/elements";
 import { getJsxExpression } from "../../base-generator/expressions/jsx";
@@ -32,26 +35,25 @@ function isOutputDecorator(name: string) {
 function getProperiesName(
   props: Property[],
   specificDecorator: (name: string) => boolean
-): string {
+): StringLiteral[] {
   return props
     .filter((prop: Property) => {
       return prop.decorators.some((d) => {
         return specificDecorator(d.name);
       });
     })
-    .map((m) => m.name)
-    .join();
+    .map((m) => new StringLiteral(m.name));
 }
 
 function setComponentProperty(
   componentParameters: ObjectLiteral,
   name: string,
-  value: string
+  value: StringLiteral[]
 ) {
-  if (value) {
+  if (value.length) {
     componentParameters.setProperty(
       name,
-      new SimpleExpression(`[${value.replace(/(\w+)/g, '"$1"')}]`)
+      new SimpleExpression(`[${value.join()}]`)
     );
   }
 }
