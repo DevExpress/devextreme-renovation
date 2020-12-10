@@ -527,11 +527,18 @@ export class Component extends Class implements Heritable {
     return new Block([], true);
   }
 
-  getViewSpreadAccessor() {
+  getViewSpreadAccessor(members: Array<Property | Method>) {
     const viewFunction = this.decorators[0].getViewFunction();
     const argumentPattern = getViewFunctionBindingPattern(viewFunction);
     const spreadVar = argumentPattern.elements.find(
       (p: BindingElement) => p.dotDotDotToken === "..."
+    );
+
+    const props = getProps(members).filter(
+      (m) =>
+        !argumentPattern.elements.some(
+          (e) => !e.dotDotDotToken && e.name.toString() === m._name.toString()
+        )
     );
 
     if (spreadVar) {
@@ -541,12 +548,13 @@ export class Component extends Class implements Heritable {
           argumentPattern,
           { members: this.members },
           spreadVar
-        )
+        ),
+        props
       );
     } else return undefined;
   }
 
-  createViewSpreadAccessor(name: Identifier, body: Block) {
+  createViewSpreadAccessor(name: Identifier, body: Block, props: Property[]) {
     return new GetAccessor(undefined, undefined, name, [], undefined, body);
   }
 }

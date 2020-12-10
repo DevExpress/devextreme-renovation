@@ -3918,7 +3918,8 @@ mocha.describe("Component", function () {
     );
     const accessor = comp.createViewSpreadAccessor(
       new Identifier("spr"),
-      new Block([], true)
+      new Block([], true),
+      []
     );
 
     assert.deepEqual(block, new Block([], true));

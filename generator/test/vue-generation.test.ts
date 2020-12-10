@@ -122,6 +122,10 @@ mocha.describe("vue-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("slot-pass-from-rest", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("template", function () {
     this.testGenerator(this.test!.title);
   });
@@ -328,6 +332,9 @@ mocha.describe("vue-generation", function () {
   });
 
   mocha.it("template-default-value", function () {
+    this.testGenerator(this.test!.title);
+  });
+  mocha.it("jsx-template-spread", function () {
     this.testGenerator(this.test!.title);
   });
 });

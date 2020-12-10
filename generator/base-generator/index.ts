@@ -609,21 +609,9 @@ export default class Generator implements GeneratorAPI {
           );
         }
 
-        const componentInputs: ComponentInput[] = this.cache[modulePath].filter(
-          (e: any) => e instanceof Component || e instanceof ComponentInput
-        );
-
         importClause.imports?.forEach((name) => {
           const originalName = importClause.resolveImport(name);
-          const componentInput = componentInputs.find(
-            (c) =>
-              c.name.toString() === originalName &&
-              c.modifiers.indexOf("export") >= 0
-          );
-
-          if (componentInput) {
-            this.addComponent(name, componentInput, importClause);
-          }
+          this.addToContext(name, originalName, importClause, modulePath);
         });
         this.cache.__globals__ &&
           importClause.imports?.forEach((i) => {
@@ -1260,6 +1248,71 @@ export default class Generator implements GeneratorAPI {
     context.components[name] = component;
   }
 
+  addInterface(name: string, _interface: Interface) {
+    const context = this.getContext();
+    context.externalInterfaces = context.externalInterfaces || {};
+    context.externalInterfaces[name] = _interface;
+  }
+  addType(name: string, _type: TypeLiteralNode) {
+    const context = this.getContext();
+    context.externalTypes = context.externalTypes || {};
+    context.externalTypes[name] = _type;
+  }
+  addToContext(
+    name: string,
+    originalName: string | undefined,
+    importClause: ImportClause,
+    modulePath: string
+  ) {
+    const externalFile = this.cache[modulePath];
+    const isImported = (i: {
+      name: Identifier | string;
+      modifiers: string[];
+    }): boolean => {
+      const name = i.name instanceof Identifier ? i.name.toString() : i.name;
+      return name === originalName && i.modifiers.indexOf("export") >= 0;
+    };
+
+    const externalElement = externalFile.find(isImported);
+
+    if (
+      externalElement instanceof Component ||
+      externalElement instanceof ComponentInput
+    ) {
+      this.addComponent(name, externalElement, importClause);
+    }
+    if (externalElement instanceof Interface) {
+      this.addInterface(name, externalElement);
+    } else if (externalElement instanceof Class) {
+      this.addInterface(
+        name,
+        new Interface(
+          externalElement.decorators,
+          externalElement.modifiers,
+          new Identifier(name),
+          externalElement.typeParameters,
+          externalElement.heritageClauses,
+          externalElement.members
+            .filter((m) => m instanceof Property)
+            .map(
+              (p) =>
+                new PropertySignature(
+                  p.modifiers,
+                  p._name,
+                  "",
+                  p.type instanceof TypeExpression ? p.type : undefined,
+                  undefined
+                )
+            )
+        )
+      );
+    } else if (
+      externalElement instanceof TypeAliasDeclaration &&
+      externalElement.type instanceof TypeLiteralNode
+    ) {
+      this.addType(name, externalElement.type);
+    }
+  }
   getInitialContext(): GeneratorContext {
     return {
       defaultOptionsModule:
