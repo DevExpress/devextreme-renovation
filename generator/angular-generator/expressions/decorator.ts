@@ -4,6 +4,7 @@ import { Decorators } from "../../component_declaration/decorators";
 import {
   ObjectLiteral,
   StringLiteral,
+  ArrayLiteral,
 } from "../../base-generator/expressions/literal";
 import { TemplateExpression } from "../../base-generator/expressions/template";
 import { isElement } from "./jsx/elements";
@@ -51,10 +52,7 @@ function setComponentProperty(
   value: StringLiteral[]
 ) {
   if (value.length) {
-    componentParameters.setProperty(
-      name,
-      new SimpleExpression(`[${value.join()}]`)
-    );
+    componentParameters.setProperty(name, new ArrayLiteral(value, false));
   }
 }
 
