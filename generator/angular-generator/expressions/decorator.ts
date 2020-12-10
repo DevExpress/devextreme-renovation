@@ -11,7 +11,6 @@ import { isElement } from "./jsx/elements";
 import { getJsxExpression } from "../../base-generator/expressions/jsx";
 import { BaseFunction } from "../../base-generator/expressions/functions";
 import { Identifier } from "../../base-generator/expressions/common";
-import { SimpleExpression } from "../../base-generator/expressions/base";
 import { GeneratorContext } from "../../base-generator/types";
 import { getAngularSelector } from "./component";
 import { getProps } from "../../base-generator/expressions/component";
