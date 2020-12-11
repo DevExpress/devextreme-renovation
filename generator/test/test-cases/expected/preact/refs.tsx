@@ -1,17 +1,17 @@
 function view(viewModel: Widget) {
   return (
-    <div ref={viewModel.divRef as any}>
-      <div ref={viewModel.props.outerDivRef as any}></div>
+    <div ref={viewModel.divRef}>
+      <div ref={viewModel.props.outerDivRef}></div>
     </div>
   );
 }
 
 export declare type WidgetPropsType = {
-  outerDivRef?: RefObject<HTMLDivElement>;
-  refProp?: RefObject<HTMLDivElement>;
-  forwardRefProp?: RefObject<HTMLDivElement>;
-  requiredRefProp: RefObject<HTMLDivElement>;
-  requiredForwardRefProp: RefObject<HTMLDivElement>;
+  outerDivRef?: any;
+  refProp?: any;
+  forwardRefProp?: any;
+  requiredRefProp: any;
+  requiredForwardRefProp: any;
 };
 const WidgetProps: WidgetPropsType = ({} as any) as WidgetPropsType;
 import * as Preact from "preact";
@@ -43,11 +43,11 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetProps & RestProps) {
-  const __divRef = useRef<HTMLDivElement>();
-  const __ref = useRef<HTMLDivElement>();
-  const __existingRef = useRef<HTMLDivElement>();
-  const __forwardRef = useRef<HTMLDivElement>();
-  const __existingForwardRef = useRef<HTMLDivElement>();
+  const __divRef = useRef<any>();
+  const __ref = useRef<any>();
+  const __existingRef = useRef<any>();
+  const __forwardRef = useRef<any>();
+  const __existingForwardRef = useRef<any>();
 
   const __writeRefs = useCallback(
     function __writeRefs(): any {

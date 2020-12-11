@@ -5,6 +5,7 @@ import {
   Effect,
   Ref,
   OneWay,
+  RefObject,
 } from "../../component_declaration/common";
 
 function view(model: EffectsDOMUpdate) {
@@ -13,7 +14,7 @@ function view(model: EffectsDOMUpdate) {
       <span>{model.props.text}</span>
       <div
         id={model.props.name}
-        ref={model.divRef as any}
+        ref={model.divRef}
         style={{ backgroundColor: "#b3b3b3" }}
       ></div>
     </div>
@@ -30,7 +31,7 @@ class Props {
   view,
 })
 export default class EffectsDOMUpdate extends JSXComponent<Props, "text">() {
-  @Ref() divRef!: HTMLDivElement;
+  @Ref() divRef!: RefObject<HTMLDivElement>;
 
   @Effect()
   noDepsEffect() {

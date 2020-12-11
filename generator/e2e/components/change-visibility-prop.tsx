@@ -6,6 +6,7 @@ import {
   InternalState,
   Ref,
   Effect,
+  RefObject,
 } from "../../component_declaration/common";
 
 function view(model: VisibilityChangeProp) {
@@ -14,7 +15,7 @@ function view(model: VisibilityChangeProp) {
       {model.props.visible ? (
         <div
           id={"change-visibility-prop-element"}
-          ref={model.element as any}
+          ref={model.element}
           style={{
             width: 100,
             height: 20,
@@ -38,7 +39,7 @@ class WidgetInput {
 })
 export default class VisibilityChangeProp extends JSXComponent(WidgetInput) {
   @InternalState() counter: number = 0;
-  @Ref() element?: HTMLDivElement;
+  @Ref() element?: RefObject<HTMLDivElement>;
 
   @Effect()
   elementClick() {

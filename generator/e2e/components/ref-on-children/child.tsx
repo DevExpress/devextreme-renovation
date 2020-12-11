@@ -4,15 +4,16 @@ import {
   JSXComponent,
   ForwardRef,
   Effect,
+  RefObject,
 } from "../../../component_declaration/common";
 
 function view({ props: { childRef } }: ForwardRefChild) {
-  return <span className="forward-ref-child" ref={childRef as never}></span>;
+  return <span className="forward-ref-child" ref={childRef}></span>;
 }
 
 @ComponentBindings()
 class Props {
-  @ForwardRef() childRef!: HTMLDivElement;
+  @ForwardRef() childRef!: RefObject<HTMLDivElement>;
 }
 
 @Component({

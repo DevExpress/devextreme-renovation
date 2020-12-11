@@ -24,6 +24,7 @@ import { Decorators } from "../../component_declaration/decorators";
 import { ComponentInput } from "./component-input";
 import { extractComplexType, isTypeArray, TypeExpression } from "./type";
 import { BindingElement, BindingPattern } from "./binding-pattern";
+import { extractRefType } from "../utils/expressions";
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
   return heritageClauses.some((h) => h.isJsxComponent);
@@ -71,6 +72,10 @@ export class Component extends Class implements Heritable {
     return this._name.toString();
   }
 
+  extractRefType(type: TypeExpression | string) {
+    return extractRefType(type, "RefObject");
+  }
+
   addPrefixToMembers(members: Array<Property | Method>) {
     members
       .filter((m) => !m.inherited && m instanceof GetAccessor)
@@ -86,6 +91,10 @@ export class Component extends Class implements Heritable {
       (!this.defaultOptionRules ||
         this.defaultOptionRules.toString() !== "null")
     );
+  }
+
+  processRef(member: Property) {
+    return member;
   }
 
   processMembers(members: Array<Property | Method>) {
@@ -156,6 +165,19 @@ export class Component extends Class implements Heritable {
     members = super.processMembers(
       this.addPrefixToMembers(members).concat(props)
     );
+
+    members = members.map((member) => {
+      if (
+        member.isRef ||
+        member.isRefProp ||
+        member.isForwardRef ||
+        member.isForwardRefProp
+      ) {
+        return this.processRef(member as Property);
+      }
+      return member;
+    });
+
     const restPropsGetter = this.createRestPropsGetter(members);
     restPropsGetter.prefix = "__";
     members.push(restPropsGetter);
@@ -194,7 +216,9 @@ export class Component extends Class implements Heritable {
         (r: { refs: Property[]; apiRefs: Property[] }, p) => {
           if (
             context.components &&
-            context.components[p.type!.toString()] instanceof Component
+            context.components[
+              this.extractRefType(p.type!).toString()
+            ] instanceof Component
           ) {
             p.decorators.find(
               (d) => d.name === "Ref"

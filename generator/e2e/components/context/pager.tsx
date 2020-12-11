@@ -6,6 +6,7 @@ import {
   Effect,
   InternalState,
   Ref,
+  RefObject,
 } from "../../../component_declaration/common";
 
 import { Context } from "./context";
@@ -17,7 +18,7 @@ function view(model: PagerComponent) {
       Pager:{" "}
       <input
         id="context-pager-input"
-        ref={model.input as any}
+        ref={model.input}
         value={model.pageIndex}
       />
     </div>
@@ -34,7 +35,7 @@ export default class PagerComponent extends JSXComponent(Props) {
   @Consumer(Context)
   context!: PluginContext;
 
-  @Ref() input!: HTMLInputElement;
+  @Ref() input!: RefObject<HTMLInputElement>;
 
   @Effect()
   inputEffect() {

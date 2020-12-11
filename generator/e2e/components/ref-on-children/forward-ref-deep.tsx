@@ -4,6 +4,7 @@ import {
   JSXComponent,
   Effect,
   ForwardRef,
+  RefObject,
 } from "../../../component_declaration/common";
 import Child from "./child";
 
@@ -13,7 +14,7 @@ function view({ props: { childRef } }: ForwardRefDeep) {
 
 @ComponentBindings()
 class Props {
-  @ForwardRef() childRef!: HTMLDivElement;
+  @ForwardRef() childRef!: RefObject<HTMLDivElement>;
 }
 
 @Component({

@@ -6,15 +6,16 @@ import {
   ForwardRef,
   Ref,
   Slot,
+  RefObject,
 } from "../../../../component_declaration/common";
 
 function view({ host, props: { children } }: ProvideRefFromParentToChildren) {
-  return <div ref={host as any}>{children}</div>;
+  return <div ref={host}>{children}</div>;
 }
 
 @ComponentBindings()
 class Props {
-  @ForwardRef() elementRef?: HTMLDivElement;
+  @ForwardRef() elementRef?: RefObject<HTMLDivElement>;
   @Slot() children!: JSX.Element;
 }
 
@@ -25,7 +26,7 @@ export default class ProvideRefFromParentToChildren extends JSXComponent<
   Props,
   "children"
 >() {
-  @Ref() host!: HTMLDivElement;
+  @Ref() host!: RefObject<HTMLDivElement>;
 
   @Effect({ run: "once" })
   init() {

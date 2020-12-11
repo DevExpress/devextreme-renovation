@@ -6,6 +6,7 @@ import {
   Effect,
   Ref,
   OneWay,
+  RefObject,
 } from "../../../../component_declaration/common";
 
 function view(model: Widget) {
@@ -25,7 +26,7 @@ function view(model: Widget) {
 
 @ComponentBindings()
 export class WidgetProps {
-  @Ref() someRef?: HTMLElement;
+  @Ref() someRef?: RefObject<HTMLElement>;
 }
 
 @Component({

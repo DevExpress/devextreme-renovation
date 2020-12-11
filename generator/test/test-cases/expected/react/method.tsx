@@ -1,5 +1,5 @@
 function view(viewModel: Widget) {
-  return <div ref={viewModel.divRef as any}></div>;
+  return <div ref={viewModel.divRef}></div>;
 }
 
 export declare type WidgetInputType = {

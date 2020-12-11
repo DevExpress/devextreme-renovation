@@ -4,25 +4,26 @@ import {
   ComponentBindings,
   JSXComponent,
   ForwardRef,
+  RefObject,
 } from "../../../../component_declaration/common";
 
 function view(viewModel: Widget) {
   return (
-    <div ref={viewModel.divRef as any}>
-      <div ref={viewModel.props.outerDivRef as any}></div>
+    <div ref={viewModel.divRef}>
+      <div ref={viewModel.props.outerDivRef}></div>
     </div>
   );
 }
 
 @ComponentBindings()
 class WidgetProps {
-  @ForwardRef() outerDivRef?: HTMLDivElement;
+  @ForwardRef() outerDivRef?: RefObject<HTMLDivElement>;
 
-  @Ref() refProp?: HTMLDivElement;
-  @ForwardRef() forwardRefProp?: HTMLDivElement;
+  @Ref() refProp?: RefObject<HTMLDivElement>;
+  @ForwardRef() forwardRefProp?: RefObject<HTMLDivElement>;
 
-  @Ref() requiredRefProp!: HTMLDivElement;
-  @ForwardRef() requiredForwardRefProp!: HTMLDivElement;
+  @Ref() requiredRefProp!: RefObject<HTMLDivElement>;
+  @ForwardRef() requiredForwardRefProp!: RefObject<HTMLDivElement>;
 }
 
 @Component({
@@ -32,12 +33,12 @@ export default class Widget extends JSXComponent<
   WidgetProps,
   "requiredRefProp" | "requiredForwardRefProp"
 >(WidgetProps) {
-  @Ref() divRef!: HTMLDivElement;
+  @Ref() divRef!: RefObject<HTMLDivElement>;
 
-  @Ref() ref?: HTMLDivElement;
-  @ForwardRef() forwardRef?: HTMLDivElement;
-  @Ref() existingRef!: HTMLDivElement;
-  @ForwardRef() existingForwardRef!: HTMLDivElement;
+  @Ref() ref?: RefObject<HTMLDivElement>;
+  @ForwardRef() forwardRef?: RefObject<HTMLDivElement>;
+  @Ref() existingRef!: RefObject<HTMLDivElement>;
+  @ForwardRef() existingForwardRef!: RefObject<HTMLDivElement>;
 
   writeRefs() {
     let someRef;

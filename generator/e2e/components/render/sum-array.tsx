@@ -4,8 +4,8 @@ import {
   JSXComponent,
   OneWay,
   Effect,
-  InternalState,
   Ref,
+  RefObject,
 } from "../../../component_declaration/common";
 
 function view({ sum, restAttributes, counterRef }: SumArray) {
@@ -14,7 +14,7 @@ function view({ sum, restAttributes, counterRef }: SumArray) {
       Sum: <span className={"sum"}>{sum}</span>
       <br />
       Updates:
-      <span ref={counterRef as any} className={"update-count"}>
+      <span ref={counterRef} className={"update-count"}>
         0
       </span>
     </div>
@@ -30,7 +30,7 @@ export class SumArrayProps {
   view,
 })
 export default class SumArray extends JSXComponent(SumArrayProps) {
-  @Ref() counterRef!: HTMLDivElement;
+  @Ref() counterRef!: RefObject<HTMLDivElement>;
 
   @Effect()
   arrayUpdated() {

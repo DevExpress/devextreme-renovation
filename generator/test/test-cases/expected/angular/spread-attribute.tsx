@@ -50,7 +50,7 @@ export default class Widget extends WidgetInput {
   scheduledApplyAttributes = false;
   __applyAttributes__() {
     const _attr_0: { [name: string]: any } = this.__attr1 || {};
-    const _ref_0 = this.host?.nativeElement as any;
+    const _ref_0 = this.host?.nativeElement;
     if (_ref_0) {
       for (let key in _attr_0) {
         _ref_0.setAttribute(key, _attr_0[key].toString());
@@ -66,7 +66,7 @@ export default class Widget extends WidgetInput {
     }
 
     const _attr_2: { [name: string]: any } = this.__attr2 || {};
-    const _ref_2 = this.i1?.nativeElement as any;
+    const _ref_2 = this.i1?.nativeElement;
     if (_ref_2) {
       for (let key in _attr_2) {
         _ref_2.setAttribute(key, _attr_2[key].toString());
@@ -105,6 +105,7 @@ export default class Widget extends WidgetInput {
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}
