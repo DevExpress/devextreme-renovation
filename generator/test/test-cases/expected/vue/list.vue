@@ -9,9 +9,22 @@
             style="display: contents"
             :set="(ListItemDefault = { value: item.text })"
             ><WidgetWithProps :value="ListItemDefault.value"
-          /></div> </slot></div></template
+          /></div> </slot
+        ><div class="footer"></div></div></template
     ><template v-for="item of items"
       ><div style="display: contents" :key="item.key"
+        ><slot name="ListItem" :value="item.text" @click="global_noop">
+          <div
+            style="display: contents"
+            :set="
+              (ListItemDefault = { value: item.text, onClick: global_noop })
+            "
+            ><WidgetWithProps
+              :value="ListItemDefault.value"
+              @click="ListItemDefault.onClick"
+          /></div> </slot></div></template
+    ><template v-for="item of items"
+      ><div style="display: contents" :key="item.key" v-if="item.text !== ''"
         ><slot name="ListItem" :value="item.text" @click="global_noop">
           <div
             style="display: contents"

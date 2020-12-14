@@ -30,6 +30,7 @@ function view(model: List) {
     return (
       <div key={item.key}>
         <model.props.ListItem value={item.text} />
+        <div className="footer"></div>
       </div>
     );
   });
@@ -41,6 +42,16 @@ function view(model: List) {
       {model.props.items?.map((item) => (
         <model.props.ListItem key={item.key} value={item.text} onClick={noop} />
       ))}
+      {model.props.items?.map(
+        (item) =>
+          item.text !== "" && (
+            <model.props.ListItem
+              key={item.key}
+              value={item.text}
+              onClick={noop}
+            />
+          )
+      )}
     </div>
   );
 }
