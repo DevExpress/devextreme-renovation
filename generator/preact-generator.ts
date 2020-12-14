@@ -36,6 +36,7 @@ import { JsxClosingElement as ReactJsxClosingElement } from "./react-generator/e
 import { JsxOpeningElement as ReactJsxOpeningElement } from "./react-generator/expressions/jsx/jsx-opening-element";
 import { JsxAttribute as ReactJsxAttribute } from "./react-generator/expressions/jsx/jsx-attribute";
 import { kebabSvgAttributes } from "./base-generator/utils/svg-utils/kebab-attributes";
+import { extractRefType } from "./base-generator/utils/expressions";
 
 const BASE_JQUERY_WIDGET = "BASE_JQUERY_WIDGET";
 
@@ -130,6 +131,10 @@ export class PreactComponent extends ReactComponent {
     );
   }
 
+  extractRefType(type: TypeExpression | string) {
+    return extractRefType(type, "RefObject");
+  }
+
   compilePortalComponent() {
     return `import { createPortal } from "preact/compat";
     declare type PortalProps = {
@@ -158,10 +163,6 @@ export class PreactComponent extends ReactComponent {
     }
 
     return imports;
-  }
-
-  processModuleFileName(module: string) {
-    return processModuleFileName(module);
   }
 
   compileRestProps() {
@@ -445,8 +446,6 @@ class JQueryComponent {
 }
 
 export class Property extends ReactProperty {
-  REF_OBJECT_TYPE = "RefObject";
-
   typeDeclaration() {
     if (this.isSlot || this.isTemplate) {
       return `${this.name}${this.compileTypeDeclarationType("any")}`;
@@ -494,6 +493,18 @@ class JsxAttribute extends ReactJsxAttribute {
 }
 
 export class TypeReferenceNode extends ReactTypeReferenceNode {
+  constructor(
+    public typeName: Identifier,
+    public typeArguments: TypeExpression[] = [],
+    public context: GeneratorContext
+  ) {
+    super(typeName, typeArguments, context);
+    if (typeName.toString() === "RefObject") {
+      this.typeName = new Identifier("any");
+      this.typeArguments = [];
+    }
+  }
+
   toString() {
     if (this.typeName.toString().startsWith("JSX.")) {
       return "any";

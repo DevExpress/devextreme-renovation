@@ -59,6 +59,7 @@ import {
   angularPortalCoreImports,
   angularPortalCdkImports,
 } from "./templates/portal-component";
+import { TypeReferenceNode } from "./type-reference-node";
 import { PropsGetAccessor } from "./class-members/props-get-accessor";
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = "CUSTOM_VALUE_ACCESSOR_PROVIDER";
@@ -358,6 +359,20 @@ export class AngularComponent extends Component {
         complexType
       ),
     ];
+  }
+
+  processRef(member: Property) {
+    if (
+      member.type instanceof TypeReferenceNode &&
+      member.type.typeName.toString() === "RefObject"
+    ) {
+      member.type.typeName = member.type.typeArguments.length
+        ? new Identifier(member.type.typeArguments[0].toString())
+        : new Identifier("any");
+      member.type.typeArguments = [];
+    }
+
+    return member;
   }
 
   processMembers(members: Array<Property | Method>) {

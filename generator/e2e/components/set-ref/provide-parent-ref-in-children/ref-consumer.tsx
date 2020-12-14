@@ -4,6 +4,7 @@ import {
   JSXComponent,
   Effect,
   ForwardRef,
+  RefObject,
 } from "../../../../component_declaration/common";
 
 function view(model: RefConsumer) {
@@ -12,7 +13,7 @@ function view(model: RefConsumer) {
 
 @ComponentBindings()
 class Props {
-  @ForwardRef() elementRef?: HTMLDivElement;
+  @ForwardRef() elementRef?: RefObject<HTMLDivElement>;
 }
 
 @Component({

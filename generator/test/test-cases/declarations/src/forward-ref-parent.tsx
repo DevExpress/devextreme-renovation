@@ -5,6 +5,7 @@ import {
   Effect,
   ForwardRef,
   InternalState,
+  RefObject,
 } from "../../../../component_declaration/common";
 import Child from "./forward-ref-child";
 
@@ -20,14 +21,14 @@ function view({
 
 @ComponentBindings()
 class Props {
-  @ForwardRef() nullableRef?: HTMLDivElement;
+  @ForwardRef() nullableRef?: RefObject<HTMLDivElement>;
 }
 
 @Component({
   view,
 })
 export default class RefOnChildrenParent extends JSXComponent(Props) {
-  @ForwardRef() child!: HTMLDivElement;
+  @ForwardRef() child!: RefObject<HTMLDivElement>;
   @InternalState() innerState: number = 10;
 
   @Effect()

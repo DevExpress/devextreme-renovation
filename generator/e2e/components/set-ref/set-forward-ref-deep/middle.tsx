@@ -3,6 +3,7 @@ import {
   ComponentBindings,
   JSXComponent,
   ForwardRef,
+  RefObject,
 } from "../../../../component_declaration/common";
 
 import SetForwardRefChild from "../set-forward-child";
@@ -13,7 +14,7 @@ function view({ props: { host } }: SetForwardRefDeepMiddle) {
 
 @ComponentBindings()
 class Props {
-  @ForwardRef() host!: HTMLDivElement;
+  @ForwardRef() host!: RefObject<HTMLDivElement>;
 }
 
 @Component({

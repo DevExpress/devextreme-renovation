@@ -4,6 +4,7 @@ import {
   JSXComponent,
   Effect,
   ForwardRef,
+  RefObject,
 } from "../../../component_declaration/common";
 import Child from "./child";
 import ChildWithAssign from "./child-with-assign";
@@ -24,8 +25,8 @@ class Props {}
   view,
 })
 export default class ForwardRefParent extends JSXComponent(Props) {
-  @ForwardRef() firstChild!: HTMLDivElement;
-  @ForwardRef() secondChild!: HTMLDivElement;
+  @ForwardRef() firstChild!: RefObject<HTMLDivElement>;
+  @ForwardRef() secondChild!: RefObject<HTMLDivElement>;
 
   @Effect()
   effect() {

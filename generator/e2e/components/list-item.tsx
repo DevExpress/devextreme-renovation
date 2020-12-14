@@ -6,12 +6,13 @@ import {
   Event,
   Effect,
   Ref,
+  RefObject,
 } from "../../component_declaration/common";
 const CLASS_NAME = "list-item";
 
 function view({ props: { text }, style, host }: ListItem) {
   return (
-    <div ref={host as any} style={style} className={CLASS_NAME}>
+    <div ref={host} style={style} className={CLASS_NAME}>
       {text}
     </div>
   );
@@ -33,7 +34,7 @@ export default class ListItem extends JSXComponent<
   ListItemProps,
   "text" | "color" | "onClick"
 >() {
-  @Ref() host!: HTMLDivElement;
+  @Ref() host!: RefObject<HTMLDivElement>;
 
   @Effect()
   onClickEffect() {

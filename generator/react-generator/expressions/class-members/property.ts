@@ -49,8 +49,6 @@ export function compileJSXTemplateType(
 }
 
 export class Property extends BaseProperty {
-  REF_OBJECT_TYPE = "MutableRefObject";
-
   defaultProps() {
     return this.defaultDeclaration();
   }
@@ -79,9 +77,6 @@ export class Property extends BaseProperty {
       )
     ) {
       type = "any";
-    }
-    if (this.isRefProp || this.isForwardRefProp) {
-      type = `${this.REF_OBJECT_TYPE}<${this.type}>`;
     }
     let name = this.name;
     if (this.isRef || this.isForwardRef || this.isApiRef) {

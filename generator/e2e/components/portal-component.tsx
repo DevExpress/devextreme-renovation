@@ -5,6 +5,7 @@ import {
   Portal,
   Ref,
   Effect,
+  RefObject,
 } from "../../component_declaration/common";
 
 function view({ props, rendered, _body }: PortalComponent) {
@@ -25,7 +26,7 @@ function view({ props, rendered, _body }: PortalComponent) {
 
 @ComponentBindings()
 class Props {
-  @Ref() containerRef: any;
+  @Ref() containerRef?: RefObject;
 }
 
 @Component({

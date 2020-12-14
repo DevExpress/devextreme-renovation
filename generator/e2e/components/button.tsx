@@ -7,13 +7,14 @@ import {
   Effect,
   Ref,
   OneWay,
+  RefObject,
 } from "../../component_declaration/common";
 
 function view(model: Button) {
   return (
     <div
       id={model.props.id}
-      ref={model.host as any}
+      ref={model.host}
       style={{
         border: "1px solid black",
         padding: 10,
@@ -36,7 +37,7 @@ export class ButtonInput {
   view,
 })
 export default class Button extends JSXComponent(ButtonInput) {
-  @Ref() host!: HTMLDivElement;
+  @Ref() host!: RefObject<HTMLDivElement>;
 
   @Effect() clickEffect() {
     const handler = (e: Event) => {

@@ -5,6 +5,7 @@ import {
   Ref,
   Method,
   JSXComponent,
+  RefObject,
 } from "../../../../component_declaration/common";
 
 function view(viewModel: Widget) {
@@ -28,7 +29,7 @@ class WidgetInput {
   jQuery: { register: true },
 })
 export default class Widget extends JSXComponent(WidgetInput) {
-  @Ref() divRef!: HTMLDivElement;
+  @Ref() divRef!: RefObject<HTMLDivElement>;
 
   @Method()
   getHeight(p: number = 10, p1: any): string {

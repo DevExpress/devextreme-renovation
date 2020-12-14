@@ -7,6 +7,7 @@ import {
   InternalState,
   Ref,
   Effect,
+  RefObject,
 } from "../../../component_declaration/common";
 import GridComponent from "./grid";
 import Pager from "./pager";
@@ -32,11 +33,7 @@ function view(model: ContextApp) {
         />
       </GridComponent>
 
-      <input
-        id="context-app-input"
-        ref={model.input as any}
-        value={model.pageIndex}
-      />
+      <input id="context-app-input" ref={model.input} value={model.pageIndex} />
     </div>
   );
 }
@@ -50,7 +47,7 @@ class Props {}
 export default class ContextApp extends JSXComponent(Props) {
   @InternalState() pageIndex = 1;
 
-  @Ref() input!: HTMLInputElement;
+  @Ref() input!: RefObject<HTMLInputElement>;
 
   @Effect()
   inputEffect() {

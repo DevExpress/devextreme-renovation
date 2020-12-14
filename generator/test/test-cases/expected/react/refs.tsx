@@ -1,7 +1,7 @@
 function view(viewModel: Widget) {
   return (
-    <div ref={viewModel.divRef as any}>
-      <div ref={viewModel.props.outerDivRef as any}></div>
+    <div ref={viewModel.divRef}>
+      <div ref={viewModel.props.outerDivRef}></div>
     </div>
   );
 }
