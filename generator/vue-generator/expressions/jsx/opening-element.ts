@@ -38,6 +38,23 @@ import { extractComponentFromType } from "../../../base-generator/utils/componen
 import { PropsGetAccessor } from "../class-members/props-get-accessor";
 import { IPropsGetAccessor } from "../../../angular-generator/types";
 
+const createFragment = (
+  attributes: (JsxAttribute | JsxSpreadAttribute)[],
+  body: string,
+  context: GeneratorContext
+): JsxElement => {
+  return new JsxElement(
+    new JsxOpeningElement(
+      new Identifier("Fragment"),
+      undefined,
+      attributes,
+      context
+    ),
+    [body],
+    new JsxClosingElement(new Identifier("Fragment"), context)
+  );
+};
+
 export class JsxOpeningElement extends BaseJsxOpeningElement {
   attributes: Array<JsxAttribute | JsxSpreadAttribute>;
   constructor(
@@ -111,32 +128,33 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       (a) => a instanceof JsxAttribute && a.name.toString() !== "key"
     ) as JsxAttribute[];
 
-    const initializerComponent =
+    const initializerComponent: Component | undefined =
       initializer instanceof Identifier &&
       this.context.components &&
-      this.context.components[initializer.toString()]
-        ? this.context.components[initializer.toString()]
+      this.context.components[initializer.toString()] instanceof Component
+        ? (this.context.components[initializer.toString()] as Component)
         : undefined;
 
     const keyAttribute = this.attributes.find(
       (a) => a instanceof JsxAttribute && a.name.toString() === "key"
     );
 
-    options.jsxComponent = (initializerComponent as Component) || {
-      members: [],
-    };
+    if (initializerComponent) {
+      options = {
+        ...options,
+        jsxComponent: initializerComponent,
+      };
+    }
 
     const componentTag = initializerComponent
       ? `<${initializerComponent.name} ${defaultAttrs
           .map((a) => {
             if (
-              options &&
-              options.jsxComponent &&
-              options.jsxComponent.members.find(
+              initializerComponent.members.find(
                 (m) => m.isEvent && m.name === a.name.toString()
               )
             ) {
-              return `@${getEventName(a.name, options.jsxComponent.state)}="${
+              return `@${getEventName(a.name, initializerComponent.state)}="${
                 templateProperty.name
               }Default.${a.name.toString(options)}"`;
             }
@@ -155,21 +173,38 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       body = initializer.getTemplate(slotOptions);
     if (body) {
       const attrString = keyAttribute
-        ? defaultAttrs.map((a) => a.toString(options)).join(" ")
-        : attributes.join(" ");
-      const slotString = `<slot name="${templateProperty.name}" ${attrString}>
-        <div style="display:contents" ${this.createSetAttributes(
-          templateProperty,
-          defaultAttrs,
-          options
-        )}>${body}</div>
+        ? defaultAttrs.map((a) => a.toString(options))
+        : attributes;
+
+      const fragment = createFragment(
+        [this.createSetAttributes(templateProperty, defaultAttrs, options)],
+        body,
+        this.context
+      );
+
+      const slotString = `<slot name="${
+        templateProperty.name
+      }" ${attrString.join(" ")}>
+        ${fragment.toString(options)}
       </slot>`;
       if (keyAttribute) {
-        const ifDirective =
-          this.attributes.find(
-            (a) => a instanceof VueDirective && a.name.toString() === "v-if"
-          ) || "";
-        return `<div style="display:contents" ${keyAttribute}${ifDirective}>${slotString}</div>`;
+        const ifDirective = this.attributes.find(
+          (a) => a instanceof VueDirective && a.name.toString() === "v-if"
+        );
+
+        const fragmentAttributes: (JsxAttribute | JsxSpreadAttribute)[] = [
+          keyAttribute,
+        ];
+
+        if (ifDirective) {
+          fragmentAttributes.push(ifDirective);
+        }
+
+        return createFragment(
+          fragmentAttributes,
+          slotString,
+          this.context
+        ).toString(options);
       }
       return slotString;
     }
@@ -182,16 +217,21 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     templateProperty: Property,
     attrs: BaseJsxAttribute[],
     options?: toStringOptions
-  ): string {
-    return `:set='${templateProperty.name}Default={${attrs
-      .map((a) => {
-        return `${a.name.toString(options)}:${a.initializer.toString(
-          options?.componentContext === "model"
-            ? options
-            : { componentContext: "model", members: options!.members }
-        )}`;
-      })
-      .join(",")}}'`;
+  ): VueDirective {
+    return new VueDirective(
+      new Identifier(":set"),
+      new SimpleExpression(
+        `${templateProperty.name}Default={${attrs
+          .map((a) => {
+            return `${a.name.toString(options)}:${a.initializer.toString(
+              options?.componentContext === "model"
+                ? options
+                : { componentContext: "model", members: options!.members }
+            )}`;
+          })
+          .join(",")}}`
+      )
+    );
   }
   createJsxAttribute(name: Identifier, value: Expression) {
     return new JsxAttribute(name, value);
