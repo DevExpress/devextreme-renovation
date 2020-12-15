@@ -4,6 +4,7 @@ import {
   ComponentBindings,
   JSXComponent,
   Ref,
+  RefObject,
 } from "../../../../component_declaration/common";
 
 @ComponentBindings()
@@ -15,7 +16,7 @@ export class WidgetInput {
   view: view,
 })
 export default class Widget extends JSXComponent(WidgetInput) {
-  @Ref() headerRef?: any;
+  @Ref() headerRef?: RefObject;
 }
 
 function view(viewModel: Widget) {

@@ -34,7 +34,8 @@ import { CommonModule } from "@angular/common";
               context: { value: item.text }
             "
           >
-          </ng-container></div></ng-container
+          </ng-container
+          ><div class="footer"></div></div></ng-container
       ><ng-container *ngFor="let item of items; trackBy: _trackBy_items_2"
         ><ng-container
           *ngTemplateOutlet="
@@ -42,7 +43,16 @@ import { CommonModule } from "@angular/common";
             context: { value: item.text, onClick: global_noop }
           "
         >
-        </ng-container></ng-container></div
+        </ng-container></ng-container
+      ><ng-container *ngFor="let item of items; trackBy: _trackBy_items_3"
+        ><ng-container *ngIf="item.text !== ''">
+          <ng-container
+            *ngTemplateOutlet="
+              ListItem || ListItemDefault;
+              context: { value: item.text, onClick: global_noop }
+            "
+          >
+          </ng-container> </ng-container></ng-container></div
     ><ng-template #ListItemDefault let-value="value" let-onClick="onClick"
       ><dx-widget-with-props
         [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
@@ -73,6 +83,9 @@ export default class List extends ListInput {
     return item.key;
   }
   _trackBy_items_2(_index: number, item: any) {
+    return item.key;
+  }
+  _trackBy_items_3(_index: number, item: any) {
     return item.key;
   }
 

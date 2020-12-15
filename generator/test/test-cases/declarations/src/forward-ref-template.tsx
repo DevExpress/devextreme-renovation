@@ -1,22 +1,37 @@
-import { Component, ComponentBindings, JSXComponent, Effect, Template, Fragment, ForwardRef } from "../../../../component_declaration/common";
+import {
+  Component,
+  ComponentBindings,
+  JSXComponent,
+  Effect,
+  Template,
+  Fragment,
+  ForwardRef,
+  RefObject,
+} from "../../../../component_declaration/common";
 
-function view(model: RefOnChildrenTemplate) { 
-    return <Fragment><model.props.contentTemplate childRef={model.child}></model.props.contentTemplate></Fragment>
+function view(model: RefOnChildrenTemplate) {
+  return (
+    <Fragment>
+      <model.props.contentTemplate
+        childRef={model.child}
+      ></model.props.contentTemplate>
+    </Fragment>
+  );
 }
 
 @ComponentBindings()
-class Props { 
-    @Template() contentTemplate: any;
+class Props {
+  @Template() contentTemplate: any;
 }
 
 @Component({
-    view
+  view,
 })
 export default class RefOnChildrenTemplate extends JSXComponent(Props) {
-    @ForwardRef() child!: HTMLDivElement;
+  @ForwardRef() child!: RefObject<HTMLDivElement>;
 
-    @Effect()
-    effect(){
-        this.child.innerHTML+= "ParentText";
-    }
+  @Effect()
+  effect() {
+    this.child.innerHTML += "ParentText";
+  }
 }

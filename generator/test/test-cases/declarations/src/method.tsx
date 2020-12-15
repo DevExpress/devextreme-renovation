@@ -5,10 +5,11 @@ import {
   Ref,
   Method,
   JSXComponent,
+  RefObject,
 } from "../../../../component_declaration/common";
 
 function view(viewModel: Widget) {
-  return <div ref={viewModel.divRef as any}></div>;
+  return <div ref={viewModel.divRef}></div>;
 }
 
 @ComponentBindings()
@@ -21,7 +22,7 @@ class WidgetInput {
   view: view,
 })
 export default class Widget extends JSXComponent(WidgetInput) {
-  @Ref() divRef!: HTMLDivElement;
+  @Ref() divRef!: RefObject<HTMLDivElement>;
 
   @Method()
   getHeight(p: number = 10, p1: any): string {

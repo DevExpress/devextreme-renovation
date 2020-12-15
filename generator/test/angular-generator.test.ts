@@ -6455,7 +6455,7 @@ mocha.describe("Angular generator", function () {
         assert.strictEqual(
           getResult(property.toString()),
           getResult(`
-            @Output() onClick:EventEmitter = new EventEmitter();
+            @Output() onClick:EventEmitter<void> = new EventEmitter();
           `)
         );
       }

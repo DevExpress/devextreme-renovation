@@ -6,6 +6,7 @@ import {
   Ref,
   OneWay,
   InternalState,
+  RefObject,
 } from "../../../component_declaration/common";
 
 function view({
@@ -17,7 +18,7 @@ function view({
   return (
     <svg
       id="simple-svg-component"
-      ref={host as any}
+      ref={host}
       className={className}
       width={width}
       height={height}
@@ -49,7 +50,7 @@ export class Props {
   isSVG: true,
 })
 export default class SimpleSVGComponent extends JSXComponent(Props) {
-  @Ref() host!: SVGElement;
+  @Ref() host!: RefObject<SVGSVGElement>;
 
   @InternalState() clickCount = 0;
 

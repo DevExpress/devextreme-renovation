@@ -6,6 +6,7 @@ import {
   InternalState,
   Ref,
   OneWay,
+  RefObject,
 } from "../../component_declaration/common";
 import Button from "./button";
 
@@ -17,7 +18,7 @@ function view(model: EffectsStateUpdate) {
       </Button>
       <div
         id={model.props.name}
-        ref={model.divRef as any}
+        ref={model.divRef}
         style={{ backgroundColor: "#b3b3b3" }}
       ></div>
     </div>
@@ -33,7 +34,7 @@ class Props {
   view,
 })
 export default class EffectsStateUpdate extends JSXComponent(Props) {
-  @Ref() divRef!: HTMLDivElement;
+  @Ref() divRef!: RefObject<HTMLDivElement>;
   @InternalState() state1: number = 0;
 
   @Effect()

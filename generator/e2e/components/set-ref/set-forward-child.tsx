@@ -5,22 +5,23 @@ import {
   Effect,
   Ref,
   ForwardRef,
+  RefObject,
 } from "../../../component_declaration/common";
 
 function view({ host }: SetForwardRef) {
-  return <span className="set-forward-ref" ref={host as any}></span>;
+  return <span className="set-forward-ref" ref={host}></span>;
 }
 
 @ComponentBindings()
 class Props {
-  @ForwardRef() forwardHost?: HTMLDivElement;
+  @ForwardRef() forwardHost?: RefObject<HTMLDivElement>;
 }
 
 @Component({
   view,
 })
 export default class SetForwardRef extends JSXComponent<Props>() {
-  @Ref() host!: HTMLDivElement;
+  @Ref() host!: RefObject<HTMLDivElement>;
 
   @Effect({ run: "once" })
   forwardHost() {

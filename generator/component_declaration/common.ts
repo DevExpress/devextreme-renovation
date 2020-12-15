@@ -149,6 +149,12 @@ export const Listen = (
  * Declare a reference on DOM Element
  */
 export const Ref = () => propertyDecorator;
+
+export type RefObject<T = {}> = Readonly<{ current: T | null }> &
+  {
+    [P in keyof T]: T[P];
+  };
+
 /**
  * Method Decorator.
  * Declare a logic that should be executed after component is rendered.

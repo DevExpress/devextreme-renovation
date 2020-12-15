@@ -1,7 +1,7 @@
 import WidgetWithRefProp from "./dx-widget-with-ref-prop";
 function view(viewModel: Widget) {
   return (
-    <div ref={viewModel.divRef as any}>
+    <div ref={viewModel.divRef}>
       <WidgetWithRefProp
         parentRef={viewModel.divRef}
         nullableRef={viewModel.props.nullableRef}

@@ -5,6 +5,7 @@ import {
   Effect,
   ForwardRef,
   InternalState,
+  RefObject,
 } from "../../../../component_declaration/common";
 import ParentWidget from "./parent";
 import RefConsumer from "./ref-consumer";
@@ -30,7 +31,7 @@ class Props {}
 export default class ForwardRefProvider extends JSXComponent<Props>() {
   @InternalState() isRendered = false;
 
-  @ForwardRef() host!: HTMLDivElement;
+  @ForwardRef() host!: RefObject<HTMLDivElement>;
 
   @Effect({ run: "once" })
   init() {

@@ -94,7 +94,8 @@
     Ref,
     Slot,
     Template,
-    TwoWay
+    TwoWay,
+    RefObject
   } from 'devextreme-generator/component_declaration/common';
   import SubComponent from './SubComponent';
   import { subscriber } from './utils/subscriber';
@@ -113,7 +114,7 @@
   export default class MyComponent extends JSXComponent(MyComponentProps) {
     innerState: boolean = false;
 
-    @Ref() rootRef! HTMLDivElement;
+    @Ref() rootRef!: RefObject<HTMLDivElement>;
 
     @Effect()
     atomicEffect() {
@@ -143,7 +144,7 @@
     const hasTemplate = !!viewModel.props.userTemplate;
     return (
       <div
-        ref={viewModel.rootRef as any}
+        ref={viewModel.rootRef}
         className="my-class"
         { ...viewModel.restAttributes }
       >
@@ -730,6 +731,11 @@ describe('_Component_', () => {
 
 1. Из-за сохранения обратной совместимости в `@Component` невозможна реализация полей с именами `state` и `render`. Однако могут существовать методы `state()` и `render()`, а так же попрса `state` (поле в `@ComponentBinding`).
 
+1. Следующие типы зарезервированы и используются в тех или иных фреймворках. Объявление своих типов или интерфейсов с таким же именем невозможно:
+    * `RefObject`
+    * `MutableRefObject`
+    * `ElementRef`
+
 ### Use Cases
 
 В этом разделе опишем подробнее как и для чего использовать те или иные декораторы, конструкции и прочее. А также более интересные примеры и случаи.
@@ -975,17 +981,22 @@ function viewFunction(viewModel) {
 
 #### @Ref()
 
-Рефы предоставляют ссылку на элемент или другой компонент для доступа к *DOM* или *API* другого компонента.
+Рефы предоставляют ссылку на элемент или другой компонент для доступа к *DOM* или *API* другого компонента. Для передачи ссылок в JSX разметку, необходимо использовать тип `RefObject`, предоставляемый генератором.
 
 Для корректной инициализации рефов их надо объявить и передать как спец-проп `ref` в нужный элемент (компонент):
 
 ```tsx
+import {
+  ...,
+  RefObject
+} from 'devextreme-generator/component_declaration/common';
+
 @ComponentBindings()
 class MyComponentProps {}
 
 @Component({ view: viewFunction })
 class MyComponent extends JSXComponent(MyComponentProps) {
-  @Ref() rootRef!: HTMLDivElement;
+  @Ref() rootRef!: RefObject<HTMLDivElement>;
 }
 
 function viewFunction(viewModel: MyComponent) {
@@ -1000,7 +1011,7 @@ function viewFunction(viewModel: MyComponent) {
 ```tsx
 @ComponentBindings()
 class MyComponentProps {
-  @Ref() parentElement?: HTMLDivElement;
+  @Ref() parentElement?: RefObject<HTMLDivElement>;
 }
 
 @Component({ view: viewFunction })
@@ -1015,7 +1026,33 @@ class MyComponent extends JSXComponent(MyComponentProps) {
 
 ```
 
-Примеры использования рефов смотри ниже.
+**Важно!**
+Тип `RefObject` используется только при определении типа полей. Если какой-то метод использует в качестве параметра ссылку или возвращает её, следует использовать тип элемента:
+
+```tsx
+import {
+  ...,
+  RefObject
+} from 'devextreme-generator/component_declaration/common';
+
+@ComponentBindings()
+class MyComponentProps {}
+
+@Component({ view: viewFunction })
+class MyComponent extends JSXComponent(MyComponentProps) {
+  @Ref() rootRef!: RefObject<HTMLDivElement>;
+  
+  getRef(): HTMLDivElement {
+    return this.rootRef;
+  }
+}
+
+function viewFunction(viewModel: MyComponent) {
+  return (
+    <div ref={viewModel.rootRef}></div>
+  );
+}
+```
 
 #### @ForwardRef()
 
@@ -1032,7 +1069,7 @@ class ParentProps {}
 
 @Component({ view: parentView })
 class ParentComponent extends JSXComponent(ParentProps) {
-  @ForwardRef() childElement!: HTMLDivElement;
+  @ForwardRef() childElement!: RefObject<HTMLDivElement>;
 
   @Effect()
   effect(){
@@ -1053,7 +1090,7 @@ function viewFunction(viewModel: ParentComponent) {
 
 @ComponentBindings()
 class ChildProps {
-  @ForwardRef() elementRef!: HTMLDivElement;
+  @ForwardRef() elementRef!: RefObject<HTMLDivElement>;
 }
 
 @Component({ view: parentView })
@@ -1246,7 +1283,7 @@ class MyComponentProps {
 
 @Component({ view: viewFunction })
 class MyComponent extends JSXComponent(MyComponentProps) {
-  @Ref() rootRef!: HTMLDivElement;
+  @Ref() rootRef!: RefObject<HTMLDivElement>;
 
   @Method()
   export(format: string) {
@@ -1280,7 +1317,7 @@ class MyComponentProps {
 
 @Component({ view: viewFunction })
 class MyComponent extends JSXComponent(MyComponentProps) {
-  @Ref() editorRef?: MyEditorComponent;
+  @Ref() editorRef?: RefObject<MyEditorComponent>;
 
   @Method()
   focus() {
@@ -1404,7 +1441,7 @@ import { Portal } from 'devextreme-generator/component_declaration/common';
 
 @ComponentBindings()
 class MyComponentProps {
-  @Ref() someElement!: HTMLDivElement;
+  @Ref() someElement!: RefObject<HTMLDivElement>;
   @OneWay() opened: boolean = false;
 }
 

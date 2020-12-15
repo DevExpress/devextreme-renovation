@@ -26,7 +26,7 @@ function parseEventType(type: TypeExpression | string) {
       }
       return type;
     });
-    return typeList.length ? `<${typeList}>` : "";
+    return typeList.length ? `<${typeList}>` : "<void>";
   }
   return "<any>";
 }

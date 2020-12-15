@@ -5,13 +5,14 @@ import {
   Effect,
   InternalState,
   Ref,
+  RefObject,
 } from "../../component_declaration/common";
 
 function view({ buttonRef, contentRef }: EffectSubscribeUnsubscribe) {
   return (
     <div>
       <span
-        ref={buttonRef as any}
+        ref={buttonRef}
         style={{
           border: "1px solid black",
         }}
@@ -21,7 +22,7 @@ function view({ buttonRef, contentRef }: EffectSubscribeUnsubscribe) {
       </span>
       :
       <span
-        ref={contentRef as any}
+        ref={contentRef}
         id="effect-subscribe-unsubscribe-button-content"
       ></span>
     </div>
@@ -35,8 +36,8 @@ class Props {}
   view,
 })
 export default class EffectSubscribeUnsubscribe extends JSXComponent(Props) {
-  @Ref() buttonRef!: HTMLSpanElement;
-  @Ref() contentRef!: HTMLSpanElement;
+  @Ref() buttonRef!: RefObject<HTMLSpanElement>;
+  @Ref() contentRef!: RefObject<HTMLSpanElement>;
   @InternalState() state1: number = 0;
 
   @Effect()

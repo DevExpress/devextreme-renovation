@@ -15,7 +15,7 @@ function view(model: Widget) {
 }
 
 export declare type WidgetPropsType = {
-  someRef?: RefObject<HTMLElement>;
+  someRef?: any;
 };
 export const WidgetProps: WidgetPropsType = {};
 import * as Preact from "preact";

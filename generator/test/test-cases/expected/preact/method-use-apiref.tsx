@@ -2,7 +2,7 @@ import BaseWidget from "./method";
 function view(viewModel: WidgetWithApiRef) {
   return (
     <BaseWidget
-      ref={viewModel.baseRef as any}
+      ref={viewModel.baseRef}
       prop1={viewModel.props.prop1}
     ></BaseWidget>
   );
@@ -12,7 +12,6 @@ export declare type WidgetWithApiRefInputType = {
   prop1?: number;
 };
 const WidgetWithApiRefInput: WidgetWithApiRefInputType = {};
-import { WidgetRef as BaseWidgetRef } from "./method";
 import * as Preact from "preact";
 import { useCallback, useRef, useImperativeHandle } from "preact/hooks";
 import { forwardRef } from "preact/compat";
@@ -37,7 +36,7 @@ const WidgetWithApiRef = forwardRef<
   props: typeof WidgetWithApiRefInput & RestProps,
   ref
 ) {
-  const __baseRef = useRef<BaseWidgetRef>();
+  const __baseRef = useRef<any>();
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
