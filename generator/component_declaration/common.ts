@@ -214,6 +214,11 @@ export type JSXTemplate<
 >;
 
 /**
+ * Type for styles.
+ */
+export type CSSStyles = React.CSSProperties;
+
+/**
  * Create Elements function
  * Import it for testing purpose
  */
