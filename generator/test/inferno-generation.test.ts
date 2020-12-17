@@ -103,9 +103,9 @@ mocha.describe("inferno-generation", function () {
   //     this.testGenerator(this.test!.title);
   //   });
 
-  //   mocha.it("dx-inner-widget", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
+  mocha.it("dx-inner-widget", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   //   mocha.it("dx-widget-with-template", function () {
   //     this.testGenerator(this.test!.title);
@@ -115,9 +115,9 @@ mocha.describe("inferno-generation", function () {
   //     this.testGenerator(this.test!.title);
   //   });
 
-  //   mocha.it("spread-props-attribute", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
+  mocha.it("spread-props-attribute", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   //   mocha.it("template", function () {
   //     this.testGenerator(this.test!.title);
@@ -154,33 +154,17 @@ mocha.describe("inferno-generation", function () {
   //     this.testGenerator(this.test!.title);
   //   });
 
-  //   mocha.it("model-value-disabled", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  mocha.it("model", function () {
+  mocha.it("import-component", function () {
     this.testGenerator(this.test!.title);
   });
-
-  //   mocha.it("list", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("globals-in-template", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("import-component", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
 
   //   mocha.it("import-component-named", function () {
   //     this.testGenerator(this.test!.title);
   //   });
 
-  //   mocha.it("component-bindings-only", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
+  mocha.it("component-bindings-only", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   //   mocha.it("component-pass", function () {
   //     this.testGenerator(this.test!.title);
@@ -234,9 +218,9 @@ mocha.describe("inferno-generation", function () {
   //     this.testGenerator(this.test!.title);
   //   });
 
-  //   mocha.it("export-default", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
+  mocha.it("export-default", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   //   mocha.it("export-named", function () {
   //     this.testGenerator(this.test!.title);

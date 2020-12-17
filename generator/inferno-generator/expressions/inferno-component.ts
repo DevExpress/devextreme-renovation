@@ -114,11 +114,11 @@ export class InfernoComponent extends ReactComponent {
 
     if (state.length) {
       return `state: {
-                ${state.map((p) => p.typeDeclaration())}
-            }`;
+          ${state.map((p) => p.typeDeclaration())}
+       };`;
     }
 
-    return "";
+    return "state = {};";
   }
 
   compileStateInitializer(): string {
@@ -126,7 +126,8 @@ export class InfernoComponent extends ReactComponent {
 
     if (state.length) {
       return `this.state = {
-                ${state.map((p) => p.defaultDeclaration()).join(",\n")}};`;
+        ${state.map((p) => p.defaultDeclaration()).join(",\n")}
+      };`;
     }
 
     return "";
