@@ -43,9 +43,9 @@ mocha.describe("inferno-generation", function () {
     generator.resetCache();
   });
 
-  //   mocha.it("class", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
+  mocha.it("class", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   mocha.it("props", function () {
     this.testGenerator(this.test!.title);
@@ -59,9 +59,9 @@ mocha.describe("inferno-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  //   mocha.it("state-short-operator", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
+  mocha.it("state-short-operator", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   mocha.it("internal-state", function () {
     this.testGenerator(this.test!.title);
@@ -71,9 +71,9 @@ mocha.describe("inferno-generation", function () {
   //     this.testGenerator(this.test!.title);
   //   });
 
-  //   mocha.it("component-input", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
+  mocha.it("component-input", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   //   mocha.it("slots", function () {
   //     this.testGenerator(this.test!.title);

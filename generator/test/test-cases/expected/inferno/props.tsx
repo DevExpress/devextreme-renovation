@@ -24,6 +24,7 @@ declare type RestProps = Omit<
 export default class Widget extends InfernoComponent<
   typeof WidgetInput & RestProps
 > {
+  refs: any;
   constructor(props: typeof WidgetInput & RestProps) {
     super({
       ...WidgetInput,
