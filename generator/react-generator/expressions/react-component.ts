@@ -53,6 +53,10 @@ import { GeneratorContext } from "../../base-generator/types";
 import { HeritageClause } from "./heritage-clause";
 import { extractRefType } from "../../base-generator/utils/expressions";
 import { TypeReferenceNode } from "./type-reference-node";
+import {
+  PropertyAssignment,
+  ShorthandPropertyAssignment,
+} from "../../base-generator/expressions/property-assignment";
 
 function getSubscriptions(methods: Method[]) {
   return methods
@@ -120,6 +124,17 @@ export class ReactComponent extends Component {
     return member;
   }
 
+  addPrefixToMembers(members: Array<BaseProperty | Method>) {
+    return super.addPrefixToMembers(
+      members.map((m) => {
+        if (m instanceof Method || m.isRef || m.isForwardRef) {
+          m.prefix = "__";
+        }
+        return m;
+      })
+    );
+  }
+
   processMembers(members: Array<BaseProperty | Method>) {
     members = super.processMembers(members).map((p) => {
       if (p.inherited) {
@@ -133,13 +148,6 @@ export class ReactComponent extends Component {
     }
     (members.filter((m) => m.isNested) as Property[]).forEach((m) => {
       members.push(this.createNestedPropertyGetter(m));
-    });
-
-    members = members.map((m) => {
-      if (m instanceof Method || m.isRef || m.isForwardRef) {
-        m.prefix = "__";
-      }
-      return m;
     });
 
     return members;
@@ -174,7 +182,7 @@ export class ReactComponent extends Component {
       ),
       new ReturnStatement(new SimpleExpression(`__collectChildren(children)`)),
     ];
-    return new Method(
+    const method = new Method(
       [],
       undefined,
       undefined,
@@ -185,6 +193,18 @@ export class ReactComponent extends Component {
       new ArrayTypeNode(new SimpleTypeExpression("T")),
       new Block(statements, true)
     );
+
+    method.prefix = "__";
+
+    return method;
+  }
+
+  createGetAccessor(
+    name: Identifier,
+    type: TypeExpression,
+    block: Block
+  ): GetAccessor {
+    return new GetAccessor(undefined, undefined, name, [], type, block);
   }
 
   createRestPropsGetter(members: BaseClassMember[]) {
@@ -230,11 +250,8 @@ export class ReactComponent extends Component {
       new ReturnStatement(new SimpleExpression("restProps")),
     ];
 
-    return new GetAccessor(
-      undefined,
-      undefined,
+    return this.createGetAccessor(
       new Identifier("restAttributes"),
-      [],
       new SimpleTypeExpression("RestProps"),
       new Block(statements, true)
     );
@@ -389,7 +406,7 @@ export class ReactComponent extends Component {
       : `convertRulesToOptions<${this.getPropsType()}>(${rules})`;
   }
 
-  compileDefaultProps() {
+  compileDefaultPropsObjectProperties(): string[] {
     const defaultProps = this.heritageClauses
       .filter((h) => h.defaultProps.length)
       .map((h) => `...${h.defaultProps}`)
@@ -404,6 +421,12 @@ export class ReactComponent extends Component {
         `...${this.compileConvertRulesToOptions(this.defaultOptionRules)}`
       );
     }
+
+    return defaultProps;
+  }
+
+  compileDefaultProps() {
+    const defaultProps = this.compileDefaultPropsObjectProperties();
 
     if (this.needGenerateDefaultOptions) {
       return `
@@ -583,10 +606,31 @@ export class ReactComponent extends Component {
       );
   }
 
-  compileViewModelArguments(): string[] {
-    const compileState = (state: BaseProperty[]) =>
-      state.filter((s) => !s.isPrivate).map((s) => `${s.name}:${s.getter()}`);
-    const state = compileState(this.state);
+  compileViewModelArguments(): string {
+    const toStringOptions = this.getToStringOptions();
+    const compileState = (state: BaseClassMember[], context = "") =>
+      state
+        .filter((s) => !s.isPrivate)
+        .map((s) => {
+          if (
+            s._name.toString() !== s.getter(toStringOptions.newComponentContext)
+          ) {
+            const expression = context
+              ? new PropertyAccess(
+                  new SimpleExpression("this"),
+                  new Identifier(context)
+                )
+              : new SimpleExpression("this");
+            return new PropertyAssignment(
+              s._name,
+              new PropertyAccess(expression, s._name)
+            );
+          }
+          return new ShorthandPropertyAssignment(s._name);
+        })
+        .map((p) => p.toString(toStringOptions));
+
+    const state = compileState(this.state, "props");
     const internalState = compileState(this.internalState);
 
     const template = this.processTemplates();
@@ -610,7 +654,7 @@ export class ReactComponent extends Component {
       ...this.refs,
       ...this.apiRefs,
     ];
-    return props
+    const statements = props
       .concat(
         listenersAndRefs.map(
           (r) => `${r._name.toString()}:${r.name.toString()}`
@@ -623,15 +667,9 @@ export class ReactComponent extends Component {
           )
           .map((m) => m.name.toString())
       )
-      .concat(
-        this.methods
-          .filter((m) => !m.isPrivate)
-          .map((m) =>
-            m._name.toString() !== m.getter()
-              ? `${m._name}:${m.getter()}`
-              : m.getter()
-          )
-      );
+      .concat(compileState(this.methods.filter((m) => !m.isPrivate)));
+
+    return `{${statements.join(",\n")}}`;
   }
 
   compileRestProps(): string {
@@ -793,9 +831,9 @@ export class ReactComponent extends Component {
     const callView = `${this.view}(
         ${
           viewFunction?.parameters.length
-            ? `${this.viewModel}({
-                ${this.compileViewModelArguments().join(",\n")}
-            })`
+            ? `${this.viewModel}(
+                ${this.compileViewModelArguments()}
+            )`
             : ""
         }
     )`;
