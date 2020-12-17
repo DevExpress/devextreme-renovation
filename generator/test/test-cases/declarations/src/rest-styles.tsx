@@ -20,11 +20,7 @@ function view({ styles }: Widget) {
 }
 
 @ComponentBindings()
-class WidgetInput {
-  @OneWay() height: number = 10;
-  @Event() onClick: (a: number) => null = () => null;
-  @TwoWay() p?: string = "";
-}
+class WidgetInput {}
 
 @Component({
   view: view,

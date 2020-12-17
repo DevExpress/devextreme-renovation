@@ -5,28 +5,10 @@
 const modifyStyles = (styles) => {
   return { height: "100px", ...styles };
 };
-const WidgetInput = {
-  height: {
-    type: Number,
-    default() {
-      return 10;
-    },
-  },
-  p: {
-    type: String,
-    default() {
-      return "";
-    },
-  },
-};
+const WidgetInput = {};
 export const DxWidget = {
   name: "Widget",
   props: WidgetInput,
-  data() {
-    return {
-      p_state: this.p,
-    };
-  },
   computed: {
     __styles() {
       const { style } = this.__restAttributes;
@@ -36,16 +18,8 @@ export const DxWidget = {
       return {};
     },
     props() {
-      return {
-        height: this.height,
-        onClick: this.onClick,
-        p: this.p_state,
-        pChange: this.pChange,
-      };
+      return {};
     },
-  },
-  watch: {
-    p: ["__p_watcher"],
   },
   methods: {
     __processStyle(value) {
@@ -60,15 +34,6 @@ export const DxWidget = {
         }, {});
       }
       return value;
-    },
-    onClick(...args) {
-      this.$emit("click", ...args);
-    },
-    pChange(...args) {
-      this.$emit("update:p", ...args);
-    },
-    __p_watcher(s) {
-      this.p_state = s;
     },
   },
 };

@@ -5,21 +5,10 @@ function view({ styles }: Widget) {
   return <span style={styles}></span>;
 }
 
-export declare type WidgetInputType = {
-  height: number;
-  onClick: (a: number) => null;
-  p?: string;
-  defaultP?: string;
-  pChange?: (p: string) => void;
-};
-const WidgetInput: WidgetInputType = {
-  height: 10,
-  onClick: () => null,
-  defaultP: "",
-  pChange: () => {},
-};
+export declare type WidgetInputType = {};
+const WidgetInput: WidgetInputType = {};
 import * as React from "react";
-import { useState, useCallback, HTMLAttributes } from "react";
+import { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
@@ -32,27 +21,20 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const [__state_p, __state_setP] = useState<string | undefined>(() =>
-    props.p !== undefined ? props.p : props.defaultP
-  );
-
   const __styles = useCallback(function __styles(): any {
     const { style } = __restAttributes();
     return modifyStyles(style);
   }, []);
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { defaultP, height, onClick, p, pChange, ...restProps } = {
-        ...props,
-        p: props.p !== undefined ? props.p : __state_p,
-      };
+      const { ...restProps } = props;
       return restProps;
     },
-    [props, __state_p]
+    [props]
   );
 
   return view({
-    props: { ...props, p: props.p !== undefined ? props.p : __state_p },
+    props: { ...props },
     styles: __styles(),
     restAttributes: __restAttributes(),
   });

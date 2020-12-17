@@ -1,13 +1,7 @@
 const modifyStyles = (styles: any) => {
   return { height: "100px", ...styles };
 };
-import { Input, Output, EventEmitter } from "@angular/core";
-class WidgetInput {
-  @Input() height: number = 10;
-  @Output() onClick: EventEmitter<number> = new EventEmitter();
-  @Input() p?: string = "";
-  @Output() pChange: EventEmitter<string> = new EventEmitter();
-}
+class WidgetInput {}
 
 import {
   Component,
@@ -21,8 +15,6 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["height", "p"],
-  outputs: ["onClick", "pChange"],
   template: `<span [ngStyle]="__processNgStyle(__styles)"></span>`,
 })
 export default class Widget extends WidgetInput {
@@ -40,17 +32,8 @@ export default class Widget extends WidgetInput {
     });
   }
 
-  _onClick: any;
-  _pChange: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-    this._onClick = (e: any) => {
-      this.onClick.emit(e);
-    };
-    this._pChange = (e: any) => {
-      this.pChange.emit(e);
-      this._detectChanges();
-    };
   }
 
   __processNgStyle(value: any) {
