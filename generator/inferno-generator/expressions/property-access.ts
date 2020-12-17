@@ -8,9 +8,9 @@ export class PropertyAccess extends ReactPropertyAccess {
     property: Property,
     options: toStringOptions
   ) {
-    if (property.isInternalState) {
+    if (property.isInternalState || property.isState) {
       return `this.${property.name}=${state}`;
     }
-    return "TODO";
+    return super.compileStateSetting(state, property, options);
   }
 }

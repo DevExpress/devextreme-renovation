@@ -55,9 +55,9 @@ mocha.describe("inferno-generation", function () {
   //     this.testGenerator(this.test!.title);
   //   });
 
-  //   mocha.it("state", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
+  mocha.it("state", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   //   mocha.it("state-short-operator", function () {
   //     this.testGenerator(this.test!.title);
@@ -158,9 +158,9 @@ mocha.describe("inferno-generation", function () {
   //     this.testGenerator(this.test!.title);
   //   });
 
-  //   mocha.it("model", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
+  mocha.it("model", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   //   mocha.it("list", function () {
   //     this.testGenerator(this.test!.title);

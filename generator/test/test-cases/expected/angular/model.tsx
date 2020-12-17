@@ -1,11 +1,15 @@
 import { Input, Output, EventEmitter } from "@angular/core";
 class ModelWidgetInput {
   @Input() baseStateProp?: boolean;
-  @Output() baseStatePropChange: EventEmitter<boolean> = new EventEmitter();
+  @Output() baseStatePropChange: EventEmitter<
+    boolean | undefined
+  > = new EventEmitter();
   @Input() modelStateProp?: boolean;
   @Input() value?: boolean;
-  @Output() modelStatePropChange: EventEmitter<boolean> = new EventEmitter();
-  @Output() valueChange: EventEmitter<boolean> = new EventEmitter();
+  @Output() modelStatePropChange: EventEmitter<
+    boolean | undefined
+  > = new EventEmitter();
+  @Output() valueChange: EventEmitter<boolean | undefined> = new EventEmitter();
 }
 
 import {

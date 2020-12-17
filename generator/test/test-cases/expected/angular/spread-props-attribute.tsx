@@ -3,7 +3,7 @@ import { Input, Output, EventEmitter } from "@angular/core";
 export class WidgetInput {
   @Input() visible?: boolean;
   @Input() value?: boolean;
-  @Output() valueChange: EventEmitter<boolean> = new EventEmitter();
+  @Output() valueChange: EventEmitter<boolean | undefined> = new EventEmitter();
 }
 
 import {

@@ -6,22 +6,23 @@ import { Component as InfernoComponent } from "inferno";
 import { createElement as h } from "inferno-create-element";
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof {}>;
 export default class Widget extends InfernoComponent<{} & RestProps> {
-  state = {
-    _hovered: false,
+  state: {
+    _hovered: Boolean;
   };
   constructor(props: {} & RestProps) {
     super({
       ...props,
     });
+    this.state = {
+      _hovered: false,
+    };
   }
 
   get _hovered(): Boolean {
     return this.state._hovered;
   }
   set _hovered(value: Boolean) {
-    this.setState({
-      _hovered: value,
-    });
+    this.setState({ _hovered: value });
   }
 
   updateState(): any {
