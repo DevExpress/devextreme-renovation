@@ -132,6 +132,9 @@ export class TypeReferenceNode extends TypeExpression {
     public context: GeneratorContext
   ) {
     super();
+    if (typeName.toString() === "CSSAttributes") {
+      this.typeName = new Identifier("any");
+    }
   }
   toString() {
     const typeArguments = this.typeArguments.length
