@@ -132,7 +132,7 @@ export class TypeReferenceNode extends TypeExpression {
     public context: GeneratorContext
   ) {
     super();
-    if (typeName.toString() === "CSSStyles") {
+    if (typeName.toString() === "CSSAttributes") {
       this.typeName = new Identifier("any");
     }
   }

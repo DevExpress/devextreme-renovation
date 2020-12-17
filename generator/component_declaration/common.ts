@@ -222,7 +222,7 @@ export type JSXTemplate<
 /**
  * Type for styles.
  */
-export type CSSStyles = React.CSSProperties;
+export type CSSAttributes = React.CSSProperties;
 
 /**
  * Create Elements function

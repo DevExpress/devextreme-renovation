@@ -5,10 +5,10 @@ import {
   ComponentBindings,
   JSXComponent,
   TwoWay,
-  CSSStyles,
+  CSSAttributes,
 } from "../../../../component_declaration/common";
 
-const modifyStyles = (styles: CSSStyles) => {
+const modifyStyles = (styles: CSSAttributes) => {
   return {
     height: "100px",
     ...styles,

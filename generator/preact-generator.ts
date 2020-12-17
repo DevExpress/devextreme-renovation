@@ -503,7 +503,7 @@ export class TypeReferenceNode extends ReactTypeReferenceNode {
       this.typeName = new Identifier("any");
       this.typeArguments = [];
     }
-    if (typeName.toString() === "CSSStyles") {
+    if (typeName.toString() === "CSSAttributes") {
       this.typeName = new Identifier("any");
     }
   }
