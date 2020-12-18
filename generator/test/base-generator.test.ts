@@ -3935,6 +3935,44 @@ mocha.describe("Component", function () {
       )
     );
   });
+
+  mocha.it("extractGlobalsFromTemplate", function () {
+    const component = generator.createComponent(
+      createDecorator(Decorators.Component),
+      undefined,
+      new Identifier("Component"),
+      [],
+      [],
+      []
+    );
+
+    const templateString = `global_var
+      global_items1
+      _trackBy_global_items2
+      div global_items3
+      "global_items4"
+      {global_items5}
+    `;
+
+    assert.deepEqual(component.extractGlobalsFromTemplate(templateString), [
+      "global_var: var",
+      "global_items1: items1",
+      "global_items3: items3",
+      "global_items4: items4",
+      "global_items5: items5",
+    ]);
+
+    assert.deepEqual(
+      component.extractGlobalsFromTemplate(templateString, " = "),
+      [
+        "global_var = var",
+        "global_items1 = items1",
+        "global_items3 = items3",
+        "global_items4 = items4",
+        "global_items5 = items5",
+      ]
+    );
+  });
 });
 
 mocha.describe("ComponentInput", function () {
