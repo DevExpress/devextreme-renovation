@@ -3,7 +3,7 @@ import generator from "../inferno-generator";
 import compile from "../component-compiler";
 import path from "path";
 
-import { createTestGenerator } from "./helpers/common";
+import { createTestGenerator, getModulePath } from "./helpers/common";
 import { resolveModule } from "../base-generator/utils/path-utils";
 
 mocha.describe("inferno-generation", function () {
@@ -286,33 +286,33 @@ mocha.describe("inferno-generation", function () {
   //     this.testGenerator(this.test!.title);
   //   });
 
-  //   mocha.describe("Default option rules", function () {
-  //     this.beforeEach(function () {
-  //       generator.options = {
-  //         defaultOptionsModule: getModulePath(
-  //           "component_declaration/default_options"
-  //         ),
-  //       };
-  //       generator.setContext({
-  //         dirname: path.resolve(__dirname, "./test-cases/declarations/src"),
-  //       });
-  //     });
+  mocha.describe("Default option rules", function () {
+    this.beforeEach(function () {
+      generator.options = {
+        defaultOptionsModule: getModulePath(
+          "component_declaration/default_options"
+        ),
+      };
+      generator.setContext({
+        dirname: path.resolve(__dirname, "./test-cases/declarations/src"),
+      });
+    });
 
-  //     this.afterEach(function () {
-  //       generator.setContext(null);
-  //       generator.options = {};
-  //     });
+    this.afterEach(function () {
+      generator.setContext(null);
+      generator.options = {};
+    });
 
-  //     mocha.it("default-options-empty", function () {
-  //       this.testGenerator(this.test!.title);
-  //     });
+    mocha.it("default-options-empty", function () {
+      this.testGenerator(this.test!.title);
+    });
 
-  //     mocha.it("required-props", function () {
-  //       this.testGenerator(this.test!.title);
-  //     });
+    // mocha.it("required-props", function () {
+    //   this.testGenerator(this.test!.title);
+    // });
 
-  //     mocha.it("use-external-component-bindings", function () {
-  //       this.testGenerator(this.test!.title);
-  //     });
-  //   });
+    // mocha.it("use-external-component-bindings", function () {
+    //   this.testGenerator(this.test!.title);
+    // });
+  });
 });

@@ -139,6 +139,7 @@ export class InfernoComponent extends ReactComponent {
     return `
             ${this.compileImports()}
             ${this.compileRestProps()}
+            ${this.compileDefaultOptionsMethod()}
             ${this.modifiers.join(" ")} class ${
       this.name
     } extends InfernoComponent<${propsType}> {
