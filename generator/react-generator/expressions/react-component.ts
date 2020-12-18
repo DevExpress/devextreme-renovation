@@ -52,7 +52,6 @@ import {
 import { Conditional } from "../../base-generator/expressions/conditions";
 import { GeneratorContext, toStringOptions } from "../../base-generator/types";
 import { HeritageClause } from "./heritage-clause";
-import { extractRefType } from "../../base-generator/utils/expressions";
 import {
   PropertyAssignment,
   ShorthandPropertyAssignment,
@@ -104,10 +103,6 @@ export class ReactComponent extends Component {
     this.refs = this.refs.concat(
       this.members.filter((m) => m.isForwardRef) as Property[]
     );
-  }
-
-  extractRefType(type: TypeExpression | string) {
-    return extractRefType(type, this.REF_OBJECT_TYPE);
   }
 
   addPrefixToMembers(members: Array<BaseProperty | Method>) {

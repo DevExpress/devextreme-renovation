@@ -36,7 +36,6 @@ import { JsxClosingElement as ReactJsxClosingElement } from "./react-generator/e
 import { JsxOpeningElement as ReactJsxOpeningElement } from "./react-generator/expressions/jsx/jsx-opening-element";
 import { JsxAttribute as ReactJsxAttribute } from "./react-generator/expressions/jsx/jsx-attribute";
 import { kebabSvgAttributes } from "./base-generator/utils/svg-utils/kebab-attributes";
-import { extractRefType } from "./base-generator/utils/expressions";
 
 const BASE_JQUERY_WIDGET = "BASE_JQUERY_WIDGET";
 
@@ -129,10 +128,6 @@ export class PreactComponent extends ReactComponent {
       members,
       context
     );
-  }
-
-  extractRefType(type: TypeExpression | string) {
-    return extractRefType(type, "RefObject");
   }
 
   compilePortalComponent() {

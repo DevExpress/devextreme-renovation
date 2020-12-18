@@ -24,7 +24,6 @@ import { Decorators } from "../../component_declaration/decorators";
 import { ComponentInput } from "./component-input";
 import { extractComplexType, isTypeArray, TypeExpression } from "./type";
 import { BindingElement, BindingPattern } from "./binding-pattern";
-import { extractRefType } from "../utils/expressions";
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
   return heritageClauses.some((h) => h.isJsxComponent);
@@ -70,10 +69,6 @@ export class Component extends Class implements Heritable {
 
   get name() {
     return this._name.toString();
-  }
-
-  extractRefType(type: TypeExpression | string) {
-    return extractRefType(type, "RefObject");
   }
 
   addPrefixToMembers(members: Array<Property | Method>) {

@@ -146,10 +146,6 @@ export class InfernoComponent extends PreactComponent {
     return "";
   }
 
-  compileFunctionalComponentType() {
-    return `any`;
-  }
-
   toString() {
     const propsType = this.compilePropsType();
 
