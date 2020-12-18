@@ -133,6 +133,10 @@ export class InfernoComponent extends ReactComponent {
     return "";
   }
 
+  compileFunctionalComponentType() {
+    return `any`;
+  }
+
   toString() {
     const propsType = this.compilePropsType();
 
@@ -140,6 +144,7 @@ export class InfernoComponent extends ReactComponent {
             ${this.compileImports()}
             ${this.compileRestProps()}
             ${this.compileDefaultOptionsMethod()}
+            ${this.compileTemplateGetter()}
             ${this.modifiers.join(" ")} class ${
       this.name
     } extends InfernoComponent<${propsType}> {
