@@ -4,6 +4,7 @@ import {
   SimpleTypeExpression,
   mergeTypeExpressionImports,
   reduceTypeExpressionImports,
+  TypeReferenceNode,
 } from "./type";
 import { Expression } from "./base";
 import {
@@ -357,6 +358,13 @@ export class Property extends BaseClassMember {
     );
     this.questionOrExclamationToken = questionOrExclamationToken;
     this.initializer = initializer;
+  }
+
+  compileRefType(): string {
+    const type =
+      (this.type instanceof TypeReferenceNode && this.type.typeArguments[0]) ||
+      "any";
+    return type.toString();
   }
 
   typeDeclaration() {

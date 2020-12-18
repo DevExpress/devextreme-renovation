@@ -1,4 +1,3 @@
-import { ReactComponent } from "../../react-generator/expressions/react-component";
 import { Method } from "../../base-generator/expressions/class-members";
 import { Identifier } from "../../base-generator/expressions/common";
 import { TypeExpression } from "../../base-generator/expressions/type";
@@ -13,15 +12,29 @@ import { Parameter } from "../../base-generator/expressions/functions";
 import { getProps } from "../../base-generator/expressions/component";
 import { getChangeEventToken } from "../../react-generator/expressions/property-access";
 import { Property } from "./class-members/property";
+import { PreactComponent } from "../../preact-generator";
 
-export class InfernoComponent extends ReactComponent {
+export class InfernoComponent extends PreactComponent {
+  REF_OBJECT_TYPE = "RefObject";
+
   compileImportStatements(
     hooks: string[],
     compats: string[],
     core: string[]
   ): string[] {
+    const coreImports = ["Component as InfernoComponent"];
+    const coreSet = new Set(core);
+    const hooksSet = new Set(hooks);
+
+    if (hooksSet.has("useRef")) {
+      coreImports.push("createRef as infernoCreateRef");
+    }
+
+    if (coreSet.has(this.REF_OBJECT_TYPE)) {
+      coreImports.push(this.REF_OBJECT_TYPE);
+    }
     const imports = [
-      `import { Component as InfernoComponent } from "inferno"`,
+      `import { ${coreImports.join(",")} } from "inferno"`,
       `import { createElement as h } from "inferno-create-element"`,
     ];
     return imports;
@@ -140,6 +153,14 @@ export class InfernoComponent extends ReactComponent {
   toString() {
     const propsType = this.compilePropsType();
 
+    const properties = this.members.filter(
+      (m) => m instanceof Property && !m.inherited && !m.isInternalState
+    );
+    const bindMethods = this.members
+      .filter((m) => m instanceof Method && !(m instanceof GetAccessor))
+      .map((m) => `this.${m.name} = this.${m.name}.bind(this)`)
+      .join(";\n");
+
     return `
             ${this.compileImports()}
             ${this.compileRestProps()}
@@ -150,6 +171,9 @@ export class InfernoComponent extends ReactComponent {
     } extends InfernoComponent<${propsType}> {
                 ${this.compileStateProperty()}
                 refs: any;
+                ${properties
+                  .map((p) => p.toString(this.getToStringOptions()))
+                  .join(";\n")}
                 constructor(props: ${propsType}) {
                     super({
                         ${this.compileDefaultPropsObjectProperties()
@@ -157,11 +181,13 @@ export class InfernoComponent extends ReactComponent {
                           .join(",")}
                     });
                     ${this.compileStateInitializer()}
+                    ${bindMethods}
                 }
 
                 ${this.compileStateSetterAndGetters()}
 
-                ${this.methods
+                ${this.effects
+                  .concat(this.methods)
                   .map((m) => m.toString(this.getToStringOptions()))
                   .join("\n")}
                 

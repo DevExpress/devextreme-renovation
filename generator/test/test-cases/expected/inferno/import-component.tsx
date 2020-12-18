@@ -14,20 +14,26 @@ const ChildInput: ChildInputType = {
 };
 import { Component as InfernoComponent } from "inferno";
 import { createElement as h } from "inferno-create-element";
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof ChildInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
+
 export default class Child extends InfernoComponent<
   typeof ChildInput & RestProps
 > {
   state = {};
   refs: any;
+
   constructor(props: typeof ChildInput & RestProps) {
     super({
       ...ChildInput,
       ...props,
     });
+
+    this.getProps = this.getProps.bind(this);
   }
 
   getProps(): typeof WidgetProps {

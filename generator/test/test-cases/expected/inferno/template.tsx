@@ -15,32 +15,6 @@ export declare type WidgetInputType = {
     Partial<Omit<typeof WidgetWithPropsInput, "value">> &
       Required<Pick<typeof WidgetWithPropsInput, "value">>
   >;
-  headerRender?: React.FunctionComponent<any>;
-  headerComponent?: React.JSXElementConstructor<any>;
-  render?: React.FunctionComponent<
-    Partial<{ textProp: string; textPropExpr: string }>
-  >;
-  component?: React.JSXElementConstructor<
-    Partial<{ textProp: string; textPropExpr: string }>
-  >;
-  contentRender?: React.FunctionComponent<
-    Partial<Omit<{ data: { p1: string }; index: number }, "data">> &
-      Required<Pick<{ data: { p1: string }; index: number }, "data">>
-  >;
-  contentComponent?: React.JSXElementConstructor<
-    Partial<Omit<{ data: { p1: string }; index: number }, "data">> &
-      Required<Pick<{ data: { p1: string }; index: number }, "data">>
-  >;
-  footerRender?: React.FunctionComponent<Partial<{ someProp: boolean }>>;
-  footerComponent?: React.JSXElementConstructor<Partial<{ someProp: boolean }>>;
-  componentRender?: React.FunctionComponent<
-    Partial<Omit<typeof WidgetWithPropsInput, "value">> &
-      Required<Pick<typeof WidgetWithPropsInput, "value">>
-  >;
-  componentComponent?: React.JSXElementConstructor<
-    Partial<Omit<typeof WidgetWithPropsInput, "value">> &
-      Required<Pick<typeof WidgetWithPropsInput, "value">>
-  >;
 };
 export const WidgetInput: WidgetInputType = {
   someProp: false,
@@ -52,28 +26,24 @@ export const WidgetInput: WidgetInputType = {
 };
 import { Component as InfernoComponent } from "inferno";
 import { createElement as h } from "inferno-create-element";
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 
-const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
-  (TemplateProp &&
-    (TemplateProp.defaultProps
-      ? (props: any) => <TemplateProp {...props} />
-      : TemplateProp)) ||
-  (RenderProp &&
-    ((props: any) =>
-      RenderProp(
-        ...("data" in props ? [props.data, props.index] : [props])
-      ))) ||
-  (ComponentProp && ((props: any) => <ComponentProp {...props} />));
-
+const getTemplate = (TemplateProp: any) =>
+  TemplateProp &&
+  (TemplateProp.defaultProps
+    ? (props: any) => <TemplateProp {...props} />
+    : TemplateProp);
 export default class WidgetWithTemplate extends InfernoComponent<
   typeof WidgetInput & RestProps
 > {
   state = {};
   refs: any;
+
   constructor(props: typeof WidgetInput & RestProps) {
     super({
       ...WidgetInput,
@@ -83,20 +53,10 @@ export default class WidgetWithTemplate extends InfernoComponent<
 
   get restAttributes(): RestProps {
     const {
-      component,
-      componentComponent,
-      componentRender,
       componentTemplate,
-      contentComponent,
-      contentRender,
       contentTemplate,
-      footerComponent,
-      footerRender,
       footerTemplate,
-      headerComponent,
-      headerRender,
       headerTemplate,
-      render,
       someProp,
       template,
       ...restProps
@@ -109,27 +69,11 @@ export default class WidgetWithTemplate extends InfernoComponent<
     return view({
       props: {
         ...props,
-        headerTemplate: getTemplate(
-          props.headerTemplate,
-          props.headerRender,
-          props.headerComponent
-        ),
-        template: getTemplate(props.template, props.render, props.component),
-        contentTemplate: getTemplate(
-          props.contentTemplate,
-          props.contentRender,
-          props.contentComponent
-        ),
-        footerTemplate: getTemplate(
-          props.footerTemplate,
-          props.footerRender,
-          props.footerComponent
-        ),
-        componentTemplate: getTemplate(
-          props.componentTemplate,
-          props.componentRender,
-          props.componentComponent
-        ),
+        headerTemplate: getTemplate(props.headerTemplate),
+        template: getTemplate(props.template),
+        contentTemplate: getTemplate(props.contentTemplate),
+        footerTemplate: getTemplate(props.footerTemplate),
+        componentTemplate: getTemplate(props.componentTemplate),
       },
       restAttributes: this.restAttributes,
     } as WidgetWithTemplate);

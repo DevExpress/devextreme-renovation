@@ -4,12 +4,19 @@ function view(model: Widget) {
 
 import { Component as InfernoComponent } from "inferno";
 import { createElement as h } from "inferno-create-element";
-declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof {}>;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
+
 export default class Widget extends InfernoComponent<{} & RestProps> {
   state: {
     _hovered: Boolean;
   };
   refs: any;
+
   constructor(props: {} & RestProps) {
     super({
       ...props,
@@ -17,6 +24,7 @@ export default class Widget extends InfernoComponent<{} & RestProps> {
     this.state = {
       _hovered: false,
     };
+    this.updateState = this.updateState.bind(this);
   }
 
   get _hovered(): Boolean {

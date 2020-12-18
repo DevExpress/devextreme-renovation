@@ -15,10 +15,13 @@ export const InnerWidgetProps: InnerWidgetPropsType = ({
 } as any) as InnerWidgetPropsType;
 import { Component as InfernoComponent } from "inferno";
 import { createElement as h } from "inferno-create-element";
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof InnerWidgetProps
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
+
 export default class InnerWidget extends InfernoComponent<
   typeof InnerWidgetProps & RestProps
 > {
@@ -26,6 +29,7 @@ export default class InnerWidget extends InfernoComponent<
     value: number;
   };
   refs: any;
+
   constructor(props: typeof InnerWidgetProps & RestProps) {
     super({
       ...InnerWidgetProps,

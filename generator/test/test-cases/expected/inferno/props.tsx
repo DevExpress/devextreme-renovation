@@ -17,20 +17,27 @@ export const WidgetInput: WidgetInputType = {
 };
 import { Component as InfernoComponent } from "inferno";
 import { createElement as h } from "inferno-create-element";
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
+
 export default class Widget extends InfernoComponent<
   typeof WidgetInput & RestProps
 > {
   state = {};
   refs: any;
+
   constructor(props: typeof WidgetInput & RestProps) {
     super({
       ...WidgetInput,
       ...props,
     });
+
+    this.getHeight = this.getHeight.bind(this);
+    this.getRestProps = this.getRestProps.bind(this);
   }
 
   getHeight(): number {

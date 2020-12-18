@@ -1,8 +1,10 @@
 import { Property as ReactProperty } from "../../../react-generator/expressions/class-members/property";
 import { capitalizeFirstLetter } from "../../../base-generator/utils/string";
+import { toStringOptions } from "../../../base-generator/types";
+import { TypeReferenceNode } from "../type-reference-node";
 
 export class Property extends ReactProperty {
-  getter(componentContext?: string, keepRef: boolean = false) {
+  getter(componentContext?: string, keepRef?: boolean) {
     if (this.isInternalState || this.isState) {
       return `${this.processComponentContext(componentContext)}${this.name}`;
     }
@@ -28,5 +30,19 @@ export class Property extends ReactProperty {
       this.initializer,
       true
     );
+  }
+
+  toString(options?: toStringOptions) {
+    if (this.isRef || this.isForwardRef) {
+      const type =
+        (this.type instanceof TypeReferenceNode &&
+          this.type.typeArguments[0]) ||
+        "any";
+      return `${this.modifiers.join(" ")} ${
+        this.name
+      } = infernoCreateRef<${type}>()`;
+    }
+
+    return super.toString(options);
   }
 }

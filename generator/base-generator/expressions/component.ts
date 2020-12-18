@@ -93,10 +93,6 @@ export class Component extends Class implements Heritable {
     );
   }
 
-  processRef(member: Property) {
-    return member;
-  }
-
   processMembers(members: Array<Property | Method>) {
     members = members.map((m) => {
       if (
@@ -166,18 +162,6 @@ export class Component extends Class implements Heritable {
       this.addPrefixToMembers(members).concat(props)
     );
 
-    members = members.map((member) => {
-      if (
-        member.isRef ||
-        member.isRefProp ||
-        member.isForwardRef ||
-        member.isForwardRefProp
-      ) {
-        return this.processRef(member as Property);
-      }
-      return member;
-    });
-
     const restPropsGetter = this.createRestPropsGetter(members);
     restPropsGetter.prefix = "__";
     members.push(restPropsGetter);
@@ -210,27 +194,23 @@ export class Component extends Class implements Heritable {
       )
     ) as Property[];
 
-    const refs = members
-      .filter((m) => m.decorators.find((d) => d.name === "Ref"))
-      .reduce(
-        (r: { refs: Property[]; apiRefs: Property[] }, p) => {
-          if (
-            context.components &&
-            context.components[
-              this.extractRefType(p.type!).toString()
-            ] instanceof Component
-          ) {
-            p.decorators.find(
-              (d) => d.name === "Ref"
-            )!.expression.expression = new SimpleExpression("ApiRef");
-            r.apiRefs.push(p as Property);
-          } else {
-            r.refs.push(p as Property);
-          }
-          return r;
-        },
-        { refs: [], apiRefs: [] }
-      );
+    const refs = (members.filter((m) => m.isRef) as Property[]).reduce(
+      (r: { refs: Property[]; apiRefs: Property[] }, p) => {
+        if (
+          context.components &&
+          context.components[p.compileRefType()] instanceof Component
+        ) {
+          p.decorators.find(
+            (d) => d.name === "Ref"
+          )!.expression.expression = new SimpleExpression("ApiRef");
+          r.apiRefs.push(p as Property);
+        } else {
+          r.refs.push(p as Property);
+        }
+        return r;
+      },
+      { refs: [], apiRefs: [] }
+    );
     this.refs = refs.refs;
     this.apiRefs = refs.apiRefs;
 

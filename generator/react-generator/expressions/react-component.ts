@@ -47,12 +47,12 @@ import { ComponentInput, getTemplatePropName } from "./react-component-input";
 import {
   capitalizeFirstLetter,
   lowerizeFirstLetter,
+  processComponentContext,
 } from "../../base-generator/utils/string";
 import { Conditional } from "../../base-generator/expressions/conditions";
-import { GeneratorContext } from "../../base-generator/types";
+import { GeneratorContext, toStringOptions } from "../../base-generator/types";
 import { HeritageClause } from "./heritage-clause";
 import { extractRefType } from "../../base-generator/utils/expressions";
-import { TypeReferenceNode } from "./type-reference-node";
 import {
   PropertyAssignment,
   ShorthandPropertyAssignment,
@@ -107,21 +107,7 @@ export class ReactComponent extends Component {
   }
 
   extractRefType(type: TypeExpression | string) {
-    return extractRefType(type, "MutableRefObject");
-  }
-
-  processRef(member: Property) {
-    if (
-      member.type instanceof TypeReferenceNode &&
-      member.type.typeName.toString() === "RefObject"
-    ) {
-      member.type.typeName = new Identifier("MutableRefObject");
-      if (member.type.typeArguments.length === 0) {
-        member.type.typeArguments.push(new SimpleTypeExpression("any"));
-      }
-    }
-
-    return member;
+    return extractRefType(type, this.REF_OBJECT_TYPE);
   }
 
   addPrefixToMembers(members: Array<BaseProperty | Method>) {
@@ -368,8 +354,9 @@ export class ReactComponent extends Component {
         -1,
         0,
         ...this.apiRefs.reduce((imports: string[], ref) => {
+          const refType = ref.compileRefType();
           const baseComponent = this.context.components![
-            this.extractRefType(ref.type!).toString()
+            refType
           ] as ReactComponent;
           if (this.context.dirname) {
             const relativePath = getModuleRelativePath(
@@ -377,9 +364,9 @@ export class ReactComponent extends Component {
               baseComponent.context.path!
             );
             imports.push(
-              `import {${baseComponent.name}Ref as ${this.extractRefType(
-                ref.type
-              )}Ref} from "${this.processModuleFileName(
+              `import {${
+                baseComponent.name
+              }Ref as ${refType}Ref} from "${this.processModuleFileName(
                 relativePath.replace(path.extname(relativePath), "")
               )}"`
             );
@@ -545,14 +532,8 @@ export class ReactComponent extends Component {
 
   compileUseRef() {
     return this.refs
-      .map((r) => {
-        return `const ${r.name}=useRef<${this.extractRefType(r.type)}>()`;
-      })
-      .concat(
-        this.apiRefs.map((r) => {
-          return `const ${r.name}=useRef<${this.extractRefType(r.type)}Ref>()`;
-        })
-      )
+      .concat(this.apiRefs)
+      .map((a) => a.toString(this.getToStringOptions()))
       .join(";\n");
   }
 
@@ -607,7 +588,10 @@ export class ReactComponent extends Component {
   }
 
   compileViewModelArguments(): string {
-    const toStringOptions = this.getToStringOptions();
+    const toStringOptions: toStringOptions = {
+      ...this.getToStringOptions(),
+      keepRef: true,
+    };
     const compileState = (state: BaseClassMember[], context = "") =>
       state
         .filter((s) => !s.isPrivate)
@@ -657,7 +641,10 @@ export class ReactComponent extends Component {
     const statements = props
       .concat(
         listenersAndRefs.map(
-          (r) => `${r._name.toString()}:${r.name.toString()}`
+          (r) =>
+            `${r._name.toString()}:${processComponentContext(
+              toStringOptions.newComponentContext
+            )}${r.name.toString()}`
         )
       )
       .concat(
@@ -709,7 +696,7 @@ export class ReactComponent extends Component {
     return `typeof ${heritageClause.propsType}`;
   }
 
-  getToStringOptions() {
+  getToStringOptions(): toStringOptions {
     return {
       members: this.members,
       componentContext: "this",
