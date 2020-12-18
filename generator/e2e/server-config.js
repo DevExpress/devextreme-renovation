@@ -29,6 +29,13 @@ const servers = [
     config: require("./platforms/preact/webpack.config"),
     instance: null,
   },
+  {
+    platform: "Inferno",
+    port: 3003,
+    contentBase: path.join(__dirname, "./platforms/inferno/app/dist/"),
+    config: require("./platforms/inferno/webpack.config"),
+    instance: null,
+  },
 ];
 
 module.exports = servers;

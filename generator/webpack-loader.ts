@@ -3,6 +3,7 @@ import { ReactGenerator } from "./react-generator";
 import { AngularGenerator } from "./angular-generator/angular-generator";
 import { VueGenerator } from "./vue-generator/vue-generator";
 import { PreactGenerator } from "./preact-generator";
+import { InfernoGenerator } from "./inferno-generator/inferno-generator";
 import ts from "typescript";
 import path from "path";
 import { GeneratorOptions } from "./base-generator/types";
@@ -38,6 +39,9 @@ export default function (this: loader.LoaderContext, source: string) {
         jqueryComponentRegistratorModule,
         jqueryBaseComponentModule,
       };
+      break;
+    case "inferno":
+      generator = new InfernoGenerator();
       break;
     default:
       throw new Error("Invalid platform");
