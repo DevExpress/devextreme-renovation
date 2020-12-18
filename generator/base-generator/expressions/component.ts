@@ -536,9 +536,13 @@ export class Component extends Class implements Heritable {
   ): string[] {
     const globals =
       template
-        ?.match(/global_\w+/gi)
+        ?.match(/(^|[^\w])global_\w+/gi)
         ?.map(
-          (global) => `${global}${delimiter}${global.replace("global_", "")}`
+          (global) =>
+            `${global.replace(/[^\w]/, "")}${delimiter}${global.replace(
+              /(^|[^\w])global_/,
+              ""
+            )}`
         ) || [];
     return [...new Set(globals)];
   }
