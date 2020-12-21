@@ -478,7 +478,7 @@ class JsxClosingElement extends ReactJsxClosingElement {
   }
 }
 
-class JsxAttribute extends ReactJsxAttribute {
+export class JsxAttribute extends ReactJsxAttribute {
   processName(name: string, options?: toStringOptions) {
     if (!options?.jsxComponent && kebabSvgAttributes.has(name)) {
       return dasherize(name);

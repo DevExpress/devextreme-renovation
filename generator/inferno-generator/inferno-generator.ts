@@ -1,4 +1,4 @@
-import { ReactGenerator } from "../react-generator/react-generator";
+import { PreactGenerator, JsxAttribute } from "../preact-generator";
 import { Decorator } from "../base-generator/expressions/decorator";
 import { Identifier } from "../base-generator/expressions/common";
 import { HeritageClause } from "../react-generator/expressions/heritage-clause";
@@ -14,8 +14,13 @@ import { TypeReferenceNode } from "./expressions/type-reference-node";
 import { ComponentInput } from "../preact-generator";
 import { TypeParameterDeclaration } from "../base-generator/expressions/type-parameter-declaration";
 import { Method } from "./expressions/class-members/method";
+import { JsxOpeningElement } from "./expressions/jsx/jsx-opening-element";
+import { JsxClosingElement } from "./expressions/jsx/jsx-closing-element";
+import { ImportDeclaration } from "./expressions/import-declaration";
+import { ImportClause } from "../base-generator/expressions/import";
+import { StringLiteral } from "../base-generator/expressions/literal";
 
-export class InfernoGenerator extends ReactGenerator {
+export class InfernoGenerator extends PreactGenerator {
   // format(code: string) {
   //     return code;
   // }
@@ -119,5 +124,36 @@ export class InfernoGenerator extends ReactGenerator {
     typeArguments?: TypeExpression[]
   ) {
     return new TypeReferenceNode(typeName, typeArguments, this.getContext());
+  }
+
+  createJsxOpeningElement(
+    tagName: Identifier,
+    typeArguments: any[],
+    attributes: JsxAttribute[] = []
+  ) {
+    return new JsxOpeningElement(
+      tagName,
+      typeArguments,
+      attributes,
+      this.getContext()
+    );
+  }
+
+  createJsxClosingElement(tagName: Identifier) {
+    return new JsxClosingElement(tagName);
+  }
+
+  createImportDeclarationCore(
+    decorators: Decorator[] | undefined,
+    modifiers: string[] | undefined,
+    importClause: ImportClause,
+    moduleSpecifier: StringLiteral
+  ) {
+    return new ImportDeclaration(
+      decorators,
+      modifiers,
+      importClause,
+      moduleSpecifier
+    );
   }
 }
