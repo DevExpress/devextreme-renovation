@@ -32,7 +32,7 @@ function isOutputDecorator(name: string): boolean {
   return name === Decorators.Event;
 }
 
-function getProperiesName(
+function getPropertiesName(
   props: Property[],
   specificDecorator: (name: string) => boolean
 ): StringLiteral[] {
@@ -70,8 +70,8 @@ export class Decorator extends BaseDecorator {
       const parameters = this.expression.arguments[0] as ObjectLiteral;
       if (options) {
         const props = getProps(options.members);
-        const inputs = getProperiesName(props, isInputDecorator);
-        const outputs = getProperiesName(props, isOutputDecorator);
+        const inputs = getPropertiesName(props, isInputDecorator);
+        const outputs = getPropertiesName(props, isOutputDecorator);
 
         setComponentProperty(parameters, "inputs", inputs);
         setComponentProperty(parameters, "outputs", outputs);
@@ -92,6 +92,8 @@ export class Decorator extends BaseDecorator {
         });
         const templates = compileDefaultTemplates(options, this.context);
         if (templates?.length) template += templates.join("");
+        const slots = compileSlots(options);
+        if (slots?.length) template += slots.join("")
         if (template) {
           parameters.setProperty(
             "template",
@@ -158,4 +160,11 @@ function compileDefaultTemplates(
       })
       .filter((s) => s) as string[];
   }
+}
+
+function compileSlots(options: toStringOptions|undefined): string[]{
+  if (options && options.slots){
+    return Object.entries(options.slots).map(([name, s])=>`<ng-template #${name}><ng-content${s.selector}></ng-content></ng-template>`)
+  }
+  return []
 }

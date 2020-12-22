@@ -22,10 +22,10 @@
     "@types/react": "^16.9.19",
     "code-block-writer": "^10.1.0",
     "gulp": "^4.0.2",
+    "loader-utils": "^2.0.0",
     "prettier": "^2.1.0",
     "react": "^16.13.1",
-    "typescript": "3.8",
-    "loader-utils": "^2.0.0"
+    "typescript": "3.8"
   },
   "devDependencies": {
     "@angular/cdk": "^11.0.2",

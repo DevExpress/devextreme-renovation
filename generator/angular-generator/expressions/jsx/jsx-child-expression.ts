@@ -101,11 +101,17 @@ export class JsxChildExpression extends JsxExpression {
   }
 
   compileSlot(slot: Property, options: toStringOptions) {
-    const slotValue =
-      slot.name.toString() === "children"
-        ? "<ng-content></ng-content>"
-        : `<ng-content select="[${slot.name}]"></ng-content>`;
-
+    // const slotValue =
+    //   slot.name.toString() === "children"
+    //     ? "<ng-content></ng-content>"
+    //     : `<ng-content select="[${slot.name}]"></ng-content>`;
+    const slotValue = `<ng-container [ngTemplateOutlet]="${slot.name}"></ng-container>`
+    const selector = slot.name.toString() === "children" ? "" : `select="[${slot.name}]"`;
+    
+    options.slots = options.slots || {};
+    if (!options.slots[slot.name]){
+      options.slots[slot.name] = {selector: selector};
+    }
     options.checkSlot?.(slot, options);
 
     const wrapperTagName = options.isSVG ? "svg:g" : "div";
