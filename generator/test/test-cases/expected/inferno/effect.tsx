@@ -30,6 +30,26 @@ declare type RestProps = {
   ref?: any;
 };
 
+class InfernoEffect {
+  private destroy?: () => void;
+  constructor(
+    private effect: () => () => void,
+    private dependency: Array<any>
+  ) {
+    this.destroy = effect();
+  }
+
+  update(dependency?: Array<any>) {
+    if (!dependency || dependency.some((d, i) => this.dependency[i] !== d)) {
+      this.destroy?.();
+      this.destroy = this.effect();
+    }
+  }
+
+  dispose() {
+    this.destroy?.();
+  }
+}
 export default class Widget extends InfernoComponent<
   typeof WidgetInput & RestProps
 > {
@@ -40,6 +60,7 @@ export default class Widget extends InfernoComponent<
   };
   refs: any;
 
+  _effects: InfernoEffect[] = [];
   constructor(props: typeof WidgetInput & RestProps) {
     super({
       ...WidgetInput,
@@ -74,6 +95,26 @@ export default class Widget extends InfernoComponent<
   set s(value: number) {
     this.setState({ s: value });
     this.props.sChange!(value);
+  }
+
+  componentDidMount() {
+    this._effects = [
+      new InfernoEffect(this.setupData, [
+        this.props.p,
+        this.s,
+        this.props.sChange,
+        this.i,
+      ]),
+      new InfernoEffect(this.onceEffect, []),
+      new InfernoEffect(this.alwaysEffect, []),
+    ];
+  }
+  componentDidUpdated() {
+    this._effects[0].update([this.props.p, this.s, this.props.sChange, this.i]);
+    this._effects[2].update();
+  }
+  componentWillUnmount() {
+    this._effects.forEach((e) => e.dispose());
   }
 
   setupData(): any {

@@ -1,4 +1,7 @@
-import { Method } from "../../base-generator/expressions/class-members";
+import {
+  Method,
+  BaseClassMember,
+} from "../../base-generator/expressions/class-members";
 import { Identifier } from "../../base-generator/expressions/common";
 import { TypeExpression } from "../../base-generator/expressions/type";
 import {
@@ -13,6 +16,13 @@ import { getProps } from "../../base-generator/expressions/component";
 import { getChangeEventToken } from "../../react-generator/expressions/property-access";
 import { Property } from "./class-members/property";
 import { PreactComponent } from "../../preact-generator";
+import { Decorators } from "../../component_declaration/decorators";
+
+const getEffectRunParameter = (effect: BaseClassMember) =>
+  effect.decorators
+    .find((d) => d.name === Decorators.Effect)
+    ?.getParameter("run")
+    ?.valueOf();
 
 export class InfernoComponent extends PreactComponent {
   REF_OBJECT_TYPE = "RefObject";
@@ -146,6 +156,89 @@ export class InfernoComponent extends PreactComponent {
     return "";
   }
 
+  compileEffectClass() {
+    if (this.effects.length) {
+      return `class InfernoEffect {
+        private destroy?: () => void;
+        constructor(private effect: ()=>()=>void, private dependency: Array<any>) { 
+          this.destroy = effect();
+        }
+      
+        update(dependency?: Array<any>) { 
+          if (!dependency || dependency.some((d, i) => this.dependency[i] !== d)) { 
+            this.destroy?.();
+            this.destroy = this.effect();
+          }
+        }
+      
+        dispose() { 
+          this.destroy?.();
+        }
+      }`;
+    }
+
+    return "";
+  }
+
+  compileEffects(
+    didMountStatements: string[],
+    didUpdatedStatements: string[],
+    componentWillUnmountStatements: string[]
+  ) {
+    if (this.effects.length) {
+      const dependencies = this.effects.map((e) =>
+        e.getDependency(this.getToStringOptions())
+      );
+
+      const create = this.effects.map((e, i) => {
+        const dependency =
+          getEffectRunParameter(e) === undefined ? dependencies[i] : [];
+        return `new InfernoEffect(this.${e.name}, [${dependency.join(",")}])`;
+      });
+
+      didMountStatements.push(`this._effects=[
+        ${create.join(",")}
+      ]`);
+
+      const update = this.effects.reduce((result: string[], effect, index) => {
+        const run = getEffectRunParameter(effect);
+
+        if (run === "always") {
+          result.push(`this._effects[${index}].update()`);
+        }
+
+        if (run === undefined) {
+          const dependency = dependencies[index];
+          result.push(
+            `this._effects[${index}].update([${dependency.join(",")}])`
+          );
+        }
+
+        return result;
+      }, []);
+
+      didUpdatedStatements.push(update.join(";\n"));
+
+      componentWillUnmountStatements.push(
+        `this._effects.forEach(e=>e.dispose());`
+      );
+
+      return "_effects: InfernoEffect[] = []";
+    }
+
+    return "";
+  }
+
+  compileLifeCycle(name: string, statements: string[]) {
+    if (statements.length) {
+      return `${name}(){
+        ${statements.join(";\n")}
+      }`;
+    }
+
+    return "";
+  }
+
   toString() {
     const propsType = this.compilePropsType();
 
@@ -157,11 +250,16 @@ export class InfernoComponent extends PreactComponent {
       .map((m) => `this.${m.name} = this.${m.name}.bind(this)`)
       .join(";\n");
 
+    const componentDidMountStatements: string[] = [];
+    const componentDidUpdatedStatements: string[] = [];
+    const componentWillUnmountStatements: string[] = [];
+
     return `
             ${this.compileImports()}
             ${this.compileRestProps()}
             ${this.compileDefaultOptionsMethod()}
             ${this.compileTemplateGetter()}
+            ${this.compileEffectClass()}
             ${this.modifiers.join(" ")} class ${
       this.name
     } extends InfernoComponent<${propsType}> {
@@ -170,6 +268,12 @@ export class InfernoComponent extends PreactComponent {
                 ${properties
                   .map((p) => p.toString(this.getToStringOptions()))
                   .join(";\n")}
+                  
+                  ${this.compileEffects(
+                    componentDidMountStatements,
+                    componentDidUpdatedStatements,
+                    componentWillUnmountStatements
+                  )}
                 constructor(props: ${propsType}) {
                     super({
                         ${this.compileDefaultPropsObjectProperties()
@@ -181,6 +285,19 @@ export class InfernoComponent extends PreactComponent {
                 }
 
                 ${this.compileStateSetterAndGetters()}
+
+                ${this.compileLifeCycle(
+                  "componentDidMount",
+                  componentDidMountStatements
+                )}
+                ${this.compileLifeCycle(
+                  "componentDidUpdated",
+                  componentDidUpdatedStatements
+                )}
+                ${this.compileLifeCycle(
+                  "componentWillUnmount",
+                  componentWillUnmountStatements
+                )}
 
                 ${this.effects
                   .concat(this.methods)
