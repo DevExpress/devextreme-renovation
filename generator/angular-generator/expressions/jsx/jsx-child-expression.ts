@@ -100,7 +100,6 @@ export class JsxChildExpression extends JsxExpression {
   }
 
   compileSlot(slot: Property, options: toStringOptions) {
-    const slotValue = `<ng-container [ngTemplateOutlet]="dx${slot.name}"></ng-container>`
     const selector = slot.name.toString() === "children" ? "" : `select="[${slot.name}]"`;
 
     options.slots = options.slots || {};    
@@ -113,7 +112,7 @@ export class JsxChildExpression extends JsxExpression {
 
     options.checkSlot?.(slot, options);
 
-    return slotValue;
+    return `<ng-container [ngTemplateOutlet]="dx${slot.name}"></ng-container>`;
   }
 
   createIfAttribute(condition: Expression): JsxAttribute {

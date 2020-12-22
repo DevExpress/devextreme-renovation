@@ -152,7 +152,7 @@ function view(model: App) {
       <div style={{ border: "1px solid grey", padding: "5px" }}>
         <TemplateDefaultValueApp />
       </div>
-      <RenderSlotCondition>{model.slotValue}</RenderSlotCondition>
+      <RenderSlotCondition>content</RenderSlotCondition>
       <DefaultPropsComponent />
       <InlineArrowFunction />
       <DynamicComponent />
@@ -194,11 +194,8 @@ export default class App extends JSXComponent(AppInput) {
 
   @InternalState() domEffectsText: string = "A";
 
-  @InternalState() slotValue:string = "slot";
-
   onButtonClick() {
     this.clickCount = this.clickCount + 1;
-    this.slotValue = this.slotValue + 'b'
   }
 
   onButtonEffectsClick() {
