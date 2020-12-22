@@ -45,7 +45,7 @@ export class InfernoComponent extends PreactComponent {
     }
     const imports = [
       `import { ${coreImports.join(",")} } from "inferno"`,
-      `import { createElement as h } from "inferno-create-element"`,
+      `import { createElement as h } from "inferno-compat";`,
     ];
     return imports;
   }
@@ -169,6 +169,9 @@ export class InfernoComponent extends PreactComponent {
             this.destroy?.();
             this.destroy = this.effect();
           }
+          if (dependency) {
+            this.dependency = dependency;
+          }
         }
       
         dispose() { 
@@ -182,7 +185,7 @@ export class InfernoComponent extends PreactComponent {
 
   compileEffects(
     didMountStatements: string[],
-    didUpdatedStatements: string[],
+    didUpdateStatements: string[],
     componentWillUnmountStatements: string[]
   ) {
     if (this.effects.length) {
@@ -217,7 +220,7 @@ export class InfernoComponent extends PreactComponent {
         return result;
       }, []);
 
-      didUpdatedStatements.push(update.join(";\n"));
+      didUpdateStatements.push(update.join(";\n"));
 
       componentWillUnmountStatements.push(
         `this._effects.forEach(e=>e.dispose());`
@@ -251,7 +254,7 @@ export class InfernoComponent extends PreactComponent {
       .join(";\n");
 
     const componentDidMountStatements: string[] = [];
-    const componentDidUpdatedStatements: string[] = [];
+    const componentDidUpdateStatements: string[] = [];
     const componentWillUnmountStatements: string[] = [];
 
     return `
@@ -271,7 +274,7 @@ export class InfernoComponent extends PreactComponent {
                   
                   ${this.compileEffects(
                     componentDidMountStatements,
-                    componentDidUpdatedStatements,
+                    componentDidUpdateStatements,
                     componentWillUnmountStatements
                   )}
                 constructor(props: ${propsType}) {
@@ -287,8 +290,8 @@ export class InfernoComponent extends PreactComponent {
                   componentDidMountStatements
                 )}
                 ${this.compileLifeCycle(
-                  "componentDidUpdated",
-                  componentDidUpdatedStatements
+                  "componentDidUpdate",
+                  componentDidUpdateStatements
                 )}
                 ${this.compileLifeCycle(
                   "componentWillUnmount",

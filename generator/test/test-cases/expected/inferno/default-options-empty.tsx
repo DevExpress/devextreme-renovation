@@ -9,7 +9,7 @@ import {
   Rule,
 } from "../../../../component_declaration/default_options";
 import { Component as InfernoComponent } from "inferno";
-import { createElement as h } from "inferno-create-element";
+import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };

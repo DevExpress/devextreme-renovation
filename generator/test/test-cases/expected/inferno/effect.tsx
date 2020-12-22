@@ -22,7 +22,7 @@ export const WidgetInput: WidgetInputType = ({
   sChange: () => {},
 } as any) as WidgetInputType;
 import { Component as InfernoComponent } from "inferno";
-import { createElement as h } from "inferno-create-element";
+import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
@@ -43,6 +43,9 @@ class InfernoEffect {
     if (!dependency || dependency.some((d, i) => this.dependency[i] !== d)) {
       this.destroy?.();
       this.destroy = this.effect();
+    }
+    if (dependency) {
+      this.dependency = dependency;
     }
   }
 
@@ -106,7 +109,7 @@ export default class Widget extends InfernoComponent<
       new InfernoEffect(this.alwaysEffect, []),
     ];
   }
-  componentDidUpdated() {
+  componentDidUpdate() {
     this._effects[0].update([this.props.p, this.s, this.props.sChange, this.i]);
     this._effects[2].update();
   }

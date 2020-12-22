@@ -12,7 +12,7 @@ const WidgetInput: WidgetInputType = ({
   propStateChange: () => {},
 } as any) as WidgetInputType;
 import { Component as InfernoComponent } from "inferno";
-import { createElement as h } from "inferno-create-element";
+import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
