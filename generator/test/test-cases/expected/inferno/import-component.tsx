@@ -28,10 +28,7 @@ export default class Child extends InfernoComponent<
   refs: any;
 
   constructor(props: typeof ChildInput & RestProps) {
-    super({
-      ...ChildInput,
-      ...props,
-    });
+    super(props);
 
     this.getProps = this.getProps.bind(this);
   }
@@ -53,3 +50,7 @@ export default class Child extends InfernoComponent<
     } as Child);
   }
 }
+
+Child.defaultProps = {
+  ...ChildInput,
+};

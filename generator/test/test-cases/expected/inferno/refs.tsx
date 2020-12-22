@@ -37,11 +37,9 @@ export default class Widget extends InfernoComponent<
   forwardRef = infernoCreateRef<HTMLDivElement>();
   existingRef = infernoCreateRef<HTMLDivElement>();
   existingForwardRef = infernoCreateRef<HTMLDivElement>();
+
   constructor(props: typeof WidgetProps & RestProps) {
-    super({
-      ...WidgetProps,
-      ...props,
-    });
+    super(props);
 
     this.writeRefs = this.writeRefs.bind(this);
     this.readRefs = this.readRefs.bind(this);
@@ -140,3 +138,7 @@ export default class Widget extends InfernoComponent<
     } as Widget);
   }
 }
+
+Widget.defaultProps = {
+  ...WidgetProps,
+};

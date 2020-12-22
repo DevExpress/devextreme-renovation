@@ -20,10 +20,7 @@ export default class Widget extends InfernoComponent<
   refs: any;
 
   constructor(props: typeof PickedProps & RestProps) {
-    super({
-      ...PickedProps,
-      ...props,
-    });
+    super(props);
 
     this.getColumns = this.getColumns.bind(this);
   }
@@ -52,3 +49,7 @@ export default class Widget extends InfernoComponent<
     } as Widget);
   }
 }
+
+Widget.defaultProps = {
+  ...PickedProps,
+};

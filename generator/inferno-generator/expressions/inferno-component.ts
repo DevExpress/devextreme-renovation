@@ -275,11 +275,7 @@ export class InfernoComponent extends PreactComponent {
                     componentWillUnmountStatements
                   )}
                 constructor(props: ${propsType}) {
-                    super({
-                        ${this.compileDefaultPropsObjectProperties()
-                          .concat("...props")
-                          .join(",")}
-                    });
+                    super(props);
                     ${this.compileStateInitializer()}
                     ${bindMethods}
                 }
@@ -309,6 +305,8 @@ export class InfernoComponent extends PreactComponent {
                     return ${this.compileViewCall()}
                 }
             }
+
+            ${this.compileDefaultProps()}
         `;
   }
 }

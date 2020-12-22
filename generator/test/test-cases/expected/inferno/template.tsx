@@ -38,6 +38,7 @@ const getTemplate = (TemplateProp: any) =>
   (TemplateProp.defaultProps
     ? (props: any) => <TemplateProp {...props} />
     : TemplateProp);
+
 export default class WidgetWithTemplate extends InfernoComponent<
   typeof WidgetInput & RestProps
 > {
@@ -45,10 +46,7 @@ export default class WidgetWithTemplate extends InfernoComponent<
   refs: any;
 
   constructor(props: typeof WidgetInput & RestProps) {
-    super({
-      ...WidgetInput,
-      ...props,
-    });
+    super(props);
   }
 
   get restAttributes(): RestProps {
@@ -79,6 +77,10 @@ export default class WidgetWithTemplate extends InfernoComponent<
     } as WidgetWithTemplate);
   }
 }
+
+WidgetWithTemplate.defaultProps = {
+  ...WidgetInput,
+};
 function view(viewModel: WidgetWithTemplate) {
   const myvar = viewModel.props.someProp;
   const FooterTemplate = viewModel.props.footerTemplate;

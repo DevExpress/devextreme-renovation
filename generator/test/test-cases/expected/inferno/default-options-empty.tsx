@@ -30,13 +30,7 @@ export default class Widget extends InfernoComponent<
   refs: any;
 
   constructor(props: typeof WidgetProps & RestProps) {
-    super({
-      ...WidgetProps,
-      ...convertRulesToOptions<typeof WidgetProps>([
-        { device: true, options: {} },
-      ]),
-      ...props,
-    });
+    super(props);
   }
 
   get restAttributes(): RestProps {
@@ -49,3 +43,13 @@ export default class Widget extends InfernoComponent<
     return view();
   }
 }
+
+function __createDefaultProps() {
+  return {
+    ...WidgetProps,
+    ...convertRulesToOptions<typeof WidgetProps>([
+      { device: true, options: {} },
+    ]),
+  };
+}
+Widget.defaultProps = __createDefaultProps();

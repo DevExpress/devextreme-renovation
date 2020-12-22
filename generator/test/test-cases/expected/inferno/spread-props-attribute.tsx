@@ -30,10 +30,7 @@ export default class Widget extends InfernoComponent<
   refs: any;
 
   constructor(props: typeof WidgetInput & RestProps) {
-    super({
-      ...WidgetInput,
-      ...props,
-    });
+    super(props);
     this.state = {
       value:
         this.props.value !== undefined
@@ -66,3 +63,7 @@ export default class Widget extends InfernoComponent<
     } as Widget);
   }
 }
+
+Widget.defaultProps = {
+  ...WidgetInput,
+};

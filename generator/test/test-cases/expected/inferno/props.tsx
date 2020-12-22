@@ -31,10 +31,7 @@ export default class Widget extends InfernoComponent<
   refs: any;
 
   constructor(props: typeof WidgetInput & RestProps) {
-    super({
-      ...WidgetInput,
-      ...props,
-    });
+    super(props);
 
     this.getHeight = this.getHeight.bind(this);
     this.getRestProps = this.getRestProps.bind(this);
@@ -71,3 +68,7 @@ export default class Widget extends InfernoComponent<
     } as Widget);
   }
 }
+
+Widget.defaultProps = {
+  ...WidgetInput,
+};

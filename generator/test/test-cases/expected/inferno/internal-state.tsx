@@ -18,9 +18,7 @@ export default class Widget extends InfernoComponent<{} & RestProps> {
   refs: any;
 
   constructor(props: {} & RestProps) {
-    super({
-      ...props,
-    });
+    super(props);
     this.state = {
       _hovered: false,
     };

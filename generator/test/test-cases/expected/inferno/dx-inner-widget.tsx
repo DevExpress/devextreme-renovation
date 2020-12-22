@@ -31,10 +31,7 @@ export default class InnerWidget extends InfernoComponent<
   refs: any;
 
   constructor(props: typeof InnerWidgetProps & RestProps) {
-    super({
-      ...InnerWidgetProps,
-      ...props,
-    });
+    super(props);
     this.state = {
       value:
         this.props.value !== undefined
@@ -71,3 +68,7 @@ export default class InnerWidget extends InfernoComponent<
     } as InnerWidget);
   }
 }
+
+InnerWidget.defaultProps = {
+  ...InnerWidgetProps,
+};

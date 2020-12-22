@@ -28,10 +28,7 @@ export default class Widget extends InfernoComponent<
   refs: any;
 
   constructor(props: typeof WidgetProps & RestProps) {
-    super({
-      ...WidgetProps,
-      ...props,
-    });
+    super(props);
 
     this.onClick = this.onClick.bind(this);
   }
@@ -53,3 +50,7 @@ export default class Widget extends InfernoComponent<
     } as Widget);
   }
 }
+
+Widget.defaultProps = {
+  ...WidgetProps,
+};
