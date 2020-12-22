@@ -103,18 +103,15 @@ export class JsxChildExpression extends JsxExpression {
     const slotValue = `<ng-container [ngTemplateOutlet]="dx${slot.name}"></ng-container>`
     const selector = slot.name.toString() === "children" ? "" : `select="[${slot.name}]"`;
 
-    options.slots = options.slots || {};
-    
-    
-    
+    options.slots = options.slots || {};    
     if (!options.slots[slot.name]){
       options.slots[slot.name] = {
         selector: selector, 
         isSVG: options.isSVG
       };
     }
-    options.checkSlot?.(slot, options);
 
+    options.checkSlot?.(slot, options);
 
     return slotValue;
   }
