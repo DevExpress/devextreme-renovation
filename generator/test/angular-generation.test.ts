@@ -307,9 +307,6 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it.only("conditional-slot", function () {
-    this.testGenerator(this.test!.title);
-  });
 
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {

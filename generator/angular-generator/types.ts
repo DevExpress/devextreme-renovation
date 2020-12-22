@@ -34,7 +34,10 @@ export interface toStringOptions extends BaseToStringOptions {
   isSVG?: boolean;
   checkSlot?: (slot: Property, options: toStringOptions) => void;
   slots?: {
-    [name: string] : {selector: string}
+    [name: string] : {
+      selector: string,
+      isSVG: boolean | undefined
+    }
   } 
 }
 

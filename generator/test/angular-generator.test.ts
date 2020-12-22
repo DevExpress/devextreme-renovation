@@ -1838,8 +1838,8 @@ mocha.describe("Angular generator", function () {
         assert.strictEqual(
           removeSpaces(element.children[0].toString(this.toStringOptions)),
           removeSpaces(`
-                    <div #slotChildren style="display: contents"><ng-content></ng-content></div>
-                    <ng-container *ngIf="!(children)">{{alternative}}</ng-container>
+              <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
+              <ng-container *ngIf="!(children)">{{alternative}}</ng-container>
               `)
         );
       });
@@ -2562,7 +2562,7 @@ mocha.describe("Angular generator", function () {
             members: [slotProperty],
             componentContext: "viewModel",
           }),
-          `<span ><div #slotName style="display: contents"><ng-content select="[name]"></ng-content></div></span>`
+          `<span ><ng-container [ngTemplateOutlet]="dxname"></ng-container></span>`
         );
       });
 
@@ -2600,7 +2600,7 @@ mocha.describe("Angular generator", function () {
             componentContext: "viewModel",
             newComponentContext: "",
           }),
-          `<span ><div #slotName style="display: contents"><ng-content select="[name]"></ng-content></div></span>`
+          `<span ><ng-container [ngTemplateOutlet]="dxname"></ng-container></span>`
         );
       });
 
@@ -2636,7 +2636,7 @@ mocha.describe("Angular generator", function () {
           expression.toString({
             members: [slotProperty],
           }),
-          `<span ><div #slotChildren style="display: contents"><ng-content></ng-content></div></span>`
+          `<span ><ng-container [ngTemplateOutlet]="dxchildren"></ng-container></span>`
         );
       });
 
@@ -2673,7 +2673,7 @@ mocha.describe("Angular generator", function () {
             members: [slotProperty],
             isSVG: true,
           }),
-          `<svg:svg ><svg:g #slotChildren ><ng-content></ng-content></svg:g></svg>`
+          `<svg:svg ><ng-container [ngTemplateOutlet]="dxchildren"></ng-container></svg>`
         );
       });
 
@@ -2973,7 +2973,7 @@ mocha.describe("Angular generator", function () {
                 newComponentContext: "",
                 members: [slotProperty],
               }),
-              `<dx-widget ><div #slotChildren style="display: contents"><ng-content></ng-content></div></dx-widget>`
+              `<dx-widget ><ng-container [ngTemplateOutlet]="dxchildren"></ng-container></dx-widget>`
             );
           });
 
@@ -3020,14 +3020,10 @@ mocha.describe("Angular generator", function () {
                 })
               ),
               removeSpaces(`
-                            <dx-widget >
-                                <div #slotChildren style="display: contents">
-                                    <ng-content></ng-content>
-                                </div>
-                                <div #slotNamedSlot style="display: contents">
-                                    <ng-content select="[namedSlot]"></ng-content>
-                                </div>
-                            </dx-widget>`)
+                <dx-widget>
+                  <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
+                  <ng-container [ngTemplateOutlet]="dxnamedSlot"></ng-container>
+                </dx-widget>`)
             );
           });
 
@@ -3058,7 +3054,7 @@ mocha.describe("Angular generator", function () {
                 newComponentContext: "",
                 members: [slotProperty],
               }),
-              `<dx-widget ><div #slotChildren style="display: contents"><ng-content></ng-content></div></dx-widget>`
+              `<dx-widget ><ng-container [ngTemplateOutlet]="dxchildren"></ng-container></dx-widget>`
             );
           });
 
@@ -3095,7 +3091,7 @@ mocha.describe("Angular generator", function () {
                 newComponentContext: "",
                 members: [slotProperty],
               }),
-              `<dx-widget ><div #slotChildren style="display: contents"><ng-content></ng-content></div></dx-widget>`
+              `<dx-widget ><ng-container [ngTemplateOutlet]="dxchildren"></ng-container></dx-widget>`
             );
           });
         });
@@ -3787,13 +3783,12 @@ mocha.describe("Angular generator", function () {
             })
           ),
           removeSpaces(`
-                    <div>
-                        <ng-container *ngIf="!template">
-                            <div #slotChildren style="display:contents">
-                                <ng-content></ng-content>
-                            </div>
-                        </ng-container>
-                    </div>`)
+            <div>
+              <ng-container *ngIf="!template">
+                <ng-container[ngTemplateOutlet]="dxchildren">
+                </ng-container>
+              </ng-container>
+            </div>`)
         );
       });
 

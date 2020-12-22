@@ -14,7 +14,6 @@ import {
 import { Property } from "../../../base-generator/expressions/class-members";
 import { JsxAttribute } from "./attribute";
 import { AngularDirective } from "./angular-directive";
-import { capitalizeFirstLetter } from "../../../base-generator/utils/string";
 import { BindingPattern } from "../../../base-generator/expressions/binding-pattern";
 import {
   Parameter,
@@ -101,25 +100,23 @@ export class JsxChildExpression extends JsxExpression {
   }
 
   compileSlot(slot: Property, options: toStringOptions) {
-    // const slotValue =
-    //   slot.name.toString() === "children"
-    //     ? "<ng-content></ng-content>"
-    //     : `<ng-content select="[${slot.name}]"></ng-content>`;
-    const slotValue = `<ng-container [ngTemplateOutlet]="${slot.name}"></ng-container>`
+    const slotValue = `<ng-container [ngTemplateOutlet]="dx${slot.name}"></ng-container>`
     const selector = slot.name.toString() === "children" ? "" : `select="[${slot.name}]"`;
-    
+
     options.slots = options.slots || {};
+    
+    
+    
     if (!options.slots[slot.name]){
-      options.slots[slot.name] = {selector: selector};
+      options.slots[slot.name] = {
+        selector: selector, 
+        isSVG: options.isSVG
+      };
     }
     options.checkSlot?.(slot, options);
 
-    const wrapperTagName = options.isSVG ? "svg:g" : "div";
-    const wrapperStyle = options.isSVG ? "" : `style="display: contents"`;
 
-    return `<${wrapperTagName} #slot${capitalizeFirstLetter(
-      slot.name
-    )} ${wrapperStyle}>${slotValue}</${wrapperTagName}>`;
+    return slotValue;
   }
 
   createIfAttribute(condition: Expression): JsxAttribute {

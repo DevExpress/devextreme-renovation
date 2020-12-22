@@ -23,10 +23,14 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["p"],
   template: `<div
-    ><dx-widget
+      ><dx-widget
+        ><ng-container
+          [ngTemplateOutlet]="dxchildren"
+        ></ng-container></dx-widget></div
+    ><ng-template #dxchildren
       ><div #slotChildren style="display: contents"
-        ><ng-content></ng-content></div></dx-widget
-  ></div>`,
+        ><ng-content></ng-content></div
+    ></ng-template>`,
 })
 export default class SlotPass extends WidgetInput {
   get __restAttributes(): any {

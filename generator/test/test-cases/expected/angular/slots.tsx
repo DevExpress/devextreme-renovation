@@ -24,14 +24,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div
-    ><div
-      ><div #slotNamedSlot style="display: contents"
-        ><ng-content select="[namedSlot]"></ng-content></div></div
-    ><div
-      ><div #slotChildren style="display: contents"
-        ><ng-content></ng-content></div></div
-  ></div>`,
+  template: `<div ><div ><ng-container [ngTemplateOutlet]="dxnamedSlot"></ng-container></div><div ><ng-container [ngTemplateOutlet]="dxchildren"></ng-container></div></div><ng-template #dxnamedSlot><div #slotNamedSlot style="display: contents"><ng-contentselect="[namedSlot]"></ng-content></div></ng-template><ng-template #dxchildren><div #slotChildren style="display: contents"><ng-content></ng-content></div></ng-template>`,
 })
 export default class Widget extends WidgetInput {
   get __restAttributes(): any {
@@ -71,6 +64,7 @@ export default class Widget extends WidgetInput {
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}

@@ -19,9 +19,11 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div #slotChildren style="display: contents"
-    ><ng-content></ng-content
-  ></div>`,
+  template: `<ng-container [ngTemplateOutlet]="dxchildren"></ng-container
+    ><ng-template #dxchildren
+      ><div #slotChildren style="display: contents"
+        ><ng-content></ng-content></div
+    ></ng-template>`,
 })
 export default class Widget extends WidgetInput {
   get __restAttributes(): any {
@@ -51,6 +53,7 @@ export default class Widget extends WidgetInput {
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}
