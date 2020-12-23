@@ -6,7 +6,8 @@ export class WidgetProps {
   __slotChildren?: ElementRef<HTMLDivElement>;
 
   get children() {
-    return this.__slotChildren?.nativeElement?.innerHTML.trim() || "";
+    const childNodes = this.__slotChildren?.nativeElement?.childNodes;
+    return childNodes && childNodes.length > 2;
   }
 }
 
@@ -23,7 +24,8 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["height", "width"],
-  template: `<div></div>`,
+  template: `<div></div
+    ><ng-template #dxchildren><ng-content></ng-content></ng-template>`,
 })
 export default class Widget extends WidgetProps {
   __onClick(): any {
@@ -56,6 +58,7 @@ export default class Widget extends WidgetProps {
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}

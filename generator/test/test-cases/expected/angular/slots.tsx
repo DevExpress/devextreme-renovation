@@ -3,12 +3,14 @@ class WidgetInput {
   __slotNamedSlot?: ElementRef<HTMLDivElement>;
 
   get namedSlot() {
-    return this.__slotNamedSlot?.nativeElement?.innerHTML.trim() || "";
+    const childNodes = this.__slotNamedSlot?.nativeElement?.childNodes;
+    return childNodes && childNodes.length > 2;
   }
   __slotChildren?: ElementRef<HTMLDivElement>;
 
   get children() {
-    return this.__slotChildren?.nativeElement?.innerHTML.trim() || "";
+    const childNodes = this.__slotChildren?.nativeElement?.childNodes;
+    return childNodes && childNodes.length > 2;
   }
 }
 
@@ -25,13 +27,19 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div
-    ><div
-      ><div #slotNamedSlot style="display: contents"
-        ><ng-content select="[namedSlot]"></ng-content></div></div
-    ><div
-      ><div #slotChildren style="display: contents"
-        ><ng-content></ng-content></div></div
-  ></div>`,
+      ><div
+        ><div #slotNamedSlot style="display: contents"
+          ><ng-container
+            [ngTemplateOutlet]="dxnamedSlot"
+          ></ng-container></div></div
+      ><div
+        ><div #slotChildren style="display: contents"
+          ><ng-container
+            [ngTemplateOutlet]="dxchildren"
+          ></ng-container></div></div></div
+    ><ng-template #dxnamedSlot
+      ><ng-content select="[namedSlot]"></ng-content></ng-template
+    ><ng-template #dxchildren><ng-content></ng-content></ng-template>`,
 })
 export default class Widget extends WidgetInput {
   get __restAttributes(): any {
@@ -71,6 +79,7 @@ export default class Widget extends WidgetInput {
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}
