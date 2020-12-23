@@ -32,17 +32,19 @@ declare type RestProps = {
 
 class InfernoEffect {
   private destroy?: () => void;
+  private timeout = 0;
   constructor(
     private effect: () => () => void,
     private dependency: Array<any>
   ) {
-    this.destroy = effect();
+    this.timeout = setTimeout(() => (this.destroy = effect()));
   }
 
   update(dependency?: Array<any>) {
     if (!dependency || dependency.some((d, i) => this.dependency[i] !== d)) {
       this.destroy?.();
-      this.destroy = this.effect();
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => (this.destroy = this.effect()));
     }
     if (dependency) {
       this.dependency = dependency;
