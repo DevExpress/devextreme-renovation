@@ -5,7 +5,8 @@ class WidgetInput {
   __slotChildren?: ElementRef<HTMLDivElement>;
 
   get children() {
-    return this.__slotChildren?.nativeElement?.innerHTML.trim() || "";
+    const childNodes = this.__slotChildren?.nativeElement?.childNodes;
+    return childNodes && childNodes.length > 2;
   }
 }
 
@@ -24,13 +25,11 @@ import { CommonModule } from "@angular/common";
   inputs: ["p"],
   template: `<div
       ><dx-widget
-        ><ng-container
-          [ngTemplateOutlet]="dxchildren"
-        ></ng-container></dx-widget></div
-    ><ng-template #dxchildren
-      ><div #slotChildren style="display: contents"
-        ><ng-content></ng-content></div
-    ></ng-template>`,
+        ><div #slotChildren style="display: contents"
+          ><ng-container
+            [ngTemplateOutlet]="dxchildren"
+          ></ng-container></div></dx-widget></div
+    ><ng-template #dxchildren><ng-content></ng-content></ng-template>`,
 })
 export default class SlotPass extends WidgetInput {
   get __restAttributes(): any {

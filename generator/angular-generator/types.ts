@@ -33,12 +33,6 @@ export interface toStringOptions extends BaseToStringOptions {
   hasDynamicComponents?: boolean;
   isSVG?: boolean;
   checkSlot?: (slot: Property, options: toStringOptions) => void;
-  slots?: {
-    [name: string] : {
-      selector: string,
-      isSVG: boolean | undefined
-    }
-  } 
 }
 
 export type AngularGeneratorContext = GeneratorContext & {

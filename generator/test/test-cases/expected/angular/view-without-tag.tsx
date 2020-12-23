@@ -3,7 +3,8 @@ class WidgetInput {
   __slotChildren?: ElementRef<HTMLDivElement>;
 
   get children() {
-    return this.__slotChildren?.nativeElement?.innerHTML.trim() || "";
+    const childNodes = this.__slotChildren?.nativeElement?.childNodes;
+    return childNodes && childNodes.length > 2;
   }
 }
 
@@ -19,11 +20,9 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<ng-container [ngTemplateOutlet]="dxchildren"></ng-container
-    ><ng-template #dxchildren
-      ><div #slotChildren style="display: contents"
-        ><ng-content></ng-content></div
-    ></ng-template>`,
+  template: `<div #slotChildren style="display: contents"
+      ><ng-container [ngTemplateOutlet]="dxchildren"></ng-container></div
+    ><ng-template #dxchildren><ng-content></ng-content></ng-template>`,
 })
 export default class Widget extends WidgetInput {
   get __restAttributes(): any {

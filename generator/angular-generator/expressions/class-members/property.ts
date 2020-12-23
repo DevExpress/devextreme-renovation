@@ -93,7 +93,8 @@ export class Property extends BaseProperty {
       return `__${selector}?: ElementRef<HTMLDivElement>;
 
             get ${this.name}(){
-                return this.__${selector}?.nativeElement?.innerHTML.trim()||"";
+                const childNodes =  this.__${selector}?.nativeElement?.childNodes;
+                return childNodes && childNodes.length > 2;
             }`;
     }
     if (this.isNestedComp) {

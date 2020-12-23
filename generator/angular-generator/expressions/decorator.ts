@@ -16,7 +16,6 @@ import { getAngularSelector } from "./component";
 import { getProps } from "../../base-generator/expressions/component";
 import { FunctionTypeNode } from "../../base-generator/expressions/type";
 import { Property } from "../../base-generator/expressions/class-members";
-import { capitalizeFirstLetter } from "../../base-generator/utils/string";
 
 function isInputDecorator(name: string): boolean {
   return (
@@ -94,7 +93,7 @@ export class Decorator extends BaseDecorator {
         const templates = compileDefaultTemplates(options, this.context);
         if (templates?.length) template += templates.join("");
         const slots = compileSlots(options);
-        if (slots?.length) template += slots.join("")
+        if (slots?.length) template += slots.join("");
         if (template) {
           parameters.setProperty(
             "template",
@@ -163,17 +162,14 @@ function compileDefaultTemplates(
   }
 }
 
-function compileSlots(options: toStringOptions|undefined): string[]{
-  if (options && options.slots){
-    return Object.entries(options.slots).
-    map(([name, s]) => {
-      const wrapperTagName = s.isSVG ? "svg:g" : "div";
-      const wrapperStyle = s.isSVG ? "" : `style="display: contents"`;
-      return `<ng-template #dx${name}><${wrapperTagName} #slot${
-        capitalizeFirstLetter(name)} ${wrapperStyle}><ng-content${s.selector}></ng-content></${
-          wrapperTagName}></ng-template>`
-    }
-    )
-  }
-  return []
+function compileSlots(options?: toStringOptions): string[] {
+  return (
+    options?.members
+      .filter((m) => m instanceof Property && m.isSlot)
+      .map((slot) => {
+        const selector =
+          slot.name.toString() === "children" ? "" : `select="[${slot.name}]"`;
+        return `<ng-template #dx${slot.name}><ng-content ${selector}></ng-content></ng-template>`;
+      }) || []
+  );
 }

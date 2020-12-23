@@ -40,6 +40,7 @@ import {
   getMember,
 } from "../../../base-generator/utils/expressions";
 import { VariableExpression } from "../../../base-generator/types";
+import { capitalizeFirstLetter } from "../../../base-generator/utils/string";
 
 export const mergeToStringOptions = (
   dst: toStringOptions | undefined,
@@ -100,19 +101,16 @@ export class JsxChildExpression extends JsxExpression {
   }
 
   compileSlot(slot: Property, options: toStringOptions) {
-    const selector = slot.name.toString() === "children" ? "" : `select="[${slot.name}]"`;
-
-    options.slots = options.slots || {};    
-    if (!options.slots[slot.name]){
-      options.slots[slot.name] = {
-        selector: selector, 
-        isSVG: options.isSVG
-      };
-    }
-
     options.checkSlot?.(slot, options);
 
-    return `<ng-container [ngTemplateOutlet]="dx${slot.name}"></ng-container>`;
+    const slotValue = `<ng-container [ngTemplateOutlet]="dx${slot.name}"></ng-container>`;
+
+    const wrapperTagName = options.isSVG ? "svg:g" : "div";
+    const wrapperStyle = options.isSVG ? "" : `style="display: contents"`;
+
+    return `<${wrapperTagName} #slot${capitalizeFirstLetter(
+      slot.name
+    )} ${wrapperStyle}>${slotValue}</${wrapperTagName}>`;
   }
 
   createIfAttribute(condition: Expression): JsxAttribute {

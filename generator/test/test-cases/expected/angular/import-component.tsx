@@ -21,7 +21,8 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["height", "width"],
   outputs: ["onClick"],
-  template: `<dx-widget [height]="__getProps().height"></dx-widget>`,
+  template: `<dx-widget [height]="__getProps().height"></dx-widget
+    ><ng-template #dxchildren><ng-content></ng-content></ng-template>`,
 })
 export default class Child extends ChildInput {
   __getProps(): WidgetProps {
