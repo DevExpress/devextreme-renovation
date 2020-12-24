@@ -794,18 +794,25 @@ export class ReactComponent extends Component {
     );
   }
 
-  compilePortalComponent() {
-    return `import { createPortal } from "react-dom";
-      declare type PortalProps = {
-        container?: HTMLElement | null;
-        children: React.ReactNode,
+  compilePortalComponentCore() {
+    return `
+    declare type PortalProps = {
+      container?: HTMLElement | null;
+      children: React.ReactNode,
+    }
+    const Portal = ({ container, children }: PortalProps): React.ReactPortal | null => {
+      if(container) {
+        return createPortal(children, container);
       }
-      const Portal = ({ container, children }: PortalProps): React.ReactPortal | null => {
-        if(container) {
-          return createPortal(children, container);
-        }
-        return null;
-      }`;
+      return null;
+    }`;
+  }
+
+  compilePortalComponent(): string {
+    if (!this.containsPortal()) {
+      return "";
+    }
+    return this.compilePortalComponentCore();
   }
 
   compileViewCall() {
@@ -841,11 +848,9 @@ export class ReactComponent extends Component {
   toString() {
     const getTemplateFunc = this.compileTemplateGetter();
 
-    const portal = this.containsPortal() ? this.compilePortalComponent() : "";
-
     return `
               ${this.compileImports()}
-              ${portal}
+              ${this.compilePortalComponent()}
               ${
                 this.members.some((m) => m.isNested)
                   ? this.createNestedChildrenCollector()

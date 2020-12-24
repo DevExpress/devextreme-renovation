@@ -1,3 +1,4 @@
+import { createPortal } from "preact/compat";
 function view(model: Widget) {
   return (
     <div>
@@ -21,7 +22,7 @@ export const WidgetProps: WidgetPropsType = {};
 import * as Preact from "preact";
 import { RefObject } from "preact";
 import { useState, useCallback, useEffect } from "preact/hooks";
-import { createPortal } from "preact/compat";
+
 declare type PortalProps = {
   container?: HTMLElement | null;
   children: any;

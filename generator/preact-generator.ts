@@ -130,8 +130,8 @@ export class PreactComponent extends ReactComponent {
     );
   }
 
-  compilePortalComponent() {
-    return `import { createPortal } from "preact/compat";
+  compilePortalComponentCore() {
+    return `
     declare type PortalProps = {
       container?: HTMLElement | null;
       children: any,
@@ -519,8 +519,26 @@ export type GeneratorContext = BaseGeneratorContext & GeneratorOptions;
 
 export class ImportDeclaration extends BaseImportDeclaration {
   compileComponentDeclarationImport() {
+    const preact: string[] = [];
+    const compat: string[] = [];
+
+    const result: string[] = [];
+
     if (this.has("createContext")) {
-      return `import { createContext } from "preact"`;
+      preact.push("createContext");
+    }
+    if (this.has("Portal")) {
+      compat.push("createPortal");
+    }
+
+    if (preact.length) {
+      result.push(`import { ${preact} } from "preact"`);
+    }
+    if (compat.length) {
+      result.push(`import { ${compat} } from "preact/compat"`);
+    }
+    if (result.length) {
+      return result.join(";\n");
     }
     return super.compileComponentDeclarationImport();
   }

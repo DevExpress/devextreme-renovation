@@ -262,6 +262,7 @@ export class InfernoComponent extends PreactComponent {
 
     return `
             ${this.compileImports()}
+            ${this.compilePortalComponent()}
             ${this.compileRestProps()}
             ${this.compileDefaultOptionsMethod()}
             ${this.compileTemplateGetter()}

@@ -2,8 +2,16 @@ import { ImportDeclaration as BaseImportDeclaration } from "../../base-generator
 
 export class ImportDeclaration extends BaseImportDeclaration {
   compileComponentDeclarationImport() {
+    const inferno: string[] = [];
     if (this.has("Fragment")) {
-      return `import {Fragment} from "inferno"`;
+      inferno.push("Fragment");
+    }
+    if (this.has("Portal")) {
+      inferno.push("createPortal");
+    }
+
+    if (inferno.length) {
+      return `import {${inferno}} from "inferno"`;
     }
     return super.compileComponentDeclarationImport();
   }

@@ -234,9 +234,9 @@ mocha.describe("inferno-generation", function () {
   //     this.testGenerator(this.test!.title);
   //   });
 
-  //   mocha.it("portal", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
+  mocha.it("portal", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   //   mocha.it("functions", function () {
   //     this.testGenerator(this.test!.title);
