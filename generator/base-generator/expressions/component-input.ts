@@ -151,8 +151,8 @@ export class ComponentInput extends Class implements Heritable {
   }
 
   buildTemplateProperties(
-    templateMember: Property,
-    members: BaseClassMember[]
+    _templateMember: Property,
+    _members: BaseClassMember[]
   ): Property[] {
     return [];
   }

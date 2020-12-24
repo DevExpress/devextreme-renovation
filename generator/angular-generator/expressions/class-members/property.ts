@@ -180,7 +180,7 @@ export class Property extends BaseProperty {
     return `${componentContext}${this.name}`;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(_options: toStringOptions) {
     return [this.name];
   }
 

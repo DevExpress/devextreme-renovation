@@ -6,11 +6,11 @@ import {
 } from "../types";
 
 export class Expression implements IExpression {
-  getDependency(options: toStringOptions): string[] {
+  getDependency(_options: toStringOptions): string[] {
     return [];
   }
 
-  toString(options?: toStringOptions) {
+  toString(_options?: toStringOptions) {
     return "";
   }
 
@@ -22,7 +22,7 @@ export class Expression implements IExpression {
     return false;
   }
 
-  getImports(context: GeneratorContext): TypeExpressionImports {
+  getImports(_context: GeneratorContext): TypeExpressionImports {
     return [];
   }
 }

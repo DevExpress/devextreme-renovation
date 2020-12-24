@@ -107,7 +107,7 @@ export function createTestGenerator(
   };
 }
 
-export function executeInBuildFolder(modulePath: string) {
+export function executeInBuildFolder(_modulePath: string) {
   const relativePath = path.relative(process.cwd(), __dirname);
   return relativePath.startsWith("build");
 }

@@ -1323,7 +1323,7 @@ export class AngularComponent extends Component {
   returnGetAccessorBlock(
     argumentPattern: BindingPattern,
     options: toStringOptions,
-    spreadVar: BindingElement
+    _spreadVar: BindingElement
   ) {
     const propsNames = getProps(options.members).map((p) => p._name.toString());
     const argNames = argumentPattern.getAllDependency(options);

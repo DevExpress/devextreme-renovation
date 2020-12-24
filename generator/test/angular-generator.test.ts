@@ -128,15 +128,15 @@ mocha.describe("Angular generator", function () {
       `JsxAttribute with template expression - [attr]="string concatenation"`,
       function () {
         const templateExpression = generator.createTemplateExpression(
-          generator.createTemplateHead("a", "a"),
+          generator.createTemplateHead("a"),
           [
             generator.createTemplateSpan(
               generator.createNumericLiteral("1"),
-              generator.createTemplateMiddle("b", "b")
+              generator.createTemplateMiddle("b")
             ),
             generator.createTemplateSpan(
               generator.createNumericLiteral("2"),
-              generator.createTemplateTail("c", "c")
+              generator.createTemplateTail("c")
             ),
           ]
         );
