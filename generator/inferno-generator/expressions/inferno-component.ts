@@ -193,7 +193,7 @@ export class InfernoComponent extends PreactComponent {
   ) {
     if (this.effects.length) {
       const dependencies = this.effects.map((e) =>
-        e.getDependency(this.getToStringOptions())
+        e.getDependency(this.getToStringOptions()).map((d) => `this.${d}`)
       );
 
       const create = this.effects.map((e, i) => {

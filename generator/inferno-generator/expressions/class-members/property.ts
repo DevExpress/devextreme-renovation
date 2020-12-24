@@ -75,10 +75,7 @@ export class Property extends ReactProperty {
     return super.toString(options);
   }
 
-  getDependency(options: toStringOptions) {
-    const componentContext = this.processComponentContext(
-      options.componentContext
-    );
+  getDependency() {
     if (
       this.decorators.some(
         (d) =>
@@ -88,7 +85,7 @@ export class Property extends ReactProperty {
           d.name === Decorators.Slot
       )
     ) {
-      return [`${componentContext}props.${this.name}`];
+      return [`props.${this.name}`];
     } else if (
       this.decorators.some(
         (d) =>
@@ -102,18 +99,15 @@ export class Property extends ReactProperty {
       const scope = this.processComponentContext(this.scope);
       return this.questionOrExclamationToken === "?"
         ? [
-            `${componentContext}${scope}${this.name}${
+            `${scope}${this.name}${
               scope ? this.questionOrExclamationToken : ""
             }.current`,
           ]
         : [];
     } else if (this.isState) {
-      return [
-        `${componentContext}${this.name}`,
-        `${componentContext}props.${this.name}Change`,
-      ];
+      return [`${this.name}`, `props.${this.name}Change`];
     } else if (this.isInternalState || this.isProvider || this.isConsumer) {
-      return [`${componentContext}${this.name}`];
+      return [`${this.name}`];
     }
     throw `Can't parse property: ${this._name}`;
   }
