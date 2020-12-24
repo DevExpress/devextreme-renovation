@@ -143,12 +143,11 @@ function compileDefaultTemplates(
             .join(" ")}></${getAngularSelector(component.name)}>
             </ng-template>`;
           return templateString;
-        }
-        if (template.initializer instanceof BaseFunction) {
+        } else {
           const templateString = `  <ng-template #${name}Default ${template.variables
             .map((v) => `let-${v}="${v}"`)
             .join(" ")}>
-            ${template.initializer.getTemplate({
+            ${(template.initializer as BaseFunction).getTemplate({
               members: [],
               newComponentContext: "",
             })}
@@ -158,4 +157,5 @@ function compileDefaultTemplates(
       })
       .filter((s) => s) as string[];
   }
+  return undefined;
 }

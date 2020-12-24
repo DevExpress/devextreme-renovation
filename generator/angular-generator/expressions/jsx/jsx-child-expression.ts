@@ -160,9 +160,13 @@ export class JsxChildExpression extends JsxExpression {
         this.createJsxExpression(statement)
       ).toString(options);
     }
+    return undefined;
   }
 
-  getExpressionFromStatement(statement: Expression, options?: toStringOptions) {
+  getExpressionFromStatement(
+    statement: Expression,
+    _options?: toStringOptions
+  ) {
     return getJsxExpression(statement);
   }
 
@@ -363,7 +367,7 @@ export class JsxChildExpression extends JsxExpression {
   }
 
   getTemplateForVariable(
-    element: JsxElement | JsxSelfClosingElement,
+    _element: JsxElement | JsxSelfClosingElement,
     identifier: Identifier
   ): JsxElement | JsxSelfClosingElement {
     return new JsxSelfClosingElement(
