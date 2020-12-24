@@ -51,9 +51,14 @@ export default class ContextApp extends JSXComponent(Props) {
 
   @Effect()
   inputEffect() {
-    this.input.addEventListener("input", () => {
-      this.setPageIndex(Number(this.input.value) || 0);
-    });
+    const handler = (e: Event) => {
+      this.setPageIndex(
+        Number(this.pageIndex.toString() + (e as InputEvent).data) || 0
+      );
+    };
+    this.input.addEventListener("input", handler);
+
+    return () => this.input.removeEventListener("input", handler);
   }
 
   setPageIndex(pageIndex: number) {

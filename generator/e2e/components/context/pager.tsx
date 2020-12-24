@@ -33,15 +33,20 @@ class Props {}
 })
 export default class PagerComponent extends JSXComponent(Props) {
   @Consumer(Context)
-  context!: PluginContext;
+  contextConsumer!: PluginContext;
 
   @Ref() input!: RefObject<HTMLInputElement>;
 
   @Effect()
   inputEffect() {
-    this.input.addEventListener("input", () => {
-      this.setPageIndex(Number(this.input.value) || 0);
-    });
+    const handler = (e: Event) => {
+      this.setPageIndex(
+        Number(this.pageIndex.toString() + (e as InputEvent).data) || 0
+      );
+    };
+    this.input.addEventListener("input", handler);
+
+    return () => this.input.removeEventListener("input", handler);
   }
 
   get pageIndex() {
@@ -56,9 +61,9 @@ export default class PagerComponent extends JSXComponent(Props) {
 
   @Effect({ run: "once" })
   effect() {
-    this.paging = this.context.getPlugin("paging");
-    this.context.onChange = () => {
-      this.paging = this.context.getPlugin("paging");
+    this.paging = this.contextConsumer.getPlugin("paging");
+    this.contextConsumer.onChange = () => {
+      this.paging = this.contextConsumer.getPlugin("paging");
     };
   }
 }

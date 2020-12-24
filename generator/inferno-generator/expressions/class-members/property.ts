@@ -1,14 +1,23 @@
 import { Property as ReactProperty } from "../../../react-generator/expressions/class-members/property";
-import { capitalizeFirstLetter } from "../../../base-generator/utils/string";
+import {
+  capitalizeFirstLetter,
+  compileType,
+} from "../../../base-generator/utils/string";
 import { toStringOptions } from "../../../base-generator/types";
 import { TypeReferenceNode } from "../type-reference-node";
 import { Decorators } from "../../../component_declaration/decorators";
 
 export class Property extends ReactProperty {
   getter(componentContext?: string, keepRef?: boolean) {
-    if (this.isInternalState || this.isState) {
+    if (
+      this.isInternalState ||
+      this.isState ||
+      this.isProvider ||
+      this.isConsumer
+    ) {
       return `${this.processComponentContext(componentContext)}${this.name}`;
     }
+
     return super.getter(componentContext, keepRef);
   }
 
@@ -42,6 +51,25 @@ export class Property extends ReactProperty {
       return `${this.modifiers.join(" ")} ${
         this.name
       } = infernoCreateRef<${type}>()`;
+    }
+
+    if (this.isProvider) {
+      return `${this.modifiers.join(" ")} ${this.typeDeclaration()} ${
+        this.initializer && this.initializer.toString()
+          ? `= ${this.initializer.toString()}`
+          : ""
+      }`;
+    }
+
+    if (this.isConsumer) {
+      return `${this.modifiers.join(" ")} get ${this.name}()${compileType(
+        this.type.toString()
+      )}{
+        if("${this.context}" in this.context){
+          return this.context.${this.context};
+        }
+        return ${this.context};
+      }`;
     }
 
     return super.toString(options);
@@ -84,10 +112,8 @@ export class Property extends ReactProperty {
         `${componentContext}${this.name}`,
         `${componentContext}props.${this.name}Change`,
       ];
-    } else if (this.isInternalState) {
+    } else if (this.isInternalState || this.isProvider || this.isConsumer) {
       return [`${componentContext}${this.name}`];
-    } else if (this.isProvider || this.isConsumer) {
-      return [this.name];
     }
     throw `Can't parse property: ${this._name}`;
   }

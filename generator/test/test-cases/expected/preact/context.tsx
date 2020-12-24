@@ -22,7 +22,7 @@ declare type RestProps = {
 };
 interface Widget {
   props: typeof Props & RestProps;
-  context: number;
+  contextConsumer: number;
   provider: number;
   sum: any;
   contextProvider: any;
@@ -30,13 +30,13 @@ interface Widget {
 }
 
 export default function Widget(props: typeof Props & RestProps) {
-  const context = useContext(P1Context);
+  const contextConsumer = useContext(P1Context);
   const [provider] = useState(10);
   const __sum = useCallback(
     function __sum(): any {
-      return provider + context;
+      return provider + contextConsumer;
     },
-    [provider, context]
+    [provider, contextConsumer]
   );
   const __contextProvider = useCallback(function __contextProvider(): any {
     return "provide";
@@ -54,7 +54,7 @@ export default function Widget(props: typeof Props & RestProps) {
       <P1Context.Provider value={provider}>
         {view({
           props: { ...props },
-          context,
+          contextConsumer,
           provider,
           sum: __sum(),
           contextProvider: __contextProvider(),

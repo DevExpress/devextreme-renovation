@@ -245,6 +245,27 @@ export class InfernoComponent extends PreactComponent {
     return "";
   }
 
+  compileProviders(_providers: Property[], viewCallExpression: string) {
+    return viewCallExpression;
+  }
+
+  compileGetChildContext() {
+    const providers = this.members.filter((m) => m.isProvider);
+
+    if (providers.length) {
+      return this.compileLifeCycle("getChildContext", [
+        `
+        return {
+          ...this.context,
+          ${providers.map((p) => `${p.context}: this.${p.name}`).join(",\n")}
+        }
+      `,
+      ]);
+    }
+
+    return "";
+  }
+
   toString() {
     const propsType = this.compilePropsType();
 
@@ -301,6 +322,8 @@ export class InfernoComponent extends PreactComponent {
                   "componentWillUnmount",
                   componentWillUnmountStatements
                 )}
+                
+                ${this.compileGetChildContext()}
 
                 ${this.effects
                   .concat(this.methods)

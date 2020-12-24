@@ -647,7 +647,11 @@ export class ReactComponent extends Component {
           .filter(
             (m) => (m.isConsumer || m.isProvider) && !(m instanceof GetAccessor)
           )
-          .map((m) => m.name.toString())
+          .map((m) =>
+            toStringOptions.newComponentContext
+              ? `${m.name}:${m.getter(toStringOptions.componentContext)}`
+              : m.name.toString()
+          )
       )
       .concat(compileState(this.methods.filter((m) => !m.isPrivate)));
 
@@ -815,6 +819,14 @@ export class ReactComponent extends Component {
     return this.compilePortalComponentCore();
   }
 
+  compileProviders(providers: Property[], viewCallExpression: string) {
+    return providers.reduce((result, p) => {
+      return `<${p.context}.Provider value={${p.getter()}}>
+            ${result}
+          </${p.context}.Provider>`;
+    }, `{${viewCallExpression}}`);
+  }
+
   compileViewCall() {
     const viewFunction = this.context.viewFunctions?.[this.view];
     const callView = `${this.view}(
@@ -827,14 +839,10 @@ export class ReactComponent extends Component {
         }
     )`;
 
-    const providers = this.members.filter((m) => m.isProvider);
+    const providers = this.members.filter((m) => m.isProvider) as Property[];
 
     if (providers.length) {
-      return providers.reduce((result, p) => {
-        return `<${p.context}.Provider value={${p.getter()}}>
-              ${result}
-            </${p.context}.Provider>`;
-      }, `{${callView}}`);
+      return this.compileProviders(providers, callView);
     }
 
     return callView;
