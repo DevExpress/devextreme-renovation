@@ -285,7 +285,6 @@ export class InfernoComponent extends PreactComponent {
             ${this.compileImports()}
             ${this.compilePortalComponent()}
             ${this.compileRestProps()}
-            ${this.compileDefaultOptionsMethod()}
             ${this.compileTemplateGetter()}
             ${this.compileEffectClass()}
             ${this.modifiers.join(" ")} class ${
@@ -337,6 +336,8 @@ export class InfernoComponent extends PreactComponent {
             }
 
             ${this.compileDefaultProps()}
+
+            ${this.compileDefaultOptionsMethod()}
         `;
   }
 }

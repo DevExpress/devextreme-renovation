@@ -10,18 +10,13 @@ import {
 } from "../../../../component_declaration/default_options";
 import { Component as InfernoComponent } from "inferno";
 import { createElement as h } from "inferno-compat";
+
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
   ref?: any;
 };
-type WidgetOptionRule = Rule<typeof WidgetProps>;
-
-const __defaultOptionRules: WidgetOptionRule[] = [];
-export function defaultOptions(rule: WidgetOptionRule) {
-  __defaultOptionRules.push(rule);
-}
 
 export default class Widget extends InfernoComponent<
   typeof WidgetProps & RestProps
@@ -53,3 +48,14 @@ function __createDefaultProps() {
   };
 }
 Widget.defaultProps = __createDefaultProps();
+
+type WidgetOptionRule = Rule<typeof WidgetProps>;
+
+const __defaultOptionRules: WidgetOptionRule[] = [];
+export function defaultOptions(rule: WidgetOptionRule) {
+  __defaultOptionRules.push(rule);
+  Widget.defaultProps = {
+    ...__createDefaultProps(),
+    ...convertRulesToOptions<typeof WidgetProps>(__defaultOptionRules),
+  };
+}

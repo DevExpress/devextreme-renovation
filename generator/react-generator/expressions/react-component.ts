@@ -848,6 +848,15 @@ export class ReactComponent extends Component {
     return callView;
   }
 
+  compileDefaultOptionsMethod() {
+    return super.compileDefaultOptionsMethod("[]", [
+      `${this.defaultPropsDest()} = {
+            ...__createDefaultProps(),
+            ...${this.compileConvertRulesToOptions("__defaultOptionRules")}
+        };`,
+    ]);
+  }
+
   compileFunctionalComponentType() {
     return `React.FC<${this.compilePropsType()} & { ref?: React.Ref<${
       this.name
@@ -927,13 +936,6 @@ export class ReactComponent extends Component {
               ${this.compileDefaultComponentExport()}
 
               ${this.compileDefaultProps()}
-              ${this.compileDefaultOptionsMethod("[]", [
-                `${this.defaultPropsDest()} = {
-                      ...__createDefaultProps(),
-                      ...${this.compileConvertRulesToOptions(
-                        "__defaultOptionRules"
-                      )}
-                  };`,
-              ])}`;
+              ${this.compileDefaultOptionsMethod()}`;
   }
 }
