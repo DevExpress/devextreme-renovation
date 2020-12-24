@@ -31,7 +31,7 @@ const servers = [
   },
   {
     platform: "Inferno",
-    port: 3003,
+    port: 3004,
     contentBase: path.join(__dirname, "./platforms/inferno/app/dist/"),
     config: require("./platforms/inferno/webpack.config"),
     instance: null,
