@@ -95,9 +95,9 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  // mocha.it("styles-type", function () {
-  //   this.testGenerator(this.test!.title);
-  // });
+  mocha.it("styles-type", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   mocha.it("listen", function () {
     this.testGenerator(this.test!.title);
