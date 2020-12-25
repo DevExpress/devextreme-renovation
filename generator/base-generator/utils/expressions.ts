@@ -16,7 +16,11 @@ export function getExpression(
   options?: toStringOptions
 ): Expression {
   if (expression instanceof Identifier) {
-    while (options?.variables?.[expression.toString()]) {
+    while (
+      options?.variables?.[expression.toString()] &&
+      options.variables[expression.toString()].toString() !==
+        expression.toString()
+    ) {
       expression = options.variables[expression.toString()];
     }
   }

@@ -9,6 +9,10 @@
           }}{{ global_SomeClass.name }}</div
         ></span
       ></template
+    ><div
+      ><template v-for="i of global_array"
+        ><div :key="i">{{ i.toString() }}</div></template
+      ></div
     ></div
   >
 </template>
@@ -22,6 +26,7 @@ const conditionFn = (cell) => {
   return cell.visible;
 };
 const getValue = (cell) => cell.text;
+const array = new Array(100).map((_, index) => index);
 const CLASS_NAME = arrowFunction();
 export const WidgetProps = {
   cells: {
@@ -41,6 +46,7 @@ export const DxWidget = {
       global_conditionFn: conditionFn,
       global_getValue: getValue,
       global_SomeClass: SomeClass,
+      global_array: array,
     };
   },
   computed: {
