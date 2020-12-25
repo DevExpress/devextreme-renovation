@@ -14,7 +14,7 @@ export default class NativeComponents extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      counterValue: 10,
+      counterValue: 15,
     };
 
     this.counterValueChange = this.counterValueChange.bind(this);
