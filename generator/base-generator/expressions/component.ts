@@ -311,7 +311,7 @@ export class Component extends Class implements Heritable {
     return "";
   }
 
-  createRestPropsGetter(members: BaseClassMember[]) {
+  createRestPropsGetter(_members: BaseClassMember[]) {
     return new GetAccessor(
       undefined,
       undefined,
@@ -548,9 +548,9 @@ export class Component extends Class implements Heritable {
   }
 
   returnGetAccessorBlock(
-    argumentPattern: BindingPattern,
-    options: toStringOptions,
-    spreadVar: BindingElement
+    _argumentPattern: BindingPattern,
+    _options: toStringOptions,
+    _spreadVar: BindingElement
   ) {
     return new Block([], true);
   }
@@ -582,7 +582,7 @@ export class Component extends Class implements Heritable {
     } else return undefined;
   }
 
-  createViewSpreadAccessor(name: Identifier, body: Block, props: Property[]) {
+  createViewSpreadAccessor(name: Identifier, body: Block, _props: Property[]) {
     return new GetAccessor(undefined, undefined, name, [], undefined, body);
   }
 }

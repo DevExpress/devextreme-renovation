@@ -34,7 +34,7 @@ const BasicTypes = [
 ];
 export function calculatePropertyType(
   type: TypeExpression | string,
-  initializer?: Expression
+  _initializer?: Expression
 ): string {
   if (type instanceof TypeReferenceNode && type.context.imports) {
     const imports = type.context.imports;

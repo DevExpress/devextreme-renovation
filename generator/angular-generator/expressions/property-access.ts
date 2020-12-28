@@ -9,7 +9,7 @@ import { Property } from "../../base-generator/expressions/class-members";
 
 export class PropertyAccess extends BasePropertyAccess {
   processProps(
-    result: string,
+    _result: string,
     options: toStringOptions,
     elements: BindingElement[] = []
   ) {

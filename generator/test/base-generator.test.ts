@@ -1788,15 +1788,15 @@ mocha.describe("base-generator: expressions", function () {
   mocha.describe("Template string", function () {
     mocha.it("createTemplateExpression", function () {
       const expression = generator.createTemplateExpression(
-        generator.createTemplateHead("a", "a"),
+        generator.createTemplateHead("a"),
         [
           generator.createTemplateSpan(
             generator.createNumericLiteral("1"),
-            generator.createTemplateMiddle("b", "b")
+            generator.createTemplateMiddle("b")
           ),
           generator.createTemplateSpan(
             generator.createNumericLiteral("2"),
-            generator.createTemplateTail("c", "c")
+            generator.createTemplateTail("c")
           ),
         ]
       );
@@ -1808,15 +1808,15 @@ mocha.describe("base-generator: expressions", function () {
       "createTemplateExpression - convert to string concatenation",
       function () {
         const expression = generator.createTemplateExpression(
-          generator.createTemplateHead("a", "a"),
+          generator.createTemplateHead("a"),
           [
             generator.createTemplateSpan(
               generator.createNumericLiteral("1"),
-              generator.createTemplateMiddle("b", "b")
+              generator.createTemplateMiddle("b")
             ),
             generator.createTemplateSpan(
               generator.createNumericLiteral("2"),
-              generator.createTemplateTail("c", "c")
+              generator.createTemplateTail("c")
             ),
           ]
         );
@@ -1832,10 +1832,7 @@ mocha.describe("base-generator: expressions", function () {
     );
 
     mocha.it("createNoSubstitutionTemplateLiteral", function () {
-      const expression = generator.createNoSubstitutionTemplateLiteral(
-        "10",
-        "10"
-      );
+      const expression = generator.createNoSubstitutionTemplateLiteral("10");
 
       assert.equal(expression.toString(), "`10`");
     });

@@ -144,7 +144,7 @@ export class JsxAttribute extends BaseJsxAttribute {
     return templateProps?.some((p) => p.name === this.name.toString()) || false;
   }
 
-  skipValue(options?: toStringOptions) {
+  skipValue(_options?: toStringOptions) {
     return false;
   }
 

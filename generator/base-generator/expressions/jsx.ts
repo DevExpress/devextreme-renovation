@@ -39,7 +39,7 @@ export function getJsxExpression(
     e instanceof ExpressionWithOptionalExpression
   ) {
     return getJsxExpression(e.expression, options);
-  } else if (e instanceof Expression) {
+  } else {
     return new JsxExpression(undefined, e);
   }
 }
@@ -62,7 +62,7 @@ export class JsxAttribute {
       initializer || new JsxExpression(undefined, new SimpleExpression("true"));
   }
 
-  getTemplateContext(options?: toStringOptions): PropertyAssignment[] {
+  getTemplateContext(_options?: toStringOptions): PropertyAssignment[] {
     return [];
   }
 
@@ -81,8 +81,8 @@ export class JsxOpeningElement extends Expression {
 
   processTagName(
     tagName: Expression,
-    options?: toStringOptions,
-    isClosing: boolean = false
+    _options?: toStringOptions,
+    _isClosing: boolean = false
   ) {
     return tagName;
   }

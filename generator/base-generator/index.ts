@@ -159,7 +159,7 @@ export default class Generator implements GeneratorAPI {
     return new Identifier(name);
   }
 
-  createNumericLiteral(value: string, numericLiteralFlags = ""): Expression {
+  createNumericLiteral(value: string, _numericLiteralFlags = ""): Expression {
     return new NumericLiteral(value);
   }
 
@@ -317,11 +317,11 @@ export default class Generator implements GeneratorAPI {
     return new CatchClause(variableDeclaration, expression);
   }
 
-  createBreak(label?: string | Identifier) {
+  createBreak() {
     return new SimpleExpression(this.SyntaxKind.BreakKeyword);
   }
 
-  createContinue(label?: string | Identifier) {
+  createContinue() {
     return new SimpleExpression(this.SyntaxKind.ContinueKeyword);
   }
 
@@ -476,9 +476,9 @@ export default class Generator implements GeneratorAPI {
   }
 
   createExportAssignment(
-    decorators: Decorator[] = [],
-    modifiers: string[] = [],
-    isExportEquals: any,
+    _decorators: Decorator[] = [],
+    _modifiers: string[] = [],
+    _isExportEquals: any,
     expression: Expression
   ) {
     return `export default ${expression}`;
@@ -1088,13 +1088,13 @@ export default class Generator implements GeneratorAPI {
     return new Conditional(condition, whenTrue, whenFalse);
   }
 
-  createTemplateHead(text: string, rawText?: string) {
+  createTemplateHead(text: string) {
     return text;
   }
-  createTemplateMiddle(text: string, rawText?: string) {
+  createTemplateMiddle(text: string) {
     return text;
   }
-  createTemplateTail(text: string, rawText?: string) {
+  createTemplateTail(text: string) {
     return text;
   }
 
@@ -1106,7 +1106,7 @@ export default class Generator implements GeneratorAPI {
     return new TemplateExpression(head, templateSpans);
   }
 
-  createNoSubstitutionTemplateLiteral(text: string, rawText?: string) {
+  createNoSubstitutionTemplateLiteral(text: string) {
     return new TemplateExpression(text, []);
   }
 
@@ -1241,7 +1241,7 @@ export default class Generator implements GeneratorAPI {
   addComponent(
     name: string,
     component: Component | ComponentInput,
-    importClause?: ImportClause
+    _importClause?: ImportClause
   ) {
     const context = this.getContext();
     context.components = context.components || {};
@@ -1374,6 +1374,7 @@ export default class Generator implements GeneratorAPI {
           codeFactoryResult.splice(index, 1);
           return true;
         }
+        return undefined;
       });
     }
   }

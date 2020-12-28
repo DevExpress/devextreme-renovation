@@ -218,7 +218,7 @@ export class VueGenerator extends BaseGenerator {
   createCallChain(
     expression: Expression,
     questionDotToken: string | undefined,
-    typeArguments: TypeExpression[] | undefined,
+    _typeArguments: TypeExpression[] | undefined,
     argumentsArray: Expression[] | undefined
   ) {
     return new CallChain(

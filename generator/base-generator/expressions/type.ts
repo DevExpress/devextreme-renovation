@@ -220,7 +220,7 @@ export class TypeLiteralNode extends TypeExpression {
     this.members = members;
   }
 
-  toString(options?: toStringOptions) {
+  toString(_options?: toStringOptions) {
     return `{${this.members.join(",")}}`;
   }
 }
@@ -273,7 +273,7 @@ export class IndexSignature extends Expression {
     this.type = type;
   }
 
-  toString(options?: toStringOptions) {
+  toString(_options?: toStringOptions) {
     return `${this.parameters.map((p) => `[${p.typeDeclaration()}]`)}:${
       this.type
     }`;

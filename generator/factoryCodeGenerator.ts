@@ -51,19 +51,19 @@ export function generateFactoryCode(
         createIdentifier(node as import("typescript").Identifier);
         return;
       case ts.SyntaxKind.SuperKeyword:
-        createSuper(node as import("typescript").SuperExpression);
+        createSuper();
         return;
       case ts.SyntaxKind.ThisKeyword:
-        createThis(node as import("typescript").ThisExpression);
+        createThis();
         return;
       case ts.SyntaxKind.NullKeyword:
-        createNull(node as import("typescript").NullLiteral);
+        createNull();
         return;
       case ts.SyntaxKind.TrueKeyword:
-        createTrue(node as import("typescript").BooleanLiteral);
+        createTrue();
         return;
       case ts.SyntaxKind.FalseKeyword:
-        createFalse(node as import("typescript").BooleanLiteral);
+        createFalse();
         return;
       case ts.SyntaxKind.QualifiedName:
         createQualifiedName(node as import("typescript").QualifiedName);
@@ -209,7 +209,7 @@ export function generateFactoryCode(
         );
         return;
       case ts.SyntaxKind.ThisType:
-        createThisTypeNode(node as import("typescript").ThisTypeNode);
+        createThisTypeNode();
         return;
       case ts.SyntaxKind.TypeOperator:
         createTypeOperatorNode(node as import("typescript").TypeOperatorNode);
@@ -359,7 +359,7 @@ export function generateFactoryCode(
         createClassExpression(node as import("typescript").ClassExpression);
         return;
       case ts.SyntaxKind.OmittedExpression:
-        createOmittedExpression(node as import("typescript").OmittedExpression);
+        createOmittedExpression();
         return;
       case ts.SyntaxKind.ExpressionWithTypeArguments:
         createExpressionWithTypeArguments(
@@ -379,9 +379,7 @@ export function generateFactoryCode(
         createTemplateSpan(node as import("typescript").TemplateSpan);
         return;
       case ts.SyntaxKind.SemicolonClassElement:
-        createSemicolonClassElement(
-          node as import("typescript").SemicolonClassElement
-        );
+        createSemicolonClassElement();
         return;
       case ts.SyntaxKind.Block:
         createBlock(node as import("typescript").Block);
@@ -390,7 +388,7 @@ export function generateFactoryCode(
         createVariableStatement(node as import("typescript").VariableStatement);
         return;
       case ts.SyntaxKind.EmptyStatement:
-        createEmptyStatement(node as import("typescript").EmptyStatement);
+        createEmptyStatement();
         return;
       case ts.SyntaxKind.ExpressionStatement:
         createExpressionStatement(
@@ -440,7 +438,7 @@ export function generateFactoryCode(
         createTry(node as import("typescript").TryStatement);
         return;
       case ts.SyntaxKind.DebuggerStatement:
-        createDebuggerStatement(node as import("typescript").DebuggerStatement);
+        createDebuggerStatement();
         return;
       case ts.SyntaxKind.VariableDeclaration:
         createVariableDeclaration(
@@ -545,14 +543,10 @@ export function generateFactoryCode(
         createJsxText(node as import("typescript").JsxText);
         return;
       case ts.SyntaxKind.JsxOpeningFragment:
-        createJsxOpeningFragment(
-          node as import("typescript").JsxOpeningFragment
-        );
+        createJsxOpeningFragment();
         return;
       case ts.SyntaxKind.JsxClosingFragment:
-        createJsxJsxClosingFragment(
-          node as import("typescript").JsxClosingFragment
-        );
+        createJsxJsxClosingFragment();
         return;
       case ts.SyntaxKind.JsxAttribute:
         createJsxAttribute(node as import("typescript").JsxAttribute);
@@ -649,27 +643,27 @@ export function generateFactoryCode(
     writer.write(")");
   }
 
-  function createSuper(node: import("typescript").SuperExpression) {
+  function createSuper() {
     writer.write("ts.createSuper(");
     writer.write(")");
   }
 
-  function createThis(node: import("typescript").ThisExpression) {
+  function createThis() {
     writer.write("ts.createThis(");
     writer.write(")");
   }
 
-  function createNull(node: import("typescript").NullLiteral) {
+  function createNull() {
     writer.write("ts.createNull(");
     writer.write(")");
   }
 
-  function createTrue(node: import("typescript").BooleanLiteral) {
+  function createTrue() {
     writer.write("ts.createTrue(");
     writer.write(")");
   }
 
-  function createFalse(node: import("typescript").BooleanLiteral) {
+  function createFalse() {
     writer.write("ts.createFalse(");
     writer.write(")");
   }
@@ -1779,7 +1773,7 @@ export function generateFactoryCode(
     writer.write(")");
   }
 
-  function createThisTypeNode(node: import("typescript").ThisTypeNode) {
+  function createThisTypeNode() {
     writer.write("ts.createThisTypeNode(");
     writer.write(")");
   }
@@ -2597,9 +2591,7 @@ export function generateFactoryCode(
     writer.write(")");
   }
 
-  function createOmittedExpression(
-    node: import("typescript").OmittedExpression
-  ) {
+  function createOmittedExpression() {
     writer.write("ts.createOmittedExpression(");
     writer.write(")");
   }
@@ -2674,9 +2666,7 @@ export function generateFactoryCode(
     writer.write(")");
   }
 
-  function createSemicolonClassElement(
-    node: import("typescript").SemicolonClassElement
-  ) {
+  function createSemicolonClassElement() {
     writer.write("ts.createSemicolonClassElement(");
     writer.write(")");
   }
@@ -2742,7 +2732,7 @@ export function generateFactoryCode(
     writer.write(")");
   }
 
-  function createEmptyStatement(node: import("typescript").EmptyStatement) {
+  function createEmptyStatement() {
     writer.write("ts.createEmptyStatement(");
     writer.write(")");
   }
@@ -2936,9 +2926,7 @@ export function generateFactoryCode(
     writer.write(")");
   }
 
-  function createDebuggerStatement(
-    node: import("typescript").DebuggerStatement
-  ) {
+  function createDebuggerStatement() {
     writer.write("ts.createDebuggerStatement(");
     writer.write(")");
   }
@@ -4030,16 +4018,12 @@ export function generateFactoryCode(
     writer.write(")");
   }
 
-  function createJsxOpeningFragment(
-    node: import("typescript").JsxOpeningFragment
-  ) {
+  function createJsxOpeningFragment() {
     writer.write("ts.createJsxOpeningFragment(");
     writer.write(")");
   }
 
-  function createJsxJsxClosingFragment(
-    node: import("typescript").JsxClosingFragment
-  ) {
+  function createJsxJsxClosingFragment() {
     writer.write("ts.createJsxJsxClosingFragment(");
     writer.write(")");
   }

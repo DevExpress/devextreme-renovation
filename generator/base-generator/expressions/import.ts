@@ -84,6 +84,7 @@ export class ImportClause {
         return node.propertyName?.toString() || name;
       }
     }
+    return undefined;
   }
 
   remove(name: string) {
