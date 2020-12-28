@@ -381,6 +381,13 @@ class JQueryComponent {
         .join(", ")}`;
     }
 
+    const templateList = this.source.props.reduce((arr: string[], prop) => {
+      if (prop.isTemplate) {
+        return [...arr, `'${prop.name}'`];
+      }
+      return arr;
+    }, []);
+
     return `
         get _propsInfo() {
             return {
@@ -388,7 +395,8 @@ class JQueryComponent {
                   (s) => `['${s.name}', ${s.initializer}, '${s.name}Change']`
                 )}],
                 allowNull: [${withNullType}],
-                elements: [${withElementType}]
+                elements: [${withElementType}],
+                templates: [${templateList}]
             };
         }
         `;
