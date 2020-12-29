@@ -1,10 +1,10 @@
+import { InfernoComponent } from "../../../../modules/inferno/base_component";
 import { PickedProps, GridColumnProps } from "./nested-props";
 export const CustomColumnComponent = (props: typeof GridColumnProps) => {};
 function view(model: Widget) {
   return <div />;
 }
 
-import { Component as InfernoComponent } from "inferno";
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;

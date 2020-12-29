@@ -1,3 +1,4 @@
+import { InfernoComponent } from "../../../../modules/inferno/base_component";
 export const COMPONENT_INPUT_CLASS = "c3";
 function view(model: Widget) {
   return <div></div>;
@@ -12,7 +13,6 @@ export const WidgetProps: WidgetPropsType = {
   height: 10,
   width: 10,
 };
-import { Component as InfernoComponent } from "inferno";
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;

@@ -1,3 +1,4 @@
+import { InfernoComponent } from "../../../../modules/inferno/base_component";
 function view(model: Widget): any {
   return <span></span>;
 }
@@ -15,7 +16,6 @@ export const WidgetInput: WidgetInputType = {
   onClick: () => {},
   onSomething: () => {},
 };
-import { Component as InfernoComponent } from "inferno";
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;

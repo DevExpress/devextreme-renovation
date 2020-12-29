@@ -1,3 +1,4 @@
+import { InfernoComponent } from "../../../../modules/inferno/base_component";
 import InnerWidget from "./dx-inner-widget";
 function view({ props, restAttributes }: Widget) {
   return <InnerWidget {...(props as any)} {...restAttributes} />;
@@ -12,7 +13,6 @@ export declare type WidgetInputType = {
 export const WidgetInput: WidgetInputType = {
   valueChange: () => {},
 };
-import { Component as InfernoComponent } from "inferno";
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;

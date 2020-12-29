@@ -1,4 +1,6 @@
-import { createPortal } from "inferno";
+import { Portal } from "../../../../modules/inferno/portal";
+import { InfernoEffect } from "../../../../modules/inferno/effect";
+import { InfernoComponent } from "../../../../modules/inferno/base_component";
 function view(model: Widget) {
   return (
     <div>
@@ -19,19 +21,8 @@ export declare type WidgetPropsType = {
   someRef?: RefObject<HTMLElement>;
 };
 export const WidgetProps: WidgetPropsType = {};
-import { Component as InfernoComponent, RefObject } from "inferno";
 import { createElement as h } from "inferno-compat";
-
-declare type PortalProps = {
-  container?: HTMLElement | null;
-  children: any;
-};
-const Portal = ({ container, children }: PortalProps): any => {
-  if (container) {
-    return createPortal(children, container);
-  }
-  return null;
-};
+import { RefObject } from "inferno";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
@@ -39,31 +30,6 @@ declare type RestProps = {
   ref?: any;
 };
 
-class InfernoEffect {
-  private destroy?: () => void;
-  private timeout = 0;
-  constructor(
-    private effect: () => () => void,
-    private dependency: Array<any>
-  ) {
-    this.timeout = setTimeout(() => (this.destroy = effect()));
-  }
-
-  update(dependency?: Array<any>) {
-    if (!dependency || dependency.some((d, i) => this.dependency[i] !== d)) {
-      this.destroy?.();
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => (this.destroy = this.effect()));
-    }
-    if (dependency) {
-      this.dependency = dependency;
-    }
-  }
-
-  dispose() {
-    this.destroy?.();
-  }
-}
 export default class Widget extends InfernoComponent<
   typeof WidgetProps & RestProps
 > {
@@ -72,7 +38,6 @@ export default class Widget extends InfernoComponent<
   };
   refs: any;
 
-  _effects: InfernoEffect[] = [];
   constructor(props: typeof WidgetProps & RestProps) {
     super(props);
     this.state = {
@@ -81,19 +46,16 @@ export default class Widget extends InfernoComponent<
     this.onInit = this.onInit.bind(this);
   }
 
+  createEffects() {
+    return [new InfernoEffect(this.onInit, [])];
+  }
+  updateEffects() {}
+
   get rendered(): boolean {
     return this.state.rendered;
   }
   set rendered(value: boolean) {
     this.setState({ rendered: value });
-  }
-
-  componentDidMount() {
-    this._effects = [new InfernoEffect(this.onInit, [])];
-  }
-  componentDidUpdate() {}
-  componentWillUnmount() {
-    this._effects.forEach((e) => e.dispose());
   }
 
   onInit(): any {

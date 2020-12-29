@@ -1,8 +1,8 @@
+import { InfernoComponent } from "../../../../modules/inferno/base_component";
 function view(model: Widget) {
   return <span></span>;
 }
 
-import { Component as InfernoComponent } from "inferno";
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;

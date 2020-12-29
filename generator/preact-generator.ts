@@ -723,7 +723,8 @@ export class PreactGenerator extends ReactGenerator {
       decorators,
       modifiers,
       importClause,
-      moduleSpecifier
+      moduleSpecifier,
+      this.getContext()
     );
   }
 

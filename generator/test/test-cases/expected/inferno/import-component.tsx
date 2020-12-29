@@ -1,3 +1,4 @@
+import { InfernoComponent } from "../../../../modules/inferno/base_component";
 import Base, { WidgetProps } from "./component-input";
 function view(model: Child) {
   return <Base height={model.getProps().height} />;
@@ -12,7 +13,6 @@ const ChildInput: ChildInputType = {
   height: 10,
   onClick: () => {},
 };
-import { Component as InfernoComponent } from "inferno";
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;

@@ -1,3 +1,4 @@
+import { InfernoComponent } from "../../../../modules/inferno/base_component";
 import { WidgetWithProps, WidgetWithPropsInput } from "./dx-widget-with-props";
 
 export declare type WidgetInputType = {
@@ -24,7 +25,6 @@ export const WidgetInput: WidgetInputType = {
   footerTemplate: () => <div></div>,
   componentTemplate: WidgetWithProps,
 };
-import { Component as InfernoComponent } from "inferno";
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;
@@ -32,13 +32,11 @@ declare type RestProps = {
   key?: any;
   ref?: any;
 };
-
 const getTemplate = (TemplateProp: any) =>
   TemplateProp &&
   (TemplateProp.defaultProps
     ? (props: any) => <TemplateProp {...props} />
     : TemplateProp);
-
 export default class WidgetWithTemplate extends InfernoComponent<
   typeof WidgetInput & RestProps
 > {

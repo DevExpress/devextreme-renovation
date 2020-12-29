@@ -1,3 +1,4 @@
+import { InfernoComponent } from "../../../../modules/inferno/base_component";
 function view(model: InnerWidget) {
   return <div style={{ width: 100, height: 100 }}></div>;
 }
@@ -13,7 +14,6 @@ export const InnerWidgetProps: InnerWidgetPropsType = ({
   defaultValue: 14,
   valueChange: () => {},
 } as any) as InnerWidgetPropsType;
-import { Component as InfernoComponent } from "inferno";
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;

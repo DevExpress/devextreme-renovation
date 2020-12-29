@@ -1,3 +1,4 @@
+import { InfernoComponent } from "../../../../modules/inferno/base_component";
 function view(viewModel: Widget) {
   return (
     <div ref={viewModel.divRef}>
@@ -14,12 +15,8 @@ export declare type WidgetPropsType = {
   requiredForwardRefProp: RefObject<HTMLDivElement>;
 };
 const WidgetProps: WidgetPropsType = ({} as any) as WidgetPropsType;
-import {
-  Component as InfernoComponent,
-  createRef as infernoCreateRef,
-  RefObject,
-} from "inferno";
 import { createElement as h } from "inferno-compat";
+import { createRef as infernoCreateRef, RefObject } from "inferno";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };

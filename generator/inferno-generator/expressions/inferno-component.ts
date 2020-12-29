@@ -29,10 +29,10 @@ export class InfernoComponent extends PreactComponent {
 
   compileImportStatements(
     hooks: string[],
-    compats: string[],
+    _compats: string[],
     core: string[]
   ): string[] {
-    const coreImports = ["Component as InfernoComponent"];
+    const coreImports = [];
     const coreSet = new Set(core);
     const hooksSet = new Set(hooks);
 
@@ -43,10 +43,12 @@ export class InfernoComponent extends PreactComponent {
     if (coreSet.has(this.REF_OBJECT_TYPE)) {
       coreImports.push(this.REF_OBJECT_TYPE);
     }
-    const imports = [
-      `import { ${coreImports.join(",")} } from "inferno"`,
-      `import { createElement as h } from "inferno-compat";`,
-    ];
+    const imports = [`import { createElement as h } from "inferno-compat";`];
+
+    if (coreImports.length) {
+      imports.push(`import { ${coreImports.join(",")} } from "inferno"`);
+    }
+
     return imports;
   }
 
@@ -156,41 +158,9 @@ export class InfernoComponent extends PreactComponent {
     return "";
   }
 
-  compileEffectClass() {
-    if (this.effects.length) {
-      return `class InfernoEffect {
-        private destroy?: () => void;
-        private timeout = 0;
-        constructor(private effect: ()=>()=>void, private dependency: Array<any>) { 
-          this.timeout = setTimeout(()=>this.destroy = effect())
-          
-        }
-      
-        update(dependency?: Array<any>) { 
-          if (!dependency || dependency.some((d, i) => this.dependency[i] !== d)) { 
-            this.destroy?.();
-            clearTimeout(this.timeout);
-            this.timeout = setTimeout(()=>this.destroy = this.effect())
-          }
-          if (dependency) {
-            this.dependency = dependency;
-          }
-        }
-      
-        dispose() { 
-          this.destroy?.();
-        }
-      }`;
-    }
-
-    return "";
-  }
-
-  compileEffects(
-    didMountStatements: string[],
-    didUpdateStatements: string[],
-    componentWillUnmountStatements: string[]
-  ) {
+  compileEffects() {
+    const createEffectsStatements: string[] = [];
+    const updateEffectsStatements: string[] = [];
     if (this.effects.length) {
       const dependencies = this.effects.map((e) =>
         e.getDependency(this.getToStringOptions()).map((d) => `this.${d}`)
@@ -198,41 +168,35 @@ export class InfernoComponent extends PreactComponent {
 
       const create = this.effects.map((e, i) => {
         const dependency =
-          getEffectRunParameter(e) === undefined ? dependencies[i] : [];
+          getEffectRunParameter(e) !== "once" ? dependencies[i] : [];
         return `new InfernoEffect(this.${e.name}, [${dependency.join(",")}])`;
       });
 
-      didMountStatements.push(`this._effects=[
-        ${create.join(",")}
-      ]`);
+      createEffectsStatements.push(`
+       return [
+          ${create.join(",")}
+        ];
+      `);
 
       const update = this.effects.reduce((result: string[], effect, index) => {
         const run = getEffectRunParameter(effect);
 
-        if (run === "always") {
-          result.push(`this._effects[${index}].update()`);
-        }
-
-        if (run === undefined) {
+        if (run !== "once") {
           const dependency = dependencies[index];
           result.push(
             `this._effects[${index}].update([${dependency.join(",")}])`
           );
         }
-
         return result;
       }, []);
 
-      didUpdateStatements.push(update.join(";\n"));
-
-      componentWillUnmountStatements.push(
-        `this._effects.forEach(e=>e.dispose());`
-      );
-
-      return "_effects: InfernoEffect[] = []";
+      updateEffectsStatements.push(update.join(";\n"));
     }
 
-    return "";
+    return `
+      ${this.compileLifeCycle("createEffects", createEffectsStatements)}
+      ${this.compileLifeCycle("updateEffects", updateEffectsStatements)}
+    `;
   }
 
   compileLifeCycle(name: string, statements: string[]) {
@@ -254,8 +218,7 @@ export class InfernoComponent extends PreactComponent {
 
     if (providers.length) {
       return this.compileLifeCycle("getChildContext", [
-        `
-        return {
+        `return {
           ...this.context,
           ${providers.map((p) => `${p.context}: this.${p.name}`).join(",\n")}
         }
@@ -277,16 +240,10 @@ export class InfernoComponent extends PreactComponent {
       .map((m) => `this.${m.name} = this.${m.name}.bind(this)`)
       .join(";\n");
 
-    const componentDidMountStatements: string[] = [];
-    const componentDidUpdateStatements: string[] = [];
-    const componentWillUnmountStatements: string[] = [];
-
     return `
             ${this.compileImports()}
-            ${this.compilePortalComponent()}
             ${this.compileRestProps()}
             ${this.compileTemplateGetter()}
-            ${this.compileEffectClass()}
             ${this.modifiers.join(" ")} class ${
       this.name
     } extends InfernoComponent<${propsType}> {
@@ -296,31 +253,15 @@ export class InfernoComponent extends PreactComponent {
                   .map((p) => p.toString(this.getToStringOptions()))
                   .join(";\n")}
                   
-                  ${this.compileEffects(
-                    componentDidMountStatements,
-                    componentDidUpdateStatements,
-                    componentWillUnmountStatements
-                  )}
                 constructor(props: ${propsType}) {
                     super(props);
                     ${this.compileStateInitializer()}
                     ${bindMethods}
                 }
 
-                ${this.compileStateSetterAndGetters()}
+                ${this.compileEffects()}
 
-                ${this.compileLifeCycle(
-                  "componentDidMount",
-                  componentDidMountStatements
-                )}
-                ${this.compileLifeCycle(
-                  "componentDidUpdate",
-                  componentDidUpdateStatements
-                )}
-                ${this.compileLifeCycle(
-                  "componentWillUnmount",
-                  componentWillUnmountStatements
-                )}
+                ${this.compileStateSetterAndGetters()}
                 
                 ${this.compileGetChildContext()}
 

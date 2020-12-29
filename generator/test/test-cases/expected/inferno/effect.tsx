@@ -1,3 +1,5 @@
+import { InfernoEffect } from "../../../../modules/inferno/effect";
+import { InfernoComponent } from "../../../../modules/inferno/base_component";
 function view(model: Widget) {
   return <div></div>;
 }
@@ -21,7 +23,6 @@ export const WidgetInput: WidgetInputType = ({
   defaultS: 10,
   sChange: () => {},
 } as any) as WidgetInputType;
-import { Component as InfernoComponent } from "inferno";
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;
@@ -30,31 +31,6 @@ declare type RestProps = {
   ref?: any;
 };
 
-class InfernoEffect {
-  private destroy?: () => void;
-  private timeout = 0;
-  constructor(
-    private effect: () => () => void,
-    private dependency: Array<any>
-  ) {
-    this.timeout = setTimeout(() => (this.destroy = effect()));
-  }
-
-  update(dependency?: Array<any>) {
-    if (!dependency || dependency.some((d, i) => this.dependency[i] !== d)) {
-      this.destroy?.();
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => (this.destroy = this.effect()));
-    }
-    if (dependency) {
-      this.dependency = dependency;
-    }
-  }
-
-  dispose() {
-    this.destroy?.();
-  }
-}
 export default class Widget extends InfernoComponent<
   typeof WidgetInput & RestProps
 > {
@@ -65,7 +41,6 @@ export default class Widget extends InfernoComponent<
   };
   refs: any;
 
-  _effects: InfernoEffect[] = [];
   constructor(props: typeof WidgetInput & RestProps) {
     super(props);
     this.state = {
@@ -77,6 +52,39 @@ export default class Widget extends InfernoComponent<
     this.onceEffect = this.onceEffect.bind(this);
     this.alwaysEffect = this.alwaysEffect.bind(this);
     this.getP = this.getP.bind(this);
+  }
+
+  createEffects() {
+    return [
+      new InfernoEffect(this.setupData, [
+        this.props.p,
+        this.s,
+        this.props.sChange,
+        this.i,
+      ]),
+      new InfernoEffect(this.onceEffect, []),
+      new InfernoEffect(this.alwaysEffect, [
+        this.i,
+        this.j,
+        this.props.p,
+        this.props.r,
+        this.s,
+        this.props.sChange,
+        this.props.defaultS,
+      ]),
+    ];
+  }
+  updateEffects() {
+    this._effects[0].update([this.props.p, this.s, this.props.sChange, this.i]);
+    this._effects[2].update([
+      this.i,
+      this.j,
+      this.props.p,
+      this.props.r,
+      this.s,
+      this.props.sChange,
+      this.props.defaultS,
+    ]);
   }
 
   get i(): number {
@@ -97,26 +105,6 @@ export default class Widget extends InfernoComponent<
   set s(value: number) {
     this.setState({ s: value });
     this.props.sChange!(value);
-  }
-
-  componentDidMount() {
-    this._effects = [
-      new InfernoEffect(this.setupData, [
-        this.props.p,
-        this.s,
-        this.props.sChange,
-        this.i,
-      ]),
-      new InfernoEffect(this.onceEffect, []),
-      new InfernoEffect(this.alwaysEffect, []),
-    ];
-  }
-  componentDidUpdate() {
-    this._effects[0].update([this.props.p, this.s, this.props.sChange, this.i]);
-    this._effects[2].update();
-  }
-  componentWillUnmount() {
-    this._effects.forEach((e) => e.dispose());
   }
 
   setupData(): any {

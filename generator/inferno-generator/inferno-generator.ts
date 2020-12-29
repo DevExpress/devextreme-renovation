@@ -19,6 +19,7 @@ import { JsxClosingElement } from "./expressions/jsx/jsx-closing-element";
 import { ImportDeclaration } from "./expressions/import-declaration";
 import { ImportClause } from "../base-generator/expressions/import";
 import { StringLiteral } from "../base-generator/expressions/literal";
+import path from "path";
 
 export class InfernoGenerator extends PreactGenerator {
   // format(code: string) {
@@ -153,7 +154,12 @@ export class InfernoGenerator extends PreactGenerator {
       decorators,
       modifiers,
       importClause,
-      moduleSpecifier
+      moduleSpecifier,
+      this.getContext()
     );
+  }
+
+  getModulesPath() {
+    return path.resolve(__dirname, "../modules/inferno");
   }
 }

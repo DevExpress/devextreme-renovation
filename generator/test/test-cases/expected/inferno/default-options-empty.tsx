@@ -1,3 +1,4 @@
+import { InfernoComponent } from "../../../../modules/inferno/base_component";
 function view() {
   return <div></div>;
 }
@@ -8,9 +9,7 @@ import {
   convertRulesToOptions,
   Rule,
 } from "../../../../component_declaration/default_options";
-import { Component as InfernoComponent } from "inferno";
 import { createElement as h } from "inferno-compat";
-
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };

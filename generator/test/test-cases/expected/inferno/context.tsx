@@ -1,6 +1,5 @@
-const createContext = function <T>(defaultValue: T) {
-  return defaultValue;
-};
+import { InfernoComponent } from "../../../../modules/inferno/base_component";
+import { createContext } from "../../../../modules/inferno/create_context";
 function view(model: Widget): any {
   return <span></span>;
 }
@@ -13,9 +12,7 @@ export declare type PropsType = {
 const Props: PropsType = {
   p1: 10,
 };
-import { Component as InfernoComponent } from "inferno";
 import { createElement as h } from "inferno-compat";
-
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };

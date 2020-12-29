@@ -8,16 +8,32 @@ export class ImportDeclaration extends BaseImportDeclaration {
       inferno.push("Fragment");
     }
     if (this.has("Portal")) {
-      inferno.push("createPortal");
+      result.push(`import {Portal} from ${this.resolveCommonModule("portal")}`);
     }
 
     if (inferno.length) {
       result.push(`import {${inferno}} from "inferno"`);
     }
 
+    if (this.has("Effect")) {
+      result.push(
+        `import {InfernoEffect} from ${this.resolveCommonModule("effect")}`
+      );
+    }
+
+    if (this.has("Component")) {
+      result.push(
+        `import {InfernoComponent} from ${this.resolveCommonModule(
+          "base_component"
+        )}`
+      );
+    }
+
     if (this.has("createContext")) {
       result.push(
-        `const createContext = function<T>(defaultValue: T){ return defaultValue}`
+        `import {createContext} from ${this.resolveCommonModule(
+          "create_context"
+        )}`
       );
     }
 

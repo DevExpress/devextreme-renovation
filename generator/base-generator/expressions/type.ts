@@ -174,7 +174,8 @@ export class TypeReferenceNode extends TypeExpression {
               undefined,
               new NamedImports([new ImportSpecifier(undefined, this.typeName)])
             ),
-            new StringLiteral(moduleSpecifier)
+            new StringLiteral(moduleSpecifier),
+            this.context
           )
         );
       }
@@ -205,7 +206,8 @@ export class TypeReferenceNode extends TypeExpression {
               ),
               new StringLiteral(
                 moduleSpecifier.replace(path.extname(moduleSpecifier), "")
-              )
+              ),
+              this.context
             )
           );
         }
