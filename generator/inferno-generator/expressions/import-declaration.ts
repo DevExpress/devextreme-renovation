@@ -21,6 +21,12 @@ export class ImportDeclaration extends BaseImportDeclaration {
       );
     }
 
+    if (this.has("RefObject")) {
+      result.push(
+        `import {RefObject} from ${this.resolveCommonModule("ref_object")}`
+      );
+    }
+
     if (this.has("Component")) {
       result.push(
         `import {InfernoComponent} from ${this.resolveCommonModule(

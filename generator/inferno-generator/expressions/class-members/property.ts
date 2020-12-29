@@ -50,7 +50,7 @@ export class Property extends BaseProperty {
         "any";
       return `${this.modifiers.join(" ")} ${
         this.name
-      } = infernoCreateRef<${type}>()`;
+      }:RefObject<${type}> = infernoCreateRef<${type}>()`;
     }
 
     if (this.isProvider) {
