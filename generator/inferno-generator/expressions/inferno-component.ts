@@ -267,6 +267,7 @@ export class InfernoComponent extends PreactComponent {
 
                 ${this.effects
                   .concat(this.methods)
+                  .concat(this.members.filter((m) => m.isApiMethod) as Method[])
                   .map((m) => m.toString(this.getToStringOptions()))
                   .join("\n")}
                 
