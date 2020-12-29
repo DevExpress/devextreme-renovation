@@ -7,7 +7,7 @@ function view(model: Widget) {
 export declare type WidgetPropsType = {
   height?: number;
   width?: number;
-  children?: React.ReactNode;
+  children?: any;
 };
 export const WidgetProps: WidgetPropsType = {
   height: 10,

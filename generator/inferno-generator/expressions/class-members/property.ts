@@ -1,4 +1,4 @@
-import { Property as ReactProperty } from "../../../react-generator/expressions/class-members/property";
+import { Property as BaseProperty } from "../../../preact-generator";
 import {
   capitalizeFirstLetter,
   compileType,
@@ -7,7 +7,7 @@ import { toStringOptions } from "../../../base-generator/types";
 import { TypeReferenceNode } from "../type-reference-node";
 import { Decorators } from "../../../component_declaration/decorators";
 
-export class Property extends ReactProperty {
+export class Property extends BaseProperty {
   getter(componentContext?: string, keepRef?: boolean) {
     if (
       this.isInternalState ||

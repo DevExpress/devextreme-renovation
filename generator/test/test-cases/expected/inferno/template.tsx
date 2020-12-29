@@ -3,19 +3,11 @@ import { WidgetWithProps, WidgetWithPropsInput } from "./dx-widget-with-props";
 
 export declare type WidgetInputType = {
   someProp: boolean;
-  headerTemplate: React.FunctionComponent<any>;
-  template: React.FunctionComponent<
-    Partial<{ textProp: string; textPropExpr: string }>
-  >;
-  contentTemplate: React.FunctionComponent<
-    Partial<Omit<{ data: { p1: string }; index: number }, "data">> &
-      Required<Pick<{ data: { p1: string }; index: number }, "data">>
-  >;
-  footerTemplate: React.FunctionComponent<Partial<{ someProp: boolean }>>;
-  componentTemplate: React.FunctionComponent<
-    Partial<Omit<typeof WidgetWithPropsInput, "value">> &
-      Required<Pick<typeof WidgetWithPropsInput, "value">>
-  >;
+  headerTemplate: any;
+  template: any;
+  contentTemplate: any;
+  footerTemplate: any;
+  componentTemplate: any;
 };
 export const WidgetInput: WidgetInputType = {
   someProp: false,

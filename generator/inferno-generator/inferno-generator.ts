@@ -11,7 +11,6 @@ import { Parameter } from "../base-generator/expressions/functions";
 import { Block } from "../base-generator/expressions/statements";
 import { GetAccessor } from "./expressions/class-members/get-accessor";
 import { TypeReferenceNode } from "./expressions/type-reference-node";
-import { ComponentInput } from "../preact-generator";
 import { TypeParameterDeclaration } from "../base-generator/expressions/type-parameter-declaration";
 import { Method } from "./expressions/class-members/method";
 import { JsxOpeningElement } from "./expressions/jsx/jsx-opening-element";
@@ -35,25 +34,6 @@ export class InfernoGenerator extends PreactGenerator {
   ) {
     return new InfernoComponent(
       componentDecorator,
-      modifiers,
-      name,
-      typeParameters,
-      heritageClauses,
-      members,
-      this.getContext()
-    );
-  }
-
-  createComponentBindings(
-    decorators: Decorator[],
-    modifiers: string[] | undefined,
-    name: Identifier,
-    typeParameters: string[],
-    heritageClauses: HeritageClause[],
-    members: Array<Property | Method>
-  ) {
-    return new ComponentInput(
-      decorators,
       modifiers,
       name,
       typeParameters,
