@@ -1,14 +1,23 @@
 export const InfernoEffectHost: {
-  owner: any;
+  lockCount: number;
+  lock: () => void;
   callbacks: Array<() => void>;
-  callEffects: (component: any) => void;
+  callEffects: () => void;
 } = {
-  owner: null,
+  lockCount: 0,
+  lock() {
+    this.lockCount++;
+  },
+
   callbacks: [],
-  callEffects(component: any) {
-    if (component === this.owner) {
+
+  callEffects() {
+    this.lockCount--;
+    if (this.lockCount < 0) {
+      throw "Unexpected Effect Call";
+    }
+    if (this.lockCount === 0) {
       const effects = this.callbacks;
-      this.owner = null;
       this.callbacks = [];
       effects.forEach((callback) => callback());
     }

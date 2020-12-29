@@ -11,30 +11,24 @@ export class InfernoComponent<P = {}, S = {}> extends Component<P, S> {
 
   updateEffects() {}
 
-  setEffectOwner() {
-    if (InfernoEffectHost.owner === null) {
-      InfernoEffectHost.owner = this;
-    }
-  }
-
   componentWillMount() {
-    this.setEffectOwner();
+    InfernoEffectHost.lock();
   }
 
   componentWillUpdate() {
-    this.setEffectOwner();
+    InfernoEffectHost.lock();
   }
 
   componentDidMount() {
     InfernoEffectHost.callbacks.push(
       () => (this._effects = this.createEffects())
     );
-    InfernoEffectHost.callEffects(this);
+    InfernoEffectHost.callEffects();
   }
 
   componentDidUpdate() {
     InfernoEffectHost.callbacks.push(() => this.updateEffects());
-    InfernoEffectHost.callEffects(this);
+    InfernoEffectHost.callEffects();
   }
 
   componentWillUnmount() {
