@@ -14,6 +14,11 @@ jobs:
         TASK: [generate-components, react-compilation-check]
 
     steps:
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: 14
+      
       - name: Get sources
         uses: actions/checkout@v2
 
