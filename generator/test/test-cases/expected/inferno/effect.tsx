@@ -39,6 +39,12 @@ export default class Widget extends InfernoComponent<
     j: number;
     s: number;
   };
+  _currentState: {
+    i: number;
+    j: number;
+    s: number;
+  } | null = null;
+
   refs: any;
 
   constructor(props: typeof WidgetInput & RestProps) {
@@ -88,33 +94,51 @@ export default class Widget extends InfernoComponent<
   }
 
   get i(): number {
-    return this.state.i;
+    const state = this._currentState || this.state;
+    return state.i;
   }
-  set i(value: number) {
-    this.setState({ i: value });
+  set_i(value: () => number): any {
+    this.setState((state: any) => {
+      this._currentState = state;
+      const newValue = value();
+      this._currentState = null;
+      return { i: newValue };
+    });
   }
   get j(): number {
-    return this.state.j;
+    const state = this._currentState || this.state;
+    return state.j;
   }
-  set j(value: number) {
-    this.setState({ j: value });
+  set_j(value: () => number): any {
+    this.setState((state: any) => {
+      this._currentState = state;
+      const newValue = value();
+      this._currentState = null;
+      return { j: newValue };
+    });
   }
   get s(): number {
-    return this.props.s !== undefined ? this.props.s : this.state.s;
+    const state = this._currentState || this.state;
+    return this.props.s !== undefined ? this.props.s : state.s;
   }
-  set s(value: number) {
-    this.setState({ s: value });
-    this.props.sChange!(value);
+  set_s(value: () => number): any {
+    this.setState((state: any) => {
+      this._currentState = state;
+      const newValue = value();
+      this.props.sChange!(newValue);
+      this._currentState = null;
+      return { s: newValue };
+    });
   }
 
   setupData(): any {
     const id = subscribe(this.getP(), this.s, this.i);
-    this.i = 15;
+    this.set_i(() => 15);
     return () => unsubscribe(id);
   }
   onceEffect(): any {
     const id = subscribe(this.getP(), this.s, this.i);
-    this.i = 15;
+    this.set_i(() => 15);
     return () => unsubscribe(id);
   }
   alwaysEffect(): any {

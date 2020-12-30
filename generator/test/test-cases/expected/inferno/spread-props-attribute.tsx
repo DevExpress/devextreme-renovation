@@ -27,6 +27,10 @@ export default class Widget extends InfernoComponent<
   state: {
     value?: boolean;
   };
+  _currentState: {
+    value?: boolean;
+  } | null = null;
+
   refs: any;
 
   constructor(props: typeof WidgetInput & RestProps) {
@@ -40,11 +44,17 @@ export default class Widget extends InfernoComponent<
   }
 
   get value(): boolean | undefined {
-    return this.props.value !== undefined ? this.props.value : this.state.value;
+    const state = this._currentState || this.state;
+    return this.props.value !== undefined ? this.props.value : state.value;
   }
-  set value(value: boolean | undefined) {
-    this.setState({ value: value });
-    this.props.valueChange!(value);
+  set_value(value: () => boolean | undefined): any {
+    this.setState((state: any) => {
+      this._currentState = state;
+      const newValue = value();
+      this.props.valueChange!(newValue);
+      this._currentState = null;
+      return { value: newValue };
+    });
   }
 
   get restAttributes(): RestProps {

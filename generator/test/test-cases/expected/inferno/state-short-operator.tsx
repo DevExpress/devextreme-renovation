@@ -27,6 +27,11 @@ export default class Widget extends InfernoComponent<
     innerState: number;
     propState: number;
   };
+  _currentState: {
+    innerState: number;
+    propState: number;
+  } | null = null;
+
   refs: any;
 
   constructor(props: typeof WidgetInput & RestProps) {
@@ -42,30 +47,42 @@ export default class Widget extends InfernoComponent<
   }
 
   get innerState(): number {
-    return this.state.innerState;
+    const state = this._currentState || this.state;
+    return state.innerState;
   }
-  set innerState(value: number) {
-    this.setState({ innerState: value });
+  set_innerState(value: () => number): any {
+    this.setState((state: any) => {
+      this._currentState = state;
+      const newValue = value();
+      this._currentState = null;
+      return { innerState: newValue };
+    });
   }
   get propState(): number {
+    const state = this._currentState || this.state;
     return this.props.propState !== undefined
       ? this.props.propState
-      : this.state.propState;
+      : state.propState;
   }
-  set propState(value: number) {
-    this.setState({ propState: value });
-    this.props.propStateChange!(value);
+  set_propState(value: () => number): any {
+    this.setState((state: any) => {
+      this._currentState = state;
+      const newValue = value();
+      this.props.propStateChange!(newValue);
+      this._currentState = null;
+      return { propState: newValue };
+    });
   }
 
   updateState(): any {
-    this.innerState = this.innerState + 1;
-    this.innerState = this.innerState + 1;
-    this.innerState = this.innerState + 1;
-    this.innerState = this.innerState + 1;
-    this.propState = this.propState + 1;
-    this.propState = this.propState + 1;
-    this.propState = this.propState + 1;
-    this.propState = this.propState + 1;
+    this.set_innerState(() => this.innerState + 1);
+    this.set_innerState(() => this.innerState + 1);
+    this.set_innerState(() => this.innerState + 1);
+    this.set_innerState(() => this.innerState + 1);
+    this.set_propState(() => this.propState + 1);
+    this.set_propState(() => this.propState + 1);
+    this.set_propState(() => this.propState + 1);
+    this.set_propState(() => this.propState + 1);
   }
   get restAttributes(): RestProps {
     const { defaultPropState, propState, propStateChange, ...restProps } = {

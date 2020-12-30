@@ -28,6 +28,10 @@ export default class InnerWidget extends InfernoComponent<
   state: {
     value: number;
   };
+  _currentState: {
+    value: number;
+  } | null = null;
+
   refs: any;
 
   constructor(props: typeof InnerWidgetProps & RestProps) {
@@ -41,11 +45,17 @@ export default class InnerWidget extends InfernoComponent<
   }
 
   get value(): number {
-    return this.props.value !== undefined ? this.props.value : this.state.value;
+    const state = this._currentState || this.state;
+    return this.props.value !== undefined ? this.props.value : state.value;
   }
-  set value(value: number) {
-    this.setState({ value: value });
-    this.props.valueChange!(value);
+  set_value(value: () => number): any {
+    this.setState((state: any) => {
+      this._currentState = state;
+      const newValue = value();
+      this.props.valueChange!(newValue);
+      this._currentState = null;
+      return { value: newValue };
+    });
   }
 
   get restAttributes(): RestProps {

@@ -45,6 +45,13 @@ export default class Widget extends InfernoComponent<
     state2: boolean;
     stateProp?: boolean;
   };
+  _currentState: {
+    innerData?: string;
+    state1?: boolean;
+    state2: boolean;
+    stateProp?: boolean;
+  } | null = null;
+
   refs: any;
 
   constructor(props: typeof WidgetInput & RestProps) {
@@ -71,51 +78,71 @@ export default class Widget extends InfernoComponent<
   }
 
   get innerData(): string | undefined {
-    return this.state.innerData;
+    const state = this._currentState || this.state;
+    return state.innerData;
   }
-  set innerData(value: string | undefined) {
-    this.setState({ innerData: value });
+  set_innerData(value: () => string | undefined): any {
+    this.setState((state: any) => {
+      this._currentState = state;
+      const newValue = value();
+      this._currentState = null;
+      return { innerData: newValue };
+    });
   }
   get state1(): boolean | undefined {
-    return this.props.state1 !== undefined
-      ? this.props.state1
-      : this.state.state1;
+    const state = this._currentState || this.state;
+    return this.props.state1 !== undefined ? this.props.state1 : state.state1;
   }
-  set state1(value: boolean | undefined) {
-    this.setState({ state1: value });
-    this.props.state1Change!(value);
+  set_state1(value: () => boolean | undefined): any {
+    this.setState((state: any) => {
+      this._currentState = state;
+      const newValue = value();
+      this.props.state1Change!(newValue);
+      this._currentState = null;
+      return { state1: newValue };
+    });
   }
   get state2(): boolean {
-    return this.props.state2 !== undefined
-      ? this.props.state2
-      : this.state.state2;
+    const state = this._currentState || this.state;
+    return this.props.state2 !== undefined ? this.props.state2 : state.state2;
   }
-  set state2(value: boolean) {
-    this.setState({ state2: value });
-    this.props.state2Change!(value);
+  set_state2(value: () => boolean): any {
+    this.setState((state: any) => {
+      this._currentState = state;
+      const newValue = value();
+      this.props.state2Change!(newValue);
+      this._currentState = null;
+      return { state2: newValue };
+    });
   }
   get stateProp(): boolean | undefined {
+    const state = this._currentState || this.state;
     return this.props.stateProp !== undefined
       ? this.props.stateProp
-      : this.state.stateProp;
+      : state.stateProp;
   }
-  set stateProp(value: boolean | undefined) {
-    this.setState({ stateProp: value });
-    this.props.statePropChange!(value);
+  set_stateProp(value: () => boolean | undefined): any {
+    this.setState((state: any) => {
+      this._currentState = state;
+      const newValue = value();
+      this.props.statePropChange!(newValue);
+      this._currentState = null;
+      return { stateProp: newValue };
+    });
   }
 
   updateState(): any {
-    this.state1 = !this.state1;
+    this.set_state1(() => !this.state1);
   }
   updateState2(): any {
     const cur = this.state2;
-    this.state2 = cur !== false ? false : true;
+    this.set_state2(() => (cur !== false ? false : true));
   }
   destruct(): any {
     const s = this.state1;
   }
   stateChange(stateProp?: boolean): any {
-    this.stateProp = stateProp;
+    this.set_stateProp(() => stateProp);
   }
   get restAttributes(): RestProps {
     const {

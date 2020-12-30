@@ -1,5 +1,6 @@
 import { Portal } from "../../../../modules/inferno/portal";
 import { InfernoEffect } from "../../../../modules/inferno/effect";
+import { RefObject } from "../../../../modules/inferno/ref_object";
 import { InfernoComponent } from "../../../../modules/inferno/base_component";
 function view(model: Widget) {
   return (
@@ -22,7 +23,6 @@ export declare type WidgetPropsType = {
 };
 export const WidgetProps: WidgetPropsType = {};
 import { createElement as h } from "inferno-compat";
-import { RefObject } from "inferno";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
@@ -36,6 +36,10 @@ export default class Widget extends InfernoComponent<
   state: {
     rendered: boolean;
   };
+  _currentState: {
+    rendered: boolean;
+  } | null = null;
+
   refs: any;
 
   constructor(props: typeof WidgetProps & RestProps) {
@@ -52,14 +56,20 @@ export default class Widget extends InfernoComponent<
   updateEffects() {}
 
   get rendered(): boolean {
-    return this.state.rendered;
+    const state = this._currentState || this.state;
+    return state.rendered;
   }
-  set rendered(value: boolean) {
-    this.setState({ rendered: value });
+  set_rendered(value: () => boolean): any {
+    this.setState((state: any) => {
+      this._currentState = state;
+      const newValue = value();
+      this._currentState = null;
+      return { rendered: newValue };
+    });
   }
 
   onInit(): any {
-    this.rendered = true;
+    this.set_rendered(() => true);
   }
   get restAttributes(): RestProps {
     const { someRef, ...restProps } = {

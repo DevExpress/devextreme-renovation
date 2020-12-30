@@ -3,7 +3,10 @@ import {
   BaseClassMember,
 } from "../../base-generator/expressions/class-members";
 import { Identifier } from "../../base-generator/expressions/common";
-import { TypeExpression } from "../../base-generator/expressions/type";
+import {
+  TypeExpression,
+  FunctionTypeNode,
+} from "../../base-generator/expressions/type";
 import {
   Block,
   ReturnStatement,
@@ -86,21 +89,29 @@ export class InfernoComponent extends PreactComponent {
       (m) => m.isInternalState || m.isState
     ) as Property[]).reduce((result: Array<GetAccessor | SetAccessor>, m) => {
       const getterStatement = m.isInternalState
-        ? `this.state.${m.name}`
-        : `this.props.${m.name}!==undefined?this.props.${m.name}:this.state.${m.name}`;
+        ? `state.${m.name}`
+        : `this.props.${m.name}!==undefined?this.props.${m.name}:state.${m.name}`;
 
-      const setStateStatement = `this.setState({ ${m.name}: value })`;
       const changePropertyName = `${m.name}Change`;
       const changeProperty = props.find(
         (m) => m.name === changePropertyName
       ) as Property;
-      const setterStatement = m.isInternalState
-        ? setStateStatement
-        : `${setStateStatement};
-                this.props.${m.name}Change${getChangeEventToken(
-            changeProperty
-          )}(value)
-              `;
+
+      const setStateStatement = `this.setState((state: any)=>{
+        this._currentState = state;
+        const newValue = value();
+        ${
+          changeProperty
+            ? `this.props.${m.name}Change${getChangeEventToken(
+                changeProperty
+              )}(newValue)`
+            : ""
+        };
+        this._currentState = null;
+        return {${m.name}: newValue};
+      })`;
+
+      const setterStatement = setStateStatement;
 
       const type =
         m.questionOrExclamationToken !== "?" ? m.type : `${m.type}|undefined`;
@@ -110,17 +121,35 @@ export class InfernoComponent extends PreactComponent {
           m._name,
           type,
           new Block(
-            [new ReturnStatement(new SimpleExpression(getterStatement))],
+            [
+              new SimpleExpression(
+                "const state = this._currentState||this.state"
+              ),
+              new ReturnStatement(new SimpleExpression(getterStatement)),
+            ],
             false
           )
         )
       );
       result.push(
-        new SetAccessor(
+        new Method(
           [],
           [],
-          m._name,
-          [new Parameter([], [], undefined, new Identifier("value"), "", type)],
+          undefined,
+          new Identifier(`set_${m._name}`),
+          undefined,
+          undefined,
+          [
+            new Parameter(
+              [],
+              [],
+              undefined,
+              new Identifier("value"),
+              "",
+              new FunctionTypeNode(undefined, [], type)
+            ),
+          ],
+          "any",
           new Block([new SimpleExpression(setterStatement)], false)
         )
       );
@@ -134,9 +163,13 @@ export class InfernoComponent extends PreactComponent {
     const state = this.internalState.concat(this.state);
 
     if (state.length) {
-      return `state: {
-          ${state.map((p) => p.typeDeclaration())}
-       };`;
+      const type = `{
+        ${state.map((p) => p.typeDeclaration())}
+     }`;
+      return `
+      state: ${type};
+      _currentState: ${type}|null = null;
+      `;
     }
 
     return "state = {};";
