@@ -135,6 +135,9 @@ export class ImportDeclaration {
   ) {}
 
   resolveCommonModule(module: string): string {
+    if (this.context.modules!.startsWith("devextreme-generator")) {
+      return `"${this.context.modules}/${module}"`;
+    }
     return `"${getRelativePath(
       this.context.dirname!,
       this.context.modules!,

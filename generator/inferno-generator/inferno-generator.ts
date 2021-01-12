@@ -140,6 +140,9 @@ export class InfernoGenerator extends PreactGenerator {
   }
 
   getModulesPath() {
+    if (this.options.modulesPath) {
+      return super.getModulesPath();
+    }
     return path.resolve(__dirname, "../modules/inferno");
   }
 }

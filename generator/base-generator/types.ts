@@ -32,6 +32,7 @@ export type VariableExpression = {
 
 export type GeneratorOptions = {
   defaultOptionsModule?: string;
+  modulesPath?: string;
 };
 
 export type GeneratorCache = {

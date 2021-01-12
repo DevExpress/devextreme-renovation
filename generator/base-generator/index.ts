@@ -1317,7 +1317,7 @@ export default class Generator implements GeneratorAPI {
   }
 
   getModulesPath() {
-    return "";
+    return this.options.modulesPath || "";
   }
 
   getInitialContext(): GeneratorContext {

@@ -5,7 +5,7 @@ import path from "path";
 
 import { createTestGenerator, getModulePath } from "./helpers/common";
 
-mocha.describe.only("inferno-generator: jQuery generation", function () {
+mocha.describe("inferno-generator: jQuery generation", function () {
   const testGenerator = createTestGenerator("inferno-jquery");
   this.beforeAll(function () {
     compile(
