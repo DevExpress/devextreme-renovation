@@ -58,7 +58,7 @@ export class PropertyAccess extends BasePropertyAccess {
     return setState;
   }
 
-  getAssignmentDependency(options?: toStringOptions) {
+  getAssignmentDependency(_options?: toStringOptions) {
     return [`${this.name}Change`];
   }
 

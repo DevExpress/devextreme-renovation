@@ -1,12 +1,7 @@
-import { ViewChild, ElementRef } from "@angular/core";
-class WidgetInput {
-  __slotChildren?: ElementRef<HTMLDivElement>;
-
-  get children() {
-    const childNodes = this.__slotChildren?.nativeElement?.childNodes;
-    return childNodes && childNodes.length > 2;
-  }
-}
+const modifyStyles = (styles: any) => {
+  return { height: "100px", ...styles };
+};
+class WidgetInput {}
 
 import {
   Component,
@@ -20,11 +15,13 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div #slotChildren style="display: contents"
-      ><ng-container [ngTemplateOutlet]="dxchildren"></ng-container></div
-    ><ng-template #dxchildren><ng-content></ng-content></ng-template>`,
+  template: `<span [ngStyle]="__processNgStyle(__styles)"></span>`,
 })
 export default class Widget extends WidgetInput {
+  get __styles(): any {
+    const { style } = this.__restAttributes;
+    return modifyStyles(style);
+  }
   get __restAttributes(): any {
     return {};
   }
@@ -38,15 +35,20 @@ export default class Widget extends WidgetInput {
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
   }
-  @ViewChild("slotChildren") set slotChildren(
-    slot: ElementRef<HTMLDivElement>
-  ) {
-    const oldValue = this.children;
-    this.__slotChildren = slot;
-    const newValue = this.children;
-    if (!!oldValue !== !!newValue) {
-      this._detectChanges();
+
+  __processNgStyle(value: any) {
+    if (typeof value === "object") {
+      return Object.keys(value).reduce((v: { [name: string]: any }, k) => {
+        if (typeof value[k] === "number") {
+          v[k] = value[k] + "px";
+        } else {
+          v[k] = value[k];
+        }
+        return v;
+      }, {});
     }
+
+    return value;
   }
 }
 @NgModule({

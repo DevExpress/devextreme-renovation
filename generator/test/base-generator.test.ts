@@ -1788,15 +1788,15 @@ mocha.describe("base-generator: expressions", function () {
   mocha.describe("Template string", function () {
     mocha.it("createTemplateExpression", function () {
       const expression = generator.createTemplateExpression(
-        generator.createTemplateHead("a", "a"),
+        generator.createTemplateHead("a"),
         [
           generator.createTemplateSpan(
             generator.createNumericLiteral("1"),
-            generator.createTemplateMiddle("b", "b")
+            generator.createTemplateMiddle("b")
           ),
           generator.createTemplateSpan(
             generator.createNumericLiteral("2"),
-            generator.createTemplateTail("c", "c")
+            generator.createTemplateTail("c")
           ),
         ]
       );
@@ -1808,15 +1808,15 @@ mocha.describe("base-generator: expressions", function () {
       "createTemplateExpression - convert to string concatenation",
       function () {
         const expression = generator.createTemplateExpression(
-          generator.createTemplateHead("a", "a"),
+          generator.createTemplateHead("a"),
           [
             generator.createTemplateSpan(
               generator.createNumericLiteral("1"),
-              generator.createTemplateMiddle("b", "b")
+              generator.createTemplateMiddle("b")
             ),
             generator.createTemplateSpan(
               generator.createNumericLiteral("2"),
-              generator.createTemplateTail("c", "c")
+              generator.createTemplateTail("c")
             ),
           ]
         );
@@ -1832,10 +1832,7 @@ mocha.describe("base-generator: expressions", function () {
     );
 
     mocha.it("createNoSubstitutionTemplateLiteral", function () {
-      const expression = generator.createNoSubstitutionTemplateLiteral(
-        "10",
-        "10"
-      );
+      const expression = generator.createNoSubstitutionTemplateLiteral("10");
 
       assert.equal(expression.toString(), "`10`");
     });
@@ -3933,6 +3930,44 @@ mocha.describe("Component", function () {
         undefined,
         new Block([], true)
       )
+    );
+  });
+
+  mocha.it("extractGlobalsFromTemplate", function () {
+    const component = generator.createComponent(
+      createDecorator(Decorators.Component),
+      undefined,
+      new Identifier("Component"),
+      [],
+      [],
+      []
+    );
+
+    const templateString = `global_var
+      global_items1
+      _trackBy_global_items2
+      div global_items3
+      "global_items4"
+      {global_items5}
+    `;
+
+    assert.deepEqual(component.extractGlobalsFromTemplate(templateString), [
+      "global_var: var",
+      "global_items1: items1",
+      "global_items3: items3",
+      "global_items4: items4",
+      "global_items5: items5",
+    ]);
+
+    assert.deepEqual(
+      component.extractGlobalsFromTemplate(templateString, " = "),
+      [
+        "global_var = var",
+        "global_items1 = items1",
+        "global_items3 = items3",
+        "global_items4 = items4",
+        "global_items5 = items5",
+      ]
     );
   });
 });

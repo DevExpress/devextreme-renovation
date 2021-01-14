@@ -18,7 +18,7 @@ export class ArrowFunction extends AngularArrowFunction {
     modifiers: string[] | undefined,
     typeParameters: TypeParameterDeclaration[] | undefined,
     parameters: Parameter[],
-    type: TypeExpression | string | undefined,
+    _type: TypeExpression | string | undefined,
     equalsGreaterThanToken: string,
     body: Block | Expression,
     context: GeneratorContext

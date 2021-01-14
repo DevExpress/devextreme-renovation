@@ -171,7 +171,7 @@ export class BaseClassMember extends Expression {
     return this.name === this._name.toString();
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(_options: toStringOptions) {
     return [this.name];
   }
 
@@ -378,7 +378,7 @@ export class Property extends BaseClassMember {
     return `${this.name}:${this.initializer}`;
   }
 
-  getter(componentContext?: string, keepRef: boolean = false) {
+  getter(componentContext?: string, _keepRef: boolean = false) {
     return `${this.processComponentContext(
       componentContext
     )}${this._name.toString()}`;
@@ -410,7 +410,7 @@ export class Property extends BaseClassMember {
     );
   }
 
-  toString(options?: toStringOptions) {
+  toString(_options?: toStringOptions) {
     return `${this.modifiers.join(" ")} ${this.decorators
       .map((d) => d.toString())
       .join(" ")} ${this.typeDeclaration()} ${

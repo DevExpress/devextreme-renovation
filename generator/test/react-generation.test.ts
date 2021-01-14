@@ -75,6 +75,10 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("rest-styles", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("context", function () {
     this.testGenerator(this.test!.title);
   });

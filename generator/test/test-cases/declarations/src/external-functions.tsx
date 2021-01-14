@@ -22,6 +22,12 @@ const conditionFn: (cell: Cell) => boolean = (cell) => {
 
 const getValue: (cell: Cell) => string = (cell) => cell.text;
 
+function render(i: number) {
+  return <div key={i}>{i.toString()}</div>;
+}
+
+const array = new Array(100).map((_, index) => index);
+
 const CLASS_NAME = arrowFunction();
 
 function view(model: Widget) {
@@ -38,6 +44,7 @@ function view(model: Widget) {
           )}
         </span>
       ))}
+      <div>{array.map((i) => render(i))}</div>
     </div>
   );
 }

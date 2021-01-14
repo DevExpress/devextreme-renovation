@@ -163,7 +163,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return false;
   }
 
-  getPropertyFromSpread(property: Property) {
+  getPropertyFromSpread(_property: Property) {
     return true;
   }
 
@@ -312,7 +312,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
   updateSpreadAttribute(
     spreadAttribute: JsxSpreadAttribute,
-    attributes: JsxAttribute[]
+    _attributes: JsxAttribute[]
   ) {
     return spreadAttribute;
   }
@@ -630,8 +630,8 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   }
 
   templatePropToJsxElement(
-    template: JsxAttribute,
-    options?: toStringOptions
+    _template: JsxAttribute,
+    _options?: toStringOptions
   ): JsxElement | null {
     return null;
   }
@@ -756,6 +756,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
             expression: (a as JsxSpreadAttribute).expression,
           } as JsxSpreadAttributeMeta;
         }
+        return undefined;
       });
 
     return result.filter((a) => a) as JsxSpreadAttributeMeta[];
@@ -816,6 +817,8 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         options
       );
     }
+
+    return undefined;
   }
 }
 

@@ -165,6 +165,7 @@ export function getTemplate(
 
     return getJsxExpression(returnStatement);
   }
+  return undefined;
 }
 export function getViewFunctionBindingPattern(
   viewFunction: BaseFunction | null

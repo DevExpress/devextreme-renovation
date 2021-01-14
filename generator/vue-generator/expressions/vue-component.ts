@@ -65,7 +65,7 @@ export class VueComponent extends Component {
     return `Dx${this.name}`;
   }
 
-  createRestPropsGetter(members: BaseClassMember[]) {
+  createRestPropsGetter(_members: BaseClassMember[]) {
     return new GetAccessor(
       undefined,
       undefined,
@@ -295,7 +295,7 @@ export class VueComponent extends Component {
 
   returnGetAccessorBlock(
     argumentPattern: BindingPattern,
-    options: toStringOptions,
+    _options: toStringOptions,
     spreadVar: BindingElement
   ) {
     return new Block(

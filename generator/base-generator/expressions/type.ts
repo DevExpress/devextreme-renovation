@@ -133,6 +133,9 @@ export class TypeReferenceNode extends TypeExpression {
     public context: GeneratorContext
   ) {
     super();
+    if (typeName.toString() === "CSSAttributes") {
+      this.typeName = new Identifier("any");
+    }
   }
   toString() {
     if (this.typeName.toString() === "RefObject") {
@@ -228,7 +231,7 @@ export class TypeLiteralNode extends TypeExpression {
     this.members = members;
   }
 
-  toString(options?: toStringOptions) {
+  toString(_options?: toStringOptions) {
     return `{${this.members.join(",")}}`;
   }
 }
@@ -281,7 +284,7 @@ export class IndexSignature extends Expression {
     this.type = type;
   }
 
-  toString(options?: toStringOptions) {
+  toString(_options?: toStringOptions) {
     return `${this.parameters.map((p) => `[${p.typeDeclaration()}]`)}:${
       this.type
     }`;
