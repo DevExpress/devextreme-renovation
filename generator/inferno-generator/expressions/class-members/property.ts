@@ -43,14 +43,15 @@ export class Property extends BaseProperty {
   }
 
   toString(options?: toStringOptions) {
-    if (this.isRef || this.isForwardRef) {
+    if (this.isRef || this.isForwardRef || this.isApiRef) {
       const type =
         (this.type instanceof TypeReferenceNode &&
           this.type.typeArguments[0]) ||
         "any";
+      const refType = this.isApiRef ? "any" : type;
       return `${this.modifiers.join(" ")} ${
         this.name
-      }:RefObject<${type}> = infernoCreateRef<${type}>()`;
+      }:RefObject<${refType}> = infernoCreateRef<${type}>()`;
     }
 
     if (this.isProvider) {

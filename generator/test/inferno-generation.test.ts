@@ -142,13 +142,13 @@ mocha.describe("inferno-generation", function () {
   //     }
   //   });
 
-  //   mocha.it("method", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
+  mocha.it("method", function () {
+    this.testGenerator(this.test!.title);
+  });
 
-  //   mocha.it("method-use-apiref", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
+  mocha.it("method-use-apiref", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   //   mocha.it("method-without-decorator", function () {
   //     this.testGenerator(this.test!.title);
