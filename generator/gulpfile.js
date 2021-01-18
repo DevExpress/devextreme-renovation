@@ -46,7 +46,21 @@ gulp.task("tests", function (done) {
   });
 });
 
-gulp.task("build", gulp.parallel(["copy-test-cases", "compile"]));
+gulp.task("compile-inferno-modules", function compile() {
+  const tsProject = ts.createProject(
+    "./test/test-cases/expected/inferno/tsconfig.json",
+    ts.reporter.fullReporter
+  );
+  return gulp
+    .src("modules/inferno/**/*.ts")
+    .pipe(tsProject())
+    .pipe(gulp.dest("build/modules/inferno"));
+});
+
+gulp.task(
+  "build",
+  gulp.parallel(["copy-test-cases", "compile", "compile-inferno-modules"])
+);
 
 gulp.task(
   "build-dist",
@@ -57,7 +71,8 @@ gulp.task(
       .src()
       .pipe(tsProject())
       .pipe(gulp.dest(tsProject.options.outDir));
-  })
+  }),
+  "compile-inferno-modules"
 );
 
 gulp.task(
@@ -87,6 +102,16 @@ gulp.task("compile-react-check", function compile() {
     ts.reporter.fullReporter
   );
   return gulp.src("test/test-cases/expected/react/**/*.tsx").pipe(tsProject());
+});
+
+gulp.task("compile-inferno-check", function compile() {
+  const tsProject = ts.createProject(
+    "./test/test-cases/expected/inferno/tsconfig.json",
+    ts.reporter.fullReporter
+  );
+  return gulp
+    .src("test/test-cases/expected/inferno/**/*.tsx")
+    .pipe(tsProject());
 });
 
 gulp.task("compile-angular-check", function compile() {
