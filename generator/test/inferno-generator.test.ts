@@ -4,6 +4,11 @@ import assert from "assert";
 import path from "path";
 import { InfernoGenerator } from "../inferno-generator/inferno-generator";
 
+import factory from "./helpers/create-component";
+import { Decorators } from "../component_declaration/decorators";
+
+const { createDecorator } = factory(generator);
+
 mocha.describe("Expressions", function () {
   mocha.describe("jsx", function () {
     mocha.describe("JsxOpeningElement", function () {
@@ -121,6 +126,68 @@ mocha.describe("Expressions", function () {
         );
       }
     );
+  });
+
+  mocha.describe("class-members/property", function () {
+    mocha.describe("getDependency", function () {
+      mocha.it("@Ref() p?:string", function () {
+        const expression = generator.createProperty(
+          [createDecorator(Decorators.Ref)],
+          [],
+          generator.createIdentifier("p"),
+          generator.SyntaxKind.QuestionToken,
+          generator.createKeywordTypeNode("string")
+        );
+
+        assert.deepStrictEqual(expression.getDependency(), ["p.current"]);
+      });
+
+      mocha.it("@RefProp() p?:string", function () {
+        const expression = generator.createProperty(
+          [createDecorator(Decorators.RefProp)],
+          [],
+          generator.createIdentifier("p"),
+          generator.SyntaxKind.QuestionToken,
+          generator.createKeywordTypeNode("string")
+        );
+
+        expression.scope = "props";
+
+        assert.deepStrictEqual(expression.getDependency(), [
+          "props.p?.current",
+        ]);
+      });
+
+      mocha.it("@Ref() p:string", function () {
+        const expression = generator.createProperty(
+          [createDecorator(Decorators.Ref)],
+          [],
+          generator.createIdentifier("p"),
+          undefined,
+          generator.createKeywordTypeNode("string")
+        );
+
+        assert.deepStrictEqual(expression.getDependency(), []);
+      });
+
+      mocha.it("with unknown decorator should throw exception", function () {
+        const expression = generator.createProperty(
+          [createDecorator("SomeName")],
+          [],
+          generator.createIdentifier("p"),
+          undefined,
+          generator.createKeywordTypeNode("string")
+        );
+
+        let error = null;
+        try {
+          expression.getDependency();
+        } catch (e) {
+          error = e;
+        }
+        assert.strictEqual(error, "Can't parse property: p");
+      });
+    });
   });
 });
 
