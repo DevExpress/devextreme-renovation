@@ -145,25 +145,9 @@ export class Property extends BaseProperty {
       }
       const postfix = this.isForwardRefProp ? "Ref" : "";
       if (this.isForwardRefProp) {
-        return `${componentContext}${this.name}?.()${
-          this.isElementRef
-            ? `${
-                this.questionOrExclamationToken === SyntaxKind.ExclamationToken
-                  ? ""
-                  : this.questionOrExclamationToken
-              }.nativeElement`
-            : ""
-        }`;
+        return `${componentContext}${this.name}?.()`;
       }
-      return `${componentContext}${this.name}${postfix}${
-        this.isElementRef
-          ? `${
-              this.questionOrExclamationToken === SyntaxKind.ExclamationToken
-                ? ""
-                : this.questionOrExclamationToken
-            }.nativeElement`
-          : ""
-      }`;
+      return `${componentContext}${this.name}${postfix}`;
     }
     if (this.isRefProp) {
       return `${componentContext}${this.name}`;

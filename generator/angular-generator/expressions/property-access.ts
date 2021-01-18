@@ -65,4 +65,20 @@ export class PropertyAccess extends BasePropertyAccess {
 
     return `this._${property.name}=${value}`;
   }
+
+  processName(options?: toStringOptions) {
+    const expression = this.extractRefExpression(options);
+
+    if (expression) {
+      const member = expression.getMember(options);
+      if (member?.isRef || member?.isForwardRef || member?.isForwardRefProp) {
+        return ".nativeElement";
+      }
+      if (member?.isRefProp) {
+        return "";
+      }
+    }
+
+    return `.${this.name}`;
+  }
 }

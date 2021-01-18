@@ -27,4 +27,22 @@ export class PropertyAccess extends BasePropertyAccess {
     }
     return super.toString(options, elements);
   }
+
+  processName(options?: toStringOptions) {
+    const expression = this.extractRefExpression(options);
+
+    if (expression) {
+      const member = expression.getMember(options);
+      if (
+        member?.isRef ||
+        member?.isForwardRef ||
+        member?.isForwardRefProp ||
+        member?.isRefProp
+      ) {
+        return "";
+      }
+    }
+
+    return super.processName(options);
+  }
 }

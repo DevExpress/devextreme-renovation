@@ -43,13 +43,12 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         ) as Property | undefined;
 
         const token = relatedProp?.questionOrExclamationToken ?? "";
-        const getter = relatedProp ? ".current!" : "";
 
         this.attributes[containerIndex] = new JsxAttribute(
           attr.name,
           new JsxExpression(
             undefined,
-            new SimpleExpression(`${expression}${token}${getter}`)
+            new SimpleExpression(`${expression}${token}`)
           )
         );
       }

@@ -55,44 +55,49 @@ export default class Widget extends JSXComponent<
       ? this.props.forwardRefProp
       : this.divRef;
 
-    if (!this.ref) {
-      this.ref = this.divRef;
+    if (this.ref && !this.ref.current) {
+      this.ref.current = this.divRef.current;
     }
-    !this.ref && (this.ref = this.divRef);
-    someRef = this.ref ? this.ref : this.divRef;
+    this.ref && !this.ref.current && (this.ref!.current = this.divRef.current);
+    someRef = this.ref?.current ? this.ref.current : this.divRef.current;
 
-    if (!this.forwardRef) {
+    if (this.forwardRef && !this.forwardRef.current) {
     }
 
     if (this.props.forwardRefProp) {
       this.props.forwardRefProp = this.divRef;
     }
 
-    someRef = this.forwardRef ? this.forwardRef : this.divRef;
+    someRef = this.forwardRef ? this.forwardRef.current : this.divRef.current;
 
-    this.existingRef = this.divRef;
+    this.existingRef.current = this.divRef.current;
     this.props.requiredForwardRefProp = this.divRef;
   }
 
   readRefs() {
-    const outer_1 = this.props.refProp?.outerHTML;
-    const outer_2 = this.props.forwardRefProp?.outerHTML;
-    const outer_3 = this.ref?.outerHTML;
-    const outer_4 = this.forwardRef?.outerHTML;
-    const outer_5 = this.existingRef.outerHTML;
-    const outer_6 = this.existingForwardRef.outerHTML;
-    const outer_7 = this.props.requiredRefProp.outerHTML;
-    const outer_8 = this.props.requiredForwardRefProp.outerHTML;
+    const outer_1 = this.props.refProp?.current?.outerHTML;
+    const outer_2 = this.props.forwardRefProp?.current?.outerHTML;
+    const outer_3 = this.ref?.current?.outerHTML;
+    const outer_4 = this.forwardRef?.current?.outerHTML;
+    const outer_5 = this.existingRef.current?.outerHTML;
+    const outer_6 = this.existingForwardRef.current?.outerHTML;
+    const outer_7 = this.props.requiredRefProp.current?.outerHTML;
+    const outer_8 = this.props.requiredForwardRefProp.current?.outerHTML;
   }
 
   getRestRefs(): {
-    refProp?: HTMLDivElement;
-    forwardRefProp?: HTMLDivElement;
-    requiredRefProp: HTMLDivElement;
-    requiredForwardRefProp: HTMLDivElement;
+    refProp?: HTMLDivElement | null;
+    forwardRefProp?: HTMLDivElement | null;
+    requiredRefProp: HTMLDivElement | null;
+    requiredForwardRefProp: HTMLDivElement | null;
   } {
     const { outerDivRef, ...restProps } = this.props;
 
-    return restProps;
+    return {
+      refProp: restProps.refProp?.current,
+      forwardRefProp: restProps.forwardRefProp?.current,
+      requiredRefProp: restProps.requiredRefProp.current,
+      requiredForwardRefProp: restProps.requiredForwardRefProp.current,
+    };
   }
 }

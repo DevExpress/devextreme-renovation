@@ -523,11 +523,13 @@ export class ReactComponent extends Component {
   compileUseRef() {
     return this.refs
       .map((r) => {
-        return `const ${r.name}=useRef<${this.extractRefType(r.type)}>()`;
+        return `const ${r.name}=useRef<${this.extractRefType(r.type)}>(null)`;
       })
       .concat(
         this.apiRefs.map((r) => {
-          return `const ${r.name}=useRef<${this.extractRefType(r.type)}Ref>()`;
+          return `const ${r.name}=useRef<${this.extractRefType(
+            r.type
+          )}Ref>(null)`;
         })
       )
       .join(";\n");

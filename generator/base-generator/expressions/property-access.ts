@@ -1,6 +1,6 @@
 import { Expression, ExpressionWithExpression } from "./base";
 import { toStringOptions } from "../types";
-import { Identifier } from "./common";
+import { Identifier, NonNullExpression } from "./common";
 import SyntaxKind from "../syntaxKind";
 import { Property, Method } from "./class-members";
 import { getProps } from "./component";
@@ -92,13 +92,19 @@ export class PropertyAccess extends ExpressionWithExpression {
     );
   }
 
+  processName(options?: toStringOptions) {
+    return `.${this.name}`;
+  }
+
   toString(options?: toStringOptions, elements: BindingElement[] = []) {
     const member = this.getMember(options);
     if (member) {
       return `${member.getter(options!.newComponentContext, options?.keepRef)}`;
     }
 
-    const result = `${this.expression.toString(options)}.${this.name}`;
+    const result = `${this.expression.toString(options)}${this.processName(
+      options
+    )}`;
     const context = this.calculateComponentContext(options);
 
     if (
@@ -164,6 +170,19 @@ export class PropertyAccess extends ExpressionWithExpression {
     }
     return false;
   }
+
+  extractRefExpression(options?: toStringOptions) {
+    let expression = this.expression;
+
+    if (expression instanceof NonNullExpression) {
+      expression = expression.expression;
+    }
+
+    return expression instanceof PropertyAccess &&
+      this.name.toString(options) === "current"
+      ? expression
+      : null;
+  }
 }
 
 export class PropertyAccessChain extends ExpressionWithExpression {
@@ -179,13 +198,17 @@ export class PropertyAccessChain extends ExpressionWithExpression {
     this.name = name;
   }
 
+  processName(options?: toStringOptions) {
+    return `${this.questionDotToken}${this.name.toString(options)}`;
+  }
+
   toString(options?: toStringOptions) {
     const replaceMark = this.questionDotToken === SyntaxKind.QuestionDotToken;
     const firstPart = this.expression.toString(options);
 
-    return `${replaceMark ? firstPart.replace(/[\?!]$/, "") : firstPart}${
-      this.questionDotToken
-    }${this.name.toString(options)}`;
+    return `${
+      replaceMark ? firstPart.replace(/[\?!]$/, "") : firstPart
+    }${this.processName(options)}`;
   }
 
   getDependency(options: toStringOptions) {

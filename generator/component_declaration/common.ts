@@ -150,10 +150,7 @@ export const Listen = (
  */
 export const Ref = () => propertyDecorator;
 
-export type RefObject<T = {}> = Readonly<{ current: T | null }> &
-  {
-    [P in keyof T]: T[P];
-  };
+export type RefObject<T = {}> = { current: T | null };
 
 /**
  * Method Decorator.

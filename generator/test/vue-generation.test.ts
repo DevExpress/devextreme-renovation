@@ -114,7 +114,7 @@ mocha.describe("vue-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it("refs", function () {
+  mocha.it.only("refs", function () {
     this.testGenerator(this.test!.title);
   });
 

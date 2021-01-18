@@ -112,12 +112,7 @@ export class Property extends BaseProperty {
       )
     ) {
       if (componentContext === "") {
-        if (keepRef && this.isForwardRefProp) {
-          return `${scope}${this.name}`;
-        }
-        return `${scope}${this.name}${
-          scope ? this.questionOrExclamationToken : ""
-        }.current!`;
+        return `${scope}${this.name}`;
       }
       return getPropName(this.name, componentContext, scope);
     } else if (this.isState) {
@@ -159,11 +154,7 @@ export class Property extends BaseProperty {
     ) {
       const scope = this.processComponentContext(this.scope);
       return this.questionOrExclamationToken === "?"
-        ? [
-            `${scope}${this.name.toString()}${
-              scope ? this.questionOrExclamationToken : ""
-            }.current`,
-          ]
+        ? [`${scope}${this.name.toString()}`]
         : [];
     } else if (this.isState) {
       return [getPropName(this.name), getLocalStateName(this.name)];
@@ -225,12 +216,7 @@ export class Property extends BaseProperty {
   }
 
   get canBeDestructured() {
-    if (
-      this.isState ||
-      this.isRefProp ||
-      this.isNested ||
-      this.isForwardRefProp
-    ) {
+    if (this.isState || this.isNested) {
       return false;
     }
     return super.canBeDestructured;

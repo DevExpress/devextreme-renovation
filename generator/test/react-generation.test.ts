@@ -138,7 +138,7 @@ mocha.describe("react-generation", function () {
     }
   });
 
-  mocha.it("refs", function () {
+  mocha.it.only("refs", function () {
     this.testGenerator(this.test!.title);
   });
 
