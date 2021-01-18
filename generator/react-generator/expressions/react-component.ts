@@ -305,6 +305,35 @@ export class ReactComponent extends Component {
     return imports;
   }
 
+  compileApiRefImports(imports: string[]) {
+    if (this.apiRefs.length) {
+      imports.splice(
+        -1,
+        0,
+        ...this.apiRefs.reduce((imports: string[], ref) => {
+          const refType = ref.compileRefType();
+          const baseComponent = this.context.components![
+            refType
+          ] as ReactComponent;
+          if (this.context.dirname) {
+            const relativePath = getModuleRelativePath(
+              this.context.dirname,
+              baseComponent.context.path!
+            );
+            imports.push(
+              `import {${
+                baseComponent.name
+              }Ref as ${refType}Ref} from "${this.processModuleFileName(
+                relativePath.replace(path.extname(relativePath), "")
+              )}"`
+            );
+          }
+          return imports;
+        }, [])
+      );
+    }
+  }
+
   compileImports() {
     const imports: string[] = [];
     const hooks: string[] = [];
@@ -344,32 +373,7 @@ export class ReactComponent extends Component {
       compats.push("forwardRef");
     }
 
-    if (this.apiRefs.length) {
-      imports.splice(
-        -1,
-        0,
-        ...this.apiRefs.reduce((imports: string[], ref) => {
-          const refType = ref.compileRefType();
-          const baseComponent = this.context.components![
-            refType
-          ] as ReactComponent;
-          if (this.context.dirname) {
-            const relativePath = getModuleRelativePath(
-              this.context.dirname,
-              baseComponent.context.path!
-            );
-            imports.push(
-              `import {${
-                baseComponent.name
-              }Ref as ${refType}Ref} from "${this.processModuleFileName(
-                relativePath.replace(path.extname(relativePath), "")
-              )}"`
-            );
-          }
-          return imports;
-        }, [])
-      );
-    }
+    this.compileApiRefImports(imports);
 
     this.compileDefaultOptionsImport(imports);
 

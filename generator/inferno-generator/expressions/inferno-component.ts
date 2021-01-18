@@ -47,6 +47,8 @@ export class InfernoComponent extends PreactComponent {
     return imports;
   }
 
+  compileApiRefImports() {}
+
   addPrefixToMembers(members: Array<Property | Method>) {
     return members;
   }

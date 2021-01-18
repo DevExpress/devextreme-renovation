@@ -14,7 +14,6 @@ export declare type WidgetWithApiRefInputType = {
   prop1?: number;
 };
 const WidgetWithApiRefInput: WidgetWithApiRefInputType = {};
-import { WidgetRef as BaseWidgetRef } from "./method";
 import { createElement as h } from "inferno-compat";
 import { createRef as infernoCreateRef } from "inferno";
 declare type RestProps = {
