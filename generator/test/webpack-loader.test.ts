@@ -109,10 +109,20 @@ mocha.describe("webpack-loader", function () {
     mocha.it("inferno", async function () {
       await compiler(fixtureFileName, {
         platform: "inferno",
+        defaultOptionsModule: "options",
+        jqueryBaseComponentModule: "jqueryBase",
+        jqueryComponentRegistratorModule: "registrator",
+        modulesPath: "devextreme-generator/modules",
       });
 
-      const args = this.codeCompilerStub.lastCall.args;
-      assert.ok(args[0] instanceof InfernoGenerator);
+      const generator = this.codeCompilerStub.lastCall.args[0];
+      assert.ok(generator instanceof InfernoGenerator);
+      assert.deepEqual(generator.options, {
+        defaultOptionsModule: "options",
+        jqueryBaseComponentModule: "jqueryBase",
+        jqueryComponentRegistratorModule: "registrator",
+        modulesPath: "devextreme-generator/modules",
+      });
     });
   });
 
