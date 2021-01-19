@@ -64,15 +64,19 @@ gulp.task(
 
 gulp.task(
   "build-dist",
-  gulp.series("copy-package", "copy-test-cases", function () {
-    const tsProject = ts.createProject("tsconfig.dist.json");
+  gulp.series(
+    "copy-package",
+    "copy-test-cases",
+    function () {
+      const tsProject = ts.createProject("tsconfig.dist.json");
 
-    return tsProject
-      .src()
-      .pipe(tsProject())
-      .pipe(gulp.dest(tsProject.options.outDir));
-  }),
-  "compile-inferno-modules"
+      return tsProject
+        .src()
+        .pipe(tsProject())
+        .pipe(gulp.dest(tsProject.options.outDir));
+    },
+    "compile-inferno-modules"
+  )
 );
 
 gulp.task(
