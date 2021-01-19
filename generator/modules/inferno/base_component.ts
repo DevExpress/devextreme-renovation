@@ -31,7 +31,11 @@ export class InfernoComponent<P = {}, S = {}> extends Component<P, S> {
     InfernoEffectHost.callEffects();
   }
 
-  componentWillUnmount() {
+  destroyEffects() {
     this._effects.forEach((e) => e.dispose());
+  }
+
+  componentWillUnmount() {
+    this.destroyEffects();
   }
 }
