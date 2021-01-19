@@ -6,7 +6,6 @@ import {
   JSXComponent,
   InternalState,
   Ref,
-  Effect,
   RefObject,
 } from "../../../component_declaration/common";
 import GridComponent from "./grid";
@@ -14,6 +13,7 @@ import Pager from "./pager";
 import Paging from "./paging";
 
 import GetterProvider from "./getter-context";
+import PageSelector from "./page-selector";
 
 function view(model: ContextApp) {
   return (
@@ -32,8 +32,12 @@ function view(model: ContextApp) {
           pageIndexChange={model.setPageIndex}
         />
       </GridComponent>
-
-      <input id="context-app-input" ref={model.input} value={model.pageIndex} />
+      <div id="context-page-selector">
+        <PageSelector
+          value={model.pageIndex}
+          valueChange={model.pageIndexChange}
+        />
+      </div>
     </div>
   );
 }
@@ -49,16 +53,8 @@ export default class ContextApp extends JSXComponent(Props) {
 
   @Ref() input!: RefObject<HTMLInputElement>;
 
-  @Effect()
-  inputEffect() {
-    const handler = (e: Event) => {
-      this.setPageIndex(
-        Number(this.pageIndex.toString() + (e as InputEvent).data) || 0
-      );
-    };
-    this.input.addEventListener("input", handler);
-
-    return () => this.input.removeEventListener("input", handler);
+  get pageIndexChange() {
+    return (e: number) => this.setPageIndex(e);
   }
 
   setPageIndex(pageIndex: number) {

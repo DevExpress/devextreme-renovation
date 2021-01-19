@@ -268,26 +268,27 @@ cloneTest("Check templates passing with events binding", async (t) => {
 
 cloneTest("Context - share object", async (t) => {
   const checkValue = async (expected) => {
-    const pagerValueEl = await Selector("#context-pager-input");
+    const pagerValueEl = await Selector("#pager span.value");
     const pagingEl = await Selector("#context-paging-value");
-    const appEl = await Selector("#context-app-input");
+    const appEl = await Selector("#context-page-selector span.value");
     const getterContext = await Selector("#context-getter-provider");
 
-    await t.expect(await pagerValueEl.value).eql(expected);
+    await t.expect(await pagerValueEl.textContent).eql(expected);
     await t
       .expect((await pagingEl.textContent).trim())
       .eql(`paging:${expected}`);
-    await t.expect(await appEl.value).eql(expected);
+    await t.expect(await appEl.textContent).eql(expected);
     await t
       .expect(await getterContext.textContent)
       .eql(`Consumer Value:${expected}`);
   };
 
-  await t.typeText("#context-app-input", "32");
-  await checkValue("132");
+  await t.click("#context-page-selector span.add");
+  await t.click("#context-page-selector span.add");
+  await checkValue("3");
 
-  await t.typeText("#context-pager-input", "55");
-  await checkValue("13255");
+  await t.click("#pager span.sub");
+  await checkValue("2");
 });
 
 cloneTest("Property access chain in view", async (t) => {
