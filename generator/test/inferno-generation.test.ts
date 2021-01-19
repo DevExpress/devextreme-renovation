@@ -51,10 +51,6 @@ mocha.describe("inferno-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  //   mocha.it("pick-props", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
   mocha.it("state", function () {
     this.testGenerator(this.test!.title);
   });
@@ -67,21 +63,9 @@ mocha.describe("inferno-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  //   mocha.it("empty-component", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
   mocha.it("component-input", function () {
     this.testGenerator(this.test!.title);
   });
-
-  //   mocha.it("slots", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("slot-pass-from-rest", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
 
   mocha.it("effect", function () {
     this.testGenerator(this.test!.title);
@@ -91,25 +75,9 @@ mocha.describe("inferno-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  //   mocha.it("spread-attribute", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("spread-attribute-without-ref", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("spread-attribute-with-custom-component", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
   mocha.it("dx-inner-widget", function () {
     this.testGenerator(this.test!.title);
   });
-
-  //   mocha.it("dx-widget-with-template", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
 
   mocha.it("dx-widget-with-props", function () {
     this.testGenerator(this.test!.title);
@@ -123,25 +91,6 @@ mocha.describe("inferno-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  //   mocha.it("template-transit", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("template-pass", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("Throw error if ref is passed to template", function () {
-  //     try {
-  //       this.testGenerator("template-with-ref");
-  //     } catch (e) {
-  //       assert.strictEqual(
-  //         e,
-  //         "Templates do not support refs. See 'headerTemplate' prop usage in view function"
-  //       );
-  //     }
-  //   });
-
   mocha.it("method", function () {
     this.testGenerator(this.test!.title);
   });
@@ -150,53 +99,17 @@ mocha.describe("inferno-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  //   mocha.it("method-without-decorator", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
   mocha.it("import-component", function () {
     this.testGenerator(this.test!.title);
   });
-
-  //   mocha.it("import-component-named", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
 
   mocha.it("component-bindings-only", function () {
     this.testGenerator(this.test!.title);
   });
 
-  //   mocha.it("component-pass", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  // mocha.it("jsx-function-in-view", function () {
-  //   this.testGenerator(this.test!.title);
-  // });
-
   mocha.it("refs", function () {
     this.testGenerator(this.test!.title);
   });
-
-  //   mocha.it("dx-widget-with-ref-prop", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("refs-as-props", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  // mocha.it("implements", function () {
-  //   this.testGenerator(this.test!.title);
-  // });
-
-  //   mocha.it("two-way-props", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("getter-with-complex-type", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
 
   mocha.it("nested", function () {
     this.testGenerator(this.test!.title);
@@ -206,85 +119,13 @@ mocha.describe("inferno-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  //   mocha.it("forward-ref-template", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("forward-ref-parent", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("forward-ref-child", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
   mocha.it("export-default", function () {
     this.testGenerator(this.test!.title);
   });
 
-  //   mocha.it("export-named", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("export-named-api-ref", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("effects-with-iterable", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
   mocha.it("portal", function () {
     this.testGenerator(this.test!.title);
   });
-
-  //   mocha.it("functions", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("external-functions", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("iterables-repeat", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("import-type", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("private", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("view-without-tag", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("view-without-tag-arrow", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("spread-in-view", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("template-default-value", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("dynamic-component", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("dynamic-components-array", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
-
-  //   mocha.it("jsx-template-spread", function () {
-  //     this.testGenerator(this.test!.title);
-  //   });
 
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
@@ -306,13 +147,5 @@ mocha.describe("inferno-generation", function () {
     mocha.it("default-options-empty", function () {
       this.testGenerator(this.test!.title);
     });
-
-    // mocha.it("required-props", function () {
-    //   this.testGenerator(this.test!.title);
-    // });
-
-    // mocha.it("use-external-component-bindings", function () {
-    //   this.testGenerator(this.test!.title);
-    // });
   });
 });
