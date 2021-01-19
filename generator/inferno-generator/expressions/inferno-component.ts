@@ -215,7 +215,7 @@ export class InfernoComponent extends PreactComponent {
         if (run !== "once") {
           const dependency = dependencies[index];
           result.push(
-            `this._effects[${index}].update([${dependency.join(",")}])`
+            `this._effects[${index}]?.update([${dependency.join(",")}])`
           );
         }
         return result;

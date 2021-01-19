@@ -81,13 +81,13 @@ export default class Widget extends InfernoComponent<
     ];
   }
   updateEffects() {
-    this._effects[0].update([
+    this._effects[0]?.update([
       this.props.p,
       this.state_s,
       this.props.sChange,
       this.i,
     ]);
-    this._effects[2].update([
+    this._effects[2]?.update([
       this.i,
       this.j,
       this.props.p,
