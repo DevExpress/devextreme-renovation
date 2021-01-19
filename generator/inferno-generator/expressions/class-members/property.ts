@@ -9,13 +9,14 @@ import { Decorators } from "../../../component_declaration/decorators";
 
 export class Property extends BaseProperty {
   getter(componentContext?: string, keepRef?: boolean) {
-    if (
-      this.isInternalState ||
-      this.isState ||
-      this.isProvider ||
-      this.isConsumer
-    ) {
+    if (this.isInternalState || this.isProvider || this.isConsumer) {
       return `${this.processComponentContext(componentContext)}${this.name}`;
+    }
+
+    if (this.isState) {
+      return `${this.processComponentContext(componentContext)}state_${
+        this.name
+      }`;
     }
 
     return super.getter(componentContext, keepRef);
@@ -106,7 +107,7 @@ export class Property extends BaseProperty {
           ]
         : [];
     } else if (this.isState) {
-      return [`${this.name}`, `props.${this.name}Change`];
+      return [`state_${this.name}`, `props.${this.name}Change`];
     } else if (this.isInternalState || this.isProvider || this.isConsumer) {
       return [`${this.name}`];
     }

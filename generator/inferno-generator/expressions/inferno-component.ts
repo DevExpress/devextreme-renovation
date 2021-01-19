@@ -114,9 +114,13 @@ export class InfernoComponent extends PreactComponent {
       const type =
         m.questionOrExclamationToken !== "?" ? m.type : `${m.type}|undefined`;
 
+      const getterName = m.isInternalState
+        ? m._name
+        : new Identifier(`state_${m._name}`);
+
       result.push(
         this.createGetAccessor(
-          m._name,
+          getterName,
           type,
           new Block(
             [

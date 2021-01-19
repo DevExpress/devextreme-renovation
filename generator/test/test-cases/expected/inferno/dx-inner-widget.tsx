@@ -44,7 +44,7 @@ export default class InnerWidget extends InfernoComponent<
     };
   }
 
-  get value(): number {
+  get state_value(): number {
     const state = this._currentState || this.state;
     return this.props.value !== undefined ? this.props.value : state.value;
   }
@@ -66,14 +66,14 @@ export default class InnerWidget extends InfernoComponent<
       value,
       valueChange,
       ...restProps
-    } = { ...this.props, value: this.value };
+    } = { ...this.props, value: this.state_value };
     return restProps;
   }
 
   render() {
     const props = this.props;
     return view({
-      props: { ...props, value: this.value },
+      props: { ...props, value: this.state_value },
       restAttributes: this.restAttributes,
     } as InnerWidget);
   }

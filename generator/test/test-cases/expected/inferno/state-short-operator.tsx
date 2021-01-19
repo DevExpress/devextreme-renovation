@@ -58,7 +58,7 @@ export default class Widget extends InfernoComponent<
       return { innerState: newValue };
     });
   }
-  get propState(): number {
+  get state_propState(): number {
     const state = this._currentState || this.state;
     return this.props.propState !== undefined
       ? this.props.propState
@@ -79,15 +79,15 @@ export default class Widget extends InfernoComponent<
     this.set_innerState(() => this.innerState + 1);
     this.set_innerState(() => this.innerState + 1);
     this.set_innerState(() => this.innerState + 1);
-    this.set_propState(() => this.propState + 1);
-    this.set_propState(() => this.propState + 1);
-    this.set_propState(() => this.propState + 1);
-    this.set_propState(() => this.propState + 1);
+    this.set_propState(() => this.state_propState + 1);
+    this.set_propState(() => this.state_propState + 1);
+    this.set_propState(() => this.state_propState + 1);
+    this.set_propState(() => this.state_propState + 1);
   }
   get restAttributes(): RestProps {
     const { defaultPropState, propState, propStateChange, ...restProps } = {
       ...this.props,
-      propState: this.propState,
+      propState: this.state_propState,
     };
     return restProps;
   }
@@ -95,7 +95,7 @@ export default class Widget extends InfernoComponent<
   render() {
     const props = this.props;
     return view({
-      props: { ...props, propState: this.propState },
+      props: { ...props, propState: this.state_propState },
       innerState: this.innerState,
       updateState: this.updateState,
       restAttributes: this.restAttributes,

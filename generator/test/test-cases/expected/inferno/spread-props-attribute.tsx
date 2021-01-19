@@ -43,7 +43,7 @@ export default class Widget extends InfernoComponent<
     };
   }
 
-  get value(): boolean | undefined {
+  get state_value(): boolean | undefined {
     const state = this._currentState || this.state;
     return this.props.value !== undefined ? this.props.value : state.value;
   }
@@ -60,7 +60,7 @@ export default class Widget extends InfernoComponent<
   get restAttributes(): RestProps {
     const { defaultValue, value, valueChange, visible, ...restProps } = {
       ...this.props,
-      value: this.value,
+      value: this.state_value,
     };
     return restProps;
   }
@@ -68,7 +68,7 @@ export default class Widget extends InfernoComponent<
   render() {
     const props = this.props;
     return view({
-      props: { ...props, value: this.value },
+      props: { ...props, value: this.state_value },
       restAttributes: this.restAttributes,
     } as Widget);
   }

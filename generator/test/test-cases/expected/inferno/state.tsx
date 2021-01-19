@@ -89,7 +89,7 @@ export default class Widget extends InfernoComponent<
       return { innerData: newValue };
     });
   }
-  get state1(): boolean | undefined {
+  get state_state1(): boolean | undefined {
     const state = this._currentState || this.state;
     return this.props.state1 !== undefined ? this.props.state1 : state.state1;
   }
@@ -102,7 +102,7 @@ export default class Widget extends InfernoComponent<
       return { state1: newValue };
     });
   }
-  get state2(): boolean {
+  get state_state2(): boolean {
     const state = this._currentState || this.state;
     return this.props.state2 !== undefined ? this.props.state2 : state.state2;
   }
@@ -115,7 +115,7 @@ export default class Widget extends InfernoComponent<
       return { state2: newValue };
     });
   }
-  get stateProp(): boolean | undefined {
+  get state_stateProp(): boolean | undefined {
     const state = this._currentState || this.state;
     return this.props.stateProp !== undefined
       ? this.props.stateProp
@@ -132,14 +132,14 @@ export default class Widget extends InfernoComponent<
   }
 
   updateState(): any {
-    this.set_state1(() => !this.state1);
+    this.set_state1(() => !this.state_state1);
   }
   updateState2(): any {
-    const cur = this.state2;
+    const cur = this.state_state2;
     this.set_state2(() => (cur !== false ? false : true));
   }
   destruct(): any {
-    const s = this.state1;
+    const s = this.state_state1;
   }
   stateChange(stateProp?: boolean): any {
     this.set_stateProp(() => stateProp);
@@ -158,9 +158,9 @@ export default class Widget extends InfernoComponent<
       ...restProps
     } = {
       ...this.props,
-      state1: this.state1,
-      state2: this.state2,
-      stateProp: this.stateProp,
+      state1: this.state_state1,
+      state2: this.state_state2,
+      stateProp: this.state_stateProp,
     };
     return restProps;
   }
@@ -170,9 +170,9 @@ export default class Widget extends InfernoComponent<
     return view({
       props: {
         ...props,
-        state1: this.state1,
-        state2: this.state2,
-        stateProp: this.stateProp,
+        state1: this.state_state1,
+        state2: this.state_state2,
+        stateProp: this.state_stateProp,
       },
       innerData: this.innerData,
       updateState: this.updateState,

@@ -64,7 +64,7 @@ export default class Widget extends InfernoComponent<
     return [
       new InfernoEffect(this.setupData, [
         this.props.p,
-        this.s,
+        this.state_s,
         this.props.sChange,
         this.i,
       ]),
@@ -74,20 +74,25 @@ export default class Widget extends InfernoComponent<
         this.j,
         this.props.p,
         this.props.r,
-        this.s,
+        this.state_s,
         this.props.sChange,
         this.props.defaultS,
       ]),
     ];
   }
   updateEffects() {
-    this._effects[0].update([this.props.p, this.s, this.props.sChange, this.i]);
+    this._effects[0].update([
+      this.props.p,
+      this.state_s,
+      this.props.sChange,
+      this.i,
+    ]);
     this._effects[2].update([
       this.i,
       this.j,
       this.props.p,
       this.props.r,
-      this.s,
+      this.state_s,
       this.props.sChange,
       this.props.defaultS,
     ]);
@@ -117,7 +122,7 @@ export default class Widget extends InfernoComponent<
       return { j: newValue };
     });
   }
-  get s(): number {
+  get state_s(): number {
     const state = this._currentState || this.state;
     return this.props.s !== undefined ? this.props.s : state.s;
   }
@@ -132,12 +137,12 @@ export default class Widget extends InfernoComponent<
   }
 
   setupData(): any {
-    const id = subscribe(this.getP(), this.s, this.i);
+    const id = subscribe(this.getP(), this.state_s, this.i);
     this.set_i(() => 15);
     return () => unsubscribe(id);
   }
   onceEffect(): any {
-    const id = subscribe(this.getP(), this.s, this.i);
+    const id = subscribe(this.getP(), this.state_s, this.i);
     this.set_i(() => 15);
     return () => unsubscribe(id);
   }
@@ -151,7 +156,7 @@ export default class Widget extends InfernoComponent<
   get restAttributes(): RestProps {
     const { defaultS, p, r, s, sChange, ...restProps } = {
       ...this.props,
-      s: this.s,
+      s: this.state_s,
     };
     return restProps;
   }
@@ -159,7 +164,7 @@ export default class Widget extends InfernoComponent<
   render() {
     const props = this.props;
     return view({
-      props: { ...props, s: this.s },
+      props: { ...props, s: this.state_s },
       i: this.i,
       j: this.j,
       getP: this.getP,
