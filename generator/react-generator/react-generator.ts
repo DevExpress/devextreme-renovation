@@ -87,7 +87,8 @@ export class ReactGenerator extends BaseGenerator {
       decorators,
       modifiers,
       importClause,
-      moduleSpecifier
+      moduleSpecifier,
+      this.getContext()
     );
   }
 

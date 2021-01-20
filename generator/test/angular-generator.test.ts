@@ -6538,7 +6538,7 @@ mocha.describe("Angular generator", function () {
       assert.strictEqual(
         getResult(bindings.members[1].toString()),
         getResult(`
-          @Output() p1Change:EventEmitter<number> = new EventEmitter();
+          @Output() p1Change:EventEmitter<number|undefined> = new EventEmitter();
         `)
       );
     });

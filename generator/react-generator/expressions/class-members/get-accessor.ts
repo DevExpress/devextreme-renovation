@@ -3,8 +3,8 @@ import { calculateMethodDependency } from "./method";
 import { toStringOptions } from "../../../base-generator/types";
 
 export class GetAccessor extends BaseGetAccessor {
-  getter() {
-    return `${super.getter()}()`;
+  getter(componentContext?: string) {
+    return `${super.getter(componentContext)}()`;
   }
 
   getDependency(options: toStringOptions) {

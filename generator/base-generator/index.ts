@@ -538,7 +538,8 @@ export default class Generator implements GeneratorAPI {
       decorators,
       modifiers,
       importClause,
-      moduleSpecifier
+      moduleSpecifier,
+      this.getContext()
     );
   }
 
@@ -559,7 +560,8 @@ export default class Generator implements GeneratorAPI {
           decorators,
           modifiers,
           importClause,
-          moduleSpecifier
+          moduleSpecifier,
+          this.getContext()
         );
         return context.defaultOptionsImport;
       }
@@ -1313,11 +1315,17 @@ export default class Generator implements GeneratorAPI {
       this.addType(name, externalElement.type);
     }
   }
+
+  getModulesPath() {
+    return this.options.modulesPath || "";
+  }
+
   getInitialContext(): GeneratorContext {
     return {
       defaultOptionsModule:
         this.options.defaultOptionsModule &&
         path.resolve(this.options.defaultOptionsModule),
+      modules: this.getModulesPath(),
     };
   }
 

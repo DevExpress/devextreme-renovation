@@ -57,5 +57,5 @@
     /* Advanced Options */
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
   },
-  "exclude": ["node_modules", "build", "test/test-cases", "e2e"]
+  "exclude": ["node_modules", "build", "test/test-cases", "e2e", "modules"]
 }

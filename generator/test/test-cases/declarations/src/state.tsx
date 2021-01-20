@@ -40,7 +40,7 @@ export default class Widget extends JSXComponent(WidgetInput) {
     const s = state1;
   }
 
-  stateChange(stateProp: boolean) {
+  stateChange(stateProp?: boolean) {
     this.props.stateProp = stateProp;
   }
 }

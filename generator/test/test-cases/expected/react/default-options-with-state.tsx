@@ -3,9 +3,9 @@ function view() {}
 export declare type WidgetPropsType = {
   p1: string;
   p2: string;
-  defaultP1?: string;
+  defaultP1: string;
   p1Change?: (p1: string) => void;
-  defaultP2?: string;
+  defaultP2: string;
   p2Change?: (p2: string) => void;
 };
 export const WidgetProps: WidgetPropsType = ({

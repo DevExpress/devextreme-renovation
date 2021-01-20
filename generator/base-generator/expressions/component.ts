@@ -24,7 +24,6 @@ import { Decorators } from "../../component_declaration/decorators";
 import { ComponentInput } from "./component-input";
 import { extractComplexType, isTypeArray, TypeExpression } from "./type";
 import { BindingElement, BindingPattern } from "./binding-pattern";
-import { extractRefType } from "../utils/expressions";
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
   return heritageClauses.some((h) => h.isJsxComponent);
@@ -72,10 +71,6 @@ export class Component extends Class implements Heritable {
     return this._name.toString();
   }
 
-  extractRefType(type: TypeExpression | string) {
-    return extractRefType(type, "RefObject");
-  }
-
   addPrefixToMembers(members: Array<Property | Method>) {
     members
       .filter((m) => !m.inherited && m instanceof GetAccessor)
@@ -91,10 +86,6 @@ export class Component extends Class implements Heritable {
       (!this.defaultOptionRules ||
         this.defaultOptionRules.toString() !== "null")
     );
-  }
-
-  processRef(member: Property) {
-    return member;
   }
 
   processMembers(members: Array<Property | Method>) {
@@ -166,18 +157,6 @@ export class Component extends Class implements Heritable {
       this.addPrefixToMembers(members).concat(props)
     );
 
-    members = members.map((member) => {
-      if (
-        member.isRef ||
-        member.isRefProp ||
-        member.isForwardRef ||
-        member.isForwardRefProp
-      ) {
-        return this.processRef(member as Property);
-      }
-      return member;
-    });
-
     const restPropsGetter = this.createRestPropsGetter(members);
     restPropsGetter.prefix = "__";
     members.push(restPropsGetter);
@@ -210,27 +189,23 @@ export class Component extends Class implements Heritable {
       )
     ) as Property[];
 
-    const refs = members
-      .filter((m) => m.decorators.find((d) => d.name === "Ref"))
-      .reduce(
-        (r: { refs: Property[]; apiRefs: Property[] }, p) => {
-          if (
-            context.components &&
-            context.components[
-              this.extractRefType(p.type!).toString()
-            ] instanceof Component
-          ) {
-            p.decorators.find(
-              (d) => d.name === "Ref"
-            )!.expression.expression = new SimpleExpression("ApiRef");
-            r.apiRefs.push(p as Property);
-          } else {
-            r.refs.push(p as Property);
-          }
-          return r;
-        },
-        { refs: [], apiRefs: [] }
-      );
+    const refs = (members.filter((m) => m.isRef) as Property[]).reduce(
+      (r: { refs: Property[]; apiRefs: Property[] }, p) => {
+        if (
+          context.components &&
+          context.components[p.compileRefType()] instanceof Component
+        ) {
+          p.decorators.find(
+            (d) => d.name === "Ref"
+          )!.expression.expression = new SimpleExpression("ApiRef");
+          r.apiRefs.push(p as Property);
+        } else {
+          r.refs.push(p as Property);
+        }
+        return r;
+      },
+      { refs: [], apiRefs: [] }
+    );
     this.refs = refs.refs;
     this.apiRefs = refs.apiRefs;
 

@@ -1,7 +1,8 @@
 import { StringLiteral } from "./literal";
 import { Identifier } from "./common";
 import { Decorator } from "./decorator";
-import { VariableExpression } from "../types";
+import { VariableExpression, GeneratorContext } from "../types";
+import { getRelativePath } from "../utils/path-utils";
 
 export class NamedImports {
   node: ImportSpecifier[];
@@ -130,8 +131,20 @@ export class ImportDeclaration {
     public decorators: Decorator[] = [],
     public modifiers: string[] = [],
     public importClause: ImportClause,
-    public moduleSpecifier: StringLiteral
+    public moduleSpecifier: StringLiteral,
+    public context: GeneratorContext
   ) {}
+
+  resolveCommonModule(module: string): string {
+    if (this.context.modules!.startsWith("devextreme-generator")) {
+      return `"${this.context.modules}/${module}"`;
+    }
+    return `"${getRelativePath(
+      this.context.dirname!,
+      this.context.modules!,
+      module
+    )}"`;
+  }
 
   replaceSpecifier(search: string | RegExp, replaceValue: string) {
     this.moduleSpecifier.expression = this.moduleSpecifier.expression.replace(

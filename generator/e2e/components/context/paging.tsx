@@ -28,11 +28,11 @@ export default class PagingComponent extends JSXComponent<Props, "pageIndex">(
   Props
 ) {
   @Consumer(Context)
-  context!: PluginContext;
+  contextConsumer!: PluginContext;
 
   @Effect()
   effect() {
-    this.context.registerPlugin("paging", {
+    this.contextConsumer.registerPlugin("paging", {
       pageIndex: this.props.pageIndex,
       setPageIndex: (pageIndex: number) => {
         this.props.pageIndex = pageIndex;

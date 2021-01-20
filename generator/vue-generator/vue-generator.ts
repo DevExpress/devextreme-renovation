@@ -396,7 +396,8 @@ export class VueGenerator extends BaseGenerator {
       decorators,
       modifiers,
       importClause,
-      moduleSpecifier
+      moduleSpecifier,
+      this.getContext()
     );
   }
 

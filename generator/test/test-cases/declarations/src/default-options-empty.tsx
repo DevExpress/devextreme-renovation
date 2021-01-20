@@ -4,7 +4,9 @@ import {
   ComponentBindings,
 } from "../../../../component_declaration/common";
 
-function view() {}
+function view() {
+  return <div></div>;
+}
 
 @ComponentBindings()
 export class WidgetProps {}

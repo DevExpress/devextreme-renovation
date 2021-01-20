@@ -11,15 +11,15 @@ import {
 
 import { Context } from "./context";
 import { PluginContext } from "./context";
+import PageSelector from "./page-selector";
 
 function view(model: PagerComponent) {
   return (
-    <div>
+    <div id="pager">
       Pager:{" "}
-      <input
-        id="context-pager-input"
-        ref={model.input}
+      <PageSelector
         value={model.pageIndex}
+        valueChange={model.pageIndexChange}
       />
     </div>
   );
@@ -33,15 +33,12 @@ class Props {}
 })
 export default class PagerComponent extends JSXComponent(Props) {
   @Consumer(Context)
-  context!: PluginContext;
+  contextConsumer!: PluginContext;
 
   @Ref() input!: RefObject<HTMLInputElement>;
 
-  @Effect()
-  inputEffect() {
-    this.input.addEventListener("input", () => {
-      this.setPageIndex(Number(this.input.value) || 0);
-    });
+  get pageIndexChange() {
+    return (e: number) => this.setPageIndex(e);
   }
 
   get pageIndex() {
@@ -56,9 +53,9 @@ export default class PagerComponent extends JSXComponent(Props) {
 
   @Effect({ run: "once" })
   effect() {
-    this.paging = this.context.getPlugin("paging");
-    this.context.onChange = () => {
-      this.paging = this.context.getPlugin("paging");
+    this.paging = this.contextConsumer.getPlugin("paging");
+    this.contextConsumer.onChange = () => {
+      this.paging = this.contextConsumer.getPlugin("paging");
     };
   }
 }

@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2016",
+    "module": "ESNext",
+    "strict": false,
+    "esModuleInterop": false,
+    "moduleResolution": "node",
+    "typeRoots": ["node_modules/@types"],
+    "experimentalDecorators": true,
+    "noEmitOnError": false,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "jsxFactory": "h",
+    "declaration": false,
+    "allowSyntheticDefaultImports": true
+  },
+  "exclude": ["node_modules"]
+}

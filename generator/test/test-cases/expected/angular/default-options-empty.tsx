@@ -25,6 +25,7 @@ export function defaultOptions(rule: WidgetOptionRule) {
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<div></div>`,
 })
 export default class Widget extends WidgetProps {
   get __restAttributes(): any {
@@ -51,6 +52,7 @@ export default class Widget extends WidgetProps {
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}

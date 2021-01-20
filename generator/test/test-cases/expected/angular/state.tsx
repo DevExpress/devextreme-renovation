@@ -4,9 +4,13 @@ class WidgetInput {
   @Input() state1?: boolean = false;
   @Input() state2: boolean = false;
   @Input() stateProp?: boolean;
-  @Output() state1Change: EventEmitter<boolean> = new EventEmitter();
+  @Output() state1Change: EventEmitter<
+    boolean | undefined
+  > = new EventEmitter();
   @Output() state2Change: EventEmitter<boolean> = new EventEmitter();
-  @Output() statePropChange: EventEmitter<boolean> = new EventEmitter();
+  @Output() statePropChange: EventEmitter<
+    boolean | undefined
+  > = new EventEmitter();
 }
 
 import {
@@ -43,7 +47,7 @@ export default class Widget extends WidgetInput {
     const { state1 } = this;
     const s = state1;
   }
-  __stateChange(stateProp: boolean): any {
+  __stateChange(stateProp?: boolean): any {
     this._statePropChange((this.stateProp = stateProp));
   }
   get __restAttributes(): any {

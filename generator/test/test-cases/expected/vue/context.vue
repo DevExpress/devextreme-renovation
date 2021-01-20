@@ -26,7 +26,7 @@ export const DxWidget = {
   props: Props,
   computed: {
     __sum() {
-      return this.provider.value + this.context.value;
+      return this.provider.value + this.contextConsumer.value;
     },
     __contextProvider() {
       return "provide";
@@ -39,7 +39,7 @@ export const DxWidget = {
     },
   },
   inject: {
-    context: {
+    contextConsumer: {
       from: "P1Context",
       default: P1Context(),
     },

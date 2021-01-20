@@ -111,11 +111,11 @@ export class Property extends BaseProperty {
           d.name === Decorators.ForwardRefProp
       )
     ) {
-      if (componentContext === "") {
+      if (componentContext === "" || componentContext.startsWith("this")) {
         if (keepRef && this.isForwardRefProp) {
-          return `${scope}${this.name}`;
+          return `${componentContext}${scope}${this.name}`;
         }
-        return `${scope}${this.name}${
+        return `${componentContext}${scope}${this.name}${
           scope ? this.questionOrExclamationToken : ""
         }.current!`;
       }
@@ -209,6 +209,14 @@ export class Property extends BaseProperty {
       )}] = useState<${type}>(()=>${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(
         this.name
       )}${defaultExclamationToken})`;
+    }
+
+    if (this.isRef || this.isForwardRef) {
+      return `const ${this.name}=useRef<${this.compileRefType()}>()`;
+    }
+
+    if (this.isApiRef) {
+      return `const ${this.name}=useRef<${this.compileRefType()}Ref>()`;
     }
 
     if (this.isConsumer) {

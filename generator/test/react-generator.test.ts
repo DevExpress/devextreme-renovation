@@ -2837,10 +2837,13 @@ mocha.describe("ComponentInput", function () {
 
     mocha.it("Empty input with empty component", function () {
       const component = createComponent([]);
-      assert.deepEqual(component.compileViewModelArguments(), [
-        "props:{...props}",
-        "restAttributes:__restAttributes()",
-      ]);
+      assert.strictEqual(
+        getResult(component.compileViewModelArguments()),
+        getResult(`{
+          props:{...props},
+          restAttributes: __restAttributes()
+        }`)
+      );
     });
 
     mocha.it("Prop in input with empty component", function () {
@@ -2861,10 +2864,13 @@ mocha.describe("ComponentInput", function () {
           generator.createKeywordTypeNode(generator.SyntaxKind.BooleanKeyword)
         ),
       ]);
-      assert.deepEqual(component.compileViewModelArguments(), [
-        "props:{...props}",
-        "restAttributes:__restAttributes()",
-      ]);
+      assert.strictEqual(
+        getResult(component.compileViewModelArguments()),
+        getResult(`{
+          props:{...props},
+          restAttributes:__restAttributes()
+        }`)
+      );
     });
 
     mocha.it(
@@ -2891,7 +2897,7 @@ mocha.describe("ComponentInput", function () {
           ),
         ]);
         assert.deepEqual(
-          getResult(`{${component.compileViewModelArguments().join(",")}}`),
+          getResult(`${component.compileViewModelArguments()}`),
           getResult(`{
                 props:{
                     ...props,
@@ -2948,7 +2954,7 @@ mocha.describe("ComponentInput", function () {
           ]
         );
         assert.deepEqual(
-          getResult(`{${component.compileViewModelArguments().join(",")}}`),
+          getResult(`${component.compileViewModelArguments()}`),
           getResult(
             "{props:{...props},s:__state_s,restAttributes: __restAttributes()}"
           )
@@ -2979,7 +2985,7 @@ mocha.describe("ComponentInput", function () {
       );
 
       assert.strictEqual(
-        getResult(`{${component.compileViewModelArguments().join(",")}}`),
+        getResult(`${component.compileViewModelArguments()}`),
         getResult(
           "{props:{...props}, property: __property(), restAttributes: __restAttributes() }"
         )
@@ -3026,7 +3032,7 @@ mocha.describe("ComponentInput", function () {
       );
 
       assert.strictEqual(
-        getResult(`{${component.compileViewModelArguments().join(",")}}`),
+        getResult(`${component.compileViewModelArguments()}`),
         getResult("{props:{...props}, restAttributes: __restAttributes() }")
       );
     });

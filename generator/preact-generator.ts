@@ -36,7 +36,6 @@ import { JsxClosingElement as ReactJsxClosingElement } from "./react-generator/e
 import { JsxOpeningElement as ReactJsxOpeningElement } from "./react-generator/expressions/jsx/jsx-opening-element";
 import { JsxAttribute as ReactJsxAttribute } from "./react-generator/expressions/jsx/jsx-attribute";
 import { kebabSvgAttributes } from "./base-generator/utils/svg-utils/kebab-attributes";
-import { extractRefType } from "./base-generator/utils/expressions";
 
 const BASE_JQUERY_WIDGET = "BASE_JQUERY_WIDGET";
 
@@ -131,12 +130,8 @@ export class PreactComponent extends ReactComponent {
     );
   }
 
-  extractRefType(type: TypeExpression | string) {
-    return extractRefType(type, "RefObject");
-  }
-
-  compilePortalComponent() {
-    return `import { createPortal } from "preact/compat";
+  compilePortalComponentCore() {
+    return `
     declare type PortalProps = {
       container?: HTMLElement | null;
       children: any,
@@ -491,7 +486,7 @@ class JsxClosingElement extends ReactJsxClosingElement {
   }
 }
 
-class JsxAttribute extends ReactJsxAttribute {
+export class JsxAttribute extends ReactJsxAttribute {
   processName(name: string, options?: toStringOptions) {
     if (!options?.jsxComponent && kebabSvgAttributes.has(name)) {
       return dasherize(name);
@@ -535,8 +530,26 @@ export type GeneratorContext = BaseGeneratorContext & GeneratorOptions;
 
 export class ImportDeclaration extends BaseImportDeclaration {
   compileComponentDeclarationImport() {
+    const preact: string[] = [];
+    const compat: string[] = [];
+
+    const result: string[] = [];
+
     if (this.has("createContext")) {
-      return `import { createContext } from "preact"`;
+      preact.push("createContext");
+    }
+    if (this.has("Portal")) {
+      compat.push("createPortal");
+    }
+
+    if (preact.length) {
+      result.push(`import { ${preact} } from "preact"`);
+    }
+    if (compat.length) {
+      result.push(`import { ${compat} } from "preact/compat"`);
+    }
+    if (result.length) {
+      return result.join(";\n");
     }
     return super.compileComponentDeclarationImport();
   }
@@ -721,7 +734,8 @@ export class PreactGenerator extends ReactGenerator {
       decorators,
       modifiers,
       importClause,
-      moduleSpecifier
+      moduleSpecifier,
+      this.getContext()
     );
   }
 

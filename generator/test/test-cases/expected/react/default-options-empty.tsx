@@ -1,4 +1,6 @@
-function view() {}
+function view() {
+  return <div></div>;
+}
 
 export declare type WidgetPropsType = {};
 export const WidgetProps: WidgetPropsType = {};

@@ -3,8 +3,10 @@ class ModelWidgetInput {
   @Input() disabled?: boolean;
   @Input() value?: boolean;
   @Input() notValue?: boolean;
-  @Output() valueChange: EventEmitter<boolean> = new EventEmitter();
-  @Output() notValueChange: EventEmitter<boolean> = new EventEmitter();
+  @Output() valueChange: EventEmitter<boolean | undefined> = new EventEmitter();
+  @Output() notValueChange: EventEmitter<
+    boolean | undefined
+  > = new EventEmitter();
 }
 
 import {

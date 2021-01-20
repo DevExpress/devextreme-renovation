@@ -56,9 +56,9 @@ import { CommonModule } from "@angular/common";
   template: `<span></span>`,
 })
 export default class Widget extends Props {
-  contextConsumer: number;
+  contextConsumerConsumer: number;
   get __sum(): any {
-    return this.provider.value + this.contextConsumer;
+    return this.provider.value + this.contextConsumerConsumer;
   }
   get __contextProvider(): any {
     if (this.__getterCache["contextProvider"] !== undefined) {
@@ -96,24 +96,24 @@ export default class Widget extends Props {
 
   constructor(
     private changeDetection: ChangeDetectorRef,
-    @SkipSelf() @Optional() private context: P1Context,
+    @SkipSelf() @Optional() private contextConsumer: P1Context,
     @Host() private provider: P1Context,
     @Host() private contextProviderProvider: GetterContext
   ) {
     super();
-    if (!context) {
-      this.context = new P1Context();
+    if (!contextConsumer) {
+      this.contextConsumer = new P1Context();
     } else {
       const changeHandler = (value: number) => {
-        this.contextConsumer = value;
+        this.contextConsumerConsumer = value;
         this._detectChanges();
       };
-      const subscription = context.change.subscribe(changeHandler);
+      const subscription = contextConsumer.change.subscribe(changeHandler);
       this._destroyContext.push(() => {
         subscription.unsubscribe();
       });
     }
-    this.contextConsumer = this.context.value;
+    this.contextConsumerConsumer = this.contextConsumer.value;
 
     this.provider.value = 10;
   }
@@ -121,6 +121,7 @@ export default class Widget extends Props {
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}
