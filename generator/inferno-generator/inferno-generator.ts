@@ -21,9 +21,6 @@ import { StringLiteral } from "../base-generator/expressions/literal";
 import path from "path";
 
 export class InfernoGenerator extends PreactGenerator {
-  // format(code: string) {
-  //     return code;
-  // }
   createComponent(
     componentDecorator: Decorator,
     modifiers: string[],
