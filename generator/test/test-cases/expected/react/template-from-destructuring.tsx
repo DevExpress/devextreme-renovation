@@ -1,10 +1,10 @@
-export declare type CheckBoxPropsType = {
+export declare type PropsType = {
   contentTemplate: React.FunctionComponent<Partial<any>>;
   contentRender?: React.FunctionComponent<Partial<any>>;
   contentComponent?: React.JSXElementConstructor<Partial<any>>;
 };
-export const CheckBoxProps: CheckBoxPropsType = {
-  contentTemplate: () => <div>jdfsfaaah</div>,
+export const Props: PropsType = {
+  contentTemplate: () => <div />,
 };
 export const viewFunction = ({ props }: TestComponent): any => {
   const { contentTemplate: AnotherTemplate } = props;
@@ -14,12 +14,9 @@ export const viewFunction = ({ props }: TestComponent): any => {
 import * as React from "react";
 import { useCallback, HTMLAttributes } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof CheckBoxProps
->;
+declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
 interface TestComponent {
-  props: typeof CheckBoxProps & RestProps;
+  props: typeof Props & RestProps;
   restAttributes: RestProps;
 }
 
@@ -35,7 +32,7 @@ const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
       ))) ||
   (ComponentProp && ((props: any) => <ComponentProp {...props} />));
 
-export function TestComponent(props: typeof CheckBoxProps & RestProps) {
+export function TestComponent(props: typeof Props & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
@@ -65,5 +62,5 @@ export function TestComponent(props: typeof CheckBoxProps & RestProps) {
 export default TestComponent;
 
 TestComponent.defaultProps = {
-  ...CheckBoxProps,
+  ...Props,
 };

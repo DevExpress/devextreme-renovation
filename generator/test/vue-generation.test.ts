@@ -338,7 +338,12 @@ mocha.describe("vue-generation", function () {
   mocha.it("template-default-value", function () {
     this.testGenerator(this.test!.title);
   });
+
   mocha.it("jsx-template-spread", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("template-from-destructuring", function () {
     this.testGenerator(this.test!.title);
   });
 });

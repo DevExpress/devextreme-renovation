@@ -7,11 +7,10 @@ import {
 } from "../../../../component_declaration/common";
 
 @ComponentBindings()
-export class CheckBoxProps {
-  @Template() contentTemplate: JSXTemplate<any> = () => <div>jdfsfaaah</div>;
+export class Props {
+  @Template() contentTemplate: JSXTemplate<any> = () => <div />;
 }
 export const viewFunction = ({ props }: TestComponent): JSX.Element => {
-  // const { contentTemplate: Cell } = props;
   const { contentTemplate: AnotherTemplate } = props;
   return <AnotherTemplate />;
 };
@@ -19,4 +18,4 @@ export const viewFunction = ({ props }: TestComponent): JSX.Element => {
   defaultOptionRules: null,
   view: viewFunction,
 })
-export class TestComponent extends JSXComponent(CheckBoxProps) {}
+export class TestComponent extends JSXComponent(Props) {}
