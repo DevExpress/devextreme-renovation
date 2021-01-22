@@ -18,13 +18,10 @@ export class Interface extends Expression {
   }
   toString() {
     return `
-            ${this.decorators.join("\n")}
-            ${this.modifiers.join(" ")} interface ${
-      this.name
-    }${compileTypeParameters(this.typeParameters)} ${this.heritageClauses.join(
-      " "
-    )} {
-                ${this.members.join(";\n")}
-            }`;
+      ${this.decorators.join("\n")}
+      ${this.modifiers.join(" ")} interface ${this.name}${compileTypeParameters(
+      this.typeParameters
+    )} ${this.heritageClauses.join(" ")} {
+        ${this.members.join(";\n")}}`;
   }
 }
