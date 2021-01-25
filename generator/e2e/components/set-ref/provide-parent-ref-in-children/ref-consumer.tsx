@@ -29,8 +29,8 @@ export default class RefConsumer extends JSXComponent<Props>() {
   @Effect({ run: "once" })
   init() {
     const elementRef = this.getElementRef();
-    if (elementRef) {
-      elementRef.innerHTML += ":element passed";
+    if (elementRef?.current) {
+      elementRef.current.innerHTML += ":element passed";
     }
   }
 }

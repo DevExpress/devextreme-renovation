@@ -219,9 +219,12 @@ export class Property extends BaseProperty {
     if (
       this.isEvent ||
       this.isState ||
+      this.isRef ||
       this.isRefProp ||
-      this.isNested ||
-      this.isForwardRefProp
+      this.isForwardRef ||
+      this.isForwardRefProp ||
+      this.isRefProp ||
+      this.isNested
     ) {
       return false;
     }

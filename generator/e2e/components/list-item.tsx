@@ -42,9 +42,9 @@ export default class ListItem extends JSXComponent<
       this.props.onClick();
     };
 
-    this.host.addEventListener("click", handler);
+    this.host.current?.addEventListener("click", handler);
 
-    return () => this.host.removeEventListener("click", handler);
+    return () => this.host.current?.removeEventListener("click", handler);
   }
 
   @Effect({ run: "once" })

@@ -4,7 +4,8 @@ import SyntaxKind from "../syntaxKind";
 import { Property } from "./class-members";
 import { PropertyAccess } from "./property-access";
 import { getConditionalOptions } from "../utils/options";
-import { Paren, Call } from "./common";
+import { Paren, Call, NonNullExpression } from "./common";
+import { getMember } from "../utils/expressions";
 
 const isShortOperator = (operator: string) => {
   return (
@@ -48,8 +49,15 @@ export class Binary extends Expression {
   }
 
   toString(options?: toStringOptions) {
-    const dependencyMember =
-      this.left instanceof PropertyAccess && this.left.getMember(options);
+    const leftExpression =
+      this.left instanceof PropertyAccess &&
+      this.left.name.toString() === "current"
+        ? this.left.expression instanceof NonNullExpression
+          ? this.left.expression.expression
+          : this.left.expression
+        : this.left;
+    const dependencyMember = getMember(leftExpression, options);
+    // this.left instanceof PropertyAccess && this.left.getMember(options);
     const leftOptions =
       isLogicalOperator(this.operator) && !isCondition(this.left)
         ? getConditionalOptions(options)
@@ -71,6 +79,12 @@ export class Binary extends Expression {
       if (rightExpression) {
         if (dependencyMember.isReadOnly()) {
           throw `Error: Can't assign property use TwoWay, Internal State, Ref, ForwardRef prop - ${this.toString()}`;
+        }
+        if (
+          !(this.left instanceof PropertyAccess) &&
+          dependencyMember.isForwardRefProp
+        ) {
+          throw `Error: Can't assign destructed ForwardRefProp - ${this.toString()}. Assign ForwardRefProp using "this.props"`;
         }
 
         return `${(this.left as PropertyAccess).compileStateSetting(

@@ -29,6 +29,8 @@ import { GetAccessor } from "./expressions/class-members/get-accessor";
 import { PropertyAccess } from "./expressions/property-access";
 import { TypeReferenceNode } from "./expressions/type-reference-node";
 import { TypeParameterDeclaration } from "../base-generator/expressions/type-parameter-declaration";
+import { BindingPattern } from "../base-generator/expressions/binding-pattern";
+import { VariableDeclaration } from "./expressions/variable-declaration";
 
 export class ReactGenerator extends BaseGenerator {
   createHeritageClause(token: string, types: ExpressionWithTypeArguments[]) {
@@ -193,5 +195,13 @@ export class ReactGenerator extends BaseGenerator {
       type,
       body
     );
+  }
+
+  createVariableDeclarationCore(
+    name: Identifier | BindingPattern,
+    type?: TypeExpression,
+    initializer?: Expression
+  ) {
+    return new VariableDeclaration(name, type, initializer);
   }
 }

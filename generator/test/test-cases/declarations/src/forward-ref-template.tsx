@@ -32,6 +32,8 @@ export default class RefOnChildrenTemplate extends JSXComponent(Props) {
 
   @Effect()
   effect() {
-    this.child.innerHTML += "ParentText";
+    if (this.child.current) {
+      this.child.current.innerHTML += "ParentText";
+    }
   }
 }

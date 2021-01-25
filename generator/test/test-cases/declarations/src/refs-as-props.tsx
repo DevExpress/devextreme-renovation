@@ -29,12 +29,17 @@ class WidgetInput {
 export default class Widget extends JSXComponent(WidgetInput) {
   @Ref() divRef!: RefObject<HTMLDivElement>;
 
-  getSize() {
-    return this.divRef.outerHTML + this.props.nullableRef?.outerHTML;
+  getDirectly() {
+    const divRefOuter = this.divRef.current?.outerHTML ?? "";
+    const nullableRefOuter = this.props.nullableRef?.current?.outerHTML ?? "";
+    return divRefOuter + nullableRefOuter;
   }
 
-  getNullable() {
+  getDestructed() {
+    const { divRef } = this;
     const { nullableRef } = this.props;
-    return nullableRef?.outerHTML;
+    const divRefOuter = divRef.current?.outerHTML ?? "";
+    const nullableRefOuter = nullableRef?.current?.outerHTML ?? "";
+    return divRefOuter + nullableRefOuter;
   }
 }

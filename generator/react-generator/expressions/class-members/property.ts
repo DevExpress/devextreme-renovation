@@ -7,7 +7,10 @@ import {
 } from "../../../base-generator/utils/string";
 import { toStringOptions } from "../../../base-generator/types";
 import { Identifier } from "../../../base-generator/expressions/common";
-import { TypeExpression } from "../../../base-generator/expressions/type";
+import {
+  TypeExpression,
+  SimpleTypeExpression,
+} from "../../../base-generator/expressions/type";
 import {
   compileJSXTemplateProps,
   TypeReferenceNode,
@@ -54,6 +57,17 @@ export class Property extends BaseProperty {
   }
 
   compileTypeDeclarationType(type: string | TypeExpression) {
+    if (
+      (this.isRefProp || this.isForwardRefProp) &&
+      type instanceof TypeReferenceNode &&
+      type.toString() !== "any"
+    ) {
+      const typeArguments =
+        type.typeArguments.toString() === "any"
+          ? type.typeArguments
+          : [new SimpleTypeExpression(`${type.typeArguments[0]} | null`)];
+      type = new TypeReferenceNode(type.typeName, typeArguments, type.context);
+    }
     return compileType(
       type.toString(),
       this.questionOrExclamationToken === SyntaxKind.ExclamationToken
@@ -216,7 +230,7 @@ export class Property extends BaseProperty {
   }
 
   get canBeDestructured() {
-    if (this.isState || this.isNested) {
+    if (this.isState || this.isNested || this.isRef || this.isForwardRef) {
       return false;
     }
     return super.canBeDestructured;

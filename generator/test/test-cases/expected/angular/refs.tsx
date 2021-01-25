@@ -48,59 +48,61 @@ export default class Widget extends WidgetProps {
     let someRef;
     if (this.refProp) {
     }
-    someRef = this.refProp ? this.refProp : this.divRef.nativeElement;
+    someRef = this.refProp ? this.refProp : this.divRef;
     if (this.forwardRefProp) {
-      this.forwardRef_forwardRefProp(new ElementRef(this.divRef.nativeElement));
+      this.forwardRef_forwardRefProp(this.divRef);
     }
-    this.forwardRefProp &&
-      this.forwardRef_forwardRefProp(new ElementRef(this.divRef.nativeElement));
-    someRef = this.forwardRefProp?.()?.nativeElement
-      ? this.forwardRefProp?.()?.nativeElement
-      : this.divRef.nativeElement;
-    if (!this.ref) {
+    this.forwardRefProp && this.forwardRef_forwardRefProp(this.divRef);
+    someRef = this.forwardRefProp?.() ? this.forwardRefProp?.() : this.divRef;
+    if (this.ref && !this.ref.nativeElement) {
       this.ref = new ElementRef(this.divRef.nativeElement);
     }
-    !this.ref && (this.ref = new ElementRef(this.divRef.nativeElement));
+    this.ref &&
+      !this.ref.nativeElement &&
+      (this.ref = new ElementRef(this.divRef.nativeElement));
     someRef = this.ref?.nativeElement
-      ? this.ref?.nativeElement
+      ? this.ref.nativeElement
       : this.divRef.nativeElement;
-    if (!this.forwardRef) {
+    if (this.forwardRef && !this.forwardRef.nativeElement) {
     }
     if (this.forwardRefProp) {
-      this.forwardRef_forwardRefProp(new ElementRef(this.divRef.nativeElement));
+      this.forwardRef_forwardRefProp(this.divRef);
     }
-    someRef = this.forwardRef?.nativeElement
-      ? this.forwardRef?.nativeElement
+    someRef = this.forwardRef
+      ? this.forwardRef.nativeElement
       : this.divRef.nativeElement;
     this.existingRef = new ElementRef(this.divRef.nativeElement);
-    this.forwardRef_requiredForwardRefProp(
-      new ElementRef(this.divRef.nativeElement)
-    );
+    this.forwardRef_requiredForwardRefProp(this.divRef);
   }
   __readRefs(): any {
     const outer_1 = this.refProp?.outerHTML;
     const outer_2 = this.forwardRefProp?.()?.nativeElement?.outerHTML;
     const outer_3 = this.ref?.nativeElement?.outerHTML;
     const outer_4 = this.forwardRef?.nativeElement?.outerHTML;
-    const outer_5 = this.existingRef.nativeElement.outerHTML;
-    const outer_6 = this.existingForwardRef.nativeElement.outerHTML;
-    const outer_7 = this.requiredRefProp.outerHTML;
-    const outer_8 = this.requiredForwardRefProp?.().nativeElement.outerHTML;
+    const outer_5 = this.existingRef.nativeElement?.outerHTML;
+    const outer_6 = this.existingForwardRef.nativeElement?.outerHTML;
+    const outer_7 = this.requiredRefProp?.outerHTML;
+    const outer_8 = this.requiredForwardRefProp?.().nativeElement?.outerHTML;
   }
   __getRestRefs(): {
-    refProp?: HTMLDivElement;
-    forwardRefProp?: HTMLDivElement;
-    requiredRefProp: HTMLDivElement;
-    requiredForwardRefProp: HTMLDivElement;
+    refProp?: HTMLDivElement | null;
+    forwardRefProp?: HTMLDivElement | null;
+    requiredRefProp: HTMLDivElement | null;
+    requiredForwardRefProp: HTMLDivElement | null;
   } {
     const { outerDivRef, ...restProps } = {
-      outerDivRef: this.outerDivRef?.()?.nativeElement,
+      outerDivRef: this.outerDivRef?.(),
       refProp: this.refProp,
-      forwardRefProp: this.forwardRefProp?.()?.nativeElement,
+      forwardRefProp: this.forwardRefProp?.(),
       requiredRefProp: this.requiredRefProp,
-      requiredForwardRefProp: this.requiredForwardRefProp?.().nativeElement,
+      requiredForwardRefProp: this.requiredForwardRefProp?.(),
     };
-    return restProps;
+    return {
+      refProp: restProps.refProp,
+      forwardRefProp: restProps.forwardRefProp?.nativeElement,
+      requiredRefProp: restProps.requiredRefProp,
+      requiredForwardRefProp: restProps.requiredForwardRefProp.nativeElement,
+    };
   }
   get __restAttributes(): any {
     return {};
@@ -249,6 +251,7 @@ export default class Widget extends WidgetProps {
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}

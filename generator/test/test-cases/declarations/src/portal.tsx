@@ -17,7 +17,7 @@ function view(model: Widget) {
           <span></span>
         </Portal>
       )}
-      <Portal container={model.props.someRef}>
+      <Portal container={model.props.someRef?.current || null}>
         <span></span>
       </Portal>
     </div>

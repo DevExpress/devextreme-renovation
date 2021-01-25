@@ -39,17 +39,23 @@ export default class EffectsStateUpdate extends JSXComponent(Props) {
 
   @Effect()
   depsEffect() {
-    this.divRef.insertAdjacentText("beforeend", `(${this.state1} deps)`);
+    this.divRef.current?.insertAdjacentText(
+      "beforeend",
+      `(${this.state1} deps)`
+    );
   }
 
   @Effect({ run: "always" })
   alwaysEffect() {
-    this.divRef.insertAdjacentText("beforeend", "(always)");
+    this.divRef.current?.insertAdjacentText("beforeend", "(always)");
   }
 
   @Effect({ run: "once" })
   onceEffect() {
-    this.divRef.insertAdjacentText("beforeend", `(${this.state1} once)`);
+    this.divRef.current?.insertAdjacentText(
+      "beforeend",
+      `(${this.state1} once)`
+    );
   }
 
   onButtonClick() {

@@ -26,14 +26,13 @@ export default class Widget extends JSXComponent(WidgetInput) {
 
   @Method()
   getHeight(p: number = 10, p1: any): string {
-    return `${this.props.prop1} + ${this.props.prop2} + ${this.divRef.innerHTML} + ${p}`;
+    return `${this.props.prop1} + ${this.props.prop2} + ${this.divRef.current?.innerHTML} + ${p}`;
   }
 
   @Method()
   getSize(): string {
-    return `${this.props.prop1} + ${this.divRef.innerHTML} + ${this.getHeight(
-      0,
-      0
-    )}`;
+    return `${this.props.prop1} + ${
+      this.divRef.current?.innerHTML
+    } + ${this.getHeight(0, 0)}`;
   }
 }

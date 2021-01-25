@@ -34,6 +34,9 @@ export default class WidgetWithApiRef extends JSXComponent(
 
   @Method()
   getSomething(): string {
-    return `${this.props.prop1} + ${this.baseRef?.getHeight(1, undefined)}`;
+    return `${this.props.prop1} + ${this.baseRef?.current?.getHeight(
+      1,
+      undefined
+    )}`;
   }
 }

@@ -208,6 +208,21 @@ export class PreactComponent extends ReactComponent {
       .filter((p) => p.isTemplate)
       .map((t) => `${t.name}: getTemplate(props.${t.name})`);
   }
+
+  compileUseRef() {
+    return this.refs
+      .map((r) => {
+        const refType = this.extractRefType(r.type);
+        return `const ${r.name}=useRef<${refType}>(null)`;
+      })
+      .concat(
+        this.apiRefs.map((r) => {
+          const refType = this.extractRefType(r.type);
+          return `const ${r.name}=useRef<${refType}Ref>(null)`;
+        })
+      )
+      .join(";\n");
+  }
 }
 
 class JQueryComponent {

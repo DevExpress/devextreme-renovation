@@ -31,20 +31,30 @@ interface Widget {
   writeRefs: () => any;
   readRefs: () => any;
   getRestRefs: () => {
-    refProp?: MutableRefObject<HTMLDivElement | null>;
-    forwardRefProp?: MutableRefObject<HTMLDivElement | null>;
-    requiredRefProp: MutableRefObject<HTMLDivElement | null>;
-    requiredForwardRefProp: MutableRefObject<HTMLDivElement | null>;
+    refProp?: HTMLDivElement | null;
+    forwardRefProp?: HTMLDivElement | null;
+    requiredRefProp: HTMLDivElement | null;
+    requiredForwardRefProp: HTMLDivElement | null;
   };
   restAttributes: RestProps;
 }
 
 export default function Widget(props: typeof WidgetProps & RestProps) {
-  const __divRef = useRef<HTMLDivElement | null>(null);
-  const __ref = useRef<HTMLDivElement | null>(null);
-  const __existingRef = useRef<HTMLDivElement | null>(null);
-  const __forwardRef = useRef<HTMLDivElement | null>(null);
-  const __existingForwardRef = useRef<HTMLDivElement | null>(null);
+  const __divRef: MutableRefObject<HTMLDivElement | null> = useRef<
+    HTMLDivElement
+  >(null);
+  const __ref: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(
+    null
+  );
+  const __existingRef: MutableRefObject<HTMLDivElement | null> = useRef<
+    HTMLDivElement
+  >(null);
+  const __forwardRef: MutableRefObject<HTMLDivElement | null> = useRef<
+    HTMLDivElement
+  >(null);
+  const __existingForwardRef: MutableRefObject<HTMLDivElement | null> = useRef<
+    HTMLDivElement
+  >(null);
 
   const __writeRefs = useCallback(
     function __writeRefs(): any {
@@ -60,7 +70,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
       if (__ref && !__ref.current) {
         __ref.current = __divRef.current;
       }
-      __ref && !__ref.current && (__ref!.current = __divRef.current);
+      __ref && !__ref.current && (__ref.current = __divRef.current);
       someRef = __ref?.current ? __ref.current : __divRef.current;
       if (__forwardRef && !__forwardRef.current) {
       }
@@ -88,13 +98,18 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   );
   const __getRestRefs = useCallback(
     function __getRestRefs(): {
-      refProp?: MutableRefObject<HTMLDivElement | null>;
-      forwardRefProp?: MutableRefObject<HTMLDivElement | null>;
-      requiredRefProp: MutableRefObject<HTMLDivElement | null>;
-      requiredForwardRefProp: MutableRefObject<HTMLDivElement | null>;
+      refProp?: HTMLDivElement | null;
+      forwardRefProp?: HTMLDivElement | null;
+      requiredRefProp: HTMLDivElement | null;
+      requiredForwardRefProp: HTMLDivElement | null;
     } {
       const { outerDivRef, ...restProps } = props;
-      return restProps;
+      return {
+        refProp: restProps.refProp?.current,
+        forwardRefProp: restProps.forwardRefProp?.current,
+        requiredRefProp: restProps.requiredRefProp.current,
+        requiredForwardRefProp: restProps.requiredForwardRefProp.current,
+      };
     },
     [props]
   );

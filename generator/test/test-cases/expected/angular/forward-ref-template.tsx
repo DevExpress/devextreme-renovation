@@ -24,7 +24,9 @@ import { CommonModule } from "@angular/common";
 export default class RefOnChildrenTemplate extends Props {
   child!: ElementRef<HTMLDivElement>;
   __effect(): any {
-    this.child.nativeElement.innerHTML += "ParentText";
+    if (this.child.nativeElement) {
+      this.child.nativeElement.innerHTML += "ParentText";
+    }
   }
   get __restAttributes(): any {
     return {};
@@ -111,6 +113,7 @@ export default class RefOnChildrenTemplate extends Props {
 @NgModule({
   declarations: [RefOnChildrenTemplate],
   imports: [CommonModule],
+
   exports: [RefOnChildrenTemplate],
 })
 export class DxRefOnChildrenTemplateModule {}

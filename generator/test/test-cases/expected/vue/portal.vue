@@ -2,7 +2,14 @@
   <div
     ><DxPortal :container="() => document.body" v-if="rendered"
       ><span></span></DxPortal
-    ><DxPortal :container="() => props.someRef"><span></span></DxPortal
+    ><DxPortal
+      :container="
+        () =>
+          (someRef?.() === undefined || someRef?.() === null
+            ? undefined
+            : someRef?.()) || null
+      "
+      ><span></span></DxPortal
   ></div>
 </template>
 <script>

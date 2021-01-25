@@ -75,6 +75,7 @@ export class PropertyAccess extends ExpressionWithExpression {
     });
     const componentContext = this.calculateComponentContext(options);
     const usePropsSpace =
+      options?.usePropsSpace ||
       expressionString === `${processComponentContext(componentContext)}props`;
     if (expressionString === componentContext || usePropsSpace) {
       const props = getProps(options?.members || []) as Array<

@@ -27,11 +27,15 @@ export const DxWidget = {
     },
   },
   methods: {
-    __getSize() {
-      return this.$refs.divRef.outerHTML + this.props.nullableRef?.outerHTML;
+    __getDirectly() {
+      const divRefOuter = this.$refs.divRef?.outerHTML ?? "";
+      const nullableRefOuter = this.props.nullableRef?.outerHTML ?? "";
+      return divRefOuter + nullableRefOuter;
     },
-    __getNullable() {
-      return this.props.nullableRef?.outerHTML;
+    __getDestructed() {
+      const divRefOuter = this.$refs.divRef?.outerHTML ?? "";
+      const nullableRefOuter = this.props.nullableRef?.outerHTML ?? "";
+      return divRefOuter + nullableRefOuter;
     },
   },
 };

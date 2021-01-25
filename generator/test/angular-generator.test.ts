@@ -7642,8 +7642,11 @@ mocha.describe("Angular generator", function () {
         );
 
         const expression = generator.createPropertyAccess(
-          generator.createThis(),
-          generator.createIdentifier("div")
+          generator.createPropertyAccess(
+            generator.createThis(),
+            generator.createIdentifier("div")
+          ),
+          generator.createIdentifier("current")
         );
 
         const svgElement = generator.createProperty(
@@ -7660,16 +7663,6 @@ mocha.describe("Angular generator", function () {
           generator.createIdentifier("div"),
           undefined,
           generator.createKeywordTypeNode("Element")
-        );
-
-        const getHtmlElement = generator.createProperty(
-          [createDecorator(Decorators.Ref)],
-          [],
-          generator.createIdentifier("div"),
-          undefined,
-          generator.createTypeReferenceNode(
-            generator.createIdentifier("GetHtmlElement")
-          )
         );
 
         assert.strictEqual(
@@ -7696,7 +7689,7 @@ mocha.describe("Angular generator", function () {
             componentContext: generator.SyntaxKind.ThisKeyword,
             newComponentContext: generator.SyntaxKind.ThisKeyword,
           }),
-          "this.div?.nativeElement"
+          "this.div.nativeElement"
         );
 
         assert.strictEqual(
@@ -7716,10 +7709,28 @@ mocha.describe("Angular generator", function () {
           }),
           "this.div.nativeElement"
         );
+      });
+
+      mocha.it("Access ref object", function () {
+        const property = generator.createProperty(
+          [createDecorator(Decorators.Ref)],
+          [],
+          generator.createIdentifier("div"),
+          undefined,
+          generator.createUnionTypeNode([
+            generator.createKeywordTypeNode("HTMLDivElement"),
+            generator.createKeywordTypeNode("undefined"),
+          ])
+        );
+
+        const expression = generator.createPropertyAccess(
+          generator.createThis(),
+          generator.createIdentifier("div")
+        );
 
         assert.strictEqual(
           expression.toString({
-            members: [getHtmlElement],
+            members: [property],
             componentContext: generator.SyntaxKind.ThisKeyword,
             newComponentContext: generator.SyntaxKind.ThisKeyword,
           }),

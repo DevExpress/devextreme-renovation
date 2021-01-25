@@ -24,6 +24,7 @@ export type toStringOptions = {
   variables?: VariableExpression;
   jsxComponent?: Component;
   keepRef?: boolean;
+  usePropsSpace?: boolean;
 };
 
 export type VariableExpression = {

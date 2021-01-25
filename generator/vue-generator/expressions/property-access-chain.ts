@@ -1,28 +1,37 @@
 import { PropertyAccessChain as BasePropertyAccessChain } from "../../angular-generator/expressions/property-access-chain";
 import { toStringOptions } from "../types";
-import { NonNullExpression } from "./non-null-expression";
 import { PropertyAccess } from "./property-access";
+import { getMember } from "../../base-generator/utils/expressions";
 
 export class PropertyAccessChain extends BasePropertyAccessChain {
   processName(options?: toStringOptions) {
-    let expression = this.expression;
-    if (
-      expression instanceof PropertyAccessChain ||
-      expression instanceof NonNullExpression
-    ) {
-      expression = expression.expression;
-    }
+    if (this.name.toString(options) === "current") {
+      const expressionString = (this
+        .expression as PropertyAccess).expression.toString({
+        members: [],
+        variables: {
+          ...options?.variables,
+        },
+      });
+      const member = getMember(this.expression, {
+        members: [],
+        ...options,
+        componentContext:
+          expressionString.includes("this") ||
+          options?.variables?.[expressionString]
+            ? options?.componentContext
+            : expressionString,
+        usePropsSpace:
+          !expressionString.includes("this") &&
+          !options?.variables?.[expressionString],
+      });
 
-    if (
-      expression instanceof PropertyAccess &&
-      this.name.toString(options) === "current"
-    ) {
-      const member = expression.getMember(options);
       if (
         member?.isRef ||
         member?.isForwardRef ||
         member?.isForwardRefProp ||
-        member?.isRefProp
+        member?.isRefProp ||
+        member?.isApiRef
       ) {
         return "";
       }

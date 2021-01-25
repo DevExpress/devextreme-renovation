@@ -2113,8 +2113,11 @@ mocha.describe(
       const expression = generator.createBinary(
         generator.createPropertyAccess(
           generator.createPropertyAccess(
-            generator.createThis(),
-            generator.createIdentifier("div")
+            generator.createPropertyAccess(
+              generator.createThis(),
+              generator.createIdentifier("div")
+            ),
+            generator.createIdentifier("current")
           ),
           generator.createIdentifier("InnerHtml")
         ),
@@ -2128,7 +2131,7 @@ mocha.describe(
           componentContext: "this",
           newComponentContext: "",
         }),
-        "div.current!.InnerHtml = value"
+        "div.current.InnerHtml = value"
       );
       assert.deepEqual(
         expression.getDependency({
@@ -2147,8 +2150,11 @@ mocha.describe(
       const expression = generator.createPostfix(
         generator.createPropertyAccess(
           generator.createPropertyAccess(
-            generator.createThis(),
-            generator.createIdentifier("div")
+            generator.createPropertyAccess(
+              generator.createThis(),
+              generator.createIdentifier("div")
+            ),
+            generator.createIdentifier("current")
           ),
           generator.createIdentifier("InnerHtml")
         ),
@@ -2161,7 +2167,7 @@ mocha.describe(
           componentContext: "this",
           newComponentContext: "",
         }),
-        "div.current!.InnerHtml++"
+        "div.current.InnerHtml++"
       );
     });
 
@@ -2175,8 +2181,11 @@ mocha.describe(
       const expression = generator.createBinary(
         generator.createPropertyAccess(
           generator.createPropertyAccess(
-            generator.createThis(),
-            generator.createIdentifier("div")
+            generator.createPropertyAccess(
+              generator.createThis(),
+              generator.createIdentifier("div")
+            ),
+            generator.createIdentifier("current")
           ),
           generator.createIdentifier("InnerHtml")
         ),
@@ -2190,7 +2199,7 @@ mocha.describe(
           componentContext: "this",
           newComponentContext: "",
         }),
-        "div.current!.InnerHtml += value"
+        "div.current.InnerHtml += value"
       );
     });
 

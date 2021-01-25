@@ -58,9 +58,9 @@ export default class SimpleSVGComponent extends JSXComponent(Props) {
     const handler = (e: Event) => {
       this.clickCount = this.clickCount + 1;
     };
-    this.host.addEventListener("click", handler);
+    this.host.current?.addEventListener("click", handler);
 
-    return () => this.host.removeEventListener("click", handler);
+    return () => this.host.current?.removeEventListener("click", handler);
   }
 
   get className() {

@@ -31,7 +31,9 @@ export default class RefOnChildrenParent extends Props {
   child!: ElementRef<HTMLDivElement>;
   innerState: number = 10;
   __effect(): any {
-    this.child.nativeElement.innerHTML = "Ref from child";
+    if (this.child.nativeElement) {
+      this.child.nativeElement.innerHTML = "Ref from child";
+    }
     const html = this.nullableRef?.()?.nativeElement?.innerHTML;
   }
   get __restAttributes(): any {
@@ -127,7 +129,7 @@ export default class RefOnChildrenParent extends Props {
   ngOnChanges(changes: { [name: string]: any }) {
     if (
       this.__destroyEffects.length &&
-      ["nullableRef"].some((d) => changes[d])
+      ["child", "nullableRef"].some((d) => changes[d])
     ) {
       this.__schedule_effect();
     }

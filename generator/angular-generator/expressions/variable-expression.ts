@@ -6,6 +6,15 @@ export class VariableDeclaration extends BaseVariableDeclaration {
     if (this.isJsx()) {
       return "";
     }
+    if (this.initializer?.toString() === "this" && options?.members.length) {
+      const members = options.members.filter(
+        (member) => !member.canBeDestructured
+      );
+      options.variables = {
+        ...options.variables,
+        ...this.getVariables(members),
+      };
+    }
     return super.toString(options);
   }
 }

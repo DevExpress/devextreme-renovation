@@ -27,7 +27,9 @@ export const DxRefOnChildrenTemplate = {
       return this.$refs.child;
     },
     __effect() {
-      this.$refs.child.innerHTML += "ParentText";
+      if (this.$refs.child) {
+        this.$refs.child.innerHTML += "ParentText";
+      }
     },
     __schedule_effect() {
       this.__scheduleEffect(0, "__effect");

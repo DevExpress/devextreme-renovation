@@ -34,10 +34,10 @@ interface Widget {
   writeRefs: () => any;
   readRefs: () => any;
   getRestRefs: () => {
-    refProp?: any;
-    forwardRefProp?: any;
-    requiredRefProp: any;
-    requiredForwardRefProp: any;
+    refProp?: HTMLDivElement | null;
+    forwardRefProp?: HTMLDivElement | null;
+    requiredRefProp: HTMLDivElement | null;
+    requiredForwardRefProp: HTMLDivElement | null;
   };
   restAttributes: RestProps;
 }
@@ -63,7 +63,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
       if (__ref && !__ref.current) {
         __ref.current = __divRef.current;
       }
-      __ref && !__ref.current && (__ref!.current = __divRef.current);
+      __ref && !__ref.current && (__ref.current = __divRef.current);
       someRef = __ref?.current ? __ref.current : __divRef.current;
       if (__forwardRef && !__forwardRef.current) {
       }
@@ -91,13 +91,18 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   );
   const __getRestRefs = useCallback(
     function __getRestRefs(): {
-      refProp?: any;
-      forwardRefProp?: any;
-      requiredRefProp: any;
-      requiredForwardRefProp: any;
+      refProp?: HTMLDivElement | null;
+      forwardRefProp?: HTMLDivElement | null;
+      requiredRefProp: HTMLDivElement | null;
+      requiredForwardRefProp: HTMLDivElement | null;
     } {
       const { outerDivRef, ...restProps } = props;
-      return restProps;
+      return {
+        refProp: restProps.refProp?.current,
+        forwardRefProp: restProps.forwardRefProp?.current,
+        requiredRefProp: restProps.requiredRefProp.current,
+        requiredForwardRefProp: restProps.requiredForwardRefProp.current,
+      };
     },
     [props]
   );

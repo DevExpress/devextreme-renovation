@@ -94,7 +94,12 @@ class DxPortal {
   template: `<div
     ><dx-portal [container]="document.body" *ngIf="rendered"
       ><span></span></dx-portal
-    ><dx-portal [container]="someRef"><span></span></dx-portal
+    ><dx-portal
+      [container]="
+        (someRef === undefined || someRef === null ? undefined : someRef) ||
+        null
+      "
+      ><span></span></dx-portal
   ></div>`,
 })
 export default class Widget extends WidgetProps {
@@ -138,6 +143,7 @@ export default class Widget extends WidgetProps {
 @NgModule({
   declarations: [Widget, DxPortal],
   imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}

@@ -20,11 +20,7 @@ export default function WidgetWithRefProp(
 ) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { nullableRef, parentRef, ...restProps } = {
-        ...props,
-        parentRef: props.parentRef?.current!,
-        nullableRef: props.nullableRef?.current!,
-      };
+      const { nullableRef, parentRef, ...restProps } = props;
       return restProps;
     },
     [props]

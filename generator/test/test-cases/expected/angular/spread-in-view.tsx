@@ -78,6 +78,7 @@ export default class Widget extends WidgetProps {
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}

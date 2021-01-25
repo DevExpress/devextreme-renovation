@@ -337,7 +337,11 @@ export class ReactComponent extends Component {
       hooks.push("useRef");
     }
 
-    if (this.members.some((m) => m.isRefProp || m.isForwardRefProp)) {
+    if (
+      this.refs.length ||
+      this.apiRefs.length ||
+      this.members.some((m) => m.isRefProp || m.isForwardRefProp)
+    ) {
       core.push(this.REF_OBJECT_TYPE);
     }
 
@@ -523,13 +527,13 @@ export class ReactComponent extends Component {
   compileUseRef() {
     return this.refs
       .map((r) => {
-        return `const ${r.name}=useRef<${this.extractRefType(r.type)}>(null)`;
+        const refType = this.extractRefType(r.type);
+        return `const ${r.name}:MutableRefObject<${refType} | null>=useRef<${refType}>(null)`;
       })
       .concat(
         this.apiRefs.map((r) => {
-          return `const ${r.name}=useRef<${this.extractRefType(
-            r.type
-          )}Ref>(null)`;
+          const refType = this.extractRefType(r.type);
+          return `const ${r.name}:MutableRefObject<${refType}Ref | null>=useRef<${refType}Ref>(null)`;
         })
       )
       .join(";\n");

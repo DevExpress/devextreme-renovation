@@ -2,6 +2,8 @@ import { PropertyAccess as BasePropertyAccess } from "../../base-generator/expre
 import { Property } from "./class-members/property";
 import { BindingElement } from "../../base-generator/expressions/binding-pattern";
 import { toStringOptions } from "../types";
+import { getMember } from "../../base-generator/utils/expressions";
+import { NonNullExpression } from "./non-null-expression";
 
 export class PropertyAccess extends BasePropertyAccess {
   compileStateSetting(state: string, property: Property) {
@@ -29,15 +31,38 @@ export class PropertyAccess extends BasePropertyAccess {
   }
 
   processName(options?: toStringOptions) {
-    const expression = this.extractRefExpression(options);
+    if (this.name.toString(options) === "current") {
+      const expressionString = (this
+        .expression as PropertyAccess).expression.toString({
+        members: [],
+        variables: {
+          ...options?.variables,
+        },
+      });
+      const expression =
+        this.expression instanceof NonNullExpression
+          ? this.expression.expression
+          : this.expression;
 
-    if (expression) {
-      const member = expression.getMember(options);
+      const member = getMember(expression, {
+        members: [],
+        ...options,
+        componentContext:
+          expressionString.includes("this") ||
+          options?.variables?.[expressionString]
+            ? options?.componentContext
+            : expressionString,
+        usePropsSpace:
+          !expressionString.includes("this") &&
+          !options?.variables?.[expressionString],
+      });
+
       if (
         member?.isRef ||
         member?.isForwardRef ||
         member?.isForwardRefProp ||
-        member?.isRefProp
+        member?.isRefProp ||
+        member?.isApiRef
       ) {
         return "";
       }

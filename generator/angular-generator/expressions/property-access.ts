@@ -3,9 +3,13 @@ import { toStringOptions } from "../types";
 import { BindingElement } from "../../base-generator/expressions/binding-pattern";
 import { ObjectLiteral } from "../../base-generator/expressions/literal";
 import { PropertyAssignment } from "../../base-generator/expressions/property-assignment";
-import { Identifier } from "../../base-generator/expressions/common";
+import {
+  Identifier,
+  NonNullExpression,
+} from "../../base-generator/expressions/common";
 import { getProps } from "../../base-generator/expressions/component";
 import { Property } from "../../base-generator/expressions/class-members";
+import { getMember } from "../../base-generator/utils/expressions";
 
 export class PropertyAccess extends BasePropertyAccess {
   processProps(
@@ -67,18 +71,42 @@ export class PropertyAccess extends BasePropertyAccess {
   }
 
   processName(options?: toStringOptions) {
-    const expression = this.extractRefExpression(options);
+    if (this.name.toString(options) === "current") {
+      const expressionString = (this
+        .expression as PropertyAccess).expression.toString({
+        members: [],
+        variables: {
+          ...options?.variables,
+        },
+      });
+      const expression =
+        this.expression instanceof NonNullExpression
+          ? this.expression.expression
+          : this.expression;
+      const member = getMember(expression, {
+        members: [],
+        ...options,
+        componentContext:
+          expressionString.includes("this") ||
+          options?.variables?.[expressionString]
+            ? options?.componentContext
+            : expressionString,
+        usePropsSpace:
+          !expressionString.includes("this") &&
+          !options?.variables?.[expressionString],
+      });
 
-    if (expression) {
-      const member = expression.getMember(options);
-      if (member?.isRef || member?.isForwardRef || member?.isForwardRefProp) {
-        return ".nativeElement";
+      if (
+        member instanceof Property &&
+        (member?.isRef || member?.isForwardRef || member?.isForwardRefProp)
+      ) {
+        return `.nativeElement`;
       }
-      if (member?.isRefProp) {
+      if (member?.isRefProp || member?.isApiRef) {
         return "";
       }
     }
 
-    return `.${this.name}`;
+    return super.processName(options);
   }
 }

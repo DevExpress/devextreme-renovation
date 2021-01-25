@@ -195,7 +195,7 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it.only("refs", function () {
+  mocha.it("refs", function () {
     this.testGenerator(this.test!.title);
   });
 

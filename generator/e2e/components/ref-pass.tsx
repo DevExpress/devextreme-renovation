@@ -27,6 +27,8 @@ export default class RefPass extends JSXComponent(Props) {
 
   @Effect()
   loadEffect() {
-    this.contentRef.innerHTML += "parentText";
+    if (this.contentRef.current) {
+      this.contentRef.current.innerHTML += "parentText";
+    }
   }
 }

@@ -65,8 +65,8 @@ import { VariableDeclaration } from "./expressions/variable-declaration";
 import { Class } from "./expressions/class";
 import { GeneratorContext } from "../base-generator/types";
 import { ExpressionWithTypeArguments } from "./types";
-import { Binary } from "./expressions/binary";
 import { PropertyAccessChain } from "./expressions/property-access-chain";
+import { Binary } from "./expressions/binary";
 
 const emptyToString = () => "";
 
@@ -264,10 +264,6 @@ export class VueGenerator extends BaseGenerator {
       type,
       initializer
     );
-  }
-
-  createBinary(left: Expression, operator: string, right: Expression) {
-    return new Binary(left, operator, right);
   }
 
   processSourceFileName(name: string) {
@@ -533,6 +529,10 @@ export class VueGenerator extends BaseGenerator {
     members: EnumMember[]
   ) {
     return new Enum(decorators, modifiers, name, members);
+  }
+
+  createBinary(left: Expression, operator: string, right: Expression) {
+    return new Binary(left, operator, right);
   }
 
   createClassDeclarationCore(
