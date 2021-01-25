@@ -3708,6 +3708,34 @@ mocha.describe("base-generator: expressions", function () {
             `)
       );
     });
+
+    mocha.it("generic interface", function () {
+      const expression = generator.createInterfaceDeclaration(
+        [],
+        [],
+        generator.createIdentifier("i1"),
+        [
+          generator.createTypeReferenceNode(generator.createIdentifier("T")),
+          "S",
+        ],
+        [],
+        [
+          generator.createPropertySignature(
+            [],
+            generator.createIdentifier("m"),
+            undefined,
+            generator.createTypeReferenceNode(generator.createIdentifier("T")),
+            undefined
+          ),
+        ]
+      );
+      assert.strictEqual(
+        getAst(expression.toString()),
+        getAst(`interface i1<T,S>  {
+          m: T;
+        }`)
+      );
+    });
   });
 
   mocha.describe("Enum", function () {
