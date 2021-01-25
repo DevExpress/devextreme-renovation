@@ -67,7 +67,7 @@ export class Property extends BaseProperty {
     const eventDecorator = this.decorators.find(
       (d) => d.name === Decorators.Event
     );
-    const defaultValue = super.toString();
+
     if (eventDecorator) {
       return `${eventDecorator} ${this.name}:EventEmitter${parseEventType(
         this.type
@@ -132,7 +132,8 @@ export class Property extends BaseProperty {
         .map((d) => d.toString())
         .join(" ")} ${this.typeDeclaration()} = null`;
     }
-    return defaultValue;
+
+    return super.toString();
   }
 
   getter(componentContext?: string, keepRef: boolean = false) {
@@ -182,6 +183,9 @@ export class Property extends BaseProperty {
   }
 
   getDependency(_options: toStringOptions) {
+    if (this.isMutable) {
+      return [];
+    }
     return [this.name];
   }
 

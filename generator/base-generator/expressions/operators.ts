@@ -54,7 +54,7 @@ export class Binary extends Expression {
       isLogicalOperator(this.operator) && !isCondition(this.left)
         ? getConditionalOptions(options)
         : options;
-    if (dependencyMember) {
+    if (dependencyMember && !dependencyMember.isMutable) {
       let rightExpression;
 
       if (this.operator === SyntaxKind.EqualsToken) {

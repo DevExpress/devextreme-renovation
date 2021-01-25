@@ -50,6 +50,7 @@ export class Component extends Class implements Heritable {
   modelProp?: Property;
   state: Property[] = [];
   internalState: Property[];
+  mutable: Property[];
   refs: Property[];
   apiRefs: Property[];
 
@@ -212,6 +213,8 @@ export class Component extends Class implements Heritable {
     this.internalState = members.filter((m) => m.isInternalState) as Property[];
 
     this.state = members.filter((m) => m.isState) as Property[];
+
+    this.mutable = members.filter((m) => m.isMutable) as Property[];
 
     let modelProps = this.state.filter((m) =>
       m.decorators.find(

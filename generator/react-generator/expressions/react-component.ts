@@ -360,7 +360,7 @@ export class ReactComponent extends Component {
       hooks.push("useEffect");
     }
 
-    if (this.refs.length || this.apiRefs.length) {
+    if (this.refs.length || this.apiRefs.length || this.mutable.length) {
       hooks.push("useRef");
     }
 
@@ -453,6 +453,7 @@ export class ReactComponent extends Component {
   stateDeclaration() {
     return `${this.state
       .concat(this.internalState)
+      .concat(this.mutable)
       .map((p) => p.toString(this.getToStringOptions()))
       .join(";\n")}`;
   }
@@ -550,7 +551,8 @@ export class ReactComponent extends Component {
                         !m.inherited &&
                         !m.isEffect &&
                         !m.isApiMethod &&
-                        !m.isPrivate
+                        !m.isPrivate &&
+                        !m.isMutable
                     )
                     .map((m) => m.typeDeclaration())
                 )

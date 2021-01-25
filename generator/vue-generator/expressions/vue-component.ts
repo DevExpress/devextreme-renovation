@@ -429,10 +429,13 @@ export class VueComponent extends Component {
 
   generateData() {
     const statements: string[] = this.extractGlobalsFromTemplate(this.template);
-    if (this.internalState.length) {
+    const states = ([] as Property[])
+      .concat(this.internalState)
+      .concat(this.mutable);
+    if (states.length) {
       statements.push.apply(
         statements,
-        this.internalState.map((i) =>
+        states.map((i) =>
           i.toString({
             members: this.members,
           })

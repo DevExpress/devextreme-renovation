@@ -9,7 +9,12 @@ import { Decorators } from "../../../component_declaration/decorators";
 
 export class Property extends BaseProperty {
   getter(componentContext?: string, keepRef?: boolean) {
-    if (this.isInternalState || this.isProvider || this.isConsumer) {
+    if (
+      this.isInternalState ||
+      this.isProvider ||
+      this.isConsumer ||
+      this.isMutable
+    ) {
       return `${this.processComponentContext(componentContext)}${this.name}`;
     }
 
@@ -53,6 +58,16 @@ export class Property extends BaseProperty {
       return `${this.modifiers.join(" ")} ${
         this.name
       }:RefObject<${refType}> = infernoCreateRef<${type}>()`;
+    }
+
+    if (this.isMutable) {
+      return `${this.modifiers.join(" ")} ${this.name}${
+        this.questionOrExclamationToken
+      }${compileType(this.type.toString())} ${
+        this.initializer && this.initializer.toString()
+          ? `= ${this.initializer.toString()}`
+          : ""
+      }`;
     }
 
     if (this.isProvider) {
@@ -110,6 +125,8 @@ export class Property extends BaseProperty {
       return [`state_${this.name}`, `props.${this.name}Change`];
     } else if (this.isInternalState || this.isProvider || this.isConsumer) {
       return [`${this.name}`];
+    } else if (this.isMutable) {
+      return [];
     }
     throw `Can't parse property: ${this._name}`;
   }

@@ -14,6 +14,7 @@ export const enum Decorators {
   ForwardRef = "ForwardRef",
 
   InternalState = "InternalState",
+  Mutable = "Mutable",
   Ref = "Ref",
   Method = "Method",
   Effect = "Effect",
