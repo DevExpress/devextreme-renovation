@@ -45,7 +45,8 @@
     - [@Effect()](#effect)		
     - [@Template()](#template)	
     - [@Slot()](#slot)		
-    - [@Method()](#method)	
+    - [@Method()](#method)
+    - [@Mutable()](#mutable)	
     - [Context](#context)	
     - [JSX](#jsx)
     - [Portals](#portals)
@@ -229,6 +230,8 @@
 - `@Effect()` - метод, в котором можно запустить код для работы с *DOM* и только в нём! См. [пример](#Описание-компонента), в нем организована синтетическая подписка на *DOM* элемент. Аналог [useEffect в реакте](https://ru.reactjs.org/docs/hooks-reference.html#useeffect);
 
 - `@Method()` - этим декоратором помечаются методы, которые представляют внешнее *API* компонента. Для примеров - экспорт, принт, фокус. Методы должны использоваться только в редких случаях, когда нельзя что-то решить через входные пропы, либо если надо что-то юзеру отдать, что не может быть отдано через `@TwoWay` пропы и ивенты.
+
+- `@Mutable()` - декоратором помечаются члены, изменение которых не должно приводить к переповерке компонента и вызову эффектов;
 
 Также класс компонента может содержать члены без декораторов:
 
@@ -1333,6 +1336,78 @@ function viewFunction(viewModel: MyComponent) {
   return (
     <div>
       <MyEditorComponent ref={viewModel.editorRef} editorProp={viewModel.props.type} />
+    </div>
+  );
+}
+```
+
+#### @Mutable()
+
+Этим декоратором помечаются поля компонента, изменение которых не затрагивает компонент, его перерендер и не вызывает срабатывание эффектов, в которых используются помеченные поля. Также эти поля не попадают во viewModel.
+
+**Важно!** Эти поля следует использовать только с целью избежать вызова эффектов, если нет иного способа. Изменение данного поля применяется мгновенно, что стоит учитывать при разработке. В противном случае результат может отличаться от ожидаемого. Также не следует передавать значение этого поля напрямую в разметку, так как в разных фреймворках эффект может отличаться.
+
+В примере ниже, изменение поля не приведет к вызову эффекта, и разметка после вызова метода останется прежней:
+
+```tsx
+@ComponentBindings()
+class MyComponentProps { }
+
+@Component({ view: viewFunction })
+class MyComponent extends JSXComponent(MyComponentProps) {
+  @Mutable() innerField: string = "";
+  widgetData: string = "";
+
+  @Method()
+  updateData(data: string) {
+    this.innerField = data;
+  }
+
+  @Effect()
+  updateData() {
+    this.widgetData = this.innerField
+  }
+}
+
+function viewFunction(viewModel: MyComponent) {
+  return (
+    <div>
+      <span>{viewModel.widgetData}</span>
+    </div>
+  );
+}
+```
+
+Необходимо учитывать это при разработке компонента. Например, выставлять специальный флаг, который будет вызыввать связанные эффекты. В примере ниже, вызов метода стригерит срабатывание эффекта и обновит разметку:
+
+```tsx
+@ComponentBindings()
+class MyComponentProps { }
+
+@Component({ view: viewFunction })
+class MyComponent extends JSXComponent(MyComponentProps) {
+  @Mutable() innerField: string = "";
+  needUpdate: boolean = false;
+
+  @Method()
+  updateData(data: string) {
+    this.innerField = data;
+    this.needUpdate = true;
+  }
+
+  @Effect()
+  updateData() {
+    if (this.needUpdate) {
+      this.needUpdate = false;
+      this.widgetData = this.innerField
+    }
+  }
+}
+
+function viewFunction(viewModel: MyComponent) {
+  return (
+    <div>
+      <span>{viewModel.widgetData}</span>
     </div>
   );
 }
