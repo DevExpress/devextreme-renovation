@@ -221,7 +221,9 @@ export class Property extends BaseProperty {
     }
 
     if (this.isRef || this.isForwardRef) {
-      return `const ${this.name}=useRef<${this.compileRefType()}>()`;
+      return `const ${
+        this.name
+      }:MutableRefObject<${this.compileRefType()} | null>=useRef<${this.compileRefType()}>(null)`;
     }
 
     if (this.isMutable) {
@@ -231,7 +233,9 @@ export class Property extends BaseProperty {
     }
 
     if (this.isApiRef) {
-      return `const ${this.name}=useRef<${this.compileRefType()}Ref>()`;
+      return `const ${
+        this.name
+      }:MutableRefObject<${this.compileRefType()}Ref | null>=useRef<${this.compileRefType()}Ref>(null)`;
     }
 
     if (this.isConsumer) {

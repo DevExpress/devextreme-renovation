@@ -41,7 +41,7 @@ export default class WidgetWithApiRef extends InfernoComponent<
     return restProps;
   }
   getSomething(): string {
-    return `${this.props.prop1} + ${this.baseRef.current?.getHeight(
+    return `${this.props.prop1} + ${this.baseRef?.current?.getHeight(
       1,
       undefined
     )}`;
