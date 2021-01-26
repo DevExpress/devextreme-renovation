@@ -131,6 +131,11 @@ export const Event = (_args?: { actionConfig?: any }) => propertyDecorator;
  * Declares a widget property. Any change of it causes component re-render
  */
 export const InternalState = () => propertyDecorator;
+/**
+ * Property Decorator
+ * Declares a widget property. Any change of it doesn't causes component re-render and doesn't call effects.
+ */
+export const Mutable = () => propertyDecorator;
 
 class Context {}
 

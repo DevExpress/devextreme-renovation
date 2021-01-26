@@ -63,7 +63,8 @@ export class Decorator extends BaseDecorator {
       this.name === Decorators.ApiRef ||
       this.name === Decorators.InternalState ||
       this.name === Decorators.Method ||
-      this.name === Decorators.ForwardRef
+      this.name === Decorators.ForwardRef ||
+      this.name === Decorators.Mutable
     ) {
       return "";
     } else if (this.name === Decorators.Component) {

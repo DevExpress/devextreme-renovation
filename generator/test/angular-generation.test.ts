@@ -159,6 +159,10 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("mutable-state", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("model-value-disabled", function () {
     this.testGenerator(this.test!.title);
   });

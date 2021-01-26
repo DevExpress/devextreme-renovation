@@ -232,6 +232,9 @@ export class Property extends BaseProperty {
     if (this.isState) {
       return [`${this.name}_state`];
     }
+    if (this.isMutable) {
+      return [];
+    }
     return super.getDependency(options);
   }
 }

@@ -130,6 +130,8 @@ export class Property extends BaseProperty {
       return `__getNested${capitalizeFirstLetter(this.name)}()`;
     } else if (this.isProvider || this.isConsumer) {
       return this.name;
+    } else if (this.isMutable) {
+      return `${this.name}.current!`;
     }
     throw `Can't parse property: ${this._name}`;
   }
@@ -171,6 +173,8 @@ export class Property extends BaseProperty {
       return [getPropName(this.name), getPropName("children")];
     } else if (this.isProvider || this.isConsumer) {
       return [this.name];
+    } else if (this.isMutable) {
+      return [];
     }
     throw `Can't parse property: ${this._name}`;
   }
@@ -213,6 +217,12 @@ export class Property extends BaseProperty {
 
     if (this.isRef || this.isForwardRef) {
       return `const ${this.name}=useRef<${this.compileRefType()}>()`;
+    }
+
+    if (this.isMutable) {
+      return `const ${this.name}=useRef<${type}>(${
+        this.initializer ? this.initializer : ""
+      })`;
     }
 
     if (this.isApiRef) {

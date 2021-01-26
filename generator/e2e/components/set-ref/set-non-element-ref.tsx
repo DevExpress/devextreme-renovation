@@ -5,6 +5,7 @@ import {
   Effect,
   Ref,
   RefObject,
+  Mutable,
 } from "../../../component_declaration/common";
 
 function view({ host }: SetNonElementRef) {
@@ -19,7 +20,7 @@ class Props {}
 })
 export default class SetNonElementRef extends JSXComponent<Props>() {
   @Ref() host!: RefObject<HTMLDivElement>;
-  @Ref() obj!: {
+  @Mutable() obj!: {
     value: number;
   };
 
