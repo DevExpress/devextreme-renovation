@@ -297,7 +297,8 @@ export class AngularGenerator extends Generator {
       decorators,
       modifiers,
       importClause,
-      moduleSpecifier
+      moduleSpecifier,
+      this.getContext()
     );
   }
 

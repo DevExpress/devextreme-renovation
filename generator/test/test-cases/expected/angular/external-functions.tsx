@@ -8,6 +8,7 @@ const conditionFn: (cell: Cell) => boolean = (cell) => {
   return cell.visible;
 };
 const getValue: (cell: Cell) => string = (cell) => cell.text;
+const array = new Array(100).map((_, index) => index);
 const CLASS_NAME = arrowFunction();
 import { Input } from "@angular/core";
 export class WidgetProps {
@@ -38,6 +39,11 @@ import { CommonModule } from "@angular/common";
           }}{{ global_SomeClass.name }}</div
         ></span
       ></ng-container
+    ><div
+      ><ng-container
+        *ngFor="let i of global_array; trackBy: _trackBy_global_array_1"
+        ><div>{{ i.toString() }}</div></ng-container
+      ></div
     ></div
   >`,
 })
@@ -47,6 +53,7 @@ export default class Widget extends WidgetProps {
   global_conditionFn = conditionFn;
   global_getValue = getValue;
   global_SomeClass = SomeClass;
+  global_array = array;
   __addPostfix(index: number): any {
     return `_#${index}`;
   }
@@ -62,6 +69,9 @@ export default class Widget extends WidgetProps {
 
   _trackBy_cells_0(index: number, cell: any) {
     return index;
+  }
+  _trackBy_global_array_1(_index: number, i: any) {
+    return i;
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {
@@ -86,6 +96,7 @@ export default class Widget extends WidgetProps {
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}

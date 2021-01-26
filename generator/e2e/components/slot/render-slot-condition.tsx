@@ -14,14 +14,14 @@ function view({
   switchCondition,
   props: { children },
 }: RenderSlotCondition) {
-  const widget = <span id="render-slot-condition-content">{children}</span>;
-
   return (
     <Fragment>
       {condition ? (
-        <Button id="render-slot-condition-in-button">{widget}</Button>
+        <Button id="render-slot-condition-in-button">
+          <span id="render-slot-condition-content">{children}</span>
+        </Button>
       ) : (
-        widget
+        <span id="render-slot-condition-content">{children}</span>
       )}
       <Button id="render-slot-condition-switch" onClick={switchCondition}>
         Switch Condition

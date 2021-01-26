@@ -165,6 +165,7 @@ export function getTemplate(
 
     return getJsxExpression(returnStatement);
   }
+  return undefined;
 }
 export function getViewFunctionBindingPattern(
   viewFunction: BaseFunction | null
@@ -236,6 +237,29 @@ export class BaseFunction extends Expression {
         newComponentContext: componentParameter.name.toString(),
       };
 
+      if (
+        componentParameter &&
+        componentParameter.name instanceof BindingPattern
+      ) {
+        const props = componentParameter.name.elements.find(
+          (e) => e.propertyName?.toString() === "props"
+        );
+        if (props?.name instanceof BindingPattern) {
+          props.name.elements.forEach((e) => {
+            const member = members.find(
+              (m) =>
+                m._name.toString() === (e.propertyName || e.name).toString()
+            );
+            if (member) {
+              member.scope = "";
+              if (e.propertyName) {
+                member._name = e.name as Identifier;
+              }
+            }
+          });
+        }
+        options.componentContext = options.newComponentContext = "";
+      }
       options.variables = (this.body instanceof Block
         ? this.body.statements
         : [this.body]
@@ -265,30 +289,6 @@ export class BaseFunction extends Expression {
         }
         return v;
       }, {});
-
-      if (
-        componentParameter &&
-        componentParameter.name instanceof BindingPattern
-      ) {
-        const props = componentParameter.name.elements.find(
-          (e) => e.propertyName?.toString() === "props"
-        );
-        if (props?.name instanceof BindingPattern) {
-          props.name.elements.forEach((e) => {
-            const member = members.find(
-              (m) =>
-                m._name.toString() === (e.propertyName || e.name).toString()
-            );
-            if (member) {
-              member.scope = "";
-              if (e.propertyName) {
-                member._name = e.name as Identifier;
-              }
-            }
-          });
-        }
-        options.componentContext = options.newComponentContext = "";
-      }
     }
     return options;
   }

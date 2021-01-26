@@ -29,7 +29,7 @@ export class BindingElement extends Expression {
     return `${key}${this.dotDotDotToken}${nameString}`;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(_options: toStringOptions) {
     if (!this.propertyName) {
       return [this.name.toString()];
     }

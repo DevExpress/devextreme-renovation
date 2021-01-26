@@ -14,7 +14,6 @@ import {
 import { Property } from "../../../base-generator/expressions/class-members";
 import { JsxAttribute } from "./attribute";
 import { AngularDirective } from "./angular-directive";
-import { capitalizeFirstLetter } from "../../../base-generator/utils/string";
 import { BindingPattern } from "../../../base-generator/expressions/binding-pattern";
 import {
   Parameter,
@@ -41,6 +40,7 @@ import {
   getMember,
 } from "../../../base-generator/utils/expressions";
 import { VariableExpression } from "../../../base-generator/types";
+import { capitalizeFirstLetter } from "../../../base-generator/utils/string";
 
 export const mergeToStringOptions = (
   dst: toStringOptions | undefined,
@@ -101,12 +101,9 @@ export class JsxChildExpression extends JsxExpression {
   }
 
   compileSlot(slot: Property, options: toStringOptions) {
-    const slotValue =
-      slot.name.toString() === "children"
-        ? "<ng-content></ng-content>"
-        : `<ng-content select="[${slot.name}]"></ng-content>`;
-
     options.checkSlot?.(slot, options);
+
+    const slotValue = `<ng-container [ngTemplateOutlet]="dx${slot.name}"></ng-container>`;
 
     const wrapperTagName = options.isSVG ? "svg:g" : "div";
     const wrapperStyle = options.isSVG ? "" : `style="display: contents"`;
@@ -160,9 +157,13 @@ export class JsxChildExpression extends JsxExpression {
         this.createJsxExpression(statement)
       ).toString(options);
     }
+    return undefined;
   }
 
-  getExpressionFromStatement(statement: Expression, options?: toStringOptions) {
+  getExpressionFromStatement(
+    statement: Expression,
+    _options?: toStringOptions
+  ) {
     return getJsxExpression(statement);
   }
 
@@ -363,7 +364,7 @@ export class JsxChildExpression extends JsxExpression {
   }
 
   getTemplateForVariable(
-    element: JsxElement | JsxSelfClosingElement,
+    _element: JsxElement | JsxSelfClosingElement,
     identifier: Identifier
   ): JsxElement | JsxSelfClosingElement {
     return new JsxSelfClosingElement(

@@ -65,7 +65,7 @@ export class VueComponent extends Component {
     return `Dx${this.name}`;
   }
 
-  createRestPropsGetter(members: BaseClassMember[]) {
+  createRestPropsGetter(_members: BaseClassMember[]) {
     return new GetAccessor(
       undefined,
       undefined,
@@ -295,7 +295,7 @@ export class VueComponent extends Component {
 
   returnGetAccessorBlock(
     argumentPattern: BindingPattern,
-    options: toStringOptions,
+    _options: toStringOptions,
     spreadVar: BindingElement
   ) {
     return new Block(
@@ -429,10 +429,13 @@ export class VueComponent extends Component {
 
   generateData() {
     const statements: string[] = this.extractGlobalsFromTemplate(this.template);
-    if (this.internalState.length) {
+    const states = ([] as Property[])
+      .concat(this.internalState)
+      .concat(this.mutable);
+    if (states.length) {
       statements.push.apply(
         statements,
-        this.internalState.map((i) =>
+        states.map((i) =>
           i.toString({
             members: this.members,
           })

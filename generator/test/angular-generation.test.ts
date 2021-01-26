@@ -159,6 +159,10 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("mutable-state", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("model-value-disabled", function () {
     this.testGenerator(this.test!.title);
   });
@@ -304,6 +308,10 @@ mocha.describe("angular-generation", function () {
   });
 
   mocha.it("jsx-template-spread", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("template-from-destructuring", function () {
     this.testGenerator(this.test!.title);
   });
 

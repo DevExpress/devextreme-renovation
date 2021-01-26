@@ -34,7 +34,7 @@ const BasicTypes = [
 ];
 export function calculatePropertyType(
   type: TypeExpression | string,
-  initializer?: Expression
+  _initializer?: Expression
 ): string {
   if (type instanceof TypeReferenceNode && type.context.imports) {
     const imports = type.context.imports;
@@ -234,6 +234,9 @@ export class Property extends BaseProperty {
   getDependency(options: toStringOptions) {
     if (this.isState) {
       return [`${this.name}_state`];
+    }
+    if (this.isMutable) {
+      return [];
     }
     return super.getDependency(options);
   }

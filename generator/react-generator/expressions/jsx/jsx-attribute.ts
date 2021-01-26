@@ -22,7 +22,7 @@ export class JsxAttribute extends BaseJsxAttribute {
     return [new PropertyAssignment(this.name, initializer.getExpression()!)];
   }
 
-  processName(name: string, options?: toStringOptions) {
+  processName(name: string, _options?: toStringOptions) {
     return (eventsDictionary as any)[name] || name;
   }
 

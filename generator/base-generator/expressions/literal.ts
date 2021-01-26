@@ -69,6 +69,7 @@ export class ObjectLiteral extends Expression {
     if (property) {
       return property.value;
     }
+    return undefined;
   }
 
   setProperty(propertyName: string, value: Expression) {

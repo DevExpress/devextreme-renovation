@@ -20,7 +20,7 @@ export class TrackByAttribute extends JsxAttribute {
     this.trackByExpressionString = trackByExpressionString;
   }
 
-  toString(options?: toStringOptions) {
+  toString(_options?: toStringOptions) {
     return "";
   }
 

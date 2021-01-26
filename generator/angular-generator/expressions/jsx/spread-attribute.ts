@@ -91,7 +91,7 @@ export class JsxSpreadAttribute extends JsxExpression {
     return this.getPropertyAssignmentFormSpread(expression, options, context);
   }
 
-  toString(options?: toStringOptions) {
+  toString(_options?: toStringOptions) {
     return "";
   }
 }

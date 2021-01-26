@@ -1,6 +1,6 @@
 {
   "name": "devextreme-generator",
-  "version": "1.0.138",
+  "version": "1.0.142",
   "description": "Component generator",
   "scripts": {
     "test": "nyc mocha ./build/test --timeout 30000",
@@ -22,10 +22,10 @@
     "@types/react": "^16.9.19",
     "code-block-writer": "^10.1.0",
     "gulp": "^4.0.2",
+    "loader-utils": "^2.0.0",
     "prettier": "^2.1.0",
     "react": "^16.13.1",
-    "typescript": "3.8",
-    "loader-utils": "^2.0.0"
+    "typescript": "3.8"
   },
   "devDependencies": {
     "@angular/cdk": "^11.0.2",
@@ -56,6 +56,10 @@
     "gulp-typescript": "^6.0.0-alpha.1",
     "html-loader": "^1.0.0",
     "html-webpack-plugin": "^4.0.3",
+    "inferno": "^7.4.6",
+    "inferno-compat": "^7.4.6",
+    "inferno-create-element": "^7.4.6",
+    "inferno-hydrate": "^7.4.6",
     "looks-same": "^7.2.2",
     "memfs": "^3.2.0",
     "mocha": "^6.2.2",

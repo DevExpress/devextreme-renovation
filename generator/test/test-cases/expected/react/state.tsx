@@ -13,12 +13,12 @@ export declare type WidgetInputType = {
   state1?: boolean;
   state2: boolean;
   stateProp?: boolean;
-  defaultState1?: boolean;
-  state1Change?: (state1: boolean) => void;
-  defaultState2?: boolean;
+  defaultState1: boolean;
+  state1Change?: (state1?: boolean) => void;
+  defaultState2: boolean;
   state2Change?: (state2: boolean) => void;
   defaultStateProp?: boolean;
-  statePropChange?: (stateProp: boolean) => void;
+  statePropChange?: (stateProp?: boolean) => void;
 };
 const WidgetInput: WidgetInputType = ({
   defaultState1: false,
@@ -40,7 +40,7 @@ interface Widget {
   updateState: () => any;
   updateState2: () => any;
   destruct: () => any;
-  stateChange: (stateProp: boolean) => any;
+  stateChange: (stateProp?: boolean) => any;
   restAttributes: RestProps;
 }
 
@@ -87,7 +87,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     [props.state1, __state_state1]
   );
   const __stateChange = useCallback(
-    function __stateChange(stateProp: boolean): any {
+    function __stateChange(stateProp?: boolean): any {
       __state_setStateProp((__state_stateProp) => stateProp),
         props.statePropChange!(stateProp);
     },

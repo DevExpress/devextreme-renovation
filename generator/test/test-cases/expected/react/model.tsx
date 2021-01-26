@@ -4,14 +4,14 @@ function view(model: ModelWidget) {
 
 export declare type ModelWidgetInputType = {
   baseStateProp?: boolean;
-  baseStatePropChange?: (stateProp: boolean) => void;
+  baseStatePropChange?: (stateProp?: boolean) => void;
   modelStateProp?: boolean;
   value?: boolean;
   defaultBaseStateProp?: boolean;
   defaultModelStateProp?: boolean;
-  modelStatePropChange?: (modelStateProp: boolean) => void;
+  modelStatePropChange?: (modelStateProp?: boolean) => void;
   defaultValue?: boolean;
-  valueChange?: (value: boolean) => void;
+  valueChange?: (value?: boolean) => void;
 };
 const ModelWidgetInput: ModelWidgetInputType = {
   modelStatePropChange: () => {},

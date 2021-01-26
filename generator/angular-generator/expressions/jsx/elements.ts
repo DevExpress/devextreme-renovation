@@ -75,7 +75,7 @@ export class JsxElement extends BaseJsxElement {
             isSVG: true,
             checkSlot:
               (!hasSvgSlot &&
-                ((slot: Property, options: toStringOptions) => {
+                ((slot: Property, _options: toStringOptions) => {
                   if (!slot.isSvgSlot) {
                     throw `Can't pass ${slot._name} slot into ${
                       this.openingElement.component!._name

@@ -23,5 +23,5 @@ class Props {
 })
 export default class GridComponent extends JSXComponent(Props) {
   @Provider(Context)
-  context: PluginContext = new PluginContext();
+  contextProvider: PluginContext = new PluginContext();
 }

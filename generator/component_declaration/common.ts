@@ -67,10 +67,10 @@ export function Component(arg: ComponentParameters) {
  * Class can contains only properties with decorators OneWay, TwoWay, Slot, Template.
  */
 export function ComponentBindings() {
-  return function ComponentBindings(constructor: Function) {};
+  return function ComponentBindings(_constructor: Function) {};
 }
 
-const propertyDecorator = function (target: any, propertyKey: string) {};
+const propertyDecorator = function (_target: any, _propertyKey: string) {};
 
 /**
  * Property Decorator.
@@ -88,7 +88,7 @@ export const ForwardRef = () => propertyDecorator;
  * Define a property that user can pass to component. Component can write to it.
  * Any change of this property causes component re-render, also user gets notified about that change (in a different way, depending on target platform)
  */
-export const TwoWay = (args?: {
+export const TwoWay = (_args?: {
   /**
    * Specify whether to use this prop as model binding
    */
@@ -110,7 +110,7 @@ export const Template = () => propertyDecorator;
  * Property Decorator.
  * Declares an input property that the user can set custom rendering part of widget.
  */
-export const Slot = (args?: {
+export const Slot = (_args?: {
   /**
    * Specify whether to pass content as svg
    */
@@ -125,24 +125,29 @@ export const Method = () => propertyDecorator;
  * Property Decorator.
  * Declares input property that is component event handler
  */
-export const Event = (args?: { actionConfig?: any }) => propertyDecorator;
+export const Event = (_args?: { actionConfig?: any }) => propertyDecorator;
 /**
  * Property Decorator
  * Declares a widget property. Any change of it causes component re-render
  */
 export const InternalState = () => propertyDecorator;
+/**
+ * Property Decorator
+ * Declares a widget property. Any change of it doesn't causes component re-render and doesn't call effects.
+ */
+export const Mutable = () => propertyDecorator;
 
 class Context {}
 
-export const Provider = (Context: Context) => propertyDecorator;
+export const Provider = (_Context: Context) => propertyDecorator;
 
-export const Consumer = (Context: Context) => propertyDecorator;
+export const Consumer = (_Context: Context) => propertyDecorator;
 
-export const createContext = <T>(defaultValue: T) => new Context();
+export const createContext = <T>(_defaultValue: T) => new Context();
 
 export const Listen = (
-  eventName?: string,
-  parameters?: { target?: Document | Window | string }
+  _eventName?: string,
+  _parameters?: { target?: Document | Window | string }
 ) => propertyDecorator;
 /**
  * Property Decorator.
@@ -157,9 +162,10 @@ export type RefObject<T = any> = { current: T | null };
  * Declare a logic that should be executed after component is rendered.
  * All DOM references is available here.
  */
-export const Effect = (args?: { run?: "once" | "always" }) => propertyDecorator;
+export const Effect = (_args?: { run?: "once" | "always" }) =>
+  propertyDecorator;
 
-interface JSXComponentBase<P> {
+interface JSXComponentBase<_P> {
   context: any;
   forceUpdate: any;
   refs: any;
@@ -168,7 +174,7 @@ interface JSXComponentBase<P> {
   state(): any;
   isReactComponent: any;
 }
-class JSXComponentBase<P> {}
+class JSXComponentBase<_P> {}
 /**
  * A function that returns base class for any Component.
  * Pass ComponentBindings as an argument

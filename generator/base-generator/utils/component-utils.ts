@@ -67,4 +67,6 @@ export function extractComponentFromType(
   ) {
     return context.components![type.expression.toString()] as Component;
   }
+
+  return undefined;
 }

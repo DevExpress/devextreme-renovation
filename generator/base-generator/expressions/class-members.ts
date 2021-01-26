@@ -4,6 +4,7 @@ import {
   SimpleTypeExpression,
   mergeTypeExpressionImports,
   reduceTypeExpressionImports,
+  TypeReferenceNode,
 } from "./type";
 import { Expression } from "./base";
 import {
@@ -159,6 +160,10 @@ export class BaseClassMember extends Expression {
     return this._hasDecorator(Decorators.ApiRef);
   }
 
+  get isMutable() {
+    return this._hasDecorator(Decorators.Mutable);
+  }
+
   get context() {
     const decorator = this.decorators.find(
       (d) => d.name === Decorators.Consumer || d.name === Decorators.Provider
@@ -170,7 +175,7 @@ export class BaseClassMember extends Expression {
     return this.name === this._name.toString();
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(_options: toStringOptions) {
     return [this.name];
   }
 
@@ -359,6 +364,13 @@ export class Property extends BaseClassMember {
     this.initializer = initializer;
   }
 
+  compileRefType(): string {
+    const type =
+      (this.type instanceof TypeReferenceNode && this.type.typeArguments[0]) ||
+      "any";
+    return type.toString();
+  }
+
   typeDeclaration() {
     return `${this.name}${compileType(
       this.type.toString(),
@@ -370,7 +382,7 @@ export class Property extends BaseClassMember {
     return `${this.name}:${this.initializer}`;
   }
 
-  getter(componentContext?: string, keepRef: boolean = false) {
+  getter(componentContext?: string, _keepRef: boolean = false) {
     return `${this.processComponentContext(
       componentContext
     )}${this._name.toString()}`;
@@ -402,7 +414,7 @@ export class Property extends BaseClassMember {
     );
   }
 
-  toString(options?: toStringOptions) {
+  toString(_options?: toStringOptions) {
     return `${this.modifiers.join(" ")} ${this.decorators
       .map((d) => d.toString())
       .join(" ")} ${this.typeDeclaration()} ${

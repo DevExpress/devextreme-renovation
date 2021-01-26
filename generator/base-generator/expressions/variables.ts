@@ -53,7 +53,7 @@ export class VariableDeclaration extends Expression {
     if (
       this.name instanceof BindingPattern &&
       options?.members.length &&
-      this.initializer instanceof PropertyAccess &&
+      this.initializer instanceof (PropertyAccess || Identifier) &&
       this.initializer
         .toString({
           members: [],

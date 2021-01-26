@@ -5,7 +5,8 @@ class WidgetInput {
   __slotChildren?: ElementRef<HTMLDivElement>;
 
   get children() {
-    return this.__slotChildren?.nativeElement?.innerHTML.trim() || "";
+    const childNodes = this.__slotChildren?.nativeElement?.childNodes;
+    return childNodes && childNodes.length > 2;
   }
 }
 
@@ -23,10 +24,12 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["p"],
   template: `<div
-    ><dx-widget
-      ><div #slotChildren style="display: contents"
-        ><ng-content></ng-content></div></dx-widget
-  ></div>`,
+      ><dx-widget
+        ><div #slotChildren style="display: contents"
+          ><ng-container
+            [ngTemplateOutlet]="dxchildren"
+          ></ng-container></div></dx-widget></div
+    ><ng-template #dxchildren><ng-content></ng-content></ng-template>`,
 })
 export default class SlotPass extends WidgetInput {
   get __restAttributes(): any {

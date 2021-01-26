@@ -48,8 +48,8 @@ export class PropertyAccess extends ExpressionWithExpression {
 
   processProps(
     result: string,
-    options: toStringOptions,
-    elements: BindingElement[] = []
+    _options: toStringOptions,
+    _elements: BindingElement[] = []
   ) {
     return result;
   }
@@ -85,6 +85,7 @@ export class PropertyAccess extends ExpressionWithExpression {
         ? props
         : options?.members.filter((m) => props.indexOf(m) === -1);
     }
+    return undefined;
   }
 
   getMember(options?: toStringOptions) {
@@ -130,7 +131,7 @@ export class PropertyAccess extends ExpressionWithExpression {
   compileStateSetting(
     state: string,
     property: Property,
-    options: toStringOptions
+    _options: toStringOptions
   ) {
     return `this.${property.name}=${state}`;
   }

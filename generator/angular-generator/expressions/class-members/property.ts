@@ -67,7 +67,7 @@ export class Property extends BaseProperty {
     const eventDecorator = this.decorators.find(
       (d) => d.name === Decorators.Event
     );
-    const defaultValue = super.toString();
+
     if (eventDecorator) {
       return `${eventDecorator} ${this.name}:EventEmitter${parseEventType(
         this.type
@@ -93,7 +93,8 @@ export class Property extends BaseProperty {
       return `__${selector}?: ElementRef<HTMLDivElement>;
 
             get ${this.name}(){
-                return this.__${selector}?.nativeElement?.innerHTML.trim()||"";
+                const childNodes =  this.__${selector}?.nativeElement?.childNodes;
+                return childNodes && childNodes.length > 2;
             }`;
     }
     if (this.isNestedComp) {
@@ -131,7 +132,8 @@ export class Property extends BaseProperty {
         .map((d) => d.toString())
         .join(" ")} ${this.typeDeclaration()} = null`;
     }
-    return defaultValue;
+
+    return super.toString();
   }
 
   getter(componentContext?: string, keepRef: boolean = false) {
@@ -164,7 +166,10 @@ export class Property extends BaseProperty {
     return `${componentContext}${this.name}`;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(_options: toStringOptions) {
+    if (this.isMutable) {
+      return [];
+    }
     return [this.name];
   }
 

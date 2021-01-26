@@ -100,7 +100,7 @@ export class Property extends BaseProperty {
     return `${name}${this.compileTypeDeclarationType(type)}`;
   }
 
-  getter(componentContext?: string, keepRef: boolean = false) {
+  getter(componentContext?: string, _: boolean = false) {
     componentContext = this.processComponentContext(componentContext);
     const scope = this.processComponentContext(this.scope);
     if (this.isInternalState) {
@@ -139,11 +139,13 @@ export class Property extends BaseProperty {
       return `__getNested${capitalizeFirstLetter(this.name)}()`;
     } else if (this.isProvider || this.isConsumer) {
       return this.name;
+    } else if (this.isMutable) {
+      return `${this.name}.current!`;
     }
     throw `Can't parse property: ${this._name}`;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(_options: toStringOptions) {
     if (this.isInternalState) {
       return [getLocalStateName(this.name)];
     } else if (
@@ -176,6 +178,8 @@ export class Property extends BaseProperty {
       return [getPropName(this.name), getPropName("children")];
     } else if (this.isProvider || this.isConsumer) {
       return [this.name];
+    } else if (this.isMutable) {
+      return [];
     }
     throw `Can't parse property: ${this._name}`;
   }
@@ -214,6 +218,20 @@ export class Property extends BaseProperty {
       )}] = useState<${type}>(()=>${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(
         this.name
       )}${defaultExclamationToken})`;
+    }
+
+    if (this.isRef || this.isForwardRef) {
+      return `const ${this.name}=useRef<${this.compileRefType()}>()`;
+    }
+
+    if (this.isMutable) {
+      return `const ${this.name}=useRef<${type}>(${
+        this.initializer ? this.initializer : ""
+      })`;
+    }
+
+    if (this.isApiRef) {
+      return `const ${this.name}=useRef<${this.compileRefType()}Ref>()`;
     }
 
     if (this.isConsumer) {

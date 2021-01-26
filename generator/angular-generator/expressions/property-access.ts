@@ -13,7 +13,7 @@ import { getMember } from "../../base-generator/utils/expressions";
 
 export class PropertyAccess extends BasePropertyAccess {
   processProps(
-    result: string,
+    _result: string,
     options: toStringOptions,
     elements: BindingElement[] = []
   ) {

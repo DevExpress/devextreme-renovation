@@ -42,7 +42,7 @@ export class Function extends AngularFunction {
     name: Identifier,
     typeParameters: any,
     parameters: Parameter[],
-    type: TypeExpression | undefined,
+    _type: TypeExpression | undefined,
     body: Block,
     context: GeneratorContext
   ) {

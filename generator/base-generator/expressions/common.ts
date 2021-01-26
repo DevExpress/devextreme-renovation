@@ -12,6 +12,7 @@ function getIdentifierExpressionFromVariable(
   if (options?.variables && options.variables[stringValue]) {
     return options.variables[stringValue];
   }
+  return undefined;
 }
 
 export class Identifier extends SimpleExpression {
@@ -60,7 +61,7 @@ export class Void extends ExpressionWithExpression {
 }
 
 export class Delete extends ExpressionWithExpression {
-  toString(options?: toStringOptions) {
+  toString(_options?: toStringOptions) {
     return `${SyntaxKind.DeleteKeyword} ${super.toString()}`;
   }
 }

@@ -24,7 +24,6 @@ import { Decorators } from "../../component_declaration/decorators";
 import { ComponentInput } from "./component-input";
 import { extractComplexType, isTypeArray, TypeExpression } from "./type";
 import { BindingElement, BindingPattern } from "./binding-pattern";
-import { extractRefType } from "../utils/expressions";
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
   return heritageClauses.some((h) => h.isJsxComponent);
@@ -51,6 +50,7 @@ export class Component extends Class implements Heritable {
   modelProp?: Property;
   state: Property[] = [];
   internalState: Property[];
+  mutable: Property[];
   refs: Property[];
   apiRefs: Property[];
 
@@ -72,10 +72,6 @@ export class Component extends Class implements Heritable {
     return this._name.toString();
   }
 
-  extractRefType(type: TypeExpression | string) {
-    return extractRefType(type, "RefObject");
-  }
-
   addPrefixToMembers(members: Array<Property | Method>) {
     members
       .filter((m) => !m.inherited && m instanceof GetAccessor)
@@ -91,10 +87,6 @@ export class Component extends Class implements Heritable {
       (!this.defaultOptionRules ||
         this.defaultOptionRules.toString() !== "null")
     );
-  }
-
-  processRef(member: Property) {
-    return member;
   }
 
   processMembers(members: Array<Property | Method>) {
@@ -166,18 +158,6 @@ export class Component extends Class implements Heritable {
       this.addPrefixToMembers(members).concat(props)
     );
 
-    members = members.map((member) => {
-      if (
-        member.isRef ||
-        member.isRefProp ||
-        member.isForwardRef ||
-        member.isForwardRefProp
-      ) {
-        return this.processRef(member as Property);
-      }
-      return member;
-    });
-
     const restPropsGetter = this.createRestPropsGetter(members);
     restPropsGetter.prefix = "__";
     members.push(restPropsGetter);
@@ -210,33 +190,31 @@ export class Component extends Class implements Heritable {
       )
     ) as Property[];
 
-    const refs = members
-      .filter((m) => m.decorators.find((d) => d.name === "Ref"))
-      .reduce(
-        (r: { refs: Property[]; apiRefs: Property[] }, p) => {
-          if (
-            context.components &&
-            context.components[
-              this.extractRefType(p.type!).toString()
-            ] instanceof Component
-          ) {
-            p.decorators.find(
-              (d) => d.name === "Ref"
-            )!.expression.expression = new SimpleExpression("ApiRef");
-            r.apiRefs.push(p as Property);
-          } else {
-            r.refs.push(p as Property);
-          }
-          return r;
-        },
-        { refs: [], apiRefs: [] }
-      );
+    const refs = (members.filter((m) => m.isRef) as Property[]).reduce(
+      (r: { refs: Property[]; apiRefs: Property[] }, p) => {
+        if (
+          context.components &&
+          context.components[p.compileRefType()] instanceof Component
+        ) {
+          p.decorators.find(
+            (d) => d.name === "Ref"
+          )!.expression.expression = new SimpleExpression("ApiRef");
+          r.apiRefs.push(p as Property);
+        } else {
+          r.refs.push(p as Property);
+        }
+        return r;
+      },
+      { refs: [], apiRefs: [] }
+    );
     this.refs = refs.refs;
     this.apiRefs = refs.apiRefs;
 
     this.internalState = members.filter((m) => m.isInternalState) as Property[];
 
     this.state = members.filter((m) => m.isState) as Property[];
+
+    this.mutable = members.filter((m) => m.isMutable) as Property[];
 
     let modelProps = this.state.filter((m) =>
       m.decorators.find(
@@ -311,7 +289,7 @@ export class Component extends Class implements Heritable {
     return "";
   }
 
-  createRestPropsGetter(members: BaseClassMember[]) {
+  createRestPropsGetter(_members: BaseClassMember[]) {
     return new GetAccessor(
       undefined,
       undefined,
@@ -536,17 +514,21 @@ export class Component extends Class implements Heritable {
   ): string[] {
     const globals =
       template
-        ?.match(/global_\w+/gi)
+        ?.match(/(^|[^\w])global_\w+/gi)
         ?.map(
-          (global) => `${global}${delimiter}${global.replace("global_", "")}`
+          (global) =>
+            `${global.replace(/[^\w]/, "")}${delimiter}${global.replace(
+              /(^|[^\w])global_/,
+              ""
+            )}`
         ) || [];
     return [...new Set(globals)];
   }
 
   returnGetAccessorBlock(
-    argumentPattern: BindingPattern,
-    options: toStringOptions,
-    spreadVar: BindingElement
+    _argumentPattern: BindingPattern,
+    _options: toStringOptions,
+    _spreadVar: BindingElement
   ) {
     return new Block([], true);
   }
@@ -578,7 +560,7 @@ export class Component extends Class implements Heritable {
     } else return undefined;
   }
 
-  createViewSpreadAccessor(name: Identifier, body: Block, props: Property[]) {
+  createViewSpreadAccessor(name: Identifier, body: Block, _props: Property[]) {
     return new GetAccessor(undefined, undefined, name, [], undefined, body);
   }
 }

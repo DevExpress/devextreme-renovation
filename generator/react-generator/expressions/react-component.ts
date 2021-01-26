@@ -47,12 +47,15 @@ import { ComponentInput, getTemplatePropName } from "./react-component-input";
 import {
   capitalizeFirstLetter,
   lowerizeFirstLetter,
+  processComponentContext,
 } from "../../base-generator/utils/string";
 import { Conditional } from "../../base-generator/expressions/conditions";
-import { GeneratorContext } from "../../base-generator/types";
+import { GeneratorContext, toStringOptions } from "../../base-generator/types";
 import { HeritageClause } from "./heritage-clause";
-import { extractRefType } from "../../base-generator/utils/expressions";
-import { TypeReferenceNode } from "./type-reference-node";
+import {
+  PropertyAssignment,
+  ShorthandPropertyAssignment,
+} from "../../base-generator/expressions/property-assignment";
 
 function getSubscriptions(methods: Method[]) {
   return methods
@@ -102,22 +105,15 @@ export class ReactComponent extends Component {
     );
   }
 
-  extractRefType(type: TypeExpression | string) {
-    return extractRefType(type, "MutableRefObject");
-  }
-
-  processRef(member: Property) {
-    if (
-      member.type instanceof TypeReferenceNode &&
-      member.type.typeName.toString() === "RefObject"
-    ) {
-      member.type.typeName = new Identifier("MutableRefObject");
-      if (member.type.typeArguments.length === 0) {
-        member.type.typeArguments.push(new SimpleTypeExpression("any"));
-      }
-    }
-
-    return member;
+  addPrefixToMembers(members: Array<BaseProperty | Method>) {
+    return super.addPrefixToMembers(
+      members.map((m) => {
+        if (m instanceof Method || m.isRef || m.isForwardRef) {
+          m.prefix = "__";
+        }
+        return m;
+      })
+    );
   }
 
   processMembers(members: Array<BaseProperty | Method>) {
@@ -133,13 +129,6 @@ export class ReactComponent extends Component {
     }
     (members.filter((m) => m.isNested) as Property[]).forEach((m) => {
       members.push(this.createNestedPropertyGetter(m));
-    });
-
-    members = members.map((m) => {
-      if (m instanceof Method || m.isRef || m.isForwardRef) {
-        m.prefix = "__";
-      }
-      return m;
     });
 
     return members;
@@ -174,7 +163,7 @@ export class ReactComponent extends Component {
       ),
       new ReturnStatement(new SimpleExpression(`__collectChildren(children)`)),
     ];
-    return new Method(
+    const method = new Method(
       [],
       undefined,
       undefined,
@@ -185,6 +174,18 @@ export class ReactComponent extends Component {
       new ArrayTypeNode(new SimpleTypeExpression("T")),
       new Block(statements, true)
     );
+
+    method.prefix = "__";
+
+    return method;
+  }
+
+  createGetAccessor(
+    name: Identifier,
+    type: TypeExpression,
+    block: Block
+  ): GetAccessor {
+    return new GetAccessor(undefined, undefined, name, [], type, block);
   }
 
   createRestPropsGetter(members: BaseClassMember[]) {
@@ -230,11 +231,8 @@ export class ReactComponent extends Component {
       new ReturnStatement(new SimpleExpression("restProps")),
     ];
 
-    return new GetAccessor(
-      undefined,
-      undefined,
+    return this.createGetAccessor(
       new Identifier("restAttributes"),
-      [],
       new SimpleTypeExpression("RestProps"),
       new Block(statements, true)
     );
@@ -307,6 +305,35 @@ export class ReactComponent extends Component {
     return imports;
   }
 
+  compileApiRefImports(imports: string[]) {
+    if (this.apiRefs.length) {
+      imports.splice(
+        -1,
+        0,
+        ...this.apiRefs.reduce((imports: string[], ref) => {
+          const refType = ref.compileRefType();
+          const baseComponent = this.context.components![
+            refType
+          ] as ReactComponent;
+          if (this.context.dirname) {
+            const relativePath = getModuleRelativePath(
+              this.context.dirname,
+              baseComponent.context.path!
+            );
+            imports.push(
+              `import {${
+                baseComponent.name
+              }Ref as ${refType}Ref} from "${this.processModuleFileName(
+                relativePath.replace(path.extname(relativePath), "")
+              )}"`
+            );
+          }
+          return imports;
+        }, [])
+      );
+    }
+  }
+
   compileImports() {
     const imports: string[] = [];
     const hooks: string[] = [];
@@ -333,7 +360,7 @@ export class ReactComponent extends Component {
       hooks.push("useEffect");
     }
 
-    if (this.refs.length || this.apiRefs.length) {
+    if (this.refs.length || this.apiRefs.length || this.mutable.length) {
       hooks.push("useRef");
     }
 
@@ -350,31 +377,7 @@ export class ReactComponent extends Component {
       compats.push("forwardRef");
     }
 
-    if (this.apiRefs.length) {
-      imports.splice(
-        -1,
-        0,
-        ...this.apiRefs.reduce((imports: string[], ref) => {
-          const baseComponent = this.context.components![
-            this.extractRefType(ref.type!).toString()
-          ] as ReactComponent;
-          if (this.context.dirname) {
-            const relativePath = getModuleRelativePath(
-              this.context.dirname,
-              baseComponent.context.path!
-            );
-            imports.push(
-              `import {${baseComponent.name}Ref as ${this.extractRefType(
-                ref.type
-              )}Ref} from "${this.processModuleFileName(
-                relativePath.replace(path.extname(relativePath), "")
-              )}"`
-            );
-          }
-          return imports;
-        }, [])
-      );
-    }
+    this.compileApiRefImports(imports);
 
     this.compileDefaultOptionsImport(imports);
 
@@ -393,7 +396,7 @@ export class ReactComponent extends Component {
       : `convertRulesToOptions<${this.getPropsType()}>(${rules})`;
   }
 
-  compileDefaultProps() {
+  compileDefaultPropsObjectProperties(): string[] {
     const defaultProps = this.heritageClauses
       .filter((h) => h.defaultProps.length)
       .map((h) => `...${h.defaultProps}`)
@@ -408,6 +411,12 @@ export class ReactComponent extends Component {
         `...${this.compileConvertRulesToOptions(this.defaultOptionRules)}`
       );
     }
+
+    return defaultProps;
+  }
+
+  compileDefaultProps() {
+    const defaultProps = this.compileDefaultPropsObjectProperties();
 
     if (this.needGenerateDefaultOptions) {
       return `
@@ -448,6 +457,7 @@ export class ReactComponent extends Component {
   stateDeclaration() {
     return `${this.state
       .concat(this.internalState)
+      .concat(this.mutable)
       .map((p) => p.toString(this.getToStringOptions()))
       .join(";\n")}`;
   }
@@ -526,16 +536,8 @@ export class ReactComponent extends Component {
 
   compileUseRef() {
     return this.refs
-      .map((r) => {
-        const refType = this.extractRefType(r.type);
-        return `const ${r.name}:MutableRefObject<${refType} | null>=useRef<${refType}>(null)`;
-      })
-      .concat(
-        this.apiRefs.map((r) => {
-          const refType = this.extractRefType(r.type);
-          return `const ${r.name}:MutableRefObject<${refType}Ref | null>=useRef<${refType}Ref>(null)`;
-        })
-      )
+      .concat(this.apiRefs)
+      .map((a) => a.toString(this.getToStringOptions()))
       .join(";\n");
   }
 
@@ -553,7 +555,8 @@ export class ReactComponent extends Component {
                         !m.inherited &&
                         !m.isEffect &&
                         !m.isApiMethod &&
-                        !m.isPrivate
+                        !m.isPrivate &&
+                        !m.isMutable
                     )
                     .map((m) => m.typeDeclaration())
                 )
@@ -589,10 +592,34 @@ export class ReactComponent extends Component {
       );
   }
 
-  compileViewModelArguments(): string[] {
-    const compileState = (state: BaseProperty[]) =>
-      state.filter((s) => !s.isPrivate).map((s) => `${s.name}:${s.getter()}`);
-    const state = compileState(this.state);
+  compileViewModelArguments(): string {
+    const toStringOptions: toStringOptions = {
+      ...this.getToStringOptions(),
+      keepRef: true,
+    };
+    const compileState = (state: BaseClassMember[], context = "") =>
+      state
+        .filter((s) => !s.isPrivate)
+        .map((s) => {
+          if (
+            s._name.toString() !== s.getter(toStringOptions.newComponentContext)
+          ) {
+            const expression = context
+              ? new PropertyAccess(
+                  new SimpleExpression("this"),
+                  new Identifier(context)
+                )
+              : new SimpleExpression("this");
+            return new PropertyAssignment(
+              s._name,
+              new PropertyAccess(expression, s._name)
+            );
+          }
+          return new ShorthandPropertyAssignment(s._name);
+        })
+        .map((p) => p.toString(toStringOptions));
+
+    const state = compileState(this.state, "props");
     const internalState = compileState(this.internalState);
 
     const template = this.processTemplates();
@@ -616,10 +643,13 @@ export class ReactComponent extends Component {
       ...this.refs,
       ...this.apiRefs,
     ];
-    return props
+    const statements = props
       .concat(
         listenersAndRefs.map(
-          (r) => `${r._name.toString()}:${r.name.toString()}`
+          (r) =>
+            `${r._name.toString()}:${processComponentContext(
+              toStringOptions.newComponentContext
+            )}${r.name.toString()}`
         )
       )
       .concat(
@@ -627,17 +657,15 @@ export class ReactComponent extends Component {
           .filter(
             (m) => (m.isConsumer || m.isProvider) && !(m instanceof GetAccessor)
           )
-          .map((m) => m.name.toString())
-      )
-      .concat(
-        this.methods
-          .filter((m) => !m.isPrivate)
           .map((m) =>
-            m._name.toString() !== m.getter()
-              ? `${m._name}:${m.getter()}`
-              : m.getter()
+            toStringOptions.newComponentContext
+              ? `${m.name}:${m.getter(toStringOptions.componentContext)}`
+              : m.name.toString()
           )
-      );
+      )
+      .concat(compileState(this.methods.filter((m) => !m.isPrivate)));
+
+    return `{${statements.join(",\n")}}`;
   }
 
   compileRestProps(): string {
@@ -677,7 +705,7 @@ export class ReactComponent extends Component {
     return `typeof ${heritageClause.propsType}`;
   }
 
-  getToStringOptions() {
+  getToStringOptions(): toStringOptions {
     return {
       members: this.members,
       componentContext: "this",
@@ -780,18 +808,33 @@ export class ReactComponent extends Component {
     );
   }
 
-  compilePortalComponent() {
-    return `import { createPortal } from "react-dom";
-      declare type PortalProps = {
-        container?: HTMLElement | null;
-        children: React.ReactNode,
+  compilePortalComponentCore() {
+    return `
+    declare type PortalProps = {
+      container?: HTMLElement | null;
+      children: React.ReactNode,
+    }
+    const Portal = ({ container, children }: PortalProps): React.ReactPortal | null => {
+      if(container) {
+        return createPortal(children, container);
       }
-      const Portal = ({ container, children }: PortalProps): React.ReactPortal | null => {
-        if(container) {
-          return createPortal(children, container);
-        }
-        return null;
-      }`;
+      return null;
+    }`;
+  }
+
+  compilePortalComponent(): string {
+    if (!this.containsPortal()) {
+      return "";
+    }
+    return this.compilePortalComponentCore();
+  }
+
+  compileProviders(providers: Property[], viewCallExpression: string) {
+    return providers.reduce((result, p) => {
+      return `<${p.context}.Provider value={${p.getter()}}>
+            ${result}
+          </${p.context}.Provider>`;
+    }, `{${viewCallExpression}}`);
   }
 
   compileViewCall() {
@@ -799,24 +842,29 @@ export class ReactComponent extends Component {
     const callView = `${this.view}(
         ${
           viewFunction?.parameters.length
-            ? `${this.viewModel}({
-                ${this.compileViewModelArguments().join(",\n")}
-            })`
+            ? `${this.viewModel}(
+                ${this.compileViewModelArguments()}
+            )`
             : ""
         }
     )`;
 
-    const providers = this.members.filter((m) => m.isProvider);
+    const providers = this.members.filter((m) => m.isProvider) as Property[];
 
     if (providers.length) {
-      return providers.reduce((result, p) => {
-        return `<${p.context}.Provider value={${p.getter()}}>
-              ${result}
-            </${p.context}.Provider>`;
-      }, `{${callView}}`);
+      return this.compileProviders(providers, callView);
     }
 
     return callView;
+  }
+
+  compileDefaultOptionsMethod() {
+    return super.compileDefaultOptionsMethod("[]", [
+      `${this.defaultPropsDest()} = {
+            ...__createDefaultProps(),
+            ...${this.compileConvertRulesToOptions("__defaultOptionRules")}
+        };`,
+    ]);
   }
 
   compileFunctionalComponentType() {
@@ -827,11 +875,9 @@ export class ReactComponent extends Component {
   toString() {
     const getTemplateFunc = this.compileTemplateGetter();
 
-    const portal = this.containsPortal() ? this.compilePortalComponent() : "";
-
     return `
               ${this.compileImports()}
-              ${portal}
+              ${this.compilePortalComponent()}
               ${
                 this.members.some((m) => m.isNested)
                   ? this.createNestedChildrenCollector()
@@ -900,13 +946,6 @@ export class ReactComponent extends Component {
               ${this.compileDefaultComponentExport()}
 
               ${this.compileDefaultProps()}
-              ${this.compileDefaultOptionsMethod("[]", [
-                `${this.defaultPropsDest()} = {
-                      ...__createDefaultProps(),
-                      ...${this.compileConvertRulesToOptions(
-                        "__defaultOptionRules"
-                      )}
-                  };`,
-              ])}`;
+              ${this.compileDefaultOptionsMethod()}`;
   }
 }

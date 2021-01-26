@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 function view(model: Widget) {
   return (
     <div>
@@ -26,7 +27,7 @@ import {
   MutableRefObject,
   HTMLAttributes,
 } from "react";
-import { createPortal } from "react-dom";
+
 declare type PortalProps = {
   container?: HTMLElement | null;
   children: React.ReactNode;

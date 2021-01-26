@@ -32,7 +32,7 @@ function isOutputDecorator(name: string): boolean {
   return name === Decorators.Event;
 }
 
-function getProperiesName(
+function getPropertiesName(
   props: Property[],
   specificDecorator: (name: string) => boolean
 ): StringLiteral[] {
@@ -63,15 +63,16 @@ export class Decorator extends BaseDecorator {
       this.name === Decorators.ApiRef ||
       this.name === Decorators.InternalState ||
       this.name === Decorators.Method ||
-      this.name === Decorators.ForwardRef
+      this.name === Decorators.ForwardRef ||
+      this.name === Decorators.Mutable
     ) {
       return "";
     } else if (this.name === Decorators.Component) {
       const parameters = this.expression.arguments[0] as ObjectLiteral;
       if (options) {
         const props = getProps(options.members);
-        const inputs = getProperiesName(props, isInputDecorator);
-        const outputs = getProperiesName(props, isOutputDecorator);
+        const inputs = getPropertiesName(props, isInputDecorator);
+        const outputs = getPropertiesName(props, isOutputDecorator);
 
         setComponentProperty(parameters, "inputs", inputs);
         setComponentProperty(parameters, "outputs", outputs);
@@ -92,6 +93,8 @@ export class Decorator extends BaseDecorator {
         });
         const templates = compileDefaultTemplates(options, this.context);
         if (templates?.length) template += templates.join("");
+        const slots = compileSlots(options);
+        if (slots?.length) template += slots.join("");
         if (template) {
           parameters.setProperty(
             "template",
@@ -143,12 +146,11 @@ function compileDefaultTemplates(
             .join(" ")}></${getAngularSelector(component.name)}>
             </ng-template>`;
           return templateString;
-        }
-        if (template.initializer instanceof BaseFunction) {
+        } else {
           const templateString = `  <ng-template #${name}Default ${template.variables
             .map((v) => `let-${v}="${v}"`)
             .join(" ")}>
-            ${template.initializer.getTemplate({
+            ${(template.initializer as BaseFunction).getTemplate({
               members: [],
               newComponentContext: "",
             })}
@@ -158,4 +160,17 @@ function compileDefaultTemplates(
       })
       .filter((s) => s) as string[];
   }
+  return undefined;
+}
+
+function compileSlots(options?: toStringOptions): string[] {
+  return (
+    options?.members
+      .filter((m) => m instanceof Property && m.isSlot)
+      .map((slot) => {
+        const selector =
+          slot.name.toString() === "children" ? "" : `select="[${slot.name}]"`;
+        return `<ng-template #dx${slot.name}><ng-content ${selector}></ng-content></ng-template>`;
+      }) || []
+  );
 }

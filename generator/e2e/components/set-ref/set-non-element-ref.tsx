@@ -5,6 +5,7 @@ import {
   Effect,
   Ref,
   RefObject,
+  Mutable,
 } from "../../../component_declaration/common";
 
 function view({ host }: SetNonElementRef) {
@@ -19,19 +20,19 @@ class Props {}
 })
 export default class SetNonElementRef extends JSXComponent<Props>() {
   @Ref() host!: RefObject<HTMLDivElement>;
-  @Ref() obj!: RefObject<{
+  @Mutable() obj!: {
     value: number;
-  }>;
+  };
 
   @Effect({ run: "once" })
   setObj() {
-    this.obj.current = { value: 10 };
+    this.obj = { value: 10 };
   }
 
   @Effect()
   printObj() {
     if (this.host.current) {
-      this.host.current.innerHTML = `non-object-ref-value: ${this.obj.current?.value}`;
+      this.host.current.innerHTML = `non-object-ref-value: ${this.obj.value}`;
     }
   }
 }

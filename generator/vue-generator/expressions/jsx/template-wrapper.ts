@@ -5,7 +5,7 @@ import { JsxSpreadAttribute } from "./spread-attribute";
 import { SimpleExpression } from "../../../base-generator/expressions/base";
 
 export class TemplateWrapperElement extends JsxOpeningElement {
-  getTemplateProperty(options?: toStringOptions) {
+  getTemplateProperty(_options?: toStringOptions) {
     return undefined;
   }
 

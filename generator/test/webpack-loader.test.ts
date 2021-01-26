@@ -10,6 +10,7 @@ import { PreactGenerator } from "../preact-generator";
 import { ReactGenerator } from "../react-generator";
 import { AngularGenerator } from "../angular-generator/angular-generator";
 import { VueGenerator } from "../vue-generator/vue-generator";
+import { InfernoGenerator } from "../inferno-generator/inferno-generator";
 import { assertCode } from "./helpers/common";
 
 const fixtureFileName = "test/test-cases/declarations/src/props.tsx";
@@ -103,6 +104,25 @@ mocha.describe("webpack-loader", function () {
 
       const args = this.codeCompilerStub.lastCall.args;
       assert.ok(args[0] instanceof VueGenerator);
+    });
+
+    mocha.it("inferno", async function () {
+      await compiler(fixtureFileName, {
+        platform: "inferno",
+        defaultOptionsModule: "options",
+        jqueryBaseComponentModule: "jqueryBase",
+        jqueryComponentRegistratorModule: "registrator",
+        modulesPath: "devextreme-generator/modules",
+      });
+
+      const generator = this.codeCompilerStub.lastCall.args[0];
+      assert.ok(generator instanceof InfernoGenerator);
+      assert.deepEqual(generator.options, {
+        defaultOptionsModule: "options",
+        jqueryBaseComponentModule: "jqueryBase",
+        jqueryComponentRegistratorModule: "registrator",
+        modulesPath: "devextreme-generator/modules",
+      });
     });
   });
 

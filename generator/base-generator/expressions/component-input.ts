@@ -88,7 +88,9 @@ export class ComponentInput extends Class implements Heritable {
           [],
           undefined,
           stateMember._name,
-          undefined,
+          stateMember.questionOrExclamationToken === SyntaxKind.QuestionToken
+            ? stateMember.questionOrExclamationToken
+            : "",
           stateMember.type
         ),
       ],
@@ -122,7 +124,7 @@ export class ComponentInput extends Class implements Heritable {
       ],
       [],
       new Identifier(`default${capitalizeFirstLetter(stateMember._name)}`),
-      SyntaxKind.QuestionToken,
+      stateMember.initializer ? "" : SyntaxKind.QuestionToken,
       stateMember.type,
       stateMember.initializer
     );
@@ -151,8 +153,8 @@ export class ComponentInput extends Class implements Heritable {
   }
 
   buildTemplateProperties(
-    templateMember: Property,
-    members: BaseClassMember[]
+    _templateMember: Property,
+    _members: BaseClassMember[]
   ): Property[] {
     return [];
   }

@@ -15,6 +15,8 @@ import {
 import SyntaxKind from "../../base-generator/syntaxKind";
 import { BindingElement } from "../../base-generator/expressions/binding-pattern";
 import { getProps } from "../../base-generator/expressions/component";
+import { SimpleExpression } from "../../base-generator/expressions/base";
+import { processComponentContext } from "../../base-generator/utils/string";
 
 export function getChangeEventToken(property: Property): string {
   if (property.questionOrExclamationToken === SyntaxKind.QuestionToken) {
@@ -47,17 +49,20 @@ export class PropertyAccess extends BasePropertyAccess {
       )}(${state}))`;
     }
     if (property.isRef || property.isForwardRefProp) {
+      const componentContext = property.processComponentContext(
+        options.newComponentContext
+      );
       const scope = property.processComponentContext(property.scope);
       const elementGetter =
         this.name.toString() !== property.name.toString()
           ? `.${this.name.toString()}`
           : "";
-      return `${scope}​​​​​​​​​${property.name}${elementGetter}=${state}​​​​​​​​`;
+      return `${componentContext}${scope}​​​​​​​​​${property.name}${elementGetter}=${state}​​​​​​​​`;
     }
     return setState;
   }
 
-  getAssignmentDependency(options?: toStringOptions) {
+  getAssignmentDependency(_options?: toStringOptions) {
     return [`${this.name}Change`];
   }
 
@@ -93,10 +98,20 @@ export class PropertyAccess extends BasePropertyAccess {
       options.componentContext === SyntaxKind.ThisKeyword
     ) {
       const hasSimpleProps = props.some((p) => p.canBeDestructured);
-      const initValue = (hasSimpleProps ||
-      elements.some((e) => e.dotDotDotToken)
-        ? [new SpreadAssignment(new Identifier("props"))]
-        : []) as (PropertyAssignment | SpreadAssignment)[];
+      const initValue: (PropertyAssignment | SpreadAssignment)[] =
+        hasSimpleProps || elements.some((e) => e.dotDotDotToken)
+          ? [
+              new SpreadAssignment(
+                options.newComponentContext
+                  ? new SimpleExpression(
+                      `${processComponentContext(
+                        options.newComponentContext
+                      )}props`
+                    )
+                  : new Identifier("props")
+              ),
+            ]
+          : [];
 
       const destructedProps = props.reduce((acc, p) => {
         if (this.needToCreateAssignment(p, elements, hasRest)) {
