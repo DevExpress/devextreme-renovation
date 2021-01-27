@@ -25,7 +25,7 @@ export class NamedImports {
   }
 
   remove(name: string) {
-    this.node = this.node.filter((n) => n.toString() !== name);
+    this.node = this.node.filter((n) => n.name.toString() !== name);
   }
 
   toString() {
