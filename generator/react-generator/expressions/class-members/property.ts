@@ -62,10 +62,11 @@ export class Property extends BaseProperty {
       type instanceof TypeReferenceNode &&
       type.toString() !== "any"
     ) {
-      const typeArguments =
-        type.typeArguments.toString() === "any"
+      const typeArguments = type.typeArguments.length
+        ? type.typeArguments.toString() === "any"
           ? type.typeArguments
-          : [new SimpleTypeExpression(`${type.typeArguments[0]} | null`)];
+          : [new SimpleTypeExpression(`${type.typeArguments[0]} | null`)]
+        : [new SimpleTypeExpression("any")];
       type = new TypeReferenceNode(type.typeName, typeArguments, type.context);
     }
     return compileType(

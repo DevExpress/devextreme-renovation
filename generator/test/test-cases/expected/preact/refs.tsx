@@ -43,11 +43,11 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetProps & RestProps) {
-  const __divRef = useRef<any>(null);
-  const __ref = useRef<any>(null);
-  const __existingRef = useRef<any>(null);
-  const __forwardRef = useRef<any>(null);
-  const __existingForwardRef = useRef<any>(null);
+  const __divRef: RefObject<any> = useRef<any>(null);
+  const __ref: RefObject<any> = useRef<any>(null);
+  const __existingRef: RefObject<any> = useRef<any>(null);
+  const __forwardRef: RefObject<any> = useRef<any>(null);
+  const __existingForwardRef: RefObject<any> = useRef<any>(null);
 
   const __writeRefs = useCallback(
     function __writeRefs(): any {

@@ -94,7 +94,7 @@ export class PropertyAccess extends ExpressionWithExpression {
     );
   }
 
-  processName(options?: toStringOptions) {
+  processName(_?: toStringOptions) {
     return `.${this.name}`;
   }
 

@@ -37,7 +37,7 @@ const WidgetWithApiRef = forwardRef<
   props: typeof WidgetWithApiRefInput & RestProps,
   ref
 ) {
-  const __baseRef = useRef<any>(null);
+  const __baseRef: RefObject<any> = useRef<any>(null);
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {

@@ -459,3 +459,6 @@ export class Constructor {
     `;
   }
 }
+
+export const isProperty = (member: BaseClassMember): member is Property =>
+  member instanceof Property;

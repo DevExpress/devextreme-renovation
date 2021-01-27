@@ -26,10 +26,7 @@ export default function WidgetWithRefProp(
     [props]
   );
 
-  return view({
-    props: { ...props },
-    restAttributes: __restAttributes(),
-  });
+  return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
 
 WidgetWithRefProp.defaultProps = {

@@ -3,8 +3,20 @@ import { toStringOptions } from "../../base-generator/types";
 import SyntaxKind from "../../base-generator/syntaxKind";
 import { getMember } from "../../base-generator/utils/expressions";
 import { PropertyAccess } from "./property-access";
+import { isProperty } from "../../base-generator/expressions/class-members";
+import { Property } from "./class-members/property";
 
 export class PropertyAccessChain extends BasePropertyAccessChain {
+  getRefAccessor(member: Property) {
+    if (member.isRef || member.isForwardRef || member.isForwardRefProp) {
+      return `${this.questionDotToken}nativeElement`;
+    }
+    if (member.isRefProp || member.isApiRef) {
+      return "";
+    }
+    return null;
+  }
+
   processName(options?: toStringOptions) {
     if (this.name.toString(options) === "current") {
       const expressionString = (this
@@ -27,11 +39,11 @@ export class PropertyAccessChain extends BasePropertyAccessChain {
           !options?.variables?.[expressionString],
       });
 
-      if (member?.isRef || member?.isForwardRef || member?.isForwardRefProp) {
-        return `${this.questionDotToken}nativeElement`;
-      }
-      if (member?.isRefProp || member?.isApiRef) {
-        return "";
+      if (member && isProperty(member)) {
+        const accessor = this.getRefAccessor(member);
+        if (accessor !== null) {
+          return accessor;
+        }
       }
     }
 

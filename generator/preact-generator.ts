@@ -203,21 +203,6 @@ export class PreactComponent extends ReactComponent {
       .filter((p) => p.isTemplate)
       .map((t) => `${t.name}: getTemplate(props.${t.name})`);
   }
-
-  compileUseRef() {
-    return this.refs
-      .map((r) => {
-        const refType = this.extractRefType(r.type);
-        return `const ${r.name}=useRef<${refType}>(null)`;
-      })
-      .concat(
-        this.apiRefs.map((r) => {
-          const refType = this.extractRefType(r.type);
-          return `const ${r.name}=useRef<${refType}Ref>(null)`;
-        })
-      )
-      .join(";\n");
-  }
 }
 
 class JQueryComponent {
@@ -482,6 +467,15 @@ export class Property extends ReactProperty {
       true
     );
   }
+
+  toString(options?: toStringOptions) {
+    if (this.isRef || this.isForwardRef) {
+      return `const ${
+        this.name
+      }:RefObject<${this.compileRefType()}>=useRef<${this.compileRefType()}>(null)`;
+    }
+    return super.toString(options);
+  }
 }
 
 const processTagName = (tagName: Expression) =>
@@ -511,6 +505,8 @@ export class JsxAttribute extends ReactJsxAttribute {
 }
 
 export class TypeReferenceNode extends ReactTypeReferenceNode {
+  REF_OBJECT_TYPE = "RefObject";
+
   constructor(
     public typeName: Identifier,
     public typeArguments: TypeExpression[] = [],
