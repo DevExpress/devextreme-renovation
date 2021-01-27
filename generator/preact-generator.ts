@@ -107,7 +107,6 @@ export class ComponentInput extends BaseComponentInput {
 }
 
 export class PreactComponent extends ReactComponent {
-  REF_OBJECT_TYPE = "RefObject";
   context!: GeneratorContext;
 
   constructor(
@@ -128,6 +127,10 @@ export class PreactComponent extends ReactComponent {
       members,
       context
     );
+  }
+
+  get REF_OBJECT_TYPE() {
+    return "RefObject";
   }
 
   compilePortalComponentCore() {
@@ -456,6 +459,14 @@ export class Property extends ReactProperty {
     return super.typeDeclaration();
   }
 
+  compileTypeReferenceNode(
+    typeName: Identifier,
+    typeArguments: TypeExpression[],
+    context: GeneratorContext
+  ) {
+    return new TypeReferenceNode(typeName, typeArguments, context);
+  }
+
   inherit() {
     return new Property(
       this.decorators,
@@ -505,7 +516,9 @@ export class JsxAttribute extends ReactJsxAttribute {
 }
 
 export class TypeReferenceNode extends ReactTypeReferenceNode {
-  REF_OBJECT_TYPE = "RefObject";
+  get REF_OBJECT_TYPE() {
+    return "RefObject";
+  }
 
   constructor(
     public typeName: Identifier,

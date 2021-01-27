@@ -5,7 +5,10 @@ import {
   compileType,
   capitalizeFirstLetter,
 } from "../../../base-generator/utils/string";
-import { toStringOptions } from "../../../base-generator/types";
+import {
+  toStringOptions,
+  GeneratorContext,
+} from "../../../base-generator/types";
 import { Identifier } from "../../../base-generator/expressions/common";
 import {
   TypeExpression,
@@ -56,6 +59,14 @@ export class Property extends BaseProperty {
     return this.defaultDeclaration();
   }
 
+  compileTypeReferenceNode(
+    typeName: Identifier,
+    typeArguments: TypeExpression[],
+    context: GeneratorContext
+  ) {
+    return new TypeReferenceNode(typeName, typeArguments, context);
+  }
+
   compileTypeDeclarationType(type: string | TypeExpression) {
     if (
       (this.isRefProp || this.isForwardRefProp) &&
@@ -67,7 +78,11 @@ export class Property extends BaseProperty {
           ? type.typeArguments
           : [new SimpleTypeExpression(`${type.typeArguments[0]} | null`)]
         : [new SimpleTypeExpression("any")];
-      type = new TypeReferenceNode(type.typeName, typeArguments, type.context);
+      type = this.compileTypeReferenceNode(
+        type.typeName,
+        typeArguments,
+        type.context
+      );
     }
     return compileType(
       type.toString(),

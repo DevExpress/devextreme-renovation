@@ -9,11 +9,11 @@ function view(viewModel: Widget) {
 }
 
 export declare type WidgetPropsType = {
-  outerDivRef?: RefObject<HTMLDivElement>;
-  refProp?: RefObject<HTMLDivElement>;
-  forwardRefProp?: RefObject<HTMLDivElement>;
-  requiredRefProp: RefObject<HTMLDivElement>;
-  requiredForwardRefProp: RefObject<HTMLDivElement>;
+  outerDivRef?: any;
+  refProp?: any;
+  forwardRefProp?: any;
+  requiredRefProp: any;
+  requiredForwardRefProp: any;
 };
 const WidgetProps: WidgetPropsType = ({} as any) as WidgetPropsType;
 import { createElement as h } from "inferno-compat";
@@ -48,60 +48,53 @@ export default class Widget extends InfernoComponent<
 
   writeRefs(): any {
     let someRef;
-    if (this.props.refProp?.current!) {
+    if (this.props.refProp) {
     }
-    someRef = this.props.refProp?.current!
-      ? this.props.refProp?.current!
-      : this.divRef.current!;
+    someRef = this.props.refProp ? this.props.refProp : this.divRef;
     if (this.props.forwardRefProp) {
-      this.props.forwardRefProp.current = this.divRef.current!;
+      this.props.forwardRefProp = this.divRef;
     }
-    this.props.forwardRefProp &&
-      (this.props.forwardRefProp.current = this.divRef.current!);
-    someRef = this.props.forwardRefProp?.current!
-      ? this.props.forwardRefProp?.current!
-      : this.divRef.current!;
-    if (!this.ref.current!) {
-      this.ref.current = this.divRef.current!;
+    this.props.forwardRefProp && (this.props.forwardRefProp = this.divRef);
+    someRef = this.props.forwardRefProp
+      ? this.props.forwardRefProp
+      : this.divRef;
+    if (this.ref && !this.ref.current) {
+      this.ref.current = this.divRef.current;
     }
-    !this.ref.current! && (this.ref.current = this.divRef.current!);
-    someRef = this.ref.current! ? this.ref.current! : this.divRef.current!;
-    if (!this.forwardRef.current!) {
+    this.ref && !this.ref.current && (this.ref.current = this.divRef.current);
+    someRef = this.ref?.current ? this.ref.current : this.divRef.current;
+    if (this.forwardRef && !this.forwardRef.current) {
     }
     if (this.props.forwardRefProp) {
-      this.props.forwardRefProp.current = this.divRef.current!;
+      this.props.forwardRefProp = this.divRef;
     }
-    someRef = this.forwardRef.current!
-      ? this.forwardRef.current!
-      : this.divRef.current!;
-    this.existingRef.current = this.divRef.current!;
-    this.props.requiredForwardRefProp.current = this.divRef.current!;
+    someRef = this.forwardRef ? this.forwardRef.current : this.divRef.current;
+    this.existingRef.current = this.divRef.current;
+    this.props.requiredForwardRefProp = this.divRef;
   }
   readRefs(): any {
     const outer_1 = this.props.refProp?.current?.outerHTML;
     const outer_2 = this.props.forwardRefProp?.current?.outerHTML;
-    const outer_3 = this.ref.current?.outerHTML;
-    const outer_4 = this.forwardRef.current?.outerHTML;
-    const outer_5 = this.existingRef.current!.outerHTML;
-    const outer_6 = this.existingForwardRef.current!.outerHTML;
-    const outer_7 = this.props.requiredRefProp!.current!.outerHTML;
-    const outer_8 = this.props.requiredForwardRefProp!.current!.outerHTML;
+    const outer_3 = this.ref?.current?.outerHTML;
+    const outer_4 = this.forwardRef?.current?.outerHTML;
+    const outer_5 = this.existingRef.current?.outerHTML;
+    const outer_6 = this.existingForwardRef.current?.outerHTML;
+    const outer_7 = this.props.requiredRefProp.current?.outerHTML;
+    const outer_8 = this.props.requiredForwardRefProp.current?.outerHTML;
   }
   getRestRefs(): {
-    refProp?: HTMLDivElement;
-    forwardRefProp?: HTMLDivElement;
-    requiredRefProp: HTMLDivElement;
-    requiredForwardRefProp: HTMLDivElement;
+    refProp?: HTMLDivElement | null;
+    forwardRefProp?: HTMLDivElement | null;
+    requiredRefProp: HTMLDivElement | null;
+    requiredForwardRefProp: HTMLDivElement | null;
   } {
-    const { outerDivRef, ...restProps } = {
-      ...this.props,
-      outerDivRef: this.props.outerDivRef?.current!,
-      refProp: this.props.refProp?.current!,
-      forwardRefProp: this.props.forwardRefProp?.current!,
-      requiredRefProp: this.props.requiredRefProp!.current!,
-      requiredForwardRefProp: this.props.requiredForwardRefProp!.current!,
+    const { outerDivRef, ...restProps } = this.props;
+    return {
+      refProp: restProps.refProp?.current,
+      forwardRefProp: restProps.forwardRefProp?.current,
+      requiredRefProp: restProps.requiredRefProp.current,
+      requiredForwardRefProp: restProps.requiredForwardRefProp.current,
     };
-    return restProps;
   }
   get restAttributes(): RestProps {
     const {
@@ -111,14 +104,7 @@ export default class Widget extends InfernoComponent<
       requiredForwardRefProp,
       requiredRefProp,
       ...restProps
-    } = {
-      ...this.props,
-      outerDivRef: this.props.outerDivRef?.current!,
-      refProp: this.props.refProp?.current!,
-      forwardRefProp: this.props.forwardRefProp?.current!,
-      requiredRefProp: this.props.requiredRefProp!.current!,
-      requiredForwardRefProp: this.props.requiredForwardRefProp!.current!,
-    };
+    } = this.props;
     return restProps;
   }
 

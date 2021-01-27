@@ -79,8 +79,6 @@ function getSubscriptions(methods: Method[]) {
 }
 
 export class ReactComponent extends Component {
-  REF_OBJECT_TYPE = "MutableRefObject";
-
   constructor(
     decorator: Decorator,
     modifiers: string[] = [],
@@ -103,6 +101,10 @@ export class ReactComponent extends Component {
     this.refs = this.refs.concat(
       this.members.filter((m) => m.isForwardRef) as Property[]
     );
+  }
+
+  get REF_OBJECT_TYPE() {
+    return "MutableRefObject";
   }
 
   addPrefixToMembers(members: Array<BaseProperty | Method>) {
