@@ -98,9 +98,12 @@ export class PropertyAccess extends BasePropertyAccess {
 
       if (
         member instanceof Property &&
-        (member?.isRef || member?.isForwardRef || member?.isForwardRefProp)
+        (member?.isRef || member?.isForwardRef)
       ) {
         return `.nativeElement`;
+      }
+      if (member?.isForwardRefProp) {
+        return `?.().nativeElement`;
       }
       if (member?.isRefProp || member?.isApiRef) {
         return "";

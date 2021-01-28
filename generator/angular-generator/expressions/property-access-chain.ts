@@ -8,8 +8,11 @@ import { Property } from "./class-members/property";
 
 export class PropertyAccessChain extends BasePropertyAccessChain {
   getRefAccessor(member: Property) {
-    if (member.isRef || member.isForwardRef || member.isForwardRefProp) {
+    if (member.isRef || member.isForwardRef) {
       return `${this.questionDotToken}nativeElement`;
+    }
+    if (member.isForwardRefProp) {
+      return `?.()${this.questionDotToken}nativeElement`;
     }
     if (member.isRefProp || member.isApiRef) {
       return "";

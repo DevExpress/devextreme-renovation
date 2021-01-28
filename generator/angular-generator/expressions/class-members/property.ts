@@ -136,19 +136,18 @@ export class Property extends BaseProperty {
     return super.toString();
   }
 
-  getter(componentContext?: string, keepRef: boolean = false) {
+  getter(componentContext?: string, _keepRef: boolean = false) {
     componentContext = this.processComponentContext(componentContext);
     if (this.isEvent) {
       return `${componentContext}_${this.name}`;
     }
-    if (this.isRef || this.isRefProp || this.isForwardRef) {
+    if (
+      this.isRef ||
+      this.isRefProp ||
+      this.isForwardRef ||
+      this.isForwardRefProp
+    ) {
       return `${componentContext}${this.name}`;
-    }
-    if (this.isForwardRefProp) {
-      if (keepRef) {
-        return `${componentContext}${this.name}`;
-      }
-      return `${componentContext}${this.name}?.()`;
     }
     if (this.isConsumer) {
       return `${componentContext}${this.name}Consumer`;
