@@ -48,12 +48,18 @@ export default class Widget extends WidgetProps {
     let someRef;
     if (this.refProp) {
     }
+    if (this.refProp) {
+    }
+    if (this.forwardRefProp) {
+    }
+    if (this.forwardRefProp?.()?.nativeElement) {
+    }
     someRef = this.refProp ? this.refProp : this.divRef;
     if (this.forwardRefProp) {
       this.forwardRef_forwardRefProp(this.divRef);
     }
     this.forwardRefProp && this.forwardRef_forwardRefProp(this.divRef);
-    someRef = this.forwardRefProp?.() ? this.forwardRefProp?.() : this.divRef;
+    someRef = this.forwardRefProp ? this.forwardRefProp : this.divRef;
     if (this.ref && !this.ref.nativeElement) {
       this.ref = new ElementRef(this.divRef.nativeElement);
     }
@@ -91,17 +97,18 @@ export default class Widget extends WidgetProps {
     requiredForwardRefProp: HTMLDivElement | null;
   } {
     const { outerDivRef, ...restProps } = {
-      outerDivRef: this.outerDivRef?.(),
+      outerDivRef: this.outerDivRef,
       refProp: this.refProp,
-      forwardRefProp: this.forwardRefProp?.(),
+      forwardRefProp: this.forwardRefProp,
       requiredRefProp: this.requiredRefProp,
-      requiredForwardRefProp: this.requiredForwardRefProp?.(),
+      requiredForwardRefProp: this.requiredForwardRefProp,
     };
     return {
       refProp: restProps.refProp,
-      forwardRefProp: restProps.forwardRefProp?.nativeElement,
+      forwardRefProp: restProps.forwardRefProp?.()?.nativeElement,
       requiredRefProp: restProps.requiredRefProp,
-      requiredForwardRefProp: restProps.requiredForwardRefProp.nativeElement,
+      requiredForwardRefProp: restProps.requiredForwardRefProp?.()
+        .nativeElement,
     };
   }
   get __restAttributes(): any {

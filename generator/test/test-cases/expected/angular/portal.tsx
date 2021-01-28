@@ -96,8 +96,7 @@ class DxPortal {
       ><span></span></dx-portal
     ><dx-portal
       [container]="
-        (someRef === undefined || someRef === null ? undefined : someRef) ||
-        null
+        someRef === undefined || someRef === null ? undefined : someRef
       "
       ><span></span></dx-portal
   ></div>`,

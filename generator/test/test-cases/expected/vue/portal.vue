@@ -2,13 +2,7 @@
   <div
     ><DxPortal :container="() => document.body" v-if="rendered"
       ><span></span></DxPortal
-    ><DxPortal
-      :container="
-        () =>
-          (someRef?.() === undefined || someRef?.() === null
-            ? undefined
-            : someRef?.()) || null
-      "
+    ><DxPortal :container="() => (someRef && someRef() ? someRef() : undefined)"
       ><span></span></DxPortal
   ></div>
 </template>
@@ -66,7 +60,7 @@ export const DxWidget = {
       return {};
     },
     props() {
-      return { someRef: this.someRef?.() };
+      return { someRef: this.someRef };
     },
   },
   methods: {

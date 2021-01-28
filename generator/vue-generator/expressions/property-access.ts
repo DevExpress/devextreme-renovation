@@ -57,14 +57,11 @@ export class PropertyAccess extends BasePropertyAccess {
           !options?.variables?.[expressionString],
       });
 
-      if (
-        member?.isRef ||
-        member?.isForwardRef ||
-        member?.isForwardRefProp ||
-        member?.isRefProp ||
-        member?.isApiRef
-      ) {
+      if (member?.isRef || member?.isForwardRef || member?.isApiRef) {
         return "";
+      }
+      if (member?.isRefProp || member?.isForwardRefProp) {
+        return `()`;
       }
     }
 
