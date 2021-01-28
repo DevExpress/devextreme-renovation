@@ -595,10 +595,7 @@ export class ReactComponent extends Component {
   }
 
   compileViewModelArguments(): string {
-    const toStringOptions: toStringOptions = {
-      ...this.getToStringOptions(),
-      keepRef: true,
-    };
+    const toStringOptions: toStringOptions = this.getToStringOptions();
     const compileState = (state: BaseClassMember[], context = "") =>
       state
         .filter((s) => !s.isPrivate)

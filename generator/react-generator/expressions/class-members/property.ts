@@ -116,7 +116,7 @@ export class Property extends BaseProperty {
     return `${name}${this.compileTypeDeclarationType(type)}`;
   }
 
-  getter(componentContext?: string, _: boolean = false) {
+  getter(componentContext?: string, _keepRef: boolean = false) {
     componentContext = this.processComponentContext(componentContext);
     const scope = this.processComponentContext(this.scope);
     if (this.isInternalState) {

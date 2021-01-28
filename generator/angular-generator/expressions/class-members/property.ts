@@ -141,18 +141,14 @@ export class Property extends BaseProperty {
     if (this.isEvent) {
       return `${componentContext}_${this.name}`;
     }
-    if (this.isRef || this.isForwardRef || this.isForwardRefProp) {
+    if (this.isRef || this.isRefProp || this.isForwardRef) {
+      return `${componentContext}${this.name}`;
+    }
+    if (this.isForwardRefProp) {
       if (keepRef) {
         return `${componentContext}${this.name}`;
       }
-      const postfix = this.isForwardRefProp ? "Ref" : "";
-      if (this.isForwardRefProp) {
-        return `${componentContext}${this.name}?.()`;
-      }
-      return `${componentContext}${this.name}${postfix}`;
-    }
-    if (this.isRefProp) {
-      return `${componentContext}${this.name}`;
+      return `${componentContext}${this.name}?.()`;
     }
     if (this.isConsumer) {
       return `${componentContext}${this.name}Consumer`;

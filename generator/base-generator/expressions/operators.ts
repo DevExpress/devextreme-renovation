@@ -57,7 +57,6 @@ export class Binary extends Expression {
           : this.left.expression
         : this.left;
     const dependencyMember = getMember(leftExpression, options);
-    // this.left instanceof PropertyAccess && this.left.getMember(options);
     const leftOptions =
       isLogicalOperator(this.operator) && !isCondition(this.left)
         ? getConditionalOptions(options)

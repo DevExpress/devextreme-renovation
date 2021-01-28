@@ -8,7 +8,7 @@ import { TypeReferenceNode } from "../type-reference-node";
 import { Decorators } from "../../../component_declaration/decorators";
 
 export class Property extends BaseProperty {
-  getter(componentContext?: string, keepRef?: boolean) {
+  getter(componentContext?: string, _keepRef?: boolean) {
     if (
       this.isInternalState ||
       this.isProvider ||
@@ -24,7 +24,7 @@ export class Property extends BaseProperty {
       }`;
     }
 
-    return super.getter(componentContext, keepRef);
+    return super.getter(componentContext);
   }
 
   defaultDeclaration() {
