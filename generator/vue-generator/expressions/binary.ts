@@ -1,7 +1,4 @@
-import {
-  Binary as BinaryBase,
-  Prefix,
-} from "../../base-generator/expressions/operators";
+import { Binary as BinaryBase } from "../../base-generator/expressions/operators";
 import { toStringOptions } from "../types";
 import { PropertyAccess } from "./property-access";
 
@@ -19,23 +16,9 @@ export class Binary extends BinaryBase {
     ) {
       if (
         this.operator === "&&" &&
-        `!${this.left.toString(options)}.current` ===
-          this.right.toString(options)
+        `!${this.left.toString(options)}` === this.right.toString(options)
       ) {
         return this.right.toString(options);
-      }
-    }
-    if (
-      this.right instanceof Prefix &&
-      this.right.operand instanceof PropertyAccess
-    ) {
-      const rightExpression = this.right.operand.extractRefExpression(options);
-      if (rightExpression) {
-        const rightMember = rightExpression.getMember(options);
-        const equalMembers = rightMember === dependencyMember;
-        if (equalMembers) {
-          return this.right.toString(options);
-        }
       }
     }
 

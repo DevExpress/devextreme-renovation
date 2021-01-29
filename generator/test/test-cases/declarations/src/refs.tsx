@@ -33,7 +33,7 @@ export default class Widget extends JSXComponent<
   WidgetProps,
   "requiredRefProp" | "requiredForwardRefProp"
 >(WidgetProps) {
-  @Ref() divRef!: RefObject<HTMLDivElement>;
+  @Ref() divRef?: RefObject<HTMLDivElement>;
 
   @Ref() ref?: RefObject<HTMLDivElement>;
   @ForwardRef() forwardRef?: RefObject<HTMLDivElement>;
@@ -44,41 +44,27 @@ export default class Widget extends JSXComponent<
     let someRef;
 
     if (this.props.refProp) {
+      someRef = this.props.refProp.current;
     }
     if (this.props.refProp?.current) {
+      someRef = this.props.refProp.current;
     }
     if (this.props.forwardRefProp) {
+      someRef = this.props.forwardRefProp.current;
     }
     if (this.props.forwardRefProp?.current) {
+      someRef = this.props.forwardRefProp.current;
     }
 
-    someRef = this.props.refProp ? this.props.refProp : this.divRef;
+    someRef = this.props.outerDivRef!.current;
 
-    if (this.props.forwardRefProp) {
-      this.props.forwardRefProp = this.divRef;
+    if (this.props.forwardRefProp && !this.props.forwardRefProp.current) {
+      this.props.forwardRefProp.current = this.divRef!.current;
     }
-    this.props.forwardRefProp && (this.props.forwardRefProp = this.divRef);
-    someRef = this.props.forwardRefProp
-      ? this.props.forwardRefProp
-      : this.divRef;
 
     if (this.ref && !this.ref.current) {
-      this.ref.current = this.divRef.current;
+      this.ref.current = this.divRef!.current;
     }
-    this.ref && !this.ref.current && (this.ref!.current = this.divRef.current);
-    someRef = this.ref?.current ? this.ref.current : this.divRef.current;
-
-    if (this.forwardRef && !this.forwardRef.current) {
-    }
-
-    if (this.props.forwardRefProp) {
-      this.props.forwardRefProp = this.divRef;
-    }
-
-    someRef = this.forwardRef ? this.forwardRef.current : this.divRef.current;
-
-    this.existingRef.current = this.divRef.current;
-    this.props.requiredForwardRefProp = this.divRef;
   }
 
   readRefs() {

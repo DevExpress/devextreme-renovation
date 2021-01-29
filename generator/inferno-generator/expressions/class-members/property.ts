@@ -3,11 +3,24 @@ import {
   capitalizeFirstLetter,
   compileType,
 } from "../../../base-generator/utils/string";
-import { toStringOptions } from "../../../base-generator/types";
+import {
+  toStringOptions,
+  GeneratorContext,
+} from "../../../base-generator/types";
 import { TypeReferenceNode } from "../type-reference-node";
 import { Decorators } from "../../../component_declaration/decorators";
+import { Identifier } from "../../../base-generator/expressions/common";
+import { TypeExpression } from "../../../base-generator/expressions/type";
 
 export class Property extends BaseProperty {
+  compileTypeReferenceNode(
+    typeName: Identifier,
+    typeArguments: TypeExpression[],
+    context: GeneratorContext
+  ) {
+    return new TypeReferenceNode(typeName, typeArguments, context);
+  }
+
   getter(componentContext?: string, _keepRef?: boolean) {
     if (
       this.isInternalState ||

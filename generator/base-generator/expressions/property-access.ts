@@ -1,6 +1,6 @@
 import { Expression, ExpressionWithExpression } from "./base";
 import { toStringOptions } from "../types";
-import { Identifier, NonNullExpression } from "./common";
+import { Identifier } from "./common";
 import SyntaxKind from "../syntaxKind";
 import { Property, Method } from "./class-members";
 import { getProps } from "./component";
@@ -172,19 +172,6 @@ export class PropertyAccess extends ExpressionWithExpression {
     }
     return false;
   }
-
-  extractRefExpression(options?: toStringOptions) {
-    let expression = this.expression;
-
-    if (expression instanceof NonNullExpression) {
-      expression = expression.expression;
-    }
-
-    return expression instanceof PropertyAccess &&
-      this.name.toString(options) === "current"
-      ? expression
-      : null;
-  }
 }
 
 export class PropertyAccessChain extends ExpressionWithExpression {
@@ -225,3 +212,7 @@ export class Spread extends ExpressionWithExpression {
     return `${SyntaxKind.DotDotDotToken}${super.toString(options)}`;
   }
 }
+
+export const isPropertyAccess = (
+  expression: Expression
+): expression is PropertyAccess => expression instanceof PropertyAccess;

@@ -79,12 +79,6 @@ export class Binary extends Expression {
         if (dependencyMember.isReadOnly()) {
           throw `Error: Can't assign property use TwoWay, Internal State, Ref, ForwardRef prop - ${this.toString()}`;
         }
-        if (
-          !(this.left instanceof PropertyAccess) &&
-          dependencyMember.isForwardRefProp
-        ) {
-          throw `Error: Can't assign destructed ForwardRefProp - ${this.toString()}. Assign ForwardRefProp using "this.props"`;
-        }
 
         return `${(this.left as PropertyAccess).compileStateSetting(
           rightExpression,

@@ -101,8 +101,9 @@ export class PropertyAccess extends BasePropertyAccess {
       ) {
         return `.nativeElement`;
       }
-      if (member?.isForwardRefProp) {
-        return `?.().nativeElement`;
+      if (member instanceof Property && member?.isForwardRefProp) {
+        const token = member.isOptional ? "?." : "";
+        return `${token}()?.nativeElement`;
       }
       if (member?.isRefProp || member?.isApiRef) {
         return "";

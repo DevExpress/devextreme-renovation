@@ -459,14 +459,6 @@ export class Property extends ReactProperty {
     return super.typeDeclaration();
   }
 
-  compileTypeReferenceNode(
-    typeName: Identifier,
-    typeArguments: TypeExpression[],
-    context: GeneratorContext
-  ) {
-    return new TypeReferenceNode(typeName, typeArguments, context);
-  }
-
   inherit() {
     return new Property(
       this.decorators,
@@ -516,10 +508,6 @@ export class JsxAttribute extends ReactJsxAttribute {
 }
 
 export class TypeReferenceNode extends ReactTypeReferenceNode {
-  get REF_OBJECT_TYPE() {
-    return "RefObject";
-  }
-
   constructor(
     public typeName: Identifier,
     public typeArguments: TypeExpression[] = [],

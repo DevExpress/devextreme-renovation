@@ -19,7 +19,7 @@ function view(model: Widget) {
 }
 
 export declare type WidgetPropsType = {
-  someRef?: any;
+  someRef?: RefObject<HTMLElement | null>;
 };
 export const WidgetProps: WidgetPropsType = {};
 import { createElement as h } from "inferno-compat";

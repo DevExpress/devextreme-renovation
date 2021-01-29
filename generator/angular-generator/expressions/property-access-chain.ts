@@ -1,10 +1,13 @@
-import { PropertyAccessChain as BasePropertyAccessChain } from "../../base-generator/expressions/property-access";
+import {
+  PropertyAccessChain as BasePropertyAccessChain,
+  isPropertyAccess,
+} from "../../base-generator/expressions/property-access";
 import { toStringOptions } from "../../base-generator/types";
 import SyntaxKind from "../../base-generator/syntaxKind";
 import { getMember } from "../../base-generator/utils/expressions";
-import { PropertyAccess } from "./property-access";
 import { isProperty } from "../../base-generator/expressions/class-members";
 import { Property } from "./class-members/property";
+import { Identifier } from "../../base-generator/expressions/common";
 
 export class PropertyAccessChain extends BasePropertyAccessChain {
   getRefAccessor(member: Property) {
@@ -21,15 +24,18 @@ export class PropertyAccessChain extends BasePropertyAccessChain {
   }
 
   processName(options?: toStringOptions) {
-    if (this.name.toString(options) === "current") {
-      const expressionString = (this
-        .expression as PropertyAccess).expression.toString({
+    if (
+      this.name.toString(options) === "current" &&
+      (isPropertyAccess(this.expression) ||
+        this.expression instanceof Identifier)
+    ) {
+      const expressionString = this.expression.expression.toString({
         members: [],
         variables: {
           ...options?.variables,
         },
       });
-      const member = getMember(this.expression, {
+      const computedOptions = {
         members: [],
         ...options,
         componentContext:
@@ -40,7 +46,8 @@ export class PropertyAccessChain extends BasePropertyAccessChain {
         usePropsSpace:
           !expressionString.includes("this") &&
           !options?.variables?.[expressionString],
-      });
+      };
+      const member = getMember(this.expression, computedOptions);
 
       if (member && isProperty(member)) {
         const accessor = this.getRefAccessor(member);

@@ -23,7 +23,7 @@ declare type RestProps = Omit<
 >;
 interface Widget {
   props: typeof WidgetProps & RestProps;
-  divRef: any;
+  divRef?: any;
   ref?: any;
   forwardRef?: any;
   existingRef: any;
@@ -60,34 +60,26 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
     function __writeRefs(): any {
       let someRef;
       if (props.refProp) {
+        someRef = props.refProp.current;
       }
       if (props.refProp?.current) {
+        someRef = props.refProp.current;
       }
       if (props.forwardRefProp) {
+        someRef = props.forwardRefProp.current;
       }
       if (props.forwardRefProp?.current) {
+        someRef = props.forwardRefProp.current;
       }
-      someRef = props.refProp ? props.refProp : __divRef;
-      if (props.forwardRefProp) {
-        props.forwardRefProp = __divRef;
+      someRef = props.outerDivRef!.current;
+      if (props.forwardRefProp && !props.forwardRefProp.current) {
+        props.forwardRefProp.current = __divRef!.current;
       }
-      props.forwardRefProp && (props.forwardRefProp = __divRef);
-      someRef = props.forwardRefProp ? props.forwardRefProp : __divRef;
       if (__ref && !__ref.current) {
-        __ref.current = __divRef.current;
+        __ref.current = __divRef!.current;
       }
-      __ref && !__ref.current && (__ref.current = __divRef.current);
-      someRef = __ref?.current ? __ref.current : __divRef.current;
-      if (__forwardRef && !__forwardRef.current) {
-      }
-      if (props.forwardRefProp) {
-        props.forwardRefProp = __divRef;
-      }
-      someRef = __forwardRef ? __forwardRef.current : __divRef.current;
-      __existingRef.current = __divRef.current;
-      props.requiredForwardRefProp = __divRef;
     },
-    [props.refProp, props.forwardRefProp, __ref, __forwardRef]
+    [props.refProp, props.forwardRefProp, props.outerDivRef, __divRef, __ref]
   );
   const __readRefs = useCallback(
     function __readRefs(): any {

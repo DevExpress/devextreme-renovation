@@ -31,7 +31,7 @@ export default class RefOnChildrenChild extends Props {
     const nullableRefHtml = this.nullableRef?.()?.nativeElement?.innerHTML;
     if (this.nullableRef) {
       this.forwardRef_nullableRef(
-        new ElementRef(this.childRef?.().nativeElement)
+        new ElementRef(this.childRef()?.nativeElement)
       );
     }
     return nullableRefHtml;
