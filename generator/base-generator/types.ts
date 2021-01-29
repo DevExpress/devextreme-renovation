@@ -23,7 +23,6 @@ export type toStringOptions = {
   newComponentContext?: string;
   variables?: VariableExpression;
   jsxComponent?: Component;
-  keepRef?: boolean;
   usePropsSpace?: boolean;
 };
 

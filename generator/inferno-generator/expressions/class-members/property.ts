@@ -21,7 +21,7 @@ export class Property extends BaseProperty {
     return new TypeReferenceNode(typeName, typeArguments, context);
   }
 
-  getter(componentContext?: string, _keepRef?: boolean) {
+  getter(componentContext?: string) {
     if (
       this.isInternalState ||
       this.isProvider ||

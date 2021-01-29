@@ -136,7 +136,7 @@ export class Property extends BaseProperty {
     return super.toString();
   }
 
-  getter(componentContext?: string, _keepRef: boolean = false) {
+  getter(componentContext?: string) {
     componentContext = this.processComponentContext(componentContext);
     if (this.isEvent) {
       return `${componentContext}_${this.name}`;

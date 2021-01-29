@@ -151,7 +151,7 @@ export class Property extends BaseProperty {
           }`;
   }
 
-  getter(componentContext?: string, _keepRef: boolean = false) {
+  getter(componentContext?: string) {
     const baseValue = super.getter(componentContext);
     componentContext = this.processComponentContext(componentContext);
     if (this.isState) {

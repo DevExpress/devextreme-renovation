@@ -5,7 +5,6 @@ import {
 } from "./base";
 import { toStringOptions } from "../types";
 import { Block } from "./statements";
-import { getConditionalOptions } from "../utils/options";
 
 export class If extends ExpressionWithExpression {
   thenStatement: Expression;
@@ -24,10 +23,9 @@ export class If extends ExpressionWithExpression {
     const elseStatement = this.elseStatement
       ? `else ${this.elseStatement.toString(options)}`
       : "";
-    return `if(${this.expression.toString(
-      getConditionalOptions(options)
-    )})${this.thenStatement.toString(options)}
-        ${elseStatement}`;
+    return `if(${this.expression.toString(options)})
+      ${this.thenStatement.toString(options)}
+       ${elseStatement}`;
   }
 
   getDependency(options: toStringOptions) {

@@ -365,7 +365,7 @@ export class Property extends BaseClassMember {
     return `${this.name}:${this.initializer}`;
   }
 
-  getter(componentContext?: string, _keepRef: boolean = false) {
+  getter(componentContext?: string) {
     return `${this.processComponentContext(
       componentContext
     )}${this._name.toString()}`;

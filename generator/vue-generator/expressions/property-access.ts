@@ -25,7 +25,7 @@ export class PropertyAccess extends BasePropertyAccess {
   toString(options?: toStringOptions, elements: BindingElement[] = []) {
     const member = this.getMember(options);
     if (member && member.isRefProp && member instanceof Property) {
-      return `${member.getter(options!.newComponentContext, options?.keepRef)}`;
+      return `${member.getter(options!.newComponentContext)}`;
     }
     return super.toString(options, elements);
   }
