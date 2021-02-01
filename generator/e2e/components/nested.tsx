@@ -28,6 +28,7 @@ function view({ props: { rows }, getRowCells }: WithNested) {
 export default class WithNested extends JSXComponent(WithNestedInput) {
   getRowCells(index: number) {
     const cells = this.props.rows?.[index].cells;
+    console.log(cells, this.props);
     return (
       cells
         ?.map((cell) => (typeof cell === "string" ? cell : cell.gridData))

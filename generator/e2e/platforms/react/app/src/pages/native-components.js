@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Counter from "../../../../../components/counter";
 import ButtonWithTemplate from "../../../../../components/button-with-template";
 import Nested, { Row, RowCell } from "../../../../../components/nested";
+import NestedTest, { Parent } from "../../../../../components/my-nested";
 
 const buttonTemplate = ({ text }) => (
   <div style={{ border: "1px solid blue" }}>{text + "!"}</div>
@@ -16,7 +17,6 @@ export default () => {
         text={"With Template"}
         render={buttonTemplate}
       ></ButtonWithTemplate>
-
       <ButtonWithTemplate text={"Without Template"}></ButtonWithTemplate>
       <form>
         <Counter
@@ -26,7 +26,6 @@ export default () => {
         ></Counter>
       </form>
       <div id="counter-form-value">{counterValue}</div>
-
       <Nested
         rows={[
           { cells: [{ gridData: "cell11" }, "cell12"] },
@@ -42,8 +41,21 @@ export default () => {
           <RowCell gridData="cell42" />
         </Row>
       </Nested>
+      <Nested>
+        <Row>
+          <RowCell />
+        </Row>
+      </Nested>
       <Nested rows={[]}></Nested>
       <Nested></Nested>
+      My Nested Testing
+      <NestedTest>
+        <Parent prop1="prop1passed"></Parent>
+      </NestedTest>
+      <NestedTest>
+        <Parent prop2="prop2passed"></Parent>
+      </NestedTest>
+      <NestedTest></NestedTest>
     </div>
   );
 };

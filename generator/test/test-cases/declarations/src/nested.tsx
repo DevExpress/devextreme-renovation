@@ -2,27 +2,39 @@ import {
   Component,
   JSXComponent,
 } from "../../../../component_declaration/common";
-import { PickedProps, GridColumnProps } from "./nested-props";
+import { WithNestedInput } from "./nested-props";
 
-export const CustomColumnComponent = (props: GridColumnProps) => {};
-
-function view(model: Widget) {
-  return <div />;
+function view({ props: { rows }, getRowCells }: WithNested) {
+  return (
+    <div>
+      {rows ? (
+        rows.length ? (
+          rows?.map((_, index) => (
+            <span key={index}>
+              {getRowCells(index)}
+              <br />
+            </span>
+          ))
+        ) : (
+          <span>{"Empty Array"}</span>
+        )
+      ) : (
+        <span>{"No Data"}</span>
+      )}
+    </div>
+  );
 }
 
 @Component({
-  view: view,
+  view,
 })
-export default class Widget extends JSXComponent<PickedProps>() {
-  getColumns() {
-    const { columns } = this.props;
-
-    return columns?.map((el) => (typeof el === "string" ? el : el.name));
-  }
-
-  get isEditable() {
+export default class WithNested extends JSXComponent(WithNestedInput) {
+  getRowCells(index: number) {
+    const cells = this.props.rows?.[index].cells;
     return (
-      this.props.editing?.editEnabled || this.props.editing?.custom?.length
+      cells
+        ?.map((cell) => (typeof cell === "string" ? cell : cell.gridData))
+        .join("|") || []
     );
   }
 }

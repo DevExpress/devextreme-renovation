@@ -27,14 +27,28 @@
         <DxRowCell grid-data="cell42"></DxRowCell>
       </DxRow>
     </Nested>
+    <Nested>
+      <DxRow>
+        <DxRowCell> </DxRowCell>
+      </DxRow>
+    </Nested>
     <Nested :rows="[]"> </Nested>
     <Nested> </Nested>
+    <!-- MyNestedTesting
+    <NestedTest>
+      <Parent prop1="prop1passed"></Parent>
+    </NestedTest>
+    <NestedTest>
+      <Parent prop2="prop2passed"></Parent>
+    </NestedTest>
+    <NestedTest></NestedTest> -->
   </div>
 </template>
 <script>
 import ButtonWithTemplate from "../../../../../components/button-with-template.tsx";
 import Counter from "../../../../../components/counter.tsx";
 import Nested, { DxRow, DxRowCell } from "../../../../../components/nested.tsx";
+// import NestedTest, { DxParent } from "../../../../../components/my-nested.tsx";
 
 export default {
   components: {
@@ -43,6 +57,8 @@ export default {
     Nested,
     DxRow,
     DxRowCell,
+    // DxWithNestedTest,
+    // DxParent,
   },
 
   data() {

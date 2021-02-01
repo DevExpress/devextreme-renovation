@@ -1,49 +1,19 @@
 <script>
-export const GridColumnProps = {
-  name: {
+export const GridCell = {
+  gridData: {
     type: String,
     default() {
-      return "";
+      return "defaultValue";
     },
   },
-  index: {
-    type: Number,
-    default() {
-      return 0;
-    },
-  },
-  custom: {
+};
+export const GridRow = {
+  cells: {
     type: Array,
   },
 };
-export const CustomProps = {};
-export const AnotherCustomProps = {};
-export const EditingProps = {
-  editEnabled: {
-    type: Boolean,
-    default() {
-      return false;
-    },
-  },
-  custom: {
-    type: Array,
-  },
-};
-export const ColumnEditingProps = {
-  editEnabled: {
-    type: Boolean,
-    default() {
-      return false;
-    },
-  },
-};
-export const WidgetProps = {
-  columns: {
-    type: Array,
-  },
-};
-export const PickedProps = {
-  columns: {
+export const WithNestedInput = {
+  rows: {
     type: Array,
   },
 };
