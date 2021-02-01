@@ -96,7 +96,8 @@
     Slot,
     Template,
     TwoWay,
-    RefObject
+    RefObject,
+    InternalState,
   } from 'devextreme-generator/component_declaration/common';
   import SubComponent from './SubComponent';
   import { subscriber } from './utils/subscriber';
@@ -113,7 +114,7 @@
 
   @Component({ view: viewFunction })
   export default class MyComponent extends JSXComponent(MyComponentProps) {
-    innerState: boolean = false;
+    @InternalState() innerState: boolean = false;
 
     @Ref() rootRef!: RefObject<HTMLDivElement>;
 
@@ -1356,7 +1357,7 @@ class MyComponentProps { }
 @Component({ view: viewFunction })
 class MyComponent extends JSXComponent(MyComponentProps) {
   @Mutable() innerField: string = "";
-  widgetData: string = "";
+  @InternalState() widgetData: string = "";
 
   @Method()
   updateData(data: string) {
@@ -1366,41 +1367,6 @@ class MyComponent extends JSXComponent(MyComponentProps) {
   @Effect()
   updateData() {
     this.widgetData = this.innerField
-  }
-}
-
-function viewFunction(viewModel: MyComponent) {
-  return (
-    <div>
-      <span>{viewModel.widgetData}</span>
-    </div>
-  );
-}
-```
-
-Необходимо учитывать это при разработке компонента. Например, выставлять специальный флаг, который будет вызыввать связанные эффекты. В примере ниже, вызов метода стригерит срабатывание эффекта и обновит разметку:
-
-```tsx
-@ComponentBindings()
-class MyComponentProps { }
-
-@Component({ view: viewFunction })
-class MyComponent extends JSXComponent(MyComponentProps) {
-  @Mutable() innerField: string = "";
-  needUpdate: boolean = false;
-
-  @Method()
-  updateData(data: string) {
-    this.innerField = data;
-    this.needUpdate = true;
-  }
-
-  @Effect()
-  updateData() {
-    if (this.needUpdate) {
-      this.needUpdate = false;
-      this.widgetData = this.innerField
-    }
   }
 }
 
@@ -1525,7 +1491,7 @@ class MyComponentProps {
 
 @Component({ view: viewFunction })
 class MyComponent extends JSXComponent(MyComponentProps) {
-  rendered = false;
+  @InternalState() rendered = false;
   get bodyElement() {
     return document?.body;
   }

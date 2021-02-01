@@ -7,10 +7,7 @@
 </template>
 <script>
 import { COMPONENT_INPUT_CLASS } from "./component-input";
-import {
-  WidgetTwo as ExternalComponent,
-  DxWidgetTwo as ExternalComponent,
-} from "./component-pass-two";
+import { DxWidgetTwo as ExternalComponent } from "./component-pass-two";
 export const PREFIX = "dx";
 export const CLASS_NAME = PREFIX + "c1" + "c2" + COMPONENT_INPUT_CLASS;
 const getKey = (item) => item.key;
