@@ -3,7 +3,7 @@ import { toStringOptions } from "../types";
 import SyntaxKind from "../syntaxKind";
 import { Property } from "./class-members";
 import { PropertyAccess } from "./property-access";
-import { Paren, Call, NonNullExpression } from "./common";
+import { NonNullExpression } from "./common";
 import { getMember } from "../utils/expressions";
 
 const isShortOperator = (operator: string) => {
