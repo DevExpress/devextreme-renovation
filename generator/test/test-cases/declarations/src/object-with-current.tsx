@@ -23,11 +23,12 @@ export class WidgetInput {
 })
 export default class Widget extends JSXComponent(WidgetInput) {
   @InternalState() someState?: { current: string };
+  @InternalState() existsState: { current: string } = { current: "value" };
 
   concatStrings() {
     const fromProps = this.props.someProp?.current || "";
     const fromState = this.someState?.current || "";
 
-    return `${fromProps}${fromState}`;
+    return `${fromProps}${fromState}${this.existsState.current}`;
   }
 }

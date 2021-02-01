@@ -17,6 +17,7 @@ declare type RestProps = Omit<
 interface Widget {
   props: typeof WidgetInput & RestProps;
   someState?: { current: string };
+  existsState: { current: string };
   concatStrings: () => any;
   restAttributes: RestProps;
 }
@@ -25,14 +26,17 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   const [__state_someState, __state_setSomeState] = useState<
     { current: string } | undefined
   >(undefined);
+  const [__state_existsState, __state_setExistsState] = useState<{
+    current: string;
+  }>({ current: "value" });
 
   const __concatStrings = useCallback(
     function __concatStrings(): any {
       const fromProps = props.someProp?.current || "";
       const fromState = __state_someState?.current || "";
-      return `${fromProps}${fromState}`;
+      return `${fromProps}${fromState}${__state_existsState.current}`;
     },
-    [props.someProp, __state_someState]
+    [props.someProp, __state_someState, __state_existsState]
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
@@ -45,6 +49,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   return view({
     props: { ...props },
     someState: __state_someState,
+    existsState: __state_existsState,
     concatStrings: __concatStrings,
     restAttributes: __restAttributes(),
   });

@@ -1587,6 +1587,23 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
+    mocha.it("PropertyAccess process props", function () {
+      const expression = generator.createPropertyAccess(
+        generator.createPropertyAccess(
+          generator.createThis(),
+          generator.createIdentifier("props")
+        ),
+        generator.createIdentifier("field")
+      );
+      const options = {
+        members: [],
+        componentContext: "this",
+        newComponentContext: "viewModel",
+      };
+
+      assert.equal(expression.toString(options), "viewModel.props.field");
+    });
+
     mocha.it("ElementAccess", function () {
       const expression = generator.createElementAccess(
         generator.createPropertyAccess(

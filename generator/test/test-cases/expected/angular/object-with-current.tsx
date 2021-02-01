@@ -22,10 +22,11 @@ import { CommonModule } from "@angular/common";
 })
 export default class Widget extends WidgetInput {
   someState?: { current: string };
+  existsState: { current: string } = { current: "value" };
   __concatStrings(): any {
     const fromProps = this.someProp?.current || "";
     const fromState = this.someState?.current || "";
-    return `${fromProps}${fromState}`;
+    return `${fromProps}${fromState}${this.existsState.current}`;
   }
   get __restAttributes(): any {
     return {};
@@ -42,6 +43,10 @@ export default class Widget extends WidgetInput {
   }
   set _someState(someState: { current: string }) {
     this.someState = someState;
+    this._detectChanges();
+  }
+  set _existsState(existsState: { current: string }) {
+    this.existsState = existsState;
     this._detectChanges();
   }
 }

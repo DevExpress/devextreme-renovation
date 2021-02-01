@@ -1,11 +1,17 @@
-import { PropertyAccess as BasePropertyAccess } from "../../base-generator/expressions/property-access";
+import { PropertyAccess as BasePropertyAccess } from "../../angular-generator/expressions/property-access";
 import { Property } from "./class-members/property";
 import { BindingElement } from "../../base-generator/expressions/binding-pattern";
 import { toStringOptions } from "../types";
-import { getMember } from "../../base-generator/utils/expressions";
-import { NonNullExpression } from "./non-null-expression";
 
 export class PropertyAccess extends BasePropertyAccess {
+  processProps(
+    result: string,
+    _options: toStringOptions,
+    _elements: BindingElement[] = []
+  ) {
+    return result;
+  }
+
   compileStateSetting(state: string, property: Property) {
     const isState = property.isState;
     const propertyName = isState ? `${property.name}_state` : property.name;
@@ -30,41 +36,13 @@ export class PropertyAccess extends BasePropertyAccess {
     return super.toString(options, elements);
   }
 
-  processName(options?: toStringOptions) {
-    if (this.name.toString(options) === "current") {
-      const expressionString = (this
-        .expression as PropertyAccess).expression.toString({
-        members: [],
-        variables: {
-          ...options?.variables,
-        },
-      });
-      const expression =
-        this.expression instanceof NonNullExpression
-          ? this.expression.expression
-          : this.expression;
-
-      const member = getMember(expression, {
-        members: [],
-        ...options,
-        componentContext:
-          expressionString.includes("this") ||
-          options?.variables?.[expressionString]
-            ? options?.componentContext
-            : expressionString,
-        usePropsSpace:
-          !expressionString.includes("this") &&
-          !options?.variables?.[expressionString],
-      });
-
-      if (member?.isRef || member?.isForwardRef || member?.isApiRef) {
-        return "";
-      }
-      if (member?.isRefProp || member?.isForwardRefProp) {
-        return `()`;
-      }
+  getRefAccessor(member: Property) {
+    if (member.isRef || member?.isForwardRef || member.isApiRef) {
+      return "";
     }
-
-    return super.processName(options);
+    if (member.isRefProp || member.isForwardRefProp) {
+      return `()`;
+    }
+    return null;
   }
 }

@@ -21,9 +21,11 @@ export default class Widget extends InfernoComponent<
 > {
   state: {
     someState?: { current: string };
+    existsState: { current: string };
   };
   _currentState: {
     someState?: { current: string };
+    existsState: { current: string };
   } | null = null;
 
   refs: any;
@@ -32,6 +34,7 @@ export default class Widget extends InfernoComponent<
     super(props);
     this.state = {
       someState: undefined,
+      existsState: { current: "value" },
     };
     this.concatStrings = this.concatStrings.bind(this);
   }
@@ -48,11 +51,23 @@ export default class Widget extends InfernoComponent<
       return { someState: newValue };
     });
   }
+  get existsState(): { current: string } {
+    const state = this._currentState || this.state;
+    return state.existsState;
+  }
+  set_existsState(value: () => { current: string }): any {
+    this.setState((state: any) => {
+      this._currentState = state;
+      const newValue = value();
+      this._currentState = null;
+      return { existsState: newValue };
+    });
+  }
 
   concatStrings(): any {
     const fromProps = this.props.someProp?.current || "";
     const fromState = this.someState?.current || "";
-    return `${fromProps}${fromState}`;
+    return `${fromProps}${fromState}${this.existsState.current}`;
   }
   get restAttributes(): RestProps {
     const { someProp, ...restProps } = this.props;
@@ -64,6 +79,7 @@ export default class Widget extends InfernoComponent<
     return view({
       props: { ...props },
       someState: this.someState,
+      existsState: this.existsState,
       concatStrings: this.concatStrings,
       restAttributes: this.restAttributes,
     } as Widget);

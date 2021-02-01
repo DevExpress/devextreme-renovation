@@ -19,7 +19,12 @@ export class PropertyAccessChain extends BasePropertyAccessChain {
     if (options && options.newComponentContext !== SyntaxKind.ThisKeyword) {
       const expression = this.expression.toString(options);
       const member = getMember(this.expression, options);
-      if (member?.isRefProp || member?.isForwardRefProp) {
+      if (
+        member?.isRef ||
+        member?.isRefProp ||
+        member?.isForwardRef ||
+        member?.isForwardRefProp
+      ) {
         return `(${expression} && ${expression}()?${expression}():undefined)`;
       }
     }

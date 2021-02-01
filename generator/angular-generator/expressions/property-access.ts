@@ -1,4 +1,7 @@
-import { PropertyAccess as BasePropertyAccess } from "../../base-generator/expressions/property-access";
+import {
+  PropertyAccess as BasePropertyAccess,
+  compileRefOptions,
+} from "../../base-generator/expressions/property-access";
 import { toStringOptions } from "../types";
 import { BindingElement } from "../../base-generator/expressions/binding-pattern";
 import { ObjectLiteral } from "../../base-generator/expressions/literal";
@@ -8,7 +11,10 @@ import {
   NonNullExpression,
 } from "../../base-generator/expressions/common";
 import { getProps } from "../../base-generator/expressions/component";
-import { Property } from "../../base-generator/expressions/class-members";
+import {
+  Property,
+  isProperty,
+} from "../../base-generator/expressions/class-members";
 import { getMember } from "../../base-generator/utils/expressions";
 
 export class PropertyAccess extends BasePropertyAccess {
@@ -69,10 +75,28 @@ export class PropertyAccess extends BasePropertyAccess {
     return `this._${property.name}=${value}`;
   }
 
+  getRefAccessor(member: Property) {
+    if (member.isRef || member.isForwardRef) {
+      return `.nativeElement`;
+    }
+    if (member.isForwardRefProp) {
+      const token = member.isOptional ? "?." : "";
+      return `${token}()?.nativeElement`;
+    }
+    if (member.isRefProp || member.isApiRef) {
+      return "";
+    }
+    return null;
+  }
+
   processName(options?: toStringOptions) {
-    if (this.name.toString(options) === "current") {
-      const expressionString = (this
-        .expression as PropertyAccess).expression.toString({
+    if (
+      this.name.toString(options) === "current" &&
+      (this.expression instanceof PropertyAccess ||
+        this.expression instanceof Identifier ||
+        this.expression instanceof NonNullExpression)
+    ) {
+      const expressionString = this.expression.expression.toString({
         members: [],
         variables: {
           ...options?.variables,
@@ -82,31 +106,16 @@ export class PropertyAccess extends BasePropertyAccess {
         this.expression instanceof NonNullExpression
           ? this.expression.expression
           : this.expression;
-      const member = getMember(expression, {
-        members: [],
-        ...options,
-        componentContext:
-          expressionString.includes("this") ||
-          options?.variables?.[expressionString]
-            ? options?.componentContext
-            : expressionString,
-        usePropsSpace:
-          !expressionString.includes("this") &&
-          !options?.variables?.[expressionString],
-      });
+      const member = getMember(
+        expression,
+        compileRefOptions(expressionString, options)
+      );
 
-      if (
-        member instanceof Property &&
-        (member?.isRef || member?.isForwardRef)
-      ) {
-        return `.nativeElement`;
-      }
-      if (member instanceof Property && member?.isForwardRefProp) {
-        const token = member.isOptional ? "?." : "";
-        return `${token}()?.nativeElement`;
-      }
-      if (member?.isRefProp || member?.isApiRef) {
-        return "";
+      if (member && isProperty(member)) {
+        const accessor = this.getRefAccessor(member);
+        if (accessor !== null) {
+          return accessor;
+        }
       }
     }
 

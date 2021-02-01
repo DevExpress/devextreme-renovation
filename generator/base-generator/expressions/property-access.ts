@@ -94,7 +94,7 @@ export class PropertyAccess extends ExpressionWithExpression {
     );
   }
 
-  processName(_?: toStringOptions) {
+  processName(_options?: toStringOptions) {
     return `.${this.name}`;
   }
 
@@ -213,6 +213,17 @@ export class Spread extends ExpressionWithExpression {
   }
 }
 
-export const isPropertyAccess = (
-  expression: Expression
-): expression is PropertyAccess => expression instanceof PropertyAccess;
+export const compileRefOptions = (
+  expressionString: string,
+  options?: toStringOptions
+) => ({
+  members: [],
+  ...options,
+  componentContext:
+    expressionString.includes("this") || options?.variables?.[expressionString]
+      ? options?.componentContext
+      : expressionString,
+  usePropsSpace:
+    !expressionString.includes("this") &&
+    !options?.variables?.[expressionString],
+});

@@ -13,6 +13,7 @@ export const DxWidget = {
   data() {
     return {
       someState: undefined,
+      existsState: { current: "value" },
     };
   },
   computed: {
@@ -27,7 +28,7 @@ export const DxWidget = {
     __concatStrings() {
       const fromProps = this.someProp?.current || "";
       const fromState = this.someState?.current || "";
-      return `${fromProps}${fromState}`;
+      return `${fromProps}${fromState}${this.existsState.current}`;
     },
   },
 };
