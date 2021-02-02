@@ -116,7 +116,7 @@ export class InfernoComponent extends PreactComponent {
 
       const getterName = m.isInternalState
         ? m._name
-        : new Identifier(`state_${m._name}`);
+        : new Identifier(`__state_${m._name}`);
 
       result.push(
         this.createGetAccessor(
