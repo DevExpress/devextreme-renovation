@@ -1,8 +1,7 @@
 export class InfernoEffect {
-  private destroy?: () => void;
-  private timeout = 0;
+  private destroy?: (() => void) | void;
   constructor(
-    private effect: () => () => void,
+    private effect: () => (() => void) | void,
     private dependency: Array<any>
   ) {
     this.destroy = effect();
@@ -10,8 +9,7 @@ export class InfernoEffect {
 
   update(dependency?: Array<any>) {
     if (!dependency || dependency.some((d, i) => this.dependency[i] !== d)) {
-      this.destroy?.();
-      clearTimeout(this.timeout);
+      this.dispose();
       this.destroy = this.effect();
     }
     if (dependency) {
@@ -20,6 +18,8 @@ export class InfernoEffect {
   }
 
   dispose() {
-    this.destroy?.();
+    if (this.destroy) {
+      this.destroy();
+    }
   }
 }
