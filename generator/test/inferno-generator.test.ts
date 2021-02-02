@@ -239,6 +239,16 @@ mocha.describe("Expressions", function () {
       });
     });
   });
+
+  mocha.describe("TypeReferenceNode", function () {
+    mocha.it("JSXTemplate", function () {
+      const expression = generator.createTypeReferenceNode(
+        generator.createIdentifier("JSXTemplate")
+      );
+
+      assert.strictEqual(expression.toString(), "any");
+    });
+  });
 });
 
 mocha.describe("Inferno-generator", function () {
