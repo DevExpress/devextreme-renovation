@@ -6,7 +6,7 @@ import {
 
 @ComponentBindings()
 export class GridCell {
-  @OneWay() gridData: string = "defaultValue";
+  @OneWay() gridData?: string = "defaultValue";
 }
 
 @ComponentBindings()

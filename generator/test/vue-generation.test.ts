@@ -213,11 +213,11 @@ mocha.describe("vue-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it.only("nested", function () {
+  mocha.it("nested", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it.only("nested-props", function () {
+  mocha.it("nested-props", function () {
     this.testGenerator(this.test!.title);
   });
 

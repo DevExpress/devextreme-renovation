@@ -1,6 +1,4 @@
 {
   "mochaExplorer.files": "test/*.ts",
-  "mochaExplorer.require": "ts-node/register",
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "typescript.tsdk": "node_modules\\typescript\\lib"
+  "mochaExplorer.require": "ts-node/register"
 }

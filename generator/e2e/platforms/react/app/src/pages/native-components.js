@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import Counter from "../../../../../components/counter";
 import ButtonWithTemplate from "../../../../../components/button-with-template";
 import Nested, { Row, RowCell } from "../../../../../components/nested";
-import NestedTest, { Parent } from "../../../../../components/my-nested";
 
 const buttonTemplate = ({ text }) => (
   <div style={{ border: "1px solid blue" }}>{text + "!"}</div>
@@ -44,18 +43,11 @@ export default () => {
       <Nested>
         <Row>
           <RowCell />
+          <RowCell gridData="notDefault"/>
         </Row>
       </Nested>
       <Nested rows={[]}></Nested>
       <Nested></Nested>
-      My Nested Testing
-      <NestedTest>
-        <Parent prop1="prop1passed"></Parent>
-      </NestedTest>
-      <NestedTest>
-        <Parent prop2="prop2passed"></Parent>
-      </NestedTest>
-      <NestedTest></NestedTest>
     </div>
   );
 };
