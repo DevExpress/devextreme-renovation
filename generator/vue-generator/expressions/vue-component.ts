@@ -86,7 +86,13 @@ export class VueComponent extends Component {
             const isUnregisteredDxTag = tag.indexOf("Dx") === 0;
             if(name) {
               const collectedChildren = {};
-              const childProps = child.componentOptions.propsData;
+              const defaultProps =
+                child.componentOptions?.Ctor?.extendOptions?.defaultProps || {};
+              const childProps = Object.assign(
+                {},
+                defaultProps,
+                child.componentOptions.propsData
+              );
               if(child.componentOptions.children) {
                 __collectChildren(child.componentOptions.children).forEach(
                   ({ __name, ...cProps }) => {
@@ -136,7 +142,39 @@ export class VueComponent extends Component {
       this.context
     );
   }
-
+  createNestedDefaultPropsExtractor() {
+    const statements = [
+      new ReturnStatement(
+        new SimpleExpression(`Object.entries(propsObject)
+        .filter(([key, value]) => value?.default)
+        .reduce((accObj, [key, value]) => {
+          accObj[key] = value.default();
+          return accObj;
+        }, {});`)
+      ),
+    ];
+    return new Function(
+      undefined,
+      undefined,
+      "",
+      new Identifier("__extractDefaultValues"),
+      [],
+      [
+        new Parameter(
+          [],
+          [],
+          undefined,
+          new Identifier("propsObject"),
+          undefined,
+          new ArrayTypeNode(new SimpleTypeExpression("Object")),
+          undefined
+        ),
+      ],
+      new SimpleTypeExpression("{ [name:string]: any }"),
+      new Block(statements, true),
+      this.context
+    );
+  }
   createNestedChildrenGetter() {
     const statements = [
       new ReturnStatement(
@@ -889,7 +927,8 @@ export class VueComponent extends Component {
     return `export const Dx${name} = {
       props: ${component.name}
     }
-    Dx${name}.propName="${propName}"`;
+    Dx${name}.propName="${propName}"
+    Dx${name}.defaultProps=__extractDefaultValues(${component.name})`;
   }
 
   toString() {
@@ -925,6 +964,11 @@ export class VueComponent extends Component {
           ${
             this.members.some((m) => m.isNested)
               ? this.createNestedChildrenCollector()
+              : ""
+          }
+          ${
+            this.members.some((m) => m.isNested)
+              ? this.createNestedDefaultPropsExtractor()
               : ""
           }
           ${this.compileNestedComponents()}

@@ -188,6 +188,7 @@ export default class Widget extends PickedProps {
     DxWidgetEditingAnotherCustom,
   ],
   imports: [CommonModule],
+
   exports: [
     Widget,
     DxWidgetColumn,

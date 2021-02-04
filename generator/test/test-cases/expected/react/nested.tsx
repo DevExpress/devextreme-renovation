@@ -40,26 +40,32 @@ export const Column: React.FunctionComponent<typeof GridColumnProps> & {
   propName: string;
 } = () => null;
 Column.propName = "columns";
+Column.defaultProps = GridColumnProps;
 export const Editing: React.FunctionComponent<typeof EditingProps> & {
   propName: string;
 } = () => null;
 Editing.propName = "editing";
+Editing.defaultProps = EditingProps;
 export const ColumnCustom: React.FunctionComponent<typeof CustomProps> & {
   propName: string;
 } = () => null;
 ColumnCustom.propName = "custom";
+ColumnCustom.defaultProps = CustomProps;
 export const ColumnEditing: React.FunctionComponent<
   typeof ColumnEditingProps
 > & { propName: string } = () => null;
 ColumnEditing.propName = "editing";
+ColumnEditing.defaultProps = ColumnEditingProps;
 export const EditingCustom: React.FunctionComponent<typeof CustomProps> & {
   propName: string;
 } = () => null;
 EditingCustom.propName = "custom";
+EditingCustom.defaultProps = CustomProps;
 export const EditingAnotherCustom: React.FunctionComponent<
   typeof AnotherCustomProps
 > & { propName: string } = () => null;
 EditingAnotherCustom.propName = "anotherCustom";
+EditingAnotherCustom.defaultProps = AnotherCustomProps;
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,

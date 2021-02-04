@@ -11,7 +11,13 @@ function __collectChildren(children) {
     const isUnregisteredDxTag = tag.indexOf("Dx") === 0;
     if (name) {
       const collectedChildren = {};
-      const childProps = child.componentOptions.propsData;
+      const defaultProps =
+        child.componentOptions?.Ctor?.extendOptions?.defaultProps || {};
+      const childProps = Object.assign(
+        {},
+        defaultProps,
+        child.componentOptions.propsData
+      );
       if (child.componentOptions.children) {
         __collectChildren(child.componentOptions.children).forEach(
           ({ __name, ...cProps }) => {
@@ -38,6 +44,14 @@ function __collectChildren(children) {
     return acc;
   }, []);
 }
+function __extractDefaultValues(propsObject) {
+  return Object.entries(propsObject)
+    .filter(([key, value]) => value?.default)
+    .reduce((accObj, [key, value]) => {
+      accObj[key] = value.default();
+      return accObj;
+    }, {});
+}
 import {
   EditingProps,
   CustomProps,
@@ -48,26 +62,34 @@ export const DxColumn = {
   props: GridColumnProps,
 };
 DxColumn.propName = "columns";
+DxColumn.defaultProps = __extractDefaultValues(GridColumnProps);
 export const DxEditing = {
   props: EditingProps,
 };
 DxEditing.propName = "editing";
+DxEditing.defaultProps = __extractDefaultValues(EditingProps);
 export const DxColumnCustom = {
   props: CustomProps,
 };
 DxColumnCustom.propName = "custom";
+DxColumnCustom.defaultProps = __extractDefaultValues(CustomProps);
 export const DxColumnEditing = {
   props: ColumnEditingProps,
 };
 DxColumnEditing.propName = "editing";
+DxColumnEditing.defaultProps = __extractDefaultValues(ColumnEditingProps);
 export const DxEditingCustom = {
   props: CustomProps,
 };
 DxEditingCustom.propName = "custom";
+DxEditingCustom.defaultProps = __extractDefaultValues(CustomProps);
 export const DxEditingAnotherCustom = {
   props: AnotherCustomProps,
 };
 DxEditingAnotherCustom.propName = "anotherCustom";
+DxEditingAnotherCustom.defaultProps = __extractDefaultValues(
+  AnotherCustomProps
+);
 
 export const DxWidget = {
   name: "Widget",

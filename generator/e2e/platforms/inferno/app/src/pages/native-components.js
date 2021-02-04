@@ -55,6 +55,9 @@ export default class NativeComponents extends Component {
         <Nested
           rows={[{ cells: [{ gridData: "cell41" }, { gridData: "cell42" }] }]}
         ></Nested>
+        <Nested
+          rows={[{ cells: [{gridData: "defaultValue"}, {gridData: "notDefault"}]}]}
+        ></Nested>
         <Nested rows={[]}></Nested>
         <Nested></Nested>
       </div>

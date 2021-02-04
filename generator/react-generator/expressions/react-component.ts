@@ -711,7 +711,8 @@ export class ReactComponent extends Component {
 
   getNestedExports(component: ComponentInput, name: string, propName: string) {
     return `export const ${name}: React.FunctionComponent<typeof ${component.name}> & { propName: string } = () => null;
-      ${name}.propName="${propName}"`;
+      ${name}.propName="${propName}"
+      ${name}.defaultProps=${component.name}`;
   }
 
   collectNestedComponents() {
