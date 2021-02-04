@@ -26,7 +26,7 @@ export class PropertyAccessChain extends BasePropertyAccessChain {
 
   processName(options?: toStringOptions) {
     if (
-      this.name.toString(options) === "current" &&
+      this.name.toString() === "current" &&
       (this.expression instanceof PropertyAccess ||
         this.expression instanceof Identifier)
     ) {

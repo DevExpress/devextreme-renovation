@@ -1,5 +1,8 @@
 <template>
-  <span></span>
+  <span
+    >{{ (sizes ?? { width: 0, height: 0 }).height
+    }}{{ (sizes ?? { width: 0, height: 0 }).width }}</span
+  >
 </template>
 <script>
 export const WidgetInput = {
@@ -15,6 +18,9 @@ export const WidgetInput = {
       return {};
     },
   },
+  sizes: {
+    type: Object,
+  },
 };
 export const DxWidget = {
   name: "Widget",
@@ -27,6 +33,7 @@ export const DxWidget = {
       return {
         height: this.height,
         export: this.export,
+        sizes: this.sizes,
         onClick: this.onClick,
         onSomething: this.onSomething,
       };

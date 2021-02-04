@@ -4,6 +4,7 @@ import { Input, Output, EventEmitter } from "@angular/core";
 export class WidgetInput {
   @Input() height: number = 10;
   @Input() export: object = {};
+  @Input() sizes?: { height: number; width: number };
   @Output() onClick: EventEmitter<number> = new EventEmitter();
   @Output() onSomething: EventEmitter<any> = new EventEmitter();
 }
@@ -20,9 +21,13 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["height", "export"],
+  inputs: ["height", "export", "sizes"],
   outputs: ["onClick", "onSomething"],
-  template: `<span></span>`,
+  template: `<span
+    >{{(sizes ?? {width:0,height:0}).height
+
+    }}{{(sizes ?? {width:0,height:0}).width}}</span
+  >`,
 })
 export default class Widget extends WidgetInput {
   __getHeight(): number {
@@ -34,6 +39,7 @@ export default class Widget extends WidgetInput {
     const { height, onClick, ...rest } = {
       height: this.height,
       export: this.export,
+      sizes: this.sizes,
       onClick: this._onClick,
       onSomething: this._onSomething,
     };
@@ -64,6 +70,7 @@ export default class Widget extends WidgetInput {
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}

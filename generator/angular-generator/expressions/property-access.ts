@@ -91,7 +91,7 @@ export class PropertyAccess extends BasePropertyAccess {
 
   processName(options?: toStringOptions) {
     if (
-      this.name.toString(options) === "current" &&
+      this.name.toString() === "current" &&
       (this.expression instanceof PropertyAccess ||
         this.expression instanceof Identifier ||
         this.expression instanceof NonNullExpression)
