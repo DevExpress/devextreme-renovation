@@ -27,6 +27,12 @@
         <DxRowCell grid-data="cell42"></DxRowCell>
       </DxRow>
     </Nested>
+    <Nested>
+      <DxRow>
+        <DxRowCell></DxRowCell>
+        <DxRowCell grid-data="notDefault"></DxRowCell>
+      </DxRow>
+    </Nested>
     <Nested :rows="[]"> </Nested>
     <Nested> </Nested>
   </div>

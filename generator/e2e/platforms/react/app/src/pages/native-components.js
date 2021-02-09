@@ -16,7 +16,6 @@ export default () => {
         text={"With Template"}
         render={buttonTemplate}
       ></ButtonWithTemplate>
-
       <ButtonWithTemplate text={"Without Template"}></ButtonWithTemplate>
       <form>
         <Counter
@@ -26,7 +25,6 @@ export default () => {
         ></Counter>
       </form>
       <div id="counter-form-value">{counterValue}</div>
-
       <Nested
         rows={[
           { cells: [{ gridData: "cell11" }, "cell12"] },
@@ -40,6 +38,12 @@ export default () => {
         <Row>
           <RowCell gridData="cell41" />
           <RowCell gridData="cell42" />
+        </Row>
+      </Nested>
+      <Nested>
+        <Row>
+          <RowCell />
+          <RowCell gridData="notDefault" />
         </Row>
       </Nested>
       <Nested rows={[]}></Nested>
