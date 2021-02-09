@@ -24,6 +24,8 @@ export default class SetForwardRefParent extends JSXComponent<Props>() {
 
   @Effect()
   setContent() {
-    this.host.innerHTML = "content in forwardRef";
+    if (this.host.current) {
+      this.host.current.innerHTML = "content in forwardRef";
+    }
   }
 }

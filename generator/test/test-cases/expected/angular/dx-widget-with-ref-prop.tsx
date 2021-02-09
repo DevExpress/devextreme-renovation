@@ -37,6 +37,7 @@ export default class WidgetWithRefProp extends WidgetWithRefPropInput {
 @NgModule({
   declarations: [WidgetWithRefProp],
   imports: [CommonModule],
+
   exports: [WidgetWithRefProp],
 })
 export class DxWidgetWithRefPropModule {}

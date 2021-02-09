@@ -53,7 +53,11 @@ export class PropertyAccess extends BasePropertyAccess {
         options.newComponentContext
       );
       const scope = property.processComponentContext(property.scope);
-      return `${componentContext}${scope}​​​​​​​​​${property.name}​​​​​​​​.current=${state}​​​​​​​​`;
+      const elementGetter =
+        this.name.toString() !== property.name.toString()
+          ? `.${this.name.toString()}`
+          : "";
+      return `${componentContext}${scope}​​​​​​​​​${property.name}${elementGetter}=${state}​​​​​​​​`;
     }
     return setState;
   }

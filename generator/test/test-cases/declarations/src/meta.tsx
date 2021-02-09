@@ -45,11 +45,11 @@ export default class MetaWidget extends JSXComponent(MetaWidgetInput) {
 
   @Method()
   apiMethod1() {
-    return this.baseRef?.getHeight(1, 1);
+    return this.baseRef?.current?.getHeight(1, 1);
   }
 
   @Method()
   apiMethod2() {
-    return this.baseRef?.getHeight(1, 1);
+    return this.baseRef?.current?.getHeight(1, 1);
   }
 }

@@ -1,7 +1,8 @@
+type EventCallBack<Type> = (e: Type) => void;
+
 import { Input } from "@angular/core";
-class WidgetInput {
-  @Input() size!: { width: number; height: number };
-  @Input() type!: string;
+export class WidgetInput {
+  @Input() someProp?: { current: string };
 }
 
 import {
@@ -12,30 +13,20 @@ import {
   ViewRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import {
-  convertRulesToOptions,
-  Rule,
-} from "../../../../component_declaration/default_options";
-
-type WidgetOptionRule = Rule<Partial<WidgetInput>>;
-
-const __defaultOptionRules: WidgetOptionRule[] = [];
-export function defaultOptions(rule: WidgetOptionRule) {
-  __defaultOptionRules.push(rule);
-}
 
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["size", "type"],
+  inputs: ["someProp"],
+  template: `<span></span>`,
 })
 export default class Widget extends WidgetInput {
-  get __getHeight(): number {
-    return this.size.height;
-  }
-  get __type(): string {
-    const { type } = this;
-    return type;
+  someState?: { current: string };
+  existsState: { current: string } = { current: "value" };
+  __concatStrings(): any {
+    const fromProps = this.someProp?.current || "";
+    const fromState = this.someState?.current || "";
+    return `${fromProps}${fromState}${this.existsState.current}`;
   }
   get __restAttributes(): any {
     return {};
@@ -49,13 +40,14 @@ export default class Widget extends WidgetInput {
 
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
-
-    const defaultOptions = convertRulesToOptions<WidgetInput>(
-      __defaultOptionRules
-    );
-    Object.keys(defaultOptions).forEach((option) => {
-      (this as any)[option] = (defaultOptions as any)[option];
-    });
+  }
+  set _someState(someState: { current: string }) {
+    this.someState = someState;
+    this._detectChanges();
+  }
+  set _existsState(existsState: { current: string }) {
+    this.existsState = existsState;
+    this._detectChanges();
   }
 }
 @NgModule({

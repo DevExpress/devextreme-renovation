@@ -63,9 +63,10 @@ import { EnumMember, Enum } from "./expressions/enum";
 import { Call, New } from "./expressions/call";
 import { VariableDeclaration } from "./expressions/variable-declaration";
 import { Class } from "./expressions/class";
-import { PropertyAccessChain } from "../angular-generator/expressions/property-access-chain";
 import { GeneratorContext } from "../base-generator/types";
 import { ExpressionWithTypeArguments } from "./types";
+import { PropertyAccessChain } from "./expressions/property-access-chain";
+import { Binary } from "./expressions/binary";
 
 const emptyToString = () => "";
 
@@ -529,6 +530,10 @@ export class VueGenerator extends BaseGenerator {
     members: EnumMember[]
   ) {
     return new Enum(decorators, modifiers, name, members);
+  }
+
+  createBinary(left: Expression, operator: string, right: Expression) {
+    return new Binary(left, operator, right);
   }
 
   createClassDeclarationCore(

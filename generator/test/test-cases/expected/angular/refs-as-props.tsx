@@ -30,12 +30,15 @@ import { CommonModule } from "@angular/common";
 })
 export default class Widget extends WidgetInput {
   @ViewChild("divRef", { static: false }) divRef!: ElementRef<HTMLDivElement>;
-  __getSize(): any {
-    return this.divRef.nativeElement.outerHTML + this.nullableRef?.outerHTML;
+  __getDirectly(): any {
+    const divRefOuter = this.divRef.nativeElement?.outerHTML ?? "";
+    const nullableRefOuter = this.nullableRef?.outerHTML ?? "";
+    return divRefOuter + nullableRefOuter;
   }
-  __getNullable(): any {
-    const { nullableRef } = this;
-    return nullableRef?.outerHTML;
+  __getDestructed(): any {
+    const divRefOuter = this.divRef.nativeElement?.outerHTML ?? "";
+    const nullableRefOuter = this.nullableRef?.outerHTML ?? "";
+    return divRefOuter + nullableRefOuter;
   }
   get __restAttributes(): any {
     return {};

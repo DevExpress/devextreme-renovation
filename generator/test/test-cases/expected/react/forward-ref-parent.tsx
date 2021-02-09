@@ -10,7 +10,7 @@ function view({
 }
 
 export declare type PropsType = {
-  nullableRef?: MutableRefObject<HTMLDivElement>;
+  nullableRef?: MutableRefObject<HTMLDivElement | null>;
 };
 const Props: PropsType = {};
 import * as React from "react";
@@ -32,23 +32,24 @@ interface RefOnChildrenParent {
 }
 
 export default function RefOnChildrenParent(props: typeof Props & RestProps) {
-  const __child = useRef<HTMLDivElement>();
+  const __child: MutableRefObject<HTMLDivElement | null> = useRef<
+    HTMLDivElement
+  >(null);
   const [__state_innerState, __state_setInnerState] = useState<number>(10);
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { nullableRef, ...restProps } = {
-        ...props,
-        nullableRef: props.nullableRef?.current!,
-      };
+      const { nullableRef, ...restProps } = props;
       return restProps;
     },
     [props]
   );
   useEffect(() => {
-    __child.current!.innerHTML = "Ref from child";
+    if (__child.current) {
+      __child.current.innerHTML = "Ref from child";
+    }
     const html = props.nullableRef?.current?.innerHTML;
-  }, [props.nullableRef?.current]);
+  }, [props.nullableRef]);
 
   return view({
     props: { ...props },

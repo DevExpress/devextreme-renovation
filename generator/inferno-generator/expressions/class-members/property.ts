@@ -3,12 +3,25 @@ import {
   capitalizeFirstLetter,
   compileType,
 } from "../../../base-generator/utils/string";
-import { toStringOptions } from "../../../base-generator/types";
+import {
+  toStringOptions,
+  GeneratorContext,
+} from "../../../base-generator/types";
 import { TypeReferenceNode } from "../type-reference-node";
 import { Decorators } from "../../../component_declaration/decorators";
+import { Identifier } from "../../../base-generator/expressions/common";
+import { TypeExpression } from "../../../base-generator/expressions/type";
 
 export class Property extends BaseProperty {
-  getter(componentContext?: string, keepRef?: boolean) {
+  compileTypeReferenceNode(
+    typeName: Identifier,
+    typeArguments: TypeExpression[],
+    context: GeneratorContext
+  ) {
+    return new TypeReferenceNode(typeName, typeArguments, context);
+  }
+
+  getter(componentContext?: string) {
     if (
       this.isInternalState ||
       this.isProvider ||
@@ -24,7 +37,7 @@ export class Property extends BaseProperty {
       }`;
     }
 
-    return super.getter(componentContext, keepRef);
+    return super.getter(componentContext);
   }
 
   defaultDeclaration() {

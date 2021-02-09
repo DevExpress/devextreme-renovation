@@ -136,38 +136,17 @@ export class Property extends BaseProperty {
     return super.toString();
   }
 
-  getter(componentContext?: string, keepRef: boolean = false) {
+  getter(componentContext?: string) {
     componentContext = this.processComponentContext(componentContext);
     if (this.isEvent) {
       return `${componentContext}_${this.name}`;
     }
-    if (this.isRef || this.isForwardRef || this.isForwardRefProp) {
-      if (keepRef) {
-        return `${componentContext}${this.name}`;
-      }
-      const postfix = this.isForwardRefProp ? "Ref" : "";
-      if (this.isForwardRefProp) {
-        return `${componentContext}${this.name}?.()${
-          this.isElementRef
-            ? `${
-                this.questionOrExclamationToken === SyntaxKind.ExclamationToken
-                  ? ""
-                  : this.questionOrExclamationToken
-              }.nativeElement`
-            : ""
-        }`;
-      }
-      return `${componentContext}${this.name}${postfix}${
-        this.isElementRef
-          ? `${
-              this.questionOrExclamationToken === SyntaxKind.ExclamationToken
-                ? ""
-                : this.questionOrExclamationToken
-            }.nativeElement`
-          : ""
-      }`;
-    }
-    if (this.isRefProp) {
+    if (
+      this.isRef ||
+      this.isRefProp ||
+      this.isForwardRef ||
+      this.isForwardRefProp
+    ) {
       return `${componentContext}${this.name}`;
     }
     if (this.isConsumer) {
@@ -212,7 +191,14 @@ export class Property extends BaseProperty {
   }
 
   get canBeDestructured() {
-    if (this.isEvent || this.isNested || this.isForwardRefProp) {
+    if (
+      this.isEvent ||
+      this.isNested ||
+      this.isForwardRefProp ||
+      this.isRef ||
+      this.isRefProp ||
+      this.isForwardRef
+    ) {
       return false;
     }
     return super.canBeDestructured;

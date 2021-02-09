@@ -13,7 +13,7 @@ function view({ props, rendered, _body }: PortalComponent) {
     <div>
       {"I render portals"}
       {rendered && (
-        <Portal container={props.containerRef}>
+        <Portal container={props.containerRef?.current}>
           <div>{"I'm rendered by ref"}</div>
         </Portal>
       )}

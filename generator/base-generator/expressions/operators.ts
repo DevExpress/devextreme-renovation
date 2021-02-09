@@ -3,8 +3,8 @@ import { toStringOptions } from "../types";
 import SyntaxKind from "../syntaxKind";
 import { Property } from "./class-members";
 import { PropertyAccess } from "./property-access";
-import { getConditionalOptions } from "../utils/options";
-import { Paren, Call } from "./common";
+import { NonNullExpression } from "./common";
+import { getMember } from "../utils/expressions";
 
 const isShortOperator = (operator: string) => {
   return (
@@ -15,25 +15,11 @@ const isShortOperator = (operator: string) => {
   );
 };
 
-const isLogicalOperator = (operator: string) => {
-  return (
-    operator === SyntaxKind.AmpersandAmpersandToken ||
-    operator === SyntaxKind.BarBarToken
-  );
-};
-
 const unaryPlusOrMinus = (operator: string) => {
   return (
     operator === SyntaxKind.PlusPlusToken ||
     operator === SyntaxKind.MinusMinusToken
   );
-};
-
-const isCondition = (expression: Expression): boolean => {
-  if (expression instanceof Paren) {
-    return isCondition(expression.expression);
-  }
-  return expression instanceof Binary || expression instanceof Call;
 };
 
 export class Binary extends Expression {
@@ -48,12 +34,14 @@ export class Binary extends Expression {
   }
 
   toString(options?: toStringOptions) {
-    const dependencyMember =
-      this.left instanceof PropertyAccess && this.left.getMember(options);
-    const leftOptions =
-      isLogicalOperator(this.operator) && !isCondition(this.left)
-        ? getConditionalOptions(options)
-        : options;
+    const leftExpression =
+      this.left instanceof PropertyAccess &&
+      this.left.name.toString() === "current"
+        ? this.left.expression instanceof NonNullExpression
+          ? this.left.expression.expression
+          : this.left.expression
+        : this.left;
+    const dependencyMember = getMember(leftExpression, options);
     if (dependencyMember && !dependencyMember.isMutable) {
       let rightExpression;
 
@@ -64,7 +52,7 @@ export class Binary extends Expression {
       if (isShortOperator(this.operator)) {
         const operator = this.operator[0];
         rightExpression = `${this.left.toString(
-          leftOptions
+          options
         )}${operator}${this.right.toString(options)}`;
       }
 
@@ -80,7 +68,7 @@ export class Binary extends Expression {
         )}`;
       }
     }
-    return `${this.left.toString(leftOptions)} ${
+    return `${this.left.toString(options)} ${
       this.operator
     } ${this.right.toString(options)}`;
   }

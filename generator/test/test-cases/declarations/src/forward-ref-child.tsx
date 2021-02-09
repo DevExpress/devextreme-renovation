@@ -31,10 +31,10 @@ export default class RefOnChildrenChild extends JSXComponent<
 >() {
   method() {
     const { nullableRef } = this.props;
-    const nullableRefHtml = nullableRef?.innerHTML;
+    const nullableRefHtml = nullableRef?.current?.innerHTML;
 
     if (nullableRef) {
-      this.props.nullableRef = this.props.childRef;
+      nullableRef.current = this.props.childRef.current;
     }
 
     return nullableRefHtml;

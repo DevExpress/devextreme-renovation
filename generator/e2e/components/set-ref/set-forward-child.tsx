@@ -26,7 +26,7 @@ export default class SetForwardRef extends JSXComponent<Props>() {
   @Effect({ run: "once" })
   forwardHost() {
     if (this.props.forwardHost) {
-      this.props.forwardHost = this.host;
+      this.props.forwardHost.current = this.host.current;
     }
   }
 }

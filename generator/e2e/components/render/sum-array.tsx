@@ -35,9 +35,11 @@ export default class SumArray extends JSXComponent(SumArrayProps) {
   @Effect()
   arrayUpdated() {
     if (this.props.array) {
-      this.counterRef.innerText = (
-        Number(this.counterRef.innerText) + 1
-      ).toString();
+      if (this.counterRef.current) {
+        this.counterRef.current.innerText = (
+          Number(this.counterRef.current.innerText) + 1
+        ).toString();
+      }
     }
   }
 

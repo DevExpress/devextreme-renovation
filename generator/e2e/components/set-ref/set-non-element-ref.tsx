@@ -31,6 +31,8 @@ export default class SetNonElementRef extends JSXComponent<Props>() {
 
   @Effect()
   printObj() {
-    this.host.innerHTML = `non-object-ref-value: ${this.obj.value}`;
+    if (this.host.current) {
+      this.host.current.innerHTML = `non-object-ref-value: ${this.obj.value}`;
+    }
   }
 }

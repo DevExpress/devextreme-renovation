@@ -35,21 +35,24 @@ export default class EffectsDOMUpdate extends JSXComponent<Props, "text">() {
 
   @Effect()
   noDepsEffect() {
-    this.divRef.insertAdjacentText("beforeend", `(no deps)`);
+    this.divRef.current?.insertAdjacentText("beforeend", `(no deps)`);
   }
 
   @Effect()
   depsEffect() {
-    this.divRef.insertAdjacentText("beforeend", `(${this.props.text} deps)`);
+    this.divRef.current?.insertAdjacentText(
+      "beforeend",
+      `(${this.props.text} deps)`
+    );
   }
 
   @Effect({ run: "always" })
   alwaysEffect() {
-    this.divRef.insertAdjacentText("beforeend", "(always)");
+    this.divRef.current?.insertAdjacentText("beforeend", "(always)");
   }
 
   @Effect({ run: "once" })
   onceEffect() {
-    this.divRef.insertAdjacentText("beforeend", `(once)`);
+    this.divRef.current?.insertAdjacentText("beforeend", `(once)`);
   }
 }

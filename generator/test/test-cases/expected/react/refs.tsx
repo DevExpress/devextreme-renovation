@@ -7,11 +7,11 @@ function view(viewModel: Widget) {
 }
 
 export declare type WidgetPropsType = {
-  outerDivRef?: MutableRefObject<HTMLDivElement>;
-  refProp?: MutableRefObject<HTMLDivElement>;
-  forwardRefProp?: MutableRefObject<HTMLDivElement>;
-  requiredRefProp: MutableRefObject<HTMLDivElement>;
-  requiredForwardRefProp: MutableRefObject<HTMLDivElement>;
+  outerDivRef?: MutableRefObject<HTMLDivElement | null>;
+  refProp?: MutableRefObject<HTMLDivElement | null>;
+  forwardRefProp?: MutableRefObject<HTMLDivElement | null>;
+  requiredRefProp: MutableRefObject<HTMLDivElement | null>;
+  requiredForwardRefProp: MutableRefObject<HTMLDivElement | null>;
 };
 const WidgetProps: WidgetPropsType = ({} as any) as WidgetPropsType;
 import * as React from "react";
@@ -23,7 +23,7 @@ declare type RestProps = Omit<
 >;
 interface Widget {
   props: typeof WidgetProps & RestProps;
-  divRef: any;
+  divRef?: any;
   ref?: any;
   forwardRef?: any;
   existingRef: any;
@@ -31,94 +31,83 @@ interface Widget {
   writeRefs: () => any;
   readRefs: () => any;
   getRestRefs: () => {
-    refProp?: HTMLDivElement;
-    forwardRefProp?: HTMLDivElement;
-    requiredRefProp: HTMLDivElement;
-    requiredForwardRefProp: HTMLDivElement;
+    refProp?: HTMLDivElement | null;
+    forwardRefProp?: HTMLDivElement | null;
+    requiredRefProp: HTMLDivElement | null;
+    requiredForwardRefProp: HTMLDivElement | null;
   };
   restAttributes: RestProps;
 }
 
 export default function Widget(props: typeof WidgetProps & RestProps) {
-  const __divRef = useRef<HTMLDivElement>();
-  const __ref = useRef<HTMLDivElement>();
-  const __existingRef = useRef<HTMLDivElement>();
-  const __forwardRef = useRef<HTMLDivElement>();
-  const __existingForwardRef = useRef<HTMLDivElement>();
+  const __divRef: MutableRefObject<HTMLDivElement | null> = useRef<
+    HTMLDivElement
+  >(null);
+  const __ref: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(
+    null
+  );
+  const __existingRef: MutableRefObject<HTMLDivElement | null> = useRef<
+    HTMLDivElement
+  >(null);
+  const __forwardRef: MutableRefObject<HTMLDivElement | null> = useRef<
+    HTMLDivElement
+  >(null);
+  const __existingForwardRef: MutableRefObject<HTMLDivElement | null> = useRef<
+    HTMLDivElement
+  >(null);
 
   const __writeRefs = useCallback(
     function __writeRefs(): any {
       let someRef;
-      if (props.refProp?.current!) {
+      if (props.refProp) {
+        someRef = props.refProp.current;
       }
-      someRef = props.refProp?.current!
-        ? props.refProp?.current!
-        : __divRef.current!;
-      if (props.forwardRefProp) {
-        props.forwardRefProp.current = __divRef.current!;
-      }
-      props.forwardRefProp &&
-        (props.forwardRefProp.current = __divRef.current!);
-      someRef = props.forwardRefProp?.current!
-        ? props.forwardRefProp?.current!
-        : __divRef.current!;
-      if (!__ref.current!) {
-        __ref.current = __divRef.current!;
-      }
-      !__ref.current! && (__ref.current = __divRef.current!);
-      someRef = __ref.current! ? __ref.current! : __divRef.current!;
-      if (!__forwardRef.current!) {
+      if (props.refProp?.current) {
+        someRef = props.refProp.current;
       }
       if (props.forwardRefProp) {
-        props.forwardRefProp.current = __divRef.current!;
+        someRef = props.forwardRefProp.current;
       }
-      someRef = __forwardRef.current!
-        ? __forwardRef.current!
-        : __divRef.current!;
-      __existingRef.current = __divRef.current!;
-      props.requiredForwardRefProp.current = __divRef.current!;
+      if (props.forwardRefProp?.current) {
+        someRef = props.forwardRefProp.current;
+      }
+      someRef = props.outerDivRef!.current;
+      if (props.forwardRefProp && !props.forwardRefProp.current) {
+        props.forwardRefProp.current = __divRef!.current;
+      }
+      if (__ref && !__ref.current) {
+        __ref.current = __divRef!.current;
+      }
     },
-    [
-      props.refProp?.current,
-      props.forwardRefProp?.current,
-      __ref.current,
-      __forwardRef.current,
-    ]
+    [props.refProp, props.forwardRefProp, props.outerDivRef, __divRef, __ref]
   );
   const __readRefs = useCallback(
     function __readRefs(): any {
       const outer_1 = props.refProp?.current?.outerHTML;
       const outer_2 = props.forwardRefProp?.current?.outerHTML;
-      const outer_3 = __ref.current?.outerHTML;
-      const outer_4 = __forwardRef.current?.outerHTML;
-      const outer_5 = __existingRef.current!.outerHTML;
-      const outer_6 = __existingForwardRef.current!.outerHTML;
-      const outer_7 = props.requiredRefProp!.current!.outerHTML;
-      const outer_8 = props.requiredForwardRefProp!.current!.outerHTML;
+      const outer_3 = __ref?.current?.outerHTML;
+      const outer_4 = __forwardRef?.current?.outerHTML;
+      const outer_5 = __existingRef.current?.outerHTML;
+      const outer_6 = __existingForwardRef.current?.outerHTML;
+      const outer_7 = props.requiredRefProp.current?.outerHTML;
+      const outer_8 = props.requiredForwardRefProp.current?.outerHTML;
     },
-    [
-      props.refProp?.current,
-      props.forwardRefProp?.current,
-      __ref.current,
-      __forwardRef.current,
-    ]
+    [props.refProp, props.forwardRefProp, __ref, __forwardRef]
   );
   const __getRestRefs = useCallback(
     function __getRestRefs(): {
-      refProp?: HTMLDivElement;
-      forwardRefProp?: HTMLDivElement;
-      requiredRefProp: HTMLDivElement;
-      requiredForwardRefProp: HTMLDivElement;
+      refProp?: HTMLDivElement | null;
+      forwardRefProp?: HTMLDivElement | null;
+      requiredRefProp: HTMLDivElement | null;
+      requiredForwardRefProp: HTMLDivElement | null;
     } {
-      const { outerDivRef, ...restProps } = {
-        ...props,
-        outerDivRef: props.outerDivRef?.current!,
-        refProp: props.refProp?.current!,
-        forwardRefProp: props.forwardRefProp?.current!,
-        requiredRefProp: props.requiredRefProp!.current!,
-        requiredForwardRefProp: props.requiredForwardRefProp!.current!,
+      const { outerDivRef, ...restProps } = props;
+      return {
+        refProp: restProps.refProp?.current,
+        forwardRefProp: restProps.forwardRefProp?.current,
+        requiredRefProp: restProps.requiredRefProp.current,
+        requiredForwardRefProp: restProps.requiredForwardRefProp.current,
       };
-      return restProps;
     },
     [props]
   );
@@ -131,14 +120,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
         requiredForwardRefProp,
         requiredRefProp,
         ...restProps
-      } = {
-        ...props,
-        outerDivRef: props.outerDivRef?.current!,
-        refProp: props.refProp?.current!,
-        forwardRefProp: props.forwardRefProp?.current!,
-        requiredRefProp: props.requiredRefProp!.current!,
-        requiredForwardRefProp: props.requiredForwardRefProp!.current!,
-      };
+      } = props;
       return restProps;
     },
     [props]

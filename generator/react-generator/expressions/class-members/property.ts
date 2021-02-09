@@ -5,9 +5,15 @@ import {
   compileType,
   capitalizeFirstLetter,
 } from "../../../base-generator/utils/string";
-import { toStringOptions } from "../../../base-generator/types";
+import {
+  toStringOptions,
+  GeneratorContext,
+} from "../../../base-generator/types";
 import { Identifier } from "../../../base-generator/expressions/common";
-import { TypeExpression } from "../../../base-generator/expressions/type";
+import {
+  TypeExpression,
+  SimpleTypeExpression,
+} from "../../../base-generator/expressions/type";
 import {
   compileJSXTemplateProps,
   TypeReferenceNode,
@@ -53,7 +59,31 @@ export class Property extends BaseProperty {
     return this.defaultDeclaration();
   }
 
+  compileTypeReferenceNode(
+    typeName: Identifier,
+    typeArguments: TypeExpression[],
+    context: GeneratorContext
+  ) {
+    return new TypeReferenceNode(typeName, typeArguments, context);
+  }
+
   compileTypeDeclarationType(type: string | TypeExpression) {
+    if (
+      (this.isRefProp || this.isForwardRefProp) &&
+      type instanceof TypeReferenceNode &&
+      type.toString() !== "any"
+    ) {
+      const typeArguments = type.typeArguments.length
+        ? type.typeArguments.toString() === "any"
+          ? type.typeArguments
+          : [new SimpleTypeExpression(`${type.typeArguments[0]} | null`)]
+        : [new SimpleTypeExpression("any")];
+      type = this.compileTypeReferenceNode(
+        type.typeName,
+        typeArguments,
+        type.context
+      );
+    }
     return compileType(
       type.toString(),
       this.questionOrExclamationToken === SyntaxKind.ExclamationToken
@@ -86,7 +116,7 @@ export class Property extends BaseProperty {
     return `${name}${this.compileTypeDeclarationType(type)}`;
   }
 
-  getter(componentContext?: string, keepRef: boolean = false) {
+  getter(componentContext?: string) {
     componentContext = this.processComponentContext(componentContext);
     const scope = this.processComponentContext(this.scope);
     if (this.isInternalState) {
@@ -111,13 +141,8 @@ export class Property extends BaseProperty {
           d.name === Decorators.ForwardRefProp
       )
     ) {
-      if (componentContext === "" || componentContext.startsWith("this")) {
-        if (keepRef && this.isForwardRefProp) {
-          return `${componentContext}${scope}${this.name}`;
-        }
-        return `${componentContext}${scope}${this.name}${
-          scope ? this.questionOrExclamationToken : ""
-        }.current!`;
+      if (componentContext === "") {
+        return `${scope}${this.name}`;
       }
       return getPropName(this.name, componentContext, scope);
     } else if (this.isState) {
@@ -161,11 +186,7 @@ export class Property extends BaseProperty {
     ) {
       const scope = this.processComponentContext(this.scope);
       return this.questionOrExclamationToken === "?"
-        ? [
-            `${scope}${this.name.toString()}${
-              scope ? this.questionOrExclamationToken : ""
-            }.current`,
-          ]
+        ? [`${scope}${this.name.toString()}`]
         : [];
     } else if (this.isState) {
       return [getPropName(this.name), getLocalStateName(this.name)];
@@ -216,7 +237,9 @@ export class Property extends BaseProperty {
     }
 
     if (this.isRef || this.isForwardRef) {
-      return `const ${this.name}=useRef<${this.compileRefType()}>()`;
+      return `const ${
+        this.name
+      }:MutableRefObject<${this.compileRefType()} | null>=useRef<${this.compileRefType()}>(null)`;
     }
 
     if (this.isMutable) {
@@ -226,7 +249,9 @@ export class Property extends BaseProperty {
     }
 
     if (this.isApiRef) {
-      return `const ${this.name}=useRef<${this.compileRefType()}Ref>()`;
+      return `const ${
+        this.name
+      }:MutableRefObject<${this.compileRefType()}Ref | null>=useRef<${this.compileRefType()}Ref>(null)`;
     }
 
     if (this.isConsumer) {
@@ -243,12 +268,7 @@ export class Property extends BaseProperty {
   }
 
   get canBeDestructured() {
-    if (
-      this.isState ||
-      this.isRefProp ||
-      this.isNested ||
-      this.isForwardRefProp
-    ) {
+    if (this.isState || this.isNested || this.isRef || this.isForwardRef) {
       return false;
     }
     return super.canBeDestructured;

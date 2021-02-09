@@ -2,7 +2,7 @@
   <div ref="divRef"
     ><WidgetWithRefProp
       :parentRef="() => this.$refs.divRef"
-      :nullableRef="() => props.nullableRef"
+      :nullableRef="() => nullableRef"
   /></div>
 </template>
 <script>
@@ -23,15 +23,19 @@ export const DxWidget = {
       return {};
     },
     props() {
-      return { nullableRef: this.nullableRef?.() };
+      return { nullableRef: this.nullableRef };
     },
   },
   methods: {
-    __getSize() {
-      return this.$refs.divRef.outerHTML + this.props.nullableRef?.outerHTML;
+    __getDirectly() {
+      const divRefOuter = this.$refs.divRef?.outerHTML ?? "";
+      const nullableRefOuter = this.nullableRef?.()?.outerHTML ?? "";
+      return divRefOuter + nullableRefOuter;
     },
-    __getNullable() {
-      return this.props.nullableRef?.outerHTML;
+    __getDestructed() {
+      const divRefOuter = this.$refs.divRef?.outerHTML ?? "";
+      const nullableRefOuter = this.nullableRef?.()?.outerHTML ?? "";
+      return divRefOuter + nullableRefOuter;
     },
   },
 };

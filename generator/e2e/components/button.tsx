@@ -43,8 +43,8 @@ export default class Button extends JSXComponent(ButtonInput) {
     const handler = (e: Event) => {
       this.props.onClick?.(e);
     };
-    this.host.addEventListener("click", handler);
+    this.host.current?.addEventListener("click", handler);
 
-    return () => this.host.removeEventListener("click", handler);
+    return () => this.host.current?.removeEventListener("click", handler);
   }
 }

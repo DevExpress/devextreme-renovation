@@ -7,8 +7,8 @@ function view({ props: { childRef, nullableRef } }: RefOnChildrenChild) {
 }
 
 export declare type PropsType = {
-  childRef: MutableRefObject<HTMLDivElement>;
-  nullableRef?: MutableRefObject<HTMLDivElement>;
+  childRef: MutableRefObject<HTMLDivElement | null>;
+  nullableRef?: MutableRefObject<HTMLDivElement | null>;
   state?: number;
 };
 const Props: PropsType = ({} as any) as PropsType;
@@ -25,21 +25,18 @@ interface RefOnChildrenChild {
 export default function RefOnChildrenChild(props: typeof Props & RestProps) {
   const __method = useCallback(
     function __method(): any {
-      const nullableRefHtml = props.nullableRef?.current?.innerHTML;
-      if (props.nullableRef) {
-        props.nullableRef.current = props.childRef!.current!;
+      const { nullableRef } = props;
+      const nullableRefHtml = nullableRef?.current?.innerHTML;
+      if (nullableRef) {
+        nullableRef.current = props.childRef.current;
       }
       return nullableRefHtml;
     },
-    [props.nullableRef?.current]
+    [props.nullableRef]
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { childRef, nullableRef, state, ...restProps } = {
-        ...props,
-        childRef: props.childRef!.current!,
-        nullableRef: props.nullableRef?.current!,
-      };
+      const { childRef, nullableRef, state, ...restProps } = props;
       return restProps;
     },
     [props]

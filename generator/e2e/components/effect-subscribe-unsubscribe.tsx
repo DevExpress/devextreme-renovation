@@ -43,13 +43,15 @@ export default class EffectSubscribeUnsubscribe extends JSXComponent(Props) {
   @Effect()
   subscribeOnClick() {
     const handler = this.onButtonClick.bind(this);
-    this.buttonRef.addEventListener("click", handler);
-    return () => this.buttonRef.removeEventListener("click", handler);
+    this.buttonRef.current?.addEventListener("click", handler);
+    return () => this.buttonRef.current?.removeEventListener("click", handler);
   }
 
   onButtonClick() {
     const value = this.state1;
-    this.contentRef.innerHTML = value.toString();
+    if (this.contentRef.current) {
+      this.contentRef.current.innerHTML = value.toString();
+    }
     this.state1 = this.state1 + 1;
   }
 }

@@ -31,9 +31,9 @@ export const DxWidget = {
     props() {
       return {
         outerDivRef: this.outerDivRef?.(),
-        refProp: this.refProp?.(),
+        refProp: this.refProp,
         forwardRefProp: this.forwardRefProp?.(),
-        requiredRefProp: this.requiredRefProp(),
+        requiredRefProp: this.requiredRefProp,
         requiredForwardRefProp: this.requiredForwardRefProp?.(),
       };
     },
@@ -41,50 +41,45 @@ export const DxWidget = {
   methods: {
     __writeRefs() {
       let someRef;
-      if (this.refProp?.()) {
+      if (this.refProp) {
+        someRef = this.refProp();
       }
-      someRef = this.props.refProp ? this.props.refProp : this.$refs.divRef;
+      if (this.refProp?.()) {
+        someRef = this.refProp();
+      }
       if (this.forwardRefProp) {
+        someRef = this.forwardRefProp();
+      }
+      if (this.forwardRefProp?.()) {
+        someRef = this.forwardRefProp();
+      }
+      someRef = this.outerDivRef();
+      if (this.forwardRefProp && !this.forwardRefProp()) {
         this.forwardRef_forwardRefProp(this.$refs.divRef),
           this.forwardRefProp(this.$refs.divRef);
       }
-      this.forwardRefProp &&
-        (this.forwardRef_forwardRefProp(this.$refs.divRef),
-        this.forwardRefProp(this.$refs.divRef));
-      someRef = this.forwardRefProp?.()
-        ? this.forwardRefProp?.()
-        : this.$refs.divRef;
       if (!this.$refs.ref) {
         this.$refs.ref = this.$refs.divRef;
       }
-      !this.$refs.ref && (this.$refs.ref = this.$refs.divRef);
-      someRef = this.$refs.ref ? this.$refs.ref : this.$refs.divRef;
-      if (!this.$refs.forwardRef) {
-      }
-      if (this.forwardRefProp) {
-        this.forwardRef_forwardRefProp(this.$refs.divRef),
-          this.forwardRefProp(this.$refs.divRef);
-      }
-      someRef = this.$refs.forwardRef
-        ? this.$refs.forwardRef
-        : this.$refs.divRef;
-      this.$refs.existingRef = this.$refs.divRef;
-      this.forwardRef_requiredForwardRefProp(this.$refs.divRef),
-        this.requiredForwardRefProp(this.$refs.divRef);
     },
     __readRefs() {
-      const outer_1 = this.props.refProp?.outerHTML;
+      const outer_1 = this.refProp?.()?.outerHTML;
       const outer_2 = this.forwardRefProp?.()?.outerHTML;
       const outer_3 = this.$refs.ref?.outerHTML;
       const outer_4 = this.$refs.forwardRef?.outerHTML;
-      const outer_5 = this.$refs.existingRef.outerHTML;
-      const outer_6 = this.$refs.existingForwardRef.outerHTML;
-      const outer_7 = this.props.requiredRefProp.outerHTML;
-      const outer_8 = this.requiredForwardRefProp().outerHTML;
+      const outer_5 = this.$refs.existingRef?.outerHTML;
+      const outer_6 = this.$refs.existingForwardRef?.outerHTML;
+      const outer_7 = this.requiredRefProp()?.outerHTML;
+      const outer_8 = this.requiredForwardRefProp()?.outerHTML;
     },
     __getRestRefs() {
       const { outerDivRef, ...restProps } = this.props;
-      return restProps;
+      return {
+        refProp: restProps.refProp?.(),
+        forwardRefProp: restProps.forwardRefProp?.(),
+        requiredRefProp: restProps.requiredRefProp(),
+        requiredForwardRefProp: restProps.requiredForwardRefProp(),
+      };
     },
     forwardRef_forwardRef(ref) {
       if (arguments.length) {

@@ -7,7 +7,13 @@ import {
 } from "../../../../component_declaration/common";
 
 function view(model: Widget): JSX.Element {
-  return <span></span>;
+  const sizes = model.props.sizes ?? { width: 0, height: 0 };
+  return (
+    <span>
+      {sizes.height}
+      {sizes.width}
+    </span>
+  );
 }
 
 type EventCallBack<Type> = (e: Type) => void;
@@ -16,6 +22,7 @@ type EventCallBack<Type> = (e: Type) => void;
 export class WidgetInput {
   @OneWay() height = 10;
   @OneWay() export: object = {};
+  @OneWay() sizes?: { height: number; width: number };
   @Event() onClick: (a: number) => void = () => {};
   @Event() onSomething: EventCallBack<number> = () => {};
 }

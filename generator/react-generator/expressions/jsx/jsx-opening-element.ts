@@ -1,15 +1,7 @@
-import {
-  JsxOpeningElement as BaseJsxOpeningElement,
-  JsxExpression,
-} from "../../../base-generator/expressions/jsx";
-import {
-  Expression,
-  SimpleExpression,
-} from "../../../base-generator/expressions/base";
+import { JsxOpeningElement as BaseJsxOpeningElement } from "../../../base-generator/expressions/jsx";
+import { Expression } from "../../../base-generator/expressions/base";
 import { Identifier } from "../../../base-generator/expressions/common";
 import { toStringOptions } from "../../../base-generator/types";
-import { JsxAttribute } from "./jsx-attribute";
-import { PropertyAccess } from "../property-access";
 import { Property } from "../class-members/property";
 import {
   PropertyAssignment,
@@ -22,40 +14,6 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return tagName.toString() === "Fragment"
       ? new Identifier("React.Fragment")
       : tagName;
-  }
-
-  attributesString(options?: toStringOptions) {
-    if (this.isPortal()) {
-      const containerIndex = this.attributes.findIndex(
-        (attr) =>
-          attr instanceof JsxAttribute && attr.name.toString() === "container"
-      );
-      if (containerIndex > -1) {
-        const attr = this.attributes[containerIndex] as JsxAttribute;
-        const expression = (attr.initializer as JsxExpression).getExpression()!;
-
-        const propName =
-          expression instanceof PropertyAccess
-            ? expression.name.toString()
-            : expression.toString();
-        const relatedProp = options?.members.find(
-          (m) => m.name.toString() === propName
-        ) as Property | undefined;
-
-        const token = relatedProp?.questionOrExclamationToken ?? "";
-        const getter = relatedProp ? ".current!" : "";
-
-        this.attributes[containerIndex] = new JsxAttribute(
-          attr.name,
-          new JsxExpression(
-            undefined,
-            new SimpleExpression(`${expression}${token}${getter}`)
-          )
-        );
-      }
-    }
-
-    return super.attributesString(options);
   }
 
   toString(options?: toStringOptions) {

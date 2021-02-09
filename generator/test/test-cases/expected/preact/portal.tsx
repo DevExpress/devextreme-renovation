@@ -8,7 +8,7 @@ function view(model: Widget) {
         </Portal>
       )}
 
-      <Portal container={model.props.someRef?.current!}>
+      <Portal container={model.props.someRef?.current}>
         <span></span>
       </Portal>
     </div>
@@ -51,10 +51,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { someRef, ...restProps } = {
-        ...props,
-        someRef: props.someRef?.current!,
-      };
+      const { someRef, ...restProps } = props;
       return restProps;
     },
     [props]

@@ -31,7 +31,7 @@ export default class ProvideRefFromParentToChildren extends JSXComponent<
   @Effect({ run: "once" })
   init() {
     if (this.props.elementRef) {
-      this.props.elementRef = this.host;
+      this.props.elementRef.current = this.host.current;
     }
   }
 }

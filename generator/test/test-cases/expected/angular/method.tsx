@@ -24,11 +24,11 @@ import { CommonModule } from "@angular/common";
 export default class Widget extends WidgetInput {
   @ViewChild("divRef", { static: false }) divRef!: ElementRef<HTMLDivElement>;
   getHeight(p: number = 10, p1: any): string {
-    return `${this.prop1} + ${this.prop2} + ${this.divRef.nativeElement.innerHTML} + ${p}`;
+    return `${this.prop1} + ${this.prop2} + ${this.divRef.nativeElement?.innerHTML} + ${p}`;
   }
   getSize(): string {
     return `${this.prop1} + ${
-      this.divRef.nativeElement.innerHTML
+      this.divRef.nativeElement?.innerHTML
     } + ${this.getHeight(0, 0)}`;
   }
   get __restAttributes(): any {
@@ -48,6 +48,7 @@ export default class Widget extends WidgetInput {
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}

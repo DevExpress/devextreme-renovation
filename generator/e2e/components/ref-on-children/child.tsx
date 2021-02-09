@@ -22,6 +22,8 @@ class Props {
 export default class ForwardRefChild extends JSXComponent<Props, "childRef">() {
   @Effect()
   effect() {
-    this.props.childRef.innerHTML += "childText";
+    if (this.props.childRef.current) {
+      this.props.childRef.current.innerHTML += "childText";
+    }
   }
 }

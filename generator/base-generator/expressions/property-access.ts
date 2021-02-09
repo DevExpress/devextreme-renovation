@@ -75,6 +75,7 @@ export class PropertyAccess extends ExpressionWithExpression {
     });
     const componentContext = this.calculateComponentContext(options);
     const usePropsSpace =
+      options?.usePropsSpace ||
       expressionString === `${processComponentContext(componentContext)}props`;
     if (expressionString === componentContext || usePropsSpace) {
       const props = getProps(options?.members || []) as Array<
@@ -93,13 +94,19 @@ export class PropertyAccess extends ExpressionWithExpression {
     );
   }
 
+  processName(_options?: toStringOptions) {
+    return `.${this.name}`;
+  }
+
   toString(options?: toStringOptions, elements: BindingElement[] = []) {
     const member = this.getMember(options);
     if (member) {
-      return `${member.getter(options!.newComponentContext, options?.keepRef)}`;
+      return `${member.getter(options!.newComponentContext)}`;
     }
 
-    const result = `${this.expression.toString(options)}.${this.name}`;
+    const result = `${this.expression.toString(options)}${this.processName(
+      options
+    )}`;
     const context = this.calculateComponentContext(options);
 
     if (
@@ -180,13 +187,17 @@ export class PropertyAccessChain extends ExpressionWithExpression {
     this.name = name;
   }
 
+  processName(options?: toStringOptions) {
+    return `${this.questionDotToken}${this.name.toString(options)}`;
+  }
+
   toString(options?: toStringOptions) {
     const replaceMark = this.questionDotToken === SyntaxKind.QuestionDotToken;
     const firstPart = this.expression.toString(options);
 
-    return `${replaceMark ? firstPart.replace(/[\?!]$/, "") : firstPart}${
-      this.questionDotToken
-    }${this.name.toString(options)}`;
+    return `${
+      replaceMark ? firstPart.replace(/[\?!]$/, "") : firstPart
+    }${this.processName(options)}`;
   }
 
   getDependency(options: toStringOptions) {
@@ -201,3 +212,18 @@ export class Spread extends ExpressionWithExpression {
     return `${SyntaxKind.DotDotDotToken}${super.toString(options)}`;
   }
 }
+
+export const compileRefOptions = (
+  expressionString: string,
+  options?: toStringOptions
+) => ({
+  members: [],
+  ...options,
+  componentContext:
+    expressionString.includes("this") || options?.variables?.[expressionString]
+      ? options?.componentContext
+      : expressionString,
+  usePropsSpace:
+    !expressionString.includes("this") &&
+    !options?.variables?.[expressionString],
+});

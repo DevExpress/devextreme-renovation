@@ -33,7 +33,9 @@ export default class RefOnChildrenParent extends JSXComponent(Props) {
 
   @Effect()
   effect() {
-    this.child.innerHTML = "Ref from child";
-    const html = this.props.nullableRef?.innerHTML;
+    if (this.child.current) {
+      this.child.current.innerHTML = "Ref from child";
+    }
+    const html = this.props.nullableRef?.current?.innerHTML;
   }
 }
