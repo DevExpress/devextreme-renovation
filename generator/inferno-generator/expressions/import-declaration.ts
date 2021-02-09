@@ -21,7 +21,7 @@ export class ImportDeclaration extends BaseImportDeclaration {
       );
     }
 
-    if (this.has("RefObject")) {
+    if (this.has("RefObject") || this.has("Ref") || this.has("ForwardRef")) {
       result.push(
         `import {RefObject} from ${this.resolveCommonModule("ref_object")}`
       );

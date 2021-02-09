@@ -19,7 +19,7 @@ export class Property extends BaseProperty {
     }
 
     if (this.isState) {
-      return `${this.processComponentContext(componentContext)}state_${
+      return `${this.processComponentContext(componentContext)}__state_${
         this.name
       }`;
     }
@@ -122,7 +122,7 @@ export class Property extends BaseProperty {
           ]
         : [];
     } else if (this.isState) {
-      return [`state_${this.name}`, `props.${this.name}Change`];
+      return [`__state_${this.name}`, `props.${this.name}Change`];
     } else if (this.isInternalState || this.isProvider || this.isConsumer) {
       return [`${this.name}`];
     } else if (this.isMutable) {
