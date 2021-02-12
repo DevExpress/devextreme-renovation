@@ -306,31 +306,28 @@ export class ReactComponent extends Component {
   }
 
   compileApiRefImports(imports: string[]) {
+    const result: Set<string> = new Set<string>();
     if (this.apiRefs.length) {
-      imports.splice(
-        -1,
-        0,
-        ...this.apiRefs.reduce((imports: string[], ref) => {
-          const refType = ref.compileRefType();
-          const baseComponent = this.context.components![
-            refType
-          ] as ReactComponent;
-          if (this.context.dirname) {
-            const relativePath = getModuleRelativePath(
-              this.context.dirname,
-              baseComponent.context.path!
-            );
-            imports.push(
-              `import {${
-                baseComponent.name
-              }Ref as ${refType}Ref} from "${this.processModuleFileName(
-                relativePath.replace(path.extname(relativePath), "")
-              )}"`
-            );
-          }
-          return imports;
-        }, [])
-      );
+      this.apiRefs.forEach((ref) => {
+        const refType = ref.compileRefType();
+        const baseComponent = this.context.components![
+          refType
+        ] as ReactComponent;
+        if (this.context.dirname) {
+          const relativePath = getModuleRelativePath(
+            this.context.dirname,
+            baseComponent.context.path!
+          );
+          result.add(
+            `import {${
+              baseComponent.name
+            }Ref as ${refType}Ref} from "${this.processModuleFileName(
+              relativePath.replace(path.extname(relativePath), "")
+            )}"`
+          );
+        }
+      });
+      imports.splice(-1, 0, ...result);
     }
   }
 
