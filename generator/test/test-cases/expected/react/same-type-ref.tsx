@@ -1,4 +1,4 @@
-import { WidgetRef } from "../../expected/react/export-named-api-ref";
+import { Widget as WidgetR } from "./export-named-api-ref";
 function view(viewModel: Widget) {
   return <div></div>;
 }
@@ -7,6 +7,7 @@ export declare type WidgetInputType = {
   nullableRef?: MutableRefObject<HTMLDivElement>;
 };
 const WidgetInput: WidgetInputType = {};
+import { WidgetRef as WidgetRRef } from "./export-named-api-ref";
 import * as React from "react";
 import { useCallback, useRef, MutableRefObject, HTMLAttributes } from "react";
 
@@ -22,8 +23,8 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const __divRef1 = useRef<WidgetRef>();
-  const __divRef2 = useRef<WidgetRef>();
+  const __divRef1 = useRef<WidgetRRef>();
+  const __divRef2 = useRef<WidgetRRef>();
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
