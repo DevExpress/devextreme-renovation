@@ -8,7 +8,7 @@ import {
 import BaseWidget from "./method";
 
 function view(viewModel: Widget) {
-  return <div></div>;
+  return <BaseWidget></BaseWidget>;
 }
 
 @ComponentBindings()
