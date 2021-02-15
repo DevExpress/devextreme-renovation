@@ -140,6 +140,10 @@ mocha.describe("preact-generator", function () {
   mocha.it("template", function () {
     this.testGenerator(this.test!.title);
   });
+
+  mocha.it("object-with-current", function () {
+    this.testGenerator(this.test!.title);
+  });
 });
 
 mocha.describe("preact-generator: expressions", function () {

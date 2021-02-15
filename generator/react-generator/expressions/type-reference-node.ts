@@ -15,7 +15,9 @@ export function compileJSXTemplateProps(args: TypeExpression[]) {
 }
 
 export class TypeReferenceNode extends BaseTypeReferenceNode {
-  REF_OBJECT_TYPE = "MutableRefObject";
+  get REF_OBJECT_TYPE() {
+    return "MutableRefObject";
+  }
 
   toString() {
     if (

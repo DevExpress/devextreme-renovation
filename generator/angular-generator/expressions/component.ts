@@ -875,12 +875,11 @@ export class AngularComponent extends Component {
             getDependencyFromViewExpression(o.expression, options)
           );
 
-          const refString =
+          const refString = `${
             o.refExpression instanceof SimpleExpression
-              ? `this.${o.refExpression.toString()}?.nativeElement`
-              : o.refExpression
-                  .toString(options)
-                  .replace(/(\w|\d)!?\.nativeElement/, "$1?.nativeElement");
+              ? `this.${o.refExpression.toString()}`
+              : o.refExpression.toString(options)
+          }?.nativeElement`;
           if (o.refExpression instanceof SimpleExpression) {
             coreImports.push("ViewChild", "ElementRef");
             members.push(

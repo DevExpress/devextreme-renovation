@@ -13,7 +13,13 @@ export declare type PropsType = {
 };
 const Props: PropsType = ({} as any) as PropsType;
 import * as React from "react";
-import { useCallback, useEffect, useRef, HTMLAttributes } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  MutableRefObject,
+  HTMLAttributes,
+} from "react";
 
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
 interface RefOnChildrenTemplate {
@@ -35,7 +41,9 @@ const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
   (ComponentProp && ((props: any) => <ComponentProp {...props} />));
 
 export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
-  const __child = useRef<HTMLDivElement>();
+  const __child: MutableRefObject<HTMLDivElement | null> = useRef<
+    HTMLDivElement
+  >(null);
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
@@ -50,7 +58,9 @@ export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
     [props]
   );
   useEffect(() => {
-    __child.current!.innerHTML += "ParentText";
+    if (__child.current) {
+      __child.current.innerHTML += "ParentText";
+    }
   }, []);
 
   return view({

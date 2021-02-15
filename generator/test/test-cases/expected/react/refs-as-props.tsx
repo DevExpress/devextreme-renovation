@@ -11,7 +11,7 @@ function view(viewModel: Widget) {
 }
 
 export declare type WidgetInputType = {
-  nullableRef?: MutableRefObject<HTMLDivElement>;
+  nullableRef?: MutableRefObject<HTMLDivElement | null>;
 };
 const WidgetInput: WidgetInputType = {};
 import * as React from "react";
@@ -24,34 +24,36 @@ declare type RestProps = Omit<
 interface Widget {
   props: typeof WidgetInput & RestProps;
   divRef: any;
-  getSize: () => any;
-  getNullable: () => any;
+  getDirectly: () => any;
+  getDestructed: () => any;
   restAttributes: RestProps;
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const __divRef = useRef<HTMLDivElement>();
+  const __divRef: MutableRefObject<HTMLDivElement | null> = useRef<
+    HTMLDivElement
+  >(null);
 
-  const __getSize = useCallback(
-    function __getSize(): any {
-      return (
-        __divRef.current!.outerHTML + props.nullableRef?.current?.outerHTML
-      );
+  const __getDirectly = useCallback(
+    function __getDirectly(): any {
+      const divRefOuter = __divRef.current?.outerHTML ?? "";
+      const nullableRefOuter = props.nullableRef?.current?.outerHTML ?? "";
+      return divRefOuter + nullableRefOuter;
     },
-    [props.nullableRef?.current]
+    [props.nullableRef]
   );
-  const __getNullable = useCallback(
-    function __getNullable(): any {
-      return props.nullableRef?.current?.outerHTML;
+  const __getDestructed = useCallback(
+    function __getDestructed(): any {
+      const { nullableRef } = props;
+      const divRefOuter = __divRef.current?.outerHTML ?? "";
+      const nullableRefOuter = nullableRef?.current?.outerHTML ?? "";
+      return divRefOuter + nullableRefOuter;
     },
-    [props.nullableRef?.current]
+    [props.nullableRef]
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { nullableRef, ...restProps } = {
-        ...props,
-        nullableRef: props.nullableRef?.current!,
-      };
+      const { nullableRef, ...restProps } = props;
       return restProps;
     },
     [props]
@@ -60,8 +62,8 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   return view({
     props: { ...props },
     divRef: __divRef,
-    getSize: __getSize,
-    getNullable: __getNullable,
+    getDirectly: __getDirectly,
+    getDestructed: __getDestructed,
     restAttributes: __restAttributes(),
   });
 }

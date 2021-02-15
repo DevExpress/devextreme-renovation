@@ -28,7 +28,9 @@ const getEffectRunParameter = (effect: BaseClassMember) =>
     ?.valueOf();
 
 export class InfernoComponent extends PreactComponent {
-  REF_OBJECT_TYPE = "RefObject";
+  get REF_OBJECT_TYPE() {
+    return "RefObject";
+  }
 
   compileImportStatements(hooks: string[]): string[] {
     const coreImports = [];
@@ -116,7 +118,7 @@ export class InfernoComponent extends PreactComponent {
 
       const getterName = m.isInternalState
         ? m._name
-        : new Identifier(`state_${m._name}`);
+        : new Identifier(`__state_${m._name}`);
 
       result.push(
         this.createGetAccessor(

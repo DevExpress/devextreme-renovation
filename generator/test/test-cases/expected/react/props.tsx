@@ -1,11 +1,18 @@
 function view(model: Widget): any {
-  return <span></span>;
+  const sizes = model.props.sizes ?? { width: 0, height: 0 };
+  return (
+    <span>
+      {sizes.height}
+      {sizes.width}
+    </span>
+  );
 }
 type EventCallBack<Type> = (e: Type) => void;
 
 export declare type WidgetInputType = {
   height: number;
   export: object;
+  sizes?: { height: number; width: number };
   onClick: (a: number) => void;
   onSomething: EventCallBack<number>;
 };
@@ -56,6 +63,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
         height,
         onClick,
         onSomething,
+        sizes,
         ...restProps
       } = props;
       return restProps;

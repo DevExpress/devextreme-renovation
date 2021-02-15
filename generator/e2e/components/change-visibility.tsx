@@ -49,10 +49,10 @@ export default class VisibilityChange extends JSXComponent(WidgetInput) {
       this.visible = false;
     };
     if (this.visible) {
-      this.element?.addEventListener("click", handler);
+      this.element?.current?.addEventListener("click", handler);
     }
 
-    return () => this.element?.removeEventListener("click", handler);
+    return () => this.element?.current?.removeEventListener("click", handler);
   }
 
   clickHandler() {

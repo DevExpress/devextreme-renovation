@@ -130,7 +130,7 @@
 
     @Method()
     export() {
-      return pdfjs.fromHtml(this.rootRef);
+      return pdfjs.fromHtml(this.rootRef.current);
     }
 
     onClick() {
@@ -1050,7 +1050,7 @@ class MyComponent extends JSXComponent(MyComponentProps) {
   @Ref() rootRef!: RefObject<HTMLDivElement>;
   
   getRef(): HTMLDivElement {
-    return this.rootRef;
+    return this.rootRef.current;
   }
 }
 
@@ -1296,10 +1296,10 @@ class MyComponent extends JSXComponent(MyComponentProps) {
   export(format: string) {
     if(false) {
       // Реф используется как элемент, на который он указывает
-      return this.rootRef.innerHTML;
+      return this.rootRef.current.innerHTML;
     }
     // Но лучше как-то так
-    return exportUtils.exportElement(this.rootRef, format);
+    return exportUtils.exportElement(this.rootRef.current, format);
   }
 }
 
@@ -1510,7 +1510,7 @@ function viewFunction(viewModel: MyComponent) {
           Element in body
         </div>
       </Portal>
-      {viewModel.rendered && viewModel.props.opened && <Portal container={viewModel.props.someElement}>
+      {viewModel.rendered && viewModel.props.opened && <Portal container={viewModel.props.someElement.current}>
         <div>
           Element by ref
         </div>

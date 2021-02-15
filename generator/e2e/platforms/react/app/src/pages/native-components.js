@@ -43,7 +43,7 @@ export default () => {
       <Nested>
         <Row>
           <RowCell />
-          <RowCell gridData="notDefault"/>
+          <RowCell gridData="notDefault" />
         </Row>
       </Nested>
       <Nested rows={[]}></Nested>

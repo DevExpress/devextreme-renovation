@@ -151,35 +151,17 @@ export class Property extends BaseProperty {
           }`;
   }
 
-  getter(componentContext?: string, keepRef: boolean = false) {
+  getter(componentContext?: string) {
     const baseValue = super.getter(componentContext);
     componentContext = this.processComponentContext(componentContext);
     if (this.isState) {
       return `${componentContext}${this.name}_state`;
     }
-    if (
-      (this.isRef || this.isForwardRef || this.isForwardRefProp) &&
-      componentContext.length
-    ) {
-      if (this.isForwardRefProp) {
-        if (keepRef) {
-          return `${componentContext}${this.name}`;
-        }
-
-        return `${componentContext}${this.name}${
-          this.questionOrExclamationToken === SyntaxKind.QuestionToken
-            ? SyntaxKind.QuestionDotToken
-            : ""
-        }()`;
-      }
+    if ((this.isRef || this.isForwardRef) && componentContext.length) {
       return `${componentContext}$refs.${this.name}`;
     }
-    if (this.isRefProp) {
-      if (keepRef) {
-        const token = this.isOptional ? "?." : "";
-        return `${componentContext}${this.name}${token}()`;
-      }
-      return `${componentContext}props.${this.name}`;
+    if (this.isRefProp || this.isForwardRefProp) {
+      return `${componentContext}${this.name}`;
     }
     if (this.isTemplate) {
       return `${componentContext}$scopedSlots.${this.name}`;
@@ -219,9 +201,12 @@ export class Property extends BaseProperty {
     if (
       this.isEvent ||
       this.isState ||
+      this.isRef ||
       this.isRefProp ||
-      this.isNested ||
-      this.isForwardRefProp
+      this.isForwardRef ||
+      this.isForwardRefProp ||
+      this.isRefProp ||
+      this.isNested
     ) {
       return false;
     }

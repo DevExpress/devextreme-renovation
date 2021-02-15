@@ -11,7 +11,7 @@ function view(model: Widget) {
         </Portal>
       )}
 
-      <Portal container={model.props.someRef?.current!}>
+      <Portal container={model.props.someRef?.current}>
         <span></span>
       </Portal>
     </div>
@@ -19,7 +19,7 @@ function view(model: Widget) {
 }
 
 export declare type WidgetPropsType = {
-  someRef?: RefObject<HTMLElement>;
+  someRef?: RefObject<HTMLElement | null>;
 };
 export const WidgetProps: WidgetPropsType = {};
 import { createElement as h } from "inferno-compat";
@@ -72,10 +72,7 @@ export default class Widget extends InfernoComponent<
     this.set_rendered(() => true);
   }
   get restAttributes(): RestProps {
-    const { someRef, ...restProps } = {
-      ...this.props,
-      someRef: this.props.someRef?.current!,
-    };
+    const { someRef, ...restProps } = this.props;
     return restProps;
   }
 

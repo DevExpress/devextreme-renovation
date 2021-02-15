@@ -23,7 +23,9 @@ export default class RefProps extends JSXComponent<Props, "parentRef">() {
   @Effect()
   loadEffect() {
     const { parentRef } = this.props;
-    parentRef.style.backgroundColor = "#aaaaff";
-    parentRef.innerHTML += "childText";
+    if (parentRef.current) {
+      parentRef.current.style.backgroundColor = "#aaaaff";
+      parentRef.current.innerHTML += "childText";
+    }
   }
 }

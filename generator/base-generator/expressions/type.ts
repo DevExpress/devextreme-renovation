@@ -126,7 +126,6 @@ export class TypeQueryNode extends TypeExpression {
 }
 
 export class TypeReferenceNode extends TypeExpression {
-  REF_OBJECT_TYPE = "";
   constructor(
     public typeName: Identifier,
     public typeArguments: TypeExpression[] = [],
@@ -137,6 +136,11 @@ export class TypeReferenceNode extends TypeExpression {
       this.typeName = new Identifier("any");
     }
   }
+
+  get REF_OBJECT_TYPE() {
+    return "";
+  }
+
   toString() {
     if (this.typeName.toString() === "RefObject") {
       const typeArguments =

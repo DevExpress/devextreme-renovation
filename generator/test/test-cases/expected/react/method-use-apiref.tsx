@@ -19,6 +19,7 @@ import {
   useRef,
   useImperativeHandle,
   forwardRef,
+  MutableRefObject,
   HTMLAttributes,
 } from "react";
 
@@ -40,7 +41,9 @@ const WidgetWithApiRef = forwardRef<
   props: typeof WidgetWithApiRefInput & RestProps,
   ref
 ) {
-  const __baseRef = useRef<BaseWidgetRef>();
+  const __baseRef: MutableRefObject<BaseWidgetRef | null> = useRef<
+    BaseWidgetRef
+  >(null);
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
@@ -51,9 +54,9 @@ const WidgetWithApiRef = forwardRef<
   );
   const __getSomething = useCallback(
     function __getSomething(): string {
-      return `${props.prop1} + ${__baseRef.current?.getHeight(1, undefined)}`;
+      return `${props.prop1} + ${__baseRef?.current?.getHeight(1, undefined)}`;
     },
-    [props.prop1, __baseRef.current]
+    [props.prop1, __baseRef]
   );
 
   useImperativeHandle(ref, () => ({ getSomething: __getSomething }), [

@@ -1,11 +1,21 @@
-import { PropertyAccess as BasePropertyAccess } from "../../base-generator/expressions/property-access";
+import {
+  PropertyAccess as BasePropertyAccess,
+  compileRefOptions,
+} from "../../base-generator/expressions/property-access";
 import { toStringOptions } from "../types";
 import { BindingElement } from "../../base-generator/expressions/binding-pattern";
 import { ObjectLiteral } from "../../base-generator/expressions/literal";
 import { PropertyAssignment } from "../../base-generator/expressions/property-assignment";
-import { Identifier } from "../../base-generator/expressions/common";
+import {
+  Identifier,
+  NonNullExpression,
+} from "../../base-generator/expressions/common";
 import { getProps } from "../../base-generator/expressions/component";
-import { Property } from "../../base-generator/expressions/class-members";
+import {
+  Property,
+  isProperty,
+} from "../../base-generator/expressions/class-members";
+import { getMember } from "../../base-generator/utils/expressions";
 
 export class PropertyAccess extends BasePropertyAccess {
   processProps(
@@ -53,10 +63,9 @@ export class PropertyAccess extends BasePropertyAccess {
       return `this._${this.name}Change(${this.toString(options)}=${value})`;
     }
     if (property.isRef || property.isForwardRefProp) {
-      const setValue =
-        value.endsWith(".nativeElement") && property.isElementRef
-          ? `new ElementRef(${value})`
-          : value;
+      const setValue = value.endsWith(".nativeElement")
+        ? `new ElementRef(${value})`
+        : value;
       if (property.isForwardRefProp) {
         return `this.forwardRef_${property.name}(${setValue})`;
       }
@@ -64,5 +73,52 @@ export class PropertyAccess extends BasePropertyAccess {
     }
 
     return `this._${property.name}=${value}`;
+  }
+
+  getRefAccessor(member: Property) {
+    if (member.isRef || member.isForwardRef) {
+      return `.nativeElement`;
+    }
+    if (member.isForwardRefProp) {
+      const token = member.isOptional ? "?." : "";
+      return `${token}()?.nativeElement`;
+    }
+    if (member.isRefProp || member.isApiRef) {
+      return "";
+    }
+    return null;
+  }
+
+  processName(options?: toStringOptions) {
+    if (
+      this.name.toString() === "current" &&
+      (this.expression instanceof PropertyAccess ||
+        this.expression instanceof Identifier ||
+        this.expression instanceof NonNullExpression)
+    ) {
+      const expressionString = this.expression.expression.toString({
+        members: [],
+        variables: {
+          ...options?.variables,
+        },
+      });
+      const expression =
+        this.expression instanceof NonNullExpression
+          ? this.expression.expression
+          : this.expression;
+      const member = getMember(
+        expression,
+        compileRefOptions(expressionString, options)
+      );
+
+      if (member && isProperty(member)) {
+        const accessor = this.getRefAccessor(member);
+        if (accessor !== null) {
+          return accessor;
+        }
+      }
+    }
+
+    return super.processName(options);
   }
 }

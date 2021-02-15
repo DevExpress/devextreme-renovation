@@ -28,7 +28,9 @@ export default class ForwardRefChildAssign extends JSXComponent<
 
   @Effect()
   effect() {
-    this.props.childRef = this.spanRef;
-    this.props.childRef.innerHTML += "assignChildText";
+    this.props.childRef.current = this.spanRef.current;
+    if (this.props.childRef) {
+      this.props.childRef.current!.innerHTML += "assignChildText";
+    }
   }
 }

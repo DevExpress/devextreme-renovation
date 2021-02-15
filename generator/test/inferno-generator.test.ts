@@ -71,6 +71,56 @@ mocha.describe("Expressions", function () {
     );
 
     mocha.it(
+      "import RefObject from common_declaration if Ref is imported",
+      function () {
+        const expression = generator.createImportDeclaration(
+          [],
+          [],
+          generator.createImportClause(
+            undefined,
+            generator.createNamedImports([
+              generator.createImportSpecifier(
+                undefined,
+                generator.createIdentifier("Ref")
+              ),
+            ])
+          ),
+          generator.createStringLiteral("component_declaration/common")
+        );
+
+        assert.strictEqual(
+          expression.toString(),
+          `import {RefObject} from "../modules/inferno/ref_object"`
+        );
+      }
+    );
+
+    mocha.it(
+      "import RefObject from common_declaration if ForwardRef is imported",
+      function () {
+        const expression = generator.createImportDeclaration(
+          [],
+          [],
+          generator.createImportClause(
+            undefined,
+            generator.createNamedImports([
+              generator.createImportSpecifier(
+                undefined,
+                generator.createIdentifier("ForwardRef")
+              ),
+            ])
+          ),
+          generator.createStringLiteral("component_declaration/common")
+        );
+
+        assert.strictEqual(
+          expression.toString(),
+          `import {RefObject} from "../modules/inferno/ref_object"`
+        );
+      }
+    );
+
+    mocha.it(
       "import Component from common_declaration should import it from default modules path",
       function () {
         const expression = generator.createImportDeclaration(
@@ -187,6 +237,16 @@ mocha.describe("Expressions", function () {
         }
         assert.strictEqual(error, "Can't parse property: p");
       });
+    });
+  });
+
+  mocha.describe("TypeReferenceNode", function () {
+    mocha.it("JSXTemplate", function () {
+      const expression = generator.createTypeReferenceNode(
+        generator.createIdentifier("JSXTemplate")
+      );
+
+      assert.strictEqual(expression.toString(), "any");
     });
   });
 });

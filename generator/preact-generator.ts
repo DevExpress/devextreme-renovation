@@ -107,7 +107,6 @@ export class ComponentInput extends BaseComponentInput {
 }
 
 export class PreactComponent extends ReactComponent {
-  REF_OBJECT_TYPE = "RefObject";
   context!: GeneratorContext;
 
   constructor(
@@ -128,6 +127,10 @@ export class PreactComponent extends ReactComponent {
       members,
       context
     );
+  }
+
+  get REF_OBJECT_TYPE() {
+    return "RefObject";
   }
 
   compilePortalComponentCore() {
@@ -466,6 +469,15 @@ export class Property extends ReactProperty {
       this.initializer,
       true
     );
+  }
+
+  toString(options?: toStringOptions) {
+    if (this.isRef || this.isForwardRef) {
+      return `const ${
+        this.name
+      }:RefObject<${this.compileRefType()}>=useRef<${this.compileRefType()}>(null)`;
+    }
+    return super.toString(options);
   }
 }
 

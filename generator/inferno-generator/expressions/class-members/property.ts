@@ -3,12 +3,25 @@ import {
   capitalizeFirstLetter,
   compileType,
 } from "../../../base-generator/utils/string";
-import { toStringOptions } from "../../../base-generator/types";
+import {
+  toStringOptions,
+  GeneratorContext,
+} from "../../../base-generator/types";
 import { TypeReferenceNode } from "../type-reference-node";
 import { Decorators } from "../../../component_declaration/decorators";
+import { Identifier } from "../../../base-generator/expressions/common";
+import { TypeExpression } from "../../../base-generator/expressions/type";
 
 export class Property extends BaseProperty {
-  getter(componentContext?: string, keepRef?: boolean) {
+  compileTypeReferenceNode(
+    typeName: Identifier,
+    typeArguments: TypeExpression[],
+    context: GeneratorContext
+  ) {
+    return new TypeReferenceNode(typeName, typeArguments, context);
+  }
+
+  getter(componentContext?: string) {
     if (
       this.isInternalState ||
       this.isProvider ||
@@ -19,12 +32,12 @@ export class Property extends BaseProperty {
     }
 
     if (this.isState) {
-      return `${this.processComponentContext(componentContext)}state_${
+      return `${this.processComponentContext(componentContext)}__state_${
         this.name
       }`;
     }
 
-    return super.getter(componentContext, keepRef);
+    return super.getter(componentContext);
   }
 
   defaultDeclaration() {
@@ -122,7 +135,7 @@ export class Property extends BaseProperty {
           ]
         : [];
     } else if (this.isState) {
-      return [`state_${this.name}`, `props.${this.name}Change`];
+      return [`__state_${this.name}`, `props.${this.name}Change`];
     } else if (this.isInternalState || this.isProvider || this.isConsumer) {
       return [`${this.name}`];
     } else if (this.isMutable) {

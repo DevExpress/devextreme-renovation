@@ -75,23 +75,6 @@ export class BaseClassMember extends Expression {
     return this.decorators.some((d) => d.name === name);
   }
 
-  get isElementRef() {
-    const type = this.type.toString();
-    const isElement = type
-      .match(/\w+/gi)
-      ?.some(
-        (type) =>
-          ((type.includes("HTML") || type.includes("SVG")) &&
-            type.includes("Element")) ||
-          type === "Element"
-      );
-
-    if (isElement) {
-      return true;
-    }
-    return false;
-  }
-
   get isEvent() {
     return this._hasDecorator(Decorators.Event);
   }
@@ -382,7 +365,7 @@ export class Property extends BaseClassMember {
     return `${this.name}:${this.initializer}`;
   }
 
-  getter(componentContext?: string, _keepRef: boolean = false) {
+  getter(componentContext?: string) {
     return `${this.processComponentContext(
       componentContext
     )}${this._name.toString()}`;
@@ -459,3 +442,6 @@ export class Constructor {
     `;
   }
 }
+
+export const isProperty = (member: BaseClassMember): member is Property =>
+  member instanceof Property;

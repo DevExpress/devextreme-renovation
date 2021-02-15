@@ -7,12 +7,12 @@ export const Fragment = react.Fragment;
 
 declare type PortalProps = {
   children: react.ReactNode;
-  container: Element;
+  container: Element | null | undefined;
 };
-export const Portal: react.ElementType = ({
+export const Portal: react.ElementType<PortalProps> = ({
   children,
   container,
-}: PortalProps) => createPortal(children, container);
+}) => (container instanceof Element ? createPortal(children, container) : null);
 
 export type ComponentParameters = {
   name?: string;
@@ -155,10 +155,7 @@ export const Listen = (
  */
 export const Ref = () => propertyDecorator;
 
-export type RefObject<T = {}> = Readonly<{ current: T | null }> &
-  {
-    [P in keyof T]: T[P];
-  };
+export type RefObject<T = any> = { current: T | null };
 
 /**
  * Method Decorator.

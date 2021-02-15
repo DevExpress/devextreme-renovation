@@ -32,6 +32,7 @@ export const DxRefOnChildrenParent = {
     },
   },
   watch: {
+    child: ["__schedule_effect"],
     nullableRef: ["__schedule_effect"],
   },
   methods: {
@@ -49,7 +50,9 @@ export const DxRefOnChildrenParent = {
       return this.$refs.nullableRef;
     },
     __effect() {
-      this.$refs.child.innerHTML = "Ref from child";
+      if (this.$refs.child) {
+        this.$refs.child.innerHTML = "Ref from child";
+      }
       const html = this.nullableRef?.()?.innerHTML;
     },
     __forwardRef() {},

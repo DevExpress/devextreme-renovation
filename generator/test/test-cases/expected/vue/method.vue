@@ -23,13 +23,12 @@ export const DxWidget = {
   },
   methods: {
     getHeight(p = 10, p1) {
-      return `${this.prop1} + ${this.prop2} + ${this.$refs.divRef.innerHTML} + ${p}`;
+      return `${this.prop1} + ${this.prop2} + ${this.$refs.divRef?.innerHTML} + ${p}`;
     },
     getSize() {
-      return `${this.prop1} + ${this.$refs.divRef.innerHTML} + ${this.getHeight(
-        0,
-        0
-      )}`;
+      return `${this.prop1} + ${
+        this.$refs.divRef?.innerHTML
+      } + ${this.getHeight(0, 0)}`;
     },
   },
 };

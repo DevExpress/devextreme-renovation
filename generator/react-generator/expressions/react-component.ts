@@ -79,8 +79,6 @@ function getSubscriptions(methods: Method[]) {
 }
 
 export class ReactComponent extends Component {
-  REF_OBJECT_TYPE = "MutableRefObject";
-
   constructor(
     decorator: Decorator,
     modifiers: string[] = [],
@@ -103,6 +101,10 @@ export class ReactComponent extends Component {
     this.refs = this.refs.concat(
       this.members.filter((m) => m.isForwardRef) as Property[]
     );
+  }
+
+  get REF_OBJECT_TYPE() {
+    return "MutableRefObject";
   }
 
   addPrefixToMembers(members: Array<BaseProperty | Method>) {
@@ -361,7 +363,11 @@ export class ReactComponent extends Component {
       hooks.push("useRef");
     }
 
-    if (this.members.some((m) => m.isRefProp || m.isForwardRefProp)) {
+    if (
+      this.refs.length ||
+      this.apiRefs.length ||
+      this.members.some((m) => m.isRefProp || m.isForwardRefProp)
+    ) {
       core.push(this.REF_OBJECT_TYPE);
     }
 
@@ -586,10 +592,7 @@ export class ReactComponent extends Component {
   }
 
   compileViewModelArguments(): string {
-    const toStringOptions: toStringOptions = {
-      ...this.getToStringOptions(),
-      keepRef: true,
-    };
+    const toStringOptions: toStringOptions = this.getToStringOptions();
     const compileState = (state: BaseClassMember[], context = "") =>
       state
         .filter((s) => !s.isPrivate)

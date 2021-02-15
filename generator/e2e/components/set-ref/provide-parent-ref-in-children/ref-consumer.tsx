@@ -22,7 +22,7 @@ class Props {
 export default class RefConsumer extends JSXComponent<Props>() {
   getElementRef() {
     const { elementRef } = this.props;
-    const temp = elementRef;
+    const temp = elementRef?.current;
     return temp;
   }
 

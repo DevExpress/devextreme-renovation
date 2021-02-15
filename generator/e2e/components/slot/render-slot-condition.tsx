@@ -14,11 +14,12 @@ function view({
   switchCondition,
   props: { children },
 }: RenderSlotCondition) {
-
   return (
     <Fragment>
       {condition ? (
-        <Button id="render-slot-condition-in-button"><span id="render-slot-condition-content">{children}</span></Button>
+        <Button id="render-slot-condition-in-button">
+          <span id="render-slot-condition-content">{children}</span>
+        </Button>
       ) : (
         <span id="render-slot-condition-content">{children}</span>
       )}

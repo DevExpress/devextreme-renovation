@@ -37,13 +37,11 @@ export default class Widget extends InfernoComponent<
     return restProps;
   }
   getHeight(p: number = 10, p1: any): string {
-    return `${this.props.prop1} + ${this.props.prop2} + ${
-      this.divRef.current!.innerHTML
-    } + ${p}`;
+    return `${this.props.prop1} + ${this.props.prop2} + ${this.divRef.current?.innerHTML} + ${p}`;
   }
   getSize(): string {
     return `${this.props.prop1} + ${
-      this.divRef.current!.innerHTML
+      this.divRef.current?.innerHTML
     } + ${this.getHeight(0, 0)}`;
   }
 

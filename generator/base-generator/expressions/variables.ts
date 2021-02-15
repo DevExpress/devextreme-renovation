@@ -7,6 +7,7 @@ import { BindingPattern, BindingElement } from "./binding-pattern";
 import { compileType } from "../utils/string";
 import { getProps } from "./component";
 import syntaxKind from "../syntaxKind";
+import { Property, Method } from "./class-members";
 
 function getInitializer(expression?: Expression): Expression | undefined {
   if (expression instanceof AsExpression || expression instanceof Paren) {
@@ -30,7 +31,35 @@ export class VariableDeclaration extends Expression {
     this.initializer = initializer;
   }
 
+  getVariables(members: (Property | Method)[]) {
+    return members.reduce((v: VariableExpression, m) => {
+      const bindingPattern = this.name as BindingPattern;
+      bindingPattern.remove(m._name.toString());
+      if (bindingPattern.hasRest()) {
+        bindingPattern.add(
+          new BindingElement(undefined, undefined, new Identifier(m.name))
+        );
+      }
+      return {
+        ...v,
+        [m._name.toString()]: this.initializer
+          ? new PropertyAccess(this.initializer, new Identifier(m.name))
+          : new SimpleExpression(m.name),
+      };
+    }, {});
+  }
+
   toString(options?: toStringOptions) {
+    if (this.initializer?.toString() === "this" && options?.members.length) {
+      const members = options.members.filter(
+        (member) => !member.canBeDestructured
+      );
+      options.variables = {
+        ...options.variables,
+        ...this.getVariables(members),
+      };
+    }
+
     if (
       this.name instanceof BindingPattern &&
       options?.members.length &&
@@ -48,23 +77,10 @@ export class VariableDeclaration extends Expression {
           !m.canBeDestructured && dependency.indexOf(m._name.toString()) >= 0
       );
 
-      const variables = members.reduce((v: VariableExpression, m) => {
-        const bindingPattern = this.name as BindingPattern;
-        bindingPattern.remove(m._name.toString());
-        if (bindingPattern.hasRest()) {
-          bindingPattern.add(
-            new BindingElement(undefined, undefined, new Identifier(m.name))
-          );
-        }
-        return {
-          ...v,
-          [m._name.toString()]: this.initializer
-            ? new PropertyAccess(this.initializer, new Identifier(m.name))
-            : new SimpleExpression(m.name),
-        };
-      }, options.variables || {});
-
-      options.variables = variables;
+      options.variables = {
+        ...options.variables,
+        ...this.getVariables(members),
+      };
     }
 
     let initializer: string | undefined = this.initializer?.toString(options);

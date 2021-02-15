@@ -47,9 +47,9 @@ export default class VisibilityChangeProp extends JSXComponent(WidgetInput) {
       this.counter = this.counter + 1;
     };
     if (this.props.visible) {
-      this.element?.addEventListener("click", handler);
+      this.element?.current?.addEventListener("click", handler);
     }
 
-    return () => this.element?.removeEventListener("click", handler);
+    return () => this.element?.current?.removeEventListener("click", handler);
   }
 }

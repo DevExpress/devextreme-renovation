@@ -28,6 +28,8 @@ export default class ForwardRefTemplate extends JSXComponent(Props) {
 
   @Effect()
   effect() {
-    this.child.style.backgroundColor = "rgb(120, 120, 120)";
+    if (this.child.current) {
+      this.child.current.style.backgroundColor = "rgb(120, 120, 120)";
+    }
   }
 }

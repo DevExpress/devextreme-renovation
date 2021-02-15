@@ -47,8 +47,8 @@ export default class DefaultOptionRulesComponent extends JSXComponent(Props) {
         : 0;
       this.props.twoWayPropWithDefault = this.props.twoWayPropWithDefault + 1;
     };
-    this.host.addEventListener("click", handler);
+    this.host.current?.addEventListener("click", handler);
 
-    return () => this.host.removeEventListener("click", handler);
+    return () => this.host.current?.removeEventListener("click", handler);
   }
 }
