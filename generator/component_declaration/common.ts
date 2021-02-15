@@ -157,7 +157,7 @@ export const Ref = () => propertyDecorator;
 
 export type RefObject<T = any> = {
   bivarianceHack(instance: (T & Element) | null): void;
-}["bivarianceHack"] & { current: (T & Element) | null };
+}["bivarianceHack"] & { current: T | null };
 
 /**
  * Method Decorator.
