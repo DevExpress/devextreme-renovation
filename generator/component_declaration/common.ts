@@ -155,7 +155,9 @@ export const Listen = (
  */
 export const Ref = () => propertyDecorator;
 
-export type RefObject<T = any> = { current: T | null };
+export type RefObject<T = any> = {
+  bivarianceHack(instance: (T & Element) | null): void;
+}["bivarianceHack"] & { current: (T & Element) | null };
 
 /**
  * Method Decorator.
