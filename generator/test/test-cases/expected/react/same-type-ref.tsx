@@ -4,7 +4,7 @@ function view(viewModel: Widget) {
 }
 
 export declare type WidgetInputType = {
-  nullableRef?: MutableRefObject<HTMLDivElement>;
+  nullableRef?: MutableRefObject<HTMLDivElement | null>;
 };
 const WidgetInput: WidgetInputType = {};
 import { WidgetRef as BaseWidgetRef } from "./method";
@@ -23,15 +23,16 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const __divRef1 = useRef<BaseWidgetRef>();
-  const __divRef2 = useRef<BaseWidgetRef>();
+  const __divRef1: MutableRefObject<BaseWidgetRef | null> = useRef<
+    BaseWidgetRef
+  >(null);
+  const __divRef2: MutableRefObject<BaseWidgetRef | null> = useRef<
+    BaseWidgetRef
+  >(null);
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { nullableRef, ...restProps } = {
-        ...props,
-        nullableRef: props.nullableRef?.current!,
-      };
+      const { nullableRef, ...restProps } = props;
       return restProps;
     },
     [props]
