@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "typeRoots": ["node_modules/@types"],
-    "declaration": true
+    "declaration": true,
+    "target": "ES5"
   },
   "exclude": ["node_modules"]
 }
