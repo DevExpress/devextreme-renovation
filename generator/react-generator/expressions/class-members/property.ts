@@ -268,7 +268,13 @@ export class Property extends BaseProperty {
   }
 
   get canBeDestructured() {
-    if (this.isState || this.isNested || this.isRef || this.isForwardRef) {
+    if (
+      this.isState ||
+      this.isNested ||
+      this.isRef ||
+      this.isForwardRef ||
+      this.isMutable
+    ) {
       return false;
     }
     return super.canBeDestructured;

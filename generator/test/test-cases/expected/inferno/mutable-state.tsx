@@ -30,6 +30,7 @@ export default class Widget extends InfernoComponent<
     this.setObj = this.setObj.bind(this);
     this.getValue = this.getValue.bind(this);
     this.getObj = this.getObj.bind(this);
+    this.destruct = this.destruct.bind(this);
     this.initialize = this.initialize.bind(this);
   }
 
@@ -58,6 +59,11 @@ export default class Widget extends InfernoComponent<
   getObj(): any {
     return this.obj;
   }
+  destruct(): any {
+    const a = this.obj.value;
+    const b = this.definedObj.value;
+    const c = this.notDefinedObj?.value;
+  }
   get restAttributes(): RestProps {
     const { ...restProps } = this.props;
     return restProps;
@@ -70,6 +76,7 @@ export default class Widget extends InfernoComponent<
       setObj: this.setObj,
       getValue: this.getValue,
       getObj: this.getObj,
+      destruct: this.destruct,
       restAttributes: this.restAttributes,
     } as Widget);
   }

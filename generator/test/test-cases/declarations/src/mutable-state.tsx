@@ -45,6 +45,13 @@ export default class Widget extends JSXComponent(WidgetInput) {
     return this.obj;
   }
 
+  destruct() {
+    const { obj, definedObj, notDefinedObj } = this;
+    const a = obj.value;
+    const b = definedObj.value;
+    const c = notDefinedObj?.value;
+  }
+
   @Effect()
   initialize() {
     this.setObj();

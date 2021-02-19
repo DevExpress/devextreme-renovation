@@ -33,6 +33,12 @@ export default class Widget extends WidgetInput {
   __getObj(): any {
     return this.obj;
   }
+  __destruct(): any {
+    const { definedObj, notDefinedObj, obj } = this;
+    const a = obj.value;
+    const b = definedObj.value;
+    const c = notDefinedObj?.value;
+  }
   __initialize(): any {
     this.__setObj();
   }
