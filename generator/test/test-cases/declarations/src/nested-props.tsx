@@ -2,39 +2,19 @@ import {
   ComponentBindings,
   Nested,
   OneWay,
-  TwoWay,
 } from "../../../../component_declaration/common";
 
 @ComponentBindings()
-export class GridColumnProps {
-  @OneWay() name: string = "";
-  @TwoWay() index: number = 0;
-  @Nested() editing?: ColumnEditingProps;
-  @Nested() custom?: CustomProps[];
+export class GridCell {
+  @OneWay() gridData?: string = "defaultValue";
 }
 
 @ComponentBindings()
-export class CustomProps {}
-
-@ComponentBindings()
-export class AnotherCustomProps {}
-
-@ComponentBindings()
-export class EditingProps {
-  @OneWay() editEnabled?: boolean = false;
-  @Nested() custom?: CustomProps[];
-  @Nested() anotherCustom?: AnotherCustomProps;
+export class GridRow {
+  @Nested() cells?: (GridCell | string)[] = [new GridCell()];
 }
 
 @ComponentBindings()
-export class ColumnEditingProps {
-  @OneWay() editEnabled?: boolean = false;
+export class WithNestedInput {
+  @Nested() rows?: GridRow[] = [new GridRow()];
 }
-
-@ComponentBindings()
-export class WidgetProps {
-  @Nested() columns?: Array<GridColumnProps | string>;
-  @Nested() editing?: EditingProps;
-}
-
-export type PickedProps = Pick<WidgetProps, "editing" | "columns">;

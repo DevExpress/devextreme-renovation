@@ -1,50 +1,35 @@
 <script>
-export const GridColumnProps = {
-  name: {
+export const GridCell = {
+  gridData: {
     type: String,
     default() {
-      return "";
-    },
-  },
-  index: {
-    type: Number,
-    default() {
-      return 0;
-    },
-  },
-  custom: {
-    type: Array,
-  },
-};
-export const CustomProps = {};
-export const AnotherCustomProps = {};
-export const EditingProps = {
-  editEnabled: {
-    type: Boolean,
-    default() {
-      return false;
-    },
-  },
-  custom: {
-    type: Array,
-  },
-};
-export const ColumnEditingProps = {
-  editEnabled: {
-    type: Boolean,
-    default() {
-      return false;
+      return "defaultValue";
     },
   },
 };
-export const WidgetProps = {
-  columns: {
+export const GridRow = {
+  cells: {
     type: Array,
   },
+  __defaultNestedValues() {
+    return {
+      cells: [
+        {
+          gridData:
+            GridCell === undefined || GridCell === null
+              ? undefined
+              : GridCell.gridData?.default(),
+        },
+      ],
+    };
+  },
 };
-export const PickedProps = {
-  columns: {
+export const WithNestedInput = {
+  rows: {
     type: Array,
+  },
+  __defaultNestedValues() {
+    return { rows: [GridRow?.__defaultNestedValues()] };
   },
 };
 </script>

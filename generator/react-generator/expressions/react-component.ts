@@ -776,7 +776,22 @@ export class ReactComponent extends Component {
               new Identifier("nested"),
               undefined,
               new SimpleExpression(
-                `__nestedChildren<typeof ${type} & { __name: string }>().filter(child => child.__name === "${property.name}")`
+                `__nestedChildren<typeof ${type} & { __name: string }>().filter(child => child.__name === "${
+                  property.name
+                }")${
+                  property.initializer
+                    ? `.map((n) => {
+                  if (
+                    !Object.keys(n).some(
+                      (k) => k !== "__name" && k !== "__defaultNestedValues"
+                    )
+                  ) {
+                    return n?.__defaultNestedValues?.() || n;
+                  }
+                  return n;
+                });`
+                    : ""
+                }`
               )
             ),
           ],
@@ -790,7 +805,13 @@ export class ReactComponent extends Component {
           new Conditional(
             new SimpleExpression("nested.length"),
             new SimpleExpression(`nested${indexGetter}`),
-            new SimpleExpression("undefined")
+            new SimpleExpression(
+              `${
+                property.initializer
+                  ? `props?.__defaultNestedValues?.().${property.name}`
+                  : "undefined"
+              }`
+            )
           )
         )
       ),

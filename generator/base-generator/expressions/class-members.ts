@@ -378,8 +378,8 @@ export class Property extends BaseClassMember {
     )}`;
   }
 
-  defaultDeclaration() {
-    return `${this.name}:${this.initializer}`;
+  defaultDeclaration(options?: toStringOptions) {
+    return `${this.name}:${this.initializer?.toString(options)}`;
   }
 
   getter(componentContext?: string, _keepRef: boolean = false) {

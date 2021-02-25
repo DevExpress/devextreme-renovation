@@ -43,8 +43,23 @@ export default () => {
       <Nested>
         <Row>
           <RowCell />
-          <RowCell gridData="notDefault"/>
+          <RowCell gridData="notDefault" />
         </Row>
+      </Nested>
+      1
+      <Nested>
+        <Row></Row>
+      </Nested>
+      2
+      <Nested>
+        <Row>
+          <RowCell></RowCell>
+        </Row>
+      </Nested>
+      3
+      <Nested>
+        <Row></Row>
+        <Row cells={[{ gridData: "cell11" }, "cell12"]}></Row>
       </Nested>
       <Nested rows={[]}></Nested>
       <Nested></Nested>
