@@ -1,14 +1,14 @@
-import { Class as BaseClass } from "../../base-generator/expressions/class";
+import { Parameter } from './functions/parameter';
 import {
+  SimpleExpression,
+  Class as BaseClass,
+  Identifier,
+  Block,
+  SyntaxKind,
   Constructor,
   Property,
   BaseClassMember,
-} from "../../base-generator/expressions/class-members";
-import { SimpleExpression } from "../../base-generator/expressions/base";
-import { Block } from "../../base-generator/expressions/statements";
-import syntaxKind from "../../base-generator/syntaxKind";
-import { Parameter } from "./functions/parameter";
-import { Identifier } from "../../base-generator/expressions/common";
+} from "@devextreme-generator/core";
 
 export class Class extends BaseClass {
   toString() {
@@ -20,7 +20,7 @@ export class Class extends BaseClass {
     ) as Property[];
     let members: (BaseClassMember | Constructor)[] = this.members;
     const heritageClauses = this.heritageClauses.filter(
-      (h) => h.token === syntaxKind.ExtendsKeyword
+      (h) => h.token === SyntaxKind.ExtendsKeyword
     );
     const parameterInitializationStatements = properties.map(
       (p) => new SimpleExpression(`this.${p.name}=${p.initializer}`)
@@ -31,7 +31,7 @@ export class Class extends BaseClass {
       const constructorStatements = constructor.body?.statements || [];
       const superExpression = constructorStatements[0]
         .toString()
-        .startsWith(syntaxKind.SuperKeyword)
+        .startsWith(SyntaxKind.SuperKeyword)
         ? [constructorStatements[0]]
         : [];
       constructor.body = new Block(
@@ -53,7 +53,7 @@ export class Class extends BaseClass {
               new Parameter(
                 [],
                 [],
-                syntaxKind.DotDotDotToken,
+                SyntaxKind.DotDotDotToken,
                 new Identifier("args")
               ),
             ]

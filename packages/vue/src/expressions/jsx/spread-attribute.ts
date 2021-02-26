@@ -1,7 +1,6 @@
-import { JsxSpreadAttribute as BaseJsxSpreadAttribute } from "../../../angular-generator/expressions/jsx/spread-attribute";
-import { toStringOptions } from "../../types";
-import { PropertyAccess } from "../../../base-generator/expressions/property-access";
-import { GetAccessor } from "../../../base-generator/expressions/class-members";
+import { toStringOptions } from '../../types';
+import { JsxSpreadAttribute as BaseJsxSpreadAttribute } from '@devextreme-generator/angular';
+import { GetAccessor, PropertyAccess } from '@devextreme-generator/core';
 
 export class JsxSpreadAttribute extends BaseJsxSpreadAttribute {
   getTemplateProp(options?: toStringOptions) {

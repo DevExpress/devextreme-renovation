@@ -1,15 +1,15 @@
-import { JsxAttribute as BaseJsxAttribute } from "../../../angular-generator/expressions/jsx/attribute";
-import { toStringOptions } from "../../types";
-import { getMember } from "../../../base-generator/utils/expressions";
-import { getEventName } from "../utils";
+import { JsxExpression } from './jsx-expression';
+import { toStringOptions } from '../../types';
+import { getEventName } from '../utils';
+import { JsxAttribute as BaseJsxAttribute } from '@devextreme-generator/angular';
 import {
+  dasherize,
+  getMember,
+  Identifier,
+  kebabSvgAttributes,
   Expression,
   SimpleExpression,
-} from "../../../base-generator/expressions/base";
-import { Identifier } from "../../../base-generator/expressions/common";
-import { JsxExpression } from "./jsx-expression";
-import { dasherize } from "../../../base-generator/utils/string";
-import { kebabSvgAttributes } from "../../../base-generator/utils/svg-utils/kebab-attributes";
+} from "@devextreme-generator/core";
 
 export class JsxAttribute extends BaseJsxAttribute {
   constructor(name: Identifier, initializer?: Expression) {

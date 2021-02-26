@@ -1,8 +1,7 @@
-import { PropertyAccessChain as BasePropertyAccessChain } from "../../angular-generator/expressions/property-access-chain";
-import { Property } from "./class-members/property";
-import { toStringOptions } from "../types";
-import SyntaxKind from "../../base-generator/syntaxKind";
-import { getMember } from "../../base-generator/utils/expressions";
+import { Property } from './class-members/property';
+import { toStringOptions } from '../types';
+import { PropertyAccessChain as BasePropertyAccessChain } from '@devextreme-generator/angular';
+import { getMember, SyntaxKind } from '@devextreme-generator/core';
 
 export class PropertyAccessChain extends BasePropertyAccessChain {
   getRefAccessor(member: Property) {

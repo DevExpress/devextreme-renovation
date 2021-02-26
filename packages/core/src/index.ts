@@ -1,3 +1,4 @@
+import { Generator } from './generator';
 export * from "./expressions/base";
 export * from "./expressions/binding-pattern";
 export * from "./expressions/class-members";
@@ -7,6 +8,7 @@ export * from "./expressions/component-input";
 export * from "./expressions/component";
 export * from "./expressions/conditions";
 export * from "./expressions/decorator";
+export * from "./expressions/enum";
 export * from "./expressions/functions";
 export * from "./expressions/import";
 export * from "./expressions/jsx";
@@ -18,6 +20,7 @@ export * from "./expressions/statements";
 export * from "./expressions/template";
 export * from "./expressions/type-parameter-declaration";
 export * from "./expressions/type";
+export * from "./expressions/interface";
 export * from "./expressions/variables";
 export * from "./syntaxKind";
 export * from "./types";
@@ -25,6 +28,7 @@ export * from "./utils/component-utils";
 export * from "./utils/expressions";
 export * from "./utils/string";
 export * from "./utils/svg-utils/kebab-attributes";
+export * from "./utils/path-utils";
+export * from "./utils/dependency";
 
-import { Generator } from "./generator"
 export default Generator;

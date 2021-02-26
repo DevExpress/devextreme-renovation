@@ -1,10 +1,10 @@
 import {
-  EnumMember as BaseEnumMember,
+  Decorator,
   Enum as BaseEnum,
-} from "../../base-generator/expressions/enum";
-import { Identifier } from "../../base-generator/expressions/common";
-import { Decorator } from "../../base-generator/expressions/decorator";
-import { NumericLiteral } from "../../base-generator/expressions/literal";
+  EnumMember as BaseEnumMember,
+  Identifier,
+  NumericLiteral
+  } from '@devextreme-generator/core';
 
 export class EnumMember extends BaseEnumMember {
   toString() {

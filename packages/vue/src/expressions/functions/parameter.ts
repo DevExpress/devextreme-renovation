@@ -1,5 +1,4 @@
-import { Parameter as BaseParameter } from "../../../base-generator/expressions/functions";
-import { variableDeclaration } from "../../../base-generator/utils/string";
+import { Parameter as BaseParameter, variableDeclaration } from "@devextreme-generator/core";
 
 export class Parameter extends BaseParameter {
   toString() {

@@ -2,6 +2,7 @@
   "name": "@devextreme-generator/angular",
   "version": "1.0.0",
   "description": "Component generator",
+  "main": "src/index.ts",
   "scripts": {
     "build": "gulp build",
     "build-dist": "gulp build-dist"

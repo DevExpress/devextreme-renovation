@@ -1,7 +1,7 @@
 import {
   Method as BaseMethod,
   GetAccessor,
-} from "../../../base-generator/expressions/class-members";
+} from "@devextreme-generator/core";
 import { toStringOptions } from "../../types";
 
 export function compileMethod(

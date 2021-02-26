@@ -1,18 +1,20 @@
-import { Function as AngularFunction } from "../../../angular-generator/expressions/functions/function";
-import { Decorator } from "../../../base-generator/expressions/decorator";
-import { Identifier } from "../../../base-generator/expressions/common";
+import { toStringOptions } from '../../types';
+import { JsxElement } from '../jsx/element';
+import { JsxChildExpression, JsxExpression } from '../jsx/jsx-expression';
+import { JsxClosingElement, JsxOpeningElement } from '../jsx/opening-element';
 import {
+  Function as AngularFunction,
+  isElement,
+} from "@devextreme-generator/angular";
+import {
+  Identifier,
+  Decorator,
+  Parameter,
+  Block,
+  GeneratorContext,
   SimpleTypeExpression,
   TypeExpression,
-} from "../../../base-generator/expressions/type";
-import { Parameter } from "../../../base-generator/expressions/functions";
-import { Block } from "../../../base-generator/expressions/statements";
-import { GeneratorContext } from "../../../base-generator/types";
-import { toStringOptions } from "../../types";
-import { JsxElement } from "../jsx/element";
-import { JsxOpeningElement, JsxClosingElement } from "../jsx/opening-element";
-import { isElement } from "../../../angular-generator/expressions/jsx/elements";
-import { JsxChildExpression, JsxExpression } from "../jsx/jsx-expression";
+} from "@devextreme-generator/core";
 
 export function processFunctionTemplate(
   template: string,

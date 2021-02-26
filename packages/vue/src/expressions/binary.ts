@@ -1,4 +1,4 @@
-import { Binary as BinaryBase } from "../../base-generator/expressions/operators";
+import { Binary as BinaryBase } from "@devextreme-generator/core";
 import { toStringOptions } from "../types";
 import { PropertyAccess } from "./property-access";
 

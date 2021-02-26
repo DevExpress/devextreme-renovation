@@ -1,4 +1,4 @@
-import { AngularDirective } from "../../../angular-generator/expressions/jsx/angular-directive";
+import { AngularDirective } from "@devextreme-generator/angular";
 import { toStringOptions } from "../../types";
 
 export class VueDirective extends AngularDirective {

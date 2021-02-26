@@ -1,11 +1,13 @@
-import { GetAccessor as BaseGetAccessor } from "./get-accessor";
-import { Decorator } from "../../../base-generator/expressions/decorator";
-import { Identifier } from "../../../base-generator/expressions/common";
-import { Parameter } from "../functions/parameter";
-import { TypeExpression } from "../../../base-generator/expressions/type";
-import { Block } from "../../../base-generator/expressions/statements";
-import { Property } from "./property";
-import { IPropsGetAccessor } from "../../../angular-generator/types";
+import { GetAccessor as BaseGetAccessor } from './get-accessor';
+import { Property } from './property';
+import { Parameter } from '../functions/parameter';
+import { IPropsGetAccessor } from '@devextreme-generator/angular';
+import {
+  Identifier,
+  Decorator,
+  Block,
+  TypeExpression,
+} from "@devextreme-generator/core";
 
 export class PropsGetAccessor
   extends BaseGetAccessor

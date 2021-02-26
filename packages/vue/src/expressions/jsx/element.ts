@@ -1,6 +1,8 @@
-import { JsxElement as BaseJsxElement } from "../../../angular-generator/expressions/jsx/elements";
 import { JsxChildExpression } from "./jsx-expression";
-import { JsxExpression as AngularJsxExpression } from "../../../angular-generator/expressions/jsx/jsx-expression";
+import {
+  JsxElement as BaseJsxElement,
+  JsxExpression as AngularJsxExpression,
+} from "@devextreme-generator/angular";
 
 export class JsxElement extends BaseJsxElement {
   createChildJsxExpression(expression: AngularJsxExpression) {

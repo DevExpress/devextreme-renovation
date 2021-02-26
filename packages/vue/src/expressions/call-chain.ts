@@ -1,10 +1,10 @@
+import { toStringOptions } from '../types';
 import {
+  checkDependency,
+  Expression,
   CallChain as BaseCallChain,
   Identifier,
-} from "../../base-generator/expressions/common";
-import { toStringOptions } from "../types";
-import { Expression } from "../../base-generator/expressions/base";
-import { checkDependency } from "../../base-generator/utils/dependency";
+} from "@devextreme-generator/core";
 
 export class CallChain extends BaseCallChain {
   toString(options?: toStringOptions): string {

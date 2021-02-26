@@ -1,7 +1,7 @@
-import { PropertyAccess as BasePropertyAccess } from "../../angular-generator/expressions/property-access";
-import { Property } from "./class-members/property";
-import { BindingElement } from "../../base-generator/expressions/binding-pattern";
-import { toStringOptions } from "../types";
+import { Property } from './class-members/property';
+import { toStringOptions } from '../types';
+import { PropertyAccess as BasePropertyAccess } from '@devextreme-generator/angular';
+import { BindingElement } from '@devextreme-generator/core';
 
 export class PropertyAccess extends BasePropertyAccess {
   processProps(

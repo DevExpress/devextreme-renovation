@@ -1,8 +1,40 @@
-import BaseGenerator from "../base-generator";
-import { Identifier } from "../base-generator/expressions/common";
-import { HeritageClause } from "../base-generator/expressions/class";
-
-import {
+import { AsExpression } from './expressions/as-expression';
+import { Binary } from './expressions/binary';
+import { Call, New } from './expressions/call';
+import { CallChain } from './expressions/call-chain';
+import { Class } from './expressions/class';
+import { GetAccessor } from './expressions/class-members/get-accessor';
+import { Method } from './expressions/class-members/method';
+import { Property } from './expressions/class-members/property';
+import { Enum, EnumMember } from './expressions/enum';
+import { ArrowFunction } from './expressions/functions/arrow-function';
+import { Function } from './expressions/functions/function';
+import { Parameter } from './expressions/functions/parameter';
+import { ImportDeclaration } from './expressions/import-declaration';
+import { JsxAttribute } from './expressions/jsx/attribute';
+import { JsxElement } from './expressions/jsx/element';
+import { JsxExpression } from './expressions/jsx/jsx-expression';
+import { JsxSpreadAttribute } from './expressions/jsx/spread-attribute';
+import { NonNullExpression } from './expressions/non-null-expression';
+import { PropertyAccess } from './expressions/property-access';
+import { PropertyAccessChain } from './expressions/property-access-chain';
+import { VariableDeclaration } from './expressions/variable-declaration';
+import { VueComponentInput } from './expressions/vue-component-input';
+import { ExpressionWithTypeArguments } from './types';
+import path from 'path';
+import prettier from 'prettier';
+import BaseGenerator, {
+  BindingPattern,
+  Block,
+  Decorator,
+  Expression,
+  GeneratorContext,
+  HeritageClause,
+  Identifier,
+  ImportClause,
+  Interface,
+  StringLiteral,
+  TypeParameterDeclaration,
   TypeExpression,
   SimpleTypeExpression,
   ArrayTypeNode,
@@ -17,56 +49,16 @@ import {
   TypeOperatorNode,
   PropertySignature,
   MethodSignature,
-} from "../base-generator/expressions/type";
-
-import { Expression } from "../base-generator/expressions/base";
-import { StringLiteral } from "../base-generator/expressions/literal";
-
-import { Block } from "../base-generator/expressions/statements";
-import { Decorator } from "../base-generator/expressions/decorator";
-import { BindingPattern } from "../base-generator/expressions/binding-pattern";
-
-import { Interface } from "../base-generator/expressions/interface";
-
-import { ImportClause } from "../base-generator/expressions/import";
-
-import { TypeParameterDeclaration } from "../base-generator/expressions/type-parameter-declaration";
-
-import { VueComponentInput } from "./expressions/vue-component-input";
-import { Property } from "./expressions/class-members/property";
-import { Method } from "./expressions/class-members/method";
+  } from '@devextreme-generator/core';
 import {
   VueComponent,
   getComponentListFromContext,
 } from "./expressions/vue-component";
-import { Parameter } from "./expressions/functions/parameter";
-import { GetAccessor } from "./expressions/class-members/get-accessor";
-import { Function } from "./expressions/functions/function";
-import { CallChain } from "./expressions/call-chain";
-import { ArrowFunction } from "./expressions/functions/arrow-function";
-import { PropertyAccess } from "./expressions/property-access";
-import { JsxExpression } from "./expressions/jsx/jsx-expression";
-import { JsxAttribute } from "./expressions/jsx/attribute";
-import { JsxSpreadAttribute } from "./expressions/jsx/spread-attribute";
 import {
   JsxOpeningElement,
   JsxSelfClosingElement,
   JsxClosingElement,
 } from "./expressions/jsx/opening-element";
-import { JsxElement } from "./expressions/jsx/element";
-import { AsExpression } from "./expressions/as-expression";
-import { NonNullExpression } from "./expressions/non-null-expression";
-import { ImportDeclaration } from "./expressions/import-declaration";
-import prettier from "prettier";
-import path from "path";
-import { EnumMember, Enum } from "./expressions/enum";
-import { Call, New } from "./expressions/call";
-import { VariableDeclaration } from "./expressions/variable-declaration";
-import { Class } from "./expressions/class";
-import { GeneratorContext } from "../base-generator/types";
-import { ExpressionWithTypeArguments } from "./types";
-import { PropertyAccessChain } from "./expressions/property-access-chain";
-import { Binary } from "./expressions/binary";
 
 const emptyToString = () => "";
 

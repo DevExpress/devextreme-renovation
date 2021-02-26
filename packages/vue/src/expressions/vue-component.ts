@@ -1,53 +1,42 @@
-import { GeneratorContext } from "../../base-generator/types";
+import { GetAccessor } from './class-members/get-accessor';
+import { Method } from './class-members/method';
+import { calculatePropertyType, Property } from './class-members/property';
+import { PropsGetAccessor } from './class-members/props-get-accessor';
+import { Function } from './functions/function';
+import { Parameter } from './functions/parameter';
+import { PropertyAccess } from './property-access';
+import { getEventName } from './utils';
+import { VueComponentInput } from './vue-component-input';
+import { toStringOptions } from '../types';
 import {
+  SimpleExpression,
+  BaseClassMember,
+  Call,
+  Identifier,
+  Conditional,
+  Decorator,
+  ObjectLiteral,
+  Binary,
+  SyntaxKind,
+  GeneratorContext,
+  getModuleRelativePath,
   Component,
   getProps,
-} from "../../base-generator/expressions/component";
-import { BaseClassMember } from "../../base-generator/expressions/class-members";
-import { GetAccessor } from "./class-members/get-accessor";
-import { Identifier, Call } from "../../base-generator/expressions/common";
-import {
   Block,
   ReturnStatement,
-} from "../../base-generator/expressions/statements";
-import { SimpleExpression } from "../../base-generator/expressions/base";
-import { Method } from "./class-members/method";
-import { Parameter } from "./functions/parameter";
-import { toStringOptions } from "../types";
-import { getEventName } from "./utils";
-import { getModuleRelativePath } from "../../base-generator/utils/path-utils";
-import {
   capitalizeFirstLetter,
   removePlural,
-} from "../../base-generator/utils/string";
-import { Decorator } from "../../base-generator/expressions/decorator";
-import { ObjectLiteral } from "../../base-generator/expressions/literal";
-import { PropertyAccess } from "./property-access";
-import {
   PropertyAssignment,
   SpreadAssignment,
-} from "../../base-generator/expressions/property-assignment";
-import {
   SimpleTypeExpression,
   isTypeArray,
   ArrayTypeNode,
-} from "../../base-generator/expressions/type";
-import SyntaxKind from "../../base-generator/syntaxKind";
-import { calculatePropertyType, Property } from "./class-members/property";
-import { VueComponentInput } from "./vue-component-input";
-import { Function } from "./functions/function";
-import { Conditional } from "../../base-generator/expressions/conditions";
-import {
   VariableStatement,
   VariableDeclarationList,
   VariableDeclaration,
-} from "../../base-generator/expressions/variables";
-import {
   BindingElement,
   BindingPattern,
-} from "../../base-generator/expressions/binding-pattern";
-import { Binary } from "../../base-generator/expressions/operators";
-import { PropsGetAccessor } from "./class-members/props-get-accessor";
+} from "@devextreme-generator/core";
 
 export function getComponentListFromContext(context: GeneratorContext) {
   return Object.keys(context.components || {})

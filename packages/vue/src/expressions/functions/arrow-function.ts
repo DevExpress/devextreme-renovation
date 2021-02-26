@@ -1,17 +1,19 @@
-import { ArrowFunction as AngularArrowFunction } from "../../../angular-generator/expressions/functions/arrow-function";
-import { processFunctionTemplate } from "./function";
+import { processFunctionTemplate } from './function';
+import { Parameter } from './parameter';
+import { toStringOptions } from '../../types';
+import { JsxChildExpression, JsxExpression } from '../jsx/jsx-expression';
 import {
+  ArrowFunction as AngularArrowFunction,
+  isElement,
+} from "@devextreme-generator/angular";
+import {
+  Block,
+  Expression,
+  GeneratorContext,
+  TypeParameterDeclaration,
   SimpleTypeExpression,
   TypeExpression,
-} from "../../../base-generator/expressions/type";
-import { GeneratorContext } from "../../../base-generator/types";
-import { Block } from "../../../base-generator/expressions/statements";
-import { Expression } from "../../../base-generator/expressions/base";
-import { toStringOptions } from "../../types";
-import { Parameter } from "./parameter";
-import { TypeParameterDeclaration } from "../../../base-generator/expressions/type-parameter-declaration";
-import { isElement } from "../../../angular-generator/expressions/jsx/elements";
-import { JsxChildExpression, JsxExpression } from "../jsx/jsx-expression";
+} from "@devextreme-generator/core";
 
 export class ArrowFunction extends AngularArrowFunction {
   constructor(

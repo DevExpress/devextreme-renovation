@@ -1,6 +1,6 @@
-import { VariableDeclaration as BaseVariableDeclaration } from "../../angular-generator/expressions/variable-expression";
-import { Call } from "../../base-generator/expressions/common";
-import { toStringOptions } from "../types";
+import { toStringOptions } from '../types';
+import { VariableDeclaration as BaseVariableDeclaration } from '@devextreme-generator/angular';
+import { Call } from '@devextreme-generator/core';
 
 export class VariableDeclaration extends BaseVariableDeclaration {
   toString(options?: toStringOptions) {

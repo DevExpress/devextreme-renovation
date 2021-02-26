@@ -1,42 +1,36 @@
-import { JsxOpeningElement as BaseJsxOpeningElement } from "../../../angular-generator/expressions/jsx/jsx-opening-element";
-import { JsxAttribute } from "./attribute";
-import { JsxSpreadAttribute } from "./spread-attribute";
+import { JsxAttribute } from './attribute';
+import { JsxElement } from './element';
+import { JsxChildExpression, JsxExpression } from './jsx-expression';
+import { JsxSpreadAttribute } from './spread-attribute';
+import { VueDirective } from './vue-directive';
+import { toStringOptions } from '../../types';
+import { PropsGetAccessor } from '../class-members/props-get-accessor';
+import { PropertyAccess } from '../property-access';
+import { getEventName } from '../utils';
 import {
+  IPropsGetAccessor,
+  JsxOpeningElement as BaseJsxOpeningElement,
+} from "@devextreme-generator/angular";
+import {
+  Identifier,
+  Conditional,
+  BaseFunction,
+  JsxAttribute as BaseJsxAttribute,
+  ObjectLiteral,
+  SyntaxKind,
+  GeneratorContext,
+  extractComponentFromType,
   Expression,
   SimpleExpression,
-} from "../../../base-generator/expressions/base";
-import { GeneratorContext } from "../../../base-generator/types";
-import { toStringOptions } from "../../types";
-import { Identifier } from "../../../base-generator/expressions/common";
-import {
   Property,
   Method,
-} from "../../../base-generator/expressions/class-members";
-import {
   PropertyAssignment,
   SpreadAssignment,
-} from "../../../base-generator/expressions/property-assignment";
-import { ObjectLiteral } from "../../../base-generator/expressions/literal";
-import { BaseFunction } from "../../../base-generator/expressions/functions";
-import {
   Component,
   getProps,
-} from "../../../base-generator/expressions/component";
-import { PropertyAccess } from "../property-access";
-import { JsxExpression, JsxChildExpression } from "./jsx-expression";
-import SyntaxKind from "../../../base-generator/syntaxKind";
-import { JsxElement } from "./element";
-import {
   getMember,
   getExpression,
-} from "../../../base-generator/utils/expressions";
-import { VueDirective } from "./vue-directive";
-import { Conditional } from "../../../base-generator/expressions/conditions";
-import { JsxAttribute as BaseJsxAttribute } from "../../../base-generator/expressions/jsx";
-import { getEventName } from "../utils";
-import { extractComponentFromType } from "../../../base-generator/utils/component-utils";
-import { PropsGetAccessor } from "../class-members/props-get-accessor";
-import { IPropsGetAccessor } from "../../../angular-generator/types";
+} from "@devextreme-generator/core";
 
 const createFragment = (
   attributes: (JsxAttribute | JsxSpreadAttribute)[],

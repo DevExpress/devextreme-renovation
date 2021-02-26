@@ -2,7 +2,7 @@ import { JsxOpeningElement, JsxClosingElement } from "./opening-element";
 import { JsxAttribute } from "./attribute";
 import { toStringOptions } from "../../types";
 import { JsxSpreadAttribute } from "./spread-attribute";
-import { SimpleExpression } from "../../../base-generator/expressions/base";
+import { SimpleExpression } from "@devextreme-generator/core";
 
 export class TemplateWrapperElement extends JsxOpeningElement {
   getTemplateProperty(_options?: toStringOptions) {

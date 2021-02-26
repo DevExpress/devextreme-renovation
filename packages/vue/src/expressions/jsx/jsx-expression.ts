@@ -1,27 +1,28 @@
-import { JsxChildExpression as BaseJsxChildExpression } from "../../../angular-generator/expressions/jsx/jsx-child-expression";
-import { JsxExpression as BaseJsxExpression } from "../../../angular-generator/expressions/jsx/jsx-expression";
+import { JsxAttribute } from './attribute';
+import { JsxElement } from './element';
+import { JsxSelfClosingElement } from './opening-element';
+import { VueDirective } from "./vue-directive";
+import { toStringOptions } from "../../types";
+import { Property } from "../class-members/property";
 import {
+  isElement,
+  JsxChildExpression as BaseJsxChildExpression,
+  JsxExpression as BaseJsxExpression,
+} from "@devextreme-generator/angular";
+import {
+  Call,
+  getJsxExpression,
+  Identifier,
+  PropertyAccess,
   Expression,
   SimpleExpression,
-} from "../../../base-generator/expressions/base";
-import { JsxAttribute } from "./attribute";
+  getTemplate,
+  BaseFunction,
+} from "@devextreme-generator/core";
 import {
   TemplateWrapperElement,
   ClosingTemplateWrapperElement,
 } from "./template-wrapper";
-import { toStringOptions } from "../../types";
-import { Property } from "../class-members/property";
-import { Call, Identifier } from "../../../base-generator/expressions/common";
-import {
-  getTemplate,
-  BaseFunction,
-} from "../../../base-generator/expressions/functions";
-import { PropertyAccess } from "../../../base-generator/expressions/property-access";
-import { VueDirective } from "./vue-directive";
-import { isElement } from "../../../angular-generator/expressions/jsx/elements";
-import { JsxElement } from "./element";
-import { JsxSelfClosingElement } from "./opening-element";
-import { getJsxExpression } from "../../../base-generator/expressions/jsx";
 
 export class JsxExpression extends BaseJsxExpression {}
 

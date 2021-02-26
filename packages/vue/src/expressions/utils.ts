@@ -1,5 +1,4 @@
-import { Identifier } from "../../base-generator/expressions/common";
-import { BaseClassMember } from "../../base-generator/expressions/class-members";
+import { Identifier, BaseClassMember } from "@devextreme-generator/core";
 
 export function getEventName(
   defaultName: Identifier | string,

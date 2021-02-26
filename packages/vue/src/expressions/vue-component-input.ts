@@ -1,11 +1,14 @@
-import { ComponentInput } from "../../base-generator/expressions/component-input";
-import { Decorator } from "../../base-generator/expressions/decorator";
-import { Identifier, Call } from "../../base-generator/expressions/common";
-import { TypeExpression } from "../../base-generator/expressions/type";
-import { Expression } from "../../base-generator/expressions/base";
-import { Property } from "./class-members/property";
-import { GeneratorContext } from "../../base-generator/types";
-import SyntaxKind from "../../base-generator/syntaxKind";
+import { Property } from './class-members/property';
+import {
+  Call,
+  ComponentInput,
+  Decorator,
+  Expression,
+  GeneratorContext,
+  Identifier,
+  SyntaxKind,
+  TypeExpression
+  } from '@devextreme-generator/core';
 
 export class VueComponentInput extends ComponentInput {
   createProperty(

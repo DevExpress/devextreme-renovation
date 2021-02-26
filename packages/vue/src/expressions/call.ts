@@ -1,5 +1,4 @@
-import SyntaxKind from "../../base-generator/syntaxKind";
-import { Call as BaseCall } from "../../base-generator/expressions/common";
+import { SyntaxKind, Call as BaseCall } from "@devextreme-generator/core";
 import { toStringOptions } from "../types";
 export class Call extends BaseCall {
   compileTypeArguments() {

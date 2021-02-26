@@ -1,4 +1,8 @@
+import { toStringOptions } from '../../types';
 import {
+  Expression,
+  Property as BaseProperty,
+  SyntaxKind,
   TypeExpression,
   SimpleTypeExpression,
   ArrayTypeNode,
@@ -8,20 +12,12 @@ import {
   TypeReferenceNode,
   isTypeArray,
   TypeLiteralNode,
-} from "../../../base-generator/expressions/type";
-import SyntaxKind from "../../../base-generator/syntaxKind";
-import {
   capitalizeFirstLetter,
   removePlural,
-} from "../../../base-generator/utils/string";
-import {
   StringLiteral,
   ObjectLiteral,
   NumericLiteral,
-} from "../../../base-generator/expressions/literal";
-import { Property as BaseProperty } from "../../../base-generator/expressions/class-members";
-import { toStringOptions } from "../../types";
-import { Expression } from "../../../base-generator/expressions/base";
+} from "@devextreme-generator/core";
 
 const BasicTypes = [
   "String",
