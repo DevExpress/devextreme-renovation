@@ -1,5 +1,5 @@
-import { AsExpression as BaseAsExpression } from "../../base-generator/expressions/common";
-import { toStringOptions } from "../../base-generator/types";
+import { AsExpression as BaseAsExpression } from "@devextreme-generator/core";
+import { toStringOptions } from "@devextreme-generator/core";
 
 export class AsExpression extends BaseAsExpression {
   toString(options?: toStringOptions) {

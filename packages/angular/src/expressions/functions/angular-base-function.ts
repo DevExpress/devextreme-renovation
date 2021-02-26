@@ -1,4 +1,4 @@
-import { Function } from "../../../base-generator/expressions/functions";
+import { Function } from "@devextreme-generator/core";
 import { isElement } from "../jsx/elements";
 import { JsxChildExpression } from "../jsx/jsx-child-expression";
 import { JsxExpression } from "../jsx/jsx-expression";

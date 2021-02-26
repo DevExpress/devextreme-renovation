@@ -1,7 +1,7 @@
 import { Expression, ExpressionWithExpression } from "./base";
 import { toStringOptions } from "../types";
 import { Identifier } from "./common";
-import SyntaxKind from "../syntaxKind";
+import { SyntaxKind } from "../syntaxKind";
 import { Property, Method } from "./class-members";
 import { getProps } from "./component";
 import { processComponentContext } from "../utils/string";

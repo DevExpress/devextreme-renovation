@@ -18,7 +18,7 @@ import {
   capitalizeFirstLetter,
   removePlural,
 } from "../utils/string";
-import SyntaxKind from "../syntaxKind";
+import { SyntaxKind } from "../syntaxKind";
 import { warn } from "../utils/messages";
 import { Decorators } from "@devextreme-generator/declaration";
 import { ComponentInput } from "./component-input";

@@ -1,25 +1,22 @@
-import { JsxExpression } from "./jsx-expression";
-import { Expression } from "../../../base-generator/expressions/base";
-import { toStringOptions } from "../../types";
-import { getMember } from "../../../base-generator/utils/expressions";
+
 import {
+  Expression,
+  getMember,
   PropertyAssignment,
   ShorthandPropertyAssignment,
-} from "../../../base-generator/expressions/property-assignment";
-import {
   Identifier,
   AsExpression,
-} from "../../../base-generator/expressions/common";
-import { PropertyAccess } from "../property-access";
-import { ObjectLiteral } from "../../../base-generator/expressions/literal";
-import { GeneratorContext } from "../../../base-generator/types";
-import {
+  ObjectLiteral,
+  GeneratorContext,
   PropertySignature,
   MethodSignature,
   TypeLiteralNode,
-} from "../../../base-generator/expressions/type";
+  Method,
+} from "@devextreme-generator/core";
+import { toStringOptions } from "../../types";
+import { JsxExpression } from "./jsx-expression";
+import { PropertyAccess } from "../property-access";
 import { Property } from "../class-members/property";
-import { Method } from "../../../base-generator/expressions/class-members";
 export interface JsxSpreadAttributeMeta {
   refExpression: Expression;
   expression: Expression;

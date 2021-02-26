@@ -6,7 +6,7 @@ import { toStringOptions, VariableExpression } from "../types";
 import { BindingPattern, BindingElement } from "./binding-pattern";
 import { compileType } from "../utils/string";
 import { getProps } from "./component";
-import syntaxKind from "../syntaxKind";
+import { SyntaxKind } from "../syntaxKind";
 import { Property, Method } from "./class-members";
 
 function getInitializer(expression?: Expression): Expression | undefined {
@@ -120,7 +120,7 @@ export class VariableDeclaration extends Expression {
         this.name instanceof BindingPattern &&
         this.initializer
           .toString()
-          .startsWith(options?.componentContext || syntaxKind.ThisKeyword)
+          .startsWith(options?.componentContext || SyntaxKind.ThisKeyword)
       ) {
         if (this.name.hasRest()) {
           return initializerDependency;

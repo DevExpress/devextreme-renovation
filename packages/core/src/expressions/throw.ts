@@ -1,9 +1,9 @@
 import { ExpressionWithExpression } from "./base";
 import { toStringOptions } from "../types";
-import syntaxKind from "../syntaxKind";
+import { SyntaxKind } from "../syntaxKind";
 
 export class Throw extends ExpressionWithExpression {
   toString(options?: toStringOptions) {
-    return `${syntaxKind.ThrowKeyword} ${this.expression.toString(options)}`;
+    return `${SyntaxKind.ThrowKeyword} ${this.expression.toString(options)}`;
   }
 }

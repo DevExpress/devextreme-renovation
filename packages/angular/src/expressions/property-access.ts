@@ -1,21 +1,17 @@
 import {
   PropertyAccess as BasePropertyAccess,
   compileRefOptions,
-} from "../../base-generator/expressions/property-access";
-import { toStringOptions } from "../types";
-import { BindingElement } from "../../base-generator/expressions/binding-pattern";
-import { ObjectLiteral } from "../../base-generator/expressions/literal";
-import { PropertyAssignment } from "../../base-generator/expressions/property-assignment";
-import {
+  BindingElement,
+  ObjectLiteral,
+  PropertyAssignment,
   Identifier,
   NonNullExpression,
-} from "../../base-generator/expressions/common";
-import { getProps } from "../../base-generator/expressions/component";
-import {
+  getProps,
   Property,
   isProperty,
-} from "../../base-generator/expressions/class-members";
-import { getMember } from "../../base-generator/utils/expressions";
+  getMember,
+} from "@devextreme-generator/core";
+import { toStringOptions } from "../types";
 
 export class PropertyAccess extends BasePropertyAccess {
   processProps(

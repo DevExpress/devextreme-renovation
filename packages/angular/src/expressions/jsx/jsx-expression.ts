@@ -1,11 +1,11 @@
-import { JsxExpression as BaseJsxExpression } from "../../../base-generator/expressions/jsx";
-import { Expression } from "../../../base-generator/expressions/base";
-import { Call } from "../../../base-generator/expressions/common";
-import { BaseFunction } from "../../../base-generator/expressions/functions";
 import {
+  JsxExpression as BaseJsxExpression,
+  Expression,
+  Call,
+  BaseFunction,
   PropertyAccessChain,
   PropertyAccess,
-} from "../../../base-generator/expressions/property-access";
+} from "@devextreme-generator/core";
 import { toStringOptions } from "../../types";
 
 export class JsxExpression extends BaseJsxExpression {

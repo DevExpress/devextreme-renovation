@@ -23,7 +23,7 @@ import {
 import { Decorator } from "./decorator";
 import { Decorators } from "@devextreme-generator/declaration";
 import { TypeParameterDeclaration } from "./type-parameter-declaration";
-import SyntaxKind from "../syntaxKind";
+import { SyntaxKind } from "../syntaxKind";
 
 export class BaseClassMember extends Expression {
   decorators: Decorator[];

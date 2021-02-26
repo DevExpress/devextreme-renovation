@@ -1,21 +1,21 @@
-import { Decorator as BaseDecorator } from "../../base-generator/expressions/decorator";
-import { toStringOptions } from "../types";
-import { Decorators } from "../../component_declaration/decorators";
 import {
+  Decorator as BaseDecorator,
+  Property,
+  TemplateExpression,
+  getJsxExpression,
+  BaseFunction,
+  Identifier,
+  GeneratorContext,
+  getProps,
+  FunctionTypeNode,
   ObjectLiteral,
   StringLiteral,
   ArrayLiteral,
-} from "../../base-generator/expressions/literal";
-import { TemplateExpression } from "../../base-generator/expressions/template";
+} from "@devextreme-generator/core";
+import { Decorators } from "@devextreme-generator/declaration";
+import { toStringOptions } from "../types";
 import { isElement } from "./jsx/elements";
-import { getJsxExpression } from "../../base-generator/expressions/jsx";
-import { BaseFunction } from "../../base-generator/expressions/functions";
-import { Identifier } from "../../base-generator/expressions/common";
-import { GeneratorContext } from "../../base-generator/types";
 import { getAngularSelector } from "./component";
-import { getProps } from "../../base-generator/expressions/component";
-import { FunctionTypeNode } from "../../base-generator/expressions/type";
-import { Property } from "../../base-generator/expressions/class-members";
 
 function isInputDecorator(name: string): boolean {
   return (

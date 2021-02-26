@@ -1,4 +1,4 @@
-import { TypeReferenceNode as BaseTypeReferenceNode } from "../../base-generator/expressions/type";
+import { TypeReferenceNode as BaseTypeReferenceNode } from "@devextreme-generator/core";
 
 export class TypeReferenceNode extends BaseTypeReferenceNode {
   toString() {

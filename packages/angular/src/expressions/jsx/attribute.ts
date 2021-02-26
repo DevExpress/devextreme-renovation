@@ -1,24 +1,20 @@
-import { JsxAttribute as BaseJsxAttribute } from "../../../base-generator/expressions/jsx";
-import { toStringOptions } from "../../types";
-import { PropertyAssignment } from "../../../base-generator/expressions/property-assignment";
 import {
+  JsxAttribute as BaseJsxAttribute,
+  PropertyAssignment,
+  StringLiteral,
+  getMember,
+  Identifier,
+  dasherize,
+  kebabSvgAttributes,
   Expression,
   SimpleExpression,
-} from "../../../base-generator/expressions/base";
-import { StringLiteral } from "../../../base-generator/expressions/literal";
-import { getMember } from "../../../base-generator/utils/expressions";
-import {
   Method,
   GetAccessor,
-} from "../../../base-generator/expressions/class-members";
-import {
   isCall,
   isFunction,
-} from "../../../base-generator/expressions/functions";
-import { Identifier } from "../../../base-generator/expressions/common";
+} from "@devextreme-generator/core";
+import { toStringOptions } from "../../types";
 import { JsxExpression } from "./jsx-expression";
-import { dasherize } from "../../../base-generator/utils/string";
-import { kebabSvgAttributes } from "../../../base-generator/utils/svg-utils/kebab-attributes";
 
 const ATTR_BINDING_ATTRIBUTES = ["aria-label"];
 

@@ -1,48 +1,47 @@
-import Generator from "../base-generator";
-import { Call } from "../base-generator/expressions/common";
-import { Method } from "../base-generator/expressions/class-members";
-import { Expression } from "../base-generator/expressions/base";
-import { Identifier } from "../base-generator/expressions/common";
-import { Block } from "../base-generator/expressions/statements";
-import { Parameter } from "../base-generator/expressions/functions";
-import { TypeExpression } from "../base-generator/expressions/type";
-import { HeritageClause } from "../base-generator/expressions/class";
-import { ImportClause } from "../base-generator/expressions/import";
-import { ComponentInput as BaseComponentInput } from "../base-generator/expressions/component-input";
-import { BindingPattern } from "../base-generator/expressions/binding-pattern";
-import { TypeParameterDeclaration } from "../base-generator/expressions/type-parameter-declaration";
-import { JsxExpression } from "./expressions/jsx/jsx-expression";
-import { JsxAttribute } from "./expressions/jsx/attribute";
-import { JsxSpreadAttribute } from "./expressions/jsx/spread-attribute";
+import { counter } from './counter';
+import { AsExpression } from './expressions/as-expression';
+import { GetAccessor } from './expressions/class-members/get-accessor';
+import { Property } from './expressions/class-members/property';
+import { AngularComponent } from './expressions/component';
+import { ComponentInput } from './expressions/component-input';
+import { ContextDeclaration } from './expressions/context-declaration';
+import { Decorator } from './expressions/decorator';
+import { ArrowFunction } from './expressions/functions/arrow-function';
+import { Function } from './expressions/functions/function';
+import { ImportDeclaration } from './expressions/import-declaration';
+import { JsxAttribute } from './expressions/jsx/attribute';
+import { JsxElement } from './expressions/jsx/elements';
+import { JsxExpression } from './expressions/jsx/jsx-expression';
+import { JsxSpreadAttribute } from './expressions/jsx/spread-attribute';
+import { NonNullExpression } from './expressions/non-null-expression';
+import { PropertyAccess } from './expressions/property-access';
+import { PropertyAccessChain } from './expressions/property-access-chain';
+import { TypeReferenceNode } from './expressions/type-reference-node';
+import { VariableDeclaration } from './expressions/variable-expression';
+import { AngularGeneratorContext } from './types';
+import Generator, {
+  StringLiteral,
+  GeneratorContext,
+  Call,
+  Method,
+  Expression,
+  Identifier,
+  Block,
+  Parameter,
+  TypeExpression,
+  HeritageClause,
+  ImportClause,
+  ComponentInput as BaseComponentInput,
+  BindingPattern,
+  TypeParameterDeclaration,
+  VariableDeclarationList,
+  VariableStatement,
+} from "@devextreme-generator/core";
 import {
   JsxOpeningElement,
   JsxSelfClosingElement,
   JsxClosingElement,
 } from "./expressions/jsx/jsx-opening-element";
-import { JsxElement } from "./expressions/jsx/elements";
-import { Decorator } from "./expressions/decorator";
-import { ComponentInput } from "./expressions/component-input";
-import { AngularComponent } from "./expressions/component";
-import { Property } from "./expressions/class-members/property";
-import { GetAccessor } from "./expressions/class-members/get-accessor";
-import { VariableDeclaration } from "./expressions/variable-expression";
-import { ArrowFunction } from "./expressions/functions/arrow-function";
-import { Function } from "./expressions/functions/function";
-import { PropertyAccess } from "./expressions/property-access";
-import { AsExpression } from "./expressions/as-expression";
-import { counter } from "./counter";
-import { GeneratorContext } from "../base-generator/types";
-import { AngularGeneratorContext } from "./types";
-import { NonNullExpression } from "./expressions/non-null-expression";
-import { StringLiteral } from "../base-generator/expressions/literal";
-import { ImportDeclaration } from "./expressions/import-declaration";
-import {
-  VariableDeclarationList,
-  VariableStatement,
-} from "../base-generator/expressions/variables";
-import { ContextDeclaration } from "./expressions/context-declaration";
-import { PropertyAccessChain } from "./expressions/property-access-chain";
-import { TypeReferenceNode } from "./expressions/type-reference-node";
 
 export class AngularGenerator extends Generator {
   createJsxExpression(dotDotDotToken: string = "", expression?: Expression) {

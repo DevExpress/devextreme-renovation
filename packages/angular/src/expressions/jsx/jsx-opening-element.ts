@@ -1,56 +1,45 @@
-import { JsxOpeningElement as BaseJsxOpeningElement } from "../../../base-generator/expressions/jsx";
-import { JsxSpreadAttributeMeta, JsxSpreadAttribute } from "./spread-attribute";
-import { JsxAttribute } from "./attribute";
-import {
-  Component,
-  getProps,
-} from "../../../base-generator/expressions/component";
 import {
   BaseFunction,
-  isFunction,
-  Parameter,
-} from "../../../base-generator/expressions/functions";
-import { Identifier, Paren } from "../../../base-generator/expressions/common";
-import {
-  TypeLiteralNode,
-  PropertySignature,
-} from "../../../base-generator/expressions/type";
-import { toStringOptions, IPropsGetAccessor } from "../../types";
-import {
-  Property,
-  GetAccessor,
-  Method,
-} from "../../../base-generator/expressions/class-members";
-import { PropertyAccess } from "../../../base-generator/expressions/property-access";
-import {
-  SimpleExpression,
+  BindingPattern,
+  Component,
+  Conditional,
   Expression,
-} from "../../../base-generator/expressions/base";
-import { AngularDirective } from "./angular-directive";
-import { ObjectLiteral } from "../../../base-generator/expressions/literal";
-import {
+  extractComponentFromType,
+  GeneratorContext,
+  GetAccessor,
+  getExpression,
+  getMember,
+  getProps,
+  Identifier,
+  isFunction,
+  JsxOpeningElement as BaseJsxOpeningElement,
+  Method,
+  ObjectLiteral,
+  Parameter,
+  Paren,
+  Prefix,
+  processComponentContext,
+  Property,
+  PropertyAccess,
   PropertyAssignment,
+  PropertySignature,
   ShorthandPropertyAssignment,
-} from "../../../base-generator/expressions/property-assignment";
-import { processComponentContext } from "../../../base-generator/utils/string";
+  SimpleExpression,
+  SyntaxKind,
+  TypeLiteralNode,
+} from "@devextreme-generator/core";
+import { JsxSpreadAttributeMeta, JsxSpreadAttribute } from "./spread-attribute";
+import { JsxAttribute } from "./attribute";
+import { toStringOptions, IPropsGetAccessor } from "../../types";
+import { AngularDirective } from "./angular-directive";
 import { JsxExpression } from "./jsx-expression";
 import {
   JsxChildExpression,
   mergeToStringOptions,
 } from "./jsx-child-expression";
 import { JsxElement } from "./elements";
-import { GeneratorContext } from "../../../base-generator/types";
 import { AngularComponent } from "../component";
 import { counter } from "../../counter";
-import { Conditional } from "../../../base-generator/expressions/conditions";
-import { Prefix } from "../../../base-generator/expressions/operators";
-import SyntaxKind from "../../../base-generator/syntaxKind";
-import {
-  getExpression,
-  getMember,
-} from "../../../base-generator/utils/expressions";
-import { extractComponentFromType } from "../../../base-generator/utils/component-utils";
-import { BindingPattern } from "../../../base-generator/expressions/binding-pattern";
 import { PropsGetAccessor } from "../class-members/props-get-accessor";
 
 function pickSpreadValue(first: string, second: string): string {

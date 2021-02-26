@@ -1,65 +1,53 @@
+import { GetAccessor } from './class-members/get-accessor';
+import { Property } from './class-members/property';
+import { PropsGetAccessor } from './class-members/props-get-accessor';
+import { SetAccessor } from './class-members/set-accessor';
+import { ComponentInput } from './component-input';
+import { Decorator } from './decorator';
+import { isElement } from './jsx/elements';
+import { AngularGeneratorContext, toStringOptions } from '../types';
 import {
-  Component,
-  getProps,
-} from "../../base-generator/expressions/component";
-import { Decorator } from "./decorator";
-import {
-  StringLiteral,
   ArrayLiteral,
-  ObjectLiteral,
-} from "../../base-generator/expressions/literal";
-import { HeritageClause } from "../../base-generator/expressions/class";
-import { Identifier, Call } from "../../base-generator/expressions/common";
-import {
-  Block,
-  ReturnStatement,
-} from "../../base-generator/expressions/statements";
-import {
-  Expression,
-  SimpleExpression,
-} from "../../base-generator/expressions/base";
-import { toStringOptions, AngularGeneratorContext } from "../types";
-import SyntaxKind from "../../base-generator/syntaxKind";
-import {
-  Parameter,
-  getTemplate,
-} from "../../base-generator/expressions/functions";
-import {
-  SimpleTypeExpression,
-  FunctionTypeNode,
-  isTypeArray,
-  extractComplexType,
-} from "../../base-generator/expressions/type";
-import { Property } from "./class-members/property";
-import { Method } from "../../base-generator/expressions/class-members";
-import { GetAccessor } from "./class-members/get-accessor";
-import { SetAccessor } from "./class-members/set-accessor";
-import { Decorators } from "../../component_declaration/decorators";
-import { isElement } from "./jsx/elements";
-import { GeneratorContext } from "../../base-generator/types";
-import { ComponentInput } from "./component-input";
-import {
-  removePlural,
-  compileType,
-  capitalizeFirstLetter,
-} from "../../base-generator/utils/string";
-import { If } from "../../base-generator/expressions/conditions";
-import { PropertyAccess } from "../../base-generator/expressions/property-access";
-import {
   BindingElement,
   BindingPattern,
-} from "../../base-generator/expressions/binding-pattern";
-import { PropertyAssignment } from "../../base-generator/expressions/property-assignment";
+  Block,
+  Call,
+  capitalizeFirstLetter,
+  compileType,
+  Component,
+  Expression,
+  extractComplexType,
+  FunctionTypeNode,
+  GeneratorContext,
+  getProps,
+  getTemplate,
+  HeritageClause,
+  Identifier,
+  If,
+  isTypeArray,
+  Method,
+  ObjectLiteral,
+  Parameter,
+  PropertyAccess,
+  PropertyAssignment,
+  removePlural,
+  ReturnStatement,
+  SimpleExpression,
+  SimpleTypeExpression,
+  StringLiteral,
+  SyntaxKind
+  } from '@devextreme-generator/core';
+import { Decorators } from '@devextreme-generator/declaration';
+import {
+  angularPortalCdkImports,
+  angularPortalCoreImports,
+  angularPortalTemplate,
+} from "./templates/portal-component";
 import {
   dynamicComponentDirective,
   dynamicComponentDirectiveCoreImports,
 } from "./templates/dynamic-component-directive";
-import {
-  angularPortalTemplate,
-  angularPortalCoreImports,
-  angularPortalCdkImports,
-} from "./templates/portal-component";
-import { PropsGetAccessor } from "./class-members/props-get-accessor";
+
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = "CUSTOM_VALUE_ACCESSOR_PROVIDER";
 

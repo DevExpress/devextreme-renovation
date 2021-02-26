@@ -1,11 +1,15 @@
-import { ComponentInput as BaseComponentInput } from "../../base-generator/expressions/component-input";
-import { Call, Identifier } from "../../base-generator/expressions/common";
-import { TypeExpression } from "../../base-generator/expressions/type";
-import { Decorator } from "./decorator";
-import { AngularGeneratorContext } from "../types";
-import { Property } from "./class-members/property";
-import { Expression } from "../../base-generator/expressions/base";
-import { compileCoreImports } from "./component";
+import { Property } from './class-members/property';
+import { compileCoreImports } from './component';
+import { Decorator } from './decorator';
+import { AngularGeneratorContext } from '../types';
+import {
+  Call,
+  Expression,
+  Identifier,
+  ComponentInput as BaseComponentInput,
+  TypeExpression,
+} from "@devextreme-generator/core";
+
 
 export class ComponentInput extends BaseComponentInput {
   createProperty(

@@ -1,13 +1,13 @@
 import {
   PropertyAccessChain as BasePropertyAccessChain,
   compileRefOptions,
-} from "../../base-generator/expressions/property-access";
-import { toStringOptions } from "../../base-generator/types";
-import SyntaxKind from "../../base-generator/syntaxKind";
-import { getMember } from "../../base-generator/utils/expressions";
-import { isProperty } from "../../base-generator/expressions/class-members";
+  toStringOptions,
+  SyntaxKind,
+  getMember,
+  isProperty,
+  Identifier
+} from "@devextreme-generator/core";
 import { Property } from "./class-members/property";
-import { Identifier } from "../../base-generator/expressions/common";
 import { PropertyAccess } from "./property-access";
 
 export class PropertyAccessChain extends BasePropertyAccessChain {

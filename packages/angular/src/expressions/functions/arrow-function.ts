@@ -1,4 +1,4 @@
-import { ArrowFunction as BaseArrowFunction } from "../../../base-generator/expressions/functions";
+import { ArrowFunction as BaseArrowFunction } from "@devextreme-generator/core";
 import { JsxChildExpression } from "../jsx/jsx-child-expression";
 import { JsxExpression } from "../jsx/jsx-expression";
 import { isElement } from "../jsx/elements";

@@ -6,7 +6,7 @@ import {
   ExpressionWithOptionalExpression,
 } from "./base";
 import { toStringOptions, GeneratorContext } from "../types";
-import SyntaxKind from "../syntaxKind";
+import { SyntaxKind } from "../syntaxKind";
 import { Conditional } from "./conditions";
 import { Component } from "./component";
 import { PropertyAssignment, SpreadAssignment } from "./property-assignment";

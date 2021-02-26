@@ -1,19 +1,17 @@
 import {
-  toStringOptions as BaseToStringOptions,
-  GeneratorContext,
-} from "../base-generator/types";
-import { Heritable } from "../base-generator/expressions/class";
-import { TrackByAttribute } from "./expressions/jsx/track-by-attribute";
-import { Expression } from "../base-generator/expressions/base";
-import { Property } from "./expressions/class-members/property";
-import {
   BaseClassMember,
+  BaseFunction,
+  Expression,
+  GeneratorContext,
+  GetAccessor,
+  Heritable,
+  Identifier,
   Method,
   Property as BaseProperty,
-  GetAccessor,
-} from "../base-generator/expressions/class-members";
-import { BaseFunction } from "../base-generator/expressions/functions";
-import { Identifier } from "../base-generator/expressions/common";
+  toStringOptions as BaseToStringOptions,
+} from "@devextreme-generator/core";
+import { TrackByAttribute } from "./expressions/jsx/track-by-attribute";
+import { Property } from "./expressions/class-members/property";
 
 export interface toStringOptions extends BaseToStringOptions {
   members: Array<Property | Method>;

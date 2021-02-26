@@ -1,8 +1,10 @@
-import { JsxAttribute } from "./attribute";
-import { Identifier } from "../../../base-generator/expressions/common";
-import { SimpleExpression } from "../../../base-generator/expressions/base";
+import {
+  Identifier,
+  SimpleExpression,
+  SyntaxKind,
+} from "@devextreme-generator/core";
 import { toStringOptions } from "../../types";
-import SyntaxKind from "../../../base-generator/syntaxKind";
+import { JsxAttribute } from "./attribute";
 
 export class TrackByAttribute extends JsxAttribute {
   indexName: string;

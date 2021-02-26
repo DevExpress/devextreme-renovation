@@ -16,7 +16,7 @@ export interface IExpression {
   getImports(context: GeneratorContext): TypeExpressionImports;
 }
 
-export type toStringOptions = {
+export interface toStringOptions {
   members: Array<Property | Method>;
   disableTemplates?: boolean;
   componentContext?: string;

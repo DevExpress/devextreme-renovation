@@ -1,20 +1,16 @@
-import { Property as BaseProperty } from "../../../base-generator/expressions/class-members";
-import { Identifier } from "../../../base-generator/expressions/common";
-import { Decorator } from "../decorator";
-import {
-  TypeExpression,
-  FunctionTypeNode,
-} from "../../../base-generator/expressions/type";
-import { Decorators } from "../../../component_declaration/decorators";
 import {
   capitalizeFirstLetter,
   compileType,
-} from "../../../base-generator/utils/string";
-import SyntaxKind from "../../../base-generator/syntaxKind";
-import {
   Expression,
+  FunctionTypeNode,
+  Identifier,
+  Property as BaseProperty,
   SimpleExpression,
-} from "../../../base-generator/expressions/base";
+  SyntaxKind,
+  TypeExpression,
+} from "@devextreme-generator/core";
+import { Decorators } from "@devextreme-generator/declaration";
+import { Decorator } from "../decorator";
 import { toStringOptions } from "../../types";
 
 function parseEventType(type: TypeExpression | string) {

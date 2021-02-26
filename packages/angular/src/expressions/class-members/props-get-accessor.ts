@@ -1,11 +1,13 @@
-import { GetAccessor } from "./get-accessor";
-import { Decorator } from "../decorator";
-import { Identifier } from "../../../base-generator/expressions/common";
-import { Parameter } from "../../../base-generator/expressions/functions";
-import { TypeExpression } from "../../../base-generator/expressions/type";
-import { Block } from "../../../base-generator/expressions/statements";
-import { Property } from "./property";
-import { IPropsGetAccessor } from "../../types";
+import { GetAccessor } from './get-accessor';
+import { Property } from './property';
+import { IPropsGetAccessor } from '../../types';
+import { Decorator } from '../decorator';
+import {
+  Block,
+  Identifier,
+  Parameter,
+  TypeExpression
+  } from '@devextreme-generator/core';
 
 export class PropsGetAccessor extends GetAccessor implements IPropsGetAccessor {
   constructor(

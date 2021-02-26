@@ -1,14 +1,17 @@
-import { Class } from "../../base-generator/expressions/class";
-import { Decorator } from "../../base-generator/expressions/decorator";
-import { Call, Identifier } from "../../base-generator/expressions/common";
+import {
+  Class,
+  Decorator,
+  Call,
+  Identifier,
+  VariableStatement,
+  SimpleTypeExpression,
+  SimpleExpression,
+  Block,
+  Parameter,
+} from "@devextreme-generator/core";
 import { Property } from "./class-members/property";
-import { VariableStatement } from "../../base-generator/expressions/variables";
-import { SimpleTypeExpression } from "../../base-generator/expressions/type";
-import { SimpleExpression } from "../../base-generator/expressions/base";
-import { GetAccessor } from "./class-members/get-accessor";
-import { Block } from "../../base-generator/expressions/statements";
 import { SetAccessor } from "./class-members/set-accessor";
-import { Parameter } from "../../base-generator/expressions/functions";
+import { GetAccessor } from "./class-members/get-accessor";
 
 export class ContextDeclaration extends VariableStatement {
   toString() {

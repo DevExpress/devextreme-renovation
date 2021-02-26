@@ -1,27 +1,20 @@
 import {
   isComplexType,
   TypeExpression,
-} from "../../../base-generator/expressions/type";
-import { GetAccessor as BaseGetAccessor } from "../../../base-generator/expressions/class-members";
-import { Decorator } from "../decorator";
-import { SimpleExpression } from "../../../base-generator/expressions/base";
-import {
+  GetAccessor as BaseGetAccessor,
+  SimpleExpression,
   ReturnStatement,
   Block,
-} from "../../../base-generator/expressions/statements";
-import {
   Identifier,
   Call,
   Paren,
-} from "../../../base-generator/expressions/common";
-import {
   Parameter,
   ArrowFunction,
-} from "../../../base-generator/expressions/functions";
-import { Binary } from "../../../base-generator/expressions/operators";
-
-import SyntaxKind from "../../../base-generator/syntaxKind";
-import { Decorators } from "../../../component_declaration/decorators";
+  Binary,
+  SyntaxKind,
+} from "@devextreme-generator/core";
+import { Decorators } from "@devextreme-generator/declaration";
+import { Decorator } from "../decorator";
 
 export class GetAccessor extends BaseGetAccessor {
   constructor(

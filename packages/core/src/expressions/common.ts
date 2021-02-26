@@ -1,5 +1,5 @@
 import { toStringOptions } from "../types";
-import SyntaxKind from "../syntaxKind";
+import { SyntaxKind } from "../syntaxKind";
 import { ExpressionWithExpression, Expression, SimpleExpression } from "./base";
 import { TypeExpression } from "./type";
 import { compileTypeParameters } from "../utils/string";

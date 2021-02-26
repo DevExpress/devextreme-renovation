@@ -17,7 +17,7 @@ import {
 } from "./type";
 import { Property, Method, BaseClassMember } from "./class-members";
 import { Identifier, Call } from "./common";
-import SyntaxKind from "../syntaxKind";
+import { SyntaxKind } from "../syntaxKind";
 import { SimpleExpression, Expression } from "./base";
 import { capitalizeFirstLetter } from "../utils/string";
 import { Decorator } from "./decorator";

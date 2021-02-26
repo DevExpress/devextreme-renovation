@@ -1,4 +1,7 @@
-import { JsxElement as BaseJsxElement } from "../../../base-generator/expressions/jsx";
+import {
+  JsxElement as BaseJsxElement,
+  JsxOpeningElement as BaseJsxOpeningElement,
+} from "@devextreme-generator/core";
 import { JsxExpression } from "./jsx-expression";
 import {
   JsxChildExpression,
@@ -11,7 +14,6 @@ import {
 } from "./jsx-opening-element";
 import { toStringOptions } from "../../types";
 import { JsxSpreadAttributeMeta } from "./spread-attribute";
-import { JsxOpeningElement as BaseJsxOpeningElement } from "../../../base-generator/expressions/jsx";
 import { Property } from "../class-members/property";
 
 export const isElement = (e: any): e is JsxElement | JsxSelfClosingElement =>

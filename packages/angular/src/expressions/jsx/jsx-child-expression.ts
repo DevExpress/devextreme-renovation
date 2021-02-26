@@ -3,31 +3,30 @@ import { toStringOptions } from "../../types";
 import {
   Expression,
   SimpleExpression,
-} from "../../../base-generator/expressions/base";
-import SyntaxKind from "../../../base-generator/syntaxKind";
-import { Binary, Prefix } from "../../../base-generator/expressions/operators";
-import {
+  SyntaxKind,
+  Binary,
+  Prefix,
   Paren,
   Identifier,
   Call,
-} from "../../../base-generator/expressions/common";
-import { Property } from "../../../base-generator/expressions/class-members";
-import { JsxAttribute } from "./attribute";
-import { AngularDirective } from "./angular-directive";
-import { BindingPattern } from "../../../base-generator/expressions/binding-pattern";
-import {
+  Property,
+  BindingPattern,
   Parameter,
   BaseFunction,
   getTemplate,
-} from "../../../base-generator/expressions/functions";
-import { PropertyAccess } from "../../../base-generator/expressions/property-access";
-import { TrackByAttribute } from "./track-by-attribute";
-import { Conditional } from "../../../base-generator/expressions/conditions";
-import { StringLiteral } from "../../../base-generator/expressions/literal";
-import {
+  PropertyAccess,
+  Conditional,
+  StringLiteral,
   getExpressionFromParens,
   getJsxExpression,
-} from "../../../base-generator/expressions/jsx";
+  getExpression,
+  getMember,
+  VariableExpression,
+  capitalizeFirstLetter,
+} from "@devextreme-generator/core";
+import { JsxAttribute } from "./attribute";
+import { AngularDirective } from "./angular-directive";
+import { TrackByAttribute } from "./track-by-attribute";
 import { isElement, JsxElement } from "./elements";
 import {
   JsxOpeningElement,
@@ -35,12 +34,6 @@ import {
   JsxClosingElement,
 } from "./jsx-opening-element";
 import { counter } from "../../counter";
-import {
-  getExpression,
-  getMember,
-} from "../../../base-generator/utils/expressions";
-import { VariableExpression } from "../../../base-generator/types";
-import { capitalizeFirstLetter } from "../../../base-generator/utils/string";
 
 export const mergeToStringOptions = (
   dst: toStringOptions | undefined,

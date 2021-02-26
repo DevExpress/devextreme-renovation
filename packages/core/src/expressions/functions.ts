@@ -16,7 +16,7 @@ import {
 } from "../utils/string";
 import { Component } from "./component";
 import { VariableStatement } from "./variables";
-import SyntaxKind from "../syntaxKind";
+import { SyntaxKind } from "../syntaxKind";
 import { getJsxExpression, JsxExpression, JsxElement } from "./jsx";
 import { Decorator } from "./decorator";
 import { Property } from "./class-members";
