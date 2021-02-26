@@ -47,6 +47,12 @@ export const DxWidget = {
     __getObj() {
       return this.obj;
     },
+    __destruct() {
+      const { definedObj, notDefinedObj, obj } = this;
+      const a = obj.value;
+      const b = definedObj.value;
+      const c = notDefinedObj?.value;
+    },
     __initialize() {
       this.__setObj();
     },

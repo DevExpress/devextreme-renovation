@@ -16,6 +16,7 @@ interface Widget {
   setObj: () => any;
   getValue: () => any;
   getObj: () => any;
+  destruct: () => any;
   restAttributes: RestProps;
 }
 
@@ -39,6 +40,11 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   const __getObj = useCallback(function __getObj(): any {
     return obj.current!;
   }, []);
+  const __destruct = useCallback(function __destruct(): any {
+    const a = obj.current!.value;
+    const b = definedObj.current!.value;
+    const c = notDefinedObj.current?.value;
+  }, []);
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { ...restProps } = props;
@@ -55,6 +61,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     setObj: __setObj,
     getValue: __getValue,
     getObj: __getObj,
+    destruct: __destruct,
     restAttributes: __restAttributes(),
   });
 }
