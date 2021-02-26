@@ -2,20 +2,7 @@
   "name": "@devextreme-generator/react",
   "version": "1.0.0",
   "description": "Component generator",
-  "scripts": {
-    "test": "nyc mocha ./build/test --timeout 30000",
-    "test:with-reporters": "nyc --reporter cobertura mocha ./build/test --timeout 30000 --reporter mocha-junit-reporter --reporter-options mochaFile=./build/test/report/test-result.xml",
-    "test:with-replace": "nyc mocha ./build/test --timeout 30000 --replace",
-    "tsc": "tsc",
-    "build": "gulp build",
-    "build-dist": "gulp build-dist",
-    "dev": "gulp watch",
-    "test:testcafe": "start-server-and-test testcafe:start-test-servers \"3000|3001\" testcafe",
-    "test:testcafe-headless": "start-server-and-test testcafe:start-test-servers \"3000|3001\" 'testcafe chrome:headless'",
-    "testcafe:start-test-servers": "cross-env NODE_ENV=development node ./e2e/start-servers.js",
-    "test:compile-check": "gulp compile-check",
-    "gulp": "gulp"
-  },
+  "scripts": {},
   "author": "Developer Express Inc.",
   "license": "MIT",
   "dependencies": {

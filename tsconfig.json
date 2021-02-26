@@ -12,7 +12,7 @@
     // "declarationMap": true,                /* Generates a sourcemap for each corresponding '.d.ts' file. */
     "sourceMap": true /* Generates corresponding '.map' file. */,
     // "outFile": "./",                       /* Concatenate and emit output to single file. */
-    "outDir": "./build" /* Redirect output structure to the directory. */,
+    "outDir": "./dist" /* Redirect output structure to the directory. */,
     // "rootDir": "./",                       /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
     // "composite": true,                     /* Enable project compilation */
     // "tsBuildInfoFile": "./",               /* Specify file to store incremental compilation information */
@@ -57,5 +57,23 @@
     /* Advanced Options */
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
   },
-  "exclude": ["node_modules", "build", "test/test-cases", "e2e", "modules"]
+  "exclude": ["node_modules", "build", "test/test-cases", "e2e", "modules"],
+  "paths": {
+    "@devextreme-generator/angular": ["@devextreme-generator/angular/src"],
+    // "@devextreme-generator/angular/*": ["@devextreme-generator/angular/src/*"],
+    "@devextreme-generator/core": ["@devextreme-generator/core/src"],
+    // "@devextreme-generator/core/*": ["@devextreme-generator/core/src/*"],
+    "@devextreme-generator/declaration": [
+      "@devextreme-generator/declaration/src"
+    ],
+    // "@devextreme-generator/declaration/*": ["@devextreme-generator/declaration/src/*"],
+    "@devextreme-generator/inferno": ["@devextreme-generator/inferno/src"],
+    // "@devextreme-generator/inferno/*": ["@devextreme-generator/inferno/src/*"],
+    "@devextreme-generator/preact": ["@devextreme-generator/preact/src"],
+    // "@devextreme-generator/preact/*": ["@devextreme-generator/preact/src/*"],
+    "@devextreme-generator/react": ["@devextreme-generator/react/src"],
+    // "@devextreme-generator/react/*": ["@devextreme-generator/react/src/*"],
+    "@devextreme-generator/vue": ["@devextreme-generator/vue/src"]
+    // "@devextreme-generator/vue/*": ["@devextreme-generator/vue/src/*"],
+  }
 }

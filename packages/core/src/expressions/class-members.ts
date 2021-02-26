@@ -21,7 +21,7 @@ import {
   compileTypeParameters,
 } from "../utils/string";
 import { Decorator } from "./decorator";
-import { Decorators } from "../../component_declaration/decorators";
+import { Decorators } from "@devextreme-generator/declaration";
 import { TypeParameterDeclaration } from "./type-parameter-declaration";
 import SyntaxKind from "../syntaxKind";
 

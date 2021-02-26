@@ -1,8 +1,11 @@
 {
-  "name": "@devextreme-generator/angular",
+  "name": "@devextreme-generator/declaration",
   "version": "1.0.0",
   "description": "Component generator",
+  "main": "src/index.ts",
   "scripts": {
+    "build": "gulp build",
+    "build-dist": "gulp build-dist"
   },
   "author": "Developer Express Inc.",
   "license": "MIT",

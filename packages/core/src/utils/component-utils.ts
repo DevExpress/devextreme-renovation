@@ -1,6 +1,6 @@
-import { HeritageClause } from "../../base-generator/expressions/class";
-import { Identifier, Call } from "../../base-generator/expressions/common";
-import { Decorator } from "../../base-generator/expressions/decorator";
+import { HeritageClause } from "../expressions/class";
+import { Identifier, Call } from "../expressions/common";
+import { Decorator } from "../expressions/decorator";
 import {
   ExpressionWithTypeArguments,
   extractElementType,
@@ -8,9 +8,9 @@ import {
   TypeExpression,
   TypeQueryNode,
   TypeReferenceNode,
-} from "../../base-generator/expressions/type";
-import { GeneratorContext } from "../../base-generator/types";
-import { Decorators } from "../../component_declaration/decorators";
+} from "../expressions/type";
+import { GeneratorContext } from "../types";
+import { Decorators } from "@devextreme-generator/declaration";
 import { Component } from "../expressions/component";
 import { ComponentInput } from "../expressions/component-input";
 

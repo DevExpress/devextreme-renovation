@@ -1,7 +1,7 @@
 import SyntaxKind from "./syntaxKind";
 import fs from "fs";
 import path from "path";
-import { compileCode } from "../component-compiler";
+import { compileCode } from "./component-compiler";
 import {
   ImportDeclaration,
   ImportClause,
@@ -118,7 +118,7 @@ import { Decorator } from "./expressions/decorator";
 import { Interface } from "./expressions/interface";
 import { Throw } from "./expressions/throw";
 import { CatchClause, Try } from "./expressions/try-catch";
-import { Decorators } from "../component_declaration/decorators";
+import { Decorators } from "@devextreme-generator/declaration";
 import { TypeParameterDeclaration } from "./expressions/type-parameter-declaration";
 import prettier from "prettier";
 import { GeneratorAPI, GeneratorResult } from "./generator-api";

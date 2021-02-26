@@ -21,10 +21,10 @@ import SyntaxKind from "../syntaxKind";
 import { SimpleExpression, Expression } from "./base";
 import { capitalizeFirstLetter } from "../utils/string";
 import { Decorator } from "./decorator";
-import { warn } from "../../utils/messages";
+import { warn } from "../utils/messages";
 import { getProps } from "./component";
 import { GeneratorContext, TypeExpressionImports } from "../types";
-import { Decorators } from "../../component_declaration/decorators";
+import { Decorators } from "@devextreme-generator/declaration";
 import { findComponentInput } from "../utils/expressions";
 
 const RESERVED_NAMES = ["class", "key", "ref", "style", "class"];

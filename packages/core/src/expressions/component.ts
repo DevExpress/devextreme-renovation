@@ -19,8 +19,8 @@ import {
   removePlural,
 } from "../utils/string";
 import SyntaxKind from "../syntaxKind";
-import { warn } from "../../utils/messages";
-import { Decorators } from "../../component_declaration/decorators";
+import { warn } from "../utils/messages";
+import { Decorators } from "@devextreme-generator/declaration";
 import { ComponentInput } from "./component-input";
 import { extractComplexType, isTypeArray, TypeExpression } from "./type";
 import { BindingElement, BindingPattern } from "./binding-pattern";
