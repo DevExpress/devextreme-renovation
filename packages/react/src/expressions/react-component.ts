@@ -1,61 +1,47 @@
-import { Identifier, Call } from "../../base-generator/expressions/common";
-import { Decorator } from "../../base-generator/expressions/decorator";
-import { BaseClassMember } from "../../base-generator/expressions/class-members";
+import { GetAccessor } from './class-members/get-accessor';
+import { Method } from './class-members/method';
+import { getPropName, Property } from './class-members/property';
+import { HeritageClause } from './heritage-clause';
+import { PropertyAccess } from './property-access';
+import { ComponentInput, getTemplatePropName } from './react-component-input';
+import path from 'path';
 import {
+  BaseClassMember,
+  Property as BaseProperty,
+  Call,
+  Identifier,
+  Conditional,
+  Decorator,
+  ObjectLiteral,
+  TypeParameterDeclaration,
+  SyntaxKind,
+  GeneratorContext,
+  toStringOptions,
+  getModuleRelativePath,
   getProps,
   Component,
-} from "../../base-generator/expressions/component";
-import {
   BindingElement,
   BindingPattern,
-} from "../../base-generator/expressions/binding-pattern";
-import SyntaxKind from "../../base-generator/syntaxKind";
-import {
   VariableStatement,
   VariableDeclaration,
   VariableDeclarationList,
-} from "../../base-generator/expressions/variables";
-import { PropertyAccess } from "./property-access";
-import {
   SimpleExpression,
   Expression,
-} from "../../base-generator/expressions/base";
-import {
   ReturnStatement,
   Block,
-} from "../../base-generator/expressions/statements";
-import {
   SimpleTypeExpression,
   ArrayTypeNode,
   extractComplexType,
   isTypeArray,
   TypeExpression,
-} from "../../base-generator/expressions/type";
-import { TypeParameterDeclaration } from "../../base-generator/expressions/type-parameter-declaration";
-import {
   Parameter,
   Function,
-} from "../../base-generator/expressions/functions";
-import { getModuleRelativePath } from "../../base-generator/utils/path-utils";
-import { Property, getPropName } from "./class-members/property";
-import { Property as BaseProperty } from "../../base-generator/expressions/class-members";
-import { Method } from "./class-members/method";
-import { GetAccessor } from "./class-members/get-accessor";
-import { ObjectLiteral } from "../../base-generator/expressions/literal";
-import path from "path";
-import { ComponentInput, getTemplatePropName } from "./react-component-input";
-import {
   capitalizeFirstLetter,
   lowerizeFirstLetter,
   processComponentContext,
-} from "../../base-generator/utils/string";
-import { Conditional } from "../../base-generator/expressions/conditions";
-import { GeneratorContext, toStringOptions } from "../../base-generator/types";
-import { HeritageClause } from "./heritage-clause";
-import {
   PropertyAssignment,
   ShorthandPropertyAssignment,
-} from "../../base-generator/expressions/property-assignment";
+} from "@devextreme-generator/core";
 
 function getSubscriptions(methods: Method[]) {
   return methods

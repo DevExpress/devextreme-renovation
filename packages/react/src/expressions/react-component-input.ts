@@ -1,15 +1,18 @@
-import { ComponentInput as BaseComponentInput } from "../../base-generator/expressions/component-input";
-import { Decorator } from "../../base-generator/expressions/decorator";
-import { Identifier, Call } from "../../base-generator/expressions/common";
-import { TypeExpression } from "../../base-generator/expressions/type";
-import { Expression } from "../../base-generator/expressions/base";
-import { compileJSXTemplateType, Property } from "./class-members/property";
-import { Property as BaseProperty } from "../../base-generator/expressions/class-members";
-import { BaseClassMember } from "../../base-generator/expressions/class-members";
-import { Decorators } from "../../component_declaration/decorators";
-import SyntaxKind from "../../base-generator/syntaxKind";
-import { capitalizeFirstLetter } from "../../base-generator/utils/string";
-import { Method } from "./class-members/method";
+import { Method } from './class-members/method';
+import { compileJSXTemplateType, Property } from './class-members/property';
+import { Decorators } from "@devextreme-generator/declaration";
+import {
+  Expression,
+  Property as BaseProperty,
+  BaseClassMember,
+  Call,
+  Identifier,
+  ComponentInput as BaseComponentInput,
+  Decorator,
+  TypeExpression,
+  SyntaxKind,
+  capitalizeFirstLetter,
+} from "@devextreme-generator/core";
 
 export function getTemplatePropName(
   name: Identifier | string,

@@ -1,10 +1,10 @@
 import {
   JsxAttribute as BaseJsxAttribute,
   JsxExpression,
-} from "../../../base-generator/expressions/jsx";
-import { PropertyAssignment } from "../../../base-generator/expressions/property-assignment";
-import { toStringOptions } from "../../../base-generator/types";
-import { getProps } from "../../../base-generator/expressions/component";
+  PropertyAssignment,
+  toStringOptions,
+  getProps,
+} from "@devextreme-generator/core";
 
 const eventsDictionary = {
   pointerover: "onPointerOver",

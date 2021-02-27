@@ -1,9 +1,5 @@
-import { getLocalStateName } from "./property";
-import {
-  Method as BaseMethod,
-  BaseClassMember,
-} from "../../../base-generator/expressions/class-members";
-import { toStringOptions } from "../../../base-generator/types";
+import { getLocalStateName } from './property';
+import { BaseClassMember, Method as BaseMethod, toStringOptions } from '@devextreme-generator/core';
 
 export function calculateMethodDependency(
   dependency: string[],

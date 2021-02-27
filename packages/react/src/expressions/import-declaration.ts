@@ -1,4 +1,4 @@
-import { ImportDeclaration as BaseImportDeclaration } from "../../base-generator/expressions/import";
+import { ImportDeclaration as BaseImportDeclaration } from "@devextreme-generator/core";
 
 export class ImportDeclaration extends BaseImportDeclaration {
   compileComponentDeclarationImport() {

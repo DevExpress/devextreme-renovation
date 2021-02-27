@@ -1,19 +1,15 @@
-import { Property as BaseProperty } from "../../../base-generator/expressions/class-members";
-import { Decorators } from "../../../component_declaration/decorators";
-import SyntaxKind from "../../../base-generator/syntaxKind";
+import { Decorators } from '@devextreme-generator/declaration';
 import {
+  Property as BaseProperty,
+  Identifier,
+  SyntaxKind,
   compileType,
   capitalizeFirstLetter,
-} from "../../../base-generator/utils/string";
-import {
   toStringOptions,
   GeneratorContext,
-} from "../../../base-generator/types";
-import { Identifier } from "../../../base-generator/expressions/common";
-import {
   TypeExpression,
   SimpleTypeExpression,
-} from "../../../base-generator/expressions/type";
+} from "@devextreme-generator/core";
 import {
   compileJSXTemplateProps,
   TypeReferenceNode,

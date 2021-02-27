@@ -1,7 +1,7 @@
 import {
   TypeExpression,
   TypeReferenceNode as BaseTypeReferenceNode,
-} from "../../base-generator/expressions/type";
+} from "@devextreme-generator/core";
 import { ComponentInput } from "./react-component-input";
 
 // TODO: move these types to generator's common

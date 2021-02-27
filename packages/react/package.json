@@ -2,7 +2,11 @@
   "name": "@devextreme-generator/react",
   "version": "1.0.0",
   "description": "Component generator",
-  "scripts": {},
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "gulp build",
+    "build-dist": "gulp build-dist"
+  },
   "author": "Developer Express Inc.",
   "license": "MIT",
   "dependencies": {
@@ -66,6 +70,8 @@
     "vue-template-compiler": "^2.6.11",
     "webpack": "^4.44.1",
     "webpack-dev-server": "^3.11.0",
-    "zone.js": "^0.10.3"
+    "zone.js": "^0.10.3",
+    "@devextreme-generator/core": "^1.0.0",
+    "@devextreme-generator/declaration": "^1.0.0"
   }
 }

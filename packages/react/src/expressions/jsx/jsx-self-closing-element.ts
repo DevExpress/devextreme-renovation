@@ -1,5 +1,5 @@
 import { JsxOpeningElement } from "./jsx-opening-element";
-import { toStringOptions } from "../../../base-generator/types";
+import { toStringOptions } from "@devextreme-generator/core";
 
 export class JsxSelfClosingElement extends JsxOpeningElement {
   toString(options?: toStringOptions) {

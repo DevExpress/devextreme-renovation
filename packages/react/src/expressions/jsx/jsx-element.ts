@@ -1,6 +1,8 @@
-import { JsxElement as BaseJsxElement } from "../../../base-generator/expressions/jsx";
-import { toStringOptions } from "../../../base-generator/types";
 import { JsxOpeningElement } from "./jsx-opening-element";
+import {
+  JsxElement as BaseJsxElement,
+  toStringOptions,
+} from "@devextreme-generator/core";
 
 export class JsxElement extends BaseJsxElement {
   toString(options?: toStringOptions) {

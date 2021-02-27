@@ -1,22 +1,22 @@
-import { PropertyAccess as BasePropertyAccess } from "../../base-generator/expressions/property-access";
+import {
+  SimpleExpression,
+  BindingElement,
+  Property as BaseProperty,
+  Identifier,
+  getProps,
+  ObjectLiteral,
+  PropertyAccess as BasePropertyAccess,
+  SyntaxKind,
+  toStringOptions,
+  processComponentContext,
+  PropertyAssignment,
+  SpreadAssignment,
+} from "@devextreme-generator/core";
 import {
   Property,
   getLocalStateName,
   stateSetter,
 } from "./class-members/property";
-import { Property as BaseProperty } from "../../base-generator/expressions/class-members";
-import { toStringOptions } from "../../base-generator/types";
-import { Identifier } from "../../base-generator/expressions/common";
-import { ObjectLiteral } from "../../base-generator/expressions/literal";
-import {
-  PropertyAssignment,
-  SpreadAssignment,
-} from "../../base-generator/expressions/property-assignment";
-import SyntaxKind from "../../base-generator/syntaxKind";
-import { BindingElement } from "../../base-generator/expressions/binding-pattern";
-import { getProps } from "../../base-generator/expressions/component";
-import { SimpleExpression } from "../../base-generator/expressions/base";
-import { processComponentContext } from "../../base-generator/utils/string";
 
 export function getChangeEventToken(property: Property): string {
   if (property.questionOrExclamationToken === SyntaxKind.QuestionToken) {

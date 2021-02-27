@@ -1,34 +1,31 @@
-import BaseGenerator from "../base-generator";
-import {
+import { GetAccessor } from './expressions/class-members/get-accessor';
+import { Method } from './expressions/class-members/method';
+import { Property } from './expressions/class-members/property';
+import { HeritageClause } from './expressions/heritage-clause';
+import { ImportDeclaration } from './expressions/import-declaration';
+import { JsxAttribute } from './expressions/jsx/jsx-attribute';
+import { JsxClosingElement } from './expressions/jsx/jsx-closing-element';
+import { JsxElement } from './expressions/jsx/jsx-element';
+import { JsxOpeningElement } from './expressions/jsx/jsx-opening-element';
+import { JsxSelfClosingElement } from './expressions/jsx/jsx-self-closing-element';
+import { PropertyAccess } from './expressions/property-access';
+import { ReactComponent } from './expressions/react-component';
+import { ComponentInput } from "./expressions/react-component-input";
+import { TypeReferenceNode } from "./expressions/type-reference-node";
+import BaseGenerator, {
+  Expression,
+  Identifier,
+  Decorator,
+  Parameter,
+  ImportClause,
+  StringLiteral,
+  Block,
+  TypeParameterDeclaration,
   ExpressionWithTypeArguments,
   TypeExpression,
-} from "../base-generator/expressions/type";
-import { HeritageClause } from "./expressions/heritage-clause";
-import { Decorator } from "../base-generator/expressions/decorator";
-import { Identifier } from "../base-generator/expressions/common";
-import { Property } from "./expressions/class-members/property";
-import { Method } from "./expressions/class-members/method";
-import { ReactComponent } from "./expressions/react-component";
-import { ComponentInput } from "./expressions/react-component-input";
-import { Expression } from "../base-generator/expressions/base";
-import { JsxAttribute } from "./expressions/jsx/jsx-attribute";
-import { ImportClause } from "../base-generator/expressions/import";
-import { StringLiteral } from "../base-generator/expressions/literal";
-import { ImportDeclaration } from "./expressions/import-declaration";
-import {
   JsxSpreadAttribute,
   JsxExpression,
-} from "../base-generator/expressions/jsx";
-import { JsxOpeningElement } from "./expressions/jsx/jsx-opening-element";
-import { JsxSelfClosingElement } from "./expressions/jsx/jsx-self-closing-element";
-import { JsxClosingElement } from "./expressions/jsx/jsx-closing-element";
-import { JsxElement } from "./expressions/jsx/jsx-element";
-import { Parameter } from "../base-generator/expressions/functions";
-import { Block } from "../base-generator/expressions/statements";
-import { GetAccessor } from "./expressions/class-members/get-accessor";
-import { PropertyAccess } from "./expressions/property-access";
-import { TypeReferenceNode } from "./expressions/type-reference-node";
-import { TypeParameterDeclaration } from "../base-generator/expressions/type-parameter-declaration";
+} from "@devextreme-generator/core";
 
 export class ReactGenerator extends BaseGenerator {
   createHeritageClause(token: string, types: ExpressionWithTypeArguments[]) {

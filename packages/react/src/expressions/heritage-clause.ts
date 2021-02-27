@@ -1,6 +1,8 @@
-import { HeritageClause as BaseHeritageClause } from "../../base-generator/expressions/class";
-import { GeneratorContext } from "../../base-generator/types";
-import { ExpressionWithTypeArguments } from "../../base-generator/expressions/type";
+import {
+  HeritageClause as BaseHeritageClause,
+  GeneratorContext,
+  ExpressionWithTypeArguments,
+} from "@devextreme-generator/core";
 
 export class HeritageClause extends BaseHeritageClause {
   constructor(

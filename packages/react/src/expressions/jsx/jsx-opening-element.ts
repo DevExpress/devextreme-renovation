@@ -1,13 +1,13 @@
-import { JsxOpeningElement as BaseJsxOpeningElement } from "../../../base-generator/expressions/jsx";
-import { Expression } from "../../../base-generator/expressions/base";
-import { Identifier } from "../../../base-generator/expressions/common";
-import { toStringOptions } from "../../../base-generator/types";
-import { Property } from "../class-members/property";
+import { Property } from '../class-members/property';
 import {
+  Expression,
+  Identifier,
+  JsxOpeningElement as BaseJsxOpeningElement,
+  ObjectLiteral,
+  toStringOptions,
   PropertyAssignment,
   SpreadAssignment,
-} from "../../../base-generator/expressions/property-assignment";
-import { ObjectLiteral } from "../../../base-generator/expressions/literal";
+} from "@devextreme-generator/core";
 
 export class JsxOpeningElement extends BaseJsxOpeningElement {
   processTagName(tagName: Expression) {

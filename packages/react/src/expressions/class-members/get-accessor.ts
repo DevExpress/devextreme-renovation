@@ -1,6 +1,8 @@
-import { GetAccessor as BaseGetAccessor } from "../../../base-generator/expressions/class-members";
 import { calculateMethodDependency } from "./method";
-import { toStringOptions } from "../../../base-generator/types";
+import {
+  GetAccessor as BaseGetAccessor,
+  toStringOptions,
+} from "@devextreme-generator/core";
 
 export class GetAccessor extends BaseGetAccessor {
   getter(componentContext?: string) {
