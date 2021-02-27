@@ -1,41 +1,39 @@
-import { ReactGenerator } from "./react-generator";
-import path from "path";
-import { Expression } from "./base-generator/expressions/base";
-import { Identifier, Call } from "./base-generator/expressions/common";
+import { Decorators } from '@devextreme-generator/declaration';
+import path from 'path';
 import {
+  Expression,
+  Method,
+  Call,
+  Identifier,
+  Decorator,
+  getModuleRelativePath,
+  compileType,
+  dasherize,
+  kebabSvgAttributes,
   ImportClause,
   ImportDeclaration as BaseImportDeclaration,
   isNamedImports,
-} from "./base-generator/expressions/import";
-import {
   StringLiteral,
   ObjectLiteral,
-} from "./base-generator/expressions/literal";
-import {
   mergeTypeExpressionImports,
   reduceTypeExpressionImports,
   TypeExpression,
   UnionTypeNode,
-} from "./base-generator/expressions/type";
-import { getModuleRelativePath } from "./base-generator/utils/path-utils";
-import {
   GeneratorContext as BaseGeneratorContext,
   GeneratorOptions as BaseGeneratorOptions,
   toStringOptions,
-} from "./base-generator/types";
-import { Decorator } from "./base-generator/expressions/decorator";
-import { Method } from "./base-generator/expressions/class-members";
-import { compileType, dasherize } from "./base-generator/utils/string";
-import { Decorators } from "./component_declaration/decorators";
-import { ComponentInput as BaseComponentInput } from "./react-generator/expressions/react-component-input";
-import { Property as ReactProperty } from "./react-generator/expressions/class-members/property";
-import { HeritageClause } from "./react-generator/expressions/heritage-clause";
-import { ReactComponent } from "./react-generator/expressions/react-component";
-import { TypeReferenceNode as ReactTypeReferenceNode } from "./react-generator/expressions/type-reference-node";
-import { JsxClosingElement as ReactJsxClosingElement } from "./react-generator/expressions/jsx/jsx-closing-element";
-import { JsxOpeningElement as ReactJsxOpeningElement } from "./react-generator/expressions/jsx/jsx-opening-element";
-import { JsxAttribute as ReactJsxAttribute } from "./react-generator/expressions/jsx/jsx-attribute";
-import { kebabSvgAttributes } from "./base-generator/utils/svg-utils/kebab-attributes";
+} from "@devextreme-generator/core";
+import {
+  ReactGenerator,
+  Property as ReactProperty,
+  HeritageClause,
+  JsxAttribute as ReactJsxAttribute,
+  JsxClosingElement as ReactJsxClosingElement,
+  JsxOpeningElement as ReactJsxOpeningElement,
+  ReactComponent,
+  ComponentInput as BaseComponentInput,
+  TypeReferenceNode as ReactTypeReferenceNode,
+} from "@devextreme-generator/react";
 
 const BASE_JQUERY_WIDGET = "BASE_JQUERY_WIDGET";
 
