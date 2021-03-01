@@ -35,6 +35,7 @@
     </Nested>
     <Nested :rows="[]"> </Nested>
     <Nested> </Nested>
+    <Nested><DxRow></DxRow></Nested>
   </div>
 </template>
 <script>

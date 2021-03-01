@@ -65,7 +65,12 @@ function __extractDefaultValues(propsObject) {
 }
 import { GridRow, GridCell } from "./nested-props";
 export const DxRow = {
-  props: GridRow,
+  props: (({ __defaultNestedValues, ...o }) => o)(GridRow),
+  computed: {
+    __defaultNestedValues() {
+      return GridRow.__defaultNestedValues;
+    },
+  },
 };
 DxRow.propName = "rows";
 DxRow.defaultProps = __extractDefaultValues(GridRow);
@@ -89,10 +94,26 @@ export const DxWithNested = {
       return this.$slots.default ? __collectChildren(this.$slots.default) : [];
     },
     __getNestedRow() {
-      const nested = this.__nestedChildren.filter(
-        (child) => child.__name === "rows"
-      );
-      return this.rows ? this.rows : nested.length ? nested : undefined;
+      const nested = this.__nestedChildren
+        .filter((child) => child.__name === "rows")
+        .map((n) => {
+          if (
+            !Object.keys(n).some(
+              (k) => k !== "__name" && k !== "__defaultNestedValues"
+            )
+          ) {
+            return n?.__defaultNestedValues?.() || n;
+          }
+          return n;
+        });
+      return this.rows
+        ? this.rows
+        : nested.length
+        ? nested
+        : this?.__defaultNestedValues()?.rows;
+    },
+    __defaultNestedValues() {
+      return WithNestedInput.__defaultNestedValues;
     },
   },
   methods: {

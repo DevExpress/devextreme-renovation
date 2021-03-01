@@ -454,6 +454,26 @@ export class VueComponent extends Component {
       const containNestedInput = this.context.components?.[
         props
       ]?.members?.some((m) => m.name === "__defaultNestedValues");
+      this.methods.push(
+        new GetAccessor(
+          undefined,
+          undefined,
+          new Identifier("__defaultNestedValues"),
+          [],
+          undefined,
+          new Block(
+            [
+              new ReturnStatement(
+                new PropertyAccess(
+                  new SimpleExpression(props),
+                  new Identifier("__defaultNestedValues")
+                )
+              ),
+            ],
+            true
+          )
+        )
+      );
       if (containNestedInput) {
         return `props: (({ __defaultNestedValues, ...o }) => o)(${props})`;
       }
@@ -508,7 +528,7 @@ export class VueComponent extends Component {
       nestedName = removePlural(nestedName);
     }
     const propName = `${SyntaxKind.ThisKeyword}.${property.name}`;
-
+    const hasDefaultValues = property.isNested && property.initializer;
     const statements = [
       new VariableStatement(
         undefined,
@@ -518,7 +538,22 @@ export class VueComponent extends Component {
               new Identifier("nested"),
               undefined,
               new SimpleExpression(
-                `this.__nestedChildren.filter(child => child.__name === "${property.name}")`
+                `this.__nestedChildren.filter(child => child.__name === "${
+                  property.name
+                }")${
+                  hasDefaultValues
+                    ? `.map((n) => {
+                          if (
+                            !Object.keys(n).some(
+                              (k) => k !== "__name" && k !== "__defaultNestedValues"
+                            )
+                          ) {
+                            return n?.__defaultNestedValues?.() || n;
+                          }
+                          return n;
+                        });`
+                    : ""
+                }`
               )
             ),
           ],
@@ -532,7 +567,11 @@ export class VueComponent extends Component {
           new Conditional(
             new SimpleExpression("nested.length"),
             new SimpleExpression(`nested${indexGetter}`),
-            new SimpleExpression("undefined")
+            new SimpleExpression(
+              hasDefaultValues
+                ? `this?.__defaultNestedValues()?.${property.name}`
+                : "undefined"
+            )
           )
         )
       ),
@@ -557,7 +596,9 @@ export class VueComponent extends Component {
           newComponentContext: "this",
         })
       );
-
+    // const containNestedInput = this.context.components?.[]?.members?.some(
+    //   (m) => m.name === "__defaultNestedValues"
+    // );
     return `computed: {
               ${statements.join(",\n")},
            }`;
@@ -933,8 +974,21 @@ export class VueComponent extends Component {
     name: string,
     propName: string
   ) {
+    const containNestedInput = component.members?.some(
+      (m) => m.name === "__defaultNestedValues"
+    );
     return `export const Dx${name} = {
-      props: ${component.name}
+      ${
+        containNestedInput
+          ? `props: (({ __defaultNestedValues, ...o }) => o)(${component.name}),
+              computed: {
+                __defaultNestedValues(){
+                  return ${component.name}.__defaultNestedValues
+              }
+            }`
+          : `props: ${component.name}`
+      }
+
     }
     Dx${name}.propName="${propName}"
     Dx${name}.defaultProps=__extractDefaultValues(${component.name})`;
