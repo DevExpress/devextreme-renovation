@@ -55,8 +55,8 @@ export function compileJSXTemplateType(
 }
 
 export class Property extends BaseProperty {
-  defaultProps() {
-    return this.defaultDeclaration();
+  defaultProps(options?: toStringOptions) {
+    return this.defaultDeclaration(options);
   }
 
   compileTypeReferenceNode(

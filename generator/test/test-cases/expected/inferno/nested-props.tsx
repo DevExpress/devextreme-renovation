@@ -22,6 +22,7 @@ export declare type EditingPropsType = {
 };
 export const EditingProps: EditingPropsType = {
   editEnabled: false,
+  custom: [new CustomProps()],
 };
 export declare type ColumnEditingPropsType = {
   editEnabled?: boolean;

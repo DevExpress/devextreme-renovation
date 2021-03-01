@@ -88,8 +88,11 @@ export class VueComponent extends Component {
               const collectedChildren = {};
               const defaultProps =
                 child.componentOptions?.Ctor?.extendOptions?.defaultProps || {};
+              const __defaultNestedValues =
+                child.componentOptions?.Ctor?.extendOptions?.computed?.__defaultNestedValues() ||
+                {};
               const childProps = Object.assign(
-                {},
+                {__defaultNestedValues},
                 defaultProps,
                 child.componentOptions.propsData
               );
@@ -447,6 +450,12 @@ export class VueComponent extends Component {
                           ...props,
                           [propName]: {...${props}[propName]}
                         }), {})`;
+      }
+      const containNestedInput = this.context.components?.[
+        props
+      ]?.members?.some((m) => m.name === "__defaultNestedValues");
+      if (containNestedInput) {
+        return `props: (({ __defaultNestedValues, ...o }) => o)(${props})`;
       }
       return `props: ${props}`;
     }

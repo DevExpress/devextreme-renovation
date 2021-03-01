@@ -11,10 +11,10 @@ export class GridCell {
 
 @ComponentBindings()
 export class GridRow {
-  @Nested() cells?: (GridCell | string)[];
+  @Nested() cells?: (GridCell | string)[] = [new GridCell()];
 }
 
 @ComponentBindings()
 export class WithNestedInput {
-  @Nested() rows?: GridRow[];
+  @Nested() rows?: GridRow[] = [new GridRow()];
 }
