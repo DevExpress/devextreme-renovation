@@ -10,12 +10,10 @@
   "author": "Developer Express Inc.",
   "license": "MIT",
   "dependencies": {
-    "@types/react": "^16.9.19",
     "code-block-writer": "^10.1.0",
     "gulp": "^4.0.2",
     "loader-utils": "^2.0.0",
     "prettier": "^2.1.0",
-    "react": "^16.13.1",
     "typescript": "3.8"
   },
   "devDependencies": {
@@ -34,7 +32,6 @@
     "@types/mocha": "5.2.7",
     "@types/node": "^12.12.14",
     "@types/prettier": "^2.1.0",
-    "@types/react-dom": "^16.9.8",
     "@types/sinon": "^7.5.1",
     "@types/typescript": "^2.0.0",
     "angular2-template-loader": "^0.6.2",
