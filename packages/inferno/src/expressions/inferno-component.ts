@@ -1,25 +1,22 @@
+import { SetAccessor } from '@devextreme-generator/angular';
 import {
-  Method,
   BaseClassMember,
-} from "../../base-generator/expressions/class-members";
-import { Identifier } from "../../base-generator/expressions/common";
-import {
-  TypeExpression,
-  FunctionTypeNode,
-} from "../../base-generator/expressions/type";
-import {
   Block,
+  FunctionTypeNode,
+  getProps,
+  Identifier,
+  Method,
+  Parameter,
   ReturnStatement,
-} from "../../base-generator/expressions/statements";
-import { GetAccessor } from "./class-members/get-accessor";
-import { SimpleExpression } from "../../base-generator/expressions/base";
-import { SetAccessor } from "../../angular-generator/expressions/class-members/set-accessor";
-import { Parameter } from "../../base-generator/expressions/functions";
-import { getProps } from "../../base-generator/expressions/component";
-import { getChangeEventToken } from "../../react-generator/expressions/property-access";
-import { Property } from "./class-members/property";
-import { PreactComponent } from "../../preact-generator";
-import { Decorators } from "../../component_declaration/decorators";
+  SimpleExpression,
+  TypeExpression
+} from '@devextreme-generator/core';
+import { Decorators } from '@devextreme-generator/declaration';
+import { PreactComponent } from '@devextreme-generator/preact';
+import { getChangeEventToken } from '@devextreme-generator/react';
+
+import { GetAccessor } from './class-members/get-accessor';
+import { Property } from './class-members/property';
 
 const getEffectRunParameter = (effect: BaseClassMember) =>
   effect.decorators

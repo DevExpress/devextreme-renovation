@@ -1,5 +1,5 @@
-import { JsxOpeningElement as ReactJsxOpeningElement } from "../../../react-generator/expressions/jsx/jsx-opening-element";
-import { Expression } from "../../../base-generator/expressions/base";
+import { Expression } from '@devextreme-generator/core';
+import { JsxOpeningElement as ReactJsxOpeningElement } from '@devextreme-generator/react';
 
 export const processTagName = (tagName: Expression) => tagName;
 

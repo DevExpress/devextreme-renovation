@@ -1,24 +1,28 @@
-import { PreactGenerator, JsxAttribute } from "../preact-generator";
-import { Decorator } from "../base-generator/expressions/decorator";
-import { Identifier } from "../base-generator/expressions/common";
-import { HeritageClause } from "../react-generator/expressions/heritage-clause";
-import { InfernoComponent } from "./expressions/inferno-component";
-import { TypeExpression } from "../base-generator/expressions/type";
-import { Expression } from "../base-generator/expressions/base";
-import { Property } from "./expressions/class-members/property";
-import { PropertyAccess } from "./expressions/property-access";
-import { Parameter } from "../base-generator/expressions/functions";
-import { Block } from "../base-generator/expressions/statements";
-import { GetAccessor } from "./expressions/class-members/get-accessor";
-import { TypeReferenceNode } from "./expressions/type-reference-node";
-import { TypeParameterDeclaration } from "../base-generator/expressions/type-parameter-declaration";
-import { Method } from "./expressions/class-members/method";
-import { JsxOpeningElement } from "./expressions/jsx/jsx-opening-element";
-import { JsxClosingElement } from "./expressions/jsx/jsx-closing-element";
-import { ImportDeclaration } from "./expressions/import-declaration";
-import { ImportClause } from "../base-generator/expressions/import";
-import { StringLiteral } from "../base-generator/expressions/literal";
-import path from "path";
+import path from 'path';
+
+import {
+  Block,
+  Decorator,
+  Expression,
+  Identifier,
+  ImportClause,
+  Parameter,
+  StringLiteral,
+  TypeExpression,
+  TypeParameterDeclaration
+} from '@devextreme-generator/core';
+import { JsxAttribute, PreactGenerator } from '@devextreme-generator/preact';
+import { HeritageClause } from '@devextreme-generator/react';
+
+import { GetAccessor } from './expressions/class-members/get-accessor';
+import { Method } from './expressions/class-members/method';
+import { Property } from './expressions/class-members/property';
+import { ImportDeclaration } from './expressions/import-declaration';
+import { InfernoComponent } from './expressions/inferno-component';
+import { JsxClosingElement } from './expressions/jsx/jsx-closing-element';
+import { JsxOpeningElement } from './expressions/jsx/jsx-opening-element';
+import { PropertyAccess } from './expressions/property-access';
+import { TypeReferenceNode } from './expressions/type-reference-node';
 
 export class InfernoGenerator extends PreactGenerator {
   createComponent(

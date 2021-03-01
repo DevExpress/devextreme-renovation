@@ -1,6 +1,5 @@
-import { Method as ReactMethod } from "../../../react-generator/expressions/class-members/method";
-import { toStringOptions } from "../../../base-generator/types";
-import { compileType } from "../../../base-generator/utils/string";
+import { toStringOptions, compileType } from '@devextreme-generator/core';
+import { Method as ReactMethod } from '@devextreme-generator/react';
 
 export class Method extends ReactMethod {
   toString(options?: toStringOptions) {

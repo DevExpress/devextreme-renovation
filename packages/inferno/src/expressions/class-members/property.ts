@@ -1,16 +1,15 @@
-import { Property as BaseProperty } from "../../../preact-generator";
 import {
   capitalizeFirstLetter,
   compileType,
-} from "../../../base-generator/utils/string";
-import {
-  toStringOptions,
   GeneratorContext,
-} from "../../../base-generator/types";
-import { TypeReferenceNode } from "../type-reference-node";
-import { Decorators } from "../../../component_declaration/decorators";
-import { Identifier } from "../../../base-generator/expressions/common";
-import { TypeExpression } from "../../../base-generator/expressions/type";
+  Identifier,
+  toStringOptions,
+  TypeExpression
+} from '@devextreme-generator/core';
+import { Decorators } from '@devextreme-generator/declaration';
+import { Property as BaseProperty } from '@devextreme-generator/preact';
+
+import { TypeReferenceNode } from '../type-reference-node';
 
 export class Property extends BaseProperty {
   compileTypeReferenceNode(

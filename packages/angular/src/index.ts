@@ -1,4 +1,5 @@
 import { AngularGenerator } from './angular-generator';
+
 export * from "./types";
 export * from "./expressions/property-access";
 export * from "./expressions/property-access-chain";
@@ -12,5 +13,6 @@ export * from "./expressions/jsx/spread-attribute";
 export * from "./expressions/jsx/jsx-child-expression";
 export * from "./expressions/jsx//jsx-opening-element";
 export * from "./expressions/jsx/angular-directive";
+export * from "./expressions/class-members/set-accessor";
 
 export default new AngularGenerator();

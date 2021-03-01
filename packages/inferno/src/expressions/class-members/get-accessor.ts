@@ -1,4 +1,4 @@
-import { GetAccessor as ReactGetAccessor } from "../../../react-generator/expressions/class-members/get-accessor";
+import { GetAccessor as ReactGetAccessor } from "@devextreme-generator/react";
 
 export class GetAccessor extends ReactGetAccessor {
   getter(componentContext?: string) {

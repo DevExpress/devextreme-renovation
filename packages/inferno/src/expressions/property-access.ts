@@ -1,6 +1,7 @@
-import { PropertyAccess as ReactPropertyAccess } from "../../react-generator/expressions/property-access";
-import { Property } from "./class-members/property";
-import { toStringOptions } from "../../base-generator/types";
+import { toStringOptions } from '@devextreme-generator/core';
+import { PropertyAccess as ReactPropertyAccess } from '@devextreme-generator/react';
+
+import { Property } from './class-members/property';
 
 export class PropertyAccess extends ReactPropertyAccess {
   compileStateSetting(
