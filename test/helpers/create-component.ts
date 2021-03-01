@@ -1,9 +1,4 @@
-import Generator from "../../packages/generator/base-generator";
-import {
-  Property,
-  Method,
-} from "../../packages/generator/base-generator/expressions/class-members";
-import { Expression } from "../../packages/generator/base-generator/expressions/base";
+import Generator, { Expression, Method, Property } from '../../packages/core/src/index';
 
 export default function (generator: Generator) {
   function createComponentDecorator(parameters: { [name: string]: any }) {

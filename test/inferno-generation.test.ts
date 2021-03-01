@@ -1,10 +1,10 @@
-import mocha from "./helpers/mocha";
-import generator from "../inferno-generator";
-import compile from "../component-compiler";
-import path from "path";
+import path from 'path';
 
-import { createTestGenerator, getModulePath } from "./helpers/common";
-import { resolveModule } from "../base-generator/utils/path-utils";
+import { resolveModule } from '../packages/core';
+import compile from '../packages/core/src/component-compiler';
+import generator from '../packages/inferno';
+import { createTestGenerator, getModulePath } from './helpers/common';
+import mocha from './helpers/mocha';
 
 mocha.describe("inferno-generation", function () {
   const testGenerator = createTestGenerator("inferno");

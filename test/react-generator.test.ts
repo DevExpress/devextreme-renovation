@@ -1,20 +1,17 @@
-import assert from "assert";
-import mocha from "./helpers/mocha";
-import generator from "../react-generator";
-import { toStringOptions } from "../base-generator/types";
-import { Decorators } from "../component_declaration/decorators";
-import path from "path";
+import assert from 'assert';
+import path from 'path';
+
 import {
-  printSourceCodeAst as getResult,
-  removeSpaces,
-} from "./helpers/common";
-import { GeneratorContext } from "../base-generator/types";
-import { Method } from "../base-generator/expressions/class-members";
-import { SimpleExpression } from "../base-generator/expressions/base";
-import { Binary } from "../base-generator/expressions/operators";
-import { Property } from "../react-generator/expressions/class-members/property";
-import { ReactComponent } from "../react-generator/expressions/react-component";
-import { ComponentInput } from "../react-generator/expressions/react-component-input";
+  Binary,
+  Decorators,
+  GeneratorContext,
+  Method,
+  SimpleExpression,
+  toStringOptions
+} from '../packages/core';
+import generator, { ComponentInput, Property, ReactComponent } from '../packages/react';
+import { printSourceCodeAst as getResult, removeSpaces } from './helpers/common';
+import mocha from './helpers/mocha';
 
 function createComponentDecorator(parameters: { [name: string]: any }) {
   return generator.createDecorator(

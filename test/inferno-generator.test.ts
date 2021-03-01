@@ -1,11 +1,10 @@
-import mocha from "./helpers/mocha";
-import generator from "../inferno-generator";
-import assert from "assert";
-import path from "path";
-import { InfernoGenerator } from "../inferno-generator/inferno-generator";
+import assert from 'assert';
+import path from 'path';
 
-import factory from "./helpers/create-component";
-import { Decorators } from "../component_declaration/decorators";
+import { Decorators } from '../packages/core';
+import generator, { InfernoGenerator } from '../packages/inferno';
+import factory from './helpers/create-component';
+import mocha from './helpers/mocha';
 
 const { createDecorator } = factory(generator);
 

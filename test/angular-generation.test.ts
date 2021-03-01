@@ -1,11 +1,11 @@
-import assert from "assert";
-import mocha from "./helpers/mocha";
-import generator from "../angular-generator";
-import compile from "../component-compiler";
-import path from "path";
+import assert from 'assert';
+import path from 'path';
 
-import { createTestGenerator, getModulePath } from "./helpers/common";
-import { resolveModule } from "../base-generator/utils/path-utils";
+import generator from '../packages/angular';
+import { resolveModule } from '../packages/core';
+import compile from '../packages/core/src/component-compiler';
+import { createTestGenerator, getModulePath } from './helpers/common';
+import mocha from './helpers/mocha';
 
 mocha.describe("angular-generation", function () {
   const testGenerator = createTestGenerator("angular");

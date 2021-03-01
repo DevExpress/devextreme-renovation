@@ -1,6 +1,8 @@
 import { AngularGenerator } from './angular-generator';
 
+export { AngularGenerator };
 export * from "./types";
+export * from "./expressions/component";
 export * from "./expressions/property-access";
 export * from "./expressions/property-access-chain";
 export * from "./expressions/variable-expression";

@@ -1,28 +1,26 @@
-import mocha from "./helpers/mocha";
-import generator from "../angular-generator";
-import assert from "assert";
-import path from "path";
+import assert from 'assert';
+import path from 'path';
 
+import generator, {
+  AngularComponent,
+  AngularDirective,
+  JsxExpression,
+  SetAccessor,
+  toStringOptions
+} from '../packages/angular';
 import {
-  printSourceCodeAst as getResult,
-  removeSpaces,
-  assertCode,
-} from "./helpers/common";
-import { GeneratorContext } from "../base-generator/types";
-import { Identifier } from "../base-generator/expressions/common";
-import { Decorators } from "../component_declaration/decorators";
-
-import factory from "./helpers/create-component";
-import { TypeExpression } from "../base-generator/expressions/type";
-import { Block } from "../base-generator/expressions/statements";
-import { AngularComponent } from "../angular-generator/expressions/component";
-import { toStringOptions } from "../angular-generator/types";
-import { JsxExpression } from "../angular-generator/expressions/jsx/jsx-expression";
-import { AngularDirective } from "../angular-generator/expressions/jsx/angular-directive";
-import { SetAccessor } from "../angular-generator/expressions/class-members/set-accessor";
-import { Expression } from "../base-generator/expressions/base";
-import { ComponentParameters } from "../component_declaration/common";
-import { Parameter } from "../base-generator/expressions/functions";
+  Block,
+  Decorators,
+  Expression,
+  GeneratorContext,
+  Identifier,
+  Parameter,
+  TypeExpression
+} from '../packages/core';
+import { ComponentParameters } from '../packages/declaration';
+import { assertCode, printSourceCodeAst as getResult, removeSpaces } from './helpers/common';
+import factory from './helpers/create-component';
+import mocha from './helpers/mocha';
 
 const { createComponent, createComponentDecorator, createDecorator } = factory(
   generator

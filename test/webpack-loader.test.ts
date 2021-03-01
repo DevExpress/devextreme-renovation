@@ -1,17 +1,17 @@
-import assert from "assert";
-import mocha from "./helpers/mocha";
-import path from "path";
-import sinon from "sinon";
-import * as ComponentCompiler from "../component-compiler";
-import fs from "fs";
+import assert from 'assert';
+import fs from 'fs';
+import path from 'path';
+import sinon from 'sinon';
 
-import compiler from "./helpers/webpack-test-compiler";
-import { PreactGenerator } from "../preact-generator";
-import { ReactGenerator } from "../react-generator";
-import { AngularGenerator } from "../angular-generator/angular-generator";
-import { VueGenerator } from "../vue-generator/vue-generator";
-import { InfernoGenerator } from "../inferno-generator/inferno-generator";
-import { assertCode } from "./helpers/common";
+import { AngularGenerator } from '../packages/angular';
+import * as ComponentCompiler from '../packages/core/src/component-compiler';
+import { InfernoGenerator } from '../packages/inferno';
+import { PreactGenerator } from '../packages/preact';
+import { ReactGenerator } from '../packages/react';
+import { VueGenerator } from '../packages/vue';
+import { assertCode } from './helpers/common';
+import mocha from './helpers/mocha';
+import compiler from './helpers/webpack-test-compiler';
 
 const fixtureFileName = "test/test-cases/declarations/src/props.tsx";
 

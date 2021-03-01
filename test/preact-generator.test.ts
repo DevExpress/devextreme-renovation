@@ -1,17 +1,16 @@
-import mocha from "./helpers/mocha";
-import generator, { PreactComponent } from "../preact-generator";
-import compile from "../component-compiler";
-import path from "path";
-import assert from "assert";
+import assert from 'assert';
+import path from 'path';
 
+import { Decorators } from '../packages/core';
+import compile from '../packages/core/src/component-compiler';
+import generator, { PreactComponent } from '../packages/preact';
 import {
-  printSourceCodeAst as getResult,
   createTestGenerator,
   getModulePath,
-} from "./helpers/common";
-
-import factory from "./helpers/create-component";
-import { Decorators } from "../component_declaration/decorators";
+  printSourceCodeAst as getResult
+} from './helpers/common';
+import factory from './helpers/create-component';
+import mocha from './helpers/mocha';
 
 const { createDecorator } = factory(generator);
 

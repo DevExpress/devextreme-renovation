@@ -1,53 +1,39 @@
-import assert from "assert";
-import mocha from "./helpers/mocha";
-import Generator from "../base-generator";
-import {
-  printSourceCodeAst as getAst,
-  assertCode,
-  removeSpaces,
-} from "./helpers/common";
-import {
-  Expression,
-  SimpleExpression,
-} from "../base-generator/expressions/base";
-import ts from "typescript";
-import {
-  ElementAccess,
-  PropertyAccess,
-} from "../base-generator/expressions/property-access";
-import { Class } from "../base-generator/expressions/class";
-import { ComponentInput } from "../base-generator/expressions/component-input";
-import { Component, getProps } from "../base-generator/expressions/component";
-import {
-  ImportClause,
-  ImportDeclaration,
-} from "../base-generator/expressions/import";
-import sinon from "sinon";
+import assert from 'assert';
+import path from 'path';
+import sinon from 'sinon';
+import ts from 'typescript';
 
-import path from "path";
-
-const generator = new Generator();
-
-import componentCreator from "./helpers/create-component";
-import { toStringOptions } from "../base-generator/types";
-import {
+import Generator, {
   BindingElement,
   BindingPattern,
-} from "../base-generator/expressions/binding-pattern";
-import {
-  Property,
-  Method,
+  Block,
+  Call,
+  Class,
+  Component,
+  ComponentInput,
+  Decorator,
+  ElementAccess,
+  Expression,
   GetAccessor,
-} from "../base-generator/expressions/class-members";
-import { Decorators } from "../component_declaration/decorators";
-import {
+  getProps,
+  Identifier,
+  ImportClause,
+  ImportDeclaration,
   mergeTypeExpressionImports,
+  Method,
+  Property,
+  PropertyAccess,
+  SimpleExpression,
+  toStringOptions,
   TypeExpression,
-  TypeReferenceNode,
-} from "../base-generator/expressions/type";
-import { Call, Identifier } from "../base-generator/expressions/common";
-import { Decorator } from "../base-generator/expressions/decorator";
-import { Block } from "../base-generator/expressions/statements";
+  TypeReferenceNode
+} from '../packages/core/src/index';
+import { Decorators } from '../packages/declaration/src/index';
+import { assertCode, printSourceCodeAst as getAst, removeSpaces } from './helpers/common';
+import componentCreator from './helpers/create-component';
+import mocha from './helpers/mocha';
+
+const generator = new Generator();
 
 const { createComponentDecorator, createDecorator } = componentCreator(
   generator

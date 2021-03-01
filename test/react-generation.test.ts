@@ -1,10 +1,11 @@
-import mocha from "./helpers/mocha";
-import assert from "assert";
-import compile from "../component-compiler";
-import { createTestGenerator, getModulePath } from "./helpers/common";
-import generator from "../react-generator";
-import path from "path";
-import { resolveModule } from "../base-generator/utils/path-utils";
+import assert from 'assert';
+import path from 'path';
+
+import { resolveModule } from '../packages/core';
+import compile from '../packages/core/src/component-compiler';
+import generator from '../packages/react';
+import { createTestGenerator, getModulePath } from './helpers/common';
+import mocha from './helpers/mocha';
 
 mocha.describe("react-generation", function () {
   this.beforeAll(function () {

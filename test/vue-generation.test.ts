@@ -1,7 +1,7 @@
 import assert from "assert";
 import mocha from "./helpers/mocha";
-import generator from "../vue-generator";
-import compile from "../component-compiler";
+import generator from "../packages/vue";
+import compile from "../packages/core/src/component-compiler";
 import path from "path";
 
 import {
@@ -9,7 +9,7 @@ import {
   assertCode,
   getModulePath,
 } from "./helpers/common";
-import { resolveModule } from "../base-generator/utils/path-utils";
+import { resolveModule } from "../packages/core";
 
 function getPartFromSourceFile(code: string, tagName: string) {
   const tag = `<${tagName}>`;

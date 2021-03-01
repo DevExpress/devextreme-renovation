@@ -1,7 +1,7 @@
 import assert from "assert";
 import mocha from "./helpers/mocha";
-import generator from "../preact-generator";
-import vueGenerator from "../vue-generator";
+import generator from "../packages/preact";
+import vueGenerator from "../packages/vue";
 import gulp from "gulp";
 import fs from "fs";
 import path from "path";
@@ -11,7 +11,7 @@ import sinon from "sinon";
 import {
   generateComponents,
   deleteFolderRecursive,
-} from "../component-compiler";
+} from "../packages/core/src/component-compiler";
 import File from "vinyl";
 
 async function readData(stream: NodeJS.ReadableStream): Promise<File[]> {
