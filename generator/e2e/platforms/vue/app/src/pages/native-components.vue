@@ -32,9 +32,17 @@
         <DxRowCell></DxRowCell>
         <DxRowCell grid-data="notDefault"></DxRowCell>
       </DxRow>
+      <DxRow>
+        <DxRowCell></DxRowCell>
+      </DxRow>
     </Nested>
     <Nested :rows="[]"> </Nested>
     <Nested> </Nested>
+    <Nested><DxRow></DxRow></Nested>
+    <Nested
+      ><DxRow :cells="['cell51', { gridData: 'cell52' }]"></DxRow>
+      <DxRow></DxRow
+    ></Nested>
   </div>
 </template>
 <script>
