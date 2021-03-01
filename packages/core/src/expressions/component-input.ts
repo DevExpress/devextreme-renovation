@@ -1,31 +1,31 @@
+import { Decorators } from '../decorators';
+import { SyntaxKind } from '../syntaxKind';
+import { GeneratorContext, TypeExpressionImports } from '../types';
+import { findComponentInput } from '../utils/expressions';
+import { warn } from '../utils/messages';
+import { capitalizeFirstLetter } from '../utils/string';
+import { Expression, SimpleExpression } from './base';
 import {
   Class,
-  Heritable,
-  inheritMembers,
-  HeritageClause,
   getMemberListFromTypeExpression,
-} from "./class";
-import { Parameter } from "./functions";
+  Heritable,
+  HeritageClause,
+  inheritMembers
+} from './class';
+import { BaseClassMember, Method, Property } from './class-members';
+import { Call, Identifier } from './common';
+import { getProps } from './component';
+import { Decorator } from './decorator';
+import { Parameter } from './functions';
 import {
-  SimpleTypeExpression,
-  FunctionTypeNode,
-  TypeExpression,
   extractComplexType,
-  TypeReferenceNode,
+  FunctionTypeNode,
   IntersectionTypeNode,
   mergeTypeExpressionImports,
-} from "./type";
-import { Property, Method, BaseClassMember } from "./class-members";
-import { Identifier, Call } from "./common";
-import { SyntaxKind } from "../syntaxKind";
-import { SimpleExpression, Expression } from "./base";
-import { capitalizeFirstLetter } from "../utils/string";
-import { Decorator } from "./decorator";
-import { warn } from "../utils/messages";
-import { getProps } from "./component";
-import { GeneratorContext, TypeExpressionImports } from "../types";
-import { Decorators } from "@devextreme-generator/declaration";
-import { findComponentInput } from "../utils/expressions";
+  SimpleTypeExpression,
+  TypeExpression,
+  TypeReferenceNode
+} from './type';
 
 const RESERVED_NAMES = ["class", "key", "ref", "style", "class"];
 

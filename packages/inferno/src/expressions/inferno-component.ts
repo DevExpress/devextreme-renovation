@@ -2,6 +2,7 @@ import { SetAccessor } from '@devextreme-generator/angular';
 import {
   BaseClassMember,
   Block,
+  Decorators,
   FunctionTypeNode,
   getProps,
   Identifier,
@@ -11,7 +12,6 @@ import {
   SimpleExpression,
   TypeExpression
 } from '@devextreme-generator/core';
-import { Decorators } from '@devextreme-generator/declaration';
 import { PreactComponent } from '@devextreme-generator/preact';
 import { getChangeEventToken } from '@devextreme-generator/react';
 

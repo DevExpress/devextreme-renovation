@@ -1,18 +1,18 @@
-import { HeritageClause } from "../expressions/class";
-import { Identifier, Call } from "../expressions/common";
-import { Decorator } from "../expressions/decorator";
+import { Decorators } from '../decorators';
+import { HeritageClause } from '../expressions/class';
+import { Call, Identifier } from '../expressions/common';
+import { Component } from '../expressions/component';
+import { ComponentInput } from '../expressions/component-input';
+import { Decorator } from '../expressions/decorator';
 import {
   ExpressionWithTypeArguments,
   extractElementType,
   isTypeArray,
   TypeExpression,
   TypeQueryNode,
-  TypeReferenceNode,
-} from "../expressions/type";
-import { GeneratorContext } from "../types";
-import { Decorators } from "@devextreme-generator/declaration";
-import { Component } from "../expressions/component";
-import { ComponentInput } from "../expressions/component-input";
+  TypeReferenceNode
+} from '../expressions/type';
+import { GeneratorContext } from '../types';
 
 export function extractComponentFromType(
   typeExpression: string | TypeExpression | undefined,

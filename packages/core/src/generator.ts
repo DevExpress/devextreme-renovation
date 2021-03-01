@@ -1,134 +1,113 @@
-import { SyntaxKind } from "./syntaxKind";
-import fs from "fs";
-import path from "path";
-import { compileCode } from "./component-compiler";
+import fs from 'fs';
+import path from 'path';
+import prettier from 'prettier';
+
+import { compileCode } from './component-compiler';
+import { Decorators } from './decorators';
+import { Expression, SimpleExpression } from './expressions/base';
+import { BindingElement, BindingPattern } from './expressions/binding-pattern';
+import { Class, HeritageClause } from './expressions/class';
+import { Constructor, GetAccessor, Method, Property } from './expressions/class-members';
 import {
-  ImportDeclaration,
-  ImportClause,
-  NamedImportBindings,
-  NamedImports,
-  NamespaceImport,
-  ImportSpecifier,
-} from "./expressions/import";
-import { SimpleExpression, Expression } from "./expressions/base";
-import {
+  AsExpression,
+  Call,
+  CallChain,
+  Delete,
   Identifier,
   New,
-  Delete,
-  Paren,
-  Call,
   NonNullExpression,
+  Paren,
   TypeOf,
-  Void,
-  CallChain,
-  AsExpression,
-} from "./expressions/common";
+  Void
+} from './expressions/common';
+import { Component } from './expressions/component';
+import { ComponentInput, membersFromTypeDeclaration } from './expressions/component-input';
 import {
-  JsxExpression,
+  CaseBlock,
+  CaseClause,
+  Conditional,
+  DefaultClause,
+  If,
+  Switch
+} from './expressions/conditions';
+import { Do, For, ForIn, While } from './expressions/cycle';
+import { Decorator } from './expressions/decorator';
+import { Enum, EnumMember } from './expressions/enum';
+import { ExportDeclaration, ExportSpecifier, NamedExports } from './expressions/export';
+import { ArrowFunction, Function, Parameter } from './expressions/functions';
+import {
+  ImportClause,
+  ImportDeclaration,
+  ImportSpecifier,
+  NamedImportBindings,
+  NamedImports,
+  NamespaceImport
+} from './expressions/import';
+import { Interface } from './expressions/interface';
+import {
   JsxAttribute,
-  JsxSpreadAttribute,
-  JsxOpeningElement,
-  JsxSelfClosingElement,
   JsxClosingElement,
   JsxElement,
-} from "./expressions/jsx";
-import { Parameter, ArrowFunction, Function } from "./expressions/functions";
+  JsxExpression,
+  JsxOpeningElement,
+  JsxSelfClosingElement,
+  JsxSpreadAttribute
+} from './expressions/jsx';
+import { ArrayLiteral, NumericLiteral, ObjectLiteral, StringLiteral } from './expressions/literal';
+import { Binary, Postfix, Prefix } from './expressions/operators';
 import {
-  TypeExpression,
-  FunctionTypeNode,
-  TypeReferenceNode,
-  SimpleTypeExpression,
-  ArrayTypeNode,
-  PropertySignature,
-  IndexSignature,
-  TypeLiteralNode,
-  IntersectionTypeNode,
-  UnionTypeNode,
-  TypeQueryNode,
-  ParenthesizedType,
-  LiteralTypeNode,
-  IndexedAccessTypeNode,
-  QualifiedName,
-  MethodSignature,
-  TypeOperatorNode,
-  TypeAliasDeclaration,
-  TypePredicateNode,
-  InferTypeNode,
-  TupleTypeNode,
-  ConditionalTypeNode,
-  OptionalTypeNode,
-} from "./expressions/type";
+  ComputedPropertyName,
+  ElementAccess,
+  PropertyAccess,
+  PropertyAccessChain,
+  Spread
+} from './expressions/property-access';
 import {
-  Method,
-  GetAccessor,
-  Property,
-  Constructor,
-} from "./expressions/class-members";
-import { For, ForIn, Do, While } from "./expressions/cycle";
-import {
-  CaseClause,
-  DefaultClause,
-  CaseBlock,
-  Switch,
-  If,
-  Conditional,
-} from "./expressions/conditions";
-import {
-  ShorthandPropertyAssignment,
-  SpreadAssignment,
   PropertyAssignment,
-} from "./expressions/property-assignment";
-import { Binary, Prefix, Postfix } from "./expressions/operators";
-import { ReturnStatement, Block } from "./expressions/statements";
+  ShorthandPropertyAssignment,
+  SpreadAssignment
+} from './expressions/property-assignment';
+import { Block, ReturnStatement } from './expressions/statements';
+import { TemplateExpression, TemplateSpan } from './expressions/template';
+import { Throw } from './expressions/throw';
+import { CatchClause, Try } from './expressions/try-catch';
 import {
-  GeneratorContext,
-  GeneratorOptions,
-  GeneratorCache,
-  VariableExpression,
-} from "./types";
+  ArrayTypeNode,
+  ConditionalTypeNode,
+  ExpressionWithTypeArguments,
+  FunctionTypeNode,
+  IndexedAccessTypeNode,
+  IndexSignature,
+  InferTypeNode,
+  IntersectionTypeNode,
+  LiteralTypeNode,
+  MethodSignature,
+  OptionalTypeNode,
+  ParenthesizedType,
+  PropertySignature,
+  QualifiedName,
+  SimpleTypeExpression,
+  TupleTypeNode,
+  TypeAliasDeclaration,
+  TypeExpression,
+  TypeLiteralNode,
+  TypeOperatorNode,
+  TypePredicateNode,
+  TypeQueryNode,
+  TypeReferenceNode,
+  UnionTypeNode
+} from './expressions/type';
+import { TypeParameterDeclaration } from './expressions/type-parameter-declaration';
 import {
   VariableDeclaration,
   VariableDeclarationList,
-  VariableStatement,
-} from "./expressions/variables";
-import {
-  StringLiteral,
-  ArrayLiteral,
-  ObjectLiteral,
-  NumericLiteral,
-} from "./expressions/literal";
-import { Class, HeritageClause } from "./expressions/class";
-import { TemplateSpan, TemplateExpression } from "./expressions/template";
-import {
-  ComputedPropertyName,
-  PropertyAccess,
-  ElementAccess,
-  PropertyAccessChain,
-  Spread,
-} from "./expressions/property-access";
-import { BindingPattern, BindingElement } from "./expressions/binding-pattern";
-import {
-  ComponentInput,
-  membersFromTypeDeclaration,
-} from "./expressions/component-input";
-import { Component } from "./expressions/component";
-import { ExpressionWithTypeArguments } from "./expressions/type";
-import { getModuleRelativePath, resolveModule } from "./utils/path-utils";
-import { Decorator } from "./expressions/decorator";
-import { Interface } from "./expressions/interface";
-import { Throw } from "./expressions/throw";
-import { CatchClause, Try } from "./expressions/try-catch";
-import { Decorators } from "@devextreme-generator/declaration";
-import { TypeParameterDeclaration } from "./expressions/type-parameter-declaration";
-import prettier from "prettier";
-import { GeneratorAPI, GeneratorResult } from "./generator-api";
-import {
-  ExportDeclaration,
-  ExportSpecifier,
-  NamedExports,
-} from "./expressions/export";
-import { Enum, EnumMember } from "./expressions/enum";
-import { getExpression } from "./utils/expressions";
+  VariableStatement
+} from './expressions/variables';
+import { GeneratorAPI, GeneratorResult } from './generator-api';
+import { SyntaxKind } from './syntaxKind';
+import { GeneratorCache, GeneratorContext, GeneratorOptions, VariableExpression } from './types';
+import { getExpression } from './utils/expressions';
+import { getModuleRelativePath, resolveModule } from './utils/path-utils';
 
 export class Generator implements GeneratorAPI {
   NodeFlags = {

@@ -1,4 +1,5 @@
 import { Generator } from './generator';
+export * from "./decorators";
 export * from "./expressions/base";
 export * from "./expressions/binding-pattern";
 export * from "./expressions/class-members";

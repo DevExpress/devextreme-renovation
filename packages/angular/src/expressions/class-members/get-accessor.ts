@@ -1,20 +1,21 @@
 import {
-  isComplexType,
-  TypeExpression,
-  GetAccessor as BaseGetAccessor,
-  SimpleExpression,
-  ReturnStatement,
-  Block,
-  Identifier,
-  Call,
-  Paren,
-  Parameter,
   ArrowFunction,
   Binary,
+  Block,
+  Call,
+  Decorators,
+  GetAccessor as BaseGetAccessor,
+  Identifier,
+  isComplexType,
+  Parameter,
+  Paren,
+  ReturnStatement,
+  SimpleExpression,
   SyntaxKind,
-} from "@devextreme-generator/core";
-import { Decorators } from "@devextreme-generator/declaration";
-import { Decorator } from "../decorator";
+  TypeExpression
+} from '@devextreme-generator/core';
+
+import { Decorator } from '../decorator';
 
 export class GetAccessor extends BaseGetAccessor {
   constructor(

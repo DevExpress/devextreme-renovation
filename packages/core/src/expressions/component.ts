@@ -1,29 +1,20 @@
-import { Identifier, Call } from "./common";
-import {
-  GetAccessor,
-  Property,
-  Method,
-  BaseClassMember,
-} from "./class-members";
-import { SimpleExpression, Expression } from "./base";
-import { ObjectLiteral } from "./literal";
-import { HeritageClause, inheritMembers, Class, Heritable } from "./class";
-import { GeneratorContext, toStringOptions } from "../types";
-import { Block, ReturnStatement } from "./statements";
-import { getModuleRelativePath } from "../utils/path-utils";
-import { Decorator } from "./decorator";
-import { BaseFunction, getViewFunctionBindingPattern } from "./functions";
-import {
-  compileType,
-  capitalizeFirstLetter,
-  removePlural,
-} from "../utils/string";
-import { SyntaxKind } from "../syntaxKind";
-import { warn } from "../utils/messages";
-import { Decorators } from "@devextreme-generator/declaration";
-import { ComponentInput } from "./component-input";
-import { extractComplexType, isTypeArray, TypeExpression } from "./type";
-import { BindingElement, BindingPattern } from "./binding-pattern";
+import { Decorators } from '../decorators';
+import { SyntaxKind } from '../syntaxKind';
+import { GeneratorContext, toStringOptions } from '../types';
+import { warn } from '../utils/messages';
+import { getModuleRelativePath } from '../utils/path-utils';
+import { capitalizeFirstLetter, compileType, removePlural } from '../utils/string';
+import { Expression, SimpleExpression } from './base';
+import { BindingElement, BindingPattern } from './binding-pattern';
+import { Class, Heritable, HeritageClause, inheritMembers } from './class';
+import { BaseClassMember, GetAccessor, Method, Property } from './class-members';
+import { Call, Identifier } from './common';
+import { ComponentInput } from './component-input';
+import { Decorator } from './decorator';
+import { BaseFunction, getViewFunctionBindingPattern } from './functions';
+import { ObjectLiteral } from './literal';
+import { Block, ReturnStatement } from './statements';
+import { extractComplexType, isTypeArray, TypeExpression } from './type';
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
   return heritageClauses.some((h) => h.isJsxComponent);

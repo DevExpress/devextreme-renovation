@@ -1,19 +1,17 @@
-import { Decorators } from '@devextreme-generator/declaration';
 import {
-  Property as BaseProperty,
-  Identifier,
-  SyntaxKind,
-  compileType,
   capitalizeFirstLetter,
-  toStringOptions,
+  compileType,
+  Decorators,
   GeneratorContext,
-  TypeExpression,
+  Identifier,
+  Property as BaseProperty,
   SimpleTypeExpression,
-} from "@devextreme-generator/core";
-import {
-  compileJSXTemplateProps,
-  TypeReferenceNode,
-} from "../type-reference-node";
+  SyntaxKind,
+  toStringOptions,
+  TypeExpression
+} from '@devextreme-generator/core';
+
+import { compileJSXTemplateProps, TypeReferenceNode } from '../type-reference-node';
 
 export function getLocalStateName(
   name: Identifier | string,

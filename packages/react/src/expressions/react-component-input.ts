@@ -1,18 +1,19 @@
-import { Method } from './class-members/method';
-import { compileJSXTemplateType, Property } from './class-members/property';
-import { Decorators } from "@devextreme-generator/declaration";
 import {
-  Expression,
-  Property as BaseProperty,
   BaseClassMember,
   Call,
-  Identifier,
+  capitalizeFirstLetter,
   ComponentInput as BaseComponentInput,
   Decorator,
-  TypeExpression,
+  Decorators,
+  Expression,
+  Identifier,
+  Property as BaseProperty,
   SyntaxKind,
-  capitalizeFirstLetter,
-} from "@devextreme-generator/core";
+  TypeExpression
+} from '@devextreme-generator/core';
+
+import { Method } from './class-members/method';
+import { compileJSXTemplateType, Property } from './class-members/property';
 
 export function getTemplatePropName(
   name: Identifier | string,

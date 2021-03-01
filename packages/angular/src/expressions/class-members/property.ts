@@ -1,17 +1,18 @@
 import {
   capitalizeFirstLetter,
   compileType,
+  Decorators,
   Expression,
   FunctionTypeNode,
   Identifier,
   Property as BaseProperty,
   SimpleExpression,
   SyntaxKind,
-  TypeExpression,
-} from "@devextreme-generator/core";
-import { Decorators } from "@devextreme-generator/declaration";
-import { Decorator } from "../decorator";
-import { toStringOptions } from "../../types";
+  TypeExpression
+} from '@devextreme-generator/core';
+
+import { toStringOptions } from '../../types';
+import { Decorator } from '../decorator';
 
 function parseEventType(type: TypeExpression | string) {
   if (type instanceof FunctionTypeNode) {

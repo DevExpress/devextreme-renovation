@@ -1,39 +1,40 @@
-import { Decorators } from '@devextreme-generator/declaration';
 import path from 'path';
+
 import {
-  Expression,
-  Method,
   Call,
-  Identifier,
-  Decorator,
-  getModuleRelativePath,
   compileType,
   dasherize,
-  kebabSvgAttributes,
+  Decorator,
+  Decorators,
+  Expression,
+  GeneratorContext as BaseGeneratorContext,
+  GeneratorOptions as BaseGeneratorOptions,
+  getModuleRelativePath,
+  Identifier,
   ImportClause,
   ImportDeclaration as BaseImportDeclaration,
   isNamedImports,
-  StringLiteral,
-  ObjectLiteral,
+  kebabSvgAttributes,
   mergeTypeExpressionImports,
+  Method,
+  ObjectLiteral,
   reduceTypeExpressionImports,
-  TypeExpression,
-  UnionTypeNode,
-  GeneratorContext as BaseGeneratorContext,
-  GeneratorOptions as BaseGeneratorOptions,
+  StringLiteral,
   toStringOptions,
-} from "@devextreme-generator/core";
+  TypeExpression,
+  UnionTypeNode
+} from '@devextreme-generator/core';
 import {
-  ReactGenerator,
-  Property as ReactProperty,
+  ComponentInput as BaseComponentInput,
   HeritageClause,
   JsxAttribute as ReactJsxAttribute,
   JsxClosingElement as ReactJsxClosingElement,
   JsxOpeningElement as ReactJsxOpeningElement,
+  Property as ReactProperty,
   ReactComponent,
-  ComponentInput as BaseComponentInput,
-  TypeReferenceNode as ReactTypeReferenceNode,
-} from "@devextreme-generator/react";
+  ReactGenerator,
+  TypeReferenceNode as ReactTypeReferenceNode
+} from '@devextreme-generator/react';
 
 const BASE_JQUERY_WIDGET = "BASE_JQUERY_WIDGET";
 

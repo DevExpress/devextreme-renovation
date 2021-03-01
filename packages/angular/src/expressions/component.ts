@@ -1,11 +1,3 @@
-import { GetAccessor } from './class-members/get-accessor';
-import { Property } from './class-members/property';
-import { PropsGetAccessor } from './class-members/props-get-accessor';
-import { SetAccessor } from './class-members/set-accessor';
-import { ComponentInput } from './component-input';
-import { Decorator } from './decorator';
-import { isElement } from './jsx/elements';
-import { AngularGeneratorContext, toStringOptions } from '../types';
 import {
   ArrayLiteral,
   BindingElement,
@@ -15,6 +7,7 @@ import {
   capitalizeFirstLetter,
   compileType,
   Component,
+  Decorators,
   Expression,
   extractComplexType,
   FunctionTypeNode,
@@ -36,18 +29,25 @@ import {
   SimpleTypeExpression,
   StringLiteral,
   SyntaxKind
-  } from '@devextreme-generator/core';
-import { Decorators } from '@devextreme-generator/declaration';
+} from '@devextreme-generator/core';
+
+import { AngularGeneratorContext, toStringOptions } from '../types';
+import { GetAccessor } from './class-members/get-accessor';
+import { Property } from './class-members/property';
+import { PropsGetAccessor } from './class-members/props-get-accessor';
+import { SetAccessor } from './class-members/set-accessor';
+import { ComponentInput } from './component-input';
+import { Decorator } from './decorator';
+import { isElement } from './jsx/elements';
+import {
+  dynamicComponentDirective,
+  dynamicComponentDirectiveCoreImports
+} from './templates/dynamic-component-directive';
 import {
   angularPortalCdkImports,
   angularPortalCoreImports,
-  angularPortalTemplate,
-} from "./templates/portal-component";
-import {
-  dynamicComponentDirective,
-  dynamicComponentDirectiveCoreImports,
-} from "./templates/dynamic-component-directive";
-
+  angularPortalTemplate
+} from './templates/portal-component';
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = "CUSTOM_VALUE_ACCESSOR_PROVIDER";
 

@@ -1,12 +1,12 @@
 import {
   capitalizeFirstLetter,
   compileType,
+  Decorators,
   GeneratorContext,
   Identifier,
   toStringOptions,
   TypeExpression
 } from '@devextreme-generator/core';
-import { Decorators } from '@devextreme-generator/declaration';
 import { Property as BaseProperty } from '@devextreme-generator/preact';
 
 import { TypeReferenceNode } from '../type-reference-node';

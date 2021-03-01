@@ -1,5 +1,4 @@
-import { ImportDeclaration as BaseImportDeclaration } from "@devextreme-generator/core";
-import { Decorators } from "@devextreme-generator/declaration";
+import { Decorators, ImportDeclaration as BaseImportDeclaration } from '@devextreme-generator/core';
 
 export class ImportDeclaration extends BaseImportDeclaration {
   compileComponentDeclarationImport() {

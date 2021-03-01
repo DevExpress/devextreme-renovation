@@ -1,29 +1,25 @@
-import { Identifier } from "./common";
+import { Decorators } from '../decorators';
+import { SyntaxKind } from '../syntaxKind';
+import { GeneratorContext, toStringOptions, TypeExpressionImports } from '../types';
 import {
-  TypeExpression,
-  SimpleTypeExpression,
+  calculateType,
+  compileType,
+  compileTypeParameters,
+  processComponentContext
+} from '../utils/string';
+import { Expression } from './base';
+import { Identifier } from './common';
+import { Decorator } from './decorator';
+import { Parameter } from './functions';
+import { Block } from './statements';
+import {
   mergeTypeExpressionImports,
   reduceTypeExpressionImports,
-  TypeReferenceNode,
-} from "./type";
-import { Expression } from "./base";
-import {
-  GeneratorContext,
-  toStringOptions,
-  TypeExpressionImports,
-} from "../types";
-import { Parameter } from "./functions";
-import { Block } from "./statements";
-import {
-  compileType,
-  processComponentContext,
-  calculateType,
-  compileTypeParameters,
-} from "../utils/string";
-import { Decorator } from "./decorator";
-import { Decorators } from "@devextreme-generator/declaration";
-import { TypeParameterDeclaration } from "./type-parameter-declaration";
-import { SyntaxKind } from "../syntaxKind";
+  SimpleTypeExpression,
+  TypeExpression,
+  TypeReferenceNode
+} from './type';
+import { TypeParameterDeclaration } from './type-parameter-declaration';
 
 export class BaseClassMember extends Expression {
   decorators: Decorator[];

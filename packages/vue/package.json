@@ -72,7 +72,6 @@
     "webpack-dev-server": "^3.11.0",
     "zone.js": "^0.10.3",
     "@devextreme-generator/core": "^1.0.0",
-    "@devextreme-generator/declaration": "^1.0.0",
     "@devextreme-generator/angular": "^1.0.0"
   }
 }
