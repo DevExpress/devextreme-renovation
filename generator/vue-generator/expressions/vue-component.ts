@@ -445,15 +445,16 @@ export class VueComponent extends Component {
   generateProps() {
     if (this.isJSXComponent) {
       let props = this.heritageClauses[0].propsType.toString();
+      const propName = props;
+      const containNestedInput = this.context.components?.[
+        propName
+      ]?.members?.some((m) => m.name === "__defaultNestedValues");
       if (this.needGenerateDefaultOptions) {
         props = `Object.keys(${props}).reduce((props, propName)=>({
                           ...props,
                           [propName]: {...${props}[propName]}
                         }), {})`;
       }
-      const containNestedInput = this.context.components?.[
-        props
-      ]?.members?.some((m) => m.name === "__defaultNestedValues");
       this.methods.push(
         new GetAccessor(
           undefined,
@@ -465,7 +466,7 @@ export class VueComponent extends Component {
             [
               new ReturnStatement(
                 new PropertyAccess(
-                  new SimpleExpression(props),
+                  new SimpleExpression(propName),
                   new Identifier("__defaultNestedValues")
                 )
               ),
@@ -596,9 +597,7 @@ export class VueComponent extends Component {
           newComponentContext: "this",
         })
       );
-    // const containNestedInput = this.context.components?.[]?.members?.some(
-    //   (m) => m.name === "__defaultNestedValues"
-    // );
+
     return `computed: {
               ${statements.join(",\n")},
            }`;
