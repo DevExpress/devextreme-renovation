@@ -4,7 +4,6 @@ import {
   Identifier,
 } from "../../base-generator/expressions/common";
 import { toStringOptions } from "../types";
-import { PropertyAccess } from "./property-access";
 import { PropertyAccessChain } from "../../angular-generator/expressions/property-access-chain";
 import syntaxKind from "../../base-generator/syntaxKind";
 import { PropertyAssignment } from "../../base-generator/expressions/property-assignment";

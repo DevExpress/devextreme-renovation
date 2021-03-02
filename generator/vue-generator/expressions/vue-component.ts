@@ -201,7 +201,9 @@ export class VueComponent extends Component {
   }
 
   createPropsGetter(members: Array<Property | Method>) {
-    const props = getProps(members);
+    const props = getProps(members).filter(
+      (m) => m.name !== "__defaultNestedValues"
+    );
 
     const propertyAssignments = props.map((p) => {
       const expression = p.isForwardRefProp

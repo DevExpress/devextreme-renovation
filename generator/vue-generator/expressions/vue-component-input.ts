@@ -7,16 +7,13 @@ import { Property } from "./class-members/property";
 import { GeneratorContext } from "../../base-generator/types";
 import SyntaxKind from "../../base-generator/syntaxKind";
 import { Method } from "./class-members/method";
-import { isNewExpression } from "typescript";
-import syntaxKind from "../../base-generator/syntaxKind";
-import { ArrowFunction } from "./functions/arrow-function";
-import { Function } from "./functions/function";
 import {
   Block,
   ReturnStatement,
 } from "../../base-generator/expressions/statements";
 import { ObjectLiteral } from "../../base-generator/expressions/literal";
 import { PropertyAssignment } from "../../base-generator/expressions/property-assignment";
+import { ArrowFunction } from "./functions/arrow-function";
 
 export class VueComponentInput extends ComponentInput {
   createProperty(
@@ -51,18 +48,6 @@ export class VueComponentInput extends ComponentInput {
           .map((m) =>
             m.toString({
               members: [],
-              componentInputs: Object.keys(this.context.components || {}).map(
-                (name) => ({
-                  name,
-                  isNested:
-                    this.context.components?.[name].members.some(
-                      (m) => m.isNested
-                    ) || false,
-                  fields: this.context.components?.[name].members.map(
-                    (m) => m._name
-                  ),
-                })
-              ),
             })
           )
       )
@@ -101,31 +86,36 @@ export class VueComponentInput extends ComponentInput {
       return accum;
     }, [] as { name: string; initializer: Expression }[]);
     if (containNestedWithInitializer && initializerArray.length) {
-      const defaultNestedValuesProp = new Method(
+      const defaultNestedValuesProp = new Property(
+        [new Decorator(new Call(new Identifier("OneWay"), undefined, []), {})],
         [],
-        [],
-        "",
         new Identifier("__defaultNestedValues"),
-        undefined,
-        [],
-        [],
-        undefined,
-        new Block(
-          [
-            new ReturnStatement(
-              new ObjectLiteral(
-                initializerArray.map(
-                  (elem) =>
-                    new PropertyAssignment(
-                      new Identifier(elem.name),
-                      elem.initializer
-                    )
-                ),
-                true
-              )
-            ),
-          ],
-          true
+        "",
+        "Function",
+        new ArrowFunction(
+          [],
+          undefined,
+          [],
+          undefined,
+          SyntaxKind.EqualsGreaterThanToken,
+          new Block(
+            [
+              new ReturnStatement(
+                new ObjectLiteral(
+                  initializerArray.map(
+                    (elem) =>
+                      new PropertyAssignment(
+                        new Identifier(elem.name),
+                        elem.initializer
+                      )
+                  ),
+                  true
+                )
+              ),
+            ],
+            true
+          ),
+          this.context
         )
       );
       return defaultNestedValuesProp;

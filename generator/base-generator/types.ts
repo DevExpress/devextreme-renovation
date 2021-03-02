@@ -25,7 +25,6 @@ export type toStringOptions = {
   variables?: VariableExpression;
   jsxComponent?: Component;
   usePropsSpace?: boolean;
-  keepRef?: boolean;
   componentInputs?: {
     name: string;
     isNested: boolean;

@@ -22,6 +22,7 @@ import {
 import { Property as BaseProperty } from "../../../base-generator/expressions/class-members";
 import { toStringOptions } from "../../types";
 import { Expression } from "../../../base-generator/expressions/base";
+import { ArrowFunction } from "../functions/arrow-function";
 
 const BasicTypes = [
   "String",
@@ -134,7 +135,27 @@ export class Property extends BaseProperty {
     if (this.questionOrExclamationToken === SyntaxKind.ExclamationToken) {
       parts.push("required: true");
     }
-    if (!this.isNested)
+    if (this.name === "__defaultNestedValues") {
+      const context =
+        this.initializer instanceof ArrowFunction
+          ? this.initializer.context
+          : undefined;
+      const componentInputs = Object.keys(context?.components || {}).map(
+        (name) => {
+          const members = context?.components?.[name].members;
+          return {
+            name,
+            isNested: members?.some((m) => m.isNested) || false,
+            fields: members?.map((m) => m._name),
+          };
+        }
+      );
+      return `${this.name}: ${this.initializer?.toString({
+        ...options,
+        componentInputs,
+      })}`;
+    }
+    if (!this.isNested) {
       if (this.initializer && type !== "Function") {
         parts.push(`default(){
                   return ${this.initializer}
@@ -146,6 +167,7 @@ export class Property extends BaseProperty {
         return undefined
       }`);
       }
+    }
 
     return `${this.name}: {
               ${parts.join(",\n")}
