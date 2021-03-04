@@ -140,7 +140,7 @@ mocha.describe("Expressions", function () {
 
         assert.strictEqual(
           expression.toString(),
-          `import {InfernoComponent} from "../modules/inferno/base_component"`
+          `import { BaseInfernoComponent, InfernoComponent } from "../modules/inferno/base_component"`
         );
       }
     );
@@ -172,7 +172,7 @@ mocha.describe("Expressions", function () {
 
         assert.strictEqual(
           expression.toString(),
-          `import {InfernoComponent} from "devextreme-generator/modules/base_component"`
+          `import { BaseInfernoComponent, InfernoComponent } from "devextreme-generator/modules/base_component"`
         );
       }
     );
