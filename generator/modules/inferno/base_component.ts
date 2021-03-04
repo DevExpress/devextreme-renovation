@@ -21,8 +21,7 @@ const areObjectsEqual = (firstObject: any, secondObject: any) => {
   return !hasDifferentElement;
 };
 
-export class InfernoComponent<P = {}, S = {}> extends Component<P, S> {
-  _effects: InfernoEffect[] = [];
+export class BaseInfernoComponent<P = {}, S = {}> extends Component<P, S> {
   _pendingContext: any = this.context;
 
   componentWillReceiveProps(_: any, context: any) {
@@ -35,6 +34,13 @@ export class InfernoComponent<P = {}, S = {}> extends Component<P, S> {
       !areObjectsEqual(this.context, this._pendingContext)
     );
   }
+}
+
+export class InfernoComponent<P = {}, S = {}> extends BaseInfernoComponent<
+  P,
+  S
+> {
+  _effects: InfernoEffect[] = [];
 
   createEffects(): InfernoEffect[] {
     return [];
