@@ -1,5 +1,4 @@
-import { PickedProps, GridColumnProps } from "./nested-props";
-export const CustomColumnComponent = (props: GridColumnProps) => {};
+import { WithNestedInput } from "./nested-props";
 import {
   Component,
   NgModule,
@@ -13,143 +12,75 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-import {
-  EditingProps,
-  CustomProps,
-  ColumnEditingProps,
-  AnotherCustomProps,
-} from "./nested-props";
+import { GridRow, GridCell } from "./nested-props";
 
 @Directive({
-  selector: "dx-widget dxo-editing dxo-another-custom",
+  selector: "dx-with-nested dxi-row dxi-cell",
 })
-class DxWidgetEditingAnotherCustom extends AnotherCustomProps {}
+class DxWithNestedRowCell extends GridCell {}
 
 @Directive({
-  selector: "dx-widget dxo-editing dxi-custom",
+  selector: "dx-with-nested dxi-row",
 })
-class DxWidgetEditingCustom extends CustomProps {}
-
-@Directive({
-  selector: "dx-widget dxi-column dxo-editing",
-})
-class DxWidgetColumnEditing extends ColumnEditingProps {}
-
-@Directive({
-  selector: "dx-widget dxi-column dxi-custom",
-})
-class DxWidgetColumnCustom extends CustomProps {}
-
-@Directive({
-  selector: "dx-widget dxo-editing",
-})
-class DxWidgetEditing extends EditingProps {
-  private __custom?: DxWidgetEditingCustom[];
-  @ContentChildren(DxWidgetEditingCustom) customNested!: QueryList<
-    DxWidgetEditingCustom
-  >;
-  @Input() set custom(value: DxWidgetEditingCustom[] | undefined) {
-    this.__custom = value;
+class DxWithNestedRow extends GridRow {
+  private __cells?: (DxWithNestedRowCell | string)[];
+  @ContentChildren(DxWithNestedRowCell)
+  cellsNested!: QueryList<DxWithNestedRowCell>;
+  @Input() set cells(value: (DxWithNestedRowCell | string)[] | undefined) {
+    this.__cells = value;
   }
-  get custom(): DxWidgetEditingCustom[] | undefined {
-    if (this.__custom) {
-      return this.__custom;
+  get cells(): (DxWithNestedRowCell | string)[] | undefined {
+    if (this.__cells) {
+      return this.__cells;
     }
-    const nested = this.customNested.toArray();
+    const nested = this.cellsNested.toArray();
     if (nested.length) {
       return nested;
     }
-  }
-  private __anotherCustom?: DxWidgetEditingAnotherCustom;
-  @ContentChildren(DxWidgetEditingAnotherCustom)
-  anotherCustomNested!: QueryList<DxWidgetEditingAnotherCustom>;
-  @Input() set anotherCustom(value: DxWidgetEditingAnotherCustom | undefined) {
-    this.__anotherCustom = value;
-  }
-  get anotherCustom(): DxWidgetEditingAnotherCustom | undefined {
-    if (this.__anotherCustom) {
-      return this.__anotherCustom;
-    }
-    const nested = this.anotherCustomNested.toArray();
-    if (nested.length) {
-      return nested[0];
-    }
-  }
-}
-
-@Directive({
-  selector: "dx-widget dxi-column",
-})
-class DxWidgetColumn extends GridColumnProps {
-  private __editing?: DxWidgetColumnEditing;
-  @ContentChildren(DxWidgetColumnEditing) editingNested!: QueryList<
-    DxWidgetColumnEditing
-  >;
-  @Input() set editing(value: DxWidgetColumnEditing | undefined) {
-    this.__editing = value;
-  }
-  get editing(): DxWidgetColumnEditing | undefined {
-    if (this.__editing) {
-      return this.__editing;
-    }
-    const nested = this.editingNested.toArray();
-    if (nested.length) {
-      return nested[0];
-    }
-  }
-  private __custom?: DxWidgetColumnCustom[];
-  @ContentChildren(DxWidgetColumnCustom) customNested!: QueryList<
-    DxWidgetColumnCustom
-  >;
-  @Input() set custom(value: DxWidgetColumnCustom[] | undefined) {
-    this.__custom = value;
-  }
-  get custom(): DxWidgetColumnCustom[] | undefined {
-    if (this.__custom) {
-      return this.__custom;
-    }
-    const nested = this.customNested.toArray();
-    if (nested.length) {
-      return nested;
-    }
+    return new GridRow().cells;
   }
 }
 
 @Component({
-  selector: "dx-widget",
+  selector: "dx-with-nested",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["columns", "editing"],
-  template: `<div></div>`,
+  inputs: ["rows"],
+  template: `<div>
+    <ng-container *ngIf="rows"
+      ><ng-container *ngIf="rows.length"
+        ><ng-container
+          *ngFor="let _ of rows; index as index; trackBy: _trackBy_rows_0"
+          ><span>{{ __getRowCells(index) }}<br /></span></ng-container
+      ></ng-container>
+      <span *ngIf="!rows.length">Empty Array</span></ng-container
+    >
+    <span *ngIf="!rows">No Data</span>
+  </div>`,
 })
-export default class Widget extends PickedProps {
-  __getColumns(): any {
-    const { columns } = this;
-    return columns?.map((el) => (typeof el === "string" ? el : el.name));
+export default class WithNested extends WithNestedInput {
+  __getRowCells(index: number): any {
+    const cells = this.rows?.[index].cells;
+    return (
+      cells
+        ?.map((cell) => (typeof cell === "string" ? cell : cell.gridData))
+        .join("|") || []
+    );
   }
-  get __isEditable(): any {
-    return this.editing?.editEnabled || this.editing?.custom?.length;
-  }
-  private __columns?: Array<DxWidgetColumn | string>;
-  @ContentChildren(DxWidgetColumn) columnsNested!: QueryList<DxWidgetColumn>;
-  get columns(): Array<DxWidgetColumn | string> | undefined {
-    if (this.__columns) {
-      return this.__columns;
+  private __rows?: DxWithNestedRow[];
+  @ContentChildren(DxWithNestedRow) rowsNested!: QueryList<DxWithNestedRow>;
+  get rows(): DxWithNestedRow[] | undefined {
+    if (this.__rows) {
+      return this.__rows;
     }
-    const nested = this.columnsNested.toArray();
+    const nested = this.rowsNested.toArray();
     if (nested.length) {
       return nested;
     }
-  }
-  private __editing?: DxWidgetEditing;
-  @ContentChildren(DxWidgetEditing) editingNested!: QueryList<DxWidgetEditing>;
-  get editing(): DxWidgetEditing | undefined {
-    if (this.__editing) {
-      return this.__editing;
-    }
-    const nested = this.editingNested.toArray();
-    if (nested.length) {
-      return nested[0];
-    }
+    return new WithNestedInput().rows?.map((row) => {
+      return Object.assign(row, {
+        cellsNested: new DxWithNestedRow().cellsNested,
+      });
+    });
   }
   get __restAttributes(): any {
     return {};
@@ -161,6 +92,10 @@ export default class Widget extends PickedProps {
     });
   }
 
+  _trackBy_rows_0(index: number, _: any) {
+    return index;
+  }
+
   ngAfterViewInit() {
     this._detectChanges();
   }
@@ -168,36 +103,17 @@ export default class Widget extends PickedProps {
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
   }
-  @Input() set columns(value: Array<DxWidgetColumn | string> | undefined) {
-    this.__columns = value;
-    this._detectChanges();
-  }
-  @Input() set editing(value: DxWidgetEditing | undefined) {
-    this.__editing = value;
+  @Input() set rows(value: DxWithNestedRow[] | undefined) {
+    this.__rows = value;
     this._detectChanges();
   }
 }
 @NgModule({
-  declarations: [
-    Widget,
-    DxWidgetColumn,
-    DxWidgetEditing,
-    DxWidgetColumnCustom,
-    DxWidgetColumnEditing,
-    DxWidgetEditingCustom,
-    DxWidgetEditingAnotherCustom,
-  ],
+  declarations: [WithNested, DxWithNestedRow, DxWithNestedRowCell],
   imports: [CommonModule],
 
-  exports: [
-    Widget,
-    DxWidgetColumn,
-    DxWidgetEditing,
-    DxWidgetColumnCustom,
-    DxWidgetColumnEditing,
-    DxWidgetEditingCustom,
-    DxWidgetEditingAnotherCustom,
-  ],
+  exports: [WithNested, DxWithNestedRow, DxWithNestedRowCell],
 })
-export class DxWidgetModule {}
-export { Widget as DxWidgetComponent };
+export class DxWithNestedModule {}
+export { WithNested as DxWithNestedComponent };
+export { DxWithNestedRow, DxWithNestedRowCell };
