@@ -1,5 +1,8 @@
 import { InfernoEffect } from "../../../../modules/inferno/effect";
-import { InfernoComponent } from "../../../../modules/inferno/base_component";
+import {
+  BaseInfernoComponent,
+  InfernoComponent,
+} from "../../../../modules/inferno/base_component";
 function view(viewModel: Widget) {
   return <div></div>;
 }

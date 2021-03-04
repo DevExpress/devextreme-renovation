@@ -1,5 +1,8 @@
 import { RefObject } from "../../../../modules/inferno/ref_object";
-import { InfernoComponent } from "../../../../modules/inferno/base_component";
+import {
+  BaseInfernoComponent,
+  InfernoComponent,
+} from "../../../../modules/inferno/base_component";
 import BaseWidget from "./method";
 function view(viewModel: WidgetWithApiRef) {
   return (
@@ -23,7 +26,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class WidgetWithApiRef extends InfernoComponent<
+export default class WidgetWithApiRef extends BaseInfernoComponent<
   typeof WidgetWithApiRefInput & RestProps
 > {
   state = {};

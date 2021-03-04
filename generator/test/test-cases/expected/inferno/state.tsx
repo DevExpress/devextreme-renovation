@@ -1,4 +1,7 @@
-import { InfernoComponent } from "../../../../modules/inferno/base_component";
+import {
+  BaseInfernoComponent,
+  InfernoComponent,
+} from "../../../../modules/inferno/base_component";
 import BaseState from "./model";
 function view(model: Widget) {
   return (
@@ -36,7 +39,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends InfernoComponent<
+export default class Widget extends BaseInfernoComponent<
   typeof WidgetInput & RestProps
 > {
   state: {

@@ -1,4 +1,7 @@
-import { InfernoComponent } from "../../../../modules/inferno/base_component";
+import {
+  BaseInfernoComponent,
+  InfernoComponent,
+} from "../../../../modules/inferno/base_component";
 
 export declare type WidgetWithPropsInputType = {
   value: string;
@@ -18,7 +21,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export class WidgetWithProps extends InfernoComponent<
+export class WidgetWithProps extends BaseInfernoComponent<
   typeof WidgetWithPropsInput & RestProps
 > {
   state = {};
