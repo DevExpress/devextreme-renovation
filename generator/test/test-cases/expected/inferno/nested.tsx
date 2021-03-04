@@ -1,4 +1,7 @@
-import { InfernoComponent } from "../../../../modules/inferno/base_component";
+import {
+  BaseInfernoComponent,
+  InfernoComponent,
+} from "../../../../modules/inferno/base_component";
 import { PickedProps, GridColumnProps } from "./nested-props";
 export const CustomColumnComponent = (props: typeof GridColumnProps) => {};
 function view(model: Widget) {
@@ -13,7 +16,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends InfernoComponent<
+export default class Widget extends BaseInfernoComponent<
   typeof PickedProps & RestProps
 > {
   state = {};

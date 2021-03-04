@@ -1,7 +1,10 @@
 import { Portal } from "../../../../modules/inferno/portal";
 import { InfernoEffect } from "../../../../modules/inferno/effect";
 import { RefObject } from "../../../../modules/inferno/ref_object";
-import { InfernoComponent } from "../../../../modules/inferno/base_component";
+import {
+  BaseInfernoComponent,
+  InfernoComponent,
+} from "../../../../modules/inferno/base_component";
 function view(model: Widget) {
   return (
     <div>

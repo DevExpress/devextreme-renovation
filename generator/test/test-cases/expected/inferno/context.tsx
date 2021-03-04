@@ -1,4 +1,7 @@
-import { InfernoComponent } from "../../../../modules/inferno/base_component";
+import {
+  BaseInfernoComponent,
+  InfernoComponent,
+} from "../../../../modules/inferno/base_component";
 import { createContext } from "../../../../modules/inferno/create_context";
 function view(model: Widget): any {
   return <span></span>;
@@ -20,7 +23,9 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends InfernoComponent<typeof Props & RestProps> {
+export default class Widget extends BaseInfernoComponent<
+  typeof Props & RestProps
+> {
   state = {};
   refs: any;
   get contextConsumer(): number {
