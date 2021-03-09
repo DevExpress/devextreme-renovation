@@ -15,8 +15,7 @@
     "bootstrap": "lerna bootstrap --no-ci --hoist",
     "build": "lerna run build --parallel",
     "build:watch": "lerna run build:watch --parallel",
-    "build-dist": "lerna run build-dist --parallel",
-    "test": "gulp copy-test-cases && mocha ./dist/test --timeout 30000"
+    "build-dist": "lerna run build-dist --parallel"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

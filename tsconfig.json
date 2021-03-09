@@ -57,7 +57,7 @@
     /* Advanced Options */
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
   },
-  "exclude": ["node_modules", "build", "packages/test/test-cases", "e2e", "modules"],
+  "exclude": ["node_modules", "build", "packages/test/unit-tests/test-cases", "e2e", "modules"],
   "paths": {
     "@devextreme-generator/angular": ["packages/angular/src"],
     "@devextreme-generator/angular/*": ["packages/angular/src/*"],
