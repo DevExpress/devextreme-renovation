@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import prettier from 'prettier';
 
-import { compileCode } from './component-compiler';
+import { compileCode } from './code-compiler';
 import { Decorators } from './decorators';
 import { Expression, SimpleExpression } from './expressions/base';
 import { BindingElement, BindingPattern } from './expressions/binding-pattern';
@@ -18,18 +18,11 @@ import {
   NonNullExpression,
   Paren,
   TypeOf,
-  Void
+  Void,
 } from './expressions/common';
 import { Component } from './expressions/component';
 import { ComponentInput, membersFromTypeDeclaration } from './expressions/component-input';
-import {
-  CaseBlock,
-  CaseClause,
-  Conditional,
-  DefaultClause,
-  If,
-  Switch
-} from './expressions/conditions';
+import { CaseBlock, CaseClause, Conditional, DefaultClause, If, Switch } from './expressions/conditions';
 import { Do, For, ForIn, While } from './expressions/cycle';
 import { Decorator } from './expressions/decorator';
 import { Enum, EnumMember } from './expressions/enum';
@@ -41,7 +34,7 @@ import {
   ImportSpecifier,
   NamedImportBindings,
   NamedImports,
-  NamespaceImport
+  NamespaceImport,
 } from './expressions/import';
 import { Interface } from './expressions/interface';
 import {
@@ -51,7 +44,7 @@ import {
   JsxExpression,
   JsxOpeningElement,
   JsxSelfClosingElement,
-  JsxSpreadAttribute
+  JsxSpreadAttribute,
 } from './expressions/jsx';
 import { ArrayLiteral, NumericLiteral, ObjectLiteral, StringLiteral } from './expressions/literal';
 import { Binary, Postfix, Prefix } from './expressions/operators';
@@ -60,13 +53,9 @@ import {
   ElementAccess,
   PropertyAccess,
   PropertyAccessChain,
-  Spread
+  Spread,
 } from './expressions/property-access';
-import {
-  PropertyAssignment,
-  ShorthandPropertyAssignment,
-  SpreadAssignment
-} from './expressions/property-assignment';
+import { PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment } from './expressions/property-assignment';
 import { Block, ReturnStatement } from './expressions/statements';
 import { TemplateExpression, TemplateSpan } from './expressions/template';
 import { Throw } from './expressions/throw';
@@ -95,14 +84,10 @@ import {
   TypePredicateNode,
   TypeQueryNode,
   TypeReferenceNode,
-  UnionTypeNode
+  UnionTypeNode,
 } from './expressions/type';
 import { TypeParameterDeclaration } from './expressions/type-parameter-declaration';
-import {
-  VariableDeclaration,
-  VariableDeclarationList,
-  VariableStatement
-} from './expressions/variables';
+import { VariableDeclaration, VariableDeclarationList, VariableStatement } from './expressions/variables';
 import { GeneratorAPI, GeneratorResult } from './generator-api';
 import { SyntaxKind } from './syntaxKind';
 import { GeneratorCache, GeneratorContext, GeneratorOptions, VariableExpression } from './types';

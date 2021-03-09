@@ -1,6 +1,7 @@
-import { GeneratorAPI, GeneratorResult } from "./generator-api";
-import { generateFactoryCode } from "./factoryCodeGenerator";
-import ts from "typescript";
+import ts from 'typescript';
+
+import { generateFactoryCode } from './factoryCodeGenerator';
+import { GeneratorAPI, GeneratorResult } from './generator-api';
 
 export function compileCode(
   generator: GeneratorAPI,

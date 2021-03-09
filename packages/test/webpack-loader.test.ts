@@ -1,14 +1,14 @@
+import { AngularGenerator } from '@devextreme-generator/angular';
+import * as CorePackage from '@devextreme-generator/core';
+import { InfernoGenerator } from '@devextreme-generator/inferno';
+import { PreactGenerator } from '@devextreme-generator/preact';
+import { ReactGenerator } from '@devextreme-generator/react';
+import { VueGenerator } from '@devextreme-generator/vue';
 import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
 import sinon from 'sinon';
 
-import { AngularGenerator } from '@devextreme-generator/angular';
-import * as ComponentCompiler from '@devextreme-generator/core/src/component-compiler';
-import { InfernoGenerator } from '@devextreme-generator/inferno';
-import { PreactGenerator } from '@devextreme-generator/preact';
-import { ReactGenerator } from '@devextreme-generator/react';
-import { VueGenerator } from '@devextreme-generator/vue';
 import { assertCode } from './helpers/common';
 import mocha from './helpers/mocha';
 import compiler from './helpers/webpack-test-compiler';
@@ -18,7 +18,7 @@ const fixtureFileName = "test-cases/declarations/src/props.tsx";
 mocha.describe("webpack-loader", function () {
   this.beforeEach(function () {
     this.codeCompilerStub = sinon
-      .stub(ComponentCompiler, "compileCode")
+      .stub(CorePackage, "compileCode")
       .returns("const a = 10");
   });
 

@@ -1,4 +1,4 @@
-import CodeBlockWriter from "code-block-writer";
+import CodeBlockWriter from 'code-block-writer';
 
 export function generateFactoryCode(
   ts: typeof import("typescript"),

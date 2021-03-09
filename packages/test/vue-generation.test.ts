@@ -1,15 +1,11 @@
-import assert from "assert";
-import mocha from "./helpers/mocha";
-import generator from "@devextreme-generator/vue";
-import compile from "@devextreme-generator/core/src/component-compiler";
-import path from "path";
+import { compile } from '@devextreme-generator/dev-utils';
+import generator from '@devextreme-generator/vue';
+import assert from 'assert';
+import path from 'path';
 
-import {
-  createTestGenerator,
-  assertCode,
-  getModulePath,
-} from "./helpers/common";
-import { resolveModule } from "../core/src";
+import { resolveModule } from '../core/src';
+import { assertCode, createTestGenerator, getModulePath } from './helpers/common';
+import mocha from './helpers/mocha';
 
 function getPartFromSourceFile(code: string, tagName: string) {
   const tag = `<${tagName}>`;

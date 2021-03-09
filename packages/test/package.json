@@ -76,6 +76,7 @@
     "@devextreme-generator/preact": "^1.0.0",
     "@devextreme-generator/inferno": "^1.0.0",
     "@devextreme-generator/inferno-common": "^1.0.0",
-    "@devextreme-generator/declaration": "^1.0.0"
+    "@devextreme-generator/declaration": "^1.0.0",
+    "@devextreme-generator/dev-utils": "^1.0.0"
   }
 }

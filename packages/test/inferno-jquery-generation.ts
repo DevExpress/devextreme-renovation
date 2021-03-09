@@ -1,7 +1,7 @@
+import { compile } from '@devextreme-generator/dev-utils';
+import generator from '@devextreme-generator/inferno';
 import path from 'path';
 
-import compile from '@devextreme-generator/core/src/component-compiler';
-import generator from '@devextreme-generator/inferno';
 import { createTestGenerator, getModulePath } from './helpers/common';
 import mocha from './helpers/mocha';
 

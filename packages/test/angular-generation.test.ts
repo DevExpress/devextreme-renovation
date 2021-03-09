@@ -1,9 +1,9 @@
+import generator from '@devextreme-generator/angular';
+import { resolveModule } from '@devextreme-generator/core';
+import { compile } from '@devextreme-generator/dev-utils';
 import assert from 'assert';
 import path from 'path';
 
-import generator from '@devextreme-generator/angular';
-import { resolveModule } from '@devextreme-generator/core';
-import compile from '@devextreme-generator/core/src/component-compiler';
 import { createTestGenerator, getModulePath } from './helpers/common';
 import mocha from './helpers/mocha';
 

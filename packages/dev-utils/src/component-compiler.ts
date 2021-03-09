@@ -1,11 +1,9 @@
-import ts from "typescript";
-import fs from "fs";
-import { generateFactoryCode } from "./factoryCodeGenerator";
-import Stream from "stream";
-import File from "vinyl";
-import { GeneratorAPI, GeneratorResult } from "./generator-api";
-import { compileCode } from "./code-compiler";
-import path from "path";
+import { compileCode, generateFactoryCode, GeneratorAPI, GeneratorResult } from '@devextreme-generator/core';
+import fs from 'fs';
+import path from 'path';
+import Stream from 'stream';
+import ts from 'typescript';
+import File from 'vinyl';
 
 export function deleteFolderRecursive(path: string) {
   if (fs.existsSync(path)) {
@@ -53,7 +51,7 @@ export function generateComponents(generator: GeneratorAPI) {
   return stream;
 }
 
-export default function compile(dir: string, outDir: string) {
+export function compile(dir: string, outDir: string) {
   if (fs.existsSync(outDir)) {
     deleteFolderRecursive(outDir);
   }
@@ -74,5 +72,3 @@ export default function compile(dir: string, outDir: string) {
       );
     });
 }
-
-export { compileCode };

@@ -1,8 +1,7 @@
-import { StringLiteral } from "./literal";
-import { Identifier } from "./common";
-import { Decorator } from "./decorator";
-import { VariableExpression, GeneratorContext } from "../types";
-import { getRelativePath } from "../utils/path-utils";
+import { GeneratorContext, VariableExpression } from '../types';
+import { Identifier } from './common';
+import { Decorator } from './decorator';
+import { StringLiteral } from './literal';
 
 export class NamedImports {
   node: ImportSpecifier[];

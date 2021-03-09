@@ -1,14 +1,10 @@
+import { Decorators } from '@devextreme-generator/core';
+import { compile } from '@devextreme-generator/dev-utils';
+import generator, { PreactComponent } from '@devextreme-generator/preact';
 import assert from 'assert';
 import path from 'path';
 
-import { Decorators } from '@devextreme-generator/core';
-import compile from '@devextreme-generator/core/src/component-compiler';
-import generator, { PreactComponent } from '@devextreme-generator/preact';
-import {
-  createTestGenerator,
-  getModulePath,
-  printSourceCodeAst as getResult
-} from './helpers/common';
+import { createTestGenerator, getModulePath, printSourceCodeAst as getResult } from './helpers/common';
 import factory from './helpers/create-component';
 import mocha from './helpers/mocha';
 

@@ -1,5 +1,5 @@
-import ts from "typescript";
-import path from "path";
+import path from 'path';
+import ts from 'typescript';
 
 export function getTsConfig(filename: string) {
   const { config, error } = ts.readConfigFile(filename, ts.sys.readFile);

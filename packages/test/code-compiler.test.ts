@@ -1,18 +1,15 @@
-import assert from "assert";
-import mocha from "./helpers/mocha";
-import generator from "@devextreme-generator/preact";
-import vueGenerator from "@devextreme-generator/vue";
-import gulp from "gulp";
-import fs from "fs";
-import path from "path";
-import { printSourceCodeAst } from "./helpers/common";
-import sinon from "sinon";
+import { deleteFolderRecursive, generateComponents } from '@devextreme-generator/dev-utils';
+import generator from '@devextreme-generator/preact';
+import vueGenerator from '@devextreme-generator/vue';
+import assert from 'assert';
+import fs from 'fs';
+import gulp from 'gulp';
+import path from 'path';
+import sinon from 'sinon';
+import File from 'vinyl';
 
-import {
-  generateComponents,
-  deleteFolderRecursive,
-} from "@devextreme-generator/core/src/component-compiler";
-import File from "vinyl";
+import { printSourceCodeAst } from './helpers/common';
+import mocha from './helpers/mocha';
 
 async function readData(stream: NodeJS.ReadableStream): Promise<File[]> {
   return new Promise((resolve, _error) => {
