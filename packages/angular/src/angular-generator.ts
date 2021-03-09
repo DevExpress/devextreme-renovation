@@ -277,7 +277,7 @@ export class AngularGenerator extends Generator {
 
   createTypeReferenceNode(
     typeName: Identifier,
-    typeArguments?: TypeExpression[]
+    typeArguments: TypeExpression[] = []
   ) {
     return new TypeReferenceNode(typeName, typeArguments, this.getContext());
   }
@@ -287,8 +287,8 @@ export class AngularGenerator extends Generator {
   }
 
   createImportDeclarationCore(
-    decorators: Decorator[] | undefined,
-    modifiers: string[] | undefined,
+    decorators: Decorator[] = [],
+    modifiers: string[] = [],
     importClause: ImportClause,
     moduleSpecifier: StringLiteral
   ) {
@@ -314,7 +314,7 @@ export class AngularGenerator extends Generator {
 
   addComponent(
     name: string,
-    component: BaseComponentInput | BaseComponentInput,
+    component: BaseComponentInput,
     importClause?: ImportClause
   ) {
     if (component instanceof AngularComponent) {

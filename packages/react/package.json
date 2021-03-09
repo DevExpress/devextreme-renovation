@@ -2,10 +2,15 @@
   "name": "@devextreme-generator/react",
   "version": "1.0.0",
   "description": "Component generator",
-  "main": "src/index.ts",
+  "main": "dist/index",
+  "types": "dist/index",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "gulp build",
-    "build-dist": "gulp build-dist"
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "pack": "npm run build && npm pack"
   },
   "author": "Developer Express Inc.",
   "license": "MIT",

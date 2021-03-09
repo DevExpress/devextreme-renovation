@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "build": "tsc",
+    "build:watch": "tsc --watch",
     "pack": "npm run build && npm pack"
   },
   "author": "Developer Express Inc.",

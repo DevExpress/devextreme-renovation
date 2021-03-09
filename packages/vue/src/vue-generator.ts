@@ -380,8 +380,8 @@ export class VueGenerator extends BaseGenerator {
   }
 
   createImportDeclarationCore(
-    decorators: Decorator[] | undefined,
-    modifiers: string[] | undefined,
+    decorators: Decorator[] = [],
+    modifiers: string[] = [],
     importClause: ImportClause,
     moduleSpecifier: StringLiteral
   ) {

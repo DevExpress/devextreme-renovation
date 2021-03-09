@@ -75,8 +75,8 @@ export class ReactGenerator extends BaseGenerator {
   }
 
   createImportDeclarationCore(
-    decorators: Decorator[] | undefined,
-    modifiers: string[] | undefined,
+    decorators: Decorator[] = [],
+    modifiers: string[] = [],
     importClause: ImportClause,
     moduleSpecifier: StringLiteral
   ) {
@@ -164,7 +164,7 @@ export class ReactGenerator extends BaseGenerator {
 
   createTypeReferenceNode(
     typeName: Identifier,
-    typeArguments?: TypeExpression[]
+    typeArguments: TypeExpression[] = []
   ) {
     return new TypeReferenceNode(typeName, typeArguments, this.getContext());
   }

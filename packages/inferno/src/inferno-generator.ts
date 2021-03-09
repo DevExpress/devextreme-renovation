@@ -101,7 +101,7 @@ export class InfernoGenerator extends PreactGenerator {
 
   createTypeReferenceNode(
     typeName: Identifier,
-    typeArguments?: TypeExpression[]
+    typeArguments: TypeExpression[] = []
   ) {
     return new TypeReferenceNode(typeName, typeArguments, this.getContext());
   }
@@ -124,8 +124,8 @@ export class InfernoGenerator extends PreactGenerator {
   }
 
   createImportDeclarationCore(
-    decorators: Decorator[] | undefined,
-    modifiers: string[] | undefined,
+    decorators: Decorator[] = [],
+    modifiers: string[] = [],
     importClause: ImportClause,
     moduleSpecifier: StringLiteral
   ) {
