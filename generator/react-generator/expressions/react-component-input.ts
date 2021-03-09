@@ -137,7 +137,7 @@ export class ComponentInput extends BaseComponentInput {
         (name) => ({
           name,
           isNested:
-            this.context.components?.[name].members.some((m) => m.isNested) ||
+            this.context.components?.[name]?.members.some((m) => m.isNested) ||
             false,
         })
       ),
