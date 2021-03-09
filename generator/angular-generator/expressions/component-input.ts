@@ -164,7 +164,7 @@ export class ComponentInput extends BaseComponentInput {
   }
   toString() {
     const membersWithNestedReplaced = this.members.reduce((acc, m) => {
-      if (m.isNested && m instanceof Property && m.initializer) {
+      if (m.isNested && m instanceof Property) {
         acc.push(...this.processNestedProperty(m));
       } else {
         acc.push(m);
