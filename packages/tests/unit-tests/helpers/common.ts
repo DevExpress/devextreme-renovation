@@ -106,15 +106,3 @@ export function createTestGenerator(
     }
   };
 }
-
-// export function executeInBuildFolder(_modulePath: string) {
-//   const relativePath = path.relative(process.cwd(), __dirname);
-//   return relativePath.startsWith("build");
-// }
-
-export function getModulePath(modulePath: string): string {
-  // if (executeInBuildFolder(modulePath)) {
-  //   return `${modulePath}`;
-  // }
-  return modulePath;
-}

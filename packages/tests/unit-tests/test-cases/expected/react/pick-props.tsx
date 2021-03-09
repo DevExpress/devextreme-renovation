@@ -1,9 +1,9 @@
 import Props from "./component-bindings-only";
-import { Options } from "./types";
+import { Options } from "./types.d";
 function view(model: Widget) {
   return <div>{model.props.data?.value}</div>;
 }
-import { AdditionalOptions } from "./types";
+import { AdditionalOptions } from "./types.d";
 export declare type WidgetPropsType = {
   data?: Options;
   info?: AdditionalOptions;

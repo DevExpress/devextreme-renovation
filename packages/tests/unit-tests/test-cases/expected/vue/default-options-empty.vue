@@ -3,7 +3,7 @@
 </template>
 <script>
 export const WidgetProps = {};
-import { convertRulesToOptions } from "../../../../declaration/src/default_options";
+import { convertRulesToOptions } from "../../../../jquery-helpers/default_options";
 
 const __defaultOptionRules = [{ device: true, options: {} }];
 export function defaultOptions(rule) {

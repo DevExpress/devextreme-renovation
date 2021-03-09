@@ -3280,7 +3280,7 @@ mocha.describe("base-generator: expressions", function () {
     );
 
     mocha.it(
-      "component_declaration/common module should be an empty string",
+      "@devextreme-generator/declaration module should be an empty string",
       function () {
         assert.equal(
           generator.createImportDeclaration(
@@ -3290,7 +3290,7 @@ mocha.describe("base-generator: expressions", function () {
               generator.createIdentifier("Button"),
               undefined
             ),
-            generator.createStringLiteral("../../component_declaration/common")
+            generator.createStringLiteral("@devextreme-generator/declaration")
           ),
           ""
         );
@@ -3493,7 +3493,7 @@ mocha.describe("base-generator: expressions", function () {
     });
 
     mocha.describe("getVariableExpressions", function () {
-      mocha.it("empty for component_declaration/common module", function () {
+      mocha.it("empty for @devextreme-generator/declaration", function () {
         const expression = generator.createImportDeclaration(
           undefined,
           undefined,
@@ -3506,7 +3506,7 @@ mocha.describe("base-generator: expressions", function () {
               ),
             ])
           ),
-          generator.createStringLiteral("../../component_declaration/common")
+          generator.createStringLiteral("@devextreme-generator/declaration")
         );
         assert.deepEqual(expression.getVariableExpressions(), {});
       });

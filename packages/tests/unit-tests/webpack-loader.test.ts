@@ -13,7 +13,7 @@ import { assertCode } from './helpers/common';
 import mocha from './helpers/mocha';
 import compiler from './helpers/webpack-test-compiler';
 
-const fixtureFileName = "test-cases/declarations/src/props.tsx";
+const fixtureFileName = path.resolve(__dirname, "./test-cases/declarations/src/props.tsx");
 
 mocha.describe("webpack-loader", function () {
   this.beforeEach(function () {
@@ -58,7 +58,7 @@ mocha.describe("webpack-loader", function () {
       );
       assert.deepEqual(args[2], {
         path: path.resolve(fixtureFileName),
-        dirname: path.resolve("test/test-cases/declarations/src"),
+        dirname: path.resolve(__dirname, "test-cases/declarations/src"),
       });
       assert.strictEqual(args[3], false);
       assert.strictEqual(output, this.codeCompilerStub());
@@ -112,7 +112,6 @@ mocha.describe("webpack-loader", function () {
         defaultOptionsModule: "options",
         jqueryBaseComponentModule: "jqueryBase",
         jqueryComponentRegistratorModule: "registrator",
-        modulesPath: "devextreme-generator/modules",
       });
 
       const generator = this.codeCompilerStub.lastCall.args[0];
@@ -121,7 +120,6 @@ mocha.describe("webpack-loader", function () {
         defaultOptionsModule: "options",
         jqueryBaseComponentModule: "jqueryBase",
         jqueryComponentRegistratorModule: "registrator",
-        modulesPath: "devextreme-generator/modules",
       });
     });
   });
@@ -131,7 +129,7 @@ mocha.describe("webpack-loader", function () {
       this.codeCompilerStub.returns("const a: number = 10");
       const stats = await compiler(fixtureFileName, {
         platform: "preact",
-        tsConfig: "test/test-cases/tsconfig.json",
+        tsConfig: path.resolve(__dirname, "test-cases/tsconfig.json"),
       });
 
       const output = stats.toJson().modules![0].source!;
@@ -143,7 +141,7 @@ mocha.describe("webpack-loader", function () {
       this.codeCompilerStub.returns("const a: string = null");
       const stats = await compiler(fixtureFileName, {
         platform: "preact",
-        tsConfig: "test/test-cases/tsconfig.json",
+        tsConfig: path.resolve(__dirname, "./test-cases/tsconfig.json"),
       });
 
       const output = stats.toJson().modules![0].source!;
@@ -154,7 +152,7 @@ mocha.describe("webpack-loader", function () {
     mocha.it("tsconfig error - use default", async function () {
       const stats = await compiler(fixtureFileName, {
         platform: "preact",
-        tsConfig: "incorrect.tsconfig.json",
+        tsConfig: path.resolve(__dirname, "incorrect.tsconfig.json"),
       });
 
       const output = stats.toJson().modules![0].source!;
@@ -167,7 +165,7 @@ mocha.describe("webpack-loader", function () {
       async function () {
         const stats = await compiler(fixtureFileName, {
           platform: "preact",
-          tsConfig: "test/test-cases/webpack-loader.test.tsconfig.json",
+          tsConfig: path.resolve(__dirname, "./test-cases/webpack-loader.test.tsconfig.json"),
         });
 
         const output = stats.toJson().modules![0].source!;

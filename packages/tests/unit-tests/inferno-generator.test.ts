@@ -1,7 +1,7 @@
 import assert from 'assert';
 
 import { Decorators } from '@devextreme-generator/core';
-import generator, { InfernoGenerator } from '@devextreme-generator/inferno';
+import generator from '@devextreme-generator/inferno';
 import factory from './helpers/create-component';
 import mocha from './helpers/mocha';
 
@@ -121,38 +121,6 @@ mocha.describe("Expressions", function () {
     mocha.it(
       "import Component from common_declaration should import it from default modules path",
       function () {
-        const expression = generator.createImportDeclaration(
-          [],
-          [],
-          generator.createImportClause(
-            undefined,
-            generator.createNamedImports([
-              generator.createImportSpecifier(
-                undefined,
-                generator.createIdentifier("Component")
-              ),
-            ])
-          ),
-          generator.createStringLiteral("@devextreme-generator/declaration")
-        );
-
-        assert.strictEqual(
-          expression.toString(),
-          `import {InfernoComponent} from "@devextreme-generator/inferno-common"`
-        );
-      }
-    );
-
-    mocha.it(
-      "import Component from common_declaration should import it from node_modules if modulesPath is set",
-      function () {
-        const generator = new InfernoGenerator();
-        generator.options = { modulesPath: "devextreme-generator/modules" };
-        generator.setContext({
-          path: __filename,
-          dirname: __dirname,
-        });
-
         const expression = generator.createImportDeclaration(
           [],
           [],

@@ -13,7 +13,7 @@ export const WidgetProps = {
     },
   },
 };
-import { convertRulesToOptions } from "../../../../declaration/src/default_options";
+import { convertRulesToOptions } from "../../../../jquery-helpers/default_options";
 
 const __defaultOptionRules = [];
 export function defaultOptions(rule) {

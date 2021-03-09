@@ -23,11 +23,6 @@
   ></div>
 </template>
 <script>
-import {
-  InterfaceTemplateInput,
-  ClassTemplateInput,
-  TypeTemplateInput,
-} from "./types";
 const Props = {
   PropFromClass: {},
   PropFromInterface: {

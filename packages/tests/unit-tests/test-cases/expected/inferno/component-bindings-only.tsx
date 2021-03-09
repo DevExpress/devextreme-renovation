@@ -1,4 +1,4 @@
-import { Options, AdditionalOptions } from "./types";
+import { Options, AdditionalOptions } from "./types.d";
 
 export declare type WidgetPropsType = {
   height?: number;

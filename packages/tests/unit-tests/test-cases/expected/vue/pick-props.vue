@@ -3,7 +3,6 @@
 </template>
 <script>
 import Props from "./component-bindings-only";
-import { Options } from "./types";
 const WidgetProps = {
   data: {
     default() {

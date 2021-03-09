@@ -3,14 +3,11 @@ import webpack from "webpack";
 import { createFsFromVolume, Volume } from "memfs";
 import { GeneratorOptions } from "@devextreme-generator/core";
 import { GeneratorOptions as PreactGeneratorOptions } from "@devextreme-generator/preact";
-// import { executeInBuildFolder } from "./common";
 
 export declare type Options = { platform: string; tsConfig?: string } & (
   | GeneratorOptions
   | PreactGeneratorOptions
 );
-
-// const loaderExt = "ts";
 
 export default (
   fileName: string,
@@ -28,10 +25,7 @@ export default (
         {
           test: /\.tsx$/,
           use: {
-            loader: path.resolve(
-              __dirname,
-              `../webpack-loader.ts`
-            ),
+            loader: "@devextreme-generator/dev-utils/dist/webpack-loader",
             options: options,
           },
         },

@@ -2,7 +2,7 @@ import {
   InterfaceTemplateInput,
   ClassTemplateInput,
   TypeTemplateInput,
-} from "./types";
+} from "./types.d";
 
 interface TemplateInput {
   inputInt: number;
@@ -77,7 +77,8 @@ export default function Widget(props: typeof Props & RestProps) {
     height: string;
   } {
     return { width: "40px", height: "30px" };
-  }, []);
+  },
+  []);
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {

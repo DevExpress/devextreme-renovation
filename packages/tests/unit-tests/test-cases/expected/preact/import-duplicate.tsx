@@ -1,4 +1,4 @@
-import { Options } from "./types";
+import { Options } from "./types.d";
 export const viewFunction = (viewModel: Marker) => <div></div>;
 
 export interface InterfaceConfig {

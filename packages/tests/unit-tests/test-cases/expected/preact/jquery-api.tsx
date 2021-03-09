@@ -1,8 +1,8 @@
-import registerComponent from "../../../component_declaration/jquery_component_registrator";
-import BaseComponent from "../../../component_declaration/jquery_base_component";
-import WidgetComponent from "../../../jquery-api";
+import registerComponent from "../../../../jquery-helpers/jquery_component_registrator";
+import BaseComponent from "../../../../jquery-helpers/jquery_base_component";
+import WidgetComponent from "../../../../jquery-api";
 
-import { MyTypeReturn, MyType } from "../../../jquery-api";
+import { MyTypeReturn, MyType } from "../../../../jquery-api";
 
 export default class Widget extends BaseComponent {
   getHeight(p: number = 10, p1: any): string {

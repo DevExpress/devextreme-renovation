@@ -1,5 +1,4 @@
 <script>
-import { Options, AdditionalOptions } from "./types";
 const WidgetProps = {
   height: {
     type: Number,

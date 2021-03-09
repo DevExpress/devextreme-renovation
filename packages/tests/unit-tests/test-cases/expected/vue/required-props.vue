@@ -9,7 +9,7 @@ const WidgetInput = {
     required: true,
   },
 };
-import { convertRulesToOptions } from "../../../../declaration/src/default_options";
+import { convertRulesToOptions } from "../../../../jquery-helpers/default_options";
 
 const __defaultOptionRules = [];
 export function defaultOptions(rule) {

@@ -17,7 +17,6 @@ export default function (this: loader.LoaderContext, source: string) {
     defaultOptionsModule,
     jqueryComponentRegistratorModule,
     jqueryBaseComponentModule,
-    modulesPath,
     tsConfig,
   } = getOptions(this) as any;
   let generator = null;
@@ -46,7 +45,6 @@ export default function (this: loader.LoaderContext, source: string) {
       generator.options = {
         jqueryComponentRegistratorModule,
         jqueryBaseComponentModule,
-        modulesPath,
       };
       break;
     default:

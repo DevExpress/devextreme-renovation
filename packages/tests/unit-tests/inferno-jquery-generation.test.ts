@@ -2,7 +2,7 @@ import { compile } from '@devextreme-generator/dev-utils';
 import generator from '@devextreme-generator/inferno';
 import path from 'path';
 
-import { createTestGenerator, getModulePath } from './helpers/common';
+import { createTestGenerator } from './helpers/common';
 import mocha from './helpers/mocha';
 
 mocha.describe("inferno-generator: jQuery generation", function () {
@@ -16,7 +16,7 @@ mocha.describe("inferno-generator: jQuery generation", function () {
     this.testGenerator = function (componentName: string) {
       generator.setContext({
         dirname: path.resolve(__dirname, "./test-cases/declarations/src"),
-        path: getModulePath(`${componentName}.tsx`),
+        path: `${componentName}.tsx`,
       });
       testGenerator.call(this, componentName, generator, 1);
     };
@@ -24,12 +24,8 @@ mocha.describe("inferno-generator: jQuery generation", function () {
 
   this.beforeEach(function () {
     generator.options = {
-      jqueryComponentRegistratorModule: getModulePath(
-        "component_declaration/jquery_component_registrator"
-      ),
-      jqueryBaseComponentModule: getModulePath(
-        "component_declaration/jquery_base_component"
-      ),
+      jqueryComponentRegistratorModule: path.resolve(__dirname, "../jquery-helpers/jquery_component_registrator"),
+      jqueryBaseComponentModule: path.resolve(__dirname, "../jquery-helpers/jquery_base_component"),
     };
   });
 

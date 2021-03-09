@@ -1,6 +1,6 @@
-import registerComponent from "../../../component_declaration/jquery_component_registrator";
-import BaseComponent from "../../../component_declaration/jquery_base_component";
-import WidgetComponent from "../../../jquery-element-type";
+import registerComponent from "../../../../jquery-helpers/jquery_component_registrator";
+import BaseComponent from "../../../../jquery-helpers/jquery_base_component";
+import WidgetComponent from "../../../../jquery-element-type";
 
 export default class Widget extends BaseComponent {
   methodWithElementParam(

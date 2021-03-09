@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "description": "Component generator tests",
   "scripts": {
-    "test": "nyc mocha -r ts-node/register ./*.test.ts --timeout 30000",
-    "test:with-reporters": "nyc --reporter cobertura mocha -r ts-node/register ./*.test.ts --timeout 30000 --reporter mocha-junit-reporter --reporter-options mochaFile=./report/test-result.xml",
-    "test:with-replace": "nyc mocha -r ts-node/register ./*.test.ts --timeout 30000 --replace"
+    "test": "nyc mocha -r ts-node/register ./unit-tests/*.test.ts --timeout 30000",
+    "test:with-reporters": "nyc --reporter cobertura mocha -r ts-node/register ./unit-tests/*.test.ts --timeout 30000 --reporter mocha-junit-reporter --reporter-options mochaFile=./report/test-result.xml",
+    "test:with-replace": "nyc mocha -r ts-node/register ./unit-tests/*.test.ts --timeout 30000 --replace"
   },
   "author": "Developer Express Inc.",
   "license": "MIT",
