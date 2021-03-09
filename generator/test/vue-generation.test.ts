@@ -245,6 +245,10 @@ mocha.describe("vue-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("extra-tag", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("context", function () {
     this.testGenerator(this.test!.title);
   });

@@ -1,11 +1,11 @@
-import { Identifier, Paren, Call } from "./common";
+import { Call, Identifier, Paren } from "./common";
 import {
   Expression,
   ExpressionWithExpression,
-  SimpleExpression,
   ExpressionWithOptionalExpression,
+  SimpleExpression,
 } from "./base";
-import { toStringOptions, GeneratorContext } from "../types";
+import { GeneratorContext, toStringOptions } from "../types";
 import SyntaxKind from "../syntaxKind";
 import { Conditional } from "./conditions";
 import { Component } from "./component";
@@ -129,9 +129,26 @@ export class JsxOpeningElement extends Expression {
     return value;
   }
 
+  getJsxOptions(options?: toStringOptions): toStringOptions {
+    const jsxVariables = options?.variables;
+    options?.members.forEach((m) => {
+      if (
+        m._name.toString() === this.tagName.toString() &&
+        options?.variables?.hasOwnProperty(m._name.toString()) &&
+        !m.isTemplate
+      ) {
+        delete jsxVariables?.[m._name.toString()];
+      }
+    });
+    return {
+      ...options,
+      variables: jsxVariables,
+    } as toStringOptions;
+  }
+
   toString(options?: toStringOptions) {
     return `<${this.processTagName(this.tagName, options).toString(
-      options
+      this.getJsxOptions(options)
     )} ${this.attributesString(options)}>`;
   }
 
@@ -209,7 +226,7 @@ export class JsxElement extends Expression {
 export class JsxSelfClosingElement extends JsxOpeningElement {
   toString(options?: toStringOptions) {
     return `<${this.processTagName(this.tagName, options).toString(
-      options
+      this.getJsxOptions(options)
     )} ${this.attributesString(options)}/>`;
   }
 }
@@ -221,7 +238,7 @@ export class JsxClosingElement extends JsxOpeningElement {
 
   toString(options?: toStringOptions) {
     return `</${this.processTagName(this.tagName, options, true).toString(
-      options
+      this.getJsxOptions(options)
     )}>`;
   }
 }
@@ -234,6 +251,7 @@ export class JsxExpression extends ExpressionWithOptionalExpression {
   }
 
   toString(options?: toStringOptions) {
+    debugger;
     return this.expression
       ? `{${this.dotDotDotToken}${this.expression.toString(options)}}`
       : "";

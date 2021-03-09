@@ -255,6 +255,10 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("extra-tag", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("effects-with-iterable", function () {
     this.testGenerator(this.test!.title);
   });
