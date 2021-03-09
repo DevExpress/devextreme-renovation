@@ -1,5 +1,4 @@
 import assert from 'assert';
-import path from 'path';
 
 import { Decorators } from '@devextreme-generator/core';
 import generator, { InfernoGenerator } from '@devextreme-generator/inferno';
@@ -59,7 +58,7 @@ mocha.describe("Expressions", function () {
               ),
             ])
           ),
-          generator.createStringLiteral("component_declaration/common")
+          generator.createStringLiteral("@devextreme-generator/declaration")
         );
 
         assert.strictEqual(
@@ -84,12 +83,12 @@ mocha.describe("Expressions", function () {
               ),
             ])
           ),
-          generator.createStringLiteral("component_declaration/common")
+          generator.createStringLiteral("@devextreme-generator/declaration")
         );
 
         assert.strictEqual(
           expression.toString(),
-          `import {RefObject} from "../modules/inferno/ref_object"`
+          `import {RefObject} from "@devextreme-generator/inferno-common"`
         );
       }
     );
@@ -109,12 +108,12 @@ mocha.describe("Expressions", function () {
               ),
             ])
           ),
-          generator.createStringLiteral("component_declaration/common")
+          generator.createStringLiteral("@devextreme-generator/declaration")
         );
 
         assert.strictEqual(
           expression.toString(),
-          `import {RefObject} from "../modules/inferno/ref_object"`
+          `import {RefObject} from "@devextreme-generator/inferno-common"`
         );
       }
     );
@@ -134,12 +133,12 @@ mocha.describe("Expressions", function () {
               ),
             ])
           ),
-          generator.createStringLiteral("component_declaration/common")
+          generator.createStringLiteral("@devextreme-generator/declaration")
         );
 
         assert.strictEqual(
           expression.toString(),
-          `import {InfernoComponent} from "../modules/inferno/base_component"`
+          `import {InfernoComponent} from "@devextreme-generator/inferno-common"`
         );
       }
     );
@@ -166,12 +165,12 @@ mocha.describe("Expressions", function () {
               ),
             ])
           ),
-          generator.createStringLiteral("component_declaration/common")
+          generator.createStringLiteral("@devextreme-generator/declaration")
         );
 
         assert.strictEqual(
           expression.toString(),
-          `import {InfernoComponent} from "devextreme-generator/modules/base_component"`
+          `import {InfernoComponent} from "@devextreme-generator/inferno-common"`
         );
       }
     );

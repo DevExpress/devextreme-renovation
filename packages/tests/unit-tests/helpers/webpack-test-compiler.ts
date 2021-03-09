@@ -10,7 +10,7 @@ export declare type Options = { platform: string; tsConfig?: string } & (
   | PreactGeneratorOptions
 );
 
-const loaderExt = "ts";
+// const loaderExt = "ts";
 
 export default (
   fileName: string,
