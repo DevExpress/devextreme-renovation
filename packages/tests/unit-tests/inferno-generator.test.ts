@@ -249,21 +249,3 @@ mocha.describe("Expressions", function () {
     });
   });
 });
-
-mocha.describe("Inferno-generator", function () {
-  mocha.describe("getModulesPath", function () {
-    mocha.it("default value", function () {
-      assert.strictEqual(
-        generator.getModulesPath(),
-        path.resolve(__dirname, "../modules/inferno")
-      );
-    });
-
-    mocha.it("with modulesPath in options", function () {
-      const generator = new InfernoGenerator();
-      const value = "devextreme-generator/modules/inferno";
-      generator.options.modulesPath = value;
-      assert.strictEqual(generator.getModulesPath(), value);
-    });
-  });
-});
