@@ -13,7 +13,7 @@ export class AnotherCustomProps {}
 
 export class EditingProps {
   @Input() editEnabled?: boolean = false;
-  @Input() custom?: CustomProps[] = [new CustomProps()];
+  @Input() custom?: CustomProps[];
   @Input() anotherCustom?: AnotherCustomProps;
 }
 

@@ -1,24 +1,7 @@
-import { WithNestedInput } from "./nested-props";
-function view({ getRowCells, props: { rows } }: WithNested) {
-  return (
-    <div>
-      {rows ? (
-        rows.length ? (
-          rows?.map((_, index) => (
-            <span key={index}>
-              {getRowCells(index)}
-
-              <br />
-            </span>
-          ))
-        ) : (
-          <span>{"Empty Array"}</span>
-        )
-      ) : (
-        <span>{"No Data"}</span>
-      )}
-    </div>
-  );
+import { PickedProps, GridColumnProps } from "./nested-props";
+export const CustomColumnComponent = (props: typeof GridColumnProps) => {};
+function view(model: Widget) {
+  return <div />;
 }
 
 import * as React from "react";
@@ -47,47 +30,81 @@ function __collectChildren<T>(children: React.ReactNode): T[] {
     };
   });
 }
-import { GridRow, GridCell } from "./nested-props";
-export const Row: React.FunctionComponent<typeof GridRow> & {
+import {
+  EditingProps,
+  CustomProps,
+  ColumnEditingProps,
+  AnotherCustomProps,
+} from "./nested-props";
+export const Column: React.FunctionComponent<typeof GridColumnProps> & {
   propName: string;
 } = () => null;
-Row.propName = "rows";
-Row.defaultProps = GridRow;
-export const RowCell: React.FunctionComponent<typeof GridCell> & {
+Column.propName = "columns";
+Column.defaultProps = GridColumnProps;
+export const Editing: React.FunctionComponent<typeof EditingProps> & {
   propName: string;
 } = () => null;
-RowCell.propName = "cells";
-RowCell.defaultProps = GridCell;
+Editing.propName = "editing";
+Editing.defaultProps = EditingProps;
+export const ColumnCustom: React.FunctionComponent<typeof CustomProps> & {
+  propName: string;
+} = () => null;
+ColumnCustom.propName = "custom";
+ColumnCustom.defaultProps = CustomProps;
+export const ColumnEditing: React.FunctionComponent<
+  typeof ColumnEditingProps
+> & { propName: string } = () => null;
+ColumnEditing.propName = "editing";
+ColumnEditing.defaultProps = ColumnEditingProps;
+export const EditingCustom: React.FunctionComponent<typeof CustomProps> & {
+  propName: string;
+} = () => null;
+EditingCustom.propName = "custom";
+EditingCustom.defaultProps = CustomProps;
+export const EditingAnotherCustom: React.FunctionComponent<
+  typeof AnotherCustomProps
+> & { propName: string } = () => null;
+EditingAnotherCustom.propName = "anotherCustom";
+EditingAnotherCustom.defaultProps = AnotherCustomProps;
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof typeof WithNestedInput
+  keyof typeof PickedProps
 >;
-interface WithNested {
-  props: typeof WithNestedInput & RestProps;
-  getRowCells: (index: number) => any;
+interface Widget {
+  props: typeof PickedProps & RestProps;
+  getColumns: () => any;
+  isEditable: any;
   restAttributes: RestProps;
   nestedChildren: <T>() => T[];
-  __getNestedRows: typeof GridRow[] | undefined;
+  __getNestedColumns: Array<typeof GridColumnProps | string> | undefined;
+  __getNestedEditing: typeof EditingProps | undefined;
 }
 
-export default function WithNested(props: typeof WithNestedInput & RestProps) {
-  const __getRowCells = useCallback(
-    function __getRowCells(index: number): any {
-      const cells = __getNestedRows()?.[index].cells;
-      return (
-        cells
-          ?.map((cell) => (typeof cell === "string" ? cell : cell.gridData))
-          .join("|") || []
+export default function Widget(props: typeof PickedProps & RestProps) {
+  const __getColumns = useCallback(
+    function __getColumns(): any {
+      return __getNestedColumns()?.map((el) =>
+        typeof el === "string" ? el : el.name
       );
     },
-    [props.rows, props.children]
+    [props.columns, props.children]
+  );
+  const __isEditable = useCallback(
+    function __isEditable(): any {
+      return (
+        __getNestedEditing()?.editEnabled ||
+        __getNestedEditing()?.custom?.length
+      );
+    },
+    [props.editing, props.children]
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { __defaultNestedValues, children, rows, ...restProps } = {
+      const { children, columns, editing, ...restProps } = {
         ...props,
-        rows: __getNestedRows(),
+        columns: __getNestedColumns(),
+        editing: __getNestedEditing(),
       };
       return restProps;
     },
@@ -100,38 +117,46 @@ export default function WithNested(props: typeof WithNestedInput & RestProps) {
     },
     [props.children]
   );
-  const __getNestedRows = useCallback(
-    function __getNestedRows(): typeof GridRow[] | undefined {
-      const nested = __nestedChildren<typeof GridRow & { __name: string }>()
-        .filter((child) => child.__name === "rows")
-        .map((n) => {
-          if (
-            !Object.keys(n).some(
-              (k) => k !== "__name" && k !== "__defaultNestedValues"
-            )
-          ) {
-            return n?.__defaultNestedValues?.() || n;
-          }
-          return n;
-        });
-      return props.rows
-        ? props.rows
-        : nested.length
-        ? nested
-        : props?.__defaultNestedValues?.().rows;
+  const __getNestedColumns = useCallback(
+    function __getNestedColumns():
+      | Array<typeof GridColumnProps | string>
+      | undefined {
+      const nested = __nestedChildren<
+        typeof GridColumnProps & { __name: string }
+      >().filter((child) => child.__name === "columns");
+      return props.columns ? props.columns : nested.length ? nested : undefined;
     },
-    [props.rows, props.children]
+    [props.columns, props.children]
+  );
+  const __getNestedEditing = useCallback(
+    function __getNestedEditing(): typeof EditingProps | undefined {
+      const nested = __nestedChildren<
+        typeof EditingProps & { __name: string }
+      >().filter((child) => child.__name === "editing");
+      return props.editing
+        ? props.editing
+        : nested.length
+        ? nested?.[0]
+        : undefined;
+    },
+    [props.editing, props.children]
   );
 
   return view({
-    props: { ...props, rows: __getNestedRows() },
-    getRowCells: __getRowCells,
+    props: {
+      ...props,
+      columns: __getNestedColumns(),
+      editing: __getNestedEditing(),
+    },
+    getColumns: __getColumns,
+    isEditable: __isEditable(),
     restAttributes: __restAttributes(),
     nestedChildren: __nestedChildren,
-    __getNestedRows: __getNestedRows(),
+    __getNestedColumns: __getNestedColumns(),
+    __getNestedEditing: __getNestedEditing(),
   });
 }
 
-WithNested.defaultProps = {
-  ...WithNestedInput,
+Widget.defaultProps = {
+  ...PickedProps,
 };

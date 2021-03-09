@@ -27,22 +27,39 @@
         <DxRowCell grid-data="cell42"></DxRowCell>
       </DxRow>
     </Nested>
-    <Nested>
-      <DxRow>
-        <DxRowCell></DxRowCell>
-        <DxRowCell grid-data="notDefault"></DxRowCell>
-      </DxRow>
-      <DxRow>
-        <DxRowCell></DxRowCell>
-      </DxRow>
-    </Nested>
     <Nested :rows="[]"> </Nested>
-    <Nested> </Nested>
-    <Nested><DxRow></DxRow></Nested>
-    <Nested
-      ><DxRow :cells="['cell51', { gridData: 'cell52' }]"></DxRow>
-      <DxRow></DxRow
-    ></Nested>
+    <br />
+    Default values:
+    <div style="border: 1px solid">
+      Just nested:
+      <Nested></Nested>
+      <br />
+      Nested Row:
+      <Nested>
+        <DxRow></DxRow>
+      </Nested>
+      <br />
+      Nested Row with not default Row:
+      <Nested>
+        <DxRow></DxRow>
+        <DxRow :cells="[{ gridData: 'cell11' }, 'cell12']"></DxRow>
+      </Nested>
+      <br />
+      Nested Cell:
+      <Nested>
+        <DxRow>
+          <DxRowCell></DxRowCell>
+        </DxRow>
+      </Nested>
+      <br />
+      Nested Cell with not default Cell:
+      <Nested>
+        <DxRow>
+          <DxRowCell />
+          <DxRowCell gridData="notDefault" />
+        </DxRow>
+      </Nested>
+    </div>
   </div>
 </template>
 <script>

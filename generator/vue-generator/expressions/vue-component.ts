@@ -457,27 +457,28 @@ export class VueComponent extends Component {
                           [propName]: {...${props}[propName]}
                         }), {})`;
       }
-      this.methods.push(
-        new GetAccessor(
-          undefined,
-          undefined,
-          new Identifier("__defaultNestedValues"),
-          [],
-          undefined,
-          new Block(
-            [
-              new ReturnStatement(
-                new PropertyAccess(
-                  new SimpleExpression(propName),
-                  new Identifier("__defaultNestedValues")
-                )
-              ),
-            ],
-            true
-          )
-        )
-      );
+
       if (containNestedInput) {
+        this.methods.push(
+          new GetAccessor(
+            undefined,
+            undefined,
+            new Identifier("__defaultNestedValues"),
+            [],
+            undefined,
+            new Block(
+              [
+                new ReturnStatement(
+                  new PropertyAccess(
+                    new SimpleExpression(propName),
+                    new Identifier("__defaultNestedValues")
+                  )
+                ),
+              ],
+              true
+            )
+          )
+        );
         return `props: (({ __defaultNestedValues, ...o }) => o)(${props})`;
       }
       return `props: ${props}`;

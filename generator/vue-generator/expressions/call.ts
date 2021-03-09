@@ -29,7 +29,7 @@ export class New extends Call {
         );
         return defaultValue.toString();
       }
-      if (matchedInput?.fields) {
+      if (matchedInput?.fields?.length && matchedInput?.fields?.length > 0) {
         const objectFields = matchedInput.fields.map(
           (prop) =>
             new PropertyAssignment(

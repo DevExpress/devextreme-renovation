@@ -1,17 +1,9 @@
 <template>
-  <div
-    ><template v-if="__getNestedRow"
-      ><template v-if="__getNestedRow.length"
-        ><template v-for="(_, index) of __getNestedRow"
-          ><span :key="index">{{ __getRowCells(index) }}<br /></span></template
-      ></template>
-      <span v-else>Empty Array</span></template
-    >
-    <span v-else>No Data</span></div
-  >
+  <div />
 </template>
 <script>
-import { WithNestedInput } from "./nested-props";
+import { PickedProps, GridColumnProps } from "./nested-props";
+export const CustomColumnComponent = (props) => {};
 function __collectChildren(children) {
   return children.reduce((acc, child) => {
     const name = child.componentOptions?.Ctor?.extendOptions?.propName;
@@ -63,69 +55,91 @@ function __extractDefaultValues(propsObject) {
       return accObj;
     }, {});
 }
-import { GridRow, GridCell } from "./nested-props";
-export const DxRow = {
-  props: (({ __defaultNestedValues, ...o }) => o)(GridRow),
-  computed: {
-    __defaultNestedValues() {
-      return GridRow.__defaultNestedValues;
-    },
-  },
+import {
+  EditingProps,
+  CustomProps,
+  ColumnEditingProps,
+  AnotherCustomProps,
+} from "./nested-props";
+export const DxColumn = {
+  props: GridColumnProps,
 };
-DxRow.propName = "rows";
-DxRow.defaultProps = __extractDefaultValues(GridRow);
-export const DxRowCell = {
-  props: GridCell,
+DxColumn.propName = "columns";
+DxColumn.defaultProps = __extractDefaultValues(GridColumnProps);
+export const DxEditing = {
+  props: EditingProps,
 };
-DxRowCell.propName = "cells";
-DxRowCell.defaultProps = __extractDefaultValues(GridCell);
+DxEditing.propName = "editing";
+DxEditing.defaultProps = __extractDefaultValues(EditingProps);
+export const DxColumnCustom = {
+  props: CustomProps,
+};
+DxColumnCustom.propName = "custom";
+DxColumnCustom.defaultProps = __extractDefaultValues(CustomProps);
+export const DxColumnEditing = {
+  props: ColumnEditingProps,
+};
+DxColumnEditing.propName = "editing";
+DxColumnEditing.defaultProps = __extractDefaultValues(ColumnEditingProps);
+export const DxEditingCustom = {
+  props: CustomProps,
+};
+DxEditingCustom.propName = "custom";
+DxEditingCustom.defaultProps = __extractDefaultValues(CustomProps);
+export const DxEditingAnotherCustom = {
+  props: AnotherCustomProps,
+};
+DxEditingAnotherCustom.propName = "anotherCustom";
+DxEditingAnotherCustom.defaultProps = __extractDefaultValues(
+  AnotherCustomProps
+);
 
-export const DxWithNested = {
-  name: "WithNested",
-  props: (({ __defaultNestedValues, ...o }) => o)(WithNestedInput),
+export const DxWidget = {
+  name: "Widget",
+  props: PickedProps,
   computed: {
+    __isEditable() {
+      return (
+        this.__getNestedEditing?.editEnabled ||
+        this.__getNestedEditing?.custom?.length
+      );
+    },
     __restAttributes() {
       return {};
     },
     props() {
-      return { rows: this.__getNestedRow };
+      return {
+        columns: this.__getNestedColumn,
+        editing: this.__getNestedEditing,
+      };
     },
     __nestedChildren() {
       return this.$slots.default ? __collectChildren(this.$slots.default) : [];
     },
-    __getNestedRow() {
-      const nested = this.__nestedChildren
-        .filter((child) => child.__name === "rows")
-        .map((n) => {
-          if (
-            !Object.keys(n).some(
-              (k) => k !== "__name" && k !== "__defaultNestedValues"
-            )
-          ) {
-            return n?.__defaultNestedValues?.() || n;
-          }
-          return n;
-        });
-      return this.rows
-        ? this.rows
-        : nested.length
-        ? nested
-        : this?.__defaultNestedValues()?.rows;
+    __getNestedColumn() {
+      const nested = this.__nestedChildren.filter(
+        (child) => child.__name === "columns"
+      );
+      return this.columns ? this.columns : nested.length ? nested : undefined;
     },
-    __defaultNestedValues() {
-      return WithNestedInput.__defaultNestedValues;
+    __getNestedEditing() {
+      const nested = this.__nestedChildren.filter(
+        (child) => child.__name === "editing"
+      );
+      return this.editing
+        ? this.editing
+        : nested.length
+        ? nested?.[0]
+        : undefined;
     },
   },
   methods: {
-    __getRowCells(index) {
-      const cells = this.__getNestedRow?.[index].cells;
-      return (
-        cells
-          ?.map((cell) => (typeof cell === "string" ? cell : cell.gridData))
-          .join("|") || []
+    __getColumns() {
+      return this.__getNestedColumn?.map((el) =>
+        typeof el === "string" ? el : el.name
       );
     },
   },
 };
-export default DxWithNested;
+export default DxWidget;
 </script>

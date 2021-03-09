@@ -1,18 +1,41 @@
-export declare type GridCellType = {
-  gridData?: string;
+export declare type GridColumnPropsType = {
+  name: string;
+  index: number;
+  editing?: typeof ColumnEditingProps;
+  custom?: typeof CustomProps[];
+  defaultIndex: number;
+  indexChange?: (index: number) => void;
 };
-export const GridCell: GridCellType = {
-  gridData: "defaultValue",
+export const GridColumnProps: GridColumnPropsType = ({
+  name: "",
+  defaultIndex: 0,
+  indexChange: () => {},
+} as any) as GridColumnPropsType;
+export declare type CustomPropsType = {};
+export const CustomProps: CustomPropsType = {};
+export declare type AnotherCustomPropsType = {};
+export const AnotherCustomProps: AnotherCustomPropsType = {};
+export declare type EditingPropsType = {
+  editEnabled?: boolean;
+  custom?: typeof CustomProps[];
+  anotherCustom?: typeof AnotherCustomProps;
 };
-export declare type GridRowType = {
-  cells?: (typeof GridCell | string)[];
+export const EditingProps: EditingPropsType = {
+  editEnabled: false,
 };
-export const GridRow: GridRowType = {
-  cells: [GridCell],
+export declare type ColumnEditingPropsType = {
+  editEnabled?: boolean;
 };
-export declare type WithNestedInputType = {
-  rows?: typeof GridRow[];
+export const ColumnEditingProps: ColumnEditingPropsType = {
+  editEnabled: false,
 };
-export const WithNestedInput: WithNestedInputType = {
-  rows: [GridRow],
+export declare type WidgetPropsType = {
+  columns?: Array<typeof GridColumnProps | string>;
+  editing?: typeof EditingProps;
 };
+export const WidgetProps: WidgetPropsType = {};
+export declare type PickedPropsType = {
+  columns?: Array<typeof GridColumnProps | string>;
+  editing?: typeof EditingProps;
+};
+export const PickedProps: PickedPropsType = {};

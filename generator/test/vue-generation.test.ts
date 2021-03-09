@@ -213,11 +213,11 @@ mocha.describe("vue-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it.only("nested", function () {
+  mocha.it("nested", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it.only("nested-props", function () {
+  mocha.it("nested-props", function () {
     this.testGenerator(this.test!.title);
   });
 
@@ -352,6 +352,14 @@ mocha.describe("vue-generation", function () {
   });
 
   mocha.it("template-from-destructuring", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("nested-default", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("nested-default-props", function () {
     this.testGenerator(this.test!.title);
   });
 });

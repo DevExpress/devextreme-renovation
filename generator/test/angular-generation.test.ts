@@ -319,6 +319,14 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("nested-default", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("nested-default-props", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {

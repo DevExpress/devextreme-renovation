@@ -40,29 +40,39 @@ export default () => {
           <RowCell gridData="cell42" />
         </Row>
       </Nested>
-      <Nested>
-        <Row>
-          <RowCell />
-          <RowCell gridData="notDefault" />
-        </Row>
-      </Nested>
-      1
-      <Nested>
-        <Row></Row>
-      </Nested>
-      2
-      <Nested>
-        <Row>
-          <RowCell></RowCell>
-        </Row>
-      </Nested>
-      3
-      <Nested>
-        <Row></Row>
-        <Row cells={[{ gridData: "cell11" }, "cell12"]}></Row>
-      </Nested>
       <Nested rows={[]}></Nested>
-      <Nested></Nested>
+      <br></br>
+      Default values:
+      <div style={{ border: "1px solid" }}>
+        Just nested:
+        <Nested></Nested>
+        <br />
+        Nested Row:
+        <Nested>
+          <Row></Row>
+        </Nested>
+        <br />
+        Nested Row with not default Row:
+        <Nested>
+          <Row></Row>
+          <Row cells={[{ gridData: "cell11" }, "cell12"]}></Row>
+        </Nested>
+        <br />
+        Nested Cell:
+        <Nested>
+          <Row>
+            <RowCell></RowCell>
+          </Row>
+        </Nested>
+        <br />
+        Nested Cell with not default Cell:
+        <Nested>
+          <Row>
+            <RowCell />
+            <RowCell gridData="notDefault" />
+          </Row>
+        </Nested>
+      </div>
     </div>
   );
 };

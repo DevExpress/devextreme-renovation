@@ -40,13 +40,13 @@ export class Property extends BaseProperty {
     return super.getter(componentContext);
   }
 
-  defaultDeclaration() {
+  defaultDeclaration(options?: toStringOptions) {
     if (this.isState) {
       return `${this.name}: this.props.${this.name}!==undefined?this.props.${
         this.name
       }: this.props.default${capitalizeFirstLetter(this.name)}`;
     }
-    return super.defaultDeclaration();
+    return super.defaultDeclaration(options);
   }
 
   inherit() {

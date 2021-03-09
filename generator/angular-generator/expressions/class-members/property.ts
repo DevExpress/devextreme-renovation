@@ -98,7 +98,7 @@ export class Property extends BaseProperty {
             }`;
     }
     if (this.isNestedComp) {
-      return `@ContentChildren(${this.type}) ${this.name}!: QueryList<${this.type}>`;
+      return `@ContentChildren(${this.type}) ${this.name} ${this.questionOrExclamationToken}: QueryList<${this.type}>`;
     }
 
     if (this.isProvider || this.isConsumer) {

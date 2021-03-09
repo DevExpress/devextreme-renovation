@@ -60,6 +60,7 @@ import {
   angularPortalCdkImports,
 } from "./templates/portal-component";
 import { PropsGetAccessor } from "./class-members/props-get-accessor";
+import syntaxKind from "../../base-generator/syntaxKind";
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = "CUSTOM_VALUE_ACCESSOR_PROVIDER";
 
@@ -262,13 +263,16 @@ export class AngularComponent extends Component {
     modifiers: string[],
     name: string,
     questionOrExclamationToken: string,
-    type: string
+    type: string,
+    componentName: string,
+    initializer?: Expression
   ) {
     const isArray = isTypeArray(type);
     const indexGetter = isArray ? "" : "[0]";
     if (questionOrExclamationToken === "?") {
       type = type + "| undefined";
     }
+
     return new GetAccessor(
       [],
       modifiers,
@@ -280,10 +284,11 @@ export class AngularComponent extends Component {
           new SimpleExpression(`if (this.__${name}) {
           return this.__${name};
         }
-        const nested = this.${name}Nested.toArray();
-        if (nested.length) {
+        const nested = this.${name}Nested?.toArray();
+        if (nested && nested.length) {
           return nested${indexGetter};
-        }`),
+        }
+        ${initializer ? `return new ${componentName}().${name}` : ""}`),
         ],
         true
       )
@@ -310,7 +315,8 @@ export class AngularComponent extends Component {
   processNestedProperty(
     property: Property,
     onPushStrategy: boolean = false,
-    selector: string = this.selector
+    selector: string = this.selector,
+    componentName: string = this.heritageClauses[0].propsType.toString()
   ) {
     const {
       decorators,
@@ -318,6 +324,7 @@ export class AngularComponent extends Component {
       questionOrExclamationToken,
       type,
       name,
+      initializer,
     } = property;
 
     const nestedCompDecorator = [
@@ -330,6 +337,7 @@ export class AngularComponent extends Component {
     const nestedName = `Dx${convertSelectorToName(
       `${selector} ${isTypeArray(type) ? removePlural(name) : name}`
     )}`;
+
     const complexType = type
       .toString()
       .replace(extractComplexType(type), nestedName);
@@ -340,7 +348,7 @@ export class AngularComponent extends Component {
         nestedCompDecorator,
         modifiers,
         name,
-        questionOrExclamationToken,
+        syntaxKind.QuestionToken,
         nestedName
       ),
       this.createNestedPropertySetter(
@@ -355,7 +363,9 @@ export class AngularComponent extends Component {
         modifiers,
         name,
         questionOrExclamationToken,
-        complexType
+        complexType,
+        componentName,
+        initializer
       ),
     ];
   }
@@ -1045,7 +1055,11 @@ export class AngularComponent extends Component {
     const innerNested = (component.members.filter(
       (m) => m.isNested
     ) as Property[])
-      .map((m) => this.processNestedProperty(m, false, selector).join("\n"))
+      .map((m) =>
+        this.processNestedProperty(m, false, selector, component.name).join(
+          "\n"
+        )
+      )
       .join("\n");
 
     const name = convertSelectorToName(selector);
