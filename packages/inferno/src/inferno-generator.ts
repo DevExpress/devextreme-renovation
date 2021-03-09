@@ -1,5 +1,3 @@
-import path from 'path';
-
 import {
   Block,
   Decorator,
@@ -138,12 +136,5 @@ export class InfernoGenerator extends PreactGenerator {
       moduleSpecifier,
       this.getContext()
     );
-  }
-
-  getModulesPath() {
-    if (this.options.modulesPath) {
-      return super.getModulesPath();
-    }
-    return path.resolve(__dirname, "../modules/inferno");
   }
 }

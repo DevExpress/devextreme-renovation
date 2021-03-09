@@ -2,24 +2,24 @@
   "name": "@devextreme-generator/inferno-common",
   "version": "1.0.0",
   "description": "Component generator",
-  "main": "src/index.ts",
+  "main": "dist/index",
+  "types": "dist/index",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "gulp build",
-    "build-dist": "gulp build-dist"
+    "build": "tsc",
+    "pack": "npm run build && npm pack"
   },
   "author": "Developer Express Inc.",
   "license": "MIT",
   "dependencies": {
-    "code-block-writer": "^10.1.0",
-    "gulp": "^4.0.2",
     "inferno-compat": "^7.4.6",
     "inferno-create-element": "^7.4.6",
     "inferno-hydrate": "^7.4.6",
-    "inferno": "^7.4.6",
-    "loader-utils": "^2.0.0",
-    "prettier": "^2.1.0",
-    "typescript": "3.8"
+    "inferno": "^7.4.6"
   },
   "devDependencies": {
+    "typescript": "3.8"
   }
 }

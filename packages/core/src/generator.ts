@@ -1295,16 +1295,11 @@ export class Generator implements GeneratorAPI {
     }
   }
 
-  getModulesPath() {
-    return this.options.modulesPath || "";
-  }
-
   getInitialContext(): GeneratorContext {
     return {
-      defaultOptionsModule:
-        this.options.defaultOptionsModule &&
-        path.resolve(this.options.defaultOptionsModule),
-      modules: this.getModulesPath(),
+      defaultOptionsModule: this.options.defaultOptionsModule,
+        // this.options.defaultOptionsModule &&
+        // path.resolve(this.options.defaultOptionsModule),
     };
   }
 

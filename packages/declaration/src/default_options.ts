@@ -1,3 +1,4 @@
+// NOTE: fake for tests
 export type Rule<T> = {
   device: any;
   options: Partial<T>;

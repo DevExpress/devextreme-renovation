@@ -135,17 +135,6 @@ export class ImportDeclaration {
     public context: GeneratorContext
   ) {}
 
-  resolveCommonModule(module: string): string {
-    if (this.context.modules!.startsWith("devextreme-generator")) {
-      return `"${this.context.modules}/${module}"`;
-    }
-    return `"${getRelativePath(
-      this.context.dirname!,
-      this.context.modules!,
-      module
-    )}"`;
-  }
-
   replaceSpecifier(search: string | RegExp, replaceValue: string) {
     this.moduleSpecifier.expression = this.moduleSpecifier.expression.replace(
       search,

@@ -57,23 +57,23 @@
     /* Advanced Options */
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
   },
-  "exclude": ["node_modules", "build", "test/test-cases", "e2e", "modules"],
+  "exclude": ["node_modules", "build", "packages/test/test-cases", "e2e", "modules"],
   "paths": {
-    "@devextreme-generator/angular": ["@devextreme-generator/angular/src"],
-    // "@devextreme-generator/angular/*": ["@devextreme-generator/angular/src/*"],
-    "@devextreme-generator/core": ["@devextreme-generator/core/src"],
-    // "@devextreme-generator/core/*": ["@devextreme-generator/core/src/*"],
+    "@devextreme-generator/angular": ["packages/angular/src"],
+    "@devextreme-generator/angular/*": ["packages/angular/src/*"],
+    "@devextreme-generator/core": ["packages/core/src"],
+    "@devextreme-generator/core/*": ["packages/core/src/*"],
     "@devextreme-generator/declaration": [
-      "@devextreme-generator/declaration/src"
+      "packages/declaration/src"
     ],
-    // "@devextreme-generator/declaration/*": ["@devextreme-generator/declaration/src/*"],
-    "@devextreme-generator/inferno": ["@devextreme-generator/inferno/src"],
-    // "@devextreme-generator/inferno/*": ["@devextreme-generator/inferno/src/*"],
-    "@devextreme-generator/preact": ["@devextreme-generator/preact/src"],
-    // "@devextreme-generator/preact/*": ["@devextreme-generator/preact/src/*"],
-    "@devextreme-generator/react": ["@devextreme-generator/react/src"],
-    // "@devextreme-generator/react/*": ["@devextreme-generator/react/src/*"],
-    "@devextreme-generator/vue": ["@devextreme-generator/vue/src"]
-    // "@devextreme-generator/vue/*": ["@devextreme-generator/vue/src/*"],
+    "@devextreme-generator/declaration/*": ["packages/declaration/src/*"],
+    "@devextreme-generator/inferno": ["packages/inferno/src"],
+    "@devextreme-generator/inferno/*": ["packages/inferno/src/*"],
+    "@devextreme-generator/preact": ["packages/preact/src"],
+    "@devextreme-generator/preact/*": ["packages/preact/src/*"],
+    "@devextreme-generator/react": ["packages/react/src"],
+    "@devextreme-generator/react/*": ["packages/react/src/*"],
+    "@devextreme-generator/vue": ["packages/vue/src"],
+    "@devextreme-generator/vue/*": ["packages/vue/src/*"]
   }
 }

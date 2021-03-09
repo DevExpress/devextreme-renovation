@@ -3,43 +3,39 @@ import { ImportDeclaration as BaseImportDeclaration } from "@devextreme-generato
 export class ImportDeclaration extends BaseImportDeclaration {
   compileComponentDeclarationImport() {
     const inferno: string[] = [];
+    const common: string[] = [];
     const result: string[] = [];
     if (this.has("Fragment")) {
       inferno.push("Fragment");
-    }
-    if (this.has("Portal")) {
-      result.push(`import {Portal} from ${this.resolveCommonModule("portal")}`);
     }
 
     if (inferno.length) {
       result.push(`import {${inferno}} from "inferno"`);
     }
 
+    if (this.has("Portal")) {
+      common.push(`Portal`);
+    }
+
     if (this.has("Effect")) {
-      result.push(
-        `import {InfernoEffect} from ${this.resolveCommonModule("effect")}`
-      );
+      common.push(`InfernoEffect`);
     }
 
     if (this.has("RefObject") || this.has("Ref") || this.has("ForwardRef")) {
-      result.push(
-        `import {RefObject} from ${this.resolveCommonModule("ref_object")}`
-      );
+      common.push(`RefObject`);
     }
 
     if (this.has("Component")) {
-      result.push(
-        `import {InfernoComponent} from ${this.resolveCommonModule(
-          "base_component"
-        )}`
-      );
+      common.push(`InfernoComponent`);
     }
 
     if (this.has("createContext")) {
+      common.push(`createContext`);
+    }
+
+    if (common.length) {
       result.push(
-        `import {createContext} from ${this.resolveCommonModule(
-          "create_context"
-        )}`
+        `import {${common}} from "@devextreme-generator/inferno-common"`
       );
     }
 
