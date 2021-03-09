@@ -4,7 +4,7 @@ import {
   TwoWay,
   ComponentBindings,
   JSXComponent,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 function view(model: ModelWidget) {
   return <div>{model.props.baseStateProp}</div>;

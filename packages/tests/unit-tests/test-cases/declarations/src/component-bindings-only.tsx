@@ -1,8 +1,8 @@
 import {
   OneWay,
   ComponentBindings,
-} from "../../../../component_declaration/common";
-import { Options, AdditionalOptions } from "./types";
+} from "@devextreme-generator/declaration";
+import { Options, AdditionalOptions } from "./types.d";
 
 @ComponentBindings()
 export default class WidgetProps {

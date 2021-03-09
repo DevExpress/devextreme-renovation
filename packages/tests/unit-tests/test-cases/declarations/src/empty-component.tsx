@@ -1,4 +1,4 @@
-import { Component, OneWay } from "../../../../component_declaration/common";
+import { Component, OneWay } from "@devextreme-generator/declaration";
 @Component({
   view: view1,
   defaultOptionRules: null,

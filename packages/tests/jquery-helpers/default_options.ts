@@ -1,8 +1,4 @@
-// NOTE: fake for tests
-export type Rule<T> = {
-  device: any;
-  options: Partial<T>;
-};
+import { Rule } from "@devextreme-generator/declaration"
 
 export function convertRulesToOptions<T>(rules: Rule<T>[]): T {
   return rules.reduce((options: T, rule) => {
@@ -18,3 +14,5 @@ export function createDefaultOptionRules<T>(
 ): Rule<T>[] {
   return options;
 }
+
+export { Rule };

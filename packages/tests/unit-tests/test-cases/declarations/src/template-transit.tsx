@@ -3,7 +3,7 @@ import {
   Template,
   ComponentBindings,
   JSXComponent,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 import WidgetWithTemplate from "./dx-widget-with-template";
 
 @ComponentBindings()

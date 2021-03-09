@@ -3,7 +3,7 @@ import {
   Component,
   ComponentBindings,
   TwoWay,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 function view() {}
 

@@ -3,7 +3,7 @@ import {
   OneWay,
   ComponentBindings,
   JSXComponent,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 import { Widget } from "./export-named";
 
 function view(model: Child) {

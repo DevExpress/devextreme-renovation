@@ -3,7 +3,7 @@ import {
   OneWay,
   JSXComponent,
   ComponentBindings,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 @ComponentBindings()
 class Props {

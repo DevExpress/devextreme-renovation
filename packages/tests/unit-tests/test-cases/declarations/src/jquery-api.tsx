@@ -6,7 +6,7 @@ import {
   Method,
   JSXComponent,
   RefObject,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 function view(viewModel: Widget) {
   return <div ref={viewModel.divRef as any}></div>;

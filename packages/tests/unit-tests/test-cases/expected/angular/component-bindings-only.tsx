@@ -1,4 +1,4 @@
-import { Options, AdditionalOptions } from "./types";
+import { Options, AdditionalOptions } from "./types.d";
 
 import { Input } from "@angular/core";
 export default class WidgetProps {

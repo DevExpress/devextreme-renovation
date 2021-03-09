@@ -6,7 +6,7 @@ import {
   JSXComponent,
   Provider,
   Consumer,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 function view(model: Widget): JSX.Element {
   return <span></span>;

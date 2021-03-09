@@ -5,7 +5,7 @@ import {
   JSXComponent,
   ForwardRef,
   RefObject,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 function view(viewModel: Widget) {
   return (

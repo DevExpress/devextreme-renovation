@@ -3,7 +3,7 @@ import {
   ComponentBindings,
   Method,
   JSXComponent,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 import BaseWidget, { MyType, MyTypeReturn } from "./jquery-api";
 

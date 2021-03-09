@@ -1,4 +1,4 @@
-import { Component, Listen } from "../../../../component_declaration/common";
+import { Component, Listen } from "@devextreme-generator/declaration";
 
 function view(model: Widget) {
   return <div></div>;

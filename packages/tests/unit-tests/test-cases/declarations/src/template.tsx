@@ -5,7 +5,7 @@ import {
   JSXComponent,
   OneWay,
   JSXTemplate,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 import { WidgetWithProps, WidgetWithPropsInput } from "./dx-widget-with-props";
 
 @ComponentBindings()

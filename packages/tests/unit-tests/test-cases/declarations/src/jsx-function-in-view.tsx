@@ -4,7 +4,7 @@ import {
   ComponentBindings,
   JSXComponent,
   OneWay,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 const loadingJSX = ({ text }: any) => {
   return <div>{text}</div>;

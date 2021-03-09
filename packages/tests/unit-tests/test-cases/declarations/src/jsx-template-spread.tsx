@@ -5,12 +5,12 @@ import {
   JSXTemplate,
   Template,
   OneWay,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 import {
   InterfaceTemplateInput,
   ClassTemplateInput,
   TypeTemplateInput,
-} from "./types";
+} from "./types.d";
 interface TemplateInput {
   inputInt: number;
 }

@@ -4,7 +4,7 @@ import { compile } from '@devextreme-generator/dev-utils';
 import assert from 'assert';
 import path from 'path';
 
-import { createTestGenerator, getModulePath } from './helpers/common';
+import { createTestGenerator } from './helpers/common';
 import mocha from './helpers/mocha';
 
 mocha.describe("angular-generation", function () {
@@ -322,9 +322,7 @@ mocha.describe("angular-generation", function () {
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {
-        defaultOptionsModule: getModulePath(
-          "../declaration/src/default_options"
-        ),
+        defaultOptionsModule: path.resolve(__dirname, "../jquery-helpers/default_options"),
       };
       generator.setContext({
         dirname: path.resolve(__dirname, "./test-cases/declarations/src"),

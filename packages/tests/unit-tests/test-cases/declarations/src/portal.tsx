@@ -7,7 +7,7 @@ import {
   Ref,
   OneWay,
   RefObject,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 function view(model: Widget) {
   return (

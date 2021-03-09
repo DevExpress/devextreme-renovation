@@ -11,7 +11,7 @@ import { CommonModule } from "@angular/common";
 import {
   convertRulesToOptions,
   Rule,
-} from "@devextreme-generator/declaration/src/default_options";
+} from "../../../../jquery-helpers/default_options";
 
 type WidgetOptionRule = Rule<Partial<WidgetProps>>;
 

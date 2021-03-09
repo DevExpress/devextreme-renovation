@@ -1,7 +1,7 @@
 import {
   JSXComponent,
   Component,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 import Props from "./component-bindings-only";
 
 function view(model: Widget) {

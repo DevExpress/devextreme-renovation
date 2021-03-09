@@ -1,9 +1,9 @@
 import {
   JSXComponent,
   Component,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 import Props from "./component-bindings-only";
-import { Options } from "./types";
+import { Options } from "./types.d";
 
 function view(model: Widget) {
   return <div>{model.props.data?.value}</div>;

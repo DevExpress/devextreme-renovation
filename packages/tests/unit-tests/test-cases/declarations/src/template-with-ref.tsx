@@ -5,7 +5,7 @@ import {
   JSXComponent,
   Ref,
   RefObject,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 @ComponentBindings()
 export class WidgetInput {

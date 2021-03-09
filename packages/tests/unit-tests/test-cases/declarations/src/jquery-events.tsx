@@ -3,7 +3,7 @@ import {
   Event,
   ComponentBindings,
   JSXComponent,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 @ComponentBindings()
 class WidgetProps {

@@ -3,7 +3,7 @@ import {
   ComponentBindings,
   JSXComponent,
   OneWay,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 import { namedFunction as externalFunction } from "./functions";
 import { SomeClass } from "./class";
 

@@ -4,7 +4,7 @@ import {
   Fragment,
   JSXComponent,
   OneWay,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 import WidgetOne from "./component-pass-one";
 import { WidgetTwo } from "./component-pass-two";
 

@@ -4,7 +4,7 @@ import {
   JSXComponent,
   OneWay,
   Slot,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 function view({ props: { text, children } }: WidgetTwo) {
   return (

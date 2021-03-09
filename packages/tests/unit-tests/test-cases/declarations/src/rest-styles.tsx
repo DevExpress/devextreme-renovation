@@ -6,7 +6,7 @@ import {
   JSXComponent,
   TwoWay,
   CSSAttributes,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 const modifyStyles = (styles: CSSAttributes) => {
   return {

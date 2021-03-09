@@ -2,7 +2,7 @@ import {
   InterfaceTemplateInput,
   ClassTemplateInput,
   TypeTemplateInput,
-} from "./types";
+} from "./types.d";
 
 interface TemplateInput {
   inputInt: number;
@@ -48,7 +48,12 @@ import { CommonModule } from "@angular/common";
         "
       >
       </ng-container
-      ><ng-container *ngTemplateOutlet="template2 || template2Default">
+      ><ng-container
+        *ngTemplateOutlet="
+          template2 || template2Default;
+          context: { inputInt: PropFromClass.inputInt }
+        "
+      >
       </ng-container
       ><ng-container
         *ngTemplateOutlet="
@@ -57,9 +62,19 @@ import { CommonModule } from "@angular/common";
         "
       >
       </ng-container
-      ><ng-container *ngTemplateOutlet="template2 || template2Default">
+      ><ng-container
+        *ngTemplateOutlet="
+          template2 || template2Default;
+          context: { inputInt: PropFromImportedInterface.inputInt }
+        "
+      >
       </ng-container
-      ><ng-container *ngTemplateOutlet="template2 || template2Default">
+      ><ng-container
+        *ngTemplateOutlet="
+          template2 || template2Default;
+          context: { inputInt: PropFromImportedType.inputInt }
+        "
+      >
       </ng-container
     ></div>
     <ng-template #templateDefault let-width="width" let-height="height">

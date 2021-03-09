@@ -3,7 +3,7 @@ import {
   Component,
   ComponentBindings,
   OneWay,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 import { COMPONENT_INPUT_CLASS } from "./component-input";
 import { WidgetTwo as ExternalComponent } from "./component-pass-two";
 

@@ -1,11 +1,11 @@
-import { Options } from "./types";
+import { Options } from "./types.d";
 import {
   ComponentBindings,
   OneWay,
   Component,
   JSXComponent,
   Effect,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 export const viewFunction = (viewModel: Marker) => <div></div>;
 

@@ -5,7 +5,7 @@ import {
   OneWay,
   Event,
   Listen,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 function view(model: Widget) {
   return <div></div>;

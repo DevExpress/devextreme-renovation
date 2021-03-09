@@ -5,7 +5,7 @@ import {
   JSXTemplate,
   OneWay,
   InternalState,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 import DynamicComponent, { WidgetInput } from "./props";
 import DynamicComponentWithTemplate, {

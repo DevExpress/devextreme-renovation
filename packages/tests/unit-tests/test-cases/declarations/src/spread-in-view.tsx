@@ -4,7 +4,7 @@ import {
   JSXComponent,
   OneWay,
   Event,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 export const viewFunction = ({ props: { a, ...rest } }: Widget) => {
   return <div {...rest}></div>;

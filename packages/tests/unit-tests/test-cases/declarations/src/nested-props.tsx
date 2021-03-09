@@ -3,7 +3,7 @@ import {
   Nested,
   OneWay,
   TwoWay,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 @ComponentBindings()
 export class GridColumnProps {

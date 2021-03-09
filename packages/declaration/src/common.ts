@@ -1,6 +1,10 @@
 import * as react from "react";
 import { createPortal } from "react-dom";
-import { Rule } from "./default_options";
+
+export type Rule<T> = {
+  device: any;
+  options: Partial<T>;
+};
 
 export const React = react;
 export const Fragment = react.Fragment;

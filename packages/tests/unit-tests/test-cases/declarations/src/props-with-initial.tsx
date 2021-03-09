@@ -2,7 +2,7 @@ import {
   Component,
   ComponentBindings,
   JSXComponent,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 import { WidgetWithProps } from "./dx-widget-with-props";
 
 function view(model: Widget): JSX.Element {

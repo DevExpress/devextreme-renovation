@@ -5,7 +5,7 @@ import {
   ComponentBindings,
   JSXComponent,
   InternalState,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 function view(model: Widget): JSX.Element {
   return <span></span>;

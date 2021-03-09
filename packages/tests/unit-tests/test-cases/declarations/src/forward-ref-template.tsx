@@ -7,7 +7,7 @@ import {
   Fragment,
   ForwardRef,
   RefObject,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 function view(model: RefOnChildrenTemplate) {
   return (

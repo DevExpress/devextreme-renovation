@@ -4,7 +4,7 @@ import {
   JSXComponent,
   JSXTemplate,
   Template,
-} from "../../../../component_declaration/common";
+} from "@devextreme-generator/declaration";
 
 @ComponentBindings()
 export class Props {
