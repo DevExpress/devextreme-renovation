@@ -23,9 +23,11 @@
     "@devextreme-generator/vue": "^1.0.0",
     "loader-utils": "^2.0.0",
     "typescript": "3.8",
+    "vinyl": "^2.2.1",
     "webpack": "^4.44.1"
   },
   "devDependencies": {
-    "@types/loader-utils": "^2.0.1"
+    "@types/loader-utils": "^2.0.1",
+    "@types/vinyl": "^2.0.4"
   }
 }
