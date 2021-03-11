@@ -1,7 +1,7 @@
 {
   "name": "@devextreme-generator/react",
   "version": "1.0.0",
-  "description": "Component generator",
+  "description": "DevExtreme react component generator",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -10,7 +10,8 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "pack": "npm run build && npm pack"
+    "pack": "npm run build && npm pack",
+    "clear": "shx rm -rf dist"
   },
   "author": "Developer Express Inc.",
   "license": "MIT",
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "@types/node": "^12.12.14",
+    "shx": "^0.3.3",
     "typescript": "3.8"
   }
 }

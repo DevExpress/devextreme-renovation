@@ -15,6 +15,7 @@
     "bootstrap": "lerna bootstrap --no-ci --hoist",
     "build": "lerna run build --parallel",
     "build:watch": "lerna run build:watch --parallel",
+    "clear": "lerna run clear --parallel",
     "pack": "lerna run pack --parallel",
     "test": "cd packages/tests && npm run test",
     "test:with-reporters": "cd packages/tests && npm run test:with-reporters",

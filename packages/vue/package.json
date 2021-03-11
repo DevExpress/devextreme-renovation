@@ -1,7 +1,7 @@
 {
   "name": "@devextreme-generator/vue",
   "version": "1.0.0",
-  "description": "Component generator",
+  "description": "DevExtreme vue component generator",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -10,18 +10,20 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "pack": "npm run build && npm pack"
+    "pack": "npm run build && npm pack",
+    "clear": "shx rm -rf dist"
   },
   "author": "Developer Express Inc.",
   "license": "MIT",
   "dependencies": {
-    "@devextreme-generator/core": "^1.0.0",
     "@devextreme-generator/angular": "^1.0.0",
+    "@devextreme-generator/core": "^1.0.0",
     "prettier": "^2.1.0"
   },
   "devDependencies": {
     "@types/node": "^12.12.14",
     "@types/prettier": "^2.1.0",
+    "shx": "^0.3.3",
     "typescript": "3.8"
   }
 }

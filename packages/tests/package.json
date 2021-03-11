@@ -2,7 +2,6 @@
   "name": "tests",
   "private": true,
   "version": "1.0.0",
-  "description": "Component generator tests",
   "scripts": {
     "test": "nyc mocha -r ts-node/register ./unit-tests/*.test.ts --timeout 30000",
     "test:with-reporters": "nyc --reporter cobertura mocha -r ts-node/register ./unit-tests/*.test.ts --timeout 30000 --reporter mocha-junit-reporter --reporter-options mochaFile=./report/test-result.xml",
@@ -13,7 +12,6 @@
   },
   "author": "Developer Express Inc.",
   "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
     "@angular/cdk": "^11.0.2",
     "@angular/common": "^11.0.4",
@@ -64,6 +62,7 @@
     "raw-loader": "1.0.0",
     "react-dom": "^16.13.1",
     "rxjs": "^6.5.4",
+    "shx": "^0.3.3",
     "sinon": "^8.0.4",
     "start-server-and-test": "^1.10.11",
     "testcafe": "^1.8.3",

@@ -1,7 +1,7 @@
 {
   "name": "@devextreme-generator/dev-utils",
   "version": "1.0.0",
-  "description": "Component generator",
+  "description": "DevExtreme development utils",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -10,7 +10,8 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "pack": "npm run build && npm pack"
+    "pack": "npm run build && npm pack",
+    "clear": "shx rm -rf dist"
   },
   "author": "Developer Express Inc.",
   "license": "MIT",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@types/loader-utils": "^2.0.1",
-    "@types/vinyl": "^2.0.4"
+    "@types/vinyl": "^2.0.4",
+    "shx": "^0.3.3"
   }
 }

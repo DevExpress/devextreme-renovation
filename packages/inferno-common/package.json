@@ -1,7 +1,7 @@
 {
   "name": "@devextreme-generator/inferno-common",
   "version": "1.0.0",
-  "description": "Component generator",
+  "description": "DevExtreme inferno common components",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -10,17 +10,19 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "pack": "npm run build && npm pack"
+    "pack": "npm run build && npm pack",
+    "clear": "shx rm -rf dist"
   },
   "author": "Developer Express Inc.",
   "license": "MIT",
   "dependencies": {
+    "inferno": "^7.4.6",
     "inferno-compat": "^7.4.6",
     "inferno-create-element": "^7.4.6",
-    "inferno-hydrate": "^7.4.6",
-    "inferno": "^7.4.6"
+    "inferno-hydrate": "^7.4.6"
   },
   "devDependencies": {
+    "shx": "^0.3.3",
     "typescript": "3.8"
   }
 }
