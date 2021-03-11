@@ -21,7 +21,10 @@
     "test:with-replace": "cd packages/tests && npm run test:with-replace",
     "test:testcafe": "cd packages/tests && npm run test:testcafe",
     "test:testcafe-headless": "cd packages/tests && npm run test:testcafe-headless",
-    "testcafe:start-test-servers": "cd packages/tests && npm run testcafe:start-test-servers"
+    "testcafe:start-test-servers": "cd packages/tests && npm run testcafe:start-test-servers",
+    "publish:patch": "lerna version patch --no-git-tag-version --no-push",
+    "publish:minor": "lerna version minor --no-git-tag-version --no-push",
+    "publish:major": "lerna version major --no-git-tag-version --no-push"
   },
   "devDependencies": {
     "husky": "^4.2.5",

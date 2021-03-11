@@ -1,7 +1,7 @@
 {
   "name": "tests",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Component generator tests",
   "scripts": {
     "test": "nyc mocha -r ts-node/register ./unit-tests/*.test.ts --timeout 30000",
