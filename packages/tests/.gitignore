@@ -1,3 +1,4 @@
 componentFactory
+.nyc_output
 e2e/tests/temp
 e2e/tests/etalon
