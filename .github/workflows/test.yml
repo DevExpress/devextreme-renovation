@@ -1,6 +1,6 @@
 # This workflow will run tests for DevExtreme generators
 
-name: Build Devextreme
+name: DevExtreme generators
 
 on: [push, pull_request]
 
