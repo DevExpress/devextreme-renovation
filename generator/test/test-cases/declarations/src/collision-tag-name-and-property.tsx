@@ -4,7 +4,6 @@ import {
   JSXComponent,
   OneWay,
 } from "devextreme-generator/component_declaration/common";
-import SvgGraphicsProps from "./base_graphics_props";
 
 export const viewFunction = ({
   computedProps,
@@ -15,7 +14,7 @@ export const viewFunction = ({
 };
 
 @ComponentBindings()
-export class TextSvgElementProps extends SvgGraphicsProps {
+export class TextSvgElementProps {
   @OneWay() text?: string | null = "";
 }
 

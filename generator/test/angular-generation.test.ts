@@ -255,7 +255,7 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it("extra-tag", function () {
+  mocha.it("collision-tag-name-and-property", function () {
     this.testGenerator(this.test!.title);
   });
 

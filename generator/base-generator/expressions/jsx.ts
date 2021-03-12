@@ -129,17 +129,19 @@ export class JsxOpeningElement extends Expression {
     return value;
   }
 
-  getJsxOptions(options?: toStringOptions): toStringOptions {
+  getJsxOptions(options?: toStringOptions) {
+    const tagNameString = this.tagName.toString();
     const jsxVariables = options?.variables;
-    options?.members.forEach((m) => {
-      if (
-        m._name.toString() === this.tagName.toString() &&
-        options?.variables?.hasOwnProperty(m._name.toString()) &&
-        !m.isTemplate
-      ) {
-        delete jsxVariables?.[m._name.toString()];
-      }
-    });
+    if (!jsxVariables?.[tagNameString]) {
+      return options;
+    }
+    if (
+      options?.members.find(
+        (m) => m._name.toString() === tagNameString && !m.isTemplate
+      )
+    ) {
+      delete jsxVariables?.[tagNameString];
+    }
     return {
       ...options,
       variables: jsxVariables,
@@ -251,7 +253,6 @@ export class JsxExpression extends ExpressionWithOptionalExpression {
   }
 
   toString(options?: toStringOptions) {
-    debugger;
     return this.expression
       ? `{${this.dotDotDotToken}${this.expression.toString(options)}}`
       : "";

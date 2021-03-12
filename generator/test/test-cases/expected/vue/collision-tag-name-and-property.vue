@@ -4,9 +4,7 @@
   >
 </template>
 <script>
-import SvgGraphicsProps from "./base_graphics_props";
 export const TextSvgElementProps = {
-  ...SvgGraphicsProps,
   text: {
     type: [String],
     default() {

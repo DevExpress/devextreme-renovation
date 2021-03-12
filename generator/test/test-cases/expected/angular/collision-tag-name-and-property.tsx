@@ -1,6 +1,5 @@
-import SvgGraphicsProps from "./base_graphics_props";
 import { Input } from "@angular/core";
-export class TextSvgElementProps extends SvgGraphicsProps {
+export class TextSvgElementProps {
   @Input() text?: string | null = "";
 }
 
