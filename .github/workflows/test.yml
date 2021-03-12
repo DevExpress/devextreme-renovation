@@ -1,0 +1,25 @@
+# This workflow will run tests for DevExtreme generators
+
+name: Build Devextreme
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run npm install
+        run: npm install --no-audit --no-fund
+
+      - name: Run bootstrap
+        run: npm run bootstrap:ci
+
+      - name: Run build
+        run: npm run build
+
+      - name: Run tests
+        run: npm run test:with-reporters
+
+      - name: Run e2e tests
+        run: npm run test:testcafe-headless
