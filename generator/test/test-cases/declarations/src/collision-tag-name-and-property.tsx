@@ -3,7 +3,7 @@ import {
   ComponentBindings,
   JSXComponent,
   OneWay,
-} from "devextreme-generator/component_declaration/common";
+} from "../../../../component_declaration/common";
 
 export const viewFunction = ({
   computedProps,
