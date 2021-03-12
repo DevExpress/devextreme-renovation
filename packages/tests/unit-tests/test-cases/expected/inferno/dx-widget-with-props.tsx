@@ -1,4 +1,7 @@
-import { InfernoComponent } from "@devextreme-generator/inferno-common";
+import {
+  BaseInfernoComponent,
+  InfernoComponent,
+} from "@devextreme-generator/inferno-common";
 
 export declare type WidgetWithPropsInputType = {
   value: string;
@@ -18,7 +21,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export class WidgetWithProps extends InfernoComponent<
+export class WidgetWithProps extends BaseInfernoComponent<
   typeof WidgetWithPropsInput & RestProps
 > {
   state = {};

@@ -1,4 +1,7 @@
-import { InfernoComponent } from "@devextreme-generator/inferno-common";
+import {
+  BaseInfernoComponent,
+  InfernoComponent,
+} from "@devextreme-generator/inferno-common";
 import Base, { WidgetProps } from "./component-input";
 function view(model: Child) {
   return <Base height={model.getProps().height} />;
@@ -21,7 +24,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Child extends InfernoComponent<
+export default class Child extends BaseInfernoComponent<
   typeof ChildInput & RestProps
 > {
   state = {};

@@ -1,4 +1,7 @@
-import { InfernoComponent } from "@devextreme-generator/inferno-common";
+import {
+  BaseInfernoComponent,
+  InfernoComponent,
+} from "@devextreme-generator/inferno-common";
 import InnerWidget from "./dx-inner-widget";
 function view({ props, restAttributes }: Widget) {
   return <InnerWidget {...(props as any)} {...restAttributes} />;
@@ -21,7 +24,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends InfernoComponent<
+export default class Widget extends BaseInfernoComponent<
   typeof WidgetInput & RestProps
 > {
   state: {

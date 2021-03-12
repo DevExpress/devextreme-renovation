@@ -2,6 +2,7 @@ import {
   Portal,
   InfernoEffect,
   RefObject,
+  BaseInfernoComponent,
   InfernoComponent,
 } from "@devextreme-generator/inferno-common";
 function view(model: Widget) {

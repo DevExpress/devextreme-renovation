@@ -1,5 +1,6 @@
 import {
   RefObject,
+  BaseInfernoComponent,
   InfernoComponent,
 } from "@devextreme-generator/inferno-common";
 import BaseWidget from "./method";
@@ -25,7 +26,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class WidgetWithApiRef extends InfernoComponent<
+export default class WidgetWithApiRef extends BaseInfernoComponent<
   typeof WidgetWithApiRefInput & RestProps
 > {
   state = {};

@@ -1,4 +1,7 @@
-import { InfernoComponent } from "@devextreme-generator/inferno-common";
+import {
+  BaseInfernoComponent,
+  InfernoComponent,
+} from "@devextreme-generator/inferno-common";
 function view(model: Widget) {
   return <div></div>;
 }
@@ -20,7 +23,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends InfernoComponent<
+export default class Widget extends BaseInfernoComponent<
   typeof WidgetInput & RestProps
 > {
   state: {

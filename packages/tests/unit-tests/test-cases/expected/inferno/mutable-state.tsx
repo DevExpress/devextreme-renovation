@@ -1,5 +1,6 @@
 import {
   InfernoEffect,
+  BaseInfernoComponent,
   InfernoComponent,
 } from "@devextreme-generator/inferno-common";
 function view(viewModel: Widget) {

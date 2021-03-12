@@ -138,7 +138,7 @@ mocha.describe("Expressions", function () {
 
         assert.strictEqual(
           expression.toString(),
-          `import {InfernoComponent} from "@devextreme-generator/inferno-common"`
+          `import {BaseInfernoComponent,InfernoComponent} from "@devextreme-generator/inferno-common"`
         );
       }
     );

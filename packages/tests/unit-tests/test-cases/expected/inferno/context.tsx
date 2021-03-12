@@ -1,4 +1,5 @@
 import {
+  BaseInfernoComponent,
   InfernoComponent,
   createContext,
 } from "@devextreme-generator/inferno-common";
@@ -22,7 +23,9 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends InfernoComponent<typeof Props & RestProps> {
+export default class Widget extends BaseInfernoComponent<
+  typeof Props & RestProps
+> {
   state = {};
   refs: any;
   get contextConsumer(): number {

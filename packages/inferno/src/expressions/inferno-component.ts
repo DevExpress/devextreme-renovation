@@ -203,7 +203,7 @@ export class InfernoComponent extends PreactComponent {
       });
 
       createEffectsStatements.push(`
-       return [
+        return [
           ${create.join(",")}
         ];
       `);
@@ -270,13 +270,16 @@ export class InfernoComponent extends PreactComponent {
       .map((m) => `this.${m.name} = this.${m.name}.bind(this)`)
       .join(";\n");
 
+    const hasEffects = this.effects.length > 0;
+    const component = hasEffects ? "InfernoComponent" : "BaseInfernoComponent";
+
     return `
             ${this.compileImports()}
             ${this.compileRestProps()}
             ${this.compileTemplateGetter()}
             ${this.modifiers.join(" ")} class ${
       this.name
-    } extends InfernoComponent<${propsType}> {
+    } extends ${component}<${propsType}> {
                 ${this.compileStateProperty()}
                 refs: any;
                 ${properties

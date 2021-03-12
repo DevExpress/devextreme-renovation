@@ -1,4 +1,7 @@
-import { InfernoComponent } from "@devextreme-generator/inferno-common";
+import {
+  BaseInfernoComponent,
+  InfernoComponent,
+} from "@devextreme-generator/inferno-common";
 import { WidgetWithProps, WidgetWithPropsInput } from "./dx-widget-with-props";
 
 export declare type WidgetInputType = {
@@ -29,7 +32,7 @@ const getTemplate = (TemplateProp: any) =>
   (TemplateProp.defaultProps
     ? (props: any) => <TemplateProp {...props} />
     : TemplateProp);
-export default class WidgetWithTemplate extends InfernoComponent<
+export default class WidgetWithTemplate extends BaseInfernoComponent<
   typeof WidgetInput & RestProps
 > {
   state = {};
