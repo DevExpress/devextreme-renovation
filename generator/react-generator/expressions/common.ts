@@ -21,7 +21,7 @@ export class New extends BaseNew {
           ),
           new PropertyAccess(
             this.expression,
-            new Identifier("__defaultNestedValues()")
+            new Identifier("__defaultNestedValues")
           ),
           this.expression
         );

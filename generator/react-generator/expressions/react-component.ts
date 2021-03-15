@@ -786,7 +786,7 @@ export class ReactComponent extends Component {
                       (k) => k !== "__name" && k !== "__defaultNestedValues"
                     )
                   ) {
-                    return n?.__defaultNestedValues?.() || n;
+                    return n?.__defaultNestedValues || n;
                   }
                   return n;
                 });`
@@ -808,7 +808,7 @@ export class ReactComponent extends Component {
             new SimpleExpression(
               `${
                 property.initializer
-                  ? `props?.__defaultNestedValues?.().${property.name}`
+                  ? `props?.__defaultNestedValues?.${property.name}`
                   : "undefined"
               }`
             )

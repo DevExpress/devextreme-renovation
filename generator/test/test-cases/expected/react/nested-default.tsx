@@ -113,7 +113,7 @@ export default function WithNested(props: typeof WithNestedInput & RestProps) {
               (k) => k !== "__name" && k !== "__defaultNestedValues"
             )
           ) {
-            return n?.__defaultNestedValues?.() || n;
+            return n?.__defaultNestedValues || n;
           }
           return n;
         });
@@ -121,7 +121,7 @@ export default function WithNested(props: typeof WithNestedInput & RestProps) {
         ? props.rows
         : nested.length
         ? nested
-        : props?.__defaultNestedValues?.().rows;
+        : props?.__defaultNestedValues?.rows;
     },
     [props.rows, props.children]
   );

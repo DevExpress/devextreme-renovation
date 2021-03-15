@@ -1,10 +1,6 @@
 import { ComponentInput as BaseComponentInput } from "../../base-generator/expressions/component-input";
 import { Decorator } from "../../base-generator/expressions/decorator";
-import {
-  Identifier,
-  Call,
-  Paren,
-} from "../../base-generator/expressions/common";
+import { Identifier, Call } from "../../base-generator/expressions/common";
 import { TypeExpression } from "../../base-generator/expressions/type";
 import { Expression } from "../../base-generator/expressions/base";
 import { compileJSXTemplateType, Property } from "./class-members/property";
@@ -17,7 +13,6 @@ import { Method } from "./class-members/method";
 import syntaxKind from "../../base-generator/syntaxKind";
 import { ObjectLiteral } from "../../base-generator/expressions/literal";
 import { PropertyAssignment } from "../../base-generator/expressions/property-assignment";
-import { ArrowFunction } from "../../base-generator/expressions/functions";
 
 export function getTemplatePropName(
   name: Identifier | string,
@@ -196,26 +191,16 @@ export class ComponentInput extends BaseComponentInput {
         undefined,
         new Identifier("__defaultNestedValues"),
         syntaxKind.QuestionToken,
-        `()=>${this.name}Type`,
-        new ArrowFunction(
-          undefined,
-          undefined,
-          [],
-          undefined,
-          syntaxKind.EqualsGreaterThanToken,
-          new Paren(
-            new ObjectLiteral(
-              initializerArray.map(
-                (elem) =>
-                  new PropertyAssignment(
-                    new Identifier(elem.name),
-                    elem.initializer
-                  )
-              ),
-              true
-            )
+        `${this.name}Type`,
+        new ObjectLiteral(
+          initializerArray.map(
+            (elem) =>
+              new PropertyAssignment(
+                new Identifier(elem.name),
+                elem.initializer
+              )
           ),
-          this.context
+          true
         ),
         false
       );
