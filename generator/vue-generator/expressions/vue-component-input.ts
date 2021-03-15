@@ -7,13 +7,8 @@ import { Property } from "./class-members/property";
 import { GeneratorContext } from "../../base-generator/types";
 import SyntaxKind from "../../base-generator/syntaxKind";
 import { Method } from "./class-members/method";
-import {
-  Block,
-  ReturnStatement,
-} from "../../base-generator/expressions/statements";
 import { ObjectLiteral } from "../../base-generator/expressions/literal";
 import { PropertyAssignment } from "../../base-generator/expressions/property-assignment";
-import { ArrowFunction } from "./functions/arrow-function";
 
 export class VueComponentInput extends ComponentInput {
   createProperty(
@@ -39,6 +34,16 @@ export class VueComponentInput extends ComponentInput {
   }
 
   toString() {
+    const componentInputs = Object.keys(this.context?.components || {}).map(
+      (name) => {
+        const members = this.context?.components?.[name].members;
+        return {
+          name,
+          isNested: members?.some((m) => m.isNested) || false,
+          fields: members?.map((m) => m._name),
+        };
+      }
+    );
     const members = this.baseTypes
       .map((t) => `...${t}`)
       .concat(
@@ -48,6 +53,10 @@ export class VueComponentInput extends ComponentInput {
           .map((m) =>
             m.toString({
               members: [],
+              componentInputs:
+                m.name === "__defaultNestedValues"
+                  ? componentInputs
+                  : undefined,
             })
           )
       )
@@ -91,31 +100,16 @@ export class VueComponentInput extends ComponentInput {
         [],
         new Identifier("__defaultNestedValues"),
         "",
-        "Function",
-        new ArrowFunction(
-          [],
-          undefined,
-          [],
-          undefined,
-          SyntaxKind.EqualsGreaterThanToken,
-          new Block(
-            [
-              new ReturnStatement(
-                new ObjectLiteral(
-                  initializerArray.map(
-                    (elem) =>
-                      new PropertyAssignment(
-                        new Identifier(elem.name),
-                        elem.initializer
-                      )
-                  ),
-                  true
-                )
-              ),
-            ],
-            true
+        undefined,
+        new ObjectLiteral(
+          initializerArray.map(
+            (elem) =>
+              new PropertyAssignment(
+                new Identifier(elem.name),
+                elem.initializer
+              )
           ),
-          this.context
+          true
         )
       );
       return defaultNestedValuesProp;
