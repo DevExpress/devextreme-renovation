@@ -9,6 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Get sources
+        uses: actions/checkout@v2
+
       - name: Run npm install
         run: npm install --no-audit --no-fund
 
