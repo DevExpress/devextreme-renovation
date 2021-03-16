@@ -21,11 +21,8 @@ function __collectChildren(children) {
       const collectedChildren = {};
       const defaultProps =
         child.componentOptions?.Ctor?.extendOptions?.defaultProps || {};
-      const __defaultNestedValues =
-        child.componentOptions?.Ctor?.extendOptions?.computed?.__defaultNestedValues() ||
-        {};
       const childProps = Object.assign(
-        { __defaultNestedValues },
+        {},
         defaultProps,
         child.componentOptions.propsData
       );
@@ -65,12 +62,7 @@ function __extractDefaultValues(propsObject) {
 }
 import { GridRow, GridCell } from "./nested-default-props";
 export const DxRow = {
-  props: (({ __defaultNestedValues, ...o }) => o)(GridRow),
-  computed: {
-    __defaultNestedValues() {
-      return GridRow.__defaultNestedValues;
-    },
-  },
+  props: GridRow,
 };
 DxRow.propName = "rows";
 DxRow.defaultProps = __extractDefaultValues(GridRow);
@@ -82,7 +74,7 @@ DxRowCell.defaultProps = __extractDefaultValues(GridCell);
 
 export const DxWithNested = {
   name: "WithNested",
-  props: (({ __defaultNestedValues, ...o }) => o)(WithNestedInput),
+  props: WithNestedInput,
   computed: {
     __restAttributes() {
       return {};
@@ -102,7 +94,7 @@ export const DxWithNested = {
               (k) => k !== "__name" && k !== "__defaultNestedValues"
             )
           ) {
-            return n?.__defaultNestedValues?.() || n;
+            return n?.__defaultNestedValues || n;
           }
           return n;
         });
@@ -110,10 +102,7 @@ export const DxWithNested = {
         ? this.rows
         : nested.length
         ? nested
-        : this?.__defaultNestedValues()?.rows;
-    },
-    __defaultNestedValues() {
-      return WithNestedInput.__defaultNestedValues;
+        : this?.__defaultNestedValues?.rows;
     },
   },
   methods: {

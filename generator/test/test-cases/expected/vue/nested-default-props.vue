@@ -12,14 +12,18 @@ export const GridRow = {
     type: Array,
   },
   __defaultNestedValues: {
-    cells: [
-      {
-        gridData:
-          GridCell === undefined || GridCell === null
-            ? undefined
-            : GridCell.gridData?.default(),
-      },
-    ],
+    default() {
+      return {
+        cells: [
+          {
+            gridData:
+              GridCell === undefined || GridCell === null
+                ? undefined
+                : GridCell.gridData?.default(),
+          },
+        ],
+      };
+    },
   },
 };
 export const WithNestedInput = {
@@ -33,8 +37,12 @@ export const WithNestedInput = {
     },
   },
   __defaultNestedValues: {
-    rows: [GridRow?.__defaultNestedValues],
-    dateTime: new Date(),
+    default() {
+      return {
+        rows: [GridRow?.__defaultNestedValues.default()],
+        dateTime: new Date(),
+      };
+    },
   },
 };
 export const EmptyClass = {};
@@ -42,6 +50,10 @@ export const FakeNested = {
   value: {
     type: Array,
   },
-  __defaultNestedValues: { value: [EmptyClass] },
+  __defaultNestedValues: {
+    default() {
+      return { value: [EmptyClass] };
+    },
+  },
 };
 </script>

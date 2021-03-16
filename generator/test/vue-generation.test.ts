@@ -355,11 +355,11 @@ mocha.describe("vue-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it.only("nested-default", function () {
+  mocha.it("nested-default", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it.only("nested-default-props", function () {
+  mocha.it("nested-default-props", function () {
     this.testGenerator(this.test!.title);
   });
 });

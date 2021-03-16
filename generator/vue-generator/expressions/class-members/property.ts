@@ -134,13 +134,14 @@ export class Property extends BaseProperty {
     if (this.questionOrExclamationToken === SyntaxKind.ExclamationToken) {
       parts.push("required: true");
     }
-    if (this.name === "__defaultNestedValues") {
-      return `${this.name}: ${this.initializer?.toString(options)}`;
-    }
-    if (!this.isNested) {
+
+    if (
+      !this.isNested ||
+      (this.isNested && this.name === "__defaultNestedValues")
+    ) {
       if (this.initializer && type !== "Function") {
         parts.push(`default(){
-                  return ${this.initializer}
+                  return ${this.initializer.toString(options)}
               }`);
       } else if (this.initializer) {
         parts.push(`default:${this.initializer}`);

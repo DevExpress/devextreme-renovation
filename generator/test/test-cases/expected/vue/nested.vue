@@ -13,11 +13,8 @@ function __collectChildren(children) {
       const collectedChildren = {};
       const defaultProps =
         child.componentOptions?.Ctor?.extendOptions?.defaultProps || {};
-      const __defaultNestedValues =
-        child.componentOptions?.Ctor?.extendOptions?.computed?.__defaultNestedValues() ||
-        {};
       const childProps = Object.assign(
-        { __defaultNestedValues },
+        {},
         defaultProps,
         child.componentOptions.propsData
       );

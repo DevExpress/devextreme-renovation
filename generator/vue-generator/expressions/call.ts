@@ -25,7 +25,7 @@ export class New extends Call {
         const defaultValue = new PropertyAccessChain(
           this.expression,
           syntaxKind.QuestionDotToken,
-          new Identifier("__defaultNestedValues")
+          new Identifier("__defaultNestedValues.default()")
         );
         return defaultValue.toString();
       }
