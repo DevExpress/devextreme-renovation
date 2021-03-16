@@ -10,10 +10,11 @@ export class GridRow {
   }
   get cells(): (GridCell | string)[] | undefined {
     if (!this.__cells__) {
-      return [new GridCell()];
+      return GridRow.defaultNestedCells;
     }
     return this.__cells__;
   }
+  public static defaultNestedCells: (GridCell | string)[] = [new GridCell()];
 }
 
 export class WithNestedInput {
@@ -23,10 +24,11 @@ export class WithNestedInput {
   }
   get rows(): GridRow[] | undefined {
     if (!this.__rows__) {
-      return [new GridRow()];
+      return WithNestedInput.defaultNestedRows;
     }
     return this.__rows__;
   }
+  public static defaultNestedRows: GridRow[] = [new GridRow()];
   @Input() dateTime?: Date = new Date();
 }
 
@@ -39,8 +41,9 @@ export class FakeNested {
   }
   get value(): EmptyClass[] | undefined {
     if (!this.__value__) {
-      return [new EmptyClass()];
+      return FakeNested.defaultNestedValue;
     }
     return this.__value__;
   }
+  public static defaultNestedValue: EmptyClass[] = [new EmptyClass()];
 }

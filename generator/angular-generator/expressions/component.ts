@@ -288,7 +288,13 @@ export class AngularComponent extends Component {
         if (nested && nested.length) {
           return nested${indexGetter};
         }
-        ${initializer ? `return new ${componentName}().${name}` : ""}`),
+        ${
+          initializer
+            ? `return ${componentName}.defaultNested${capitalizeFirstLetter(
+                name
+              )}`
+            : ""
+        }`),
         ],
         true
       )

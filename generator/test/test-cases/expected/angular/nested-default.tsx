@@ -24,9 +24,8 @@ class DxWithNestedRowCell extends GridCell {}
 })
 class DxWithNestedRow extends GridRow {
   private __cells?: (DxWithNestedRowCell | string)[];
-  @ContentChildren(DxWithNestedRowCell) cellsNested?: QueryList<
-    DxWithNestedRowCell
-  >;
+  @ContentChildren(DxWithNestedRowCell)
+  cellsNested?: QueryList<DxWithNestedRowCell>;
   @Input() set cells(value: (DxWithNestedRowCell | string)[] | undefined) {
     this.__cells = value;
   }
@@ -38,7 +37,7 @@ class DxWithNestedRow extends GridRow {
     if (nested && nested.length) {
       return nested;
     }
-    return new GridRow().cells;
+    return GridRow.defaultNestedCells;
   }
 }
 
@@ -77,7 +76,7 @@ export default class WithNested extends WithNestedInput {
     if (nested && nested.length) {
       return nested;
     }
-    return new WithNestedInput().rows;
+    return WithNestedInput.defaultNestedRows;
   }
   get __restAttributes(): any {
     return {};

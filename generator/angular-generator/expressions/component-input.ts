@@ -17,6 +17,7 @@ import {
 } from "../../base-generator/expressions/statements";
 import { Parameter } from "../../base-generator/expressions/functions";
 import { SetAccessor } from "./class-members/set-accessor";
+import { capitalizeFirstLetter } from "../../base-generator/utils/string";
 
 export class ComponentInput extends BaseComponentInput {
   createProperty(
@@ -66,7 +67,7 @@ export class ComponentInput extends BaseComponentInput {
       initializer,
     } = property;
 
-    return [
+    const resultArray = [
       this.createNestedState(name, questionOrExclamationToken, type),
       this.createNestedPropertySetter(
         decorators,
@@ -83,6 +84,25 @@ export class ComponentInput extends BaseComponentInput {
         initializer
       ),
     ];
+    if (initializer) {
+      resultArray.push(this.createDefaultNestedValues(name, type, initializer));
+    }
+    return resultArray;
+  }
+  createDefaultNestedValues(
+    name: string,
+    type: TypeExpression | string,
+    initializer: Expression
+  ) {
+    return new Property(
+      [],
+      ["public", "static"],
+      new Identifier(`defaultNested${capitalizeFirstLetter(name)}`),
+      "",
+      type,
+      initializer,
+      false
+    );
   }
   createNestedState(
     name: string,
@@ -145,7 +165,7 @@ export class ComponentInput extends BaseComponentInput {
     if (initializer) {
       statements.push(
         new SimpleExpression(`if(!this.__${name}__){
-        return ${initializer}
+        return ${this.name}.defaultNested${capitalizeFirstLetter(name)}
       }`)
       );
     }
