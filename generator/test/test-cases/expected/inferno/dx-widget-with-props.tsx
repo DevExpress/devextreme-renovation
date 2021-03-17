@@ -2,6 +2,7 @@ import {
   BaseInfernoComponent,
   InfernoComponent,
 } from "../../../../modules/inferno/base_component";
+import { normalizeStyles } from "../../../../modules/inferno/utils";
 
 export declare type WidgetWithPropsInputType = {
   value: string;
