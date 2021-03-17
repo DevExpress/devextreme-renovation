@@ -3,7 +3,7 @@ import {
   InfernoComponent,
 } from "../../../../modules/inferno/base_component";
 function view(model: InnerWidget) {
-  return <div style={{ width: 100, height: 100 }}></div>;
+  return <div style={model.normalizeStyles({ width: 100, height: 100 })}></div>;
 }
 
 export declare type InnerWidgetPropsType = {
@@ -78,6 +78,7 @@ export default class InnerWidget extends BaseInfernoComponent<
     return view({
       props: { ...props, value: this.__state_value },
       restAttributes: this.restAttributes,
+      normalizeStyles: this.normalizeStyles,
     } as InnerWidget);
   }
 }

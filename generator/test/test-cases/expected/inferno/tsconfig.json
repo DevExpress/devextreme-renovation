@@ -3,7 +3,8 @@
   "compilerOptions": {
     "typeRoots": ["node_modules/@types"],
     "declaration": true,
-    "target": "ES5"
+    "target": "ES5",
+    "lib": ["ES2017", "DOM"]
   },
   "exclude": ["node_modules"]
 }
