@@ -49,7 +49,9 @@ const getNumberStyleValue = (style: string, value: number | string) => {
   return NUMBER_STYLES.has(style) ? value : `${value}px`;
 };
 
-export const normalizeStyles = (styles: Record<string, string | number>) => {
+export const normalizeStyles = (styles: unknown) => {
+  if (!(styles instanceof Object)) return styles;
+
   const newStyles: Record<string, string | number> = {};
   for (const [key, value] of Object.entries(styles)) {
     const kebabString = kebabCase(key);
