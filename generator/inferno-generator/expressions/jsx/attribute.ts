@@ -3,13 +3,11 @@ import { toStringOptions } from "../../../base-generator/types";
 import { JsxAttribute as BaseJsxAttribute } from "../../../preact-generator";
 
 export class JsxAttribute extends BaseJsxAttribute {
-  toString(options: toStringOptions) {
+  toString(options?: toStringOptions) {
     const name = this.name.toString();
-    if (name === "style") {
+    if (name === "style" && this.initializer instanceof JsxExpression) {
       const value =
-        this.initializer instanceof JsxExpression
-          ? this.initializer.expression?.toString(options) ?? ""
-          : this.initializer.toString(options);
+        this.initializer.getExpression(options)?.toString(options) ?? "{}";
       return `${this.processName(name, options)}={normalizeStyles(${value})}`;
     }
     return super.toString(options);
