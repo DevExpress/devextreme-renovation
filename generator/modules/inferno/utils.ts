@@ -45,19 +45,21 @@ const isNumeric = (value: string | number) => {
   return !isNaN(Number(value));
 };
 
-const getNumberStyleValue = (style: string, value: number | string) => {
+const getNumberStyleValue = (style: string, value: string | number) => {
   return NUMBER_STYLES.has(style) ? value : `${value}px`;
 };
 
 export const normalizeStyles = (styles: unknown) => {
   if (!(styles instanceof Object)) return styles;
 
-  const newStyles: Record<string, string | number> = {};
-  for (const [key, value] of Object.entries(styles)) {
-    const kebabString = kebabCase(key);
-    newStyles[kebabString] = isNumeric(value)
-      ? getNumberStyleValue(kebabString, value)
-      : value;
-  }
-  return newStyles;
+  return Object.entries(styles).reduce(
+    (result: Record<string, string | number>, [key, value]) => {
+      const kebabString = kebabCase(key);
+      result[kebabString] = isNumeric(value)
+        ? getNumberStyleValue(kebabString, value)
+        : value;
+      return result;
+    },
+    {} as Record<string, string | number>
+  );
 };
