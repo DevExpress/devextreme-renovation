@@ -45,9 +45,7 @@ export class ImportDeclaration extends BaseImportDeclaration {
 
     if (
       this.context.viewFunctions &&
-      Object.values(this.context.viewFunctions).some((viewFunction) =>
-        viewFunction.containsStyle()
-      )
+      Object.keys(this.context.viewFunctions).length
     ) {
       result.push(
         `import {normalizeStyles} from ${this.resolveCommonModule("utils")}`

@@ -50,7 +50,7 @@ const getNumberStyleValue = (style: string, value: string | number) => {
 };
 
 export const normalizeStyles = (styles: unknown) => {
-  if (!(styles instanceof Object)) return undefined;
+  if (!(styles instanceof Object)) return styles;
 
   return Object.entries(styles).reduce(
     (result: Record<string, string | number>, [key, value]) => {

@@ -29,13 +29,6 @@ export class JsxAttribute extends BaseJsxAttribute {
   toString(options?: toStringOptions) {
     let tsOptions = options;
     let name = this.name.toString(options);
-
-    if (name === "style" && this.initializer instanceof JsxExpression) {
-      const value =
-        this.initializer.getExpression(options)?.toString(options) ?? "{}";
-      return `${this.processName(name, options)}={normalizeStyles(${value})}`;
-    }
-
     if (options?.jsxComponent) {
       const member = getProps(options.jsxComponent.members).find(
         (m) => m._name.toString() === this.name.toString()

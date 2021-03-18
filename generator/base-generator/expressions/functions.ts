@@ -20,10 +20,7 @@ import SyntaxKind from "../syntaxKind";
 import { getJsxExpression, JsxExpression, JsxElement } from "./jsx";
 import { Decorator } from "./decorator";
 import { Property } from "./class-members";
-import {
-  containsPortalsInStatements,
-  containsStyleInStatements,
-} from "../utils/functions";
+import { containsPortalsInStatements } from "../utils/functions";
 import { TypeParameterDeclaration } from "./type-parameter-declaration";
 import { PropertyAccess } from "./property-access";
 
@@ -320,21 +317,6 @@ export class BaseFunction extends Expression {
       ) as ReturnStatement;
       if (statement && statement.expression) {
         return containsPortalsInStatements(
-          statement.expression as Paren | JsxExpression | JsxElement
-        );
-      }
-    }
-    return false;
-  }
-
-  containsStyle() {
-    const body = this.body;
-    if (body instanceof Block) {
-      const statement = body.statements.find(
-        (state) => state instanceof ReturnStatement
-      ) as ReturnStatement;
-      if (statement && statement.expression) {
-        return containsStyleInStatements(
           statement.expression as Paren | JsxExpression | JsxElement
         );
       }
