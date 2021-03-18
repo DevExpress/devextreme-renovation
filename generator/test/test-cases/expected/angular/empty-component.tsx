@@ -59,7 +59,7 @@ const getNumberStyleValue = (style: string, value: string | number) => {
   return NUMBER_STYLES.has(style) ? value : `${value}px`;
 };
 
-export const normalizeStyles = (styles: unknown) => {
+const normalizeStyles = (styles: unknown) => {
   if (!(styles instanceof Object)) return styles;
 
   return Object.entries(styles).reduce(

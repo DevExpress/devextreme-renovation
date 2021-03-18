@@ -1409,7 +1409,7 @@ export class AngularComponent extends Component {
           return NUMBER_STYLES.has(style) ? value : \`\${value}px\`;
         };
         
-        export const normalizeStyles = (styles: unknown) => {
+        const normalizeStyles = (styles: unknown) => {
           if (!(styles instanceof Object)) return styles;
         
           return Object.entries(styles).reduce((result: Record<string, string | number>, [key, value]) => {
