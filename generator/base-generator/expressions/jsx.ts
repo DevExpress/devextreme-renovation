@@ -160,6 +160,12 @@ export class JsxOpeningElement extends Expression {
   isPortal() {
     return this.tagName.toString() === "Portal";
   }
+
+  hasStyle() {
+    return this.attributes.some(
+      (attr) => attr instanceof JsxAttribute && attr.name.toString() === "style"
+    );
+  }
 }
 
 export class JsxElement extends Expression {
@@ -203,6 +209,10 @@ export class JsxElement extends Expression {
 
   isPortal() {
     return this.openingElement.isPortal();
+  }
+
+  hasStyle() {
+    return this.openingElement.hasStyle();
   }
 }
 

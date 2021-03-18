@@ -3,7 +3,6 @@ import {
   InfernoComponent,
 } from "../../../../modules/inferno/base_component";
 import { createContext } from "../../../../modules/inferno/create_context";
-import { normalizeStyles } from "../../../../modules/inferno/utils";
 function view(model: Widget): any {
   return <span></span>;
 }

@@ -2,7 +2,6 @@ import {
   BaseInfernoComponent,
   InfernoComponent,
 } from "../../../../modules/inferno/base_component";
-import { normalizeStyles } from "../../../../modules/inferno/utils";
 import InnerWidget from "./dx-inner-widget";
 function view({ props, restAttributes }: Widget) {
   return <InnerWidget {...(props as any)} {...restAttributes} />;

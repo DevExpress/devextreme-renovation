@@ -369,9 +369,8 @@ export class VueComponent extends Component {
     );
   }
 
-  compileStyleNormalizer(options: toStringOptions) {
-    return options.hasStyle
-      ? `
+  compileStyleNormalizer() {
+    return `
       const NUMBER_STYLES = new Set([
         "animation-iteration-count",
         "border-image-outset",
@@ -423,7 +422,7 @@ export class VueComponent extends Component {
       };
 
       const normalizeStyles = (styles) => {
-        if (!(styles instanceof Object)) return styles;
+        if (!(styles instanceof Object)) return undefined;
       
         return Object.entries(styles).reduce((result, [key, value]) => {
           const kebabString = kebabCase(key);
@@ -432,13 +431,17 @@ export class VueComponent extends Component {
             : value;
           return result;
         }, {})
-      };`
-      : "";
+      };`;
   }
 
-  compileTemplate(methods: string[], options: toStringOptions) {
+  compileTemplate(methods: string[]) {
     const viewFunction = this.decorators[0].getViewFunction();
     if (viewFunction) {
+      const options: toStringOptions = {
+        members: this.members,
+        newComponentContext: "",
+        isSVG: this.isSVGComponent,
+      };
       this.template = viewFunction.getTemplate(options);
 
       if (options.hasStyle) {
@@ -987,13 +990,8 @@ export class VueComponent extends Component {
   toString() {
     const methods: string[] = [];
     const components: string[] = [];
-    const options: toStringOptions = {
-      members: this.members,
-      newComponentContext: "",
-      isSVG: this.isSVGComponent,
-    };
 
-    this.compileTemplate(methods, options);
+    this.compileTemplate(methods);
 
     const portalComponent = this.containsPortal()
       ? this.compilePortalComponent(components)
@@ -1017,9 +1015,13 @@ export class VueComponent extends Component {
       this.generateBeforeDestroy(),
     ].filter((s) => s);
 
+    const hasStyle = this.context.viewFunctions?.[
+      `${this.view}`
+    ]?.containsStyle();
+
     return `
           ${this.compileImports()}
-          ${this.compileStyleNormalizer(options)}
+          ${hasStyle ? this.compileStyleNormalizer() : ""}
           ${
             this.members.some((m) => m.isNested)
               ? this.createNestedChildrenCollector()

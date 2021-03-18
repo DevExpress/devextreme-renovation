@@ -2,7 +2,6 @@ import {
   BaseInfernoComponent,
   InfernoComponent,
 } from "../../../../modules/inferno/base_component";
-import { normalizeStyles } from "../../../../modules/inferno/utils";
 import Base, { WidgetProps } from "./component-input";
 function view(model: Child) {
   return <Base height={model.getProps().height} />;

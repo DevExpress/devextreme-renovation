@@ -87,7 +87,7 @@ const getNumberStyleValue = (style, value) => {
 };
 
 const normalizeStyles = (styles) => {
-  if (!(styles instanceof Object)) return styles;
+  if (!(styles instanceof Object)) return undefined;
 
   return Object.entries(styles).reduce((result, [key, value]) => {
     const kebabString = kebabCase(key);

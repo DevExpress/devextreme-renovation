@@ -2,7 +2,6 @@ import {
   BaseInfernoComponent,
   InfernoComponent,
 } from "../../../../modules/inferno/base_component";
-import { normalizeStyles } from "../../../../modules/inferno/utils";
 function view(model: Widget): any {
   const sizes = model.props.sizes ?? { width: 0, height: 0 };
   return (

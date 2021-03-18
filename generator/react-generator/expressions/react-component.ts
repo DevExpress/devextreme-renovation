@@ -871,9 +871,13 @@ export class ReactComponent extends Component {
   }
   toString() {
     const getTemplateFunc = this.compileTemplateGetter();
+    const hasStyle = this.context.viewFunctions?.[
+      `${this.view}`
+    ]?.containsStyle();
 
     return `
               ${this.compileImports()}
+              ${hasStyle ? this.compileStyleNormalizer() : ""}
               ${this.compilePortalComponent()}
               ${
                 this.members.some((m) => m.isNested)

@@ -2,7 +2,6 @@ import {
   BaseInfernoComponent,
   InfernoComponent,
 } from "../../../../modules/inferno/base_component";
-import { normalizeStyles } from "../../../../modules/inferno/utils";
 import { PickedProps, GridColumnProps } from "./nested-props";
 export const CustomColumnComponent = (props: typeof GridColumnProps) => {};
 function view(model: Widget) {
