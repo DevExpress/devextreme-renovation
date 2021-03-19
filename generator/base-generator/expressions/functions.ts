@@ -1,9 +1,4 @@
-import {
-  Expression,
-  ExpressionWithExpression,
-  ExpressionWithOptionalExpression,
-  SimpleExpression,
-} from "./base";
+import { Expression, SimpleExpression } from "./base";
 import { Identifier, Paren, Call } from "./common";
 import { TypeExpression } from "./type";
 import {
@@ -27,7 +22,6 @@ import {
   JsxExpression,
   JsxElement,
   JsxOpeningElement,
-  JsxSelfClosingElement,
 } from "./jsx";
 import { Decorator } from "./decorator";
 import { Property } from "./class-members";
