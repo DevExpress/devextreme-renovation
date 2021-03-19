@@ -17,10 +17,18 @@ import {
 import { Component } from "./component";
 import { VariableStatement } from "./variables";
 import SyntaxKind from "../syntaxKind";
-import { getJsxExpression, JsxExpression, JsxElement } from "./jsx";
+import {
+  getJsxExpression,
+  JsxExpression,
+  JsxElement,
+  JsxOpeningElement,
+} from "./jsx";
 import { Decorator } from "./decorator";
 import { Property } from "./class-members";
-import { containsPortalsInStatements } from "../utils/functions";
+import {
+  containsPortalsInStatements,
+  containsStyleInStatements,
+} from "../utils/functions";
 import { TypeParameterDeclaration } from "./type-parameter-declaration";
 import { PropertyAccess } from "./property-access";
 
@@ -320,6 +328,27 @@ export class BaseFunction extends Expression {
           statement.expression as Paren | JsxExpression | JsxElement
         );
       }
+    }
+    return false;
+  }
+
+  containsStyle(): boolean {
+    let body = this.body;
+    if (body instanceof Paren) {
+      body = body.expression;
+    }
+    if (body instanceof Block) {
+      const statement = body.statements.find(
+        (state) => state instanceof ReturnStatement
+      ) as ReturnStatement;
+      if (statement && statement.expression) {
+        return containsStyleInStatements(
+          statement.expression as Paren | JsxExpression | JsxElement
+        );
+      }
+    }
+    if (body instanceof JsxElement || body instanceof JsxOpeningElement) {
+      return body.hasStyle();
     }
     return false;
   }
