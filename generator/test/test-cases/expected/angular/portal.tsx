@@ -93,7 +93,9 @@ class DxPortal {
   inputs: ["someRef"],
   template: `<div
     ><dx-portal [container]="document.body" *ngIf="rendered"
-      ><span></span></dx-portal
+      ><span></span
+    ></dx-portal>
+    <ng-container *ngIf="!rendered">{{ null }}</ng-container
     ><dx-portal
       [container]="
         someRef === undefined || someRef === null ? undefined : someRef

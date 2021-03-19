@@ -12,11 +12,11 @@ import {
 function view(model: Widget) {
   return (
     <div>
-      {model.rendered && (
+      {model.rendered ? (
         <Portal container={document.body}>
           <span></span>
         </Portal>
-      )}
+      ) : null}
       <Portal container={model.props.someRef?.current}>
         <span></span>
       </Portal>
