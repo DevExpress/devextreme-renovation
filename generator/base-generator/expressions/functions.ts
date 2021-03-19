@@ -1,4 +1,9 @@
-import { Expression, SimpleExpression } from "./base";
+import {
+  Expression,
+  ExpressionWithExpression,
+  ExpressionWithOptionalExpression,
+  SimpleExpression,
+} from "./base";
 import { Identifier, Paren, Call } from "./common";
 import { TypeExpression } from "./type";
 import {
@@ -22,6 +27,7 @@ import {
   JsxExpression,
   JsxElement,
   JsxOpeningElement,
+  JsxSelfClosingElement,
 } from "./jsx";
 import { Decorator } from "./decorator";
 import { Property } from "./class-members";
@@ -333,24 +339,45 @@ export class BaseFunction extends Expression {
   }
 
   containsStyle(): boolean {
+    if (!this.isJsx()) return false;
+
     let body = this.body;
     if (body instanceof Paren) {
       body = body.expression;
     }
     if (body instanceof Block) {
-      const statement = body.statements.find(
+      const returnStatement = body.statements.find(
         (state) => state instanceof ReturnStatement
-      ) as ReturnStatement;
-      if (statement && statement.expression) {
-        return containsStyleInStatements(
-          statement.expression as Paren | JsxExpression | JsxElement
+      ) as ReturnStatement | undefined;
+
+      const variables = body.statements.filter(
+        (statement) => statement instanceof VariableStatement
+      ) as VariableStatement[];
+      const jsxElements = variables.reduce((acc, { declarationList }) => {
+        acc.push(
+          ...(declarationList.declarations
+            .map(({ initializer }) => {
+              let expression =
+                initializer instanceof Paren
+                  ? initializer.expression
+                  : initializer;
+              return expression instanceof JsxOpeningElement ||
+                expression instanceof JsxElement
+                ? expression
+                : null;
+            })
+            .filter((expression) => expression !== null) as Expression[])
         );
-      }
+        return acc;
+      }, [] as Expression[]);
+
+      return (
+        (returnStatement?.expression &&
+          containsStyleInStatements(returnStatement.expression)) ||
+        jsxElements.some(containsStyleInStatements)
+      );
     }
-    if (body instanceof JsxElement || body instanceof JsxOpeningElement) {
-      return body.hasStyle();
-    }
-    return false;
+    return containsStyleInStatements(body);
   }
 
   compileTypeParameters(): string {
