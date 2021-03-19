@@ -2,43 +2,30 @@ import {
   Component,
   ComponentBindings,
   JSXComponent,
-  OneWay,
 } from "../../component_declaration/common";
 
-function view(model: StylesWidget) {
+function view(_model: StylesWidget) {
   return (
-    <div id={model.props.id}>
-      <div style={model.styles}>There is component with styles getter</div>
-      <div
-        style={{
-          backgroundColor: "green",
-          zIndex: 100,
-          width: "100",
-          height: 100,
-          opacity: 0.5,
-        }}
-      >
-        There is component with inline styles
-      </div>
+    <div
+      id={"styles-unification"}
+      style={{
+        backgroundColor: "green",
+        zIndex: 100,
+        width: "100",
+        height: 100,
+        opacity: 0.5,
+        paddingLeft: "10",
+      }}
+    >
+      There is component with styles
     </div>
   );
 }
 
 @ComponentBindings()
-class StylesWidgetProps {
-  @OneWay() id?: string;
-}
+class StylesWidgetProps {}
 
 @Component({
   view,
 })
-export default class StylesWidget extends JSXComponent(StylesWidgetProps) {
-  get styles() {
-    return {
-      backgroundColor: "red",
-      zIndex: 100,
-      width: "100",
-      height: 100,
-    };
-  }
-}
+export default class StylesWidget extends JSXComponent(StylesWidgetProps) {}
