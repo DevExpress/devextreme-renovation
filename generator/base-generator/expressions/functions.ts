@@ -363,11 +363,11 @@ export class BaseFunction extends Expression {
         return acc;
       }, [] as Expression[]);
 
-      return (
-        (returnStatement?.expression &&
-          containsStyleInStatements(returnStatement.expression)) ||
-        jsxElements.some(containsStyleInStatements)
-      );
+      const expressions = returnStatement?.expression
+        ? jsxElements.concat(returnStatement.expression)
+        : jsxElements;
+
+      return expressions.some(containsPortalsInStatements);
     }
     return containsStyleInStatements(body);
   }
