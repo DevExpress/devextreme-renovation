@@ -333,8 +333,6 @@ export class BaseFunction extends Expression {
   }
 
   containsStyle(): boolean {
-    if (!this.isJsx()) return false;
-
     let body = this.body;
     if (body instanceof Paren) {
       body = body.expression;
