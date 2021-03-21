@@ -367,7 +367,7 @@ export class BaseFunction extends Expression {
         ? jsxElements.concat(returnStatement.expression)
         : jsxElements;
 
-      return expressions.some(containsPortalsInStatements);
+      return expressions.some(containsStyleInStatements);
     }
     return containsStyleInStatements(body);
   }
