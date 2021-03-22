@@ -17,7 +17,6 @@ export class GridRow {
 @ComponentBindings()
 export class WithNestedInput {
   @Nested() rows?: GridRow[] = [new GridRow()];
-  @OneWay() dateTime?: Date = new Date();
 }
 
 @ComponentBindings()

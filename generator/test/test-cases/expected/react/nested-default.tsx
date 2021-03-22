@@ -85,13 +85,10 @@ export default function WithNested(props: typeof WithNestedInput & RestProps) {
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const {
-        __defaultNestedValues,
-        children,
-        dateTime,
-        rows,
-        ...restProps
-      } = { ...props, rows: __getNestedRows() };
+      const { __defaultNestedValues, children, rows, ...restProps } = {
+        ...props,
+        rows: __getNestedRows(),
+      };
       return restProps;
     },
     [props]

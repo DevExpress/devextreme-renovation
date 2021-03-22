@@ -11,8 +11,6 @@ import SyntaxKind from "../../base-generator/syntaxKind";
 import { capitalizeFirstLetter } from "../../base-generator/utils/string";
 import { Method } from "./class-members/method";
 import syntaxKind from "../../base-generator/syntaxKind";
-import { ObjectLiteral } from "../../base-generator/expressions/literal";
-import { PropertyAssignment } from "../../base-generator/expressions/property-assignment";
 
 export function getTemplatePropName(
   name: Identifier | string,
@@ -176,47 +174,19 @@ export class ComponentInput extends BaseComponentInput {
   }
 
   createDefaultNestedValues(members: Array<BaseProperty | Method>) {
-    const containNestedWithInitializer = members.some(
-      (m) => m.isNested && m instanceof BaseProperty && m.initializer
-    );
-    const initializerArray = members.reduce((accum, m) => {
-      if (m instanceof BaseProperty && m.initializer) {
-        accum.push({ name: m.name, initializer: m.initializer });
-      }
-      return accum;
-    }, [] as { name: string; initializer: Expression }[]);
-    if (containNestedWithInitializer && initializerArray.length) {
-      const defaultNestedValuesProp = new Property(
-        [new Decorator(new Call(new Identifier("OneWay"), undefined, []), {})],
-        undefined,
-        new Identifier("__defaultNestedValues"),
-        syntaxKind.QuestionToken,
-        `${this.name}Type`,
-        new ObjectLiteral(
-          initializerArray.map(
-            (elem) =>
-              new PropertyAssignment(
-                new Identifier(elem.name),
-                elem.initializer
-              )
-          ),
-          true
-        ),
-        false
-      );
-      return defaultNestedValuesProp;
+    const resultProp = super.createDefaultNestedValues(members);
+    if (resultProp) {
+      resultProp.type = `${this.name}Type`;
+      resultProp.questionOrExclamationToken = syntaxKind.QuestionToken;
     }
-    return undefined;
+    return resultProp;
   }
+
   processMembers(members: Array<BaseProperty | Method>) {
     members = super.processMembers(members);
     const children = this.createChildrenForNested(members);
     if (children !== null) {
       members.push(children);
-    }
-    const defaultNested = this.createDefaultNestedValues(members);
-    if (defaultNested) {
-      members.push(defaultNested);
     }
     return members;
   }

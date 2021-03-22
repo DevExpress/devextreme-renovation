@@ -80,7 +80,7 @@ export const DxWithNested = {
       return {};
     },
     props() {
-      return { rows: this.__getNestedRow, dateTime: this.dateTime };
+      return { rows: this.__getNestedRow };
     },
     __nestedChildren() {
       return this.$slots.default ? __collectChildren(this.$slots.default) : [];

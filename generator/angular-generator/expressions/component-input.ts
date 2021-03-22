@@ -17,7 +17,6 @@ import {
 } from "../../base-generator/expressions/statements";
 import { Parameter } from "../../base-generator/expressions/functions";
 import { SetAccessor } from "./class-members/set-accessor";
-import { capitalizeFirstLetter } from "../../base-generator/utils/string";
 
 export class ComponentInput extends BaseComponentInput {
   createProperty(
@@ -84,25 +83,7 @@ export class ComponentInput extends BaseComponentInput {
         initializer
       ),
     ];
-    if (initializer) {
-      resultArray.push(this.createDefaultNestedValues(name, type, initializer));
-    }
     return resultArray;
-  }
-  createDefaultNestedValues(
-    name: string,
-    type: TypeExpression | string,
-    initializer: Expression
-  ) {
-    return new Property(
-      [],
-      ["public", "static"],
-      new Identifier(`defaultNested${capitalizeFirstLetter(name)}`),
-      "",
-      type,
-      initializer,
-      false
-    );
   }
   createNestedState(
     name: string,
@@ -165,7 +146,7 @@ export class ComponentInput extends BaseComponentInput {
     if (initializer) {
       statements.push(
         new SimpleExpression(`if(!this.__${name}__){
-        return ${this.name}.defaultNested${capitalizeFirstLetter(name)}
+        return ${this.name}.__defaultNestedValues.${name}
       }`)
       );
     }
@@ -182,6 +163,15 @@ export class ComponentInput extends BaseComponentInput {
       new Block(statements, true)
     );
   }
+  createDefaultNestedValues(members: Array<Property | Method>) {
+    const resultProp = super.createDefaultNestedValues(members);
+    if (resultProp?.modifiers) {
+      resultProp.modifiers.push("public", "static");
+      resultProp.decorators = [];
+    }
+    return resultProp;
+  }
+
   toString() {
     const membersWithNestedReplaced = this.members.reduce((acc, m) => {
       if (m.isNested && m instanceof Property) {

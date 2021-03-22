@@ -290,9 +290,7 @@ export class AngularComponent extends Component {
         }
         ${
           initializer
-            ? `return ${componentName}.defaultNested${capitalizeFirstLetter(
-                name
-              )}`
+            ? `return ${componentName}.__defaultNestedValues.${name}`
             : ""
         }`),
         ],

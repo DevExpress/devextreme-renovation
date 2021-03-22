@@ -30,18 +30,9 @@ export const WithNestedInput = {
   rows: {
     type: Array,
   },
-  dateTime: {
-    type: Date,
-    default() {
-      return new Date();
-    },
-  },
   __defaultNestedValues: {
     default() {
-      return {
-        rows: [GridRow?.__defaultNestedValues.default()],
-        dateTime: new Date(),
-      };
+      return { rows: [GridRow?.__defaultNestedValues.default()] };
     },
   },
 };

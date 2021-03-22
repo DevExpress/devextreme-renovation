@@ -37,14 +37,14 @@ class DxWithNestedRow extends GridRow {
     if (nested && nested.length) {
       return nested;
     }
-    return GridRow.defaultNestedCells;
+    return GridRow.__defaultNestedValues.cells;
   }
 }
 
 @Component({
   selector: "dx-with-nested",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["rows", "dateTime"],
+  inputs: ["rows"],
   template: `<div
     ><ng-container *ngIf="rows"
       ><ng-container *ngIf="rows.length"
@@ -76,7 +76,7 @@ export default class WithNested extends WithNestedInput {
     if (nested && nested.length) {
       return nested;
     }
-    return WithNestedInput.defaultNestedRows;
+    return WithNestedInput.__defaultNestedValues.rows;
   }
   get __restAttributes(): any {
     return {};
