@@ -17,7 +17,9 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["text"],
   template: `<svg:text>
-    <svg:ng-container *ngIf="![].length">{{ text }}</svg:ng-container>
+    <svg:ng-container *ngIf="![].length">
+      {{ __computedProps.text }}
+    </svg:ng-container>
   </svg:text>`,
 })
 export class TextSvgElement extends TextSvgElementProps {

@@ -1,6 +1,6 @@
 <template>
   <text
-    ><template v-if="![].length">{{ text }}</template></text
+    ><template v-if="![].length">{{ __computedProps.text }}</template></text
   >
 </template>
 <script>
