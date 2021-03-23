@@ -1,7 +1,7 @@
 {
   "name": "@devextreme/vdom",
   "version": "1.0.0",
-  "description": "DevExtreme inferno common components",
+  "description": "DevExtreme virtual DOM common components",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
