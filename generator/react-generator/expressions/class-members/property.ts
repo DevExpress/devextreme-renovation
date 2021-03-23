@@ -84,12 +84,14 @@ export class Property extends BaseProperty {
         type.context
       );
     }
-    return compileType(
-      type.toString(),
+    let questionOrExclamationToken =
       this.questionOrExclamationToken === SyntaxKind.ExclamationToken
         ? ""
-        : this.questionOrExclamationToken
-    );
+        : this.questionOrExclamationToken;
+    if (this.isNested && this.initializer) {
+      questionOrExclamationToken = SyntaxKind.QuestionToken;
+    }
+    return compileType(type.toString(), questionOrExclamationToken);
   }
 
   typeDeclaration() {

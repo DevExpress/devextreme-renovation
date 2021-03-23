@@ -26,10 +26,10 @@ class DxWithNestedRow extends GridRow {
   private __cells?: (DxWithNestedRowCell | string)[];
   @ContentChildren(DxWithNestedRowCell)
   cellsNested?: QueryList<DxWithNestedRowCell>;
-  @Input() set cells(value: (DxWithNestedRowCell | string)[] | undefined) {
+  @Input() set cells(value: (DxWithNestedRowCell | string)[]) {
     this.__cells = value;
   }
-  get cells(): (DxWithNestedRowCell | string)[] | undefined {
+  get cells(): (DxWithNestedRowCell | string)[] {
     if (this.__cells) {
       return this.__cells;
     }

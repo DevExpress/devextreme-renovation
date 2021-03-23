@@ -1,14 +1,14 @@
 import { Input } from "@angular/core";
 export class GridCell {
-  @Input() gridData?: string = "defaultValue";
+  @Input() gridData: string = "defaultValue";
 }
 
 export class GridRow {
   private __cells__?: (GridCell | string)[];
-  @Input() set cells(value: (GridCell | string)[] | undefined) {
+  @Input() set cells(value: (GridCell | string)[]) {
     this.__cells__ = value;
   }
-  get cells(): (GridCell | string)[] | undefined {
+  get cells(): (GridCell | string)[] {
     if (!this.__cells__) {
       return GridRow.__defaultNestedValues.cells;
     }

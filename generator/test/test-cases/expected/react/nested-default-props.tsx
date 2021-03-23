@@ -1,5 +1,5 @@
 export declare type GridCellType = {
-  gridData?: string;
+  gridData: string;
 };
 export const GridCell: GridCellType = {
   gridData: "defaultValue",

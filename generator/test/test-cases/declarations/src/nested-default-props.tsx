@@ -6,12 +6,12 @@ import {
 
 @ComponentBindings()
 export class GridCell {
-  @OneWay() gridData?: string = "defaultValue";
+  @OneWay() gridData: string = "defaultValue";
 }
 
 @ComponentBindings()
 export class GridRow {
-  @Nested() cells?: (GridCell | string)[] = [new GridCell()];
+  @Nested() cells: (GridCell | string)[] = [new GridCell()];
 }
 
 @ComponentBindings()

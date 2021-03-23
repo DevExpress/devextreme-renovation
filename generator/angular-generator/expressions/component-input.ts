@@ -17,6 +17,7 @@ import {
 } from "../../base-generator/expressions/statements";
 import { Parameter } from "../../base-generator/expressions/functions";
 import { SetAccessor } from "./class-members/set-accessor";
+import syntaxKind from "../../base-generator/syntaxKind";
 
 export class ComponentInput extends BaseComponentInput {
   createProperty(
@@ -94,7 +95,7 @@ export class ComponentInput extends BaseComponentInput {
       [],
       ["private"],
       new Identifier(`__${name}__`),
-      questionOrExclamationToken,
+      questionOrExclamationToken || syntaxKind.QuestionToken,
       `${type}`,
       undefined
     );

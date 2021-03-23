@@ -226,7 +226,7 @@ export class AngularComponent extends Component {
       [],
       ["private"],
       new Identifier(`__${name}`),
-      questionOrExclamationToken,
+      questionOrExclamationToken || syntaxKind.QuestionToken,
       `${type}`,
       undefined
     );
