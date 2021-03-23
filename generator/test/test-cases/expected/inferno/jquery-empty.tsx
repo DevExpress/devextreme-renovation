@@ -3,58 +3,54 @@ import {
   InfernoComponent,
   InfernoComponentWrapper,
 } from "../../../../modules/inferno/base_component";
-export const COMPONENT_INPUT_CLASS = "c3";
-function view(model: Widget) {
-  return <div></div>;
-}
 
-export declare type WidgetPropsType = {
+export declare type PropsType = {
   height?: number;
   width?: number;
-  children?: any;
 };
-export const WidgetProps: WidgetPropsType = {
-  height: 10,
-  width: 10,
-};
+const Props: PropsType = {};
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
   ref?: any;
+  $element: Element | null | undefined;
 };
 
-export default class Widget extends BaseInfernoComponent<
-  typeof WidgetProps & RestProps
+export default class Widget extends InfernoComponentWrapper<
+  typeof Props & RestProps
 > {
   state = {};
   refs: any;
 
-  constructor(props: typeof WidgetProps & RestProps) {
+  constructor(props: typeof Props & RestProps) {
     super(props);
-
-    this.onClick = this.onClick.bind(this);
   }
 
-  onClick(): any {
-    const v = this.props.height;
-  }
   get restAttributes(): RestProps {
-    const { children, height, width, ...restProps } = this.props;
+    const { height, width, ...restProps } = this.props;
     return restProps;
   }
 
   render() {
     const props = this.props;
-    return view({
+    return view1({
       props: { ...props },
-      onClick: this.onClick,
       restAttributes: this.restAttributes,
     } as Widget);
   }
 }
 
 Widget.defaultProps = {
-  ...WidgetProps,
+  ...Props,
 };
+function view1(viewModel: Widget) {
+  return (
+    <div style={{ height: viewModel.props.height }}>
+      <span></span>
+
+      <span></span>
+    </div>
+  );
+}

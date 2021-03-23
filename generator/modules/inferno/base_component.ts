@@ -76,3 +76,59 @@ export class InfernoComponent<P = {}, S = {}> extends BaseInfernoComponent<
     this.destroyEffects();
   }
 }
+
+type WrapperProps<Props> = Props & {
+  $element: Element | null | undefined;
+};
+export class InfernoComponentWrapper<
+  P extends WrapperProps<{}>,
+  S = {}
+> extends InfernoComponent<P, S> {
+  initialDxStyles: string[] = [];
+  pendingClasses: string[] = [];
+
+  getInitialClasses() {
+    return (this.props.$element?.getAttribute("class") || "")
+      .split(" ")
+      .filter((name) => name.startsWith("dx-"));
+  }
+
+  getCustomClasses() {
+    return (this.props.$element?.getAttribute("class") || "")
+      .split(" ")
+      .filter((name) => !name.startsWith("dx-"));
+  }
+
+  componentWillMount() {
+    super.componentWillMount();
+
+    this.initialDxStyles = this.getInitialClasses();
+  }
+
+  shouldComponentUpdate(nextProps: P, nextState: S) {
+    const shouldUpdate = super.shouldComponentUpdate(nextProps, nextState);
+
+    if (shouldUpdate) {
+      this.pendingClasses = this.getCustomClasses();
+    }
+    return shouldUpdate;
+  }
+
+  componentDidMount() {
+    super.componentDidMount();
+
+    const additionalClasses = this.initialDxStyles.concat(this.pendingClasses);
+    if (additionalClasses) {
+      this.props.$element?.classList.add(...additionalClasses);
+    }
+  }
+
+  componentDidUpdate() {
+    super.componentDidUpdate();
+
+    const additionalClasses = this.initialDxStyles.concat(this.pendingClasses);
+    if (additionalClasses) {
+      this.props.$element?.classList.add(...additionalClasses);
+    }
+  }
+}

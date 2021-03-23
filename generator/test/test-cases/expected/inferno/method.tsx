@@ -2,6 +2,7 @@ import { RefObject } from "../../../../modules/inferno/ref_object";
 import {
   BaseInfernoComponent,
   InfernoComponent,
+  InfernoComponentWrapper,
 } from "../../../../modules/inferno/base_component";
 function view(viewModel: Widget) {
   return <div ref={viewModel.divRef}></div>;

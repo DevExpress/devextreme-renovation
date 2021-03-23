@@ -1,6 +1,7 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
+  InfernoComponentWrapper,
 } from "../../../../modules/inferno/base_component";
 function view() {
   return <div></div>;

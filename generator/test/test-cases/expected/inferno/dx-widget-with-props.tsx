@@ -1,6 +1,7 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
+  InfernoComponentWrapper,
 } from "../../../../modules/inferno/base_component";
 
 export declare type WidgetWithPropsInputType = {

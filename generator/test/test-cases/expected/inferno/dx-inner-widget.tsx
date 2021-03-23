@@ -1,6 +1,7 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
+  InfernoComponentWrapper,
 } from "../../../../modules/inferno/base_component";
 function view(model: InnerWidget) {
   return <div style={{ width: 100, height: 100 }}></div>;
