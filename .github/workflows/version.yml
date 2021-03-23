@@ -1,6 +1,8 @@
 name: Version
 on:
   pull_request:
+    paths:
+      - ./packages/**/package.json
     types:
       - opened
       - reopened

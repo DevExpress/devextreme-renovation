@@ -1,10 +1,5 @@
 name: Publication
-on:
-  push:
-    branches:
-      - master
-    paths:
-      - ./packages/**/package.json
+on: [push]
 
 jobs:
 
