@@ -25,7 +25,6 @@ jobs:
     name: Prebuild
     runs-on: ubuntu-latest
     needs: [ version-bump ]
-    if: needs.version-bump.outputs.changed == 'true'
 
     steps:
 
