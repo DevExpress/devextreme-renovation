@@ -49,7 +49,7 @@ jobs:
       - uses: actions/upload-artifact@master
         with:
           name: devextreme-generator-artifacts
-          path: ./packages/**/*.tgz
+          path: ./packages/*/package.tgz
 
   publishing:
     name: Publish
@@ -80,7 +80,7 @@ jobs:
           name: devextreme-generator-artifacts
 
       - name: Publish ${{ matrix.PACKAGE }}
-        run: npm publish ./packages/${{ matrix.PACKAGE }}/*.tgz --dry-run
+        run: npm publish ./${{ matrix.PACKAGE }}/package.tgz --dry-run
         env:
           PACKAGE: ${{ matrix.PACKAGE }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
