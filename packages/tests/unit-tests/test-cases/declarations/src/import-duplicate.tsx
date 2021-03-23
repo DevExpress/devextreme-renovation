@@ -5,7 +5,7 @@ import {
   Component,
   JSXComponent,
   Effect,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 export const viewFunction = (viewModel: Marker) => <div></div>;
 

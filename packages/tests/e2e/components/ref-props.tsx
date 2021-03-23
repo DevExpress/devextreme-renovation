@@ -5,7 +5,7 @@ import {
   Ref,
   Effect,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view(model: RefProps) {
   return <div>{"Ref Props"}</div>;

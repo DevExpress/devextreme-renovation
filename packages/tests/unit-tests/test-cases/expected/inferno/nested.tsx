@@ -1,7 +1,7 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-} from "@devextreme-generator/inferno-common";
+} from "@devextreme/vdom";
 import { PickedProps, GridColumnProps } from "./nested-props";
 export const CustomColumnComponent = (props: typeof GridColumnProps) => {};
 function view(model: Widget) {

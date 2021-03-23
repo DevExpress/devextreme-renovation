@@ -1,5 +1,5 @@
 import { Decorators } from '@devextreme-generator/core';
-import { compile } from '@devextreme-generator/dev-utils';
+import { compile } from '@devextreme-generator/build-helpers';
 import generator, { PreactComponent } from '@devextreme-generator/preact';
 import assert from 'assert';
 import path from 'path';

@@ -4,7 +4,7 @@ import {
   ComponentBindings,
   OneWay,
   JSXComponent,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view(model: Widget) {
   return <div>{model.props.state1}</div>;

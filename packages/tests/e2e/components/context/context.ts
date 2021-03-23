@@ -1,4 +1,4 @@
-import { createContext } from "@devextreme-generator/declaration";
+import { createContext } from "@devextreme-generator/declarations";
 
 export class PluginContext {
   onChange?: Function;

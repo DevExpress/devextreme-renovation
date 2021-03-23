@@ -5,7 +5,7 @@ import {
   Effect,
   ForwardRef,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import Child from "./child";
 
 function view({ props: { childRef } }: ForwardRefDeep) {

@@ -3,7 +3,7 @@ import {
   ComponentBindings,
   JSXComponent,
   Fragment,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view(model: ComponentWithFragment) {
   return (

@@ -4,7 +4,7 @@ import {
   JSXComponent,
   ForwardRef,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 import SetForwardRefChild from "../set-forward-child";
 

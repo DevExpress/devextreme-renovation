@@ -6,7 +6,7 @@ import {
   JSXComponent,
   TwoWay,
   CSSAttributes,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 const modifyStyles = (styles: CSSAttributes) => {
   return {

@@ -4,7 +4,7 @@ import {
   JSXComponent,
   ComponentBindings,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import BaseWidget from "./method";
 
 function view(viewModel: Widget) {

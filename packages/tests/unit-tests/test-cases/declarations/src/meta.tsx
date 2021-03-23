@@ -10,7 +10,7 @@ import {
   Ref,
   Method,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import AnotherWidget from "./method";
 
 function view(model: MetaWidget) {

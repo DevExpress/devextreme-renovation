@@ -2,7 +2,7 @@ import {
   BaseInfernoComponent,
   InfernoComponent,
   createContext,
-} from "@devextreme-generator/inferno-common";
+} from "@devextreme/vdom";
 function view(model: Widget): any {
   return <span></span>;
 }

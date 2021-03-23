@@ -7,7 +7,7 @@ import {
   Effect,
   Ref,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view(model: DefaultOptionRulesComponent) {
   return (

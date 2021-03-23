@@ -3,7 +3,7 @@ import {
   OneWay,
   ComponentBindings,
   JSXComponent,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view(model: CallMethodInGetterWidget) {
   return <div id={model.props.id}>{model.text}</div>;

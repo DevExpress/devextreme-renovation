@@ -4,7 +4,7 @@ import {
   JSXComponent,
   Ref,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import PortalComponent from "./portal-component";
 
 function view(model: PortalContainer) {

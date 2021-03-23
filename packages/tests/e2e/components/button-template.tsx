@@ -3,7 +3,7 @@ import {
   ComponentBindings,
   JSXComponent,
   OneWay,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view(model: ButtonTemplate) {
   return <div style={{ backgroundColor: "#00aa00" }}>{model.props.text}</div>;

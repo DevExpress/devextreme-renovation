@@ -4,7 +4,7 @@ import {
   JSXComponent,
   OneWay,
   TwoWay,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import InnerWidget from "./dx-inner-widget";
 
 function view({ props, restAttributes }: Widget) {

@@ -6,7 +6,7 @@ import {
   Ref,
   OneWay,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view(model: EffectsDOMUpdate) {
   return (

@@ -1,7 +1,7 @@
 import {
   JSXComponent,
   Component,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import Props from "./component-bindings-only";
 import { Options } from "./types.d";
 

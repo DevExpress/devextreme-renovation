@@ -2,7 +2,7 @@ import {
   RefObject,
   BaseInfernoComponent,
   InfernoComponent,
-} from "@devextreme-generator/inferno-common";
+} from "@devextreme/vdom";
 import BaseWidget from "./method";
 function view(viewModel: WidgetWithApiRef) {
   return (

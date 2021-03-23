@@ -1,4 +1,4 @@
-import { Component, JSXComponent } from "@devextreme-generator/declaration";
+import { Component, JSXComponent } from "@devextreme-generator/declarations";
 import Button, { ButtonInput } from "./button";
 
 function view(model: Widget) {

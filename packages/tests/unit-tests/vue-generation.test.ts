@@ -1,4 +1,4 @@
-import { compile } from '@devextreme-generator/dev-utils';
+import { compile } from '@devextreme-generator/build-helpers';
 import generator from '@devextreme-generator/vue';
 import assert from 'assert';
 import path from 'path';

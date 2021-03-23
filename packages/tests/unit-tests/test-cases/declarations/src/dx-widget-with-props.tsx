@@ -5,7 +5,7 @@ import {
   OneWay,
   Method,
   Event,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 @ComponentBindings()
 export class WidgetWithPropsInput {

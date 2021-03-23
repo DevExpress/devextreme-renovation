@@ -7,7 +7,7 @@ import {
   InternalState,
   Template,
   JSXTemplate,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import ListItem, { ListItemProps } from "./list-item";
 
 function view({

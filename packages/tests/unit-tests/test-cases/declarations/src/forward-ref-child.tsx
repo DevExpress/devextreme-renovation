@@ -5,7 +5,7 @@ import {
   ForwardRef,
   OneWay,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view({ props: { childRef, nullableRef } }: RefOnChildrenChild) {
   return (

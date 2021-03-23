@@ -7,7 +7,7 @@ import {
   InternalState,
   Ref,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import GridComponent from "./grid";
 import Pager from "./pager";
 import Paging from "./paging";

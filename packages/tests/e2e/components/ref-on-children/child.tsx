@@ -5,7 +5,7 @@ import {
   ForwardRef,
   Effect,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view({ props: { childRef } }: ForwardRefChild) {
   return <span className="forward-ref-child" ref={childRef}></span>;

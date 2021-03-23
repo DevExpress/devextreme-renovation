@@ -5,7 +5,7 @@ import {
   JSXComponent,
   Template,
   InternalState,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 import PanelComponent from "./panel-component";
 

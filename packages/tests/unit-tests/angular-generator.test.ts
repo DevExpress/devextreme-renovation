@@ -17,7 +17,7 @@ import {
   Parameter,
   TypeExpression
 } from '@devextreme-generator/core';
-import { ComponentParameters } from '@devextreme-generator/declaration';
+import { ComponentParameters } from '@devextreme-generator/declarations';
 import { assertCode, printSourceCodeAst as getResult, removeSpaces } from './helpers/common';
 import factory from './helpers/create-component';
 import mocha from './helpers/mocha';

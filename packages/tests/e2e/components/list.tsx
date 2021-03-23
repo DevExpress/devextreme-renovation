@@ -5,7 +5,7 @@ import {
   Event,
   OneWay,
   InternalState,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import ListItem from "./list-item";
 
 function view({ items, restAttributes, counter }: List) {

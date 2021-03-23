@@ -25,7 +25,7 @@ export default (
         {
           test: /\.tsx$/,
           use: {
-            loader: "@devextreme-generator/dev-utils/dist/webpack-loader",
+            loader: "@devextreme-generator/build-helpers/dist/webpack-loader",
             options: options,
           },
         },

@@ -5,7 +5,7 @@ import {
   JSXTemplate,
   OneWay,
   Template,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import SampleWidget from "./sample-widget";
 
 export const viewFunction = (model: TemplateDefaultValue) => (

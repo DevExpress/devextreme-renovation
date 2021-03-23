@@ -5,7 +5,7 @@ import {
   Effect,
   ForwardRef,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import Child from "./child";
 import ChildWithAssign from "./child-with-assign";
 

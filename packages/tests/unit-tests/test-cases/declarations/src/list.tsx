@@ -5,7 +5,7 @@ import {
   JSXTemplate,
   OneWay,
   Template,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import { WidgetWithProps } from "./dx-widget-with-props";
 const noop = (e: any) => {};
 @ComponentBindings()

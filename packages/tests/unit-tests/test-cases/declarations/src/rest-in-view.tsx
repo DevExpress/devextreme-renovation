@@ -5,7 +5,7 @@ import {
   ComponentBindings,
   JSXComponent,
   TwoWay,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view({ props: { height, ...rest } }: Widget) {
   return <span>{rest}</span>;

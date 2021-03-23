@@ -27,7 +27,7 @@ module.exports = {
         include: path.resolve(__dirname, "../../components"),
         loaders: [
           {
-            loader: "@devextreme-generator/dev-utils/dist/webpack-loader",
+            loader: "@devextreme-generator/build-helpers/dist/webpack-loader",
             options: {
               platform: "angular",
               defaultOptionsModule: path.resolve(__dirname, "../../../jquery-helpers/default_options"),

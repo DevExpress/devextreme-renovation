@@ -4,7 +4,7 @@ import {
   Slot,
   JSXComponent,
   OneWay,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import Widget from "./slots";
 
 function view({ props: { p, ...rest } }: SlotPass) {

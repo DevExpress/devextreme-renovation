@@ -1,7 +1,7 @@
 import {
   OneWay,
   ComponentBindings,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import { Options, AdditionalOptions } from "./types.d";
 
 @ComponentBindings()

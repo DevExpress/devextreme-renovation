@@ -3,7 +3,7 @@ import {
   ComponentBindings,
   JSXComponent,
   Template,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 export const viewFunction = ({
   props: { firstTemplate: First, secondTemplate },
 }: Middle): JSX.Element => (

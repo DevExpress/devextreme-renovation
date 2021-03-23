@@ -2,7 +2,7 @@ import {
   Component,
   ComponentBindings,
   JSXComponent,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import { JQueryCustomBaseComponent } from "../../../../jquery-helpers/jquery_custom_base_component";
 
 function view(model: Widget) {

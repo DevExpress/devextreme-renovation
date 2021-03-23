@@ -170,7 +170,7 @@ export class ImportDeclaration {
 
   isCommonDeclarationModule() {
     return (
-      this.moduleSpecifier.expression.toString() === "@devextreme-generator/declaration"
+      this.moduleSpecifier.expression.toString() === "@devextreme-generator/declarations"
     );
   }
 

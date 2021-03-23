@@ -4,7 +4,7 @@ import {
   JSXComponent,
   JSXTemplate,
   OneWay,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 import DynamicComponent, { WidgetInput } from "./props";
 

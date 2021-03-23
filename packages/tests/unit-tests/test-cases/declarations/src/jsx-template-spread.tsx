@@ -5,7 +5,7 @@ import {
   JSXTemplate,
   Template,
   OneWay,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import {
   InterfaceTemplateInput,
   ClassTemplateInput,

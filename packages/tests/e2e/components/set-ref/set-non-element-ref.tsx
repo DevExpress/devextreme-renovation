@@ -6,7 +6,7 @@ import {
   Ref,
   RefObject,
   Mutable,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view({ host }: SetNonElementRef) {
   return <span className="set-non-element-ref" ref={host}></span>;

@@ -7,7 +7,7 @@ import {
   Effect,
   Ref,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 const CLASS_NAME = "list-item";
 
 function view({ props: { text }, style, host }: ListItem) {

@@ -1,4 +1,4 @@
-import { deleteFolderRecursive, generateComponents } from '@devextreme-generator/dev-utils';
+import { deleteFolderRecursive, generateComponents } from '@devextreme-generator/build-helpers';
 import generator from '@devextreme-generator/preact';
 import vueGenerator from '@devextreme-generator/vue';
 import assert from 'assert';

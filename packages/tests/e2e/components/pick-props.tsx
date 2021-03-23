@@ -1,4 +1,4 @@
-import { Component, JSXComponent } from "@devextreme-generator/declaration";
+import { Component, JSXComponent } from "@devextreme-generator/declarations";
 import { WidgetInput, SimpleComponent } from "./simple";
 
 function view({ props: { color } }: PickPropsComponent) {

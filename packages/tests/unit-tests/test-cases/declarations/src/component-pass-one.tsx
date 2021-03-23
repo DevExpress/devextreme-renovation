@@ -4,7 +4,7 @@ import {
   JSXComponent,
   OneWay,
   Slot,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view({ props: { text, children } }: WidgetOne) {
   return (

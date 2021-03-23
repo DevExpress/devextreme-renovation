@@ -1,5 +1,5 @@
 {
-  "name": "@devextreme-generator/dev-utils",
+  "name": "@devextreme-generator/build-helpers",
   "version": "1.0.0",
   "description": "DevExtreme development utils",
   "main": "dist/index",

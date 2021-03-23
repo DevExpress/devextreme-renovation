@@ -1,5 +1,5 @@
 {
-  "name": "@devextreme-generator/inferno-common",
+  "name": "@devextreme/vdom",
   "version": "1.0.0",
   "description": "DevExtreme inferno common components",
   "main": "dist/index",

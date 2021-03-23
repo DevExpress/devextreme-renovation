@@ -4,7 +4,7 @@ import {
   Event,
   ComponentBindings,
   JSXComponent,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view(model: Widget): JSX.Element {
   const sizes = model.props.sizes ?? { width: 0, height: 0 };

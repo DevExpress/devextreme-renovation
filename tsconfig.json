@@ -3,14 +3,15 @@
   "compilerOptions": {
     "baseUrl": "./packages",
     "paths": {
-      "@devextreme-generator/angular": ["./angular/src"],
-      "@devextreme-generator/core": ["./core/src"],
-      "@devextreme-generator/declaration": ["./declaration/src"],
-      "@devextreme-generator/dev-utils": ["./dev-utils/src"],
-      "@devextreme-generator/inferno": ["./inferno/src"],
-      "@devextreme-generator/preact": ["./preact/src"],
-      "@devextreme-generator/react": ["./react/src"],
-      "@devextreme-generator/vue": ["./vue/src"]
+      "@devextreme-generator/angular": ["./angular-generator/src"],
+      "@devextreme-generator/core": ["./core-generator/src"],
+      "@devextreme-generator/declarations": ["./declarations/src"],
+      "@devextreme-generator/build-helpers": ["./build-helpers/src"],
+      "@devextreme-generator/inferno": ["./inferno-generator/src"],
+      "@devextreme-generator/preact": ["./preact-generator/src"],
+      "@devextreme-generator/react": ["./react-generator/src"],
+      "@devextreme-generator/vue": ["./vue-generator/src"],
+      "@devextreme/vdom": ["./vdom/src"]
     }
   }
 }

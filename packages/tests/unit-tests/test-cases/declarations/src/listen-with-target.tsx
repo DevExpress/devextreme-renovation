@@ -1,4 +1,4 @@
-import { Component, Listen } from "@devextreme-generator/declaration";
+import { Component, Listen } from "@devextreme-generator/declarations";
 
 function view() {}
 

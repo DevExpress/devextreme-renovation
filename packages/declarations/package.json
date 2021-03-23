@@ -1,5 +1,5 @@
 {
-  "name": "@devextreme-generator/declaration",
+  "name": "@devextreme-generator/declarations",
   "version": "1.0.0",
   "description": "DevExtreme declarations",
   "main": "dist/index",

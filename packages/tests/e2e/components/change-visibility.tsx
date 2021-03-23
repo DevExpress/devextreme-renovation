@@ -6,7 +6,7 @@ import {
   Ref,
   Effect,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import ButtonComponent from "./button";
 
 function view(model: VisibilityChange) {

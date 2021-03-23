@@ -2,7 +2,7 @@ import {
   Component,
   ComponentBindings,
   JSXComponent,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import TemplateDefaultValue from "./template-default-value";
 
 const CustomTemplate = (props: { text?: string; textWithDefault?: string }) => {

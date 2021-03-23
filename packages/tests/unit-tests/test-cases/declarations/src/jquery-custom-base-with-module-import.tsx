@@ -2,7 +2,7 @@ import {
   Component,
   ComponentBindings,
   JSXComponent,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import * as utils from "../../../../jquery-helpers/default_options";
 import MyBaseComponent from "../../../../jquery-helpers/jquery_custom_base_component";
 

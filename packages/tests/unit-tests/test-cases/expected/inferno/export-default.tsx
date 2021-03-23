@@ -1,7 +1,7 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-} from "@devextreme-generator/inferno-common";
+} from "@devextreme/vdom";
 function view(model: Widget) {
   return <div></div>;
 }

@@ -6,7 +6,7 @@ import {
   Method,
   JSXComponent,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import BaseWidget from "./method";
 
 function view(viewModel: WidgetWithApiRef) {

@@ -2,7 +2,7 @@ import {
   Component,
   ComponentBindings,
   JSXComponent,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import InnerWidget from "./dx-inner-widget";
 
 function view(model: Widget) {

@@ -4,7 +4,7 @@ import {
   Event,
   ComponentBindings,
   JSXComponent,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import Base, { WidgetProps } from "./component-input";
 
 function view(model: Child) {

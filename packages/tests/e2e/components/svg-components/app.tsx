@@ -3,7 +3,7 @@ import {
   ComponentBindings,
   JSXComponent,
   Fragment,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 import SimpleComponent from "./simple-svg";
 import SvgRoot from "./svg-root";

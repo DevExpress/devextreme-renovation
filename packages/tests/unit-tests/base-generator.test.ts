@@ -3290,7 +3290,7 @@ mocha.describe("base-generator: expressions", function () {
               generator.createIdentifier("Button"),
               undefined
             ),
-            generator.createStringLiteral("@devextreme-generator/declaration")
+            generator.createStringLiteral("@devextreme-generator/declarations")
           ),
           ""
         );
@@ -3506,7 +3506,7 @@ mocha.describe("base-generator: expressions", function () {
               ),
             ])
           ),
-          generator.createStringLiteral("@devextreme-generator/declaration")
+          generator.createStringLiteral("@devextreme-generator/declarations")
         );
         assert.deepEqual(expression.getVariableExpressions(), {});
       });

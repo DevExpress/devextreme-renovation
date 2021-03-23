@@ -3,7 +3,7 @@ import {
   ComponentBindings,
   JSXComponent,
   OneWay,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import {
   EnumType,
   Union,

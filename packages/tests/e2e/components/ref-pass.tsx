@@ -5,7 +5,7 @@ import {
   Effect,
   Ref,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import RefProps from "./ref-props";
 
 function view({ contentRef }: RefPass) {

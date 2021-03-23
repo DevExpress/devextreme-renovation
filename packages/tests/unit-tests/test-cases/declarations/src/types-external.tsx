@@ -3,7 +3,7 @@ import {
   ComponentBindings,
   JSXComponent,
   OneWay,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 export declare type EnumType = "data" | "none";
 export declare type Union = string | number;

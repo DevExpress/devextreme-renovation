@@ -4,7 +4,7 @@ import {
   ComponentBindings,
   JSXComponent,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 @ComponentBindings()
 export class WidgetWithRefPropInput {

@@ -16,7 +16,7 @@ module.exports = {
             loader: "vue-loader",
           },
           {
-            loader: "@devextreme-generator/dev-utils/dist/webpack-loader",
+            loader: "@devextreme-generator/build-helpers/dist/webpack-loader",
             options: {
               platform: "vue",
               defaultOptionsModule:
@@ -55,7 +55,7 @@ module.exports = {
             },
           },
           {
-            loader: "@devextreme-generator/dev-utils/dist/webpack-loader",
+            loader: "@devextreme-generator/build-helpers/dist/webpack-loader",
             options: {
               platform: "vue",
               defaultOptionsModule:

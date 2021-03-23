@@ -3,7 +3,7 @@ import {
   Slot,
   ComponentBindings,
   JSXComponent,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 const view = (model: Widget): any => model.props.children;
 

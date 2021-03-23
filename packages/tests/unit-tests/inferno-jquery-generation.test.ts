@@ -1,4 +1,4 @@
-import { compile } from '@devextreme-generator/dev-utils';
+import { compile } from '@devextreme-generator/build-helpers';
 import generator from '@devextreme-generator/inferno';
 import path from 'path';
 

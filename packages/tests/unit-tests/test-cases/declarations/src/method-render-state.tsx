@@ -5,7 +5,7 @@ import {
   Ref,
   Method,
   JSXComponent,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 const view = () => <div></div>;
 

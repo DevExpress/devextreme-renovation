@@ -5,7 +5,7 @@ import {
   Effect,
   ForwardRef,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view(model: RefConsumer) {
   return <span>consumer is rendered</span>;

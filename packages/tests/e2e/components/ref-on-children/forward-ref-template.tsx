@@ -6,7 +6,7 @@ import {
   Template,
   ForwardRef,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view({
   props: { contentTemplate: Template },

@@ -5,7 +5,7 @@ import {
   OneWay,
   Event,
   TwoWay,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view(model: InnerWidget) {
   return <div style={{ width: 100, height: 100 }}></div>;

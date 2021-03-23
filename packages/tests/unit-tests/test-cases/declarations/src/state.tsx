@@ -3,7 +3,7 @@ import {
   TwoWay,
   ComponentBindings,
   JSXComponent,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import BaseState from "./model";
 
 function view(model: Widget) {

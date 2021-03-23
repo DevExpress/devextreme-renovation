@@ -7,7 +7,7 @@ import {
   InternalState,
   Ref,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 import { Context } from "./context";
 import { PluginContext } from "./context";

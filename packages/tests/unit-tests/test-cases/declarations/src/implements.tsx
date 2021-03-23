@@ -3,7 +3,7 @@ import {
   ComponentBindings,
   JSXComponent,
   OneWay,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import BaseProps from "./component-bindings-only";
 
 const view = (model: Widget) => <span />;

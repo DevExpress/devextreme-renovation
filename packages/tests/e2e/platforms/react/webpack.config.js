@@ -17,7 +17,7 @@ module.exports = {
             },
           },
           {
-            loader: "@devextreme-generator/dev-utils/dist/webpack-loader",
+            loader: "@devextreme-generator/build-helpers/dist/webpack-loader",
             options: {
               platform: "react",
               tsConfig: path.resolve(__dirname, "./tsconfig.json"),

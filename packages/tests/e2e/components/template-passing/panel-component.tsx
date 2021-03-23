@@ -4,7 +4,7 @@ import {
   JSXComponent,
   Event,
   Template,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import BodyComponent from "./body-component";
 
 const lorem = "Lorem ipsum dolor sit amet consectetur, adipisicing elit";

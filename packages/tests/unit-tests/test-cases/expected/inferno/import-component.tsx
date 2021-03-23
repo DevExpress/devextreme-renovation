@@ -1,7 +1,7 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-} from "@devextreme-generator/inferno-common";
+} from "@devextreme/vdom";
 import Base, { WidgetProps } from "./component-input";
 function view(model: Child) {
   return <Base height={model.getProps().height} />;

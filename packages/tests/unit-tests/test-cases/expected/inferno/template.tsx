@@ -1,7 +1,7 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-} from "@devextreme-generator/inferno-common";
+} from "@devextreme/vdom";
 import { WidgetWithProps, WidgetWithPropsInput } from "./dx-widget-with-props";
 
 export declare type WidgetInputType = {

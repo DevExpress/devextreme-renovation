@@ -4,7 +4,7 @@ import {
   ComponentBindings,
   InternalState,
   JSXComponent,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view(viewModel: Widget) {
   return <div></div>;

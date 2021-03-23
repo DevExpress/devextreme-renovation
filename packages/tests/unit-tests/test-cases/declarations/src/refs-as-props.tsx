@@ -4,7 +4,7 @@ import {
   JSXComponent,
   ComponentBindings,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import WidgetWithRefProp from "./dx-widget-with-ref-prop";
 
 function view(viewModel: Widget) {

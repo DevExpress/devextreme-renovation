@@ -3,7 +3,7 @@ import {
   ComponentBindings,
   JSXComponent,
   Template,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import { Middle } from "./template-as-template-prop-middle";
 import { Child } from "./template-as-template-prop-child";
 

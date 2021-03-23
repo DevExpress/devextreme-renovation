@@ -5,7 +5,7 @@ import {
   Template,
   OneWay,
   React,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 @ComponentBindings()
 export class ListInput {

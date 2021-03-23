@@ -1,6 +1,6 @@
 import generator from '@devextreme-generator/angular';
 import { resolveModule } from '@devextreme-generator/core';
-import { compile } from '@devextreme-generator/dev-utils';
+import { compile } from '@devextreme-generator/build-helpers';
 import assert from 'assert';
 import path from 'path';
 

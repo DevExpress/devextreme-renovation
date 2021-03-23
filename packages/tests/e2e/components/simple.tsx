@@ -3,7 +3,7 @@ import {
   OneWay,
   ComponentBindings,
   JSXComponent,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view(model: SimpleComponent) {
   return (

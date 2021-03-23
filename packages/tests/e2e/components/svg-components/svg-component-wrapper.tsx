@@ -3,7 +3,7 @@ import {
   ComponentBindings,
   JSXComponent,
   Slot,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 import SvgRoot from "./svg-root";
 

@@ -3,7 +3,7 @@ import {
   Component,
   JSXComponent,
   InternalState,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view({ i1, i2, i3 }: TestPropertyAccessChain) {
   return (

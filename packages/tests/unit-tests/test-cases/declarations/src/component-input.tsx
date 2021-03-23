@@ -4,7 +4,7 @@ import {
   Component,
   ComponentBindings,
   Slot,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 export const COMPONENT_INPUT_CLASS = "c3";
 

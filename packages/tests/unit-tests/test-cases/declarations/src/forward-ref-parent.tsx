@@ -6,7 +6,7 @@ import {
   ForwardRef,
   InternalState,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import Child from "./forward-ref-child";
 
 function view({

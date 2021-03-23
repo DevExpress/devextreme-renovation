@@ -58,7 +58,7 @@ mocha.describe("Expressions", function () {
               ),
             ])
           ),
-          generator.createStringLiteral("@devextreme-generator/declaration")
+          generator.createStringLiteral("@devextreme-generator/declarations")
         );
 
         assert.strictEqual(
@@ -83,12 +83,12 @@ mocha.describe("Expressions", function () {
               ),
             ])
           ),
-          generator.createStringLiteral("@devextreme-generator/declaration")
+          generator.createStringLiteral("@devextreme-generator/declarations")
         );
 
         assert.strictEqual(
           expression.toString(),
-          `import {RefObject} from "@devextreme-generator/inferno-common"`
+          `import {RefObject} from "@devextreme/vdom"`
         );
       }
     );
@@ -108,12 +108,12 @@ mocha.describe("Expressions", function () {
               ),
             ])
           ),
-          generator.createStringLiteral("@devextreme-generator/declaration")
+          generator.createStringLiteral("@devextreme-generator/declarations")
         );
 
         assert.strictEqual(
           expression.toString(),
-          `import {RefObject} from "@devextreme-generator/inferno-common"`
+          `import {RefObject} from "@devextreme/vdom"`
         );
       }
     );
@@ -133,12 +133,12 @@ mocha.describe("Expressions", function () {
               ),
             ])
           ),
-          generator.createStringLiteral("@devextreme-generator/declaration")
+          generator.createStringLiteral("@devextreme-generator/declarations")
         );
 
         assert.strictEqual(
           expression.toString(),
-          `import {BaseInfernoComponent,InfernoComponent} from "@devextreme-generator/inferno-common"`
+          `import {BaseInfernoComponent,InfernoComponent} from "@devextreme/vdom"`
         );
       }
     );

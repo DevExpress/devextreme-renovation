@@ -7,7 +7,7 @@ import {
   Ref,
   Slot,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view({ host, props: { children } }: ProvideRefFromParentToChildren) {
   return <div ref={host}>{children}</div>;

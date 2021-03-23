@@ -4,7 +4,7 @@ import {
   JSXComponent,
   OneWay,
   Template,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import Button from "./button-with-template";
 import ButtonTemplate from "./button-template";
 

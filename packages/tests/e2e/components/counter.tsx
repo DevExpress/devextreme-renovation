@@ -5,7 +5,7 @@ import {
   OneWay,
   TwoWay,
   Event,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import Button from "./button";
 
 function view(model: Counter) {

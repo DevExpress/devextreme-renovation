@@ -2,7 +2,7 @@ import {
   JSXComponent,
   Component,
   ComponentBindings,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view() {
   return <div></div>;

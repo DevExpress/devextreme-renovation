@@ -5,7 +5,7 @@ import {
   InternalState,
   Slot,
   Fragment,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 import Button from "../button";
 

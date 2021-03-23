@@ -4,7 +4,7 @@ import {
   JSXComponent,
   Provider,
   Slot,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 import { Context } from "./context";
 import { PluginContext } from "./context";

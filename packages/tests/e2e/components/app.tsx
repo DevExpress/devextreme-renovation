@@ -3,7 +3,7 @@ import {
   ComponentBindings,
   JSXComponent,
   InternalState,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 import { SimpleComponent } from "./simple";
 import ButtonComponent from "./button";

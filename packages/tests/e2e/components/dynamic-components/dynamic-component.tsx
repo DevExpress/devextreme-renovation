@@ -4,7 +4,7 @@ import {
   InternalState,
   JSXComponent,
   JSXTemplate,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 import Counter, { CounterInput } from "../counter";
 import Button, { ButtonInput } from "../button";

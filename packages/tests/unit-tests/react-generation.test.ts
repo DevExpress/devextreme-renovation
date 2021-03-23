@@ -1,5 +1,5 @@
 import { resolveModule } from '@devextreme-generator/core';
-import { compile } from '@devextreme-generator/dev-utils';
+import { compile } from '@devextreme-generator/build-helpers';
 import generator from '@devextreme-generator/react';
 import assert from 'assert';
 import path from 'path';

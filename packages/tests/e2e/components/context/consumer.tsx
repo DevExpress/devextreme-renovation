@@ -3,7 +3,7 @@ import {
   ComponentBindings,
   JSXComponent,
   Consumer,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 import { SimpleContext } from "./context";
 

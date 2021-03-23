@@ -6,7 +6,7 @@ import {
   Ref,
   Effect,
   RefObject,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 
 function view({ props, rendered, _body }: PortalComponent) {
   return (

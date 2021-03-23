@@ -1,7 +1,7 @@
 import {
   Component,
   JSXComponent,
-} from "@devextreme-generator/declaration";
+} from "@devextreme-generator/declarations";
 import { PickedProps, GridColumnProps } from "./nested-props";
 
 export const CustomColumnComponent = (props: GridColumnProps) => {};

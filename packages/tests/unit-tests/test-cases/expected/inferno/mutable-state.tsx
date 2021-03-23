@@ -2,7 +2,7 @@ import {
   InfernoEffect,
   BaseInfernoComponent,
   InfernoComponent,
-} from "@devextreme-generator/inferno-common";
+} from "@devextreme/vdom";
 function view(viewModel: Widget) {
   return <div></div>;
 }

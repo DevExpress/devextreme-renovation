@@ -1,7 +1,7 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-} from "@devextreme-generator/inferno-common";
+} from "@devextreme/vdom";
 import InnerWidget from "./dx-inner-widget";
 function view({ props, restAttributes }: Widget) {
   return <InnerWidget {...(props as any)} {...restAttributes} />;
