@@ -1,4 +1,7 @@
-import { InfernoComponent } from "../../../../modules/inferno/base_component";
+import {
+  BaseInfernoComponent,
+  InfernoComponent,
+} from "../../../../modules/inferno/base_component";
 function view(model: InnerWidget) {
   return <div style={{ width: 100, height: 100 }}></div>;
 }
@@ -22,7 +25,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class InnerWidget extends InfernoComponent<
+export default class InnerWidget extends BaseInfernoComponent<
   typeof InnerWidgetProps & RestProps
 > {
   state: {

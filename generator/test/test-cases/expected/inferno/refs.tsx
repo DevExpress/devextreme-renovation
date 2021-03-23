@@ -1,5 +1,8 @@
 import { RefObject } from "../../../../modules/inferno/ref_object";
-import { InfernoComponent } from "../../../../modules/inferno/base_component";
+import {
+  BaseInfernoComponent,
+  InfernoComponent,
+} from "../../../../modules/inferno/base_component";
 function view(viewModel: Widget) {
   return (
     <div ref={viewModel.divRef}>
@@ -25,7 +28,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends InfernoComponent<
+export default class Widget extends BaseInfernoComponent<
   typeof WidgetProps & RestProps
 > {
   state = {};
@@ -34,9 +37,7 @@ export default class Widget extends InfernoComponent<
   ref: RefObject<HTMLDivElement> = infernoCreateRef<HTMLDivElement>();
   forwardRef: RefObject<HTMLDivElement> = infernoCreateRef<HTMLDivElement>();
   existingRef: RefObject<HTMLDivElement> = infernoCreateRef<HTMLDivElement>();
-  existingForwardRef: RefObject<HTMLDivElement> = infernoCreateRef<
-    HTMLDivElement
-  >();
+  existingForwardRef: RefObject<HTMLDivElement> = infernoCreateRef<HTMLDivElement>();
 
   constructor(props: typeof WidgetProps & RestProps) {
     super(props);

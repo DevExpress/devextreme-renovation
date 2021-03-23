@@ -69,6 +69,19 @@ mocha.describe("Angular generator", function () {
       }
     );
 
+    mocha.it("collision-tag-name-and-property", function () {
+      const openingElement = generator.createJsxOpeningElement(
+        generator.createIdentifier("text"),
+        undefined,
+        undefined
+      );
+      const options = {
+        members: [],
+        variables: {},
+      };
+      assert.strictEqual(openingElement.toString(options), "<text >");
+    });
+
     mocha.it("Void elements should be self-closing", function () {
       assert.strictEqual(
         generator

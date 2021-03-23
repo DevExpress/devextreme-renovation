@@ -1,11 +1,11 @@
-import { Identifier, Paren, Call } from "./common";
+import { Call, Identifier, Paren } from "./common";
 import {
   Expression,
   ExpressionWithExpression,
-  SimpleExpression,
   ExpressionWithOptionalExpression,
+  SimpleExpression,
 } from "./base";
-import { toStringOptions, GeneratorContext } from "../types";
+import { GeneratorContext, toStringOptions } from "../types";
 import SyntaxKind from "../syntaxKind";
 import { Conditional } from "./conditions";
 import { Component } from "./component";
@@ -129,9 +129,28 @@ export class JsxOpeningElement extends Expression {
     return value;
   }
 
+  getJsxOptions(options?: toStringOptions) {
+    const tagNameString = this.tagName.toString();
+    const jsxVariables = Object.assign({}, options?.variables);
+    if (!jsxVariables?.[tagNameString]) {
+      return options;
+    }
+    if (
+      options?.members.find(
+        (m) => m._name.toString() === tagNameString && !m.isTemplate
+      )
+    ) {
+      delete jsxVariables?.[tagNameString];
+    }
+    return {
+      ...options,
+      variables: jsxVariables,
+    } as toStringOptions;
+  }
+
   toString(options?: toStringOptions) {
     return `<${this.processTagName(this.tagName, options).toString(
-      options
+      this.getJsxOptions(options)
     )} ${this.attributesString(options)}>`;
   }
 
@@ -209,7 +228,7 @@ export class JsxElement extends Expression {
 export class JsxSelfClosingElement extends JsxOpeningElement {
   toString(options?: toStringOptions) {
     return `<${this.processTagName(this.tagName, options).toString(
-      options
+      this.getJsxOptions(options)
     )} ${this.attributesString(options)}/>`;
   }
 }
@@ -221,7 +240,7 @@ export class JsxClosingElement extends JsxOpeningElement {
 
   toString(options?: toStringOptions) {
     return `</${this.processTagName(this.tagName, options, true).toString(
-      options
+      this.getJsxOptions(options)
     )}>`;
   }
 }
