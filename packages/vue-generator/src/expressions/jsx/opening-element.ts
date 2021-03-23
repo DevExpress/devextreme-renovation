@@ -481,6 +481,8 @@ export class JsxClosingElement extends JsxOpeningElement {
     if (this.isDynamicComponent(options)) {
       return this.compileDynamicComponent();
     }
-    return `</${this.processTagName(this.tagName, options).toString(options)}>`;
+    return `</${this.processTagName(this.tagName, options).toString(
+      this.getJsxOptions(options)
+    )}>`;
   }
 }

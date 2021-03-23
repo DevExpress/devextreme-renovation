@@ -2418,6 +2418,77 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.toString(), "<div name={value}></div>");
     });
 
+    mocha.it("getJsxOptions", function () {
+      const element = generator.createJsxOpeningElement(
+        generator.createIdentifier("text"),
+        [],
+        undefined
+      );
+      assert.strictEqual(element.getJsxOptions(), undefined);
+      const options1 = {
+        members: [
+          generator.createProperty([], [], generator.createIdentifier("text")),
+        ],
+        variables: { text: new SimpleExpression("text") },
+      };
+      assert.deepEqual(element.getJsxOptions(options1), {
+        ...options1,
+        variables: {},
+      });
+      const options2 = {
+        members: [
+          generator.createProperty([], [], generator.createIdentifier("img")),
+        ],
+        variables: { text: new SimpleExpression("text") },
+      };
+      assert.deepEqual(element.getJsxOptions(options2), {
+        members: [
+          generator.createProperty([], [], generator.createIdentifier("img")),
+        ],
+        variables: { text: new SimpleExpression("text") },
+      });
+      const options3 = {
+        members: [
+          generator.createProperty(
+            [createDecorator(Decorators.Template)],
+            [],
+            generator.createIdentifier("text")
+          ),
+        ],
+        variables: { text: new SimpleExpression("text") },
+      };
+      assert.deepEqual(element.getJsxOptions(options3), {
+        members: [
+          generator.createProperty(
+            [createDecorator(Decorators.Template)],
+            [],
+            generator.createIdentifier("text")
+          ),
+        ],
+        variables: { text: new SimpleExpression("text") },
+      });
+      const options4 = {
+        members: [
+          generator.createProperty(
+            [createDecorator(Decorators.Template)],
+            [],
+            generator.createIdentifier("text")
+          ),
+        ],
+        variables: { text: new SimpleExpression("img") },
+      };
+      assert.deepEqual(element.getJsxOptions(options4), {
+        members: [
+          generator.createProperty(
+            [createDecorator(Decorators.Template)],
+            [],
+            generator.createIdentifier("text")
+          ),
+        ],
+        variables: { text: new SimpleExpression("img") },
+      });
+    });
+
     mocha.it("JsxElement - trim string children", function () {
       const expression = generator.createJsxElement(
         generator.createJsxOpeningElement(

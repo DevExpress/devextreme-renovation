@@ -894,6 +894,8 @@ export class JsxClosingElement extends JsxOpeningElement {
   }
 
   toString(options?: toStringOptions) {
-    return `</${this.processTagName(this.tagName, options).toString(options)}>`;
+    return `</${this.processTagName(this.tagName, options).toString(
+      this.getJsxOptions(options)
+    )}>`;
   }
 }
