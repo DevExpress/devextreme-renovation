@@ -1,0 +1,72 @@
+name: Publication
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - ./packages/**/package.json
+
+jobs:
+
+  version-bump:
+    name: Detect version bump
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.detection.outputs.changed }}
+      version: ${{ steps.detection.outputs.version }}
+
+    strategy:
+      matrix:
+        PACKAGE: [
+          core-generator,
+          angular-generator,
+          vue-generator,
+          react-generator,
+          preact-generator,
+          inferno-generator,
+          build-helpers,
+          declarations,
+          vdom,
+        ]
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: Detect Bump
+        id: detection
+        uses: ./.github/actions/detect-version-bump
+
+  publishing:
+    name: Publish
+    runs-on: windows-latest
+    needs: [ version-bump ]
+    if: needs.version-bump.outputs.changed == 'true'
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Run npm install
+        run: npm install --no-audit --no-fund --ignore-scripts
+
+      - name: Run bootstrap
+        run: npm run bootstrap:ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm run test
+
+      - name: Pack
+        run: npm run pack
+
+      - name: Publish ${{ matrix.PACKAGE }}
+        run: npm publish ./packages/${{ matrix.PACKAGE }} --dry-run
+        env:
+          PACKAGE: ${{ matrix.PACKAGE }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
