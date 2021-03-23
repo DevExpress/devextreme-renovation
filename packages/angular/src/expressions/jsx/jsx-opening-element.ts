@@ -405,11 +405,12 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         options.defaultTemplates[name].variables = [
           ...new Set([...oldVariables, ...contextElementsStr]),
         ];
-      } else
+      } else {
         options.defaultTemplates[name] = {
           variables: contextElementsStr,
           initializer,
         };
+      }
     }
     if (containerAttributes.length) {
       return `<ng-container ${containerAttributes.join("\n")}>
