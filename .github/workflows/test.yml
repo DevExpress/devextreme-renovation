@@ -9,20 +9,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get sources
+      - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Run npm install
+      - name: Install packages
         run: npm install --no-audit --no-fund --ignore-scripts
 
-      - name: Run bootstrap
+      - name: Bootstrap
         run: npm run bootstrap:ci
 
-      - name: Run build
+      - name: Build
         run: npm run build
 
-      - name: Run tests
+      - name: Tests
         run: npm run test:with-reporters
 
-      - name: Run e2e tests
+      - name: e2e tests
         run: npm run test:testcafe-headless
