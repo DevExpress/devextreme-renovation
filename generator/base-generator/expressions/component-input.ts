@@ -26,6 +26,8 @@ import { getProps } from "./component";
 import { GeneratorContext, TypeExpressionImports } from "../types";
 import { Decorators } from "../../component_declaration/decorators";
 import { findComponentInput } from "../utils/expressions";
+import { ObjectLiteral } from "./literal";
+import { PropertyAssignment } from "./property-assignment";
 
 const RESERVED_NAMES = ["class", "key", "ref", "style", "class"];
 
@@ -215,7 +217,10 @@ export class ComponentInput extends Class implements Heritable {
         );
       }
     });
-
+    const defaultNested = this.createDefaultNestedValues(members);
+    if (defaultNested) {
+      members.push(defaultNested);
+    }
     return inheritMembers(
       this.heritageClauses,
       super.processMembers(
@@ -264,6 +269,39 @@ export class ComponentInput extends Class implements Heritable {
         return result.concat(m.getImports(context));
       }, []);
     return mergeTypeExpressionImports(imports);
+  }
+
+  createDefaultNestedValues(members: Array<Property | Method>) {
+    const containNestedWithInitializer = members.some(
+      (m) => m.isNested && m instanceof Property && m.initializer
+    );
+    const initializerArray = members.reduce((accum, m) => {
+      if (m instanceof Property && m.initializer) {
+        accum.push({ name: m.name, initializer: m.initializer });
+      }
+      return accum;
+    }, [] as { name: string; initializer: Expression }[]);
+    if (containNestedWithInitializer && initializerArray.length) {
+      const defaultNestedValuesProp = this.createProperty(
+        [new Decorator(new Call(new Identifier("OneWay"), undefined, []), {})],
+        undefined,
+        new Identifier("__defaultNestedValues"),
+        undefined,
+        undefined,
+        new ObjectLiteral(
+          initializerArray.map(
+            (elem) =>
+              new PropertyAssignment(
+                new Identifier(elem.name),
+                elem.initializer
+              )
+          ),
+          true
+        )
+      );
+      return defaultNestedValuesProp;
+    }
+    return undefined;
   }
 }
 

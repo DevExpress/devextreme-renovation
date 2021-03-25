@@ -134,16 +134,22 @@ export class Property extends BaseProperty {
     if (this.questionOrExclamationToken === SyntaxKind.ExclamationToken) {
       parts.push("required: true");
     }
-    if (this.initializer && type !== "Function") {
-      parts.push(`default(){
-                  return ${this.initializer}
+
+    if (
+      !this.isNested ||
+      (this.isNested && this.name === "__defaultNestedValues")
+    ) {
+      if (this.initializer && type !== "Function") {
+        parts.push(`default(){
+                  return ${this.initializer.toString(options)}
               }`);
-    } else if (this.initializer) {
-      parts.push(`default:${this.initializer}`);
-    } else if (!this.initializer && type.indexOf("Boolean") >= 0) {
-      parts.push(`default(){
+      } else if (this.initializer) {
+        parts.push(`default:${this.initializer}`);
+      } else if (!this.initializer && type.indexOf("Boolean") >= 0) {
+        parts.push(`default(){
         return undefined
       }`);
+      }
     }
 
     return `${this.name}: {

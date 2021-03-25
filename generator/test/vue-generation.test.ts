@@ -358,4 +358,12 @@ mocha.describe("vue-generation", function () {
   mocha.it("template-from-destructuring", function () {
     this.testGenerator(this.test!.title);
   });
+
+  mocha.it("nested-default", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("nested-default-props", function () {
+    this.testGenerator(this.test!.title);
+  });
 });

@@ -29,6 +29,7 @@ import { GetAccessor } from "./expressions/class-members/get-accessor";
 import { PropertyAccess } from "./expressions/property-access";
 import { TypeReferenceNode } from "./expressions/type-reference-node";
 import { TypeParameterDeclaration } from "../base-generator/expressions/type-parameter-declaration";
+import { New } from "./expressions/common";
 
 export class ReactGenerator extends BaseGenerator {
   createHeritageClause(token: string, types: ExpressionWithTypeArguments[]) {
@@ -194,5 +195,13 @@ export class ReactGenerator extends BaseGenerator {
       type,
       body
     );
+  }
+
+  createNew(
+    expression: Expression,
+    typeArguments: TypeExpression[] | undefined,
+    argumentsArray: Expression[]
+  ) {
+    return new New(expression, typeArguments, argumentsArray);
   }
 }

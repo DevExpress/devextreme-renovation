@@ -31,6 +31,16 @@ export class VueComponentInput extends ComponentInput {
   }
 
   toString() {
+    const componentInputs = Object.keys(this.context?.components || {}).map(
+      (name) => {
+        const members = this.context?.components?.[name].members;
+        return {
+          name,
+          isNested: members?.some((m) => m.isNested) || false,
+          fields: members?.map((m) => m._name),
+        };
+      }
+    );
     const members = this.baseTypes
       .map((t) => `...${t}`)
       .concat(
@@ -40,6 +50,10 @@ export class VueComponentInput extends ComponentInput {
           .map((m) =>
             m.toString({
               members: [],
+              componentInputs:
+                m.name === "__defaultNestedValues"
+                  ? componentInputs
+                  : undefined,
             })
           )
       )
