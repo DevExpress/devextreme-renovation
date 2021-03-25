@@ -1,4 +1,4 @@
-const NUMBER_STYLES = new Set([
+const NUMBER_STYLES = [
   "animation-iteration-count",
   "border-image-outset",
   "border-image-slice",
@@ -33,7 +33,7 @@ const NUMBER_STYLES = new Set([
   "widows",
   "z-index",
   "zoom",
-]);
+];
 
 const uppercasePattern = /[A-Z]/g;
 const kebabCase = (str: string) => {
@@ -46,20 +46,18 @@ const isNumeric = (value: string | number) => {
 };
 
 const getNumberStyleValue = (style: string, value: string | number) => {
-  return NUMBER_STYLES.has(style) ? value : `${value}px`;
+  return NUMBER_STYLES.indexOf(style) > -1 ? value : `${value}px`;
 };
 
 export const normalizeStyles = (styles: unknown) => {
   if (!(styles instanceof Object)) return undefined;
 
-  return Object.entries(styles).reduce(
-    (result: Record<string, string | number>, [key, value]) => {
-      const kebabString = kebabCase(key);
-      result[kebabString] = isNumeric(value)
-        ? getNumberStyleValue(kebabString, value)
-        : value;
-      return result;
-    },
-    {} as Record<string, string | number>
-  );
+  return Object.keys(styles).reduce((result, key) => {
+    const value = (styles as Record<string, unknown>)[key] as number | string;
+    const kebabString = kebabCase(key);
+    result[kebabString] = isNumeric(value)
+      ? getNumberStyleValue(kebabString, value)
+      : value;
+    return result;
+  }, {} as Record<string, string | number>);
 };
