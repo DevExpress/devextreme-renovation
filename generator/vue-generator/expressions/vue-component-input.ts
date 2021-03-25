@@ -33,7 +33,8 @@ export class VueComponentInput extends ComponentInput {
   toString() {
     const componentInputs = Object.keys(this.context?.components || {}).map(
       (name) => {
-        const members = this.context?.components?.[name].members;
+        const component = this.context?.components?.[name];
+        const members = component?.members;
         return {
           name,
           isNested: members?.some((m) => m.isNested) || false,
