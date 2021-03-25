@@ -2,8 +2,9 @@ import {
   BaseInfernoComponent,
   InfernoComponent,
 } from "../../../../modules/inferno/base_component";
+import { normalizeStyles } from "../../../../modules/inferno/utils";
 function view(model: InnerWidget) {
-  return <div style={{ width: 100, height: 100 }}></div>;
+  return <div style={normalizeStyles({ width: 100, height: 100 })}></div>;
 }
 
 export declare type InnerWidgetPropsType = {

@@ -1,7 +1,9 @@
 <template>
   <div
     ><DxPortal :container="() => document.body" v-if="rendered"
-      ><span></span></DxPortal
+      ><span></span
+    ></DxPortal>
+    <template v-else>{{ null }}</template
     ><DxPortal :container="() => (someRef && someRef() ? someRef() : undefined)"
       ><span></span></DxPortal
   ></div>

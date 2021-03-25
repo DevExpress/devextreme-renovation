@@ -17,10 +17,18 @@ import {
 import { Component } from "./component";
 import { VariableStatement } from "./variables";
 import SyntaxKind from "../syntaxKind";
-import { getJsxExpression, JsxExpression, JsxElement } from "./jsx";
+import {
+  getJsxExpression,
+  JsxExpression,
+  JsxElement,
+  JsxOpeningElement,
+} from "./jsx";
 import { Decorator } from "./decorator";
 import { Property } from "./class-members";
-import { containsPortalsInStatements } from "../utils/functions";
+import {
+  containsPortalsInStatements,
+  containsStyleInStatements,
+} from "../utils/functions";
 import { TypeParameterDeclaration } from "./type-parameter-declaration";
 import { PropertyAccess } from "./property-access";
 
@@ -322,6 +330,46 @@ export class BaseFunction extends Expression {
       }
     }
     return false;
+  }
+
+  containsStyle(): boolean {
+    let body = this.body;
+    if (body instanceof Paren) {
+      body = body.expression;
+    }
+    if (body instanceof Block) {
+      const returnStatement = body.statements.find(
+        (state) => state instanceof ReturnStatement
+      ) as ReturnStatement | undefined;
+
+      const variables = body.statements.filter(
+        (statement) => statement instanceof VariableStatement
+      ) as VariableStatement[];
+      const jsxElements = variables.reduce((acc, { declarationList }) => {
+        acc.push(
+          ...(declarationList.declarations
+            .map(({ initializer }) => {
+              let expression =
+                initializer instanceof Paren
+                  ? initializer.expression
+                  : initializer;
+              return expression instanceof JsxOpeningElement ||
+                expression instanceof JsxElement
+                ? expression
+                : null;
+            })
+            .filter((expression) => expression !== null) as Expression[])
+        );
+        return acc;
+      }, [] as Expression[]);
+
+      const expressions = returnStatement?.expression
+        ? jsxElements.concat(returnStatement.expression)
+        : jsxElements;
+
+      return expressions.some(containsStyleInStatements);
+    }
+    return containsStyleInStatements(body);
   }
 
   compileTypeParameters(): string {

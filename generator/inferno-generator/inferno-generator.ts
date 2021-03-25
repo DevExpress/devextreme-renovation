@@ -1,4 +1,4 @@
-import { PreactGenerator, JsxAttribute } from "../preact-generator";
+import { PreactGenerator } from "../preact-generator";
 import { Decorator } from "../base-generator/expressions/decorator";
 import { Identifier } from "../base-generator/expressions/common";
 import { HeritageClause } from "../react-generator/expressions/heritage-clause";
@@ -18,6 +18,7 @@ import { JsxClosingElement } from "./expressions/jsx/jsx-closing-element";
 import { ImportDeclaration } from "./expressions/import-declaration";
 import { ImportClause } from "../base-generator/expressions/import";
 import { StringLiteral } from "../base-generator/expressions/literal";
+import { JsxAttribute } from "./expressions/jsx/attribute";
 import path from "path";
 
 export class InfernoGenerator extends PreactGenerator {
@@ -141,5 +142,9 @@ export class InfernoGenerator extends PreactGenerator {
       return super.getModulesPath();
     }
     return path.resolve(__dirname, "../modules/inferno");
+  }
+
+  createJsxAttribute(name: Identifier, initializer?: Expression) {
+    return new JsxAttribute(name, initializer);
   }
 }

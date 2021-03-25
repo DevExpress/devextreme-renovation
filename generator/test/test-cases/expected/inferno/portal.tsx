@@ -5,14 +5,15 @@ import {
   BaseInfernoComponent,
   InfernoComponent,
 } from "../../../../modules/inferno/base_component";
+import { normalizeStyles } from "../../../../modules/inferno/utils";
 function view(model: Widget) {
   return (
     <div>
-      {model.rendered && (
+      {model.rendered ? (
         <Portal container={document.body}>
           <span></span>
         </Portal>
-      )}
+      ) : null}
 
       <Portal container={model.props.someRef?.current}>
         <span></span>

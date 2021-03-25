@@ -3,6 +3,7 @@ import {
   BaseInfernoComponent,
   InfernoComponent,
 } from "../../../../modules/inferno/base_component";
+import { normalizeStyles } from "../../../../modules/inferno/utils";
 import BaseWidget from "./method";
 function view(viewModel: WidgetWithApiRef) {
   return (

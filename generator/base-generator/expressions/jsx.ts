@@ -12,6 +12,7 @@ import { Component } from "./component";
 import { PropertyAssignment, SpreadAssignment } from "./property-assignment";
 import { getTemplateProperty } from "../utils/expressions";
 import { Property } from "./class-members";
+import { isFunction } from "./functions";
 
 export function getJsxExpression(
   e: ExpressionWithExpression | Expression | undefined,
@@ -179,6 +180,18 @@ export class JsxOpeningElement extends Expression {
   isPortal() {
     return this.tagName.toString() === "Portal";
   }
+
+  hasStyle() {
+    return this.attributes.some(
+      (attribute) =>
+        attribute instanceof JsxAttribute &&
+        (attribute.name.toString() === "style" ||
+          (attribute.initializer instanceof JsxExpression &&
+            attribute.initializer.expression &&
+            isFunction(attribute.initializer.expression) &&
+            attribute.initializer.expression.containsStyle()))
+    );
+  }
 }
 
 export class JsxElement extends Expression {
@@ -222,6 +235,10 @@ export class JsxElement extends Expression {
 
   isPortal() {
     return this.openingElement.isPortal();
+  }
+
+  hasStyle() {
+    return this.openingElement.hasStyle();
   }
 }
 

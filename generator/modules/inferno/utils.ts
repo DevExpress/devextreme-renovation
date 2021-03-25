@@ -1,13 +1,3 @@
-import {
-  Component,
-  NgModule,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  ViewRef,
-  Input,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-
 const NUMBER_STYLES = new Set([
   "animation-iteration-count",
   "border-image-outset",
@@ -59,7 +49,7 @@ const getNumberStyleValue = (style: string, value: string | number) => {
   return NUMBER_STYLES.has(style) ? value : `${value}px`;
 };
 
-const normalizeStyles = (styles: unknown) => {
+export const normalizeStyles = (styles: unknown) => {
   if (!(styles instanceof Object)) return undefined;
 
   return Object.entries(styles).reduce(
@@ -73,39 +63,3 @@ const normalizeStyles = (styles: unknown) => {
     {} as Record<string, string | number>
   );
 };
-
-@Component({
-  selector: "dx-widget",
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["height", "width"],
-  template: `<div [ngStyle]="__processNgStyle({ height: height })"
-    ><span></span><span></span
-  ></div>`,
-})
-export default class Widget {
-  @Input() height?: number;
-  @Input() width?: number;
-  get __restAttributes(): any {
-    return {};
-  }
-  _detectChanges(): void {
-    setTimeout(() => {
-      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
-        this.changeDetection.detectChanges();
-    });
-  }
-
-  constructor(private changeDetection: ChangeDetectorRef) {}
-
-  __processNgStyle(value: any) {
-    return normalizeStyles(value);
-  }
-}
-@NgModule({
-  declarations: [Widget],
-  imports: [CommonModule],
-
-  exports: [Widget],
-})
-export class DxWidgetModule {}
-export { Widget as DxWidgetComponent };
