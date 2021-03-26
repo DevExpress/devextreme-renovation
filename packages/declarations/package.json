@@ -1,0 +1,28 @@
+{
+  "name": "@devextreme-generator/declarations",
+  "version": "1.0.0",
+  "description": "DevExtreme declarations",
+  "main": "dist/index",
+  "types": "dist/index",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --project ./tsconfig.build.json",
+    "build:watch": "tsc --project ./tsconfig.build.json --watch",
+    "pack": "npm run build && npm pack && shx cp *.tgz package.tgz",
+    "clear": "shx rm -rf dist"
+  },
+  "author": "Developer Express Inc.",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.2",
+    "@types/react-dom": "^17.0.2",
+    "shx": "^0.3.3",
+    "typescript": "3.8"
+  }
+}

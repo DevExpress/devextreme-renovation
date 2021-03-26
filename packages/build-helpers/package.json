@@ -1,0 +1,35 @@
+{
+  "name": "@devextreme-generator/build-helpers",
+  "version": "1.0.0",
+  "description": "DevExtreme development utils",
+  "main": "dist/index",
+  "types": "dist/index",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --project ./tsconfig.build.json",
+    "build:watch": "tsc --project ./tsconfig.build.json --watch",
+    "pack": "npm run build && npm pack && shx cp *.tgz package.tgz",
+    "clear": "shx rm -rf dist"
+  },
+  "author": "Developer Express Inc.",
+  "license": "MIT",
+  "dependencies": {
+    "@devextreme-generator/angular": "^1.0.0",
+    "@devextreme-generator/core": "^1.0.0",
+    "@devextreme-generator/inferno": "^1.0.0",
+    "@devextreme-generator/preact": "^1.0.0",
+    "@devextreme-generator/react": "^1.0.0",
+    "@devextreme-generator/vue": "^1.0.0",
+    "loader-utils": "^2.0.0",
+    "typescript": "3.8",
+    "vinyl": "^2.2.1",
+    "webpack": "^4.44.1"
+  },
+  "devDependencies": {
+    "@types/loader-utils": "^2.0.1",
+    "@types/vinyl": "^2.0.4",
+    "shx": "^0.3.3"
+  }
+}

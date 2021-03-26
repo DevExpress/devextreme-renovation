@@ -1,73 +1,36 @@
-# devextreme-renovation
+# Devextreme Generators
 
-[![Build Status](https://dev.azure.com/pavelgruba/devextreme-renovation/_apis/build/status/DevExpress.devextreme-renovation?branchName=master)](https://dev.azure.com/pavelgruba/devextreme-renovation/_build/latest?definitionId=1&branchName=master) ![Build Devextreme](https://github.com/DevExpress/devextreme-renovation/workflows/Build%20Devextreme/badge.svg)
+## Building
 
-## Generator
+- `npm install`
+- `npm run build` - build all generators and common modules (required for tests)
+- `npm run build:watch` - build generators and modules in watch mode (required for tests)
 
-[![npm package](https://img.shields.io/npm/v/devextreme-generator?logo=npm&style=flat-square)](https://www.npmjs.org/package/devextreme-generator)
+## Publishing
 
+## Using
 
-### Building
-  - cwd
-    `cd ./generator`
-  - install packages
-    `npm install`
-  - build
-    `npm run build` or `npm run build-dist` or `npm run dev`
-  - test
-    `npm test`
-    
-### Publishing
+### Installing
 
-Increment version in [package.json](https://github.com/DevExpress/devextreme-renovation/blob/master/generator/package.json#L3) and commit it in the master. The package will be published automatically once tests passed.
+### Usage
 
-### Using
+#### With gulp
 
-#### Installing
-
-    `npm install --save devextreme-generator`
-    
-#### Usage
-
-##### With gulp
+#### Generate component from file
 
 ```javascript
-// gulpfile.js
-const { generateComponents } = require('devextreme-generator/component-compiler');
-const generator = require('devextreme-generator/preact-generator').default;
-// const generator = require('devextreme-generator/react-generator').default;
-// const generator = require('devextreme-generator/angular-generator').default;
-
-// Optional set options
-generator.options = {
-    defaultOptionsModule: 'pathToYourModule or node_modules/devextreme-generator/component_declaration/default_options',
-    jqueryComponentRegistratorModule: 'path',
-    jqueryBaseComponentModule: 'preact_wrapper/component',
-};
-
-gulp.task('generate-components', function() {
-    return gulp.src(SRC)
-        .pipe(generateComponents(generator))
-        .pipe(gulp.dest(DEST));
-});
-
- ```
- 
- ##### Generate component from file
- 
- ```javascript
-const { compileCode } = require('devextreme-generator/component-compiler');
-const reactGenerator = require('devextreme-generator/react-generator').default;
+const { compileCode } = require('@devextreme-generator/core');
+const reactGenerator = require('@devextreme-generator/react').default;
 
 const result = compileCode(generator, source, {
     path: path,
     dirname: dirname
 });
  ```
- 
-  ##### With webpack
-   
- ```javascript
+
+#### With webpack
+
+```javascript
 // webpack.config.js
 
 module.exports = {
@@ -81,12 +44,12 @@ module.exports = {
                         loader: 'babel-loader',
                     },
                     {
-                        loader: 'devextreme-generator/webpack-loader',
+                        loader: '@devextreme-generator/build-helpers/dist/webpack-loader',
                         options: {
-                            platform: 'preact',
+                            platform: 'inferno',
                             defaultOptionsModule: 'path',
                             // ...
-                            tsConfig: path.resolve('./preact.tsconfig.json')
+                            tsConfig: path.resolve('./inferno.tsconfig.json')
                         },
                     },
                 ],
