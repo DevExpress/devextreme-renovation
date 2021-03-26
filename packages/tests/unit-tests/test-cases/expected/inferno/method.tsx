@@ -2,6 +2,7 @@ import {
   RefObject,
   BaseInfernoComponent,
   InfernoComponent,
+  normalizeStyles
 } from "@devextreme/vdom";
 function view(viewModel: Widget) {
   return <div ref={viewModel.divRef}></div>;

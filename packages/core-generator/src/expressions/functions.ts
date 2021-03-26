@@ -1,28 +1,19 @@
-import { Expression, SimpleExpression } from "./base";
-import { Identifier, Paren, Call } from "./common";
-import { TypeExpression } from "./type";
-import {
-  toStringOptions,
-  GeneratorContext,
-  VariableExpression,
-} from "../types";
-import { Block, ReturnStatement } from "./statements";
-import { BindingElement, BindingPattern } from "./binding-pattern";
-import {
-  variableDeclaration,
-  compileType,
-  compileTypeParameters,
-  compileArrowTypeParameters,
-} from "../utils/string";
-import { Component } from "./component";
-import { VariableStatement } from "./variables";
-import { SyntaxKind } from "../syntaxKind";
-import { getJsxExpression, JsxExpression, JsxElement } from "./jsx";
-import { Decorator } from "./decorator";
-import { Property } from "./class-members";
-import { containsPortalsInStatements } from "../utils/functions";
-import { TypeParameterDeclaration } from "./type-parameter-declaration";
-import { PropertyAccess } from "./property-access";
+import { SyntaxKind } from '../syntaxKind';
+import { GeneratorContext, toStringOptions, VariableExpression } from '../types';
+import { containsPortalsInStatements, containsStyleInStatements } from '../utils/functions';
+import { compileArrowTypeParameters, compileType, compileTypeParameters, variableDeclaration } from '../utils/string';
+import { Expression, SimpleExpression } from './base';
+import { BindingElement, BindingPattern } from './binding-pattern';
+import { Property } from './class-members';
+import { Call, Identifier, Paren } from './common';
+import { Component } from './component';
+import { Decorator } from './decorator';
+import { getJsxExpression, JsxElement, JsxExpression, JsxOpeningElement } from './jsx';
+import { PropertyAccess } from './property-access';
+import { Block, ReturnStatement } from './statements';
+import { TypeExpression } from './type';
+import { TypeParameterDeclaration } from './type-parameter-declaration';
+import { VariableStatement } from './variables';
 
 export class Parameter {
   decorators: Decorator[];
@@ -322,6 +313,46 @@ export class BaseFunction extends Expression {
       }
     }
     return false;
+  }
+
+  containsStyle(): boolean {
+    let body = this.body;
+    if (body instanceof Paren) {
+      body = body.expression;
+    }
+    if (body instanceof Block) {
+      const returnStatement = body.statements.find(
+        (state) => state instanceof ReturnStatement
+      ) as ReturnStatement | undefined;
+
+      const variables = body.statements.filter(
+        (statement) => statement instanceof VariableStatement
+      ) as VariableStatement[];
+      const jsxElements = variables.reduce((acc, { declarationList }) => {
+        acc.push(
+          ...(declarationList.declarations
+            .map(({ initializer }) => {
+              let expression =
+                initializer instanceof Paren
+                  ? initializer.expression
+                  : initializer;
+              return expression instanceof JsxOpeningElement ||
+                expression instanceof JsxElement
+                ? expression
+                : null;
+            })
+            .filter((expression) => expression !== null) as Expression[])
+        );
+        return acc;
+      }, [] as Expression[]);
+
+      const expressions = returnStatement?.expression
+        ? jsxElements.concat(returnStatement.expression)
+        : jsxElements;
+
+      return expressions.some(containsStyleInStatements);
+    }
+    return containsStyleInStatements(body);
   }
 
   compileTypeParameters(): string {

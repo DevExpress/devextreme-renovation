@@ -1,6 +1,7 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
+  normalizeStyles
 } from "@devextreme/vdom";
 import BaseState from "./model";
 function view(model: Widget) {

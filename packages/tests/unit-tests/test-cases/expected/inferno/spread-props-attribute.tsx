@@ -1,6 +1,7 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
+  normalizeStyles
 } from "@devextreme/vdom";
 import InnerWidget from "./dx-inner-widget";
 function view({ props, restAttributes }: Widget) {

@@ -762,7 +762,22 @@ export class ReactComponent extends Component {
               new Identifier("nested"),
               undefined,
               new SimpleExpression(
-                `__nestedChildren<typeof ${type} & { __name: string }>().filter(child => child.__name === "${property.name}")`
+                `__nestedChildren<typeof ${type} & { __name: string }>().filter(child => child.__name === "${
+                  property.name
+                }")${
+                  property.initializer
+                    ? `.map((n) => {
+                  if (
+                    !Object.keys(n).some(
+                      (k) => k !== "__name" && k !== "__defaultNestedValues"
+                    )
+                  ) {
+                    return n?.__defaultNestedValues || n;
+                  }
+                  return n;
+                });`
+                    : ""
+                }`
               )
             ),
           ],
@@ -776,7 +791,13 @@ export class ReactComponent extends Component {
           new Conditional(
             new SimpleExpression("nested.length"),
             new SimpleExpression(`nested${indexGetter}`),
-            new SimpleExpression("undefined")
+            new SimpleExpression(
+              `${
+                property.initializer
+                  ? `props?.__defaultNestedValues?.${property.name}`
+                  : "undefined"
+              }`
+            )
           )
         )
       ),
@@ -855,11 +876,79 @@ export class ReactComponent extends Component {
       this.name
     }Ref> }> & { defaultProps: ${this.getPropsType()}}`;
   }
+
+  compileStyleNormalizer() {
+    const hasStyle =
+      this.context.viewFunctions &&
+      Object.values(this.context.viewFunctions).some((viewFunction) =>
+        viewFunction.containsStyle()
+      );
+    return hasStyle
+      ? `const NUMBER_STYLES = new Set([
+          "animationIterationCount",
+          "borderImageOutset",
+          "borderImageSlice",
+          "border-imageWidth",
+          "boxFlex",
+          "boxFlexGroup",
+          "boxOrdinalGroup",
+          "columnCount",
+          "fillOpacity",
+          "flex",
+          "flexGrow",
+          "flexNegative",
+          "flexOrder",
+          "flexPositive",
+          "flexShrink",
+          "floodOpacity",
+          "fontWeight",
+          "gridColumn",
+          "gridRow",
+          "lineClamp",
+          "lineHeight",
+          "opacity",
+          "order",
+          "orphans",
+          "stopOpacity",
+          "strokeDasharray",
+          "strokeDashoffset",
+          "strokeMiterlimit",
+          "strokeOpacity",
+          "strokeWidth",
+          "tabSize",
+          "widows",
+          "zIndex",
+          "zoom",
+        ]);
+        
+        const isNumeric = (value: string | number) => {
+          if (typeof value === "number") return true;
+          return !isNaN(Number(value));
+        };
+        
+        const getNumberStyleValue = (style: string, value: string | number) => {
+          return NUMBER_STYLES.has(style) ? value : \`\${value}px\`;
+        };
+        
+        const normalizeStyles = (styles: unknown) => {
+          if (!(styles instanceof Object)) return undefined;
+        
+          return Object.entries(styles).reduce((result: Record<string, string | number>, [key, value]) => {
+            result[key] = isNumeric(value)
+              ? getNumberStyleValue(key, value)
+              : value;
+            return result;
+          }, {} as Record<string, string | number>)
+        };`
+      : "";
+  }
+
   toString() {
     const getTemplateFunc = this.compileTemplateGetter();
 
     return `
               ${this.compileImports()}
+              ${this.compileStyleNormalizer()}
               ${this.compilePortalComponent()}
               ${
                 this.members.some((m) => m.isNested)

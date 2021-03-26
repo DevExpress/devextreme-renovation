@@ -30,7 +30,9 @@ function view({
       />
       <Component height={height} onClick={onComponentClick} />
       <ComponentWithTemplate
-        template={({ textProp }) => <div>{textProp}</div>}
+        template={({ textProp }) => (
+          <div style={{ height: "50px" }}>{textProp}</div>
+        )}
       />
     </div>
   );

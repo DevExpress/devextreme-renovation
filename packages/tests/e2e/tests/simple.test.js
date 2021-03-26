@@ -398,3 +398,23 @@ cloneTest("Dynamic components", async (t) => {
 
   await checkContent(26, false);
 });
+
+cloneTest("Styles unification", async (t) => {
+  const stylesComponent = Selector("#styles-unification");
+
+  await t
+    .expect(await stylesComponent.getStyleProperty("background-color"))
+    .eql("rgb(0, 128, 0)");
+
+  await t.expect(await stylesComponent.getStyleProperty("z-index")).eql("100");
+
+  await t.expect(await stylesComponent.getStyleProperty("width")).eql("100px");
+
+  await t.expect(await stylesComponent.getStyleProperty("height")).eql("100px");
+
+  await t.expect(await stylesComponent.getStyleProperty("opacity")).eql("0.5");
+
+  await t
+    .expect(await stylesComponent.getStyleProperty("padding-left"))
+    .eql("10px");
+});

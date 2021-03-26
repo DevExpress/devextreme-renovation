@@ -35,11 +35,36 @@
     <dxi-cell gridData="cell42"></dxi-cell>
   </dxi-row>
 </dx-with-nested>
-<dx-with-nested>
-  <dxi-row>
-    <dxi-cell></dxi-cell>
-    <dxi-cell gridData="notDefault"></dxi-cell>
-  </dxi-row>
-</dx-with-nested>
 <dx-with-nested [rows]="[]"> </dx-with-nested>
-<dx-with-nested> </dx-with-nested>
+<br />
+Default values:
+<div style="border: 1px solid black"
+  >Just nested:
+  <dx-with-nested> </dx-with-nested>
+  <br />
+  Nested Row:
+  <dx-with-nested>
+    <dxi-row></dxi-row>
+  </dx-with-nested>
+  <br />
+  Nested Row with not default Row:
+  <dx-with-nested>
+    <dxi-row></dxi-row>
+    <dxi-row [cells]="[{ gridData: 'cell11' }, 'cell12']"></dxi-row>
+  </dx-with-nested>
+  <br />
+  Nested Cell:
+  <dx-with-nested>
+    <dxi-row>
+      <dxi-cell></dxi-cell>
+    </dxi-row>
+  </dx-with-nested>
+  <br />
+  Nested Cell with not default Cell:
+  <dx-with-nested>
+    <dxi-row>
+      <dxi-cell></dxi-cell>
+      <dxi-cell gridData="notDefault"></dxi-cell>
+    </dxi-row>
+  </dx-with-nested>
+</div>

@@ -1,6 +1,7 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
+  normalizeStyles
 } from "@devextreme/vdom";
 function view(model: Widget) {
   return <div></div>;

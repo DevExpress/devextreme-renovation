@@ -118,19 +118,32 @@ export class ComponentInput extends BaseComponentInput {
     const declarationModifiers =
       this.modifiers.indexOf("default") !== -1 ? [] : this.modifiers;
 
-    const propertiesWithInitializer = this.members.filter(
-      (m) =>
-        !(m as Property).inherited &&
-        (m as Property).initializer &&
-        m.decorators.find((d) => d.name !== Decorators.TwoWay)
-    ) as Property[];
+    const propertiesWithInitializer = this.members
+      .filter(
+        (m) =>
+          !(m as Property).inherited &&
+          (m as Property).initializer &&
+          m.decorators.find((d) => d.name !== Decorators.TwoWay)
+      )
+      .filter((m) => !m.isNested) as Property[];
 
+    const options = {
+      members: [],
+      componentInputs: Object.keys(this.context.components || {}).map(
+        (name) => ({
+          name,
+          isNested:
+            this.context.components?.[name]?.members.some((m) => m.isNested) ||
+            false,
+        })
+      ),
+    };
     return `${this.compileImports()}
           ${typeDeclaration}
           ${declarationModifiers.join(" ")} const ${this.name}:${typeName}={
              ${inherited
                .concat(
-                 propertiesWithInitializer.map((p) => p.defaultDeclaration())
+                 propertiesWithInitializer.map((p) => p.defaultProps(options))
                )
                .join(",\n")}
           }${typeCasting};
@@ -161,6 +174,15 @@ export class ComponentInput extends BaseComponentInput {
       );
     }
     return null;
+  }
+
+  createDefaultNestedValues(members: Array<BaseProperty | Method>) {
+    const resultProp = super.createDefaultNestedValues(members);
+    if (resultProp) {
+      resultProp.type = `${this.name}Type`;
+      resultProp.questionOrExclamationToken = SyntaxKind.QuestionToken;
+    }
+    return resultProp;
   }
 
   processMembers(members: Array<BaseProperty | Method>) {

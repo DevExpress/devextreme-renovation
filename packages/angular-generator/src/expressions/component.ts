@@ -28,7 +28,7 @@ import {
   SimpleExpression,
   SimpleTypeExpression,
   StringLiteral,
-  SyntaxKind
+  SyntaxKind,
 } from '@devextreme-generator/core';
 
 import { AngularGeneratorContext, toStringOptions } from '../types';
@@ -39,15 +39,8 @@ import { SetAccessor } from './class-members/set-accessor';
 import { ComponentInput } from './component-input';
 import { Decorator } from './decorator';
 import { isElement } from './jsx/elements';
-import {
-  dynamicComponentDirective,
-  dynamicComponentDirectiveCoreImports
-} from './templates/dynamic-component-directive';
-import {
-  angularPortalCdkImports,
-  angularPortalCoreImports,
-  angularPortalTemplate
-} from './templates/portal-component';
+import { dynamicComponentDirective, dynamicComponentDirectiveCoreImports } from './templates/dynamic-component-directive';
+import { angularPortalCdkImports, angularPortalCoreImports, angularPortalTemplate } from './templates/portal-component';
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = "CUSTOM_VALUE_ACCESSOR_PROVIDER";
 
@@ -213,7 +206,7 @@ export class AngularComponent extends Component {
       [],
       ["private"],
       new Identifier(`__${name}`),
-      questionOrExclamationToken,
+      questionOrExclamationToken || SyntaxKind.QuestionToken,
       `${type}`,
       undefined
     );
@@ -250,13 +243,16 @@ export class AngularComponent extends Component {
     modifiers: string[],
     name: string,
     questionOrExclamationToken: string,
-    type: string
+    type: string,
+    componentName: string,
+    initializer?: Expression
   ) {
     const isArray = isTypeArray(type);
     const indexGetter = isArray ? "" : "[0]";
     if (questionOrExclamationToken === "?") {
       type = type + "| undefined";
     }
+
     return new GetAccessor(
       [],
       modifiers,
@@ -268,9 +264,14 @@ export class AngularComponent extends Component {
           new SimpleExpression(`if (this.__${name}) {
           return this.__${name};
         }
-        const nested = this.${name}Nested.toArray();
-        if (nested.length) {
+        const nested = this.${name}Nested?.toArray();
+        if (nested && nested.length) {
           return nested${indexGetter};
+        }
+        ${
+          initializer
+            ? `return ${componentName}.__defaultNestedValues.${name}`
+            : ""
         }`),
         ],
         true
@@ -298,7 +299,8 @@ export class AngularComponent extends Component {
   processNestedProperty(
     property: Property,
     onPushStrategy: boolean = false,
-    selector: string = this.selector
+    selector: string = this.selector,
+    componentName: string = this.heritageClauses[0].propsType.toString()
   ) {
     const {
       decorators,
@@ -306,6 +308,7 @@ export class AngularComponent extends Component {
       questionOrExclamationToken,
       type,
       name,
+      initializer,
     } = property;
 
     const nestedCompDecorator = [
@@ -318,6 +321,7 @@ export class AngularComponent extends Component {
     const nestedName = `Dx${convertSelectorToName(
       `${selector} ${isTypeArray(type) ? removePlural(name) : name}`
     )}`;
+
     const complexType = type
       .toString()
       .replace(extractComplexType(type), nestedName);
@@ -328,7 +332,7 @@ export class AngularComponent extends Component {
         nestedCompDecorator,
         modifiers,
         name,
-        questionOrExclamationToken,
+        SyntaxKind.QuestionToken,
         nestedName
       ),
       this.createNestedPropertySetter(
@@ -343,7 +347,9 @@ export class AngularComponent extends Component {
         modifiers,
         name,
         questionOrExclamationToken,
-        complexType
+        complexType,
+        componentName,
+        initializer
       ),
     ];
   }
@@ -948,18 +954,7 @@ export class AngularComponent extends Component {
   compileNgStyleProcessor(options: toStringOptions): string {
     if (options.hasStyle) {
       return `__processNgStyle(value:any){
-                    if (typeof value === "object") {
-                        return Object.keys(value).reduce((v: { [name: string]: any }, k) => {
-                            if (typeof value[k] === "number") {
-                                v[k] = value[k] + "px";
-                            } else {
-                                v[k] = value[k];
-                            }
-                            return v;
-                        }, {});
-                    }
-
-                    return value;
+                    return normalizeStyles(value);
                 }`;
     }
     return "";
@@ -1033,7 +1028,11 @@ export class AngularComponent extends Component {
     const innerNested = (component.members.filter(
       (m) => m.isNested
     ) as Property[])
-      .map((m) => this.processNestedProperty(m, false, selector).join("\n"))
+      .map((m) =>
+        this.processNestedProperty(m, false, selector, component.name).join(
+          "\n"
+        )
+      )
       .join("\n");
 
     const name = convertSelectorToName(selector);
@@ -1355,6 +1354,73 @@ export class AngularComponent extends Component {
     return "";
   }
 
+  compileStyleNormalizer(options: toStringOptions) {
+    return options.hasStyle
+      ? `const NUMBER_STYLES = new Set([
+          "animation-iteration-count",
+          "border-image-outset",
+          "border-image-slice",
+          "border-image-width",
+          "box-flex",
+          "box-flex-group",
+          "box-ordinal-group",
+          "column-count",
+          "fill-opacity",
+          "flex",
+          "flex-grow",
+          "flex-negative",
+          "flex-order",
+          "flex-positive",
+          "flex-shrink",
+          "flood-opacity",
+          "font-weight",
+          "grid-column",
+          "grid-row",
+          "line-clamp",
+          "line-height",
+          "opacity",
+          "order",
+          "orphans",
+          "stop-opacity",
+          "stroke-dasharray",
+          "stroke-dashoffset",
+          "stroke-miterlimit",
+          "stroke-opacity",
+          "stroke-width",
+          "tab-size",
+          "widows",
+          "z-index",
+          "zoom",
+        ]);
+
+        const uppercasePattern = /[A-Z]/g;
+        const kebabCase = (str: string) => {
+          return str.replace(uppercasePattern, "-$&").toLowerCase();
+        };
+        
+        const isNumeric = (value: string | number) => {
+          if (typeof value === "number") return true;
+          return !isNaN(Number(value));
+        };
+        
+        const getNumberStyleValue = (style: string, value: string | number) => {
+          return NUMBER_STYLES.has(style) ? value : \`\${value}px\`;
+        };
+        
+        const normalizeStyles = (styles: unknown) => {
+          if (!(styles instanceof Object)) return undefined;
+        
+          return Object.entries(styles).reduce((result: Record<string, string | number>, [key, value]) => {
+            const kebabString = kebabCase(key);
+            result[kebabString] = isNumeric(value)
+              ? getNumberStyleValue(kebabString, value)
+              : value;
+            return result;
+          }, {} as Record<string, string | number>)
+        };`
+      : "";
+  }
+
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -1458,6 +1524,7 @@ export class AngularComponent extends Component {
     return `
         ${this.compileImports(coreImports)}
         ${this.compileCdkImports(cdkImports)}
+        ${this.compileStyleNormalizer(decoratorToStringOptions)}
         ${this.compileNestedComponents(nestedModules)}
         ${dynamicComponentDirective}
         ${portalComponent}

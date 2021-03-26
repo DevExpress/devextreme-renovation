@@ -1,6 +1,7 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
+  normalizeStyles
 } from "@devextreme/vdom";
 import Base, { WidgetProps } from "./component-input";
 function view(model: Child) {

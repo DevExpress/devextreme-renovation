@@ -46,6 +46,7 @@ import InlineArrowFunction from "./inline-arrow-function";
 import ListTemplate from "./list-template";
 
 import DynamicComponent from "./dynamic-components/dynamic-component";
+import StylesWidget from "./styles";
 
 function view(model: App) {
   return (
@@ -156,6 +157,7 @@ function view(model: App) {
       <DefaultPropsComponent />
       <InlineArrowFunction />
       <DynamicComponent />
+      <StylesWidget />
     </div>
   );
 }

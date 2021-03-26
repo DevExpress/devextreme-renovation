@@ -26,6 +26,7 @@ import BaseGenerator, {
   JsxSpreadAttribute,
   JsxExpression,
 } from "@devextreme-generator/core";
+import { New } from "./expressions/common";
 
 export class ReactGenerator extends BaseGenerator {
   createHeritageClause(token: string, types: ExpressionWithTypeArguments[]) {
@@ -191,5 +192,13 @@ export class ReactGenerator extends BaseGenerator {
       type,
       body
     );
+  }
+
+  createNew(
+    expression: Expression,
+    typeArguments: TypeExpression[] | undefined,
+    argumentsArray: Expression[]
+  ) {
+    return new New(expression, typeArguments, argumentsArray);
   }
 }

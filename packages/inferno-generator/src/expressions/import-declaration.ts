@@ -39,6 +39,15 @@ export class ImportDeclaration extends BaseImportDeclaration {
       );
     }
 
+    if (
+      this.context.viewFunctions &&
+      Object.keys(this.context.viewFunctions).length
+    ) {
+      result.push(
+        `import {normalizeStyles} from ${this.resolveCommonModule("utils")}`
+      );
+    }
+
     if (result.length) {
       return result.join(";\n");
     }

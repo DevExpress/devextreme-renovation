@@ -5,18 +5,14 @@ import { findComponentInput } from '../utils/expressions';
 import { warn } from '../utils/messages';
 import { capitalizeFirstLetter } from '../utils/string';
 import { Expression, SimpleExpression } from './base';
-import {
-  Class,
-  getMemberListFromTypeExpression,
-  Heritable,
-  HeritageClause,
-  inheritMembers
-} from './class';
+import { Class, getMemberListFromTypeExpression, Heritable, HeritageClause, inheritMembers } from './class';
 import { BaseClassMember, Method, Property } from './class-members';
 import { Call, Identifier } from './common';
 import { getProps } from './component';
 import { Decorator } from './decorator';
 import { Parameter } from './functions';
+import { ObjectLiteral } from './literal';
+import { PropertyAssignment } from './property-assignment';
 import {
   extractComplexType,
   FunctionTypeNode,
@@ -24,7 +20,7 @@ import {
   mergeTypeExpressionImports,
   SimpleTypeExpression,
   TypeExpression,
-  TypeReferenceNode
+  TypeReferenceNode,
 } from './type';
 
 const RESERVED_NAMES = ["class", "key", "ref", "style", "class"];
@@ -215,7 +211,10 @@ export class ComponentInput extends Class implements Heritable {
         );
       }
     });
-
+    const defaultNested = this.createDefaultNestedValues(members);
+    if (defaultNested) {
+      members.push(defaultNested);
+    }
     return inheritMembers(
       this.heritageClauses,
       super.processMembers(
@@ -264,6 +263,39 @@ export class ComponentInput extends Class implements Heritable {
         return result.concat(m.getImports(context));
       }, []);
     return mergeTypeExpressionImports(imports);
+  }
+
+  createDefaultNestedValues(members: Array<Property | Method>) {
+    const containNestedWithInitializer = members.some(
+      (m) => m.isNested && m instanceof Property && m.initializer
+    );
+    const initializerArray = members.reduce((accum, m) => {
+      if (m instanceof Property && m.initializer) {
+        accum.push({ name: m.name, initializer: m.initializer });
+      }
+      return accum;
+    }, [] as { name: string; initializer: Expression }[]);
+    if (containNestedWithInitializer && initializerArray.length) {
+      const defaultNestedValuesProp = this.createProperty(
+        [new Decorator(new Call(new Identifier("OneWay"), undefined, []), {})],
+        undefined,
+        new Identifier("__defaultNestedValues"),
+        undefined,
+        undefined,
+        new ObjectLiteral(
+          initializerArray.map(
+            (elem) =>
+              new PropertyAssignment(
+                new Identifier(elem.name),
+                elem.initializer
+              )
+          ),
+          true
+        )
+      );
+      return defaultNestedValuesProp;
+    }
+    return undefined;
   }
 }
 

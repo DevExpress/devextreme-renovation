@@ -45,8 +45,9 @@ class DxWidgetColumnCustom extends CustomProps {}
 })
 class DxWidgetEditing extends EditingProps {
   private __custom?: DxWidgetEditingCustom[];
-  @ContentChildren(DxWidgetEditingCustom)
-  customNested!: QueryList<DxWidgetEditingCustom>;
+  @ContentChildren(DxWidgetEditingCustom) customNested?: QueryList<
+    DxWidgetEditingCustom
+  >;
   @Input() set custom(value: DxWidgetEditingCustom[] | undefined) {
     this.__custom = value;
   }
@@ -54,14 +55,14 @@ class DxWidgetEditing extends EditingProps {
     if (this.__custom) {
       return this.__custom;
     }
-    const nested = this.customNested.toArray();
-    if (nested.length) {
+    const nested = this.customNested?.toArray();
+    if (nested && nested.length) {
       return nested;
     }
   }
   private __anotherCustom?: DxWidgetEditingAnotherCustom;
   @ContentChildren(DxWidgetEditingAnotherCustom)
-  anotherCustomNested!: QueryList<DxWidgetEditingAnotherCustom>;
+  anotherCustomNested?: QueryList<DxWidgetEditingAnotherCustom>;
   @Input() set anotherCustom(value: DxWidgetEditingAnotherCustom | undefined) {
     this.__anotherCustom = value;
   }
@@ -69,8 +70,8 @@ class DxWidgetEditing extends EditingProps {
     if (this.__anotherCustom) {
       return this.__anotherCustom;
     }
-    const nested = this.anotherCustomNested.toArray();
-    if (nested.length) {
+    const nested = this.anotherCustomNested?.toArray();
+    if (nested && nested.length) {
       return nested[0];
     }
   }
@@ -81,8 +82,9 @@ class DxWidgetEditing extends EditingProps {
 })
 class DxWidgetColumn extends GridColumnProps {
   private __editing?: DxWidgetColumnEditing;
-  @ContentChildren(DxWidgetColumnEditing)
-  editingNested!: QueryList<DxWidgetColumnEditing>;
+  @ContentChildren(DxWidgetColumnEditing) editingNested?: QueryList<
+    DxWidgetColumnEditing
+  >;
   @Input() set editing(value: DxWidgetColumnEditing | undefined) {
     this.__editing = value;
   }
@@ -90,14 +92,15 @@ class DxWidgetColumn extends GridColumnProps {
     if (this.__editing) {
       return this.__editing;
     }
-    const nested = this.editingNested.toArray();
-    if (nested.length) {
+    const nested = this.editingNested?.toArray();
+    if (nested && nested.length) {
       return nested[0];
     }
   }
   private __custom?: DxWidgetColumnCustom[];
-  @ContentChildren(DxWidgetColumnCustom)
-  customNested!: QueryList<DxWidgetColumnCustom>;
+  @ContentChildren(DxWidgetColumnCustom) customNested?: QueryList<
+    DxWidgetColumnCustom
+  >;
   @Input() set custom(value: DxWidgetColumnCustom[] | undefined) {
     this.__custom = value;
   }
@@ -105,8 +108,8 @@ class DxWidgetColumn extends GridColumnProps {
     if (this.__custom) {
       return this.__custom;
     }
-    const nested = this.customNested.toArray();
-    if (nested.length) {
+    const nested = this.customNested?.toArray();
+    if (nested && nested.length) {
       return nested;
     }
   }
@@ -127,24 +130,24 @@ export default class Widget extends PickedProps {
     return this.editing?.editEnabled || this.editing?.custom?.length;
   }
   private __columns?: Array<DxWidgetColumn | string>;
-  @ContentChildren(DxWidgetColumn) columnsNested!: QueryList<DxWidgetColumn>;
+  @ContentChildren(DxWidgetColumn) columnsNested?: QueryList<DxWidgetColumn>;
   get columns(): Array<DxWidgetColumn | string> | undefined {
     if (this.__columns) {
       return this.__columns;
     }
-    const nested = this.columnsNested.toArray();
-    if (nested.length) {
+    const nested = this.columnsNested?.toArray();
+    if (nested && nested.length) {
       return nested;
     }
   }
   private __editing?: DxWidgetEditing;
-  @ContentChildren(DxWidgetEditing) editingNested!: QueryList<DxWidgetEditing>;
+  @ContentChildren(DxWidgetEditing) editingNested?: QueryList<DxWidgetEditing>;
   get editing(): DxWidgetEditing | undefined {
     if (this.__editing) {
       return this.__editing;
     }
-    const nested = this.editingNested.toArray();
-    if (nested.length) {
+    const nested = this.editingNested?.toArray();
+    if (nested && nested.length) {
       return nested[0];
     }
   }

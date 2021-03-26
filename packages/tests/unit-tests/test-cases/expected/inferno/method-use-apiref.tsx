@@ -2,6 +2,7 @@ import {
   RefObject,
   BaseInfernoComponent,
   InfernoComponent,
+  normalizeStyles
 } from "@devextreme/vdom";
 import BaseWidget from "./method";
 function view(viewModel: WidgetWithApiRef) {

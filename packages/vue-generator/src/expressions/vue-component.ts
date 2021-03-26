@@ -187,7 +187,9 @@ export class VueComponent extends Component {
   }
 
   createPropsGetter(members: Array<Property | Method>) {
-    const props = getProps(members);
+    const props = getProps(members).filter(
+      (m) => m.name !== "__defaultNestedValues"
+    );
 
     const propertyAssignments = props.map((p) => {
       const expression = p.isForwardRefProp
@@ -357,15 +359,77 @@ export class VueComponent extends Component {
       props
     );
   }
-  compileTemplate(methods: string[]) {
-    const viewFunction = this.decorators[0].getViewFunction();
-    if (viewFunction) {
-      const options: toStringOptions = {
-        members: this.members,
-        newComponentContext: "",
-        isSVG: this.isSVGComponent,
+
+  compileStyleNormalizer(options: toStringOptions) {
+    return options.hasStyle
+      ? `
+      const NUMBER_STYLES = new Set([
+        "animation-iteration-count",
+        "border-image-outset",
+        "border-image-slice",
+        "border-image-width",
+        "box-flex",
+        "box-flex-group",
+        "box-ordinal-group",
+        "column-count",
+        "fill-opacity",
+        "flex",
+        "flex-grow",
+        "flex-negative",
+        "flex-order",
+        "flex-positive",
+        "flex-shrink",
+        "flood-opacity",
+        "font-weight",
+        "grid-column",
+        "grid-row",
+        "line-clamp",
+        "line-height",
+        "opacity",
+        "order",
+        "orphans",
+        "stop-opacity",
+        "stroke-dasharray",
+        "stroke-dashoffset",
+        "stroke-miterlimit",
+        "stroke-opacity",
+        "stroke-width",
+        "tab-size",
+        "widows",
+        "z-index",
+        "zoom",
+      ])
+      const uppercasePattern = /[A-Z]/g;
+      const kebabCase = (str) => {
+        return str.replace(uppercasePattern, "-$&").toLowerCase();
       };
 
+      const isNumeric = (value) => {
+        if (typeof value === "number") return true;
+        return !isNaN(Number(value));
+      };
+
+      const getNumberStyleValue = (style, value) => {
+        return NUMBER_STYLES.has(style) ? value : \`\${value}px\`;
+      };
+
+      const normalizeStyles = (styles) => {
+        if (!(styles instanceof Object)) return undefined;
+      
+        return Object.entries(styles).reduce((result, [key, value]) => {
+          const kebabString = kebabCase(key);
+          result[kebabString] = isNumeric(value)
+            ? getNumberStyleValue(kebabString, value)
+            : value;
+          return result;
+        }, {})
+      };`
+      : "";
+  }
+
+  compileTemplate(methods: string[], options: toStringOptions) {
+    const viewFunction = this.decorators[0].getViewFunction();
+    if (viewFunction) {
       this.template = viewFunction.getTemplate(options);
 
       if (options.hasStyle) {
@@ -391,18 +455,9 @@ export class VueComponent extends Component {
             undefined,
             new Block(
               [
-                new SimpleExpression(`
-                              if (typeof value === "object") {
-                                  return Object.keys(value).reduce((v, k) => {
-                                      if (typeof value[k] === "number") {
-                                          v[k] = value[k] + "px";
-                                      } else {
-                                          v[k] = value[k];
-                                      }
-                                      return v;
-                                  }, {});
-                              }
-                              return value;`),
+                new ReturnStatement(
+                  new SimpleExpression("normalizeStyles(value)")
+                ),
               ],
               true
             )
@@ -431,12 +486,14 @@ export class VueComponent extends Component {
   generateProps() {
     if (this.isJSXComponent) {
       let props = this.heritageClauses[0].propsType.toString();
+
       if (this.needGenerateDefaultOptions) {
         props = `Object.keys(${props}).reduce((props, propName)=>({
                           ...props,
                           [propName]: {...${props}[propName]}
                         }), {})`;
       }
+
       return `props: ${props}`;
     }
     return "";
@@ -488,7 +545,7 @@ export class VueComponent extends Component {
       nestedName = removePlural(nestedName);
     }
     const propName = `${SyntaxKind.ThisKeyword}.${property.name}`;
-
+    const hasDefaultValues = property.isNested && property.initializer;
     const statements = [
       new VariableStatement(
         undefined,
@@ -498,7 +555,22 @@ export class VueComponent extends Component {
               new Identifier("nested"),
               undefined,
               new SimpleExpression(
-                `this.__nestedChildren.filter(child => child.__name === "${property.name}")`
+                `this.__nestedChildren.filter(child => child.__name === "${
+                  property.name
+                }")${
+                  hasDefaultValues
+                    ? `.map((n) => {
+                          if (
+                            !Object.keys(n).some(
+                              (k) => k !== "__name" && k !== "__defaultNestedValues"
+                            )
+                          ) {
+                            return n?.__defaultNestedValues || n;
+                          }
+                          return n;
+                        });`
+                    : ""
+                }`
               )
             ),
           ],
@@ -512,7 +584,11 @@ export class VueComponent extends Component {
           new Conditional(
             new SimpleExpression("nested.length"),
             new SimpleExpression(`nested${indexGetter}`),
-            new SimpleExpression("undefined")
+            new SimpleExpression(
+              hasDefaultValues
+                ? `this?.__defaultNestedValues?.${property.name}`
+                : "undefined"
+            )
           )
         )
       ),
@@ -914,7 +990,7 @@ export class VueComponent extends Component {
     propName: string
   ) {
     return `export const Dx${name} = {
-      props: ${component.name}
+      ${`props: ${component.name}`}
     }
     Dx${name}.propName="${propName}"
     Dx${name}.defaultProps=__extractDefaultValues(${component.name})`;
@@ -923,8 +999,13 @@ export class VueComponent extends Component {
   toString() {
     const methods: string[] = [];
     const components: string[] = [];
+    const options: toStringOptions = {
+      members: this.members,
+      newComponentContext: "",
+      isSVG: this.isSVGComponent,
+    };
 
-    this.compileTemplate(methods);
+    this.compileTemplate(methods, options);
 
     const portalComponent = this.containsPortal()
       ? this.compilePortalComponent(components)
@@ -950,6 +1031,7 @@ export class VueComponent extends Component {
 
     return `
           ${this.compileImports()}
+          ${this.compileStyleNormalizer(options)}
           ${
             this.members.some((m) => m.isNested)
               ? this.createNestedChildrenCollector()

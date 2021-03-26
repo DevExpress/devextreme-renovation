@@ -9,7 +9,7 @@ import {
   TypeExpression,
   TypeParameterDeclaration
 } from '@devextreme-generator/core';
-import { JsxAttribute, PreactGenerator } from '@devextreme-generator/preact';
+import { PreactGenerator } from '@devextreme-generator/preact';
 import { HeritageClause } from '@devextreme-generator/react';
 
 import { GetAccessor } from './expressions/class-members/get-accessor';
@@ -21,6 +21,7 @@ import { JsxClosingElement } from './expressions/jsx/jsx-closing-element';
 import { JsxOpeningElement } from './expressions/jsx/jsx-opening-element';
 import { PropertyAccess } from './expressions/property-access';
 import { TypeReferenceNode } from './expressions/type-reference-node';
+import { JsxAttribute } from "./expressions/jsx/attribute";
 
 export class InfernoGenerator extends PreactGenerator {
   createComponent(
@@ -136,5 +137,9 @@ export class InfernoGenerator extends PreactGenerator {
       moduleSpecifier,
       this.getContext()
     );
+  }
+
+  createJsxAttribute(name: Identifier, initializer?: Expression) {
+    return new JsxAttribute(name, initializer);
   }
 }

@@ -5,6 +5,7 @@ import { ArrowFunction, Function } from "./expressions/functions";
 import { Component } from "./expressions/component";
 import { TypeExpression } from "./expressions/type";
 import { Interface } from "./expressions/interface";
+import { Identifier } from "./expressions/common";
 
 export type TypeExpressionImports = ImportDeclaration[];
 
@@ -24,6 +25,11 @@ export interface toStringOptions {
   variables?: VariableExpression;
   jsxComponent?: Component;
   usePropsSpace?: boolean;
+  componentInputs?: {
+    name: string;
+    isNested: boolean;
+    fields?: Identifier[];
+  }[];
 };
 
 export type VariableExpression = {
