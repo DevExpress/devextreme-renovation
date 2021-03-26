@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.build.json",
   "include": ["src/**/*"],
   "compilerOptions": {
+    "target": "ES5",
     "outDir": "./dist",
     "typeRoots": ["node_modules/inferno"],
   }
