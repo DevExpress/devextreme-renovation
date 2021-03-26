@@ -36,9 +36,4 @@ jobs:
               echo "::error::PR title should match new version: $version"
               ((errCount+=1))
             fi
-            if ! [[ $(git diff HEAD^ HEAD --shortstat) =~ (10 *file *changed.*10 *insertion.*10 *deletion) ]]
-            then
-              echo "::error::PR with version bump should have no other changes"
-              ((errCount+=1))
-            fi
             exit $errCount
