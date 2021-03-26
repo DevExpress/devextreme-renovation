@@ -1,6 +1,6 @@
 {
   "name": "@devextreme-generator/angular",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "DevExtreme angular component generator",
   "main": "dist/index",
   "types": "dist/index",
@@ -16,7 +16,7 @@
   "author": "Developer Express Inc.",
   "license": "MIT",
   "dependencies": {
-    "@devextreme-generator/core": "1.0.1"
+    "@devextreme-generator/core": "^1.0.2"
   },
   "devDependencies": {
     "shx": "^0.3.3",
