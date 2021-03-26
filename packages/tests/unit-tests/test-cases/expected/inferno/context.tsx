@@ -1,8 +1,8 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-  createContext,
   normalizeStyles,
+  createContext,
 } from "@devextreme/vdom";
 function view(model: Widget): any {
   return <span></span>;

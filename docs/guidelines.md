@@ -98,7 +98,7 @@
     TwoWay,
     RefObject,
     InternalState,
-  } from 'devextreme-generator/component_declaration/common';
+  } from '@devextreme-generator/declarations';
   import SubComponent from './SubComponent';
   import { subscriber } from './utils/subscriber';
   import pdfjs from 'pdfjs';
@@ -603,7 +603,7 @@ onWidgetKeyDown(event: Event, options) {
 
 ### Исходный код
 
-Все декораторы, а также базовый `JSXComponent` необходимо импортировать из `devextreme-generator/component_declaration/common`.
+Все декораторы, а также базовый `JSXComponent` необходимо импортировать из `@devextreme-generator/declarations`.
 
 Стартовый шаблон кода компонента:
 
@@ -613,7 +613,7 @@ import {
   ComponentBindings,
   JSXComponent,
   OneWay,
-} from 'devextreme-generator/component_declaration/common';
+} from '@devextreme-generator/declarations';
 
 export const viewFunction = (viewModel: Component) => {
   return (<div></div>);
@@ -1008,7 +1008,7 @@ function viewFunction(viewModel) {
 import {
   ...,
   RefObject
-} from 'devextreme-generator/component_declaration/common';
+} from '@devextreme-generator/declarations';
 
 @ComponentBindings()
 class MyComponentProps {}
@@ -1052,7 +1052,7 @@ class MyComponent extends JSXComponent(MyComponentProps) {
 import {
   ...,
   RefObject
-} from 'devextreme-generator/component_declaration/common';
+} from '@devextreme-generator/declarations';
 
 @ComponentBindings()
 class MyComponentProps {}
@@ -1179,7 +1179,7 @@ function viewFunction(viewModel: MyComponent) {
 import {
   ...,
   JSXTemplate
-} from 'devextreme-generator/component_declaration/common';
+} from '@devextreme-generator/declarations';
 import { SomeWidgetProps } from './some_widget';
 
 @ComponentBindings()
@@ -1398,7 +1398,7 @@ function viewFunction(viewModel: MyComponent) {
 ##### Создание контекста
 
 ```tsx
-import { createContext } from 'devextreme-generator/component_declaration/common';
+import { createContext } from '@devextreme-generator/declarations';
 
 const defaultValue = false;
 const RtlEnabledContext = createContext<boolean>(defaultValue);
@@ -1410,7 +1410,7 @@ const RtlEnabledContext = createContext<boolean>(defaultValue);
 Для передачи контекста необходимо использовать проперти компонента или геттер. Для этого его необходимо отметить декоратором `Provider`.
 
 ```tsx
-import { Provider, JSXComponent, ComponentBindings, OneWay } from 'devextreme-generator/component_declaration/common';
+import { Provider, JSXComponent, ComponentBindings, OneWay } from '@devextreme-generator/declarations';
 
 @ComponentBindings()
 export class Props {
@@ -1431,7 +1431,7 @@ export class ProviderComponent extends JSXComponent(Props){
 Получить контекст может проперти компонента, отмеченное декоратором `Counsumer`. Такое проперти будет иметь значение ближайшего провайдера контекста, найденного вверху дерева. Если такого провайдера нет, то значение будет равно `defaultValue` (см [Создание контекста](#cоздание-контекста)).
 
 ```tsx
-import { Consumer, JSXComponent, ComponentBindings, OneWay, Component } from 'devextreme-generator/component_declaration/common';
+import { Consumer, JSXComponent, ComponentBindings, OneWay, Component } from '@devextreme-generator/declarations';
 
 
 const view = ({ rtlEnabled }: ConsumerComponent) => 
@@ -1458,7 +1458,7 @@ export class ConsumerComponent extends JSXComponent(Props){
 **Ограничение** Если компонент регистрирует jQuery виджет, то его корневым элементом может быть только `div`.
 
 ```tsx
-import { Fragment } from 'devextreme-generator/component_declaration/common';
+import { Fragment } from '@devextreme-generator/declarations';
 
 @ComponentBindings()
 class MyComponentProps {
@@ -1493,7 +1493,7 @@ Portal - специальный JSX компонент, позволяющий �
 Пример:
 
 ```tsx
-import { Portal } from 'devextreme-generator/component_declaration/common';
+import { Portal } from '@devextreme-generator/declarations';
 
 @ComponentBindings()
 class MyComponentProps {
@@ -1542,7 +1542,7 @@ function viewFunction(viewModel: MyComponent) {
 
 import {
     JSXComponent, Component, ComponentBindings, OneWay, Fragment, JSXTemplate, InternalState,
-} from "../../../component_declaration/common";
+} from "@devextreme-generator/declarations";
 
 import { PlaceholderItemProps } from "./placeholder-props"; // здесь объявленны обычные пропсы компоненты см. [ComponentBindings](#описание-компонента)
 
@@ -1595,7 +1595,7 @@ export class Placeholder extends JSXComponent<PlaceholderProps>() {
 import {
     JSXComponent, Component,
     Fragment
-} from "../../../component_declaration/common";
+} from "@devextreme-generator/declarations";
 
 import { PlaceholderItemProps } from "./placeholder-props";
 import Button from "../button";

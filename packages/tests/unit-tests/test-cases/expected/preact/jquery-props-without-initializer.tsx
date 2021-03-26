@@ -1,5 +1,5 @@
-import registerComponent from "../../../../component_declaration/jquery_component_registrator";
-import BaseComponent from "../../../../component_declaration/jquery_base_component";
+import registerComponent from "../../../../jquery-helpers/jquery_component_registrator";
+import BaseComponent from "../../../../jquery-helpers/jquery_custom_base_component";
 import WidgetComponent from "../../../../jquery-props-info";
 
 export default class Widget extends BaseComponent {

@@ -26,7 +26,7 @@ export class ImportDeclaration extends BaseImportDeclaration {
     }
 
     if (this.has("Component")) {
-      common.push("BaseInfernoComponent", "InfernoComponent");
+      common.push("BaseInfernoComponent", "InfernoComponent", "normalizeStyles");
     }
 
     if (this.has("createContext")) {
@@ -36,15 +36,6 @@ export class ImportDeclaration extends BaseImportDeclaration {
     if (common.length) {
       result.push(
         `import {${common}} from "@devextreme/vdom"`
-      );
-    }
-
-    if (
-      this.context.viewFunctions &&
-      Object.keys(this.context.viewFunctions).length
-    ) {
-      result.push(
-        `import {normalizeStyles} from ${this.resolveCommonModule("utils")}`
       );
     }
 

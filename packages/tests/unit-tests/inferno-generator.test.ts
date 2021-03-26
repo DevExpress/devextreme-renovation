@@ -44,7 +44,7 @@ mocha.describe("Expressions", function () {
       generator.setContext(null);
     });
     mocha.it(
-      "import Fragment from common_declaration should import it from inferno",
+      "import Fragment from @devextreme-generator/declarations should import it from @devextreme/vdom",
       function () {
         const expression = generator.createImportDeclaration(
           [],
@@ -69,7 +69,7 @@ mocha.describe("Expressions", function () {
     );
 
     mocha.it(
-      "import RefObject from common_declaration if Ref is imported",
+      "import RefObject from @devextreme/vdom if Ref is imported",
       function () {
         const expression = generator.createImportDeclaration(
           [],
@@ -94,7 +94,7 @@ mocha.describe("Expressions", function () {
     );
 
     mocha.it(
-      "import RefObject from common_declaration if ForwardRef is imported",
+      "import RefObject from @devextreme/vdom if ForwardRef is imported",
       function () {
         const expression = generator.createImportDeclaration(
           [],
@@ -119,7 +119,7 @@ mocha.describe("Expressions", function () {
     );
 
     mocha.it(
-      "import Component from common_declaration should import it from default modules path",
+      "import Component from @devextreme-generator/declarations should import it from @devextreme/vdom",
       function () {
         const expression = generator.createImportDeclaration(
           [],
@@ -138,7 +138,7 @@ mocha.describe("Expressions", function () {
 
         assert.strictEqual(
           expression.toString(),
-          `import {BaseInfernoComponent,InfernoComponent} from "@devextreme/vdom"`
+          `import {BaseInfernoComponent,InfernoComponent,normalizeStyles} from "@devextreme/vdom"`
         );
       }
     );

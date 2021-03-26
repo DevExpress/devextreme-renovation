@@ -534,7 +534,7 @@ export class Generator implements GeneratorAPI {
     const module = moduleSpecifier.expression.toString();
     if (
       context.dirname &&
-      module.indexOf("component_declaration/common") === -1
+      module.indexOf("@devextreme-generator/declarations") === -1
     ) {
       const modulePath = resolveModule(
         path.join(context.dirname, module),

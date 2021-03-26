@@ -1,7 +1,7 @@
-import { 
+import {
   BaseInfernoComponent,
   InfernoComponent,
-  normalizeStyles
+  normalizeStyles,
 } from "@devextreme/vdom";
 export const COMPONENT_INPUT_CLASS = "c3";
 function view(model: Widget) {

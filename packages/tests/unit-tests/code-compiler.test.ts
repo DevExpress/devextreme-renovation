@@ -145,9 +145,9 @@ mocha.describe("Gathering meta information about components", function () {
 
 mocha.describe("jQuery", function () {
   const jqueryComponentRegistratorModule =
-    "../component_declaration/jquery_component_registrator";
+    "../jquery-helpers/jquery_component_registrator";
   const jqueryBaseComponentModule =
-    "../component_declaration/jquery_base_component";
+    "../jquery-helpers/jquery_base_component";
 
   this.beforeEach(function () {
     generator.options = {

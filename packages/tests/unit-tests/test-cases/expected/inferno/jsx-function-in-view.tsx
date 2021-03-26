@@ -1,8 +1,8 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-} from "../../../../modules/inferno/base_component";
-import { normalizeStyles } from "../../../../modules/inferno/utils";
+  normalizeStyles,
+} from "@devextreme/vdom";
 const loadingJSX = ({ text }: any) => {
   return <div>{text}</div>;
 };
