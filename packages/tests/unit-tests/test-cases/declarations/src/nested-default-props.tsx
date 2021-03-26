@@ -1,8 +1,8 @@
 import {
-  ComponentBindings,
-  Nested,
-  OneWay,
-} from "../../../../component_declaration/common";
+	ComponentBindings,
+	Nested,
+	OneWay,
+} from "@devextreme-generator/declarations";
 
 @ComponentBindings()
 export class GridCell {
@@ -26,3 +26,4 @@ export class EmptyClass {}
 export class FakeNested {
   @Nested() value?: EmptyClass[] = [new EmptyClass()];
 }
+  
