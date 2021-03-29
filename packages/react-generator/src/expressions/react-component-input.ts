@@ -193,7 +193,7 @@ export class ComponentInput extends BaseComponentInput {
     }
     members.map((m) => {
       if (m instanceof Property && m.isNested && m.initializer) {
-        m.questionOrExclamationToken = syntaxKind.QuestionToken;
+        m.questionOrExclamationToken = SyntaxKind.QuestionToken;
       }
     });
     return members;
