@@ -134,7 +134,7 @@ export default function undefWidget(props: typeof WidgetProps & RestProps) {
               (k) => k !== "__name" && k !== "__defaultNestedValues"
             )
           ) {
-            return n?.__defaultNestedValues || n;
+            return (n as any)?.__defaultNestedValues || n;
           }
           return n;
         });

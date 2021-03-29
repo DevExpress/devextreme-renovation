@@ -1,10 +1,10 @@
-import { GetAccessor } from './class-members/get-accessor';
-import { Method } from './class-members/method';
-import { getPropName, Property } from './class-members/property';
-import { HeritageClause } from './heritage-clause';
-import { PropertyAccess } from './property-access';
-import { ComponentInput, getTemplatePropName } from './react-component-input';
-import path from 'path';
+import { GetAccessor } from "./class-members/get-accessor";
+import { Method } from "./class-members/method";
+import { getPropName, Property } from "./class-members/property";
+import { HeritageClause } from "./heritage-clause";
+import { PropertyAccess } from "./property-access";
+import { ComponentInput, getTemplatePropName } from "./react-component-input";
+import path from "path";
 import {
   BaseClassMember,
   Property as BaseProperty,
@@ -775,7 +775,7 @@ export class ReactComponent extends Component {
                       (k) => k !== "__name" && k !== "__defaultNestedValues"
                     )
                   ) {
-                    return n?.__defaultNestedValues || n;
+                    return (n as any)?.__defaultNestedValues || n;
                   }
                   return n;
                 });`
