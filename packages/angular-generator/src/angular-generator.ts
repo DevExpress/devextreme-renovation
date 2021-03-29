@@ -19,10 +19,10 @@ import { PropertyAccessChain } from './expressions/property-access-chain';
 import { TypeReferenceNode } from './expressions/type-reference-node';
 import { VariableDeclaration } from './expressions/variable-expression';
 import { AngularGeneratorContext } from './types';
-import { Call } from './expressions/call';
 import Generator, {
   StringLiteral,
   GeneratorContext,
+  Call,
   Method,
   Expression,
   Identifier,
@@ -35,7 +35,7 @@ import Generator, {
   BindingPattern,
   TypeParameterDeclaration,
   VariableDeclarationList,
-  VariableStatement,
+  VariableStatement
 } from "@devextreme-generator/core";
 import {
   JsxOpeningElement,

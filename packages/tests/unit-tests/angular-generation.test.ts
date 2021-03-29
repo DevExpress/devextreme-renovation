@@ -331,10 +331,6 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it.only("nested-undefined", function () {
-    this.testGenerator(this.test!.title);
-  });
-
   mocha.it.only("nested-bug", function () {
     this.testGenerator(this.test!.title);
   });
