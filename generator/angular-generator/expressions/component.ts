@@ -1078,19 +1078,21 @@ export class AngularComponent extends Component {
 
     const nested = Object.keys(components).reduce(
       (acc, key) => {
-        const property = nestedProps.find(
+        const propertyArr = nestedProps.filter(
           ({ type }) => extractComplexType(type) === key
         );
-        if (property) {
-          const { name: propName, type: propType } = property;
-          const isArray = isTypeArray(propType);
-          const postfix = isArray ? "i" : "o";
-          const selectorName = isArray ? removePlural(propName) : propName;
-          const selector = getAngularSelector(selectorName, postfix);
+        if (propertyArr.length > 0) {
+          propertyArr.forEach((property) => {
+            const { name: propName, type: propType } = property;
+            const isArray = isTypeArray(propType);
+            const postfix = isArray ? "i" : "o";
+            const selectorName = isArray ? removePlural(propName) : propName;
+            const selector = getAngularSelector(selectorName, postfix);
 
-          acc.push({
-            component: components[key] as ComponentInput,
-            name: `${parentSelector} ${selector}`,
+            acc.push({
+              component: components[key] as ComponentInput,
+              name: `${parentSelector} ${selector}`,
+            });
           });
         }
         return acc;

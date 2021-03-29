@@ -130,6 +130,9 @@ export class ReactComponent extends Component {
       members.push(this.createNestedChildrenGetter());
     }
     (members.filter((m) => m.isNested) as Property[]).forEach((m) => {
+      if (m.initializer) {
+        m.questionOrExclamationToken = SyntaxKind.QuestionToken;
+      }
       members.push(this.createNestedPropertyGetter(m));
     });
 

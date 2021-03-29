@@ -1,5 +1,4 @@
 import Generator from "../base-generator";
-import { Call } from "../base-generator/expressions/common";
 import { Method } from "../base-generator/expressions/class-members";
 import { Expression } from "../base-generator/expressions/base";
 import { Identifier } from "../base-generator/expressions/common";
@@ -43,6 +42,7 @@ import {
 import { ContextDeclaration } from "./expressions/context-declaration";
 import { PropertyAccessChain } from "./expressions/property-access-chain";
 import { TypeReferenceNode } from "./expressions/type-reference-node";
+import { Call } from "./expressions/call";
 
 export class AngularGenerator extends Generator {
   createJsxExpression(dotDotDotToken: string = "", expression?: Expression) {

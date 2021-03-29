@@ -366,4 +366,8 @@ mocha.describe("vue-generation", function () {
   mocha.it("nested-default-props", function () {
     this.testGenerator(this.test!.title);
   });
+
+  mocha.it.only("nested-bug", function () {
+    this.testGenerator(this.test!.title);
+  });
 });
