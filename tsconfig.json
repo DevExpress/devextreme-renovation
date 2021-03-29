@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    "baseUrl": "./packages",
+    "paths": {
+      "@devextreme-generator/angular": ["./angular-generator/src"],
+      "@devextreme-generator/core": ["./core-generator/src"],
+      "@devextreme-generator/declarations": ["./declarations/src"],
+      "@devextreme-generator/build-helpers": ["./build-helpers/src"],
+      "@devextreme-generator/inferno": ["./inferno-generator/src"],
+      "@devextreme-generator/preact": ["./preact-generator/src"],
+      "@devextreme-generator/react": ["./react-generator/src"],
+      "@devextreme-generator/vue": ["./vue-generator/src"],
+      "@devextreme/vdom": ["./vdom/src"]
+    }
+  }
+}

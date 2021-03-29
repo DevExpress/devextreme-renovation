@@ -1,0 +1,25 @@
+{
+  "name": "@devextreme-generator/angular",
+  "version": "1.0.2",
+  "description": "DevExtreme angular component generator",
+  "main": "dist/index",
+  "types": "dist/index",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --project ./tsconfig.build.json",
+    "build:watch": "tsc --project ./tsconfig.build.json --watch",
+    "pack": "npm run build && npm pack && shx cp *.tgz package.tgz",
+    "clear": "shx rm -rf dist"
+  },
+  "author": "Developer Express Inc.",
+  "license": "MIT",
+  "dependencies": {
+    "@devextreme-generator/core": "^1.0.2"
+  },
+  "devDependencies": {
+    "shx": "^0.3.3",
+    "typescript": "3.8"
+  }
+}
