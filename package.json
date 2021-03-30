@@ -1,6 +1,6 @@
 {
   "private": true,
-  "version": "1.0.0",
+  "version": "0.0.0",
   "name": "devextreme-renovation",
   "author": {
     "name": "Developer Express Inc.",
@@ -11,17 +11,25 @@
     "url": "git+https://github.com/DevExpress/devextreme-renovation.git"
   },
   "scripts": {
-    "install": "cd generator && npm install",
-    "postinstall": "cd generator && npm run build"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
+    "postinstall": "npm run bootstrap",
+    "bootstrap": "lerna bootstrap --no-ci --hoist",
+    "bootstrap:ci": "lerna bootstrap --hoist",
+    "build": "lerna run build",
+    "build:watch": "lerna run build && lerna run build:watch --parallel",
+    "clear": "lerna run clear --parallel",
+    "pack": "lerna run pack",
+    "test": "cd packages/tests && npm run test",
+    "test:with-reporters": "cd packages/tests && npm run test:with-reporters",
+    "test:with-replace": "cd packages/tests && npm run test:with-replace",
+    "test:testcafe": "cd packages/tests && npm run test:testcafe",
+    "test:testcafe-headless": "cd packages/tests && npm run test:testcafe-headless",
+    "testcafe:start-test-servers": "cd packages/tests && npm run testcafe:start-test-servers",
+    "publish:patch": "lerna version patch --no-git-tag-version --no-push",
+    "publish:minor": "lerna version minor --no-git-tag-version --no-push",
+    "publish:major": "lerna version major --no-git-tag-version --no-push"
   },
   "devDependencies": {
     "husky": "^4.2.5",
-    "prettier": "^2.1.0",
-    "pretty-quick": "^3.0.0"
+    "lerna": "^3.22.1"
   }
 }

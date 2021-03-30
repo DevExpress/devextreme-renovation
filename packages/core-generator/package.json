@@ -1,0 +1,28 @@
+{
+  "name": "@devextreme-generator/core",
+  "version": "1.0.2",
+  "description": "DevExtreme core generator",
+  "main": "dist/index",
+  "types": "dist/index",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --project ./tsconfig.build.json",
+    "build:watch": "tsc --project ./tsconfig.build.json --watch",
+    "pack": "npm run build && npm pack && shx cp *.tgz package.tgz",
+    "clear": "shx rm -rf dist"
+  },
+  "author": "Developer Express Inc.",
+  "license": "MIT",
+  "dependencies": {
+    "code-block-writer": "^10.1.0",
+    "prettier": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.14",
+    "@types/prettier": "^2.1.0",
+    "shx": "^0.3.3",
+    "typescript": "3.8"
+  }
+}
