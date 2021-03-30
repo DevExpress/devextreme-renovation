@@ -20,7 +20,6 @@ import { getChangeEventToken } from "../../react-generator/expressions/property-
 import { Property } from "./class-members/property";
 import { PreactComponent } from "../../preact-generator";
 import { Decorators } from "../../component_declaration/decorators";
-import { ObjectLiteral } from "../../base-generator/expressions/literal";
 
 const getEffectRunParameter = (effect: BaseClassMember) =>
   effect.decorators
@@ -263,22 +262,6 @@ export class InfernoComponent extends PreactComponent {
     return "";
   }
 
-  get jQueryRegistered() {
-    const jqueryProp = this.decorators[0].getParameter("jQuery") as
-      | ObjectLiteral
-      | undefined;
-    return jqueryProp?.getProperty("register")?.toString() === "true";
-  }
-
-  compileRestProps() {
-    return `declare type RestProps = {
-      className?: string;
-      style?: { [name: string]: any };
-      key?: any, ref?: any;
-      ${this.jQueryRegistered ? "$element: Element | null | undefined;" : ""}
-    };`;
-  }
-
   toString() {
     const propsType = this.compilePropsType();
 
@@ -291,11 +274,7 @@ export class InfernoComponent extends PreactComponent {
       .join(";\n");
 
     const hasEffects = this.effects.length > 0;
-    const component = this.jQueryRegistered
-      ? "InfernoComponentWrapper"
-      : hasEffects
-      ? "InfernoComponent"
-      : "BaseInfernoComponent";
+    const component = hasEffects ? "InfernoComponent" : "BaseInfernoComponent";
 
     return `
             ${this.compileImports()}

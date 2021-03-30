@@ -29,7 +29,7 @@ export class ImportDeclaration extends BaseImportDeclaration {
 
     if (this.has("Component")) {
       result.push(
-        `import { BaseInfernoComponent, InfernoComponent, InfernoComponentWrapper } from ${this.resolveCommonModule(
+        `import { BaseInfernoComponent, InfernoComponent } from ${this.resolveCommonModule(
           "base_component"
         )}`
       );

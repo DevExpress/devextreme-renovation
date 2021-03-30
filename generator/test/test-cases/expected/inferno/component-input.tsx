@@ -1,7 +1,6 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoComponentWrapper,
 } from "../../../../modules/inferno/base_component";
 export const COMPONENT_INPUT_CLASS = "c3";
 function view(model: Widget) {

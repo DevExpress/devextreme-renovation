@@ -1,7 +1,6 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoComponentWrapper,
 } from "../../../../modules/inferno/base_component";
 import InnerWidget from "./dx-inner-widget";
 function view({ props, restAttributes }: Widget) {

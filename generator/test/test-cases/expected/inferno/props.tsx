@@ -1,7 +1,6 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoComponentWrapper,
 } from "../../../../modules/inferno/base_component";
 function view(model: Widget): any {
   const sizes = model.props.sizes ?? { width: 0, height: 0 };

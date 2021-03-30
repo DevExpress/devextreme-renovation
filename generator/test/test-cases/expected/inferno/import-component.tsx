@@ -1,7 +1,6 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoComponentWrapper,
 } from "../../../../modules/inferno/base_component";
 import Base, { WidgetProps } from "./component-input";
 function view(model: Child) {

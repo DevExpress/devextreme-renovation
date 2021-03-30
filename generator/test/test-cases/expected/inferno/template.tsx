@@ -1,7 +1,6 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoComponentWrapper,
 } from "../../../../modules/inferno/base_component";
 import { WidgetWithProps, WidgetWithPropsInput } from "./dx-widget-with-props";
 

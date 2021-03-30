@@ -1,7 +1,6 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoComponentWrapper,
 } from "../../../../modules/inferno/base_component";
 import { createContext } from "../../../../modules/inferno/create_context";
 function view(model: Widget): any {

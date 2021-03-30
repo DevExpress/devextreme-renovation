@@ -2,7 +2,6 @@ import { RefObject } from "../../../../modules/inferno/ref_object";
 import {
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoComponentWrapper,
 } from "../../../../modules/inferno/base_component";
 import BaseWidget from "./method";
 function view(viewModel: WidgetWithApiRef) {
