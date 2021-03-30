@@ -5,7 +5,7 @@
 </template>
 <script>
 export const FakeNested = {
-  sas: {
+  numberProp: {
     type: Number,
     default() {
       return 2;
@@ -24,10 +24,10 @@ export const WidgetProps = {
       return {
         anotherNestedPropInit: [
           {
-            sas:
+            numberProp:
               FakeNested === undefined || FakeNested === null
                 ? undefined
-                : FakeNested.sas?.default(),
+                : FakeNested.numberProp?.default(),
           },
         ],
       };

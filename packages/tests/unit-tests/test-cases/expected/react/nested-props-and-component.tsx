@@ -10,10 +10,10 @@ function view(model: undefWidget) {
 }
 
 export declare type FakeNestedType = {
-  sas: number;
+  numberProp: number;
 };
 export const FakeNested: FakeNestedType = {
-  sas: 2,
+  numberProp: 2,
 };
 export declare type WidgetPropsType = {
   nestedProp?: typeof FakeNested[];

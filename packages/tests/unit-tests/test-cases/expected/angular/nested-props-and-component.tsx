@@ -1,6 +1,6 @@
 import { Input } from "@angular/core";
 export class FakeNested {
-  @Input() sas: number = 2;
+  @Input() numberProp: number = 2;
 }
 
 export class WidgetProps {
