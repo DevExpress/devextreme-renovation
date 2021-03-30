@@ -10,15 +10,20 @@ function view(model: undefWidget) {
 }
 
 export declare type FakeNestedType = {
-  sas: number;
+  numberProp: number;
 };
 export const FakeNested: FakeNestedType = {
-  sas: 2,
+  numberProp: 2,
 };
 export declare type WidgetPropsType = {
+  someProp?: number;
+  slotProp?: React.ReactNode;
+  templateProp?: React.FunctionComponent<any>;
   nestedProp?: typeof FakeNested[];
   anotherNestedPropInit?: typeof FakeNested[];
   __defaultNestedValues?: WidgetPropsType;
+  renderProp?: React.FunctionComponent<any>;
+  componentProp?: React.JSXElementConstructor<any>;
   children?: React.ReactNode;
 };
 export const WidgetProps: WidgetPropsType = {
@@ -62,6 +67,7 @@ declare type RestProps = Omit<
 >;
 interface undefWidget {
   props: typeof WidgetProps & RestProps;
+  someprop: any;
   nested: any;
   nestedinit: any;
   restAttributes: RestProps;
@@ -70,7 +76,26 @@ interface undefWidget {
   __getNestedAnotherNestedPropInit: typeof FakeNested[] | undefined;
 }
 
+const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
+  (TemplateProp &&
+    (TemplateProp.defaultProps
+      ? (props: any) => <TemplateProp {...props} />
+      : TemplateProp)) ||
+  (RenderProp &&
+    ((props: any) =>
+      RenderProp(
+        ...("data" in props ? [props.data, props.index] : [props])
+      ))) ||
+  (ComponentProp && ((props: any) => <ComponentProp {...props} />));
+
 export default function undefWidget(props: typeof WidgetProps & RestProps) {
+  const __someprop = useCallback(function __someprop(): any {
+    return {
+      ...props,
+      nestedProp: __getNestedNestedProp(),
+      anotherNestedPropInit: __getNestedAnotherNestedPropInit(),
+    }.hasOwnProperty("someProp");
+  }, []);
   const __nested = useCallback(function __nested(): any {
     return {
       ...props,
@@ -91,7 +116,12 @@ export default function undefWidget(props: typeof WidgetProps & RestProps) {
         __defaultNestedValues,
         anotherNestedPropInit,
         children,
+        componentProp,
         nestedProp,
+        renderProp,
+        slotProp,
+        someProp,
+        templateProp,
         ...restProps
       } = {
         ...props,
@@ -150,9 +180,15 @@ export default function undefWidget(props: typeof WidgetProps & RestProps) {
   return view({
     props: {
       ...props,
+      templateProp: getTemplate(
+        props.templateProp,
+        props.renderProp,
+        props.componentProp
+      ),
       nestedProp: __getNestedNestedProp(),
       anotherNestedPropInit: __getNestedAnotherNestedPropInit(),
     },
+    someprop: __someprop(),
     nested: __nested(),
     nestedinit: __nestedinit(),
     restAttributes: __restAttributes(),

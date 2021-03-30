@@ -5,7 +5,7 @@
 </template>
 <script>
 export const FakeNested = {
-  sas: {
+  numberProp: {
     type: Number,
     default() {
       return 2;
@@ -13,6 +13,9 @@ export const FakeNested = {
   },
 };
 export const WidgetProps = {
+  someProp: {
+    type: Number,
+  },
   nestedProp: {
     type: Array,
   },
@@ -24,10 +27,10 @@ export const WidgetProps = {
       return {
         anotherNestedPropInit: [
           {
-            sas:
+            numberProp:
               FakeNested === undefined || FakeNested === null
                 ? undefined
-                : FakeNested.sas?.default(),
+                : FakeNested.numberProp?.default(),
           },
         ],
       };
@@ -92,6 +95,9 @@ export const DxundefWidget = {
   name: "undefWidget",
   props: WidgetProps,
   computed: {
+    __someprop() {
+      return this.props.hasOwnProperty("someProp");
+    },
     __nested() {
       return this.props.hasOwnProperty("nestedProp");
     },
@@ -103,6 +109,9 @@ export const DxundefWidget = {
     },
     props() {
       return {
+        someProp: this.someProp,
+        slotProp: this.$slots.slotProp,
+        templateProp: this.$scopedSlots.templateProp,
         nestedProp: this.__getNestedNestedProp,
         anotherNestedPropInit: this.__getNestedAnotherNestedPropInit,
       };

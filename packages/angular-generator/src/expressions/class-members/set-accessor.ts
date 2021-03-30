@@ -31,4 +31,17 @@ export class SetAccessor extends Method {
   toString(options?: toStringOptions) {
     return `${super.toString(options)}`;
   }
+  get canBeDestructured() {
+    if (
+      this.isEvent ||
+      this.isNested ||
+      this.isForwardRefProp ||
+      this.isRef ||
+      this.isRefProp ||
+      this.isForwardRef
+    ) {
+      return false;
+    }
+    return super.canBeDestructured;
+  }
 }

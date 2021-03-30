@@ -12,10 +12,10 @@ import {
   ReturnStatement,
   SimpleExpression,
   SyntaxKind,
-  TypeExpression
-} from '@devextreme-generator/core';
+  TypeExpression,
+} from "@devextreme-generator/core";
 
-import { Decorator } from '../decorator';
+import { Decorator } from "../decorator";
 
 export class GetAccessor extends BaseGetAccessor {
   constructor(
@@ -67,5 +67,19 @@ export class GetAccessor extends BaseGetAccessor {
 
   isMemorized(): boolean {
     return isComplexType(this.type) || this.isProvider;
+  }
+
+  get canBeDestructured() {
+    if (
+      this.isEvent ||
+      this.isNested ||
+      this.isForwardRefProp ||
+      this.isRef ||
+      this.isRefProp ||
+      this.isForwardRef
+    ) {
+      return false;
+    }
+    return super.canBeDestructured;
   }
 }

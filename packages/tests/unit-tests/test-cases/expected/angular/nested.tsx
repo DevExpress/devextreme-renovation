@@ -45,9 +45,8 @@ class DxWidgetColumnCustom extends CustomProps {}
 })
 class DxWidgetEditing extends EditingProps {
   private __custom?: DxWidgetEditingCustom[];
-  @ContentChildren(DxWidgetEditingCustom) customNested?: QueryList<
-    DxWidgetEditingCustom
-  >;
+  @ContentChildren(DxWidgetEditingCustom)
+  customNested?: QueryList<DxWidgetEditingCustom>;
   @Input() set custom(value: DxWidgetEditingCustom[] | undefined) {
     this.__custom = value;
   }
@@ -82,9 +81,8 @@ class DxWidgetEditing extends EditingProps {
 })
 class DxWidgetColumn extends GridColumnProps {
   private __editing?: DxWidgetColumnEditing;
-  @ContentChildren(DxWidgetColumnEditing) editingNested?: QueryList<
-    DxWidgetColumnEditing
-  >;
+  @ContentChildren(DxWidgetColumnEditing)
+  editingNested?: QueryList<DxWidgetColumnEditing>;
   @Input() set editing(value: DxWidgetColumnEditing | undefined) {
     this.__editing = value;
   }
@@ -98,9 +96,8 @@ class DxWidgetColumn extends GridColumnProps {
     }
   }
   private __custom?: DxWidgetColumnCustom[];
-  @ContentChildren(DxWidgetColumnCustom) customNested?: QueryList<
-    DxWidgetColumnCustom
-  >;
+  @ContentChildren(DxWidgetColumnCustom)
+  customNested?: QueryList<DxWidgetColumnCustom>;
   @Input() set custom(value: DxWidgetColumnCustom[] | undefined) {
     this.__custom = value;
   }
@@ -123,8 +120,7 @@ class DxWidgetColumn extends GridColumnProps {
 })
 export default class Widget extends PickedProps {
   __getColumns(): any {
-    const { columns } = this;
-    return columns?.map((el) => (typeof el === "string" ? el : el.name));
+    return this.columns?.map((el) => (typeof el === "string" ? el : el.name));
   }
   get __isEditable(): any {
     return this.editing?.editEnabled || this.editing?.custom?.length;
