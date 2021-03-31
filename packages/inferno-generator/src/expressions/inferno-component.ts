@@ -7,6 +7,7 @@ import {
   getProps,
   Identifier,
   Method,
+  ObjectLiteral,
   Parameter,
   ReturnStatement,
   SimpleExpression,
@@ -258,6 +259,12 @@ export class InfernoComponent extends PreactComponent {
 
     return "";
   }
+  get jQueryRegistered() {
+    const jqueryProp = this.decorators[0].getParameter("jQuery") as
+      | ObjectLiteral
+      | undefined;
+    return jqueryProp?.getProperty("register")?.toString() === "true";
+  }
 
   toString() {
     const propsType = this.compilePropsType();
@@ -271,7 +278,11 @@ export class InfernoComponent extends PreactComponent {
       .join(";\n");
 
     const hasEffects = this.effects.length > 0;
-    const component = hasEffects ? "InfernoComponent" : "BaseInfernoComponent";
+    const component = this.jQueryRegistered
+      ? "InfernoWrapperComponent"
+      : hasEffects
+      ? "InfernoComponent"
+      : "BaseInfernoComponent";
 
     return `
             ${this.compileImports()}
