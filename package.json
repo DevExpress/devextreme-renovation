@@ -24,9 +24,9 @@
     "test:testcafe": "cd packages/tests && npm run test:testcafe",
     "test:testcafe-headless": "cd packages/tests && npm run test:testcafe-headless",
     "testcafe:start-test-servers": "cd packages/tests && npm run testcafe:start-test-servers",
-    "publish:patch": "lerna version patch -m \"%v\" --exact --no-push",
-    "publish:minor": "lerna version minor -m \"%v\" --exact --no-push",
-    "publish:major": "lerna version major -m \"%v\" --exact --no-push"
+    "publish:patch": "lerna version patch -m %v --exact --no-push",
+    "publish:minor": "lerna version minor -m %v --exact --no-push",
+    "publish:major": "lerna version major -m %v --exact --no-push"
   },
   "devDependencies": {
     "husky": "^4.2.5",
