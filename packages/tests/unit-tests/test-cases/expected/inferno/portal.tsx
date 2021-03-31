@@ -4,6 +4,7 @@ import {
   RefObject,
   BaseInfernoComponent,
   InfernoComponent,
+  InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/vdom";
 function view(model: Widget) {

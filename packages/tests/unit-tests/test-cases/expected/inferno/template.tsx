@@ -1,6 +1,7 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
+  InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/vdom";
 import { WidgetWithProps, WidgetWithPropsInput } from "./dx-widget-with-props";
