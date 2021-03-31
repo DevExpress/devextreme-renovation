@@ -2,10 +2,5 @@
   "packages": ["packages/*"],
   "version": "independent",
   "npmClient": "npm",
-  "stream": true,
-  "command": {
-    "version": {
-      "message": "%s"
-    }
-  }
+  "stream": true
 }
