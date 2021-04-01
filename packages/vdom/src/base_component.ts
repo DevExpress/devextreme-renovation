@@ -1,4 +1,4 @@
-import { Component } from "inferno";
+import { Component, findDOMfromVNode } from "inferno";
 import { InfernoEffect } from "./effect";
 import { InfernoEffectHost } from "./effect_host";
 
@@ -74,5 +74,61 @@ export class InfernoComponent<P = {}, S = {}> extends BaseInfernoComponent<
 
   componentWillUnmount() {
     this.destroyEffects();
+  }
+}
+
+export class InfernoWrapperComponent<P = {}, S = {}> extends InfernoComponent<P, S> {
+  vDomElement: Element | null = null;
+  vDomPreviousClasses: string[] = [];
+  vDomRemovedClasses: string[] = [];
+  vDomAddedClasses: string[] = [];
+
+  vDomUpdateClasses() {
+    const currentClasses = this.vDomElement?.className.split(' ') ?? [];
+    const addedClasses = currentClasses.filter(className => !this.vDomPreviousClasses.includes(className));
+    const removedClasses = this.vDomPreviousClasses.filter(className => !currentClasses.includes(className));
+
+    addedClasses.forEach(value => {
+      const indexInRemoved = this.vDomRemovedClasses.indexOf(value);
+      if (indexInRemoved >- 1) {
+        this.vDomRemovedClasses.splice(indexInRemoved, 1);
+      } else {
+        this.vDomAddedClasses.push(value);
+      }
+    });
+
+    removedClasses.forEach(value => {
+      const indexInAdded = this.vDomAddedClasses.indexOf(value);
+      if (indexInAdded >- 1) {
+        this.vDomAddedClasses.splice(indexInAdded, 1);
+      } else {
+        this.vDomRemovedClasses.push(value);
+      }
+    })
+  }
+
+  componentDidMount() {
+    super.componentDidMount();
+
+    this.vDomElement = findDOMfromVNode(this.$LI, true);
+    this.vDomPreviousClasses = this.vDomElement?.className.split(' ') ?? [];
+  }
+  
+
+  componentDidUpdate() {
+    super.componentDidUpdate();
+
+    this.vDomElement?.classList.add(...this.vDomAddedClasses);
+    this.vDomElement?.classList.remove(...this.vDomRemovedClasses);
+
+    this.vDomPreviousClasses = this.vDomElement?.className.split(' ') ?? [];
+  }
+
+  shouldComponentUpdate(nextProps: P, nextState: S) {
+    const shouldUpdate = super.shouldComponentUpdate(nextProps, nextState);
+    if (shouldUpdate) {
+      this.vDomUpdateClasses();
+    }
+    return shouldUpdate;
   }
 }

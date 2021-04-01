@@ -2,6 +2,7 @@ import {
   RefObject,
   BaseInfernoComponent,
   InfernoComponent,
+  InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/vdom";
 import BaseWidget from "./method";
