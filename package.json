@@ -24,9 +24,10 @@
     "test:testcafe": "cd packages/tests && npm run test:testcafe",
     "test:testcafe-headless": "cd packages/tests && npm run test:testcafe-headless",
     "testcafe:start-test-servers": "cd packages/tests && npm run testcafe:start-test-servers",
-    "publish:patch": "lerna version patch --exact",
-    "publish:minor": "lerna version minor --exact",
-    "publish:major": "lerna version major --exact"
+    "publish:patch": "npm run prepare-release-branch && lerna version patch --exact",
+    "publish:minor": "npm run prepare-release-branch && lerna version minor --exact",
+    "publish:major": "npm run prepare-release-branch && lerna version major --exact",
+    "prepare-release-branch": "git checkout -b release && git push origin release"
   },
   "devDependencies": {
     "husky": "^4.2.5",
