@@ -18,20 +18,18 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends BaseInfernoComponent<
-  typeof PickedProps & RestProps
-> {
+export default class Widget extends BaseInfernoComponent<any> {
   state = {};
   refs: any;
 
-  constructor(props: typeof PickedProps & RestProps) {
+  constructor(props: any) {
     super(props);
 
     this.getColumns = this.getColumns.bind(this);
   }
 
   getColumns(): any {
-    const { columns } = this.props;
+    const { columns } = this.props as any;
     return columns?.map((el) => (typeof el === "string" ? el : el.name));
   }
   get isEditable(): any {
@@ -40,7 +38,7 @@ export default class Widget extends BaseInfernoComponent<
     );
   }
   get restAttributes(): RestProps {
-    const { columns, editing, ...restProps } = this.props;
+    const { columns, editing, ...restProps } = this.props as any;
     return restProps;
   }
 

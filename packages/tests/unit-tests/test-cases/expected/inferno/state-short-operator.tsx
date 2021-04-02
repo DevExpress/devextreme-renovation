@@ -25,9 +25,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends BaseInfernoComponent<
-  typeof WidgetInput & RestProps
-> {
+export default class Widget extends BaseInfernoComponent<any> {
   state: {
     innerState: number;
     propState: number;
@@ -39,7 +37,7 @@ export default class Widget extends BaseInfernoComponent<
 
   refs: any;
 
-  constructor(props: typeof WidgetInput & RestProps) {
+  constructor(props: any) {
     super(props);
     this.state = {
       innerState: 0,
@@ -93,7 +91,7 @@ export default class Widget extends BaseInfernoComponent<
     const { defaultPropState, propState, propStateChange, ...restProps } = {
       ...this.props,
       propState: this.__state_propState,
-    };
+    } as any;
     return restProps;
   }
 

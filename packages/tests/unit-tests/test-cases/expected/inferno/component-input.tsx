@@ -26,13 +26,11 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends BaseInfernoComponent<
-  typeof WidgetProps & RestProps
-> {
+export default class Widget extends BaseInfernoComponent<any> {
   state = {};
   refs: any;
 
-  constructor(props: typeof WidgetProps & RestProps) {
+  constructor(props: any) {
     super(props);
 
     this.onClick = this.onClick.bind(this);
@@ -42,7 +40,7 @@ export default class Widget extends BaseInfernoComponent<
     const v = this.props.height;
   }
   get restAttributes(): RestProps {
-    const { children, height, width, ...restProps } = this.props;
+    const { children, height, width, ...restProps } = this.props as any;
     return restProps;
   }
 

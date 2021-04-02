@@ -28,21 +28,19 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class WidgetWithApiRef extends BaseInfernoComponent<
-  typeof WidgetWithApiRefInput & RestProps
-> {
+export default class WidgetWithApiRef extends BaseInfernoComponent<any> {
   state = {};
   refs: any;
   baseRef: RefObject<any> = infernoCreateRef<BaseWidget>();
 
-  constructor(props: typeof WidgetWithApiRefInput & RestProps) {
+  constructor(props: any) {
     super(props);
 
     this.getSomething = this.getSomething.bind(this);
   }
 
   get restAttributes(): RestProps {
-    const { prop1, ...restProps } = this.props;
+    const { prop1, ...restProps } = this.props as any;
     return restProps;
   }
   getSomething(): string {
