@@ -23,20 +23,19 @@ declare type RestProps = {
   ref?: any;
 };
 
-export class WidgetWithProps extends BaseInfernoComponent<
-  typeof WidgetWithPropsInput & RestProps
-> {
+export class WidgetWithProps extends BaseInfernoComponent<any> {
   state = {};
   refs: any;
 
-  constructor(props: typeof WidgetWithPropsInput & RestProps) {
+  constructor(props: any) {
     super(props);
 
     this.doSomething = this.doSomething.bind(this);
   }
 
   get restAttributes(): RestProps {
-    const { number, onClick, optionalValue, value, ...restProps } = this.props;
+    const { number, onClick, optionalValue, value, ...restProps } = this
+      .props as any;
     return restProps;
   }
   doSomething(): any {}

@@ -16,7 +16,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends BaseInfernoComponent<{} & RestProps> {
+export default class Widget extends BaseInfernoComponent<any> {
   state: {
     _hovered: Boolean;
   };
@@ -26,7 +26,7 @@ export default class Widget extends BaseInfernoComponent<{} & RestProps> {
 
   refs: any;
 
-  constructor(props: {} & RestProps) {
+  constructor(props: any) {
     super(props);
     this.state = {
       _hovered: false,
@@ -51,7 +51,7 @@ export default class Widget extends BaseInfernoComponent<{} & RestProps> {
     this.set__hovered(() => !this._hovered);
   }
   get restAttributes(): RestProps {
-    const { ...restProps } = this.props;
+    const { ...restProps } = this.props as any;
     return restProps;
   }
 

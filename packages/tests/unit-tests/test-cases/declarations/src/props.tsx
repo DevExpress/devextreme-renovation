@@ -4,6 +4,7 @@ import {
   Event,
   ComponentBindings,
   JSXComponent,
+  TwoWay,
 } from "@devextreme-generator/declarations";
 
 function view(model: Widget): JSX.Element {
@@ -23,6 +24,7 @@ export class WidgetInput {
   @OneWay() height = 10;
   @OneWay() export: object = {};
   @OneWay() sizes?: { height: number; width: number };
+  @TwoWay() stringValue: string = '';
   @Event() onClick: (a: number) => void = () => {};
   @Event() onSomething: EventCallBack<number> = () => {};
 }

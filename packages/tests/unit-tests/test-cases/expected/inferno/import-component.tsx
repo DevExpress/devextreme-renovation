@@ -26,13 +26,11 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Child extends BaseInfernoComponent<
-  typeof ChildInput & RestProps
-> {
+export default class Child extends BaseInfernoComponent<any> {
   state = {};
   refs: any;
 
-  constructor(props: typeof ChildInput & RestProps) {
+  constructor(props: any) {
     super(props);
 
     this.getProps = this.getProps.bind(this);
@@ -42,7 +40,8 @@ export default class Child extends BaseInfernoComponent<
     return { height: this.props.height } as typeof WidgetProps;
   }
   get restAttributes(): RestProps {
-    const { children, height, onClick, width, ...restProps } = this.props;
+    const { children, height, onClick, width, ...restProps } = this
+      .props as any;
     return restProps;
   }
 

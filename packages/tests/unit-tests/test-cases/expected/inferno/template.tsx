@@ -34,13 +34,11 @@ const getTemplate = (TemplateProp: any) =>
   (TemplateProp.defaultProps
     ? (props: any) => <TemplateProp {...props} />
     : TemplateProp);
-export default class WidgetWithTemplate extends BaseInfernoComponent<
-  typeof WidgetInput & RestProps
-> {
+export default class WidgetWithTemplate extends BaseInfernoComponent<any> {
   state = {};
   refs: any;
 
-  constructor(props: typeof WidgetInput & RestProps) {
+  constructor(props: any) {
     super(props);
   }
 
@@ -53,7 +51,7 @@ export default class WidgetWithTemplate extends BaseInfernoComponent<
       someProp,
       template,
       ...restProps
-    } = this.props;
+    } = this.props as any;
     return restProps;
   }
 

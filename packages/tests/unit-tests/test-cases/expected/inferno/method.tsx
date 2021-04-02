@@ -23,14 +23,12 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends BaseInfernoComponent<
-  typeof WidgetInput & RestProps
-> {
+export default class Widget extends BaseInfernoComponent<any> {
   state = {};
   refs: any;
   divRef: RefObject<HTMLDivElement> = infernoCreateRef<HTMLDivElement>();
 
-  constructor(props: typeof WidgetInput & RestProps) {
+  constructor(props: any) {
     super(props);
 
     this.getHeight = this.getHeight.bind(this);
@@ -38,7 +36,7 @@ export default class Widget extends BaseInfernoComponent<
   }
 
   get restAttributes(): RestProps {
-    const { prop1, prop2, ...restProps } = this.props;
+    const { prop1, prop2, ...restProps } = this.props as any;
     return restProps;
   }
   getHeight(p: number = 10, p1: any): string {

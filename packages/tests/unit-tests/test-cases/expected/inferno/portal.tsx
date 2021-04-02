@@ -35,9 +35,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends InfernoComponent<
-  typeof WidgetProps & RestProps
-> {
+export default class Widget extends InfernoComponent<any> {
   state: {
     rendered: boolean;
   };
@@ -47,7 +45,7 @@ export default class Widget extends InfernoComponent<
 
   refs: any;
 
-  constructor(props: typeof WidgetProps & RestProps) {
+  constructor(props: any) {
     super(props);
     this.state = {
       rendered: false,
@@ -77,7 +75,7 @@ export default class Widget extends InfernoComponent<
     this.set_rendered(() => true);
   }
   get restAttributes(): RestProps {
-    const { someRef, ...restProps } = this.props;
+    const { someRef, ...restProps } = this.props as any;
     return restProps;
   }
 

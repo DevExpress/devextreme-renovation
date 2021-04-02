@@ -30,9 +30,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends BaseInfernoComponent<
-  typeof WidgetProps & RestProps
-> {
+export default class Widget extends BaseInfernoComponent<any> {
   state = {};
   refs: any;
   divRef: RefObject<HTMLDivElement> = infernoCreateRef<HTMLDivElement>();
@@ -41,7 +39,7 @@ export default class Widget extends BaseInfernoComponent<
   existingRef: RefObject<HTMLDivElement> = infernoCreateRef<HTMLDivElement>();
   existingForwardRef: RefObject<HTMLDivElement> = infernoCreateRef<HTMLDivElement>();
 
-  constructor(props: typeof WidgetProps & RestProps) {
+  constructor(props: any) {
     super(props);
 
     this.writeRefs = this.writeRefs.bind(this);
@@ -87,7 +85,7 @@ export default class Widget extends BaseInfernoComponent<
     requiredRefProp: HTMLDivElement | null;
     requiredForwardRefProp: HTMLDivElement | null;
   } {
-    const { outerDivRef, ...restProps } = this.props;
+    const { outerDivRef, ...restProps } = this.props as any;
     return {
       refProp: restProps.refProp?.current,
       forwardRefProp: restProps.forwardRefProp?.current,
@@ -103,7 +101,7 @@ export default class Widget extends BaseInfernoComponent<
       requiredForwardRefProp,
       requiredRefProp,
       ...restProps
-    } = this.props;
+    } = this.props as any;
     return restProps;
   }
 
