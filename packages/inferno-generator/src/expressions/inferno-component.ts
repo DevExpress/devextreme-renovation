@@ -1,22 +1,31 @@
 import { SetAccessor } from '@devextreme-generator/angular';
 import {
   BaseClassMember,
+  BindingElement,
+  BindingPattern,
   Block,
   Decorators,
   FunctionTypeNode,
   getProps,
   Identifier,
   Method,
+  ObjectLiteral,
   Parameter,
   ReturnStatement,
   SimpleExpression,
-  TypeExpression
+  SimpleTypeExpression,
+  SyntaxKind,
+  TypeExpression,
+  VariableDeclarationList,
+  VariableStatement
 } from '@devextreme-generator/core';
 import { PreactComponent } from '@devextreme-generator/preact';
 import { getChangeEventToken } from '@devextreme-generator/react';
 
 import { GetAccessor } from './class-members/get-accessor';
 import { Property } from './class-members/property';
+import { PropertyAccess } from './property-access';
+import { VariableDeclaration } from './variable-declaration';
 
 const getEffectRunParameter = (effect: BaseClassMember) =>
   effect.decorators
@@ -258,9 +267,68 @@ export class InfernoComponent extends PreactComponent {
 
     return "";
   }
+  get jQueryRegistered() {
+    const jqueryProp = this.decorators[0].getParameter("jQuery") as
+      | ObjectLiteral
+      | undefined;
+    return jqueryProp?.getProperty("register")?.toString() === "true";
+  }
+
+  // TODO: remove after inferno fixed https://github.com/infernojs/inferno/issues/1536
+  createRestPropsGetter(members: BaseClassMember[]) {
+    const props = getProps(members);
+    const bindingElements = props
+      .reduce((bindingElements, p) => {
+        if (p._name.toString() === "export") {
+          bindingElements.push(
+            new BindingElement(undefined, p._name, "exportProp")
+          );
+        } else {
+          bindingElements.push(
+            new BindingElement(undefined, undefined, p._name)
+          );
+        }
+        return bindingElements;
+      }, [] as BindingElement[])
+      .concat([
+        new BindingElement(
+          SyntaxKind.DotDotDotToken,
+          undefined,
+          new Identifier("restProps")
+        ),
+      ]);
+
+    const statements = [
+      new VariableStatement(
+        undefined,
+        new VariableDeclarationList(
+          [
+            new VariableDeclaration(
+              new BindingPattern(bindingElements, "object"),
+              undefined,
+              new PropertyAccess(
+                new SimpleExpression("this"),
+                new Identifier("props")
+              )
+            ),
+          ],
+          SyntaxKind.ConstKeyword
+        )
+      ),
+      new ReturnStatement(new SimpleExpression("restProps")),
+    ];
+
+    return this.createGetAccessor(
+      new Identifier("restAttributes"),
+      new SimpleTypeExpression("RestProps"),
+      new Block(statements, true)
+    );
+  }
 
   toString() {
-    const propsType = this.compilePropsType();
+    // TODO: uncomment after inferno fixed https://github.com/infernojs/inferno/issues/1536
+    // const propsType = this.compilePropsType();
+    const propsType = "any";
 
     const properties = this.members.filter(
       (m) => m instanceof Property && !m.inherited && !m.isInternalState
@@ -271,7 +339,11 @@ export class InfernoComponent extends PreactComponent {
       .join(";\n");
 
     const hasEffects = this.effects.length > 0;
-    const component = hasEffects ? "InfernoComponent" : "BaseInfernoComponent";
+    const component = this.jQueryRegistered
+      ? "InfernoWrapperComponent"
+      : hasEffects
+      ? "InfernoComponent"
+      : "BaseInfernoComponent";
 
     return `
             ${this.compileImports()}

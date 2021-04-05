@@ -21,10 +21,21 @@ export const WidgetInput = {
   sizes: {
     type: Object,
   },
+  stringValue: {
+    type: String,
+    default() {
+      return "";
+    },
+  },
 };
 export const DxWidget = {
   name: "Widget",
   props: WidgetInput,
+  data() {
+    return {
+      stringValue_state: this.stringValue,
+    };
+  },
   computed: {
     __restAttributes() {
       return {};
@@ -34,10 +45,15 @@ export const DxWidget = {
         height: this.height,
         export: this.export,
         sizes: this.sizes,
+        stringValue: this.stringValue_state,
         onClick: this.onClick,
         onSomething: this.onSomething,
+        stringValueChange: this.stringValueChange,
       };
     },
+  },
+  watch: {
+    stringValue: ["__stringValue_watcher"],
   },
   methods: {
     __getHeight() {
@@ -54,6 +70,12 @@ export const DxWidget = {
     },
     onSomething(...args) {
       this.$emit("something", ...args);
+    },
+    stringValueChange(...args) {
+      this.$emit("update:string-value", ...args);
+    },
+    __stringValue_watcher(s) {
+      this.stringValue_state = s;
     },
   },
 };
