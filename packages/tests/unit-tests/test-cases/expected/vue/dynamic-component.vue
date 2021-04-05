@@ -5,7 +5,11 @@
       :height="internalStateValue"
       v-bind="{
         ...__spreadProps,
-        ...{ onClick: undefined, onSomething: undefined },
+        ...{
+          onClick: undefined,
+          onSomething: undefined,
+          stringValueChange: undefined,
+        },
       }"
       @click="
         __spreadProps.onClick !== undefined
@@ -13,6 +17,7 @@
           : __onComponentClick
       "
       @something="__spreadProps.onSomething"
+      @update:string-value="__spreadProps.stringValueChange"
     /><component
       v-bind:is="__Component"
       :height="height"

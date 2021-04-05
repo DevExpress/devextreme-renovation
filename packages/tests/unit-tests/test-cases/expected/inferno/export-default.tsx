@@ -1,6 +1,7 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
+  InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/vdom";
 function view(model: Widget) {
@@ -19,18 +20,16 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends BaseInfernoComponent<
-  typeof WidgetInput & RestProps
-> {
+export default class Widget extends BaseInfernoComponent<any> {
   state = {};
   refs: any;
 
-  constructor(props: typeof WidgetInput & RestProps) {
+  constructor(props: any) {
     super(props);
   }
 
   get restAttributes(): RestProps {
-    const { prop, ...restProps } = this.props;
+    const { prop, ...restProps } = this.props as any;
     return restProps;
   }
 

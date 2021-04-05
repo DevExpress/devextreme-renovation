@@ -1,6 +1,7 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
+  InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/vdom";
 import InnerWidget from "./dx-inner-widget";
@@ -25,9 +26,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends BaseInfernoComponent<
-  typeof WidgetInput & RestProps
-> {
+export default class Widget extends BaseInfernoComponent<any> {
   state: {
     value?: boolean;
   };
@@ -37,7 +36,7 @@ export default class Widget extends BaseInfernoComponent<
 
   refs: any;
 
-  constructor(props: typeof WidgetInput & RestProps) {
+  constructor(props: any) {
     super(props);
     this.state = {
       value:
@@ -65,7 +64,7 @@ export default class Widget extends BaseInfernoComponent<
     const { defaultValue, value, valueChange, visible, ...restProps } = {
       ...this.props,
       value: this.__state_value,
-    };
+    } as any;
     return restProps;
   }
 
