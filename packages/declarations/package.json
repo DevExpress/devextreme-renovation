@@ -1,6 +1,6 @@
 {
   "name": "@devextreme-generator/declarations",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "DevExtreme declarations",
   "main": "dist/index",
   "types": "dist/index",

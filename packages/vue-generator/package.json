@@ -1,6 +1,6 @@
 {
   "name": "@devextreme-generator/vue",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "DevExtreme vue component generator",
   "main": "dist/index",
   "types": "dist/index",
@@ -16,8 +16,8 @@
   "author": "Developer Express Inc.",
   "license": "MIT",
   "dependencies": {
-    "@devextreme-generator/angular": "1.0.3",
-    "@devextreme-generator/core": "1.0.3",
+    "@devextreme-generator/angular": "^1.0.4",
+    "@devextreme-generator/core": "^1.0.4",
     "prettier": "^2.1.0"
   },
   "devDependencies": {
