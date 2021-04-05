@@ -4,7 +4,6 @@ import {
   RefObject,
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/vdom";
 function view(model: Widget) {
@@ -35,7 +34,9 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends InfernoComponent<any> {
+export default class Widget extends InfernoComponent<
+  typeof WidgetProps & RestProps
+> {
   state: {
     rendered: boolean;
   };
@@ -45,7 +46,7 @@ export default class Widget extends InfernoComponent<any> {
 
   refs: any;
 
-  constructor(props: any) {
+  constructor(props: typeof WidgetProps & RestProps) {
     super(props);
     this.state = {
       rendered: false,
@@ -75,7 +76,7 @@ export default class Widget extends InfernoComponent<any> {
     this.set_rendered(() => true);
   }
   get restAttributes(): RestProps {
-    const { someRef, ...restProps } = this.props as any;
+    const { someRef, ...restProps } = this.props;
     return restProps;
   }
 

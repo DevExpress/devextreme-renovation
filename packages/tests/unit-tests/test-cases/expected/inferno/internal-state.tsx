@@ -1,7 +1,6 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/vdom";
 function view(model: Widget) {
@@ -16,7 +15,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends BaseInfernoComponent<any> {
+export default class Widget extends BaseInfernoComponent<{} & RestProps> {
   state: {
     _hovered: Boolean;
   };
@@ -26,7 +25,7 @@ export default class Widget extends BaseInfernoComponent<any> {
 
   refs: any;
 
-  constructor(props: any) {
+  constructor(props: {} & RestProps) {
     super(props);
     this.state = {
       _hovered: false,
@@ -51,7 +50,7 @@ export default class Widget extends BaseInfernoComponent<any> {
     this.set__hovered(() => !this._hovered);
   }
   get restAttributes(): RestProps {
-    const { ...restProps } = this.props as any;
+    const { ...restProps } = this.props;
     return restProps;
   }
 

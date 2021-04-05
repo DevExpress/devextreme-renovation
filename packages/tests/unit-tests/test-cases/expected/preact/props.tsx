@@ -3,7 +3,6 @@ function view(model: Widget): any {
   return (
     <span>
       {sizes.height}
-
       {sizes.width}
     </span>
   );
@@ -14,22 +13,17 @@ export declare type WidgetInputType = {
   height: number;
   export: object;
   sizes?: { height: number; width: number };
-  stringValue: string;
   onClick: (a: number) => void;
   onSomething: EventCallBack<number>;
-  defaultStringValue: string;
-  stringValueChange?: (stringValue: string) => void;
 };
-export const WidgetInput: WidgetInputType = ({
+export const WidgetInput: WidgetInputType = {
   height: 10,
   export: {},
   onClick: () => {},
   onSomething: () => {},
-  defaultStringValue: "",
-  stringValueChange: () => {},
-} as any) as WidgetInputType;
+};
 import * as Preact from "preact";
-import { useState, useCallback } from "preact/hooks";
+import { useCallback } from "preact/hooks";
 
 declare type RestProps = {
   className?: string;
@@ -45,12 +39,6 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const [__state_stringValue, __state_setStringValue] = useState<string>(() =>
-    props.stringValue !== undefined
-      ? props.stringValue
-      : props.defaultStringValue!
-  );
-
   const __getHeight = useCallback(
     function __getHeight(): number {
       props.onClick(10);
@@ -65,49 +53,28 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
       export: object;
       onSomething: EventCallBack<number>;
     } {
-      const { height, onClick, ...rest } = {
-        ...props,
-        stringValue:
-          props.stringValue !== undefined
-            ? props.stringValue
-            : __state_stringValue,
-      };
+      const { height, onClick, ...rest } = props;
       return rest;
     },
-    [props, __state_stringValue]
+    [props]
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
-        defaultStringValue,
         export: exportProp,
         height,
         onClick,
         onSomething,
         sizes,
-        stringValue,
-        stringValueChange,
         ...restProps
-      } = {
-        ...props,
-        stringValue:
-          props.stringValue !== undefined
-            ? props.stringValue
-            : __state_stringValue,
-      };
+      } = props;
       return restProps;
     },
-    [props, __state_stringValue]
+    [props]
   );
 
   return view({
-    props: {
-      ...props,
-      stringValue:
-        props.stringValue !== undefined
-          ? props.stringValue
-          : __state_stringValue,
-    },
+    props: { ...props },
     getHeight: __getHeight,
     getRestProps: __getRestProps,
     restAttributes: __restAttributes(),

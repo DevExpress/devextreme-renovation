@@ -2,7 +2,6 @@ import {
   RefObject,
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/vdom";
 function view(viewModel: Widget) {
@@ -30,7 +29,9 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends BaseInfernoComponent<any> {
+export default class Widget extends BaseInfernoComponent<
+  typeof WidgetProps & RestProps
+> {
   state = {};
   refs: any;
   divRef: RefObject<HTMLDivElement> = infernoCreateRef<HTMLDivElement>();
@@ -39,7 +40,7 @@ export default class Widget extends BaseInfernoComponent<any> {
   existingRef: RefObject<HTMLDivElement> = infernoCreateRef<HTMLDivElement>();
   existingForwardRef: RefObject<HTMLDivElement> = infernoCreateRef<HTMLDivElement>();
 
-  constructor(props: any) {
+  constructor(props: typeof WidgetProps & RestProps) {
     super(props);
 
     this.writeRefs = this.writeRefs.bind(this);
@@ -85,7 +86,7 @@ export default class Widget extends BaseInfernoComponent<any> {
     requiredRefProp: HTMLDivElement | null;
     requiredForwardRefProp: HTMLDivElement | null;
   } {
-    const { outerDivRef, ...restProps } = this.props as any;
+    const { outerDivRef, ...restProps } = this.props;
     return {
       refProp: restProps.refProp?.current,
       forwardRefProp: restProps.forwardRefProp?.current,
@@ -101,7 +102,7 @@ export default class Widget extends BaseInfernoComponent<any> {
       requiredForwardRefProp,
       requiredRefProp,
       ...restProps
-    } = this.props as any;
+    } = this.props;
     return restProps;
   }
 

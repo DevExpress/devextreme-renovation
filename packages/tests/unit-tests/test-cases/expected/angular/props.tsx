@@ -5,10 +5,8 @@ export class WidgetInput {
   @Input() height: number = 10;
   @Input() export: object = {};
   @Input() sizes?: { height: number; width: number };
-  @Input() stringValue: string = "";
   @Output() onClick: EventEmitter<number> = new EventEmitter();
   @Output() onSomething: EventEmitter<any> = new EventEmitter();
-  @Output() stringValueChange: EventEmitter<string> = new EventEmitter();
 }
 
 import {
@@ -23,10 +21,12 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["height", "export", "sizes", "stringValue"],
-  outputs: ["onClick", "onSomething", "stringValueChange"],
+  inputs: ["height", "export", "sizes"],
+  outputs: ["onClick", "onSomething"],
   template: `<span
     >{{(sizes ?? {width:0,height:0}).height
+
+
     }}{{(sizes ?? {width:0,height:0}).width}}</span
   >`,
 })
@@ -41,10 +41,8 @@ export default class Widget extends WidgetInput {
       height: this.height,
       export: this.export,
       sizes: this.sizes,
-      stringValue: this.stringValue,
       onClick: this._onClick,
       onSomething: this._onSomething,
-      stringValueChange: this._stringValueChange,
     };
     return rest;
   }
@@ -60,7 +58,6 @@ export default class Widget extends WidgetInput {
 
   _onClick: any;
   _onSomething: any;
-  _stringValueChange: any;
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
     this._onClick = (e: any) => {
@@ -68,10 +65,6 @@ export default class Widget extends WidgetInput {
     };
     this._onSomething = (e: any) => {
       this.onSomething.emit(e);
-    };
-    this._stringValueChange = (e: any) => {
-      this.stringValueChange.emit(e);
-      this._detectChanges();
     };
   }
 }

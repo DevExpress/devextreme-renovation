@@ -1,7 +1,6 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/vdom";
 function view(model: InnerWidget) {
@@ -27,7 +26,9 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class InnerWidget extends BaseInfernoComponent<any> {
+export default class InnerWidget extends BaseInfernoComponent<
+  typeof InnerWidgetProps & RestProps
+> {
   state: {
     value: number;
   };
@@ -37,7 +38,7 @@ export default class InnerWidget extends BaseInfernoComponent<any> {
 
   refs: any;
 
-  constructor(props: any) {
+  constructor(props: typeof InnerWidgetProps & RestProps) {
     super(props);
     this.state = {
       value:
@@ -69,7 +70,7 @@ export default class InnerWidget extends BaseInfernoComponent<any> {
       value,
       valueChange,
       ...restProps
-    } = { ...this.props, value: this.__state_value } as any;
+    } = { ...this.props, value: this.__state_value };
     return restProps;
   }
 

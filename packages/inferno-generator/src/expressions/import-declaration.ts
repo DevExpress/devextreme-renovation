@@ -26,7 +26,7 @@ export class ImportDeclaration extends BaseImportDeclaration {
     }
 
     if (this.has("Component")) {
-      common.push("BaseInfernoComponent", "InfernoComponent", "InfernoWrapperComponent", "normalizeStyles");
+      common.push("BaseInfernoComponent", "InfernoComponent", "normalizeStyles");
     }
 
     if (this.has("createContext")) {

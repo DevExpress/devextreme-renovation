@@ -2,7 +2,6 @@ import {
   InfernoEffect,
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/vdom";
 function view(viewModel: Widget) {
@@ -20,14 +19,16 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends InfernoComponent<any> {
+export default class Widget extends InfernoComponent<
+  typeof WidgetInput & RestProps
+> {
   state = {};
   refs: any;
   obj!: { value?: number };
   notDefinedObj?: { value?: number };
   definedObj: { value?: number } = { value: 0 };
 
-  constructor(props: any) {
+  constructor(props: typeof WidgetInput & RestProps) {
     super(props);
 
     this.setObj = this.setObj.bind(this);
@@ -68,7 +69,7 @@ export default class Widget extends InfernoComponent<any> {
     const c = this.notDefinedObj?.value;
   }
   get restAttributes(): RestProps {
-    const { ...restProps } = this.props as any;
+    const { ...restProps } = this.props;
     return restProps;
   }
 
