@@ -2,7 +2,6 @@ import {
   RefObject,
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/vdom";
 function view(viewModel: Widget) {
@@ -23,12 +22,14 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends BaseInfernoComponent<any> {
+export default class Widget extends BaseInfernoComponent<
+  typeof WidgetInput & RestProps
+> {
   state = {};
   refs: any;
   divRef: RefObject<HTMLDivElement> = infernoCreateRef<HTMLDivElement>();
 
-  constructor(props: any) {
+  constructor(props: typeof WidgetInput & RestProps) {
     super(props);
 
     this.getHeight = this.getHeight.bind(this);
@@ -36,7 +37,7 @@ export default class Widget extends BaseInfernoComponent<any> {
   }
 
   get restAttributes(): RestProps {
-    const { prop1, prop2, ...restProps } = this.props as any;
+    const { prop1, prop2, ...restProps } = this.props;
     return restProps;
   }
   getHeight(p: number = 10, p1: any): string {

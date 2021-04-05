@@ -2,7 +2,6 @@ import {
   RefObject,
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/vdom";
 import BaseWidget from "./method";
@@ -28,19 +27,21 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class WidgetWithApiRef extends BaseInfernoComponent<any> {
+export default class WidgetWithApiRef extends BaseInfernoComponent<
+  typeof WidgetWithApiRefInput & RestProps
+> {
   state = {};
   refs: any;
   baseRef: RefObject<any> = infernoCreateRef<BaseWidget>();
 
-  constructor(props: any) {
+  constructor(props: typeof WidgetWithApiRefInput & RestProps) {
     super(props);
 
     this.getSomething = this.getSomething.bind(this);
   }
 
   get restAttributes(): RestProps {
-    const { prop1, ...restProps } = this.props as any;
+    const { prop1, ...restProps } = this.props;
     return restProps;
   }
   getSomething(): string {

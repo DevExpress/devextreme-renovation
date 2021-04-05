@@ -2,7 +2,6 @@ import {
   InfernoEffect,
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/vdom";
 function view(model: Widget) {
@@ -36,7 +35,9 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends InfernoComponent<any> {
+export default class Widget extends InfernoComponent<
+  typeof WidgetInput & RestProps
+> {
   state: {
     i: number;
     j: number;
@@ -50,7 +51,7 @@ export default class Widget extends InfernoComponent<any> {
 
   refs: any;
 
-  constructor(props: any) {
+  constructor(props: typeof WidgetInput & RestProps) {
     super(props);
     this.state = {
       i: 10,
@@ -160,7 +161,7 @@ export default class Widget extends InfernoComponent<any> {
     const { defaultS, p, r, s, sChange, ...restProps } = {
       ...this.props,
       s: this.__state_s,
-    } as any;
+    };
     return restProps;
   }
 

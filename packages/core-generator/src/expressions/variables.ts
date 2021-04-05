@@ -95,7 +95,14 @@ export class VariableDeclaration extends Expression {
       ) &&
       options
     ) {
-      initializer = this.processPropInitializer(initializerExpression, options);
+      let elements: BindingElement[] = [];
+      if (this.name instanceof BindingPattern) {
+        elements = this.name.elements;
+      }
+      initializer = this.initializer!.toString().replace(
+        initializerExpression.toString(),
+        initializerExpression.toString(options, elements)
+      );
     }
 
     if (this.name.toString()) {
@@ -104,18 +111,6 @@ export class VariableDeclaration extends Expression {
       }`;
     }
     return "";
-  }
-
-  // TODO: remove after inferno fixed https://github.com/infernojs/inferno/issues/1536
-  processPropInitializer(initializerExpression: PropertyAccess, options: toStringOptions) {
-    let elements: BindingElement[] = [];
-    if (this.name instanceof BindingPattern) {
-      elements = this.name.elements;
-    }
-    return this.initializer!.toString().replace(
-      initializerExpression.toString(),
-      initializerExpression.toString(options, elements)
-    );
   }
 
   getDependency(options: toStringOptions) {

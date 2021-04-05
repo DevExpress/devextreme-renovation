@@ -1,7 +1,6 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/vdom";
 const loadingJSX = ({ text }: any) => {
@@ -27,11 +26,13 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends BaseInfernoComponent<any> {
+export default class Widget extends BaseInfernoComponent<
+  typeof WidgetInput & RestProps
+> {
   state = {};
   refs: any;
 
-  constructor(props: any) {
+  constructor(props: typeof WidgetInput & RestProps) {
     super(props);
   }
 
@@ -42,7 +43,7 @@ export default class Widget extends BaseInfernoComponent<any> {
     return "User";
   }
   get restAttributes(): RestProps {
-    const { greetings, loading, ...restProps } = this.props as any;
+    const { greetings, loading, ...restProps } = this.props;
     return restProps;
   }
 

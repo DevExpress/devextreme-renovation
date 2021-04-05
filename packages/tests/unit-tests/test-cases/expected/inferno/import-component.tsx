@@ -1,7 +1,6 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/vdom";
 import Base, { WidgetProps } from "./component-input";
@@ -26,11 +25,13 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Child extends BaseInfernoComponent<any> {
+export default class Child extends BaseInfernoComponent<
+  typeof ChildInput & RestProps
+> {
   state = {};
   refs: any;
 
-  constructor(props: any) {
+  constructor(props: typeof ChildInput & RestProps) {
     super(props);
 
     this.getProps = this.getProps.bind(this);
@@ -40,8 +41,7 @@ export default class Child extends BaseInfernoComponent<any> {
     return { height: this.props.height } as typeof WidgetProps;
   }
   get restAttributes(): RestProps {
-    const { children, height, onClick, width, ...restProps } = this
-      .props as any;
+    const { children, height, onClick, width, ...restProps } = this.props;
     return restProps;
   }
 

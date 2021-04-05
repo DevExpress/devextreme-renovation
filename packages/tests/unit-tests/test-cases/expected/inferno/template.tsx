@@ -1,7 +1,6 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/vdom";
 import { WidgetWithProps, WidgetWithPropsInput } from "./dx-widget-with-props";
@@ -34,11 +33,13 @@ const getTemplate = (TemplateProp: any) =>
   (TemplateProp.defaultProps
     ? (props: any) => <TemplateProp {...props} />
     : TemplateProp);
-export default class WidgetWithTemplate extends BaseInfernoComponent<any> {
+export default class WidgetWithTemplate extends BaseInfernoComponent<
+  typeof WidgetInput & RestProps
+> {
   state = {};
   refs: any;
 
-  constructor(props: any) {
+  constructor(props: typeof WidgetInput & RestProps) {
     super(props);
   }
 
@@ -51,7 +52,7 @@ export default class WidgetWithTemplate extends BaseInfernoComponent<any> {
       someProp,
       template,
       ...restProps
-    } = this.props as any;
+    } = this.props;
     return restProps;
   }
 

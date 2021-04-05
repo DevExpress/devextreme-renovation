@@ -1,5 +1,4 @@
 import {
-  BindingPattern,
   Block,
   Decorator,
   Expression,
@@ -23,7 +22,6 @@ import { JsxOpeningElement } from './expressions/jsx/jsx-opening-element';
 import { PropertyAccess } from './expressions/property-access';
 import { TypeReferenceNode } from './expressions/type-reference-node';
 import { JsxAttribute } from "./expressions/jsx/attribute";
-import { VariableDeclaration } from './expressions/variable-declaration';
 
 export class InfernoGenerator extends PreactGenerator {
   createComponent(
@@ -143,13 +141,5 @@ export class InfernoGenerator extends PreactGenerator {
 
   createJsxAttribute(name: Identifier, initializer?: Expression) {
     return new JsxAttribute(name, initializer);
-  }
-
-  createVariableDeclarationCore(
-    name: Identifier | BindingPattern,
-    type?: TypeExpression,
-    initializer?: Expression
-  ) {
-    return new VariableDeclaration(name, type, initializer);
   }
 }
