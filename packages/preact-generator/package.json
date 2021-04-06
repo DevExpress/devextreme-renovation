@@ -19,6 +19,10 @@
     "@devextreme-generator/core": "1.0.5",
     "@devextreme-generator/react": "1.0.5"
   },
+  "peerDependencies": {
+    "@devextreme-generator/core": "1.0.5",
+    "@devextreme-generator/react": "1.0.5"
+  },
   "devDependencies": {
     "@types/node": "^12.12.14",
     "shx": "^0.3.3",
