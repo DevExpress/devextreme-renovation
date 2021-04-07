@@ -65,7 +65,7 @@ jobs:
 
       - uses: actions/upload-artifact@master
         with:
-          name: devextreme-generator
+          name: devextreme-artifacts
           path: ./DevExtreme
 
   check-compilation:
@@ -83,12 +83,10 @@ jobs:
 
       - uses: actions/download-artifact@master
         with:
-          name: devextreme-generator-artifacts
+          name: devextreme-artifacts
 
       - name: Check - ${{ matrix.TASK }}
         env:
           TASK: ${{ matrix.TASK }}
-        run: |
-          cd ./DevExtreme
-          npx gulp $TASK
+        run: npx gulp $TASK
 
