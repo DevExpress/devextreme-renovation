@@ -18,6 +18,7 @@
     "build:watch": "lerna run build && lerna run build:watch --parallel",
     "clear": "lerna run clear --parallel",
     "pack": "lerna run pack",
+    "lint": "eslint --ext .ts",
     "test": "cd packages/tests && npm run test",
     "test:with-reporters": "cd packages/tests && npm run test:with-reporters",
     "test:with-replace": "cd packages/tests && npm run test:with-replace",
