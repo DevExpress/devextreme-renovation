@@ -1,15 +1,20 @@
 {
-  "extends": [
-      "devextreme/typescript"
-  ],
-  "env": {
-      "browser": true,
-      "node": true,
-      "jest": true
-  },
-  "parserOptions": {
-      "project": ["./tsconfig.json"]
-  },
-  "rules": {
-  }
+    "extends": [
+        "devextreme/typescript"
+    ],
+    "env": {
+        "browser": true,
+        "node": true,
+        "jest": true
+    },
+    "ignorePatterns": ["packages/tests", "node_modules", "dist"],
+    "parserOptions": {
+        "project": ["./tsconfig.json", "./packages/*/tsconfig.json"]
+    },
+    "rules": {
+        "import/no-cycle": "warn",
+        "no-param-reassign": "warn",
+        "no-underscore-dangle": "warn",
+        "@typescript-eslint/no-explicit-any": "warn"
+    }
 }
