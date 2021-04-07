@@ -1,0 +1,91 @@
+# This workflow will run tests for DevExtreme generators
+
+name: DevExtreme compilation
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build-generators:
+    name: Build Generators
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install packages
+        run: npm install --no-audit --no-fund --ignore-scripts
+
+      - name: Bootstrap
+        run: npm run bootstrap:ci
+
+      - name: Pack
+        run: npm run pack
+
+      - name: Get DevExtreme
+        run: git clone https://github.com/DevExpress/DevExtreme
+
+      - name: Install Generator
+        run: |
+          cd ./DevExtreme
+          npm i ../generator/build
+
+      - uses: actions/upload-artifact@master
+        with:
+          name: devextreme-generator-artifacts
+          path: ./packages/*/package.tgz
+
+  build-devextreme:
+    name: Build DevExtreme
+    steps:
+      - name: Get DevExtreme
+        run: git clone https://github.com/DevExpress/DevExtreme
+
+      - uses: actions/download-artifact@master
+        with:
+          name: devextreme-generator-artifacts
+
+      - name: Install Generators
+        run: |
+          cd ./DevExtreme
+          npm i ./vdom/package.tgz
+          npm i ./declarations/package.tgz
+          npm i ./core/package.tgz
+          npm i ./angular/package.tgz
+          npm i ./vue/package.tgz
+          npm i ./react/package.tgz
+          npm i ./preact/package.tgz
+          npm i ./inferno/package.tgz
+          npm i ./build-helpers/package.tgz
+          cd ..
+
+      - uses: actions/upload-artifact@master
+        with:
+          name: devextreme-generator
+          path: ./DevExtreme
+
+  check-compilation:
+    name: Check DevExtreme compilation
+
+    strategy:
+      matrix:
+        TASK: [generate-components, react-compilation-check, angular-compilation-check, vue-compilation-check]
+
+    steps:
+      - uses: actions/download-artifact@master
+        with:
+          name: devextreme-generator-artifacts
+
+      - name: Check - ${{ matrix.TASK }}
+        env:
+          TASK: ${{ matrix.TASK }}
+        run: |
+          cd ./DevExtreme
+          npx gulp $TASK
+
