@@ -75,4 +75,6 @@ jobs:
       - name: Check - ${{ matrix.TASK }}
         env:
           TASK: ${{ matrix.TASK }}
-        run: npx gulp $TASK
+        run: |
+          cd ./DevExtreme
+          npx gulp $TASK
