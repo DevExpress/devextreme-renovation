@@ -13,10 +13,10 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceFolder}/packages/tests/unit-tests/angular-generation.test",
-                "${workspaceFolder}/packages/tests/unit-tests/angular-generator.test",
-                "${workspaceFolder}/packages/tests/unit-tests/react-generator.test",
-                "${workspaceFolder}/packages/tests/unit-tests/vue-generation.test"
+                // "${workspaceFolder}/packages/tests/unit-tests/angular-generation.test",
+                // "${workspaceFolder}/packages/tests/unit-tests/angular-generator.test",
+                // "${workspaceFolder}/packages/tests/unit-tests/react-generator.test",
+                // "${workspaceFolder}/packages/tests/unit-tests/vue-generation.test"
               ],
             "skipFiles": [
                 "<node_internals>/**"
