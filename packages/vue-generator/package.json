@@ -20,10 +20,6 @@
     "@devextreme-generator/core": "1.0.6",
     "prettier": "^2.1.0"
   },
-  "peerDependencies": {
-    "@devextreme-generator/angular": "1.0.5",
-    "@devextreme-generator/core": "1.0.5"
-  },
   "devDependencies": {
     "@types/node": "^12.12.14",
     "@types/prettier": "^2.1.0",

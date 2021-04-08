@@ -21,12 +21,6 @@
     "@devextreme-generator/preact": "1.0.6",
     "@devextreme-generator/react": "1.0.6"
   },
-  "peerDependencies": {
-    "@devextreme-generator/angular": "1.0.5",
-    "@devextreme-generator/core": "1.0.5",
-    "@devextreme-generator/preact": "1.0.5",
-    "@devextreme-generator/react": "1.0.5"
-  },
   "devDependencies": {
     "shx": "^0.3.3",
     "typescript": "3.8"
