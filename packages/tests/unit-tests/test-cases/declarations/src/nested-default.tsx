@@ -1,7 +1,4 @@
-import {
-  Component,
-  JSXComponent,
-} from "@devextreme-generator/declarations";
+import { Component, JSXComponent } from "@devextreme-generator/declarations";
 import { WithNestedInput } from "./nested-default-props";
 
 function view({ props: { rows }, getRowCells }: WithNested) {

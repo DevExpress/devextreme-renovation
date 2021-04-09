@@ -110,7 +110,7 @@ export default function WithNested(props: typeof WithNestedInput & RestProps) {
               (k) => k !== "__name" && k !== "__defaultNestedValues"
             )
           ) {
-            return n?.__defaultNestedValues || n;
+            return (n as any)?.__defaultNestedValues || n;
           }
           return n;
         });
