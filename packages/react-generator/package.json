@@ -1,6 +1,6 @@
 {
   "name": "@devextreme-generator/react",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "DevExtreme react component generator",
   "main": "dist/index",
   "types": "dist/index",
@@ -16,10 +16,7 @@
   "author": "Developer Express Inc.",
   "license": "MIT",
   "dependencies": {
-    "@devextreme-generator/core": "1.0.5"
-  },
-  "peerDependencies": {
-    "@devextreme-generator/core": "1.0.5"
+    "@devextreme-generator/core": "1.0.6"
   },
   "devDependencies": {
     "@types/node": "^12.12.14",
