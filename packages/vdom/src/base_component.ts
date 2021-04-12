@@ -84,7 +84,9 @@ export class InfernoWrapperComponent<P = {}, S = {}> extends InfernoComponent<P,
   vDomAddedClasses: string[] = [];
 
   vDomUpdateClasses() {
-    const currentClasses = this.vDomElement?.className.split(' ') ?? [];
+    const currentClasses = this.vDomElement?.className.length
+      ? this.vDomElement.className.split(' ')
+      : [];
     const addedClasses = currentClasses.filter(className => this.vDomPreviousClasses.indexOf(className) < 0);
     const removedClasses = this.vDomPreviousClasses.filter(className => currentClasses.indexOf(className) < 0);
 
@@ -111,7 +113,9 @@ export class InfernoWrapperComponent<P = {}, S = {}> extends InfernoComponent<P,
     super.componentDidMount();
 
     this.vDomElement = findDOMfromVNode(this.$LI, true);
-    this.vDomPreviousClasses = this.vDomElement?.className.split(' ') ?? [];
+    this.vDomPreviousClasses = this.vDomElement?.className.length
+      ? this.vDomElement.className.split(' ')
+      : [];
   }
   
 
@@ -123,7 +127,9 @@ export class InfernoWrapperComponent<P = {}, S = {}> extends InfernoComponent<P,
     if (element !== null) {
       this.vDomAddedClasses.forEach((className) => element.classList.add(className));
       this.vDomRemovedClasses.forEach((className) => element.classList.remove(className));
-      this.vDomPreviousClasses = element.className.split(' ') ?? [];
+      this.vDomPreviousClasses = this.vDomElement?.className.length
+        ? this.vDomElement.className.split(' ')
+        : [];
     }
   }
 
