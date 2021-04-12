@@ -191,6 +191,11 @@ export class ComponentInput extends BaseComponentInput {
     if (children !== null) {
       members.push(children);
     }
+    members.forEach((m) => {
+      if (m instanceof Property && m.isNested && m.initializer) {
+        m.questionOrExclamationToken = SyntaxKind.QuestionToken;
+      }
+    });
     return members;
   }
 

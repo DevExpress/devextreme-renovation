@@ -35,7 +35,7 @@ import Generator, {
   BindingPattern,
   TypeParameterDeclaration,
   VariableDeclarationList,
-  VariableStatement,
+  VariableStatement
 } from "@devextreme-generator/core";
 import {
   JsxOpeningElement,

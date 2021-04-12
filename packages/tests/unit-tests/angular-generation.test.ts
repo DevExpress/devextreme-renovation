@@ -1,11 +1,11 @@
-import generator from '@devextreme-generator/angular';
-import { resolveModule } from '@devextreme-generator/core';
-import { compile } from '@devextreme-generator/build-helpers';
-import assert from 'assert';
-import path from 'path';
+import generator from "@devextreme-generator/angular";
+import { resolveModule } from "@devextreme-generator/core";
+import { compile } from "@devextreme-generator/build-helpers";
+import assert from "assert";
+import path from "path";
 
-import { createTestGenerator } from './helpers/common';
-import mocha from './helpers/mocha';
+import { createTestGenerator } from "./helpers/common";
+import mocha from "./helpers/mocha";
 
 mocha.describe("angular-generation", function () {
   const testGenerator = createTestGenerator("angular");
@@ -331,10 +331,17 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("nested-props-and-component", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {
-        defaultOptionsModule: path.resolve(__dirname, "../jquery-helpers/default_options"),
+        defaultOptionsModule: path.resolve(
+          __dirname,
+          "../jquery-helpers/default_options"
+        ),
       };
       generator.setContext({
         dirname: path.resolve(__dirname, "./test-cases/declarations/src"),
