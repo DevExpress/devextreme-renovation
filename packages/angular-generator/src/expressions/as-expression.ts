@@ -1,5 +1,4 @@
-import { AsExpression as BaseAsExpression } from "@devextreme-generator/core";
-import { toStringOptions } from "@devextreme-generator/core";
+import { AsExpression as BaseAsExpression, toStringOptions } from '@devextreme-generator/core';
 
 export class AsExpression extends BaseAsExpression {
   toString(options?: toStringOptions) {

@@ -132,7 +132,7 @@ export class JsxOpeningElement extends Expression {
 
   getJsxOptions(options?: toStringOptions) {
     const tagNameString = this.tagName.toString();
-    const jsxVariables = Object.assign({}, options?.variables);
+    const jsxVariables = { ...options?.variables };
     if (!jsxVariables?.[tagNameString]) {
       return options;
     }

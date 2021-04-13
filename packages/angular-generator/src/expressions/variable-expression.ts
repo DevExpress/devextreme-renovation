@@ -1,5 +1,4 @@
-import { VariableDeclaration as BaseVariableDeclaration } from "@devextreme-generator/core";
-import { toStringOptions } from "@devextreme-generator/core";
+import { toStringOptions, VariableDeclaration as BaseVariableDeclaration } from '@devextreme-generator/core';
 
 export class VariableDeclaration extends BaseVariableDeclaration {
   toString(options?: toStringOptions) {

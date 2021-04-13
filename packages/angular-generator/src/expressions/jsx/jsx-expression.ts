@@ -21,7 +21,7 @@ export class JsxExpression extends BaseJsxExpression {
         return iterator;
       }
     }
-    return;
+    return undefined;
   }
 
   toString(options?: toStringOptions) {

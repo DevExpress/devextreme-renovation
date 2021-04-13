@@ -4277,8 +4277,7 @@ export function generateFactoryCode(
   function getFlagValues(enumObj: any, value: number) {
     const members: number[] = [];
     for (const prop in enumObj) {
-      if (typeof enumObj[prop] === "string") continue;
-      if ((enumObj[prop] & value) !== 0) members.push(enumObj[prop]);
+      if (typeof enumObj[prop] !== "string" && (enumObj[prop] & value) !== 0) members.push(enumObj[prop]);
     }
     return members;
   }

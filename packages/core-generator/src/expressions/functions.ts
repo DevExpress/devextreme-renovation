@@ -249,7 +249,8 @@ export class BaseFunction extends Expression {
             }
           });
         }
-        options.componentContext = options.newComponentContext = "";
+        options.newComponentContext = ""
+        options.componentContext = "";
       }
       options.variables = (this.body instanceof Block
         ? this.body.statements

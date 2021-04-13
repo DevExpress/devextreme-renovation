@@ -196,7 +196,7 @@ export class PropertyAccessChain extends ExpressionWithExpression {
     const firstPart = this.expression.toString(options);
 
     return `${
-      replaceMark ? firstPart.replace(/[\?!]$/, "") : firstPart
+      replaceMark ? firstPart.replace(/[?!]$/, "") : firstPart
     }${this.processName(options)}`;
   }
 

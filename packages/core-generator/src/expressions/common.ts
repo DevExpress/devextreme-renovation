@@ -16,10 +16,6 @@ function getIdentifierExpressionFromVariable(
 }
 
 export class Identifier extends SimpleExpression {
-  constructor(name: string) {
-    super(name);
-  }
-
   valueOf() {
     return this.expression;
   }
@@ -132,7 +128,7 @@ export class CallChain extends Call {
 
 export class NonNullExpression extends ExpressionWithExpression {
   toString(options?: toStringOptions) {
-    return `${super.toString(options).replace(/[\?!]$/, "")}!`;
+    return `${super.toString(options).replace(/[?!]$/, "")}!`;
   }
 }
 

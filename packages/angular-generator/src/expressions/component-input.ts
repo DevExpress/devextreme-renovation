@@ -110,7 +110,7 @@ export class ComponentInput extends BaseComponentInput {
   ) {
     let typeString = type.toString();
     if (questionOrExclamationToken === "?") {
-      typeString = typeString + "| undefined";
+      typeString += "| undefined";
     }
     const statements = [new SimpleExpression(`this.__${name}__=value;`)];
 
@@ -140,7 +140,7 @@ export class ComponentInput extends BaseComponentInput {
   ) {
     let typeString = `${type}`;
     if (questionOrExclamationToken === "?") {
-      typeString = typeString + "| undefined";
+      typeString += "| undefined";
     }
 
     const statements = [];

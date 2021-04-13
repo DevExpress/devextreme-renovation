@@ -361,7 +361,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       .filter((el) => el.key.toString() !== "key");
 
     const keyAttribute = this.attributes.find(
-      (el) => el instanceof JsxAttribute && el.name.toString() == "key"
+      (el) => el instanceof JsxAttribute && el.name.toString() === "key"
     );
     if (keyAttribute instanceof JsxAttribute) {
       keyAttribute.compileKey(options);

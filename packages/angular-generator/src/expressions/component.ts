@@ -221,14 +221,12 @@ export class AngularComponent extends Component {
     onPushStrategy: boolean
   ) {
     if (questionOrExclamationToken === "?") {
-      type = type + "| undefined";
+      type += "| undefined";
     }
     const statements = [new SimpleExpression(`this.__${name}=value;`)];
     if (onPushStrategy) {
       statements.push(new SimpleExpression(`this._detectChanges();`));
     }
-
-    onPushStrategy;
 
     return new SetAccessor(
       decorator,
@@ -250,7 +248,7 @@ export class AngularComponent extends Component {
     const isArray = isTypeArray(type);
     const indexGetter = isArray ? "" : "[0]";
     if (questionOrExclamationToken === "?") {
-      type = type + "| undefined";
+      type += "| undefined";
     }
 
     return new GetAccessor(
@@ -611,7 +609,7 @@ export class AngularComponent extends Component {
           } = {}`,
       ];
 
-      getters.map((g) => {
+      getters.forEach((g) => {
         const allDeps = g.getDependency({
           members: this.members,
           componentContext: SyntaxKind.ThisKeyword,
@@ -679,7 +677,7 @@ export class AngularComponent extends Component {
       let usedIterables = new Set();
 
       const subscribe = (e: Method) => `this.${e.getter()}()`;
-      effects.map((e, i) => {
+      effects.forEach((e, i) => {
         const allDeps = e.getDependency({
           members: this.members,
           componentContext: SyntaxKind.ThisKeyword,

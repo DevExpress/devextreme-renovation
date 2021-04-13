@@ -108,26 +108,6 @@ export class ComponentInput extends BaseComponentInput {
 export class PreactComponent extends ReactComponent {
   context!: GeneratorContext;
 
-  constructor(
-    decorator: Decorator,
-    modifiers: string[],
-    name: Identifier,
-    typeParameters: string[],
-    heritageClauses: HeritageClause[],
-    members: Array<Property | Method>,
-    context: GeneratorContext
-  ) {
-    super(
-      decorator,
-      modifiers,
-      name,
-      typeParameters,
-      heritageClauses,
-      members,
-      context
-    );
-  }
-
   get REF_OBJECT_TYPE() {
     return "RefObject";
   }

@@ -13,7 +13,7 @@ export * from "./expressions/jsx/attribute";
 export * from "./expressions/jsx/jsx-expression";
 export * from "./expressions/jsx/spread-attribute";
 export * from "./expressions/jsx/jsx-child-expression";
-export * from "./expressions/jsx//jsx-opening-element";
+export * from "./expressions/jsx/jsx-opening-element";
 export * from "./expressions/jsx/angular-directive";
 export * from "./expressions/class-members/set-accessor";
 
