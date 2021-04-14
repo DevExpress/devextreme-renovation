@@ -42,46 +42,43 @@ import { isElement } from './jsx/elements';
 import { dynamicComponentDirective, dynamicComponentDirectiveCoreImports } from './templates/dynamic-component-directive';
 import { angularPortalCdkImports, angularPortalCoreImports, angularPortalTemplate } from './templates/portal-component';
 
-const CUSTOM_VALUE_ACCESSOR_PROVIDER = "CUSTOM_VALUE_ACCESSOR_PROVIDER";
+const CUSTOM_VALUE_ACCESSOR_PROVIDER = 'CUSTOM_VALUE_ACCESSOR_PROVIDER';
 
 export function compileCoreImports(
   members: Array<Property | Method>,
   context: AngularGeneratorContext,
-  imports: string[] = []
+  imports: string[] = [],
 ) {
   if (
-    members.some((m) =>
-      m.decorators.some(
-        (d) =>
-          d.name === Decorators.OneWay ||
-          d.name === Decorators.RefProp ||
-          d.name === Decorators.Nested ||
-          d.name === Decorators.ForwardRefProp
-      )
-    )
+    members.some((m) => m.decorators.some(
+      (d) => d.name === Decorators.OneWay
+          || d.name === Decorators.RefProp
+          || d.name === Decorators.Nested
+          || d.name === Decorators.ForwardRefProp,
+    ))
   ) {
-    imports.push("Input");
+    imports.push('Input');
   }
   if (members.some((m) => m.isState)) {
-    imports.push("Input", "Output", "EventEmitter");
+    imports.push('Input', 'Output', 'EventEmitter');
   }
   if (members.some((m) => m.isTemplate)) {
-    imports.push("Input", "TemplateRef");
+    imports.push('Input', 'TemplateRef');
   }
   if (members.some((m) => m.isEvent)) {
-    imports.push("Output", "EventEmitter");
+    imports.push('Output', 'EventEmitter');
   }
 
   if (members.some((m) => m.isSlot)) {
-    imports.push("ViewChild", "ElementRef");
+    imports.push('ViewChild', 'ElementRef');
   }
 
   if (members.some((m) => m.isNestedComp)) {
-    imports.push("ContentChildren", "QueryList", "Directive");
+    imports.push('ContentChildren', 'QueryList', 'Directive');
   }
 
   if (members.some((m) => m.isForwardRef)) {
-    imports.push("ElementRef");
+    imports.push('ElementRef');
   }
 
   const set = new Set(context.angularCoreImports);
@@ -90,16 +87,16 @@ export function compileCoreImports(
 
   if (needImport.length) {
     return `import {${[...new Set(needImport)].join(
-      ","
+      ',',
     )}} from "@angular/core"`;
   }
 
-  return "";
+  return '';
 }
 
 function separateDependency(
   allDependency: string[],
-  internalState: Property[]
+  internalState: Property[],
 ): [string[], string[]] {
   const result: [string[], string[]] = [[], []];
   return allDependency.reduce((r, d) => {
@@ -115,36 +112,33 @@ function separateDependency(
 
 function getDependencyFromViewExpression(
   expression: Expression,
-  options: toStringOptions
+  options: toStringOptions,
 ): string[] {
   const members = options.members;
 
   const dependency = expression.getDependency(options);
 
-  const dependencyMembers = members.filter((m) =>
-    dependency.some((d) => d === m._name.toString())
-  );
+  const dependencyMembers = members.filter((m) => dependency.some((d) => d === m._name.toString()));
 
   const methods = dependencyMembers.filter((m) => m instanceof Method);
 
   return methods.reduce(
-    (d: string[], m) =>
-      d.concat(
-        m.getDependency({
-          ...options,
-          componentContext: SyntaxKind.ThisKeyword,
-        })
-      ),
-    dependency.filter((d) => !methods.some((m) => m._name.toString() === d))
+    (d: string[], m) => d.concat(
+      m.getDependency({
+        ...options,
+        componentContext: SyntaxKind.ThisKeyword,
+      }),
+    ),
+    dependency.filter((d) => !methods.some((m) => m._name.toString() === d)),
   );
 }
 
-const ngOnChangesParameters = ["changes"];
+const ngOnChangesParameters = ['changes'];
 
 export const getAngularSelector = (
   name: string | Identifier,
-  postfix: string = "",
-  isSVG = false
+  postfix = '',
+  isSVG = false,
 ) => {
   name = name.toString();
   const words = name
@@ -155,19 +149,20 @@ export const getAngularSelector = (
   if (isSVG) {
     return `g [${name}]`;
   }
-  return [`dx${postfix}`].concat(words).join("-");
+  return [`dx${postfix}`].concat(words).join('-');
 };
 
-export const convertSelectorToName = (selector: string) =>
-  selector
-    .replace(/dx[io]?-/g, "")
-    .split(/[- ]/)
-    .map((str) => capitalizeFirstLetter(str))
-    .join("");
+export const convertSelectorToName = (selector: string) => selector
+  .replace(/dx[io]?-/g, '')
+  .split(/[- ]/)
+  .map((str) => capitalizeFirstLetter(str))
+  .join('');
 
 export class AngularComponent extends Component {
   decorator: Decorator;
+
   members!: (Property | Method)[];
+
   constructor(
     componentDecorator: Decorator,
     modifiers: string[],
@@ -175,7 +170,7 @@ export class AngularComponent extends Component {
     typeParameters: string[],
     heritageClauses: HeritageClause[],
     members: Array<Property | Method>,
-    context: GeneratorContext
+    context: GeneratorContext,
   ) {
     super(
       componentDecorator,
@@ -184,15 +179,15 @@ export class AngularComponent extends Component {
       typeParameters,
       heritageClauses,
       members,
-      context
+      context,
     );
     componentDecorator.addParameter(
-      "selector",
-      new StringLiteral(this.selector)
+      'selector',
+      new StringLiteral(this.selector),
     );
     componentDecorator.addParameter(
-      "changeDetection",
-      new SimpleExpression("ChangeDetectionStrategy.OnPush")
+      'changeDetection',
+      new SimpleExpression('ChangeDetectionStrategy.OnPush'),
     );
     this.decorator = componentDecorator;
   }
@@ -200,15 +195,15 @@ export class AngularComponent extends Component {
   createNestedState(
     name: string,
     questionOrExclamationToken: string,
-    type: string
+    type: string,
   ) {
     return new Property(
       [],
-      ["private"],
+      ['private'],
       new Identifier(`__${name}`),
       questionOrExclamationToken || SyntaxKind.QuestionToken,
       `${type}`,
-      undefined
+      undefined,
     );
   }
 
@@ -218,24 +213,22 @@ export class AngularComponent extends Component {
     name: string,
     questionOrExclamationToken: string,
     type: string,
-    onPushStrategy: boolean
+    onPushStrategy: boolean,
   ) {
-    if (questionOrExclamationToken === "?") {
-      type = type + "| undefined";
+    if (questionOrExclamationToken === '?') {
+      type += '| undefined';
     }
     const statements = [new SimpleExpression(`this.__${name}=value;`)];
     if (onPushStrategy) {
-      statements.push(new SimpleExpression(`this._detectChanges();`));
+      statements.push(new SimpleExpression('this._detectChanges();'));
     }
-
-    onPushStrategy;
 
     return new SetAccessor(
       decorator,
       modifiers,
       new Identifier(`${name}`),
-      [new Parameter([], [], undefined, new Identifier("value"), "", type)],
-      new Block(statements, true)
+      [new Parameter([], [], undefined, new Identifier('value'), '', type)],
+      new Block(statements, true),
     );
   }
 
@@ -245,12 +238,12 @@ export class AngularComponent extends Component {
     questionOrExclamationToken: string,
     type: string,
     componentName: string,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     const isArray = isTypeArray(type);
-    const indexGetter = isArray ? "" : "[0]";
-    if (questionOrExclamationToken === "?") {
-      type = type + "| undefined";
+    const indexGetter = isArray ? '' : '[0]';
+    if (questionOrExclamationToken === '?') {
+      type += '| undefined';
     }
 
     return new GetAccessor(
@@ -269,13 +262,13 @@ export class AngularComponent extends Component {
           return nested${indexGetter};
         }
         ${
-          initializer
-            ? `return ${componentName}.__defaultNestedValues.${name}`
-            : ""
-        }`),
+  initializer
+    ? `return ${componentName}.__defaultNestedValues.${name}`
+    : ''
+}`),
         ],
-        true
-      )
+        true,
+      ),
     );
   }
 
@@ -284,7 +277,7 @@ export class AngularComponent extends Component {
     modifiers: string[],
     name: string,
     questionOrExclamationToken: string,
-    type: string
+    type: string,
   ) {
     return new Property(
       decorator,
@@ -292,15 +285,15 @@ export class AngularComponent extends Component {
       new Identifier(`${name}Nested`),
       questionOrExclamationToken,
       type,
-      undefined
+      undefined,
     );
   }
 
   processNestedProperty(
     property: Property,
-    onPushStrategy: boolean = false,
+    onPushStrategy = false,
     selector: string = this.selector,
-    componentName: string = this.heritageClauses[0].propsType.toString()
+    componentName: string = this.heritageClauses[0].propsType.toString(),
   ) {
     const {
       decorators,
@@ -314,12 +307,12 @@ export class AngularComponent extends Component {
     const nestedCompDecorator = [
       new Decorator(
         new Call(new Identifier(Decorators.NestedComp), undefined, []),
-        {}
+        {},
       ),
     ];
 
     const nestedName = `Dx${convertSelectorToName(
-      `${selector} ${isTypeArray(type) ? removePlural(name) : name}`
+      `${selector} ${isTypeArray(type) ? removePlural(name) : name}`,
     )}`;
 
     const complexType = type
@@ -333,7 +326,7 @@ export class AngularComponent extends Component {
         modifiers,
         name,
         SyntaxKind.QuestionToken,
-        nestedName
+        nestedName,
       ),
       this.createNestedPropertySetter(
         decorators,
@@ -341,7 +334,7 @@ export class AngularComponent extends Component {
         name,
         questionOrExclamationToken,
         complexType,
-        onPushStrategy
+        onPushStrategy,
       ),
       this.createNestedPropertyGetter(
         modifiers,
@@ -349,7 +342,7 @@ export class AngularComponent extends Component {
         questionOrExclamationToken,
         complexType,
         componentName,
-        initializer
+        initializer,
       ),
     ];
   }
@@ -357,20 +350,18 @@ export class AngularComponent extends Component {
   processMembers(members: Array<Property | Method>) {
     members = super.processMembers(members);
     members = members.concat(
-      (members.filter((m) => m.isForwardRefProp) as Property[]).map((m) => {
-        return new Property(
-          [
-            new Decorator(
-              new Call(new Identifier(Decorators.Ref), [], []),
-              this.context
-            ),
-          ],
-          [],
-          new Identifier(`${m.name}Ref`),
-          m.questionOrExclamationToken,
-          m.type
-        );
-      })
+      (members.filter((m) => m.isForwardRefProp) as Property[]).map((m) => new Property(
+        [
+          new Decorator(
+            new Call(new Identifier(Decorators.Ref), [], []),
+            this.context,
+          ),
+        ],
+        [],
+        new Identifier(`${m.name}Ref`),
+        m.questionOrExclamationToken,
+        m.type,
+      )),
     );
 
     members = members.concat(
@@ -379,19 +370,18 @@ export class AngularComponent extends Component {
         .map((m) => {
           const property = m as Property;
           const type = new SimpleTypeExpression(`ElementRef<${m.type}>`);
-          const isOptional =
-            property.questionOrExclamationToken === SyntaxKind.QuestionToken;
+          const isOptional = property.questionOrExclamationToken === SyntaxKind.QuestionToken;
           const questionDotTokenIfNeed = isOptional
             ? SyntaxKind.QuestionDotToken
-            : "";
-          const returnType = `${type}${isOptional ? "|undefined" : ""}`;
+            : '';
+          const returnType = `${type}${isOptional ? '|undefined' : ''}`;
           const parameter = new Parameter(
             [],
             [],
             undefined,
-            new Identifier("ref"),
+            new Identifier('ref'),
             SyntaxKind.QuestionToken,
-            type
+            type,
           );
           return new GetAccessor(
             [],
@@ -401,7 +391,7 @@ export class AngularComponent extends Component {
             new FunctionTypeNode(
               [],
               [parameter],
-              new SimpleTypeExpression(returnType)
+              new SimpleTypeExpression(returnType),
             ),
             new Block(
               [
@@ -410,26 +400,26 @@ export class AngularComponent extends Component {
                     this.name
                   }, ${parameter}): ${returnType}{
                     if(arguments.length){
-                      this.${m.name}${m.isForwardRefProp ? "Ref" : ""} = ref${
-                    !isOptional ? "!" : ""
-                  };
+                      this.${m.name}${m.isForwardRefProp ? 'Ref' : ''} = ref${
+  !isOptional ? '!' : ''
+};
                       ${
-                        m.isForwardRefProp
-                          ? `this.${m.name}
+  m.isForwardRefProp
+    ? `this.${m.name}
                         ${questionDotTokenIfNeed}(ref)`
-                          : ""
-                      }
+    : ''
+}
                     }
                   return this.${m.name}${
-                    m.isForwardRefProp ? `${questionDotTokenIfNeed}()` : ""
-                  }
-                }).bind(this)`
+  m.isForwardRefProp ? `${questionDotTokenIfNeed}()` : ''
+}
+                }).bind(this)`,
                 ),
               ],
-              true
-            )
+              true,
+            ),
           );
-        })
+        }),
     );
 
     members = members.reduce((acc, m) => {
@@ -443,9 +433,9 @@ export class AngularComponent extends Component {
             [],
             new Identifier(`${m.name}Consumer`),
             undefined,
-            m.type
+            m.type,
           ),
-          m
+          m,
         );
       }
       acc.push(m);
@@ -457,10 +447,10 @@ export class AngularComponent extends Component {
       const name = new Identifier(`slot${capitalizeFirstLetter(s.name)}`);
       const decorators = [
         new Decorator(
-          new Call(new Identifier("ViewChild"), undefined, [
+          new Call(new Identifier('ViewChild'), undefined, [
             new SimpleExpression(`"${name}"`),
           ]),
-          {}
+          {},
         ),
       ];
       const parameters = [
@@ -468,9 +458,9 @@ export class AngularComponent extends Component {
           [],
           [],
           undefined,
-          new Identifier("slot"),
+          new Identifier('slot'),
           undefined,
-          new SimpleTypeExpression("ElementRef<HTMLDivElement>")
+          new SimpleTypeExpression('ElementRef<HTMLDivElement>'),
         ),
       ];
       const body = new Block(
@@ -484,7 +474,7 @@ export class AngularComponent extends Component {
           }
         `),
         ],
-        true
+        true,
       );
 
       members.push(new SetAccessor(decorators, [], name, parameters, body));
@@ -495,7 +485,7 @@ export class AngularComponent extends Component {
         undefined,
         undefined,
         undefined,
-        new Identifier("_detectChanges"),
+        new Identifier('_detectChanges'),
         undefined,
         undefined,
         [],
@@ -504,16 +494,16 @@ export class AngularComponent extends Component {
           [
             new SimpleExpression(`setTimeout(() => {
             ${new If(
-              new SimpleExpression(
-                "this.changeDetection && !(this.changeDetection as ViewRef).destroyed"
-              ),
-              new SimpleExpression("this.changeDetection.detectChanges()")
-            )}
+    new SimpleExpression(
+      'this.changeDetection && !(this.changeDetection as ViewRef).destroyed',
+    ),
+    new SimpleExpression('this.changeDetection.detectChanges()'),
+  )}
           })`),
           ],
-          true
-        )
-      )
+          true,
+        ),
+      ),
     );
 
     return members;
@@ -523,7 +513,7 @@ export class AngularComponent extends Component {
     members
       .filter((m) => !m.isApiMethod)
       .forEach((m) => {
-        m.prefix = "__";
+        m.prefix = '__';
       });
     members = members.reduce((members, member) => {
       if (member.isInternalState) {
@@ -538,19 +528,19 @@ export class AngularComponent extends Component {
                 [],
                 undefined,
                 member._name,
-                "",
+                '',
                 member.type,
-                undefined
+                undefined,
               ),
             ],
             new Block(
               [
                 new SimpleExpression(`this.${member.name}=${member._name}`),
-                new SimpleExpression("this._detectChanges()"),
+                new SimpleExpression('this._detectChanges()'),
               ],
-              false
-            )
-          )
+              false,
+            ),
+          ),
         );
       }
       return members;
@@ -559,7 +549,7 @@ export class AngularComponent extends Component {
   }
 
   get selector() {
-    return getAngularSelector(this._name, "", this.isSVGComponent);
+    return getAngularSelector(this._name, '', this.isSVGComponent);
   }
 
   get module() {
@@ -567,74 +557,74 @@ export class AngularComponent extends Component {
   }
 
   compileImports(coreImports: string[] = []) {
-    const core = ["Component", "NgModule"].concat(coreImports);
+    const core = ['Component', 'NgModule'].concat(coreImports);
 
     if (this.refs.length || this.apiRefs.length) {
-      core.push("ViewChild");
+      core.push('ViewChild');
     }
     if (this.refs.length) {
-      core.push("ElementRef");
+      core.push('ElementRef');
     }
 
     if (this.modelProp) {
-      core.push("forwardRef", "HostListener");
+      core.push('forwardRef', 'HostListener');
     }
 
     const imports = [
       `${compileCoreImports(
         this.members.filter((m) => !m.inherited),
         this.context,
-        core
+        core,
       )}`,
       'import {CommonModule} from "@angular/common"',
       ...(this.modelProp
         ? [
-            "import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms'",
-          ]
+          "import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms'",
+        ]
         : []),
     ];
 
     this.compileDefaultOptionsImport(imports);
 
-    return imports.join(";\n");
+    return imports.join(';\n');
   }
 
   compileGetterCache(ngOnChanges: string[]): string {
     const getters = this.members.filter(
-      (m) => m instanceof GetAccessor && m.isMemorized()
+      (m) => m instanceof GetAccessor && m.isMemorized(),
     );
 
     if (getters.length) {
       const statements = [
         `__getterCache: {
-            ${getters.map((g) => `${g._name}?:${g.type}`).join(";\n")}
+            ${getters.map((g) => `${g._name}?:${g.type}`).join(';\n')}
           } = {}`,
       ];
 
-      getters.map((g) => {
+      getters.forEach((g) => {
         const allDeps = g.getDependency({
           members: this.members,
           componentContext: SyntaxKind.ThisKeyword,
         });
         const [propsDependency, internalStateDependency] = separateDependency(
           allDeps,
-          this.internalState
+          this.internalState,
         );
         const deleteCacheStatement = `this.__getterCache["${g._name.toString()}"] = undefined;`;
 
         if (propsDependency.length) {
           const conditionArray = [];
-          if (propsDependency.indexOf("props") === -1) {
+          if (propsDependency.indexOf('props') === -1) {
             conditionArray.push(
-              `[${propsDependency.map((d) => `"${d}"`).join(",")}].some(d=>${
+              `[${propsDependency.map((d) => `"${d}"`).join(',')}].some(d=>${
                 ngOnChangesParameters[0]
-              }[d])`
+              }[d])`,
             );
           }
 
           if (conditionArray.length) {
             ngOnChanges.push(`
-                        if (${conditionArray.join("&&")}) {
+                        if (${conditionArray.join('&&')}) {
                             ${deleteCacheStatement}
                         }`);
           } else {
@@ -644,20 +634,20 @@ export class AngularComponent extends Component {
 
         internalStateDependency.forEach((name) => {
           const setter = this.members.find(
-            (p) => p.name === `_${name}`
+            (p) => p.name === `_${name}`,
           ) as SetAccessor;
           if (setter) {
             setter.body.statements.push(
-              new SimpleExpression(deleteCacheStatement)
+              new SimpleExpression(deleteCacheStatement),
             );
           }
         });
       });
 
-      return statements.join("\n");
+      return statements.join('\n');
     }
 
-    return "";
+    return '';
   }
 
   compileEffects(
@@ -665,32 +655,30 @@ export class AngularComponent extends Component {
     ngOnDestroyStatements: string[],
     ngOnChanges: string[],
     ngAfterViewCheckedStatements: string[],
-    ngDoCheckStatements: string[]
+    ngDoCheckStatements: string[],
   ) {
     const effects = this.members.filter((m) => m.isEffect) as Method[];
     let hasInternalStateDependency = false;
 
     if (effects.length) {
       const statements = [
-        "__destroyEffects: any[] = [];",
-        "__viewCheckedSubscribeEvent: Array<(()=>void)|null> = [];",
-        "_effectTimeout: any;",
+        '__destroyEffects: any[] = [];',
+        '__viewCheckedSubscribeEvent: Array<(()=>void)|null> = [];',
+        '_effectTimeout: any;',
       ];
       let usedIterables = new Set();
 
       const subscribe = (e: Method) => `this.${e.getter()}()`;
-      effects.map((e, i) => {
+      effects.forEach((e, i) => {
         const allDeps = e.getDependency({
           members: this.members,
           componentContext: SyntaxKind.ThisKeyword,
         });
         const [propsDependency, internalStateDependency] = separateDependency(
           allDeps,
-          this.internalState
+          this.internalState,
         );
-        const iterableDeps = allDeps.filter((dep) =>
-          isTypeArray(this.members.find((m) => m.name === dep)?.type)
-        );
+        const iterableDeps = allDeps.filter((dep) => isTypeArray(this.members.find((m) => m.name === dep)?.type));
 
         const updateEffectMethod = `__schedule_${e._name}`;
         if (propsDependency.length || internalStateDependency.length) {
@@ -702,27 +690,25 @@ export class AngularComponent extends Component {
                     }`);
         }
         if (propsDependency.length) {
-          const conditionArray = ["this.__destroyEffects.length"];
-          if (propsDependency.indexOf("props") === -1) {
+          const conditionArray = ['this.__destroyEffects.length'];
+          if (propsDependency.indexOf('props') === -1) {
             conditionArray.push(
-              `[${propsDependency.map((d) => `"${d}"`).join(",")}].some(d=>${
+              `[${propsDependency.map((d) => `"${d}"`).join(',')}].some(d=>${
                 ngOnChangesParameters[0]
-              }[d])`
+              }[d])`,
             );
           }
 
-          const iterableProps = propsDependency.filter((dep) =>
-            isTypeArray(this.members.find((m) => m.name === dep)?.type)
-          );
+          const iterableProps = propsDependency.filter((dep) => isTypeArray(this.members.find((m) => m.name === dep)?.type));
           const assignments = iterableProps
             .map(
               (p) => `if (${ngOnChangesParameters[0]}["${p}"]) {
             this.__cachedObservables["${p}"] = [...${ngOnChangesParameters[0]}["${p}"].currentValue];
-          }`
+          }`,
             )
-            .join("\n");
+            .join('\n');
           ngOnChanges.push(`
-                        if (${conditionArray.join("&&")}) {
+                        if (${conditionArray.join('&&')}) {
                             ${assignments}
                             this.${updateEffectMethod}();
                         }`);
@@ -730,15 +716,15 @@ export class AngularComponent extends Component {
 
         if (iterableDeps.length) {
           usedIterables = new Set([...usedIterables].concat(iterableDeps));
-          const observableConditionArray = ["this.__destroyEffects.length"];
+          const observableConditionArray = ['this.__destroyEffects.length'];
           observableConditionArray.push(
             `this.__checkObservables([${iterableDeps
               .map((d) => `"${d}"`)
-              .join(",")}])`
+              .join(',')}])`,
           );
 
           ngDoCheckStatements.push(`
-          if (${observableConditionArray.join("&&")}) {
+          if (${observableConditionArray.join('&&')}) {
               this._detectChanges();
               this.${updateEffectMethod}();
           }`);
@@ -746,31 +732,30 @@ export class AngularComponent extends Component {
 
         internalStateDependency.forEach((name) => {
           const setter = this.members.find(
-            (p) => p.name === `_${name}`
+            (p) => p.name === `_${name}`,
           ) as SetAccessor;
           if (setter) {
             if (
-              usedIterables.has(name) &&
-              !setter.body.statements.some(
-                (expr) =>
-                  expr.toString() ===
-                  `this.__cachedObservables["${name}"] = [...${name}];`
+              usedIterables.has(name)
+              && !setter.body.statements.some(
+                (expr) => expr.toString()
+                  === `this.__cachedObservables["${name}"] = [...${name}];`,
               )
             ) {
               setter.body.statements.push(
                 new SimpleExpression(
-                  `this.__cachedObservables["${name}"] = [...${name}];`
-                )
+                  `this.__cachedObservables["${name}"] = [...${name}];`,
+                ),
               );
             }
             setter.body.statements.push(
               new SimpleExpression(`
                 if (this.__destroyEffects.length) {
                     this.${updateEffectMethod}();
-                }`)
+                }`),
             );
             setter.body.statements.push(
-              new SimpleExpression("this._updateEffects()")
+              new SimpleExpression('this._updateEffects()'),
             );
             hasInternalStateDependency = true;
           }
@@ -792,11 +777,11 @@ export class AngularComponent extends Component {
             }
           }
         `);
-        ngAfterViewCheckedStatements.push(`this._updateEffects()`);
+        ngAfterViewCheckedStatements.push('this._updateEffects()');
       }
       if (usedIterables.size > 0) {
         statements.push(
-          "__cachedObservables: { [name: string]: Array<any> } = {}"
+          '__cachedObservables: { [name: string]: Array<any> } = {}',
         );
         statements.push(`__checkObservables(keys: string[]) {
           let isChanged = false;
@@ -813,33 +798,33 @@ export class AngularComponent extends Component {
         }`);
         usedIterables.forEach((i) => {
           ngAfterViewInitStatements.push(
-            `this.__cachedObservables["${i}"] = this.${i}`
+            `this.__cachedObservables["${i}"] = this.${i}`,
           );
         });
       }
       ngAfterViewInitStatements.push(
         `this._effectTimeout = setTimeout(()=>{
           this.__destroyEffects.push(${effects
-            .map((e) => subscribe(e))
-            .join(",")});
-          }, 0)`
+    .map((e) => subscribe(e))
+    .join(',')});
+          }, 0)`,
       );
       ngOnDestroyStatements.push(
         `this.__destroyEffects.forEach(d => d && d());
          clearTimeout(this._effectTimeout);
-        `
+        `,
       );
-      return statements.join("\n");
+      return statements.join('\n');
     }
 
-    return "";
+    return '';
   }
 
   compileTrackBy(options: toStringOptions): string {
     return (
       options.trackBy
         ?.map((trackBy) => trackBy.getTrackByDeclaration())
-        .join("\n") || ""
+        .join('\n') || ''
     );
   }
 
@@ -847,13 +832,13 @@ export class AngularComponent extends Component {
     ngOnChangesStatements: string[],
     coreImports: string[],
     ngAfterViewInitStatements: string[],
-    ngAfterViewCheckedStatements: string[]
+    ngAfterViewCheckedStatements: string[],
   ): string {
     const viewFunction = this.decorator.getViewFunction();
     if (viewFunction) {
       const options: toStringOptions = {
         members: this.members,
-        newComponentContext: this.viewModel ? "_viewModel" : "",
+        newComponentContext: this.viewModel ? '_viewModel' : '',
       };
       const expression = getTemplate(viewFunction, options);
       const allDependency: string[] = [];
@@ -866,7 +851,7 @@ export class AngularComponent extends Component {
 
           allDependency.push.apply(
             allDependency,
-            getDependencyFromViewExpression(o.expression, options)
+            getDependencyFromViewExpression(o.expression, options),
           );
 
           const refString = `${
@@ -875,9 +860,9 @@ export class AngularComponent extends Component {
               : o.refExpression.toString(options)
           }?.nativeElement`;
           if (o.refExpression instanceof SimpleExpression) {
-            coreImports.push("ViewChild", "ElementRef");
+            coreImports.push('ViewChild', 'ElementRef');
             members.push(
-              `@ViewChild("${o.refExpression.toString()}", { static: false }) ${o.refExpression.toString()}?: ElementRef<HTMLDivElement>`
+              `@ViewChild("${o.refExpression.toString()}", { static: false }) ${o.refExpression.toString()}?: ElementRef<HTMLDivElement>`,
             );
           }
           return `
@@ -892,8 +877,8 @@ export class AngularComponent extends Component {
         });
 
         if (statements.length) {
-          const methodName = "__applyAttributes__";
-          const scheduledApplyAttributes = "scheduledApplyAttributes";
+          const methodName = '__applyAttributes__';
+          const scheduledApplyAttributes = 'scheduledApplyAttributes';
           ngAfterViewCheckedStatements.push(`if(this.${scheduledApplyAttributes}){
             this.${methodName}();
             this.${scheduledApplyAttributes} = false;
@@ -901,23 +886,22 @@ export class AngularComponent extends Component {
 
           const [propsDependency, internalStateDependency] = separateDependency(
             allDependency.filter(
-              (d) =>
-                !this.members.some(
-                  (m) => m._name.toString() === d && m instanceof Method
-                )
+              (d) => !this.members.some(
+                (m) => m._name.toString() === d && m instanceof Method,
+              ),
             ),
-            this.members.filter((m) => m.isInternalState) as Property[]
+            this.members.filter((m) => m.isInternalState) as Property[],
           );
 
           internalStateDependency.forEach((name) => {
             const setter = this.members.find(
-              (p) => p.name === `_${name}`
+              (p) => p.name === `_${name}`,
             ) as SetAccessor;
             if (setter) {
               const expression = `this.${scheduledApplyAttributes} = this`;
               if (
                 !setter.body.statements.some(
-                  (expr) => expr.toString() === expression
+                  (expr) => expr.toString() === expression,
                 )
               ) {
                 setter.body.statements.push(new SimpleExpression(expression));
@@ -928,10 +912,10 @@ export class AngularComponent extends Component {
           if (propsDependency.length) {
             ngOnChangesStatements.push(`if([${propsDependency
               .map((d) => `"${d}"`)
-              .join(",")}].some(d=>
+              .join(',')}].some(d=>
               ${ngOnChangesParameters[0]}[d] && !${
-              ngOnChangesParameters[0]
-            }[d].firstChange)){
+  ngOnChangesParameters[0]
+}[d].firstChange)){
                 this.${scheduledApplyAttributes} = true;
             }`);
           }
@@ -941,14 +925,14 @@ export class AngularComponent extends Component {
           members.push(`
             ${scheduledApplyAttributes} = false;
             ${methodName}(){
-              ${statements.join("\n")}
+              ${statements.join('\n')}
             }`);
 
-          return members.join(";\n");
+          return members.join(';\n');
         }
       }
     }
-    return "";
+    return '';
   }
 
   compileNgStyleProcessor(options: toStringOptions): string {
@@ -957,20 +941,20 @@ export class AngularComponent extends Component {
                     return normalizeStyles(value);
                 }`;
     }
-    return "";
+    return '';
   }
 
   compileLifeCycle(
     name: string,
     statements: string[],
-    parameters: string[] = []
+    parameters: string[] = [],
   ): string {
-    if (statements.length || (name !== "ngOnChanges" && parameters.length)) {
-      return `${name}(${parameters.join(",")}){
-                ${statements.join("\n")}
+    if (statements.length || (name !== 'ngOnChanges' && parameters.length)) {
+      return `${name}(${parameters.join(',')}){
+                ${statements.join('\n')}
             }`;
     }
-    return "";
+    return '';
   }
 
   compileDefaultOptionsPropsType() {
@@ -986,20 +970,20 @@ export class AngularComponent extends Component {
             });`);
 
       return this.compileDefaultOptionsMethod(
-        this.defaultOptionRules ? this.defaultOptionRules.toString() : "[]",
-        []
+        this.defaultOptionRules ? this.defaultOptionRules.toString() : '[]',
+        [],
       );
     }
-    return "";
+    return '';
   }
 
   compileNgModel() {
     if (!this.modelProp) {
-      return "";
+      return '';
     }
 
     const disabledProp = getProps(this.members).find(
-      (m) => m._name.toString() === "disabled"
+      (m) => m._name.toString() === 'disabled',
     );
 
     return `
@@ -1012,12 +996,12 @@ export class AngularComponent extends Component {
         }
 
         ${
-          disabledProp
-            ? `setDisabledState(isDisabled: boolean): void {
+  disabledProp
+    ? `setDisabledState(isDisabled: boolean): void {
             this.disabled = isDisabled;
         }`
-            : ""
-        }
+    : ''
+}
 
         registerOnChange(fn: () => void): void { this.change = fn; }
         registerOnTouched(fn: () => void): void { this.touched = fn; }
@@ -1026,14 +1010,12 @@ export class AngularComponent extends Component {
 
   getNestedExports(component: ComponentInput, selector: string) {
     const innerNested = (component.members.filter(
-      (m) => m.isNested
+      (m) => m.isNested,
     ) as Property[])
-      .map((m) =>
-        this.processNestedProperty(m, false, selector, component.name).join(
-          "\n"
-        )
-      )
-      .join("\n");
+      .map((m) => this.processNestedProperty(m, false, selector, component.name).join(
+        '\n',
+      ))
+      .join('\n');
 
     const name = convertSelectorToName(selector);
 
@@ -1049,23 +1031,23 @@ export class AngularComponent extends Component {
 
   getNestedFromComponentInput(
     component: ComponentInput,
-    parentSelector: string = this.selector
+    parentSelector: string = this.selector,
   ): { component: ComponentInput; name: string }[] {
     const nestedProps = component.members.filter(
-      (m) => m.isNested
+      (m) => m.isNested,
     ) as Property[];
     const components = component.context.components!;
 
     const nested = Object.keys(components).reduce(
       (acc, key) => {
         const propertyArr = nestedProps.filter(
-          ({ type }) => extractComplexType(type) === key
+          ({ type }) => extractComplexType(type) === key,
         );
         if (propertyArr.length > 0) {
           propertyArr.forEach((property) => {
             const { name: propName, type: propType } = property;
             const isArray = isTypeArray(propType);
-            const postfix = isArray ? "i" : "o";
+            const postfix = isArray ? 'i' : 'o';
             const selectorName = isArray ? removePlural(propName) : propName;
             const selector = getAngularSelector(selectorName, postfix);
 
@@ -1080,21 +1062,19 @@ export class AngularComponent extends Component {
       [] as {
         component: ComponentInput;
         name: string;
-      }[]
+      }[],
     );
 
     return nested.concat(
       nested.reduce(
-        (acc, el) => {
-          return acc.concat(
-            this.getNestedFromComponentInput(el.component, el.name)
-          );
-        },
+        (acc, el) => acc.concat(
+          this.getNestedFromComponentInput(el.component, el.name),
+        ),
         [] as {
           component: ComponentInput;
           name: string;
-        }[]
-      )
+        }[],
+      ),
     );
   }
 
@@ -1109,7 +1089,7 @@ export class AngularComponent extends Component {
     const collectedComponents = this.collectNestedComponents();
     if (collectedComponents.length) {
       const imports = this.getNestedImports(
-        collectedComponents.map(({ component }) => component)
+        collectedComponents.map(({ component }) => component),
       );
       const nestedComponents = collectedComponents
         .map(({ component, name }) => {
@@ -1118,9 +1098,9 @@ export class AngularComponent extends Component {
         })
         .reverse();
 
-      return imports.concat(nestedComponents).join("\n");
+      return imports.concat(nestedComponents).join('\n');
     }
-    return "";
+    return '';
   }
 
   compileBindEvents(constructorStatements: string[]) {
@@ -1132,27 +1112,27 @@ export class AngularComponent extends Component {
           `this._${e.name}=(e:any) => {
             this.${e.name}.emit(e);
             ${
-              this.members.some(
-                (m) => m.isState && e.name === `${m.name}Change`
-              )
-                ? "this._detectChanges();"
-                : ""
-            }
-          }`
+  this.members.some(
+    (m) => m.isState && e.name === `${m.name}Change`,
+  )
+    ? 'this._detectChanges();'
+    : ''
+}
+          }`,
         );
-        return `_${e.name}${compileType("any")}`;
+        return `_${e.name}${compileType('any')}`;
       })
-      .join(";\n");
+      .join(';\n');
   }
 
   compilePortalComponent(
     coreImports: string[],
     cdkImports: string[],
-    importModules: string[]
+    importModules: string[],
   ) {
     coreImports.push(...angularPortalCoreImports);
     cdkImports.push(...angularPortalCdkImports);
-    importModules.push("DxPortal");
+    importModules.push('DxPortal');
 
     // TODO change on import
     return angularPortalTemplate;
@@ -1161,14 +1141,14 @@ export class AngularComponent extends Component {
   compileDynamicComponentDirective(
     decoratorToStringOptions: toStringOptions,
     coreImports: string[],
-    importModules: string[]
+    importModules: string[],
   ) {
     if (!decoratorToStringOptions.hasDynamicComponents) {
-      return "";
+      return '';
     }
 
     coreImports.push(...dynamicComponentDirectiveCoreImports);
-    importModules.push("DynamicComponentDirective");
+    importModules.push('DynamicComponentDirective');
 
     // TODO change on import
     return dynamicComponentDirective;
@@ -1177,17 +1157,17 @@ export class AngularComponent extends Component {
   compileCdkImports(cdkImports: string[] = []) {
     if (cdkImports.length) {
       return `import { ${[...new Set(cdkImports)].join(
-        ","
+        ',',
       )} } from "@angular/cdk/portal"`;
     }
-    return "";
+    return '';
   }
 
   fillProviders() {
     let providers: string[] = [];
 
     const contextProperties = this.members.filter(
-      (m) => m.isConsumer || m.isProvider
+      (m) => m.isConsumer || m.isProvider,
     );
 
     if (contextProperties.length) {
@@ -1203,18 +1183,18 @@ export class AngularComponent extends Component {
 
     if (providers.length) {
       this.decorator.addParameter(
-        "providers",
+        'providers',
         new ArrayLiteral(
           providers.map((p) => new SimpleExpression(p)),
-          true
-        )
+          true,
+        ),
       );
     }
   }
 
   compileValueAccessor(implementedInterfaces: string[]): string {
     if (this.modelProp) {
-      implementedInterfaces.push("ControlValueAccessor");
+      implementedInterfaces.push('ControlValueAccessor');
       return `const ${CUSTOM_VALUE_ACCESSOR_PROVIDER} = {
                 provide: NG_VALUE_ACCESSOR,
                 useExisting: forwardRef(() => ${this.name}),
@@ -1222,16 +1202,16 @@ export class AngularComponent extends Component {
             }`;
     }
 
-    return "";
+    return '';
   }
 
   compileContext(
     constructorStatements: string[],
     constructorArguments: string[],
     ngDoCheckStatements: string[],
-    ngOnDestroyStatements: string[]
+    ngOnDestroyStatements: string[],
   ): string {
-    let destroyContext = "";
+    let destroyContext = '';
     this.members.forEach((m) => {
       if (m.isProvider) {
         const name = m instanceof GetAccessor ? `${m._name}Provider` : m.name;
@@ -1239,19 +1219,17 @@ export class AngularComponent extends Component {
 
         if (!(m instanceof GetAccessor)) {
           constructorStatements.push(
-            `this.${m.name}.value = ${(m as Property).initializer}`
+            `this.${m.name}.value = ${(m as Property).initializer}`,
           );
-        } else {
-          if (m instanceof GetAccessor) {
-            ngDoCheckStatements.push(m.getter(SyntaxKind.ThisKeyword));
-          }
+        } else if (m instanceof GetAccessor) {
+          ngDoCheckStatements.push(m.getter(SyntaxKind.ThisKeyword));
         }
       }
       if (m.isConsumer) {
         constructorArguments.push(
-          `@SkipSelf() @Optional() private ${m.name}: ${m.context}`
+          `@SkipSelf() @Optional() private ${m.name}: ${m.context}`,
         );
-        destroyContext = "_destroyContext: Array<()=>void> = [];";
+        destroyContext = '_destroyContext: Array<()=>void> = [];';
         constructorStatements.push(
           `if(!${m.name}){
             this.${m.name} = new ${m.context}();
@@ -1266,13 +1244,13 @@ export class AngularComponent extends Component {
             });
           }
           this.${m.name}Consumer = this.${m.name}.value;
-          `
+          `,
         );
       }
     });
 
     if (destroyContext.length) {
-      ngOnDestroyStatements.push(`this._destroyContext.forEach(d=>d())`);
+      ngOnDestroyStatements.push('this._destroyContext.forEach(d=>d())');
     }
     return destroyContext;
   }
@@ -1284,42 +1262,42 @@ export class AngularComponent extends Component {
           const defaults = getProps(c.members)
             .filter((p) => p.initializer)
             .map((p) => `${p.name}: ${p.initializer}`)
-            .join(",");
-          return defaults ? `${c.name}Defaults = {${defaults}}` : "";
+            .join(',');
+          return defaults ? `${c.name}Defaults = {${defaults}}` : '';
         })
         .filter((d) => d)
-        .join("\n");
+        .join('\n');
     }
-    return "";
+    return '';
   }
 
   returnGetAccessorBlock(
     argumentPattern: BindingPattern,
     options: toStringOptions,
-    _spreadVar: BindingElement
+    _spreadVar: BindingElement,
   ) {
     const propsNames = getProps(options.members).map((p) => p._name.toString());
     const argNames = argumentPattern.getAllDependency(options);
     const res = propsNames
       .filter((p) => !argNames.includes(p))
       .map(
-        (r) =>
-          new PropertyAssignment(
-            new Identifier(r),
+        (r) => new PropertyAssignment(
+          new Identifier(r),
+          new PropertyAccess(
             new PropertyAccess(
-              new PropertyAccess(
-                new SimpleExpression(SyntaxKind.ThisKeyword),
-                new Identifier("props")
-              ),
-              new Identifier(r)
-            )
-          )
+              new SimpleExpression(SyntaxKind.ThisKeyword),
+              new Identifier('props'),
+            ),
+            new Identifier(r),
+          ),
+        ),
       );
     return new Block(
       [new ReturnStatement(new ObjectLiteral(res, false))],
-      true
+      true,
     );
   }
+
   createViewSpreadAccessor(name: Identifier, body: Block, props: Property[]) {
     return new PropsGetAccessor(
       undefined,
@@ -1328,20 +1306,21 @@ export class AngularComponent extends Component {
       [],
       undefined,
       body,
-      props
+      props,
     );
   }
+
   compileDynamicComponents(
     decoratorToStringOptions: toStringOptions,
     coreImports: string[],
     ngAfterViewInitStatements: string[],
-    ngAfterViewCheckedStatements: string[]
+    ngAfterViewCheckedStatements: string[],
   ): string {
     if (decoratorToStringOptions.hasDynamicComponents) {
-      coreImports.push("ViewChildren", "EventEmitter", "QueryList");
+      coreImports.push('ViewChildren', 'EventEmitter', 'QueryList');
 
-      ngAfterViewInitStatements.push("this.createDynamicComponents()");
-      ngAfterViewCheckedStatements.push("this.createDynamicComponents()");
+      ngAfterViewInitStatements.push('this.createDynamicComponents()');
+      ngAfterViewCheckedStatements.push('this.createDynamicComponents()');
 
       return `
       @ViewChildren(DynamicComponentDirective) dynamicComponentHost!: QueryList<
@@ -1353,7 +1332,7 @@ export class AngularComponent extends Component {
         });
       }`;
     }
-    return "";
+    return '';
   }
 
   compileStyleNormalizer(options: toStringOptions) {
@@ -1420,7 +1399,7 @@ export class AngularComponent extends Component {
             return result;
           }, {} as Record<string, string | number>)
         };`
-      : "";
+      : '';
   }
 
   toString() {
@@ -1434,10 +1413,10 @@ export class AngularComponent extends Component {
       .map((k) => components[k])
       .filter((c) => c instanceof AngularComponent && c !== this)
       .map((c) => (c as AngularComponent).module)
-      .concat(["CommonModule"]);
+      .concat(['CommonModule']);
 
     const entryComponents = Object.keys(components).filter(
-      (k) => components[k] instanceof AngularComponent && components[k] !== this
+      (k) => components[k] instanceof AngularComponent && components[k] !== this,
     );
 
     const ngOnChangesStatements: string[] = [];
@@ -1447,12 +1426,12 @@ export class AngularComponent extends Component {
     const ngDoCheckStatements: string[] = [];
     const constructorStatements: string[] = [];
     const coreImports: string[] = [
-      "ChangeDetectionStrategy",
-      "ChangeDetectorRef",
-      "ViewRef",
+      'ChangeDetectionStrategy',
+      'ChangeDetectorRef',
+      'ViewRef',
     ];
     const constructorArguments: string[] = [
-      "private changeDetection: ChangeDetectorRef",
+      'private changeDetection: ChangeDetectorRef',
     ];
 
     const cdkImports: string[] = [];
@@ -1464,7 +1443,7 @@ export class AngularComponent extends Component {
 
     const decoratorToStringOptions: toStringOptions = {
       members: this.members,
-      newComponentContext: this.viewModel ? "_viewModel" : "",
+      newComponentContext: this.viewModel ? '_viewModel' : '',
       disableTemplates: true,
       isSVG: this.isSVGComponent,
     };
@@ -1473,25 +1452,24 @@ export class AngularComponent extends Component {
 
     this.fillProviders();
     const componentDecorator = this.decorator.toString(
-      decoratorToStringOptions
+      decoratorToStringOptions,
     );
     const spreadAttributes = this.compileSpreadAttributes(
       ngOnChangesStatements,
       coreImports,
       ngAfterViewInitStatements,
-      ngAfterViewCheckedStatements
+      ngAfterViewCheckedStatements,
     );
 
     this.members
       .filter(
-        (m) =>
-          m.isForwardRefProp &&
-          decoratorToStringOptions.forwardRefs?.some(
-            (forwardRef) => forwardRef === m
-          )
+        (m) => m.isForwardRefProp
+          && decoratorToStringOptions.forwardRefs?.some(
+            (forwardRef) => forwardRef === m,
+          ),
       )
       .forEach((m) => {
-        const token = (m as Property).isOptional ? "?." : "";
+        const token = (m as Property).isOptional ? '?.' : '';
         ngAfterViewInitStatements.push(`
                 this.${m.name}${token}(this.${m.name}Ref);
             `);
@@ -1502,10 +1480,10 @@ export class AngularComponent extends Component {
 
     const portalComponent = this.containsPortal()
       ? this.compilePortalComponent(coreImports, cdkImports, importModules)
-      : "";
+      : '';
 
     if (this.members.some((m) => m.isNestedComp)) {
-      ngAfterViewInitStatements.push("this._detectChanges()");
+      ngAfterViewInitStatements.push('this._detectChanges()');
     }
 
     const trackBy = this.compileTrackBy(decoratorToStringOptions);
@@ -1514,13 +1492,13 @@ export class AngularComponent extends Component {
       decoratorToStringOptions,
       coreImports,
       ngAfterViewInitStatements,
-      ngAfterViewCheckedStatements
+      ngAfterViewCheckedStatements,
     );
 
     const dynamicComponentDirective = this.compileDynamicComponentDirective(
       decoratorToStringOptions,
       coreImports,
-      importModules
+      importModules,
     );
 
     return `
@@ -1533,88 +1511,86 @@ export class AngularComponent extends Component {
         ${this.compileDefaultOptions(constructorStatements)}
         ${this.compileValueAccessor(implementedInterfaces)}
         ${componentDecorator}
-        ${this.modifiers.join(" ")} class ${this.name} ${
-      props.length ? `extends ${props.join(" ")}` : ""
-    } ${
-      implementedInterfaces.length
-        ? `implements ${implementedInterfaces.join(",")}`
-        : ""
-    } {
+        ${this.modifiers.join(' ')} class ${this.name} ${
+  props.length ? `extends ${props.join(' ')}` : ''
+} ${
+  implementedInterfaces.length
+    ? `implements ${implementedInterfaces.join(',')}`
+    : ''
+} {
             ${this.extractGlobalsFromTemplate(
-              componentDecorator + trackBy,
-              " = "
-            ).join(";\n")}
+    componentDecorator + trackBy,
+    ' = ',
+  ).join(';\n')}
             ${this.members
-              .filter((m) => !m.inherited && !(m instanceof SetAccessor))
-              .map((m) =>
-                m.toString({
-                  members: this.members,
-                  componentContext: SyntaxKind.ThisKeyword,
-                  newComponentContext: SyntaxKind.ThisKeyword,
-                  forwardRefs: decoratorToStringOptions.forwardRefs,
-                })
-              )
-              .filter((m) => m)
-              .join("\n")}
+    .filter((m) => !m.inherited && !(m instanceof SetAccessor))
+    .map((m) => m.toString({
+      members: this.members,
+      componentContext: SyntaxKind.ThisKeyword,
+      newComponentContext: SyntaxKind.ThisKeyword,
+      forwardRefs: decoratorToStringOptions.forwardRefs,
+    }))
+    .filter((m) => m)
+    .join('\n')}
             ${spreadAttributes}
             ${trackBy}
             ${this.compileContext(
-              constructorStatements,
-              constructorArguments,
-              ngDoCheckStatements,
-              ngOnDestroyStatements
-            )}
+    constructorStatements,
+    constructorArguments,
+    ngDoCheckStatements,
+    ngOnDestroyStatements,
+  )}
             ${dynamicComponents}
             ${this.compileEffects(
-              ngAfterViewInitStatements,
-              ngOnDestroyStatements,
-              ngOnChangesStatements,
-              ngAfterViewCheckedStatements,
-              ngDoCheckStatements
-            )}
+    ngAfterViewInitStatements,
+    ngOnDestroyStatements,
+    ngOnChangesStatements,
+    ngAfterViewCheckedStatements,
+    ngDoCheckStatements,
+  )}
             ${this.compileGetterCache(ngOnChangesStatements)}
             ${this.compileNgModel()}
             ${this.compileLifeCycle(
-              "ngAfterViewInit",
-              ngAfterViewInitStatements
-            )}
-            ${this.compileLifeCycle("ngOnChanges", ngOnChangesStatements, [
-              `${ngOnChangesParameters[0]}: {[name:string]: any}`,
-            ])}
-            ${this.compileLifeCycle("ngOnDestroy", ngOnDestroyStatements)}
+    'ngAfterViewInit',
+    ngAfterViewInitStatements,
+  )}
+            ${this.compileLifeCycle('ngOnChanges', ngOnChangesStatements, [
+    `${ngOnChangesParameters[0]}: {[name:string]: any}`,
+  ])}
+            ${this.compileLifeCycle('ngOnDestroy', ngOnDestroyStatements)}
             ${this.compileLifeCycle(
-              "ngAfterViewChecked",
-              ngAfterViewCheckedStatements
-            )}
-            ${this.compileLifeCycle("ngDoCheck", ngDoCheckStatements)}
+    'ngAfterViewChecked',
+    ngAfterViewCheckedStatements,
+  )}
+            ${this.compileLifeCycle('ngDoCheck', ngDoCheckStatements)}
             ${this.compileBindEvents(constructorStatements)}
             ${this.compileLifeCycle(
-              "constructor",
-              (constructorStatements.length || constructorArguments.length) &&
-                this.heritageClauses.length
-                ? ["super()"].concat(constructorStatements)
-                : constructorStatements,
-              constructorArguments
-            )}
-            ${this.members.filter((m) => m instanceof SetAccessor).join("\n")}
+    'constructor',
+    (constructorStatements.length || constructorArguments.length)
+                && this.heritageClauses.length
+      ? ['super()'].concat(constructorStatements)
+      : constructorStatements,
+    constructorArguments,
+  )}
+            ${this.members.filter((m) => m instanceof SetAccessor).join('\n')}
             ${this.compileNgStyleProcessor(decoratorToStringOptions)}
             ${this.compileDefaultPropsForTemplates(decoratorToStringOptions)}
         }
         @NgModule({
             declarations: [${this.name}, ${nestedModules
-      .concat(importModules)
-      .join(", ")}],
+  .concat(importModules)
+  .join(', ')}],
             imports: [
-                ${modules.join(",\n")}
+                ${modules.join(',\n')}
             ],
             ${
-              entryComponents.length
-                ? `entryComponents: [ 
-              ${entryComponents.join(",\n")}
+  entryComponents.length
+    ? `entryComponents: [ 
+              ${entryComponents.join(',\n')}
             ],`
-                : ""
-            }
-            exports: [${this.name}, ${nestedModules.join(", ")}]
+    : ''
+}
+            exports: [${this.name}, ${nestedModules.join(', ')}]
         })
         export class ${this.module} {}
         export { ${this.name} as Dx${this.name}Component };

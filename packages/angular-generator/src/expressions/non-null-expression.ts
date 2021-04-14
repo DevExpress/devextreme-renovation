@@ -1,8 +1,8 @@
 import {
   NonNullExpression as BaseNonNullExpression,
   toStringOptions,
-  SyntaxKind
-} from "@devextreme-generator/core";
+  SyntaxKind,
+} from '@devextreme-generator/core';
 
 export class NonNullExpression extends BaseNonNullExpression {
   toString(options?: toStringOptions) {

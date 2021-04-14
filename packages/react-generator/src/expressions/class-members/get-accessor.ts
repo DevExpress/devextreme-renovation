@@ -1,8 +1,8 @@
-import { calculateMethodDependency } from "./method";
 import {
   GetAccessor as BaseGetAccessor,
   toStringOptions,
-} from "@devextreme-generator/core";
+} from '@devextreme-generator/core';
+import { calculateMethodDependency } from './method';
 
 export class GetAccessor extends BaseGetAccessor {
   getter(componentContext?: string) {
@@ -12,7 +12,7 @@ export class GetAccessor extends BaseGetAccessor {
   getDependency(options: toStringOptions) {
     return calculateMethodDependency(
       super.getDependency(options),
-      options.members
+      options.members,
     );
   }
 }

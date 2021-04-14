@@ -1,11 +1,7 @@
-import { processFunctionTemplate } from './function';
-import { Parameter } from './parameter';
-import { toStringOptions } from '../../types';
-import { JsxChildExpression, JsxExpression } from '../jsx/jsx-expression';
 import {
   ArrowFunction as AngularArrowFunction,
   isElement,
-} from "@devextreme-generator/angular";
+} from '@devextreme-generator/angular';
 import {
   Block,
   Expression,
@@ -13,7 +9,11 @@ import {
   TypeParameterDeclaration,
   SimpleTypeExpression,
   TypeExpression,
-} from "@devextreme-generator/core";
+} from '@devextreme-generator/core';
+import { processFunctionTemplate } from './function';
+import { Parameter } from './parameter';
+import { toStringOptions } from '../../types';
+import { JsxChildExpression, JsxExpression } from '../jsx/jsx-expression';
 
 export class ArrowFunction extends AngularArrowFunction {
   constructor(
@@ -23,16 +23,16 @@ export class ArrowFunction extends AngularArrowFunction {
     _type: TypeExpression | string | undefined,
     equalsGreaterThanToken: string,
     body: Block | Expression,
-    context: GeneratorContext
+    context: GeneratorContext,
   ) {
     super(
       modifiers,
       typeParameters,
       parameters,
-      new SimpleTypeExpression(""),
+      new SimpleTypeExpression(''),
       equalsGreaterThanToken,
       body,
-      context
+      context,
     );
   }
 
@@ -47,11 +47,11 @@ export class ArrowFunction extends AngularArrowFunction {
     return processFunctionTemplate(
       super.getTemplate(options, doNotChangeContext),
       this.context,
-      options
+      options,
     );
   }
 
   compileTypeParameters(): string {
-    return "";
+    return '';
   }
 }

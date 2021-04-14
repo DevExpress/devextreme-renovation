@@ -1,4 +1,4 @@
-import { GeneratorCache, GeneratorContext } from "./types";
+import { GeneratorCache, GeneratorContext } from './types';
 
 export declare type GeneratorResult = { path?: string; code: string };
 

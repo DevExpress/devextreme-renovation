@@ -1,14 +1,17 @@
-import { Identifier } from "./common";
-import { TypeExpression } from "./type";
+import { Identifier } from './common';
+import { TypeExpression } from './type';
 
 export class TypeParameterDeclaration extends TypeExpression {
   name: Identifier;
+
   constraint?: TypeExpression;
+
   defaultType?: TypeExpression;
+
   constructor(
     name: Identifier,
     constraint?: TypeExpression,
-    defaultType?: TypeExpression
+    defaultType?: TypeExpression,
   ) {
     super();
     this.name = name;
@@ -17,8 +20,8 @@ export class TypeParameterDeclaration extends TypeExpression {
   }
 
   toString() {
-    const constraint = this.constraint ? ` extends ${this.constraint}` : "";
-    const defaultType = this.defaultType ? ` = ${this.defaultType}` : "";
+    const constraint = this.constraint ? ` extends ${this.constraint}` : '';
+    const defaultType = this.defaultType ? ` = ${this.defaultType}` : '';
     return `${this.name}${constraint}${defaultType}`;
   }
 }

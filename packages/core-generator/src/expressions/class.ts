@@ -1,5 +1,5 @@
-import { Identifier, Call } from "./common";
-import { Property, Method } from "./class-members";
+import { Identifier, Call } from './common';
+import { Property, Method } from './class-members';
 import {
   ExpressionWithTypeArguments,
   TypeExpression,
@@ -7,49 +7,46 @@ import {
   UnionTypeNode,
   TypeOperatorNode,
   TypeReferenceNode,
-} from "./type";
-import { GeneratorContext } from "../types";
-import { Decorator } from "./decorator";
-import { StringLiteral } from "./literal";
-import { findComponentInput } from "../utils/expressions";
-import { Expression } from "./base";
-import { compileTypeParameters } from "../utils/string";
+} from './type';
+import { GeneratorContext } from '../types';
+import { Decorator } from './decorator';
+import { StringLiteral } from './literal';
+import { findComponentInput } from '../utils/expressions';
+import { Expression } from './base';
+import { compileTypeParameters } from '../utils/string';
 
 export function inheritMembers(
   heritageClauses: HeritageClause[],
-  members: Array<Property | Method>
+  members: Array<Property | Method>,
 ) {
   return heritageClauses.reduce((m, { members }) => {
-    members = members.filter((inheritMember) =>
-      m.every((m) => m.name.toString() !== inheritMember.name.toString())
-    );
+    members = members.filter((inheritMember) => m.every((m) => m.name.toString() !== inheritMember.name.toString()));
     return m.concat(members);
   }, members);
 }
 
 export function getMemberListFromTypeExpression(
   type: TypeExpression,
-  context: GeneratorContext
+  context: GeneratorContext,
 ): string[] {
   if (
-    type instanceof LiteralTypeNode &&
-    type.expression instanceof StringLiteral
+    type instanceof LiteralTypeNode
+    && type.expression instanceof StringLiteral
   ) {
     return [type.expression.expression];
   }
 
   if (type instanceof UnionTypeNode) {
     return type.types.reduce(
-      (types: string[], t) =>
-        types.concat(getMemberListFromTypeExpression(t, context)),
-      []
+      (types: string[], t) => types.concat(getMemberListFromTypeExpression(t, context)),
+      [],
     );
   }
 
   if (type instanceof TypeOperatorNode) {
     const component = findComponentInput(
       type.type as TypeReferenceNode,
-      context
+      context,
     );
     if (component) {
       return component.members.map((m) => m.name);
@@ -60,8 +57,11 @@ export function getMemberListFromTypeExpression(
 
 export class HeritageClause {
   token: string;
+
   types: ExpressionWithTypeArguments[];
+
   members: Property[];
+
   defaultProps: string[] = [];
 
   get propsType() {
@@ -81,12 +81,12 @@ export class HeritageClause {
 
   get requiredProps() {
     if (
-      this.types[0].expression instanceof Call &&
-      this.types[0].expression.typeArguments?.[1]
+      this.types[0].expression instanceof Call
+      && this.types[0].expression.typeArguments?.[1]
     ) {
       return getMemberListFromTypeExpression(
         this.types[0].expression.typeArguments[1],
-        this.context
+        this.context,
       );
     }
     return [];
@@ -95,20 +95,20 @@ export class HeritageClause {
   constructor(
     token: string,
     types: ExpressionWithTypeArguments[],
-    public context: GeneratorContext
+    public context: GeneratorContext,
   ) {
     this.token = token;
     this.types = types;
 
     this.members = types.reduce((properties: Property[], typeExpression) => {
-      const typeString = typeExpression.type.toString().replace("typeof ", "");
+      const typeString = typeExpression.type.toString().replace('typeof ', '');
       if (
-        context.components &&
-        context.components[typeString] &&
-        context.components[typeString]
+        context.components
+        && context.components[typeString]
+        && context.components[typeString]
       ) {
         properties = properties.concat(
-          context.components[typeString].heritageProperties
+          context.components[typeString].heritageProperties,
         );
       }
       return properties;
@@ -122,11 +122,17 @@ export class HeritageClause {
 
 export class Class extends Expression {
   decorators: Decorator[];
+
   _name: Identifier;
+
   members: Array<Property | Method>;
+
   modifiers: string[];
+
   heritageClauses: HeritageClause[];
+
   context: GeneratorContext;
+
   typeParameters: TypeExpression[] | string[] | undefined;
 
   get name() {
@@ -144,7 +150,7 @@ export class Class extends Expression {
     typeParameters: TypeExpression[] | string[] | undefined,
     heritageClauses: HeritageClause[] = [],
     members: Array<Property | Method>,
-    context: GeneratorContext
+    context: GeneratorContext,
   ) {
     super();
     this._name = name;
@@ -157,12 +163,12 @@ export class Class extends Expression {
   }
 
   toString() {
-    return `${this.decorators.join("\n")}
-        ${this.modifiers.join(" ")} 
+    return `${this.decorators.join('\n')}
+        ${this.modifiers.join(' ')} 
         class ${this.name}${compileTypeParameters(this.typeParameters)} ${
-      this.heritageClauses.length ? `${this.heritageClauses.join(" ")}` : ""
-    } {
-            ${this.members.join("\n")}
+  this.heritageClauses.length ? `${this.heritageClauses.join(' ')}` : ''
+} {
+            ${this.members.join('\n')}
         }`;
   }
 }

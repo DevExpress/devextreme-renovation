@@ -1,14 +1,8 @@
-import { JsxAttribute } from './attribute';
-import { JsxElement } from './element';
-import { JsxSelfClosingElement } from './opening-element';
-import { VueDirective } from "./vue-directive";
-import { toStringOptions } from "../../types";
-import { Property } from "../class-members/property";
 import {
   isElement,
   JsxChildExpression as BaseJsxChildExpression,
   JsxExpression as BaseJsxExpression,
-} from "@devextreme-generator/angular";
+} from '@devextreme-generator/angular';
 import {
   Call,
   getJsxExpression,
@@ -18,11 +12,17 @@ import {
   SimpleExpression,
   getTemplate,
   BaseFunction,
-} from "@devextreme-generator/core";
+} from '@devextreme-generator/core';
+import { JsxAttribute } from './attribute';
+import { JsxElement } from './element';
+import { JsxSelfClosingElement } from './opening-element';
+import { VueDirective } from './vue-directive';
+import { toStringOptions } from '../../types';
+import { Property } from '../class-members/property';
 import {
   TemplateWrapperElement,
   ClosingTemplateWrapperElement,
-} from "./template-wrapper";
+} from './template-wrapper';
 
 export class JsxExpression extends BaseJsxExpression {}
 
@@ -33,19 +33,19 @@ export class JsxChildExpression extends BaseJsxChildExpression {
 
   createContainer(
     attributes: JsxAttribute[],
-    children: Array<JsxExpression | JsxElement | JsxSelfClosingElement>
+    children: Array<JsxExpression | JsxElement | JsxSelfClosingElement>,
   ) {
     return new JsxElement(
       new TemplateWrapperElement(attributes),
       children,
-      new ClosingTemplateWrapperElement()
+      new ClosingTemplateWrapperElement(),
     );
   }
 
   createIfAttribute(condition?: Expression) {
     return new VueDirective(
-      new Identifier(condition ? "v-if" : "v-else"),
-      condition || new SimpleExpression("")
+      new Identifier(condition ? 'v-if' : 'v-else'),
+      condition || new SimpleExpression(''),
     );
   }
 
@@ -54,7 +54,7 @@ export class JsxChildExpression extends BaseJsxChildExpression {
   }
 
   getTemplateForVariable(
-    element: JsxElement | JsxSelfClosingElement
+    element: JsxElement | JsxSelfClosingElement,
   ): JsxElement | JsxSelfClosingElement {
     return element;
   }
@@ -67,18 +67,18 @@ export class JsxChildExpression extends BaseJsxChildExpression {
     condition: Expression,
     thenStatement: Expression,
     elseStatement: Expression,
-    options?: toStringOptions
+    options?: toStringOptions,
   ) {
     const result: string[] = [];
     result.push(this.compileStatement(thenStatement, condition, options));
     result.push(this.compileStatement(elseStatement, undefined, options));
 
-    return result.join("\n");
+    return result.join('\n');
   }
 
   compileSlot(slot: Property) {
-    if (slot.name.toString() === "children") {
-      return `<slot></slot>`;
+    if (slot.name.toString() === 'children') {
+      return '<slot></slot>';
     }
     return `<slot name="${slot.name}"></slot>`;
   }
@@ -86,7 +86,7 @@ export class JsxChildExpression extends BaseJsxChildExpression {
   compileIterator(
     iterator: BaseFunction,
     expression: Call,
-    options?: toStringOptions
+    options?: toStringOptions,
   ): string {
     const templateOptions: toStringOptions = options
       ? { ...options, ...{ keys: [] } }
@@ -98,7 +98,7 @@ export class JsxChildExpression extends BaseJsxChildExpression {
 
     templateOptions.mapItemName = this.getIteratorItemName(
       iterator.parameters[0].name,
-      { ...templateOptions }
+      { ...templateOptions },
     ).toString();
 
     templateOptions.mapItemExpression = itemsExpression;
@@ -108,18 +108,18 @@ export class JsxChildExpression extends BaseJsxChildExpression {
     }
 
     const vForAttribute = new VueDirective(
-      new Identifier("v-for"),
+      new Identifier('v-for'),
       new SimpleExpression(
         `${
           vForValue.length > 1 ? `(${vForValue})` : vForValue[0].toString()
-        } of ${itemsExpression.toString(options)}`
-      )
+        } of ${itemsExpression.toString(options)}`,
+      ),
     );
 
     if (isElement(templateExpression)) {
       const element = templateExpression.clone();
       const elementString = `<template ${vForAttribute}>${element.toString(
-        templateOptions
+        templateOptions,
       )}</template>`;
       if (options) {
         options.hasStyle = options.hasStyle || templateOptions.hasStyle;
@@ -129,14 +129,14 @@ export class JsxChildExpression extends BaseJsxChildExpression {
 
     if (templateExpression) {
       const expression: JsxChildExpression = new JsxChildExpression(
-        templateExpression as JsxExpression
+        templateExpression as JsxExpression,
       );
       return this.createContainer(
         [vForAttribute as JsxAttribute],
-        [expression]
+        [expression],
       ).toString(templateOptions);
     }
 
-    return "";
+    return '';
   }
 }

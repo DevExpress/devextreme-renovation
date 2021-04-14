@@ -1,11 +1,7 @@
-import { toStringOptions } from '../../types';
-import { JsxElement } from '../jsx/element';
-import { JsxChildExpression, JsxExpression } from '../jsx/jsx-expression';
-import { JsxClosingElement, JsxOpeningElement } from '../jsx/opening-element';
 import {
   Function as AngularFunction,
   isElement,
-} from "@devextreme-generator/angular";
+} from '@devextreme-generator/angular';
 import {
   Identifier,
   Decorator,
@@ -14,23 +10,27 @@ import {
   GeneratorContext,
   SimpleTypeExpression,
   TypeExpression,
-} from "@devextreme-generator/core";
+} from '@devextreme-generator/core';
+import { toStringOptions } from '../../types';
+import { JsxElement } from '../jsx/element';
+import { JsxChildExpression, JsxExpression } from '../jsx/jsx-expression';
+import { JsxClosingElement, JsxOpeningElement } from '../jsx/opening-element';
 
 export function processFunctionTemplate(
   template: string,
   context: GeneratorContext,
-  options?: toStringOptions
+  options?: toStringOptions,
 ) {
-  if (template.startsWith("<slot")) {
+  if (template.startsWith('<slot')) {
     return new JsxElement(
       new JsxOpeningElement(
-        new Identifier("Fragment"),
+        new Identifier('Fragment'),
         undefined,
         undefined,
-        context
+        context,
       ),
       [template],
-      new JsxClosingElement(new Identifier("Fragment"), context)
+      new JsxClosingElement(new Identifier('Fragment'), context),
     ).toString(options);
   }
   return template;
@@ -46,7 +46,7 @@ export class Function extends AngularFunction {
     parameters: Parameter[],
     _type: TypeExpression | undefined,
     body: Block,
-    context: GeneratorContext
+    context: GeneratorContext,
   ) {
     super(
       decorators,
@@ -55,9 +55,9 @@ export class Function extends AngularFunction {
       name,
       typeParameters,
       parameters,
-      new SimpleTypeExpression(""),
+      new SimpleTypeExpression(''),
       body,
-      context
+      context,
     );
   }
 
@@ -72,11 +72,11 @@ export class Function extends AngularFunction {
     return processFunctionTemplate(
       super.getTemplate(options, doNotChangeContext),
       this.context,
-      options
+      options,
     );
   }
 
   compileTypeParameters(): string {
-    return "";
+    return '';
   }
 }
