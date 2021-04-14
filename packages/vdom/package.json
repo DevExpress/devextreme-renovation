@@ -2,14 +2,15 @@
   "name": "@devextreme/vdom",
   "version": "1.0.6",
   "description": "DevExtreme virtual DOM common components",
-  "main": "dist/index",
-  "types": "dist/index",
+  "main": "dist/cjs/index",
+  "module": "dist/esm/index",
+  "types": "dist/esm/index",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc --project ./tsconfig.build.json",
-    "build:watch": "tsc --project ./tsconfig.build.json --watch",
+    "build": "tsc -p ./tsconfig.esm.build.json && tsc -p ./tsconfig.cjs.build.json",
+    "build:watch": "tsc -p ./tsconfig.esm.build.json --watch",
     "pack": "npm run build && npm pack && shx cp *.tgz package.tgz",
     "clear": "shx rm -rf dist"
   },
