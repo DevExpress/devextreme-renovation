@@ -1,3 +1,21 @@
+import Generator, {
+  StringLiteral,
+  GeneratorContext,
+  Call,
+  Method,
+  Expression,
+  Identifier,
+  Block,
+  Parameter,
+  TypeExpression,
+  HeritageClause,
+  ImportClause,
+  ComponentInput as BaseComponentInput,
+  BindingPattern,
+  TypeParameterDeclaration,
+  VariableDeclarationList,
+  VariableStatement,
+} from '@devextreme-generator/core';
 import { counter } from './counter';
 import { AsExpression } from './expressions/as-expression';
 import { GetAccessor } from './expressions/class-members/get-accessor';
@@ -19,32 +37,14 @@ import { PropertyAccessChain } from './expressions/property-access-chain';
 import { TypeReferenceNode } from './expressions/type-reference-node';
 import { VariableDeclaration } from './expressions/variable-expression';
 import { AngularGeneratorContext } from './types';
-import Generator, {
-  StringLiteral,
-  GeneratorContext,
-  Call,
-  Method,
-  Expression,
-  Identifier,
-  Block,
-  Parameter,
-  TypeExpression,
-  HeritageClause,
-  ImportClause,
-  ComponentInput as BaseComponentInput,
-  BindingPattern,
-  TypeParameterDeclaration,
-  VariableDeclarationList,
-  VariableStatement
-} from "@devextreme-generator/core";
 import {
   JsxOpeningElement,
   JsxSelfClosingElement,
   JsxClosingElement,
-} from "./expressions/jsx/jsx-opening-element";
+} from './expressions/jsx/jsx-opening-element';
 
 export class AngularGenerator extends Generator {
-  createJsxExpression(dotDotDotToken: string = "", expression?: Expression) {
+  createJsxExpression(dotDotDotToken = '', expression?: Expression) {
     return new JsxExpression(dotDotDotToken, expression);
   }
 
@@ -63,24 +63,24 @@ export class AngularGenerator extends Generator {
   createJsxOpeningElement(
     tagName: Expression,
     typeArguments?: any,
-    attributes?: Array<JsxAttribute | JsxSpreadAttribute>
+    attributes?: Array<JsxAttribute | JsxSpreadAttribute>,
   ) {
     return new JsxOpeningElement(
       tagName,
       typeArguments,
       attributes,
-      this.getContext()
+      this.getContext(),
     );
   }
 
   createVariableStatement(
     modifiers: string[] | undefined,
-    declarationList: VariableDeclarationList
+    declarationList: VariableDeclarationList,
   ) {
     if (
       declarationList.declarations[0].initializer
         ?.toString()
-        .startsWith("createContext")
+        .startsWith('createContext')
     ) {
       return new ContextDeclaration(modifiers, declarationList);
     }
@@ -90,13 +90,13 @@ export class AngularGenerator extends Generator {
   createJsxSelfClosingElement(
     tagName: Expression,
     typeArguments?: any,
-    attributes?: Array<JsxAttribute | JsxSpreadAttribute>
+    attributes?: Array<JsxAttribute | JsxSpreadAttribute>,
   ) {
     return new JsxSelfClosingElement(
       tagName,
       typeArguments,
       attributes,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -107,9 +107,9 @@ export class AngularGenerator extends Generator {
   createJsxElement(
     openingElement: JsxOpeningElement,
     children: Array<
-      JsxElement | string | JsxExpression | JsxSelfClosingElement
+    JsxElement | string | JsxExpression | JsxSelfClosingElement
     >,
-    closingElement: JsxClosingElement
+    closingElement: JsxClosingElement,
   ) {
     return new JsxElement(openingElement, children, closingElement);
   }
@@ -122,7 +122,7 @@ export class AngularGenerator extends Generator {
     typeParameters: any,
     parameters: Parameter[],
     type: TypeExpression | undefined,
-    body: Block
+    body: Block,
   ) {
     return new Function(
       decorators,
@@ -133,7 +133,7 @@ export class AngularGenerator extends Generator {
       parameters,
       type,
       body,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -143,7 +143,7 @@ export class AngularGenerator extends Generator {
     parameters: Parameter[],
     type: TypeExpression | undefined,
     equalsGreaterThanToken: string,
-    body: Block | Expression
+    body: Block | Expression,
   ) {
     return new ArrowFunction(
       modifiers,
@@ -152,14 +152,14 @@ export class AngularGenerator extends Generator {
       type,
       equalsGreaterThanToken,
       body,
-      this.getContext()
+      this.getContext(),
     );
   }
 
   createVariableDeclarationCore(
     name: Identifier | BindingPattern,
     type?: TypeExpression,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     return new VariableDeclaration(name, type, initializer);
   }
@@ -174,7 +174,7 @@ export class AngularGenerator extends Generator {
     name: Identifier,
     typeParameters: string[],
     heritageClauses: HeritageClause[],
-    members: Array<Property | Method>
+    members: Array<Property | Method>,
   ) {
     return new ComponentInput(
       decorators,
@@ -183,7 +183,7 @@ export class AngularGenerator extends Generator {
       typeParameters,
       heritageClauses,
       members,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -193,7 +193,7 @@ export class AngularGenerator extends Generator {
     name: Identifier,
     questionOrExclamationToken?: string,
     type?: TypeExpression,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     return new Property(
       decorators,
@@ -201,7 +201,7 @@ export class AngularGenerator extends Generator {
       name,
       questionOrExclamationToken,
       type,
-      initializer
+      initializer,
     );
   }
 
@@ -214,7 +214,7 @@ export class AngularGenerator extends Generator {
     typeParameters: TypeParameterDeclaration[] | undefined,
     parameters: Parameter[],
     type: TypeExpression | undefined,
-    body: Block
+    body: Block,
   ) {
     return new Method(
       decorators,
@@ -225,7 +225,7 @@ export class AngularGenerator extends Generator {
       typeParameters,
       parameters,
       type,
-      body
+      body,
     );
   }
 
@@ -235,7 +235,7 @@ export class AngularGenerator extends Generator {
     name: Identifier,
     parameters: Parameter[],
     type?: TypeExpression,
-    body?: Block
+    body?: Block,
   ) {
     return new GetAccessor(decorators, modifiers, name, parameters, type, body);
   }
@@ -246,7 +246,7 @@ export class AngularGenerator extends Generator {
     name: Identifier,
     typeParameters: any,
     heritageClauses: HeritageClause[],
-    members: Array<Property | Method>
+    members: Array<Property | Method>,
   ) {
     return new AngularComponent(
       componentDecorator,
@@ -255,7 +255,7 @@ export class AngularGenerator extends Generator {
       typeParameters,
       heritageClauses,
       members,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -266,7 +266,7 @@ export class AngularGenerator extends Generator {
   createPropertyAccessChain(
     expression: Expression,
     questionDotToken: string | undefined,
-    name: Expression
+    name: Expression,
   ) {
     return new PropertyAccessChain(expression, questionDotToken, name);
   }
@@ -277,7 +277,7 @@ export class AngularGenerator extends Generator {
 
   createTypeReferenceNode(
     typeName: Identifier,
-    typeArguments: TypeExpression[] = []
+    typeArguments: TypeExpression[] = [],
   ) {
     return new TypeReferenceNode(typeName, typeArguments, this.getContext());
   }
@@ -290,14 +290,14 @@ export class AngularGenerator extends Generator {
     decorators: Decorator[] = [],
     modifiers: string[] = [],
     importClause: ImportClause,
-    moduleSpecifier: StringLiteral
+    moduleSpecifier: StringLiteral,
   ) {
     return new ImportDeclaration(
       decorators,
       modifiers,
       importClause,
       moduleSpecifier,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -308,14 +308,16 @@ export class AngularGenerator extends Generator {
   }
 
   setContext(context: GeneratorContext | null) {
-    !context && counter.reset();
+    if (!context) {
+      counter.reset();
+    }
     return super.setContext(context);
   }
 
   addComponent(
     name: string,
     component: BaseComponentInput,
-    importClause?: ImportClause
+    importClause?: ImportClause,
   ) {
     if (component instanceof AngularComponent) {
       importClause?.add(component.module);

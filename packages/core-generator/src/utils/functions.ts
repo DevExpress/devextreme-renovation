@@ -1,21 +1,21 @@
-import { Expression } from "../expressions/base";
-import { Paren } from "../expressions/common";
-import { Conditional } from "../expressions/conditions";
+import { Expression } from '../expressions/base';
+import { Paren } from '../expressions/common';
+import { Conditional } from '../expressions/conditions';
 import {
   JsxExpression,
   JsxElement,
   JsxOpeningElement,
-} from "../expressions/jsx";
-import { Binary } from "../expressions/operators";
+} from '../expressions/jsx';
+import { Binary } from '../expressions/operators';
 
 export function containsPortalsInStatements(statement: Expression): boolean {
   if (statement instanceof JsxElement) {
     const children = statement.children.filter(
-      (c) => typeof c !== "string"
+      (c) => typeof c !== 'string',
     ) as Expression[];
     return (
-      statement.isPortal() ||
-      children.some((c) => containsPortalsInStatements(c))
+      statement.isPortal()
+      || children.some((c) => containsPortalsInStatements(c))
     );
   }
   if (statement instanceof Paren) {
@@ -31,8 +31,8 @@ export function containsPortalsInStatements(statement: Expression): boolean {
   }
   if (statement instanceof Conditional) {
     return (
-      containsPortalsInStatements(statement.elseStatement) ||
-      containsPortalsInStatements(statement.thenStatement)
+      containsPortalsInStatements(statement.elseStatement)
+      || containsPortalsInStatements(statement.thenStatement)
     );
   }
   return false;
@@ -41,7 +41,7 @@ export function containsPortalsInStatements(statement: Expression): boolean {
 export const containsStyleInStatements = (statement: Expression): boolean => {
   if (statement instanceof JsxElement) {
     const children = statement.children.filter(
-      (c) => typeof c !== "string"
+      (c) => typeof c !== 'string',
     ) as Expression[];
     return (
       statement.hasStyle() || children.some((c) => containsStyleInStatements(c))
@@ -63,8 +63,8 @@ export const containsStyleInStatements = (statement: Expression): boolean => {
   }
   if (statement instanceof Conditional) {
     return (
-      containsStyleInStatements(statement.elseStatement) ||
-      containsStyleInStatements(statement.thenStatement)
+      containsStyleInStatements(statement.elseStatement)
+      || containsStyleInStatements(statement.thenStatement)
     );
   }
   return false;

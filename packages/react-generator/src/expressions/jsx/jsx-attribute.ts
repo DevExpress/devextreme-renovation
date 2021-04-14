@@ -4,21 +4,20 @@ import {
   PropertyAssignment,
   toStringOptions,
   getProps,
-} from "@devextreme-generator/core";
+} from '@devextreme-generator/core';
 
 const eventsDictionary = {
-  pointerover: "onPointerOver",
-  pointerout: "onPointerOut",
-  pointerdown: "onPointerDown",
-  click: "onClick",
+  pointerover: 'onPointerOver',
+  pointerout: 'onPointerOut',
+  pointerdown: 'onPointerDown',
+  click: 'onClick',
 };
 
 export class JsxAttribute extends BaseJsxAttribute {
   getTemplateContext(): PropertyAssignment[] {
-    const initializer =
-      this.initializer instanceof JsxExpression
-        ? this.initializer
-        : new JsxExpression(undefined, this.initializer);
+    const initializer = this.initializer instanceof JsxExpression
+      ? this.initializer
+      : new JsxExpression(undefined, this.initializer);
     return [new PropertyAssignment(this.name, initializer.getExpression()!)];
   }
 
@@ -30,15 +29,14 @@ export class JsxAttribute extends BaseJsxAttribute {
     let tsOptions = options;
     let name = this.name.toString(options);
 
-    if (name === "style" && this.initializer instanceof JsxExpression) {
-      const value =
-        this.initializer.getExpression(options)?.toString(options) ?? "{}";
+    if (name === 'style' && this.initializer instanceof JsxExpression) {
+      const value = this.initializer.getExpression(options)?.toString(options) ?? '{}';
       return `${this.processName(name, options)}={normalizeStyles(${value})}`;
     }
 
     if (options?.jsxComponent) {
       const member = getProps(options.jsxComponent.members).find(
-        (m) => m._name.toString() === this.name.toString()
+        (m) => m._name.toString() === this.name.toString(),
       );
       if (member) {
         name = member.name;
@@ -49,7 +47,7 @@ export class JsxAttribute extends BaseJsxAttribute {
       }
     }
     return `${this.processName(name, tsOptions)}=${this.initializer.toString(
-      tsOptions
+      tsOptions,
     )}`;
   }
 }

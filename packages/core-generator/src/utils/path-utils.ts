@@ -1,17 +1,17 @@
-import path from "path";
-import fs from "fs";
-import { GeneratorCache } from "../types";
+import path from 'path';
+import fs from 'fs';
+import { GeneratorCache } from '../types';
 
 export function getRelativePath(src: string, dst: string, moduleName: string) {
   const relativePath = `${path.relative(src, dst)}/${moduleName}`.replace(
     /\\/gi,
-    "/"
+    '/',
   );
 
-  if (relativePath.startsWith("/")) {
+  if (relativePath.startsWith('/')) {
     return `.${relativePath}`;
   }
-  if (!relativePath.startsWith(".")) {
+  if (!relativePath.startsWith('.')) {
     return `./${relativePath}`;
   }
   return relativePath;
@@ -20,23 +20,23 @@ export function getRelativePath(src: string, dst: string, moduleName: string) {
 export function getModuleRelativePath(
   src: string,
   moduleSpecifier: string,
-  cleanExtension = false
+  cleanExtension = false,
 ) {
   const normalizedPath = path.normalize(moduleSpecifier);
   const moduleParts = normalizedPath.split(/(\/|\\)/);
 
   const folderPath = path.resolve(
-    moduleParts.slice(0, moduleParts.length - 2).join("/")
+    moduleParts.slice(0, moduleParts.length - 2).join('/'),
   );
 
   const relativePath = getRelativePath(
     src,
     folderPath,
-    moduleParts[moduleParts.length - 1]
+    moduleParts[moduleParts.length - 1],
   );
 
   if (cleanExtension) {
-    return relativePath.replace(path.extname(relativePath), "");
+    return relativePath.replace(path.extname(relativePath), '');
   }
 
   return relativePath;
@@ -44,7 +44,7 @@ export function getModuleRelativePath(
 
 export function readModule(
   module: string,
-  cache: GeneratorCache
+  cache: GeneratorCache,
 ): string | null {
   if (cache[module]) {
     return module;
@@ -58,10 +58,10 @@ export function readModule(
 
 export function resolveModule(
   module: string,
-  cache: GeneratorCache
+  cache: GeneratorCache,
 ): string | null {
   const ext = path.extname(module);
-  if (ext === ".tsx" || ext === ".ts") {
+  if (ext === '.tsx' || ext === '.ts') {
     return readModule(module, cache);
   }
   return (

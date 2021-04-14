@@ -10,4 +10,4 @@ export const counter = (function () {
       i = 0;
     },
   };
-})();
+}());

@@ -1,4 +1,4 @@
-import { Parameter as BaseParameter, variableDeclaration } from "@devextreme-generator/core";
+import { Parameter as BaseParameter, variableDeclaration } from '@devextreme-generator/core';
 
 export class Parameter extends BaseParameter {
   toString() {
@@ -7,7 +7,7 @@ export class Parameter extends BaseParameter {
       undefined,
       this.initializer,
       undefined,
-      this.dotDotDotToken
+      this.dotDotDotToken,
     );
   }
 }

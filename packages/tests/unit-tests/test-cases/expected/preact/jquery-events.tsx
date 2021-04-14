@@ -23,6 +23,12 @@ export default class Widget extends BaseComponent {
       allowNull: [],
       elements: [],
       templates: [],
+      props: [
+        "onKeyDown",
+        "onEventWithoutConfig",
+        "onEventWithConfig",
+        "onEventWithEmptyConfig",
+      ],
     };
   }
 

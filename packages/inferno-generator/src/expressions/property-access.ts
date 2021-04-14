@@ -7,7 +7,7 @@ export class PropertyAccess extends ReactPropertyAccess {
   compileStateSetting(
     state: string,
     property: Property,
-    options: toStringOptions
+    options: toStringOptions,
   ) {
     if (property.isInternalState || property.isState) {
       return `this.set_${property.name}(()=>(${state}))`;

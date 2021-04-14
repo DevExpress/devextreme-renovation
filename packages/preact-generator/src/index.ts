@@ -1,6 +1,6 @@
 import { PreactGenerator } from './preact-generator';
 
-export * from "./preact-generator";
+export * from './preact-generator';
 
 // export { PreactGenerator };
 

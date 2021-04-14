@@ -1,6 +1,6 @@
-import { toStringOptions } from '../../types';
 import { JsxSpreadAttribute as BaseJsxSpreadAttribute } from '@devextreme-generator/angular';
 import { GetAccessor, PropertyAccess } from '@devextreme-generator/core';
+import { toStringOptions } from '../../types';
 
 export class JsxSpreadAttribute extends BaseJsxSpreadAttribute {
   getTemplateProp(options?: toStringOptions) {
@@ -12,10 +12,10 @@ export class JsxSpreadAttribute extends BaseJsxSpreadAttribute {
     if (expression instanceof PropertyAccess) {
       const member = expression.getMember(options);
       if (
-        member instanceof GetAccessor &&
-        member._name.toString() === "restAttributes"
+        member instanceof GetAccessor
+        && member._name.toString() === 'restAttributes'
       ) {
-        return "";
+        return '';
       }
     }
     return `v-bind="${expression.toString(options).replace(/"/gi, "'")}"`;
