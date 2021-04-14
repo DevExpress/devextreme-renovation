@@ -10,22 +10,22 @@ import {
   isTypeArray,
   TypeExpression,
   TypeQueryNode,
-  TypeReferenceNode
+  TypeReferenceNode,
 } from '../expressions/type';
 import { GeneratorContext } from '../types';
 
 export function extractComponentFromType(
   typeExpression: string | TypeExpression | undefined,
-  context: GeneratorContext
+  context: GeneratorContext,
 ): Component | undefined {
   const type = isTypeArray(typeExpression)
     ? extractElementType(typeExpression)
     : typeExpression;
 
   if (
-    type instanceof TypeReferenceNode &&
-    type.typeName.toString() === "JSXTemplate" &&
-    type.typeArguments[0] instanceof TypeReferenceNode
+    type instanceof TypeReferenceNode
+    && type.typeName.toString() === 'JSXTemplate'
+    && type.typeArguments[0] instanceof TypeReferenceNode
   ) {
     const propsName = (type
       .typeArguments[0] as TypeReferenceNode).type.toString();
@@ -34,36 +34,36 @@ export function extractComponentFromType(
       return new Component(
         new Decorator(new Call(new Identifier(Decorators.Component)), context),
         [],
-        new Identifier("temp"),
+        new Identifier('temp'),
         [],
         [
           new HeritageClause(
-            "extends",
+            'extends',
             [
               new ExpressionWithTypeArguments(
                 undefined,
-                new Call(new Identifier("JSXComponent"), type.typeArguments)
+                new Call(new Identifier('JSXComponent'), type.typeArguments),
               ),
             ],
-            context
+            context,
           ),
         ],
         [],
-        context
+        context,
       );
     }
   }
 
   if (
-    type instanceof TypeReferenceNode &&
-    context.components?.[type.typeName.toString()] instanceof Component
+    type instanceof TypeReferenceNode
+    && context.components?.[type.typeName.toString()] instanceof Component
   ) {
     return context.components![type.typeName.toString()] as Component;
   }
 
   if (
-    type instanceof TypeQueryNode &&
-    context.components?.[type.expression.toString()] instanceof Component
+    type instanceof TypeQueryNode
+    && context.components?.[type.expression.toString()] instanceof Component
   ) {
     return context.components![type.expression.toString()] as Component;
   }

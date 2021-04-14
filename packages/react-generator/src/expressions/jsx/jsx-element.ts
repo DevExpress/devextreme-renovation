@@ -1,8 +1,8 @@
-import { JsxOpeningElement } from "./jsx-opening-element";
 import {
   JsxElement as BaseJsxElement,
   toStringOptions,
-} from "@devextreme-generator/core";
+} from '@devextreme-generator/core';
+import { JsxOpeningElement } from './jsx-opening-element';
 
 export class JsxElement extends BaseJsxElement {
   toString(options?: toStringOptions) {
@@ -12,28 +12,28 @@ export class JsxElement extends BaseJsxElement {
     } else {
       const children: string = this.children
         .map((c) => {
-          let str = "";
+          let str = '';
           if (
-            c instanceof JsxElement &&
-            c.openingElement.getTemplateProperty(options)
+            c instanceof JsxElement
+            && c.openingElement.getTemplateProperty(options)
           ) {
             str = `{${c.openingElement.toString(options)}}`;
           } else if (
-            c instanceof JsxOpeningElement &&
-            c.getTemplateProperty(options)
+            c instanceof JsxOpeningElement
+            && c.getTemplateProperty(options)
           ) {
             str = `{${c.toString(options)}}`;
-          } else if (typeof c === "string") {
+          } else if (typeof c === 'string') {
             str = c.trim();
           } else {
             str = c.toString(options);
           }
           return str;
         })
-        .join("\n");
+        .join('\n');
 
       str = `${this.openingElement.toString(
-        options
+        options,
       )}${children}${this.closingElement.toString(options)}`;
     }
     return str;

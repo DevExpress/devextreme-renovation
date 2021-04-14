@@ -5,10 +5,10 @@ import {
   SyntaxKind,
   getMember,
   isProperty,
-  Identifier
-} from "@devextreme-generator/core";
-import { Property } from "./class-members/property";
-import { PropertyAccess } from "./property-access";
+  Identifier,
+} from '@devextreme-generator/core';
+import { Property } from './class-members/property';
+import { PropertyAccess } from './property-access';
 
 export class PropertyAccessChain extends BasePropertyAccessChain {
   getRefAccessor(member: Property) {
@@ -19,16 +19,16 @@ export class PropertyAccessChain extends BasePropertyAccessChain {
       return `?.()${this.questionDotToken}nativeElement`;
     }
     if (member.isRefProp || member.isApiRef) {
-      return "";
+      return '';
     }
     return null;
   }
 
   processName(options?: toStringOptions) {
     if (
-      this.name.toString() === "current" &&
-      (this.expression instanceof PropertyAccess ||
-        this.expression instanceof Identifier)
+      this.name.toString() === 'current'
+      && (this.expression instanceof PropertyAccess
+        || this.expression instanceof Identifier)
     ) {
       const expressionString = this.expression.expression.toString({
         members: [],
@@ -38,7 +38,7 @@ export class PropertyAccessChain extends BasePropertyAccessChain {
       });
       const member = getMember(
         this.expression,
-        compileRefOptions(expressionString, options)
+        compileRefOptions(expressionString, options),
       );
 
       if (member && isProperty(member)) {
@@ -56,13 +56,12 @@ export class PropertyAccessChain extends BasePropertyAccessChain {
     if (options && options.newComponentContext !== SyntaxKind.ThisKeyword) {
       const expression = this.expression.toString(options);
       const member = getMember(this.expression, options);
-      const name =
-        member?.isRef ||
-        member?.isRefProp ||
-        member?.isForwardRef ||
-        member?.isForwardRefProp
-          ? ""
-          : `.${this.name}`;
+      const name = member?.isRef
+        || member?.isRefProp
+        || member?.isForwardRef
+        || member?.isForwardRefProp
+        ? ''
+        : `.${this.name}`;
       return `(${expression}===undefined||${expression}===null?undefined:${expression}${name})`;
     }
     return super.toString(options);

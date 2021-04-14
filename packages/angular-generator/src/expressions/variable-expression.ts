@@ -3,7 +3,7 @@ import { toStringOptions, VariableDeclaration as BaseVariableDeclaration } from 
 export class VariableDeclaration extends BaseVariableDeclaration {
   toString(options?: toStringOptions) {
     if (this.isJsx()) {
-      return "";
+      return '';
     }
     return super.toString(options);
   }

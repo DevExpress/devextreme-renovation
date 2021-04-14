@@ -1,9 +1,11 @@
-import { Expression, ExpressionWithOptionalExpression } from "./base";
-import { toStringOptions } from "../types";
+import { Expression, ExpressionWithOptionalExpression } from './base';
+import { toStringOptions } from '../types';
 
 export class Block extends Expression {
   statements: Expression[];
+
   multiLine: boolean;
+
   constructor(statements: Expression[], multiLine: boolean) {
     super();
     this.statements = statements;
@@ -12,14 +14,12 @@ export class Block extends Expression {
 
   toString(options?: toStringOptions) {
     return `{
-      ${this.statements.map((s) => s.toString(options)).join(";\n")}
+      ${this.statements.map((s) => s.toString(options)).join(';\n')}
     }`;
   }
 
   getDependency(options: toStringOptions) {
-    return this.statements.reduce((d: string[], s) => {
-      return d.concat(s.getDependency(options));
-    }, []);
+    return this.statements.reduce((d: string[], s) => d.concat(s.getDependency(options)), []);
   }
 
   isJsx() {

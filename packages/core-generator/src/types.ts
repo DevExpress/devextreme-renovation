@@ -1,11 +1,11 @@
-import { Property, Method } from "./expressions/class-members";
-import { Heritable } from "./expressions/class";
-import { ImportDeclaration, ImportClause } from "./expressions/import";
-import { ArrowFunction, Function } from "./expressions/functions";
-import { Component } from "./expressions/component";
-import { TypeExpression } from "./expressions/type";
-import { Interface } from "./expressions/interface";
-import { Identifier } from "./expressions/common";
+import { Property, Method } from './expressions/class-members';
+import { Heritable } from './expressions/class';
+import { ImportDeclaration, ImportClause } from './expressions/import';
+import { ArrowFunction, Function } from './expressions/functions';
+import { Component } from './expressions/component';
+import { TypeExpression } from './expressions/type';
+import { Interface } from './expressions/interface';
+import { Identifier } from './expressions/common';
 
 export type TypeExpressionImports = ImportDeclaration[];
 
@@ -30,7 +30,7 @@ export interface toStringOptions {
     isNested: boolean;
     fields?: Identifier[];
   }[];
-};
+}
 
 export type VariableExpression = {
   [name: string]: IExpression;

@@ -11,7 +11,7 @@ import {
   ObjectLiteral,
   Property,
   StringLiteral,
-  TemplateExpression
+  TemplateExpression,
 } from '@devextreme-generator/core';
 
 import { toStringOptions } from '../types';
@@ -20,12 +20,12 @@ import { isElement } from './jsx/elements';
 
 function isInputDecorator(name: string): boolean {
   return (
-    name === Decorators.OneWay ||
-    name === Decorators.TwoWay ||
-    name === Decorators.Template ||
-    name === Decorators.RefProp ||
-    name === Decorators.Nested ||
-    name === Decorators.ForwardRefProp
+    name === Decorators.OneWay
+    || name === Decorators.TwoWay
+    || name === Decorators.Template
+    || name === Decorators.RefProp
+    || name === Decorators.Nested
+    || name === Decorators.ForwardRefProp
   );
 }
 
@@ -35,19 +35,17 @@ function isOutputDecorator(name: string): boolean {
 
 function getPropertiesName(
   props: Property[],
-  specificDecorator: (name: string) => boolean
+  specificDecorator: (name: string) => boolean,
 ): StringLiteral[] {
   return props
-    .filter(({ decorators }) =>
-      decorators.some(({ name }) => specificDecorator(name))
-    )
+    .filter(({ decorators }) => decorators.some(({ name }) => specificDecorator(name)))
     .map((m) => new StringLiteral(m.name));
 }
 
 function setComponentProperty(
   componentParameters: ObjectLiteral,
   name: string,
-  value: StringLiteral[]
+  value: StringLiteral[],
 ) {
   if (value.length) {
     componentParameters.setProperty(name, new ArrayLiteral(value, false));
@@ -57,26 +55,26 @@ function setComponentProperty(
 export class Decorator extends BaseDecorator {
   toString(options?: toStringOptions) {
     if (isInputDecorator(this.name)) {
-      return "@Input()";
-    } else if (
-      this.name === Decorators.Effect ||
-      this.name === Decorators.Ref ||
-      this.name === Decorators.ApiRef ||
-      this.name === Decorators.InternalState ||
-      this.name === Decorators.Method ||
-      this.name === Decorators.ForwardRef ||
-      this.name === Decorators.Mutable
+      return '@Input()';
+    } if (
+      this.name === Decorators.Effect
+      || this.name === Decorators.Ref
+      || this.name === Decorators.ApiRef
+      || this.name === Decorators.InternalState
+      || this.name === Decorators.Method
+      || this.name === Decorators.ForwardRef
+      || this.name === Decorators.Mutable
     ) {
-      return "";
-    } else if (this.name === Decorators.Component) {
+      return '';
+    } if (this.name === Decorators.Component) {
       const parameters = this.expression.arguments[0] as ObjectLiteral;
       if (options) {
         const props = getProps(options.members);
         const inputs = getPropertiesName(props, isInputDecorator);
         const outputs = getPropertiesName(props, isOutputDecorator);
 
-        setComponentProperty(parameters, "inputs", inputs);
-        setComponentProperty(parameters, "outputs", outputs);
+        setComponentProperty(parameters, 'inputs', inputs);
+        setComponentProperty(parameters, 'outputs', outputs);
       }
 
       const viewFunction = this.getViewFunction();
@@ -93,27 +91,27 @@ export class Decorator extends BaseDecorator {
           }
         });
         const templates = compileDefaultTemplates(options, this.context);
-        if (templates?.length) template += templates.join("");
+        if (templates?.length) template += templates.join('');
         const slots = compileSlots(options);
-        if (slots?.length) template += slots.join("");
+        if (slots?.length) template += slots.join('');
         if (template) {
           parameters.setProperty(
-            "template",
-            new TemplateExpression(template, [])
+            'template',
+            new TemplateExpression(template, []),
           );
         }
       }
 
       [
-        "view",
-        "defaultOptionRules",
-        "jQuery",
-        "isSVG",
-        "name",
-        "components",
+        'view',
+        'defaultOptionRules',
+        'jQuery',
+        'isSVG',
+        'name',
+        'components',
       ].forEach((name) => parameters.removeProperty(name));
     } else if (isOutputDecorator(this.name)) {
-      return "@Output()";
+      return '@Output()';
     }
     return super.toString();
   }
@@ -121,7 +119,7 @@ export class Decorator extends BaseDecorator {
 
 function compileDefaultTemplates(
   options?: toStringOptions,
-  context?: GeneratorContext
+  context?: GeneratorContext,
 ): string[] | undefined {
   if (options?.defaultTemplates) {
     return Object.entries(options.defaultTemplates)
@@ -132,32 +130,31 @@ function compileDefaultTemplates(
           const component = context.components[template.initializer.toString()];
           const templateString = `<ng-template #${name}Default ${template.variables
             .map((v) => `let-${v}="${v}"`)
-            .join(" ")}><${getAngularSelector(
-            component.name
+            .join(' ')}><${getAngularSelector(
+            component.name,
           )} ${template.variables
             .map((v) => {
               const componentProp = component.heritageProperties.find(
-                (p) => p.name.toString() === v
+                (p) => p.name.toString() === v,
               );
               if (componentProp?.type instanceof FunctionTypeNode) {
                 return `(${v})="${v} !== undefined ? ${v}($event) : ${component.name}Defaults.${v}($event)"`;
               }
               return `[${v}]="${v} !== undefined ? ${v} : ${component.name}Defaults.${v}"`;
             })
-            .join(" ")}></${getAngularSelector(component.name)}>
-            </ng-template>`;
-          return templateString;
-        } else {
-          const templateString = `  <ng-template #${name}Default ${template.variables
-            .map((v) => `let-${v}="${v}"`)
-            .join(" ")}>
-            ${(template.initializer as BaseFunction).getTemplate({
-              members: [],
-              newComponentContext: "",
-            })}
+            .join(' ')}></${getAngularSelector(component.name)}>
             </ng-template>`;
           return templateString;
         }
+        const templateString = `  <ng-template #${name}Default ${template.variables
+          .map((v) => `let-${v}="${v}"`)
+          .join(' ')}>
+            ${(template.initializer as BaseFunction).getTemplate({
+    members: [],
+    newComponentContext: '',
+  })}
+            </ng-template>`;
+        return templateString;
       })
       .filter((s) => s) as string[];
   }
@@ -169,8 +166,7 @@ function compileSlots(options?: toStringOptions): string[] {
     options?.members
       .filter((m) => m instanceof Property && m.isSlot)
       .map((slot) => {
-        const selector =
-          slot.name.toString() === "children" ? "" : `select="[${slot.name}]"`;
+        const selector = slot.name.toString() === 'children' ? '' : `select="[${slot.name}]"`;
         return `<ng-template #dx${slot.name}><ng-content ${selector}></ng-content></ng-template>`;
       }) || []
   );

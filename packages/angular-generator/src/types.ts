@@ -9,9 +9,9 @@ import {
   Method,
   Property as BaseProperty,
   toStringOptions as BaseToStringOptions,
-} from "@devextreme-generator/core";
-import { TrackByAttribute } from "./expressions/jsx/track-by-attribute";
-import { Property } from "./expressions/class-members/property";
+} from '@devextreme-generator/core';
+import { TrackByAttribute } from './expressions/jsx/track-by-attribute';
+import { Property } from './expressions/class-members/property';
 
 export interface toStringOptions extends BaseToStringOptions {
   members: Array<Property | Method>;

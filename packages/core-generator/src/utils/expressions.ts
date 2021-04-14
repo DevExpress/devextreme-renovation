@@ -1,21 +1,21 @@
-import { Expression } from "../expressions/base";
-import { toStringOptions, GeneratorContext } from "../types";
-import { Identifier, Paren, AsExpression } from "../expressions/common";
-import { JsxExpression } from "../expressions/jsx";
-import { PropertyAccess } from "../expressions/property-access";
-import { Property, Method } from "../expressions/class-members";
-import { TypeReferenceNode } from "../expressions/type";
-import { ComponentInput } from "../expressions/component-input";
+import { Expression } from '../expressions/base';
+import { toStringOptions, GeneratorContext } from '../types';
+import { Identifier, Paren, AsExpression } from '../expressions/common';
+import { JsxExpression } from '../expressions/jsx';
+import { PropertyAccess } from '../expressions/property-access';
+import { Property, Method } from '../expressions/class-members';
+import { TypeReferenceNode } from '../expressions/type';
+import { ComponentInput } from '../expressions/component-input';
 
 export function getExpression(
   expression: Expression,
-  options?: toStringOptions
+  options?: toStringOptions,
 ): Expression {
   if (expression instanceof Identifier) {
     while (
-      options?.variables?.[expression.toString()] &&
-      options.variables[expression.toString()].toString() !==
-        expression.toString()
+      options?.variables?.[expression.toString()]
+      && options.variables[expression.toString()].toString()
+        !== expression.toString()
     ) {
       expression = options.variables[expression.toString()];
     }
@@ -23,7 +23,7 @@ export function getExpression(
 
   if (expression instanceof Paren || expression instanceof AsExpression) {
     return getExpression(expression.expression, options);
-  } else if (expression instanceof JsxExpression && expression.expression) {
+  } if (expression instanceof JsxExpression && expression.expression) {
     return getExpression(expression.expression, options);
   }
 
@@ -32,7 +32,7 @@ export function getExpression(
 
 export function getMember(
   expression: Expression,
-  options?: toStringOptions
+  options?: toStringOptions,
 ): Property | Method | undefined {
   expression = getExpression(expression, options);
 
@@ -45,20 +45,19 @@ export function getMember(
 
 export function getTemplateProperty(
   expression: Expression,
-  options?: toStringOptions
+  options?: toStringOptions,
 ) {
   const tagName = getExpression(expression, options).toString(options);
   return options?.members.find(
-    (s) =>
-      s.isTemplate && tagName === `${s.getter(options?.newComponentContext)}`
+    (s) => s.isTemplate && tagName === `${s.getter(options?.newComponentContext)}`,
   );
 }
 
 export function findComponentInput(
   type: TypeReferenceNode,
-  context: GeneratorContext
+  context: GeneratorContext,
 ): ComponentInput {
   return context.components?.[
-    type.type.toString().replace("typeof ", "")
+    type.type.toString().replace('typeof ', '')
   ] as ComponentInput;
 }

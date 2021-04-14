@@ -1,27 +1,27 @@
+import path from 'path';
 import {
   Expression,
   ExpressionWithOptionalExpression,
   ExpressionWithExpression,
-} from "./base";
-import { Identifier, Call } from "./common";
-import { Parameter } from "./functions";
+} from './base';
+import { Identifier, Call } from './common';
+import { Parameter } from './functions';
 import {
   toStringOptions,
   GeneratorContext,
   TypeExpressionImports,
-} from "../types";
-import { compileType, compileTypeParameters } from "../utils/string";
-import { Decorator } from "./decorator";
-import { ObjectLiteral, StringLiteral } from "./literal";
-import { TypeParameterDeclaration } from "./type-parameter-declaration";
-import { getModuleRelativePath } from "../utils/path-utils";
-import path from "path";
+} from '../types';
+import { compileType, compileTypeParameters } from '../utils/string';
+import { Decorator } from './decorator';
+import { ObjectLiteral, StringLiteral } from './literal';
+import { TypeParameterDeclaration } from './type-parameter-declaration';
+import { getModuleRelativePath } from '../utils/path-utils';
 import {
   ImportClause,
   ImportDeclaration,
   ImportSpecifier,
   NamedImports,
-} from "./import";
+} from './import';
 
 export class TypeExpression extends Expression {}
 
@@ -59,7 +59,7 @@ export class FunctionTypeNode extends TypeExpression {
   constructor(
     public typeParameters: any,
     public parameters: Parameter[],
-    public type: TypeExpression | string
+    public type: TypeExpression | string,
   ) {
     super();
   }
@@ -71,7 +71,7 @@ export class FunctionTypeNode extends TypeExpression {
   getImports(context: GeneratorContext) {
     return reduceTypeExpressionImports(
       [this.type, ...this.parameters.map((p) => p.type)],
-      context
+      context,
     );
   }
 }
@@ -92,13 +92,14 @@ export class OptionalTypeNode extends TypeExpression {
 
 export class IntersectionTypeNode extends TypeExpression {
   types: TypeExpression[];
+
   constructor(types: TypeExpression[]) {
     super();
     this.types = types;
   }
 
   toString() {
-    return this.types.join("&");
+    return this.types.join('&');
   }
 
   getImports(context: GeneratorContext) {
@@ -108,7 +109,7 @@ export class IntersectionTypeNode extends TypeExpression {
 
 export class UnionTypeNode extends IntersectionTypeNode {
   toString() {
-    return this.types.join("|");
+    return this.types.join('|');
   }
 }
 
@@ -129,30 +130,29 @@ export class TypeReferenceNode extends TypeExpression {
   constructor(
     public typeName: Identifier,
     public typeArguments: TypeExpression[] = [],
-    public context: GeneratorContext
+    public context: GeneratorContext,
   ) {
     super();
-    if (typeName.toString() === "CSSAttributes") {
-      this.typeName = new Identifier("any");
+    if (typeName.toString() === 'CSSAttributes') {
+      this.typeName = new Identifier('any');
     }
   }
 
   get REF_OBJECT_TYPE() {
-    return "";
+    return '';
   }
 
   toString() {
-    if (this.typeName.toString() === "RefObject") {
-      const typeArguments =
-        this.typeArguments.length === 0 ? ["any"] : this.typeArguments;
+    if (this.typeName.toString() === 'RefObject') {
+      const typeArguments = this.typeArguments.length === 0 ? ['any'] : this.typeArguments;
       if (!this.REF_OBJECT_TYPE) {
-        return typeArguments.join("");
+        return typeArguments.join('');
       }
       return `${this.REF_OBJECT_TYPE}${compileTypeParameters(typeArguments)}`;
     }
     const typeArguments = this.typeArguments.length
-      ? `<${this.typeArguments.join(",")}>`
-      : "";
+      ? `<${this.typeArguments.join(',')}>`
+      : '';
     return `${this.typeName}${typeArguments}`;
   }
 
@@ -165,13 +165,13 @@ export class TypeReferenceNode extends TypeExpression {
     if (this.context.path !== context.path) {
       const typeNameString = this.typeName.toString();
       if (
-        this.context.types?.[typeNameString] ||
-        this.context.interfaces?.[typeNameString]
+        this.context.types?.[typeNameString]
+        || this.context.interfaces?.[typeNameString]
       ) {
         const moduleSpecifier = getModuleRelativePath(
           context.dirname!,
           this.context.path!,
-          true
+          true,
         );
         result.push(
           new ImportDeclaration(
@@ -179,26 +179,26 @@ export class TypeReferenceNode extends TypeExpression {
             [],
             new ImportClause(
               undefined,
-              new NamedImports([new ImportSpecifier(undefined, this.typeName)])
+              new NamedImports([new ImportSpecifier(undefined, this.typeName)]),
             ),
             new StringLiteral(moduleSpecifier),
-            this.context
-          )
+            this.context,
+          ),
         );
       }
 
       const importClause = Object.values(
-        this.context.imports || {}
+        this.context.imports || {},
       ).find((importClause) => importClause.has(typeNameString));
 
       if (importClause) {
         const importClauseRelativePath = Object.keys(
-          this.context.imports!
+          this.context.imports!,
         ).find((key) => this.context.imports![key] === importClause)!;
         const moduleSpecifier = getModuleRelativePath(
           context.dirname!,
           path.resolve(this.context.dirname!, importClauseRelativePath),
-          false
+          false,
         );
         if (!context.imports?.[moduleSpecifier]?.has(typeNameString)) {
           result.push(
@@ -209,13 +209,13 @@ export class TypeReferenceNode extends TypeExpression {
                 undefined,
                 new NamedImports([
                   new ImportSpecifier(undefined, this.typeName),
-                ])
+                ]),
               ),
               new StringLiteral(
-                moduleSpecifier.replace(path.extname(moduleSpecifier), "")
+                moduleSpecifier.replace(path.extname(moduleSpecifier), ''),
               ),
-              this.context
-            )
+              this.context,
+            ),
           );
         }
       }
@@ -223,35 +223,39 @@ export class TypeReferenceNode extends TypeExpression {
 
     return mergeTypeExpressionImports(
       result,
-      reduceTypeExpressionImports(this.typeArguments, context)
+      reduceTypeExpressionImports(this.typeArguments, context),
     );
   }
 }
 
 export class TypeLiteralNode extends TypeExpression {
   members: PropertySignature[];
+
   constructor(members: PropertySignature[]) {
     super();
     this.members = members;
   }
 
   toString(_options?: toStringOptions) {
-    return `{${this.members.join(",")}}`;
+    return `{${this.members.join(',')}}`;
   }
 }
 
 export class PropertySignature extends ExpressionWithOptionalExpression {
   modifiers: string[];
+
   name: Identifier;
+
   questionToken: string;
+
   type?: TypeExpression;
 
   constructor(
     modifiers: string[] = [],
     name: Identifier,
-    questionToken: string = "",
+    questionToken = '',
     type?: TypeExpression,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     super(initializer);
     this.modifiers = modifiers;
@@ -263,23 +267,27 @@ export class PropertySignature extends ExpressionWithOptionalExpression {
   toString(options?: toStringOptions) {
     const initializer = this.expression
       ? `=${this.expression.toString(options)}`
-      : "";
+      : '';
     return `${this.name}${this.questionToken}${compileType(
-      this.type?.toString()
+      this.type?.toString(),
     )}${initializer}`;
   }
 }
 
 export class IndexSignature extends Expression {
   decorators?: Decorator[];
+
   modifiers: string[];
+
   parameters: Parameter[];
+
   type: TypeExpression;
+
   constructor(
     decorators: Decorator[] = [],
     modifiers: string[] = [],
     parameters: Parameter[],
-    type: TypeExpression
+    type: TypeExpression,
   ) {
     super();
     this.decorators = decorators;
@@ -297,6 +305,7 @@ export class IndexSignature extends Expression {
 
 export class ExpressionWithTypeArguments extends ExpressionWithExpression {
   typeArguments: TypeReferenceNode[];
+
   constructor(typeArguments: TypeReferenceNode[] = [], expression: Expression) {
     super(expression);
     this.typeArguments = typeArguments;
@@ -304,13 +313,13 @@ export class ExpressionWithTypeArguments extends ExpressionWithExpression {
 
   toString() {
     const typeArgumentString = this.typeArguments.length
-      ? `<${this.typeArguments.join(",")}>`
-      : "";
+      ? `<${this.typeArguments.join(',')}>`
+      : '';
     return `${this.expression}${typeArgumentString}`;
   }
 
   get isJsxComponent() {
-    return this.expression.toString().startsWith("JSXComponent");
+    return this.expression.toString().startsWith('JSXComponent');
   }
 
   get typeNode() {
@@ -337,6 +346,7 @@ export class ExpressionWithTypeArguments extends ExpressionWithExpression {
 
 export class ParenthesizedType extends TypeExpression {
   expression: TypeExpression;
+
   constructor(expression: TypeExpression) {
     super();
     this.expression = expression;
@@ -366,7 +376,9 @@ export class LiteralTypeNode extends TypeExpression {
 
 export class IndexedAccessTypeNode extends TypeExpression {
   objectType: TypeExpression;
+
   indexType: TypeExpression;
+
   constructor(objectType: TypeExpression, indexType: TypeExpression) {
     super();
     this.objectType = objectType;
@@ -380,6 +392,7 @@ export class IndexedAccessTypeNode extends TypeExpression {
 
 export class QualifiedName extends TypeExpression {
   left: Expression;
+
   right: Identifier;
 
   constructor(left: Expression, right: Identifier) {
@@ -395,16 +408,21 @@ export class QualifiedName extends TypeExpression {
 
 export class MethodSignature extends TypeExpression {
   typeParameters: any;
+
   parameters: Parameter[];
+
   type: TypeExpression;
+
   name: Identifier;
+
   questionToken?: string;
+
   constructor(
     typeParameters: any,
     parameters: Parameter[] = [],
-    type: TypeExpression = new SimpleTypeExpression("any"),
+    type: TypeExpression = new SimpleTypeExpression('any'),
     name: Identifier,
-    questionToken?: string
+    questionToken?: string,
   ) {
     super();
     this.typeParameters = typeParameters;
@@ -417,13 +435,14 @@ export class MethodSignature extends TypeExpression {
   toString() {
     return `${this.name}(${this.parameters})${compileType(
       this.type.toString(),
-      this.questionToken
+      this.questionToken,
     )}`;
   }
 }
 
 export class TypeOperatorNode extends TypeExpression {
   type: TypeExpression;
+
   constructor(type: TypeExpression) {
     super();
     this.type = type;
@@ -440,13 +459,13 @@ export class TypeAliasDeclaration extends TypeExpression {
     public modifiers: string[] = [],
     public name: Identifier,
     public typeParameters: TypeParameterDeclaration[] | undefined,
-    public type: TypeExpression
+    public type: TypeExpression,
   ) {
     super();
   }
 
   toString() {
-    return `${this.modifiers.join(" ")} type ${
+    return `${this.modifiers.join(' ')} type ${
       this.name
     }${compileTypeParameters(this.typeParameters)} = ${this.type}`;
   }
@@ -458,32 +477,31 @@ export function isComplexType(type: TypeExpression | string): boolean {
   }
 
   if (
-    type instanceof FunctionTypeNode ||
-    type instanceof ArrayTypeNode ||
-    type instanceof TypeReferenceNode ||
-    type instanceof ObjectLiteral ||
-    type instanceof TypeLiteralNode ||
-    (type instanceof LiteralTypeNode &&
-      type.expression instanceof ObjectLiteral) ||
-    type.toString() === "object"
+    type instanceof FunctionTypeNode
+    || type instanceof ArrayTypeNode
+    || type instanceof TypeReferenceNode
+    || type instanceof ObjectLiteral
+    || type instanceof TypeLiteralNode
+    || (type instanceof LiteralTypeNode
+      && type.expression instanceof ObjectLiteral)
+    || type.toString() === 'object'
   ) {
     return true;
   }
   return false;
 }
 
-export const isTypeArray = (type: string | TypeExpression | undefined) =>
-  type instanceof ArrayTypeNode ||
-  (type instanceof TypeReferenceNode && type.typeName.toString() === "Array") ||
-  (typeof type === "string" &&
-    (type.indexOf("Array") === 0 ||
-      type.lastIndexOf("[]") === type.length - 2));
+export const isTypeArray = (type: string | TypeExpression | undefined) => type instanceof ArrayTypeNode
+  || (type instanceof TypeReferenceNode && type.typeName.toString() === 'Array')
+  || (typeof type === 'string'
+    && (type.indexOf('Array') === 0
+      || type.lastIndexOf('[]') === type.length - 2));
 
 export const extractElementType = (
-  type: string | TypeExpression | undefined
+  type: string | TypeExpression | undefined,
 ): TypeExpression | void => {
   if (type instanceof TypeReferenceNode) {
-    if (type.typeName.toString() === "Array") {
+    if (type.typeName.toString() === 'Array') {
       return type.typeArguments[0];
     }
   }
@@ -491,11 +509,13 @@ export const extractElementType = (
   if (type instanceof ArrayTypeNode) {
     return type.elementType;
   }
+
+  return undefined;
 };
 
 export const extractComplexType = (type?: string | TypeExpression): string => {
   if (type instanceof TypeReferenceNode) {
-    if (type.typeName.toString() === "Array") {
+    if (type.typeName.toString() === 'Array') {
       return extractComplexType(type.typeArguments[0]);
     }
     return `${type.typeName.toString()}`;
@@ -513,14 +533,14 @@ export const extractComplexType = (type?: string | TypeExpression): string => {
     }
   }
 
-  return "any";
+  return 'any';
 };
 
 export class TypePredicateNode extends TypeExpression {
   constructor(
     public assertsModifier: string | undefined,
     public parameterName: Identifier,
-    public type: TypeExpression
+    public type: TypeExpression,
   ) {
     super();
   }
@@ -546,7 +566,7 @@ export class TupleTypeNode extends TypeExpression {
   }
 
   toString() {
-    return `[${this.elementTypes.join(", ")}]`;
+    return `[${this.elementTypes.join(', ')}]`;
   }
 }
 
@@ -555,7 +575,7 @@ export class ConditionalTypeNode extends TypeExpression {
     public checkType: TypeExpression,
     public extendsType: TypeExpression,
     public trueType: TypeExpression,
-    public falseType: TypeExpression
+    public falseType: TypeExpression,
   ) {
     super();
   }
@@ -566,7 +586,7 @@ export class ConditionalTypeNode extends TypeExpression {
 }
 
 function convertTypeExpressionImportsToDictionary(
-  imports: TypeExpressionImports
+  imports: TypeExpressionImports,
 ) {
   return imports.reduce(
     (modules: { [name: string]: ImportDeclaration }, typeImports) => {
@@ -581,16 +601,14 @@ function convertTypeExpressionImportsToDictionary(
       }
       return modules;
     },
-    {}
+    {},
   );
 }
 
 export function mergeTypeExpressionImports(
   ...imports: TypeExpressionImports[]
 ) {
-  const allImports = imports.reduce((result, typeImports) => {
-    return result.concat(typeImports);
-  }, []);
+  const allImports = imports.reduce((result, typeImports) => result.concat(typeImports), []);
   const dictionary = convertTypeExpressionImportsToDictionary(allImports);
 
   return Object.keys(dictionary).map((key) => dictionary[key]);
@@ -598,7 +616,7 @@ export function mergeTypeExpressionImports(
 
 export function reduceTypeExpressionImports(
   expressions: (Expression | string | undefined)[],
-  context: GeneratorContext
+  context: GeneratorContext,
 ) {
   return expressions.reduce((imports: TypeExpressionImports, e) => {
     if (e instanceof Expression) {

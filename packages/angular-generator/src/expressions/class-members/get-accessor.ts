@@ -12,7 +12,7 @@ import {
   ReturnStatement,
   SimpleExpression,
   SyntaxKind,
-  TypeExpression
+  TypeExpression,
 } from '@devextreme-generator/core';
 
 import { Decorator } from '../decorator';
@@ -24,7 +24,7 @@ export class GetAccessor extends BaseGetAccessor {
     name: Identifier,
     parameters: Parameter[],
     type?: TypeExpression | string,
-    body?: Block
+    body?: Block,
   ) {
     const isProvider = decorators?.some((d) => d.name === Decorators.Provider);
     if (body && ((type && isComplexType(type)) || isProvider)) {
@@ -41,19 +41,19 @@ export class GetAccessor extends BaseGetAccessor {
               type,
               SyntaxKind.EqualsGreaterThanToken,
               new Block(body.statements, false),
-              {}
-            )
+              {},
+            ),
           ),
-          undefined
-        )
+          undefined,
+        ),
       );
       const returnExpression = !isProvider
         ? setCacheExpression
         : new Binary(
-            new SimpleExpression(`this.${name}Provider.value`),
-            SyntaxKind.EqualsToken,
-            setCacheExpression
-          );
+          new SimpleExpression(`this.${name}Provider.value`),
+          SyntaxKind.EqualsToken,
+          setCacheExpression,
+        );
       body.statements = [
         new SimpleExpression(`
                     if(${cacheAccess}!==undefined){

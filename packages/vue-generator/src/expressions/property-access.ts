@@ -1,13 +1,13 @@
-import { Property } from './class-members/property';
-import { toStringOptions } from '../types';
 import { PropertyAccess as BasePropertyAccess } from '@devextreme-generator/angular';
 import { BindingElement } from '@devextreme-generator/core';
+import { Property } from './class-members/property';
+import { toStringOptions } from '../types';
 
 export class PropertyAccess extends BasePropertyAccess {
   processProps(
     result: string,
     _options: toStringOptions,
-    _elements: BindingElement[] = []
+    _elements: BindingElement[] = [],
   ) {
     return result;
   }
@@ -38,10 +38,10 @@ export class PropertyAccess extends BasePropertyAccess {
 
   getRefAccessor(member: Property) {
     if (member.isRef || member?.isForwardRef || member.isApiRef) {
-      return "";
+      return '';
     }
     if (member.isRefProp || member.isForwardRefProp) {
-      return `()`;
+      return '()';
     }
     return null;
   }

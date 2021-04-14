@@ -26,7 +26,7 @@ export class ComponentInput extends BaseComponentInput {
     name: Identifier,
     questionOrExclamationToken?: string,
     type?: TypeExpression | string,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     return new Property(
       decorators,
@@ -34,7 +34,7 @@ export class ComponentInput extends BaseComponentInput {
       name,
       questionOrExclamationToken,
       type,
-      initializer
+      initializer,
     );
   }
 
@@ -50,13 +50,14 @@ export class ComponentInput extends BaseComponentInput {
     const imports: string[] = [
       `${compileCoreImports(
         this.members.filter((m) => !m.inherited),
-        this.context
+        this.context,
       )}`,
     ];
     const missedImports = this.getImports(this.context);
 
-    return imports.concat(missedImports.map((i) => i.toString())).join(";\n");
+    return imports.concat(missedImports.map((i) => i.toString())).join(';\n');
   }
+
   processNestedProperty(property: Property) {
     const {
       decorators,
@@ -74,30 +75,31 @@ export class ComponentInput extends BaseComponentInput {
         modifiers,
         name,
         questionOrExclamationToken,
-        `${type}`
+        `${type}`,
       ),
       this.createNestedPropertyGetter(
         modifiers,
         name,
         questionOrExclamationToken,
         type,
-        initializer
+        initializer,
       ),
     ];
     return resultArray;
   }
+
   createNestedState(
     name: string,
     questionOrExclamationToken: string,
-    type: TypeExpression | string
+    type: TypeExpression | string,
   ) {
     return new Property(
       [],
-      ["private"],
+      ['private'],
       new Identifier(`__${name}__`),
       questionOrExclamationToken || SyntaxKind.QuestionToken,
       `${type}`,
-      undefined
+      undefined,
     );
   }
 
@@ -106,11 +108,11 @@ export class ComponentInput extends BaseComponentInput {
     modifiers: string[],
     name: string,
     questionOrExclamationToken: string,
-    type: string | TypeExpression
+    type: string | TypeExpression,
   ) {
     let typeString = type.toString();
-    if (questionOrExclamationToken === "?") {
-      typeString += "| undefined";
+    if (questionOrExclamationToken === '?') {
+      typeString += '| undefined';
     }
     const statements = [new SimpleExpression(`this.__${name}__=value;`)];
 
@@ -123,24 +125,25 @@ export class ComponentInput extends BaseComponentInput {
           [],
           [],
           undefined,
-          new Identifier("value"),
-          "",
-          typeString
+          new Identifier('value'),
+          '',
+          typeString,
         ),
       ],
-      new Block(statements, true)
+      new Block(statements, true),
     );
   }
+
   createNestedPropertyGetter(
     modifiers: string[],
     name: string,
     questionOrExclamationToken: string,
     type: string | TypeExpression,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     let typeString = `${type}`;
-    if (questionOrExclamationToken === "?") {
-      typeString += "| undefined";
+    if (questionOrExclamationToken === '?') {
+      typeString += '| undefined';
     }
 
     const statements = [];
@@ -148,11 +151,11 @@ export class ComponentInput extends BaseComponentInput {
       statements.push(
         new SimpleExpression(`if(!this.__${name}__){
         return ${this.name}.__defaultNestedValues.${name}
-      }`)
+      }`),
       );
     }
     statements.push(
-      new ReturnStatement(new SimpleExpression(`this.__${name}__`))
+      new ReturnStatement(new SimpleExpression(`this.__${name}__`)),
     );
 
     return new GetAccessor(
@@ -161,13 +164,14 @@ export class ComponentInput extends BaseComponentInput {
       new Identifier(`${name}`),
       [],
       typeString,
-      new Block(statements, true)
+      new Block(statements, true),
     );
   }
+
   createDefaultNestedValues(members: Array<Property | Method>) {
     const resultProp = super.createDefaultNestedValues(members);
     if (resultProp?.modifiers) {
-      resultProp.modifiers.push("public", "static");
+      resultProp.modifiers.push('public', 'static');
       resultProp.decorators = [];
     }
     return resultProp;
@@ -186,19 +190,18 @@ export class ComponentInput extends BaseComponentInput {
 
     return `
         ${this.compileImports()}
-        ${this.modifiers.join(" ")} class ${
-      this.name
-    } ${this.heritageClauses.map((h) => h.toString()).join(" ")} {
+        ${this.modifiers.join(' ')} class ${
+  this.name
+} ${this.heritageClauses.map((h) => h.toString()).join(' ')} {
             ${membersWithNestedReplaced
-              .filter(
-                (p) =>
-                  (p instanceof Property || SetAccessor || GetAccessor) &&
-                  !p.inherited
-              )
-              .map((m) => m.toString())
-              .filter((m) => m)
-              .concat("")
-              .join(";\n")}
+    .filter(
+      (p) => (p instanceof Property || SetAccessor || GetAccessor)
+                  && !p.inherited,
+    )
+    .map((m) => m.toString())
+    .filter((m) => m)
+    .concat('')
+    .join(';\n')}
         }`;
   }
 }

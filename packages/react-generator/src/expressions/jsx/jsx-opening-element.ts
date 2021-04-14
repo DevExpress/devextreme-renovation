@@ -1,4 +1,3 @@
-import { Property } from '../class-members/property';
 import {
   Expression,
   Identifier,
@@ -7,12 +6,13 @@ import {
   toStringOptions,
   PropertyAssignment,
   SpreadAssignment,
-} from "@devextreme-generator/core";
+} from '@devextreme-generator/core';
+import { Property } from '../class-members/property';
 
 export class JsxOpeningElement extends BaseJsxOpeningElement {
   processTagName(tagName: Expression) {
-    return tagName.toString() === "Fragment"
-      ? new Identifier("React.Fragment")
+    return tagName.toString() === 'Fragment'
+      ? new Identifier('React.Fragment')
       : tagName;
   }
 
@@ -24,16 +24,14 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     this.checkTemplatePropUsage(templateProperty);
 
     const contextElements = this.attributes.reduce(
-      (elements: (PropertyAssignment | SpreadAssignment)[], a) => {
-        return elements.concat(a.getTemplateContext());
-      },
-      []
+      (elements: (PropertyAssignment | SpreadAssignment)[], a) => elements.concat(a.getTemplateContext()),
+      [],
     );
     const templateParams = contextElements.length
       ? new ObjectLiteral(contextElements, false)
-          .toString(options)
-          .replace(/"/gi, "'")
-      : "{}";
+        .toString(options)
+        .replace(/"/gi, "'")
+      : '{}';
 
     return `${this.tagName.toString({
       ...options,

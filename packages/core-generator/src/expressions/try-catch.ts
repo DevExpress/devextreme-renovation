@@ -1,12 +1,12 @@
-import { Expression, ExpressionWithExpression } from "./base";
-import { Block } from "./statements";
-import { toStringOptions } from "../types";
+import { Expression, ExpressionWithExpression } from './base';
+import { Block } from './statements';
+import { toStringOptions } from '../types';
 
 export class Try extends ExpressionWithExpression {
   constructor(
     tryBlock: Block,
     public catchClause?: CatchClause,
-    public finallyBlock?: Block
+    public finallyBlock?: Block,
   ) {
     super(tryBlock);
   }
@@ -16,19 +16,19 @@ export class Try extends ExpressionWithExpression {
       .getDependency(options)
       .concat(this.catchClause ? this.catchClause.getDependency(options) : [])
       .concat(
-        this.finallyBlock ? this.finallyBlock.getDependency(options) : []
+        this.finallyBlock ? this.finallyBlock.getDependency(options) : [],
       );
   }
 
   toString(options?: toStringOptions) {
     const catchClause = this.catchClause
       ? this.catchClause.toString(options)
-      : "";
+      : '';
     const finallyBlock = this.finallyBlock
       ? `finally ${this.finallyBlock.toString(options)}`
-      : "";
+      : '';
     return `try ${this.expression.toString(
-      options
+      options,
     )} ${catchClause} ${finallyBlock}`;
   }
 }
@@ -36,7 +36,7 @@ export class Try extends ExpressionWithExpression {
 export class CatchClause extends ExpressionWithExpression {
   constructor(
     public variableDeclaration: Expression | undefined,
-    expression: Block
+    expression: Block,
   ) {
     super(expression);
   }
@@ -44,7 +44,7 @@ export class CatchClause extends ExpressionWithExpression {
   toString(options?: toStringOptions) {
     const variable = this.variableDeclaration
       ? `(${this.variableDeclaration})`
-      : "";
+      : '';
     return `catch${variable} ${this.expression.toString(options)}`;
   }
 }

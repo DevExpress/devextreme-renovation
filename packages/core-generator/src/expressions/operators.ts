@@ -1,31 +1,30 @@
-import { Expression } from "./base";
-import { toStringOptions } from "../types";
-import { SyntaxKind } from "../syntaxKind";
-import { Property } from "./class-members";
-import { PropertyAccess } from "./property-access";
-import { NonNullExpression } from "./common";
-import { getMember } from "../utils/expressions";
+import { Expression } from './base';
+import { toStringOptions } from '../types';
+import { SyntaxKind } from '../syntaxKind';
+import { Property } from './class-members';
+import { PropertyAccess } from './property-access';
+import { NonNullExpression } from './common';
+import { getMember } from '../utils/expressions';
 
-const isShortOperator = (operator: string) => {
-  return (
-    operator === SyntaxKind.PlusEqualsToken ||
-    operator === SyntaxKind.MinusEqualsToken ||
-    operator === SyntaxKind.SlashEqualsToken ||
-    operator === SyntaxKind.AsteriskEqualsToken
-  );
-};
+const isShortOperator = (operator: string) => (
+  operator === SyntaxKind.PlusEqualsToken
+    || operator === SyntaxKind.MinusEqualsToken
+    || operator === SyntaxKind.SlashEqualsToken
+    || operator === SyntaxKind.AsteriskEqualsToken
+);
 
-const unaryPlusOrMinus = (operator: string) => {
-  return (
-    operator === SyntaxKind.PlusPlusToken ||
-    operator === SyntaxKind.MinusMinusToken
-  );
-};
+const unaryPlusOrMinus = (operator: string) => (
+  operator === SyntaxKind.PlusPlusToken
+    || operator === SyntaxKind.MinusMinusToken
+);
 
 export class Binary extends Expression {
   left: Expression;
+
   operator: string;
+
   right: Expression;
+
   constructor(left: Expression, operator: string, right: Expression) {
     super();
     this.left = left;
@@ -34,13 +33,12 @@ export class Binary extends Expression {
   }
 
   toString(options?: toStringOptions) {
-    const leftExpression =
-      this.left instanceof PropertyAccess &&
-      this.left.name.toString() === "current"
-        ? this.left.expression instanceof NonNullExpression
-          ? this.left.expression.expression
-          : this.left.expression
-        : this.left;
+    const leftExpression = this.left instanceof PropertyAccess
+      && this.left.name.toString() === 'current'
+      ? this.left.expression instanceof NonNullExpression
+        ? this.left.expression.expression
+        : this.left.expression
+      : this.left;
     const dependencyMember = getMember(leftExpression, options);
     if (dependencyMember && !dependencyMember.isMutable) {
       let rightExpression;
@@ -52,7 +50,7 @@ export class Binary extends Expression {
       if (isShortOperator(this.operator)) {
         const operator = this.operator[0];
         rightExpression = `${this.left.toString(
-          options
+          options,
         )}${operator}${this.right.toString(options)}`;
       }
 
@@ -64,7 +62,7 @@ export class Binary extends Expression {
         return `${(this.left as PropertyAccess).compileStateSetting(
           rightExpression,
           dependencyMember as Property,
-          options!
+          options!,
         )}`;
       }
     }
@@ -76,8 +74,8 @@ export class Binary extends Expression {
   getDependency(options: toStringOptions) {
     if (this.operator === SyntaxKind.EqualsToken) {
       if (
-        this.left instanceof PropertyAccess &&
-        this.left.isPropsScope({
+        this.left instanceof PropertyAccess
+        && this.left.isPropsScope({
           members: [],
           componentContext: this.left.calculateComponentContext(),
         })
@@ -100,7 +98,9 @@ export class Binary extends Expression {
 
 export class Prefix extends Expression {
   operator: string;
+
   operand: Expression;
+
   constructor(operator: string, operand: Expression) {
     super();
     this.operator = operator;
@@ -108,23 +108,22 @@ export class Prefix extends Expression {
   }
 
   compileUnaryMath(options?: toStringOptions) {
-    const dependencyMember =
-      this.operand instanceof PropertyAccess && this.operand.getMember(options);
+    const dependencyMember = this.operand instanceof PropertyAccess && this.operand.getMember(options);
     if (unaryPlusOrMinus(this.operator) && dependencyMember) {
       if (dependencyMember.isReadOnly()) {
         throw `Error: Can't assign property use TwoWay() or Internal State - ${this.toString()}`;
       }
       const operator = this.operator[0];
       const rightExpression = `${this.operand.toString(
-        options
+        options,
       )}${operator}${1}`;
       return `${(this.operand as PropertyAccess).compileStateSetting(
         rightExpression,
         dependencyMember as Property,
-        options!
+        options!,
       )}`;
     }
-    return "";
+    return '';
   }
 
   toString(options?: toStringOptions) {

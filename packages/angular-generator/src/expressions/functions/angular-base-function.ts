@@ -1,7 +1,7 @@
-import { Function } from "@devextreme-generator/core";
-import { isElement } from "../jsx/elements";
-import { JsxChildExpression } from "../jsx/jsx-child-expression";
-import { JsxExpression } from "../jsx/jsx-expression";
+import { Function } from '@devextreme-generator/core';
+import { isElement } from '../jsx/elements';
+import { JsxChildExpression } from '../jsx/jsx-child-expression';
+import { JsxExpression } from '../jsx/jsx-expression';
 
 export class AngularBaseFunction extends Function {
   processTemplateExpression(expression?: JsxExpression) {

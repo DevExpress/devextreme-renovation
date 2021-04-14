@@ -3,8 +3,8 @@ import {
   Enum as BaseEnum,
   EnumMember as BaseEnumMember,
   Identifier,
-  NumericLiteral
-  } from '@devextreme-generator/core';
+  NumericLiteral,
+} from '@devextreme-generator/core';
 
 export class EnumMember extends BaseEnumMember {
   toString() {
@@ -19,7 +19,7 @@ export class Enum extends BaseEnum {
     decorators: Decorator[] = [],
     modifiers: string[] = [],
     name: Identifier,
-    members: EnumMember[]
+    members: EnumMember[],
   ) {
     super(decorators, modifiers, name, members);
     this.members = this.processMembers(members);
@@ -31,11 +31,11 @@ export class Enum extends BaseEnum {
       if (initializer === undefined) {
         if (acc.length > 0) {
           const nextValue = (
-            parseInt(acc[acc.length - 1].initializer!.toString()) + 1
+            parseInt(acc[acc.length - 1].initializer!.toString(), 10) + 1
           ).toString();
           initializer = new NumericLiteral(nextValue);
         } else {
-          initializer = new NumericLiteral("0");
+          initializer = new NumericLiteral('0');
         }
       }
       acc.push(new EnumMember(m.name, initializer));
@@ -44,8 +44,8 @@ export class Enum extends BaseEnum {
   }
 
   toString() {
-    return `${this.modifiers.join(" ")} const ${this.name} = {
-      ${this.members.join(",\n")}
+    return `${this.modifiers.join(' ')} const ${this.name} = {
+      ${this.members.join(',\n')}
     }`;
   }
 }

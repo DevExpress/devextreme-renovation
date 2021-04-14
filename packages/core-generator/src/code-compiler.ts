@@ -7,14 +7,14 @@ export function compileCode(
   generator: GeneratorAPI,
   code: string,
   file: { dirname: string; path: string; importedModules?: string[] },
-  includeExtraComponents: boolean = false,
-  createFactoryOnly = false
+  includeExtraComponents = false,
+  createFactoryOnly = false,
 ): GeneratorResult[] | string {
   const source = ts.createSourceFile(
     file.path,
     code,
     ts.ScriptTarget.ES2016,
-    true
+    true,
   );
   generator.setContext({
     path: file.path,
@@ -25,12 +25,12 @@ export function compileCode(
 
   if (createFactoryOnly && generator.cache[file.path]) {
     generator.setContext(null);
-    return "";
+    return '';
   }
 
   const codeFactoryResult = generator.generate(
     eval(codeFactory),
-    createFactoryOnly
+    createFactoryOnly,
   );
   generator.setContext(null);
 

@@ -1,4 +1,3 @@
-import { Property } from './class-members/property';
 import {
   Call,
   ComponentInput,
@@ -7,8 +6,9 @@ import {
   GeneratorContext,
   Identifier,
   SyntaxKind,
-  TypeExpression
-  } from '@devextreme-generator/core';
+  TypeExpression,
+} from '@devextreme-generator/core';
+import { Property } from './class-members/property';
 
 export class VueComponentInput extends ComponentInput {
   createProperty(
@@ -17,7 +17,7 @@ export class VueComponentInput extends ComponentInput {
     name: Identifier,
     questionOrExclamationToken?: string,
     type?: string | TypeExpression,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     return new Property(
       decorators,
@@ -25,7 +25,7 @@ export class VueComponentInput extends ComponentInput {
       name,
       questionOrExclamationToken,
       type,
-      initializer
+      initializer,
     );
   }
 
@@ -43,7 +43,7 @@ export class VueComponentInput extends ComponentInput {
           isNested: members?.some((m) => m.isNested) || false,
           fields: members?.map((m) => m._name),
         };
-      }
+      },
     );
     const members = this.baseTypes
       .map((t) => `...${t}`)
@@ -51,29 +51,26 @@ export class VueComponentInput extends ComponentInput {
         this.members
           .filter((m) => !m.inherited)
           .map((m) => (m instanceof Property ? m.inherit() : m))
-          .map((m) =>
-            m.toString({
-              members: [],
-              componentInputs:
-                m.name === "__defaultNestedValues"
+          .map((m) => m.toString({
+            members: [],
+            componentInputs:
+                m.name === '__defaultNestedValues'
                   ? componentInputs
                   : undefined,
-            })
-          )
+          })),
       )
       .filter((m) => m);
-    const modifiers =
-      this.modifiers.indexOf(SyntaxKind.DefaultKeyword) === -1
-        ? this.modifiers
-        : [];
-    return `${modifiers.join(" ")} const ${this.name} = {
-              ${members.join(",")}
+    const modifiers = this.modifiers.indexOf(SyntaxKind.DefaultKeyword) === -1
+      ? this.modifiers
+      : [];
+    return `${modifiers.join(' ')} const ${this.name} = {
+              ${members.join(',')}
           };
           ${
-            modifiers !== this.modifiers
-              ? `${this.modifiers.join(" ")} ${this.name}`
-              : ""
-          }`;
+  modifiers !== this.modifiers
+    ? `${this.modifiers.join(' ')} ${this.name}`
+    : ''
+}`;
   }
 
   getInitializerScope(component: string, name: string) {

@@ -8,23 +8,22 @@ import {
   SimpleTypeExpression,
   SyntaxKind,
   toStringOptions,
-  TypeExpression
+  TypeExpression,
 } from '@devextreme-generator/core';
-
 
 import { compileJSXTemplateProps, TypeReferenceNode } from '../type-reference-node';
 
 export function getLocalStateName(
   name: Identifier | string,
-  componentContext: string = ""
+  componentContext = '',
 ) {
   return `${componentContext}__state_${name}`;
 }
 
 export function getPropName(
   name: Identifier | string,
-  componentContext: string = "",
-  scope = "props."
+  componentContext = '',
+  scope = 'props.',
 ) {
   return `${componentContext}${scope}${name}`;
 }
@@ -35,14 +34,14 @@ export function stateSetter(stateName: Identifier | string) {
 
 export function compileJSXTemplateType(
   type: string | TypeExpression,
-  isComponent = false
+  isComponent = false,
 ) {
   if (
-    type instanceof TypeReferenceNode &&
-    type.typeName.toString() === "JSXTemplate"
+    type instanceof TypeReferenceNode
+    && type.typeName.toString() === 'JSXTemplate'
   ) {
     return `React.${
-      isComponent ? "JSXElementConstructor" : "FunctionComponent"
+      isComponent ? 'JSXElementConstructor' : 'FunctionComponent'
     }<${compileJSXTemplateProps(type.typeArguments)}>`;
   }
 
@@ -57,32 +56,31 @@ export class Property extends BaseProperty {
   compileTypeReferenceNode(
     typeName: Identifier,
     typeArguments: TypeExpression[],
-    context: GeneratorContext
+    context: GeneratorContext,
   ) {
     return new TypeReferenceNode(typeName, typeArguments, context);
   }
 
   compileTypeDeclarationType(type: string | TypeExpression) {
     if (
-      (this.isRefProp || this.isForwardRefProp) &&
-      type instanceof TypeReferenceNode &&
-      type.toString() !== "any"
+      (this.isRefProp || this.isForwardRefProp)
+      && type instanceof TypeReferenceNode
+      && type.toString() !== 'any'
     ) {
       const typeArguments = type.typeArguments.length
-        ? type.typeArguments.toString() === "any"
+        ? type.typeArguments.toString() === 'any'
           ? type.typeArguments
           : [new SimpleTypeExpression(`${type.typeArguments[0]} | null`)]
-        : [new SimpleTypeExpression("any")];
+        : [new SimpleTypeExpression('any')];
       type = this.compileTypeReferenceNode(
         type.typeName,
         typeArguments,
-        type.context
+        type.context,
       );
     }
-    let questionOrExclamationToken =
-      this.questionOrExclamationToken === SyntaxKind.ExclamationToken
-        ? ""
-        : this.questionOrExclamationToken;
+    let questionOrExclamationToken = this.questionOrExclamationToken === SyntaxKind.ExclamationToken
+      ? ''
+      : this.questionOrExclamationToken;
     if (this.isNested && this.initializer) {
       questionOrExclamationToken = SyntaxKind.QuestionToken;
     }
@@ -93,17 +91,16 @@ export class Property extends BaseProperty {
     let type = this.type;
 
     if (this.isSlot) {
-      type = "React.ReactNode";
+      type = 'React.ReactNode';
     }
     if (
       this.decorators.find(
-        (d) =>
-          d.name === Decorators.Ref ||
-          d.name === Decorators.ApiRef ||
-          d.name === Decorators.ForwardRef
+        (d) => d.name === Decorators.Ref
+          || d.name === Decorators.ApiRef
+          || d.name === Decorators.ForwardRef,
       )
     ) {
-      type = "any";
+      type = 'any';
     }
     let name = this.name;
     if (this.isRef || this.isForwardRef || this.isApiRef) {
@@ -118,41 +115,39 @@ export class Property extends BaseProperty {
     const scope = this.processComponentContext(this.scope);
     if (this.isInternalState) {
       return getLocalStateName(this.name, componentContext);
-    } else if (
+    } if (
       this.decorators.some(
-        (d) =>
-          d.name === Decorators.OneWay ||
-          d.name === Decorators.Event ||
-          d.name === Decorators.Template ||
-          d.name === Decorators.Slot
+        (d) => d.name === Decorators.OneWay
+          || d.name === Decorators.Event
+          || d.name === Decorators.Template
+          || d.name === Decorators.Slot,
       )
     ) {
       return getPropName(this.name, componentContext, scope);
-    } else if (
+    } if (
       this.decorators.some(
-        (d) =>
-          d.name === Decorators.Ref ||
-          d.name === Decorators.ForwardRef ||
-          d.name === Decorators.ApiRef ||
-          d.name === Decorators.RefProp ||
-          d.name === Decorators.ForwardRefProp
+        (d) => d.name === Decorators.Ref
+          || d.name === Decorators.ForwardRef
+          || d.name === Decorators.ApiRef
+          || d.name === Decorators.RefProp
+          || d.name === Decorators.ForwardRefProp,
       )
     ) {
-      if (componentContext === "") {
+      if (componentContext === '') {
         return `${scope}${this.name}`;
       }
       return getPropName(this.name, componentContext, scope);
-    } else if (this.isState) {
+    } if (this.isState) {
       const propName = getPropName(this.name, componentContext, scope);
       return `(${propName}!==undefined?${propName}:${getLocalStateName(
         this.name,
-        componentContext
+        componentContext,
       )})`;
-    } else if (this.isNested) {
+    } if (this.isNested) {
       return `__getNested${capitalizeFirstLetter(this.name)}()`;
-    } else if (this.isProvider || this.isConsumer) {
+    } if (this.isProvider || this.isConsumer) {
       return this.name;
-    } else if (this.isMutable) {
+    } if (this.isMutable) {
       return `${this.name}.current!`;
     }
     throw `Can't parse property: ${this._name}`;
@@ -161,37 +156,35 @@ export class Property extends BaseProperty {
   getDependency(_options: toStringOptions) {
     if (this.isInternalState) {
       return [getLocalStateName(this.name)];
-    } else if (
+    } if (
       this.decorators.some(
-        (d) =>
-          d.name === Decorators.OneWay ||
-          d.name === Decorators.Event ||
-          d.name === Decorators.Template ||
-          d.name === Decorators.Slot
+        (d) => d.name === Decorators.OneWay
+          || d.name === Decorators.Event
+          || d.name === Decorators.Template
+          || d.name === Decorators.Slot,
       )
     ) {
       return [getPropName(this.name)];
-    } else if (
+    } if (
       this.decorators.some(
-        (d) =>
-          d.name === Decorators.Ref ||
-          d.name === Decorators.ForwardRef ||
-          d.name === Decorators.ApiRef ||
-          d.name === Decorators.RefProp ||
-          d.name === Decorators.ForwardRefProp
+        (d) => d.name === Decorators.Ref
+          || d.name === Decorators.ForwardRef
+          || d.name === Decorators.ApiRef
+          || d.name === Decorators.RefProp
+          || d.name === Decorators.ForwardRefProp,
       )
     ) {
       const scope = this.processComponentContext(this.scope);
-      return this.questionOrExclamationToken === "?"
+      return this.questionOrExclamationToken === '?'
         ? [`${scope}${this.name.toString()}`]
         : [];
-    } else if (this.isState) {
+    } if (this.isState) {
       return [getPropName(this.name), getLocalStateName(this.name)];
-    } else if (this.isNested) {
-      return [getPropName(this.name), getPropName("children")];
-    } else if (this.isProvider || this.isConsumer) {
+    } if (this.isNested) {
+      return [getPropName(this.name), getPropName('children')];
+    } if (this.isProvider || this.isConsumer) {
       return [this.name];
-    } else if (this.isMutable) {
+    } if (this.isMutable) {
       return [];
     }
     throw `Can't parse property: ${this._name}`;
@@ -205,7 +198,7 @@ export class Property extends BaseProperty {
       this.questionOrExclamationToken,
       this.type,
       this.initializer,
-      true
+      true,
     );
   }
 
@@ -215,21 +208,20 @@ export class Property extends BaseProperty {
     }
     const type = `${this.type}${
       this.questionOrExclamationToken === SyntaxKind.QuestionToken
-        ? " | undefined"
-        : ""
+        ? ' | undefined'
+        : ''
     }`;
     if (this.isState) {
       const propName = getPropName(this.name);
-      const defaultExclamationToken =
-        this.initializer &&
-        this.questionOrExclamationToken !== SyntaxKind.QuestionToken
-          ? SyntaxKind.ExclamationToken
-          : "";
+      const defaultExclamationToken = this.initializer
+        && this.questionOrExclamationToken !== SyntaxKind.QuestionToken
+        ? SyntaxKind.ExclamationToken
+        : '';
 
       return `const [${getLocalStateName(this.name)}, ${stateSetter(
-        this.name
+        this.name,
       )}] = useState<${type}>(()=>${propName}!==undefined?${propName}:props.default${capitalizeFirstLetter(
-        this.name
+        this.name,
       )}${defaultExclamationToken})`;
     }
 
@@ -241,7 +233,7 @@ export class Property extends BaseProperty {
 
     if (this.isMutable) {
       return `const ${this.name}=useRef<${type}>(${
-        this.initializer ? this.initializer : ""
+        this.initializer ? this.initializer : ''
       })`;
     }
 
@@ -260,17 +252,17 @@ export class Property extends BaseProperty {
     }
 
     return `const [${getLocalStateName(this.name)}, ${stateSetter(
-      this.name
+      this.name,
     )}] = useState<${type}>(${this.initializer})`;
   }
 
   get canBeDestructured() {
     if (
-      this.isState ||
-      this.isNested ||
-      this.isRef ||
-      this.isForwardRef ||
-      this.isMutable
+      this.isState
+      || this.isNested
+      || this.isRef
+      || this.isForwardRef
+      || this.isMutable
     ) {
       return false;
     }
