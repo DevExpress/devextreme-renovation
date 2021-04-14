@@ -38,10 +38,14 @@ import {
 } from '@devextreme-generator/core';
 import { GetAccessor } from './class-members/get-accessor';
 import { Method } from './class-members/method';
-import { getPropName, Property } from './class-members/property';
+import {
+  getPropName, Property,
+} from './class-members/property';
 import { HeritageClause } from './heritage-clause';
 import { PropertyAccess } from './property-access';
-import { ComponentInput, getTemplatePropName } from './react-component-input';
+import {
+  ComponentInput, getTemplatePropName,
+} from './react-component-input';
 
 function getSubscriptions(methods: Method[]) {
   return methods
@@ -116,6 +120,9 @@ export class ReactComponent extends Component {
       members.push(this.createNestedChildrenGetter());
     }
     (members.filter((m) => m.isNested) as Property[]).forEach((m) => {
+      if (m.initializer) {
+        m.questionOrExclamationToken = SyntaxKind.QuestionToken;
+      }
       members.push(this.createNestedPropertyGetter(m));
     });
 
@@ -761,7 +768,7 @@ export class ReactComponent extends Component {
                       (k) => k !== "__name" && k !== "__defaultNestedValues"
                     )
                   ) {
-                    return n?.__defaultNestedValues || n;
+                    return (n as any)?.__defaultNestedValues || n;
                   }
                   return n;
                 });`

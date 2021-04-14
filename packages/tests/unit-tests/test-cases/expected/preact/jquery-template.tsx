@@ -19,6 +19,7 @@ export default class Widget extends BaseComponent {
       allowNull: [],
       elements: [],
       templates: ["template", "anotherTemplate"],
+      props: ["template", "anotherTemplate"],
     };
   }
 

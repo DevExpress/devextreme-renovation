@@ -1,6 +1,6 @@
 {
   "name": "@devextreme-generator/core",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "DevExtreme core generator",
   "main": "dist/index",
   "types": "dist/index",

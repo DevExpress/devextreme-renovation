@@ -370,7 +370,8 @@ class JQueryComponent {
   )}],
                 allowNull: [${withNullType}],
                 elements: [${withElementType}],
-                templates: [${templateList}]
+                templates: [${templateList}],
+                props: [${this.source.props.map(({ name }) => `'${name}'`)}]
             };
         }
         `;

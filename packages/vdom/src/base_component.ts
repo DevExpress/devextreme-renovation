@@ -88,8 +88,8 @@ export class InfernoWrapperComponent<P = {}, S = {}> extends InfernoComponent<P,
 
   vDomUpdateClasses() {
     const currentClasses = this.vDomElement?.className.split(' ') ?? [];
-    const addedClasses = currentClasses.filter((className) => !this.vDomPreviousClasses.includes(className));
-    const removedClasses = this.vDomPreviousClasses.filter((className) => !currentClasses.includes(className));
+    const addedClasses = currentClasses.filter((className) => this.vDomPreviousClasses.indexOf(className) < 0);
+    const removedClasses = this.vDomPreviousClasses.filter((className) => currentClasses.indexOf(className) < 0);
 
     addedClasses.forEach((value) => {
       const indexInRemoved = this.vDomRemovedClasses.indexOf(value);
@@ -120,10 +120,13 @@ export class InfernoWrapperComponent<P = {}, S = {}> extends InfernoComponent<P,
   componentDidUpdate() {
     super.componentDidUpdate();
 
-    this.vDomElement?.classList.add(...this.vDomAddedClasses);
-    this.vDomElement?.classList.remove(...this.vDomRemovedClasses);
+    const element = this.vDomElement;
 
-    this.vDomPreviousClasses = this.vDomElement?.className.split(' ') ?? [];
+    if (element !== null) {
+      this.vDomAddedClasses.forEach((className) => element.classList.add(className));
+      this.vDomRemovedClasses.forEach((className) => element.classList.remove(className));
+      this.vDomPreviousClasses = element.className.split(' ') ?? [];
+    }
   }
 
   shouldComponentUpdate(nextProps: P, nextState: S) {

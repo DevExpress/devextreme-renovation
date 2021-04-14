@@ -1,6 +1,6 @@
 {
   "name": "@devextreme-generator/preact",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "DevExtreme preact component generator",
   "main": "dist/index",
   "types": "dist/index",
@@ -16,8 +16,8 @@
   "author": "Developer Express Inc.",
   "license": "MIT",
   "dependencies": {
-    "@devextreme-generator/core": "1.0.5",
-    "@devextreme-generator/react": "1.0.5"
+    "@devextreme-generator/core": "1.0.6",
+    "@devextreme-generator/react": "1.0.6"
   },
   "devDependencies": {
     "@types/node": "^12.12.14",
