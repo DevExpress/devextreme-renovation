@@ -56,7 +56,8 @@ export class Decorator extends BaseDecorator {
   toString(options?: toStringOptions) {
     if (isInputDecorator(this.name)) {
       return '@Input()';
-    } if (
+    }
+    if (
       this.name === Decorators.Effect
       || this.name === Decorators.Ref
       || this.name === Decorators.ApiRef
@@ -66,7 +67,8 @@ export class Decorator extends BaseDecorator {
       || this.name === Decorators.Mutable
     ) {
       return '';
-    } if (this.name === Decorators.Component) {
+    }
+    if (this.name === Decorators.Component) {
       const parameters = this.expression.arguments[0] as ObjectLiteral;
       if (options) {
         const props = getProps(options.members);

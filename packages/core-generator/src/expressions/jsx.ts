@@ -20,22 +20,26 @@ export function getJsxExpression(
 ): JsxExpression | undefined {
   if (e instanceof Conditional && e.isJsx()) {
     return new JsxExpression(undefined, e);
-  } if (
+  }
+  if (
     options
     && e instanceof Identifier
     && options.variables?.[e.toString()]
   ) {
     const expression = options.variables[e.toString()];
     return getJsxExpression(expression, options);
-  } if (
+  }
+  if (
     e instanceof JsxExpression
     || e instanceof JsxElement
     || e instanceof JsxOpeningElement
   ) {
     return e as JsxExpression;
-  } if (e instanceof Call) {
+  }
+  if (e instanceof Call) {
     return new JsxExpression(undefined, e);
-  } if (
+  }
+  if (
     e instanceof Paren
     || e instanceof ExpressionWithOptionalExpression
   ) {
