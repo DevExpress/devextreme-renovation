@@ -56,6 +56,6 @@
     }
   },
   "lint-staged": {
-    "*": "npm run lint:fix"
+    "*": "eslint --fix"
   }
 }
