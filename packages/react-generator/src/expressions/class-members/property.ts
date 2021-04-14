@@ -114,7 +114,8 @@ export class Property extends BaseProperty {
     const scope = this.processComponentContext(this.scope);
     if (this.isInternalState) {
       return getLocalStateName(this.name, componentContext);
-    } if (
+    }
+    if (
       this.decorators.some(
         (d) => d.name === Decorators.OneWay
           || d.name === Decorators.Event
@@ -123,7 +124,8 @@ export class Property extends BaseProperty {
       )
     ) {
       return getPropName(this.name, componentContext, scope);
-    } if (
+    }
+    if (
       this.decorators.some(
         (d) => d.name === Decorators.Ref
           || d.name === Decorators.ForwardRef
@@ -136,17 +138,21 @@ export class Property extends BaseProperty {
         return `${scope}${this.name}`;
       }
       return getPropName(this.name, componentContext, scope);
-    } if (this.isState) {
+    }
+    if (this.isState) {
       const propName = getPropName(this.name, componentContext, scope);
       return `(${propName}!==undefined?${propName}:${getLocalStateName(
         this.name,
         componentContext,
       )})`;
-    } if (this.isNested) {
+    }
+    if (this.isNested) {
       return `__getNested${capitalizeFirstLetter(this.name)}()`;
-    } if (this.isProvider || this.isConsumer) {
+    }
+    if (this.isProvider || this.isConsumer) {
       return this.name;
-    } if (this.isMutable) {
+    }
+    if (this.isMutable) {
       return `${this.name}.current!`;
     }
     throw `Can't parse property: ${this._name}`;
@@ -155,7 +161,8 @@ export class Property extends BaseProperty {
   getDependency(_options: toStringOptions) {
     if (this.isInternalState) {
       return [getLocalStateName(this.name)];
-    } if (
+    }
+    if (
       this.decorators.some(
         (d) => d.name === Decorators.OneWay
           || d.name === Decorators.Event
@@ -164,7 +171,8 @@ export class Property extends BaseProperty {
       )
     ) {
       return [getPropName(this.name)];
-    } if (
+    }
+    if (
       this.decorators.some(
         (d) => d.name === Decorators.Ref
           || d.name === Decorators.ForwardRef
@@ -177,13 +185,17 @@ export class Property extends BaseProperty {
       return this.questionOrExclamationToken === '?'
         ? [`${scope}${this.name.toString()}`]
         : [];
-    } if (this.isState) {
+    }
+    if (this.isState) {
       return [getPropName(this.name), getLocalStateName(this.name)];
-    } if (this.isNested) {
+    }
+    if (this.isNested) {
       return [getPropName(this.name), getPropName('children')];
-    } if (this.isProvider || this.isConsumer) {
+    }
+    if (this.isProvider || this.isConsumer) {
       return [this.name];
-    } if (this.isMutable) {
+    }
+    if (this.isMutable) {
       return [];
     }
     throw `Can't parse property: ${this._name}`;
