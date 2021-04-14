@@ -6,6 +6,7 @@ import { compileCode } from './code-compiler';
 import { Decorators } from './decorators';
 import { Expression, SimpleExpression } from './expressions/base';
 import { BindingElement, BindingPattern } from './expressions/binding-pattern';
+import { CallSignature } from './expressions/call-signature';
 import { Class, HeritageClause } from './expressions/class';
 import { Constructor, GetAccessor, Method, Property } from './expressions/class-members';
 import {
@@ -125,6 +126,10 @@ export class Generator implements GeneratorAPI {
 
   createNumericLiteral(value: string, _numericLiteralFlags = ""): Expression {
     return new NumericLiteral(value);
+  }
+  
+  createCallSignature(typeParameters: TypeExpression[], parameters: Parameter[], type: TypeExpression | string) {
+    return new CallSignature(typeParameters, parameters, type);
   }
 
   createVariableDeclaration(
