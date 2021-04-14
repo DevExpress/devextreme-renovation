@@ -137,7 +137,7 @@ export class Generator implements GeneratorAPI {
   createNumericLiteral(value: string, _numericLiteralFlags = ''): Expression {
     return new NumericLiteral(value);
   }
-  
+
   createCallSignature(typeParameters: TypeExpression[], parameters: Parameter[], type: TypeExpression | string) {
     return new CallSignature(typeParameters, parameters, type);
   }
