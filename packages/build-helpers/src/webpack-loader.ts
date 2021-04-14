@@ -24,23 +24,23 @@ export default function (this: loader.LoaderContext, source: string) {
   const options: GeneratorOptions = { defaultOptionsModule };
 
   switch (platform) {
-    case "react":
+    case 'react':
       generator = new ReactGenerator();
       break;
-    case "angular":
+    case 'angular':
       generator = new AngularGenerator();
       break;
-    case "vue":
+    case 'vue':
       generator = new VueGenerator();
       break;
-    case "preact":
+    case 'preact':
       generator = new PreactGenerator();
       generator.options = {
         jqueryComponentRegistratorModule,
         jqueryBaseComponentModule,
       };
       break;
-    case "inferno":
+    case 'inferno':
       generator = new InfernoGenerator();
       generator.options = {
         jqueryComponentRegistratorModule,
@@ -48,7 +48,7 @@ export default function (this: loader.LoaderContext, source: string) {
       };
       break;
     default:
-      throw new Error("Invalid platform");
+      throw new Error('Invalid platform');
   }
 
   generator.options = {
@@ -63,13 +63,13 @@ export default function (this: loader.LoaderContext, source: string) {
       path: this.resourcePath,
       dirname: path.dirname(this.resourcePath),
     },
-    false
+    false,
   );
 
   if (tsConfig) {
     const compilationResult = ts.transpileModule(
       result as string,
-      getTsConfig(tsConfig)
+      getTsConfig(tsConfig),
     );
     return compilationResult.outputText;
   }

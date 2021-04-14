@@ -1,9 +1,10 @@
-import { Decorator } from "./decorator";
-import { Identifier } from "./common";
-import { Expression } from "./base";
+import { Decorator } from './decorator';
+import { Identifier } from './common';
+import { Expression } from './base';
 
 export class EnumMember {
   name: Expression;
+
   initializer?: Expression;
 
   constructor(name: Expression, initializer?: Expression) {
@@ -20,15 +21,18 @@ export class EnumMember {
 
 export class Enum {
   decorators: Decorator[];
+
   modifiers: string[];
+
   name: Identifier;
+
   members: EnumMember[];
 
   constructor(
     decorators: Decorator[] = [],
     modifiers: string[] = [],
     name: Identifier,
-    members: EnumMember[]
+    members: EnumMember[],
   ) {
     this.decorators = decorators;
     this.modifiers = modifiers;
@@ -37,8 +41,8 @@ export class Enum {
   }
 
   toString() {
-    return `${this.modifiers.join(" ")} enum ${this.name} {
-      ${this.members.join(",\n")}
+    return `${this.modifiers.join(' ')} enum ${this.name} {
+      ${this.members.join(',\n')}
     }`;
   }
 }

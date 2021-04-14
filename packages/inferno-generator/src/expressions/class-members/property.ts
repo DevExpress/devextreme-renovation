@@ -5,7 +5,7 @@ import {
   GeneratorContext,
   Identifier,
   toStringOptions,
-  TypeExpression
+  TypeExpression,
 } from '@devextreme-generator/core';
 import { Property as BaseProperty } from '@devextreme-generator/preact';
 
@@ -15,17 +15,17 @@ export class Property extends BaseProperty {
   compileTypeReferenceNode(
     typeName: Identifier,
     typeArguments: TypeExpression[],
-    context: GeneratorContext
+    context: GeneratorContext,
   ) {
     return new TypeReferenceNode(typeName, typeArguments, context);
   }
 
   getter(componentContext?: string) {
     if (
-      this.isInternalState ||
-      this.isProvider ||
-      this.isConsumer ||
-      this.isMutable
+      this.isInternalState
+      || this.isProvider
+      || this.isConsumer
+      || this.isMutable
     ) {
       return `${this.processComponentContext(componentContext)}${this.name}`;
     }
@@ -56,43 +56,42 @@ export class Property extends BaseProperty {
       this.questionOrExclamationToken,
       this.type,
       this.initializer,
-      true
+      true,
     );
   }
 
   toString(options?: toStringOptions) {
     if (this.isRef || this.isForwardRef || this.isApiRef) {
-      const type =
-        (this.type instanceof TypeReferenceNode &&
-          this.type.typeArguments[0]) ||
-        "any";
-      const refType = this.isApiRef ? "any" : type;
-      return `${this.modifiers.join(" ")} ${
+      const type = (this.type instanceof TypeReferenceNode
+          && this.type.typeArguments[0])
+        || 'any';
+      const refType = this.isApiRef ? 'any' : type;
+      return `${this.modifiers.join(' ')} ${
         this.name
       }:RefObject<${refType}> = infernoCreateRef<${type}>()`;
     }
 
     if (this.isMutable) {
-      return `${this.modifiers.join(" ")} ${this.name}${
+      return `${this.modifiers.join(' ')} ${this.name}${
         this.questionOrExclamationToken
       }${compileType(this.type.toString())} ${
         this.initializer && this.initializer.toString()
           ? `= ${this.initializer.toString()}`
-          : ""
+          : ''
       }`;
     }
 
     if (this.isProvider) {
-      return `${this.modifiers.join(" ")} ${this.typeDeclaration()} ${
+      return `${this.modifiers.join(' ')} ${this.typeDeclaration()} ${
         this.initializer && this.initializer.toString()
           ? `= ${this.initializer.toString()}`
-          : ""
+          : ''
       }`;
     }
 
     if (this.isConsumer) {
-      return `${this.modifiers.join(" ")} get ${this.name}()${compileType(
-        this.type.toString()
+      return `${this.modifiers.join(' ')} get ${this.name}()${compileType(
+        this.type.toString(),
       )}{
         if("${this.context}" in this.context){
           return this.context.${this.context};
@@ -107,37 +106,35 @@ export class Property extends BaseProperty {
   getDependency() {
     if (
       this.decorators.some(
-        (d) =>
-          d.name === Decorators.OneWay ||
-          d.name === Decorators.Event ||
-          d.name === Decorators.Template ||
-          d.name === Decorators.Slot
+        (d) => d.name === Decorators.OneWay
+          || d.name === Decorators.Event
+          || d.name === Decorators.Template
+          || d.name === Decorators.Slot,
       )
     ) {
       return [`props.${this.name}`];
-    } else if (
+    } if (
       this.decorators.some(
-        (d) =>
-          d.name === Decorators.Ref ||
-          d.name === Decorators.ForwardRef ||
-          d.name === Decorators.ApiRef ||
-          d.name === Decorators.RefProp ||
-          d.name === Decorators.ForwardRefProp
+        (d) => d.name === Decorators.Ref
+          || d.name === Decorators.ForwardRef
+          || d.name === Decorators.ApiRef
+          || d.name === Decorators.RefProp
+          || d.name === Decorators.ForwardRefProp,
       )
     ) {
       const scope = this.processComponentContext(this.scope);
-      return this.questionOrExclamationToken === "?"
+      return this.questionOrExclamationToken === '?'
         ? [
-            `${scope}${this.name}${
-              scope ? this.questionOrExclamationToken : ""
-            }.current`,
-          ]
+          `${scope}${this.name}${
+            scope ? this.questionOrExclamationToken : ''
+          }.current`,
+        ]
         : [];
-    } else if (this.isState) {
+    } if (this.isState) {
       return [`__state_${this.name}`, `props.${this.name}Change`];
-    } else if (this.isInternalState || this.isProvider || this.isConsumer) {
+    } if (this.isInternalState || this.isProvider || this.isConsumer) {
       return [`${this.name}`];
-    } else if (this.isMutable) {
+    } if (this.isMutable) {
       return [];
     }
     throw `Can't parse property: ${this._name}`;

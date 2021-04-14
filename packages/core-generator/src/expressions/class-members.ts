@@ -5,7 +5,7 @@ import {
   calculateType,
   compileType,
   compileTypeParameters,
-  processComponentContext
+  processComponentContext,
 } from '../utils/string';
 import { Expression } from './base';
 import { Identifier } from './common';
@@ -17,27 +17,31 @@ import {
   reduceTypeExpressionImports,
   SimpleTypeExpression,
   TypeExpression,
-  TypeReferenceNode
+  TypeReferenceNode,
 } from './type';
 import { TypeParameterDeclaration } from './type-parameter-declaration';
 
 export class BaseClassMember extends Expression {
   decorators: Decorator[];
+
   modifiers: string[];
+
   _name: Identifier;
+
   type: TypeExpression | string;
+
   inherited: boolean;
 
-  scope: string = "";
+  scope = '';
 
-  prefix: string = "";
+  prefix = '';
 
   constructor(
     decorators: Decorator[] = [],
     modifiers: string[] = [],
     name: Identifier,
-    type: TypeExpression | string = new SimpleTypeExpression(""),
-    inherited: boolean = false
+    type: TypeExpression | string = new SimpleTypeExpression(''),
+    inherited = false,
   ) {
     super();
     this.decorators = decorators;
@@ -97,14 +101,14 @@ export class BaseClassMember extends Expression {
 
   get isSlot() {
     return (
-      this._hasDecorator(Decorators.Slot) ||
-      this._hasDecorator(Decorators.ViewChild)
+      this._hasDecorator(Decorators.Slot)
+      || this._hasDecorator(Decorators.ViewChild)
     );
   }
 
   get isSvgSlot() {
     const decorator = this.decorators.find((d) => d.name === Decorators.Slot);
-    return decorator?.getParameter("isSVG")?.toString() === "true";
+    return decorator?.getParameter('isSVG')?.toString() === 'true';
   }
 
   get isTemplate() {
@@ -145,7 +149,7 @@ export class BaseClassMember extends Expression {
 
   get context() {
     const decorator = this.decorators.find(
-      (d) => d.name === Decorators.Consumer || d.name === Decorators.Provider
+      (d) => d.name === Decorators.Consumer || d.name === Decorators.Provider,
     ) as Decorator;
     return decorator.expression.arguments[0];
   }
@@ -165,9 +169,13 @@ export class BaseClassMember extends Expression {
 
 export class Method extends BaseClassMember {
   asteriskToken?: string;
+
   questionToken: string;
+
   typeParameters: TypeParameterDeclaration[];
+
   parameters: Parameter[];
+
   body: Block;
 
   constructor(
@@ -175,11 +183,11 @@ export class Method extends BaseClassMember {
     modifiers: string[] = [],
     asteriskToken: string | undefined,
     name: Identifier,
-    questionToken: string = "",
+    questionToken = '',
     typeParameters: TypeParameterDeclaration[] | undefined = [],
     parameters: Parameter[],
-    type: TypeExpression | string = new SimpleTypeExpression("any"),
-    body: Block
+    type: TypeExpression | string = new SimpleTypeExpression('any'),
+    body: Block,
   ) {
     super(decorators, modifiers, name, type);
     this.asteriskToken = asteriskToken;
@@ -198,7 +206,7 @@ export class Method extends BaseClassMember {
       this.questionToken
     }:${this.compileTypeParameters()}(${this.parameters
       .map((p) => p.typeDeclaration())
-      .join(",")})=>${this.type}`;
+      .join(',')})=>${this.type}`;
   }
 
   declaration(options?: toStringOptions) {
@@ -219,29 +227,28 @@ export class Method extends BaseClassMember {
     const members = options.members;
     const run = this.decorators
       .find((d) => d.name === Decorators.Effect)
-      ?.getParameter("run")
+      ?.getParameter('run')
       ?.valueOf();
-    const depsReducer = (d: string[], p: Method | Property | undefined) =>
-      d.concat(
-        p!.getDependency({
-          ...options,
-          members: members.filter((p) => p !== this),
-        })
-      );
+    const depsReducer = (d: string[], p: Method | Property | undefined) => d.concat(
+      p!.getDependency({
+        ...options,
+        members: members.filter((p) => p !== this),
+      }),
+    );
 
     let result: string[] = [];
-    if (run === "always") {
+    if (run === 'always') {
       result = this.filterDependencies(
         members
           .filter((m) => !(m instanceof Method))
-          .reduce(depsReducer, ["props"])
+          .reduce(depsReducer, ['props']),
       );
-    } else if (run !== "once") {
+    } else if (run !== 'once') {
       const dependency = this.body.getDependency(options);
       const additionalDependency = [];
 
-      if (dependency.find((d) => d === "props")) {
-        additionalDependency.push("props");
+      if (dependency.find((d) => d === 'props')) {
+        additionalDependency.push('props');
       }
 
       result = [...new Set(dependency)]
@@ -250,8 +257,8 @@ export class Method extends BaseClassMember {
         .reduce(depsReducer, [])
         .concat(additionalDependency);
 
-      if (additionalDependency.indexOf("props") > -1) {
-        result = result.filter((d) => !d.startsWith("props."));
+      if (additionalDependency.indexOf('props') > -1) {
+        result = result.filter((d) => !d.startsWith('props.'));
       }
     }
 
@@ -259,10 +266,10 @@ export class Method extends BaseClassMember {
   }
 
   toString(options?: toStringOptions) {
-    return `${this.decorators.join(" ")} ${this.modifiers.join(" ")} ${
+    return `${this.decorators.join(' ')} ${this.modifiers.join(' ')} ${
       this.name
     }${this.compileTypeParameters()}(${this.parameters})${compileType(
-      this.type.toString()
+      this.type.toString(),
     )}${this.body.toString(options)}`;
   }
 
@@ -275,7 +282,7 @@ export class Method extends BaseClassMember {
       this.parameters
         .map((p) => p.type)
         .filter((t) => t instanceof TypeExpression) as TypeExpression[],
-      context
+      context,
     );
 
     return mergeTypeExpressionImports(result, parametersImport);
@@ -289,18 +296,18 @@ export class GetAccessor extends Method {
     name: Identifier,
     parameters: Parameter[],
     type?: TypeExpression | string,
-    body?: Block
+    body?: Block,
   ) {
     super(
       decorators,
       modifiers,
-      "",
+      '',
       name,
-      "",
+      '',
       [],
       parameters,
       type,
-      body || new Block([], false)
+      body || new Block([], false),
     );
   }
 
@@ -313,47 +320,47 @@ export class GetAccessor extends Method {
   }
 
   toString(options?: toStringOptions) {
-    return `${this.modifiers.join(" ")} get ${this.name}()${compileType(
-      this.type.toString()
+    return `${this.modifiers.join(' ')} get ${this.name}()${compileType(
+      this.type.toString(),
     )}${this.body.toString(options)}`;
   }
 }
 
 export class Property extends BaseClassMember {
   questionOrExclamationToken: string;
+
   initializer?: Expression;
 
   constructor(
     decorators: Decorator[] = [],
     modifiers: string[] = [],
     name: Identifier,
-    questionOrExclamationToken: string = "",
+    questionOrExclamationToken = '',
     type?: TypeExpression | string,
     initializer?: Expression,
-    inherited: boolean = false
+    inherited = false,
   ) {
     super(
       decorators,
       modifiers,
       name,
-      type || new SimpleTypeExpression(calculateType(initializer) || "any"),
-      inherited
+      type || new SimpleTypeExpression(calculateType(initializer) || 'any'),
+      inherited,
     );
     this.questionOrExclamationToken = questionOrExclamationToken;
     this.initializer = initializer;
   }
 
   compileRefType(): string {
-    const type =
-      (this.type instanceof TypeReferenceNode && this.type.typeArguments[0]) ||
-      "any";
+    const type = (this.type instanceof TypeReferenceNode && this.type.typeArguments[0])
+      || 'any';
     return type.toString();
   }
 
   typeDeclaration() {
     return `${this.name}${compileType(
       this.type.toString(),
-      this.questionOrExclamationToken
+      this.questionOrExclamationToken,
     )}`;
   }
 
@@ -363,21 +370,20 @@ export class Property extends BaseClassMember {
 
   getter(componentContext?: string) {
     return `${this.processComponentContext(
-      componentContext
+      componentContext,
     )}${this._name.toString()}`;
   }
 
   isReadOnly() {
     return this.decorators.some(
-      (d) =>
-        d.name === Decorators.OneWay ||
-        d.name === Decorators.Event ||
-        d.name === Decorators.RefProp ||
-        d.name === Decorators.ForwardRef ||
-        d.name === Decorators.ApiRef ||
-        d.name === Decorators.Nested ||
-        d.name === Decorators.Slot ||
-        d.name === Decorators.Template
+      (d) => d.name === Decorators.OneWay
+        || d.name === Decorators.Event
+        || d.name === Decorators.RefProp
+        || d.name === Decorators.ForwardRef
+        || d.name === Decorators.ApiRef
+        || d.name === Decorators.Nested
+        || d.name === Decorators.Slot
+        || d.name === Decorators.Template,
     );
   }
 
@@ -389,24 +395,24 @@ export class Property extends BaseClassMember {
       this.questionOrExclamationToken,
       this.type,
       this.initializer,
-      true
+      true,
     );
   }
 
   toString(_options?: toStringOptions) {
-    return `${this.modifiers.join(" ")} ${this.decorators
+    return `${this.modifiers.join(' ')} ${this.decorators
       .map((d) => d.toString())
-      .join(" ")} ${this.typeDeclaration()} ${
+      .join(' ')} ${this.typeDeclaration()} ${
       this.initializer && this.initializer.toString()
         ? `= ${this.initializer.toString()}`
-        : ""
+        : ''
     }`;
   }
 
   get isInternalState() {
     return (
-      this.decorators.length === 0 ||
-      this._hasDecorator(Decorators.InternalState)
+      this.decorators.length === 0
+      || this._hasDecorator(Decorators.InternalState)
     );
   }
 
@@ -427,17 +433,16 @@ export class Constructor {
     public decorators: Decorator[] = [],
     public modifiers: string[] = [],
     public parameters: Parameter[],
-    public body: Block | undefined
+    public body: Block | undefined,
   ) {}
 
   toString() {
-    return `${this.decorators.join(" ")}
-      ${this.modifiers.join(" ")} constructor(${this.parameters})${
-      this.body || "{}"
-    }
+    return `${this.decorators.join(' ')}
+      ${this.modifiers.join(' ')} constructor(${this.parameters})${
+  this.body || '{}'
+}
     `;
   }
 }
 
-export const isProperty = (member: BaseClassMember): member is Property =>
-  member instanceof Property;
+export const isProperty = (member: BaseClassMember): member is Property => member instanceof Property;

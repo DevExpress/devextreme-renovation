@@ -1,5 +1,5 @@
-import * as react from "react";
-import { createPortal } from "react-dom";
+import * as react from 'react';
+import { createPortal } from 'react-dom';
 
 export type Rule<T> = {
   device: any;
@@ -151,7 +151,7 @@ export const createContext = <T>(_defaultValue: T) => new Context();
 
 export const Listen = (
   _eventName?: string,
-  _parameters?: { target?: Document | Window | string }
+  _parameters?: { target?: Document | Window | string },
 ) => propertyDecorator;
 /**
  * Property Decorator.
@@ -161,15 +161,14 @@ export const Ref = () => propertyDecorator;
 
 export type RefObject<T = any> = {
   bivarianceHack(instance: (T & Element) | null): void;
-}["bivarianceHack"] & { current: T | null };
+}['bivarianceHack'] & { current: T | null };
 
 /**
  * Method Decorator.
  * Declare a logic that should be executed after component is rendered.
  * All DOM references is available here.
  */
-export const Effect = (_args?: { run?: "once" | "always" }) =>
-  propertyDecorator;
+export const Effect = (_args?: { run?: 'once' | 'always' }) => propertyDecorator;
 
 interface JSXComponentBase<_P> {
   context: any;
@@ -188,26 +187,30 @@ class JSXComponentBase<_P> {}
 export function JSXComponent<
   PropsType,
   RequiredProps extends keyof PropsType = Exclude<
-    keyof PropsType,
-    keyof PropsType
-  >
+  keyof PropsType,
+  keyof PropsType
+  >,
 >(Props?: { new (): PropsType & { ref?: React.Component<PropsType> } }) {
   type DefaultPropsType = Omit<PropsType, RequiredProps> & {
     [name: string]: any;
   };
   type RealPropsType = Partial<Omit<PropsType, RequiredProps>> &
-    Pick<PropsType, RequiredProps>;
+  Pick<PropsType, RequiredProps>;
   const BaseComponent = class extends JSXComponentBase<RealPropsType> {
-    static defaultProps: DefaultPropsType = ((Props && new Props()) ||
-      {}) as DefaultPropsType;
+    static defaultProps: DefaultPropsType = ((Props && new Props())
+      || {}) as DefaultPropsType;
+
     static isReactComponent = {};
+
     constructor(props: RealPropsType) {
       super();
       this.props = props as PropsType;
     }
+
     props!: PropsType;
+
     restAttributes: { [name: string]: any } = {
-      "rest-attributes": "restAttributes",
+      'rest-attributes': 'restAttributes',
     }; // for testing purpose
   };
   BaseComponent.prototype.isReactComponent = {}; // for enzyme tests
@@ -220,12 +223,12 @@ export function JSXComponent<
 export type JSXTemplate<
   PropsType = {},
   RequiredProps extends keyof PropsType = Exclude<
-    keyof PropsType,
-    keyof PropsType
-  >
+  keyof PropsType,
+  keyof PropsType
+  >,
 > = React.JSXElementConstructor<
-  Partial<Omit<PropsType, RequiredProps>> &
-    Required<Pick<PropsType, RequiredProps>>
+Partial<Omit<PropsType, RequiredProps>> &
+Required<Pick<PropsType, RequiredProps>>
 >;
 
 /**

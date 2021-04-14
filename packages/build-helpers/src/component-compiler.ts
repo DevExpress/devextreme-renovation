@@ -1,4 +1,6 @@
-import { compileCode, generateFactoryCode, GeneratorAPI, GeneratorResult } from '@devextreme-generator/core';
+import {
+  compileCode, generateFactoryCode, GeneratorAPI, GeneratorResult,
+} from '@devextreme-generator/core';
 import fs from 'fs';
 import path from 'path';
 import Stream from 'stream';
@@ -29,7 +31,7 @@ export function generateComponents(generator: GeneratorAPI) {
           generator,
           code,
           originalFile,
-          true
+          true,
         ) as GeneratorResult[];
 
         components
@@ -46,7 +48,7 @@ export function generateComponents(generator: GeneratorAPI) {
     },
   });
 
-  stream.on("end", () => generator.resetCache());
+  stream.on('end', () => generator.resetCache());
 
   return stream;
 }
@@ -63,12 +65,12 @@ export function compile(dir: string, outDir: string) {
         name,
         fs.readFileSync(`${dir}/${name}`).toString(),
         ts.ScriptTarget.ES2016,
-        true
+        true,
       );
       const factoryCode = generateFactoryCode(ts, source);
       fs.writeFileSync(
-        `${outDir}/${name.replace(path.extname(name), ".js")}`,
-        factoryCode
+        `${outDir}/${name.replace(path.extname(name), '.js')}`,
+        factoryCode,
       );
     });
 }

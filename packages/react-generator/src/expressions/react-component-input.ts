@@ -9,7 +9,7 @@ import {
   Identifier,
   Property as BaseProperty,
   SyntaxKind,
-  TypeExpression
+  TypeExpression,
 } from '@devextreme-generator/core';
 
 import { Method } from './class-members/method';
@@ -17,7 +17,7 @@ import { compileJSXTemplateType, Property } from './class-members/property';
 
 export function getTemplatePropName(
   name: Identifier | string,
-  propName: string
+  propName: string,
 ) {
   return name
     .toString()
@@ -28,25 +28,23 @@ export function getTemplatePropName(
 export function buildTemplateProperty(
   templateMember: Property,
   members: BaseClassMember[],
-  propName: "render" | "component"
+  propName: 'render' | 'component',
 ) {
   const templatePropName = getTemplatePropName(templateMember._name, propName);
   if (!members.find((m) => m._name.toString() === templatePropName)) {
-    const type =
-      propName === "render"
-        ? compileJSXTemplateType(templateMember.type)
-        : compileJSXTemplateType(templateMember.type, true);
+    const type = propName === 'render'
+      ? compileJSXTemplateType(templateMember.type)
+      : compileJSXTemplateType(templateMember.type, true);
     return new Property(
-      [new Decorator(new Call(new Identifier("OneWay"), undefined, []), {})],
+      [new Decorator(new Call(new Identifier('OneWay'), undefined, []), {})],
       [],
       new Identifier(templatePropName),
       SyntaxKind.QuestionToken,
       type,
-      undefined
+      undefined,
     );
-  } else {
-    throw `You can't use '${templatePropName}' property. It'll be generated for '${templateMember._name}' template property.`;
   }
+  throw `You can't use '${templatePropName}' property. It'll be generated for '${templateMember._name}' template property.`;
 }
 
 export class ComponentInput extends BaseComponentInput {
@@ -56,7 +54,7 @@ export class ComponentInput extends BaseComponentInput {
     name: Identifier,
     questionOrExclamationToken?: string,
     type?: TypeExpression,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     return new Property(
       decorators,
@@ -64,22 +62,22 @@ export class ComponentInput extends BaseComponentInput {
       name,
       questionOrExclamationToken,
       type,
-      initializer
+      initializer,
     );
   }
 
   buildTemplateProperties(
     templateMember: Property,
-    members: BaseClassMember[]
+    members: BaseClassMember[],
   ) {
     return [
-      buildTemplateProperty(templateMember, members, "render"),
-      buildTemplateProperty(templateMember, members, "component"),
+      buildTemplateProperty(templateMember, members, 'render'),
+      buildTemplateProperty(templateMember, members, 'component'),
     ];
   }
 
   compileImports() {
-    return this.getImports(this.context).join(";\n");
+    return this.getImports(this.context).join(';\n');
   }
 
   toString() {
@@ -87,43 +85,40 @@ export class ComponentInput extends BaseComponentInput {
 
     const types = this.heritageClauses.reduce(
       (t: string[], h) => t.concat(h.typeNodes.map((t) => `typeof ${t}`)),
-      []
+      [],
     );
     const typeName = `${this.name}Type`;
 
     const properties = this.members.filter(
-      (m) => !(m as Property).inherited
+      (m) => !(m as Property).inherited,
     ) as Property[];
 
     const typeDeclaration = `export declare type ${typeName} = ${types
       .concat([
         `{
-              ${properties.map((p) => p.typeDeclaration()).join(";\n")}
+              ${properties.map((p) => p.typeDeclaration()).join(';\n')}
           }`,
       ])
-      .join("&")}`;
+      .join('&')}`;
 
     const typeCasting = properties.some(
-      (p) =>
-        (p.questionOrExclamationToken === SyntaxKind.ExclamationToken &&
-          !p.initializer) ||
-        (p.type.toString() === "any" &&
-          !p.questionOrExclamationToken &&
-          !p.initializer) ||
-        (p.isState && p.questionOrExclamationToken === "")
+      (p) => (p.questionOrExclamationToken === SyntaxKind.ExclamationToken
+          && !p.initializer)
+        || (p.type.toString() === 'any'
+          && !p.questionOrExclamationToken
+          && !p.initializer)
+        || (p.isState && p.questionOrExclamationToken === ''),
     )
       ? ` as any as ${typeName}`
-      : "";
+      : '';
 
-    const declarationModifiers =
-      this.modifiers.indexOf("default") !== -1 ? [] : this.modifiers;
+    const declarationModifiers = this.modifiers.indexOf('default') !== -1 ? [] : this.modifiers;
 
     const propertiesWithInitializer = this.members
       .filter(
-        (m) =>
-          !(m as Property).inherited &&
-          (m as Property).initializer &&
-          m.decorators.find((d) => d.name !== Decorators.TwoWay)
+        (m) => !(m as Property).inherited
+          && (m as Property).initializer
+          && m.decorators.find((d) => d.name !== Decorators.TwoWay),
       )
       .filter((m) => !m.isNested) as Property[];
 
@@ -133,44 +128,44 @@ export class ComponentInput extends BaseComponentInput {
         (name) => ({
           name,
           isNested:
-            this.context.components?.[name]?.members.some((m) => m.isNested) ||
-            false,
-        })
+            this.context.components?.[name]?.members.some((m) => m.isNested)
+            || false,
+        }),
       ),
     };
     return `${this.compileImports()}
           ${typeDeclaration}
-          ${declarationModifiers.join(" ")} const ${this.name}:${typeName}={
+          ${declarationModifiers.join(' ')} const ${this.name}:${typeName}={
              ${inherited
-               .concat(
-                 propertiesWithInitializer.map((p) => p.defaultProps(options))
-               )
-               .join(",\n")}
+    .concat(
+      propertiesWithInitializer.map((p) => p.defaultProps(options)),
+    )
+    .join(',\n')}
           }${typeCasting};
           ${
-            declarationModifiers !== this.modifiers
-              ? `${this.modifiers.join(" ")} ${this.name}`
-              : ""
-          }`;
+  declarationModifiers !== this.modifiers
+    ? `${this.modifiers.join(' ')} ${this.name}`
+    : ''
+}`;
   }
 
   createChildrenForNested(members: Array<BaseProperty | Method>) {
-    const hasChildren = members.some((m) => m.isSlot && m.name === "children");
+    const hasChildren = members.some((m) => m.isSlot && m.name === 'children');
     const hasNested = members.some((m) => m.isNested);
     if (hasNested && !hasChildren) {
       return new Property(
         [
           new Decorator(
             new Call(new Identifier(Decorators.Slot), undefined, undefined),
-            {}
+            {},
           ),
         ],
         undefined,
-        new Identifier("children"),
-        "?",
+        new Identifier('children'),
+        '?',
         undefined,
         undefined,
-        undefined
+        undefined,
       );
     }
     return null;

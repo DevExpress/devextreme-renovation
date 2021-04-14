@@ -1,26 +1,3 @@
-import { AsExpression } from './expressions/as-expression';
-import { Binary } from './expressions/binary';
-import { Call, New } from './expressions/call';
-import { CallChain } from './expressions/call-chain';
-import { Class } from './expressions/class';
-import { GetAccessor } from './expressions/class-members/get-accessor';
-import { Method } from './expressions/class-members/method';
-import { Property } from './expressions/class-members/property';
-import { Enum, EnumMember } from './expressions/enum';
-import { ArrowFunction } from './expressions/functions/arrow-function';
-import { Function } from './expressions/functions/function';
-import { Parameter } from './expressions/functions/parameter';
-import { ImportDeclaration } from './expressions/import-declaration';
-import { JsxAttribute } from './expressions/jsx/attribute';
-import { JsxElement } from './expressions/jsx/element';
-import { JsxExpression } from './expressions/jsx/jsx-expression';
-import { JsxSpreadAttribute } from './expressions/jsx/spread-attribute';
-import { NonNullExpression } from './expressions/non-null-expression';
-import { PropertyAccess } from './expressions/property-access';
-import { PropertyAccessChain } from './expressions/property-access-chain';
-import { VariableDeclaration } from './expressions/variable-declaration';
-import { VueComponentInput } from './expressions/vue-component-input';
-import { ExpressionWithTypeArguments } from './types';
 import path from 'path';
 import prettier from 'prettier';
 import BaseGenerator, {
@@ -49,18 +26,41 @@ import BaseGenerator, {
   TypeOperatorNode,
   PropertySignature,
   MethodSignature,
-  } from '@devextreme-generator/core';
+} from '@devextreme-generator/core';
+import { AsExpression } from './expressions/as-expression';
+import { Binary } from './expressions/binary';
+import { Call, New } from './expressions/call';
+import { CallChain } from './expressions/call-chain';
+import { Class } from './expressions/class';
+import { GetAccessor } from './expressions/class-members/get-accessor';
+import { Method } from './expressions/class-members/method';
+import { Property } from './expressions/class-members/property';
+import { Enum, EnumMember } from './expressions/enum';
+import { ArrowFunction } from './expressions/functions/arrow-function';
+import { Function } from './expressions/functions/function';
+import { Parameter } from './expressions/functions/parameter';
+import { ImportDeclaration } from './expressions/import-declaration';
+import { JsxAttribute } from './expressions/jsx/attribute';
+import { JsxElement } from './expressions/jsx/element';
+import { JsxExpression } from './expressions/jsx/jsx-expression';
+import { JsxSpreadAttribute } from './expressions/jsx/spread-attribute';
+import { NonNullExpression } from './expressions/non-null-expression';
+import { PropertyAccess } from './expressions/property-access';
+import { PropertyAccessChain } from './expressions/property-access-chain';
+import { VariableDeclaration } from './expressions/variable-declaration';
+import { VueComponentInput } from './expressions/vue-component-input';
+import { ExpressionWithTypeArguments } from './types';
 import {
   VueComponent,
   getComponentListFromContext,
-} from "./expressions/vue-component";
+} from './expressions/vue-component';
 import {
   JsxOpeningElement,
   JsxSelfClosingElement,
   JsxClosingElement,
-} from "./expressions/jsx/opening-element";
+} from './expressions/jsx/opening-element';
 
-const emptyToString = () => "";
+const emptyToString = () => '';
 
 const addEmptyToString = <T>(e: T): T => {
   (e as any).toString = emptyToString;
@@ -73,7 +73,7 @@ export class VueGenerator extends BaseGenerator {
     name: Identifier,
     typeParameters: string[],
     heritageClauses: HeritageClause[],
-    members: Array<Property | Method>
+    members: Array<Property | Method>,
   ) {
     return new VueComponentInput(
       decorators,
@@ -82,7 +82,7 @@ export class VueGenerator extends BaseGenerator {
       typeParameters,
       heritageClauses,
       members,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -92,7 +92,7 @@ export class VueGenerator extends BaseGenerator {
     name: Identifier,
     typeParameters: any,
     heritageClauses: HeritageClause[],
-    members: Array<Property | Method>
+    members: Array<Property | Method>,
   ) {
     return new VueComponent(
       componentDecorator,
@@ -101,7 +101,7 @@ export class VueGenerator extends BaseGenerator {
       typeParameters,
       heritageClauses,
       members,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -111,7 +111,7 @@ export class VueGenerator extends BaseGenerator {
     name: Identifier,
     questionOrExclamationToken?: string,
     type?: TypeExpression,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     return new Property(
       decorators,
@@ -119,7 +119,7 @@ export class VueGenerator extends BaseGenerator {
       name,
       questionOrExclamationToken,
       type,
-      initializer
+      initializer,
     );
   }
 
@@ -129,7 +129,7 @@ export class VueGenerator extends BaseGenerator {
     name: Identifier,
     parameters: Parameter[],
     type?: TypeExpression,
-    body?: Block
+    body?: Block,
   ) {
     return new GetAccessor(decorators, modifiers, name, parameters, type, body);
   }
@@ -143,7 +143,7 @@ export class VueGenerator extends BaseGenerator {
     typeParameters: TypeParameterDeclaration[] | undefined,
     parameters: Parameter[],
     type: TypeExpression | undefined,
-    body: Block
+    body: Block,
   ) {
     return new Method(
       decorators,
@@ -154,7 +154,7 @@ export class VueGenerator extends BaseGenerator {
       typeParameters,
       parameters,
       type,
-      body
+      body,
     );
   }
 
@@ -166,7 +166,7 @@ export class VueGenerator extends BaseGenerator {
     typeParameters: any,
     parameters: Parameter[],
     type: TypeExpression | undefined,
-    body: Block
+    body: Block,
   ) {
     return new Function(
       decorators,
@@ -177,7 +177,7 @@ export class VueGenerator extends BaseGenerator {
       parameters,
       type,
       body,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -187,7 +187,7 @@ export class VueGenerator extends BaseGenerator {
     parameters: Parameter[],
     type: TypeExpression | string | undefined,
     equalsGreaterThanToken: string,
-    body: Block | Expression
+    body: Block | Expression,
   ) {
     return new ArrowFunction(
       modifiers,
@@ -196,14 +196,14 @@ export class VueGenerator extends BaseGenerator {
       type,
       equalsGreaterThanToken,
       body,
-      this.getContext()
+      this.getContext(),
     );
   }
 
   createVariableDeclarationCore(
     name: Identifier | BindingPattern,
     type?: TypeExpression,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     return new VariableDeclaration(name, type, initializer);
   }
@@ -212,20 +212,20 @@ export class VueGenerator extends BaseGenerator {
     expression: Expression,
     questionDotToken: string | undefined,
     _typeArguments: TypeExpression[] | undefined,
-    argumentsArray: Expression[] | undefined
+    argumentsArray: Expression[] | undefined,
   ) {
     return new CallChain(
       expression,
       questionDotToken,
       undefined,
-      argumentsArray
+      argumentsArray,
     );
   }
 
   createCall(
     expression: Expression,
     typeArguments: TypeExpression[] | undefined,
-    argumentsArray?: Expression[]
+    argumentsArray?: Expression[],
   ) {
     return new Call(expression, typeArguments, argumentsArray);
   }
@@ -233,7 +233,7 @@ export class VueGenerator extends BaseGenerator {
   createNew(
     expression: Expression,
     typeArguments: TypeExpression[] | undefined,
-    argumentsArray: Expression[]
+    argumentsArray: Expression[],
   ) {
     return new New(expression, typeArguments, argumentsArray);
   }
@@ -245,7 +245,7 @@ export class VueGenerator extends BaseGenerator {
     name: Identifier | BindingPattern,
     questionToken?: string,
     type?: TypeExpression,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     return new Parameter(
       decorators,
@@ -254,52 +254,52 @@ export class VueGenerator extends BaseGenerator {
       name,
       questionToken,
       type,
-      initializer
+      initializer,
     );
   }
 
   processSourceFileName(name: string) {
     const ext = getComponentListFromContext(this.getContext()).length
-      ? ".vue"
-      : ".js";
+      ? '.vue'
+      : '.js';
     return name.replace(path.extname(name), ext);
   }
 
   format(code: string) {
-    if (code.indexOf("<script>") === -1) {
+    if (code.indexOf('<script>') === -1) {
       return code;
     }
     return prettier.format(code, {
-      parser: "vue",
-      htmlWhitespaceSensitivity: "strict",
+      parser: 'vue',
+      htmlWhitespaceSensitivity: 'strict',
     });
   }
 
   processCodeFactoryResult(
     codeFactoryResult: Array<any>,
-    createFactoryOnly: boolean
+    createFactoryOnly: boolean,
   ) {
     const code = super.processCodeFactoryResult(
       codeFactoryResult,
-      createFactoryOnly
+      createFactoryOnly,
     );
     if (getComponentListFromContext(this.getContext()).length === 0) {
-      return prettier.format(code, { parser: "babel" });
+      return prettier.format(code, { parser: 'babel' });
     }
     const template = codeFactoryResult.find((r) => r instanceof VueComponent)
       ?.template;
     return this.format(`
             ${
-              template
-                ? `
+  template
+    ? `
             <template>
             ${template}
             </template>`
-                : ""
-            }
-            ${"<script>"}
+    : ''
+}
+            ${'<script>'}
             ${code}
-            ${"</script>"}
+            ${'</script>'}
         `);
   }
 
@@ -310,38 +310,38 @@ export class VueGenerator extends BaseGenerator {
   createPropertyAccessChain(
     expression: Expression,
     questionDotToken: string | undefined,
-    name: Expression
+    name: Expression,
   ) {
     return new PropertyAccessChain(expression, questionDotToken, name);
   }
 
-  createJsxExpression(dotDotDotToken: string = "", expression?: Expression) {
+  createJsxExpression(dotDotDotToken = '', expression?: Expression) {
     return new JsxExpression(dotDotDotToken, expression);
   }
 
   createJsxOpeningElement(
     tagName: Expression,
     typeArguments?: any,
-    attributes?: Array<JsxAttribute | JsxSpreadAttribute>
+    attributes?: Array<JsxAttribute | JsxSpreadAttribute>,
   ) {
     return new JsxOpeningElement(
       tagName,
       typeArguments,
       attributes,
-      this.getContext()
+      this.getContext(),
     );
   }
 
   createJsxSelfClosingElement(
     tagName: Expression,
     typeArguments?: any,
-    attributes?: Array<JsxAttribute | JsxSpreadAttribute>
+    attributes?: Array<JsxAttribute | JsxSpreadAttribute>,
   ) {
     return new JsxSelfClosingElement(
       tagName,
       typeArguments,
       attributes,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -356,9 +356,9 @@ export class VueGenerator extends BaseGenerator {
   createJsxElement(
     openingElement: JsxOpeningElement,
     children: Array<
-      JsxElement | string | JsxExpression | JsxSelfClosingElement
+    JsxElement | string | JsxExpression | JsxSelfClosingElement
     >,
-    closingElement: JsxClosingElement
+    closingElement: JsxClosingElement,
   ) {
     return new JsxElement(openingElement, children, closingElement);
   }
@@ -383,54 +383,54 @@ export class VueGenerator extends BaseGenerator {
     decorators: Decorator[] = [],
     modifiers: string[] = [],
     importClause: ImportClause,
-    moduleSpecifier: StringLiteral
+    moduleSpecifier: StringLiteral,
   ) {
     return new ImportDeclaration(
       decorators,
       modifiers,
       importClause,
       moduleSpecifier,
-      this.getContext()
+      this.getContext(),
     );
   }
 
   createExpressionWithTypeArguments(
     typeArguments: TypeReferenceNode[] | undefined,
-    expression: Expression
+    expression: Expression,
   ) {
     return new ExpressionWithTypeArguments(typeArguments, expression);
   }
 
   createKeywordTypeNode(kind: string) {
     return addEmptyToString<SimpleTypeExpression>(
-      super.createKeywordTypeNode(kind)
+      super.createKeywordTypeNode(kind),
     );
   }
 
   createArrayTypeNode(elementType: TypeExpression) {
     return addEmptyToString<ArrayTypeNode>(
-      super.createArrayTypeNode(elementType)
+      super.createArrayTypeNode(elementType),
     );
   }
 
   createLiteralTypeNode(literal: Expression) {
     return addEmptyToString<LiteralTypeNode>(
-      super.createLiteralTypeNode(literal)
+      super.createLiteralTypeNode(literal),
     );
   }
 
   createIndexedAccessTypeNode(
     objectType: TypeExpression,
-    indexType: TypeExpression
+    indexType: TypeExpression,
   ) {
     return addEmptyToString<IndexedAccessTypeNode>(
-      super.createIndexedAccessTypeNode(objectType, indexType)
+      super.createIndexedAccessTypeNode(objectType, indexType),
     );
   }
 
   createIntersectionTypeNode(types: TypeExpression[]) {
     return addEmptyToString<IntersectionTypeNode>(
-      super.createIntersectionTypeNode(types)
+      super.createIntersectionTypeNode(types),
     );
   }
 
@@ -440,17 +440,17 @@ export class VueGenerator extends BaseGenerator {
 
   createParenthesizedType(expression: TypeExpression) {
     return addEmptyToString<ParenthesizedType>(
-      super.createParenthesizedType(expression)
+      super.createParenthesizedType(expression),
     );
   }
 
   createFunctionTypeNode(
     typeParameters: any,
     parameters: Parameter[],
-    type: TypeExpression
+    type: TypeExpression,
   ) {
     return addEmptyToString<FunctionTypeNode>(
-      super.createFunctionTypeNode(typeParameters, parameters, type)
+      super.createFunctionTypeNode(typeParameters, parameters, type),
     );
   }
 
@@ -459,14 +459,14 @@ export class VueGenerator extends BaseGenerator {
     modifiers: string[] | undefined,
     name: Identifier,
     typeParameters: any,
-    type: TypeExpression
+    type: TypeExpression,
   ) {
     const base = super.createTypeAliasDeclaration(
       decorators,
       modifiers,
       name,
       typeParameters,
-      type
+      type,
     );
 
     if (base instanceof TypeAliasDeclaration) {
@@ -478,16 +478,16 @@ export class VueGenerator extends BaseGenerator {
 
   createTypeOperatorNode(type: TypeExpression) {
     return addEmptyToString<TypeOperatorNode>(
-      super.createTypeOperatorNode(type)
+      super.createTypeOperatorNode(type),
     );
   }
 
   createTypeReferenceNode(
     typeName: Identifier,
-    typeArguments?: TypeExpression[]
+    typeArguments?: TypeExpression[],
   ) {
     return addEmptyToString<TypeReferenceNode>(
-      super.createTypeReferenceNode(typeName, typeArguments)
+      super.createTypeReferenceNode(typeName, typeArguments),
     );
   }
 
@@ -497,7 +497,7 @@ export class VueGenerator extends BaseGenerator {
     name: Identifier,
     typeParameters: any[] | undefined,
     heritageClauses: HeritageClause[] | undefined,
-    members: Array<PropertySignature | MethodSignature>
+    members: Array<PropertySignature | MethodSignature>,
   ) {
     return addEmptyToString<Interface>(
       super.createInterfaceDeclaration(
@@ -506,8 +506,8 @@ export class VueGenerator extends BaseGenerator {
         name,
         typeParameters,
         heritageClauses,
-        members
-      )
+        members,
+      ),
     );
   }
 
@@ -519,7 +519,7 @@ export class VueGenerator extends BaseGenerator {
     decorators: Decorator[] | undefined,
     modifiers: string[] | undefined,
     name: Identifier,
-    members: EnumMember[]
+    members: EnumMember[],
   ) {
     return new Enum(decorators, modifiers, name, members);
   }
@@ -535,7 +535,7 @@ export class VueGenerator extends BaseGenerator {
     typeParameters: string[],
     heritageClauses: HeritageClause[],
     members: Array<Property | Method>,
-    context: GeneratorContext
+    context: GeneratorContext,
   ) {
     return new Class(
       decorators,
@@ -544,18 +544,18 @@ export class VueGenerator extends BaseGenerator {
       typeParameters,
       heritageClauses,
       members,
-      context
+      context,
     );
   }
 
   addComponent(
     name: string,
     component: VueComponent | VueComponentInput,
-    importClause?: ImportClause
+    importClause?: ImportClause,
   ) {
     if (
-      component instanceof VueComponent &&
-      importClause?.default?.toString() !== name
+      component instanceof VueComponent
+      && importClause?.default?.toString() !== name
     ) {
       importClause?.remove(name);
       importClause?.add(name, component.exportedName);

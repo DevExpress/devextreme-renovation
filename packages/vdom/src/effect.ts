@@ -1,8 +1,9 @@
 export class InfernoEffect {
   private destroy?: (() => void) | void;
+
   constructor(
     private effect: () => (() => void) | void,
-    private dependency: Array<any>
+    private dependency: Array<any>,
   ) {
     this.destroy = effect();
   }
