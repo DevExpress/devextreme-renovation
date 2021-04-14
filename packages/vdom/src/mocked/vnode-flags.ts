@@ -23,7 +23,7 @@ export declare const enum VNodeFlags {
   DOMRef = 2033,
   InUseOrNormalized = 81920,
   ClearInUse = -16385,
-  ComponentKnown = 12
+  ComponentKnown = 12,
 }
 
 export declare const enum ChildFlags {
@@ -33,5 +33,5 @@ export declare const enum ChildFlags {
   HasNonKeyedChildren = 4,
   HasKeyedChildren = 8,
   HasTextChildren = 16,
-  MultipleChildren = 12
+  MultipleChildren = 12,
 }

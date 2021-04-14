@@ -9,6 +9,7 @@ export default class Widget extends JQueryCustomBaseComponent {
       allowNull: [],
       elements: [],
       templates: [],
+      props: [],
     };
   }
 

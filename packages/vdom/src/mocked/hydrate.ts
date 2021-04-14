@@ -1,5 +1,9 @@
-import { _CI, _HI, _M, _MCCC, _ME, _MFCC, _MP, _MR, EMPTY_OBJ, render, VNode, _RFC as renderFunctionalComponent } from 'inferno';
-import { isFunction, isInvalid, isNull, isNullOrUndef, throwError } from './shared';
+import {
+  _CI, _HI, _M, _MCCC, _ME, _MFCC, _MP, _MR, EMPTY_OBJ, render, VNode, _RFC as renderFunctionalComponent,
+} from 'inferno';
+import {
+  isFunction, isInvalid, isNull, isNullOrUndef, throwError,
+} from './shared';
 import { ChildFlags, VNodeFlags } from './vnode-flags';
 
 function isSameInnerHTML(dom: Element, innerHTML: string): boolean {
@@ -79,10 +83,8 @@ function hydrateChildren(parentVNode: VNode, parentNode: any, currentNode: any, 
         parentNode.appendChild(document.createTextNode(children as string));
       } else if (parentNode.childNodes.length !== 1 || currentNode.nodeType !== 3) {
         parentNode.textContent = children as string;
-      } else {
-        if (currentNode.nodeValue !== children) {
-          currentNode.nodeValue = children as string;
-        }
+      } else if (currentNode.nodeValue !== children) {
+        currentNode.nodeValue = children as string;
       }
       currentNode = null;
     } else if (childFlags & ChildFlags.MultipleChildren) {

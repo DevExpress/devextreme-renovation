@@ -27,20 +27,20 @@ import {
   SimpleExpression,
   SyntaxKind,
   TypeLiteralNode,
-} from "@devextreme-generator/core";
-import { JsxSpreadAttributeMeta, JsxSpreadAttribute } from "./spread-attribute";
-import { JsxAttribute } from "./attribute";
-import { toStringOptions, IPropsGetAccessor } from "../../types";
-import { AngularDirective } from "./angular-directive";
-import { JsxExpression } from "./jsx-expression";
+} from '@devextreme-generator/core';
+import { JsxSpreadAttributeMeta, JsxSpreadAttribute } from './spread-attribute';
+import { JsxAttribute } from './attribute';
+import { toStringOptions, IPropsGetAccessor } from '../../types';
+import { AngularDirective } from './angular-directive';
+import { JsxExpression } from './jsx-expression';
 import {
   JsxChildExpression,
   mergeToStringOptions,
-} from "./jsx-child-expression";
-import { JsxElement } from "./elements";
-import { AngularComponent } from "../component";
-import { counter } from "../../counter";
-import { PropsGetAccessor } from "../class-members/props-get-accessor";
+} from './jsx-child-expression';
+import { JsxElement } from './elements';
+import { AngularComponent } from '../component';
+import { counter } from '../../counter';
+import { PropsGetAccessor } from '../class-members/props-get-accessor';
 
 function pickSpreadValue(first: string, second: string): string {
   return `(${second}!==undefined?${second}:${first})`;
@@ -48,7 +48,7 @@ function pickSpreadValue(first: string, second: string): string {
 
 function functionParameterToTemplateVariables(
   parameter?: Parameter,
-  options?: toStringOptions
+  options?: toStringOptions,
 ): AngularDirective[] {
   if (!parameter) {
     return [];
@@ -59,18 +59,16 @@ function functionParameterToTemplateVariables(
       const name = param.name.toString(options);
       return new AngularDirective(
         new Identifier(`let-${name}`),
-        new Identifier(name)
+        new Identifier(name),
       );
     });
   }
 
   if (parameter.name instanceof BindingPattern) {
-    return parameter.name.elements.map((element) => {
-      return new AngularDirective(
-        new Identifier(`let-${element.name}`),
-        new Identifier(`${element.propertyName || element.name}`)
-      );
-    });
+    return parameter.name.elements.map((element) => new AngularDirective(
+      new Identifier(`let-${element.name}`),
+      new Identifier(`${element.propertyName || element.name}`),
+    ));
   }
 
   throw `Can't convert function parameter ${parameter.toString()} into template parameter: Use BindingPattern or TypeLiteralNode`;
@@ -83,7 +81,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     tagName: Expression,
     typeArguments: any,
     attributes: Array<JsxAttribute | JsxSpreadAttribute> = [],
-    context: GeneratorContext
+    context: GeneratorContext,
   ) {
     super(tagName, typeArguments, attributes, context);
     this.attributes = attributes;
@@ -92,35 +90,34 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   processAngularSelector(
     selector: string,
     isClosing = false,
-    options?: toStringOptions
+    options?: toStringOptions,
   ) {
-    const svgPrefix = "svg:";
-    const prefix =
-      options?.isSVG && selector.indexOf(svgPrefix) === -1 ? svgPrefix : "";
+    const svgPrefix = 'svg:';
+    const prefix = options?.isSVG && selector.indexOf(svgPrefix) === -1 ? svgPrefix : '';
     return isClosing
-      ? selector.replace(/\[.+\]/gi, "")
-      : `${prefix}${selector.replace("[", "").replace("]", "")}`;
+      ? selector.replace(/\[.+\]/gi, '')
+      : `${prefix}${selector.replace('[', '').replace(']', '')}`;
   }
 
   processTagName(
     tagName: Expression,
     options?: toStringOptions,
-    isClosing = false
+    isClosing = false,
   ): Expression {
     if (this.isDynamicComponent(options)) {
-      return new SimpleExpression("ng-template");
+      return new SimpleExpression('ng-template');
     }
 
     if (this.component instanceof AngularComponent) {
       const selector = this.processAngularSelector(
         this.component.selector,
         isClosing,
-        options
+        options,
       );
       return new Identifier(selector);
     }
-    if (tagName.toString() === "Portal") {
-      return new Identifier("dx-portal");
+    if (tagName.toString() === 'Portal') {
+      return new Identifier('dx-portal');
     }
 
     if (options?.isSVG && !isClosing) {
@@ -157,24 +154,23 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   }
 
   isPropsGetAccessor(
-    member: Property | Method | undefined
+    member: Property | Method | undefined,
   ): member is IPropsGetAccessor {
     return member instanceof PropsGetAccessor;
   }
 
   spreadToArray(
     spreadAttribute: JsxSpreadAttribute,
-    options?: toStringOptions
+    options?: toStringOptions,
   ) {
     const component = this.component;
-    const properties =
-      (component &&
-        getProps(component.members).filter(this.getPropertyFromSpread)) ||
-      [];
+    const properties = (component
+        && getProps(component.members).filter(this.getPropertyFromSpread))
+      || [];
 
     const spreadAttributesExpression = getExpression(
       spreadAttribute.expression,
-      options
+      options,
     );
 
     if (spreadAttributesExpression instanceof ObjectLiteral) {
@@ -184,7 +180,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
             return values.concat([
               this.createJsxAttribute(
                 new Identifier(p.key.toString()),
-                p.value
+                p.value,
               ),
             ]);
           }
@@ -192,7 +188,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
             return values.concat([
               this.createJsxAttribute(
                 new Identifier(p.key.toString()),
-                p.value
+                p.value,
               ),
             ]);
           }
@@ -200,11 +196,11 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
           return values.concat(
             this.spreadToArray(
               new JsxSpreadAttribute(undefined, p.expression),
-              options
-            )
+              options,
+            ),
           );
         },
-        []
+        [],
       );
 
       return attributesFromObject;
@@ -213,24 +209,22 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     if (spreadAttributesExpression instanceof PropertyAccess) {
       const member = spreadAttributesExpression.getMember(options);
       if (
-        member instanceof GetAccessor &&
-        member._name.toString() === "restAttributes"
+        member instanceof GetAccessor
+        && member._name.toString() === 'restAttributes'
       ) {
         return [];
       }
       if (this.component && this.isPropsGetAccessor(member)) {
-        return member.props.map((p) => {
-          return this.createJsxAttribute(
-            new Identifier(p._name.toString()),
+        return member.props.map((p) => this.createJsxAttribute(
+          new Identifier(p._name.toString()),
+          new PropertyAccess(
             new PropertyAccess(
-              new PropertyAccess(
-                new Identifier(options!.componentContext!),
-                new Identifier("props")
-              ),
-              p._name
-            )
-          );
-        });
+              new Identifier(options!.componentContext!),
+              new Identifier('props'),
+            ),
+            p._name,
+          ),
+        ));
       }
     }
 
@@ -238,13 +232,13 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       const propName = prop._name;
       const spreadValueExpression = new PropertyAccess(
         spreadAttributesExpression,
-        propName
+        propName,
       );
 
       const isPropsScope = spreadValueExpression.isPropsScope(options);
       const members = spreadValueExpression.getMembers(options);
       const hasMember = members?.some(
-        (m) => m._name.toString() === propName.toString()
+        (m) => m._name.toString() === propName.toString(),
       );
       if (isPropsScope && !hasMember) {
         return acc;
@@ -252,8 +246,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
       const spreadValue = spreadValueExpression.toString(options);
       const attr = this.attributes.find(
-        (a) =>
-          a instanceof JsxAttribute && a.name.toString() === propName.toString()
+        (a) => a instanceof JsxAttribute && a.name.toString() === propName.toString(),
       ) as JsxAttribute;
       let value = spreadValue;
       if (attr) {
@@ -262,17 +255,15 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         const attrValue = attr.initializer.toString(options);
         const member = getMember(attr.initializer, options);
         if (
-          member instanceof Method &&
-          !(member instanceof GetAccessor) &&
-          (attrIndex > spreadIndex || attrIndex === -1)
+          member instanceof Method
+          && !(member instanceof GetAccessor)
+          && (attrIndex > spreadIndex || attrIndex === -1)
         ) {
           value = attrValue;
+        } else if (spreadIndex < attrIndex) {
+          value = pickSpreadValue(spreadValue, attrValue);
         } else {
-          if (spreadIndex < attrIndex) {
-            value = pickSpreadValue(spreadValue, attrValue);
-          } else {
-            value = pickSpreadValue(attrValue, spreadValue);
-          }
+          value = pickSpreadValue(attrValue, spreadValue);
         }
       }
 
@@ -287,28 +278,28 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
   processSpreadAttributesOnNativeElement() {
     const ref = this.attributes.find(
-      (a) => a instanceof JsxAttribute && a.name.toString() === "ref"
+      (a) => a instanceof JsxAttribute && a.name.toString() === 'ref',
     );
     if (!ref && !this.component) {
       this.attributes.push(
         new JsxAttribute(
-          new Identifier("ref"),
-          new SimpleExpression(`_auto_ref_${counter.get()}`)
-        )
+          new Identifier('ref'),
+          new SimpleExpression(`_auto_ref_${counter.get()}`),
+        ),
       );
     }
   }
 
   updateSpreadAttribute(
     spreadAttribute: JsxSpreadAttribute,
-    _attributes: JsxAttribute[]
+    _attributes: JsxAttribute[],
   ) {
     return spreadAttribute;
   }
 
   processSpreadAttributes(options?: toStringOptions) {
     const spreadAttributes = this.attributes.filter(
-      (a) => a instanceof JsxSpreadAttribute
+      (a) => a instanceof JsxSpreadAttribute,
     ) as JsxSpreadAttribute[];
     if (spreadAttributes.length) {
       spreadAttributes.forEach((spreadAttr) => {
@@ -316,12 +307,12 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
         const updatedSpreadAttribute = this.updateSpreadAttribute(
           spreadAttr,
-          attributes
+          attributes,
         );
 
         if (updatedSpreadAttribute !== spreadAttr) {
           const oldAttrIndex = this.attributes.findIndex(
-            (a) => a === spreadAttr
+            (a) => a === spreadAttr,
           );
           if (oldAttrIndex > -1) {
             this.attributes.splice(oldAttrIndex, 1);
@@ -331,9 +322,8 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
         attributes.forEach((attr) => {
           const oldAttrIndex = this.attributes.findIndex(
-            (a) =>
-              a instanceof JsxAttribute &&
-              a.name.toString() === attr.name.toString()
+            (a) => a instanceof JsxAttribute
+              && a.name.toString() === attr.name.toString(),
           );
           if (oldAttrIndex > -1) {
             this.attributes.splice(oldAttrIndex, 1);
@@ -358,19 +348,19 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         const contextElements = a.getTemplateContext(options, this.context);
         return elements.concat(contextElements);
       }, [])
-      .filter((el) => el.key.toString() !== "key");
+      .filter((el) => el.key.toString() !== 'key');
 
     const keyAttribute = this.attributes.find(
-      (el) => el instanceof JsxAttribute && el.name.toString() == "key"
+      (el) => el instanceof JsxAttribute && el.name.toString() === 'key',
     );
     if (keyAttribute instanceof JsxAttribute) {
       keyAttribute.compileKey(options);
     }
     const contextString = contextElements.length
       ? `; context:${new ObjectLiteral(contextElements, false)
-          .toString(options)
-          .replace(/"/gi, "'")}`
-      : "";
+        .toString(options)
+        .replace(/"/gi, "'")}`
+      : '';
     const containerAttributes = this.attributes
       .filter((a) => a instanceof AngularDirective)
       .map((a) => a.toString(options));
@@ -380,16 +370,15 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
     let elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${name}${contextString}"></ng-container>`;
 
-    const initializerComponent =
-      initializer instanceof Identifier &&
-      this.context.components &&
-      this.context.components[initializer.toString()]
-        ? this.context.components[initializer.toString()]
-        : undefined;
+    const initializerComponent = initializer instanceof Identifier
+      && this.context.components
+      && this.context.components[initializer.toString()]
+      ? this.context.components[initializer.toString()]
+      : undefined;
     if (
-      options &&
-      (initializer instanceof BaseFunction ||
-        (initializer instanceof Identifier && initializerComponent))
+      options
+      && (initializer instanceof BaseFunction
+        || (initializer instanceof Identifier && initializerComponent))
     ) {
       elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${name}||${name}Default${contextString}">
       </ng-container>`;
@@ -413,7 +402,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       }
     }
     if (containerAttributes.length) {
-      return `<ng-container ${containerAttributes.join("\n")}>
+      return `<ng-container ${containerAttributes.join('\n')}>
         ${elementString}
       </ng-container>`;
     }
@@ -423,23 +412,22 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
   separateChildrenForDynamicComponent(
     children: Array<string | Expression>,
-    options?: toStringOptions
+    options?: toStringOptions,
   ): [string, string] | null {
     if (this.isDynamicComponent(options) && children.length) {
       const templates = children.filter(
-        (c) =>
-          c instanceof JsxElement &&
-          c.openingElement.tagName.toString() === "ng-template"
+        (c) => c instanceof JsxElement
+          && c.openingElement.tagName.toString() === 'ng-template',
       ) as JsxElement[];
 
       const childrenString = children
         .filter((c) => !templates.some((t) => t === c))
         .map((c) => c.toString(options))
-        .join("");
+        .join('');
 
       const templatesString = templates
         .map((c) => c.toString(options))
-        .join("");
+        .join('');
 
       return [childrenString, templatesString];
     }
@@ -449,16 +437,15 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
   compileDynamicComponent(
     options: toStringOptions,
-    expression: Expression
+    expression: Expression,
   ): string {
     const member = getMember(expression, options);
     const component = extractComponentFromType(member?.type, this.context);
     this.component = component;
     const templates = component?.members.filter((m) => m.isTemplate);
     const props = this.attributes.filter(
-      (a) =>
-        !(a instanceof AngularDirective) &&
-        !(a instanceof JsxAttribute && a.name.toString() === "key")
+      (a) => !(a instanceof AngularDirective)
+        && !(a instanceof JsxAttribute && a.name.toString() === 'key'),
     );
 
     options.hasDynamicComponents = true;
@@ -472,7 +459,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       if (p instanceof JsxSpreadAttribute) {
         return new PropertyAssignment(
           new Identifier(`dxSpreadProp${index}`),
-          p.expression
+          p.expression,
         );
       }
       if (templates?.some((m) => m.name === p.name.toString())) {
@@ -483,32 +470,30 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         const templateValue = /"(.+)"/gi.exec(stringValue)?.[1];
         return new PropertyAssignment(
           p.name,
-          new SimpleExpression(templateValue || "null")
+          new SimpleExpression(templateValue || 'null'),
         );
-      } else {
-        const member = getMember(p.initializer, options);
-        const valueExpression =
-          member instanceof Method
-            ? new SimpleExpression(
-                `${p.initializer.toString(options)}.bind(this)`
-              )
-            : p.initializer;
-        return new PropertyAssignment(p.name, valueExpression);
       }
+      const member = getMember(p.initializer, options);
+      const valueExpression = member instanceof Method
+        ? new SimpleExpression(
+          `${p.initializer.toString(options)}.bind(this)`,
+        )
+        : p.initializer;
+      return new PropertyAssignment(p.name, valueExpression);
     });
 
     const directives = this.attributes
       .filter((a) => a instanceof AngularDirective)
       .concat([
         new JsxAttribute(
-          new Identifier("props"),
-          new ObjectLiteral(propsObject, false)
+          new Identifier('props'),
+          new ObjectLiteral(propsObject, false),
         ),
       ])
       .map((d) => d.toString(options))
       .concat(`[componentConstructor]="${this.tagName.toString(options)}"`)
       .concat(params)
-      .join("\n");
+      .join('\n');
 
     return `<ng-template dynamicComponent ${directives}>`;
   }
@@ -541,7 +526,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       this.tagName,
       this.typeArguments,
       (this.attributes as JsxAttribute[]).slice(),
-      this.context
+      this.context,
     );
   }
 
@@ -556,18 +541,15 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   getSlotsFromAttributes(options?: toStringOptions) {
     if (this.component) {
       const slots = this.attributes.filter(
-        (a) =>
-          a instanceof JsxAttribute &&
-          a.isSlotAttribute({
+        (a) => a instanceof JsxAttribute
+          && a.isSlotAttribute({
             members: [],
             ...options,
             jsxComponent: this.component,
-          })
+          }),
       ) as JsxAttribute[];
 
-      return slots.map((s) =>
-        this.createJsxChildExpression(this.createJsxExpression(s.initializer))
-      );
+      return slots.map((s) => this.createJsxChildExpression(this.createJsxExpression(s.initializer)));
     }
     return [];
   }
@@ -579,17 +561,17 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   createTemplateElement(
     name: string,
     parameters: AngularDirective[],
-    element: string | JsxExpression | JsxSelfClosingElement | JsxElement
+    element: string | JsxExpression | JsxSelfClosingElement | JsxElement,
   ): JsxElement {
-    const tag = new SimpleExpression("ng-template");
+    const tag = new SimpleExpression('ng-template');
     const ref = new AngularDirective(
       new Identifier(`#${name}`),
-      new SimpleExpression("")
+      new SimpleExpression(''),
     );
     return new JsxElement(
       new JsxOpeningElement(tag, undefined, [ref, ...parameters], this.context),
       [element],
-      new JsxClosingElement(tag, this.context)
+      new JsxClosingElement(tag, this.context),
     );
   }
 
@@ -599,8 +581,8 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       if (prop.initializer) {
         initializer = this.createJsxExpression(
           new SimpleExpression(
-            `(${prop._name} !== undefined ? ${prop._name} : ${component.name}Defaults.${prop._name})`
-          )
+            `(${prop._name} !== undefined ? ${prop._name} : ${component.name}Defaults.${prop._name})`,
+          ),
         );
       }
       return new JsxAttribute(prop._name, initializer);
@@ -609,11 +591,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       component._name,
       undefined,
       attributes,
-      component.context
+      component.context,
     );
     const templateAttr = getProps(component.members).map(
-      (prop) =>
-        new AngularDirective(new Identifier(`let-${prop._name}`), prop._name)
+      (prop) => new AngularDirective(new Identifier(`let-${prop._name}`), prop._name),
     );
 
     return this.createTemplateElement(name, templateAttr, element);
@@ -621,7 +602,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
   templatePropToJsxElement(
     _template: JsxAttribute,
-    _options?: toStringOptions
+    _options?: toStringOptions,
   ): JsxElement | null {
     return null;
   }
@@ -629,7 +610,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   functionToJsxElement(
     name: string,
     func: BaseFunction,
-    options?: toStringOptions
+    options?: toStringOptions,
   ) {
     const templateOptions: toStringOptions = {
       members: [],
@@ -643,20 +624,19 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return this.createTemplateElement(
       name,
       functionParameterToTemplateVariables(func.parameters[0]),
-      element
+      element,
     );
   }
 
   getTemplatesFromAttributes(options?: toStringOptions) {
     if (this.component) {
       const templates = this.attributes.filter(
-        (a) =>
-          a instanceof JsxAttribute &&
-          a.isTemplateAttribute({
+        (a) => a instanceof JsxAttribute
+          && a.isTemplateAttribute({
             members: [],
             ...options,
             jsxComponent: this.component,
-          })
+          }),
       ) as JsxAttribute[];
 
       const components = templates.reduce((acc, template) => {
@@ -673,7 +653,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
       if (options) {
         options.templateComponents = (options.templateComponents || []).concat(
-          components.map((c) => c.component)
+          components.map((c) => c.component),
         );
       }
 
@@ -688,8 +668,8 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
           });
         }
         if (
-          template.initializer.isJsx() &&
-          isFunction(getExpression(template.initializer))
+          template.initializer.isJsx()
+          && isFunction(getExpression(template.initializer))
         ) {
           acc.push({
             name: this.getArrowFunctionGeneratedName(template.name.toString()),
@@ -700,23 +680,17 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       }, [] as { name: string; func: BaseFunction }[]);
 
       const props = templates.filter(
-        (t) =>
-          !(components as { name: string }[])
-            .concat(functions)
-            .some(
-              ({ name }) =>
-                name === this.getTemplateName(t) ||
-                name === `__${this.getTemplateName(t)}__generated`
-            )
+        (t) => !(components as { name: string }[])
+          .concat(functions)
+          .some(
+            ({ name }) => name === this.getTemplateName(t)
+                || name === `__${this.getTemplateName(t)}__generated`,
+          ),
       );
 
       const result = [
-        ...components.map(({ name, component }) =>
-          this.componentToJsxElement(name, component)
-        ),
-        ...functions.map(({ name, func }) =>
-          this.functionToJsxElement(name, func, options)
-        ),
+        ...components.map(({ name, component }) => this.componentToJsxElement(name, component)),
+        ...functions.map(({ name, func }) => this.functionToJsxElement(name, func, options)),
         ...(props
           .map((t) => this.templatePropToJsxElement(t, options))
           .filter((e) => e !== null) as JsxElement[]),
@@ -727,9 +701,11 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
     return [];
   }
+
   getArrowFunctionGeneratedName(templateName: string) {
     return `__${templateName}__generated`;
   }
+
   getSpreadAttributes() {
     if (this.component) {
       return [];
@@ -738,7 +714,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       .filter((a) => a instanceof JsxSpreadAttribute)
       .map((a) => {
         const ref = this.attributes.find(
-          (a) => a instanceof JsxAttribute && a.name.toString() === "ref"
+          (a) => a instanceof JsxAttribute && a.name.toString() === 'ref',
         ) as JsxAttribute | undefined;
         if (ref) {
           return {
@@ -755,19 +731,19 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   createJsxElementForVariable(
     expression: Expression,
     children: Array<
-      JsxElement | string | JsxChildExpression | JsxSelfClosingElement
+    JsxElement | string | JsxChildExpression | JsxSelfClosingElement
     > = [],
-    attributes: JsxAttribute[] = []
+    attributes: JsxAttribute[] = [],
   ): JsxElement {
     const element = new JsxElement(
       new JsxOpeningElement(
         expression,
         this.typeArguments,
         (this.attributes as JsxAttribute[]).concat(attributes),
-        this.context
+        this.context,
       ),
       children,
-      new JsxClosingElement(expression, this.context)
+      new JsxClosingElement(expression, this.context),
     );
 
     return element;
@@ -776,35 +752,35 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   compileJsxElementsForVariable(
     options?: toStringOptions,
     children: Array<
-      JsxElement | string | JsxChildExpression | JsxSelfClosingElement
-    > = []
+    JsxElement | string | JsxChildExpression | JsxSelfClosingElement
+    > = [],
   ): string | undefined {
     const variable = getExpression(this.tagName, options);
 
     if (variable === this.tagName) {
-      return;
+      return undefined;
     }
     if (variable instanceof Conditional) {
       return [
         this.createJsxElementForVariable(variable.thenStatement, children, [
-          new AngularDirective(new Identifier("*ngIf"), variable.expression),
+          new AngularDirective(new Identifier('*ngIf'), variable.expression),
         ]),
         this.createJsxElementForVariable(variable.elseStatement, children, [
           new AngularDirective(
-            new Identifier("*ngIf"),
+            new Identifier('*ngIf'),
             new Prefix(
               SyntaxKind.ExclamationToken,
-              new Paren(variable.expression)
-            )
+              new Paren(variable.expression),
+            ),
           ),
         ]),
       ]
         .map((c) => c.toString(options))
-        .join("");
+        .join('');
     }
     if (variable instanceof Identifier) {
       return this.createJsxElementForVariable(variable, children, []).toString(
-        options
+        options,
       );
     }
 
@@ -814,26 +790,26 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
 // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
 const VOID_ELEMENTS = [
-  "area",
-  "base",
-  "br",
-  "col",
-  "embed",
-  "hr",
-  "img",
-  "input",
-  "link",
-  "meta",
-  "param",
-  "source",
-  "track",
-  "wbr",
+  'area',
+  'base',
+  'br',
+  'col',
+  'embed',
+  'hr',
+  'img',
+  'input',
+  'link',
+  'meta',
+  'param',
+  'source',
+  'track',
+  'wbr',
 ];
 
 export class JsxSelfClosingElement extends JsxOpeningElement {
   toString(options?: toStringOptions) {
     if (VOID_ELEMENTS.indexOf(this.tagName.toString(options)) !== -1) {
-      return `${super.toString(options).replace(">", "/>")}`;
+      return `${super.toString(options).replace('>', '/>')}`;
     }
 
     if (this.getTemplateProperty(options)) {
@@ -853,24 +829,24 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
 
     const separatedChildren = this.separateChildrenForDynamicComponent(
       children,
-      options
+      options,
     );
 
     if (separatedChildren) {
       return `${openingElement}${separatedChildren[0]}</${this.processTagName(
         this.tagName,
         options,
-        true
+        true,
       )}>
         ${separatedChildren[1]}`;
     }
 
-    const childrenString = children.map((c) => c.toString(options)).join("");
+    const childrenString = children.map((c) => c.toString(options)).join('');
 
     return `${openingElement}${childrenString}</${this.processTagName(
       this.tagName,
       options,
-      true
+      true,
     )}>`;
   }
 
@@ -879,7 +855,7 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
       this.tagName,
       this.typeArguments,
       (this.attributes as JsxAttribute[]).slice(),
-      this.context
+      this.context,
     );
   }
 }
@@ -895,7 +871,7 @@ export class JsxClosingElement extends JsxOpeningElement {
 
   toString(options?: toStringOptions) {
     return `</${this.processTagName(this.tagName, options).toString(
-      this.getJsxOptions(options)
+      this.getJsxOptions(options),
     )}>`;
   }
 }

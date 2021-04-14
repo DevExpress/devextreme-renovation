@@ -1,7 +1,7 @@
 import {
-	ComponentBindings,
-	Nested,
-	OneWay,
+  ComponentBindings,
+  Nested,
+  OneWay,
 } from "@devextreme-generator/declarations";
 
 @ComponentBindings()
@@ -26,4 +26,3 @@ export class EmptyClass {}
 export class FakeNested {
   @Nested() value?: EmptyClass[] = [new EmptyClass()];
 }
-  

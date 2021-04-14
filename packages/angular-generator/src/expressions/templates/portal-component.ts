@@ -68,11 +68,11 @@ export const angularPortalTemplate = `@Component({
   }`;
 
 export const angularPortalCoreImports = [
-  "ViewChild",
-  "ComponentFactoryResolver",
-  "ApplicationRef",
-  "Injector",
-  "ElementRef",
+  'ViewChild',
+  'ComponentFactoryResolver',
+  'ApplicationRef',
+  'Injector',
+  'ElementRef',
 ];
 
-export const angularPortalCdkImports = ["DomPortalOutlet", "DomPortal"];
+export const angularPortalCdkImports = ['DomPortalOutlet', 'DomPortal'];

@@ -1,9 +1,3 @@
-import { GetAccessor } from './class-members/get-accessor';
-import { Method } from './class-members/method';
-import { getPropName, Property } from './class-members/property';
-import { HeritageClause } from './heritage-clause';
-import { PropertyAccess } from './property-access';
-import { ComponentInput, getTemplatePropName } from './react-component-input';
 import path from 'path';
 import {
   BaseClassMember,
@@ -41,18 +35,28 @@ import {
   processComponentContext,
   PropertyAssignment,
   ShorthandPropertyAssignment,
-} from "@devextreme-generator/core";
+} from '@devextreme-generator/core';
+import { GetAccessor } from './class-members/get-accessor';
+import { Method } from './class-members/method';
+import {
+  getPropName, Property,
+} from './class-members/property';
+import { HeritageClause } from './heritage-clause';
+import { PropertyAccess } from './property-access';
+import {
+  ComponentInput, getTemplatePropName,
+} from './react-component-input';
 
 function getSubscriptions(methods: Method[]) {
   return methods
     .map((m) => {
       const [event, parameters] = m.decorators.find(
-        (d) => d.name === "Listen"
+        (d) => d.name === 'Listen',
       )!.expression.arguments;
 
       let target: string | undefined;
       if (parameters instanceof ObjectLiteral) {
-        target = parameters.getProperty("target")?.toString();
+        target = parameters.getProperty('target')?.toString();
       }
 
       return {
@@ -72,7 +76,7 @@ export class ReactComponent extends Component {
     typeParameters: string[],
     heritageClauses: HeritageClause[] = [],
     members: Array<Property | Method>,
-    context: GeneratorContext
+    context: GeneratorContext,
   ) {
     super(
       decorator,
@@ -81,33 +85,33 @@ export class ReactComponent extends Component {
       typeParameters,
       heritageClauses,
       members,
-      context
+      context,
     );
 
     this.refs = this.refs.concat(
-      this.members.filter((m) => m.isForwardRef) as Property[]
+      this.members.filter((m) => m.isForwardRef) as Property[],
     );
   }
 
   get REF_OBJECT_TYPE() {
-    return "MutableRefObject";
+    return 'MutableRefObject';
   }
 
   addPrefixToMembers(members: Array<BaseProperty | Method>) {
     return super.addPrefixToMembers(
       members.map((m) => {
         if (m instanceof Method || m.isRef || m.isForwardRef) {
-          m.prefix = "__";
+          m.prefix = '__';
         }
         return m;
-      })
+      }),
     );
   }
 
   processMembers(members: Array<BaseProperty | Method>) {
     members = super.processMembers(members).map((p) => {
       if (p.inherited) {
-        p.scope = "props";
+        p.scope = 'props';
       }
       return p;
     });
@@ -116,6 +120,9 @@ export class ReactComponent extends Component {
       members.push(this.createNestedChildrenGetter());
     }
     (members.filter((m) => m.isNested) as Property[]).forEach((m) => {
+      if (m.initializer) {
+        m.questionOrExclamationToken = SyntaxKind.QuestionToken;
+      }
       members.push(this.createNestedPropertyGetter(m));
     });
 
@@ -134,36 +141,36 @@ export class ReactComponent extends Component {
                   new BindingElement(
                     undefined,
                     undefined,
-                    new Identifier("children")
+                    new Identifier('children'),
                   ),
                 ],
-                "object"
+                'object',
               ),
               undefined,
               new PropertyAccess(
-                new SimpleExpression("this"),
-                new Identifier("props")
-              )
+                new SimpleExpression('this'),
+                new Identifier('props'),
+              ),
             ),
           ],
-          SyntaxKind.ConstKeyword
-        )
+          SyntaxKind.ConstKeyword,
+        ),
       ),
-      new ReturnStatement(new SimpleExpression(`__collectChildren(children)`)),
+      new ReturnStatement(new SimpleExpression('__collectChildren(children)')),
     ];
     const method = new Method(
       [],
       undefined,
       undefined,
-      new Identifier("nestedChildren"),
+      new Identifier('nestedChildren'),
       undefined,
-      [new TypeParameterDeclaration(new Identifier("T"))],
+      [new TypeParameterDeclaration(new Identifier('T'))],
       [],
-      new ArrayTypeNode(new SimpleTypeExpression("T")),
-      new Block(statements, true)
+      new ArrayTypeNode(new SimpleTypeExpression('T')),
+      new Block(statements, true),
     );
 
-    method.prefix = "__";
+    method.prefix = '__';
 
     return method;
   }
@@ -171,7 +178,7 @@ export class ReactComponent extends Component {
   createGetAccessor(
     name: Identifier,
     type: TypeExpression,
-    block: Block
+    block: Block,
   ): GetAccessor {
     return new GetAccessor(undefined, undefined, name, [], type, block);
   }
@@ -180,13 +187,13 @@ export class ReactComponent extends Component {
     const props = getProps(members);
     const bindingElements = props
       .reduce((bindingElements, p) => {
-        if (p._name.toString() === "export") {
+        if (p._name.toString() === 'export') {
           bindingElements.push(
-            new BindingElement(undefined, p._name, "exportProp")
+            new BindingElement(undefined, p._name, 'exportProp'),
           );
         } else {
           bindingElements.push(
-            new BindingElement(undefined, undefined, p._name)
+            new BindingElement(undefined, undefined, p._name),
           );
         }
         return bindingElements;
@@ -195,7 +202,7 @@ export class ReactComponent extends Component {
         new BindingElement(
           SyntaxKind.DotDotDotToken,
           undefined,
-          new Identifier("restProps")
+          new Identifier('restProps'),
         ),
       ]);
 
@@ -205,24 +212,24 @@ export class ReactComponent extends Component {
         new VariableDeclarationList(
           [
             new VariableDeclaration(
-              new BindingPattern(bindingElements, "object"),
+              new BindingPattern(bindingElements, 'object'),
               undefined,
               new PropertyAccess(
-                new SimpleExpression("this"),
-                new Identifier("props")
-              )
+                new SimpleExpression('this'),
+                new Identifier('props'),
+              ),
             ),
           ],
-          SyntaxKind.ConstKeyword
-        )
+          SyntaxKind.ConstKeyword,
+        ),
       ),
-      new ReturnStatement(new SimpleExpression("restProps")),
+      new ReturnStatement(new SimpleExpression('restProps')),
     ];
 
     return this.createGetAccessor(
-      new Identifier("restAttributes"),
-      new SimpleTypeExpression("RestProps"),
-      new Block(statements, true)
+      new Identifier('restAttributes'),
+      new SimpleTypeExpression('RestProps'),
+      new Block(statements, true),
     );
   }
 
@@ -250,44 +257,44 @@ export class ReactComponent extends Component {
                 ...childProps,
                 __name: child.type.propName,
               }
-            })`)
+            })`),
       ),
     ];
 
     return new Function(
       undefined,
       undefined,
-      "",
-      new Identifier("__collectChildren"),
-      [new TypeParameterDeclaration(new Identifier("T"))],
+      '',
+      new Identifier('__collectChildren'),
+      [new TypeParameterDeclaration(new Identifier('T'))],
       [
         new Parameter(
           [],
           [],
-          "",
-          new Identifier("children"),
+          '',
+          new Identifier('children'),
           undefined,
-          "React.ReactNode",
-          undefined
+          'React.ReactNode',
+          undefined,
         ),
       ],
-      new ArrayTypeNode(new SimpleTypeExpression("T")),
+      new ArrayTypeNode(new SimpleTypeExpression('T')),
       new Block(statements, true),
-      this.context
+      this.context,
     );
   }
 
   compileImportStatements(hooks: string[], compats: string[], core: string[]) {
     const elementAttributes = this.isSVGComponent
-      ? "SVGAttributes"
-      : "HTMLAttributes";
+      ? 'SVGAttributes'
+      : 'HTMLAttributes';
     const imports = ["import * as React from 'react'"];
     const namedImports = hooks
       .concat(compats)
       .concat(core)
       .concat([elementAttributes]);
     if (namedImports.length) {
-      imports.push(`import {${namedImports.join(",")}} from 'react'`);
+      imports.push(`import {${namedImports.join(',')}} from 'react'`);
     }
 
     return imports;
@@ -304,14 +311,14 @@ export class ReactComponent extends Component {
         if (this.context.dirname) {
           const relativePath = getModuleRelativePath(
             this.context.dirname,
-            baseComponent.context.path!
+            baseComponent.context.path!,
           );
           result.add(
             `import {${
               baseComponent.name
             }Ref as ${refType}Ref} from "${this.processModuleFileName(
-              relativePath.replace(path.extname(relativePath), "")
-            )}"`
+              relativePath.replace(path.extname(relativePath), ''),
+            )}"`,
           );
         }
       });
@@ -326,40 +333,40 @@ export class ReactComponent extends Component {
     const core: string[] = [];
 
     if (
-      this.internalState.length ||
-      this.state.length ||
-      this.members.some((m) => m.isProvider)
+      this.internalState.length
+      || this.state.length
+      || this.members.some((m) => m.isProvider)
     ) {
-      hooks.push("useState");
+      hooks.push('useState');
     }
 
     if (this.members.some((m) => m.isConsumer)) {
-      hooks.push("useContext");
+      hooks.push('useContext');
     }
 
     if (this.listeners.length || this.methods.length) {
-      hooks.push("useCallback");
+      hooks.push('useCallback');
     }
 
     if (getSubscriptions(this.listeners).length || this.effects.length) {
-      hooks.push("useEffect");
+      hooks.push('useEffect');
     }
 
     if (this.refs.length || this.apiRefs.length || this.mutable.length) {
-      hooks.push("useRef");
+      hooks.push('useRef');
     }
 
     if (
-      this.refs.length ||
-      this.apiRefs.length ||
-      this.members.some((m) => m.isRefProp || m.isForwardRefProp)
+      this.refs.length
+      || this.apiRefs.length
+      || this.members.some((m) => m.isRefProp || m.isForwardRefProp)
     ) {
       core.push(this.REF_OBJECT_TYPE);
     }
 
     if (this.members.filter((a) => a.isApiMethod).length) {
-      hooks.push("useImperativeHandle");
-      compats.push("forwardRef");
+      hooks.push('useImperativeHandle');
+      compats.push('forwardRef');
     }
 
     this.compileApiRefImports(imports);
@@ -368,7 +375,7 @@ export class ReactComponent extends Component {
 
     return imports
       .concat(this.compileImportStatements(hooks, compats, core))
-      .join(";\n");
+      .join(';\n');
   }
 
   defaultPropsDest() {
@@ -388,12 +395,12 @@ export class ReactComponent extends Component {
       .concat(
         this.props
           .filter((p) => !p.inherited && p.initializer)
-          .map((p) => (p as Property).defaultProps())
+          .map((p) => (p as Property).defaultProps()),
       );
 
     if (this.defaultOptionRules && this.needGenerateDefaultOptions) {
       defaultProps.push(
-        `...${this.compileConvertRulesToOptions(this.defaultOptionRules)}`
+        `...${this.compileConvertRulesToOptions(this.defaultOptionRules)}`,
       );
     }
 
@@ -406,11 +413,11 @@ export class ReactComponent extends Component {
     if (this.needGenerateDefaultOptions) {
       return `
                   ${
-                    this.state.length
-                      ? `function __processTwoWayProps(defaultProps: ${this.compilePropsType()}){
+  this.state.length
+    ? `function __processTwoWayProps(defaultProps: ${this.compilePropsType()}){
                           const twoWayProps:string[] = [${this.state.map(
-                            (s) => `"${s.name}"`
-                          )}];
+    (s) => `"${s.name}"`,
+  )}];
 
                           return Object.keys(defaultProps).reduce((props, propName)=>{
                               const propValue = (defaultProps as any)[propName];
@@ -419,12 +426,12 @@ export class ReactComponent extends Component {
                               return props;
                           }, {});
                       }`
-                      : ""
-                  }
+    : ''
+}
 
                   function __createDefaultProps(){
                       return {
-                          ${defaultProps.join(",\n")}
+                          ${defaultProps.join(',\n')}
                       }
                   }
                   ${this.defaultPropsDest()}= __createDefaultProps();
@@ -432,11 +439,11 @@ export class ReactComponent extends Component {
     }
     if (defaultProps.length) {
       return `${this.defaultPropsDest()} = {
-                  ${defaultProps.join(",\n")}
+                  ${defaultProps.join(',\n')}
               }`;
     }
 
-    return "";
+    return '';
   }
 
   stateDeclaration() {
@@ -444,58 +451,55 @@ export class ReactComponent extends Component {
       .concat(this.internalState)
       .concat(this.mutable)
       .map((p) => p.toString(this.getToStringOptions()))
-      .join(";\n")}`;
+      .join(';\n')}`;
   }
 
   compileUseEffect() {
     const subscriptions = getSubscriptions(this.listeners);
 
-    let subscriptionsString = "";
+    let subscriptionsString = '';
     if (subscriptions.length) {
       const { add, cleanup } = subscriptions.reduce(
         ({ add, cleanup }, s) => {
           (add as string[]).push(
-            `${s.target}.addEventListener(${s.eventName}, ${s.name});`
+            `${s.target}.addEventListener(${s.eventName}, ${s.name});`,
           );
           (cleanup as string[]).push(
-            `${s.target}.removeEventListener(${s.eventName}, ${s.name});`
+            `${s.target}.removeEventListener(${s.eventName}, ${s.name});`,
           );
           return { add, cleanup };
         },
-        { add: [], cleanup: [] }
+        { add: [], cleanup: [] },
       );
 
       subscriptionsString = `useEffect(()=>{
-                      ${add.join("\n")}
+                      ${add.join('\n')}
                       return function cleanup(){
-                          ${cleanup.join("\n")}
+                          ${cleanup.join('\n')}
                       }
                   });`;
     }
     return (
-      subscriptionsString +
-      this.effects
+      subscriptionsString
+      + this.effects
         .map(
-          (e) =>
-            `useEffect(${e.arrowDeclaration(
-              this.getToStringOptions()
-            )}, [${e.getDependency({
-              members: this.members,
-              componentContext: SyntaxKind.ThisKeyword,
-            })}])`
+          (e) => `useEffect(${e.arrowDeclaration(
+            this.getToStringOptions(),
+          )}, [${e.getDependency({
+            members: this.members,
+            componentContext: SyntaxKind.ThisKeyword,
+          })}])`,
         )
-        .join(";\n")
+        .join(';\n')
     );
   }
 
   compileComponentRef() {
     const api = this.members.filter((a) => a.isApiMethod);
     if (api.length) {
-      return `export type ${this.name}Ref = {${api.map((a) =>
-        a.typeDeclaration()
-      )}}`;
+      return `export type ${this.name}Ref = {${api.map((a) => a.typeDeclaration())}}`;
     }
-    return "";
+    return '';
   }
 
   compileUseImperativeHandle() {
@@ -509,21 +513,21 @@ export class ReactComponent extends Component {
 
         return r;
       },
-      { methods: [], deps: [] }
+      { methods: [], deps: [] },
     );
 
     return api.methods.length
       ? `useImperativeHandle(ref, () => ({${api.methods.join(
-          ",\n"
-        )}}), [${api.deps.join(",")}])`
-      : "";
+        ',\n',
+      )}}), [${api.deps.join(',')}])`
+      : '';
   }
 
   compileUseRef() {
     return this.refs
       .concat(this.apiRefs)
       .map((a) => a.toString(this.getToStringOptions()))
-      .join(";\n");
+      .join(';\n');
   }
 
   compileComponentInterface() {
@@ -533,19 +537,18 @@ export class ReactComponent extends Component {
 
     return `interface ${this.name}{
               ${props
-                .concat(
-                  this.members
-                    .filter(
-                      (m) =>
-                        !m.inherited &&
-                        !m.isEffect &&
-                        !m.isApiMethod &&
-                        !m.isPrivate &&
-                        !m.isMutable
-                    )
-                    .map((m) => m.typeDeclaration())
-                )
-                .join(";\n")}
+    .concat(
+      this.members
+        .filter(
+          (m) => !m.inherited
+                        && !m.isEffect
+                        && !m.isApiMethod
+                        && !m.isPrivate
+                        && !m.isMutable,
+        )
+        .map((m) => m.typeDeclaration()),
+    )
+    .join(';\n')}
           }`;
   }
 
@@ -562,46 +565,44 @@ export class ReactComponent extends Component {
               (ComponentProp && ((props: any) => <ComponentProp {...props} />))
           );
       `
-      : "";
+      : '';
   }
 
   processTemplates() {
     return this.props
       .filter((p) => p.isTemplate)
       .map(
-        (t) =>
-          `${t.name}: getTemplate(props.${t.name}, props.${getTemplatePropName(
-            t.name,
-            "render"
-          )}, props.${getTemplatePropName(t.name, "component")})`
+        (t) => `${t.name}: getTemplate(props.${t.name}, props.${getTemplatePropName(
+          t.name,
+          'render',
+        )}, props.${getTemplatePropName(t.name, 'component')})`,
       );
   }
 
   compileViewModelArguments(): string {
     const toStringOptions: toStringOptions = this.getToStringOptions();
-    const compileState = (state: BaseClassMember[], context = "") =>
-      state
-        .filter((s) => !s.isPrivate)
-        .map((s) => {
-          if (
-            s._name.toString() !== s.getter(toStringOptions.newComponentContext)
-          ) {
-            const expression = context
-              ? new PropertyAccess(
-                  new SimpleExpression("this"),
-                  new Identifier(context)
-                )
-              : new SimpleExpression("this");
-            return new PropertyAssignment(
-              s._name,
-              new PropertyAccess(expression, s._name)
-            );
-          }
-          return new ShorthandPropertyAssignment(s._name);
-        })
-        .map((p) => p.toString(toStringOptions));
+    const compileState = (state: BaseClassMember[], context = '') => state
+      .filter((s) => !s.isPrivate)
+      .map((s) => {
+        if (
+          s._name.toString() !== s.getter(toStringOptions.newComponentContext)
+        ) {
+          const expression = context
+            ? new PropertyAccess(
+              new SimpleExpression('this'),
+              new Identifier(context),
+            )
+            : new SimpleExpression('this');
+          return new PropertyAssignment(
+            s._name,
+            new PropertyAccess(expression, s._name),
+          );
+        }
+        return new ShorthandPropertyAssignment(s._name);
+      })
+      .map((p) => p.toString(toStringOptions));
 
-    const state = compileState(this.state, "props");
+    const state = compileState(this.state, 'props');
     const internalState = compileState(this.internalState);
 
     const template = this.processTemplates();
@@ -612,13 +613,13 @@ export class ReactComponent extends Component {
 
     const props = this.isJSXComponent
       ? [
-          `props:{${["...props"]
-            .concat(state)
-            .concat(template)
-            .concat(nestedProps)
-            .join(",\n")}}`,
-        ].concat(internalState)
-      : ["...props"].concat(internalState).concat(state).concat(nestedProps);
+        `props:{${['...props']
+          .concat(state)
+          .concat(template)
+          .concat(nestedProps)
+          .join(',\n')}}`,
+      ].concat(internalState)
+      : ['...props'].concat(internalState).concat(state).concat(nestedProps);
 
     const listenersAndRefs: BaseClassMember[] = [
       ...this.listeners,
@@ -628,32 +629,29 @@ export class ReactComponent extends Component {
     const statements = props
       .concat(
         listenersAndRefs.map(
-          (r) =>
-            `${r._name.toString()}:${processComponentContext(
-              toStringOptions.newComponentContext
-            )}${r.name.toString()}`
-        )
+          (r) => `${r._name.toString()}:${processComponentContext(
+            toStringOptions.newComponentContext,
+          )}${r.name.toString()}`,
+        ),
       )
       .concat(
         this.members
           .filter(
-            (m) => (m.isConsumer || m.isProvider) && !(m instanceof GetAccessor)
+            (m) => (m.isConsumer || m.isProvider) && !(m instanceof GetAccessor),
           )
-          .map((m) =>
-            toStringOptions.newComponentContext
-              ? `${m.name}:${m.getter(toStringOptions.componentContext)}`
-              : m.name.toString()
-          )
+          .map((m) => (toStringOptions.newComponentContext
+            ? `${m.name}:${m.getter(toStringOptions.componentContext)}`
+            : m.name.toString())),
       )
       .concat(compileState(this.methods.filter((m) => !m.isPrivate)));
 
-    return `{${statements.join(",\n")}}`;
+    return `{${statements.join(',\n')}}`;
   }
 
   compileRestProps(): string {
     const elementType = this.isSVGComponent
-      ? "SVGAttributes<SVGElement>"
-      : "HTMLAttributes<HTMLElement>";
+      ? 'SVGAttributes<SVGElement>'
+      : 'HTMLAttributes<HTMLElement>';
     return `declare type RestProps = Omit<${elementType}, keyof ${this.getPropsType()}>`;
   }
 
@@ -661,8 +659,8 @@ export class ReactComponent extends Component {
     if (this.isJSXComponent) {
       const type = this.heritageClauses[0].types[0];
       if (
-        type.expression instanceof Call &&
-        type.expression.typeArguments?.length
+        type.expression instanceof Call
+        && type.expression.typeArguments?.length
       ) {
         return type.expression.typeArguments[0].toString();
       }
@@ -671,15 +669,15 @@ export class ReactComponent extends Component {
     }
     return `{
               ${this.props
-                .concat(this.state)
-                .concat(this.slots)
-                .map((p) => p.typeDeclaration())
-                .join(",\n")}
+    .concat(this.state)
+    .concat(this.slots)
+    .map((p) => p.typeDeclaration())
+    .join(',\n')}
           }`;
   }
 
   compilePropsType() {
-    return this.getPropsType().concat(" & RestProps");
+    return this.getPropsType().concat(' & RestProps');
   }
 
   compileDefaultOptionsPropsType() {
@@ -690,8 +688,8 @@ export class ReactComponent extends Component {
   getToStringOptions(): toStringOptions {
     return {
       members: this.members,
-      componentContext: "this",
-      newComponentContext: "",
+      componentContext: 'this',
+      newComponentContext: '',
     };
   }
 
@@ -713,25 +711,23 @@ export class ReactComponent extends Component {
     const collectedComponents = this.collectNestedComponents();
     if (collectedComponents.length) {
       const imports = this.getNestedImports(
-        collectedComponents.map(({ component }) => component)
+        collectedComponents.map(({ component }) => component),
       );
       const nestedComponents = collectedComponents.map(
-        ({ component, name, propName }) =>
-          this.getNestedExports(component, name, propName)
+        ({ component, name, propName }) => this.getNestedExports(component, name, propName),
       );
 
-      return imports.concat(nestedComponents).join("\n");
+      return imports.concat(nestedComponents).join('\n');
     }
-    return "";
+    return '';
   }
 
   createNestedPropertyGetter(property: Property) {
     const propName = getPropName(property.name);
     const isArray = isTypeArray(property.type);
     const type = extractComplexType(property.type);
-    const indexGetter = isArray ? "" : "?.[0]";
-    const undefinedType =
-      property.questionOrExclamationToken === "?" ? " | undefined" : "";
+    const indexGetter = isArray ? '' : '?.[0]';
+    const undefinedType = property.questionOrExclamationToken === '?' ? ' | undefined' : '';
 
     const getterName = `__getNested${capitalizeFirstLetter(property.name)}`;
     const getterType = property.type.toString();
@@ -747,19 +743,19 @@ export class ReactComponent extends Component {
                   new BindingElement(
                     undefined,
                     undefined,
-                    new Identifier(property.name)
+                    new Identifier(property.name),
                   ),
                 ],
-                "object"
+                'object',
               ),
               undefined,
               new PropertyAccess(
-                new SimpleExpression("this"),
-                new Identifier("props")
-              )
+                new SimpleExpression('this'),
+                new Identifier('props'),
+              ),
             ),
             new VariableDeclaration(
-              new Identifier("nested"),
+              new Identifier('nested'),
               undefined,
               new SimpleExpression(
                 `__nestedChildren<typeof ${type} & { __name: string }>().filter(child => child.__name === "${
@@ -772,34 +768,34 @@ export class ReactComponent extends Component {
                       (k) => k !== "__name" && k !== "__defaultNestedValues"
                     )
                   ) {
-                    return n?.__defaultNestedValues || n;
+                    return (n as any)?.__defaultNestedValues || n;
                   }
                   return n;
                 });`
-                    : ""
-                }`
-              )
+                    : ''
+                }`,
+              ),
             ),
           ],
-          SyntaxKind.ConstKeyword
-        )
+          SyntaxKind.ConstKeyword,
+        ),
       ),
       new ReturnStatement(
         new Conditional(
           new SimpleExpression(propName),
           new SimpleExpression(propName),
           new Conditional(
-            new SimpleExpression("nested.length"),
+            new SimpleExpression('nested.length'),
             new SimpleExpression(`nested${indexGetter}`),
             new SimpleExpression(
               `${
                 property.initializer
                   ? `props?.__defaultNestedValues?.${property.name}`
-                  : "undefined"
-              }`
-            )
-          )
-        )
+                  : 'undefined'
+              }`,
+            ),
+          ),
+        ),
       ),
     ];
     return new GetAccessor(
@@ -808,7 +804,7 @@ export class ReactComponent extends Component {
       new Identifier(getterName),
       [],
       new SimpleTypeExpression(`${getterType}${undefinedType}`),
-      new Block(statements, true)
+      new Block(statements, true),
     );
   }
 
@@ -828,29 +824,27 @@ export class ReactComponent extends Component {
 
   compilePortalComponent(): string {
     if (!this.containsPortal()) {
-      return "";
+      return '';
     }
     return this.compilePortalComponentCore();
   }
 
   compileProviders(providers: Property[], viewCallExpression: string) {
-    return providers.reduce((result, p) => {
-      return `<${p.context}.Provider value={${p.getter()}}>
+    return providers.reduce((result, p) => `<${p.context}.Provider value={${p.getter()}}>
             ${result}
-          </${p.context}.Provider>`;
-    }, `{${viewCallExpression}}`);
+          </${p.context}.Provider>`, `{${viewCallExpression}}`);
   }
 
   compileViewCall() {
     const viewFunction = this.context.viewFunctions?.[this.view];
     const callView = `${this.view}(
         ${
-          viewFunction?.parameters.length
-            ? `${this.viewModel}(
+  viewFunction?.parameters.length
+    ? `${this.viewModel}(
                 ${this.compileViewModelArguments()}
             )`
-            : ""
-        }
+    : ''
+}
     )`;
 
     const providers = this.members.filter((m) => m.isProvider) as Property[];
@@ -863,10 +857,10 @@ export class ReactComponent extends Component {
   }
 
   compileDefaultOptionsMethod() {
-    return super.compileDefaultOptionsMethod("[]", [
+    return super.compileDefaultOptionsMethod('[]', [
       `${this.defaultPropsDest()} = {
             ...__createDefaultProps(),
-            ...${this.compileConvertRulesToOptions("__defaultOptionRules")}
+            ...${this.compileConvertRulesToOptions('__defaultOptionRules')}
         };`,
     ]);
   }
@@ -878,11 +872,8 @@ export class ReactComponent extends Component {
   }
 
   compileStyleNormalizer() {
-    const hasStyle =
-      this.context.viewFunctions &&
-      Object.values(this.context.viewFunctions).some((viewFunction) =>
-        viewFunction.containsStyle()
-      );
+    const hasStyle = this.context.viewFunctions
+      && Object.values(this.context.viewFunctions).some((viewFunction) => viewFunction.containsStyle());
     return hasStyle
       ? `const NUMBER_STYLES = new Set([
           "animationIterationCount",
@@ -940,7 +931,7 @@ export class ReactComponent extends Component {
             return result;
           }, {} as Record<string, string | number>)
         };`
-      : "";
+      : '';
   }
 
   toString() {
@@ -951,69 +942,66 @@ export class ReactComponent extends Component {
               ${this.compileStyleNormalizer()}
               ${this.compilePortalComponent()}
               ${
-                this.members.some((m) => m.isNested)
-                  ? this.createNestedChildrenCollector()
-                  : ""
-              }
+  this.members.some((m) => m.isNested)
+    ? this.createNestedChildrenCollector()
+    : ''
+}
               ${this.compileNestedComponents()}
               ${this.compileComponentRef()}
               ${this.compileRestProps()}
               ${this.compileComponentInterface()}
               ${getTemplateFunc}
               ${
-                this.members.filter((m) => m.isApiMethod).length === 0
-                  ? `${this.modifiers.join(" ")} function ${
-                      this.name
-                    }(props: ${this.compilePropsType()}){`
-                  : `const ${this.name} = forwardRef<${
-                      this.name
-                    }Ref, ${this.compilePropsType()}>(function ${lowerizeFirstLetter(
-                      this.name
-                    )}(props: ${this.compilePropsType()}, ref){`
-              }
+  this.members.filter((m) => m.isApiMethod).length === 0
+    ? `${this.modifiers.join(' ')} function ${
+      this.name
+    }(props: ${this.compilePropsType()}){`
+    : `const ${this.name} = forwardRef<${
+      this.name
+    }Ref, ${this.compilePropsType()}>(function ${lowerizeFirstLetter(
+      this.name,
+    )}(props: ${this.compilePropsType()}, ref){`
+}
                   ${this.compileUseRef()}
                   ${this.stateDeclaration()}
                   ${this.members
-                    .filter(
-                      (m) =>
-                        (m.isConsumer || m.isProvider) &&
-                        !(m instanceof GetAccessor)
-                    )
-                    .map((m) => m.toString(this.getToStringOptions()))
-                    .join(";\n")}
+    .filter(
+      (m) => (m.isConsumer || m.isProvider)
+                        && !(m instanceof GetAccessor),
+    )
+    .map((m) => m.toString(this.getToStringOptions()))
+    .join(';\n')}
                                           ${this.listeners
-                                            .concat(this.methods)
-                                            .concat(
-                                              this.members.filter(
-                                                (m) => m.isApiMethod
-                                              ) as Array<Method>
-                                            )
-                                            .map((m) => {
-                                              return `const ${
-                                                m.name
-                                              }=useCallback(${m.declaration(
-                                                this.getToStringOptions()
-                                              )}, [${m.getDependency({
-                                                members: this.members,
-                                                componentContext:
+    .concat(this.methods)
+    .concat(
+      this.members.filter(
+        (m) => m.isApiMethod,
+      ) as Array<Method>,
+    )
+    .map((m) => `const ${
+      m.name
+    }=useCallback(${m.declaration(
+      this.getToStringOptions(),
+    )}, [${m.getDependency({
+      members: this.members,
+      componentContext:
                                                   SyntaxKind.ThisKeyword,
-                                              })}]);`;
-                                            })
-                                            .join("\n")}
+    })}]);`)
+    .join('\n')}
                   ${this.compileUseEffect()}
                   ${this.compileUseImperativeHandle()}
                   return ${this.compileViewCall()}
               ${
-                this.members.filter((m) => m.isApiMethod).length === 0
-                  ? `}`
-                  : `}) as ${this.compileFunctionalComponentType()};\n${this.modifiers.join(
-                      " "
-                    )} ${
-                      this.modifiers.join(" ") === "export"
-                        ? `{${this.name}}`
-                        : this.name
-                    };`
-              }
+  this.members.filter((m) => m.isApiMethod).length === 0
+    ? '}'
+    : `}) as ${this.compileFunctionalComponentType()};\n${this.modifiers.join(
+      ' ',
+    )} ${
+      this.modifiers.join(' ') === 'export'
+        ? `{${this.name}}`
+        : this.name
+    };`
+}
 
               ${this.compileDefaultComponentExport()}
 

@@ -1,7 +1,7 @@
 import {
   NonNullExpression as BaseNonNullExpression,
   toStringOptions,
-} from "@devextreme-generator/core";
+} from '@devextreme-generator/core';
 
 export class NonNullExpression extends BaseNonNullExpression {
   toString(options?: toStringOptions) {

@@ -7,7 +7,9 @@ import { Decorators } from './decorators';
 import { Expression, SimpleExpression } from './expressions/base';
 import { BindingElement, BindingPattern } from './expressions/binding-pattern';
 import { Class, HeritageClause } from './expressions/class';
-import { Constructor, GetAccessor, Method, Property } from './expressions/class-members';
+import {
+  Constructor, GetAccessor, Method, Property,
+} from './expressions/class-members';
 import {
   AsExpression,
   Call,
@@ -22,8 +24,12 @@ import {
 } from './expressions/common';
 import { Component } from './expressions/component';
 import { ComponentInput, membersFromTypeDeclaration } from './expressions/component-input';
-import { CaseBlock, CaseClause, Conditional, DefaultClause, If, Switch } from './expressions/conditions';
-import { Do, For, ForIn, While } from './expressions/cycle';
+import {
+  CaseBlock, CaseClause, Conditional, DefaultClause, If, Switch,
+} from './expressions/conditions';
+import {
+  Do, For, ForIn, While,
+} from './expressions/cycle';
 import { Decorator } from './expressions/decorator';
 import { Enum, EnumMember } from './expressions/enum';
 import { ExportDeclaration, ExportSpecifier, NamedExports } from './expressions/export';
@@ -46,7 +52,9 @@ import {
   JsxSelfClosingElement,
   JsxSpreadAttribute,
 } from './expressions/jsx';
-import { ArrayLiteral, NumericLiteral, ObjectLiteral, StringLiteral } from './expressions/literal';
+import {
+  ArrayLiteral, NumericLiteral, ObjectLiteral, StringLiteral,
+} from './expressions/literal';
 import { Binary, Postfix, Prefix } from './expressions/operators';
 import {
   ComputedPropertyName,
@@ -90,18 +98,20 @@ import { TypeParameterDeclaration } from './expressions/type-parameter-declarati
 import { VariableDeclaration, VariableDeclarationList, VariableStatement } from './expressions/variables';
 import { GeneratorAPI, GeneratorResult } from './generator-api';
 import { SyntaxKind } from './syntaxKind';
-import { GeneratorCache, GeneratorContext, GeneratorOptions, VariableExpression } from './types';
+import {
+  GeneratorCache, GeneratorContext, GeneratorOptions, VariableExpression,
+} from './types';
 import { getExpression } from './utils/expressions';
 import { getModuleRelativePath, resolveModule } from './utils/path-utils';
 
 export class Generator implements GeneratorAPI {
   NodeFlags = {
-    Const: "const",
-    Let: "let",
-    None: "var",
-    LessThanEqualsToken: "<=",
-    MinusEqualsToken: "-=",
-    ConstructorKeyword: "constructor",
+    Const: 'const',
+    Let: 'let',
+    None: 'var',
+    LessThanEqualsToken: '<=',
+    MinusEqualsToken: '-=',
+    ConstructorKeyword: 'constructor',
 
     // FirstToken: 0,
     // EndOfFileToken: 1,
@@ -123,14 +133,14 @@ export class Generator implements GeneratorAPI {
     return new Identifier(name);
   }
 
-  createNumericLiteral(value: string, _numericLiteralFlags = ""): Expression {
+  createNumericLiteral(value: string, _numericLiteralFlags = ''): Expression {
     return new NumericLiteral(value);
   }
 
   createVariableDeclaration(
     name: Identifier | BindingPattern,
     type?: TypeExpression,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     if (initializer) {
       this.addViewFunction(name.toString(), initializer);
@@ -141,21 +151,21 @@ export class Generator implements GeneratorAPI {
   createVariableDeclarationCore(
     name: Identifier | BindingPattern,
     type?: TypeExpression,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     return new VariableDeclaration(name, type, initializer);
   }
 
   createVariableDeclarationList(
     declarations: VariableDeclaration[],
-    flags?: string
+    flags?: string,
   ) {
     return new VariableDeclarationList(declarations, flags);
   }
 
   createVariableStatement(
     modifiers: string[] | undefined,
-    declarationList: VariableDeclarationList
+    declarationList: VariableDeclarationList,
   ) {
     return new VariableStatement(modifiers, declarationList);
   }
@@ -165,16 +175,16 @@ export class Generator implements GeneratorAPI {
   }
 
   createBindingElement(
-    dotDotDotToken: string = "",
+    dotDotDotToken = '',
     propertyName: Identifier | undefined,
     name: string | Identifier | BindingPattern,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     return new BindingElement(dotDotDotToken, propertyName, name, initializer);
   }
 
   createArrayBindingPattern(elements: Array<BindingElement>) {
-    return new BindingPattern(elements, "array");
+    return new BindingPattern(elements, 'array');
   }
 
   createArrayLiteral(elements: Expression[], multiLine: boolean): Expression {
@@ -183,20 +193,20 @@ export class Generator implements GeneratorAPI {
 
   createObjectLiteral(
     properties: Array<
-      PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment
+    PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment
     >,
-    multiLine: boolean
+    multiLine: boolean,
   ) {
     return new ObjectLiteral(properties, multiLine);
   }
 
   createObjectBindingPattern(elements: BindingElement[]) {
-    return new BindingPattern(elements, "object");
+    return new BindingPattern(elements, 'object');
   }
 
   createPropertyAssignment(
     key: Identifier | ComputedPropertyName,
-    value: Expression
+    value: Expression,
   ) {
     return new PropertyAssignment(key, value);
   }
@@ -212,7 +222,7 @@ export class Generator implements GeneratorAPI {
   createTypePredicateNodeWithModifier(
     assertsModifier: string | undefined,
     parameterName: Identifier,
-    type: TypeExpression
+    type: TypeExpression,
   ) {
     return new TypePredicateNode(assertsModifier, parameterName, type);
   }
@@ -229,7 +239,7 @@ export class Generator implements GeneratorAPI {
     checkType: TypeExpression,
     extendsType: TypeExpression,
     trueType: TypeExpression,
-    falseType: TypeExpression
+    falseType: TypeExpression,
   ) {
     return new ConditionalTypeNode(checkType, extendsType, trueType, falseType);
   }
@@ -245,7 +255,7 @@ export class Generator implements GeneratorAPI {
   createNew(
     expression: Expression,
     typeArguments: TypeExpression[] | undefined,
-    argumentsArray: Expression[]
+    argumentsArray: Expression[],
   ) {
     return new New(expression, typeArguments, argumentsArray);
   }
@@ -276,7 +286,7 @@ export class Generator implements GeneratorAPI {
 
   createCatchClause(
     variableDeclaration: Expression | undefined,
-    expression: Block
+    expression: Block,
   ) {
     return new CatchClause(variableDeclaration, expression);
   }
@@ -290,7 +300,7 @@ export class Generator implements GeneratorAPI {
   }
 
   createEmptyStatement() {
-    return new SimpleExpression("");
+    return new SimpleExpression('');
   }
 
   createDebuggerStatement() {
@@ -309,7 +319,7 @@ export class Generator implements GeneratorAPI {
     typeParameters: any,
     parameters: Parameter[],
     type: TypeExpression | string | undefined,
-    body: Block
+    body: Block,
   ) {
     const functionDeclaration = this.createFunctionDeclarationCore(
       decorators,
@@ -319,11 +329,11 @@ export class Generator implements GeneratorAPI {
       typeParameters,
       parameters,
       type,
-      body
+      body,
     );
     this.addViewFunction(
       functionDeclaration.name!.toString(),
-      functionDeclaration
+      functionDeclaration,
     );
     return functionDeclaration;
   }
@@ -336,7 +346,7 @@ export class Generator implements GeneratorAPI {
     typeParameters: any,
     parameters: Parameter[],
     type: TypeExpression | string | undefined,
-    body: Block
+    body: Block,
   ) {
     return new Function(
       decorators,
@@ -347,7 +357,7 @@ export class Generator implements GeneratorAPI {
       parameters,
       type,
       body,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -358,7 +368,7 @@ export class Generator implements GeneratorAPI {
     name: Identifier | BindingPattern,
     questionToken?: string,
     type?: TypeExpression | string,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     return new Parameter(
       decorators,
@@ -367,7 +377,7 @@ export class Generator implements GeneratorAPI {
       name,
       questionToken,
       type,
-      initializer
+      initializer,
     );
   }
 
@@ -382,7 +392,7 @@ export class Generator implements GeneratorAPI {
     typeParameters: any,
     parameters: Parameter[],
     type: TypeExpression | string | undefined,
-    body: Block
+    body: Block,
   ) {
     return this.createFunctionDeclarationCore(
       [],
@@ -392,7 +402,7 @@ export class Generator implements GeneratorAPI {
       typeParameters,
       parameters,
       type,
-      body
+      body,
     );
   }
 
@@ -406,7 +416,7 @@ export class Generator implements GeneratorAPI {
     parameters: Parameter[],
     type: TypeExpression | string | undefined,
     equalsGreaterThanToken: string,
-    body: Block | Expression
+    body: Block | Expression,
   ) {
     return new ArrowFunction(
       modifiers,
@@ -415,7 +425,7 @@ export class Generator implements GeneratorAPI {
       type,
       equalsGreaterThanToken,
       body,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -434,7 +444,7 @@ export class Generator implements GeneratorAPI {
   createCall(
     expression: Expression,
     typeArguments: TypeExpression[] | undefined,
-    argumentsArray?: Expression[]
+    argumentsArray?: Expression[],
   ) {
     return new Call(expression, typeArguments, argumentsArray);
   }
@@ -443,7 +453,7 @@ export class Generator implements GeneratorAPI {
     _decorators: Decorator[] = [],
     _modifiers: string[] = [],
     _isExportEquals: any,
-    expression: Expression
+    expression: Expression,
   ) {
     return `export default ${expression}`;
   }
@@ -464,14 +474,14 @@ export class Generator implements GeneratorAPI {
     decorators: Decorator[] | undefined,
     modifiers: string[] | undefined,
     name: Identifier,
-    members: EnumMember[]
+    members: EnumMember[],
   ) {
     return new Enum(decorators, modifiers, name, members);
   }
 
   createTypeReferenceNode(
     typeName: Identifier,
-    typeArguments?: TypeExpression[]
+    typeArguments?: TypeExpression[],
   ) {
     return new TypeReferenceNode(typeName, typeArguments, this.getContext());
   }
@@ -479,7 +489,7 @@ export class Generator implements GeneratorAPI {
   createIf(
     expression: Expression,
     thenStatement: Expression,
-    elseStatement?: Expression
+    elseStatement?: Expression,
   ) {
     return new If(expression, thenStatement, elseStatement);
   }
@@ -496,14 +506,14 @@ export class Generator implements GeneratorAPI {
     decorators: Decorator[] | undefined,
     modifiers: string[] | undefined,
     importClause: ImportClause,
-    moduleSpecifier: StringLiteral
+    moduleSpecifier: StringLiteral,
   ) {
     return new ImportDeclaration(
       decorators,
       modifiers,
       importClause,
       moduleSpecifier,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -511,13 +521,13 @@ export class Generator implements GeneratorAPI {
     decorators: Decorator[] | undefined,
     modifiers: string[] | undefined,
     importClause: ImportClause = new ImportClause(),
-    moduleSpecifier: StringLiteral
+    moduleSpecifier: StringLiteral,
   ) {
     const context = this.getContext();
     if (context.defaultOptionsModule && context.dirname) {
       const relativePath = getModuleRelativePath(
         context.dirname,
-        context.defaultOptionsModule
+        context.defaultOptionsModule,
       );
       if (relativePath.toString() === moduleSpecifier.valueOf()) {
         context.defaultOptionsImport = new ImportDeclaration(
@@ -525,7 +535,7 @@ export class Generator implements GeneratorAPI {
           modifiers,
           importClause,
           moduleSpecifier,
-          this.getContext()
+          this.getContext(),
         );
         return context.defaultOptionsImport;
       }
@@ -533,12 +543,12 @@ export class Generator implements GeneratorAPI {
 
     const module = moduleSpecifier.expression.toString();
     if (
-      context.dirname &&
-      module.indexOf("@devextreme-generator/declarations") === -1
+      context.dirname
+      && module.indexOf('@devextreme-generator/declarations') === -1
     ) {
       const modulePath = resolveModule(
         path.join(context.dirname, module),
-        this.cache
+        this.cache,
       );
 
       if (modulePath) {
@@ -560,18 +570,17 @@ export class Generator implements GeneratorAPI {
             importedModules: [...importedModules, modulePath],
           },
           false,
-          true
+          true,
         );
 
         if (importClause.default) {
           this.addComponent(
             importClause.default.toString(),
             this.cache[modulePath].find(
-              (e: any) =>
-                (e instanceof Component || e instanceof ComponentInput) &&
-                e.modifiers.find((m) => m === SyntaxKind.DefaultKeyword)
+              (e: any) => (e instanceof Component || e instanceof ComponentInput)
+                && e.modifiers.find((m) => m === SyntaxKind.DefaultKeyword),
             ),
-            importClause
+            importClause,
           );
         }
 
@@ -579,7 +588,7 @@ export class Generator implements GeneratorAPI {
           const originalName = importClause.resolveImport(name);
           this.addToContext(name, originalName, importClause, modulePath);
         });
-        this.cache.__globals__ &&
+        if (this.cache.__globals__) {
           importClause.imports?.forEach((i) => {
             if (this.cache.__globals__[i]) {
               context.globals = {
@@ -588,6 +597,7 @@ export class Generator implements GeneratorAPI {
               };
             }
           });
+        }
       }
     }
 
@@ -595,13 +605,13 @@ export class Generator implements GeneratorAPI {
       decorators,
       modifiers,
       importClause,
-      moduleSpecifier
+      moduleSpecifier,
     );
   }
 
   createImportSpecifier(
     propertyName: Identifier | undefined,
-    name: Identifier
+    name: Identifier,
   ) {
     return new ImportSpecifier(propertyName, name);
   }
@@ -613,14 +623,14 @@ export class Generator implements GeneratorAPI {
   createImportClause(
     name?: Identifier,
     namedBindings?: NamedImportBindings,
-    isTypeOnly?: boolean
+    isTypeOnly?: boolean,
   ) {
     return new ImportClause(name, namedBindings, isTypeOnly);
   }
 
   createExportSpecifier(
     propertyName: Identifier | undefined,
-    name: Identifier
+    name: Identifier,
   ) {
     return new ExportSpecifier(propertyName, name);
   }
@@ -633,13 +643,13 @@ export class Generator implements GeneratorAPI {
     decorators: Decorator[] | undefined,
     modifiers: string[] | undefined,
     exportClause: NamedImports | undefined,
-    moduleSpecifier?: Expression
+    moduleSpecifier?: Expression,
   ) {
     return new ExportDeclaration(
       decorators,
       modifiers,
       exportClause,
-      moduleSpecifier
+      moduleSpecifier,
     );
   }
 
@@ -653,7 +663,7 @@ export class Generator implements GeneratorAPI {
     name: Identifier,
     questionOrExclamationToken?: string,
     type?: TypeExpression,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     return new Property(
       decorators,
@@ -661,7 +671,7 @@ export class Generator implements GeneratorAPI {
       name,
       questionOrExclamationToken,
       type,
-      initializer
+      initializer,
     );
   }
 
@@ -671,7 +681,7 @@ export class Generator implements GeneratorAPI {
     name: Identifier,
     typeParameters: TypeExpression[] | string[] | undefined,
     heritageClauses: HeritageClause[],
-    members: Array<Property | Method>
+    members: Array<Property | Method>,
   ) {
     return new Component(
       componentDecorator,
@@ -680,7 +690,7 @@ export class Generator implements GeneratorAPI {
       typeParameters,
       heritageClauses,
       members,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -690,7 +700,7 @@ export class Generator implements GeneratorAPI {
     name: Identifier,
     typeParameters: TypeExpression[] | string[] | undefined,
     heritageClauses: HeritageClause[],
-    members: Array<Property | Method>
+    members: Array<Property | Method>,
   ) {
     return new ComponentInput(
       decorators,
@@ -699,7 +709,7 @@ export class Generator implements GeneratorAPI {
       typeParameters,
       heritageClauses,
       members,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -710,7 +720,7 @@ export class Generator implements GeneratorAPI {
     typeParameters: TypeExpression[] | string[] | undefined,
     heritageClauses: HeritageClause[],
     members: Array<Property | Method>,
-    context: GeneratorContext
+    context: GeneratorContext,
   ) {
     return new Class(
       decorators,
@@ -719,7 +729,7 @@ export class Generator implements GeneratorAPI {
       typeParameters,
       heritageClauses,
       members,
-      context
+      context,
     );
   }
 
@@ -729,10 +739,10 @@ export class Generator implements GeneratorAPI {
     name: Identifier,
     typeParameters: TypeExpression[] | string[] | undefined,
     heritageClauses: HeritageClause[],
-    members: Array<Property | Method>
+    members: Array<Property | Method>,
   ) {
     const componentDecorator = decorators.find(
-      (d) => d.name === Decorators.Component
+      (d) => d.name === Decorators.Component,
     );
     let result: Class | Component | ComponentInput;
     if (componentDecorator) {
@@ -742,7 +752,7 @@ export class Generator implements GeneratorAPI {
         name,
         typeParameters,
         heritageClauses,
-        members
+        members,
       );
       this.addComponent(name.toString(), result as Component);
     } else if (
@@ -754,7 +764,7 @@ export class Generator implements GeneratorAPI {
         name,
         typeParameters,
         heritageClauses,
-        members
+        members,
       );
       this.addComponent(name.toString(), componentInput);
       result = componentInput;
@@ -766,7 +776,7 @@ export class Generator implements GeneratorAPI {
         typeParameters,
         heritageClauses,
         members,
-        this.getContext()
+        this.getContext(),
       );
     }
 
@@ -779,7 +789,7 @@ export class Generator implements GeneratorAPI {
     name: Identifier,
     typeParameters: any[] | undefined,
     heritageClauses: HeritageClause[] | undefined,
-    members: Array<PropertySignature | MethodSignature>
+    members: Array<PropertySignature | MethodSignature>,
   ) {
     const result = new Interface(
       decorators,
@@ -787,7 +797,7 @@ export class Generator implements GeneratorAPI {
       name,
       typeParameters,
       heritageClauses,
-      members
+      members,
     );
 
     const context = this.getContext();
@@ -801,7 +811,7 @@ export class Generator implements GeneratorAPI {
     return new PropertyAccess(expression, name);
   }
 
-  createJsxExpression(dotDotDotToken: string = "", expression?: Expression) {
+  createJsxExpression(dotDotDotToken = '', expression?: Expression) {
     return new JsxExpression(dotDotDotToken, expression);
   }
 
@@ -820,26 +830,26 @@ export class Generator implements GeneratorAPI {
   createJsxOpeningElement(
     tagName: Expression,
     typeArguments: any[],
-    attributes?: Array<JsxAttribute | JsxSpreadAttribute>
+    attributes?: Array<JsxAttribute | JsxSpreadAttribute>,
   ) {
     return new JsxOpeningElement(
       tagName,
       typeArguments,
       attributes,
-      this.getContext()
+      this.getContext(),
     );
   }
 
   createJsxSelfClosingElement(
     tagName: Expression,
     typeArguments: any[],
-    attributes?: Array<JsxAttribute | JsxSpreadAttribute>
+    attributes?: Array<JsxAttribute | JsxSpreadAttribute>,
   ) {
     return new JsxSelfClosingElement(
       tagName,
       typeArguments,
       attributes,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -850,21 +860,21 @@ export class Generator implements GeneratorAPI {
   createJsxElement(
     openingElement: JsxOpeningElement,
     children: Array<
-      JsxElement | string | JsxExpression | JsxSelfClosingElement
+    JsxElement | string | JsxExpression | JsxSelfClosingElement
     >,
-    closingElement: JsxClosingElement
+    closingElement: JsxClosingElement,
   ) {
     return new JsxElement(openingElement, children, closingElement);
   }
 
   createJsxText(text: string, containsOnlyTriviaWhiteSpaces: string) {
-    return containsOnlyTriviaWhiteSpaces === "true" ? "" : text;
+    return containsOnlyTriviaWhiteSpaces === 'true' ? '' : text;
   }
 
   createFunctionTypeNode(
     typeParameters: any,
     parameters: Parameter[],
-    type: TypeExpression | string
+    type: TypeExpression | string,
   ) {
     return new FunctionTypeNode(typeParameters, parameters, type);
   }
@@ -886,7 +896,7 @@ export class Generator implements GeneratorAPI {
     typeParameters: TypeParameterDeclaration[] | undefined,
     parameters: Parameter[],
     type: TypeExpression | undefined,
-    body: Block
+    body: Block,
   ) {
     return new Method(
       decorators,
@@ -897,7 +907,7 @@ export class Generator implements GeneratorAPI {
       typeParameters,
       parameters,
       type,
-      body
+      body,
     );
   }
 
@@ -907,7 +917,7 @@ export class Generator implements GeneratorAPI {
     name: Identifier,
     parameters: Parameter[],
     type?: TypeExpression,
-    body?: Block
+    body?: Block,
   ) {
     return new GetAccessor(decorators, modifiers, name, parameters, type, body);
   }
@@ -916,7 +926,7 @@ export class Generator implements GeneratorAPI {
     decorators: Decorator[] | undefined,
     modifiers: string[] | undefined,
     parameters: Parameter[],
-    body: Block | undefined
+    body: Block | undefined,
   ) {
     return new Constructor(decorators, modifiers, parameters, body);
   }
@@ -940,7 +950,7 @@ export class Generator implements GeneratorAPI {
   createElementAccessChain(
     expression: Expression,
     questionDotToken: string | undefined,
-    index: Expression
+    index: Expression,
   ) {
     return new ElementAccess(expression, questionDotToken, index);
   }
@@ -954,14 +964,14 @@ export class Generator implements GeneratorAPI {
     name: Identifier,
     questionToken: string | undefined,
     type?: TypeExpression,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     return new PropertySignature(
       modifiers,
       name,
       questionToken,
       type,
-      initializer
+      initializer,
     );
   }
 
@@ -969,7 +979,7 @@ export class Generator implements GeneratorAPI {
     decorators: Decorator[] | undefined,
     modifiers: string[] | undefined,
     parameters: Parameter[],
-    type: TypeExpression
+    type: TypeExpression,
   ) {
     return new IndexSignature(decorators, modifiers, parameters, type);
   }
@@ -984,7 +994,7 @@ export class Generator implements GeneratorAPI {
 
   createIndexedAccessTypeNode(
     objectType: TypeExpression,
-    indexType: TypeExpression
+    indexType: TypeExpression,
   ) {
     return new IndexedAccessTypeNode(objectType, indexType);
   }
@@ -994,7 +1004,7 @@ export class Generator implements GeneratorAPI {
     modifiers: string[] | undefined,
     name: Identifier,
     typeParameters: TypeParameterDeclaration[] | undefined,
-    type: TypeExpression
+    type: TypeExpression,
   ) {
     const members = membersFromTypeDeclaration(type, this.getContext());
 
@@ -1003,17 +1013,17 @@ export class Generator implements GeneratorAPI {
         [
           this.createDecorator(
             this.createCall(
-              this.createIdentifier("ComponentBindings"),
+              this.createIdentifier('ComponentBindings'),
               undefined,
-              []
-            )
+              [],
+            ),
           ),
         ],
         modifiers,
         name,
         [],
         [],
-        members
+        members,
       );
 
       this.addComponent(name.toString(), componentBindings);
@@ -1030,7 +1040,7 @@ export class Generator implements GeneratorAPI {
       modifiers,
       name,
       typeParameters,
-      type
+      type,
     );
   }
 
@@ -1049,7 +1059,7 @@ export class Generator implements GeneratorAPI {
   createConditional(
     condition: Expression,
     whenTrue: Expression,
-    whenFalse: Expression
+    whenFalse: Expression,
   ) {
     return new Conditional(condition, whenTrue, whenFalse);
   }
@@ -1057,9 +1067,11 @@ export class Generator implements GeneratorAPI {
   createTemplateHead(text: string) {
     return text;
   }
+
   createTemplateMiddle(text: string) {
     return text;
   }
+
   createTemplateTail(text: string) {
     return text;
   }
@@ -1080,7 +1092,7 @@ export class Generator implements GeneratorAPI {
     initializer: Expression | undefined,
     condition: Expression | undefined,
     incrementor: Expression | undefined,
-    statement: Expression
+    statement: Expression,
   ) {
     return new For(initializer, condition, incrementor, statement);
   }
@@ -1088,7 +1100,7 @@ export class Generator implements GeneratorAPI {
   createForIn(
     initializer: Expression,
     expression: Expression,
-    statement: Expression
+    statement: Expression,
   ) {
     return new ForIn(initializer, expression, statement);
   }
@@ -1119,7 +1131,7 @@ export class Generator implements GeneratorAPI {
 
   createExpressionWithTypeArguments(
     typeArguments: TypeReferenceNode[] | undefined,
-    expression: Expression
+    expression: Expression,
   ) {
     return new ExpressionWithTypeArguments(typeArguments, expression);
   }
@@ -1147,7 +1159,7 @@ export class Generator implements GeneratorAPI {
   createPropertyAccessChain(
     expression: Expression,
     questionDotToken: string | undefined,
-    name: Expression
+    name: Expression,
   ) {
     return new PropertyAccessChain(expression, questionDotToken, name);
   }
@@ -1156,13 +1168,13 @@ export class Generator implements GeneratorAPI {
     expression: Expression,
     questionDotToken: string | undefined,
     typeArguments: any,
-    argumentsArray: Expression[] | undefined
+    argumentsArray: Expression[] | undefined,
   ) {
     return new CallChain(
       expression,
       questionDotToken,
       typeArguments,
-      argumentsArray
+      argumentsArray,
     );
   }
 
@@ -1179,21 +1191,21 @@ export class Generator implements GeneratorAPI {
     parameters: Parameter[],
     type: TypeExpression | undefined,
     name: Identifier,
-    questionToken?: string
+    questionToken?: string,
   ) {
     return new MethodSignature(
       typeParameters,
       parameters,
       type,
       name,
-      questionToken
+      questionToken,
     );
   }
 
   createTypeParameterDeclaration(
     name: Identifier,
     constraint?: TypeExpression,
-    defaultType?: TypeExpression
+    defaultType?: TypeExpression,
   ) {
     return new TypeParameterDeclaration(name, constraint, defaultType);
   }
@@ -1207,7 +1219,7 @@ export class Generator implements GeneratorAPI {
   addComponent(
     name: string,
     component: Component | ComponentInput,
-    _importClause?: ImportClause
+    _importClause?: ImportClause,
   ) {
     const context = this.getContext();
     context.components = context.components || {};
@@ -1219,16 +1231,18 @@ export class Generator implements GeneratorAPI {
     context.externalInterfaces = context.externalInterfaces || {};
     context.externalInterfaces[name] = _interface;
   }
+
   addType(name: string, _type: TypeLiteralNode) {
     const context = this.getContext();
     context.externalTypes = context.externalTypes || {};
     context.externalTypes[name] = _type;
   }
+
   addToContext(
     name: string,
     originalName: string | undefined,
     importClause: ImportClause,
-    modulePath: string
+    modulePath: string,
   ) {
     const externalFile = this.cache[modulePath];
     const isImported = (i: {
@@ -1236,14 +1250,14 @@ export class Generator implements GeneratorAPI {
       modifiers: string[];
     }): boolean => {
       const name = i.name instanceof Identifier ? i.name.toString() : i.name;
-      return name === originalName && i.modifiers.indexOf("export") >= 0;
+      return name === originalName && i.modifiers.indexOf('export') >= 0;
     };
 
     const externalElement = externalFile.find(isImported);
 
     if (
-      externalElement instanceof Component ||
-      externalElement instanceof ComponentInput
+      externalElement instanceof Component
+      || externalElement instanceof ComponentInput
     ) {
       this.addComponent(name, externalElement, importClause);
     }
@@ -1261,20 +1275,19 @@ export class Generator implements GeneratorAPI {
           externalElement.members
             .filter((m) => m instanceof Property)
             .map(
-              (p) =>
-                new PropertySignature(
-                  p.modifiers,
-                  p._name,
-                  "",
-                  p.type instanceof TypeExpression ? p.type : undefined,
-                  undefined
-                )
-            )
-        )
+              (p) => new PropertySignature(
+                p.modifiers,
+                p._name,
+                '',
+                p.type instanceof TypeExpression ? p.type : undefined,
+                undefined,
+              ),
+            ),
+        ),
       );
     } else if (
-      externalElement instanceof TypeAliasDeclaration &&
-      externalElement.type instanceof TypeLiteralNode
+      externalElement instanceof TypeAliasDeclaration
+      && externalElement.type instanceof TypeLiteralNode
     ) {
       this.addType(name, externalElement.type);
     }
@@ -1283,8 +1296,8 @@ export class Generator implements GeneratorAPI {
   getInitialContext(): GeneratorContext {
     return {
       defaultOptionsModule: this.options.defaultOptionsModule,
-        // this.options.defaultOptionsModule &&
-        // path.resolve(this.options.defaultOptionsModule),
+      // this.options.defaultOptionsModule &&
+      // path.resolve(this.options.defaultOptionsModule),
     };
   }
 
@@ -1319,14 +1332,14 @@ export class Generator implements GeneratorAPI {
 
   meta: { [name: string]: any } = {};
 
-  destination: string = "";
+  destination = '';
 
   options: GeneratorOptions = {};
 
   format(code: string) {
     return prettier.format(code, {
-      parser: "typescript",
-      htmlWhitespaceSensitivity: "strict",
+      parser: 'typescript',
+      htmlWhitespaceSensitivity: 'strict',
     });
   }
 
@@ -1335,8 +1348,8 @@ export class Generator implements GeneratorAPI {
     if (jqueryBaseComponentName) {
       codeFactoryResult.some((node, index) => {
         if (
-          node instanceof ImportDeclaration &&
-          node.has(jqueryBaseComponentName)
+          node instanceof ImportDeclaration
+          && node.has(jqueryBaseComponentName)
         ) {
           codeFactoryResult.splice(index, 1);
           return true;
@@ -1348,7 +1361,7 @@ export class Generator implements GeneratorAPI {
 
   processCodeFactoryResult(
     codeFactoryResult: Array<any>,
-    createFactoryOnly: boolean
+    createFactoryOnly: boolean,
   ) {
     const context = this.getContext();
     const functions: Function[] = [];
@@ -1367,7 +1380,7 @@ export class Generator implements GeneratorAPI {
                 [key]: variables[key],
               };
             },
-            {}
+            {},
           ),
         };
       }
@@ -1388,9 +1401,8 @@ export class Generator implements GeneratorAPI {
     codeFactoryResult.forEach((e) => {
       if (e instanceof Component) {
         const name = e.view.toString();
-        const globalView =
-          context.globals?.[name] ||
-          functions.find((f) => f.name!.toString() === name);
+        const globalView = context.globals?.[name]
+          || functions.find((f) => f.name!.toString() === name);
         if (!context.viewFunctions?.[name] && globalView) {
           const viewFunction = getExpression(globalView);
           viewFunction.isJsx = () => true;
@@ -1400,9 +1412,9 @@ export class Generator implements GeneratorAPI {
     });
     this.cache.__globals__ = context.globals;
     if (createFactoryOnly) {
-      return "";
+      return '';
     }
-    return this.format(codeFactoryResult.join(";\n"));
+    return this.format(codeFactoryResult.join(';\n'));
   }
 
   generate(factory: any, createFactoryOnly = false): GeneratorResult[] {
@@ -1415,7 +1427,7 @@ export class Generator implements GeneratorAPI {
     }
     if (path && this.context.length === 1) {
       const component = codeFactoryResult.find(
-        (e: any) => e instanceof Component
+        (e: any) => e instanceof Component,
       ) as Component;
       if (component) {
         this.meta[path] = component.getMeta();
@@ -1433,7 +1445,7 @@ export class Generator implements GeneratorAPI {
   getComponentsMeta(): any[] {
     return Object.keys(this.meta).reduce(
       (r: any[], path) => [...r, { ...this.meta[path], path }],
-      []
+      [],
     );
   }
 }

@@ -1,4 +1,4 @@
-import { createPortal } from "inferno";
+import { createPortal } from 'inferno';
 
 declare type PortalProps = {
   container?: HTMLElement | null;

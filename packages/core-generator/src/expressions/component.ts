@@ -6,8 +6,12 @@ import { getModuleRelativePath } from '../utils/path-utils';
 import { capitalizeFirstLetter, compileType, removePlural } from '../utils/string';
 import { Expression, SimpleExpression } from './base';
 import { BindingElement, BindingPattern } from './binding-pattern';
-import { Class, Heritable, HeritageClause, inheritMembers } from './class';
-import { BaseClassMember, GetAccessor, Method, Property } from './class-members';
+import {
+  Class, Heritable, HeritageClause, inheritMembers,
+} from './class';
+import {
+  BaseClassMember, GetAccessor, Method, Property,
+} from './class-members';
 import { Call, Identifier } from './common';
 import { ComponentInput } from './component-input';
 import { Decorator } from './decorator';
@@ -21,36 +25,43 @@ export function isJSXComponent(heritageClauses: HeritageClause[]) {
 }
 
 export function getProps(members: BaseClassMember[]): Property[] {
-  return members.filter((m) =>
-    m.decorators.find(
-      (d) =>
-        d.name === Decorators.OneWay ||
-        d.name === Decorators.TwoWay ||
-        d.name === Decorators.Nested ||
-        d.name === Decorators.Event ||
-        d.name === Decorators.Template ||
-        d.name === Decorators.Slot ||
-        d.name === Decorators.ForwardRefProp ||
-        d.name === Decorators.RefProp
-    )
-  ) as Property[];
+  return members.filter((m) => m.decorators.find(
+    (d) => d.name === Decorators.OneWay
+        || d.name === Decorators.TwoWay
+        || d.name === Decorators.Nested
+        || d.name === Decorators.Event
+        || d.name === Decorators.Template
+        || d.name === Decorators.Slot
+        || d.name === Decorators.ForwardRefProp
+        || d.name === Decorators.RefProp,
+  )) as Property[];
 }
 
 export class Component extends Class implements Heritable {
   props: Property[] = [];
+
   modelProp?: Property;
+
   state: Property[] = [];
+
   internalState: Property[];
+
   mutable: Property[];
+
   refs: Property[];
+
   apiRefs: Property[];
 
   listeners: Method[];
+
   methods: Method[];
+
   effects: Method[];
+
   slots: Property[];
 
   view: any;
+
   viewModel: any;
 
   isSVGComponent: boolean;
@@ -67,33 +78,32 @@ export class Component extends Class implements Heritable {
     members
       .filter((m) => !m.inherited && m instanceof GetAccessor)
       .forEach((m) => {
-        m.prefix = "__";
+        m.prefix = '__';
       });
     return members;
   }
 
   get needGenerateDefaultOptions(): boolean {
     return (
-      !!this.context.defaultOptionsModule &&
-      (!this.defaultOptionRules ||
-        this.defaultOptionRules.toString() !== "null")
+      !!this.context.defaultOptionsModule
+      && (!this.defaultOptionRules
+        || this.defaultOptionRules.toString() !== 'null')
     );
   }
 
   processMembers(members: Array<Property | Method>) {
     members = members.map((m) => {
       if (
-        m instanceof Property &&
-        m.decorators.length === 0 &&
-        m.initializer instanceof BaseFunction
+        m instanceof Property
+        && m.decorators.length === 0
+        && m.initializer instanceof BaseFunction
       ) {
-        const body =
-          m.initializer.body instanceof Block
-            ? m.initializer.body
-            : new Block(
-                [new ReturnStatement(m.initializer.body as Expression)],
-                true
-              );
+        const body = m.initializer.body instanceof Block
+          ? m.initializer.body
+          : new Block(
+            [new ReturnStatement(m.initializer.body as Expression)],
+            true,
+          );
 
         return new Method(
           [],
@@ -104,19 +114,17 @@ export class Component extends Class implements Heritable {
           [],
           m.initializer.parameters,
           m.initializer.type,
-          body
+          body,
         );
       }
       return m;
     });
 
-    const api = members.filter((m) =>
-      m.decorators.find((d) => d.name === "Method")
-    );
+    const api = members.filter((m) => m.decorators.find((d) => d.name === 'Method'));
     const props = inheritMembers(this.heritageClauses, []) as Property[];
 
     const requiredProps = props.filter(
-      (p) => p.questionOrExclamationToken === SyntaxKind.ExclamationToken
+      (p) => p.questionOrExclamationToken === SyntaxKind.ExclamationToken,
     );
 
     if (requiredProps.length) {
@@ -129,28 +137,26 @@ export class Component extends Class implements Heritable {
           this.name
         } component declaration is not correct. Props have required properties. Include their keys to declaration
           ${this.name} extends JSXComponent<${
-          this.heritageClauses[0].propsType
-        }, ${requiredProps.map((p) => `"${p.name}"`).join("|")}>
+  this.heritageClauses[0].propsType
+}, ${requiredProps.map((p) => `"${p.name}"`).join('|')}>
         `);
       }
     }
 
     api
-      .filter((m) =>
-        props.some((p) => p._name.toString() === m._name.toString())
-      )
+      .filter((m) => props.some((p) => p._name.toString() === m._name.toString()))
       .forEach((a) => {
         warn(
-          `Component ${this.name} has Prop and Api method with same name: ${a._name}`
+          `Component ${this.name} has Prop and Api method with same name: ${a._name}`,
         );
       });
 
     members = super.processMembers(
-      this.addPrefixToMembers(members).concat(props)
+      this.addPrefixToMembers(members).concat(props),
     );
 
     const restPropsGetter = this.createRestPropsGetter(members);
-    restPropsGetter.prefix = "__";
+    restPropsGetter.prefix = '__';
     members.push(restPropsGetter);
     return members;
   }
@@ -162,7 +168,7 @@ export class Component extends Class implements Heritable {
     typeParameters: TypeExpression[] | string[] | undefined,
     heritageClauses: HeritageClause[] = [],
     members: Array<Property | Method>,
-    context: GeneratorContext
+    context: GeneratorContext,
   ) {
     super(
       [decorator],
@@ -171,32 +177,29 @@ export class Component extends Class implements Heritable {
       typeParameters,
       heritageClauses.filter((h) => h.token === SyntaxKind.ExtendsKeyword),
       members,
-      context
+      context,
     );
     members = this.members;
-    this.props = members.filter((m) =>
-      m.decorators.find(
-        (d) =>
-          d.name === "OneWay" || d.name === "Event" || d.name === "Template"
-      )
-    ) as Property[];
+    this.props = members.filter((m) => m.decorators.find(
+      (d) => d.name === 'OneWay' || d.name === 'Event' || d.name === 'Template',
+    )) as Property[];
 
     const refs = (members.filter((m) => m.isRef) as Property[]).reduce(
       (r: { refs: Property[]; apiRefs: Property[] }, p) => {
         if (
-          context.components &&
-          context.components[p.compileRefType()] instanceof Component
+          context.components
+          && context.components[p.compileRefType()] instanceof Component
         ) {
           p.decorators.find(
-            (d) => d.name === "Ref"
-          )!.expression.expression = new SimpleExpression("ApiRef");
+            (d) => d.name === 'Ref',
+          )!.expression.expression = new SimpleExpression('ApiRef');
           r.apiRefs.push(p as Property);
         } else {
           r.refs.push(p as Property);
         }
         return r;
       },
-      { refs: [], apiRefs: [] }
+      { refs: [], apiRefs: [] },
     );
     this.refs = refs.refs;
     this.apiRefs = refs.apiRefs;
@@ -207,56 +210,48 @@ export class Component extends Class implements Heritable {
 
     this.mutable = members.filter((m) => m.isMutable) as Property[];
 
-    let modelProps = this.state.filter((m) =>
-      m.decorators.find(
-        (d) =>
-          (d.expression.arguments[0] as ObjectLiteral)
-            ?.getProperty("isModel")
-            ?.toString() === "true"
-      )
-    );
+    const modelProps = this.state.filter((m) => m.decorators.find(
+      (d) => (d.expression.arguments[0] as ObjectLiteral)
+        ?.getProperty('isModel')
+        ?.toString() === 'true',
+    ));
 
     if (modelProps.length > 1) {
       throw `There should be only one model prop. Props marked as isModel: ${modelProps
         .map((s) => s._name)
-        .join(", ")}`;
+        .join(', ')}`;
     }
 
-    this.modelProp =
-      modelProps[0] || this.state.find((s) => s._name.toString() === "value");
+    this.modelProp = modelProps[0] || this.state.find((s) => s._name.toString() === 'value');
 
     this.methods = members.filter(
-      (m) =>
-        (m instanceof Method && m.decorators.length === 0) ||
-        m instanceof GetAccessor
+      (m) => (m instanceof Method && m.decorators.length === 0)
+        || m instanceof GetAccessor,
     ) as Method[];
 
-    this.listeners = members.filter((m) =>
-      m.decorators.find((d) => d.name === "Listen")
-    ) as Method[];
+    this.listeners = members.filter((m) => m.decorators.find((d) => d.name === 'Listen')) as Method[];
 
     this.effects = members.filter((m) => m.isEffect) as Method[];
 
     this.slots = members.filter((m) => m.isSlot) as Property[];
 
-    this.view = decorator.getParameter("view");
-    this.viewModel = decorator.getParameter("viewModel") || "";
+    this.view = decorator.getParameter('view');
+    this.viewModel = decorator.getParameter('viewModel') || '';
 
-    this.defaultOptionRules = decorator.getParameter("defaultOptionRules");
+    this.defaultOptionRules = decorator.getParameter('defaultOptionRules');
 
-    this.isSVGComponent =
-      decorator.getParameter("isSVG")?.valueOf().toString() === "true";
+    this.isSVGComponent = decorator.getParameter('isSVG')?.valueOf().toString() === 'true';
 
     this.context = context;
 
     if (context.defaultOptionsImport) {
-      context.defaultOptionsImport.add("convertRulesToOptions");
-      context.defaultOptionsImport.add("Rule");
+      context.defaultOptionsImport.add('convertRulesToOptions');
+      context.defaultOptionsImport.add('Rule');
     }
   }
 
   compileDefaultProps() {
-    return "";
+    return '';
   }
 
   get heritageProperties() {
@@ -269,7 +264,7 @@ export class Component extends Class implements Heritable {
           p._name,
           p.questionOrExclamationToken,
           p.type,
-          p.initializer
+          p.initializer,
         );
         property.inherited = true;
         return property;
@@ -277,33 +272,33 @@ export class Component extends Class implements Heritable {
   }
 
   defaultPropsDest() {
-    return "";
+    return '';
   }
 
   createRestPropsGetter(_members: BaseClassMember[]) {
     return new GetAccessor(
       undefined,
       undefined,
-      new Identifier("restAttributes"),
+      new Identifier('restAttributes'),
       [],
       undefined,
-      new Block([new SimpleExpression("return {}")], true)
+      new Block([new SimpleExpression('return {}')], true),
     );
   }
 
   compileDefaultOptionsImport(imports: string[]): void {
     if (
-      !this.context.defaultOptionsImport &&
-      this.needGenerateDefaultOptions &&
-      this.context.defaultOptionsModule &&
-      this.context.dirname
+      !this.context.defaultOptionsImport
+      && this.needGenerateDefaultOptions
+      && this.context.defaultOptionsModule
+      && this.context.dirname
     ) {
       const relativePath = getModuleRelativePath(
         this.context.dirname,
-        this.context.defaultOptionsModule
+        this.context.defaultOptionsModule,
       );
       imports.push(
-        `import {convertRulesToOptions, Rule} from "${relativePath}"`
+        `import {convertRulesToOptions, Rule} from "${relativePath}"`,
       );
     }
   }
@@ -330,30 +325,30 @@ export class Component extends Class implements Heritable {
   }
 
   compileDefaultOptionsMethod(
-    defaultOptionRulesInitializer: string = "[]",
-    statements: string[] = []
+    defaultOptionRulesInitializer = '[]',
+    statements: string[] = [],
   ) {
     if (this.needGenerateDefaultOptions) {
       const defaultOptionsTypeName = this.compileDefaultOptionsRuleTypeName();
       return `${this.compileDefaultOptionRulesType()}
 
             const __defaultOptionRules${compileType(
-              defaultOptionsTypeName ? `${defaultOptionsTypeName}[]` : ""
-            )} = ${defaultOptionRulesInitializer};
+    defaultOptionsTypeName ? `${defaultOptionsTypeName}[]` : '',
+  )} = ${defaultOptionRulesInitializer};
             export function defaultOptions(rule${compileType(
-              defaultOptionsTypeName
-            )}) {
+    defaultOptionsTypeName,
+  )}) {
                 __defaultOptionRules.push(rule);
-                ${statements.join("\n")}
+                ${statements.join('\n')}
             }`;
     }
-    return "";
+    return '';
   }
 
   compileDefaultComponentExport() {
-    return this.modifiers.join(" ") === "export"
+    return this.modifiers.join(' ') === 'export'
       ? `export default ${this.name}`
-      : ``;
+      : '';
   }
 
   processModuleFileName(module: string) {
@@ -388,43 +383,41 @@ export class Component extends Class implements Heritable {
 
   getJQueryBaseComponentName(): string | undefined {
     const jQueryProp = this.decorators[0].getParameter(
-      "jQuery"
+      'jQuery',
     ) as ObjectLiteral;
-    const baseComponent = jQueryProp?.getProperty("component");
+    const baseComponent = jQueryProp?.getProperty('component');
     return baseComponent?.toString();
   }
 
   containsPortal() {
     const viewFunctions = this.context.viewFunctions;
     if (viewFunctions) {
-      return Object.keys(viewFunctions).some((key) =>
-        viewFunctions[key].containsPortal()
-      );
+      return Object.keys(viewFunctions).some((key) => viewFunctions[key].containsPortal());
     }
     return false;
   }
 
   getNestedFromComponentInput(
     component: ComponentInput,
-    parentName: string = ""
+    parentName = '',
   ): {
-    component: ComponentInput;
-    name: string;
-    propName?: string;
-  }[] {
+      component: ComponentInput;
+      name: string;
+      propName?: string;
+    }[] {
     const nestedProps = component.members.filter((m) => m.isNested);
     const components = component.context.components!;
 
     const nested = Object.keys(components).reduce(
       (acc, key) => {
         const property = nestedProps.find(
-          ({ type }) => extractComplexType(type) === key
+          ({ type }) => extractComplexType(type) === key,
         ) as Property;
         if (property) {
           const componentName = capitalizeFirstLetter(
             isTypeArray(property.type)
               ? removePlural(property.name)
-              : property.name
+              : property.name,
           );
           acc.push({
             component: components[key] as ComponentInput,
@@ -438,19 +431,18 @@ export class Component extends Class implements Heritable {
         component: ComponentInput;
         name: string;
         propName?: string;
-      }[]
+      }[],
     );
 
     return nested.concat(
       nested.reduce(
-        (acc, { component, name }) =>
-          acc.concat(this.getNestedFromComponentInput(component, name)),
+        (acc, { component, name }) => acc.concat(this.getNestedFromComponentInput(component, name)),
         [] as {
           component: ComponentInput;
           name: string;
           propName?: string;
-        }[]
-      )
+        }[],
+      ),
     );
   }
 
@@ -462,7 +454,7 @@ export class Component extends Class implements Heritable {
         ? (heritage.typeArguments[0] as any).typeName
         : heritage.arguments[0].toString();
       return this.getNestedFromComponentInput(
-        components[inheritFrom] as ComponentInput
+        components[inheritFrom] as ComponentInput,
       );
     }
     return [];
@@ -470,15 +462,15 @@ export class Component extends Class implements Heritable {
 
   getNestedImports(components: ComponentInput[]) {
     const outerComponents = components.filter(
-      ({ name }) => !this.context.components![name]
+      ({ name }) => !this.context.components![name],
     );
     const imports = outerComponents.reduce(
       (acc, component) => {
         let relativePath = getModuleRelativePath(
           this.context.dirname!,
-          component.context.path!
+          component.context.path!,
         );
-        relativePath = relativePath.slice(0, relativePath.lastIndexOf("."));
+        relativePath = relativePath.slice(0, relativePath.lastIndexOf('.'));
 
         if (!acc[relativePath]) {
           acc[relativePath] = [];
@@ -489,11 +481,11 @@ export class Component extends Class implements Heritable {
       },
       {} as {
         [x: string]: string[];
-      }
+      },
     );
 
     const result = Object.keys(imports).map(
-      (path) => `import { ${[...new Set(imports[path])]} } from "${path}";`
+      (path) => `import { ${[...new Set(imports[path])]} } from "${path}";`,
     );
 
     return result;
@@ -501,25 +493,23 @@ export class Component extends Class implements Heritable {
 
   extractGlobalsFromTemplate(
     template: string | undefined,
-    delimiter = ": "
+    delimiter = ': ',
   ): string[] {
-    const globals =
-      template
-        ?.match(/(^|[^\w])global_\w+/gi)
-        ?.map(
-          (global) =>
-            `${global.replace(/[^\w]/, "")}${delimiter}${global.replace(
-              /(^|[^\w])global_/,
-              ""
-            )}`
-        ) || [];
+    const globals = template
+      ?.match(/(^|[^\w])global_\w+/gi)
+      ?.map(
+        (global) => `${global.replace(/[^\w]/, '')}${delimiter}${global.replace(
+          /(^|[^\w])global_/,
+          '',
+        )}`,
+      ) || [];
     return [...new Set(globals)];
   }
 
   returnGetAccessorBlock(
     _argumentPattern: BindingPattern,
     _options: toStringOptions,
-    _spreadVar: BindingElement
+    _spreadVar: BindingElement,
   ) {
     return new Block([], true);
   }
@@ -528,14 +518,13 @@ export class Component extends Class implements Heritable {
     const viewFunction = this.decorators[0].getViewFunction();
     const argumentPattern = getViewFunctionBindingPattern(viewFunction);
     const spreadVar = argumentPattern.elements.find(
-      (p: BindingElement) => p.dotDotDotToken === "..."
+      (p: BindingElement) => p.dotDotDotToken === '...',
     );
 
     const props = getProps(members).filter(
-      (m) =>
-        !argumentPattern.elements.some(
-          (e) => !e.dotDotDotToken && e.name.toString() === m._name.toString()
-        )
+      (m) => !argumentPattern.elements.some(
+        (e) => !e.dotDotDotToken && e.name.toString() === m._name.toString(),
+      ),
     );
 
     if (spreadVar) {
@@ -544,11 +533,11 @@ export class Component extends Class implements Heritable {
         this.returnGetAccessorBlock(
           argumentPattern,
           { members: this.members },
-          spreadVar
+          spreadVar,
         ),
-        props
+        props,
       );
-    } else return undefined;
+    } return undefined;
   }
 
   createViewSpreadAccessor(name: Identifier, body: Block, _props: Property[]) {

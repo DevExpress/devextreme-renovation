@@ -1,10 +1,9 @@
-import { Component, findDOMfromVNode } from "inferno";
-import { InfernoEffect } from "./effect";
-import { InfernoEffectHost } from "./effect_host";
+import { Component, findDOMfromVNode } from 'inferno';
+import { InfernoEffect } from './effect';
+import { InfernoEffectHost } from './effect_host';
 
 const areObjectsEqual = (firstObject: any, secondObject: any) => {
-  const bothAreObjects =
-    firstObject instanceof Object && secondObject instanceof Object;
+  const bothAreObjects = firstObject instanceof Object && secondObject instanceof Object;
   if (!bothAreObjects) {
     return firstObject === secondObject;
   }
@@ -16,7 +15,7 @@ const areObjectsEqual = (firstObject: any, secondObject: any) => {
   }
 
   const hasDifferentElement = firstObjectKeys.some(
-    (key) => firstObject[key] !== secondObject[key]
+    (key) => firstObject[key] !== secondObject[key],
   );
   return !hasDifferentElement;
 };
@@ -27,18 +26,19 @@ export class BaseInfernoComponent<P = {}, S = {}> extends Component<P, S> {
   componentWillReceiveProps(_: any, context: any) {
     this._pendingContext = context ?? {};
   }
+
   shouldComponentUpdate(nextProps: P, nextState: S) {
     return (
-      !areObjectsEqual(this.props, nextProps) ||
-      !areObjectsEqual(this.state, nextState) ||
-      !areObjectsEqual(this.context, this._pendingContext)
+      !areObjectsEqual(this.props, nextProps)
+      || !areObjectsEqual(this.state, nextState)
+      || !areObjectsEqual(this.context, this._pendingContext)
     );
   }
 }
 
 export class InfernoComponent<P = {}, S = {}> extends BaseInfernoComponent<
-  P,
-  S
+P,
+S
 > {
   _effects: InfernoEffect[] = [];
 
@@ -58,7 +58,7 @@ export class InfernoComponent<P = {}, S = {}> extends BaseInfernoComponent<
 
   componentDidMount() {
     InfernoEffectHost.callbacks.push(
-      () => (this._effects = this.createEffects())
+      () => { this._effects = this.createEffects(); },
     );
     InfernoEffectHost.callEffects();
   }
@@ -79,32 +79,35 @@ export class InfernoComponent<P = {}, S = {}> extends BaseInfernoComponent<
 
 export class InfernoWrapperComponent<P = {}, S = {}> extends InfernoComponent<P, S> {
   vDomElement: Element | null = null;
+
   vDomPreviousClasses: string[] = [];
+
   vDomRemovedClasses: string[] = [];
+
   vDomAddedClasses: string[] = [];
 
   vDomUpdateClasses() {
     const currentClasses = this.vDomElement?.className.split(' ') ?? [];
-    const addedClasses = currentClasses.filter(className => this.vDomPreviousClasses.indexOf(className) < 0);
-    const removedClasses = this.vDomPreviousClasses.filter(className => currentClasses.indexOf(className) < 0);
+    const addedClasses = currentClasses.filter((className) => this.vDomPreviousClasses.indexOf(className) < 0);
+    const removedClasses = this.vDomPreviousClasses.filter((className) => currentClasses.indexOf(className) < 0);
 
-    addedClasses.forEach(value => {
+    addedClasses.forEach((value) => {
       const indexInRemoved = this.vDomRemovedClasses.indexOf(value);
-      if (indexInRemoved >- 1) {
+      if (indexInRemoved > -1) {
         this.vDomRemovedClasses.splice(indexInRemoved, 1);
       } else {
         this.vDomAddedClasses.push(value);
       }
     });
 
-    removedClasses.forEach(value => {
+    removedClasses.forEach((value) => {
       const indexInAdded = this.vDomAddedClasses.indexOf(value);
-      if (indexInAdded >- 1) {
+      if (indexInAdded > -1) {
         this.vDomAddedClasses.splice(indexInAdded, 1);
       } else {
         this.vDomRemovedClasses.push(value);
       }
-    })
+    });
   }
 
   componentDidMount() {
@@ -113,7 +116,6 @@ export class InfernoWrapperComponent<P = {}, S = {}> extends InfernoComponent<P,
     this.vDomElement = findDOMfromVNode(this.$LI, true);
     this.vDomPreviousClasses = this.vDomElement?.className.split(' ') ?? [];
   }
-  
 
   componentDidUpdate() {
     super.componentDidUpdate();

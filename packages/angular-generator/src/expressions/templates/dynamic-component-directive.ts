@@ -100,10 +100,10 @@ export class DynamicComponentDirective {
 }`;
 
 export const dynamicComponentDirectiveCoreImports = [
-  "Directive",
-  "ViewContainerRef",
-  "Input",
-  "TemplateRef",
-  "ComponentFactoryResolver",
-  "EmbeddedViewRef",
+  'Directive',
+  'ViewContainerRef',
+  'Input',
+  'TemplateRef',
+  'ComponentFactoryResolver',
+  'EmbeddedViewRef',
 ];

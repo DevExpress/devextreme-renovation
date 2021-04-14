@@ -8,10 +8,10 @@ import {
   SimpleExpression,
   Block,
   Parameter,
-} from "@devextreme-generator/core";
-import { Property } from "./class-members/property";
-import { SetAccessor } from "./class-members/set-accessor";
-import { GetAccessor } from "./class-members/get-accessor";
+} from '@devextreme-generator/core';
+import { Property } from './class-members/property';
+import { SetAccessor } from './class-members/set-accessor';
+import { GetAccessor } from './class-members/get-accessor';
 
 export class ContextDeclaration extends VariableStatement {
   toString() {
@@ -21,14 +21,14 @@ export class ContextDeclaration extends VariableStatement {
     const valueProperty = new Property(
       [],
       [],
-      new Identifier("_value"),
+      new Identifier('_value'),
       undefined,
       undefined,
-      initializer
+      initializer,
     );
 
     const declaration = new Class(
-      [new Decorator(new Call(new Identifier("Injectable")), {})],
+      [new Decorator(new Call(new Identifier('Injectable')), {})],
       this.modifiers,
       createContextExpression.name as Identifier,
       [],
@@ -38,33 +38,33 @@ export class ContextDeclaration extends VariableStatement {
         new Property(
           [],
           [],
-          new Identifier("change"),
+          new Identifier('change'),
           undefined,
           new SimpleTypeExpression(`ContextEmitter<${valueProperty.type}>`),
-          new SimpleExpression("new ContextEmitter()")
+          new SimpleExpression('new ContextEmitter()'),
         ),
 
         new GetAccessor(
           [],
           [],
-          new Identifier("value"),
+          new Identifier('value'),
           [],
           valueProperty.type,
-          new Block([new SimpleExpression("return this._value")], false)
+          new Block([new SimpleExpression('return this._value')], false),
         ),
 
         new SetAccessor(
           [],
           [],
-          new Identifier("value"),
+          new Identifier('value'),
           [
             new Parameter(
               [],
               [],
               undefined,
-              new Identifier("value"),
+              new Identifier('value'),
               undefined,
-              valueProperty.type
+              valueProperty.type,
             ),
           ],
           new Block(
@@ -73,14 +73,14 @@ export class ContextDeclaration extends VariableStatement {
                 `if(this._value!==value) {
                   this._value = value;
                   this.change.emit(value);
-                }`
+                }`,
               ),
             ],
-            false
-          )
+            false,
+          ),
         ),
       ],
-      {}
+      {},
     );
     return declaration.toString();
   }

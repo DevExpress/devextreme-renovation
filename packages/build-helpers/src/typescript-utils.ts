@@ -9,7 +9,7 @@ export function getTsConfig(filename: string) {
   let baseConfig: any = {};
   if (config.extends) {
     baseConfig = getTsConfig(
-      path.resolve(path.dirname(filename), config.extends)
+      path.resolve(path.dirname(filename), config.extends),
     );
   }
   return {

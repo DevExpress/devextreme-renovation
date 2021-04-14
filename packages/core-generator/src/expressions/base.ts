@@ -3,7 +3,7 @@ import {
   IExpression,
   toStringOptions,
   TypeExpressionImports,
-} from "../types";
+} from '../types';
 
 export class Expression implements IExpression {
   getDependency(_options: toStringOptions): string[] {
@@ -11,7 +11,7 @@ export class Expression implements IExpression {
   }
 
   toString(_options?: toStringOptions) {
-    return "";
+    return '';
   }
 
   getAllDependency(options: toStringOptions) {
@@ -29,6 +29,7 @@ export class Expression implements IExpression {
 
 export class SimpleExpression extends Expression {
   expression: string;
+
   constructor(expression: string) {
     super();
     this.expression = expression;
@@ -69,7 +70,7 @@ export class ExpressionWithOptionalExpression extends Expression {
   }
 
   toString(options?: toStringOptions) {
-    return this.expression ? this.expression.toString(options) : "";
+    return this.expression ? this.expression.toString(options) : '';
   }
 
   isJsx() {
