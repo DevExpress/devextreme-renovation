@@ -167,5 +167,5 @@ jobs:
           GITHUBACTION: "true"
           TARGET: "test"
         run: |
-          chmod +x ./docker-ci.sh
-          ./docker-ci.sh
+          chmod +x ./DevExtreme/docker-ci.sh
+          ./DevExtreme/docker-ci.sh
