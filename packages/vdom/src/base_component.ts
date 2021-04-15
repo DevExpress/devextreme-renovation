@@ -20,7 +20,10 @@ const areObjectsEqual = (firstObject: any, secondObject: any) => {
   return !hasDifferentElement;
 };
 
-export class BaseInfernoComponent<P = {}, S = {}> extends Component<P, S> {
+export class BaseInfernoComponent<
+  P = Record<string, unknown>,
+  S = Record<string, unknown>,
+> extends Component<P, S> {
   _pendingContext: any = this.context;
 
   componentWillReceiveProps(_: any, context: any) {
@@ -36,10 +39,10 @@ export class BaseInfernoComponent<P = {}, S = {}> extends Component<P, S> {
   }
 }
 
-export class InfernoComponent<P = {}, S = {}> extends BaseInfernoComponent<
-P,
-S
-> {
+export class InfernoComponent<
+  P = Record<string, unknown>,
+  S = Record<string, unknown>,
+> extends BaseInfernoComponent<P, S> {
   _effects: InfernoEffect[] = [];
 
   createEffects(): InfernoEffect[] {
@@ -77,7 +80,10 @@ S
   }
 }
 
-export class InfernoWrapperComponent<P = {}, S = {}> extends InfernoComponent<P, S> {
+export class InfernoWrapperComponent<
+  P = Record<string, unknown>,
+  S = Record<string, unknown>,
+> extends InfernoComponent<P, S> {
   vDomElement: Element | null = null;
 
   vDomPreviousClasses: string[] = [];
@@ -86,10 +92,16 @@ export class InfernoWrapperComponent<P = {}, S = {}> extends InfernoComponent<P,
 
   vDomAddedClasses: string[] = [];
 
-  vDomUpdateClasses() {
-    const currentClasses = this.vDomElement?.className.split(' ') ?? [];
-    const addedClasses = currentClasses.filter((className) => this.vDomPreviousClasses.indexOf(className) < 0);
-    const removedClasses = this.vDomPreviousClasses.filter((className) => currentClasses.indexOf(className) < 0);
+  vDomUpdateClasses(): void {
+    const currentClasses = this.vDomElement?.className.length
+      ? this.vDomElement.className.split(' ')
+      : [];
+    const addedClasses = currentClasses.filter(
+      (className) => this.vDomPreviousClasses.indexOf(className) < 0,
+    );
+    const removedClasses = this.vDomPreviousClasses.filter(
+      (className) => currentClasses.indexOf(className) < 0,
+    );
 
     addedClasses.forEach((value) => {
       const indexInRemoved = this.vDomRemovedClasses.indexOf(value);
@@ -110,14 +122,16 @@ export class InfernoWrapperComponent<P = {}, S = {}> extends InfernoComponent<P,
     });
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     super.componentDidMount();
 
     this.vDomElement = findDOMfromVNode(this.$LI, true);
-    this.vDomPreviousClasses = this.vDomElement?.className.split(' ') ?? [];
+    this.vDomPreviousClasses = this.vDomElement?.className.length
+      ? this.vDomElement.className.split(' ')
+      : [];
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(): void {
     super.componentDidUpdate();
 
     const element = this.vDomElement;
@@ -125,11 +139,13 @@ export class InfernoWrapperComponent<P = {}, S = {}> extends InfernoComponent<P,
     if (element !== null) {
       this.vDomAddedClasses.forEach((className) => element.classList.add(className));
       this.vDomRemovedClasses.forEach((className) => element.classList.remove(className));
-      this.vDomPreviousClasses = element.className.split(' ') ?? [];
+      this.vDomPreviousClasses = this.vDomElement?.className.length
+        ? this.vDomElement.className.split(' ')
+        : [];
     }
   }
 
-  shouldComponentUpdate(nextProps: P, nextState: S) {
+  shouldComponentUpdate(nextProps: P, nextState: S): boolean {
     const shouldUpdate = super.shouldComponentUpdate(nextProps, nextState);
     if (shouldUpdate) {
       this.vDomUpdateClasses();
