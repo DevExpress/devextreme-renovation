@@ -1,6 +1,6 @@
 # This workflow will run tests for DevExtreme generators
 
-name: DevExtreme Compatibility
+name: DevExtreme
 
 on:
   push:
@@ -109,7 +109,7 @@ jobs:
       VM_MEMORY: 3072
       VM_CPU: 2
       VM_TIMEOUT: 7200
-    needs: [ build-generators ]
+    needs: [ devextreme-compilation ]
 
     strategy:
       matrix:
@@ -119,6 +119,10 @@ jobs:
         JQUERY: [ jquery=3 ]
 
     steps:
+      - name: Setup utils
+        run: |
+          sudo apt-get install -y dbus-x11 httping x11vnc xvfb
+
       - name: Install NodeJS
         uses: actions/setup-node@v2
         with:
