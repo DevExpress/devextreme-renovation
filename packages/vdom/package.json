@@ -12,7 +12,7 @@
     "build": "tsc -p ./tsconfig.esm.build.json && tsc -p ./tsconfig.cjs.build.json",
     "build:watch": "tsc -p ./tsconfig.esm.build.json --watch",
     "pack": "npm run build && npm pack && shx cp *.tgz package.tgz",
-    "clear": "shx rm -rf dist"
+    "clear": "shx rm -rf dist && shx rm -f *.tgz"
   },
   "author": "Developer Express Inc.",
   "license": "MIT",
