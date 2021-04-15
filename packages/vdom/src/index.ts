@@ -5,3 +5,4 @@ export * from './effect_host';
 export * from './portal';
 export * from './ref_object';
 export * from './utils';
+export * from './mocked/hydrate';
