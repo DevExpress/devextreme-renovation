@@ -19,7 +19,6 @@ jobs:
       VM_MEMORY: 3072
       VM_CPU: 2
       VM_TIMEOUT: 7200
-    needs: [ build-generators ]
 
     steps:
       - name: Install NodeJS
