@@ -27,7 +27,7 @@ export class BaseInfernoComponent<
   _pendingContext: any = this.context;
 
   componentWillReceiveProps(_: any, context: any) {
-    this._pendingContext = context ?? {};
+    this._pendingContext = context || {};
   }
 
   shouldComponentUpdate(nextProps: P, nextState: S) {
