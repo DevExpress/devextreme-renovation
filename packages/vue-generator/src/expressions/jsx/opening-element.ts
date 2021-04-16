@@ -22,6 +22,7 @@ import {
   extractComponentFromType,
   Expression,
   SimpleExpression,
+  processComponentContext,
   Property,
   Method,
   PropertyAssignment,
@@ -176,7 +177,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         this.context
       );
 
-      const slotString = `<slot name="${
+      const slotString = `<slot :name="${
         templateProperty.name
       }" ${attrString.join(" ")}>
         ${fragment.toString(options)}
@@ -203,9 +204,19 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       return slotString;
     }
 
-    return `<slot name="${templateProperty.name}" ${attributes.join(
+    return `<slot :name="${templateProperty.name}" ${attributes.join(
       " "
     )}></slot>`;
+  }
+  getTemplateProperty(options?: toStringOptions) {
+    const tagName = getExpression(this.tagName, options).toString(options);
+    const contextExpr = processComponentContext(options?.newComponentContext);
+    return options?.members
+      .filter((m) => m.isTemplate)
+      .find((s) => {
+        const value = `${contextExpr}${s.name.toString()}`;
+        return tagName.endsWith(`${value}`) || tagName.endsWith(`${value}]`);
+      });
   }
   createSetAttributes(
     templateProperty: Property,
@@ -281,7 +292,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         }
       : options;
 
-    return `<component 
+    return `<component
               v-bind:is="${this.tagName.toString(options)}"
               ${this.attributesString(attributesOptions)}
             >`;
@@ -365,7 +376,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         [],
         this.context
       ),
-      [`<slot name=${slotName} v-bind="slotProps"></slot>`],
+      [`<slot :name=${slotName} v-bind="slotProps"></slot>`],
       new JsxClosingElement(new Identifier("template"), this.context)
     );
   }
