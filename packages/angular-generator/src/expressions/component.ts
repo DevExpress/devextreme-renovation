@@ -292,7 +292,7 @@ export class AngularComponent extends Component {
   processNestedProperty(
     property: Property,
     onPushStrategy = false,
-    selector: string = this.selector,
+    parentName = `Dx${convertSelectorToName(this.selector)}`,
     componentName: string = this.heritageClauses[0].propsType.toString(),
   ) {
     const {
@@ -311,9 +311,9 @@ export class AngularComponent extends Component {
       ),
     ];
 
-    const nestedName = `Dx${convertSelectorToName(
-      `${selector} ${isTypeArray(type) ? removePlural(name) : name}`,
-    )}`;
+    const nestedName = `${parentName}${capitalizeFirstLetter(isTypeArray(type)
+      ? removePlural(name)
+      : name)}`;
 
     const complexType = type
       .toString()
@@ -1008,22 +1008,20 @@ export class AngularComponent extends Component {
         `;
   }
 
-  getNestedExports(component: ComponentInput, selector: string) {
+  getNestedExports(component: ComponentInput, name: string, selector = '') {
     const innerNested = (component.members.filter(
       (m) => m.isNested,
     ) as Property[])
-      .map((m) => this.processNestedProperty(m, false, selector, component.name).join(
+      .map((m) => this.processNestedProperty(m, false, name, component.name).join(
         '\n',
       ))
       .join('\n');
-
-    const name = convertSelectorToName(selector);
 
     return `
       @Directive({
         selector: "${selector}"
       })
-      class Dx${name} extends ${component.name} {
+      class ${name} extends ${component.name} {
         ${innerNested}
       }
     `;
@@ -1092,9 +1090,12 @@ export class AngularComponent extends Component {
         collectedComponents.map(({ component }) => component),
       );
       const nestedComponents = collectedComponents
-        .map(({ component, name }) => {
-          nestedModules.push(`Dx${convertSelectorToName(name)}`);
-          return this.getNestedExports(component, name);
+        .map(({ component, name: fullSelector }) => {
+          const name = `Dx${convertSelectorToName(fullSelector)}`;
+          const selector = fullSelector.split(' ').pop();
+
+          nestedModules.push(name);
+          return this.getNestedExports(component, name, selector);
         })
         .reverse();
 

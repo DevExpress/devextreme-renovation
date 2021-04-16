@@ -15,12 +15,12 @@ import { CommonModule } from "@angular/common";
 import { GridRow, GridCell } from "./nested-default-props";
 
 @Directive({
-  selector: "dx-with-nested dxi-row dxi-cell",
+  selector: "dxi-cell",
 })
 class DxWithNestedRowCell extends GridCell {}
 
 @Directive({
-  selector: "dx-with-nested dxi-row",
+  selector: "dxi-row",
 })
 class DxWithNestedRow extends GridRow {
   private __cells?: (DxWithNestedRowCell | string)[];
