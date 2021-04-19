@@ -1,12 +1,12 @@
 import {
   Method as BaseMethod,
   GetAccessor,
-} from "@devextreme-generator/core";
-import { toStringOptions } from "../../types";
+} from '@devextreme-generator/core';
+import { toStringOptions } from '../../types';
 
 export function compileMethod(
   expression: Method | GetAccessor,
-  options?: toStringOptions
+  options?: toStringOptions,
 ): string {
   return `${expression.name}(${
     expression.parameters

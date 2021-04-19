@@ -1,4 +1,3 @@
-import { toStringOptions } from '../../types';
 import {
   Expression,
   Property as BaseProperty,
@@ -17,82 +16,81 @@ import {
   StringLiteral,
   ObjectLiteral,
   NumericLiteral,
-} from "@devextreme-generator/core";
+} from '@devextreme-generator/core';
+import { toStringOptions } from '../../types';
 
 const BasicTypes = [
-  "String",
-  "Number",
-  "Boolean",
-  "Array",
-  "Date",
-  "Function",
-  "Symbol",
+  'String',
+  'Number',
+  'Boolean',
+  'Array',
+  'Date',
+  'Function',
+  'Symbol',
 ];
 export function calculatePropertyType(
   type: TypeExpression | string,
-  _initializer?: Expression
+  _initializer?: Expression,
 ): string {
   if (type instanceof TypeReferenceNode && type.context.imports) {
     const imports = type.context.imports;
     if (
-      Object.keys(imports).some((key) =>
-        imports[key].has(type.typeName.toString())
-      )
+      Object.keys(imports).some((key) => imports[key].has(type.typeName.toString()))
     ) {
-      return "";
+      return '';
     }
   }
   if (type instanceof SimpleTypeExpression) {
     const typeString = type.type.toString();
     if (
-      typeString !== SyntaxKind.AnyKeyword &&
-      typeString !== SyntaxKind.UndefinedKeyword
+      typeString !== SyntaxKind.AnyKeyword
+      && typeString !== SyntaxKind.UndefinedKeyword
     ) {
       return capitalizeFirstLetter(typeString);
     }
   }
   if (type instanceof ArrayTypeNode) {
-    return "Array";
+    return 'Array';
   }
   if (type instanceof UnionTypeNode) {
     const types = ([] as string[]).concat(
-      type.types.map((t) => calculatePropertyType(t))
+      type.types.map((t) => calculatePropertyType(t)),
     );
     const typesWithoutDuplicates = [...new Set(types)];
     return typesWithoutDuplicates.length === 1
       ? typesWithoutDuplicates[0]
-      : `[${typesWithoutDuplicates.join(",")}]`;
+      : `[${typesWithoutDuplicates.join(',')}]`;
   }
   if (type instanceof FunctionTypeNode) {
-    return "Function";
+    return 'Function';
   }
   if (type instanceof LiteralTypeNode) {
     if (type.expression instanceof ObjectLiteral) {
-      return "Object";
+      return 'Object';
     }
     if (type.expression instanceof StringLiteral) {
-      return "String";
+      return 'String';
     }
     if (type.expression instanceof NumericLiteral) {
-      return "Number";
+      return 'Number';
     }
   }
   if (type instanceof TypeLiteralNode) {
-    return "Object";
+    return 'Object';
   }
   if (type instanceof TypeReferenceNode) {
     const typeString = type.type.toString();
-    if (typeString === "Array") {
-      return "Array";
+    if (typeString === 'Array') {
+      return 'Array';
     }
     if (type.context.types && type.context.types[typeString]) {
       return calculatePropertyType(type.context.types[typeString]);
     }
-    return BasicTypes.includes(typeString) || typeString.endsWith("Element")
+    return BasicTypes.includes(typeString) || typeString.endsWith('Element')
       ? typeString
-      : "Object";
+      : 'Object';
   }
-  return "";
+  return '';
 }
 
 export class Property extends BaseProperty {
@@ -102,7 +100,7 @@ export class Property extends BaseProperty {
 
   toString(options?: toStringOptions) {
     if (!options) {
-      return "";
+      return '';
     }
     if (this.isInternalState) {
       return `${this.name}: ${this.initializer}`;
@@ -114,7 +112,7 @@ export class Property extends BaseProperty {
       this.isSlot ||
       (this.isNested && !isTypeArray(this.type))
     ) {
-      return "";
+      return '';
     }
 
     const type =
@@ -127,12 +125,12 @@ export class Property extends BaseProperty {
     }
 
     if (this.questionOrExclamationToken === SyntaxKind.ExclamationToken) {
-      parts.push("required: true");
+      parts.push('required: true');
     }
 
     if (
-      !this.isNested ||
-      (this.isNested && this.name === "__defaultNestedValues")
+      !this.isNested
+      || (this.isNested && this.name === '__defaultNestedValues')
     ) {
       if (this.isTemplate) {
         parts.push(`default(){
@@ -144,7 +142,7 @@ export class Property extends BaseProperty {
         }`);
       } else if (this.initializer) {
         parts.push(`default:${this.initializer}`);
-      } else if (!this.initializer && type.indexOf("Boolean") >= 0) {
+      } else if (!this.initializer && type.indexOf('Boolean') >= 0) {
         parts.push(`default(){
         return undefined
       }`);
@@ -152,7 +150,7 @@ export class Property extends BaseProperty {
     }
 
     return `${this.name}: {
-              ${parts.join(",\n")}
+              ${parts.join(',\n')}
           }`;
   }
 
@@ -179,7 +177,7 @@ export class Property extends BaseProperty {
       return `${template.context}${template.name}`;
     }
     if (this.isSlot) {
-      const name = this.name === "children" ? "default" : this.name;
+      const name = this.name === 'children' ? 'default' : this.name;
       return `${componentContext}$slots.${name}`;
     }
     if (this.isConsumer || this.isProvider) {
@@ -205,20 +203,20 @@ export class Property extends BaseProperty {
       this.questionOrExclamationToken,
       this.type,
       this.initializer,
-      true
+      true,
     );
   }
 
   get canBeDestructured() {
     if (
-      this.isEvent ||
-      this.isState ||
-      this.isRef ||
-      this.isRefProp ||
-      this.isForwardRef ||
-      this.isForwardRefProp ||
-      this.isRefProp ||
-      this.isNested
+      this.isEvent
+      || this.isState
+      || this.isRef
+      || this.isRefProp
+      || this.isForwardRef
+      || this.isForwardRefProp
+      || this.isRefProp
+      || this.isNested
     ) {
       return false;
     }

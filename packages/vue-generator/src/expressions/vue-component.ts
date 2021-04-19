@@ -1,13 +1,3 @@
-import { GetAccessor } from './class-members/get-accessor';
-import { Method } from './class-members/method';
-import { calculatePropertyType, Property } from './class-members/property';
-import { PropsGetAccessor } from './class-members/props-get-accessor';
-import { Function } from './functions/function';
-import { Parameter } from './functions/parameter';
-import { PropertyAccess } from './property-access';
-import { getEventName } from './utils';
-import { VueComponentInput } from './vue-component-input';
-import { toStringOptions } from '../types';
 import {
   SimpleExpression,
   BaseClassMember,
@@ -36,7 +26,17 @@ import {
   VariableDeclaration,
   BindingElement,
   BindingPattern,
-} from "@devextreme-generator/core";
+} from '@devextreme-generator/core';
+import { GetAccessor } from './class-members/get-accessor';
+import { Method } from './class-members/method';
+import { calculatePropertyType, Property } from './class-members/property';
+import { PropsGetAccessor } from './class-members/props-get-accessor';
+import { Function } from './functions/function';
+import { Parameter } from './functions/parameter';
+import { PropertyAccess } from './property-access';
+import { getEventName } from './utils';
+import { VueComponentInput } from './vue-component-input';
+import { toStringOptions } from '../types';
 
 export function getComponentListFromContext(context: GeneratorContext) {
   return Object.keys(context.components || {})
@@ -58,10 +58,10 @@ export class VueComponent extends Component {
     return new GetAccessor(
       undefined,
       undefined,
-      new Identifier("restAttributes"),
+      new Identifier('restAttributes'),
       [],
       undefined,
-      new Block([new SimpleExpression("return {}")], true)
+      new Block([new SimpleExpression('return {}')], true),
     );
   }
 
@@ -104,33 +104,34 @@ export class VueComponent extends Component {
               throw new Error(\`Unknown custom element: <\${tag}> - did you register the component correctly?'\`);
             }
             return acc;
-          }, [])`
-        )
+          }, [])`,
+        ),
       ),
     ];
 
     return new Function(
       undefined,
       undefined,
-      "",
-      new Identifier("__collectChildren"),
+      '',
+      new Identifier('__collectChildren'),
       [],
       [
         new Parameter(
           [],
           [],
-          "",
-          new Identifier("children"),
+          '',
+          new Identifier('children'),
           undefined,
-          new ArrayTypeNode(new SimpleTypeExpression("Object")),
-          undefined
+          new ArrayTypeNode(new SimpleTypeExpression('Object')),
+          undefined,
         ),
       ],
-      new SimpleTypeExpression("{ [name:string]: any }[]"),
+      new SimpleTypeExpression('{ [name:string]: any }[]'),
       new Block(statements, true),
-      this.context
+      this.context,
     );
   }
+
   createNestedDefaultPropsExtractor() {
     const statements = [
       new ReturnStatement(
@@ -139,48 +140,49 @@ export class VueComponent extends Component {
         .reduce((accObj, [key, value]) => {
           accObj[key] = value.default();
           return accObj;
-        }, {});`)
+        }, {});`),
       ),
     ];
     return new Function(
       undefined,
       undefined,
-      "",
-      new Identifier("__extractDefaultValues"),
+      '',
+      new Identifier('__extractDefaultValues'),
       [],
       [
         new Parameter(
           [],
           [],
           undefined,
-          new Identifier("propsObject"),
+          new Identifier('propsObject'),
           undefined,
-          new ArrayTypeNode(new SimpleTypeExpression("Object")),
-          undefined
+          new ArrayTypeNode(new SimpleTypeExpression('Object')),
+          undefined,
         ),
       ],
-      new SimpleTypeExpression("{ [name:string]: any }"),
+      new SimpleTypeExpression('{ [name:string]: any }'),
       new Block(statements, true),
-      this.context
+      this.context,
     );
   }
+
   createNestedChildrenGetter() {
     const statements = [
       new ReturnStatement(
         new Conditional(
-          new SimpleExpression("this.$slots.default"),
-          new SimpleExpression("__collectChildren(this.$slots.default)"),
-          new SimpleExpression("[]")
-        )
+          new SimpleExpression('this.$slots.default'),
+          new SimpleExpression('__collectChildren(this.$slots.default)'),
+          new SimpleExpression('[]'),
+        ),
       ),
     ];
     const result = new GetAccessor(
       [],
       undefined,
-      new Identifier("__nestedChildren"),
+      new Identifier('__nestedChildren'),
       [],
       undefined,
-      new Block(statements, true)
+      new Block(statements, true),
     );
 
     return result;
@@ -188,33 +190,33 @@ export class VueComponent extends Component {
 
   createPropsGetter(members: Array<Property | Method>) {
     const props = getProps(members).filter(
-      (m) => m.name !== "__defaultNestedValues"
+      (m) => m.name !== '__defaultNestedValues',
     );
 
     const propertyAssignments = props.map((p) => {
       const expression = p.isForwardRefProp
         ? new SimpleExpression(`this.${p.name}?.()`)
         : new PropertyAccess(
-            new PropertyAccess(
-              new Identifier(SyntaxKind.ThisKeyword),
-              new Identifier("props")
-            ),
-            p._name
-          );
+          new PropertyAccess(
+            new Identifier(SyntaxKind.ThisKeyword),
+            new Identifier('props'),
+          ),
+          p._name,
+        );
 
       const propertyAssignment = new PropertyAssignment(p._name, expression);
 
-      if (p.isOptional && calculatePropertyType(p.type) === "Boolean") {
+      if (p.isOptional && calculatePropertyType(p.type) === 'Boolean') {
         return new SpreadAssignment(
           new Binary(
             new Binary(
               expression,
               SyntaxKind.ExclamationEqualsEqualsToken,
-              new SimpleExpression(SyntaxKind.UndefinedKeyword)
+              new SimpleExpression(SyntaxKind.UndefinedKeyword),
             ),
             SyntaxKind.AmpersandAmpersandToken,
-            new ObjectLiteral([propertyAssignment], false)
-          )
+            new ObjectLiteral([propertyAssignment], false),
+          ),
         );
       }
 
@@ -226,10 +228,10 @@ export class VueComponent extends Component {
     return new GetAccessor(
       [],
       [],
-      new Identifier("props"),
+      new Identifier('props'),
       [],
       undefined,
-      new Block([new ReturnStatement(expression)], true)
+      new Block([new ReturnStatement(expression)], true),
     );
   }
 
@@ -237,7 +239,7 @@ export class VueComponent extends Component {
     members
       .filter((m) => !m.isApiMethod)
       .forEach((m) => {
-        m.prefix = "__";
+        m.prefix = '__';
       });
     return members;
   }
@@ -251,16 +253,16 @@ export class VueComponent extends Component {
           new Property(
             [
               new Decorator(
-                new Call(new Identifier("InternalState"), undefined, []),
-                {}
+                new Call(new Identifier('InternalState'), undefined, []),
+                {},
               ),
             ],
             [],
             new Identifier(`${m._name}_state`),
-            "",
+            '',
             m.type,
-            new SimpleExpression(`this.${base.name}`)
-          )
+            new SimpleExpression(`this.${base.name}`),
+          ),
         );
       }
       if (m.isForwardRef || m.isForwardRefProp) {
@@ -272,21 +274,21 @@ export class VueComponent extends Component {
             new Identifier(`forwardRef_${m.name}`),
             undefined,
             [],
-            [new Parameter([], [], undefined, new Identifier("ref"))],
+            [new Parameter([], [], undefined, new Identifier('ref'))],
             undefined,
             new Block(
               [
                 new SimpleExpression(`
               if(arguments.length){
                 this.$refs.${m.name}=ref;
-                ${m.isForwardRefProp ? `this.${m.name}?.(ref);` : ""}
+                ${m.isForwardRefProp ? `this.${m.name}?.(ref);` : ''}
               }
               return this.$refs.${m.name}
             `),
               ],
-              true
-            )
-          )
+              true,
+            ),
+          ),
         );
       }
       return members;
@@ -309,14 +311,14 @@ export class VueComponent extends Component {
 
   compileDefaultOptionsImport(imports: string[]): void {
     if (
-      !this.context.defaultOptionsImport &&
-      this.needGenerateDefaultOptions &&
-      this.context.defaultOptionsModule &&
-      this.context.dirname
+      !this.context.defaultOptionsImport
+      && this.needGenerateDefaultOptions
+      && this.context.defaultOptionsModule
+      && this.context.dirname
     ) {
       const relativePath = getModuleRelativePath(
         this.context.dirname,
-        this.context.defaultOptionsModule
+        this.context.defaultOptionsModule,
       );
       imports.push(`import {convertRulesToOptions} from "${relativePath}"`);
     }
@@ -325,7 +327,7 @@ export class VueComponent extends Component {
   returnGetAccessorBlock(
     argumentPattern: BindingPattern,
     _options: toStringOptions,
-    spreadVar: BindingElement
+    spreadVar: BindingElement,
   ) {
     return new Block(
       [
@@ -335,16 +337,16 @@ export class VueComponent extends Component {
               argumentPattern,
               undefined,
               new PropertyAccess(
-                new SimpleExpression(`this`),
-                new Identifier("props")
-              )
+                new SimpleExpression('this'),
+                new Identifier('props'),
+              ),
             ),
           ],
-          "const"
+          'const',
         ),
         new ReturnStatement(new SimpleExpression(spreadVar.name.toString())),
       ],
-      true
+      true,
     );
   }
 
@@ -356,7 +358,7 @@ export class VueComponent extends Component {
       [],
       undefined,
       body,
-      props
+      props,
     );
   }
 
@@ -424,7 +426,7 @@ export class VueComponent extends Component {
           return result;
         }, {})
       };`
-      : "";
+      : '';
   }
 
   compileTemplate(methods: string[], options: toStringOptions) {
@@ -438,7 +440,7 @@ export class VueComponent extends Component {
             [],
             [],
             undefined,
-            new Identifier("__processStyle"),
+            new Identifier('__processStyle'),
             undefined,
             [],
             [
@@ -446,22 +448,22 @@ export class VueComponent extends Component {
                 [],
                 [],
                 undefined,
-                new Identifier("value"),
+                new Identifier('value'),
                 undefined,
                 undefined,
-                undefined
+                undefined,
               ),
             ],
             undefined,
             new Block(
               [
                 new ReturnStatement(
-                  new SimpleExpression("normalizeStyles(value)")
+                  new SimpleExpression('normalizeStyles(value)'),
                 ),
               ],
-              true
-            )
-          )
+              true,
+            ),
+          ),
         );
       }
 
@@ -470,14 +472,12 @@ export class VueComponent extends Component {
       if (forwardRefs.length) {
         methods.push(`__forwardRef(){
           ${forwardRefs
-            .filter((m) =>
-              options.forwardRefs?.some((forwardRef) => forwardRef === m)
-            )
-            .map((m) => {
-              const token = (m as Property).isOptional ? "?." : "";
-              return `this.${m._name}${token}(this.$refs.${m._name});`;
-            })
-            .join("\n")}
+    .filter((m) => options.forwardRefs?.some((forwardRef) => forwardRef === m))
+    .map((m) => {
+      const token = (m as Property).isOptional ? '?.' : '';
+      return `this.${m._name}${token}(this.$refs.${m._name});`;
+    })
+    .join('\n')}
                 }`);
       }
     }
@@ -496,18 +496,18 @@ export class VueComponent extends Component {
 
       return `props: ${props}`;
     }
-    return "";
+    return '';
   }
 
   generateModel() {
     if (!this.modelProp) {
-      return "";
+      return '';
     }
     return `model: {
               prop: "${this.modelProp._name}",
               event: "${getEventName(`${this.modelProp._name}Change`, [
-                this.modelProp,
-              ])}"
+    this.modelProp,
+  ])}"
           }`;
   }
 
@@ -519,27 +519,25 @@ export class VueComponent extends Component {
     if (states.length) {
       statements.push.apply(
         statements,
-        states.map((i) =>
-          i.toString({
-            members: this.members,
-          })
-        )
+        states.map((i) => i.toString({
+          members: this.members,
+        })),
       );
     }
 
     if (statements.length) {
       return `data() {
                   return {
-                      ${statements.join(",\n")}
+                      ${statements.join(',\n')}
                   };
               }`;
     }
-    return "";
+    return '';
   }
 
   createNestedPropertyGetter(property: Property) {
     const isArray = isTypeArray(property.type);
-    const indexGetter = isArray ? "" : "?.[0]";
+    const indexGetter = isArray ? '' : '?.[0]';
     let nestedName = capitalizeFirstLetter(property.name);
     if (isArray) {
       nestedName = removePlural(nestedName);
@@ -552,7 +550,7 @@ export class VueComponent extends Component {
         new VariableDeclarationList(
           [
             new VariableDeclaration(
-              new Identifier("nested"),
+              new Identifier('nested'),
               undefined,
               new SimpleExpression(
                 `this.__nestedChildren.filter(child => child.__name === "${
@@ -569,28 +567,28 @@ export class VueComponent extends Component {
                           }
                           return n;
                         });`
-                    : ""
-                }`
-              )
+                    : ''
+                }`,
+              ),
             ),
           ],
-          SyntaxKind.ConstKeyword
-        )
+          SyntaxKind.ConstKeyword,
+        ),
       ),
       new ReturnStatement(
         new Conditional(
           new SimpleExpression(propName),
           new SimpleExpression(propName),
           new Conditional(
-            new SimpleExpression("nested.length"),
+            new SimpleExpression('nested.length'),
             new SimpleExpression(`nested${indexGetter}`),
             new SimpleExpression(
               hasDefaultValues
                 ? `this?.__defaultNestedValues?.${property.name}`
-                : "undefined"
-            )
-          )
-        )
+                : 'undefined',
+            ),
+          ),
+        ),
       ),
     ];
     return new GetAccessor(
@@ -599,23 +597,21 @@ export class VueComponent extends Component {
       new Identifier(`__getNested${nestedName}`),
       [],
       undefined,
-      new Block(statements, true)
+      new Block(statements, true),
     );
   }
 
   generateComputed() {
     const statements: string[] = this.methods
       .filter((m) => m instanceof GetAccessor)
-      .map((m) =>
-        m.toString({
-          members: this.members,
-          componentContext: "this",
-          newComponentContext: "this",
-        })
-      );
+      .map((m) => m.toString({
+        members: this.members,
+        componentContext: 'this',
+        newComponentContext: 'this',
+      }));
 
     return `computed: {
-              ${statements.join(",\n")},
+              ${statements.join(',\n')},
            }`;
   }
 
@@ -628,13 +624,11 @@ export class VueComponent extends Component {
         .filter((m) => m instanceof Method && !(m instanceof GetAccessor))
         .concat(this.effects)
         .concat(this.members.filter((m) => m.isApiMethod) as Method[])
-        .map((m) =>
-          m.toString({
-            members: this.members,
-            componentContext: "this",
-            newComponentContext: "this",
-          })
-        )
+        .map((m) => m.toString({
+          members: this.members,
+          componentContext: 'this',
+          newComponentContext: 'this',
+        })),
     );
 
     this.members
@@ -642,19 +636,19 @@ export class VueComponent extends Component {
       .forEach((m) => {
         statements.push(`${m._name}(...args){
                   this.$emit("${getEventName(
-                    m._name,
-                    this.members.filter((m) => m.isState)
-                  )}", ...args);
+    m._name,
+    this.members.filter((m) => m.isState),
+  )}", ...args);
               }`);
       });
 
     if (statements.length || externalStatements.length) {
       return `methods: {
-        ${statements.concat(externalStatements).join(",\n")}
+        ${statements.concat(externalStatements).join(',\n')}
       }`;
     }
 
-    return "";
+    return '';
   }
 
   generateWatch(methods: string[]) {
@@ -677,7 +671,7 @@ export class VueComponent extends Component {
       }
 
       dependency
-        .filter((d) => d !== "props")
+        .filter((d) => d !== 'props')
         .forEach((d) => {
           watches[d] = watches[d] || [];
           watches[d].push(`"${scheduleEffectName}"`);
@@ -706,7 +700,7 @@ export class VueComponent extends Component {
                 }
                 this.$nextTick(()=>this.__scheduleEffects[index]&&this.__scheduleEffects[index]());
             }
-        }`
+        }`,
       );
     }
 
@@ -720,19 +714,17 @@ export class VueComponent extends Component {
       watches[stateName].push(`"${stateWatcherName}"`);
     });
 
-    const watchStatements = Object.keys(watches).map((k) => {
-      return `${k}: [
-                  ${watches[k].join(",\n")}
-              ]`;
-    });
+    const watchStatements = Object.keys(watches).map((k) => `${k}: [
+                  ${watches[k].join(',\n')}
+              ]`);
 
     if (watchStatements.length) {
       return `watch: {
-                  ${watchStatements.join(",\n")}
+                  ${watchStatements.join(',\n')}
               }`;
     }
 
-    return "";
+    return '';
   }
 
   generateComponents(components: string[] = []) {
@@ -740,23 +732,23 @@ export class VueComponent extends Component {
       Object.keys(this.context.components || {}).filter((k) => {
         const component = this.context.components?.[k];
         return component instanceof VueComponent && component !== this;
-      })
+      }),
     );
 
     if (components.length) {
       return `components: {
-                  ${components.join(",\n")}
+                  ${components.join(',\n')}
               }`;
     }
 
-    return "";
+    return '';
   }
 
   generateMounted() {
     const statements: string[] = [];
 
     if (this.members.filter((m) => m.isForwardRefProp).length) {
-      statements.push(`this.__forwardRef()`);
+      statements.push('this.__forwardRef()');
     }
 
     this.effects.forEach((e, i) => {
@@ -765,19 +757,19 @@ export class VueComponent extends Component {
 
     if (statements.length) {
       return `mounted(){
-                  ${statements.join(";\n")}
+                  ${statements.join(';\n')}
               }`;
     }
 
-    return "";
+    return '';
   }
 
   generateCreated() {
     const statements: string[] = [];
 
     if (this.effects.length) {
-      statements.push("this.__destroyEffects=[]");
-      statements.push("this.__scheduleEffects=[]");
+      statements.push('this.__destroyEffects=[]');
+      statements.push('this.__scheduleEffects=[]');
     }
 
     const providers = this.members.filter((p) => p.isProvider) as Property[];
@@ -787,21 +779,20 @@ export class VueComponent extends Component {
           .map((p) => {
             if (!(p instanceof GetAccessor)) {
               return `this.${p.name} = this._provided.${p.context}`;
-            } else {
-              return `this.provide${capitalizeFirstLetter(p.name)}()`;
             }
+            return `this.provide${capitalizeFirstLetter(p.name)}()`;
           })
-          .join(";")
+          .join(';'),
       );
     }
 
     if (statements.length) {
       return `created(){
-                  ${statements.join(";\n")}
+                  ${statements.join(';\n')}
               }`;
     }
 
-    return "";
+    return '';
   }
 
   generateBeforeCreate() {
@@ -820,18 +811,18 @@ export class VueComponent extends Component {
 
     if (statements.length) {
       return `beforeCreate(){
-                  ${statements.join(";\n")}
+                  ${statements.join(';\n')}
               }`;
     }
 
-    return "";
+    return '';
   }
 
   generateUpdated() {
     const statements: string[] = [];
 
     if (this.members.filter((m) => m.isForwardRefProp).length) {
-      statements.push(`this.__forwardRef()`);
+      statements.push('this.__forwardRef()');
     }
 
     if (this.effects.length) {
@@ -844,11 +835,11 @@ export class VueComponent extends Component {
 
     if (statements.length) {
       return `updated(){
-                  ${statements.join(";\n")}
+                  ${statements.join(';\n')}
               }`;
     }
 
-    return "";
+    return '';
   }
 
   generateBeforeDestroy() {
@@ -865,32 +856,32 @@ export class VueComponent extends Component {
 
     if (statements.length) {
       return `beforeDestroy(){
-                  ${statements.join("\n")}
+                  ${statements.join('\n')}
               }`;
     }
 
-    return "";
+    return '';
   }
 
   compileDefaultOptionsRuleTypeName() {
-    return "";
+    return '';
   }
 
   compileDefaultOptionRulesType() {
-    return "";
+    return '';
   }
 
   compileImports() {
     const imports: string[] = [];
     this.compileDefaultOptionsImport(imports);
 
-    return imports.join(";\n");
+    return imports.join(';\n');
   }
 
   compileComponentExport(statements: string[]) {
     const name = this.exportedName;
     return `export const ${name} = {
-              ${statements.join(",\n")}
+              ${statements.join(',\n')}
           }
           export default ${name}`;
   }
@@ -901,14 +892,12 @@ export class VueComponent extends Component {
       return `provide(){
         return {
           ${providers
-            .map((p) => {
-              return `${p.context}: ${p.context}(${p.initializer})`;
-            })
-            .join(",")}
+    .map((p) => `${p.context}: ${p.context}(${p.initializer})`)
+    .join(',')}
         };
       }`;
     }
-    return "";
+    return '';
   }
 
   generateInject(): string {
@@ -916,18 +905,18 @@ export class VueComponent extends Component {
     if (consumers.length) {
       return `inject: {
         ${consumers.map(
-          (c) => `${c.name}: {
+    (c) => `${c.name}: {
           from: "${c.context}",
           default: ${c.context}()
-        }`
-        )}
+        }`,
+  )}
       }`;
     }
-    return "";
+    return '';
   }
 
   compilePortalComponent(components: string[]) {
-    components.push("DxPortal");
+    components.push('DxPortal');
     return `const DxPortal = Vue.extend({
       render: function (createElement) {
         if(this.$attrs.container()) {
@@ -972,22 +961,21 @@ export class VueComponent extends Component {
     const collectedComponents = this.collectNestedComponents();
     if (collectedComponents.length) {
       const imports = this.getNestedImports(
-        collectedComponents.map(({ component }) => component)
+        collectedComponents.map(({ component }) => component),
       );
       const nestedComponents = collectedComponents.map(
-        ({ component, name, propName }) =>
-          this.getNestedExports(component, name, propName)
+        ({ component, name, propName }) => this.getNestedExports(component, name, propName),
       );
 
-      return imports.concat(nestedComponents).join("\n");
+      return imports.concat(nestedComponents).join('\n');
     }
-    return "";
+    return '';
   }
 
   getNestedExports(
     component: VueComponentInput,
     name: string,
-    propName: string
+    propName: string,
   ) {
     return `export const Dx${name} = {
       ${`props: ${component.name}`}
@@ -1001,7 +989,7 @@ export class VueComponent extends Component {
     const components: string[] = [];
     const options: toStringOptions = {
       members: this.members,
-      newComponentContext: "",
+      newComponentContext: '',
       isSVG: this.isSVGComponent,
     };
 
@@ -1009,7 +997,7 @@ export class VueComponent extends Component {
 
     const portalComponent = this.containsPortal()
       ? this.compilePortalComponent(components)
-      : "";
+      : '';
 
     const statements = [
       `name: "${this.name}"`,
@@ -1033,21 +1021,21 @@ export class VueComponent extends Component {
           ${this.compileImports()}
           ${this.compileStyleNormalizer(options)}
           ${
-            this.members.some((m) => m.isNested)
-              ? this.createNestedChildrenCollector()
-              : ""
-          }
+  this.members.some((m) => m.isNested)
+    ? this.createNestedChildrenCollector()
+    : ''
+}
           ${
-            this.members.some((m) => m.isNested)
-              ? this.createNestedDefaultPropsExtractor()
-              : ""
-          }
+  this.members.some((m) => m.isNested)
+    ? this.createNestedDefaultPropsExtractor()
+    : ''
+}
           ${this.compileNestedComponents()}
           ${portalComponent}
           ${this.compileDefaultOptionsMethod(
-            this.defaultOptionRules ? this.defaultOptionRules.toString() : "[]",
-            []
-          )}
+    this.defaultOptionRules ? this.defaultOptionRules.toString() : '[]',
+    [],
+  )}
           ${this.compileDefaultProps()}
           ${this.compileComponentExport(statements)}`;
   }

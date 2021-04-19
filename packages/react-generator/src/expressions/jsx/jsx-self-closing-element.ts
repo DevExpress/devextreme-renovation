@@ -1,5 +1,5 @@
-import { JsxOpeningElement } from "./jsx-opening-element";
-import { toStringOptions } from "@devextreme-generator/core";
+import { toStringOptions } from '@devextreme-generator/core';
+import { JsxOpeningElement } from './jsx-opening-element';
 
 export class JsxSelfClosingElement extends JsxOpeningElement {
   toString(options?: toStringOptions) {
@@ -7,7 +7,7 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
       return super.toString(options);
     }
     return `<${this.processTagName(this.tagName).toString(
-      options
+      options,
     )} ${this.attributesString(options)}/>`;
   }
 }

@@ -1,19 +1,21 @@
-import { Expression, ExpressionWithExpression } from "./base";
-import { toStringOptions } from "../types";
-import { Identifier } from "./common";
-import { SyntaxKind } from "../syntaxKind";
-import { Property, Method } from "./class-members";
-import { getProps } from "./component";
-import { processComponentContext } from "../utils/string";
-import { BindingElement } from "./binding-pattern";
+import { Expression, ExpressionWithExpression } from './base';
+import { toStringOptions } from '../types';
+import { Identifier } from './common';
+import { SyntaxKind } from '../syntaxKind';
+import { Property, Method } from './class-members';
+import { getProps } from './component';
+import { processComponentContext } from '../utils/string';
+import { BindingElement } from './binding-pattern';
 
 export class ElementAccess extends ExpressionWithExpression {
   index: Expression;
+
   questionDotToken: string;
+
   constructor(
     expression: Expression,
-    questionDotToken: string = "",
-    index: Expression
+    questionDotToken = '',
+    index: Expression,
   ) {
     super(expression);
     this.index = index;
@@ -41,6 +43,7 @@ export class ComputedPropertyName extends ExpressionWithExpression {
 
 export class PropertyAccess extends ExpressionWithExpression {
   name: Identifier;
+
   constructor(expression: Expression, name: Identifier) {
     super(expression);
     this.name = name;
@@ -49,7 +52,7 @@ export class PropertyAccess extends ExpressionWithExpression {
   processProps(
     result: string,
     _options: toStringOptions,
-    _elements: BindingElement[] = []
+    _elements: BindingElement[] = [],
   ) {
     return result;
   }
@@ -74,12 +77,11 @@ export class PropertyAccess extends ExpressionWithExpression {
       },
     });
     const componentContext = this.calculateComponentContext(options);
-    const usePropsSpace =
-      options?.usePropsSpace ||
-      expressionString === `${processComponentContext(componentContext)}props`;
+    const usePropsSpace = options?.usePropsSpace
+      || expressionString === `${processComponentContext(componentContext)}props`;
     if (expressionString === componentContext || usePropsSpace) {
       const props = getProps(options?.members || []) as Array<
-        Property | Method
+      Property | Method
       >;
       return usePropsSpace
         ? props
@@ -90,7 +92,7 @@ export class PropertyAccess extends ExpressionWithExpression {
 
   getMember(options?: toStringOptions) {
     return this.getMembers(options)?.find(
-      (m) => m._name.toString() === this.name.toString()
+      (m) => m._name.toString() === this.name.toString(),
     );
   }
 
@@ -105,24 +107,23 @@ export class PropertyAccess extends ExpressionWithExpression {
     }
 
     const result = `${this.expression.toString(options)}${this.processName(
-      options
+      options,
     )}`;
     const context = this.calculateComponentContext(options);
 
     if (
-      options?.newComponentContext !== undefined &&
-      result.startsWith(`${context}.`)
+      options?.newComponentContext !== undefined
+      && result.startsWith(`${context}.`)
     ) {
-      const value =
-        options?.newComponentContext === ""
-          ? result.replace(`${context}.`, options.newComponentContext)
-          : result.replace(context, options.newComponentContext);
+      const value = options?.newComponentContext === ''
+        ? result.replace(`${context}.`, options.newComponentContext)
+        : result.replace(context, options.newComponentContext);
 
       if (this.checkPropsAccess(result, options)) {
         return this.processProps(value, options, elements);
       }
 
-      return options?.newComponentContext === "" ? this.name.toString() : value;
+      return options?.newComponentContext === '' ? this.name.toString() : value;
     }
 
     return result;
@@ -131,28 +132,27 @@ export class PropertyAccess extends ExpressionWithExpression {
   compileStateSetting(
     state: string,
     property: Property,
-    _options: toStringOptions
+    _options: toStringOptions,
   ) {
     return `this.${property.name}=${state}`;
   }
 
   getDependency(options: toStringOptions) {
     const expressionString = this.expression.toString();
-    const componentContext =
-      options?.componentContext || SyntaxKind.ThisKeyword;
+    const componentContext = options?.componentContext || SyntaxKind.ThisKeyword;
     if (
-      (expressionString === componentContext &&
-        this.name.toString() !== "props") ||
-      expressionString === `${componentContext}.props`
+      (expressionString === componentContext
+        && this.name.toString() !== 'props')
+      || expressionString === `${componentContext}.props`
     ) {
       return [this.name.toString()];
     }
     const dependency = this.expression.getDependency(options);
     if (
-      this.toString() === `${componentContext}.props` &&
-      dependency.length === 0
+      this.toString() === `${componentContext}.props`
+      && dependency.length === 0
     ) {
-      return ["props"];
+      return ['props'];
     }
     return dependency;
   }
@@ -163,10 +163,10 @@ export class PropertyAccess extends ExpressionWithExpression {
 
   isPropsScope(options?: toStringOptions) {
     if (
-      this.expression instanceof PropertyAccess &&
-      this.expression.expression.toString(options) ===
-        options?.componentContext &&
-      this.expression.name.toString() === "props"
+      this.expression instanceof PropertyAccess
+      && this.expression.expression.toString(options)
+        === options?.componentContext
+      && this.expression.name.toString() === 'props'
     ) {
       return true;
     }
@@ -176,11 +176,13 @@ export class PropertyAccess extends ExpressionWithExpression {
 
 export class PropertyAccessChain extends ExpressionWithExpression {
   questionDotToken: string;
+
   name: Expression;
+
   constructor(
     expression: Expression,
     questionDotToken: string = SyntaxKind.DotToken,
-    name: Expression
+    name: Expression,
   ) {
     super(expression);
     this.questionDotToken = questionDotToken;
@@ -196,7 +198,7 @@ export class PropertyAccessChain extends ExpressionWithExpression {
     const firstPart = this.expression.toString(options);
 
     return `${
-      replaceMark ? firstPart.replace(/[\?!]$/, "") : firstPart
+      replaceMark ? firstPart.replace(/[?!]$/, '') : firstPart
     }${this.processName(options)}`;
   }
 
@@ -215,15 +217,15 @@ export class Spread extends ExpressionWithExpression {
 
 export const compileRefOptions = (
   expressionString: string,
-  options?: toStringOptions
+  options?: toStringOptions,
 ) => ({
   members: [],
   ...options,
   componentContext:
-    expressionString.includes("this") || options?.variables?.[expressionString]
+    expressionString.includes('this') || options?.variables?.[expressionString]
       ? options?.componentContext
       : expressionString,
   usePropsSpace:
-    !expressionString.includes("this") &&
-    !options?.variables?.[expressionString],
+    !expressionString.includes('this')
+    && !options?.variables?.[expressionString],
 });

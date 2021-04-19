@@ -8,7 +8,7 @@ import {
   Property as BaseProperty,
   SimpleExpression,
   SyntaxKind,
-  TypeExpression
+  TypeExpression,
 } from '@devextreme-generator/core';
 
 import { toStringOptions } from '../../types';
@@ -17,38 +17,38 @@ import { Decorator } from '../decorator';
 function parseEventType(type: TypeExpression | string) {
   if (type instanceof FunctionTypeNode) {
     const typeList = type.parameters.map((p) => {
-      const type = p.type?.toString() || "any";
-      if (p.questionToken === SyntaxKind.QuestionToken && type !== "any") {
+      const type = p.type?.toString() || 'any';
+      if (p.questionToken === SyntaxKind.QuestionToken && type !== 'any') {
         return `${type}|${SyntaxKind.UndefinedKeyword}`;
       }
       return type;
     });
-    return typeList.length ? `<${typeList}>` : "<void>";
+    return typeList.length ? `<${typeList}>` : '<void>';
   }
-  return "<any>";
+  return '<any>';
 }
 
 export class Property extends BaseProperty {
   get name() {
     return this._name.toString();
   }
+
   constructor(
     decorators: Decorator[] = [],
     modifiers: string[] = [],
     name: Identifier,
-    questionOrExclamationToken: string = "",
+    questionOrExclamationToken = '',
     type?: TypeExpression | string,
     initializer?: Expression,
-    inherited: boolean = false
+    inherited = false,
   ) {
     if (decorators.find((d) => d.name === Decorators.Template)) {
-      questionOrExclamationToken =
-        questionOrExclamationToken === SyntaxKind.ExclamationToken
-          ? ""
-          : questionOrExclamationToken;
+      questionOrExclamationToken = questionOrExclamationToken === SyntaxKind.ExclamationToken
+        ? ''
+        : questionOrExclamationToken;
     }
     if (!initializer && decorators.find((d) => d.name === Decorators.Event)) {
-      initializer = new SimpleExpression("(e: any) => void 0");
+      initializer = new SimpleExpression('(e: any) => void 0');
     }
     super(
       decorators,
@@ -57,29 +57,29 @@ export class Property extends BaseProperty {
       questionOrExclamationToken,
       type,
       initializer,
-      inherited
+      inherited,
     );
   }
+
   toString(options?: toStringOptions) {
     const eventDecorator = this.decorators.find(
-      (d) => d.name === Decorators.Event
+      (d) => d.name === Decorators.Event,
     );
 
     if (eventDecorator) {
       return `${eventDecorator} ${this.name}:EventEmitter${parseEventType(
-        this.type
+        this.type,
       )} = new EventEmitter();`;
     }
     if (this.isRef) {
-      const decoratorString =
-        !options?.forwardRefs?.some(
-          (forwardRef) => `${forwardRef.name}Ref` === this.name
-        ) &&
-        options?.members
+      const decoratorString = !options?.forwardRefs?.some(
+        (forwardRef) => `${forwardRef.name}Ref` === this.name,
+      )
+        && options?.members
           .filter((m) => m.isForwardRefProp || m.isForwardRef)
           .some((forwardRef) => `${forwardRef.name}Ref` === this.name)
-          ? ""
-          : `@ViewChild("${this.name}", {static: false}) `;
+        ? ''
+        : `@ViewChild("${this.name}", {static: false}) `;
       return `${decoratorString}${this.name}${this.questionOrExclamationToken}:ElementRef<${this.type}>`;
     }
     if (this._hasDecorator(Decorators.ApiRef)) {
@@ -99,35 +99,35 @@ export class Property extends BaseProperty {
     }
 
     if (this.isProvider || this.isConsumer) {
-      return "";
+      return '';
     }
 
     if (this.isForwardRefProp) {
       const type = `ElementRef<${this.type}>`;
       const returnType = `${type}${
         this.questionOrExclamationToken === SyntaxKind.QuestionToken
-          ? "|undefined"
-          : ""
+          ? '|undefined'
+          : ''
       }`;
-      return `${this.modifiers.join(" ")} ${this.decorators
+      return `${this.modifiers.join(' ')} ${this.decorators
         .map((d) => d.toString())
-        .join(" ")} ${this.name}${
+        .join(' ')} ${this.name}${
         this.questionOrExclamationToken
       }:(ref?:${type})=>${returnType}`;
     }
 
     if (this.isForwardRef) {
-      return `${this.modifiers.join(" ")} ${this.decorators
+      return `${this.modifiers.join(' ')} ${this.decorators
         .map((d) => d.toString())
-        .join(" ")} ${this.name}${this.questionOrExclamationToken}:ElementRef<${
+        .join(' ')} ${this.name}${this.questionOrExclamationToken}:ElementRef<${
         this.type
       }>`;
     }
 
     if (this.isTemplate) {
-      return `${this.modifiers.join(" ")} ${this.decorators
+      return `${this.modifiers.join(' ')} ${this.decorators
         .map((d) => d.toString())
-        .join(" ")} ${this.typeDeclaration()} = null`;
+        .join(' ')} ${this.typeDeclaration()} = null`;
     }
 
     return super.toString();
@@ -139,10 +139,10 @@ export class Property extends BaseProperty {
       return `${componentContext}_${this.name}`;
     }
     if (
-      this.isRef ||
-      this.isRefProp ||
-      this.isForwardRef ||
-      this.isForwardRefProp
+      this.isRef
+      || this.isRefProp
+      || this.isForwardRef
+      || this.isForwardRefProp
     ) {
       return `${componentContext}${this.name}`;
     }
@@ -168,8 +168,8 @@ export class Property extends BaseProperty {
   typeDeclaration(): string {
     if (this.isTemplate) {
       return `${this.name}${compileType(
-        `TemplateRef<any> | null`,
-        this.questionOrExclamationToken
+        'TemplateRef<any> | null',
+        this.questionOrExclamationToken,
       )}`;
     }
     return super.typeDeclaration();
@@ -183,18 +183,18 @@ export class Property extends BaseProperty {
       this.questionOrExclamationToken,
       this.type,
       this.initializer,
-      true
+      true,
     );
   }
 
   get canBeDestructured() {
     if (
-      this.isEvent ||
-      this.isNested ||
-      this.isForwardRefProp ||
-      this.isRef ||
-      this.isRefProp ||
-      this.isForwardRef
+      this.isEvent
+      || this.isNested
+      || this.isForwardRefProp
+      || this.isRef
+      || this.isRefProp
+      || this.isForwardRef
     ) {
       return false;
     }

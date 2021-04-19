@@ -25,6 +25,9 @@ jobs:
       - name: Bootstrap
         run: npm run bootstrap:ci
 
+      - name: Lint
+        run: npm run lint
+
       - name: Build
         run: npm run build
 

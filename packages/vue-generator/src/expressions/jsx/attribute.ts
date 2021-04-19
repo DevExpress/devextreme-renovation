@@ -1,6 +1,3 @@
-import { JsxExpression } from './jsx-expression';
-import { toStringOptions } from '../../types';
-import { getEventName } from '../utils';
 import { JsxAttribute as BaseJsxAttribute } from '@devextreme-generator/angular';
 import {
   dasherize,
@@ -9,19 +6,23 @@ import {
   kebabSvgAttributes,
   Expression,
   SimpleExpression,
-} from "@devextreme-generator/core";
+} from '@devextreme-generator/core';
+import { JsxExpression } from './jsx-expression';
+import { toStringOptions } from '../../types';
+import { getEventName } from '../utils';
 
 export class JsxAttribute extends BaseJsxAttribute {
   constructor(name: Identifier, initializer?: Expression) {
     super(
       name,
-      initializer || new JsxExpression(undefined, new SimpleExpression("true"))
+      initializer || new JsxExpression(undefined, new SimpleExpression('true')),
     );
   }
+
   getTemplateProp(options?: toStringOptions) {
-    if (this.name.toString() === "key") {
+    if (this.name.toString() === 'key') {
       this.compileKey(options);
-      return "";
+      return '';
     }
     return `v-bind:${this.name}="${this.compileInitializer(options)}"`;
   }
@@ -29,14 +30,14 @@ export class JsxAttribute extends BaseJsxAttribute {
   compileName(options?: toStringOptions) {
     const name = this.name.toString();
     if (!options?.jsxComponent) {
-      if (name === "className") {
-        return this.isStringLiteralValue() ? "class" : "v-bind:class";
+      if (name === 'className') {
+        return this.isStringLiteralValue() ? 'class' : 'v-bind:class';
       }
-      if (name === "style") {
+      if (name === 'style') {
         if (options) {
           options.hasStyle = true;
         }
-        return "v-bind:style";
+        return 'v-bind:style';
       }
 
       if (kebabSvgAttributes.has(name)) {
@@ -55,7 +56,7 @@ export class JsxAttribute extends BaseJsxAttribute {
     const name = this.compileName(options);
     return this.compileBase(
       name,
-      this.compileValue(name, this.compileInitializer(options))
+      this.compileValue(name, this.compileInitializer(options)),
     );
   }
 
@@ -70,7 +71,7 @@ export class JsxAttribute extends BaseJsxAttribute {
 
   getForwardRefValue(options?: toStringOptions) {
     const member = getMember(this.initializer, options)!;
-    if (this.name.toString() === "ref") {
+    if (this.name.toString() === 'ref') {
       return member.name;
     }
     return `forwardRef_${member.name}`;
@@ -81,7 +82,7 @@ export class JsxAttribute extends BaseJsxAttribute {
   }
 
   compileValue(name: string, value: string) {
-    if (name === "v-bind:style") {
+    if (name === 'v-bind:style') {
       return `__processStyle(${value})`;
     }
 
@@ -95,12 +96,12 @@ export class JsxAttribute extends BaseJsxAttribute {
   compileEvent(options: toStringOptions) {
     return `@${getEventName(
       this.name,
-      options.jsxComponent!.state
+      options.jsxComponent!.state,
     )}="${this.compileInitializer(options)}"`;
   }
 
   compileBase(name: string, value: string) {
-    const prefix = name.startsWith("v-bind") ? "" : ":";
+    const prefix = name.startsWith('v-bind') ? '' : ':';
     return `${prefix}${name}="${value}"`;
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@devextreme-generator/build-helpers",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "DevExtreme development utils",
   "main": "dist/index",
   "types": "dist/index",
@@ -16,24 +16,16 @@
   "author": "Developer Express Inc.",
   "license": "MIT",
   "dependencies": {
-    "@devextreme-generator/angular": "1.0.5",
-    "@devextreme-generator/core": "1.0.5",
-    "@devextreme-generator/inferno": "1.0.5",
-    "@devextreme-generator/preact": "1.0.5",
-    "@devextreme-generator/react": "1.0.5",
-    "@devextreme-generator/vue": "1.0.5",
+    "@devextreme-generator/angular": "1.1.0",
+    "@devextreme-generator/core": "1.1.0",
+    "@devextreme-generator/inferno": "1.1.0",
+    "@devextreme-generator/preact": "1.1.0",
+    "@devextreme-generator/react": "1.1.0",
+    "@devextreme-generator/vue": "1.1.0",
     "loader-utils": "^2.0.0",
     "typescript": "3.8",
     "vinyl": "^2.2.1",
     "webpack": "^4.44.1"
-  },
-  "peerDependencies": {
-    "@devextreme-generator/angular": "1.0.5",
-    "@devextreme-generator/core": "1.0.5",
-    "@devextreme-generator/inferno": "1.0.5",
-    "@devextreme-generator/preact": "1.0.5",
-    "@devextreme-generator/react": "1.0.5",
-    "@devextreme-generator/vue": "1.0.5"
   },
   "devDependencies": {
     "@types/loader-utils": "^2.0.1",

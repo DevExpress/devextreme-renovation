@@ -1,6 +1,6 @@
-import { NamedImports, ImportSpecifier } from "./import";
-import { Decorator } from "./decorator";
-import { Expression } from "./base";
+import { NamedImports, ImportSpecifier } from './import';
+import { Decorator } from './decorator';
+import { Expression } from './base';
 
 export class NamedExports extends NamedImports {}
 
@@ -11,11 +11,12 @@ export class ExportDeclaration {
     public decorators: Decorator[] | undefined,
     public modifiers: string[] = [],
     public exportClause: NamedExports | undefined,
-    public moduleSpecifier?: Expression
+    public moduleSpecifier?: Expression,
   ) {}
+
   toString() {
-    return `export ${this.exportClause ? this.exportClause : "*"}${
-      this.moduleSpecifier ? ` from ${this.moduleSpecifier}` : ""
+    return `export ${this.exportClause ? this.exportClause : '*'}${
+      this.moduleSpecifier ? ` from ${this.moduleSpecifier}` : ''
     }`;
   }
 }

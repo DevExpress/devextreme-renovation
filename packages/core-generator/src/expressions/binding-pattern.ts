@@ -1,18 +1,22 @@
-import { Expression, SimpleExpression } from "./base";
-import { Identifier } from "./common";
-import { VariableExpression, toStringOptions } from "../types";
-import { ElementAccess, PropertyAccess } from "./property-access";
+import { Expression, SimpleExpression } from './base';
+import { Identifier } from './common';
+import { VariableExpression, toStringOptions } from '../types';
+import { ElementAccess, PropertyAccess } from './property-access';
 
 export class BindingElement extends Expression {
   dotDotDotToken?: string;
+
   propertyName?: Identifier;
+
   name: string | Identifier | BindingPattern;
+
   initializer?: Expression;
+
   constructor(
-    dotDotDotToken: string = "",
+    dotDotDotToken = '',
     propertyName: Identifier | undefined,
     name: string | Identifier | BindingPattern,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     super();
     this.dotDotDotToken = dotDotDotToken;
@@ -24,8 +28,8 @@ export class BindingElement extends Expression {
   toString() {
     const nameString = this.name.toString();
     const key = this.propertyName
-      ? `${this.propertyName}${nameString ? ":" : ""}`
-      : "";
+      ? `${this.propertyName}${nameString ? ':' : ''}`
+      : '';
     return `${key}${this.dotDotDotToken}${nameString}`;
   }
 
@@ -39,11 +43,12 @@ export class BindingElement extends Expression {
 
 export class BindingPattern extends Expression {
   elements: Array<BindingElement>;
+
   removedElements: Array<BindingElement> = [];
 
-  type: "array" | "object";
+  type: 'array' | 'object';
 
-  constructor(elements: Array<BindingElement>, type: "object" | "array") {
+  constructor(elements: Array<BindingElement>, type: 'object' | 'array') {
     super();
     this.elements = elements;
     this.type = type;
@@ -51,25 +56,25 @@ export class BindingPattern extends Expression {
 
   toString() {
     if (this.elements.length === 0) {
-      return "";
+      return '';
     }
-    return this.type === "array"
+    return this.type === 'array'
       ? `[${this.elements}]`
       : `{${this.elements.sort((a, b) => {
-          if (a.dotDotDotToken) {
-            return 1;
-          }
-          if (b.dotDotDotToken) {
-            return -1;
-          }
-          const aValue = a.propertyName?.toString() || a.name.toString();
-          const bValue = b.propertyName?.toString() || b.name.toString();
-
-          if (aValue < bValue) {
-            return -1;
-          }
+        if (a.dotDotDotToken) {
           return 1;
-        })}}`;
+        }
+        if (b.dotDotDotToken) {
+          return -1;
+        }
+        const aValue = a.propertyName?.toString() || a.name.toString();
+        const bValue = b.propertyName?.toString() || b.name.toString();
+
+        if (aValue < bValue) {
+          return -1;
+        }
+        return 1;
+      })}}`;
   }
 
   remove(name: string) {
@@ -98,24 +103,24 @@ export class BindingPattern extends Expression {
     return this.elements.reduce((v: VariableExpression, e, index) => {
       let expression: Expression | null = null;
 
-      if (this.type !== "object") {
+      if (this.type !== 'object') {
         expression = new ElementAccess(
           startExpression,
           undefined,
-          new SimpleExpression(index.toString())
+          new SimpleExpression(index.toString()),
         );
       } else if (e.name instanceof Identifier) {
         expression = new PropertyAccess(
           startExpression,
-          e.propertyName || e.name
+          e.propertyName || e.name,
         );
-      } else if (typeof e.name === "string") {
+      } else if (typeof e.name === 'string') {
         const name = e.name;
         expression = new PropertyAccess(startExpression, new Identifier(name));
       } else if (e.name instanceof BindingPattern && e.propertyName) {
         return {
           ...e.name.getVariableExpressions(
-            new PropertyAccess(startExpression, e.propertyName)
+            new PropertyAccess(startExpression, e.propertyName),
           ),
           ...v,
         };

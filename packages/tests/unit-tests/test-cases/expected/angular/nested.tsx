@@ -21,33 +21,32 @@ import {
 } from "./nested-props";
 
 @Directive({
-  selector: "dx-widget dxo-editing dxo-another-custom",
+  selector: "dxo-another-custom",
 })
 class DxWidgetEditingAnotherCustom extends AnotherCustomProps {}
 
 @Directive({
-  selector: "dx-widget dxo-editing dxi-custom",
+  selector: "dxi-custom",
 })
 class DxWidgetEditingCustom extends CustomProps {}
 
 @Directive({
-  selector: "dx-widget dxi-column dxo-editing",
+  selector: "dxo-editing",
 })
 class DxWidgetColumnEditing extends ColumnEditingProps {}
 
 @Directive({
-  selector: "dx-widget dxi-column dxi-custom",
+  selector: "dxi-custom",
 })
 class DxWidgetColumnCustom extends CustomProps {}
 
 @Directive({
-  selector: "dx-widget dxo-editing",
+  selector: "dxo-editing",
 })
 class DxWidgetEditing extends EditingProps {
   private __custom?: DxWidgetEditingCustom[];
-  @ContentChildren(DxWidgetEditingCustom) customNested?: QueryList<
-    DxWidgetEditingCustom
-  >;
+  @ContentChildren(DxWidgetEditingCustom)
+  customNested?: QueryList<DxWidgetEditingCustom>;
   @Input() set custom(value: DxWidgetEditingCustom[] | undefined) {
     this.__custom = value;
   }
@@ -78,13 +77,12 @@ class DxWidgetEditing extends EditingProps {
 }
 
 @Directive({
-  selector: "dx-widget dxi-column",
+  selector: "dxi-column",
 })
 class DxWidgetColumn extends GridColumnProps {
   private __editing?: DxWidgetColumnEditing;
-  @ContentChildren(DxWidgetColumnEditing) editingNested?: QueryList<
-    DxWidgetColumnEditing
-  >;
+  @ContentChildren(DxWidgetColumnEditing)
+  editingNested?: QueryList<DxWidgetColumnEditing>;
   @Input() set editing(value: DxWidgetColumnEditing | undefined) {
     this.__editing = value;
   }
@@ -98,9 +96,8 @@ class DxWidgetColumn extends GridColumnProps {
     }
   }
   private __custom?: DxWidgetColumnCustom[];
-  @ContentChildren(DxWidgetColumnCustom) customNested?: QueryList<
-    DxWidgetColumnCustom
-  >;
+  @ContentChildren(DxWidgetColumnCustom)
+  customNested?: QueryList<DxWidgetColumnCustom>;
   @Input() set custom(value: DxWidgetColumnCustom[] | undefined) {
     this.__custom = value;
   }
