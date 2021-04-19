@@ -13,9 +13,9 @@ import {
   SimpleExpression,
   SyntaxKind,
   TypeExpression,
-} from "@devextreme-generator/core";
+} from '@devextreme-generator/core';
 
-import { Decorator } from "../decorator";
+import { Decorator } from '../decorator';
 
 export class GetAccessor extends BaseGetAccessor {
   constructor(
@@ -24,7 +24,7 @@ export class GetAccessor extends BaseGetAccessor {
     name: Identifier,
     parameters: Parameter[],
     type?: TypeExpression | string,
-    body?: Block
+    body?: Block,
   ) {
     const isProvider = decorators?.some((d) => d.name === Decorators.Provider);
     if (body && ((type && isComplexType(type)) || isProvider)) {
@@ -41,19 +41,19 @@ export class GetAccessor extends BaseGetAccessor {
               type,
               SyntaxKind.EqualsGreaterThanToken,
               new Block(body.statements, false),
-              {}
-            )
+              {},
+            ),
           ),
-          undefined
-        )
+          undefined,
+        ),
       );
       const returnExpression = !isProvider
         ? setCacheExpression
         : new Binary(
-            new SimpleExpression(`this.${name}Provider.value`),
-            SyntaxKind.EqualsToken,
-            setCacheExpression
-          );
+          new SimpleExpression(`this.${name}Provider.value`),
+          SyntaxKind.EqualsToken,
+          setCacheExpression,
+        );
       body.statements = [
         new SimpleExpression(`
                     if(${cacheAccess}!==undefined){
@@ -71,12 +71,12 @@ export class GetAccessor extends BaseGetAccessor {
 
   get canBeDestructured() {
     if (
-      this.isEvent ||
-      this.isNested ||
-      this.isForwardRefProp ||
-      this.isRef ||
-      this.isRefProp ||
-      this.isForwardRef
+      this.isEvent
+      || this.isNested
+      || this.isForwardRefProp
+      || this.isRef
+      || this.isRefProp
+      || this.isForwardRef
     ) {
       return false;
     }
