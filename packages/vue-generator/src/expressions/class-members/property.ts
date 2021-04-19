@@ -170,7 +170,7 @@ export class Property extends BaseProperty {
         context: componentContext,
         name: this.name,
       } : {
-        context: '$slots',
+        context: '$scopedSlots',
         name: `[${this.name}]`,
       };
       return `${template.context}${template.name}`;
