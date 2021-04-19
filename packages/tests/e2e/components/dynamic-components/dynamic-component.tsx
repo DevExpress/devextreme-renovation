@@ -51,6 +51,7 @@ function view({
         id={"dynamic-component-button-with-template"}
         // text="10"  https://github.com/DevExpress/devextreme-renovation/issues/545
         {...spread}
+        template={({text}) => (
           <div
             style={{
               backgroundColor: "black",
