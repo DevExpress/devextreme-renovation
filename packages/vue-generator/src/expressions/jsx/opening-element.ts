@@ -201,9 +201,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     }
 
     return `<slot :name="${templateProperty.name}" ${attributes.join(
-      " "
+      ' ',
     )}></slot>`;
   }
+
   getTemplateProperty(options?: toStringOptions) {
     const tagName = getExpression(this.tagName, options).toString(options);
     const contextExpr = processComponentContext(options?.newComponentContext);
@@ -214,6 +215,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         return tagName.endsWith(`${value}`) || tagName.endsWith(`${value}]`);
       });
   }
+
   createSetAttributes(
     templateProperty: Property,
     attrs: BaseJsxAttribute[],
@@ -368,7 +370,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         this.context,
       ),
       [`<slot :name=${slotName} v-bind="slotProps"></slot>`],
-      new JsxClosingElement(new Identifier("template"), this.context)
+      new JsxClosingElement(new Identifier('template'), this.context),
     );
   }
 
