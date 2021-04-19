@@ -1,6 +1,7 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
+  InfernoWrapperComponent,
   normalizeStyles,
   createContext,
 } from "@devextreme/vdom";
@@ -24,9 +25,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export default class Widget extends BaseInfernoComponent<
-  typeof Props & RestProps
-> {
+export default class Widget extends BaseInfernoComponent<any> {
   state = {};
   refs: any;
   get contextConsumer(): number {
@@ -37,7 +36,7 @@ export default class Widget extends BaseInfernoComponent<
   }
   provider: number = 10;
 
-  constructor(props: typeof Props & RestProps) {
+  constructor(props: any) {
     super(props);
   }
 
@@ -56,7 +55,7 @@ export default class Widget extends BaseInfernoComponent<
     return "provide";
   }
   get restAttributes(): RestProps {
-    const { p1, ...restProps } = this.props;
+    const { p1, ...restProps } = this.props as any;
     return restProps;
   }
 

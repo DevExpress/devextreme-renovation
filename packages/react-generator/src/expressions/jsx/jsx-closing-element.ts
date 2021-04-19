@@ -1,5 +1,5 @@
-import { JsxOpeningElement } from "./jsx-opening-element";
-import { Expression, toStringOptions } from "@devextreme-generator/core";
+import { Expression, toStringOptions } from '@devextreme-generator/core';
+import { JsxOpeningElement } from './jsx-opening-element';
 
 export class JsxClosingElement extends JsxOpeningElement {
   constructor(tagName: Expression) {

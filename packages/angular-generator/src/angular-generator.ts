@@ -1,24 +1,3 @@
-import { counter } from './counter';
-import { AsExpression } from './expressions/as-expression';
-import { GetAccessor } from './expressions/class-members/get-accessor';
-import { Property } from './expressions/class-members/property';
-import { AngularComponent } from './expressions/component';
-import { ComponentInput } from './expressions/component-input';
-import { ContextDeclaration } from './expressions/context-declaration';
-import { Decorator } from './expressions/decorator';
-import { ArrowFunction } from './expressions/functions/arrow-function';
-import { Function } from './expressions/functions/function';
-import { ImportDeclaration } from './expressions/import-declaration';
-import { JsxAttribute } from './expressions/jsx/attribute';
-import { JsxElement } from './expressions/jsx/elements';
-import { JsxExpression } from './expressions/jsx/jsx-expression';
-import { JsxSpreadAttribute } from './expressions/jsx/spread-attribute';
-import { NonNullExpression } from './expressions/non-null-expression';
-import { PropertyAccess } from './expressions/property-access';
-import { PropertyAccessChain } from './expressions/property-access-chain';
-import { TypeReferenceNode } from './expressions/type-reference-node';
-import { VariableDeclaration } from './expressions/variable-expression';
-import { AngularGeneratorContext } from './types';
 import Generator, {
   StringLiteral,
   GeneratorContext,
@@ -35,8 +14,29 @@ import Generator, {
   BindingPattern,
   TypeParameterDeclaration,
   VariableDeclarationList,
-  VariableStatement
+  VariableStatement,
 } from "@devextreme-generator/core";
+import { counter } from "./counter";
+import { AsExpression } from "./expressions/as-expression";
+import { GetAccessor } from "./expressions/class-members/get-accessor";
+import { Property } from "./expressions/class-members/property";
+import { AngularComponent } from "./expressions/component";
+import { ComponentInput } from "./expressions/component-input";
+import { ContextDeclaration } from "./expressions/context-declaration";
+import { Decorator } from "./expressions/decorator";
+import { ArrowFunction } from "./expressions/functions/arrow-function";
+import { Function } from "./expressions/functions/function";
+import { ImportDeclaration } from "./expressions/import-declaration";
+import { JsxAttribute } from "./expressions/jsx/attribute";
+import { JsxElement } from "./expressions/jsx/elements";
+import { JsxExpression } from "./expressions/jsx/jsx-expression";
+import { JsxSpreadAttribute } from "./expressions/jsx/spread-attribute";
+import { NonNullExpression } from "./expressions/non-null-expression";
+import { PropertyAccess } from "./expressions/property-access";
+import { PropertyAccessChain } from "./expressions/property-access-chain";
+import { TypeReferenceNode } from "./expressions/type-reference-node";
+import { VariableDeclaration } from "./expressions/variable-expression";
+import { AngularGeneratorContext } from "./types";
 import {
   JsxOpeningElement,
   JsxSelfClosingElement,
@@ -44,7 +44,7 @@ import {
 } from "./expressions/jsx/jsx-opening-element";
 
 export class AngularGenerator extends Generator {
-  createJsxExpression(dotDotDotToken: string = "", expression?: Expression) {
+  createJsxExpression(dotDotDotToken = "", expression?: Expression) {
     return new JsxExpression(dotDotDotToken, expression);
   }
 
@@ -308,7 +308,9 @@ export class AngularGenerator extends Generator {
   }
 
   setContext(context: GeneratorContext | null) {
-    !context && counter.reset();
+    if (!context) {
+      counter.reset();
+    }
     return super.setContext(context);
   }
 

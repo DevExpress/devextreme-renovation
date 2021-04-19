@@ -152,7 +152,7 @@ export class ReactComponent extends Component {
           SyntaxKind.ConstKeyword
         )
       ),
-      new ReturnStatement(new SimpleExpression(`__collectChildren(children)`)),
+      new ReturnStatement(new SimpleExpression("__collectChildren(children)")),
     ];
     const method = new Method(
       [],
@@ -837,11 +837,12 @@ export class ReactComponent extends Component {
   }
 
   compileProviders(providers: Property[], viewCallExpression: string) {
-    return providers.reduce((result, p) => {
-      return `<${p.context}.Provider value={${p.getter()}}>
+    return providers.reduce(
+      (result, p) => `<${p.context}.Provider value={${p.getter()}}>
             ${result}
-          </${p.context}.Provider>`;
-    }, `{${viewCallExpression}}`);
+          </${p.context}.Provider>`,
+      `{${viewCallExpression}}`
+    );
   }
 
   compileViewCall() {
@@ -991,24 +992,25 @@ export class ReactComponent extends Component {
                                                 (m) => m.isApiMethod
                                               ) as Array<Method>
                                             )
-                                            .map((m) => {
-                                              return `const ${
-                                                m.name
-                                              }=useCallback(${m.declaration(
-                                                this.getToStringOptions()
-                                              )}, [${m.getDependency({
-                                                members: this.members,
-                                                componentContext:
-                                                  SyntaxKind.ThisKeyword,
-                                              })}]);`;
-                                            })
+                                            .map(
+                                              (m) =>
+                                                `const ${
+                                                  m.name
+                                                }=useCallback(${m.declaration(
+                                                  this.getToStringOptions()
+                                                )}, [${m.getDependency({
+                                                  members: this.members,
+                                                  componentContext:
+                                                    SyntaxKind.ThisKeyword,
+                                                })}]);`
+                                            )
                                             .join("\n")}
                   ${this.compileUseEffect()}
                   ${this.compileUseImperativeHandle()}
                   return ${this.compileViewCall()}
               ${
                 this.members.filter((m) => m.isApiMethod).length === 0
-                  ? `}`
+                  ? "}"
                   : `}) as ${this.compileFunctionalComponentType()};\n${this.modifiers.join(
                       " "
                     )} ${

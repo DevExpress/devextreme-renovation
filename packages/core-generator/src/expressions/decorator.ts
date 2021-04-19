@@ -1,19 +1,21 @@
-import { GeneratorContext } from "../types";
-import { Expression } from "./base";
-import { Call, Identifier } from "./common";
-import { ObjectLiteral } from "./literal";
-import { ArrowFunction, Function } from "./functions";
+import { GeneratorContext } from '../types';
+import { Expression } from './base';
+import { Call, Identifier } from './common';
+import { ObjectLiteral } from './literal';
+import { ArrowFunction, Function } from './functions';
 
 export class Decorator {
   expression: Call;
+
   context: GeneratorContext;
+
   viewParameter?: Expression | null;
 
   constructor(expression: Call, context: GeneratorContext) {
     this.expression = expression;
     this.context = context;
-    if (this.name === "Component") {
-      this.viewParameter = this.getParameter("view");
+    if (this.name === 'Component') {
+      this.viewParameter = this.getParameter('view');
     }
   }
 

@@ -1,5 +1,5 @@
-import { InfernoGenerator } from "./inferno-generator";
+import { InfernoGenerator } from './inferno-generator';
 
-export { InfernoGenerator }
+export { InfernoGenerator };
 
 export default new InfernoGenerator();

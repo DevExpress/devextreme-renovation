@@ -2,32 +2,30 @@ import {
   Expression,
   ExpressionWithOptionalExpression,
   ExpressionWithExpression,
-} from "./base";
-import { toStringOptions } from "../types";
-import { Identifier } from "./common";
-import { ComputedPropertyName } from "./property-access";
+} from './base';
+import { toStringOptions } from '../types';
+import { Identifier } from './common';
+import { ComputedPropertyName } from './property-access';
 
 export class PropertyAssignment extends Expression {
   constructor(
     public key: Identifier | ComputedPropertyName,
-    public value: Expression
+    public value: Expression,
   ) {
     super();
   }
 
   toString(options?: toStringOptions) {
-    const key =
-      this.key instanceof ComputedPropertyName
-        ? this.key.toString(options)
-        : this.key.toString();
+    const key = this.key instanceof ComputedPropertyName
+      ? this.key.toString(options)
+      : this.key.toString();
     return `${key}:${this.value.toString(options)}`;
   }
 
   getDependency(options: toStringOptions) {
-    const keyDependency =
-      this.key instanceof ComputedPropertyName
-        ? this.key.getDependency(options)
-        : [];
+    const keyDependency = this.key instanceof ComputedPropertyName
+      ? this.key.getDependency(options)
+      : [];
     return keyDependency.concat(this.value.getDependency(options));
   }
 }
@@ -49,10 +47,10 @@ export class ShorthandPropertyAssignment extends ExpressionWithOptionalExpressio
   }
 
   toString(options?: toStringOptions) {
-    let expression = this.expression ? `:${super.toString(options)}` : "";
+    let expression = this.expression ? `:${super.toString(options)}` : '';
     if (!expression && options?.variables?.[this.name.toString()]) {
       expression = `:${options.variables[this.name.toString()].toString(
-        options
+        options,
       )}`;
     }
 
@@ -61,8 +59,9 @@ export class ShorthandPropertyAssignment extends ExpressionWithOptionalExpressio
 }
 
 export class SpreadAssignment extends ExpressionWithExpression {
-  key: null = null;
-  value: null = null;
+  key = null;
+
+  value = null;
 
   toString(options?: toStringOptions) {
     return `...${this.expression.toString(options)}`;

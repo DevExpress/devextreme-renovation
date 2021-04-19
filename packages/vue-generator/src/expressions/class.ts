@@ -1,4 +1,3 @@
-import { Parameter } from './functions/parameter';
 import {
   SimpleExpression,
   Class as BaseClass,
@@ -8,7 +7,8 @@ import {
   Constructor,
   Property,
   BaseClassMember,
-} from "@devextreme-generator/core";
+} from '@devextreme-generator/core';
+import { Parameter } from './functions/parameter';
 
 export class Class extends BaseClass {
   toString() {
@@ -16,14 +16,14 @@ export class Class extends BaseClass {
       | Constructor
       | undefined;
     const properties = this.members.filter(
-      (m) => m instanceof Property
+      (m) => m instanceof Property,
     ) as Property[];
     let members: (BaseClassMember | Constructor)[] = this.members;
     const heritageClauses = this.heritageClauses.filter(
-      (h) => h.token === SyntaxKind.ExtendsKeyword
+      (h) => h.token === SyntaxKind.ExtendsKeyword,
     );
     const parameterInitializationStatements = properties.map(
-      (p) => new SimpleExpression(`this.${p.name}=${p.initializer}`)
+      (p) => new SimpleExpression(`this.${p.name}=${p.initializer}`),
     );
 
     if (constructor) {
@@ -42,7 +42,7 @@ export class Class extends BaseClass {
             ? constructorStatements.slice(1)
             : constructorStatements),
         ],
-        true
+        true,
       );
     }
 
@@ -50,13 +50,13 @@ export class Class extends BaseClass {
       if (properties.length) {
         const parameters = heritageClauses.length
           ? [
-              new Parameter(
-                [],
-                [],
-                SyntaxKind.DotDotDotToken,
-                new Identifier("args")
-              ),
-            ]
+            new Parameter(
+              [],
+              [],
+              SyntaxKind.DotDotDotToken,
+              new Identifier('args'),
+            ),
+          ]
           : [];
 
         constructor = new Constructor(
@@ -66,12 +66,12 @@ export class Class extends BaseClass {
           new Block(
             [
               ...(parameters.length
-                ? [new SimpleExpression("super(...args)")]
+                ? [new SimpleExpression('super(...args)')]
                 : []),
               ...parameterInitializationStatements,
             ],
-            true
-          )
+            true,
+          ),
         );
       }
     }
@@ -81,11 +81,11 @@ export class Class extends BaseClass {
       members.push(constructor);
     }
 
-    return `${this.modifiers.join(" ")} 
+    return `${this.modifiers.join(' ')} 
             class ${this.name} ${
-      this.heritageClauses.length ? `${heritageClauses.join(" ")}` : ""
-    } {
-                ${members.join("\n")}
+  this.heritageClauses.length ? `${heritageClauses.join(' ')}` : ''
+} {
+                ${members.join('\n')}
             }`;
   }
 }

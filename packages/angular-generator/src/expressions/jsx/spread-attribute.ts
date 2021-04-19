@@ -1,4 +1,3 @@
-
 import {
   Expression,
   getMember,
@@ -12,11 +11,12 @@ import {
   MethodSignature,
   TypeLiteralNode,
   Method,
-} from "@devextreme-generator/core";
-import { toStringOptions } from "../../types";
-import { JsxExpression } from "./jsx-expression";
-import { PropertyAccess } from "../property-access";
-import { Property } from "../class-members/property";
+} from '@devextreme-generator/core';
+import { toStringOptions } from '../../types';
+import { JsxExpression } from './jsx-expression';
+import { PropertyAccess } from '../property-access';
+import { Property } from '../class-members/property';
+
 export interface JsxSpreadAttributeMeta {
   refExpression: Expression;
   expression: Expression;
@@ -24,7 +24,8 @@ export interface JsxSpreadAttributeMeta {
 
 export class JsxSpreadAttribute extends JsxExpression {
   expression: Expression;
-  constructor(dotDotDotToken: string = "", expression: Expression) {
+
+  constructor(dotDotDotToken = '', expression: Expression) {
     super(dotDotDotToken, expression);
     this.expression = expression;
   }
@@ -36,31 +37,27 @@ export class JsxSpreadAttribute extends JsxExpression {
   getPropertyAssignmentFormSpread(
     expression: Expression,
     options?: toStringOptions,
-    context?: GeneratorContext
+    context?: GeneratorContext,
   ): PropertyAssignment[] {
     const member = getMember(expression, options);
     const components = context?.components;
 
     if (member) {
-      if (member._name.toString() === "restAttributes") {
+      if (member._name.toString() === 'restAttributes') {
         return [];
       }
 
-      const type =
-        expression instanceof AsExpression ? expression.type : member.type;
+      const type = expression instanceof AsExpression ? expression.type : member.type;
 
       const propComponent = components?.[type.toString()];
-      const propInterface =
-        context?.interfaces?.[type.toString()] ||
-        context?.externalInterfaces?.[type.toString()];
-      const propType =
-        context?.types?.[type.toString()] ||
-        context?.externalTypes?.[type.toString()];
-      const container =
-        propComponent ||
-        propInterface ||
-        (propType instanceof TypeLiteralNode ? propType : undefined) ||
-        (type instanceof TypeLiteralNode ? type : undefined);
+      const propInterface = context?.interfaces?.[type.toString()]
+        || context?.externalInterfaces?.[type.toString()];
+      const propType = context?.types?.[type.toString()]
+        || context?.externalTypes?.[type.toString()];
+      const container = propComponent
+        || propInterface
+        || (propType instanceof TypeLiteralNode ? propType : undefined)
+        || (type instanceof TypeLiteralNode ? type : undefined);
       if (container) {
         return extractPropertyAssignment(container, expression);
       }
@@ -80,7 +77,7 @@ export class JsxSpreadAttribute extends JsxExpression {
           return props.concat(new PropertyAssignment(e.key, e.name));
         }
         return props.concat(
-          this.getPropertyAssignmentFormSpread(e.expression, options, context)
+          this.getPropertyAssignmentFormSpread(e.expression, options, context),
         );
       }, []);
     }
@@ -89,7 +86,7 @@ export class JsxSpreadAttribute extends JsxExpression {
   }
 
   toString(_options?: toStringOptions) {
-    return "";
+    return '';
   }
 }
 
@@ -97,7 +94,7 @@ function extractPropertyAssignment(
   container: {
     members: Array<PropertySignature | MethodSignature | Property | Method>;
   },
-  expression: Expression
+  expression: Expression,
 ) {
   return container.members.map((m) => {
     const name = m.name instanceof Identifier ? m.name : new Identifier(m.name);

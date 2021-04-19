@@ -12,7 +12,7 @@ import { toStringOptions } from '../types';
 
 export class Call extends BaseCall {
   compileTypeArguments() {
-    return "";
+    return '';
   }
 }
 export class New extends Call {
@@ -20,31 +20,30 @@ export class New extends Call {
     const componentInputs = options?.componentInputs || [];
     if (componentInputs.length) {
       const matchedInput = componentInputs.find(
-        (c) => c.name === this.expression.toString()
+        (c) => c.name === this.expression.toString(),
       );
       if (matchedInput?.isNested) {
         const defaultValue = new PropertyAccessChain(
           this.expression,
           SyntaxKind.QuestionDotToken,
-          new Identifier("__defaultNestedValues.default()")
+          new Identifier('__defaultNestedValues.default()'),
         );
         return defaultValue.toString();
       }
       if (matchedInput?.fields?.length && matchedInput?.fields?.length > 0) {
         const objectFields = matchedInput.fields.map(
-          (prop) =>
-            new PropertyAssignment(
-              prop,
+          (prop) => new PropertyAssignment(
+            prop,
+            new PropertyAccessChain(
+              this.expression,
+              SyntaxKind.QuestionDotToken,
               new PropertyAccessChain(
-                this.expression,
+                prop,
                 SyntaxKind.QuestionDotToken,
-                new PropertyAccessChain(
-                  prop,
-                  SyntaxKind.QuestionDotToken,
-                  new SimpleExpression("default()")
-                )
-              )
-            )
+                new SimpleExpression('default()'),
+              ),
+            ),
+          ),
         );
         return new ObjectLiteral(objectFields, true).toString(options);
       }

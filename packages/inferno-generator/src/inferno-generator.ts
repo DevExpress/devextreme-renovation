@@ -1,4 +1,5 @@
 import {
+  BindingPattern,
   Block,
   Decorator,
   Expression,
@@ -7,7 +8,7 @@ import {
   Parameter,
   StringLiteral,
   TypeExpression,
-  TypeParameterDeclaration
+  TypeParameterDeclaration,
 } from '@devextreme-generator/core';
 import { PreactGenerator } from '@devextreme-generator/preact';
 import { HeritageClause } from '@devextreme-generator/react';
@@ -21,7 +22,8 @@ import { JsxClosingElement } from './expressions/jsx/jsx-closing-element';
 import { JsxOpeningElement } from './expressions/jsx/jsx-opening-element';
 import { PropertyAccess } from './expressions/property-access';
 import { TypeReferenceNode } from './expressions/type-reference-node';
-import { JsxAttribute } from "./expressions/jsx/attribute";
+import { JsxAttribute } from './expressions/jsx/attribute';
+import { VariableDeclaration } from './expressions/variable-declaration';
 
 export class InfernoGenerator extends PreactGenerator {
   createComponent(
@@ -30,7 +32,7 @@ export class InfernoGenerator extends PreactGenerator {
     name: Identifier,
     typeParameters: string[],
     heritageClauses: HeritageClause[],
-    members: Array<Property | Method>
+    members: Array<Property | Method>,
   ) {
     return new InfernoComponent(
       componentDecorator,
@@ -39,7 +41,7 @@ export class InfernoGenerator extends PreactGenerator {
       typeParameters,
       heritageClauses,
       members,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -49,7 +51,7 @@ export class InfernoGenerator extends PreactGenerator {
     name: Identifier,
     questionOrExclamationToken?: string,
     type?: TypeExpression,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     return new Property(
       decorators,
@@ -57,7 +59,7 @@ export class InfernoGenerator extends PreactGenerator {
       name,
       questionOrExclamationToken,
       type,
-      initializer
+      initializer,
     );
   }
 
@@ -70,7 +72,7 @@ export class InfernoGenerator extends PreactGenerator {
     typeParameters: TypeParameterDeclaration[] | undefined,
     parameters: Parameter[],
     type: TypeExpression | undefined,
-    body: Block
+    body: Block,
   ) {
     return new Method(
       decorators,
@@ -81,7 +83,7 @@ export class InfernoGenerator extends PreactGenerator {
       typeParameters,
       parameters,
       type,
-      body
+      body,
     );
   }
 
@@ -91,7 +93,7 @@ export class InfernoGenerator extends PreactGenerator {
     name: Identifier,
     parameters: Parameter[],
     type?: TypeExpression,
-    body?: Block
+    body?: Block,
   ) {
     return new GetAccessor(decorators, modifiers, name, parameters, type, body);
   }
@@ -102,7 +104,7 @@ export class InfernoGenerator extends PreactGenerator {
 
   createTypeReferenceNode(
     typeName: Identifier,
-    typeArguments: TypeExpression[] = []
+    typeArguments: TypeExpression[] = [],
   ) {
     return new TypeReferenceNode(typeName, typeArguments, this.getContext());
   }
@@ -110,13 +112,13 @@ export class InfernoGenerator extends PreactGenerator {
   createJsxOpeningElement(
     tagName: Identifier,
     typeArguments: any[],
-    attributes: JsxAttribute[] = []
+    attributes: JsxAttribute[] = [],
   ) {
     return new JsxOpeningElement(
       tagName,
       typeArguments,
       attributes,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -128,18 +130,26 @@ export class InfernoGenerator extends PreactGenerator {
     decorators: Decorator[] = [],
     modifiers: string[] = [],
     importClause: ImportClause,
-    moduleSpecifier: StringLiteral
+    moduleSpecifier: StringLiteral,
   ) {
     return new ImportDeclaration(
       decorators,
       modifiers,
       importClause,
       moduleSpecifier,
-      this.getContext()
+      this.getContext(),
     );
   }
 
   createJsxAttribute(name: Identifier, initializer?: Expression) {
     return new JsxAttribute(name, initializer);
+  }
+
+  createVariableDeclarationCore(
+    name: Identifier | BindingPattern,
+    type?: TypeExpression,
+    initializer?: Expression,
+  ) {
+    return new VariableDeclaration(name, type, initializer);
   }
 }

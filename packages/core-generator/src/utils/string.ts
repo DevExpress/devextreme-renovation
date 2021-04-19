@@ -1,8 +1,8 @@
-import { Identifier } from "../expressions/common";
-import { BindingPattern } from "../expressions/binding-pattern";
-import { Expression } from "../expressions/base";
-import { TypeExpression } from "../expressions/type";
-import { StringLiteral, NumericLiteral } from "../expressions/literal";
+import { Identifier } from '../expressions/common';
+import { BindingPattern } from '../expressions/binding-pattern';
+import { Expression } from '../expressions/base';
+import { TypeExpression } from '../expressions/type';
+import { StringLiteral, NumericLiteral } from '../expressions/literal';
 
 export function capitalizeFirstLetter(string: string | Identifier) {
   string = string.toString();
@@ -16,12 +16,12 @@ export function lowerizeFirstLetter(string: string | Identifier) {
 
 export const dasherize = (value: string): string => {
   const words = value.split(/(?=[A-Z])/).map((w) => w.toLowerCase());
-  return words.join("-");
+  return words.join('-');
 };
 
 export const removePlural = (string: string | Identifier) => {
   string = string.toString();
-  let last = string.lastIndexOf("s");
+  const last = string.lastIndexOf('s');
   if (last > 0 && last === string.length - 1) {
     return string.slice(0, last);
   }
@@ -30,44 +30,42 @@ export const removePlural = (string: string | Identifier) => {
 
 export const calculateType = (initializer?: Expression): string => {
   if (initializer instanceof StringLiteral) {
-    return "string";
+    return 'string';
   }
   if (initializer instanceof NumericLiteral) {
-    return "number";
+    return 'number';
   }
   const initializerString = initializer?.toString();
-  if (initializerString === "true" || initializerString === "false") {
-    return "boolean";
+  if (initializerString === 'true' || initializerString === 'false') {
+    return 'boolean';
   }
-  return "";
+  return '';
 };
 
-export const compileType = (type: string = "", questionToken: string = "") => {
-  return type ? `${questionToken}:${type}` : "";
-};
+export const compileType = (type = '', questionToken = '') => (type ? `${questionToken}:${type}` : '');
 
 export const compileTypeParameters = (
-  typeParameters: TypeExpression[] | string[] | undefined
-) => (typeParameters?.length ? `<${typeParameters}>` : "");
+  typeParameters: TypeExpression[] | string[] | undefined,
+) => (typeParameters?.length ? `<${typeParameters}>` : '');
 
 export const compileArrowTypeParameters = (
-  typeParameters: TypeExpression[] | string[] | undefined
-) => (typeParameters?.length ? `<${typeParameters} extends unknown>` : "");
+  typeParameters: TypeExpression[] | string[] | undefined,
+) => (typeParameters?.length ? `<${typeParameters} extends unknown>` : '');
 
 export function variableDeclaration(
   name: Identifier | BindingPattern,
-  type: string = "",
+  type = '',
   initializer?: Expression,
-  questionToken: string = "",
-  dotDotDotToken: string = ""
+  questionToken = '',
+  dotDotDotToken = '',
 ): string {
-  const initializerDeclaration = initializer ? `=${initializer}` : "";
+  const initializerDeclaration = initializer ? `=${initializer}` : '';
   return `${dotDotDotToken}${name}${compileType(
     type,
-    questionToken
+    questionToken,
   )}${initializerDeclaration}`;
 }
 
-export function processComponentContext(componentContext: string = "") {
-  return componentContext.length ? `${componentContext}.` : "";
+export function processComponentContext(componentContext = '') {
+  return componentContext.length ? `${componentContext}.` : '';
 }

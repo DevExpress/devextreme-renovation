@@ -1,12 +1,12 @@
-import { toStringOptions } from "../types";
-import { SyntaxKind } from "../syntaxKind";
-import { ExpressionWithExpression, Expression, SimpleExpression } from "./base";
-import { TypeExpression } from "./type";
-import { compileTypeParameters } from "../utils/string";
+import { toStringOptions } from '../types';
+import { SyntaxKind } from '../syntaxKind';
+import { ExpressionWithExpression, Expression, SimpleExpression } from './base';
+import { TypeExpression } from './type';
+import { compileTypeParameters } from '../utils/string';
 
 function getIdentifierExpressionFromVariable(
   expression: Expression,
-  options?: toStringOptions
+  options?: toStringOptions,
 ) {
   const stringValue = expression.toString();
   if (options?.variables && options.variables[stringValue]) {
@@ -16,10 +16,6 @@ function getIdentifierExpressionFromVariable(
 }
 
 export class Identifier extends SimpleExpression {
-  constructor(name: string) {
-    super(name);
-  }
-
   valueOf() {
     return this.expression;
   }
@@ -76,7 +72,7 @@ export class Call extends ExpressionWithExpression {
   constructor(
     expression: Expression,
     public typeArguments?: TypeExpression[],
-    public argumentsArray: Expression[] = []
+    public argumentsArray: Expression[] = [],
   ) {
     super(expression);
   }
@@ -91,16 +87,14 @@ export class Call extends ExpressionWithExpression {
 
   toString(options?: toStringOptions) {
     return `${this.expression.toString(
-      options
+      options,
     )}${this.compileTypeArguments()}(${this.argumentsArray
       .map((a) => a.toString(options))
-      .join(",")})`;
+      .join(',')})`;
   }
 
   getDependency(options: toStringOptions) {
-    const argumentsDependency = this.argumentsArray.reduce((d: string[], a) => {
-      return d.concat(a.getDependency(options));
-    }, []);
+    const argumentsDependency = this.argumentsArray.reduce((d: string[], a) => d.concat(a.getDependency(options)), []);
     return super.getDependency(options).concat(argumentsDependency);
   }
 }
@@ -113,11 +107,12 @@ export class New extends Call {
 
 export class CallChain extends Call {
   questionDotToken: string;
+
   constructor(
     expression: Expression,
-    questionDotToken: string = "",
+    questionDotToken = '',
     typeArguments: any,
-    argumentsArray: Expression[] = []
+    argumentsArray: Expression[] = [],
   ) {
     super(expression, typeArguments, argumentsArray);
     this.questionDotToken = questionDotToken;
@@ -126,18 +121,19 @@ export class CallChain extends Call {
   toString(options?: toStringOptions) {
     return `${this.expression.toString(options)}${
       this.questionDotToken
-    }(${this.argumentsArray.map((a) => a.toString(options)).join(",")})`;
+    }(${this.argumentsArray.map((a) => a.toString(options)).join(',')})`;
   }
 }
 
 export class NonNullExpression extends ExpressionWithExpression {
   toString(options?: toStringOptions) {
-    return `${super.toString(options).replace(/[\?!]$/, "")}!`;
+    return `${super.toString(options).replace(/[?!]$/, '')}!`;
   }
 }
 
 export class AsExpression extends ExpressionWithExpression {
   type: TypeExpression;
+
   constructor(expression: Expression, type: TypeExpression) {
     super(expression);
     this.type = type;

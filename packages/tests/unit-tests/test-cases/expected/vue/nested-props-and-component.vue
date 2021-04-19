@@ -1,7 +1,7 @@
 <template>
-  <div
-    ><div>Nested:{{ __nested }}</div></div
-  >
+  <div>
+    <div>Nested:{{ __nested }}</div>
+  </div>
 </template>
 <script>
 export const FakeNested = {

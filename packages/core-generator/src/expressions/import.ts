@@ -5,6 +5,7 @@ import { StringLiteral } from './literal';
 
 export class NamedImports {
   node: ImportSpecifier[];
+
   constructor(node: ImportSpecifier[] = []) {
     this.node = node;
   }
@@ -14,8 +15,8 @@ export class NamedImports {
     this.node.push(
       new ImportSpecifier(
         propertyName ? new Identifier(propertyName) : undefined,
-        new Identifier(name)
-      )
+        new Identifier(name),
+      ),
     );
   }
 
@@ -28,13 +29,15 @@ export class NamedImports {
   }
 
   toString() {
-    return this.node.length ? `{${this.node.join(",")}}` : "";
+    return this.node.length ? `{${this.node.join(',')}}` : '';
   }
 }
 
 export class ImportSpecifier {
   propertyName: Identifier | undefined;
+
   name: Identifier;
+
   constructor(propertyName: Identifier | undefined, name: Identifier) {
     this.propertyName = propertyName;
     this.name = name;
@@ -49,16 +52,18 @@ export class ImportSpecifier {
 
 export type NamedImportBindings = NamespaceImport | NamedImports;
 
-export const isNamedImports = (node: any): node is NamedImports =>
-  node instanceof NamedImports;
+export const isNamedImports = (node: any): node is NamedImports => node instanceof NamedImports;
 export class ImportClause {
   name?: Identifier;
+
   namedBindings?: NamedImportBindings;
+
   isTypeOnly?: boolean;
+
   constructor(
     name?: Identifier,
     namedBindings?: NamedImportBindings,
-    isTypeOnly?: boolean
+    isTypeOnly?: boolean,
   ) {
     this.name = name;
     this.namedBindings = namedBindings;
@@ -78,7 +83,7 @@ export class ImportClause {
   resolveImport(name: string): string | undefined {
     if (isNamedImports(this.namedBindings)) {
       const node = this.namedBindings.node.find(
-        (n) => n.name.toString() === name
+        (n) => n.name.toString() === name,
       );
       if (node) {
         return node.propertyName?.toString() || name;
@@ -116,12 +121,14 @@ export class ImportClause {
 
     if (this.namedBindings) {
       const namedBindings = this.namedBindings.toString();
-      namedBindings && result.push(namedBindings);
+      if (namedBindings) {
+        result.push(namedBindings);
+      }
     }
 
     return result.length
-      ? `${this.isTypeOnly ? "type " : ""}${result.join(",")} from `
-      : "";
+      ? `${this.isTypeOnly ? 'type ' : ''}${result.join(',')} from `
+      : '';
   }
 }
 
@@ -131,13 +138,13 @@ export class ImportDeclaration {
     public modifiers: string[] = [],
     public importClause: ImportClause,
     public moduleSpecifier: StringLiteral,
-    public context: GeneratorContext
+    public context: GeneratorContext,
   ) {}
 
   replaceSpecifier(search: string | RegExp, replaceValue: string) {
     this.moduleSpecifier.expression = this.moduleSpecifier.expression.replace(
       search,
-      replaceValue
+      replaceValue,
     );
   }
 
@@ -154,28 +161,26 @@ export class ImportDeclaration {
       return {};
     }
     return (this.importClause.imports || []).reduce(
-      (result: VariableExpression, name: string) => {
-        return {
-          ...result,
-          [name]: new Identifier(name),
-        };
-      },
+      (result: VariableExpression, name: string) => ({
+        ...result,
+        [name]: new Identifier(name),
+      }),
       {
         ...(this.importClause.default && {
           [this.importClause.default.toString()]: this.importClause.default,
         }),
-      }
+      },
     );
   }
 
   isCommonDeclarationModule() {
     return (
-      this.moduleSpecifier.expression.toString() === "@devextreme-generator/declarations"
+      this.moduleSpecifier.expression.toString() === '@devextreme-generator/declarations'
     );
   }
 
   compileComponentDeclarationImport() {
-    return "";
+    return '';
   }
 
   toString() {

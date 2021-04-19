@@ -5,7 +5,9 @@ import { findComponentInput } from '../utils/expressions';
 import { warn } from '../utils/messages';
 import { capitalizeFirstLetter } from '../utils/string';
 import { Expression, SimpleExpression } from './base';
-import { Class, getMemberListFromTypeExpression, Heritable, HeritageClause, inheritMembers } from './class';
+import {
+  Class, getMemberListFromTypeExpression, Heritable, HeritageClause, inheritMembers,
+} from './class';
 import { BaseClassMember, Method, Property } from './class-members';
 import { Call, Identifier } from './common';
 import { getProps } from './component';
@@ -23,7 +25,7 @@ import {
   TypeReferenceNode,
 } from './type';
 
-const RESERVED_NAMES = ["class", "key", "ref", "style", "class"];
+const RESERVED_NAMES = ['class', 'key', 'ref', 'style', 'class'];
 
 export class ComponentInput extends Class implements Heritable {
   constructor(
@@ -33,7 +35,7 @@ export class ComponentInput extends Class implements Heritable {
     typeParameters: TypeExpression[] | string[] | undefined,
     heritageClauses: HeritageClause[] = [],
     members: Array<Property | Method>,
-    context: GeneratorContext
+    context: GeneratorContext,
   ) {
     super(
       decorators,
@@ -42,14 +44,14 @@ export class ComponentInput extends Class implements Heritable {
       typeParameters,
       heritageClauses.filter((h) => h.token === SyntaxKind.ExtendsKeyword),
       members,
-      context
+      context,
     );
   }
 
   get baseTypes() {
     return this.heritageClauses.reduce(
       (t: string[], h) => t.concat(h.typeNodes.map((t) => t.toString())),
-      []
+      [],
     );
   }
 
@@ -59,7 +61,7 @@ export class ComponentInput extends Class implements Heritable {
     name: Identifier,
     questionOrExclamationToken?: string,
     type?: string | TypeExpression,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     return new Property(
       decorators,
@@ -67,7 +69,7 @@ export class ComponentInput extends Class implements Heritable {
       name,
       questionOrExclamationToken,
       type,
-      initializer
+      initializer,
     );
   }
 
@@ -86,11 +88,11 @@ export class ComponentInput extends Class implements Heritable {
           stateMember._name,
           stateMember.questionOrExclamationToken === SyntaxKind.QuestionToken
             ? stateMember.questionOrExclamationToken
-            : "",
-          stateMember.type
+            : '',
+          stateMember.type,
         ),
       ],
-      new SimpleTypeExpression("void")
+      new SimpleTypeExpression('void'),
     );
   }
 
@@ -98,15 +100,15 @@ export class ComponentInput extends Class implements Heritable {
     return this.createProperty(
       [
         this.createDecorator(
-          new Call(new Identifier("Event"), undefined, []),
-          {}
+          new Call(new Identifier('Event'), undefined, []),
+          {},
         ),
       ],
       [],
       stateName,
       SyntaxKind.QuestionToken,
       this.buildChangeStateType(stateMember),
-      new SimpleExpression("()=>{}")
+      new SimpleExpression('()=>{}'),
     );
   }
 
@@ -114,22 +116,22 @@ export class ComponentInput extends Class implements Heritable {
     return this.createProperty(
       [
         this.createDecorator(
-          new Call(new Identifier("OneWay"), undefined, []),
-          {}
+          new Call(new Identifier('OneWay'), undefined, []),
+          {},
         ),
       ],
       [],
       new Identifier(`default${capitalizeFirstLetter(stateMember._name)}`),
-      stateMember.initializer ? "" : SyntaxKind.QuestionToken,
+      stateMember.initializer ? '' : SyntaxKind.QuestionToken,
       stateMember.type,
-      stateMember.initializer
+      stateMember.initializer,
     );
   }
 
   buildStateProperties(stateMember: Property, members: BaseClassMember[]) {
     const props: Property[] = [];
     const defaultStatePropName = `default${capitalizeFirstLetter(
-      stateMember._name
+      stateMember._name,
     )}`;
     if (!members.some((m) => m._name.toString() === defaultStatePropName)) {
       const defaultStateProperty = this.buildDefaultStateProperty(stateMember);
@@ -150,7 +152,7 @@ export class ComponentInput extends Class implements Heritable {
 
   buildTemplateProperties(
     _templateMember: Property,
-    _members: BaseClassMember[]
+    _members: BaseClassMember[],
   ): Property[] {
     return [];
   }
@@ -161,17 +163,17 @@ export class ComponentInput extends Class implements Heritable {
       if (refIndex > -1) {
         m.decorators[refIndex] = this.createDecorator(
           new Call(new Identifier(Decorators.RefProp), undefined, []),
-          {}
+          {},
         );
       }
 
       const forwardRefIndex = m.decorators.findIndex(
-        (d) => d.name === "ForwardRef"
+        (d) => d.name === 'ForwardRef',
       );
       if (forwardRefIndex > -1) {
         m.decorators[forwardRefIndex] = this.createDecorator(
           new Call(new Identifier(Decorators.ForwardRefProp), undefined, []),
-          {}
+          {},
         );
       }
     });
@@ -179,35 +181,35 @@ export class ComponentInput extends Class implements Heritable {
     members.forEach((m) => {
       if (!(m instanceof Property)) {
         warn(
-          `${this.name} ComponentBindings has non-property member: ${m._name}`
+          `${this.name} ComponentBindings has non-property member: ${m._name}`,
         );
         return;
       }
       if (m.decorators.length !== 1) {
         if (m.decorators.length === 0) {
           warn(
-            `${this.name} ComponentBindings has property without decorator: ${m._name}`
+            `${this.name} ComponentBindings has property without decorator: ${m._name}`,
           );
         } else {
           warn(
-            `${this.name} ComponentBindings has property with multiple decorators: ${m._name}`
+            `${this.name} ComponentBindings has property with multiple decorators: ${m._name}`,
           );
         }
       } else if (getProps([m]).length === 0) {
         warn(
-          `${this.name} ComponentBindings has property "${m._name}" with incorrect decorator: ${m.decorators[0].name}`
+          `${this.name} ComponentBindings has property "${m._name}" with incorrect decorator: ${m.decorators[0].name}`,
         );
       }
 
-      if (m.isNested && extractComplexType(m.type) === "any") {
+      if (m.isNested && extractComplexType(m.type) === 'any') {
         warn(
-          `One of "${m.name}" Nested property's types should be complex type`
+          `One of "${m.name}" Nested property's types should be complex type`,
         );
       }
 
       if (RESERVED_NAMES.some((n) => n === m._name.toString())) {
         warn(
-          `${this.name} ComponentBindings has property with reserved name: ${m._name}`
+          `${this.name} ComponentBindings has property with reserved name: ${m._name}`,
         );
       }
     });
@@ -221,26 +223,22 @@ export class ComponentInput extends Class implements Heritable {
         members.concat(
           members
             .filter((m) => m.isState)
-            .reduce((properties: Property[], p) => {
-              return properties.concat(
-                this.buildStateProperties(p as Property, members)
-              );
-            }, []),
+            .reduce((properties: Property[], p) => properties.concat(
+              this.buildStateProperties(p as Property, members),
+            ), []),
           members
             .filter((m) => m.isTemplate)
-            .reduce((properties: Property[], p) => {
-              return properties.concat(
-                this.buildTemplateProperties(p as Property, members)
-              );
-            }, [])
-        )
-      )
+            .reduce((properties: Property[], p) => properties.concat(
+              this.buildTemplateProperties(p as Property, members),
+            ), []),
+        ),
+      ),
     );
   }
 
   get heritageProperties() {
     return (this.members.filter(
-      (m) => m instanceof Property
+      (m) => m instanceof Property,
     ) as Property[]).map((p) => p.inherit());
   }
 
@@ -259,15 +257,13 @@ export class ComponentInput extends Class implements Heritable {
   getImports(context: GeneratorContext) {
     const imports = this.members
       .filter((m) => !m.inherited)
-      .reduce((result: TypeExpressionImports, m) => {
-        return result.concat(m.getImports(context));
-      }, []);
+      .reduce((result: TypeExpressionImports, m) => result.concat(m.getImports(context)), []);
     return mergeTypeExpressionImports(imports);
   }
 
   createDefaultNestedValues(members: Array<Property | Method>) {
     const containNestedWithInitializer = members.some(
-      (m) => m.isNested && m instanceof Property && m.initializer
+      (m) => m.isNested && m instanceof Property && m.initializer,
     );
     const initializerArray = members.reduce((accum, m) => {
       if (m instanceof Property && m.initializer) {
@@ -277,21 +273,20 @@ export class ComponentInput extends Class implements Heritable {
     }, [] as { name: string; initializer: Expression }[]);
     if (containNestedWithInitializer && initializerArray.length) {
       const defaultNestedValuesProp = this.createProperty(
-        [new Decorator(new Call(new Identifier("OneWay"), undefined, []), {})],
+        [new Decorator(new Call(new Identifier('OneWay'), undefined, []), {})],
         undefined,
-        new Identifier("__defaultNestedValues"),
+        new Identifier('__defaultNestedValues'),
         undefined,
         undefined,
         new ObjectLiteral(
           initializerArray.map(
-            (elem) =>
-              new PropertyAssignment(
-                new Identifier(elem.name),
-                elem.initializer
-              )
+            (elem) => new PropertyAssignment(
+              new Identifier(elem.name),
+              elem.initializer,
+            ),
           ),
-          true
-        )
+          true,
+        ),
       );
       return defaultNestedValuesProp;
     }
@@ -299,22 +294,20 @@ export class ComponentInput extends Class implements Heritable {
   }
 }
 
-const omit = (members: string[]) => (p: Property | Method) =>
-  !members.some((m) => m === p.name);
-const pick = (members: string[]) => (p: Property | Method) =>
-  members.some((m) => m === p.name);
+const omit = (members: string[]) => (p: Property | Method) => !members.some((m) => m === p.name);
+const pick = (members: string[]) => (p: Property | Method) => members.some((m) => m === p.name);
 
 function processMembersFromType(
   members: (Property | Method)[],
   baseComponentInput: string,
-  componentInput: ComponentInput
+  componentInput: ComponentInput,
 ) {
   return (members as Property[]).map((p) => {
     const m = p.inherit();
     m.inherited = false;
     if (m.initializer) {
       m.initializer = new SimpleExpression(
-        `${componentInput.getInitializerScope(baseComponentInput, m.name)}`
+        `${componentInput.getInitializerScope(baseComponentInput, m.name)}`,
       );
     }
     return m;
@@ -327,7 +320,7 @@ function removeDuplicates(members: (Property | Method)[]) {
       d[m.name] = m;
       return d;
     },
-    {}
+    {},
   );
 
   return Object.keys(dictionary).map((k) => dictionary[k]);
@@ -335,54 +328,52 @@ function removeDuplicates(members: (Property | Method)[]) {
 
 export function membersFromTypeDeclaration(
   type: TypeExpression,
-  context: GeneratorContext
+  context: GeneratorContext,
 ): (Property | Method)[] {
   let result: (Property | Method)[] = [];
 
   if (
-    type instanceof TypeReferenceNode &&
-    (type.type.toString() === "Omit" || type.type.toString() === "Pick") &&
-    type.typeArguments.length &&
-    type.typeArguments[0] instanceof TypeReferenceNode
+    type instanceof TypeReferenceNode
+    && (type.type.toString() === 'Omit' || type.type.toString() === 'Pick')
+    && type.typeArguments.length
+    && type.typeArguments[0] instanceof TypeReferenceNode
   ) {
     const componentInput = findComponentInput(
       type.typeArguments[0] as TypeReferenceNode,
-      context
+      context,
     );
     const members = getMemberListFromTypeExpression(
       type.typeArguments[1],
-      context
+      context,
     );
     if (componentInput instanceof ComponentInput) {
-      const filter =
-        type.type.toString() === "Omit" ? omit(members) : pick(members);
+      const filter = type.type.toString() === 'Omit' ? omit(members) : pick(members);
       const componentInputName = (type
         .typeArguments[0] as TypeReferenceNode).type
         .toString()
-        .replace("typeof ", "");
+        .replace('typeof ', '');
       result = processMembersFromType(
         componentInput.members.filter(filter),
         componentInputName,
-        componentInput
+        componentInput,
       );
     }
   } else if (type instanceof TypeReferenceNode) {
     const componentInput = findComponentInput(type, context);
-    const componentInputName = type.type.toString().replace("typeof ", "");
+    const componentInputName = type.type.toString().replace('typeof ', '');
     if (componentInput) {
       result = processMembersFromType(
         componentInput.members,
         componentInputName,
-        componentInput
+        componentInput,
       );
     }
   }
 
   if (type instanceof IntersectionTypeNode) {
     result = type.types.reduce(
-      (members: (Property | Method)[], t) =>
-        members.concat(membersFromTypeDeclaration(t, context)),
-      []
+      (members: (Property | Method)[], t) => members.concat(membersFromTypeDeclaration(t, context)),
+      [],
     );
   }
 

@@ -64,7 +64,9 @@ class DxUndefWidgetNestedProp extends FakeNested {}
   template: `<div>
       <div>Nested:{{ __nested }}</div>
     </div>
-    <ng-template #dxslotProp><ng-content select="[slotProp]"></ng-content></ng-template>`,
+    <ng-template #dxslotProp
+      ><ng-content select="[slotProp]"></ng-content
+    ></ng-template>`,
 })
 export default class undefWidget extends WidgetProps {
   get __someprop(): any {
@@ -140,11 +142,15 @@ export default class undefWidget extends WidgetProps {
     this.__nestedProp = value;
     this._detectChanges();
   }
-  @Input() set anotherNestedPropInit(value: DxUndefWidgetAnotherNestedPropInit[]) {
+  @Input() set anotherNestedPropInit(
+    value: DxUndefWidgetAnotherNestedPropInit[]
+  ) {
     this.__anotherNestedPropInit = value;
     this._detectChanges();
   }
-  @ViewChild("slotSlotProp") set slotSlotProp(slot: ElementRef<HTMLDivElement>) {
+  @ViewChild("slotSlotProp") set slotSlotProp(
+    slot: ElementRef<HTMLDivElement>
+  ) {
     const oldValue = this.slotProp;
     this.__slotSlotProp = slot;
     const newValue = this.slotProp;
@@ -154,10 +160,18 @@ export default class undefWidget extends WidgetProps {
   }
 }
 @NgModule({
-  declarations: [undefWidget, DxUndefWidgetNestedProp, DxUndefWidgetAnotherNestedPropInit],
+  declarations: [
+    undefWidget,
+    DxUndefWidgetNestedProp,
+    DxUndefWidgetAnotherNestedPropInit,
+  ],
   imports: [CommonModule],
 
-  exports: [undefWidget, DxUndefWidgetNestedProp, DxUndefWidgetAnotherNestedPropInit],
+  exports: [
+    undefWidget,
+    DxUndefWidgetNestedProp,
+    DxUndefWidgetAnotherNestedPropInit,
+  ],
 })
 export class DxundefWidgetModule {}
 export { undefWidget as DxundefWidgetComponent };

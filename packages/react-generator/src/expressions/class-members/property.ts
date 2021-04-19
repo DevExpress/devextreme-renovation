@@ -8,22 +8,24 @@ import {
   SimpleTypeExpression,
   SyntaxKind,
   toStringOptions,
-  TypeExpression
-} from '@devextreme-generator/core';
+  TypeExpression,
+} from "@devextreme-generator/core";
 
-
-import { compileJSXTemplateProps, TypeReferenceNode } from '../type-reference-node';
+import {
+  compileJSXTemplateProps,
+  TypeReferenceNode,
+} from "../type-reference-node";
 
 export function getLocalStateName(
   name: Identifier | string,
-  componentContext: string = ""
+  componentContext = ""
 ) {
   return `${componentContext}__state_${name}`;
 }
 
 export function getPropName(
   name: Identifier | string,
-  componentContext: string = "",
+  componentContext = "",
   scope = "props."
 ) {
   return `${componentContext}${scope}${name}`;
@@ -116,7 +118,8 @@ export class Property extends BaseProperty {
     const scope = this.processComponentContext(this.scope);
     if (this.isInternalState) {
       return getLocalStateName(this.name, componentContext);
-    } else if (
+    }
+    if (
       this.decorators.some(
         (d) =>
           d.name === Decorators.OneWay ||
@@ -126,7 +129,8 @@ export class Property extends BaseProperty {
       )
     ) {
       return getPropName(this.name, componentContext, scope);
-    } else if (
+    }
+    if (
       this.decorators.some(
         (d) =>
           d.name === Decorators.Ref ||
@@ -140,17 +144,21 @@ export class Property extends BaseProperty {
         return `${scope}${this.name}`;
       }
       return getPropName(this.name, componentContext, scope);
-    } else if (this.isState) {
+    }
+    if (this.isState) {
       const propName = getPropName(this.name, componentContext, scope);
       return `(${propName}!==undefined?${propName}:${getLocalStateName(
         this.name,
         componentContext
       )})`;
-    } else if (this.isNested) {
+    }
+    if (this.isNested) {
       return `__getNested${capitalizeFirstLetter(this.name)}()`;
-    } else if (this.isProvider || this.isConsumer) {
+    }
+    if (this.isProvider || this.isConsumer) {
       return this.name;
-    } else if (this.isMutable) {
+    }
+    if (this.isMutable) {
       return `${this.name}.current!`;
     }
     throw `Can't parse property: ${this._name}`;
@@ -159,7 +167,8 @@ export class Property extends BaseProperty {
   getDependency(_options: toStringOptions) {
     if (this.isInternalState) {
       return [getLocalStateName(this.name)];
-    } else if (
+    }
+    if (
       this.decorators.some(
         (d) =>
           d.name === Decorators.OneWay ||
@@ -169,7 +178,8 @@ export class Property extends BaseProperty {
       )
     ) {
       return [getPropName(this.name)];
-    } else if (
+    }
+    if (
       this.decorators.some(
         (d) =>
           d.name === Decorators.Ref ||
@@ -183,13 +193,17 @@ export class Property extends BaseProperty {
       return this.questionOrExclamationToken === "?"
         ? [`${scope}${this.name.toString()}`]
         : [];
-    } else if (this.isState) {
+    }
+    if (this.isState) {
       return [getPropName(this.name), getLocalStateName(this.name)];
-    } else if (this.isNested) {
+    }
+    if (this.isNested) {
       return [getPropName(this.name), getPropName("children")];
-    } else if (this.isProvider || this.isConsumer) {
+    }
+    if (this.isProvider || this.isConsumer) {
       return [this.name];
-    } else if (this.isMutable) {
+    }
+    if (this.isMutable) {
       return [];
     }
     throw `Can't parse property: ${this._name}`;

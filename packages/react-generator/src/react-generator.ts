@@ -1,17 +1,3 @@
-import { GetAccessor } from './expressions/class-members/get-accessor';
-import { Method } from './expressions/class-members/method';
-import { Property } from './expressions/class-members/property';
-import { HeritageClause } from './expressions/heritage-clause';
-import { ImportDeclaration } from './expressions/import-declaration';
-import { JsxAttribute } from './expressions/jsx/jsx-attribute';
-import { JsxClosingElement } from './expressions/jsx/jsx-closing-element';
-import { JsxElement } from './expressions/jsx/jsx-element';
-import { JsxOpeningElement } from './expressions/jsx/jsx-opening-element';
-import { JsxSelfClosingElement } from './expressions/jsx/jsx-self-closing-element';
-import { PropertyAccess } from './expressions/property-access';
-import { ReactComponent } from './expressions/react-component';
-import { ComponentInput } from "./expressions/react-component-input";
-import { TypeReferenceNode } from "./expressions/type-reference-node";
 import BaseGenerator, {
   Expression,
   Identifier,
@@ -25,8 +11,22 @@ import BaseGenerator, {
   TypeExpression,
   JsxSpreadAttribute,
   JsxExpression,
-} from "@devextreme-generator/core";
-import { New } from "./expressions/common";
+} from '@devextreme-generator/core';
+import { GetAccessor } from './expressions/class-members/get-accessor';
+import { Method } from './expressions/class-members/method';
+import { Property } from './expressions/class-members/property';
+import { HeritageClause } from './expressions/heritage-clause';
+import { ImportDeclaration } from './expressions/import-declaration';
+import { JsxAttribute } from './expressions/jsx/jsx-attribute';
+import { JsxClosingElement } from './expressions/jsx/jsx-closing-element';
+import { JsxElement } from './expressions/jsx/jsx-element';
+import { JsxOpeningElement } from './expressions/jsx/jsx-opening-element';
+import { JsxSelfClosingElement } from './expressions/jsx/jsx-self-closing-element';
+import { PropertyAccess } from './expressions/property-access';
+import { ReactComponent } from './expressions/react-component';
+import { ComponentInput } from './expressions/react-component-input';
+import { TypeReferenceNode } from './expressions/type-reference-node';
+import { New } from './expressions/common';
 
 export class ReactGenerator extends BaseGenerator {
   createHeritageClause(token: string, types: ExpressionWithTypeArguments[]) {
@@ -39,7 +39,7 @@ export class ReactGenerator extends BaseGenerator {
     name: Identifier,
     typeParameters: string[],
     heritageClauses: HeritageClause[],
-    members: Array<Property | Method>
+    members: Array<Property | Method>,
   ) {
     return new ReactComponent(
       componentDecorator,
@@ -48,7 +48,7 @@ export class ReactGenerator extends BaseGenerator {
       typeParameters,
       heritageClauses,
       members,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -58,7 +58,7 @@ export class ReactGenerator extends BaseGenerator {
     name: Identifier,
     typeParameters: string[],
     heritageClauses: HeritageClause[],
-    members: Array<Property | Method>
+    members: Array<Property | Method>,
   ) {
     return new ComponentInput(
       decorators,
@@ -67,7 +67,7 @@ export class ReactGenerator extends BaseGenerator {
       typeParameters,
       heritageClauses,
       members,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -79,40 +79,40 @@ export class ReactGenerator extends BaseGenerator {
     decorators: Decorator[] = [],
     modifiers: string[] = [],
     importClause: ImportClause,
-    moduleSpecifier: StringLiteral
+    moduleSpecifier: StringLiteral,
   ) {
     return new ImportDeclaration(
       decorators,
       modifiers,
       importClause,
       moduleSpecifier,
-      this.getContext()
+      this.getContext(),
     );
   }
 
   createJsxOpeningElement(
     tagName: Identifier,
     typeArguments: any[],
-    attributes?: Array<JsxAttribute | JsxSpreadAttribute>
+    attributes?: Array<JsxAttribute | JsxSpreadAttribute>,
   ) {
     return new JsxOpeningElement(
       tagName,
       typeArguments,
       attributes,
-      this.getContext()
+      this.getContext(),
     );
   }
 
   createJsxSelfClosingElement(
     tagName: Identifier,
     typeArguments: any[],
-    attributes?: Array<JsxAttribute | JsxSpreadAttribute>
+    attributes?: Array<JsxAttribute | JsxSpreadAttribute>,
   ) {
     return new JsxSelfClosingElement(
       tagName,
       typeArguments,
       attributes,
-      this.getContext()
+      this.getContext(),
     );
   }
 
@@ -123,9 +123,9 @@ export class ReactGenerator extends BaseGenerator {
   createJsxElement(
     openingElement: JsxOpeningElement,
     children: Array<
-      JsxElement | string | JsxExpression | JsxSelfClosingElement
+    JsxElement | string | JsxExpression | JsxSelfClosingElement
     >,
-    closingElement: JsxClosingElement
+    closingElement: JsxClosingElement,
   ) {
     return new JsxElement(openingElement, children, closingElement);
   }
@@ -136,7 +136,7 @@ export class ReactGenerator extends BaseGenerator {
     name: Identifier,
     questionOrExclamationToken?: string,
     type?: TypeExpression,
-    initializer?: Expression
+    initializer?: Expression,
   ) {
     return new Property(
       decorators,
@@ -144,7 +144,7 @@ export class ReactGenerator extends BaseGenerator {
       name,
       questionOrExclamationToken,
       type,
-      initializer
+      initializer,
     );
   }
 
@@ -154,7 +154,7 @@ export class ReactGenerator extends BaseGenerator {
     name: Identifier,
     parameters: Parameter[],
     type?: TypeExpression,
-    body?: Block
+    body?: Block,
   ) {
     return new GetAccessor(decorators, modifiers, name, parameters, type, body);
   }
@@ -165,7 +165,7 @@ export class ReactGenerator extends BaseGenerator {
 
   createTypeReferenceNode(
     typeName: Identifier,
-    typeArguments: TypeExpression[] = []
+    typeArguments: TypeExpression[] = [],
   ) {
     return new TypeReferenceNode(typeName, typeArguments, this.getContext());
   }
@@ -179,7 +179,7 @@ export class ReactGenerator extends BaseGenerator {
     typeParameters: TypeParameterDeclaration[] | undefined,
     parameters: Parameter[],
     type: TypeExpression | undefined,
-    body: Block
+    body: Block,
   ) {
     return new Method(
       decorators,
@@ -190,14 +190,14 @@ export class ReactGenerator extends BaseGenerator {
       typeParameters,
       parameters,
       type,
-      body
+      body,
     );
   }
 
   createNew(
     expression: Expression,
     typeArguments: TypeExpression[] | undefined,
-    argumentsArray: Expression[]
+    argumentsArray: Expression[],
   ) {
     return new New(expression, typeArguments, argumentsArray);
   }

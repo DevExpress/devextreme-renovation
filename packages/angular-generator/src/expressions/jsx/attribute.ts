@@ -12,21 +12,22 @@ import {
   GetAccessor,
   isCall,
   isFunction,
-} from "@devextreme-generator/core";
-import { toStringOptions } from "../../types";
-import { JsxExpression } from "./jsx-expression";
+} from '@devextreme-generator/core';
+import { toStringOptions } from '../../types';
+import { JsxExpression } from './jsx-expression';
 
-const ATTR_BINDING_ATTRIBUTES = ["aria-label"];
+const ATTR_BINDING_ATTRIBUTES = ['aria-label'];
 
 export class JsxAttribute extends BaseJsxAttribute {
   constructor(name: Identifier, initializer?: Expression) {
     super(
       name,
-      initializer || new JsxExpression(undefined, new SimpleExpression("true"))
+      initializer || new JsxExpression(undefined, new SimpleExpression('true')),
     );
   }
+
   getRefValue(options?: toStringOptions) {
-    return this.compileRef(options).replace("#", "");
+    return this.compileRef(options).replace('#', '');
   }
 
   getForwardRefValue(options?: toStringOptions): string {
@@ -55,7 +56,7 @@ export class JsxAttribute extends BaseJsxAttribute {
   compileRef(options?: toStringOptions) {
     const member = getMember(this.initializer, options);
     if (member) {
-      return `#${member.name}${member.isForwardRefProp ? "Ref" : ""}`;
+      return `#${member.name}${member.isForwardRefProp ? 'Ref' : ''}`;
     }
 
     return `#${this.initializer.toString(options)}`;
@@ -68,14 +69,14 @@ export class JsxAttribute extends BaseJsxAttribute {
   compileName(options?: toStringOptions) {
     const name = this.name.toString();
     if (!options?.jsxComponent) {
-      if (name === "className") {
-        return options?.isSVG ? "attr.class" : "class";
+      if (name === 'className') {
+        return options?.isSVG ? 'attr.class' : 'class';
       }
-      if (name === "style") {
+      if (name === 'style') {
         if (options) {
           options.hasStyle = true;
         }
-        return "ngStyle";
+        return 'ngStyle';
       }
 
       if (ATTR_BINDING_ATTRIBUTES.indexOf(name) > -1) {
@@ -95,15 +96,15 @@ export class JsxAttribute extends BaseJsxAttribute {
       options.keys = options.keys || [];
       options.keys.push(this.initializer);
     }
-    return "";
+    return '';
   }
 
   compileValue(name: string, value: string) {
-    if (name === "title") {
+    if (name === 'title') {
       return `${value}!==undefined?${value}:''`;
     }
 
-    if (name === "ngStyle") {
+    if (name === 'ngStyle') {
       return `__processNgStyle(${value})`;
     }
 
@@ -116,9 +117,9 @@ export class JsxAttribute extends BaseJsxAttribute {
 
   isStringLiteralValue() {
     return (
-      this.initializer instanceof StringLiteral ||
-      (this.initializer instanceof JsxExpression &&
-        this.initializer.expression instanceof StringLiteral)
+      this.initializer instanceof StringLiteral
+      || (this.initializer instanceof JsxExpression
+        && this.initializer.expression instanceof StringLiteral)
     );
   }
 
@@ -135,7 +136,7 @@ export class JsxAttribute extends BaseJsxAttribute {
 
   isTemplateAttribute(options?: toStringOptions) {
     const templateProps = options?.jsxComponent?.members.filter(
-      (p) => p.isTemplate
+      (p) => p.isTemplate,
     );
     return templateProps?.some((p) => p.name === this.name.toString()) || false;
   }
@@ -146,10 +147,10 @@ export class JsxAttribute extends BaseJsxAttribute {
 
   toString(options?: toStringOptions) {
     if (this.skipValue(options)) {
-      return "";
+      return '';
     }
 
-    if (this.name.toString() === "ref") {
+    if (this.name.toString() === 'ref') {
       const member = getMember(this.initializer, options);
       if (member?.isForwardRef || member?.isForwardRefProp) {
         options!.forwardRefs = options!.forwardRefs || [];
@@ -167,17 +168,17 @@ export class JsxAttribute extends BaseJsxAttribute {
     }
 
     if (this.isSlotAttribute(options)) {
-      return "";
+      return '';
     }
 
     const name = this.compileName(options);
 
-    if (name === "key" && this.compileKey() !== null) {
+    if (name === 'key' && this.compileKey() !== null) {
       return this.compileKey(options) as string;
     }
 
     if (this.isStringLiteralValue()) {
-      return `${name.replace("attr.", "")}=${this.initializer.toString()}`;
+      return `${name.replace('attr.', '')}=${this.initializer.toString()}`;
     }
 
     if (this.initializer instanceof JsxExpression) {
@@ -187,29 +188,27 @@ export class JsxAttribute extends BaseJsxAttribute {
         if (this.isTemplateAttribute(options)) {
           if (funcName) {
             return this.compileBase(name, funcName);
-          } else {
-            return this.compileBase(name, `__${name}__generated`);
           }
+          return this.compileBase(name, `__${name}__generated`);
         }
       }
     }
 
     return this.compileBase(
       name,
-      this.compileValue(name, this.compileInitializer(options))
+      this.compileValue(name, this.compileInitializer(options)),
     );
   }
 
   getTemplateContext(options?: toStringOptions): PropertyAssignment[] {
     const member = getMember(this.initializer, options);
-    const binding =
-      member instanceof Method && !(member instanceof GetAccessor)
-        ? ".bind(this)"
-        : "";
+    const binding = member instanceof Method && !(member instanceof GetAccessor)
+      ? '.bind(this)'
+      : '';
     return [
       new PropertyAssignment(
         this.name,
-        new SimpleExpression(`${this.compileInitializer(options)}${binding}`)
+        new SimpleExpression(`${this.compileInitializer(options)}${binding}`),
       ),
     ];
   }

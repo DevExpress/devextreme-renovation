@@ -332,7 +332,10 @@ mocha.describe("angular-generation", function () {
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {
-        defaultOptionsModule: path.resolve(__dirname, "../jquery-helpers/default_options"),
+        defaultOptionsModule: path.resolve(
+          __dirname,
+          "../jquery-helpers/default_options"
+        ),
       };
       generator.setContext({
         dirname: path.resolve(__dirname, "./test-cases/declarations/src"),

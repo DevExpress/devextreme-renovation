@@ -29,18 +29,25 @@ import {
   SimpleTypeExpression,
   StringLiteral,
   SyntaxKind,
-} from '@devextreme-generator/core';
+} from "@devextreme-generator/core";
 
-import { AngularGeneratorContext, toStringOptions } from '../types';
-import { GetAccessor } from './class-members/get-accessor';
-import { Property } from './class-members/property';
-import { PropsGetAccessor } from './class-members/props-get-accessor';
-import { SetAccessor } from './class-members/set-accessor';
-import { ComponentInput } from './component-input';
-import { Decorator } from './decorator';
-import { isElement } from './jsx/elements';
-import { dynamicComponentDirective, dynamicComponentDirectiveCoreImports } from './templates/dynamic-component-directive';
-import { angularPortalCdkImports, angularPortalCoreImports, angularPortalTemplate } from './templates/portal-component';
+import { AngularGeneratorContext, toStringOptions } from "../types";
+import { GetAccessor } from "./class-members/get-accessor";
+import { Property } from "./class-members/property";
+import { PropsGetAccessor } from "./class-members/props-get-accessor";
+import { SetAccessor } from "./class-members/set-accessor";
+import { ComponentInput } from "./component-input";
+import { Decorator } from "./decorator";
+import { isElement } from "./jsx/elements";
+import {
+  dynamicComponentDirective,
+  dynamicComponentDirectiveCoreImports,
+} from "./templates/dynamic-component-directive";
+import {
+  angularPortalCdkImports,
+  angularPortalCoreImports,
+  angularPortalTemplate,
+} from "./templates/portal-component";
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = "CUSTOM_VALUE_ACCESSOR_PROVIDER";
 
@@ -143,7 +150,7 @@ const ngOnChangesParameters = ["changes"];
 
 export const getAngularSelector = (
   name: string | Identifier,
-  postfix: string = "",
+  postfix = "",
   isSVG = false
 ) => {
   name = name.toString();
@@ -167,7 +174,9 @@ export const convertSelectorToName = (selector: string) =>
 
 export class AngularComponent extends Component {
   decorator: Decorator;
+
   members!: (Property | Method)[];
+
   constructor(
     componentDecorator: Decorator,
     modifiers: string[],
@@ -221,14 +230,12 @@ export class AngularComponent extends Component {
     onPushStrategy: boolean
   ) {
     if (questionOrExclamationToken === "?") {
-      type = type + "| undefined";
+      type += "| undefined";
     }
     const statements = [new SimpleExpression(`this.__${name}=value;`)];
     if (onPushStrategy) {
-      statements.push(new SimpleExpression(`this._detectChanges();`));
+      statements.push(new SimpleExpression("this._detectChanges();"));
     }
-
-    onPushStrategy;
 
     return new SetAccessor(
       decorator,
@@ -250,7 +257,7 @@ export class AngularComponent extends Component {
     const isArray = isTypeArray(type);
     const indexGetter = isArray ? "" : "[0]";
     if (questionOrExclamationToken === "?") {
-      type = type + "| undefined";
+      type += "| undefined";
     }
 
     return new GetAccessor(
@@ -298,8 +305,8 @@ export class AngularComponent extends Component {
 
   processNestedProperty(
     property: Property,
-    onPushStrategy: boolean = false,
-    selector: string = this.selector,
+    onPushStrategy = false,
+    parentName = `Dx${convertSelectorToName(this.selector)}`,
     componentName: string = this.heritageClauses[0].propsType.toString()
   ) {
     const {
@@ -318,8 +325,8 @@ export class AngularComponent extends Component {
       ),
     ];
 
-    const nestedName = `Dx${convertSelectorToName(
-      `${selector} ${isTypeArray(type) ? removePlural(name) : name}`
+    const nestedName = `${parentName}${capitalizeFirstLetter(
+      isTypeArray(type) ? removePlural(name) : name
     )}`;
 
     const complexType = type
@@ -357,20 +364,21 @@ export class AngularComponent extends Component {
   processMembers(members: Array<Property | Method>) {
     members = super.processMembers(members);
     members = members.concat(
-      (members.filter((m) => m.isForwardRefProp) as Property[]).map((m) => {
-        return new Property(
-          [
-            new Decorator(
-              new Call(new Identifier(Decorators.Ref), [], []),
-              this.context
-            ),
-          ],
-          [],
-          new Identifier(`${m.name}Ref`),
-          m.questionOrExclamationToken,
-          m.type
-        );
-      })
+      (members.filter((m) => m.isForwardRefProp) as Property[]).map(
+        (m) =>
+          new Property(
+            [
+              new Decorator(
+                new Call(new Identifier(Decorators.Ref), [], []),
+                this.context
+              ),
+            ],
+            [],
+            new Identifier(`${m.name}Ref`),
+            m.questionOrExclamationToken,
+            m.type
+          )
+      )
     );
 
     members = members.concat(
@@ -611,7 +619,7 @@ export class AngularComponent extends Component {
           } = {}`,
       ];
 
-      getters.map((g) => {
+      getters.forEach((g) => {
         const allDeps = g.getDependency({
           members: this.members,
           componentContext: SyntaxKind.ThisKeyword,
@@ -679,7 +687,7 @@ export class AngularComponent extends Component {
       let usedIterables = new Set();
 
       const subscribe = (e: Method) => `this.${e.getter()}()`;
-      effects.map((e, i) => {
+      effects.forEach((e, i) => {
         const allDeps = e.getDependency({
           members: this.members,
           componentContext: SyntaxKind.ThisKeyword,
@@ -792,7 +800,7 @@ export class AngularComponent extends Component {
             }
           }
         `);
-        ngAfterViewCheckedStatements.push(`this._updateEffects()`);
+        ngAfterViewCheckedStatements.push("this._updateEffects()");
       }
       if (usedIterables.size > 0) {
         statements.push(
@@ -1024,24 +1032,20 @@ export class AngularComponent extends Component {
         `;
   }
 
-  getNestedExports(component: ComponentInput, selector: string) {
+  getNestedExports(component: ComponentInput, name: string, selector = "") {
     const innerNested = (component.members.filter(
       (m) => m.isNested
     ) as Property[])
       .map((m) =>
-        this.processNestedProperty(m, false, selector, component.name).join(
-          "\n"
-        )
+        this.processNestedProperty(m, false, name, component.name).join("\n")
       )
       .join("\n");
-
-    const name = convertSelectorToName(selector);
 
     return `
       @Directive({
         selector: "${selector}"
       })
-      class Dx${name} extends ${component.name} {
+      class ${name} extends ${component.name} {
         ${innerNested}
       }
     `;
@@ -1085,11 +1089,8 @@ export class AngularComponent extends Component {
 
     return nested.concat(
       nested.reduce(
-        (acc, el) => {
-          return acc.concat(
-            this.getNestedFromComponentInput(el.component, el.name)
-          );
-        },
+        (acc, el) =>
+          acc.concat(this.getNestedFromComponentInput(el.component, el.name)),
         [] as {
           component: ComponentInput;
           name: string;
@@ -1112,9 +1113,12 @@ export class AngularComponent extends Component {
         collectedComponents.map(({ component }) => component)
       );
       const nestedComponents = collectedComponents
-        .map(({ component, name }) => {
-          nestedModules.push(`Dx${convertSelectorToName(name)}`);
-          return this.getNestedExports(component, name);
+        .map(({ component, name: fullSelector }) => {
+          const name = `Dx${convertSelectorToName(fullSelector)}`;
+          const selector = fullSelector.split(" ").pop();
+
+          nestedModules.push(name);
+          return this.getNestedExports(component, name, selector);
         })
         .reverse();
 
@@ -1241,10 +1245,8 @@ export class AngularComponent extends Component {
           constructorStatements.push(
             `this.${m.name}.value = ${(m as Property).initializer}`
           );
-        } else {
-          if (m instanceof GetAccessor) {
-            ngDoCheckStatements.push(m.getter(SyntaxKind.ThisKeyword));
-          }
+        } else if (m instanceof GetAccessor) {
+          ngDoCheckStatements.push(m.getter(SyntaxKind.ThisKeyword));
         }
       }
       if (m.isConsumer) {
@@ -1272,7 +1274,7 @@ export class AngularComponent extends Component {
     });
 
     if (destroyContext.length) {
-      ngOnDestroyStatements.push(`this._destroyContext.forEach(d=>d())`);
+      ngOnDestroyStatements.push("this._destroyContext.forEach(d=>d())");
     }
     return destroyContext;
   }
@@ -1320,6 +1322,7 @@ export class AngularComponent extends Component {
       true
     );
   }
+
   createViewSpreadAccessor(name: Identifier, body: Block, props: Property[]) {
     return new PropsGetAccessor(
       undefined,
@@ -1331,6 +1334,7 @@ export class AngularComponent extends Component {
       props
     );
   }
+
   compileDynamicComponents(
     decoratorToStringOptions: toStringOptions,
     coreImports: string[],
