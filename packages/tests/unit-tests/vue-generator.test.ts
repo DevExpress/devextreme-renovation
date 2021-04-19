@@ -2736,7 +2736,7 @@ mocha.describe("Vue-generator", function () {
               })
             ),
             removeSpaces(`
-                        <template v-if="!$slots[template]"><slot></slot></template>
+                        <template v-if="!$scopedSlots[template]"><slot></slot></template>
                   `)
           );
         });
@@ -3482,7 +3482,7 @@ mocha.describe("Vue-generator", function () {
             componentContext: "viewModel",
             newComponentContext: "",
           }),
-          `<slot :name="template" v-if="$slots[template]"></slot>`
+          `<slot :name="template" v-if="$scopedSlots[template]"></slot>`
         );
       });
     });

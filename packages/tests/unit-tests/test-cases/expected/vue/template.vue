@@ -8,7 +8,7 @@
       :name="contentTemplate"
       v-bind:data="{ p1: 'value' }"
       v-bind:index="10"
-      v-if="$slots[contentTemplate]"
+      v-if="$scopedSlots[contentTemplate]"
     >
       <div
         style="display: contents"
@@ -19,7 +19,7 @@
       :name="template"
       v-bind:textProp="'textPropValue'"
       v-bind:textPropExpr="'textPropExrpValue'"
-      v-if="!$slots[contentTemplate]"
+      v-if="!$scopedSlots[contentTemplate]"
     >
       <div
         style="display: contents"
@@ -34,7 +34,7 @@
     ><slot
       :name="footerTemplate"
       v-bind:someProp="someProp"
-      v-if="$slots[footerTemplate]"
+      v-if="$scopedSlots[footerTemplate]"
     >
       <div
         style="display: contents"
