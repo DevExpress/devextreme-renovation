@@ -1,4 +1,7 @@
-import { Call as BaseCall, StringLiteral } from '@devextreme-generator/core';
+import {
+  Block, Call as BaseCall, capitalizeFirstLetter, Identifier, ReturnStatement, SimpleExpression, StringLiteral
+} from '@devextreme-generator/core';
+import { Function } from './functions/function';
 import { toStringOptions } from '../types';
 
 export class Call extends BaseCall {
@@ -19,9 +22,24 @@ export class Call extends BaseCall {
         && nestedNames.some((name) => name === value.toString())
       ) {
         argument = new StringLiteral(`__${value}`, argument.quoteSymbol);
+        // const functionName = `hasOwnNested${capitalizeFirstLetter(value)}`;
+        // const hasOwnNestedFunction = new Function(
+        //   undefined,
+        //   undefined,
+        //   '',
+        //   new Identifier(functionName),
+        //   undefined, [], undefined,
+        //   new Block([new ReturnStatement(new SimpleExpression(`this.hasOwnProperty("__${value}")||this.${value}!==undefined`))], true),
+        //   {}
+        // );
+        return `this.hasOwnProperty(${argument}) || this.${value} !== undefined`;
       }
     }
 
     return `this.hasOwnProperty(${argument})`;
   }
+
+  // createHasOwnNested(options?: toStringOptions) {
+  //   const argument = this.arguments?.[0];
+  // }
 }

@@ -1,7 +1,6 @@
 import Generator, {
   StringLiteral,
   GeneratorContext,
-  Call,
   Method,
   Expression,
   Identifier,
@@ -36,6 +35,7 @@ import { PropertyAccess } from './expressions/property-access';
 import { PropertyAccessChain } from './expressions/property-access-chain';
 import { TypeReferenceNode } from './expressions/type-reference-node';
 import { VariableDeclaration } from './expressions/variable-expression';
+import { Call } from './expressions/common';
 import { AngularGeneratorContext } from './types';
 import {
   JsxOpeningElement,
@@ -203,6 +203,14 @@ export class AngularGenerator extends Generator {
       type,
       initializer,
     );
+  }
+
+  createCall(
+    expression: Expression,
+    typeArguments: TypeExpression[] | undefined,
+    argumentsArray?: Expression[]
+  ) {
+    return new Call(expression, typeArguments, argumentsArray);
   }
 
   createMethod(

@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <div>Nested:{{ __nested }}</div>
-  </div>
+  <div
+    ><div>Nested:{{ __nested }}</div></div
+  >
 </template>
 <script>
 export const FakeNested = {
@@ -96,13 +96,13 @@ export const DxundefWidget = {
   props: WidgetProps,
   computed: {
     __someprop() {
-      return this.props.hasOwnProperty("someProp");
+      return this.hasOwnProperty("someProp");
     },
     __nested() {
-      return this.props.hasOwnProperty("nestedProp");
+      return this.hasOwnProperty("nestedProp");
     },
     __nestedinit() {
-      return this.props.hasOwnProperty("anotherNestedPropInit");
+      return this.hasOwnProperty("anotherNestedPropInit");
     },
     __restAttributes() {
       return {};

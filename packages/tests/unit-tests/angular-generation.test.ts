@@ -10,12 +10,18 @@ import mocha from "./helpers/mocha";
 mocha.describe("angular-generation", function () {
   const testGenerator = createTestGenerator("angular");
   this.beforeAll(function () {
-    compile(`${__dirname}/test-cases/declarations/src`, `${__dirname}/test-cases/componentFactory`);
+    compile(
+      `${__dirname}/test-cases/declarations/src`,
+      `${__dirname}/test-cases/componentFactory`
+    );
     this.testGenerator = function (componentName: string) {
       generator.setContext({
         dirname: path.resolve(__dirname, "./test-cases/declarations/src"),
         path: resolveModule(
-          path.resolve(__dirname, `./test-cases/declarations/src/${componentName}`),
+          path.resolve(
+            __dirname,
+            `./test-cases/declarations/src/${componentName}`
+          ),
           generator.cache
         )!,
       });

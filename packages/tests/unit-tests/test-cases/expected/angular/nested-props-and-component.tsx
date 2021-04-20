@@ -69,31 +69,16 @@ class DxUndefWidgetNestedProp extends FakeNested {}
 })
 export default class undefWidget extends WidgetProps {
   get __someprop(): any {
-    return {
-      someProp: this.someProp,
-      slotProp: this.slotProp,
-      templateProp: this.templateProp,
-      nestedProp: this.nestedProp,
-      anotherNestedPropInit: this.anotherNestedPropInit,
-    }.hasOwnProperty("someProp");
+    return this.hasOwnProperty("someProp");
   }
   get __nested(): any {
-    return {
-      someProp: this.someProp,
-      slotProp: this.slotProp,
-      templateProp: this.templateProp,
-      nestedProp: this.nestedProp,
-      anotherNestedPropInit: this.anotherNestedPropInit,
-    }.hasOwnProperty("nestedProp");
+    return this.hasOwnProperty("__nestedProp") || this.nestedProp !== undefined;
   }
   get __nestedinit(): any {
-    return {
-      someProp: this.someProp,
-      slotProp: this.slotProp,
-      templateProp: this.templateProp,
-      nestedProp: this.nestedProp,
-      anotherNestedPropInit: this.anotherNestedPropInit,
-    }.hasOwnProperty("anotherNestedPropInit");
+    return (
+      this.hasOwnProperty("__anotherNestedPropInit") ||
+      this.anotherNestedPropInit !== undefined
+    );
   }
   private __nestedProp?: DxUndefWidgetNestedProp[];
   @ContentChildren(DxUndefWidgetNestedProp)
