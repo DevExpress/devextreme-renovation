@@ -47,5 +47,6 @@
     "eslint-plugin-react-hooks": "^4.0.8",
     "eslint-plugin-spellcheck": "0.0.14",
     "lerna": "^3.22.1"
-  }
+  },
+  "dependencies": {}
 }

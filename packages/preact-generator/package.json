@@ -14,7 +14,6 @@
     "clear": "shx rm -rf dist"
   },
   "author": "Developer Express Inc.",
-  "license": "MIT",
   "dependencies": {
     "@devextreme-generator/core": "1.1.0",
     "@devextreme-generator/react": "1.1.0"
