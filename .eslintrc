@@ -1,7 +1,5 @@
 {
-  "extends": [
-    "devextreme/typescript"
-  ],
+  "extends": ["devextreme/typescript"],
   "env": {
     "browser": true,
     "node": true,
@@ -14,10 +12,7 @@
     "packages/vdom/src/mocked" // Temporary ignored because lot of errors. Now we need just copy package with minimal changes.
   ],
   "parserOptions": {
-    "project": [
-      "./tsconfig.json",
-      "./packages/*/tsconfig.json"
-    ]
+    "project": ["./tsconfig.json", "./packages/*/tsconfig.json"]
   },
   "rules": {
     "@typescript-eslint/ban-types": "warn",
@@ -27,13 +22,13 @@
     "@typescript-eslint/no-non-null-assertion": "warn",
     "@typescript-eslint/no-shadow": "warn",
     "@typescript-eslint/no-throw-literal": "warn",
-    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/no-use-before-define": "warn",
     "class-methods-use-this": "warn",
     "func-names": "warn",
     "guard-for-in": "warn",
     "import/no-cycle": "warn",
-    "max-classes-per-file": "warn",
+    "max-classes-per-file": "off",
     "max-len": "warn",
     "no-bitwise": "warn",
     "no-console": "warn",
@@ -51,6 +46,8 @@
     "react/no-deprecated": "warn",
     "react/no-string-refs": "warn",
     "react/prop-types": "warn",
-    "react/sort-comp": "warn"
+    "react/sort-comp": "warn",
+    "comma-dangle": "off",
+    "@typescript-eslint/comma-dangle": "off"
   }
 }

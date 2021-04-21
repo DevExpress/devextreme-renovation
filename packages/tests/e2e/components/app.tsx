@@ -155,11 +155,11 @@ function view(model: App) {
         <TemplateDefaultValueApp />
       </div>
       <RenderSlotCondition>content</RenderSlotCondition>
-      <DefaultPropsComponent />
+      <DefaultPropsComponent/>
       <InlineArrowFunction />
       <DynamicComponent />
       <StylesWidget />
-      <UndefWidget />
+      <UndefWidget twoWayProp={2}/>
     </div>
   );
 }

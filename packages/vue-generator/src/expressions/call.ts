@@ -8,6 +8,7 @@ import {
   PropertyAssignment,
   SimpleExpression,
   SyntaxKind,
+  StringLiteral
 } from '@devextreme-generator/core';
 
 import { toStringOptions } from '../types';
@@ -17,12 +18,21 @@ export class Call extends BaseCall {
     return '';
   }
 
-  compileHasOwnProperty(options?: toStringOptions) {
-    return `this.hasOwnProperty(${this.arguments[0].toString(options)})`;
+  getHasOwnArgument(argument:StringLiteral) {
+    return argument;
+  }
+
+  compileHasOwnProperty(_options?: toStringOptions):string {
+    const argument = this.arguments?.[0];
+    if (argument instanceof StringLiteral) {
+      const value = argument.valueOf();
+      return `this.props.${value} !== undefined || this.$options.propsData.hasOwnProperty(${argument})`;
+    }
+    return '';
   }
 }
 export class New extends Call {
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions): string {
     const componentInputs = options?.componentInputs || [];
     if (componentInputs.length) {
       const matchedInput = componentInputs.find(

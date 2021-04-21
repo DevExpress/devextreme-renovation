@@ -18,10 +18,16 @@ function view(model: UndefWidget) {
   return (
     <div>
       <div>
-        OneWay: {model.someprop} | {model.props.someProp}
+        OneWay: {`${model.oneway}`} | {model.props.oneWayProp}
       </div>
-      <div>Nested: {model.nested}</div>
-      <div>Nested with Init: {model.nestedinit}</div>
+      <div>TwoWay: {`${model.twoway}`}</div>
+      <div>Event: {`${model.someevent}`}</div>
+      <div>Ref: {`${model.someref}`}</div>
+      <div>ForwardRef: {`${model.someforwardref}`}</div>
+      <div>Slot: {`${model.someslot}`}</div>
+      <div>Template: {`${model.sometemplate}`}</div>
+      <div>Nested: {`${model.nested}`}</div>
+      <div>Nested with Init: {`${model.nestedinit}`}</div>
     </div>
   );
 }
@@ -31,8 +37,8 @@ export class FakeNested {
 }
 @ComponentBindings()
 export class WidgetProps {
-  @OneWay() someProp?: number = 2;
-  @TwoWay() twoWayProp: number = 2;
+  @OneWay() oneWayProp?: number;
+  @TwoWay() twoWayProp?: number;
   @Event() someEvent?: () => void;
   @Ref() someRef?: RefObject;
   @ForwardRef() someForwardRef?: RefObject;
@@ -43,8 +49,26 @@ export class WidgetProps {
 }
 @Component({ view })
 export default class UndefWidget extends JSXComponent(WidgetProps) {
-  get someprop() {
-    return this.props.hasOwnProperty("someProp");
+  get oneway() {
+    return this.props.hasOwnProperty("oneWayProp");
+  }
+  get twoway() {
+    return this.props.hasOwnProperty("twoWayProp");
+  }
+  get someevent() {
+    return this.props.hasOwnProperty("someEvent");
+  }
+  get someref() {
+    return this.props.hasOwnProperty("someRef");
+  }
+  get someforwardref() {
+    return this.props.hasOwnProperty("someForwardRef");
+  }
+  get someslot() {
+    return this.props.hasOwnProperty("slotProp");
+  }
+  get sometemplate(){
+    return this.props.hasOwnProperty("templateProp")
   }
   get nested() {
     return this.props.hasOwnProperty("nestedProp");
