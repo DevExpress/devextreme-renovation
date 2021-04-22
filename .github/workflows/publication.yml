@@ -2,7 +2,7 @@ name: Publication
 on:
   push:
     branches:
-      - master
+      - releases/*
     paths:
       - 'packages/*/package.json'
 env:
