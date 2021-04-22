@@ -1,22 +1,22 @@
 <template>
   <div
-    ><slot name="template" v-bind="__spreadGetter">
+    ><slot :name="template" v-bind="__spreadGetter">
       <div style="display: contents" :set="(templateDefault = {})"
         ><div></div
       ></div> </slot
-    ><slot name="template2" v-bind="PropFromClass">
+    ><slot :name="template2" v-bind="PropFromClass">
       <div style="display: contents" :set="(template2Default = {})"
         ><div></div
       ></div> </slot
-    ><slot name="template2" v-bind="PropFromInterface">
+    ><slot :name="template2" v-bind="PropFromInterface">
       <div style="display: contents" :set="(template2Default = {})"
         ><div></div
       ></div> </slot
-    ><slot name="template2" v-bind="PropFromImportedInterface">
+    ><slot :name="template2" v-bind="PropFromImportedInterface">
       <div style="display: contents" :set="(template2Default = {})"
         ><div></div
       ></div> </slot
-    ><slot name="template2" v-bind="PropFromImportedType">
+    ><slot :name="template2" v-bind="PropFromImportedType">
       <div style="display: contents" :set="(template2Default = {})"
         ><div></div
       ></div> </slot
@@ -30,6 +30,18 @@ const Props = {
   },
   PropFromImportedInterface: {},
   PropFromImportedType: {},
+  template: {
+    type: String,
+    default() {
+      return "template";
+    },
+  },
+  template2: {
+    type: String,
+    default() {
+      return "template2";
+    },
+  },
 };
 export const DxWidget = {
   name: "Widget",
@@ -47,8 +59,8 @@ export const DxWidget = {
         PropFromInterface: this.PropFromInterface,
         PropFromImportedInterface: this.PropFromImportedInterface,
         PropFromImportedType: this.PropFromImportedType,
-        template: this.$scopedSlots.template,
-        template2: this.$scopedSlots.template2,
+        template: this.template,
+        template2: this.template2,
       };
     },
   },
