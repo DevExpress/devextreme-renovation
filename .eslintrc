@@ -46,6 +46,8 @@
     "react/no-deprecated": "warn",
     "react/no-string-refs": "warn",
     "react/prop-types": "warn",
-    "react/sort-comp": "warn"
+    "react/sort-comp": "warn",
+    "comma-dangle": "off",
+    "@typescript-eslint/comma-dangle": "off"
   }
 }
