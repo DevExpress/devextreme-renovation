@@ -1,52 +1,5 @@
 function view(model: UndefWidget) {
-  return (
-    <div>
-      <div>
-        OneWay:
-        {`${model.oneway}`}|{model.props.oneWayProp}
-      </div>
-
-      <div>
-        TwoWay:
-        {`${model.twoway}`}
-      </div>
-
-      <div>
-        Event:
-        {`${model.someevent}`}
-      </div>
-
-      <div>
-        Ref:
-        {`${model.someref}`}
-      </div>
-
-      <div>
-        ForwardRef:
-        {`${model.someforwardref}`}
-      </div>
-
-      <div>
-        Slot:
-        {`${model.someslot}`}
-      </div>
-
-      <div>
-        Template:
-        {`${model.sometemplate}`}
-      </div>
-
-      <div>
-        Nested:
-        {`${model.nested}`}
-      </div>
-
-      <div>
-        Nested with Init:
-        {`${model.nestedinit}`}
-      </div>
-    </div>
-  );
+  return <div></div>;
 }
 
 export declare type FakeNestedType = {

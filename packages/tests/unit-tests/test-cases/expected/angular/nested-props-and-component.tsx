@@ -86,16 +86,7 @@ class DxUndefWidgetNestedProp extends FakeNested {}
     "anotherNestedPropInit",
   ],
   outputs: ["someEvent", "twoWayPropChange"],
-  template: `<div
-      ><div>OneWay:{{ "" + __oneway + "" }}|{{ oneWayProp }}</div
-      ><div>TwoWay:{{ "" + __twoway + "" }}</div
-      ><div>Event:{{ "" + __someevent + "" }}</div
-      ><div>Ref:{{ "" + __someref + "" }}</div
-      ><div>ForwardRef:{{ "" + __someforwardref + "" }}</div
-      ><div>Slot:{{ "" + __someslot + "" }}</div
-      ><div>Template:{{ "" + __sometemplate + "" }}</div
-      ><div>Nested:{{ "" + __nested + "" }}</div
-      ><div>Nested with Init:{{ "" + __nestedinit + "" }}</div></div
+  template: `<div></div
     ><ng-template #dxslotProp
       ><ng-content select="[slotProp]"></ng-content
     ></ng-template>`,
