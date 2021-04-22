@@ -18,17 +18,8 @@ export class Call extends BaseCall {
     return '';
   }
 
-  getHasOwnArgument(argument:StringLiteral) {
-    return argument;
-  }
-
-  compileHasOwnProperty(_options?: toStringOptions):string {
-    const argument = this.arguments?.[0];
-    if (argument instanceof StringLiteral) {
-      const value = argument.valueOf();
-      return `this.props.${value} !== undefined || this.$options.propsData.hasOwnProperty(${argument})`;
-    }
-    return '';
+  compileHasOwnProperty(value: string, _options?: toStringOptions): string {
+    return `this.props.${value} !== undefined || this.$options.propsData.hasOwnProperty("${value}")`;
   }
 }
 export class New extends Call {

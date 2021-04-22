@@ -9,7 +9,7 @@ import {
 import { PropertyAccess } from './property-access';
 
 export class New extends BaseNew {
-  toString(options?: toStringOptions):string {
+  toString(options?: toStringOptions): string {
     const componentInputs = options?.componentInputs || [];
     if (componentInputs.length) {
       const matchedInput = componentInputs.find(
@@ -38,30 +38,20 @@ export class New extends BaseNew {
 }
 
 export class Call extends BaseCall {
-  toString(options?: toStringOptions): string {
-    if (this.expression.toString() === 'this.props.hasOwnProperty') {
-      const argument = this.arguments?.[0];
-      if (argument instanceof StringLiteral) {
-        const value = argument.valueOf();
-        const nestedNames = options?.members.filter((m) => m.isNested).map((m) => m.name) ?? [];
-        if (
-          this.expression instanceof PropertyAccess
-          && this.arguments.length > 0
-          && nestedNames.some((name) => name === value.toString())
-        ) {
-          return `${this.expression.expression.toString(options)}.${value} !== undefined || props.hasOwnProperty(${argument})`;
-        }
-        const twoWayNames = options?.members
-          .filter((m) => m.decorators?.[0]?.toString() === '@TwoWay()').map((m) => m.name) ?? [];
-        if (
-          this.expression instanceof PropertyAccess
-          && this.arguments.length > 0
-          && twoWayNames.some((name) => name === value.toString())
-        ) {
-          return `${this.expression.expression.toString(options)}.${value} !== undefined || props.hasOwnProperty(${argument})`;
-        }
-      }
+  compileHasOwnProperty(value: string, options?: toStringOptions) {
+    const nestedAndTwoWayNames = options?.members.filter(
+      (m) => m.isNested || m.decorators?.[0]?.toString() === '@TwoWay()')
+      .map((m) => m.name) ?? [];
+    const isTwoWayOrNested = (nestedAndTwoWayNames.some((name) => name === value.toString()));
+    if (
+      this.expression instanceof PropertyAccess
+      && this.arguments.length > 0
+      && isTwoWayOrNested
+    ) {
+      const propsContext = options?.newComponentContext ? `${options?.newComponentContext}.` : '';
+      return `${this.expression.expression.toString(options)}.${value} !== undefined || ${propsContext
+        }props.hasOwnProperty("${value}")`;
     }
-    return super.toString(options);
+    return super.compileHasOwnProperty(value, options);
   }
 }

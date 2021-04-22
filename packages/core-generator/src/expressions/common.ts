@@ -3,6 +3,7 @@ import { SyntaxKind } from '../syntaxKind';
 import { ExpressionWithExpression, Expression, SimpleExpression } from './base';
 import { TypeExpression } from './type';
 import { compileTypeParameters } from '../utils/string';
+import { StringLiteral } from './literal';
 
 function getIdentifierExpressionFromVariable(
   expression: Expression,
@@ -86,16 +87,31 @@ export class Call extends ExpressionWithExpression {
   }
 
   toString(options?: toStringOptions) {
-    return `${this.expression.toString(
-      options,
-    )}${this.compileTypeArguments()}(${this.argumentsArray
-      .map((a) => a.toString(options))
-      .join(',')})`;
+    if (this.expression.toString() === 'this.props.hasOwnProperty') {
+      const argument = this.arguments?.[0];
+      if (argument instanceof StringLiteral) {
+        const value = argument.valueOf();
+        return this.compileHasOwnProperty(value, options);
+      }
+    }
+    return this.compileDefaultToString(options);
   }
 
   getDependency(options: toStringOptions) {
     const argumentsDependency = this.argumentsArray.reduce((d: string[], a) => d.concat(a.getDependency(options)), []);
     return super.getDependency(options).concat(argumentsDependency);
+  }
+
+  compileHasOwnProperty(_value: string, options?: toStringOptions) {
+    return this.compileDefaultToString(options);
+  }
+
+  compileDefaultToString(options?: toStringOptions) {
+    return `${this.expression.toString(
+      options,
+    )}${this.compileTypeArguments()}(${this.argumentsArray
+      .map((a) => a.toString(options))
+      .join(',')})`;
   }
 }
 
@@ -121,7 +137,7 @@ export class CallChain extends Call {
   toString(options?: toStringOptions) {
     return `${this.expression.toString(options)}${
       this.questionDotToken
-    }(${this.argumentsArray.map((a) => a.toString(options)).join(',')})`;
+      }(${this.argumentsArray.map((a) => a.toString(options)).join(',')})`;
   }
 }
 
