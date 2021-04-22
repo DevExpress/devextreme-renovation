@@ -13,5 +13,5 @@
       "@devextreme-generator/vue": ["./vue-generator/src"],
       "@devextreme/vdom": ["./vdom/src"]
     }
-  },
+  }
 }

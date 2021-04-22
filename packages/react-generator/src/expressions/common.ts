@@ -4,7 +4,6 @@ import {
   New as BaseNew,
   toStringOptions,
   Call as BaseCall,
-  StringLiteral
 } from '@devextreme-generator/core';
 import { PropertyAccess } from './property-access';
 
@@ -38,9 +37,10 @@ export class New extends BaseNew {
 }
 
 export class Call extends BaseCall {
-  compileHasOwnProperty(value: string, options?: toStringOptions) {
+  compileHasOwnProperty(value: string, options?: toStringOptions):string {
     const nestedAndTwoWayNames = options?.members.filter(
-      (m) => m.isNested || m.decorators?.[0]?.toString() === '@TwoWay()')
+      (m) => m.isNested || m.decorators?.[0]?.toString() === '@TwoWay()',
+    )
       .map((m) => m.name) ?? [];
     const isTwoWayOrNested = (nestedAndTwoWayNames.some((name) => name === value.toString()));
     if (
@@ -50,7 +50,7 @@ export class Call extends BaseCall {
     ) {
       const propsContext = options?.newComponentContext ? `${options?.newComponentContext}.` : '';
       return `${this.expression.expression.toString(options)}.${value} !== undefined || ${propsContext
-        }props.hasOwnProperty("${value}")`;
+      }props.hasOwnProperty("${value}")`;
     }
     return super.compileHasOwnProperty(value, options);
   }

@@ -1,5 +1,4 @@
-import { Call as BaseCall, StringLiteral } from '@devextreme-generator/core';
-import { Function } from './functions/function';
+import { Call as BaseCall } from '@devextreme-generator/core';
 import { toStringOptions } from '../types';
 
 export class Call extends BaseCall {
@@ -7,7 +6,7 @@ export class Call extends BaseCall {
     const nestedNames = options?.members.filter((m) => m.isNested).map((m) => m.name) ?? [];
     if (
       this.arguments.length > 0
-      && nestedNames.some((name) => name === value.toString())
+      && nestedNames.some((name: string) => name === value)
     ) {
       return `this.hasOwnProperty("__${value}") || this.${value} !== undefined`;
     }

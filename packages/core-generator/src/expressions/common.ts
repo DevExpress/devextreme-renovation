@@ -86,7 +86,7 @@ export class Call extends ExpressionWithExpression {
     return this.argumentsArray.map((a) => a);
   }
 
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions):string {
     if (this.expression.toString() === 'this.props.hasOwnProperty') {
       const argument = this.arguments?.[0];
       if (argument instanceof StringLiteral) {
@@ -102,11 +102,11 @@ export class Call extends ExpressionWithExpression {
     return super.getDependency(options).concat(argumentsDependency);
   }
 
-  compileHasOwnProperty(_value: string, options?: toStringOptions) {
+  compileHasOwnProperty(_value: string, options?: toStringOptions):string {
     return this.compileDefaultToString(options);
   }
 
-  compileDefaultToString(options?: toStringOptions) {
+  compileDefaultToString(options?: toStringOptions):string {
     return `${this.expression.toString(
       options,
     )}${this.compileTypeArguments()}(${this.argumentsArray
@@ -116,7 +116,7 @@ export class Call extends ExpressionWithExpression {
 }
 
 export class New extends Call {
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions):string {
     return `${SyntaxKind.NewKeyword} ${super.toString(options)}`;
   }
 }
@@ -134,15 +134,15 @@ export class CallChain extends Call {
     this.questionDotToken = questionDotToken;
   }
 
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions):string {
     return `${this.expression.toString(options)}${
       this.questionDotToken
-      }(${this.argumentsArray.map((a) => a.toString(options)).join(',')})`;
+    }(${this.argumentsArray.map((a) => a.toString(options)).join(',')})`;
   }
 }
 
 export class NonNullExpression extends ExpressionWithExpression {
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions): string {
     return `${super.toString(options).replace(/[?!]$/, '')}!`;
   }
 }

@@ -319,7 +319,7 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it.only("nested-props-and-component", function () {
+  mocha.it("nested-props-and-component", function () {
     this.testGenerator(this.test!.title);
   });
 

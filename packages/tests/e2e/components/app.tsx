@@ -47,7 +47,6 @@ import ListTemplate from "./list-template";
 
 import DynamicComponent from "./dynamic-components/dynamic-component";
 import StylesWidget from "./styles";
-import UndefWidget from "./nested-undefined-component";
 
 function view(model: App) {
   return (
@@ -159,7 +158,6 @@ function view(model: App) {
       <InlineArrowFunction />
       <DynamicComponent />
       <StylesWidget />
-      <UndefWidget twoWayProp={2}/>
     </div>
   );
 }
