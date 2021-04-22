@@ -28,7 +28,7 @@
     "func-names": "warn",
     "guard-for-in": "warn",
     "import/no-cycle": "warn",
-    "max-classes-per-file": "warn",
+    "max-classes-per-file": "off",
     "max-len": "warn",
     "no-bitwise": "warn",
     "no-console": "warn",

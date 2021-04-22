@@ -155,7 +155,7 @@ export class AsExpression extends ExpressionWithExpression {
     this.type = type;
   }
 
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions):string {
     return `${super.toString(options)} ${SyntaxKind.AsKeyword} ${this.type}`;
   }
 }

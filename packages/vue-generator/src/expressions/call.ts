@@ -1,18 +1,20 @@
-import {
-  PropertyAccessChain,
-  Call as BaseCall,
-} from '@devextreme-generator/angular';
+import { PropertyAccessChain } from '@devextreme-generator/angular';
 import {
   Identifier,
   ObjectLiteral,
   PropertyAssignment,
   SimpleExpression,
   SyntaxKind,
+  Call as BaseCall,
 } from '@devextreme-generator/core';
 
 import { toStringOptions } from '../types';
 
 export class Call extends BaseCall {
+  compileTypeArguments() {
+    return '';
+  }
+
   compileHasOwnProperty(value: string, _options?: toStringOptions): string {
     return `this.props.${value} !== undefined || this.$options.propsData.hasOwnProperty("${value}")`;
   }
