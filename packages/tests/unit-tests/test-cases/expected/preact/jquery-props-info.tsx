@@ -33,6 +33,10 @@ export default class Widget extends BaseComponent {
         "state3Change",
         "defaultState4",
         "state4Change",
+        "state1",
+        "state2",
+        "state3",
+        "state4",
       ],
     };
   }
