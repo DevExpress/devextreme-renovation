@@ -8,16 +8,11 @@ import {
   PropertyAssignment,
   SimpleExpression,
   SyntaxKind,
-  StringLiteral
 } from '@devextreme-generator/core';
 
 import { toStringOptions } from '../types';
 
 export class Call extends BaseCall {
-  compileTypeArguments(): string {
-    return '';
-  }
-
   compileHasOwnProperty(value: string, _options?: toStringOptions): string {
     return `this.props.${value} !== undefined || this.$options.propsData.hasOwnProperty("${value}")`;
   }
@@ -33,7 +28,7 @@ export class New extends Call {
         const defaultValue = new PropertyAccessChain(
           this.expression,
           SyntaxKind.QuestionDotToken,
-          new Identifier('__defaultNestedValues.default()')
+          new Identifier('__defaultNestedValues.default()'),
         );
         return defaultValue.toString();
       }
