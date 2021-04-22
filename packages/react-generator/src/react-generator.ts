@@ -205,7 +205,7 @@ export class ReactGenerator extends BaseGenerator {
   createCall(
     expression: Expression,
     typeArguments: TypeExpression[] | undefined,
-    argumentsArray?: Expression[]
+    argumentsArray?: Expression[],
   ) {
     return new Call(expression, typeArguments, argumentsArray);
   }

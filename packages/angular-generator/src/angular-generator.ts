@@ -208,7 +208,7 @@ export class AngularGenerator extends Generator {
   createCall(
     expression: Expression,
     typeArguments: TypeExpression[] | undefined,
-    argumentsArray?: Expression[]
+    argumentsArray?: Expression[],
   ) {
     return new Call(expression, typeArguments, argumentsArray);
   }

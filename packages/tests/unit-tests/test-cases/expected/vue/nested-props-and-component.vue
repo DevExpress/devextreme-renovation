@@ -23,6 +23,12 @@ export const WidgetProps = {
   someForwardRef: {
     type: Function,
   },
+  templateProp: {
+    type: String,
+    default() {
+      return "templateProp";
+    },
+  },
   nestedProp: {
     type: Array,
   },
@@ -172,7 +178,7 @@ export const DxUndefWidget = {
         someRef: this.someRef,
         someForwardRef: this.someForwardRef?.(),
         slotProp: this.$slots.slotProp,
-        templateProp: this.$scopedSlots.templateProp,
+        templateProp: this.templateProp,
         nestedProp: this.__getNestedNestedProp,
         anotherNestedPropInit: this.__getNestedAnotherNestedPropInit,
         twoWayPropChange: this.twoWayPropChange,
