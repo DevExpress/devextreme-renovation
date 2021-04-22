@@ -873,7 +873,7 @@ mocha.describe("Vue-generator", function () {
 
         assert.strictEqual(
           getAst(expression.toString({ members: [] })),
-          getAst(`p: { 
+          getAst(`p: {
             type: Number,
             default(){
               return 10;
@@ -893,7 +893,7 @@ mocha.describe("Vue-generator", function () {
 
         assert.strictEqual(
           getAst(expression.toString({ members: [] })),
-          getAst(`p: { 
+          getAst(`p: {
             type: String,
             default(){
               return "10";
@@ -924,7 +924,7 @@ mocha.describe("Vue-generator", function () {
 
         assert.strictEqual(
           getAst(expression.toString({ members: [] })),
-          getAst(`p: { 
+          getAst(`p: {
             type: Function,
             default: () => null
           }`)
@@ -977,7 +977,7 @@ mocha.describe("Vue-generator", function () {
 
       mocha.describe("Template", function () {
         mocha.it(
-          "Template props toString should return empty string",
+          "Template props toString should return default value",
           function () {
             const expression = generator.createProperty(
               [createDecorator("Template")],
@@ -988,7 +988,13 @@ mocha.describe("Vue-generator", function () {
               generator.createTrue()
             );
 
-            assert.strictEqual(expression.toString({ members: [] }), "");
+            assert.strictEqual(getAst(expression.toString({ members: [] })),
+            getAst(`p: {
+              type: String,
+              default(){
+                return "p"
+              }
+            }`));
           }
         );
       });
@@ -1619,7 +1625,7 @@ mocha.describe("Vue-generator", function () {
             }) as string
           ),
           removeSpaces(
-            `<div style="display:contents"><slot name="contentTemplate"></slot></div>`
+            `<div style="display:contents"><slot :name="contentTemplate"></slot></div>`
           )
         );
       });
@@ -1672,7 +1678,7 @@ mocha.describe("Vue-generator", function () {
             }) as string
           ),
           removeSpaces(
-            `<div style="display:contents"><slot name="contentTemplate"></slot></div>`
+            `<div style="display:contents"><slot :name="contentTemplate"></slot></div>`
           )
         );
       });
@@ -2583,7 +2589,7 @@ mocha.describe("Vue-generator", function () {
               })
             ),
             removeSpaces(`
-                    <slot name="template" v-bind:text="props.text" v-if="condition"></slot>
+                    <slot :name="template" v-bind:text="props.text" v-if="condition"></slot>
                     <template v-else>{{text}}</template>
                 `)
           );
@@ -2730,7 +2736,7 @@ mocha.describe("Vue-generator", function () {
               })
             ),
             removeSpaces(`
-                        <template v-if="!$scopedSlots.template"><slot></slot></template>
+                        <template v-if="!$scopedSlots[template]"><slot></slot></template>
                   `)
           );
         });
@@ -3310,7 +3316,7 @@ mocha.describe("Vue-generator", function () {
             componentContext: "viewModel",
             newComponentContext: "",
           }),
-          `<slot name="template" ></slot>`
+          `<slot :name="template" ></slot>`
         );
       });
 
@@ -3348,7 +3354,7 @@ mocha.describe("Vue-generator", function () {
             componentContext: "viewModel",
             newComponentContext: "",
           }),
-          `<slot name="template" v-bind:p1="10" v-bind:p2="'11'"></slot>`
+          `<slot :name="template" v-bind:p1="10" v-bind:p2="'11'"></slot>`
         );
       });
 
@@ -3386,7 +3392,7 @@ mocha.describe("Vue-generator", function () {
             componentContext: "viewModel",
             newComponentContext: "",
           }),
-          `<slot name="template" ></slot>`
+          `<slot :name="template" ></slot>`
         );
       });
 
@@ -3419,7 +3425,7 @@ mocha.describe("Vue-generator", function () {
             componentContext: "viewModel",
             newComponentContext: "",
           }),
-          `<slot name="template" v-bind="item"></slot>`
+          `<slot :name="template" v-bind="item"></slot>`
         );
       });
 
@@ -3476,7 +3482,7 @@ mocha.describe("Vue-generator", function () {
             componentContext: "viewModel",
             newComponentContext: "",
           }),
-          `<slot name="template" v-if="$scopedSlots.template"></slot>`
+          `<slot :name="template" v-if="$scopedSlots[template]"></slot>`
         );
       });
     });
@@ -3952,7 +3958,7 @@ mocha.describe("Vue-generator", function () {
             removeSpaces(element.toString(options)),
             removeSpaces(
               `<div>
-                <component 
+                <component
                   v-bind:is="DynamicComponent"
                   v-if="condition"
                 />
@@ -4046,7 +4052,7 @@ mocha.describe("Vue-generator", function () {
             removeSpaces(`
             <div>
               <template v-for="item of DynamicComponent">
-                <component 
+                <component
                   v-bind:is="item"
                   @event="value"
                 />
@@ -4446,7 +4452,7 @@ mocha.describe("Vue-generator", function () {
             removeSpaces(`
                         <ComponentWithTemplate>
                             <template v-slot:contentTemplate="slotProps">
-                                <DxWidget 
+                                <DxWidget
                                     :height="slotProps.height"
                                     :width="slotProps.width"
                                     :children="slotProps.children"/>

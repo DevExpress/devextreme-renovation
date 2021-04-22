@@ -1,10 +1,17 @@
 <template>
   <div style="display: contents"
-    ><slot name="contentTemplate" v-bind:childRef="forwardRef_child"></slot
+    ><slot :name="contentTemplate" v-bind:childRef="forwardRef_child"></slot
   ></div>
 </template>
 <script>
-const Props = {};
+const Props = {
+  contentTemplate: {
+    type: String,
+    default() {
+      return "contentTemplate";
+    },
+  },
+};
 export const DxRefOnChildrenTemplate = {
   name: "RefOnChildrenTemplate",
   props: Props,
@@ -13,7 +20,7 @@ export const DxRefOnChildrenTemplate = {
       return {};
     },
     props() {
-      return { contentTemplate: this.$scopedSlots.contentTemplate };
+      return { contentTemplate: this.contentTemplate };
     },
   },
   watch: {

@@ -110,7 +110,6 @@ export class Property extends BaseProperty {
       this.isEvent
       || (this.isRef && !this.inherited)
       || this.isSlot
-      || this.isTemplate
       || (this.isNested && !isTypeArray(this.type))
     ) {
       return '';
@@ -118,7 +117,7 @@ export class Property extends BaseProperty {
 
     const type = this.isRefProp || this.isForwardRefProp
       ? 'Function'
-      : calculatePropertyType(this.type, this.initializer);
+      : this.isTemplate ? 'String' : calculatePropertyType(this.type, this.initializer);
     const parts = [];
     if (type) {
       parts.push(`type: ${type}`);
@@ -132,10 +131,14 @@ export class Property extends BaseProperty {
       !this.isNested
       || (this.isNested && this.name === '__defaultNestedValues')
     ) {
-      if (this.initializer && type !== 'Function') {
+      if (this.isTemplate) {
         parts.push(`default(){
-                  return ${this.initializer.toString(options)}
-              }`);
+          return "${this.name}"
+        }`);
+      } else if (this.initializer && type !== 'Function') {
+        parts.push(`default(){
+          return ${this.initializer.toString(options)}
+        }`);
       } else if (this.initializer) {
         parts.push(`default:${this.initializer}`);
       } else if (!this.initializer && type.indexOf('Boolean') >= 0) {
@@ -163,7 +166,14 @@ export class Property extends BaseProperty {
       return `${componentContext}${this.name}`;
     }
     if (this.isTemplate) {
-      return `${componentContext}$scopedSlots.${this.name}`;
+      const template = componentContext ? {
+        context: componentContext,
+        name: this.name,
+      } : {
+        context: '$scopedSlots',
+        name: `[${this.name}]`,
+      };
+      return `${template.context}${template.name}`;
     }
     if (this.isSlot) {
       const name = this.name === 'children' ? 'default' : this.name;

@@ -1,7 +1,7 @@
 <template>
   <div
     >TemplateDefaultValue<slot
-      name="defaultCompTemplate"
+      :name="defaultCompTemplate"
       v-bind:optionalValue="stringToRender"
       v-bind:value="'twdComp'"
     >
@@ -17,13 +17,13 @@
           :optionalValue="defaultCompTemplateDefault.optionalValue"
           :value="defaultCompTemplateDefault.value"
       /></div> </slot
-    ><slot name="defaultCompTemplate" v-bind:value="stringToRender">
+    ><slot :name="defaultCompTemplate" v-bind:value="stringToRender">
       <div
         style="display: contents"
         :set="(defaultCompTemplateDefault = { value: stringToRender })"
         ><WidgetWithProps :value="defaultCompTemplateDefault.value"
       /></div> </slot
-    ><slot name="defaultFuncTemplate" v-bind:value="stringToRender">
+    ><slot :name="defaultFuncTemplate" v-bind:value="stringToRender">
       <div
         style="display: contents"
         :set="(defaultFuncTemplateDefault = { value: stringToRender })"
@@ -39,6 +39,18 @@
 <script>
 import { DxWidgetWithProps as WidgetWithProps } from "./dx-widget-with-props";
 export const TemplateDefaultValueProps = {
+  defaultCompTemplate: {
+    type: String,
+    default() {
+      return "defaultCompTemplate";
+    },
+  },
+  defaultFuncTemplate: {
+    type: String,
+    default() {
+      return "defaultFuncTemplate";
+    },
+  },
   stringToRender: {
     type: String,
     default() {
@@ -58,8 +70,8 @@ export const DxTemplateDefaultValue = {
     },
     props() {
       return {
-        defaultCompTemplate: this.$scopedSlots.defaultCompTemplate,
-        defaultFuncTemplate: this.$scopedSlots.defaultFuncTemplate,
+        defaultCompTemplate: this.defaultCompTemplate,
+        defaultFuncTemplate: this.defaultFuncTemplate,
         stringToRender: this.stringToRender,
       };
     },

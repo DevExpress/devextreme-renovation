@@ -1,14 +1,14 @@
 <template>
   <div
-    ><slot name="headerTemplate">
+    ><slot :name="headerTemplate">
       <div style="display: contents" :set="(headerTemplateDefault = {})">{{
         null
       }}</div> </slot
     ><slot
-      name="contentTemplate"
+      :name="contentTemplate"
       v-bind:data="{ p1: 'value' }"
       v-bind:index="10"
-      v-if="$scopedSlots.contentTemplate"
+      v-if="$scopedSlots[contentTemplate]"
     >
       <div
         style="display: contents"
@@ -16,10 +16,10 @@
         ><div>{{ contentTemplateDefault.data.p1 }}</div></div
       > </slot
     ><slot
-      name="template"
+      :name="template"
       v-bind:textProp="'textPropValue'"
       v-bind:textPropExpr="'textPropExrpValue'"
-      v-if="!$scopedSlots.contentTemplate"
+      v-if="!$scopedSlots[contentTemplate]"
     >
       <div
         style="display: contents"
@@ -32,16 +32,16 @@
         ><div></div
       ></div> </slot
     ><slot
-      name="footerTemplate"
+      :name="footerTemplate"
       v-bind:someProp="someProp"
-      v-if="$scopedSlots.footerTemplate"
+      v-if="$scopedSlots[footerTemplate]"
     >
       <div
         style="display: contents"
         :set="(footerTemplateDefault = { someProp: myvar })"
         ><div></div
       ></div> </slot
-    ><slot name="componentTemplate" v-bind:value="'Test Value'">
+    ><slot :name="componentTemplate" v-bind:value="'Test Value'">
       <div
         style="display: contents"
         :set="(componentTemplateDefault = { value: 'Test Value' })"
@@ -61,6 +61,36 @@ export const WidgetInput = {
       return false;
     },
   },
+  headerTemplate: {
+    type: String,
+    default() {
+      return "headerTemplate";
+    },
+  },
+  template: {
+    type: String,
+    default() {
+      return "template";
+    },
+  },
+  contentTemplate: {
+    type: String,
+    default() {
+      return "contentTemplate";
+    },
+  },
+  footerTemplate: {
+    type: String,
+    default() {
+      return "footerTemplate";
+    },
+  },
+  componentTemplate: {
+    type: String,
+    default() {
+      return "componentTemplate";
+    },
+  },
 };
 export const DxWidgetWithTemplate = {
   name: "WidgetWithTemplate",
@@ -75,11 +105,11 @@ export const DxWidgetWithTemplate = {
     props() {
       return {
         someProp: this.someProp,
-        headerTemplate: this.$scopedSlots.headerTemplate,
-        template: this.$scopedSlots.template,
-        contentTemplate: this.$scopedSlots.contentTemplate,
-        footerTemplate: this.$scopedSlots.footerTemplate,
-        componentTemplate: this.$scopedSlots.componentTemplate,
+        headerTemplate: this.headerTemplate,
+        template: this.template,
+        contentTemplate: this.contentTemplate,
+        footerTemplate: this.footerTemplate,
+        componentTemplate: this.componentTemplate,
       };
     },
   },

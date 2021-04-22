@@ -2,6 +2,8 @@
   "name": "@devextreme-generator/react",
   "version": "1.1.0",
   "description": "DevExtreme react component generator",
+  "author": "Developer Express Inc.",
+  "license": "UNLICENSED",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -11,10 +13,8 @@
     "build": "tsc --project ./tsconfig.build.json",
     "build:watch": "tsc --project ./tsconfig.build.json --watch",
     "pack": "npm run build && npm pack && shx cp *.tgz package.tgz",
-    "clear": "shx rm -rf dist"
+    "clear": "shx rm -rf dist && shx rm -f *.tgz"
   },
-  "author": "Developer Express Inc.",
-  "license": "MIT",
   "dependencies": {
     "@devextreme-generator/core": "1.1.0"
   },
