@@ -4,7 +4,7 @@
       ><div :key="item.key">{{ item.text }}</div></template
     ><template v-for="item of items"
       ><div :key="item.key"
-        ><slot name="ListItem" v-bind:value="item.text">
+        ><slot :name="ListItem" v-bind:value="item.text">
           <div
             style="display: contents"
             :set="(ListItemDefault = { value: item.text })"
@@ -13,7 +13,7 @@
         ><div class="footer"></div></div></template
     ><template v-for="item of items"
       ><div style="display: contents" :key="item.key"
-        ><slot name="ListItem" :value="item.text" @click="global_noop">
+        ><slot :name="ListItem" :value="item.text" @click="global_noop">
           <div
             style="display: contents"
             :set="
@@ -25,7 +25,7 @@
           /></div> </slot></div></template
     ><template v-for="item of items"
       ><div style="display: contents" :key="item.key" v-if="item.text !== ''"
-        ><slot name="ListItem" :value="item.text" @click="global_noop">
+        ><slot :name="ListItem" :value="item.text" @click="global_noop">
           <div
             style="display: contents"
             :set="
@@ -44,6 +44,12 @@ export const ListInput = {
   items: {
     type: Array,
   },
+  ListItem: {
+    type: String,
+    default() {
+      return "ListItem";
+    },
+  },
 };
 export const DxList = {
   name: "List",
@@ -61,7 +67,7 @@ export const DxList = {
       return {};
     },
     props() {
-      return { items: this.items, ListItem: this.$scopedSlots.ListItem };
+      return { items: this.items, ListItem: this.ListItem };
     },
   },
 };

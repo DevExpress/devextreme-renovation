@@ -1,14 +1,20 @@
 <template>
-  <div style="display: contents">
-    <slot name="contentTemplate">
-      <div style="display: contents" :set="(contentTemplateDefault = {})">
-        <div />
-      </div>
-    </slot>
-  </div>
+  <div style="display: contents"
+    ><slot :name="contentTemplate">
+      <div style="display: contents" :set="(contentTemplateDefault = {})"
+        ><div
+      /></div> </slot
+  ></div>
 </template>
 <script>
-export const Props = {};
+export const Props = {
+  contentTemplate: {
+    type: String,
+    default() {
+      return "contentTemplate";
+    },
+  },
+};
 export const DxTestComponent = {
   name: "TestComponent",
   props: Props,
@@ -17,7 +23,7 @@ export const DxTestComponent = {
       return {};
     },
     props() {
-      return { contentTemplate: this.$scopedSlots.contentTemplate };
+      return { contentTemplate: this.contentTemplate };
     },
   },
 };
