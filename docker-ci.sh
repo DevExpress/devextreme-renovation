@@ -184,7 +184,7 @@ function run_test_styles {
 }
 
 function start_runner_watchdog {
-    local last_suite_time_file="$PWD/testing/LastSuiteTime.txt"
+    local last_suite_time_file="$PWD/DevExtreme/testing/LastSuiteTime.txt"
     local last_suite_time=unknown
 
     while true; do
