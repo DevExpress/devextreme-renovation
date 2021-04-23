@@ -984,8 +984,7 @@ export class ReactComponent extends Component {
         this.getToStringOptions(),
       )}, [${m.getDependency({
         members: this.members,
-        componentContext:
-                                                    SyntaxKind.ThisKeyword,
+        componentContext: SyntaxKind.ThisKeyword,
       })}]);`,
     )
     .join('\n')}

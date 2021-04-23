@@ -37,7 +37,7 @@ export class New extends BaseNew {
 }
 
 export class Call extends BaseCall {
-  compileHasOwnProperty(value: string, options?: toStringOptions):string {
+  compileHasOwnProperty(value: string, options?: toStringOptions): string {
     const nestedAndTwoWayNames = options?.members.filter(
       (m) => m.isNested || m.decorators?.[0]?.toString() === '@TwoWay()',
     )

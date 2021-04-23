@@ -116,7 +116,7 @@ export class Call extends ExpressionWithExpression {
 }
 
 export class New extends Call {
-  toString(options?: toStringOptions):string {
+  toString(options?: toStringOptions): string {
     return `${SyntaxKind.NewKeyword} ${super.toString(options)}`;
   }
 }
@@ -134,7 +134,7 @@ export class CallChain extends Call {
     this.questionDotToken = questionDotToken;
   }
 
-  toString(options?: toStringOptions):string {
+  toString(options?: toStringOptions): string {
     return `${this.expression.toString(options)}${
       this.questionDotToken
     }(${this.argumentsArray.map((a) => a.toString(options)).join(',')})`;
@@ -155,7 +155,7 @@ export class AsExpression extends ExpressionWithExpression {
     this.type = type;
   }
 
-  toString(options?: toStringOptions):string {
+  toString(options?: toStringOptions): string {
     return `${super.toString(options)} ${SyntaxKind.AsKeyword} ${this.type}`;
   }
 }
