@@ -2,6 +2,8 @@
   "name": "@devextreme-generator/angular",
   "version": "1.1.1",
   "description": "DevExtreme angular component generator",
+  "author": "Developer Express Inc.",
+  "license": "UNLICENSED",
   "main": "dist/index",
   "types": "dist/index",
   "files": [
@@ -13,8 +15,6 @@
     "pack": "npm run build && npm pack && shx cp *.tgz package.tgz",
     "clear": "shx rm -rf dist && shx rm -f *.tgz"
   },
-  "author": "Developer Express Inc.",
-  "license": "MIT",
   "dependencies": {
     "@devextreme-generator/core": "1.1.1"
   },

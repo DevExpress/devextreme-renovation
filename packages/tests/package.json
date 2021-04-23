@@ -12,7 +12,6 @@
     "clear:screenshots": "shx rm -rf ./e2e/tests/etalon && shx rm -rf ./e2e/tests/temp"
   },
   "author": "Developer Express Inc.",
-  "license": "MIT",
   "devDependencies": {
     "@angular/cdk": "^11.0.2",
     "@angular/common": "^11.0.4",
