@@ -39,12 +39,12 @@ import {
 import { CommonModule } from "@angular/common";
 
 @Directive({
-  selector: "dx-undef-widget dxi-another-nested-prop-init",
+  selector: "dxi-another-nested-prop-init",
 })
 class DxUndefWidgetAnotherNestedPropInit extends FakeNested {}
 
 @Directive({
-  selector: "dx-undef-widget dxi-nested-prop",
+  selector: "dxi-nested-prop",
 })
 class DxUndefWidgetNestedProp extends FakeNested {}
 

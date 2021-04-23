@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - master
+      - releases/*
   pull_request:
     branches:
       - '**'
@@ -25,7 +26,7 @@ jobs:
       - name: Bootstrap
         run: npm run bootstrap:ci
 
-      - name: Build
+      - name: Lint
         run: npm run lint
 
       - name: Build

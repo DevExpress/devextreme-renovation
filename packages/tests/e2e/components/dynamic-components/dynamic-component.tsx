@@ -51,7 +51,7 @@ function view({
         id={"dynamic-component-button-with-template"}
         // text="10"  https://github.com/DevExpress/devextreme-renovation/issues/545
         {...spread}
-        template={({ text }) => (
+        template={({text}) => (
           <div
             style={{
               backgroundColor: "black",
@@ -91,10 +91,9 @@ export default class DynamicComponent extends JSXComponent(Props) {
     return ButtonWithTemplate;
   }
 
-  get spread(): { text: string; template: null } {
+  get spread(): { text: string} {
     return {
-      text: this.value.toString(),
-      template: null,
+      text: this.value.toString()
     };
   }
 

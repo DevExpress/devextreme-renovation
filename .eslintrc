@@ -1,48 +1,56 @@
 {
-    "extends": [
-        "devextreme/typescript"
-    ],
-    "env": {
-        "browser": true,
-        "node": true,
-        "jest": true
-    },
-    "ignorePatterns": ["packages/tests", "node_modules", "dist"],
-    "parserOptions": {
-        "project": ["./tsconfig.json", "./packages/*/tsconfig.json"]
-    },
-    "rules": {
-        "@typescript-eslint/ban-types": "warn",
-        "@typescript-eslint/explicit-module-boundary-types": "warn",
-        "@typescript-eslint/naming-convention": "warn",
-        "@typescript-eslint/no-explicit-any": "warn",
-        "@typescript-eslint/no-non-null-assertion": "warn",
-        "@typescript-eslint/no-shadow": "warn",
-        "@typescript-eslint/no-throw-literal": "warn",
-        "@typescript-eslint/no-unused-vars": "warn",
-        "@typescript-eslint/no-use-before-define": "warn",
-        "class-methods-use-this": "warn",
-        "func-names": "warn",
-        "guard-for-in": "warn",
-        "import/no-cycle": "warn",
-        "max-classes-per-file": "warn",
-        "max-len": "warn",
-        "no-bitwise": "warn",
-        "no-console": "warn",
-        "no-eval": "warn",
-        "no-irregular-whitespace": "warn",
-        "no-nested-ternary": "warn",
-        "no-param-reassign": "warn",
-        "no-plusplus": "warn",
-        "no-restricted-globals": "warn",
-        "no-restricted-syntax": "warn",
-        "no-underscore-dangle": "warn",
-        "prefer-destructuring": "off", // This rule may be fixed but we has a problem with TS after auto-fix
-        "prefer-spread": "warn",
-        "react/destructuring-assignment": "warn",
-        "react/no-deprecated": "warn",
-        "react/no-string-refs": "warn",
-        "react/prop-types": "warn",
-        "react/sort-comp": "warn"
-    }
+  "extends": [
+    "devextreme/typescript"
+  ],
+  "env": {
+    "browser": true,
+    "node": true,
+    "jest": true
+  },
+  "ignorePatterns": [
+    "packages/tests",
+    "node_modules",
+    "dist",
+    "packages/vdom/src/mocked" // Temporary ignored because lot of errors. Now we need just copy package with minimal changes.
+  ],
+  "parserOptions": {
+    "project": [
+      "./tsconfig.json",
+      "./packages/*/tsconfig.json"
+    ]
+  },
+  "rules": {
+    "@typescript-eslint/ban-types": "warn",
+    "@typescript-eslint/explicit-module-boundary-types": "warn",
+    "@typescript-eslint/naming-convention": "warn",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-non-null-assertion": "warn",
+    "@typescript-eslint/no-shadow": "warn",
+    "@typescript-eslint/no-throw-literal": "warn",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-use-before-define": "warn",
+    "class-methods-use-this": "warn",
+    "func-names": "warn",
+    "guard-for-in": "warn",
+    "import/no-cycle": "warn",
+    "max-classes-per-file": "warn",
+    "max-len": "warn",
+    "no-bitwise": "warn",
+    "no-console": "warn",
+    "no-eval": "warn",
+    "no-irregular-whitespace": "warn",
+    "no-nested-ternary": "warn",
+    "no-param-reassign": "warn",
+    "no-plusplus": "warn",
+    "no-restricted-globals": "warn",
+    "no-restricted-syntax": "warn",
+    "no-underscore-dangle": "warn",
+    "prefer-destructuring": "off", // This rule may be fixed but we has a problem with TS after auto-fix
+    "prefer-spread": "warn",
+    "react/destructuring-assignment": "warn",
+    "react/no-deprecated": "warn",
+    "react/no-string-refs": "warn",
+    "react/prop-types": "warn",
+    "react/sort-comp": "warn"
+  }
 }
