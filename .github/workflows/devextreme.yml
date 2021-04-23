@@ -13,22 +13,13 @@ on:
 jobs:
   build-generators:
     name: Build Generators
-    runs-on: farm
-    env:
-      VM_IMAGE: UBUNTU
-      VM_MEMORY: 3072
-      VM_CPU: 2
-      VM_TIMEOUT: 7200
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Install NodeJS
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-          registry-url: 'http://npmproxy:4873'
-
       - name: Checkout
-        uses: ./../../checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
 
       - name: Install packages
         run: npm install --no-audit --no-fund --ignore-scripts
@@ -46,12 +37,7 @@ jobs:
 
   devextreme-compilation:
     name: DevExtreme Compilation
-    runs-on: farm
-    env:
-      VM_IMAGE: UBUNTU
-      VM_MEMORY: 3072
-      VM_CPU: 2
-      VM_TIMEOUT: 7200
+    runs-on: ubuntu-latest
     needs: [ build-generators ]
 
     strategy:
@@ -59,14 +45,11 @@ jobs:
         TASK: [generate-components, react-compilation-check, angular-compilation-check, vue-compilation-check]
 
     steps:
-      - name: Install NodeJS
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-          registry-url: 'http://npmproxy:4873'
 
       - name: Checkout
-        uses: ./../../checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
 
       - name: Get DevExtreme
         run: git clone https://github.com/DevExpress/DevExtreme
@@ -103,12 +86,7 @@ jobs:
 
   devextreme-qunit-tests:
     name: DevExtreme QUnit Tests
-    runs-on: farm
-    env:
-      VM_IMAGE: UBUNTU
-      VM_MEMORY: 3072
-      VM_CPU: 2
-      VM_TIMEOUT: 7200
+    runs-on: ubuntu-latest
     needs: [ devextreme-compilation ]
 
     strategy:
@@ -123,14 +101,10 @@ jobs:
         run: |
           sudo apt-get install -y dbus-x11 httping x11vnc xvfb
 
-      - name: Install NodeJS
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-          registry-url: 'http://npmproxy:4873'
-
       - name: Checkout
-        uses: ./../../checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
 
       - name: Get DevExtreme
         run: git clone https://github.com/DevExpress/DevExtreme
