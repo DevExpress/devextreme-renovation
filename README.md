@@ -1,6 +1,6 @@
 # Devextreme Generators
 
-**This version are compatible with latest version of DevExtreme**
+This version are compatible with **latest version of DevExtreme**
 
 ## Building
 
@@ -24,11 +24,11 @@ All changes should be merged in `master` branch. After that, these changes shoul
 - `npm run test:testcafe` - run e2e tests
 - `npm run testcafe:start-test-servers` - start testcafe server to check e2e tests run frameworks on next ports:
 
-    - http://localhost:3000/ - Angular
-    - http://localhost:3001/ - React
-    - http://localhost:3002/ - Vue
-    - http://localhost:3003/ - Preact
-    - http://localhost:3004/ - Inferno
+  - <http://localhost:3000/> - Angular
+  - <http://localhost:3001/> - React
+  - <http://localhost:3002/> - Vue
+  - <http://localhost:3003/> - Preact
+  - <http://localhost:3004/> - Inferno
 
 ## Publishing
 
@@ -37,9 +37,9 @@ New version are published automatically by GitHub actions. For this, you need to
 - Checkout to version, which you will update (`releases/v*`)
 - Make sure that you have no `release` branch locally (could have stayed after previous release)
 - Run publish script based on changes since last release:
-    - `npm run publish:patch` - fixes, improvements and refactor
-    - `npm run publish:minor` - new features, probably after that you need to create a PR in DevExtreme repo (to use these features)
-    - `npm run publish:major` - Breaking Changes or next version to continue development while code freeze
+  - `npm run publish:patch` - fixes, improvements and refactor
+  - `npm run publish:minor` - new features, probably after that you need to create a PR in DevExtreme repo (to use these features)
+  - `npm run publish:major` - Breaking Changes or next version to continue development while code freeze
 - Make sure that all packages are updated. After that, changes will be committed to `release` branch and pushed
 - Go to GitHub and create a PR to right branch (`releases/v*`). Check name of PR, it should be `v*.*.*`
 
@@ -54,6 +54,7 @@ After merge, GihHub action will check that version updated in right branch and p
 These packages need to be installed for development
 
 Generators:
+
 - `npm install --save-dev @devextreme-generator/core`
 - `npm install --save-dev @devextreme-generator/angular`
 - `npm install --save-dev @devextreme-generator/inferno`
@@ -67,7 +68,6 @@ Declarations
 Build tools:
 
 - `npm install --save-dev @devextreme-generator/build-helpers`
-
 
 ### Usage
 
