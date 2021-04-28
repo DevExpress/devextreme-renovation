@@ -9,7 +9,7 @@
 
 ## Development
 
-All changes should me merged in `master` branch. After that, these changes should be cherry-picked to the desired version of generator (branch `releases/v*`).
+All changes should be merged in `master` branch. After that, these changes should be cherry-picked to the desired version of generator (branch `releases/v*`).
 
 ## Testing
 
