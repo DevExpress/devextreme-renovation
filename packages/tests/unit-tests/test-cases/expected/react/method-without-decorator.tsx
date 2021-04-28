@@ -11,6 +11,7 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof WidgetInput
 >;
+
 interface Widget {
   props: typeof WidgetInput & RestProps;
   method1: (a: number) => void;
@@ -18,7 +19,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+const Widget: React.FC<typeof WidgetInput & RestProps> = (props) => {
   const __privateMethod = useCallback(function __privateMethod(
     a: number
   ): any {},
@@ -43,8 +44,10 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     method2,
     restAttributes: __restAttributes(),
   });
-}
+};
 
 Widget.defaultProps = {
   ...WidgetInput,
 };
+
+export default Widget;

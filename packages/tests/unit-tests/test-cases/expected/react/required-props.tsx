@@ -16,6 +16,7 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof WidgetInput
 >;
+
 interface Widget {
   props: typeof WidgetInput & RestProps;
   getHeight: number;
@@ -23,7 +24,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+const Widget: React.FC<typeof WidgetInput & RestProps> = (props) => {
   const __getHeight = useCallback(
     function __getHeight(): number {
       return props.size.height;
@@ -46,7 +47,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   );
 
   return view();
-}
+};
 
 function __createDefaultProps() {
   return {
@@ -65,3 +66,4 @@ export function defaultOptions(rule: WidgetOptionRule) {
     ...convertRulesToOptions<typeof WidgetInput>(__defaultOptionRules),
   };
 }
+export default Widget;

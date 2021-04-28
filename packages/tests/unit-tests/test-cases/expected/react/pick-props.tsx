@@ -19,13 +19,14 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof WidgetProps
 >;
+
 interface Widget {
   props: typeof WidgetProps & RestProps;
   innerData: Options;
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetProps & RestProps) {
+const Widget: React.FC<typeof WidgetProps & RestProps> = (props) => {
   const [__state_innerData, __state_setInnerData] = useState<Options>({
     value: "",
   });
@@ -43,8 +44,10 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
     innerData: __state_innerData,
     restAttributes: __restAttributes(),
   });
-}
+};
 
 Widget.defaultProps = {
   ...WidgetProps,
 };
+
+export default Widget;

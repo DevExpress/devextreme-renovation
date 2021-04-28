@@ -28,6 +28,7 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof WidgetWithApiRefInput
 >;
+
 interface WidgetWithApiRef {
   props: typeof WidgetWithApiRefInput & RestProps;
   baseRef?: any;
@@ -76,3 +77,5 @@ export default WidgetWithApiRef;
 WidgetWithApiRef.defaultProps = {
   ...WidgetWithApiRefInput,
 };
+
+export default WidgetWithApiRef;

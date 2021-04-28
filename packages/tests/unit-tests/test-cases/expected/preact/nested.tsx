@@ -13,6 +13,7 @@ declare type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   props: typeof PickedProps & RestProps;
   getColumns: () => any;
@@ -20,7 +21,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof PickedProps & RestProps) {
+const Widget: React.FC<typeof PickedProps & RestProps> = (props) => {
   const __getColumns = useCallback(
     function __getColumns(): any {
       const { columns } = props;
@@ -48,8 +49,10 @@ export default function Widget(props: typeof PickedProps & RestProps) {
     isEditable: __isEditable(),
     restAttributes: __restAttributes(),
   });
-}
+};
 
 Widget.defaultProps = {
   ...PickedProps,
 };
+
+export default Widget;

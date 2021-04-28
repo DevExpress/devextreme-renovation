@@ -71,6 +71,7 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof PickedProps
 >;
+
 interface Widget {
   props: typeof PickedProps & RestProps;
   getColumns: () => any;
@@ -81,7 +82,7 @@ interface Widget {
   __getNestedEditing: typeof EditingProps | undefined;
 }
 
-export default function Widget(props: typeof PickedProps & RestProps) {
+const Widget: React.FC<typeof PickedProps & RestProps> = (props) => {
   const __getColumns = useCallback(
     function __getColumns(): any {
       return __getNestedColumns()?.map((el) =>
@@ -155,8 +156,10 @@ export default function Widget(props: typeof PickedProps & RestProps) {
     __getNestedColumns: __getNestedColumns(),
     __getNestedEditing: __getNestedEditing(),
   });
-}
+};
 
 Widget.defaultProps = {
   ...PickedProps,
 };
+
+export default Widget;

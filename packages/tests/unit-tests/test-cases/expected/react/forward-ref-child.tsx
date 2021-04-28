@@ -16,13 +16,14 @@ import * as React from "react";
 import { useCallback, MutableRefObject, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
+
 interface RefOnChildrenChild {
   props: typeof Props & RestProps;
   method: () => any;
   restAttributes: RestProps;
 }
 
-export default function RefOnChildrenChild(props: typeof Props & RestProps) {
+const RefOnChildrenChild: React.FC<typeof Props & RestProps> = (props) => {
   const __method = useCallback(
     function __method(): any {
       const { nullableRef } = props;
@@ -47,8 +48,10 @@ export default function RefOnChildrenChild(props: typeof Props & RestProps) {
     method: __method,
     restAttributes: __restAttributes(),
   });
-}
+};
 
 RefOnChildrenChild.defaultProps = {
   ...Props,
 };
+
+export default RefOnChildrenChild;

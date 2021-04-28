@@ -24,6 +24,7 @@ declare type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface WidgetWithApiRef {
   props: typeof WidgetWithApiRefInput & RestProps;
   baseRef?: any;
@@ -69,3 +70,5 @@ export default WidgetWithApiRef;
 WidgetWithApiRef.defaultProps = {
   ...WidgetWithApiRefInput,
 };
+
+export default WidgetWithApiRef;

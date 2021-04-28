@@ -19,6 +19,7 @@ import * as React from "react";
 import { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
+
 interface DynamicComponentCreator {
   props: typeof Props & RestProps;
   Components: React.FunctionComponent<Partial<typeof WidgetInput>>[];
@@ -26,9 +27,7 @@ interface DynamicComponentCreator {
   restAttributes: RestProps;
 }
 
-export default function DynamicComponentCreator(
-  props: typeof Props & RestProps
-) {
+const DynamicComponentCreator: React.FC<typeof Props & RestProps> = (props) => {
   const __Components = useCallback(
     function __Components(): React.FunctionComponent<
       Partial<typeof WidgetInput>
@@ -55,8 +54,10 @@ export default function DynamicComponentCreator(
     onComponentClick: __onComponentClick,
     restAttributes: __restAttributes(),
   });
-}
+};
 
 DynamicComponentCreator.defaultProps = {
   ...Props,
 };
+
+export default DynamicComponentCreator;

@@ -16,6 +16,7 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof TemplateTransitWidgetInput
 >;
+
 interface TemplateTransitWidget {
   props: typeof TemplateTransitWidgetInput & RestProps;
   restAttributes: RestProps;
@@ -33,9 +34,9 @@ const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
       ))) ||
   (ComponentProp && ((props: any) => <ComponentProp {...props} />));
 
-export default function TemplateTransitWidget(
-  props: typeof TemplateTransitWidgetInput & RestProps
-) {
+const TemplateTransitWidget: React.FC<
+  typeof TemplateTransitWidgetInput & RestProps
+> = (props) => {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
@@ -68,11 +69,13 @@ export default function TemplateTransitWidget(
     },
     restAttributes: __restAttributes(),
   });
-}
+};
 
 TemplateTransitWidget.defaultProps = {
   ...TemplateTransitWidgetInput,
 };
+
+export default TemplateTransitWidget;
 function view_1({
   props: { componentTemplateProp: ComponentTemplateProp, templateProp },
 }: TemplateTransitWidget) {

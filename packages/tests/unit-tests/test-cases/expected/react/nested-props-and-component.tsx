@@ -60,6 +60,7 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof WidgetProps
 >;
+
 interface undefWidget {
   props: typeof WidgetProps & RestProps;
   nested: any;
@@ -70,7 +71,7 @@ interface undefWidget {
   __getNestedAnotherNestedPropInit: typeof FakeNested[] | undefined;
 }
 
-export default function undefWidget(props: typeof WidgetProps & RestProps) {
+const undefWidget: React.FC<typeof WidgetProps & RestProps> = (props) => {
   const __nested = useCallback(function __nested(): any {
     return {
       ...props,
@@ -160,8 +161,10 @@ export default function undefWidget(props: typeof WidgetProps & RestProps) {
     __getNestedNestedProp: __getNestedNestedProp(),
     __getNestedAnotherNestedPropInit: __getNestedAnotherNestedPropInit(),
   });
-}
+};
 
 undefWidget.defaultProps = {
   ...WidgetProps,
 };
+
+export default undefWidget;

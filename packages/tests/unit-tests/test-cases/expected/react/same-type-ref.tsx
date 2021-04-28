@@ -15,6 +15,7 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof WidgetInput
 >;
+
 interface Widget {
   props: typeof WidgetInput & RestProps;
   divRef1: any;
@@ -22,7 +23,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+const Widget: React.FC<typeof WidgetInput & RestProps> = (props) => {
   const __divRef1: MutableRefObject<BaseWidgetRef | null> = useRef<BaseWidgetRef>(
     null
   );
@@ -44,8 +45,10 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     divRef2: __divRef2,
     restAttributes: __restAttributes(),
   });
-}
+};
 
 Widget.defaultProps = {
   ...WidgetInput,
 };
+
+export default Widget;

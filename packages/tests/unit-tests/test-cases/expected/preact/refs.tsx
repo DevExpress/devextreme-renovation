@@ -24,6 +24,7 @@ declare type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   props: typeof WidgetProps & RestProps;
   divRef?: any;
@@ -42,7 +43,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetProps & RestProps) {
+const Widget: React.FC<typeof WidgetProps & RestProps> = (props) => {
   const __divRef: RefObject<any> = useRef<any>(null);
   const __ref: RefObject<any> = useRef<any>(null);
   const __existingRef: RefObject<any> = useRef<any>(null);
@@ -131,8 +132,10 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
     getRestRefs: __getRestRefs,
     restAttributes: __restAttributes(),
   });
-}
+};
 
 Widget.defaultProps = {
   ...WidgetProps,
 };
+
+export default Widget;

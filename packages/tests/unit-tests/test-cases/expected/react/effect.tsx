@@ -28,6 +28,7 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof WidgetInput
 >;
+
 interface Widget {
   props: typeof WidgetInput & RestProps;
   i: number;
@@ -36,7 +37,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+const Widget: React.FC<typeof WidgetInput & RestProps> = (props) => {
   const [__state_s, __state_setS] = useState<number>(() =>
     props.s !== undefined ? props.s : props.defaultS!
   );
@@ -98,8 +99,10 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     getP: __getP,
     restAttributes: __restAttributes(),
   });
-}
+};
 
 Widget.defaultProps = {
   ...WidgetInput,
 };
+
+export default Widget;

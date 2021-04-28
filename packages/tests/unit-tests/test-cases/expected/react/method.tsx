@@ -25,6 +25,7 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof WidgetInput
 >;
+
 interface Widget {
   props: typeof WidgetInput & RestProps;
   divRef: any;
@@ -79,3 +80,5 @@ export default Widget;
 Widget.defaultProps = {
   ...WidgetInput,
 };
+
+export default Widget;

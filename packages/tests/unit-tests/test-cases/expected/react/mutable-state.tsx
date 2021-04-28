@@ -11,6 +11,7 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof WidgetInput
 >;
+
 interface Widget {
   props: typeof WidgetInput & RestProps;
   setObj: () => any;
@@ -20,7 +21,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+const Widget: React.FC<typeof WidgetInput & RestProps> = (props) => {
   const obj = useRef<{ value?: number }>();
   const notDefinedObj = useRef<{ value?: number } | undefined>();
   const definedObj = useRef<{ value?: number }>({ value: 0 });
@@ -64,8 +65,10 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     destruct: __destruct,
     restAttributes: __restAttributes(),
   });
-}
+};
 
 Widget.defaultProps = {
   ...WidgetInput,
 };
+
+export default Widget;

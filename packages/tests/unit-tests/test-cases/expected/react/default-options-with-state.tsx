@@ -25,12 +25,13 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof WidgetProps
 >;
+
 interface Widget {
   props: typeof WidgetProps & RestProps;
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetProps & RestProps) {
+const Widget: React.FC<typeof WidgetProps & RestProps> = (props) => {
   const [__state_p1, __state_setP1] = useState<string>(() =>
     props.p1 !== undefined ? props.p1 : props.defaultP1!
   );
@@ -59,7 +60,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   );
 
   return view();
-}
+};
 
 function __processTwoWayProps(defaultProps: typeof WidgetProps & RestProps) {
   const twoWayProps: string[] = ["p1", "p2"];
@@ -91,3 +92,4 @@ export function defaultOptions(rule: WidgetOptionRule) {
     ...__processTwoWayProps(convertRulesToOptions(__defaultOptionRules)),
   };
 }
+export default Widget;

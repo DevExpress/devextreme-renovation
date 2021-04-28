@@ -11,12 +11,13 @@ import * as React from "react";
 import { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
+
 interface Widget {
   props: typeof Props & RestProps;
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof Props & RestProps) {
+const Widget: React.FC<typeof Props & RestProps> = (props) => {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { data, height, info, ...restProps } = props;
@@ -26,7 +27,7 @@ export default function Widget(props: typeof Props & RestProps) {
   );
 
   return view({ props: { ...props }, restAttributes: __restAttributes() });
-}
+};
 
 function __createDefaultProps() {
   return {
@@ -45,3 +46,4 @@ export function defaultOptions(rule: WidgetOptionRule) {
     ...convertRulesToOptions<typeof Props>(__defaultOptionRules),
   };
 }
+export default Widget;

@@ -18,12 +18,13 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof WidgetProps
 >;
+
 interface Widget {
   props: typeof WidgetProps & RestProps;
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetProps & RestProps) {
+const Widget: React.FC<typeof WidgetProps & RestProps> = (props) => {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { a, id, onClick, ...restProps } = props;
@@ -36,8 +37,10 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
     props: { ...props },
     restAttributes: __restAttributes(),
   });
-}
+};
 
 Widget.defaultProps = {
   ...WidgetProps,
 };
+
+export default Widget;

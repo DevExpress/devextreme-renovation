@@ -10,14 +10,15 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof WidgetWithRefPropInput
 >;
+
 interface WidgetWithRefProp {
   props: typeof WidgetWithRefPropInput & RestProps;
   restAttributes: RestProps;
 }
 
-export default function WidgetWithRefProp(
-  props: typeof WidgetWithRefPropInput & RestProps
-) {
+const WidgetWithRefProp: React.FC<typeof WidgetWithRefPropInput & RestProps> = (
+  props
+) => {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { nullableRef, parentRef, ...restProps } = props;
@@ -27,11 +28,13 @@ export default function WidgetWithRefProp(
   );
 
   return view({ props: { ...props }, restAttributes: __restAttributes() });
-}
+};
 
 WidgetWithRefProp.defaultProps = {
   ...WidgetWithRefPropInput,
 };
+
+export default WidgetWithRefProp;
 function view(viewModel: WidgetWithRefProp) {
   return <div></div>;
 }

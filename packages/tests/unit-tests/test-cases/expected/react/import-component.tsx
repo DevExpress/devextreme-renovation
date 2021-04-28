@@ -19,13 +19,14 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof ChildInput
 >;
+
 interface Child {
   props: typeof ChildInput & RestProps;
   getProps: () => typeof WidgetProps;
   restAttributes: RestProps;
 }
 
-export default function Child(props: typeof ChildInput & RestProps) {
+const Child: React.FC<typeof ChildInput & RestProps> = (props) => {
   const __getProps = useCallback(
     function __getProps(): typeof WidgetProps {
       return { height: props.height } as typeof WidgetProps;
@@ -45,8 +46,10 @@ export default function Child(props: typeof ChildInput & RestProps) {
     getProps: __getProps,
     restAttributes: __restAttributes(),
   });
-}
+};
 
 Child.defaultProps = {
   ...ChildInput,
 };
+
+export default Child;

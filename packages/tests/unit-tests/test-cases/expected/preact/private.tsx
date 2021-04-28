@@ -13,13 +13,14 @@ declare type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   props: typeof WidgetInput & RestProps;
   simpleGetter: () => any;
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+const Widget: React.FC<typeof WidgetInput & RestProps> = (props) => {
   const [__state_decoratedState, __state_setDecoratedState] = useState<string>(
     ""
   );
@@ -50,8 +51,10 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     simpleGetter: __simpleGetter,
     restAttributes: __restAttributes(),
   });
-}
+};
 
 Widget.defaultProps = {
   ...WidgetInput,
 };
+
+export default Widget;

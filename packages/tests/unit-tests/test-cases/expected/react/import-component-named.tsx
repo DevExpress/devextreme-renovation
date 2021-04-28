@@ -16,12 +16,13 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof ChildInput
 >;
+
 interface Child {
   props: typeof ChildInput & RestProps;
   restAttributes: RestProps;
 }
 
-export default function Child(props: typeof ChildInput & RestProps) {
+const Child: React.FC<typeof ChildInput & RestProps> = (props) => {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { height, ...restProps } = props;
@@ -30,12 +31,11 @@ export default function Child(props: typeof ChildInput & RestProps) {
     [props]
   );
 
-  return view({
-    props: { ...props },
-    restAttributes: __restAttributes(),
-  });
-}
+  return view({ props: { ...props }, restAttributes: __restAttributes() });
+};
 
 Child.defaultProps = {
   ...ChildInput,
 };
+
+export default Child;

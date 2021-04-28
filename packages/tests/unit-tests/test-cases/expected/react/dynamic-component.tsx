@@ -97,6 +97,7 @@ const normalizeStyles = (styles: unknown) => {
 };
 
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
+
 interface DynamicComponentCreator {
   props: typeof Props & RestProps;
   internalStateValue: number;
@@ -110,9 +111,7 @@ interface DynamicComponentCreator {
   restAttributes: RestProps;
 }
 
-export default function DynamicComponentCreator(
-  props: typeof Props & RestProps
-) {
+const DynamicComponentCreator: React.FC<typeof Props & RestProps> = (props) => {
   const [
     __state_internalStateValue,
     __state_setInternalStateValue,
@@ -167,8 +166,10 @@ export default function DynamicComponentCreator(
     onComponentClick: __onComponentClick,
     restAttributes: __restAttributes(),
   });
-}
+};
 
 DynamicComponentCreator.defaultProps = {
   ...Props,
 };
+
+export default DynamicComponentCreator;

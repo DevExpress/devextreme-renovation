@@ -37,6 +37,7 @@ declare type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   props: typeof WidgetInput & RestProps;
   getHeight: () => number;
@@ -44,7 +45,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+const Widget: React.FC<typeof WidgetInput & RestProps> = (props) => {
   const [__state_stringValue, __state_setStringValue] = useState<string>(() =>
     props.stringValue !== undefined
       ? props.stringValue
@@ -112,8 +113,10 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     getRestProps: __getRestProps,
     restAttributes: __restAttributes(),
   });
-}
+};
 
 Widget.defaultProps = {
   ...WidgetInput,
 };
+
+export default Widget;

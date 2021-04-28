@@ -14,6 +14,7 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof WidgetInput
 >;
+
 interface Widget {
   props: typeof WidgetInput & RestProps;
   someState?: { current: string };
@@ -22,7 +23,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+const Widget: React.FC<typeof WidgetInput & RestProps> = (props) => {
   const [__state_someState, __state_setSomeState] = useState<
     { current: string } | undefined
   >(undefined);
@@ -53,8 +54,10 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     concatStrings: __concatStrings,
     restAttributes: __restAttributes(),
   });
-}
+};
 
 Widget.defaultProps = {
   ...WidgetInput,
 };
+
+export default Widget;

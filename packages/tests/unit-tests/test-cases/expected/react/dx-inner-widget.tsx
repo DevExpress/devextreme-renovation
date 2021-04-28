@@ -77,14 +77,13 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof InnerWidgetProps
 >;
+
 interface InnerWidget {
   props: typeof InnerWidgetProps & RestProps;
   restAttributes: RestProps;
 }
 
-export default function InnerWidget(
-  props: typeof InnerWidgetProps & RestProps
-) {
+const InnerWidget: React.FC<typeof InnerWidgetProps & RestProps> = (props) => {
   const [__state_value, __state_setValue] = useState<number>(() =>
     props.value !== undefined ? props.value : props.defaultValue!
   );
@@ -114,8 +113,10 @@ export default function InnerWidget(
     },
     restAttributes: __restAttributes(),
   });
-}
+};
 
 InnerWidget.defaultProps = {
   ...InnerWidgetProps,
 };
+
+export default InnerWidget;

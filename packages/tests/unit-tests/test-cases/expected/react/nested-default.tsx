@@ -63,6 +63,7 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof WithNestedInput
 >;
+
 interface WithNested {
   props: typeof WithNestedInput & RestProps;
   getRowCells: (index: number) => any;
@@ -71,7 +72,7 @@ interface WithNested {
   __getNestedRows: typeof GridRow[] | undefined;
 }
 
-export default function WithNested(props: typeof WithNestedInput & RestProps) {
+const WithNested: React.FC<typeof WithNestedInput & RestProps> = (props) => {
   const __getRowCells = useCallback(
     function __getRowCells(index: number): any {
       const cells = __getNestedRows()?.[index].cells;
@@ -130,8 +131,10 @@ export default function WithNested(props: typeof WithNestedInput & RestProps) {
     nestedChildren: __nestedChildren,
     __getNestedRows: __getNestedRows(),
   });
-}
+};
 
 WithNested.defaultProps = {
   ...WithNestedInput,
 };
+
+export default WithNested;
