@@ -18,6 +18,18 @@ All changes should me merged in `master` branch. After that, these changes shoul
 - `npm run test` - run all test (unit and generated)
 - `npm run test:with-replace` - run all test and replace failed generated tests
 
+### e2e tests
+
+- `npm run build` - e2e tests use webpack which require to compile sources
+- `npm run test:testcafe` - run e2e tests
+- `npm run testcafe:start-test-servers` - start testcafe server to check e2e tests run frameworks on next ports:
+
+    - http://localhost:3000/ - Angular
+    - http://localhost:3001/ - React
+    - http://localhost:3002/ - Vue
+    - http://localhost:3003/ - Preact
+    - http://localhost:3004/ - Inferno
+
 ## Publishing
 
 New version are published automatically by GitHub actions. For this, you need to create a special PR, prepared by script:
