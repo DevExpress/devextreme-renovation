@@ -39,7 +39,7 @@ New version are published automatically by GitHub actions. For this, you need to
 - Run publish script based on changes since last release:
     - `npm run publish:patch` - fixes, improvements and refactor
     - `npm run publish:minor` - new features, probably after that you need to create a PR in DevExtreme repo (to use these features)
-    - `npm run publish:minor` - Breaking Changes or next version to continue development while code freeze
+    - `npm run publish:major` - Breaking Changes or next version to continue development while code freeze
 - Make sure that all packages are updated. After that, changes will be committed to `release` branch and pushed
 - Go to GitHub and create a PR to right branch (`releases/v*`). Check name of PR, it should be `v*.*.*`
 
