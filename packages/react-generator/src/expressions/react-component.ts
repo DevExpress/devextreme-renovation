@@ -935,6 +935,12 @@ export class ReactComponent extends Component {
   }
 
   toString() {
+    const getDefaultExport = (check: boolean) => (
+      !check
+        ? `export default ${this.name}`
+        : ''
+    );
+
     const getTemplateFunc = this.compileTemplateGetter();
 
     return `
@@ -1005,6 +1011,6 @@ export class ReactComponent extends Component {
 
               ${this.compileDefaultProps()}
               ${this.compileDefaultOptionsMethod()}
-              ${this.modifiers.join(' ')} ${this.name}`;
+              ${getDefaultExport(this.modifiers.join(' ') === 'export')}`;
   }
 }
