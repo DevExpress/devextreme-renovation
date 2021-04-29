@@ -52,13 +52,9 @@ const WidgetWithProps = forwardRef<
 > & { defaultProps: typeof WidgetWithPropsInput };
 export { WidgetWithProps };
 
-export default WidgetWithProps;
-
 WidgetWithProps.defaultProps = {
   ...WidgetWithPropsInput,
 };
-
-export default WidgetWithProps;
 function view({ props: { optionalValue, value } }: WidgetWithProps) {
   return <div>{optionalValue || value}</div>;
 }
