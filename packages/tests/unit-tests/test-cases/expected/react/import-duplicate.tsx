@@ -19,12 +19,13 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof MarkerProps
 >;
+
 interface Marker {
   props: typeof MarkerProps & RestProps;
   restAttributes: RestProps;
 }
 
-export function Marker(props: typeof MarkerProps & RestProps) {
+const Marker: React.FC<typeof MarkerProps & RestProps> = (props) => {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { color, config, date, ...restProps } = props;
@@ -37,7 +38,7 @@ export function Marker(props: typeof MarkerProps & RestProps) {
     props: { ...props },
     restAttributes: __restAttributes(),
   });
-}
+};
 
 export default Marker;
 

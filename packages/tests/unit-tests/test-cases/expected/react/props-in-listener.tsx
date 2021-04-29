@@ -11,13 +11,14 @@ import * as React from "react";
 import { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
+
 interface Widget {
   props: typeof Props & RestProps;
   clickHandler: () => any;
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof Props & RestProps) {
+const Widget: React.FC<typeof Props & RestProps> = (props) => {
   const __clickHandler = useCallback(
     function __clickHandler(): any {
       props.onClick!({ type: props.type });
@@ -37,7 +38,7 @@ export function Widget(props: typeof Props & RestProps) {
     clickHandler: __clickHandler,
     restAttributes: __restAttributes(),
   });
-}
+};
 
 export default Widget;
 

@@ -932,6 +932,11 @@ export class ReactComponent extends Component {
   }
 
   toString(): string {
+    const getDefaultExport = (check: boolean) => (
+      !check
+        ? `export default ${this.name}`
+        : ''
+    );
     return `
     ${this.compileImports()}
     ${this.compileStyleNormalizer()}
@@ -991,6 +996,7 @@ export class ReactComponent extends Component {
 
   ${this.compileDefaultProps()}
   ${this.compileDefaultOptionsMethod()}
-  ${this.modifiers.join(' ')} ${this.name}`;
+  ${getDefaultExport(this.modifiers.join(' ') === 'export')}
+`;
   }
 }

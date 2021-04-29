@@ -6,13 +6,14 @@ import * as React from "react";
 import { useCallback, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof {}>;
+
 interface Widget {
   onClick: (e: Event) => any;
   onPointerMove: (a: any, b: any, c: any) => any;
   restAttributes: RestProps;
 }
 
-export function Widget(props: {} & RestProps) {
+const Widget: React.FC<{} & RestProps> = (props) => {
   const __onClick = useCallback(function __onClick(e: Event): any {}, []);
   const __onPointerMove = useCallback(function __onPointerMove(
     a = "a",
@@ -34,6 +35,6 @@ export function Widget(props: {} & RestProps) {
     onPointerMove: __onPointerMove,
     restAttributes: __restAttributes(),
   });
-}
+};
 
 export default Widget;

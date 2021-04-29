@@ -15,12 +15,13 @@ declare type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   props: typeof WidgetInput & RestProps;
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetInput & RestProps) {
+const Widget: React.FC<typeof WidgetInput & RestProps> = (props) => {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { prop, ...restProps } = props;
@@ -29,11 +30,8 @@ export function Widget(props: typeof WidgetInput & RestProps) {
     [props]
   );
 
-  return view({
-    props: { ...props },
-    restAttributes: __restAttributes(),
-  });
-}
+  return view({ props: { ...props }, restAttributes: __restAttributes() });
+};
 
 Widget.defaultProps = {
   ...WidgetInput,

@@ -4,13 +4,14 @@ import * as React from "react";
 import { useCallback, useEffect, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof {}>;
+
 interface Widget {
   onPointerUp: () => any;
   scrollHandler: () => any;
   restAttributes: RestProps;
 }
 
-export function Widget(props: {} & RestProps) {
+const Widget: React.FC<{} & RestProps> = (props) => {
   const __onPointerUp = useCallback(function __onPointerUp(): any {}, []);
   const __scrollHandler = useCallback(function __scrollHandler(): any {}, []);
   const __restAttributes = useCallback(
@@ -30,6 +31,6 @@ export function Widget(props: {} & RestProps) {
   });
 
   return view();
-}
+};
 
 export default Widget;

@@ -21,6 +21,7 @@ declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
   keyof typeof WidgetWithPropsInput
 >;
+
 interface WidgetWithProps {
   props: typeof WidgetWithPropsInput & RestProps;
   restAttributes: RestProps;
@@ -45,10 +46,7 @@ const WidgetWithProps = forwardRef<
   useImperativeHandle(ref, () => ({ doSomething: __doSomething }), [
     __doSomething,
   ]);
-  return view({
-    props: { ...props },
-    restAttributes: __restAttributes(),
-  });
+  return view({ props: { ...props }, restAttributes: __restAttributes() });
 }) as React.FC<
   typeof WidgetWithPropsInput &
     RestProps & { ref?: React.Ref<WidgetWithPropsRef> }

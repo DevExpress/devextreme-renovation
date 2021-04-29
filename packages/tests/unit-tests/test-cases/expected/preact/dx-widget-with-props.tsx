@@ -19,6 +19,7 @@ declare type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface WidgetWithProps {
   props: typeof WidgetWithPropsInput & RestProps;
   restAttributes: RestProps;
@@ -43,10 +44,7 @@ const WidgetWithProps = forwardRef<
   useImperativeHandle(ref, () => ({ doSomething: __doSomething }), [
     __doSomething,
   ]);
-  return view({
-    props: { ...props },
-    restAttributes: __restAttributes(),
-  });
+  return view({ props: { ...props }, restAttributes: __restAttributes() });
 }) as Preact.FunctionalComponent<typeof WidgetWithPropsInput & RestProps> & {
   defaultProps: typeof WidgetWithPropsInput;
 };
