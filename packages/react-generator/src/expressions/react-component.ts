@@ -982,12 +982,10 @@ export class ReactComponent extends Component {
     return ${this.compileViewCall()}
     ${this.members.filter((m) => m.isApiMethod).length === 0
     ? '}'
-    : `}) as ${this.compileFunctionalComponentType()};\n${this.modifiers.join(' ')}
-    ${this.modifiers.join(' ') === 'export'
-    ? `{${this.name}}`
-    : this.name
-};`
+    : `}) as ${this.compileFunctionalComponentType()};\n${getExport(this.modifiers.join(' '))};`
 }
+
+    ${this.compileDefaultComponentExport()}
     ${this.compileDefaultProps()}
 
     ${this.compileDefaultOptionsMethod()}

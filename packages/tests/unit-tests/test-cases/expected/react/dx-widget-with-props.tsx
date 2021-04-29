@@ -51,6 +51,7 @@ const WidgetWithProps = forwardRef<
     RestProps & { ref?: React.Ref<WidgetWithPropsRef> }
 > & { defaultProps: typeof WidgetWithPropsInput };
 export { WidgetWithProps };
+export default WidgetWithProps;
 WidgetWithProps.defaultProps = {
   ...WidgetWithPropsInput,
 };
