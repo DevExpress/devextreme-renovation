@@ -58,9 +58,8 @@ const TestComponent: React.FC<typeof Props & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
-
 TestComponent.defaultProps = {
   ...Props,
 };
 
-export default TestComponent;
+export { TestComponent };

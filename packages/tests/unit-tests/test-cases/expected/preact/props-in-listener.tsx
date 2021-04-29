@@ -47,4 +47,4 @@ Widget.defaultProps = {
   ...Props,
 };
 
-export default Widget;
+export { Widget };

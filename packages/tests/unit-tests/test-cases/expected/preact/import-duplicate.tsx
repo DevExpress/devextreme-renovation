@@ -44,4 +44,4 @@ Marker.defaultProps = {
   ...MarkerProps,
 };
 
-export default Marker;
+export { Marker };

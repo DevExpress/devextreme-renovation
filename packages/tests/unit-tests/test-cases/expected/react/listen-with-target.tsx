@@ -32,4 +32,4 @@ const Widget: React.FC<{} & RestProps> = (props) => {
   return view();
 };
 
-export default Widget;
+export { Widget };

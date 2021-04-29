@@ -935,6 +935,11 @@ export class ReactComponent extends Component {
   }
 
   toString() {
+    const getExport = (exportType: string) => `\n${exportType}
+      ${exportType === 'export'
+    ? `{${this.name}}`
+    : this.name
+}`;
     return `
     ${this.compileImports()}
     ${this.compileStyleNormalizer()}
@@ -983,12 +988,12 @@ export class ReactComponent extends Component {
     : this.name
 };`
 }
-    ${this.compileDefaultComponentExport()}
     ${this.compileDefaultProps()}
 
     ${this.compileDefaultOptionsMethod()}
+    
     ${this.members.filter((m) => m.isApiMethod).length === 0
-    ? `${this.modifiers.join(' ')} ${this.name}`
+    ? getExport(this.modifiers.join(' '))
     : ''
 }`;
   }
