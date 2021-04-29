@@ -29,7 +29,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof Props & RestProps) {
+const Widget: React.FC<typeof Props & RestProps> = (props) => {
   const contextConsumer = useContext(P1Context);
   const [provider] = useState(10);
   const __sum = useCallback(
@@ -63,7 +63,8 @@ export default function Widget(props: typeof Props & RestProps) {
       </P1Context.Provider>
     </GetterContext.Provider>
   );
-}
+};
+export default Widget;
 
 Widget.defaultProps = {
   ...Props,

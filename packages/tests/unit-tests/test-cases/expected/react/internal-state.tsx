@@ -12,7 +12,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: {} & RestProps) {
+const Widget: React.FC<{} & RestProps> = (props) => {
   const [__state__hovered, __state_set_hovered] = useState<Boolean>(false);
 
   const __updateState = useCallback(
@@ -35,4 +35,6 @@ export default function Widget(props: {} & RestProps) {
     updateState: __updateState,
     restAttributes: __restAttributes(),
   });
-}
+};
+
+export default Widget;

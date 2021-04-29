@@ -31,7 +31,7 @@ interface RefOnChildrenParent {
   restAttributes: RestProps;
 }
 
-export default function RefOnChildrenParent(props: typeof Props & RestProps) {
+const RefOnChildrenParent: React.FC<typeof Props & RestProps> = (props) => {
   const __child: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(
     null
   );
@@ -57,7 +57,8 @@ export default function RefOnChildrenParent(props: typeof Props & RestProps) {
     child: __child,
     restAttributes: __restAttributes(),
   });
-}
+};
+export default RefOnChildrenParent;
 
 RefOnChildrenParent.defaultProps = {
   ...Props,

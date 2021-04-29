@@ -25,7 +25,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetProps & RestProps) {
+const Widget: React.FC<typeof WidgetProps & RestProps> = (props) => {
   const __onClick = useCallback(
     function __onClick(): any {
       const v = props.height;
@@ -45,7 +45,8 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
     onClick: __onClick,
     restAttributes: __restAttributes(),
   });
-}
+};
+export default Widget;
 
 Widget.defaultProps = {
   ...WidgetProps,

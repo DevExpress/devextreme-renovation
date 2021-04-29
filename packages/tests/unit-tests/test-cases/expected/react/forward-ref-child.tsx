@@ -22,7 +22,7 @@ interface RefOnChildrenChild {
   restAttributes: RestProps;
 }
 
-export default function RefOnChildrenChild(props: typeof Props & RestProps) {
+const RefOnChildrenChild: React.FC<typeof Props & RestProps> = (props) => {
   const __method = useCallback(
     function __method(): any {
       const { nullableRef } = props;
@@ -47,7 +47,8 @@ export default function RefOnChildrenChild(props: typeof Props & RestProps) {
     method: __method,
     restAttributes: __restAttributes(),
   });
-}
+};
+export default RefOnChildrenChild;
 
 RefOnChildrenChild.defaultProps = {
   ...Props,

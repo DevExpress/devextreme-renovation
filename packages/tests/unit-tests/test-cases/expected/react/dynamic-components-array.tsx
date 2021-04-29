@@ -26,9 +26,7 @@ interface DynamicComponentCreator {
   restAttributes: RestProps;
 }
 
-export default function DynamicComponentCreator(
-  props: typeof Props & RestProps
-) {
+const DynamicComponentCreator: React.FC<typeof Props & RestProps> = (props) => {
   const __Components = useCallback(
     function __Components(): React.FunctionComponent<
       Partial<typeof WidgetInput>
@@ -55,7 +53,8 @@ export default function DynamicComponentCreator(
     onComponentClick: __onComponentClick,
     restAttributes: __restAttributes(),
   });
-}
+};
+export default DynamicComponentCreator;
 
 DynamicComponentCreator.defaultProps = {
   ...Props,

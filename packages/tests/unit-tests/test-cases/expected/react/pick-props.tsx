@@ -25,7 +25,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetProps & RestProps) {
+const Widget: React.FC<typeof WidgetProps & RestProps> = (props) => {
   const [__state_innerData, __state_setInnerData] = useState<Options>({
     value: "",
   });
@@ -43,7 +43,8 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
     innerData: __state_innerData,
     restAttributes: __restAttributes(),
   });
-}
+};
+export default Widget;
 
 Widget.defaultProps = {
   ...WidgetProps,

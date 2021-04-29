@@ -29,7 +29,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+const Widget: React.FC<typeof WidgetInput & RestProps> = (props) => {
   const __onClick = useCallback(function __onClick(): void {}, []);
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
@@ -44,7 +44,8 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     onClick: __onClick,
     restAttributes: __restAttributes(),
   });
-}
+};
+export default Widget;
 
 Widget.defaultProps = {
   ...WidgetInput,

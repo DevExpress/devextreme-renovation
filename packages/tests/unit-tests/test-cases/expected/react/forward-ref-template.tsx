@@ -40,7 +40,7 @@ const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
       ))) ||
   (ComponentProp && ((props: any) => <ComponentProp {...props} />));
 
-export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
+const RefOnChildrenTemplate: React.FC<typeof Props & RestProps> = (props) => {
   const __child: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(
     null
   );
@@ -75,7 +75,8 @@ export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
     child: __child,
     restAttributes: __restAttributes(),
   });
-}
+};
+export default RefOnChildrenTemplate;
 
 RefOnChildrenTemplate.defaultProps = {
   ...Props,

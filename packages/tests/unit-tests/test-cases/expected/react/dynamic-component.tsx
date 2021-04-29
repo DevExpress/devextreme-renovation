@@ -110,9 +110,7 @@ interface DynamicComponentCreator {
   restAttributes: RestProps;
 }
 
-export default function DynamicComponentCreator(
-  props: typeof Props & RestProps
-) {
+const DynamicComponentCreator: React.FC<typeof Props & RestProps> = (props) => {
   const [
     __state_internalStateValue,
     __state_setInternalStateValue,
@@ -167,7 +165,8 @@ export default function DynamicComponentCreator(
     onComponentClick: __onComponentClick,
     restAttributes: __restAttributes(),
   });
-}
+};
+export default DynamicComponentCreator;
 
 DynamicComponentCreator.defaultProps = {
   ...Props,

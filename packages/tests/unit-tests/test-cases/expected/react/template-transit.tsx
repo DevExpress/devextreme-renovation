@@ -33,9 +33,9 @@ const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
       ))) ||
   (ComponentProp && ((props: any) => <ComponentProp {...props} />));
 
-export default function TemplateTransitWidget(
-  props: typeof TemplateTransitWidgetInput & RestProps
-) {
+const TemplateTransitWidget: React.FC<
+  typeof TemplateTransitWidgetInput & RestProps
+> = (props) => {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
@@ -68,7 +68,8 @@ export default function TemplateTransitWidget(
     },
     restAttributes: __restAttributes(),
   });
-}
+};
+export default TemplateTransitWidget;
 
 TemplateTransitWidget.defaultProps = {
   ...TemplateTransitWidgetInput,

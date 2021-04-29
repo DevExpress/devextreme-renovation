@@ -52,7 +52,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetProps & RestProps) {
+const Widget: React.FC<typeof WidgetProps & RestProps> = (props) => {
   const [__state_rendered, __state_setRendered] = useState<boolean>(false);
 
   const __restAttributes = useCallback(
@@ -71,7 +71,8 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
     rendered: __state_rendered,
     restAttributes: __restAttributes(),
   });
-}
+};
+export default Widget;
 
 Widget.defaultProps = {
   ...WidgetProps,

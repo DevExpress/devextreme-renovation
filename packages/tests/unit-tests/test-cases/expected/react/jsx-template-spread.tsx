@@ -71,7 +71,7 @@ const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
       ))) ||
   (ComponentProp && ((props: any) => <ComponentProp {...props} />));
 
-export default function Widget(props: typeof Props & RestProps) {
+const Widget: React.FC<typeof Props & RestProps> = (props) => {
   const __spreadGetter = useCallback(function __spreadGetter(): {
     width: string;
     height: string;
@@ -108,7 +108,8 @@ export default function Widget(props: typeof Props & RestProps) {
     spreadGetter: __spreadGetter(),
     restAttributes: __restAttributes(),
   });
-}
+};
+export default Widget;
 
 Widget.defaultProps = {
   ...Props,

@@ -71,12 +71,12 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(
-  props: {
+const Widget: React.FC<
+  {
     height?: number;
     width?: number;
   } & RestProps
-) {
+> = (props) => {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { height, width, ...restProps } = props;
@@ -86,8 +86,9 @@ export default function Widget(
   );
 
   return view1({ ...props, restAttributes: __restAttributes() });
-}
+};
 
+export default Widget;
 function view1(viewModel: Widget) {
   return (
     <div style={normalizeStyles({ height: viewModel.height })}>

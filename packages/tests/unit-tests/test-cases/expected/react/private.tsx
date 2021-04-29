@@ -17,7 +17,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+const Widget: React.FC<typeof WidgetInput & RestProps> = (props) => {
   const [__state_decoratedState, __state_setDecoratedState] = useState<string>(
     ""
   );
@@ -48,7 +48,8 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     simpleGetter: __simpleGetter,
     restAttributes: __restAttributes(),
   });
-}
+};
+export default Widget;
 
 Widget.defaultProps = {
   ...WidgetInput,

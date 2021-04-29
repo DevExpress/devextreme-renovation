@@ -20,7 +20,7 @@ interface Import {
   restAttributes: RestProps;
 }
 
-export default function Import(props: typeof ImportProps & RestProps) {
+const Import: React.FC<typeof ImportProps & RestProps> = (props) => {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { Test, ...restProps } = props;
@@ -33,7 +33,8 @@ export default function Import(props: typeof ImportProps & RestProps) {
     props: { ...props },
     restAttributes: __restAttributes(),
   });
-}
+};
+export default Import;
 
 Import.defaultProps = {
   ...ImportProps,

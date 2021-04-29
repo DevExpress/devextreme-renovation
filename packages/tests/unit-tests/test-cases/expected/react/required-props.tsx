@@ -23,7 +23,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+const Widget: React.FC<typeof WidgetInput & RestProps> = (props) => {
   const __getHeight = useCallback(
     function __getHeight(): number {
       return props.size.height;
@@ -46,7 +46,8 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   );
 
   return view();
-}
+};
+export default Widget;
 
 function __createDefaultProps() {
   return {

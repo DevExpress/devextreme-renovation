@@ -44,7 +44,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+const Widget: React.FC<typeof WidgetInput & RestProps> = (props) => {
   const [__state_state1, __state_setState1] = useState<boolean | undefined>(
     () => (props.state1 !== undefined ? props.state1 : props.defaultState1)
   );
@@ -133,7 +133,8 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     stateChange: __stateChange,
     restAttributes: __restAttributes(),
   });
-}
+};
+export default Widget;
 
 Widget.defaultProps = {
   ...WidgetInput,

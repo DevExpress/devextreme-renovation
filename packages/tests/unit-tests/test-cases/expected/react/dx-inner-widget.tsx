@@ -82,9 +82,7 @@ interface InnerWidget {
   restAttributes: RestProps;
 }
 
-export default function InnerWidget(
-  props: typeof InnerWidgetProps & RestProps
-) {
+const InnerWidget: React.FC<typeof InnerWidgetProps & RestProps> = (props) => {
   const [__state_value, __state_setValue] = useState<number>(() =>
     props.value !== undefined ? props.value : props.defaultValue!
   );
@@ -114,7 +112,8 @@ export default function InnerWidget(
     },
     restAttributes: __restAttributes(),
   });
-}
+};
+export default InnerWidget;
 
 InnerWidget.defaultProps = {
   ...InnerWidgetProps,

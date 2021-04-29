@@ -34,9 +34,9 @@ const getTemplate = (TemplateProp: any) =>
   (TemplateProp.defaultProps
     ? (props: any) => <TemplateProp {...props} />
     : TemplateProp);
-export default function WidgetWithTemplate(
-  props: typeof WidgetInput & RestProps
-) {
+const WidgetWithTemplate: React.FC<typeof WidgetInput & RestProps> = (
+  props
+) => {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
@@ -64,7 +64,8 @@ export default function WidgetWithTemplate(
     },
     restAttributes: __restAttributes(),
   });
-}
+};
+export default WidgetWithTemplate;
 
 WidgetWithTemplate.defaultProps = {
   ...WidgetInput,

@@ -29,9 +29,7 @@ interface ModelWidget {
   restAttributes: RestProps;
 }
 
-export default function ModelWidget(
-  props: typeof ModelWidgetInput & RestProps
-) {
+const ModelWidget: React.FC<typeof ModelWidgetInput & RestProps> = (props) => {
   const [__state_baseStateProp, __state_setBaseStateProp] = useState<
     boolean | undefined
   >(() =>
@@ -95,7 +93,8 @@ export default function ModelWidget(
     },
     restAttributes: __restAttributes(),
   });
-}
+};
+export default ModelWidget;
 
 ModelWidget.defaultProps = {
   ...ModelWidgetInput,

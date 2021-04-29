@@ -15,9 +15,9 @@ interface WidgetWithRefProp {
   restAttributes: RestProps;
 }
 
-export default function WidgetWithRefProp(
-  props: typeof WidgetWithRefPropInput & RestProps
-) {
+const WidgetWithRefProp: React.FC<typeof WidgetWithRefPropInput & RestProps> = (
+  props
+) => {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { nullableRef, parentRef, ...restProps } = props;
@@ -27,7 +27,8 @@ export default function WidgetWithRefProp(
   );
 
   return view({ props: { ...props }, restAttributes: __restAttributes() });
-}
+};
+export default WidgetWithRefProp;
 
 WidgetWithRefProp.defaultProps = {
   ...WidgetWithRefPropInput,

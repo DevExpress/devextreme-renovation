@@ -18,7 +18,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+const Widget: React.FC<typeof WidgetInput & RestProps> = (props) => {
   const __privateMethod = useCallback(function __privateMethod(
     a: number
   ): any {},
@@ -43,7 +43,8 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     method2,
     restAttributes: __restAttributes(),
   });
-}
+};
+export default Widget;
 
 Widget.defaultProps = {
   ...WidgetInput,
