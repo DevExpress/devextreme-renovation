@@ -983,12 +983,12 @@ export class ReactComponent extends Component {
     : this.name
 };`
 }
-
+    ${this.compileDefaultComponentExport()}
     ${this.compileDefaultProps()}
 
     ${this.compileDefaultOptionsMethod()}
     ${this.members.filter((m) => m.isApiMethod).length === 0
-    ? `export default ${this.name}`
+    ? `${this.modifiers.join(' ')} ${this.name}`
     : ''
 }`;
   }
