@@ -94,8 +94,9 @@ const ModelWidget: React.FC<typeof ModelWidgetInput & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
-export default ModelWidget;
 
 ModelWidget.defaultProps = {
   ...ModelWidgetInput,
 };
+
+export default ModelWidget;

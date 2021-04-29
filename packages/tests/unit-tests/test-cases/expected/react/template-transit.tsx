@@ -69,11 +69,12 @@ const TemplateTransitWidget: React.FC<
     restAttributes: __restAttributes(),
   });
 };
-export default TemplateTransitWidget;
 
 TemplateTransitWidget.defaultProps = {
   ...TemplateTransitWidgetInput,
 };
+
+export default TemplateTransitWidget;
 function view_1({
   props: { componentTemplateProp: ComponentTemplateProp, templateProp },
 }: TemplateTransitWidget) {

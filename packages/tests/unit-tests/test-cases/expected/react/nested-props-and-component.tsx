@@ -161,8 +161,9 @@ const undefWidget: React.FC<typeof WidgetProps & RestProps> = (props) => {
     __getNestedAnotherNestedPropInit: __getNestedAnotherNestedPropInit(),
   });
 };
-export default undefWidget;
 
 undefWidget.defaultProps = {
   ...WidgetProps,
 };
+
+export default undefWidget;

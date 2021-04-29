@@ -113,8 +113,9 @@ const InnerWidget: React.FC<typeof InnerWidgetProps & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
-export default InnerWidget;
 
 InnerWidget.defaultProps = {
   ...InnerWidgetProps,
 };
+
+export default InnerWidget;

@@ -156,8 +156,9 @@ const Widget: React.FC<typeof PickedProps & RestProps> = (props) => {
     __getNestedEditing: __getNestedEditing(),
   });
 };
-export default Widget;
 
 Widget.defaultProps = {
   ...PickedProps,
 };
+
+export default Widget;

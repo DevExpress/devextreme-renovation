@@ -32,8 +32,9 @@ const Child: React.FC<typeof ChildInput & RestProps> = (props) => {
 
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 };
-export default Child;
 
 Child.defaultProps = {
   ...ChildInput,
 };
+
+export default Child;

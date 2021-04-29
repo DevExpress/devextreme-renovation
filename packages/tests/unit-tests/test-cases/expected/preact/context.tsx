@@ -64,8 +64,9 @@ const Widget: React.FC<typeof Props & RestProps> = (props) => {
     </GetterContext.Provider>
   );
 };
-export default Widget;
 
 Widget.defaultProps = {
   ...Props,
 };
+
+export default Widget;

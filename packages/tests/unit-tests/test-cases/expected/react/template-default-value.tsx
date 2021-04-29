@@ -134,8 +134,9 @@ const TemplateDefaultValue: React.FC<
     restAttributes: __restAttributes(),
   });
 };
-export default TemplateDefaultValue;
 
 TemplateDefaultValue.defaultProps = {
   ...TemplateDefaultValueProps,
 };
+
+export default TemplateDefaultValue;

@@ -131,8 +131,9 @@ const WithNested: React.FC<typeof WithNestedInput & RestProps> = (props) => {
     __getNestedRows: __getNestedRows(),
   });
 };
-export default WithNested;
 
 WithNested.defaultProps = {
   ...WithNestedInput,
 };
+
+export default WithNested;

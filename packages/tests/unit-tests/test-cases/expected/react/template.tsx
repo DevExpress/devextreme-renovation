@@ -131,11 +131,12 @@ const WidgetWithTemplate: React.FC<typeof WidgetInput & RestProps> = (
     restAttributes: __restAttributes(),
   });
 };
-export default WidgetWithTemplate;
 
 WidgetWithTemplate.defaultProps = {
   ...WidgetInput,
 };
+
+export default WidgetWithTemplate;
 function view(viewModel: WidgetWithTemplate) {
   const myvar = viewModel.props.someProp;
   const FooterTemplate = viewModel.props.footerTemplate;

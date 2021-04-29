@@ -134,8 +134,9 @@ const Widget: React.FC<typeof WidgetInput & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
-export default Widget;
 
 Widget.defaultProps = {
   ...WidgetInput,
 };
+
+export default Widget;

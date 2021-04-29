@@ -28,11 +28,12 @@ const WidgetWithRefProp: React.FC<typeof WidgetWithRefPropInput & RestProps> = (
 
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 };
-export default WidgetWithRefProp;
 
 WidgetWithRefProp.defaultProps = {
   ...WidgetWithRefPropInput,
 };
+
+export default WidgetWithRefProp;
 function view(viewModel: WidgetWithRefProp) {
   return <div></div>;
 }
