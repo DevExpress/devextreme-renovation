@@ -113,7 +113,6 @@ const InnerWidget: React.FC<typeof InnerWidgetProps & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
-
 InnerWidget.defaultProps = {
   ...InnerWidgetProps,
 };

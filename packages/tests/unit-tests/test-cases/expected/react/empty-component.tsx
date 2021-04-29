@@ -87,7 +87,6 @@ const Widget: React.FC<
 
   return view1({ ...props, restAttributes: __restAttributes() });
 };
-
 export default Widget;
 function view1(viewModel: Widget) {
   return (

@@ -56,7 +56,6 @@ const Widget: React.FC<typeof WidgetInput & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
-
 Widget.defaultProps = {
   ...WidgetInput,
 };

@@ -64,7 +64,6 @@ const Widget: React.FC<typeof Props & RestProps> = (props) => {
     </GetterContext.Provider>
   );
 };
-
 Widget.defaultProps = {
   ...Props,
 };

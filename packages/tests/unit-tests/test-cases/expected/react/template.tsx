@@ -131,7 +131,6 @@ const WidgetWithTemplate: React.FC<typeof WidgetInput & RestProps> = (
     restAttributes: __restAttributes(),
   });
 };
-
 WidgetWithTemplate.defaultProps = {
   ...WidgetInput,
 };

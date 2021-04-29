@@ -48,7 +48,6 @@ const RefOnChildrenChild: React.FC<typeof Props & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
-
 RefOnChildrenChild.defaultProps = {
   ...Props,
 };

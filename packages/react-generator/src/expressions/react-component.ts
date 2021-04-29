@@ -935,82 +935,63 @@ export class ReactComponent extends Component {
   }
 
   toString() {
-    const getDefaultExport = (check: boolean) => (
-      !check
-        ? `export default ${this.name}`
-        : ''
-    );
-
-    const getTemplateFunc = this.compileTemplateGetter();
-
     return `
-              ${this.compileImports()}
-              ${this.compileStyleNormalizer()}
-              ${this.compilePortalComponent()}
-              ${
-  this.members.some((m) => m.isNested)
+    ${this.compileImports()}
+    ${this.compileStyleNormalizer()}
+    ${this.compilePortalComponent()}
+    ${this.members.some((m) => m.isNested)
     ? this.createNestedChildrenCollector()
     : ''
-}
-              ${this.compileNestedComponents()}
-              ${this.compileComponentRef()}
-              ${this.compileRestProps()}
-              ${this.compileComponentInterface()}
-              ${getTemplateFunc}
-              ${
-  this.members.filter((m) => m.isApiMethod).length === 0
+}  
+    ${this.compileNestedComponents()}
+    ${this.compileComponentRef()}
+    ${this.compileRestProps()}
+    ${this.compileComponentInterface()}
+    ${this.compileTemplateGetter()}
+    ${this.members.filter((m) => m.isApiMethod).length === 0
     ? `const ${this.name}: React.FC<${this.compilePropsType()}> = (props) => {`
-    : `const ${this.name} = forwardRef<${
-      this.name
-    }Ref, ${this.compilePropsType()}>(function ${lowerizeFirstLetter(
-      this.name,
-    )}(props: ${this.compilePropsType()}, ref){`
+    : `const ${this.name} = forwardRef<${this.name}Ref,
+    ${this.compilePropsType()}>
+    (function ${lowerizeFirstLetter(this.name)}
+    (props: ${this.compilePropsType()}, ref){`
 }
-                  ${this.compileUseRef()}
-                  ${this.stateDeclaration()}
-                  ${this.members
-    .filter(
-      (m) => (m.isConsumer || m.isProvider)
-                        && !(m instanceof GetAccessor),
-    )
+    ${this.compileUseRef()}
+    ${this.stateDeclaration()}
+    ${this.members
+    .filter((m) => (m.isConsumer || m.isProvider) && !(m instanceof GetAccessor))
     .map((m) => m.toString(this.getToStringOptions()))
     .join(';\n')}
-                                          ${this.listeners
+    ${this.listeners
     .concat(this.methods)
-    .concat(
-      this.members.filter(
-        (m) => m.isApiMethod,
-      ) as Array<Method>,
-    )
-    .map((m) => `const ${
-      m.name
-    }=useCallback(${m.declaration(
-      this.getToStringOptions(),
-    )}, [${m.getDependency({
-      members: this.members,
-      componentContext:
-                                                  SyntaxKind.ThisKeyword,
-    })}]);`)
+    .concat(this.members.filter((m) => m.isApiMethod) as Array<Method>)
+    .map((m) => `const ${m.name}=useCallback(
+      ${m.declaration(this.getToStringOptions())},
+      [${m.getDependency({
+    members: this.members,
+    componentContext: SyntaxKind.ThisKeyword,
+  })
+}]);`)
     .join('\n')}
-                  ${this.compileUseEffect()}
-                  ${this.compileUseImperativeHandle()}
-                  return ${this.compileViewCall()}
-              ${
-  this.members.filter((m) => m.isApiMethod).length === 0
+    ${this.compileUseEffect()}
+    ${this.compileUseImperativeHandle()}
+    return ${this.compileViewCall()}
+    ${this.members.filter((m) => m.isApiMethod).length === 0
     ? '}'
-    : `}) as ${this.compileFunctionalComponentType()};\n${this.modifiers.join(
-      ' ',
-    )} ${
-      this.modifiers.join(' ') === 'export'
-        ? `{${this.name}}`
-        : this.name
-    };`
+    : `}) as ${this.compileFunctionalComponentType()};\n${this.modifiers.join(' ')}
+    ${this.modifiers.join(' ') === 'export'
+    ? `{${this.name}}`
+    : this.name
 }
-
-              ${this.compileDefaultComponentExport()}
-
-              ${this.compileDefaultProps()}
-              ${this.compileDefaultOptionsMethod()}
-              ${getDefaultExport(this.modifiers.join(' ') === 'export')}`;
+};
+`
+}
+    ${this.compileDefaultComponentExport()};
+    ${this.compileDefaultProps()}
+    
+    ${this.compileDefaultOptionsMethod()}
+    ${this.members.filter((m) => m.isApiMethod).length === 0
+    ? `export default ${this.name}`
+    : ''
+}`;
   }
 }

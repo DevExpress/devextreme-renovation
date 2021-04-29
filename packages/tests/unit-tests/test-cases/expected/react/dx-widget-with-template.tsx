@@ -74,7 +74,6 @@ const WidgetWithTemplate: React.FC<
     restAttributes: __restAttributes(),
   });
 };
-
 WidgetWithTemplate.defaultProps = {
   ...WidgetWithTemplateInput,
 };

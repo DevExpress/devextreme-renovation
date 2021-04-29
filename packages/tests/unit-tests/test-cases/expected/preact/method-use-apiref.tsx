@@ -69,5 +69,3 @@ export default WidgetWithApiRef;
 WidgetWithApiRef.defaultProps = {
   ...WidgetWithApiRefInput,
 };
-
-export default WidgetWithApiRef;

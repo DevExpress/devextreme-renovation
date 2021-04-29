@@ -45,10 +45,7 @@ const WidgetWithProps = forwardRef<
   useImperativeHandle(ref, () => ({ doSomething: __doSomething }), [
     __doSomething,
   ]);
-  return view({
-    props: { ...props },
-    restAttributes: __restAttributes(),
-  });
+  return view({ props: { ...props }, restAttributes: __restAttributes() });
 }) as React.FC<
   typeof WidgetWithPropsInput &
     RestProps & { ref?: React.Ref<WidgetWithPropsRef> }
@@ -60,6 +57,8 @@ export default WidgetWithProps;
 WidgetWithProps.defaultProps = {
   ...WidgetWithPropsInput,
 };
+
+export default WidgetWithProps;
 function view({ props: { optionalValue, value } }: WidgetWithProps) {
   return <div>{optionalValue || value}</div>;
 }

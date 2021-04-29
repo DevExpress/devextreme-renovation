@@ -60,7 +60,6 @@ const Widget: React.FC<typeof WidgetProps & RestProps> = (props) => {
 
   return view();
 };
-
 function __processTwoWayProps(defaultProps: typeof WidgetProps & RestProps) {
   const twoWayProps: string[] = ["p1", "p2"];
 

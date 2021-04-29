@@ -40,7 +40,6 @@ const Widget: React.FC<typeof WidgetProps & RestProps> = (props) => {
 
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 };
-
 Widget.defaultProps = {
   ...WidgetProps,
 };

@@ -34,7 +34,6 @@ const Import: React.FC<typeof ImportProps & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
-
 Import.defaultProps = {
   ...ImportProps,
 };

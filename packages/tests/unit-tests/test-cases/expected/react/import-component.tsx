@@ -46,7 +46,6 @@ const Child: React.FC<typeof ChildInput & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
-
 Child.defaultProps = {
   ...ChildInput,
 };

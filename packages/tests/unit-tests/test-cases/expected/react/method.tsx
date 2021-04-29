@@ -79,5 +79,3 @@ export default Widget;
 Widget.defaultProps = {
   ...WidgetInput,
 };
-
-export default Widget;

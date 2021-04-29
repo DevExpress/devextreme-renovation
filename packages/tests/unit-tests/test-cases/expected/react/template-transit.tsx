@@ -69,7 +69,6 @@ const TemplateTransitWidget: React.FC<
     restAttributes: __restAttributes(),
   });
 };
-
 TemplateTransitWidget.defaultProps = {
   ...TemplateTransitWidgetInput,
 };

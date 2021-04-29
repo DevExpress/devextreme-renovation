@@ -28,7 +28,6 @@ const WidgetWithRefProp: React.FC<typeof WidgetWithRefPropInput & RestProps> = (
 
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 };
-
 WidgetWithRefProp.defaultProps = {
   ...WidgetWithRefPropInput,
 };

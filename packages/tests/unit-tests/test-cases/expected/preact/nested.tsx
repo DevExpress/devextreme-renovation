@@ -49,7 +49,6 @@ const Widget: React.FC<typeof PickedProps & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
-
 Widget.defaultProps = {
   ...PickedProps,
 };

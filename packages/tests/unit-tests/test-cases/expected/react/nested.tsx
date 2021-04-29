@@ -156,7 +156,6 @@ const Widget: React.FC<typeof PickedProps & RestProps> = (props) => {
     __getNestedEditing: __getNestedEditing(),
   });
 };
-
 Widget.defaultProps = {
   ...PickedProps,
 };

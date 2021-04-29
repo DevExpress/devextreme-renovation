@@ -94,7 +94,6 @@ const ModelWidget: React.FC<typeof ModelWidgetInput & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
-
 ModelWidget.defaultProps = {
   ...ModelWidgetInput,
 };

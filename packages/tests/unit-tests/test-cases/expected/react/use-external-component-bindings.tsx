@@ -27,7 +27,6 @@ const Widget: React.FC<typeof Props & RestProps> = (props) => {
 
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 };
-
 function __createDefaultProps() {
   return {
     ...Props,

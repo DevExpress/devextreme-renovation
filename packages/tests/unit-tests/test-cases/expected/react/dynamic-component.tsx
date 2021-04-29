@@ -166,7 +166,6 @@ const DynamicComponentCreator: React.FC<typeof Props & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
-
 DynamicComponentCreator.defaultProps = {
   ...Props,
 };

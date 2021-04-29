@@ -134,7 +134,6 @@ const TemplateDefaultValue: React.FC<
     restAttributes: __restAttributes(),
   });
 };
-
 TemplateDefaultValue.defaultProps = {
   ...TemplateDefaultValueProps,
 };

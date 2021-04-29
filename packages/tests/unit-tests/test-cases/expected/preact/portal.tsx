@@ -66,7 +66,6 @@ const Widget: React.FC<typeof WidgetProps & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
-
 Widget.defaultProps = {
   ...WidgetProps,
 };

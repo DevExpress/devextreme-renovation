@@ -36,5 +36,4 @@ const Widget: React.FC<{} & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
-
 export default Widget;
