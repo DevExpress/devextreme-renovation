@@ -22,7 +22,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof Props & RestProps) {
+const Widget: React.FC<typeof Props & RestProps> = (props) => {
   const __clickHandler = useCallback(
     function __clickHandler(): any {
       props.onClick!({ type: props.type });
@@ -42,7 +42,7 @@ export function Widget(props: typeof Props & RestProps) {
     clickHandler: __clickHandler,
     restAttributes: __restAttributes(),
   });
-}
+};
 
 Widget.defaultProps = {
   ...Props,

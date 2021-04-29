@@ -32,7 +32,7 @@ const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
       ))) ||
   (ComponentProp && ((props: any) => <ComponentProp {...props} />));
 
-export function TestComponent(props: typeof Props & RestProps) {
+const TestComponent: React.FC<typeof Props & RestProps> = (props) => {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
@@ -57,7 +57,7 @@ export function TestComponent(props: typeof Props & RestProps) {
     },
     restAttributes: __restAttributes(),
   });
-}
+};
 
 export default TestComponent;
 
