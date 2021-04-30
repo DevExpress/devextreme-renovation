@@ -17,22 +17,22 @@ function view(model: Widget) {
 
 export declare type WidgetInputType = {
   state1?: boolean;
-  state2: boolean;
+  state2?: boolean;
   stateProp?: boolean;
   defaultState1: boolean;
   state1Change?: (state1?: boolean) => void;
   defaultState2: boolean;
-  state2Change?: (state2: boolean) => void;
+  state2Change?: (state2?: boolean) => void;
   defaultStateProp?: boolean;
   statePropChange?: (stateProp?: boolean) => void;
 };
-const WidgetInput: WidgetInputType = ({
+const WidgetInput: WidgetInputType = {
   defaultState1: false,
   state1Change: () => {},
   defaultState2: false,
   state2Change: () => {},
   statePropChange: () => {},
-} as any) as WidgetInputType;
+};
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;
@@ -45,13 +45,13 @@ export default class Widget extends BaseInfernoComponent<any> {
   state: {
     innerData?: string;
     state1?: boolean;
-    state2: boolean;
+    state2?: boolean;
     stateProp?: boolean;
   };
   _currentState: {
     innerData?: string;
     state1?: boolean;
-    state2: boolean;
+    state2?: boolean;
     stateProp?: boolean;
   } | null = null;
 
@@ -105,11 +105,11 @@ export default class Widget extends BaseInfernoComponent<any> {
       return { state1: newValue };
     });
   }
-  get __state_state2(): boolean {
+  get __state_state2(): boolean | undefined {
     const state = this._currentState || this.state;
     return this.props.state2 !== undefined ? this.props.state2 : state.state2;
   }
-  set_state2(value: () => boolean): any {
+  set_state2(value: () => boolean | undefined): any {
     this.setState((state: any) => {
       this._currentState = state;
       const newValue = value();

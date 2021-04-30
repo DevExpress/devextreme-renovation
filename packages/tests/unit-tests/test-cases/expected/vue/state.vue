@@ -47,7 +47,7 @@ export const DxWidget = {
     props() {
       return {
         ...(this.state1_state !== undefined && { state1: this.state1_state }),
-        state2: this.state2_state,
+        ...(this.state2_state !== undefined && { state2: this.state2_state }),
         ...(this.stateProp_state !== undefined && {
           stateProp: this.stateProp_state,
         }),

@@ -18,7 +18,7 @@ function view(model: Widget) {
 @ComponentBindings()
 class WidgetInput {
   @TwoWay() state1?: boolean = false;
-  @TwoWay() state2 = false;
+  @TwoWay() state2? = false;
   @TwoWay() stateProp?: boolean;
 }
 @Component({

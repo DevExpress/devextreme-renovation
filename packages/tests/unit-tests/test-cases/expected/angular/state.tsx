@@ -2,12 +2,14 @@ import BaseState, { DxModelWidgetModule } from "./model";
 import { Input, Output, EventEmitter } from "@angular/core";
 class WidgetInput {
   @Input() state1?: boolean = false;
-  @Input() state2: boolean = false;
+  @Input() state2?: boolean = false;
   @Input() stateProp?: boolean;
   @Output() state1Change: EventEmitter<
     boolean | undefined
   > = new EventEmitter();
-  @Output() state2Change: EventEmitter<boolean> = new EventEmitter();
+  @Output() state2Change: EventEmitter<
+    boolean | undefined
+  > = new EventEmitter();
   @Output() statePropChange: EventEmitter<
     boolean | undefined
   > = new EventEmitter();

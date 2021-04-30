@@ -12,9 +12,9 @@ function view(model: Widget) {
 
 @ComponentBindings()
 class WidgetInput {
-  @TwoWay() state1 = false;
+  @TwoWay() state1? = false;
   @TwoWay() state2?: string;
-  @TwoWay() state3: (e: any) => number = (e: any) => {
+  @TwoWay() state3?: (e: any) => number = (e: any) => {
     return e.num;
   };
   @TwoWay() state4?: number | null;

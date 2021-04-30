@@ -11,22 +11,22 @@ function view(model: Widget) {
 
 export declare type WidgetInputType = {
   state1?: boolean;
-  state2: boolean;
+  state2?: boolean;
   stateProp?: boolean;
   defaultState1: boolean;
   state1Change?: (state1?: boolean) => void;
   defaultState2: boolean;
-  state2Change?: (state2: boolean) => void;
+  state2Change?: (state2?: boolean) => void;
   defaultStateProp?: boolean;
   statePropChange?: (stateProp?: boolean) => void;
 };
-const WidgetInput: WidgetInputType = ({
+const WidgetInput: WidgetInputType = {
   defaultState1: false,
   state1Change: () => {},
   defaultState2: false,
   state2Change: () => {},
   statePropChange: () => {},
-} as any) as WidgetInputType;
+};
 import * as React from "react";
 import { useState, useCallback, HTMLAttributes } from "react";
 
@@ -48,8 +48,8 @@ const Widget: React.FC<typeof WidgetInput & RestProps> = (props) => {
   const [__state_state1, __state_setState1] = useState<boolean | undefined>(
     () => (props.state1 !== undefined ? props.state1 : props.defaultState1)
   );
-  const [__state_state2, __state_setState2] = useState<boolean>(() =>
-    props.state2 !== undefined ? props.state2 : props.defaultState2!
+  const [__state_state2, __state_setState2] = useState<boolean | undefined>(
+    () => (props.state2 !== undefined ? props.state2 : props.defaultState2)
   );
   const [__state_stateProp, __state_setStateProp] = useState<
     boolean | undefined
