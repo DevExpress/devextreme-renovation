@@ -35,5 +35,8 @@ jobs:
       - name: Tests
         run: npm run test:with-reporters
 
+      - name: Tests compilation check
+        run: npm run test:compile-check
+
       - name: e2e tests
         run: npm run test:testcafe-headless
