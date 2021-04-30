@@ -38,14 +38,10 @@ import {
 } from '@devextreme-generator/core';
 import { GetAccessor } from './class-members/get-accessor';
 import { Method } from './class-members/method';
-import {
-  getPropName, Property,
-} from './class-members/property';
+import { getPropName, Property } from './class-members/property';
 import { HeritageClause } from './heritage-clause';
 import { PropertyAccess } from './property-access';
-import {
-  ComponentInput, getTemplatePropName,
-} from './react-component-input';
+import { ComponentInput, getTemplatePropName } from './react-component-input';
 
 function getSubscriptions(methods: Method[]) {
   return methods
@@ -830,9 +826,12 @@ export class ReactComponent extends Component {
   }
 
   compileProviders(providers: Property[], viewCallExpression: string) {
-    return providers.reduce((result, p) => `<${p.context}.Provider value={${p.getter()}}>
+    return providers.reduce(
+      (result, p) => `<${p.context}.Provider value={${p.getter()}}>
             ${result}
-          </${p.context}.Provider>`, `{${viewCallExpression}}`);
+          </${p.context}.Provider>`,
+      `{${viewCallExpression}}`,
+    );
   }
 
   compileViewCall() {
@@ -978,15 +977,16 @@ export class ReactComponent extends Component {
         (m) => m.isApiMethod,
       ) as Array<Method>,
     )
-    .map((m) => `const ${
-      m.name
-    }=useCallback(${m.declaration(
-      this.getToStringOptions(),
-    )}, [${m.getDependency({
-      members: this.members,
-      componentContext:
-                                                  SyntaxKind.ThisKeyword,
-    })}]);`)
+    .map(
+      (m) => `const ${
+        m.name
+      }=useCallback(${m.declaration(
+        this.getToStringOptions(),
+      )}, [${m.getDependency({
+        members: this.members,
+        componentContext: SyntaxKind.ThisKeyword,
+      })}]);`,
+    )
     .join('\n')}
                   ${this.compileUseEffect()}
                   ${this.compileUseImperativeHandle()}
