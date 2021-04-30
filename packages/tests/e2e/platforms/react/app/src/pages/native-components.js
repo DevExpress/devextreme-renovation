@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 import Counter from "../../../../../components/counter";
 import ButtonWithTemplate from "../../../../../components/button-with-template";
 import Nested, { Row, RowCell } from "../../../../../components/nested";
+import UndefWidget, {NestedProp} from "../../../../../components/nested-undefined-component";
+
 
 const buttonTemplate = ({ text }) => (
   <div style={{ border: "1px solid blue" }}>{text + "!"}</div>
@@ -10,6 +12,8 @@ const buttonTemplate = ({ text }) => (
 
 export default () => {
   const [counterValue, counterValueChange] = useState(15);
+  const someRef = useRef(null);
+  const someForwardRef = useRef(null);
   return (
     <div>
       <ButtonWithTemplate
@@ -73,6 +77,18 @@ export default () => {
           </Row>
         </Nested>
       </div>
+      hasOwnProperty tests<br/>
+        All is not defined
+        <UndefWidget/>
+        All is defined by a prop
+        <UndefWidget oneWayProp={2} twoWayProp={2} someRef={someRef} 
+          someForwardRef={someForwardRef} nestedProp={[{numberProp: 2}]} 
+          anotherNestedPropInit={[{numberProp: 2}]}>
+        </UndefWidget>
+        Nested defined by a config component, OneWay and TwoWay set to undefined
+        <UndefWidget oneWayProp={undefined} twoWayProp={undefined}>
+          <NestedProp numberProp={2}/>
+        </UndefWidget>
     </div>
   );
 };

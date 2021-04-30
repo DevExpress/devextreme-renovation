@@ -154,7 +154,7 @@ function view(model: App) {
         <TemplateDefaultValueApp />
       </div>
       <RenderSlotCondition>content</RenderSlotCondition>
-      <DefaultPropsComponent />
+      <DefaultPropsComponent/>
       <InlineArrowFunction />
       <DynamicComponent />
       <StylesWidget />
