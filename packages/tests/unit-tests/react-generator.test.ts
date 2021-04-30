@@ -1,5 +1,5 @@
-import assert from 'assert';
-import path from 'path';
+import assert from "assert";
+import path from "path";
 
 import {
   Binary,
@@ -7,11 +7,18 @@ import {
   GeneratorContext,
   Method,
   SimpleExpression,
-  toStringOptions
-} from '@devextreme-generator/core';
-import generator, { ComponentInput, Property, ReactComponent } from '@devextreme-generator/react';
-import { printSourceCodeAst as getResult, removeSpaces } from './helpers/common';
-import mocha from './helpers/mocha';
+  toStringOptions,
+} from "@devextreme-generator/core";
+import generator, {
+  ComponentInput,
+  Property,
+  ReactComponent,
+} from "@devextreme-generator/react";
+import {
+  printSourceCodeAst as getResult,
+  removeSpaces,
+} from "./helpers/common";
+import mocha from "./helpers/mocha";
 
 function createComponentDecorator(parameters: { [name: string]: any }) {
   return generator.createDecorator(

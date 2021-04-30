@@ -3,6 +3,7 @@ import { SyntaxKind } from '../syntaxKind';
 import { ExpressionWithExpression, Expression, SimpleExpression } from './base';
 import { TypeExpression } from './type';
 import { compileTypeParameters } from '../utils/string';
+import { StringLiteral } from './literal';
 
 function getIdentifierExpressionFromVariable(
   expression: Expression,
@@ -85,22 +86,37 @@ export class Call extends ExpressionWithExpression {
     return this.argumentsArray.map((a) => a);
   }
 
-  toString(options?: toStringOptions) {
-    return `${this.expression.toString(
-      options,
-    )}${this.compileTypeArguments()}(${this.argumentsArray
-      .map((a) => a.toString(options))
-      .join(',')})`;
+  toString(options?: toStringOptions):string {
+    if (this.expression.toString() === 'this.props.hasOwnProperty') {
+      const argument = this.arguments?.[0];
+      if (argument instanceof StringLiteral) {
+        const value = argument.valueOf();
+        return this.compileHasOwnProperty(value, options);
+      }
+    }
+    return this.compileDefaultToString(options);
   }
 
   getDependency(options: toStringOptions) {
     const argumentsDependency = this.argumentsArray.reduce((d: string[], a) => d.concat(a.getDependency(options)), []);
     return super.getDependency(options).concat(argumentsDependency);
   }
+
+  compileHasOwnProperty(_value: string, options?: toStringOptions):string {
+    return this.compileDefaultToString(options);
+  }
+
+  compileDefaultToString(options?: toStringOptions):string {
+    return `${this.expression.toString(
+      options,
+    )}${this.compileTypeArguments()}(${this.argumentsArray
+      .map((a) => a.toString(options))
+      .join(',')})`;
+  }
 }
 
 export class New extends Call {
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions): string {
     return `${SyntaxKind.NewKeyword} ${super.toString(options)}`;
   }
 }
@@ -118,7 +134,7 @@ export class CallChain extends Call {
     this.questionDotToken = questionDotToken;
   }
 
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions): string {
     return `${this.expression.toString(options)}${
       this.questionDotToken
     }(${this.argumentsArray.map((a) => a.toString(options)).join(',')})`;
@@ -126,7 +142,7 @@ export class CallChain extends Call {
 }
 
 export class NonNullExpression extends ExpressionWithExpression {
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions): string {
     return `${super.toString(options).replace(/[?!]$/, '')}!`;
   }
 }
@@ -139,7 +155,7 @@ export class AsExpression extends ExpressionWithExpression {
     this.type = type;
   }
 
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions): string {
     return `${super.toString(options)} ${SyntaxKind.AsKeyword} ${this.type}`;
   }
 }

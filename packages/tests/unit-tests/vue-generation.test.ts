@@ -1,11 +1,11 @@
-import { compile } from '@devextreme-generator/build-helpers';
-import generator from '@devextreme-generator/vue';
-import assert from 'assert';
-import path from 'path';
+import { compile } from "@devextreme-generator/build-helpers";
+import generator from "@devextreme-generator/vue";
+import assert from "assert";
+import path from "path";
 
-import { resolveModule } from '@devextreme-generator/core';
-import { assertCode, createTestGenerator } from './helpers/common';
-import mocha from './helpers/mocha';
+import { resolveModule } from "@devextreme-generator/core";
+import { assertCode, createTestGenerator } from "./helpers/common";
+import mocha from "./helpers/mocha";
 
 function getPartFromSourceFile(code: string, tagName: string) {
   const tag = `<${tagName}>`;
@@ -292,7 +292,10 @@ mocha.describe("vue-generation", function () {
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {
-        defaultOptionsModule: path.resolve(__dirname, "../jquery-helpers/default_options"),
+        defaultOptionsModule: path.resolve(
+          __dirname,
+          "../jquery-helpers/default_options"
+        ),
       };
       generator.setContext({
         dirname: path.resolve(__dirname, "./test-cases/declarations/src"),
