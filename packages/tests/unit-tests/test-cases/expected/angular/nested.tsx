@@ -120,8 +120,7 @@ class DxWidgetColumn extends GridColumnProps {
 })
 export default class Widget extends PickedProps {
   __getColumns(): any {
-    const { columns } = this;
-    return columns?.map((el) => (typeof el === "string" ? el : el.name));
+    return this.columns?.map((el) => (typeof el === "string" ? el : el.name));
   }
   get __isEditable(): any {
     return this.editing?.editEnabled || this.editing?.custom?.length;

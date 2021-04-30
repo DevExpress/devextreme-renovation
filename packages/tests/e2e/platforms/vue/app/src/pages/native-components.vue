@@ -60,12 +60,25 @@
         </DxRow>
       </Nested>
     </div>
+    hasOwnProperty tests<br/>
+        All is not defined
+        <UndefWidget/>
+        All is defined by a prop
+        <UndefWidget oneWayProp="2" twoWayProp="2" :nestedProp="[{numberProp: 2}]" 
+          :someRef="someRef" :someForwardRef="someRef"
+          :anotherNestedPropInit="[{numberProp: 2}]">
+        </UndefWidget>
+        Nested defined by a config component, OneWay and TwoWay set to undefined
+        <UndefWidget :oneWayProp="undefined" :twoWayProp="undefined">
+          <DxNestedProp numberProp="2"/>
+        </UndefWidget>
   </div>
 </template>
 <script>
 import ButtonWithTemplate from "../../../../../components/button-with-template.tsx";
 import Counter from "../../../../../components/counter.tsx";
 import Nested, { DxRow, DxRowCell } from "../../../../../components/nested.tsx";
+import UndefWidget, {DxNestedProp} from "../../../../../components/nested-undefined-component.tsx";
 
 export default {
   components: {
@@ -74,11 +87,14 @@ export default {
     Nested,
     DxRow,
     DxRowCell,
+    UndefWidget,
+    DxNestedProp
   },
 
   data() {
     return {
       counterValue: 15,
+      someRef: null
     };
   },
   methods: {},
