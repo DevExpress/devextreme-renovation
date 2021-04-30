@@ -54,8 +54,9 @@ const DynamicComponentCreator: React.FC<typeof Props & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
+
+export default DynamicComponentCreator;
+
 DynamicComponentCreator.defaultProps = {
   ...Props,
 };
-
-export default DynamicComponentCreator;

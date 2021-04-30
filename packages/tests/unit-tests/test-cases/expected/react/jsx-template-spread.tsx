@@ -109,8 +109,9 @@ const Widget: React.FC<typeof Props & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
+
+export default Widget;
+
 Widget.defaultProps = {
   ...Props,
 };
-
-export default Widget;

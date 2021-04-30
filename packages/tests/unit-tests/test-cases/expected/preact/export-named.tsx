@@ -31,8 +31,9 @@ const Widget: React.FC<typeof WidgetInput & RestProps> = (props) => {
 
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 };
+
+export { Widget };
+
 Widget.defaultProps = {
   ...WidgetInput,
 };
-
-export { Widget };

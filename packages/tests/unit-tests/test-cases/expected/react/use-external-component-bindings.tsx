@@ -27,6 +27,9 @@ const Widget: React.FC<typeof Props & RestProps> = (props) => {
 
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 };
+
+export default Widget;
+
 function __createDefaultProps() {
   return {
     ...Props,
@@ -44,4 +47,3 @@ export function defaultOptions(rule: WidgetOptionRule) {
     ...convertRulesToOptions<typeof Props>(__defaultOptionRules),
   };
 }
-export default Widget;

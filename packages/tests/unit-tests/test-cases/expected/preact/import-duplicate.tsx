@@ -40,8 +40,9 @@ const Marker: React.FC<typeof MarkerProps & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
+
+export { Marker };
+
 Marker.defaultProps = {
   ...MarkerProps,
 };
-
-export { Marker };

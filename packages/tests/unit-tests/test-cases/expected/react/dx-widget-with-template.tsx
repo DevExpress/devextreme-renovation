@@ -74,11 +74,12 @@ const WidgetWithTemplate: React.FC<
     restAttributes: __restAttributes(),
   });
 };
+
+export default WidgetWithTemplate;
+
 WidgetWithTemplate.defaultProps = {
   ...WidgetWithTemplateInput,
 };
-
-export default WidgetWithTemplate;
 function view(viewModel: WidgetWithTemplate) {
   return (
     <div>

@@ -60,6 +60,9 @@ const Widget: React.FC<typeof WidgetProps & RestProps> = (props) => {
 
   return view();
 };
+
+export default Widget;
+
 function __processTwoWayProps(defaultProps: typeof WidgetProps & RestProps) {
   const twoWayProps: string[] = ["p1", "p2"];
 
@@ -90,4 +93,3 @@ export function defaultOptions(rule: WidgetOptionRule) {
     ...__processTwoWayProps(convertRulesToOptions(__defaultOptionRules)),
   };
 }
-export default Widget;

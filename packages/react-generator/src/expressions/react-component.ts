@@ -986,13 +986,14 @@ export class ReactComponent extends Component {
 }
 
     ${this.compileDefaultComponentExport()}
-    ${this.compileDefaultProps()}
-
-    ${this.compileDefaultOptionsMethod()}
-    
     ${this.members.filter((m) => m.isApiMethod).length === 0
     ? getExport(this.modifiers.join(' '))
     : ''
-}`;
+}
+
+    ${this.compileDefaultProps()}
+
+    ${this.compileDefaultOptionsMethod()}
+    `;
   }
 }

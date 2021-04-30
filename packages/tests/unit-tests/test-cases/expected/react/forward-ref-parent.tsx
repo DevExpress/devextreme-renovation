@@ -58,8 +58,9 @@ const RefOnChildrenParent: React.FC<typeof Props & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
+
+export default RefOnChildrenParent;
+
 RefOnChildrenParent.defaultProps = {
   ...Props,
 };
-
-export default RefOnChildrenParent;
