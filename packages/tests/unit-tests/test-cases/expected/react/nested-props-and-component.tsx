@@ -94,7 +94,7 @@ const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
       ))) ||
   (ComponentProp && ((props: any) => <ComponentProp {...props} />));
 
-export default function UndefWidget(props: typeof WidgetProps & RestProps) {
+const UndefWidget: React.FC<typeof WidgetProps & RestProps> = (props) => {
   const [__state_twoWayProp, __state_setTwoWayProp] = useState<
     number | undefined
   >(() =>
@@ -301,7 +301,7 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
   });
 };
 
-export default undefWidget;
+export default UndefWidget;
 
 UndefWidget.defaultProps = {
   ...WidgetProps,
