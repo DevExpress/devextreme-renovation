@@ -226,7 +226,7 @@ class JQueryComponent {
     return (this.source.members.filter((a) => a.isApiMethod) as Method[])
       .map((a) => {
         const returnsElementType = a.type?.toString().endsWith('Element');
-        const call = `this.viewRef.${a._name}(${a.parameters
+        const call = `this.viewRef?.${a._name}(${a.parameters
           .map((p) => {
             const param = p.name;
             const hasElementType = p.type
