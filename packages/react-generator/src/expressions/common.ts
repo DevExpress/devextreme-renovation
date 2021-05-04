@@ -14,7 +14,7 @@ export class New extends BaseNew {
       const matchedInput = componentInputs.find(
         (c) => c.name === this.expression.toString(),
       );
-      if (matchedInput?.isNested) {
+      if (matchedInput?.members.some((m) => m.isNested)) {
         const conditional = new Conditional(
           new PropertyAccess(
             this.expression,
@@ -33,6 +33,13 @@ export class New extends BaseNew {
       }
     }
     return super.toString(options);
+    // Object.keys(this.context.components || {}).map(
+    //   (name) => ({
+    //     name,
+    //     isNested:
+    //       this.context.components?.[name]?.members.some((m) => m.isNested)
+    //       || false,
+    //   })
   }
 }
 

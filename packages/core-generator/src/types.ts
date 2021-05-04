@@ -6,6 +6,7 @@ import { Component } from './expressions/component';
 import { TypeExpression } from './expressions/type';
 import { Interface } from './expressions/interface';
 import { Identifier } from './expressions/common';
+import { ComponentInput } from './expressions/component-input';
 
 export type TypeExpressionImports = ImportDeclaration[];
 
@@ -25,11 +26,7 @@ export interface toStringOptions {
   variables?: VariableExpression;
   jsxComponent?: Component;
   usePropsSpace?: boolean;
-  componentInputs?: {
-    name: string;
-    isNested: boolean;
-    fields?: Identifier[];
-  }[];
+  componentInputs?: ComponentInput[];
 }
 
 export type VariableExpression = {

@@ -33,17 +33,16 @@ export class VueComponentInput extends ComponentInput {
     return new Decorator(expression, context);
   }
 
-  toString() {
-    const componentInputs = Object.keys(this.context?.components || {}).map(
-      (name) => {
-        const component = this.context?.components?.[name];
-        const members = component?.members;
-        return {
-          name,
-          isNested: members?.some((m) => m.isNested) || false,
-          fields: members?.map((m) => m._name),
-        };
+  toString(): string {
+    const componentInputs = Object.keys(this.context.components || {}).reduce(
+      (componentInputArr, key) => {
+        const component = this.context.components?.[key];
+        if (component instanceof ComponentInput) {
+          componentInputArr.push(component);
+        }
+        return componentInputArr;
       },
+      [] as ComponentInput[],
     );
     const members = this.baseTypes
       .map((t) => `...${t}`)
