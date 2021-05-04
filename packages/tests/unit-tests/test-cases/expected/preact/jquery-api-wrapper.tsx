@@ -6,7 +6,7 @@ import { MyTypeReturn, MyType } from "./jquery-api";
 
 export default class Widget extends BaseComponent {
   getValue(arg: MyType): MyTypeReturn {
-    return this.viewRef.getValue(arg);
+    return this.viewRef?.getValue(arg);
   }
 
   get _propsInfo() {
