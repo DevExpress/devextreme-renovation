@@ -10,7 +10,7 @@ const CustomTemplate = ({ text }: { text: string; value: number }) => {
   return <span>{text}</span>;
 };
 
-function view(model: Widget) {
+function view(model: Widget):JSX.Element|null {
   return (
     <WidgetWithTemplate
       template={CustomTemplate}

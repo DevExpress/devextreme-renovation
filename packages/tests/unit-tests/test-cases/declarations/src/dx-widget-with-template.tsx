@@ -19,7 +19,7 @@ export default class WidgetWithTemplate extends JSXComponent(
   WidgetWithTemplateInput
 ) {}
 
-function view(viewModel: WidgetWithTemplate) {
+function view(viewModel: WidgetWithTemplate) :JSX.Element|null {
   return (
     <div>
       <viewModel.props.componentTemplate />

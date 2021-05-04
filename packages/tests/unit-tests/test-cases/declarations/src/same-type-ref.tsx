@@ -7,7 +7,7 @@ import {
 } from "@devextreme-generator/declarations";
 import BaseWidget from "./method";
 
-function view(viewModel: Widget) {
+function view(viewModel: Widget):JSX.Element|null {
   return <BaseWidget></BaseWidget>;
 }
 

@@ -1,7 +1,7 @@
 const modifyStyles = (styles: any) => {
   return { height: "100px", ...styles };
 };
-function view({ styles }: Widget) {
+function view({ styles }: Widget): any | null {
   return <span style={normalizeStyles(styles)}></span>;
 }
 

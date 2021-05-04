@@ -1,6 +1,8 @@
 export declare type WidgetInputType = {};
 export const WidgetInput: WidgetInputType = {};
-const view = (viewModel: Widget) => <svg {...viewModel.restAttributes}></svg>;
+const view = (viewModel: Widget): any | null => (
+  <svg {...viewModel.restAttributes}></svg>
+);
 
 import * as React from "react";
 import { useCallback, SVGAttributes } from "react";

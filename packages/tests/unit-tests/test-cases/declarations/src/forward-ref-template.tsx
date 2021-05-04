@@ -9,7 +9,7 @@ import {
   RefObject,
 } from "@devextreme-generator/declarations";
 
-function view(model: RefOnChildrenTemplate) {
+function view(model: RefOnChildrenTemplate) :JSX.Element|null {
   return (
     <Fragment>
       <model.props.contentTemplate

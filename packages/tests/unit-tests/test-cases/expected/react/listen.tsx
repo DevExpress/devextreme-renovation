@@ -1,4 +1,4 @@
-function view(model: Widget) {
+function view(model: Widget): any | null {
   return <div></div>;
 }
 
@@ -35,6 +35,7 @@ const Widget: React.FC<{} & RestProps> = (props) => {
     restAttributes: __restAttributes(),
   });
 };
+
 export default Widget;
 
 export { Widget };

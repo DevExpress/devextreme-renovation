@@ -7,7 +7,7 @@ import {
   TwoWay,
 } from "@devextreme-generator/declarations";
 
-function view(model: InnerWidget) {
+function view(model: InnerWidget) :JSX.Element|null {
   return <div style={{ width: 100, height: 100 }}></div>;
 }
 

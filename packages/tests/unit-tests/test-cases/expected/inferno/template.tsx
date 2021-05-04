@@ -74,7 +74,7 @@ export default class WidgetWithTemplate extends BaseInfernoComponent<any> {
 WidgetWithTemplate.defaultProps = {
   ...WidgetInput,
 };
-function view(viewModel: WidgetWithTemplate) {
+function view(viewModel: WidgetWithTemplate): any | null {
   const myvar = viewModel.props.someProp;
   const FooterTemplate = viewModel.props.footerTemplate;
   const ComponentTemplate = viewModel.props.componentTemplate;

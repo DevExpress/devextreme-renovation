@@ -6,7 +6,7 @@ import {
 } from "@devextreme-generator/declarations";
 import BaseState from "./model";
 
-function view(model: Widget) {
+function view(model: Widget):JSX.Element|null {
   return (
     <div>
       {model.props.state1}

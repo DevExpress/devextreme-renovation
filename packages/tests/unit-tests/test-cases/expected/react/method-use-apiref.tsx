@@ -1,5 +1,5 @@
 import BaseWidget from "./method";
-function view(viewModel: WidgetWithApiRef) {
+function view(viewModel: WidgetWithApiRef): any | null {
   return (
     <BaseWidget
       ref={viewModel.baseRef}
@@ -71,6 +71,7 @@ const WidgetWithApiRef = forwardRef<
   typeof WidgetWithApiRefInput &
     RestProps & { ref?: React.Ref<WidgetWithApiRefRef> }
 > & { defaultProps: typeof WidgetWithApiRefInput };
+
 export default WidgetWithApiRef;
 
 WidgetWithApiRef.defaultProps = {

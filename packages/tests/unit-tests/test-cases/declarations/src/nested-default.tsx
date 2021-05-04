@@ -1,7 +1,7 @@
 import { Component, JSXComponent } from "@devextreme-generator/declarations";
 import { WithNestedInput } from "./nested-default-props";
 
-function view({ props: { rows }, getRowCells }: WithNested) {
+function view({ props: { rows }, getRowCells }: WithNested):JSX.Element|null {
   return (
     <div>
       {rows ? (

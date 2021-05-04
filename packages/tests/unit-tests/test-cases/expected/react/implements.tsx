@@ -1,5 +1,5 @@
 import BaseProps from "./component-bindings-only";
-const view = (model: Widget) => <span />;
+const view = (model: Widget): any | null => <span />;
 
 interface PropsI {
   p: string;

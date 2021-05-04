@@ -13,7 +13,7 @@ import {
 } from "@devextreme-generator/declarations";
 import AnotherWidget from "./method";
 
-function view(model: MetaWidget) {
+function view(model: MetaWidget):JSX.Element|null {
   return null;
 }
 

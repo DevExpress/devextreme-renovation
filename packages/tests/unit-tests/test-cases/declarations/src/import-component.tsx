@@ -7,7 +7,7 @@ import {
 } from "@devextreme-generator/declarations";
 import Base, { WidgetProps } from "./component-input";
 
-function view(model: Child) {
+function view(model: Child):JSX.Element|null {
   return <Base height={model.getProps().height} />;
 }
 

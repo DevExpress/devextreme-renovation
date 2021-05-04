@@ -6,7 +6,7 @@ import {
   normalizeStyles,
 } from "@devextreme/vdom";
 import BaseWidget from "./method";
-function view(viewModel: WidgetWithApiRef) {
+function view(viewModel: WidgetWithApiRef): any | null {
   return (
     <BaseWidget
       ref={viewModel.baseRef}

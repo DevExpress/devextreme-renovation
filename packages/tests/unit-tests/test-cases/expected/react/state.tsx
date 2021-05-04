@@ -1,5 +1,5 @@
 import BaseState from "./model";
-function view(model: Widget) {
+function view(model: Widget): any | null {
   return (
     <div>
       {model.props.state1}

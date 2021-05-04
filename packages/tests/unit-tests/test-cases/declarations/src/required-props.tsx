@@ -5,7 +5,9 @@ import {
   JSXComponent,
 } from "@devextreme-generator/declarations";
 
-function view() {}
+function view():JSX.Element|null {
+  return null;
+}
 
 @ComponentBindings()
 class WidgetInput {

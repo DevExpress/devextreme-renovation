@@ -10,7 +10,7 @@ function view({
   onComponentClick,
   props: { height },
   spreadProps,
-}: DynamicComponentCreator): any {
+}: DynamicComponentCreator): any | null {
   return (
     <div>
       <JSXTemplateComponent

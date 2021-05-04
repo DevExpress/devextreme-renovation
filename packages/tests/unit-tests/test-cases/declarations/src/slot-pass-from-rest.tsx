@@ -7,7 +7,7 @@ import {
 } from "@devextreme-generator/declarations";
 import Widget from "./slots";
 
-function view({ props: { p, ...rest } }: SlotPass) {
+function view({ props: { p, ...rest } }: SlotPass):JSX.Element|null {
   return (
     <div>
       <Widget {...rest} />

@@ -80,7 +80,7 @@ export default WidgetWithTemplate;
 WidgetWithTemplate.defaultProps = {
   ...WidgetWithTemplateInput,
 };
-function view(viewModel: WidgetWithTemplate) {
+function view(viewModel: WidgetWithTemplate): any | null {
   return (
     <div>
       {viewModel.props.componentTemplate({})}

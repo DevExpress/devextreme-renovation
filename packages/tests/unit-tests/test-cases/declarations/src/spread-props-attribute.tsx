@@ -7,7 +7,7 @@ import {
 } from "@devextreme-generator/declarations";
 import InnerWidget from "./dx-inner-widget";
 
-function view({ props, restAttributes }: Widget) {
+function view({ props, restAttributes }: Widget):JSX.Element|null {
   return <InnerWidget {...(props as any)} {...restAttributes} />;
 }
 

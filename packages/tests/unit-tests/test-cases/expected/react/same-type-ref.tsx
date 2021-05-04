@@ -1,5 +1,5 @@
 import BaseWidget from "./method";
-function view(viewModel: Widget) {
+function view(viewModel: Widget): any | null {
   return <BaseWidget></BaseWidget>;
 }
 

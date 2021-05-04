@@ -4,7 +4,7 @@ import {
 } from "@devextreme-generator/declarations";
 import Props from "./component-bindings-only";
 
-function view(model: Widget) {
+function view(model: Widget):JSX.Element|null {
   return <div>{model.props.height}</div>;
 }
 

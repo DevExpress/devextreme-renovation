@@ -17,7 +17,7 @@ export class WidgetInput {
 })
 export default class Widget extends JSXComponent(WidgetInput) {}
 
-function view(viewModel: Widget) {
+function view(viewModel: Widget):JSX.Element|null {
   return (
     <div>
       <viewModel.props.template />

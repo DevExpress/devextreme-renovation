@@ -6,7 +6,7 @@ import {
 } from "@devextreme-generator/declarations";
 import { Widget } from "./export-named";
 
-function view(model: Child) {
+function view(model: Child):JSX.Element|null  {
   return <Widget prop={true} />;
 }
 

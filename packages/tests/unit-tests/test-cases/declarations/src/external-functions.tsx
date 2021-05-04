@@ -30,7 +30,7 @@ const array = new Array(100).map((_, index) => index);
 
 const CLASS_NAME = arrowFunction();
 
-function view(model: Widget) {
+function view(model: Widget) :JSX.Element|null {
   return (
     <div className={CLASS_NAME} style={externalFunction()}>
       {model.props.cells.map((cell, index) => (

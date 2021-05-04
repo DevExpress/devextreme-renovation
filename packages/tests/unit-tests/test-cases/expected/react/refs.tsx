@@ -1,4 +1,4 @@
-function view(viewModel: Widget) {
+function view(viewModel: Widget): any | null {
   return (
     <div ref={viewModel.divRef}>
       <div ref={viewModel.props.outerDivRef}></div>

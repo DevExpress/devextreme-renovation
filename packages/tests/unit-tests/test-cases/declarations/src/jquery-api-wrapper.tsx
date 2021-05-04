@@ -7,7 +7,7 @@ import {
 
 import BaseWidget, { MyType, MyTypeReturn } from "./jquery-api";
 
-function view(viewModel: Widget) {
+function view(viewModel: Widget):JSX.Element|null {
   return <BaseWidget />;
 }
 

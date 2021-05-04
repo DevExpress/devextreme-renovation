@@ -22,7 +22,7 @@ export class ListInput {
 })
 export default class List extends JSXComponent(ListInput) {}
 
-function view(model: List) {
+function view(model: List):JSX.Element|null {
   const items = model.props.items?.map((item: any) => {
     return <div key={item.key}>{item.text}</div>;
   });

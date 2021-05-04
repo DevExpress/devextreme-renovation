@@ -33,7 +33,7 @@ const Props: PropsType = {
   template: (props) => <div></div>,
   template2: () => <div></div>,
 };
-function view(model: Widget) {
+function view(model: Widget): any | null {
   return (
     <div>
       {model.props.template({ ...model.spreadGetter })}

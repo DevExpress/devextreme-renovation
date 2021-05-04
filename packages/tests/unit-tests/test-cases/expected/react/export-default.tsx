@@ -1,4 +1,4 @@
-function view(model: Widget) {
+function view(model: Widget): any | null {
   return <div></div>;
 }
 

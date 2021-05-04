@@ -1,5 +1,5 @@
 import { Widget } from "./export-named";
-function view(model: Child) {
+function view(model: Child): any | null {
   return <Widget prop={true} />;
 }
 

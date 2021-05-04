@@ -1,6 +1,6 @@
 import { PickedProps, GridColumnProps } from "./nested-props";
 export const CustomColumnComponent = (props: typeof GridColumnProps) => {};
-function view(model: Widget) {
+function view(model: Widget): any | null {
   return <div />;
 }
 

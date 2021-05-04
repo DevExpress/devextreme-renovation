@@ -17,7 +17,7 @@ type Item = {
 
 const getKey = (item: Item) => item.key;
 
-function view({ props: { items } }: WidgetWithGlobals) {
+function view({ props: { items } }: WidgetWithGlobals) :JSX.Element|null {
   return (
     <div className={CLASS_NAME}>
       <span className={CLASS_NAME}></span>

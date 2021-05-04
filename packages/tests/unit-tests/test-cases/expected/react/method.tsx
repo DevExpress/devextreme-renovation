@@ -1,4 +1,4 @@
-function view(viewModel: Widget) {
+function view(viewModel: Widget): any | null {
   return <div ref={viewModel.divRef}></div>;
 }
 
@@ -74,6 +74,7 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
 ) as React.FC<
   typeof WidgetInput & RestProps & { ref?: React.Ref<WidgetRef> }
 > & { defaultProps: typeof WidgetInput };
+
 export default Widget;
 
 Widget.defaultProps = {

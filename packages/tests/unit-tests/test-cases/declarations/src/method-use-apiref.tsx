@@ -9,7 +9,7 @@ import {
 } from "@devextreme-generator/declarations";
 import BaseWidget from "./method";
 
-function view(viewModel: WidgetWithApiRef) {
+function view(viewModel: WidgetWithApiRef):JSX.Element|null {
   return (
     <BaseWidget
       ref={viewModel.baseRef}

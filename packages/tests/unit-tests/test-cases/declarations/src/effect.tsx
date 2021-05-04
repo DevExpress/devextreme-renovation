@@ -8,7 +8,7 @@ import {
   JSXComponent,
 } from "@devextreme-generator/declarations";
 
-function view(model: Widget) {
+function view(model: Widget) :JSX.Element|null {
   return <div></div>;
 }
 

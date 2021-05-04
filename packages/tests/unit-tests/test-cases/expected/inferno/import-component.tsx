@@ -5,7 +5,7 @@ import {
   normalizeStyles,
 } from "@devextreme/vdom";
 import Base, { WidgetProps } from "./component-input";
-function view(model: Child) {
+function view(model: Child): any | null {
   return <Base height={model.getProps().height} />;
 }
 

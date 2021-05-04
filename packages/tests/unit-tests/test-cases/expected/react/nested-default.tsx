@@ -1,5 +1,5 @@
 import { WithNestedInput } from "./nested-default-props";
-function view({ getRowCells, props: { rows } }: WithNested) {
+function view({ getRowCells, props: { rows } }: WithNested): any | null {
   return (
     <div>
       {rows ? (

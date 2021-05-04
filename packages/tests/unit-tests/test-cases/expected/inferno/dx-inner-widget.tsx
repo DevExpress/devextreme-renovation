@@ -4,7 +4,7 @@ import {
   InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/vdom";
-function view(model: InnerWidget) {
+function view(model: InnerWidget): any | null {
   return <div style={normalizeStyles({ width: 100, height: 100 })}></div>;
 }
 

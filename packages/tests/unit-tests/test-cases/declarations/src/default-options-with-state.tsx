@@ -5,7 +5,9 @@ import {
   TwoWay,
 } from "@devextreme-generator/declarations";
 
-function view() {}
+function view(): JSX.Element|null {
+  return null;
+}
 
 @ComponentBindings()
 export class WidgetProps {

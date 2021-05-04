@@ -19,6 +19,6 @@ export default class WidgetWithRefProp extends JSXComponent(
   WidgetWithRefPropInput
 ) {}
 
-function view(viewModel: WidgetWithRefProp) {
+function view(viewModel: WidgetWithRefProp) :JSX.Element|null {
   return <div></div>;
 }

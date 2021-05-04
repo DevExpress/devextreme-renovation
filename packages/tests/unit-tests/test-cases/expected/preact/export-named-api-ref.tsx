@@ -1,4 +1,4 @@
-function view(model: Widget) {
+function view(model: Widget): any | null {
   return <div></div>;
 }
 
@@ -39,6 +39,7 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
 ) as Preact.FunctionalComponent<typeof WidgetInput & RestProps> & {
   defaultProps: typeof WidgetInput;
 };
+
 export { Widget };
 
 Widget.defaultProps = {

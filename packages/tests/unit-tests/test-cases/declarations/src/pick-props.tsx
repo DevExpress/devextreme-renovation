@@ -5,7 +5,7 @@ import {
 import Props from "./component-bindings-only";
 import { Options } from "./types.d";
 
-function view(model: Widget) {
+function view(model: Widget):JSX.Element|null {
   return <div>{model.props.data?.value}</div>;
 }
 

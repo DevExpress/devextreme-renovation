@@ -1,5 +1,5 @@
 import WidgetWithRefProp from "./dx-widget-with-ref-prop";
-function view(viewModel: Widget) {
+function view(viewModel: Widget): any | null {
   return (
     <div ref={viewModel.divRef}>
       <WidgetWithRefProp

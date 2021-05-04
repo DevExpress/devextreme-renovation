@@ -5,7 +5,7 @@ import {
   JSXComponent,
 } from "@devextreme-generator/declarations";
 
-const view = (model: Widget): any => model.props.children;
+const view = (model: Widget):JSX.Element|null => model.props.children;
 
 @ComponentBindings()
 class WidgetInput {

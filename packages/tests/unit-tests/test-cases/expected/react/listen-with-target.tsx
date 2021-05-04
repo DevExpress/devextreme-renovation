@@ -1,4 +1,6 @@
-function view() {}
+function view(): any | null {
+  return null;
+}
 
 import * as React from "react";
 import { useCallback, useEffect, HTMLAttributes } from "react";
@@ -31,6 +33,7 @@ const Widget: React.FC<{} & RestProps> = (props) => {
 
   return view();
 };
+
 export default Widget;
 
 export { Widget };

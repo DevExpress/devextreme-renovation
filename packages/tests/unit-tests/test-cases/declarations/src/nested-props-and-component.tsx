@@ -14,7 +14,7 @@ import {
   Slot,
 } from "@devextreme-generator/declarations";
 
-function view(model: UndefWidget) {
+function view(model: UndefWidget):JSX.Element|null {
   return (
     <div></div>
   );

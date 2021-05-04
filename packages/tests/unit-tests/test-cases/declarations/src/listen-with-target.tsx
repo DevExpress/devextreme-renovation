@@ -1,6 +1,8 @@
 import { Component, Listen } from "@devextreme-generator/declarations";
 
-function view() {}
+function view():JSX.Element|null {
+  return null;
+}
 
 @Component({
   name: "Component",

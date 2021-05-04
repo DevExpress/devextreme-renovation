@@ -6,7 +6,7 @@ import {
 import * as utils from "../../../../jquery-helpers/default_options";
 import MyBaseComponent from "../../../../jquery-helpers/jquery_custom_base_component";
 
-function view(model: Widget) {
+function view(model: Widget):JSX.Element|null {
   return <div></div>;
 }
 

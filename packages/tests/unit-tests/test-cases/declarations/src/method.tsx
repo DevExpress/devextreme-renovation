@@ -8,7 +8,7 @@ import {
   RefObject,
 } from "@devextreme-generator/declarations";
 
-function view(viewModel: Widget) {
+function view(viewModel: Widget):JSX.Element|null {
   return <div ref={viewModel.divRef}></div>;
 }
 

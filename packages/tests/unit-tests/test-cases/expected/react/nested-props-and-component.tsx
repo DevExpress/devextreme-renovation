@@ -1,4 +1,4 @@
-function view(model: UndefWidget) {
+function view(model: UndefWidget): any | null {
   return <div></div>;
 }
 

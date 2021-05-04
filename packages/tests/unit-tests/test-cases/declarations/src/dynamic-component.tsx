@@ -20,7 +20,7 @@ function view({
   spreadProps,
   props: { height },
   onComponentClick,
-}: DynamicComponentCreator): JSX.Element {
+}: DynamicComponentCreator): JSX.Element|null {
   return (
     <div>
       <JSXTemplateComponent

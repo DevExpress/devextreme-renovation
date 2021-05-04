@@ -6,7 +6,7 @@ import {
   OneWay,
 } from "@devextreme-generator/declarations";
 
-function view(model: ModelWidget) {
+function view(model: ModelWidget):JSX.Element|null {
   return <div>{model.props.value}</div>;
 }
 

@@ -13,7 +13,7 @@ export class ListInput {
   @OneWay() keyExpr?: string = "value";
 }
 
-function view(viewModel: List) {
+function view(viewModel: List):JSX.Element|null {
   return (
     <div>
       <div>

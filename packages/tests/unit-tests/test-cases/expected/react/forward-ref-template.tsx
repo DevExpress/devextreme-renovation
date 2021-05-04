@@ -1,4 +1,4 @@
-function view(model: RefOnChildrenTemplate) {
+function view(model: RefOnChildrenTemplate): any | null {
   return (
     <React.Fragment>
       {model.props.contentTemplate({ childRef: model.child })}

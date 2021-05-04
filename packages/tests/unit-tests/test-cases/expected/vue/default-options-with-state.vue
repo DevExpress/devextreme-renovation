@@ -1,3 +1,6 @@
+<template>
+  {{ null }}
+</template>
 <script>
 export const WidgetProps = {
   p1: {

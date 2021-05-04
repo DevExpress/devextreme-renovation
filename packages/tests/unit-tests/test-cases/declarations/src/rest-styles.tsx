@@ -15,7 +15,7 @@ const modifyStyles = (styles: CSSAttributes) => {
   };
 };
 
-function view({ styles }: Widget) {
+function view({ styles }: Widget):JSX.Element|null {
   return <span style={styles}></span>;
 }
 

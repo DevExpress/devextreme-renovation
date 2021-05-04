@@ -1,5 +1,5 @@
 import { createPortal } from "preact/compat";
-function view(model: Widget) {
+function view(model: Widget): any | null {
   return (
     <div>
       {model.rendered ? (

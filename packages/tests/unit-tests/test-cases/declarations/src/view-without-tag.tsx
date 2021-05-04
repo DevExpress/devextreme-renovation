@@ -5,7 +5,7 @@ import {
   JSXComponent,
 } from "@devextreme-generator/declarations";
 
-function view(model: Widget): any {
+function view(model: Widget):JSX.Element|null {
   return model.props.children;
 }
 

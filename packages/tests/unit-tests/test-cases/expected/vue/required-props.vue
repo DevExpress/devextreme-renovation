@@ -1,3 +1,6 @@
+<template>
+  {{ null }}
+</template>
 <script>
 const WidgetInput = {
   size: {

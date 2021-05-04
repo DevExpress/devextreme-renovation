@@ -1,4 +1,4 @@
-const view = (model: Widget): any => model.props.children;
+const view = (model: Widget): any | null => model.props.children;
 
 export declare type WidgetInputType = {
   children?: React.ReactNode;

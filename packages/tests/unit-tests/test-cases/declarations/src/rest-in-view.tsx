@@ -7,7 +7,7 @@ import {
   TwoWay,
 } from "@devextreme-generator/declarations";
 
-function view({ props: { height, ...rest } }: Widget) {
+function view({ props: { height, ...rest } }: Widget):JSX.Element|null {
   return <span>{rest}</span>;
 }
 

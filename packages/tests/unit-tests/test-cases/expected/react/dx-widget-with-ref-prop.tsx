@@ -34,6 +34,6 @@ export default WidgetWithRefProp;
 WidgetWithRefProp.defaultProps = {
   ...WidgetWithRefPropInput,
 };
-function view(viewModel: WidgetWithRefProp) {
+function view(viewModel: WidgetWithRefProp): any | null {
   return <div></div>;
 }

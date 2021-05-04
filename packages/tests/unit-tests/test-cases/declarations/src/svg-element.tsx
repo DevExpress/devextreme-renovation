@@ -6,7 +6,7 @@ import {
 
 @ComponentBindings()
 export class WidgetInput {}
-const view = (viewModel: Widget) => <svg {...viewModel.restAttributes}></svg>;
+const view = (viewModel: Widget):JSX.Element|null => <svg {...viewModel.restAttributes}></svg>;
 @Component({
   view,
   isSVG: true,

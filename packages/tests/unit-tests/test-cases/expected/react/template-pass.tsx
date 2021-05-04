@@ -3,7 +3,7 @@ import InnerWidget from "./dx-inner-widget";
 const CustomTemplate = ({ text }: { text: string; value: number }) => {
   return <span>{text}</span>;
 };
-function view(model: Widget) {
+function view(model: Widget): any | null {
   return (
     <WidgetWithTemplate
       template={CustomTemplate}

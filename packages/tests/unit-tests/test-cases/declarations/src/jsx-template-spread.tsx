@@ -27,7 +27,7 @@ class Props {
   > = (props) => <div></div>;
   @Template() template2: JSXTemplate<TemplateInput> = () => <div></div>;
 }
-function view(model: Widget) {
+function view(model: Widget):JSX.Element|null {
   return (
     <div>
       <model.props.template {...model.spreadGetter}></model.props.template>

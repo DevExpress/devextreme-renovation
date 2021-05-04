@@ -7,7 +7,7 @@ import {
   JSXComponent,
 } from "@devextreme-generator/declarations";
 
-const view = () => <div></div>;
+const view = ():JSX.Element|null => <div></div>;
 
 @ComponentBindings()
 class WidgetInput {}

@@ -39,7 +39,7 @@ export class WidgetInput {
 })
 export default class WidgetWithTemplate extends JSXComponent(WidgetInput) {}
 
-function view(viewModel: WidgetWithTemplate) {
+function view(viewModel: WidgetWithTemplate):JSX.Element|null {
   const myvar = viewModel.props.someProp;
   const FooterTemplate = viewModel.props.footerTemplate;
   const ComponentTemplate = viewModel.props.componentTemplate;

@@ -1,4 +1,6 @@
-function view() {}
+function view(): any | null {
+  return null;
+}
 
 export declare type WidgetPropsType = {
   p1: string;

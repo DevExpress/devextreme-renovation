@@ -1,5 +1,5 @@
 import BaseWidget from "./method";
-function view(viewModel: WidgetWithApiRef) {
+function view(viewModel: WidgetWithApiRef): any | null {
   return (
     <BaseWidget
       ref={viewModel.baseRef}
@@ -64,6 +64,7 @@ const WidgetWithApiRef = forwardRef<
 }) as Preact.FunctionalComponent<typeof WidgetWithApiRefInput & RestProps> & {
   defaultProps: typeof WidgetWithApiRefInput;
 };
+
 export default WidgetWithApiRef;
 
 WidgetWithApiRef.defaultProps = {

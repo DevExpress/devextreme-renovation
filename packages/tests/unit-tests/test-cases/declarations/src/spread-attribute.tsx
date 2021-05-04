@@ -7,7 +7,7 @@ import {
   RefObject,
 } from "@devextreme-generator/declarations";
 
-function view(model: Widget) {
+function view(model: Widget):JSX.Element|null {
   return (
     <div ref={model.host} {...model.attr1}>
       <input {...model.attr2} />

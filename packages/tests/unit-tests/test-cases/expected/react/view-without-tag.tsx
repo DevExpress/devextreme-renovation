@@ -1,4 +1,4 @@
-function view(model: Widget): any {
+function view(model: Widget): any | null {
   return model.props.children;
 }
 

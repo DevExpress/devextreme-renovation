@@ -32,7 +32,7 @@ export default class Widget extends JSXComponent(WidgetInput) {
   }
 }
 
-function view(viewModel: Widget) {
+function view(viewModel: Widget):JSX.Element|null {
   const MyComponent = viewModel.props.loading
     ? loadingJSX(viewModel.loadingProps)
     : infoJSX(viewModel.props.greetings, viewModel.name);

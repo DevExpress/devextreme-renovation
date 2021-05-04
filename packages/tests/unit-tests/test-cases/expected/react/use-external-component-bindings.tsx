@@ -1,5 +1,5 @@
 import Props from "./component-bindings-only";
-function view(model: Widget) {
+function view(model: Widget): any | null {
   return <div>{model.props.height}</div>;
 }
 

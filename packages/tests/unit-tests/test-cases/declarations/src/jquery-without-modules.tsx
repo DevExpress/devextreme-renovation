@@ -17,7 +17,7 @@ class Props {
 })
 export default class Widget extends JSXComponent(Props) {}
 
-function view1(viewModel: Widget) {
+function view1(viewModel: Widget):JSX.Element|null {
   return (
     <div style={{ height: viewModel.props.height }}>
       <span></span>

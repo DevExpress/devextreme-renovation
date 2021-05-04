@@ -1,4 +1,4 @@
-function view(model: ModelWidget) {
+function view(model: ModelWidget): any | null {
   return <div>{model.props.baseStateProp}</div>;
 }
 

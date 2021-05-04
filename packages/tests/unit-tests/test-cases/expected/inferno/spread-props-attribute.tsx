@@ -5,7 +5,7 @@ import {
   normalizeStyles,
 } from "@devextreme/vdom";
 import InnerWidget from "./dx-inner-widget";
-function view({ props, restAttributes }: Widget) {
+function view({ props, restAttributes }: Widget): any | null {
   return <InnerWidget {...(props as any)} {...restAttributes} />;
 }
 

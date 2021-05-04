@@ -5,7 +5,7 @@ import {
 } from "@devextreme-generator/declarations";
 import InnerWidget from "./dx-inner-widget";
 
-function view(model: Widget) {
+function view(model: Widget):JSX.Element|null {
   return (
     <InnerWidget selected={false} {...model.attr1} {...model.restAttributes} />
   );
