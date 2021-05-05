@@ -19,14 +19,7 @@ function view({
         {...spreadProps}
       />
 
-      <Component
-        height={height}
-        onClick={onComponentClick}
-        export={() => {}}
-        stringValue=""
-        onSomething={() => {}}
-        defaultStringValue=""
-      />
+      <Component height={height} onClick={onComponentClick} {...spreadProps} />
 
       <ComponentWithTemplate
         template={({ textProp }) => (

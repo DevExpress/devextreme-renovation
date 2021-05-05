@@ -219,11 +219,11 @@ export class DynamicComponentDirective {
     ></ng-template
     ><ng-template
       dynamicComponent
-      [props]="{height:height,onClick:__onComponentClick.bind(this),export: () => {
-      
-    },stringValue:'',onSomething: () => {
-      
-    },defaultStringValue:''}"
+      [props]="{
+        height: height,
+        onClick: __onComponentClick.bind(this),
+        dxSpreadProp2: __spreadProps
+      }"
       [componentConstructor]="__Component"
       let-internalStateValue="internalStateValue"
       let-Component="Component"

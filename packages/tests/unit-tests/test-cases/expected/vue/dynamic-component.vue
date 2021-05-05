@@ -21,11 +21,21 @@
     /><component
       v-bind:is="__Component"
       :height="height"
-      @click="__onComponentClick"
-      :export="() => {}"
-      stringValue=""
-      @something="() => {}"
-      defaultStringValue=""
+      v-bind="{
+        ...__spreadProps,
+        ...{
+          onClick: undefined,
+          onSomething: undefined,
+          stringValueChange: undefined,
+        },
+      }"
+      @click="
+        __spreadProps.onClick !== undefined
+          ? __spreadProps.onClick
+          : __onComponentClick
+      "
+      @something="__spreadProps.onSomething"
+      @update:string-value="__spreadProps.stringValueChange"
     /><component v-bind:is="__ComponentWithTemplate"
       ><template v-slot:template="{ textProp }"
         ><div v-bind:style="__processStyle({ height: '50px' })">{{
