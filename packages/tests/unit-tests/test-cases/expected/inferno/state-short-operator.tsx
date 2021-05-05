@@ -10,7 +10,7 @@ function view(model: Widget): any | null {
 
 export declare type WidgetInputType = {
   propState: number;
-  defaultPropState: number;
+  defaultPropState?: number;
   propStateChange?: (propState: number) => void;
 };
 const WidgetInput: WidgetInputType = ({

@@ -12,7 +12,7 @@ export declare type WidgetInputType = {
   p: string;
   r: string;
   s: number;
-  defaultS: number;
+  defaultS?: number;
   sChange?: (s: number) => void;
 };
 export const WidgetInput: WidgetInputType = ({

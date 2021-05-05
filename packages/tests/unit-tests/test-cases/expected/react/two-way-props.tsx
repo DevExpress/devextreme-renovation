@@ -5,7 +5,7 @@ function view(model: Widget): any | null {
 export declare type WidgetInputType = {
   height: number;
   selected: boolean;
-  defaultSelected: boolean;
+  defaultSelected?: boolean;
   selectedChange?: (selected: boolean) => void;
 };
 const WidgetInput: WidgetInputType = ({

@@ -13,9 +13,9 @@ export declare type WidgetInputType = {
   state1?: boolean;
   state2?: boolean;
   stateProp?: boolean;
-  defaultState1: boolean;
+  defaultState1?: boolean;
   state1Change?: (state1?: boolean) => void;
-  defaultState2: boolean;
+  defaultState2?: boolean;
   state2Change?: (state2?: boolean) => void;
   defaultStateProp?: boolean;
   statePropChange?: (stateProp?: boolean) => void;

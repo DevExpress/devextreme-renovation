@@ -3,7 +3,7 @@ export declare type GridColumnPropsType = {
   index: number;
   editing?: typeof ColumnEditingProps;
   custom?: typeof CustomProps[];
-  defaultIndex: number;
+  defaultIndex?: number;
   indexChange?: (index: number) => void;
 };
 export const GridColumnProps: GridColumnPropsType = ({

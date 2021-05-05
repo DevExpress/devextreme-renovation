@@ -12,7 +12,7 @@ export declare type InnerWidgetPropsType = {
   selected?: boolean;
   value: number;
   onSelect?: (e: any) => any;
-  defaultValue: number;
+  defaultValue?: number;
   valueChange?: (value: number) => void;
 };
 export const InnerWidgetProps: InnerWidgetPropsType = ({

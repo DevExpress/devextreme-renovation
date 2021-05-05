@@ -17,7 +17,7 @@ export declare type WidgetInputType = {
   stringValue: string;
   onClick: (a: number) => void;
   onSomething: EventCallBack<number>;
-  defaultStringValue: string;
+  defaultStringValue?: string;
   stringValueChange?: (stringValue: string) => void;
 };
 export const WidgetInput: WidgetInputType = ({
