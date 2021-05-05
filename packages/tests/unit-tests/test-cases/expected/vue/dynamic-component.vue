@@ -22,6 +22,10 @@
       v-bind:is="__Component"
       :height="height"
       @click="__onComponentClick"
+      :export="() => {}"
+      stringValue=""
+      @something="() => {}"
+      defaultStringValue=""
     /><component v-bind:is="__ComponentWithTemplate"
       ><template v-slot:template="{ textProp }"
         ><div v-bind:style="__processStyle({ height: '50px' })">{{
