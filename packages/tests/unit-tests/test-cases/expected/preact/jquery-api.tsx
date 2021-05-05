@@ -5,16 +5,16 @@ import WidgetComponent from "../../../../jquery-api";
 import { MyTypeReturn, MyType } from "../../../../jquery-api";
 
 export default class Widget extends BaseComponent {
-  getHeight(p: number = 10, p1: any): string {
+  getHeight(p: number = 10, p1: any): string | undefined {
     return this.viewRef?.getHeight(p, p1);
   }
-  getSize(): string {
+  getSize(): string | undefined {
     return this.viewRef?.getSize();
   }
-  getValue(arg: MyType): MyTypeReturn {
+  getValue(arg: MyType): MyTypeReturn | undefined {
     return this.viewRef?.getValue(arg);
   }
-  getValue2(arg: MyType): MyTypeReturn {
+  getValue2(arg: MyType): MyTypeReturn | undefined {
     return this.viewRef?.getValue2(arg);
   }
 
