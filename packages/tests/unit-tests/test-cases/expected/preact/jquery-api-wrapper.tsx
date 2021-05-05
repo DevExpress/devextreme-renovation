@@ -5,7 +5,7 @@ import WidgetComponent from "../../../../jquery-api-wrapper";
 import { MyTypeReturn, MyType } from "./jquery-api";
 
 export default class Widget extends BaseComponent {
-  getValue(arg: MyType): MyTypeReturn {
+  getValue(arg: MyType): MyTypeReturn | undefined {
     return this.viewRef?.getValue(arg);
   }
 

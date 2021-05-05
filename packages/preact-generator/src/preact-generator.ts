@@ -238,7 +238,7 @@ class JQueryComponent {
           })
           .join(',')})`;
 
-        return `${a._name}(${a.parameters})${compileType(a.type.toString())} {
+        return `${a._name}(${a.parameters})${compileType(a.type.toString())} | undefined {
                 return ${
   returnsElementType ? `this._toPublicElement(${call})` : call
 };
