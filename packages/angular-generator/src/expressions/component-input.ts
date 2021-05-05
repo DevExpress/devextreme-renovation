@@ -67,15 +67,18 @@ export class ComponentInput extends BaseComponentInput {
       name,
       initializer,
     } = property;
-
+    const inheritedPostfix = this.heritageClauses?.[0]?.members.some(
+      (parentMember) => parentMember.name === name,
+    ) ? 'Inherited' : '';
     const resultArray = [
-      this.createNestedState(name, questionOrExclamationToken, type),
+      this.createNestedState(name, questionOrExclamationToken, type, inheritedPostfix),
       this.createNestedPropertySetter(
         decorators,
         modifiers,
         name,
         questionOrExclamationToken,
         `${type}`,
+        inheritedPostfix,
       ),
       this.createNestedPropertyGetter(
         modifiers,
@@ -83,6 +86,7 @@ export class ComponentInput extends BaseComponentInput {
         questionOrExclamationToken,
         type,
         initializer,
+        inheritedPostfix,
       ),
     ];
     return resultArray;
@@ -92,11 +96,12 @@ export class ComponentInput extends BaseComponentInput {
     name: string,
     questionOrExclamationToken: string,
     type: TypeExpression | string,
+    inheritedPostfix = '',
   ) {
     return new Property(
       [],
       ['private'],
-      new Identifier(`__${name}__`),
+      new Identifier(`__${name}${inheritedPostfix}__`),
       questionOrExclamationToken || SyntaxKind.QuestionToken,
       `${type}`,
       undefined,
@@ -109,12 +114,13 @@ export class ComponentInput extends BaseComponentInput {
     name: string,
     questionOrExclamationToken: string,
     type: string | TypeExpression,
+    inheritedPostfix = '',
   ) {
     let typeString = type.toString();
     if (questionOrExclamationToken === '?') {
       typeString += '| undefined';
     }
-    const statements = [new SimpleExpression(`this.__${name}__=value;`)];
+    const statements = [new SimpleExpression(`this.__${name}${inheritedPostfix}__=value;`)];
 
     return new SetAccessor(
       decorator,
@@ -140,6 +146,7 @@ export class ComponentInput extends BaseComponentInput {
     questionOrExclamationToken: string,
     type: string | TypeExpression,
     initializer?: Expression,
+    inheritedPostfix = '',
   ) {
     let typeString = `${type}`;
     if (questionOrExclamationToken === '?') {
@@ -149,13 +156,13 @@ export class ComponentInput extends BaseComponentInput {
     const statements = [];
     if (initializer) {
       statements.push(
-        new SimpleExpression(`if(!this.__${name}__){
+        new SimpleExpression(`if(!this.__${name}${inheritedPostfix}__){
         return ${this.name}.__defaultNestedValues.${name}
       }`),
       );
     }
     statements.push(
-      new ReturnStatement(new SimpleExpression(`this.__${name}__`)),
+      new ReturnStatement(new SimpleExpression(`this.__${name}${inheritedPostfix}__`)),
     );
 
     return new GetAccessor(

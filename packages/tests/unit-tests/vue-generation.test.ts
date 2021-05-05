@@ -371,4 +371,8 @@ mocha.describe("vue-generation", function () {
   mocha.it("nested-props-and-component", function () {
     this.testGenerator(this.test!.title);
   });
+
+  mocha.it("nested-inherited", function () {
+    this.testGenerator(this.test!.title);
+  });
 });

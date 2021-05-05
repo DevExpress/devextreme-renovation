@@ -262,23 +262,17 @@ export class ComponentInput extends Class implements Heritable {
     return mergeTypeExpressionImports(imports);
   }
 
-  createDefaultNestedValues(members: Array<Property | Method>) {
-    const containNestedWithInitializer = members.some(
-      (m) => m.isNested && m instanceof Property && m.initializer,
-    );
-    const initializerArray = members.reduce((accum, m) => {
-      if (m.isNested && m instanceof Property && m.initializer) {
-        accum.push({ name: m.name, initializer: m.initializer });
-      }
-      return accum;
-    }, [] as { name: string; initializer: Expression }[]);
+  compileParentNested() {
     const parentClass = this.heritageClauses?.[0];
     const parentNesteds = parentClass?.members.filter(
       (m) => m.isNested && m instanceof Property && m.initializer,
     ).map((m) => new PropertyAssignment(
       new Identifier(m.name),
       new PropertyAccessChain(
-        new Identifier(parentClass.defaultProps[0]),
+        parentClass.typeNodes?.[0]
+          || new Identifier(parentClass.defaultProps?.[0])
+          || parentClass.types?.[0].expression,
+        // A extend B - gets B identifier, decide one of which should be used
         SyntaxKind.QuestionDotToken,
         new PropertyAccess(
           new Identifier('__defaultNestedValues'),
@@ -286,6 +280,21 @@ export class ComponentInput extends Class implements Heritable {
         ),
       ),
     ));
+    return parentNesteds;
+  }
+
+  createDefaultNestedValues(members: Array<Property | Method>) {
+    const containNestedWithInitializer = members.some(
+      (m) => m.isNested && m instanceof Property && m.initializer,
+    );
+
+    const initializerArray = members.reduce((accum, m) => {
+      if (m.isNested && m instanceof Property && m.initializer) {
+        accum.push({ name: m.name, initializer: m.initializer });
+      }
+      return accum;
+    }, [] as { name: string; initializer: Expression }[]);
+
     if (containNestedWithInitializer && initializerArray.length) {
       const defaultNestedValuesProp = this.createProperty(
         [new Decorator(new Call(new Identifier('OneWay'), undefined, []), {})],
@@ -299,7 +308,7 @@ export class ComponentInput extends Class implements Heritable {
               new Identifier(elem.name),
               elem.initializer,
             ),
-          ).concat(parentNesteds || []),
+          ).concat(this.compileParentNested() || []),
           true,
         ),
       );

@@ -5,10 +5,17 @@ import {
   Expression,
   GeneratorContext,
   Identifier,
+  PropertyAssignment,
+  SimpleExpression,
   SyntaxKind,
   TypeExpression,
+  PropertyAssignment as BasePropertyAssignment,
+  PropertyAccess as BasePropertyAccess,
+  PropertyAccessChain as BasePropertyAccessChain,
 } from '@devextreme-generator/core';
 import { Property } from './class-members/property';
+import { PropertyAccess } from './property-access';
+import { PropertyAccessChain } from './property-access-chain';
 
 export class VueComponentInput extends ComponentInput {
   createProperty(
@@ -79,5 +86,31 @@ export class VueComponentInput extends ComponentInput {
 
   buildDefaultStateProperty() {
     return null;
+  }
+
+  compileParentNested(): PropertyAssignment[] {
+    const baseParentNested = super.compileParentNested();
+    return baseParentNested?.map((assignment) => {
+      if (assignment instanceof BasePropertyAssignment
+        && assignment.value instanceof BasePropertyAccessChain
+        && assignment.value.name instanceof BasePropertyAccess) {
+        return new PropertyAssignment(
+          assignment.key,
+          new PropertyAccessChain(
+            assignment.value.expression,
+            SyntaxKind.QuestionDotToken,
+            new PropertyAccessChain(
+              assignment.value.name.expression,
+              SyntaxKind.QuestionDotToken,
+              new PropertyAccess(
+                new SimpleExpression('default()'),
+                assignment.value.name.name,
+              ),
+            ),
+          ),
+        );
+      }
+      return assignment;
+    });
   }
 }

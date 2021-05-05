@@ -323,7 +323,7 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it.only("nested-inherited", function () {
+  mocha.it("nested-inherited", function () {
     this.testGenerator(this.test!.title);
   });
 

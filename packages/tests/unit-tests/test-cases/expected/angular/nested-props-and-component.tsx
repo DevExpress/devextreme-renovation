@@ -43,7 +43,6 @@ export class WidgetProps {
     return this.__anotherNestedPropInit__;
   }
   public static __defaultNestedValues: any = {
-    someEvent: (e: any) => void 0,
     anotherNestedPropInit: [new FakeNested()],
   };
   @Output() twoWayPropChange: EventEmitter<
