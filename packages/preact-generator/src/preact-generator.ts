@@ -226,7 +226,7 @@ class JQueryComponent {
     return (this.source.members.filter((a) => a.isApiMethod) as Method[])
       .map((a) => {
         const returnsElementType = a.type?.toString().endsWith('Element');
-        const call = `this.viewRef.${a._name}(${a.parameters
+        const call = `this.viewRef?.${a._name}(${a.parameters
           .map((p) => {
             const param = p.name;
             const hasElementType = p.type
@@ -238,7 +238,7 @@ class JQueryComponent {
           })
           .join(',')})`;
 
-        return `${a._name}(${a.parameters})${compileType(a.type.toString())} {
+        return `${a._name}(${a.parameters})${compileType(a.type.toString())} | undefined {
                 return ${
   returnsElementType ? `this._toPublicElement(${call})` : call
 };
