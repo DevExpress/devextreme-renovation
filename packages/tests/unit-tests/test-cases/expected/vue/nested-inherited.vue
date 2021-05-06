@@ -63,4 +63,64 @@ export const BulletProps = {
     },
   },
 };
+export const BulletProps2 = {
+  ...BulletProps,
+  fakeNestedArr: {
+    type: Array,
+  },
+  __defaultNestedValues: {
+    default() {
+      return {
+        fakeNestedArr: [
+          {
+            baseProp:
+              FakeNested === undefined || FakeNested === null
+                ? undefined
+                : FakeNested.baseProp?.default(),
+          },
+        ],
+        tooltip:
+          BulletProps === undefined || BulletProps === null
+            ? undefined
+            : BulletProps.__defaultNestedValues?.default().tooltip,
+        someProp:
+          BulletProps === undefined || BulletProps === null
+            ? undefined
+            : BulletProps.__defaultNestedValues?.default().someProp,
+      };
+    },
+  },
+};
+export const BulletProps3 = {
+  ...BulletProps2,
+  fakeNestedArr2: {
+    type: Array,
+  },
+  __defaultNestedValues: {
+    default() {
+      return {
+        fakeNestedArr2: [
+          {
+            baseProp:
+              FakeNested === undefined || FakeNested === null
+                ? undefined
+                : FakeNested.baseProp?.default(),
+          },
+        ],
+        fakeNestedArr:
+          BulletProps2 === undefined || BulletProps2 === null
+            ? undefined
+            : BulletProps2.__defaultNestedValues?.default().fakeNestedArr,
+        tooltip:
+          BulletProps2 === undefined || BulletProps2 === null
+            ? undefined
+            : BulletProps2.__defaultNestedValues?.default().tooltip,
+        someProp:
+          BulletProps2 === undefined || BulletProps2 === null
+            ? undefined
+            : BulletProps2.__defaultNestedValues?.default().someProp,
+      };
+    },
+  },
+};
 </script>

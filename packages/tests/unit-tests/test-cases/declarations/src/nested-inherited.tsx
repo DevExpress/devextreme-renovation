@@ -1,4 +1,5 @@
 import {
+  ComponentBindings,
     ComponentBindings,
     Nested,
     OneWay,
@@ -25,4 +26,14 @@ export class BulletProps extends WidgetProps {
   @OneWay() value = 0;
 
   @Nested() tooltip?: TooltipProps = new TooltipProps();
+}
+
+@ComponentBindings()
+export class BulletProps2 extends BulletProps {
+  @Nested() fakeNestedArr: FakeNested[] = [new FakeNested()];
+}
+
+@ComponentBindings()
+export class BulletProps3 extends BulletProps2 {
+  @Nested() fakeNestedArr2: FakeNested[] = [new FakeNested()];
 }

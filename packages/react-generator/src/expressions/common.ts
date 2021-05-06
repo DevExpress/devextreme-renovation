@@ -33,13 +33,6 @@ export class New extends BaseNew {
       }
     }
     return super.toString(options);
-    // Object.keys(this.context.components || {}).map(
-    //   (name) => ({
-    //     name,
-    //     isNested:
-    //       this.context.components?.[name]?.members.some((m) => m.isNested)
-    //       || false,
-    //   })
   }
 }
 

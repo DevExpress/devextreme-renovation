@@ -67,9 +67,11 @@ export class ComponentInput extends BaseComponentInput {
       name,
       initializer,
     } = property;
+    const parentName = this.heritageClauses?.[0]?.typeNodes?.[0];
     const inheritedPostfix = this.heritageClauses?.[0]?.members.some(
       (parentMember) => parentMember.name === name,
-    ) ? 'Inherited' : '';
+    ) ? `${parentName || 'Inherited'}` : '';
+
     const resultArray = [
       this.createNestedState(name, questionOrExclamationToken, type, inheritedPostfix),
       this.createNestedPropertySetter(

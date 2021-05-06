@@ -269,10 +269,7 @@ export class ComponentInput extends Class implements Heritable {
     ).map((m) => new PropertyAssignment(
       new Identifier(m.name),
       new PropertyAccessChain(
-        parentClass.typeNodes?.[0]
-          || new Identifier(parentClass.defaultProps?.[0])
-          || parentClass.types?.[0].expression,
-        // A extend B - gets B identifier, decide one of which should be used
+        parentClass.typeNodes?.[0],
         SyntaxKind.QuestionDotToken,
         new PropertyAccess(
           new Identifier('__defaultNestedValues'),
