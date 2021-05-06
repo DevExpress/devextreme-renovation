@@ -1,5 +1,4 @@
 import {
-  ComponentBindings,
     ComponentBindings,
     Nested,
     OneWay,
