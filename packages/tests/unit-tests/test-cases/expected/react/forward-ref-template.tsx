@@ -11,7 +11,7 @@ export declare type PropsType = {
   contentRender?: any;
   contentComponent?: any;
 };
-const Props: PropsType = ({} as any) as PropsType;
+const Props: PropsType = {} as any as PropsType;
 import * as React from "react";
 import {
   useCallback,
@@ -41,18 +41,13 @@ const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
   (ComponentProp && ((props: any) => <ComponentProp {...props} />));
 
 export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
-  const __child: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(
-    null
-  );
+  const __child: MutableRefObject<HTMLDivElement | null> =
+    useRef<HTMLDivElement>(null);
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const {
-        contentComponent,
-        contentRender,
-        contentTemplate,
-        ...restProps
-      } = props;
+      const { contentComponent, contentRender, contentTemplate, ...restProps } =
+        props;
       return restProps;
     },
     [props]

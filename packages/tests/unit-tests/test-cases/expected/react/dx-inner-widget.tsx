@@ -9,10 +9,10 @@ export declare type InnerWidgetPropsType = {
   defaultValue: number;
   valueChange?: (value: number) => void;
 };
-export const InnerWidgetProps: InnerWidgetPropsType = ({
+export const InnerWidgetProps: InnerWidgetPropsType = {
   defaultValue: 14,
   valueChange: () => {},
-} as any) as InnerWidgetPropsType;
+} as any as InnerWidgetPropsType;
 import * as React from "react";
 import { useState, useCallback, HTMLAttributes } from "react";
 const NUMBER_STYLES = new Set([
