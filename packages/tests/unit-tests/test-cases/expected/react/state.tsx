@@ -20,13 +20,13 @@ export declare type WidgetInputType = {
   defaultStateProp?: boolean;
   statePropChange?: (stateProp?: boolean) => void;
 };
-const WidgetInput: WidgetInputType = ({
+const WidgetInput: WidgetInputType = {
   defaultState1: false,
   state1Change: () => {},
   defaultState2: false,
   state2Change: () => {},
   statePropChange: () => {},
-} as any) as WidgetInputType;
+} as any as WidgetInputType;
 import * as React from "react";
 import { useState, useCallback, HTMLAttributes } from "react";
 
@@ -56,9 +56,8 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   >(() =>
     props.stateProp !== undefined ? props.stateProp : props.defaultStateProp
   );
-  const [__state_innerData, __state_setInnerData] = useState<
-    string | undefined
-  >(undefined);
+  const [__state_innerData, __state_setInnerData] =
+    useState<string | undefined>(undefined);
 
   const __updateState = useCallback(
     function __updateState(): any {

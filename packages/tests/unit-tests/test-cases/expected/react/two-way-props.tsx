@@ -8,11 +8,11 @@ export declare type WidgetInputType = {
   defaultSelected: boolean;
   selectedChange?: (selected: boolean) => void;
 };
-const WidgetInput: WidgetInputType = ({
+const WidgetInput: WidgetInputType = {
   height: 10,
   defaultSelected: false,
   selectedChange: () => {},
-} as any) as WidgetInputType;
+} as any as WidgetInputType;
 import * as React from "react";
 import { useState, useCallback, HTMLAttributes } from "react";
 
