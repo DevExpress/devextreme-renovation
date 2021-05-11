@@ -7,11 +7,11 @@ export declare type GridColumnPropsType = {
   indexChange?: (index: number) => void;
   children?: React.ReactNode;
 };
-export const GridColumnProps: GridColumnPropsType = ({
+export const GridColumnProps: GridColumnPropsType = {
   name: "",
   defaultIndex: 0,
   indexChange: () => {},
-} as any) as GridColumnPropsType;
+} as any as GridColumnPropsType;
 export declare type CustomPropsType = {};
 export const CustomProps: CustomPropsType = {};
 export declare type AnotherCustomPropsType = {};
