@@ -6,11 +6,11 @@ export declare type GridColumnPropsType = {
   defaultIndex: number;
   indexChange?: (index: number) => void;
 };
-export const GridColumnProps: GridColumnPropsType = ({
+export const GridColumnProps: GridColumnPropsType = {
   name: "",
   defaultIndex: 0,
   indexChange: () => {},
-} as any) as GridColumnPropsType;
+} as any as GridColumnPropsType;
 export declare type CustomPropsType = {};
 export const CustomProps: CustomPropsType = {};
 export declare type AnotherCustomPropsType = {};
