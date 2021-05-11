@@ -5,20 +5,19 @@ import WidgetComponent from "../../../../jquery-template";
 export default class Widget extends BaseComponent {
   getProps() {
     const props = super.getProps();
-    props.template = this.componentTemplates.template;
-    props.anotherTemplate = this.componentTemplates.anotherTemplate;
+    props.template = this._componentTemplates.template;
+    props.anotherTemplate = this._componentTemplates.anotherTemplate;
     return props;
   }
 
   _optionChanged(option) {
     const { name, value } = option;
     if (name === "template") {
-      this.componentTemplates.template = this._createTemplateComponent(value);
+      this._componentTemplates.template = this._createTemplateComponent(value);
     }
     if (name === "anotherTemplate") {
-      this.componentTemplates.anotherTemplate = this._createTemplateComponent(
-        value
-      );
+      this._componentTemplates.anotherTemplate =
+        this._createTemplateComponent(value);
     }
     super._optionChanged(option);
   }
