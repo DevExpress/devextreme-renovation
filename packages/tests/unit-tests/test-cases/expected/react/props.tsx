@@ -20,14 +20,14 @@ export declare type WidgetInputType = {
   defaultStringValue: string;
   stringValueChange?: (stringValue: string) => void;
 };
-export const WidgetInput: WidgetInputType = ({
+export const WidgetInput: WidgetInputType = {
   height: 10,
   export: {},
   onClick: () => {},
   onSomething: () => {},
   defaultStringValue: "",
   stringValueChange: () => {},
-} as any) as WidgetInputType;
+} as any as WidgetInputType;
 import * as React from "react";
 import { useState, useCallback, HTMLAttributes } from "react";
 
