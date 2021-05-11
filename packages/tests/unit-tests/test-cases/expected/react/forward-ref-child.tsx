@@ -11,7 +11,7 @@ export declare type PropsType = {
   nullableRef?: MutableRefObject<HTMLDivElement | null>;
   state?: number;
 };
-const Props: PropsType = ({} as any) as PropsType;
+const Props: PropsType = {} as any as PropsType;
 import * as React from "react";
 import { useCallback, MutableRefObject, HTMLAttributes } from "react";
 
