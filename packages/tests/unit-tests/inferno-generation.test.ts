@@ -51,7 +51,7 @@ mocha.describe("inferno-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it("state", function () {
+  mocha.it.only("state", function () {
     this.testGenerator(this.test!.title);
   });
 

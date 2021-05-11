@@ -102,9 +102,8 @@ export class InfernoComponent extends PreactComponent {
         (m) => m.name === changePropertyName,
       ) as Property;
 
-      const setStateStatement = `this.setState((state: any)=>{
-        this._currentState = state;
-        const newValue = value();
+      const setStateStatement = `this.setState(({${m.name}, ...__current_state}: any)=>{
+        const newValue = value(${m.name});
         ${
   changeProperty
     ? `this.props.${m.name}Change${getChangeEventToken(
@@ -112,8 +111,7 @@ export class InfernoComponent extends PreactComponent {
     )}(newValue)`
     : ''
 };
-        this._currentState = null;
-        return {${m.name}: newValue};
+        return {...__current_state, ${m.name}: newValue};
       })`;
 
       const setterStatement = setStateStatement;
@@ -131,7 +129,7 @@ export class InfernoComponent extends PreactComponent {
           new Block(
             [
               new SimpleExpression(
-                'const state = this._currentState||this.state',
+                'const state = this.state',
               ),
               new ReturnStatement(new SimpleExpression(getterStatement)),
             ],
@@ -154,7 +152,16 @@ export class InfernoComponent extends PreactComponent {
               undefined,
               new Identifier('value'),
               '',
-              new FunctionTypeNode(undefined, [], type),
+              new FunctionTypeNode(undefined, [
+                new Parameter(
+                  [],
+                  [],
+                  '',
+                  m._name,
+                  '',
+                  m.type,
+                ),
+              ], type),
             ),
           ],
           'any',
@@ -176,7 +183,6 @@ export class InfernoComponent extends PreactComponent {
      }`;
       return `
       state: ${type};
-      _currentState: ${type}|null = null;
       `;
     }
 

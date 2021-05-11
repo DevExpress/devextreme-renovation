@@ -9,8 +9,9 @@ export class PropertyAccess extends ReactPropertyAccess {
     property: Property,
     options: toStringOptions,
   ) {
+    debugger;
     if (property.isInternalState || property.isState) {
-      return `this.set_${property.name}(()=>(${state}))`;
+      return `this.set_${property.name}((${property.name}: ${property.type})=>(${state}))`;
     }
     return super.compileStateSetting(state, property, options);
   }
