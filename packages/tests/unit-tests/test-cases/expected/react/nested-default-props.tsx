@@ -6,7 +6,7 @@ export const GridCell: GridCellType = {
 };
 export declare type GridRowType = {
   cells?: (typeof GridCell | string)[];
-  __defaultNestedValues?: GridRowType;
+  __defaultNestedValues?: any;
   children?: React.ReactNode;
 };
 export const GridRow: GridRowType = {
@@ -14,7 +14,7 @@ export const GridRow: GridRowType = {
 };
 export declare type WithNestedInputType = {
   rows?: typeof GridRow[];
-  __defaultNestedValues?: WithNestedInputType;
+  __defaultNestedValues?: any;
   children?: React.ReactNode;
 };
 export const WithNestedInput: WithNestedInputType = {
@@ -28,7 +28,7 @@ export declare type EmptyClassType = {};
 export const EmptyClass: EmptyClassType = {};
 export declare type FakeNestedType = {
   value?: typeof EmptyClass[];
-  __defaultNestedValues?: FakeNestedType;
+  __defaultNestedValues?: any;
   children?: React.ReactNode;
 };
 export const FakeNested: FakeNestedType = {

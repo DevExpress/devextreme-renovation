@@ -5,10 +5,17 @@ import {
   Expression,
   GeneratorContext,
   Identifier,
+  PropertyAssignment,
+  SimpleExpression,
   SyntaxKind,
   TypeExpression,
+  PropertyAssignment as BasePropertyAssignment,
+  PropertyAccess as BasePropertyAccess,
+  PropertyAccessChain as BasePropertyAccessChain,
 } from '@devextreme-generator/core';
 import { Property } from './class-members/property';
+import { PropertyAccess } from './property-access';
+import { PropertyAccessChain } from './property-access-chain';
 
 export class VueComponentInput extends ComponentInput {
   createProperty(
@@ -33,17 +40,16 @@ export class VueComponentInput extends ComponentInput {
     return new Decorator(expression, context);
   }
 
-  toString() {
-    const componentInputs = Object.keys(this.context?.components || {}).map(
-      (name) => {
-        const component = this.context?.components?.[name];
-        const members = component?.members;
-        return {
-          name,
-          isNested: members?.some((m) => m.isNested) || false,
-          fields: members?.map((m) => m._name),
-        };
+  toString(): string {
+    const componentInputs = Object.keys(this.context.components || {}).reduce(
+      (componentInputArr, key) => {
+        const component = this.context.components?.[key];
+        if (component instanceof ComponentInput) {
+          componentInputArr.push(component);
+        }
+        return componentInputArr;
       },
+      [] as ComponentInput[],
     );
     const members = this.baseTypes
       .map((t) => `...${t}`)
@@ -80,5 +86,31 @@ export class VueComponentInput extends ComponentInput {
 
   buildDefaultStateProperty() {
     return null;
+  }
+
+  compileParentNested(): PropertyAssignment[] {
+    const baseParentNested = super.compileParentNested();
+    return baseParentNested?.map((assignment) => {
+      if (assignment instanceof BasePropertyAssignment
+        && assignment.value instanceof BasePropertyAccessChain
+        && assignment.value.name instanceof BasePropertyAccess) {
+        return new PropertyAssignment(
+          assignment.key,
+          new PropertyAccessChain(
+            assignment.value.expression,
+            SyntaxKind.QuestionDotToken,
+            new PropertyAccessChain(
+              assignment.value.name.expression,
+              SyntaxKind.QuestionDotToken,
+              new PropertyAccess(
+                new SimpleExpression('default()'),
+                assignment.value.name.name,
+              ),
+            ),
+          ),
+        );
+      }
+      return assignment;
+    });
   }
 }
