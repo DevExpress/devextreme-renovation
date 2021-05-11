@@ -199,7 +199,7 @@ class JQueryComponent {
       -1,
       0,
       ...templates.map(
-        (t) => `props.${t.name} = this.componentTemplates.${t.name};`,
+        (t) => `props.${t.name} = this._componentTemplates.${t.name};`,
       ),
     );
 
@@ -228,7 +228,7 @@ class JQueryComponent {
     if (templates.length) {
       const statements: string[] = templates.map(
         (t) => `if (name === '${t.name}') {
-          this.componentTemplates.${t.name} = this._createTemplateComponent(value);
+          this._componentTemplates.${t.name} = this._createTemplateComponent(value);
         }`,
       );
 
