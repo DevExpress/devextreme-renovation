@@ -4,7 +4,7 @@ export declare type WidgetInputType = {
   size: { width: number; height: number };
   type: string;
 };
-const WidgetInput: WidgetInputType = ({} as any) as WidgetInputType;
+const WidgetInput: WidgetInputType = {} as any as WidgetInputType;
 import {
   convertRulesToOptions,
   Rule,

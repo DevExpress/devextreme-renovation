@@ -200,7 +200,7 @@ class JQueryComponent {
       -1,
       0,
       ...templates.map(
-        (t) => `props.${t.name} = this._createTemplateComponent(props, props.${t.name});`,
+        (t) => `props.${t.name} = this._componentTemplates.${t.name};`,
       ),
     );
 
@@ -221,6 +221,26 @@ class JQueryComponent {
             return props;
         }
         `;
+  }
+
+  compileOptionChanged() {
+    const templates = this.source.props.filter((p) => p.decorators.find((d) => d.name === 'Template'));
+
+    if (templates.length) {
+      const statements: string[] = templates.map(
+        (t) => `if (name === '${t.name}') {
+          this._componentTemplates.${t.name} = this._createTemplateComponent(value);
+        }`,
+      );
+
+      return `_optionChanged(option) {
+        const { name, value } = option;
+        ${statements.join('\n')}
+        super._optionChanged(option);
+      }`;
+    }
+
+    return '';
   }
 
   hasElementTypeParam(params: Parameter): boolean | undefined {
@@ -415,6 +435,8 @@ class JQueryComponent {
     : baseComponent.toString()
 } {
             ${this.compileGetProps()}
+
+            ${this.compileOptionChanged()}
 
             ${this.compileAPI()}
 

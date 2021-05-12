@@ -13,10 +13,10 @@ export declare type WidgetInputType = {
   defaultPropState: number;
   propStateChange?: (propState: number) => void;
 };
-const WidgetInput: WidgetInputType = ({
+const WidgetInput: WidgetInputType = {
   defaultPropState: 1,
   propStateChange: () => {},
-} as any) as WidgetInputType;
+} as any as WidgetInputType;
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;

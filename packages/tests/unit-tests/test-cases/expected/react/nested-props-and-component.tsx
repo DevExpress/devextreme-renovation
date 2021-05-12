@@ -18,7 +18,7 @@ export declare type WidgetPropsType = {
   templateProp?: React.FunctionComponent<any>;
   nestedProp?: typeof FakeNested[];
   anotherNestedPropInit?: typeof FakeNested[];
-  __defaultNestedValues?: WidgetPropsType;
+  __defaultNestedValues?: any;
   defaultTwoWayProp?: number;
   twoWayPropChange?: (twoWayProp?: number) => void;
   renderProp?: React.FunctionComponent<any>;

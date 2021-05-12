@@ -26,7 +26,7 @@ export class New extends Call {
       const matchedInput = componentInputs.find(
         (c) => c.name === this.expression.toString(),
       );
-      if (matchedInput?.isNested) {
+      if (matchedInput?.members.some((m) => m.isNested)) {
         const defaultValue = new PropertyAccessChain(
           this.expression,
           SyntaxKind.QuestionDotToken,
@@ -34,15 +34,15 @@ export class New extends Call {
         );
         return defaultValue.toString();
       }
-      if (matchedInput?.fields?.length && matchedInput?.fields?.length > 0) {
-        const objectFields = matchedInput.fields.map(
+      if (matchedInput?.members?.length) {
+        const objectFields = matchedInput.members.map(
           (prop) => new PropertyAssignment(
-            prop,
+            prop._name,
             new PropertyAccessChain(
               this.expression,
               SyntaxKind.QuestionDotToken,
               new PropertyAccessChain(
-                prop,
+                prop._name,
                 SyntaxKind.QuestionDotToken,
                 new SimpleExpression('default()'),
               ),

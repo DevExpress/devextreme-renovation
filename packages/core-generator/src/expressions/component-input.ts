@@ -24,6 +24,7 @@ import {
   TypeExpression,
   TypeReferenceNode,
 } from './type';
+import { PropertyAccessChain, PropertyAccess } from './property-access';
 
 const RESERVED_NAMES = ['class', 'key', 'ref', 'style', 'class'];
 
@@ -261,16 +262,36 @@ export class ComponentInput extends Class implements Heritable {
     return mergeTypeExpressionImports(imports);
   }
 
+  compileParentNested() {
+    const parentClass = this.heritageClauses?.[0];
+    const parentNesteds = parentClass?.members.filter(
+      (m) => m.isNested && m instanceof Property && m.initializer,
+    ).map((m) => new PropertyAssignment(
+      new Identifier(m.name),
+      new PropertyAccessChain(
+        parentClass.typeNodes?.[0],
+        SyntaxKind.QuestionDotToken,
+        new PropertyAccess(
+          new Identifier('__defaultNestedValues'),
+          new Identifier(m.name),
+        ),
+      ),
+    ));
+    return parentNesteds;
+  }
+
   createDefaultNestedValues(members: Array<Property | Method>) {
     const containNestedWithInitializer = members.some(
       (m) => m.isNested && m instanceof Property && m.initializer,
     );
+
     const initializerArray = members.reduce((accum, m) => {
-      if (m instanceof Property && m.initializer) {
+      if (m.isNested && m instanceof Property && m.initializer) {
         accum.push({ name: m.name, initializer: m.initializer });
       }
       return accum;
     }, [] as { name: string; initializer: Expression }[]);
+
     if (containNestedWithInitializer && initializerArray.length) {
       const defaultNestedValuesProp = this.createProperty(
         [new Decorator(new Call(new Identifier('OneWay'), undefined, []), {})],
@@ -284,7 +305,7 @@ export class ComponentInput extends Class implements Heritable {
               new Identifier(elem.name),
               elem.initializer,
             ),
-          ),
+          ).concat(this.compileParentNested() || []),
           true,
         ),
       );
