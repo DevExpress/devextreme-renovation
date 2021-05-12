@@ -194,15 +194,6 @@ class JQueryComponent {
   compileGetProps() {
     const statements: string[] = [];
 
-    const templates = this.source.props.filter((p) => p.decorators.find((d) => d.name === 'Template'));
-    statements.splice(
-      -1,
-      0,
-      ...templates.map(
-        (t) => `props.${t.name} = this._componentTemplates.${t.name};`,
-      ),
-    );
-
     if (this.source.props.find((p) => p.name === 'onKeyDown' && p.isEvent)) {
       statements.push(
         'props.onKeyDown = this._wrapKeyDownHandler(props.onKeyDown);',
@@ -220,26 +211,6 @@ class JQueryComponent {
             return props;
         }
         `;
-  }
-
-  compileOptionChanged() {
-    const templates = this.source.props.filter((p) => p.decorators.find((d) => d.name === 'Template'));
-
-    if (templates.length) {
-      const statements: string[] = templates.map(
-        (t) => `if (name === '${t.name}') {
-          this._componentTemplates.${t.name} = this._createTemplateComponent(value);
-        }`,
-      );
-
-      return `_optionChanged(option) {
-        const { name, value } = option;
-        ${statements.join('\n')}
-        super._optionChanged(option);
-      }`;
-    }
-
-    return '';
   }
 
   compileAPI() {
@@ -431,8 +402,6 @@ class JQueryComponent {
     : baseComponent.toString()
 } {
             ${this.compileGetProps()}
-
-            ${this.compileOptionChanged()}
 
             ${this.compileAPI()}
 
