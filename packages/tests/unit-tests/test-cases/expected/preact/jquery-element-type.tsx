@@ -6,15 +6,18 @@ export default class Widget extends BaseComponent {
   methodWithElementParam(
     arg1: number,
     elementArg: HTMLElement | string
-  ): number {
-    return this.viewRef.methodWithElementParam(
+  ): number | undefined {
+    return this.viewRef?.methodWithElementParam(
       arg1,
       this._patchElementParam(elementArg)
     );
   }
-  methodWithElementReturn(arg1: number, elementArg: HTMLElement): HTMLElement {
+  methodWithElementReturn(
+    arg1: number,
+    elementArg: HTMLElement
+  ): HTMLElement | undefined {
     return this._toPublicElement(
-      this.viewRef.methodWithElementReturn(
+      this.viewRef?.methodWithElementReturn(
         arg1,
         this._patchElementParam(elementArg)
       )

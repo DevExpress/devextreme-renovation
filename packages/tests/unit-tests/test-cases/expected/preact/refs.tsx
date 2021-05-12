@@ -13,7 +13,7 @@ export declare type WidgetPropsType = {
   requiredRefProp: any;
   requiredForwardRefProp: any;
 };
-const WidgetProps: WidgetPropsType = ({} as any) as WidgetPropsType;
+const WidgetProps: WidgetPropsType = {} as any as WidgetPropsType;
 import * as Preact from "preact";
 import { RefObject } from "preact";
 import { useCallback, useRef } from "preact/hooks";

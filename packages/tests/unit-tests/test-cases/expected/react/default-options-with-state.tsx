@@ -8,12 +8,12 @@ export declare type WidgetPropsType = {
   defaultP2: string;
   p2Change?: (p2: string) => void;
 };
-export const WidgetProps: WidgetPropsType = ({
+export const WidgetProps: WidgetPropsType = {
   defaultP1: "",
   p1Change: () => {},
   defaultP2: "",
   p2Change: () => {},
-} as any) as WidgetPropsType;
+} as any as WidgetPropsType;
 import {
   convertRulesToOptions,
   Rule,
@@ -40,19 +40,12 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const {
-        defaultP1,
-        defaultP2,
-        p1,
-        p1Change,
-        p2,
-        p2Change,
-        ...restProps
-      } = {
-        ...props,
-        p1: props.p1 !== undefined ? props.p1 : __state_p1,
-        p2: props.p2 !== undefined ? props.p2 : __state_p2,
-      };
+      const { defaultP1, defaultP2, p1, p1Change, p2, p2Change, ...restProps } =
+        {
+          ...props,
+          p1: props.p1 !== undefined ? props.p1 : __state_p1,
+          p2: props.p2 !== undefined ? props.p2 : __state_p2,
+        };
       return restProps;
     },
     [props, __state_p1, __state_p2]
