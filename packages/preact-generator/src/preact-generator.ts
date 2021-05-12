@@ -225,17 +225,14 @@ class JQueryComponent {
       .map((a) => {
         const returnsElementType = a.type?.toString().endsWith('Element');
         const hasElementType = a.parameters.some((p) => this.hasElementTypeParam(p));
-        const call = `this.viewRef?.${a._name}(${hasElementType ? `...args.map((a, index) => {
-          return params[index];
-        })` : 'arguments'})`;
+        const call = `this.viewRef?.${a._name}(${hasElementType ? '...params.slice(0, arguments.length)' : 'arguments'})`;
         const getParams = (method: Method) => method.parameters.map((p) => {
           const param = p.name;
           return this.hasElementTypeParam(p) ? `this._patchElementParam(${param})` : param;
         }).join(',');
 
         return `${a._name}(${a.parameters})${compileType(a.type.toString())} | undefined {
-          ${hasElementType ? `const params = [${getParams(a)}];
-          const args = [].slice.call(arguments);` : ''}
+          ${hasElementType ? `const params = [${getParams(a)}];` : ''}
           return ${returnsElementType ? `this._toPublicElement(${call})` : call};
         }`;
       })
