@@ -194,15 +194,6 @@ class JQueryComponent {
   compileGetProps() {
     const statements: string[] = [];
 
-    const templates = this.source.props.filter((p) => p.decorators.find((d) => d.name === 'Template'));
-    statements.splice(
-      -1,
-      0,
-      ...templates.map(
-        (t) => `props.${t.name} = this._createTemplateComponent(props, props.${t.name});`,
-      ),
-    );
-
     if (this.source.props.find((p) => p.name === 'onKeyDown' && p.isEvent)) {
       statements.push(
         'props.onKeyDown = this._wrapKeyDownHandler(props.onKeyDown);',
@@ -226,7 +217,7 @@ class JQueryComponent {
     return (this.source.members.filter((a) => a.isApiMethod) as Method[])
       .map((a) => {
         const returnsElementType = a.type?.toString().endsWith('Element');
-        const call = `this.viewRef.${a._name}(${a.parameters
+        const call = `this.viewRef?.${a._name}(${a.parameters
           .map((p) => {
             const param = p.name;
             const hasElementType = p.type
@@ -238,7 +229,7 @@ class JQueryComponent {
           })
           .join(',')})`;
 
-        return `${a._name}(${a.parameters})${compileType(a.type.toString())} {
+        return `${a._name}(${a.parameters})${compileType(a.type.toString())} | undefined {
                 return ${
   returnsElementType ? `this._toPublicElement(${call})` : call
 };
