@@ -18,6 +18,7 @@ import {
   mergeTypeExpressionImports,
   Method,
   ObjectLiteral,
+  Parameter,
   reduceTypeExpressionImports,
   StringLiteral,
   toStringOptions,
@@ -194,15 +195,6 @@ class JQueryComponent {
   compileGetProps() {
     const statements: string[] = [];
 
-    const templates = this.source.props.filter((p) => p.decorators.find((d) => d.name === 'Template'));
-    statements.splice(
-      -1,
-      0,
-      ...templates.map(
-        (t) => `props.${t.name} = this._createTemplateComponent(props, props.${t.name});`,
-      ),
-    );
-
     if (this.source.props.find((p) => p.name === 'onKeyDown' && p.isEvent)) {
       statements.push(
         'props.onKeyDown = this._wrapKeyDownHandler(props.onKeyDown);',
@@ -222,27 +214,27 @@ class JQueryComponent {
         `;
   }
 
+  hasElementTypeParam(params: Parameter): boolean | undefined {
+    return params.type?.toString()
+      .split('|')
+      .some((t) => t.endsWith('Element'));
+  }
+
   compileAPI() {
     return (this.source.members.filter((a) => a.isApiMethod) as Method[])
       .map((a) => {
         const returnsElementType = a.type?.toString().endsWith('Element');
-        const call = `this.viewRef.${a._name}(${a.parameters
-          .map((p) => {
-            const param = p.name;
-            const hasElementType = p.type
-              ?.toString()
-              .split('|')
-              .some((t) => t.endsWith('Element'));
+        const hasElementType = a.parameters.some((p) => this.hasElementTypeParam(p));
+        const call = `this.viewRef?.${a._name}(${hasElementType ? '...params.slice(0, arguments.length)' : 'arguments'})`;
+        const getParams = (method: Method) => method.parameters.map((p) => {
+          const param = p.name;
+          return this.hasElementTypeParam(p) ? `this._patchElementParam(${param})` : param;
+        }).join(',');
 
-            return hasElementType ? `this._patchElementParam(${param})` : param;
-          })
-          .join(',')})`;
-
-        return `${a._name}(${a.parameters})${compileType(a.type.toString())} {
-                return ${
-  returnsElementType ? `this._toPublicElement(${call})` : call
-};
-            }`;
+        return `${a._name}(${a.parameters})${compileType(a.type.toString())} | undefined {
+          ${hasElementType ? `const params = [${getParams(a)}];` : ''}
+          return ${returnsElementType ? `this._toPublicElement(${call})` : call};
+        }`;
       })
       .join('\n');
   }

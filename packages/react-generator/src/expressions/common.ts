@@ -14,7 +14,7 @@ export class New extends BaseNew {
       const matchedInput = componentInputs.find(
         (c) => c.name === this.expression.toString(),
       );
-      if (matchedInput?.isNested) {
+      if (matchedInput?.members.some((m) => m.isNested)) {
         const conditional = new Conditional(
           new PropertyAccess(
             this.expression,
