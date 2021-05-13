@@ -14,6 +14,7 @@ import {
   isFunction,
 } from '@devextreme-generator/core';
 import { toStringOptions } from '../../types';
+// import { PropertyAccessChain } from '../property-access-chain';
 import { JsxExpression } from './jsx-expression';
 
 const ATTR_BINDING_ATTRIBUTES = ['aria-label'];
@@ -31,11 +32,11 @@ export class JsxAttribute extends BaseJsxAttribute {
   }
 
   getForwardRefValue(options?: toStringOptions): string {
-    const member = getMember(this.initializer, options)!;
-    return `forwardRef_${member.name.toString()}`;
+    const member = getMember(this.initializer, options);
+    return `forwardRef_${member?.name}`;
   }
 
-  compileInitializer(options?: toStringOptions) {
+  compileInitializer(options?: toStringOptions): string {
     if (this.isRefAttribute(options)) {
       return this.getRefValue(options);
     }
