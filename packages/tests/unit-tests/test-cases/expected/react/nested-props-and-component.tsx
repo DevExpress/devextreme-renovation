@@ -18,7 +18,7 @@ export const FakeNested: FakeNestedType = {
 export declare type WidgetPropsType = {
   nestedProp?: typeof FakeNested[];
   anotherNestedPropInit?: typeof FakeNested[];
-  __defaultNestedValues?: WidgetPropsType;
+  __defaultNestedValues?: any;
   children?: React.ReactNode;
 };
 export const WidgetProps: WidgetPropsType = {
@@ -28,9 +28,11 @@ import * as React from "react";
 import { useCallback, HTMLAttributes } from "react";
 
 function __collectChildren<T>(children: React.ReactNode): T[] {
-  return (React.Children.toArray(children).filter(
-    (child) => React.isValidElement(child) && typeof child.type !== "string"
-  ) as (React.ReactElement & { type: { propName: string } })[]).map((child) => {
+  return (
+    React.Children.toArray(children).filter(
+      (child) => React.isValidElement(child) && typeof child.type !== "string"
+    ) as (React.ReactElement & { type: { propName: string } })[]
+  ).map((child) => {
     const { children: childChildren, ...childProps } = child.props;
     const collectedChildren = {} as any;
     __collectChildren(childChildren).forEach(
