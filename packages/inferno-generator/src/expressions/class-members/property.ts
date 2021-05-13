@@ -22,18 +22,21 @@ export class Property extends BaseProperty {
 
   getter(componentContext?: string) {
     if (
-      this.isInternalState
-      || this.isProvider
+      this.isProvider
       || this.isConsumer
       || this.isMutable
     ) {
       return `${this.processComponentContext(componentContext)}${this.name}`;
     }
 
+    if (this.isInternalState) {
+      return `${this.processComponentContext(componentContext)}state.${this.name}`;
+    }
+
     if (this.isState) {
-      return `${this.processComponentContext(componentContext)}__state_${
-        this.name
-      }`;
+      const propState = `${this.processComponentContext(componentContext)}props.${this.name}`;
+      const innerState = `${this.processComponentContext(componentContext)}state.${this.name}`;
+      return `(${propState} !== undefined ? ${propState} : ${innerState})`;
     }
 
     return super.getter(componentContext);
@@ -131,8 +134,10 @@ export class Property extends BaseProperty {
         ]
         : [];
     } if (this.isState) {
-      return [`__state_${this.name}`, `props.${this.name}Change`];
-    } if (this.isInternalState || this.isProvider || this.isConsumer) {
+      return [`state.${this.name}`, `props.${this.name}Change`];
+    } if (this.isInternalState) {
+      return [`state.${this.name}`];
+    } if (this.isProvider || this.isConsumer) {
       return [`${this.name}`];
     } if (this.isMutable) {
       return [];

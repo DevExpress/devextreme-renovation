@@ -1,16 +1,13 @@
-import { SetAccessor } from '@devextreme-generator/angular';
 import {
   BaseClassMember,
   BindingElement,
   BindingPattern,
   Block,
   Decorators,
-  FunctionTypeNode,
   getProps,
   Identifier,
   Method,
   ObjectLiteral,
-  Parameter,
   ReturnStatement,
   SimpleExpression,
   SimpleTypeExpression,
@@ -20,7 +17,6 @@ import {
   VariableStatement,
 } from '@devextreme-generator/core';
 import { PreactComponent } from '@devextreme-generator/preact';
-import { getChangeEventToken } from '@devextreme-generator/react';
 
 import { GetAccessor } from './class-members/get-accessor';
 import { Property } from './class-members/property';
@@ -86,92 +82,6 @@ export class InfernoComponent extends PreactComponent {
 
   compileViewModelArguments(): string {
     return `${super.compileViewModelArguments()} as ${this.name}`;
-  }
-
-  compileStateSetterAndGetters(): string {
-    const props = getProps(this.members);
-    const members = (this.members.filter(
-      (m) => m.isInternalState || m.isState,
-    ) as Property[]).reduce((result: Array<GetAccessor | SetAccessor>, m) => {
-      const getterStatement = m.isInternalState
-        ? `state.${m.name}`
-        : `this.props.${m.name}!==undefined?this.props.${m.name}:state.${m.name}`;
-
-      const changePropertyName = `${m.name}Change`;
-      const changeProperty = props.find(
-        (m) => m.name === changePropertyName,
-      ) as Property;
-
-      const setStateStatement = `this.setState(({${m.name}, ...__current_state}: any)=>{
-        const newValue = value(${m.name});
-        ${
-  changeProperty
-    ? `this.props.${m.name}Change${getChangeEventToken(
-      changeProperty,
-    )}(newValue)`
-    : ''
-};
-        return {...__current_state, ${m.name}: newValue};
-      })`;
-
-      const setterStatement = setStateStatement;
-
-      const type = m.questionOrExclamationToken !== '?' ? m.type : `${m.type}|undefined`;
-
-      const getterName = m.isInternalState
-        ? m._name
-        : new Identifier(`__state_${m._name}`);
-
-      result.push(
-        this.createGetAccessor(
-          getterName,
-          type,
-          new Block(
-            [
-              new SimpleExpression(
-                'const state = this.state',
-              ),
-              new ReturnStatement(new SimpleExpression(getterStatement)),
-            ],
-            false,
-          ),
-        ),
-      );
-      result.push(
-        new Method(
-          [],
-          [],
-          undefined,
-          new Identifier(`set_${m._name}`),
-          undefined,
-          undefined,
-          [
-            new Parameter(
-              [],
-              [],
-              undefined,
-              new Identifier('value'),
-              '',
-              new FunctionTypeNode(undefined, [
-                new Parameter(
-                  [],
-                  [],
-                  '',
-                  m._name,
-                  '',
-                  m.type,
-                ),
-              ], type),
-            ),
-          ],
-          'any',
-          new Block([new SimpleExpression(setterStatement)], false),
-        ),
-      );
-      return result;
-    }, []);
-
-    return members.map((m) => m.toString(this.getToStringOptions())).join('\n');
   }
 
   compileStateProperty(): string {
@@ -367,8 +277,6 @@ export class InfernoComponent extends PreactComponent {
                 }
 
                 ${this.compileEffects()}
-
-                ${this.compileStateSetterAndGetters()}
                 
                 ${this.compileGetChildContext()}
 
