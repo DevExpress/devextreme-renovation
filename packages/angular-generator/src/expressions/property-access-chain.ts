@@ -39,6 +39,9 @@ export class PropertyAccessChain extends BasePropertyAccessChain {
       const member = getMember(
         this.expression,
         compileRefOptions(expressionString, options),
+      ) || getMember(
+        this.expression,
+        options,
       );
 
       if (member && isProperty(member)) {
@@ -48,34 +51,27 @@ export class PropertyAccessChain extends BasePropertyAccessChain {
         }
       }
     }
-    // if (this.name.toString() === 'current' && this.expression instanceof PropertyAccessChain
-    // && (this.expression.expression instanceof PropertyAccess
-    //   || this.expression.expression instanceof Identifier)) {
-    //   const expressionString = this.expression.expression.expression.toString({
-    //     members: [],
-    //     variables: {
-    //       ...options?.variables,
-    //     },
-    //   });
-    //   const member = getMember(
-    //     this.expression.expression,
-    //     compileRefOptions(expressionString, options),
-    //   );
-
-    //   if (member && isProperty(member)) {
-    //     const accessor = this.getRefAccessor(member);
-    //     if (accessor !== null) {
-    //       return accessor;
-    //     }
-    //   }
-    // }
+    if (this.name.toString() === 'current' && this.expression instanceof PropertyAccessChain) {
+      const member = this.expression.getMember(options);
+      if (member && isProperty(member)) {
+        const accessor = this.getRefAccessor(member);
+        if (accessor !== null) {
+          return accessor;
+        }
+      }
+    }
     return super.processName(options);
   }
 
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions): string {
     if (options && options.newComponentContext !== SyntaxKind.ThisKeyword) {
-      // const member = getMember(this.expression, options);
-      const member = this.expression.getMember(options);
+      let chainMember;
+      if (this.expression instanceof PropertyAccessChain) {
+        chainMember = this.expression.getMember(options);
+      }
+      const member = getMember(this.expression, options)
+      || chainMember;
+      const expression = this.expression.toString(options);
       const name = member?.isRef
       || member?.isRefProp
       || member?.isForwardRef
@@ -83,9 +79,9 @@ export class PropertyAccessChain extends BasePropertyAccessChain {
         ? ''
         : `.${this.name}`;
       if (name === '' && this.name.toString() === 'current') {
-        return this.processName(options);
+        return `${member?.name}${this.processName(options)}`;
       }
-      const expression = this.expression.toString(options);
+
       return `(${expression}===undefined||${expression}===null?undefined:${expression}${name})`;
     }
     return super.toString(options);

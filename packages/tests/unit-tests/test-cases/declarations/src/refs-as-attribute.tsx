@@ -11,16 +11,16 @@ import {
     return (
       <div>
         <div 
+            someArg={viewModel.forwardRef}
+            someArg2={viewModel.forwardRef?.current}
+            someArg3={viewModel.forwardRefCurrent}
+            someArg4={viewModel.someRef}
+            someArg5={viewModel.someRef?.current}
             someArg6={viewModel.props?.refProp?.current}
             someArg7={viewModel.props?.forwardRefProp?.current}>
             
             </div>
       </div>
-    //   someArg={viewModel.forwardRef}
-    //   someArg2={viewModel.forwardRef?.current}
-    //   someArg3={viewModel.forwardRefCurrent}
-    //   someArg4={viewModel.someRef}
-    //   someArg5={viewModel.someRef?.current}
     );
   }
   

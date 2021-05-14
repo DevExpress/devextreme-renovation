@@ -23,45 +23,13 @@ import { CommonModule } from "@angular/common";
   inputs: ["refProp", "forwardRefProp"],
   template: `<div
     ><div
-      [someArg6]="
-        ({ refProp: refProp, forwardRefProp: forwardRefProp } === undefined ||
-        { refProp: refProp, forwardRefProp: forwardRefProp } === null
-          ? undefined
-          : { refProp: refProp, forwardRefProp: forwardRefProp }.refProp) ===
-          undefined ||
-        ({ refProp: refProp, forwardRefProp: forwardRefProp } === undefined ||
-        { refProp: refProp, forwardRefProp: forwardRefProp } === null
-          ? undefined
-          : { refProp: refProp, forwardRefProp: forwardRefProp }.refProp) ===
-          null
-          ? undefined
-          : ({ refProp: refProp, forwardRefProp: forwardRefProp } ===
-              undefined ||
-            { refProp: refProp, forwardRefProp: forwardRefProp } === null
-              ? undefined
-              : { refProp: refProp, forwardRefProp: forwardRefProp }.refProp
-            ).current
-      "
-      [someArg7]="
-        ({ refProp: refProp, forwardRefProp: forwardRefProp } === undefined ||
-        { refProp: refProp, forwardRefProp: forwardRefProp } === null
-          ? undefined
-          : { refProp: refProp, forwardRefProp: forwardRefProp }
-              .forwardRefProp) === undefined ||
-        ({ refProp: refProp, forwardRefProp: forwardRefProp } === undefined ||
-        { refProp: refProp, forwardRefProp: forwardRefProp } === null
-          ? undefined
-          : { refProp: refProp, forwardRefProp: forwardRefProp }
-              .forwardRefProp) === null
-          ? undefined
-          : ({ refProp: refProp, forwardRefProp: forwardRefProp } ===
-              undefined ||
-            { refProp: refProp, forwardRefProp: forwardRefProp } === null
-              ? undefined
-              : { refProp: refProp, forwardRefProp: forwardRefProp }
-                  .forwardRefProp
-            ).current
-      "
+      [someArg]="forwardRef_forwardRef"
+      [someArg2]="forwardRef?.nativeElement"
+      [someArg3]="__forwardRefCurrent"
+      [someArg4]="someRef"
+      [someArg5]="someRef?.nativeElement"
+      [someArg6]="refProp"
+      [someArg7]="forwardRefProp?.()?.nativeElement"
     ></div
   ></div>`,
 })

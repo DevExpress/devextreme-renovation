@@ -6,28 +6,8 @@
       :someArg3="__forwardRefCurrent"
       :someArg4="someRef"
       :someArg5="someRef && someRef() ? someRef() : undefined"
-      :someArg6="
-        (props === undefined || props === null ? undefined : props.refProp) ===
-          undefined ||
-        (props === undefined || props === null ? undefined : props.refProp) ===
-          null
-          ? undefined
-          : (props === undefined || props === null ? undefined : props.refProp)
-              .current
-      "
-      :someArg7="
-        (props === undefined || props === null
-          ? undefined
-          : props.forwardRefProp) === undefined ||
-        (props === undefined || props === null
-          ? undefined
-          : props.forwardRefProp) === null
-          ? undefined
-          : (props === undefined || props === null
-              ? undefined
-              : props.forwardRefProp
-            ).current
-      "
+      :someArg6="refProp?.()"
+      :someArg7="forwardRefProp?.()"
     ></div
   ></div>
 </template>
