@@ -30,9 +30,6 @@ export default class Widget extends BaseInfernoComponent<any> {
   state: {
     value?: boolean;
   };
-  _currentState: {
-    value?: boolean;
-  } | null = null;
 
   refs: any;
 
@@ -46,24 +43,11 @@ export default class Widget extends BaseInfernoComponent<any> {
     };
   }
 
-  get __state_value(): boolean | undefined {
-    const state = this._currentState || this.state;
-    return this.props.value !== undefined ? this.props.value : state.value;
-  }
-  set_value(value: () => boolean | undefined): any {
-    this.setState((state: any) => {
-      this._currentState = state;
-      const newValue = value();
-      this.props.valueChange!(newValue);
-      this._currentState = null;
-      return { value: newValue };
-    });
-  }
-
   get restAttributes(): RestProps {
     const { defaultValue, value, valueChange, visible, ...restProps } = {
       ...this.props,
-      value: this.__state_value,
+      value:
+        this.props.value !== undefined ? this.props.value : this.state.value,
     } as any;
     return restProps;
   }
@@ -71,7 +55,11 @@ export default class Widget extends BaseInfernoComponent<any> {
   render() {
     const props = this.props;
     return view({
-      props: { ...props, value: this.__state_value },
+      props: {
+        ...props,
+        value:
+          this.props.value !== undefined ? this.props.value : this.state.value,
+      },
       restAttributes: this.restAttributes,
     } as Widget);
   }

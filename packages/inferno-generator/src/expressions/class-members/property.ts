@@ -134,7 +134,7 @@ export class Property extends BaseProperty {
         ]
         : [];
     } if (this.isState) {
-      return [`state.${this.name}`, `props.${this.name}Change`];
+      return [`state.${this.name}`, `props.${this.name}`];
     } if (this.isInternalState) {
       return [`state.${this.name}`];
     } if (this.isProvider || this.isConsumer) {

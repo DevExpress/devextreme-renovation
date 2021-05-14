@@ -46,9 +46,6 @@ export default class Widget extends BaseInfernoComponent<any> {
   state: {
     stringValue: string;
   };
-  _currentState: {
-    stringValue: string;
-  } | null = null;
 
   refs: any;
 
@@ -64,22 +61,6 @@ export default class Widget extends BaseInfernoComponent<any> {
     this.getRestProps = this.getRestProps.bind(this);
   }
 
-  get __state_stringValue(): string {
-    const state = this._currentState || this.state;
-    return this.props.stringValue !== undefined
-      ? this.props.stringValue
-      : state.stringValue;
-  }
-  set_stringValue(value: () => string): any {
-    this.setState((state: any) => {
-      this._currentState = state;
-      const newValue = value();
-      this.props.stringValueChange!(newValue);
-      this._currentState = null;
-      return { stringValue: newValue };
-    });
-  }
-
   getHeight(): number {
     this.props.onClick(10);
     const { onClick } = this.props as any;
@@ -89,7 +70,10 @@ export default class Widget extends BaseInfernoComponent<any> {
   getRestProps(): { export: object; onSomething: EventCallBack<number> } {
     const { height, onClick, ...rest } = {
       ...this.props,
-      stringValue: this.__state_stringValue,
+      stringValue:
+        this.props.stringValue !== undefined
+          ? this.props.stringValue
+          : this.state.stringValue,
     } as any;
     return rest;
   }
@@ -104,14 +88,26 @@ export default class Widget extends BaseInfernoComponent<any> {
       stringValue,
       stringValueChange,
       ...restProps
-    } = { ...this.props, stringValue: this.__state_stringValue } as any;
+    } = {
+      ...this.props,
+      stringValue:
+        this.props.stringValue !== undefined
+          ? this.props.stringValue
+          : this.state.stringValue,
+    } as any;
     return restProps;
   }
 
   render() {
     const props = this.props;
     return view({
-      props: { ...props, stringValue: this.__state_stringValue },
+      props: {
+        ...props,
+        stringValue:
+          this.props.stringValue !== undefined
+            ? this.props.stringValue
+            : this.state.stringValue,
+      },
       getHeight: this.getHeight,
       getRestProps: this.getRestProps,
       restAttributes: this.restAttributes,

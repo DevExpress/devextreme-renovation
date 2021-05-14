@@ -39,9 +39,6 @@ export default class Widget extends InfernoComponent<any> {
   state: {
     rendered: boolean;
   };
-  _currentState: {
-    rendered: boolean;
-  } | null = null;
 
   refs: any;
 
@@ -58,21 +55,8 @@ export default class Widget extends InfernoComponent<any> {
   }
   updateEffects() {}
 
-  get rendered(): boolean {
-    const state = this._currentState || this.state;
-    return state.rendered;
-  }
-  set_rendered(value: () => boolean): any {
-    this.setState((state: any) => {
-      this._currentState = state;
-      const newValue = value();
-      this._currentState = null;
-      return { rendered: newValue };
-    });
-  }
-
   onInit(): any {
-    this.set_rendered(() => true);
+    this.setState((state: any) => ({ ...state, rendered: true }));
   }
   get restAttributes(): RestProps {
     const { someRef, ...restProps } = this.props as any;
@@ -83,7 +67,7 @@ export default class Widget extends InfernoComponent<any> {
     const props = this.props;
     return view({
       props: { ...props },
-      rendered: this.rendered,
+      rendered: this.state.rendered,
       restAttributes: this.restAttributes,
     } as Widget);
   }
