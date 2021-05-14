@@ -16,11 +16,11 @@ export class Property extends BaseProperty {
     typeName: Identifier,
     typeArguments: TypeExpression[],
     context: GeneratorContext,
-  ) {
+  ): TypeReferenceNode {
     return new TypeReferenceNode(typeName, typeArguments, context);
   }
 
-  getter(componentContext?: string) {
+  getter(componentContext?: string): string {
     if (
       this.isProvider
       || this.isConsumer
@@ -42,7 +42,7 @@ export class Property extends BaseProperty {
     return super.getter(componentContext);
   }
 
-  defaultDeclaration(options?: toStringOptions) {
+  defaultDeclaration(options?: toStringOptions): string {
     if (this.isState) {
       return `${this.name}: this.props.${this.name}!==undefined?this.props.${
         this.name
@@ -51,7 +51,7 @@ export class Property extends BaseProperty {
     return super.defaultDeclaration(options);
   }
 
-  inherit() {
+  inherit(): Property {
     return new Property(
       this.decorators,
       this.modifiers,
@@ -63,7 +63,7 @@ export class Property extends BaseProperty {
     );
   }
 
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions): string {
     if (this.isRef || this.isForwardRef || this.isApiRef) {
       const type = (this.type instanceof TypeReferenceNode
           && this.type.typeArguments[0])
@@ -75,21 +75,21 @@ export class Property extends BaseProperty {
     }
 
     if (this.isMutable) {
+      const initializer = this.initializer && this.initializer.toString()
+        ? `= ${this.initializer.toString()}`
+        : '';
+
       return `${this.modifiers.join(' ')} ${this.name}${
         this.questionOrExclamationToken
-      }${compileType(this.type.toString())} ${
-        this.initializer && this.initializer.toString()
-          ? `= ${this.initializer.toString()}`
-          : ''
-      }`;
+      }${compileType(this.type.toString())} ${initializer}`;
     }
 
     if (this.isProvider) {
-      return `${this.modifiers.join(' ')} ${this.typeDeclaration()} ${
-        this.initializer && this.initializer.toString()
-          ? `= ${this.initializer.toString()}`
-          : ''
-      }`;
+      const initializer = this.initializer && this.initializer.toString()
+        ? `= ${this.initializer.toString()}`
+        : '';
+
+      return `${this.modifiers.join(' ')} ${this.typeDeclaration()} ${initializer}`;
     }
 
     if (this.isConsumer) {
@@ -106,7 +106,7 @@ export class Property extends BaseProperty {
     return super.toString(options);
   }
 
-  getDependency() {
+  getDependency(): string[] {
     if (
       this.decorators.some(
         (d) => d.name === Decorators.OneWay
@@ -116,7 +116,8 @@ export class Property extends BaseProperty {
       )
     ) {
       return [`props.${this.name}`];
-    } if (
+    }
+    if (
       this.decorators.some(
         (d) => d.name === Decorators.Ref
           || d.name === Decorators.ForwardRef
@@ -133,13 +134,17 @@ export class Property extends BaseProperty {
           }.current`,
         ]
         : [];
-    } if (this.isState) {
+    }
+    if (this.isState) {
       return [`state.${this.name}`, `props.${this.name}`];
-    } if (this.isInternalState) {
+    }
+    if (this.isInternalState) {
       return [`state.${this.name}`];
-    } if (this.isProvider || this.isConsumer) {
+    }
+    if (this.isProvider || this.isConsumer) {
       return [`${this.name}`];
-    } if (this.isMutable) {
+    }
+    if (this.isMutable) {
       return [];
     }
     throw `Can't parse property: ${this._name}`;

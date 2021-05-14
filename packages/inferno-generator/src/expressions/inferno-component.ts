@@ -8,10 +8,12 @@ import {
   Identifier,
   Method,
   ObjectLiteral,
+  Property as BaseProperty,
   ReturnStatement,
   SimpleExpression,
   SimpleTypeExpression,
   SyntaxKind,
+  toStringOptions,
   TypeExpression,
   VariableDeclarationList,
   VariableStatement,
@@ -29,7 +31,7 @@ const getEffectRunParameter = (effect: BaseClassMember) => effect.decorators
   ?.valueOf();
 
 export class InfernoComponent extends PreactComponent {
-  get REF_OBJECT_TYPE() {
+  get REF_OBJECT_TYPE(): string {
     return 'RefObject';
   }
 
@@ -52,11 +54,11 @@ export class InfernoComponent extends PreactComponent {
 
   compileApiRefImports() {}
 
-  addPrefixToMembers(members: Array<Property | Method>) {
+  addPrefixToMembers(members: (Property | Method)[]): (Property | Method)[] {
     return members;
   }
 
-  processMembers(members: Array<Property | Method>) {
+  processMembers(members: (Property | Method)[]): (BaseProperty | Method)[] {
     return super.processMembers(members).map((m) => {
       if (m._name.toString() === 'restAttributes') {
         m.prefix = '';
@@ -65,7 +67,7 @@ export class InfernoComponent extends PreactComponent {
     });
   }
 
-  getToStringOptions() {
+  getToStringOptions(): toStringOptions {
     return {
       ...super.getToStringOptions(),
       newComponentContext: 'this',
@@ -88,9 +90,7 @@ export class InfernoComponent extends PreactComponent {
     const state = this.internalState.concat(this.state);
 
     if (state.length) {
-      const type = `{
-        ${state.map((p) => p.typeDeclaration())}
-     }`;
+      const type = `{${state.map((p) => p.typeDeclaration())}}`;
       return `
       state: ${type};
       `;
@@ -111,7 +111,7 @@ export class InfernoComponent extends PreactComponent {
     return '';
   }
 
-  compileEffects() {
+  compileEffects(): string {
     const createEffectsStatements: string[] = [];
     const updateEffectsStatements: string[] = [];
     if (this.effects.length) {
@@ -149,7 +149,7 @@ export class InfernoComponent extends PreactComponent {
     `;
   }
 
-  compileLifeCycle(name: string, statements: string[]) {
+  compileLifeCycle(name: string, statements: string[]): string {
     if (statements.length) {
       return `${name}(){
         ${statements.join(';\n')}
@@ -159,18 +159,21 @@ export class InfernoComponent extends PreactComponent {
     return '';
   }
 
-  compileProviders(_providers: Property[], viewCallExpression: string) {
+  compileProviders(_providers: Property[], viewCallExpression: string): string {
     return viewCallExpression;
   }
 
-  compileGetChildContext() {
+  compileGetChildContext(): string {
     const providers = this.members.filter((m) => m.isProvider);
 
     if (providers.length) {
+      const providersString = providers
+        .map((p) => `${p.context}: this.${p.name}`)
+        .join(',\n');
       return this.compileLifeCycle('getChildContext', [
         `return {
           ...this.context,
-          ${providers.map((p) => `${p.context}: this.${p.name}`).join(',\n')}
+          ${providersString}
         }
       `,
       ]);
@@ -179,7 +182,7 @@ export class InfernoComponent extends PreactComponent {
     return '';
   }
 
-  get jQueryRegistered() {
+  get jQueryRegistered(): boolean {
     const jqueryProp = this.decorators[0].getParameter('jQuery') as
       | ObjectLiteral
       | undefined;
@@ -187,7 +190,7 @@ export class InfernoComponent extends PreactComponent {
   }
 
   // TODO: remove after inferno fixed https://github.com/infernojs/inferno/issues/1536
-  createRestPropsGetter(members: BaseClassMember[]) {
+  createRestPropsGetter(members: BaseClassMember[]): GetAccessor {
     const props = getProps(members);
     const bindingElements = props
       .reduce((bindingElements, p) => {
@@ -237,7 +240,7 @@ export class InfernoComponent extends PreactComponent {
     );
   }
 
-  toString() {
+  toString(): string {
     // TODO: uncomment after inferno fixed https://github.com/infernojs/inferno/issues/1536
     // const propsType = this.compilePropsType();
     const propsType = 'any';
