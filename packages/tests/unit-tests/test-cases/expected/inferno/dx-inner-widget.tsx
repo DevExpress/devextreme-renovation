@@ -28,9 +28,7 @@ declare type RestProps = {
 };
 
 export default class InnerWidget extends BaseInfernoComponent<any> {
-  state: {
-    value: number;
-  };
+  state: { value: number };
 
   refs: any;
 
@@ -43,6 +41,8 @@ export default class InnerWidget extends BaseInfernoComponent<any> {
           : this.props.defaultValue,
     };
   }
+
+  value!: number;
 
   get restAttributes(): RestProps {
     const {

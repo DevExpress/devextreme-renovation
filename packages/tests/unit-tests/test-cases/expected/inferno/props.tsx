@@ -43,9 +43,7 @@ declare type RestProps = {
 };
 
 export default class Widget extends BaseInfernoComponent<any> {
-  state: {
-    stringValue: string;
-  };
+  state: { stringValue: string };
 
   refs: any;
 
@@ -60,6 +58,8 @@ export default class Widget extends BaseInfernoComponent<any> {
     this.getHeight = this.getHeight.bind(this);
     this.getRestProps = this.getRestProps.bind(this);
   }
+
+  stringValue!: string;
 
   getHeight(): number {
     this.props.onClick(10);

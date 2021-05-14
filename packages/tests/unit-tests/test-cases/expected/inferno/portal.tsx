@@ -36,9 +36,7 @@ declare type RestProps = {
 };
 
 export default class Widget extends InfernoComponent<any> {
-  state: {
-    rendered: boolean;
-  };
+  state: { rendered: boolean };
 
   refs: any;
 
@@ -49,6 +47,8 @@ export default class Widget extends InfernoComponent<any> {
     };
     this.onInit = this.onInit.bind(this);
   }
+
+  rendered!: boolean;
 
   createEffects() {
     return [new InfernoEffect(this.onInit, [])];

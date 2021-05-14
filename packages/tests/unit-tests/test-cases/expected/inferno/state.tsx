@@ -74,6 +74,11 @@ export default class Widget extends BaseInfernoComponent<any> {
     this.stateChange = this.stateChange.bind(this);
   }
 
+  innerData?: string;
+  state1?: boolean;
+  state2!: boolean;
+  stateProp?: boolean;
+
   updateState(): any {
     this.setState((state: any) => {
       this.props.state1Change!(

@@ -240,6 +240,18 @@ export class InfernoComponent extends PreactComponent {
     );
   }
 
+  compileInstance(): string {
+    const state = this.internalState.concat(this.state);
+
+    if (state.length) {
+      return state
+        .map((p) => (p as Property).instanceDeclaration())
+        .join(';\n');
+    }
+
+    return '';
+  }
+
   toString(): string {
     // TODO: uncomment after inferno fixed https://github.com/infernojs/inferno/issues/1536
     // const propsType = this.compilePropsType();
@@ -278,6 +290,8 @@ export class InfernoComponent extends PreactComponent {
                     ${this.compileStateInitializer()}
                     ${bindMethods}
                 }
+
+                ${this.compileInstance()};
 
                 ${this.compileEffects()}
                 

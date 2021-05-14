@@ -37,11 +37,7 @@ declare type RestProps = {
 };
 
 export default class Widget extends InfernoComponent<any> {
-  state: {
-    i: number;
-    j: number;
-    s: number;
-  };
+  state: { i: number; j: number; s: number };
 
   refs: any;
 
@@ -57,6 +53,10 @@ export default class Widget extends InfernoComponent<any> {
     this.alwaysEffect = this.alwaysEffect.bind(this);
     this.getP = this.getP.bind(this);
   }
+
+  i!: number;
+  j!: number;
+  s!: number;
 
   createEffects() {
     return [

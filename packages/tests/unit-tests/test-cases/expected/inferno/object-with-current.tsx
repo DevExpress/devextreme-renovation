@@ -22,10 +22,7 @@ declare type RestProps = {
 };
 
 export default class Widget extends BaseInfernoComponent<any> {
-  state: {
-    someState?: { current: string };
-    existsState: { current: string };
-  };
+  state: { someState?: { current: string }; existsState: { current: string } };
 
   refs: any;
 
@@ -37,6 +34,9 @@ export default class Widget extends BaseInfernoComponent<any> {
     };
     this.concatStrings = this.concatStrings.bind(this);
   }
+
+  someState?: { current: string };
+  existsState!: { current: string };
 
   concatStrings(): any {
     const fromProps = this.props.someProp?.current || "";

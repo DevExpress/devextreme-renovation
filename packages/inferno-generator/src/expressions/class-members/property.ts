@@ -149,4 +149,11 @@ export class Property extends BaseProperty {
     }
     throw `Can't parse property: ${this._name}`;
   }
+
+  instanceDeclaration(): string {
+    return `${this.name}${compileType(
+      this.type.toString(),
+      this.questionOrExclamationToken.length ? this.questionOrExclamationToken : '!',
+    )}`;
+  }
 }

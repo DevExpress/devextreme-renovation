@@ -26,10 +26,7 @@ declare type RestProps = {
 };
 
 export default class Widget extends BaseInfernoComponent<any> {
-  state: {
-    innerState: number;
-    propState: number;
-  };
+  state: { innerState: number; propState: number };
 
   refs: any;
 
@@ -44,6 +41,9 @@ export default class Widget extends BaseInfernoComponent<any> {
     };
     this.updateState = this.updateState.bind(this);
   }
+
+  innerState!: number;
+  propState!: number;
 
   updateState(): any {
     this.setState((state: any) => ({

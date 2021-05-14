@@ -17,9 +17,7 @@ declare type RestProps = {
 };
 
 export default class Widget extends BaseInfernoComponent<any> {
-  state: {
-    _hovered: Boolean;
-  };
+  state: { _hovered: Boolean };
 
   refs: any;
 
@@ -30,6 +28,8 @@ export default class Widget extends BaseInfernoComponent<any> {
     };
     this.updateState = this.updateState.bind(this);
   }
+
+  _hovered!: Boolean;
 
   updateState(): any {
     this.setState((state: any) => ({ ...state, _hovered: !state._hovered }));
