@@ -6264,7 +6264,7 @@ mocha.describe("Angular generator", function () {
           assert.strictEqual(ngOnChanges.join(";\n"), "");
 
           assert.strictEqual(
-            getResult(internalStateSetter.body.toString()),
+            getResult(internalStateSetter.body?.toString() || ""),
             getResult(`{
               this.attr=attr;
               this._detectChanges();
@@ -8641,6 +8641,26 @@ mocha.describe("Angular generator", function () {
       );
 
       assert.strictEqual(expression.toString(), "<div ></div>");
+    });
+
+    mocha.it("abstract method", function () {
+      debugger;
+      const expression = generator.createMethod(
+        [],
+        ["abstract"],
+        undefined,
+        generator.createIdentifier("m"),
+        undefined,
+        undefined,
+        [],
+        undefined,
+        undefined
+      );
+
+      assert.strictEqual(
+        expression.toString(),
+        " abstract m():any;"
+      );
     });
   });
 });

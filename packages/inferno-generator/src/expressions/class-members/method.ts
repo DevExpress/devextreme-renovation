@@ -8,7 +8,7 @@ export class Method extends ReactMethod {
         this.name
       }${this.compileTypeParameters()}(${this.parameters})${compileType(
         this.type.toString(),
-      )}${this.body.toString(options)}`;
+      )}${this.body?.toString(options)}`;
     }
 
     return super.toString();

@@ -75,6 +75,25 @@ mocha.describe("react-generator: expressions", function () {
         assert.strictEqual(expression.typeDeclaration(), "name:any");
       });
 
+      mocha.it("abstract method", function () {
+        const expression = generator.createMethod(
+          [],
+          ["abstract"],
+          undefined,
+          generator.createIdentifier("m"),
+          undefined,
+          undefined,
+          [],
+          undefined,
+          undefined
+        );
+
+        assert.strictEqual(
+          expression.toString(),
+          " abstract m():any;"
+        );
+    });
+
       mocha.it("JSXTemplate type", function () {
         const property = generator.createProperty(
           [

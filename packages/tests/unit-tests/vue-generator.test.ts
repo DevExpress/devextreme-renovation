@@ -1251,6 +1251,25 @@ mocha.describe("Vue-generator", function () {
       );
     });
 
+    mocha.it("abstract method", function () {
+      const expression = generator.createMethod(
+          [createDecorator("SomeDecorator")],
+          ["public", "abstract"],
+          undefined,
+          generator.createIdentifier("m"),
+          undefined,
+          undefined,
+          [],
+          undefined,
+          undefined
+      );
+
+      assert.strictEqual(
+        getAst(expression.toString()),
+        getAst("m(){}")
+      );
+    });
+
     mocha.it("Method with parameters", function () {
       const expression = generator.createMethod(
         [],

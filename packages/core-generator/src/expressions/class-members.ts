@@ -176,7 +176,7 @@ export class Method extends BaseClassMember {
 
   parameters: Parameter[];
 
-  body: Block;
+  body: Block | undefined;
 
   constructor(
     decorators: Decorator[] = [],
@@ -187,7 +187,7 @@ export class Method extends BaseClassMember {
     typeParameters: TypeParameterDeclaration[] | undefined = [],
     parameters: Parameter[],
     type: TypeExpression | string = new SimpleTypeExpression('any'),
-    body: Block,
+    body: Block | undefined,
   ) {
     super(decorators, modifiers, name, type);
     this.asteriskToken = asteriskToken;
@@ -195,6 +195,22 @@ export class Method extends BaseClassMember {
     this.typeParameters = typeParameters;
     this.parameters = parameters;
     this.body = body;
+  }
+
+  compileBody(options?: toStringOptions): string {
+    if (!this.body && this.modifiers.indexOf('abstract') !== -1) {
+      return ';';
+    } if (this.body && this.modifiers.indexOf('abstract') === -1) {
+      return this.body.toString(options);
+    }
+    if (this.body && this.modifiers.indexOf('abstract') !== -1) {
+      throw new Error(`Method '${this.name}' cannot have an implementation because it is marked abstract.`);
+    }
+    return '';
+  }
+
+  compileModifiers(): string {
+    return this.modifiers.join(' ');
   }
 
   compileTypeParameters(): string {
@@ -212,11 +228,11 @@ export class Method extends BaseClassMember {
   declaration(options?: toStringOptions) {
     return `function ${this.name}${this.compileTypeParameters()}(${
       this.parameters
-    })${compileType(this.type.toString())}${this.body.toString(options)}`;
+    })${compileType(this.type.toString())}${this.body?.toString(options)}`;
   }
 
   arrowDeclaration(options?: any) {
-    return `(${this.parameters})=>${this.body.toString(options)}`;
+    return `(${this.parameters})=>${this.body?.toString(options)}`;
   }
 
   filterDependencies(dependencies: string[]): string[] {
@@ -244,10 +260,10 @@ export class Method extends BaseClassMember {
           .reduce(depsReducer, ['props']),
       );
     } else if (run !== 'once') {
-      const dependency = this.body.getDependency(options);
+      const dependency = this.body?.getDependency(options);
       const additionalDependency = [];
 
-      if (dependency.find((d) => d === 'props')) {
+      if (dependency?.find((d) => d === 'props')) {
         additionalDependency.push('props');
       }
 
@@ -266,11 +282,11 @@ export class Method extends BaseClassMember {
   }
 
   toString(options?: toStringOptions) {
-    return `${this.decorators.join(' ')} ${this.modifiers.join(' ')} ${
+    return `${this.decorators.join(' ')} ${this.compileModifiers()} ${
       this.name
     }${this.compileTypeParameters()}(${this.parameters})${compileType(
       this.type.toString(),
-    )}${this.body.toString(options)}`;
+    )}${this.compileBody(options)}`;
   }
 
   getImports(context: GeneratorContext) {
@@ -322,7 +338,7 @@ export class GetAccessor extends Method {
   toString(options?: toStringOptions) {
     return `${this.modifiers.join(' ')} get ${this.name}()${compileType(
       this.type.toString(),
-    )}${this.body.toString(options)}`;
+    )}${this.body?.toString(options)}`;
   }
 }
 
