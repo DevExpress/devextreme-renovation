@@ -13,12 +13,14 @@ const ChildInput: ChildInputType = {
   onClick: () => {},
 };
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof ChildInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Child {
   props: typeof ChildInput & RestProps;
   getProps: () => typeof WidgetProps;

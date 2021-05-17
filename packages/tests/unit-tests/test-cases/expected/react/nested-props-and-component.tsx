@@ -25,7 +25,7 @@ export const WidgetProps: WidgetPropsType = {
   __defaultNestedValues: { anotherNestedPropInit: [FakeNested] },
 };
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback } from "react";
 
 function __collectChildren<T>(children: React.ReactNode): T[] {
   return (
@@ -58,10 +58,12 @@ export const NestedProp: React.FunctionComponent<typeof FakeNested> & {
 NestedProp.propName = "nestedProp";
 NestedProp.defaultProps = FakeNested;
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetProps
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface undefWidget {
   props: typeof WidgetProps & RestProps;
   nested: any;

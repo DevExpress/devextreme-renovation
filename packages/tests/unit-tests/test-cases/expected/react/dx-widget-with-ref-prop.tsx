@@ -4,12 +4,14 @@ export declare type WidgetWithRefPropInputType = {
 };
 export const WidgetWithRefPropInput: WidgetWithRefPropInputType = {};
 import * as React from "react";
-import { useCallback, MutableRefObject, HTMLAttributes } from "react";
+import { useCallback, MutableRefObject } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetWithRefPropInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface WidgetWithRefProp {
   props: typeof WidgetWithRefPropInput & RestProps;
   restAttributes: RestProps;

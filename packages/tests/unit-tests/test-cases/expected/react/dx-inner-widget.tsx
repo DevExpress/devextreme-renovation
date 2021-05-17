@@ -14,7 +14,7 @@ export const InnerWidgetProps: InnerWidgetPropsType = {
   valueChange: () => {},
 } as any as InnerWidgetPropsType;
 import * as React from "react";
-import { useState, useCallback, HTMLAttributes } from "react";
+import { useState, useCallback } from "react";
 const NUMBER_STYLES = new Set([
   "animationIterationCount",
   "borderImageOutset",
@@ -73,10 +73,12 @@ const normalizeStyles = (styles: unknown) => {
   );
 };
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof InnerWidgetProps
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface InnerWidget {
   props: typeof InnerWidgetProps & RestProps;
   restAttributes: RestProps;

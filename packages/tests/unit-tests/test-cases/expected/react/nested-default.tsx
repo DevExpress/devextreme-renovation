@@ -22,12 +22,14 @@ function view({ getRowCells, props: { rows } }: WithNested) {
 }
 
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback } from "react";
 
 function __collectChildren<T>(children: React.ReactNode): T[] {
-  return (React.Children.toArray(children).filter(
-    (child) => React.isValidElement(child) && typeof child.type !== "string"
-  ) as (React.ReactElement & { type: { propName: string } })[]).map((child) => {
+  return (
+    React.Children.toArray(children).filter(
+      (child) => React.isValidElement(child) && typeof child.type !== "string"
+    ) as (React.ReactElement & { type: { propName: string } })[]
+  ).map((child) => {
     const { children: childChildren, ...childProps } = child.props;
     const collectedChildren = {} as any;
     __collectChildren(childChildren).forEach(
@@ -59,10 +61,12 @@ export const RowCell: React.FunctionComponent<typeof GridCell> & {
 RowCell.propName = "cells";
 RowCell.defaultProps = GridCell;
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WithNestedInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface WithNested {
   props: typeof WithNestedInput & RestProps;
   getRowCells: (index: number) => any;
