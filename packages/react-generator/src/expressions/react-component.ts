@@ -89,11 +89,11 @@ export class ReactComponent extends Component {
     );
   }
 
-  get REF_OBJECT_TYPE() {
+  get REF_OBJECT_TYPE(): string {
     return 'MutableRefObject';
   }
 
-  addPrefixToMembers(members: Array<BaseProperty | Method>) {
+  addPrefixToMembers(members: (BaseProperty | Method)[]): (BaseProperty | Method)[] {
     return super.addPrefixToMembers(
       members.map((m) => {
         if (m instanceof Method || m.isRef || m.isForwardRef) {
@@ -104,7 +104,7 @@ export class ReactComponent extends Component {
     );
   }
 
-  processMembers(members: Array<BaseProperty | Method>) {
+  processMembers(members: (BaseProperty | Method)[]): (BaseProperty | Method)[] {
     members = super.processMembers(members).map((p) => {
       if (p.inherited) {
         p.scope = 'props';
@@ -125,7 +125,7 @@ export class ReactComponent extends Component {
     return members;
   }
 
-  createNestedChildrenGetter() {
+  createNestedChildrenGetter(): Method {
     const statements = [
       new VariableStatement(
         undefined,
@@ -179,7 +179,7 @@ export class ReactComponent extends Component {
     return new GetAccessor(undefined, undefined, name, [], type, block);
   }
 
-  createRestPropsGetter(members: BaseClassMember[]) {
+  createRestPropsGetter(members: BaseClassMember[]): GetAccessor {
     const props = getProps(members);
     const bindingElements = props
       .reduce((bindingElements, p) => {
@@ -229,7 +229,8 @@ export class ReactComponent extends Component {
     );
   }
 
-  createNestedChildrenCollector() {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  createNestedChildrenCollector(): Function {
     const statements = [
       new ReturnStatement(
         new SimpleExpression(`(React.Children.toArray(children)
@@ -280,15 +281,11 @@ export class ReactComponent extends Component {
     );
   }
 
-  compileImportStatements(hooks: string[], compats: string[], core: string[]) {
-    const elementAttributes = this.isSVGComponent
-      ? 'SVGAttributes'
-      : 'HTMLAttributes';
+  compileImportStatements(hooks: string[], compats: string[], core: string[]): string[] {
     const imports = ["import * as React from 'react'"];
     const namedImports = hooks
       .concat(compats)
-      .concat(core)
-      .concat([elementAttributes]);
+      .concat(core);
     if (namedImports.length) {
       imports.push(`import {${namedImports.join(',')}} from 'react'`);
     }
@@ -296,7 +293,7 @@ export class ReactComponent extends Component {
     return imports;
   }
 
-  compileApiRefImports(imports: string[]) {
+  compileApiRefImports(imports: string[]): void {
     const result: Set<string> = new Set<string>();
     if (this.apiRefs.length) {
       this.apiRefs.forEach((ref) => {
@@ -322,7 +319,7 @@ export class ReactComponent extends Component {
     }
   }
 
-  compileImports() {
+  compileImports(): string {
     const imports: string[] = [];
     const hooks: string[] = [];
     const compats: string[] = [];
@@ -374,11 +371,11 @@ export class ReactComponent extends Component {
       .join(';\n');
   }
 
-  defaultPropsDest() {
+  defaultPropsDest(): string {
     return `${this.name.toString()}.defaultProps`;
   }
 
-  compileConvertRulesToOptions(rules: string | Expression) {
+  compileConvertRulesToOptions(rules: string | Expression): string {
     return this.state.length
       ? `__processTwoWayProps(convertRulesToOptions(${rules}))`
       : `convertRulesToOptions<${this.getPropsType()}>(${rules})`;
@@ -403,7 +400,7 @@ export class ReactComponent extends Component {
     return defaultProps;
   }
 
-  compileDefaultProps() {
+  compileDefaultProps(): string {
     const defaultProps = this.compileDefaultPropsObjectProperties();
 
     if (this.needGenerateDefaultOptions) {
@@ -442,7 +439,7 @@ export class ReactComponent extends Component {
     return '';
   }
 
-  stateDeclaration() {
+  stateDeclaration(): string {
     return `${this.state
       .concat(this.internalState)
       .concat(this.mutable)
@@ -450,7 +447,7 @@ export class ReactComponent extends Component {
       .join(';\n')}`;
   }
 
-  compileUseEffect() {
+  compileUseEffect(): string {
     const subscriptions = getSubscriptions(this.listeners);
 
     let subscriptionsString = '';
@@ -490,7 +487,7 @@ export class ReactComponent extends Component {
     );
   }
 
-  compileComponentRef() {
+  compileComponentRef(): string {
     const api = this.members.filter((a) => a.isApiMethod);
     if (api.length) {
       return `export type ${this.name}Ref = {${api.map((a) => a.typeDeclaration())}}`;
@@ -498,7 +495,7 @@ export class ReactComponent extends Component {
     return '';
   }
 
-  compileUseImperativeHandle() {
+  compileUseImperativeHandle(): string {
     const api = this.members.reduce(
       (r: { methods: string[]; deps: string[] }, a) => {
         if (a.isApiMethod) {
@@ -519,14 +516,14 @@ export class ReactComponent extends Component {
       : '';
   }
 
-  compileUseRef() {
+  compileUseRef(): string {
     return this.refs
       .concat(this.apiRefs)
       .map((a) => a.toString(this.getToStringOptions()))
       .join(';\n');
   }
 
-  compileComponentInterface() {
+  compileComponentInterface(): string {
     const props = this.isJSXComponent
       ? [`props: ${this.compilePropsType()}`]
       : [];
@@ -564,7 +561,7 @@ export class ReactComponent extends Component {
       : '';
   }
 
-  processTemplates() {
+  processTemplates(): string[] {
     return this.props
       .filter((p) => p.isTemplate)
       .map(
@@ -645,13 +642,10 @@ export class ReactComponent extends Component {
   }
 
   compileRestProps(): string {
-    const elementType = this.isSVGComponent
-      ? 'SVGAttributes<SVGElement>'
-      : 'HTMLAttributes<HTMLElement>';
-    return `declare type RestProps = Omit<${elementType}, keyof ${this.getPropsType()}>`;
+    return 'declare type RestProps = { className?: string; style?: { [name: string]: any }, key?: any, ref?: any }';
   }
 
-  getPropsType() {
+  getPropsType(): string {
     if (this.isJSXComponent) {
       const type = this.heritageClauses[0].types[0];
       if (
@@ -663,20 +657,19 @@ export class ReactComponent extends Component {
 
       return this.compileDefaultOptionsPropsType();
     }
-    return `{
-              ${this.props
-    .concat(this.state)
-    .concat(this.slots)
-    .map((p) => p.typeDeclaration())
-    .join(',\n')}
-          }`;
+    return `{${this.props
+      .concat(this.state)
+      .concat(this.slots)
+      .map((p) => p.typeDeclaration())
+      .join(',\n')}
+    }`;
   }
 
-  compilePropsType() {
+  compilePropsType(): string {
     return this.getPropsType().concat(' & RestProps');
   }
 
-  compileDefaultOptionsPropsType() {
+  compileDefaultOptionsPropsType(): string {
     const heritageClause = this.heritageClauses[0];
     return `typeof ${heritageClause.propsType}`;
   }
@@ -689,7 +682,7 @@ export class ReactComponent extends Component {
     };
   }
 
-  getNestedExports(component: ComponentInput, name: string, propName: string) {
+  getNestedExports(component: ComponentInput, name: string, propName: string): string {
     return `export const ${name}: React.FunctionComponent<typeof ${component.name}> & { propName: string } = () => null;
       ${name}.propName="${propName}"
       ${name}.defaultProps=${component.name}`;
@@ -703,7 +696,7 @@ export class ReactComponent extends Component {
     }[];
   }
 
-  compileNestedComponents() {
+  compileNestedComponents(): string {
     const collectedComponents = this.collectNestedComponents();
     if (collectedComponents.length) {
       const imports = this.getNestedImports(
@@ -718,7 +711,7 @@ export class ReactComponent extends Component {
     return '';
   }
 
-  createNestedPropertyGetter(property: Property) {
+  createNestedPropertyGetter(property: Property): GetAccessor {
     const propName = getPropName(property.name);
     const isArray = isTypeArray(property.type);
     const type = extractComplexType(property.type);
@@ -804,7 +797,7 @@ export class ReactComponent extends Component {
     );
   }
 
-  compilePortalComponentCore() {
+  compilePortalComponentCore(): string {
     return `
     declare type PortalProps = {
       container?: HTMLElement | null;
@@ -825,7 +818,7 @@ export class ReactComponent extends Component {
     return this.compilePortalComponentCore();
   }
 
-  compileProviders(providers: Property[], viewCallExpression: string) {
+  compileProviders(providers: Property[], viewCallExpression: string): string {
     return providers.reduce(
       (result, p) => `<${p.context}.Provider value={${p.getter()}}>
             ${result}
@@ -834,7 +827,7 @@ export class ReactComponent extends Component {
     );
   }
 
-  compileViewCall() {
+  compileViewCall(): string {
     const viewFunction = this.context.viewFunctions?.[this.view];
     const callView = `${this.view}(
         ${
@@ -864,13 +857,13 @@ export class ReactComponent extends Component {
     ]);
   }
 
-  compileFunctionalComponentType() {
+  compileFunctionalComponentType(): string {
     return `React.FC<${this.compilePropsType()} & { ref?: React.Ref<${
       this.name
     }Ref> }> & { defaultProps: ${this.getPropsType()}}`;
   }
 
-  compileStyleNormalizer() {
+  compileStyleNormalizer(): string {
     const hasStyle = this.context.viewFunctions
       && Object.values(this.context.viewFunctions).some((viewFunction) => viewFunction.containsStyle());
     return hasStyle
@@ -933,7 +926,7 @@ export class ReactComponent extends Component {
       : '';
   }
 
-  toString() {
+  toString(): string {
     const getTemplateFunc = this.compileTemplateGetter();
 
     return `

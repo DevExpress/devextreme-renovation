@@ -20,10 +20,14 @@ import {
   useEffect,
   useRef,
   MutableRefObject,
-  HTMLAttributes,
 } from "react";
 
-declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface RefOnChildrenParent {
   props: typeof Props & RestProps;
   child: any;
@@ -32,9 +36,8 @@ interface RefOnChildrenParent {
 }
 
 export default function RefOnChildrenParent(props: typeof Props & RestProps) {
-  const __child: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(
-    null
-  );
+  const __child: MutableRefObject<HTMLDivElement | null> =
+    useRef<HTMLDivElement>(null);
   const [__state_innerState, __state_setInnerState] = useState<number>(10);
 
   const __restAttributes = useCallback(

@@ -10,12 +10,14 @@ export declare type TemplateTransitWidgetInputType = {
 };
 export const TemplateTransitWidgetInput: TemplateTransitWidgetInputType = {};
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof TemplateTransitWidgetInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface TemplateTransitWidget {
   props: typeof TemplateTransitWidgetInput & RestProps;
   restAttributes: RestProps;
