@@ -5,18 +5,14 @@ function view(viewModel: Widget) {
 export declare type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
 import * as React from "react";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  DOMAttributes,
-  HTMLAttributes,
-} from "react";
+import { useCallback, useEffect, useRef } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput | keyof DOMAttributes<HTMLElement>
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetInput & RestProps;
   setObj: () => any;

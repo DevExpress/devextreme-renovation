@@ -12,18 +12,14 @@ const Props: PropsType = {
   p1: 10,
 };
 import * as React from "react";
-import {
-  useState,
-  useContext,
-  useCallback,
-  DOMAttributes,
-  HTMLAttributes,
-} from "react";
+import { useState, useContext, useCallback } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof Props | keyof DOMAttributes<HTMLElement>
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof Props & RestProps;
   contextConsumer: number;

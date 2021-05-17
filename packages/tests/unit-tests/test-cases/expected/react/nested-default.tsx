@@ -22,7 +22,7 @@ function view({ getRowCells, props: { rows } }: WithNested) {
 }
 
 import * as React from "react";
-import { useCallback, DOMAttributes, HTMLAttributes } from "react";
+import { useCallback } from "react";
 
 function __collectChildren<T>(children: React.ReactNode): T[] {
   return (
@@ -61,10 +61,12 @@ export const RowCell: React.FunctionComponent<typeof GridCell> & {
 RowCell.propName = "cells";
 RowCell.defaultProps = GridCell;
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WithNestedInput | keyof DOMAttributes<HTMLElement>
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface WithNested {
   props: typeof WithNestedInput & RestProps;
   getRowCells: (index: number) => any;

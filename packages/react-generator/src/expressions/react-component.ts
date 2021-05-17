@@ -282,15 +282,10 @@ export class ReactComponent extends Component {
   }
 
   compileImportStatements(hooks: string[], compats: string[], core: string[]): string[] {
-    const elementAttributes = ['DOMAttributes'];
-    elementAttributes.push(this.isSVGComponent
-      ? 'SVGAttributes'
-      : 'HTMLAttributes');
     const imports = ["import * as React from 'react'"];
     const namedImports = hooks
       .concat(compats)
-      .concat(core)
-      .concat(elementAttributes);
+      .concat(core);
     if (namedImports.length) {
       imports.push(`import {${namedImports.join(',')}} from 'react'`);
     }
@@ -647,13 +642,7 @@ export class ReactComponent extends Component {
   }
 
   compileRestProps(): string {
-    const elementType = this.isSVGComponent
-      ? 'SVGAttributes<SVGElement>'
-      : 'HTMLAttributes<HTMLElement>';
-    return `declare type RestProps = Omit<
-      ${elementType},
-      keyof ${this.getPropsType()} | keyof DOMAttributes<HTMLElement>
-    >`;
+    return 'declare type RestProps = { className?: string; style?: { [name: string]: any }, key?: any, ref?: any }';
   }
 
   getPropsType(): string {

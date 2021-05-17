@@ -12,12 +12,14 @@ export const viewFunction = ({ props }: TestComponent): any => {
 };
 
 import * as React from "react";
-import { useCallback, DOMAttributes, HTMLAttributes } from "react";
+import { useCallback } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof Props | keyof DOMAttributes<HTMLElement>
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface TestComponent {
   props: typeof Props & RestProps;
   restAttributes: RestProps;

@@ -9,19 +9,15 @@ export const WidgetWithPropsInput: WidgetWithPropsInputType = {
   number: 42,
 };
 import * as React from "react";
-import {
-  useCallback,
-  useImperativeHandle,
-  forwardRef,
-  DOMAttributes,
-  HTMLAttributes,
-} from "react";
+import { useCallback, useImperativeHandle, forwardRef } from "react";
 
 export type WidgetWithPropsRef = { doSomething: () => any };
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetWithPropsInput | keyof DOMAttributes<HTMLElement>
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface WidgetWithProps {
   props: typeof WidgetWithPropsInput & RestProps;
   restAttributes: RestProps;

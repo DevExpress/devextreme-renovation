@@ -3,12 +3,14 @@ function view(model: Widget) {
 }
 
 import * as React from "react";
-import { useState, useCallback, DOMAttributes, HTMLAttributes } from "react";
+import { useState, useCallback } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof {} | keyof DOMAttributes<HTMLElement>
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   _hovered: Boolean;
   updateState: () => any;

@@ -28,12 +28,14 @@ const WidgetInput: WidgetInputType = {
   statePropChange: () => {},
 } as any as WidgetInputType;
 import * as React from "react";
-import { useState, useCallback, DOMAttributes, HTMLAttributes } from "react";
+import { useState, useCallback } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput | keyof DOMAttributes<HTMLElement>
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetInput & RestProps;
   innerData?: string;

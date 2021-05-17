@@ -14,18 +14,18 @@ import {
   useImperativeHandle,
   forwardRef,
   MutableRefObject,
-  DOMAttributes,
-  HTMLAttributes,
 } from "react";
 
 export type WidgetRef = {
   getHeight: (p: number, p1: any) => string;
   getSize: () => string;
 };
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput | keyof DOMAttributes<HTMLElement>
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetInput & RestProps;
   divRef: any;

@@ -1,12 +1,14 @@
 function view() {}
 
 import * as React from "react";
-import { useCallback, useEffect, DOMAttributes, HTMLAttributes } from "react";
+import { useCallback, useEffect } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof {} | keyof DOMAttributes<HTMLElement>
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   onPointerUp: () => any;
   scrollHandler: () => any;

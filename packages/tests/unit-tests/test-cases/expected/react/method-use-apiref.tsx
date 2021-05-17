@@ -20,15 +20,15 @@ import {
   useImperativeHandle,
   forwardRef,
   MutableRefObject,
-  DOMAttributes,
-  HTMLAttributes,
 } from "react";
 
 export type WidgetWithApiRefRef = { getSomething: () => string };
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetWithApiRefInput | keyof DOMAttributes<HTMLElement>
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface WidgetWithApiRef {
   props: typeof WidgetWithApiRefInput & RestProps;
   baseRef?: any;

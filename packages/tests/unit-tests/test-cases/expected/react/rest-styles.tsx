@@ -8,7 +8,7 @@ function view({ styles }: Widget) {
 export declare type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
 import * as React from "react";
-import { useCallback, DOMAttributes, HTMLAttributes } from "react";
+import { useCallback } from "react";
 const NUMBER_STYLES = new Set([
   "animationIterationCount",
   "borderImageOutset",
@@ -67,10 +67,12 @@ const normalizeStyles = (styles: unknown) => {
   );
 };
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput | keyof DOMAttributes<HTMLElement>
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetInput & RestProps;
   styles: any;

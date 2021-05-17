@@ -5,7 +5,7 @@ function view(model: Widget) {
 }
 
 import * as React from "react";
-import { useCallback, DOMAttributes, HTMLAttributes } from "react";
+import { useCallback } from "react";
 
 function __collectChildren<T>(children: React.ReactNode): T[] {
   return (
@@ -69,10 +69,12 @@ export const EditingAnotherCustom: React.FunctionComponent<
 EditingAnotherCustom.propName = "anotherCustom";
 EditingAnotherCustom.defaultProps = AnotherCustomProps;
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof PickedProps | keyof DOMAttributes<HTMLElement>
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof PickedProps & RestProps;
   getColumns: () => any;

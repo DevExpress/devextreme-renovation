@@ -37,7 +37,7 @@ const Props: PropsType = {
   height: 10,
 };
 import * as React from "react";
-import { useState, useCallback, DOMAttributes, HTMLAttributes } from "react";
+import { useState, useCallback } from "react";
 const NUMBER_STYLES = new Set([
   "animationIterationCount",
   "borderImageOutset",
@@ -96,10 +96,12 @@ const normalizeStyles = (styles: unknown) => {
   );
 };
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof Props | keyof DOMAttributes<HTMLElement>
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface DynamicComponentCreator {
   props: typeof Props & RestProps;
   internalStateValue: number;

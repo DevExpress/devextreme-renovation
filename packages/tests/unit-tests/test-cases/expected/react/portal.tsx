@@ -20,14 +20,7 @@ export declare type WidgetPropsType = {
 };
 export const WidgetProps: WidgetPropsType = {};
 import * as React from "react";
-import {
-  useState,
-  useCallback,
-  useEffect,
-  MutableRefObject,
-  DOMAttributes,
-  HTMLAttributes,
-} from "react";
+import { useState, useCallback, useEffect, MutableRefObject } from "react";
 
 declare type PortalProps = {
   container?: HTMLElement | null;
@@ -43,10 +36,12 @@ const Portal = ({
   return null;
 };
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetProps | keyof DOMAttributes<HTMLElement>
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetProps & RestProps;
   rendered: boolean;
