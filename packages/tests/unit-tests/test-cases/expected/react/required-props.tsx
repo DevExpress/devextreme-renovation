@@ -10,11 +10,11 @@ import {
   Rule,
 } from "../../../../jquery-helpers/default_options";
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback, DOMAttributes, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput
+  keyof typeof WidgetInput | keyof DOMAttributes<HTMLElement>
 >;
 interface Widget {
   props: typeof WidgetInput & RestProps;

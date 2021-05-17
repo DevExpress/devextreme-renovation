@@ -22,11 +22,17 @@ export const WidgetInput: WidgetInputType = {
   sChange: () => {},
 } as any as WidgetInputType;
 import * as React from "react";
-import { useState, useCallback, useEffect, HTMLAttributes } from "react";
+import {
+  useState,
+  useCallback,
+  useEffect,
+  DOMAttributes,
+  HTMLAttributes,
+} from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput
+  keyof typeof WidgetInput | keyof DOMAttributes<HTMLElement>
 >;
 interface Widget {
   props: typeof WidgetInput & RestProps;

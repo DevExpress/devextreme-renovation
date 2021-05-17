@@ -3,9 +3,12 @@ function view(model: Widget) {
 }
 
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback, DOMAttributes, HTMLAttributes } from "react";
 
-declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof {}>;
+declare type RestProps = Omit<
+  HTMLAttributes<HTMLElement>,
+  keyof {} | keyof DOMAttributes<HTMLElement>
+>;
 interface Widget {
   onClick: (e: Event) => any;
   onPointerMove: (a: any, b: any, c: any) => any;

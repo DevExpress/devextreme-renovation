@@ -5,11 +5,11 @@ function view(model: Widget) {
 export declare type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
 import * as React from "react";
-import { useState, useCallback, HTMLAttributes } from "react";
+import { useState, useCallback, DOMAttributes, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput
+  keyof typeof WidgetInput | keyof DOMAttributes<HTMLElement>
 >;
 interface Widget {
   props: typeof WidgetInput & RestProps;
@@ -18,9 +18,8 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const [__state_decoratedState, __state_setDecoratedState] = useState<string>(
-    ""
-  );
+  const [__state_decoratedState, __state_setDecoratedState] =
+    useState<string>("");
   const [__state_simpleState, __state_setSimpleState] = useState<string>("");
 
   const __privateGetter = useCallback(

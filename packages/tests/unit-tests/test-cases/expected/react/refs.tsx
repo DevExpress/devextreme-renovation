@@ -15,11 +15,17 @@ export declare type WidgetPropsType = {
 };
 const WidgetProps: WidgetPropsType = {} as any as WidgetPropsType;
 import * as React from "react";
-import { useCallback, useRef, MutableRefObject, HTMLAttributes } from "react";
+import {
+  useCallback,
+  useRef,
+  MutableRefObject,
+  DOMAttributes,
+  HTMLAttributes,
+} from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetProps
+  keyof typeof WidgetProps | keyof DOMAttributes<HTMLElement>
 >;
 interface Widget {
   props: typeof WidgetProps & RestProps;

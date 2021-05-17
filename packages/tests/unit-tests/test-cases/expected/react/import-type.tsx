@@ -9,11 +9,11 @@ export declare type ImportPropsType = {
 };
 export const ImportProps: ImportPropsType = {};
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback, DOMAttributes, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof typeof ImportProps
+  keyof typeof ImportProps | keyof DOMAttributes<HTMLElement>
 >;
 interface Import {
   props: typeof ImportProps & RestProps;

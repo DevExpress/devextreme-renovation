@@ -20,13 +20,14 @@ import {
   useImperativeHandle,
   forwardRef,
   MutableRefObject,
+  DOMAttributes,
   HTMLAttributes,
 } from "react";
 
 export type WidgetWithApiRefRef = { getSomething: () => string };
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetWithApiRefInput
+  keyof typeof WidgetWithApiRefInput | keyof DOMAttributes<HTMLElement>
 >;
 interface WidgetWithApiRef {
   props: typeof WidgetWithApiRefInput & RestProps;
@@ -41,9 +42,8 @@ const WidgetWithApiRef = forwardRef<
   props: typeof WidgetWithApiRefInput & RestProps,
   ref
 ) {
-  const __baseRef: MutableRefObject<BaseWidgetRef | null> = useRef<BaseWidgetRef>(
-    null
-  );
+  const __baseRef: MutableRefObject<BaseWidgetRef | null> =
+    useRef<BaseWidgetRef>(null);
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {

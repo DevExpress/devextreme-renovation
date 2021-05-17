@@ -16,9 +16,12 @@ const Props: PropsType = {
   height: 10,
 };
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback, DOMAttributes, HTMLAttributes } from "react";
 
-declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
+declare type RestProps = Omit<
+  HTMLAttributes<HTMLElement>,
+  keyof typeof Props | keyof DOMAttributes<HTMLElement>
+>;
 interface DynamicComponentCreator {
   props: typeof Props & RestProps;
   Components: React.FunctionComponent<Partial<typeof WidgetInput>>[];

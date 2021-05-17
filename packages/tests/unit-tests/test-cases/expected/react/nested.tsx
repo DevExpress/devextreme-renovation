@@ -5,12 +5,14 @@ function view(model: Widget) {
 }
 
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback, DOMAttributes, HTMLAttributes } from "react";
 
 function __collectChildren<T>(children: React.ReactNode): T[] {
-  return (React.Children.toArray(children).filter(
-    (child) => React.isValidElement(child) && typeof child.type !== "string"
-  ) as (React.ReactElement & { type: { propName: string } })[]).map((child) => {
+  return (
+    React.Children.toArray(children).filter(
+      (child) => React.isValidElement(child) && typeof child.type !== "string"
+    ) as (React.ReactElement & { type: { propName: string } })[]
+  ).map((child) => {
     const { children: childChildren, ...childProps } = child.props;
     const collectedChildren = {} as any;
     __collectChildren(childChildren).forEach(
@@ -69,7 +71,7 @@ EditingAnotherCustom.defaultProps = AnotherCustomProps;
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof typeof PickedProps
+  keyof typeof PickedProps | keyof DOMAttributes<HTMLElement>
 >;
 interface Widget {
   props: typeof PickedProps & RestProps;

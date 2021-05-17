@@ -17,11 +17,11 @@ const WidgetInput: WidgetInputType = {
   p: "10",
 };
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback, DOMAttributes, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput
+  keyof typeof WidgetInput | keyof DOMAttributes<HTMLElement>
 >;
 interface Widget {
   props: typeof WidgetInput & RestProps;

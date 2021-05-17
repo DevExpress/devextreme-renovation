@@ -13,11 +13,11 @@ export declare type MarkerPropsType = {
 };
 export const MarkerProps: MarkerPropsType = {};
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback, DOMAttributes, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof typeof MarkerProps
+  keyof typeof MarkerProps | keyof DOMAttributes<HTMLElement>
 >;
 interface Marker {
   props: typeof MarkerProps & RestProps;

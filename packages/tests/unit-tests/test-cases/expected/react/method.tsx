@@ -14,6 +14,7 @@ import {
   useImperativeHandle,
   forwardRef,
   MutableRefObject,
+  DOMAttributes,
   HTMLAttributes,
 } from "react";
 
@@ -23,7 +24,7 @@ export type WidgetRef = {
 };
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput
+  keyof typeof WidgetInput | keyof DOMAttributes<HTMLElement>
 >;
 interface Widget {
   props: typeof WidgetInput & RestProps;
@@ -33,9 +34,8 @@ interface Widget {
 
 const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
   function widget(props: typeof WidgetInput & RestProps, ref) {
-    const __divRef: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(
-      null
-    );
+    const __divRef: MutableRefObject<HTMLDivElement | null> =
+      useRef<HTMLDivElement>(null);
 
     const __restAttributes = useCallback(
       function __restAttributes(): RestProps {

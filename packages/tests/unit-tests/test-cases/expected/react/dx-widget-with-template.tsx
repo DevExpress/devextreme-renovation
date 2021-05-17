@@ -11,11 +11,11 @@ export declare type WidgetWithTemplateInputType = {
 };
 export const WidgetWithTemplateInput: WidgetWithTemplateInputType = {};
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback, DOMAttributes, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetWithTemplateInput
+  keyof typeof WidgetWithTemplateInput | keyof DOMAttributes<HTMLElement>
 >;
 interface WidgetWithTemplate {
   props: typeof WidgetWithTemplateInput & RestProps;

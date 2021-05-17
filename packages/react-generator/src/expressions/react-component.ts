@@ -281,14 +281,15 @@ export class ReactComponent extends Component {
   }
 
   compileImportStatements(hooks: string[], compats: string[], core: string[]) {
-    const elementAttributes = this.isSVGComponent
+    const elementAttributes = ['DOMAttributes'];
+    elementAttributes.push(this.isSVGComponent
       ? 'SVGAttributes'
-      : 'HTMLAttributes';
+      : 'HTMLAttributes');
     const imports = ["import * as React from 'react'"];
     const namedImports = hooks
       .concat(compats)
       .concat(core)
-      .concat([elementAttributes]);
+      .concat(elementAttributes);
     if (namedImports.length) {
       imports.push(`import {${namedImports.join(',')}} from 'react'`);
     }
@@ -648,10 +649,13 @@ export class ReactComponent extends Component {
     const elementType = this.isSVGComponent
       ? 'SVGAttributes<SVGElement>'
       : 'HTMLAttributes<HTMLElement>';
-    return `declare type RestProps = Omit<${elementType}, keyof ${this.getPropsType()}>`;
+    return `declare type RestProps = Omit<
+      ${elementType},
+      keyof ${this.getPropsType()} | keyof DOMAttributes<HTMLElement>
+    >`;
   }
 
-  getPropsType() {
+  getPropsType(): string {
     if (this.isJSXComponent) {
       const type = this.heritageClauses[0].types[0];
       if (
@@ -663,20 +667,19 @@ export class ReactComponent extends Component {
 
       return this.compileDefaultOptionsPropsType();
     }
-    return `{
-              ${this.props
-    .concat(this.state)
-    .concat(this.slots)
-    .map((p) => p.typeDeclaration())
-    .join(',\n')}
-          }`;
+    return `{${this.props
+      .concat(this.state)
+      .concat(this.slots)
+      .map((p) => p.typeDeclaration())
+      .join(',\n')}
+    }`;
   }
 
-  compilePropsType() {
+  compilePropsType(): string {
     return this.getPropsType().concat(' & RestProps');
   }
 
-  compileDefaultOptionsPropsType() {
+  compileDefaultOptionsPropsType(): string {
     const heritageClause = this.heritageClauses[0];
     return `typeof ${heritageClause.propsType}`;
   }

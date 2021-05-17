@@ -12,9 +12,12 @@ export const viewFunction = ({ props }: TestComponent): any => {
 };
 
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback, DOMAttributes, HTMLAttributes } from "react";
 
-declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
+declare type RestProps = Omit<
+  HTMLAttributes<HTMLElement>,
+  keyof typeof Props | keyof DOMAttributes<HTMLElement>
+>;
 interface TestComponent {
   props: typeof Props & RestProps;
   restAttributes: RestProps;
@@ -35,12 +38,8 @@ const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
 export function TestComponent(props: typeof Props & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const {
-        contentComponent,
-        contentRender,
-        contentTemplate,
-        ...restProps
-      } = props;
+      const { contentComponent, contentRender, contentTemplate, ...restProps } =
+        props;
       return restProps;
     },
     [props]

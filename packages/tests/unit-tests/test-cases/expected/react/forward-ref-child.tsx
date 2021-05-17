@@ -13,9 +13,17 @@ export declare type PropsType = {
 };
 const Props: PropsType = {} as any as PropsType;
 import * as React from "react";
-import { useCallback, MutableRefObject, HTMLAttributes } from "react";
+import {
+  useCallback,
+  MutableRefObject,
+  DOMAttributes,
+  HTMLAttributes,
+} from "react";
 
-declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
+declare type RestProps = Omit<
+  HTMLAttributes<HTMLElement>,
+  keyof typeof Props | keyof DOMAttributes<HTMLElement>
+>;
 interface RefOnChildrenChild {
   props: typeof Props & RestProps;
   method: () => any;

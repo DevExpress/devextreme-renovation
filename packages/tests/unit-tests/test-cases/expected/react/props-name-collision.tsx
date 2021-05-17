@@ -1,9 +1,10 @@
-const view = (model: Widget): any => model.props.children;
+import WidgetWithProps from "./props";
+function view(model: Widget) {
+  return <WidgetWithProps {...model.restAttributes} />;
+}
 
-export declare type WidgetInputType = {
-  children?: React.ReactNode;
-};
-const WidgetInput: WidgetInputType = {};
+export declare type WidgetInputType = {};
+export const WidgetInput: WidgetInputType = {};
 import * as React from "react";
 import { useCallback, DOMAttributes, HTMLAttributes } from "react";
 
@@ -19,7 +20,7 @@ interface Widget {
 export default function Widget(props: typeof WidgetInput & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { children, ...restProps } = props;
+      const { ...restProps } = props;
       return restProps;
     },
     [props]

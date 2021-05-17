@@ -18,10 +18,14 @@ import {
   useEffect,
   useRef,
   MutableRefObject,
+  DOMAttributes,
   HTMLAttributes,
 } from "react";
 
-declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
+declare type RestProps = Omit<
+  HTMLAttributes<HTMLElement>,
+  keyof typeof Props | keyof DOMAttributes<HTMLElement>
+>;
 interface RefOnChildrenTemplate {
   props: typeof Props & RestProps;
   child: any;

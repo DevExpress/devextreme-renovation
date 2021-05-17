@@ -74,11 +74,11 @@ export const TemplateDefaultValueProps: TemplateDefaultValuePropsType = {
   stringToRender: "strCompDefault",
 };
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback, DOMAttributes, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof typeof TemplateDefaultValueProps
+  keyof typeof TemplateDefaultValueProps | keyof DOMAttributes<HTMLElement>
 >;
 interface TemplateDefaultValue {
   props: typeof TemplateDefaultValueProps & RestProps;

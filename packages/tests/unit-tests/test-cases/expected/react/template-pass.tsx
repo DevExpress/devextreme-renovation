@@ -18,11 +18,11 @@ function view(model: Widget) {
 export declare type WidgetPropsType = {};
 export const WidgetProps: WidgetPropsType = {};
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback, DOMAttributes, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetProps
+  keyof typeof WidgetProps | keyof DOMAttributes<HTMLElement>
 >;
 interface Widget {
   props: typeof WidgetProps & RestProps;
@@ -38,10 +38,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
     [props]
   );
 
-  return view({
-    props: { ...props },
-    restAttributes: __restAttributes(),
-  });
+  return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
 
 Widget.defaultProps = {

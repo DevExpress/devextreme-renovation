@@ -10,11 +10,11 @@ const ChildInput: ChildInputType = {
   height: 10,
 };
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback, DOMAttributes, HTMLAttributes } from "react";
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof typeof ChildInput
+  keyof typeof ChildInput | keyof DOMAttributes<HTMLElement>
 >;
 interface Child {
   props: typeof ChildInput & RestProps;
@@ -30,10 +30,7 @@ export default function Child(props: typeof ChildInput & RestProps) {
     [props]
   );
 
-  return view({
-    props: { ...props },
-    restAttributes: __restAttributes(),
-  });
+  return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
 
 Child.defaultProps = {

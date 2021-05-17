@@ -30,12 +30,20 @@ export const WidgetProps: WidgetPropsType = {
   twoWayPropChange: () => {},
 };
 import * as React from "react";
-import { useState, useCallback, MutableRefObject, HTMLAttributes } from "react";
+import {
+  useState,
+  useCallback,
+  MutableRefObject,
+  DOMAttributes,
+  HTMLAttributes,
+} from "react";
 
 function __collectChildren<T>(children: React.ReactNode): T[] {
-  return (React.Children.toArray(children).filter(
-    (child) => React.isValidElement(child) && typeof child.type !== "string"
-  ) as (React.ReactElement & { type: { propName: string } })[]).map((child) => {
+  return (
+    React.Children.toArray(children).filter(
+      (child) => React.isValidElement(child) && typeof child.type !== "string"
+    ) as (React.ReactElement & { type: { propName: string } })[]
+  ).map((child) => {
     const { children: childChildren, ...childProps } = child.props;
     const collectedChildren = {} as any;
     __collectChildren(childChildren).forEach(
@@ -63,7 +71,7 @@ NestedProp.defaultProps = FakeNested;
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetProps
+  keyof typeof WidgetProps | keyof DOMAttributes<HTMLElement>
 >;
 interface UndefWidget {
   props: typeof WidgetProps & RestProps;

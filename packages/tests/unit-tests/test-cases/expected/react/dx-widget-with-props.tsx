@@ -13,13 +13,14 @@ import {
   useCallback,
   useImperativeHandle,
   forwardRef,
+  DOMAttributes,
   HTMLAttributes,
 } from "react";
 
 export type WidgetWithPropsRef = { doSomething: () => any };
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetWithPropsInput
+  keyof typeof WidgetWithPropsInput | keyof DOMAttributes<HTMLElement>
 >;
 interface WidgetWithProps {
   props: typeof WidgetWithPropsInput & RestProps;
@@ -45,10 +46,7 @@ const WidgetWithProps = forwardRef<
   useImperativeHandle(ref, () => ({ doSomething: __doSomething }), [
     __doSomething,
   ]);
-  return view({
-    props: { ...props },
-    restAttributes: __restAttributes(),
-  });
+  return view({ props: { ...props }, restAttributes: __restAttributes() });
 }) as React.FC<
   typeof WidgetWithPropsInput &
     RestProps & { ref?: React.Ref<WidgetWithPropsRef> }

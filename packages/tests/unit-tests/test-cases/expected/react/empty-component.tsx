@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback, DOMAttributes, HTMLAttributes } from "react";
 const NUMBER_STYLES = new Set([
   "animationIterationCount",
   "borderImageOutset",
@@ -60,10 +60,7 @@ const normalizeStyles = (styles: unknown) => {
 
 declare type RestProps = Omit<
   HTMLAttributes<HTMLElement>,
-  keyof {
-    height?: number;
-    width?: number;
-  }
+  keyof { height?: number; width?: number } | keyof DOMAttributes<HTMLElement>
 >;
 interface Widget {
   height?: number;
@@ -72,10 +69,7 @@ interface Widget {
 }
 
 export default function Widget(
-  props: {
-    height?: number;
-    width?: number;
-  } & RestProps
+  props: { height?: number; width?: number } & RestProps
 ) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
