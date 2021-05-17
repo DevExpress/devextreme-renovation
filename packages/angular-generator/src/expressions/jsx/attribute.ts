@@ -57,7 +57,10 @@ export class JsxAttribute extends BaseJsxAttribute {
   compileRef(options?: toStringOptions) {
     const member = getMember(this.initializer, options);
     if (member) {
-      return `#${member.name}${member.isForwardRefProp ? 'Ref' : ''}`;
+      if (member.isRef) {
+        return `#${member.name}Link`;
+      }
+      return `#${member.name}${member.isForwardRefProp ? '__Ref__' : ''}`;
     }
 
     return `#${this.initializer.toString(options)}`;

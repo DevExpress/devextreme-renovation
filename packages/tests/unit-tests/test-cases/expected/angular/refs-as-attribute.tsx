@@ -31,7 +31,8 @@ import { CommonModule } from "@angular/common";
   ></div>`,
 })
 export default class Widget extends WidgetProps {
-  @ViewChild("someRef", { static: false }) someRef?: ElementRef<HTMLDivElement>;
+  @ViewChild("someRefLink", { static: false })
+  someRef?: ElementRef<HTMLDivElement>;
   forwardRef?: ElementRef<HTMLDivElement>;
   get __forwardRefCurrent(): any {
     return this.forwardRef?.nativeElement;
@@ -39,7 +40,7 @@ export default class Widget extends WidgetProps {
   get __restAttributes(): any {
     return {};
   }
-  forwardRefPropRef?: ElementRef<HTMLDivElement>;
+  forwardRefProp__Ref__?: ElementRef<HTMLDivElement>;
   get forwardRef_forwardRef(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> | undefined {
@@ -74,7 +75,7 @@ export default class Widget extends WidgetProps {
         ref?: ElementRef<HTMLDivElement>
       ): ElementRef<HTMLDivElement> | undefined {
         if (arguments.length) {
-          this.forwardRefPropRef = ref;
+          this.forwardRefProp__Ref__ = ref;
           this.forwardRefProp?.(ref);
         }
         return this.forwardRefProp?.();
