@@ -15,12 +15,14 @@ export declare type WidgetPropsType = {
 };
 const WidgetProps: WidgetPropsType = {} as any as WidgetPropsType;
 import * as React from "react";
-import { useCallback, useRef, MutableRefObject, HTMLAttributes } from "react";
+import { useCallback, useRef, MutableRefObject } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetProps
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetProps & RestProps;
   divRef?: any;

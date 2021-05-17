@@ -143,10 +143,6 @@ export class PreactComponent extends ReactComponent {
     return imports;
   }
 
-  compileRestProps() {
-    return 'declare type RestProps = { className?: string; style?: { [name: string]: any }, key?: any, ref?: any }';
-  }
-
   compileDefaultComponentExport() {
     return '';
   }
