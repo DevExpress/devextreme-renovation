@@ -79,7 +79,10 @@ export class PropertyAccessChain extends BasePropertyAccessChain {
         ? ''
         : `.${this.name}`;
       if (name === '' && this.name.toString() === 'current') {
-        return `${member?.name}${this.processName(options)}`;
+        if (member?.isForwardRefProp) {
+          return `${expression} ? ${member.name}()?.nativeElement : undefined`;
+        }
+        return `${expression}${this.processName(options)}`;
       }
 
       return `(${expression}===undefined||${expression}===null?undefined:${expression}${name})`;

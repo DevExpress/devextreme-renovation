@@ -343,6 +343,26 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it.only("ref-child", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it.only("ref-helper", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it.only("ref-middle", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it.only("ref-parent", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it.only("button", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {

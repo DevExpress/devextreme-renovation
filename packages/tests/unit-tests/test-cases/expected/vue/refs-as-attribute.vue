@@ -1,13 +1,10 @@
 <template>
   <div
     ><div
-      :someArg="forwardRef_forwardRef"
-      :someArg2="forwardRef && forwardRef() ? forwardRef() : undefined"
-      :someArg3="__forwardRefCurrent"
-      :someArg4="someRef"
-      :someArg5="someRef && someRef() ? someRef() : undefined"
-      :someArg6="refProp?.()"
-      :someArg7="forwardRefProp?.()"
+      :someArg1="forwardRef && forwardRef() ? forwardRef() : undefined"
+      :someArg2="someRef && someRef() ? someRef() : undefined"
+      :someArg3="refProp?.()"
+      :someArg4="forwardRefProp ? forwardRefProp()?.nativeElement : undefined"
     ></div
   ></div>
 </template>

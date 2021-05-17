@@ -23,13 +23,10 @@ import { CommonModule } from "@angular/common";
   inputs: ["refProp", "forwardRefProp"],
   template: `<div
     ><div
-      [someArg]="forwardRef_forwardRef"
-      [someArg2]="forwardRef?.nativeElement"
-      [someArg3]="__forwardRefCurrent"
-      [someArg4]="someRef"
-      [someArg5]="someRef?.nativeElement"
-      [someArg6]="refProp"
-      [someArg7]="forwardRefProp?.()?.nativeElement"
+      [someArg1]="forwardRef?.nativeElement"
+      [someArg2]="someRef?.nativeElement"
+      [someArg3]="refProp"
+      [someArg4]="forwardRefProp ? forwardRefProp()?.nativeElement : undefined"
     ></div
   ></div>`,
 })
