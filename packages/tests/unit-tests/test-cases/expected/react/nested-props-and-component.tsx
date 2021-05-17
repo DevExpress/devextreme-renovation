@@ -25,7 +25,7 @@ export const WidgetProps: WidgetPropsType = {
   __defaultNestedValues: { anotherNestedPropInit: [FakeNested] },
 };
 import * as React from "react";
-import { useState, useCallback, MutableRefObject } from "react";
+import { useCallback } from "react";
 
 function __collectChildren<T>(children: React.ReactNode): T[] {
   return (
@@ -64,7 +64,7 @@ declare type RestProps = {
   key?: any;
   ref?: any;
 };
-interface UndefWidget {
+interface undefWidget {
   props: typeof WidgetProps & RestProps;
   nested: any;
   nestedinit: any;
