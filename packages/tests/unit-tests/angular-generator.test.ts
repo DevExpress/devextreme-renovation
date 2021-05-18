@@ -8644,7 +8644,6 @@ mocha.describe("Angular generator", function () {
     });
 
     mocha.it("abstract method", function () {
-      debugger;
       const expression = generator.createMethod(
         [],
         ["abstract"],
