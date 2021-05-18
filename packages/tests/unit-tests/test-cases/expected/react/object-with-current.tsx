@@ -8,12 +8,14 @@ export declare type WidgetInputType = {
 };
 export const WidgetInput: WidgetInputType = {};
 import * as React from "react";
-import { useState, useCallback, HTMLAttributes } from "react";
+import { useState, useCallback } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetInput & RestProps;
   someState?: { current: string };
@@ -23,9 +25,8 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const [__state_someState, __state_setSomeState] = useState<
-    { current: string } | undefined
-  >(undefined);
+  const [__state_someState, __state_setSomeState] =
+    useState<{ current: string } | undefined>(undefined);
   const [__state_existsState, __state_setExistsState] = useState<{
     current: string;
   }>({ current: "value" });
