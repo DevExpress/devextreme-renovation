@@ -1,3 +1,5 @@
+import HelperWidget, { DxHelperWidgetModule } from "./refs-as-attribute-helper";
+
 import { Input } from "@angular/core";
 class WidgetProps {
   @Input() refProp?: HTMLDivElement;
@@ -5,7 +7,6 @@ class WidgetProps {
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> | undefined;
 }
-
 import {
   Component,
   NgModule,
@@ -22,12 +23,14 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["refProp", "forwardRefProp"],
   template: `<div
-    ><div
-      [someArg1]="forwardRef?.nativeElement"
-      [someArg2]="someRef?.nativeElement"
-      [someArg3]="refProp"
-      [someArg4]="forwardRefProp ? forwardRefProp()?.nativeElement : undefined"
-    ></div
+    ><dx-helper-widget
+      [forwardRef]="forwardRef?.nativeElement"
+      [someRef]="someRef?.nativeElement"
+      [refProp]="refProp"
+      [forwardRefProp]="
+        forwardRefProp ? forwardRefProp()?.nativeElement : undefined
+      "
+    ></dx-helper-widget
   ></div>`,
 })
 export default class Widget extends WidgetProps {
@@ -104,8 +107,8 @@ export default class Widget extends WidgetProps {
 }
 @NgModule({
   declarations: [Widget],
-  imports: [CommonModule],
-
+  imports: [DxHelperWidgetModule, CommonModule],
+  entryComponents: [HelperWidget],
   exports: [Widget],
 })
 export class DxWidgetModule {}

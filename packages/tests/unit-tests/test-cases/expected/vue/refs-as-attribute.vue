@@ -1,14 +1,33 @@
 <template>
   <div
-    ><div
-      :someArg1="forwardRef && forwardRef() ? forwardRef() : undefined"
-      :someArg2="someRef && someRef() ? someRef() : undefined"
-      :someArg3="refProp?.()"
-      :someArg4="forwardRefProp ? forwardRefProp()?.nativeElement : undefined"
-    ></div
+    ><HelperWidget
+      :forwardRef="this.$refs.forwardRef"
+      :someRef="this.$refs.someRef"
+      :refProp="
+        (props === undefined || props === null ? undefined : props.refProp) &&
+        (props === undefined || props === null ? undefined : props.refProp)()
+          ? (props === undefined || props === null
+              ? undefined
+              : props.refProp)()
+          : undefined
+      "
+      :forwardRefProp="
+        (props === undefined || props === null
+          ? undefined
+          : props.forwardRefProp) &&
+        (props === undefined || props === null
+          ? undefined
+          : props.forwardRefProp)()
+          ? (props === undefined || props === null
+              ? undefined
+              : props.forwardRefProp)()
+          : undefined
+      "
+    ></HelperWidget
   ></div>
 </template>
 <script>
+import HelperWidget from "./refs-as-attribute-helper";
 const WidgetProps = {
   refProp: {
     type: Function,
@@ -19,6 +38,9 @@ const WidgetProps = {
 };
 export const DxWidget = {
   name: "Widget",
+  components: {
+    HelperWidget,
+  },
   props: WidgetProps,
   computed: {
     __forwardRefCurrent() {

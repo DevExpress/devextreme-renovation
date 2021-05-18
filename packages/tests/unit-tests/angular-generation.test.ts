@@ -343,7 +343,9 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-
+  mocha.it("refs-as-attribute-helper", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
