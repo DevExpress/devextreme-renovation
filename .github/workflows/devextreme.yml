@@ -53,7 +53,7 @@ jobs:
           fetch-depth: 2
 
       - name: Get DevExtreme
-        run: git clone https://github.com/DevExpress/DevExtreme
+        run: git clone -b 21_1 --single-branch https://github.com/DevExpress/DevExtreme
 
       - name: Build DevExtreme
         run: |
@@ -97,7 +97,7 @@ jobs:
           fetch-depth: 2
 
       - name: Get DevExtreme
-        run: git clone https://github.com/DevExpress/DevExtreme
+        run: git clone -b 21_1 --single-branch https://github.com/DevExpress/DevExtreme
 
       - name: Build DevExtreme
         env:
@@ -154,7 +154,7 @@ jobs:
           fetch-depth: 2
 
       - name: Get DevExtreme
-        run: git clone https://github.com/DevExpress/DevExtreme
+        run: git clone -b 21_1 --single-branch https://github.com/DevExpress/DevExtreme
 
       - name: Build DevExtreme
         env:
