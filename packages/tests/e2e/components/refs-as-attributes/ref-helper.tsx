@@ -20,5 +20,4 @@ function view(model:RefHelper){
 }
 @Component({view})
 export default class RefHelper extends JSXComponent(RefHelperProps) {
-
 }
