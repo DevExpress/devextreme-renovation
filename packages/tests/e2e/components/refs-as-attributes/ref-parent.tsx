@@ -21,11 +21,6 @@ export default class RefParent extends JSXComponent(RefParentProps) {
     @Ref() refProp?: RefObject<HTMLDivElement>;
     @InternalState() buttonText: string = 'rerender';
 
-    onButtonClick(){
-        this.buttonText = 'sas'
-        console.log('sas')
-    }
-
     @Effect({run:'once'}) updateShowRefVisibility(){
         this.showRefHelper = true;
     }

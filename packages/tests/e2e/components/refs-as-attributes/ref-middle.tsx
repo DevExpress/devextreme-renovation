@@ -1,4 +1,4 @@
-import { Component, ComponentBindings, Effect, ForwardRef, JSXComponent, OneWay, Ref, RefObject } from "@devextreme-generator/declarations";
+import { Component, ComponentBindings, ForwardRef, JSXComponent, OneWay, Ref, RefObject } from "@devextreme-generator/declarations";
 import RefChild from './ref-child';
 import RefHelper from './ref-helper';
 
