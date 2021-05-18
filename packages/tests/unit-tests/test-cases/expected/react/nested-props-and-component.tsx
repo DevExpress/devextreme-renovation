@@ -18,19 +18,21 @@ export const FakeNested: FakeNestedType = {
 export declare type WidgetPropsType = {
   nestedProp?: typeof FakeNested[];
   anotherNestedPropInit?: typeof FakeNested[];
-  __defaultNestedValues?: WidgetPropsType;
+  __defaultNestedValues?: any;
   children?: React.ReactNode;
 };
 export const WidgetProps: WidgetPropsType = {
   __defaultNestedValues: { anotherNestedPropInit: [FakeNested] },
 };
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback } from "react";
 
 function __collectChildren<T>(children: React.ReactNode): T[] {
-  return (React.Children.toArray(children).filter(
-    (child) => React.isValidElement(child) && typeof child.type !== "string"
-  ) as (React.ReactElement & { type: { propName: string } })[]).map((child) => {
+  return (
+    React.Children.toArray(children).filter(
+      (child) => React.isValidElement(child) && typeof child.type !== "string"
+    ) as (React.ReactElement & { type: { propName: string } })[]
+  ).map((child) => {
     const { children: childChildren, ...childProps } = child.props;
     const collectedChildren = {} as any;
     __collectChildren(childChildren).forEach(
@@ -56,10 +58,12 @@ export const NestedProp: React.FunctionComponent<typeof FakeNested> & {
 NestedProp.propName = "nestedProp";
 NestedProp.defaultProps = FakeNested;
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetProps
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface undefWidget {
   props: typeof WidgetProps & RestProps;
   nested: any;

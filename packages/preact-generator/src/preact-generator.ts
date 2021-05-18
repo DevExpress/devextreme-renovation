@@ -18,6 +18,7 @@ import {
   mergeTypeExpressionImports,
   Method,
   ObjectLiteral,
+  Parameter,
   reduceTypeExpressionImports,
   StringLiteral,
   toStringOptions,
@@ -142,10 +143,6 @@ export class PreactComponent extends ReactComponent {
     return imports;
   }
 
-  compileRestProps() {
-    return 'declare type RestProps = { className?: string; style?: { [name: string]: any }, key?: any, ref?: any }';
-  }
-
   compileDefaultComponentExport() {
     return '';
   }
@@ -213,27 +210,27 @@ class JQueryComponent {
         `;
   }
 
+  hasElementTypeParam(params: Parameter): boolean | undefined {
+    return params.type?.toString()
+      .split('|')
+      .some((t) => t.endsWith('Element'));
+  }
+
   compileAPI() {
     return (this.source.members.filter((a) => a.isApiMethod) as Method[])
       .map((a) => {
         const returnsElementType = a.type?.toString().endsWith('Element');
-        const call = `this.viewRef?.${a._name}(${a.parameters
-          .map((p) => {
-            const param = p.name;
-            const hasElementType = p.type
-              ?.toString()
-              .split('|')
-              .some((t) => t.endsWith('Element'));
-
-            return hasElementType ? `this._patchElementParam(${param})` : param;
-          })
-          .join(',')})`;
+        const hasElementType = a.parameters.some((p) => this.hasElementTypeParam(p));
+        const call = `this.viewRef?.${a._name}(${hasElementType ? '...params.slice(0, arguments.length)' : '...arguments'})`;
+        const getParams = (method: Method) => method.parameters.map((p) => {
+          const param = p.name;
+          return this.hasElementTypeParam(p) ? `this._patchElementParam(${param})` : param;
+        }).join(',');
 
         return `${a._name}(${a.parameters})${compileType(a.type.toString())} | undefined {
-                return ${
-  returnsElementType ? `this._toPublicElement(${call})` : call
-};
-            }`;
+          ${hasElementType ? `const params = [${getParams(a)}];` : ''}
+          return ${returnsElementType ? `this._toPublicElement(${call})` : call};
+        }`;
       })
       .join('\n');
   }

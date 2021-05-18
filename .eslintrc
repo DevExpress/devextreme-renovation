@@ -29,7 +29,7 @@
     "@typescript-eslint/no-throw-literal": "warn",
     "@typescript-eslint/no-unused-vars": "warn",
     "@typescript-eslint/no-use-before-define": "warn",
-    "class-methods-use-this": "warn",
+    "class-methods-use-this": "off",
     "func-names": "warn",
     "guard-for-in": "warn",
     "import/no-cycle": "warn",
@@ -47,7 +47,7 @@
     "no-underscore-dangle": "warn",
     "prefer-destructuring": "off", // This rule may be fixed but we has a problem with TS after auto-fix
     "prefer-spread": "warn",
-    "react/destructuring-assignment": "warn",
+    "react/destructuring-assignment": "off",
     "react/no-deprecated": "warn",
     "react/no-string-refs": "warn",
     "react/prop-types": "warn",
