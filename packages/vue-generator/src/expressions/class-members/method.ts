@@ -15,16 +15,17 @@ export function compileMethod(
 
 export class Method extends BaseMethod {
   compileBody(options?: toStringOptions): string {
-    if (!this.body && this.modifiers.indexOf('abstract') !== -1) {
-      return '{}';
-    } if (this.body && this.modifiers.indexOf('abstract') === -1) {
-      return this.body.toString(options);
-    } if (this.body && this.modifiers.indexOf('abstract') !== -1) {
+    if (this.modifiers.indexOf('abstract') !== -1) {
+      if (!this.body) {
+        return '{}';
+      }
       throw new Error(`Method '${this.name}' cannot have an implementation because it is marked abstract.`);
-    } else if (!this.body && this.modifiers.indexOf('abstract') === -1) {
+    } else {
+      if (this.body) {
+        return this.body.toString(options);
+      }
       throw new Error('Function implementation is missing or not immediately following the declaration.');
     }
-    return '';
   }
 
   toString(options?: toStringOptions): string {
