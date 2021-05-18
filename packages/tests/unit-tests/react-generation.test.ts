@@ -80,6 +80,10 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("props-name-collision", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("rest-styles", function () {
     this.testGenerator(this.test!.title);
   });

@@ -1,13 +1,12 @@
+import WidgetWithProps from "./props";
 function view(model: Widget) {
-  return <div></div>;
+  return <WidgetWithProps {...model.restAttributes} />;
 }
 
-export declare type WidgetInputType = {
-  prop?: boolean;
-};
-const WidgetInput: WidgetInputType = {};
-import * as Preact from "preact";
-import { useCallback } from "preact/hooks";
+export declare type WidgetInputType = {};
+export const WidgetInput: WidgetInputType = {};
+import * as React from "react";
+import { useCallback } from "react";
 
 declare type RestProps = {
   className?: string;
@@ -20,10 +19,10 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetInput & RestProps) {
+export default function Widget(props: typeof WidgetInput & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { prop, ...restProps } = props;
+      const { ...restProps } = props;
       return restProps;
     },
     [props]
