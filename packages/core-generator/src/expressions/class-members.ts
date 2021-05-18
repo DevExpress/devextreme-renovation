@@ -282,7 +282,7 @@ export class Method extends BaseClassMember {
   }
 
   toString(options?: toStringOptions) {
-    return `${this.decorators.join(' ')} ${this.compileModifiers()} ${
+    return `${this.decorators.join(' ')}${this.compileModifiers()} ${
       this.name
     }${this.compileTypeParameters()}(${this.parameters})${compileType(
       this.type.toString(),

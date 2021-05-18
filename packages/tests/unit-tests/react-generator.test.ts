@@ -90,7 +90,7 @@ mocha.describe("react-generator: expressions", function () {
 
         assert.strictEqual(
           expression.toString(),
-          " abstract m():any;"
+          "abstract m():any;"
         );
     });
 

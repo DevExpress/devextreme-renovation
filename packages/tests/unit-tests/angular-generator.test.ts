@@ -8658,7 +8658,7 @@ mocha.describe("Angular generator", function () {
 
       assert.strictEqual(
         expression.toString(),
-        " abstract m():any;"
+        "abstract m():any;"
       );
     });
   });
