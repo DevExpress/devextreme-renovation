@@ -41,8 +41,6 @@ export default class Widget extends BaseInfernoComponent<any> {
     };
   }
 
-  value?: boolean;
-
   get restAttributes(): RestProps {
     const { defaultValue, value, valueChange, visible, ...restProps } = {
       ...this.props,

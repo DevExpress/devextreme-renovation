@@ -56,7 +56,6 @@ export default class Widget extends InfernoComponent<any> {
 
   i!: number;
   j!: number;
-  s!: number;
 
   createEffects() {
     return [

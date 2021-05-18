@@ -59,8 +59,6 @@ export default class Widget extends BaseInfernoComponent<any> {
     this.getRestProps = this.getRestProps.bind(this);
   }
 
-  stringValue!: string;
-
   getHeight(): number {
     this.props.onClick(10);
     const { onClick } = this.props as any;

@@ -42,8 +42,6 @@ export default class InnerWidget extends BaseInfernoComponent<any> {
     };
   }
 
-  value!: number;
-
   get restAttributes(): RestProps {
     const {
       defaultValue,

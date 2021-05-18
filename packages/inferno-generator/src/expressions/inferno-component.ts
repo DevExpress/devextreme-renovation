@@ -241,7 +241,7 @@ export class InfernoComponent extends PreactComponent {
   }
 
   compileInstance(): string {
-    const state = this.internalState.concat(this.state);
+    const state = this.internalState;
 
     if (state.length) {
       return state

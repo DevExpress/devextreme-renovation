@@ -43,7 +43,6 @@ export default class Widget extends BaseInfernoComponent<any> {
   }
 
   innerState!: number;
-  propState!: number;
 
   updateState(): any {
     this.setState((state: any) => ({
