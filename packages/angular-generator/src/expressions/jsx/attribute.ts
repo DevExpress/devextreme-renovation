@@ -14,7 +14,6 @@ import {
   isFunction,
 } from '@devextreme-generator/core';
 import { toStringOptions } from '../../types';
-// import { PropertyAccessChain } from '../property-access-chain';
 import { JsxExpression } from './jsx-expression';
 
 const ATTR_BINDING_ATTRIBUTES = ['aria-label'];
