@@ -15,12 +15,14 @@ export declare type WidgetInputType = {
 };
 const WidgetInput: WidgetInputType = {};
 import * as React from "react";
-import { useCallback, useRef, MutableRefObject, HTMLAttributes } from "react";
+import { useCallback, useRef, MutableRefObject } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetInput & RestProps;
   divRef: any;
@@ -30,9 +32,8 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const __divRef: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(
-    null
-  );
+  const __divRef: MutableRefObject<HTMLDivElement | null> =
+    useRef<HTMLDivElement>(null);
 
   const __getDirectly = useCallback(
     function __getDirectly(): any {

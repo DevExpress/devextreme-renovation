@@ -14,17 +14,18 @@ import {
   useImperativeHandle,
   forwardRef,
   MutableRefObject,
-  HTMLAttributes,
 } from "react";
 
 export type WidgetRef = {
   getHeight: (p: number, p1: any) => string;
   getSize: () => string;
 };
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetInput & RestProps;
   divRef: any;
@@ -33,9 +34,8 @@ interface Widget {
 
 const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
   function widget(props: typeof WidgetInput & RestProps, ref) {
-    const __divRef: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(
-      null
-    );
+    const __divRef: MutableRefObject<HTMLDivElement | null> =
+      useRef<HTMLDivElement>(null);
 
     const __restAttributes = useCallback(
       function __restAttributes(): RestProps {
