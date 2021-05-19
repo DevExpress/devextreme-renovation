@@ -2,12 +2,13 @@ import assert from "assert";
 import path from "path";
 
 import {
-    Binary, Block,
-    Decorators,
-    GeneratorContext,
-    Method,
-    SimpleExpression,
-    toStringOptions,
+  Binary,
+  Block,
+  Decorators,
+  GeneratorContext,
+  Method,
+  SimpleExpression,
+  toStringOptions,
 } from "@devextreme-generator/core";
 import generator, {
   ComponentInput,
