@@ -20,7 +20,6 @@
   >
 </template>
 <script>
-1;
 const HelperWidgetProps = {
   forwardRef: {
     type: [HTMLDivElement],

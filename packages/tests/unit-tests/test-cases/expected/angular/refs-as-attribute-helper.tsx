@@ -1,5 +1,3 @@
-1;
-
 import { Input } from "@angular/core";
 class HelperWidgetProps {
   @Input() forwardRef?: HTMLDivElement | null;

@@ -4,7 +4,7 @@ import {
     ComponentBindings,
     JSXComponent,
     OneWay,
-  } from "@devextreme-generator/declarations";1
+  } from "@devextreme-generator/declarations";
 @ComponentBindings()
 class HelperWidgetProps {
   @OneWay() forwardRef?: HTMLDivElement | null;

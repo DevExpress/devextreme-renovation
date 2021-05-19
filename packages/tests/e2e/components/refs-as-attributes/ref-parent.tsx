@@ -2,9 +2,8 @@ import { Effect, Component, ComponentBindings, ForwardRef, InternalState, JSXCom
 import RefMiddle from './ref-middle';
 
 @ComponentBindings()
-export class RefParentProps {
-    
-}
+export class RefParentProps {}
+
 function view(model:RefParent){
     return (
         <div>

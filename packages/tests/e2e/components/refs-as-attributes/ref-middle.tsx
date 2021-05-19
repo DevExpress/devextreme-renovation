@@ -8,8 +8,7 @@ export class RefMiddleProps {
     @ForwardRef() forwardRefProp?: RefObject<HTMLDivElement>;
     @OneWay() showRefHelper?: boolean;
 }
-function view(model:RefMiddle){
-    
+function view(model:RefMiddle){   
     return (
         <div id="forwardRefProp" ref={model.props.forwardRefProp}>
             <div id="ref" ref={model.middleDivRef}></div>

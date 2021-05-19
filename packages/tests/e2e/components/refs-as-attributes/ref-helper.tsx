@@ -7,8 +7,7 @@ export class RefHelperProps {
     @OneWay() forwardRef?: HTMLDivElement | null;
     @OneWay() forwardRefProp?: HTMLDivElement | null;
 }
-function view(model:RefHelper){
-    console.log(model.props.someRef);
+function view(model:RefHelper) {
     return (
         <div>
             <div>Ref: {model.props.someRef?.id}</div>
@@ -19,5 +18,4 @@ function view(model:RefHelper){
     )
 }
 @Component({view})
-export default class RefHelper extends JSXComponent(RefHelperProps) {
-}
+export default class RefHelper extends JSXComponent(RefHelperProps) {}

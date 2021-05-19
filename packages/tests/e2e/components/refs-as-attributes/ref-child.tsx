@@ -11,6 +11,4 @@ function view(model:RefChild){
     )
 }
 @Component({view})
-export default class RefChild extends JSXComponent(RefChildProps) {
-
-}
+export default class RefChild extends JSXComponent(RefChildProps) {}
