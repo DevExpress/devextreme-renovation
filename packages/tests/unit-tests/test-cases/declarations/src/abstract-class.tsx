@@ -17,5 +17,3 @@ export abstract class SomeClass{
       return this.p;
     }
 }
-
-  
