@@ -1,7 +1,7 @@
 import assert from 'assert';
 
 import { toStringOptions } from '@devextreme-generator/angular';
-import { Decorators, Identifier, TypeExpression } from '@devextreme-generator/core';
+import {Block, Decorators, Identifier, TypeExpression} from '@devextreme-generator/core';
 import generator, { JsxExpression, VueComponent } from '@devextreme-generator/vue';
 import { printSourceCodeAst as getAst, removeSpaces } from './helpers/common';
 import componentCreator from './helpers/create-component';
@@ -1251,24 +1251,70 @@ mocha.describe("Vue-generator", function () {
       );
     });
 
-    mocha.it("abstract method", function () {
+  mocha.describe("Abstract method", function () {
+    mocha.it("abstract method with modifier and without body", function () {
       const expression = generator.createMethod(
-          [createDecorator("SomeDecorator")],
-          ["public", "abstract"],
-          undefined,
-          generator.createIdentifier("m"),
-          undefined,
-          undefined,
-          [],
-          undefined,
-          undefined
+        [],
+        ["abstract"],
+        undefined,
+        generator.createIdentifier("m"),
+        undefined,
+        undefined,
+        [],
+        undefined,
+        undefined
       );
 
       assert.strictEqual(
-        getAst(expression.toString()),
-        getAst("m(){}")
+        expression.toString(),
+        "m(){}"
       );
     });
+
+    mocha.it("abstract method without modifier and without body", function () {
+      const expression = generator.createMethod(
+        [],
+        [],
+        undefined,
+        generator.createIdentifier("m"),
+        undefined,
+        undefined,
+        [],
+        undefined,
+        undefined
+      );
+
+      try {
+        expression.toString();
+      } catch (e) {
+        assert.strictEqual(
+          e.toString().split("\n")[0],
+          "Error: Function implementation is missing or not immediately following the declaration.");
+      }
+    });
+
+    mocha.it("abstract method with modifier and body", function () {
+      const expression = generator.createMethod(
+        [],
+        ["abstract"],
+        undefined,
+        generator.createIdentifier("m"),
+        undefined,
+        undefined,
+        [],
+        undefined,
+        new Block([], false)
+      );
+
+      try {
+        expression.toString();
+      } catch (e) {
+        assert.strictEqual(
+          e.toString().split("\n")[0],
+          "Error: Method 'm' cannot have an implementation because it is marked abstract.");
+      }
+    });
+  });
 
     mocha.it("Method with parameters", function () {
       const expression = generator.createMethod(
