@@ -3,6 +3,7 @@ import path from "path";
 
 import {
   Binary,
+  Block,
   Decorators,
   GeneratorContext,
   Method,
@@ -149,6 +150,71 @@ mocha.describe("react-generator: expressions", function () {
         );
 
         assert.strictEqual(expression.getter(), "name()");
+      });
+    });
+
+    mocha.describe("Abstract method", function () {
+      mocha.it("abstract method with modifier and without body", function () {
+        const expression = generator.createMethod(
+          [],
+          ["abstract"],
+          undefined,
+          generator.createIdentifier("m"),
+          undefined,
+          undefined,
+          [],
+          undefined,
+          undefined
+        );
+
+        assert.strictEqual(
+          expression.toString(),
+          "abstract m():any;"
+        );
+      });
+
+      mocha.it("abstract method without modifier and without body", function () {
+        const expression = generator.createMethod(
+          [],
+          [],
+          undefined,
+          generator.createIdentifier("m"),
+          undefined,
+          undefined,
+          [],
+          undefined,
+          undefined
+        );
+
+        try {
+          expression.toString();
+        } catch (e) {
+          assert.strictEqual(
+            e.toString().split("\n")[0],
+            "Error: Function implementation is missing or not immediately following the declaration.");
+        }
+      });
+
+      mocha.it("abstract method with modifier and body", function () {
+        const expression = generator.createMethod(
+          [],
+          ["abstract"],
+          undefined,
+          generator.createIdentifier("m"),
+          undefined,
+          undefined,
+          [],
+          undefined,
+          new Block([], false)
+        );
+
+        try {
+          expression.toString();
+        } catch (e) {
+          assert.strictEqual(
+            e.toString().split("\n")[0],
+            "Error: Method 'm' cannot have an implementation because it is marked abstract.");
+        }
       });
     });
   });

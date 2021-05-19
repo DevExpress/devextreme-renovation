@@ -646,7 +646,7 @@ export class AngularComponent extends Component {
             (p) => p.name === `_${name}`,
           ) as SetAccessor;
           if (setter) {
-            setter.body.statements.push(
+            setter.body?.statements.push(
               new SimpleExpression(deleteCacheStatement),
             );
           }
@@ -746,24 +746,24 @@ export class AngularComponent extends Component {
           if (setter) {
             if (
               usedIterables.has(name)
-              && !setter.body.statements.some(
+              && !setter.body?.statements.some(
                 (expr) => expr.toString()
                   === `this.__cachedObservables["${name}"] = [...${name}];`,
               )
             ) {
-              setter.body.statements.push(
+              setter.body?.statements.push(
                 new SimpleExpression(
                   `this.__cachedObservables["${name}"] = [...${name}];`,
                 ),
               );
             }
-            setter.body.statements.push(
+            setter.body?.statements.push(
               new SimpleExpression(`
                 if (this.__destroyEffects.length) {
                     this.${updateEffectMethod}();
                 }`),
             );
-            setter.body.statements.push(
+            setter.body?.statements.push(
               new SimpleExpression('this._updateEffects()'),
             );
             hasInternalStateDependency = true;
@@ -909,11 +909,11 @@ export class AngularComponent extends Component {
             if (setter) {
               const expression = `this.${scheduledApplyAttributes} = this`;
               if (
-                !setter.body.statements.some(
+                !setter.body?.statements.some(
                   (expr) => expr.toString() === expression,
                 )
               ) {
-                setter.body.statements.push(new SimpleExpression(expression));
+                setter.body?.statements.push(new SimpleExpression(expression));
               }
             }
           });
