@@ -10,6 +10,7 @@ import {
   ObjType,
   StringArr,
   StringType,
+  WidgetProps as ExternalWidgetProps
 } from "./types-external";
 
 export const viewFunction = (viewModel: Widget) => {
@@ -40,3 +41,6 @@ export class WidgetProps {
 
 @Component({ view: viewFunction })
 export default class Widget extends JSXComponent(WidgetProps) {}
+
+
+type BaseViewPropsType = Pick<WidgetProps, 'strArr'> & Pick<ExternalWidgetProps, 'customTypeField'>;
