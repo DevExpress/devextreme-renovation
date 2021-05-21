@@ -1,26 +1,24 @@
-import { SetAccessor } from '@devextreme-generator/angular';
 import {
   BaseClassMember,
   BindingElement,
   BindingPattern,
   Block,
   Decorators,
-  FunctionTypeNode,
   getProps,
   Identifier,
   Method,
   ObjectLiteral,
-  Parameter,
+  Property as BaseProperty,
   ReturnStatement,
   SimpleExpression,
   SimpleTypeExpression,
   SyntaxKind,
+  toStringOptions,
   TypeExpression,
   VariableDeclarationList,
   VariableStatement,
 } from '@devextreme-generator/core';
 import { PreactComponent } from '@devextreme-generator/preact';
-import { getChangeEventToken } from '@devextreme-generator/react';
 
 import { GetAccessor } from './class-members/get-accessor';
 import { Property } from './class-members/property';
@@ -33,7 +31,7 @@ const getEffectRunParameter = (effect: BaseClassMember) => effect.decorators
   ?.valueOf();
 
 export class InfernoComponent extends PreactComponent {
-  get REF_OBJECT_TYPE() {
+  get REF_OBJECT_TYPE(): string {
     return 'RefObject';
   }
 
@@ -56,11 +54,11 @@ export class InfernoComponent extends PreactComponent {
 
   compileApiRefImports() {}
 
-  addPrefixToMembers(members: Array<Property | Method>) {
+  addPrefixToMembers(members: (Property | Method)[]): (Property | Method)[] {
     return members;
   }
 
-  processMembers(members: Array<Property | Method>) {
+  processMembers(members: (Property | Method)[]): (BaseProperty | Method)[] {
     return super.processMembers(members).map((m) => {
       if (m._name.toString() === 'restAttributes') {
         m.prefix = '';
@@ -69,7 +67,7 @@ export class InfernoComponent extends PreactComponent {
     });
   }
 
-  getToStringOptions() {
+  getToStringOptions(): toStringOptions {
     return {
       ...super.getToStringOptions(),
       newComponentContext: 'this',
@@ -88,95 +86,13 @@ export class InfernoComponent extends PreactComponent {
     return `${super.compileViewModelArguments()} as ${this.name}`;
   }
 
-  compileStateSetterAndGetters(): string {
-    const props = getProps(this.members);
-    const members = (this.members.filter(
-      (m) => m.isInternalState || m.isState,
-    ) as Property[]).reduce((result: Array<GetAccessor | SetAccessor>, m) => {
-      const getterStatement = m.isInternalState
-        ? `state.${m.name}`
-        : `this.props.${m.name}!==undefined?this.props.${m.name}:state.${m.name}`;
-
-      const changePropertyName = `${m.name}Change`;
-      const changeProperty = props.find(
-        (m) => m.name === changePropertyName,
-      ) as Property;
-
-      const setStateStatement = `this.setState((state: any)=>{
-        this._currentState = state;
-        const newValue = value();
-        ${
-  changeProperty
-    ? `this.props.${m.name}Change${getChangeEventToken(
-      changeProperty,
-    )}(newValue)`
-    : ''
-};
-        this._currentState = null;
-        return {${m.name}: newValue};
-      })`;
-
-      const setterStatement = setStateStatement;
-
-      const type = m.questionOrExclamationToken !== '?' ? m.type : `${m.type}|undefined`;
-
-      const getterName = m.isInternalState
-        ? m._name
-        : new Identifier(`__state_${m._name}`);
-
-      result.push(
-        this.createGetAccessor(
-          getterName,
-          type,
-          new Block(
-            [
-              new SimpleExpression(
-                'const state = this._currentState||this.state',
-              ),
-              new ReturnStatement(new SimpleExpression(getterStatement)),
-            ],
-            false,
-          ),
-        ),
-      );
-      result.push(
-        new Method(
-          [],
-          [],
-          undefined,
-          new Identifier(`set_${m._name}`),
-          undefined,
-          undefined,
-          [
-            new Parameter(
-              [],
-              [],
-              undefined,
-              new Identifier('value'),
-              '',
-              new FunctionTypeNode(undefined, [], type),
-            ),
-          ],
-          'any',
-          new Block([new SimpleExpression(setterStatement)], false),
-        ),
-      );
-      return result;
-    }, []);
-
-    return members.map((m) => m.toString(this.getToStringOptions())).join('\n');
-  }
-
   compileStateProperty(): string {
     const state = this.internalState.concat(this.state);
 
     if (state.length) {
-      const type = `{
-        ${state.map((p) => p.typeDeclaration())}
-     }`;
+      const type = `{${state.map((p) => p.typeDeclaration())}}`;
       return `
       state: ${type};
-      _currentState: ${type}|null = null;
       `;
     }
 
@@ -195,7 +111,7 @@ export class InfernoComponent extends PreactComponent {
     return '';
   }
 
-  compileEffects() {
+  compileEffects(): string {
     const createEffectsStatements: string[] = [];
     const updateEffectsStatements: string[] = [];
     if (this.effects.length) {
@@ -233,7 +149,7 @@ export class InfernoComponent extends PreactComponent {
     `;
   }
 
-  compileLifeCycle(name: string, statements: string[]) {
+  compileLifeCycle(name: string, statements: string[]): string {
     if (statements.length) {
       return `${name}(){
         ${statements.join(';\n')}
@@ -243,18 +159,21 @@ export class InfernoComponent extends PreactComponent {
     return '';
   }
 
-  compileProviders(_providers: Property[], viewCallExpression: string) {
+  compileProviders(_providers: Property[], viewCallExpression: string): string {
     return viewCallExpression;
   }
 
-  compileGetChildContext() {
+  compileGetChildContext(): string {
     const providers = this.members.filter((m) => m.isProvider);
 
     if (providers.length) {
+      const providersString = providers
+        .map((p) => `${p.context}: this.${p.name}`)
+        .join(',\n');
       return this.compileLifeCycle('getChildContext', [
         `return {
           ...this.context,
-          ${providers.map((p) => `${p.context}: this.${p.name}`).join(',\n')}
+          ${providersString}
         }
       `,
       ]);
@@ -263,7 +182,7 @@ export class InfernoComponent extends PreactComponent {
     return '';
   }
 
-  get jQueryRegistered() {
+  get jQueryRegistered(): boolean {
     const jqueryProp = this.decorators[0].getParameter('jQuery') as
       | ObjectLiteral
       | undefined;
@@ -271,7 +190,7 @@ export class InfernoComponent extends PreactComponent {
   }
 
   // TODO: remove after inferno fixed https://github.com/infernojs/inferno/issues/1536
-  createRestPropsGetter(members: BaseClassMember[]) {
+  createRestPropsGetter(members: BaseClassMember[]): GetAccessor {
     const props = getProps(members);
     const bindingElements = props
       .reduce((bindingElements, p) => {
@@ -321,7 +240,19 @@ export class InfernoComponent extends PreactComponent {
     );
   }
 
-  toString() {
+  compileInstance(): string {
+    const state = this.internalState;
+
+    if (state.length) {
+      return state
+        .map((p) => (p as Property).instanceDeclaration())
+        .join(';\n');
+    }
+
+    return '';
+  }
+
+  toString(): string {
     // TODO: uncomment after inferno fixed https://github.com/infernojs/inferno/issues/1536
     // const propsType = this.compilePropsType();
     const propsType = 'any';
@@ -360,9 +291,9 @@ export class InfernoComponent extends PreactComponent {
                     ${bindMethods}
                 }
 
-                ${this.compileEffects()}
+                ${this.compileInstance()};
 
-                ${this.compileStateSetterAndGetters()}
+                ${this.compileEffects()}
                 
                 ${this.compileGetChildContext()}
 

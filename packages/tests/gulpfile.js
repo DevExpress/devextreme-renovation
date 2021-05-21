@@ -44,6 +44,7 @@ gulp.task(
   gulp.parallel(
     "compile-declaration-check",
     "compile-react-check",
-    "compile-angular-check"
+    "compile-angular-check",
+    "compile-inferno-check"
   )
 );
