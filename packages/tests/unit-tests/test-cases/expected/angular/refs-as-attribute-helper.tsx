@@ -19,12 +19,10 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["forwardRef", "someRef", "refProp", "forwardRefProp"],
   template: `<div
-    ><div>Ref:{{(===undefined||===null?undefined:.someRef)}}</div
-    ><div>ForwardRef:{{(===undefined||===null?undefined:.forwardRef)}}</div
-    ><div>RefProp:{{(===undefined||===null?undefined:.refProp)}}</div
-    ><div
-      >ForwardRefProp:{{(===undefined||===null?undefined:.forwardRefProp)}}</div
-    ></div
+    ><div>Ref:{{ someRef }}</div
+    ><div>ForwardRef:{{ forwardRef }}</div
+    ><div>RefProp:{{ refProp }}</div
+    ><div>ForwardRefProp:{{ forwardRefProp }}</div></div
   >`,
 })
 export default class HelperWidget extends HelperWidgetProps {

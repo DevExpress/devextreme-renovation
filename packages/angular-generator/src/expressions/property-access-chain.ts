@@ -84,7 +84,9 @@ export class PropertyAccessChain extends BasePropertyAccessChain {
         }
         return `${member?.name}${this.processName(options)}`;
       }
-
+      if (expression === '' || (this.expression instanceof PropertyAccess && this.expression.name.toString() === 'props')) {
+        return `${this.name}`;
+      }
       return `(${expression}===undefined||${expression}===null?undefined:${expression}${name})`;
     }
     return super.toString(options);

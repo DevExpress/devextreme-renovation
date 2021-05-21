@@ -1,22 +1,9 @@
 <template>
   <div
-    ><div
-      >Ref:{{
-        props === undefined || props === null ? undefined : props.someRef
-      }}</div
-    ><div
-      >ForwardRef:{{
-        props === undefined || props === null ? undefined : props.forwardRef
-      }}</div
-    ><div
-      >RefProp:{{
-        props === undefined || props === null ? undefined : props.refProp
-      }}</div
-    ><div
-      >ForwardRefProp:{{
-        props === undefined || props === null ? undefined : props.forwardRefProp
-      }}</div
-    ></div
+    ><div>Ref:{{ someRef }}</div
+    ><div>ForwardRef:{{ forwardRef }}</div
+    ><div>RefProp:{{ refProp }}</div
+    ><div>ForwardRefProp:{{ forwardRefProp }}</div></div
   >
 </template>
 <script>

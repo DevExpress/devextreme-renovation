@@ -3,25 +3,9 @@
     ><HelperWidget
       :forwardRef="this.$refs.forwardRef"
       :someRef="this.$refs.someRef"
-      :refProp="
-        (props === undefined || props === null ? undefined : props.refProp) &&
-        (props === undefined || props === null ? undefined : props.refProp)()
-          ? (props === undefined || props === null
-              ? undefined
-              : props.refProp)()
-          : undefined
-      "
+      :refProp="refProp && refProp() ? refProp() : undefined"
       :forwardRefProp="
-        (props === undefined || props === null
-          ? undefined
-          : props.forwardRefProp) &&
-        (props === undefined || props === null
-          ? undefined
-          : props.forwardRefProp)()
-          ? (props === undefined || props === null
-              ? undefined
-              : props.forwardRefProp)()
-          : undefined
+        forwardRefProp && forwardRefProp() ? forwardRefProp() : undefined
       "
     ></HelperWidget
   ></div>
