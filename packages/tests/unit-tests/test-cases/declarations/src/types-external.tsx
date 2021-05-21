@@ -30,7 +30,13 @@ export class WidgetProps {
   @OneWay() strArr: StringArr = ["ba", "ab"];
   @OneWay() s: StringType = "";
   @OneWay() strDate: StrDate = new Date();
+  @OneWay() customTypeField?: { name: string; customField: CustomType }[];
 }
 
 @Component({ view: viewFunction })
 export default class Widget extends JSXComponent(WidgetProps) {}
+
+export interface CustomType {
+  name: string;
+  value: number;
+}
