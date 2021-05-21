@@ -39,6 +39,9 @@ export const WidgetProps = {
       return new Date();
     },
   },
+  customTypeField: {
+    type: Array,
+  },
 };
 export const DxWidget = {
   name: "Widget",
@@ -55,6 +58,7 @@ export const DxWidget = {
         strArr: this.strArr,
         s: this.s,
         strDate: this.strDate,
+        customTypeField: this.customTypeField,
       };
     },
   },
