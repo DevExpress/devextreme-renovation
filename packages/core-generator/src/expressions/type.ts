@@ -239,6 +239,16 @@ export class TypeLiteralNode extends TypeExpression {
   toString(_options?: toStringOptions) {
     return `{${this.members.join(',')}}`;
   }
+
+  getImports(context: GeneratorContext) {
+    return this.members.reduce((acc, m) => {
+      const imports = m.type?.getImports(context);
+      if (imports) {
+        return acc.concat(imports);
+      }
+      return acc;
+    }, [] as TypeExpressionImports);
+  }
 }
 
 export class PropertySignature extends ExpressionWithOptionalExpression {
