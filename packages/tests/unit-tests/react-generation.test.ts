@@ -331,6 +331,14 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("types", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("types-external", function () {
+    this.testGenerator(this.test!.title);
+  });
+  
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {
