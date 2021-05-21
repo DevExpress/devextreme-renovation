@@ -143,6 +143,10 @@ mocha.describe("inferno-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("jquery-empty", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {
