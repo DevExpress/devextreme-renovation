@@ -40,12 +40,15 @@ export class InfernoComponent extends PreactComponent {
   compileImportStatements(hooks: string[]): string[] {
     const coreImports = [];
     const hooksSet = new Set(hooks);
+    const imports = ['import { createElement as h } from "inferno-compat";'];
 
     if (hooksSet.has('useRef')) {
       coreImports.push('createRef as infernoCreateRef');
     }
 
-    const imports = ['import { createElement as h } from "inferno-compat";'];
+    if (this.jQueryRegistered) {
+      imports.push('import { createReRenderEffect } from "@devextreme/vdom";');
+    }
 
     if (coreImports.length) {
       imports.push(`import { ${coreImports.join(',')} } from "inferno"`);
@@ -198,13 +201,17 @@ export class InfernoComponent extends PreactComponent {
   compileEffects() {
     const createEffectsStatements: string[] = [];
     const updateEffectsStatements: string[] = [];
-    if (this.effects.length) {
+    if (this.effects.length || this.jQueryRegistered) {
       const dependencies = this.effects.map((e) => e.getDependency(this.getToStringOptions()).map((d) => `this.${d}`));
 
       const create = this.effects.map((e, i) => {
         const dependency = getEffectRunParameter(e) !== 'once' ? dependencies[i] : [];
         return `new InfernoEffect(this.${e.name}, [${dependency.join(',')}])`;
       });
+
+      if (this.jQueryRegistered) {
+        create.push('createReRenderEffect()');
+      }
 
       createEffectsStatements.push(`
         return [
@@ -224,7 +231,9 @@ export class InfernoComponent extends PreactComponent {
         return result;
       }, []);
 
-      updateEffectsStatements.push(update.join(';\n'));
+      if (update.length) {
+        updateEffectsStatements.push(update.join(';\n'));
+      }
     }
 
     return `
