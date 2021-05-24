@@ -4,5 +4,6 @@ export * from './effect';
 export * from './effect_host';
 export * from './portal';
 export * from './ref_object';
+export * from './re_render_effect';
 export * from './utils';
 export * from './mocked/hydrate';
