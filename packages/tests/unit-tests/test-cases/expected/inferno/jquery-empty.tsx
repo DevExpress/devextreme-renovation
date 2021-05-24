@@ -10,6 +10,7 @@ export declare type PropsType = {
 };
 const Props: PropsType = {};
 import { createElement as h } from "inferno-compat";
+import { createReRenderEffect } from "@devextreme/vdom";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
@@ -26,6 +27,10 @@ export default class Widget extends InfernoComponentWrapper<
 
   constructor(props: typeof Props & RestProps) {
     super(props);
+  }
+
+  createEffects() {
+    return [createReRenderEffect()];
   }
 
   get restAttributes(): RestProps {
