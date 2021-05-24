@@ -24,7 +24,7 @@ import { CommonModule } from "@angular/common";
   selector: "dx-ref-on-children-child",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["childRef", "nullableRef", "state"],
-  template: `<div #childRefRef><div #nullableRefRef></div></div>`,
+  template: `<div #childRef__Ref__><div #nullableRef__Ref__></div></div>`,
 })
 export default class RefOnChildrenChild extends Props {
   __method(): any {
@@ -39,10 +39,10 @@ export default class RefOnChildrenChild extends Props {
   get __restAttributes(): any {
     return {};
   }
-  @ViewChild("childRefRef", { static: false })
-  childRefRef!: ElementRef<HTMLDivElement>;
-  @ViewChild("nullableRefRef", { static: false })
-  nullableRefRef?: ElementRef<HTMLDivElement>;
+  @ViewChild("childRef__Ref__", { static: false })
+  childRef__Ref__!: ElementRef<HTMLDivElement>;
+  @ViewChild("nullableRef__Ref__", { static: false })
+  nullableRef__Ref__?: ElementRef<HTMLDivElement>;
   get forwardRef_childRef(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> {
@@ -57,7 +57,7 @@ export default class RefOnChildrenChild extends Props {
         ref?: ElementRef<HTMLDivElement>
       ): ElementRef<HTMLDivElement> {
         if (arguments.length) {
-          this.childRefRef = ref!;
+          this.childRef__Ref__ = ref!;
           this.childRef(ref);
         }
         return this.childRef();
@@ -78,7 +78,7 @@ export default class RefOnChildrenChild extends Props {
         ref?: ElementRef<HTMLDivElement>
       ): ElementRef<HTMLDivElement> | undefined {
         if (arguments.length) {
-          this.nullableRefRef = ref;
+          this.nullableRef__Ref__ = ref;
           this.nullableRef?.(ref);
         }
         return this.nullableRef?.();
@@ -102,9 +102,9 @@ export default class RefOnChildrenChild extends Props {
   } = {};
 
   ngAfterViewInit() {
-    this.childRef(this.childRefRef);
+    this.childRef(this.childRef__Ref__);
 
-    this.nullableRef?.(this.nullableRefRef);
+    this.nullableRef?.(this.nullableRef__Ref__);
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {

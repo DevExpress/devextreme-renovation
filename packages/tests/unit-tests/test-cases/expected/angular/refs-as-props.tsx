@@ -21,15 +21,16 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["nullableRef"],
-  template: `<div #divRef
+  template: `<div #divRefLink
     ><dx-widget-with-ref-prop
-      [parentRef]="divRef"
+      [parentRef]="divRefLink"
       [nullableRef]="nullableRef"
     ></dx-widget-with-ref-prop
   ></div>`,
 })
 export default class Widget extends WidgetInput {
-  @ViewChild("divRef", { static: false }) divRef!: ElementRef<HTMLDivElement>;
+  @ViewChild("divRefLink", { static: false })
+  divRef!: ElementRef<HTMLDivElement>;
   __getDirectly(): any {
     const divRefOuter = this.divRef.nativeElement?.outerHTML ?? "";
     const nullableRefOuter = this.nullableRef?.outerHTML ?? "";

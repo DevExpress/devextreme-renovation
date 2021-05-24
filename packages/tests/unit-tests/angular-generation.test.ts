@@ -343,6 +343,14 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("refs-as-attribute", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("refs-as-attribute-helper", function () {
+    this.testGenerator(this.test!.title);
+  });
+    
   mocha.it("types", function () {
     this.testGenerator(this.test!.title);
   });

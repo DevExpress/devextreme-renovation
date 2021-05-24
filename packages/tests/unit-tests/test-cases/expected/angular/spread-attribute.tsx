@@ -18,13 +18,13 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop"],
-  template: `<div #host
-    ><input #_auto_ref_0 /><input #i1 /><input #_auto_ref_1
+  template: `<div #hostLink
+    ><input #_auto_ref_0 /><input #i1Link /><input #_auto_ref_1
   /></div>`,
 })
 export default class Widget extends WidgetInput {
-  @ViewChild("host", { static: false }) host?: ElementRef<HTMLDivElement>;
-  @ViewChild("i1", { static: false }) i1!: ElementRef<HTMLInputElement>;
+  @ViewChild("hostLink", { static: false }) host?: ElementRef<HTMLDivElement>;
+  @ViewChild("i1Link", { static: false }) i1!: ElementRef<HTMLInputElement>;
   get __attr1(): any {
     return {};
   }

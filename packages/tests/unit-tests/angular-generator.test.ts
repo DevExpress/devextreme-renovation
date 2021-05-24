@@ -2506,7 +2506,7 @@ mocha.describe("Angular generator", function () {
           componentContext: "viewModel",
           newComponentContext: "",
         }),
-        "#refName"
+        "#refNameLink"
       );
     });
 
@@ -2537,7 +2537,7 @@ mocha.describe("Angular generator", function () {
           componentContext: "viewModel",
           newComponentContext: "",
         }),
-        "#refName"
+        "#refNameLink"
       );
     });
 
@@ -6384,7 +6384,7 @@ mocha.describe("Angular generator", function () {
 
       assert.strictEqual(
         property.toString(),
-        `@ViewChild("host", {static: false}) host?:ElementRef<HTMLDivElement>`
+        `@ViewChild("hostLink", {static: false}) host?:ElementRef<HTMLDivElement>`
       );
     });
 
