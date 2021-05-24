@@ -19,10 +19,11 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop1", "prop2"],
-  template: `<div #divRef></div>`,
+  template: `<div #divRefLink></div>`,
 })
 export default class Widget extends WidgetInput {
-  @ViewChild("divRef", { static: false }) divRef!: ElementRef<HTMLDivElement>;
+  @ViewChild("divRefLink", { static: false })
+  divRef!: ElementRef<HTMLDivElement>;
   getHeight(p: number = 10, p1: any): string {
     return `${this.prop1} + ${this.prop2} + ${this.divRef.nativeElement?.innerHTML} + ${p}`;
   }
