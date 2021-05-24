@@ -53,7 +53,6 @@ export default class Widget extends InfernoComponent<any> {
   createEffects() {
     return [new InfernoEffect(this.onInit, [])];
   }
-  updateEffects() {}
 
   onInit(): any {
     this.setState((state: any) => ({ ...state, rendered: true }));
