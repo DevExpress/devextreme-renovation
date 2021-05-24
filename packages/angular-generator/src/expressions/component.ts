@@ -350,18 +350,20 @@ export class AngularComponent extends Component {
   processMembers(members: Array<Property | Method>) {
     members = super.processMembers(members);
     members = members.concat(
-      (members.filter((m) => m.isForwardRefProp) as Property[]).map((m) => new Property(
-        [
-          new Decorator(
-            new Call(new Identifier(Decorators.Ref), [], []),
-            this.context,
-          ),
-        ],
-        [],
-        new Identifier(`${m.name}Ref`),
-        m.questionOrExclamationToken,
-        m.type,
-      )),
+      (members.filter((m) => m.isForwardRefProp) as Property[]).map(
+        (m) => new Property(
+          [
+            new Decorator(
+              new Call(new Identifier(Decorators.Ref), [], []),
+              this.context,
+            ),
+          ],
+          [],
+          new Identifier(`${m.name}__Ref__`),
+          m.questionOrExclamationToken,
+          m.type,
+        ),
+      ),
     );
 
     members = members.concat(
@@ -400,7 +402,7 @@ export class AngularComponent extends Component {
                     this.name
                   }, ${parameter}): ${returnType}{
                     if(arguments.length){
-                      this.${m.name}${m.isForwardRefProp ? 'Ref' : ''} = ref${
+                      this.${m.name}${m.isForwardRefProp ? '__Ref__' : ''} = ref${
   !isOptional ? '!' : ''
 };
                       ${
@@ -1472,7 +1474,7 @@ export class AngularComponent extends Component {
       .forEach((m) => {
         const token = (m as Property).isOptional ? '?.' : '';
         ngAfterViewInitStatements.push(`
-                this.${m.name}${token}(this.${m.name}Ref);
+                this.${m.name}${token}(this.${m.name}__Ref__);
             `);
       });
 

@@ -44,7 +44,7 @@ import SetForwardRef from "./set-ref/set-forward-ref-parent";
 import SetForwardRefDeep from "./set-ref/set-forward-ref-deep/parent";
 import InlineArrowFunction from "./inline-arrow-function";
 import ListTemplate from "./list-template";
-
+import RefParent from "./refs-as-attributes/ref-parent";
 import DynamicComponent from "./dynamic-components/dynamic-component";
 import StylesWidget from "./styles";
 
@@ -158,6 +158,7 @@ function view(model: App) {
       <InlineArrowFunction />
       <DynamicComponent />
       <StylesWidget />
+      <RefParent />
     </div>
   );
 }

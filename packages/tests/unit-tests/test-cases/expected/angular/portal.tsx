@@ -96,11 +96,7 @@ class DxPortal {
       ><span></span
     ></dx-portal>
     <ng-container *ngIf="!rendered">{{ null }}</ng-container
-    ><dx-portal
-      [container]="
-        someRef === undefined || someRef === null ? undefined : someRef
-      "
-      ><span></span></dx-portal
+    ><dx-portal [container]="someRef"><span></span></dx-portal
   ></div>`,
 })
 export default class Widget extends WidgetProps {
