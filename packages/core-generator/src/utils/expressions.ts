@@ -39,7 +39,6 @@ export function getMember(
   if (expression instanceof PropertyAccess) {
     return expression.getMember(options);
   }
-
   return undefined;
 }
 

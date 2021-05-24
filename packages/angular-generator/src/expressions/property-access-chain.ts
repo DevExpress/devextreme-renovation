@@ -39,6 +39,9 @@ export class PropertyAccessChain extends BasePropertyAccessChain {
       const member = getMember(
         this.expression,
         compileRefOptions(expressionString, options),
+      ) || getMember(
+        this.expression,
+        options,
       );
 
       if (member && isProperty(member)) {
@@ -48,20 +51,42 @@ export class PropertyAccessChain extends BasePropertyAccessChain {
         }
       }
     }
-
+    if (this.name.toString() === 'current' && this.expression instanceof PropertyAccessChain) {
+      const member = this.expression.getMember(options);
+      if (member && isProperty(member)) {
+        const accessor = this.getRefAccessor(member);
+        if (accessor !== null) {
+          return accessor;
+        }
+      }
+    }
     return super.processName(options);
   }
 
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions): string {
     if (options && options.newComponentContext !== SyntaxKind.ThisKeyword) {
+      let chainMember;
+      if (this.expression instanceof PropertyAccessChain) {
+        chainMember = this.expression.getMember(options);
+      }
+      const member = getMember(this.expression, options)
+      || chainMember;
       const expression = this.expression.toString(options);
-      const member = getMember(this.expression, options);
       const name = member?.isRef
-        || member?.isRefProp
-        || member?.isForwardRef
-        || member?.isForwardRefProp
+      || member?.isRefProp
+      || member?.isForwardRef
+      || member?.isForwardRefProp
         ? ''
         : `.${this.name}`;
+      if (name === '' && this.name.toString() === 'current') {
+        if (member?.isForwardRefProp) {
+          return `${member.name} ? ${member.name}()?.nativeElement : undefined`;
+        }
+        return `${member?.name}${this.processName(options)}`;
+      }
+      if (expression === '' || (this.expression instanceof PropertyAccess && this.expression.name.toString() === 'props')) {
+        return `${this.name}`;
+      }
       return `(${expression}===undefined||${expression}===null?undefined:${expression}${name})`;
     }
     return super.toString(options);

@@ -372,4 +372,12 @@ mocha.describe("vue-generation", function () {
   mocha.it("nested-inherited", function () {
     this.testGenerator(this.test!.title);
   });
+
+  mocha.it("refs-as-attribute", function () {
+    this.testGenerator(this.test!.title);
+  });
+  
+  mocha.it("refs-as-attribute-helper", function () {
+    this.testGenerator(this.test!.title);
+  });
 });

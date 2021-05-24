@@ -207,6 +207,12 @@ export class PropertyAccessChain extends ExpressionWithExpression {
       .getDependency(options)
       .concat(this.name.getDependency(options));
   }
+
+  getMember(options?: toStringOptions) {
+    return options?.members.find(
+      (m) => m._name.toString() === this.name.toString(),
+    );
+  }
 }
 
 export class Spread extends ExpressionWithExpression {
