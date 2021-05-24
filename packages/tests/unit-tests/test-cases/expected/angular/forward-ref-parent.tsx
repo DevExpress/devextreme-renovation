@@ -39,7 +39,7 @@ export default class RefOnChildrenParent extends Props {
   get __restAttributes(): any {
     return {};
   }
-  nullableRefRef?: ElementRef<HTMLDivElement>;
+  nullableRef__Ref__?: ElementRef<HTMLDivElement>;
   get forwardRef_child(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> {
@@ -74,7 +74,7 @@ export default class RefOnChildrenParent extends Props {
         ref?: ElementRef<HTMLDivElement>
       ): ElementRef<HTMLDivElement> | undefined {
         if (arguments.length) {
-          this.nullableRefRef = ref;
+          this.nullableRef__Ref__ = ref;
           this.nullableRef?.(ref);
         }
         return this.nullableRef?.();

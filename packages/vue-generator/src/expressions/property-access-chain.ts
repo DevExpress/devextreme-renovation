@@ -14,16 +14,24 @@ export class PropertyAccessChain extends BasePropertyAccessChain {
     return null;
   }
 
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions): string {
     if (options && options.newComponentContext !== SyntaxKind.ThisKeyword) {
+      let chainMember;
+      if (this.expression instanceof PropertyAccessChain) {
+        chainMember = this.expression.getMember(options);
+      }
+      const member = getMember(this.expression, options)
+      || chainMember;
       const expression = this.expression.toString(options);
-      const member = getMember(this.expression, options);
       if (
         member?.isRef
         || member?.isRefProp
         || member?.isForwardRef
         || member?.isForwardRefProp
       ) {
+        if (this.name.toString() === 'current' && (member?.isRef || member?.isForwardRef)) {
+          return `this.$refs.${member?.name}`;
+        }
         return `(${expression} && ${expression}()?${expression}():undefined)`;
       }
     }

@@ -366,7 +366,7 @@ export class AngularComponent extends Component {
             ),
           ],
           [],
-          new Identifier(`${m.name}Ref`),
+          new Identifier(`${m.name}__Ref__`),
           m.questionOrExclamationToken,
           m.type,
         ),
@@ -409,7 +409,7 @@ export class AngularComponent extends Component {
                     this.name
                   }, ${parameter}): ${returnType}{
                     if(arguments.length){
-                      this.${m.name}${m.isForwardRefProp ? 'Ref' : ''} = ref${
+                      this.${m.name}${m.isForwardRefProp ? '__Ref__' : ''} = ref${
   !isOptional ? '!' : ''
 };
                       ${
@@ -1477,7 +1477,7 @@ export class AngularComponent extends Component {
       .forEach((m) => {
         const token = (m as Property).isOptional ? '?.' : '';
         ngAfterViewInitStatements.push(`
-                this.${m.name}${token}(this.${m.name}Ref);
+                this.${m.name}${token}(this.${m.name}__Ref__);
             `);
       });
 

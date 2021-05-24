@@ -45,9 +45,8 @@ export class WidgetProps {
   public static __defaultNestedValues: any = {
     anotherNestedPropInit: [new FakeNested()],
   };
-  @Output() twoWayPropChange: EventEmitter<
-    number | undefined
-  > = new EventEmitter();
+  @Output() twoWayPropChange: EventEmitter<number | undefined> =
+    new EventEmitter();
 }
 
 import {
@@ -149,7 +148,7 @@ export default class UndefWidget extends WidgetProps {
   get __restAttributes(): any {
     return {};
   }
-  someForwardRefRef?: ElementRef<any>;
+  someForwardRef__Ref__?: ElementRef<any>;
   get forwardRef_someForwardRef(): (
     ref?: ElementRef<any>
   ) => ElementRef<any> | undefined {
@@ -164,7 +163,7 @@ export default class UndefWidget extends WidgetProps {
         ref?: ElementRef<any>
       ): ElementRef<any> | undefined {
         if (arguments.length) {
-          this.someForwardRefRef = ref;
+          this.someForwardRef__Ref__ = ref;
           this.someForwardRef?.(ref);
         }
         return this.someForwardRef?.();

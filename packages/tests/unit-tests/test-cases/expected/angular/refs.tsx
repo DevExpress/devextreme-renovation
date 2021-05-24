@@ -34,13 +34,14 @@ import { CommonModule } from "@angular/common";
     "requiredRefProp",
     "requiredForwardRefProp",
   ],
-  template: `<div #divRef><div #outerDivRefRef></div></div>`,
+  template: `<div #divRefLink><div #outerDivRef__Ref__></div></div>`,
 })
 export default class Widget extends WidgetProps {
-  @ViewChild("divRef", { static: false }) divRef?: ElementRef<HTMLDivElement>;
-  @ViewChild("ref", { static: false }) ref?: ElementRef<HTMLDivElement>;
+  @ViewChild("divRefLink", { static: false })
+  divRef?: ElementRef<HTMLDivElement>;
+  @ViewChild("refLink", { static: false }) ref?: ElementRef<HTMLDivElement>;
   forwardRef?: ElementRef<HTMLDivElement>;
-  @ViewChild("existingRef", { static: false })
+  @ViewChild("existingRefLink", { static: false })
   existingRef!: ElementRef<HTMLDivElement>;
   existingForwardRef!: ElementRef<HTMLDivElement>;
   __writeRefs(): any {
@@ -100,10 +101,10 @@ export default class Widget extends WidgetProps {
   get __restAttributes(): any {
     return {};
   }
-  @ViewChild("outerDivRefRef", { static: false })
-  outerDivRefRef?: ElementRef<HTMLDivElement>;
-  forwardRefPropRef?: ElementRef<HTMLDivElement>;
-  requiredForwardRefPropRef!: ElementRef<HTMLDivElement>;
+  @ViewChild("outerDivRef__Ref__", { static: false })
+  outerDivRef__Ref__?: ElementRef<HTMLDivElement>;
+  forwardRefProp__Ref__?: ElementRef<HTMLDivElement>;
+  requiredForwardRefProp__Ref__!: ElementRef<HTMLDivElement>;
   get forwardRef_forwardRef(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> | undefined {
@@ -158,7 +159,7 @@ export default class Widget extends WidgetProps {
         ref?: ElementRef<HTMLDivElement>
       ): ElementRef<HTMLDivElement> | undefined {
         if (arguments.length) {
-          this.outerDivRefRef = ref;
+          this.outerDivRef__Ref__ = ref;
           this.outerDivRef?.(ref);
         }
         return this.outerDivRef?.();
@@ -179,7 +180,7 @@ export default class Widget extends WidgetProps {
         ref?: ElementRef<HTMLDivElement>
       ): ElementRef<HTMLDivElement> | undefined {
         if (arguments.length) {
-          this.forwardRefPropRef = ref;
+          this.forwardRefProp__Ref__ = ref;
           this.forwardRefProp?.(ref);
         }
         return this.forwardRefProp?.();
@@ -200,7 +201,7 @@ export default class Widget extends WidgetProps {
         ref?: ElementRef<HTMLDivElement>
       ): ElementRef<HTMLDivElement> {
         if (arguments.length) {
-          this.requiredForwardRefPropRef = ref!;
+          this.requiredForwardRefProp__Ref__ = ref!;
           this.requiredForwardRefProp(ref);
         }
         return this.requiredForwardRefProp();
@@ -233,7 +234,7 @@ export default class Widget extends WidgetProps {
   } = {};
 
   ngAfterViewInit() {
-    this.outerDivRef?.(this.outerDivRefRef);
+    this.outerDivRef?.(this.outerDivRef__Ref__);
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {
