@@ -13,9 +13,7 @@ import Button, { ButtonInput } from "./button";
 function view(model: ButtonWithInternalState) {
   return (
     <Button id={model.props.id} onClick={model.onButtonClick}>
-      {model.props.pressed ? "Pressed" : "Unpressed"}
-      {" - Internal State is "}
-      {model.innerState === model.props.pressed ? "Synchronized" : "Not Synchronized" }
+      {model.textContent}
     </Button>
   );
 }
@@ -34,6 +32,10 @@ export default class ButtonWithInternalState extends JSXComponent(
   ButtonWithInternalStateInput
 ) {
   @InternalState() innerState: boolean = false;
+
+  get textContent() {
+    return `${this.props.pressed ? "Pressed" : "Unpressed"} - Internal State is ${this.innerState === this.props.pressed ? "Synchronized" : "Not Synchronized" }`
+  }
 
   @Effect()
   synchronizeInternalState() {
