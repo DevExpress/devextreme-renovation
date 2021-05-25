@@ -62,11 +62,6 @@ export default class Widget extends BaseInfernoComponent<any> {
       innerState: state.innerState + 1,
     }));
     this.setState((state: any) => {
-      this.props.propStateChange!(
-        (this.props.propState !== undefined
-          ? this.props.propState
-          : state.propState) + 1
-      );
       return {
         ...state,
         propState:
@@ -75,12 +70,12 @@ export default class Widget extends BaseInfernoComponent<any> {
             : state.propState) + 1,
       };
     });
+    this.props.propStateChange!(
+      (this.props.propState !== undefined
+        ? this.props.propState
+        : this.state.propState) + 1
+    );
     this.setState((state: any) => {
-      this.props.propStateChange!(
-        (this.props.propState !== undefined
-          ? this.props.propState
-          : state.propState) + 1
-      );
       return {
         ...state,
         propState:
@@ -89,12 +84,12 @@ export default class Widget extends BaseInfernoComponent<any> {
             : state.propState) + 1,
       };
     });
+    this.props.propStateChange!(
+      (this.props.propState !== undefined
+        ? this.props.propState
+        : this.state.propState) + 1
+    );
     this.setState((state: any) => {
-      this.props.propStateChange!(
-        (this.props.propState !== undefined
-          ? this.props.propState
-          : state.propState) + 1
-      );
       return {
         ...state,
         propState:
@@ -103,12 +98,12 @@ export default class Widget extends BaseInfernoComponent<any> {
             : state.propState) + 1,
       };
     });
+    this.props.propStateChange!(
+      (this.props.propState !== undefined
+        ? this.props.propState
+        : this.state.propState) + 1
+    );
     this.setState((state: any) => {
-      this.props.propStateChange!(
-        (this.props.propState !== undefined
-          ? this.props.propState
-          : state.propState) + 1
-      );
       return {
         ...state,
         propState:
@@ -117,6 +112,11 @@ export default class Widget extends BaseInfernoComponent<any> {
             : state.propState) + 1,
       };
     });
+    this.props.propStateChange!(
+      (this.props.propState !== undefined
+        ? this.props.propState
+        : this.state.propState) + 1
+    );
   }
   get restAttributes(): RestProps {
     const { defaultPropState, propState, propStateChange, ...restProps } = {
