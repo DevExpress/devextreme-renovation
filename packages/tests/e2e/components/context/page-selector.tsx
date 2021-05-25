@@ -33,10 +33,14 @@ class Props {
 })
 export default class PageSelector extends JSXComponent(Props) {
   get add() {
-    return () => (this.props.value = this.props.value + 1);
+    return () => {
+      this.props.value = this.props.value + 1
+    };
   }
 
   get sub() {
-    return () => (this.props.value = this.props.value - 1);
+    return () => {
+      this.props.value = this.props.value - 1
+    };
   }
 }
