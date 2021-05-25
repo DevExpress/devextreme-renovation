@@ -78,9 +78,6 @@ export default class Widget extends BaseInfernoComponent<any> {
 
   updateState(): any {
     this.setState((state: any) => {
-      this.props.state1Change!(
-        !(this.props.state1 !== undefined ? this.props.state1 : state.state1)
-      );
       return {
         ...state,
         state1: !(this.props.state1 !== undefined
@@ -88,14 +85,17 @@ export default class Widget extends BaseInfernoComponent<any> {
           : state.state1),
       };
     });
+    this.props.state1Change!(
+      !(this.props.state1 !== undefined ? this.props.state1 : this.state.state1)
+    );
   }
   updateState2(): any {
     const cur =
       this.props.state2 !== undefined ? this.props.state2 : this.state.state2;
     this.setState((state: any) => {
-      this.props.state2Change!(cur !== false ? false : true);
       return { ...state, state2: cur !== false ? false : true };
     });
+    this.props.state2Change!(cur !== false ? false : true);
   }
   destruct(): any {
     const s =
@@ -103,9 +103,9 @@ export default class Widget extends BaseInfernoComponent<any> {
   }
   stateChange(stateProp?: boolean): any {
     this.setState((state: any) => {
-      this.props.statePropChange!(stateProp);
       return { ...state, stateProp: stateProp };
     });
+    this.props.statePropChange!(stateProp);
   }
   get restAttributes(): RestProps {
     const {
