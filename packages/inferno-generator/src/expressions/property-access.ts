@@ -15,10 +15,14 @@ export class PropertyAccess extends ReactPropertyAccess {
     }
     if (property.isState) {
       const contextlessState = state.replace(new RegExp(`\\bthis.state.${property.name}\\b`, 'g'), `state.${property.name}`);
-      return `this.setState((state: any) => {
-        return {...state, ${property.name}: ${contextlessState}};
-      });
-      this.props.${property.name}Change!(${state});`;
+      return `{
+        let __newValue;
+        this.setState((state: any) => {
+          __newValue = ${contextlessState};
+          return {${property.name}: __newValue};
+        });
+        this.props.${property.name}Change!(__newValue);
+      }`;
     }
     return super.compileStateSetting(state, property, options);
   }
