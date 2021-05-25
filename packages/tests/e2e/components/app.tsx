@@ -47,6 +47,7 @@ import ListTemplate from "./list-template";
 import RefParent from "./refs-as-attributes/ref-parent";
 import DynamicComponent from "./dynamic-components/dynamic-component";
 import StylesWidget from "./styles";
+import ButtonWithInternalState from "./internal-state-change-on-effect";
 
 function view(model: App) {
   return (
@@ -67,6 +68,11 @@ function view(model: App) {
       <div id="button-with-state-pressed">
         {model.buttonWithStateIsPressed.toString()}
       </div>
+      <ButtonWithInternalState
+        id="button-with-sync-state"
+        pressedChange={model.onSynchronizeValueChange}
+        synchronizedWithPressed={model.synchronizedValue}
+      />
       <ComponentWithSpread
         containerId="component-with-spread"
         aria={model.spreadAttributesComponentAria}
@@ -196,6 +202,12 @@ export default class App extends JSXComponent(AppInput) {
   ];
 
   @InternalState() domEffectsText: string = "A";
+
+  @InternalState() synchronizedValue: boolean = false;
+
+  onSynchronizeValueChange(newValue: boolean) {
+    this.synchronizedValue = newValue;
+  }
 
   onButtonClick() {
     this.clickCount = this.clickCount + 1;
