@@ -418,3 +418,17 @@ cloneTest("Styles unification", async (t) => {
     .expect(await stylesComponent.getStyleProperty("padding-left"))
     .eql("10px");
 });
+
+cloneTest("Synchronize InternalState setting on effect after TwoWay prop changed", async (t) => {
+  const buttonWithSyncState = Selector("#button-with-sync-state");
+  
+  await t
+    .expect((await buttonWithSyncState.textContent).trim())
+    .eql(`Unpressed - Internal State is Synchronized`);
+
+  await t.click(buttonWithSyncState)
+  
+  await t
+    .expect((await buttonWithSyncState.textContent).trim())
+    .eql(`Pressed - Internal State is Synchronized`);
+})

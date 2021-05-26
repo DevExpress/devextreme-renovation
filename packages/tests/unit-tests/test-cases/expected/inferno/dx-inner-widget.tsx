@@ -28,12 +28,7 @@ declare type RestProps = {
 };
 
 export default class InnerWidget extends BaseInfernoComponent<any> {
-  state: {
-    value: number;
-  };
-  _currentState: {
-    value: number;
-  } | null = null;
+  state: { value: number };
 
   refs: any;
 
@@ -47,20 +42,6 @@ export default class InnerWidget extends BaseInfernoComponent<any> {
     };
   }
 
-  get __state_value(): number {
-    const state = this._currentState || this.state;
-    return this.props.value !== undefined ? this.props.value : state.value;
-  }
-  set_value(value: () => number): any {
-    this.setState((state: any) => {
-      this._currentState = state;
-      const newValue = value();
-      this.props.valueChange!(newValue);
-      this._currentState = null;
-      return { value: newValue };
-    });
-  }
-
   get restAttributes(): RestProps {
     const {
       defaultValue,
@@ -69,14 +50,22 @@ export default class InnerWidget extends BaseInfernoComponent<any> {
       value,
       valueChange,
       ...restProps
-    } = { ...this.props, value: this.__state_value } as any;
+    } = {
+      ...this.props,
+      value:
+        this.props.value !== undefined ? this.props.value : this.state.value,
+    } as any;
     return restProps;
   }
 
   render() {
     const props = this.props;
     return view({
-      props: { ...props, value: this.__state_value },
+      props: {
+        ...props,
+        value:
+          this.props.value !== undefined ? this.props.value : this.state.value,
+      },
       restAttributes: this.restAttributes,
     } as InnerWidget);
   }

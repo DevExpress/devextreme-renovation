@@ -17,12 +17,7 @@ declare type RestProps = {
 };
 
 export default class Widget extends BaseInfernoComponent<any> {
-  state: {
-    _hovered: Boolean;
-  };
-  _currentState: {
-    _hovered: Boolean;
-  } | null = null;
+  state: { _hovered: Boolean };
 
   refs: any;
 
@@ -34,21 +29,10 @@ export default class Widget extends BaseInfernoComponent<any> {
     this.updateState = this.updateState.bind(this);
   }
 
-  get _hovered(): Boolean {
-    const state = this._currentState || this.state;
-    return state._hovered;
-  }
-  set__hovered(value: () => Boolean): any {
-    this.setState((state: any) => {
-      this._currentState = state;
-      const newValue = value();
-      this._currentState = null;
-      return { _hovered: newValue };
-    });
-  }
+  _hovered!: Boolean;
 
   updateState(): any {
-    this.set__hovered(() => !this._hovered);
+    this.setState((state: any) => ({ ...state, _hovered: !state._hovered }));
   }
   get restAttributes(): RestProps {
     const { ...restProps } = this.props as any;
@@ -59,7 +43,7 @@ export default class Widget extends BaseInfernoComponent<any> {
     const props = this.props;
     return view({
       ...props,
-      _hovered: this._hovered,
+      _hovered: this.state._hovered,
       updateState: this.updateState,
       restAttributes: this.restAttributes,
     } as Widget);
