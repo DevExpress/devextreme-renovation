@@ -272,8 +272,8 @@ class JQueryComponent {
     imports.push(
       `import ${
         defaultImport
-          ? `${widgetComponent}`
-          : `{ ${widget} as ${widgetComponent} }`
+          ? `${widgetComponent}, { defaultOptions }`
+          : `{ ${widget} as ${widgetComponent}, defaultOptions }`
       } from '${processModuleFileName(
         relativePath.replace(path.extname(relativePath), ''),
       )}'`,
@@ -412,6 +412,7 @@ class JQueryComponent {
         }
 
         registerComponent("dx${this.source.name}", ${this.source.name});
+        ${this.source.name}.defaultOptions = defaultOptions;
         `;
   }
 }
