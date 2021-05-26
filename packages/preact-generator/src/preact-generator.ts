@@ -354,7 +354,7 @@ class JQueryComponent {
         get _propsInfo() {
             return {
                 twoWay: [${this.source.state.map(
-    (s) => `['${s.name}', ${s.initializer}, '${s.name}Change']`,
+    (s) => `['${s.name}', 'default${s.name[0].toUpperCase()}${s.name.slice(1)}', '${s.name}Change']`,
   )}],
                 allowNull: [${withNullType}],
                 elements: [${withElementType}],
