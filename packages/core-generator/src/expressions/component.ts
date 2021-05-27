@@ -84,6 +84,10 @@ export class Component extends Class implements Heritable {
   }
 
   get needGenerateDefaultOptions(): boolean {
+    /* NOTE: return 'false' only when:
+        - no 'defaultOptionsModule' in generator options
+        - component decorator 'defaultOptionRules' parameter is equal to 'null'
+    */
     return (
       !!this.context.defaultOptionsModule
       && (!this.defaultOptionRules
