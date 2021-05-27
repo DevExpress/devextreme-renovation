@@ -272,8 +272,8 @@ class JQueryComponent {
     imports.push(
       `import ${
         defaultImport
-          ? `${widgetComponent}`
-          : `{ ${widget} as ${widgetComponent} }`
+          ? `${widgetComponent}, { defaultOptions }`
+          : `{ ${widget} as ${widgetComponent}, defaultOptions }`
       } from '${processModuleFileName(
         relativePath.replace(path.extname(relativePath), ''),
       )}'`,
@@ -354,7 +354,7 @@ class JQueryComponent {
         get _propsInfo() {
             return {
                 twoWay: [${this.source.state.map(
-    (s) => `['${s.name}', ${s.initializer}, '${s.name}Change']`,
+    (s) => `['${s.name}', 'default${s.name[0].toUpperCase()}${s.name.slice(1)}', '${s.name}Change']`,
   )}],
                 allowNull: [${withNullType}],
                 elements: [${withElementType}],
@@ -412,6 +412,7 @@ class JQueryComponent {
         }
 
         registerComponent("dx${this.source.name}", ${this.source.name});
+        ${this.source.name}.defaultOptions = defaultOptions;
         `;
   }
 }

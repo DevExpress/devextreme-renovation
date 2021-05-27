@@ -1,21 +1,15 @@
 import registerComponent from "../../../../jquery-helpers/jquery_component_registrator";
 import BaseComponent from "../../../../jquery-helpers/jquery_base_component";
-import WidgetComponent from "../../../../jquery-props-info";
+import WidgetComponent, { defaultOptions } from "../../../../jquery-props-info";
 
 export default class Widget extends BaseComponent {
   get _propsInfo() {
     return {
       twoWay: [
-        ["state1", false, "state1Change"],
-        ["state2", "default value", "state2Change"],
-        [
-          "state3",
-          (e: any) => {
-            return e.num;
-          },
-          "state3Change",
-        ],
-        ["state4", null, "state4Change"],
+        ["state1", "defaultState1", "state1Change"],
+        ["state2", "defaultState2", "state2Change"],
+        ["state3", "defaultState3", "state3Change"],
+        ["state4", "defaultState4", "state4Change"],
       ],
       allowNull: ["prop1", "defaultState4", "state4"],
       elements: ["target1", "target2"],
@@ -47,3 +41,4 @@ export default class Widget extends BaseComponent {
 }
 
 registerComponent("dxWidget", Widget);
+Widget.defaultOptions = defaultOptions;
