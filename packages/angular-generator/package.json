@@ -1,6 +1,6 @@
 {
   "name": "@devextreme-generator/angular",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "description": "DevExtreme angular component generator",
   "author": "Developer Express Inc.",
   "license": "UNLICENSED",
@@ -16,7 +16,7 @@
     "clear": "shx rm -rf dist && shx rm -f *.tgz"
   },
   "dependencies": {
-    "@devextreme-generator/core": "2.1.2"
+    "@devextreme-generator/core": "2.2.0"
   },
   "devDependencies": {
     "shx": "^0.3.3",
