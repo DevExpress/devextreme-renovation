@@ -31,11 +31,15 @@ export const ColumnEditingProps: ColumnEditingPropsType = {
 };
 export declare type WidgetPropsType = {
   columns?: Array<typeof GridColumnProps | string>;
-  editing?: typeof EditingProps;
+  editing: typeof EditingProps;
 };
-export const WidgetProps: WidgetPropsType = {};
+export const WidgetProps: WidgetPropsType = {
+  editing: EditingProps,
+};
 export declare type PickedPropsType = {
   columns?: Array<typeof GridColumnProps | string>;
-  editing?: typeof EditingProps;
+  editing: typeof EditingProps;
 };
-export const PickedProps: PickedPropsType = {};
+export const PickedProps: PickedPropsType = {
+  editing: WidgetProps.editing,
+};

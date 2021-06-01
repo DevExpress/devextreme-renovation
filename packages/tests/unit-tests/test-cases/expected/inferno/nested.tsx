@@ -33,9 +33,7 @@ export default class Widget extends BaseInfernoComponent<any> {
     return columns?.map((el) => (typeof el === "string" ? el : el.name));
   }
   get isEditable(): any {
-    return (
-      this.props.editing?.editEnabled || this.props.editing?.custom?.length
-    );
+    return this.props.editing.editEnabled || this.props.editing.custom?.length;
   }
   get restAttributes(): RestProps {
     const { columns, editing, ...restProps } = this.props as any;

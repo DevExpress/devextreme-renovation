@@ -41,10 +41,25 @@ export const WidgetProps = {
   columns: {
     type: Array,
   },
+  __defaultNestedValues: {
+    default() {
+      return { editing: EditingProps?.__defaultNestedValues.default() };
+    },
+  },
 };
 export const PickedProps = {
   columns: {
     type: Array,
+  },
+  __defaultNestedValues: {
+    default() {
+      return {
+        editing:
+          typeof WidgetProps.editing.default === "function"
+            ? WidgetProps.editing.default()
+            : WidgetProps.editing.default,
+      };
+    },
   },
 };
 </script>

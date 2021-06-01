@@ -83,7 +83,7 @@ interface UndefWidget {
   restAttributes: RestProps;
   nestedChildren: <T>() => T[];
   __getNestedNestedProp: typeof FakeNested[] | undefined;
-  __getNestedAnotherNestedPropInit: typeof FakeNested[] | undefined;
+  __getNestedAnotherNestedPropInit: typeof FakeNested[];
 }
 
 const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
@@ -252,9 +252,7 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
     [props.nestedProp, props.children]
   );
   const __getNestedAnotherNestedPropInit = useCallback(
-    function __getNestedAnotherNestedPropInit():
-      | typeof FakeNested[]
-      | undefined {
+    function __getNestedAnotherNestedPropInit(): typeof FakeNested[] {
       const nested = __nestedChildren<typeof FakeNested & { __name: string }>()
         .filter((child) => child.__name === "anotherNestedPropInit")
         .map((n) => {
