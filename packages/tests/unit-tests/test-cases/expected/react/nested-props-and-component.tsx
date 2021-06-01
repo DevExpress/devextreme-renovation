@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 function view(model: UndefWidget) {
   return <div></div>;
 }
@@ -30,7 +31,7 @@ export const WidgetProps: WidgetPropsType = {
   twoWayPropChange: () => {},
 };
 import * as React from "react";
-import { useState, useCallback, MutableRefObject } from "react";
+import { useState, useCallback } from "react";
 
 function __collectChildren<T>(children: React.ReactNode): T[] {
   return (
