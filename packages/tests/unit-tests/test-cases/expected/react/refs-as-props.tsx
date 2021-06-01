@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 import WidgetWithRefProp from "./dx-widget-with-ref-prop";
 function view(viewModel: Widget) {
   return (
@@ -15,7 +16,7 @@ export declare type WidgetInputType = {
 };
 const WidgetInput: WidgetInputType = {};
 import * as React from "react";
-import { useCallback, useRef, MutableRefObject } from "react";
+import { useCallback, useRef } from "react";
 
 declare type RestProps = {
   className?: string;
