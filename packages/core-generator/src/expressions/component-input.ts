@@ -280,38 +280,43 @@ export class ComponentInput extends Class implements Heritable {
     return parentNesteds;
   }
 
-  createDefaultNestedValues(members: Array<Property | Method>) {
-    const containNestedWithInitializer = members.some(
-      (m) => m.isNested && m instanceof Property && m.initializer,
+  shouldGenerateDefaultNested(members: (Property | Method)[]): boolean {
+    return members.some(
+      (member) => member.isNested && member instanceof Property && member.initializer,
     );
+  }
 
-    const initializerArray = members.reduce((accum, m) => {
-      if (m.isNested && m instanceof Property && m.initializer) {
-        accum.push({ name: m.name, initializer: m.initializer });
-      }
-      return accum;
-    }, [] as { name: string; initializer: Expression }[]);
+  createDefaultNestedValues(members: (Property | Method)[]): Property | null {
+    if (this.shouldGenerateDefaultNested(members)) {
+      const initializerArray = members.reduce((accum, member) => {
+        if (member.isNested && member instanceof Property && member.initializer) {
+          accum.push({ name: member.name, initializer: member.initializer });
+        }
+        return accum;
+      }, [] as { name: string; initializer: Expression }[]);
 
-    if (containNestedWithInitializer && initializerArray.length) {
-      const defaultNestedValuesProp = this.createProperty(
+      const defaultNestedInitializer = initializerArray.length
+        ? new ObjectLiteral(
+          initializerArray
+            .map(
+              ({ name, initializer }) => new PropertyAssignment(new Identifier(name), initializer),
+            )
+            .concat(this.compileParentNested() || []),
+          true,
+        )
+        : undefined;
+
+      return this.createProperty(
         [new Decorator(new Call(new Identifier('OneWay'), undefined, []), {})],
         undefined,
         new Identifier('__defaultNestedValues'),
         undefined,
         undefined,
-        new ObjectLiteral(
-          initializerArray.map(
-            (elem) => new PropertyAssignment(
-              new Identifier(elem.name),
-              elem.initializer,
-            ),
-          ).concat(this.compileParentNested() || []),
-          true,
-        ),
+        defaultNestedInitializer,
       );
-      return defaultNestedValuesProp;
     }
-    return undefined;
+
+    return null;
   }
 }
 
