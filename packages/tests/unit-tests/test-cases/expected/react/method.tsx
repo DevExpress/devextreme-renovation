@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 function view(viewModel: Widget) {
   return <div ref={viewModel.divRef}></div>;
 }
@@ -8,13 +9,7 @@ export declare type WidgetInputType = {
 };
 const WidgetInput: WidgetInputType = {};
 import * as React from "react";
-import {
-  useCallback,
-  useRef,
-  useImperativeHandle,
-  forwardRef,
-  MutableRefObject,
-} from "react";
+import { useCallback, useRef, useImperativeHandle, forwardRef } from "react";
 
 export type WidgetRef = {
   getHeight: (p: number, p1: any) => string;

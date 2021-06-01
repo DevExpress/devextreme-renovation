@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 import BaseWidget from "./method";
 function view(viewModel: WidgetWithApiRef) {
   return (
@@ -14,13 +15,7 @@ export declare type WidgetWithApiRefInputType = {
 const WidgetWithApiRefInput: WidgetWithApiRefInputType = {};
 import { WidgetRef as BaseWidgetRef } from "./method";
 import * as React from "react";
-import {
-  useCallback,
-  useRef,
-  useImperativeHandle,
-  forwardRef,
-  MutableRefObject,
-} from "react";
+import { useCallback, useRef, useImperativeHandle, forwardRef } from "react";
 
 export type WidgetWithApiRefRef = { getSomething: () => string };
 declare type RestProps = {

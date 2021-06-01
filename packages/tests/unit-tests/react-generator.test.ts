@@ -3411,3 +3411,44 @@ mocha.describe("Default_options", function () {
     }
   );
 });
+
+mocha.describe("Import_Declaration", function(){
+  this.beforeEach(function () {
+    generator.setContext({ dirname: path.resolve(__dirname) });
+  });
+
+  this.afterEach(function () {
+    generator.setContext(null);
+  });
+  mocha.it("generates import for RefObject", function(){
+    const importDeclaration = generator.createImportDeclaration(
+      undefined,
+      undefined,
+      generator.createImportClause(
+        undefined,
+        generator.createNamedImports([
+          generator.createImportSpecifier(
+            undefined,
+            generator.createIdentifier("ComponentBindings")
+          ),
+          generator.createImportSpecifier(
+            undefined,
+            generator.createIdentifier("Ref")
+          ),
+          generator.createImportSpecifier(
+            undefined,
+            generator.createIdentifier("RefObject")
+          )
+        ]),
+        false
+      ),
+      generator.createStringLiteral("@devextreme-generator/declarations")
+    );
+    assert.strictEqual(
+      getResult(importDeclaration.toString()),
+      getResult(
+        `import { MutableRefObject } from "react"`
+      )
+    );
+  })
+})

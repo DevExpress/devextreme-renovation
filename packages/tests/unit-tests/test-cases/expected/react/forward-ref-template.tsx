@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 function view(model: RefOnChildrenTemplate) {
   return (
     <React.Fragment>
@@ -13,7 +14,7 @@ export declare type PropsType = {
 };
 const Props: PropsType = {} as any as PropsType;
 import * as React from "react";
-import { useCallback, useEffect, useRef, MutableRefObject } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 declare type RestProps = {
   className?: string;

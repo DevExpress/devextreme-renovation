@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 import BaseWidget from "./method";
 function view(viewModel: Widget) {
   return <BaseWidget></BaseWidget>;
@@ -9,7 +10,7 @@ export declare type WidgetInputType = {
 const WidgetInput: WidgetInputType = {};
 import { WidgetRef as BaseWidgetRef } from "./method";
 import * as React from "react";
-import { useCallback, useRef, MutableRefObject } from "react";
+import { useCallback, useRef } from "react";
 
 declare type RestProps = {
   className?: string;

@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 function view({ props: { childRef, nullableRef } }: RefOnChildrenChild) {
   return (
     <div ref={childRef}>
@@ -13,7 +14,7 @@ export declare type PropsType = {
 };
 const Props: PropsType = {} as any as PropsType;
 import * as React from "react";
-import { useCallback, MutableRefObject } from "react";
+import { useCallback } from "react";
 
 declare type RestProps = {
   className?: string;
