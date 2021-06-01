@@ -61,62 +61,50 @@ export default class Widget extends BaseInfernoComponent<any> {
       ...state,
       innerState: state.innerState + 1,
     }));
-    this.setState((state: any) => {
-      this.props.propStateChange!(
-        (this.props.propState !== undefined
-          ? this.props.propState
-          : state.propState) + 1
-      );
-      return {
-        ...state,
-        propState:
+    {
+      let __newValue;
+      this.setState((state: any) => {
+        __newValue =
           (this.props.propState !== undefined
             ? this.props.propState
-            : state.propState) + 1,
-      };
-    });
-    this.setState((state: any) => {
-      this.props.propStateChange!(
-        (this.props.propState !== undefined
-          ? this.props.propState
-          : state.propState) + 1
-      );
-      return {
-        ...state,
-        propState:
+            : state.propState) + 1;
+        return { propState: __newValue };
+      });
+      this.props.propStateChange!(__newValue);
+    }
+    {
+      let __newValue;
+      this.setState((state: any) => {
+        __newValue =
           (this.props.propState !== undefined
             ? this.props.propState
-            : state.propState) + 1,
-      };
-    });
-    this.setState((state: any) => {
-      this.props.propStateChange!(
-        (this.props.propState !== undefined
-          ? this.props.propState
-          : state.propState) + 1
-      );
-      return {
-        ...state,
-        propState:
+            : state.propState) + 1;
+        return { propState: __newValue };
+      });
+      this.props.propStateChange!(__newValue);
+    }
+    {
+      let __newValue;
+      this.setState((state: any) => {
+        __newValue =
           (this.props.propState !== undefined
             ? this.props.propState
-            : state.propState) + 1,
-      };
-    });
-    this.setState((state: any) => {
-      this.props.propStateChange!(
-        (this.props.propState !== undefined
-          ? this.props.propState
-          : state.propState) + 1
-      );
-      return {
-        ...state,
-        propState:
+            : state.propState) + 1;
+        return { propState: __newValue };
+      });
+      this.props.propStateChange!(__newValue);
+    }
+    {
+      let __newValue;
+      this.setState((state: any) => {
+        __newValue =
           (this.props.propState !== undefined
             ? this.props.propState
-            : state.propState) + 1,
-      };
-    });
+            : state.propState) + 1;
+        return { propState: __newValue };
+      });
+      this.props.propStateChange!(__newValue);
+    }
   }
   get restAttributes(): RestProps {
     const { defaultPropState, propState, propStateChange, ...restProps } = {

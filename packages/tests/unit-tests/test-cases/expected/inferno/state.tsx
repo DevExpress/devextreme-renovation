@@ -77,35 +77,42 @@ export default class Widget extends BaseInfernoComponent<any> {
   innerData?: string;
 
   updateState(): any {
-    this.setState((state: any) => {
-      this.props.state1Change!(
-        !(this.props.state1 !== undefined ? this.props.state1 : state.state1)
-      );
-      return {
-        ...state,
-        state1: !(this.props.state1 !== undefined
+    {
+      let __newValue;
+      this.setState((state: any) => {
+        __newValue = !(this.props.state1 !== undefined
           ? this.props.state1
-          : state.state1),
-      };
-    });
+          : state.state1);
+        return { state1: __newValue };
+      });
+      this.props.state1Change!(__newValue);
+    }
   }
   updateState2(): any {
     const cur =
       this.props.state2 !== undefined ? this.props.state2 : this.state.state2;
-    this.setState((state: any) => {
-      this.props.state2Change!(cur !== false ? false : true);
-      return { ...state, state2: cur !== false ? false : true };
-    });
+    {
+      let __newValue;
+      this.setState((state: any) => {
+        __newValue = cur !== false ? false : true;
+        return { state2: __newValue };
+      });
+      this.props.state2Change!(__newValue);
+    }
   }
   destruct(): any {
     const s =
       this.props.state1 !== undefined ? this.props.state1 : this.state.state1;
   }
   stateChange(stateProp?: boolean): any {
-    this.setState((state: any) => {
-      this.props.statePropChange!(stateProp);
-      return { ...state, stateProp: stateProp };
-    });
+    {
+      let __newValue;
+      this.setState((state: any) => {
+        __newValue = stateProp;
+        return { stateProp: __newValue };
+      });
+      this.props.statePropChange!(__newValue);
+    }
   }
   get restAttributes(): RestProps {
     const {
