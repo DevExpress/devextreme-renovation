@@ -37,10 +37,9 @@ export class PropertyAccess extends BasePropertyAccess {
     const localStateName = getLocalStateName(
       property.name,
     );
-    const stateValue = state.startsWith('{') ? `(${state})` : state;
     const setState = `${stateSetter(property.name)}(${localStateName} => ({
       ...${localStateName},
-      ${this.name}: ${stateValue}
+      ${this.name}: ${state}
     }))`;
 
     const eventName = `${this.name}Change`;

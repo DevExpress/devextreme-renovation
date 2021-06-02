@@ -33,4 +33,11 @@ export default class Widget extends JSXComponent<PickedProps>() {
       [key]: value
     };
   }
+
+  addChangeNotDestructured(key: string, value: unknown) {
+    this.props.editing.changes = {
+      ...this.props.editing.changes,
+      [key]: value
+    };
+  }
 }
