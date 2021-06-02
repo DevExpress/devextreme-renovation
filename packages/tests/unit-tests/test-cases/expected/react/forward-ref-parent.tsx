@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 import Child from "./forward-ref-child";
 function view({
   child,
@@ -14,13 +15,7 @@ export declare type PropsType = {
 };
 const Props: PropsType = {};
 import * as React from "react";
-import {
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-  MutableRefObject,
-} from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 declare type RestProps = {
   className?: string;

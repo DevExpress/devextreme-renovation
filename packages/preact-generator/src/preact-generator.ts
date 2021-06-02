@@ -518,7 +518,9 @@ export class ImportDeclaration extends BaseImportDeclaration {
     if (this.has('Portal')) {
       compat.push('createPortal');
     }
-
+    if (this.has('RefObject') || this.has('Ref') || this.has('ForwardRef')) {
+      preact.push('RefObject');
+    }
     if (preact.length) {
       result.push(`import { ${preact} } from "preact"`);
     }
