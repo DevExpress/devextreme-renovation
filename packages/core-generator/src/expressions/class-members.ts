@@ -399,7 +399,6 @@ export class Property extends BaseClassMember {
         || d.name === Decorators.RefProp
         || d.name === Decorators.ForwardRef
         || d.name === Decorators.ApiRef
-        || d.name === Decorators.Nested
         || d.name === Decorators.Slot
         || d.name === Decorators.Template,
     );

@@ -25,4 +25,12 @@ export default class Widget extends JSXComponent<PickedProps>() {
       this.props.editing.editEnabled || this.props.editing.custom?.length
     );
   }
+
+  addChange(key: string, value: unknown) {
+    const currentChanges = this.props.editing.changes
+    this.props.editing.changes = {
+      ...currentChanges,
+      [key]: value
+    };
+  }
 }

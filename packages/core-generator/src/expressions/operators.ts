@@ -1,7 +1,7 @@
 import { Expression } from './base';
 import { toStringOptions } from '../types';
 import { SyntaxKind } from '../syntaxKind';
-import { Property } from './class-members';
+import { Property, Method } from './class-members';
 import { PropertyAccess } from './property-access';
 import { NonNullExpression } from './common';
 import { getMember } from '../utils/expressions';
@@ -32,14 +32,22 @@ export class Binary extends Expression {
     this.right = right;
   }
 
-  toString(options?: toStringOptions) {
-    const leftExpression = this.left instanceof PropertyAccess
-      && this.left.name.toString() === 'current'
-      ? this.left.expression instanceof NonNullExpression
+  getDependencyMember(options?: toStringOptions): Property | Method | undefined {
+    let expression = this.left;
+    if (this.left instanceof PropertyAccess && this.left.name.toString() === 'current') {
+      expression = this.left.expression instanceof NonNullExpression
         ? this.left.expression.expression
-        : this.left.expression
-      : this.left;
-    const dependencyMember = getMember(leftExpression, options);
+        : this.left.expression;
+    }
+    let member = getMember(expression, options);
+    if (!member && this.left instanceof PropertyAccess) {
+      member = getMember(this.left.expression, options);
+    }
+    return member;
+  }
+
+  toString(options?: toStringOptions): string {
+    const dependencyMember = this.getDependencyMember(options);
     if (dependencyMember && !dependencyMember.isMutable) {
       let rightExpression;
 
@@ -71,7 +79,7 @@ export class Binary extends Expression {
     } ${this.right.toString(options)}`;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): string[] {
     if (this.operator === SyntaxKind.EqualsToken) {
       if (
         this.left instanceof PropertyAccess

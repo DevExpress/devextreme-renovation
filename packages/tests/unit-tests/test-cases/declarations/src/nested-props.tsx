@@ -22,6 +22,7 @@ export class AnotherCustomProps {}
 @ComponentBindings()
 export class EditingProps {
   @OneWay() editEnabled?: boolean = false;
+  @TwoWay() changes: Record<string, unknown> = {};
   @Nested() custom?: CustomProps[];
   @Nested() anotherCustom?: AnotherCustomProps;
 }

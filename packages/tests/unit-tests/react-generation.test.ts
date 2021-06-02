@@ -219,11 +219,11 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it("nested", function () {
+  mocha.it.only("nested", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it("nested-props", function () {
+  mocha.it.only("nested-props", function () {
     this.testGenerator(this.test!.title);
   });
 

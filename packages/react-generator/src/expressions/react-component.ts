@@ -112,17 +112,30 @@ export class ReactComponent extends Component {
       return p;
     });
 
-    if (members.some((m) => m.isNested)) {
+    if (members.some((member) => member.isNested)) {
       members.push(this.createNestedChildrenGetter());
     }
-    (members.filter((m) => m.isNested) as Property[]).forEach((m) => {
-      if (m.initializer) {
-        m.questionOrExclamationToken = SyntaxKind.QuestionToken;
+    (members.filter((member) => member.isNested) as Property[]).forEach((member) => {
+      if (member.initializer) {
+        member.questionOrExclamationToken = SyntaxKind.QuestionToken;
       }
-      members.push(this.createNestedPropertyGetter(m));
+      members.push(this.createNestedPropertyGetter(member));
+      members.push(this.createStatesForNestedTwoWay(member));
     });
 
     return members;
+  }
+
+  createStatesForNestedTwoWay(property: Property): Property {
+    return new Property(
+      [new Decorator(new Call(new Identifier('InternalState')), {})],
+      undefined,
+      new Identifier(property.name),
+      undefined,
+      undefined,
+      new SimpleExpression(`props.__defaultNestedValues.${property.name}`),
+      false,
+    );
   }
 
   createNestedChildrenGetter(): Method {
@@ -769,11 +782,7 @@ export class ReactComponent extends Component {
             new SimpleExpression('nested.length'),
             new SimpleExpression(`nested${indexGetter}`),
             new SimpleExpression(
-              `${
-                property.initializer
-                  ? `props?.__defaultNestedValues?.${property.name}`
-                  : 'undefined'
-              }`,
+              `__state_${property.name}`,
             ),
           ),
         ),

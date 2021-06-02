@@ -29,14 +29,42 @@ export function getChangeEventToken(property: Property): string {
 }
 
 export class PropertyAccess extends BasePropertyAccess {
+  compileNestedSetting(
+    state: string,
+    property: Property,
+    options: toStringOptions,
+  ): string {
+    const localStateName = getLocalStateName(
+      property.name,
+    );
+    const stateValue = state.startsWith('{') ? `(${state})` : state;
+    const setState = `${stateSetter(property.name)}(${localStateName} => ({
+      ...${localStateName},
+      ${this.name}: ${stateValue}
+    }))`;
+
+    const eventName = `${this.name}Change`;
+    const eventCall = `${this.expression.toString(options)}.${eventName}?.(${state})`;
+
+    return `{
+      ${setState};
+      ${eventCall};
+    }`;
+  }
+
   compileStateSetting(
     state: string,
     property: Property,
     options: toStringOptions,
   ) {
+    if (property.isNested) {
+      return this.compileNestedSetting(state, property, options);
+    }
+
     const setState = `${stateSetter(this.name)}(${getLocalStateName(
       this.name,
     )} => ${state.startsWith('{') ? `(${state})` : state})`;
+
     if (property.isState) {
       const propertyName = `${this.name}Change`;
       const props = getProps(options.members);
@@ -47,6 +75,7 @@ export class PropertyAccess extends BasePropertyAccess {
         changeProperty,
       )}(${state}))`;
     }
+
     if (property.isRef || property.isForwardRefProp) {
       const componentContext = property.processComponentContext(
         options.newComponentContext,
@@ -57,6 +86,7 @@ export class PropertyAccess extends BasePropertyAccess {
         : '';
       return `${componentContext}${scope}​​​​​​​​​${property.name}${elementGetter}=${state}​​​​​​​​`;
     }
+
     return setState;
   }
 
