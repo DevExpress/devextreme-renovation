@@ -87,9 +87,8 @@ export const DxEditingAnotherCustom = {
   props: AnotherCustomProps,
 };
 DxEditingAnotherCustom.propName = "anotherCustom";
-DxEditingAnotherCustom.defaultProps = __extractDefaultValues(
-  AnotherCustomProps
-);
+DxEditingAnotherCustom.defaultProps =
+  __extractDefaultValues(AnotherCustomProps);
 
 export const DxWidget = {
   name: "Widget",
@@ -97,8 +96,8 @@ export const DxWidget = {
   computed: {
     __isEditable() {
       return (
-        this.__getNestedEditing?.editEnabled ||
-        this.__getNestedEditing?.custom?.length
+        this.__getNestedEditing.editEnabled ||
+        this.__getNestedEditing.custom?.length
       );
     },
     __restAttributes() {
@@ -120,14 +119,23 @@ export const DxWidget = {
       return this.columns ? this.columns : nested.length ? nested : undefined;
     },
     __getNestedEditing() {
-      const nested = this.__nestedChildren.filter(
-        (child) => child.__name === "editing"
-      );
+      const nested = this.__nestedChildren
+        .filter((child) => child.__name === "editing")
+        .map((n) => {
+          if (
+            !Object.keys(n).some(
+              (k) => k !== "__name" && k !== "__defaultNestedValues"
+            )
+          ) {
+            return n?.__defaultNestedValues || n;
+          }
+          return n;
+        });
       return this.editing
         ? this.editing
         : nested.length
         ? nested?.[0]
-        : undefined;
+        : this?.__defaultNestedValues?.editing;
     },
   },
   methods: {
