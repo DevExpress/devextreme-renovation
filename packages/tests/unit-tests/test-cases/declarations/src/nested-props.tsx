@@ -34,7 +34,7 @@ export class ColumnEditingProps {
 @ComponentBindings()
 export class WidgetProps {
   @Nested() columns?: Array<GridColumnProps | string>;
-  @Nested() editing?: EditingProps;
+  @Nested() editing: EditingProps = new EditingProps();
 }
 
 export type PickedProps = Pick<WidgetProps, "editing" | "columns">;

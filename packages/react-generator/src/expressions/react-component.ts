@@ -708,7 +708,7 @@ export class ReactComponent extends Component {
     const isArray = isTypeArray(property.type);
     const type = extractComplexType(property.type);
     const indexGetter = isArray ? '' : '?.[0]';
-    const undefinedType = property.questionOrExclamationToken === '?' ? ' | undefined' : '';
+    const undefinedType = property.initializer ? '' : ' | undefined';
 
     const getterName = `__getNested${capitalizeFirstLetter(property.name)}`;
     const getterType = property.type.toString();
