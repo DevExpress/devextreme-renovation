@@ -124,7 +124,7 @@ export default class Widget extends PickedProps {
     return columns?.map((el) => (typeof el === "string" ? el : el.name));
   }
   get __isEditable(): any {
-    return this.editing?.editEnabled || this.editing?.custom?.length;
+    return this.editing.editEnabled || this.editing.custom?.length;
   }
   private __columns?: Array<DxWidgetColumn | string>;
   @ContentChildren(DxWidgetColumn) columnsNested?: QueryList<DxWidgetColumn>;
@@ -139,7 +139,7 @@ export default class Widget extends PickedProps {
   }
   private __editing?: DxWidgetEditing;
   @ContentChildren(DxWidgetEditing) editingNested?: QueryList<DxWidgetEditing>;
-  get editing(): DxWidgetEditing | undefined {
+  get editing(): DxWidgetEditing {
     if (this.__editing) {
       return this.__editing;
     }
@@ -147,6 +147,7 @@ export default class Widget extends PickedProps {
     if (nested && nested.length) {
       return nested[0];
     }
+    return PickedProps.__defaultNestedValues.editing;
   }
   get __restAttributes(): any {
     return {};
@@ -169,7 +170,7 @@ export default class Widget extends PickedProps {
     this.__columns = value;
     this._detectChanges();
   }
-  @Input() set editing(value: DxWidgetEditing | undefined) {
+  @Input() set editing(value: DxWidgetEditing) {
     this.__editing = value;
     this._detectChanges();
   }

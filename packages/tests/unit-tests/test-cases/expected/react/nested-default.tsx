@@ -72,7 +72,7 @@ interface WithNested {
   getRowCells: (index: number) => any;
   restAttributes: RestProps;
   nestedChildren: <T>() => T[];
-  __getNestedRows: typeof GridRow[] | undefined;
+  __getNestedRows: typeof GridRow[];
 }
 
 export default function WithNested(props: typeof WithNestedInput & RestProps) {
@@ -105,7 +105,7 @@ export default function WithNested(props: typeof WithNestedInput & RestProps) {
     [props.children]
   );
   const __getNestedRows = useCallback(
-    function __getNestedRows(): typeof GridRow[] | undefined {
+    function __getNestedRows(): typeof GridRow[] {
       const nested = __nestedChildren<typeof GridRow & { __name: string }>()
         .filter((child) => child.__name === "rows")
         .map((n) => {

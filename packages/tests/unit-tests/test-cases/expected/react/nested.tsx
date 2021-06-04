@@ -82,7 +82,7 @@ interface Widget {
   restAttributes: RestProps;
   nestedChildren: <T>() => T[];
   __getNestedColumns: Array<typeof GridColumnProps | string> | undefined;
-  __getNestedEditing: typeof EditingProps | undefined;
+  __getNestedEditing: typeof EditingProps;
 }
 
 export default function Widget(props: typeof PickedProps & RestProps) {
@@ -97,15 +97,20 @@ export default function Widget(props: typeof PickedProps & RestProps) {
   const __isEditable = useCallback(
     function __isEditable(): any {
       return (
-        __getNestedEditing()?.editEnabled ||
-        __getNestedEditing()?.custom?.length
+        __getNestedEditing().editEnabled || __getNestedEditing().custom?.length
       );
     },
     [props.editing, props.children]
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { children, columns, editing, ...restProps } = {
+      const {
+        __defaultNestedValues,
+        children,
+        columns,
+        editing,
+        ...restProps
+      } = {
         ...props,
         columns: __getNestedColumns(),
         editing: __getNestedEditing(),
@@ -133,15 +138,26 @@ export default function Widget(props: typeof PickedProps & RestProps) {
     [props.columns, props.children]
   );
   const __getNestedEditing = useCallback(
-    function __getNestedEditing(): typeof EditingProps | undefined {
+    function __getNestedEditing(): typeof EditingProps {
       const nested = __nestedChildren<
         typeof EditingProps & { __name: string }
-      >().filter((child) => child.__name === "editing");
+      >()
+        .filter((child) => child.__name === "editing")
+        .map((n) => {
+          if (
+            !Object.keys(n).some(
+              (k) => k !== "__name" && k !== "__defaultNestedValues"
+            )
+          ) {
+            return (n as any)?.__defaultNestedValues || n;
+          }
+          return n;
+        });
       return props.editing
         ? props.editing
         : nested.length
         ? nested?.[0]
-        : undefined;
+        : props?.__defaultNestedValues?.editing;
     },
     [props.editing, props.children]
   );

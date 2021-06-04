@@ -54,12 +54,16 @@ export class WidgetProps {
     return this.__columns__;
   }
   private __editing__?: EditingProps;
-  @Input() set editing(value: EditingProps | undefined) {
+  @Input() set editing(value: EditingProps) {
     this.__editing__ = value;
   }
-  get editing(): EditingProps | undefined {
+  get editing(): EditingProps {
+    if (!this.__editing__) {
+      return WidgetProps.__defaultNestedValues.editing;
+    }
     return this.__editing__;
   }
+  public static __defaultNestedValues: any = { editing: new EditingProps() };
 }
 
 export class PickedProps {
@@ -71,10 +75,16 @@ export class PickedProps {
     return this.__columns__;
   }
   private __editing__?: EditingProps;
-  @Input() set editing(value: EditingProps | undefined) {
+  @Input() set editing(value: EditingProps) {
     this.__editing__ = value;
   }
-  get editing(): EditingProps | undefined {
+  get editing(): EditingProps {
+    if (!this.__editing__) {
+      return PickedProps.__defaultNestedValues.editing;
+    }
     return this.__editing__;
   }
+  public static __defaultNestedValues: any = {
+    editing: new WidgetProps().editing,
+  };
 }

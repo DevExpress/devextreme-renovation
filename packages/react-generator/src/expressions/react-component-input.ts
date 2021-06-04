@@ -80,6 +80,10 @@ export class ComponentInput extends BaseComponentInput {
     return this.getImports(this.context).join(';\n');
   }
 
+  shouldGenerateDefaultNested(members: (Property | Method)[]): boolean {
+    return members.some((member) => member.isNested);
+  }
+
   toString(): string {
     const inherited = this.baseTypes.map((t) => `...${t}`);
 
