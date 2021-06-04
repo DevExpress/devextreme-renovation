@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 import { createPortal } from "react-dom";
 function view(model: Widget) {
   return (
@@ -20,7 +21,7 @@ export declare type WidgetPropsType = {
 };
 export const WidgetProps: WidgetPropsType = {};
 import * as React from "react";
-import { useState, useCallback, useEffect, MutableRefObject } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 declare type PortalProps = {
   container?: HTMLElement | null;

@@ -353,14 +353,6 @@ export class ReactComponent extends Component {
       hooks.push('useRef');
     }
 
-    if (
-      this.refs.length
-      || this.apiRefs.length
-      || this.members.some((m) => m.isRefProp || m.isForwardRefProp)
-    ) {
-      core.push(this.REF_OBJECT_TYPE);
-    }
-
     if (this.members.filter((a) => a.isApiMethod).length) {
       hooks.push('useImperativeHandle');
       compats.push('forwardRef');
