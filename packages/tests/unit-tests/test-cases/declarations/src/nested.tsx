@@ -22,7 +22,7 @@ export default class Widget extends JSXComponent<PickedProps>() {
 
   get isEditable() {
     return (
-      this.props.editing?.editEnabled || this.props.editing?.custom?.length
+      this.props.editing.editEnabled || this.props.editing.custom?.length
     );
   }
 }
