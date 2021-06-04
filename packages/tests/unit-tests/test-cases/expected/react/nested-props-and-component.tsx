@@ -1,6 +1,12 @@
-import { MutableRefObject } from "react";
-function view(model: UndefWidget) {
-  return <div></div>;
+function view(model: undefWidget) {
+  return (
+    <div>
+      <div>
+        Nested:
+        {model.nested}
+      </div>
+    </div>
+  );
 }
 
 export declare type FakeNestedType = {
@@ -19,7 +25,7 @@ export const WidgetProps: WidgetPropsType = {
   __defaultNestedValues: { anotherNestedPropInit: [FakeNested] },
 };
 import * as React from "react";
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 
 function __collectChildren<T>(children: React.ReactNode): T[] {
   return (
