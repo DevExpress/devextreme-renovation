@@ -3870,6 +3870,30 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(getAst(result.toString()), getAst("enum MyEnum {}"));
     });
   });
+
+  mocha.describe("Module Declaration", () => {
+    mocha.it("shorthand module", () => {
+      const moduleDeclaration = generator.createModuleDeclaration(
+        undefined,
+        undefined,
+        generator.createStringLiteral("my-module"),
+        undefined
+      );
+
+      assert.strictEqual(getAst(moduleDeclaration.toString()), getAst("module 'my-module'"));
+    });
+
+    mocha.it("module with body", () => {
+      const moduleDeclaration = generator.createModuleDeclaration(
+        undefined,
+        undefined,
+        generator.createStringLiteral("my-module"),
+        generator.createModuleBlock([]),
+      );
+
+      assert.strictEqual(getAst(moduleDeclaration.toString()), getAst("module 'my-module' { }"));
+    });
+  });
 });
 
 mocha.describe("common", function () {
