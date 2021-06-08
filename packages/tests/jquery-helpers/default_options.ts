@@ -13,7 +13,11 @@ export function createDefaultOptionRules<T>(
   return options;
 }
 
+export type RecursivePartial<T> = {
+  [P in keyof T]?: RecursivePartial<T[P]>;
+};
+
 export type Rule<T> = {
   device: any;
-  options: Partial<T>;
+  options: RecursivePartial<T>;
 };

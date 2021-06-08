@@ -169,5 +169,9 @@ mocha.describe("inferno-generation", function () {
     mocha.it("default-options-empty", function () {
       this.testGenerator(this.test!.title);
     });
+
+    mocha.it("default-options-nested", function () {
+      this.testGenerator(this.test!.title);
+    });
   });
 });

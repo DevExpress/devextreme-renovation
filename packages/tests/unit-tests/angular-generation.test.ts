@@ -381,6 +381,10 @@ mocha.describe("angular-generation", function () {
       this.testGenerator(this.test!.title);
     });
 
+    mocha.it("default-options-nested", function () {
+      this.testGenerator(this.test!.title);
+    });
+
     mocha.it("required-props", function () {
       this.testGenerator(this.test!.title);
     });
