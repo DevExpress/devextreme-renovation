@@ -40,4 +40,8 @@ export default class Widget extends JSXComponent<PickedProps>() {
       [key]: value
     };
   }
+
+  changeDeepTwoWayProp() {
+    this.props.editing.anotherCustom.twoWayProp = true;
+  }
 }

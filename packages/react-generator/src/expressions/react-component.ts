@@ -35,6 +35,7 @@ import {
   processComponentContext,
   PropertyAssignment,
   ShorthandPropertyAssignment,
+  getTypeName,
 } from '@devextreme-generator/core';
 import { GetAccessor } from './class-members/get-accessor';
 import { Method } from './class-members/method';
@@ -114,28 +115,56 @@ export class ReactComponent extends Component {
 
     if (members.some((member) => member.isNested)) {
       members.push(this.createNestedChildrenGetter());
+      members.push(...this.createStatesForNestedTwoWay(members));
     }
     (members.filter((member) => member.isNested) as Property[]).forEach((member) => {
       if (member.initializer) {
         member.questionOrExclamationToken = SyntaxKind.QuestionToken;
       }
       members.push(this.createNestedPropertyGetter(member));
-      members.push(this.createStatesForNestedTwoWay(member));
     });
 
     return members;
   }
 
-  createStatesForNestedTwoWay(property: Property): Property {
-    return new Property(
-      [new Decorator(new Call(new Identifier('InternalState')), {})],
-      undefined,
-      new Identifier(property.name),
-      undefined,
-      undefined,
-      new SimpleExpression(`props.__defaultNestedValues.${property.name}`),
-      false,
-    );
+  createStatesForNestedTwoWay(members: (BaseProperty | Method)[]): Property[] {
+    const nestedComponents = this.collectNestedComponents(members);
+    const twoWayProps = nestedComponents.reduce((result, { component, propName }) => {
+      const twoWay = component.members
+        .filter((member) => member.isState)
+        .map((member) => {
+          const name = `${propName}${capitalizeFirstLetter(member.name)}`;
+          return new Property(
+            [new Decorator(new Call(new Identifier('InternalState')), {})],
+            undefined,
+            new Identifier(name),
+            undefined,
+            undefined,
+            (member as Property).initializer,
+            false,
+          );
+        });
+      console.log(twoWay);
+      return [
+        ...result,
+        ...twoWay,
+      ];
+    }, [] as Property[]);
+
+    return twoWayProps;
+
+    // return nestedProps.map(({ property, parentPropertyName }) => {
+    //   const name = `${parentPropertyName}${capitalizeFirstLetter(property.name)}`;
+    //   return new Property(
+    //     [new Decorator(new Call(new Identifier('InternalState')), {})],
+    //     undefined,
+    //     new Identifier(lowerizeFirstLetter(name)),
+    //     undefined,
+    //     undefined,
+    //     property.initializer,
+    //     false,
+    //   );
+    // });
   }
 
   createNestedChildrenGetter(): Method {
@@ -693,8 +722,8 @@ export class ReactComponent extends Component {
       ${name}.defaultProps=${component.name}`;
   }
 
-  collectNestedComponents() {
-    return super.collectNestedComponents() as {
+  collectNestedComponents(members = this.members) {
+    return super.collectNestedComponents(members) as {
       component: ComponentInput;
       name: string;
       propName: string;
@@ -719,7 +748,7 @@ export class ReactComponent extends Component {
   createNestedPropertyGetter(property: Property): GetAccessor {
     const propName = getPropName(property.name);
     const isArray = isTypeArray(property.type);
-    const type = extractComplexType(property.type);
+    const type = getTypeName(extractComplexType(property.type));
     const indexGetter = isArray ? '' : '?.[0]';
     const undefinedType = property.initializer ? '' : ' | undefined';
 

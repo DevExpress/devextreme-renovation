@@ -14,6 +14,7 @@ import {
   GeneratorContext,
   getProps,
   getTemplate,
+  getTypeName,
   HeritageClause,
   Identifier,
   If,
@@ -324,7 +325,7 @@ export class AngularComponent extends Component {
 
     const complexType = type
       .toString()
-      .replace(extractComplexType(type), nestedName);
+      .replace(getTypeName(extractComplexType(type)), nestedName);
 
     return [
       this.createNestedState(name, questionOrExclamationToken, complexType),

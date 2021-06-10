@@ -523,12 +523,12 @@ export const extractElementType = (
   return undefined;
 };
 
-export const extractComplexType = (type?: string | TypeExpression): string => {
+export const extractComplexType = (type?: string | TypeExpression): string | TypeReferenceNode => {
   if (type instanceof TypeReferenceNode) {
     if (type.typeName.toString() === 'Array') {
       return extractComplexType(type.typeArguments[0]);
     }
-    return `${type.typeName.toString()}`;
+    return type;
   }
   if (type instanceof ArrayTypeNode) {
     return extractComplexType(type.elementType);
@@ -545,6 +545,10 @@ export const extractComplexType = (type?: string | TypeExpression): string => {
 
   return 'any';
 };
+
+export const getTypeName = (
+  type: string | TypeReferenceNode,
+): string => (type instanceof TypeReferenceNode ? type.typeName.toString() : type);
 
 export class TypePredicateNode extends TypeExpression {
   constructor(

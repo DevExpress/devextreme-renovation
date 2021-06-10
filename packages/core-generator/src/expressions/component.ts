@@ -18,7 +18,9 @@ import { Decorator } from './decorator';
 import { BaseFunction, getViewFunctionBindingPattern } from './functions';
 import { ObjectLiteral } from './literal';
 import { Block, ReturnStatement } from './statements';
-import { extractComplexType, isTypeArray, TypeExpression } from './type';
+import {
+  extractComplexType, getTypeName, isTypeArray, TypeExpression,
+} from './type';
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
   return heritageClauses.some((h) => h.isJsxComponent);
@@ -415,7 +417,7 @@ export class Component extends Class implements Heritable {
     const nested = Object.keys(components).reduce(
       (acc, key) => {
         const property = nestedProps.find(
-          ({ type }) => extractComplexType(type) === key,
+          ({ type }) => getTypeName(extractComplexType(type)) === key,
         ) as Property;
         if (property) {
           const componentName = capitalizeFirstLetter(
@@ -450,16 +452,18 @@ export class Component extends Class implements Heritable {
     );
   }
 
-  collectNestedComponents() {
-    if (this.members.some((m) => m.isNested)) {
-      const components = this.context.components!;
-      const heritage = this.heritageClauses[0].typeNodes[0] as Call;
-      const inheritFrom = heritage.typeArguments?.length
-        ? (heritage.typeArguments[0] as any).typeName
-        : heritage.arguments[0].toString();
-      return this.getNestedFromComponentInput(
-        components[inheritFrom] as ComponentInput,
-      );
+  findComponentInputFromInherited(): ComponentInput {
+    const components = this.context.components!;
+    const heritage = this.heritageClauses[0].typeNodes[0] as Call;
+    const inheritFrom = heritage.typeArguments?.length
+      ? (heritage.typeArguments[0] as any).typeName
+      : heritage.arguments[0].toString();
+    return components[inheritFrom] as ComponentInput;
+  }
+
+  collectNestedComponents(members = this.members) {
+    if (members.some((m) => m.isNested)) {
+      return this.getNestedFromComponentInput(this.findComponentInputFromInherited());
     }
     return [];
   }

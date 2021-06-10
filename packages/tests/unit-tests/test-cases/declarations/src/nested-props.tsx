@@ -17,14 +17,16 @@ export class GridColumnProps {
 export class CustomProps {}
 
 @ComponentBindings()
-export class AnotherCustomProps {}
+export class AnotherCustomProps {
+  @TwoWay() twoWayProp: boolean = false;
+}
 
 @ComponentBindings()
 export class EditingProps {
   @OneWay() editEnabled?: boolean = false;
   @TwoWay() changes: Record<string, unknown> = {};
   @Nested() custom?: CustomProps[];
-  @Nested() anotherCustom?: AnotherCustomProps;
+  @Nested() anotherCustom: AnotherCustomProps = new AnotherCustomProps();
 }
 
 @ComponentBindings()
