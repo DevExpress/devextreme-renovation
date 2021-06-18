@@ -69,7 +69,7 @@ export class ComponentInput extends BaseComponentInput {
   buildTemplateProperties(
     templateMember: Property,
     members: BaseClassMember[],
-  ) {
+  ): Property[] {
     return [
       buildTemplateProperty(templateMember, members, 'render'),
       buildTemplateProperty(templateMember, members, 'component'),
@@ -155,7 +155,7 @@ export class ComponentInput extends BaseComponentInput {
 }`;
   }
 
-  createChildrenForNested(members: Array<BaseProperty | Method>) {
+  createChildrenForNested(members: Array<BaseProperty | Method>): Property | null {
     const hasChildren = members.some((m) => m.isSlot && m.name === 'children');
     const hasNested = members.some((m) => m.isNested);
     if (hasNested && !hasChildren) {

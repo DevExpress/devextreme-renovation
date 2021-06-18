@@ -262,7 +262,7 @@ export class ComponentInput extends Class implements Heritable {
     return mergeTypeExpressionImports(imports);
   }
 
-  compileParentNested() {
+  compileParentNested(): PropertyAssignment[] {
     const parentClass = this.heritageClauses?.[0];
     const parentNesteds = parentClass?.members.filter(
       (m) => m.isNested && m instanceof Property && m.initializer,

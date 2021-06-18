@@ -3,7 +3,10 @@ import {
   BindingElement,
   BindingPattern,
   Block,
+  Call,
+  Decorator,
   Decorators,
+  Expression,
   getProps,
   Identifier,
   Method,
@@ -259,6 +262,18 @@ export class InfernoComponent extends PreactComponent {
     }
 
     return '';
+  }
+
+  createInternalState(name: string, initializer?: Expression):Property {
+    return new Property(
+      [new Decorator(new Call(new Identifier('InternalState')), {})],
+      undefined,
+      new Identifier(name),
+      undefined,
+      undefined,
+      initializer,
+      false,
+    );
   }
 
   toString(): string {

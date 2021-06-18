@@ -12,6 +12,9 @@ function view(model: Widget) {
 
 @Component({
   view: view,
+  jQuery: {
+    register: true
+  }
 })
 export default class Widget extends JSXComponent<PickedProps>() {
   getColumns() {

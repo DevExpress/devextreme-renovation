@@ -46,4 +46,8 @@ mocha.describe("inferno-generator: jQuery generation", function () {
   mocha.it("jquery-empty", function () {
     this.testGenerator(this.test!.title);
   });
+
+  mocha.it.only("nested", function () {
+    this.testGenerator(this.test!.title);
+  });
 });

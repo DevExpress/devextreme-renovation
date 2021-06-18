@@ -105,6 +105,15 @@ export class ReactComponent extends Component {
     );
   }
 
+  createNestedPropertyGetters(members: (BaseProperty | Method)[]): GetAccessor[] {
+    return (members.filter((member) => member.isNested) as Property[]).map((member) => {
+      if (member.initializer) {
+        member.questionOrExclamationToken = SyntaxKind.QuestionToken;
+      }
+      return this.createNestedGetter(member);
+    });
+  }
+
   processMembers(members: (BaseProperty | Method)[]): (BaseProperty | Method)[] {
     members = super.processMembers(members).map((p) => {
       if (p.inherited) {
@@ -114,17 +123,27 @@ export class ReactComponent extends Component {
     });
 
     if (members.some((member) => member.isNested)) {
-      members.push(this.createNestedChildrenGetter());
-      members.push(...this.createStatesForNestedTwoWay(members));
-    }
-    (members.filter((member) => member.isNested) as Property[]).forEach((member) => {
-      if (member.initializer) {
-        member.questionOrExclamationToken = SyntaxKind.QuestionToken;
+      const nestedChildrenGetter = this.createNestedChildrenGetter();
+      if (nestedChildrenGetter) {
+        members.push(nestedChildrenGetter);
       }
-      members.push(this.createNestedPropertyGetter(member));
-    });
+      members.push(...this.createStatesForNestedTwoWay(members));
+      members.push(...this.createNestedPropertyGetters(members));
+    }
 
     return members;
+  }
+
+  createInternalState(name: string, initializer?: Expression):Property {
+    return new Property(
+      [new Decorator(new Call(new Identifier('InternalState')), {})],
+      undefined,
+      new Identifier(name),
+      undefined,
+      undefined,
+      initializer,
+      false,
+    );
   }
 
   createStatesForNestedTwoWay(members: (BaseProperty | Method)[]): Property[] {
@@ -134,17 +153,8 @@ export class ReactComponent extends Component {
         .filter((member) => member.isState)
         .map((member) => {
           const name = `${propName}${capitalizeFirstLetter(member.name)}`;
-          return new Property(
-            [new Decorator(new Call(new Identifier('InternalState')), {})],
-            undefined,
-            new Identifier(name),
-            undefined,
-            undefined,
-            (member as Property).initializer,
-            false,
-          );
+          return this.createInternalState(name, (member as Property).initializer);
         });
-      console.log(twoWay);
       return [
         ...result,
         ...twoWay,
@@ -152,22 +162,9 @@ export class ReactComponent extends Component {
     }, [] as Property[]);
 
     return twoWayProps;
-
-    // return nestedProps.map(({ property, parentPropertyName }) => {
-    //   const name = `${parentPropertyName}${capitalizeFirstLetter(property.name)}`;
-    //   return new Property(
-    //     [new Decorator(new Call(new Identifier('InternalState')), {})],
-    //     undefined,
-    //     new Identifier(lowerizeFirstLetter(name)),
-    //     undefined,
-    //     undefined,
-    //     property.initializer,
-    //     false,
-    //   );
-    // });
   }
 
-  createNestedChildrenGetter(): Method {
+  createNestedChildrenGetter(): Method | null {
     const statements = [
       new VariableStatement(
         undefined,
@@ -745,7 +742,7 @@ export class ReactComponent extends Component {
     return '';
   }
 
-  createNestedPropertyGetter(property: Property): GetAccessor {
+  createNestedGetter(property: Property): GetAccessor {
     const propName = getPropName(property.name);
     const isArray = isTypeArray(property.type);
     const type = getTypeName(extractComplexType(property.type));

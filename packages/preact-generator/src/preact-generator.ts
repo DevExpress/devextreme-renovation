@@ -1,11 +1,9 @@
 import path from 'path';
 
 import {
-  Call,
   compileType,
   dasherize,
   Decorator,
-  Decorators,
   Expression,
   GeneratorContext as BaseGeneratorContext,
   GeneratorOptions as BaseGeneratorOptions,
@@ -82,38 +80,35 @@ export class ComponentInput extends BaseComponentInput {
     );
   }
 
-  processMembers(members: Array<Property | Method>) {
-    members = members.map((m) => {
-      if (m.isNested) {
-        const index = m.decorators.findIndex(
-          (d) => d.name === Decorators.Nested,
-        );
-        if (index > -1) {
-          m.decorators[index] = this.createDecorator(
-            new Call(new Identifier(Decorators.OneWay), undefined, []),
-            {},
-          );
-        }
-      }
-      return m;
-    });
-
-    return super.processMembers(members);
+  buildTemplateProperties(): never[] {
+    return [];
   }
 
-  buildTemplateProperties() {
-    return [];
+  createChildrenForNested(): Property | null {
+    return null;
+  }
+
+  shouldGenerateDefaultNested(): boolean {
+    return false;
   }
 }
 
 export class PreactComponent extends ReactComponent {
   context!: GeneratorContext;
 
-  get REF_OBJECT_TYPE() {
+  get REF_OBJECT_TYPE(): string {
     return 'RefObject';
   }
 
-  compilePortalComponentCore() {
+  createNestedChildrenGetter(): Method | null {
+    return null;
+  }
+
+  createNestedPropertyGetters(): never[] {
+    return [];
+  }
+
+  compilePortalComponentCore(): string {
     return `
     declare type PortalProps = {
       container?: HTMLElement | null;
