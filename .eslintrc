@@ -22,7 +22,7 @@
     "@typescript-eslint/no-non-null-assertion": "warn",
     "@typescript-eslint/no-shadow": "warn",
     "@typescript-eslint/no-throw-literal": "warn",
-    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
     "@typescript-eslint/no-use-before-define": "warn",
     "class-methods-use-this": "off",
     "func-names": "warn",

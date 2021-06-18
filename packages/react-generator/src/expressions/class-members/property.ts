@@ -112,7 +112,11 @@ export class Property extends BaseProperty {
     return `${name}${this.compileTypeDeclarationType(type)}`;
   }
 
-  getter(componentContext?: string) {
+  nestedGetter(_scope: string, _componentContext?: string): string {
+    return `__getNested${capitalizeFirstLetter(this.name)}()`;
+  }
+
+  getter(componentContext?: string): string {
     componentContext = this.processComponentContext(componentContext);
     const scope = this.processComponentContext(this.scope);
     if (this.isInternalState) {
@@ -150,7 +154,7 @@ export class Property extends BaseProperty {
       )})`;
     }
     if (this.isNested) {
-      return `__getNested${capitalizeFirstLetter(this.name)}()`;
+      return this.nestedGetter(scope, componentContext);
     }
     if (this.isProvider || this.isConsumer) {
       return this.name;

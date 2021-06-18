@@ -25,6 +25,7 @@ import {
 } from '@devextreme-generator/core';
 import {
   ComponentInput as BaseComponentInput,
+  getPropName,
   HeritageClause,
   JsxAttribute as ReactJsxAttribute,
   JsxClosingElement as ReactJsxClosingElement,
@@ -413,14 +414,14 @@ class JQueryComponent {
 }
 
 export class Property extends ReactProperty {
-  typeDeclaration() {
+  typeDeclaration(): string {
     if (this.isSlot || this.isTemplate) {
       return `${this.name}${this.compileTypeDeclarationType('any')}`;
     }
     return super.typeDeclaration();
   }
 
-  inherit() {
+  inherit(): Property {
     return new Property(
       this.decorators,
       this.modifiers,
@@ -432,13 +433,17 @@ export class Property extends ReactProperty {
     );
   }
 
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions): string {
     if (this.isRef || this.isForwardRef) {
       return `const ${
         this.name
       }:RefObject<${this.compileRefType()}>=useRef<${this.compileRefType()}>(null)`;
     }
     return super.toString(options);
+  }
+
+  nestedGetter(scope: string, componentContext?: string): string {
+    return getPropName(this.name, componentContext, scope);
   }
 }
 
