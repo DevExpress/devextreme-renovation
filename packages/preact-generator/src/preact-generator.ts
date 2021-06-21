@@ -3,6 +3,7 @@ import path from 'path';
 import {
   Call,
   compileType,
+  Component as BaseComponent,
   dasherize,
   Decorator,
   Decorators,
@@ -235,6 +236,13 @@ class JQueryComponent {
       .join('\n');
   }
 
+  get needGenerateDefaultOptions() {
+    const context = this.source.context;
+    const widget = this.source.name;
+
+    return (context.components?.[widget] as BaseComponent).needGenerateDefaultOptions;
+  }
+
   compileImports(component: string, imports: string[] = []) {
     const context = this.source.context;
 
@@ -269,11 +277,14 @@ class JQueryComponent {
     const defaultImport = this.source.modifiers.indexOf('default') !== -1;
     const widget = this.source.name;
     const widgetComponent = `${widget}Component`;
+    const importedDefaultOptions = this.needGenerateDefaultOptions
+      ? `${defaultImport ? ', { defaultOptions }' : ', defaultOptions'}`
+      : '';
     imports.push(
       `import ${
         defaultImport
-          ? `${widgetComponent}, { defaultOptions }`
-          : `{ ${widget} as ${widgetComponent}, defaultOptions }`
+          ? `${widgetComponent} ${importedDefaultOptions}`
+          : `{ ${widget} as ${widgetComponent} ${importedDefaultOptions} }`
       } from '${processModuleFileName(
         relativePath.replace(path.extname(relativePath), ''),
       )}'`,
@@ -388,6 +399,10 @@ class JQueryComponent {
       return '';
     }
 
+    const defineDefaultOptions = this.needGenerateDefaultOptions
+      ? `${this.source.name}.defaultOptions = defaultOptions`
+      : '';
+
     return `
         ${this.compileImports(baseComponent)}
 
@@ -412,7 +427,7 @@ class JQueryComponent {
         }
 
         registerComponent("dx${this.source.name}", ${this.source.name});
-        ${this.source.name}.defaultOptions = defaultOptions;
+        ${defineDefaultOptions};
         `;
   }
 }

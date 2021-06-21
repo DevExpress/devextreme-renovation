@@ -26,6 +26,7 @@ mocha.describe("inferno-generator: jQuery generation", function () {
     generator.options = {
       jqueryComponentRegistratorModule: path.resolve(__dirname, "../jquery-helpers/jquery_component_registrator"),
       jqueryBaseComponentModule: path.resolve(__dirname, "../jquery-helpers/jquery_base_component"),
+      defaultOptionsModule: path.resolve(__dirname, "../jquery-helpers/default_options")
     };
   });
 
@@ -44,6 +45,10 @@ mocha.describe("inferno-generator: jQuery generation", function () {
   });
 
   mocha.it("jquery-empty", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("jquery-with-default-options", function () {
     this.testGenerator(this.test!.title);
   });
 });
