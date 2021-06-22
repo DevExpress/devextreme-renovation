@@ -17,8 +17,9 @@ export class Props {
 
 @Component({
   view: view,
+  jQuery: { register: true },
 })
-export default class Widget extends JSXComponent(Props) {
+export default class Widget extends JSXComponent<Props>() {
   @InternalState() i: number = 10;
 
   get g1(): number[] {
@@ -27,5 +28,9 @@ export default class Widget extends JSXComponent(Props) {
 
   get g2(): number {
     return this.props.p;
+  }
+
+  get g3(): number {
+    return this.i;
   }
 }

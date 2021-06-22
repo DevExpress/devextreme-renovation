@@ -48,6 +48,7 @@ import RefParent from "./refs-as-attributes/ref-parent";
 import DynamicComponent from "./dynamic-components/dynamic-component";
 import StylesWidget from "./styles";
 import ButtonWithInternalState from "./internal-state-change-on-effect";
+import TestComponent from './test-component';
 
 function view(model: App) {
   return (
@@ -165,6 +166,7 @@ function view(model: App) {
       <DynamicComponent />
       <StylesWidget />
       <RefParent />
+      <TestComponent numProp={model.buttCounter}/>
     </div>
   );
 }
@@ -195,7 +197,7 @@ export default class App extends JSXComponent(AppInput) {
   @InternalState() spreadAttributesComponentAria = "init";
 
   @InternalState() callMethodInGetterWidgetProp = 1;
-
+  @InternalState() buttCounter = 3;
   @InternalState() listItems = [
     { key: 0, text: "a" },
     { key: 1, text: "b" },
@@ -212,7 +214,9 @@ export default class App extends JSXComponent(AppInput) {
   onButtonClick() {
     this.clickCount = this.clickCount + 1;
   }
-
+  onButtClick() {
+    this.buttCounter = this.buttCounter + 1;
+  }
   onButtonEffectsClick() {
     this.domEffectsText = this.domEffectsText === "A" ? "B" : "A";
   }

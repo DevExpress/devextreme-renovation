@@ -623,7 +623,7 @@ export class AngularComponent extends Component {
 
         if (propsDependency.length) {
           const conditionArray = [];
-          if (propsDependency.indexOf('props') === -1) {
+          if (!propsDependency.includes('props')) {
             conditionArray.push(
               `[${propsDependency.map((d) => `"${d}"`).join(',')}].some(d=>${
                 ngOnChangesParameters[0]

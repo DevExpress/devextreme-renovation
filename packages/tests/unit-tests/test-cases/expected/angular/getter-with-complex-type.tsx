@@ -31,6 +31,9 @@ export default class Widget extends Props {
   get __g2(): number {
     return this.p;
   }
+  get __g3(): number {
+    return this.i;
+  }
   get __restAttributes(): any {
     return {};
   }
@@ -63,6 +66,7 @@ export default class Widget extends Props {
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}

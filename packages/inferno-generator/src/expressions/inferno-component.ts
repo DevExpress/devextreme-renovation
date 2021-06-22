@@ -114,6 +114,88 @@ export class InfernoComponent extends PreactComponent {
     return '';
   }
 
+  compileGetterCache(componentWillUpdate_Statements: string[]): string {
+    const getters = this.members.filter(
+      (m) => m instanceof GetAccessor && m.isMemorized(),
+    );
+
+    if (getters.length) {
+      const statements = [
+        `__getterCache: {
+            ${getters.map((g) => `${g._name}?:${g.type}`).join(';\n')}
+          } = {}`,
+      ];
+
+      componentWillUpdate_Statements.push(`const changesFunc = (oldObj: { [name: string]: any }, nextObj: { [name: string]: any }) =>
+      Object.keys(nextObj).reduce((changes, nextObjKey) => {
+        if (oldObj[nextObjKey] !== nextObj[nextObjKey])
+          changes.push(nextObjKey);
+        return changes;
+      }, [] as string[]);
+    const [propsChanges, stateChanges, contextChanges] = [
+      changesFunc(this.props, nextProps),
+      changesFunc(this.state, nextState),
+      changesFunc(this.context, context),
+    ];`);
+
+      getters.forEach((g) => {
+        const allDeps = g.getDependency({
+          members: this.members,
+          componentContext: SyntaxKind.ThisKeyword,
+        });
+
+        const deleteCacheStatement = `this.__getterCache["${g._name.toString()}"] = undefined;`;
+        ['props', 'state', 'context'].forEach((dependency) => {
+          if (allDeps.includes(dependency)) {
+            componentWillUpdate_Statements.push(`if (${dependency}Changes.length){
+              ${deleteCacheStatement}
+            }`);
+          }
+        });
+
+        if (allDeps.length) {
+          const conditions = allDeps.map((dep) => {
+            if (dep.indexOf('props.') === 0) {
+              return `propsChanges.includes("${dep.replace('props.', '')}")`;
+            }
+            if (dep.indexOf('state.') === 0) {
+              return `stateChanges.includes("${dep.replace('state.', '')}")`;
+            }
+            if (dep.indexOf('context.') === 0) {
+              return `contextChanges.includes("${dep.replace('context.', '')}")`;
+            }
+            switch (dep) {
+              case 'props':
+                return 'propsChanges.length';
+              case 'state':
+                return 'stateChanges.length';
+              case 'context':
+                return 'contextChanges.length';
+              default:
+                return 'false';
+            }
+          });
+          componentWillUpdate_Statements.push(`if (${conditions.join(' || ')}) {
+            ${deleteCacheStatement}
+          }`);
+        }
+      });
+      return statements.join('\n');
+    }
+    return '';
+  }
+
+  compileComponentWillUpdate(statements: string[]): string {
+    const superStatement = this.jQueryRegistered ? 'super.componentWillUpdate();' : '';
+    if (statements.length) {
+      return `componentWillUpdate(nextProps, nextState, context) {
+        ${statements.join('\n')}
+        ${superStatement}
+      }`;
+    }
+    return '';
+  }
+
   compileEffects(): string {
     const createEffectsStatements: string[] = [];
     const updateEffectsStatements: string[] = [];
@@ -281,6 +363,7 @@ export class InfernoComponent extends PreactComponent {
         ? 'InfernoComponent'
         : 'BaseInfernoComponent';
 
+    const componentWillUpdate: string[] = [];
     return `
             ${this.compileImports()}
             ${this.compileRestProps()}
@@ -311,7 +394,8 @@ export class InfernoComponent extends PreactComponent {
     .concat(this.members.filter((m) => m.isApiMethod) as Method[])
     .map((m) => m.toString(this.getToStringOptions()))
     .join('\n')}
-                
+                ${this.compileGetterCache(componentWillUpdate)}
+                ${this.compileComponentWillUpdate(componentWillUpdate)}
                 render(){
                     const props = this.props;
                     return ${this.compileViewCall()}

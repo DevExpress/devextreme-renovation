@@ -151,6 +151,14 @@ mocha.describe("inferno-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it.only("getter-with-complex-type", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it.only("ref-consumer", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {
