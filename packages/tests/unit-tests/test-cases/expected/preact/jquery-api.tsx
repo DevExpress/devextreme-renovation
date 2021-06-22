@@ -1,6 +1,6 @@
 import registerComponent from "../../../../jquery-helpers/jquery_component_registrator";
 import BaseComponent from "../../../../jquery-helpers/jquery_base_component";
-import WidgetComponent, { defaultOptions } from "../../../../jquery-api";
+import WidgetComponent from "../../../../jquery-api";
 
 import { MyTypeReturn, MyType } from "../../../../jquery-api";
 
@@ -34,4 +34,3 @@ export default class Widget extends BaseComponent {
 }
 
 registerComponent("dxWidget", Widget);
-Widget.defaultOptions = defaultOptions;
