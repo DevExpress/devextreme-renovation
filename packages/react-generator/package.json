@@ -1,6 +1,6 @@
 {
   "name": "@devextreme-generator/react",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "DevExtreme react component generator",
   "author": "Developer Express Inc.",
   "license": "UNLICENSED",
@@ -16,7 +16,7 @@
     "clear": "shx rm -rf dist && shx rm -f *.tgz"
   },
   "dependencies": {
-    "@devextreme-generator/core": "2.2.2"
+    "@devextreme-generator/core": "2.2.3"
   },
   "devDependencies": {
     "@types/node": "^12.12.14",
