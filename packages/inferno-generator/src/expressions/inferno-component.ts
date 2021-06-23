@@ -187,7 +187,7 @@ export class InfernoComponent extends PreactComponent {
 
   compileComponentWillUpdate(statements: string[]): string {
     const superStatement = this.jQueryRegistered ? 'super.componentWillUpdate();' : '';
-    if (statements.length) {
+    if (statements.length > 1) {
       return `componentWillUpdate(nextProps, nextState, context) {
         ${statements.join('\n')}
         ${superStatement}

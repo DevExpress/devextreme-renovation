@@ -43,10 +43,9 @@ export default class GetterProvider extends BaseInfernoComponent<any> {
     if (this.__getterCache["provide"] !== undefined) {
       return this.__getterCache["provide"];
     }
-    return (this.provide.value = this.__getterCache["provide"] =
-      (() => {
-        return this.props.p;
-      })());
+    return (this.__getterCache["provide"] = (() => {
+      return this.props.p;
+    })());
   }
   get restAttributes(): RestProps {
     const { p, ...restProps } = this.props as any;

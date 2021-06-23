@@ -23,7 +23,7 @@ export const compileGetterCache = (
   type: TypeExpression | string | undefined,
   body: Block,
   isProvider: boolean | undefined,
-  needToAddPostfix = true,
+  needToHandleProvider = true,
 ): Expression[] => {
   const cacheAccess = `this.__getterCache["${name.toString()}"]`;
   const setCacheExpression = new Binary(
@@ -44,13 +44,13 @@ export const compileGetterCache = (
       undefined,
     ),
   );
-  const returnExpression = !isProvider
-    ? setCacheExpression
-    : new Binary(
-      new SimpleExpression(`this.${name}${needToAddPostfix ? 'Provider' : ''}.value`),
+  const returnExpression = isProvider && needToHandleProvider
+    ? new Binary(
+      new SimpleExpression(`this.${name}Provider.value`),
       SyntaxKind.EqualsToken,
       setCacheExpression,
-    );
+    )
+    : setCacheExpression;
   return [
     new SimpleExpression(`
                 if(${cacheAccess}!==undefined){
