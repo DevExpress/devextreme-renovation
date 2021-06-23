@@ -6,15 +6,15 @@ export const InfernoEffectHost: {
 } = {
   lockCount: 0,
   lock() {
-    this.lockCount++;
+    this.lockCount += 1;
   },
 
   callbacks: [],
 
   callEffects() {
-    this.lockCount--;
+    this.lockCount -= 1;
     if (this.lockCount < 0) {
-      throw 'Unexpected Effect Call';
+      throw new Error('Unexpected Effect Call');
     }
     if (this.lockCount === 0) {
       const effects = this.callbacks;

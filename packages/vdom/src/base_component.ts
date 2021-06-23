@@ -26,11 +26,11 @@ export class BaseInfernoComponent<
 > extends Component<P, S> {
   _pendingContext: any = this.context;
 
-  componentWillReceiveProps(_: any, context: any) {
+  componentWillReceiveProps(_: any, context: any): void {
     this._pendingContext = context ?? {};
   }
 
-  shouldComponentUpdate(nextProps: P, nextState: S) {
+  shouldComponentUpdate(nextProps: P, nextState: S): boolean {
     return (
       !areObjectsEqual(this.props, nextProps)
       || !areObjectsEqual(this.state, nextState)
@@ -49,9 +49,9 @@ export class InfernoComponent<
     return [];
   }
 
-  updateEffects() {}
+  updateEffects(): void {}
 
-  componentWillMount() {
+  componentWillMount(): void {
     InfernoEffectHost.lock();
   }
 
@@ -60,23 +60,23 @@ export class InfernoComponent<
     InfernoEffectHost.lock();
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     InfernoEffectHost.callbacks.push(
       () => { this._effects = this.createEffects(); },
     );
     InfernoEffectHost.callEffects();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(): void {
     InfernoEffectHost.callbacks.push(() => this.updateEffects());
     InfernoEffectHost.callEffects();
   }
 
-  destroyEffects() {
+  destroyEffects(): void {
     this._effects.forEach((e) => e.dispose());
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     this.destroyEffects();
   }
 }
