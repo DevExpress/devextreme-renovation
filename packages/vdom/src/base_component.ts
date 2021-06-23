@@ -55,7 +55,8 @@ export class InfernoComponent<
     InfernoEffectHost.lock();
   }
 
-  componentWillUpdate() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  componentWillUpdate(_nextProps?: P, _nextState?: S, _context?: any): void {
     InfernoEffectHost.lock();
   }
 
