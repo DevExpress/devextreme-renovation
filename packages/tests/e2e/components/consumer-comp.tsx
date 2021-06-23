@@ -10,6 +10,7 @@ import {
     return (
       <div>
         {model.somethingToRender}
+        {model.complexGetter}
         <ButtonComponent onClick={model.onButtClick}/>
         
       </div>
@@ -29,9 +30,12 @@ import {
       this.numberContextConsumer.increaseCounter()
       console.log(this.numberContextConsumer.counter)
     }
-    get somethingToRender(){
+    get somethingToRender(): number{
         const counter = this.numberContextConsumer?.counter
         return counter ? counter : 0;
+    }
+    get complexGetter(): number[] {
+      return [this.numberContextConsumer?.counter]
     }
   }
   

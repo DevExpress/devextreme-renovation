@@ -1,3 +1,24 @@
+import {
+  Injectable,
+  EventEmitter as ContextEmitter,
+  SkipSelf,
+  Optional,
+  Host,
+} from "@angular/core";
+@Injectable()
+class SimpleContext {
+  _value: number = 5;
+  change: ContextEmitter<number> = new ContextEmitter();
+  get value(): number {
+    return this._value;
+  }
+  set value(value: number) {
+    if (this._value !== value) {
+      this._value = value;
+      this.change.emit(value);
+    }
+  }
+}
 import { Input } from "@angular/core";
 export class Props {
   @Input() p: number = 10;
@@ -15,11 +36,21 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [SimpleContext],
   inputs: ["p"],
   template: `<div></div>`,
 })
 export default class Widget extends Props {
   i: number = 10;
+  get __provide(): any {
+    if (this.__getterCache["provide"] !== undefined) {
+      return this.__getterCache["provide"];
+    }
+    return (this.provideProvider.value = this.__getterCache["provide"] =
+      (() => {
+        return this.i;
+      })());
+  }
   get __g1(): number[] {
     if (this.__getterCache["g1"] !== undefined) {
       return this.__getterCache["g1"];
@@ -45,6 +76,7 @@ export default class Widget extends Props {
   }
 
   __getterCache: {
+    provide?: any;
     g1?: number[];
   } = {};
 
@@ -54,12 +86,20 @@ export default class Widget extends Props {
     }
   }
 
-  constructor(private changeDetection: ChangeDetectorRef) {
+  ngDoCheck() {
+    this.__provide;
+  }
+
+  constructor(
+    private changeDetection: ChangeDetectorRef,
+    @Host() private provideProvider: SimpleContext
+  ) {
     super();
   }
   set _i(i: number) {
     this.i = i;
     this._detectChanges();
+    this.__getterCache["provide"] = undefined;
     this.__getterCache["g1"] = undefined;
   }
 }

@@ -3,7 +3,9 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
+  createContext,
 } from "@devextreme/vdom";
+const SimpleContext = createContext<number>(5);
 function view(viewModel: Widget) {
   return <div></div>;
 }
@@ -41,6 +43,21 @@ export default class Widget extends InfernoWrapperComponent<any> {
     return [createReRenderEffect()];
   }
 
+  getChildContext() {
+    return {
+      ...this.context,
+      SimpleContext: this.provide,
+    };
+  }
+
+  get provide(): any {
+    if (this.__getterCache["provide"] !== undefined) {
+      return this.__getterCache["provide"];
+    }
+    return (this.__getterCache["provide"] = (() => {
+      return this.state.i;
+    })());
+  }
   get g1(): number[] {
     if (this.__getterCache["g1"] !== undefined) {
       return this.__getterCache["g1"];
@@ -60,6 +77,7 @@ export default class Widget extends InfernoWrapperComponent<any> {
     return restProps;
   }
   __getterCache: {
+    provide?: any;
     g1?: number[];
   } = {};
   componentWillUpdate(nextProps, nextState, context) {
@@ -77,6 +95,9 @@ export default class Widget extends InfernoWrapperComponent<any> {
       changesFunc(this.state, nextState),
       changesFunc(this.context, context),
     ];
+    if (stateChanges.includes("i")) {
+      this.__getterCache["provide"] = undefined;
+    }
     if (propsChanges.includes("p") || stateChanges.includes("i")) {
       this.__getterCache["g1"] = undefined;
     }
@@ -87,6 +108,7 @@ export default class Widget extends InfernoWrapperComponent<any> {
     return view({
       props: { ...props },
       i: this.state.i,
+      provide: this.provide,
       g1: this.g1,
       g2: this.g2,
       g3: this.g3,
