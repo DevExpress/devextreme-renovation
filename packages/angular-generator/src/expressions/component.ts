@@ -1042,7 +1042,7 @@ export class AngularComponent extends Component {
       component: ComponentInput;
       name: string
       propList?: string[];
-      isPlural: boolean;
+      isArray: boolean;
     }[] {
     const nestedProps = component.members.filter(
       (m) => m.isNested,
@@ -1065,7 +1065,7 @@ export class AngularComponent extends Component {
             acc.push({
               component: components[key] as ComponentInput,
               name: `${parentSelector} ${selector}`,
-              isPlural: isArray,
+              isArray,
             });
           });
         }
@@ -1075,7 +1075,7 @@ export class AngularComponent extends Component {
         component: ComponentInput;
         name: string;
         propList?: string[];
-        isPlural: boolean;
+        isArray: boolean;
       }[],
     );
 
@@ -1086,7 +1086,7 @@ export class AngularComponent extends Component {
           component: ComponentInput;
           name: string;
           propList?: string[];
-          isPlural: boolean;
+          isArray: boolean;
         }[],
       ),
     );
@@ -1097,7 +1097,7 @@ export class AngularComponent extends Component {
       component: ComponentInput;
       name: string;
       propList: string[];
-      isPlural: boolean;
+      isArray: boolean;
     }[];
   }
 

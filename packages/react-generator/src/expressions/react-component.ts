@@ -149,7 +149,7 @@ export class ReactComponent extends Component {
   createStatesForNestedTwoWay(members: (BaseProperty | Method)[]): Property[] {
     const nestedComponents = this.collectNestedComponents(members);
     const twoWayProps = nestedComponents
-      .filter(({ isPlural }) => !isPlural)
+      .filter(({ isArray }) => !isArray)
       .reduce((result, { component, propList }) => {
         const twoWay = component.members
           .filter((member) => member.isState)
@@ -731,7 +731,7 @@ export class ReactComponent extends Component {
       name: string;
       propName: string;
       propList: string[];
-      isPlural: boolean;
+      isArray: boolean;
     }[];
   }
 
