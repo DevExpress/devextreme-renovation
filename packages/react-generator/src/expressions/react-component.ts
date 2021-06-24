@@ -134,32 +134,38 @@ export class ReactComponent extends Component {
     return members;
   }
 
-  createInternalState(name: string, initializer?: Expression):Property {
+  createInternalState(name: string, initializer?: string):Property {
     return new Property(
       [new Decorator(new Call(new Identifier('InternalState')), {})],
       undefined,
       new Identifier(name),
       undefined,
       undefined,
-      initializer,
+      initializer ? new SimpleExpression(initializer) : undefined,
       false,
     );
   }
 
   createStatesForNestedTwoWay(members: (BaseProperty | Method)[]): Property[] {
     const nestedComponents = this.collectNestedComponents(members);
-    const twoWayProps = nestedComponents.reduce((result, { component, propName }) => {
-      const twoWay = component.members
-        .filter((member) => member.isState)
-        .map((member) => {
-          const name = `${propName}${capitalizeFirstLetter(member.name)}`;
-          return this.createInternalState(name, (member as Property).initializer);
-        });
-      return [
-        ...result,
-        ...twoWay,
-      ];
-    }, [] as Property[]);
+    const twoWayProps = nestedComponents
+      .filter(({ isPlural }) => !isPlural)
+      .reduce((result, { component, propList }) => {
+        const twoWay = component.members
+          .filter((member) => member.isState)
+          .filter((member) => !isTypeArray(member.type))
+          .map((member) => {
+            const name = `${lowerizeFirstLetter(propList.map(capitalizeFirstLetter).join(''))}${capitalizeFirstLetter(member.name)}`;
+            const prop = `props.${propList.join('?.')}?.${member.name}`;
+            const defaultProp = `props.${propList.join('?.')}?.default${capitalizeFirstLetter(member.name)}`;
+            const initializer = `${prop} !== undefined ? ${prop} : ${defaultProp}`;
+            return this.createInternalState(name, initializer);
+          });
+        return [
+          ...result,
+          ...twoWay,
+        ];
+      }, [] as Property[]);
 
     return twoWayProps;
   }
@@ -724,6 +730,8 @@ export class ReactComponent extends Component {
       component: ComponentInput;
       name: string;
       propName: string;
+      propList: string[];
+      isPlural: boolean;
     }[];
   }
 

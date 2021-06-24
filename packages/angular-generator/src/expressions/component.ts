@@ -1038,7 +1038,12 @@ export class AngularComponent extends Component {
   getNestedFromComponentInput(
     component: ComponentInput,
     parentSelector: string = this.selector,
-  ): { component: ComponentInput; name: string }[] {
+  ): {
+      component: ComponentInput;
+      name: string
+      propList?: string[];
+      isPlural: boolean;
+    }[] {
     const nestedProps = component.members.filter(
       (m) => m.isNested,
     ) as Property[];
@@ -1060,6 +1065,7 @@ export class AngularComponent extends Component {
             acc.push({
               component: components[key] as ComponentInput,
               name: `${parentSelector} ${selector}`,
+              isPlural: isArray,
             });
           });
         }
@@ -1068,6 +1074,8 @@ export class AngularComponent extends Component {
       [] as {
         component: ComponentInput;
         name: string;
+        propList?: string[];
+        isPlural: boolean;
       }[],
     );
 
@@ -1077,6 +1085,8 @@ export class AngularComponent extends Component {
         [] as {
           component: ComponentInput;
           name: string;
+          propList?: string[];
+          isPlural: boolean;
         }[],
       ),
     );
@@ -1086,6 +1096,8 @@ export class AngularComponent extends Component {
     return super.collectNestedComponents() as {
       component: ComponentInput;
       name: string;
+      propList: string[];
+      isPlural: boolean;
     }[];
   }
 

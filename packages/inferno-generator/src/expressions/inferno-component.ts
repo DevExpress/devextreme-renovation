@@ -6,7 +6,6 @@ import {
   Call,
   Decorator,
   Decorators,
-  Expression,
   getProps,
   Identifier,
   Method,
@@ -264,14 +263,14 @@ export class InfernoComponent extends PreactComponent {
     return '';
   }
 
-  createInternalState(name: string, initializer?: Expression):Property {
+  createInternalState(name: string, initializer?: string):Property {
     return new Property(
       [new Decorator(new Call(new Identifier('InternalState')), {})],
       undefined,
       new Identifier(name),
       undefined,
       undefined,
-      initializer,
+      initializer ? new SimpleExpression(initializer) : undefined,
       false,
     );
   }

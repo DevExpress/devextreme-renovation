@@ -954,6 +954,8 @@ export class VueComponent extends Component {
       component: VueComponentInput;
       name: string;
       propName: string;
+      propList: string[];
+      isPlural: boolean;
     }[];
   }
 

@@ -406,10 +406,13 @@ export class Component extends Class implements Heritable {
   getNestedFromComponentInput(
     component: ComponentInput,
     parentName = '',
+    parentPropList: string[] = [],
   ): {
       component: ComponentInput;
       name: string;
       propName?: string;
+      propList?: string[];
+      isPlural: boolean;
     }[] {
     const nestedProps = component.members.filter((m) => m.isNested);
     const components = component.context.components!;
@@ -420,8 +423,9 @@ export class Component extends Class implements Heritable {
           ({ type }) => getTypeName(extractComplexType(type)) === key,
         ) as Property;
         if (property) {
+          const isPlural = isTypeArray(property.type);
           const componentName = capitalizeFirstLetter(
-            isTypeArray(property.type)
+            isPlural
               ? removePlural(property.name)
               : property.name,
           );
@@ -429,6 +433,8 @@ export class Component extends Class implements Heritable {
             component: components[key] as ComponentInput,
             name: `${parentName}${componentName}`,
             propName: property.name,
+            propList: parentPropList.concat(property.name),
+            isPlural,
           });
         }
         return acc;
@@ -437,16 +443,21 @@ export class Component extends Class implements Heritable {
         component: ComponentInput;
         name: string;
         propName?: string;
+        propList?: string[];
+        isPlural: boolean;
       }[],
     );
 
     return nested.concat(
       nested.reduce(
-        (acc, { component, name }) => acc.concat(this.getNestedFromComponentInput(component, name)),
+        (acc, { component, name, propList }) => acc
+          .concat(this.getNestedFromComponentInput(component, name, propList)),
         [] as {
           component: ComponentInput;
           name: string;
           propName?: string;
+          propList?: string[];
+          isPlural: boolean;
         }[],
       ),
     );
