@@ -263,13 +263,13 @@ export class InfernoComponent extends PreactComponent {
     return '';
   }
 
-  createInternalState(name: string, initializer?: string):Property {
+  createInternalState(name: string, initializer?: string, type?: string | TypeExpression):Property {
     return new Property(
       [new Decorator(new Call(new Identifier('InternalState')), {})],
       undefined,
       new Identifier(name),
       undefined,
-      undefined,
+      type,
       initializer ? new SimpleExpression(initializer) : undefined,
       false,
     );

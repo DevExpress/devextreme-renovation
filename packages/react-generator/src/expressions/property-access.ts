@@ -11,6 +11,8 @@ import {
   processComponentContext,
   PropertyAssignment,
   SpreadAssignment,
+  lowerizeFirstLetter,
+  capitalizeFirstLetter,
 } from '@devextreme-generator/core';
 import {
   Property,
@@ -31,16 +33,18 @@ export function getChangeEventToken(property: Property): string {
 export class PropertyAccess extends BasePropertyAccess {
   compileNestedSetting(
     state: string,
-    property: Property,
+    _property: Property,
     options: toStringOptions,
   ): string {
-    const localStateName = getLocalStateName(
-      property.name,
-    );
-    const setState = `${stateSetter(property.name)}(${localStateName} => ({
-      ...${localStateName},
-      ${this.name}: ${state}
-    }))`;
+    const stateName = this.expression.toString()
+      .replace('this.props.', '')
+      .split('.')
+      .concat(this.name.toString())
+      .map(capitalizeFirstLetter)
+      .join('');
+    const setter = `__state_set${stateName}`;
+    const localStateName = `__state_${lowerizeFirstLetter(stateName)}`;
+    const setState = `${setter}(${localStateName} => (${state}))`;
 
     const eventName = `${this.name}Change`;
     const eventCall = `${this.expression.toString(options)}.${eventName}?.(${state})`;

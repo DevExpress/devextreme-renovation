@@ -134,13 +134,13 @@ export class ReactComponent extends Component {
     return members;
   }
 
-  createInternalState(name: string, initializer?: string):Property {
+  createInternalState(name: string, initializer?: string, type?: string | TypeExpression):Property {
     return new Property(
       [new Decorator(new Call(new Identifier('InternalState')), {})],
       undefined,
       new Identifier(name),
       undefined,
-      undefined,
+      type,
       initializer ? new SimpleExpression(initializer) : undefined,
       false,
     );
@@ -159,7 +159,7 @@ export class ReactComponent extends Component {
             const prop = `props.${propList.join('?.')}?.${member.name}`;
             const defaultProp = `props.${propList.join('?.')}?.default${capitalizeFirstLetter(member.name)}`;
             const initializer = `${prop} !== undefined ? ${prop} : ${defaultProp}`;
-            return this.createInternalState(name, initializer);
+            return this.createInternalState(name, initializer, member.type);
           });
         return [
           ...result,
