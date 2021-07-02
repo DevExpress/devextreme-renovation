@@ -15,7 +15,7 @@ import {
       <div>
         Cached Getters
         <ConsumerComp numProp={model.numProp}></ConsumerComp>
-        <ButtonComponent onClick={model.increaseProp}>Increase Prop value</ButtonComponent>
+        <ButtonComponent id="updatePropButton" onClick={model.increaseProp}>Increase Prop value</ButtonComponent>
       </div>
     );
   }

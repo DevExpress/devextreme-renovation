@@ -11,11 +11,13 @@ import {
   function view(model: ConsumerComp) {
     return (
       <div>
-        {model.counter}
-        {model.renderArray}
-        {model.renderObject}
-        <ButtonComponent onClick={model.increaseContext}>Increase Context value</ButtonComponent>
-        <ButtonComponent onClick={model.increaseState}>Increase State value</ButtonComponent>
+        <div id="getterCacheValue">
+          {model.counter}
+          {model.renderArray}
+          {model.renderObject}
+        </div>
+        <ButtonComponent id="updateContextButton" onClick={model.increaseContext}>Increase Context value</ButtonComponent>
+        <ButtonComponent id="updateStateButton" onClick={model.increaseState}>Increase State value</ButtonComponent>
       </div>
     );
   }
