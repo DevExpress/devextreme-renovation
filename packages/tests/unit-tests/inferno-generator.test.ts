@@ -169,7 +169,7 @@ mocha.describe("Expressions", function () {
       );
     }
     mocha.describe("memorize getAccessor with complex type", function () {
-      mocha.it.only("Do not memorize union with simple type", function () {
+      mocha.it("Do not memorize union with simple type", function () {
         const simpleGetAccessor = createGetAccessor(
           generator.createUnionTypeNode([
           generator.createLiteralTypeNode(
@@ -208,7 +208,7 @@ mocha.describe("Expressions", function () {
                       }`)
         );
       });
-      mocha.it.only("Memorize Provider", function () {
+      mocha.it("Memorize Provider", function () {
         const getter = createGetAccessor(undefined,undefined,undefined,[createDecorator(Decorators.Provider)]);
         assert.strictEqual(getter.isMemorized(), true);
         assert.strictEqual(
@@ -237,7 +237,7 @@ mocha.describe("Expressions", function () {
         changesFunc(this.state, nextState),
         changesFunc(this.context, context),
       ];`
-      mocha.it.only("Do not generate if simple type", function () {
+      mocha.it("Do not generate if simple type", function () {
         const getter = createGetAccessor(
           generator.createKeywordTypeNode("string")
         );
@@ -249,7 +249,7 @@ mocha.describe("Expressions", function () {
         assert.deepStrictEqual(componentWillUpdate, []);
       });
 
-      mocha.it.only(
+      mocha.it(
         "Create cache if component has getter with complex type",
         function () {
           const component = createComponent([
@@ -285,7 +285,7 @@ mocha.describe("Expressions", function () {
           assert.deepStrictEqual(componentWillUpdate.map(s => getResult(s)), [getResult(changesFunction)]);
         }
       );
-      mocha.it.only("generates componentWillUpdate and reset if dependant prop or state changes", function (){
+      mocha.it("generates componentWillUpdate and reset if dependant prop or state changes", function (){
         const component = createComponent([
           createGetAccessor(
             generator.createArrayTypeNode(generator.createKeywordTypeNode("number")),

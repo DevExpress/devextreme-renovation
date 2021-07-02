@@ -152,7 +152,17 @@ export class InfernoComponent extends PreactComponent {
             }`);
           }
         });
-
+        const contextConsumers = this.members.map((member) => {
+          if (member.isConsumer) {
+            return {
+              name: member._name.toString(),
+              contextName: member?.decorators[0]?.expression?.arguments[0].toString(),
+            };
+          }
+          return undefined;
+        }).filter((contextConsumer) => contextConsumer) as Array<{
+          name: string, contextName: string
+        }>;
         if (allDeps.length) {
           const conditions = allDeps.map((dep) => {
             if (dep.indexOf('props.') === 0) {
@@ -164,16 +174,13 @@ export class InfernoComponent extends PreactComponent {
             if (dep.indexOf('context.') === 0) {
               return `contextChanges.includes("${dep.replace('context.', '')}")`;
             }
-            switch (dep) {
-              case 'props':
-                return 'propsChanges.length';
-              case 'state':
-                return 'stateChanges.length';
-              case 'context':
-                return 'contextChanges.length';
-              default:
-                return 'false';
+            if (dep === 'props') {
+              return 'propsChanges.length';
             }
+            const dependencyContext = contextConsumers.find(
+              (consumer) => consumer.name === dep,
+            )?.contextName;
+            return dependencyContext ? `contextChanges.includes("${dependencyContext}")` : 'false';
           });
           componentWillUpdate_Statements.push(`if (${conditions.join(' || ')}) {
             ${deleteCacheStatement}
