@@ -171,9 +171,6 @@ export class InfernoComponent extends PreactComponent {
             if (dep.indexOf('state.') === 0) {
               return `stateChanges.includes("${dep.replace('state.', '')}")`;
             }
-            if (dep.indexOf('context.') === 0) {
-              return `contextChanges.includes("${dep.replace('context.', '')}")`;
-            }
             if (dep === 'props') {
               return 'propsChanges.length';
             }

@@ -30,8 +30,8 @@ export default class Widget extends JSXComponent<Props>() {
   get provide() {
     return this.i
   }
-  // @Consumer(SimpleContext)
-  // cons!: number;
+  @Consumer(SimpleContext)
+  cons!: number;
   get g1(): number[] {
     return [this.props.p, this.i];
   }
@@ -44,7 +44,7 @@ export default class Widget extends JSXComponent<Props>() {
     return this.i;
   }
 
-  // get g4(): number[] {
-  //   return [this.cons]
-  // }
+  get g4(): number[] {
+    return [this.cons]
+  }
 }

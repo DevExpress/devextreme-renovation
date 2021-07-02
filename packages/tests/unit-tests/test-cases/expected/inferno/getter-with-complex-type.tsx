@@ -29,6 +29,12 @@ export default class Widget extends InfernoWrapperComponent<any> {
   state: { i: number };
 
   refs: any;
+  get cons(): number {
+    if ("SimpleContext" in this.context) {
+      return this.context.SimpleContext;
+    }
+    return SimpleContext;
+  }
 
   constructor(props: any) {
     super(props);
@@ -72,6 +78,14 @@ export default class Widget extends InfernoWrapperComponent<any> {
   get g3(): number {
     return this.state.i;
   }
+  get g4(): number[] {
+    if (this.__getterCache["g4"] !== undefined) {
+      return this.__getterCache["g4"];
+    }
+    return (this.__getterCache["g4"] = ((): number[] => {
+      return [this.cons];
+    })());
+  }
   get restAttributes(): RestProps {
     const { p, ...restProps } = this.props as any;
     return restProps;
@@ -79,6 +93,7 @@ export default class Widget extends InfernoWrapperComponent<any> {
   __getterCache: {
     provide?: any;
     g1?: number[];
+    g4?: number[];
   } = {};
   componentWillUpdate(nextProps, nextState, context) {
     const changesFunc = (
@@ -101,6 +116,9 @@ export default class Widget extends InfernoWrapperComponent<any> {
     if (propsChanges.includes("p") || stateChanges.includes("i")) {
       this.__getterCache["g1"] = undefined;
     }
+    if (contextChanges.includes("SimpleContext")) {
+      this.__getterCache["g4"] = undefined;
+    }
     super.componentWillUpdate();
   }
   render() {
@@ -108,10 +126,12 @@ export default class Widget extends InfernoWrapperComponent<any> {
     return view({
       props: { ...props },
       i: this.state.i,
+      cons: this.cons,
       provide: this.provide,
       g1: this.g1,
       g2: this.g2,
       g3: this.g3,
+      g4: this.g4,
       restAttributes: this.restAttributes,
     } as Widget);
   }

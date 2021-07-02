@@ -51,6 +51,7 @@ export default class Widget extends Props {
         return this.i;
       })());
   }
+  consConsumer: number;
   get __g1(): number[] {
     if (this.__getterCache["g1"] !== undefined) {
       return this.__getterCache["g1"];
@@ -65,6 +66,14 @@ export default class Widget extends Props {
   get __g3(): number {
     return this.i;
   }
+  get __g4(): number[] {
+    if (this.__getterCache["g4"] !== undefined) {
+      return this.__getterCache["g4"];
+    }
+    return (this.__getterCache["g4"] = ((): number[] => {
+      return [this.consConsumer];
+    })());
+  }
   get __restAttributes(): any {
     return {};
   }
@@ -78,12 +87,20 @@ export default class Widget extends Props {
   __getterCache: {
     provide?: any;
     g1?: number[];
+    g4?: number[];
   } = {};
+  resetDependantGetters(): void {
+    this.__getterCache["g4"] = undefined;
+  }
+  _destroyContext: Array<() => void> = [];
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (["p"].some((d) => changes[d])) {
       this.__getterCache["g1"] = undefined;
     }
+  }
+  ngOnDestroy() {
+    this._destroyContext.forEach((d) => d());
   }
 
   ngDoCheck() {
@@ -92,9 +109,24 @@ export default class Widget extends Props {
 
   constructor(
     private changeDetection: ChangeDetectorRef,
-    @Host() private provideProvider: SimpleContext
+    @Host() private provideProvider: SimpleContext,
+    @SkipSelf() @Optional() private cons: SimpleContext
   ) {
     super();
+    if (!cons) {
+      this.cons = new SimpleContext();
+    } else {
+      const changeHandler = (value: number) => {
+        this.consConsumer = value;
+        this.resetDependantGetters();
+        this._detectChanges();
+      };
+      const subscription = cons.change.subscribe(changeHandler);
+      this._destroyContext.push(() => {
+        subscription.unsubscribe();
+      });
+    }
+    this.consConsumer = this.cons.value;
   }
   set _i(i: number) {
     this.i = i;

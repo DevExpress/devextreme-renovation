@@ -622,23 +622,6 @@ export class AngularComponent extends Component {
         const deleteCacheStatement = `this.__getterCache["${g._name.toString()}"] = undefined;`;
 
         if (propsDependency.length) {
-          const conditionArray = [];
-          if (!propsDependency.includes('props')) {
-            conditionArray.push(
-              `[${propsDependency.map((d) => `"${d}"`).join(',')}].some(d=>${
-                ngOnChangesParameters[0]
-              }[d])`,
-            );
-          }
-
-          if (conditionArray.length) {
-            ngOnChanges.push(`
-                        if (${conditionArray.join('&&')}) {
-                            ${deleteCacheStatement}
-                        }`);
-          } else {
-            ngOnChanges.push(deleteCacheStatement);
-          }
           const contextDependencies = propsDependency.reduce((acc, dep) => {
             if (this.members.find(
               (m) => m._name.toString() === dep && m.isConsumer,
@@ -647,6 +630,27 @@ export class AngularComponent extends Component {
             }
             return acc;
           }, [] as string[]);
+          const conditionArray = [];
+
+          const dependenciesWithoutContext = propsDependency.filter(
+            (dep) => !contextDependencies.includes(dep),
+          );
+          if (dependenciesWithoutContext.length) {
+            conditionArray.push(
+              `[${dependenciesWithoutContext.map((d) => `"${d}"`).join(',')}].some(d=>${
+                ngOnChangesParameters[0]
+              }[d])`,
+            );
+          }
+          if (propsDependency.includes('props')) {
+            ngOnChanges.push(deleteCacheStatement);
+          } else if (conditionArray.length) {
+            ngOnChanges.push(`
+                        if (${conditionArray.join('&&')}) {
+                            ${deleteCacheStatement}
+                        }`);
+          }
+
           if (contextDependencies.length) {
             resetDependantGetters.push(deleteCacheStatement);
           }
