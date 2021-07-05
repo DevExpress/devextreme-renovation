@@ -226,13 +226,7 @@ mocha.describe("Expressions", function () {
       });
     });
     mocha.describe("GetAccessor cache", function () {
-      const changesFunction = `const changesFunc = (oldObj: { [name: string]: any }, nextObj: { [name: string]: any }) =>
-        Object.keys(nextObj).reduce((changes, nextObjKey) => {
-          if (oldObj[nextObjKey] !== nextObj[nextObjKey])
-            changes.push(nextObjKey);
-          return changes;
-        }, [] as string[]);
-      const [propsChanges, stateChanges, contextChanges] = [
+      const changesFunction = `const [propsChanges, stateChanges, contextChanges] = [
         changesFunc(this.props, nextProps),
         changesFunc(this.state, nextState),
         changesFunc(this.context, context),
