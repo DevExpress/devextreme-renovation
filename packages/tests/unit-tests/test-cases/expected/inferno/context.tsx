@@ -18,6 +18,7 @@ const Props: PropsType = {
   p1: 10,
 };
 import { createElement as h } from "inferno-compat";
+import { changesFunc } from "@devextreme/vdom";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };

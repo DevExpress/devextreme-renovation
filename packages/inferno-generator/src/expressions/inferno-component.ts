@@ -39,15 +39,19 @@ export class InfernoComponent extends PreactComponent {
     const coreImports = [];
     const hooksSet = new Set(hooks);
     const imports = ['import { createElement as h } from "inferno-compat";'];
+    const hasCachedGetters = this.members.filter(
+      (m) => m instanceof GetAccessor && m.isMemorized(),
+    ).length > 0;
 
     if (hooksSet.has('useRef')) {
       coreImports.push('createRef as infernoCreateRef');
     }
 
     if (this.jQueryRegistered) {
-      imports.push('import { createReRenderEffect } from "@devextreme/vdom";');
+      imports.push(`import { createReRenderEffect${hasCachedGetters ? ', changesFunc' : ''} } from "@devextreme/vdom";`);
+    } else if (hasCachedGetters) {
+      imports.push('import { changesFunc } from "@devextreme/vdom";');
     }
-
     if (coreImports.length) {
       imports.push(`import { ${coreImports.join(',')} } from "inferno"`);
     }
@@ -126,12 +130,7 @@ export class InfernoComponent extends PreactComponent {
           } = {}`,
       ];
 
-      componentWillUpdate_Statements.push(`const changesFunc = (oldObj: { [name: string]: any }, nextObj: { [name: string]: any }) =>
-      Object.keys(nextObj).reduce((changes, nextObjKey) => {
-        if (oldObj[nextObjKey] !== nextObj[nextObjKey])
-          changes.push(nextObjKey);
-        return changes;
-      }, [] as string[]);
+      componentWillUpdate_Statements.push(`
     const [propsChanges, stateChanges, contextChanges] = [
       changesFunc(this.props, nextProps),
       changesFunc(this.state, nextState),

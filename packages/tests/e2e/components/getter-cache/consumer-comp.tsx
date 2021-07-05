@@ -60,4 +60,3 @@ import {
       return Object.values(this.objectGetter).join(' ')
     }
   }
-  
