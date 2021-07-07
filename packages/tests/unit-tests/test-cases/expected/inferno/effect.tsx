@@ -103,7 +103,7 @@ export default class Widget extends InfernoComponent<any> {
       this.props.s !== undefined ? this.props.s : this.state.s,
       this.state.i
     );
-    this.setState((state: any) => ({ ...state, i: 15 }));
+    this.setState((__state_argument: any) => ({ i: 15 }));
     return () => unsubscribe(id);
   }
   onceEffect(): any {
@@ -112,7 +112,7 @@ export default class Widget extends InfernoComponent<any> {
       this.props.s !== undefined ? this.props.s : this.state.s,
       this.state.i
     );
-    this.setState((state: any) => ({ ...state, i: 15 }));
+    this.setState((__state_argument: any) => ({ i: 15 }));
     return () => unsubscribe(id);
   }
   alwaysEffect(): any {
