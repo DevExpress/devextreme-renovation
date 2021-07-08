@@ -32,7 +32,9 @@ export default class Widget extends BaseInfernoComponent<any> {
   _hovered!: Boolean;
 
   updateState(): any {
-    this.setState((state: any) => ({ ...state, _hovered: !state._hovered }));
+    this.setState((__state_argument: any) => ({
+      _hovered: !__state_argument._hovered,
+    }));
   }
   get restAttributes(): RestProps {
     const { ...restProps } = this.props as any;

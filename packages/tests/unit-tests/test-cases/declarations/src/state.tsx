@@ -3,6 +3,7 @@ import {
   TwoWay,
   ComponentBindings,
   JSXComponent,
+  InternalState,
 } from "@devextreme-generator/declarations";
 import BaseState from "./model";
 
@@ -25,6 +26,7 @@ class WidgetInput {
   view,
 })
 export default class Widget extends JSXComponent(WidgetInput) {
+  @InternalState() internalState: number = 0;
   innerData?: string;
   updateState() {
     this.props.state1 = !this.props.state1;
@@ -33,6 +35,14 @@ export default class Widget extends JSXComponent(WidgetInput) {
   updateState2() {
     const cur = this.props.state2;
     this.props.state2 = cur !== false ? false : true;
+  }
+
+  updateState3(state: boolean) {
+    this.props.state2 = state
+  }
+
+  updateInnerState(state: number) {
+    this.internalState = state;
   }
 
   destruct() {
