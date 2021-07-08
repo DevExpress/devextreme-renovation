@@ -4,13 +4,11 @@ class WidgetInput {
   @Input() state1?: boolean = false;
   @Input() state2: boolean = false;
   @Input() stateProp?: boolean;
-  @Output() state1Change: EventEmitter<
-    boolean | undefined
-  > = new EventEmitter();
+  @Output() state1Change: EventEmitter<boolean | undefined> =
+    new EventEmitter();
   @Output() state2Change: EventEmitter<boolean> = new EventEmitter();
-  @Output() statePropChange: EventEmitter<
-    boolean | undefined
-  > = new EventEmitter();
+  @Output() statePropChange: EventEmitter<boolean | undefined> =
+    new EventEmitter();
 }
 
 import {
@@ -35,6 +33,7 @@ import { CommonModule } from "@angular/common";
   ></div>`,
 })
 export default class Widget extends WidgetInput {
+  internalState: number = 0;
   innerData?: string;
   __updateState(): any {
     this._state1Change((this.state1 = !this.state1));
@@ -42,6 +41,12 @@ export default class Widget extends WidgetInput {
   __updateState2(): any {
     const cur = this.state2;
     this._state2Change((this.state2 = cur !== false ? false : true));
+  }
+  __updateState3(state: boolean): any {
+    this._state2Change((this.state2 = state));
+  }
+  __updateInnerState(state: number): any {
+    this._internalState = state;
   }
   __destruct(): any {
     const { state1 } = this;
@@ -77,6 +82,10 @@ export default class Widget extends WidgetInput {
       this.statePropChange.emit(e);
       this._detectChanges();
     };
+  }
+  set _internalState(internalState: number) {
+    this.internalState = internalState;
+    this._detectChanges();
   }
   set _innerData(innerData: string) {
     this.innerData = innerData;
