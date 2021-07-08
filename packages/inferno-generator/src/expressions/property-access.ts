@@ -10,14 +10,14 @@ export class PropertyAccess extends ReactPropertyAccess {
     options: toStringOptions,
   ): string {
     if (property.isInternalState) {
-      const contextlessState = state.replace(new RegExp(`\\bthis.state.${property.name}\\b`, 'g'), `state.${property.name}`);
-      return `this.setState((state: any)=>({...state, ${property.name}: ${contextlessState}}))`;
+      const contextlessState = state.replace(new RegExp(`\\bthis.state.${property.name}\\b`, 'g'), `__state_argument.${property.name}`);
+      return `this.setState((__state_argument: any)=>({ ${property.name}: ${contextlessState}}))`;
     }
     if (property.isState) {
-      const contextlessState = state.replace(new RegExp(`\\bthis.state.${property.name}\\b`, 'g'), `state.${property.name}`);
+      const contextlessState = state.replace(new RegExp(`\\bthis.state.${property.name}\\b`, 'g'), `__state_argument.${property.name}`);
       return `{
         let __newValue;
-        this.setState((state: any) => {
+        this.setState((__state_argument: any) => {
           __newValue = ${contextlessState};
           return {${property.name}: __newValue};
         });
