@@ -424,9 +424,7 @@ export class ReactComponent extends Component {
                   ${this.defaultPropsDest()} = ${defaultPropsObj};
               `;
     }
-    // if (defaultProps.length === 1 && defaultProps[0].startsWith('...')) {
-    //   return `${this.defaultPropsDest()} = ${defaultProps[0].replace('...', '')}`;
-    // }
+
     if (defaultPropsObj) {
       return `${this.defaultPropsDest()} = ${defaultPropsObj}`;
     }
