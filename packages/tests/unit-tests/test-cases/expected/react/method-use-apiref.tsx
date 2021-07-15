@@ -68,6 +68,4 @@ const WidgetWithApiRef = forwardRef<
 > & { defaultProps: typeof WidgetWithApiRefInput };
 export default WidgetWithApiRef;
 
-WidgetWithApiRef.defaultProps = {
-  ...WidgetWithApiRefInput,
-};
+WidgetWithApiRef.defaultProps = WidgetWithApiRefInput;

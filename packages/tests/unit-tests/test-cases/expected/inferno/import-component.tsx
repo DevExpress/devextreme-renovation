@@ -13,11 +13,16 @@ export declare type ChildInputType = typeof WidgetProps & {
   height: number;
   onClick: (a: number) => void;
 };
-const ChildInput: ChildInputType = {
-  ...WidgetProps,
-  height: 10,
-  onClick: () => {},
-};
+const ChildInput: ChildInputType = Object.create(
+  Object.prototype,
+  Object.assign(
+    Object.getOwnPropertyDescriptors(WidgetProps),
+    Object.getOwnPropertyDescriptors({
+      height: 10,
+      onClick: () => {},
+    })
+  )
+);
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;
@@ -55,6 +60,4 @@ export default class Child extends BaseInfernoComponent<any> {
   }
 }
 
-Child.defaultProps = {
-  ...ChildInput,
-};
+Child.defaultProps = ChildInput;

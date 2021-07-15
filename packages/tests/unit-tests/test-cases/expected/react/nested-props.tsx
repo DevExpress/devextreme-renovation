@@ -40,10 +40,12 @@ export declare type WidgetPropsType = {
   children?: React.ReactNode;
 };
 export const WidgetProps: WidgetPropsType = {
-  __defaultNestedValues: {
-    editing: EditingProps.__defaultNestedValues
-      ? EditingProps.__defaultNestedValues
-      : EditingProps,
+  get __defaultNestedValues() {
+    return {
+      editing: EditingProps.__defaultNestedValues
+        ? EditingProps.__defaultNestedValues
+        : EditingProps,
+    };
   },
 };
 export declare type PickedPropsType = {
@@ -53,5 +55,7 @@ export declare type PickedPropsType = {
   children?: React.ReactNode;
 };
 export const PickedProps: PickedPropsType = {
-  __defaultNestedValues: { editing: WidgetProps.editing },
+  get __defaultNestedValues() {
+    return { editing: WidgetProps.editing };
+  },
 };

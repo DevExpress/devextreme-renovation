@@ -42,6 +42,7 @@ import { getPropName, Property } from './class-members/property';
 import { HeritageClause } from './heritage-clause';
 import { PropertyAccess } from './property-access';
 import { ComponentInput, getTemplatePropName } from './react-component-input';
+import { compileGettersCompatibleExtend } from './common';
 
 function getSubscriptions(methods: Method[]) {
   return methods
@@ -374,14 +375,9 @@ export class ReactComponent extends Component {
   }
 
   compileDefaultPropsObjectProperties(): string[] {
-    const defaultProps = this.heritageClauses
-      .filter((h) => h.defaultProps.length)
-      .map((h) => `...${h.defaultProps}`)
-      .concat(
-        this.props
-          .filter((p) => !p.inherited && p.initializer)
-          .map((p) => (p as Property).defaultProps()),
-      );
+    const defaultProps = this.props
+      .filter((p) => !p.inherited && p.initializer)
+      .map((p) => (p as Property).defaultProps());
 
     if (this.defaultOptionRules && this.needGenerateDefaultOptions) {
       defaultProps.push(
@@ -393,7 +389,18 @@ export class ReactComponent extends Component {
   }
 
   compileDefaultProps(): string {
+    const baseDefaultPropsObj = this.heritageClauses
+      .filter((h) => h.defaultProps.length)[0]?.defaultProps[0];
     const defaultProps = this.compileDefaultPropsObjectProperties();
+
+    let defaultPropsObj = baseDefaultPropsObj;
+
+    if (defaultProps.length) {
+      defaultPropsObj = `{ ${defaultProps.join(',\n')} }`;
+      if (baseDefaultPropsObj) {
+        defaultPropsObj = compileGettersCompatibleExtend(baseDefaultPropsObj, defaultPropsObj);
+      }
+    }
 
     if (this.needGenerateDefaultOptions) {
       return `
@@ -414,18 +421,14 @@ export class ReactComponent extends Component {
     : ''
 }
 
-                  function __createDefaultProps(){
-                      return {
-                          ${defaultProps.join(',\n')}
-                      }
-                  }
-                  ${this.defaultPropsDest()}= __createDefaultProps();
+                  ${this.defaultPropsDest()} = ${defaultPropsObj};
               `;
     }
-    if (defaultProps.length) {
-      return `${this.defaultPropsDest()} = {
-                  ${defaultProps.join(',\n')}
-              }`;
+    // if (defaultProps.length === 1 && defaultProps[0].startsWith('...')) {
+    //   return `${this.defaultPropsDest()} = ${defaultProps[0].replace('...', '')}`;
+    // }
+    if (defaultPropsObj) {
+      return `${this.defaultPropsDest()} = ${defaultPropsObj}`;
     }
 
     return '';
@@ -842,10 +845,10 @@ export class ReactComponent extends Component {
 
   compileDefaultOptionsMethod() {
     return super.compileDefaultOptionsMethod('[]', [
-      `${this.defaultPropsDest()} = {
-            ...__createDefaultProps(),
-            ...${this.compileConvertRulesToOptions('__defaultOptionRules')}
-        };`,
+      `${this.defaultPropsDest()} = ${compileGettersCompatibleExtend(
+        this.defaultPropsDest(),
+        this.compileConvertRulesToOptions('__defaultOptionRules'),
+      )}`,
     ]);
   }
 

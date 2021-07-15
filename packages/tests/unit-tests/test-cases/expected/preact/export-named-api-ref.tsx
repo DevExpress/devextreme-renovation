@@ -41,6 +41,4 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
 };
 export { Widget };
 
-Widget.defaultProps = {
-  ...WidgetInput,
-};
+Widget.defaultProps = WidgetInput;

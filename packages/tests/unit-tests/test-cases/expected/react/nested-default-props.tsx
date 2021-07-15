@@ -10,7 +10,9 @@ export declare type GridRowType = {
   children?: React.ReactNode;
 };
 export const GridRow: GridRowType = {
-  __defaultNestedValues: { cells: [GridCell] },
+  get __defaultNestedValues() {
+    return { cells: [GridCell] };
+  },
 };
 export declare type WithNestedInputType = {
   rows?: typeof GridRow[];
@@ -18,10 +20,12 @@ export declare type WithNestedInputType = {
   children?: React.ReactNode;
 };
 export const WithNestedInput: WithNestedInputType = {
-  __defaultNestedValues: {
-    rows: [
-      GridRow.__defaultNestedValues ? GridRow.__defaultNestedValues : GridRow,
-    ],
+  get __defaultNestedValues() {
+    return {
+      rows: [
+        GridRow.__defaultNestedValues ? GridRow.__defaultNestedValues : GridRow,
+      ],
+    };
   },
 };
 export declare type EmptyClassType = {};
@@ -32,5 +36,7 @@ export declare type FakeNestedType = {
   children?: React.ReactNode;
 };
 export const FakeNested: FakeNestedType = {
-  __defaultNestedValues: { value: [EmptyClass] },
+  get __defaultNestedValues() {
+    return { value: [EmptyClass] };
+  },
 };

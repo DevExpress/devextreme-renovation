@@ -28,7 +28,9 @@ export declare type WidgetInputType = {
 };
 export const WidgetInput: WidgetInputType = {
   height: 10,
-  export: {},
+  get export() {
+    return {};
+  },
   onClick: () => {},
   onSomething: () => {},
   defaultStringValue: "",
@@ -113,6 +115,4 @@ export default class Widget extends BaseInfernoComponent<any> {
   }
 }
 
-Widget.defaultProps = {
-  ...WidgetInput,
-};
+Widget.defaultProps = WidgetInput;

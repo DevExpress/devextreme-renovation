@@ -138,6 +138,4 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   });
 }
 
-Widget.defaultProps = {
-  ...WidgetProps,
-};
+Widget.defaultProps = WidgetProps;
