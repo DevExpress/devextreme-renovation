@@ -7,8 +7,7 @@ import {
   compileTypeParameters,
   processComponentContext,
 } from '../utils/string';
-import { Expression, ExpressionWithExpression } from './base';
-import { ObjectLiteral } from './literal';
+import { Expression } from './base';
 import { Identifier } from './common';
 import { Decorator } from './decorator';
 import { Parameter } from './functions';
@@ -384,12 +383,7 @@ export class Property extends BaseClassMember {
   }
 
   defaultDeclaration(options?: toStringOptions) {
-    const { name, initializer } = this;
-    if (initializer instanceof ExpressionWithExpression || initializer instanceof ObjectLiteral) {
-      return `get ${name}() { return ${initializer?.toString(options)} }`;
-    }
-
-    return `${name}:${initializer?.toString(options)}`;
+    return `${this.name}:${this.initializer?.toString(options)}`;
   }
 
   getter(componentContext?: string) {

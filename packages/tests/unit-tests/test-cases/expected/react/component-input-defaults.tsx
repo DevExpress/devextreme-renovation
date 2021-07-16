@@ -31,7 +31,11 @@ export declare type WidgetPropsType = typeof BaseProps & {
   text?: string;
   texts1?: typeof TextsProps;
   texts2?: typeof TextsProps;
+  texts3?: typeof TextsProps;
+  template?: React.FunctionComponent<Partial<void>>;
   __defaultNestedValues?: any;
+  render?: React.FunctionComponent<Partial<void>>;
+  component?: React.JSXElementConstructor<Partial<void>>;
   children?: React.ReactNode;
 };
 export const WidgetProps: WidgetPropsType = Object.create(
@@ -42,8 +46,12 @@ export const WidgetProps: WidgetPropsType = Object.create(
       get text() {
         return format("text");
       },
+      get texts1() {
+        return { text: format("text") };
+      },
+      template: () => <div></div>,
       get __defaultNestedValues() {
-        return { texts1: { text: format("text") }, texts2: TextsProps };
+        return { texts2: { text: format("text") }, texts3: TextsProps };
       },
     })
   )
@@ -76,11 +84,11 @@ function __collectChildren<T>(children: React.ReactNode): T[] {
     };
   });
 }
-export const Texts1: React.FunctionComponent<typeof TextsProps> & {
+export const Texts2: React.FunctionComponent<typeof TextsProps> & {
   propName: string;
 } = () => null;
-Texts1.propName = "texts1";
-Texts1.defaultProps = TextsProps;
+Texts2.propName = "texts2";
+Texts2.defaultProps = TextsProps;
 
 declare type RestProps = {
   className?: string;
@@ -92,9 +100,21 @@ interface Widget {
   props: typeof WidgetProps & RestProps;
   restAttributes: RestProps;
   nestedChildren: <T>() => T[];
-  __getNestedTexts1: typeof TextsProps;
   __getNestedTexts2: typeof TextsProps;
+  __getNestedTexts3: typeof TextsProps;
 }
+
+const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
+  (TemplateProp &&
+    (TemplateProp.defaultProps
+      ? (props: any) => <TemplateProp {...props} />
+      : TemplateProp)) ||
+  (RenderProp &&
+    ((props: any) =>
+      RenderProp(
+        ...("data" in props ? [props.data, props.index] : [props])
+      ))) ||
+  (ComponentProp && ((props: any) => <ComponentProp {...props} />));
 
 export default function Widget(props: typeof WidgetProps & RestProps) {
   const __restAttributes = useCallback(
@@ -102,17 +122,21 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
       const {
         __defaultNestedValues,
         children,
+        component,
         empty,
         height,
+        render,
+        template,
         text,
         texts1,
         texts2,
+        texts3,
         width,
         ...restProps
       } = {
         ...props,
-        texts1: __getNestedTexts1(),
         texts2: __getNestedTexts2(),
+        texts3: __getNestedTexts3(),
       };
       return restProps;
     },
@@ -124,28 +148,6 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
       return __collectChildren(children);
     },
     [props.children]
-  );
-  const __getNestedTexts1 = useCallback(
-    function __getNestedTexts1(): typeof TextsProps {
-      const nested = __nestedChildren<typeof TextsProps & { __name: string }>()
-        .filter((child) => child.__name === "texts1")
-        .map((n) => {
-          if (
-            !Object.keys(n).some(
-              (k) => k !== "__name" && k !== "__defaultNestedValues"
-            )
-          ) {
-            return (n as any)?.__defaultNestedValues || n;
-          }
-          return n;
-        });
-      return props.texts1
-        ? props.texts1
-        : nested.length
-        ? nested?.[0]
-        : props?.__defaultNestedValues?.texts1;
-    },
-    [props.texts1, props.children]
   );
   const __getNestedTexts2 = useCallback(
     function __getNestedTexts2(): typeof TextsProps {
@@ -169,17 +171,40 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
     },
     [props.texts2, props.children]
   );
+  const __getNestedTexts3 = useCallback(
+    function __getNestedTexts3(): typeof TextsProps {
+      const nested = __nestedChildren<typeof TextsProps & { __name: string }>()
+        .filter((child) => child.__name === "texts3")
+        .map((n) => {
+          if (
+            !Object.keys(n).some(
+              (k) => k !== "__name" && k !== "__defaultNestedValues"
+            )
+          ) {
+            return (n as any)?.__defaultNestedValues || n;
+          }
+          return n;
+        });
+      return props.texts3
+        ? props.texts3
+        : nested.length
+        ? nested?.[0]
+        : props?.__defaultNestedValues?.texts3;
+    },
+    [props.texts3, props.children]
+  );
 
   return view({
     props: {
       ...props,
-      texts1: __getNestedTexts1(),
+      template: getTemplate(props.template, props.render, props.component),
       texts2: __getNestedTexts2(),
+      texts3: __getNestedTexts3(),
     },
     restAttributes: __restAttributes(),
     nestedChildren: __nestedChildren,
-    __getNestedTexts1: __getNestedTexts1(),
     __getNestedTexts2: __getNestedTexts2(),
+    __getNestedTexts3: __getNestedTexts3(),
   });
 }
 

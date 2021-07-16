@@ -37,6 +37,8 @@ export declare type WidgetPropsType = typeof BaseProps & {
   text?: string;
   texts1?: typeof TextsProps;
   texts2?: typeof TextsProps;
+  texts3?: typeof TextsProps;
+  template?: any;
 };
 export const WidgetProps: WidgetPropsType = Object.create(
   Object.prototype,
@@ -50,8 +52,12 @@ export const WidgetProps: WidgetPropsType = Object.create(
         return { text: format("text") };
       },
       get texts2() {
+        return { text: format("text") };
+      },
+      get texts3() {
         return TextsProps;
       },
+      template: () => <div></div>,
     })
   )
 );
@@ -62,7 +68,11 @@ declare type RestProps = {
   key?: any;
   ref?: any;
 };
-
+const getTemplate = (TemplateProp: any) =>
+  TemplateProp &&
+  (TemplateProp.defaultProps
+    ? (props: any) => <TemplateProp {...props} />
+    : TemplateProp);
 export default class Widget extends BaseInfernoComponent<any> {
   state = {};
   refs: any;
@@ -72,15 +82,24 @@ export default class Widget extends BaseInfernoComponent<any> {
   }
 
   get restAttributes(): RestProps {
-    const { empty, height, text, texts1, texts2, width, ...restProps } = this
-      .props as any;
+    const {
+      empty,
+      height,
+      template,
+      text,
+      texts1,
+      texts2,
+      texts3,
+      width,
+      ...restProps
+    } = this.props as any;
     return restProps;
   }
 
   render() {
     const props = this.props;
     return view({
-      props: { ...props },
+      props: { ...props, template: getTemplate(props.template) },
       restAttributes: this.restAttributes,
     } as Widget);
   }

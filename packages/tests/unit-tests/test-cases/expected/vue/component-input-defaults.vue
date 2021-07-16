@@ -41,11 +41,23 @@ export const WidgetProps = {
       return format("text");
     },
   },
+  texts1: {
+    type: Object,
+    default() {
+      return { text: format("text") };
+    },
+  },
+  template: {
+    type: String,
+    default() {
+      return "template";
+    },
+  },
   __defaultNestedValues: {
     default() {
       return {
-        texts1: { text: format("text") },
-        texts2: {
+        texts2: { text: format("text") },
+        texts3: {
           text:
             TextsProps === undefined || TextsProps === null
               ? undefined
@@ -103,11 +115,11 @@ function __extractDefaultValues(propsObject) {
       return accObj;
     }, {});
 }
-export const DxTexts1 = {
+export const DxTexts2 = {
   props: TextsProps,
 };
-DxTexts1.propName = "texts1";
-DxTexts1.defaultProps = __extractDefaultValues(TextsProps);
+DxTexts2.propName = "texts2";
+DxTexts2.defaultProps = __extractDefaultValues(TextsProps);
 
 export const DxWidget = {
   name: "Widget",
@@ -119,8 +131,10 @@ export const DxWidget = {
     props() {
       return {
         text: this.text,
-        texts1: this.__getNestedTexts1,
+        texts1: this.texts1,
         texts2: this.__getNestedTexts2,
+        texts3: this.__getNestedTexts3,
+        template: this.template,
         empty: this.empty,
         height: this.height,
         width: this.width,
@@ -128,25 +142,6 @@ export const DxWidget = {
     },
     __nestedChildren() {
       return this.$slots.default ? __collectChildren(this.$slots.default) : [];
-    },
-    __getNestedTexts1() {
-      const nested = this.__nestedChildren
-        .filter((child) => child.__name === "texts1")
-        .map((n) => {
-          if (
-            !Object.keys(n).some(
-              (k) => k !== "__name" && k !== "__defaultNestedValues"
-            )
-          ) {
-            return n?.__defaultNestedValues || n;
-          }
-          return n;
-        });
-      return this.texts1
-        ? this.texts1
-        : nested.length
-        ? nested?.[0]
-        : this?.__defaultNestedValues?.texts1;
     },
     __getNestedTexts2() {
       const nested = this.__nestedChildren
@@ -166,6 +161,25 @@ export const DxWidget = {
         : nested.length
         ? nested?.[0]
         : this?.__defaultNestedValues?.texts2;
+    },
+    __getNestedTexts3() {
+      const nested = this.__nestedChildren
+        .filter((child) => child.__name === "texts3")
+        .map((n) => {
+          if (
+            !Object.keys(n).some(
+              (k) => k !== "__name" && k !== "__defaultNestedValues"
+            )
+          ) {
+            return n?.__defaultNestedValues || n;
+          }
+          return n;
+        });
+      return this.texts3
+        ? this.texts3
+        : nested.length
+        ? nested?.[0]
+        : this?.__defaultNestedValues?.texts3;
     },
   },
 };

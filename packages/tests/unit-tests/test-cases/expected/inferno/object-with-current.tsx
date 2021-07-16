@@ -30,9 +30,7 @@ export default class Widget extends BaseInfernoComponent<any> {
     super(props);
     this.state = {
       someState: undefined,
-      get existsState() {
-        return { current: "value" };
-      },
+      existsState: { current: "value" },
     };
     this.concatStrings = this.concatStrings.bind(this);
   }

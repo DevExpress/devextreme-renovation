@@ -4,6 +4,8 @@ import {
   JSXComponent,
   Component,
   ComponentBindings,
+  Template,
+  JSXTemplate,
 } from "@devextreme-generator/declarations";
 
 function view(model: Widget) {
@@ -33,10 +35,15 @@ export class TextsProps {
 @ComponentBindings()
 export class WidgetProps extends BaseProps {
   @OneWay() text?: string = format('text');
-  @Nested() texts1?: TextsProps = {
+  @OneWay() texts1?: TextsProps = {
     text: format('text')
   }
-  @Nested() texts2?: TextsProps = new TextsProps();
+  @Nested() texts2?: TextsProps = {
+    text: format('text')
+  }
+  @Nested() texts3?: TextsProps = new TextsProps();
+
+  @Template() template?: JSXTemplate<void> = () => <div></div>;
 }
 
 @Component({
