@@ -56,12 +56,12 @@ export class Call extends BaseCall {
   }
 }
 
-export function compileGettersCompatibleExtend(obj1: string, obj2: string): string {
+export function compileGettersCompatibleExtend(baseObject: string, extenderObject: string): string {
   return `Object.create(
     Object.prototype,
     Object.assign(
-      Object.getOwnPropertyDescriptors(${obj1}),
-      Object.getOwnPropertyDescriptors(${obj2})
+      Object.getOwnPropertyDescriptors(${baseObject}),
+      Object.getOwnPropertyDescriptors(${extenderObject})
     )
   )`;
 }

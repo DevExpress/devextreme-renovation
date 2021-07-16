@@ -146,11 +146,12 @@ export class ComponentInput extends BaseComponentInput {
    }`;
 
     let defaultProps = defaultObject;
+    const inheritedBaseType = this.baseTypes[0];
 
-    if (this.baseTypes.length) {
+    if (inheritedBaseType) {
       defaultProps = propertiesWithInitializer.length
-        ? compileGettersCompatibleExtend(this.baseTypes[0], defaultObject)
-        : this.baseTypes[0];
+        ? compileGettersCompatibleExtend(inheritedBaseType, defaultObject)
+        : inheritedBaseType;
     }
     return `${this.compileImports()}
           ${typeDeclaration}
