@@ -16,5 +16,7 @@ export * from './expressions/jsx/jsx-child-expression';
 export * from './expressions/jsx/jsx-opening-element';
 export * from './expressions/jsx/angular-directive';
 export * from './expressions/class-members/set-accessor';
+export * from './expressions/class-members/get-accessor';
+export * from './expressions/common';
 
 export default new AngularGenerator();

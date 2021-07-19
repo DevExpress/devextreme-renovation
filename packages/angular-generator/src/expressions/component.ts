@@ -591,7 +591,7 @@ export class AngularComponent extends Component {
     return imports.join(';\n');
   }
 
-  compileGetterCache(ngOnChanges: string[]): string {
+  compileGetterCache(ngOnChanges: string[], resetDependantGetters: string[] = []): string {
     const getters = this.members.filter(
       (m) => m instanceof GetAccessor && m.isMemorized(),
     );
@@ -615,22 +615,37 @@ export class AngularComponent extends Component {
         const deleteCacheStatement = `this.__getterCache["${g._name.toString()}"] = undefined;`;
 
         if (propsDependency.length) {
+          const contextDependencies = propsDependency.reduce((acc, dep) => {
+            if (this.members.find(
+              (m) => m._name.toString() === dep && m.isConsumer,
+            )) {
+              acc.push(dep);
+            }
+            return acc;
+          }, [] as string[]);
           const conditionArray = [];
-          if (propsDependency.indexOf('props') === -1) {
+
+          const dependenciesWithoutContext = propsDependency.filter(
+            (dep) => !contextDependencies.includes(dep),
+          );
+          if (dependenciesWithoutContext.length) {
             conditionArray.push(
-              `[${propsDependency.map((d) => `"${d}"`).join(',')}].some(d=>${
+              `[${dependenciesWithoutContext.map((d) => `"${d}"`).join(',')}].some(d=>${
                 ngOnChangesParameters[0]
               }[d])`,
             );
           }
-
-          if (conditionArray.length) {
+          if (propsDependency.includes('props')) {
+            ngOnChanges.push(deleteCacheStatement);
+          } else if (conditionArray.length) {
             ngOnChanges.push(`
                         if (${conditionArray.join('&&')}) {
                             ${deleteCacheStatement}
                         }`);
-          } else {
-            ngOnChanges.push(deleteCacheStatement);
+          }
+
+          if (contextDependencies.length) {
+            resetDependantGetters.push(deleteCacheStatement);
           }
         }
 
@@ -645,8 +660,12 @@ export class AngularComponent extends Component {
           }
         });
       });
-
-      return statements.join('\n');
+      if (resetDependantGetters.length) {
+        statements.push(`resetDependantGetters(): void {
+          ${resetDependantGetters.join('\n;')}
+        }`);
+      }
+      return statements.join('\n;');
     }
 
     return '';
@@ -658,7 +677,7 @@ export class AngularComponent extends Component {
     ngOnChanges: string[],
     ngAfterViewCheckedStatements: string[],
     ngDoCheckStatements: string[],
-  ) {
+  ): string {
     const effects = this.members.filter((m) => m.isEffect) as Method[];
     let hasInternalStateDependency = false;
 
@@ -680,7 +699,9 @@ export class AngularComponent extends Component {
           allDeps,
           this.internalState,
         );
-        const iterableDeps = allDeps.filter((dep) => isTypeArray(this.members.find((m) => m.name === dep)?.type));
+        const iterableDeps = allDeps.filter((dep) => isTypeArray(
+          this.members.find((m) => m.name === dep)?.type,
+        ));
 
         const updateEffectMethod = `__schedule_${e._name}`;
         if (propsDependency.length || internalStateDependency.length) {
@@ -1213,6 +1234,7 @@ export class AngularComponent extends Component {
     constructorArguments: string[],
     ngDoCheckStatements: string[],
     ngOnDestroyStatements: string[],
+    resetDependantGetters: string[],
   ): string {
     let destroyContext = '';
     this.members.forEach((m) => {
@@ -1238,7 +1260,8 @@ export class AngularComponent extends Component {
             this.${m.name} = new ${m.context}();
           } else {
             const changeHandler = (value: ${m.type})=>{
-              this.${m.name}Consumer = value
+              this.${m.name}Consumer = value;
+              ${resetDependantGetters.length ? 'this.resetDependantGetters();' : ''}
               this._detectChanges();
             };
             const subscription = ${m.name}.change.subscribe(changeHandler);
@@ -1422,6 +1445,7 @@ export class AngularComponent extends Component {
       (k) => components[k] instanceof AngularComponent && components[k] !== this,
     );
 
+    const resetDependantGetters: string[] = [];
     const ngOnChangesStatements: string[] = [];
     const ngAfterViewInitStatements: string[] = [];
     const ngOnDestroyStatements: string[] = [];
@@ -1537,12 +1561,6 @@ export class AngularComponent extends Component {
     .join('\n')}
             ${spreadAttributes}
             ${trackBy}
-            ${this.compileContext(
-    constructorStatements,
-    constructorArguments,
-    ngDoCheckStatements,
-    ngOnDestroyStatements,
-  )}
             ${dynamicComponents}
             ${this.compileEffects(
     ngAfterViewInitStatements,
@@ -1551,7 +1569,14 @@ export class AngularComponent extends Component {
     ngAfterViewCheckedStatements,
     ngDoCheckStatements,
   )}
-            ${this.compileGetterCache(ngOnChangesStatements)}
+            ${this.compileGetterCache(ngOnChangesStatements, resetDependantGetters)}
+            ${this.compileContext(
+    constructorStatements,
+    constructorArguments,
+    ngDoCheckStatements,
+    ngOnDestroyStatements,
+    resetDependantGetters,
+  )}
             ${this.compileNgModel()}
             ${this.compileLifeCycle(
     'ngAfterViewInit',

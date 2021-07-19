@@ -8279,7 +8279,7 @@ mocha.describe("Angular generator", function () {
 
             const ngOnChanges: string[] = [];
             assert.strictEqual(component.compileGetterCache(ngOnChanges), "");
-            assert.deepEqual(ngOnChanges, []);
+            assert.deepStrictEqual(ngOnChanges, []);
           });
 
           mocha.it(
@@ -8315,7 +8315,7 @@ mocha.describe("Angular generator", function () {
                             g2?:number[];
                         } = {}`)
               );
-              assert.deepEqual(ngOnChanges, []);
+              assert.deepStrictEqual(ngOnChanges, []);
             }
           );
 
