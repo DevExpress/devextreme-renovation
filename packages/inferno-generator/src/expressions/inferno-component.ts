@@ -17,6 +17,7 @@ import {
   TypeExpression,
   VariableDeclarationList,
   VariableStatement,
+  capitalizeFirstLetter,
 } from '@devextreme-generator/core';
 import { PreactComponent } from '@devextreme-generator/preact';
 
@@ -39,19 +40,15 @@ export class InfernoComponent extends PreactComponent {
     const coreImports = [];
     const hooksSet = new Set(hooks);
     const imports = ['import { createElement as h } from "inferno-compat";'];
-    const hasCachedGetters = this.members.filter(
-      (m) => m instanceof GetAccessor && m.isMemorized(),
-    ).length > 0;
 
     if (hooksSet.has('useRef')) {
       coreImports.push('createRef as infernoCreateRef');
     }
 
     if (this.jQueryRegistered) {
-      imports.push(`import { createReRenderEffect${hasCachedGetters ? ', changesFunc' : ''} } from "@devextreme/vdom";`);
-    } else if (hasCachedGetters) {
-      imports.push('import { changesFunc } from "@devextreme/vdom";');
+      imports.push('import { createReRenderEffect } from "@devextreme/vdom";');
     }
+
     if (coreImports.length) {
       imports.push(`import { ${coreImports.join(',')} } from "inferno"`);
     }
@@ -130,13 +127,6 @@ export class InfernoComponent extends PreactComponent {
           } = {}`,
       ];
 
-      componentWillUpdate_Statements.push(`
-    const [propsChanges, stateChanges, contextChanges] = [
-      changesFunc(this.props, nextProps),
-      changesFunc(this.state, nextState),
-      changesFunc(this.context, context),
-    ];`);
-
       getters.forEach((g) => {
         const allDeps = g.getDependency({
           members: this.members,
@@ -144,13 +134,7 @@ export class InfernoComponent extends PreactComponent {
         });
 
         const deleteCacheStatement = `this.__getterCache["${g._name.toString()}"] = undefined;`;
-        ['props', 'state', 'context'].forEach((dependency) => {
-          if (allDeps.includes(dependency)) {
-            componentWillUpdate_Statements.push(`if (${dependency}Changes.length){
-              ${deleteCacheStatement}
-            }`);
-          }
-        });
+
         const contextConsumers = this.members.map((member) => {
           if (member.isConsumer) {
             return {
@@ -165,18 +149,20 @@ export class InfernoComponent extends PreactComponent {
         if (allDeps.length) {
           const conditions = allDeps.map((dep) => {
             if (dep.indexOf('props.') === 0) {
-              return `propsChanges.includes("${dep.replace('props.', '')}")`;
+              const depName = dep.replace('props.', '');
+              return `this.props["${depName}"] !== nextProps["${depName}"]`;
             }
             if (dep.indexOf('state.') === 0) {
-              return `stateChanges.includes("${dep.replace('state.', '')}")`;
+              const depName = dep.replace('state.', '');
+              return `this.state["${depName}"] !== nextState["${depName}"]`;
             }
-            if (dep === 'props') {
-              return 'propsChanges.length';
+            if (dep === 'props' || dep === 'state') {
+              return `this.${dep} !== next${capitalizeFirstLetter(dep)}`;
             }
             const dependencyContext = contextConsumers.find(
               (consumer) => consumer.name === dep,
             )?.contextName;
-            return dependencyContext ? `contextChanges.includes("${dependencyContext}")` : 'false';
+            return dependencyContext ? `this.context["${dependencyContext}"] !== context["${dependencyContext}"]` : 'false';
           });
           componentWillUpdate_Statements.push(`if (${conditions.join(' || ')}) {
             ${deleteCacheStatement}
@@ -190,7 +176,7 @@ export class InfernoComponent extends PreactComponent {
 
   compileComponentWillUpdate(statements: string[]): string {
     const superStatement = this.jQueryRegistered ? 'super.componentWillUpdate();' : '';
-    if (statements.length > 1) {
+    if (statements.length > 0) {
       return `componentWillUpdate(nextProps, nextState, context) {
         ${statements.join('\n')}
         ${superStatement}

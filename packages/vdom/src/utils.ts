@@ -57,11 +57,3 @@ export const normalizeStyles = (styles: unknown) => {
     return result;
   }, {} as Record<string, string | number>);
 };
-
-export const changesFunc = (
-  oldObj: { [name: string]: any },
-  nextObj: { [name: string]: any },
-): string[] => Object.keys(nextObj).reduce((changes, nextObjKey) => {
-  if (oldObj[nextObjKey] !== nextObj[nextObjKey]) { changes.push(nextObjKey); }
-  return changes;
-}, [] as string[]);

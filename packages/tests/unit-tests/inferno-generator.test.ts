@@ -226,11 +226,6 @@ mocha.describe("Expressions", function () {
       });
     });
     mocha.describe("GetAccessor cache", function () {
-      const changesFunction = `const [propsChanges, stateChanges, contextChanges] = [
-        changesFunc(this.props, nextProps),
-        changesFunc(this.state, nextState),
-        changesFunc(this.context, context),
-      ];`
       mocha.it("Do not generate if simple type", function () {
         const getter = createGetAccessor(
           generator.createKeywordTypeNode("string")
@@ -276,7 +271,7 @@ mocha.describe("Expressions", function () {
                         g2?:number[];
                     } = {}`)
           );
-          assert.deepStrictEqual(componentWillUpdate.map(s => getResult(s)), [getResult(changesFunction)]);
+          assert.deepStrictEqual(componentWillUpdate.map(s => getResult(s)), []);
         }
       );
       mocha.it("generates componentWillUpdate and reset if dependant prop or state changes", function (){
@@ -321,14 +316,16 @@ mocha.describe("Expressions", function () {
                       name?: number[]
                   } = {}`)
         );
-
+        console.log(componentWillUpdate);
         assert.deepStrictEqual(
           componentWillUpdate.map(s => getResult(s)),
-          [ changesFunction,
-            `if (propsChanges.includes("p") || stateChanges.includes("s")) {
-              this.__getterCache["name"] = undefined;
-            }`
-          ].map(s=>getResult(s))
+            [
+              getResult(
+                `if (this.props["p"] !== nextProps["p"] || this.state["s"] !== nextState["s"]) {
+                  this.__getterCache["name"] = undefined;
+                }`
+              )
+            ]
         );
       })
     });

@@ -17,7 +17,7 @@ export const Props: PropsType = {
   p: 10,
 };
 import { createElement as h } from "inferno-compat";
-import { createReRenderEffect, changesFunc } from "@devextreme/vdom";
+import { createReRenderEffect } from "@devextreme/vdom";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
@@ -96,18 +96,16 @@ export default class Widget extends InfernoWrapperComponent<any> {
     g4?: number[];
   } = {};
   componentWillUpdate(nextProps, nextState, context) {
-    const [propsChanges, stateChanges, contextChanges] = [
-      changesFunc(this.props, nextProps),
-      changesFunc(this.state, nextState),
-      changesFunc(this.context, context),
-    ];
-    if (stateChanges.includes("i")) {
+    if (this.state["i"] !== nextState["i"]) {
       this.__getterCache["provide"] = undefined;
     }
-    if (propsChanges.includes("p") || stateChanges.includes("i")) {
+    if (
+      this.props["p"] !== nextProps["p"] ||
+      this.state["i"] !== nextState["i"]
+    ) {
       this.__getterCache["g1"] = undefined;
     }
-    if (contextChanges.includes("SimpleContext")) {
+    if (this.context["SimpleContext"] !== context["SimpleContext"]) {
       this.__getterCache["g4"] = undefined;
     }
     super.componentWillUpdate();
