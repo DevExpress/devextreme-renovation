@@ -52,12 +52,20 @@ export default class Widget extends BaseInfernoComponent<any> {
     return this.provider + this.contextConsumer;
   }
   get contextProvider(): any {
-    return "provide";
+    if (this.__getterCache["contextProvider"] !== undefined) {
+      return this.__getterCache["contextProvider"];
+    }
+    return (this.__getterCache["contextProvider"] = (() => {
+      return "provide";
+    })());
   }
   get restAttributes(): RestProps {
     const { p1, ...restProps } = this.props as any;
     return restProps;
   }
+  __getterCache: {
+    contextProvider?: any;
+  } = {};
 
   render() {
     const props = this.props;
