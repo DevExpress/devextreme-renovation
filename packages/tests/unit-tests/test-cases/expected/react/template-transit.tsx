@@ -72,9 +72,7 @@ export default function TemplateTransitWidget(
   });
 }
 
-TemplateTransitWidget.defaultProps = {
-  ...TemplateTransitWidgetInput,
-};
+TemplateTransitWidget.defaultProps = TemplateTransitWidgetInput;
 function view_1({
   props: { componentTemplateProp: ComponentTemplateProp, templateProp },
 }: TemplateTransitWidget) {

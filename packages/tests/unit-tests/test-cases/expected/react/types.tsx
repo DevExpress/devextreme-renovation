@@ -32,13 +32,21 @@ export const WidgetProps: WidgetPropsType = {
   bool: true,
   arr: [],
   strArr: ["a", "b"],
-  obj: {},
-  date: new Date(),
+  get obj() {
+    return {};
+  },
+  get date() {
+    return new Date();
+  },
   func: () => {},
-  symbol: Symbol("x"),
+  get symbol() {
+    return Symbol("x");
+  },
   externalEnum: "data",
   externalUnion: 0,
-  externalObj: { number: 0, text: "text" },
+  get externalObj() {
+    return { number: 0, text: "text" };
+  },
   externalArray: ["s1", "s2"],
   externalString: "someValue",
 };
@@ -87,9 +95,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   });
 }
 
-Widget.defaultProps = {
-  ...WidgetProps,
-};
+Widget.defaultProps = WidgetProps;
 import { CustomType } from "./types-external";
 export declare type BaseViewPropsTypeType = {
   strArr: Array<String>;

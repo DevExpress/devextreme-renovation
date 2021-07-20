@@ -14,6 +14,7 @@ function view(model: DefaultOptionRulesComponent) {
     <div ref={model.host} {...model.restAttributes}>
       <span>{model.props.oneWayProp}</span>
       <span>{model.props.oneWayPropWithDefault}</span>
+      <span>{model.props.oneWayPropWithExpressionDefault}</span>
       <span>{model.props.twoWayProp}</span>
       <span>{model.props.twoWayPropWithDefault}</span>
       <span>{model.props.arrayProp.join("")}</span>
@@ -23,10 +24,21 @@ function view(model: DefaultOptionRulesComponent) {
   );
 }
 
+let currentLocale = 'en';
+
+export function setLocale(value: string) {
+    currentLocale = value;
+}
+
+function format(text: string) {
+  return `${text}_${currentLocale}`;
+}
+
 @ComponentBindings()
 export class Props {
   @OneWay() oneWayProp?: string;
   @OneWay() oneWayPropWithDefault?: string = "";
+  @OneWay() oneWayPropWithExpressionDefault?: string = format('test');
   @TwoWay() twoWayProp?: number;
   @TwoWay() twoWayPropWithDefault: number = 3;
   @OneWay() arrayProp: string[] = ["arr"];

@@ -62,6 +62,4 @@ export default function DynamicComponentCreator(
   });
 }
 
-DynamicComponentCreator.defaultProps = {
-  ...Props,
-};
+DynamicComponentCreator.defaultProps = Props;

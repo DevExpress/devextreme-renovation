@@ -1300,7 +1300,7 @@ mocha.describe("import Components", function () {
 
       assert.equal(
         getResult(component.compileDefaultProps()),
-        getResult("Component.defaultProps = {...Base.defaultProps}")
+        getResult("Component.defaultProps = Base.defaultProps")
       );
     }
   );
@@ -1386,8 +1386,9 @@ mocha.describe("import Components", function () {
         [
           generator.createDecorator(
             generator.createCall(
-              generator.createIdentifier(Decorators.OneWay),
-              undefined
+              generator.createIdentifier("OneWay"),
+              undefined,
+              []
             )
           ),
         ],
@@ -1411,7 +1412,7 @@ mocha.describe("import Components", function () {
       assert.equal(
         getResult(component.compileDefaultProps()),
         getResult(
-          "Component.defaultProps = {...Base.defaultProps, childProp:10}"
+          "Component.defaultProps = Object.create(Object.prototype,Object.assign(Object.getOwnPropertyDescriptors(Base.defaultProps),Object.getOwnPropertyDescriptors({childProp:10})))"
         )
       );
     }
@@ -1526,7 +1527,7 @@ mocha.describe("import Components", function () {
       getResult(model.toString()),
       getResult(`
             export declare type ModelType = typeof WidgetProps & {};
-            const Model:ModelType = {...WidgetProps}
+            const Model:ModelType = WidgetProps
         `)
     );
   });
@@ -1590,7 +1591,7 @@ mocha.describe("import Components", function () {
       removeSpaces(model.toString()),
       removeSpaces(`
             export declare type ModelType = typeof WidgetProps & {height:string}
-            constModel:ModelType={...WidgetProps, height:"10px"};
+            constModel:ModelType=Object.create(Object.prototype,Object.assign(Object.getOwnPropertyDescriptors(WidgetProps),Object.getOwnPropertyDescriptors({height:"10px"})));
         `)
     );
   });

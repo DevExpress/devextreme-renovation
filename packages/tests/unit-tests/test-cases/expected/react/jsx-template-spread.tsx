@@ -115,6 +115,4 @@ export default function Widget(props: typeof Props & RestProps) {
   });
 }
 
-Widget.defaultProps = {
-  ...Props,
-};
+Widget.defaultProps = Props;

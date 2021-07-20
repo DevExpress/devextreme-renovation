@@ -72,6 +72,4 @@ export default class Widget extends InfernoComponent<any> {
   }
 }
 
-Widget.defaultProps = {
-  ...WidgetProps,
-};
+Widget.defaultProps = WidgetProps;

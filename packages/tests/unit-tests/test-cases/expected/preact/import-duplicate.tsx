@@ -41,6 +41,4 @@ export function Marker(props: typeof MarkerProps & RestProps) {
   });
 }
 
-Marker.defaultProps = {
-  ...MarkerProps,
-};
+Marker.defaultProps = MarkerProps;

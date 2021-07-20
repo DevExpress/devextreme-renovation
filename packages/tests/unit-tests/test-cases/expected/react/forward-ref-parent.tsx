@@ -57,6 +57,4 @@ export default function RefOnChildrenParent(props: typeof Props & RestProps) {
   });
 }
 
-RefOnChildrenParent.defaultProps = {
-  ...Props,
-};
+RefOnChildrenParent.defaultProps = Props;

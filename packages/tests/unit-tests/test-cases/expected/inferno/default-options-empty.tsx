@@ -41,23 +41,30 @@ export default class Widget extends BaseInfernoComponent<any> {
   }
 }
 
-function __createDefaultProps() {
-  return {
-    ...WidgetProps,
-    ...convertRulesToOptions<typeof WidgetProps>([
-      { device: true, options: {} },
-    ]),
-  };
-}
-Widget.defaultProps = __createDefaultProps();
+Widget.defaultProps = Object.create(
+  Object.prototype,
+  Object.assign(
+    Object.getOwnPropertyDescriptors(WidgetProps),
+    Object.getOwnPropertyDescriptors({
+      ...convertRulesToOptions<typeof WidgetProps>([
+        { device: true, options: {} },
+      ]),
+    })
+  )
+);
 
 type WidgetOptionRule = Rule<typeof WidgetProps>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {
   __defaultOptionRules.push(rule);
-  Widget.defaultProps = {
-    ...__createDefaultProps(),
-    ...convertRulesToOptions<typeof WidgetProps>(__defaultOptionRules),
-  };
+  Widget.defaultProps = Object.create(
+    Object.prototype,
+    Object.assign(
+      Object.getOwnPropertyDescriptors(Widget.defaultProps),
+      Object.getOwnPropertyDescriptors(
+        convertRulesToOptions<typeof WidgetProps>(__defaultOptionRules)
+      )
+    )
+  );
 }

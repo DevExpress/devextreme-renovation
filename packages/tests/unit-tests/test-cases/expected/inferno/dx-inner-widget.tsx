@@ -71,6 +71,4 @@ export default class InnerWidget extends BaseInfernoComponent<any> {
   }
 }
 
-InnerWidget.defaultProps = {
-  ...InnerWidgetProps,
-};
+InnerWidget.defaultProps = InnerWidgetProps;

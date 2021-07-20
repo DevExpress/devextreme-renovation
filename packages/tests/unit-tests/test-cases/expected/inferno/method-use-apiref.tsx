@@ -60,6 +60,4 @@ export default class WidgetWithApiRef extends BaseInfernoComponent<any> {
   }
 }
 
-WidgetWithApiRef.defaultProps = {
-  ...WidgetWithApiRefInput,
-};
+WidgetWithApiRef.defaultProps = WidgetWithApiRefInput;
