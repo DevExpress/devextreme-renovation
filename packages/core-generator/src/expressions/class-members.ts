@@ -241,7 +241,7 @@ export class Method extends BaseClassMember {
     return dependencies;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): string[] {
     const members = options.members;
     const run = this.decorators
       .find((d) => d.name === Decorators.Effect)
@@ -283,7 +283,7 @@ export class Method extends BaseClassMember {
     return [...new Set(result)];
   }
 
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions): string {
     return `${this.decorators.join(' ')}${this.compileModifiers()} ${
       this.name
     }${this.compileTypeParameters()}(${this.parameters})${compileType(

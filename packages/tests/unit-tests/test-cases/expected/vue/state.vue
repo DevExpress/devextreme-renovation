@@ -34,6 +34,7 @@ export const DxWidget = {
   props: WidgetInput,
   data() {
     return {
+      internalState: 0,
       innerData: undefined,
       state1_state: this.state1,
       state2_state: this.state2,
@@ -71,6 +72,12 @@ export const DxWidget = {
       const cur = this.state2_state;
       (this.state2_state = cur !== false ? false : true),
         this.state2Change(this.state2_state);
+    },
+    __updateState3(state) {
+      (this.state2_state = state), this.state2Change(this.state2_state);
+    },
+    __updateInnerState(state) {
+      this.internalState = state;
     },
     __destruct() {
       const s = this.state1_state;

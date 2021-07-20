@@ -66,9 +66,10 @@ export default class Widget extends Props {
     }
     return (this.contextProviderProvider.value = this.__getterCache[
       "contextProvider"
-    ] = (() => {
-      return "provide";
-    })());
+    ] =
+      (() => {
+        return "provide";
+      })());
   }
   get __restAttributes(): any {
     return {};
@@ -80,11 +81,10 @@ export default class Widget extends Props {
     });
   }
 
-  _destroyContext: Array<() => void> = [];
-
   __getterCache: {
     contextProvider?: any;
   } = {};
+  _destroyContext: Array<() => void> = [];
 
   ngOnDestroy() {
     this._destroyContext.forEach((d) => d());
@@ -106,6 +106,7 @@ export default class Widget extends Props {
     } else {
       const changeHandler = (value: number) => {
         this.contextConsumerConsumer = value;
+
         this._detectChanges();
       };
       const subscription = contextConsumer.change.subscribe(changeHandler);
