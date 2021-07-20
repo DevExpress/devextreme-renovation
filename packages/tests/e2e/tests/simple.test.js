@@ -432,3 +432,31 @@ cloneTest("Synchronize InternalState setting on effect after TwoWay prop changed
     .expect((await buttonWithSyncState.textContent).trim())
     .eql(`Pressed - Internal State is Synchronized`);
 })
+
+cloneTest("Cached getters reset if dependency updated", async (t) => {
+  const updatePropButton = Selector("#updatePropButton");
+  const updateStateButton = Selector("#updateStateButton");
+  const updateContextButton = Selector("#updateContextButton");
+  const getterCacheValue = Selector("#getterCacheValue");
+  await t
+    .expect((await getterCacheValue.textContent).trim())
+    .eql('20 0 20 0 2')
+  
+  await t.click(updatePropButton)
+
+  await t
+    .expect((await getterCacheValue.textContent).trim())
+    .eql('21 0 21 0 2')
+
+  await t.click(updateStateButton)
+    
+  await t
+    .expect((await getterCacheValue.textContent).trim())
+    .eql('21 1 21 1 2')
+  
+  await t.click(updateContextButton)
+
+  await t
+    .expect((await getterCacheValue.textContent).trim())
+    .eql('31 1 31 1 3')
+})

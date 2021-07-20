@@ -48,6 +48,7 @@ import RefParent from "./refs-as-attributes/ref-parent";
 import DynamicComponent from "./dynamic-components/dynamic-component";
 import StylesWidget from "./styles";
 import ButtonWithInternalState from "./internal-state-change-on-effect";
+import GetterCache from './getter-cache/getter-cache-parent';
 
 function view(model: App) {
   return (
@@ -165,6 +166,7 @@ function view(model: App) {
       <DynamicComponent />
       <StylesWidget />
       <RefParent />
+      <GetterCache />
     </div>
   );
 }
@@ -197,7 +199,6 @@ export default class App extends JSXComponent(AppInput) {
   @InternalState() spreadAttributesComponentAria = "init";
 
   @InternalState() callMethodInGetterWidgetProp = 1;
-
   @InternalState() listItems = [
     { key: 0, text: "a" },
     { key: 1, text: "b" },

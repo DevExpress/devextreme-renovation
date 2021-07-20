@@ -16,3 +16,8 @@ export class PluginContext {
 export const Context = createContext<PluginContext | null>(null);
 
 export const SimpleContext = createContext<number>(10);
+export interface NumberContextType {
+  counter: number,
+  increaseCounter: ()=>void;
+}
+export const NumberContext = createContext<NumberContextType>({counter:1, increaseCounter: ()=>{}});
