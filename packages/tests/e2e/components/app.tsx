@@ -15,7 +15,7 @@ import ComponentWithRest from "./rest-attributes";
 import CallMethodInGetterWidget from "./call-method-in-getter";
 import ComponentWithFragment from "./component-with-fragment";
 import ComponentWithDefaultOptionRules, {
-  defaultOptions as setDefaultOptions,
+  defaultOptions as setDefaultOptions, setLocale
 } from "./default-option-rules";
 import List from "./list";
 import SpreadProps from "./spread-props";
@@ -183,6 +183,8 @@ setDefaultOptions({
     functionProp: () => "func",
   },
 });
+
+setLocale('ja');
 
 @ComponentBindings()
 class AppInput {}

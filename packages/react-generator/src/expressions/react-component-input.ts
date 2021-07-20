@@ -14,6 +14,7 @@ import {
 
 import { Method } from './class-members/method';
 import { compileJSXTemplateType, Property } from './class-members/property';
+import { compileGettersCompatibleExtend } from './common';
 
 export function getTemplatePropName(
   name: Identifier | string,
@@ -85,8 +86,6 @@ export class ComponentInput extends BaseComponentInput {
   }
 
   toString(): string {
-    const inherited = this.baseTypes.map((t) => `...${t}`);
-
     const types = this.heritageClauses.reduce(
       (t: string[], h) => t.concat(h.typeNodes.map((t) => `typeof ${t}`)),
       [],
@@ -139,15 +138,24 @@ export class ComponentInput extends BaseComponentInput {
         [] as ComponentInput[],
       ),
     };
+
+    const defaultObject = `{
+      ${propertiesWithInitializer
+    .map((p) => p.defaultProps(options))
+    .join(',\n')}
+   }`;
+
+    let defaultProps = defaultObject;
+    const inheritedBaseType = this.baseTypes[0];
+
+    if (inheritedBaseType) {
+      defaultProps = propertiesWithInitializer.length
+        ? compileGettersCompatibleExtend(inheritedBaseType, defaultObject)
+        : inheritedBaseType;
+    }
     return `${this.compileImports()}
           ${typeDeclaration}
-          ${declarationModifiers.join(' ')} const ${this.name}:${typeName}={
-             ${inherited
-    .concat(
-      propertiesWithInitializer.map((p) => p.defaultProps(options)),
-    )
-    .join(',\n')}
-          }${typeCasting};
+          ${declarationModifiers.join(' ')} const ${this.name}:${typeName}=${defaultProps}${typeCasting};
           ${
   declarationModifiers !== this.modifiers
     ? `${this.modifiers.join(' ')} ${this.name}`

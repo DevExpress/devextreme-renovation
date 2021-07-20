@@ -50,20 +50,20 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   return view();
 }
 
-function __createDefaultProps() {
-  return {
-    ...WidgetInput,
-  };
-}
-Widget.defaultProps = __createDefaultProps();
+Widget.defaultProps = WidgetInput;
 
 type WidgetOptionRule = Rule<typeof WidgetInput>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {
   __defaultOptionRules.push(rule);
-  Widget.defaultProps = {
-    ...__createDefaultProps(),
-    ...convertRulesToOptions<typeof WidgetInput>(__defaultOptionRules),
-  };
+  Widget.defaultProps = Object.create(
+    Object.prototype,
+    Object.assign(
+      Object.getOwnPropertyDescriptors(Widget.defaultProps),
+      Object.getOwnPropertyDescriptors(
+        convertRulesToOptions<typeof WidgetInput>(__defaultOptionRules)
+      )
+    )
+  );
 }

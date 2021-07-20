@@ -3,17 +3,17 @@ import BaseWidget from "./method";
 function view(viewModel: WidgetWithApiRef) {
   return (
     <BaseWidget
-    ref={viewModel.baseRef}
-    prop1={viewModel.props.prop1}
+      ref={viewModel.baseRef}
+      prop1={viewModel.props.prop1}
     ></BaseWidget>
-    );
-  }
-  
-  export declare type WidgetWithApiRefInputType = {
-    prop1?: number;
-  };
-  const WidgetWithApiRefInput: WidgetWithApiRefInputType = {};
-  import * as Preact from "preact";
+  );
+}
+
+export declare type WidgetWithApiRefInputType = {
+  prop1?: number;
+};
+const WidgetWithApiRefInput: WidgetWithApiRefInputType = {};
+import * as Preact from "preact";
 import { useCallback, useRef, useImperativeHandle } from "preact/hooks";
 import { forwardRef } from "preact/compat";
 
@@ -66,6 +66,4 @@ const WidgetWithApiRef = forwardRef<
 };
 export default WidgetWithApiRef;
 
-WidgetWithApiRef.defaultProps = {
-  ...WidgetWithApiRefInput,
-};
+WidgetWithApiRef.defaultProps = WidgetWithApiRefInput;

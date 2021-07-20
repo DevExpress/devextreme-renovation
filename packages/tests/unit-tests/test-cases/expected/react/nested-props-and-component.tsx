@@ -27,7 +27,9 @@ export declare type WidgetPropsType = {
   children?: React.ReactNode;
 };
 export const WidgetProps: WidgetPropsType = {
-  __defaultNestedValues: { anotherNestedPropInit: [FakeNested] },
+  get __defaultNestedValues() {
+    return { anotherNestedPropInit: [FakeNested] };
+  },
   twoWayPropChange: () => {},
 };
 import * as React from "react";
@@ -304,6 +306,4 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
   });
 }
 
-UndefWidget.defaultProps = {
-  ...WidgetProps,
-};
+UndefWidget.defaultProps = WidgetProps;

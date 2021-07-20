@@ -66,9 +66,7 @@ export default function WidgetWithTemplate(
   });
 }
 
-WidgetWithTemplate.defaultProps = {
-  ...WidgetInput,
-};
+WidgetWithTemplate.defaultProps = WidgetInput;
 function view(viewModel: WidgetWithTemplate) {
   const myvar = viewModel.props.someProp;
   const FooterTemplate = viewModel.props.footerTemplate;

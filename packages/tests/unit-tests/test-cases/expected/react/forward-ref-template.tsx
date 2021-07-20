@@ -72,6 +72,4 @@ export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
   });
 }
 
-RefOnChildrenTemplate.defaultProps = {
-  ...Props,
-};
+RefOnChildrenTemplate.defaultProps = Props;

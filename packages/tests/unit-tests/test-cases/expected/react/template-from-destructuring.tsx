@@ -62,6 +62,4 @@ export function TestComponent(props: typeof Props & RestProps) {
 
 export default TestComponent;
 
-TestComponent.defaultProps = {
-  ...Props,
-};
+TestComponent.defaultProps = Props;

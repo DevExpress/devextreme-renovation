@@ -161,6 +161,14 @@ mocha.describe("vue-generation", function () {
     this.testGenerator("dx-inner-widget");
   });
 
+  mocha.it("component-input", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("component-input-defaults", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("component-bindings-only", function () {
     this.testGenerator(this.test!.title);
   });

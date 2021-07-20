@@ -69,20 +69,20 @@ function __processTwoWayProps(defaultProps: typeof WidgetProps & RestProps) {
   }, {});
 }
 
-function __createDefaultProps() {
-  return {
-    ...WidgetProps,
-  };
-}
-Widget.defaultProps = __createDefaultProps();
+Widget.defaultProps = WidgetProps;
 
 type WidgetOptionRule = Rule<typeof WidgetProps>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {
   __defaultOptionRules.push(rule);
-  Widget.defaultProps = {
-    ...__createDefaultProps(),
-    ...__processTwoWayProps(convertRulesToOptions(__defaultOptionRules)),
-  };
+  Widget.defaultProps = Object.create(
+    Object.prototype,
+    Object.assign(
+      Object.getOwnPropertyDescriptors(Widget.defaultProps),
+      Object.getOwnPropertyDescriptors(
+        __processTwoWayProps(convertRulesToOptions(__defaultOptionRules))
+      )
+    )
+  );
 }

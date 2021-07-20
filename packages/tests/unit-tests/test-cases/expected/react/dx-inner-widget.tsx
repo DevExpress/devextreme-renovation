@@ -118,6 +118,4 @@ export default function InnerWidget(
   });
 }
 
-InnerWidget.defaultProps = {
-  ...InnerWidgetProps,
-};
+InnerWidget.defaultProps = InnerWidgetProps;
