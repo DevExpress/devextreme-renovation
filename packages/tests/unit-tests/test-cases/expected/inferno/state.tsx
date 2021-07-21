@@ -43,6 +43,7 @@ declare type RestProps = {
 
 export default class Widget extends BaseInfernoComponent<any> {
   state: {
+    internalState: number;
     innerData?: string;
     state1?: boolean;
     state2: boolean;
@@ -54,6 +55,7 @@ export default class Widget extends BaseInfernoComponent<any> {
   constructor(props: any) {
     super(props);
     this.state = {
+      internalState: 0,
       innerData: undefined,
       state1:
         this.props.state1 !== undefined
@@ -70,19 +72,22 @@ export default class Widget extends BaseInfernoComponent<any> {
     };
     this.updateState = this.updateState.bind(this);
     this.updateState2 = this.updateState2.bind(this);
+    this.updateState3 = this.updateState3.bind(this);
+    this.updateInnerState = this.updateInnerState.bind(this);
     this.destruct = this.destruct.bind(this);
     this.stateChange = this.stateChange.bind(this);
   }
 
+  internalState!: number;
   innerData?: string;
 
   updateState(): any {
     {
       let __newValue;
-      this.setState((state: any) => {
+      this.setState((__state_argument: any) => {
         __newValue = !(this.props.state1 !== undefined
           ? this.props.state1
-          : state.state1);
+          : __state_argument.state1);
         return { state1: __newValue };
       });
       this.props.state1Change!(__newValue);
@@ -93,12 +98,25 @@ export default class Widget extends BaseInfernoComponent<any> {
       this.props.state2 !== undefined ? this.props.state2 : this.state.state2;
     {
       let __newValue;
-      this.setState((state: any) => {
+      this.setState((__state_argument: any) => {
         __newValue = cur !== false ? false : true;
         return { state2: __newValue };
       });
       this.props.state2Change!(__newValue);
     }
+  }
+  updateState3(state: boolean): any {
+    {
+      let __newValue;
+      this.setState((__state_argument: any) => {
+        __newValue = state;
+        return { state2: __newValue };
+      });
+      this.props.state2Change!(__newValue);
+    }
+  }
+  updateInnerState(state: number): any {
+    this.setState((__state_argument: any) => ({ internalState: state }));
   }
   destruct(): any {
     const s =
@@ -107,7 +125,7 @@ export default class Widget extends BaseInfernoComponent<any> {
   stateChange(stateProp?: boolean): any {
     {
       let __newValue;
-      this.setState((state: any) => {
+      this.setState((__state_argument: any) => {
         __newValue = stateProp;
         return { stateProp: __newValue };
       });
@@ -158,9 +176,12 @@ export default class Widget extends BaseInfernoComponent<any> {
             ? this.props.stateProp
             : this.state.stateProp,
       },
+      internalState: this.state.internalState,
       innerData: this.state.innerData,
       updateState: this.updateState,
       updateState2: this.updateState2,
+      updateState3: this.updateState3,
+      updateInnerState: this.updateInnerState,
       destruct: this.destruct,
       stateChange: this.stateChange,
       restAttributes: this.restAttributes,

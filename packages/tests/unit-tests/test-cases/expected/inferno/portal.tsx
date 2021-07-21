@@ -55,7 +55,7 @@ export default class Widget extends InfernoComponent<any> {
   }
 
   onInit(): any {
-    this.setState((state: any) => ({ ...state, rendered: true }));
+    this.setState((__state_argument: any) => ({ rendered: true }));
   }
   get restAttributes(): RestProps {
     const { someRef, ...restProps } = this.props as any;
