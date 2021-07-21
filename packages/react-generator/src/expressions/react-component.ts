@@ -7,7 +7,6 @@ import {
   Conditional,
   Decorator,
   ObjectLiteral,
-  TypeParameterDeclaration,
   SyntaxKind,
   GeneratorContext,
   toStringOptions,
@@ -24,8 +23,6 @@ import {
   ReturnStatement,
   Block,
   SimpleTypeExpression,
-  ArrayTypeNode,
-  extractComplexType,
   isTypeArray,
   TypeExpression,
   Parameter,
@@ -161,9 +158,9 @@ export class ReactComponent extends Component {
       undefined,
       new Identifier('nestedChildren'),
       undefined,
-      [new TypeParameterDeclaration(new Identifier('T'))],
       [],
-      new ArrayTypeNode(new SimpleTypeExpression('T')),
+      [],
+      new SimpleTypeExpression('Record<string, any>'),
       new Block(statements, true),
     );
 
@@ -234,28 +231,20 @@ export class ReactComponent extends Component {
   createNestedChildrenCollector(): Function {
     const statements = [
       new ReturnStatement(
-        new SimpleExpression(`(React.Children.toArray(children)
-            .filter((child) =>
-              React.isValidElement(child) &&
-              typeof child.type !== "string") as (React.ReactElement & { type: { propName: string } })[])
-            .map(child => {
-              const { children: childChildren, ...childProps } = child.props;
-              const collectedChildren = {} as any;
-              __collectChildren(childChildren).forEach(({ __name, ...restProps }: any) => {
-                  if(__name) {
-                    if(!collectedChildren[__name]) {
-                      collectedChildren[__name] = [];
-                    }
-                    collectedChildren[__name].push(restProps);
-                  }
-                }
-              );
-              return {
-                ...collectedChildren,
-                ...childProps,
-                __name: child.type.propName,
-              }
-            })`),
+        new SimpleExpression(`(
+              React.Children.toArray(children).filter(
+                (child) => React.isValidElement(child) && typeof child.type !== "string"
+              ) as (React.ReactElement & { type: { propName: string } })[]
+            )
+              .reduce((acc: Record<string, any>, child) => {
+                const { children: childChildren, ...childProps } = child.props;
+                const collectedChildren = __collectChildren(childChildren);
+                const allChild = { ...childProps, ...collectedChildren };
+                return {
+                  ...acc,
+                  [child.type.propName]: acc[child.type.propName] ? [...acc[child.type.propName], allChild] : [allChild],
+                };
+              }, {})`),
       ),
     ];
 
@@ -264,7 +253,7 @@ export class ReactComponent extends Component {
       undefined,
       '',
       new Identifier('__collectChildren'),
-      [new TypeParameterDeclaration(new Identifier('T'))],
+      [],
       [
         new Parameter(
           [],
@@ -276,7 +265,7 @@ export class ReactComponent extends Component {
           undefined,
         ),
       ],
-      new ArrayTypeNode(new SimpleTypeExpression('T')),
+      new SimpleTypeExpression('Record<string, any>'),
       new Block(statements, true),
       this.context,
     );
@@ -308,8 +297,7 @@ export class ReactComponent extends Component {
             baseComponent.context.path!,
           );
           result.add(
-            `import {${
-              baseComponent.name
+            `import {${baseComponent.name
             }Ref as ${refType}Ref} from "${this.processModuleFileName(
               relativePath.replace(path.extname(relativePath), ''),
             )}"`,
@@ -404,8 +392,7 @@ export class ReactComponent extends Component {
 
     if (this.needGenerateDefaultOptions) {
       return `
-                  ${
-  this.state.length
+                  ${this.state.length
     ? `function __processTwoWayProps(defaultProps: ${this.compilePropsType()}){
                           const twoWayProps:string[] = [${this.state.map(
     (s) => `"${s.name}"`,
@@ -527,10 +514,10 @@ export class ReactComponent extends Component {
       this.members
         .filter(
           (m) => !m.inherited
-                        && !m.isEffect
-                        && !m.isApiMethod
-                        && !m.isPrivate
-                        && !m.isMutable,
+                && !m.isEffect
+                && !m.isApiMethod
+                && !m.isPrivate
+                && !m.isMutable,
         )
         .map((m) => m.typeDeclaration()),
     )
@@ -707,7 +694,6 @@ export class ReactComponent extends Component {
   createNestedPropertyGetter(property: Property): GetAccessor {
     const propName = getPropName(property.name);
     const isArray = isTypeArray(property.type);
-    const type = extractComplexType(property.type);
     const indexGetter = isArray ? '' : '?.[0]';
     const undefinedType = property.initializer ? '' : ' | undefined';
 
@@ -739,24 +725,7 @@ export class ReactComponent extends Component {
             new VariableDeclaration(
               new Identifier('nested'),
               undefined,
-              new SimpleExpression(
-                `__nestedChildren<typeof ${type} & { __name: string }>().filter(child => child.__name === "${
-                  property.name
-                }")${
-                  property.initializer
-                    ? `.map((n) => {
-                  if (
-                    !Object.keys(n).some(
-                      (k) => k !== "__name" && k !== "__defaultNestedValues"
-                    )
-                  ) {
-                    return (n as any)?.__defaultNestedValues || n;
-                  }
-                  return n;
-                });`
-                    : ''
-                }`,
-              ),
+              new SimpleExpression('__nestedChildren()'),
             ),
           ],
           SyntaxKind.ConstKeyword,
@@ -767,13 +736,12 @@ export class ReactComponent extends Component {
           new SimpleExpression(propName),
           new SimpleExpression(propName),
           new Conditional(
-            new SimpleExpression('nested.length'),
-            new SimpleExpression(`nested${indexGetter}`),
+            new SimpleExpression(`nested.${property.name}`),
+            new SimpleExpression(`nested.${property.name}${indexGetter}`),
             new SimpleExpression(
-              `${
-                property.initializer
-                  ? `props?.__defaultNestedValues?.${property.name}`
-                  : 'undefined'
+              `${property.initializer
+                ? `props?.__defaultNestedValues?.${property.name}`
+                : 'undefined'
               }`,
             ),
           ),
@@ -823,8 +791,7 @@ export class ReactComponent extends Component {
   compileViewCall(): string {
     const viewFunction = this.context.viewFunctions?.[this.view];
     const callView = `${this.view}(
-        ${
-  viewFunction?.parameters.length
+        ${viewFunction?.parameters.length
     ? `${this.viewModel}(
                 ${this.compileViewModelArguments()}
             )`
@@ -851,8 +818,7 @@ export class ReactComponent extends Component {
   }
 
   compileFunctionalComponentType(): string {
-    return `React.FC<${this.compilePropsType()} & { ref?: React.Ref<${
-      this.name
+    return `React.FC<${this.compilePropsType()} & { ref?: React.Ref<${this.name
     }Ref> }> & { defaultProps: ${this.getPropsType()}}`;
   }
 
@@ -926,8 +892,7 @@ export class ReactComponent extends Component {
               ${this.compileImports()}
               ${this.compileStyleNormalizer()}
               ${this.compilePortalComponent()}
-              ${
-  this.members.some((m) => m.isNested)
+              ${this.members.some((m) => m.isNested)
     ? this.createNestedChildrenCollector()
     : ''
 }
@@ -936,13 +901,10 @@ export class ReactComponent extends Component {
               ${this.compileRestProps()}
               ${this.compileComponentInterface()}
               ${getTemplateFunc}
-              ${
-  this.members.filter((m) => m.isApiMethod).length === 0
-    ? `${this.modifiers.join(' ')} function ${
-      this.name
+              ${this.members.filter((m) => m.isApiMethod).length === 0
+    ? `${this.modifiers.join(' ')} function ${this.name
     }(props: ${this.compilePropsType()}){`
-    : `const ${this.name} = forwardRef<${
-      this.name
+    : `const ${this.name} = forwardRef<${this.name
     }Ref, ${this.compilePropsType()}>(function ${lowerizeFirstLetter(
       this.name,
     )}(props: ${this.compilePropsType()}, ref){`
@@ -952,7 +914,7 @@ export class ReactComponent extends Component {
                   ${this.members
     .filter(
       (m) => (m.isConsumer || m.isProvider)
-                        && !(m instanceof GetAccessor),
+            && !(m instanceof GetAccessor),
     )
     .map((m) => m.toString(this.getToStringOptions()))
     .join(';\n')}
@@ -964,8 +926,7 @@ export class ReactComponent extends Component {
       ) as Array<Method>,
     )
     .map(
-      (m) => `const ${
-        m.name
+      (m) => `const ${m.name
       }=useCallback(${m.declaration(
         this.getToStringOptions(),
       )}, [${m.getDependency({
@@ -977,15 +938,13 @@ export class ReactComponent extends Component {
                   ${this.compileUseEffect()}
                   ${this.compileUseImperativeHandle()}
                   return ${this.compileViewCall()}
-              ${
-  this.members.filter((m) => m.isApiMethod).length === 0
+              ${this.members.filter((m) => m.isApiMethod).length === 0
     ? '}'
     : `}) as ${this.compileFunctionalComponentType()};\n${this.modifiers.join(
       ' ',
-    )} ${
-      this.modifiers.join(' ') === 'export'
-        ? `{${this.name}}`
-        : this.name
+    )} ${this.modifiers.join(' ') === 'export'
+      ? `{${this.name}}`
+      : this.name
     };`
 }
 

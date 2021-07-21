@@ -59,30 +59,22 @@ export const WidgetProps: WidgetPropsType = Object.create(
 import * as React from "react";
 import { useCallback } from "react";
 
-function __collectChildren<T>(children: React.ReactNode): T[] {
+function __collectChildren(children: React.ReactNode): Record<string, any> {
   return (
     React.Children.toArray(children).filter(
       (child) => React.isValidElement(child) && typeof child.type !== "string"
     ) as (React.ReactElement & { type: { propName: string } })[]
-  ).map((child) => {
+  ).reduce((acc: Record<string, any>, child) => {
     const { children: childChildren, ...childProps } = child.props;
-    const collectedChildren = {} as any;
-    __collectChildren(childChildren).forEach(
-      ({ __name, ...restProps }: any) => {
-        if (__name) {
-          if (!collectedChildren[__name]) {
-            collectedChildren[__name] = [];
-          }
-          collectedChildren[__name].push(restProps);
-        }
-      }
-    );
+    const collectedChildren = __collectChildren(childChildren);
+    const allChild = { ...childProps, ...collectedChildren };
     return {
-      ...collectedChildren,
-      ...childProps,
-      __name: child.type.propName,
+      ...acc,
+      [child.type.propName]: acc[child.type.propName]
+        ? [...acc[child.type.propName], allChild]
+        : [allChild],
     };
-  });
+  }, {});
 }
 export const Texts2: React.FunctionComponent<typeof TextsProps> & {
   propName: string;
@@ -99,7 +91,7 @@ declare type RestProps = {
 interface Widget {
   props: typeof WidgetProps & RestProps;
   restAttributes: RestProps;
-  nestedChildren: <T>() => T[];
+  nestedChildren: () => Record<string, any>;
   __getNestedTexts2: typeof TextsProps;
   __getNestedTexts3: typeof TextsProps;
 }
@@ -143,7 +135,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
     [props]
   );
   const __nestedChildren = useCallback(
-    function __nestedChildren<T>(): T[] {
+    function __nestedChildren(): Record<string, any> {
       const { children } = props;
       return __collectChildren(children);
     },
@@ -151,44 +143,22 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   );
   const __getNestedTexts2 = useCallback(
     function __getNestedTexts2(): typeof TextsProps {
-      const nested = __nestedChildren<typeof TextsProps & { __name: string }>()
-        .filter((child) => child.__name === "texts2")
-        .map((n) => {
-          if (
-            !Object.keys(n).some(
-              (k) => k !== "__name" && k !== "__defaultNestedValues"
-            )
-          ) {
-            return (n as any)?.__defaultNestedValues || n;
-          }
-          return n;
-        });
+      const nested = __nestedChildren();
       return props.texts2
         ? props.texts2
-        : nested.length
-        ? nested?.[0]
+        : nested.texts2
+        ? nested.texts2?.[0]
         : props?.__defaultNestedValues?.texts2;
     },
     [props.texts2, props.children]
   );
   const __getNestedTexts3 = useCallback(
     function __getNestedTexts3(): typeof TextsProps {
-      const nested = __nestedChildren<typeof TextsProps & { __name: string }>()
-        .filter((child) => child.__name === "texts3")
-        .map((n) => {
-          if (
-            !Object.keys(n).some(
-              (k) => k !== "__name" && k !== "__defaultNestedValues"
-            )
-          ) {
-            return (n as any)?.__defaultNestedValues || n;
-          }
-          return n;
-        });
+      const nested = __nestedChildren();
       return props.texts3
         ? props.texts3
-        : nested.length
-        ? nested?.[0]
+        : nested.texts3
+        ? nested.texts3?.[0]
         : props?.__defaultNestedValues?.texts3;
     },
     [props.texts3, props.children]
