@@ -5,6 +5,7 @@ import { FormsModule } from "@angular/forms";
 import { DxCounterModule } from "../../../../../../components/counter";
 import { DxWithNestedModule } from "../../../../../../components/nested";
 import { DxButtonWithTemplateModule } from "../../../../../../components/button-with-template";
+import { DxUndefWidgetModule } from "../../../../../../components/nested-undefined-component";
 
 @NgModule({
   declarations: [AppComponent],
@@ -14,6 +15,7 @@ import { DxButtonWithTemplateModule } from "../../../../../../components/button-
     DxCounterModule,
     DxWithNestedModule,
     DxButtonWithTemplateModule,
+    DxUndefWidgetModule
   ],
   providers: [],
   bootstrap: [AppComponent],

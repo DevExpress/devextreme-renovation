@@ -5,7 +5,7 @@ import ButtonWithTemplate from "../../../../../components/button-with-template";
 import Counter from "../../../../../components/counter";
 
 import Nested from "../../../../../components/nested";
-
+import UndefWidget from "../../../../../components/nested-undefined-component";
 const buttonTemplate = ({ text }) => (
   <div style={{ border: "1px solid blue" }}>{text + "!"}</div>
 );
@@ -76,6 +76,17 @@ export default class NativeComponents extends Component {
           Nested Cell with not default Cell:
           <Nested rows={[{ cells: ["defaultValue", "notDefault"] }]}></Nested>
         </div>
+        hasOwnProperty tests<br/>
+        All is not defined
+        <UndefWidget/>
+        All is defined by a prop
+        <UndefWidget oneWayProp={2} twoWayProp={2} someRef={null} 
+          someForwardRef={null} nestedProp={[{numberProp: 2}]} 
+          anotherNestedPropInit={[{numberProp: 2}]}>
+        </UndefWidget>
+        Nested defined by a config component, OneWay and TwoWay set to undefined
+        <UndefWidget oneWayProp={undefined} twoWayProp={undefined} nestedProp={[{numberProp: 2}]}>
+        </UndefWidget>
       </div>
     );
   }

@@ -45,62 +45,58 @@ export default class Widget extends BaseInfernoComponent<any> {
   innerState!: number;
 
   updateState(): any {
-    this.setState((state: any) => ({
-      ...state,
-      innerState: state.innerState + 1,
+    this.setState((__state_argument: any) => ({
+      innerState: __state_argument.innerState + 1,
     }));
-    this.setState((state: any) => ({
-      ...state,
-      innerState: state.innerState + 1,
+    this.setState((__state_argument: any) => ({
+      innerState: __state_argument.innerState + 1,
     }));
-    this.setState((state: any) => ({
-      ...state,
-      innerState: state.innerState + 1,
+    this.setState((__state_argument: any) => ({
+      innerState: __state_argument.innerState + 1,
     }));
-    this.setState((state: any) => ({
-      ...state,
-      innerState: state.innerState + 1,
+    this.setState((__state_argument: any) => ({
+      innerState: __state_argument.innerState + 1,
     }));
     {
       let __newValue;
-      this.setState((state: any) => {
+      this.setState((__state_argument: any) => {
         __newValue =
           (this.props.propState !== undefined
             ? this.props.propState
-            : state.propState) + 1;
+            : __state_argument.propState) + 1;
         return { propState: __newValue };
       });
       this.props.propStateChange!(__newValue);
     }
     {
       let __newValue;
-      this.setState((state: any) => {
+      this.setState((__state_argument: any) => {
         __newValue =
           (this.props.propState !== undefined
             ? this.props.propState
-            : state.propState) + 1;
+            : __state_argument.propState) + 1;
         return { propState: __newValue };
       });
       this.props.propStateChange!(__newValue);
     }
     {
       let __newValue;
-      this.setState((state: any) => {
+      this.setState((__state_argument: any) => {
         __newValue =
           (this.props.propState !== undefined
             ? this.props.propState
-            : state.propState) + 1;
+            : __state_argument.propState) + 1;
         return { propState: __newValue };
       });
       this.props.propStateChange!(__newValue);
     }
     {
       let __newValue;
-      this.setState((state: any) => {
+      this.setState((__state_argument: any) => {
         __newValue =
           (this.props.propState !== undefined
             ? this.props.propState
-            : state.propState) + 1;
+            : __state_argument.propState) + 1;
         return { propState: __newValue };
       });
       this.props.propStateChange!(__newValue);
