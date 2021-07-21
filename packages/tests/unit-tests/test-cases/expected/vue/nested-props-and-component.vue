@@ -1,7 +1,5 @@
 <template>
-  <div
-    ><div>Nested:{{ __nested }}</div></div
-  >
+  <div></div>
 </template>
 <script>
 export const FakeNested = {
@@ -13,6 +11,24 @@ export const FakeNested = {
   },
 };
 export const WidgetProps = {
+  oneWayProp: {
+    type: Number,
+  },
+  twoWayProp: {
+    type: Number,
+  },
+  someRef: {
+    type: Function,
+  },
+  someForwardRef: {
+    type: Function,
+  },
+  templateProp: {
+    type: String,
+    default() {
+      return "templateProp";
+    },
+  },
   nestedProp: {
     type: Array,
   },
@@ -88,23 +104,84 @@ export const DxNestedProp = {
 DxNestedProp.propName = "nestedProp";
 DxNestedProp.defaultProps = __extractDefaultValues(FakeNested);
 
-export const DxundefWidget = {
-  name: "undefWidget",
+export const DxUndefWidget = {
+  name: "UndefWidget",
   props: WidgetProps,
+  data() {
+    return {
+      twoWayProp_state: this.twoWayProp,
+    };
+  },
   computed: {
+    __oneway() {
+      return (
+        this.props.oneWayProp !== undefined ||
+        this.$options.propsData.hasOwnProperty("oneWayProp")
+      );
+    },
+    __twoway() {
+      return (
+        this.props.twoWayProp !== undefined ||
+        this.$options.propsData.hasOwnProperty("twoWayProp")
+      );
+    },
+    __someevent() {
+      return (
+        this.props.someEvent !== undefined ||
+        this.$options.propsData.hasOwnProperty("someEvent")
+      );
+    },
+    __someref() {
+      return (
+        this.props.someRef !== undefined ||
+        this.$options.propsData.hasOwnProperty("someRef")
+      );
+    },
+    __someforwardref() {
+      return (
+        this.props.someForwardRef !== undefined ||
+        this.$options.propsData.hasOwnProperty("someForwardRef")
+      );
+    },
+    __someslot() {
+      return (
+        this.props.slotProp !== undefined ||
+        this.$options.propsData.hasOwnProperty("slotProp")
+      );
+    },
+    __sometemplate() {
+      return (
+        this.props.templateProp !== undefined ||
+        this.$options.propsData.hasOwnProperty("templateProp")
+      );
+    },
     __nested() {
-      return this.props.hasOwnProperty("nestedProp");
+      return (
+        this.props.nestedProp !== undefined ||
+        this.$options.propsData.hasOwnProperty("nestedProp")
+      );
     },
     __nestedinit() {
-      return this.props.hasOwnProperty("anotherNestedPropInit");
+      return (
+        this.props.anotherNestedPropInit !== undefined ||
+        this.$options.propsData.hasOwnProperty("anotherNestedPropInit")
+      );
     },
     __restAttributes() {
       return {};
     },
     props() {
       return {
+        oneWayProp: this.oneWayProp,
+        twoWayProp: this.twoWayProp_state,
+        someEvent: this.someEvent,
+        someRef: this.someRef,
+        someForwardRef: this.someForwardRef?.(),
+        slotProp: this.$slots.slotProp,
+        templateProp: this.templateProp,
         nestedProp: this.__getNestedNestedProp,
         anotherNestedPropInit: this.__getNestedAnotherNestedPropInit,
+        twoWayPropChange: this.twoWayPropChange,
       };
     },
     __nestedChildren() {
@@ -140,6 +217,34 @@ export const DxundefWidget = {
         : this?.__defaultNestedValues?.anotherNestedPropInit;
     },
   },
+  watch: {
+    twoWayProp: ["__twoWayProp_watcher"],
+  },
+  methods: {
+    forwardRef_someForwardRef(ref) {
+      if (arguments.length) {
+        this.$refs.someForwardRef = ref;
+        this.someForwardRef?.(ref);
+      }
+      return this.$refs.someForwardRef;
+    },
+    someEvent(...args) {
+      this.$emit("some-event", ...args);
+    },
+    twoWayPropChange(...args) {
+      this.$emit("update:two-way-prop", ...args);
+    },
+    __forwardRef() {},
+    __twoWayProp_watcher(s) {
+      this.twoWayProp_state = s;
+    },
+  },
+  mounted() {
+    this.__forwardRef();
+  },
+  updated() {
+    this.__forwardRef();
+  },
 };
-export default DxundefWidget;
+export default DxUndefWidget;
 </script>

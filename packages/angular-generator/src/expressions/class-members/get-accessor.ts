@@ -68,4 +68,18 @@ export class GetAccessor extends BaseGetAccessor {
   isMemorized(): boolean {
     return isComplexType(this.type) || this.isProvider;
   }
+
+  get canBeDestructured() {
+    if (
+      this.isEvent
+      || this.isNested
+      || this.isForwardRefProp
+      || this.isRef
+      || this.isRefProp
+      || this.isForwardRef
+    ) {
+      return false;
+    }
+    return super.canBeDestructured;
+  }
 }

@@ -39,8 +39,15 @@ import { SetAccessor } from './class-members/set-accessor';
 import { ComponentInput } from './component-input';
 import { Decorator } from './decorator';
 import { isElement } from './jsx/elements';
-import { dynamicComponentDirective, dynamicComponentDirectiveCoreImports } from './templates/dynamic-component-directive';
-import { angularPortalCdkImports, angularPortalCoreImports, angularPortalTemplate } from './templates/portal-component';
+import {
+  dynamicComponentDirective,
+  dynamicComponentDirectiveCoreImports,
+} from './templates/dynamic-component-directive';
+import {
+  angularPortalCdkImports,
+  angularPortalCoreImports,
+  angularPortalTemplate,
+} from './templates/portal-component';
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = 'CUSTOM_VALUE_ACCESSOR_PROVIDER';
 
@@ -311,9 +318,9 @@ export class AngularComponent extends Component {
       ),
     ];
 
-    const nestedName = `${parentName}${capitalizeFirstLetter(isTypeArray(type)
-      ? removePlural(name)
-      : name)}`;
+    const nestedName = `${parentName}${capitalizeFirstLetter(
+      isTypeArray(type) ? removePlural(name) : name,
+    )}`;
 
     const complexType = type
       .toString()
@@ -1014,9 +1021,7 @@ export class AngularComponent extends Component {
     const innerNested = (component.members.filter(
       (m) => m.isNested,
     ) as Property[])
-      .map((m) => this.processNestedProperty(m, false, name, component.name).join(
-        '\n',
-      ))
+      .map((m) => this.processNestedProperty(m, false, name, component.name).join('\n'))
       .join('\n');
 
     return `
@@ -1067,9 +1072,7 @@ export class AngularComponent extends Component {
 
     return nested.concat(
       nested.reduce(
-        (acc, el) => acc.concat(
-          this.getNestedFromComponentInput(el.component, el.name),
-        ),
+        (acc, el) => acc.concat(this.getNestedFromComponentInput(el.component, el.name)),
         [] as {
           component: ComponentInput;
           name: string;

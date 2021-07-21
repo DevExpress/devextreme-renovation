@@ -11,7 +11,10 @@ import {
   TypeExpression,
 } from '@devextreme-generator/core';
 
-import { compileJSXTemplateProps, TypeReferenceNode } from '../type-reference-node';
+import {
+  compileJSXTemplateProps,
+  TypeReferenceNode,
+} from '../type-reference-node';
 
 export function getLocalStateName(
   name: Identifier | string,

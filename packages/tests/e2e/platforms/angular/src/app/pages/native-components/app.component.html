@@ -68,3 +68,15 @@ Default values:
     </dxi-row>
   </dx-with-nested>
 </div>
+hasOwnProperty tests <br>
+All is not defined
+<dx-undef-widget></dx-undef-widget>
+All is defined by a prop
+<dx-undef-widget [oneWayProp]="2" [twoWayProp]="2" [someRef]="someRef" [someForwardRef]="someRef"
+  [nestedProp]="[{numberProp: 2}]" 
+  [anotherNestedPropInit]="[{numberProp: 2}]">
+</dx-undef-widget>
+Nested defined by a config component, OneWay and TwoWay set to undefined
+<dx-undef-widget [oneWayProp]="undefined" [twoWayProp]="undefined">
+  <dxi-nested-prop [numberProp]="2"></dxi-nested-prop> 
+</dx-undef-widget>
