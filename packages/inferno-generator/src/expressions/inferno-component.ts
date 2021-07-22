@@ -17,6 +17,7 @@ import {
   TypeExpression,
   VariableDeclarationList,
   VariableStatement,
+  capitalizeFirstLetter,
 } from '@devextreme-generator/core';
 import { PreactComponent } from '@devextreme-generator/preact';
 
@@ -111,6 +112,76 @@ export class InfernoComponent extends PreactComponent {
       };`;
     }
 
+    return '';
+  }
+
+  compileGetterCache(componentWillUpdate_Statements: string[]): string {
+    const getters = this.members.filter(
+      (m) => m instanceof GetAccessor && m.isMemorized(),
+    );
+
+    if (getters.length) {
+      const statements = [
+        `__getterCache: {
+            ${getters.map((g) => `${g._name}?:${g.type}`).join(';\n')}
+          } = {}`,
+      ];
+
+      getters.forEach((g) => {
+        const allDeps = g.getDependency({
+          members: this.members,
+          componentContext: SyntaxKind.ThisKeyword,
+        });
+
+        const deleteCacheStatement = `this.__getterCache["${g._name.toString()}"] = undefined;`;
+
+        const contextConsumers = this.members.map((member) => {
+          if (member.isConsumer) {
+            return {
+              name: member._name.toString(),
+              contextName: member?.decorators[0]?.expression?.arguments[0].toString(),
+            };
+          }
+          return undefined;
+        }).filter((contextConsumer) => contextConsumer) as Array<{
+          name: string, contextName: string
+        }>;
+        if (allDeps.length) {
+          const conditions = allDeps.map((dep) => {
+            if (dep.indexOf('props.') === 0) {
+              const depName = dep.replace('props.', '');
+              return `this.props["${depName}"] !== nextProps["${depName}"]`;
+            }
+            if (dep.indexOf('state.') === 0) {
+              const depName = dep.replace('state.', '');
+              return `this.state["${depName}"] !== nextState["${depName}"]`;
+            }
+            if (dep === 'props' || dep === 'state') {
+              return `this.${dep} !== next${capitalizeFirstLetter(dep)}`;
+            }
+            const dependencyContext = contextConsumers.find(
+              (consumer) => consumer.name === dep,
+            )?.contextName;
+            return dependencyContext ? `this.context["${dependencyContext}"] !== context["${dependencyContext}"]` : 'false';
+          });
+          componentWillUpdate_Statements.push(`if (${conditions.join(' || ')}) {
+            ${deleteCacheStatement}
+          }`);
+        }
+      });
+      return statements.join('\n');
+    }
+    return '';
+  }
+
+  compileComponentWillUpdate(statements: string[]): string {
+    const superStatement = this.jQueryRegistered ? 'super.componentWillUpdate();' : '';
+    if (statements.length > 0) {
+      return `componentWillUpdate(nextProps, nextState, context) {
+        ${statements.join('\n')}
+        ${superStatement}
+      }`;
+    }
     return '';
   }
 
@@ -281,6 +352,7 @@ export class InfernoComponent extends PreactComponent {
         ? 'InfernoComponent'
         : 'BaseInfernoComponent';
 
+    const componentWillUpdate: string[] = [];
     return `
             ${this.compileImports()}
             ${this.compileRestProps()}
@@ -311,7 +383,8 @@ export class InfernoComponent extends PreactComponent {
     .concat(this.members.filter((m) => m.isApiMethod) as Method[])
     .map((m) => m.toString(this.getToStringOptions()))
     .join('\n')}
-                
+                ${this.compileGetterCache(componentWillUpdate)}
+                ${this.compileComponentWillUpdate(componentWillUpdate)}
                 render(){
                     const props = this.props;
                     return ${this.compileViewCall()}
