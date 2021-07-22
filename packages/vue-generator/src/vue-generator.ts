@@ -143,7 +143,7 @@ export class VueGenerator extends BaseGenerator {
     typeParameters: TypeParameterDeclaration[] | undefined,
     parameters: Parameter[],
     type: TypeExpression | undefined,
-    body: Block,
+    body: Block | undefined,
   ) {
     return new Method(
       decorators,

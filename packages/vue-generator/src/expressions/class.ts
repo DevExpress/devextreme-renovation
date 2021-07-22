@@ -81,10 +81,9 @@ export class Class extends BaseClass {
       members.push(constructor);
     }
 
-    return `${this.modifiers.join(' ')} 
-            class ${this.name} ${
-  this.heritageClauses.length ? `${heritageClauses.join(' ')}` : ''
-} {
+    return `${this.modifiers.filter((modifier) => modifier !== SyntaxKind.AbstractKeyword).join(' ')} class ${this.name} ${
+      this.heritageClauses.length ? `${heritageClauses.join(' ')}` : ''
+    } {
                 ${members.join('\n')}
             }`;
   }
