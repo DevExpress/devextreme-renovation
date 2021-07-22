@@ -41,9 +41,16 @@ function __collectChildren(children: React.ReactNode): Record<string, any> {
       (child) => React.isValidElement(child) && typeof child.type !== "string"
     ) as (React.ReactElement & { type: { propName: string } })[]
   ).reduce((acc: Record<string, any>, child) => {
-    const { children: childChildren, ...childProps } = child.props;
+    const {
+      children: childChildren,
+      __defaultNestedValues,
+      ...childProps
+    } = child.props;
     const collectedChildren = __collectChildren(childChildren);
-    const allChild = { ...childProps, ...collectedChildren };
+    const childPropsValue = Object.keys(childProps).length
+      ? childProps
+      : __defaultNestedValues;
+    const allChild = { ...childPropsValue, ...collectedChildren };
     return {
       ...acc,
       [child.type.propName]: acc[child.type.propName]
