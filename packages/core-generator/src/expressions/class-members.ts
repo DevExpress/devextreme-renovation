@@ -284,7 +284,6 @@ export class Method extends BaseClassMember {
   }
 
   toString(options?: toStringOptions): string {
-
     return `${this.decorators.join(' ')}${this.compileModifiers()} ${
       this.name
     }${this.compileTypeParameters()}(${this.parameters})${compileType(
