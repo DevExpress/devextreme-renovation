@@ -55,3 +55,13 @@ export class Call extends BaseCall {
     return super.compileHasOwnProperty(value, options);
   }
 }
+
+export function compileGettersCompatibleExtend(baseObject: string, extenderObject: string): string {
+  return `Object.create(
+    Object.prototype,
+    Object.assign(
+      Object.getOwnPropertyDescriptors(${baseObject}),
+      Object.getOwnPropertyDescriptors(${extenderObject})
+    )
+  )`;
+}

@@ -37,6 +37,4 @@ export default function Import(props: typeof ImportProps & RestProps) {
   });
 }
 
-Import.defaultProps = {
-  ...ImportProps,
-};
+Import.defaultProps = ImportProps;

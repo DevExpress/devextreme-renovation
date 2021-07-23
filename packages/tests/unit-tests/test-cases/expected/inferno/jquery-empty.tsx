@@ -45,9 +45,7 @@ export default class Widget extends InfernoWrapperComponent<any> {
   }
 }
 
-Widget.defaultProps = {
-  ...Props,
-};
+Widget.defaultProps = Props;
 function view1(viewModel: Widget) {
   return (
     <div style={normalizeStyles({ height: viewModel.props.height })}>

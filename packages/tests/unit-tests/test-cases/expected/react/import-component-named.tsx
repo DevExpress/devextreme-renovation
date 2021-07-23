@@ -35,6 +35,4 @@ export default function Child(props: typeof ChildInput & RestProps) {
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
 
-Child.defaultProps = {
-  ...ChildInput,
-};
+Child.defaultProps = ChildInput;

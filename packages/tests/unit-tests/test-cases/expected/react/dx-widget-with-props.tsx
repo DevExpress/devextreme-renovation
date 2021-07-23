@@ -51,9 +51,7 @@ export { WidgetWithProps };
 
 export default WidgetWithProps;
 
-WidgetWithProps.defaultProps = {
-  ...WidgetWithPropsInput,
-};
+WidgetWithProps.defaultProps = WidgetWithPropsInput;
 function view({ props: { optionalValue, value } }: WidgetWithProps) {
   return <div>{optionalValue || value}</div>;
 }

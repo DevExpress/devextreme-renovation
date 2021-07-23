@@ -33,6 +33,4 @@ export function Widget(props: typeof WidgetInput & RestProps) {
 
 export default Widget;
 
-Widget.defaultProps = {
-  ...WidgetInput,
-};
+Widget.defaultProps = WidgetInput;

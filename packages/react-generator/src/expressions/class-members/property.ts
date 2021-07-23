@@ -2,8 +2,10 @@ import {
   capitalizeFirstLetter,
   compileType,
   Decorators,
+  ExpressionWithExpression,
   GeneratorContext,
   Identifier,
+  ObjectLiteral,
   Property as BaseProperty,
   SimpleTypeExpression,
   SyntaxKind,
@@ -53,6 +55,13 @@ export function compileJSXTemplateType(
 
 export class Property extends BaseProperty {
   defaultProps(options?: toStringOptions) {
+    const { initializer } = this;
+    const isComplexExpression = initializer instanceof ExpressionWithExpression
+      || initializer instanceof ObjectLiteral;
+
+    if (isComplexExpression) {
+      return `get ${this.name}() { return ${initializer?.toString(options)} }`;
+    }
     return this.defaultDeclaration(options);
   }
 

@@ -12,7 +12,9 @@ export declare type WidgetPropsType = {
 };
 export const WidgetProps: WidgetPropsType = {
   baseProp: 0,
-  __defaultNestedValues: { someProp: FakeNested },
+  get __defaultNestedValues() {
+    return { someProp: FakeNested };
+  },
 };
 export declare type TooltipPropsType = {
   tooltipValue: number;
@@ -22,12 +24,14 @@ export declare type TooltipPropsType = {
 };
 export const TooltipProps: TooltipPropsType = {
   tooltipValue: 0,
-  __defaultNestedValues: {
-    tooltipNested: [
-      WidgetProps.__defaultNestedValues
-        ? WidgetProps.__defaultNestedValues
-        : WidgetProps,
-    ],
+  get __defaultNestedValues() {
+    return {
+      tooltipNested: [
+        WidgetProps.__defaultNestedValues
+          ? WidgetProps.__defaultNestedValues
+          : WidgetProps,
+      ],
+    };
   },
 };
 export declare type BulletPropsType = typeof WidgetProps & {
@@ -35,38 +39,59 @@ export declare type BulletPropsType = typeof WidgetProps & {
   tooltip?: typeof TooltipProps;
   __defaultNestedValues?: any;
 };
-export const BulletProps: BulletPropsType = {
-  ...WidgetProps,
-  value: 0,
-  __defaultNestedValues: {
-    tooltip: TooltipProps.__defaultNestedValues
-      ? TooltipProps.__defaultNestedValues
-      : TooltipProps,
-    someProp: WidgetProps?.__defaultNestedValues.someProp,
-  },
-};
+export const BulletProps: BulletPropsType = Object.create(
+  Object.prototype,
+  Object.assign(
+    Object.getOwnPropertyDescriptors(WidgetProps),
+    Object.getOwnPropertyDescriptors({
+      value: 0,
+      get __defaultNestedValues() {
+        return {
+          tooltip: TooltipProps.__defaultNestedValues
+            ? TooltipProps.__defaultNestedValues
+            : TooltipProps,
+          someProp: WidgetProps?.__defaultNestedValues.someProp,
+        };
+      },
+    })
+  )
+);
 export declare type BulletProps2Type = typeof BulletProps & {
   fakeNestedArr?: typeof FakeNested[];
   __defaultNestedValues?: any;
 };
-export const BulletProps2: BulletProps2Type = {
-  ...BulletProps,
-  __defaultNestedValues: {
-    fakeNestedArr: [FakeNested],
-    tooltip: BulletProps?.__defaultNestedValues.tooltip,
-    someProp: BulletProps?.__defaultNestedValues.someProp,
-  },
-};
+export const BulletProps2: BulletProps2Type = Object.create(
+  Object.prototype,
+  Object.assign(
+    Object.getOwnPropertyDescriptors(BulletProps),
+    Object.getOwnPropertyDescriptors({
+      get __defaultNestedValues() {
+        return {
+          fakeNestedArr: [FakeNested],
+          tooltip: BulletProps?.__defaultNestedValues.tooltip,
+          someProp: BulletProps?.__defaultNestedValues.someProp,
+        };
+      },
+    })
+  )
+);
 export declare type BulletProps3Type = typeof BulletProps2 & {
   fakeNestedArr2?: typeof FakeNested[];
   __defaultNestedValues?: any;
 };
-export const BulletProps3: BulletProps3Type = {
-  ...BulletProps2,
-  __defaultNestedValues: {
-    fakeNestedArr2: [FakeNested],
-    fakeNestedArr: BulletProps2?.__defaultNestedValues.fakeNestedArr,
-    tooltip: BulletProps2?.__defaultNestedValues.tooltip,
-    someProp: BulletProps2?.__defaultNestedValues.someProp,
-  },
-};
+export const BulletProps3: BulletProps3Type = Object.create(
+  Object.prototype,
+  Object.assign(
+    Object.getOwnPropertyDescriptors(BulletProps2),
+    Object.getOwnPropertyDescriptors({
+      get __defaultNestedValues() {
+        return {
+          fakeNestedArr2: [FakeNested],
+          fakeNestedArr: BulletProps2?.__defaultNestedValues.fakeNestedArr,
+          tooltip: BulletProps2?.__defaultNestedValues.tooltip,
+          someProp: BulletProps2?.__defaultNestedValues.someProp,
+        };
+      },
+    })
+  )
+);

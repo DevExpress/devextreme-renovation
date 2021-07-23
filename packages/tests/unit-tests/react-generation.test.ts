@@ -191,6 +191,10 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("component-input-defaults", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("component-bindings-only", function () {
     this.testGenerator(this.test!.title);
   });
