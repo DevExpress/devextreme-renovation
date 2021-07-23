@@ -99,6 +99,4 @@ export default function ModelWidget(
   });
 }
 
-ModelWidget.defaultProps = {
-  ...ModelWidgetInput,
-};
+ModelWidget.defaultProps = ModelWidgetInput;

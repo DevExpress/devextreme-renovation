@@ -136,6 +136,4 @@ export default function WithNested(props: typeof WithNestedInput & RestProps) {
   });
 }
 
-WithNested.defaultProps = {
-  ...WithNestedInput,
-};
+WithNested.defaultProps = WithNestedInput;

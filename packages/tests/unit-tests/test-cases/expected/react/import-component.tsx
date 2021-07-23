@@ -7,11 +7,16 @@ export declare type ChildInputType = typeof WidgetProps & {
   height: number;
   onClick: (a: number) => void;
 };
-const ChildInput: ChildInputType = {
-  ...WidgetProps,
-  height: 10,
-  onClick: () => {},
-};
+const ChildInput: ChildInputType = Object.create(
+  Object.prototype,
+  Object.assign(
+    Object.getOwnPropertyDescriptors(WidgetProps),
+    Object.getOwnPropertyDescriptors({
+      height: 10,
+      onClick: () => {},
+    })
+  )
+);
 import * as React from "react";
 import { useCallback } from "react";
 
@@ -49,6 +54,4 @@ export default function Child(props: typeof ChildInput & RestProps) {
   });
 }
 
-Child.defaultProps = {
-  ...ChildInput,
-};
+Child.defaultProps = ChildInput;

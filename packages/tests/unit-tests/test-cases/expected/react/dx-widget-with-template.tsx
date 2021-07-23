@@ -77,9 +77,7 @@ export default function WidgetWithTemplate(
   });
 }
 
-WidgetWithTemplate.defaultProps = {
-  ...WidgetWithTemplateInput,
-};
+WidgetWithTemplate.defaultProps = WidgetWithTemplateInput;
 function view(viewModel: WidgetWithTemplate) {
   return (
     <div>

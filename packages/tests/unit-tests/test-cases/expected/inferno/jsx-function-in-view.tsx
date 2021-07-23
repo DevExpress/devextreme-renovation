@@ -57,9 +57,7 @@ export default class Widget extends BaseInfernoComponent<any> {
   }
 }
 
-Widget.defaultProps = {
-  ...WidgetInput,
-};
+Widget.defaultProps = WidgetInput;
 function view(viewModel: Widget) {
   const MyComponent = viewModel.props.loading
     ? loadingJSX(viewModel.loadingProps)

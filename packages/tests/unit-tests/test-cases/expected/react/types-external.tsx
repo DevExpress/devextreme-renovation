@@ -20,10 +20,14 @@ export declare type WidgetPropsType = {
 export const WidgetProps: WidgetPropsType = {
   data: "data",
   union: "uniontext",
-  obj: { number: 123, text: "sda" },
+  get obj() {
+    return { number: 123, text: "sda" };
+  },
   strArr: ["ba", "ab"],
   s: "",
-  strDate: new Date(),
+  get strDate() {
+    return new Date();
+  },
 };
 import * as React from "react";
 import { useCallback } from "react";
@@ -63,9 +67,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   });
 }
 
-Widget.defaultProps = {
-  ...WidgetProps,
-};
+Widget.defaultProps = WidgetProps;
 
 export interface CustomType {
   name: string;

@@ -137,6 +137,4 @@ export default function TemplateDefaultValue(
   });
 }
 
-TemplateDefaultValue.defaultProps = {
-  ...TemplateDefaultValueProps,
-};
+TemplateDefaultValue.defaultProps = TemplateDefaultValueProps;

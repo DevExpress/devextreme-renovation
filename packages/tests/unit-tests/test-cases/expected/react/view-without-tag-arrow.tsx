@@ -30,6 +30,4 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
 
-Widget.defaultProps = {
-  ...WidgetInput,
-};
+Widget.defaultProps = WidgetInput;

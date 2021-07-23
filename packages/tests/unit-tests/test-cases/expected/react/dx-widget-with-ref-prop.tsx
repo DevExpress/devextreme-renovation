@@ -33,9 +33,7 @@ export default function WidgetWithRefProp(
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
 
-WidgetWithRefProp.defaultProps = {
-  ...WidgetWithRefPropInput,
-};
+WidgetWithRefProp.defaultProps = WidgetWithRefPropInput;
 function view(viewModel: WidgetWithRefProp) {
   return <div></div>;
 }
