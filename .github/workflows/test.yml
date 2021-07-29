@@ -40,3 +40,11 @@ jobs:
 
       - name: e2e tests
         run: npm run test:testcafe-headless
+
+      - name: Copy screenshots artifacts
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: screenshots
+          path: ${{ github.workspace }}//e2e/tests/temp/**/*
+          if-no-files-found: ignore
