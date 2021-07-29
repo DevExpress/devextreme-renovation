@@ -35,30 +35,29 @@ export const WidgetProps: WidgetPropsType = {
 import * as React from "react";
 import { useState, useCallback } from "react";
 
-function __collectChildren<T>(children: React.ReactNode): T[] {
+function __collectChildren(children: React.ReactNode): Record<string, any> {
   return (
     React.Children.toArray(children).filter(
       (child) => React.isValidElement(child) && typeof child.type !== "string"
     ) as (React.ReactElement & { type: { propName: string } })[]
-  ).map((child) => {
-    const { children: childChildren, ...childProps } = child.props;
-    const collectedChildren = {} as any;
-    __collectChildren(childChildren).forEach(
-      ({ __name, ...restProps }: any) => {
-        if (__name) {
-          if (!collectedChildren[__name]) {
-            collectedChildren[__name] = [];
-          }
-          collectedChildren[__name].push(restProps);
-        }
-      }
-    );
+  ).reduce((acc: Record<string, any>, child) => {
+    const {
+      children: childChildren,
+      __defaultNestedValues,
+      ...childProps
+    } = child.props;
+    const collectedChildren = __collectChildren(childChildren);
+    const childPropsValue = Object.keys(childProps).length
+      ? childProps
+      : __defaultNestedValues;
+    const allChild = { ...childPropsValue, ...collectedChildren };
     return {
-      ...collectedChildren,
-      ...childProps,
-      __name: child.type.propName,
+      ...acc,
+      [child.type.propName]: acc[child.type.propName]
+        ? [...acc[child.type.propName], allChild]
+        : [allChild],
     };
-  });
+  }, {});
 }
 export const NestedProp: React.FunctionComponent<typeof FakeNested> & {
   propName: string;
@@ -84,7 +83,7 @@ interface UndefWidget {
   nested: any;
   nestedinit: any;
   restAttributes: RestProps;
-  nestedChildren: <T>() => T[];
+  nestedChildren: () => Record<string, any>;
   __getNestedNestedProp: typeof FakeNested[] | undefined;
   __getNestedAnotherNestedPropInit: typeof FakeNested[];
 }
@@ -235,7 +234,7 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
     [props, __state_twoWayProp]
   );
   const __nestedChildren = useCallback(
-    function __nestedChildren<T>(): T[] {
+    function __nestedChildren(): Record<string, any> {
       const { children } = props;
       return __collectChildren(children);
     },
@@ -243,35 +242,22 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
   );
   const __getNestedNestedProp = useCallback(
     function __getNestedNestedProp(): typeof FakeNested[] | undefined {
-      const nested = __nestedChildren<
-        typeof FakeNested & { __name: string }
-      >().filter((child) => child.__name === "nestedProp");
+      const nested = __nestedChildren();
       return props.nestedProp
         ? props.nestedProp
-        : nested.length
-        ? nested
+        : nested.nestedProp
+        ? nested.nestedProp
         : undefined;
     },
     [props.nestedProp, props.children]
   );
   const __getNestedAnotherNestedPropInit = useCallback(
     function __getNestedAnotherNestedPropInit(): typeof FakeNested[] {
-      const nested = __nestedChildren<typeof FakeNested & { __name: string }>()
-        .filter((child) => child.__name === "anotherNestedPropInit")
-        .map((n) => {
-          if (
-            !Object.keys(n).some(
-              (k) => k !== "__name" && k !== "__defaultNestedValues"
-            )
-          ) {
-            return (n as any)?.__defaultNestedValues || n;
-          }
-          return n;
-        });
+      const nested = __nestedChildren();
       return props.anotherNestedPropInit
         ? props.anotherNestedPropInit
-        : nested.length
-        ? nested
+        : nested.anotherNestedPropInit
+        ? nested.anotherNestedPropInit
         : props?.__defaultNestedValues?.anotherNestedPropInit;
     },
     [props.anotherNestedPropInit, props.children]
