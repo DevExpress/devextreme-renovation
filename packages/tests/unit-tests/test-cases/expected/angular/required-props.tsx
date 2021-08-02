@@ -34,7 +34,7 @@ export default class Widget extends WidgetInput {
     return this.size.height;
   }
   get __type(): string {
-    const { type } = this;
+    const { type } = this.props;
     return type;
   }
   get __restAttributes(): any {
@@ -50,9 +50,8 @@ export default class Widget extends WidgetInput {
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
 
-    const defaultOptions = convertRulesToOptions<WidgetInput>(
-      __defaultOptionRules
-    );
+    const defaultOptions =
+      convertRulesToOptions<WidgetInput>(__defaultOptionRules);
     Object.keys(defaultOptions).forEach((option) => {
       (this as any)[option] = (defaultOptions as any)[option];
     });

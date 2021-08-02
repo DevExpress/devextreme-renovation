@@ -38,10 +38,7 @@ export default class Widget extends WidgetInput {
   }
   __getRestProps(): { export: object; onSomething: EventCallBack<number> } {
     const { height, onClick, ...rest } = {
-      height: this.height,
-      export: this.export,
-      sizes: this.sizes,
-      stringValue: this.stringValue,
+      ...this,
       onClick: this._onClick,
       onSomething: this._onSomething,
       stringValueChange: this._stringValueChange,

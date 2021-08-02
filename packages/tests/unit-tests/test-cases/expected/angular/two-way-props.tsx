@@ -23,16 +23,12 @@ import { CommonModule } from "@angular/common";
 })
 export default class Widget extends WidgetInput {
   __getHeight(): number {
-    const { height } = this;
-    const { height: _height } = this;
+    const { height } = this.props;
+    const { height: _height } = this.props;
     return height + _height;
   }
   __getProps(): any {
-    return {
-      height: this.height,
-      selected: this.selected,
-      selectedChange: this._selectedChange,
-    };
+    return { ...this, selectedChange: this._selectedChange };
   }
   get __restAttributes(): any {
     return {};
@@ -56,6 +52,7 @@ export default class Widget extends WidgetInput {
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}

@@ -49,7 +49,7 @@ export default class Widget extends WidgetInput {
     this._internalState = state;
   }
   __destruct(): any {
-    const { state1 } = this;
+    const { state1 } = this.props;
     const s = state1;
   }
   __stateChange(stateProp?: boolean): any {

@@ -3,6 +3,7 @@ import {
   compileRefOptions,
   BindingElement,
   ObjectLiteral,
+  Property as BaseProperty,
   PropertyAssignment,
   Identifier,
   NonNullExpression,
@@ -10,43 +11,106 @@ import {
   Property,
   isProperty,
   getMember,
+  SyntaxKind,
+  SpreadAssignment,
+  SimpleExpression,
 } from '@devextreme-generator/core';
 import { toStringOptions } from '../types';
 
 export class PropertyAccess extends BasePropertyAccess {
+  needToCreateAssignment(
+    property: BaseProperty,
+    elements: BindingElement[],
+    hasRest: boolean,
+  ) {
+    return (
+      !property.canBeDestructured
+      && (elements.length === 0
+        || elements.some(
+          (e) => (e.propertyName || e.name).toString()
+              === property._name.toString() || hasRest,
+        ))
+    );
+  }
+
   processProps(
-    _result: string,
+    result: string,
     options: toStringOptions,
     elements: BindingElement[] = [],
   ) {
+    const props = getProps(options.members);
     const hasRest = elements.some((e) => e.dotDotDotToken);
-    const props = getProps(options.members).filter(
-      (p) => hasRest
-        || elements.length === 0
-        || elements.some(
-          (e) => (e.propertyName || e.name).toString() === p._name.toString(),
-        ),
-    );
-    if (props.some((p) => !p.canBeDestructured) || props.length === 0) {
-      const expression = new ObjectLiteral(
-        props.map(
-          (p) => new PropertyAssignment(
-            p._name,
-            new PropertyAccess(
-              new PropertyAccess(
-                new Identifier(this.calculateComponentContext(options)),
-                new Identifier('props'),
-              ),
-              p._name,
-            ),
+    const hasComplexProps = props.some((p) => this.needToCreateAssignment(p, elements, hasRest));
+
+    if (
+      hasComplexProps
+      && options.componentContext === SyntaxKind.ThisKeyword
+    ) {
+      const hasSimpleProps = props.some((p) => p.canBeDestructured);
+      const initValue: (PropertyAssignment | SpreadAssignment)[] = hasSimpleProps
+      || elements.some((e) => e.dotDotDotToken)
+        ? [
+          new SpreadAssignment(
+            options.newComponentContext
+              ? new SimpleExpression(
+                `${ options.newComponentContext.length ? `${options.newComponentContext}` : ''}`,
+              )
+              : new Identifier('props'),
           ),
-        ),
-        true,
-      );
+        ]
+        : [];
+
+      const destructedProps = props.reduce((acc, p) => {
+        if (this.needToCreateAssignment(p, elements, hasRest)) {
+          acc.push(
+            new PropertyAssignment(
+              p._name,
+              new PropertyAccess(
+                new PropertyAccess(
+                  new Identifier(this.calculateComponentContext(options)),
+                  new Identifier('props'),
+                ),
+                p._name,
+              ),
+            ),
+          );
+        }
+        return acc;
+      }, initValue);
+
+      const expression = new ObjectLiteral(destructedProps, true);
       return expression.toString(options);
     }
-    return options.newComponentContext!;
+
+    return result;
   }
+    // const hasRest = elements.some((e) => e.dotDotDotToken);
+    // const props = getProps(options.members).filter(
+    //   (p) => hasRest
+    //     || elements.length === 0
+    //     || elements.some(
+    //       (e) => (e.propertyName || e.name).toString() === p._name.toString(),
+    //     ),
+    // );
+    // if (props.some((p) => !p.canBeDestructured) || props.length === 0) {
+    //   const expression = new ObjectLiteral(
+    //     props.map(
+    //       (p) => new PropertyAssignment(
+    //         p._name,
+    //         new PropertyAccess(
+    //           new PropertyAccess(
+    //             new Identifier(this.calculateComponentContext(options)),
+    //             new Identifier('props'),
+    //           ),
+    //           p._name,
+    //         ),
+    //       ),
+    //     ),
+    //     true,
+    //   );
+    //   return expression.toString(options);
+    // }
+    // return options.newComponentContext!;
 
   compileStateSetting(
     value: string,

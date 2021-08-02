@@ -28,7 +28,7 @@ export class TextSvgElement extends TextSvgElementProps {
       return this.__getterCache["computedProps"];
     }
     return (this.__getterCache["computedProps"] = ((): TextSvgElementProps => {
-      return this;
+      return this.props;
     })());
   }
   get __restAttributes(): any {
