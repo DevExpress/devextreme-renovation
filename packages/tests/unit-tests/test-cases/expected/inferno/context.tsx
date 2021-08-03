@@ -55,7 +55,7 @@ export default class Widget extends BaseInfernoComponent<any> {
     if (this.__getterCache["contextProvider"] !== undefined) {
       return this.__getterCache["contextProvider"];
     }
-    return (this.__getterCache["contextProvider"] = (() => {
+    return (this.__getterCache["contextProvider"] = ((): any => {
       return "provide";
     })());
   }

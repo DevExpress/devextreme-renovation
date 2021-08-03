@@ -1,37 +1,28 @@
 import { GetAccessor as ReactGetAccessor } from '@devextreme-generator/react';
 import {
   isComplexType,
-  Decorator,
-  Identifier,
-  Parameter,
-  TypeExpression,
-  Block,
-  Decorators,
+  toStringOptions,
 } from '@devextreme-generator/core';
 
 import { compileGetterCache } from '@devextreme-generator/angular';
 
 export class GetAccessor extends ReactGetAccessor {
-  constructor(
-    decorators: Decorator[] | undefined,
-    modifiers: string[] | undefined,
-    name: Identifier,
-    parameters: Parameter[],
-    type?: TypeExpression | string,
-    body?: Block,
-  ) {
-    const isProvider = decorators?.some((d) => d.name === Decorators.Provider);
-    if (body && ((type && isComplexType(type)) || isProvider)) {
-      body.statements = compileGetterCache(name, type, body, isProvider, false);
-    }
-    super(decorators, modifiers, name, parameters, type, body);
-  }
-
   isMemorized(): boolean {
     return isComplexType(this.type) || this.isProvider;
   }
 
   getter(componentContext?: string): string {
     return super.getter(componentContext).replace('()', '');
+  }
+
+  toString(options?: toStringOptions): string {
+    if (options?.isComponent
+       && this.body
+       && ((this.type && isComplexType(this.type)) || this.isProvider)) {
+      this.body.statements = compileGetterCache(
+        this._name, this.type, this.body, this.isProvider, false,
+      );
+    }
+    return super.toString(options);
   }
 }

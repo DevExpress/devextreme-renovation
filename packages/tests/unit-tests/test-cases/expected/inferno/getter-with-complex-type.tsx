@@ -60,7 +60,7 @@ export default class Widget extends InfernoWrapperComponent<any> {
     if (this.__getterCache["provide"] !== undefined) {
       return this.__getterCache["provide"];
     }
-    return (this.__getterCache["provide"] = (() => {
+    return (this.__getterCache["provide"] = ((): any => {
       return this.state.i;
     })());
   }
@@ -127,3 +127,10 @@ export default class Widget extends InfernoWrapperComponent<any> {
 }
 
 Widget.defaultProps = Props;
+
+class SomeClass {
+  i: number = 2;
+  get numberGetter(): number[] {
+    return [this.i, this.i];
+  }
+}
