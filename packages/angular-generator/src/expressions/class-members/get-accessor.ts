@@ -3,20 +3,17 @@ import {
   Binary,
   Block,
   Call,
-  Decorators,
   GetAccessor as BaseGetAccessor,
   Identifier,
   isComplexType,
-  Parameter,
   Paren,
   ReturnStatement,
   SimpleExpression,
   SyntaxKind,
   TypeExpression,
   Expression,
+  toStringOptions,
 } from '@devextreme-generator/core';
-
-import { Decorator } from '../decorator';
 
 export const compileGetterCache = (
   name: Identifier,
@@ -60,21 +57,6 @@ export const compileGetterCache = (
   ];
 };
 export class GetAccessor extends BaseGetAccessor {
-  constructor(
-    decorators: Decorator[] | undefined,
-    modifiers: string[] | undefined,
-    name: Identifier,
-    parameters: Parameter[],
-    type?: TypeExpression | string,
-    body?: Block,
-  ) {
-    const isProvider = decorators?.some((d) => d.name === Decorators.Provider);
-    if (body && ((type && isComplexType(type)) || isProvider)) {
-      body.statements = compileGetterCache(name, type, body, isProvider);
-    }
-    super(decorators, modifiers, name, parameters, type, body);
-  }
-
   isMemorized(): boolean {
     return isComplexType(this.type) || this.isProvider;
   }
@@ -91,5 +73,12 @@ export class GetAccessor extends BaseGetAccessor {
       return false;
     }
     return super.canBeDestructured;
+  }
+
+  toString(options?: toStringOptions): string {
+    if (options && this.body && ((this.type && isComplexType(this.type)) || this.isProvider)) {
+      this.body.statements = compileGetterCache(this._name, this.type, this.body, this.isProvider);
+    }
+    return super.toString(options);
   }
 }

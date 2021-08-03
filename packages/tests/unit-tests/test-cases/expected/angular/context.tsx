@@ -67,7 +67,7 @@ export default class Widget extends Props {
     return (this.contextProviderProvider.value = this.__getterCache[
       "contextProvider"
     ] =
-      (() => {
+      ((): any => {
         return "provide";
       })());
   }
