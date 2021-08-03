@@ -196,7 +196,7 @@ mocha.describe("Expressions", function () {
 
         assert.strictEqual(getter.isMemorized(), true);
         assert.strictEqual(
-          getResult(getter.toString()),
+          getResult(getter.toString({members: []})),
           getResult(`get name():{}{
                           if(this.__getterCache["name"]!==undefined){
                               return this.__getterCache["name"]
@@ -212,13 +212,13 @@ mocha.describe("Expressions", function () {
         const getter = createGetAccessor(undefined,undefined,undefined,[createDecorator(Decorators.Provider)]);
         assert.strictEqual(getter.isMemorized(), true);
         assert.strictEqual(
-          getResult(getter.toString()),
+          getResult(getter.toString({members: []})),
           getResult(`get name(): any {
                           if(this.__getterCache["name"]!==undefined){
                               return this.__getterCache["name"]
                           }
                   
-                          return this.__getterCache["name"]=(() => {
+                          return this.__getterCache["name"]=((): any => {
                               return result;
                           })();
                       }`)
@@ -316,7 +316,6 @@ mocha.describe("Expressions", function () {
                       name?: number[]
                   } = {}`)
         );
-        console.log(componentWillUpdate);
         assert.deepStrictEqual(
           componentWillUpdate.map(s => getResult(s)),
             [
