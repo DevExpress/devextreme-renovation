@@ -53,7 +53,7 @@ export class PropertyAccess extends BasePropertyAccess {
           new SpreadAssignment(
             options.newComponentContext
               ? new SimpleExpression(
-                `${ options.newComponentContext.length ? `${options.newComponentContext}` : ''}`,
+                `${options.newComponentContext.length ? `${options.newComponentContext}` : ''}`,
               )
               : new Identifier('props'),
           ),
@@ -84,33 +84,6 @@ export class PropertyAccess extends BasePropertyAccess {
 
     return result;
   }
-    // const hasRest = elements.some((e) => e.dotDotDotToken);
-    // const props = getProps(options.members).filter(
-    //   (p) => hasRest
-    //     || elements.length === 0
-    //     || elements.some(
-    //       (e) => (e.propertyName || e.name).toString() === p._name.toString(),
-    //     ),
-    // );
-    // if (props.some((p) => !p.canBeDestructured) || props.length === 0) {
-    //   const expression = new ObjectLiteral(
-    //     props.map(
-    //       (p) => new PropertyAssignment(
-    //         p._name,
-    //         new PropertyAccess(
-    //           new PropertyAccess(
-    //             new Identifier(this.calculateComponentContext(options)),
-    //             new Identifier('props'),
-    //           ),
-    //           p._name,
-    //         ),
-    //       ),
-    //     ),
-    //     true,
-    //   );
-    //   return expression.toString(options);
-    // }
-    // return options.newComponentContext!;
 
   compileStateSetting(
     value: string,
