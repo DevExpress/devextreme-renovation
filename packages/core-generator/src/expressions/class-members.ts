@@ -337,7 +337,7 @@ export class GetAccessor extends Method {
     return `${this.processComponentContext(componentContext)}${this.name}`;
   }
 
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions): string {
     return `${this.modifiers.join(' ')} get ${this.name}()${compileType(
       this.type.toString(),
     )}${this.body?.toString(options)}`;
