@@ -8145,7 +8145,7 @@ mocha.describe("Angular generator", function () {
           );
 
           assert.strictEqual(
-            getResult(getter.toString({members: []})),
+            getResult(getter.toString({members: [], isComponent: true})),
             getResult(`get name():string[]{
                             if(this.__getterCache["name"]!==undefined){
                                 return this.__getterCache["name"]
@@ -8192,7 +8192,7 @@ mocha.describe("Angular generator", function () {
           );
 
           assert.strictEqual(
-            getResult(getter.toString()),
+            getResult(getter.toString({members: [], isComponent:true})),
             getResult(`get name():string{
                             return result;
                         }`)
@@ -8214,7 +8214,7 @@ mocha.describe("Angular generator", function () {
           );
 
           assert.strictEqual(
-            getResult(getter.toString()),
+            getResult(getter.toString({members: [], isComponent:true})),
             getResult(`get name():'1'|'2'{
                             return result;
                         }`)
@@ -8234,7 +8234,7 @@ mocha.describe("Angular generator", function () {
           );
 
           assert.strictEqual(
-            getResult(getter.toString({members: []})),
+            getResult(getter.toString({members: [], isComponent:true})),
             getResult(`get name():'1'|{}{
                             if(this.__getterCache["name"]!==undefined){
                                 return this.__getterCache["name"];
@@ -8256,7 +8256,7 @@ mocha.describe("Angular generator", function () {
 
           assert.strictEqual(getter.isMemorized(), true);
           assert.strictEqual(
-            getResult(getter.toString({members: []})),
+            getResult(getter.toString({members: [], isComponent:true})),
             getResult(`get name():{}{
                             if(this.__getterCache["name"]!==undefined){
                                 return this.__getterCache["name"]

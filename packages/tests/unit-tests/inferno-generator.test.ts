@@ -196,7 +196,7 @@ mocha.describe("Expressions", function () {
 
         assert.strictEqual(getter.isMemorized(), true);
         assert.strictEqual(
-          getResult(getter.toString({members: []})),
+          getResult(getter.toString({members: [], isComponent:true})),
           getResult(`get name():{}{
                           if(this.__getterCache["name"]!==undefined){
                               return this.__getterCache["name"]
@@ -212,7 +212,7 @@ mocha.describe("Expressions", function () {
         const getter = createGetAccessor(undefined,undefined,undefined,[createDecorator(Decorators.Provider)]);
         assert.strictEqual(getter.isMemorized(), true);
         assert.strictEqual(
-          getResult(getter.toString({members: []})),
+          getResult(getter.toString({members: [], isComponent:true})),
           getResult(`get name(): any {
                           if(this.__getterCache["name"]!==undefined){
                               return this.__getterCache["name"]

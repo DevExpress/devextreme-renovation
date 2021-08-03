@@ -76,7 +76,9 @@ export class GetAccessor extends BaseGetAccessor {
   }
 
   toString(options?: toStringOptions): string {
-    if (options && this.body && ((this.type && isComplexType(this.type)) || this.isProvider)) {
+    if (options?.isComponent
+       && this.body
+       && ((this.type && isComplexType(this.type)) || this.isProvider)) {
       this.body.statements = compileGetterCache(this._name, this.type, this.body, this.isProvider);
     }
     return super.toString(options);
