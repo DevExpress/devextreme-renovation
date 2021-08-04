@@ -52,7 +52,7 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it.only("props", function () {
+  mocha.it("props", function () {
     this.testGenerator(this.test!.title);
   });
 
