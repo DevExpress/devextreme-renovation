@@ -26,6 +26,7 @@ export interface toStringOptions {
   jsxComponent?: Component;
   usePropsSpace?: boolean;
   componentInputs?: ComponentInput[];
+  isComponent?: boolean;
 }
 
 export type VariableExpression = {

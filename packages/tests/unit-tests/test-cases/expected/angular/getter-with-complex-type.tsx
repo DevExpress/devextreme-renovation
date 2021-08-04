@@ -47,7 +47,7 @@ export default class Widget extends Props {
       return this.__getterCache["provide"];
     }
     return (this.provideProvider.value = this.__getterCache["provide"] =
-      (() => {
+      ((): any => {
         return this.i;
       })());
   }
@@ -143,3 +143,10 @@ export default class Widget extends Props {
 })
 export class DxWidgetModule {}
 export { Widget as DxWidgetComponent };
+
+class SomeClass {
+  i: number = 2;
+  get numberGetter(): number[] {
+    return [this.i, this.i];
+  }
+}

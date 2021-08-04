@@ -1559,6 +1559,7 @@ export class AngularComponent extends Component {
       componentContext: SyntaxKind.ThisKeyword,
       newComponentContext: SyntaxKind.ThisKeyword,
       forwardRefs: decoratorToStringOptions.forwardRefs,
+      isComponent: true,
     }))
     .filter((m) => m)
     .join('\n')}

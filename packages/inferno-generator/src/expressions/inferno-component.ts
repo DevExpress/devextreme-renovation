@@ -75,6 +75,7 @@ export class InfernoComponent extends PreactComponent {
     return {
       ...super.getToStringOptions(),
       newComponentContext: 'this',
+      isComponent: true,
     };
   }
 

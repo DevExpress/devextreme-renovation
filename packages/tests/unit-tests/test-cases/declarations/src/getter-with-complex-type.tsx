@@ -48,3 +48,10 @@ export default class Widget extends JSXComponent<Props>() {
     return [this.cons]
   }
 }
+
+class SomeClass {
+  i = 2;
+  get numberGetter(): number[] {
+    return [this.i, this.i];
+  }
+}
