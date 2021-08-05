@@ -80,6 +80,7 @@ export class PropertyAccess extends BasePropertyAccess {
     }
     return null;
   }
+
   processName(options?: toStringOptions) {
     if (
       this.name.toString() === 'current'
