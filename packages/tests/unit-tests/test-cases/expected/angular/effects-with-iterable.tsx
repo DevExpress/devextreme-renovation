@@ -25,12 +25,12 @@ export default class Widget extends WidgetInput {
   keys: string[] = [];
   counter: number = 0;
   __effect(): any {
-    const { propObject } = this.props;
+    const { propObject } = this;
     const { internalObject } = this;
     this._keys = Object.keys(propObject).concat(Object.keys(internalObject));
   }
   __effectWithObservables(): any {
-    const { propArray } = this.props;
+    const { propArray } = this;
     const { internalArray } = this;
     this._counter = propArray.length + internalArray.length;
   }

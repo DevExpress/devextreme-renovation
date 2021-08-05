@@ -3,7 +3,6 @@ import {
   compileRefOptions,
   BindingElement,
   ObjectLiteral,
-  Property as BaseProperty,
   PropertyAssignment,
   Identifier,
   NonNullExpression,
@@ -11,81 +10,55 @@ import {
   Property,
   isProperty,
   getMember,
-  SyntaxKind,
-  SpreadAssignment,
-  SimpleExpression,
 } from '@devextreme-generator/core';
 import { toStringOptions } from '../types';
 
 export class PropertyAccess extends BasePropertyAccess {
-  needToCreateAssignment(
-    property: BaseProperty,
-    elements: BindingElement[],
-    hasRest: boolean,
-  ) {
-    return (
-      !property.canBeDestructured
-      && (elements.length === 0
-        || elements.some(
-          (e) => (e.propertyName || e.name).toString()
-              === property._name.toString() || hasRest,
-        ))
-    );
-  }
-
   processProps(
-    result: string,
+    _result: string,
     options: toStringOptions,
     elements: BindingElement[] = [],
   ) {
-    const props = getProps(options.members);
     const hasRest = elements.some((e) => e.dotDotDotToken);
-    const hasComplexProps = props.some((p) => this.needToCreateAssignment(p, elements, hasRest));
-
-    if (
-      hasComplexProps
-      && options.componentContext === SyntaxKind.ThisKeyword
-    ) {
-      const hasSimpleProps = props.some((p) => p.canBeDestructured);
-      const initValue: (PropertyAssignment | SpreadAssignment)[] = hasSimpleProps
-      || elements.some((e) => e.dotDotDotToken)
-        ? [
-          new SpreadAssignment(
-            options.newComponentContext
-              ? new SimpleExpression(
-                `${options.newComponentContext.length ? `${options.newComponentContext}` : ''}`,
-              )
-              : new Identifier('props'),
-          ),
-        ]
-        : [];
-
-      const destructedProps = props.reduce((acc, p) => {
-        if (this.needToCreateAssignment(p, elements, hasRest)) {
-          acc.push(
-            new PropertyAssignment(
-              p._name,
+    const props = getProps(options.members).filter(
+      (p) => hasRest
+        || elements.length === 0
+        || elements.some(
+          (e) => (e.propertyName || e.name).toString() === p._name.toString(),
+        ),
+    );
+    if (props.some((p) => !p.canBeDestructured) || props.length === 0) {
+      const expression = new ObjectLiteral(
+        props.map(
+          (p) => new PropertyAssignment(
+            p._name,
+            new PropertyAccess(
               new PropertyAccess(
-                new PropertyAccess(
-                  new Identifier(this.calculateComponentContext(options)),
-                  new Identifier('props'),
-                ),
-                p._name,
+                new Identifier(this.calculateComponentContext(options)),
+                new Identifier('props'),
               ),
+              p._name,
             ),
-          );
-        }
-        return acc;
-      }, initValue);
-
-      const expression = new ObjectLiteral(destructedProps, true);
+          ),
+        ),
+        true,
+      );
       return expression.toString(options);
     }
-
-    return result;
+    return options.newComponentContext!;
   }
 
   compileStateSetting(
+
+    
+          
+            
+    
+
+          
+    
+    
+  
     value: string,
     property: Property,
     options: toStringOptions,
@@ -102,10 +75,8 @@ export class PropertyAccess extends BasePropertyAccess {
       }
       return `this.${property.name} = ${setValue}`;
     }
-
     return `this._${property.name}=${value}`;
   }
-
   getRefAccessor(member: Property) {
     if (member.isRef || member.isForwardRef) {
       return '.nativeElement';
@@ -119,7 +90,6 @@ export class PropertyAccess extends BasePropertyAccess {
     }
     return null;
   }
-
   processName(options?: toStringOptions) {
     if (
       this.name.toString() === 'current'
@@ -140,7 +110,6 @@ export class PropertyAccess extends BasePropertyAccess {
         expression,
         compileRefOptions(expressionString, options),
       );
-
       if (member && isProperty(member)) {
         const accessor = this.getRefAccessor(member);
         if (accessor !== null) {
@@ -148,7 +117,6 @@ export class PropertyAccess extends BasePropertyAccess {
         }
       }
     }
-
     return super.processName(options);
   }
 }

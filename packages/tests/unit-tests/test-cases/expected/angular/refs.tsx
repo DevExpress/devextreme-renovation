@@ -85,7 +85,6 @@ export default class Widget extends WidgetProps {
     requiredForwardRefProp: HTMLDivElement | null;
   } {
     const { outerDivRef, ...restProps } = {
-      ...this,
       outerDivRef: this.outerDivRef,
       refProp: this.refProp,
       forwardRefProp: this.forwardRefProp,

@@ -34,7 +34,7 @@ export default class Widget extends WidgetInput {
     return this.size.height;
   }
   get __type(): string {
-    const { type } = this.props;
+    const { type } = this;
     return type;
   }
   get __restAttributes(): any {

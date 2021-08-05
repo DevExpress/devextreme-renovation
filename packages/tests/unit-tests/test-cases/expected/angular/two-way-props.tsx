@@ -23,12 +23,16 @@ import { CommonModule } from "@angular/common";
 })
 export default class Widget extends WidgetInput {
   __getHeight(): number {
-    const { height } = this.props;
-    const { height: _height } = this.props;
+    const { height } = this;
+    const { height: _height } = this;
     return height + _height;
   }
   __getProps(): any {
-    return { ...this, selectedChange: this._selectedChange };
+    return {
+      height: this.height,
+      selected: this.selected,
+      selectedChange: this._selectedChange,
+    };
   }
   get __restAttributes(): any {
     return {};
