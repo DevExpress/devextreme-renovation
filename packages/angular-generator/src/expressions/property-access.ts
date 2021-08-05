@@ -49,16 +49,6 @@ export class PropertyAccess extends BasePropertyAccess {
   }
 
   compileStateSetting(
-
-    
-          
-            
-    
-
-          
-    
-    
-  
     value: string,
     property: Property,
     options: toStringOptions,
