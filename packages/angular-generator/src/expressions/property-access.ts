@@ -67,6 +67,7 @@ export class PropertyAccess extends BasePropertyAccess {
     }
     return `this._${property.name}=${value}`;
   }
+
   getRefAccessor(member: Property) {
     if (member.isRef || member.isForwardRef) {
       return '.nativeElement';
