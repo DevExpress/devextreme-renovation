@@ -96,6 +96,7 @@ export default class Widget extends InfernoWrapperComponent<any> {
     g4?: number[];
   } = {};
   componentWillUpdate(nextProps, nextState, context) {
+    super.componentWillUpdate();
     if (this.state["i"] !== nextState["i"]) {
       this.__getterCache["provide"] = undefined;
     }
@@ -108,7 +109,6 @@ export default class Widget extends InfernoWrapperComponent<any> {
     if (this.context["SimpleContext"] !== context["SimpleContext"]) {
       this.__getterCache["g4"] = undefined;
     }
-    super.componentWillUpdate();
   }
   render() {
     const props = this.props;

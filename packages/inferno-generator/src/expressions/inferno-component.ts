@@ -175,13 +175,13 @@ export class InfernoComponent extends PreactComponent {
     return '';
   }
 
-  compileComponentWillUpdate(statements: string[]): string {
-    const superStatement = this.jQueryRegistered ? 'super.componentWillUpdate();' : '';
+  compileComponentWillUpdate(statements: string[], componentType: string): string {
     if (statements.length > 0) {
-      return `componentWillUpdate(nextProps, nextState, context) {
-        ${statements.join('\n')}
-        ${superStatement}
-      }`;
+      const superStatement = componentType !== 'BaseInfernoComponent' ? 'super.componentWillUpdate();' : '';
+      return `componentWillUpdate(nextProps, nextState, context) {        
+      ${superStatement}
+      ${statements.join('\n')}
+}`;
     }
     return '';
   }
@@ -385,7 +385,7 @@ export class InfernoComponent extends PreactComponent {
     .map((m) => m.toString(this.getToStringOptions()))
     .join('\n')}
                 ${this.compileGetterCache(componentWillUpdate)}
-                ${this.compileComponentWillUpdate(componentWillUpdate)}
+                ${this.compileComponentWillUpdate(componentWillUpdate, component)}
                 render(){
                     const props = this.props;
                     return ${this.compileViewCall()}

@@ -159,6 +159,18 @@ mocha.describe("inferno-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("inferno-will-update-base", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("inferno-will-update-jquery", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("inferno-will-update-effects", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {
