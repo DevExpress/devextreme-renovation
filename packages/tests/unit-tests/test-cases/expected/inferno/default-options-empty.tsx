@@ -63,6 +63,11 @@ export function defaultOptions(rule: WidgetOptionRule) {
     Object.assign(
       Object.getOwnPropertyDescriptors(Widget.defaultProps),
       Object.getOwnPropertyDescriptors(
+        convertRulesToOptions<typeof WidgetProps>([
+          { device: true, options: {} },
+        ])
+      ),
+      Object.getOwnPropertyDescriptors(
         convertRulesToOptions<typeof WidgetProps>(__defaultOptionRules)
       )
     )

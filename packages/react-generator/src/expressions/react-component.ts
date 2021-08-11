@@ -813,6 +813,8 @@ export class ReactComponent extends Component {
     return super.compileDefaultOptionsMethod('[]', [
       `${this.defaultPropsDest()} = ${compileGettersCompatibleExtend(
         this.defaultPropsDest(),
+        ...(this.defaultOptionRules && this.needGenerateDefaultOptions
+          ? [this.compileConvertRulesToOptions(this.defaultOptionRules)] : []),
         this.compileConvertRulesToOptions('__defaultOptionRules'),
       )}`,
     ]);
