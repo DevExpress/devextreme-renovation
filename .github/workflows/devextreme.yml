@@ -132,16 +132,14 @@ jobs:
           npm run test-jest
 
   devextreme-qunit-tests:
-    name: DevExtreme QUnit Tests
+    name: QUnit Constel ${{ matrix.CONSTEL }}
     runs-on: ubuntu-latest
     needs: [ devextreme-compilation ]
 
     strategy:
       matrix:
-        NORENOVATION: [ true ]
         BROWSER: [ google-chrome ]
-        CONSTEL: [ export, misc, ui, ui.widgets, ui.editors, ui.grid, ui.scheduler, viz, renovation ]
-        JQUERY: [ jquery=3 ]
+        CONSTEL: [ export, misc, ui, ui.widgets(1/2), ui.widgets(2/2), ui.editors, ui.grid, ui.scheduler(1/2), ui.scheduler(2/2), viz, renovation ]
 
     steps:
       - name: Setup utils
@@ -186,9 +184,8 @@ jobs:
       - name: Run QUnit tests
         env:
           CONSTEL: ${{ matrix.CONSTEL }}
-          JQUERY: ${{ matrix.JQUERY }}
           BROWSER: ${{ matrix.BROWSER }}
-          NORENOVATION: ${{ matrix.NORENOVATION }}
+          NORENOVATION: "false"
           GITHUBACTION: "true"
           TARGET: "test"
         run: |
