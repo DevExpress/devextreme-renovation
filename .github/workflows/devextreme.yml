@@ -180,6 +180,7 @@ jobs:
           npm i ../preact-generator/package.tgz
           npm i ../inferno-generator/package.tgz
           npm i ../build-helpers/package.tgz
+          npm ls 
 
       - name: Run QUnit tests
         env:
