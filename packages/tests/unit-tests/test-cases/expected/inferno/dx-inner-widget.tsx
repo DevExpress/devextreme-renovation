@@ -43,21 +43,33 @@ export default class InnerWidget extends BaseInfernoComponent<any> {
   }
 
   get restAttributes(): RestProps {
-    const {
-      defaultValue,
-      onSelect,
-      selected,
-      value,
-      valueChange,
-      ...restProps
-    } = {
-      ...this.props,
-      value:
-        this.props.value !== undefined ? this.props.value : this.state.value,
-    } as any;
-    return restProps;
+    if (this.__getterCache["restAttributes"] !== undefined) {
+      return this.__getterCache["restAttributes"];
+    }
+    return (this.__getterCache["restAttributes"] = ((): RestProps => {
+      const {
+        defaultValue,
+        onSelect,
+        selected,
+        value,
+        valueChange,
+        ...restProps
+      } = {
+        ...this.props,
+        value:
+          this.props.value !== undefined ? this.props.value : this.state.value,
+      } as any;
+      return restProps;
+    })());
   }
-
+  __getterCache: {
+    restAttributes?: RestProps;
+  } = {};
+  componentWillUpdate(nextProps, nextState, context) {
+    if (this.props !== nextProps || false) {
+      this.__getterCache["restAttributes"] = undefined;
+    }
+  }
   render() {
     const props = this.props;
     return view({

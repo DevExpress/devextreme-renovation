@@ -116,9 +116,9 @@ export class InfernoComponent extends PreactComponent {
     return '';
   }
 
-  compileGetterCache(componentWillUpdate_Statements: string[]): string {
+  compileGetterCache(componentWillUpdate_Statements: string[], options?: toStringOptions): string {
     const getters = this.members.filter(
-      (m) => m instanceof GetAccessor && m.isMemorized(),
+      (m) => m instanceof GetAccessor && m.isMemorized(options),
     );
 
     if (getters.length) {
@@ -384,7 +384,7 @@ export class InfernoComponent extends PreactComponent {
     .concat(this.members.filter((m) => m.isApiMethod) as Method[])
     .map((m) => m.toString(this.getToStringOptions()))
     .join('\n')}
-                ${this.compileGetterCache(componentWillUpdate)}
+                ${this.compileGetterCache(componentWillUpdate, this.getToStringOptions())}
                 ${this.compileComponentWillUpdate(componentWillUpdate, component)}
                 render(){
                     const props = this.props;

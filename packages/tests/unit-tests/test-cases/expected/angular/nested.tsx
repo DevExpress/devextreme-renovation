@@ -123,30 +123,47 @@ export default class Widget extends PickedProps {
     return this.columns?.map((el) => (typeof el === "string" ? el : el.name));
   }
   get __isEditable(): any {
-    return this.editing.editEnabled || this.editing.custom?.length;
+    if (this.__getterCache["isEditable"] !== undefined) {
+      return this.__getterCache["isEditable"];
+    }
+    return (this.__getterCache["isEditable"] = ((): any => {
+      return this.editing.editEnabled || this.editing.custom?.length;
+    })());
   }
   private __columns?: Array<DxWidgetColumn | string>;
   @ContentChildren(DxWidgetColumn) columnsNested?: QueryList<DxWidgetColumn>;
   get columns(): Array<DxWidgetColumn | string> | undefined {
-    if (this.__columns) {
-      return this.__columns;
+    if (this.__getterCache["columns"] !== undefined) {
+      return this.__getterCache["columns"];
     }
-    const nested = this.columnsNested?.toArray();
-    if (nested && nested.length) {
-      return nested;
-    }
+    return (this.__getterCache["columns"] = (():
+      | Array<DxWidgetColumn | string>
+      | undefined => {
+      if (this.__columns) {
+        return this.__columns;
+      }
+      const nested = this.columnsNested?.toArray();
+      if (nested && nested.length) {
+        return nested;
+      }
+    })());
   }
   private __editing?: DxWidgetEditing;
   @ContentChildren(DxWidgetEditing) editingNested?: QueryList<DxWidgetEditing>;
   get editing(): DxWidgetEditing {
-    if (this.__editing) {
-      return this.__editing;
+    if (this.__getterCache["editing"] !== undefined) {
+      return this.__getterCache["editing"];
     }
-    const nested = this.editingNested?.toArray();
-    if (nested && nested.length) {
-      return nested[0];
-    }
-    return PickedProps.__defaultNestedValues.editing;
+    return (this.__getterCache["editing"] = ((): DxWidgetEditing => {
+      if (this.__editing) {
+        return this.__editing;
+      }
+      const nested = this.editingNested?.toArray();
+      if (nested && nested.length) {
+        return nested[0];
+      }
+      return PickedProps.__defaultNestedValues.editing;
+    })());
   }
   get __restAttributes(): any {
     return {};
@@ -157,6 +174,12 @@ export default class Widget extends PickedProps {
         this.changeDetection.detectChanges();
     });
   }
+
+  __getterCache: {
+    isEditable?: any;
+    columns?: Array<DxWidgetColumn | string> | undefined;
+    editing?: DxWidgetEditing;
+  } = {};
 
   ngAfterViewInit() {
     this._detectChanges();

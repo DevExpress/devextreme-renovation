@@ -145,7 +145,7 @@ export class Property extends BaseProperty {
       return [`${this.name}`];
     }
     if (this.isMutable) {
-      return [];
+      return [`${this.name}`];
     }
     throw `Can't parse property: ${this._name}`;
   }

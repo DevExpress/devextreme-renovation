@@ -58,7 +58,12 @@ import { CommonModule } from "@angular/common";
 export default class Widget extends Props {
   contextConsumerConsumer: number;
   get __sum(): any {
-    return this.provider.value + this.contextConsumerConsumer;
+    if (this.__getterCache["sum"] !== undefined) {
+      return this.__getterCache["sum"];
+    }
+    return (this.__getterCache["sum"] = ((): any => {
+      return this.provider.value + this.contextConsumerConsumer;
+    })());
   }
   get __contextProvider(): any {
     if (this.__getterCache["contextProvider"] !== undefined) {
@@ -82,10 +87,19 @@ export default class Widget extends Props {
   }
 
   __getterCache: {
+    sum?: any;
     contextProvider?: any;
   } = {};
+  resetDependantGetters(): void {
+    this.__getterCache["sum"] = undefined;
+  }
   _destroyContext: Array<() => void> = [];
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (["provider"].some((d) => changes[d])) {
+      this.__getterCache["sum"] = undefined;
+    }
+  }
   ngOnDestroy() {
     this._destroyContext.forEach((d) => d());
   }
@@ -106,7 +120,7 @@ export default class Widget extends Props {
     } else {
       const changeHandler = (value: number) => {
         this.contextConsumerConsumer = value;
-
+        this.resetDependantGetters();
         this._detectChanges();
       };
       const subscription = contextConsumer.change.subscribe(changeHandler);

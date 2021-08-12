@@ -33,13 +33,36 @@ export default class Widget extends BaseInfernoComponent<any> {
     return columns?.map((el) => (typeof el === "string" ? el : el.name));
   }
   get isEditable(): any {
-    return this.props.editing.editEnabled || this.props.editing.custom?.length;
+    if (this.__getterCache["isEditable"] !== undefined) {
+      return this.__getterCache["isEditable"];
+    }
+    return (this.__getterCache["isEditable"] = ((): any => {
+      return (
+        this.props.editing.editEnabled || this.props.editing.custom?.length
+      );
+    })());
   }
   get restAttributes(): RestProps {
-    const { columns, editing, ...restProps } = this.props as any;
-    return restProps;
+    if (this.__getterCache["restAttributes"] !== undefined) {
+      return this.__getterCache["restAttributes"];
+    }
+    return (this.__getterCache["restAttributes"] = ((): RestProps => {
+      const { columns, editing, ...restProps } = this.props as any;
+      return restProps;
+    })());
   }
-
+  __getterCache: {
+    isEditable?: any;
+    restAttributes?: RestProps;
+  } = {};
+  componentWillUpdate(nextProps, nextState, context) {
+    if (this.props["editing"] !== nextProps["editing"]) {
+      this.__getterCache["isEditable"] = undefined;
+    }
+    if (this.props !== nextProps) {
+      this.__getterCache["restAttributes"] = undefined;
+    }
+  }
   render() {
     const props = this.props;
     return view({

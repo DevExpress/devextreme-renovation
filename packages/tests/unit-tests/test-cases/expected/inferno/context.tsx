@@ -49,7 +49,12 @@ export default class Widget extends BaseInfernoComponent<any> {
   }
 
   get sum(): any {
-    return this.provider + this.contextConsumer;
+    if (this.__getterCache["sum"] !== undefined) {
+      return this.__getterCache["sum"];
+    }
+    return (this.__getterCache["sum"] = ((): any => {
+      return this.provider + this.contextConsumer;
+    })());
   }
   get contextProvider(): any {
     if (this.__getterCache["contextProvider"] !== undefined) {
@@ -60,13 +65,27 @@ export default class Widget extends BaseInfernoComponent<any> {
     })());
   }
   get restAttributes(): RestProps {
-    const { p1, ...restProps } = this.props as any;
-    return restProps;
+    if (this.__getterCache["restAttributes"] !== undefined) {
+      return this.__getterCache["restAttributes"];
+    }
+    return (this.__getterCache["restAttributes"] = ((): RestProps => {
+      const { p1, ...restProps } = this.props as any;
+      return restProps;
+    })());
   }
   __getterCache: {
+    sum?: any;
     contextProvider?: any;
+    restAttributes?: RestProps;
   } = {};
-
+  componentWillUpdate(nextProps, nextState, context) {
+    if (false || this.context["P1Context"] !== context["P1Context"]) {
+      this.__getterCache["sum"] = undefined;
+    }
+    if (this.props !== nextProps) {
+      this.__getterCache["restAttributes"] = undefined;
+    }
+  }
   render() {
     const props = this.props;
     return view({

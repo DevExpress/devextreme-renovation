@@ -598,9 +598,11 @@ export class AngularComponent extends Component {
     return imports.join(';\n');
   }
 
-  compileGetterCache(ngOnChanges: string[], resetDependantGetters: string[] = []): string {
+  compileGetterCache(ngOnChanges: string[],
+    options?: toStringOptions,
+    resetDependantGetters: string[] = []): string {
     const getters = this.members.filter(
-      (m) => m instanceof GetAccessor && m.isMemorized(),
+      (m) => m instanceof GetAccessor && m.isMemorized(options),
     );
 
     if (getters.length) {
@@ -1573,7 +1575,7 @@ export class AngularComponent extends Component {
     ngAfterViewCheckedStatements,
     ngDoCheckStatements,
   )}
-            ${this.compileGetterCache(ngOnChangesStatements, resetDependantGetters)}
+            ${this.compileGetterCache(ngOnChangesStatements, decoratorToStringOptions, resetDependantGetters)}
             ${this.compileContext(
     constructorStatements,
     constructorArguments,

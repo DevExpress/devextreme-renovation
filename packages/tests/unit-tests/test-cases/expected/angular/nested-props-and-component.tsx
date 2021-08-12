@@ -91,59 +91,119 @@ class DxUndefWidgetNestedProp extends FakeNested {}
 })
 export default class UndefWidget extends WidgetProps {
   get __oneway(): any {
-    return this.hasOwnProperty("oneWayProp");
+    if (this.__getterCache["oneway"] !== undefined) {
+      return this.__getterCache["oneway"];
+    }
+    return (this.__getterCache["oneway"] = ((): any => {
+      return this.hasOwnProperty("oneWayProp");
+    })());
   }
   get __twoway(): any {
-    return this.hasOwnProperty("twoWayProp");
+    if (this.__getterCache["twoway"] !== undefined) {
+      return this.__getterCache["twoway"];
+    }
+    return (this.__getterCache["twoway"] = ((): any => {
+      return this.hasOwnProperty("twoWayProp");
+    })());
   }
   get __someevent(): any {
-    return this.hasOwnProperty("someEvent");
+    if (this.__getterCache["someevent"] !== undefined) {
+      return this.__getterCache["someevent"];
+    }
+    return (this.__getterCache["someevent"] = ((): any => {
+      return this.hasOwnProperty("someEvent");
+    })());
   }
   get __someref(): any {
-    return this.hasOwnProperty("someRef");
+    if (this.__getterCache["someref"] !== undefined) {
+      return this.__getterCache["someref"];
+    }
+    return (this.__getterCache["someref"] = ((): any => {
+      return this.hasOwnProperty("someRef");
+    })());
   }
   get __someforwardref(): any {
-    return this.hasOwnProperty("someForwardRef");
+    if (this.__getterCache["someforwardref"] !== undefined) {
+      return this.__getterCache["someforwardref"];
+    }
+    return (this.__getterCache["someforwardref"] = ((): any => {
+      return this.hasOwnProperty("someForwardRef");
+    })());
   }
   get __someslot(): any {
-    return this.hasOwnProperty("slotProp");
+    if (this.__getterCache["someslot"] !== undefined) {
+      return this.__getterCache["someslot"];
+    }
+    return (this.__getterCache["someslot"] = ((): any => {
+      return this.hasOwnProperty("slotProp");
+    })());
   }
   get __sometemplate(): any {
-    return this.hasOwnProperty("templateProp");
+    if (this.__getterCache["sometemplate"] !== undefined) {
+      return this.__getterCache["sometemplate"];
+    }
+    return (this.__getterCache["sometemplate"] = ((): any => {
+      return this.hasOwnProperty("templateProp");
+    })());
   }
   get __nested(): any {
-    return this.hasOwnProperty("__nestedProp") || this.nestedProp !== undefined;
+    if (this.__getterCache["nested"] !== undefined) {
+      return this.__getterCache["nested"];
+    }
+    return (this.__getterCache["nested"] = ((): any => {
+      return (
+        this.hasOwnProperty("__nestedProp") || this.nestedProp !== undefined
+      );
+    })());
   }
   get __nestedinit(): any {
-    return (
-      this.hasOwnProperty("__anotherNestedPropInit") ||
-      this.anotherNestedPropInit !== undefined
-    );
+    if (this.__getterCache["nestedinit"] !== undefined) {
+      return this.__getterCache["nestedinit"];
+    }
+    return (this.__getterCache["nestedinit"] = ((): any => {
+      return (
+        this.hasOwnProperty("__anotherNestedPropInit") ||
+        this.anotherNestedPropInit !== undefined
+      );
+    })());
   }
   private __nestedProp?: DxUndefWidgetNestedProp[];
   @ContentChildren(DxUndefWidgetNestedProp)
   nestedPropNested?: QueryList<DxUndefWidgetNestedProp>;
   get nestedProp(): DxUndefWidgetNestedProp[] | undefined {
-    if (this.__nestedProp) {
-      return this.__nestedProp;
+    if (this.__getterCache["nestedProp"] !== undefined) {
+      return this.__getterCache["nestedProp"];
     }
-    const nested = this.nestedPropNested?.toArray();
-    if (nested && nested.length) {
-      return nested;
-    }
+    return (this.__getterCache["nestedProp"] = (():
+      | DxUndefWidgetNestedProp[]
+      | undefined => {
+      if (this.__nestedProp) {
+        return this.__nestedProp;
+      }
+      const nested = this.nestedPropNested?.toArray();
+      if (nested && nested.length) {
+        return nested;
+      }
+    })());
   }
   private __anotherNestedPropInit?: DxUndefWidgetAnotherNestedPropInit[];
   @ContentChildren(DxUndefWidgetAnotherNestedPropInit)
   anotherNestedPropInitNested?: QueryList<DxUndefWidgetAnotherNestedPropInit>;
   get anotherNestedPropInit(): DxUndefWidgetAnotherNestedPropInit[] {
-    if (this.__anotherNestedPropInit) {
-      return this.__anotherNestedPropInit;
+    if (this.__getterCache["anotherNestedPropInit"] !== undefined) {
+      return this.__getterCache["anotherNestedPropInit"];
     }
-    const nested = this.anotherNestedPropInitNested?.toArray();
-    if (nested && nested.length) {
-      return nested;
-    }
-    return WidgetProps.__defaultNestedValues.anotherNestedPropInit;
+    return (this.__getterCache["anotherNestedPropInit"] =
+      ((): DxUndefWidgetAnotherNestedPropInit[] => {
+        if (this.__anotherNestedPropInit) {
+          return this.__anotherNestedPropInit;
+        }
+        const nested = this.anotherNestedPropInitNested?.toArray();
+        if (nested && nested.length) {
+          return nested;
+        }
+        return WidgetProps.__defaultNestedValues.anotherNestedPropInit;
+      })());
   }
   get __restAttributes(): any {
     return {};
@@ -178,6 +238,17 @@ export default class UndefWidget extends WidgetProps {
   }
 
   __getterCache: {
+    oneway?: any;
+    twoway?: any;
+    someevent?: any;
+    someref?: any;
+    someforwardref?: any;
+    someslot?: any;
+    sometemplate?: any;
+    nested?: any;
+    nestedinit?: any;
+    nestedProp?: DxUndefWidgetNestedProp[] | undefined;
+    anotherNestedPropInit?: DxUndefWidgetAnotherNestedPropInit[];
     forwardRef_someForwardRef?: (
       ref?: ElementRef<any>
     ) => ElementRef<any> | undefined;

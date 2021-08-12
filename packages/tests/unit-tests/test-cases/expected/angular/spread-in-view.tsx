@@ -34,7 +34,12 @@ export default class Widget extends WidgetProps {
     });
   }
   get rest(): any {
-    return { id: this.id, onClick: this._onClick };
+    if (this.__getterCache["rest"] !== undefined) {
+      return this.__getterCache["rest"];
+    }
+    return (this.__getterCache["rest"] = ((): any => {
+      return { id: this.id, onClick: this._onClick };
+    })());
   }
   @ViewChild("_auto_ref_0", { static: false })
   _auto_ref_0?: ElementRef<HTMLDivElement>;
@@ -50,12 +55,20 @@ export default class Widget extends WidgetProps {
     }
   }
 
+  __getterCache: {
+    rest?: any;
+  } = {};
+
   ngAfterViewInit() {
     this.__applyAttributes__();
   }
   ngOnChanges(changes: { [name: string]: any }) {
     if (["id", "onClick"].some((d) => changes[d] && !changes[d].firstChange)) {
       this.scheduledApplyAttributes = true;
+    }
+
+    if (["id", "onClick"].some((d) => changes[d])) {
+      this.__getterCache["rest"] = undefined;
     }
   }
 

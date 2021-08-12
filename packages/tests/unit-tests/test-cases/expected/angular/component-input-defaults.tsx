@@ -88,26 +88,36 @@ export default class Widget extends WidgetProps {
   private __texts2?: DxWidgetTexts2;
   @ContentChildren(DxWidgetTexts2) texts2Nested?: QueryList<DxWidgetTexts2>;
   get texts2(): DxWidgetTexts2 | undefined {
-    if (this.__texts2) {
-      return this.__texts2;
+    if (this.__getterCache["texts2"] !== undefined) {
+      return this.__getterCache["texts2"];
     }
-    const nested = this.texts2Nested?.toArray();
-    if (nested && nested.length) {
-      return nested[0];
-    }
-    return WidgetProps.__defaultNestedValues.texts2;
+    return (this.__getterCache["texts2"] = ((): DxWidgetTexts2 | undefined => {
+      if (this.__texts2) {
+        return this.__texts2;
+      }
+      const nested = this.texts2Nested?.toArray();
+      if (nested && nested.length) {
+        return nested[0];
+      }
+      return WidgetProps.__defaultNestedValues.texts2;
+    })());
   }
   private __texts3?: DxWidgetTexts3;
   @ContentChildren(DxWidgetTexts3) texts3Nested?: QueryList<DxWidgetTexts3>;
   get texts3(): DxWidgetTexts3 | undefined {
-    if (this.__texts3) {
-      return this.__texts3;
+    if (this.__getterCache["texts3"] !== undefined) {
+      return this.__getterCache["texts3"];
     }
-    const nested = this.texts3Nested?.toArray();
-    if (nested && nested.length) {
-      return nested[0];
-    }
-    return WidgetProps.__defaultNestedValues.texts3;
+    return (this.__getterCache["texts3"] = ((): DxWidgetTexts3 | undefined => {
+      if (this.__texts3) {
+        return this.__texts3;
+      }
+      const nested = this.texts3Nested?.toArray();
+      if (nested && nested.length) {
+        return nested[0];
+      }
+      return WidgetProps.__defaultNestedValues.texts3;
+    })());
   }
   get __restAttributes(): any {
     return {};
@@ -118,6 +128,11 @@ export default class Widget extends WidgetProps {
         this.changeDetection.detectChanges();
     });
   }
+
+  __getterCache: {
+    texts2?: DxWidgetTexts2 | undefined;
+    texts3?: DxWidgetTexts3 | undefined;
+  } = {};
 
   ngAfterViewInit() {
     this._detectChanges();

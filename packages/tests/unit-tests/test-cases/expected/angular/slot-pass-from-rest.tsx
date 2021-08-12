@@ -42,7 +42,22 @@ export default class SlotPass extends WidgetInput {
     });
   }
   get rest(): any {
-    return { children: this.children };
+    if (this.__getterCache["rest"] !== undefined) {
+      return this.__getterCache["rest"];
+    }
+    return (this.__getterCache["rest"] = ((): any => {
+      return { children: this.children };
+    })());
+  }
+
+  __getterCache: {
+    rest?: any;
+  } = {};
+
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (["children"].some((d) => changes[d])) {
+      this.__getterCache["rest"] = undefined;
+    }
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {

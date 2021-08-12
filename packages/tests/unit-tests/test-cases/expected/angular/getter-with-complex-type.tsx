@@ -5,6 +5,11 @@ import {
   Optional,
   Host,
 } from "@angular/core";
+
+interface SlidingWindowState {
+  indexesForReuse: number[];
+  slidingWindowIndexes: number[];
+}
 @Injectable()
 class SimpleContext {
   _value: number = 5;
@@ -41,6 +46,8 @@ import { CommonModule } from "@angular/common";
   template: `<div></div>`,
 })
 export default class Widget extends Props {
+  internalField: number = 3;
+  mutableField: number = 3;
   i: number = 10;
   get __provide(): any {
     if (this.__getterCache["provide"] !== undefined) {
@@ -61,10 +68,20 @@ export default class Widget extends Props {
     })());
   }
   get __g2(): number {
-    return this.p;
+    if (this.__getterCache["g2"] !== undefined) {
+      return this.__getterCache["g2"];
+    }
+    return (this.__getterCache["g2"] = ((): number => {
+      return this.p;
+    })());
   }
   get __g3(): number {
-    return this.i;
+    if (this.__getterCache["g3"] !== undefined) {
+      return this.__getterCache["g3"];
+    }
+    return (this.__getterCache["g3"] = ((): number => {
+      return this.i;
+    })());
   }
   get __g4(): number[] {
     if (this.__getterCache["g4"] !== undefined) {
@@ -73,6 +90,25 @@ export default class Widget extends Props {
     return (this.__getterCache["g4"] = ((): number[] => {
       return [this.consConsumer];
     })());
+  }
+  __someFunc(): any {
+    return this.p;
+  }
+  get __g5(): number[] {
+    return [
+      this.__someFunc(),
+      this.__g3,
+      this.internalField,
+      this.mutableField,
+    ];
+  }
+  slidingWindowStateHolder!: SlidingWindowState;
+  private get __slidingWindowState(): SlidingWindowState {
+    const slidingWindowState = this.slidingWindowStateHolder;
+    if (!slidingWindowState) {
+      return { indexesForReuse: [], slidingWindowIndexes: [] };
+    }
+    return slidingWindowState;
   }
   get __restAttributes(): any {
     return {};
@@ -87,7 +123,11 @@ export default class Widget extends Props {
   __getterCache: {
     provide?: any;
     g1?: number[];
+    g2?: number;
+    g3?: number;
     g4?: number[];
+    g5?: number[];
+    slidingWindowState?: SlidingWindowState;
   } = {};
   resetDependantGetters(): void {
     this.__getterCache["g4"] = undefined;
@@ -97,6 +137,18 @@ export default class Widget extends Props {
   ngOnChanges(changes: { [name: string]: any }) {
     if (["p"].some((d) => changes[d])) {
       this.__getterCache["g1"] = undefined;
+    }
+
+    if (["p"].some((d) => changes[d])) {
+      this.__getterCache["g2"] = undefined;
+    }
+
+    if (["p", "mutableField"].some((d) => changes[d])) {
+      this.__getterCache["g5"] = undefined;
+    }
+
+    if (["slidingWindowStateHolder"].some((d) => changes[d])) {
+      this.__getterCache["slidingWindowState"] = undefined;
     }
   }
   ngOnDestroy() {
@@ -128,11 +180,18 @@ export default class Widget extends Props {
     }
     this.consConsumer = this.cons.value;
   }
+  set _internalField(internalField: number) {
+    this.internalField = internalField;
+    this._detectChanges();
+    this.__getterCache["g5"] = undefined;
+  }
   set _i(i: number) {
     this.i = i;
     this._detectChanges();
     this.__getterCache["provide"] = undefined;
     this.__getterCache["g1"] = undefined;
+    this.__getterCache["g3"] = undefined;
+    this.__getterCache["g5"] = undefined;
   }
 }
 @NgModule({

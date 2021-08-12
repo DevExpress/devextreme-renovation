@@ -929,13 +929,20 @@ export class ReactComponent extends Component {
       ) as Array<Method>,
     )
     .map(
-      (m) => `const ${m.name
-      }=useCallback(${m.declaration(
-        this.getToStringOptions(),
-      )}, [${m.getDependency({
-        members: this.members,
-        componentContext: SyntaxKind.ThisKeyword,
-      })}]);`,
+      (m) => {
+        if ((m instanceof GetAccessor) && !m.isMemorized(this.getToStringOptions())) {
+          return `const ${m.name}=${m.declaration(
+            this.getToStringOptions(),
+          )}`;
+        }
+        return `const ${m.name
+        }=useCallback(${m.declaration(
+          this.getToStringOptions(),
+        )}, [${m.getDependency({
+          members: this.members,
+          componentContext: SyntaxKind.ThisKeyword,
+        })}]);`;
+      },
     )
     .join('\n')}
                   ${this.compileUseEffect()}

@@ -5,6 +5,11 @@ import {
   normalizeStyles,
   createContext,
 } from "@devextreme/vdom";
+
+interface SlidingWindowState {
+  indexesForReuse: number[];
+  slidingWindowIndexes: number[];
+}
 const SimpleContext = createContext<number>(5);
 function view(viewModel: Widget) {
   return <div></div>;
@@ -18,6 +23,7 @@ export const Props: PropsType = {
 };
 import { createElement as h } from "inferno-compat";
 import { createReRenderEffect } from "@devextreme/vdom";
+import { createRef as infernoCreateRef } from "inferno";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
@@ -26,23 +32,28 @@ declare type RestProps = {
 };
 
 export default class Widget extends InfernoWrapperComponent<any> {
-  state: { i: number };
+  state: { internalField: number; i: number };
 
   refs: any;
+  mutableField: number = 3;
   get cons(): number {
     if ("SimpleContext" in this.context) {
       return this.context.SimpleContext;
     }
     return SimpleContext;
   }
+  slidingWindowStateHolder!: SlidingWindowState;
 
   constructor(props: any) {
     super(props);
     this.state = {
+      internalField: 3,
       i: 10,
     };
+    this.someFunc = this.someFunc.bind(this);
   }
 
+  internalField!: number;
   i!: number;
 
   createEffects() {
@@ -73,10 +84,20 @@ export default class Widget extends InfernoWrapperComponent<any> {
     })());
   }
   get g2(): number {
-    return this.props.p;
+    if (this.__getterCache["g2"] !== undefined) {
+      return this.__getterCache["g2"];
+    }
+    return (this.__getterCache["g2"] = ((): number => {
+      return this.props.p;
+    })());
   }
   get g3(): number {
-    return this.state.i;
+    if (this.__getterCache["g3"] !== undefined) {
+      return this.__getterCache["g3"];
+    }
+    return (this.__getterCache["g3"] = ((): number => {
+      return this.state.i;
+    })());
   }
   get g4(): number[] {
     if (this.__getterCache["g4"] !== undefined) {
@@ -86,14 +107,40 @@ export default class Widget extends InfernoWrapperComponent<any> {
       return [this.cons];
     })());
   }
+  someFunc(): any {
+    return this.props.p;
+  }
+  get g5(): number[] {
+    return [
+      this.someFunc(),
+      this.g3,
+      this.state.internalField,
+      this.mutableField,
+    ];
+  }
+  private get slidingWindowState(): SlidingWindowState {
+    const slidingWindowState = this.slidingWindowStateHolder;
+    if (!slidingWindowState) {
+      return { indexesForReuse: [], slidingWindowIndexes: [] };
+    }
+    return slidingWindowState;
+  }
   get restAttributes(): RestProps {
-    const { p, ...restProps } = this.props as any;
-    return restProps;
+    if (this.__getterCache["restAttributes"] !== undefined) {
+      return this.__getterCache["restAttributes"];
+    }
+    return (this.__getterCache["restAttributes"] = ((): RestProps => {
+      const { p, ...restProps } = this.props as any;
+      return restProps;
+    })());
   }
   __getterCache: {
     provide?: any;
     g1?: number[];
+    g2?: number;
+    g3?: number;
     g4?: number[];
+    restAttributes?: RestProps;
   } = {};
   componentWillUpdate(nextProps, nextState, context) {
     super.componentWillUpdate();
@@ -106,14 +153,24 @@ export default class Widget extends InfernoWrapperComponent<any> {
     ) {
       this.__getterCache["g1"] = undefined;
     }
+    if (this.props["p"] !== nextProps["p"]) {
+      this.__getterCache["g2"] = undefined;
+    }
+    if (this.state["i"] !== nextState["i"]) {
+      this.__getterCache["g3"] = undefined;
+    }
     if (this.context["SimpleContext"] !== context["SimpleContext"]) {
       this.__getterCache["g4"] = undefined;
+    }
+    if (this.props !== nextProps) {
+      this.__getterCache["restAttributes"] = undefined;
     }
   }
   render() {
     const props = this.props;
     return view({
       props: { ...props },
+      internalField: this.state.internalField,
       i: this.state.i,
       cons: this.cons,
       provide: this.provide,
@@ -121,6 +178,8 @@ export default class Widget extends InfernoWrapperComponent<any> {
       g2: this.g2,
       g3: this.g3,
       g4: this.g4,
+      someFunc: this.someFunc,
+      g5: this.g5,
       restAttributes: this.restAttributes,
     } as Widget);
   }

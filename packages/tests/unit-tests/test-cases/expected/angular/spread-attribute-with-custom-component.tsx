@@ -22,7 +22,12 @@ import { CommonModule } from "@angular/common";
 })
 export default class Widget extends WidgetInput {
   get __attr1(): any {
-    return { value: 100, selected: true };
+    if (this.__getterCache["attr1"] !== undefined) {
+      return this.__getterCache["attr1"];
+    }
+    return (this.__getterCache["attr1"] = ((): any => {
+      return { value: 100, selected: true };
+    })());
   }
   get __restAttributes(): any {
     return {};
@@ -33,6 +38,10 @@ export default class Widget extends WidgetInput {
         this.changeDetection.detectChanges();
     });
   }
+
+  __getterCache: {
+    attr1?: any;
+  } = {};
 
   constructor(private changeDetection: ChangeDetectorRef) {
     super();

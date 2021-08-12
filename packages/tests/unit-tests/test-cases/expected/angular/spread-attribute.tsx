@@ -26,10 +26,20 @@ export default class Widget extends WidgetInput {
   @ViewChild("hostLink", { static: false }) host?: ElementRef<HTMLDivElement>;
   @ViewChild("i1Link", { static: false }) i1!: ElementRef<HTMLInputElement>;
   get __attr1(): any {
-    return {};
+    if (this.__getterCache["attr1"] !== undefined) {
+      return this.__getterCache["attr1"];
+    }
+    return (this.__getterCache["attr1"] = ((): any => {
+      return {};
+    })());
   }
   get __attr2(): any {
-    return {};
+    if (this.__getterCache["attr2"] !== undefined) {
+      return this.__getterCache["attr2"];
+    }
+    return (this.__getterCache["attr2"] = ((): any => {
+      return {};
+    })());
   }
   get __restAttributes(): any {
     return {};
@@ -79,6 +89,11 @@ export default class Widget extends WidgetInput {
       }
     }
   }
+
+  __getterCache: {
+    attr1?: any;
+    attr2?: any;
+  } = {};
 
   ngAfterViewInit() {
     this.__applyAttributes__();

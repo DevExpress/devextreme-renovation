@@ -31,11 +31,21 @@ export function defaultOptions(rule: WidgetOptionRule) {
 })
 export default class Widget extends WidgetInput {
   get __getHeight(): number {
-    return this.size.height;
+    if (this.__getterCache["getHeight"] !== undefined) {
+      return this.__getterCache["getHeight"];
+    }
+    return (this.__getterCache["getHeight"] = ((): number => {
+      return this.size.height;
+    })());
   }
   get __type(): string {
-    const { type } = this;
-    return type;
+    if (this.__getterCache["type"] !== undefined) {
+      return this.__getterCache["type"];
+    }
+    return (this.__getterCache["type"] = ((): string => {
+      const { type } = this;
+      return type;
+    })());
   }
   get __restAttributes(): any {
     return {};
@@ -47,12 +57,26 @@ export default class Widget extends WidgetInput {
     });
   }
 
+  __getterCache: {
+    getHeight?: number;
+    type?: string;
+  } = {};
+
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (["size"].some((d) => changes[d])) {
+      this.__getterCache["getHeight"] = undefined;
+    }
+
+    if (["type"].some((d) => changes[d])) {
+      this.__getterCache["type"] = undefined;
+    }
+  }
+
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
 
-    const defaultOptions = convertRulesToOptions<WidgetInput>(
-      __defaultOptionRules
-    );
+    const defaultOptions =
+      convertRulesToOptions<WidgetInput>(__defaultOptionRules);
     Object.keys(defaultOptions).forEach((option) => {
       (this as any)[option] = (defaultOptions as any)[option];
     });

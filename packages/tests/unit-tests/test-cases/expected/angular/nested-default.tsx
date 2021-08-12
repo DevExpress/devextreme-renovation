@@ -69,14 +69,19 @@ export default class WithNested extends WithNestedInput {
   private __rows?: DxWithNestedRow[];
   @ContentChildren(DxWithNestedRow) rowsNested?: QueryList<DxWithNestedRow>;
   get rows(): DxWithNestedRow[] | undefined {
-    if (this.__rows) {
-      return this.__rows;
+    if (this.__getterCache["rows"] !== undefined) {
+      return this.__getterCache["rows"];
     }
-    const nested = this.rowsNested?.toArray();
-    if (nested && nested.length) {
-      return nested;
-    }
-    return WithNestedInput.__defaultNestedValues.rows;
+    return (this.__getterCache["rows"] = ((): DxWithNestedRow[] | undefined => {
+      if (this.__rows) {
+        return this.__rows;
+      }
+      const nested = this.rowsNested?.toArray();
+      if (nested && nested.length) {
+        return nested;
+      }
+      return WithNestedInput.__defaultNestedValues.rows;
+    })());
   }
   get __restAttributes(): any {
     return {};
@@ -91,6 +96,10 @@ export default class WithNested extends WithNestedInput {
   _trackBy_rows_0(index: number, _: any) {
     return index;
   }
+
+  __getterCache: {
+    rows?: DxWithNestedRow[] | undefined;
+  } = {};
 
   ngAfterViewInit() {
     this._detectChanges();

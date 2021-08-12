@@ -36,8 +36,13 @@ export default class Widget extends BaseInfernoComponent<any> {
   }
 
   get restAttributes(): RestProps {
-    const { prop1, prop2, ...restProps } = this.props as any;
-    return restProps;
+    if (this.__getterCache["restAttributes"] !== undefined) {
+      return this.__getterCache["restAttributes"];
+    }
+    return (this.__getterCache["restAttributes"] = ((): RestProps => {
+      const { prop1, prop2, ...restProps } = this.props as any;
+      return restProps;
+    })());
   }
   getHeight(p: number = 10, p1: any): string {
     return `${this.props.prop1} + ${this.props.prop2} + ${this.divRef.current?.innerHTML} + ${p}`;
@@ -47,7 +52,14 @@ export default class Widget extends BaseInfernoComponent<any> {
       this.divRef.current?.innerHTML
     } + ${this.getHeight(0, 0)}`;
   }
-
+  __getterCache: {
+    restAttributes?: RestProps;
+  } = {};
+  componentWillUpdate(nextProps, nextState, context) {
+    if (this.props !== nextProps) {
+      this.__getterCache["restAttributes"] = undefined;
+    }
+  }
   render() {
     const props = this.props;
     return view({

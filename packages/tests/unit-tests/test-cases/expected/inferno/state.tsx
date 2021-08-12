@@ -133,31 +133,47 @@ export default class Widget extends BaseInfernoComponent<any> {
     }
   }
   get restAttributes(): RestProps {
-    const {
-      defaultState1,
-      defaultState2,
-      defaultStateProp,
-      state1,
-      state1Change,
-      state2,
-      state2Change,
-      stateProp,
-      statePropChange,
-      ...restProps
-    } = {
-      ...this.props,
-      state1:
-        this.props.state1 !== undefined ? this.props.state1 : this.state.state1,
-      state2:
-        this.props.state2 !== undefined ? this.props.state2 : this.state.state2,
-      stateProp:
-        this.props.stateProp !== undefined
-          ? this.props.stateProp
-          : this.state.stateProp,
-    } as any;
-    return restProps;
+    if (this.__getterCache["restAttributes"] !== undefined) {
+      return this.__getterCache["restAttributes"];
+    }
+    return (this.__getterCache["restAttributes"] = ((): RestProps => {
+      const {
+        defaultState1,
+        defaultState2,
+        defaultStateProp,
+        state1,
+        state1Change,
+        state2,
+        state2Change,
+        stateProp,
+        statePropChange,
+        ...restProps
+      } = {
+        ...this.props,
+        state1:
+          this.props.state1 !== undefined
+            ? this.props.state1
+            : this.state.state1,
+        state2:
+          this.props.state2 !== undefined
+            ? this.props.state2
+            : this.state.state2,
+        stateProp:
+          this.props.stateProp !== undefined
+            ? this.props.stateProp
+            : this.state.stateProp,
+      } as any;
+      return restProps;
+    })());
   }
-
+  __getterCache: {
+    restAttributes?: RestProps;
+  } = {};
+  componentWillUpdate(nextProps, nextState, context) {
+    if (this.props !== nextProps || false || false || false) {
+      this.__getterCache["restAttributes"] = undefined;
+    }
+  }
   render() {
     const props = this.props;
     return view({

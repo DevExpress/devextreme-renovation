@@ -38,7 +38,12 @@ export default class Widget extends WidgetProps {
   someRef?: ElementRef<HTMLDivElement>;
   forwardRef?: ElementRef<HTMLDivElement>;
   get __forwardRefCurrent(): any {
-    return this.forwardRef?.nativeElement;
+    if (this.__getterCache["forwardRefCurrent"] !== undefined) {
+      return this.__getterCache["forwardRefCurrent"];
+    }
+    return (this.__getterCache["forwardRefCurrent"] = ((): any => {
+      return this.forwardRef?.nativeElement;
+    })());
   }
   get __restAttributes(): any {
     return {};
@@ -93,6 +98,7 @@ export default class Widget extends WidgetProps {
   }
 
   __getterCache: {
+    forwardRefCurrent?: any;
     forwardRef_forwardRef?: (
       ref?: ElementRef<HTMLDivElement>
     ) => ElementRef<HTMLDivElement> | undefined;
@@ -100,6 +106,12 @@ export default class Widget extends WidgetProps {
       ref?: ElementRef<HTMLDivElement>
     ) => ElementRef<HTMLDivElement> | undefined;
   } = {};
+
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (["forwardRef"].some((d) => changes[d])) {
+      this.__getterCache["forwardRefCurrent"] = undefined;
+    }
+  }
 
   constructor(private changeDetection: ChangeDetectorRef) {
     super();

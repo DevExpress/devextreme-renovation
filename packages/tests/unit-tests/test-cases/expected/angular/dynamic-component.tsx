@@ -174,9 +174,10 @@ export class DynamicComponentDirective {
       this.childView?.detectChanges();
       return;
     }
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
-      this.componentConstructor
-    );
+    const componentFactory =
+      this.componentFactoryResolver.resolveComponentFactory(
+        this.componentConstructor
+      );
     this.viewContainerRef.clear();
     const childView = this.renderChildView(model);
     const component = this.viewContainerRef.createComponent<any>(
@@ -251,7 +252,12 @@ export class DynamicComponentDirective {
 export default class DynamicComponentCreator extends Props {
   internalStateValue: number = 0;
   get __Component(): typeof DynamicComponent {
-    return DynamicComponent;
+    if (this.__getterCache["Component"] !== undefined) {
+      return this.__getterCache["Component"];
+    }
+    return (this.__getterCache["Component"] = ((): typeof DynamicComponent => {
+      return DynamicComponent;
+    })());
   }
   get __JSXTemplateComponent(): any {
     if (this.__getterCache["JSXTemplateComponent"] !== undefined) {
@@ -270,7 +276,12 @@ export default class DynamicComponentCreator extends Props {
     })());
   }
   get __spreadProps(): any {
-    return { export: {} };
+    if (this.__getterCache["spreadProps"] !== undefined) {
+      return this.__getterCache["spreadProps"];
+    }
+    return (this.__getterCache["spreadProps"] = ((): any => {
+      return { export: {} };
+    })());
   }
   __onComponentClick(): any {}
   get __restAttributes(): any {
@@ -292,8 +303,10 @@ export default class DynamicComponentCreator extends Props {
   }
 
   __getterCache: {
+    Component?: typeof DynamicComponent;
     JSXTemplateComponent?: any;
     ComponentWithTemplate?: any;
+    spreadProps?: any;
   } = {};
 
   ngAfterViewInit() {

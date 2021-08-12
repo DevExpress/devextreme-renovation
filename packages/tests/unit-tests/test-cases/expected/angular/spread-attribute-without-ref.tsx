@@ -18,7 +18,12 @@ import { CommonModule } from "@angular/common";
 })
 export default class Widget extends WidgetInput {
   get __attr1(): any {
-    return {};
+    if (this.__getterCache["attr1"] !== undefined) {
+      return this.__getterCache["attr1"];
+    }
+    return (this.__getterCache["attr1"] = ((): any => {
+      return {};
+    })());
   }
   get __restAttributes(): any {
     return {};
@@ -42,6 +47,10 @@ export default class Widget extends WidgetInput {
       }
     }
   }
+
+  __getterCache: {
+    attr1?: any;
+  } = {};
 
   ngAfterViewInit() {
     this.__applyAttributes__();

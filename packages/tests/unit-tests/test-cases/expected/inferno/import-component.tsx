@@ -45,11 +45,23 @@ export default class Child extends BaseInfernoComponent<any> {
     return { height: this.props.height } as typeof WidgetProps;
   }
   get restAttributes(): RestProps {
-    const { children, height, onClick, width, ...restProps } = this
-      .props as any;
-    return restProps;
+    if (this.__getterCache["restAttributes"] !== undefined) {
+      return this.__getterCache["restAttributes"];
+    }
+    return (this.__getterCache["restAttributes"] = ((): RestProps => {
+      const { children, height, onClick, width, ...restProps } = this
+        .props as any;
+      return restProps;
+    })());
   }
-
+  __getterCache: {
+    restAttributes?: RestProps;
+  } = {};
+  componentWillUpdate(nextProps, nextState, context) {
+    if (this.props !== nextProps) {
+      this.__getterCache["restAttributes"] = undefined;
+    }
+  }
   render() {
     const props = this.props;
     return view({

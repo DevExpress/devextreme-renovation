@@ -5,7 +5,6 @@ import {
   Call,
   GetAccessor as BaseGetAccessor,
   Identifier,
-  isComplexType,
   Paren,
   ReturnStatement,
   SimpleExpression,
@@ -57,10 +56,6 @@ export const compileGetterCache = (
   ];
 };
 export class GetAccessor extends BaseGetAccessor {
-  isMemorized(): boolean {
-    return isComplexType(this.type) || this.isProvider;
-  }
-
   get canBeDestructured() {
     if (
       this.isEvent
@@ -78,7 +73,7 @@ export class GetAccessor extends BaseGetAccessor {
   toString(options?: toStringOptions): string {
     if (options?.isComponent
        && this.body
-       && ((this.type && isComplexType(this.type)) || this.isProvider)) {
+       && this.isMemorized(options)) {
       this.body.statements = compileGetterCache(this._name, this.type, this.body, this.isProvider);
     }
     return super.toString(options);

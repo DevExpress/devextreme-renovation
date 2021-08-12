@@ -44,13 +44,35 @@ export class InheritedFromInfernoComponent extends InfernoComponent<any> {
 
   someEffect(): any {}
   get someGetter(): any {
-    return this.state._hovered;
+    if (this.__getterCache["someGetter"] !== undefined) {
+      return this.__getterCache["someGetter"];
+    }
+    return (this.__getterCache["someGetter"] = ((): any => {
+      return this.state._hovered;
+    })());
   }
   get restAttributes(): RestProps {
-    const { ...restProps } = this.props as any;
-    return restProps;
+    if (this.__getterCache["restAttributes"] !== undefined) {
+      return this.__getterCache["restAttributes"];
+    }
+    return (this.__getterCache["restAttributes"] = ((): RestProps => {
+      const { ...restProps } = this.props as any;
+      return restProps;
+    })());
   }
-
+  __getterCache: {
+    someGetter?: any;
+    restAttributes?: RestProps;
+  } = {};
+  componentWillUpdate(nextProps, nextState, context) {
+    super.componentWillUpdate();
+    if (this.state["_hovered"] !== nextState["_hovered"]) {
+      this.__getterCache["someGetter"] = undefined;
+    }
+    if (this.props !== nextProps) {
+      this.__getterCache["restAttributes"] = undefined;
+    }
+  }
   render() {
     const props = this.props;
     return view();

@@ -85,8 +85,13 @@ const normalizeStyles = (styles: unknown) => {
 })
 export default class Widget extends WidgetInput {
   get __styles(): any {
-    const { style } = this.__restAttributes;
-    return modifyStyles(style);
+    if (this.__getterCache["styles"] !== undefined) {
+      return this.__getterCache["styles"];
+    }
+    return (this.__getterCache["styles"] = ((): any => {
+      const { style } = this.__restAttributes;
+      return modifyStyles(style);
+    })());
   }
   get __restAttributes(): any {
     return {};
@@ -97,6 +102,10 @@ export default class Widget extends WidgetInput {
         this.changeDetection.detectChanges();
     });
   }
+
+  __getterCache: {
+    styles?: any;
+  } = {};
 
   constructor(private changeDetection: ChangeDetectorRef) {
     super();

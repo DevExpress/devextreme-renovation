@@ -6,9 +6,13 @@ import {
   JSXComponent,
   Provider,
   createContext,
-  Consumer
+  Consumer,
+  Mutable
 } from "@devextreme-generator/declarations";
-
+interface SlidingWindowState {
+  indexesForReuse: number[];
+  slidingWindowIndexes: number[];
+}
 const SimpleContext = createContext<number>(5);
 
 function view(viewModel: Widget) {
@@ -25,6 +29,8 @@ export class Props {
   jQuery: { register: true },
 })
 export default class Widget extends JSXComponent<Props>() {
+  internalField = 3
+  @Mutable() mutableField = 3;
   @InternalState() i: number = 10;
   @Provider(SimpleContext)
   get provide() {
@@ -46,6 +52,28 @@ export default class Widget extends JSXComponent<Props>() {
 
   get g4(): number[] {
     return [this.cons]
+  }
+
+  someFunc(){
+    return this.props.p
+  }
+
+  get g5(): number[] {
+    return [this.someFunc(), this.g3, this.internalField, this.mutableField]
+  }
+
+  @Mutable()
+  slidingWindowStateHolder!: SlidingWindowState;
+
+  private get slidingWindowState(): SlidingWindowState {
+    const slidingWindowState = this.slidingWindowStateHolder;
+    if (!slidingWindowState) {
+      return {
+        indexesForReuse: [],
+        slidingWindowIndexes: [],
+      };
+    }
+    return slidingWindowState;
   }
 }
 

@@ -103,16 +103,28 @@ export default class Widget extends BaseInfernoComponent<any> {
     }
   }
   get restAttributes(): RestProps {
-    const { defaultPropState, propState, propStateChange, ...restProps } = {
-      ...this.props,
-      propState:
-        this.props.propState !== undefined
-          ? this.props.propState
-          : this.state.propState,
-    } as any;
-    return restProps;
+    if (this.__getterCache["restAttributes"] !== undefined) {
+      return this.__getterCache["restAttributes"];
+    }
+    return (this.__getterCache["restAttributes"] = ((): RestProps => {
+      const { defaultPropState, propState, propStateChange, ...restProps } = {
+        ...this.props,
+        propState:
+          this.props.propState !== undefined
+            ? this.props.propState
+            : this.state.propState,
+      } as any;
+      return restProps;
+    })());
   }
-
+  __getterCache: {
+    restAttributes?: RestProps;
+  } = {};
+  componentWillUpdate(nextProps, nextState, context) {
+    if (this.props !== nextProps || false) {
+      this.__getterCache["restAttributes"] = undefined;
+    }
+  }
   render() {
     const props = this.props;
     return view({

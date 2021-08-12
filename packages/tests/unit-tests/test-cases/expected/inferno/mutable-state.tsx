@@ -38,10 +38,10 @@ export default class Widget extends InfernoComponent<any> {
   }
 
   createEffects() {
-    return [new InfernoEffect(this.initialize, [])];
+    return [new InfernoEffect(this.initialize, [this.notDefinedObj])];
   }
   updateEffects() {
-    this._effects[0]?.update([]);
+    this._effects[0]?.update([this.notDefinedObj]);
   }
 
   initialize(): any {
@@ -68,10 +68,23 @@ export default class Widget extends InfernoComponent<any> {
     const c = this.notDefinedObj?.value;
   }
   get restAttributes(): RestProps {
-    const { ...restProps } = this.props as any;
-    return restProps;
+    if (this.__getterCache["restAttributes"] !== undefined) {
+      return this.__getterCache["restAttributes"];
+    }
+    return (this.__getterCache["restAttributes"] = ((): RestProps => {
+      const { ...restProps } = this.props as any;
+      return restProps;
+    })());
   }
-
+  __getterCache: {
+    restAttributes?: RestProps;
+  } = {};
+  componentWillUpdate(nextProps, nextState, context) {
+    super.componentWillUpdate();
+    if (this.props !== nextProps) {
+      this.__getterCache["restAttributes"] = undefined;
+    }
+  }
   render() {
     const props = this.props;
     return view({

@@ -18,7 +18,12 @@ export default class Widget extends WidgetInput {
   private decoratedState: string = "";
   private simpleState: string = "";
   private get __privateGetter(): any {
-    return this.decoratedState.concat(this.simpleState);
+    if (this.__getterCache["privateGetter"] !== undefined) {
+      return this.__getterCache["privateGetter"];
+    }
+    return (this.__getterCache["privateGetter"] = ((): any => {
+      return this.decoratedState.concat(this.simpleState);
+    })());
   }
   __simpleGetter(): any {
     return this.decoratedState.concat(this.simpleState);
@@ -33,21 +38,28 @@ export default class Widget extends WidgetInput {
     });
   }
 
+  __getterCache: {
+    privateGetter?: any;
+  } = {};
+
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
   }
   set _decoratedState(decoratedState: string) {
     this.decoratedState = decoratedState;
     this._detectChanges();
+    this.__getterCache["privateGetter"] = undefined;
   }
   set _simpleState(simpleState: string) {
     this.simpleState = simpleState;
     this._detectChanges();
+    this.__getterCache["privateGetter"] = undefined;
   }
 }
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}

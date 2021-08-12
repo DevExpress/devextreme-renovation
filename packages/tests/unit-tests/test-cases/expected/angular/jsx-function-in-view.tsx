@@ -28,10 +28,20 @@ import { CommonModule } from "@angular/common";
 })
 export default class Widget extends WidgetInput {
   get __loadingProps(): any {
-    return { text: "Loading..." };
+    if (this.__getterCache["loadingProps"] !== undefined) {
+      return this.__getterCache["loadingProps"];
+    }
+    return (this.__getterCache["loadingProps"] = ((): any => {
+      return { text: "Loading..." };
+    })());
   }
   get __name(): any {
-    return "User";
+    if (this.__getterCache["name"] !== undefined) {
+      return this.__getterCache["name"];
+    }
+    return (this.__getterCache["name"] = ((): any => {
+      return "User";
+    })());
   }
   get __restAttributes(): any {
     return {};
@@ -43,6 +53,11 @@ export default class Widget extends WidgetInput {
     });
   }
 
+  __getterCache: {
+    loadingProps?: any;
+    name?: any;
+  } = {};
+
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
   }
@@ -50,6 +65,7 @@ export default class Widget extends WidgetInput {
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}

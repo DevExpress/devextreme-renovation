@@ -159,9 +159,9 @@ export class Property extends BaseProperty {
   }
 
   getDependency(_options: toStringOptions) {
-    if (this.isMutable) {
-      return [];
-    }
+    // if (this.isMutable) {
+    //   return [];
+    // }
     return [this.name];
   }
 

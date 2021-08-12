@@ -83,7 +83,9 @@ mocha.describe("react-generation", function () {
   mocha.it("props-name-collision", function () {
     this.testGenerator(this.test!.title);
   });
-
+  mocha.it("getter-with-complex-type", function () {
+    this.testGenerator(this.test!.title);
+  });
   mocha.it("rest-styles", function () {
     this.testGenerator(this.test!.title);
   });
