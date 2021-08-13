@@ -7293,7 +7293,7 @@ mocha.describe("Angular generator", function () {
           newComponentContext: generator.SyntaxKind.ThisKeyword,
         });
 
-        assert.strictEqual(stringValue, "{}");
+        assert.strictEqual(stringValue, "this");
       });
 
       mocha.it(
@@ -7391,16 +7391,12 @@ mocha.describe("Angular generator", function () {
           componentContext: generator.SyntaxKind.ThisKeyword,
           newComponentContext: generator.SyntaxKind.ThisKeyword,
         });
-
         assert.strictEqual(
           getResult(stringValue),
           getResult(`{
-                    p1:this.p1,
-                    p2:this.p2,
-                    p3:this._p3,
-                    p4:this.p4,
-                    p5:this.p5
-                }`)
+            ...this,
+            p3: this._p3
+          }`)
         );
       });
 
@@ -7450,10 +7446,9 @@ mocha.describe("Angular generator", function () {
             newComponentContext: generator.SyntaxKind.ThisKeyword,
             members: members,
           });
-
         assert.strictEqual(
           getResult(stringValue),
-          getResult(`{p1, p3:_p3}={p1:this.p1, p3:this._p3}`)
+          getResult(`{p1, p3:_p3}={...this, p3:this._p3}`)
         );
       });
 
@@ -7511,7 +7506,7 @@ mocha.describe("Angular generator", function () {
 
         assert.strictEqual(
           getResult(stringValue),
-          getResult(`{p1, p3:_p3}=({p1:this.p1, p3:this._p3} as any)`)
+          getResult(`{p1, p3:_p3}=({...this, p3:this._p3} as any)`)
         );
       });
 

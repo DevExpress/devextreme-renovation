@@ -84,13 +84,7 @@ export default class Widget extends WidgetProps {
     requiredRefProp: HTMLDivElement | null;
     requiredForwardRefProp: HTMLDivElement | null;
   } {
-    const { outerDivRef, ...restProps } = {
-      outerDivRef: this.outerDivRef,
-      refProp: this.refProp,
-      forwardRefProp: this.forwardRefProp,
-      requiredRefProp: this.requiredRefProp,
-      requiredForwardRefProp: this.requiredForwardRefProp,
-    };
+    const { outerDivRef, ...restProps } = this;
     return {
       refProp: restProps.refProp,
       forwardRefProp: restProps.forwardRefProp?.()?.nativeElement,

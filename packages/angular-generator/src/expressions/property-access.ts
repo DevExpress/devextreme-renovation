@@ -10,39 +10,75 @@ import {
   Property,
   isProperty,
   getMember,
+  processComponentContext,
+  SyntaxKind,
+  SpreadAssignment,
+  SimpleExpression,
 } from '@devextreme-generator/core';
 import { toStringOptions } from '../types';
 
 export class PropertyAccess extends BasePropertyAccess {
+  needToCreateAssignment(
+    property: Property,
+    elements: BindingElement[],
+    hasRest: boolean,
+  ) {
+    return (
+      property.isEvent
+      && (elements.length === 0
+        || elements.some(
+          (e) => (e.propertyName || e.name).toString()
+              === property._name.toString() || hasRest,
+        ))
+    );
+  }
+
   processProps(
     _result: string,
     options: toStringOptions,
     elements: BindingElement[] = [],
   ) {
     const hasRest = elements.some((e) => e.dotDotDotToken);
-    const props = getProps(options.members).filter(
-      (p) => hasRest
-        || elements.length === 0
-        || elements.some(
-          (e) => (e.propertyName || e.name).toString() === p._name.toString(),
-        ),
-    );
-    if (props.some((p) => !p.canBeDestructured) || props.length === 0) {
-      const expression = new ObjectLiteral(
-        props.map(
-          (p) => new PropertyAssignment(
-            p._name,
-            new PropertyAccess(
-              new PropertyAccess(
-                new Identifier(this.calculateComponentContext(options)),
-                new Identifier('props'),
-              ),
-              p._name,
-            ),
+    const props = getProps(options.members);
+    const hasComplexProps = props.some((p) => this.needToCreateAssignment(p, elements, hasRest));
+
+    if (
+      hasComplexProps
+      && options.componentContext === SyntaxKind.ThisKeyword
+    ) {
+      const hasSimpleProps = props.some((p) => !p.canBeDestructured);
+      const initValue: (PropertyAssignment | SpreadAssignment)[] = hasSimpleProps
+      || elements.some((e) => e.dotDotDotToken)
+        ? [
+          new SpreadAssignment(
+            options.newComponentContext
+              ? new SimpleExpression(
+                `${processComponentContext(
+                  options.newComponentContext,
+                ).slice(0, -1)}`,
+              )
+              : new Identifier('props'),
           ),
-        ),
-        true,
-      );
+        ]
+        : [];
+      const destructedProps = props.reduce((acc, p) => {
+        if (this.needToCreateAssignment(p, elements, hasRest)) {
+          acc.push(
+            new PropertyAssignment(
+              p._name,
+              new PropertyAccess(
+                new PropertyAccess(
+                  new Identifier(this.calculateComponentContext(options)),
+                  new Identifier('props'),
+                ),
+                p._name,
+              ),
+            ),
+          );
+        }
+        return acc;
+      }, initValue);
+      const expression = new ObjectLiteral(destructedProps, true);
       return expression.toString(options);
     }
     return options.newComponentContext!;
