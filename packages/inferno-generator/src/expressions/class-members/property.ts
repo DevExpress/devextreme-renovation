@@ -141,10 +141,7 @@ export class Property extends BaseProperty {
     if (this.isInternalState) {
       return [`state.${this.name}`];
     }
-    if (this.isProvider || this.isConsumer) {
-      return [`${this.name}`];
-    }
-    if (this.isMutable) {
+    if (this.isProvider || this.isConsumer || this.isMutable) {
       return [`${this.name}`];
     }
     throw `Can't parse property: ${this._name}`;

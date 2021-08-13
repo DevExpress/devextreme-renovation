@@ -29,7 +29,6 @@ export class Props {
   jQuery: { register: true },
 })
 export default class Widget extends JSXComponent<Props>() {
-  internalField = 3
   @Mutable() mutableField = 3;
   @InternalState() i: number = 10;
   @Provider(SimpleContext)
@@ -54,27 +53,11 @@ export default class Widget extends JSXComponent<Props>() {
     return [this.cons]
   }
 
-  someFunc(){
-    return this.props.p
-  }
 
   get g5(): number[] {
-    return [this.someFunc(), this.g3, this.internalField, this.mutableField]
+    return [this.props.p, this.mutableField]
   }
 
-  @Mutable()
-  slidingWindowStateHolder!: SlidingWindowState;
-
-  private get slidingWindowState(): SlidingWindowState {
-    const slidingWindowState = this.slidingWindowStateHolder;
-    if (!slidingWindowState) {
-      return {
-        indexesForReuse: [],
-        slidingWindowIndexes: [],
-      };
-    }
-    return slidingWindowState;
-  }
 }
 
 class SomeClass {

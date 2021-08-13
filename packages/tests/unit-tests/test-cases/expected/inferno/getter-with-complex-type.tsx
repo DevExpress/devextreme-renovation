@@ -32,7 +32,7 @@ declare type RestProps = {
 };
 
 export default class Widget extends InfernoWrapperComponent<any> {
-  state: { internalField: number; i: number };
+  state: { i: number };
 
   refs: any;
   mutableField: number = 3;
@@ -42,18 +42,14 @@ export default class Widget extends InfernoWrapperComponent<any> {
     }
     return SimpleContext;
   }
-  slidingWindowStateHolder!: SlidingWindowState;
 
   constructor(props: any) {
     super(props);
     this.state = {
-      internalField: 3,
       i: 10,
     };
-    this.someFunc = this.someFunc.bind(this);
   }
 
-  internalField!: number;
   i!: number;
 
   createEffects() {
@@ -107,23 +103,8 @@ export default class Widget extends InfernoWrapperComponent<any> {
       return [this.cons];
     })());
   }
-  someFunc(): any {
-    return this.props.p;
-  }
   get g5(): number[] {
-    return [
-      this.someFunc(),
-      this.g3,
-      this.state.internalField,
-      this.mutableField,
-    ];
-  }
-  private get slidingWindowState(): SlidingWindowState {
-    const slidingWindowState = this.slidingWindowStateHolder;
-    if (!slidingWindowState) {
-      return { indexesForReuse: [], slidingWindowIndexes: [] };
-    }
-    return slidingWindowState;
+    return [this.props.p, this.mutableField];
   }
   get restAttributes(): RestProps {
     if (this.__getterCache["restAttributes"] !== undefined) {
@@ -170,7 +151,6 @@ export default class Widget extends InfernoWrapperComponent<any> {
     const props = this.props;
     return view({
       props: { ...props },
-      internalField: this.state.internalField,
       i: this.state.i,
       cons: this.cons,
       provide: this.provide,
@@ -178,7 +158,6 @@ export default class Widget extends InfernoWrapperComponent<any> {
       g2: this.g2,
       g3: this.g3,
       g4: this.g4,
-      someFunc: this.someFunc,
       g5: this.g5,
       restAttributes: this.restAttributes,
     } as Widget);

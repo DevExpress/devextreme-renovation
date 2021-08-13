@@ -1575,7 +1575,9 @@ export class AngularComponent extends Component {
     ngAfterViewCheckedStatements,
     ngDoCheckStatements,
   )}
-            ${this.compileGetterCache(ngOnChangesStatements, decoratorToStringOptions, resetDependantGetters)}
+            ${this.compileGetterCache(ngOnChangesStatements,
+    { ...decoratorToStringOptions, componentContext: SyntaxKind.ThisKeyword },
+    resetDependantGetters)}
             ${this.compileContext(
     constructorStatements,
     constructorArguments,

@@ -74,7 +74,20 @@ export class GetAccessor extends BaseGetAccessor {
     if (options?.isComponent
        && this.body
        && this.isMemorized(options)) {
-      this.body.statements = compileGetterCache(this._name, this.type, this.body, this.isProvider);
+      const baseGetter = new BaseGetAccessor(
+        this.decorators,
+        this.modifiers,
+        new Identifier(this.name),
+        this.parameters,
+        this.type,
+        this.body,
+      );
+      if (baseGetter?.body) {
+        baseGetter.body.statements = compileGetterCache(
+          this._name, this.type, this.body, this.isProvider,
+        );
+        return baseGetter.toString(options);
+      }
     }
     return super.toString(options);
   }

@@ -46,7 +46,6 @@ import { CommonModule } from "@angular/common";
   template: `<div></div>`,
 })
 export default class Widget extends Props {
-  internalField: number = 3;
   mutableField: number = 3;
   i: number = 10;
   get __provide(): any {
@@ -91,24 +90,8 @@ export default class Widget extends Props {
       return [this.consConsumer];
     })());
   }
-  __someFunc(): any {
-    return this.p;
-  }
   get __g5(): number[] {
-    return [
-      this.__someFunc(),
-      this.__g3,
-      this.internalField,
-      this.mutableField,
-    ];
-  }
-  slidingWindowStateHolder!: SlidingWindowState;
-  private get __slidingWindowState(): SlidingWindowState {
-    const slidingWindowState = this.slidingWindowStateHolder;
-    if (!slidingWindowState) {
-      return { indexesForReuse: [], slidingWindowIndexes: [] };
-    }
-    return slidingWindowState;
+    return [this.p, this.mutableField];
   }
   get __restAttributes(): any {
     return {};
@@ -126,8 +109,6 @@ export default class Widget extends Props {
     g2?: number;
     g3?: number;
     g4?: number[];
-    g5?: number[];
-    slidingWindowState?: SlidingWindowState;
   } = {};
   resetDependantGetters(): void {
     this.__getterCache["g4"] = undefined;
@@ -141,14 +122,6 @@ export default class Widget extends Props {
 
     if (["p"].some((d) => changes[d])) {
       this.__getterCache["g2"] = undefined;
-    }
-
-    if (["p", "mutableField"].some((d) => changes[d])) {
-      this.__getterCache["g5"] = undefined;
-    }
-
-    if (["slidingWindowStateHolder"].some((d) => changes[d])) {
-      this.__getterCache["slidingWindowState"] = undefined;
     }
   }
   ngOnDestroy() {
@@ -180,18 +153,12 @@ export default class Widget extends Props {
     }
     this.consConsumer = this.cons.value;
   }
-  set _internalField(internalField: number) {
-    this.internalField = internalField;
-    this._detectChanges();
-    this.__getterCache["g5"] = undefined;
-  }
   set _i(i: number) {
     this.i = i;
     this._detectChanges();
     this.__getterCache["provide"] = undefined;
     this.__getterCache["g1"] = undefined;
     this.__getterCache["g3"] = undefined;
-    this.__getterCache["g5"] = undefined;
   }
 }
 @NgModule({

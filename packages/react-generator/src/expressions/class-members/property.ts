@@ -204,10 +204,7 @@ export class Property extends BaseProperty {
     if (this.isNested) {
       return [getPropName(this.name), getPropName('children')];
     }
-    if (this.isProvider || this.isConsumer) {
-      return [this.name];
-    }
-    if (this.isMutable) {
+    if (this.isProvider || this.isConsumer || this.isMutable) {
       return [this.name];
     }
     throw `Can't parse property: ${this._name}`;

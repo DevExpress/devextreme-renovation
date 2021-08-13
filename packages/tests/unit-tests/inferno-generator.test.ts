@@ -5,7 +5,6 @@ import generator from '@devextreme-generator/inferno';
 import factory from './helpers/create-component';
 import mocha from './helpers/mocha';
 import {
-  printSourceCodeAst as getResult,
   removeSpaces,
 } from "./helpers/common";
 import { InfernoComponent } from 'inferno-generator/src/expressions/inferno-component';
@@ -194,13 +193,13 @@ mocha.describe("Expressions", function () {
           )
         );
 
-        assert.strictEqual(getter.isMemorized(), true);
+        assert.strictEqual(getter.isMemorized({members: [], isComponent: true}), true);
         assert.strictEqual(
-          getResult(getter.toString({members: [], isComponent:true})),
-          getResult(`get name():{}{
+          removeSpaces(getter.toString({members: [], isComponent:true})),
+          removeSpaces(`get name():{}{
                           if(this.__getterCache["name"]!==undefined){
-                              return this.__getterCache["name"]
-                          }
+                              return this.__getterCache["name"];
+                          };
                   
                           return this.__getterCache["name"]=( ():{} => {
                               return result;
@@ -210,13 +209,13 @@ mocha.describe("Expressions", function () {
       });
       mocha.it("Memorize Provider", function () {
         const getter = createGetAccessor(undefined,undefined,undefined,[createDecorator(Decorators.Provider)]);
-        assert.strictEqual(getter.isMemorized(), true);
+        assert.strictEqual(getter.isMemorized({members: [], isComponent: true}), true);
         assert.strictEqual(
-          getResult(getter.toString({members: [], isComponent:true})),
-          getResult(`get name(): any {
+          removeSpaces(getter.toString({members: [], isComponent:true})),
+          removeSpaces(`get name(): any {
                           if(this.__getterCache["name"]!==undefined){
-                              return this.__getterCache["name"]
-                          }
+                              return this.__getterCache["name"];
+                          };
                   
                           return this.__getterCache["name"]=((): any => {
                               return result;
@@ -265,13 +264,20 @@ mocha.describe("Expressions", function () {
 
           const componentWillUpdate: string[] = [];
           assert.strictEqual(
-            getResult(component.compileGetterCache(componentWillUpdate)),
-            getResult(`__getterCache: {
+            removeSpaces(component.compileGetterCache(componentWillUpdate, {members: [], isComponent: true})),
+            removeSpaces(`__getterCache: {
                         g1?:string[];
                         g2?:number[];
+                        g3?:number;
+                        restAttributes?:RestProps
                     } = {}`)
           );
-          assert.deepStrictEqual(componentWillUpdate.map(s => getResult(s)), []);
+          assert.deepStrictEqual(
+            componentWillUpdate.map(s => removeSpaces(s)), 
+            [removeSpaces(`if (this.props !== nextProps) {
+                this.__getterCache["restAttributes"] = undefined;
+              }`
+            )]);
         }
       );
       mocha.it("generates componentWillUpdate and reset if dependant prop or state changes", function (){
@@ -311,22 +317,54 @@ mocha.describe("Expressions", function () {
 
         const componentWillUpdate: string[] = []
         assert.strictEqual(
-          getResult(component.compileGetterCache(componentWillUpdate)),
-          getResult(`__getterCache: {
-                      name?: number[]
+          removeSpaces(component.compileGetterCache(componentWillUpdate, {members: [], isComponent: true})),
+          removeSpaces(`__getterCache: {
+                      name?: number[];
+                      restAttributes?:RestProps
                   } = {}`)
         );
         assert.deepStrictEqual(
-          componentWillUpdate.map(s => getResult(s)),
+          componentWillUpdate.map(s => removeSpaces(s)),
             [
-              getResult(
+              removeSpaces(
                 `if (this.props["p"] !== nextProps["p"] || this.state["s"] !== nextState["s"]) {
                   this.__getterCache["name"] = undefined;
+                }`
+              ),
+              removeSpaces(
+                `if (this.props !== nextProps) {
+                  this.__getterCache["restAttributes"] = undefined;
                 }`
               )
             ]
         );
       })
+      mocha.it("Do not generate if has mutable dependency", function () {
+        const getter = createGetAccessor(
+          generator.createKeywordTypeNode("string"),
+          new Block([generator.createReturn(generator.createPropertyAccess(generator.createThis(),generator.createIdentifier("someMutable")))], false)
+        );
+
+        const component = createComponent([getter]) as InfernoComponent;
+
+        const ngOnChanges: string[] = [];
+        assert.strictEqual(removeSpaces(component.compileGetterCache(ngOnChanges, {
+          members: [
+            generator.createProperty(
+              [createDecorator(Decorators.Mutable)],
+              [],
+              generator.createIdentifier("someMutable")
+            )], 
+          isComponent:true
+        })), removeSpaces(`__getterCache: {
+                            restAttributes?:RestProps
+                          } = {}`));
+        assert.deepStrictEqual(ngOnChanges.map(statement=> removeSpaces(statement)), [removeSpaces(
+          `if (this.props !== nextProps) {
+            this.__getterCache["restAttributes"] = undefined;
+          }`
+        )]);
+      });
     });
   });
   mocha.describe("class-members/property", function () {

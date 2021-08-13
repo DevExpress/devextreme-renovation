@@ -8157,7 +8157,7 @@ mocha.describe("Angular generator", function () {
                         }`)
           );
 
-          assert.strictEqual(getter.isMemorized(), true);
+          assert.strictEqual(getter.isMemorized({members: [], isComponent: true}), true);
         });
 
         mocha.it("Memorize createTypeLiteralNode", function () {
@@ -8175,7 +8175,7 @@ mocha.describe("Angular generator", function () {
             ])
           );
 
-          assert.strictEqual(getter.isMemorized(), true);
+          assert.strictEqual(getter.isMemorized({members: [], isComponent: true}), true);
         });
 
         mocha.it("Memorize object", function () {
@@ -8183,10 +8183,10 @@ mocha.describe("Angular generator", function () {
             generator.createKeywordTypeNode(generator.SyntaxKind.ObjectKeyword)
           );
 
-          assert.strictEqual(getter.isMemorized(), true);
+          assert.strictEqual(getter.isMemorized({members: [], isComponent: true}), true);
         });
 
-        mocha.it("Do not memorize primitive type", function () {
+        mocha.it("Memorize primitive type", function () {
           const getter = createGetAccessor(
             generator.createKeywordTypeNode("string")
           );
@@ -8194,14 +8194,20 @@ mocha.describe("Angular generator", function () {
           assert.strictEqual(
             getResult(getter.toString({members: [], isComponent:true})),
             getResult(`get name():string{
-                            return result;
+                          if(this.__getterCache["name"]!==undefined){
+                              return this.__getterCache["name"]
+                          }
+                  
+                          return this.__getterCache["name"]=( ():string => {
+                              return result;
+                          })();
                         }`)
           );
 
-          assert.strictEqual(getter.isMemorized(), false);
+          assert.strictEqual(getter.isMemorized({members: [], isComponent:true}), true);
         });
 
-        mocha.it("Do not memorize union with primitive type", function () {
+        mocha.it("Memorize union with primitive type", function () {
           const getter = createGetAccessor(
             generator.createUnionTypeNode([
               generator.createLiteralTypeNode(
@@ -8216,7 +8222,13 @@ mocha.describe("Angular generator", function () {
           assert.strictEqual(
             getResult(getter.toString({members: [], isComponent:true})),
             getResult(`get name():'1'|'2'{
-                            return result;
+                          if(this.__getterCache["name"]!==undefined){
+                              return this.__getterCache["name"]
+                          }
+                  
+                          return this.__getterCache["name"]=( ():'1'|'2' => {
+                              return result;
+                          })();
                         }`)
           );
         });
@@ -8254,7 +8266,7 @@ mocha.describe("Angular generator", function () {
             )
           );
 
-          assert.strictEqual(getter.isMemorized(), true);
+          assert.strictEqual(getter.isMemorized({members: [], isComponent:true}), true);
           assert.strictEqual(
             getResult(getter.toString({members: [], isComponent:true})),
             getResult(`get name():{}{
@@ -8270,15 +8282,24 @@ mocha.describe("Angular generator", function () {
         });
 
         mocha.describe("GetAccessor cache", function () {
-          mocha.it("Do not generate if simple type", function () {
+          mocha.it("Do not generate if has mutable dependency", function () {
             const getter = createGetAccessor(
-              generator.createKeywordTypeNode("string")
+              generator.createKeywordTypeNode("string"),
+              new Block([generator.createReturn(generator.createPropertyAccess(generator.createThis(),generator.createIdentifier("someMutable")))], false)
             );
 
             const component = createComponent([getter]) as AngularComponent;
 
             const ngOnChanges: string[] = [];
-            assert.strictEqual(component.compileGetterCache(ngOnChanges), "");
+            assert.strictEqual(component.compileGetterCache(ngOnChanges, {
+              members: [
+                generator.createProperty(
+                  [createDecorator(Decorators.Mutable)],
+                  [],
+                  new Identifier("someMutable")
+                )], 
+              isComponent:true
+            }), "");
             assert.deepStrictEqual(ngOnChanges, []);
           });
 
@@ -8309,10 +8330,11 @@ mocha.describe("Angular generator", function () {
 
               const ngOnChanges: string[] = [];
               assert.strictEqual(
-                getResult(component.compileGetterCache(ngOnChanges)),
+                getResult(component.compileGetterCache(ngOnChanges, {members: [], isComponent: true})),
                 getResult(`__getterCache: {
                             g1?:string[];
                             g2?:number[];
+                            g3?:number;
                         } = {}`)
               );
               assert.deepStrictEqual(ngOnChanges, []);
@@ -8351,7 +8373,7 @@ mocha.describe("Angular generator", function () {
 
               const ngOnChanges: string[] = [];
               assert.strictEqual(
-                getResult(component.compileGetterCache(ngOnChanges)),
+                getResult(component.compileGetterCache(ngOnChanges, {members: [], isComponent: true})),
                 getResult(`__getterCache: {
                             name?:string[];
                         } = {}`)
@@ -8402,7 +8424,7 @@ mocha.describe("Angular generator", function () {
 
             const ngOnChanges: string[] = [];
             assert.strictEqual(
-              getResult(component.compileGetterCache(ngOnChanges)),
+              getResult(component.compileGetterCache(ngOnChanges, {members: [], isComponent: true})),
               getResult(`__getterCache: {
                             name?:string[];
                         } = {}`)
@@ -8455,7 +8477,7 @@ mocha.describe("Angular generator", function () {
 
               const ngOnChanges: string[] = [];
 
-              component.compileGetterCache(ngOnChanges);
+              component.compileGetterCache(ngOnChanges, {members: [], isComponent: true});
 
               assert.deepEqual(
                 ngOnChanges.join("\n"),

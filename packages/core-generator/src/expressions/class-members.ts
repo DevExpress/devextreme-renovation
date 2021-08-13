@@ -330,9 +330,12 @@ export class GetAccessor extends Method {
   }
 
   isMemorized(options?: toStringOptions): boolean {
-    const mutables = options?.members.filter((m) => m.isMutable).map((m) => m._name.toString());
-    const containMutableDep = options && this.getDependency(options).some((dep) => mutables?.includes(dep));
-    return options ? !containMutableDep : false;
+    if (options) {
+      const mutables = options?.members.filter((m) => m.isMutable).map((m) => m._name.toString());
+      const containMutableDep = this.getDependency(options).some((dep) => mutables?.includes(dep));
+      return !containMutableDep;
+    }
+    return false;
   }
 
   typeDeclaration() {
