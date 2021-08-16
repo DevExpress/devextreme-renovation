@@ -53,7 +53,6 @@ export class ShorthandPropertyAssignment extends ExpressionWithOptionalExpressio
         options,
       )}`;
     }
-
     return `${this.name}${expression}`;
   }
 }

@@ -55,16 +55,46 @@ export default class Widget extends WidgetInput {
   __destroyEffects: any[] = [];
   __viewCheckedSubscribeEvent: Array<(() => void) | null> = [];
   _effectTimeout: any;
+  __schedule_initialize() {
+    this.__destroyEffects[0]?.();
+    this.__viewCheckedSubscribeEvent[0] = () => {
+      this.__destroyEffects[0] = this.__initialize();
+    };
+  }
+
+  _updateEffects() {
+    if (this.__viewCheckedSubscribeEvent.length) {
+      clearTimeout(this._effectTimeout);
+      this._effectTimeout = setTimeout(() => {
+        this.__viewCheckedSubscribeEvent.forEach((s, i) => {
+          s?.();
+          if (this.__viewCheckedSubscribeEvent[i] === s) {
+            this.__viewCheckedSubscribeEvent[i] = null;
+          }
+        });
+      });
+    }
+  }
 
   ngAfterViewInit() {
     this._effectTimeout = setTimeout(() => {
       this.__destroyEffects.push(this.__initialize());
     }, 0);
   }
-
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (
+      this.__destroyEffects.length &&
+      ["notDefinedObj"].some((d) => changes[d])
+    ) {
+      this.__schedule_initialize();
+    }
+  }
   ngOnDestroy() {
     this.__destroyEffects.forEach((d) => d && d());
     clearTimeout(this._effectTimeout);
+  }
+  ngAfterViewChecked() {
+    this._updateEffects();
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {

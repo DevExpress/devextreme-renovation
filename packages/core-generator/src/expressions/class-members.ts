@@ -18,6 +18,7 @@ import {
   SimpleTypeExpression,
   TypeExpression,
   TypeReferenceNode,
+  isComplexType,
 } from './type';
 import { TypeParameterDeclaration } from './type-parameter-declaration';
 
@@ -327,6 +328,15 @@ export class GetAccessor extends Method {
       type,
       body || new Block([], false),
     );
+  }
+
+  isMemorized(options?: toStringOptions): boolean {
+    if (options) {
+      const mutables = options?.members.filter((m) => m.isMutable).map((m) => m._name.toString());
+      const containMutableDep = this.getDependency(options).some((dep) => mutables?.includes(dep));
+      return !containMutableDep && ((this.type && isComplexType(this.type)) || this.isProvider);
+    }
+    return false;
   }
 
   typeDeclaration() {

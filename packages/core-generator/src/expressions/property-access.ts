@@ -122,10 +122,8 @@ export class PropertyAccess extends ExpressionWithExpression {
       if (this.checkPropsAccess(result, options)) {
         return this.processProps(value, options, elements);
       }
-
       return options?.newComponentContext === '' ? this.name.toString() : value;
     }
-
     return result;
   }
 

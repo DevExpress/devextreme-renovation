@@ -18,6 +18,7 @@ export const Props: PropsType = {
 };
 import { createElement as h } from "inferno-compat";
 import { createReRenderEffect } from "@devextreme/vdom";
+import { createRef as infernoCreateRef } from "inferno";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
@@ -29,6 +30,7 @@ export default class Widget extends InfernoWrapperComponent<any> {
   state: { i: number };
 
   refs: any;
+  mutableVar: number = 10;
   get cons(): number {
     if ("SimpleContext" in this.context) {
       return this.context.SimpleContext;
@@ -86,6 +88,9 @@ export default class Widget extends InfernoWrapperComponent<any> {
       return [this.cons];
     })());
   }
+  get g5(): number[] {
+    return [this.state.i, this.mutableVar];
+  }
   get restAttributes(): RestProps {
     const { p, ...restProps } = this.props as any;
     return restProps;
@@ -121,6 +126,7 @@ export default class Widget extends InfernoWrapperComponent<any> {
       g2: this.g2,
       g3: this.g3,
       g4: this.g4,
+      g5: this.g5,
       restAttributes: this.restAttributes,
     } as Widget);
   }

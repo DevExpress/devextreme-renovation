@@ -86,15 +86,7 @@ import { CommonModule } from "@angular/common";
 })
 export default class Widget extends Props {
   get __spreadGetter(): { width: string; height: string } {
-    if (this.__getterCache["spreadGetter"] !== undefined) {
-      return this.__getterCache["spreadGetter"];
-    }
-    return (this.__getterCache["spreadGetter"] = ((): {
-      width: string;
-      height: string;
-    } => {
-      return { width: "40px", height: "30px" };
-    })());
+    return { width: "40px", height: "30px" };
   }
   get __restAttributes(): any {
     return {};
@@ -105,10 +97,6 @@ export default class Widget extends Props {
         this.changeDetection.detectChanges();
     });
   }
-
-  __getterCache: {
-    spreadGetter?: { width: string; height: string };
-  } = {};
 
   constructor(private changeDetection: ChangeDetectorRef) {
     super();
