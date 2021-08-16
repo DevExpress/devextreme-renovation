@@ -93,12 +93,7 @@ export default class Widget extends InfernoWrapperComponent<any> {
     return [this.state.i, this.mutableVar];
   }
   get userGet(): UserType {
-    if (this.__getterCache["userGet"] !== undefined) {
-      return this.__getterCache["userGet"];
-    }
-    return (this.__getterCache["userGet"] = ((): UserType => {
-      return "user";
-    })());
+    return "user";
   }
   get restAttributes(): RestProps {
     const { p, ...restProps } = this.props as any;
@@ -108,7 +103,6 @@ export default class Widget extends InfernoWrapperComponent<any> {
     provide?: any;
     g1?: number[];
     g4?: number[];
-    userGet?: UserType;
   } = {};
   componentWillUpdate(nextProps, nextState, context) {
     super.componentWillUpdate();

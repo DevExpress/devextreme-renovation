@@ -937,7 +937,7 @@ export class ReactComponent extends Component {
     .map(
       (m) => {
         const isMemorizedGetter = (m instanceof GetAccessor
-          && m.isMemorized(this.getToStringOptions(), false));
+          && m.isMemorized(this.getToStringOptions(), false, this.context.types));
 
         return `const ${m.name
         }=${isMemorizedGetter ? 'useMemo' : 'useCallback'}(${m.declaration(

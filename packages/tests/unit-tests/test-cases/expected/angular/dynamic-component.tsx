@@ -174,9 +174,10 @@ export class DynamicComponentDirective {
       this.childView?.detectChanges();
       return;
     }
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
-      this.componentConstructor
-    );
+    const componentFactory =
+      this.componentFactoryResolver.resolveComponentFactory(
+        this.componentConstructor
+      );
     this.viewContainerRef.clear();
     const childView = this.renderChildView(model);
     const component = this.viewContainerRef.createComponent<any>(
@@ -254,20 +255,10 @@ export default class DynamicComponentCreator extends Props {
     return DynamicComponent;
   }
   get __JSXTemplateComponent(): any {
-    if (this.__getterCache["JSXTemplateComponent"] !== undefined) {
-      return this.__getterCache["JSXTemplateComponent"];
-    }
-    return (this.__getterCache["JSXTemplateComponent"] = ((): any => {
-      return DynamicComponent as any;
-    })());
+    return DynamicComponent as any;
   }
   get __ComponentWithTemplate(): any {
-    if (this.__getterCache["ComponentWithTemplate"] !== undefined) {
-      return this.__getterCache["ComponentWithTemplate"];
-    }
-    return (this.__getterCache["ComponentWithTemplate"] = ((): any => {
-      return DynamicComponentWithTemplate as any;
-    })());
+    return DynamicComponentWithTemplate as any;
   }
   get __spreadProps(): any {
     return { export: {} };
@@ -290,11 +281,6 @@ export default class DynamicComponentCreator extends Props {
       container.createComponent(this);
     });
   }
-
-  __getterCache: {
-    JSXTemplateComponent?: any;
-    ComponentWithTemplate?: any;
-  } = {};
 
   ngAfterViewInit() {
     this.createDynamicComponents();

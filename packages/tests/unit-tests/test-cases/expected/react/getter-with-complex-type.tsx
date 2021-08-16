@@ -74,7 +74,7 @@ export default function Widget(props: typeof Props & RestProps) {
     },
     [__state_i, mutableVar]
   );
-  const __userGet = useMemo(function __userGet(): UserType {
+  const __userGet = useCallback(function __userGet(): UserType {
     return "user";
   }, []);
   const __restAttributes = useCallback(
@@ -97,7 +97,7 @@ export default function Widget(props: typeof Props & RestProps) {
         g3: __g3(),
         g4: __g4,
         g5: __g5(),
-        userGet: __userGet,
+        userGet: __userGet(),
         restAttributes: __restAttributes(),
       })}
     </SimpleContext.Provider>

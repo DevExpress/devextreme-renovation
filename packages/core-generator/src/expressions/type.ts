@@ -22,6 +22,8 @@ import {
   ImportSpecifier,
   NamedImports,
 } from './import';
+import { Class } from './class';
+
 
 export class TypeExpression extends Expression {}
 
@@ -481,15 +483,20 @@ export class TypeAliasDeclaration extends TypeExpression {
   }
 }
 
-export function isComplexType(type: TypeExpression | string): boolean {
+export function isComplexType(
+  type: TypeExpression | string,
+  contextTypes?:{ [name:string]: TypeExpression },
+): boolean {
   if (type instanceof UnionTypeNode) {
     return type.types.some((t) => isComplexType(t));
   }
-
+  if (type instanceof TypeReferenceNode) {
+    const contextType = contextTypes?.[type.typeName.toString()];
+    return contextType instanceof Class || isComplexType(contextType || '');
+  }
   if (
     type instanceof FunctionTypeNode
     || type instanceof ArrayTypeNode
-    || (type instanceof TypeReferenceNode)
     || type instanceof ObjectLiteral
     || (type instanceof TypeLiteralNode
       && !type.members.map((member) => isComplexType(member?.type || '')).includes(false))

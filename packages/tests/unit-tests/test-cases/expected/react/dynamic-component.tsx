@@ -37,7 +37,7 @@ const Props: PropsType = {
   height: 10,
 };
 import * as React from "react";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 const NUMBER_STYLES = new Set([
   "animationIterationCount",
   "borderImageOutset",
@@ -127,7 +127,7 @@ export default function DynamicComponentCreator(
     },
     []
   );
-  const __JSXTemplateComponent = useMemo(
+  const __JSXTemplateComponent = useCallback(
     function __JSXTemplateComponent(): React.FunctionComponent<
       Partial<typeof WidgetInput>
     > {
@@ -137,7 +137,7 @@ export default function DynamicComponentCreator(
     },
     []
   );
-  const __ComponentWithTemplate = useMemo(
+  const __ComponentWithTemplate = useCallback(
     function __ComponentWithTemplate(): React.FunctionComponent<
       Partial<typeof PropsWithTemplate>
     > {
@@ -164,8 +164,8 @@ export default function DynamicComponentCreator(
     props: { ...props },
     internalStateValue: __state_internalStateValue,
     Component: __Component(),
-    JSXTemplateComponent: __JSXTemplateComponent,
-    ComponentWithTemplate: __ComponentWithTemplate,
+    JSXTemplateComponent: __JSXTemplateComponent(),
+    ComponentWithTemplate: __ComponentWithTemplate(),
     spreadProps: __spreadProps(),
     onComponentClick: __onComponentClick,
     restAttributes: __restAttributes(),

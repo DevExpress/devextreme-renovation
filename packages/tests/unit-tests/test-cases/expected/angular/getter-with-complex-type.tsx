@@ -81,12 +81,7 @@ export default class Widget extends Props {
     return [this.i, this.mutableVar];
   }
   get __userGet(): UserType {
-    if (this.__getterCache["userGet"] !== undefined) {
-      return this.__getterCache["userGet"];
-    }
-    return (this.__getterCache["userGet"] = ((): UserType => {
-      return "user";
-    })());
+    return "user";
   }
   get __restAttributes(): any {
     return {};
@@ -102,7 +97,6 @@ export default class Widget extends Props {
     provide?: any;
     g1?: number[];
     g4?: number[];
-    userGet?: UserType;
   } = {};
   resetDependantGetters(): void {
     this.__getterCache["g4"] = undefined;
