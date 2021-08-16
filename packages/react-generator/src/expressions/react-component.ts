@@ -332,7 +332,8 @@ export class ReactComponent extends Component {
     }
 
     if (this.members.map(
-      (member) => member instanceof GetAccessor && member.isMemorized(this.getToStringOptions()),
+      (member) => member instanceof GetAccessor
+       && member.isMemorized(this.getToStringOptions(), false),
     ).includes(true)) {
       hooks.push('useMemo');
     }
@@ -936,7 +937,7 @@ export class ReactComponent extends Component {
     .map(
       (m) => {
         const isMemorizedGetter = (m instanceof GetAccessor
-          && m.isMemorized(this.getToStringOptions()));
+          && m.isMemorized(this.getToStringOptions(), false));
 
         return `const ${m.name
         }=${isMemorizedGetter ? 'useMemo' : 'useCallback'}(${m.declaration(

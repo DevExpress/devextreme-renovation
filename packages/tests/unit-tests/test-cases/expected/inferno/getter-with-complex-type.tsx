@@ -9,6 +9,7 @@ const SimpleContext = createContext<number>(5);
 function view(viewModel: Widget) {
   return <div></div>;
 }
+type UserType = "user" | "not";
 
 export declare type PropsType = {
   p: number;
@@ -91,6 +92,14 @@ export default class Widget extends InfernoWrapperComponent<any> {
   get g5(): number[] {
     return [this.state.i, this.mutableVar];
   }
+  get userGet(): UserType {
+    if (this.__getterCache["userGet"] !== undefined) {
+      return this.__getterCache["userGet"];
+    }
+    return (this.__getterCache["userGet"] = ((): UserType => {
+      return "user";
+    })());
+  }
   get restAttributes(): RestProps {
     const { p, ...restProps } = this.props as any;
     return restProps;
@@ -99,6 +108,7 @@ export default class Widget extends InfernoWrapperComponent<any> {
     provide?: any;
     g1?: number[];
     g4?: number[];
+    userGet?: UserType;
   } = {};
   componentWillUpdate(nextProps, nextState, context) {
     super.componentWillUpdate();
@@ -127,6 +137,7 @@ export default class Widget extends InfernoWrapperComponent<any> {
       g3: this.g3,
       g4: this.g4,
       g5: this.g5,
+      userGet: this.userGet,
       restAttributes: this.restAttributes,
     } as Widget);
   }

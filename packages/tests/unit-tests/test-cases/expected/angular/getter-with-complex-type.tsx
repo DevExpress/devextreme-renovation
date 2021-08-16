@@ -19,6 +19,8 @@ class SimpleContext {
     }
   }
 }
+type UserType = "user" | "not";
+
 import { Input } from "@angular/core";
 export class Props {
   @Input() p: number = 10;
@@ -78,6 +80,14 @@ export default class Widget extends Props {
   get __g5(): number[] {
     return [this.i, this.mutableVar];
   }
+  get __userGet(): UserType {
+    if (this.__getterCache["userGet"] !== undefined) {
+      return this.__getterCache["userGet"];
+    }
+    return (this.__getterCache["userGet"] = ((): UserType => {
+      return "user";
+    })());
+  }
   get __restAttributes(): any {
     return {};
   }
@@ -92,6 +102,7 @@ export default class Widget extends Props {
     provide?: any;
     g1?: number[];
     g4?: number[];
+    userGet?: UserType;
   } = {};
   resetDependantGetters(): void {
     this.__getterCache["g4"] = undefined;

@@ -330,11 +330,16 @@ export class GetAccessor extends Method {
     );
   }
 
-  isMemorized(options?: toStringOptions): boolean {
+  isMemorized(options?: toStringOptions, needToMemorizeProvider = true): boolean {
+    if (this.isProvider && !needToMemorizeProvider) {
+      return false;
+    }
     if (options) {
       const mutables = options?.members.filter((m) => m.isMutable).map((m) => m._name.toString());
       const containMutableDep = this.getDependency(options).some((dep) => mutables?.includes(dep));
-      return !containMutableDep && ((this.type && isComplexType(this.type)) || this.isProvider);
+      return !containMutableDep
+      && (isComplexType(this.type)
+        || this.isProvider);
     }
     return false;
   }

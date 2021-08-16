@@ -15,7 +15,7 @@ const SimpleContext = createContext<number>(5);
 function view(viewModel: Widget) {
   return <div></div>;
 }
-
+type UserType = 'user'|'not';
 @ComponentBindings()
 export class Props {
   @OneWay() p: number = 10;
@@ -52,6 +52,10 @@ export default class Widget extends JSXComponent<Props>() {
 
   get g5(): number[] {
     return [this.i, this.mutableVar]
+  }
+
+  get userGet(): UserType{
+    return 'user'
   }
 }
 

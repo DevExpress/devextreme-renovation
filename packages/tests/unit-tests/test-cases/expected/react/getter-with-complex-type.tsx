@@ -3,6 +3,7 @@ const SimpleContext = createContext<number>(5);
 function view(viewModel: Widget) {
   return <div></div>;
 }
+type UserType = "user" | "not";
 
 export declare type PropsType = {
   p: number;
@@ -29,6 +30,7 @@ interface Widget {
   g3: number;
   g4: number[];
   g5: number[];
+  userGet: UserType;
   restAttributes: RestProps;
 }
 
@@ -36,7 +38,7 @@ export default function Widget(props: typeof Props & RestProps) {
   const [__state_i, __state_setI] = useState<number>(10);
   const mutableVar = useRef<number>(10);
   const cons = useContext(SimpleContext);
-  const __provide = useMemo(
+  const __provide = useCallback(
     function __provide(): any {
       return __state_i;
     },
@@ -72,6 +74,9 @@ export default function Widget(props: typeof Props & RestProps) {
     },
     [__state_i, mutableVar]
   );
+  const __userGet = useMemo(function __userGet(): UserType {
+    return "user";
+  }, []);
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { p, ...restProps } = props;
@@ -86,12 +91,13 @@ export default function Widget(props: typeof Props & RestProps) {
         props: { ...props },
         i: __state_i,
         cons,
-        provide: __provide,
+        provide: __provide(),
         g1: __g1,
         g2: __g2(),
         g3: __g3(),
         g4: __g4,
         g5: __g5(),
+        userGet: __userGet,
         restAttributes: __restAttributes(),
       })}
     </SimpleContext.Provider>

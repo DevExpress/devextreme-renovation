@@ -6,7 +6,7 @@ import { calculateMethodDependency } from './method';
 
 export class GetAccessor extends BaseGetAccessor {
   getter(componentContext?: string, options?: toStringOptions): string {
-    if (this.isMemorized(options)) {
+    if (this.isMemorized(options, false)) {
       return `${super.getter(componentContext)}`;
     }
     return `${super.getter(componentContext)}()`;
