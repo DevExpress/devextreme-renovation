@@ -24,7 +24,6 @@ import {
 } from './import';
 import { Class } from './class';
 
-
 export class TypeExpression extends Expression {}
 
 export class SimpleTypeExpression extends TypeExpression {
