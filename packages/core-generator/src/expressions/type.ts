@@ -497,8 +497,7 @@ export function isComplexType(
     type instanceof FunctionTypeNode
     || type instanceof ArrayTypeNode
     || type instanceof ObjectLiteral
-    || (type instanceof TypeLiteralNode
-      && !type.members.map((member) => isComplexType(member?.type || '')).includes(false))
+    || type instanceof TypeLiteralNode
     || (type instanceof LiteralTypeNode && isComplexType(type.expression))
     || type.toString() === 'object'
   ) {
