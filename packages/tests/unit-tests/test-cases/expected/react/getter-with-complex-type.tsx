@@ -72,7 +72,7 @@ export default function Widget(props: typeof Props & RestProps) {
     function __g5(): number[] {
       return [__state_i, mutableVar.current!];
     },
-    [__state_i, mutableVar]
+    [__state_i]
   );
   const __userGet = useCallback(function __userGet(): UserType {
     return "user";

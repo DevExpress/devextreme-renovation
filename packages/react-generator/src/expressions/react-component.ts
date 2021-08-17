@@ -945,6 +945,9 @@ export class ReactComponent extends Component {
         )}, [${m.getDependency({
           members: this.members,
           componentContext: SyntaxKind.ThisKeyword,
+        }).filter((dep) => {
+          const depMember = this.getToStringOptions().members.find((member) => member.name === dep);
+          return !depMember?.isMutable;
         })}]);`;
       },
     )
