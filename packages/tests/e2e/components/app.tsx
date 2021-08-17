@@ -167,7 +167,6 @@ function view(model: App) {
       <StylesWidget />
       <RefParent />
       <GetterCache />
-      <ButtonComponent onClick={model.onCachedClick}>CachedGetter</ButtonComponent>
     </div>
   );
 }
@@ -253,13 +252,5 @@ export default class App extends JSXComponent(AppInput) {
 
   get arrayForSum(): number[] {
     return [1, 5, 10];
-  }
-
-  get cachedGetter(): number[] {
-    console.log('executed');
-    return [1,5];
-  }
-  onCachedClick(){
-    console.log(this.cachedGetter)
   }
 }

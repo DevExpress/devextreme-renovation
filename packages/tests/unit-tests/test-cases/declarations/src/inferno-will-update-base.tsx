@@ -22,8 +22,3 @@ import {
       this._hovered = !this._hovered;
     }
   }
-  
-  
-
- 
-  

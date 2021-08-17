@@ -132,6 +132,9 @@ export class InfernoComponent extends PreactComponent {
         const allDeps = g.getDependency({
           members: this.members,
           componentContext: SyntaxKind.ThisKeyword,
+        }).filter((dep) => {
+          const depMember = this.getToStringOptions().members.find((member) => member.name === dep);
+          return !depMember?.isMutable;
         });
 
         const deleteCacheStatement = `this.__getterCache["${g._name.toString()}"] = undefined;`;
@@ -190,7 +193,17 @@ export class InfernoComponent extends PreactComponent {
     const createEffectsStatements: string[] = [];
     const updateEffectsStatements: string[] = [];
     if (this.effects.length || this.jQueryRegistered) {
-      const dependencies = this.effects.map((e) => e.getDependency(this.getToStringOptions()).map((d) => `this.${d}`));
+      const dependencies = this.effects.map(
+        (e) => e.getDependency(this.getToStringOptions())
+          .filter((dep) => {
+            const depMember = this.getToStringOptions().members.find(
+              (member) => member.name === dep,
+            );
+            return !depMember?.isMutable;
+          })
+          .map((d) => `this.${d}`)
+        ,
+      );
 
       const create = this.effects.map((e, i) => {
         const dependency = getEffectRunParameter(e) !== 'once' ? dependencies[i] : [];

@@ -56,7 +56,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   );
   useEffect(() => {
     __setObj();
-  }, [notDefinedObj]);
+  }, []);
 
   return view({
     props: { ...props },

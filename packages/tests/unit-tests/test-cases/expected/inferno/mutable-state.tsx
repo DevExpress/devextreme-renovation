@@ -38,10 +38,10 @@ export default class Widget extends InfernoComponent<any> {
   }
 
   createEffects() {
-    return [new InfernoEffect(this.initialize, [this.notDefinedObj])];
+    return [new InfernoEffect(this.initialize, [])];
   }
   updateEffects() {
-    this._effects[0]?.update([this.notDefinedObj]);
+    this._effects[0]?.update([]);
   }
 
   initialize(): any {
