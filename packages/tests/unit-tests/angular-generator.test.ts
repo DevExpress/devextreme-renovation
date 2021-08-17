@@ -8160,7 +8160,7 @@ mocha.describe("Angular generator", function () {
           assert.strictEqual(getter.isMemorized({members: [], isComponent: true}), true);
         });
 
-        mocha.it("Do not memorize createTypeLiteralNode with simple type", function () {
+        mocha.it("Memorize createTypeLiteralNode with simple type", function () {
           const getter = createGetAccessor(
             generator.createTypeLiteralNode([
               generator.createPropertySignature(
@@ -8175,7 +8175,7 @@ mocha.describe("Angular generator", function () {
             ])
           );
 
-          assert.strictEqual(getter.isMemorized({members: [], isComponent: true}), false);
+          assert.strictEqual(getter.isMemorized({members: [], isComponent: true}), true);
         });
 
         mocha.it("Memorize createTypeLiteralNode with complex type", function () {
