@@ -9,6 +9,7 @@ const SimpleContext = createContext<number>(5);
 function view(viewModel: Widget) {
   return <div></div>;
 }
+type UserType = "user" | "not";
 
 export declare type PropsType = {
   p: number;
@@ -18,6 +19,7 @@ export const Props: PropsType = {
 };
 import { createElement as h } from "inferno-compat";
 import { createReRenderEffect } from "@devextreme/vdom";
+import { createRef as infernoCreateRef } from "inferno";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
@@ -29,6 +31,7 @@ export default class Widget extends InfernoWrapperComponent<any> {
   state: { i: number };
 
   refs: any;
+  mutableVar: number = 10;
   get cons(): number {
     if ("SimpleContext" in this.context) {
       return this.context.SimpleContext;
@@ -86,6 +89,12 @@ export default class Widget extends InfernoWrapperComponent<any> {
       return [this.cons];
     })());
   }
+  get g5(): number[] {
+    return [this.state.i, this.mutableVar];
+  }
+  get userGet(): UserType {
+    return "user";
+  }
   get restAttributes(): RestProps {
     const { p, ...restProps } = this.props as any;
     return restProps;
@@ -96,6 +105,7 @@ export default class Widget extends InfernoWrapperComponent<any> {
     g4?: number[];
   } = {};
   componentWillUpdate(nextProps, nextState, context) {
+    super.componentWillUpdate();
     if (this.state["i"] !== nextState["i"]) {
       this.__getterCache["provide"] = undefined;
     }
@@ -108,7 +118,6 @@ export default class Widget extends InfernoWrapperComponent<any> {
     if (this.context["SimpleContext"] !== context["SimpleContext"]) {
       this.__getterCache["g4"] = undefined;
     }
-    super.componentWillUpdate();
   }
   render() {
     const props = this.props;
@@ -121,6 +130,8 @@ export default class Widget extends InfernoWrapperComponent<any> {
       g2: this.g2,
       g3: this.g3,
       g4: this.g4,
+      g5: this.g5,
+      userGet: this.userGet,
       restAttributes: this.restAttributes,
     } as Widget);
   }

@@ -16,7 +16,7 @@ const Props: PropsType = {
   height: 10,
 };
 import * as React from "react";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 declare type RestProps = {
   className?: string;
@@ -34,16 +34,14 @@ interface DynamicComponentCreator {
 export default function DynamicComponentCreator(
   props: typeof Props & RestProps
 ) {
-  const __Components = useCallback(
-    function __Components(): React.FunctionComponent<
+  const __Components = useMemo(function __Components(): React.FunctionComponent<
+    Partial<typeof WidgetInput>
+  >[] {
+    return [DynamicComponent] as React.FunctionComponent<
       Partial<typeof WidgetInput>
-    >[] {
-      return [DynamicComponent] as React.FunctionComponent<
-        Partial<typeof WidgetInput>
-      >[];
-    },
-    []
-  );
+    >[];
+  },
+  []);
   const __onComponentClick = useCallback(function __onComponentClick(): any {},
   []);
   const __restAttributes = useCallback(
@@ -56,7 +54,7 @@ export default function DynamicComponentCreator(
 
   return view({
     props: { ...props },
-    Components: __Components(),
+    Components: __Components,
     onComponentClick: __onComponentClick,
     restAttributes: __restAttributes(),
   });

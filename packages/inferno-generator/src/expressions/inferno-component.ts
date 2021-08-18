@@ -116,9 +116,9 @@ export class InfernoComponent extends PreactComponent {
     return '';
   }
 
-  compileGetterCache(componentWillUpdate_Statements: string[]): string {
+  compileGetterCache(componentWillUpdate_Statements: string[], options?:toStringOptions): string {
     const getters = this.members.filter(
-      (m) => m instanceof GetAccessor && m.isMemorized(),
+      (m) => m instanceof GetAccessor && m.isMemorized(options),
     );
 
     if (getters.length) {
@@ -132,6 +132,9 @@ export class InfernoComponent extends PreactComponent {
         const allDeps = g.getDependency({
           members: this.members,
           componentContext: SyntaxKind.ThisKeyword,
+        }).filter((dep) => {
+          const depMember = this.getToStringOptions().members.find((member) => member.name === dep);
+          return !depMember?.isMutable;
         });
 
         const deleteCacheStatement = `this.__getterCache["${g._name.toString()}"] = undefined;`;
@@ -175,13 +178,13 @@ export class InfernoComponent extends PreactComponent {
     return '';
   }
 
-  compileComponentWillUpdate(statements: string[]): string {
-    const superStatement = this.jQueryRegistered ? 'super.componentWillUpdate();' : '';
+  compileComponentWillUpdate(statements: string[], componentType: string): string {
     if (statements.length > 0) {
-      return `componentWillUpdate(nextProps, nextState, context) {
-        ${statements.join('\n')}
-        ${superStatement}
-      }`;
+      const superStatement = componentType !== 'BaseInfernoComponent' ? 'super.componentWillUpdate();' : '';
+      return `componentWillUpdate(nextProps, nextState, context) {        
+      ${superStatement}
+      ${statements.join('\n')}
+}`;
     }
     return '';
   }
@@ -190,7 +193,17 @@ export class InfernoComponent extends PreactComponent {
     const createEffectsStatements: string[] = [];
     const updateEffectsStatements: string[] = [];
     if (this.effects.length || this.jQueryRegistered) {
-      const dependencies = this.effects.map((e) => e.getDependency(this.getToStringOptions()).map((d) => `this.${d}`));
+      const dependencies = this.effects.map(
+        (e) => e.getDependency(this.getToStringOptions())
+          .filter((dep) => {
+            const depMember = this.getToStringOptions().members.find(
+              (member) => member.name === dep,
+            );
+            return !depMember?.isMutable;
+          })
+          .map((d) => `this.${d}`)
+        ,
+      );
 
       const create = this.effects.map((e, i) => {
         const dependency = getEffectRunParameter(e) !== 'once' ? dependencies[i] : [];
@@ -384,8 +397,8 @@ export class InfernoComponent extends PreactComponent {
     .concat(this.members.filter((m) => m.isApiMethod) as Method[])
     .map((m) => m.toString(this.getToStringOptions()))
     .join('\n')}
-                ${this.compileGetterCache(componentWillUpdate)}
-                ${this.compileComponentWillUpdate(componentWillUpdate)}
+                ${this.compileGetterCache(componentWillUpdate, this.getToStringOptions())}
+                ${this.compileComponentWillUpdate(componentWillUpdate, component)}
                 render(){
                     const props = this.props;
                     return ${this.compileViewCall()}

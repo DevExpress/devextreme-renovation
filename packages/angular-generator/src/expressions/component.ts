@@ -123,7 +123,12 @@ function getDependencyFromViewExpression(
 ): string[] {
   const members = options.members;
 
-  const dependency = expression.getDependency(options);
+  const dependency = expression.getDependency(options).filter((dep) => {
+    const depMember = options?.members.find(
+      (member) => member.name === dep,
+    );
+    return !depMember?.isMutable;
+  });
 
   const dependencyMembers = members.filter((m) => dependency.some((d) => d === m._name.toString()));
 
@@ -134,6 +139,11 @@ function getDependencyFromViewExpression(
       m.getDependency({
         ...options,
         componentContext: SyntaxKind.ThisKeyword,
+      }).filter((dep) => {
+        const depMember = options?.members.find(
+          (member) => member.name === dep,
+        );
+        return !depMember?.isMutable;
       }),
     ),
     dependency.filter((d) => !methods.some((m) => m._name.toString() === d)),
@@ -598,9 +608,11 @@ export class AngularComponent extends Component {
     return imports.join(';\n');
   }
 
-  compileGetterCache(ngOnChanges: string[], resetDependantGetters: string[] = []): string {
+  compileGetterCache(ngOnChanges: string[],
+    options?: toStringOptions,
+    resetDependantGetters: string[] = []): string {
     const getters = this.members.filter(
-      (m) => m instanceof GetAccessor && m.isMemorized(),
+      (m) => m instanceof GetAccessor && m.isMemorized(options),
     );
 
     if (getters.length) {
@@ -614,6 +626,11 @@ export class AngularComponent extends Component {
         const allDeps = g.getDependency({
           members: this.members,
           componentContext: SyntaxKind.ThisKeyword,
+        }).filter((dep) => {
+          const depMember = options?.members.find(
+            (member) => member.name === dep,
+          );
+          return !depMember?.isMutable;
         });
         const [propsDependency, internalStateDependency] = separateDependency(
           allDeps,
@@ -684,6 +701,7 @@ export class AngularComponent extends Component {
     ngOnChanges: string[],
     ngAfterViewCheckedStatements: string[],
     ngDoCheckStatements: string[],
+    options?: toStringOptions,
   ): string {
     const effects = this.members.filter((m) => m.isEffect) as Method[];
     let hasInternalStateDependency = false;
@@ -701,6 +719,11 @@ export class AngularComponent extends Component {
         const allDeps = e.getDependency({
           members: this.members,
           componentContext: SyntaxKind.ThisKeyword,
+        }).filter((dep) => {
+          const depMember = options?.members.find(
+            (member) => member.name === dep,
+          );
+          return !depMember?.isMutable;
         });
         const [propsDependency, internalStateDependency] = separateDependency(
           allDeps,
@@ -1572,8 +1595,11 @@ export class AngularComponent extends Component {
     ngOnChangesStatements,
     ngAfterViewCheckedStatements,
     ngDoCheckStatements,
+    decoratorToStringOptions,
   )}
-            ${this.compileGetterCache(ngOnChangesStatements, resetDependantGetters)}
+            ${this.compileGetterCache(ngOnChangesStatements,
+    { ...decoratorToStringOptions, componentContext: SyntaxKind.ThisKeyword },
+    resetDependantGetters)}
             ${this.compileContext(
     constructorStatements,
     constructorArguments,

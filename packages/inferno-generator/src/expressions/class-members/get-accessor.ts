@@ -1,16 +1,11 @@
 import { GetAccessor as ReactGetAccessor } from '@devextreme-generator/react';
 import {
-  isComplexType,
-  toStringOptions,
+  toStringOptions, Identifier,
 } from '@devextreme-generator/core';
 
 import { compileGetterCache } from '@devextreme-generator/angular';
 
 export class GetAccessor extends ReactGetAccessor {
-  isMemorized(): boolean {
-    return isComplexType(this.type) || this.isProvider;
-  }
-
   getter(componentContext?: string): string {
     return super.getter(componentContext).replace('()', '');
   }
@@ -18,10 +13,21 @@ export class GetAccessor extends ReactGetAccessor {
   toString(options?: toStringOptions): string {
     if (options?.isComponent
        && this.body
-       && ((this.type && isComplexType(this.type)) || this.isProvider)) {
-      this.body.statements = compileGetterCache(
-        this._name, this.type, this.body, this.isProvider, false,
+       && this.isMemorized(options)) {
+      const reactAccessor = new ReactGetAccessor(
+        this.decorators,
+        this.modifiers,
+        new Identifier(this.name),
+        this.parameters,
+        this.type,
+        this.body,
       );
+      if (reactAccessor?.body) {
+        reactAccessor.body.statements = compileGetterCache(
+          this._name, this.type, this.body, this.isProvider, false,
+        );
+        return reactAccessor.toString(options);
+      }
     }
     return super.toString(options);
   }

@@ -331,6 +331,13 @@ export class ReactComponent extends Component {
       hooks.push('useCallback');
     }
 
+    if (this.members.map(
+      (member) => member instanceof GetAccessor
+       && member.isMemorized(this.getToStringOptions(), false),
+    ).includes(true)) {
+      hooks.push('useMemo');
+    }
+
     if (getSubscriptions(this.listeners).length || this.effects.length) {
       hooks.push('useEffect');
     }
@@ -462,6 +469,11 @@ export class ReactComponent extends Component {
           )}, [${e.getDependency({
             members: this.members,
             componentContext: SyntaxKind.ThisKeyword,
+          }).filter((dep) => {
+            const depMember = this.getToStringOptions().members.find(
+              (member) => member.name === dep,
+            );
+            return !depMember?.isMutable;
           })}])`,
         )
         .join(';\n')
@@ -618,7 +630,6 @@ export class ReactComponent extends Component {
             : m.name.toString())),
       )
       .concat(compileState(this.methods.filter((m) => !m.isPrivate)));
-
     return `{${statements.join(',\n')}}`;
   }
 
@@ -813,6 +824,8 @@ export class ReactComponent extends Component {
     return super.compileDefaultOptionsMethod('[]', [
       `${this.defaultPropsDest()} = ${compileGettersCompatibleExtend(
         this.defaultPropsDest(),
+        ...(this.defaultOptionRules && this.needGenerateDefaultOptions
+          ? [this.compileConvertRulesToOptions(this.defaultOptionRules)] : []),
         this.compileConvertRulesToOptions('__defaultOptionRules'),
       )}`,
     ]);
@@ -927,13 +940,21 @@ export class ReactComponent extends Component {
       ) as Array<Method>,
     )
     .map(
-      (m) => `const ${m.name
-      }=useCallback(${m.declaration(
-        this.getToStringOptions(),
-      )}, [${m.getDependency({
-        members: this.members,
-        componentContext: SyntaxKind.ThisKeyword,
-      })}]);`,
+      (m) => {
+        const isMemorizedGetter = (m instanceof GetAccessor
+          && m.isMemorized(this.getToStringOptions(), false, this.context.types));
+
+        return `const ${m.name
+        }=${isMemorizedGetter ? 'useMemo' : 'useCallback'}(${m.declaration(
+          this.getToStringOptions(),
+        )}, [${m.getDependency({
+          members: this.members,
+          componentContext: SyntaxKind.ThisKeyword,
+        }).filter((dep) => {
+          const depMember = this.getToStringOptions().members.find((member) => member.name === dep);
+          return !depMember?.isMutable;
+        })}]);`;
+      },
     )
     .join('\n')}
                   ${this.compileUseEffect()}

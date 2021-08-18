@@ -24,12 +24,7 @@ import { CommonModule } from "@angular/common";
 })
 export class TextSvgElement extends TextSvgElementProps {
   get __computedProps(): TextSvgElementProps {
-    if (this.__getterCache["computedProps"] !== undefined) {
-      return this.__getterCache["computedProps"];
-    }
-    return (this.__getterCache["computedProps"] = ((): TextSvgElementProps => {
-      return this;
-    })());
+    return this;
   }
   get __restAttributes(): any {
     return {};
@@ -39,14 +34,6 @@ export class TextSvgElement extends TextSvgElementProps {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
         this.changeDetection.detectChanges();
     });
-  }
-
-  __getterCache: {
-    computedProps?: TextSvgElementProps;
-  } = {};
-
-  ngOnChanges(changes: { [name: string]: any }) {
-    this.__getterCache["computedProps"] = undefined;
   }
 
   constructor(private changeDetection: ChangeDetectorRef) {

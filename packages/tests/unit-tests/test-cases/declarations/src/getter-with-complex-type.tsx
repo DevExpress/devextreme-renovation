@@ -6,7 +6,8 @@ import {
   JSXComponent,
   Provider,
   createContext,
-  Consumer
+  Consumer,
+  Mutable
 } from "@devextreme-generator/declarations";
 
 const SimpleContext = createContext<number>(5);
@@ -14,7 +15,7 @@ const SimpleContext = createContext<number>(5);
 function view(viewModel: Widget) {
   return <div></div>;
 }
-
+type UserType = 'user'|'not';
 @ComponentBindings()
 export class Props {
   @OneWay() p: number = 10;
@@ -25,6 +26,7 @@ export class Props {
   jQuery: { register: true },
 })
 export default class Widget extends JSXComponent<Props>() {
+  @Mutable() mutableVar = 10;
   @InternalState() i: number = 10;
   @Provider(SimpleContext)
   get provide() {
@@ -46,6 +48,14 @@ export default class Widget extends JSXComponent<Props>() {
 
   get g4(): number[] {
     return [this.cons]
+  }
+
+  get g5(): number[] {
+    return [this.i, this.mutableVar]
+  }
+
+  get userGet(): UserType{
+    return 'user'
   }
 }
 

@@ -1587,11 +1587,12 @@ mocha.describe("import Components", function () {
     );
 
     assert.strictEqual(model.defaultPropsDest(), "Model");
+
     assert.strictEqual(
       removeSpaces(model.toString()),
       removeSpaces(`
             export declare type ModelType = typeof WidgetProps & {height:string}
-            constModel:ModelType=Object.create(Object.prototype,Object.assign(Object.getOwnPropertyDescriptors(WidgetProps),Object.getOwnPropertyDescriptors({height:"10px"})));
+            constModel:ModelType=Object.create(Object.prototype,Object.assign(Object.getOwnPropertyDescriptors(WidgetProps),Object.getOwnPropertyDescriptors({height:"10px"}),));
         `)
     );
   });
