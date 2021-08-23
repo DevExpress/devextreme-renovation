@@ -3,9 +3,7 @@ export declare type PropsType = {
   contentRender?: React.FunctionComponent<Partial<any>>;
   contentComponent?: React.JSXElementConstructor<Partial<any>>;
 };
-export const Props: PropsType = {
-  contentTemplate: () => <div />,
-};
+export const Props: PropsType = { contentTemplate: () => <div /> };
 export const viewFunction = ({ props }: TestComponent): any => {
   const { contentTemplate: AnotherTemplate } = props;
   return AnotherTemplate({});

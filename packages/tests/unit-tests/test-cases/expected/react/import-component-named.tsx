@@ -6,9 +6,7 @@ function view(model: Child) {
 export declare type ChildInputType = {
   height: number;
 };
-const ChildInput: ChildInputType = {
-  height: 10,
-};
+const ChildInput: ChildInputType = { height: 10 };
 import * as React from "react";
 import { useCallback } from "react";
 

@@ -60,7 +60,12 @@ export class Property extends BaseProperty {
       || initializer instanceof ObjectLiteral;
 
     if (isComplexExpression) {
-      return `get ${this.name}() { return ${initializer?.toString(options)} }`;
+      return `${this.name}: {
+          enumerable: true,
+          get: function() {
+            return ${initializer?.toString(options)}   
+          }
+        }`;
     }
     return this.defaultDeclaration(options);
   }

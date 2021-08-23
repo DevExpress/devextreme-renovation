@@ -8,10 +8,7 @@ export declare type WidgetPropsType = {
   data?: Options;
   info?: AdditionalOptions;
 };
-const WidgetProps: WidgetPropsType = {
-  data: Props.data,
-  info: Props.info,
-};
+const WidgetProps: WidgetPropsType = { data: Props.data, info: Props.info };
 import * as React from "react";
 import { useState, useCallback } from "react";
 

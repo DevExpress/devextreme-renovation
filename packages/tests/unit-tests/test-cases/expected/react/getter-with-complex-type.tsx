@@ -8,9 +8,7 @@ type UserType = "user" | "not";
 export declare type PropsType = {
   p: number;
 };
-export const Props: PropsType = {
-  p: 10,
-};
+export const Props: PropsType = { p: 10 };
 import * as React from "react";
 import { useState, useContext, useCallback, useMemo, useRef } from "react";
 

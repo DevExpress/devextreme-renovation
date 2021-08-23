@@ -13,20 +13,31 @@ export declare type BasePropsType = {
   height?: number;
   width?: number;
 };
-export const BaseProps: BasePropsType = {
-  height: 10,
-  get width() {
-    return isMaterial() ? 20 : 10;
-  },
-};
+export const BaseProps: BasePropsType = Object.defineProperties(
+  { height: 10 },
+  {
+    width: {
+      enumerable: true,
+      get: function () {
+        return isMaterial() ? 20 : 10;
+      },
+    },
+  }
+);
 export declare type TextsPropsType = {
   text?: string;
 };
-export const TextsProps: TextsPropsType = {
-  get text() {
-    return format("text");
-  },
-};
+export const TextsProps: TextsPropsType = Object.defineProperties(
+  {},
+  {
+    text: {
+      enumerable: true,
+      get: function () {
+        return format("text");
+      },
+    },
+  }
+);
 export declare type WidgetPropsType = typeof BaseProps & {
   text?: string;
   texts1?: typeof TextsProps;
@@ -42,18 +53,31 @@ export const WidgetProps: WidgetPropsType = Object.create(
   Object.prototype,
   Object.assign(
     Object.getOwnPropertyDescriptors(BaseProps),
-    Object.getOwnPropertyDescriptors({
-      get text() {
-        return format("text");
-      },
-      get texts1() {
-        return { text: format("text") };
-      },
-      template: () => <div></div>,
-      get __defaultNestedValues() {
-        return { texts2: { text: format("text") }, texts3: TextsProps };
-      },
-    })
+    Object.getOwnPropertyDescriptors(
+      Object.defineProperties(
+        { template: () => <div></div> },
+        {
+          text: {
+            enumerable: true,
+            get: function () {
+              return format("text");
+            },
+          },
+          texts1: {
+            enumerable: true,
+            get: function () {
+              return { text: format("text") };
+            },
+          },
+          __defaultNestedValues: {
+            enumerable: true,
+            get: function () {
+              return { texts2: { text: format("text") }, texts3: TextsProps };
+            },
+          },
+        }
+      )
+    )
   )
 );
 import * as React from "react";
