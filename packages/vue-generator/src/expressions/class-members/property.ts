@@ -45,6 +45,7 @@ export function calculatePropertyType(
     if (
       typeString !== SyntaxKind.AnyKeyword
       && typeString !== SyntaxKind.UndefinedKeyword
+      && typeString !== SyntaxKind.UnknownKeyword
     ) {
       return capitalizeFirstLetter(typeString);
     }

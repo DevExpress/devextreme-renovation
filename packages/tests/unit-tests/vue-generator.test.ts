@@ -517,6 +517,24 @@ mocha.describe("Vue-generator", function () {
           assert.strictEqual(expression.getter("this"), "this.p");
         });
 
+        mocha.it.only("Property with KeywordTypeNode - unknown", function () {
+          const expression = generator.createProperty(
+            decorators,
+            undefined,
+            name,
+            generator.SyntaxKind.QuestionToken,
+            generator.createKeywordTypeNode("unknown"),
+            undefined
+          );
+
+          assert.strictEqual(
+            getAst(expression.toString({ members: [] })),
+            getAst("p: {}")
+          );
+          assert.strictEqual(expression.getter(), "p");
+          assert.strictEqual(expression.getter("this"), "this.p");
+        });
+
         mocha.it("Property with ArrayTypeNode", function () {
           const expression = generator.createProperty(
             decorators,
