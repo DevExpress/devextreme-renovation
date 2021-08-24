@@ -327,6 +327,10 @@ mocha.describe("vue-generation", function () {
       this.testGenerator(this.test!.title);
     });
 
+    mocha.it("props-any-undefined-unknown", function () {
+      this.testGenerator(this.test!.title);
+    });
+
     mocha.it("use-external-component-bindings", function () {
       this.testGenerator(this.test!.title);
     });
