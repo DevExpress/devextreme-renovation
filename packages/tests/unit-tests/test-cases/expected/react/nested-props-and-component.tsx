@@ -6,9 +6,7 @@ function view(model: UndefWidget) {
 export declare type FakeNestedType = {
   numberProp: number;
 };
-export const FakeNested: FakeNestedType = {
-  numberProp: 2,
-};
+export const FakeNested: FakeNestedType = { numberProp: 2 };
 export declare type WidgetPropsType = {
   oneWayProp?: number;
   twoWayProp?: number;
@@ -26,12 +24,17 @@ export declare type WidgetPropsType = {
   componentProp?: React.JSXElementConstructor<any>;
   children?: React.ReactNode;
 };
-export const WidgetProps: WidgetPropsType = {
-  get __defaultNestedValues() {
-    return { anotherNestedPropInit: [FakeNested] };
-  },
-  twoWayPropChange: () => {},
-};
+export const WidgetProps: WidgetPropsType = Object.defineProperties(
+  { twoWayPropChange: () => {} },
+  {
+    __defaultNestedValues: {
+      enumerable: true,
+      get: function () {
+        return { anotherNestedPropInit: [FakeNested] };
+      },
+    },
+  }
+);
 import * as React from "react";
 import { useState, useCallback } from "react";
 

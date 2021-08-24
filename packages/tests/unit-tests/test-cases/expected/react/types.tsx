@@ -26,30 +26,46 @@ export declare type WidgetPropsType = {
   externalArray: StringArr;
   externalString: StringType;
 };
-export const WidgetProps: WidgetPropsType = {
-  str: "",
-  num: 1,
-  bool: true,
-  arr: [],
-  strArr: ["a", "b"],
-  get obj() {
-    return {};
+export const WidgetProps: WidgetPropsType = Object.defineProperties(
+  {
+    str: "",
+    num: 1,
+    bool: true,
+    arr: [],
+    strArr: ["a", "b"],
+    func: () => {},
+    externalEnum: "data",
+    externalUnion: 0,
+    externalArray: ["s1", "s2"],
+    externalString: "someValue",
   },
-  get date() {
-    return new Date();
-  },
-  func: () => {},
-  get symbol() {
-    return Symbol("x");
-  },
-  externalEnum: "data",
-  externalUnion: 0,
-  get externalObj() {
-    return { number: 0, text: "text" };
-  },
-  externalArray: ["s1", "s2"],
-  externalString: "someValue",
-};
+  {
+    obj: {
+      enumerable: true,
+      get: function () {
+        return {};
+      },
+    },
+    date: {
+      enumerable: true,
+      get: function () {
+        return new Date();
+      },
+    },
+    symbol: {
+      enumerable: true,
+      get: function () {
+        return Symbol("x");
+      },
+    },
+    externalObj: {
+      enumerable: true,
+      get: function () {
+        return { number: 0, text: "text" };
+      },
+    },
+  }
+);
 import * as React from "react";
 import { useCallback } from "react";
 
@@ -101,6 +117,4 @@ export declare type BaseViewPropsTypeType = {
   strArr: Array<String>;
   customTypeField?: { name: string; customField: CustomType }[];
 };
-const BaseViewPropsType: BaseViewPropsTypeType = {
-  strArr: WidgetProps.strArr,
-};
+const BaseViewPropsType: BaseViewPropsTypeType = { strArr: WidgetProps.strArr };

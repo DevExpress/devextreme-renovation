@@ -20,16 +20,23 @@ export declare type WidgetInputType = {
   defaultStringValue: string;
   stringValueChange?: (stringValue: string) => void;
 };
-export const WidgetInput: WidgetInputType = {
-  height: 10,
-  get export() {
-    return {};
+export const WidgetInput: WidgetInputType = Object.defineProperties(
+  {
+    height: 10,
+    onClick: () => {},
+    onSomething: () => {},
+    defaultStringValue: "",
+    stringValueChange: () => {},
   },
-  onClick: () => {},
-  onSomething: () => {},
-  defaultStringValue: "",
-  stringValueChange: () => {},
-} as any as WidgetInputType;
+  {
+    export: {
+      enumerable: true,
+      get: function () {
+        return {};
+      },
+    },
+  }
+) as any as WidgetInputType;
 import * as Preact from "preact";
 import { useState, useCallback } from "preact/hooks";
 

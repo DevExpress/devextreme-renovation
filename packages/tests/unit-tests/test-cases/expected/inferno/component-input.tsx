@@ -14,10 +14,7 @@ export declare type WidgetPropsType = {
   width?: number;
   children?: any;
 };
-export const WidgetProps: WidgetPropsType = {
-  height: 10,
-  width: 10,
-};
+export const WidgetProps: WidgetPropsType = { height: 10, width: 10 };
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;

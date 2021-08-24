@@ -33,9 +33,7 @@ function view({
 export declare type PropsType = {
   height: number;
 };
-const Props: PropsType = {
-  height: 10,
-};
+const Props: PropsType = { height: 10 };
 import * as React from "react";
 import { useState, useCallback } from "react";
 const NUMBER_STYLES = new Set([
