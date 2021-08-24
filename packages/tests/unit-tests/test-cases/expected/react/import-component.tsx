@@ -11,10 +11,7 @@ const ChildInput: ChildInputType = Object.create(
   Object.prototype,
   Object.assign(
     Object.getOwnPropertyDescriptors(WidgetProps),
-    Object.getOwnPropertyDescriptors({
-      height: 10,
-      onClick: () => {},
-    })
+    Object.getOwnPropertyDescriptors({ height: 10, onClick: () => {} })
   )
 );
 import * as React from "react";

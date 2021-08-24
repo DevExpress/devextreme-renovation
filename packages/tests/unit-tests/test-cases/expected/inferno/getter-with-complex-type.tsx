@@ -14,9 +14,7 @@ type UserType = "user" | "not";
 export declare type PropsType = {
   p: number;
 };
-export const Props: PropsType = {
-  p: 10,
-};
+export const Props: PropsType = { p: 10 };
 import { createElement as h } from "inferno-compat";
 import { createReRenderEffect } from "@devextreme/vdom";
 import { createRef as infernoCreateRef } from "inferno";

@@ -8,10 +8,7 @@ export declare type WidgetPropsType = {
   width?: number;
   children?: React.ReactNode;
 };
-export const WidgetProps: WidgetPropsType = {
-  height: 10,
-  width: 10,
-};
+export const WidgetProps: WidgetPropsType = { height: 10, width: 10 };
 import * as React from "react";
 import { useCallback } from "react";
 

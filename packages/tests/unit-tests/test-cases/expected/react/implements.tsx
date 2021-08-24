@@ -16,9 +16,7 @@ const WidgetInput: WidgetInputType = Object.create(
   Object.prototype,
   Object.assign(
     Object.getOwnPropertyDescriptors(BaseProps),
-    Object.getOwnPropertyDescriptors({
-      p: "10",
-    })
+    Object.getOwnPropertyDescriptors({ p: "10" })
   )
 );
 import * as React from "react";
