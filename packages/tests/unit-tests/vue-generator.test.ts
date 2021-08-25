@@ -517,7 +517,7 @@ mocha.describe("Vue-generator", function () {
           assert.strictEqual(expression.getter("this"), "this.p");
         });
 
-        mocha.it.only("Property with KeywordTypeNode - unknown", function () {
+        mocha.it("Property with KeywordTypeNode - unknown", function () {
           const expression = generator.createProperty(
             decorators,
             undefined,

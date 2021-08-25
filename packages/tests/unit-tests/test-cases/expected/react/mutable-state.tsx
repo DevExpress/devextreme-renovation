@@ -27,26 +27,38 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   const notDefinedObj = useRef<{ value?: number } | undefined>();
   const definedObj = useRef<{ value?: number }>({ value: 0 });
 
-  const __setObj = useCallback(function __setObj(): any {
-    obj.current!.value = 0;
-    definedObj.current!.value = 0;
-    notDefinedObj.current! = notDefinedObj.current! || {};
-    notDefinedObj.current!.value = 0;
-  }, []);
-  const __getValue = useCallback(function __getValue(): any {
-    const a: number = obj.current!.value ?? 0;
-    const b: number = notDefinedObj.current?.value ?? 0;
-    const c: number = definedObj.current!.value ?? 0;
-    return a + b + c;
-  }, []);
-  const __getObj = useCallback(function __getObj(): any {
-    return obj.current!;
-  }, []);
-  const __destruct = useCallback(function __destruct(): any {
-    const a = obj.current!.value;
-    const b = definedObj.current!.value;
-    const c = notDefinedObj.current?.value;
-  }, []);
+  const __setObj = useCallback(
+    function __setObj(): any {
+      obj.current!.value = 0;
+      definedObj.current!.value = 0;
+      notDefinedObj.current! = notDefinedObj.current! || {};
+      notDefinedObj.current!.value = 0;
+    },
+    [notDefinedObj]
+  );
+  const __getValue = useCallback(
+    function __getValue(): any {
+      const a: number = obj.current!.value ?? 0;
+      const b: number = notDefinedObj.current?.value ?? 0;
+      const c: number = definedObj.current!.value ?? 0;
+      return a + b + c;
+    },
+    [obj, notDefinedObj, definedObj]
+  );
+  const __getObj = useCallback(
+    function __getObj(): any {
+      return obj.current!;
+    },
+    [obj]
+  );
+  const __destruct = useCallback(
+    function __destruct(): any {
+      const a = obj.current!.value;
+      const b = definedObj.current!.value;
+      const c = notDefinedObj.current?.value;
+    },
+    [obj, notDefinedObj, definedObj]
+  );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { ...restProps } = props;
@@ -56,7 +68,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   );
   useEffect(() => {
     __setObj();
-  }, []);
+  }, [notDefinedObj]);
 
   return view({
     props: { ...props },

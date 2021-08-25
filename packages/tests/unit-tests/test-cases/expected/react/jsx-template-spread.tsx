@@ -50,7 +50,7 @@ function view(model: Widget) {
 }
 
 import * as React from "react";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 declare type RestProps = {
   className?: string;
@@ -77,7 +77,7 @@ const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
   (ComponentProp && ((props: any) => <ComponentProp {...props} />));
 
 export default function Widget(props: typeof Props & RestProps) {
-  const __spreadGetter = useMemo(function __spreadGetter(): {
+  const __spreadGetter = useCallback(function __spreadGetter(): {
     width: string;
     height: string;
   } {
@@ -110,7 +110,7 @@ export default function Widget(props: typeof Props & RestProps) {
       template: getTemplate(props.template, props.render, props.component),
       template2: getTemplate(props.template2, props.render2, props.component2),
     },
-    spreadGetter: __spreadGetter,
+    spreadGetter: __spreadGetter(),
     restAttributes: __restAttributes(),
   });
 }

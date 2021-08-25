@@ -17,7 +17,6 @@ import {
   getLocalStateName,
   stateSetter,
 } from './class-members/property';
-import { GetAccessor } from './class-members/get-accessor';
 
 export function getChangeEventToken(property: Property): string {
   if (property.questionOrExclamationToken === SyntaxKind.QuestionToken) {
@@ -132,13 +131,5 @@ export class PropertyAccess extends BasePropertyAccess {
     }
 
     return result;
-  }
-
-  toString(options?: toStringOptions, elements: BindingElement[] = []) {
-    const member = this.getMember(options);
-    if (member instanceof GetAccessor) {
-      return `${member.getter(options!.newComponentContext, options)}`;
-    }
-    return super.toString(options, elements);
   }
 }
