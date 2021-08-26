@@ -25,7 +25,8 @@ export class VueComponentInput extends ComponentInput {
     questionOrExclamationToken?: string,
     type?: string | TypeExpression,
     initializer?: Expression,
-  ) {
+    fromCode = false,
+  ): Property {
     return new Property(
       decorators,
       modifiers,
@@ -33,6 +34,8 @@ export class VueComponentInput extends ComponentInput {
       questionOrExclamationToken,
       type,
       initializer,
+      false,
+      fromCode,
     );
   }
 

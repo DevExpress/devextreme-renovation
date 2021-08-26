@@ -36,7 +36,8 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
 })
 export default class Widget
   extends WidgetInput
-  implements ControlValueAccessor {
+  implements ControlValueAccessor
+{
   get __restAttributes(): any {
     return {};
   }

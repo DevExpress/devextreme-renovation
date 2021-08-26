@@ -27,6 +27,7 @@ export class ComponentInput extends BaseComponentInput {
     questionOrExclamationToken?: string,
     type?: TypeExpression | string,
     initializer?: Expression,
+    fromCode = false,
   ) {
     return new Property(
       decorators,
@@ -35,6 +36,8 @@ export class ComponentInput extends BaseComponentInput {
       questionOrExclamationToken,
       type,
       initializer,
+      false,
+      fromCode,
     );
   }
 

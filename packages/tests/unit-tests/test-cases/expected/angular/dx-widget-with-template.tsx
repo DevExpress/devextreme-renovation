@@ -42,6 +42,7 @@ export default class WidgetWithTemplate extends WidgetWithTemplateInput {
 @NgModule({
   declarations: [WidgetWithTemplate],
   imports: [CommonModule],
+
   exports: [WidgetWithTemplate],
 })
 export class DxWidgetWithTemplateModule {}

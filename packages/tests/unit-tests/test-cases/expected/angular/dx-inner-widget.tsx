@@ -101,7 +101,8 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
 })
 export default class InnerWidget
   extends InnerWidgetProps
-  implements ControlValueAccessor {
+  implements ControlValueAccessor
+{
   get __restAttributes(): any {
     return {};
   }

@@ -112,6 +112,7 @@ export class VueGenerator extends BaseGenerator {
     questionOrExclamationToken?: string,
     type?: TypeExpression,
     initializer?: Expression,
+    fromCode = false,
   ) {
     return new Property(
       decorators,
@@ -120,6 +121,8 @@ export class VueGenerator extends BaseGenerator {
       questionOrExclamationToken,
       type,
       initializer,
+      false,
+      fromCode,
     );
   }
 

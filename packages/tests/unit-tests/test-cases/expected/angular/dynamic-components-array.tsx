@@ -104,9 +104,10 @@ export class DynamicComponentDirective {
       this.childView?.detectChanges();
       return;
     }
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
-      this.componentConstructor
-    );
+    const componentFactory =
+      this.componentFactoryResolver.resolveComponentFactory(
+        this.componentConstructor
+      );
     this.viewContainerRef.clear();
     const childView = this.renderChildView(model);
     const component = this.viewContainerRef.createComponent<any>(

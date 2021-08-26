@@ -900,6 +900,8 @@ export function generateFactoryCode(
       else {
         writeNodeText(node.initializer);
       }
+      writer.write(',').newLine();
+      writer.write('true');
     });
     writer.write(')');
   }
