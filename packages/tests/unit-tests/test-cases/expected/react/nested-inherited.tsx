@@ -1,7 +1,9 @@
 export declare type FakeNestedType = {
   baseProp: number;
 };
-export const FakeNested: FakeNestedType = { baseProp: 0 };
+export const FakeNested: FakeNestedType = {
+  baseProp: 0,
+};
 export declare type WidgetPropsType = {
   baseProp: number;
   someProp?: typeof FakeNested;

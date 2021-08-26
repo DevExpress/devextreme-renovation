@@ -18,7 +18,17 @@ export declare type WidgetPropsType = {
   customTypeField?: { name: string; customField: CustomType }[];
 };
 export const WidgetProps: WidgetPropsType = Object.defineProperties(
-  { data: "data", union: "uniontext", strArr: ["ba", "ab"], s: "" },
+  {
+    data: "data",
+    union: "uniontext",
+    strArr: {
+      enumerable: true,
+      get: function () {
+        return ["ba", "ab"];
+      },
+    },
+    s: "",
+  },
   {
     obj: {
       enumerable: true,

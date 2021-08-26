@@ -27,6 +27,7 @@ export interface toStringOptions {
   usePropsSpace?: boolean;
   componentInputs?: ComponentInput[];
   isComponent?: boolean;
+  fromType?: boolean;
 }
 
 export type VariableExpression = {

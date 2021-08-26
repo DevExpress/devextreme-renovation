@@ -20,7 +20,9 @@ export declare type EditingPropsType = {
   custom?: typeof CustomProps[];
   anotherCustom?: typeof AnotherCustomProps;
 };
-export const EditingProps: EditingPropsType = { editEnabled: false };
+export const EditingProps: EditingPropsType = {
+  editEnabled: false,
+};
 export declare type ColumnEditingPropsType = {
   editEnabled?: boolean;
 };
@@ -46,4 +48,8 @@ export declare type PickedPropsType = {
   columns?: Array<typeof GridColumnProps | string>;
   editing: typeof EditingProps;
 };
-export const PickedProps: PickedPropsType = { editing: WidgetProps.editing };
+export const PickedProps: PickedPropsType = {
+  get editing() {
+    return WidgetProps.editing;
+  },
+};

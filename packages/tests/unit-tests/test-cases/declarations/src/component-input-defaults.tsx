@@ -25,12 +25,21 @@ export class BaseProps {
   @OneWay() empty?: string;
   @OneWay() height?: number = 10;
   @OneWay() width?: number = isMaterial() ? 20 : 10;
+// TODO uncoment and fix 
+// https://trello.com/c/ZEt2d0fW/2862-fix-bug-with-inherited-default-props-generation  
+//  @Nested() baseNested = { text0: "3" }
 }
 
 @ComponentBindings()
 export class TextsProps {
   @OneWay() text?: string = format('text');
 }
+
+@ComponentBindings()
+export class ExpressionProps {
+  @OneWay() expressionDefault? = isMaterial() ? 20 : 10;
+}
+
 
 @ComponentBindings()
 export class WidgetProps extends BaseProps {
@@ -46,8 +55,10 @@ export class WidgetProps extends BaseProps {
   @Template() template?: JSXTemplate<void> = () => <div></div>;
 }
 
+type WidgetPropsType = WidgetProps & Pick<ExpressionProps, "expressionDefault">
+
 @Component({
   view: view,
 })
-export default class Widget extends JSXComponent(WidgetProps) {
+export default class Widget extends JSXComponent<WidgetPropsType>() {
 }

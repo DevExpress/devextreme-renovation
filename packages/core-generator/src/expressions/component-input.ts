@@ -29,6 +29,8 @@ import { PropertyAccessChain, PropertyAccess } from './property-access';
 const RESERVED_NAMES = ['class', 'key', 'ref', 'style', 'class'];
 
 export class ComponentInput extends Class implements Heritable {
+  fromType = false;
+
   constructor(
     decorators: Decorator[],
     modifiers: string[] | undefined,
@@ -37,6 +39,7 @@ export class ComponentInput extends Class implements Heritable {
     heritageClauses: HeritageClause[] = [],
     members: Array<Property | Method>,
     context: GeneratorContext,
+    fromType = false,
   ) {
     super(
       decorators,
@@ -47,6 +50,7 @@ export class ComponentInput extends Class implements Heritable {
       members,
       context,
     );
+    this.fromType = fromType;
   }
 
   get baseTypes() {
@@ -158,7 +162,8 @@ export class ComponentInput extends Class implements Heritable {
     return [];
   }
 
-  processMembers(members: Array<Property | Method>) {
+  processMembers(members_: Array<Property | Method>) {
+    const members = super.processMembers(members_);
     members.forEach((m) => {
       const refIndex = m.decorators.findIndex((d) => d.name === Decorators.Ref);
       if (refIndex > -1) {
@@ -217,6 +222,9 @@ export class ComponentInput extends Class implements Heritable {
     const defaultNested = this.createDefaultNestedValues(members);
     if (defaultNested) {
       members.push(defaultNested);
+    }
+    if (this.name === 'WidgetPropsType') {
+      debugger;
     }
     return inheritMembers(
       this.heritageClauses,
@@ -343,10 +351,12 @@ function processMembersFromType(
 function removeDuplicates(members: (Property | Method)[]) {
   const dictionary = members.reduce(
     (d: { [name: string]: Property | Method }, m) => {
-      d[m.name] = m;
+      if (m.name !== '__defaultNestedValues') {
+        d[m.name] = m;
+      }
       return d;
     },
-    {},
+    { },
   );
 
   return Object.keys(dictionary).map((k) => dictionary[k]);

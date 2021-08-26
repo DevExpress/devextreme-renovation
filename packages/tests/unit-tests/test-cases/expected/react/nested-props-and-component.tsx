@@ -6,7 +6,9 @@ function view(model: UndefWidget) {
 export declare type FakeNestedType = {
   numberProp: number;
 };
-export const FakeNested: FakeNestedType = { numberProp: 2 };
+export const FakeNested: FakeNestedType = {
+  numberProp: 2,
+};
 export declare type WidgetPropsType = {
   oneWayProp?: number;
   twoWayProp?: number;

@@ -108,7 +108,7 @@ export class ComponentInput extends BaseComponentInput {
 
     const typeCasting = properties.some(
       (p) => (p.questionOrExclamationToken === SyntaxKind.ExclamationToken
-          && !p.initializer)
+        && !p.initializer)
         || (p.type.toString() === 'any'
           && !p.questionOrExclamationToken
           && !p.initializer)
@@ -139,6 +139,7 @@ export class ComponentInput extends BaseComponentInput {
         },
         [] as ComponentInput[],
       ),
+      fromType: this.fromType,
     };
     const defineProperties = propertiesWithInitializer.reduce(
       (acc : { notComplex: string[], complex: string[] }, curr) => {
@@ -169,8 +170,7 @@ export class ComponentInput extends BaseComponentInput {
     return `${this.compileImports()}
           ${typeDeclaration}
           ${declarationModifiers.join(' ')} const ${this.name}:${typeName}=${defaultProps}${typeCasting};
-          ${
-  declarationModifiers !== this.modifiers
+          ${declarationModifiers !== this.modifiers
     ? `${this.modifiers.join(' ')} ${this.name}`
     : ''
 }`;

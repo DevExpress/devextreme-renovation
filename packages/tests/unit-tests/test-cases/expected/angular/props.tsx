@@ -1,9 +1,17 @@
 type EventCallBack<Type> = (e: Type) => void;
+const device = "ios";
+function isDevice() {
+  return true;
+}
 
 import { Input, Output, EventEmitter } from "@angular/core";
 export class WidgetInput {
   @Input() height: number = 10;
   @Input() export: object = {};
+  @Input() array: any = ["1"];
+  @Input() expressionDefault: string = device === "ios" ? "yes" : "no";
+  @Input() expressionDefault1: boolean = !device;
+  @Input() expressionDefault2: boolean | string = isDevice() || "test";
   @Input() sizes?: { height: number; width: number };
   @Input() stringValue: string = "";
   @Output() onClick: EventEmitter<number> = new EventEmitter();
@@ -23,7 +31,16 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["height", "export", "sizes", "stringValue"],
+  inputs: [
+    "height",
+    "export",
+    "array",
+    "expressionDefault",
+    "expressionDefault1",
+    "expressionDefault2",
+    "sizes",
+    "stringValue",
+  ],
   outputs: ["onClick", "onSomething", "stringValueChange"],
   template: `<span
     >{{(sizes ?? {width:0,height:0}).height
@@ -40,6 +57,10 @@ export default class Widget extends WidgetInput {
     const { height, onClick, ...rest } = {
       height: this.height,
       export: this.export,
+      array: this.array,
+      expressionDefault: this.expressionDefault,
+      expressionDefault1: this.expressionDefault1,
+      expressionDefault2: this.expressionDefault2,
       sizes: this.sizes,
       stringValue: this.stringValue,
       onClick: this._onClick,

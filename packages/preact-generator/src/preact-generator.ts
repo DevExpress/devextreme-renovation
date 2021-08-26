@@ -53,6 +53,7 @@ export class ComponentInput extends BaseComponentInput {
     heritageClauses: HeritageClause[] = [],
     members: Array<Property | Method>,
     context: GeneratorContext,
+    fromType: boolean,
   ) {
     super(
       decorators,
@@ -62,6 +63,7 @@ export class ComponentInput extends BaseComponentInput {
       heritageClauses,
       members,
       context,
+      fromType,
     );
   }
 
@@ -704,6 +706,7 @@ export class PreactGenerator extends ReactGenerator {
     typeParameters: string[],
     heritageClauses: HeritageClause[],
     members: Array<Property | Method>,
+    fromType = false,
   ) {
     return new ComponentInput(
       decorators,
@@ -713,6 +716,7 @@ export class PreactGenerator extends ReactGenerator {
       heritageClauses,
       members,
       this.getContext(),
+      fromType,
     );
   }
 

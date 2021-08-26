@@ -1,7 +1,9 @@
 export declare type GridCellType = {
   gridData: string;
 };
-export const GridCell: GridCellType = { gridData: "defaultValue" };
+export const GridCell: GridCellType = {
+  gridData: "defaultValue",
+};
 export declare type GridRowType = {
   cells?: (typeof GridCell | string)[];
   __defaultNestedValues?: any;

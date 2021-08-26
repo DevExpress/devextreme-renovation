@@ -31,12 +31,27 @@ export const WidgetProps: WidgetPropsType = Object.defineProperties(
     str: "",
     num: 1,
     bool: true,
-    arr: [],
-    strArr: ["a", "b"],
+    arr: {
+      enumerable: true,
+      get: function () {
+        return [];
+      },
+    },
+    strArr: {
+      enumerable: true,
+      get: function () {
+        return ["a", "b"];
+      },
+    },
     func: () => {},
     externalEnum: "data",
     externalUnion: 0,
-    externalArray: ["s1", "s2"],
+    externalArray: {
+      enumerable: true,
+      get: function () {
+        return ["s1", "s2"];
+      },
+    },
     externalString: "someValue",
   },
   {
@@ -117,4 +132,6 @@ export declare type BaseViewPropsTypeType = {
   strArr: Array<String>;
   customTypeField?: { name: string; customField: CustomType }[];
 };
-const BaseViewPropsType: BaseViewPropsTypeType = { strArr: WidgetProps.strArr };
+const BaseViewPropsType: BaseViewPropsTypeType = {
+  strArr: WidgetProps.strArr,
+};

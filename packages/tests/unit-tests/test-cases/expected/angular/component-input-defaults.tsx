@@ -16,6 +16,10 @@ export class TextsProps {
   @Input() text?: string = format("text");
 }
 
+export class ExpressionProps {
+  @Input() expressionDefault?: any = isMaterial() ? 20 : 10;
+}
+
 import { TemplateRef } from "@angular/core";
 export class WidgetProps extends BaseProps {
   @Input() text?: string = format("text");
@@ -44,6 +48,40 @@ export class WidgetProps extends BaseProps {
   public static __defaultNestedValues: any = {
     texts2: { text: format("text") },
     texts3: new TextsProps(),
+  };
+}
+
+class WidgetPropsType {
+  @Input() text?: string = new WidgetProps().text;
+  @Input() texts1?: TextsProps = new WidgetProps().texts1;
+  private __texts2__?: TextsProps;
+  @Input() set texts2(value: TextsProps | undefined) {
+    this.__texts2__ = value;
+  }
+  get texts2(): TextsProps | undefined {
+    if (!this.__texts2__) {
+      return WidgetPropsType.__defaultNestedValues.texts2;
+    }
+    return this.__texts2__;
+  }
+  private __texts3__?: TextsProps;
+  @Input() set texts3(value: TextsProps | undefined) {
+    this.__texts3__ = value;
+  }
+  get texts3(): TextsProps | undefined {
+    if (!this.__texts3__) {
+      return WidgetPropsType.__defaultNestedValues.texts3;
+    }
+    return this.__texts3__;
+  }
+  @Input() template?: TemplateRef<any> | null = null;
+  @Input() empty?: string;
+  @Input() height?: number = new WidgetProps().height;
+  @Input() width?: number = new WidgetProps().width;
+  @Input() expressionDefault?: any = new ExpressionProps().expressionDefault;
+  public static __defaultNestedValues: any = {
+    texts2: new WidgetProps().texts2,
+    texts3: new WidgetProps().texts3,
   };
 }
 
@@ -81,10 +119,11 @@ class DxWidgetTexts2 extends TextsProps {}
     "empty",
     "height",
     "width",
+    "expressionDefault",
   ],
   template: `<div></div>`,
 })
-export default class Widget extends WidgetProps {
+export default class Widget extends WidgetPropsType {
   private __texts2?: DxWidgetTexts2;
   @ContentChildren(DxWidgetTexts2) texts2Nested?: QueryList<DxWidgetTexts2>;
   get texts2(): DxWidgetTexts2 | undefined {
@@ -95,7 +134,7 @@ export default class Widget extends WidgetProps {
     if (nested && nested.length) {
       return nested[0];
     }
-    return WidgetProps.__defaultNestedValues.texts2;
+    return WidgetPropsType.__defaultNestedValues.texts2;
   }
   private __texts3?: DxWidgetTexts3;
   @ContentChildren(DxWidgetTexts3) texts3Nested?: QueryList<DxWidgetTexts3>;
@@ -107,7 +146,7 @@ export default class Widget extends WidgetProps {
     if (nested && nested.length) {
       return nested[0];
     }
-    return WidgetProps.__defaultNestedValues.texts3;
+    return WidgetPropsType.__defaultNestedValues.texts3;
   }
   get __restAttributes(): any {
     return {};

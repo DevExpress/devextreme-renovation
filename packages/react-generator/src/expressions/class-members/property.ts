@@ -2,11 +2,11 @@ import {
   capitalizeFirstLetter,
   compileType,
   Decorators,
-  ExpressionWithExpression,
   GeneratorContext,
   Identifier,
-  ObjectLiteral,
+  BaseFunction,
   Property as BaseProperty,
+  SimpleExpression,
   SimpleTypeExpression,
   SyntaxKind,
   toStringOptions,
@@ -45,9 +45,8 @@ export function compileJSXTemplateType(
     type instanceof TypeReferenceNode
     && type.typeName.toString() === 'JSXTemplate'
   ) {
-    return `React.${
-      isComponent ? 'JSXElementConstructor' : 'FunctionComponent'
-    }<${compileJSXTemplateProps(type.typeArguments)}>`;
+    const companentTypeName = isComponent ? 'JSXElementConstructor' : 'FunctionComponent';
+    return `React.${companentTypeName}<${compileJSXTemplateProps(type.typeArguments)}>`;
   }
 
   return type;
@@ -56,9 +55,9 @@ export function compileJSXTemplateType(
 export class Property extends BaseProperty {
   defaultProps(options?: toStringOptions) {
     const { initializer } = this;
-    const isComplexExpression = initializer instanceof ExpressionWithExpression
-      || initializer instanceof ObjectLiteral;
-
+    const isSimpleExpression = initializer instanceof SimpleExpression;
+    const isFunction = initializer instanceof BaseFunction;
+    const isComplexExpression = !(isSimpleExpression || isFunction);
     if (isComplexExpression) {
       return `${this.name}: {
           enumerable: true,
@@ -66,6 +65,9 @@ export class Property extends BaseProperty {
             return ${initializer?.toString(options)}   
           }
         }`;
+    }
+    if (options?.fromType) {
+      return `get ${this.name}() { return ${initializer?.toString(options)} }`;
     }
     return this.defaultDeclaration(options);
   }
@@ -231,10 +233,9 @@ export class Property extends BaseProperty {
     if (!options) {
       return super.toString();
     }
-    const type = `${this.type}${
-      this.questionOrExclamationToken === SyntaxKind.QuestionToken
-        ? ' | undefined'
-        : ''
+    const type = `${this.type}${this.questionOrExclamationToken === SyntaxKind.QuestionToken
+      ? ' | undefined'
+      : ''
     }`;
     if (this.isState) {
       const propName = getPropName(this.name);
@@ -251,20 +252,17 @@ export class Property extends BaseProperty {
     }
 
     if (this.isRef || this.isForwardRef) {
-      return `const ${
-        this.name
+      return `const ${this.name
       }:MutableRefObject<${this.compileRefType()} | null>=useRef<${this.compileRefType()}>(null)`;
     }
 
     if (this.isMutable) {
-      return `const ${this.name}=useRef<${type}>(${
-        this.initializer ? this.initializer : ''
+      return `const ${this.name}=useRef<${type}>(${this.initializer ? this.initializer : ''
       })`;
     }
 
     if (this.isApiRef) {
-      return `const ${
-        this.name
+      return `const ${this.name
       }:MutableRefObject<${this.compileRefType()}Ref | null>=useRef<${this.compileRefType()}Ref>(null)`;
     }
 

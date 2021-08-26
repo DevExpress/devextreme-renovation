@@ -24,7 +24,9 @@ export declare type EditingPropsType = {
   __defaultNestedValues?: any;
   children?: React.ReactNode;
 };
-export const EditingProps: EditingPropsType = { editEnabled: false };
+export const EditingProps: EditingPropsType = {
+  editEnabled: false,
+};
 export declare type ColumnEditingPropsType = {
   editEnabled?: boolean;
 };
