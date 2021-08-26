@@ -8,6 +8,14 @@ function isMaterial() {
 function format(key) {
   return "localized_" + key;
 }
+export const TextsProps = {
+  text: {
+    type: String,
+    default() {
+      return format("text");
+    },
+  },
+};
 export const BaseProps = {
   empty: {
     type: String,
@@ -34,14 +42,6 @@ export const BaseProps = {
               : TextsProps.text?.default(),
         },
       };
-    },
-  },
-};
-export const TextsProps = {
-  text: {
-    type: String,
-    default() {
-      return format("text");
     },
   },
 };

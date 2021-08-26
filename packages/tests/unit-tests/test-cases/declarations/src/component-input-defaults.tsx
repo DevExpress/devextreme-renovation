@@ -20,6 +20,13 @@ function format(key: string) {
   return 'localized_' + key;
 }
 
+
+
+@ComponentBindings()
+export class TextsProps {
+  @OneWay() text?: string = format('text');
+}
+
 @ComponentBindings()
 export class BaseProps {
   @OneWay() empty?: string;
@@ -27,12 +34,6 @@ export class BaseProps {
   @OneWay() width?: number = isMaterial() ? 20 : 10;
   @Nested() baseNested?: TextsProps = new TextsProps();
 }
-
-@ComponentBindings()
-export class TextsProps {
-  @OneWay() text?: string = format('text');
-}
-
 @ComponentBindings()
 export class WidgetProps extends BaseProps {
   @OneWay() text?: string = format('text');

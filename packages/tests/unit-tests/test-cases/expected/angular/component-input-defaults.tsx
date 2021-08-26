@@ -6,6 +6,10 @@ function format(key: string) {
 }
 
 import { Input } from "@angular/core";
+export class TextsProps {
+  @Input() text?: string = format("text");
+}
+
 export class BaseProps {
   @Input() empty?: string;
   @Input() height?: number = 10;
@@ -21,10 +25,6 @@ export class BaseProps {
     return this.__baseNested__;
   }
   public static __defaultNestedValues: any = { baseNested: new TextsProps() };
-}
-
-export class TextsProps {
-  @Input() text?: string = format("text");
 }
 
 import { TemplateRef } from "@angular/core";

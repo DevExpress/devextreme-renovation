@@ -14,6 +14,20 @@ function format(key: string) {
   return "localized_" + key;
 }
 
+export declare type TextsPropsType = {
+  text?: string;
+};
+export const TextsProps: TextsPropsType = Object.defineProperties(
+  {},
+  {
+    text: {
+      enumerable: true,
+      get: function () {
+        return format("text");
+      },
+    },
+  }
+);
 export declare type BasePropsType = {
   empty?: string;
   height?: number;
@@ -33,20 +47,6 @@ export const BaseProps: BasePropsType = Object.defineProperties(
       enumerable: true,
       get: function () {
         return TextsProps;
-      },
-    },
-  }
-);
-export declare type TextsPropsType = {
-  text?: string;
-};
-export const TextsProps: TextsPropsType = Object.defineProperties(
-  {},
-  {
-    text: {
-      enumerable: true,
-      get: function () {
-        return format("text");
       },
     },
   }
