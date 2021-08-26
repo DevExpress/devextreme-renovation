@@ -223,9 +223,6 @@ export class ComponentInput extends Class implements Heritable {
     if (defaultNested) {
       members.push(defaultNested);
     }
-    if (this.name === 'WidgetPropsType') {
-      debugger;
-    }
     return inheritMembers(
       this.heritageClauses,
       super.processMembers(
