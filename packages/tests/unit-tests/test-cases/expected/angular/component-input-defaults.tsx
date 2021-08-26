@@ -51,7 +51,7 @@ export class WidgetProps extends BaseProps {
     }
     return this.__texts3__;
   }
-  @Input() template?: TemplateRef<any> | null = null;
+  @Input() someTemplate?: TemplateRef<any> | null = null;
   public static __defaultNestedValues: any = {
     texts2: { text: format("text") },
     texts3: new TextsProps(),
@@ -96,7 +96,7 @@ export class WidgetTypeProps {
     }
     return this.__texts3__;
   }
-  @Input() template?: TemplateRef<any> | null = null;
+  @Input() someTemplate?: TemplateRef<any> | null = null;
   @Input() empty?: string;
   @Input() height?: number = new WidgetProps().height;
   @Input() width?: number = new WidgetProps().width;
@@ -153,7 +153,7 @@ class DxWidgetTexts2 extends TextsProps {}
     "texts1",
     "texts2",
     "texts3",
-    "template",
+    "someTemplate",
     "empty",
     "height",
     "width",

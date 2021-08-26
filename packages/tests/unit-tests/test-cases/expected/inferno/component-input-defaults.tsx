@@ -18,6 +18,7 @@ export declare type BasePropsType = {
   empty?: string;
   height?: number;
   width?: number;
+  baseNested?: typeof TextsProps;
 };
 export const BaseProps: BasePropsType = Object.defineProperties(
   { height: 10 },
@@ -26,6 +27,12 @@ export const BaseProps: BasePropsType = Object.defineProperties(
       enumerable: true,
       get: function () {
         return isMaterial() ? 20 : 10;
+      },
+    },
+    baseNested: {
+      enumerable: true,
+      get: function () {
+        return TextsProps;
       },
     },
   }
@@ -49,7 +56,7 @@ export declare type WidgetPropsType = typeof BaseProps & {
   texts1?: typeof TextsProps;
   texts2?: typeof TextsProps;
   texts3?: typeof TextsProps;
-  template?: any;
+  someTemplate?: any;
 };
 export const WidgetProps: WidgetPropsType = Object.create(
   Object.prototype,
@@ -57,7 +64,7 @@ export const WidgetProps: WidgetPropsType = Object.create(
     Object.getOwnPropertyDescriptors(BaseProps),
     Object.getOwnPropertyDescriptors(
       Object.defineProperties(
-        { template: () => <div></div> },
+        { someTemplate: () => <div></div> },
         {
           text: {
             enumerable: true,
@@ -88,6 +95,43 @@ export const WidgetProps: WidgetPropsType = Object.create(
     )
   )
 );
+export declare type PickedPropsType = {
+  someValue?: string;
+};
+export const PickedProps: PickedPropsType = Object.defineProperties(
+  {},
+  {
+    someValue: {
+      enumerable: true,
+      get: function () {
+        return format("text");
+      },
+    },
+  }
+);
+export declare type WidgetTypePropsType = {
+  text?: string;
+  texts1?: typeof TextsProps;
+  texts2?: typeof TextsProps;
+  texts3?: typeof TextsProps;
+  someTemplate?: any;
+  empty?: string;
+  height?: number;
+  width?: number;
+  baseNested?: typeof TextsProps;
+  someValue?: string;
+};
+export const WidgetTypeProps: WidgetTypePropsType = {
+  text: WidgetProps.text,
+  texts1: WidgetProps.texts1,
+  texts2: WidgetProps.texts2,
+  texts3: WidgetProps.texts3,
+  someTemplate: WidgetProps.someTemplate,
+  height: WidgetProps.height,
+  width: WidgetProps.width,
+  baseNested: WidgetProps.baseNested,
+  someValue: PickedProps.someValue,
+};
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;
@@ -110,9 +154,10 @@ export default class Widget extends BaseInfernoComponent<any> {
 
   get restAttributes(): RestProps {
     const {
+      baseNested,
       empty,
       height,
-      template,
+      someTemplate,
       text,
       texts1,
       texts2,
@@ -126,7 +171,7 @@ export default class Widget extends BaseInfernoComponent<any> {
   render() {
     const props = this.props;
     return view({
-      props: { ...props, template: getTemplate(props.template) },
+      props: { ...props, someTemplate: getTemplate(props.someTemplate) },
       restAttributes: this.restAttributes,
     } as Widget);
   }

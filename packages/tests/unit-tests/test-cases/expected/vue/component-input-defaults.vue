@@ -24,6 +24,18 @@ export const BaseProps = {
       return isMaterial() ? 20 : 10;
     },
   },
+  __defaultNestedValues: {
+    default() {
+      return {
+        baseNested: {
+          text:
+            TextsProps === undefined || TextsProps === null
+              ? undefined
+              : TextsProps.text?.default(),
+        },
+      };
+    },
+  },
 };
 export const TextsProps = {
   text: {
@@ -47,10 +59,10 @@ export const WidgetProps = {
       return { text: format("text") };
     },
   },
-  template: {
+  someTemplate: {
     type: String,
     default() {
-      return "template";
+      return "someTemplate";
     },
   },
   __defaultNestedValues: {
@@ -63,6 +75,87 @@ export const WidgetProps = {
               ? undefined
               : TextsProps.text?.default(),
         },
+        baseNested:
+          BaseProps === undefined || BaseProps === null
+            ? undefined
+            : BaseProps.__defaultNestedValues?.default().baseNested,
+      };
+    },
+  },
+};
+export const PickedProps = {
+  someValue: {
+    type: String,
+    default() {
+      return format("text");
+    },
+  },
+};
+export const WidgetTypeProps = {
+  text: {
+    type: String,
+    default() {
+      return typeof WidgetProps.text.default === "function"
+        ? WidgetProps.text.default()
+        : WidgetProps.text.default;
+    },
+  },
+  texts1: {
+    type: Object,
+    default() {
+      return typeof WidgetProps.texts1.default === "function"
+        ? WidgetProps.texts1.default()
+        : WidgetProps.texts1.default;
+    },
+  },
+  someTemplate: {
+    type: String,
+    default() {
+      return "someTemplate";
+    },
+  },
+  empty: {
+    type: String,
+  },
+  height: {
+    type: Number,
+    default() {
+      return typeof WidgetProps.height.default === "function"
+        ? WidgetProps.height.default()
+        : WidgetProps.height.default;
+    },
+  },
+  width: {
+    type: Number,
+    default() {
+      return typeof WidgetProps.width.default === "function"
+        ? WidgetProps.width.default()
+        : WidgetProps.width.default;
+    },
+  },
+  someValue: {
+    type: String,
+    default() {
+      return typeof PickedProps.someValue.default === "function"
+        ? PickedProps.someValue.default()
+        : PickedProps.someValue.default;
+    },
+  },
+  __defaultNestedValues: {
+    default() {
+      return {
+        texts2:
+          typeof WidgetProps.texts2.default === "function"
+            ? WidgetProps.texts2.default()
+            : WidgetProps.texts2.default,
+        texts3:
+          typeof WidgetProps.texts3.default === "function"
+            ? WidgetProps.texts3.default()
+            : WidgetProps.texts3.default,
+        baseNested:
+          typeof WidgetProps.baseNested.default === "function"
+            ? WidgetProps.baseNested.default()
+            : WidgetProps.baseNested.default,
       };
     },
   },
@@ -134,10 +227,11 @@ export const DxWidget = {
         texts1: this.texts1,
         texts2: this.__getNestedTexts2,
         texts3: this.__getNestedTexts3,
-        template: this.template,
+        someTemplate: this.someTemplate,
         empty: this.empty,
         height: this.height,
         width: this.width,
+        baseNested: this.__getNestedBaseNested,
       };
     },
     __nestedChildren() {
@@ -180,6 +274,25 @@ export const DxWidget = {
         : nested.length
         ? nested?.[0]
         : this?.__defaultNestedValues?.texts3;
+    },
+    __getNestedBaseNested() {
+      const nested = this.__nestedChildren
+        .filter((child) => child.__name === "baseNested")
+        .map((n) => {
+          if (
+            !Object.keys(n).some(
+              (k) => k !== "__name" && k !== "__defaultNestedValues"
+            )
+          ) {
+            return n?.__defaultNestedValues || n;
+          }
+          return n;
+        });
+      return this.baseNested
+        ? this.baseNested
+        : nested.length
+        ? nested?.[0]
+        : this?.__defaultNestedValues?.baseNested;
     },
   },
 };
