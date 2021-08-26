@@ -24,7 +24,7 @@ import { JsxOpeningElement } from './expressions/jsx/jsx-opening-element';
 import { JsxSelfClosingElement } from './expressions/jsx/jsx-self-closing-element';
 import { PropertyAccess } from './expressions/property-access';
 import { ReactComponent } from './expressions/react-component';
-import { ComponentInput } from './expressions/react-component-input';
+import { ComponentInput, getTemplatePropName } from './expressions/react-component-input';
 import { TypeReferenceNode } from './expressions/type-reference-node';
 import { New, Call } from './expressions/common';
 
@@ -208,5 +208,17 @@ export class ReactGenerator extends BaseGenerator {
     argumentsArray?: Expression[],
   ) {
     return new Call(expression, typeArguments, argumentsArray);
+  }
+
+  filterExcessiveMembers(members: Array<Property|Method>): (Property|Method)[] {
+    const templateMembers = members.filter((m) => m.isTemplate);
+    const excessiveTemplateMemberNames: string[] = [];
+    templateMembers.forEach((m) => {
+      excessiveTemplateMemberNames.push(getTemplatePropName(m.name, 'render'), getTemplatePropName(m.name, 'component'));
+    });
+    const result = members
+      .filter((m) => !excessiveTemplateMemberNames.some((name) => name === m.name.toString()))
+      .filter((m) => m.name.toString() !== '__defaultNestedValues');
+    return result;
   }
 }

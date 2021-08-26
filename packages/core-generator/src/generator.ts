@@ -1001,7 +1001,7 @@ export class Generator implements GeneratorAPI {
   createIndexedAccessTypeNode(
     objectType: TypeExpression,
     indexType: TypeExpression,
-  ) {
+  ): IndexedAccessTypeNode {
     return new IndexedAccessTypeNode(objectType, indexType);
   }
 
@@ -1011,8 +1011,10 @@ export class Generator implements GeneratorAPI {
     name: Identifier,
     typeParameters: TypeParameterDeclaration[] | undefined,
     type: TypeExpression,
-  ) {
-    const members = membersFromTypeDeclaration(type, this.getContext());
+  ): ComponentInput | TypeAliasDeclaration {
+    const members = this.filterExcessiveMembers(
+      membersFromTypeDeclaration(type, this.getContext()),
+    );
 
     if (members.length) {
       const componentBindings = this.createComponentBindings(
@@ -1048,6 +1050,10 @@ export class Generator implements GeneratorAPI {
       typeParameters,
       type,
     );
+  }
+
+  filterExcessiveMembers(members: Array<Property | Method>): (Property|Method)[] {
+    return members.filter((m) => (m.name.toString() !== '__defaultNestedValues'));
   }
 
   createIntersectionTypeNode(types: TypeExpression[]) {

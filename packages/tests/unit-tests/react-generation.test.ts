@@ -138,6 +138,10 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("nested-pick", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("Throw error if ref is passed to template", function () {
     try {
       this.testGenerator("template-with-ref");

@@ -10,6 +10,17 @@ export class BaseProps {
   @Input() empty?: string;
   @Input() height?: number = 10;
   @Input() width?: number = isMaterial() ? 20 : 10;
+  private __baseNested__?: TextsProps;
+  @Input() set baseNested(value: TextsProps | undefined) {
+    this.__baseNested__ = value;
+  }
+  get baseNested(): TextsProps | undefined {
+    if (!this.__baseNested__) {
+      return BaseProps.__defaultNestedValues.baseNested;
+    }
+    return this.__baseNested__;
+  }
+  public static __defaultNestedValues: any = { baseNested: new TextsProps() };
 }
 
 export class TextsProps {
@@ -44,6 +55,66 @@ export class WidgetProps extends BaseProps {
   public static __defaultNestedValues: any = {
     texts2: { text: format("text") },
     texts3: new TextsProps(),
+    baseNested: BaseProps?.__defaultNestedValues.baseNested,
+  };
+  private __baseNestedBaseProps__?: TextsProps;
+  @Input() set baseNested(value: TextsProps | undefined) {
+    this.__baseNestedBaseProps__ = value;
+  }
+  get baseNested(): TextsProps | undefined {
+    if (!this.__baseNestedBaseProps__) {
+      return WidgetProps.__defaultNestedValues.baseNested;
+    }
+    return this.__baseNestedBaseProps__;
+  }
+}
+
+export class PickedProps {
+  @Input() someValue?: string = format("text");
+}
+
+export class WidgetTypeProps {
+  @Input() text?: string = new WidgetProps().text;
+  @Input() texts1?: TextsProps = new WidgetProps().texts1;
+  private __texts2__?: TextsProps;
+  @Input() set texts2(value: TextsProps | undefined) {
+    this.__texts2__ = value;
+  }
+  get texts2(): TextsProps | undefined {
+    if (!this.__texts2__) {
+      return WidgetTypeProps.__defaultNestedValues.texts2;
+    }
+    return this.__texts2__;
+  }
+  private __texts3__?: TextsProps;
+  @Input() set texts3(value: TextsProps | undefined) {
+    this.__texts3__ = value;
+  }
+  get texts3(): TextsProps | undefined {
+    if (!this.__texts3__) {
+      return WidgetTypeProps.__defaultNestedValues.texts3;
+    }
+    return this.__texts3__;
+  }
+  @Input() template?: TemplateRef<any> | null = null;
+  @Input() empty?: string;
+  @Input() height?: number = new WidgetProps().height;
+  @Input() width?: number = new WidgetProps().width;
+  private __baseNested__?: TextsProps;
+  @Input() set baseNested(value: TextsProps | undefined) {
+    this.__baseNested__ = value;
+  }
+  get baseNested(): TextsProps | undefined {
+    if (!this.__baseNested__) {
+      return WidgetTypeProps.__defaultNestedValues.baseNested;
+    }
+    return this.__baseNested__;
+  }
+  @Input() someValue?: string = new PickedProps().someValue;
+  public static __defaultNestedValues: any = {
+    texts2: new WidgetProps().texts2,
+    texts3: new WidgetProps().texts3,
+    baseNested: new WidgetProps().baseNested,
   };
 }
 
@@ -58,6 +129,11 @@ import {
   Directive,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+
+@Directive({
+  selector: "dxo-base-nested",
+})
+class DxWidgetBaseNested extends TextsProps {}
 
 @Directive({
   selector: "dxo-texts3",
@@ -81,6 +157,7 @@ class DxWidgetTexts2 extends TextsProps {}
     "empty",
     "height",
     "width",
+    "baseNested",
   ],
   template: `<div></div>`,
 })
@@ -109,6 +186,19 @@ export default class Widget extends WidgetProps {
     }
     return WidgetProps.__defaultNestedValues.texts3;
   }
+  private __baseNested?: DxWidgetBaseNested;
+  @ContentChildren(DxWidgetBaseNested)
+  baseNestedNested?: QueryList<DxWidgetBaseNested>;
+  get baseNested(): DxWidgetBaseNested | undefined {
+    if (this.__baseNested) {
+      return this.__baseNested;
+    }
+    const nested = this.baseNestedNested?.toArray();
+    if (nested && nested.length) {
+      return nested[0];
+    }
+    return WidgetProps.__defaultNestedValues.baseNested;
+  }
   get __restAttributes(): any {
     return {};
   }
@@ -134,12 +224,16 @@ export default class Widget extends WidgetProps {
     this.__texts3 = value;
     this._detectChanges();
   }
+  @Input() set baseNested(value: DxWidgetBaseNested | undefined) {
+    this.__baseNested = value;
+    this._detectChanges();
+  }
 }
 @NgModule({
-  declarations: [Widget, DxWidgetTexts2, DxWidgetTexts3],
+  declarations: [Widget, DxWidgetTexts2, DxWidgetTexts3, DxWidgetBaseNested],
   imports: [CommonModule],
 
-  exports: [Widget, DxWidgetTexts2, DxWidgetTexts3],
+  exports: [Widget, DxWidgetTexts2, DxWidgetTexts3, DxWidgetBaseNested],
 })
 export class DxWidgetModule {}
 export { Widget as DxWidgetComponent };
