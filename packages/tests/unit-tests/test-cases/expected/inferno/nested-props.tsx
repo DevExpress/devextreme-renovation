@@ -43,11 +43,7 @@ export declare type PickedPropsType = {
   editing: typeof EditingProps;
 };
 export const PickedProps: PickedPropsType = {
-<<<<<<< HEAD
   get editing() {
     return WidgetProps.editing;
   },
-=======
-  editing: WidgetProps.editing,
->>>>>>> master
 };
