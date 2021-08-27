@@ -10,6 +10,17 @@ export class BaseProps {
   @Input() empty?: string;
   @Input() height?: number = 10;
   @Input() width?: number = isMaterial() ? 20 : 10;
+  private __baseNested__?: any;
+  @Input() set baseNested(value: any) {
+    this.__baseNested__ = value;
+  }
+  get baseNested(): any {
+    if (!this.__baseNested__) {
+      return BaseProps.__defaultNestedValues.baseNested;
+    }
+    return this.__baseNested__;
+  }
+  public static __defaultNestedValues: any = { baseNested: { text0: "3" } };
 }
 
 export class TextsProps {
@@ -48,7 +59,18 @@ export class WidgetProps extends BaseProps {
   public static __defaultNestedValues: any = {
     texts2: { text: format("text") },
     texts3: new TextsProps(),
+    baseNested: BaseProps?.__defaultNestedValues.baseNested,
   };
+  private __baseNestedBaseProps__?: any;
+  @Input() set baseNested(value: any) {
+    this.__baseNestedBaseProps__ = value;
+  }
+  get baseNested(): any {
+    if (!this.__baseNestedBaseProps__) {
+      return WidgetProps.__defaultNestedValues.baseNested;
+    }
+    return this.__baseNestedBaseProps__;
+  }
 }
 
 class WidgetPropsType {
@@ -78,10 +100,21 @@ class WidgetPropsType {
   @Input() empty?: string;
   @Input() height?: number = new WidgetProps().height;
   @Input() width?: number = new WidgetProps().width;
+  private __baseNested__?: any;
+  @Input() set baseNested(value: any) {
+    this.__baseNested__ = value;
+  }
+  get baseNested(): any {
+    if (!this.__baseNested__) {
+      return WidgetPropsType.__defaultNestedValues.baseNested;
+    }
+    return this.__baseNested__;
+  }
   @Input() expressionDefault?: any = new ExpressionProps().expressionDefault;
   public static __defaultNestedValues: any = {
     texts2: new WidgetProps().texts2,
     texts3: new WidgetProps().texts3,
+    baseNested: new WidgetProps().baseNested,
   };
 }
 
@@ -119,6 +152,7 @@ class DxWidgetTexts2 extends TextsProps {}
     "empty",
     "height",
     "width",
+    "baseNested",
     "expressionDefault",
   ],
   template: `<div></div>`,
@@ -148,6 +182,19 @@ export default class Widget extends WidgetPropsType {
     }
     return WidgetPropsType.__defaultNestedValues.texts3;
   }
+  private __baseNested?: DxWidgetBaseNested;
+  @ContentChildren(DxWidgetBaseNested)
+  baseNestedNested?: QueryList<DxWidgetBaseNested>;
+  get baseNested(): DxWidgetBaseNested {
+    if (this.__baseNested) {
+      return this.__baseNested;
+    }
+    const nested = this.baseNestedNested?.toArray();
+    if (nested && nested.length) {
+      return nested[0];
+    }
+    return WidgetPropsType.__defaultNestedValues.baseNested;
+  }
   get __restAttributes(): any {
     return {};
   }
@@ -171,6 +218,10 @@ export default class Widget extends WidgetPropsType {
   }
   @Input() set texts3(value: DxWidgetTexts3 | undefined) {
     this.__texts3 = value;
+    this._detectChanges();
+  }
+  @Input() set baseNested(value: DxWidgetBaseNested) {
+    this.__baseNested = value;
     this._detectChanges();
   }
 }

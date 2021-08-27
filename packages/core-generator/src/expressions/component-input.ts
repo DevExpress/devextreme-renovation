@@ -60,6 +60,10 @@ export class ComponentInput extends Class implements Heritable {
     );
   }
 
+  membersFromTypeDeclarationIgnoreMembers(): string[] {
+    return ['__defaultNestedValues'];
+  }
+
   createProperty(
     decorators: Decorator[],
     modifiers: string[] | undefined,
@@ -328,29 +332,34 @@ export class ComponentInput extends Class implements Heritable {
 const omit = (members: string[]) => (p: Property | Method) => !members.some((m) => m === p.name);
 const pick = (members: string[]) => (p: Property | Method) => members.some((m) => m === p.name);
 
-function processMembersFromType(
-  members: (Property | Method)[],
-  baseComponentInput: string,
+function processComponentInputMembersFromType(
+  // members: (Property | Method)[],
   componentInput: ComponentInput,
-) {
-  return (members as Property[]).map((p) => {
-    const m = p.inherit();
-    m.inherited = false;
-    if (m.initializer) {
-      m.initializer = new SimpleExpression(
-        `${componentInput.getInitializerScope(baseComponentInput, m.name)}`,
-      );
-    }
-    return m;
-  });
+  baseComponentInput: string,
+  filter? : (m: Property) => boolean,
+): (Property | Method)[] {
+  const membersToIgnore = componentInput.membersFromTypeDeclarationIgnoreMembers();
+  const filterIgnoredMembers = ({ name } : { name: string }) => !membersToIgnore.includes(name);
+  const fullFilter = filter ? (m: Property) => filterIgnoredMembers(m) && filter(m)
+    : filterIgnoredMembers;
+  return (componentInput.members as Property[])
+    .filter(fullFilter)
+    .map((p) => {
+      const m = p.inherit();
+      m.inherited = false;
+      if (m.initializer) {
+        m.initializer = new SimpleExpression(
+          `${componentInput.getInitializerScope(baseComponentInput, m.name)}`,
+        );
+      }
+      return m;
+    });
 }
 
 function removeDuplicates(members: (Property | Method)[]) {
   const dictionary = members.reduce(
     (d: { [name: string]: Property | Method }, m) => {
-      if (m.name !== '__defaultNestedValues') {
-        d[m.name] = m;
-      }
+      d[m.name] = m;
       return d;
     },
     { },
@@ -385,25 +394,22 @@ export function membersFromTypeDeclaration(
         .typeArguments[0] as TypeReferenceNode).type
         .toString()
         .replace('typeof ', '');
-      result = processMembersFromType(
-        componentInput.members.filter(filter),
-        componentInputName,
+      result = processComponentInputMembersFromType(
         componentInput,
+        componentInputName,
+        filter,
       );
     }
   } else if (type instanceof TypeReferenceNode) {
     const componentInput = findComponentInput(type, context);
     const componentInputName = type.type.toString().replace('typeof ', '');
     if (componentInput) {
-      result = processMembersFromType(
-        componentInput.members,
-        componentInputName,
+      result = processComponentInputMembersFromType(
         componentInput,
+        componentInputName,
       );
     }
-  }
-
-  if (type instanceof IntersectionTypeNode) {
+  } else if (type instanceof IntersectionTypeNode) {
     result = type.types.reduce(
       (members: (Property | Method)[], t) => members.concat(membersFromTypeDeclaration(t, context)),
       [],

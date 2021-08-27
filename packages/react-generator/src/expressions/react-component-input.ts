@@ -87,6 +87,10 @@ export class ComponentInput extends BaseComponentInput {
     return members.some((member) => member.isNested);
   }
 
+  membersFromTypeDeclarationIgnoreMembers(): string[] {
+    return [...super.membersFromTypeDeclarationIgnoreMembers(), 'component', 'render', ''];
+  }
+
   toString(): string {
     const types = this.heritageClauses.reduce(
       (t: string[], h) => t.concat(h.typeNodes.map((t) => `typeof ${t}`)),
