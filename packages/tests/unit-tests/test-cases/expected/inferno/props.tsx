@@ -26,23 +26,16 @@ export declare type WidgetInputType = {
   defaultStringValue: string;
   stringValueChange?: (stringValue: string) => void;
 };
-export const WidgetInput: WidgetInputType = Object.defineProperties(
-  {
-    height: 10,
-    onClick: () => {},
-    onSomething: () => {},
-    defaultStringValue: "",
-    stringValueChange: () => {},
+export const WidgetInput: WidgetInputType = {
+  height: 10,
+  get export() {
+    return {};
   },
-  {
-    export: {
-      enumerable: true,
-      get: function () {
-        return {};
-      },
-    },
-  }
-) as any as WidgetInputType;
+  onClick: () => {},
+  onSomething: () => {},
+  defaultStringValue: "",
+  stringValueChange: () => {},
+} as any as WidgetInputType;
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;

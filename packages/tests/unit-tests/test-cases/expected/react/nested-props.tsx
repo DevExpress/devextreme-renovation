@@ -24,7 +24,9 @@ export declare type EditingPropsType = {
   __defaultNestedValues?: any;
   children?: React.ReactNode;
 };
-export const EditingProps: EditingPropsType = { editEnabled: false };
+export const EditingProps: EditingPropsType = {
+  editEnabled: false,
+};
 export declare type ColumnEditingPropsType = {
   editEnabled?: boolean;
 };
@@ -37,35 +39,23 @@ export declare type WidgetPropsType = {
   __defaultNestedValues?: any;
   children?: React.ReactNode;
 };
-export const WidgetProps: WidgetPropsType = Object.defineProperties(
-  {},
-  {
-    __defaultNestedValues: {
-      enumerable: true,
-      get: function () {
-        return {
-          editing: EditingProps.__defaultNestedValues
-            ? EditingProps.__defaultNestedValues
-            : EditingProps,
-        };
-      },
-    },
-  }
-);
+export const WidgetProps: WidgetPropsType = {
+  get __defaultNestedValues() {
+    return {
+      editing: EditingProps.__defaultNestedValues
+        ? EditingProps.__defaultNestedValues
+        : EditingProps,
+    };
+  },
+};
 export declare type PickedPropsType = {
   columns?: Array<typeof GridColumnProps | string>;
   editing?: typeof EditingProps;
   __defaultNestedValues?: any;
   children?: React.ReactNode;
 };
-export const PickedProps: PickedPropsType = Object.defineProperties(
-  {},
-  {
-    __defaultNestedValues: {
-      enumerable: true,
-      get: function () {
-        return { editing: WidgetProps.editing };
-      },
-    },
-  }
-);
+export const PickedProps: PickedPropsType = {
+  get __defaultNestedValues() {
+    return { editing: WidgetProps.editing };
+  },
+};

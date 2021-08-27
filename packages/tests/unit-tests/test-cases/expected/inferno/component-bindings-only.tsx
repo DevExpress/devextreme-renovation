@@ -5,21 +5,13 @@ export declare type WidgetPropsType = {
   data?: Options;
   info?: AdditionalOptions;
 };
-const WidgetProps: WidgetPropsType = Object.defineProperties(
-  { height: 10 },
-  {
-    data: {
-      enumerable: true,
-      get: function () {
-        return { value: "" };
-      },
-    },
-    info: {
-      enumerable: true,
-      get: function () {
-        return { index: 0 };
-      },
-    },
-  }
-);
+const WidgetProps: WidgetPropsType = {
+  height: 10,
+  get data() {
+    return { value: "" };
+  },
+  get info() {
+    return { index: 0 };
+  },
+};
 export default WidgetProps;
