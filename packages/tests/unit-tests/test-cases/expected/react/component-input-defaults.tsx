@@ -12,17 +12,11 @@ export declare type BasePropsType = {
   empty?: string;
   height?: number;
   width?: number;
-  baseNested?: any;
-  __defaultNestedValues?: any;
-  children?: React.ReactNode;
 };
 export const BaseProps: BasePropsType = {
   height: 10,
   get width() {
     return isMaterial() ? 20 : 10;
-  },
-  get __defaultNestedValues() {
-    return { baseNested: { text0: "3" } };
   },
 };
 export declare type TextsPropsType = {
@@ -50,6 +44,7 @@ export declare type WidgetPropsType = typeof BaseProps & {
   __defaultNestedValues?: any;
   render?: React.FunctionComponent<Partial<void>>;
   component?: React.JSXElementConstructor<Partial<void>>;
+  children?: React.ReactNode;
 };
 export const WidgetProps: WidgetPropsType = Object.create(
   Object.prototype,
@@ -64,11 +59,7 @@ export const WidgetProps: WidgetPropsType = Object.create(
       },
       template: () => <div></div>,
       get __defaultNestedValues() {
-        return {
-          texts2: { text: format("text") },
-          texts3: TextsProps,
-          baseNested: BaseProps?.__defaultNestedValues.baseNested,
-        };
+        return { texts2: { text: format("text") }, texts3: TextsProps };
       },
     })
   )
@@ -82,7 +73,6 @@ export declare type WidgetPropsTypeType = {
   empty?: string;
   height?: number;
   width?: number;
-  baseNested?: any;
   children?: React.ReactNode;
   expressionDefault?: any;
   __defaultNestedValues?: any;
@@ -97,11 +87,7 @@ const WidgetPropsType: WidgetPropsTypeType = {
   width: WidgetProps.width,
   expressionDefault: ExpressionProps.expressionDefault,
   get __defaultNestedValues() {
-    return {
-      texts2: WidgetProps.texts2,
-      texts3: WidgetProps.texts3,
-      baseNested: WidgetProps.baseNested,
-    };
+    return { texts2: WidgetProps.texts2, texts3: WidgetProps.texts3 };
   },
 };
 import * as React from "react";
@@ -149,7 +135,6 @@ interface Widget {
   nestedChildren: () => Record<string, any>;
   __getNestedTexts2: typeof TextsProps;
   __getNestedTexts3: typeof TextsProps;
-  __getNestedBaseNested: any;
 }
 
 const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
@@ -169,7 +154,6 @@ export default function Widget(props: typeof WidgetPropsType & RestProps) {
     function __restAttributes(): RestProps {
       const {
         __defaultNestedValues,
-        baseNested,
         children,
         component,
         empty,
@@ -187,7 +171,6 @@ export default function Widget(props: typeof WidgetPropsType & RestProps) {
         ...props,
         texts2: __getNestedTexts2(),
         texts3: __getNestedTexts3(),
-        baseNested: __getNestedBaseNested(),
       };
       return restProps;
     },
@@ -222,17 +205,6 @@ export default function Widget(props: typeof WidgetPropsType & RestProps) {
     },
     [props.texts3, props.children]
   );
-  const __getNestedBaseNested = useCallback(
-    function __getNestedBaseNested(): any {
-      const nested = __nestedChildren();
-      return props.baseNested
-        ? props.baseNested
-        : nested.baseNested
-        ? nested.baseNested?.[0]
-        : props?.__defaultNestedValues?.baseNested;
-    },
-    [props.baseNested, props.children]
-  );
 
   return view({
     props: {
@@ -240,13 +212,11 @@ export default function Widget(props: typeof WidgetPropsType & RestProps) {
       template: getTemplate(props.template, props.render, props.component),
       texts2: __getNestedTexts2(),
       texts3: __getNestedTexts3(),
-      baseNested: __getNestedBaseNested(),
     },
     restAttributes: __restAttributes(),
     nestedChildren: __nestedChildren,
     __getNestedTexts2: __getNestedTexts2(),
     __getNestedTexts3: __getNestedTexts3(),
-    __getNestedBaseNested: __getNestedBaseNested(),
   });
 }
 

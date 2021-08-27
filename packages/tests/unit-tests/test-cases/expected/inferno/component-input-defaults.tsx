@@ -18,15 +18,11 @@ export declare type BasePropsType = {
   empty?: string;
   height?: number;
   width?: number;
-  baseNested: any;
 };
 export const BaseProps: BasePropsType = {
   height: 10,
   get width() {
     return isMaterial() ? 20 : 10;
-  },
-  get baseNested() {
-    return { text0: "3" };
   },
 };
 export declare type TextsPropsType = {
@@ -82,7 +78,6 @@ export declare type WidgetPropsTypeType = {
   empty?: string;
   height?: number;
   width?: number;
-  baseNested: any;
   expressionDefault?: any;
 };
 const WidgetPropsType: WidgetPropsTypeType = {
@@ -106,9 +101,6 @@ const WidgetPropsType: WidgetPropsTypeType = {
   },
   get width() {
     return WidgetProps.width;
-  },
-  get baseNested() {
-    return WidgetProps.baseNested;
   },
   get expressionDefault() {
     return ExpressionProps.expressionDefault;
@@ -136,7 +128,6 @@ export default class Widget extends BaseInfernoComponent<any> {
 
   get restAttributes(): RestProps {
     const {
-      baseNested,
       empty,
       expressionDefault,
       height,
