@@ -10,8 +10,6 @@ import {
   Property as BaseProperty,
   SyntaxKind,
   TypeExpression,
-  ExpressionWithExpression,
-  ObjectLiteral,
 } from '@devextreme-generator/core';
 
 import { Method } from './class-members/method';
@@ -140,23 +138,12 @@ export class ComponentInput extends BaseComponentInput {
         [] as ComponentInput[],
       ),
     };
-    const defineProperties = propertiesWithInitializer.reduce(
-      (acc : { notComplex: string[], complex: string[] }, curr) => {
-        if (curr.initializer instanceof ExpressionWithExpression
-        || curr.initializer instanceof ObjectLiteral) {
-          acc.complex.push(curr.defaultProps(options));
-        } else {
-          acc.notComplex.push(curr.defaultProps(options));
-        }
-        return acc;
-      }, { notComplex: [], complex: [] },
-    );
-    const defaultObject = defineProperties.complex.length ? `
-    Object.defineProperties({${defineProperties.notComplex.join(',\n')}},{
-      ${defineProperties.complex.join(',\n')}
-    })` : `{
-      ${defineProperties.notComplex.join(',\n')}
-    }`;
+
+    const defaultObject = `{
+      ${propertiesWithInitializer
+    .map((p) => p.defaultProps(options))
+    .join(',\n')}
+   }`;
 
     let defaultProps = defaultObject;
     const inheritedBaseType = this.baseTypes[0];

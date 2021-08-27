@@ -14,7 +14,9 @@ const GetterContext = createContext("default");
 export declare type PropsType = {
   p1: number;
 };
-const Props: PropsType = { p1: 10 };
+const Props: PropsType = {
+  p1: 10,
+};
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;

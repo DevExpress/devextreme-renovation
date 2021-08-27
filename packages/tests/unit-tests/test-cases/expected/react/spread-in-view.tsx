@@ -7,7 +7,10 @@ export declare type WidgetPropsType = {
   id: string;
   onClick?: (e: any) => void;
 };
-export const WidgetProps: WidgetPropsType = { a: [1, 2, 3], id: "1" };
+export const WidgetProps: WidgetPropsType = {
+  a: [1, 2, 3],
+  id: "1",
+};
 import * as React from "react";
 import { useCallback } from "react";
 
