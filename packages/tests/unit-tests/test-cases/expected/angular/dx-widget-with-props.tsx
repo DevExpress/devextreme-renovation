@@ -45,7 +45,6 @@ export class WidgetWithProps extends WidgetWithPropsInput {
 @NgModule({
   declarations: [WidgetWithProps],
   imports: [CommonModule],
-
   exports: [WidgetWithProps],
 })
 export class DxWidgetWithPropsModule {}

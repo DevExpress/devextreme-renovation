@@ -670,7 +670,6 @@ export class Generator implements GeneratorAPI {
     questionOrExclamationToken?: string,
     type?: TypeExpression,
     initializer?: Expression,
-    fromCode = false,
   ) {
     return new Property(
       decorators,
@@ -679,8 +678,6 @@ export class Generator implements GeneratorAPI {
       questionOrExclamationToken,
       type,
       initializer,
-      false,
-      fromCode,
     );
   }
 

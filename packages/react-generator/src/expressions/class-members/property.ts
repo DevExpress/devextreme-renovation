@@ -226,7 +226,6 @@ export class Property extends BaseProperty {
       this.type,
       this.initializer,
       true,
-      this.fromCode,
     );
   }
 

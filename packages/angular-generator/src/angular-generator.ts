@@ -194,7 +194,6 @@ export class AngularGenerator extends Generator {
     questionOrExclamationToken?: string,
     type?: TypeExpression,
     initializer?: Expression,
-    fromCode = false,
   ) {
     return new Property(
       decorators,
@@ -203,8 +202,6 @@ export class AngularGenerator extends Generator {
       questionOrExclamationToken,
       type,
       initializer,
-      false,
-      fromCode,
     );
   }
 

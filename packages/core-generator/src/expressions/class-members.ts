@@ -368,8 +368,6 @@ export class Property extends BaseClassMember {
 
   initializer?: Expression;
 
-  fromCode!: boolean;
-
   constructor(
     decorators: Decorator[] = [],
     modifiers: string[] = [],
@@ -378,7 +376,6 @@ export class Property extends BaseClassMember {
     type?: TypeExpression | string,
     initializer?: Expression,
     inherited = false,
-    fromCode = false,
   ) {
     super(
       decorators,
@@ -389,7 +386,6 @@ export class Property extends BaseClassMember {
     );
     this.questionOrExclamationToken = questionOrExclamationToken;
     this.initializer = initializer;
-    this.fromCode = fromCode;
   }
 
   compileRefType(): string {
@@ -437,7 +433,6 @@ export class Property extends BaseClassMember {
       this.type,
       this.initializer,
       true,
-      this.fromCode,
     );
   }
 

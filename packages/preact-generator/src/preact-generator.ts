@@ -74,7 +74,6 @@ export class ComponentInput extends BaseComponentInput {
     questionOrExclamationToken?: string,
     type?: TypeExpression,
     initializer?: Expression,
-    fromCode = false,
   ) {
     return new Property(
       decorators,
@@ -83,8 +82,6 @@ export class ComponentInput extends BaseComponentInput {
       questionOrExclamationToken,
       type,
       initializer,
-      false,
-      fromCode,
     );
   }
 
@@ -454,7 +451,6 @@ export class Property extends ReactProperty {
       this.type,
       this.initializer,
       true,
-      this.fromCode,
     );
   }
 
@@ -692,7 +688,6 @@ export class PreactGenerator extends ReactGenerator {
     questionOrExclamationToken = '',
     type?: TypeExpression,
     initializer?: Expression,
-    fromCode = false,
   ) {
     return new Property(
       decorators,
@@ -701,8 +696,6 @@ export class PreactGenerator extends ReactGenerator {
       questionOrExclamationToken,
       type,
       initializer,
-      false,
-      fromCode,
     );
   }
 

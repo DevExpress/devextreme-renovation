@@ -53,7 +53,6 @@ export default class List extends ListInput {
 @NgModule({
   declarations: [List],
   imports: [CommonModule],
-
   exports: [List],
 })
 export class DxListModule {}

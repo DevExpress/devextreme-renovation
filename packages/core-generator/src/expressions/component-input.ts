@@ -67,7 +67,6 @@ export class ComponentInput extends Class implements Heritable {
     questionOrExclamationToken?: string,
     type?: string | TypeExpression,
     initializer?: Expression,
-    fromCode = false,
   ) {
     return new Property(
       decorators,
@@ -76,8 +75,6 @@ export class ComponentInput extends Class implements Heritable {
       questionOrExclamationToken,
       type,
       initializer,
-      false,
-      fromCode,
     );
   }
 
@@ -351,7 +348,7 @@ function processMembersFromType(
 function removeDuplicates(members: (Property | Method)[]) {
   const dictionary = members.reduce(
     (d: { [name: string]: Property | Method }, m) => {
-      if ((m as Property).fromCode !== false) {
+      if (m.name !== '__defaultNestedValues') {
         d[m.name] = m;
       }
       return d;
@@ -412,5 +409,6 @@ export function membersFromTypeDeclaration(
       [],
     );
   }
+
   return removeDuplicates(result);
 }

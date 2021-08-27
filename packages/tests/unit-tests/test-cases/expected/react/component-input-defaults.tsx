@@ -38,20 +38,6 @@ export const TextsProps: TextsPropsType = Object.defineProperties(
     },
   }
 );
-export declare type ExpressionPropsType = {
-  expressionDefault?: any;
-};
-export const ExpressionProps: ExpressionPropsType = Object.defineProperties(
-  {},
-  {
-    expressionDefault: {
-      enumerable: true,
-      get: function () {
-        return isMaterial() ? 20 : 10;
-      },
-    },
-  }
-);
 export declare type WidgetPropsType = typeof BaseProps & {
   text?: string;
   texts1?: typeof TextsProps;
@@ -94,39 +80,6 @@ export const WidgetProps: WidgetPropsType = Object.create(
     )
   )
 );
-export declare type WidgetPropsTypeType = {
-  text?: string;
-  texts1?: typeof TextsProps;
-  texts2?: typeof TextsProps;
-  texts3?: typeof TextsProps;
-  template?: React.FunctionComponent<Partial<void>>;
-  empty?: string;
-  height?: number;
-  width?: number;
-  expressionDefault?: any;
-  __defaultNestedValues?: any;
-  render?: React.FunctionComponent<Partial<void>>;
-  component?: React.JSXElementConstructor<Partial<void>>;
-  children?: React.ReactNode;
-};
-const WidgetPropsType: WidgetPropsTypeType = Object.defineProperties(
-  {
-    text: WidgetProps.text,
-    texts1: WidgetProps.texts1,
-    template: WidgetProps.template,
-    height: WidgetProps.height,
-    width: WidgetProps.width,
-    expressionDefault: ExpressionProps.expressionDefault,
-  },
-  {
-    __defaultNestedValues: {
-      enumerable: true,
-      get: function () {
-        return { texts2: WidgetProps.texts2, texts3: WidgetProps.texts3 };
-      },
-    },
-  }
-);
 import * as React from "react";
 import { useCallback } from "react";
 
@@ -167,7 +120,7 @@ declare type RestProps = {
   ref?: any;
 };
 interface Widget {
-  props: typeof WidgetPropsType & RestProps;
+  props: typeof WidgetProps & RestProps;
   restAttributes: RestProps;
   nestedChildren: () => Record<string, any>;
   __getNestedTexts2: typeof TextsProps;
@@ -186,7 +139,7 @@ const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
       ))) ||
   (ComponentProp && ((props: any) => <ComponentProp {...props} />));
 
-export default function Widget(props: typeof WidgetPropsType & RestProps) {
+export default function Widget(props: typeof WidgetProps & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
@@ -194,7 +147,6 @@ export default function Widget(props: typeof WidgetPropsType & RestProps) {
         children,
         component,
         empty,
-        expressionDefault,
         height,
         render,
         template,
@@ -257,4 +209,4 @@ export default function Widget(props: typeof WidgetPropsType & RestProps) {
   });
 }
 
-Widget.defaultProps = WidgetPropsType;
+Widget.defaultProps = WidgetProps;

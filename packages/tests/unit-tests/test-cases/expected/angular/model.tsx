@@ -1,12 +1,14 @@
 import { Input, Output, EventEmitter } from "@angular/core";
 class ModelWidgetInput {
   @Input() baseStateProp?: boolean;
-  @Output() baseStatePropChange: EventEmitter<boolean | undefined> =
-    new EventEmitter();
+  @Output() baseStatePropChange: EventEmitter<
+    boolean | undefined
+  > = new EventEmitter();
   @Input() modelStateProp?: boolean;
   @Input() value?: boolean;
-  @Output() modelStatePropChange: EventEmitter<boolean | undefined> =
-    new EventEmitter();
+  @Output() modelStatePropChange: EventEmitter<
+    boolean | undefined
+  > = new EventEmitter();
   @Output() valueChange: EventEmitter<boolean | undefined> = new EventEmitter();
 }
 
@@ -37,8 +39,7 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
 })
 export default class ModelWidget
   extends ModelWidgetInput
-  implements ControlValueAccessor
-{
+  implements ControlValueAccessor {
   get __restAttributes(): any {
     return {};
   }
@@ -86,7 +87,6 @@ export default class ModelWidget
 @NgModule({
   declarations: [ModelWidget],
   imports: [CommonModule],
-
   exports: [ModelWidget],
 })
 export class DxModelWidgetModule {}

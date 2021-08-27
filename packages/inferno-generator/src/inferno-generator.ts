@@ -52,7 +52,6 @@ export class InfernoGenerator extends PreactGenerator {
     questionOrExclamationToken?: string,
     type?: TypeExpression,
     initializer?: Expression,
-    fromCode = false,
   ) {
     return new Property(
       decorators,
@@ -61,8 +60,6 @@ export class InfernoGenerator extends PreactGenerator {
       questionOrExclamationToken,
       type,
       initializer,
-      false,
-      fromCode,
     );
   }
 

@@ -36,7 +36,6 @@ export default class Widget {
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
-
   exports: [Widget],
 })
 export class DxWidgetModule {}

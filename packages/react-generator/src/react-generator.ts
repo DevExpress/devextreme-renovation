@@ -137,7 +137,6 @@ export class ReactGenerator extends BaseGenerator {
     questionOrExclamationToken?: string,
     type?: TypeExpression,
     initializer?: Expression,
-    fromCode = false,
   ) {
     return new Property(
       decorators,
@@ -146,8 +145,6 @@ export class ReactGenerator extends BaseGenerator {
       questionOrExclamationToken,
       type,
       initializer,
-      false,
-      fromCode,
     );
   }
 

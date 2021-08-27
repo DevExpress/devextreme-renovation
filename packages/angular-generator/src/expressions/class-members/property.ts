@@ -41,7 +41,6 @@ export class Property extends BaseProperty {
     type?: TypeExpression | string,
     initializer?: Expression,
     inherited = false,
-    fromCode = false,
   ) {
     if (decorators.find((d) => d.name === Decorators.Template)) {
       questionOrExclamationToken = questionOrExclamationToken === SyntaxKind.ExclamationToken
@@ -59,7 +58,6 @@ export class Property extends BaseProperty {
       type,
       initializer,
       inherited,
-      fromCode,
     );
   }
 
@@ -183,7 +181,6 @@ export class Property extends BaseProperty {
       this.type,
       this.initializer,
       true,
-      this.fromCode,
     );
   }
 
