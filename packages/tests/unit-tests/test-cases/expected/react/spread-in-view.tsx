@@ -8,11 +8,8 @@ export declare type WidgetPropsType = {
   onClick?: (e: any) => void;
 };
 export const WidgetProps: WidgetPropsType = {
-  a: {
-    enumerable: true,
-    get: function () {
-      return [1, 2, 3];
-    },
+  get a() {
+    return [1, 2, 3];
   },
   id: "1",
 };

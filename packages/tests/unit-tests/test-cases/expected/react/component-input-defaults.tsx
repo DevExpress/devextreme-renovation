@@ -16,51 +16,31 @@ export declare type BasePropsType = {
   __defaultNestedValues?: any;
   children?: React.ReactNode;
 };
-export const BaseProps: BasePropsType = Object.defineProperties(
-  { height: 10 },
-  {
-    width: {
-      enumerable: true,
-      get: function () {
-        return isMaterial() ? 20 : 10;
-      },
-    },
-    __defaultNestedValues: {
-      enumerable: true,
-      get: function () {
-        return { baseNested: { text0: "3" } };
-      },
-    },
-  }
-);
+export const BaseProps: BasePropsType = {
+  height: 10,
+  get width() {
+    return isMaterial() ? 20 : 10;
+  },
+  get __defaultNestedValues() {
+    return { baseNested: { text0: "3" } };
+  },
+};
 export declare type TextsPropsType = {
   text?: string;
 };
-export const TextsProps: TextsPropsType = Object.defineProperties(
-  {},
-  {
-    text: {
-      enumerable: true,
-      get: function () {
-        return format("text");
-      },
-    },
-  }
-);
+export const TextsProps: TextsPropsType = {
+  get text() {
+    return format("text");
+  },
+};
 export declare type ExpressionPropsType = {
   expressionDefault?: any;
 };
-export const ExpressionProps: ExpressionPropsType = Object.defineProperties(
-  {},
-  {
-    expressionDefault: {
-      enumerable: true,
-      get: function () {
-        return isMaterial() ? 20 : 10;
-      },
-    },
-  }
-);
+export const ExpressionProps: ExpressionPropsType = {
+  get expressionDefault() {
+    return isMaterial() ? 20 : 10;
+  },
+};
 export declare type WidgetPropsType = typeof BaseProps & {
   text?: string;
   texts1?: typeof TextsProps;
@@ -75,35 +55,22 @@ export const WidgetProps: WidgetPropsType = Object.create(
   Object.prototype,
   Object.assign(
     Object.getOwnPropertyDescriptors(BaseProps),
-    Object.getOwnPropertyDescriptors(
-      Object.defineProperties(
-        { template: () => <div></div> },
-        {
-          text: {
-            enumerable: true,
-            get: function () {
-              return format("text");
-            },
-          },
-          texts1: {
-            enumerable: true,
-            get: function () {
-              return { text: format("text") };
-            },
-          },
-          __defaultNestedValues: {
-            enumerable: true,
-            get: function () {
-              return {
-                texts2: { text: format("text") },
-                texts3: TextsProps,
-                baseNested: BaseProps?.__defaultNestedValues.baseNested,
-              };
-            },
-          },
-        }
-      )
-    )
+    Object.getOwnPropertyDescriptors({
+      get text() {
+        return format("text");
+      },
+      get texts1() {
+        return { text: format("text") };
+      },
+      template: () => <div></div>,
+      get __defaultNestedValues() {
+        return {
+          texts2: { text: format("text") },
+          texts3: TextsProps,
+          baseNested: BaseProps?.__defaultNestedValues.baseNested,
+        };
+      },
+    })
   )
 );
 export declare type WidgetPropsTypeType = {
@@ -122,28 +89,21 @@ export declare type WidgetPropsTypeType = {
   render?: React.FunctionComponent<Partial<void>>;
   component?: React.JSXElementConstructor<Partial<void>>;
 };
-const WidgetPropsType: WidgetPropsTypeType = Object.defineProperties(
-  {
-    text: WidgetProps.text,
-    texts1: WidgetProps.texts1,
-    template: WidgetProps.template,
-    height: WidgetProps.height,
-    width: WidgetProps.width,
-    expressionDefault: ExpressionProps.expressionDefault,
+const WidgetPropsType: WidgetPropsTypeType = {
+  text: WidgetProps.text,
+  texts1: WidgetProps.texts1,
+  template: WidgetProps.template,
+  height: WidgetProps.height,
+  width: WidgetProps.width,
+  expressionDefault: ExpressionProps.expressionDefault,
+  get __defaultNestedValues() {
+    return {
+      texts2: WidgetProps.texts2,
+      texts3: WidgetProps.texts3,
+      baseNested: WidgetProps.baseNested,
+    };
   },
-  {
-    __defaultNestedValues: {
-      enumerable: true,
-      get: function () {
-        return {
-          texts2: WidgetProps.texts2,
-          texts3: WidgetProps.texts3,
-          baseNested: WidgetProps.baseNested,
-        };
-      },
-    },
-  }
-);
+};
 import * as React from "react";
 import { useCallback } from "react";
 

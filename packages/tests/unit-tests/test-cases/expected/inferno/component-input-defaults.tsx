@@ -20,51 +20,31 @@ export declare type BasePropsType = {
   width?: number;
   baseNested: any;
 };
-export const BaseProps: BasePropsType = Object.defineProperties(
-  { height: 10 },
-  {
-    width: {
-      enumerable: true,
-      get: function () {
-        return isMaterial() ? 20 : 10;
-      },
-    },
-    baseNested: {
-      enumerable: true,
-      get: function () {
-        return { text0: "3" };
-      },
-    },
-  }
-);
+export const BaseProps: BasePropsType = {
+  height: 10,
+  get width() {
+    return isMaterial() ? 20 : 10;
+  },
+  get baseNested() {
+    return { text0: "3" };
+  },
+};
 export declare type TextsPropsType = {
   text?: string;
 };
-export const TextsProps: TextsPropsType = Object.defineProperties(
-  {},
-  {
-    text: {
-      enumerable: true,
-      get: function () {
-        return format("text");
-      },
-    },
-  }
-);
+export const TextsProps: TextsPropsType = {
+  get text() {
+    return format("text");
+  },
+};
 export declare type ExpressionPropsType = {
   expressionDefault?: any;
 };
-export const ExpressionProps: ExpressionPropsType = Object.defineProperties(
-  {},
-  {
-    expressionDefault: {
-      enumerable: true,
-      get: function () {
-        return isMaterial() ? 20 : 10;
-      },
-    },
-  }
-);
+export const ExpressionProps: ExpressionPropsType = {
+  get expressionDefault() {
+    return isMaterial() ? 20 : 10;
+  },
+};
 export declare type WidgetPropsType = typeof BaseProps & {
   text?: string;
   texts1?: typeof TextsProps;
@@ -76,37 +56,21 @@ export const WidgetProps: WidgetPropsType = Object.create(
   Object.prototype,
   Object.assign(
     Object.getOwnPropertyDescriptors(BaseProps),
-    Object.getOwnPropertyDescriptors(
-      Object.defineProperties(
-        { template: () => <div></div> },
-        {
-          text: {
-            enumerable: true,
-            get: function () {
-              return format("text");
-            },
-          },
-          texts1: {
-            enumerable: true,
-            get: function () {
-              return { text: format("text") };
-            },
-          },
-          texts2: {
-            enumerable: true,
-            get: function () {
-              return { text: format("text") };
-            },
-          },
-          texts3: {
-            enumerable: true,
-            get: function () {
-              return TextsProps;
-            },
-          },
-        }
-      )
-    )
+    Object.getOwnPropertyDescriptors({
+      get text() {
+        return format("text");
+      },
+      get texts1() {
+        return { text: format("text") };
+      },
+      get texts2() {
+        return { text: format("text") };
+      },
+      get texts3() {
+        return TextsProps;
+      },
+      template: () => <div></div>,
+    })
   )
 );
 export declare type WidgetPropsTypeType = {

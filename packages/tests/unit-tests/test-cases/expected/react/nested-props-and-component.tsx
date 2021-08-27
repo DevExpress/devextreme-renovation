@@ -26,17 +26,12 @@ export declare type WidgetPropsType = {
   componentProp?: React.JSXElementConstructor<any>;
   children?: React.ReactNode;
 };
-export const WidgetProps: WidgetPropsType = Object.defineProperties(
-  { twoWayPropChange: () => {} },
-  {
-    __defaultNestedValues: {
-      enumerable: true,
-      get: function () {
-        return { anotherNestedPropInit: [FakeNested] };
-      },
-    },
-  }
-);
+export const WidgetProps: WidgetPropsType = {
+  get __defaultNestedValues() {
+    return { anotherNestedPropInit: [FakeNested] };
+  },
+  twoWayPropChange: () => {},
+};
 import * as React from "react";
 import { useState, useCallback } from "react";
 

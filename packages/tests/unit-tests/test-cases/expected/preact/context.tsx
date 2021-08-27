@@ -8,7 +8,9 @@ const GetterContext = createContext("default");
 export declare type PropsType = {
   p1: number;
 };
-const Props: PropsType = { p1: 10 };
+const Props: PropsType = {
+  p1: 10,
+};
 import * as Preact from "preact";
 import { useState, useContext, useCallback } from "preact/hooks";
 

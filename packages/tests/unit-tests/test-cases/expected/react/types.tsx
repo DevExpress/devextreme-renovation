@@ -26,61 +26,36 @@ export declare type WidgetPropsType = {
   externalArray: StringArr;
   externalString: StringType;
 };
-export const WidgetProps: WidgetPropsType = Object.defineProperties(
-  {
-    str: "",
-    num: 1,
-    bool: true,
-    arr: {
-      enumerable: true,
-      get: function () {
-        return [];
-      },
-    },
-    strArr: {
-      enumerable: true,
-      get: function () {
-        return ["a", "b"];
-      },
-    },
-    func: () => {},
-    externalEnum: "data",
-    externalUnion: 0,
-    externalArray: {
-      enumerable: true,
-      get: function () {
-        return ["s1", "s2"];
-      },
-    },
-    externalString: "someValue",
+export const WidgetProps: WidgetPropsType = {
+  str: "",
+  num: 1,
+  bool: true,
+  get arr() {
+    return [];
   },
-  {
-    obj: {
-      enumerable: true,
-      get: function () {
-        return {};
-      },
-    },
-    date: {
-      enumerable: true,
-      get: function () {
-        return new Date();
-      },
-    },
-    symbol: {
-      enumerable: true,
-      get: function () {
-        return Symbol("x");
-      },
-    },
-    externalObj: {
-      enumerable: true,
-      get: function () {
-        return { number: 0, text: "text" };
-      },
-    },
-  }
-);
+  get strArr() {
+    return ["a", "b"];
+  },
+  get obj() {
+    return {};
+  },
+  get date() {
+    return new Date();
+  },
+  func: () => {},
+  get symbol() {
+    return Symbol("x");
+  },
+  externalEnum: "data",
+  externalUnion: 0,
+  get externalObj() {
+    return { number: 0, text: "text" };
+  },
+  get externalArray() {
+    return ["s1", "s2"];
+  },
+  externalString: "someValue",
+};
 import * as React from "react";
 import { useCallback } from "react";
 

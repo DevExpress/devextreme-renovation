@@ -33,23 +33,21 @@ export declare type WidgetPropsType = {
   columns?: Array<typeof GridColumnProps | string>;
   editing: typeof EditingProps;
 };
-export const WidgetProps: WidgetPropsType = Object.defineProperties(
-  {},
-  {
-    editing: {
-      enumerable: true,
-      get: function () {
-        return EditingProps;
-      },
-    },
-  }
-);
+export const WidgetProps: WidgetPropsType = {
+  get editing() {
+    return EditingProps;
+  },
+};
 export declare type PickedPropsType = {
   columns?: Array<typeof GridColumnProps | string>;
   editing: typeof EditingProps;
 };
 export const PickedProps: PickedPropsType = {
+<<<<<<< HEAD
   get editing() {
     return WidgetProps.editing;
   },
+=======
+  editing: WidgetProps.editing,
+>>>>>>> master
 };

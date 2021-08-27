@@ -58,15 +58,7 @@ export class Property extends BaseProperty {
     const isSimpleExpression = initializer instanceof SimpleExpression;
     const isFunction = initializer instanceof BaseFunction;
     const isComplexExpression = !(isSimpleExpression || isFunction);
-    if (isComplexExpression) {
-      return `${this.name}: {
-          enumerable: true,
-          get: function() {
-            return ${initializer?.toString(options)}   
-          }
-        }`;
-    }
-    if (options?.fromType) {
+    if (isComplexExpression || options?.fromType) {
       return `get ${this.name}() { return ${initializer?.toString(options)} }`;
     }
     return this.defaultDeclaration(options);

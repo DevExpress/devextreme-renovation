@@ -17,33 +17,20 @@ export declare type WidgetPropsType = {
   strDate: StrDate;
   customTypeField?: { name: string; customField: CustomType }[];
 };
-export const WidgetProps: WidgetPropsType = Object.defineProperties(
-  {
-    data: "data",
-    union: "uniontext",
-    strArr: {
-      enumerable: true,
-      get: function () {
-        return ["ba", "ab"];
-      },
-    },
-    s: "",
+export const WidgetProps: WidgetPropsType = {
+  data: "data",
+  union: "uniontext",
+  get obj() {
+    return { number: 123, text: "sda" };
   },
-  {
-    obj: {
-      enumerable: true,
-      get: function () {
-        return { number: 123, text: "sda" };
-      },
-    },
-    strDate: {
-      enumerable: true,
-      get: function () {
-        return new Date();
-      },
-    },
-  }
-);
+  get strArr() {
+    return ["ba", "ab"];
+  },
+  s: "",
+  get strDate() {
+    return new Date();
+  },
+};
 import * as React from "react";
 import { useCallback } from "react";
 

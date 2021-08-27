@@ -15,7 +15,9 @@ export declare type WidgetInputType = {
   defaultValue?: boolean;
   valueChange?: (value?: boolean) => void;
 };
-export const WidgetInput: WidgetInputType = { valueChange: () => {} };
+export const WidgetInput: WidgetInputType = {
+  valueChange: () => {},
+};
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;
