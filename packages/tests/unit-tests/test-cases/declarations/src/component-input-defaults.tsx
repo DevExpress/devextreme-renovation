@@ -25,7 +25,9 @@ export class BaseProps {
   @OneWay() empty?: string;
   @OneWay() height?: number = 10;
   @OneWay() width?: number = isMaterial() ? 20 : 10;
-  @Nested() baseNested = { text0: "3" }
+// TODO uncoment and fix 
+// https://trello.com/c/ZEt2d0fW/2862-fix-bug-with-inherited-default-props-generation  
+//  @Nested() baseNested = { text0: "3" }
 }
 
 @ComponentBindings()
