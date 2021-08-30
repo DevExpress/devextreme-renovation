@@ -5,6 +5,10 @@
   >
 </template>
 <script>
+const device = "ios";
+function isDevice() {
+  return true;
+}
 export const WidgetInput = {
   height: {
     type: Number,
@@ -16,6 +20,29 @@ export const WidgetInput = {
     type: Object,
     default() {
       return {};
+    },
+  },
+  array: {
+    default() {
+      return ["1"];
+    },
+  },
+  expressionDefault: {
+    type: String,
+    default() {
+      return device === "ios" ? "yes" : "no";
+    },
+  },
+  expressionDefault1: {
+    type: Boolean,
+    default() {
+      return !device;
+    },
+  },
+  expressionDefault2: {
+    type: [Boolean, String],
+    default() {
+      return isDevice() || "test";
     },
   },
   sizes: {
@@ -44,6 +71,10 @@ export const DxWidget = {
       return {
         height: this.height,
         export: this.export,
+        array: this.array,
+        expressionDefault: this.expressionDefault,
+        expressionDefault1: this.expressionDefault1,
+        expressionDefault2: this.expressionDefault2,
         sizes: this.sizes,
         stringValue: this.stringValue_state,
         onClick: this.onClick,

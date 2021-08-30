@@ -33,6 +33,13 @@ export const TextsProps = {
     },
   },
 };
+export const ExpressionProps = {
+  expressionDefault: {
+    default() {
+      return isMaterial() ? 20 : 10;
+    },
+  },
+};
 export const WidgetProps = {
   ...BaseProps,
   text: {
@@ -63,6 +70,70 @@ export const WidgetProps = {
               ? undefined
               : TextsProps.text?.default(),
         },
+      };
+    },
+  },
+};
+const WidgetPropsType = {
+  text: {
+    type: String,
+    default() {
+      return typeof WidgetProps.text.default === "function"
+        ? WidgetProps.text.default()
+        : WidgetProps.text.default;
+    },
+  },
+  texts1: {
+    type: Object,
+    default() {
+      return typeof WidgetProps.texts1.default === "function"
+        ? WidgetProps.texts1.default()
+        : WidgetProps.texts1.default;
+    },
+  },
+  template: {
+    type: String,
+    default() {
+      return "template";
+    },
+  },
+  empty: {
+    type: String,
+  },
+  height: {
+    type: Number,
+    default() {
+      return typeof WidgetProps.height.default === "function"
+        ? WidgetProps.height.default()
+        : WidgetProps.height.default;
+    },
+  },
+  width: {
+    type: Number,
+    default() {
+      return typeof WidgetProps.width.default === "function"
+        ? WidgetProps.width.default()
+        : WidgetProps.width.default;
+    },
+  },
+  expressionDefault: {
+    default() {
+      return typeof ExpressionProps.expressionDefault.default === "function"
+        ? ExpressionProps.expressionDefault.default()
+        : ExpressionProps.expressionDefault.default;
+    },
+  },
+  __defaultNestedValues: {
+    default() {
+      return {
+        texts2:
+          typeof WidgetProps.texts2.default === "function"
+            ? WidgetProps.texts2.default()
+            : WidgetProps.texts2.default,
+        texts3:
+          typeof WidgetProps.texts3.default === "function"
+            ? WidgetProps.texts3.default()
+            : WidgetProps.texts3.default,
       };
     },
   },
@@ -123,7 +194,7 @@ DxTexts2.defaultProps = __extractDefaultValues(TextsProps);
 
 export const DxWidget = {
   name: "Widget",
-  props: WidgetProps,
+  props: WidgetPropsType,
   computed: {
     __restAttributes() {
       return {};
@@ -138,6 +209,7 @@ export const DxWidget = {
         empty: this.empty,
         height: this.height,
         width: this.width,
+        expressionDefault: this.expressionDefault,
       };
     },
     __nestedChildren() {

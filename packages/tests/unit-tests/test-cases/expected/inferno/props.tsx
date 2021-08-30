@@ -15,10 +15,18 @@ function view(model: Widget): any {
   );
 }
 type EventCallBack<Type> = (e: Type) => void;
+const device = "ios";
+function isDevice() {
+  return true;
+}
 
 export declare type WidgetInputType = {
   height: number;
   export: object;
+  array: any;
+  expressionDefault: string;
+  expressionDefault1: boolean;
+  expressionDefault2: boolean | string;
   sizes?: { height: number; width: number };
   stringValue: string;
   onClick: (a: number) => void;
@@ -30,6 +38,18 @@ export const WidgetInput: WidgetInputType = {
   height: 10,
   get export() {
     return {};
+  },
+  get array() {
+    return ["1"];
+  },
+  get expressionDefault() {
+    return device === "ios" ? "yes" : "no";
+  },
+  get expressionDefault1() {
+    return !device;
+  },
+  get expressionDefault2() {
+    return isDevice() || "test";
   },
   onClick: () => {},
   onSomething: () => {},
@@ -79,8 +99,12 @@ export default class Widget extends BaseInfernoComponent<any> {
   }
   get restAttributes(): RestProps {
     const {
+      array,
       defaultStringValue,
       export: exportProp,
+      expressionDefault,
+      expressionDefault1,
+      expressionDefault2,
       height,
       onClick,
       onSomething,

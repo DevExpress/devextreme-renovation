@@ -23,7 +23,9 @@ export const WidgetProps: WidgetPropsType = {
   get obj() {
     return { number: 123, text: "sda" };
   },
-  strArr: ["ba", "ab"],
+  get strArr() {
+    return ["ba", "ab"];
+  },
   s: "",
   get strDate() {
     return new Date();

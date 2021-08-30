@@ -18,11 +18,18 @@ function view(model: Widget): JSX.Element {
 }
 
 type EventCallBack<Type> = (e: Type) => void;
+const device = "ios";
+function isDevice() { return true }
 
 @ComponentBindings()
 export class WidgetInput {
   @OneWay() height = 10;
   @OneWay() export: object = {};
+  @OneWay() array = ["1"];
+
+  @OneWay() expressionDefault: string = device === "ios" ? "yes" : "no";
+  @OneWay() expressionDefault1: boolean = !device;
+  @OneWay() expressionDefault2: boolean | string = isDevice() || "test";
   @OneWay() sizes?: { height: number; width: number };
   @TwoWay() stringValue: string = '';
   @Event() onClick: (a: number) => void = () => {};

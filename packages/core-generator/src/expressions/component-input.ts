@@ -27,8 +27,11 @@ import {
 import { PropertyAccessChain, PropertyAccess } from './property-access';
 
 const RESERVED_NAMES = ['class', 'key', 'ref', 'style', 'class'];
+const typeDeclarationIgnoreMembers = ['__defaultNestedValues'];
 
 export class ComponentInput extends Class implements Heritable {
+  fromType: boolean;
+
   constructor(
     decorators: Decorator[],
     modifiers: string[] | undefined,
@@ -37,6 +40,7 @@ export class ComponentInput extends Class implements Heritable {
     heritageClauses: HeritageClause[] = [],
     members: Array<Property | Method>,
     context: GeneratorContext,
+    fromType = false,
   ) {
     super(
       decorators,
@@ -47,6 +51,7 @@ export class ComponentInput extends Class implements Heritable {
       members,
       context,
     );
+    this.fromType = fromType;
   }
 
   get baseTypes() {
@@ -54,6 +59,10 @@ export class ComponentInput extends Class implements Heritable {
       (t: string[], h) => t.concat(h.typeNodes.map((t) => t.toString())),
       [],
     );
+  }
+
+  membersFromTypeDeclarationIgnoreMembers(): string[] {
+    return typeDeclarationIgnoreMembers;
   }
 
   createProperty(
@@ -158,7 +167,8 @@ export class ComponentInput extends Class implements Heritable {
     return [];
   }
 
-  processMembers(members: Array<Property | Method>) {
+  processMembers(members_: Array<Property | Method>) {
+    const members = super.processMembers(members_);
     members.forEach((m) => {
       const refIndex = m.decorators.findIndex((d) => d.name === Decorators.Ref);
       if (refIndex > -1) {
@@ -323,21 +333,27 @@ export class ComponentInput extends Class implements Heritable {
 const omit = (members: string[]) => (p: Property | Method) => !members.some((m) => m === p.name);
 const pick = (members: string[]) => (p: Property | Method) => members.some((m) => m === p.name);
 
-function processMembersFromType(
-  members: (Property | Method)[],
-  baseComponentInput: string,
+function processComponentInputMembersFromType(
   componentInput: ComponentInput,
-) {
-  return (members as Property[]).map((p) => {
-    const m = p.inherit();
-    m.inherited = false;
-    if (m.initializer) {
-      m.initializer = new SimpleExpression(
-        `${componentInput.getInitializerScope(baseComponentInput, m.name)}`,
-      );
-    }
-    return m;
-  });
+  baseComponentInput: string,
+  filter?: (m: Property) => boolean,
+): (Property | Method)[] {
+  const membersToIgnore = componentInput.membersFromTypeDeclarationIgnoreMembers();
+  const filterIgnoredMembers = ({ name }: { name: string }) => !membersToIgnore.includes(name);
+  const fullFilter = filter ? (m: Property) => filterIgnoredMembers(m) && filter(m)
+    : filterIgnoredMembers;
+  return (componentInput.members as Property[])
+    .filter(fullFilter)
+    .map((p) => {
+      const m = p.inherit();
+      m.inherited = false;
+      if (m.initializer) {
+        m.initializer = new SimpleExpression(
+          `${componentInput.getInitializerScope(baseComponentInput, m.name)}`,
+        );
+      }
+      return m;
+    });
 }
 
 function removeDuplicates(members: (Property | Method)[]) {
@@ -378,25 +394,22 @@ export function membersFromTypeDeclaration(
         .typeArguments[0] as TypeReferenceNode).type
         .toString()
         .replace('typeof ', '');
-      result = processMembersFromType(
-        componentInput.members.filter(filter),
-        componentInputName,
+      result = processComponentInputMembersFromType(
         componentInput,
+        componentInputName,
+        filter,
       );
     }
   } else if (type instanceof TypeReferenceNode) {
     const componentInput = findComponentInput(type, context);
     const componentInputName = type.type.toString().replace('typeof ', '');
     if (componentInput) {
-      result = processMembersFromType(
-        componentInput.members,
-        componentInputName,
+      result = processComponentInputMembersFromType(
         componentInput,
+        componentInputName,
       );
     }
-  }
-
-  if (type instanceof IntersectionTypeNode) {
+  } else if (type instanceof IntersectionTypeNode) {
     result = type.types.reduce(
       (members: (Property | Method)[], t) => members.concat(membersFromTypeDeclaration(t, context)),
       [],

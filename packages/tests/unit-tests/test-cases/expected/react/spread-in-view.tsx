@@ -8,7 +8,9 @@ export declare type WidgetPropsType = {
   onClick?: (e: any) => void;
 };
 export const WidgetProps: WidgetPropsType = {
-  a: [1, 2, 3],
+  get a() {
+    return [1, 2, 3];
+  },
   id: "1",
 };
 import * as React from "react";

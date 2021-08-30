@@ -27,28 +27,35 @@ export function getTemplatePropName(
 }
 
 export function buildTemplateProperty(
+  templatePropName: string,
+  templateMember: Property,
+  isComponent: boolean,
+) {
+  return new Property(
+    [new Decorator(new Call(new Identifier('OneWay'), undefined, []), {})],
+    [],
+    new Identifier(templatePropName),
+    SyntaxKind.QuestionToken,
+    compileJSXTemplateType(templateMember.type, isComponent),
+    undefined,
+  );
+}
+
+export function getTemplatePropertyName(
   templateMember: Property,
   members: BaseClassMember[],
   propName: 'render' | 'component',
 ) {
   const templatePropName = getTemplatePropName(templateMember._name, propName);
   if (!members.find((m) => m._name.toString() === templatePropName)) {
-    const type = propName === 'render'
-      ? compileJSXTemplateType(templateMember.type)
-      : compileJSXTemplateType(templateMember.type, true);
-    return new Property(
-      [new Decorator(new Call(new Identifier('OneWay'), undefined, []), {})],
-      [],
-      new Identifier(templatePropName),
-      SyntaxKind.QuestionToken,
-      type,
-      undefined,
-    );
+    return templatePropName;
   }
   throw `You can't use '${templatePropName}' property. It'll be generated for '${templateMember._name}' template property.`;
 }
 
 export class ComponentInput extends BaseComponentInput {
+  typeDeclarationIgnoreMembers!: string[];
+
   createProperty(
     decorators: Decorator[],
     modifiers: string[] | undefined,
@@ -71,10 +78,14 @@ export class ComponentInput extends BaseComponentInput {
     templateMember: Property,
     members: BaseClassMember[],
   ) {
-    return [
-      buildTemplateProperty(templateMember, members, 'render'),
-      buildTemplateProperty(templateMember, members, 'component'),
-    ];
+    const renderPropName = getTemplatePropertyName(templateMember, members, 'render');
+    const componentPropName = getTemplatePropertyName(templateMember, members, 'component');
+    this.typeDeclarationIgnoreMembers = [...(this.typeDeclarationIgnoreMembers || []), renderPropName, componentPropName];
+    return [buildTemplateProperty(renderPropName, templateMember, false), buildTemplateProperty(componentPropName, templateMember, true)];
+  }
+
+  membersFromTypeDeclarationIgnoreMembers(): string[] {
+    return [...super.membersFromTypeDeclarationIgnoreMembers(), ...(this.typeDeclarationIgnoreMembers || [])];
   }
 
   compileImports() {
@@ -106,7 +117,7 @@ export class ComponentInput extends BaseComponentInput {
 
     const typeCasting = properties.some(
       (p) => (p.questionOrExclamationToken === SyntaxKind.ExclamationToken
-          && !p.initializer)
+        && !p.initializer)
         || (p.type.toString() === 'any'
           && !p.questionOrExclamationToken
           && !p.initializer)
@@ -137,6 +148,7 @@ export class ComponentInput extends BaseComponentInput {
         },
         [] as ComponentInput[],
       ),
+      fromType: this.fromType,
     };
 
     const defaultObject = `{
@@ -156,8 +168,7 @@ export class ComponentInput extends BaseComponentInput {
     return `${this.compileImports()}
           ${typeDeclaration}
           ${declarationModifiers.join(' ')} const ${this.name}:${typeName}=${defaultProps}${typeCasting};
-          ${
-  declarationModifiers !== this.modifiers
+          ${declarationModifiers !== this.modifiers
     ? `${this.modifiers.join(' ')} ${this.name}`
     : ''
 }`;

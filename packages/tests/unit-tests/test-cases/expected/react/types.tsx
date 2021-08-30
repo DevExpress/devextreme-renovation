@@ -30,8 +30,12 @@ export const WidgetProps: WidgetPropsType = {
   str: "",
   num: 1,
   bool: true,
-  arr: [],
-  strArr: ["a", "b"],
+  get arr() {
+    return [];
+  },
+  get strArr() {
+    return ["a", "b"];
+  },
   get obj() {
     return {};
   },
@@ -47,7 +51,9 @@ export const WidgetProps: WidgetPropsType = {
   get externalObj() {
     return { number: 0, text: "text" };
   },
-  externalArray: ["s1", "s2"],
+  get externalArray() {
+    return ["s1", "s2"];
+  },
   externalString: "someValue",
 };
 import * as React from "react";

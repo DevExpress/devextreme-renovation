@@ -707,6 +707,7 @@ export class Generator implements GeneratorAPI {
     typeParameters: TypeExpression[] | string[] | undefined,
     heritageClauses: HeritageClause[],
     members: Array<Property | Method>,
+    fromType = false,
   ) {
     return new ComponentInput(
       decorators,
@@ -716,6 +717,7 @@ export class Generator implements GeneratorAPI {
       heritageClauses,
       members,
       this.getContext(),
+      fromType,
     );
   }
 
@@ -1030,6 +1032,7 @@ export class Generator implements GeneratorAPI {
         [],
         [],
         members,
+        true,
       );
 
       this.addComponent(name.toString(), componentBindings);

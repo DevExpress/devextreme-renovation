@@ -140,7 +140,7 @@ export class Class extends Expression {
   }
 
   processMembers(members: Array<Property | Method>) {
-    return members;
+    return [...members];
   }
 
   constructor(

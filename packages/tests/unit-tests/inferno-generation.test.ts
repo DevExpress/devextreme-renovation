@@ -122,6 +122,10 @@ mocha.describe("inferno-generation", function () {
   mocha.it("nested", function () {
     this.testGenerator(this.test!.title);
   });
+  
+  mocha.it("nested-pick", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   mocha.it("nested-props", function () {
     this.testGenerator(this.test!.title);
