@@ -45,8 +45,8 @@ export function compileJSXTemplateType(
     type instanceof TypeReferenceNode
     && type.typeName.toString() === 'JSXTemplate'
   ) {
-    const companentTypeName = isComponent ? 'JSXElementConstructor' : 'FunctionComponent';
-    return `React.${companentTypeName}<${compileJSXTemplateProps(type.typeArguments)}>`;
+    const componentTypeName = isComponent ? 'JSXElementConstructor' : 'FunctionComponent';
+    return `React.${componentTypeName}<${compileJSXTemplateProps(type.typeArguments)}>`;
   }
 
   return type;

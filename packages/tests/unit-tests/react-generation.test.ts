@@ -332,6 +332,10 @@ mocha.describe("react-generation", function () {
   mocha.it("nested-default-props", function () {
     this.testGenerator(this.test!.title);
   });
+  
+  mocha.it("nested-pick", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   mocha.it("nested-props-and-component", function () {
     this.testGenerator(this.test!.title);

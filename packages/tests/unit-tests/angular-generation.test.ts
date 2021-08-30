@@ -339,6 +339,10 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("nested-pick", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("nested-props-and-component", function () {
     this.testGenerator(this.test!.title);
   });

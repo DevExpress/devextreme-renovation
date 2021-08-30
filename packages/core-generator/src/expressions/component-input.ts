@@ -27,10 +27,10 @@ import {
 import { PropertyAccessChain, PropertyAccess } from './property-access';
 
 const RESERVED_NAMES = ['class', 'key', 'ref', 'style', 'class'];
+const typeDeclarationIgnoreMembers = ['__defaultNestedValues'];
 
 export class ComponentInput extends Class implements Heritable {
-  fromType = false;
-
+  fromType: boolean;
   constructor(
     decorators: Decorator[],
     modifiers: string[] | undefined,
@@ -61,7 +61,7 @@ export class ComponentInput extends Class implements Heritable {
   }
 
   membersFromTypeDeclarationIgnoreMembers(): string[] {
-    return ['__defaultNestedValues'];
+    return typeDeclarationIgnoreMembers;
   }
 
   createProperty(
@@ -333,13 +333,12 @@ const omit = (members: string[]) => (p: Property | Method) => !members.some((m) 
 const pick = (members: string[]) => (p: Property | Method) => members.some((m) => m === p.name);
 
 function processComponentInputMembersFromType(
-  // members: (Property | Method)[],
   componentInput: ComponentInput,
   baseComponentInput: string,
-  filter? : (m: Property) => boolean,
+  filter?: (m: Property) => boolean,
 ): (Property | Method)[] {
   const membersToIgnore = componentInput.membersFromTypeDeclarationIgnoreMembers();
-  const filterIgnoredMembers = ({ name } : { name: string }) => !membersToIgnore.includes(name);
+  const filterIgnoredMembers = ({ name }: { name: string }) => !membersToIgnore.includes(name);
   const fullFilter = filter ? (m: Property) => filterIgnoredMembers(m) && filter(m)
     : filterIgnoredMembers;
   return (componentInput.members as Property[])
@@ -362,7 +361,7 @@ function removeDuplicates(members: (Property | Method)[]) {
       d[m.name] = m;
       return d;
     },
-    { },
+    {},
   );
 
   return Object.keys(dictionary).map((k) => dictionary[k]);
