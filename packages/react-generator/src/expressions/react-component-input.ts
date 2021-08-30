@@ -29,7 +29,7 @@ export function getTemplatePropName(
 export function buildTemplateProperty(
   templatePropName: string,
   templateMember: Property,
-  isComponent: boolean
+  isComponent: boolean,
 ) {
   return new Property(
     [new Decorator(new Call(new Identifier('OneWay'), undefined, []), {})],
@@ -53,9 +53,9 @@ export function getTemplatePropertyName(
   throw `You can't use '${templatePropName}' property. It'll be generated for '${templateMember._name}' template property.`;
 }
 
-
 export class ComponentInput extends BaseComponentInput {
   typeDeclarationIgnoreMembers!: string[];
+
   createProperty(
     decorators: Decorator[],
     modifiers: string[] | undefined,
@@ -79,7 +79,7 @@ export class ComponentInput extends BaseComponentInput {
     members: BaseClassMember[],
   ) {
     const renderPropName = getTemplatePropertyName(templateMember, members, 'render');
-    const componentPropName = getTemplatePropertyName(templateMember, members, 'component')
+    const componentPropName = getTemplatePropertyName(templateMember, members, 'component');
     this.typeDeclarationIgnoreMembers = [...(this.typeDeclarationIgnoreMembers || []), renderPropName, componentPropName];
     return [buildTemplateProperty(renderPropName, templateMember, false), buildTemplateProperty(componentPropName, templateMember, true)];
   }
@@ -87,7 +87,6 @@ export class ComponentInput extends BaseComponentInput {
   membersFromTypeDeclarationIgnoreMembers(): string[] {
     return [...super.membersFromTypeDeclarationIgnoreMembers(), ...(this.typeDeclarationIgnoreMembers || [])];
   }
-
 
   compileImports() {
     return this.getImports(this.context).join(';\n');
@@ -154,8 +153,8 @@ export class ComponentInput extends BaseComponentInput {
 
     const defaultObject = `{
       ${propertiesWithInitializer
-        .map((p) => p.defaultProps(options))
-        .join(',\n')}
+    .map((p) => p.defaultProps(options))
+    .join(',\n')}
    }`;
 
     let defaultProps = defaultObject;
@@ -170,9 +169,9 @@ export class ComponentInput extends BaseComponentInput {
           ${typeDeclaration}
           ${declarationModifiers.join(' ')} const ${this.name}:${typeName}=${defaultProps}${typeCasting};
           ${declarationModifiers !== this.modifiers
-        ? `${this.modifiers.join(' ')} ${this.name}`
-        : ''
-      }`;
+    ? `${this.modifiers.join(' ')} ${this.name}`
+    : ''
+}`;
   }
 
   createChildrenForNested(members: Array<BaseProperty | Method>) {

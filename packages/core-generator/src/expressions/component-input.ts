@@ -31,6 +31,7 @@ const typeDeclarationIgnoreMembers = ['__defaultNestedValues'];
 
 export class ComponentInput extends Class implements Heritable {
   fromType: boolean;
+
   constructor(
     decorators: Decorator[],
     modifiers: string[] | undefined,
