@@ -67,6 +67,10 @@ const addEmptyToString = <T>(e: T): T => {
   return e as typeof e;
 };
 export class VueGenerator extends BaseGenerator {
+  getPlatform(): string {
+    return 'vue';
+  }
+
   createComponentBindings(
     decorators: Decorator[],
     modifiers: string[] | undefined,

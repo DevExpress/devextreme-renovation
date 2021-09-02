@@ -1,0 +1,1 @@
+import { renderTemplate } from '@devextreme/vdom/src/angular';

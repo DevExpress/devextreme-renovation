@@ -3,6 +3,7 @@ import CodeBlockWriter from 'code-block-writer';
 export function generateFactoryCode(
   ts: typeof import('typescript'),
   initialNode: import('typescript').Node,
+  platform: string,
 ) {
   const writer = new CodeBlockWriter({
     newLine: '\n',
@@ -3656,7 +3657,8 @@ export function generateFactoryCode(
         writeNodeText(node.importClause);
       }
       writer.write(',').newLine();
-      writeNodeText(node.moduleSpecifier);
+      const processedPath = node.moduleSpecifier.getText().replace(/(devextreme\/vdom\/src\/)declarations/i, `$1${platform}`);
+      writer.write(`ts.createStringLiteral(${processedPath})`);
     });
     writer.write(')');
   }

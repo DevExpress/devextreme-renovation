@@ -29,6 +29,10 @@ import { TypeReferenceNode } from './expressions/type-reference-node';
 import { New, Call } from './expressions/common';
 
 export class ReactGenerator extends BaseGenerator {
+  getPlatform(): string {
+    return 'react';
+  }
+
   createHeritageClause(token: string, types: ExpressionWithTypeArguments[]) {
     return new HeritageClause(token, types, this.getContext());
   }

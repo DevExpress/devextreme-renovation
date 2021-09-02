@@ -15,7 +15,8 @@ mocha.describe("preact-generator", function () {
   this.beforeAll(function () {
     compile(
       `${__dirname}/test-cases/declarations/src`,
-      `${__dirname}/test-cases/componentFactory`
+      `${__dirname}/test-cases/componentFactory/preact`,
+      'preact'
     );
     this.testGenerator = function (componentName: string) {
       generator.setContext({
@@ -418,7 +419,8 @@ mocha.describe("preact-generator: jQuery generation", function () {
   this.beforeAll(function () {
     compile(
       `${__dirname}/test-cases/declarations/src`,
-      `${__dirname}/test-cases/componentFactory`
+      `${__dirname}/test-cases/componentFactory/preact`,
+      'preact'
     );
 
     this.testGenerator = function (componentName: string) {
