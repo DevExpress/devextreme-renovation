@@ -8,9 +8,14 @@ import {
   Rule,
 } from "../../../../jquery-helpers/default_options";
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback } from "react";
 
-declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof Props & RestProps;
   restAttributes: RestProps;
@@ -28,20 +33,20 @@ export default function Widget(props: typeof Props & RestProps) {
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
 
-function __createDefaultProps() {
-  return {
-    ...Props,
-  };
-}
-Widget.defaultProps = __createDefaultProps();
+Widget.defaultProps = Props;
 
 type WidgetOptionRule = Rule<typeof Props>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {
   __defaultOptionRules.push(rule);
-  Widget.defaultProps = {
-    ...__createDefaultProps(),
-    ...convertRulesToOptions<typeof Props>(__defaultOptionRules),
-  };
+  Widget.defaultProps = Object.create(
+    Object.prototype,
+    Object.assign(
+      Object.getOwnPropertyDescriptors(Widget.defaultProps),
+      Object.getOwnPropertyDescriptors(
+        convertRulesToOptions<typeof Props>(__defaultOptionRules)
+      )
+    )
+  );
 }

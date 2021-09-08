@@ -9,12 +9,14 @@ import {
   Rule,
 } from "../../../../jquery-helpers/default_options";
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetProps
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetProps & RestProps;
   restAttributes: RestProps;
@@ -32,23 +34,35 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   return view();
 }
 
-function __createDefaultProps() {
-  return {
-    ...WidgetProps,
-    ...convertRulesToOptions<typeof WidgetProps>([
-      { device: true, options: {} },
-    ]),
-  };
-}
-Widget.defaultProps = __createDefaultProps();
+Widget.defaultProps = Object.create(
+  Object.prototype,
+  Object.assign(
+    Object.getOwnPropertyDescriptors(WidgetProps),
+    Object.getOwnPropertyDescriptors({
+      ...convertRulesToOptions<typeof WidgetProps>([
+        { device: true, options: {} },
+      ]),
+    })
+  )
+);
 
 type WidgetOptionRule = Rule<typeof WidgetProps>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {
   __defaultOptionRules.push(rule);
-  Widget.defaultProps = {
-    ...__createDefaultProps(),
-    ...convertRulesToOptions<typeof WidgetProps>(__defaultOptionRules),
-  };
+  Widget.defaultProps = Object.create(
+    Object.prototype,
+    Object.assign(
+      Object.getOwnPropertyDescriptors(Widget.defaultProps),
+      Object.getOwnPropertyDescriptors(
+        convertRulesToOptions<typeof WidgetProps>([
+          { device: true, options: {} },
+        ])
+      ),
+      Object.getOwnPropertyDescriptors(
+        convertRulesToOptions<typeof WidgetProps>(__defaultOptionRules)
+      )
+    )
+  );
 }

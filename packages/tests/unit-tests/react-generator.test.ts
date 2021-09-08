@@ -3,6 +3,7 @@ import path from "path";
 
 import {
   Binary,
+  Block,
   Decorators,
   GeneratorContext,
   Method,
@@ -149,6 +150,71 @@ mocha.describe("react-generator: expressions", function () {
         );
 
         assert.strictEqual(expression.getter(), "name()");
+      });
+    });
+
+    mocha.describe("Abstract method", function () {
+      mocha.it("abstract method with modifier and without body", function () {
+        const expression = generator.createMethod(
+          [],
+          ["abstract"],
+          undefined,
+          generator.createIdentifier("m"),
+          undefined,
+          undefined,
+          [],
+          undefined,
+          undefined
+        );
+
+        assert.strictEqual(
+          expression.toString(),
+          "abstract m():any;"
+        );
+      });
+
+      mocha.it("abstract method without modifier and without body", function () {
+        const expression = generator.createMethod(
+          [],
+          [],
+          undefined,
+          generator.createIdentifier("m"),
+          undefined,
+          undefined,
+          [],
+          undefined,
+          undefined
+        );
+
+        try {
+          expression.toString();
+        } catch (e) {
+          assert.strictEqual(
+            e.toString().split("\n")[0],
+            "Error: Function implementation is missing or not immediately following the declaration.");
+        }
+      });
+
+      mocha.it("abstract method with modifier and body", function () {
+        const expression = generator.createMethod(
+          [],
+          ["abstract"],
+          undefined,
+          generator.createIdentifier("m"),
+          undefined,
+          undefined,
+          [],
+          undefined,
+          new Block([], false)
+        );
+
+        try {
+          expression.toString();
+        } catch (e) {
+          assert.strictEqual(
+            e.toString().split("\n")[0],
+            "Error: Method 'm' cannot have an implementation because it is marked abstract.");
+        }
       });
     });
   });
@@ -1234,7 +1300,7 @@ mocha.describe("import Components", function () {
 
       assert.equal(
         getResult(component.compileDefaultProps()),
-        getResult("Component.defaultProps = {...Base.defaultProps}")
+        getResult("Component.defaultProps = Base.defaultProps")
       );
     }
   );
@@ -1320,8 +1386,9 @@ mocha.describe("import Components", function () {
         [
           generator.createDecorator(
             generator.createCall(
-              generator.createIdentifier(Decorators.OneWay),
-              undefined
+              generator.createIdentifier("OneWay"),
+              undefined,
+              []
             )
           ),
         ],
@@ -1345,7 +1412,7 @@ mocha.describe("import Components", function () {
       assert.equal(
         getResult(component.compileDefaultProps()),
         getResult(
-          "Component.defaultProps = {...Base.defaultProps, childProp:10}"
+          "Component.defaultProps = Object.create(Object.prototype,Object.assign(Object.getOwnPropertyDescriptors(Base.defaultProps),Object.getOwnPropertyDescriptors({childProp:10})))"
         )
       );
     }
@@ -1460,7 +1527,7 @@ mocha.describe("import Components", function () {
       getResult(model.toString()),
       getResult(`
             export declare type ModelType = typeof WidgetProps & {};
-            const Model:ModelType = {...WidgetProps}
+            const Model:ModelType = WidgetProps
         `)
     );
   });
@@ -1520,11 +1587,12 @@ mocha.describe("import Components", function () {
     );
 
     assert.strictEqual(model.defaultPropsDest(), "Model");
+
     assert.strictEqual(
       removeSpaces(model.toString()),
       removeSpaces(`
             export declare type ModelType = typeof WidgetProps & {height:string}
-            constModel:ModelType={...WidgetProps, height:"10px"};
+            constModel:ModelType=Object.create(Object.prototype,Object.assign(Object.getOwnPropertyDescriptors(WidgetProps),Object.getOwnPropertyDescriptors({height:"10px"}),));
         `)
     );
   });
@@ -3302,7 +3370,7 @@ mocha.describe("Default_options", function () {
     assert.strictEqual(
       getResult(component.compileImports()),
       getResult(
-        `import * as React from "react"; import { useCallback, HTMLAttributes } from "react";`
+        `import * as React from "react"; import { useCallback } from "react";`
       )
     );
   });
@@ -3369,7 +3437,7 @@ mocha.describe("Default_options", function () {
       assert.strictEqual(
         getResult(component.compileImports()),
         getResult(
-          `import {convertRulesToOptions, Rule} from "../default_options"; import * as React from "react"; import { useCallback, HTMLAttributes } from "react";`
+          `import {convertRulesToOptions, Rule} from "../default_options"; import * as React from "react"; import { useCallback } from "react";`
         )
       );
     }
@@ -3393,7 +3461,7 @@ mocha.describe("Default_options", function () {
       assert.strictEqual(
         getResult(component.compileImports()),
         getResult(
-          `import * as React from "react"; import { useCallback, HTMLAttributes } from "react";`
+          `import * as React from "react"; import { useCallback } from "react";`
         )
       );
     }
@@ -3418,3 +3486,44 @@ mocha.describe("Default_options", function () {
     }
   );
 });
+
+mocha.describe("Import_Declaration", function(){
+  this.beforeEach(function () {
+    generator.setContext({ dirname: path.resolve(__dirname) });
+  });
+
+  this.afterEach(function () {
+    generator.setContext(null);
+  });
+  mocha.it("generates import for RefObject", function(){
+    const importDeclaration = generator.createImportDeclaration(
+      undefined,
+      undefined,
+      generator.createImportClause(
+        undefined,
+        generator.createNamedImports([
+          generator.createImportSpecifier(
+            undefined,
+            generator.createIdentifier("ComponentBindings")
+          ),
+          generator.createImportSpecifier(
+            undefined,
+            generator.createIdentifier("Ref")
+          ),
+          generator.createImportSpecifier(
+            undefined,
+            generator.createIdentifier("RefObject")
+          )
+        ]),
+        false
+      ),
+      generator.createStringLiteral("@devextreme-generator/declarations")
+    );
+    assert.strictEqual(
+      getResult(importDeclaration.toString()),
+      getResult(
+        `import { MutableRefObject } from "react"`
+      )
+    );
+  })
+})

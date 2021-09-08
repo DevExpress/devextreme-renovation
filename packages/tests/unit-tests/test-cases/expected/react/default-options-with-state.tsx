@@ -8,23 +8,25 @@ export declare type WidgetPropsType = {
   defaultP2: string;
   p2Change?: (p2: string) => void;
 };
-export const WidgetProps: WidgetPropsType = ({
+export const WidgetProps: WidgetPropsType = {
   defaultP1: "",
   p1Change: () => {},
   defaultP2: "",
   p2Change: () => {},
-} as any) as WidgetPropsType;
+} as any as WidgetPropsType;
 import {
   convertRulesToOptions,
   Rule,
 } from "../../../../jquery-helpers/default_options";
 import * as React from "react";
-import { useState, useCallback, HTMLAttributes } from "react";
+import { useState, useCallback } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetProps
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetProps & RestProps;
   restAttributes: RestProps;
@@ -40,19 +42,12 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const {
-        defaultP1,
-        defaultP2,
-        p1,
-        p1Change,
-        p2,
-        p2Change,
-        ...restProps
-      } = {
-        ...props,
-        p1: props.p1 !== undefined ? props.p1 : __state_p1,
-        p2: props.p2 !== undefined ? props.p2 : __state_p2,
-      };
+      const { defaultP1, defaultP2, p1, p1Change, p2, p2Change, ...restProps } =
+        {
+          ...props,
+          p1: props.p1 !== undefined ? props.p1 : __state_p1,
+          p2: props.p2 !== undefined ? props.p2 : __state_p2,
+        };
       return restProps;
     },
     [props, __state_p1, __state_p2]
@@ -74,20 +69,20 @@ function __processTwoWayProps(defaultProps: typeof WidgetProps & RestProps) {
   }, {});
 }
 
-function __createDefaultProps() {
-  return {
-    ...WidgetProps,
-  };
-}
-Widget.defaultProps = __createDefaultProps();
+Widget.defaultProps = WidgetProps;
 
 type WidgetOptionRule = Rule<typeof WidgetProps>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {
   __defaultOptionRules.push(rule);
-  Widget.defaultProps = {
-    ...__createDefaultProps(),
-    ...__processTwoWayProps(convertRulesToOptions(__defaultOptionRules)),
-  };
+  Widget.defaultProps = Object.create(
+    Object.prototype,
+    Object.assign(
+      Object.getOwnPropertyDescriptors(Widget.defaultProps),
+      Object.getOwnPropertyDescriptors(
+        __processTwoWayProps(convertRulesToOptions(__defaultOptionRules))
+      )
+    )
+  );
 }

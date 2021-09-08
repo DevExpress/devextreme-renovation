@@ -8,6 +8,7 @@ import {
   ObjType,
   StringArr,
   StringType,
+  WidgetProps as ExternalWidgetProps,
 } from "./types-external";
 export const WidgetProps = {
   str: {
@@ -116,4 +117,17 @@ export const DxWidget = {
   },
 };
 export default DxWidget;
+const BaseViewPropsType = {
+  strArr: {
+    type: Array,
+    default() {
+      return typeof WidgetProps.strArr.default === "function"
+        ? WidgetProps.strArr.default()
+        : WidgetProps.strArr.default;
+    },
+  },
+  customTypeField: {
+    type: Array,
+  },
+};
 </script>

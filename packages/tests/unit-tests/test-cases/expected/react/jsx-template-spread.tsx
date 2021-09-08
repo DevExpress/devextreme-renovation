@@ -50,9 +50,14 @@ function view(model: Widget) {
 }
 
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback } from "react";
 
-declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof Props & RestProps;
   spreadGetter: { width: string; height: string };
@@ -110,6 +115,4 @@ export default function Widget(props: typeof Props & RestProps) {
   });
 }
 
-Widget.defaultProps = {
-  ...Props,
-};
+Widget.defaultProps = Props;

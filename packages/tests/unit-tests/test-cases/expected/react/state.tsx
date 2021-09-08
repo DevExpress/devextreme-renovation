@@ -20,25 +20,30 @@ export declare type WidgetInputType = {
   defaultStateProp?: boolean;
   statePropChange?: (stateProp?: boolean) => void;
 };
-const WidgetInput: WidgetInputType = ({
+const WidgetInput: WidgetInputType = {
   defaultState1: false,
   state1Change: () => {},
   defaultState2: false,
   state2Change: () => {},
   statePropChange: () => {},
-} as any) as WidgetInputType;
+} as any as WidgetInputType;
 import * as React from "react";
-import { useState, useCallback, HTMLAttributes } from "react";
+import { useState, useCallback } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetInput & RestProps;
+  internalState: number;
   innerData?: string;
   updateState: () => any;
   updateState2: () => any;
+  updateState3: (state: boolean) => any;
+  updateInnerState: (state: number) => any;
   destruct: () => any;
   stateChange: (stateProp?: boolean) => any;
   restAttributes: RestProps;
@@ -56,9 +61,9 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   >(() =>
     props.stateProp !== undefined ? props.stateProp : props.defaultStateProp
   );
-  const [__state_innerData, __state_setInnerData] = useState<
-    string | undefined
-  >(undefined);
+  const [__state_internalState, __state_setInternalState] = useState<number>(0);
+  const [__state_innerData, __state_setInnerData] =
+    useState<string | undefined>(undefined);
 
   const __updateState = useCallback(
     function __updateState(): any {
@@ -80,6 +85,18 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     },
     [props.state2, __state_state2, props.state2Change]
   );
+  const __updateState3 = useCallback(
+    function __updateState3(state: boolean): any {
+      __state_setState2((__state_state2) => state), props.state2Change!(state);
+    },
+    [props.state2Change]
+  );
+  const __updateInnerState = useCallback(function __updateInnerState(
+    state: number
+  ): any {
+    __state_setInternalState((__state_internalState) => state);
+  },
+  []);
   const __destruct = useCallback(
     function __destruct(): any {
       const s = props.state1 !== undefined ? props.state1 : __state_state1;
@@ -126,15 +143,16 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
       stateProp:
         props.stateProp !== undefined ? props.stateProp : __state_stateProp,
     },
+    internalState: __state_internalState,
     innerData: __state_innerData,
     updateState: __updateState,
     updateState2: __updateState2,
+    updateState3: __updateState3,
+    updateInnerState: __updateInnerState,
     destruct: __destruct,
     stateChange: __stateChange,
     restAttributes: __restAttributes(),
   });
 }
 
-Widget.defaultProps = {
-  ...WidgetInput,
-};
+Widget.defaultProps = WidgetInput;

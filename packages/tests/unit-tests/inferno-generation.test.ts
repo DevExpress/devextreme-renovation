@@ -47,6 +47,10 @@ mocha.describe("inferno-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("abstract-class", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("props", function () {
     this.testGenerator(this.test!.title);
   });
@@ -64,6 +68,10 @@ mocha.describe("inferno-generation", function () {
   });
 
   mocha.it("component-input", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("component-input-defaults", function () {
     this.testGenerator(this.test!.title);
   });
 
@@ -114,6 +122,10 @@ mocha.describe("inferno-generation", function () {
   mocha.it("nested", function () {
     this.testGenerator(this.test!.title);
   });
+  
+  mocha.it("nested-pick", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   mocha.it("nested-props", function () {
     this.testGenerator(this.test!.title);
@@ -140,6 +152,26 @@ mocha.describe("inferno-generation", function () {
   });
 
   mocha.it("function-declaration", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("jquery-empty", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("getter-with-complex-type", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("inferno-will-update-base", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("inferno-will-update-jquery", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("inferno-will-update-effects", function () {
     this.testGenerator(this.test!.title);
   });
 

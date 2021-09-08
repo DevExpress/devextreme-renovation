@@ -2,6 +2,10 @@
 
 name: DevExtreme
 
+concurrency:
+  group: wf-${{github.event.pull_request.number}}-${{github.workflow}}
+  cancel-in-progress: true
+
 on:
   push:
     branches:
@@ -53,7 +57,7 @@ jobs:
           fetch-depth: 2
 
       - name: Get DevExtreme
-        run: git clone https://github.com/DevExpress/DevExtreme
+        run: git clone -b 21_2 --single-branch https://github.com/DevExpress/DevExtreme
 
       - name: Build DevExtreme
         run: |
@@ -85,30 +89,19 @@ jobs:
           cd ./DevExtreme
           npx gulp $TASK
 
-  devextreme-qunit-tests:
-    name: DevExtreme QUnit Tests
+  devextreme-jest-tests:
+    name: DevExtreme Jest Tests
     runs-on: ubuntu-latest
-    needs: [ devextreme-compilation ]
-
-    strategy:
-      matrix:
-        NORENOVATION: [ true ]
-        BROWSER: [ google-chrome ]
-        CONSTEL: [ export, misc, ui, ui.widgets, ui.editors, ui.grid, ui.scheduler, viz, renovation ]
-        JQUERY: [ jquery=3 ]
+    needs: [ build-generators ]
 
     steps:
-      - name: Setup utils
-        run: |
-          sudo apt-get install -y dbus-x11 httping x11vnc xvfb
-
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 2
 
       - name: Get DevExtreme
-        run: git clone https://github.com/DevExpress/DevExtreme
+        run: git clone -b 21_2 --single-branch https://github.com/DevExpress/DevExtreme
 
       - name: Build DevExtreme
         env:
@@ -137,12 +130,66 @@ jobs:
           npm i ../inferno-generator/package.tgz
           npm i ../build-helpers/package.tgz
 
+      - name: Run Jest tests
+        run: |
+          cd ./DevExtreme
+          npm run test-jest
+
+  devextreme-qunit-tests:
+    name: QUnit Constel ${{ matrix.CONSTEL }}
+    runs-on: ubuntu-latest
+    needs: [ build-generators ]
+
+    strategy:
+      matrix:
+        BROWSER: [ google-chrome ]
+        CONSTEL: [ export, misc, ui, ui.widgets(1/2), ui.widgets(2/2), ui.editors, ui.grid, ui.scheduler(1/2), ui.scheduler(2/2), viz, renovation ]
+
+    steps:
+      - name: Setup utils
+        run: |
+          sudo apt-get install -y dbus-x11 httping x11vnc xvfb
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: Get DevExtreme
+        run: git clone -b 21_2 --single-branch https://github.com/DevExpress/DevExtreme
+
+      - uses: actions/download-artifact@master
+        with:
+          name: devextreme-generator-artifacts
+
+      - name: Install Generators
+        run: |
+          cd ./DevExtreme
+          npm i ../vdom/package.tgz
+          npm i ../declarations/package.tgz
+          npm i ../core-generator/package.tgz
+          npm i ../angular-generator/package.tgz
+          npm i ../vue-generator/package.tgz
+          npm i ../react-generator/package.tgz
+          npm i ../preact-generator/package.tgz
+          npm i ../inferno-generator/package.tgz
+          npm i ../build-helpers/package.tgz
+
+      - name: Build DevExtreme
+        env:
+          DEVEXTREME_TEST_CI: "true"
+          DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
+        run: |
+          cd ./DevExtreme
+          npm install --no-package-lock --no-audit --no-fund
+          npm run build
+      
       - name: Run QUnit tests
         env:
           CONSTEL: ${{ matrix.CONSTEL }}
-          JQUERY: ${{ matrix.JQUERY }}
           BROWSER: ${{ matrix.BROWSER }}
-          NORENOVATION: ${{ matrix.NORENOVATION }}
+          NORENOVATION: "false"
           GITHUBACTION: "true"
           TARGET: "test"
         run: |

@@ -14,7 +14,7 @@ export class New extends BaseNew {
       const matchedInput = componentInputs.find(
         (c) => c.name === this.expression.toString(),
       );
-      if (matchedInput?.isNested) {
+      if (matchedInput?.members.some((m) => m.isNested)) {
         const conditional = new Conditional(
           new PropertyAccess(
             this.expression,
@@ -54,4 +54,13 @@ export class Call extends BaseCall {
     }
     return super.compileHasOwnProperty(value, options);
   }
+}
+
+export function compileGettersCompatibleExtend(...extenderObjects: string[]): string {
+  return `Object.create(
+    Object.prototype,
+    Object.assign(
+      ${extenderObjects.map((object) => `Object.getOwnPropertyDescriptors(${object}),`).join('\n')}
+    )
+  )`;
 }

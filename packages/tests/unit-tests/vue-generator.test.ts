@@ -1,7 +1,7 @@
 import assert from 'assert';
 
 import { toStringOptions } from '@devextreme-generator/angular';
-import { Decorators, Identifier, TypeExpression } from '@devextreme-generator/core';
+import {Block, Decorators, Identifier, TypeExpression} from '@devextreme-generator/core';
 import generator, { JsxExpression, VueComponent } from '@devextreme-generator/vue';
 import { printSourceCodeAst as getAst, removeSpaces } from './helpers/common';
 import componentCreator from './helpers/create-component';
@@ -506,6 +506,24 @@ mocha.describe("Vue-generator", function () {
             name,
             generator.SyntaxKind.QuestionToken,
             generator.createKeywordTypeNode("undefined"),
+            undefined
+          );
+
+          assert.strictEqual(
+            getAst(expression.toString({ members: [] })),
+            getAst("p: {}")
+          );
+          assert.strictEqual(expression.getter(), "p");
+          assert.strictEqual(expression.getter("this"), "this.p");
+        });
+
+        mocha.it("Property with KeywordTypeNode - unknown", function () {
+          const expression = generator.createProperty(
+            decorators,
+            undefined,
+            name,
+            generator.SyntaxKind.QuestionToken,
+            generator.createKeywordTypeNode("unknown"),
             undefined
           );
 
@@ -1250,6 +1268,71 @@ mocha.describe("Vue-generator", function () {
         getAst("m(){}")
       );
     });
+
+  mocha.describe("Abstract method", function () {
+    mocha.it("abstract method with modifier and without body", function () {
+      const expression = generator.createMethod(
+        [],
+        ["abstract"],
+        undefined,
+        generator.createIdentifier("m"),
+        undefined,
+        undefined,
+        [],
+        undefined,
+        undefined
+      );
+
+      assert.strictEqual(
+        expression.toString(),
+        "m(){}"
+      );
+    });
+
+    mocha.it("abstract method without modifier and without body", function () {
+      const expression = generator.createMethod(
+        [],
+        [],
+        undefined,
+        generator.createIdentifier("m"),
+        undefined,
+        undefined,
+        [],
+        undefined,
+        undefined
+      );
+
+      try {
+        expression.toString();
+      } catch (e) {
+        assert.strictEqual(
+          e.toString().split("\n")[0],
+          "Error: Function implementation is missing or not immediately following the declaration.");
+      }
+    });
+
+    mocha.it("abstract method with modifier and body", function () {
+      const expression = generator.createMethod(
+        [],
+        ["abstract"],
+        undefined,
+        generator.createIdentifier("m"),
+        undefined,
+        undefined,
+        [],
+        undefined,
+        new Block([], false)
+      );
+
+      try {
+        expression.toString();
+      } catch (e) {
+        assert.strictEqual(
+          e.toString().split("\n")[0],
+          "Error: Method 'm' cannot have an implementation because it is marked abstract.");
+      }
+    });
+  });
 
     mocha.it("Method with parameters", function () {
       const expression = generator.createMethod(

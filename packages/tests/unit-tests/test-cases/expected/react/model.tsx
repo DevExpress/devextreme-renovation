@@ -18,12 +18,14 @@ const ModelWidgetInput: ModelWidgetInputType = {
   valueChange: () => {},
 };
 import * as React from "react";
-import { useState, useCallback, HTMLAttributes } from "react";
+import { useState, useCallback } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof ModelWidgetInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface ModelWidget {
   props: typeof ModelWidgetInput & RestProps;
   restAttributes: RestProps;
@@ -97,6 +99,4 @@ export default function ModelWidget(
   });
 }
 
-ModelWidget.defaultProps = {
-  ...ModelWidgetInput,
-};
+ModelWidget.defaultProps = ModelWidgetInput;

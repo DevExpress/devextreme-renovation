@@ -122,10 +122,8 @@ export class PropertyAccess extends ExpressionWithExpression {
       if (this.checkPropsAccess(result, options)) {
         return this.processProps(value, options, elements);
       }
-
       return options?.newComponentContext === '' ? this.name.toString() : value;
     }
-
     return result;
   }
 
@@ -206,6 +204,12 @@ export class PropertyAccessChain extends ExpressionWithExpression {
     return super
       .getDependency(options)
       .concat(this.name.getDependency(options));
+  }
+
+  getMember(options?: toStringOptions) {
+    return options?.members.find(
+      (m) => m._name.toString() === this.name.toString(),
+    );
   }
 }
 

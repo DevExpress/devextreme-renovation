@@ -56,6 +56,7 @@ import {
 import {
   ArrayLiteral, NumericLiteral, ObjectLiteral, StringLiteral,
 } from './expressions/literal';
+import { ModuleDeclaration } from './expressions/module_declaration';
 import { Binary, Postfix, Prefix } from './expressions/operators';
 import {
   ComputedPropertyName,
@@ -706,6 +707,7 @@ export class Generator implements GeneratorAPI {
     typeParameters: TypeExpression[] | string[] | undefined,
     heritageClauses: HeritageClause[],
     members: Array<Property | Method>,
+    fromType = false,
   ) {
     return new ComponentInput(
       decorators,
@@ -715,6 +717,7 @@ export class Generator implements GeneratorAPI {
       heritageClauses,
       members,
       this.getContext(),
+      fromType,
     );
   }
 
@@ -1029,6 +1032,7 @@ export class Generator implements GeneratorAPI {
         [],
         [],
         members,
+        true,
       );
 
       this.addComponent(name.toString(), componentBindings);
@@ -1217,6 +1221,20 @@ export class Generator implements GeneratorAPI {
 
   createRegularExpressionLiteral(text: string) {
     return new SimpleExpression(text);
+  }
+
+  createModuleDeclaration(
+    decorators: Decorator[] | undefined,
+    modifiers: string[] | undefined,
+    name: StringLiteral,
+    body: Block | undefined,
+    _flags?: never, // These flags are NodeFlag which different of our and don't used now
+  ): ModuleDeclaration {
+    return new ModuleDeclaration(decorators, modifiers, name, body);
+  }
+
+  createModuleBlock(statements: Expression[]): Block {
+    return new Block(statements, true);
   }
 
   context: GeneratorContext[] = [];

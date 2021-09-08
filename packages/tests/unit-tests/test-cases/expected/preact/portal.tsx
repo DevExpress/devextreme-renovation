@@ -1,3 +1,4 @@
+import { RefObject } from "preact";
 import { createPortal } from "preact/compat";
 function view(model: Widget) {
   return (
@@ -20,7 +21,6 @@ export declare type WidgetPropsType = {
 };
 export const WidgetProps: WidgetPropsType = {};
 import * as Preact from "preact";
-import { RefObject } from "preact";
 import { useState, useCallback, useEffect } from "preact/hooks";
 
 declare type PortalProps = {
@@ -67,6 +67,4 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   });
 }
 
-Widget.defaultProps = {
-  ...WidgetProps,
-};
+Widget.defaultProps = WidgetProps;

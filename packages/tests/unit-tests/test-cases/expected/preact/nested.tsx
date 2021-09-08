@@ -30,7 +30,7 @@ export default function Widget(props: typeof PickedProps & RestProps) {
   );
   const __isEditable = useCallback(
     function __isEditable(): any {
-      return props.editing?.editEnabled || props.editing?.custom?.length;
+      return props.editing.editEnabled || props.editing.custom?.length;
     },
     [props.editing]
   );
@@ -50,6 +50,4 @@ export default function Widget(props: typeof PickedProps & RestProps) {
   });
 }
 
-Widget.defaultProps = {
-  ...PickedProps,
-};
+Widget.defaultProps = PickedProps;

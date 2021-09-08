@@ -140,7 +140,7 @@ export class Class extends Expression {
   }
 
   processMembers(members: Array<Property | Method>) {
-    return members;
+    return [...members];
   }
 
   constructor(
@@ -164,8 +164,8 @@ export class Class extends Expression {
 
   toString() {
     return `${this.decorators.join('\n')}
-        ${this.modifiers.join(' ')} 
-        class ${this.name}${compileTypeParameters(this.typeParameters)} ${
+        ${this.modifiers.join(' ')} class ${this.name}
+        ${compileTypeParameters(this.typeParameters)} ${
   this.heritageClauses.length ? `${this.heritageClauses.join(' ')}` : ''
 } {
             ${this.members.join('\n')}

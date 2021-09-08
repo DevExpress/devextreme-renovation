@@ -5,11 +5,11 @@ import {
 import { calculateMethodDependency } from './method';
 
 export class GetAccessor extends BaseGetAccessor {
-  getter(componentContext?: string) {
+  getter(componentContext?: string): string {
     return `${super.getter(componentContext)}()`;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): string[] {
     return calculateMethodDependency(
       super.getDependency(options),
       options.members,

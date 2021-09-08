@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 function view({ props: { childRef, nullableRef } }: RefOnChildrenChild) {
   return (
     <div ref={childRef}>
@@ -11,11 +12,16 @@ export declare type PropsType = {
   nullableRef?: MutableRefObject<HTMLDivElement | null>;
   state?: number;
 };
-const Props: PropsType = ({} as any) as PropsType;
+const Props: PropsType = {} as any as PropsType;
 import * as React from "react";
-import { useCallback, MutableRefObject, HTMLAttributes } from "react";
+import { useCallback } from "react";
 
-declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface RefOnChildrenChild {
   props: typeof Props & RestProps;
   method: () => any;
@@ -49,6 +55,4 @@ export default function RefOnChildrenChild(props: typeof Props & RestProps) {
   });
 }
 
-RefOnChildrenChild.defaultProps = {
-  ...Props,
-};
+RefOnChildrenChild.defaultProps = Props;

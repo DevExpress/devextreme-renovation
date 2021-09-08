@@ -43,18 +43,13 @@ const WidgetWithProps = forwardRef<
   useImperativeHandle(ref, () => ({ doSomething: __doSomething }), [
     __doSomething,
   ]);
-  return view({
-    props: { ...props },
-    restAttributes: __restAttributes(),
-  });
+  return view({ props: { ...props }, restAttributes: __restAttributes() });
 }) as Preact.FunctionalComponent<typeof WidgetWithPropsInput & RestProps> & {
   defaultProps: typeof WidgetWithPropsInput;
 };
 export { WidgetWithProps };
 
-WidgetWithProps.defaultProps = {
-  ...WidgetWithPropsInput,
-};
+WidgetWithProps.defaultProps = WidgetWithPropsInput;
 function view({ props: { optionalValue, value } }: WidgetWithProps) {
   return <div>{optionalValue || value}</div>;
 }

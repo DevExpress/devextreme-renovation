@@ -15,19 +15,21 @@ export declare type WidgetInputType = {
   defaultS: number;
   sChange?: (s: number) => void;
 };
-export const WidgetInput: WidgetInputType = ({
+export const WidgetInput: WidgetInputType = {
   p: "10",
   r: "20",
   defaultS: 10,
   sChange: () => {},
-} as any) as WidgetInputType;
+} as any as WidgetInputType;
 import * as React from "react";
-import { useState, useCallback, useEffect, HTMLAttributes } from "react";
+import { useState, useCallback, useEffect } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetInput & RestProps;
   i: number;
@@ -100,6 +102,4 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   });
 }
 
-Widget.defaultProps = {
-  ...WidgetInput,
-};
+Widget.defaultProps = WidgetInput;

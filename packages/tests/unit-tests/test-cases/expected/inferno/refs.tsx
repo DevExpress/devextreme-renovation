@@ -20,7 +20,7 @@ export declare type WidgetPropsType = {
   requiredRefProp: RefObject<HTMLDivElement | null>;
   requiredForwardRefProp: RefObject<HTMLDivElement | null>;
 };
-const WidgetProps: WidgetPropsType = ({} as any) as WidgetPropsType;
+const WidgetProps: WidgetPropsType = {} as any as WidgetPropsType;
 import { createElement as h } from "inferno-compat";
 import { createRef as infernoCreateRef } from "inferno";
 declare type RestProps = {
@@ -37,7 +37,8 @@ export default class Widget extends BaseInfernoComponent<any> {
   ref: RefObject<HTMLDivElement> = infernoCreateRef<HTMLDivElement>();
   forwardRef: RefObject<HTMLDivElement> = infernoCreateRef<HTMLDivElement>();
   existingRef: RefObject<HTMLDivElement> = infernoCreateRef<HTMLDivElement>();
-  existingForwardRef: RefObject<HTMLDivElement> = infernoCreateRef<HTMLDivElement>();
+  existingForwardRef: RefObject<HTMLDivElement> =
+    infernoCreateRef<HTMLDivElement>();
 
   constructor(props: any) {
     super(props);
@@ -122,6 +123,4 @@ export default class Widget extends BaseInfernoComponent<any> {
   }
 }
 
-Widget.defaultProps = {
-  ...WidgetProps,
-};
+Widget.defaultProps = WidgetProps;

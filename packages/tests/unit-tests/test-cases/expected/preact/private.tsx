@@ -20,9 +20,8 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const [__state_decoratedState, __state_setDecoratedState] = useState<string>(
-    ""
-  );
+  const [__state_decoratedState, __state_setDecoratedState] =
+    useState<string>("");
   const [__state_simpleState, __state_setSimpleState] = useState<string>("");
 
   const __privateGetter = useCallback(
@@ -52,6 +51,4 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   });
 }
 
-Widget.defaultProps = {
-  ...WidgetInput,
-};
+Widget.defaultProps = WidgetInput;

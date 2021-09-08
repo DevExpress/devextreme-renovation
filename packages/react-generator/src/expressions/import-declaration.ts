@@ -9,6 +9,10 @@ export class ImportDeclaration extends BaseImportDeclaration {
       react.push('createContext');
     }
 
+    if (this.has('RefObject') || this.has('Ref') || this.has('ForwardRef')) {
+      react.push('MutableRefObject');
+    }
+
     if (this.has('Portal')) {
       reactDom.push('createPortal');
     }

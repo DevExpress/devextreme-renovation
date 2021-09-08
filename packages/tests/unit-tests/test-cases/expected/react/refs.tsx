@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 function view(viewModel: Widget) {
   return (
     <div ref={viewModel.divRef}>
@@ -13,14 +14,16 @@ export declare type WidgetPropsType = {
   requiredRefProp: MutableRefObject<HTMLDivElement | null>;
   requiredForwardRefProp: MutableRefObject<HTMLDivElement | null>;
 };
-const WidgetProps: WidgetPropsType = ({} as any) as WidgetPropsType;
+const WidgetProps: WidgetPropsType = {} as any as WidgetPropsType;
 import * as React from "react";
-import { useCallback, useRef, MutableRefObject, HTMLAttributes } from "react";
+import { useCallback, useRef } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetProps
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetProps & RestProps;
   divRef?: any;
@@ -40,21 +43,16 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetProps & RestProps) {
-  const __divRef: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(
-    null
-  );
-  const __ref: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(
-    null
-  );
-  const __existingRef: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(
-    null
-  );
-  const __forwardRef: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(
-    null
-  );
-  const __existingForwardRef: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(
-    null
-  );
+  const __divRef: MutableRefObject<HTMLDivElement | null> =
+    useRef<HTMLDivElement>(null);
+  const __ref: MutableRefObject<HTMLDivElement | null> =
+    useRef<HTMLDivElement>(null);
+  const __existingRef: MutableRefObject<HTMLDivElement | null> =
+    useRef<HTMLDivElement>(null);
+  const __forwardRef: MutableRefObject<HTMLDivElement | null> =
+    useRef<HTMLDivElement>(null);
+  const __existingForwardRef: MutableRefObject<HTMLDivElement | null> =
+    useRef<HTMLDivElement>(null);
 
   const __writeRefs = useCallback(
     function __writeRefs(): any {
@@ -140,6 +138,4 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   });
 }
 
-Widget.defaultProps = {
-  ...WidgetProps,
-};
+Widget.defaultProps = WidgetProps;

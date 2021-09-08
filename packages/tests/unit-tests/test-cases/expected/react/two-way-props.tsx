@@ -8,18 +8,20 @@ export declare type WidgetInputType = {
   defaultSelected: boolean;
   selectedChange?: (selected: boolean) => void;
 };
-const WidgetInput: WidgetInputType = ({
+const WidgetInput: WidgetInputType = {
   height: 10,
   defaultSelected: false,
   selectedChange: () => {},
-} as any) as WidgetInputType;
+} as any as WidgetInputType;
 import * as React from "react";
-import { useState, useCallback, HTMLAttributes } from "react";
+import { useState, useCallback } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetInput & RestProps;
   getHeight: () => number;
@@ -80,6 +82,4 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   });
 }
 
-Widget.defaultProps = {
-  ...WidgetInput,
-};
+Widget.defaultProps = WidgetInput;

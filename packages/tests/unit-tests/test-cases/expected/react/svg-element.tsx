@@ -3,12 +3,14 @@ export const WidgetInput: WidgetInputType = {};
 const view = (viewModel: Widget) => <svg {...viewModel.restAttributes}></svg>;
 
 import * as React from "react";
-import { useCallback, SVGAttributes } from "react";
+import { useCallback } from "react";
 
-declare type RestProps = Omit<
-  SVGAttributes<SVGElement>,
-  keyof typeof WidgetInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetInput & RestProps;
   restAttributes: RestProps;
@@ -23,12 +25,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     [props]
   );
 
-  return view({
-    props: { ...props },
-    restAttributes: __restAttributes(),
-  });
+  return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
 
-Widget.defaultProps = {
-  ...WidgetInput,
-};
+Widget.defaultProps = WidgetInput;

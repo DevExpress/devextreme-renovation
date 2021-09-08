@@ -108,7 +108,7 @@ cloneTest("Click on component with default options", async (t) => {
 
   await t.click(el.child(0));
 
-  await t.expect(await el.textContent).eql("ab164abcobjfunc");
+  await t.expect(await el.textContent).eql("abtest_ja164abcobjfunc");
 });
 
 cloneTest("Click on list item", async (t) => {
@@ -418,3 +418,45 @@ cloneTest("Styles unification", async (t) => {
     .expect(await stylesComponent.getStyleProperty("padding-left"))
     .eql("10px");
 });
+
+cloneTest("Synchronize InternalState setting on effect after TwoWay prop changed", async (t) => {
+  const buttonWithSyncState = Selector("#button-with-sync-state");
+  
+  await t
+    .expect((await buttonWithSyncState.textContent).trim())
+    .eql(`Unpressed - Internal State is Synchronized`);
+
+  await t.click(buttonWithSyncState)
+  
+  await t
+    .expect((await buttonWithSyncState.textContent).trim())
+    .eql(`Pressed - Internal State is Synchronized`);
+})
+
+cloneTest("Cached getters reset if dependency updated", async (t) => {
+  const updatePropButton = Selector("#updatePropButton");
+  const updateStateButton = Selector("#updateStateButton");
+  const updateContextButton = Selector("#updateContextButton");
+  const getterCacheValue = Selector("#getterCacheValue");
+  await t
+    .expect((await getterCacheValue.textContent).trim())
+    .eql('20 0 20 0 2')
+  
+  await t.click(updatePropButton)
+
+  await t
+    .expect((await getterCacheValue.textContent).trim())
+    .eql('21 0 21 0 2')
+
+  await t.click(updateStateButton)
+    
+  await t
+    .expect((await getterCacheValue.textContent).trim())
+    .eql('21 1 21 1 2')
+  
+  await t.click(updateContextButton)
+
+  await t
+    .expect((await getterCacheValue.textContent).trim())
+    .eql('31 1 31 1 3')
+})

@@ -14,12 +14,14 @@ export declare type WidgetInputType = {
 };
 const WidgetInput: WidgetInputType = {};
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetInput & RestProps;
   restAttributes: RestProps;
@@ -34,12 +36,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     [props]
   );
 
-  return view({
-    props: { ...props },
-    restAttributes: __restAttributes(),
-  });
+  return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
 
-Widget.defaultProps = {
-  ...WidgetInput,
-};
+Widget.defaultProps = WidgetInput;

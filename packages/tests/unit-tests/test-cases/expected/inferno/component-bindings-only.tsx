@@ -7,7 +7,11 @@ export declare type WidgetPropsType = {
 };
 const WidgetProps: WidgetPropsType = {
   height: 10,
-  data: { value: "" },
-  info: { index: 0 },
+  get data() {
+    return { value: "" };
+  },
+  get info() {
+    return { index: 0 };
+  },
 };
 export default WidgetProps;

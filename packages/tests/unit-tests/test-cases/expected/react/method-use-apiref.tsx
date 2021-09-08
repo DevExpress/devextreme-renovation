@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 import BaseWidget from "./method";
 function view(viewModel: WidgetWithApiRef) {
   return (
@@ -14,20 +15,15 @@ export declare type WidgetWithApiRefInputType = {
 const WidgetWithApiRefInput: WidgetWithApiRefInputType = {};
 import { WidgetRef as BaseWidgetRef } from "./method";
 import * as React from "react";
-import {
-  useCallback,
-  useRef,
-  useImperativeHandle,
-  forwardRef,
-  MutableRefObject,
-  HTMLAttributes,
-} from "react";
+import { useCallback, useRef, useImperativeHandle, forwardRef } from "react";
 
 export type WidgetWithApiRefRef = { getSomething: () => string };
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetWithApiRefInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface WidgetWithApiRef {
   props: typeof WidgetWithApiRefInput & RestProps;
   baseRef?: any;
@@ -41,9 +37,8 @@ const WidgetWithApiRef = forwardRef<
   props: typeof WidgetWithApiRefInput & RestProps,
   ref
 ) {
-  const __baseRef: MutableRefObject<BaseWidgetRef | null> = useRef<BaseWidgetRef>(
-    null
-  );
+  const __baseRef: MutableRefObject<BaseWidgetRef | null> =
+    useRef<BaseWidgetRef>(null);
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
@@ -73,6 +68,4 @@ const WidgetWithApiRef = forwardRef<
 > & { defaultProps: typeof WidgetWithApiRefInput };
 export default WidgetWithApiRef;
 
-WidgetWithApiRef.defaultProps = {
-  ...WidgetWithApiRefInput,
-};
+WidgetWithApiRef.defaultProps = WidgetWithApiRefInput;

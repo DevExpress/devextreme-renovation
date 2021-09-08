@@ -15,10 +15,18 @@ function view(model: Widget): any {
   );
 }
 type EventCallBack<Type> = (e: Type) => void;
+const device = "ios";
+function isDevice() {
+  return true;
+}
 
 export declare type WidgetInputType = {
   height: number;
   export: object;
+  array: any;
+  expressionDefault: string;
+  expressionDefault1: boolean;
+  expressionDefault2: boolean | string;
   sizes?: { height: number; width: number };
   stringValue: string;
   onClick: (a: number) => void;
@@ -26,14 +34,28 @@ export declare type WidgetInputType = {
   defaultStringValue: string;
   stringValueChange?: (stringValue: string) => void;
 };
-export const WidgetInput: WidgetInputType = ({
+export const WidgetInput: WidgetInputType = {
   height: 10,
-  export: {},
+  get export() {
+    return {};
+  },
+  get array() {
+    return ["1"];
+  },
+  get expressionDefault() {
+    return device === "ios" ? "yes" : "no";
+  },
+  get expressionDefault1() {
+    return !device;
+  },
+  get expressionDefault2() {
+    return isDevice() || "test";
+  },
   onClick: () => {},
   onSomething: () => {},
   defaultStringValue: "",
   stringValueChange: () => {},
-} as any) as WidgetInputType;
+} as any as WidgetInputType;
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;
@@ -43,12 +65,7 @@ declare type RestProps = {
 };
 
 export default class Widget extends BaseInfernoComponent<any> {
-  state: {
-    stringValue: string;
-  };
-  _currentState: {
-    stringValue: string;
-  } | null = null;
+  state: { stringValue: string };
 
   refs: any;
 
@@ -64,22 +81,6 @@ export default class Widget extends BaseInfernoComponent<any> {
     this.getRestProps = this.getRestProps.bind(this);
   }
 
-  get __state_stringValue(): string {
-    const state = this._currentState || this.state;
-    return this.props.stringValue !== undefined
-      ? this.props.stringValue
-      : state.stringValue;
-  }
-  set_stringValue(value: () => string): any {
-    this.setState((state: any) => {
-      this._currentState = state;
-      const newValue = value();
-      this.props.stringValueChange!(newValue);
-      this._currentState = null;
-      return { stringValue: newValue };
-    });
-  }
-
   getHeight(): number {
     this.props.onClick(10);
     const { onClick } = this.props as any;
@@ -89,14 +90,21 @@ export default class Widget extends BaseInfernoComponent<any> {
   getRestProps(): { export: object; onSomething: EventCallBack<number> } {
     const { height, onClick, ...rest } = {
       ...this.props,
-      stringValue: this.__state_stringValue,
+      stringValue:
+        this.props.stringValue !== undefined
+          ? this.props.stringValue
+          : this.state.stringValue,
     } as any;
     return rest;
   }
   get restAttributes(): RestProps {
     const {
+      array,
       defaultStringValue,
       export: exportProp,
+      expressionDefault,
+      expressionDefault1,
+      expressionDefault2,
       height,
       onClick,
       onSomething,
@@ -104,14 +112,26 @@ export default class Widget extends BaseInfernoComponent<any> {
       stringValue,
       stringValueChange,
       ...restProps
-    } = { ...this.props, stringValue: this.__state_stringValue } as any;
+    } = {
+      ...this.props,
+      stringValue:
+        this.props.stringValue !== undefined
+          ? this.props.stringValue
+          : this.state.stringValue,
+    } as any;
     return restProps;
   }
 
   render() {
     const props = this.props;
     return view({
-      props: { ...props, stringValue: this.__state_stringValue },
+      props: {
+        ...props,
+        stringValue:
+          this.props.stringValue !== undefined
+            ? this.props.stringValue
+            : this.state.stringValue,
+      },
       getHeight: this.getHeight,
       getRestProps: this.getRestProps,
       restAttributes: this.restAttributes,
@@ -119,6 +139,4 @@ export default class Widget extends BaseInfernoComponent<any> {
   }
 }
 
-Widget.defaultProps = {
-  ...WidgetInput,
-};
+Widget.defaultProps = WidgetInput;

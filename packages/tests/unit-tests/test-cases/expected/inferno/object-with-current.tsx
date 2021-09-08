@@ -22,14 +22,7 @@ declare type RestProps = {
 };
 
 export default class Widget extends BaseInfernoComponent<any> {
-  state: {
-    someState?: { current: string };
-    existsState: { current: string };
-  };
-  _currentState: {
-    someState?: { current: string };
-    existsState: { current: string };
-  } | null = null;
+  state: { someState?: { current: string }; existsState: { current: string } };
 
   refs: any;
 
@@ -42,35 +35,13 @@ export default class Widget extends BaseInfernoComponent<any> {
     this.concatStrings = this.concatStrings.bind(this);
   }
 
-  get someState(): { current: string } | undefined {
-    const state = this._currentState || this.state;
-    return state.someState;
-  }
-  set_someState(value: () => { current: string } | undefined): any {
-    this.setState((state: any) => {
-      this._currentState = state;
-      const newValue = value();
-      this._currentState = null;
-      return { someState: newValue };
-    });
-  }
-  get existsState(): { current: string } {
-    const state = this._currentState || this.state;
-    return state.existsState;
-  }
-  set_existsState(value: () => { current: string }): any {
-    this.setState((state: any) => {
-      this._currentState = state;
-      const newValue = value();
-      this._currentState = null;
-      return { existsState: newValue };
-    });
-  }
+  someState?: { current: string };
+  existsState!: { current: string };
 
   concatStrings(): any {
     const fromProps = this.props.someProp?.current || "";
-    const fromState = this.someState?.current || "";
-    return `${fromProps}${fromState}${this.existsState.current}`;
+    const fromState = this.state.someState?.current || "";
+    return `${fromProps}${fromState}${this.state.existsState.current}`;
   }
   get restAttributes(): RestProps {
     const { someProp, ...restProps } = this.props as any;
@@ -81,14 +52,12 @@ export default class Widget extends BaseInfernoComponent<any> {
     const props = this.props;
     return view({
       props: { ...props },
-      someState: this.someState,
-      existsState: this.existsState,
+      someState: this.state.someState,
+      existsState: this.state.existsState,
       concatStrings: this.concatStrings,
       restAttributes: this.restAttributes,
     } as Widget);
   }
 }
 
-Widget.defaultProps = {
-  ...WidgetInput,
-};
+Widget.defaultProps = WidgetInput;

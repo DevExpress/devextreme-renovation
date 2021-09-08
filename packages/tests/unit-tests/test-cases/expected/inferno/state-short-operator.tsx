@@ -13,10 +13,10 @@ export declare type WidgetInputType = {
   defaultPropState: number;
   propStateChange?: (propState: number) => void;
 };
-const WidgetInput: WidgetInputType = ({
+const WidgetInput: WidgetInputType = {
   defaultPropState: 1,
   propStateChange: () => {},
-} as any) as WidgetInputType;
+} as any as WidgetInputType;
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
   className?: string;
@@ -26,14 +26,7 @@ declare type RestProps = {
 };
 
 export default class Widget extends BaseInfernoComponent<any> {
-  state: {
-    innerState: number;
-    propState: number;
-  };
-  _currentState: {
-    innerState: number;
-    propState: number;
-  } | null = null;
+  state: { innerState: number; propState: number };
 
   refs: any;
 
@@ -49,48 +42,73 @@ export default class Widget extends BaseInfernoComponent<any> {
     this.updateState = this.updateState.bind(this);
   }
 
-  get innerState(): number {
-    const state = this._currentState || this.state;
-    return state.innerState;
-  }
-  set_innerState(value: () => number): any {
-    this.setState((state: any) => {
-      this._currentState = state;
-      const newValue = value();
-      this._currentState = null;
-      return { innerState: newValue };
-    });
-  }
-  get __state_propState(): number {
-    const state = this._currentState || this.state;
-    return this.props.propState !== undefined
-      ? this.props.propState
-      : state.propState;
-  }
-  set_propState(value: () => number): any {
-    this.setState((state: any) => {
-      this._currentState = state;
-      const newValue = value();
-      this.props.propStateChange!(newValue);
-      this._currentState = null;
-      return { propState: newValue };
-    });
-  }
+  innerState!: number;
 
   updateState(): any {
-    this.set_innerState(() => this.innerState + 1);
-    this.set_innerState(() => this.innerState + 1);
-    this.set_innerState(() => this.innerState + 1);
-    this.set_innerState(() => this.innerState + 1);
-    this.set_propState(() => this.__state_propState + 1);
-    this.set_propState(() => this.__state_propState + 1);
-    this.set_propState(() => this.__state_propState + 1);
-    this.set_propState(() => this.__state_propState + 1);
+    this.setState((__state_argument: any) => ({
+      innerState: __state_argument.innerState + 1,
+    }));
+    this.setState((__state_argument: any) => ({
+      innerState: __state_argument.innerState + 1,
+    }));
+    this.setState((__state_argument: any) => ({
+      innerState: __state_argument.innerState + 1,
+    }));
+    this.setState((__state_argument: any) => ({
+      innerState: __state_argument.innerState + 1,
+    }));
+    {
+      let __newValue;
+      this.setState((__state_argument: any) => {
+        __newValue =
+          (this.props.propState !== undefined
+            ? this.props.propState
+            : __state_argument.propState) + 1;
+        return { propState: __newValue };
+      });
+      this.props.propStateChange!(__newValue);
+    }
+    {
+      let __newValue;
+      this.setState((__state_argument: any) => {
+        __newValue =
+          (this.props.propState !== undefined
+            ? this.props.propState
+            : __state_argument.propState) + 1;
+        return { propState: __newValue };
+      });
+      this.props.propStateChange!(__newValue);
+    }
+    {
+      let __newValue;
+      this.setState((__state_argument: any) => {
+        __newValue =
+          (this.props.propState !== undefined
+            ? this.props.propState
+            : __state_argument.propState) + 1;
+        return { propState: __newValue };
+      });
+      this.props.propStateChange!(__newValue);
+    }
+    {
+      let __newValue;
+      this.setState((__state_argument: any) => {
+        __newValue =
+          (this.props.propState !== undefined
+            ? this.props.propState
+            : __state_argument.propState) + 1;
+        return { propState: __newValue };
+      });
+      this.props.propStateChange!(__newValue);
+    }
   }
   get restAttributes(): RestProps {
     const { defaultPropState, propState, propStateChange, ...restProps } = {
       ...this.props,
-      propState: this.__state_propState,
+      propState:
+        this.props.propState !== undefined
+          ? this.props.propState
+          : this.state.propState,
     } as any;
     return restProps;
   }
@@ -98,14 +116,18 @@ export default class Widget extends BaseInfernoComponent<any> {
   render() {
     const props = this.props;
     return view({
-      props: { ...props, propState: this.__state_propState },
-      innerState: this.innerState,
+      props: {
+        ...props,
+        propState:
+          this.props.propState !== undefined
+            ? this.props.propState
+            : this.state.propState,
+      },
+      innerState: this.state.innerState,
       updateState: this.updateState,
       restAttributes: this.restAttributes,
     } as Widget);
   }
 }
 
-Widget.defaultProps = {
-  ...WidgetInput,
-};
+Widget.defaultProps = WidgetInput;

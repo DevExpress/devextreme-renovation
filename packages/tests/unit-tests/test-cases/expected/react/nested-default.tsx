@@ -22,30 +22,31 @@ function view({ getRowCells, props: { rows } }: WithNested) {
 }
 
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback } from "react";
 
-function __collectChildren<T>(children: React.ReactNode): T[] {
-  return (React.Children.toArray(children).filter(
-    (child) => React.isValidElement(child) && typeof child.type !== "string"
-  ) as (React.ReactElement & { type: { propName: string } })[]).map((child) => {
-    const { children: childChildren, ...childProps } = child.props;
-    const collectedChildren = {} as any;
-    __collectChildren(childChildren).forEach(
-      ({ __name, ...restProps }: any) => {
-        if (__name) {
-          if (!collectedChildren[__name]) {
-            collectedChildren[__name] = [];
-          }
-          collectedChildren[__name].push(restProps);
-        }
-      }
-    );
+function __collectChildren(children: React.ReactNode): Record<string, any> {
+  return (
+    React.Children.toArray(children).filter(
+      (child) => React.isValidElement(child) && typeof child.type !== "string"
+    ) as (React.ReactElement & { type: { propName: string } })[]
+  ).reduce((acc: Record<string, any>, child) => {
+    const {
+      children: childChildren,
+      __defaultNestedValues,
+      ...childProps
+    } = child.props;
+    const collectedChildren = __collectChildren(childChildren);
+    const childPropsValue = Object.keys(childProps).length
+      ? childProps
+      : __defaultNestedValues;
+    const allChild = { ...childPropsValue, ...collectedChildren };
     return {
-      ...collectedChildren,
-      ...childProps,
-      __name: child.type.propName,
+      ...acc,
+      [child.type.propName]: acc[child.type.propName]
+        ? [...acc[child.type.propName], allChild]
+        : [allChild],
     };
-  });
+  }, {});
 }
 import { GridRow, GridCell } from "./nested-default-props";
 export const Row: React.FunctionComponent<typeof GridRow> & {
@@ -59,16 +60,18 @@ export const RowCell: React.FunctionComponent<typeof GridCell> & {
 RowCell.propName = "cells";
 RowCell.defaultProps = GridCell;
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WithNestedInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface WithNested {
   props: typeof WithNestedInput & RestProps;
   getRowCells: (index: number) => any;
   restAttributes: RestProps;
-  nestedChildren: <T>() => T[];
-  __getNestedRows: typeof GridRow[] | undefined;
+  nestedChildren: () => Record<string, any>;
+  __getNestedRows: typeof GridRow[];
 }
 
 export default function WithNested(props: typeof WithNestedInput & RestProps) {
@@ -94,30 +97,19 @@ export default function WithNested(props: typeof WithNestedInput & RestProps) {
     [props]
   );
   const __nestedChildren = useCallback(
-    function __nestedChildren<T>(): T[] {
+    function __nestedChildren(): Record<string, any> {
       const { children } = props;
       return __collectChildren(children);
     },
     [props.children]
   );
   const __getNestedRows = useCallback(
-    function __getNestedRows(): typeof GridRow[] | undefined {
-      const nested = __nestedChildren<typeof GridRow & { __name: string }>()
-        .filter((child) => child.__name === "rows")
-        .map((n) => {
-          if (
-            !Object.keys(n).some(
-              (k) => k !== "__name" && k !== "__defaultNestedValues"
-            )
-          ) {
-            return (n as any)?.__defaultNestedValues || n;
-          }
-          return n;
-        });
+    function __getNestedRows(): typeof GridRow[] {
+      const nested = __nestedChildren();
       return props.rows
         ? props.rows
-        : nested.length
-        ? nested
+        : nested.rows
+        ? nested.rows
         : props?.__defaultNestedValues?.rows;
     },
     [props.rows, props.children]
@@ -132,6 +124,4 @@ export default function WithNested(props: typeof WithNestedInput & RestProps) {
   });
 }
 
-WithNested.defaultProps = {
-  ...WithNestedInput,
-};
+WithNested.defaultProps = WithNestedInput;

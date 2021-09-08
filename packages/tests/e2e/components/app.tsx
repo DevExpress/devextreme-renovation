@@ -15,7 +15,7 @@ import ComponentWithRest from "./rest-attributes";
 import CallMethodInGetterWidget from "./call-method-in-getter";
 import ComponentWithFragment from "./component-with-fragment";
 import ComponentWithDefaultOptionRules, {
-  defaultOptions as setDefaultOptions,
+  defaultOptions as setDefaultOptions, setLocale
 } from "./default-option-rules";
 import List from "./list";
 import SpreadProps from "./spread-props";
@@ -44,9 +44,11 @@ import SetForwardRef from "./set-ref/set-forward-ref-parent";
 import SetForwardRefDeep from "./set-ref/set-forward-ref-deep/parent";
 import InlineArrowFunction from "./inline-arrow-function";
 import ListTemplate from "./list-template";
-
+import RefParent from "./refs-as-attributes/ref-parent";
 import DynamicComponent from "./dynamic-components/dynamic-component";
 import StylesWidget from "./styles";
+import ButtonWithInternalState from "./internal-state-change-on-effect";
+import GetterCache from './getter-cache/getter-cache-parent';
 
 function view(model: App) {
   return (
@@ -67,6 +69,11 @@ function view(model: App) {
       <div id="button-with-state-pressed">
         {model.buttonWithStateIsPressed.toString()}
       </div>
+      <ButtonWithInternalState
+        id="button-with-sync-state"
+        pressedChange={model.onSynchronizeValueChange}
+        synchronizedWithPressed={model.synchronizedValue}
+      />
       <ComponentWithSpread
         containerId="component-with-spread"
         aria={model.spreadAttributesComponentAria}
@@ -158,6 +165,8 @@ function view(model: App) {
       <InlineArrowFunction />
       <DynamicComponent />
       <StylesWidget />
+      <RefParent />
+      <GetterCache />
     </div>
   );
 }
@@ -175,6 +184,8 @@ setDefaultOptions({
   },
 });
 
+setLocale('ja');
+
 @ComponentBindings()
 class AppInput {}
 
@@ -188,13 +199,18 @@ export default class App extends JSXComponent(AppInput) {
   @InternalState() spreadAttributesComponentAria = "init";
 
   @InternalState() callMethodInGetterWidgetProp = 1;
-
   @InternalState() listItems = [
     { key: 0, text: "a" },
     { key: 1, text: "b" },
   ];
 
   @InternalState() domEffectsText: string = "A";
+
+  @InternalState() synchronizedValue: boolean = false;
+
+  onSynchronizeValueChange(newValue: boolean) {
+    this.synchronizedValue = newValue;
+  }
 
   onButtonClick() {
     this.clickCount = this.clickCount + 1;

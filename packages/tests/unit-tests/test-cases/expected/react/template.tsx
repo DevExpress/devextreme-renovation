@@ -51,12 +51,14 @@ export const WidgetInput: WidgetInputType = {
   componentTemplate: WidgetWithProps,
 };
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface WidgetWithTemplate {
   props: typeof WidgetInput & RestProps;
   restAttributes: RestProps;
@@ -132,9 +134,7 @@ export default function WidgetWithTemplate(
   });
 }
 
-WidgetWithTemplate.defaultProps = {
-  ...WidgetInput,
-};
+WidgetWithTemplate.defaultProps = WidgetInput;
 function view(viewModel: WidgetWithTemplate) {
   const myvar = viewModel.props.someProp;
   const FooterTemplate = viewModel.props.footerTemplate;

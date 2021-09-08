@@ -1,3 +1,4 @@
+import { RefObject } from "preact";
 import BaseWidget from "./method";
 function view(viewModel: WidgetWithApiRef) {
   return (
@@ -13,7 +14,6 @@ export declare type WidgetWithApiRefInputType = {
 };
 const WidgetWithApiRefInput: WidgetWithApiRefInputType = {};
 import * as Preact from "preact";
-import { RefObject } from "preact";
 import { useCallback, useRef, useImperativeHandle } from "preact/hooks";
 import { forwardRef } from "preact/compat";
 
@@ -66,6 +66,4 @@ const WidgetWithApiRef = forwardRef<
 };
 export default WidgetWithApiRef;
 
-WidgetWithApiRef.defaultProps = {
-  ...WidgetWithApiRefInput,
-};
+WidgetWithApiRef.defaultProps = WidgetWithApiRefInput;

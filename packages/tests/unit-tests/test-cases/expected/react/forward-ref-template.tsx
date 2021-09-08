@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 function view(model: RefOnChildrenTemplate) {
   return (
     <React.Fragment>
@@ -11,17 +12,16 @@ export declare type PropsType = {
   contentRender?: any;
   contentComponent?: any;
 };
-const Props: PropsType = ({} as any) as PropsType;
+const Props: PropsType = {} as any as PropsType;
 import * as React from "react";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  MutableRefObject,
-  HTMLAttributes,
-} from "react";
+import { useCallback, useEffect, useRef } from "react";
 
-declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface RefOnChildrenTemplate {
   props: typeof Props & RestProps;
   child: any;
@@ -41,18 +41,13 @@ const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
   (ComponentProp && ((props: any) => <ComponentProp {...props} />));
 
 export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
-  const __child: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(
-    null
-  );
+  const __child: MutableRefObject<HTMLDivElement | null> =
+    useRef<HTMLDivElement>(null);
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const {
-        contentComponent,
-        contentRender,
-        contentTemplate,
-        ...restProps
-      } = props;
+      const { contentComponent, contentRender, contentTemplate, ...restProps } =
+        props;
       return restProps;
     },
     [props]
@@ -77,6 +72,4 @@ export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
   });
 }
 
-RefOnChildrenTemplate.defaultProps = {
-  ...Props,
-};
+RefOnChildrenTemplate.defaultProps = Props;

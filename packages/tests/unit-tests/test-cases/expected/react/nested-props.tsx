@@ -3,15 +3,16 @@ export declare type GridColumnPropsType = {
   index: number;
   editing?: typeof ColumnEditingProps;
   custom?: typeof CustomProps[];
+  __defaultNestedValues?: any;
   defaultIndex: number;
   indexChange?: (index: number) => void;
   children?: React.ReactNode;
 };
-export const GridColumnProps: GridColumnPropsType = ({
+export const GridColumnProps: GridColumnPropsType = {
   name: "",
   defaultIndex: 0,
   indexChange: () => {},
-} as any) as GridColumnPropsType;
+} as any as GridColumnPropsType;
 export declare type CustomPropsType = {};
 export const CustomProps: CustomPropsType = {};
 export declare type AnotherCustomPropsType = {};
@@ -20,6 +21,7 @@ export declare type EditingPropsType = {
   editEnabled?: boolean;
   custom?: typeof CustomProps[];
   anotherCustom?: typeof AnotherCustomProps;
+  __defaultNestedValues?: any;
   children?: React.ReactNode;
 };
 export const EditingProps: EditingPropsType = {
@@ -34,12 +36,26 @@ export const ColumnEditingProps: ColumnEditingPropsType = {
 export declare type WidgetPropsType = {
   columns?: Array<typeof GridColumnProps | string>;
   editing?: typeof EditingProps;
+  __defaultNestedValues?: any;
   children?: React.ReactNode;
 };
-export const WidgetProps: WidgetPropsType = {};
+export const WidgetProps: WidgetPropsType = {
+  get __defaultNestedValues() {
+    return {
+      editing: EditingProps.__defaultNestedValues
+        ? EditingProps.__defaultNestedValues
+        : EditingProps,
+    };
+  },
+};
 export declare type PickedPropsType = {
   columns?: Array<typeof GridColumnProps | string>;
   editing?: typeof EditingProps;
+  __defaultNestedValues?: any;
   children?: React.ReactNode;
 };
-export const PickedProps: PickedPropsType = {};
+export const PickedProps: PickedPropsType = {
+  get __defaultNestedValues() {
+    return { editing: WidgetProps.editing };
+  },
+};

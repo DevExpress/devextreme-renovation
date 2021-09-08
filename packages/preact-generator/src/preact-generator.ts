@@ -3,6 +3,7 @@ import path from 'path';
 import {
   Call,
   compileType,
+  Component as BaseComponent,
   dasherize,
   Decorator,
   Decorators,
@@ -18,6 +19,7 @@ import {
   mergeTypeExpressionImports,
   Method,
   ObjectLiteral,
+  Parameter,
   reduceTypeExpressionImports,
   StringLiteral,
   toStringOptions,
@@ -51,6 +53,7 @@ export class ComponentInput extends BaseComponentInput {
     heritageClauses: HeritageClause[] = [],
     members: Array<Property | Method>,
     context: GeneratorContext,
+    fromType: boolean,
   ) {
     super(
       decorators,
@@ -60,6 +63,7 @@ export class ComponentInput extends BaseComponentInput {
       heritageClauses,
       members,
       context,
+      fromType,
     );
   }
 
@@ -142,10 +146,6 @@ export class PreactComponent extends ReactComponent {
     return imports;
   }
 
-  compileRestProps() {
-    return 'declare type RestProps = { className?: string; style?: { [name: string]: any }, key?: any, ref?: any }';
-  }
-
   compileDefaultComponentExport() {
     return '';
   }
@@ -194,15 +194,6 @@ class JQueryComponent {
   compileGetProps() {
     const statements: string[] = [];
 
-    const templates = this.source.props.filter((p) => p.decorators.find((d) => d.name === 'Template'));
-    statements.splice(
-      -1,
-      0,
-      ...templates.map(
-        (t) => `props.${t.name} = this._createTemplateComponent(props, props.${t.name});`,
-      ),
-    );
-
     if (this.source.props.find((p) => p.name === 'onKeyDown' && p.isEvent)) {
       statements.push(
         'props.onKeyDown = this._wrapKeyDownHandler(props.onKeyDown);',
@@ -222,29 +213,36 @@ class JQueryComponent {
         `;
   }
 
+  hasElementTypeParam(params: Parameter): boolean | undefined {
+    return params.type?.toString()
+      .split('|')
+      .some((t) => t.endsWith('Element'));
+  }
+
   compileAPI() {
     return (this.source.members.filter((a) => a.isApiMethod) as Method[])
       .map((a) => {
         const returnsElementType = a.type?.toString().endsWith('Element');
-        const call = `this.viewRef?.${a._name}(${a.parameters
-          .map((p) => {
-            const param = p.name;
-            const hasElementType = p.type
-              ?.toString()
-              .split('|')
-              .some((t) => t.endsWith('Element'));
-
-            return hasElementType ? `this._patchElementParam(${param})` : param;
-          })
-          .join(',')})`;
+        const hasElementType = a.parameters.some((p) => this.hasElementTypeParam(p));
+        const call = `this.viewRef?.${a._name}(${hasElementType ? '...params.slice(0, arguments.length)' : '...arguments'})`;
+        const getParams = (method: Method) => method.parameters.map((p) => {
+          const param = p.name;
+          return this.hasElementTypeParam(p) ? `this._patchElementParam(${param})` : param;
+        }).join(',');
 
         return `${a._name}(${a.parameters})${compileType(a.type.toString())} | undefined {
-                return ${
-  returnsElementType ? `this._toPublicElement(${call})` : call
-};
-            }`;
+          ${hasElementType ? `const params = [${getParams(a)}];` : ''}
+          return ${returnsElementType ? `this._toPublicElement(${call})` : call};
+        }`;
       })
       .join('\n');
+  }
+
+  get needGenerateDefaultOptions() {
+    const context = this.source.context;
+    const widget = this.source.name;
+
+    return (context.components?.[widget] as BaseComponent).needGenerateDefaultOptions;
   }
 
   compileImports(component: string, imports: string[] = []) {
@@ -281,11 +279,14 @@ class JQueryComponent {
     const defaultImport = this.source.modifiers.indexOf('default') !== -1;
     const widget = this.source.name;
     const widgetComponent = `${widget}Component`;
+    const importedDefaultOptions = this.needGenerateDefaultOptions
+      ? `${defaultImport ? ', { defaultOptions }' : ', defaultOptions'}`
+      : '';
     imports.push(
       `import ${
         defaultImport
-          ? `${widgetComponent}`
-          : `{ ${widget} as ${widgetComponent} }`
+          ? `${widgetComponent} ${importedDefaultOptions}`
+          : `{ ${widget} as ${widgetComponent} ${importedDefaultOptions} }`
       } from '${processModuleFileName(
         relativePath.replace(path.extname(relativePath), ''),
       )}'`,
@@ -366,7 +367,7 @@ class JQueryComponent {
         get _propsInfo() {
             return {
                 twoWay: [${this.source.state.map(
-    (s) => `['${s.name}', ${s.initializer}, '${s.name}Change']`,
+    (s) => `['${s.name}', 'default${s.name[0].toUpperCase()}${s.name.slice(1)}', '${s.name}Change']`,
   )}],
                 allowNull: [${withNullType}],
                 elements: [${withElementType}],
@@ -400,6 +401,10 @@ class JQueryComponent {
       return '';
     }
 
+    const defineDefaultOptions = this.needGenerateDefaultOptions
+      ? `${this.source.name}.defaultOptions = defaultOptions`
+      : '';
+
     return `
         ${this.compileImports(baseComponent)}
 
@@ -424,6 +429,7 @@ class JQueryComponent {
         }
 
         registerComponent("dx${this.source.name}", ${this.source.name});
+        ${defineDefaultOptions};
         `;
   }
 }
@@ -529,7 +535,9 @@ export class ImportDeclaration extends BaseImportDeclaration {
     if (this.has('Portal')) {
       compat.push('createPortal');
     }
-
+    if (this.has('RefObject') || this.has('Ref') || this.has('ForwardRef')) {
+      preact.push('RefObject');
+    }
     if (preact.length) {
       result.push(`import { ${preact} } from "preact"`);
     }
@@ -698,6 +706,7 @@ export class PreactGenerator extends ReactGenerator {
     typeParameters: string[],
     heritageClauses: HeritageClause[],
     members: Array<Property | Method>,
+    fromType = false,
   ) {
     return new ComponentInput(
       decorators,
@@ -707,6 +716,7 @@ export class PreactGenerator extends ReactGenerator {
       heritageClauses,
       members,
       this.getContext(),
+      fromType,
     );
   }
 

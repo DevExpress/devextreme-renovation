@@ -26,6 +26,9 @@ export type ComponentParameters = {
    */
   view: Function;
 
+  /**
+   * Set to `null` to not generate 'defaultOptions' method
+   */
   defaultOptionRules?: Rule<any>[] | null;
 
   /**

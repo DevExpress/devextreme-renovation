@@ -1,26 +1,25 @@
-import { SetAccessor } from '@devextreme-generator/angular';
 import {
   BaseClassMember,
   BindingElement,
   BindingPattern,
   Block,
   Decorators,
-  FunctionTypeNode,
   getProps,
   Identifier,
   Method,
   ObjectLiteral,
-  Parameter,
+  Property as BaseProperty,
   ReturnStatement,
   SimpleExpression,
   SimpleTypeExpression,
   SyntaxKind,
+  toStringOptions,
   TypeExpression,
   VariableDeclarationList,
   VariableStatement,
+  capitalizeFirstLetter,
 } from '@devextreme-generator/core';
 import { PreactComponent } from '@devextreme-generator/preact';
-import { getChangeEventToken } from '@devextreme-generator/react';
 
 import { GetAccessor } from './class-members/get-accessor';
 import { Property } from './class-members/property';
@@ -33,19 +32,22 @@ const getEffectRunParameter = (effect: BaseClassMember) => effect.decorators
   ?.valueOf();
 
 export class InfernoComponent extends PreactComponent {
-  get REF_OBJECT_TYPE() {
+  get REF_OBJECT_TYPE(): string {
     return 'RefObject';
   }
 
   compileImportStatements(hooks: string[]): string[] {
     const coreImports = [];
     const hooksSet = new Set(hooks);
+    const imports = ['import { createElement as h } from "inferno-compat";'];
 
     if (hooksSet.has('useRef')) {
       coreImports.push('createRef as infernoCreateRef');
     }
 
-    const imports = ['import { createElement as h } from "inferno-compat";'];
+    if (this.jQueryRegistered) {
+      imports.push('import { createReRenderEffect } from "@devextreme/vdom";');
+    }
 
     if (coreImports.length) {
       imports.push(`import { ${coreImports.join(',')} } from "inferno"`);
@@ -56,11 +58,11 @@ export class InfernoComponent extends PreactComponent {
 
   compileApiRefImports() {}
 
-  addPrefixToMembers(members: Array<Property | Method>) {
+  addPrefixToMembers(members: (Property | Method)[]): (Property | Method)[] {
     return members;
   }
 
-  processMembers(members: Array<Property | Method>) {
+  processMembers(members: (Property | Method)[]): (BaseProperty | Method)[] {
     return super.processMembers(members).map((m) => {
       if (m._name.toString() === 'restAttributes') {
         m.prefix = '';
@@ -69,10 +71,11 @@ export class InfernoComponent extends PreactComponent {
     });
   }
 
-  getToStringOptions() {
+  getToStringOptions(): toStringOptions {
     return {
       ...super.getToStringOptions(),
       newComponentContext: 'this',
+      isComponent: true,
     };
   }
 
@@ -88,95 +91,13 @@ export class InfernoComponent extends PreactComponent {
     return `${super.compileViewModelArguments()} as ${this.name}`;
   }
 
-  compileStateSetterAndGetters(): string {
-    const props = getProps(this.members);
-    const members = (this.members.filter(
-      (m) => m.isInternalState || m.isState,
-    ) as Property[]).reduce((result: Array<GetAccessor | SetAccessor>, m) => {
-      const getterStatement = m.isInternalState
-        ? `state.${m.name}`
-        : `this.props.${m.name}!==undefined?this.props.${m.name}:state.${m.name}`;
-
-      const changePropertyName = `${m.name}Change`;
-      const changeProperty = props.find(
-        (m) => m.name === changePropertyName,
-      ) as Property;
-
-      const setStateStatement = `this.setState((state: any)=>{
-        this._currentState = state;
-        const newValue = value();
-        ${
-  changeProperty
-    ? `this.props.${m.name}Change${getChangeEventToken(
-      changeProperty,
-    )}(newValue)`
-    : ''
-};
-        this._currentState = null;
-        return {${m.name}: newValue};
-      })`;
-
-      const setterStatement = setStateStatement;
-
-      const type = m.questionOrExclamationToken !== '?' ? m.type : `${m.type}|undefined`;
-
-      const getterName = m.isInternalState
-        ? m._name
-        : new Identifier(`__state_${m._name}`);
-
-      result.push(
-        this.createGetAccessor(
-          getterName,
-          type,
-          new Block(
-            [
-              new SimpleExpression(
-                'const state = this._currentState||this.state',
-              ),
-              new ReturnStatement(new SimpleExpression(getterStatement)),
-            ],
-            false,
-          ),
-        ),
-      );
-      result.push(
-        new Method(
-          [],
-          [],
-          undefined,
-          new Identifier(`set_${m._name}`),
-          undefined,
-          undefined,
-          [
-            new Parameter(
-              [],
-              [],
-              undefined,
-              new Identifier('value'),
-              '',
-              new FunctionTypeNode(undefined, [], type),
-            ),
-          ],
-          'any',
-          new Block([new SimpleExpression(setterStatement)], false),
-        ),
-      );
-      return result;
-    }, []);
-
-    return members.map((m) => m.toString(this.getToStringOptions())).join('\n');
-  }
-
   compileStateProperty(): string {
     const state = this.internalState.concat(this.state);
 
     if (state.length) {
-      const type = `{
-        ${state.map((p) => p.typeDeclaration())}
-     }`;
+      const type = `{${state.map((p) => p.typeDeclaration())}}`;
       return `
       state: ${type};
-      _currentState: ${type}|null = null;
       `;
     }
 
@@ -195,16 +116,103 @@ export class InfernoComponent extends PreactComponent {
     return '';
   }
 
-  compileEffects() {
+  compileGetterCache(componentWillUpdate_Statements: string[], options?:toStringOptions): string {
+    const getters = this.members.filter(
+      (m) => m instanceof GetAccessor && m.isMemorized(options),
+    );
+
+    if (getters.length) {
+      const statements = [
+        `__getterCache: {
+            ${getters.map((g) => `${g._name}?:${g.type}`).join(';\n')}
+          } = {}`,
+      ];
+
+      getters.forEach((g) => {
+        const allDeps = g.getDependency({
+          members: this.members,
+          componentContext: SyntaxKind.ThisKeyword,
+        }).filter((dep) => {
+          const depMember = this.getToStringOptions().members.find((member) => member.name === dep);
+          return !depMember?.isMutable;
+        });
+
+        const deleteCacheStatement = `this.__getterCache["${g._name.toString()}"] = undefined;`;
+
+        const contextConsumers = this.members.map((member) => {
+          if (member.isConsumer) {
+            return {
+              name: member._name.toString(),
+              contextName: member?.decorators[0]?.expression?.arguments[0].toString(),
+            };
+          }
+          return undefined;
+        }).filter((contextConsumer) => contextConsumer) as Array<{
+          name: string, contextName: string
+        }>;
+        if (allDeps.length) {
+          const conditions = allDeps.map((dep) => {
+            if (dep.indexOf('props.') === 0) {
+              const depName = dep.replace('props.', '');
+              return `this.props["${depName}"] !== nextProps["${depName}"]`;
+            }
+            if (dep.indexOf('state.') === 0) {
+              const depName = dep.replace('state.', '');
+              return `this.state["${depName}"] !== nextState["${depName}"]`;
+            }
+            if (dep === 'props' || dep === 'state') {
+              return `this.${dep} !== next${capitalizeFirstLetter(dep)}`;
+            }
+            const dependencyContext = contextConsumers.find(
+              (consumer) => consumer.name === dep,
+            )?.contextName;
+            return dependencyContext ? `this.context["${dependencyContext}"] !== context["${dependencyContext}"]` : 'false';
+          });
+          componentWillUpdate_Statements.push(`if (${conditions.join(' || ')}) {
+            ${deleteCacheStatement}
+          }`);
+        }
+      });
+      return statements.join('\n');
+    }
+    return '';
+  }
+
+  compileComponentWillUpdate(statements: string[], componentType: string): string {
+    if (statements.length > 0) {
+      const superStatement = componentType !== 'BaseInfernoComponent' ? 'super.componentWillUpdate();' : '';
+      return `componentWillUpdate(nextProps, nextState, context) {        
+      ${superStatement}
+      ${statements.join('\n')}
+}`;
+    }
+    return '';
+  }
+
+  compileEffects(): string {
     const createEffectsStatements: string[] = [];
     const updateEffectsStatements: string[] = [];
-    if (this.effects.length) {
-      const dependencies = this.effects.map((e) => e.getDependency(this.getToStringOptions()).map((d) => `this.${d}`));
+    if (this.effects.length || this.jQueryRegistered) {
+      const dependencies = this.effects.map(
+        (e) => e.getDependency(this.getToStringOptions())
+          .filter((dep) => {
+            const depMember = this.getToStringOptions().members.find(
+              (member) => member.name === dep,
+            );
+            return !depMember?.isMutable;
+          })
+          .map((d) => `this.${d}`)
+        ,
+      );
 
       const create = this.effects.map((e, i) => {
         const dependency = getEffectRunParameter(e) !== 'once' ? dependencies[i] : [];
         return `new InfernoEffect(this.${e.name}, [${dependency.join(',')}])`;
       });
+
+      if (this.jQueryRegistered) {
+        create.push('createReRenderEffect()');
+      }
 
       createEffectsStatements.push(`
         return [
@@ -224,7 +232,9 @@ export class InfernoComponent extends PreactComponent {
         return result;
       }, []);
 
-      updateEffectsStatements.push(update.join(';\n'));
+      if (update.length) {
+        updateEffectsStatements.push(update.join(';\n'));
+      }
     }
 
     return `
@@ -233,7 +243,7 @@ export class InfernoComponent extends PreactComponent {
     `;
   }
 
-  compileLifeCycle(name: string, statements: string[]) {
+  compileLifeCycle(name: string, statements: string[]): string {
     if (statements.length) {
       return `${name}(){
         ${statements.join(';\n')}
@@ -243,18 +253,21 @@ export class InfernoComponent extends PreactComponent {
     return '';
   }
 
-  compileProviders(_providers: Property[], viewCallExpression: string) {
+  compileProviders(_providers: Property[], viewCallExpression: string): string {
     return viewCallExpression;
   }
 
-  compileGetChildContext() {
+  compileGetChildContext(): string {
     const providers = this.members.filter((m) => m.isProvider);
 
     if (providers.length) {
+      const providersString = providers
+        .map((p) => `${p.context}: this.${p.name}`)
+        .join(',\n');
       return this.compileLifeCycle('getChildContext', [
         `return {
           ...this.context,
-          ${providers.map((p) => `${p.context}: this.${p.name}`).join(',\n')}
+          ${providersString}
         }
       `,
       ]);
@@ -263,7 +276,7 @@ export class InfernoComponent extends PreactComponent {
     return '';
   }
 
-  get jQueryRegistered() {
+  get jQueryRegistered(): boolean {
     const jqueryProp = this.decorators[0].getParameter('jQuery') as
       | ObjectLiteral
       | undefined;
@@ -271,7 +284,7 @@ export class InfernoComponent extends PreactComponent {
   }
 
   // TODO: remove after inferno fixed https://github.com/infernojs/inferno/issues/1536
-  createRestPropsGetter(members: BaseClassMember[]) {
+  createRestPropsGetter(members: BaseClassMember[]): GetAccessor {
     const props = getProps(members);
     const bindingElements = props
       .reduce((bindingElements, p) => {
@@ -321,7 +334,19 @@ export class InfernoComponent extends PreactComponent {
     );
   }
 
-  toString() {
+  compileInstance(): string {
+    const state = this.internalState;
+
+    if (state.length) {
+      return state
+        .map((p) => (p as Property).instanceDeclaration())
+        .join(';\n');
+    }
+
+    return '';
+  }
+
+  toString(): string {
     // TODO: uncomment after inferno fixed https://github.com/infernojs/inferno/issues/1536
     // const propsType = this.compilePropsType();
     const propsType = 'any';
@@ -341,6 +366,7 @@ export class InfernoComponent extends PreactComponent {
         ? 'InfernoComponent'
         : 'BaseInfernoComponent';
 
+    const componentWillUpdate: string[] = [];
     return `
             ${this.compileImports()}
             ${this.compileRestProps()}
@@ -360,9 +386,9 @@ export class InfernoComponent extends PreactComponent {
                     ${bindMethods}
                 }
 
-                ${this.compileEffects()}
+                ${this.compileInstance()};
 
-                ${this.compileStateSetterAndGetters()}
+                ${this.compileEffects()}
                 
                 ${this.compileGetChildContext()}
 
@@ -371,7 +397,8 @@ export class InfernoComponent extends PreactComponent {
     .concat(this.members.filter((m) => m.isApiMethod) as Method[])
     .map((m) => m.toString(this.getToStringOptions()))
     .join('\n')}
-                
+                ${this.compileGetterCache(componentWillUpdate, this.getToStringOptions())}
+                ${this.compileComponentWillUpdate(componentWillUpdate, component)}
                 render(){
                     const props = this.props;
                     return ${this.compileViewCall()}

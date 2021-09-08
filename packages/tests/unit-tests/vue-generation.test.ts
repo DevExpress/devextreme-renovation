@@ -86,6 +86,10 @@ mocha.describe("vue-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("abstract-class", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("props", function () {
     this.testGenerator(this.test!.title);
   });
@@ -155,6 +159,14 @@ mocha.describe("vue-generation", function () {
 
   mocha.it("dx-inner-widget", function () {
     this.testGenerator("dx-inner-widget");
+  });
+
+  mocha.it("component-input", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("component-input-defaults", function () {
+    this.testGenerator(this.test!.title);
   });
 
   mocha.it("component-bindings-only", function () {
@@ -315,6 +327,10 @@ mocha.describe("vue-generation", function () {
       this.testGenerator(this.test!.title);
     });
 
+    mocha.it("props-any-undefined-unknown", function () {
+      this.testGenerator(this.test!.title);
+    });
+
     mocha.it("use-external-component-bindings", function () {
       this.testGenerator(this.test!.title);
     });
@@ -367,8 +383,24 @@ mocha.describe("vue-generation", function () {
   mocha.it("nested-default-props", function () {
     this.testGenerator(this.test!.title);
   });
+  
+  mocha.it("nested-pick", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   mocha.it("nested-props-and-component", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("nested-inherited", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("refs-as-attribute", function () {
+    this.testGenerator(this.test!.title);
+  });
+  
+  mocha.it("refs-as-attribute-helper", function () {
     this.testGenerator(this.test!.title);
   });
 });

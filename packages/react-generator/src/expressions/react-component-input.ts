@@ -14,6 +14,7 @@ import {
 
 import { Method } from './class-members/method';
 import { compileJSXTemplateType, Property } from './class-members/property';
+import { compileGettersCompatibleExtend } from './common';
 
 export function getTemplatePropName(
   name: Identifier | string,
@@ -26,28 +27,35 @@ export function getTemplatePropName(
 }
 
 export function buildTemplateProperty(
+  templatePropName: string,
+  templateMember: Property,
+  isComponent: boolean,
+) {
+  return new Property(
+    [new Decorator(new Call(new Identifier('OneWay'), undefined, []), {})],
+    [],
+    new Identifier(templatePropName),
+    SyntaxKind.QuestionToken,
+    compileJSXTemplateType(templateMember.type, isComponent),
+    undefined,
+  );
+}
+
+export function getTemplatePropertyName(
   templateMember: Property,
   members: BaseClassMember[],
   propName: 'render' | 'component',
 ) {
   const templatePropName = getTemplatePropName(templateMember._name, propName);
   if (!members.find((m) => m._name.toString() === templatePropName)) {
-    const type = propName === 'render'
-      ? compileJSXTemplateType(templateMember.type)
-      : compileJSXTemplateType(templateMember.type, true);
-    return new Property(
-      [new Decorator(new Call(new Identifier('OneWay'), undefined, []), {})],
-      [],
-      new Identifier(templatePropName),
-      SyntaxKind.QuestionToken,
-      type,
-      undefined,
-    );
+    return templatePropName;
   }
   throw `You can't use '${templatePropName}' property. It'll be generated for '${templateMember._name}' template property.`;
 }
 
 export class ComponentInput extends BaseComponentInput {
+  typeDeclarationIgnoreMembers!: string[];
+
   createProperty(
     decorators: Decorator[],
     modifiers: string[] | undefined,
@@ -70,19 +78,25 @@ export class ComponentInput extends BaseComponentInput {
     templateMember: Property,
     members: BaseClassMember[],
   ) {
-    return [
-      buildTemplateProperty(templateMember, members, 'render'),
-      buildTemplateProperty(templateMember, members, 'component'),
-    ];
+    const renderPropName = getTemplatePropertyName(templateMember, members, 'render');
+    const componentPropName = getTemplatePropertyName(templateMember, members, 'component');
+    this.typeDeclarationIgnoreMembers = [...(this.typeDeclarationIgnoreMembers || []), renderPropName, componentPropName];
+    return [buildTemplateProperty(renderPropName, templateMember, false), buildTemplateProperty(componentPropName, templateMember, true)];
+  }
+
+  membersFromTypeDeclarationIgnoreMembers(): string[] {
+    return [...super.membersFromTypeDeclarationIgnoreMembers(), ...(this.typeDeclarationIgnoreMembers || [])];
   }
 
   compileImports() {
     return this.getImports(this.context).join(';\n');
   }
 
-  toString() {
-    const inherited = this.baseTypes.map((t) => `...${t}`);
+  shouldGenerateDefaultNested(members: (Property | Method)[]): boolean {
+    return members.some((member) => member.isNested);
+  }
 
+  toString(): string {
     const types = this.heritageClauses.reduce(
       (t: string[], h) => t.concat(h.typeNodes.map((t) => `typeof ${t}`)),
       [],
@@ -103,7 +117,7 @@ export class ComponentInput extends BaseComponentInput {
 
     const typeCasting = properties.some(
       (p) => (p.questionOrExclamationToken === SyntaxKind.ExclamationToken
-          && !p.initializer)
+        && !p.initializer)
         || (p.type.toString() === 'any'
           && !p.questionOrExclamationToken
           && !p.initializer)
@@ -124,26 +138,37 @@ export class ComponentInput extends BaseComponentInput {
 
     const options = {
       members: [],
-      componentInputs: Object.keys(this.context.components || {}).map(
-        (name) => ({
-          name,
-          isNested:
-            this.context.components?.[name]?.members.some((m) => m.isNested)
-            || false,
-        }),
+      componentInputs: Object.keys(this.context.components || {}).reduce(
+        (componentInputArr, key) => {
+          const component = this.context.components?.[key];
+          if (component instanceof ComponentInput) {
+            componentInputArr.push(component);
+          }
+          return componentInputArr;
+        },
+        [] as ComponentInput[],
       ),
+      fromType: this.fromType,
     };
+
+    const defaultObject = `{
+      ${propertiesWithInitializer
+    .map((p) => p.defaultProps(options))
+    .join(',\n')}
+   }`;
+
+    let defaultProps = defaultObject;
+    const inheritedBaseType = this.baseTypes[0];
+
+    if (inheritedBaseType) {
+      defaultProps = propertiesWithInitializer.length
+        ? compileGettersCompatibleExtend(inheritedBaseType, defaultObject)
+        : inheritedBaseType;
+    }
     return `${this.compileImports()}
           ${typeDeclaration}
-          ${declarationModifiers.join(' ')} const ${this.name}:${typeName}={
-             ${inherited
-    .concat(
-      propertiesWithInitializer.map((p) => p.defaultProps(options)),
-    )
-    .join(',\n')}
-          }${typeCasting};
-          ${
-  declarationModifiers !== this.modifiers
+          ${declarationModifiers.join(' ')} const ${this.name}:${typeName}=${defaultProps}${typeCasting};
+          ${declarationModifiers !== this.modifiers
     ? `${this.modifiers.join(' ')} ${this.name}`
     : ''
 }`;
@@ -174,7 +199,7 @@ export class ComponentInput extends BaseComponentInput {
   createDefaultNestedValues(members: Array<BaseProperty | Method>) {
     const resultProp = super.createDefaultNestedValues(members);
     if (resultProp) {
-      resultProp.type = `${this.name}Type`;
+      resultProp.type = 'any';
       resultProp.questionOrExclamationToken = SyntaxKind.QuestionToken;
     }
     return resultProp;

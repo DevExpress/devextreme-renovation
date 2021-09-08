@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 import WidgetWithRefProp from "./dx-widget-with-ref-prop";
 function view(viewModel: Widget) {
   return (
@@ -15,12 +16,14 @@ export declare type WidgetInputType = {
 };
 const WidgetInput: WidgetInputType = {};
 import * as React from "react";
-import { useCallback, useRef, MutableRefObject, HTMLAttributes } from "react";
+import { useCallback, useRef } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetInput & RestProps;
   divRef: any;
@@ -30,9 +33,8 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const __divRef: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(
-    null
-  );
+  const __divRef: MutableRefObject<HTMLDivElement | null> =
+    useRef<HTMLDivElement>(null);
 
   const __getDirectly = useCallback(
     function __getDirectly(): any {
@@ -68,6 +70,4 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   });
 }
 
-Widget.defaultProps = {
-  ...WidgetInput,
-};
+Widget.defaultProps = WidgetInput;

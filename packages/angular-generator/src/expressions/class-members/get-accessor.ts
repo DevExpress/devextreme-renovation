@@ -3,72 +3,59 @@ import {
   Binary,
   Block,
   Call,
-  Decorators,
   GetAccessor as BaseGetAccessor,
   Identifier,
-  isComplexType,
-  Parameter,
   Paren,
   ReturnStatement,
   SimpleExpression,
   SyntaxKind,
   TypeExpression,
+  Expression,
+  toStringOptions,
 } from '@devextreme-generator/core';
 
-import { Decorator } from '../decorator';
-
-export class GetAccessor extends BaseGetAccessor {
-  constructor(
-    decorators: Decorator[] | undefined,
-    modifiers: string[] | undefined,
-    name: Identifier,
-    parameters: Parameter[],
-    type?: TypeExpression | string,
-    body?: Block,
-  ) {
-    const isProvider = decorators?.some((d) => d.name === Decorators.Provider);
-    if (body && ((type && isComplexType(type)) || isProvider)) {
-      const cacheAccess = `this.__getterCache["${name.toString()}"]`;
-      const setCacheExpression = new Binary(
-        new SimpleExpression(cacheAccess),
-        SyntaxKind.EqualsToken,
-        new Call(
-          new Paren(
-            new ArrowFunction(
-              [],
-              [],
-              [],
-              type,
-              SyntaxKind.EqualsGreaterThanToken,
-              new Block(body.statements, false),
-              {},
-            ),
-          ),
-          undefined,
+export const compileGetterCache = (
+  name: Identifier,
+  type: TypeExpression | string | undefined,
+  body: Block,
+  isProvider: boolean | undefined,
+  needToHandleProvider = true,
+): Expression[] => {
+  const cacheAccess = `this.__getterCache["${name.toString()}"]`;
+  const setCacheExpression = new Binary(
+    new SimpleExpression(cacheAccess),
+    SyntaxKind.EqualsToken,
+    new Call(
+      new Paren(
+        new ArrowFunction(
+          [],
+          [],
+          [],
+          type,
+          SyntaxKind.EqualsGreaterThanToken,
+          new Block(body.statements, false),
+          {},
         ),
-      );
-      const returnExpression = !isProvider
-        ? setCacheExpression
-        : new Binary(
-          new SimpleExpression(`this.${name}Provider.value`),
-          SyntaxKind.EqualsToken,
-          setCacheExpression,
-        );
-      body.statements = [
-        new SimpleExpression(`
-                    if(${cacheAccess}!==undefined){
-                        return ${cacheAccess};
-                    }`),
-        new ReturnStatement(returnExpression),
-      ];
-    }
-    super(decorators, modifiers, name, parameters, type, body);
-  }
-
-  isMemorized(): boolean {
-    return isComplexType(this.type) || this.isProvider;
-  }
-
+      ),
+      undefined,
+    ),
+  );
+  const returnExpression = isProvider && needToHandleProvider
+    ? new Binary(
+      new SimpleExpression(`this.${name}Provider.value`),
+      SyntaxKind.EqualsToken,
+      setCacheExpression,
+    )
+    : setCacheExpression;
+  return [
+    new SimpleExpression(`
+                if(${cacheAccess}!==undefined){
+                    return ${cacheAccess};
+                }`),
+    new ReturnStatement(returnExpression),
+  ];
+};
+export class GetAccessor extends BaseGetAccessor {
   get canBeDestructured() {
     if (
       this.isEvent
@@ -81,5 +68,27 @@ export class GetAccessor extends BaseGetAccessor {
       return false;
     }
     return super.canBeDestructured;
+  }
+
+  toString(options?: toStringOptions): string {
+    if (options?.isComponent
+       && this.body
+       && this.isMemorized(options)) {
+      const baseGetter = new BaseGetAccessor(
+        this.decorators,
+        this.modifiers,
+        new Identifier(this.name),
+        this.parameters,
+        this.type,
+        this.body,
+      );
+      if (baseGetter?.body) {
+        baseGetter.body.statements = compileGetterCache(
+          this._name, this.type, this.body, this.isProvider,
+        );
+        return baseGetter.toString(options);
+      }
+    }
+    return super.toString(options);
   }
 }

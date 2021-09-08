@@ -1,8 +1,9 @@
 import {
   BaseInfernoComponent,
   InfernoComponent,
-  InfernoComponentWrapper,
-} from "../../../../modules/inferno/base_component";
+  InfernoWrapperComponent,
+  normalizeStyles,
+} from "@devextreme/vdom";
 
 export declare type PropsType = {
   height?: number;
@@ -10,26 +11,28 @@ export declare type PropsType = {
 };
 const Props: PropsType = {};
 import { createElement as h } from "inferno-compat";
+import { createReRenderEffect } from "@devextreme/vdom";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
   ref?: any;
-  $element: Element | null | undefined;
 };
 
-export default class Widget extends InfernoComponentWrapper<
-  typeof Props & RestProps
-> {
+export default class Widget extends InfernoWrapperComponent<any> {
   state = {};
   refs: any;
 
-  constructor(props: typeof Props & RestProps) {
+  constructor(props: any) {
     super(props);
   }
 
+  createEffects() {
+    return [createReRenderEffect()];
+  }
+
   get restAttributes(): RestProps {
-    const { height, width, ...restProps } = this.props;
+    const { height, width, ...restProps } = this.props as any;
     return restProps;
   }
 
@@ -42,12 +45,10 @@ export default class Widget extends InfernoComponentWrapper<
   }
 }
 
-Widget.defaultProps = {
-  ...Props,
-};
+Widget.defaultProps = Props;
 function view1(viewModel: Widget) {
   return (
-    <div style={{ height: viewModel.props.height }}>
+    <div style={normalizeStyles({ height: viewModel.props.height })}>
       <span></span>
 
       <span></span>

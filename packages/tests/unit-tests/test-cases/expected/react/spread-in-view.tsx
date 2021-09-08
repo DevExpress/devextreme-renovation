@@ -8,16 +8,20 @@ export declare type WidgetPropsType = {
   onClick?: (e: any) => void;
 };
 export const WidgetProps: WidgetPropsType = {
-  a: [1, 2, 3],
+  get a() {
+    return [1, 2, 3];
+  },
   id: "1",
 };
 import * as React from "react";
-import { useCallback, HTMLAttributes } from "react";
+import { useCallback } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetProps
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetProps & RestProps;
   restAttributes: RestProps;
@@ -38,6 +42,4 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   });
 }
 
-Widget.defaultProps = {
-  ...WidgetProps,
-};
+Widget.defaultProps = WidgetProps;

@@ -365,12 +365,53 @@ mocha.describe("import Components", function () {
       assert.equal(
         getResult(component.compileDefaultProps()),
         getResult(
-          "Component.defaultProps = {...Base.defaultProps, childProp:10}"
+          "Component.defaultProps = Object.create(Object.prototype,Object.assign(Object.getOwnPropertyDescriptors(Base.defaultProps),Object.getOwnPropertyDescriptors({childProp:10})))"
         )
       );
     }
   );
 });
+mocha.describe("Import_Declaration", function(){
+  this.beforeEach(function () {
+    generator.setContext({ dirname: path.resolve(__dirname) });
+  });
+
+  this.afterEach(function () {
+    generator.setContext(null);
+  });
+  mocha.it("generates import for RefObject", function(){
+    const importDeclaration = generator.createImportDeclaration(
+      undefined,
+      undefined,
+      generator.createImportClause(
+        undefined,
+        generator.createNamedImports([
+          generator.createImportSpecifier(
+            undefined,
+            generator.createIdentifier("ComponentBindings")
+          ),
+          generator.createImportSpecifier(
+            undefined,
+            generator.createIdentifier("Ref")
+          ),
+          generator.createImportSpecifier(
+            undefined,
+            generator.createIdentifier("RefObject")
+          )
+        ]),
+        false
+      ),
+      generator.createStringLiteral("@devextreme-generator/declarations")
+    );
+    assert.strictEqual(
+      getResult(importDeclaration.toString()),
+      getResult(
+        `import { RefObject } from "preact"`
+      )
+    );
+  })
+})
+
 
 mocha.describe("preact-generator: jQuery generation", function () {
   const testGenerator = createTestGenerator("preact");

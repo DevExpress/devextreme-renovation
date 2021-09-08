@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 import Child from "./forward-ref-child";
 function view({
   child,
@@ -14,16 +15,14 @@ export declare type PropsType = {
 };
 const Props: PropsType = {};
 import * as React from "react";
-import {
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-  MutableRefObject,
-  HTMLAttributes,
-} from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
-declare type RestProps = Omit<HTMLAttributes<HTMLElement>, keyof typeof Props>;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface RefOnChildrenParent {
   props: typeof Props & RestProps;
   child: any;
@@ -32,9 +31,8 @@ interface RefOnChildrenParent {
 }
 
 export default function RefOnChildrenParent(props: typeof Props & RestProps) {
-  const __child: MutableRefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(
-    null
-  );
+  const __child: MutableRefObject<HTMLDivElement | null> =
+    useRef<HTMLDivElement>(null);
   const [__state_innerState, __state_setInnerState] = useState<number>(10);
 
   const __restAttributes = useCallback(
@@ -59,6 +57,4 @@ export default function RefOnChildrenParent(props: typeof Props & RestProps) {
   });
 }
 
-RefOnChildrenParent.defaultProps = {
-  ...Props,
-};
+RefOnChildrenParent.defaultProps = Props;

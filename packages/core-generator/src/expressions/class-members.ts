@@ -18,6 +18,7 @@ import {
   SimpleTypeExpression,
   TypeExpression,
   TypeReferenceNode,
+  isComplexType,
 } from './type';
 import { TypeParameterDeclaration } from './type-parameter-declaration';
 
@@ -176,7 +177,7 @@ export class Method extends BaseClassMember {
 
   parameters: Parameter[];
 
-  body: Block;
+  body: Block | undefined;
 
   constructor(
     decorators: Decorator[] = [],
@@ -187,7 +188,7 @@ export class Method extends BaseClassMember {
     typeParameters: TypeParameterDeclaration[] | undefined = [],
     parameters: Parameter[],
     type: TypeExpression | string = new SimpleTypeExpression('any'),
-    body: Block,
+    body: Block | undefined,
   ) {
     super(decorators, modifiers, name, type);
     this.asteriskToken = asteriskToken;
@@ -195,6 +196,24 @@ export class Method extends BaseClassMember {
     this.typeParameters = typeParameters;
     this.parameters = parameters;
     this.body = body;
+  }
+
+  compileBody(options?: toStringOptions): string {
+    if (this.modifiers.indexOf('abstract') !== -1) {
+      if (!this.body) {
+        return ';';
+      }
+      throw new Error(`Method '${this.name}' cannot have an implementation because it is marked abstract.`);
+    } else {
+      if (this.body) {
+        return this.body.toString(options);
+      }
+      throw new Error('Function implementation is missing or not immediately following the declaration.');
+    }
+  }
+
+  compileModifiers(): string {
+    return this.modifiers.join(' ');
   }
 
   compileTypeParameters(): string {
@@ -212,18 +231,18 @@ export class Method extends BaseClassMember {
   declaration(options?: toStringOptions) {
     return `function ${this.name}${this.compileTypeParameters()}(${
       this.parameters
-    })${compileType(this.type.toString())}${this.body.toString(options)}`;
+    })${compileType(this.type.toString())}${this.body?.toString(options)}`;
   }
 
   arrowDeclaration(options?: any) {
-    return `(${this.parameters})=>${this.body.toString(options)}`;
+    return `(${this.parameters})=>${this.body?.toString(options)}`;
   }
 
   filterDependencies(dependencies: string[]): string[] {
     return dependencies;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): string[] {
     const members = options.members;
     const run = this.decorators
       .find((d) => d.name === Decorators.Effect)
@@ -244,10 +263,10 @@ export class Method extends BaseClassMember {
           .reduce(depsReducer, ['props']),
       );
     } else if (run !== 'once') {
-      const dependency = this.body.getDependency(options);
+      const dependency = this.body?.getDependency(options);
       const additionalDependency = [];
 
-      if (dependency.find((d) => d === 'props')) {
+      if (dependency?.find((d) => d === 'props')) {
         additionalDependency.push('props');
       }
 
@@ -265,12 +284,12 @@ export class Method extends BaseClassMember {
     return [...new Set(result)];
   }
 
-  toString(options?: toStringOptions) {
-    return `${this.decorators.join(' ')} ${this.modifiers.join(' ')} ${
+  toString(options?: toStringOptions): string {
+    return `${this.decorators.join(' ')}${this.compileModifiers()} ${
       this.name
     }${this.compileTypeParameters()}(${this.parameters})${compileType(
       this.type.toString(),
-    )}${this.body.toString(options)}`;
+    )}${this.compileBody(options)}`;
   }
 
   getImports(context: GeneratorContext) {
@@ -311,6 +330,24 @@ export class GetAccessor extends Method {
     );
   }
 
+  isMemorized(
+    options?: toStringOptions,
+    needToMemorizeProvider = true,
+    contextTypes?:{ [name:string]: TypeExpression },
+  ): boolean {
+    if (this.isProvider && !needToMemorizeProvider) {
+      return false;
+    }
+    if (options) {
+      const mutables = options?.members.filter((m) => m.isMutable).map((m) => m._name.toString());
+      const containMutableDep = this.getDependency(options).some((dep) => mutables?.includes(dep));
+      return !containMutableDep
+      && (isComplexType(this.type, contextTypes)
+        || this.isProvider);
+    }
+    return false;
+  }
+
   typeDeclaration() {
     return `${this._name}:${this.type}`;
   }
@@ -319,10 +356,10 @@ export class GetAccessor extends Method {
     return `${this.processComponentContext(componentContext)}${this.name}`;
   }
 
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions): string {
     return `${this.modifiers.join(' ')} get ${this.name}()${compileType(
       this.type.toString(),
-    )}${this.body.toString(options)}`;
+    )}${this.body?.toString(options)}`;
   }
 }
 

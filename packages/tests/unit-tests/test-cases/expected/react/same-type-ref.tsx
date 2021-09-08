@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 import BaseWidget from "./method";
 function view(viewModel: Widget) {
   return <BaseWidget></BaseWidget>;
@@ -9,12 +10,14 @@ export declare type WidgetInputType = {
 const WidgetInput: WidgetInputType = {};
 import { WidgetRef as BaseWidgetRef } from "./method";
 import * as React from "react";
-import { useCallback, useRef, MutableRefObject, HTMLAttributes } from "react";
+import { useCallback, useRef } from "react";
 
-declare type RestProps = Omit<
-  HTMLAttributes<HTMLElement>,
-  keyof typeof WidgetInput
->;
+declare type RestProps = {
+  className?: string;
+  style?: { [name: string]: any };
+  key?: any;
+  ref?: any;
+};
 interface Widget {
   props: typeof WidgetInput & RestProps;
   divRef1: any;
@@ -23,12 +26,10 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const __divRef1: MutableRefObject<BaseWidgetRef | null> = useRef<BaseWidgetRef>(
-    null
-  );
-  const __divRef2: MutableRefObject<BaseWidgetRef | null> = useRef<BaseWidgetRef>(
-    null
-  );
+  const __divRef1: MutableRefObject<BaseWidgetRef | null> =
+    useRef<BaseWidgetRef>(null);
+  const __divRef2: MutableRefObject<BaseWidgetRef | null> =
+    useRef<BaseWidgetRef>(null);
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
@@ -46,6 +47,4 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   });
 }
 
-Widget.defaultProps = {
-  ...WidgetInput,
-};
+Widget.defaultProps = WidgetInput;

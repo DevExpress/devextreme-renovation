@@ -28,12 +28,7 @@ export function Widget(props: typeof WidgetInput & RestProps) {
     [props]
   );
 
-  return view({
-    props: { ...props },
-    restAttributes: __restAttributes(),
-  });
+  return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
 
-Widget.defaultProps = {
-  ...WidgetInput,
-};
+Widget.defaultProps = WidgetInput;

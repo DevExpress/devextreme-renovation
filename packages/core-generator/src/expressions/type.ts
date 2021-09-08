@@ -22,6 +22,7 @@ import {
   ImportSpecifier,
   NamedImports,
 } from './import';
+import { Class } from './class';
 
 export class TypeExpression extends Expression {}
 
@@ -238,6 +239,16 @@ export class TypeLiteralNode extends TypeExpression {
 
   toString(_options?: toStringOptions) {
     return `{${this.members.join(',')}}`;
+  }
+
+  getImports(context: GeneratorContext) {
+    return this.members.reduce((acc, m) => {
+      const imports = m.type?.getImports(context);
+      if (imports) {
+        return acc.concat(imports);
+      }
+      return acc;
+    }, [] as TypeExpressionImports);
   }
 }
 
@@ -471,19 +482,23 @@ export class TypeAliasDeclaration extends TypeExpression {
   }
 }
 
-export function isComplexType(type: TypeExpression | string): boolean {
+export function isComplexType(
+  type: TypeExpression | string,
+  contextTypes?:{ [name:string]: TypeExpression },
+): boolean {
   if (type instanceof UnionTypeNode) {
     return type.types.some((t) => isComplexType(t));
   }
-
+  if (type instanceof TypeReferenceNode) {
+    const contextType = contextTypes?.[type.typeName.toString()];
+    return contextType instanceof Class || isComplexType(contextType || '');
+  }
   if (
     type instanceof FunctionTypeNode
     || type instanceof ArrayTypeNode
-    || type instanceof TypeReferenceNode
     || type instanceof ObjectLiteral
     || type instanceof TypeLiteralNode
-    || (type instanceof LiteralTypeNode
-      && type.expression instanceof ObjectLiteral)
+    || (type instanceof LiteralTypeNode && isComplexType(type.expression))
     || type.toString() === 'object'
   ) {
     return true;

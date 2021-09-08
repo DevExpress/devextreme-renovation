@@ -25,9 +25,8 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const [__state_someState, __state_setSomeState] = useState<
-    { current: string } | undefined
-  >(undefined);
+  const [__state_someState, __state_setSomeState] =
+    useState<{ current: string } | undefined>(undefined);
   const [__state_existsState, __state_setExistsState] = useState<{
     current: string;
   }>({ current: "value" });
@@ -57,6 +56,4 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   });
 }
 
-Widget.defaultProps = {
-  ...WidgetInput,
-};
+Widget.defaultProps = WidgetInput;

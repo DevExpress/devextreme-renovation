@@ -56,6 +56,10 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("abstract-class", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("objects", function () {
     this.testGenerator(this.test!.title);
   });
@@ -76,6 +80,12 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("props-name-collision", function () {
+    this.testGenerator(this.test!.title);
+  });
+  mocha.it("getter-with-complex-type", function () {
+    this.testGenerator(this.test!.title);
+  });
   mocha.it("rest-styles", function () {
     this.testGenerator(this.test!.title);
   });
@@ -180,6 +190,10 @@ mocha.describe("react-generation", function () {
   });
 
   mocha.it("component-input", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("component-input-defaults", function () {
     this.testGenerator(this.test!.title);
   });
 
@@ -318,11 +332,27 @@ mocha.describe("react-generation", function () {
   mocha.it("nested-default-props", function () {
     this.testGenerator(this.test!.title);
   });
+  
+  mocha.it("nested-pick", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   mocha.it("nested-props-and-component", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("nested-inherited", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("types", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("types-external", function () {
+    this.testGenerator(this.test!.title);
+  });
+  
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {

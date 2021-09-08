@@ -73,13 +73,13 @@ export class Property extends BaseProperty {
     }
     if (this.isRef) {
       const decoratorString = !options?.forwardRefs?.some(
-        (forwardRef) => `${forwardRef.name}Ref` === this.name,
+        (forwardRef) => `${forwardRef.name}__Ref__` === this.name,
       )
         && options?.members
           .filter((m) => m.isForwardRefProp || m.isForwardRef)
-          .some((forwardRef) => `${forwardRef.name}Ref` === this.name)
+          .some((forwardRef) => `${forwardRef.name}__Ref__` === this.name)
         ? ''
-        : `@ViewChild("${this.name}", {static: false}) `;
+        : `@ViewChild("${this.name}${this.name.endsWith('__Ref__') ? '' : 'Link'}", {static: false}) `;
       return `${decoratorString}${this.name}${this.questionOrExclamationToken}:ElementRef<${this.type}>`;
     }
     if (this._hasDecorator(Decorators.ApiRef)) {
@@ -159,9 +159,6 @@ export class Property extends BaseProperty {
   }
 
   getDependency(_options: toStringOptions) {
-    if (this.isMutable) {
-      return [];
-    }
     return [this.name];
   }
 
