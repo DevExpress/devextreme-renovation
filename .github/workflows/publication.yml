@@ -28,7 +28,7 @@ jobs:
         id: detection
         uses: ./.github/actions/detect-version-bump
 
-  prepublish-build: 
+  prepublish-build:
     name: Prepublish build
     runs-on: ubuntu-latest
     needs: [ version-bump ]
@@ -75,7 +75,7 @@ jobs:
           inferno-generator,
           build-helpers,
           declarations,
-          vdom,
+          runtime,
         ]
 
     steps:

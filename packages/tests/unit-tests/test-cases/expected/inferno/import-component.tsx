@@ -3,7 +3,7 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/vdom";
+} from "@devextreme/runtime/inferno";
 import Base, { WidgetProps } from "./component-input";
 function view(model: Child) {
   return <Base height={model.getProps().height} />;
