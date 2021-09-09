@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.build.json",
-  "include": ["src/**/*"],
+  "include": ["angular/**/*", "react/**/*", "vue/**/*", "inferno/**/*"],
   "compilerOptions": {
     "outDir": "./dist",
     "typeRoots": ["node_modules/inferno"],
