@@ -6,5 +6,8 @@
   "license": "SEE LICENSE IN LICENSE",
   "main": "../dist/cjs/inferno/index",
   "module": "../dist/esm/inferno/index",
-  "types": "../dist/esm/inferno/index"
+  "types": "../dist/esm/inferno/index",
+  "dependencies": {
+    "inferno": "^7.4.6"
+  }
 }
