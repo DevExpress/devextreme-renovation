@@ -98,7 +98,7 @@ export class InfernoWrapperComponent<
 
   vDomUpdateClasses(): void {
     const el = this.vDomElement as ElementWithCustomClassesData;
-    const currentClasses = this.vDomElement?.className.length
+    const currentClasses = el.className.length
       ? el.className.split(' ')
       : [];
     const addedClasses = currentClasses.filter(
