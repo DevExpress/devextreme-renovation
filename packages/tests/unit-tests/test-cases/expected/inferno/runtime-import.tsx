@@ -1,1 +1,1 @@
-import { renderTemplate } from '@devextreme/vdom/src/inferno';
+import { renderTemplate } from '@devextreme/runtime/inferno';

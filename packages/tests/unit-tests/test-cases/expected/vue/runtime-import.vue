@@ -1,3 +1,3 @@
 <script>
-import { renderTemplate } from '@devextreme/vdom/src/vue';
+import { renderTemplate } from '@devextreme/runtime/vue';
 </script>

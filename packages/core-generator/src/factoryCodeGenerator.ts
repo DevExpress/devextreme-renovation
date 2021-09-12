@@ -1,4 +1,5 @@
 import CodeBlockWriter from 'code-block-writer';
+import { replaceDeclarationPath } from './utils/dependency';
 
 export function generateFactoryCode(
   ts: typeof import('typescript'),
@@ -3657,7 +3658,7 @@ export function generateFactoryCode(
         writeNodeText(node.importClause);
       }
       writer.write(',').newLine();
-      const processedPath = node.moduleSpecifier.getText().replace(/(devextreme\/vdom\/src\/)declarations/i, `$1${platform}`);
+      const processedPath = replaceDeclarationPath(node.moduleSpecifier.getText(), platform);
       writer.write(`ts.createStringLiteral(${processedPath})`);
     });
     writer.write(')');

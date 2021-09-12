@@ -1,1 +1,1 @@
-import { renderTemplate } from '@devextreme/vdom/src/declarations';
+import { renderTemplate } from '@devextreme/runtime/declarations';
