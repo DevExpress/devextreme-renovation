@@ -3,7 +3,7 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from "@devextreme/vdom";
 import BaseState from "./model";
 function view(model: Widget) {
   return (

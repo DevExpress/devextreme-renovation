@@ -3,7 +3,7 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from "@devextreme/vdom";
 import { PickedProps, GridColumnProps } from "./nested-props";
 export const CustomColumnComponent = (props: typeof GridColumnProps) => {};
 function view(model: Widget) {

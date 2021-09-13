@@ -4,7 +4,7 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from "@devextreme/vdom";
 
 export declare type SomePropsType = {};
 const SomeProps: SomePropsType = {};

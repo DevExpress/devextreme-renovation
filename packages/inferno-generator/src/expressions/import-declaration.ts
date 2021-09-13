@@ -35,7 +35,7 @@ export class ImportDeclaration extends BaseImportDeclaration {
 
     if (common.length) {
       result.push(
-        `import {${common}} from "@devextreme/runtime/inferno"`,
+        `import {${common}} from "@devextreme/vdom"`,
       );
     }
 

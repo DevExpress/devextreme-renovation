@@ -3,7 +3,7 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from "@devextreme/vdom";
 function view(model: Widget): any {
   const sizes = model.props.sizes ?? { width: 0, height: 0 };
   return (

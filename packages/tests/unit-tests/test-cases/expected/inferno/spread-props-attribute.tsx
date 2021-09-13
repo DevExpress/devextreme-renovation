@@ -3,7 +3,7 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from "@devextreme/vdom";
 import InnerWidget from "./dx-inner-widget";
 function view({ props, restAttributes }: Widget) {
   return <InnerWidget {...(props as any)} {...restAttributes} />;
