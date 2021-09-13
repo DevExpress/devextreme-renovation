@@ -128,9 +128,9 @@ export class InfernoWrapperComponent<
   }
 
   componentDidMount(): void {
-    super.componentDidMount();
     const el = findDOMfromVNode(this.$LI, true) as ElementWithCustomClassesData;
     this.vDomElement = el;
+    super.componentDidMount();
     el.dxClasses = el.dxClasses || {
       removed: [], added: [], previous: [],
     };
