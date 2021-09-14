@@ -7,7 +7,7 @@ export declare type WidgetInputType = {
 const WidgetInput: WidgetInputType = {} as any as WidgetInputType;
 import {
   convertRulesToOptions,
-  DefaultsRule,
+  DefaultOptionsRule,
 } from "../../../../jquery-helpers/default_options";
 import * as React from "react";
 import { useCallback } from "react";
@@ -52,7 +52,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 
 Widget.defaultProps = WidgetInput;
 
-type WidgetOptionRule = DefaultsRule<typeof WidgetInput>;
+type WidgetOptionRule = DefaultOptionsRule<typeof WidgetInput>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {

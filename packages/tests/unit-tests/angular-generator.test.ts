@@ -7074,13 +7074,13 @@ mocha.describe("Angular generator", function () {
         generator.setContext(null);
       });
 
-      mocha.it("Add import convertRulesToOptions, DefaultsRule", function () {
+      mocha.it("Add import convertRulesToOptions, DefaultOptionsRule", function () {
         const component = createComponent([]) as AngularComponent;
         assert.ok(
           component
             .compileImports()
             .indexOf(
-              `import {convertRulesToOptions, DefaultsRule} from "../default_options"`
+              `import {convertRulesToOptions, DefaultOptionsRule} from "../default_options"`
             ) > -1
         );
       });
@@ -7094,7 +7094,7 @@ mocha.describe("Angular generator", function () {
           assert.strictEqual(
             getResult(component.compileDefaultOptions([])),
             getResult(`
-                    type BaseWidgetOptionRule = DefaultsRule<Partial<BaseWidget>>;
+                    type BaseWidgetOptionRule = DefaultOptionsRule<Partial<BaseWidget>>;
                     const __defaultOptionRules:BaseWidgetOptionRule[] = rules;
                     export function defaultOptions(rule: BaseWidgetOptionRule) { 
                         __defaultOptionRules.push(rule);
@@ -7111,7 +7111,7 @@ mocha.describe("Angular generator", function () {
           assert.strictEqual(
             getResult(component.compileDefaultOptions([])),
             getResult(`
-                    type BaseWidgetOptionRule = DefaultsRule<Partial<BaseWidget>>;
+                    type BaseWidgetOptionRule = DefaultOptionsRule<Partial<BaseWidget>>;
                     const __defaultOptionRules:BaseWidgetOptionRule[] = [];
                     export function defaultOptions(rule: BaseWidgetOptionRule) { 
                         __defaultOptionRules.push(rule);

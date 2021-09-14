@@ -12,7 +12,7 @@ export declare type WidgetPropsType = {};
 export const WidgetProps: WidgetPropsType = {};
 import {
   convertRulesToOptions,
-  DefaultsRule,
+  DefaultOptionsRule,
 } from "../../../../jquery-helpers/default_options";
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
@@ -53,7 +53,7 @@ Widget.defaultProps = Object.create(
   )
 );
 
-type WidgetOptionRule = DefaultsRule<typeof WidgetProps>;
+type WidgetOptionRule = DefaultOptionsRule<typeof WidgetProps>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {

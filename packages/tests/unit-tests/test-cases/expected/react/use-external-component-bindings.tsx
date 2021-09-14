@@ -5,7 +5,7 @@ function view(model: Widget) {
 
 import {
   convertRulesToOptions,
-  DefaultsRule,
+  DefaultOptionsRule,
 } from "../../../../jquery-helpers/default_options";
 import * as React from "react";
 import { useCallback } from "react";
@@ -35,7 +35,7 @@ export default function Widget(props: typeof Props & RestProps) {
 
 Widget.defaultProps = Props;
 
-type WidgetOptionRule = DefaultsRule<typeof Props>;
+type WidgetOptionRule = DefaultOptionsRule<typeof Props>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {

@@ -1,7 +1,7 @@
 import * as react from 'react';
 import { createPortal } from 'react-dom';
 
-export type DefaultsRule<T> = {
+export type DefaultOptionsRule<T> = {
   device: any;
   options: Partial<T>;
 };
@@ -29,7 +29,7 @@ export type ComponentParameters = {
   /**
    * Set to `null` to not generate 'defaultOptions' method
    */
-  defaultOptionRules?: DefaultsRule<any>[] | null;
+  defaultOptionRules?: DefaultOptionsRule<any>[] | null;
 
   /**
    * Set to `true` if component is SVG-based

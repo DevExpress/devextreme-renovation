@@ -10,10 +10,10 @@ import {
 import { CommonModule } from "@angular/common";
 import {
   convertRulesToOptions,
-  DefaultsRule,
+  DefaultOptionsRule,
 } from "../../../../jquery-helpers/default_options";
 
-type WidgetOptionRule = DefaultsRule<Partial<WidgetProps>>;
+type WidgetOptionRule = DefaultOptionsRule<Partial<WidgetProps>>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [
   { device: true, options: {} },
