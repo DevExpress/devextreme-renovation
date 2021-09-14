@@ -46,7 +46,7 @@ export class InfernoComponent extends PreactComponent {
     }
 
     if (this.jQueryRegistered) {
-      imports.push('import { createReRenderEffect } from "@devextreme/vdom";');
+      imports.push('import { createReRenderEffect } from "@devextreme/runtime/inferno";');
     }
 
     if (coreImports.length) {
