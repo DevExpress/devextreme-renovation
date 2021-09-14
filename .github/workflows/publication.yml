@@ -76,6 +76,7 @@ jobs:
           build-helpers,
           declarations,
           runtime,
+          vdom
         ]
 
     steps:

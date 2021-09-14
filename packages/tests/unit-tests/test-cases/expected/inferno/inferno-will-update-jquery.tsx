@@ -4,7 +4,7 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/vdom";
+} from "@devextreme/runtime/inferno";
 
 export declare type SomePropsType = {};
 const SomeProps: SomePropsType = {};
@@ -13,7 +13,7 @@ function view() {
 }
 
 import { createElement as h } from "inferno-compat";
-import { createReRenderEffect } from "@devextreme/vdom";
+import { createReRenderEffect } from "@devextreme/runtime/inferno";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
