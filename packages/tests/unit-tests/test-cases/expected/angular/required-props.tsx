@@ -14,7 +14,7 @@ import {
 import { CommonModule } from "@angular/common";
 import {
   convertRulesToOptions,
-  Rule,
+  DefaultsRule,
 } from "../../../../jquery-helpers/default_options";
 
 type WidgetOptionRule = DefaultsRule<Partial<WidgetInput>>;

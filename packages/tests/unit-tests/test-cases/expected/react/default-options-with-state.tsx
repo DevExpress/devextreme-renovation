@@ -16,7 +16,7 @@ export const WidgetProps: WidgetPropsType = {
 } as any as WidgetPropsType;
 import {
   convertRulesToOptions,
-  Rule,
+  DefaultsRule,
 } from "../../../../jquery-helpers/default_options";
 import * as React from "react";
 import { useState, useCallback } from "react";

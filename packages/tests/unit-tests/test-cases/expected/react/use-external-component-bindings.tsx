@@ -5,7 +5,7 @@ function view(model: Widget) {
 
 import {
   convertRulesToOptions,
-  Rule,
+  DefaultsRule,
 } from "../../../../jquery-helpers/default_options";
 import * as React from "react";
 import { useCallback } from "react";

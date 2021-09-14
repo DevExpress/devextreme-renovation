@@ -7074,13 +7074,13 @@ mocha.describe("Angular generator", function () {
         generator.setContext(null);
       });
 
-      mocha.it("Add import convertRulesToOptions, Rule", function () {
+      mocha.it("Add import convertRulesToOptions, DefaultsRule", function () {
         const component = createComponent([]) as AngularComponent;
         assert.ok(
           component
             .compileImports()
             .indexOf(
-              `import {convertRulesToOptions, Rule} from "../default_options"`
+              `import {convertRulesToOptions, DefaultsRule} from "../default_options"`
             ) > -1
         );
       });

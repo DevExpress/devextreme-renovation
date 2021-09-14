@@ -7,7 +7,7 @@ export declare type WidgetInputType = {
 const WidgetInput: WidgetInputType = {} as any as WidgetInputType;
 import {
   convertRulesToOptions,
-  Rule,
+  DefaultsRule,
 } from "../../../../jquery-helpers/default_options";
 import * as React from "react";
 import { useCallback } from "react";
