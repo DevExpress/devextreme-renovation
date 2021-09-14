@@ -17,7 +17,7 @@ import {
   Rule,
 } from "../../../../jquery-helpers/default_options";
 
-type WidgetOptionRule = Rule<Partial<WidgetInput>>;
+type WidgetOptionRule = DefaultsRule<Partial<WidgetInput>>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {

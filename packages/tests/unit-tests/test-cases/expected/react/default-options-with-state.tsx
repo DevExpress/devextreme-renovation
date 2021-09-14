@@ -71,7 +71,7 @@ function __processTwoWayProps(defaultProps: typeof WidgetProps & RestProps) {
 
 Widget.defaultProps = WidgetProps;
 
-type WidgetOptionRule = Rule<typeof WidgetProps>;
+type WidgetOptionRule = DefaultsRule<typeof WidgetProps>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {

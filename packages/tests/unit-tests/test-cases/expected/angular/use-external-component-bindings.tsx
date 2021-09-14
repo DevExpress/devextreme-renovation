@@ -12,7 +12,7 @@ import {
   Rule,
 } from "../../../../jquery-helpers/default_options";
 
-type WidgetOptionRule = Rule<Partial<Props>>;
+type WidgetOptionRule = DefaultsRule<Partial<Props>>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {

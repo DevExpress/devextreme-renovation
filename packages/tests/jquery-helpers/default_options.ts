@@ -1,4 +1,4 @@
-export function convertRulesToOptions<T>(rules: Rule<T>[]): T {
+export function convertRulesToOptions<T>(rules: DefaultsRule<T>[]): T {
   return rules.reduce((options: T, rule) => {
     return {
       ...options,
@@ -8,12 +8,12 @@ export function convertRulesToOptions<T>(rules: Rule<T>[]): T {
 }
 
 export function createDefaultOptionRules<T>(
-  options: Rule<T>[] = []
-): Rule<T>[] {
+  options: DefaultsRule<T>[] = []
+): DefaultsRule<T>[] {
   return options;
 }
 
-export type Rule<T> = {
+export type DefaultsRule<T> = {
   device: any;
   options: Partial<T>;
 };

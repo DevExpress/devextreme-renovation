@@ -13,7 +13,7 @@ import {
   Rule,
 } from "../../../../jquery-helpers/default_options";
 
-type WidgetOptionRule = Rule<Partial<WidgetProps>>;
+type WidgetOptionRule = DefaultsRule<Partial<WidgetProps>>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [
   { device: true, options: {} },

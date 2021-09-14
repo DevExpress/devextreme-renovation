@@ -35,7 +35,7 @@ export default function Widget(props: typeof Props & RestProps) {
 
 Widget.defaultProps = Props;
 
-type WidgetOptionRule = Rule<typeof Props>;
+type WidgetOptionRule = DefaultsRule<typeof Props>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {

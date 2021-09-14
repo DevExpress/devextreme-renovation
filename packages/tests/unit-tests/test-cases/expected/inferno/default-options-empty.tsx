@@ -53,7 +53,7 @@ Widget.defaultProps = Object.create(
   )
 );
 
-type WidgetOptionRule = Rule<typeof WidgetProps>;
+type WidgetOptionRule = DefaultsRule<typeof WidgetProps>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {

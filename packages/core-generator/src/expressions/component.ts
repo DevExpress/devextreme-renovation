@@ -325,7 +325,7 @@ export class Component extends Class implements Heritable {
 
   compileDefaultOptionRulesType() {
     const defaultOptionsTypeArgument = this.compileDefaultOptionsPropsType();
-    return `type ${this.compileDefaultOptionsRuleTypeName()} = Rule<${defaultOptionsTypeArgument}>;`;
+    return `type ${this.compileDefaultOptionsRuleTypeName()} = DefaultsRule<${defaultOptionsTypeArgument}>;`;
   }
 
   compileDefaultOptionsMethod(
