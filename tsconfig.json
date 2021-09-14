@@ -11,7 +11,6 @@
       "@devextreme-generator/preact": ["./preact-generator/src"],
       "@devextreme-generator/react": ["./react-generator/src"],
       "@devextreme-generator/vue": ["./vue-generator/src"],
-      "@devextreme/vdom": ["./vdom/src"],
       "@devextreme/runtime/inferno": ["./runtime/inferno"],
       "@devextreme/runtime/angular": ["./runtime/angular"],
       "@devextreme/runtime/react": ["./runtime/react"],

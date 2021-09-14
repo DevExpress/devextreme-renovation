@@ -75,8 +75,7 @@ jobs:
           inferno-generator,
           build-helpers,
           declarations,
-          runtime,
-          vdom
+          runtime
         ]
 
     steps:
