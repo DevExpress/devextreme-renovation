@@ -72,6 +72,7 @@ jobs:
       - name: Install Generators
         run: |
           cd ./DevExtreme
+          npm i ../runtime/package.tgz
           npm i ../vdom/package.tgz
           npm i ../declarations/package.tgz
           npm i ../core-generator/package.tgz
@@ -120,6 +121,7 @@ jobs:
       - name: Install Generators
         run: |
           cd ./DevExtreme
+          npm i ../runtime/package.tgz
           npm i ../vdom/package.tgz
           npm i ../declarations/package.tgz
           npm i ../core-generator/package.tgz
@@ -165,6 +167,7 @@ jobs:
       - name: Install Generators
         run: |
           cd ./DevExtreme
+          npm i ../runtime/package.tgz
           npm i ../vdom/package.tgz
           npm i ../declarations/package.tgz
           npm i ../core-generator/package.tgz
@@ -184,7 +187,7 @@ jobs:
           cd ./DevExtreme
           npm install --no-package-lock --no-audit --no-fund
           npm run build
-      
+
       - name: Run QUnit tests
         env:
           CONSTEL: ${{ matrix.CONSTEL }}

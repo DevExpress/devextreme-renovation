@@ -1,0 +1,10 @@
+{
+    "name": "@devextreme/runtime/vue",
+    "version": "1.1.0",
+    "description": "DevExtreme vue common utils",
+    "author": "Developer Express Inc.",
+    "license": "SEE LICENSE IN LICENSE",
+    "main": "../dist/vue/cjs/index",
+    "module": "../dist/vue/esm/index",
+    "types": "../dist/vue/esm/index"
+  }

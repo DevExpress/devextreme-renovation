@@ -4,7 +4,7 @@ import {
   InfernoWrapperComponent,
   normalizeStyles,
   createContext,
-} from "@devextreme/vdom";
+} from "@devextreme/runtime/inferno";
 const SimpleContext = createContext<number>(5);
 function view(viewModel: Widget) {
   return <div></div>;
@@ -18,7 +18,7 @@ export const Props: PropsType = {
   p: 10,
 };
 import { createElement as h } from "inferno-compat";
-import { createReRenderEffect } from "@devextreme/vdom";
+import { createReRenderEffect } from "@devextreme/runtime/inferno";
 import { createRef as infernoCreateRef } from "inferno";
 declare type RestProps = {
   className?: string;

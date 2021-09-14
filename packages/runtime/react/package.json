@@ -1,0 +1,10 @@
+{
+    "name": "@devextreme/runtime/react",
+    "version": "1.1.0",
+    "description": "DevExtreme react common utils",
+    "author": "Developer Express Inc.",
+    "license": "SEE LICENSE IN LICENSE",
+    "main": "../dist/react/cjs/index",
+    "module": "../dist/react/esm/index",
+    "types": "../dist/react/esm/index"
+  }

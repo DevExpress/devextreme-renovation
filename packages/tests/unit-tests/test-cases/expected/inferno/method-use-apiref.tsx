@@ -4,7 +4,7 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/vdom";
+} from "@devextreme/runtime/inferno";
 import BaseWidget from "./method";
 function view(viewModel: WidgetWithApiRef) {
   return (
