@@ -49,7 +49,7 @@ mocha.describe("Expressions", function () {
       generator.setContext(null);
     });
     mocha.it(
-      "import Fragment from @devextreme-generator/declarations should import it from @devextreme/vdom",
+      "import Fragment from @devextreme-generator/declarations should import it from @devextreme/runtime/inferno",
       function () {
         const expression = generator.createImportDeclaration(
           [],
@@ -74,7 +74,7 @@ mocha.describe("Expressions", function () {
     );
 
     mocha.it(
-      "import RefObject from @devextreme/vdom if Ref is imported",
+      "import RefObject from @devextreme/runtime/inferno if Ref is imported",
       function () {
         const expression = generator.createImportDeclaration(
           [],
@@ -93,13 +93,13 @@ mocha.describe("Expressions", function () {
 
         assert.strictEqual(
           expression.toString(),
-          `import {RefObject} from "@devextreme/vdom"`
+          `import {RefObject} from "@devextreme/runtime/inferno"`
         );
       }
     );
 
     mocha.it(
-      "import RefObject from @devextreme/vdom if ForwardRef is imported",
+      "import RefObject from @devextreme/runtime/inferno if ForwardRef is imported",
       function () {
         const expression = generator.createImportDeclaration(
           [],
@@ -118,13 +118,13 @@ mocha.describe("Expressions", function () {
 
         assert.strictEqual(
           expression.toString(),
-          `import {RefObject} from "@devextreme/vdom"`
+          `import {RefObject} from "@devextreme/runtime/inferno"`
         );
       }
     );
 
     mocha.it(
-      "import Component from @devextreme-generator/declarations should import it from @devextreme/vdom",
+      "import Component from @devextreme-generator/declarations should import it from @devextreme/runtime/inferno",
       function () {
         const expression = generator.createImportDeclaration(
           [],
@@ -143,7 +143,7 @@ mocha.describe("Expressions", function () {
 
         assert.strictEqual(
           expression.toString(),
-          `import {BaseInfernoComponent,InfernoComponent,InfernoWrapperComponent,normalizeStyles} from "@devextreme/vdom"`
+          `import {BaseInfernoComponent,InfernoComponent,InfernoWrapperComponent,normalizeStyles} from "@devextreme/runtime/inferno"`
         );
       }
     );
