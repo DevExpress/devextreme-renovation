@@ -11,7 +11,8 @@ mocha.describe("inferno-generation", function () {
   this.beforeAll(function () {
     compile(
       `${__dirname}/test-cases/declarations/src`,
-      `${__dirname}/test-cases/componentFactory`
+      `${__dirname}/test-cases/componentFactory/inferno`,
+      'inferno'
     );
     this.testGenerator = function (componentName: string) {
       generator.setContext({

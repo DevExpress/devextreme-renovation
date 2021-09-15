@@ -44,6 +44,10 @@ import {
 } from './expressions/jsx/jsx-opening-element';
 
 export class AngularGenerator extends Generator {
+  getPlatform(): string {
+    return 'angular';
+  }
+
   createJsxExpression(dotDotDotToken = '', expression?: Expression) {
     return new JsxExpression(dotDotDotToken, expression);
   }
