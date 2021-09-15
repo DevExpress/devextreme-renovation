@@ -73,7 +73,7 @@ export function createTestGenerator(
     componentIndex: number = 0
   ) {
     const factory = require(path.resolve(
-      `${__dirname}/../test-cases/componentFactory/${componentName}`
+      `${__dirname}/../test-cases/componentFactory/${generator.getPlatform()}/${componentName}`
     ));
     const code = (this.code = generator.generate(factory)[componentIndex].code);
     const expectedPath = path.resolve(

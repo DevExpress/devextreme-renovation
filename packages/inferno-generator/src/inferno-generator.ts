@@ -26,6 +26,10 @@ import { JsxAttribute } from './expressions/jsx/attribute';
 import { VariableDeclaration } from './expressions/variable-declaration';
 
 export class InfernoGenerator extends PreactGenerator {
+  getPlatform(): string {
+    return 'inferno';
+  }
+
   createComponent(
     componentDecorator: Decorator,
     modifiers: string[],
